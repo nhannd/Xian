@@ -90,9 +90,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
                 if (instanceEnumerator.MoveNext())
                 {
                     InstanceXml instance = instanceEnumerator.Current;
-					DicomFile file = new DicomFile("file.dcm",new DicomAttributeCollection(), instance.Collection);
-                    file.TransferSyntax = instance.TransferSyntax;
-                    return file;
+					DicomFile file = new DicomFile("file.dcm",new DicomAttributeCollection(), instance.Collection)
+					                 	{TransferSyntax = instance.TransferSyntax};
+                	return file;
                 }
             }
 
@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
         /// <param name="location">The storage location of the study to process.</param>
         /// <param name="engine">The rules engine to use when processing the study.</param>
         /// <param name="postArchivalEngine">The rules engine used for studies that have been archived.</param>
-        private void ProcessStudy(ServerPartition partition, StudyStorageLocation location, ServerRulesEngine engine, ServerRulesEngine postArchivalEngine)
+        private static void ProcessStudy(ServerPartition partition, StudyStorageLocation location, ServerRulesEngine engine, ServerRulesEngine postArchivalEngine)
         {
             if (!location.QueueStudyStateEnum.Equals(QueueStudyStateEnum.Idle) || !location.AcquireWriteLock())
             {
@@ -226,7 +226,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
 				foreach (DirectoryInfo dateDir in partitionDir.GetDirectories())
 				{
 					if (dateDir.FullName.EndsWith("Deleted")
-					    || dateDir.FullName.EndsWith("Reconcile"))
+						|| dateDir.FullName.EndsWith(ServerPlatform.ReconcileStorageFolder))
 						continue;
 
 					foreach (DirectoryInfo studyDir in dateDir.GetDirectories())
@@ -244,7 +244,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
 									DicomFile file = null;
 									foreach (FileInfo sopFile in sopInstanceFiles)
 									{
-										if (!sopFile.FullName.EndsWith(".dcm"))
+										if (!sopFile.FullName.EndsWith(ServerPlatform.DicomFileExtension))
 											continue;
 
 										try

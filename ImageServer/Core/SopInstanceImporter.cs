@@ -375,7 +375,7 @@ namespace ClearCanvas.ImageServer.Core
             commandProcessor.AddCommand(new CreateDirectoryCommand(path));
 
             path = Path.Combine(path, sopInstanceUid);
-            path += ".dcm";
+            path += ServerPlatform.DicomFileExtension;
 
             commandProcessor.AddCommand(new SaveDicomFileCommand(path, file, true));
 
@@ -399,7 +399,7 @@ namespace ClearCanvas.ImageServer.Core
 				commandProcessor.AddCommand(new CreateDirectoryCommand(path));
 
 				path = Path.Combine(path, sopInstanceUid);
-				path += ".dcm";
+				path += ServerPlatform.DicomFileExtension;
 
 				if (File.Exists(path))
 					return false;

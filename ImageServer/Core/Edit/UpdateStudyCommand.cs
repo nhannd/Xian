@@ -284,7 +284,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 				int restoredCount = 0;
 				foreach (InstanceInfo sop in _updatedSopList)
 				{
-					string backupSopPath = Path.Combine(_backupDir, sop.SopInstanceUid + ".dcm");
+					string backupSopPath = Path.Combine(_backupDir, sop.SopInstanceUid + ServerPlatform.DicomFileExtension);
 
 					FileUtils.Copy(backupSopPath,_oldStudyLocation.GetSopInstancePath(sop.SeriesInstanceUid, sop.SopInstanceUid), true);
 
@@ -435,7 +435,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 				{
 					string path = Path.Combine(_oldStudyPath, seriesXml.SeriesInstanceUid);
 					path = Path.Combine(path, instanceXml.SopInstanceUid);
-					path += ".dcm";
+					path += ServerPlatform.DicomFileExtension;
 
 					//create backup
 					try
@@ -504,8 +504,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			String sopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
 
 			String destPath = _oldStudyLocation.FilesystemPath;
-			const string extension = ".dcm";
-
+			
 			using (ServerCommandProcessor filesystemUpdateProcessor = new ServerCommandProcessor("Update Study"))
 			{
 				filesystemUpdateProcessor.AddCommand(new CreateDirectoryCommand(destPath));
@@ -523,7 +522,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 				filesystemUpdateProcessor.AddCommand(new CreateDirectoryCommand(destPath));
 
 				destPath = Path.Combine(destPath, sopInstanceUid);
-				destPath += extension;
+				destPath += ServerPlatform.DicomFileExtension;
 
 				// Overwrite the prior file
 				SaveDicomFileCommand saveCommand = new SaveDicomFileCommand(destPath, file, false);
@@ -556,7 +555,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 				{
 					string existingFile = _oldStudyLocation.GetSopInstancePath(seriesXml.SeriesInstanceUid, instanceXml.SopInstanceUid);
 
-					FileInfo backupPath = new FileInfo(Path.Combine(_backupDir, instanceXml.SopInstanceUid + ".dcm"));
+					FileInfo backupPath = new FileInfo(Path.Combine(_backupDir, instanceXml.SopInstanceUid + ServerPlatform.DicomFileExtension));
 					FileUtils.Copy(existingFile, backupPath.FullName, true );
 				}
 			}

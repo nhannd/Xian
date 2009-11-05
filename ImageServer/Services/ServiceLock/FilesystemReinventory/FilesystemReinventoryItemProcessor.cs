@@ -32,15 +32,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -69,10 +66,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 			using (IReadContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
 			{
 				// Setup the delete parameters
-				DeleteStudyStorageParameters parms = new DeleteStudyStorageParameters();
-
-				parms.ServerPartitionKey = location.ServerPartitionKey;
-				parms.StudyStorageKey = location.Key;
+				DeleteStudyStorageParameters parms = new DeleteStudyStorageParameters
+				                                     	{
+				                                     		ServerPartitionKey = location.ServerPartitionKey,
+				                                     		StudyStorageKey = location.Key
+				                                     	};
 
 				// Get the Insert Instance broker and do the insert
 				IDeleteStudyStorage delete = updateContext.GetBroker<IDeleteStudyStorage>();
@@ -120,7 +118,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
                 foreach(DirectoryInfo dateDir in partitionDir.GetDirectories())
                 {
                     if (dateDir.FullName.EndsWith("Deleted", StringComparison.InvariantCultureIgnoreCase)
-                        || dateDir.FullName.EndsWith("Reconcile", StringComparison.InvariantCultureIgnoreCase))
+						|| dateDir.FullName.EndsWith(ServerPlatform.ReconcileStorageFolder, StringComparison.InvariantCultureIgnoreCase))
 						continue;
                 	List<FileInfo> fileList;
 
@@ -213,13 +211,16 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
                             using (IUpdateContext update = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
                             {
                                 IInsertStudyStorage studyInsert = update.GetBroker<IInsertStudyStorage>();
-                                InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters();
-                                insertParms.ServerPartitionKey = partition.GetKey();
-                                insertParms.StudyInstanceUid = studyInstanceUid;
-                                insertParms.Folder = dateDir.Name;
-                                insertParms.FilesystemKey = filesystem.GetKey();
-                                insertParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
-                                if (file.TransferSyntax.LosslessCompressed)
+                                InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters
+                                                                           	{
+                                                                           		ServerPartitionKey = partition.GetKey(),
+                                                                           		StudyInstanceUid = studyInstanceUid,
+                                                                           		Folder = dateDir.Name,
+                                                                           		FilesystemKey = filesystem.GetKey(),
+                                                                           		QueueStudyStateEnum =
+                                                                           			QueueStudyStateEnum.Idle
+                                                                           	};
+                            	if (file.TransferSyntax.LosslessCompressed)
                                 {
                                     insertParms.TransferSyntaxUid = file.TransferSyntax.UidString;
                                     insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossless;
@@ -239,10 +240,13 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 
                                 // WriteLock the new study storage for study processing
                                 ILockStudy lockStudy = update.GetBroker<ILockStudy>();
-                                LockStudyParameters lockParms = new LockStudyParameters();
-                                lockParms.StudyStorageKey = location.Key;
-                                lockParms.QueueStudyStateEnum = QueueStudyStateEnum.ProcessingScheduled;
-                                if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
+                                LockStudyParameters lockParms = new LockStudyParameters
+                                                                	{
+                                                                		StudyStorageKey = location.Key,
+                                                                		QueueStudyStateEnum =
+                                                                			QueueStudyStateEnum.ProcessingScheduled
+                                                                	};
+                            	if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
                                     Platform.Log(LogLevel.Error, "Unable to lock study {0} for Study Processing", location.StudyInstanceUid);
 
                                 update.Commit();
@@ -270,13 +274,15 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 								ReadContext.GetBroker<IInsertWorkQueue>();
 
 							InsertWorkQueueParameters queueInsertParms =
-								new InsertWorkQueueParameters();
-							queueInsertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.StudyProcess;
-							queueInsertParms.StudyStorageKey = location.GetKey();
-							queueInsertParms.ServerPartitionKey = partition.GetKey();
-							queueInsertParms.SeriesInstanceUid = sopFile.Directory.Name;
-							queueInsertParms.SopInstanceUid = sopInstanceUid;
-							queueInsertParms.ScheduledTime = Platform.Time;
+								new InsertWorkQueueParameters
+									{
+										WorkQueueTypeEnum = WorkQueueTypeEnum.StudyProcess,
+										StudyStorageKey = location.GetKey(),
+										ServerPartitionKey = partition.GetKey(),
+										SeriesInstanceUid = sopFile.Directory.Name,
+										SopInstanceUid = sopInstanceUid,
+										ScheduledTime = Platform.Time
+									};
 
 							if (workQueueInsert.FindOne(queueInsertParms) == null)
 								Platform.Log(LogLevel.Error,

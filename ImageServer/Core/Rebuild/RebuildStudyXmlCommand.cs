@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageServer.Core.Rebuild
 				string seriesPath = Path.Combine(_rootPath, series.SeriesInstanceUid);
 				foreach (InstanceXml instance in series)
 				{
-					string instancePath = Path.Combine(seriesPath, instance.SopInstanceUid + ".dcm");
+					string instancePath = Path.Combine(seriesPath, instance.SopInstanceUid + ServerPlatform.DicomFileExtension);
 
 					if (!theProcessor.ExecuteSubCommand(this, new InsertInstanceXmlCommand(newXml, instancePath)))
 						throw new ApplicationException(theProcessor.FailureReason);

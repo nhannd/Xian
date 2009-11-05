@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using System.Web;
 using System.Windows.Forms;
+using ClearCanvas.ImageServer.Common;
 
 namespace ClearCanvas.ImageServer.TestApp
 {
@@ -29,8 +30,8 @@ namespace ClearCanvas.ImageServer.TestApp
         {
             foreach (Series series in seriesList)
             {
-                int NumSop = series.SopInstanceUids.Count;
-                for (int i = 0; i < NumSop; i++)
+                int numSop = series.SopInstanceUids.Count;
+                for (int i = 0; i < numSop; i++)
                 {
                     
                     string sopUid = series.SopInstanceUids[i];
@@ -41,7 +42,7 @@ namespace ClearCanvas.ImageServer.TestApp
                     url.AppendFormat("&frameNumber={0}", 0);
                     url.AppendFormat("&contentType={0}", HttpUtility.HtmlEncode("application/clearcanvas"));
                     
-                    if (ServerPrefetch.Checked && i < NumSop - 1)
+                    if (ServerPrefetch.Checked && i < numSop - 1)
                     {
                         url.AppendFormat("&nextSeriesUid={0}", series.SeriesInstanceUid);
                         url.AppendFormat("&nextObjectUid={0}", series.SopInstanceUids[i+1]);
@@ -128,7 +129,7 @@ namespace ClearCanvas.ImageServer.TestApp
                 series.SopInstanceUids = new List<string>();
                 foreach (FileInfo file in seriesDir.GetFiles("*.dcm"))
                 {
-                    series.SopInstanceUids.Add(file.Name.Replace(".dcm", ""));
+                    series.SopInstanceUids.Add(file.Name.Replace(ServerPlatform.DicomFileExtension, ""));
                     imageCount++;
                 }
             }

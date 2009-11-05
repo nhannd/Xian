@@ -81,18 +81,19 @@ namespace ClearCanvas.ImageServer.Common
             IAlertService service = Platform.GetService<IAlertService>();
             if (service != null)
             {
-                AlertSource src = new AlertSource(source);
-                src.Host = ServerInstanceId;
-                Alert alert = new Alert();
-                alert.Category = category;
-                alert.Level = level;
-                alert.Code = alertCode;
-                alert.ExpirationTime = Platform.Time.Add(expirationTime);
-                alert.Source = src;
-                alert.Message = String.Format(message, args);
-                alert.ContextData = contextData;
+                AlertSource src = new AlertSource(source) {Host = ServerInstanceId};
+            	Alert alert = new Alert
+                              	{
+                              		Category = category,
+                              		Level = level,
+                              		Code = alertCode,
+                              		ExpirationTime = Platform.Time.Add(expirationTime),
+                              		Source = src,
+                              		Message = String.Format(message, args),
+                              		ContextData = contextData
+                              	};
 
-                service.GenerateAlert(alert);
+            	service.GenerateAlert(alert);
             }
         }
 
@@ -128,6 +129,25 @@ namespace ClearCanvas.ImageServer.Common
 				_log.WriteEntry(helper.Operation, helper.Serialize(false));
 			}
 		}
+
+		/// <summary>
+		/// The Reconcile folder.    DO NOT CHANGE!
+		/// </summary>
+		public const string ReconcileStorageFolder = "Reconcile";
+
+		/// <summary>
+		/// The default DICOM file extension.  DO NOT CHANGE!
+		/// </summary>
+		public const string DicomFileExtension = ".dcm";
+
+		/// <summary>
+		/// The default Duplicate DICOM file extension.  
+		/// </summary>
+		/// <remarks>
+		/// Note, due to historical reasons, this value does not have a "." in the
+		/// duplicate value.  The extensions is input in the WorkQueueUid table without the period.
+		/// </remarks>
+		public const string DuplicateFileExtension = "dup";
 
         /// <summary>
         /// Gets the path to the temporary folder.
@@ -183,10 +203,7 @@ namespace ClearCanvas.ImageServer.Common
                             {
                                 IDatabaseVersionEntityBroker broker = ctx.GetBroker<IDatabaseVersionEntityBroker>();
                                 DatabaseVersion version = broker.FindOne(new DatabaseVersionSelectCriteria());
-								if (version != null)
-                                    _dbVersion = version.GetVersionString();
-                                else
-                                    _dbVersion = String.Empty;
+								_dbVersion = version != null ? version.GetVersionString() : String.Empty;
                             }
                         }
                         catch (Exception ex)
@@ -325,17 +342,19 @@ namespace ClearCanvas.ImageServer.Common
 			StudyStorageLocation primaryStudyLocation, StudyStorageLocation secondaryStudyLocation,
 			StudyHistoryTypeEnum type, object entryInfo, object changeLog)
 		{
-			StudyHistoryUpdateColumns columns = new StudyHistoryUpdateColumns();
-			columns.InsertTime = Platform.Time;
-			columns.StudyHistoryTypeEnum = type;
-			columns.StudyStorageKey = primaryStudyLocation.GetKey();
-			if (secondaryStudyLocation != null)
-				columns.DestStudyStorageKey = secondaryStudyLocation.GetKey();
-			else
-				columns.DestStudyStorageKey = primaryStudyLocation.GetKey();
+			StudyHistoryUpdateColumns columns = new StudyHistoryUpdateColumns
+			                                    	{
+			                                    		InsertTime = Platform.Time,
+			                                    		StudyHistoryTypeEnum = type,
+			                                    		StudyStorageKey = primaryStudyLocation.GetKey(),
+			                                    		DestStudyStorageKey =
+			                                    			secondaryStudyLocation != null
+			                                    				? secondaryStudyLocation.GetKey()
+			                                    				: primaryStudyLocation.GetKey(),
+			                                    		StudyData = XmlUtils.SerializeAsXmlDoc(entryInfo) ?? new XmlDocument(),
+			                                    		ChangeDescription = XmlUtils.SerializeAsXmlDoc(changeLog) ?? new XmlDocument()
+			                                    	};
 
-			columns.StudyData = XmlUtils.SerializeAsXmlDoc(entryInfo) ?? new XmlDocument();
-			columns.ChangeDescription = XmlUtils.SerializeAsXmlDoc(changeLog) ?? new XmlDocument();
 			IStudyHistoryEntityBroker broker = updateContext.GetBroker<IStudyHistoryEntityBroker>();
 			return broker.Insert(columns);
 		}
@@ -372,18 +391,15 @@ namespace ClearCanvas.ImageServer.Common
                     // It's definitely stuck cause it won't be picked up by any servers.
                     return false; 
                 }
-                else
-                {
-                    // TODO: Need more elaborate logic to detect if it's stuck when the status is InProgress.
-                    // Ideally, we can assume item is stuck if it has not been updated for a while. 
-                    // Howerver, some operations were designed to process everything in a single run 
-                    // instead of batches.One example is the StudyProcess, research studies may take days to process 
-                    // and the item stays in "InProgress" for the entire period without any update 
-                    // (eventhough the WorkQueueUid records are removed)
-                    // For now, we assume it's stucked if it is not updated for long time.
-                    if (item.ScheduledTime < Platform.Time - Settings.Default.InactiveWorkQueueMinTime)
-                        return false;
-                }
+            	// TODO: Need more elaborate logic to detect if it's stuck when the status is InProgress.
+            	// Ideally, we can assume item is stuck if it has not been updated for a while. 
+            	// Howerver, some operations were designed to process everything in a single run 
+            	// instead of batches.One example is the StudyProcess, research studies may take days to process 
+            	// and the item stays in "InProgress" for the entire period without any update 
+            	// (eventhough the WorkQueueUid records are removed)
+            	// For now, we assume it's stucked if it is not updated for long time.
+            	if (item.ScheduledTime < Platform.Time - Settings.Default.InactiveWorkQueueMinTime)
+            		return false;
             }
 
             return true;

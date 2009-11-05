@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
         protected TransferSyntax CompressTransferSyntax { get; private set; }
         
         #endregion
-        protected override void Initialize(ClearCanvas.ImageServer.Model.WorkQueue item)
+        protected override void Initialize(Model.WorkQueue item)
         {
             base.Initialize(item);
 
@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
             if (sop.Extension != null)
                 path = basePath + "." + sop.Extension;
             else
-                path = basePath + ".dcm";
+                path = basePath + ServerPlatform.DicomFileExtension;
 
             try
             {
@@ -117,10 +117,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                 {
                     Platform.Log(LogLevel.Warn, e, "Instance not supported for compressor: {0}.  Deleting WorkQueue entry for SOP {1}", e.Message, sop.SopInstanceUid);
 
-                    if (e.InnerException != null)
-                        item.FailureDescription = e.InnerException.Message;
-                    else
-                        item.FailureDescription = e.Message;
+                    item.FailureDescription = e.InnerException != null ? e.InnerException.Message : e.Message;
 
                     // Delete it out of the queue
                     DeleteWorkQueueUid(sop);
@@ -128,10 +125,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                     return false;
                 }
                 Platform.Log(LogLevel.Error, e, "Unexpected exception when compressing file: {0} SOP Instance: {1}", path, sop.SopInstanceUid);
-                if (e.InnerException != null)
-                    item.FailureDescription = e.InnerException.Message;
-                else
-                    item.FailureDescription = e.Message;
+                item.FailureDescription = e.InnerException != null ? e.InnerException.Message : e.Message;
 
                 sop.FailureCount++;
 
@@ -151,10 +145,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                 broker.Delete(workQueueUidCriteria);
 
                 FilesystemQueueInsertParameters parms = new FilesystemQueueInsertParameters();
-                if (CompressTransferSyntax.LosslessCompressed)
-                    parms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.LosslessCompress;
-                else
-                    parms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.LossyCompress;
+                parms.FilesystemQueueTypeEnum = CompressTransferSyntax.LosslessCompressed 
+					? FilesystemQueueTypeEnum.LosslessCompress 
+					: FilesystemQueueTypeEnum.LossyCompress;
                 parms.ScheduledTime = Platform.Time + delay;
                 parms.StudyStorageKey = WorkQueueItem.StudyStorageKey;
                 parms.FilesystemKey = StorageLocation.FilesystemKey;
@@ -180,8 +173,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 		/// <param name="theCodecFactory">The factor for doing the compression</param>
 		protected bool ProcessUidList(Model.WorkQueue item, IDicomCodecFactory theCodecFactory)
 		{
-			StudyXml studyXml;
-			studyXml = LoadStudyXml(StorageLocation);
+			StudyXml studyXml = LoadStudyXml(StorageLocation);
 
             int successfulProcessCount = 0;
 			int totalCount = WorkQueueUidList.Count;
@@ -439,8 +431,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 		{
 			Platform.CheckForNullReference(item, "item");
 
-			_studyStats = new CompressStudyStatistics();
-			_studyStats.Description = String.Format("{0}", item.WorkQueueTypeEnum);
+			_studyStats = new CompressStudyStatistics
+			              	{
+			              		Description = String.Format("{0}", item.WorkQueueTypeEnum)
+			              	};
 		}
 
         protected override bool CanStart()

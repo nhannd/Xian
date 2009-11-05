@@ -36,7 +36,6 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
@@ -182,7 +181,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 
         }
 
-        private void EnsureStorageLocationIsWritable(StudyStorageLocation location)
+        private static void EnsureStorageLocationIsWritable(StudyStorageLocation location)
         {
             FilesystemMonitor.Instance.EnsureStorageLocationIsWritable(location);
         }
@@ -526,14 +525,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 
         private FileInfo GetDuplicateSopFile(WorkQueueUid uid)
         {
-            string baseDir = Path.Combine(StorageLocation.FilesystemPath, StorageLocation.PartitionFolder);
-            baseDir = Path.Combine(baseDir, "Reconcile");
-            baseDir = Path.Combine(baseDir, WorkQueueItem.GroupID);
+            string path = Path.Combine(StorageLocation.FilesystemPath, StorageLocation.PartitionFolder);
+			path = Path.Combine(path, ServerPlatform.ReconcileStorageFolder);
+            path = Path.Combine(path, WorkQueueItem.GroupID);
 
-            String path = Path.Combine(baseDir, uid.RelativePath);
+			if (string.IsNullOrEmpty(uid.RelativePath))
+			{
+				path = Path.Combine(path, StorageLocation.StudyInstanceUid);
+				path = Path.Combine(path, uid.SopInstanceUid + "." + uid.Extension);
+			}
+			else path = Path.Combine(path, uid.RelativePath);
 
-            return new FileInfo(path);
-
+			return new FileInfo(path);
         }
 
         private void PrintCommands(ICollection<BaseImageLevelUpdateCommand> commands)

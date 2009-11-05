@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 				foreach (DirectoryInfo dateDir in partitionDir.GetDirectories())
 				{
 					if (dateDir.FullName.EndsWith("Deleted")
-					    || dateDir.FullName.EndsWith("Reconcile"))
+						|| dateDir.FullName.EndsWith(ServerPlatform.ReconcileStorageFolder))
 						continue;
 
 					foreach (DirectoryInfo studyDir in dateDir.GetDirectories())

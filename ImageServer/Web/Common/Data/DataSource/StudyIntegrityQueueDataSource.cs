@@ -34,12 +34,12 @@ using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.Exceptions;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
     public class ReconcileDetails
     {
         #region Private Memebers
-        private string _studyInstanceUID;
+        private string _studyInstanceUid;
         private readonly StudyIntegrityQueue _item;
         private StudyInfo _existingStudy;
         private ImageSetDetails _conflictingImages;
@@ -185,8 +185,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
         public string StudyInstanceUID
         {
-            get { return _studyInstanceUID; }
-            set { _studyInstanceUID = value; }
+            get { return _studyInstanceUid; }
+            set { _studyInstanceUid = value; }
         }
 
 
@@ -233,7 +233,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
             }
 
             String path = Path.Combine(_location.FilesystemPath, _location.PartitionFolder);
-            path = Path.Combine(path, "Reconcile");
+			path = Path.Combine(path, ServerPlatform.ReconcileStorageFolder);
             if(!string.IsNullOrEmpty(_item.GroupID)) path = Path.Combine(path, _item.GroupID);
             path = Path.Combine(path, _location.StudyInstanceUid);
 
@@ -366,8 +366,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 				if (_study.IsLocked || _study.IsNearline || _study.IsLocked || _study.IsProcessing)
 					return false;
-				else
-					return true;
+				return true;
 			}
 		}
 
@@ -667,10 +666,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
         {
             get
             {
-                if (_duplicateSIQEntry != null && _duplicateSIQEntry.Details != null)
+            	if (_duplicateSIQEntry != null && _duplicateSIQEntry.Details != null)
                     return XmlUtils.Deserialize<DuplicateSIQQueueData>(_duplicateSIQEntry.Details);
-                else
-                    return new DuplicateSIQQueueData();
+            	return new DuplicateSIQQueueData();
             }
         }
     }

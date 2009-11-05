@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupReconcile
 
         private string GetUidPath(WorkQueueUid sop)
         {
-            string imagePath = Path.Combine(_reconcileQueueData.StoragePath, sop.SopInstanceUid + ".dcm");
+            string imagePath = Path.Combine(_reconcileQueueData.StoragePath, sop.SopInstanceUid + ServerPlatform.DicomFileExtension);
             Debug.Assert(String.IsNullOrEmpty(imagePath)==false);
 
             return imagePath;

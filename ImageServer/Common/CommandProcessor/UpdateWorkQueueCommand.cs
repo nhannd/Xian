@@ -47,8 +47,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         private WorkQueue _insertedWorkQueue;
         private readonly bool _duplicate;
         private readonly string _extension;
-        private readonly string _uidRelativePath;
-        private readonly string _uidGroupId;
+    	private readonly string _uidGroupId;
 
         #endregion
 
@@ -56,17 +55,11 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                         StudyStorageLocation location,
                         bool duplicate,
                         string extension)
-            : this(message, location, duplicate, extension, null, null)
+            : this(message, location, duplicate, extension, null)
         {
         }
 
-        public UpdateWorkQueueCommand(DicomMessageBase message, 
-                        StudyStorageLocation location, 
-                        bool duplicate, 
-                        string extension,
-                        string uidGroupId,
-                        string uidRelativePath
-            )
+        public UpdateWorkQueueCommand(DicomMessageBase message, StudyStorageLocation location, bool duplicate, string extension, string uidGroupId)
             : base("Update/Insert a WorkQueue Entry", true)
         {
             Platform.CheckForNullReference(message, "Dicom Message object");
@@ -77,7 +70,6 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             _duplicate = duplicate;
             _extension = extension;
             _uidGroupId = uidGroupId;
-            _uidRelativePath = uidRelativePath;
         }
 
         public WorkQueue InsertedWorkQueue
@@ -85,25 +77,25 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             get { return _insertedWorkQueue; }
         }
 
-
         protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
         {
             IInsertWorkQueue insert = updateContext.GetBroker<IInsertWorkQueue>();
-            InsertWorkQueueParameters parms = new InsertWorkQueueParameters();
-            parms.WorkQueueTypeEnum = WorkQueueTypeEnum.StudyProcess;
-            parms.StudyStorageKey = _storageLocation.GetKey();
-            parms.ServerPartitionKey = _storageLocation.ServerPartitionKey;
-            parms.SeriesInstanceUid = _message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
-            parms.SopInstanceUid = _message.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
-			parms.ScheduledTime = Platform.Time;
-            parms.WorkQueueGroupID = _uidGroupId;
+            InsertWorkQueueParameters parms = new InsertWorkQueueParameters
+                          	{
+                          		WorkQueueTypeEnum = WorkQueueTypeEnum.StudyProcess,
+                          		StudyStorageKey = _storageLocation.GetKey(),
+                          		ServerPartitionKey = _storageLocation.ServerPartitionKey,
+                          		SeriesInstanceUid = _message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty),
+                          		SopInstanceUid = _message.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty),
+                          		ScheduledTime = Platform.Time,
+                          		WorkQueueGroupID = _uidGroupId
+                          	};
 
-            if (_duplicate)
+        	if (_duplicate)
             {
                 parms.Duplicate = _duplicate;
                 parms.Extension = _extension;
                 parms.UidGroupID = _uidGroupId;
-                parms.UidRelativePath = _uidRelativePath;
             }
 
             _insertedWorkQueue = insert.FindOne(parms);

@@ -32,7 +32,6 @@
 using System;
 using System.IO;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Enterprise.Core;
@@ -101,9 +100,7 @@ namespace ClearCanvas.ImageServer.Core.Process
         #region Private Members
 
         // TODO: Make these values configurable
-        private const string DuplicateExtension = "dup";
-        private const string ReconcileStorageFolder = "Reconcile"; 
-
+      
         #endregion
 
         #region Public Methods
@@ -161,7 +158,8 @@ namespace ClearCanvas.ImageServer.Core.Process
         	if (context.StudyLocation.ServerPartition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.CompareDuplicates))
         	{
         		SaveDuplicate(context, file);
-        		InsertWorkQueue(context, file);
+        		context.CommandProcessor.AddCommand(
+					new UpdateWorkQueueCommand(file, context.StudyLocation, true, ServerPlatform.DuplicateFileExtension, context.Group));
         	}
         	else
         	{
@@ -174,7 +172,7 @@ namespace ClearCanvas.ImageServer.Core.Process
         }
 
 		/// <summary>
-		/// Create
+		/// Create Duplicate SIQ Entry
 		/// </summary>
 		/// <param name="file"></param>
 		/// <param name="location"></param>
@@ -235,29 +233,15 @@ namespace ClearCanvas.ImageServer.Core.Process
 				updateContext.Commit();
 			}
 		}
-        static private void InsertWorkQueue(SopProcessingContext context, DicomMessageBase file)
-        {
-            String sopUid = file.DataSet[DicomTags.SopInstanceUid].ToString();
 
-            String relativePath = StringUtilities.Combine(new[] 
-                                                              {
-                                                                  context.StudyLocation.StudyInstanceUid, sopUid
-                                                              }, Path.DirectorySeparatorChar.ToString());
-
-            relativePath = relativePath + "." + DuplicateExtension;
-
-            context.CommandProcessor.AddCommand(
-                new UpdateWorkQueueCommand(file, context.StudyLocation, true, DuplicateExtension, context.Group, relativePath));
-        }
-
-        static private void SaveDuplicate(SopProcessingContext context, DicomFile file)
+    	static private void SaveDuplicate(SopProcessingContext context, DicomFile file)
         {
             String sopUid = file.DataSet[DicomTags.SopInstanceUid].ToString();
 
             String path = Path.Combine(context.StudyLocation.FilesystemPath, context.StudyLocation.PartitionFolder);
             context.CommandProcessor.AddCommand(new CreateDirectoryCommand(path));
 
-            path = Path.Combine(path, ReconcileStorageFolder);
+			path = Path.Combine(path, ServerPlatform.ReconcileStorageFolder);
             context.CommandProcessor.AddCommand(new CreateDirectoryCommand(path));
 
             path = Path.Combine(path, context.Group /* the AE title + timestamp */);
@@ -267,7 +251,7 @@ namespace ClearCanvas.ImageServer.Core.Process
             context.CommandProcessor.AddCommand(new CreateDirectoryCommand(path));
 
             path = Path.Combine(path, sopUid);
-            path += "." + DuplicateExtension;
+			path += "." + ServerPlatform.DuplicateFileExtension;
 
             context.CommandProcessor.AddCommand(new SaveDicomFileCommand(path, file, true));
 

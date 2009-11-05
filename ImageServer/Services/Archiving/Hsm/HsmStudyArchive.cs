@@ -286,7 +286,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 						{
 							path = Path.Combine(_storageLocation.GetStudyPath(), seriesXml.SeriesInstanceUid);
 							path = Path.Combine(path, instanceXml.SopInstanceUid);
-							path += ".dcm";
+							path += ServerPlatform.DicomFileExtension;
 							defaultFile = new DicomFile(path);
 							defaultFile.Load(path);
 						}
@@ -295,7 +295,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
 					path = Path.Combine(_storageLocation.GetStudyPath(), seriesXml.SeriesInstanceUid);
 					path = Path.Combine(path, instanceXml.SopInstanceUid);
-					path += ".dcm";
+					path += ServerPlatform.DicomFileExtension;
 					defaultFile = new DicomFile(path);
 					defaultFile.Load(path);
 

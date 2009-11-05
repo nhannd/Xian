@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageServer.Rules
 		private ServerRulesEngine _seriesRulesEngine;
 		private ServerRulesEngine _studyRulesEngine;
 		private readonly ServerPartition _partition;
-		private StudyXml _studyXml = null;
+		private StudyXml _studyXml;
 		#endregion
 
 		#region Constructors
@@ -205,7 +205,7 @@ namespace ClearCanvas.ImageServer.Rules
 				if (saveInstance != null)
 				{
 					string path = Path.Combine(_location.GetStudyPath(), seriesXml.SeriesInstanceUid);
-					path = Path.Combine(path, saveInstance.SopInstanceUid + ".dcm");
+					path = Path.Combine(path, saveInstance.SopInstanceUid + ServerPlatform.DicomFileExtension);
 					fileList.Add(path);
 				}
 			}

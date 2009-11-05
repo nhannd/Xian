@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
         public string GetFolderPath()
         {
             string path = Path.Combine(_studyLocation.FilesystemPath, _studyLocation.PartitionFolder);
-            path = Path.Combine(path, "Reconcile");
+			path = Path.Combine(path, ServerPlatform.ReconcileStorageFolder);
             path = Path.Combine(path, _folder);
             return Path.Combine(path, _studyLocation.StudyInstanceUid);
         }
@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
         /// <returns></returns>
         public string GetSopRelativePath(string sopUid)
         {
-            return sopUid  + ".dcm";
+            return sopUid  + ServerPlatform.DicomFileExtension;
         }
 
         

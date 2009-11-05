@@ -33,6 +33,7 @@ using System;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
@@ -65,11 +66,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
                 {
                     IDeleteStudyStorage delete = context.GetBroker<IDeleteStudyStorage>();
 
-                    DeleteStudyStorageParameters parms = new DeleteStudyStorageParameters();
-                    parms.ServerPartitionKey = item.ServerPartitionKey;
-                    parms.StudyStorageKey = item.StudyStorageKey;
+                    DeleteStudyStorageParameters parms = new DeleteStudyStorageParameters
+                                                         	{
+                                                         		ServerPartitionKey = item.ServerPartitionKey,
+                                                         		StudyStorageKey = item.StudyStorageKey
+                                                         	};
 
-                    delete.Execute(parms);
+                	delete.Execute(parms);
                 }
                 context.Commit();
             }
@@ -133,7 +136,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
                     if (sop.Extension != null)
                         path += "." + sop.Extension;
                     else
-                        path += ".dcm";
+                        path += ServerPlatform.DicomFileExtension;
 
                     try
                     {

@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute;
@@ -81,16 +82,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
             	foreach (InstanceXml instanceXml in seriesXml)
                 {
                     string seriesPath = Path.Combine(studyPath, seriesXml.SeriesInstanceUid);
-                    string instancePath = Path.Combine(seriesPath, instanceXml.SopInstanceUid + ".dcm");
-                    StorageInstance instance = new StorageInstance(instancePath);
-                    instance.SopClass = instanceXml.SopClass;
-                    instance.TransferSyntax = instanceXml.TransferSyntax;
-                    instance.SopInstanceUid = instanceXml.SopInstanceUid;
-                    instance.StudyInstanceUid = studyXml.StudyInstanceUid;
-                    instance.PatientId = studyXml.PatientId;
-                    instance.PatientsName = studyXml.PatientsName;
+                    string instancePath = Path.Combine(seriesPath, instanceXml.SopInstanceUid + ServerPlatform.DicomFileExtension);
+                    StorageInstance instance = new StorageInstance(instancePath)
+                                               	{
+                                               		SopClass = instanceXml.SopClass,
+                                               		TransferSyntax = instanceXml.TransferSyntax,
+                                               		SopInstanceUid = instanceXml.SopInstanceUid,
+                                               		StudyInstanceUid = studyXml.StudyInstanceUid,
+                                               		PatientId = studyXml.PatientId,
+                                               		PatientsName = studyXml.PatientsName
+                                               	};
 
-                    list.Add(instance);
+                	list.Add(instance);
                 }
             }
             
@@ -117,12 +120,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
             if (relatedItems != null && relatedItems.Count > 0)
             {
                 // can't do it now. Reschedule it for future
-                List<Model.WorkQueue> list = CollectionUtils.Sort(relatedItems, delegate(Model.WorkQueue item1, Model.WorkQueue item2)
-                                      {
-                                          return item1.ScheduledTime.CompareTo(item2.ScheduledTime);
-                                      });
+                List<Model.WorkQueue> list = CollectionUtils.Sort(relatedItems,
+                                                                  (item1, item2) =>
+                                                                  item1.ScheduledTime.CompareTo(item2.ScheduledTime));
 
-                DateTime newScheduledTime = relatedItems[0].ScheduledTime.AddSeconds(WorkQueueProperties.PostponeDelaySeconds);
+                DateTime newScheduledTime = list[0].ScheduledTime.AddSeconds(WorkQueueProperties.PostponeDelaySeconds);
                 if (newScheduledTime < Platform.Time.AddMinutes(1))
                     newScheduledTime = Platform.Time.AddMinutes(1);
 

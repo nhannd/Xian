@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -60,36 +61,44 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             using(IUpdateContext context = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                ProcessDuplicateQueueEntryQueueData data = new ProcessDuplicateQueueEntryQueueData();
-                data.Action = action;
-                data.DuplicateSopFolder = entry.GetFolderPath();
-                
-                IWorkQueueProcessDuplicateSopBroker broker = context.GetBroker<IWorkQueueProcessDuplicateSopBroker>();
-                WorkQueueProcessDuplicateSopUpdateColumns columns = new WorkQueueProcessDuplicateSopUpdateColumns();
-                columns.Data = XmlUtils.SerializeAsXmlDoc(data);
-                columns.GroupID = entry.GroupID;
-                columns.ScheduledTime = Platform.Time;
-                columns.ExpirationTime = Platform.Time.Add(TimeSpan.FromMinutes(15));
-                columns.ServerPartitionKey= entry.ServerPartitionKey;
-                columns.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
-                columns.StudyStorageKey = entry.StudyStorageKey;
-                columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
+                ProcessDuplicateQueueEntryQueueData data = new ProcessDuplicateQueueEntryQueueData
+                                                           	{
+                                                           		Action = action,
+                                                           		DuplicateSopFolder = entry.GetFolderPath()
+                                                           	};
 
-                WorkQueueProcessDuplicateSop processDuplicateWorkQueueEntry = broker.Insert(columns);
+            	IWorkQueueProcessDuplicateSopBroker broker = context.GetBroker<IWorkQueueProcessDuplicateSopBroker>();
+                WorkQueueProcessDuplicateSopUpdateColumns columns = new WorkQueueProcessDuplicateSopUpdateColumns
+                                                                    	{
+                                                                    		Data = XmlUtils.SerializeAsXmlDoc(data),
+                                                                    		GroupID = entry.GroupID,
+                                                                    		ScheduledTime = Platform.Time,
+                                                                    		ExpirationTime =
+                                                                    			Platform.Time.Add(TimeSpan.FromMinutes(15)),
+                                                                    		ServerPartitionKey = entry.ServerPartitionKey,
+                                                                    		WorkQueuePriorityEnum =
+                                                                    			WorkQueuePriorityEnum.Medium,
+                                                                    		StudyStorageKey = entry.StudyStorageKey,
+                                                                    		WorkQueueStatusEnum = WorkQueueStatusEnum.Pending
+                                                                    	};
+
+            	WorkQueueProcessDuplicateSop processDuplicateWorkQueueEntry = broker.Insert(columns);
 
                 IWorkQueueUidEntityBroker workQueueUidBroker = context.GetBroker<IWorkQueueUidEntityBroker>();
                 IStudyIntegrityQueueUidEntityBroker duplicateUidBroke = context.GetBroker<IStudyIntegrityQueueUidEntityBroker>();
                 foreach (StudyIntegrityQueueUid uid in uids)
                 {
-                    WorkQueueUidUpdateColumns uidColumns = new WorkQueueUidUpdateColumns();
-                    uidColumns.Duplicate = true;
-                    uidColumns.Extension = "dup";
-                    uidColumns.SeriesInstanceUid = uid.SeriesInstanceUid;
-                    uidColumns.SopInstanceUid = uid.SopInstanceUid;
-                    uidColumns.RelativePath = uid.RelativePath;
-                    
-                    uidColumns.WorkQueueKey = processDuplicateWorkQueueEntry.GetKey();
-                    workQueueUidBroker.Insert(uidColumns);
+                    WorkQueueUidUpdateColumns uidColumns = new WorkQueueUidUpdateColumns
+                                                           	{
+                                                           		Duplicate = true,
+                                                           		Extension = ServerPlatform.DuplicateFileExtension,
+                                                           		SeriesInstanceUid = uid.SeriesInstanceUid,
+                                                           		SopInstanceUid = uid.SopInstanceUid,
+                                                           		RelativePath = uid.RelativePath,
+                                                           		WorkQueueKey = processDuplicateWorkQueueEntry.GetKey()
+                                                           	};
+
+                	workQueueUidBroker.Insert(uidColumns);
 
                     duplicateUidBroke.Delete(uid.GetKey());
                 }

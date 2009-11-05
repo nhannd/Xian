@@ -34,6 +34,7 @@ using System.IO;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageServer.Common;
 
 namespace ClearCanvas.ImageServer.TestApp
 {
@@ -132,7 +133,7 @@ namespace ClearCanvas.ImageServer.TestApp
                         Directory.CreateDirectory(destination);
 
                         string filename =
-                            Path.Combine(destination, dicomFile.MediaStorageSopInstanceUid + ".dcm");
+                            Path.Combine(destination, dicomFile.MediaStorageSopInstanceUid + ServerPlatform.DicomFileExtension);
 
 						if (File.Exists(filename))
 						{
@@ -233,7 +234,7 @@ namespace ClearCanvas.ImageServer.TestApp
 
 					if (SearchAttributeSet(dicomFile.DataSet, file.FullName, SearchTypes.PaletteColor))
 					{
-						string destination = Path.Combine(DestinationDirectory, _imageCount + ".dcm");
+						string destination = Path.Combine(DestinationDirectory, _imageCount + ServerPlatform.DicomFileExtension);
 
 						if (File.Exists(destination))
 							File.Delete(destination);

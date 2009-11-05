@@ -61,7 +61,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         protected StudyProcessStatistics _statistics;
     	protected StudyProcessorContext _context;
-        private const string RECONCILE_STORAGE_FOLDER = "Reconcile";
         #endregion
 
         #region Public Properties
@@ -152,7 +151,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Create Duplicate SIQ Entry"))
             {
-                InsertOrUpdateEntryCommand insertCommand = new InsertOrUpdateEntryCommand(uid.GroupID, StorageLocation, file, uid.RelativePath, differences);
+            	InsertOrUpdateEntryCommand insertCommand = new InsertOrUpdateEntryCommand(uid.GroupID, StorageLocation,
+                                                                  file,
+                                                                  string.IsNullOrEmpty(uid.RelativePath)
+                                                                  	? Path.Combine(StorageLocation.StudyInstanceUid, uid.SopInstanceUid + "." + uid.Extension) 
+																	: uid.RelativePath, 
+																	differences);
                 processor.AddCommand(insertCommand);
 
                 processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
@@ -236,39 +240,40 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         }
 
-        private String GetDuplicateUidPath(WorkQueueUid sop)
-        {
-            String dupPath;
-            if (!String.IsNullOrEmpty(sop.RelativePath))
-            {
-                dupPath = Path.Combine(StorageLocation.FilesystemPath, StorageLocation.PartitionFolder);
-                dupPath = Path.Combine(dupPath, RECONCILE_STORAGE_FOLDER);
-                dupPath = Path.Combine(dupPath, sop.GroupID);
-                dupPath = Path.Combine(dupPath, sop.RelativePath);
-            }
-                
-            #region BACKWARD_COMPATIBILTY_CODE
-            else
-            {
-                string basePath = Path.Combine(StorageLocation.GetStudyPath(), sop.SeriesInstanceUid);
-                basePath = Path.Combine(basePath, sop.SopInstanceUid);
-                if (sop.Extension != null)
-                    dupPath = basePath + "." + sop.Extension;
-                else
-                    dupPath = basePath + ".dcm";
-            }
-            #endregion
+		private String GetDuplicateUidPath(WorkQueueUid sop)
+		{
+			string dupPath = Path.Combine(StorageLocation.FilesystemPath, StorageLocation.PartitionFolder);
+			dupPath = Path.Combine(dupPath, ServerPlatform.ReconcileStorageFolder);
+			dupPath = Path.Combine(dupPath, sop.GroupID);
+			dupPath = string.IsNullOrEmpty(sop.RelativePath)
+			          	? Path.Combine(dupPath,
+			          	               Path.Combine(StorageLocation.StudyInstanceUid, sop.SopInstanceUid + "." + sop.Extension))
+			          	: Path.Combine(dupPath, sop.RelativePath);
 
-            return dupPath;
-        }
+			#region BACKWARD_COMPATIBILTY_CODE
 
-        private String GetDuplicateGroupPath(WorkQueueUid sop)
+			if (string.IsNullOrEmpty(sop.RelativePath) && !File.Exists(dupPath))
+			{
+				string basePath = Path.Combine(StorageLocation.GetStudyPath(), sop.SeriesInstanceUid);
+				basePath = Path.Combine(basePath, sop.SopInstanceUid);
+				if (sop.Extension != null)
+					dupPath = basePath + "." + sop.Extension;
+				else
+					dupPath = basePath + ".dcm";
+			}
+
+			#endregion
+
+			return dupPath;
+		}
+
+    	private String GetDuplicateGroupPath(WorkQueueUid sop)
         {
             String groupFolderPath = null;
             if (!String.IsNullOrEmpty(sop.RelativePath))
             {
                 groupFolderPath = Path.Combine(StorageLocation.FilesystemPath, StorageLocation.PartitionFolder);
-                groupFolderPath = Path.Combine(groupFolderPath, RECONCILE_STORAGE_FOLDER);
+				groupFolderPath = Path.Combine(groupFolderPath, ServerPlatform.ReconcileStorageFolder);
                 groupFolderPath = Path.Combine(groupFolderPath, sop.GroupID);
             }
 

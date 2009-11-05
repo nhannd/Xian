@@ -68,7 +68,10 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 	    {
 	    	if (String.IsNullOrEmpty(sop.RelativePath))
 			{
-				return Path.Combine(Context.ReconcileWorkQueueData.StoragePath, sop.SopInstanceUid + ".dcm");
+				string path = Context.ReconcileWorkQueueData.StoragePath;
+				path = Path.Combine(path, Context.WorkQueueItemStudyStorage.StudyInstanceUid);
+				path = Path.Combine(path, sop.SopInstanceUid + ServerPlatform.DicomFileExtension);
+				return path;
 			}
 	    	return Path.Combine(Context.ReconcileWorkQueueData.StoragePath, sop.RelativePath);
 	    }

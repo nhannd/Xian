@@ -36,6 +36,7 @@ using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
@@ -48,8 +49,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     {
         #region Private Members
         private readonly Device _remoteDevice;
-        private readonly ServerPartition _partition;
-        #endregion
+
+    	#endregion
 
         #region Constructors...
         /// <summary>
@@ -59,7 +60,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             :base(partition.AeTitle,remoteDevice.AeTitle,remoteDevice.IpAddress,remoteDevice.Port)
         {
             _remoteDevice = remoteDevice;
-            _partition = partition;
         }
 
         /// <summary>
@@ -72,8 +72,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         public ImageServerStorageScu(ServerPartition partition, Device remoteDevice, string moveOriginatorAe, ushort moveOrginatorMessageId)
             : base(partition.AeTitle, remoteDevice.AeTitle, remoteDevice.IpAddress, remoteDevice.Port, moveOriginatorAe, moveOrginatorMessageId)
         {
-            _partition = partition;
-            _remoteDevice = remoteDevice;
+        	_remoteDevice = remoteDevice;
         }
         #endregion
 
@@ -129,7 +128,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         {
             foreach (InstanceXml instanceXml in seriesXml)
             {
-                string instancePath = Path.Combine(seriesPath, instanceXml.SopInstanceUid + ".dcm");
+                string instancePath = Path.Combine(seriesPath, instanceXml.SopInstanceUid + ServerPlatform.DicomFileExtension);
                 StorageInstance instance = new StorageInstance(instancePath);
                 
                 AddStorageInstance(instance);

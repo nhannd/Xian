@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 	{
 		#region Private Members
 		private IReadContext _readContext;
-		private bool _cancelPending = false;
+		private bool _cancelPending;
         private readonly object _syncRoot = new object();
 		#endregion
 
@@ -248,7 +248,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 
 		protected DicomFile LoadFileFromList(List<FileInfo> fileList)
 		{
-			DicomFile file = null;
+			DicomFile file;
 			foreach (FileInfo fInfo in fileList)
 				try
 				{
@@ -260,7 +260,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 				{
 					Platform.Log(LogLevel.Warn, e, "Unexpected failure loading file: {0}.  Continuing to next file.",
 								 fInfo.FullName);
-					file = null;
 				}
 
 			return null;
@@ -286,7 +285,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 										  return;
 
 
-									  if (file.Extension.Equals(".dcm", StringComparison.InvariantCultureIgnoreCase))
+									  if (file.Extension.Equals(ServerPlatform.DicomFileExtension, StringComparison.InvariantCultureIgnoreCase))
 									  {
 										  fileList.Add(file);
 									  }
@@ -379,30 +378,27 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
             float folderSize = 0.0f;
             try
             {
-                //Checks if the path is valid or not
+            	//Checks if the path is valid or not
                 if (!Directory.Exists(folder))
                     return folderSize;
-                else
-                {
-                    try
-                    {
-                        foreach (string file in Directory.GetFiles(folder))
-                        {
-                            if (File.Exists(file))
-                            {
-                                FileInfo finfo = new FileInfo(file);
-                                folderSize += finfo.Length;
-                            }
-                        }
+            	try
+            	{
+            		foreach (string file in Directory.GetFiles(folder))
+            		{
+            			if (File.Exists(file))
+            			{
+            				FileInfo finfo = new FileInfo(file);
+            				folderSize += finfo.Length;
+            			}
+            		}
 
-                        foreach (string dir in Directory.GetDirectories(folder))
-                            folderSize += CalculateFolderSize(dir);
-                    }
-                    catch (NotSupportedException e)
-                    {
-                        Platform.Log(LogLevel.Error, e, "Unable to calculate folder size");
-                    }
-                }
+            		foreach (string dir in Directory.GetDirectories(folder))
+            			folderSize += CalculateFolderSize(dir);
+            	}
+            	catch (NotSupportedException e)
+            	{
+            		Platform.Log(LogLevel.Error, e, "Unable to calculate folder size");
+            	}
             }
             catch (UnauthorizedAccessException e)
             {

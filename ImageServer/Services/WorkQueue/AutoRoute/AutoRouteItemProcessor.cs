@@ -89,16 +89,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                 InstanceXml instanceXml = seriesXml[uid.SopInstanceUid];
             
                 string seriesPath = Path.Combine(studyPath, uid.SeriesInstanceUid);
-                string instancePath = Path.Combine(seriesPath, uid.SopInstanceUid + ".dcm");
-                StorageInstance instance = new StorageInstance(instancePath);
-                instance.SopClass = instanceXml.SopClass;
-                instance.TransferSyntax = instanceXml.TransferSyntax;
-                instance.SopInstanceUid = instanceXml.SopInstanceUid;
-        	    instance.StudyInstanceUid = studyXml.StudyInstanceUid;
-        	    instance.PatientId = studyXml.PatientId;
-			    instance.PatientsName = studyXml.PatientsName;
+                string instancePath = Path.Combine(seriesPath, uid.SopInstanceUid + ServerPlatform.DicomFileExtension);
+                StorageInstance instance = new StorageInstance(instancePath)
+                                           	{
+                                           		SopClass = instanceXml.SopClass,
+                                           		TransferSyntax = instanceXml.TransferSyntax,
+                                           		SopInstanceUid = instanceXml.SopInstanceUid,
+                                           		StudyInstanceUid = studyXml.StudyInstanceUid,
+                                           		PatientId = studyXml.PatientId,
+                                           		PatientsName = studyXml.PatientsName
+                                           	};
 
-                list.Add(uid.SopInstanceUid, instance);
+            	list.Add(uid.SopInstanceUid, instance);
             }
 
             return list.Values;

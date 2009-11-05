@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     /// Plugin for handling DICOM Retrieve Requests implementing the <see cref="IDicomScp{TContext}"/> interface.
     ///</summary>
     [ExtensionOf(typeof(DicomScpExtensionPoint<DicomScpContext>))]
-    public class MoveScpExtension : BaseScp, IDicomScp<DicomScpContext>
+    public class MoveScpExtension : BaseScp
     {
         #region Private members
         private readonly List<SupportedSop> _list = new List<SupportedSop>();
@@ -64,15 +64,19 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// </summary>
         public MoveScpExtension()
         {
-            SupportedSop sop = new SupportedSop();
-            sop.SopClass = SopClass.PatientRootQueryRetrieveInformationModelMove;
-            sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
+            SupportedSop sop = new SupportedSop
+                               	{
+                               		SopClass = SopClass.PatientRootQueryRetrieveInformationModelMove
+                               	};
+        	sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
             sop.SyntaxList.Add(TransferSyntax.ImplicitVrLittleEndian);
             _list.Add(sop);
 
-            sop = new SupportedSop();
-            sop.SopClass = SopClass.StudyRootQueryRetrieveInformationModelMove;
-            sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
+            sop = new SupportedSop
+                  	{
+                  		SopClass = SopClass.StudyRootQueryRetrieveInformationModelMove
+                  	};
+        	sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
             sop.SyntaxList.Add(TransferSyntax.ImplicitVrLittleEndian);
             _list.Add(sop);
         }
@@ -140,22 +144,18 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					{
 						return false;
 					}
-					else if (studyStorage.StudyStatusEnum == StudyStatusEnum.Nearline)
+					if (studyStorage.StudyStatusEnum == StudyStatusEnum.Nearline)
 					{
 						if (null == ServerHelper.InsertRestoreRequest(studyStorage))
 						{
 							Platform.Log(LogLevel.Error, "Unable to insert RestoreQueue entry for study {0}", studyStorage.StudyInstanceUid);
 							return false;
 						}
-						else
-						{
-							bOfflineFound = true;
-							Platform.Log(LogLevel.Info, "Inserted Restore request for nearline study {0}", studyStorage.StudyInstanceUid);
-							continue;
-						}
+						bOfflineFound = true;
+						Platform.Log(LogLevel.Info, "Inserted Restore request for nearline study {0}", studyStorage.StudyInstanceUid);
+						continue;
 					}
-					else
-						return false;
+					return false;
 				}
 
 				StudyXml theStream = LoadStudyXml(location);
@@ -190,21 +190,17 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 				{
 					return false;
 				}
-				else if (studyStorage.StudyStatusEnum == StudyStatusEnum.Nearline)
-				{
-                    if (null == ServerHelper.InsertRestoreRequest(studyStorage))
-					{
-						Platform.Log(LogLevel.Error, "Unable to insert RestoreQueue entry for study {0}", studyStorage.StudyInstanceUid);
-						return false;
-					}
-					else
-					{
-						Platform.Log(LogLevel.Info, "Inserted Restore request for nearline study {0}", studyStorage.StudyInstanceUid);
-						return false;
-					}
-				}
-				else
-					return false;
+            	if (studyStorage.StudyStatusEnum == StudyStatusEnum.Nearline)
+            	{
+            		if (null == ServerHelper.InsertRestoreRequest(studyStorage))
+            		{
+            			Platform.Log(LogLevel.Error, "Unable to insert RestoreQueue entry for study {0}", studyStorage.StudyInstanceUid);
+            			return false;
+            		}
+            		Platform.Log(LogLevel.Info, "Inserted Restore request for nearline study {0}", studyStorage.StudyInstanceUid);
+            		return false;
+            	}
+            	return false;
             }
 
 			IStudyEntityBroker select = persistenceContext.GetBroker<IStudyEntityBroker>();
@@ -245,28 +241,24 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 				{
 					return false;
 				}
-				else if (studyStorage.StudyStatusEnum == StudyStatusEnum.Nearline)
+				if (studyStorage.StudyStatusEnum == StudyStatusEnum.Nearline)
 				{
-                    if (null == ServerHelper.InsertRestoreRequest(studyStorage))
+					if (null == ServerHelper.InsertRestoreRequest(studyStorage))
 					{
 						Platform.Log(LogLevel.Error, "Unable to insert RestoreQueue entry for study {0}", studyStorage.StudyInstanceUid);
 						return false;
 					}
-					else
-					{
-						Platform.Log(LogLevel.Info, "Inserted Restore request for nearline study {0}", studyStorage.StudyInstanceUid);
-						return false;
-					}
-				}
-				else
+					Platform.Log(LogLevel.Info, "Inserted Restore request for nearline study {0}", studyStorage.StudyInstanceUid);
 					return false;
+				}
+				return false;
 			}
 
         	// There can be multiple SOP Instance UIDs in the move request
             foreach (string sopInstanceUid in sopInstanceUidArray)
             {
                 string path = Path.Combine(location.GetStudyPath(), seriesInstanceUid);
-                path = Path.Combine(path, sopInstanceUid + ".dcm");
+                path = Path.Combine(path, sopInstanceUid + ServerPlatform.DicomFileExtension);
                 _theScu.AddStorageInstance(new StorageInstance(path));
             }
 

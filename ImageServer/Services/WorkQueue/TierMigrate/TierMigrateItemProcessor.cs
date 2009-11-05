@@ -267,7 +267,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                             FileInfo file = new FileInfo(path);
                             bytesCopied += (ulong)file.Length;
                             fileCounter++;
-                            if (file.Extension != null && file.Extension.Equals(".dcm", StringComparison.InvariantCultureIgnoreCase))
+                            if (file.Extension != null && file.Extension.Equals(ServerPlatform.DicomFileExtension, StringComparison.InvariantCultureIgnoreCase))
                             {
                                 TimeSpan elapsed = Platform.Time - lastLog;
                                 TimeSpan totalElapsed = Platform.Time - startTime;
