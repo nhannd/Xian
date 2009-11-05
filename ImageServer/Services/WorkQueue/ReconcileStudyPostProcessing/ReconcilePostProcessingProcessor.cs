@@ -54,10 +54,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudyPostProcessin
         protected override InstancePreProcessingResult PreProcessFile(Model.WorkQueueUid uid, DicomFile file)
         {
             // Return a result indicating the file has been reconciled.
-            InstancePreProcessingResult result = new InstancePreProcessingResult();
-            result.AutoReconciled = true;
+            InstancePreProcessingResult result = new InstancePreProcessingResult {AutoReconciled = true};
 
-            return result;
+        	return result;
         }
 
 		protected override void ProcessItem(Model.WorkQueue item)
@@ -79,11 +78,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudyPostProcessin
 		{
             Platform.CheckFalse(compare, "compare");
 
-			SopInstanceProcessor processor = new SopInstanceProcessor(_context);
+			SopInstanceProcessor processor = new SopInstanceProcessor(Context);
 
-			long fileSize;
 			FileInfo fileInfo = new FileInfo(file.Filename);
-			fileSize = fileInfo.Length;
+			long fileSize = fileInfo.Length;
 			processor.InstanceStats.FileSize = (ulong)fileSize;
 			string sopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, "File:" + fileInfo.Name);
 			processor.InstanceStats.Description = sopInstanceUid;
@@ -99,14 +97,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudyPostProcessin
 			}
 
 		    string groupID = ServerHelper.GetUidGroup(file, StorageLocation.ServerPartition, WorkQueueItem.InsertTime);
-            processor.ProcessFile(groupID, file, stream, false, null, null);
+			processor.ProcessFile(groupID, file, stream, false, false, null, null);
 
-			_statistics.StudyInstanceUid = StorageLocation.StudyInstanceUid;
+			Statistics.StudyInstanceUid = StorageLocation.StudyInstanceUid;
 			if (String.IsNullOrEmpty(processor.Modality) == false)
-				_statistics.Modality = processor.Modality;
+				Statistics.Modality = processor.Modality;
 
 			// Update the statistics
-			_statistics.NumInstances++;
+			Statistics.NumInstances++;
 		}
 	}
 }

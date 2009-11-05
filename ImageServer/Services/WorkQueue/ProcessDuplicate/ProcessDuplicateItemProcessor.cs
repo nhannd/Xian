@@ -131,10 +131,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                 DirectoryInfo duplicateFolder = new DirectoryInfo(DuplicateFolder);
                 if (duplicateFolder.Exists)
                 {
-                    DirectoryUtility.DeleteIfEmpty(duplicateFolder.FullName);
-                    DirectoryUtility.DeleteIfEmpty(duplicateFolder.Parent.FullName);
+                	DirectoryUtility.DeleteIfEmpty(duplicateFolder.FullName);
+                	if (duplicateFolder.Parent != null) 
+						DirectoryUtility.DeleteIfEmpty(duplicateFolder.Parent.FullName);
                 }
-                PostProcessing(item, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+            	PostProcessing(item, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
             }
             else
             {
@@ -265,8 +266,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                 {
                     ctx.Commit();
                     HistoryLogged = _processDuplicateEntry.QueueData.State.HistoryLogged = true;
-                }
-                
+                }                
             }
         }
 
@@ -441,10 +441,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             bool compare = action != ProcessDuplicateAction.OverwriteAsIs;
             // NOTE: "compare" has no effect for OverwriteUseExisting or OverwriteUseDuplicate
             // because in both cases, the study and the duplicates are modified to be the same.
-            ProcessingResult result = sopInstanceProcessor.ProcessFile(group, duplicateDicomFile, studyXml, compare, uid, duplicateDicomFile.Filename);
-            if (result.Status == ProcessingStatus.Failed)
+            ProcessingResult result = sopInstanceProcessor.ProcessFile(group, duplicateDicomFile, studyXml, compare, true, uid, duplicateDicomFile.Filename);
+            if (result.Status == ProcessingStatus.Reconciled)
             {
-                throw new ApplicationException("Unable to process file");
+                throw new ApplicationException("Unexpected status of Reconciled image in duplicate handling!");
             }
 
             Debug.Assert(studyXml.NumberOfStudyRelatedInstances == originalInstanceCount + 1);

@@ -59,8 +59,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         #region Private Members
         private ServerRulesEngine _sopProcessedRulesEngine;
 
-        protected StudyProcessStatistics _statistics;
-    	protected StudyProcessorContext _context;
+        protected StudyProcessStatistics Statistics;
+    	protected StudyProcessorContext Context;
         #endregion
 
         #region Public Properties
@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         #region Constructors
         public StudyProcessItemProcessor()
         {
-            _statistics = new StudyProcessStatistics();            
+            Statistics = new StudyProcessStatistics();            
         }
 
         #endregion Constructors
@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <param name="compare">Indicates whether to compare the DICOM file against the study in the system.</param>
         protected virtual void ProcessFile(WorkQueueUid queueUid, DicomFile file, StudyXml stream, bool compare)
         {
-            SopInstanceProcessor processor = new SopInstanceProcessor(_context) {EnforceNameRules = true};
+            SopInstanceProcessor processor = new SopInstanceProcessor(Context) {EnforceNameRules = true};
 
         	FileInfo fileInfo = new FileInfo(file.Filename);
 			long fileSize = fileInfo.Length;
@@ -190,7 +190,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             string group = queueUid.GroupID ?? ServerHelper.GetUidGroup(file, ServerPartition, WorkQueueItem.InsertTime);
 
-            ProcessingResult result = processor.ProcessFile(group, file, stream, compare, queueUid, null);
+            ProcessingResult result = processor.ProcessFile(group, file, stream, compare, true, queueUid, null);
 
             if (result.Status == ProcessingStatus.Reconciled)
             {
@@ -200,13 +200,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 FileUtils.Delete(fileInfo.FullName);
             }
 			
-			_statistics.StudyInstanceUid = StorageLocation.StudyInstanceUid;
+			Statistics.StudyInstanceUid = StorageLocation.StudyInstanceUid;
 			if (String.IsNullOrEmpty(processor.Modality) == false)
-				_statistics.Modality = processor.Modality;
+				Statistics.Modality = processor.Modality;
 
 			// Update the statistics
-			_statistics.NumInstances++;
-        	_statistics.AddSubStats(processor.InstanceStats);
+			Statistics.NumInstances++;
+        	Statistics.AddSubStats(processor.InstanceStats);
         }
         
 
@@ -237,7 +237,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
 
             return successfulProcessCount;
-
         }
 
 		private String GetDuplicateUidPath(WorkQueueUid sop)
@@ -326,7 +325,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                         InstancePreProcessingResult result = PreProcessFile(sop, file);
 
-                        if (false ==file.DataSet[DicomTags.StudyInstanceUid].ToString().Equals(StorageLocation.StudyInstanceUid) 
+                        if (false == file.DataSet[DicomTags.StudyInstanceUid].ToString().Equals(StorageLocation.StudyInstanceUid) 
                             || result.DiscardImage)
                         {
                             RemoveWorkQueueUid(sop, path);
@@ -359,8 +358,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 item.FailureDescription = e.InnerException != null ? 
 					String.Format("{0}:{1}", e.GetType().Name, e.InnerException.Message) : String.Format("{0}:{1}", e.GetType().Name, e.Message);
 
-                sop.FailureCount++;
-                UpdateWorkQueueUid(sop);
+				//No longer needed.  Update was moved into the SopInstanceProcessor
+                //sop.FailureCount++;
+                //UpdateWorkQueueUid(sop);
                 return false;
                 
             }
@@ -479,15 +479,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Platform.CheckForNullReference(item, "item");
             base.OnProcessItemEnd(item);
 
-            _statistics.UidsLoadTime.Add(UidsLoadTime);
-            _statistics.StorageLocationLoadTime.Add(StorageLocationLoadTime);
-            _statistics.StudyXmlLoadTime.Add(StudyXmlLoadTime);
-            _statistics.DBUpdateTime.Add(DBUpdateTime);
+            Statistics.UidsLoadTime.Add(UidsLoadTime);
+            Statistics.StorageLocationLoadTime.Add(StorageLocationLoadTime);
+            Statistics.StudyXmlLoadTime.Add(StudyXmlLoadTime);
+            Statistics.DBUpdateTime.Add(DBUpdateTime);
 
-            if (_statistics.NumInstances > 0)
+            if (Statistics.NumInstances > 0)
             {
-                _statistics.CalculateAverage();
-                StatisticsLogger.Log(LogLevel.Info, false, _statistics);
+                Statistics.CalculateAverage();
+                StatisticsLogger.Log(LogLevel.Info, false, Statistics);
             }
 
         }
@@ -496,7 +496,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             Platform.CheckForNullReference(item, "item");
 
-            _statistics = new StudyProcessStatistics
+            Statistics = new StudyProcessStatistics
                           	{
                           		Description = String.Format("{0}[Key={1}]", item.WorkQueueTypeEnum, item.Key.Key)
                           	};
@@ -506,7 +506,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             Platform.CheckForNullReference(item, "item");
             Platform.CheckForNullReference(StorageLocation, "StorageLocation");
-            _statistics.TotalProcessTime.Start();
+            Statistics.TotalProcessTime.Start();
             
             bool successful;
         	bool idle = false;
@@ -524,14 +524,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             {
                 try
                 {
-                    _context = new StudyProcessorContext(StorageLocation);
+                    Context = new StudyProcessorContext(StorageLocation);
 
                     // Load the rules engine
                     _sopProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.SopProcessed, item.ServerPartitionKey);
                     _sopProcessedRulesEngine.AddOmittedType(ServerRuleTypeEnum.SopCompress);
                     _sopProcessedRulesEngine.Load();
-                    _statistics.SopProcessedEngineLoadTime.Add(_sopProcessedRulesEngine.Statistics.LoadTime);
-                    _context.SopProcessedRulesEngine = _sopProcessedRulesEngine;
+                    Statistics.SopProcessedEngineLoadTime.Add(_sopProcessedRulesEngine.Statistics.LoadTime);
+                    Context.SopProcessedRulesEngine = _sopProcessedRulesEngine;
                     
                     if (Study != null)
                     {
@@ -562,7 +562,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 	return;
                 }
             }
-            _statistics.TotalProcessTime.End();
+            Statistics.TotalProcessTime.End();
 
 			if (successful)
 			{

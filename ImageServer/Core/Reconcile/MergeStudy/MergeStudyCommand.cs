@@ -221,7 +221,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 
 				    SopInstanceProcessor sopProcessor = new SopInstanceProcessor(context) {EnforceNameRules = true };
 
-                    ProcessingResult result = sopProcessor.ProcessFile(groupID, file, xml, false, uid, GetReconcileUidPath(uid));
+                    ProcessingResult result = sopProcessor.ProcessFile(groupID, file, xml, false, true, uid, GetReconcileUidPath(uid));
 					if (result.Status != ProcessingStatus.Success)
 					{
 						throw new ApplicationException(String.Format("Unable to reconcile image {0}", file.Filename));
@@ -239,8 +239,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 						DuplicateSopProcessorHelper.CreateDuplicateSIQEntry(file, _destinationStudyStorage, GetReconcileUidPath(uid),
 												   Context.WorkQueueItem, uid);
 					}
-					else
-						FailUid(uid, true);
 					_failedCount++;
 				}
 			}

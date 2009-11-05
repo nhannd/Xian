@@ -92,31 +92,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 
 		#endregion
 
-		protected static void FailUid(WorkQueueUid sop, bool retry)
-		{
-			using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-			{
-				IWorkQueueUidEntityBroker uidUpdateBroker = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
-				WorkQueueUidUpdateColumns columns = new WorkQueueUidUpdateColumns();
-				if (!retry)
-					columns.Failed = true;
-				else
-				{
-					if (sop.FailureCount >= ImageServerCommonConfiguration.WorkQueueMaxFailureCount)
-					{
-						columns.Failed = true;
-					}
-					else
-					{
-						columns.FailureCount = ++sop.FailureCount;
-					}
-				}
-
-				uidUpdateBroker.Update(sop.GetKey(), columns);
-				updateContext.Commit();
-			}
-		}
-
 		protected static StudyXml LoadStudyXml(StudyStorageLocation location)
 		{
 			// This method should be combined with StudyStorageLocation.LoadStudyXml()

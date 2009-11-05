@@ -347,7 +347,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                                                       {
                                                           Platform.Log(ServerPlatform.InstanceLogLevel, "Reprocessing SOP {0} for study {1}",instanceUid, StorageLocation.StudyInstanceUid);
                                                           string groupId = ServerHelper.GetUidGroup(dicomFile, StorageLocation.ServerPartition, WorkQueueItem.InsertTime);
-                                                          ProcessingResult result = processor.ProcessFile(groupId, dicomFile, studyXml, true, null, null);
+                                                          ProcessingResult result = processor.ProcessFile(groupId, dicomFile, studyXml, true, false, null, null);
                                                           switch (result.Status)
                                                           {
                                                               case ProcessingStatus.Success:
@@ -365,12 +365,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                                                                   }
                                                                   break;
 
-                                                              case ProcessingStatus.Failed:
-                                                                  Platform.Log(LogLevel.Error, "Failed to reprocess SOP {0} for study {1}", instanceUid, StorageLocation.StudyInstanceUid);
-                                                                  // failureDescription = ""; TODO: augment the processor to return the error
-                                                                  failureDescription = String.Format("Failed to reprocess SOP {0}", instanceUid);
-
-
+                                                              case ProcessingStatus.Reconciled:
+                                                                  Platform.Log(LogLevel.Error, "SOP was unexpectedly reconciled on reprocess SOP {0} for study {1}", instanceUid, StorageLocation.StudyInstanceUid);
+                                                                  failureDescription = String.Format("SOP Was reconciled: {0}", instanceUid);
                                                                   break;
                                                           }
                                                       }

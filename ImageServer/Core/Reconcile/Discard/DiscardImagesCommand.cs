@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.Discard
 				catch (Exception e)
 				{
 					Platform.Log(LogLevel.Error, e, "Unexpected exception discarding file: {0}", imagePath);
-					FailUid(uid, true);
+					SopInstanceProcessor.FailUid(uid, true);
 				}
 			}
 		}

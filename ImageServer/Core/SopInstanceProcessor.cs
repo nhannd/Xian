@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Helpers;
@@ -43,6 +44,7 @@ using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Core.Reconcile;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Core
@@ -237,27 +239,34 @@ namespace ClearCanvas.ImageServer.Core
         public event EventHandler<SopInsertingEventArgs> OnInsertingSop;
         #endregion
 
-
 		#region Public Methods
-
-
 
 		/// <summary>
 		/// Process a specific DICOM file related to a <see cref="WorkQueue"/> request.
 		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// On success and if <see cref="uid"/> is set, the <see cref="WorkQueueUid"/> field is deleted.
+		/// </para>
+		/// </remarks>
 		/// <param name="stream">The <see cref="StudyXml"/> file to update with information from the file.</param>
-		/// <param name="group"></param>
-		/// <param name="file"></param>
-		/// <param name="compare"></param>
-		/// <param name="uid">An optional WorkQueueUid associated with the entry, that will be deleted upon success.</param>
+		/// <param name="group">A group the sop is associated with.</param>
+		/// <param name="file">The file to process.</param>
+		/// <param name="compare">Flag to compare the demographics of <see cref="file"/> with the demographics in the database</param>
+		/// <param name="retry">Flag telling if the item should be retried on failure.  Note that if the item is a duplicate, the WorkQueueUid item is not failed. </param>
+		/// <param name="uid">An optional WorkQueueUid associated with the entry, that will be deleted upon success or failed on failure.</param>
 		/// <param name="deleteFile">An option file to delete as part of the process</param>
-        public  ProcessingResult ProcessFile(string group, DicomFile file, StudyXml stream, bool compare, WorkQueueUid uid, string deleteFile)
+        public  ProcessingResult ProcessFile(string group, DicomFile file, StudyXml stream, bool compare, bool retry, WorkQueueUid uid, string deleteFile)
 		{
 		    Platform.CheckForNullReference(file, "file");
 
-
+			try
+			{
             _instanceStats.ProcessTime.Start();
-            ProcessingResult result = new ProcessingResult {Status = ProcessingStatus.Failed};
+				ProcessingResult result = new ProcessingResult
+				                          	{
+				                          		Status = ProcessingStatus.Success
+				                          	};
 
 		    using (ServerCommandProcessor processor = new ServerCommandProcessor("Process File"))
             {
@@ -292,6 +301,19 @@ namespace ClearCanvas.ImageServer.Core
 
             //TODO: Should throw exception if result is failed?
 		    return result;
+
+			}
+			catch (Exception e)
+			{
+				// If its a duplicate, ignore the exception, and just throw it
+				if (deleteFile != null && (e is InstanceAlreadyExistsException
+						|| e.InnerException != null && e.InnerException is InstanceAlreadyExistsException))
+					throw;
+
+				if (uid != null)
+					FailUid(uid, retry);
+				throw;
+			}
 		}
 
         
@@ -300,7 +322,30 @@ namespace ClearCanvas.ImageServer.Core
 
 		#region Private Methods
 
-       
+		public static void FailUid(WorkQueueUid sop, bool retry)
+		{
+			using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+			{
+				IWorkQueueUidEntityBroker uidUpdateBroker = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
+				WorkQueueUidUpdateColumns columns = new WorkQueueUidUpdateColumns();
+				if (!retry)
+					columns.Failed = true;
+				else
+				{
+					if (sop.FailureCount >= ImageServerCommonConfiguration.WorkQueueMaxFailureCount)
+					{
+						columns.Failed = true;
+					}
+					else
+					{
+						columns.FailureCount = ++sop.FailureCount;
+					}
+				}
+
+				uidUpdateBroker.Update(sop.GetKey(), columns);
+				updateContext.Commit();
+			}
+		}
 
 		/// <summary>
 		/// Returns a value indicating whether the Dicom image must be reconciled.
@@ -455,7 +500,6 @@ namespace ClearCanvas.ImageServer.Core
     public enum ProcessingStatus
     {
         Success,
-        Reconciled,
-        Failed
+        Reconciled
     }
 }
