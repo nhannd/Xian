@@ -67,14 +67,18 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		private IMouseButtonHandler _currentMouseButtonHandler;
 		private CursorWrapper _currentCursorWrapper;
 
+		private bool _suppressDrawOnSizeChanged = false;
+
 		[ThreadStatic]
-		private static bool _drawing = false;
+		private static bool _isDrawing = false;
 
 		[ThreadStatic]
 		private static bool _painting = false;
 
 		[ThreadStatic]
 		private static readonly List<TileControl> _tilesToRepaint = new List<TileControl>();
+
+		private event EventHandler _drawing;
 
 		#endregion
 
@@ -87,7 +91,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_tileController = new TileController(_tile, (_tile.ImageViewer as ImageViewerComponent).ShortcutManager);
 			_inputTranslator = new TileInputTranslator(this);
 
-			SetParentImageBoxRectangle(parentRectangle, parentImageBoxInsetWidth);
+			SetParentImageBoxRectangle(parentRectangle, parentImageBoxInsetWidth, true);
 			InitializeComponent();
 
 			this.BackColor = Color.Black;
@@ -95,7 +99,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.Anchor = AnchorStyles.None;
 			this.AllowDrop = true;
 
-			_tile.Drawing += new EventHandler(OnDrawing);
+			_tile.Drawing += new EventHandler(OnTileDrawing);
 			_tile.RendererChanged += new EventHandler(OnRendererChanged);
 			_tile.InformationBoxChanged += new EventHandler<InformationBoxChangedEventArgs>(OnInformationBoxChanged);
 			_tile.EditBoxChanged += new EventHandler(OnEditBoxChanged);
@@ -147,9 +151,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			}
 		}
 
-		public void SetParentImageBoxRectangle(
-			Rectangle parentImageBoxRectangle,
-			int parentImageBoxBorderWidth)
+		public void SetParentImageBoxRectangle(Rectangle parentImageBoxRectangle, int parentImageBoxBorderWidth, bool suppressDraw)
 		{
 			int insetImageBoxWidth = parentImageBoxRectangle.Width - 2*parentImageBoxBorderWidth;
 			int insetImageBoxHeight = parentImageBoxRectangle.Height - 2*parentImageBoxBorderWidth;
@@ -159,15 +161,32 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			int right = (int) (_tile.NormalizedRectangle.Right*insetImageBoxWidth - Tile.InsetWidth);
 			int bottom = (int) (_tile.NormalizedRectangle.Bottom*insetImageBoxHeight - Tile.InsetWidth);
 
-			this.SuspendLayout();
+			_suppressDrawOnSizeChanged = suppressDraw;
 
-			this.Location = new Point(left + parentImageBoxBorderWidth, top + parentImageBoxBorderWidth);
-			this.Size = new Size(right - left, bottom - top);
-			this.ResumeLayout(false);
+			try
+			{
+				this.SuspendLayout();
+
+				this.Location = new Point(left + parentImageBoxBorderWidth, top + parentImageBoxBorderWidth);
+				this.Size = new Size(right - left, bottom - top);
+				this.ResumeLayout(false);
+			}
+			finally
+			{
+				_suppressDrawOnSizeChanged = false;
+			}
+		}
+
+		public event EventHandler Drawing
+		{
+			add { _drawing += value; }	
+			remove { _drawing -= value; }	
 		}
 
 		public void Draw()
 		{
+			EventsHelper.Fire(_drawing, this, EventArgs.Empty);
+
 			CodeClock clock = new CodeClock();
 			clock.Start();
 
@@ -186,7 +205,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 				string errorMessage = null;
 
-				_drawing = true;
+				_isDrawing = true;
 
 				try
 				{
@@ -198,7 +217,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				}
 				finally
 				{
-					_drawing = false;
+					_isDrawing = false;
 
 					graphics.ReleaseHdc(this.Surface.ContextID);
 					graphics.Dispose();
@@ -235,7 +254,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		#region Overrides
 
-		private void OnDrawing(object sender, EventArgs e)
+		private void OnTileDrawing(object sender, EventArgs e)
 		{
 			Draw();
 		}
@@ -266,7 +285,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				//     blocking execution on the main UI thread in the middle of a rendering operation.  If we
 				//     allow another tile to paint in this situation, it actually causes some GDI errors because
 				//     the previous rendering operation has not yet completed.
-				if (_drawing || _painting)
+				if (_isDrawing || _painting)
 				{
 					e.Graphics.Clear(Color.Black);
 
@@ -356,7 +375,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			if (_tileController != null)
 				_tileController.TileClientRectangle = this.ClientRectangle;
 
-			Draw();
+			if (!_suppressDrawOnSizeChanged)
+				Draw();
 		}
 
 		#region Mouse/Keyboard Overrides

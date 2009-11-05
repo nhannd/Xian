@@ -53,16 +53,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 				if (components != null)
 					components.Dispose();
-
-				if (_imageBox != null)
-				{
-					_imageBox.Drawing -= new EventHandler(OnDrawing);
-					_imageBox.SelectionChanged -= new EventHandler<ItemEventArgs<IImageBox>>(OnImageBoxSelectionChanged);
-					_imageBox.LayoutCompleted -= new EventHandler(OnLayoutCompleted);
-					_imageBox = null;
-				}
             }
-            base.Dispose(disposing);
+
+			base.Dispose(disposing);
         }
 
         #region Component Designer generated code
@@ -88,8 +81,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this._imageScroller.Size = new System.Drawing.Size(16, 150);
 			this._imageScroller.TabIndex = 0;
 			this._imageScroller.Visible = false;
-			this._imageScroller.VisibleChanged += new System.EventHandler(this.ImageScroller_VisibleChanged);
-			this._imageScroller.ValueChanged += new System.EventHandler(this.ImageScroller_ValueChanged);
+			this._imageScroller.ValueChanged += new System.EventHandler(this.ImageScrollerValueChanged);
 			// 
 			// ImageBoxControl
 			// 

@@ -33,10 +33,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.BaseTools;
+using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
@@ -47,6 +46,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
     {
         private ImageBox _imageBox;
 		private Rectangle _parentRectangle;
+		private bool _imageScrollerVisible;
 
         /// <summary>
         /// Constructor
@@ -57,7 +57,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.ParentRectangle = parentRectangle;
 
 			InitializeComponent();
-			InitializeImageScroller();
+
+			_imageScrollerVisible = _imageScroller.Visible;
+			_imageScroller.GotFocus += ImageScrollerGotFocus;
 
 			this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 			this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
@@ -65,9 +67,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.Dock = DockStyle.None;
 			this.Anchor = AnchorStyles.None;
 
-			_imageBox.Drawing += new EventHandler(OnDrawing);
-			_imageBox.SelectionChanged += new EventHandler<ItemEventArgs<IImageBox>>(OnImageBoxSelectionChanged);
-			_imageBox.LayoutCompleted += new EventHandler(OnLayoutCompleted);
+			_imageBox.Drawing += OnDrawing;
+			_imageBox.SelectionChanged += OnImageBoxSelectionChanged;
+			_imageBox.LayoutCompleted += OnLayoutCompleted;
         }
 
 		internal ImageBox ImageBox
@@ -110,8 +112,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		internal void Draw()
 		{
-			//Trace.Write("ImageBoxControl.Draw\n");
-
 			foreach (TileControl control in this.TileControls)
 				control.Draw();
 			
@@ -131,16 +131,13 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		{
 			base.OnSizeChanged(e);
 
-			//Trace.Write("ImageBoxControl.OnSizeChanged\n");
-
 			this.SuspendLayout();
 
-			foreach (TileControl control in this.TileControls)
-				control.SetParentImageBoxRectangle(this.AvailableClientRectangle, ImageBox.InsetWidth);
+			SetTileParentImageBoxRectangles(false);
 
 			this.ResumeLayout(false);
 
-			if (_imageScroller != null && _imageScroller.Visible)
+			if (ImageScrollerVisible)
 			{
 				_imageScroller.Location = new Point(this.Width - _imageScroller.Width, 0);
 				_imageScroller.Size = new Size(_imageScroller.Width, this.Height);
@@ -151,8 +148,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			//Trace.Write("ImageBoxControl.OnPaint\n");
-
 			e.Graphics.Clear(Color.Black);
 
 			DrawImageBoxBorder(e);
@@ -182,19 +177,40 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			Draw();
 		}
 
+		private void OnTileControlDrawing(object sender, EventArgs e)
+		{
+			//Perfectly efficient when there's only 1 tile ... a little less so when there's more than 1.
+			//However, doing this makes sure the scroll bar is *always* up to date, even for things like sorting of images,
+			//which currently doesn't actually fire any events.
+			UpdateImageScroller();
+		}
+
 		private void DisposeControls(IEnumerable<TileControl> controls)
 		{
 			foreach (TileControl control in controls)
 			{
 				this.Controls.Remove(control);
 				control.Tile.SelectionChanged -= OnTileSelectionChanged;
+				control.Drawing -= OnTileControlDrawing;
 				control.Dispose();
 			}
 		}
 
 		private void PerformDispose()
 		{
-			TerminateImageScroller();
+			if (_imageBox != null)
+			{
+				_imageBox.Drawing -= OnDrawing;
+				_imageBox.SelectionChanged -= OnImageBoxSelectionChanged;
+				_imageBox.LayoutCompleted -= OnLayoutCompleted;
+				_imageBox = null;
+			}
+
+			if (_imageScroller != null)
+			{
+				_imageScroller.ValueChanged -= ImageScrollerValueChanged;
+				_imageScroller.GotFocus -= ImageScrollerGotFocus;
+			}
 
 			DisposeControls(new List<TileControl>(this.TileControls));
 		}
@@ -292,25 +308,34 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			TileControl control = view.GuiElement as TileControl;
 			control.Tile.SelectionChanged += OnTileSelectionChanged;
+			control.Drawing += OnTileControlDrawing;
 
 			control.SuspendLayout();
 			this.Controls.Add(control);
 			control.ResumeLayout(false);
 		}
 
-		private void ImageScroller_VisibleChanged(object sender, EventArgs e)
+		private void SetTileParentImageBoxRectangles(bool suppressDraw)
 		{
 			foreach (TileControl control in this.TileControls)
-				control.SetParentImageBoxRectangle(this.AvailableClientRectangle, ImageBox.InsetWidth);
+				control.SetParentImageBoxRectangle(this.AvailableClientRectangle, ImageBox.InsetWidth, suppressDraw);
 		}
 
 		#endregion
 
 		#region ImageBoxControl Scroll-stacking Support
 
-		private static readonly Dictionary<IImageBox, ImageBoxControl> _imageBoxControlIndex = new Dictionary<IImageBox, ImageBoxControl>();
-    	private bool _isScrollToolInitiatedEvent = false;
-    	private bool _isScrollBarInitiatedEvent = false;
+    	private bool ImageScrollerVisible
+    	{
+			get { return _imageScrollerVisible; }
+			set
+			{
+				//when we switch workspaces, _imageScroller.Visible changes to false.  But, for our calculations,
+				//we don't care about whether or not it's really visible, just whether or not it should be visible.
+				if (_imageScrollerVisible != value)
+					_imageScroller.Visible = _imageScrollerVisible = value;
+			}
+    	}
 
 		/// <summary>
 		/// Gets the <see cref="Control.ClientRectangle"/> of this control, less any area dedicated to the ImageBoxControl scrollbar.
@@ -320,184 +345,82 @@ namespace ClearCanvas.ImageViewer.View.WinForms
     		get
     		{
 				Rectangle clientRectangle = this.ClientRectangle;
-				if (_imageScroller.Visible)
+				if (ImageScrollerVisible)
 					clientRectangle.Width -= _imageScroller.Width - ImageBox.InsetWidth;
     			return clientRectangle;
     		}
     	}
 
-		/// <summary>
-		/// Initializes ImageBoxControl scroll-stacking support. Call on control construction.
-		/// </summary>
-    	private void InitializeImageScroller()
+    	private void ImageScrollerGotFocus(object sender, EventArgs e)
     	{
-    		_imageBoxControlIndex.Add(this.ImageBox, this);
-
-    		this.ImageBox.DisplaySetChanged += ImageBox_DisplaySetChanged;
-    		this.ImageBox.LayoutCompleted += ImageBox_LayoutCompleted;
-
-			if (this.ImageBox.DisplaySet != null)
-				UpdateScrollerRange(this.ImageBox.DisplaySet);
-
-			_imageScroller.GotFocus += ImageScroller_GotFocus;
-    	}
-
-		/// <summary>
-		/// Terminates ImageBoxControl scroll-stacking support. Call on control disposal.
-		/// </summary>
-    	private void TerminateImageScroller()
-    	{
-			_imageScroller.GotFocus -= ImageScroller_GotFocus;
-
-    		this.ImageBox.LayoutCompleted -= ImageBox_LayoutCompleted;
-    		this.ImageBox.DisplaySetChanged -= ImageBox_DisplaySetChanged;
-
-    		_imageBoxControlIndex.Remove(this.ImageBox);
-    	}
-
-    	private void ImageBox_LayoutCompleted(object sender, EventArgs e)
-    	{
-    		UpdateScrollerRange(this.ImageBox.DisplaySet);
-    	}
-
-    	private void ImageScroller_GotFocus(object sender, EventArgs e)
-    	{
-    		if(this.ImageBox != null)
+    		if(_imageBox != null)
     		{
-				if (!this.ImageBox.Selected && this.ImageBox.Tiles.Count > 0)
-    				this.ImageBox.Tiles[0].Select();
+				if (!_imageBox.Selected && _imageBox.Tiles.Count > 0)
+    				_imageBox.Tiles[0].Select();
     		}
     	}
 
-    	private void ImageBox_DisplaySetChanged(object sender, DisplaySetChangedEventArgs e)
+    	private void ImageScrollerValueChanged(object sender, EventArgs e)
     	{
-			if (e.OldDisplaySet != null)
+			if (_imageScroller.Focused)
 			{
-				e.OldDisplaySet.PresentationImages.ItemAdded -= OnCurrentDisplaySetPresentationImagesChanged;
-				e.OldDisplaySet.PresentationImages.ItemChanged -= OnCurrentDisplaySetPresentationImagesChanged;
-				e.OldDisplaySet.PresentationImages.ItemRemoved -= OnCurrentDisplaySetPresentationImagesChanged;
+				//we only draw the image box when focused because the user is actually dragging the scrollbar!
+				_imageBox.TopLeftPresentationImageIndex = _imageScroller.Value;
+
+				// make sure the scrollbar draws immediately!
+				_imageScroller.Update();
+
+				// this ordering of draw makes it look smoother for some reason.
+				_imageBox.Draw();
 			}
-
-    		UpdateScrollerRange(e.NewDisplaySet);
-
-			if (e.NewDisplaySet != null)
+			else
 			{
-				e.NewDisplaySet.PresentationImages.ItemAdded += OnCurrentDisplaySetPresentationImagesChanged;
-				e.NewDisplaySet.PresentationImages.ItemChanged += OnCurrentDisplaySetPresentationImagesChanged;
-				e.NewDisplaySet.PresentationImages.ItemRemoved += OnCurrentDisplaySetPresentationImagesChanged;
+				//The change has occurred due to external forces ... so, drawing is up to the external force!
+				_imageScroller.Update();
 			}
     	}
 
-    	private void OnCurrentDisplaySetPresentationImagesChanged(object sender, ListEventArgs<IPresentationImage> e)
-    	{
-    		UpdateScrollerRange(this.ImageBox.DisplaySet);
-    	}
+		private void UpdateImageScroller()
+		{
+			//This method can be called repeatedly and will essentially be a no-op if nothing needs to change.
+			//In tiled mode, it could be a little inefficient to call repeatedly, but it's the lesser of the evils.
+			//Otherwise, we're subscribing to a multitude of events and updating different things at different times.
+			//Not to mention, that doesn't cover every case, like sorting images.  It's nothing compared to
+			//the cost of updating the scroll control itself, anyway.
 
-    	private void ImageScroller_ValueChanged(object sender, EventArgs e)
-    	{
-    		if (!_isScrollToolInitiatedEvent)
-    		{
-    			_isScrollBarInitiatedEvent = true;
-    			try
-    			{
-    				this.ImageBox.TopLeftPresentationImageIndex = _imageScroller.Value;
+			CodeClock clock = new CodeClock();
+			clock.Start();
 
-					// make sure the scrollbar draws immediately!
-    				_imageScroller.Update();
+			bool visibleBefore = ImageScrollerVisible;
+			bool visibleNow = false;
 
-					// this ordering of draw makes it look smoother for some reason
-    				this.ImageBox.Draw();
-    			}
-    			finally
-    			{
-    				_isScrollBarInitiatedEvent = false;
-    			}
-    		}
-    	}
-
-		/// <summary>
-		/// Updates the display and range of the scrollbar
-		/// </summary>
-    	private void UpdateScrollerRange(IDisplaySet displaySet)
-    	{
+			IDisplaySet displaySet = _imageBox.DisplaySet;
     		if (displaySet != null)
     		{
-    			int tileCount = this.ImageBox.Tiles.Count;
+				int tileCount = _imageBox.Tiles.Count;
 				int maximum = Math.Max(0, displaySet.PresentationImages.Count - tileCount);
 				if (maximum > 0)
 				{
-					_imageScroller.SetValueRange(this.ImageBox.TopLeftPresentationImageIndex, 0, maximum);
+					visibleNow = true;
+
+					int topLeftIndex = _imageBox.TopLeftPresentationImageIndex;
+					_imageScroller.SetValueRange(topLeftIndex, 0, maximum);
 					_imageScroller.Increment = Math.Max(1, tileCount);
-					_imageScroller.Visible = true;
-				}
-				else
-				{
-					_imageScroller.Visible = false;
+					_imageScroller.Value = topLeftIndex;
 				}
     		}
-			else
-    		{
-    			_imageScroller.Visible = false;
-    		}
-    	}
 
-		/// <summary>
-		/// Tool that monitors the other stacking tools and updates the scrollbar accordingly.
-		/// </summary>
-    	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
-    	private class ImageBoxControlScrollTool : ImageViewerTool
-    	{
-			protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
+			if (visibleBefore != visibleNow)
 			{
-				base.OnPresentationImageSelected(sender, e);
-
-				try
-				{
-					IImageBox imageBox = FindImageBox(e.SelectedPresentationImage.ParentDisplaySet, this.ImageViewer);
-					if (imageBox != null && _imageBoxControlIndex.ContainsKey(imageBox))
-					{
-						// get the control for the image
-						ImageBoxControl imageBoxControl = _imageBoxControlIndex[imageBox];
-
-						if (!imageBoxControl._isScrollBarInitiatedEvent)
-						{
-							imageBoxControl._isScrollToolInitiatedEvent = true;
-							try
-							{
-								imageBoxControl._imageScroller.Value = imageBox.TopLeftPresentationImageIndex;
-
-								// make sure the scrollbar draws immediately!
-								imageBoxControl._imageScroller.Update();
-							}
-							finally
-							{
-								imageBoxControl._isScrollToolInitiatedEvent = false;
-							}
-						}
-					}
-				}
-				catch (Exception ex)
-				{
-					Platform.Log(LogLevel.Warn, ex, "An unidentified exception has occured.");
-#if DEBUG
-					System.Diagnostics.Debug.Assert(false, ex.Message, ex.StackTrace);
-#endif
-				}
+				ImageScrollerVisible = visibleNow;
+				//UpdateImageScroller is only called right before a Tile is drawn, so we suppress
+				//the Tile drawing as a result of a size change here.
+				SetTileParentImageBoxRectangles(true);
 			}
 
-			/// <summary>
-			/// Finds the <see cref="IImageBox"/> containing the specified <paramref name="displaySet"/> in the specified <paramref name="viewer"/>.
-			/// </summary>
-    		private static IImageBox FindImageBox(IDisplaySet displaySet, IImageViewer viewer)
-    		{
-    			foreach (IImageBox box in viewer.PhysicalWorkspace.ImageBoxes)
-    			{
-    				if (box.DisplaySet == displaySet)
-    					return box;
-    			}
-    			return null;
-    		}
-    	}
+			clock.Stop();
+			//Trace.WriteLine(String.Format("UpdateScroller: {0}", clock));
+		}
 
 		#endregion
 	}

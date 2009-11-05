@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 				if (_tile != null)
 				{
-					_tile.Drawing -= new EventHandler(OnDrawing);
+					_tile.Drawing -= new EventHandler(OnTileDrawing);
 					_tile.RendererChanged -= new EventHandler(OnRendererChanged);
 					_tile.EditBoxChanged -= new EventHandler(OnEditBoxChanged);
 					_tile.InformationBoxChanged -= new EventHandler<InformationBoxChangedEventArgs>(OnInformationBoxChanged);
