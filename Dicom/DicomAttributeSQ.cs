@@ -194,7 +194,10 @@ namespace ClearCanvas.Dicom
 			if (IsNull && a.IsNull)
 				return true;
 
-            for (int i = 0; i < a.Count; i++)
+			if (_values.Length != array.Length)
+				return false;
+
+			for (int i = 0; i < _values.Length; i++)
                 if (!array[i].Equals(_values[i]))
                     return false;
 
