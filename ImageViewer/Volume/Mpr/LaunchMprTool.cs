@@ -54,6 +54,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	public class LaunchMprTool : ImageViewerTool
 	{
 		private static readonly IActionSet _emptyActionSet = new ActionSet();
+		private MprViewerComponent _viewer;
 
 		public LaunchMprTool() {}
 
@@ -101,6 +102,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			catch (Exception ex)
 			{
 				exception = ex;
+				if (_viewer != null)
+				{
+					_viewer.Dispose();
+					_viewer = null;
+				}
 			}
 			finally
 			{
@@ -111,6 +117,21 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			{
 				ExceptionHandler.Report(exception, SR.ExceptionMprLoadFailure, base.Context.DesktopWindow);
 				return;
+			}
+
+			try
+			{
+				LaunchImageViewerArgs args = new LaunchImageViewerArgs(ViewerLaunchSettings.WindowBehaviour);
+				args.Title = _viewer.Title;
+				MprViewerComponent.Launch(_viewer, args);
+			}
+			catch (Exception)
+			{
+				ExceptionHandler.Report(exception, SR.ExceptionMprLoadFailure, base.Context.DesktopWindow);
+			}
+			finally
+			{
+				_viewer = null;
 			}
 		}
 
@@ -145,7 +166,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 		}
 
-		private static void LoadVolume(IBackgroundTaskContext context)
+		private void LoadVolume(IBackgroundTaskContext context)
 		{
 			try
 			{
@@ -171,13 +192,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				mainTask["BUILD"].MarkComplete();
 				context.ReportProgress(new BackgroundTaskProgress(mainTask.IntPercent, string.Format(SR.MessagePerformingMprWorkspaceLayout, mainTask.Progress)));
 
+				//call layout here b/c it could take a while
 				@params.SynchronizationContext.Send(delegate
 				                                    	{
-				                                    		MprViewerComponent component = new MprViewerComponent(volume);
-				                                    		component.Layout();
-				                                    		LaunchImageViewerArgs args = new LaunchImageViewerArgs(ViewerLaunchSettings.WindowBehaviour);
-				                                    		args.Title = component.Title;
-				                                    		MprViewerComponent.Launch(component, args);
+															_viewer = new MprViewerComponent(volume);
+															_viewer.Layout();
 				                                    	}, null);
 
 				mainTask["LAYOUT"].MarkComplete();

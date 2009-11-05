@@ -103,6 +103,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_tile.RendererChanged += new EventHandler(OnRendererChanged);
 			_tile.InformationBoxChanged += new EventHandler<InformationBoxChangedEventArgs>(OnInformationBoxChanged);
 			_tile.EditBoxChanged += new EventHandler(OnEditBoxChanged);
+			_tile.SelectionChanged += new EventHandler<ItemEventArgs<ITile>>(OnTileSelectionChanged);
 
 			_contextMenuStrip.ImageScalingSize = new Size(24, 24);
 			_contextMenuStrip.Opening += new CancelEventHandler(OnContextMenuStripOpening);
@@ -253,6 +254,16 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		}
 
 		#region Overrides
+
+		private void OnTileSelectionChanged(object sender, ItemEventArgs<ITile> e)
+		{
+			if (e.Item.Selected)
+			{
+				bool successful = Focus();
+				if (!successful)
+					Trace.WriteLine("Failed to set focus on tile - there must be a modal dialog in front!");
+			}
+		}
 
 		private void OnTileDrawing(object sender, EventArgs e)
 		{

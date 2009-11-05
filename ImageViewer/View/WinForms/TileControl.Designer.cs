@@ -63,6 +63,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 					_tile.RendererChanged -= new EventHandler(OnRendererChanged);
 					_tile.EditBoxChanged -= new EventHandler(OnEditBoxChanged);
 					_tile.InformationBoxChanged -= new EventHandler<InformationBoxChangedEventArgs>(OnInformationBoxChanged);
+					_tile.SelectionChanged -= new EventHandler<ItemEventArgs<ITile>>(OnTileSelectionChanged);
+
 					_tileController.CursorTokenChanged -= new EventHandler(OnCursorTokenChanged);
 					_tileController.CaptureChanging -= new EventHandler<ItemEventArgs<IMouseButtonHandler>>(OnCaptureChanging);
 

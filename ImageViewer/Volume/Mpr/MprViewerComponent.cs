@@ -243,10 +243,20 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		private class MprLayoutManager : LayoutManager
 		{
-			private bool _logicalWorkspaceBuilt = false;
+			private bool _layoutCompleted = false;
 
 			public override void Layout()
 			{
+				//The LaunchMprTool calls layout b/c it could take a while, but then
+				//ImageViewerComponent.Launch calls it again.
+				if (_layoutCompleted)
+				{
+					this.ImageViewer.PhysicalWorkspace.Draw();
+					return;
+				}
+
+				_layoutCompleted = true;
+
 				this.BuildLogicalWorkspace();
 				this.LayoutPhysicalWorkspace();
 				this.FillPhysicalWorkspace();
@@ -286,11 +296,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			protected override void BuildLogicalWorkspace()
 			{
-				if (_logicalWorkspaceBuilt)
-					return;
-
-				_logicalWorkspaceBuilt = true;
-
 				foreach (MprVolume volume in this.ImageViewer.Volumes)
 				{
 					this.ImageViewer.MprWorkspace.ImageSets.Add(CreateImageSet(volume));
