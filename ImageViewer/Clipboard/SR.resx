@@ -163,7 +163,7 @@
     <value>Delete All</value>
   </data>
   <data name="MenuDeleteClipboardItem" xml:space="preserve">
-    <value>Delete</value>
+    <value>Delete Selected</value>
   </data>
   <data name="MenuExportToImage" xml:space="preserve">
     <value>Export to Image</value>
@@ -268,7 +268,7 @@
     <value>Delete All</value>
   </data>
   <data name="ToolbarDeleteClipboardItem" xml:space="preserve">
-    <value>Delete</value>
+    <value>Delete Selected</value>
   </data>
   <data name="ToolbarExportToImage" xml:space="preserve">
     <value>Export to Image</value>
