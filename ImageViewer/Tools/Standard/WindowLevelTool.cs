@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private bool CanWindowLevel()
 		{
 			IVoiLutManager manager = GetSelectedImageVoiLutManager();
-			return manager != null && manager.Enabled && manager.GetLut() is IVoiLutLinear;
+			return manager != null && manager.Enabled && manager.VoiLut is IVoiLutLinear;
 		}
 
 		private void CaptureBeginState()
@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (!CanWindowLevel() || _memorableCommand == null)
 				return;
 
-			if (this.SelectedVoiLutProvider.VoiLutManager.GetLut() is IBasicVoiLutLinear)
+			if (this.SelectedVoiLutProvider.VoiLutManager.VoiLut is IBasicVoiLutLinear)
 			{
 				_memorableCommand.EndState = GetSelectedImageVoiLutManager().CreateMemento();
 				UndoableCommand applicatorCommand = _applicator.ApplyToLinkedImages();
@@ -154,15 +154,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			IVoiLutManager manager = this.SelectedVoiLutProvider.VoiLutManager;
 
-			IVoiLutLinear linearLut = manager.GetLut() as IVoiLutLinear;
+			IVoiLutLinear linearLut = manager.VoiLut as IVoiLutLinear;
 			IBasicVoiLutLinear standardLut = linearLut as IBasicVoiLutLinear;
 			if (standardLut == null)
 			{
 				BasicVoiLutLinear installLut = new BasicVoiLutLinear(linearLut.WindowWidth, linearLut.WindowCenter);
-				manager.InstallLut(installLut);
+				manager.InstallVoiLut(installLut);
 			}
 
-			standardLut = manager.GetLut() as IBasicVoiLutLinear; 
+			standardLut = manager.VoiLut as IBasicVoiLutLinear; 
 			standardLut.WindowWidth += windowIncrement;
 			standardLut.WindowCenter += levelIncrement;
 			this.SelectedVoiLutProvider.Draw();
@@ -182,16 +182,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void Apply(IPresentationImage image)
 		{
-			IVoiLutLinear selectedLut = (IVoiLutLinear)this.SelectedVoiLutProvider.VoiLutManager.GetLut();
+			IVoiLutLinear selectedLut = (IVoiLutLinear)this.SelectedVoiLutProvider.VoiLutManager.VoiLut;
 
 			IVoiLutProvider provider = ((IVoiLutProvider)image);
-			if (!(provider.VoiLutManager.GetLut() is IBasicVoiLutLinear))
+			if (!(provider.VoiLutManager.VoiLut is IBasicVoiLutLinear))
 			{
 				BasicVoiLutLinear installLut = new BasicVoiLutLinear(selectedLut.WindowWidth, selectedLut.WindowCenter);
-				provider.VoiLutManager.InstallLut(installLut);
+				provider.VoiLutManager.InstallVoiLut(installLut);
 			}
 
-			IBasicVoiLutLinear lut = (IBasicVoiLutLinear)provider.VoiLutManager.GetLut();
+			IBasicVoiLutLinear lut = (IBasicVoiLutLinear)provider.VoiLutManager.VoiLut;
 			lut.WindowWidth = selectedLut.WindowWidth;
 			lut.WindowCenter = selectedLut.WindowCenter;
 		}

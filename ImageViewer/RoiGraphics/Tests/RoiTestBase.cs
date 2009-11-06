@@ -321,7 +321,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 				}
 			}
 
-			[Obsolete("This method is not implemented on this test class.")]
+			//[Obsolete("This method is not implemented on this test class.")]
 			public override Roi CopyTo(IPresentationImage presentationImage)
 			{
 				throw new NotImplementedException("This method is not implemented on this test class.");

@@ -129,10 +129,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		protected override IEnumerable CreateTools()
 		{
+			ArrayList results = new ArrayList();
 			foreach (object tool in base.CreateTools())
-				yield return tool;
+				results.Add(tool);
 			foreach (object tool in new MprViewerToolExtensionPoint().CreateExtensions())
-				yield return tool;
+				results.Add(tool);
+			return results;
 		}
 
 		protected override IImageViewerToolContext CreateToolContext()

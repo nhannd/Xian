@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 				throw new InvalidOperationException("The input presentation image is not supported.");
 
 			IVoiLutManager manager = ((IVoiLutProvider)presentationImage).VoiLutManager;
-			IComposableLut currentLut = manager.GetLut();
+			IComposableLut currentLut = manager.VoiLut;
 
 			if (currentLut is MinMaxPixelCalculatedLinearLut)
 				return;
@@ -73,9 +73,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
 			IModalityLutProvider modalityLutProvider = presentationImage as IModalityLutProvider;
 			if (modalityLutProvider != null)
-				manager.InstallLut(new MinMaxPixelCalculatedLinearLut(pixelData, modalityLutProvider.ModalityLut));
+				manager.InstallVoiLut(new MinMaxPixelCalculatedLinearLut(pixelData, modalityLutProvider.ModalityLut));
 			else
-				manager.InstallLut(new MinMaxPixelCalculatedLinearLut(pixelData));
+				manager.InstallVoiLut(new MinMaxPixelCalculatedLinearLut(pixelData));
 		}
 	}
 }

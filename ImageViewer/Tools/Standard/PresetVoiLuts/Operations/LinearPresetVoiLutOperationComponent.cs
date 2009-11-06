@@ -120,9 +120,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
 			PresetVoiLutLinear.PresetVoiLutLinearParameters parameters = new PresetVoiLutLinear.PresetVoiLutLinearParameters(this.Name, this.WindowWidth, this.WindowCenter);
 
-			PresetVoiLutLinear currentLut = manager.GetLut() as PresetVoiLutLinear;
+			PresetVoiLutLinear currentLut = manager.VoiLut as PresetVoiLutLinear;
 			if (currentLut == null)
-				manager.InstallLut(new PresetVoiLutLinear(parameters));
+				manager.InstallVoiLut(new PresetVoiLutLinear(parameters));
 			else
 				currentLut.Parameters = parameters;
 		}

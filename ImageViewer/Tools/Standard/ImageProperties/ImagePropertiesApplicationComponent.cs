@@ -54,7 +54,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 
 		private readonly List<IImagePropertyProvider> _informationProviders;
 		private List<IImageProperty> _imageProperties;
-		private string[] _collapsedCategories;
 
 		public ImagePropertiesApplicationComponent(IDesktopWindow desktopWindow)
 		{

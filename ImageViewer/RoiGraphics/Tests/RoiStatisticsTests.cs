@@ -170,7 +170,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 				return true;
 			}
 
-			[Obsolete("CopyTo is not implemented by this test type.", true)]
+			//[Obsolete("CopyTo is not implemented by this test type.", true)]
 			public override Roi CopyTo(IPresentationImage presentationImage)
 			{
 				throw new NotImplementedException();
@@ -216,7 +216,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 					return imageGraphic;
 				}
 
-				[Obsolete("CreateFreshCopy is not implemented by this test type.", true)]
+				//[Obsolete("CreateFreshCopy is not implemented by this test type.", true)]
 				public override IPresentationImage CreateFreshCopy()
 				{
 					throw new NotImplementedException();

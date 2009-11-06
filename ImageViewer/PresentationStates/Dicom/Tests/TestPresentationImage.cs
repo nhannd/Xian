@@ -103,7 +103,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 			}
 		}
 
-		[Obsolete("CreateFreshCopy is not implemented by this test type.", true)]
+		//[Obsolete("CreateFreshCopy is not implemented by this test type.", true)]
 		public override IPresentationImage CreateFreshCopy()
 		{
 			throw new NotImplementedException();

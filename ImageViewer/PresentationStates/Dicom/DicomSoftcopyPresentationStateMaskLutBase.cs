@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				sequenceItem.InitializeAttributes();
 				sequenceItem.ReferencedImageSequence = new ImageSopInstanceReferenceMacro[] {CreateImageSopInstanceReference(image.Frame)};
 
-				IComposableLut lut = image.VoiLutManager.GetLut();
+				IComposableLut lut = image.VoiLutManager.VoiLut;
 				if (lut is IDataLut)
 				{
 					IDataLut voiLut = (IDataLut) lut;

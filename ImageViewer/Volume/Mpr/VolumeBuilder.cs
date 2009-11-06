@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		/// Utility class for creating a <see cref="Volume"/> from a list of <see cref="Frame"/>s.
 		/// </summary>
 		/// <remarks>
-		/// For internal use by the <see cref="Volume.Create"/> static helpers.
+		/// For internal use by the Volume static factory methods (Create).
 		/// You MUST call Dispose() on this class after you're done to release the source SOP cache locks.
 		/// </remarks>
 		private class VolumeBuilder : IDisposable

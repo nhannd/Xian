@@ -212,13 +212,13 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			{
 				//Normalize the gray presentation value because our algorithms here don't work for presentation value=0
 				ushort normalizedGrayPresentationValue = Math.Max((ushort) 1, _grayPresentationValue);
-				_overlayGraphic.VoiLutManager.InstallLut(new OverlayVoiLut(normalizedGrayPresentationValue, 65535));
+				_overlayGraphic.VoiLutManager.InstallVoiLut(new OverlayVoiLut(normalizedGrayPresentationValue, 65535));
 				_overlayGraphic.ColorMapManager.InstallColorMap(new GrayscaleColorMap(normalizedGrayPresentationValue));
 			}
 			else
 			{
 				//The color makes the gray p-value irrelevant, so do this to save space.
-				_overlayGraphic.VoiLutManager.InstallLut(new OverlayVoiLut(255, 255));
+				_overlayGraphic.VoiLutManager.InstallVoiLut(new OverlayVoiLut(255, 255));
 				_overlayGraphic.ColorMapManager.InstallColorMap(new OverlayColorMap(_color.Value));
 			}
 		}

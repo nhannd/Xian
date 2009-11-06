@@ -366,7 +366,7 @@ namespace ClearCanvas.ImageViewer
 	/// Exception class for a study whose <see cref="Sop"/>s could not be loaded, either partially or totally.
 	/// </summary>
 	/// <remarks>
-	/// This exception will be thrown from <see cref="IImageViewer.LoadStudy"/> and <see cref="ImageViewerComponent.LoadStudies"/>
+	/// This exception will be thrown from <see cref="IImageViewer.LoadStudy(ClearCanvas.ImageViewer.LoadStudyArgs)"/> and <see cref="ImageViewerComponent.LoadStudies"/>
 	/// when at least one <see cref="Sop"/> could not be loaded.  It can also be thrown in the case of
 	/// an outright failure when the exact reason is unknown (e.g. nearline, offline, in use).
 	/// </remarks>

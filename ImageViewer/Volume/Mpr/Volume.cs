@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		/// Constructs a <see cref="Volume"/> using a volume data array of signed 16-bit words.
 		/// </summary>
 		/// <remarks>
-		/// Consider using one of the static helpers such as <see cref="Create"/> to construct and automatically fill a <see cref="Volume"/>.
+		/// Consider using one of the static helpers such as <see cref="Create(ClearCanvas.ImageViewer.IDisplaySet)"/> to construct and automatically fill a <see cref="Volume"/>.
 		/// </remarks>
 		public Volume(short[] data, Size3D dimensions, Vector3D spacing, Vector3D originPatient,
 		              Matrix orientationPatient, IDicomAttributeProvider dicomAttributeModel, int paddingValue)
@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		/// Constructs a <see cref="Volume"/> using a volume data array of unsigned 16-bit words.
 		/// </summary>
 		/// <remarks>
-		/// Consider using one of the static helpers such as <see cref="Create"/> to construct and automatically fill a <see cref="Volume"/>.
+		/// Consider using one of the static helpers such as <see cref="Create(ClearCanvas.ImageViewer.IDisplaySet)"/> to construct and automatically fill a <see cref="Volume"/>.
 		/// </remarks>
 		public Volume(ushort[] data, Size3D dimensions, Vector3D spacing, Vector3D originPatient,
 		              Matrix orientationPatient, IDicomAttributeProvider dicomAttributeModel, int paddingValue)

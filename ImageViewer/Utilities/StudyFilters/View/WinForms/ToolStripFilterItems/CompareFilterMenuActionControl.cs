@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.ToolStrip
 				_action.Value = _txtValue.Text;
 				_errorProvider.Clear();
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 				_errorProvider.SetError(this, Resources.MessageParsingFailed);
 			}

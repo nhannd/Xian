@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PathProfileComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PathProfileComponentControl.Designer.cs">
       <DependentUpon>PathProfileComponentControl.cs</DependentUpon>
@@ -54,6 +55,7 @@
     <Compile Include="PathProfileComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoiHistogramComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="RoiHistogramComponentControl.Designer.cs">
       <DependentUpon>RoiHistogramComponentControl.cs</DependentUpon>

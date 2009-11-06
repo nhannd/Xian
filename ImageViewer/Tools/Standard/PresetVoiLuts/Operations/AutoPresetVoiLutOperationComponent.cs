@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
 			private IComposableLut CurrentLut
 			{
-				get { return this.VoiLutManager.GetLut(); }
+				get { return this.VoiLutManager.VoiLut; }
 			}
 
 			private MinMaxPixelCalculatedLinearLut GetDefaultMinMaxLut()
@@ -185,7 +185,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
 			public void ApplyInitialLut()
 			{
-				this.VoiLutManager.InstallLut(this.GetInitialLut());
+				this.VoiLutManager.InstallVoiLut(this.GetInitialLut());
 			}
 
 			public void ApplyNextLut()
@@ -204,7 +204,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 							IComposableLut lut = _stateProgression[(n%_stateProgression.Count)].GetLut(this);
 							if (lut != null)
 							{
-								this.VoiLutManager.InstallLut(lut);
+								this.VoiLutManager.InstallVoiLut(lut);
 								return;
 							}
 						}
@@ -257,7 +257,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
 			public void ApplyInitialLut()
 			{
-				this.VoiLutManager.InstallLut(this.GetInitialLut());
+				this.VoiLutManager.InstallVoiLut(this.GetInitialLut());
 			}
 
 			public void ApplyNextLut()

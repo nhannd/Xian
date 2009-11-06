@@ -156,7 +156,7 @@ namespace ClearCanvas.Controls.WinForms
 						base.Nodes.Add(new FolderTreeNode(shellItem));
 					}
 				}
-				catch (PathNotFoundException ex)
+				catch (PathNotFoundException)
 				{
 					throw;
 				}

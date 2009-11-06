@@ -75,7 +75,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void Invert(IPresentationImage image)
 		{
-			((IVoiLutManager)_operation.GetOriginator(image)).ToggleInvert();
+			IVoiLutManager manager = (IVoiLutManager)_operation.GetOriginator(image);
+			manager.Invert = !manager.Invert;
 		}
 	}
 }

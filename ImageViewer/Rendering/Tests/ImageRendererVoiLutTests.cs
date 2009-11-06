@@ -85,7 +85,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 				control.VoiLutManager.Enabled = true;
 			}
 			catch (NotSupportedException) {}
-			withLut.VoiLutManager.InstallLut(new IdentityVoiLinearLut());
+			withLut.VoiLutManager.InstallVoiLut(new IdentityVoiLinearLut());
 
 			Statistics stats = RenderAndDiff(control, withLut, string.Format("{0}.Lut0.bmp", testName), string.Format("{0}.Lut1.bmp", testName));
 			Trace.WriteLine(string.Format("DIFF STATS {0}", stats));
