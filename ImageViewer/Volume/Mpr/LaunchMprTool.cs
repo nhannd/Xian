@@ -125,9 +125,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				args.Title = _viewer.Title;
 				MprViewerComponent.Launch(_viewer, args);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
-				ExceptionHandler.Report(exception, SR.ExceptionMprLoadFailure, base.Context.DesktopWindow);
+				ExceptionHandler.Report(ex, SR.ExceptionMprLoadFailure, base.Context.DesktopWindow);
 			}
 			finally
 			{
