@@ -241,7 +241,7 @@
     <None Include="app.config">
     </None>
     <None Include="UISettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>UISettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>

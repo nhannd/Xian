@@ -1543,6 +1543,7 @@
     <Content Include="Pages\Studies\StudyDetails\Controls\SeriesDeleteChangeLog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\StudyIntegrityQueueGridView.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\StudyReprocessChangeLog.ascx" />
+    <Content Include="Scripts\date.js" />
     <Content Include="Scripts\jquery\jquery.scrollabletable.js" />
     <Content Include="Users.xml" />
     <Content Include="Default.aspx" />

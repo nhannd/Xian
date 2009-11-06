@@ -89,10 +89,10 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                                             <ccValidator:DateValidator
                                                         ID="DateValidator19" runat="server" ControlToValidate="PatientBirthDate"
                                                         InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="EditStudyValidationGroup" InvalidInputIndicatorID="PatientBirthDateHelp"
-                                                        Text="The Patient Birth Date cannot be in the future." Display="None">
+                                                        Display="None">
                                             </ccValidator:DateValidator>
-                                            <aspAjax:MaskedEditExtender runat="server" ID="PatientBirthDateMaskExtender" MaskType="Date" Mask="99/99/9999" TargetControlID="PatientBirthDate"></aspAjax:MaskedEditExtender>
-                                            <ccUI:CalendarExtender ID="PatientBirthDateCalendarExtender" runat="server" TargetControlID="PatientBirthDate" Format="MM/dd/yyyy" CssClass="Calendar" PopupButtonID="CalendarLink"></ccUI:CalendarExtender>
+                                            <aspAjax:MaskedEditExtender runat="server" ID="PatientBirthDateMaskExtender" MaskType="Number" TargetControlID="PatientBirthDate"></aspAjax:MaskedEditExtender>
+                                            <ccUI:CalendarExtender ID="PatientBirthDateCalendarExtender" runat="server" TargetControlID="PatientBirthDate" CssClass="Calendar" PopupButtonID="CalendarLink"></ccUI:CalendarExtender>
                                         </td></tr>
                                     </table>
                                 </td>

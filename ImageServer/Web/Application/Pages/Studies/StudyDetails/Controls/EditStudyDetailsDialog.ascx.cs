@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Web.UI.WebControls;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -408,6 +409,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             {
                 ReasonSavePanel.Visible = false;
             }
+
+            //The mask doesn't work well if the Date separator isn't "/", so disable it.
+            //DateValidator will handle invalid date values if the mask is disabled.
+            if(!CultureInfo.CurrentCulture.DateTimeFormat.DateSeparator.Equals("/"))
+            {
+                PatientBirthDateMaskExtender.Enabled = false;
+            } else
+            {
+                //Set the mask to be the format of the ShortDatePattern, but with 9's.
+                PatientBirthDateMaskExtender.Mask =
+                    CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern.Replace("d", "9").Replace("M", "9").Replace(
+                        "y", "9");
+                PatientBirthDateMaskExtender.MaskType = AjaxControlToolkit.MaskedEditType.Date;
+            }
+            
+            PatientBirthDateCalendarExtender.Format = CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern;
         }
 
         /// <summary>

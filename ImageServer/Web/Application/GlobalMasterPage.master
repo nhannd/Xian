@@ -18,6 +18,7 @@
 <body id="MasterBody" class="GlobalBody">
     
     <script type="text/javascript" src="<%= ResolveClientUrl("~/Scripts/NumberFormat154.js") %>"></script>
+    <script type="text/javascript" src="<%= ResolveClientUrl("~/Scripts/date.js") %>"></script>    
 
     <!-- this is special code that web service validation needs -->
     <div id="service" style="behavior: url(<%= ResolveClientUrl("~/Services/webservice.htc") %>);" />

@@ -31,6 +31,8 @@ function @@CLIENTID@@_ClientSideEvaluator()
 // This function is called to evaluate the input
 @@CLIENTID@@_ClientSideEvaluator.prototype.OnEvaluate = function()
 {
+        var validDateFormat = true;
+        var dateInFuture = false;
         
         result = BaseClientValidator.prototype.OnEvaluate.call(this);
     
@@ -38,26 +40,35 @@ function @@CLIENTID@@_ClientSideEvaluator()
         {
             return result;
         }
-        
+                
         if (this.input.value==null)
         {
             result.OK = false;
         } 
-        else 
+        else if(isDate(this.input.value, '@@DATE_FORMAT@@') == false)
         {
+            result.OK = false;
+            validDateFormat = false;
+        } 
+        else {       
             var today = new Date();
             
             var date = new Date(this.input.value);
 
-            if(today.getTime() - date.getTime() < 0)
+            if(today.getTime() - date.getTime() < 0) {
                 result.OK = false;
+                dateInFuture = true;
+            }
         }
     
         if (result.OK == false)
         {
             if ('@@ERROR_MESSAGE@@' == null || '@@ERROR_MESSAGE@@'=='')
             {
-                result.Message = 'Selected Date cannot be in the future.';
+                if(!validDateFormat) result.Message = 'Provided date \'' + this.input.value + '\' is not in the format \'@@DATE_FORMAT@@\'.';
+                else if (dateInFuture) result.Message = 'Provided date cannot be in the future.';
+                else if (this.input.value == null) result.Message = 'Date cannot be empty.';
+                else result.Message = 'Provided date is invalid.';
             }
             else
                 result.Message = '@@ERROR_MESSAGE@@';
