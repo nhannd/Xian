@@ -35,6 +35,7 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 {
@@ -55,10 +56,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             Debug.Assert(ServerPartition != null);
             Debug.Assert(StorageLocation != null);
 
-            if (_filesystem != null)
-				_filesystem = FilesystemMonitor.Instance.GetFilesystemInfo(StorageLocation.FilesystemKey);
-            _study = StorageLocation.LoadStudy(ReadContext);
-            _patient = Patient.Load(ReadContext, _study.PatientKey);
+			using (ExecutionContext context = new ExecutionContext())
+			{
+				if (_filesystem != null)
+					_filesystem = FilesystemMonitor.Instance.GetFilesystemInfo(StorageLocation.FilesystemKey);
+				_study = StorageLocation.LoadStudy(context.ReadContext);
+				_patient = Patient.Load(context.ReadContext, _study.PatientKey);
+			}
         }
 
         #endregion

@@ -34,7 +34,6 @@ using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -45,58 +44,25 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 {
 	public class DeletedStudyDataSource 
 	{
-		private string _accessionNumber;
-		private string _patientId;
-		private string _patientsName;
-		private DateTime? _studyDate;
-		private string _studyDescription;
 		private IList<DeletedStudyInfo> _studies;
-	    private string _deletedBy;
 
-	    public string AccessionNumber
-		{
-			get { return _accessionNumber; }
-			set { _accessionNumber  = value; }
-		}
+		public string AccessionNumber { get; set; }
 
 		public DeletedStudyInfo  Find(object key)
 		{
 			return CollectionUtils.SelectFirst(_studies,
-			                                   delegate(DeletedStudyInfo info)
-			                                   	{
-			                                   		return info.RowKey.Equals(key);
-			                                   	});
+			                                   info => info.RowKey.Equals(key));
 		}
 
-		public string PatientId
-		{
-			get { return _patientId; }
-			set { _patientId = value; }
-		}
+		public string PatientId { get; set; }
 
-		public DateTime? StudyDate
-		{
-			get { return _studyDate; }
-			set { _studyDate = value; }
-		}
+		public DateTime? StudyDate { get; set; }
 
-	    public string DeletedBy
-	    {
-            get { return _deletedBy; }
-            set { _deletedBy = value; }
-	    }
+		public string DeletedBy { get; set; }
 
-		public string PatientsName
-		{
-			get { return _patientsName; }
-			set { _patientsName = value; }
-		}
+		public string PatientsName { get; set; }
 
-		public string StudyDescription
-		{
-			get { return _studyDescription; }
-			set { _studyDescription = value; }
-		}
+		public string StudyDescription { get; set; }
 
 		private StudyDeleteRecordSelectCriteria GetSelectCriteria()
 		{
@@ -144,17 +110,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			IList<StudyDeleteRecord> list = broker.Find(criteria, startRowIndex, maxRows);
 
 			_studies = CollectionUtils.Map(
-				list, delegate(StudyDeleteRecord record)
-				      	{
-				      		return DeletedStudyInfoAssembler.CreateDeletedStudyInfo(record);
-				      	});
+				list, (StudyDeleteRecord record) => DeletedStudyInfoAssembler.CreateDeletedStudyInfo(record));
 
 			// Additional filter: DeletedBy
             if (String.IsNullOrEmpty(DeletedBy)==false)
             {
                 _studies = CollectionUtils.Select(_studies, delegate(DeletedStudyInfo record)
                                        {
-                                           if (String.IsNullOrEmpty(record.UserId) && String.IsNullOrEmpty(record.UserName))
+                                           if (String.IsNullOrEmpty(record.UserId) || String.IsNullOrEmpty(record.UserName))
                                                return false;
 
                                            // either the id or user matches
@@ -178,26 +141,28 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 	internal static class DeletedStudyInfoAssembler
 	{
-		static private readonly FilesystemMonitor _fsMonitor = FilesystemMonitor.Instance;
-
 		public static DeletedStudyInfo CreateDeletedStudyInfo(StudyDeleteRecord record)
 		{
+			Filesystem fs = Filesystem.Load(record.FilesystemKey);
+
 		    StudyDeleteExtendedInfo extendedInfo = XmlUtils.Deserialize<StudyDeleteExtendedInfo>(record.ExtendedInfo);
-			DeletedStudyInfo info = new DeletedStudyInfo();
-			info.DeleteStudyRecord = record.GetKey();
-			info.RowKey = record.GetKey().Key;
-			info.StudyInstanceUid = record.StudyInstanceUid;
-			info.PatientsName = record.PatientsName;
-			info.AccessionNumber = record.AccessionNumber;
-			info.PatientId = record.PatientId;
-			info.StudyDate = record.StudyDate;
-			info.PartitionAE = record.ServerPartitionAE;
-			info.StudyDescription = record.StudyDescription;
-			info.BackupFolderPath = _fsMonitor.GetFilesystemInfo(record.FilesystemKey).ResolveAbsolutePath(record.BackupPath);
-			info.ReasonForDeletion = record.Reason;
-			info.DeleteTime = record.Timestamp;
-		    info.UserName = extendedInfo.UserName;
-            info.UserId = extendedInfo.UserId;
+			DeletedStudyInfo info = new DeletedStudyInfo
+			                        	{
+			                        		DeleteStudyRecord = record.GetKey(),
+			                        		RowKey = record.GetKey().Key,
+			                        		StudyInstanceUid = record.StudyInstanceUid,
+			                        		PatientsName = record.PatientsName,
+			                        		AccessionNumber = record.AccessionNumber,
+			                        		PatientId = record.PatientId,
+			                        		StudyDate = record.StudyDate,
+			                        		PartitionAE = record.ServerPartitionAE,
+			                        		StudyDescription = record.StudyDescription,
+			                        		BackupFolderPath = fs.GetAbsolutePath(record.BackupPath),
+			                        		ReasonForDeletion = record.Reason,
+			                        		DeleteTime = record.Timestamp,
+			                        		UserName = extendedInfo.UserName,
+			                        		UserId = extendedInfo.UserId
+			                        	};
 			if (record.ArchiveInfo!=null)
 				info.Archives = XmlUtils.Deserialize<DeletedStudyArchiveInfoCollection>(record.ArchiveInfo);
 

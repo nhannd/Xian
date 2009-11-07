@@ -35,6 +35,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
@@ -58,71 +59,79 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 		/// <param name="type">The type of compress candidate (lossy or lossless)</param>
 		private void ProcessCompressCandidates(IEnumerable<FilesystemQueue> candidateList, FilesystemQueueTypeEnum type)
 		{
-			DateTime scheduledTime = Platform.Time.AddSeconds(10);
-
-			foreach (FilesystemQueue queueItem in candidateList)
+			using (ExecutionContext context = new ExecutionContext())
 			{
-				// Check for Shutdown/Cancel
-				if (CancelPending) break;
+				DateTime scheduledTime = Platform.Time.AddSeconds(10);
 
-				// First, get the StudyStorage locations for the study, and calculate the disk usage.
-				StudyStorageLocation location;
-				if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(ReadContext, queueItem.StudyStorageKey, out location))
-					continue;
+				foreach (FilesystemQueue queueItem in candidateList)
+				{
+					// Check for Shutdown/Cancel
+					if (CancelPending) break;
 
-				StudyXml studyXml;
-				try
-				{
-					studyXml = LoadStudyXml(location);
-				}
-				catch (Exception e)
-				{
-					Platform.Log(LogLevel.Error,e,"Skipping compress candidate, unexpected exception loading StudyXml file for {0}",location.GetStudyPath());
-					continue;
-				}
-
-				using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-				{
-					ILockStudy lockstudy = update.GetBroker<ILockStudy>();
-					LockStudyParameters lockParms = new LockStudyParameters();
-					lockParms.StudyStorageKey = location.Key;
-					lockParms.QueueStudyStateEnum = QueueStudyStateEnum.CompressScheduled;
-					if (!lockstudy.Execute(lockParms) || !lockParms.Successful)
-					{
-						Platform.Log(LogLevel.Warn, "Unable to lock study for inserting Lossless Compress. Reason:{0}. Skipping study ({1})",
-									 lockParms.FailureReason, location.StudyInstanceUid);
+					// First, get the StudyStorage locations for the study, and calculate the disk usage.
+					StudyStorageLocation location;
+					if (!FilesystemMonitor.Instance.GetWritableStudyStorageLocation(queueItem.StudyStorageKey, out location))
 						continue;
-					}
 
-					scheduledTime = scheduledTime.AddSeconds(3);
-
-					IInsertWorkQueueFromFilesystemQueue workQueueInsert = update.GetBroker<IInsertWorkQueueFromFilesystemQueue>();
-
-					InsertWorkQueueFromFilesystemQueueParameters insertParms = new InsertWorkQueueFromFilesystemQueueParameters();
-					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.CompressStudy;
-					insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.LosslessCompress;
-					insertParms.StudyStorageKey = location.GetKey();
-					insertParms.ServerPartitionKey = location.ServerPartitionKey;
-					DateTime expirationTime = scheduledTime;
-					insertParms.ScheduledTime = expirationTime;
-					insertParms.DeleteFilesystemQueue = true;
-					insertParms.Data = queueItem.QueueXml;
-					insertParms.FilesystemQueueTypeEnum = type;
-					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.CompressStudy;
-				
+					StudyXml studyXml;
 					try
 					{
-						WorkQueue entry  = workQueueInsert.FindOne(insertParms);
-
-						InsertWorkQueueUidFromStudyXml(studyXml, update, entry.GetKey());
-
-						update.Commit();
-						_studiesInserted++;
+						studyXml = LoadStudyXml(location);
 					}
 					catch (Exception e)
 					{
-						Platform.Log(LogLevel.Error, e, "Skipping compress record, unexpected problem inserting 'CompressStudy' record into WorkQueue for Study {0}", location.StudyInstanceUid);
-						// throw; -- would cause abort of inserts, go ahead and try everything
+						Platform.Log(LogLevel.Error, e, "Skipping compress candidate, unexpected exception loading StudyXml file for {0}",
+						             location.GetStudyPath());
+						continue;
+					}
+
+					using (
+						IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+					{
+						ILockStudy lockstudy = update.GetBroker<ILockStudy>();
+						LockStudyParameters lockParms = new LockStudyParameters();
+						lockParms.StudyStorageKey = location.Key;
+						lockParms.QueueStudyStateEnum = QueueStudyStateEnum.CompressScheduled;
+						if (!lockstudy.Execute(lockParms) || !lockParms.Successful)
+						{
+							Platform.Log(LogLevel.Warn,
+							             "Unable to lock study for inserting Lossless Compress. Reason:{0}. Skipping study ({1})",
+							             lockParms.FailureReason, location.StudyInstanceUid);
+							continue;
+						}
+
+						scheduledTime = scheduledTime.AddSeconds(3);
+
+						IInsertWorkQueueFromFilesystemQueue workQueueInsert = update.GetBroker<IInsertWorkQueueFromFilesystemQueue>();
+
+						InsertWorkQueueFromFilesystemQueueParameters insertParms = new InsertWorkQueueFromFilesystemQueueParameters();
+						insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.CompressStudy;
+						insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.LosslessCompress;
+						insertParms.StudyStorageKey = location.GetKey();
+						insertParms.ServerPartitionKey = location.ServerPartitionKey;
+						DateTime expirationTime = scheduledTime;
+						insertParms.ScheduledTime = expirationTime;
+						insertParms.DeleteFilesystemQueue = true;
+						insertParms.Data = queueItem.QueueXml;
+						insertParms.FilesystemQueueTypeEnum = type;
+						insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.CompressStudy;
+
+						try
+						{
+							WorkQueue entry = workQueueInsert.FindOne(insertParms);
+
+							InsertWorkQueueUidFromStudyXml(studyXml, update, entry.GetKey());
+
+							update.Commit();
+							_studiesInserted++;
+						}
+						catch (Exception e)
+						{
+							Platform.Log(LogLevel.Error, e,
+							             "Skipping compress record, unexpected problem inserting 'CompressStudy' record into WorkQueue for Study {0}",
+							             location.StudyInstanceUid);
+							// throw; -- would cause abort of inserts, go ahead and try everything
+						}
 					}
 				}
 			}

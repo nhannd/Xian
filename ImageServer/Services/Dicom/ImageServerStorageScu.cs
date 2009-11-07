@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// Load a list of preferred SOP Classes and Transfer Syntaxes for a Device.
         /// </summary>
         /// <param name="read">A read context to read from the database.</param>
-        public void LoadPreferredSyntaxes(IReadContext read)
+        public void LoadPreferredSyntaxes(IPersistenceContext read)
         {
             IDevicePreferredTransferSyntaxEntityBroker select =
                 read.GetBroker<IDevicePreferredTransferSyntaxEntityBroker>();
@@ -95,9 +95,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             List<SupportedSop> sopList = new List<SupportedSop>();
             foreach (DevicePreferredTransferSyntax preferred in list)
             {
-                SupportedSop sop = new SupportedSop();
-                sop.SopClass = SopClass.GetSopClass(preferred.GetServerSopClass().SopClassUid);
-                sop.AddSyntax(TransferSyntax.GetTransferSyntax(preferred.GetServerTransferSyntax().Uid));
+                SupportedSop sop = new SupportedSop
+                                   	{
+                                   		SopClass = SopClass.GetSopClass(preferred.GetServerSopClass().SopClassUid)
+                                   	};
+            	sop.AddSyntax(TransferSyntax.GetTransferSyntax(preferred.GetServerTransferSyntax().Uid));
 
                 sopList.Add(sop);
             }

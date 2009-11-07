@@ -36,6 +36,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Rebuild;
 using ClearCanvas.ImageServer.Model;
@@ -82,9 +84,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 						if (CancelPending) return;
 
 						String studyInstanceUid = studyDir.Name;
-
+						
 						StudyStorageLocation location;
-						if (false == GetStudyStorageLocation(partition.Key, studyInstanceUid, out location))
+						try
+						{
+							FilesystemMonitor.Instance.GetWritableStudyStorageLocation(partition.Key, studyInstanceUid,
+							                                                           StudyRestore.False, StudyCache.False, out location);
+						}
+						catch (StudyNotFoundException)
 						{
 							List<FileInfo> fileList = LoadSopFiles(studyDir, true);
 							if (fileList.Count == 0)
@@ -104,20 +111,32 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 							// had an issue with trailing periods on uids causing us to not find the 
 							// study storage, and insert a new record into the database.
 							studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
-							if (!GetStudyStorageLocation(partition.Key, studyInstanceUid, out location))
-							{
-								StudyStorage storage;
-								if (GetStudyStorage(partition, studyInstanceUid, out storage))
+							if (!studyInstanceUid.Equals(studyDir.Name))
+								try
 								{
-									Platform.Log(LogLevel.Warn, "Study {0} on filesystem partition {1} is offline {2}", studyInstanceUid,
-									             partition.Description, studyDir.ToString());
+									FilesystemMonitor.Instance.GetWritableStudyStorageLocation(partition.Key, studyInstanceUid,
+									                                                           StudyRestore.False, StudyCache.False, out location);
 								}
-								else
-									Platform.Log(LogLevel.Info, "Found study directory not in the database, ignoring: {0}", studyDir.ToString());
-
+								catch (Exception e)
+								{
+									Platform.Log(LogLevel.Warn, "Study {0} on filesystem partition {1} not found {2}: {3}", studyInstanceUid,
+									             partition.Description, studyDir.ToString(), e.Message);
+									continue;
+								}
+							else
+							{
+								Platform.Log(LogLevel.Warn, "Study {0} on filesystem partition {1} not found {2}", studyInstanceUid,
+											 partition.Description, studyDir.ToString());
 								continue;
 							}
 						}
+						catch (Exception e)
+						{
+							Platform.Log(LogLevel.Warn, "Study {0} on filesystem partition {1} not found {2}: {3}", studyInstanceUid,
+										 partition.Description, studyDir.ToString(), e.Message);
+							continue;
+						}
+
 						try
 						{
 							if (!location.AcquireWriteLock())
@@ -191,27 +210,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 			return false;
 		}
 
-		/// <summary>
-		/// Get the study storage for a potentially nearline/offline study
-		/// </summary>
-		/// <param name="partition"></param>
-		/// <param name="studyInstanceUid"></param>
-		/// <param name="storage"></param>
-		/// <returns></returns>
-		private bool GetStudyStorage(ServerPartition partition, string studyInstanceUid, out StudyStorage storage)
-		{
-			IStudyStorageEntityBroker broker = ReadContext.GetBroker<IStudyStorageEntityBroker>();
-			StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
-			criteria.ServerPartitionKey.EqualTo(partition.Key);
-			criteria.StudyInstanceUid.EqualTo(studyInstanceUid);
-			storage = broker.FindOne(criteria);
-
-			if (storage != null)
-				return true;
-
-			return false;
-		}
-
 		#endregion
 
 		#region Public Methods
@@ -223,11 +221,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 		{
 			PersistentStoreRegistry.GetDefaultStore();
 
-			IServerPartitionEntityBroker broker = ReadContext.GetBroker<IServerPartitionEntityBroker>();
-			ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
-			criteria.AeTitle.SortAsc(0);
+			using (ExecutionContext context = new ExecutionContext())
+			{
+				IServerPartitionEntityBroker broker = context.ReadContext.GetBroker<IServerPartitionEntityBroker>();
+				ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
+				criteria.AeTitle.SortAsc(0);
 
-			_partitions = broker.Find(criteria);
+				_partitions = broker.Find(criteria);
+			}
 
 			ServerFilesystemInfo info = FilesystemMonitor.Instance.GetFilesystemInfo(item.FilesystemKey);
 

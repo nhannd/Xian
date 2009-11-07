@@ -38,8 +38,6 @@ namespace ClearCanvas.ImageServer.Common.Exceptions
     /// is nearline.
     /// </summary>
     /// <remarks>
-    /// <see cref="StudyInstanceUid"/> indicates if a restore request has been submitted
-    /// for the target study.
     /// </remarks>
     public class AutoReconcileException : Exception
     {
@@ -63,26 +61,5 @@ namespace ClearCanvas.ImageServer.Common.Exceptions
         /// The Study Instance UID of the study that causes the issue.
         /// </summary>
         public string StudyInstanceUid { get; set; }
-    }
-
-    /// <summary>
-    /// Represents an exception that occured when the target study during auto-reconciliation
-    /// is nearline.
-    /// </summary>
-    /// <remarks>
-    /// <see cref="RestoreRequested"/> indicates if a restore request has been submitted
-    /// for the target study.
-    /// </remarks>
-    public class TargetStudyIsNearlineException : TargetStudyInvalidStateException
-    {
-        public TargetStudyIsNearlineException()
-            :base("Target study is not online.")
-        {
-        }
-        
-        /// <summary>
-        /// Indicates whether or not a restore request has been submitted.
-        /// </summary>
-        public bool RestoreRequested { get; set; }
     }
 }

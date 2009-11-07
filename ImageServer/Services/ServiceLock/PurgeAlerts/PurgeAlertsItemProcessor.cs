@@ -35,6 +35,7 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using Alert=ClearCanvas.ImageServer.Model.Alert;
@@ -138,61 +139,66 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.PurgeAlerts
 			criteria.InsertTime.LessThan(cutOffTime);
 			criteria.InsertTime.SortAsc(0);
 
-			IAlertEntityBroker broker = ReadContext.GetBroker<IAlertEntityBroker>();
-
-			ImageServerLogWriter<Alert> writer = new ImageServerLogWriter<Alert>(archivePath, "Alert");
-		
-			List<ServerEntityKey> keyList = new List<ServerEntityKey>(500);
-			try
+			using (ExecutionContext context = new ExecutionContext())
 			{
-				broker.Find(criteria, delegate(Alert result)
-				                      	{
-				                      		keyList.Add(result.Key);
+				IAlertEntityBroker broker = context.ReadContext.GetBroker<IAlertEntityBroker>();
 
-											// If configured, don't flush to disk.  We just delete the contents of keyList below.
-											if (!ServiceLockSettings.Default.AlertDelete)
-											{
-												if (writer.WriteLog(result, result.InsertTime))
-												{
-													// The logs been flushed, delete the log entries cached.
-													using (
-														IUpdateContext update =
-															PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-													{
-														IApplicationLogEntityBroker updateBroker = update.GetBroker<IApplicationLogEntityBroker>();
-														foreach (ServerEntityKey key in keyList)
-															updateBroker.Delete(key);
-														update.Commit();
-													}
-													keyList = new List<ServerEntityKey>();
-												}
-											}
-				                      	});
+				ImageServerLogWriter<Alert> writer = new ImageServerLogWriter<Alert>(archivePath, "Alert");
 
-				writer.FlushLog();
-
-				if (keyList.Count > 0)
+				List<ServerEntityKey> keyList = new List<ServerEntityKey>(500);
+				try
 				{
-					using (
-						IUpdateContext update =
-							PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+					broker.Find(criteria, delegate(Alert result)
+					                      	{
+					                      		keyList.Add(result.Key);
+
+					                      		// If configured, don't flush to disk.  We just delete the contents of keyList below.
+					                      		if (!ServiceLockSettings.Default.AlertDelete)
+					                      		{
+					                      			if (writer.WriteLog(result, result.InsertTime))
+					                      			{
+					                      				// The logs been flushed, delete the log entries cached.
+					                      				using (
+					                      					IUpdateContext update =
+					                      						PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush)
+					                      					)
+					                      				{
+					                      					IApplicationLogEntityBroker updateBroker =
+					                      						update.GetBroker<IApplicationLogEntityBroker>();
+					                      					foreach (ServerEntityKey key in keyList)
+					                      						updateBroker.Delete(key);
+					                      					update.Commit();
+					                      				}
+					                      				keyList = new List<ServerEntityKey>();
+					                      			}
+					                      		}
+					                      	});
+
+					writer.FlushLog();
+
+					if (keyList.Count > 0)
 					{
-						IAlertEntityBroker updateBroker = update.GetBroker<IAlertEntityBroker>();
-						foreach (ServerEntityKey key in keyList)
-							updateBroker.Delete(key);
-						update.Commit();
+						using (
+							IUpdateContext update =
+								PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+						{
+							IAlertEntityBroker updateBroker = update.GetBroker<IAlertEntityBroker>();
+							foreach (ServerEntityKey key in keyList)
+								updateBroker.Delete(key);
+							update.Commit();
+						}
 					}
 				}
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e, "Unexpected exception when purging Alert log files.");
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error, e, "Unexpected exception when purging Alert log files.");
+					writer.Dispose();
+					return false;
+				}
 				writer.Dispose();
-				return false;
-			}
-			writer.Dispose();
 
-			return true;
+				return true;
+			}
 		}
 	}
 }

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -33,29 +33,29 @@ using System;
 
 namespace ClearCanvas.ImageServer.Common.Exceptions
 {
-    /// <summary>
-    /// Represents the exception thrown when the study is online but the filesystem is missing or not writable.
-    /// </summary>
-    public class FilesystemNotWritableException : SopInstanceProcessingException
-    {
+	/// <summary>
+	/// Represents the exception thrown when the study is online but the filesystem is missing or not writable.
+	/// </summary>
+	public class FilesystemNotReadableException : SopInstanceProcessingException
+	{
 
-        public string Path { get; set; }
-        public string Reason { get; set; }
+		public string Path { get; set; }
+		public string Reason { get; set; }
 
-        public FilesystemNotWritableException()
-            : base("Study is online but the filesystem is no longer writable.")
-        {
-        }
+		public FilesystemNotReadableException()
+			: base("Study is online but the filesystem is no longer readable.")
+		{
+		}
 
-        public FilesystemNotWritableException(string path) 
-            : base(String.Format("Filesystem is not writable: {0}", path))
-        {
-            Path = path;
-        }
+		public FilesystemNotReadableException(string path)
+			: base(String.Format("Filesystem is not readable: {0}", path))
+		{
+			Path = path;
+		}
 
-        public override string ToString()
-        {
-            return string.Format("{0} : {1}", Path, Reason);
-        }
-    }
+		public override string ToString()
+		{
+			return string.Format("{0} : {1}", Path, Reason);
+		}
+	}
 }

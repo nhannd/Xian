@@ -61,16 +61,11 @@ namespace ClearCanvas.ImageServer.Core.Edit
         public static IList<WorkQueue> DeleteSeries(IUpdateContext context, ServerPartition partition, string studyInstanceUid, List<string> seriesInstanceUids, string reason)
         {
             // Find all location of the study in the system and insert series delete request
-            IList<StudyStorageLocation> storageLocations = ServerHelper.FindStudyStorages(partition, studyInstanceUid);
+            IList<StudyStorageLocation> storageLocations = StudyStorageLocation.FindStorageLocations(partition.Key, studyInstanceUid);
             IList<WorkQueue> entries = new List<WorkQueue>();
 
             foreach (StudyStorageLocation location in storageLocations)
             {
-                if (location.IsNearline)
-                {
-                    throw new InvalidStudyStateOperationException("Study Is Nearline. It must be restored first.");
-                }
-
                 try
                 {
                     string failureReason;
@@ -110,16 +105,11 @@ namespace ClearCanvas.ImageServer.Core.Edit
         public static IList<WorkQueue> MoveSeries(IUpdateContext context, ServerPartition partition, string studyInstanceUid, ServerEntityKey deviceKey, List<string> seriesInstanceUids)
         {
             // Find all location of the study in the system and insert series delete request
-            IList<StudyStorageLocation> storageLocations = ServerHelper.FindStudyStorages(partition, studyInstanceUid);
-            IList<WorkQueue> entries = new List<WorkQueue>();
+			IList<StudyStorageLocation> storageLocations = StudyStorageLocation.FindStorageLocations(partition.Key, studyInstanceUid);
+			IList<WorkQueue> entries = new List<WorkQueue>();
 
             foreach (StudyStorageLocation location in storageLocations)
             {
-                if (location.IsNearline)
-                {
-                    throw new InvalidStudyStateOperationException("Study Is Nealine. It must be restored first.");
-                }
-
                 try
                 {
                     // insert a move series request
@@ -151,16 +141,11 @@ namespace ClearCanvas.ImageServer.Core.Edit
         public static IList<WorkQueue> EditStudy(IUpdateContext context, ServerPartition partition, string studyInstanceUid, List<UpdateItem> updateItems, string reason)
         {
             // Find all location of the study in the system and insert series delete request
-            IList<StudyStorageLocation> storageLocations = ServerHelper.FindStudyStorages(partition, studyInstanceUid);
-            IList<WorkQueue> entries = new List<WorkQueue>();
+			IList<StudyStorageLocation> storageLocations = StudyStorageLocation.FindStorageLocations(partition.Key, studyInstanceUid);
+			IList<WorkQueue> entries = new List<WorkQueue>();
 
             foreach (StudyStorageLocation location in storageLocations)
             {
-                if (location.IsNearline)
-                {
-                    throw new InvalidStudyStateOperationException("Study Is Nearline. It must be restored first.");
-                }
-
                 if (location.StudyStatusEnum.Equals(StudyStatusEnum.OnlineLossy))
                 {
                     if (location.IsLatestArchiveLossless)

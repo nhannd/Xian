@@ -41,9 +41,6 @@ using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
@@ -168,10 +165,14 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 			int counter = 0;
 			Platform.Log(LogLevel.Info, "Populating images into study folder.. {0} to go", Context.WorkQueueUidList.Count);
 
-			StudyProcessorContext context = new StudyProcessorContext(_destinationStudyStorage);
+			StudyProcessorContext context = new StudyProcessorContext(_destinationStudyStorage)
+			                                	{
+			                                		SopProcessedRulesEngine =
+			                                			new ServerRulesEngine(ServerRuleApplyTimeEnum.SopProcessed,
+			                                			                      Context.WorkQueueItem.ServerPartitionKey)
+			                                	};
 
 			// Load the rules engine
-			context.SopProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.SopProcessed, Context.WorkQueueItem.ServerPartitionKey);
 			context.SopProcessedRulesEngine.AddOmittedType(ServerRuleTypeEnum.SopCompress);
 			context.SopProcessedRulesEngine.Load();
 
@@ -307,86 +308,17 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 			Platform.CheckForNullReference(UpdateContext, "UpdateContext");
 			Platform.CheckForNullReference(Context, "Context");
 			Platform.CheckForNullReference(Context.Partition, "Context.Partition");
-            
-            
 
-			String folder = ServerHelper.ResolveStorageFolder(Context.Partition, _studyInstanceUid, _studyDate, UpdateContext, true);
-            
-			IQueryStudyStorageLocation locQuery = UpdateContext.GetBroker<IQueryStudyStorageLocation>();
-			StudyStorageLocationQueryParameters locParms = new StudyStorageLocationQueryParameters
-			                                               	{
-			                                               		StudyInstanceUid = _studyInstanceUid,
-			                                               		ServerPartitionKey = Context.Partition.GetKey()
-			                                               	};
-			IList<StudyStorageLocation> studyLocationList = locQuery.Find(locParms);
+			bool created;
+			StudyStorageLocation studyLocation = FilesystemMonitor.Instance.GetOrCreateWritableStudyStorageLocation(
+				_studyInstanceUid,
+				_studyDate,
+				_transferSyntax,
+				UpdateContext,
+				Context.Partition,
+				out created);
 
-			if (studyLocationList.Count == 0)
-			{
-				// INSERT NEW LOCATION INTO DB
-
-				IStudyStorageEntityBroker selectBroker = UpdateContext.GetBroker<IStudyStorageEntityBroker>();
-				StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
-
-				criteria.ServerPartitionKey.EqualTo(Context.Partition.GetKey());
-				criteria.StudyInstanceUid.EqualTo(_studyInstanceUid);
-
-				StudyStorage storage = selectBroker.FindOne(criteria);
-				if (storage != null)
-				{
-					throw new Exception(String.Format("Received SOP Instances for Study in {0} state.  Rejecting image.", storage.StudyStatusEnum.Description));
-				}
-
-				FilesystemSelector selector = new FilesystemSelector(FilesystemMonitor.Instance);
-				ServerFilesystemInfo filesystem = selector.SelectFilesystem();
-				if (filesystem == null)
-				{
-					const string message =  "Unable to select location for storing study.";
-					Platform.Log(LogLevel.Error, message);
-					throw new Exception(message);
-				}
-
-				IInsertStudyStorage locInsert = UpdateContext.GetBroker<IInsertStudyStorage>();
-				InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters
-				                                           	{
-				                                           		ServerPartitionKey = Context.Partition.GetKey(),
-				                                           		StudyInstanceUid = _studyInstanceUid,
-				                                           		Folder = folder,
-				                                           		FilesystemKey = filesystem.Filesystem.GetKey(),
-				                                           		QueueStudyStateEnum = QueueStudyStateEnum.Idle
-				                                           	};
-
-				if (_transferSyntax.LosslessCompressed)
-				{
-					insertParms.TransferSyntaxUid = _transferSyntax.UidString;
-					insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossless;
-				}
-				else if (_transferSyntax.LossyCompressed)
-				{
-					insertParms.TransferSyntaxUid = _transferSyntax.UidString;
-					insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossy;
-				}
-				else
-				{
-					insertParms.TransferSyntaxUid = TransferSyntax.ExplicitVrLittleEndianUid;
-					insertParms.StudyStatusEnum = StudyStatusEnum.Online;
-				}
-
-				studyLocationList = locInsert.Find(insertParms);
-			}
-			else
-			{
-				if (!FilesystemMonitor.Instance.CheckFilesystemWriteable(studyLocationList[0].FilesystemKey))
-				{
-					string message = string.Format("Unable to find writable filesystem for study {0} on Partition {1}",
-								 _studyInstanceUid, Context.Partition.Description);
-					Platform.Log(LogLevel.Error, message);
-					throw new Exception(message);
-				}
-			}
-
-			//TODO:  Do we need to do something to identify a primary storage location?
-			// Also, should the above check for writeable location check the other availab
-			return studyLocationList[0];
+			return studyLocation;
 		}
 	}
 }

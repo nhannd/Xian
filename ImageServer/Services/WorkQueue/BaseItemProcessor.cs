@@ -42,7 +42,6 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Process;
@@ -153,19 +152,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 			set { _storageLocation = value; }
         }
 
-        protected IReadContext ReadContext
-        {
-            get
-            {
-                if (_readContext==null)
-                {
-                    _readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-                    
-                }
-                return _readContext;
-            }
-        }
-
         protected IList<WorkQueueUid> WorkQueueUidList
         {
             get
@@ -225,10 +211,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     		{
     			if (_workQueueProperties == null)
     			{
-    				IWorkQueueTypePropertiesEntityBroker broker = ReadContext.GetBroker<IWorkQueueTypePropertiesEntityBroker>();
-					WorkQueueTypePropertiesSelectCriteria  criteria = new WorkQueueTypePropertiesSelectCriteria();
-    				criteria.WorkQueueTypeEnum.EqualTo(WorkQueueItem.WorkQueueTypeEnum);
-    				_workQueueProperties = broker.FindOne(criteria);
+					using (ExecutionContext context = new ExecutionContext())
+					{
+						IWorkQueueTypePropertiesEntityBroker broker = context.ReadContext.GetBroker<IWorkQueueTypePropertiesEntityBroker>();
+						WorkQueueTypePropertiesSelectCriteria criteria = new WorkQueueTypePropertiesSelectCriteria();
+						criteria.WorkQueueTypeEnum.EqualTo(WorkQueueItem.WorkQueueTypeEnum);
+						_workQueueProperties = broker.FindOne(criteria);
+					}
     			}
     			return _workQueueProperties;
     		}
@@ -281,18 +270,39 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// Load the storage location for the WorkQueue item.
         /// </summary>
         /// <param name="item">The item to load the location for.</param>
-        protected bool LoadStorageLocation(Model.WorkQueue item)
+        protected bool LoadWritableStorageLocation(Model.WorkQueue item)
         {
-        	bool found = false;
+			if (_storageLocation != null)
+				return true;
+			bool found = false;
             StorageLocationLoadTime.Add(
                 delegate
                     {
-                    	found = FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(item.StudyStorageKey, out _storageLocation);
+                    	found = FilesystemMonitor.Instance.GetWritableStudyStorageLocation(item.StudyStorageKey, out _storageLocation);
                     }
                 );
 
         	return found;
         }
+
+		/// <summary>
+		/// Load the storage location for the WorkQueue item.
+		/// </summary>
+		/// <param name="item">The item to load the location for.</param>
+		protected bool LoadReadableStorageLocation(Model.WorkQueue item)
+		{
+			if (_storageLocation != null)
+				return true;
+			bool found = false;
+			StorageLocationLoadTime.Add(
+				delegate
+				{
+					found = FilesystemMonitor.Instance.GetReadableStudyStorageLocation(item.StudyStorageKey, out _storageLocation);
+				}
+				);
+
+			return found;
+		}
 
         /// <summary>
         /// Load the specific SOP Instance Uids in the database for the WorkQueue item.
@@ -303,18 +313,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             
             if (_uidList==null)
             {
-                UidsLoadTime.Add(delegate
-                        {
-                            IWorkQueueUidEntityBroker select = ReadContext.GetBroker<IWorkQueueUidEntityBroker>();
+				UidsLoadTime.Add(delegate
+				                 	{
+				                 		using (ExecutionContext context = new ExecutionContext())
+				                 		{
 
-                            WorkQueueUidSelectCriteria parms = new WorkQueueUidSelectCriteria();
+				                 			IWorkQueueUidEntityBroker select = context.ReadContext.GetBroker<IWorkQueueUidEntityBroker>();
 
-                            parms.WorkQueueKey.EqualTo(item.GetKey());
-                            _uidList = select.Find(parms);
+				                 			WorkQueueUidSelectCriteria parms = new WorkQueueUidSelectCriteria();
 
-                            _uidList = TruncateList(item, _uidList);
-                        }
-                );
+				                 			parms.WorkQueueKey.EqualTo(item.GetKey());
+				                 			_uidList = select.Find(parms);
+
+				                 			_uidList = TruncateList(item, _uidList);
+				                 		}
+				                 	}
+					);
             }
         }
 
@@ -1219,7 +1233,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             {
                 list = CollectionUtils.Select(list,
                                               item =>
-                                              CollectionUtils.Contains(types, delegate(WorkQueueTypeEnum t) { return t.Equals(item.WorkQueueTypeEnum); }));
+                                              CollectionUtils.Contains(types, t => t.Equals(item.WorkQueueTypeEnum)));
             }
 
             // Remove items if the type is in the list
@@ -1228,7 +1242,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 list = CollectionUtils.Select(list,
                                               item =>
                                               CollectionUtils.Contains(status,
-                                                                       delegate(WorkQueueStatusEnum s) { return s.Equals(item.WorkQueueStatusEnum); }));
+                                                                       s => s.Equals(item.WorkQueueStatusEnum)));
             }
 
             return list;
@@ -1251,10 +1265,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 StudyStorageLocation location = locations[0];
                 if (location != null)
                 {
-                    contextData.ValidationStudyInfo = new ValidationStudyInfo();
-                    contextData.ValidationStudyInfo.StudyInstaneUid = location.StudyInstanceUid;
+                    contextData.ValidationStudyInfo = new ValidationStudyInfo
+                                                      	{
+                                                      		StudyInstaneUid = location.StudyInstanceUid
+                                                      	};
 
-                    // study info is not always available (eg, when all images failed to process)
+                	// study info is not always available (eg, when all images failed to process)
                     if (location.Study != null)
                     {
                         contextData.ValidationStudyInfo.AccessionNumber = location.Study.AccessionNumber;
@@ -1488,7 +1504,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             {
                 Initialize(item);
 
-                if (!LoadStorageLocation(item))
+                if (!LoadWritableStorageLocation(item))
                 {
                     PostponeItem("Unable to find readable StorageLocation.");
 

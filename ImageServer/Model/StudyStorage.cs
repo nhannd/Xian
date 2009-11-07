@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -101,6 +102,35 @@ namespace ClearCanvas.ImageServer.Model
                 throw new ApplicationException("Unable to schedule study archive");
             }
         }
+
+		/// <summary>
+		/// Insert a request to restore the specified <seealso cref="StudyStorage"/>
+		/// </summary>
+		/// <returns>Reference to the <see cref="RestoreQueue"/> that was inserted.</returns>
+		public RestoreQueue InsertRestoreRequest()
+		{
+			// TODO:
+			// Check the stored procedure to see if it will insert another request if one already exists
+
+			using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+			{
+				IInsertRestoreQueue broker = updateContext.GetBroker<IInsertRestoreQueue>();
+
+				InsertRestoreQueueParameters parms = new InsertRestoreQueueParameters { StudyStorageKey = Key };
+
+				RestoreQueue queue = broker.FindOne(parms);
+
+				if (queue == null)
+				{
+					Platform.Log(LogLevel.Error, "Unable to request restore for study {0}", StudyInstanceUid);
+					return null;
+				}
+
+				updateContext.Commit();
+				Platform.Log(LogLevel.Info, "Restore requested for study {0}", StudyInstanceUid);
+				return queue;
+			}
+		}
 
 		public static StudyStorage Load(IPersistenceContext read, ServerEntityKey partitionKey, string studyInstanceUid)
 		{

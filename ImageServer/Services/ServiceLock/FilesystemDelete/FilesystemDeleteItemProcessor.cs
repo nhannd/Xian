@@ -37,6 +37,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -174,9 +175,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         #region Private Members
 		private DateTime _scheduledTime = Platform.Time;
         private float _bytesToRemove;
-        private int _studiesDeleted = 0;
-        private int _studiesMigrated = 0;
-		private int _studiesPurged = 0;
+        private int _studiesDeleted;
+        private int _studiesMigrated;
+		private int _studiesPurged;
         #endregion
 
         #region Private Methods
@@ -273,7 +274,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 				stats.StudyStorageTime.Start();
                 // First, get the StudyStorage locations for the study, and calculate the disk usage.
                 StudyStorageLocation location;
-				if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(ReadContext, queueItem.StudyStorageKey, out location))
+				if (!FilesystemMonitor.Instance.GetWritableStudyStorageLocation(queueItem.StudyStorageKey, out location))
 					continue;
 				stats.StudyStorageTime.End();
 
@@ -352,7 +353,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 				stats.StudyStorageTime.Start();
 				// First, get the StudyStorage locations for the study, and calculate the disk usage.
 				StudyStorageLocation location;
-				if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(ReadContext, queueItem.StudyStorageKey, out location))
+				if (!FilesystemMonitor.Instance.GetWritableStudyStorageLocation(queueItem.StudyStorageKey, out location))
 					continue;
 				stats.StudyStorageTime.End();
 
@@ -438,7 +439,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 				stats.StudyStorageTime.Start();
         		// First, get the StudyStorage locations for the study, and calculate the disk usage.
 				StudyStorageLocation location;
-				if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(ReadContext, queueItem.StudyStorageKey, out location))
+				if (!FilesystemMonitor.Instance.GetWritableStudyStorageLocation(queueItem.StudyStorageKey, out location))
 					continue;
 				stats.StudyStorageTime.End();
 
@@ -454,10 +455,12 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         				PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
         		{
 					ILockStudy lockstudy = update.GetBroker<ILockStudy>();
-					LockStudyParameters lockParms = new LockStudyParameters();
-					lockParms.StudyStorageKey = location.Key;
-					lockParms.QueueStudyStateEnum = QueueStudyStateEnum.MigrationScheduled;
-					if (!lockstudy.Execute(lockParms) || !lockParms.Successful)
+					LockStudyParameters lockParms = new LockStudyParameters
+					                                	{
+					                                		StudyStorageKey = location.Key,
+					                                		QueueStudyStateEnum = QueueStudyStateEnum.MigrationScheduled
+					                                	};
+        			if (!lockstudy.Execute(lockParms) || !lockParms.Successful)
 					{
 						Platform.Log(LogLevel.Warn, "Unable to lock study for inserting Tier Migration. Reason:{0}. Skipping study ({1})",
                                      lockParms.FailureReason, location.StudyInstanceUid);
@@ -466,13 +469,16 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
 					IInsertWorkQueueFromFilesystemQueue broker = update.GetBroker<IInsertWorkQueueFromFilesystemQueue>();
 
-					InsertWorkQueueFromFilesystemQueueParameters insertParms = new InsertWorkQueueFromFilesystemQueueParameters();
-        			insertParms.StudyStorageKey = location.GetKey();
-        			insertParms.ServerPartitionKey = location.ServerPartitionKey;
-        			insertParms.ScheduledTime = _scheduledTime;
-        			insertParms.DeleteFilesystemQueue = true;
-					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.MigrateStudy;
-					insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.TierMigrate;
+					InsertWorkQueueFromFilesystemQueueParameters insertParms = new InsertWorkQueueFromFilesystemQueueParameters
+                                                       	{
+                                                       		StudyStorageKey = location.GetKey(),
+                                                       		ServerPartitionKey = location.ServerPartitionKey,
+                                                       		ScheduledTime = _scheduledTime,
+                                                       		DeleteFilesystemQueue = true,
+                                                       		WorkQueueTypeEnum = WorkQueueTypeEnum.MigrateStudy,
+                                                       		FilesystemQueueTypeEnum =
+                                                       			FilesystemQueueTypeEnum.TierMigrate
+                                                       	};
 
         			Platform.Log(LogLevel.Debug, "Scheduling tier-migration for study {0} from {1} at {2}...",
         			             location.StudyInstanceUid, location.FilesystemTierEnum, _scheduledTime);
@@ -611,30 +617,38 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         /// <returns>The number of WorkQueue entries pending.</returns>
         private int CheckWorkQueueCount(Model.ServiceLock item)
         {
-            IWorkQueueEntityBroker select = ReadContext.GetBroker<IWorkQueueEntityBroker>();
+			using (ExecutionContext context = new ExecutionContext())
+			{
+				IWorkQueueEntityBroker select = context.ReadContext.GetBroker<IWorkQueueEntityBroker>();
 
-            WorkQueueSelectCriteria criteria = new WorkQueueSelectCriteria();
+				WorkQueueSelectCriteria criteria = new WorkQueueSelectCriteria();
 
-			criteria.WorkQueueTypeEnum.In(new[] { WorkQueueTypeEnum.DeleteStudy, WorkQueueTypeEnum.MigrateStudy, WorkQueueTypeEnum.PurgeStudy });
+				criteria.WorkQueueTypeEnum.In(new[]
+				                              	{
+				                              		WorkQueueTypeEnum.DeleteStudy, WorkQueueTypeEnum.MigrateStudy,
+				                              		WorkQueueTypeEnum.PurgeStudy
+				                              	});
 
-            // Do Pending status, in case there's a Failure status entry, we don't want to 
-            // block on that.
-			criteria.WorkQueueStatusEnum.In(new[] { WorkQueueStatusEnum.Pending, WorkQueueStatusEnum.InProgress });
+				// Do Pending status, in case there's a Failure status entry, we don't want to 
+				// block on that.
+				criteria.WorkQueueStatusEnum.In(new[] {WorkQueueStatusEnum.Pending, WorkQueueStatusEnum.InProgress});
 
-            FilesystemStudyStorageSelectCriteria filesystemCriteria = new FilesystemStudyStorageSelectCriteria();
+				FilesystemStudyStorageSelectCriteria filesystemCriteria = new FilesystemStudyStorageSelectCriteria();
 
-			filesystemCriteria.FilesystemKey.EqualTo(item.FilesystemKey);
+				filesystemCriteria.FilesystemKey.EqualTo(item.FilesystemKey);
 
-			criteria.FilesystemStudyStorageRelatedEntityCondition.Exists(filesystemCriteria);
-            int count = select.Count(criteria);
+				criteria.FilesystemStudyStorageRelatedEntityCondition.Exists(filesystemCriteria);
+				int count = select.Count(criteria);
 
-            return count;
+				return count;
+
+			}
         }
 
 		private void MigrateStudies(Model.ServiceLock item, ServerFilesystemInfo fs)
 		{
-			ServerFilesystemInfo newFS = FilesystemMonitor.Instance.GetLowerTierFilesystemForStorage(fs);
-			if (newFS == null)
+			ServerFilesystemInfo newFilesystem = FilesystemMonitor.Instance.GetLowerTierFilesystemForStorage(fs);
+			if (newFilesystem == null)
 			{
 				Platform.Log(LogLevel.Warn,
 				             "No writable storage in lower tiers. Tier-migration for '{0}' is disabled at this time.",

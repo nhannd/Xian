@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Model;
@@ -267,26 +268,29 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 						{
 							String sopInstanceUid = sopFile.Name.Replace(sopFile.Extension, string.Empty);
 
-							// Just use a read context here, in hopes of improving 
-							// performance.  Every other place in the code should use
-							// Update contexts when doing transactions.
-							IInsertWorkQueue workQueueInsert =
-								ReadContext.GetBroker<IInsertWorkQueue>();
+							using (ExecutionContext context = new ExecutionContext())
+							{
+								// Just use a read context here, in hopes of improving 
+								// performance.  Every other place in the code should use
+								// Update contexts when doing transactions.
+								IInsertWorkQueue workQueueInsert =
+									context.ReadContext.GetBroker<IInsertWorkQueue>();
 
-							InsertWorkQueueParameters queueInsertParms =
-								new InsertWorkQueueParameters
-									{
-										WorkQueueTypeEnum = WorkQueueTypeEnum.StudyProcess,
-										StudyStorageKey = location.GetKey(),
-										ServerPartitionKey = partition.GetKey(),
-										SeriesInstanceUid = sopFile.Directory.Name,
-										SopInstanceUid = sopInstanceUid,
-										ScheduledTime = Platform.Time
-									};
+								InsertWorkQueueParameters queueInsertParms =
+									new InsertWorkQueueParameters
+										{
+											WorkQueueTypeEnum = WorkQueueTypeEnum.StudyProcess,
+											StudyStorageKey = location.GetKey(),
+											ServerPartitionKey = partition.GetKey(),
+											SeriesInstanceUid = sopFile.Directory.Name,
+											SopInstanceUid = sopInstanceUid,
+											ScheduledTime = Platform.Time
+										};
 
-							if (workQueueInsert.FindOne(queueInsertParms) == null)
-								Platform.Log(LogLevel.Error,
-								             "Failure attempting to insert SOP Instance into WorkQueue during Reinventory.");
+								if (workQueueInsert.FindOne(queueInsertParms) == null)
+									Platform.Log(LogLevel.Error,
+									             "Failure attempting to insert SOP Instance into WorkQueue during Reinventory.");
+							}
 						}
 					}
 
@@ -310,18 +314,16 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
             return false;
         }
 
-		private bool GetStudyStorage(ServerPartition partition, string studyInstanceUid, out StudyStorage storage)
+		private static bool GetStudyStorage(ServerPartition partition, string studyInstanceUid, out StudyStorage storage)
 		{
-			IStudyStorageEntityBroker broker = ReadContext.GetBroker<IStudyStorageEntityBroker>();
-			StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
-			criteria.ServerPartitionKey.EqualTo(partition.GetKey());
-			criteria.StudyInstanceUid.EqualTo(studyInstanceUid);
-			storage = broker.FindOne(criteria);
+			using (ExecutionContext context = new ExecutionContext())
+			{
+				storage = StudyStorage.Load(context.ReadContext, partition.Key, studyInstanceUid);
+				if (storage != null)
+					return true;
 
-			if (storage != null)
-				return true;
-
-			return false;
+				return false;
+			}
 		}
 
         #endregion
@@ -330,14 +332,16 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
         protected override void OnProcess(Model.ServiceLock item)
         {
             _store = PersistentStoreRegistry.GetDefaultStore();
+			using (ExecutionContext context = new ExecutionContext())
+			{
+				IServerPartitionEntityBroker broker = context.ReadContext.GetBroker<IServerPartitionEntityBroker>();
+				ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
+				criteria.AeTitle.SortAsc(0);
 
-            IServerPartitionEntityBroker broker = ReadContext.GetBroker<IServerPartitionEntityBroker>();
-            ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
-        	criteria.AeTitle.SortAsc(0);
+				_partitions = broker.Find(criteria);
+			}
 
-            _partitions = broker.Find(criteria);
-
-			ServerFilesystemInfo info = FilesystemMonitor.Instance.GetFilesystemInfo(item.FilesystemKey);
+        	ServerFilesystemInfo info = FilesystemMonitor.Instance.GetFilesystemInfo(item.FilesystemKey);
 
             Platform.Log(LogLevel.Info, "Starting reinventory of filesystem: {0}", info.Filesystem.Description);
 

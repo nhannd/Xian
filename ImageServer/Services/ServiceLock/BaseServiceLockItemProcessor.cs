@@ -40,6 +40,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -54,16 +55,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
     public abstract class BaseServiceLockItemProcessor: IDisposable
 	{
 		#region Private Members
-		private IReadContext _readContext;
 		private bool _cancelPending;
         private readonly object _syncRoot = new object();
 		#endregion
 
 		#region Protected Properties
-		protected IReadContext ReadContext
-        {
-            get { return _readContext; }
-        }
 		protected bool CancelPending
 		{
 			get { lock (_syncRoot) return _cancelPending; }
@@ -74,7 +70,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
         #region Contructors
         public BaseServiceLockItemProcessor()
         {
-            _readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
         }
         #endregion
 
@@ -89,37 +84,44 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 		/// <returns>The list of queue entries.</returns>
         protected IList<FilesystemQueue> GetFilesystemQueueCandidates(Model.ServiceLock item, DateTime scheduledTime, FilesystemQueueTypeEnum type, bool statusCheck)
         {
-            IFilesystemQueueEntityBroker broker = ReadContext.GetBroker<IFilesystemQueueEntityBroker>();
-            FilesystemQueueSelectCriteria fsQueueCriteria = new FilesystemQueueSelectCriteria();
+			using (ExecutionContext context = new ExecutionContext())
+			{
+				IFilesystemQueueEntityBroker broker = context.ReadContext.GetBroker<IFilesystemQueueEntityBroker>();
+				FilesystemQueueSelectCriteria fsQueueCriteria = new FilesystemQueueSelectCriteria();
 
-            fsQueueCriteria.FilesystemKey.EqualTo(item.FilesystemKey);
-            fsQueueCriteria.ScheduledTime.LessThanOrEqualTo(scheduledTime);
-            fsQueueCriteria.FilesystemQueueTypeEnum.EqualTo(type);
+				fsQueueCriteria.FilesystemKey.EqualTo(item.FilesystemKey);
+				fsQueueCriteria.ScheduledTime.LessThanOrEqualTo(scheduledTime);
+				fsQueueCriteria.FilesystemQueueTypeEnum.EqualTo(type);
 
-			// Do the select based on the QueueStudyState (used to be based on a link to the WorkQueue table)
-			StudyStorageSelectCriteria studyStorageSearchCriteria = new StudyStorageSelectCriteria();
-			studyStorageSearchCriteria.QueueStudyStateEnum.EqualTo(QueueStudyStateEnum.Idle);
-			fsQueueCriteria.StudyStorage.Exists(studyStorageSearchCriteria);
+				// Do the select based on the QueueStudyState (used to be based on a link to the WorkQueue table)
+				StudyStorageSelectCriteria studyStorageSearchCriteria = new StudyStorageSelectCriteria();
+				studyStorageSearchCriteria.QueueStudyStateEnum.EqualTo(QueueStudyStateEnum.Idle);
+				fsQueueCriteria.StudyStorage.Exists(studyStorageSearchCriteria);
 
-            fsQueueCriteria.ScheduledTime.SortAsc(0);
+				fsQueueCriteria.ScheduledTime.SortAsc(0);
 
-            IList<FilesystemQueue> list = broker.Find(fsQueueCriteria, 0, ServiceLockSettings.Default.FilesystemQueueResultCount);
+				IList<FilesystemQueue> list = broker.Find(fsQueueCriteria, 0, ServiceLockSettings.Default.FilesystemQueueResultCount);
 
-            return list;
+				return list;
+			}
         }
 
         /// <summary>
         /// Load the storage location for a Study and partition.
         /// </summary>
-        protected static StudyStorageLocation LoadStorageLocation(ServerEntityKey serverPartitionKey, String studyInstanceUid)
+        protected static StudyStorageLocation LoadReadableStorageLocation(ServerEntityKey serverPartitionKey, String studyInstanceUid)
         {
             StudyStorageLocation storageLocation;
-        	if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(serverPartitionKey, studyInstanceUid, false, out storageLocation))
-            {
-                string error = String.Format("Unable to find storage location for study {0} on partition {1}",studyInstanceUid, serverPartitionKey);
-                Platform.Log(LogLevel.Error, error);
-            	return null;
-            }
+        	try
+        	{
+        		FilesystemMonitor.Instance.GetReadableStudyStorageLocation(serverPartitionKey, studyInstanceUid,
+        		                                                           StudyRestore.False, StudyCache.False,
+        		                                                           out storageLocation);
+        	}
+        	catch (Exception)
+        	{
+        		return null;
+			}
             return storageLocation;
         }
 
@@ -270,51 +272,53 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 			List<string> filesDeleted = new List<string>();
 			List<FileInfo> fileList = new List<FileInfo>();
 			FileProcessor.Process(studyDir.FullName, "*.*",
-								  delegate(string filePath, out bool cancel)
-								  {
-									  cancel = CancelPending;
-									  if (cancel)
-									  {
-										  return;
-									  }
+			                      delegate(string filePath, out bool cancel)
+			                      	{
+			                      		cancel = CancelPending;
+			                      		if (cancel)
+			                      		{
+			                      			return;
+			                      		}
 
-									  FileInfo file = new FileInfo(filePath);
+			                      		FileInfo file = new FileInfo(filePath);
 
-									  // if the file is located in a "deleted" directory then skip it
-									  if (file.DirectoryName.EndsWith("Deleted", StringComparison.InvariantCultureIgnoreCase))
-										  return;
+			                      		// if the file is located in a "deleted" directory then skip it
+			                      		if (file.DirectoryName != null)
+			                      			if (file.DirectoryName.EndsWith("Deleted", StringComparison.InvariantCultureIgnoreCase))
+			                      				return;
 
 
-									  if (file.Extension.Equals(ServerPlatform.DicomFileExtension, StringComparison.InvariantCultureIgnoreCase))
-									  {
-										  fileList.Add(file);
-									  }
-									  else
-									  {
-										  if (file.Extension.Equals(".xml", StringComparison.InvariantCultureIgnoreCase) ||
-											  file.Extension.Equals(".gz", StringComparison.InvariantCultureIgnoreCase))
-										  {
-											  // is header file
-										  }
-										  else
-										  {
-											  // TODO: Should we be smarter when dealing with left-over files?
-											  // For eg, if we encounter 123.dcm_temp that appears to be
-											  // a complete version of a corrupted 123.dcm, shouldn't we replace
-											  // 123.dcm with the 123.dcm_temp instead of deleting 123.dcm_temp?
+			                      		if (file.Extension.Equals(ServerPlatform.DicomFileExtension,
+			                      		                          StringComparison.InvariantCultureIgnoreCase))
+			                      		{
+			                      			fileList.Add(file);
+			                      		}
+			                      		else
+			                      		{
+			                      			if (file.Extension.Equals(".xml", StringComparison.InvariantCultureIgnoreCase) ||
+			                      			    file.Extension.Equals(".gz", StringComparison.InvariantCultureIgnoreCase))
+			                      			{
+			                      				// is header file
+			                      			}
+			                      			else
+			                      			{
+			                      				// TODO: Should we be smarter when dealing with left-over files?
+			                      				// For eg, if we encounter 123.dcm_temp that appears to be
+			                      				// a complete version of a corrupted 123.dcm, shouldn't we replace
+			                      				// 123.dcm with the 123.dcm_temp instead of deleting 123.dcm_temp?
 
-											  // Delete it
-											  if (cleanup)
-											  {
-												  file.Delete();
-												  filesDeleted.Add(filePath);
-											  }
-										  }
+			                      				// Delete it
+			                      				if (cleanup)
+			                      				{
+			                      					file.Delete();
+			                      					filesDeleted.Add(filePath);
+			                      				}
+			                      			}
 
-									  }
+			                      		}
 
-								  },
-								  true);
+			                      	},
+			                      true);
 
 			if (filesDeleted.Count > 0)
 			{
@@ -420,14 +424,16 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
                 // Update the WorkQueue item status and times.
                 IUpdateServiceLock update = updateContext.GetBroker<IUpdateServiceLock>();
 
-                ServiceLockUpdateParameters parms = new ServiceLockUpdateParameters();
-                parms.ServiceLockKey = item.GetKey();
-                parms.Lock = false;
-                parms.ScheduledTime = scheduledTime;
-                parms.ProcessorId = item.ProcessorId;
-                parms.Enabled = enabled;
+                ServiceLockUpdateParameters parms = new ServiceLockUpdateParameters
+                                                    	{
+                                                    		ServiceLockKey = item.GetKey(),
+                                                    		Lock = false,
+                                                    		ScheduledTime = scheduledTime,
+                                                    		ProcessorId = item.ProcessorId,
+                                                    		Enabled = enabled
+                                                    	};
 
-                if (false == update.Execute(parms))
+            	if (false == update.Execute(parms))
                 {
                     Platform.Log(LogLevel.Error, "Unable to update StudyLock GUID Status: {0}",
                                  item.GetKey().ToString());
@@ -449,11 +455,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
         /// </summary>
         public void Dispose()
         {
-            if (_readContext != null)
-            {
-                _readContext.Dispose();
-                _readContext = null;
-            }
         }
         #endregion
     }

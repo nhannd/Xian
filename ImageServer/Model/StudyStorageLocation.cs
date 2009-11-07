@@ -48,8 +48,8 @@ namespace ClearCanvas.ImageServer.Model
 {
     public class StudyStorageLocation : ServerEntity, ICloneable, IEquatable<StudyStorageLocation>
     {
-        private const string STUDY_XML_EXTENSION = "xml";
-        private const string STUDY_XML_GZIP_EXTENSION = "xml.gz";
+        private const string StudyXmlExtension = "xml";
+        private const string StudyXmlGzipExtension = "xml.gz";
         
         #region Constructors
         public StudyStorageLocation()
@@ -166,10 +166,6 @@ namespace ClearCanvas.ImageServer.Model
     	[EntityFieldDatabaseMappingAttribute(TableName = "StudyStorageLocation", ColumnName = "IsReconcileRequired")]
     	public bool IsReconcileRequired { get; set; }
 
-    	#endregion
-
-        #region Public Properties
-
         public string StudyUidFolder
         {
             get
@@ -229,7 +225,7 @@ namespace ClearCanvas.ImageServer.Model
             {
                 if (_study==null)
                 {
-                    using(IPersistenceContext context = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+                    using(IPersistenceContext context = _store.OpenReadContext())
                     {
                         _study = LoadStudy(context);
                     }
@@ -238,104 +234,127 @@ namespace ClearCanvas.ImageServer.Model
             }
         }
 
+		public string StudyFolderRelativePath
+		{
+			get
+			{
+				if (_studyFolderRelativePath != null)
+					return _studyFolderRelativePath;
+				string path = Path.Combine(PartitionFolder, StudyFolder);
+				path = Path.Combine(path, StudyUidFolder);
+				return path;
+			}
+			set { _studyFolderRelativePath = value; }
+		}
+
+		/// <summary>
+		/// Gets the related <seealso cref="StudyStorage"/> entity.
+		/// </summary>
+		public StudyStorage StudyStorage
+		{
+			get
+			{
+				if (_studyStorage == null)
+				{
+					lock (SyncRoot)
+					{
+						// TODO: Use ExecutionContext to re-use db connection if possible
+						// This however requires breaking the Common --> Model dependency.
+						using (IReadContext readContext = _store.OpenReadContext())
+						{
+							_studyStorage = StudyStorage.Load(readContext, Key);
+						}
+					}
+				}
+				return _studyStorage;
+			}
+		}
+
+		/// <summary>
+		/// Gets the related <seealso cref="Patient"/> entity.
+		/// </summary>
+		public Patient Patient
+		{
+			get
+			{
+
+				if (_patient == null)
+				{
+					lock (SyncRoot)
+					{
+						// TODO: Use ExecutionContext to re-use db connection if possible
+						// This however requires breaking the Common --> Model dependency.
+						using (IReadContext readContext = _store.OpenReadContext())
+						{
+							_patient = Patient.Load(readContext, StudyStorage.Study.PatientKey);
+						}
+					}
+				}
+				return _patient;
+			}
+		}
+
+		/// <summary>
+		/// Returns a boolean indicating whether the study has been archived and the latest 
+		/// copy in the archive is lossless.
+		/// </summary>
+		public bool IsLatestArchiveLossless
+		{
+			get
+			{
+				if (ArchiveLocations == null || ArchiveLocations.Count == 0)
+					return false;
+				return ArchiveLocations[0].ServerTransferSyntax.Lossless;
+			}
+		}
+
         #endregion
 
         #region Public Methods
         
         public Study LoadStudy(IPersistenceContext context)
         {
-            lock (SyncRoot)
-            {
-                _study = Study.Find(context, StudyInstanceUid, ServerPartition);
-            }
+			if (_study == null)
+				lock (SyncRoot)
+				{
+					if (_study == null)
+						_study = Study.Find(context, StudyInstanceUid, ServerPartition);
+				}
             return _study;
             
         }
 
-        
-
+		/// <summary>
+		/// Returns the path of the folder for the StudyStorageLocation.
+		/// </summary>
+		/// <returns></returns>
         public string GetStudyPath()
         {
             string path = Path.Combine(FilesystemPath, StudyFolderRelativePath);
             return path;
         }
 
-        public string StudyFolderRelativePath
-        {
-            get { 
-                if (_studyFolderRelativePath!=null)
-                    return _studyFolderRelativePath;
-            	string path = Path.Combine(PartitionFolder, StudyFolder);
-            	path = Path.Combine(path, StudyUidFolder);
-            	return path;
-            }
-            set { _studyFolderRelativePath = value; }
-        }
+		/// <summary>
+		/// Returns the path of the folder for the specified series.
+		/// </summary>
+		/// <param name="seriesInstanceUid"></param>
+		public String GetSeriesPath(string seriesInstanceUid)
+		{
+			return Path.Combine(GetStudyPath(), seriesInstanceUid);
+		}
 
-        /// <summary>
-        /// Gets the related <seealso cref="StudyStorage"/> entity.
-        /// </summary>
-        public StudyStorage StudyStorage
-        {
-            get
-            {
-                if (_studyStorage==null)
-                {
-                    lock(SyncRoot)
-                    {
-                        // TODO: Use ExecutionContext to re-use db connection if possible
-                        // This however requires breaking the Common --> Model dependency.
-                        using(IReadContext readContext= PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-                        {
-                            _studyStorage = StudyStorage.Load(readContext, Key);
-                        }
-                    }
-                }
-                return _studyStorage;
-            }
-        }
+		/// <summary>
+		/// Returns the path of the sop instance with the specified series and sop instance uid.
+		/// </summary>
+		/// <param name="seriesInstanceUid"></param>
+		/// <param name="sopInstanceUid"></param>
+		public String GetSopInstancePath(string seriesInstanceUid, string sopInstanceUid)
+		{
+			String path = Path.Combine(GetSeriesPath(seriesInstanceUid), sopInstanceUid + ".dcm");
+			return path;
+		}
 
-        public Patient Patient
-        {
-            get {
-
-                if (_patient==null)
-                {
-                    lock (SyncRoot)
-                    {
-                        // TODO: Use ExecutionContext to re-use db connection if possible
-                        // This however requires breaking the Common --> Model dependency.
-                        using (IReadContext readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-                        {
-                            _patient = Patient.Load(readContext, StudyStorage.Study.PatientKey);
-                        }
-                    }
-                }
-                return _patient;
-            }
-        }
-
-        public bool IsNearline
-        {
-            get { return StudyStatusEnum.Equals(StudyStatusEnum.Nearline); }
-        }
-
-        /// <summary>
-        /// Returns a boolean indicating whether the study has been archived and the latest 
-        /// copy in the archive is lossless.
-        /// </summary>
-        public bool IsLatestArchiveLossless
-        {
-            get
-            {
-            	if (ArchiveLocations == null || ArchiveLocations.Count == 0)
-                    return false;
-            	return ArchiveLocations[0].ServerTransferSyntax.Lossless;
-            }
-        }
-
-
-        /// <summary>
+		/// <summary>
         /// Acquires a lock on the study for processing
         /// </summary>
         /// <returns>
@@ -353,10 +372,8 @@ namespace ClearCanvas.ImageServer.Model
             using (context)
             {
                 ILockStudy lockStudyBroker = context.GetBroker<ILockStudy>();
-                LockStudyParameters parms = new LockStudyParameters();
-                parms.StudyStorageKey = GetKey();
-                parms.WriteLock = true;
-                if (!lockStudyBroker.Execute(parms))
+                LockStudyParameters parms = new LockStudyParameters {StudyStorageKey = GetKey(), WriteLock = true};
+            	if (!lockStudyBroker.Execute(parms))
                     return false;
 
                 context.Commit();
@@ -381,18 +398,14 @@ namespace ClearCanvas.ImageServer.Model
             using (context)
             {
                 ILockStudy lockStudyBroker = context.GetBroker<ILockStudy>();
-                LockStudyParameters parms = new LockStudyParameters();
-                parms.StudyStorageKey = GetKey();
-                parms.WriteLock = false;
-                if (!lockStudyBroker.Execute(parms))
+                LockStudyParameters parms = new LockStudyParameters {StudyStorageKey = GetKey(), WriteLock = false};
+            	if (!lockStudyBroker.Execute(parms))
                     return false;
-
 
                 context.Commit();
                 return parms.Successful;
             }
         }
-
 
         /// <summary>
         /// Return snapshot of all related items in the Study Integrity Queue.
@@ -434,210 +447,11 @@ namespace ClearCanvas.ImageServer.Model
 
             return string.IsNullOrEmpty(reason);
         }
-        #endregion
 
-        /// <summary>
-        /// Find all <see cref="StudyStorageLocation"/> associcated with the specified <see cref="StudyStorage"/>
-        /// </summary>
-        /// <param name="storage"></param>
-        /// <returns></returns>
-        static public IList<StudyStorageLocation> FindStorageLocations(StudyStorage storage)
-        {
-            using(IReadContext readContext = _store.OpenReadContext())
-            {
-                return FindStorageLocations(readContext, storage, null);
-            }
-        }
-
-        static public IList<StudyStorageLocation> FindStorageLocations(
-                    IPersistenceContext context, StudyStorage storage)
-        {
-            return FindStorageLocations(context, storage, null);
-        }
-
-        static public IList<StudyStorageLocation> FindStorageLocations(
-                   IPersistenceContext context, StudyStorage storage,
-                   Predicate<StudyStorageLocation> filter)
-        {
-            IQueryStudyStorageLocation locQuery = context.GetBroker<IQueryStudyStorageLocation>();
-            StudyStorageLocationQueryParameters locParms = new StudyStorageLocationQueryParameters();
-            locParms.StudyInstanceUid = storage.StudyInstanceUid;
-            locParms.ServerPartitionKey = storage.ServerPartitionKey;
-            IList<StudyStorageLocation> list = locQuery.Find(locParms);
-            if (filter != null)
-                CollectionUtils.Remove(list, filter);
-            return list;
-        }
-
-        /// <summary>
-		/// Returns the path of the folder for the specified series.
+		/// <summary>
+		/// Log FilesystemQueue related entries.
 		/// </summary>
-		/// <param name="seriesInstanceUid"></param>
-        public String GetSeriesPath(string seriesInstanceUid)
-        {
-            return Path.Combine(GetStudyPath(), seriesInstanceUid);
-        }
-
-        /// <summary>
-		/// Returns the path of the sop instance with the specified series and sop instance uid.
-		/// </summary>
-		/// <param name="seriesInstanceUid"></param>
-        /// <param name="sopInstanceUid"></param>
-        public String GetSopInstancePath(string seriesInstanceUid, string sopInstanceUid)
-        {
-            String path = Path.Combine(GetSeriesPath(seriesInstanceUid), sopInstanceUid + ".dcm");
-            return path ;
-        }
-
-
-        /// <summary>
-		/// Query for the all archival records for a study, sorted by archive time descendingly (latest first).
-		/// </summary>
-		/// <param name="studyStorageKey">The primary key of the StudyStorgae table.</param>
-		/// <returns>null if not found, else the value.</returns>
-        static public IList<ArchiveStudyStorage> GetArchiveLocations(ServerEntityKey studyStorageKey)
-        {
-            using (IReadContext readContext = _store.OpenReadContext())
-            {
-                ArchiveStudyStorageSelectCriteria archiveStudyStorageCriteria = new ArchiveStudyStorageSelectCriteria();
-                archiveStudyStorageCriteria.StudyStorageKey.EqualTo(studyStorageKey);
-                archiveStudyStorageCriteria.ArchiveTime.SortDesc(0);
-
-                IArchiveStudyStorageEntityBroker broker = readContext.GetBroker<IArchiveStudyStorageEntityBroker>();
-
-                return broker.Find(archiveStudyStorageCriteria);
-            }
-        }
-
-
-        /// <summary>
-        /// Gets the path of the study xml.
-        /// </summary>
-        /// <returns></returns>
-        public String GetStudyXmlPath()
-        {
-            String path = Path.Combine(GetStudyPath(), StudyInstanceUid);
-            path += "." + STUDY_XML_EXTENSION;
-
-            return path;
-        }
-
-        /// <summary>
-        /// Gets the path of the compressed study xml.
-        /// </summary>
-        /// <returns></returns>
-        public String GetCompressedStudyXmlPath()
-        {
-            String path = Path.Combine(GetStudyPath(), StudyInstanceUid);
-            path += "." + STUDY_XML_GZIP_EXTENSION;
-
-            return path;
-        }
-
-        /// <summary>
-        /// Gets the <see cref="StudyXml"/> if it exists in this storage location.
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <returns></returns>
-        public StudyXml LoadStudyXml()
-        {
-            // TODO: Use FileStreamOpener instead
-            // Can't do it until we break the dependency of ImageServer.Common on Model
-            if (_studyXml==null)
-            {
-                lock(SyncRoot)
-                {
-                    try
-                    {
-                        Stream xmlStream = Open(GetStudyXmlPath());
-                        if (xmlStream != null)
-                        {
-                            XmlDocument xml = new XmlDocument();
-                            using (xmlStream)
-                            {
-                                StudyXmlIo.Read(xml, xmlStream);
-                                xmlStream.Close();
-                            }
-
-                            _studyXml = new StudyXml();
-                            _studyXml.SetMemento(xml);
-
-                        }
-                    }
-                    catch (Exception)
-                    { }
-                }
-                
-            }
-            
-
-            return _studyXml;
-        }
-
-        public StudyXml LoadStudyXml(bool refresh)
-        {
-            lock(SyncRoot)
-            {
-                Stream xmlStream = Open(GetStudyXmlPath());
-                if (xmlStream != null)
-                {
-                    XmlDocument xml = new XmlDocument();
-                    using (xmlStream)
-                    {
-                        StudyXmlIo.Read(xml, xmlStream);
-                        xmlStream.Close();
-                    }
-
-                    _studyXml = new StudyXml();
-                    _studyXml.SetMemento(xml);
-
-                }
-
-            }
-            
-            return _studyXml;
-        }
-        
-        // TODO: Replace this method with FileStreamOpener
-        private static Stream Open(string path)
-        {
-            FileStream stream = null;
-
-            for (int i = 0; i<50; i++)
-            {
-            	try
-                {
-                    stream = new FileStream(path, FileMode.Open, 
-                                            FileAccess.Read, 
-                                            FileShare.None /* deny sharing */);
-                    break;
-                }
-                catch (FileNotFoundException)
-                {
-                    // Maybe it is being swapped?
-                }
-                catch (DirectoryNotFoundException)
-                {
-                    // The path is invalid
-                    throw;
-                }
-                catch (PathTooLongException)
-                {
-                    // The path is too long
-                    throw;
-                }
-                catch (IOException)
-                {
-                    // other IO exceptions should be treated as retry
-                	Random rand = new Random();
-                    Thread.Sleep(rand.Next(50, 100));
-                }
-            }
-            return stream;
-        }
-
-		public void LogFilesystemQueue( )
+		public void LogFilesystemQueue()
 		{
 			FilesystemQueueSelectCriteria criteria = new FilesystemQueueSelectCriteria();
 			criteria.StudyStorageKey.EqualTo(Key);
@@ -678,16 +492,216 @@ namespace ClearCanvas.ImageServer.Model
 			}
 		}
 
-        #region ICloneable Members
+		/// <summary>
+		/// Gets the path of the study xml.
+		/// </summary>
+		/// <returns></returns>
+		public String GetStudyXmlPath()
+		{
+			String path = Path.Combine(GetStudyPath(), StudyInstanceUid);
+			path += "." + StudyXmlExtension;
 
-        public object Clone()
+			return path;
+		}
+
+		/// <summary>
+		/// Gets the path of the compressed study xml.
+		/// </summary>
+		/// <returns></returns>
+		public String GetCompressedStudyXmlPath()
+		{
+			String path = Path.Combine(GetStudyPath(), StudyInstanceUid);
+			path += "." + StudyXmlGzipExtension;
+
+			return path;
+		}
+
+		/// <summary>
+		/// Gets the <see cref="StudyXml"/> if it exists in this storage location.
+		/// </summary>
+		/// <remarks>
+		/// </remarks>
+		/// <returns></returns>
+		public StudyXml LoadStudyXml()
+		{
+			// TODO: Use FileStreamOpener instead
+			// Can't do it until we break the dependency of ImageServer.Common on Model
+			if (_studyXml == null)
+			{
+				lock (SyncRoot)
+				{
+					try
+					{
+						Stream xmlStream = Open(GetStudyXmlPath());
+						if (xmlStream != null)
+						{
+							XmlDocument xml = new XmlDocument();
+							using (xmlStream)
+							{
+								StudyXmlIo.Read(xml, xmlStream);
+								xmlStream.Close();
+							}
+
+							_studyXml = new StudyXml();
+							_studyXml.SetMemento(xml);
+
+						}
+					}
+					catch (Exception)
+					{ }
+				}
+
+			}
+
+
+			return _studyXml;
+		}
+
+		public StudyXml LoadStudyXml(bool refresh)
+		{
+			lock (SyncRoot)
+			{
+				Stream xmlStream = Open(GetStudyXmlPath());
+				if (xmlStream != null)
+				{
+					XmlDocument xml = new XmlDocument();
+					using (xmlStream)
+					{
+						StudyXmlIo.Read(xml, xmlStream);
+						xmlStream.Close();
+					}
+
+					_studyXml = new StudyXml();
+					_studyXml.SetMemento(xml);
+
+				}
+
+			}
+
+			return _studyXml;
+		}
+
+        #endregion
+
+		#region Static Methods
+
+		/// <summary>
+        /// Find all <see cref="StudyStorageLocation"/> associcated with the specified <see cref="StudyStorage"/>
+        /// </summary>
+        /// <param name="storage"></param>
+        /// <returns></returns>
+        static public IList<StudyStorageLocation> FindStorageLocations(StudyStorage storage)
+        {
+            using(IReadContext readContext = _store.OpenReadContext())
+            {
+                return FindStorageLocations(readContext, storage, null);
+            }
+        }
+
+		static public IList<StudyStorageLocation> FindStorageLocations(ServerEntityKey partitionKey, string studyInstanceUid)
+		{
+			using (IReadContext readContext = _store.OpenReadContext())
+			{
+				IQueryStudyStorageLocation locQuery = readContext.GetBroker<IQueryStudyStorageLocation>();
+				StudyStorageLocationQueryParameters locParms = new StudyStorageLocationQueryParameters
+				                                               	{
+				                                               		StudyInstanceUid = studyInstanceUid,
+				                                               		ServerPartitionKey = partitionKey
+				                                               	};
+				IList<StudyStorageLocation> list = locQuery.Find(locParms);
+				return list;
+			}
+		}
+
+        static public IList<StudyStorageLocation> FindStorageLocations(
+                    IPersistenceContext context, StudyStorage storage)
+        {
+            return FindStorageLocations(context, storage, null);
+        }
+
+        static public IList<StudyStorageLocation> FindStorageLocations(
+                   IPersistenceContext context, StudyStorage storage,
+                   Predicate<StudyStorageLocation> filter)
+        {
+            IQueryStudyStorageLocation locQuery = context.GetBroker<IQueryStudyStorageLocation>();
+            StudyStorageLocationQueryParameters locParms = new StudyStorageLocationQueryParameters
+                                                           	{
+                                                           		StudyInstanceUid = storage.StudyInstanceUid,
+                                                           		ServerPartitionKey = storage.ServerPartitionKey
+                                                           	};
+        	IList<StudyStorageLocation> list = locQuery.Find(locParms);
+            if (filter != null)
+                CollectionUtils.Remove(list, filter);
+            return list;
+		}
+
+        /// <summary>
+		/// Query for the all archival records for a study, sorted by archive time descendingly (latest first).
+		/// </summary>
+		/// <param name="studyStorageKey">The primary key of the StudyStorgae table.</param>
+		/// <returns>null if not found, else the value.</returns>
+        static public IList<ArchiveStudyStorage> GetArchiveLocations(ServerEntityKey studyStorageKey)
+        {
+            using (IReadContext readContext = _store.OpenReadContext())
+            {
+                ArchiveStudyStorageSelectCriteria archiveStudyStorageCriteria = new ArchiveStudyStorageSelectCriteria();
+                archiveStudyStorageCriteria.StudyStorageKey.EqualTo(studyStorageKey);
+                archiveStudyStorageCriteria.ArchiveTime.SortDesc(0);
+
+                IArchiveStudyStorageEntityBroker broker = readContext.GetBroker<IArchiveStudyStorageEntityBroker>();
+
+                return broker.Find(archiveStudyStorageCriteria);
+            }
+		}
+
+        // TODO: Replace this method with FileStreamOpener
+        private static Stream Open(string path)
+        {
+            FileStream stream = null;
+
+            for (int i = 0; i<50; i++)
+            {
+            	try
+                {
+                    stream = new FileStream(path, FileMode.Open, 
+                                            FileAccess.Read, 
+                                            FileShare.None /* deny sharing */);
+                    break;
+                }
+                catch (FileNotFoundException)
+                {
+                    // Maybe it is being swapped?
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    // The path is invalid
+                    throw;
+                }
+                catch (PathTooLongException)
+                {
+                    // The path is too long
+                    throw;
+                }
+                catch (IOException)
+                {
+                    // other IO exceptions should be treated as retry
+                	Random rand = new Random();
+                    Thread.Sleep(rand.Next(50, 100));
+                }
+            }
+            return stream;
+		}
+
+		#endregion
+
+		#region ICloneable Members
+
+		public object Clone()
         {
             return new StudyStorageLocation(this);
         }
 
         #endregion
-
-
 
         #region IEquatable<StudyStorageLocation> Members
 
@@ -698,6 +712,5 @@ namespace ClearCanvas.ImageServer.Model
         }
 
         #endregion
-
     }
 }

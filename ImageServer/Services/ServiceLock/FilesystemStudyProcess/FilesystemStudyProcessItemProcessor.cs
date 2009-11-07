@@ -234,7 +234,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
 						String studyInstanceUid = studyDir.Name;
 						try
 						{
-							StudyStorageLocation location = LoadStorageLocation(partition.GetKey(), studyInstanceUid);
+							StudyStorageLocation location = LoadReadableStorageLocation(partition.GetKey(), studyInstanceUid);
 							if (location == null)
 							{
 								foreach (DirectoryInfo seriesDir in studyDir.GetDirectories())
@@ -267,7 +267,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
 									}
 								}
 
-								location = LoadStorageLocation(partition.GetKey(), studyInstanceUid);
+								location = LoadReadableStorageLocation(partition.GetKey(), studyInstanceUid);
 								if (location == null)
 									continue;
 							}
@@ -317,24 +317,27 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
         /// </summary>
         private void LoadRulesEngine()
         {
-            IServerPartitionEntityBroker broker = ReadContext.GetBroker<IServerPartitionEntityBroker>();
-            ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
-            IList<ServerPartition> partitions = broker.Find(criteria);
+			using (ExecutionContext context = new ExecutionContext())
+			{
+				IServerPartitionEntityBroker broker = context.ReadContext.GetBroker<IServerPartitionEntityBroker>();
+				ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
+				IList<ServerPartition> partitions = broker.Find(criteria);
 
-            foreach (ServerPartition partition in partitions)
-            {
-                ServerRulesEngine engine =
-                    new ServerRulesEngine(ServerRuleApplyTimeEnum.StudyProcessed, partition.GetKey());
-                _engines.Add(partition, engine);
+				foreach (ServerPartition partition in partitions)
+				{
+					ServerRulesEngine engine =
+						new ServerRulesEngine(ServerRuleApplyTimeEnum.StudyProcessed, partition.GetKey());
+					_engines.Add(partition, engine);
 
-                engine.Load();
+					engine.Load();
 
-            	engine =
-            		new ServerRulesEngine(ServerRuleApplyTimeEnum.StudyArchived, partition.GetKey());
-				_postArchivalEngines.Add(partition, engine);
+					engine =
+						new ServerRulesEngine(ServerRuleApplyTimeEnum.StudyArchived, partition.GetKey());
+					_postArchivalEngines.Add(partition, engine);
 
-				engine.Load();
-            }            
+					engine.Load();
+				}
+			}
         }
         #endregion
 

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,33 +29,19 @@
 
 #endregion
 
-using System;
-
 namespace ClearCanvas.ImageServer.Common.Exceptions
 {
-    /// <summary>
-    /// Represents the exception thrown when the study is online but the filesystem is missing or not writable.
-    /// </summary>
-    public class FilesystemNotWritableException : SopInstanceProcessingException
-    {
-
-        public string Path { get; set; }
-        public string Reason { get; set; }
-
-        public FilesystemNotWritableException()
-            : base("Study is online but the filesystem is no longer writable.")
+	public class StudyNotFoundException : SopInstanceProcessingException
+	{
+		public StudyNotFoundException(string studyInstanceUid)
+			   : base("Study not found: " + studyInstanceUid)
         {
+			StudyInstanceUid = studyInstanceUid;
         }
 
-        public FilesystemNotWritableException(string path) 
-            : base(String.Format("Filesystem is not writable: {0}", path))
-        {
-            Path = path;
-        }
-
-        public override string ToString()
-        {
-            return string.Format("{0} : {1}", Path, Reason);
-        }
-    }
+        /// <summary>
+        /// The study instance UID of the study that is nearline.
+        /// </summary>		
+        public string StudyInstanceUid { get; set; }
+	}
 }

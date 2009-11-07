@@ -35,6 +35,7 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -134,50 +135,53 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.ArchiveApplicationLog
 		{
 			try
 			{
-				string archivePath = Path.Combine(archiveFs.Filesystem.FilesystemPath, "ApplicationLog");
-
-				ApplicationLogSelectCriteria criteria = new ApplicationLogSelectCriteria();
-				criteria.Timestamp.SortAsc(0);
-				IApplicationLogEntityBroker broker = ReadContext.GetBroker<IApplicationLogEntityBroker>();
-				ApplicationLog firstLog = broker.FindOne(criteria);
-				if (firstLog == null)
-					return true;
-
-				DateTime currentCutOffTime = firstLog.Timestamp.AddMinutes(5);
-
-				int cachedDays = ServiceLockSettings.Default.ApplicationLogCachedDays;
-				if (cachedDays < 0) cachedDays = 0;
-
-				DateTime cutOffTime = Platform.Time.Date.AddDays(cachedDays * -1);
-
-				if (currentCutOffTime > cutOffTime)
-					return true;
-
-				using (
-					ImageServerLogWriter<ApplicationLog> writer =
-						new ImageServerLogWriter<ApplicationLog>(archivePath, "ApplicationLog"))
+				using (ExecutionContext context = new ExecutionContext())
 				{
-					while (currentCutOffTime < cutOffTime)
+					string archivePath = Path.Combine(archiveFs.Filesystem.FilesystemPath, "ApplicationLog");
+
+					ApplicationLogSelectCriteria criteria = new ApplicationLogSelectCriteria();
+					criteria.Timestamp.SortAsc(0);
+					IApplicationLogEntityBroker broker = context.ReadContext.GetBroker<IApplicationLogEntityBroker>();
+					ApplicationLog firstLog = broker.FindOne(criteria);
+					if (firstLog == null)
+						return true;
+
+					DateTime currentCutOffTime = firstLog.Timestamp.AddMinutes(5);
+
+					int cachedDays = ServiceLockSettings.Default.ApplicationLogCachedDays;
+					if (cachedDays < 0) cachedDays = 0;
+
+					DateTime cutOffTime = Platform.Time.Date.AddDays(cachedDays*-1);
+
+					if (currentCutOffTime > cutOffTime)
+						return true;
+
+					using (
+						ImageServerLogWriter<ApplicationLog> writer =
+							new ImageServerLogWriter<ApplicationLog>(archivePath, "ApplicationLog"))
 					{
-						if (!ArchiveTimeRange(writer, currentCutOffTime))
+						while (currentCutOffTime < cutOffTime)
+						{
+							if (!ArchiveTimeRange(writer, currentCutOffTime))
+							{
+								writer.FlushLog();
+								return false;
+							}
+							currentCutOffTime = currentCutOffTime.AddMinutes(5);
+						}
+
+						// Now flush the last potential 5 minutes.
+						if (!ArchiveTimeRange(writer, cutOffTime))
 						{
 							writer.FlushLog();
 							return false;
 						}
-						currentCutOffTime = currentCutOffTime.AddMinutes(5);
-					}
 
-					// Now flush the last potential 5 minutes.
-					if (!ArchiveTimeRange(writer, cutOffTime))
-					{
 						writer.FlushLog();
-						return false;
 					}
 
-					writer.FlushLog();
+					return true;
 				}
-
-				return true;
 			}
 			catch (Exception e)
 			{
@@ -186,61 +190,66 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.ArchiveApplicationLog
 			}
 		}
 
-		private bool ArchiveTimeRange(ImageServerLogWriter<ApplicationLog> writer, DateTime cutOffTime)
+		private static bool ArchiveTimeRange(ImageServerLogWriter<ApplicationLog> writer, DateTime cutOffTime)
 		{
 
 			ApplicationLogSelectCriteria criteria = new ApplicationLogSelectCriteria();
 			criteria.Timestamp.LessThan(cutOffTime);
 			criteria.Timestamp.SortAsc(0);
 
-			IApplicationLogEntityBroker broker = ReadContext.GetBroker<IApplicationLogEntityBroker>();
-
-			List<ServerEntityKey> keyList = new List<ServerEntityKey>(1000);
-			try
+			using (ExecutionContext context = new ExecutionContext())
 			{
-				broker.Find(criteria, delegate(ApplicationLog result)
-										{
-											keyList.Add(result.Key);
+				IApplicationLogEntityBroker broker = context.ReadContext.GetBroker<IApplicationLogEntityBroker>();
 
-											if (writer.WriteLog(result, result.Timestamp))
-											{
-												// The logs been flushed, delete the log entries cached.
-												// Purposely use a read context here, even though we're doing
-												// an update, so we don't use transaction wrappers, optimization
-												// is more important at this point.
-												using (
-													IReadContext update =
-														PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-												{
-													IApplicationLogEntityBroker updateBroker = update.GetBroker<IApplicationLogEntityBroker>();
-													foreach (ServerEntityKey key in keyList)
-														updateBroker.Delete(key);
-												}
-												keyList = new List<ServerEntityKey>(1000);
-											}
-										});
-
-				if (keyList.Count > 0)
+				List<ServerEntityKey> keyList = new List<ServerEntityKey>(1000);
+				try
 				{
-					// Purposely use a read context here, even though we're doing an update, so we 
-					// don't have to do an explicit commit and don't use transaction wrappers.
-					using (
-						IReadContext update =
-							PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-					{
-						IApplicationLogEntityBroker updateBroker = update.GetBroker<IApplicationLogEntityBroker>();
-						foreach (ServerEntityKey key in keyList)
-							updateBroker.Delete(key);
-					}
-				}
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e, "Unexpected exception when purging log files.");
-				return false;
-			}
+					broker.Find(criteria, delegate(ApplicationLog result)
+					                      	{
+					                      		keyList.Add(result.Key);
 
-			return true;
+					                      		if (writer.WriteLog(result, result.Timestamp))
+					                      		{
+					                      			// The logs been flushed, delete the log entries cached.
+					                      			// Purposely use a read context here, even though we're doing
+					                      			// an update, so we don't use transaction wrappers, optimization
+					                      			// is more important at this point.
+					                      			using (
+					                      				IReadContext update =
+					                      					PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+					                      			{
+					                      				IApplicationLogEntityBroker updateBroker =
+					                      					update.GetBroker<IApplicationLogEntityBroker>();
+					                      				foreach (ServerEntityKey key in keyList)
+					                      					updateBroker.Delete(key);
+					                      			}
+					                      			keyList = new List<ServerEntityKey>(1000);
+					                      		}
+					                      	});
+
+					if (keyList.Count > 0)
+					{
+						// Purposely use a read context here, even though we're doing an update, so we 
+						// don't have to do an explicit commit and don't use transaction wrappers.
+						using (
+							IReadContext update =
+								PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+						{
+							IApplicationLogEntityBroker updateBroker = update.GetBroker<IApplicationLogEntityBroker>();
+							foreach (ServerEntityKey key in keyList)
+								updateBroker.Delete(key);
+						}
+					}
+
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error, e, "Unexpected exception when purging log files.");
+					return false;
+				}
+
+				return true;
+			}
 		}
 
 	}

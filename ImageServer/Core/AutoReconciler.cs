@@ -88,9 +88,7 @@ namespace ClearCanvas.ImageServer.Core
         /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>
-        /// <exception cref="TargetStudyIsNearlineException">Thrown when the target study is currently nearline.</exception>
         /// <exception cref="TargetStudyInvalidStateException">Thrown when the target study is in invalid state and cannot be updated.</exception>
-        /// 
         public InstancePreProcessingResult Process(DicomFile file)
         {
             Platform.CheckForNullReference(file, "file");
@@ -163,10 +161,14 @@ namespace ClearCanvas.ImageServer.Core
 
         private AutoReconcilerResult ProcessImageAsIs(DicomFile file, StudyHistory lastHistory)
         {
-            bool restored;
             StudyStorage destinationStudy = StudyStorage.Load(lastHistory.DestStudyStorageKey);
-            StudyStorageLocation destStudy = ServerHelper.GetStudyOnlineStorageLocation(destinationStudy, out restored);
+        	StudyStorageLocation destStudy;
             AutoReconcilerResult preProcessingResult = new AutoReconcilerResult(StudyReconcileAction.ProcessAsIs);
+
+			//Load the destination.  An exception will be thrown if any issues are encountered.
+        	FilesystemMonitor.Instance.GetWritableStudyStorageLocation(destinationStudy.ServerPartitionKey,
+        	                                                           destinationStudy.StudyInstanceUid, StudyRestore.True,
+        	                                                           StudyCache.True, out destStudy);
 
             bool belongsToAnotherStudy = !destStudy.Equals(StorageLocation);
 
@@ -200,27 +202,21 @@ namespace ClearCanvas.ImageServer.Core
             string originalSopUid = file.DataSet[DicomTags.SopInstanceUid].ToString();
             
             AutoReconcilerResult preProcessingResult = null;
-            bool restored;
-            StudyStorageLocation destStudy;
+        	StudyStorageLocation destStudy;
             UidMapper uidMapper = null;
-            bool belongsToAnotherStudy;
-            if (lastHistory.DestStudyStorageKey != null)
+        	if (lastHistory.DestStudyStorageKey != null)
             {
                 StudyStorage destinationStudy = StudyStorage.Load(lastHistory.DestStudyStorageKey);
-                destStudy = ServerHelper.GetStudyOnlineStorageLocation(destinationStudy, out restored);
 
-                if (destStudy == null)
-                {
-                    throw new TargetStudyIsNearlineException
-                              {
-                                  StudyInstanceUid = destinationStudy.StudyInstanceUid,
-                                  RestoreRequested = restored
-                              };
-                }
+				//Load the destination.  An exception will be thrown if any issues are encountered.
+				FilesystemMonitor.Instance.GetWritableStudyStorageLocation(destinationStudy.ServerPartitionKey,
+																		   destinationStudy.StudyInstanceUid, 
+																		   StudyRestore.True, StudyCache.True, 
+																		   out destStudy);
 
                 EnsureStudyCanBeUpdated(destStudy);
 
-                belongsToAnotherStudy = !destStudy.Equals(StorageLocation);
+                bool belongsToAnotherStudy = !destStudy.Equals(StorageLocation);
 
                 ImageUpdateCommandBuilder commandBuilder = new ImageUpdateCommandBuilder();
                 IList<BaseImageLevelUpdateCommand> commands = commandBuilder.BuildCommands<StudyMatchingMap>(destStudy);
@@ -285,11 +281,6 @@ namespace ClearCanvas.ImageServer.Core
             if (!destStudy.CanUpdate(out reason))
             {
                 throw new TargetStudyInvalidStateException(reason) { StudyInstanceUid = destStudy.StudyInstanceUid };
-            }
-
-            if (!FilesystemMonitor.Instance.IsWritable(destStudy.FilesystemKey))
-            {
-                throw new FilesystemNotWritableException(destStudy.FilesystemPath);
             }
         }
 

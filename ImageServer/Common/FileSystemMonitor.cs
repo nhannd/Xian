@@ -35,7 +35,9 @@ using System.Collections.ObjectModel;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -46,6 +48,18 @@ using Timer=System.Threading.Timer;
 
 namespace ClearCanvas.ImageServer.Common
 {
+	public enum StudyRestore
+	{
+		True,
+		False
+	}
+
+	public enum StudyCache
+	{
+		True,
+		False
+	}
+
 	/// <summary>
 	/// Event args for partition monitor
 	/// </summary>
@@ -104,7 +118,7 @@ namespace ClearCanvas.ImageServer.Common
 	{
 		#region Private Static Members
 		private static FilesystemMonitor _singleton;
-		private static readonly object _lock = new object();
+		private static readonly object SyncLock = new object();
 		#endregion
 
 		#region Private Members
@@ -148,7 +162,7 @@ namespace ClearCanvas.ImageServer.Common
 			{
 				if (_singleton == null)
 				{
-					lock (_lock)
+					lock (SyncLock)
 					{
 						if (_singleton == null)
 						{
@@ -170,7 +184,7 @@ namespace ClearCanvas.ImageServer.Common
 		/// <returns></returns>
 		public IEnumerable<ServerFilesystemInfo> GetFilesystems()
 		{
-			lock (_lock)
+			lock (SyncLock)
 			{
                 // Return a list with copies of the current <see cref="ServerFilesystemInfo"/>
 			    return new FilesystemInfoCollection(_filesystemList.Values);
@@ -183,7 +197,7 @@ namespace ClearCanvas.ImageServer.Common
         /// <returns></returns>
         public IList<ServerFilesystemInfo> GetFilesystems(Predicate<ServerFilesystemInfo> filter)
         {
-            lock (_lock)
+            lock (SyncLock)
             {
                 FilesystemInfoCollection copy = new FilesystemInfoCollection(_filesystemList.Values);
                 CollectionUtils.Remove(copy, filter);
@@ -199,7 +213,7 @@ namespace ClearCanvas.ImageServer.Common
 		/// <returns>A <see cref="ServerFilesystemInfo"/> structure for the filesystem, or null if the filesystem ahs not been found.</returns>
 		public ServerFilesystemInfo GetFilesystemInfo(ServerEntityKey filesystemKey)
 		{
-			lock (_lock)
+			lock (SyncLock)
 			{
 				ServerFilesystemInfo info;
 				if (!_filesystemList.TryGetValue(filesystemKey, out info))
@@ -223,7 +237,7 @@ namespace ClearCanvas.ImageServer.Common
 		/// <returns></returns>
 		public float CheckFilesystemBytesToRemove(ServerEntityKey filesystemKey)
 		{
-			lock (_lock)
+			lock (SyncLock)
 			{
 				ServerFilesystemInfo info;
 				if (!_filesystemList.TryGetValue(filesystemKey, out info))
@@ -241,10 +255,12 @@ namespace ClearCanvas.ImageServer.Common
 		/// Check if a filesystem is writeable.
 		/// </summary>
 		/// <param name="filesystemKey"></param>
+		/// <param name="reason">The reason the filesystem is not writeable</param>
 		/// <returns></returns>
-		public bool CheckFilesystemWriteable(ServerEntityKey filesystemKey)
+		public bool CheckFilesystemWriteable(ServerEntityKey filesystemKey, out string reason)
 		{
-			lock (_lock)
+			reason = string.Empty;
+			lock (SyncLock)
 			{
 				ServerFilesystemInfo info;
 				if (!_filesystemList.TryGetValue(filesystemKey, out info))
@@ -253,7 +269,15 @@ namespace ClearCanvas.ImageServer.Common
 					_filesystemList.TryGetValue(filesystemKey, out info);
 				}
 				if (info != null)
-					return info.Writeable;
+				{
+					if (!info.Writeable)
+					{
+						if (!info.Enable)
+							reason = "Filesystem is disabled";
+						return false;
+					}
+					return true;
+				}
 			}
 			return false;
 		}
@@ -265,7 +289,7 @@ namespace ClearCanvas.ImageServer.Common
         /// <param name="location"></param>
         public void EnsureStorageLocationIsWritable(StudyStorageLocation location)
         {
-            ServerFilesystemInfo fs = Instance.GetFilesystemInfo(location.FilesystemKey);
+            ServerFilesystemInfo fs = GetFilesystemInfo(location.FilesystemKey);
 
             if (!fs.Enable)
                 throw new FilesystemNotWritableException(fs.Filesystem.FilesystemPath) { Reason = "It is disabled" };
@@ -286,10 +310,13 @@ namespace ClearCanvas.ImageServer.Common
 		/// Check if a filesystem is readable.
 		/// </summary>
 		/// <param name="filesystemKey"></param>
+		/// <param name="reason">The reason the filesystem isn't readable.</param>
 		/// <returns></returns>
-		public bool CheckFilesystemReadable(ServerEntityKey filesystemKey)
+		public bool CheckFilesystemReadable(ServerEntityKey filesystemKey, out string reason)
 		{
-			lock (_lock)
+			reason = string.Empty;
+
+			lock (SyncLock)
 			{
 				ServerFilesystemInfo info;
 				if (!_filesystemList.TryGetValue(filesystemKey, out info))
@@ -298,7 +325,18 @@ namespace ClearCanvas.ImageServer.Common
 					_filesystemList.TryGetValue(filesystemKey, out info);
 				}
 				if (info != null)
+				{
+					if (!info.Readable)
+					{
+						if (!info.Enable)
+							reason = "Filesystem is disabled";
+						else if (!info.Online)
+							reason = "Filesystem is not online";
+						else if (info.Filesystem.WriteOnly)
+							reason = "Filesystem is write only";
+					}
 					return info.Readable;
+				}
 			}
 			return false;
 		}
@@ -307,10 +345,12 @@ namespace ClearCanvas.ImageServer.Common
 		/// Check if a filesystem is online.
 		/// </summary>
 		/// <param name="filesystemKey">The filesystem primary Key</param>
+		/// <param name="reason">The reason the filesystem isn't online</param>
 		/// <returns></returns>
-		public bool CheckFilesystemOnline(ServerEntityKey filesystemKey)
+		public bool CheckFilesystemOnline(ServerEntityKey filesystemKey, out string reason)
 		{
-			lock (_lock)
+			reason = string.Empty;
+			lock (SyncLock)
 			{
 				ServerFilesystemInfo info;
 				if (!_filesystemList.TryGetValue(filesystemKey, out info))
@@ -319,24 +359,14 @@ namespace ClearCanvas.ImageServer.Common
 					_filesystemList.TryGetValue(filesystemKey, out info);
 				}
 				if (info != null)
+				{
+					if (!info.Online)
+						reason = "The filesystem is offline.";
 					return info.Online;
+				}
 			}
 			return false;
 		}
-
-		private List<FilesystemTierEnum> FindLowerTierFilesystems(ServerFilesystemInfo filesystem)
-		{
-		    List<FilesystemTierEnum> lowerTiers = new List<FilesystemTierEnum>();
-
-			foreach (FilesystemTierEnum tier in _tierInfo.Keys)
-			{
-				if (tier.Enum > filesystem.Filesystem.FilesystemTierEnum.Enum)
-                    lowerTiers.Add(tier);
-			}
-
-            return lowerTiers;
-		}
-
 
 		/// <summary>
 		/// Gets the first filesystem in lower tier for storage purpose.
@@ -345,7 +375,7 @@ namespace ClearCanvas.ImageServer.Common
 		/// <returns></returns>
 		public ServerFilesystemInfo GetLowerTierFilesystemForStorage(ServerFilesystemInfo filesystem)
 		{
-            lock(_lock)
+            lock(SyncLock)
             {
                 List<FilesystemTierEnum> lowerTiers = FindLowerTierFilesystems(filesystem);
                 if (lowerTiers == null || lowerTiers.Count == 0)
@@ -356,7 +386,7 @@ namespace ClearCanvas.ImageServer.Common
                 {
                     list.AddRange(_tierInfo[tier]);
                 }
-                CollectionUtils.Remove(list, delegate(ServerFilesystemInfo fs) { return !fs.Writeable; });
+                CollectionUtils.Remove(list, fs => !fs.Writeable);
                 list = CollectionUtils.Sort(list, FilesystemSorter.SortByFreeSpace);
                 ServerFilesystemInfo lowtierFilesystem= CollectionUtils.FirstElement(list);
 				if (lowtierFilesystem == null)
@@ -367,105 +397,248 @@ namespace ClearCanvas.ImageServer.Common
 		}
 
 		/// <summary>
-		/// Gets the first filesystem in lower tier for storage purpose.
+		/// Retrieves the storage location from the database for the specified study.  Checks if the filesystem is readable.
 		/// </summary>
-		/// <param name="context">A database read context to use for search</param>
-		/// <param name="location">The output storage location</param>
-		/// <param name="partitionKey">The primark key of the ServerPartition table.</param>
-		/// <param name="studyInstanceUid">The Study Instance UID of the study</param>
-		/// <param name="cacheValue">Specify if the value will be cached for future retrieval.</param>
-		/// <returns></returns>
-		public bool GetOnlineStudyStorageLocation(IPersistenceContext context, ServerEntityKey partitionKey, string studyInstanceUid, bool cacheValue, out StudyStorageLocation location)
+		/// <param name="partitionKey"></param>
+		/// <param name="studyInstanceUid"></param>
+		/// <param name="restore"></param>
+		/// <param name="cache"></param>
+		/// <param name="location"></param>
+		public void GetReadableStudyStorageLocation(ServerEntityKey partitionKey, string studyInstanceUid, StudyRestore restore, StudyCache cache,
+					out StudyStorageLocation location)
 		{
-			location = _storageLocationCache.GetCachedStudy(partitionKey, studyInstanceUid);
-			if (location != null)
+			using (ExecutionContext context = new ExecutionContext())
 			{
-				if (CheckFilesystemOnline(location.FilesystemKey))
-					return true;
-
-				location = null;
-				return false;
-			}
-
-			IQueryStudyStorageLocation procedure = context.GetBroker<IQueryStudyStorageLocation>();
-			StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters
-			                                            	{
-			                                            		ServerPartitionKey = partitionKey,
-			                                            		StudyInstanceUid = studyInstanceUid
-			                                            	};
-			IList<StudyStorageLocation> locationList = procedure.Find(parms);
-
-			foreach (StudyStorageLocation studyLocation in locationList)
-			{
-				if (CheckFilesystemOnline(studyLocation.FilesystemKey))
+				// Get the cached value, if it exists, otherwise fall down and recheck
+				// and handle any nearline issues below
+				location = _storageLocationCache.GetCachedStudy(partitionKey, studyInstanceUid);
+				if (location != null)
 				{
-					location = studyLocation;
-					if (cacheValue)
-						_storageLocationCache.AddCachedStudy(location);
-					return true;
+					string reason;
+					if (CheckFilesystemReadable(location.FilesystemKey, out reason))
+					{
+						return;
+					}
 				}
-			}
 
-			//Platform.Log(LogLevel.Error, "Unable to find readable StudyStorageLocation for study.");
-		    return false;
-		}
+				IQueryStudyStorageLocation procedure = context.ReadContext.GetBroker<IQueryStudyStorageLocation>();
+				StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters
+				                                            	{
+				                                            		StudyInstanceUid = studyInstanceUid,
+				                                            		ServerPartitionKey = partitionKey
+				                                            	};
+				IList<StudyStorageLocation> locationList = procedure.Find(parms);
 
-		/// <summary>
-		/// Retrieves the storage location from the database for the specified study.  Checks if the filesystem is online.
-		/// </summary>
-		/// <param name="studyInstanceUid">The Study to check for.</param>
-		/// <param name="location">The returned storage location.</param>
-		/// <param name="partitionKey">The key for the server partition.</param>
-		/// <param name="cacheValue">Specify if the value will be cached for future retrieval.</param>
-		/// <returns>true if a location was found, false otherwise.</returns>
-		public bool GetOnlineStudyStorageLocation(ServerEntityKey partitionKey, string studyInstanceUid, bool cacheValue, out StudyStorageLocation location)
-		{
-			using (IReadContext read = _store.OpenReadContext())
-			{
-				return GetOnlineStudyStorageLocation(read, partitionKey, studyInstanceUid, cacheValue, out location);
+				bool foundStudy = false;
+
+				FilesystemNotReadableException x = new FilesystemNotReadableException();
+
+				foreach (StudyStorageLocation studyLocation in locationList)
+				{
+					string reason;
+					if (CheckFilesystemReadable(studyLocation.FilesystemKey, out reason))
+					{
+						location = studyLocation;
+
+						if (cache == StudyCache.True)
+							_storageLocationCache.AddCachedStudy(location);
+
+						return;
+					}
+					foundStudy = true;
+					x.Path = studyLocation.FilesystemPath;
+					x.Reason = reason;
+				}
+
+				if (foundStudy)
+					throw x;
+
+				CheckForStudyRestore(context.ReadContext, partitionKey, studyInstanceUid, restore);
 			}
 		}
 
 		/// <summary>
 		/// Retrieves the storage location from the database for the specified study storage key.  Checks if the filesystem is online.
 		/// </summary>
-		/// <param name="context"></param>
 		/// <param name="studyStorageKey"></param>
 		/// <param name="location"></param>
 		/// <returns></returns>
-        public bool GetOnlineStudyStorageLocation(IPersistenceContext context, ServerEntityKey studyStorageKey, out StudyStorageLocation location)
+		public bool GetReadableStudyStorageLocation(ServerEntityKey studyStorageKey, out StudyStorageLocation location)
 		{
-			IQueryStudyStorageLocation procedure = context.GetBroker<IQueryStudyStorageLocation>();
-			StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters
-			                                            	{StudyStorageKey = studyStorageKey};
-			IList<StudyStorageLocation> locationList = procedure.Find(parms);
-
-			foreach (StudyStorageLocation studyLocation in locationList)
+			using (ExecutionContext context = new ExecutionContext())
 			{
-				if (CheckFilesystemOnline(studyLocation.FilesystemKey))
-				{
-					location = studyLocation;
-					return true;
-				}
-			}
+				IQueryStudyStorageLocation procedure = context.ReadContext.GetBroker<IQueryStudyStorageLocation>();
+				StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters
+				                                            	{StudyStorageKey = studyStorageKey};
+				IList<StudyStorageLocation> locationList = procedure.Find(parms);
 
-            // TODO: throw new FilesystemIsNotWritableException();
-			location = null;
-			return false;
+				foreach (StudyStorageLocation studyLocation in locationList)
+				{
+					string reason;
+					if (CheckFilesystemReadable(studyLocation.FilesystemKey, out reason))
+					{
+						location = studyLocation;
+						return true;
+					}
+				}
+
+				// TODO: throw new FilesystemIsNotReadableException();
+				location = null;
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Retrieves the storage location from the database for the specified study.  Checks if the filesystem is writable.
+		/// </summary>
+		/// <param name="location">The output storage location</param>
+		/// <param name="partitionKey">The primark key of the ServerPartition table.</param>
+		/// <param name="studyInstanceUid">The Study Instance UID of the study</param>
+		/// <param name="cache">Should the study location be cached?</param>
+		/// <param name="restore">If nearline, should the study be restored?</param>
+		/// <returns></returns>
+		public void GetWritableStudyStorageLocation(ServerEntityKey partitionKey, string studyInstanceUid, StudyRestore restore, StudyCache cache, out StudyStorageLocation location)
+		{
+			using (ExecutionContext context = new ExecutionContext())
+			{
+				string reason;
+
+				location = _storageLocationCache.GetCachedStudy(partitionKey, studyInstanceUid);
+				if (location != null)
+				{
+					if (CheckFilesystemWriteable(location.FilesystemKey, out reason))
+						return;
+				}
+
+				IQueryStudyStorageLocation procedure = context.ReadContext.GetBroker<IQueryStudyStorageLocation>();
+				StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters
+				                                            	{
+				                                            		ServerPartitionKey = partitionKey,
+				                                            		StudyInstanceUid = studyInstanceUid
+				                                            	};
+				IList<StudyStorageLocation> locationList = procedure.Find(parms);
+
+				bool found = false;
+				FilesystemNotWritableException x = new FilesystemNotWritableException();
+
+				foreach (StudyStorageLocation studyLocation in locationList)
+				{
+					if (CheckFilesystemWriteable(studyLocation.FilesystemKey, out reason))
+					{
+						location = studyLocation;
+						if (cache == StudyCache.True)
+							_storageLocationCache.AddCachedStudy(location);
+						return;
+					}
+					found = true;
+					x.Reason = reason;
+					x.Path = studyLocation.StudyFolder;
+				}
+
+				if (found)
+					throw x;
+
+				CheckForStudyRestore(context.ReadContext, partitionKey, studyInstanceUid, restore);
+			}
 		}
 
 		/// <summary>
 		/// Retrieves the storage location from the database for the specified study storage key.  Checks if the filesystem is online.
 		/// </summary>
-		/// <param name="studyStorageKey">The study storage key to get a location for.</param>
-		/// <param name="location">The returned storage location.</param>
-		/// <returns>true if a location was found, false otherwise.</returns>
-		public bool GetOnlineStudyStorageLocation(ServerEntityKey studyStorageKey, out StudyStorageLocation location)
+		/// <param name="studyStorageKey"></param>
+		/// <param name="location"></param>
+		/// <returns></returns>
+        public bool GetWritableStudyStorageLocation(ServerEntityKey studyStorageKey, out StudyStorageLocation location)
 		{
-			using (IReadContext read = _store.OpenReadContext())
+			using (ExecutionContext context = new ExecutionContext())
 			{
-				return GetOnlineStudyStorageLocation(read, studyStorageKey, out location);
+				IQueryStudyStorageLocation procedure = context.ReadContext.GetBroker<IQueryStudyStorageLocation>();
+				StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters
+				                                            	{StudyStorageKey = studyStorageKey};
+				IList<StudyStorageLocation> locationList = procedure.Find(parms);
+
+				foreach (StudyStorageLocation studyLocation in locationList)
+				{
+					string reason;
+					if (CheckFilesystemOnline(studyLocation.FilesystemKey, out reason))
+					{
+						location = studyLocation;
+						return true;
+					}
+				}
+
+				// TODO: throw new FilesystemIsNotWritableException();
+				location = null;
+				return false;
 			}
+		}
+
+		/// <summary>
+		/// Checks for a storage location for the study in the database, and creates a new location
+		/// in the database if it doesn't exist.
+		/// </summary>
+		/// <param name="partition">The partition where the study is being sent to</param>
+		/// <param name="created"></param>
+		/// <param name="studyDate"></param>
+		/// <param name="studyInstanceUid"></param>
+		/// <param name="syntax"></param>
+		/// <param name="updateContext">The update context to create the study on</param>
+		/// <returns>A <see cref="StudyStorageLocation"/> instance.</returns>
+		public StudyStorageLocation GetOrCreateWritableStudyStorageLocation(string studyInstanceUid, string studyDate, TransferSyntax syntax, IUpdateContext updateContext, ServerPartition partition, out bool created)
+		{
+			created = false;
+
+			StudyStorageLocation location;
+			try
+			{
+				GetWritableStudyStorageLocation(partition.Key, studyInstanceUid, StudyRestore.True,
+				                                StudyCache.True, out location);
+				return location;
+			}
+			catch (StudyNotFoundException)
+			{
+			}
+
+			FilesystemSelector selector = new FilesystemSelector(Instance);
+			ServerFilesystemInfo filesystem = selector.SelectFilesystem();
+			if (filesystem == null)
+			{
+				throw new NoWritableFilesystemException();
+			}
+
+			IInsertStudyStorage locInsert = updateContext.GetBroker<IInsertStudyStorage>();
+			InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters
+			                                           	{
+			                                           		ServerPartitionKey = partition.GetKey(),
+			                                           		StudyInstanceUid = studyInstanceUid,
+			                                           		Folder =
+			                                           			ResolveStorageFolder(partition.Key, studyInstanceUid, studyDate,
+			                                           			                     updateContext, false
+			                                           			/* set to false for optimization because we are sure it's not in the system */),
+			                                           		FilesystemKey = filesystem.Filesystem.GetKey(),
+			                                           		QueueStudyStateEnum = QueueStudyStateEnum.Idle
+			                                           	};
+
+			if (syntax.LosslessCompressed)
+			{
+				insertParms.TransferSyntaxUid = syntax.UidString;
+				insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossless;
+			}
+			else if (syntax.LossyCompressed)
+			{
+				insertParms.TransferSyntaxUid = syntax.UidString;
+				insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossy;
+			}
+			else
+			{
+				insertParms.TransferSyntaxUid = TransferSyntax.ExplicitVrLittleEndianUid;
+				insertParms.StudyStatusEnum = StudyStatusEnum.Online;
+			}
+
+			location = locInsert.FindOne(insertParms);
+			created = true;
+
+			return location;
 		}
 
 		/// <summary>
@@ -476,33 +649,33 @@ namespace ClearCanvas.ImageServer.Common
 		/// <returns>true on a found writeable path, false on failure or no writeable path</returns>
 		public bool GetWriteableIncomingFolder(ServerPartition partition, out string folder)
 		{
-			using (IReadContext read = _store.OpenReadContext())
+			using (ExecutionContext context = new ExecutionContext())
 			{
-				IServiceLockEntityBroker broker = read.GetBroker<IServiceLockEntityBroker>();
+				IServiceLockEntityBroker broker = context.ReadContext.GetBroker<IServiceLockEntityBroker>();
 				ServiceLockSelectCriteria criteria = new ServiceLockSelectCriteria();
 				criteria.ServiceLockTypeEnum.EqualTo(ServiceLockTypeEnum.ImportFiles);
 
 				IList<ServiceLock> rows = broker.Find(criteria);
-
 				foreach (ServiceLock serviceLock in rows)
 				{
-					if (!serviceLock.Enabled) 
+					if (!serviceLock.Enabled)
 						continue;
 
-					if (!CheckFilesystemOnline(serviceLock.FilesystemKey))
+					string reason;
+					if (!CheckFilesystemOnline(serviceLock.FilesystemKey, out reason))
 						continue;
 
-					if (!CheckFilesystemWriteable(serviceLock.FilesystemKey))
+					if (!CheckFilesystemWriteable(serviceLock.FilesystemKey, out reason))
 						continue;
 
 					String incomingFolder = String.Format("{0}_{1}", partition.PartitionFolder, ImportDirectorySuffix);
 					folder = serviceLock.Filesystem.GetAbsolutePath(incomingFolder);
 					return true;
 				}
-			}
 
-			folder = string.Empty;
-			return false;
+				folder = string.Empty;
+				return false;
+			}
 		}
 
         /// <summary>
@@ -526,7 +699,7 @@ namespace ClearCanvas.ImageServer.Common
 		/// </summary>
 		private void Initialize()
 		{
-			lock (_lock)
+			lock (SyncLock)
 			{
 				LoadFilesystems();
                 StringBuilder log = new StringBuilder();
@@ -566,7 +739,7 @@ namespace ClearCanvas.ImageServer.Common
 		{
 			bool changed = false;
 
-			lock (_lock)
+			lock (SyncLock)
 			{
                 try
                 {
@@ -632,7 +805,7 @@ namespace ClearCanvas.ImageServer.Common
 			// while we're doing this.  
 			IList<ServerFilesystemInfo> tempList;
 
-			lock (_lock)
+			lock (SyncLock)
 			{
 				tempList = new List<ServerFilesystemInfo>(_filesystemList.Count);
 
@@ -646,6 +819,87 @@ namespace ClearCanvas.ImageServer.Common
 			{
 				info.LoadFreeSpace();
 			}
+		}
+
+		/// <summary>
+		/// Returns the name of the directory in the filesytem
+		/// where the study with the specified information will be stored.
+		/// </summary>
+		/// <returns></returns>
+		/// 
+		private static string ResolveStorageFolder(ServerEntityKey partitionKey, string studyInstanceUid, string studyDate, IPersistenceContext persistenceContext, bool checkExisting)
+		{
+			string folder;
+
+			if (checkExisting)
+			{
+				StudyStorage storage = StudyStorage.Load(persistenceContext, partitionKey, studyInstanceUid);
+				if (storage != null)
+				{
+					folder = ImageServerCommonConfiguration.UseReceiveDateAsStudyFolder
+								 ? storage.InsertTime.ToString("yyyyMMdd")
+								 : String.IsNullOrEmpty(studyDate)
+									   ? ImageServerCommonConfiguration.DefaultStudyRootFolder
+									   : studyDate;
+					return folder;
+				}
+			}
+
+			folder = ImageServerCommonConfiguration.UseReceiveDateAsStudyFolder
+						 ? Platform.Time.ToString("yyyyMMdd")
+						 : String.IsNullOrEmpty(studyDate)
+							   ? ImageServerCommonConfiguration.DefaultStudyRootFolder
+							   : studyDate;
+			return folder;
+		}
+
+		/// <summary>
+		/// Find lower tier filesystems.
+		/// </summary>
+		/// <param name="filesystem"></param>
+		/// <returns></returns>
+		private List<FilesystemTierEnum> FindLowerTierFilesystems(ServerFilesystemInfo filesystem)
+		{
+			List<FilesystemTierEnum> lowerTiers = new List<FilesystemTierEnum>();
+
+			foreach (FilesystemTierEnum tier in _tierInfo.Keys)
+			{
+				if (tier.Enum > filesystem.Filesystem.FilesystemTierEnum.Enum)
+					lowerTiers.Add(tier);
+			}
+
+			return lowerTiers;
+		}
+
+		/// <summary>
+		/// Check if a study is nearline and restore if requested.
+		/// </summary>
+		/// <param name="context"></param>
+		/// <param name="partitionKey"></param>
+		/// <param name="studyInstanceUid"></param>
+		/// <param name="restore"></param>
+		private static void CheckForStudyRestore(IPersistenceContext context, ServerEntityKey partitionKey, string studyInstanceUid, StudyRestore restore)
+		{
+			IStudyStorageEntityBroker selectBroker = context.GetBroker<IStudyStorageEntityBroker>();
+			StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
+
+			criteria.ServerPartitionKey.EqualTo(partitionKey);
+			criteria.StudyInstanceUid.EqualTo(studyInstanceUid);
+
+			StudyStorage storage = selectBroker.FindOne(criteria);
+			if (storage != null)
+			{
+				if (restore == StudyRestore.True)
+				{
+					RestoreQueue restoreRq = storage.InsertRestoreRequest();
+					if (restoreRq != null)
+						throw new StudyIsNearlineException(true);
+				}
+
+				throw new StudyIsNearlineException(false);
+			}
+
+			throw new StudyNotFoundException(studyInstanceUid);
 		}
 
 		#endregion

@@ -36,8 +36,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -52,113 +50,7 @@ namespace ClearCanvas.ImageServer.Core
     /// </summary>
     public static class ServerHelper
     {
-        /// <summary>
-        /// Returns the name of the directory in the filesytem
-        /// where the study with the specified information will be stored.
-        /// </summary>
-        /// <returns></returns>
-        /// 
-        public static string ResolveStorageFolder(ServerPartition partition, string studyInstanceUid, string studyDate, IPersistenceContext persistenceContext,bool checkExisting)
-        {
-            string folder;
-
-            if (checkExisting)
-            {
-                StudyStorage storage = StudyStorage.Load(persistenceContext, partition.Key, studyInstanceUid);
-                if (storage != null)
-                {
-                    folder = ImageServerCommonConfiguration.UseReceiveDateAsStudyFolder
-                                 ? storage.InsertTime.ToString("yyyyMMdd")
-                                 : String.IsNullOrEmpty(studyDate)
-                                       ? ImageServerCommonConfiguration.DefaultStudyRootFolder
-                                       : studyDate;
-                    return folder;
-                }
-            }
-
-            folder = ImageServerCommonConfiguration.UseReceiveDateAsStudyFolder
-                         ? Platform.Time.ToString("yyyyMMdd")
-                         : String.IsNullOrEmpty(studyDate)
-                               ? ImageServerCommonConfiguration.DefaultStudyRootFolder
-                               : studyDate;
-            return folder;
-        }
-
-        /// <summary>
-        /// Checks for a storage location for the study in the database, and creates a new location
-        /// in the database if it doesn't exist.
-        /// </summary>
-        /// <param name="message">The DICOM message to create the storage location for.</param>
-        /// <param name="partition">The partition where the study is being sent to</param>
-        /// <returns>A <see cref="StudyStorageLocation"/> instance.</returns>
-		static public StudyStorageLocation GetWritableStudyStorageLocation(DicomMessageBase message, ServerPartition partition)
-        {
-        	String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
-        	String studyDate = message.DataSet[DicomTags.StudyDate].GetString(0, "");
-
-        	StudyStorageLocation location;
-        	if (
-        		!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(partition.Key, studyInstanceUid, true, out location))
-        	{
-        		using (
-        			IUpdateContext updateContext =
-        				PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-        		{
-        			StudyStorage storage = StudyStorage.Load(updateContext, partition.Key, studyInstanceUid);
-        			if (storage != null)
-        			{
-        				Platform.Log(LogLevel.Warn, "Study in {0} state.  Rejecting image.", storage.StudyStatusEnum.Description);
-        				return null;
-        			}
-
-        			FilesystemSelector selector = new FilesystemSelector(FilesystemMonitor.Instance);
-        			ServerFilesystemInfo filesystem = selector.SelectFilesystem(message);
-        			if (filesystem == null)
-        			{
-        				throw new NoWritableFilesystemException();
-        			}
-
-        			IInsertStudyStorage locInsert = updateContext.GetBroker<IInsertStudyStorage>();
-        			InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters
-        			                                           	{
-        			                                           		ServerPartitionKey = partition.GetKey(),
-        			                                           		StudyInstanceUid = studyInstanceUid,
-        			                                           		Folder =
-        			                                           			ResolveStorageFolder(partition, studyInstanceUid, studyDate,
-        			                                           			                     updateContext, false
-        			                                           			/* set to false for optimization because we are sure it's not in the system */),
-        			                                           		FilesystemKey = filesystem.Filesystem.GetKey(),
-        			                                           		QueueStudyStateEnum = QueueStudyStateEnum.Idle
-        			                                           	};
-
-        			if (message.TransferSyntax.LosslessCompressed)
-        			{
-        				insertParms.TransferSyntaxUid = message.TransferSyntax.UidString;
-        				insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossless;
-        			}
-        			else if (message.TransferSyntax.LossyCompressed)
-        			{
-        				insertParms.TransferSyntaxUid = message.TransferSyntax.UidString;
-        				insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossy;
-        			}
-        			else
-        			{
-        				insertParms.TransferSyntaxUid = TransferSyntax.ExplicitVrLittleEndianUid;
-        				insertParms.StudyStatusEnum = StudyStatusEnum.Online;
-        			}
-
-        			location = locInsert.FindOne(insertParms);
-
-        			updateContext.Commit();
-        		}
-        	}
-
-			if (location.ReadOnly)
-				throw new FilesystemNotWritableException(String.Format("Filesystem {0} is readonly", location.FilesystemPath));
-
-        	return location;
-        }
-
+     
     	/// <summary>
         /// Insert a request to restore the specified <seealso cref="StudyStorage"/>
         /// </summary>
@@ -340,31 +232,6 @@ namespace ClearCanvas.ImageServer.Core
             return FindStudyHistories(studyStorage, null);
         }
 
-		/// <summary>
-		/// Gets the storage location or requests a restore if the Study is nearline.
-		/// </summary>
-		/// <param name="studyStorage"></param>
-		/// <param name="restoreRequested"></param>
-		/// <returns></returns>
-        static public StudyStorageLocation GetStudyOnlineStorageLocation(StudyStorage studyStorage, out bool restoreRequested)
-        {
-            restoreRequested = false;
-
-            //Load a list of locations from the db
-            IList<StudyStorageLocation> locations = StudyStorageLocation.FindStorageLocations(studyStorage);
-            if (locations == null || locations.Count==0)
-            {
-                if (studyStorage.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
-                {
-                    RestoreQueue restoreQueue = InsertRestoreRequest(studyStorage);
-                    restoreRequested = restoreQueue != null;
-                }
-                return null;
-            }
-
-            return locations[0];
-        }
-
         /// <summary>
         /// Gets a string value that represents the group ID for a <see cref="DicomFile"/> based on
         /// the source/destination AE title and the application-provided timestamp.
@@ -381,26 +248,6 @@ namespace ClearCanvas.ImageServer.Core
                                      ? partition.AeTitle
                                      : file.SourceApplicationEntityTitle,
                                      timestamp!=null? timestamp.Value.ToString("yyyyMMddHHmmss"): Platform.Time.ToString("yyyyMMddHHmmss"));
-        }
-
-        /// <summary>
-        /// Returns all <see cref="StudyStorageLocation"/> of a study.
-        /// </summary>
-        /// <param name="partition"></param>
-        /// <param name="studyInstanceUid"></param>
-        /// <returns></returns>
-        public static IList<StudyStorageLocation> FindStudyStorages(ServerPartition partition, string studyInstanceUid)
-        {
-            Platform.CheckForNullReference(partition,"partition");
-            Platform.CheckForEmptyString(studyInstanceUid, "studyInstanceUid");
-            
-            using(ExecutionContext context = new ExecutionContext())
-            {
-                StudyStorage storage = StudyStorage.Load(context.PersistenceContext, partition.Key, studyInstanceUid);
-                if (storage != null)
-                    return StudyStorageLocation.FindStorageLocations(context.PersistenceContext, storage);
-            	return null;
-            }
         }
 
         /// <summary>

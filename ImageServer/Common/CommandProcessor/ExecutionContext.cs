@@ -43,6 +43,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
     public class ExecutionContext: IDisposable
     {
         #region Private Fields
+
         [ThreadStatic]
         private static ExecutionContext _current;
         protected string _backupDirectory;
@@ -163,6 +164,9 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             {
                 lock(SyncRoot)
                 {
+					if (_inheritFrom != null)
+						return _inheritFrom.ReadContext;
+
                     if (_readContext == null)
                         _readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
                 }
@@ -175,12 +179,11 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         {
             get
             {
-                if (_persistenceContext != null)
+            	if (_persistenceContext != null)
                     return _persistenceContext;
-                else
-                    return ReadContext;
+            	return ReadContext;
             }
-            set
+        	set
             {
                 _persistenceContext = value;
             }

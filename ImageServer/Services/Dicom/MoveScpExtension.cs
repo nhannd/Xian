@@ -40,7 +40,7 @@ using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Core;
+using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
@@ -105,20 +105,28 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             IList<Study> studyList = select.Find(criteria);
 
-
+        	bool bOfflineFound = false;
             foreach (Study study in studyList)
             {
                 StudyStorageLocation location;
-                
-                if (false == FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(Partition.Key, study.StudyInstanceUid, true, out location))
-                    return false;
 
-                StudyXml theStream = LoadStudyXml(location);
+				try
+				{
+					FilesystemMonitor.Instance.GetReadableStudyStorageLocation(Partition.Key, study.StudyInstanceUid,
+					                                                           StudyRestore.True, StudyCache.True, out location);
+				}
+				catch (Exception)
+				{
+					bOfflineFound = true;
+					continue;
+				}
+
+            	StudyXml theStream = LoadStudyXml(location);
 
                 _theScu.LoadStudyFromStudyXml(location.GetStudyPath(), theStream);
             }
 
-            return true;
+            return !bOfflineFound;
         }
 
         /// <summary>
@@ -137,25 +145,27 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             {
                 StudyStorageLocation location;
 
-				if (false == FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(Partition.Key, studyInstanceUid, true, out location))
+            	try
+            	{
+            		FilesystemMonitor.Instance.GetReadableStudyStorageLocation(Partition.Key, studyInstanceUid,
+            		                                                           StudyRestore.True, StudyCache.True,
+            		                                                           out location);
+            	}
+            	catch (StudyIsNearlineException e)
+            	{
+					if (e.RestoreRequested)
+						Platform.Log(LogLevel.Info, "Inserted Restore request for nearline study {0}", studyInstanceUid);
+					else						
+						Platform.Log(LogLevel.Error, "Unable to insert RestoreQueue entry for study {0}", studyInstanceUid);
+					
+					bOfflineFound = true;
+					continue;
+            	}
+				catch (Exception e)
 				{
-					StudyStorage studyStorage;
-					if (!GetStudyStatus(studyInstanceUid, out studyStorage))
-					{
-						return false;
-					}
-					if (studyStorage.StudyStatusEnum == StudyStatusEnum.Nearline)
-					{
-						if (null == ServerHelper.InsertRestoreRequest(studyStorage))
-						{
-							Platform.Log(LogLevel.Error, "Unable to insert RestoreQueue entry for study {0}", studyStorage.StudyInstanceUid);
-							return false;
-						}
-						bOfflineFound = true;
-						Platform.Log(LogLevel.Info, "Inserted Restore request for nearline study {0}", studyStorage.StudyInstanceUid);
-						continue;
-					}
-					return false;
+					Platform.Log(LogLevel.Error, e, "Unexpected exception getting readable storage location");
+					bOfflineFound = true;
+					continue;
 				}
 
 				StudyXml theStream = LoadStudyXml(location);
@@ -183,25 +193,25 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             // Now get the storage location
             StudyStorageLocation location;
 
-			if (false == FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(Partition.Key, studyInstanceUid, true, out location))
-            {
-				StudyStorage studyStorage;
-				if (!GetStudyStatus(studyInstanceUid, out studyStorage))
-				{
-					return false;
-				}
-            	if (studyStorage.StudyStatusEnum == StudyStatusEnum.Nearline)
-            	{
-            		if (null == ServerHelper.InsertRestoreRequest(studyStorage))
-            		{
-            			Platform.Log(LogLevel.Error, "Unable to insert RestoreQueue entry for study {0}", studyStorage.StudyInstanceUid);
-            			return false;
-            		}
-            		Platform.Log(LogLevel.Info, "Inserted Restore request for nearline study {0}", studyStorage.StudyInstanceUid);
-            		return false;
-            	}
-            	return false;
-            }
+			try
+			{
+				FilesystemMonitor.Instance.GetReadableStudyStorageLocation(Partition.Key, studyInstanceUid, StudyRestore.True,
+				                                                           StudyCache.True, out location);
+			}
+			catch(StudyIsNearlineException e)
+			{
+				if (e.RestoreRequested)
+					Platform.Log(LogLevel.Info, "Inserted Restore request for nearline study {0}", studyInstanceUid);
+				else
+					Platform.Log(LogLevel.Error, "Unable to insert RestoreQueue entry for study {0}", studyInstanceUid);
+            		
+				return false;
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e, "Unexpected exception getting readable storage location");
+				return false;
+			}
 
 			IStudyEntityBroker select = persistenceContext.GetBroker<IStudyEntityBroker>();
 
@@ -234,23 +244,22 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             // Now get the storage location
             StudyStorageLocation location;
 
-			if (false == FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(Partition.Key, studyInstanceUid, true, out location))
+			try
 			{
-				StudyStorage studyStorage;
-				if (!GetStudyStatus(studyInstanceUid, out studyStorage))
-				{
-					return false;
-				}
-				if (studyStorage.StudyStatusEnum == StudyStatusEnum.Nearline)
-				{
-					if (null == ServerHelper.InsertRestoreRequest(studyStorage))
-					{
-						Platform.Log(LogLevel.Error, "Unable to insert RestoreQueue entry for study {0}", studyStorage.StudyInstanceUid);
-						return false;
-					}
-					Platform.Log(LogLevel.Info, "Inserted Restore request for nearline study {0}", studyStorage.StudyInstanceUid);
-					return false;
-				}
+				FilesystemMonitor.Instance.GetReadableStudyStorageLocation(Partition.Key, studyInstanceUid, StudyRestore.True,
+																		   StudyCache.True, out location);
+			}
+			catch (StudyIsNearlineException e)
+			{
+				if (e.RestoreRequested)
+					Platform.Log(LogLevel.Info, "Inserted Restore request for nearline study {0}", studyInstanceUid);
+				else
+					Platform.Log(LogLevel.Error, "Unable to insert RestoreQueue entry for study {0}", studyInstanceUid);
+				return false;
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e, "Unable to get readable storage location");
 				return false;
 			}
 

@@ -33,7 +33,6 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
@@ -119,21 +118,6 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
 
 		#region Public Methods
 
-		private static void CheckNearline(string studyInstanceUid, ServerPartition partition)
-		{
-			StudyStorage storage = StudyStorage.Load(partition.Key, studyInstanceUid);
-            
-            if (storage==null)
-            {
-                throw new StudyNotFoundException(String.Format(SR.FaultNotExists, studyInstanceUid, partition.AeTitle));
-            }
-
-			if (storage.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
-			{
-				ServerHelper.InsertRestoreRequest(storage);
-			}
-		}
-
         /// <summary>
         /// Finds the <see cref="StudyStorageLocation"/> for the specified study
         /// </summary>
@@ -147,11 +131,9 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
             StudyStorageLocation location;
             if (!CacheEnabled)
             {
-				if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(partition.Key, studyInstanceUid, false, out location))
-				{
-					CheckNearline(studyInstanceUid, partition);
-				    throw new StudyNotOnlineException();
-				}
+            	FilesystemMonitor.Instance.GetReadableStudyStorageLocation(partition.Key, studyInstanceUid,
+            	                                                           StudyRestore.True, StudyCache.False,
+            	                                                           out location);
             }
             else
             {
@@ -163,9 +145,8 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
 
                     if (cache == null)
                     {
-                        cache = new StudyStorageCache();
-                        cache.RetentionTime = CacheRetentionTime;
-                        session.Add("StorageLocationCache", cache);
+                        cache = new StudyStorageCache {RetentionTime = CacheRetentionTime};
+                    	session.Add("StorageLocationCache", cache);
                     }
                 }
 
@@ -177,19 +158,14 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
                     if (location == null)
                     {
                         _statistics.Misses++;
-                        if (FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(partition.Key, studyInstanceUid, false, out location))
-                        {
-                            cache.Insert(location, studyInstanceUid);
-                            Platform.Log(LogLevel.Info, "Cache (since {0}): Hits {1} [{3:0}%], Miss {2}",
+                        
+						FilesystemMonitor.Instance.GetReadableStudyStorageLocation(partition.Key, studyInstanceUid, StudyRestore.True,StudyCache.False, out location);
+
+						cache.Insert(location, studyInstanceUid);
+                        Platform.Log(LogLevel.Info, "Cache (since {0}): Hits {1} [{3:0}%], Miss {2}",
                                          _statistics.StartTime,
                                          _statistics.Hits, _statistics.Misses,
                                          (float)_statistics.Hits / (_statistics.Hits + _statistics.Misses) * 100f);
-                        }
-                        else
-                        {
-                            CheckNearline(studyInstanceUid, partition);
-                            throw new StudyNotOnlineException();
-                        }
                     }
                     else
                     {

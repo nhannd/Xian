@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		/// <returns>true if a location was found, false otherwise.</returns>
 		public bool GetStudyStorageLocation(ArchiveQueue queueItem)
 		{
-			return FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(queueItem.StudyStorageKey, out _storageLocation);
+			return FilesystemMonitor.Instance.GetReadableStudyStorageLocation(queueItem.StudyStorageKey, out _storageLocation);
 		}
 
 		/// <summary>
@@ -130,10 +130,12 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                     using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                     {
                         ILockStudy studyLock = update.GetBroker<ILockStudy>();
-                        LockStudyParameters parms = new LockStudyParameters();
-                        parms.StudyStorageKey = queueItem.StudyStorageKey;
-                        parms.QueueStudyStateEnum = QueueStudyStateEnum.ArchiveScheduled;
-                        bool retVal = studyLock.Execute(parms);
+                        LockStudyParameters parms = new LockStudyParameters
+                                                    	{
+                                                    		StudyStorageKey = queueItem.StudyStorageKey,
+                                                    		QueueStudyStateEnum = QueueStudyStateEnum.ArchiveScheduled
+                                                    	};
+                    	bool retVal = studyLock.Execute(parms);
                         if (!parms.Successful || !retVal)
                         {
                             Platform.Log(LogLevel.Info, "Study {0} on partition {1} failed to lock, delaying archival.", _storageLocation.StudyInstanceUid, _hsmArchive.ServerPartition.Description);
@@ -251,10 +253,12 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                     using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                     {
                         ILockStudy studyLock = update.GetBroker<ILockStudy>();
-                        LockStudyParameters parms = new LockStudyParameters();
-                        parms.StudyStorageKey = queueItem.StudyStorageKey;
-                        parms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
-                        bool retVal = studyLock.Execute(parms);
+                        LockStudyParameters parms = new LockStudyParameters
+                                                    	{
+                                                    		StudyStorageKey = queueItem.StudyStorageKey,
+                                                    		QueueStudyStateEnum = QueueStudyStateEnum.Idle
+                                                    	};
+                    	bool retVal = studyLock.Execute(parms);
                         if (!parms.Successful || !retVal)
                         {
                             Platform.Log(LogLevel.Info, "Study {0} on partition {1} is failed to unlock.", _storageLocation.StudyInstanceUid, _hsmArchive.ServerPartition.Description);
@@ -272,11 +276,11 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		private DicomFile LoadFileFromStudyXml()
 		{
 			DicomFile defaultFile = null;
-			string path;
 			foreach (SeriesXml seriesXml in _studyXml)
 				foreach (InstanceXml instanceXml in seriesXml)
 				{
 					// Skip non-image objects
+					string path;
 					if (instanceXml.SopClass.Equals(SopClass.KeyObjectSelectionDocumentStorage)
 					    || instanceXml.SopClass.Equals(SopClass.GrayscaleSoftcopyPresentationStateStorageSopClass)
 					    || instanceXml.SopClass.Equals(SopClass.BlendingSoftcopyPresentationStateStorageSopClass)

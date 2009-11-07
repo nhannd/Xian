@@ -38,6 +38,7 @@ using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -60,7 +61,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 
         #region Private Members
         private readonly object _syncLock = new object();
-        private Dictionary<string, List<WorkQueueUid>> _uidMaps = null;
+        private Dictionary<string, List<WorkQueueUid>> _uidMaps;
         private Device _device;
         private const short UNLIMITED = -1;
         #endregion
@@ -82,7 +83,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             {
                 if (list.ContainsKey(uid.SopInstanceUid))
                 {
-                    Platform.Log(LogLevel.Warn, "WorkQueueUid {0} is a duplicate.", uid.Key);
+                    Platform.Log(LogLevel.Warn, "AutoRoute WorkQueueUid {0} is a duplicate.", uid.Key);
                     continue; // duplicate;}
                 }
                 SeriesXml seriesXml = studyXml[uid.SeriesInstanceUid];
@@ -166,7 +167,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                 {
                     if (_device==null)
                     {
-                        _device = Device.Load(ReadContext, WorkQueueItem.DeviceKey);
+						using (ExecutionContext context = new ExecutionContext())
+							_device = Device.Load(context.ReadContext, WorkQueueItem.DeviceKey);
                     }
                 }
 
@@ -181,7 +183,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
         {
             base.Initialize(item);
 
-            LoadStorageLocation(item);
+            LoadReadableStorageLocation(item);
             LoadUids(item);
             InstanceList = new List<StorageInstance>(GetStorageInstanceList());
         }
@@ -241,8 +243,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             int sendCounter = 0;
 			using (ImageServerStorageScu scu = new ImageServerStorageScu(ServerPartition, device))
 			{
-				// set the preferred syntax lists
-				scu.LoadPreferredSyntaxes(ReadContext);
+				using (ExecutionContext context = new ExecutionContext())
+					// set the preferred syntax lists
+					scu.LoadPreferredSyntaxes(context.ReadContext);
 
 				// Load the Instances to Send into the SCU component
 				scu.AddStorageInstanceList(InstanceList);

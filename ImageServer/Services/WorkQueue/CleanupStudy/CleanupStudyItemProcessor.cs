@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
 
         protected override void ProcessItem(Model.WorkQueue item)
         {
-			if (!LoadStorageLocation(item))
+			if (!LoadWritableStorageLocation(item))
 			{
 				Platform.Log(LogLevel.Warn, "Unable to find readable location when processing CleanupStudy WorkQueue item, rescheduling");
                 PostponeItem(item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2), "Unable to find readable location.");

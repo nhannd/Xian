@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         		if (storages.Count > 1)
         		{
         			Platform.Log(LogLevel.Warn,
-        			             "WorkQueueController:LoadStorageLocation: multiple study storage found for work queue item {0}",
+        			             "WorkQueueController:LoadWritableStorageLocation: multiple study storage found for work queue item {0}",
         			             item.Key.Key);
         		}
 

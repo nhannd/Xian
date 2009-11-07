@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using ClearCanvas.Common;
@@ -145,7 +143,7 @@ namespace ClearCanvas.ImageServer.Common
         }
 
         /// <summary>
-        /// Returns the number of bytes below the <see cref="Filesystem.HighWatermark"/>
+        /// Returns the number of bytes below the <see cref="Model.Filesystem.HighWatermark"/>
         /// </summary>
         /// <remarks>
         /// If the filesystem is above high watermark, <see cref="HighwaterMarkMargin"/> will become negative
@@ -237,13 +235,12 @@ namespace ClearCanvas.ImageServer.Common
 
         internal void LoadFreeSpace()
         {
-            long freeBytesForUser;
-            long totalBytes;
-            long freeBytes;
-
-            lock (_lock)
+        	lock (_lock)
             {
-                if (false == GetDiskFreeSpaceEx(_filesystem.FilesystemPath, out freeBytesForUser, out totalBytes, out freeBytes))
+            	long freeBytesForUser;
+            	long totalBytes;
+            	long freeBytes;
+            	if (false == GetDiskFreeSpaceEx(_filesystem.FilesystemPath, out freeBytesForUser, out totalBytes, out freeBytes))
                 {
                     // Only log ever 30 minutes.
                     if (_lastOfflineLog.AddMinutes(30) < Platform.Time)

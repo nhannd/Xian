@@ -76,12 +76,14 @@
     <Compile Include="Diagnostics\RandomError.cs" />
     <Compile Include="Diagnostics\Settings.cs" />
     <Compile Include="EnumInfoAttribute.cs" />
+    <Compile Include="Exceptions\FilesystemNotReadableException.cs" />
     <Compile Include="Exceptions\FilesystemNotWritableException.cs" />
     <Compile Include="Exceptions\InvalidStudyStateOperationException.cs" />
     <Compile Include="Exceptions\NoWritableFilesystemException.cs" />
     <Compile Include="Exceptions\SopInstanceProcessingException.cs" />
     <Compile Include="Exceptions\StudyIsInInvalidStateException.cs" />
     <Compile Include="Exceptions\StudyIsNearlineException.cs" />
+    <Compile Include="Exceptions\StudyNotFoundException.cs" />
     <Compile Include="FileSystemMonitor.cs" />
     <Compile Include="Helpers\DicomTagPath.cs" />
     <Compile Include="CommandProcessor\FileDeleteCommand.cs" />

@@ -34,6 +34,7 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Exceptions;
@@ -188,7 +189,7 @@ namespace ClearCanvas.ImageServer.Core
                 try
                 {
                     string failureMessage;
-                    StudyStorageLocation studyLocation = GetWritableOnlineStorage(message, true);
+                    StudyStorageLocation studyLocation = GetWritableOnlineStorage(message);
 
                     // GetWritableOnlineStorage should throw an exception if the study location cannot be found.
                     Platform.CheckForNullReference(studyLocation, "studyLocation");
@@ -320,41 +321,32 @@ namespace ClearCanvas.ImageServer.Core
         /// Gets the online storage location for a <see cref="DicomMessageBase"/>.
         /// </summary>
         /// <param name="message"></param>
-        /// <param name="restoreIfNearline"></param>
         /// <returns></returns>
         /// <exception cref="StudyIsNearlineException">Thrown if the study is nearline.</exception>
         /// <exception cref="FilesystemNotWritableException">Thrown if the study is online but the filesystem is not writable.</exception>
         /// <exception cref="SopInstanceProcessingException">Thrown ifor other exceptions.</exception>
-        private StudyStorageLocation GetWritableOnlineStorage(DicomMessageBase message, bool restoreIfNearline)
+        private StudyStorageLocation GetWritableOnlineStorage(DicomMessageBase message)
         {
             string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, String.Empty);
+            string studyDate = message.DataSet[DicomTags.StudyDate].GetString(0, String.Empty);
             Platform.CheckForEmptyString(studyInstanceUid, "studyInstanceUid");
 
-            StudyStorageLocation studyLocation = ServerHelper.GetWritableStudyStorageLocation(message, _context.Partition);
+        	StudyStorageLocation studyLocation;
 
-            if (studyLocation == null)
-            {
-                StudyStorage storage = StudyStorage.Load(_context.Partition.Key, studyInstanceUid);
+			using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+			{
+				bool created;
+				studyLocation = FilesystemMonitor.Instance.GetOrCreateWritableStudyStorageLocation(studyInstanceUid,
+				                                                                                   studyDate,
+				                                                                                   message.TransferSyntax,
+				                                                                                   updateContext,
+				                                                                                   _context.Partition,
+				                                                                                   out created);
+				if (created)
+					updateContext.Commit();
+			}
 
-                if (storage != null)
-                {
-                	if (storage.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
-                    {
-                        string failureMessage = String.Format("Study {0} on partition {1} is in a Nearline state, can't accept new images.  Inserting Restore Request for Study.", studyInstanceUid, _context.Partition.Description);
-                        Platform.Log(LogLevel.Error, failureMessage);
-
-                        if (restoreIfNearline && ServerHelper.InsertRestoreRequest(storage) == null)
-                        {
-                            Platform.Log(LogLevel.Warn, "Unable to insert Restore Request for Study");
-                            throw new StudyIsNearlineException(false);
-                        }
-                    	throw new StudyIsNearlineException(true);
-                    }
-                	throw new FilesystemNotWritableException();
-                }
-            	throw new SopInstanceProcessingException("No StudyStorage record.");
-            }
-            Platform.CheckForNullReference(studyLocation, "studyLocation");
+        	Platform.CheckForNullReference(studyLocation, "studyLocation");
             return studyLocation;
         }
 
