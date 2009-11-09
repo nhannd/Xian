@@ -72,7 +72,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
             TestResult result = rules.Test(obj, ruleFilter);
             if (result.Fail)
             {
-                string message = string.Format(SR.ExceptionInvalidEntity, TerminologyTranslator.Translate(obj.GetType()));
+                string message = string.Format(SR.ExceptionInvalidEntity, TerminologyTranslator.Translate(obj.GetClass()));
                 throw new EntityValidationException(message, result.Reasons);
             }
         }

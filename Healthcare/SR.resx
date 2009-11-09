@@ -534,7 +534,7 @@
   <data name="WorklistCategoryTranscription" xml:space="preserve">
     <value>Transcription</value>
   </data>
-  <data name="WorklistClassAndName" xml:space="preserve">
-    <value>Worklist Name/Class</value>
+  <data name="WorklistUniqueKey" xml:space="preserve">
+    <value>Worklist Name, Class and Owner</value>
   </data>
 </root>
