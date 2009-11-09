@@ -31,16 +31,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common.Specifications;
 
 namespace ClearCanvas.Enterprise.Core.Modelling
 {
     public static class Validation
     {
-        private static Dictionary<Type, ValidationRuleSet> _invariantRuleSets = new Dictionary<Type, ValidationRuleSet>();
+        private static readonly Dictionary<Type, ValidationRuleSet> _invariantRuleSets = new Dictionary<Type, ValidationRuleSet>();
 
         public static ValidationRuleSet GetInvariantRules(Type entityClass)
         {
@@ -53,7 +50,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
                     return rules;
 
                 // build rules for entityClass, and put in cache
-                ValidationBuilder builder = new ValidationBuilder();
+                var builder = new ValidationBuilder();
                 rules = builder.BuildRuleSet(entityClass);
                 _invariantRuleSets.Add(entityClass, rules);
                 return rules;
@@ -67,12 +64,12 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
         public static void Validate(DomainObject obj, Predicate<ISpecification> ruleFilter)
         {
-            ValidationRuleSet rules = Validation.GetInvariantRules(obj);
+            var rules = GetInvariantRules(obj);
 
-            TestResult result = rules.Test(obj, ruleFilter);
+            var result = rules.Test(obj, ruleFilter);
             if (result.Fail)
             {
-                string message = string.Format(SR.ExceptionInvalidEntity, TerminologyTranslator.Translate(obj.GetClass()));
+                var message = string.Format(SR.ExceptionInvalidEntity, TerminologyTranslator.Translate(obj.GetClass()));
                 throw new EntityValidationException(message, result.Reasons);
             }
         }
