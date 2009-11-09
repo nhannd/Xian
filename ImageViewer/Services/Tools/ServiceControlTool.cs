@@ -147,17 +147,17 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		public void StopService()
 		{
-			BlockingOperation.Run(delegate { StopServiceInternal(); });
+			BlockingOperation.Run(StopServiceInternal);
 		}
 
 		public void StartService()
 		{
-			BlockingOperation.Run(delegate { StartServiceInternal(); });
+			BlockingOperation.Run(StartServiceInternal);
 		}
 
 		public void RestartService()
 		{
-			BlockingOperation.Run(delegate { RestartServiceInternal(); });
+			BlockingOperation.Run(RestartServiceInternal);
 		}
 
 		private void RestartServiceInternal()

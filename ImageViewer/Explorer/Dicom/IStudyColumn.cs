@@ -46,8 +46,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
     public interface IStudyColumn
     {
-    	//TODO (cr Oct 2009): Name
-        string Heading { get; }
+        string Name { get; }
 
         float WidthFactor { get; }
 
