@@ -57,6 +57,14 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
     /// </example>
     public class DateValidator : BaseValidator
     {
+        private string _dateFormat;
+
+        public string DateFormat
+        {
+            get { return _dateFormat; }
+            set { _dateFormat = value;}
+        }
+
         #region Protected Methods
 
         protected override bool OnServerSideEvaluate()
@@ -75,7 +83,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                              ConditionalCheckBox != null ? ConditionalCheckBox.ClientID : "null");
             template.Replace("@@VALIDATE_WHEN_UNCHECKED@@", ValidateWhenUnchecked ? "true" : "false");
             template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue ? "true" : "false");
-            template.Replace("@@DATE_FORMAT@@", CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern);
+            template.Replace("@@DATE_FORMAT@@", string.IsNullOrEmpty(_dateFormat) ? CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern : _dateFormat);
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);
         }
     }

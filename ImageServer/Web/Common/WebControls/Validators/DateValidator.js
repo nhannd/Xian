@@ -40,13 +40,14 @@ function @@CLIENTID@@_ClientSideEvaluator()
         {
             return result;
         }
-                
+                        
         if (this.input.value==null)
         {
             result.OK = false;
         } 
         else if(isDate(this.input.value, '@@DATE_FORMAT@@') == false)
         {
+            alert('Failed');
             result.OK = false;
             validDateFormat = false;
         } 

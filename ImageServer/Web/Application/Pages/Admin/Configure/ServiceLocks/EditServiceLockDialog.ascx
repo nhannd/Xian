@@ -53,8 +53,8 @@
                                     TargetControlID="ScheduleDate" PopupButtonID="DatePickerButton" CssClass="Calendar" >
                         </ccUI:CalendarExtender>&nbsp;
                         <asp:TextBox ID="ScheduleTime" runat="server" CssClass="DialogTextBox"  ValidationGroup="AddEditServiceLockValidationGroup"/>
-                        <aspAjax:MaskedEditExtender runat="server" ID="ScheduleTimeMaskedEditExtender" MaskType="Time" AcceptAMPM="true" TargetControlID="ScheduleTime" Mask="99:99" MessageValidatorTip="false" OnInvalidCssClass="InvalidTextEntered"/>
-                        <aspAjax:MaskedEditValidator runat="server" ID="ScheduleTimeMaskedEditValidator" ControlExtender="ScheduleTimeMaskedEditExtender" ControlToValidate="ScheduleTime" ValidationExpression="(0[1-9]|1[0-2]):[0-5][0-9] ([ap]m|[AP]M)" ValidationGroup="AddEditServiceLockValidationGroup"  />
+                        <aspAjax:MaskedEditExtender runat="server" ID="ScheduleTimeMaskedEditExtender" MaskType="Time" AcceptAMPM="false" TargetControlID="ScheduleTime" Mask="99:99" MessageValidatorTip="false" OnInvalidCssClass="InvalidTextEntered"/>
+                        <aspAjax:MaskedEditValidator runat="server" ID="ScheduleTimeMaskedEditValidator" ControlExtender="ScheduleTimeMaskedEditExtender" ControlToValidate="ScheduleTime" ValidationExpression="(0[0-9]*|1[0-9]*|2[0-3]):[0-5][0-9]" ValidationGroup="AddEditServiceLockValidationGroup"  />
                     </asp:TableCell>
                 </asp:TableRow>
                 

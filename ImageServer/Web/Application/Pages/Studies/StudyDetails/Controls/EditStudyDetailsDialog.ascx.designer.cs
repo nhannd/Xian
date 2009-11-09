@@ -410,15 +410,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         protected global::System.Web.UI.WebControls.TextBox StudyTimeSeconds;
         
         /// <summary>
-        /// StudyTimeAmPm control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList StudyTimeAmPm;
-        
-        /// <summary>
         /// ClearStudyDateTimeButton control.
         /// </summary>
         /// <remarks>
@@ -437,13 +428,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator StudyDateHelp;
         
         /// <summary>
-        /// DateValidator1 control.
+        /// StudyDateValidator control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.DateValidator DateValidator1;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.DateValidator StudyDateValidator;
         
         /// <summary>
         /// RegularExpressionFieldValidator16 control.

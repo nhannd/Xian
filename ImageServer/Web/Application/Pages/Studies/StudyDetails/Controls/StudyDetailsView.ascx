@@ -30,7 +30,7 @@
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
             <ItemTemplate>
                 <ccUI:DALabel ID="StudyDate" runat="server"  Value='<%# Eval("StudyDate") %>' ></ccUI:DALabel>
-                <ccUI:TMLabel ID="StudyTime" runat="server"  Value='<%# Eval("StudyTime") %>' ></ccUI:TMLabel>
+                <ccUI:TMLabel ID="StudyTime" runat="server"  Value='<%# Eval("StudyTime") %>'  ></ccUI:TMLabel>
             </ItemTemplate>
         </asp:TemplateField>  
         <asp:BoundField DataField="StudyID" HeaderText="Study ID: ">

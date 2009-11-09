@@ -194,7 +194,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 changes.Add(item);
             }
 
-            int hh = StudyTimeAmPm.SelectedValue == "AM" ? int.Parse(StudyTimeHours.Text) % 12 : 12 + (int.Parse(StudyTimeHours.Text) % 12);
+            int hh = int.Parse(StudyTimeHours.Text);
             int mm = int.Parse(StudyTimeMinutes.Text);
             int ss = int.Parse(StudyTimeSeconds.Text);
             String dicomStudyTime = String.Format("{0:00}{1:00}{2:00}", hh, mm, ss);
@@ -295,8 +295,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
                     StudyTimeMinutes.Text = String.Format("{0:00}", studyTime.Value.Minute);
                     StudyTimeSeconds.Text = String.Format("{0:00}", studyTime.Value.Second);
-
-                    StudyTimeAmPm.SelectedValue = studyTime.Value.Hour < 12 ? "AM" : "PM";
                 }
                 else
                 {
@@ -304,7 +302,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     StudyTimeHours.Text = "";
                     StudyTimeMinutes.Text = "";
                     StudyTimeSeconds.Text = "";
-                    StudyTimeAmPm.SelectedValue = "AM";
                 }
 
             }
@@ -313,7 +310,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 StudyTimeHours.Text = "12";
                 StudyTimeMinutes.Text = "00";
                 StudyTimeSeconds.Text = "00";
-                StudyTimeAmPm.SelectedValue = "AM";
             }
 
             DataBind();
@@ -425,6 +421,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             }
             
             PatientBirthDateCalendarExtender.Format = CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern;
+            StudyDateValidator.DateFormat = UISettings.Default.DateFormat;
         }
 
         /// <summary>

@@ -168,20 +168,19 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
                                         <td>
-                                            <ccUI:TextBox ID="StudyDate" runat="server" CausesValidation="true" CssClass="DialogTextBox" ReadOnly="true" /><ccUI:TextBox ID="StudyTimeHours" runat="server" CausesValidation="true" CssClass="DialogTextBox" Width="17" MaxLength="2" /><span style="color: black">:</span><asp:TextBox ID="StudyTimeMinutes" runat="server" CausesValidation="true" CssClass="DialogTextBox" Width="17" MaxLength="2" /><span style="color:Black ">:</span><asp:TextBox ID="StudyTimeSeconds" runat="server" CausesValidation="true" CssClass="DialogTextBox" Width="17" MaxLength="2" /><asp:DropDownList ID="StudyTimeAmPm" runat="server" CausesValidation="true" CssClass="DialogDropDownList" ><asp:ListItem Selected="True" Text="AM" Value="AM" /><asp:ListItem Text="PM" Value="PM" /></asp:DropDownList><asp:LinkButton ID="ClearStudyDateTimeButton" Text="Clear" runat="server" CssClass="DialogLinkButton" />
+                                            <ccUI:TextBox ID="StudyDate" runat="server" CausesValidation="true" CssClass="DialogTextBox" ReadOnly="true" /><ccUI:TextBox ID="StudyTimeHours" runat="server" CausesValidation="true" CssClass="DialogTextBox" Width="17" MaxLength="2" /><span style="color: black">:</span><asp:TextBox ID="StudyTimeMinutes" runat="server" CausesValidation="true" CssClass="DialogTextBox" Width="17" MaxLength="2" /><span style="color:Black ">:</span><asp:TextBox ID="StudyTimeSeconds" runat="server" CausesValidation="true" CssClass="DialogTextBox" Width="17" MaxLength="2" /><asp:LinkButton ID="ClearStudyDateTimeButton" Text="Clear" runat="server" CssClass="DialogLinkButton" />
                                         </td>
                                         <td>
                                         <ccAsp:InvalidInputIndicator ID="StudyDateHelp" runat="server" SkinID="InvalidInputIndicator" />
                                         <ccValidator:ConditionalRequiredFieldValidator runat="server" ControlToValidate="StudyDate" Text="Study Date is required" Display="none" InvalidInputIndicatorID="StudyDateHelp" InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="EditStudyValidationGroup" RequiredWhenChecked="False"/>
                                         <ccValidator:DateValidator
-                                                        ID="DateValidator1" runat="server" ControlToValidate="StudyDate"
-                                                        InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="EditStudyValidationGroup" InvalidInputIndicatorID="StudyDateHelp"
-                                                        Text="The Study Date cannot be in the future." Display="None">
+                                                        ID="StudyDateValidator" runat="server" ControlToValidate="StudyDate" 
+                                                        InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="EditStudyValidationGroup" InvalidInputIndicatorID="StudyDateHelp" Display="None">
                                         </ccValidator:DateValidator>
                                         <ccValidator:RegularExpressionFieldValidator
                                             ID="RegularExpressionFieldValidator16" runat="server" ControlToValidate="StudyTimeHours"
                                             InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="EditStudyValidationGroup" InvalidInputIndicatorID="StudyDateHelp"
-                                            ValidationExpression="^(0*[1-9]|1[0-2])$" IgnoreEmptyValue="true" Text="Invalid Study Time" Display="None">
+                                            ValidationExpression="^(0[0-9]*|1[0-9]*|2[0-3])$" IgnoreEmptyValue="true" Text="Invalid Study Time" Display="None">
                                         </ccValidator:RegularExpressionFieldValidator>
                                         <ccValidator:RegularExpressionFieldValidator
                                             ID="RegularExpressionFieldValidator17" runat="server" ControlToValidate="StudyTimeMinutes"

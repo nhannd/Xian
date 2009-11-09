@@ -144,7 +144,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Utilities
                 }
                 else
                 {
-                    DefaultTimeFormat = "hh:mm:ss tt";
+                    DefaultTimeFormat = "HH:mm:ss";
 
                 }
             }
