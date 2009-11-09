@@ -46,6 +46,8 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 {
 	public abstract class RoiTestBase<T>
 	{
+		private static readonly string _testImagePathFormat = @"TestImages\{0}.dcm";
+
 		/// <summary>
 		/// Tests the <see cref="Roi.Contains(System.Drawing.PointF)"/> method for a given shape. The image is used to provide a basis for the coordinate space.
 		/// </summary>
@@ -257,7 +259,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 
 		protected static IPresentationImage GetImage(ImageKey key)
 		{
-			string filename = string.Format(@"RoiGraphics\Tests\Images\{0}.dcm", key.ToString().ToLower());
+			string filename = string.Format(_testImagePathFormat, key.ToString().ToLower());
 			try
 			{
 				LocalSopDataSource dataSource = new LocalSopDataSource(filename);
@@ -286,56 +288,18 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 			return Color.FromArgb(shiftRed ? 255 : (int) original.R, shiftGreen ? 255 : (int) original.G, shiftBlue ? 255 : (int) original.B);
 		}
 
-		private class GraphicsPathRoi : Roi, IRoiAreaProvider
+		[TestFixtureSetUp]
+		public void TestSetup()
 		{
-			private readonly GraphicsPath _graphicsPath;
-
-			public GraphicsPathRoi(GraphicsPath graphicsPath, IPresentationImage image)
-				: base(image)
+			foreach (ImageKey imageKey in Enum.GetValues(typeof (ImageKey)))
 			{
-				Assert.IsNotNull(graphicsPath);
-				_graphicsPath = graphicsPath;
-			}
-
-			protected override RectangleF ComputeBounds()
-			{
-				return new RectangleF(0, 0, base.ImageColumns - 1, base.ImageRows - 1);
-			}
-
-			public override bool Contains(PointF point)
-			{
-				return _graphicsPath.IsVisible(point);
-			}
-
-			public double Area
-			{
-				get
+				string filename = string.Format(_testImagePathFormat, imageKey.ToString());
+				if (!File.Exists(filename))
 				{
-					int count = 0;
-					base.PixelData.ForEachPixel(delegate(int i, int x, int y, int pixelIndex)
-					                            	{
-					                            		if (this.Contains(x, y))
-					                            			count++;
-					                            	});
-					return count;
+					Trace.WriteLine(string.Format("The required test image {0} is missing", filename));
+					Trace.WriteLine(@"Please copy the contents of RoiGraphics\Tests\Images source folder to TestImages in the working directory in order to execute these tests.");
+					Assert.Fail("Missing test images.");
 				}
-			}
-
-			//[Obsolete("This method is not implemented on this test class.")]
-			public override Roi CopyTo(IPresentationImage presentationImage)
-			{
-				throw new NotImplementedException("This method is not implemented on this test class.");
-			}
-
-			Units IRoiAreaProvider.Units
-			{
-				get { return Units.Pixels; }
-				set { }
-			}
-
-			bool IRoiAreaProvider.IsCalibrated
-			{
-				get { return false; }
 			}
 		}
 
