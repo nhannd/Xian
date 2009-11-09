@@ -670,6 +670,13 @@ namespace ClearCanvas.Dicom.Tests
 	}
 
 	[TestFixture]
+	public class HungarianCultureAttributeTest : GlobalizedCultureAttributeTest
+	{
+		// Justification: known issues with decimal formatting
+		public HungarianCultureAttributeTest() : base(CultureInfo.GetCultureInfo("hu-HU")) {}
+	}
+
+	[TestFixture]
 	public class FrenchCultureAttributeTest : GlobalizedCultureAttributeTest
 	{
 		// Justification: possible issues with decimal formatting
