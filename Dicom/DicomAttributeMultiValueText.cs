@@ -882,7 +882,7 @@ namespace ClearCanvas.Dicom
             }
             else
             {
-                _values[index] = value.ToString();
+				_values[index] = value.ToString(CultureInfo.InvariantCulture);
                 this.StreamLength = (uint)ToString().Length;
             }
         }
@@ -931,7 +931,7 @@ namespace ClearCanvas.Dicom
             }
             else
             {
-                _values[index] = value.ToString();
+				_values[index] = value.ToString(CultureInfo.InvariantCulture);
                 this.StreamLength = (uint)ToString().Length;
             }
         }
@@ -947,7 +947,17 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override void SetFloat32(int index, float value)
         {
-            SetFloat64(index, value);
+        	// DO NOT CALL SetFloat64. Precision loss will occur when converting float to double
+
+        	if (index == _values.Length)
+        	{
+        		AppendFloat32(value);
+        	}
+        	else
+        	{
+				_values[index] = value.ToString("G12", CultureInfo.InvariantCulture);
+        		this.StreamLength = (uint) ToString().Length;
+        	}
         }
 
         /// <summary>
@@ -967,7 +977,7 @@ namespace ClearCanvas.Dicom
             }
             else
             {
-                _values[index] = value.ToString("G12");
+				_values[index] = value.ToString("G12", CultureInfo.InvariantCulture);
                 this.StreamLength = (uint)ToString().Length;
             }
         }
@@ -993,7 +1003,7 @@ namespace ClearCanvas.Dicom
 
 			// Originallly had R here, but ran into problems with the attribute value being too large
 			// for a DS tag (16 bytes)
-			_values[_values.Length - 1] = value.ToString("G12"); 
+			_values[_values.Length - 1] = value.ToString("G12", CultureInfo.InvariantCulture); 
             this.StreamLength = (uint)ToString().Length;
 			this.Count = _values.Length;
         }
@@ -1017,7 +1027,7 @@ namespace ClearCanvas.Dicom
 
 			// Originallly had R here, but ran into problems with the attribute value being too large
 			// for a DS tag (16 bytes)
-			_values[_values.Length - 1] = value.ToString("G12"); 
+			_values[_values.Length - 1] = value.ToString("G12", CultureInfo.InvariantCulture); 
             this.StreamLength = (uint)ToString().Length;
 			this.Count = _values.Length;
         }
@@ -1059,7 +1069,7 @@ namespace ClearCanvas.Dicom
 
             _values = temp;
 
-			_values[_values.Length - 1] = value.ToString();
+			_values[_values.Length - 1] = value.ToString(CultureInfo.InvariantCulture);
             this.StreamLength = (uint)ToString().Length;
 			this.Count = _values.Length;
 
@@ -1102,7 +1112,7 @@ namespace ClearCanvas.Dicom
 
             _values = temp;
 
-			_values[_values.Length - 1] = value.ToString();
+			_values[_values.Length - 1] = value.ToString(CultureInfo.InvariantCulture);
             this.StreamLength = (uint)ToString().Length;
 			this.Count = _values.Length;
 
@@ -1850,7 +1860,7 @@ namespace ClearCanvas.Dicom
 				AppendInt64(value);
 			}
 			else {
-				_values[index] = value.ToString();
+				_values[index] = value.ToString(CultureInfo.InvariantCulture);
 				this.StreamLength = (uint)ToString().Length;
 			}
         }
@@ -1901,7 +1911,7 @@ namespace ClearCanvas.Dicom
 			}
             else
             {
-                _values[index] = value.ToString();
+				_values[index] = value.ToString(CultureInfo.InvariantCulture);
                 this.StreamLength = (uint)ToString().Length;
             }
         }
@@ -1942,7 +1952,7 @@ namespace ClearCanvas.Dicom
                 _values.CopyTo(newArray, 0);
             _values = newArray;
 
-			_values[_values.Length - 1] = intValue.ToString();
+			_values[_values.Length - 1] = intValue.ToString(CultureInfo.InvariantCulture);
             this.StreamLength = (uint)ToString().Length;
         	this.Count = _values.Length;
         }
@@ -1983,7 +1993,7 @@ namespace ClearCanvas.Dicom
             if (_values != null && _values.Length > 0)
                 Array.Copy(_values, temp, _values.Length);
             _values = temp;
-			_values[_values.Length - 1] = value.ToString();
+			_values[_values.Length - 1] = value.ToString(CultureInfo.InvariantCulture);
             this.StreamLength = (uint)ToString().Length;
         	this.Count = _values.Length;
         }

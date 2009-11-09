@@ -86,6 +86,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ReferencedAssemblies\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="sysglobl" />
     <Reference Include="System">
       <Name>System</Name>
       <HintPath>C:\WINDOWS\assembly\GAC_MSIL\System\2.0.0.0__b77a5c561934e089\System.dll</HintPath>
@@ -415,6 +416,7 @@
     <Compile Include="ServiceModel\Streaming\StudyIsInUseFault.cs" />
     <Compile Include="ServiceModel\Streaming\StudyIsNearlineFault.cs" />
     <Compile Include="Tests\AttributeCollectionTest.cs" />
+    <Compile Include="Tests\GlobalizedCultureAttributeTests.cs" />
     <Compile Include="Tests\DicomDirectoryTests.cs" />
     <Compile Include="Tests\ScuTests.cs" />
     <Compile Include="Utilities\Anonymization\ValidationStrategy.cs" />

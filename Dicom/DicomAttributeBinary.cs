@@ -260,6 +260,7 @@ namespace ClearCanvas.Dicom
 
         protected abstract T ParseNumber(string val);
 
+    	protected abstract string FormatNumber(T val);
 
         public override void SetNullValue()
         {
@@ -386,7 +387,7 @@ namespace ClearCanvas.Dicom
                 return false;
             }
 
-            value = _values[index].ToString();
+        	value = FormatNumber(_values[index]);
 
             return true;
         }
@@ -507,9 +508,9 @@ namespace ClearCanvas.Dicom
             foreach (T index in _values)
             {
                 if (val == null)
-                    val = new StringBuilder(index.ToString());
+                    val = new StringBuilder(FormatNumber(index));
                 else
-                    val.AppendFormat("\\{0}", index);
+					val.AppendFormat("\\{0}", FormatNumber(index));
             }
 
             if (val == null)
@@ -673,6 +674,11 @@ namespace ClearCanvas.Dicom
             return parseVal;
         }
 
+    	protected override string FormatNumber(uint val)
+    	{
+    		return val.ToString("X", CultureInfo.InvariantCulture);
+    	}
+
         public override string ToString()
         {
             if (_values == null)
@@ -682,9 +688,9 @@ namespace ClearCanvas.Dicom
             foreach (uint index in _values)
             {
                 if (val == null)
-                    val = new StringBuilder(String.Format("{0:X}", index));
+                    val = new StringBuilder(String.Format("{0}", FormatNumber(index)));
                 else
-                    val.AppendFormat("\\{0:X}", index);
+                    val.AppendFormat("\\{0}", FormatNumber(index));
             }
 
             if (val == null)
@@ -1137,13 +1143,16 @@ namespace ClearCanvas.Dicom
                 throw new DicomDataException("Null values invalid for FD VR");
 
             double parseVal;
-            if (false == double.TryParse(val.Trim(), NumberStyle, null, out parseVal))
+			if (false == double.TryParse(val.Trim(), NumberStyle, CultureInfo.InvariantCulture, out parseVal))
                 throw new DicomDataException(
                     String.Format("Invalid double format value for tag {0}: {1}", Tag, val));
             return parseVal;
         }
 
-        
+    	protected override string FormatNumber(double val)
+    	{
+    		return val.ToString(CultureInfo.InvariantCulture);
+    	}
 
         /// <summary>
         /// Sets an FD value.
@@ -1348,13 +1357,16 @@ namespace ClearCanvas.Dicom
             if (val == null)
                 throw new DicomDataException("Null values invalid for FL VR");
             float parseVal;
-            if (false == float.TryParse(val.Trim(), NumberStyle, null, out parseVal))
+			if (false == float.TryParse(val.Trim(), NumberStyle, CultureInfo.InvariantCulture, out parseVal))
                 throw new DicomDataException(
                     String.Format("Invalid float format value for tag {0}: {1}", Tag, val));
             return parseVal;
         }
 
-
+    	protected override string FormatNumber(float val)
+    	{
+    		return val.ToString(CultureInfo.InvariantCulture);
+    	}
 
         /// <summary>
         /// Retrieves a float value from an FL attribute.
@@ -1572,11 +1584,16 @@ namespace ClearCanvas.Dicom
                 throw new DicomDataException("Null values invalid for OB VR");
 
             byte parseVal;
-            if (false == byte.TryParse(val.Trim(), NumberStyle, null, out parseVal))
+			if (false == byte.TryParse(val.Trim(), NumberStyle, CultureInfo.InvariantCulture, out parseVal))
                 throw new DicomDataException(
                     String.Format("Invalid byte format value for tag {0}: {1}", Tag, val));
             return parseVal;
         }
+
+    	protected override string FormatNumber(byte val)
+    	{
+    		return val.ToString(CultureInfo.InvariantCulture);
+    	}
 
         internal override uint CalculateWriteLength(TransferSyntax syntax, DicomWriteOptions options)
         {
@@ -1759,11 +1776,16 @@ namespace ClearCanvas.Dicom
                 throw new DicomDataException("Null values invalid for OF VR");
 
             float parseVal;
-            if (false == float.TryParse(val.Trim(), NumberStyle, null, out parseVal))
+			if (false == float.TryParse(val.Trim(), NumberStyle, CultureInfo.InvariantCulture, out parseVal))
                 throw new DicomDataException(
                     String.Format("Invalid float format value for tag {0}: {1}", Tag, val));
             return parseVal;
         }
+
+    	protected override string FormatNumber(float val)
+    	{
+    		return val.ToString(CultureInfo.InvariantCulture);
+    	}
 
         #endregion
     }
@@ -1906,11 +1928,16 @@ namespace ClearCanvas.Dicom
                 throw new DicomDataException("Null values invalid for OW VR");
 
             byte parseVal;
-            if (false == byte.TryParse(val.Trim(), NumberStyle, null, out parseVal))
+			if (false == byte.TryParse(val.Trim(), NumberStyle, CultureInfo.InvariantCulture, out parseVal))
                 throw new DicomDataException(
                     String.Format("Invalid byte format value for tag {0}: {1}", Tag, val));
             return parseVal;
         }
+
+    	protected override string FormatNumber(byte val)
+    	{
+    		return val.ToString(CultureInfo.InvariantCulture);
+    	}
 
         internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
         {
@@ -2070,13 +2097,16 @@ namespace ClearCanvas.Dicom
                 throw new DicomDataException("Null values invalid for SL VR");
 
             int parseVal;
-            if (false == int.TryParse(val.Trim(), NumberStyle, null, out parseVal))
+			if (false == int.TryParse(val.Trim(), NumberStyle, CultureInfo.InvariantCulture, out parseVal))
                 throw new DicomDataException(
                     String.Format("Invalid int format value for tag {0}: {1}", Tag, val));
             return parseVal;
         }
 
-
+    	protected override string FormatNumber(int val)
+    	{
+    		return val.ToString(CultureInfo.InvariantCulture);
+    	}
 
         /// <summary>
         /// Sets an SL value.
@@ -2540,12 +2570,16 @@ namespace ClearCanvas.Dicom
                 throw new DicomDataException("Null values invalid for SS VR");
 
             short parseVal;
-            if (false == short.TryParse(val.Trim(), NumberStyle, null, out parseVal))
+			if (false == short.TryParse(val.Trim(), NumberStyle, CultureInfo.InvariantCulture, out parseVal))
                 throw new DicomDataException(
                     String.Format("Invalid short format value for tag {0}: {1}", Tag, val));
             return parseVal;
         }
 
+    	protected override string FormatNumber(short val)
+    	{
+    		return val.ToString(CultureInfo.InvariantCulture);
+    	}
 
         /// <summary>
         /// Appends an SS value.
@@ -2989,11 +3023,16 @@ namespace ClearCanvas.Dicom
                 throw new DicomDataException("Null values invalid for UL VR");
 
             uint parseVal;
-            if (false == uint.TryParse(val.Trim(), NumberStyle, null, out parseVal))
+			if (false == uint.TryParse(val.Trim(), NumberStyle, CultureInfo.InvariantCulture, out parseVal))
                 throw new DicomDataException(
                     String.Format("Invalid uint format value for tag {0}: {1}", Tag, val));
             return parseVal;
         }
+
+    	protected override string FormatNumber(uint val)
+    	{
+    		return val.ToString(CultureInfo.InvariantCulture);
+    	}
 
         public override Object Values
         {
@@ -3015,6 +3054,9 @@ namespace ClearCanvas.Dicom
                 }
                 else
                 {
+					// JY (2009-11-06): Leaving this ToString() to use the local culture settings for *BOTH* format and parse
+					//  We don't know what type the value is, so we'll assume it knows how to convert itself into a string
+					//  using assuming local culture settings, and hence we'll parse it back also assuming local culture settings
                     uint parsedValue;
                     if (UInt32.TryParse(value.ToString(), out parsedValue))
                     {
@@ -3502,11 +3544,16 @@ namespace ClearCanvas.Dicom
                 throw new DicomDataException("Null values invalid for UN VR");
 
             byte parseVal;
-            if (false == byte.TryParse(val.Trim(), NumberStyle, null, out parseVal))
+			if (false == byte.TryParse(val.Trim(), NumberStyle, CultureInfo.InvariantCulture, out parseVal))
                 throw new DicomDataException(
                     String.Format("Invalid byte format value for tag {0}: {1}", Tag, val));
             return parseVal;
         }
+
+    	protected override string FormatNumber(byte val)
+    	{
+    		return val.ToString(CultureInfo.InvariantCulture);
+    	}
 
         internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
         {
@@ -3592,6 +3639,9 @@ namespace ClearCanvas.Dicom
                 }
                 else
                 {
+					// JY (2009-11-06): Leaving this ToString() to use the local culture settings for *BOTH* format and parse
+					//  We don't know what type the value is, so we'll assume it knows how to convert itself into a string
+					//  using assuming local culture settings, and hence we'll parse it back also assuming local culture settings
                     ushort parsedValue;
                     if (ushort.TryParse(value.ToString(), out parsedValue))
                     {
@@ -3621,11 +3671,16 @@ namespace ClearCanvas.Dicom
                 throw new DicomDataException("Null values invalid for US VR");
 
             ushort parseVal;
-            if (false == ushort.TryParse(val.Trim(), NumberStyle, null, out parseVal))
+			if (false == ushort.TryParse(val.Trim(), NumberStyle, CultureInfo.InvariantCulture, out parseVal))
                 throw new DicomDataException(
                     String.Format("Invalid ushort format value for tag {0}: {1}", Tag, val));
             return parseVal;
         }
+
+    	protected override string FormatNumber(ushort val)
+    	{
+    		return val.ToString(CultureInfo.InvariantCulture);
+    	}
 
         /// <summary>
         /// Sets an US value.
