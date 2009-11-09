@@ -169,11 +169,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private ISelection _currentSelection;
 		private event EventHandler _selectedStudyChangedEvent;
 
-		private AEServerGroup _selectedServerGroup;
+		private AEServerGroup _selectedServerGroup = new AEServerGroup();
 		private event EventHandler _selectedServerChangedEvent;
 
 		private ToolSet _toolSet;
-		private OpenStudyTool _openStudyTool;
 		private ClickHandlerDelegate _defaultActionHandler;
 
 		private ActionModelRoot _toolbarModel;
@@ -221,7 +220,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					_filterDuplicateStudies = value;
 					if (CurrentSearchResult != null)
 					{
-						CurrentSearchResult.Refresh(_filterDuplicateStudies);
+						CurrentSearchResult.FilterDuplicates = _filterDuplicateStudies;
 						UpdateResultsTitle();
 					}
 				}
@@ -396,15 +395,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		public void ItemDoubleClick()
 		{
 			if (_defaultActionHandler != null)
-			{
 				_defaultActionHandler();
-			}
-			else if (_openStudyTool != null)
-			{
-				//TODO (cr Oct 2009): get rid of explicit reference.
-				//fall back to the open study tool.
-				_openStudyTool.OpenStudy();
-			}
 		}
 
 		#endregion
@@ -419,7 +410,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_processStudiesEventPublisher = new DelayedEventPublisher(DelayProcessReceivedAndRemoved);
 
 			ArrayList tools = new ArrayList(new StudyBrowserToolExtensionPoint().CreateExtensions());
-			tools.Add(_openStudyTool = new OpenStudyTool());
 			tools.Add(new FilterDuplicateStudiesTool(this));
 			_toolSet = new ToolSet(tools, new StudyBrowserToolContext(this));
 
@@ -461,7 +451,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			CurrentSearchResult.NumberOfChildServers = _selectedServerGroup.Servers.Count;
 
 			CurrentSearchResult.UpdateColumnVisibility();
-			CurrentSearchResult.Refresh(_filterDuplicateStudies);
+			CurrentSearchResult.FilterDuplicates = _filterDuplicateStudies;
 
 			EventsHelper.Fire(_selectedServerChangedEvent, this, EventArgs.Empty);
 			EventsHelper.Fire(_studyTableChanged, this, EventArgs.Empty);

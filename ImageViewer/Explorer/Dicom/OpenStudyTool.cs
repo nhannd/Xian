@@ -41,6 +41,7 @@ using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
+using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -52,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 	[ViewerActionPermission("activate", ImageViewer.AuthorityTokens.Study.Open)]
 
-	//TODO (cr Oct 2009): make an extension again.
+	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class OpenStudyTool : StudyBrowserTool
 	{
 		public OpenStudyTool()
@@ -62,9 +63,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public override void Initialize()
 		{
-			SetDoubleClickHandler();
-
 			base.Initialize();
+
+			SetDoubleClickHandler();
 		}
 
 		public void OpenStudy()
@@ -137,7 +138,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void SetDoubleClickHandler()
 		{
-			if (GetAtLeastOneServerSupportsLoading())
+			if (GetAtLeastOneServerSupportsLoading() || base.Context.SelectedServerGroup.Servers.Count == 0)
 				Context.DefaultActionHandler = OpenStudy;
 		}
 		protected override void OnSelectedStudyChanged(object sender, EventArgs e)

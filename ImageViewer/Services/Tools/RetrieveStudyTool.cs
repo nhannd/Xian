@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
@@ -64,9 +65,9 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		public override void Initialize()
 		{
-			SetDoubleClickHandler();
-
 			base.Initialize();
+
+			SetDoubleClickHandler();
 		}
 
 		private void RetrieveStudy()
@@ -156,7 +157,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private void SetDoubleClickHandler()
 		{
-			if (!GetAtLeastOneServerSupportsLoading())
+			if (!GetAtLeastOneServerSupportsLoading() && base.Context.SelectedServerGroup.Servers.Count > 0)
 				Context.DefaultActionHandler = RetrieveStudy;
 		}
 

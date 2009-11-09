@@ -18,6 +18,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private readonly Table<StudyItem> _studyTable;
 		private readonly List<StudyItem> _hiddenItems;
 
+		private bool _filterDuplicates;
 		private bool _everSearched;
 
 		public SearchResult()
@@ -81,42 +82,45 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public bool HasDuplicates { get; private set; }
 
+		public bool FilterDuplicates
+		{
+			get { return _filterDuplicates; }
+			set
+			{
+				_filterDuplicates = value;
+				if (_filterDuplicates)
+				{
+					if (_hiddenItems.Count == 0)
+					{
+						RemoveDuplicates(_studyTable.Items, _hiddenItems);
+					}
+				}
+				else
+				{
+					if (_hiddenItems.Count > 0)
+					{
+						_studyTable.Items.AddRange(_hiddenItems);
+						_hiddenItems.Clear();
+					}
+				}
+
+				StudyTable.Sort();
+			}
+		}
 		#endregion
 		#region Methods
 
-		//TODO (cr Oct 2009): not actually refreshing anything - just toggles duplicates.
-		public void Refresh(bool filterDuplicates)
-		{
-			if (filterDuplicates)
-			{
-				if (_hiddenItems.Count == 0)
-				{
-					RemoveDuplicates(_studyTable.Items, _hiddenItems);
-				}
-			}
-			else
-			{
-				if (_hiddenItems.Count > 0)
-				{
-					_studyTable.Items.AddRange(_hiddenItems);
-					_hiddenItems.Clear();
-				}
-			}
-
-			StudyTable.Sort();
-		}
-
-		//TODO (cr Oct 2009): why not just create a new result object?
 		public void Refresh(StudyItemList studies, bool filterDuplicates)
 		{
 			_everSearched = true;
+			_filterDuplicates = filterDuplicates;
 
 			_hiddenItems.Clear();
 			IList<StudyItem> filteredStudies = new List<StudyItem>(studies);
 			RemoveDuplicates(filteredStudies, _hiddenItems);
 			HasDuplicates = _hiddenItems.Count > 0;
 
-			if (!filterDuplicates)
+			if (!_filterDuplicates)
 			{
 				_hiddenItems.Clear();
 				_studyTable.Items.Clear();
@@ -181,7 +185,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					IStudyColumn newColumn = (IStudyColumn)obj;
 
 					column = new TableColumn<StudyItem, string>(
-						newColumn.Heading,
+						newColumn.Name,
 						item => (newColumn.GetValue(item) ?? "").ToString(),
 						newColumn.WidthFactor);
 
