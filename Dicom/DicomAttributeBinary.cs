@@ -2475,7 +2475,7 @@ namespace ClearCanvas.Dicom
             }
             else
             {
-                value = (UInt16)_values[index];
+                value = (UInt64)_values[index];
                 return true;
             }
         }
