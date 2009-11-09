@@ -106,6 +106,7 @@ namespace ClearCanvas.ImageServer.TestApp
                     scuClients.Add(scu);
                 }
 
+                int seriesCount = 0;
                 do
                 {
                     String seriesDescription = _seriesDesc[ran.Next(_seriesDesc.Count)];
@@ -133,9 +134,10 @@ namespace ClearCanvas.ImageServer.TestApp
                         if (ran.Next() % 20 == 0)
                             break; // don't use all images
                     }
-                    
 
-                } while (ran.Next() % 3 != 0);
+                    seriesCount++;
+
+                } while (ran.Next() % 3 != 0 && seriesCount<MaxSeries.Value);
 
                 Log(String.Format("Sending {0} images using {1} client(s)", _prevSentFiles.Count, scuClients.Count));
                 foreach (StorageScu scu in scuClients)

@@ -85,8 +85,8 @@ namespace ClearCanvas.ImageServer.TestApp
 
         private void button1_Click(object sender, EventArgs e)
         {
-            StreamingTest test = new StreamingTest();
-            test.Show();
+            ReconcileCleanupUtils util = new ReconcileCleanupUtils();
+            util.Show();
         }
     }
 }

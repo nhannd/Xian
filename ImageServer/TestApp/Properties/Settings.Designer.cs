@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageServer.TestApp.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "9.0.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -26,10 +26,32 @@ namespace ClearCanvas.ImageServer.TestApp.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=LPC;Initial Catalog=ImageServer;Integrated Security=True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=127.0.0.1;User ID=pacsuser;Password=jdmidb;Initial Catalog=ImageServe" +
+            "r")]
         public string ImageServerConnectionString {
             get {
                 return ((string)(this["ImageServerConnectionString"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=172.16.10.122;Initial Catalog=ImageServer;User ID=pacsuser;Password=j" +
+            "dmidb")]
+        public string ImageServerConnectionString1 {
+            get {
+                return ((string)(this["ImageServerConnectionString1"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=LPC;Initial Catalog=MyShop;User ID=sa;Password=clearcanvas")]
+        public string MyShopConnectionString {
+            get {
+                return ((string)(this["MyShopConnectionString"]));
             }
         }
     }

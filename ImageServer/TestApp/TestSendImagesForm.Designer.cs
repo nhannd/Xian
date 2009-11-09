@@ -48,6 +48,13 @@ namespace ClearCanvas.ImageServer.TestApp
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.AutoRun = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.omitStudyDate = new System.Windows.Forms.CheckBox();
+            this.omitBirthdate = new System.Windows.Forms.CheckBox();
+            this.omitGender = new System.Windows.Forms.CheckBox();
+            this.omitIssuerOfPatientId = new System.Windows.Forms.CheckBox();
+            this.omitPatientId = new System.Windows.Forms.CheckBox();
+            this.omitPatientName = new System.Windows.Forms.CheckBox();
+            this.omitAccession = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.StudyDate = new System.Windows.Forms.TextBox();
@@ -68,19 +75,14 @@ namespace ClearCanvas.ImageServer.TestApp
             this.label13 = new System.Windows.Forms.Label();
             this.Resend = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.omitAccession = new System.Windows.Forms.CheckBox();
-            this.omitPatientName = new System.Windows.Forms.CheckBox();
-            this.omitPatientId = new System.Windows.Forms.CheckBox();
-            this.omitIssuerOfPatientId = new System.Windows.Forms.CheckBox();
-            this.omitGender = new System.Windows.Forms.CheckBox();
-            this.omitBirthdate = new System.Windows.Forms.CheckBox();
-            this.omitStudyDate = new System.Windows.Forms.CheckBox();
+            this.MaxSeries = new System.Windows.Forms.NumericUpDown();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AssociationPerStudy)).BeginInit();
             this.panel2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MaxSeries)).BeginInit();
             this.SuspendLayout();
             // 
             // openFileDialog1
@@ -304,6 +306,76 @@ namespace ClearCanvas.ImageServer.TestApp
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Study && Demographics";
             // 
+            // omitStudyDate
+            // 
+            this.omitStudyDate.AutoSize = true;
+            this.omitStudyDate.Location = new System.Drawing.Point(307, 267);
+            this.omitStudyDate.Name = "omitStudyDate";
+            this.omitStudyDate.Size = new System.Drawing.Size(47, 17);
+            this.omitStudyDate.TabIndex = 47;
+            this.omitStudyDate.Text = "Omit";
+            this.omitStudyDate.UseVisualStyleBackColor = true;
+            // 
+            // omitBirthdate
+            // 
+            this.omitBirthdate.AutoSize = true;
+            this.omitBirthdate.Location = new System.Drawing.Point(307, 205);
+            this.omitBirthdate.Name = "omitBirthdate";
+            this.omitBirthdate.Size = new System.Drawing.Size(47, 17);
+            this.omitBirthdate.TabIndex = 47;
+            this.omitBirthdate.Text = "Omit";
+            this.omitBirthdate.UseVisualStyleBackColor = true;
+            // 
+            // omitGender
+            // 
+            this.omitGender.AutoSize = true;
+            this.omitGender.Location = new System.Drawing.Point(307, 176);
+            this.omitGender.Name = "omitGender";
+            this.omitGender.Size = new System.Drawing.Size(47, 17);
+            this.omitGender.TabIndex = 47;
+            this.omitGender.Text = "Omit";
+            this.omitGender.UseVisualStyleBackColor = true;
+            // 
+            // omitIssuerOfPatientId
+            // 
+            this.omitIssuerOfPatientId.AutoSize = true;
+            this.omitIssuerOfPatientId.Location = new System.Drawing.Point(307, 149);
+            this.omitIssuerOfPatientId.Name = "omitIssuerOfPatientId";
+            this.omitIssuerOfPatientId.Size = new System.Drawing.Size(47, 17);
+            this.omitIssuerOfPatientId.TabIndex = 47;
+            this.omitIssuerOfPatientId.Text = "Omit";
+            this.omitIssuerOfPatientId.UseVisualStyleBackColor = true;
+            // 
+            // omitPatientId
+            // 
+            this.omitPatientId.AutoSize = true;
+            this.omitPatientId.Location = new System.Drawing.Point(307, 121);
+            this.omitPatientId.Name = "omitPatientId";
+            this.omitPatientId.Size = new System.Drawing.Size(47, 17);
+            this.omitPatientId.TabIndex = 47;
+            this.omitPatientId.Text = "Omit";
+            this.omitPatientId.UseVisualStyleBackColor = true;
+            // 
+            // omitPatientName
+            // 
+            this.omitPatientName.AutoSize = true;
+            this.omitPatientName.Location = new System.Drawing.Point(307, 91);
+            this.omitPatientName.Name = "omitPatientName";
+            this.omitPatientName.Size = new System.Drawing.Size(47, 17);
+            this.omitPatientName.TabIndex = 47;
+            this.omitPatientName.Text = "Omit";
+            this.omitPatientName.UseVisualStyleBackColor = true;
+            // 
+            // omitAccession
+            // 
+            this.omitAccession.AutoSize = true;
+            this.omitAccession.Location = new System.Drawing.Point(307, 241);
+            this.omitAccession.Name = "omitAccession";
+            this.omitAccession.Size = new System.Drawing.Size(47, 17);
+            this.omitAccession.TabIndex = 47;
+            this.omitAccession.Text = "Omit";
+            this.omitAccession.UseVisualStyleBackColor = true;
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -442,6 +514,7 @@ namespace ClearCanvas.ImageServer.TestApp
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.MaxSeries);
             this.groupBox1.Controls.Add(this.label13);
             this.groupBox1.Controls.Add(this.AssociationPerStudy);
             this.groupBox1.Controls.Add(this.GenerateImages);
@@ -483,75 +556,17 @@ namespace ClearCanvas.ImageServer.TestApp
             this.textBox1.Size = new System.Drawing.Size(732, 133);
             this.textBox1.TabIndex = 50;
             // 
-            // omitAccession
+            // MaxSeries
             // 
-            this.omitAccession.AutoSize = true;
-            this.omitAccession.Location = new System.Drawing.Point(307, 241);
-            this.omitAccession.Name = "omitAccession";
-            this.omitAccession.Size = new System.Drawing.Size(47, 17);
-            this.omitAccession.TabIndex = 47;
-            this.omitAccession.Text = "Omit";
-            this.omitAccession.UseVisualStyleBackColor = true;
-            // 
-            // omitPatientName
-            // 
-            this.omitPatientName.AutoSize = true;
-            this.omitPatientName.Location = new System.Drawing.Point(307, 91);
-            this.omitPatientName.Name = "omitPatientName";
-            this.omitPatientName.Size = new System.Drawing.Size(47, 17);
-            this.omitPatientName.TabIndex = 47;
-            this.omitPatientName.Text = "Omit";
-            this.omitPatientName.UseVisualStyleBackColor = true;
-            // 
-            // omitPatientId
-            // 
-            this.omitPatientId.AutoSize = true;
-            this.omitPatientId.Location = new System.Drawing.Point(307, 121);
-            this.omitPatientId.Name = "omitPatientId";
-            this.omitPatientId.Size = new System.Drawing.Size(47, 17);
-            this.omitPatientId.TabIndex = 47;
-            this.omitPatientId.Text = "Omit";
-            this.omitPatientId.UseVisualStyleBackColor = true;
-            // 
-            // omitIssuerOfPatientId
-            // 
-            this.omitIssuerOfPatientId.AutoSize = true;
-            this.omitIssuerOfPatientId.Location = new System.Drawing.Point(307, 149);
-            this.omitIssuerOfPatientId.Name = "omitIssuerOfPatientId";
-            this.omitIssuerOfPatientId.Size = new System.Drawing.Size(47, 17);
-            this.omitIssuerOfPatientId.TabIndex = 47;
-            this.omitIssuerOfPatientId.Text = "Omit";
-            this.omitIssuerOfPatientId.UseVisualStyleBackColor = true;
-            // 
-            // omitGender
-            // 
-            this.omitGender.AutoSize = true;
-            this.omitGender.Location = new System.Drawing.Point(307, 176);
-            this.omitGender.Name = "omitGender";
-            this.omitGender.Size = new System.Drawing.Size(47, 17);
-            this.omitGender.TabIndex = 47;
-            this.omitGender.Text = "Omit";
-            this.omitGender.UseVisualStyleBackColor = true;
-            // 
-            // omitBirthdate
-            // 
-            this.omitBirthdate.AutoSize = true;
-            this.omitBirthdate.Location = new System.Drawing.Point(307, 205);
-            this.omitBirthdate.Name = "omitBirthdate";
-            this.omitBirthdate.Size = new System.Drawing.Size(47, 17);
-            this.omitBirthdate.TabIndex = 47;
-            this.omitBirthdate.Text = "Omit";
-            this.omitBirthdate.UseVisualStyleBackColor = true;
-            // 
-            // omitStudyDate
-            // 
-            this.omitStudyDate.AutoSize = true;
-            this.omitStudyDate.Location = new System.Drawing.Point(307, 267);
-            this.omitStudyDate.Name = "omitStudyDate";
-            this.omitStudyDate.Size = new System.Drawing.Size(47, 17);
-            this.omitStudyDate.TabIndex = 47;
-            this.omitStudyDate.Text = "Omit";
-            this.omitStudyDate.UseVisualStyleBackColor = true;
+            this.MaxSeries.Location = new System.Drawing.Point(34, 94);
+            this.MaxSeries.Name = "MaxSeries";
+            this.MaxSeries.Size = new System.Drawing.Size(73, 20);
+            this.MaxSeries.TabIndex = 50;
+            this.MaxSeries.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // TestSendImagesForm
             // 
@@ -573,6 +588,7 @@ namespace ClearCanvas.ImageServer.TestApp
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MaxSeries)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -626,5 +642,6 @@ namespace ClearCanvas.ImageServer.TestApp
         private System.Windows.Forms.CheckBox omitIssuerOfPatientId;
         private System.Windows.Forms.CheckBox omitPatientId;
         private System.Windows.Forms.CheckBox omitPatientName;
+        private System.Windows.Forms.NumericUpDown MaxSeries;
     }
 }
