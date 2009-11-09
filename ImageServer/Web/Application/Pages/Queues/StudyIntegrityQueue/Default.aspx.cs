@@ -49,7 +49,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                                                            {
                                                                var panel =
                                                                    LoadControl("SearchPanel.ascx") as SearchPanel;
-                                                               if(panel != null) {
+                                                               if (panel != null)
+                                                               {
                                                                    panel.ServerPartition = partition;
                                                                    panel.ID = "SearchPanel_" + partition.AeTitle;
                                                                }
@@ -85,7 +86,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                     ServerPartitionTabs.GetUserControlForPartition(partition.GetKey()).FindControl("SearchPanel_" +
                                                                                                    partition.AeTitle) as
                     SearchPanel;
-                panel.UpdateUI();
+                if (panel != null) panel.UpdateUI();
             }
         }
     }

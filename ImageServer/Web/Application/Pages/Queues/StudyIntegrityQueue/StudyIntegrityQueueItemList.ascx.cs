@@ -236,14 +236,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                     (EmptySearchResultsMessage) e.Row.FindControl("EmptySearchResultsMessage");
                 if (message != null)
                 {
-                    if (StudyIntegrityQueueGridView.DataSource == null)
-                    {
-                        message.Message = "Please enter search criteria to find studies.";
-                    }
-                    else
-                    {
-                        message.Message = "No studies found matching the provided criteria.";
-                    }
+                    message.Message = StudyIntegrityQueueGridView.DataSource == null ? "Please enter search criteria to find studies." : "No studies found matching the provided criteria.";
                 }
             }
             else

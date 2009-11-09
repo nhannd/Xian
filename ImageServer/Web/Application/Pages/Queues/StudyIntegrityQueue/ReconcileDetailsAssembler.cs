@@ -44,19 +44,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
     {
         public static ReconcileDetails CreateReconcileDetails(StudyIntegrityQueueSummary item)
         {
-            ReconcileDetails details;
-            if (item.TheStudyIntegrityQueueItem.StudyIntegrityReasonEnum.Equals(
-                    StudyIntegrityReasonEnum.InconsistentData))
-                details = new ReconcileDetails(item.TheStudyIntegrityQueueItem);
-            else
-                details = new DuplicateEntryDetails(item.TheStudyIntegrityQueueItem);
+            ReconcileDetails details = item.TheStudyIntegrityQueueItem.StudyIntegrityReasonEnum.Equals(
+                                           StudyIntegrityReasonEnum.InconsistentData) ? new ReconcileDetails(item.TheStudyIntegrityQueueItem) : new DuplicateEntryDetails(item.TheStudyIntegrityQueueItem);
 
             Study study = item.StudySummary.TheStudy;
-            details.StudyInstanceUID = study.StudyInstanceUid;
+            details.StudyInstanceUid = study.StudyInstanceUid;
 
             //Set the demographic details of the Existing Patient
             details.ExistingStudy = new ReconcileDetails.StudyInfo();
-            details.ExistingStudy.StudyInstanceUID = study.StudyInstanceUid;
+            details.ExistingStudy.StudyInstanceUid = study.StudyInstanceUid;
             details.ExistingStudy.AccessionNumber = study.AccessionNumber;
             details.ExistingStudy.StudyDate = study.StudyDate;
             details.ExistingStudy.Patient.PatientID = study.PatientId;
@@ -68,11 +64,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 study.Series.Values,
                 delegate(Series theSeries)
                     {
-                        var seriesDetails = new ReconcileDetails.SeriesDetails();
-                        seriesDetails.Description = theSeries.SeriesDescription;
-                        seriesDetails.SeriesInstanceUid = theSeries.SeriesInstanceUid;
-                        seriesDetails.Modality = theSeries.Modality;
-                        seriesDetails.NumberOfInstances = theSeries.NumberOfSeriesRelatedInstances;
+                        var seriesDetails = new ReconcileDetails.SeriesDetails
+                                                {
+                                                    Description = theSeries.SeriesDescription,
+                                                    SeriesInstanceUid = theSeries.SeriesInstanceUid,
+                                                    Modality = theSeries.Modality,
+                                                    NumberOfInstances = theSeries.NumberOfSeriesRelatedInstances,
+                                                    SeriesNumber = theSeries.SeriesNumber
+                                                };
                         return seriesDetails;
                     });
 
@@ -87,28 +86,36 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 // extract the conflicting study info from Details
                 details.ConflictingStudyInfo.AccessionNumber = item.QueueData.Details.StudyInfo.AccessionNumber;
                 details.ConflictingStudyInfo.StudyDate = item.QueueData.Details.StudyInfo.StudyDate;
-                details.ConflictingStudyInfo.StudyInstanceUID = item.QueueData.Details.StudyInfo.StudyInstanceUid;
+                details.ConflictingStudyInfo.StudyInstanceUid = item.QueueData.Details.StudyInfo.StudyInstanceUid;
                 details.ConflictingStudyInfo.StudyDate = item.QueueData.Details.StudyInfo.StudyDate;
 
-                details.ConflictingStudyInfo.Patient = new ReconcileDetails.PatientInfo();
-                details.ConflictingStudyInfo.Patient.BirthDate =
-                    item.QueueData.Details.StudyInfo.PatientInfo.PatientsBirthdate;
-                details.ConflictingStudyInfo.Patient.IssuerOfPatientID =
-                    item.QueueData.Details.StudyInfo.PatientInfo.IssuerOfPatientId;
-                details.ConflictingStudyInfo.Patient.Name = item.QueueData.Details.StudyInfo.PatientInfo.Name;
-                details.ConflictingStudyInfo.Patient.PatientID = item.QueueData.Details.StudyInfo.PatientInfo.PatientId;
-                details.ConflictingStudyInfo.Patient.Sex = item.QueueData.Details.StudyInfo.PatientInfo.Sex;
+                details.ConflictingStudyInfo.Patient = new ReconcileDetails.PatientInfo
+                                                           {
+                                                               BirthDate =
+                                                                   item.QueueData.Details.StudyInfo.PatientInfo.
+                                                                   PatientsBirthdate,
+                                                               IssuerOfPatientID =
+                                                                   item.QueueData.Details.StudyInfo.PatientInfo.
+                                                                   IssuerOfPatientId,
+                                                               Name = item.QueueData.Details.StudyInfo.PatientInfo.Name,
+                                                               PatientID =
+                                                                   item.QueueData.Details.StudyInfo.PatientInfo.
+                                                                   PatientId,
+                                                               Sex = item.QueueData.Details.StudyInfo.PatientInfo.Sex
+                                                           };
 
                 details.ConflictingStudyInfo.Series =
                     CollectionUtils.Map(
                         item.QueueData.Details.StudyInfo.Series,
                         delegate(SeriesInformation input)
                             {
-                                var seriesDetails = new ReconcileDetails.SeriesDetails();
-                                seriesDetails.Description = input.SeriesDescription;
-                                seriesDetails.Modality = input.Modality;
-                                seriesDetails.SeriesInstanceUid = input.SeriesInstanceUid;
-                                seriesDetails.NumberOfInstances = input.NumberOfInstances;
+                                var seriesDetails = new ReconcileDetails.SeriesDetails
+                                                        {
+                                                            Description = input.SeriesDescription,
+                                                            Modality = input.Modality,
+                                                            SeriesInstanceUid = input.SeriesInstanceUid,
+                                                            NumberOfInstances = input.NumberOfInstances
+                                                        };
                                 return seriesDetails;
                             });
             }
@@ -127,7 +134,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                     details.ConflictingStudyInfo.StudyDate = value;
 
                 if (desc.TryGetValue(DicomTags.StudyInstanceUid, out value))
-                    details.ConflictingStudyInfo.StudyInstanceUID = value;
+                    details.ConflictingStudyInfo.StudyInstanceUid = value;
 
                 details.ConflictingStudyInfo.Patient = new ReconcileDetails.PatientInfo();
 
@@ -157,22 +164,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
                 IList<StudyIntegrityQueueUid> uids = uidBroker.Find(criteria);
 
-                Dictionary<string, List<StudyIntegrityQueueUid>> seriesGroups = CollectionUtils.GroupBy(uids,
-                                                                                                        delegate(
-                                                                                                            StudyIntegrityQueueUid
-                                                                                                            uid)
-                                                                                                            {
-                                                                                                                return
-                                                                                                                    uid.
-                                                                                                                        SeriesInstanceUid;
-                                                                                                            });
+                Dictionary<string, List<StudyIntegrityQueueUid>> seriesGroups = CollectionUtils.GroupBy(uids, uid => uid.SeriesInstanceUid);
 
                 foreach (string seriesUid in seriesGroups.Keys)
                 {
-                    var seriesDetails = new ReconcileDetails.SeriesDetails();
-                    seriesDetails.SeriesInstanceUid = seriesUid;
-                    seriesDetails.Description = seriesGroups[seriesUid][0].SeriesDescription;
-                    seriesDetails.NumberOfInstances = seriesGroups[seriesUid].Count;
+                    var seriesDetails = new ReconcileDetails.SeriesDetails
+                                            {
+                                                SeriesInstanceUid = seriesUid,
+                                                Description = seriesGroups[seriesUid][0].SeriesDescription,
+                                                NumberOfInstances = seriesGroups[seriesUid].Count
+                                            };
                     //seriesDetails.Modality = "N/A";
                     series.Add(seriesDetails);
                 }

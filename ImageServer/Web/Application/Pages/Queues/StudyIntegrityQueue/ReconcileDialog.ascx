@@ -18,7 +18,7 @@
                     <asp:TableCell><span class="ConflictingStudyTitle">Conflicting Study</span></asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
-                    <asp:TableCell ColumnSpan="3"><div class="StudyInstanceUIDMessage">Study Instance UID: <asp:Label ID="StudyInstanceUIDLabel" runat="server" Text='<%# ReconcileDetails.StudyInstanceUID %>'></asp:Label></div></asp:TableCell>
+                    <asp:TableCell ColumnSpan="3"><div class="StudyInstanceUIDMessage">Study Instance UID: <asp:Label ID="StudyInstanceUIDLabel" runat="server" Text='<%# ReconcileDetails.StudyInstanceUid %>'></asp:Label></div></asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow VerticalAlign="Top">
                     <asp:TableCell>
@@ -70,6 +70,7 @@
                                     <div class="ReconcileGridViewPanel">
                                         <asp:GridView runat="server" CssClass="ReconcileSeriesGridView" ID="ExistingPatientSeriesGridView" width="440px" AutoGenerateColumns="false">
                                             <Columns>
+						                        <asp:BoundField HeaderText="Number" DataField="SeriesNumber" />
 						                        <asp:BoundField HeaderText="Description" DataField="Description" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />
 						                        <asp:BoundField HeaderText="Modality" DataField="Modality" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />                    
 						                        <asp:BoundField HeaderText="Instances" DataField="NumberOfInstances" />
@@ -140,6 +141,7 @@
                                     <div class="ReconcileGridViewPanel">
                                         <asp:GridView runat="server" CssClass="ReconcileSeriesGridView" ID="ConflictingPatientSeriesGridView" width="440px" AutoGenerateColumns="false">
                                             <Columns>
+						                        <asp:BoundField HeaderText="Number" DataField="SeriesNumber" />
 						                        <asp:BoundField HeaderText="Description" DataField="Description" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />
 						                        <asp:BoundField HeaderText="Modality" DataField="Modality" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />                    
 						                        <asp:BoundField HeaderText="Instances" DataField="NumberOfInstances" />

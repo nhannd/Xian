@@ -79,7 +79,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         #region private variables
 
         private bool _consistentData;
-        private DuplicateEntryDetails _details;
         private Model.StudyIntegrityQueue _item;
 
         #endregion
@@ -102,11 +101,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// <summary>
         /// Sets or gets the Reconcile Item Value
         /// </summary>
-        public DuplicateEntryDetails DuplicateEntryDetails
-        {
-            get { return _details; }
-            set { _details = value; }
-        }
+        public DuplicateEntryDetails DuplicateEntryDetails { get; set; }
 
         public bool DataIsConsistent
         {

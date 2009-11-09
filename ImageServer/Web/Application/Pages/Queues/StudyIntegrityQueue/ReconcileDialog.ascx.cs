@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
     public partial class ReconcileDialog : UserControl
     {
         private const string HighlightCssClass = " ConflictField ";
-        StudyIntegrityQueueController _controller = new StudyIntegrityQueueController();
+        private readonly StudyIntegrityQueueController _controller = new StudyIntegrityQueueController();
 
         #region Nested type: ComparisonCallback
 
@@ -120,7 +120,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         protected void OKButton_Click(object sender, EventArgs e)
         {
             var itemKey = ViewState["StudyIntegrityQueueItem"] as ServerEntityKey;
-            
+
             try
             {
                 if (MergeUsingExistingStudy.Checked)
@@ -192,14 +192,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             StudyStorageLocation location = studyLocations[0];
             StudyLocation.Text = location.GetStudyPath();
 
-            if (ReconcileDetails != null)
-            {
-                ConflictingStudyLocation.Text = ReconcileDetails.GetFolderPath();
-            }
-            else
-            {
-                ConflictingStudyLocation.Text = "Not Specified.";
-            }
+            ConflictingStudyLocation.Text = ReconcileDetails != null ? ReconcileDetails.GetFolderPath() : "Not Specified.";
 
             string reason;
             CanReconcile = _controller.CanReconcile(location, out reason);
@@ -215,24 +208,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             if (ReconcileDetails != null)
             {
                 Compare(ReconcileDetails.ExistingStudy.Patient.Name, ReconcileDetails.ConflictingStudyInfo.Patient.Name,
-                        delegate(bool different) { Highlight(ConflictingNameLabel, different); });
+                        different => Highlight(ConflictingNameLabel, different));
 
                 Compare(ReconcileDetails.ExistingStudy.Patient.PatientID,
                         ReconcileDetails.ConflictingStudyInfo.Patient.PatientID,
-                        delegate(bool different) { Highlight(ConflictingPatientIDLabel, different); });
+                        different => Highlight(ConflictingPatientIDLabel, different));
                 Compare(ReconcileDetails.ExistingStudy.Patient.IssuerOfPatientID,
                         ReconcileDetails.ConflictingStudyInfo.Patient.IssuerOfPatientID,
-                        delegate(bool different) { Highlight(ConflictingPatientIssuerOfPatientID, different); });
+                        different => Highlight(ConflictingPatientIssuerOfPatientID, different));
                 Compare(ReconcileDetails.ExistingStudy.Patient.BirthDate,
                         ReconcileDetails.ConflictingStudyInfo.Patient.BirthDate,
-                        delegate(bool different) { Highlight(ConflictingPatientBirthDate, different); });
+                        different => Highlight(ConflictingPatientBirthDate, different));
                 Compare(ReconcileDetails.ExistingStudy.Patient.Sex, ReconcileDetails.ConflictingStudyInfo.Patient.Sex,
-                        delegate(bool different) { Highlight(ConflictingPatientSex, different); });
+                        different => Highlight(ConflictingPatientSex, different));
                 Compare(ReconcileDetails.ExistingStudy.StudyDate, ReconcileDetails.ConflictingStudyInfo.StudyDate,
-                        delegate(bool different) { Highlight(ConflictingStudyDate, different); });
+                        different => Highlight(ConflictingStudyDate, different));
                 Compare(ReconcileDetails.ExistingStudy.AccessionNumber,
                         ReconcileDetails.ConflictingStudyInfo.AccessionNumber,
-                        delegate(bool different) { Highlight(ConflictingAccessionNumberLabel, different); });
+                        different => Highlight(ConflictingAccessionNumberLabel, different));
             }
         }
 

@@ -150,7 +150,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             GridPagerTop.InitializeGridPager(Labels.GridPagerQueueSingleItem,
                                              Labels.GridPagerQueueMultipleItems,
                                              StudyIntegrityQueueItemList.StudyIntegrityQueueGrid,
-                                             delegate { return StudyIntegrityQueueItemList.ResultCount; },
+                                             () => StudyIntegrityQueueItemList.ResultCount,
                                              ImageServerConstants.GridViewPagerPosition.Top);
             StudyIntegrityQueueItemList.Pager = GridPagerTop;
 

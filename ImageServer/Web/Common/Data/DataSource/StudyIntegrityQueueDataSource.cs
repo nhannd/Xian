@@ -47,11 +47,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
     public class ReconcileDetails
     {
         #region Private Memebers
-        private string _studyInstanceUid;
+
         private readonly StudyIntegrityQueue _item;
         private StudyInfo _existingStudy;
-        private ImageSetDetails _conflictingImages;
-        private StudyInfo _conflictingStudyInfo;
         private StudyStorageLocation _location;
         private StudyStorage _studyStorage;
 
@@ -60,115 +58,47 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
         public class SeriesDetails
         {
-            private string _description;
-            private int _numberOfInstances;
-            private string _modality;
-            private string _seriesInstanceUid;
+            public string Description { get; set; }
 
-            public string Description
-            {
-                get { return _description; }
-                set { _description = value; }
-            }
+            public string Modality { get; set; }
 
-            public string Modality
-            {
-                get { return _modality; }
-                set { _modality = value; }
-            }
+            public int NumberOfInstances { get; set; }
 
-            public int NumberOfInstances
-            {
-                get { return _numberOfInstances; }
-                set { _numberOfInstances = value; }
-            }
+            public string SeriesInstanceUid { get; set; }
 
-            public string SeriesInstanceUid
-            {
-                get { return _seriesInstanceUid; }
-                set { _seriesInstanceUid = value; }
-            }
+            public string SeriesNumber { get; set; }
         }
 
         public class PatientInfo
         {
-            private string _name;
-            private string _sex;
-            private string _birthDate;
-            private string _patientID;
-            private string _issuerOfPatientID;
+            public string Name { get; set; }
 
-            public string Name
-            {
-                get { return _name; }
-                set { _name = value; }
-            }
+            public string Sex { get; set; }
 
-            public string Sex
-            {
-                get { return _sex; }
-                set { _sex = value; }
-            }
+            public string BirthDate { get; set; }
 
-            public string BirthDate
-            {
-                get { return _birthDate; }
-                set { _birthDate = value; }
-            }
+            public string PatientID { get; set; }
 
-            public string PatientID
-            {
-                get { return _patientID; }
-                set { _patientID = value; }
-            }
-
-            public string IssuerOfPatientID
-            {
-                get { return _issuerOfPatientID; }
-                set { _issuerOfPatientID = value; }
-            }
-
-
+            public string IssuerOfPatientID { get; set; }
         }
 
         public class StudyInfo
         {
-            private PatientInfo _patient = new PatientInfo();
-            private IEnumerable<SeriesDetails> _series = new List<SeriesDetails>();
-            private string _accessionNumber;
-            private string _studyInstanceUID;
-            private string _studyDate;
-
-            public IEnumerable<SeriesDetails> Series
+            public StudyInfo()
             {
-                get { return _series; }
-                set { _series = value; }
+                Series = new List<SeriesDetails>();
+                Patient = new PatientInfo();
             }
 
+            public IEnumerable<SeriesDetails> Series { get; set; }
 
-            public string StudyDate
-            {
-                get { return _studyDate; }
-                set { _studyDate = value; }
-            }
+            public string StudyDate { get; set; }
 
-            public PatientInfo Patient
-            {
-                get { return _patient; }
-                set { _patient = value; }
-            }
+            public PatientInfo Patient { get; set; }
 
-            public string AccessionNumber
-            {
-                get { return _accessionNumber; }
-                set { _accessionNumber = value; }
-            }
+            public string AccessionNumber { get; set; }
 
-            public string StudyInstanceUID
-            {
-                get { return _studyInstanceUID; }
-                set { _studyInstanceUID = value; }
-            }
+            public string StudyInstanceUid { get; set; }
         }
 
         public ReconcileDetails(StudyIntegrityQueue queueItem)
@@ -183,11 +113,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
         }
 
 
-        public string StudyInstanceUID
-        {
-            get { return _studyInstanceUid; }
-            set { _studyInstanceUid = value; }
-        }
+        public string StudyInstanceUid { get; set; }
 
 
         public StudyInfo ExistingStudy
@@ -201,20 +127,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
             set { _existingStudy = value; }
         }
 
-        public ImageSetDetails ConflictingImageSet
-        {
-            get
-            {
-                return _conflictingImages;
-            }
-            set { _conflictingImages = value; }
-        }
+        public ImageSetDetails ConflictingImageSet { get; set; }
 
-        public StudyInfo ConflictingStudyInfo
-        {
-            get { return _conflictingStudyInfo; }
-            set { _conflictingStudyInfo = value; }
-        }
+        public StudyInfo ConflictingStudyInfo { get; set; }
 
         public string GetFolderPath()
         {
@@ -245,22 +160,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 	{
 		#region Private members
 
-	    private StudyIntegrityReasonEnum _reason;
-		private string _existingPatientId;
-		private string _existingPatientName;
-		private string _existingAccessionNumber;
-		private string _conflictingAccessionNumber;
-		private string _conflictingPatientName;
-		private string _conflictingPatientId;
-		private string _studyInstanceUID;
-		private DateTime _receivedTime;
-		private StudyIntegrityQueue _studyIntegrityQueueItem;
-		private ServerPartition _partition;
-		private StudySummary _study;
-	    private string[] _conflictingModalities;
+	    private StudySummary _study;
 	    private ReconcileStudyWorkQueueData _queueData;
-	    private string _conflictingStudyDate;
-	    private string _conflictingStudyDescription;
 
 	    #endregion Private members
 
@@ -276,69 +177,28 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			get { return _study; }
 			set { _study = value; }
 		}
-        
-		public string ExistingAccessionNumber
-		{
-			get { return _existingAccessionNumber; }
-			set { _existingAccessionNumber = value; }
-		}
-		public string ConflictingAccessionNumber
-		{
-			get { return _conflictingAccessionNumber; }
-			set { _conflictingAccessionNumber = value; }
-		}
-		public StudyIntegrityQueue TheStudyIntegrityQueueItem
-		{
-			get { return _studyIntegrityQueueItem; }
-			set { _studyIntegrityQueueItem = value; }
-		}
 
-		public ServerPartition ThePartition
-		{
-			get { return _partition; }
-			set { _partition = value;}
-		}
+	    public string ExistingAccessionNumber { get; set; }
 
-		public string ExistingPatientName
-		{
-			get { return _existingPatientName; }
-			set { _existingPatientName = value; }
-		}
+	    public string ConflictingAccessionNumber { get; set; }
 
-		public string ExistingPatientId
-		{
-			get { return _existingPatientId; }
-			set { _existingPatientId = value; }
-		}
+	    public StudyIntegrityQueue TheStudyIntegrityQueueItem { get; set; }
 
-		public string ConflictingPatientName
-		{
-			get { return _conflictingPatientName; }
-			set { _conflictingPatientName = value; }
-		}
+	    public ServerPartition ThePartition { get; set; }
 
-		public string ConflictingPatientId
-		{
-			get { return _conflictingPatientId; }
-			set { _conflictingPatientId = value; }
-		}
+	    public string ExistingPatientName { get; set; }
 
-	    public string[] ConflictingModalities
-	    {
-            get { return _conflictingModalities; }
-            set { _conflictingModalities = value; }
-	    }
+	    public string ExistingPatientId { get; set; }
 
-		public DateTime ReceivedTime
-		{
-			get { return _receivedTime; }
-			set { _receivedTime = value; }
-		}
-		public string StudyInstanceUID
-		{
-			get { return _studyInstanceUID; }
-			set { _studyInstanceUID = value; }
-		}
+	    public string ConflictingPatientName { get; set; }
+
+	    public string ConflictingPatientId { get; set; }
+
+	    public string[] ConflictingModalities { get; set; }
+
+	    public DateTime ReceivedTime { get; set; }
+
+	    public string StudyInstanceUid { get; set; }
 
 
 	    public ReconcileStudyWorkQueueData QueueData
@@ -347,7 +207,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
             {
                 if (_queueData==null)
                 {
-                    _queueData = XmlUtils.Deserialize < ReconcileStudyWorkQueueData>(_studyIntegrityQueueItem.Details);
+                    _queueData = XmlUtils.Deserialize < ReconcileStudyWorkQueueData>(TheStudyIntegrityQueueItem.Details);
                 }
                 return _queueData;
             }
@@ -370,23 +230,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			}
 		}
 
-	    public StudyIntegrityReasonEnum Reason
-	    {
-	        get { return _reason; }
-	        set { _reason = value; }
-	    }
+	    public StudyIntegrityReasonEnum Reason { get; set; }
 
-	    public string ConflictingStudyDate
-	    {
-            get { return _conflictingStudyDate;  }
-            set { _conflictingStudyDate = value; }
-	    }
+	    public string ConflictingStudyDate { get; set; }
 
-	    public string ConflictingStudyDescription
-	    {
-            get { return _conflictingStudyDescription; }
-            set { _conflictingStudyDescription = value; }
-	    }
+	    public string ConflictingStudyDescription { get; set; }
 
 	    #endregion Public Properties
 	}
@@ -400,78 +248,40 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 		#region Private Members
 		private readonly StudyIntegrityQueueController _searchController = new StudyIntegrityQueueController();
-		private string _description;
-		private string _patientName;
-		private string _patientId;
-		private string _accessionNumber;
-		private string _insertTime;
-		private int _resultCount;
-		private ServerPartition _partition;
-	    private IList<StudyIntegrityReasonEnum> _reasonEnum = new List<StudyIntegrityReasonEnum>();
 
-		private string _dateFormats;
-		private IList<StudyIntegrityQueueSummary> _list = new List<StudyIntegrityQueueSummary>();
-		private IList<ServerEntityKey> _searchKeys;
-		#endregion
+	    public StudyIntegrityQueueDataSource()
+	    {
+	        List = new List<StudyIntegrityQueueSummary>();
+	        ReasonEnum = new List<StudyIntegrityReasonEnum>();
+	    }
+
+	    #endregion
 
 		#region Public Properties
-        
-		public string Description
-		{
-			get { return _description; }
-			set { _description = value; }
-		}
-		public string PatientName
-		{
-			get { return _patientName; }
-			set { _patientName = value; }
-		}
-		public string PatientId
-		{
-			get { return _patientId; }
-			set { _patientId = value; }
-		}
-		public string AccessionNumber
-		{
-			get { return _accessionNumber; }
-			set { _accessionNumber = value; }
-		}
-		public string InsertTime
-		{
-			get { return _insertTime; }
-			set { _insertTime = value; }
-		}
-		public ServerPartition Partition
-		{
-			get { return _partition; }
-			set { _partition = value; }
-		}
-		public IList<StudyIntegrityReasonEnum> ReasonEnum
-		{
-			get { return _reasonEnum; }
-			set { _reasonEnum = value; }
-		}
-		public string DateFormats
-		{
-			get { return _dateFormats; }
-			set { _dateFormats = value; }
-		}
-		public IList<StudyIntegrityQueueSummary> List
-		{
-			get { return _list; }
-		}
-		public int ResultCount
-		{
-			get { return _resultCount; }
-			set { _resultCount = value; }
-		}
-		public IList<ServerEntityKey> SearchKeys
-		{
-			get { return _searchKeys; }
-			set { _searchKeys = value; }
-		}
 
-		#endregion
+	    public string Description { get; set; }
+
+	    public string PatientName { get; set; }
+
+	    public string PatientId { get; set; }
+
+	    public string AccessionNumber { get; set; }
+
+	    public string InsertTime { get; set; }
+
+	    public ServerPartition Partition { get; set; }
+
+	    public IList<StudyIntegrityReasonEnum> ReasonEnum { get; set; }
+
+	    public string DateFormats { get; set; }
+
+	    public IList<StudyIntegrityQueueSummary> List { get; private set; }
+
+	    public int ResultCount { get; set; }
+
+	    public IList<ServerEntityKey> SearchKeys { get; set; }
+
+	    #endregion
 
 		#region Public Methods
 		public IEnumerable<StudyIntegrityQueueSummary> Select(int startRowIndex, int maximumRows)
@@ -482,15 +292,15 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 			IList<StudyIntegrityQueue> queueList = _searchController.GetRangeStudyIntegrityQueueItems(criteria, startRowIndex, maximumRows);
 
-			_list = new List<StudyIntegrityQueueSummary>();
+			List = new List<StudyIntegrityQueueSummary>();
 
 			foreach (StudyIntegrityQueue item in queueList)
-				_list.Add(CreateStudyIntegrityQueueSummary(item));
+				List.Add(CreateStudyIntegrityQueueSummary(item));
 
 			if (StudyIntegrityQueueFoundSet != null)
-				StudyIntegrityQueueFoundSet(_list);
+				StudyIntegrityQueueFoundSet(List);
 
-			return _list;
+			return List;
 		}
 
 		public int SelectCount()
@@ -516,23 +326,20 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		/// </remark>
 		private StudyIntegrityQueueSummary CreateStudyIntegrityQueueSummary(StudyIntegrityQueue item)
 		{
-            StudyIntegrityQueueSummary summary = new StudyIntegrityQueueSummary();
+            var summary = new StudyIntegrityQueueSummary();
                 
-			StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();
-            StudyStorage storages = ssAdaptor.Get(HttpContextData.Current.ReadContext, item.StudyStorageKey);
+			var ssAdaptor = new StudyStorageAdaptor();
+            var storages = ssAdaptor.Get(HttpContextData.Current.ReadContext, item.StudyStorageKey);
             try
             {
                 summary.Reason = item.StudyIntegrityReasonEnum;
                 summary.TheStudyIntegrityQueueItem = item;
                 summary.ThePartition = Partition;
 
-                ReconcileStudyQueueDescription queueDescription = new ReconcileStudyQueueDescription();
+                var queueDescription = new ReconcileStudyQueueDescription();
                 queueDescription.Parse(item.Description);
                 
-                if (item.StudyIntegrityReasonEnum.Equals(StudyIntegrityReasonEnum.InconsistentData))
-                    summary.QueueData = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.Details);
-                else
-                    summary.QueueData = XmlUtils.Deserialize<DuplicateSIQQueueData>(item.Details);
+                summary.QueueData = item.StudyIntegrityReasonEnum.Equals(StudyIntegrityReasonEnum.InconsistentData) ? XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.Details) : XmlUtils.Deserialize<DuplicateSIQQueueData>(item.Details);
 
                 ImageSetDescriptor studyData = ImageSetDescriptor.Parse(item.StudyData.DocumentElement);
                     
@@ -547,7 +354,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                     summary.ConflictingStudyDate = summary.QueueData.Details.StudyInfo.StudyDate;
                     summary.ConflictingStudyDescription = summary.QueueData.Details.StudyInfo.StudyDescription;
                     
-                    List<string> modalities = new List<string>();
+                    var modalities = new List<string>();
                     List<SeriesInformation> seriesList = summary.QueueData.Details.StudyInfo.Series;
                     foreach (SeriesInformation series in seriesList)
                     {
@@ -584,7 +391,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                 summary.StudySummary = StudySummaryAssembler.CreateStudySummary(HttpContextData.Current.ReadContext, study);
                 if (summary.StudySummary!=null)
                 {
-                    summary.StudyInstanceUID = summary.StudySummary.StudyInstanceUid;
+                    summary.StudyInstanceUid = summary.StudySummary.StudyInstanceUid;
                     summary.ExistingPatientName = summary.StudySummary.PatientsName;
                     summary.ExistingPatientId = summary.StudySummary.PatientId;
                     summary.ExistingAccessionNumber = summary.StudySummary.AccessionNumber;
@@ -602,7 +409,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 		private StudyIntegrityQueueSelectCriteria GetStudyIntegrityQueueCriteria()
 		{
-			StudyIntegrityQueueSelectCriteria criteria = new StudyIntegrityQueueSelectCriteria();
+			var criteria = new StudyIntegrityQueueSelectCriteria();
 
 			// only query for device in this partition
 			criteria.ServerPartitionKey.EqualTo(Partition.GetKey());

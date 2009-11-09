@@ -84,7 +84,7 @@
                                 <asp:TableCell><span class="ConflictingStudyTitle">Duplicate SOP</span></asp:TableCell>
                             </asp:TableRow>
                             <asp:TableRow>
-                                <asp:TableCell ColumnSpan="3"><div class="StudyInstanceUIDMessage">Study Instance UID: <asp:Label ID="StudyInstanceUIDLabel" runat="server" Text='<%# DuplicateEntryDetails.StudyInstanceUID %>'></asp:Label></div></asp:TableCell>
+                                <asp:TableCell ColumnSpan="3"><div class="StudyInstanceUIDMessage">Study Instance UID: <asp:Label ID="StudyInstanceUIDLabel" runat="server" Text='<%# DuplicateEntryDetails.StudyInstanceUid %>'></asp:Label></div></asp:TableCell>
                             </asp:TableRow>
                             <asp:TableRow VerticalAlign="Top">
                                 <asp:TableCell>
@@ -137,6 +137,7 @@
                                                             <div class="ReconcileGridViewPanel" style="height:150px;">
                                                                 <asp:GridView runat="server" CssClass="ReconcileSeriesGridView" ID="ExistingPatientSeriesGridView" width="440px" AutoGenerateColumns="false">
                                                                     <Columns>
+						                                                <asp:BoundField HeaderText="Number" DataField="SeriesNumber" />
 		                                                                <asp:TemplateField HeaderText="Description" HeaderStyle-HorizontalAlign="left" ItemStyle-HorizontalAlign="Left">						                                                        
 		                                                                    <ItemTemplate>
 		                                                                        <asp:Label runat="server" ID="SeriesDescription" Text='<%# Eval("Description") %>' ToolTip='<%# Eval("SeriesInstanceUid") %>'></asp:Label>
@@ -229,6 +230,7 @@
                                                 <div class="ReconcileGridViewPanel" style="height:150px;">
                                                     <asp:GridView runat="server" CssClass="ReconcileSeriesGridView" ID="ConflictingPatientSeriesGridView" width="440px" AutoGenerateColumns="false">
                                                         <Columns>
+						                                    <asp:BoundField HeaderText="Number" DataField="SeriesNumber" />
 		                                                    <asp:TemplateField HeaderText="Description" HeaderStyle-HorizontalAlign="left" ItemStyle-HorizontalAlign="Left">						                                                        
 		                                                        <ItemTemplate>
 		                                                            <asp:Label runat="server" ID="SeriesDescription" Text='<%# Eval("SeriesDescription") %>' ToolTip='<%# Eval("SeriesInstanceUid") %>'></asp:Label>
