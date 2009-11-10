@@ -123,7 +123,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
 
 		protected void SearchButton_Click(object sender, ImageClickEventArgs e)
 		{
-            ApplicationLogGridView.Refresh();
+            if(Page.IsValid) ApplicationLogGridView.Refresh();
 		}
 	}
 }
