@@ -10,8 +10,8 @@ namespace ClearCanvas.ImageViewer
 	{
 		ISeriesIdentifier SourceSeries { get; }
 
-		//TODO (cr Oct 2009): remove until it's actually needed.
-		bool Update(Sop sop);
+		//TODO: put this stuff back when we actually support dynamically updating the viewer.
+		//bool Update(Sop sop);
 	}
 
 	public interface IDisplaySetDescriptor
@@ -116,18 +116,18 @@ namespace ClearCanvas.ImageViewer
 			return SourceSeries.SeriesNumber ?? default(int);
 		}
 
-		bool IDicomDisplaySetDescriptor.Update(Sop sop)
-		{
-			Platform.CheckForNullReference(sop, "sop");
-			return Update(sop);
-		}
+		//bool IDicomDisplaySetDescriptor.Update(Sop sop)
+		//{
+		//    Platform.CheckForNullReference(sop, "sop");
+		//    return Update(sop);
+		//}
 
-		protected virtual bool ShouldAddSop(Sop sop)
+		internal virtual bool ShouldAddSop(Sop sop)
 		{
 			return false;
 		}
 
-		protected virtual bool Update(Sop sop)
+		internal virtual bool Update(Sop sop)
 		{
 			bool updated = false;
 			if (_presentationImageFactory != null && sop.SeriesInstanceUid == SourceSeries.SeriesInstanceUid && ShouldAddSop(sop))

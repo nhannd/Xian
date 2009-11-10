@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer
 			return SourceSeries.SeriesInstanceUid;
 		}
 
-		protected override bool ShouldAddSop(Sop sop)
+		internal override bool ShouldAddSop(Sop sop)
 		{
 			return (sop.SeriesInstanceUid == SourceSeries.SeriesInstanceUid && sop.IsImage);
 		}
@@ -52,13 +52,15 @@ namespace ClearCanvas.ImageViewer
 		private readonly string _seriesInstanceUid;
 		private readonly string _sopInstanceUid;
 		private readonly int _frameNumber;
+		private readonly int _position;
 
-		public SingleFrameDisplaySetDescriptor(ISeriesIdentifier sourceSeries, Frame frame)
+		public SingleFrameDisplaySetDescriptor(ISeriesIdentifier sourceSeries, Frame frame, int position)
 			: base(sourceSeries)
 		{
 			_seriesInstanceUid = frame.SeriesInstanceUid;
 			_sopInstanceUid = frame.SopInstanceUid;
 			_frameNumber = frame.FrameNumber;
+			_position = position;
 
 			if (sourceSeries.SeriesInstanceUid == frame.SeriesInstanceUid)
 			{
@@ -96,7 +98,7 @@ namespace ClearCanvas.ImageViewer
 
 		protected override string GetUid()
 		{
-			return String.Format("{0}:{1}:{2}:{3}", SourceSeries.SeriesInstanceUid, _seriesInstanceUid, _sopInstanceUid, _frameNumber);
+			return String.Format("{0}:{1}:{2}:{3}:{4}", SourceSeries.SeriesInstanceUid, _seriesInstanceUid, _sopInstanceUid, _frameNumber, _position);
 		}
 	}
 
@@ -106,12 +108,14 @@ namespace ClearCanvas.ImageViewer
 		private readonly string _suffix;
 		private readonly string _seriesInstanceUid;
 		private readonly string _sopInstanceUid;
+		private readonly int _position;
 
-		public SingleImageDisplaySetDescriptor(ISeriesIdentifier sourceSeries, ImageSop imageSop)
+		public SingleImageDisplaySetDescriptor(ISeriesIdentifier sourceSeries, ImageSop imageSop, int position)
 			: base(sourceSeries)
 		{
 			_sopInstanceUid = imageSop.SopInstanceUid;
 			_seriesInstanceUid = imageSop.SeriesInstanceUid;
+			_position = position;
 
 			string laterality = imageSop.ImageLaterality;
 			string viewPosition = imageSop.ViewPosition;
@@ -173,8 +177,7 @@ namespace ClearCanvas.ImageViewer
 
 		protected override string GetUid()
 		{
-			//TODO: this is not guaranteed to be unique b/c of key images.
-			return String.Format("{0}:{1}:{2}", SourceSeries.SeriesInstanceUid, _seriesInstanceUid, _sopInstanceUid);
+			return String.Format("{0}:{1}:{2}:{3}", SourceSeries.SeriesInstanceUid, _seriesInstanceUid, _sopInstanceUid, _position);
 		}
 	}
 
@@ -234,6 +237,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			List<IDisplaySet> displaySets = new List<IDisplaySet>();
 
+			int position = 0;
 			foreach (Sop sop in series.Sops)
 			{
 				List<IPresentationImage> images = PresentationImageFactory.CreateImages(sop);
@@ -253,7 +257,7 @@ namespace ClearCanvas.ImageViewer
 					DisplaySetDescriptor descriptor;
 
 					if (imageSop.NumberOfFrames == 1)
-						descriptor = new SingleImageDisplaySetDescriptor(series.GetIdentifier(), imageSop);
+						descriptor = new SingleImageDisplaySetDescriptor(series.GetIdentifier(), imageSop, position++);
 					else
 						descriptor = new MultiframeDisplaySetDescriptor(series.GetIdentifier(), sop.SopInstanceUid, sop.InstanceNumber);
 
@@ -271,9 +275,9 @@ namespace ClearCanvas.ImageViewer
 						IImageSopProvider provider = (IImageSopProvider)image;
 						DisplaySetDescriptor descriptor;
 						if (provider.ImageSop.NumberOfFrames == 1)
-							descriptor = new SingleImageDisplaySetDescriptor(series.GetIdentifier(), provider.ImageSop);
+							descriptor = new SingleImageDisplaySetDescriptor(series.GetIdentifier(), provider.ImageSop, position++);
 						else
-							descriptor = new SingleFrameDisplaySetDescriptor(series.GetIdentifier(), provider.Frame);
+							descriptor = new SingleFrameDisplaySetDescriptor(series.GetIdentifier(), provider.Frame, position++);
 
 						DisplaySet displaySet = new DisplaySet(descriptor);
 						displaySet.PresentationImages.Add(image);
@@ -339,7 +343,7 @@ namespace ClearCanvas.ImageViewer
 			return String.Format("{0}:Echo{1}", SourceSeries.SeriesInstanceUid, _echoNumber);
 		}
 
-		protected override bool ShouldAddSop(Sop sop)
+		internal override bool ShouldAddSop(Sop sop)
 		{
 			if (sop.IsImage)
 			{
@@ -501,7 +505,7 @@ namespace ClearCanvas.ImageViewer
 			return String.Format("{0}:SingleImages", SourceSeries.SeriesInstanceUid);
 		}
 
-		protected override bool ShouldAddSop(Sop sop)
+		internal override bool ShouldAddSop(Sop sop)
 		{
 			return sop.SeriesInstanceUid == SourceSeries.SeriesInstanceUid && sop.IsImage && ((ImageSop)sop).NumberOfFrames == 1;
 		}
