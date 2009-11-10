@@ -64,7 +64,7 @@ namespace ClearCanvas.Dicom
     public class DicomAttributeSQ : DicomAttribute
     {
         #region Private Variables
-        private DicomSequenceItem[] _values = null;
+        private DicomSequenceItem[] _values;
         #endregion
 
         #region Constructors
@@ -81,8 +81,27 @@ namespace ClearCanvas.Dicom
             if (!tag.VR.Equals(DicomVr.SQvr)
              && !tag.MultiVR)
                 throw new DicomException(SR.InvalidVR);
-
         }
+
+		public DicomAttributeSQ(DicomTag tag, ByteBuffer bb)
+			: base(tag)
+		{
+			if (!tag.VR.Equals(DicomVr.SQvr)
+			 && !tag.MultiVR)
+				throw new DicomException(SR.InvalidVR);
+
+/* This doesn't work yet.  Need to implement a different way.
+			DicomStreamReader reader = new DicomStreamReader(bb.Stream);
+			reader.Dataset = ds;
+			reader.TransferSyntax = TransferSyntax.ImplicitVrLittleEndian;
+			DicomReadStatus stat = reader.Read(new DicomTag(0xffffffff, "Test", "Test", DicomVr.UNvr, false, 1, 1, true), DicomReadOptions.Default);
+			if (stat != DicomReadStatus.Success)
+			{
+				Platform.Log(LogLevel.Error, "Unexpected parsing error ({0}) when reading sequence attribute.", stat);
+				throw new DicomDataException("Unexpected error parsing SQ attribute");
+			}
+*/
+		}
 
         internal DicomAttributeSQ(DicomAttributeSQ attrib, bool copyBinary, bool copyPrivate, bool copyUnknown)
             : base(attrib)
@@ -151,7 +170,7 @@ namespace ClearCanvas.Dicom
             }
 
             if (item.SpecificCharacterSet == null)
-                item.SpecificCharacterSet = this.ParentCollection.SpecificCharacterSet;
+                item.SpecificCharacterSet = ParentCollection.SpecificCharacterSet;
             base.Count = _values.Length;
             base.StreamLength = (uint)base.Count;
         }
@@ -176,7 +195,7 @@ namespace ClearCanvas.Dicom
 
         public override string ToString()
         {
-            return base.Tag;
+            return Tag;
         }
 
         public override bool Equals(object obj)

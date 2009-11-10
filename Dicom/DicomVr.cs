@@ -278,7 +278,7 @@ namespace ClearCanvas.Dicom
             {
                 if (bb == null) return new DicomAttributeSQ(tag);
 
-                return new DicomAttributeSQ(tag);
+                return new DicomAttributeSQ(tag, bb);
             });
         /// <summary>
         /// The Signed Short VR.

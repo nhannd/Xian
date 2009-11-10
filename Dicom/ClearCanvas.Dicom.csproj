@@ -419,6 +419,7 @@
     <Compile Include="Tests\GlobalizedCultureAttributeTests.cs" />
     <Compile Include="Tests\DicomDirectoryTests.cs" />
     <Compile Include="Tests\ScuTests.cs" />
+    <Compile Include="Tests\UnknowVrTests.cs" />
     <Compile Include="Utilities\Anonymization\ValidationStrategy.cs" />
     <Compile Include="Utilities\StudyBuilder\DicomConverter.cs" />
     <Compile Include="Utilities\StudyBuilder\IUidCollection.cs" />
