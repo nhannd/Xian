@@ -142,10 +142,28 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			TestSortingImageSetsByStudyDate(true, true);
 		}
 
+		[Test]
+		public void TestLayoutManagerSortImageSetsByStudyDate()
+		{
+			TestSortingImageSetsByStudyDate(false, true, true);
+		}
+
+		[Test]
+		public void TestLayoutManagerSortImageSetsByStudyDateReverse()
+		{
+			TestSortingImageSetsByStudyDate(true, true, true);
+		}
+
 		private void TestSortingImageSetsByStudyDate(bool reverse, bool useSops)
+		{
+			TestSortingImageSetsByStudyDate(reverse, useSops, false);
+		}
+
+		private void TestSortingImageSetsByStudyDate(bool reverse, bool useSops, bool testLayoutManagerSort)
 		{
 			ImageSetCollection orderedCollection = new ImageSetCollection();
 			ImageSetCollection nonOrderedCollection = new ImageSetCollection();
+			StudyTree studyTree = new StudyTree();
 
 			for (int i = 0; i <= 20; ++i)
 			{
@@ -163,8 +181,10 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 				{
 					DisplaySet displaySet = new DisplaySet(id, id);
 					ImageSop sop = NewImageSop(id, id, i);
+					imageSet.Uid = sop.StudyInstanceUid;
+					studyTree.AddSop(sop);
+
 					IPresentationImage image = new DicomGrayscalePresentationImage(sop.Frames[1]);
-					sop.Dispose();
 					IImageSopProvider sopProvider = (IImageSopProvider)image;
 
 					DicomMessageSopDataSource dataSource = ((DicomMessageSopDataSource)sopProvider.ImageSop.DataSource);
@@ -184,23 +204,38 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 				orderedCollection.Add(imageSet);
 			}
 
+			if (reverse)
+			{
+				List<IImageSet> temp = new List<IImageSet>();
+				temp.AddRange(orderedCollection);
+				temp.Reverse();
+				orderedCollection.Clear();
+				foreach (IImageSet imageSet in temp)
+					orderedCollection.Add(imageSet);
+			}
+
 			Randomize(orderedCollection, nonOrderedCollection);
 
 			Debug.WriteLine("Before Sort\n------------------------\n");
-			CollectionUtils.ForEach(nonOrderedCollection, delegate(IImageSet imageSet)
-			                                              	{
-																Debug.WriteLine(String.Format("name: {0}, date: {1}", imageSet.Name, 
-																	((IImageSopProvider)(imageSet.DisplaySets[0].PresentationImages[0])).ImageSop.StudyDate));
-			                                              	});
+			CollectionUtils.ForEach(nonOrderedCollection,
+			                        imageSet => Debug.WriteLine(String.Format("name: {0}, date: {1}", imageSet.Name,
+																	((IImageSopProvider)(imageSet.DisplaySets[0].PresentationImages[0])).
+																		ImageSop.StudyDate)));
 
-			nonOrderedCollection.Sort(new StudyDateComparer(reverse));
+			if (testLayoutManagerSort)
+			{
+				LayoutManager.SortImageSets(nonOrderedCollection, GetStudies(orderedCollection, studyTree));
+			}
+			else
+			{
+				nonOrderedCollection.Sort(new StudyDateComparer(reverse));
+			}
 
 			Debug.WriteLine("\nAfter Sort\n------------------------\n");
-			CollectionUtils.ForEach(nonOrderedCollection, delegate(IImageSet imageSet)
-															{
-																Debug.WriteLine(String.Format("name: {0}, date: {1}", imageSet.Name,
-																	((IImageSopProvider)(imageSet.DisplaySets[0].PresentationImages[0])).ImageSop.StudyDate));
-															});
+			CollectionUtils.ForEach(nonOrderedCollection,
+			                        imageSet => Debug.WriteLine(String.Format("name: {0}, date: {1}", imageSet.Name,
+																  ((IImageSopProvider)(imageSet.DisplaySets[0].PresentationImages[0])).
+                                                      				ImageSop.StudyDate)));
 
 			if (reverse)
 				nonOrderedCollection.RemoveAt(20);
@@ -219,7 +254,18 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			foreach (IImageSet set in orderedCollection)
 				set.Dispose();
 
+			studyTree.Dispose();
+
 			Assert.IsTrue(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
+		}
+
+		private List<Study> GetStudies(IEnumerable<IImageSet> imageSets, StudyTree studyTree)
+		{
+			List<Study> studies = new List<Study>();
+			foreach (IImageSet imageSet in imageSets)
+				studies.Add(studyTree.GetStudy(imageSet.Uid));
+
+			return studies;
 		}
 
 		private void TestSortingDisplaySetsBySeriesNumber(bool reverse)

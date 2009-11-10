@@ -55,12 +55,6 @@ namespace ClearCanvas.ImageViewer.Comparers
 		{
 		}
 
-		private static IEnumerable<IComparable> GetCompareValues(IImageSopProvider provider)
-		{
-			yield return provider.ImageSop.StudyInstanceUid;
-			yield return provider.ImageSop.SeriesInstanceUid;
-		}
-
 		#region IComparer<IPresentationImage> Members
 
 		/// <summary>
@@ -68,9 +62,6 @@ namespace ClearCanvas.ImageViewer.Comparers
 		/// </summary>
 		public override int Compare(IPresentationImage x, IPresentationImage y)
 		{
-			if (x == y)
-				return 0; //same reference object
-
 			IImageSopProvider xProvider = x as IImageSopProvider;
 			IImageSopProvider yProvider = y as IImageSopProvider;
 
@@ -84,11 +75,10 @@ namespace ClearCanvas.ImageViewer.Comparers
 			if (yProvider == null)
 				return ReturnValue; // x < y (because we want y at the end for non-reverse sorting)
 
-			int compare = Compare(GetCompareValues(xProvider), GetCompareValues(yProvider));
-			if (compare == 0 && !ReferenceEquals(xProvider.Frame, yProvider.Frame))
-				compare = Compare(xProvider.Frame, yProvider.Frame);
+			if (ReferenceEquals(xProvider.Frame, yProvider.Frame))
+				return 0;
 
-			return compare;
+			return Compare(xProvider.Frame, yProvider.Frame);
 		}
 
 		#endregion

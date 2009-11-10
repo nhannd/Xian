@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Comparers;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -127,7 +128,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		/// <remarks>
 		/// Internally, this method calls <see cref="BuildLogicalWorkspace"/>, <see cref="LayoutPhysicalWorkspace"/>, <see cref="SortDisplaySets()"/>,
-		/// <see cref="FillPhysicalWorkspace"/> and <see cref="SortImageSets"/> in that order, followed by a call to <see cref="IDrawable.Draw">IPhysicalWorkspace.Draw</see>.
+		/// <see cref="FillPhysicalWorkspace"/> and <see cref="SortImageSets()"/> in that order, followed by a call to <see cref="IDrawable.Draw">IPhysicalWorkspace.Draw</see>.
 		/// You can override this method entirely, or you can override any of the 5 methods called by this method.
 		/// </remarks>
 		public virtual void Layout()
@@ -154,9 +155,6 @@ namespace ClearCanvas.ImageViewer
 		{
 			_layoutCompleted = true;
 			ImageViewer.EventBroker.StudyLoaded += OnPriorStudyLoaded;
-			//NOTE: this event doesn't actually get fired right now, but we're doing this for completeness.
-			//TODO (cr Oct 2009): remove subscription along with update
-			ImageViewer.EventBroker.ImageLoaded += OnImageLoaded;
 		}
 
 		#endregion
@@ -185,27 +183,6 @@ namespace ClearCanvas.ImageViewer
 				{
 					BuildFromStudy(study);
 				}
-			}
-		}
-
-		protected virtual DicomImageSetDescriptor CreateImageSetDescriptor(IStudyRootStudyIdentifier studyData)
-		{
-			return new DicomImageSetDescriptor(studyData);
-		}
-
-		//TODO (cr Oct 2009): delete untested code
-		protected virtual void UpdateImageSet(IImageSet imageSet, Series series)
-		{
-			foreach (IDisplaySet displaySet in BasicDisplaySetFactory.CreateSeriesDisplaySets(series, StudyTree))
-				imageSet.DisplaySets.Add(displaySet);
-		}
-
-		protected virtual void UpdateDisplaySet(IDisplaySet displaySet, Sop sop)
-		{
-			if (displaySet.Descriptor is IDicomDisplaySetDescriptor)
-			{
-				if (((IDicomDisplaySetDescriptor)displaySet.Descriptor).Update(sop))
-					displaySet.Draw();
 			}
 		}
 
@@ -304,6 +281,22 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		protected virtual DicomImageSetDescriptor CreateImageSetDescriptor(IStudyRootStudyIdentifier studyData)
+		{
+			return new DicomImageSetDescriptor(studyData);
+		}
+
+		protected virtual IImageSet CreateImageSet(IStudyRootStudyIdentifier studyData)
+		{
+			return new ImageSet(CreateImageSetDescriptor(studyData));
+		}
+
+		protected virtual void UpdateImageSet(IImageSet imageSet, Series series)
+		{
+			foreach (IDisplaySet displaySet in BasicDisplaySetFactory.CreateSeriesDisplaySets(series, StudyTree))
+				imageSet.DisplaySets.Add(displaySet);
+		}
+
 		protected virtual void SortSops(SopCollection sops)
 		{
 			sops.Sort(GetSopComparer());
@@ -316,9 +309,6 @@ namespace ClearCanvas.ImageViewer
 
 		protected virtual void SortSeries(SeriesCollection series)
 		{
-			foreach (Series singleSeries in series)
-				SortSops(singleSeries.Sops);
-
 			series.Sort(GetSeriesComparer());
 		}
 
@@ -327,25 +317,14 @@ namespace ClearCanvas.ImageViewer
 			return new SeriesNumberComparer();
 		}
 
-		//TODO (cr Oct 2009): sort studies
-
-		/// <summary>
-		/// Called to sort the image sets.
-		/// </summary>
-		/// <remarks>
-		/// <para>The base implementation of this method sorts the image sets by the <see cref="IComparer{T}"/> supplied by <see cref="GetImageSetComparer"/>.</para>
-		/// <para>Subclasses may choose to override just the supplied <see cref="IComparer{T}"/>, or to override this method entirely.</para>
-		/// <para>This method is called by the base implementation of <see cref="Layout"/>.</para>
-		/// </remarks>
-		/// <seealso cref="Layout"/>
-		protected virtual void SortImageSets()
+		protected virtual void SortStudies(StudyCollection studies)
 		{
-			LogicalWorkspace.ImageSets.Sort(GetImageSetComparer());
+			studies.Sort(GetStudyComparer());
 		}
 
-		protected virtual IComparer<IImageSet> GetImageSetComparer()
+		protected virtual IComparer<Study> GetStudyComparer()
 		{
-			return ImageSetCollection.GetDefaultComparer();
+			return new StudyDateComparer();
 		}
 
 		#endregion
@@ -356,36 +335,27 @@ namespace ClearCanvas.ImageViewer
 
 		private void BuildFromStudy(Study study)
 		{
-			ImageSet imageSet = GetImageSet(study.StudyInstanceUid);
-
+			IImageSet imageSet = GetImageSet(study.StudyInstanceUid);
 			// Abort if image set has already been added
 			if (imageSet != null)
 				return;
 
-			imageSet = CreateImageSet(study);
-
-			if (imageSet != null)
-				AddImageSet(imageSet);
-		}
-
-		//TODO (cr Oct 2009): protected virtual
-		private ImageSet CreateImageSet(Study study)
-		{
-			ImageSetDescriptor descriptor = CreateImageSetDescriptor(study.GetIdentifier());
-			ImageSet imageSet = new ImageSet(descriptor);
+			imageSet = CreateImageSet(study.GetIdentifier());
+			if (imageSet.Uid != study.StudyInstanceUid)
+				throw new InvalidOperationException("ImageSet Uid must be the same as Study Instance Uid.");
 
 			SortSeries(study.Series);
 
 			foreach (Series series in study.Series)
-				UpdateImageSet(imageSet, series);
-
-			if (imageSet.DisplaySets.Count == 0)
 			{
-				imageSet.Dispose();
-				imageSet = null;
+				SortSops(series.Sops);
+				UpdateImageSet(imageSet, series);
 			}
 
-			return imageSet;
+			if (imageSet.DisplaySets.Count == 0)
+				imageSet.Dispose();
+			else
+				AddImageSet(imageSet);
 		}
 
 		private void AddImageSet(IImageSet imageSet)
@@ -393,31 +363,61 @@ namespace ClearCanvas.ImageViewer
 			int insertIndex = LogicalWorkspace.ImageSets.Count;
 			if (_layoutCompleted)
 			{
-				//TODO (cr Oct 2009): can we make this sort studies
-
 				//A bit cheap, but once the initial layout is done, we need to keep everything sorted.
-				List<IImageSet> sorted = new List<IImageSet>(LogicalWorkspace.ImageSets);
-				sorted.Add(imageSet);
-				sorted.Sort(LogicalWorkspace.ImageSets.Comparer);
-				insertIndex = sorted.IndexOf(imageSet);
+				ObservableList<IImageSet> sortedImageSets = new ObservableList<IImageSet>();
+				foreach(IImageSet set in LogicalWorkspace.ImageSets)
+					sortedImageSets.Add(set);
+
+				sortedImageSets.Add(imageSet);
+				SortImageSets(sortedImageSets);
+				insertIndex = sortedImageSets.IndexOf(imageSet);
 			}
 
 			LogicalWorkspace.ImageSets.Insert(insertIndex, imageSet);
+		}
+
+		private void SortImageSets()
+		{
+			SortImageSets(LogicalWorkspace.ImageSets);
+		}
+
+		private void SortImageSets(ObservableList<IImageSet> imageSets)
+		{
+			SortImageSets(imageSets, GetAllStudiesSorted());
+		}
+
+		internal static void SortImageSets(ObservableList<IImageSet> imageSets, IList<Study> studies)
+		{
+			imageSets.Sort(new ImageSetComparer(studies));
 		}
 
 		#endregion
 
 		#region Helper Methods
 
-		private ImageSet GetImageSet(string studyInstanceUID)
+		private IImageSet GetImageSet(string studyInstanceUid)
 		{
 			foreach (ImageSet imageSet in LogicalWorkspace.ImageSets)
 			{
-				if (imageSet.Uid == studyInstanceUID)
+				if (imageSet.Uid == studyInstanceUid)
 					return imageSet;
 			}
 
 			return null;
+		}
+
+		private StudyCollection GetAllStudiesSorted()
+		{
+			StudyCollection studies = new StudyCollection();
+
+			foreach (Patient patient in StudyTree.Patients)
+			{
+				foreach (Study study in patient.Studies)
+					studies.Add(study);
+			}
+
+			SortStudies(studies);
+			return studies;
 		}
 
 		private int GetNumberOfDisplaySets()
@@ -442,32 +442,6 @@ namespace ClearCanvas.ImageViewer
 			BuildFromStudy(study);
 		}
 
-		private void OnImageLoaded(object sender, ClearCanvas.Common.Utilities.ItemEventArgs<Sop> e)
-		{
-			OnNewSopLoaded(e.Item);
-		}
-
-		private void OnNewSopLoaded(Sop sop)
-		{
-			ImageSet imageSet = GetImageSet(sop.StudyInstanceUid);
-			if (imageSet == null)
-			{
-				imageSet = CreateImageSet(sop.ParentSeries.ParentStudy);
-				if (imageSet != null)
-					AddImageSet(imageSet);
-			}
-			else
-			{
-				//Update the originals.
-				foreach (IDisplaySet displaySet in imageSet.DisplaySets)
-					UpdateDisplaySet(displaySet, sop);
-
-				//Update the copies.
-				foreach (IDisplaySet displaySet in imageSet.GetCopies())
-					UpdateDisplaySet(displaySet, sop);
-			}
-		}
-
 		#region Disposal
 
 		/// <summary>
@@ -477,7 +451,6 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (disposing && _imageViewer != null)
 			{
-				_imageViewer.EventBroker.ImageLoaded -= OnImageLoaded;
 				_imageViewer.EventBroker.StudyLoaded -= OnPriorStudyLoaded;
 				_imageViewer = null;
 			}
@@ -503,5 +476,47 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 		#endregion
+
+		private class ImageSetComparer : IComparer<IImageSet>
+		{
+			private readonly IList<Study> _studies;
+
+			public ImageSetComparer(IList<Study> studies)
+			{
+				_studies = studies;
+			}
+
+			#region IComparer<IImageSet> Members
+
+			public int Compare(IImageSet x, IImageSet y)
+			{
+				int index1 = IndexOfStudy(x.Uid);
+				int index2 = IndexOfStudy(y.Uid);
+
+				if (index1 < index2)
+					return -1;
+				
+				if (index1 > index2)
+					return 1;
+
+				return 0;
+			}
+
+			private int IndexOfStudy(string studyInstanceUid)
+			{
+				int i = 0;
+				foreach (Study study in _studies)
+				{
+					if (study.StudyInstanceUid == studyInstanceUid)
+						return i;
+
+					++i;
+				}
+
+				return -1;
+			}
+
+			#endregion
+		}
 	}
 }

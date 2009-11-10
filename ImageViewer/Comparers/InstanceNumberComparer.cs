@@ -16,8 +16,11 @@ namespace ClearCanvas.ImageViewer.Comparers
 		{
 		}
 
-		private IEnumerable<IComparable> GetCompareValues(Sop sop)
+		private static IEnumerable<IComparable> GetCompareValues(Sop sop)
 		{
+			yield return sop.StudyInstanceUid;
+			yield return sop.SeriesInstanceUid;
+
 			yield return sop.InstanceNumber;
 		}
 

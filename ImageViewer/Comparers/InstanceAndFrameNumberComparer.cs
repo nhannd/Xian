@@ -57,6 +57,9 @@ namespace ClearCanvas.ImageViewer.Comparers
 
 		private static IEnumerable<IComparable> GetCompareValues(Frame frame)
 		{
+			yield return frame.StudyInstanceUid;
+			yield return frame.SeriesInstanceUid;
+
 			yield return frame.ParentImageSop.InstanceNumber;
 			yield return frame.FrameNumber;
 			//as a last resort.

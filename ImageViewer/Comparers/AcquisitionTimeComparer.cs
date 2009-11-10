@@ -58,6 +58,9 @@ namespace ClearCanvas.ImageViewer.Comparers
 
 		private static IEnumerable<IComparable> GetCompareValues(Frame frame)
 		{
+			yield return frame.StudyInstanceUid;
+			yield return frame.SeriesInstanceUid;
+
 			DateTime? datePart = null;
 			TimeSpan? timePart = null;
 

@@ -59,6 +59,9 @@ namespace ClearCanvas.ImageViewer.Comparers
 
 		private static IEnumerable<IComparable> GetCompareValues(Frame frame)
 		{
+			yield return frame.StudyInstanceUid;
+			yield return frame.SeriesInstanceUid;
+
 			yield return frame.FrameOfReferenceUid;
 
 			double? normalX = null, normalY = null, normalZ = null;

@@ -72,9 +72,6 @@ namespace ClearCanvas.ImageViewer.Comparers
 		/// </summary>
 		public override int Compare(IDisplaySet x, IDisplaySet y)
 		{
-			if (x == y)
-				return 0; //same reference object
-
 			DisplaySet displaySet1 = x as DisplaySet;
 			DisplaySet displaySet2 = y as DisplaySet;
 			

@@ -34,7 +34,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 		{
 			List<IImageProperty> properties = new List<IImageProperty>();
 
-			//TODO (cr Oct 2009): IDicomPresentationImage?
 			if (image == null || !(image is IImageSopProvider))
 				return properties.ToArray();
 
