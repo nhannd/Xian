@@ -729,7 +729,7 @@ CREATE TABLE [dbo].[Device](
 	[AllowAutoRoute] [bit] NOT NULL CONSTRAINT [DF_Device_AllowAutoRoute]  DEFAULT ((1)),
 	[ThrottleMaxConnections] [smallint] NOT NULL CONSTRAINT [DF_Device_MaxConnections]  DEFAULT ((-1)),
     [LastAccessedTime] [datetime] NOT NULL CONSTRAINT [DF_Device_LastAccessedTime]  DEFAULT (getdate()),
-	[DeviceTypeEnum] [smallint] NOT NULL,
+	[DeviceTypeEnum] [smallint] NOT NULL CONSTRAINT [DF_Device_DeviceTYpeEnum]  DEFAULT ((100)),
 CONSTRAINT [PK_Device] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC
