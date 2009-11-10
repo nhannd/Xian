@@ -42,61 +42,15 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-	//TODO (cr Oct 2009): ActionFactoryContext
-	public class ContextMenuActionFactoryArgs
-	{
-		private int _nextActionNumber;
-		
-		internal ContextMenuActionFactoryArgs()
-		{
-		}
-
-		public IDesktopWindow DesktopWindow { get; internal set; }
-		public IImageViewer ImageViewer { get; internal set; }
-
-		public string Namespace { get; internal set; }
-		public string BasePath { get; internal set; }
-	
-		public IImageSet ImageSet { get; internal set; }
-
-		internal bool ExcludeDefaultActions { get; set; }
-
-		public string GetNextActionId()
-		{
-			return String.Format("imageSetAction{0}", ++_nextActionNumber);
-		}
-
-		public string GetFullyQualifiedActionId(string actionId)
-		{
-			return String.Format("{0}:{1}", Namespace, actionId);
-		}
-
-		public void ReplaceDefaultActions()
-		{
-			ExcludeDefaultActions = true;
-		}
-	}
-
-	[ExtensionPoint]
-	public class ContextMenuActionFactoryExtensionPoint : ExtensionPoint<IContextMenuActionFactory>
-	{
-	}
-
-	//TODO (cr Oct 2009): move to inner scope
-	public interface IContextMenuActionFactory
-	{
-		IAction[] CreateActions(ContextMenuActionFactoryArgs args);
-	}
-
 	/// <summary>
     /// This tool runs an instance of <see cref="LayoutComponent"/> in a shelf, and coordinates
     /// it so that it reflects the state of the active workspace.
 	/// </summary>
-	[ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class ContextMenuLayoutTool : ImageViewerTool
+	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	public partial class ContextMenuLayoutTool : ImageViewerTool
 	{
     	private const string _rootPath = "imageviewer-contextmenu";
-		private static readonly List<IContextMenuActionFactory> _actionFactories = CreateActionFactories();
+		private static readonly List<IActionFactory> _actionFactories = CreateActionFactories();
 		private static readonly DefaultContextMenuActionFactory _defaultActionFactory = new DefaultContextMenuActionFactory();
 
 		private List<string> _currentPathElements;
@@ -112,13 +66,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			_unavailableImageSets = new Dictionary<string, IImageSet>();
 		}
 
-		private static List<IContextMenuActionFactory> CreateActionFactories()
+		private static List<IActionFactory> CreateActionFactories()
 		{
-			List<IContextMenuActionFactory> factories = new List<IContextMenuActionFactory>();
+			List<IActionFactory> factories = new List<IActionFactory>();
 
 			try
 			{
-				foreach (IContextMenuActionFactory factory in new ContextMenuActionFactoryExtensionPoint().CreateExtensions())
+				foreach (IActionFactory factory in new ActionFactoryExtensionPoint().CreateExtensions())
 					factories.Add(factory);
 			}
 			catch (NotSupportedException)
@@ -218,7 +172,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			FilteredGroup<IImageSet> rootGroup = GetRootGroup(_imageSetGroups.Root);
 			if (rootGroup != null)
 			{
-				ContextMenuActionFactoryArgs args = new ContextMenuActionFactoryArgs
+				ActionFactoryContext context = new ActionFactoryContext
 				{
 					DesktopWindow = Context.DesktopWindow,
 					ImageViewer = Context.Viewer,
@@ -243,16 +197,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 						else
 							imageSetPath = basePath;
 
-						//TODO (cr Oct 2009): safeguard for this?
-						args.ExcludeDefaultActions = false;
-						args.BasePath = imageSetPath;
-						args.ImageSet = imageSet;
+						context.Initialize(imageSet, imageSetPath);
 						
-						foreach (IContextMenuActionFactory factory in _actionFactories)
-							actions.AddRange(factory.CreateActions(args));
+						foreach (IActionFactory factory in _actionFactories)
+							actions.AddRange(factory.CreateActions(context));
 
-						if (actions.Count == 0 || !args.ExcludeDefaultActions)
-							actions.AddRange(_defaultActionFactory.CreateActions(args));
+						if (actions.Count == 0 || !context.ExcludeDefaultActions)
+							actions.AddRange(_defaultActionFactory.CreateActions(context));
 					}
 
 					if (group.Items.Count > 0 && base.ImageViewer.PriorStudyLoader.IsActive)
