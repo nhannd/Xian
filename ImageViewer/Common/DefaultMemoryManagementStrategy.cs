@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.Common
 
 		public DefaultMemoryManagementStrategy()
 		{
-			_lastCollectionTime = Platform.Time;
+			_lastCollectionTime = DateTime.Now;
 		}
 
 		#region IMemoryManagementStrategy Members
@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Common
 
 			_regenerationCost = RegenerationCost.Low;
 
-			_collectionStartTime = Platform.Time;
+			_collectionStartTime = DateTime.Now;
 			_timeSinceLastCollection = _collectionStartTime - _lastCollectionTime;
 			TimeSpan thirtySeconds = TimeSpan.FromSeconds(30);
 			if (_timeSinceLastCollection < thirtySeconds)
@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageViewer.Common
 			}
 			finally
 			{
-				DateTime collectionEndTime = Platform.Time;
+				DateTime collectionEndTime = DateTime.Now;
 				if (_totalContainersUnloaded > 0)
 					_lastCollectionTime = collectionEndTime;
 

@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	//TODO: get rid of this or incorporate into Dicom somehow.
 
-	//TODO (cr Oct 2009): can implement IApplicationEntity
+	//TODO (cr Oct 2009): can implement IApplicationEntity?
 
 	/// <summary>
 	/// Represents a remote dicom server.

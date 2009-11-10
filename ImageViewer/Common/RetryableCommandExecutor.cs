@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Common
 			
 			public void Execute()
 			{
-				_startTime = Platform.Time;
+				_startTime = DateTime.Now;
 
 				try
 				{
@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Common
 				int retryNumber = 0;
 				while (true)
 				{
-					DateTime begin = Platform.Time;
+					DateTime begin = DateTime.Now;
 					++retryNumber;
 
 					Platform.Log(LogLevel.Debug, "Waiting for memory collected signal before retrying command.");
@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageViewer.Common
 						_retryableCommand();
 						if (Platform.IsLogLevelEnabled(LogLevel.Debug))
 						{
-							TimeSpan elapsed = Platform.Time - begin;
+							TimeSpan elapsed = DateTime.Now - begin;
 							Platform.Log(LogLevel.Debug, "Retry #{0} succeeded and took {0} seconds.", retryNumber, elapsed.TotalSeconds);
 						}
 
@@ -116,7 +116,7 @@ namespace ClearCanvas.ImageViewer.Common
 
 						if (Platform.IsLogLevelEnabled(LogLevel.Debug))
 						{
-							TimeSpan elapsed = Platform.Time - begin;
+							TimeSpan elapsed = DateTime.Now - begin;
 							Platform.Log(LogLevel.Debug, "Retry #{0} failed and took {1} seconds; wait time remaining is {2} seconds.",
 							retryNumber, elapsed.TotalSeconds, _waitTimeRemaining.TotalSeconds);
 						}
@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageViewer.Common
 
 			private void UpdateWaitTimeRemaining()
 			{
-				TimeSpan elapsed = Platform.Time - _startTime;
+				TimeSpan elapsed = DateTime.Now - _startTime;
 				_waitTimeRemaining = _maxWaitTime - elapsed;
 				if (_waitTimeRemaining < TimeSpan.Zero)
 					_waitTimeRemaining = TimeSpan.Zero;

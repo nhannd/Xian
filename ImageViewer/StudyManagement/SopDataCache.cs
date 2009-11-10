@@ -44,7 +44,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		ISopDataCacheItemReference Clone();
 	}
 
-	//TODO: implement memory manager for the cache.
 	internal static class SopDataCache
 	{
 		#region Cache Item

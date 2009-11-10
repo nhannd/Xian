@@ -135,7 +135,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			private readonly Dictionary<int, byte[]> _overlayData = new Dictionary<int, byte[]>();
 			private volatile byte[] _pixelData = null;
 
-			private readonly LargeObjectContainerData _largeObjectContainerData = new LargeObjectContainerData(Guid.NewGuid().ToString());
+			private readonly LargeObjectContainerData _largeObjectContainerData = new LargeObjectContainerData(Guid.NewGuid());
 
 			/// <summary>
 			/// Constructs a new <see cref="StandardSopFrameData"/>
@@ -201,7 +201,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			public override byte[] GetNormalizedPixelData()
 			{
 				//TODO (cr Oct 2009): do we need to use Platform.Time?
-				_largeObjectContainerData.LastAccessTime = Platform.Time;
+				_largeObjectContainerData.LastAccessTime = DateTime.Now;
 
 				byte[] pixelData = _pixelData;
 				if (pixelData == null)
@@ -263,7 +263,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			/// <returns>A byte buffer containing the normalized overlay pixel data.</returns>
 			public override byte[] GetNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber)
 			{
-				_largeObjectContainerData.LastAccessTime = Platform.Time;
+				_largeObjectContainerData.LastAccessTime = DateTime.Now;
 
 				if(overlayGroupNumber < 1)
 					throw new ArgumentOutOfRangeException("overlayGroupNumber", overlayGroupNumber, "Must be a positive, non-zero number.");
@@ -313,7 +313,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				lock (this.SyncLock)
 				{
-					_largeObjectContainerData.LastAccessTime = Platform.Time;
+					_largeObjectContainerData.LastAccessTime = DateTime.Now;
 
 					ReportLargeObjectsUnloaded();
 
@@ -369,7 +369,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			#region ILargeObjectContainer Members
 
-			string ILargeObjectContainer.Identifier
+			Guid ILargeObjectContainer.Identifier
 			{
 				get { return _largeObjectContainerData.Identifier; }
 			}

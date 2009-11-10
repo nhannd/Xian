@@ -10,24 +10,23 @@ namespace ClearCanvas.ImageViewer.Common
 		High = 2
 	}
 
-	//TODO (cr Oct 2009): make public?
-	internal class LargeObjectContainerData : ILargeObjectContainer
+	public class LargeObjectContainerData : ILargeObjectContainer
 	{
-		private readonly string _identifier;
+		private readonly Guid _identifier;
 		private int _lockCount;
 		private volatile int _largeObjectCount;
 		private long _totalBytesHeld;
 		private DateTime _lastAccessTime;
 		private volatile RegenerationCost _regenerationCost;
 
-		public LargeObjectContainerData(string identifier)
+		public LargeObjectContainerData(Guid identifier)
 		{
 			_identifier = identifier;
 		}
 
 		#region ILargeObjectContainer Members
 
-		public string Identifier
+		public Guid Identifier
 		{
 			get { return _identifier; }
 		}
@@ -79,46 +78,9 @@ namespace ClearCanvas.ImageViewer.Common
 		#endregion
 	}
 
-	//TODO (cr Oct 2009): remove?
-	public abstract class LargeObjectContainer : ILargeObjectContainer
-	{
-		private readonly string _identifier;
-
-		protected LargeObjectContainer(string identifier)
-		{
-			_identifier = identifier;
-		}
-
-		#region ILargeObjectContainer Members
-
-		public string Identifier
-		{
-			get { return _identifier; }
-		}
-
-		public abstract int LargeObjectCount { get;  }
-
-		public abstract long BytesHeldCount { get;  }
-
-		public abstract DateTime LastAccessTime { get;  }
-
-		public abstract RegenerationCost RegenerationCost { get;  }
-
-		public abstract bool IsLocked { get;  }
-
-		public abstract void Lock();
-
-		public abstract void Unlock();
-
-		public abstract void Unload();
-
-		#endregion
-	}
-
 	public interface ILargeObjectContainer
 	{
-		//TODO (cr Oct 2009): enforce GUID?
-		string Identifier { get; }
+		Guid Identifier { get; }
 
 		int LargeObjectCount { get; }
 		long BytesHeldCount { get; }

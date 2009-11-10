@@ -7,6 +7,8 @@ namespace ClearCanvas.ImageViewer.Common
 {
 	public class MemoryCollectedEventArgs : EventArgs
 	{
+		private bool _needMoreMemory = false;
+
 		public MemoryCollectedEventArgs(int largeObjectContainersUnloadedCount,
 			int largeObjectsCollectedCount, long bytesCollectedCount, TimeSpan elapsedTime, bool isLast)
 		{
@@ -23,8 +25,15 @@ namespace ClearCanvas.ImageViewer.Common
 		public readonly long BytesCollectedCount;
 		public readonly bool IsLast;
 
-		//TODO (cr Oct 2009): guard against it being set back to false when already set to true?
-		public bool NeedMoreMemory = false;
+		public bool NeedMoreMemory
+		{
+			get { return _needMoreMemory; }
+			set
+			{
+				if (value)
+					_needMoreMemory = true;
+			}
+		}
 	}
 
 	public class MemoryCollectionArgs

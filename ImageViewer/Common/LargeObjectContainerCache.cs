@@ -11,7 +11,7 @@ namespace ClearCanvas.ImageViewer.Common
 		private class Enumerator : IEnumerator<ILargeObjectContainer>
 		{
 			private readonly LargeObjectContainerCache _cache;
-			private readonly IEnumerator<KeyValuePair<string, Item>> _realEnumerator;
+			private readonly IEnumerator<KeyValuePair<Guid, Item>> _realEnumerator;
 			private ILargeObjectContainer _current;
 
 			public Enumerator(LargeObjectContainerCache cache)
@@ -128,7 +128,7 @@ namespace ClearCanvas.ImageViewer.Common
 
 		#region Private Fields
 
-		private readonly Dictionary<string, Item> _largeObjectContainers;
+		private readonly Dictionary<Guid, Item> _largeObjectContainers;
 		private long _lastLargeObjectBytesCount;
 		private volatile int _lastLargeObjectContainerCount;
 		private volatile int _lastLargeObjectCount;
@@ -137,7 +137,7 @@ namespace ClearCanvas.ImageViewer.Common
 
 		public LargeObjectContainerCache()
 		{
-			_largeObjectContainers = new Dictionary<string, Item>();
+			_largeObjectContainers = new Dictionary<Guid, Item>();
 		}
 
 		#region Properties
@@ -168,7 +168,7 @@ namespace ClearCanvas.ImageViewer.Common
 
 		internal void CleanupDeadItems(bool updateEstimates)
 		{
-			List<string> keysToRemove = new List<string>();
+			List<Guid> keysToRemove = new List<Guid>();
 			bool alreadyLogged = false;
 
 			if (updateEstimates)
@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageViewer.Common
 				_lastLargeObjectCount = 0;
 			}
 
-			foreach (KeyValuePair<string, Item> item in _largeObjectContainers)
+			foreach (KeyValuePair<Guid, Item> item in _largeObjectContainers)
 			{
 				try
 				{
@@ -202,7 +202,7 @@ namespace ClearCanvas.ImageViewer.Common
 				}
 			}
 
-			foreach (string keyToRemove in keysToRemove)
+			foreach (Guid keyToRemove in keysToRemove)
 				_largeObjectContainers.Remove(keyToRemove);
 
 			if (updateEstimates)
@@ -211,7 +211,7 @@ namespace ClearCanvas.ImageViewer.Common
 
 		public void Add(ILargeObjectContainer container)
 		{
-			string identifier = container.Identifier;
+			Guid identifier = container.Identifier;
 			Item item;
 			if (!_largeObjectContainers.TryGetValue(identifier, out item))
 			{
