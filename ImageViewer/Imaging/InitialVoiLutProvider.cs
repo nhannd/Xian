@@ -35,7 +35,7 @@ using ClearCanvas.ImageViewer;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	//TODO (cr Oct 2009): deprecate and use IImageGraphicVoiLutFactory
+	//TODO (cr Oct 2009): deprecate and use something with a more appropriate name?
 	/// <summary>
 	/// A factory that provides the initial voi lut for a given <see cref="IPresentationImage"/>.
 	/// </summary>

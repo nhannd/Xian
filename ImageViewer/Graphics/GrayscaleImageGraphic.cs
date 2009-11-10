@@ -467,7 +467,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				IComposableLut lut = null;
 
 				if (_voiLutFactory != null)
-					lut = _voiLutFactory.GetInitialVoiLut(this);
+					lut = _voiLutFactory.CreateVoiLut(this);
 
 				if (lut == null)
 					lut = new IdentityVoiLinearLut();

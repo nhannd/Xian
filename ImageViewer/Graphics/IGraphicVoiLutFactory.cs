@@ -40,10 +40,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 	public interface IGraphicVoiLutFactory
 	{
 		/// <summary>
-		/// Gets the initial VOI LUT appropriate for the <paramref name="imageGraphic"/>.
+		/// Creates a Voi LUT suitable for the given <paramref name="imageGraphic"/>.
 		/// </summary>
 		/// <returns>The VOI LUT as an <see cref="IComposableLut"/>.</returns>
-		IComposableLut GetInitialVoiLut(ImageGraphic imageGraphic);
+		IComposableLut CreateVoiLut(ImageGraphic imageGraphic);
 	}
 
 	/// <summary>
@@ -57,40 +57,42 @@ namespace ClearCanvas.ImageViewer.Graphics
 		protected GraphicVoiLutFactory() {}
 
 		/// <summary>
-		/// Gets the initial VOI LUT appropriate for the <paramref name="imageGraphic"/>.
+		/// Creates a Voi LUT suitable for the given <paramref name="imageGraphic"/>.
 		/// </summary>
 		/// <returns>The VOI LUT as an <see cref="IComposableLut"/>.</returns>
-		public abstract IComposableLut GetInitialVoiLut(ImageGraphic imageGraphic);
+		public abstract IComposableLut CreateVoiLut(ImageGraphic imageGraphic);
 
 		/// <summary>
-		/// Defines the method for getting a VOI LUT appropriate for an <see cref="ImageGraphic"/>.
+		/// Defines the method for creating a Voi LUT suitable for the given <paramref name="imageGraphic"/>.
 		/// </summary>
 		/// <returns>The VOI LUT as an <see cref="IComposableLut"/>.</returns>
-		public delegate IComposableLut GetInitialVoiLutDelegate(ImageGraphic imageGraphic);
+		public delegate IComposableLut CreateVoiLutDelegate(ImageGraphic imageGraphic);
 
 		/// <summary>
 		/// Creates a new factory that wraps the given delegate.
 		/// </summary>
-		/// <param name="initialVoiLutDelegate">A <see cref="GetInitialVoiLutDelegate"/> delegate to get a VOI LUT appropriate for the given <see cref="ImageGraphic"/>. This method should generally be static, as the factory may only be reference-copied when the parent graphic is cloned.</param>
+		/// <param name="createVoiLutDelegate">A <see cref="CreateVoiLutDelegate"/> delegate to
+		/// get a VOI LUT appropriate for the given <see cref="ImageGraphic"/>.
+		/// This method should generally be static, as the factory may only be reference-copied when the parent graphic is cloned.</param>
 		/// <returns>The VOI LUT as an <see cref="IComposableLut"/>.</returns>
-		public static GraphicVoiLutFactory GetFactory(GetInitialVoiLutDelegate initialVoiLutDelegate)
+		public static GraphicVoiLutFactory Create(CreateVoiLutDelegate createVoiLutDelegate)
 		{
-			return new DelegateGraphicVoiLutFactory(initialVoiLutDelegate);
+			return new DelegateGraphicVoiLutFactory(createVoiLutDelegate);
 		}
 
 		private class DelegateGraphicVoiLutFactory : GraphicVoiLutFactory
 		{
-			private readonly GetInitialVoiLutDelegate _initialVoiLutDelegate;
+			private readonly CreateVoiLutDelegate _createVoiLutDelegate;
 
-			public DelegateGraphicVoiLutFactory(GetInitialVoiLutDelegate initialVoiLutDelegate)
+			public DelegateGraphicVoiLutFactory(CreateVoiLutDelegate createVoiLutDelegate)
 			{
-				Platform.CheckForNullReference(initialVoiLutDelegate, "initialVoiLutDelegate");
-				_initialVoiLutDelegate = initialVoiLutDelegate;
+				Platform.CheckForNullReference(createVoiLutDelegate, "createVoiLutDelegate");
+				_createVoiLutDelegate = createVoiLutDelegate;
 			}
 
-			public override IComposableLut GetInitialVoiLut(ImageGraphic imageGraphic)
+			public override IComposableLut CreateVoiLut(ImageGraphic imageGraphic)
 			{
-				return _initialVoiLutDelegate(imageGraphic);
+				return _createVoiLutDelegate(imageGraphic);
 			}
 		}
 	}

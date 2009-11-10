@@ -111,9 +111,8 @@ namespace ClearCanvas.ImageViewer
 
 			if (base.ImageGraphic.VoiLutFactory == null)
 			{
-				base.ImageGraphic.VoiLutFactory = GraphicVoiLutFactory.GetFactory(
-					graphic => InitialVoiLutProvider.Instance.GetLut(graphic.ParentPresentationImage)
-					);
+				base.ImageGraphic.VoiLutFactory = GraphicVoiLutFactory.Create(
+					graphic => InitialVoiLutProvider.Instance.GetLut(graphic.ParentPresentationImage));
 			}
 
 			if (_dicomGraphics == null)

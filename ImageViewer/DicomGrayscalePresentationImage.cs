@@ -122,7 +122,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (base.ImageGraphic.VoiLutFactory == null)
 			{
-				base.ImageGraphic.VoiLutFactory = GraphicVoiLutFactory.GetFactory(GetInitialVoiLut);
+				base.ImageGraphic.VoiLutFactory = GraphicVoiLutFactory.Create(GetInitialVoiLut);
 			}
 
 			if (_dicomGraphics == null)
