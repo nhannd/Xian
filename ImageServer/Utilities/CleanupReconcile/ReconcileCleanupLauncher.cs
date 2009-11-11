@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Windows.Forms;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
@@ -38,8 +39,8 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
     {
         public void RunApplication(string[] args)
         {
-            MainForm form = new MainForm();
-            form.ShowDialog();
+            Application.EnableVisualStyles();
+            Application.Run(new MainForm());
         }
     }
 }
