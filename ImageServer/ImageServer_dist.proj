@@ -101,7 +101,12 @@
 	<PluginFiles Include="$(SolutionDir)\..\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\Enterprise\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Utilities\bin\$(Configuration)\ClearCanvas.ImageServer.Utilities.dll" />
   </ItemGroup>
+
+	<ItemGroup>
+		<UtilBatchFiles Include="$(SolutionDir)\..\ImageServer\Utilities\bin\$(Configuration)\ReconcileCleanup.bat" />
+	</ItemGroup>
 
   <ItemGroup>
 	<ConfigFiles Include="$(SolutionDir)\..\ImageServer\Executable\Logging.config" />
@@ -137,6 +142,10 @@
 
 	<!-- Copy logging.config -->
 	<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" />
+
+
+	<Copy SourceFiles="@(UtilBatchFiles)" DestinationFolder="$(UtilitiesDirectory)" />
+	  
 
   </Target>
 

@@ -272,11 +272,7 @@ namespace ClearCanvas.ImageServer.TestApp {
             
             private global::System.Data.DataColumn columnLastAccessedTime;
             
-            private global::System.Data.DataColumn columnLock;
-            
             private global::System.Data.DataColumn columnStudyStatusEnum;
-            
-            private global::System.Data.DataColumn columnQueueStudyStateEnum;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public StudyStorageDataTable() {
@@ -344,23 +340,9 @@ namespace ClearCanvas.ImageServer.TestApp {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public global::System.Data.DataColumn LockColumn {
-                get {
-                    return this.columnLock;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public global::System.Data.DataColumn StudyStatusEnumColumn {
                 get {
                     return this.columnStudyStatusEnum;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public global::System.Data.DataColumn QueueStudyStateEnumColumn {
-                get {
-                    return this.columnQueueStudyStateEnum;
                 }
             }
             
@@ -393,7 +375,7 @@ namespace ClearCanvas.ImageServer.TestApp {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public StudyStorageRow AddStudyStorageRow(System.Guid GUID, System.Guid ServerPartitionGUID, string StudyInstanceUid, System.DateTime InsertTime, System.DateTime LastAccessedTime, bool Lock, short StudyStatusEnum, short QueueStudyStateEnum) {
+            public StudyStorageRow AddStudyStorageRow(System.Guid GUID, System.Guid ServerPartitionGUID, string StudyInstanceUid, System.DateTime InsertTime, System.DateTime LastAccessedTime, short StudyStatusEnum) {
                 StudyStorageRow rowStudyStorageRow = ((StudyStorageRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         GUID,
@@ -401,9 +383,7 @@ namespace ClearCanvas.ImageServer.TestApp {
                         StudyInstanceUid,
                         InsertTime,
                         LastAccessedTime,
-                        Lock,
-                        StudyStatusEnum,
-                        QueueStudyStateEnum};
+                        StudyStatusEnum};
                 rowStudyStorageRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowStudyStorageRow);
                 return rowStudyStorageRow;
@@ -439,9 +419,7 @@ namespace ClearCanvas.ImageServer.TestApp {
                 this.columnStudyInstanceUid = base.Columns["StudyInstanceUid"];
                 this.columnInsertTime = base.Columns["InsertTime"];
                 this.columnLastAccessedTime = base.Columns["LastAccessedTime"];
-                this.columnLock = base.Columns["Lock"];
                 this.columnStudyStatusEnum = base.Columns["StudyStatusEnum"];
-                this.columnQueueStudyStateEnum = base.Columns["QueueStudyStateEnum"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -456,12 +434,8 @@ namespace ClearCanvas.ImageServer.TestApp {
                 base.Columns.Add(this.columnInsertTime);
                 this.columnLastAccessedTime = new global::System.Data.DataColumn("LastAccessedTime", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnLastAccessedTime);
-                this.columnLock = new global::System.Data.DataColumn("Lock", typeof(bool), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnLock);
                 this.columnStudyStatusEnum = new global::System.Data.DataColumn("StudyStatusEnum", typeof(short), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnStudyStatusEnum);
-                this.columnQueueStudyStateEnum = new global::System.Data.DataColumn("QueueStudyStateEnum", typeof(short), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnQueueStudyStateEnum);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnGUID}, true));
                 this.columnGUID.AllowDBNull = false;
@@ -471,9 +445,7 @@ namespace ClearCanvas.ImageServer.TestApp {
                 this.columnStudyInstanceUid.MaxLength = 64;
                 this.columnInsertTime.AllowDBNull = false;
                 this.columnLastAccessedTime.AllowDBNull = false;
-                this.columnLock.AllowDBNull = false;
                 this.columnStudyStatusEnum.AllowDBNull = false;
-                this.columnQueueStudyStateEnum.AllowDBNull = false;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -656,32 +628,12 @@ namespace ClearCanvas.ImageServer.TestApp {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public bool Lock {
-                get {
-                    return ((bool)(this[this.tableStudyStorage.LockColumn]));
-                }
-                set {
-                    this[this.tableStudyStorage.LockColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public short StudyStatusEnum {
                 get {
                     return ((short)(this[this.tableStudyStorage.StudyStatusEnumColumn]));
                 }
                 set {
                     this[this.tableStudyStorage.StudyStatusEnumColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public short QueueStudyStateEnum {
-                get {
-                    return ((short)(this[this.tableStudyStorage.QueueStudyStateEnumColumn]));
-                }
-                set {
-                    this[this.tableStudyStorage.QueueStudyStateEnumColumn] = value;
                 }
             }
         }
@@ -841,62 +793,53 @@ namespace ClearCanvas.ImageServer.TestApp.StudyStorageDataSetTableAdapters {
             tableMapping.ColumnMappings.Add("StudyInstanceUid", "StudyInstanceUid");
             tableMapping.ColumnMappings.Add("InsertTime", "InsertTime");
             tableMapping.ColumnMappings.Add("LastAccessedTime", "LastAccessedTime");
-            tableMapping.ColumnMappings.Add("Lock", "Lock");
             tableMapping.ColumnMappings.Add("StudyStatusEnum", "StudyStatusEnum");
-            tableMapping.ColumnMappings.Add("QueueStudyStateEnum", "QueueStudyStateEnum");
             this._adapter.TableMappings.Add(tableMapping);
             this._adapter.DeleteCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.DeleteCommand.Connection = this.Connection;
-            this._adapter.DeleteCommand.CommandText = @"DELETE FROM [StudyStorage] WHERE (([GUID] = @Original_GUID) AND ([ServerPartitionGUID] = @Original_ServerPartitionGUID) AND ([StudyInstanceUid] = @Original_StudyInstanceUid) AND ([InsertTime] = @Original_InsertTime) AND ([LastAccessedTime] = @Original_LastAccessedTime) AND ([Lock] = @Original_Lock) AND ([StudyStatusEnum] = @Original_StudyStatusEnum) AND ([QueueStudyStateEnum] = @Original_QueueStudyStateEnum))";
+            this._adapter.DeleteCommand.CommandText = @"DELETE FROM [StudyStorage] WHERE (([GUID] = @Original_GUID) AND ([ServerPartitionGUID] = @Original_ServerPartitionGUID) AND ([StudyInstanceUid] = @Original_StudyInstanceUid) AND ([InsertTime] = @Original_InsertTime) AND ([LastAccessedTime] = @Original_LastAccessedTime) AND ([StudyStatusEnum] = @Original_StudyStatusEnum))";
             this._adapter.DeleteCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_GUID", global::System.Data.SqlDbType.UniqueIdentifier, 0, global::System.Data.ParameterDirection.Input, 0, 0, "GUID", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_ServerPartitionGUID", global::System.Data.SqlDbType.UniqueIdentifier, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ServerPartitionGUID", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_StudyInstanceUid", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "StudyInstanceUid", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_InsertTime", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "InsertTime", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_LastAccessedTime", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "LastAccessedTime", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Lock", global::System.Data.SqlDbType.Bit, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Lock", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_StudyStatusEnum", global::System.Data.SqlDbType.SmallInt, 0, global::System.Data.ParameterDirection.Input, 0, 0, "StudyStatusEnum", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_QueueStudyStateEnum", global::System.Data.SqlDbType.SmallInt, 0, global::System.Data.ParameterDirection.Input, 0, 0, "QueueStudyStateEnum", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.InsertCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.InsertCommand.Connection = this.Connection;
-            this._adapter.InsertCommand.CommandText = @"INSERT INTO [StudyStorage] ([GUID], [ServerPartitionGUID], [StudyInstanceUid], [InsertTime], [LastAccessedTime], [Lock], [StudyStatusEnum], [QueueStudyStateEnum]) VALUES (@GUID, @ServerPartitionGUID, @StudyInstanceUid, @InsertTime, @LastAccessedTime, @Lock, @StudyStatusEnum, @QueueStudyStateEnum);
-SELECT GUID, ServerPartitionGUID, StudyInstanceUid, InsertTime, LastAccessedTime, Lock, StudyStatusEnum, QueueStudyStateEnum FROM StudyStorage WITH (NOLOCK) WHERE (GUID = @GUID)";
+            this._adapter.InsertCommand.CommandText = @"INSERT INTO [StudyStorage] ([GUID], [ServerPartitionGUID], [StudyInstanceUid], [InsertTime], [LastAccessedTime], [StudyStatusEnum], [QueueStudyStateEnum]) VALUES (@GUID, @ServerPartitionGUID, @StudyInstanceUid, @InsertTime, @LastAccessedTime, @StudyStatusEnum, @QueueStudyStateEnum);
+SELECT GUID, ServerPartitionGUID, StudyInstanceUid, InsertTime, LastAccessedTime, StudyStatusEnum, QueueStudyStateEnum FROM StudyStorage WITH (NOLOCK) WHERE (GUID = @GUID)";
             this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@GUID", global::System.Data.SqlDbType.UniqueIdentifier, 0, global::System.Data.ParameterDirection.Input, 0, 0, "GUID", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ServerPartitionGUID", global::System.Data.SqlDbType.UniqueIdentifier, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ServerPartitionGUID", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@StudyInstanceUid", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "StudyInstanceUid", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@InsertTime", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "InsertTime", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@LastAccessedTime", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "LastAccessedTime", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Lock", global::System.Data.SqlDbType.Bit, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Lock", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@StudyStatusEnum", global::System.Data.SqlDbType.SmallInt, 0, global::System.Data.ParameterDirection.Input, 0, 0, "StudyStatusEnum", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@QueueStudyStateEnum", global::System.Data.SqlDbType.SmallInt, 0, global::System.Data.ParameterDirection.Input, 0, 0, "QueueStudyStateEnum", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.UpdateCommand.Connection = this.Connection;
-            this._adapter.UpdateCommand.CommandText = @"UPDATE [StudyStorage] SET [GUID] = @GUID, [ServerPartitionGUID] = @ServerPartitionGUID, [StudyInstanceUid] = @StudyInstanceUid, [InsertTime] = @InsertTime, [LastAccessedTime] = @LastAccessedTime, [Lock] = @Lock, [StudyStatusEnum] = @StudyStatusEnum, [QueueStudyStateEnum] = @QueueStudyStateEnum WHERE (([GUID] = @Original_GUID) AND ([ServerPartitionGUID] = @Original_ServerPartitionGUID) AND ([StudyInstanceUid] = @Original_StudyInstanceUid) AND ([InsertTime] = @Original_InsertTime) AND ([LastAccessedTime] = @Original_LastAccessedTime) AND ([Lock] = @Original_Lock) AND ([StudyStatusEnum] = @Original_StudyStatusEnum) AND ([QueueStudyStateEnum] = @Original_QueueStudyStateEnum));
-SELECT GUID, ServerPartitionGUID, StudyInstanceUid, InsertTime, LastAccessedTime, Lock, StudyStatusEnum, QueueStudyStateEnum FROM StudyStorage WITH (NOLOCK) WHERE (GUID = @GUID)";
+            this._adapter.UpdateCommand.CommandText = @"UPDATE [StudyStorage] SET [GUID] = @GUID, [ServerPartitionGUID] = @ServerPartitionGUID, [StudyInstanceUid] = @StudyInstanceUid, [InsertTime] = @InsertTime, [LastAccessedTime] = @LastAccessedTime, [StudyStatusEnum] = @StudyStatusEnum WHERE (([GUID] = @Original_GUID) AND ([ServerPartitionGUID] = @Original_ServerPartitionGUID) AND ([StudyInstanceUid] = @Original_StudyInstanceUid) AND ([InsertTime] = @Original_InsertTime) AND ([LastAccessedTime] = @Original_LastAccessedTime) AND ([StudyStatusEnum] = @Original_StudyStatusEnum));
+SELECT GUID, ServerPartitionGUID, StudyInstanceUid, InsertTime, LastAccessedTime, StudyStatusEnum FROM StudyStorage WITH (NOLOCK) WHERE (GUID = @GUID)";
             this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@GUID", global::System.Data.SqlDbType.UniqueIdentifier, 0, global::System.Data.ParameterDirection.Input, 0, 0, "GUID", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ServerPartitionGUID", global::System.Data.SqlDbType.UniqueIdentifier, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ServerPartitionGUID", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@StudyInstanceUid", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "StudyInstanceUid", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@InsertTime", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "InsertTime", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@LastAccessedTime", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "LastAccessedTime", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Lock", global::System.Data.SqlDbType.Bit, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Lock", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@StudyStatusEnum", global::System.Data.SqlDbType.SmallInt, 0, global::System.Data.ParameterDirection.Input, 0, 0, "StudyStatusEnum", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@QueueStudyStateEnum", global::System.Data.SqlDbType.SmallInt, 0, global::System.Data.ParameterDirection.Input, 0, 0, "QueueStudyStateEnum", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_GUID", global::System.Data.SqlDbType.UniqueIdentifier, 0, global::System.Data.ParameterDirection.Input, 0, 0, "GUID", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_ServerPartitionGUID", global::System.Data.SqlDbType.UniqueIdentifier, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ServerPartitionGUID", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_StudyInstanceUid", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "StudyInstanceUid", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_InsertTime", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "InsertTime", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_LastAccessedTime", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "LastAccessedTime", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Lock", global::System.Data.SqlDbType.Bit, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Lock", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_StudyStatusEnum", global::System.Data.SqlDbType.SmallInt, 0, global::System.Data.ParameterDirection.Input, 0, 0, "StudyStatusEnum", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_QueueStudyStateEnum", global::System.Data.SqlDbType.SmallInt, 0, global::System.Data.ParameterDirection.Input, 0, 0, "QueueStudyStateEnum", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         private void InitConnection() {
             this._connection = new global::System.Data.SqlClient.SqlConnection();
-            this._connection.ConnectionString = global::ClearCanvas.ImageServer.TestApp.Properties.Settings.Default.ImageServerConnectionString1;
+            this._connection.ConnectionString = global::ClearCanvas.ImageServer.TestApp.Properties.Settings.Default.ImageServerConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -905,8 +848,8 @@ SELECT GUID, ServerPartitionGUID, StudyInstanceUid, InsertTime, LastAccessedTime
             this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[0].Connection = this.Connection;
             this._commandCollection[0].CommandText = "SELECT     GUID, ServerPartitionGUID, StudyInstanceUid, InsertTime, LastAccessedT" +
-                "ime, Lock, StudyStatusEnum, QueueStudyStateEnum\r\nFROM         StudyStorage WITH " +
-                "(NOLOCK)\r\nWHERE     (StudyInstanceUid = @StudyInstanceUid)";
+                "ime, StudyStatusEnum\r\nFROM         StudyStorage WITH (NOLOCK)\r\nWHERE     (StudyI" +
+                "nstanceUid = @StudyInstanceUid)";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
             this._commandCollection[0].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@StudyInstanceUid", global::System.Data.SqlDbType.VarChar, 64, global::System.Data.ParameterDirection.Input, 0, 0, "StudyInstanceUid", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
         }
@@ -973,7 +916,7 @@ SELECT GUID, ServerPartitionGUID, StudyInstanceUid, InsertTime, LastAccessedTime
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Delete, true)]
-        public virtual int Delete(System.Guid Original_GUID, System.Guid Original_ServerPartitionGUID, string Original_StudyInstanceUid, System.DateTime Original_InsertTime, System.DateTime Original_LastAccessedTime, bool Original_Lock, short Original_StudyStatusEnum, short Original_QueueStudyStateEnum) {
+        public virtual int Delete(System.Guid Original_GUID, System.Guid Original_ServerPartitionGUID, string Original_StudyInstanceUid, System.DateTime Original_InsertTime, System.DateTime Original_LastAccessedTime, short Original_StudyStatusEnum) {
             this.Adapter.DeleteCommand.Parameters[0].Value = ((System.Guid)(Original_GUID));
             this.Adapter.DeleteCommand.Parameters[1].Value = ((System.Guid)(Original_ServerPartitionGUID));
             if ((Original_StudyInstanceUid == null)) {
@@ -984,9 +927,7 @@ SELECT GUID, ServerPartitionGUID, StudyInstanceUid, InsertTime, LastAccessedTime
             }
             this.Adapter.DeleteCommand.Parameters[3].Value = ((System.DateTime)(Original_InsertTime));
             this.Adapter.DeleteCommand.Parameters[4].Value = ((System.DateTime)(Original_LastAccessedTime));
-            this.Adapter.DeleteCommand.Parameters[5].Value = ((bool)(Original_Lock));
-            this.Adapter.DeleteCommand.Parameters[6].Value = ((short)(Original_StudyStatusEnum));
-            this.Adapter.DeleteCommand.Parameters[7].Value = ((short)(Original_QueueStudyStateEnum));
+            this.Adapter.DeleteCommand.Parameters[5].Value = ((short)(Original_StudyStatusEnum));
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.DeleteCommand.Connection.State;
             if (((this.Adapter.DeleteCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -1006,7 +947,7 @@ SELECT GUID, ServerPartitionGUID, StudyInstanceUid, InsertTime, LastAccessedTime
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Insert, true)]
-        public virtual int Insert(System.Guid GUID, System.Guid ServerPartitionGUID, string StudyInstanceUid, System.DateTime InsertTime, System.DateTime LastAccessedTime, bool Lock, short StudyStatusEnum, short QueueStudyStateEnum) {
+        public virtual int Insert(System.Guid GUID, System.Guid ServerPartitionGUID, string StudyInstanceUid, System.DateTime InsertTime, System.DateTime LastAccessedTime, short StudyStatusEnum, short QueueStudyStateEnum) {
             this.Adapter.InsertCommand.Parameters[0].Value = ((System.Guid)(GUID));
             this.Adapter.InsertCommand.Parameters[1].Value = ((System.Guid)(ServerPartitionGUID));
             if ((StudyInstanceUid == null)) {
@@ -1017,9 +958,8 @@ SELECT GUID, ServerPartitionGUID, StudyInstanceUid, InsertTime, LastAccessedTime
             }
             this.Adapter.InsertCommand.Parameters[3].Value = ((System.DateTime)(InsertTime));
             this.Adapter.InsertCommand.Parameters[4].Value = ((System.DateTime)(LastAccessedTime));
-            this.Adapter.InsertCommand.Parameters[5].Value = ((bool)(Lock));
-            this.Adapter.InsertCommand.Parameters[6].Value = ((short)(StudyStatusEnum));
-            this.Adapter.InsertCommand.Parameters[7].Value = ((short)(QueueStudyStateEnum));
+            this.Adapter.InsertCommand.Parameters[5].Value = ((short)(StudyStatusEnum));
+            this.Adapter.InsertCommand.Parameters[6].Value = ((short)(QueueStudyStateEnum));
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.InsertCommand.Connection.State;
             if (((this.Adapter.InsertCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -1039,23 +979,7 @@ SELECT GUID, ServerPartitionGUID, StudyInstanceUid, InsertTime, LastAccessedTime
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(
-                    System.Guid GUID, 
-                    System.Guid ServerPartitionGUID, 
-                    string StudyInstanceUid, 
-                    System.DateTime InsertTime, 
-                    System.DateTime LastAccessedTime, 
-                    bool Lock, 
-                    short StudyStatusEnum, 
-                    short QueueStudyStateEnum, 
-                    System.Guid Original_GUID, 
-                    System.Guid Original_ServerPartitionGUID, 
-                    string Original_StudyInstanceUid, 
-                    System.DateTime Original_InsertTime, 
-                    System.DateTime Original_LastAccessedTime, 
-                    bool Original_Lock, 
-                    short Original_StudyStatusEnum, 
-                    short Original_QueueStudyStateEnum) {
+        public virtual int Update(System.Guid GUID, System.Guid ServerPartitionGUID, string StudyInstanceUid, System.DateTime InsertTime, System.DateTime LastAccessedTime, short StudyStatusEnum, System.Guid Original_GUID, System.Guid Original_ServerPartitionGUID, string Original_StudyInstanceUid, System.DateTime Original_InsertTime, System.DateTime Original_LastAccessedTime, short Original_StudyStatusEnum) {
             this.Adapter.UpdateCommand.Parameters[0].Value = ((System.Guid)(GUID));
             this.Adapter.UpdateCommand.Parameters[1].Value = ((System.Guid)(ServerPartitionGUID));
             if ((StudyInstanceUid == null)) {
@@ -1066,22 +990,18 @@ SELECT GUID, ServerPartitionGUID, StudyInstanceUid, InsertTime, LastAccessedTime
             }
             this.Adapter.UpdateCommand.Parameters[3].Value = ((System.DateTime)(InsertTime));
             this.Adapter.UpdateCommand.Parameters[4].Value = ((System.DateTime)(LastAccessedTime));
-            this.Adapter.UpdateCommand.Parameters[5].Value = ((bool)(Lock));
-            this.Adapter.UpdateCommand.Parameters[6].Value = ((short)(StudyStatusEnum));
-            this.Adapter.UpdateCommand.Parameters[7].Value = ((short)(QueueStudyStateEnum));
-            this.Adapter.UpdateCommand.Parameters[8].Value = ((System.Guid)(Original_GUID));
-            this.Adapter.UpdateCommand.Parameters[9].Value = ((System.Guid)(Original_ServerPartitionGUID));
+            this.Adapter.UpdateCommand.Parameters[5].Value = ((short)(StudyStatusEnum));
+            this.Adapter.UpdateCommand.Parameters[6].Value = ((System.Guid)(Original_GUID));
+            this.Adapter.UpdateCommand.Parameters[7].Value = ((System.Guid)(Original_ServerPartitionGUID));
             if ((Original_StudyInstanceUid == null)) {
                 throw new global::System.ArgumentNullException("Original_StudyInstanceUid");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[10].Value = ((string)(Original_StudyInstanceUid));
+                this.Adapter.UpdateCommand.Parameters[8].Value = ((string)(Original_StudyInstanceUid));
             }
-            this.Adapter.UpdateCommand.Parameters[11].Value = ((System.DateTime)(Original_InsertTime));
-            this.Adapter.UpdateCommand.Parameters[12].Value = ((System.DateTime)(Original_LastAccessedTime));
-            this.Adapter.UpdateCommand.Parameters[13].Value = ((bool)(Original_Lock));
-            this.Adapter.UpdateCommand.Parameters[14].Value = ((short)(Original_StudyStatusEnum));
-            this.Adapter.UpdateCommand.Parameters[15].Value = ((short)(Original_QueueStudyStateEnum));
+            this.Adapter.UpdateCommand.Parameters[9].Value = ((System.DateTime)(Original_InsertTime));
+            this.Adapter.UpdateCommand.Parameters[10].Value = ((System.DateTime)(Original_LastAccessedTime));
+            this.Adapter.UpdateCommand.Parameters[11].Value = ((short)(Original_StudyStatusEnum));
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.UpdateCommand.Connection.State;
             if (((this.Adapter.UpdateCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -1101,8 +1021,8 @@ SELECT GUID, ServerPartitionGUID, StudyInstanceUid, InsertTime, LastAccessedTime
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(System.Guid ServerPartitionGUID, string StudyInstanceUid, System.DateTime InsertTime, System.DateTime LastAccessedTime, bool Lock, short StudyStatusEnum, short QueueStudyStateEnum, System.Guid Original_GUID, System.Guid Original_ServerPartitionGUID, string Original_StudyInstanceUid, System.DateTime Original_InsertTime, System.DateTime Original_LastAccessedTime, bool Original_Lock, short Original_StudyStatusEnum, short Original_QueueStudyStateEnum) {
-            return this.Update(Original_GUID, ServerPartitionGUID, StudyInstanceUid, InsertTime, LastAccessedTime, Lock, StudyStatusEnum, QueueStudyStateEnum, Original_GUID, Original_ServerPartitionGUID, Original_StudyInstanceUid, Original_InsertTime, Original_LastAccessedTime, Original_Lock, Original_StudyStatusEnum, Original_QueueStudyStateEnum);
+        public virtual int Update(System.Guid ServerPartitionGUID, string StudyInstanceUid, System.DateTime InsertTime, System.DateTime LastAccessedTime, short StudyStatusEnum, System.Guid Original_GUID, System.Guid Original_ServerPartitionGUID, string Original_StudyInstanceUid, System.DateTime Original_InsertTime, System.DateTime Original_LastAccessedTime, short Original_StudyStatusEnum) {
+            return this.Update(Original_GUID, ServerPartitionGUID, StudyInstanceUid, InsertTime, LastAccessedTime, StudyStatusEnum, Original_GUID, Original_ServerPartitionGUID, Original_StudyInstanceUid, Original_InsertTime, Original_LastAccessedTime, Original_StudyStatusEnum);
         }
     }
     

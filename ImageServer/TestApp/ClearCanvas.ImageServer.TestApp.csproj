@@ -49,7 +49,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ReconcileFolderScanner.cs" />
     <Compile Include="ImageServerDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -61,23 +60,8 @@
     <Compile Include="ImageStreamingStressTest.Designer.cs">
       <DependentUpon>ImageStreamingStressTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="ReconcileCleanupUtils.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ReconcileCleanupUtils.Designer.cs">
-      <DependentUpon>ReconcileCleanupUtils.cs</DependentUpon>
-    </Compile>
     <Compile Include="Service References\services.cs">
       <DependentUpon>services.map</DependentUpon>
-    </Compile>
-    <Compile Include="SIQDataSet.cs">
-      <DependentUpon>SIQDataSet.xsd</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="SIQDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SIQDataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="StreamingTest.cs">
       <SubType>Form</SubType>
@@ -138,9 +122,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>ImageStreamingStressTest.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ReconcileCleanupUtils.resx">
-      <DependentUpon>ReconcileCleanupUtils.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="StreamingTest.resx">
       <SubType>Designer</SubType>
       <DependentUpon>StreamingTest.cs</DependentUpon>
@@ -200,17 +181,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Service References\services.map" />
-    <None Include="SIQDataSet.xsc">
-      <DependentUpon>SIQDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="SIQDataSet.xsd">
-      <SubType>Designer</SubType>
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>SIQDataSet.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="SIQDataSet.xss">
-      <DependentUpon>SIQDataSet.xsd</DependentUpon>
-    </None>
     <None Include="StudyStorageDataSet.xsc">
       <DependentUpon>StudyStorageDataSet.xsd</DependentUpon>
     </None>

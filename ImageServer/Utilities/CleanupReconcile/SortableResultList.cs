@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,58 +29,75 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 
-namespace ClearCanvas.ImageServer.TestApp
+namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
 {
-    public partial class Startup : Form
+    public class SortableResultList<T> : BindingList<T>
     {
-        public Startup()
+        private bool _isSorted;
+        private ListSortDirection _sortDirection;
+        private PropertyDescriptor _sortProperty;
+
+        public SortableResultList(List<T> list)
+            :base(list)
         {
-            InitializeComponent();
+            
         }
 
-
-        private void TestRule_Click(object sender, EventArgs e)
+        protected override bool SupportsSortingCore
         {
-            TestDicomFileForm test = new TestDicomFileForm();
-            test.Show();
+            get
+            {
+                return true;
+            }
         }
 
-        private void TestHeaderStreamButton_Click(object sender, EventArgs e)
+        protected override bool SupportsSearchingCore
         {
-            TestHeaderStreamingForm test = new TestHeaderStreamingForm();
-            test.Show();
+            get { return true; }
         }
 
-        private void buttonCompression_Click(object sender, EventArgs e)
+        protected override bool IsSortedCore
         {
-            TestCompressionForm test = new TestCompressionForm();
-            test.Show();
+            get
+            {
+                return _isSorted;
+            }
         }
 
-        private void buttonEditStudy_Click(object sender, EventArgs e)
+        protected override ListSortDirection SortDirectionCore
         {
-            TestEditStudyForm test = new TestEditStudyForm();
-            test.Show();
+            get
+            {
+                return _sortDirection;
+            }
+        }
+        protected override PropertyDescriptor SortPropertyCore
+        {
+            get
+            {
+                return _sortProperty;
+            }
         }
 
-        private void RandomImageSender_Click(object sender, EventArgs e)
+        protected override void ApplySortCore(PropertyDescriptor prop, ListSortDirection direction)
         {
-            TestSendImagesForm test = new TestSendImagesForm();
-            test.Show();
+            _sortDirection = direction;
+            _sortProperty = prop;
+            
+            var list = Items as List<T>;
+            list.Sort(delegate(T entry1, T entry2)
+                          {
+                              object value1 = prop.GetValue(entry1);
+                              object value2 = prop.GetValue(entry2);
+                              return value1.ToString().CompareTo(value2.ToString());
+                          });
+
+            _isSorted = true;
+            OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
         }
 
-        private void ExtremeStreaming_Click(object sender, EventArgs e)
-        {
-            ImageStreamingStressTest test = new ImageStreamingStressTest();
-            test.Show();
-        }
     }
 }
