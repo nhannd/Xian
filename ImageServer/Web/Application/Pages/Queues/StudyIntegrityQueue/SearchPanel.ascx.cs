@@ -91,7 +91,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             PatientName.Text = string.Empty;
             PatientId.Text = string.Empty;
             AccessionNumber.Text = string.Empty;
-            ReceivedDate.Text = string.Empty;
+            FromDate.Text = string.Empty;
+            ToDate.Text = string.Empty;
         }
 
         public void UpdateUI()
@@ -144,8 +145,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         {
             base.OnInit(e);
 
-            ClearReceivedDateButton.OnClientClick = ScriptHelper.ClearDate(ReceivedDate.ClientID,
-                                                                           ReceivedDateCalendarExtender.ClientID);
+            ClearFromDateButton.OnClientClick = ScriptHelper.ClearDate(FromDate.ClientID,
+                                                                           FromDateCalendarExtender.ClientID);
+            ClearToDateButton.OnClientClick = ScriptHelper.ClearDate(ToDate.ClientID,
+                                                                           ToDateCalendarExtender.ClientID);
+            ToDate.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromDate.ClientID, ToDate.ClientID, ToDate.ClientID, ToDateCalendarExtender.ClientID, "To Date must be greater than From Date");
+            FromDate.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromDate.ClientID, ToDate.ClientID, FromDate.ClientID, FromDateCalendarExtender.ClientID, "From Date must be less than To Date");
 
             GridPagerTop.InitializeGridPager(Labels.GridPagerQueueSingleItem,
                                              Labels.GridPagerQueueMultipleItems,
@@ -167,8 +172,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                                                                          source.AccessionNumber = "*" +
                                                                                                   AccessionNumber.Text +
                                                                                                   "*";
-                                                                     if (!String.IsNullOrEmpty(ReceivedDate.Text))
-                                                                         source.InsertTime = ReceivedDate.Text;
+                                                                     if (!String.IsNullOrEmpty(FromDate.Text))
+                                                                         source.FromInsertTime = FromDate.Text;
+
+                                                                     if (!String.IsNullOrEmpty(ToDate.Text))
+                                                                         source.ToInsertTime = ToDate.Text;
 
                                                                      if (ReasonListBox.SelectedIndex > -1)
                                                                      {

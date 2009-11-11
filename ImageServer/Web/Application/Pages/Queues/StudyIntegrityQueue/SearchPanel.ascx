@@ -51,11 +51,17 @@ function MultiSelect() {
                                                 <asp:TextBox ID="AccessionNumber" runat="server" CssClass="SearchTextBox" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label2" runat="server" Text="Time Received " CssClass="SearchTextBoxLabel"
+                                                <asp:Label ID="Label2" runat="server" Text="From Date " CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" />
-                                                <asp:LinkButton ID="ClearReceivedDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 2px;"/><br />
-                                                <asp:TextBox ID="ReceivedDate" runat="server" CssClass="SearchDateBox" />
+                                                <asp:LinkButton ID="ClearFromDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 10px;"/><br />
+                                                <asp:TextBox ID="FromDate" runat="server" CssClass="SearchDateBox" />
                                             </td>
+                                            <td align="left" valign="bottom">
+                                                <asp:Label ID="Label6" runat="server" Text="To Date " CssClass="SearchTextBoxLabel"
+                                                    EnableViewState="False" />
+                                                <asp:LinkButton ID="ClearToDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 2px;"/><br />
+                                                <asp:TextBox ID="ToDate" runat="server" CssClass="SearchDateBox" />
+                                            </td>                                            
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label5" runat="server" Text="Reason" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
@@ -68,9 +74,12 @@ function MultiSelect() {
                                         </tr>
                                     </table>
                                 </asp:Panel>
-                                    <ccUI:CalendarExtender ID="ReceivedDateCalendarExtender" runat="server" TargetControlID="ReceivedDate"
+                                    <ccUI:CalendarExtender ID="FromDateCalendarExtender" runat="server" TargetControlID="FromDate"
                                         CssClass="Calendar">
                                     </ccUI:CalendarExtender>
+                                    <ccUI:CalendarExtender ID="ToDateCalendarExtender" runat="server" TargetControlID="ToDate"
+                                        CssClass="Calendar">
+                                    </ccUI:CalendarExtender>                                    
                                 </td>
                             </tr>
                         </table>
