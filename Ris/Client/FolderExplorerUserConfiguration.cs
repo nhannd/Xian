@@ -180,7 +180,7 @@ namespace ClearCanvas.Ris.Client
 
 		#region FolderExplorerConfiguration overrides
 
-		protected override Predicate<IFolder> GetFolderFilterFromCustomizatinSpec(XmlElement element)
+		protected override Predicate<IFolder> GetFolderFilterFromCustomizationSpec(XmlElement element)
 		{
 			// User customizations are made to a specific folder, not a folder class, so use the "id"
 			var id = element.GetAttribute("id");

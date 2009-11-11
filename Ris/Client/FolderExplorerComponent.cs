@@ -131,6 +131,7 @@ namespace ClearCanvas.Ris.Client
 						_folderSystem.Folders.ItemRemoved += FolderRemovedEventHandler;
 						_folderSystem.FoldersChanged += FoldersChangedEventHandler;
 						_folderSystem.FoldersInvalidated += FoldersInvalidatedEventHandler;
+						_folderSystem.FolderPropertiesChanged += FolderPropertiesChangedEventHandler;
 
 						// build the initial folder tree, but do not udpate it, as this will be done on demand
 						// when this folder system is selected
@@ -154,7 +155,7 @@ namespace ClearCanvas.Ris.Client
 				});
 		}
 
-		/// <summary>
+    	/// <summary>
 		/// Invalidates all folders.
 		/// </summary>
 		internal void InvalidateFolders()
@@ -216,6 +217,7 @@ namespace ClearCanvas.Ris.Client
 			_folderSystem.Folders.ItemRemoved -= FolderRemovedEventHandler;
 			_folderSystem.FoldersChanged -= FoldersChangedEventHandler;
 			_folderSystem.FoldersInvalidated -= FoldersInvalidatedEventHandler;
+    		_folderSystem.FolderPropertiesChanged -= FolderPropertiesChangedEventHandler;
 
 			base.Stop();
 		}
@@ -380,6 +382,17 @@ namespace ClearCanvas.Ris.Client
 		{
 			//TODO: only do update if this explorer is active
 			_folderTreeRoot.Update();
+		}
+
+		private void FolderPropertiesChangedEventHandler(object sender, ItemEventArgs<IFolder> e)
+		{
+			var folder = e.Item;
+
+			// apply customizations to folder
+			FolderExplorerComponentSettings.Default.ApplyFolderCustomizations(_folderSystem, folder);
+
+			// notify UI to update folder properties
+			_folderTreeRoot.NotifyFolderPropertiesUpdated(folder);
 		}
 
 		private void BuildFolderTree()

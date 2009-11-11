@@ -127,6 +127,11 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		event EventHandler FoldersInvalidated;
 
+		/// <summary>
+		/// Occurs to indicate that one or more properties of a folder have changed and the UI needs to be updated.
+		/// </summary>
+		event EventHandler<ItemEventArgs<IFolder>> FolderPropertiesChanged;
+
 		#endregion
 
 		#region Methods

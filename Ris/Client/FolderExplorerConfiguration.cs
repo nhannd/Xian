@@ -15,11 +15,11 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		/// <param name="folderSystems"></param>
 		/// <returns></returns>
-		IEnumerable<IFolderSystem> ApplyUserFolderSystemsOrder(IEnumerable<IFolderSystem> folderSystems);
+		IEnumerable<IFolderSystem> ApplyFolderSystemsOrder(IEnumerable<IFolderSystem> folderSystems);
 
 		/// <summary>
-		/// Applies the specifications defined for the <see cref="IFolderSystem"/> with the specified <paramref name="folderSystemId"/> 
-		/// to each <see cref="IFolder"/> in the specified list and returns the resulting customized folders in a new list.
+		/// Applies the customizations defined for the <see cref="IFolderSystem"/> with the specified <paramref name="folderSystemId"/> 
+		/// to each <see cref="IFolder"/> in the specified list and returns the resulting customized and ordered folders in a new list.
 		/// </summary>
 		/// <remarks>
 		/// The method is not simply passed an <see cref="IFolderSystem"/> so that multiple calls to the method using different
@@ -28,7 +28,20 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="folderSystemId"></param>
 		/// <param name="folders"></param>
 		/// <returns></returns>
-		IList<IFolder> ApplyUserFoldersCustomizations(string folderSystemId, IList<IFolder> folders);
+		IList<IFolder> ApplyFolderCustomizations(string folderSystemId, IList<IFolder> folders);
+
+		/// <summary>
+		/// Applies the customizations defined for the <see cref="IFolderSystem"/> with the specified <paramref name="folderSystemId"/> 
+		/// to the specified <see cref="IFolder"/>, assuming this folder is part of the folder system.
+		/// </summary>
+		/// <remarks>
+		/// The method is not simply passed an <see cref="IFolderSystem"/> so that multiple calls to the method using different
+		/// <see cref="IFolderExplorerUserConfiguration"/> can be chained together.
+		/// </remarks>
+		/// <param name="folderSystemId"></param>
+		/// <param name="folder"></param>
+		/// <returns></returns>
+		void ApplyFolderCustomizations(string folderSystemId, IFolder folder);
 
 		/// <summary>
 		/// Indicates if the specified <see cref="IFolderSystem"/> should be able to have user customizations applied
@@ -67,7 +80,12 @@ namespace ClearCanvas.Ris.Client
 
 		#region IFolderExplorerConfigurationDocument members
 
-		public IEnumerable<IFolderSystem> ApplyUserFolderSystemsOrder(IEnumerable<IFolderSystem> folderSystems)
+		/// <summary>
+		/// Orders and returns a new list of <see cref="IFolderSystem"/> from the provided <see cref="IFolderSystem"/>
+		/// </summary>
+		/// <param name="folderSystems"></param>
+		/// <returns></returns>
+		public IEnumerable<IFolderSystem> ApplyFolderSystemsOrder(IEnumerable<IFolderSystem> folderSystems)
 		{
 			var orderedFolderSystems = new List<IFolderSystem>();
 			var remainingFolderSystems = new List<IFolderSystem>(folderSystems);
@@ -91,14 +109,25 @@ namespace ClearCanvas.Ris.Client
 			return orderedFolderSystems;
 		}
 
-		public IList<IFolder> ApplyUserFoldersCustomizations(string folderSystemId, IList<IFolder> folders)
+		/// <summary>
+		/// Applies the customizations defined for the <see cref="IFolderSystem"/> with the specified <paramref name="folderSystemId"/> 
+		/// to each <see cref="IFolder"/> in the specified list and returns the resulting customized and ordered folders in a new list.
+		/// </summary>
+		/// <remarks>
+		/// The method is not simply passed an <see cref="IFolderSystem"/> so that multiple calls to the method using different
+		/// <see cref="IFolderExplorerUserConfiguration"/> can be chained together.
+		/// </remarks>
+		/// <param name="folderSystemId"></param>
+		/// <param name="folders"></param>
+		/// <returns></returns>
+		public IList<IFolder> ApplyFolderCustomizations(string folderSystemId, IList<IFolder> folders)
 		{
 			var customizedFolders = new List<IFolder>();
 			var remainingFolders = new List<IFolder>(folders);
 
 			foreach (XmlElement customizationSpec in GetFolderCustomizationSpecsForFolderSystem(folderSystemId))
 			{
-				var folderFilter = GetFolderFilterFromCustomizatinSpec(customizationSpec);
+				var folderFilter = GetFolderFilterFromCustomizationSpec(customizationSpec);
 				foreach (var matchingRemainingFolder in CollectionUtils.Select(remainingFolders, folderFilter))
 				{
 					CustomizeItem(matchingRemainingFolder, customizationSpec);
@@ -113,6 +142,30 @@ namespace ClearCanvas.Ris.Client
 
 			customizedFolders.AddRange(remainingFolders);
 			return customizedFolders;
+		}
+
+		/// <summary>
+		/// Applies the customizations defined for the <see cref="IFolderSystem"/> with the specified <paramref name="folderSystemId"/> 
+		/// to the specified <see cref="IFolder"/>, assuming this folder is part of the folder system.
+		/// </summary>
+		/// <remarks>
+		/// The method is not simply passed an <see cref="IFolderSystem"/> so that multiple calls to the method using different
+		/// <see cref="IFolderExplorerUserConfiguration"/> can be chained together.
+		/// </remarks>
+		/// <param name="folderSystemId"></param>
+		/// <param name="folder"></param>
+		/// <returns></returns>
+		public void ApplyFolderCustomizations(string folderSystemId, IFolder folder)
+		{
+			// this implementation isn't very efficient but who cares
+			foreach (XmlElement customizationSpec in GetFolderCustomizationSpecsForFolderSystem(folderSystemId))
+			{
+				var folderFilter = GetFolderFilterFromCustomizationSpec(customizationSpec);
+				if(folderFilter(folder))
+				{
+					CustomizeItem(folder, customizationSpec);
+				}
+			}
 		}
 
 		public bool IsFolderSystemReadOnly(IFolderSystem folderSystem)
@@ -141,7 +194,7 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		/// <param name="element"></param>
 		/// <returns></returns>
-		protected virtual Predicate<IFolder> GetFolderFilterFromCustomizatinSpec(XmlElement element)
+		protected virtual Predicate<IFolder> GetFolderFilterFromCustomizationSpec(XmlElement element)
 		{
 			// The default configuration customizes according to folder class
 			var cls = element.GetAttribute("class");

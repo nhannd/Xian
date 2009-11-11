@@ -39,6 +39,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
 using System.Threading;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -166,8 +167,13 @@ namespace ClearCanvas.Ris.Client
                     new DialogBoxCreationArgs(editor, "Edit Worklist" + " - " + folder.Name, null, DialogSizeHint.Medium));
                 if (exitCode == ApplicationComponentExitCode.Accepted)
 				{
-					// refresh the folder
+					var worklist = CollectionUtils.FirstElement(editor.EditedWorklistSummaries);
 					IWorklistFolderSystem fs = (IWorklistFolderSystem)this.Context.SelectedFolderSystem;
+
+					// update folder properties
+					fs.UpdateWorklistFolder(folder, worklist);
+
+					// refresh folder content
 					fs.InvalidateFolder(folder);
 				}
 

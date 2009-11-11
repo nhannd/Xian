@@ -57,6 +57,13 @@ namespace ClearCanvas.Ris.Client
         /// specified worklist class.
         /// </remarks>
         IWorklistFolder AddWorklistFolder(WorklistSummary worklist);
+
+		/// <summary>
+		/// Updates the specified worklist folder to reflect the specified worklist.
+		/// </summary>
+		/// <param name="folder"></param>
+		/// <param name="worklist"></param>
+    	void UpdateWorklistFolder(IWorklistFolder folder, WorklistSummary worklist);
     }
 
 
@@ -112,7 +119,23 @@ namespace ClearCanvas.Ris.Client
             return AddWorklistFolderHelper(worklist);
         }
 
-        public override SearchParams CreateSearchParams(string searchText)
+    	/// <summary>
+    	/// Updates the specified worklist folder to reflect the specified worklist.
+    	/// </summary>
+    	/// <param name="folder"></param>
+    	/// <param name="worklist"></param>
+    	public void UpdateWorklistFolder(IWorklistFolder folder, WorklistSummary worklist)
+    	{
+			if(!this.Folders.Contains(folder))
+				return;
+
+    		InitializeFolderProperties(folder, worklist);
+
+			// notify that the folder properties have changed
+			NotifyFolderPropertiesChanged(folder);
+    	}
+
+    	public override SearchParams CreateSearchParams(string searchText)
         {
             return new WorklistSearchParams(searchText);
         }
@@ -232,31 +255,41 @@ namespace ClearCanvas.Ris.Client
             if (folder == null || !(folder is IInitializeWorklistFolder))
                 return null;
 
-            IInitializeWorklistFolder initFolder = folder as IInitializeWorklistFolder;
+            InitializeFolderProperties(folder, worklist);
 
-            // augment default base path with worklist name
-            Path path = folder.FolderPath;
-            if (!string.IsNullOrEmpty(worklist.DisplayName))
-            {
-            	path = path.Append(new PathSegment(worklist.DisplayName, folder.ResourceResolver));
-            }
-
-            // init folder
-            initFolder.Initialize(
-                path,
-                worklist.WorklistRef,
-                worklist.Description,
-                GetWorklistOwnership(worklist),
-                GetWorklistOwnerName(worklist)
-                );
-
-            // add to folders list
+        	// add to folders list
             this.Folders.Add(folder);
 
             return folder;
         }
 
-        private string GetWorklistClassForFolderClass(Type folderClass)
+		/// <summary>
+		/// Initializes the specified folder's properties from the specified worklist.
+		/// </summary>
+		/// <param name="worklist"></param>
+		/// <param name="folder"></param>
+    	private void InitializeFolderProperties(IWorklistFolder folder, WorklistSummary worklist)
+    	{
+			IInitializeWorklistFolder initFolder = (IInitializeWorklistFolder)folder;
+
+    		// augment default base path with worklist name
+    		Path path = folder.FolderPath;
+    		if (!string.IsNullOrEmpty(worklist.DisplayName))
+    		{
+    			path = path.Append(new PathSegment(worklist.DisplayName, folder.ResourceResolver));
+    		}
+
+    		// init folder
+    		initFolder.Initialize(
+    			path,
+    			worklist.WorklistRef,
+    			worklist.Description,
+    			GetWorklistOwnership(worklist),
+    			GetWorklistOwnerName(worklist)
+    			);
+    	}
+
+    	private string GetWorklistClassForFolderClass(Type folderClass)
         {
             return WorklistFolder<TItem, TWorklistService>.GetWorklistClassName(folderClass);
         }

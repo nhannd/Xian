@@ -258,6 +258,9 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets a value indicating whether this node is currently expanded.
+		/// </summary>
 		protected bool Expanded
 		{
 			get { return _expanded; }
@@ -271,6 +274,25 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		/// <summary>
+		/// Notifies the tree to update the display.
+		/// </summary>
+		protected internal void NotifyItemUpdated()
+		{
+			// parent may be null iff this is a root node
+			// parent item may not yet contain this node, if this is node has not yet been added to the parent's
+			// item collection (a transient state that occurs while the tree is being built)
+			if (_parent != null && _parent.GetSubTree().Items.Contains(this))
+				_parent.GetSubTree().Items.NotifyItemUpdated(this);
+		}
+
+		#endregion
+
+		#region Private Helpers
+
+		/// <summary>
+		/// Gets a value indicating whether this node has a sub-tree.
+		/// </summary>
 		private bool CanHaveSubTree
 		{
 			get
@@ -281,10 +303,6 @@ namespace ClearCanvas.Ris.Client
 				return this.GetSubTree().Items.Count > 0;
 			}
 		}
-
-		#endregion
-
-		#region Private Helpers
 
 		/// <summary>
 		/// Sets the folder associatd with this node.
@@ -328,18 +346,6 @@ namespace ClearCanvas.Ris.Client
 		private void FolderTextOrIconChangedEventHandler(object sender, EventArgs e)
 		{
 			NotifyItemUpdated();
-		}
-
-		/// <summary>
-		/// Notifies the tree to update the display.
-		/// </summary>
-		private void NotifyItemUpdated()
-		{
-			// parent may be null iff this is a root node
-			// parent item may not yet contain this node, if this is node has not yet been added to the parent's
-			// item collection (a transient state that occurs while the tree is being built)
-			if(_parent != null && _parent.GetSubTree().Items.Contains(this))
-				_parent.GetSubTree().Items.NotifyItemUpdated(this);
 		}
 
 		/// <summary>
@@ -437,6 +443,19 @@ namespace ClearCanvas.Ris.Client
 			if (node != null)
 			{
 				RemoveNode(node);
+			}
+		}
+
+		/// <summary>
+		/// Notifies the view that properties of the folder, such as its text or icon, have changed.
+		/// </summary>
+		/// <param name="folder"></param>
+		public void NotifyFolderPropertiesUpdated(IFolder folder)
+		{
+			FolderTreeNode node = FindNode(folder);
+			if (node != null)
+			{
+				node.NotifyItemUpdated();
 			}
 		}
 	}

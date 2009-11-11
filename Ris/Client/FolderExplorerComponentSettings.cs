@@ -62,35 +62,48 @@ namespace ClearCanvas.Ris.Client
 		#region Public API
 
 		/// <summary>
-		/// Orders the folder systems according to the default and user specific settings
+		/// Orders the folder systems according to the default and user specific settings.
 		/// </summary>
 		/// <param name="folderSystems">Input list of folder systems</param>
 		public IEnumerable<IFolderSystem> ApplyFolderSystemsOrder(IEnumerable<IFolderSystem> folderSystems)
 		{
-			folderSystems = _defaultConfig.ApplyUserFolderSystemsOrder(folderSystems);
-			return _userConfig.ApplyUserFolderSystemsOrder(folderSystems);
+			folderSystems = _defaultConfig.ApplyFolderSystemsOrder(folderSystems);
+			return _userConfig.ApplyFolderSystemsOrder(folderSystems);
 		}
 
 		/// <summary>
-		/// Customizes the folders in the specified folder system according to the default and [optionally] user specific settings
+		/// Customizes the folders in the specified folder system according to the default and [optionally] user specific settings,
+		/// returning the folders in the order specified by customization.
 		/// </summary>
 		/// <param name="folderSystem"></param>
 		/// <param name="includeUserCustomizations"></param>
 		public IEnumerable<IFolder> ApplyFolderCustomizations(IFolderSystem folderSystem, bool includeUserCustomizations)
 		{
-			var folders = _defaultConfig.ApplyUserFoldersCustomizations(folderSystem.Id, folderSystem.Folders);
+			var folders = _defaultConfig.ApplyFolderCustomizations(folderSystem.Id, folderSystem.Folders);
 			return includeUserCustomizations
-				? _userConfig.ApplyUserFoldersCustomizations(folderSystem.Id, folders)
+				? _userConfig.ApplyFolderCustomizations(folderSystem.Id, folders)
 				: folders;
 		}
 
 		/// <summary>
-		/// Customizes the folders in the specified folder system according to the default and user specific settings
+		/// Customizes the folders in the specified folder system according to the default and user specific settings,
+		/// returning the folders in the order specified by customization.
 		/// </summary>
 		/// <param name="folderSystem"></param>
 		public IEnumerable<IFolder> ApplyFolderCustomizations(IFolderSystem folderSystem)
 		{
 			return ApplyFolderCustomizations(folderSystem, true);
+		}
+
+		/// <summary>
+		/// Customizes the specified folder, in the specified folder system, according to the default and user specific setting.
+		/// </summary>
+		/// <param name="folderSystem"></param>
+		/// <param name="folder"></param>
+		public void ApplyFolderCustomizations(IFolderSystem folderSystem, IFolder folder)
+		{
+			_defaultConfig.ApplyFolderCustomizations(folderSystem.Id, folder);
+			_userConfig.ApplyFolderCustomizations(folderSystem.Id, folder);
 		}
 
 		public delegate void UpdateFolderExplorerUserConfigurationAction(IFolderExplorerUserConfigurationUpdater userConfiguration);

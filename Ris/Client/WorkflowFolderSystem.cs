@@ -214,6 +214,7 @@ namespace ClearCanvas.Ris.Client
 		private event EventHandler _titleIconChanged;
 		private event EventHandler _foldersChanged;
 		private event EventHandler _foldersInvalidated;
+		private event EventHandler<ItemEventArgs<IFolder>> _folderPropertiesChanged;
 
 
 		private string _title;
@@ -360,6 +361,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			add { _foldersInvalidated += value; }
 			remove { _foldersInvalidated -= value; }
+		}
+
+		public event EventHandler<ItemEventArgs<IFolder>> FolderPropertiesChanged
+		{
+			add { _folderPropertiesChanged += value; }
+			remove { _folderPropertiesChanged -= value; }
 		}
 
 		/// <summary>
@@ -589,6 +596,14 @@ namespace ClearCanvas.Ris.Client
 		protected void NotifyFoldersInvalidated()
 		{
 			EventsHelper.Fire(_foldersInvalidated, this, EventArgs.Empty);
+		}
+
+		/// <summary>
+		/// Notifies that a folders properties have changed.
+		/// </summary>
+		protected void NotifyFolderPropertiesChanged(IFolder folder)
+		{
+			EventsHelper.Fire(_folderPropertiesChanged, this, new ItemEventArgs<IFolder>(folder));
 		}
 
 		#endregion
