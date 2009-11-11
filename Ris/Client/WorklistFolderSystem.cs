@@ -101,9 +101,9 @@ namespace ClearCanvas.Ris.Client
         {
             get
             {
-                return CollectionUtils.Map<ExtensionInfo, string>(
+                return CollectionUtils.Map(
                     new TFolderExtensionPoint().ListExtensions(),
-                    delegate(ExtensionInfo info) { return GetWorklistClassForFolderClass(info.ExtensionClass); });
+                    (ExtensionInfo info) => GetWorklistClassForFolderClass(info.ExtensionClass));
             }
         }
 
@@ -179,10 +179,7 @@ namespace ClearCanvas.Ris.Client
         {
             ListWorklistsForUserResponse response = null;
             Platform.GetService<TWorklistService>(
-                delegate(TWorklistService service)
-                {
-                    response = service.ListWorklistsForUser(request);
-                });
+				service => response = service.ListWorklistsForUser(request));
 
             return response;
         }
@@ -210,7 +207,7 @@ namespace ClearCanvas.Ris.Client
         {
             AddDefaultFolders();
 
-            List<string> worklistClassNames = new List<string>();
+            var worklistClassNames = new List<string>();
 
             // collect worklist class names, and add unfiltered folders if authorized
             foreach (IWorklistFolder folder in folderExtensionPoint.CreateExtensions())
@@ -219,7 +216,7 @@ namespace ClearCanvas.Ris.Client
                     worklistClassNames.Add(folder.WorklistClassName);
 
                 // if unfiltered folders are visible, add the root folder
-                if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Development.ViewUnfilteredWorkflowFolders))
+                if (Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Development.ViewUnfilteredWorkflowFolders))
                 {
                     this.Folders.Add(folder);
                 }
@@ -227,10 +224,10 @@ namespace ClearCanvas.Ris.Client
             }
 
             // query the set of worklists to which the current user is subscribed, add a folder for each
-            ListWorklistsForUserResponse response = QueryWorklistSet(new ListWorklistsForUserRequest(new List<string>(worklistClassNames)));
-            foreach (WorklistSummary summary in response.Worklists)
+            var response = QueryWorklistSet(new ListWorklistsForUserRequest(new List<string>(worklistClassNames)));
+            foreach (var summary in response.Worklists)
             {
-                IWorklistFolder added = AddWorklistFolderHelper(summary);
+                var added = AddWorklistFolderHelper(summary);
 
                 if (added == null)
                     Platform.Log(LogLevel.Error, string.Format("Worklist class {0} not added to folder system, most likely because it is not mapped to a folder class.", summary.ClassName));
@@ -245,12 +242,8 @@ namespace ClearCanvas.Ris.Client
         private IWorklistFolder AddWorklistFolderHelper(WorklistSummary worklist)
         {
             // create an instance of the folder corresponding to the specified worklist class
-            IWorklistFolder folder = (IWorklistFolder)new TFolderExtensionPoint()
-                .CreateExtension(
-                    delegate(ExtensionInfo info)
-                    {
-                        return worklist.ClassName == GetWorklistClassForFolderClass(info.ExtensionClass);
-                    });
+            var folder = (IWorklistFolder)new TFolderExtensionPoint()
+                .CreateExtension(info => worklist.ClassName == GetWorklistClassForFolderClass(info.ExtensionClass));
 
             if (folder == null || !(folder is IInitializeWorklistFolder))
                 return null;
@@ -268,12 +261,12 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		/// <param name="worklist"></param>
 		/// <param name="folder"></param>
-    	private void InitializeFolderProperties(IWorklistFolder folder, WorklistSummary worklist)
+    	private static void InitializeFolderProperties(IWorklistFolder folder, WorklistSummary worklist)
     	{
-			IInitializeWorklistFolder initFolder = (IInitializeWorklistFolder)folder;
+			var initFolder = (IInitializeWorklistFolder)folder;
 
     		// augment default base path with worklist name
-    		Path path = folder.FolderPath;
+    		var path = folder.FolderPath;
     		if (!string.IsNullOrEmpty(worklist.DisplayName))
     		{
     			path = path.Append(new PathSegment(worklist.DisplayName, folder.ResourceResolver));
@@ -289,19 +282,19 @@ namespace ClearCanvas.Ris.Client
     			);
     	}
 
-    	private string GetWorklistClassForFolderClass(Type folderClass)
+    	private static string GetWorklistClassForFolderClass(Type folderClass)
         {
             return WorklistFolder<TItem, TWorklistService>.GetWorklistClassName(folderClass);
         }
 
-        private WorklistOwnership GetWorklistOwnership(WorklistSummary worklist)
+        private static WorklistOwnership GetWorklistOwnership(WorklistSummary worklist)
         {
             return worklist.IsUserWorklist ?
                 (worklist.IsStaffOwned ? WorklistOwnership.Staff : WorklistOwnership.Group)
                 : WorklistOwnership.Admin;
         }
 
-        private string GetWorklistOwnerName(WorklistSummary worklist)
+        private static string GetWorklistOwnerName(WorklistSummary worklist)
         {
             if (worklist.IsStaffOwned)
                 return Formatting.StaffNameAndRoleFormat.Format(worklist.OwnerStaff);

@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -129,7 +127,7 @@ namespace ClearCanvas.Ris.Client
 		/// <returns></returns>
 		public static string GetWorklistClassName(Type folderClass)
 		{
-			FolderForWorklistClassAttribute a = AttributeUtils.GetAttribute<FolderForWorklistClassAttribute>(folderClass);
+			var a = AttributeUtils.GetAttribute<FolderForWorklistClassAttribute>(folderClass);
 			return a == null ? null : a.WorklistClassName;
 		}
 
@@ -256,13 +254,15 @@ namespace ClearCanvas.Ris.Client
 			QueryItemsResult result = null;
 
 			Platform.GetService<TWorklistService>(
-				delegate(TWorklistService service)
+				service =>
 				{
-					QueryWorklistRequest request = this.WorklistRef == null
-						? new QueryWorklistRequest(this.WorklistClassName, true, true, DowntimeRecovery.InDowntimeRecoveryMode)
-						: new QueryWorklistRequest(this.WorklistRef, true, true, DowntimeRecovery.InDowntimeRecoveryMode);
+					var request = this.WorklistRef == null
+					                               	? new QueryWorklistRequest(this.WorklistClassName, true, true,
+					                               	                           DowntimeRecovery.InDowntimeRecoveryMode)
+					                               	: new QueryWorklistRequest(this.WorklistRef, true, true,
+					                               	                           DowntimeRecovery.InDowntimeRecoveryMode);
 
-					QueryWorklistResponse<TItem> response = service.QueryWorklist(request);
+					var response = service.QueryWorklist(request);
 					result = new QueryItemsResult(response.WorklistItems, response.ItemCount);
 				});
 
@@ -276,16 +276,18 @@ namespace ClearCanvas.Ris.Client
 		/// <returns></returns>
 		protected override int QueryCount()
 		{
-			int count = -1;
+			var count = -1;
 
 			Platform.GetService<TWorklistService>(
-				delegate(TWorklistService service)
+				service =>
 				{
-					QueryWorklistRequest request = this.WorklistRef == null
-						? new QueryWorklistRequest(this.WorklistClassName, false, true, DowntimeRecovery.InDowntimeRecoveryMode)
-						: new QueryWorklistRequest(this.WorklistRef, false, true, DowntimeRecovery.InDowntimeRecoveryMode);
+					var request = this.WorklistRef == null
+					                               	? new QueryWorklistRequest(this.WorklistClassName, false, true,
+					                               	                           DowntimeRecovery.InDowntimeRecoveryMode)
+					                               	: new QueryWorklistRequest(this.WorklistRef, false, true,
+					                               	                           DowntimeRecovery.InDowntimeRecoveryMode);
 
-					QueryWorklistResponse<TItem> response = service.QueryWorklist(request);
+					var response = service.QueryWorklist(request);
 					count = response.ItemCount;
 				});
 

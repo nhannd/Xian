@@ -416,7 +416,7 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="alphabetical"></param>
 		public void InsertFolders(IEnumerable<IFolder> folders, bool alphabetical)
 		{
-			foreach (IFolder folder in folders)
+			foreach (var folder in folders)
 			{
 				InsertFolder(folder, 0, alphabetical);
 			}
@@ -439,7 +439,7 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="folder"></param>
 		public void RemoveFolder(IFolder folder)
 		{
-			FolderTreeNode node = FindNode(folder);
+			var node = FindNode(folder);
 			if (node != null)
 			{
 				RemoveNode(node);
@@ -452,7 +452,7 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="folder"></param>
 		public void NotifyFolderPropertiesUpdated(IFolder folder)
 		{
-			FolderTreeNode node = FindNode(folder);
+			var node = FindNode(folder);
 			if (node != null)
 			{
 				node.NotifyItemUpdated();

@@ -30,11 +30,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Trees;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Actions;
@@ -139,8 +137,7 @@ namespace ClearCanvas.Ris.Client
 
 						// this timer is responsible for monitoring the auto-invalidation of all folders
 						// in the folder system, and performing the appropriate invalidations
-						_folderInvalidateTimer = new Timer(delegate { AutoInvalidateFolders(); });
-						_folderInvalidateTimer.IntervalMilliseconds = 1000; // resolution of 1 second
+						_folderInvalidateTimer = new Timer(delegate { AutoInvalidateFolders(); }) {IntervalMilliseconds = 1000};
 						_folderInvalidateTimer.Start();
 
 						// notify that this folder system is now initialized
@@ -246,7 +243,7 @@ namespace ClearCanvas.Ris.Client
             get { return new Selection(_selectedTreeNode); }
             set
             {
-				FolderTreeNode nodeToSelect = (FolderTreeNode)value.Item;
+				var nodeToSelect = (FolderTreeNode)value.Item;
                 SelectFolder(nodeToSelect);
             }
         }
@@ -284,8 +281,8 @@ namespace ClearCanvas.Ris.Client
 		{
 			try
 			{
-				int count = 0;
-				foreach (IFolder folder in _folderSystem.Folders)
+				var count = 0;
+				foreach (var folder in _folderSystem.Folders)
 				{
 					if (folder.AutoInvalidateInterval > TimeSpan.Zero
 						&& (Platform.Time - folder.LastUpdateTime) > folder.AutoInvalidateInterval)
@@ -348,7 +345,7 @@ namespace ClearCanvas.Ris.Client
 			if (treeNode.Folder != _selectedTreeNode && dropData is ISelection)
             {
                 // inform the target folder to accept the drop
-				DragDropKind result = treeNode.Folder.AcceptDrop((dropData as ISelection).Items, kind);
+				var result = treeNode.Folder.AcceptDrop((dropData as ISelection).Items, kind);
 
                 // inform the source folder that a drag was completed
                 _selectedTreeNode.Folder.DragComplete((dropData as ISelection).Items, result);

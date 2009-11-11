@@ -113,7 +113,7 @@ namespace ClearCanvas.Ris.Client
 			_resourceResolver = new ResourceResolver(typeof(Folder).Assembly);
 
 			// Initialize folder Path
-			FolderPathAttribute attrib = AttributeUtils.GetAttribute<FolderPathAttribute>(this.GetType());
+			var attrib = AttributeUtils.GetAttribute<FolderPathAttribute>(this.GetType());
 			if (attrib != null)
 			{
 				_folderPath = new Path(attrib.Path, _resourceResolver);
@@ -249,12 +249,10 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public IconSet IconSet
 		{
-			get
-			{
-				if(InErrorState)
-					return _isOpen ? this.OpenErrorIconSet : this.ClosedErrorIconSet;
-				else
-					return _isOpen ? this.OpenIconSet : this.ClosedIconSet;
+			get {
+				return InErrorState
+				       	? (_isOpen ? this.OpenErrorIconSet : this.ClosedErrorIconSet)
+				       	: (_isOpen ? this.OpenIconSet : this.ClosedIconSet);
 			}
 		}
 
