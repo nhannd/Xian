@@ -14,9 +14,9 @@
 			
 			function onBodyLoad()
 			{
-
 				if(!Ris)
 					return;
+
 				try
 				{
 					var context = Ris.getHealthcareContext();
@@ -68,7 +68,7 @@
 						Preview.OrderNotesTable.create($("prelimDiagnosisNotesSection"), notes, "Preliminary Diagnosis", false);
 						
 						notes = orderDetail.Notes.select(function(note) { return note.Category == "General"; });
-						Preview.OrderNotesTable.create($("generalNotesSection"), notes, "Order Notes", false);
+						Preview.OrderNotesTable.create($("generalNotesSection"), notes, "Order Notes", true);
 					}
 					else
 					{
