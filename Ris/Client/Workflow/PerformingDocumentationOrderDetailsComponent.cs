@@ -69,8 +69,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private OrderNoteSummaryComponent _orderNoteComponent;
 		private ChildComponentHost _orderNotesComponentHost;
 		private ChildComponentHost _protocolSummaryComponentHost;
-		private ChildComponentHost _additionalInfoComponentHost;
+
+		private ChildComponentHost _rightHandComponentContainerHost;
+		private TabComponentContainer _rightHandComponentContainer;
 		private OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
+		private AttachedDocumentPreviewComponent _orderAttachmentsComponent;
 
 		private readonly IPerformingDocumentationContext _context;
 		private readonly DataContractBase _worklistItem;
@@ -94,11 +97,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_protocolSummaryComponentHost = new ChildComponentHost(this.Host, new ProtocolSummaryComponent(_context));
 			_protocolSummaryComponentHost.StartComponent();
 
+			_rightHandComponentContainer = new TabComponentContainer();
 			_orderAdditionalInfoComponent = new OrderAdditionalInfoComponent();
 			_orderAdditionalInfoComponent.OrderExtendedProperties = _context.OrderExtendedProperties;
 			_orderAdditionalInfoComponent.HealthcareContext = _worklistItem;
-			_additionalInfoComponentHost = new ChildComponentHost(this.Host, _orderAdditionalInfoComponent);
-			_additionalInfoComponentHost.StartComponent();
+			_rightHandComponentContainer.Pages.Add(new TabPage("Additional Info", _orderAdditionalInfoComponent));
+
+			_orderAttachmentsComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Order);
+			_orderAttachmentsComponent.OrderRef = _context.OrderRef;
+			_rightHandComponentContainer.Pages.Add(new TabPage("Order Attachments", _orderAttachmentsComponent));
+
+			_rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
+			_rightHandComponentContainerHost.StartComponent();
 
 			base.Start();
 		}
@@ -117,18 +127,18 @@ namespace ClearCanvas.Ris.Client.Workflow
                 _protocolSummaryComponentHost = null;
             }
 
-            if (_additionalInfoComponentHost != null)
+			if (_rightHandComponentContainerHost != null)
             {
-                _additionalInfoComponentHost.StopComponent();
-                _additionalInfoComponentHost = null;
+				_rightHandComponentContainerHost.StopComponent();
+				_rightHandComponentContainerHost = null;
             }
 
             base.Stop();
         }
 
-		public ApplicationComponentHost AdditionalInfoHost
+		public ApplicationComponentHost RightHandComponentContainerHost
 		{
-			get { return _additionalInfoComponentHost; }
+			get { return _rightHandComponentContainerHost; }
 		}
 
 		public ApplicationComponentHost ProtocolHost

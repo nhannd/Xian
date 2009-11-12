@@ -14,5 +14,8 @@
     <Setting Name="AllowMultipleProtocollingWorkspaces" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="InitiallySelectedTabPageName" Description="Specifies the name of the initially selected tab." Type="System.String" Scope="User">
+      <Value Profile="(Default)">Order Attachments</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

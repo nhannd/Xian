@@ -40,6 +40,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -67,9 +68,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private ChildComponentHost _bannerComponentHost;
 		private ChildComponentHost _protocolEditorComponentHost;
-		private ChildComponentHost _orderDetailViewComponentHost;
-		private ChildComponentHost _priorReportsComponentHost;
 		private ChildComponentHost _orderNotesComponentHost;
+		private ChildComponentHost _rightHandComponentContainerHost;
+		private TabComponentContainer _rightHandComponentContainer;
+
+		private ProtocollingOrderDetailViewComponent _orderDetailViewComponent;
+		private PriorReportComponent _priorReportsComponent;
+		private AttachedDocumentPreviewComponent _orderAttachmentsComponent;
 
 		private bool _acceptEnabled;
 		private bool _submitForApprovalEnabled;
@@ -115,11 +120,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_protocolEditorComponentHost.Component.ModifiedChanged += ((sender, args) =>
 				this.Modified = this.Modified || _protocolEditorComponentHost.Component.Modified);
 
-			_priorReportsComponentHost = new ChildComponentHost(this.Host, new PriorReportComponent(this.WorklistItem));
-			_priorReportsComponentHost.StartComponent();
+			_rightHandComponentContainer = new TabComponentContainer();
+			_rightHandComponentContainer.Pages.Add(new TabPage("Order Details", _orderDetailViewComponent = new ProtocollingOrderDetailViewComponent(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef)));
+			_rightHandComponentContainer.Pages.Add(new TabPage("Priors", _priorReportsComponent = new PriorReportComponent(this.WorklistItem)));
+			_rightHandComponentContainer.Pages.Add(new TabPage("Order Attachments", _orderAttachmentsComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Order)));
+			_orderAttachmentsComponent.OrderRef = this.WorklistItem.OrderRef;
 
-			_orderDetailViewComponentHost = new ChildComponentHost(this.Host, new ProtocollingOrderDetailViewComponent(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef));
-			_orderDetailViewComponentHost.StartComponent();
+			_rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
+			_rightHandComponentContainerHost.StartComponent();
+
+			SetInitialProtocollingTabPage();
 
 			base.Start();
 		}
@@ -144,16 +154,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_protocolEditorComponentHost = null;
 			}
 
-			if (_priorReportsComponentHost != null)
+			if (_rightHandComponentContainerHost != null)
 			{
-				_priorReportsComponentHost.StopComponent();
-				_priorReportsComponentHost = null;
-			}
-
-			if (_orderDetailViewComponentHost != null)
-			{
-				_orderDetailViewComponentHost.StopComponent();
-				_orderDetailViewComponentHost = null;
+				_rightHandComponentContainerHost.StopComponent();
+				_rightHandComponentContainerHost = null;
 			}
 
 			base.Stop();
@@ -242,14 +246,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return _orderNotesComponentHost; }
 		}
 
-		public ApplicationComponentHost OrderDetailViewComponentHost
+		public ApplicationComponentHost RightHandComponentContainerHost
 		{
-			get { return _orderDetailViewComponentHost; }
-		}
-
-		public ApplicationComponentHost PriorReportsComponentHost
-		{
-			get { return _priorReportsComponentHost; }
+			get { return _rightHandComponentContainerHost; }
 		}
 
 		#region Accept
@@ -476,6 +475,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 			// To be protocolled folder will be invalid if it is the source of the worklist item;  the original item will have been
 			// discontinued with a new scheduled one replacing it
 			DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeProtocolledFolder));
+
+			SaveInitialProtocollingTabPage();
 		}
 
 		private void OnWorklistItemChangedEvent(object sender, EventArgs args)
@@ -591,10 +592,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private void UpdateChildComponents()
 		{
 			((BannerComponent)_bannerComponentHost.Component).HealthcareContext = this.WorklistItem;
-			((PriorReportComponent)_priorReportsComponentHost.Component).WorklistItem = this.WorklistItem;
 			((ProtocolEditorComponent)_protocolEditorComponentHost.Component).WorklistItem = this.WorklistItem;
 			((ProtocolEditorComponent)_protocolEditorComponentHost.Component).CanEdit = this.SaveEnabled;
-			((ProtocollingOrderDetailViewComponent)_orderDetailViewComponentHost.Component).Context = new OrderDetailViewComponent.OrderContext(this.WorklistItem.OrderRef);
+			_priorReportsComponent.WorklistItem = this.WorklistItem;
+			_orderDetailViewComponent.Context = new OrderDetailViewComponent.OrderContext(this.WorklistItem.OrderRef);
+			_orderAttachmentsComponent.OrderRef = this.WorklistItem.OrderRef;
 
 			// Load notes for new current item.
 			((OrderNoteSummaryComponent)_orderNotesComponentHost.Component).Notes = _notes;
@@ -641,6 +643,26 @@ namespace ClearCanvas.Ris.Client.Workflow
 			this.Host.DesktopWindow.ShowMessageBox(SR.MessageChooseRadiologist, MessageBoxActions.Ok);
 
 			return true;
+		}
+
+		private void SetInitialProtocollingTabPage()
+		{
+			var selectedTabName = ProtocollingSettings.Default.InitiallySelectedTabPageName;
+			if (string.IsNullOrEmpty(selectedTabName))
+				return;
+
+			var requestedTabPage = CollectionUtils.SelectFirst(
+				_rightHandComponentContainer.Pages,
+				tabPage => tabPage.Name.Equals(selectedTabName, StringComparison.InvariantCultureIgnoreCase));
+
+			if (requestedTabPage != null)
+				_rightHandComponentContainer.CurrentPage = requestedTabPage;
+		}
+
+		private void SaveInitialProtocollingTabPage()
+		{
+			ProtocollingSettings.Default.InitiallySelectedTabPageName = _rightHandComponentContainer.CurrentPage.Name;
+			ProtocollingSettings.Default.Save();
 		}
 
 		#endregion

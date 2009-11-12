@@ -39,6 +39,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.BrowsePatientData;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -167,6 +168,10 @@ namespace ClearCanvas.Ris.Client
 		private ToolSet _toolSet;
 		private bool _readonly;
 
+		private AsyncLoader _loader;
+		private EntityRef _patientProfileRef;
+		private EntityRef _orderRef;
+
 		/// <summary>
 		/// Constructor to show/hide the summary section
 		/// </summary>
@@ -189,6 +194,11 @@ namespace ClearCanvas.Ris.Client
 			_previewComponentHost = new ChildComponentHost(this.Host, _previewComponent);
 			_previewComponentHost.StartComponent();
 
+			if (_mode == AttachmentMode.Patient)
+				LoadPatientAttachments();
+			else
+				LoadOrderAttachments();
+
 			base.Start();
 		}
 
@@ -201,6 +211,8 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			_toolSet.Dispose();
+			_loader.Dispose();
+
 			base.Stop();
 		}
 
@@ -236,6 +248,40 @@ namespace ClearCanvas.Ris.Client
 		{
 			get { return _readonly; }
 			set { _readonly = value; }
+		}
+
+		/// <summary>
+		/// Gets and sets the patient owner.
+		/// </summary>
+		public EntityRef PatientProfileRef
+		{
+			get { return _patientProfileRef; }
+			set
+			{
+				if (_patientProfileRef == value)
+					return;
+
+				_mode = AttachmentMode.Patient;
+				_patientProfileRef = value;
+				LoadPatientAttachments();
+			}
+		}
+
+		/// <summary>
+		/// Gets and sets the order owner.
+		/// </summary>
+		public EntityRef OrderRef
+		{
+			get { return _orderRef; }
+			set
+			{
+				if (_orderRef == value)
+					return;
+
+				_mode = AttachmentMode.Order;
+				_orderRef = value;
+				LoadOrderAttachments();
+			}
 		}
 
 		public IList<PatientAttachmentSummary> PatientAttachments
@@ -330,5 +376,78 @@ namespace ClearCanvas.Ris.Client
 			this.Modified = true;
 		}
 
+		private void LoadPatientAttachments()
+		{
+			if (_patientProfileRef == null)
+				return;
+
+			GetDataResponse response = null;
+			var request = new GetDataRequest
+				{
+					GetPatientProfileDetailRequest = new GetPatientProfileDetailRequest
+						{
+							PatientProfileRef = _patientProfileRef,
+							IncludeAttachments = true
+						}
+				};
+
+			if (_loader == null)
+				_loader = new AsyncLoader();
+
+			_loader.Run(
+				delegate
+				{
+					Platform.GetService<IBrowsePatientDataService>(
+						service => response = service.GetData(request));
+				},
+				delegate(Exception e)
+				{
+					if (e == null)
+					{
+						this.PatientAttachments = response.GetPatientProfileDetailResponse.PatientProfile.Attachments;
+						if (this.PatientAttachments.Count > 0)
+							this.SetInitialSelection(this.PatientAttachments[0]);
+					}
+					else
+						Platform.Log(LogLevel.Error, e);
+				});
+		}
+
+		private void LoadOrderAttachments()
+		{
+			if (_orderRef == null)
+				return;
+
+			GetDataResponse response = null;
+			var request = new GetDataRequest
+			{
+				GetOrderDetailRequest = new GetOrderDetailRequest
+				{
+					OrderRef = _orderRef,
+					IncludeAttachments = true
+				}
+			};
+
+			if (_loader == null)
+				_loader = new AsyncLoader();
+
+			_loader.Run(
+				delegate
+				{
+					Platform.GetService<IBrowsePatientDataService>(
+						service => response = service.GetData(request));
+				},
+				delegate(Exception e)
+				{
+					if (e == null)
+					{
+						this.OrderAttachments = response.GetOrderDetailResponse.Order.Attachments;
+						if (this.OrderAttachments.Count > 0)
+							this.SetInitialSelection(this.OrderAttachments[0]);
+					}
+					else
+						Platform.Log(LogLevel.Error, e);
+				});
+		}
 	}
 }

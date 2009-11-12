@@ -379,6 +379,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private PriorReportComponent _priorReportComponent;
 		private ReportingOrderDetailViewComponent _orderComponent;
 		private OrderAdditionalInfoComponent _additionalInfoComponent;
+		private AttachedDocumentPreviewComponent _orderAttachmentsComponent;
 
 		private List<IReportingPage> _extensionPages;
 		private bool _userCancelled;
@@ -443,6 +444,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 					_rightHandComponentContainer.Pages.Add(new TabPage(page.Path, page.GetComponent()));
 				}
 
+				_orderAttachmentsComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Order);
+				_orderAttachmentsComponent.OrderRef = this.WorklistItem.OrderRef;
+				_rightHandComponentContainer.Pages.Add(new TabPage("Order Attachments", _orderAttachmentsComponent));
+
 				_rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
 				_rightHandComponentContainerHost.StartComponent();
 
@@ -453,6 +458,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_reportEditorHost = new ChildComponentHost(this.Host, _reportEditor.GetComponent());
 				_reportEditorHost.StartComponent();
 				_reportEditorHost.Component.ModifiedChanged += ((sender, args) => this.Modified = this.Modified || _reportEditorHost.Component.Modified);
+
+				SetInitialReportingTabPage();
 
 				OpenImages();
 
@@ -1038,6 +1045,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 				Platform.GetService<IReportingWorkflowService>(service =>
 					service.CancelReportingStep(new CancelReportingStepRequest(this.WorklistItem.ProcedureStepRef, _assignedStaff)));
 			}
+
+			SaveInitialReportingTabPage();
 		}
 
 		private void OnWorklistItemChangedEvent(object sender, EventArgs args)
@@ -1135,6 +1144,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			((BannerComponent)_bannerHost.Component).HealthcareContext = this.WorklistItem;
 			_priorReportComponent.WorklistItem = this.WorklistItem;
 			_orderComponent.Context = new ReportingOrderDetailViewComponent.PatientOrderContext(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef);
+			_orderAttachmentsComponent.OrderRef = this.WorklistItem.OrderRef;
 
 			if (orderDetailIsCurrent)
 			{
@@ -1314,6 +1324,25 @@ namespace ClearCanvas.Ris.Client.Workflow
 			EventsHelper.Fire(_worklistItemChanged, this, EventArgs.Empty);
 		}
 
+		private void SetInitialReportingTabPage()
+		{
+			var selectedTabName = ReportingSettings.Default.InitiallySelectedTabPageName;
+			if (string.IsNullOrEmpty(selectedTabName))
+				return;
+
+			var requestedTabPage = CollectionUtils.SelectFirst(
+				_rightHandComponentContainer.Pages,
+				tabPage => tabPage.Name.Equals(selectedTabName, StringComparison.InvariantCultureIgnoreCase));
+
+			if (requestedTabPage != null)
+				_rightHandComponentContainer.CurrentPage = requestedTabPage;
+		}
+
+		private void SaveInitialReportingTabPage()
+		{
+			ReportingSettings.Default.InitiallySelectedTabPageName = _rightHandComponentContainer.CurrentPage.Name;
+			ReportingSettings.Default.Save();
+		}
 
 		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify)]
 		private static EntityRef StartVerification(ReportingWorklistItem item)

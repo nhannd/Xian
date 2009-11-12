@@ -31,8 +31,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.splitContainer2 = new System.Windows.Forms.SplitContainer();
 			this._protocolsPanel = new System.Windows.Forms.Panel();
-			this._additionalInfoPanel = new System.Windows.Forms.Panel();
 			this._orderNotesGroupBox = new System.Windows.Forms.GroupBox();
+			this._rightHandPanel = new System.Windows.Forms.Panel();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			// splitContainer1.Panel2
 			// 
-			this.splitContainer1.Panel2.Controls.Add(this._additionalInfoPanel);
+			this.splitContainer1.Panel2.Controls.Add(this._rightHandPanel);
 			this.splitContainer1.Size = new System.Drawing.Size(521, 389);
 			this.splitContainer1.SplitterDistance = 250;
 			this.splitContainer1.TabIndex = 0;
@@ -84,14 +84,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._protocolsPanel.Size = new System.Drawing.Size(250, 188);
 			this._protocolsPanel.TabIndex = 0;
 			// 
-			// _additionalInfoPanel
-			// 
-			this._additionalInfoPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._additionalInfoPanel.Location = new System.Drawing.Point(0, 0);
-			this._additionalInfoPanel.Name = "_additionalInfoPanel";
-			this._additionalInfoPanel.Size = new System.Drawing.Size(267, 389);
-			this._additionalInfoPanel.TabIndex = 0;
-			// 
 			// _orderNotesGroupBox
 			// 
 			this._orderNotesGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -101,6 +93,14 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._orderNotesGroupBox.TabIndex = 0;
 			this._orderNotesGroupBox.TabStop = false;
 			this._orderNotesGroupBox.Text = "Order Notes";
+			// 
+			// _rightHandPanel
+			// 
+			this._rightHandPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._rightHandPanel.Location = new System.Drawing.Point(0, 0);
+			this._rightHandPanel.Name = "_rightHandPanel";
+			this._rightHandPanel.Size = new System.Drawing.Size(267, 389);
+			this._rightHandPanel.TabIndex = 0;
 			// 
 			// PerformingDocumentationOrderDetailsComponentControl
 			// 
@@ -124,7 +124,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
 		private System.Windows.Forms.Panel _protocolsPanel;
-        private System.Windows.Forms.Panel _additionalInfoPanel;
+        private System.Windows.Forms.Panel _rightHandPanel;
 		private System.Windows.Forms.GroupBox _orderNotesGroupBox;
 
     }

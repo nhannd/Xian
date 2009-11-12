@@ -23,5 +23,8 @@
     <Setting Name="ShouldOpenImages" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="InitiallySelectedTabPageName" Description="Specifies the name of the initially selected tab." Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>
