@@ -29,20 +29,14 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Text;
-
-using ClearCanvas.Enterprise.Core;
-
 namespace ClearCanvas.Healthcare {
 
 
     /// <summary>
     /// GroupNotePosting entity
     /// </summary>
-	public partial class GroupNotePosting : ClearCanvas.Healthcare.NotePosting
-	{
+	public partial class GroupNotePosting
+    {
 		/// <summary>
 		/// Gets a value indicating whether this posting can be acknowledged by the specified staff.
 		/// </summary>
@@ -50,7 +44,9 @@ namespace ClearCanvas.Healthcare {
 		/// <returns></returns>
 		protected internal override bool CanAcknowledge(Staff acknowledger)
 		{
-			return base.CanAcknowledge(acknowledger) && _recipient.Members.Contains(acknowledger);
+			return base.CanAcknowledge(acknowledger)
+				&& _recipient.Members.Contains(acknowledger)
+				&& !Equals(acknowledger, this.Note.Author); // #5528: user cannot ack a note on behalf of a group, if they authored the note
 		}
 	
 		/// <summary>
