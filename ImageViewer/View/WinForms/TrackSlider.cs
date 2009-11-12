@@ -39,27 +39,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 {
 	public partial class TrackSlider : Control, INotifyPropertyChanged
 	{
-		public enum UserAction
-		{
-			None,
-			ClickArrow,
-			ClickTrack,
-			DragThumb
-		}
-
-		public class ValueChangedEventArgs : EventArgs
-		{
-			internal ValueChangedEventArgs()
-			{}
-
-			/// <summary>
-			/// Gets the <see cref="UserAction"/> that caused the value to change.
-			/// </summary>
-			public UserAction UserAction { get; internal set; }
-		}
-
 		private event PropertyChangedEventHandler _propertyChanged;
-		private event EventHandler<ValueChangedEventArgs> _valueChanged;
+		private event EventHandler _valueChanged;
 
 		private ITrackSliderVisualStyle _visualStyle;
 		private Orientation _orientation = Orientation.Vertical;
@@ -198,7 +179,24 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		public int Value
 		{
 			get { return _value; }
-			set { SetValue(value, UserAction.None); }
+			set
+			{
+				if (value < _minimumValue || value > _maximumValue)
+				{
+					if (!this.DesignMode)
+						throw new ArgumentOutOfRangeException("value", "value");
+					value = Math.Min(_maximumValue, Math.Max(_minimumValue, value));
+				}
+
+				if (_value != value)
+				{
+					_value = value;
+					_trackBar.Invalidate();
+					this.Invalidate();
+					this.OnPropertyChanged(new PropertyChangedEventArgs("Value"));
+					this.OnValueChanged(EventArgs.Empty);
+				}
+			}
 		}
 
 		public void ResetValue()
@@ -206,15 +204,13 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.Value = Math.Min(_maximumValue, Math.Max(_minimumValue, 0));
 		}
 
-		protected virtual void OnValueChanged(ValueChangedEventArgs e)
+		protected virtual void OnValueChanged(EventArgs e)
 		{
-			this.OnPropertyChanged(new PropertyChangedEventArgs("Value"));
-
 			if (_valueChanged != null)
 				_valueChanged(this, e);
 		}
 
-		public event EventHandler<ValueChangedEventArgs> ValueChanged
+		public event EventHandler ValueChanged
 		{
 			add { _valueChanged += value; }
 			remove { _valueChanged -= value; }
@@ -231,14 +227,22 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		public int MinimumValue
 		{
 			get { return _minimumValue; }
-			set { SetValueRange(value, _maximumValue); }
+			set
+			{
+				if (_minimumValue != value)
+				{
+					_minimumValue = value;
+					_trackBar.Invalidate();
+					this.Invalidate();
+					this.OnPropertyChanged(new PropertyChangedEventArgs("MinimumValue"));
+				}
+			}
 		}
 
 		private void ResetMinimumValue()
 		{
-			const int newMinimumValue = 0;
-			int newValue = Math.Max(newMinimumValue, Math.Min(_maximumValue, _value));
-			SetValueAndRange(newValue, newMinimumValue, _maximumValue);
+			this.MinimumValue = 0;
+			this.Value = Math.Max(_minimumValue, Math.Min(_maximumValue, this.Value));
 		}
 
 		#endregion
@@ -252,14 +256,22 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		public int MaximumValue
 		{
 			get { return _maximumValue; }
-			set { SetValueRange(_minimumValue, value); }
+			set
+			{
+				if (_maximumValue != value)
+				{
+					_maximumValue = value;
+					_trackBar.Invalidate();
+					this.Invalidate();
+					this.OnPropertyChanged(new PropertyChangedEventArgs("MaximumValue"));
+				}
+			}
 		}
 
 		private void ResetMaximumValue()
 		{
-			const int newMaximumValue = 100;
-			int newValue = Math.Min(newMaximumValue, Math.Max(_minimumValue, _value));
-			SetValueAndRange(newValue, _minimumValue, newMaximumValue);
+			this.MaximumValue = 100;
+			this.Value = Math.Min(_maximumValue, Math.Max(_minimumValue, this.Value));
 		}
 
 		#endregion
@@ -359,7 +371,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 					_visualStyle = value;
 					this.ReferencedStyle = _visualStyle.CreateReference();
-					_visualStyle.PropertyChanged += VisualStyle_PropertyChanged;
+
+					if (_visualStyle != null)
+						_visualStyle.PropertyChanged += VisualStyle_PropertyChanged;
 
 					_trackBar.Invalidate();
 					this.Invalidate();
@@ -410,34 +424,12 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		public void SetValueRange(int minimumValue, int maximumValue)
 		{
-			this.SetValueAndRange(minimumValue, minimumValue, maximumValue, UserAction.None);
+			this.SetValueRange(minimumValue, minimumValue, maximumValue);
 		}
 
-		public void SetValueAndRange(int value, int minimumValue, int maximumValue)
+		public void SetValueRange(int value, int minimumValue, int maximumValue)
 		{
-			SetValueAndRange(value, minimumValue, maximumValue, UserAction.None);
-		}
-
-		protected void SetValue(int value, UserAction userAction)
-		{
-			SetValueAndRange(value, _minimumValue, _maximumValue, userAction);
-		}
-
-		protected void SetValueAndRange(int value, int minimumValue, int maximumValue, UserAction userAction)
-		{
-			if (value < _minimumValue || value > _maximumValue)
-			{
-				if (!this.DesignMode)
-					throw new ArgumentOutOfRangeException("value", "value");
-
-				value = Math.Min(_maximumValue, Math.Max(_minimumValue, value));
-			}
-
-			bool minimumChanged = _minimumValue != minimumValue;
-			bool maximumChanged = _maximumValue != maximumValue;
-			bool valueChanged = _value != value;
-
-			if (minimumChanged || maximumChanged || valueChanged)
+			if (_minimumValue != minimumValue || _maximumValue != maximumValue || _value != value)
 			{
 				_minimumValue = minimumValue;
 				_maximumValue = maximumValue;
@@ -445,13 +437,10 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 				_trackBar.Invalidate();
 				this.Invalidate();
-				if (minimumChanged)
-					this.OnPropertyChanged(new PropertyChangedEventArgs("MinimumValue"));
-				if (maximumChanged)
-					this.OnPropertyChanged(new PropertyChangedEventArgs("MaximumValue"));
-
-				if (valueChanged)
-					this.OnValueChanged(new ValueChangedEventArgs(){UserAction = userAction});
+				this.OnPropertyChanged(new PropertyChangedEventArgs("MinimumValue"));
+				this.OnPropertyChanged(new PropertyChangedEventArgs("MaximumValue"));
+				this.OnPropertyChanged(new PropertyChangedEventArgs("Value"));
+				this.OnValueChanged(EventArgs.Empty);
 			}
 		}
 

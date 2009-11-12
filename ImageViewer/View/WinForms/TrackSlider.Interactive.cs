@@ -87,13 +87,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			// if the user is holding down on the arrowheads, increment/decrement every now and then
 			if (_arrowHold && _arrowHoldCount == 0)
-			{
-				UserAction userAction;
-				int value = this.ComputeTrackClickValue(this.PointToClient(Cursor.Position), out userAction);
-				if (userAction != UserAction.None)
-					SetValue(value, userAction);
-			}
-
+				this.Value = this.ComputeTrackClickValue(this.PointToClient(Cursor.Position));
 			_arrowHoldCount = (_arrowHoldCount + 1)%16;
 		}
 
@@ -116,11 +110,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_thumbDrag = _trackBar.ThumbBounds.Contains(e.Location - this.PaddingOffset);
 			if (!_thumbDrag)
 			{
-				UserAction userAction;
-				int value = this.ComputeTrackClickValue(e.Location - this.PaddingOffset, out userAction);
-				if (userAction != UserAction.None)
-					SetValue(value, userAction);
-
+				this.Value = this.ComputeTrackClickValue(e.Location - this.PaddingOffset);
 				_arrowHoldCount = 1;
 				_arrowHold = true;
 			}
@@ -141,18 +131,18 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			if (e.Button == MouseButtons.Left)
 			{
 				if (_thumbDrag)
-					SetValue(this.ComputeThumbDragValue(e.Location - this.PaddingOffset), UserAction.DragThumb);
+					this.Value = this.ComputeThumbDragValue(e.Location - this.PaddingOffset);
 			}
 		}
 
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
-			_arrowHold = false;
-			_thumbDrag = false;
-
 			// if the control is invisible or disabled, disallow interaction
 			if (!base.CanFocus)
 				return;
+
+			_arrowHold = false;
+			_thumbDrag = false;
 
 			base.OnMouseUp(e);
 		}
@@ -176,27 +166,16 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		/// <summary>
 		/// Computes the next value of the slider based on a clicked location.
 		/// </summary>
-		private int ComputeTrackClickValue(Point location, out UserAction userAction)
+		private int ComputeTrackClickValue(Point location)
 		{
 			if (_trackBar.TrackBounds.Contains(location))
-			{
-				userAction = UserAction.ClickTrack;
 				return this.ComputeThumbDragValue(location);
-			}
-			if (_trackBar.TrackStartBounds.Contains(location))
-			{
-				userAction = UserAction.ClickArrow;
+			else if (_trackBar.TrackStartBounds.Contains(location))
 				return Math.Max(_minimumValue, Math.Min(_maximumValue, _value - _increment));
-				
-			}
-			if (_trackBar.TrackEndBounds.Contains(location))
-			{
-				userAction = UserAction.ClickArrow;
+			else if (_trackBar.TrackEndBounds.Contains(location))
 				return Math.Max(_minimumValue, Math.Min(_maximumValue, _value + _increment));
-			}
-
-			userAction = UserAction.None;
-			return _value;
+			else
+				return _value;
 		}
 	}
 }
