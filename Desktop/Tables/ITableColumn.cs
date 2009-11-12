@@ -134,5 +134,13 @@ namespace ClearCanvas.Desktop.Tables
 		/// </summary>
 		/// <returns></returns>
     	ITableCellEditor GetCellEditor();
-    }
+
+		/// <summary>
+		/// Gets a value indicating whether the specified item is editable.
+		/// This method will only ever be called if <see cref="ReadOnly"/> is false.
+		/// </summary>
+		/// <param name="item"></param>
+		/// <returns></returns>
+		bool IsEditable(object item);
+	}
 }

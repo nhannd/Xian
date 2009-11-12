@@ -1306,5 +1306,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 			e.Value = column.GetValue(_table.Items[e.RowIndex]);
 			e.ParsingApplied = true;
 		}
+
+		private void _dataGridView_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+		{
+			var column = (ITableColumn)_dataGridView.Columns[e.ColumnIndex].Tag;
+			var item = _table.Items[e.RowIndex];
+
+			// prevent editing on read-only columns, or if this particular item is not editable
+			e.Cancel = column.ReadOnly || !column.IsEditable(item);
+		}
 	}
 }

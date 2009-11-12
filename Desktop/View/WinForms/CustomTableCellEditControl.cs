@@ -38,7 +38,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 			set
 			{
-				// Ensure that the cell used for the template is a CalendarCell.
+				// Ensure that the cell used for the template is a CustomEditableTableViewCell.
 				if (value != null &&
 					!value.GetType().IsAssignableFrom(typeof(CustomEditableTableViewCell)))
 				{

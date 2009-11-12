@@ -72,6 +72,7 @@ namespace ClearCanvas.Desktop.Tables
         private readonly int _cellRow;
 
         private Comparison<TItem> _comparison;
+    	private Predicate<TItem> _editableHandler;
 		private event EventHandler _visibilityChangedEvent;
 
         private IResourceResolver _resolver;
@@ -144,6 +145,15 @@ namespace ClearCanvas.Desktop.Tables
             get { return _comparison; }
             set { _comparison = value; }
         }
+
+		/// <summary>
+		/// Gets or sets the delegate that determines whether a given item is editable.
+		/// </summary>
+    	public Predicate<TItem> EditableHandler
+    	{
+			get { return _editableHandler; }
+			set { _editableHandler = value; }
+    	}
 
 		/// <summary>
 		/// Gets or sets a custom cell editor for this column.
@@ -313,6 +323,16 @@ namespace ClearCanvas.Desktop.Tables
     	public ITableCellEditor GetCellEditor()
     	{
     		return _cellEditor;
+    	}
+
+    	public bool IsEditable(object item)
+    	{
+			if (this.ReadOnly)
+				return false;
+
+			// assume it is editable if no handler is supplied
+			// otherwise, ask the handler
+    		return _editableHandler == null ? true : _editableHandler((TItem) item);
     	}
 
     	#endregion

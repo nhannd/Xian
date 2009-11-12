@@ -65,15 +65,15 @@ namespace ClearCanvas.Desktop.Tables
         /// <param name="obj">The object to which the value is pushed.</param>
         public delegate void SetColumnClickLinkDelegate<TObject>(TObject obj);
 
-        private GetColumnValueDelegate<TItem, TColumn> _valueGetter;
+        private readonly GetColumnValueDelegate<TItem, TColumn> _valueGetter;
 
-        private SetColumnValueDelegate<TItem, TColumn> _valueSetter;
+        private readonly SetColumnValueDelegate<TItem, TColumn> _valueSetter;
 
         private SetColumnClickLinkDelegate<TItem> _linkActionDelegate;
 
 		private Converter<TItem, string> _tooltipTextProvider;
 
-    	private Converter<TColumn, object> _valueFormatter = delegate(TColumn value) { return (TColumn)value; };
+    	private Converter<TColumn, object> _valueFormatter = value => value;
 
         /// <summary>
         /// Constructs a multi-cellrow table column.
