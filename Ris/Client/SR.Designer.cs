@@ -1537,6 +1537,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reset all folders in the selected folder system.
+        /// </summary>
+        internal static string MessageResetAllFolders {
+            get {
+                return ResourceManager.GetString("MessageResetAllFolders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Resetting the selected folder system will permanantly remove all customizations from its folders.  Are you sure you would like to reset the folder system?.
         /// </summary>
         internal static string MessageResetFolderSystem {

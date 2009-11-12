@@ -909,4 +909,7 @@
   <data name="MessageMustAcknowledgeWithPost" xml:space="preserve">
     <value>All unread notes in this conversation must be read and acknowledged by checking off the left-hand side checkbox before new notes can be posted.</value>
   </data>
+  <data name="MessageResetAllFolders" xml:space="preserve">
+    <value>Reset all folders in the selected folder system</value>
+  </data>
 </root>

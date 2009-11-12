@@ -113,10 +113,8 @@ namespace ClearCanvas.Ris.Client
 			_folderSystemsActionModel = new SimpleActionModel(resourceResolver);
 			_folderSystemsActionModel.AddAction(_moveFolderSystemUpKey, SR.TitleMoveUp, "Icons.UpToolSmall.png", SR.TitleMoveUp, MoveFolderSystemUp);
 			_folderSystemsActionModel.AddAction(_moveFolderSystemDownKey, SR.TitleMoveDown, "Icons.DownToolSmall.png", SR.TitleMoveDown, MoveFolderSystemDown);
-			_folderSystemsActionModel.AddAction(_resetFolderSystemKey, SR.TitleReset, "Icons.ResetToolSmall.png", SR.TitleReset, ResetFolderSystem);
 			_folderSystemsActionModel[_moveFolderSystemUpKey].Enabled = false;
 			_folderSystemsActionModel[_moveFolderSystemDownKey].Enabled = false;
-			_folderSystemsActionModel[_resetFolderSystemKey].Enabled = false;
 
 			_foldersActionModel = new SimpleActionModel(resourceResolver);
 			_foldersActionModel.AddAction(_addFolderKey, SR.TitleAddContainerFolder, "Icons.AddToolSmall.png", SR.TitleAddContainerFolder, AddFolder);
@@ -124,11 +122,13 @@ namespace ClearCanvas.Ris.Client
 			_foldersActionModel.AddAction(_deleteFolderKey, SR.TitleDeleteContainerFolder, "Icons.DeleteToolSmall.png", SR.TitleDeleteContainerFolder, DeleteFolder);
 			_foldersActionModel.AddAction(_moveFolderUpKey, SR.TitleMoveUp, "Icons.UpToolSmall.png", SR.TitleMoveUp, MoveFolderUp);
 			_foldersActionModel.AddAction(_moveFolderDownKey, SR.TitleMoveDown, "Icons.DownToolSmall.png", SR.TitleMoveDown, MoveFolderDown);
+			_foldersActionModel.AddAction(_resetFolderSystemKey, SR.TitleReset, "Icons.ResetToolSmall.png", SR.MessageResetAllFolders, ResetFolderSystem);
 			_foldersActionModel[_addFolderKey].Enabled = false;
 			_foldersActionModel[_editFolderKey].Enabled = false;
 			_foldersActionModel[_deleteFolderKey].Enabled = false;
 			_foldersActionModel[_moveFolderUpKey].Enabled = false;
 			_foldersActionModel[_moveFolderDownKey].Enabled = false;
+			_foldersActionModel[_resetFolderSystemKey].Enabled = false;
 
 			editFolderAction.KeyStroke = XKeys.F2;
 
@@ -389,7 +389,6 @@ namespace ClearCanvas.Ris.Client
 		{
 			_folderSystemsActionModel[_moveFolderSystemUpKey].Enabled = this.CanMoveFolderSystemUp;
 			_folderSystemsActionModel[_moveFolderSystemDownKey].Enabled = this.CanMoveFolderSystemDown;
-			_folderSystemsActionModel[_resetFolderSystemKey].Enabled = _selectedFolderSystemNode != null;
 		}
 
 		#endregion
@@ -469,6 +468,7 @@ namespace ClearCanvas.Ris.Client
 			_foldersActionModel[_deleteFolderKey].Enabled = editsEnabled && _selectedFolderNode.CanDelete;
 			_foldersActionModel[_moveFolderUpKey].Enabled = editsEnabled && _selectedFolderNode.PreviousSibling != null;
 			_foldersActionModel[_moveFolderDownKey].Enabled = editsEnabled && _selectedFolderNode.NextSibling != null;
+			_foldersActionModel[_resetFolderSystemKey].Enabled = editsEnabled;
 		}
 
 		#endregion
