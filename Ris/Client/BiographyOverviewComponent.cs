@@ -41,219 +41,210 @@ using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
-    /// <summary>
-    /// Extension point for views onto <see cref="BiographyOverviewComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class BiographyOverviewComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	/// <summary>
+	/// Extension point for views onto <see cref="BiographyOverviewComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class BiographyOverviewComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    [ExtensionPoint]
-    public class PatientBiographyToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
+	[ExtensionPoint]
+	public class PatientBiographyToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
 
-    public interface IPatientBiographyToolContext : IToolContext
-    {
-        EntityRef PatientRef { get; }
-        EntityRef PatientProfileRef { get; }
-        PatientProfileDetail PatientProfile { get; }
-        IDesktopWindow DesktopWindow { get; }
-    }
+	public interface IPatientBiographyToolContext : IToolContext
+	{
+		EntityRef PatientRef { get; }
+		EntityRef PatientProfileRef { get; }
+		PatientProfileDetail PatientProfile { get; }
+		IDesktopWindow DesktopWindow { get; }
+	}
 
-    /// <summary>
-    /// PatientComponent class
-    /// </summary>
-    [AssociateView(typeof(BiographyOverviewComponentViewExtensionPoint))]
-    public class BiographyOverviewComponent : ApplicationComponent
-    {
-        class PatientBiographyToolContext : ToolContext, IPatientBiographyToolContext
-        {
-            private readonly BiographyOverviewComponent _component;
+	/// <summary>
+	/// PatientComponent class
+	/// </summary>
+	[AssociateView(typeof(BiographyOverviewComponentViewExtensionPoint))]
+	public class BiographyOverviewComponent : ApplicationComponent
+	{
+		class PatientBiographyToolContext : ToolContext, IPatientBiographyToolContext
+		{
+			private readonly BiographyOverviewComponent _component;
 
-            internal PatientBiographyToolContext(BiographyOverviewComponent component)
-            {
-                _component = component;
-            }
+			internal PatientBiographyToolContext(BiographyOverviewComponent component)
+			{
+				_component = component;
+			}
 
-            public EntityRef PatientRef
-            {
-                get { return _component._patientRef; }
-            }
+			public EntityRef PatientRef
+			{
+				get { return _component._patientRef; }
+			}
 
-            public EntityRef PatientProfileRef
-            {
-                get { return _component._profileRef; }
-            }
+			public EntityRef PatientProfileRef
+			{
+				get { return _component._profileRef; }
+			}
 
-            public PatientProfileDetail PatientProfile
-            {
-                get { return _component._patientProfile; }
-            }
+			public PatientProfileDetail PatientProfile
+			{
+				get { return _component._patientProfile; }
+			}
 
-            public IDesktopWindow DesktopWindow
-            {
-                get { return _component.Host.DesktopWindow; }
-            }
-        }
+			public IDesktopWindow DesktopWindow
+			{
+				get { return _component.Host.DesktopWindow; }
+			}
+		}
 
-        private readonly EntityRef _patientRef;
-        private readonly EntityRef _profileRef;
-        private PatientProfileDetail _patientProfile;
+		private readonly EntityRef _patientRef;
+		private readonly EntityRef _profileRef;
+		private PatientProfileDetail _patientProfile;
 
-        private ToolSet _toolSet;
-        private readonly ResourceResolver _resourceResolver;
+		private ToolSet _toolSet;
 
-        private ChildComponentHost _bannerComponentHost;
-        private ChildComponentHost _contentComponentHost;
+		private ChildComponentHost _bannerComponentHost;
+		private ChildComponentHost _contentComponentHost;
 
-        private EntityRef _selectedOrderRef;
-        private TabComponentContainer _pagesContainer;
-        private BiographyOrderHistoryComponent _orderHistoryComponent;
+		private EntityRef _selectedOrderRef;
+		private TabComponentContainer _pagesContainer;
+		private BiographyOrderHistoryComponent _orderHistoryComponent;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public BiographyOverviewComponent(
-            EntityRef patientRef,
-            EntityRef profileRef)
-        {
-            _patientRef = patientRef;
-            _profileRef = profileRef;
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public BiographyOverviewComponent(EntityRef patientRef, EntityRef profileRef)
+		{
+			_patientRef = patientRef;
+			_profileRef = profileRef;
+		}
 
-            _resourceResolver = new ResourceResolver(this.GetType().Assembly);
-        }
+		public override void Start()
+		{
+			// query for the minimum possible amount of patient profile detail, just enough to populate the title
+			Platform.GetService<IBrowsePatientDataService>(service =>
+				{
+					var response = service.GetData(new GetDataRequest
+						{
+							GetPatientProfileDetailRequest = new GetPatientProfileDetailRequest
+								{
+									PatientProfileRef = _profileRef,
+									// include notes for the notes component
+									IncludeNotes = true,
+									// include attachments for the docs component
+									IncludeAttachments = true
+								}
+						});
 
-        public override void Start()
-        {
-            // query for the minimum possible amount of patient profile detail, just enough to populate the title
-            Platform.GetService<IBrowsePatientDataService>(
-                delegate(IBrowsePatientDataService service)
-                {
-                    GetDataRequest request = new GetDataRequest();
-                    request.GetPatientProfileDetailRequest = new GetPatientProfileDetailRequest();
-                    request.GetPatientProfileDetailRequest.PatientProfileRef = _profileRef;
+					_patientProfile = response.GetPatientProfileDetailResponse.PatientProfile;
+				});
 
-                    // include notes for the notes component
-                    request.GetPatientProfileDetailRequest.IncludeNotes = true;
+			this.Host.Title = string.Format(SR.TitleBiography, PersonNameFormat.Format(_patientProfile.Name), MrnFormat.Format(_patientProfile.Mrn));
 
-                    // include attachments for the docs component
-                    request.GetPatientProfileDetailRequest.IncludeAttachments = true;
-                    GetDataResponse response = service.GetData(request);
+			// Create component for each tab
+			_orderHistoryComponent = new BiographyOrderHistoryComponent(_patientRef);
+			var noteComponent = new BiographyNoteComponent(_patientProfile.Notes);
+			var demographicComponent = new BiographyDemographicComponent(_patientRef, _profileRef);
+			var documentComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Patient);
+			var visitHistoryComponent = new BiographyVisitHistoryComponent(_patientRef);
+			documentComponent.PatientAttachments = _patientProfile.Attachments;
 
-                    _patientProfile = response.GetPatientProfileDetailResponse.PatientProfile;
-                });
+			// Create tab and tab groups
+			_pagesContainer = new TabComponentContainer();
+			_pagesContainer.Pages.Add(new TabPage(SR.TitleOrders, _orderHistoryComponent));
+			_pagesContainer.Pages.Add(new TabPage(SR.TitleVisits, visitHistoryComponent));
+			_pagesContainer.Pages.Add(new TabPage(SR.TitleDemographicProfiles, demographicComponent));
+			_pagesContainer.Pages.Add(new TabPage(SR.TitlePatientAttachments, documentComponent));
+			_pagesContainer.Pages.Add(new TabPage(SR.TitlePatientNotes, noteComponent));
 
-            this.Host.Title = string.Format(SR.TitleBiography,
-                    PersonNameFormat.Format(_patientProfile.Name),
-                    MrnFormat.Format(_patientProfile.Mrn));
+			var tabGroupContainer = new TabGroupComponentContainer(LayoutDirection.Horizontal);
+			tabGroupContainer.AddTabGroup(new TabGroup(_pagesContainer, 1.0f));
 
-            // Create component for each tab
-            _orderHistoryComponent = new BiographyOrderHistoryComponent(_patientRef);
-            BiographyNoteComponent noteComponent = new BiographyNoteComponent(_patientProfile.Notes);
-            BiographyDemographicComponent demographicComponent = new BiographyDemographicComponent(_patientRef, _profileRef);
-            AttachedDocumentPreviewComponent documentComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Patient);
-            BiographyVisitHistoryComponent visitHistoryComponent = new BiographyVisitHistoryComponent(_patientRef);
-            documentComponent.PatientAttachments = _patientProfile.Attachments;
+			_contentComponentHost = new ChildComponentHost(this.Host, tabGroupContainer);
+			_contentComponentHost.StartComponent();
 
-            // Create tab and tab groups
-            _pagesContainer = new TabComponentContainer();
-            _pagesContainer.Pages.Add(new TabPage(SR.TitleOrders, _orderHistoryComponent));
-            _pagesContainer.Pages.Add(new TabPage(SR.TitleVisits, visitHistoryComponent));
-            _pagesContainer.Pages.Add(new TabPage(SR.TitleDemographicProfiles, demographicComponent));
-            _pagesContainer.Pages.Add(new TabPage(SR.TitlePatientAttachments, documentComponent));
-            _pagesContainer.Pages.Add(new TabPage(SR.TitlePatientNotes, noteComponent));
+			_bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(_patientProfile));
+			_bannerComponentHost.StartComponent();
 
-            TabGroupComponentContainer tabGroupContainer = new TabGroupComponentContainer(LayoutDirection.Horizontal);
-            tabGroupContainer.AddTabGroup(new TabGroup(_pagesContainer, 1.0f));
+			_toolSet = new ToolSet(new PatientBiographyToolExtensionPoint(), new PatientBiographyToolContext(this));
 
-            _contentComponentHost = new ChildComponentHost(this.Host, tabGroupContainer);
-            _contentComponentHost.StartComponent();
+			base.Start();
+		}
 
-            _bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(_patientProfile));
-            _bannerComponentHost.StartComponent();
+		public override void Stop()
+		{
+			if (_contentComponentHost != null)
+			{
+				_contentComponentHost.StopComponent();
+				_contentComponentHost = null;
+			}
 
-            _toolSet = new ToolSet(new PatientBiographyToolExtensionPoint(), new PatientBiographyToolContext(this));
+			if (_bannerComponentHost != null)
+			{
+				_bannerComponentHost.StopComponent();
+				_bannerComponentHost = null;
+			}
 
-            base.Start();
-        }
+			_toolSet.Dispose();
+			base.Stop();
+		}
 
-        public override void Stop()
-        {
-            if (_contentComponentHost != null)
-            {
-                _contentComponentHost.StopComponent();
-                _contentComponentHost = null;
-            }
+		public override IActionSet ExportedActions
+		{
+			get { return _toolSet.Actions; }
+		}
 
-            if (_bannerComponentHost != null)
-            {
-                _bannerComponentHost.StopComponent();
-                _bannerComponentHost = null;
-            }
+		#region Presentation Model
 
-            _toolSet.Dispose();
-            base.Stop();
-        }
+		public ApplicationComponentHost BannerComponentHost
+		{
+			get { return _bannerComponentHost; }
+		}
 
-        public override IActionSet ExportedActions
-        {
-            get { return _toolSet.Actions; }
-        }
+		public ApplicationComponentHost ContentComponentHost
+		{
+			get { return _contentComponentHost; }
+		}
 
-        #region Presentation Model
+		public int BannerHeight
+		{
+			get { return BannerSettings.Default.BannerHeight; }
+		}
 
-        public ApplicationComponentHost BannerComponentHost
-        {
-            get { return _bannerComponentHost; }
-        }
+		#endregion
 
-        public ApplicationComponentHost ContentComponentHost
-        {
-            get { return _contentComponentHost; }
-        }
+		// Bug 4786: TableView has trouble selecting items other than the first item
+		// This method is a work around for the above defect for the BiographyOrderHistoryComponent, where TableView automatically select 
+		// the first item and delay posting this selection event after the Start method, leading to the first item always being selected.
+		// The OnControlLoad is called by the control during its Load event, which happens after the delayed selection changed event
+		// and before the control is visible.  This work around has to be done for each components that wants to override the initial
+		// selected item.
+		public void OnControlLoad()
+		{
+			_orderHistoryComponent.SelectedOrderRef = _selectedOrderRef;
+		}
 
-        public int BannerHeight
-        {
-            get { return BannerSettings.Default.BannerHeight; }
-        }
+		public EntityRef SelectedOrderRef
+		{
+			get { return _selectedOrderRef; }
+			set
+			{
+				_selectedOrderRef = value;
+				if (_orderHistoryComponent != null)
+				{
+					SetOrderTabAsActiveTabPage();
+					_orderHistoryComponent.SelectedOrderRef = value;
+				}
+			}
+		}
 
-        #endregion
+		private void SetOrderTabAsActiveTabPage()
+		{
+			var orderTabPage = CollectionUtils.SelectFirst(_pagesContainer.Pages, tabPage => tabPage.Component == _orderHistoryComponent);
 
-        // Bug 4786: TableView has trouble selecting items other than the first item
-        // This method is a work around for the above defect for the BiographyOrderHistoryComponent, where TableView automatically select 
-        // the first item and delay posting this selection event after the Start method, leading to the first item always being selected.
-        // The OnControlLoad is called by the control during its Load event, which happens after the delayed selection changed event
-        // and before the control is visible.  This work around has to be done for each components that wants to override the initial
-        // selected item.
-        public void OnControlLoad()
-        {
-            _orderHistoryComponent.SelectedOrderRef = _selectedOrderRef;
-        }
-
-        public EntityRef SelectedOrderRef
-        {
-            get { return _selectedOrderRef; }
-            set
-            {
-                _selectedOrderRef = value;
-                if (_orderHistoryComponent != null)
-                {
-                    SetOrderTabAsActiveTabPage();
-                    _orderHistoryComponent.SelectedOrderRef = value;
-                }
-            }
-        }
-
-        private void SetOrderTabAsActiveTabPage()
-        {
-            TabPage orderTabPage = CollectionUtils.SelectFirst(
-                _pagesContainer.Pages,
-                delegate(TabPage tabPage) { return tabPage.Component == _orderHistoryComponent; });
-
-            if (orderTabPage != null)
-                _pagesContainer.CurrentPage = orderTabPage;
-        }
-    }
+			if (orderTabPage != null)
+				_pagesContainer.CurrentPage = orderTabPage;
+		}
+	}
 }

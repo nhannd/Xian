@@ -159,11 +159,12 @@ namespace ClearCanvas.Ris.Client
 		public override void Start()
 		{
 			Platform.GetService<IBrowsePatientDataService>(
-				delegate(IBrowsePatientDataService service)
+				service =>
 				{
-					GetDataRequest request = new GetDataRequest();
-					request.ListOrdersRequest = new ListOrdersRequest(_patientRef, PatientOrdersQueryDetailLevel.Order);
-					GetDataResponse response = service.GetData(request);
+					var response = service.GetData(new GetDataRequest
+						{
+							ListOrdersRequest = new ListOrdersRequest(_patientRef, PatientOrdersQueryDetailLevel.Order)
+						});
 
 					_orderList.Items.AddRange(response.ListOrdersResponse.Orders);
 				});
@@ -190,7 +191,7 @@ namespace ClearCanvas.Ris.Client
 
 			// add extension pages to container and set initial context
 			// the container will start those components if the user goes to that page
-			foreach (IBiographyOrderHistoryPage page in _extensionPages)
+			foreach (var page in _extensionPages)
 			{
 				_rightHandComponentContainer.Pages.Add(new TabPage(page.Path, page.GetComponent()));
 			}
@@ -224,8 +225,9 @@ namespace ClearCanvas.Ris.Client
 			get { return _selectedOrder == null ? null : _selectedOrder.OrderRef; }
 			set
 			{
-				OrderListItem initialItem = value == null ? null : CollectionUtils.SelectFirst(_orderList.Items,
-					delegate(OrderListItem item) { return item.OrderRef.Equals(value, true); });
+				var initialItem = value == null 
+					? null 
+					: CollectionUtils.SelectFirst(_orderList.Items, item => item.OrderRef.Equals(value, true));
 
 				this.SelectedOrder = new Selection(initialItem);
 			}
@@ -236,7 +238,7 @@ namespace ClearCanvas.Ris.Client
 			get { return new Selection(_selectedOrder); }
 			set
 			{
-				OrderListItem newSelection = (OrderListItem)value.Item;
+				var newSelection = (OrderListItem)value.Item;
 				if (_selectedOrder != newSelection)
 				{
 					_selectedOrder = newSelection;
@@ -269,16 +271,18 @@ namespace ClearCanvas.Ris.Client
 			{
 				if (_selectedOrder != null)
 				{
-					Platform.GetService<IBrowsePatientDataService>(
-						delegate(IBrowsePatientDataService service)
-						{
-							GetDataRequest request = new GetDataRequest();
-							request.GetOrderDetailRequest = new GetOrderDetailRequest(_selectedOrder.OrderRef, true, true, false, false, true, false);
-							request.GetOrderDetailRequest.IncludeExtendedProperties = true;
-							GetDataResponse response = service.GetData(request);
+					Platform.GetService<IBrowsePatientDataService>(service =>
+					{
+						var response = service.GetData(new GetDataRequest
+							{
+								GetOrderDetailRequest = new GetOrderDetailRequest(_selectedOrder.OrderRef, true, true, false, false, true, false)
+									{
+										IncludeExtendedProperties = true
+									}
+							});
 
-							_orderDetail = response.GetOrderDetailResponse.Order;
-						});
+						_orderDetail = response.GetOrderDetailResponse.Order;
+					});
 				}
 
 				UpdatePages();
@@ -308,7 +312,7 @@ namespace ClearCanvas.Ris.Client
 				_visitDetailComponent.Context = new VisitDetailViewComponent.VisitContext(_selectedOrder.VisitRef);
 				_orderReportsComponent.Context = new BiographyOrderReportsComponent.ReportsContext(_selectedOrder.OrderRef, _orderDetail.PatientRef, _orderDetail.AccessionNumber);
 				_orderDocumentComponent.OrderAttachments = _orderDetail == null ? new List<OrderAttachmentSummary>() : _orderDetail.Attachments;
-				_orderAdditionalInfoComponent.OrderExtendedProperties = _orderDetail.ExtendedProperties;
+				_orderAdditionalInfoComponent.OrderExtendedProperties = _orderDetail == null ? new Dictionary<string, string>() : _orderDetail.ExtendedProperties;
 				_orderAdditionalInfoComponent.HealthcareContext = _selectedOrder;
 			}
 
