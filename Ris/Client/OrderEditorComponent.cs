@@ -1184,10 +1184,9 @@ namespace ClearCanvas.Ris.Client
 			_rightHandComponentContainer = new TabComponentContainer();
 			_rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
 
-
-			var attachmentsTabPage = new TabPage("Documents", _attachmentSummaryComponent);
-			_rightHandComponentContainer.Pages.Add(attachmentsTabPage);
 			_rightHandComponentContainer.Pages.Add(new TabPage("Additional Info", _orderAdditionalInfoComponent));
+			var attachmentsTabPage = new TabPage("Order Attachments", _attachmentSummaryComponent);
+			_rightHandComponentContainer.Pages.Add(attachmentsTabPage);
 
 			// instantiate all extension pages
 			_extensionPages = new List<IOrderEditorPage>();

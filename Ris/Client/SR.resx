@@ -787,7 +787,7 @@
     <value>Orders</value>
   </data>
   <data name="TitlePatientAttachments" xml:space="preserve">
-    <value>Patient Documents</value>
+    <value>Patient Attachments</value>
   </data>
   <data name="TitlePatientComponent" xml:space="preserve">
     <value>Patient - {0} {1}</value>

@@ -209,7 +209,7 @@ namespace ClearCanvas.Ris.Client
 						_notesSummary.Subject = _profile.Notes;
 
 						var patientDocumentsPage = new NavigatorPage(
-							"Patient/Documents",
+							"Patient/Attachments",
 							_documentSummary =
 							new AttachedDocumentPreviewComponent(false, AttachedDocumentPreviewComponent.AttachmentMode.Patient));
 						this.Pages.Add(patientDocumentsPage);

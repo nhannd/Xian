@@ -2176,7 +2176,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Patient Documents.
+        ///   Looks up a localized string similar to Patient Attachments.
         /// </summary>
         internal static string TitlePatientAttachments {
             get {
