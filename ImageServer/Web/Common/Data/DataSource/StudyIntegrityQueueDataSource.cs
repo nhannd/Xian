@@ -267,7 +267,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 	    public string AccessionNumber { get; set; }
 
-	    public string InsertTime { get; set; }
+	    public string FromInsertTime { get; set; }
+
+        public string ToInsertTime { get; set; }
 
 	    public ServerPartition Partition { get; set; }
 
@@ -440,10 +442,23 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 				criteria.Description.Like(description);    
 			}
                        
-			if (!String.IsNullOrEmpty(InsertTime))
+			if (!String.IsNullOrEmpty(FromInsertTime) || !String.IsNullOrEmpty(ToInsertTime))
 			{
-				DateTime insertTime = DateTime.Parse(InsertTime);
-				criteria.InsertTime.Between(insertTime, insertTime.AddHours(24));
+                if (!String.IsNullOrEmpty(FromInsertTime) && !String.IsNullOrEmpty(ToInsertTime))
+                {
+                    DateTime fromTime = DateTime.Parse(FromInsertTime);
+                    DateTime toTime = DateTime.Parse(ToInsertTime);
+                    if (toTime == fromTime) criteria.InsertTime.Between(fromTime, fromTime.AddHours(24));
+                    else criteria.InsertTime.Between(fromTime, toTime.AddHours(24));
+                } else if(!String.IsNullOrEmpty(FromInsertTime))
+                {
+                    DateTime fromTime = DateTime.Parse(FromInsertTime);
+                    criteria.InsertTime.MoreThanOrEqualTo(fromTime.AddHours(24));
+                } else
+                {
+                    DateTime toTime = DateTime.Parse(ToInsertTime);
+                    criteria.InsertTime.LessThanOrEqualTo(toTime.AddHours(24));
+                }
 			}
 
             if(ReasonEnum.Count > 0)
