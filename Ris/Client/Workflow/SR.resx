@@ -659,4 +659,19 @@ Choose "No" to verify this report without further action.</value>
   <data name="MessageConfirmCheckInProcedures" xml:space="preserve">
     <value>Do you still want to check-in the selected procedure(s)?</value>
   </data>
+  <data name="TitleAdditionalInfo" xml:space="preserve">
+    <value>Additional Info</value>
+  </data>
+  <data name="TitleOrder" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="TitleOrderAttachments" xml:space="preserve">
+    <value>Order Attachments</value>
+  </data>
+  <data name="TitleOrderDetails" xml:space="preserve">
+    <value>Order Details</value>
+  </data>
+  <data name="TitlePriors" xml:space="preserve">
+    <value>Priors</value>
+  </data>
 </root>

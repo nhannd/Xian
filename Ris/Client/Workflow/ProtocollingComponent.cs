@@ -121,9 +121,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 				this.Modified = this.Modified || _protocolEditorComponentHost.Component.Modified);
 
 			_rightHandComponentContainer = new TabComponentContainer();
-			_rightHandComponentContainer.Pages.Add(new TabPage("Order Details", _orderDetailViewComponent = new ProtocollingOrderDetailViewComponent(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef)));
-			_rightHandComponentContainer.Pages.Add(new TabPage("Priors", _priorReportsComponent = new PriorReportComponent(this.WorklistItem)));
-			_rightHandComponentContainer.Pages.Add(new TabPage("Order Attachments", _orderAttachmentsComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Order)));
+			_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleOrderDetails, _orderDetailViewComponent = new ProtocollingOrderDetailViewComponent(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef)));
+			_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitlePriors, _priorReportsComponent = new PriorReportComponent(this.WorklistItem)));
+			_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleOrderAttachments, _orderAttachmentsComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Order)));
 			_orderAttachmentsComponent.OrderRef = this.WorklistItem.OrderRef;
 
 			_rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);

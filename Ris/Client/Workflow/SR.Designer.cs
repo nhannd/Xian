@@ -1110,6 +1110,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Additional Info.
+        /// </summary>
+        internal static string TitleAdditionalInfo {
+            get {
+                return ResourceManager.GetString("TitleAdditionalInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Addresses.
         /// </summary>
         internal static string TitleAddresses {
@@ -1398,6 +1407,33 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Order.
+        /// </summary>
+        internal static string TitleOrder {
+            get {
+                return ResourceManager.GetString("TitleOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Order Attachments.
+        /// </summary>
+        internal static string TitleOrderAttachments {
+            get {
+                return ResourceManager.GetString("TitleOrderAttachments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Order Details.
+        /// </summary>
+        internal static string TitleOrderDetails {
+            get {
+                return ResourceManager.GetString("TitleOrderDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Order Notes.
         /// </summary>
         internal static string TitleOrderNoteboxFolderSystem {
@@ -1511,6 +1547,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         internal static string TitlePrintFaxReport {
             get {
                 return ResourceManager.GetString("TitlePrintFaxReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Priors.
+        /// </summary>
+        internal static string TitlePriors {
+            get {
+                return ResourceManager.GetString("TitlePriors", resourceCulture);
             }
         }
         

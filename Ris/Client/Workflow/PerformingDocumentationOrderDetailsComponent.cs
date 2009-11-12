@@ -101,11 +101,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_orderAdditionalInfoComponent = new OrderAdditionalInfoComponent();
 			_orderAdditionalInfoComponent.OrderExtendedProperties = _context.OrderExtendedProperties;
 			_orderAdditionalInfoComponent.HealthcareContext = _worklistItem;
-			_rightHandComponentContainer.Pages.Add(new TabPage("Additional Info", _orderAdditionalInfoComponent));
+			_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleAdditionalInfo, _orderAdditionalInfoComponent));
 
 			_orderAttachmentsComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Order);
 			_orderAttachmentsComponent.OrderRef = _context.OrderRef;
-			_rightHandComponentContainer.Pages.Add(new TabPage("Order Attachments", _orderAttachmentsComponent));
+			_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleOrderAttachments, _orderAttachmentsComponent));
 
 			_rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
 			_rightHandComponentContainerHost.StartComponent();
@@ -113,28 +113,28 @@ namespace ClearCanvas.Ris.Client.Workflow
 			base.Start();
 		}
 
-        public override void Stop()
-        {
-            if (_orderNotesComponentHost != null)
-            {
-                _orderNotesComponentHost.StopComponent();
-                _orderNotesComponentHost = null;
-            }
+		public override void Stop()
+		{
+			if (_orderNotesComponentHost != null)
+			{
+				_orderNotesComponentHost.StopComponent();
+				_orderNotesComponentHost = null;
+			}
 
-            if (_protocolSummaryComponentHost != null)
-            {
-                _protocolSummaryComponentHost.StopComponent();
-                _protocolSummaryComponentHost = null;
-            }
+			if (_protocolSummaryComponentHost != null)
+			{
+				_protocolSummaryComponentHost.StopComponent();
+				_protocolSummaryComponentHost = null;
+			}
 
 			if (_rightHandComponentContainerHost != null)
-            {
+			{
 				_rightHandComponentContainerHost.StopComponent();
 				_rightHandComponentContainerHost = null;
-            }
+			}
 
-            base.Stop();
-        }
+			base.Stop();
+		}
 
 		public ApplicationComponentHost RightHandComponentContainerHost
 		{

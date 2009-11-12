@@ -420,15 +420,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_rightHandComponentContainer.ValidationStrategy = new AllComponentsValidationStrategy();
 
 				_orderComponent = new ReportingOrderDetailViewComponent(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef);
-				_rightHandComponentContainer.Pages.Add(new TabPage("Order", _orderComponent));
+				_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleOrder, _orderComponent));
 
 				_priorReportComponent = new PriorReportComponent(this.WorklistItem);
-				_rightHandComponentContainer.Pages.Add(new TabPage("Priors", _priorReportComponent));
+				_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitlePriors, _priorReportComponent));
 
 				_additionalInfoComponent = new OrderAdditionalInfoComponent(true);
 				_additionalInfoComponent.OrderExtendedProperties = _orderDetail.ExtendedProperties;
 				_additionalInfoComponent.HealthcareContext = this.WorklistItem;
-				_rightHandComponentContainer.Pages.Add(new TabPage("Additional Info", _additionalInfoComponent));
+				_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleAdditionalInfo, _additionalInfoComponent));
 
 				// instantiate all extension pages
 				_extensionPages = new List<IReportingPage>();
@@ -446,7 +446,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				_orderAttachmentsComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Order);
 				_orderAttachmentsComponent.OrderRef = this.WorklistItem.OrderRef;
-				_rightHandComponentContainer.Pages.Add(new TabPage("Order Attachments", _orderAttachmentsComponent));
+				_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleOrderAttachments, _orderAttachmentsComponent));
 
 				_rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
 				_rightHandComponentContainerHost.StartComponent();
@@ -1081,7 +1081,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void StartReportingWorklistItem()
 		{
-			var result = ClaimAndLinkWorklistItem(this.WorklistItem);
+			ClaimAndLinkWorklistItem(this.WorklistItem);
 
 			Platform.GetService<IReportingWorkflowService>(service =>
 			{
