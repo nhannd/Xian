@@ -39,6 +39,7 @@ using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
@@ -96,9 +97,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			_stationName = string.Empty;
 			_institution = Institution.Empty;
 			_manufacturer = "ClearCanvas";
-			_manufacturersModelName = Application.Name;
+			_manufacturersModelName = ProductInformation.Name;
 			_deviceSerialNumber = string.Empty;
-			_softwareVersions = Application.Version.ToString();
+			_softwareVersions = ProductInformation.GetVersion(true, true);
 			_presentationInstanceNumber = 1;
 			_presentationSopInstanceUid = string.Empty;
 			_presentationSeriesDateTime = DateTime.Now;

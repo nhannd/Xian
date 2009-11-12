@@ -124,7 +124,7 @@
     <value>Image</value>
   </data>
   <data name="CategoryKeyImageSeries" xml:space="preserve">
-    <value>Series (Key Image)</value>
+    <value>Key Image Series</value>
   </data>
   <data name="CategoryPatient" xml:space="preserve">
     <value>Patient</value>
@@ -401,5 +401,14 @@
   </data>
   <data name="TitleImageProperties" xml:space="preserve">
     <value>Image Properties</value>
+  </data>
+  <data name="CategoryKeyImageEquipment" xml:space="preserve">
+    <value>Key Image Equipment</value>
+  </data>
+  <data name="DescriptionSoftwareVersions" xml:space="preserve">
+    <value>The version of the software that created the data</value>
+  </data>
+  <data name="NameSoftwareVersions" xml:space="preserve">
+    <value>Software Version(s)</value>
   </data>
 </root>

@@ -9,6 +9,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 {
 	public interface IImageProperty
 	{
+		string Identifier { get; }
+
 		string Category { get; }
 		string Name { get; }
 		string Description { get; }
@@ -19,85 +21,64 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 
 	public class ImageProperty : IImageProperty
 	{
-		private string _category;
-		private string _name;
-		private string _description;
-		private object _value;
-
 		public ImageProperty()
-		{
-		}
+		{}
 
-		public ImageProperty(string category, string name, string description, object value)
+		public ImageProperty(string identifier, string category, string name, string description, object value)
 		{
-			_category = category;
-			_name = name;
-			_description = description;
-			_value = value;
+			Identifier = identifier;
+			Category = category;
+			Name = name;
+			Description = description;
+			Value = value;
 		}
 
 		#region IImageProperty Members
 
-		public string Category
-		{
-			get { return _category; }
-			set { _category = value; }
-		}
+		public string Identifier { get; set; }
 
-		public string Name
-		{
-			get { return _name; }
-			set { _name = value; }
-		}
+		public string Category { get; set; }
 
-		public string Description
+		public string Name { get; set; }
+
+		public string Description { get; set; }
+
+		public object Value { get; set; }
+
+		public Type ValueType
 		{
-			get { return _description; }
-			set { _description = value; }
+			get
+			{
+				if (Value == null)
+					return typeof(string);
+				else
+					return Value.GetType();
+			}
 		}
 
 		public virtual bool IsEmpty
 		{
 			get 
 			{
-				if (_value == null)
+				if (Value == null)
 					return true;
-				if (_value is string)
-					return ((string) _value).Length == 0;
+				if (Value is string)
+					return ((string) Value).Length == 0;
 
-				//TODO (cr Oct 2009): what about objects?
 				return false;
 			}	
 		}
 
-		public Type ValueType
-		{
-			get 
-			{
-				if (_value == null)
-					return typeof(string);
-				else
-					return _value.GetType();
-			}	
-		}
-
-		public object Value
-		{
-			get { return _value; }
-			set { _value = value; }
-		}
-
 		#endregion
-
-		public static ImageProperty Create(DicomTag tag, IDicomAttributeProvider provider, string category, string name, string description, string separator)
-		{
-			return Create(provider[tag], category, name, description, separator);
-		}
 
 		public static ImageProperty Create(DicomAttribute attribute, string category, string name, string description, string separator)
 		{
+			string identifier = attribute.Tag.VariableName;
+			if (String.IsNullOrEmpty(identifier))
+				identifier = attribute.Tag.HexString;
+
 			if (attribute.IsNull || attribute.IsEmpty)
-				return new ImageProperty(category, name, description, "");
+				return new ImageProperty(identifier, category, name, description, "");
 
 			if (String.IsNullOrEmpty(separator))
 				separator = ", ";
@@ -157,7 +138,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 				value = attribute.ToString();
 			}
 
-			return new ImageProperty(category, name, description, value);
+			return new ImageProperty(identifier, category, name, description, value);
 		}
 	}
 }

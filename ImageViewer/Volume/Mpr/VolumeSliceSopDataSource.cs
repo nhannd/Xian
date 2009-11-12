@@ -40,6 +40,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
+	//TODO (cr Oct 2009): DicomMessageSopDataSource does the locking for us, but StandardSopDataSource does not!
 	public class VolumeSliceSopDataSource : StandardSopDataSource, ISopDataSource
 	{
 		private readonly IVolumeReference _volumeReference;

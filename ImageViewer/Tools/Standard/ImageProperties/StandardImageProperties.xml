@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <standard-image-properties>
-  <image-property-group category="Patient">
+  <image-property-group name="Patient">
     <image-property tag-variable-name="PatientsName" />
     <!--<image-property tag-variable-name="OtherPatientNames" />-->
     <image-property tag-variable-name="PatientId" />
@@ -11,7 +11,7 @@
     <image-property tag-variable-name="PatientsBirthTime" />
     <image-property tag-variable-name="PatientsSex" />
   </image-property-group>
-  <image-property-group category="Study">
+  <image-property-group name="Study">
     <image-property tag-variable-name="StudyId" />
     <image-property tag-variable-name="StudyDescription" />
     <image-property tag-variable-name="StudyInstanceUid" />
@@ -21,16 +21,17 @@
     <image-property tag-variable-name="AdditionalPatientsHistory" />
     <image-property tag-variable-name="AdmittingDiagnosesDescription" />
   </image-property-group>
-  <image-property-group category="Equipment">
+  <image-property-group name="Equipment">
     <image-property tag-variable-name="StationName" />
     <image-property tag-variable-name="InstitutionName" />
     <image-property tag-variable-name="InstitutionalDepartmentName" />
     <image-property tag-variable-name="InstitutionAddress" />
     <image-property tag-variable-name="Manufacturer" />
     <image-property tag-variable-name="ManufacturersModelName" />
+    <image-property tag-variable-name="SoftwareVersions" />
     <image-property tag-variable-name="DeviceSerialNumber" />
   </image-property-group>
-  <image-property-group category="Series">
+  <image-property-group name="Series">
     <image-property tag-variable-name="Modality" />
     <image-property tag-variable-name="Laterality" />
     <image-property tag-variable-name="SeriesInstanceUID" />
@@ -43,7 +44,7 @@
     <image-property tag-variable-name="OperatorsName" />
     <image-property tag-variable-name="PerformingPhysiciansName" />
   </image-property-group>
-  <image-property-group category="Image">
+  <image-property-group name="Image">
     <image-property tag-variable-name="InstanceNumber" />
     <image-property tag-variable-name="ImageLaterality" />
     <image-property tag-variable-name="ImageComments" />

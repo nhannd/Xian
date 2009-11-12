@@ -172,10 +172,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 				foreach (IImagePropertyProvider info in _informationProviders)
 				{
 					foreach (IImageProperty property in info.GetProperties(presentationImage))
-						if (!properties.ContainsKey(property.Name))
-							properties[property.Name] = property;
+						if (!properties.ContainsKey(property.Identifier))
+							properties[property.Identifier] = property;
 						else
-							Platform.Log(LogLevel.Debug, "Image property with name '{0}' already exists; ignoring.", property.Name);
+							Platform.Log(LogLevel.Debug, "Image property with identifier '{0}' already exists; ignoring.", property.Identifier);
 				}
 
 				if (ImagePropertiesSettings.Default.ShowEmptyValues)

@@ -65,9 +65,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 
 				foreach (XmlElement groupNode in groupNodes)
 				{
-					//TODO (cr Oct 2009): xml schema category -> name
 					string category = "";
-					XmlAttribute categoryAttribute = groupNode.Attributes["category"];
+					XmlAttribute categoryAttribute = groupNode.Attributes["name"];
 					if (categoryAttribute != null)
 						category = LookupCategory(categoryAttribute.Value);
 
@@ -117,7 +116,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 
 						try
 						{
-							ImageProperty property = ImageProperty.Create(tag, dataSource, category, tagName, description, separator);
+							ImageProperty property = ImageProperty.Create(dataSource[tag], category, tagName, description, separator);
 							properties.Add(property);
 						}
 						catch (Exception e)

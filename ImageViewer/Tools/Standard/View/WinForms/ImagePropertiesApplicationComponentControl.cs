@@ -140,7 +140,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 		{
 			ImagePropertyDescriptor descriptor = (ImagePropertyDescriptor)context.PropertyDescriptor;
 			string stringValue = ImagePropertyDescriptor.GetStringValue(descriptor.ImageProperty.Value, false);
-			ShowValueDialog.Show(descriptor.Name, descriptor.Description, stringValue);
+			ShowValueDialog.Show(descriptor.DisplayName, descriptor.Description, stringValue);
 			return value; //no edits allowed
 		}
 
@@ -155,7 +155,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 		public readonly IImageProperty ImageProperty;
 
 		public ImagePropertyDescriptor(IImageProperty imageProperty)
-			: base(imageProperty.Name, CreateAttributes(imageProperty))
+			: base(imageProperty.Identifier, CreateAttributes(imageProperty))
 		{
 			ImageProperty = imageProperty;
 		}
@@ -172,6 +172,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 		public override bool CanResetValue(object component)
 		{
 			return false;
+		}
+
+		public override string DisplayName
+		{
+			get
+			{
+				return ImageProperty.Name;
+			}
 		}
 
 		public override Type ComponentType

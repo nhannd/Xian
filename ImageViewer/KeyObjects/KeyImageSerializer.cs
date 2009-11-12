@@ -87,9 +87,9 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			_stationName = string.Empty;
 			_institution = Institution.Empty;
 			_manufacturer = "ClearCanvas";
-			_manufacturersModelName = Application.Name;
+			_manufacturersModelName = ProductInformation.Name;
 			_deviceSerialNumber = string.Empty;
-			_softwareVersions = Application.Version.ToString();
+			_softwareVersions = ProductInformation.GetVersion(true, true);
 		}
 
 		/// <summary>

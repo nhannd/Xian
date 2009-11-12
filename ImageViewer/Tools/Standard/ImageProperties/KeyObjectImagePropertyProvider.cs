@@ -12,15 +12,13 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 {
-	[ExtensionOf(typeof(ImagePropertyProviderExtensionPoint))]
+	[ExtensionOf(typeof (ImagePropertyProviderExtensionPoint))]
 	public class KeyObjectImagePropertyProvider : IImagePropertyProvider
 	{
 		public KeyObjectImagePropertyProvider()
 		{
 		}
 
-		//TODO (cr Oct 2009): discrepancy w/ data?  we show the image data + some key image stuff.
-		//TODO (cr Oct 2009): KI Gen Eq: creator, software versions.
 		#region IImagePropertyProvider Members
 
 		public IImageProperty[] GetProperties(IPresentationImage image)
@@ -48,6 +46,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 									ISopDataSource dataSource = keyObjectSop.DataSource;
 									KeyObjectSelectionDocumentIod iod = new KeyObjectSelectionDocumentIod(dataSource);
 									SrDocumentContentModuleIod content = iod.SrDocumentContent;
+									GeneralEquipmentModuleIod equipment = iod.GeneralEquipment;
+
 									if (content != null)
 									{
 										string codeValue = "";
@@ -73,14 +73,37 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 										}
 
 										properties.Add(
-											new ImageProperty(SR.CategoryKeyImageSeries,
-															  SR.NameKeyImageDocumentTitle,
-															  SR.DescriptionKeyImageDocumentTitle, codeValue));
+											new ImageProperty("KeyImageDocumentTitle",
+															  SR.CategoryKeyImageSeries,
+											                  SR.NameKeyImageDocumentTitle,
+											                  SR.DescriptionKeyImageDocumentTitle,
+											                  codeValue));
 
 										properties.Add(
-											new ImageProperty(SR.CategoryKeyImageSeries,
-															  SR.NameKeyImageDocumentDescription,
-															  SR.DescriptionKeyImageDocumentDescription, documentDescription));
+											new ImageProperty("KeyImageDocumentDescription",
+															  SR.CategoryKeyImageSeries,
+											                  SR.NameKeyImageDocumentDescription,
+											                  SR.DescriptionKeyImageDocumentDescription,
+											                  documentDescription));
+
+										properties.Add(
+											new ImageProperty("KeyImageEquipmentManufacturer",
+															  SR.CategoryKeyImageEquipment,
+											                  SR.NameManufacturer,
+											                  SR.DescriptionManufacturer,
+											                  equipment.Manufacturer ?? ""));
+										properties.Add(
+											new ImageProperty("KeyImageEquipmentManufacturersModelName", 
+															  SR.CategoryKeyImageEquipment,
+											                  SR.NameManufacturersModelName,
+											                  SR.DescriptionManufacturersModelName,
+											                  equipment.ManufacturersModelName ?? ""));
+										properties.Add(
+											new ImageProperty("KeyImageEquipmentSoftwareVersions",
+															  SR.CategoryKeyImageEquipment,
+											                  SR.NameSoftwareVersions,
+											                  SR.DescriptionSoftwareVersions,
+											                  equipment.SoftwareVersions ?? ""));
 									}
 								}
 							}
