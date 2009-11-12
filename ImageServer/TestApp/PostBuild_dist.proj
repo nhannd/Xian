@@ -45,6 +45,7 @@
     <CommonDirectory>$(DistributionDirectory)\common</CommonDirectory>
     <PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
     <LogDirectory>$(DistributionDirectory)\logs</LogDirectory>
+	  <UtilitiesDirectory>$(DistributionDirectory)\Utilities</UtilitiesDirectory>
   </PropertyGroup>
 
   <ItemGroup>
@@ -52,6 +53,7 @@
     <DestinationDirectories Include="$(CommonDirectory)" />
     <DestinationDirectories Include="$(PluginsDirectory)" />
     <DestinationDirectories Include="$(LogDirectory)" />
+	<DestinationDirectories Include="$(UtilitiesDirectory)"/>
   </ItemGroup>
 
   <!-- Config files, to be placed in distribution directory -->
@@ -110,6 +112,6 @@
     </CreateProperty>
 
     <!-- Run the solution specific build file -->
-    <MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory)" />
+    <MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory);UtilitiesDirectory=$(UtilitiesDirectory)" />
   </Target>
 </Project>
