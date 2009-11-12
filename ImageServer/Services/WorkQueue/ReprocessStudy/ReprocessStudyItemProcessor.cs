@@ -211,7 +211,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
 
 
 
-    [StudyIntegrityValidation(ValidationTypes = StudyIntegrityValidationModes.None)]
+    [StudyIntegrityValidation(ValidationTypes = StudyIntegrityValidationModes.Default, Recovery = RecoveryModes.Manual)]
     public class ReprocessStudyItemProcessor : BaseItemProcessor
     {
         #region Private Members
