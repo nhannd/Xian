@@ -30,10 +30,7 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Text;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common;
 using System.Collections.Generic;
 using ClearCanvas.Workflow;
@@ -45,8 +42,8 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// Note entity
     /// </summary>
-	public partial class Note : ClearCanvas.Enterprise.Core.Entity
-	{
+	public partial class Note
+    {
         #region Constructors
 
         /// <summary>
@@ -130,21 +127,20 @@ namespace ClearCanvas.Healthcare {
 
 
             // find all un-acknowledged postings that this staff person could acknowledge
-            List<NotePosting> acknowledgeablePostings = GetAcknowledgeablePostings(staff);
+            var acknowledgeablePostings = GetAcknowledgeablePostings(staff);
 
             // if none, this is a workflow exception
             if(acknowledgeablePostings.Count == 0)
                 throw new NoteAcknowledgementException("The specified staff was either not a recipient of this note, or the note has already been acknowledged.");
 
             // acknowledge the posting
-            foreach (NotePosting posting in acknowledgeablePostings)
+            foreach (var posting in acknowledgeablePostings)
             {
                 posting.Acknowledge(staff);
             }
 
             // update the 'fully acknowledged' status of this note
-            _isFullyAcknowledged = CollectionUtils.TrueForAll(_postings,
-                delegate(NotePosting posting) { return posting.IsAcknowledged; });
+            _isFullyAcknowledged = CollectionUtils.TrueForAll(_postings, posting => posting.IsAcknowledged);
         }
 
 
@@ -153,7 +149,7 @@ namespace ClearCanvas.Healthcare {
         #region Overridables
 
         /// <summary>
-        /// Called from <see cref="Post"/>, allowing subclasses to cancel the post operation by throwing an exception.
+        /// Called from <see cref="Post()"/>, allowing subclasses to cancel the post operation by throwing an exception.
         /// </summary>
         /// <remarks>
         /// Override this method to perform validation prior to posting.  Throw an exception to cancel the post.
@@ -177,12 +173,12 @@ namespace ClearCanvas.Healthcare {
         private void Post(DateTime postTime, IEnumerable<Staff> staffRecipients, IEnumerable<StaffGroup> groupRecipients)
         {
             // create postings for any recipients
-			foreach (Staff recipient in staffRecipients)
+			foreach (var recipient in staffRecipients)
             {
             	NotePosting posting = new StaffNotePosting(this, false, null, recipient);
                 _postings.Add(posting);
             }
-			foreach (StaffGroup recipient in groupRecipients)
+			foreach (var recipient in groupRecipients)
 			{
 				NotePosting posting = new GroupNotePosting(this, false, null, recipient);
 				_postings.Add(posting);
@@ -197,7 +193,7 @@ namespace ClearCanvas.Healthcare {
 
 		private List<NotePosting> GetAcknowledgeablePostings(Staff staff)
 		{
-			return CollectionUtils.Select(_postings, delegate(NotePosting posting) { return posting.CanAcknowledge(staff); });
+			return CollectionUtils.Select(_postings, posting => posting.CanAcknowledge(staff));
 		}
 	
 		/// <summary>

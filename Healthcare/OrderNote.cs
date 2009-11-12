@@ -29,12 +29,7 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Text;
 using System.Collections.Generic;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Enterprise.Core;
 
@@ -47,14 +42,25 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class OrderNote
 	{
+		/// <summary>
+		/// Gets all order notes associated with the specified order.
+		/// </summary>
+		/// <param name="order"></param>
+		/// <returns></returns>
 		public static IList<OrderNote> GetNotesForOrder(Order order)
 		{
 			return GetNotesForOrder(order, null);
 		}
 
+		/// <summary>
+		/// Gets all order notes of the specified category associated with the specified order.
+		/// </summary>
+		/// <param name="order"></param>
+		/// <param name="category"></param>
+		/// <returns></returns>
 		public static IList<OrderNote> GetNotesForOrder(Order order, string category)
 		{
-			OrderNoteSearchCriteria where = new OrderNoteSearchCriteria();
+			var where = new OrderNoteSearchCriteria();
 			where.Order.EqualTo(order);
 			where.PostTime.IsNotNull(); // only posted notes
 			if(!string.IsNullOrEmpty(category))
@@ -75,6 +81,7 @@ namespace ClearCanvas.Healthcare {
         /// <param name="author"></param>
         /// <param name="onBehalfOf"></param>
         /// <param name="body"></param>
+        /// <param name="urgent"></param>
         public OrderNote(Order order, string category, Staff author, StaffGroup onBehalfOf, string body, bool urgent)
             :base(category, author, onBehalfOf, body, urgent)
         {

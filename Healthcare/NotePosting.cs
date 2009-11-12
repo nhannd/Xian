@@ -29,11 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Text;
-
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Workflow;
 using ClearCanvas.Common;
 
@@ -43,8 +38,8 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// NotePosting entity
     /// </summary>
-	public partial class NotePosting : ClearCanvas.Enterprise.Core.Entity
-	{
+	public partial class NotePosting
+    {
 		/// <summary>
 		/// Gets a value indicating whether this posting can be acknowledged by the specified staff.
 		/// </summary>
