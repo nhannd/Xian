@@ -251,7 +251,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			// Because we supply the real spacing to the VTK reslicer, the slices are interpolated
 			//	as if the volume were isotropic. This results in an effective spacing that is the
 			//	minimum spacing for the volume.
-			return volume.MinSpacing;
+			return volume.MinimumSpacing;
 		}
 
 		#endregion

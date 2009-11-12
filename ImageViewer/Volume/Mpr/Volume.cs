@@ -41,21 +41,28 @@ using vtk;
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
 	/// <summary>
-	/// The Volume class encapsulates 3 dimensional voxel data and currently supports short and unsigned short types.
+	/// Represents a 3-dimensional volume.
+	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// The <see cref="Volume"/> class encapsulates 3 dimensional voxel data and currently supports short and unsigned short types.
 	/// You will typically use a <see cref="VolumeBuilder"/> object to create a Volume.
 	/// A volume has two coordinate spaces of interest: volume and patient. Naming convention is to use Patient
 	/// suffix if in patient space, Volume suffix in volume space, if not specified then in volume space.
-	/// 
+	/// </para>
+	/// <para>
 	/// The spaces currently only differ (potentially) by origin and orientation. The volume origin is 
 	/// fixed to 0,0,0 and the patient origin is derived from the first image's DICOM image position (patient).
 	/// The volume orientation is consistently defined by the input images and is irrespective of the actual
 	/// patient orientation (i.e. axial, sagittal, coronal captured images are all normalized in volume space).
 	/// The patient orientation is derived from the DICOM image orientation.
-	///  </summary>
+	/// </para>
+	/// </remarks>
 	public partial class Volume : IDisposable
 	{
 		#region Private fields
 
+		// CR (Oct 2009): Ideally, Volume should be a base class with specialized signed and unsigned 16-bit volume subclasses
 		// The volume arrays that contain the voxel values. Constructors ensure that only one of these 
 		//	arrays is set, which defines whether the data for this volume is signed or unsigned.
 		private short[] _volumeDataInt16;
@@ -71,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		// The DICOM image orientation (patient) of all slices, used to convert between Volume and Patient spaces
 		private readonly Matrix _orientationPatientMatrix;
 		// Used as pixel value for any data not derived from voxel values (e.g. when slice extends beyond volume)
-		private readonly int _padValue;
+		private readonly int _paddingValue;
 		// Decided to keep the volume origin at 0,0,0 and translate to patient coordinates
 		//	when needed. This makes dealing with non axial datasets easier. It also mimics 
 		//	the typical image to patient coordintate transform.
@@ -83,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		// This handle is used to pin the volume array. Whenever VTK operates on the volume,
 		//	the volume array must be pinned.
-		private GCHandle? _volArrayPinnedHandle;
+		private GCHandle? _volumeArrayPinnedHandle;
 
 		private bool _disposed = false;
 
@@ -128,7 +135,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_originPatient = originPatient;
 			_orientationPatientMatrix = orientationPatient;
 			_modelDicom = sopDataSourcePrototype;
-			_padValue = paddingValue;
+			_paddingValue = paddingValue;
 
 			// Generate a descriptive name for the volume
 			PersonName patientName = new PersonName(sopDataSourcePrototype[DicomTags.PatientsName].ToString());
@@ -186,12 +193,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		}
 
 		/// <summary>
-		/// Indicates whether this volume contains signed or unsigned shorts
+		/// Gets a value indicating whether this volume contains signed or unsigned data.
 		/// </summary>
-		/// <returns>true if unsigned, false if signed</returns>
-		public bool IsDataUnsigned()
+		public bool Signed
 		{
-			return _volumeDataUInt16 != null;
+			get { return _volumeDataInt16 != null; }
 		}
 
 		/// <summary>
@@ -202,42 +208,42 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get { return ArrayDimensions.Volume; }
 		}
 
-		public float MinXCoord
+		public float MinimumXCoodinate
 		{
 			get { return Origin.X; }
 		}
 
-		public float MaxXCoord
+		public float MaximumXCoordinate
 		{
 			get { return (Origin.X + VoxelSpacing.X*ArrayDimensions.Width); }
 		}
 
-		public float MinYCoord
+		public float MinimumYCoordinate
 		{
 			get { return Origin.Y; }
 		}
 
-		public float MaxYCoord
+		public float MaximumYCoordinate
 		{
 			get { return (Origin.Y + VoxelSpacing.Y*ArrayDimensions.Height); }
 		}
 
-		public float MinZCoord
+		public float MinimumZCoordinate
 		{
 			get { return Origin.Z; }
 		}
 
-		public float MaxZCoord
+		public float MaximumZCoordinate
 		{
 			get { return (Origin.Z + VoxelSpacing.Z*ArrayDimensions.Depth); }
 		}
 
-		public float MinSpacing
+		public float MinimumSpacing
 		{
 			get { return Math.Min(Math.Min(VoxelSpacing.X, VoxelSpacing.Y), VoxelSpacing.Z); }
 		}
 
-		public float MaxSpacing
+		public float MaximumSpacing
 		{
 			get { return Math.Max(Math.Max(VoxelSpacing.X, VoxelSpacing.Y), VoxelSpacing.Z); }
 		}
@@ -247,9 +253,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get { return _origin; }
 		}
 
-		public int PadValue
+		public int PaddingValue
 		{
-			get { return _padValue; }
+			get { return _paddingValue; }
 		}
 
 		public float LongAxisMagnitude
@@ -294,11 +300,16 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get { return ConvertToPatient(CenterPoint); }
 		}
 
-		public bool IsPointInVolume(Vector3D point)
+		public bool Contains(Vector3D point)
 		{
-			return point.X >= MinXCoord && point.X <= MaxXCoord &&
-			       point.Y >= MinYCoord && point.Y <= MaxYCoord &&
-			       point.Z >= MinZCoord && point.Z <= MaxZCoord;
+			return this.Contains(point.X, point.Y, point.Z);
+		}
+
+		public bool Contains(float x, float y, float z)
+		{
+			return x >= MinimumXCoodinate && x <= MaximumXCoordinate &&
+			       y >= MinimumYCoordinate && y <= MaximumYCoordinate &&
+			       z >= MinimumZCoordinate && z <= MaximumZCoordinate;
 		}
 
 		#endregion
@@ -396,7 +407,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			vtkVolume.SetOrigin(Origin.X, Origin.Y, Origin.Z);
 			vtkVolume.SetSpacing(VoxelSpacing.X, VoxelSpacing.Y, VoxelSpacing.Z);
 
-			if (IsDataUnsigned())
+			if (!this.Signed)
 			{
 				vtkVolume.SetScalarTypeToUnsignedShort();
 				vtkVolume.GetPointData().SetScalars(
@@ -429,12 +440,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				_cachedVtkVolume = CreateVtkVolume();
 
 			// Pin the managed volume array. If not null, then already pinned so we do not re-pin.
-			if (_volArrayPinnedHandle == null)
+			if (_volumeArrayPinnedHandle == null)
 			{
-				if (IsDataUnsigned())
-					_volArrayPinnedHandle = GCHandle.Alloc(_volumeDataUInt16, GCHandleType.Pinned);
+				if (!this.Signed)
+					_volumeArrayPinnedHandle = GCHandle.Alloc(_volumeDataUInt16, GCHandleType.Pinned);
 				else
-					_volArrayPinnedHandle = GCHandle.Alloc(_volumeDataInt16, GCHandleType.Pinned);
+					_volumeArrayPinnedHandle = GCHandle.Alloc(_volumeDataInt16, GCHandleType.Pinned);
 			}
 
 			return _cachedVtkVolume;
@@ -442,15 +453,36 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		internal void ReleasePinnedVtkVolume()
 		{
-			if (_volArrayPinnedHandle != null)
+			if (_volumeArrayPinnedHandle != null)
 			{
 				// Check for null avoids calling this twice
-				_volArrayPinnedHandle.Value.Free();
-				_volArrayPinnedHandle = null;
+				_volumeArrayPinnedHandle.Value.Free();
+				_volumeArrayPinnedHandle = null;
 			}
 		}
 
 		#endregion
+
+		#endregion
+
+		#region Unit Test Accessors
+
+#if UNIT_TESTS
+
+		internal int this[int x, int y, int z]
+		{
+			get
+			{
+				if (!this.Contains(x,y,z))
+					throw new ArgumentOutOfRangeException();
+				if (this.Signed)
+					return _volumeDataInt16[x + _arrayDimensions.Width*(y + _arrayDimensions.Height*z)];
+				else
+					return _volumeDataUInt16[x + _arrayDimensions.Width * (y + _arrayDimensions.Height * z)];
+			}
+		}
+
+#endif
 
 		#endregion
 

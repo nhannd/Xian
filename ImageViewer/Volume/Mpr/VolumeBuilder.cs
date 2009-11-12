@@ -378,7 +378,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			{
 				// ensure we have at least 3 frames
 				if (_frames.Count < 3)
-					throw new CreateVolumeException(SR.MessageSourceDataSetNeedsThreeImagesForMpr);
+					throw new InsufficientFramesException();
 
 				// ensure all frames have are from the same series, and have the same frame of reference
 				string studyInstanceUid = _frames[0].Frame.StudyInstanceUid;
@@ -387,11 +387,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				foreach (IFrameReference frame in _frames)
 				{
 					if (frame.Frame.StudyInstanceUid != studyInstanceUid)
-						throw new CreateVolumeException(SR.MessageSourceDataSetMustBeSingleStudy);
+						throw new MultipleSourceSeriesException();
 					if (frame.Frame.SeriesInstanceUid != seriesInstanceUid)
-						throw new CreateVolumeException(SR.MessageSourceDataSetMustBeSingleSeries);
+						throw new MultipleSourceSeriesException();
 					if (frame.Frame.FrameOfReferenceUid != frameOfReferenceUid)
-						throw new CreateVolumeException(SR.MessageSourceDataSetMustBeSingleFrameOfReference);
+						throw new MultipleFramesOfReferenceException();
 				}
 
 				// ensure all frames have the same orientation
@@ -399,9 +399,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				foreach (IFrameReference frame in _frames)
 				{
 					if (frame.Frame.ImageOrientationPatient.IsNull)
-						throw new CreateVolumeException(SR.MessageSourceDataSetMustDefineImageOrientationPatient);
+						throw new NullImageOrientationException();
 					if (!frame.Frame.ImageOrientationPatient.EqualsWithinTolerance(orient, _orientationTolerance))
-						throw new CreateVolumeException(SR.MessageSourceDataSetMustBeSameImageOrientationPatient);
+						throw new MultipleImageOrientationsException();
 				}
 
 				// ensure all frames are sorted by slice location
@@ -414,16 +414,16 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				{
 					float currentSpacing = CalcSpaceBetweenPlanes(_frames[i].Frame, _frames[i - 1].Frame);
 					if (currentSpacing < _minimumSliceSpacing)
-						throw new CreateVolumeException(SR.MessageSourceDataSetImagesMustBeUniquelyLocatedForMpr);
+						throw new UnevenlySpacedFramesException();
 					if (!nominalSpacing.HasValue)
 						nominalSpacing = currentSpacing;
 					if (!FloatComparer.AreEqual(currentSpacing, nominalSpacing.Value, _sliceSpacingTolerance))
-						throw new CreateVolumeException(SR.MessageSourceDataSetImagesMustBeEvenlySpacedForMpr);
+						throw new UnevenlySpacedFramesException();
 				}
 
 				// ensure frames are not tilted about multiple axes (the gantry correction algorithm only supports rotations about one)
 				if (IsMultiAxialTilt(_frames[0].Frame.ImageOrientationPatient)) // suffices to check first one... they're all co-planar now!!
-					throw new CreateVolumeException(SR.MessageSourceDataSetCanOnlyGantryTiltedInOneAxis);
+					throw new UnsupportedGantryTiltAxisException();
 			}
 
 			#endregion

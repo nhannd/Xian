@@ -81,6 +81,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>MprSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="CreateVolumeException.cs" />
     <Compile Include="IMprWorkspace.cs" />
     <Compile Include="MprDisplaySet.cs" />
     <Compile Include="MprSliceSop.cs" />
@@ -89,7 +90,15 @@
     <Compile Include="IVolumeSlicerParams.cs" />
     <Compile Include="MprVolume.cs" />
     <Compile Include="ReadOnlyVolumeSlicerParams.cs" />
+    <Compile Include="Tests\AbstractMprTest.cs" />
+    <Compile Include="Tests\MprProbeTool.cs" />
     <Compile Include="Tests\SlicerTests.cs" />
+    <Compile Include="Tests\SlicePlaneTests.cs" />
+    <Compile Include="Tests\Statistics.cs" />
+    <Compile Include="Tests\VolumeBuilderTest.cs" />
+    <Compile Include="Tests\SlicerFidelityTests.cs" />
+    <Compile Include="Tests\VolumeFunction.cs" />
+    <Compile Include="Tests\MprTestVolumeTool.cs" />
     <Compile Include="Tools\ResliceToolGraphic.cs" />
     <Compile Include="Utilities\DicomImagePlane.cs" />
     <Compile Include="Utilities\MouseImageViewerToolGroup.cs" />

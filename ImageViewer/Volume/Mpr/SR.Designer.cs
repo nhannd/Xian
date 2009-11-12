@@ -142,6 +142,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &amp;Debug.
+        /// </summary>
+        public static string MenuDebug {
+            get {
+                return ResourceManager.GetString("MenuDebug", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &amp;MPR.
         /// </summary>
         public static string MenuMpr {

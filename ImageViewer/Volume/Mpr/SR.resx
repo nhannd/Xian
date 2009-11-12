@@ -246,4 +246,7 @@
   <data name="Mpr" xml:space="preserve">
     <value>MPR</value>
   </data>
+  <data name="MenuDebug" xml:space="preserve">
+    <value>&amp;Debug</value>
+  </data>
 </root>

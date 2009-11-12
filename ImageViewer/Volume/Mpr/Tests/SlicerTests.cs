@@ -33,6 +33,7 @@
 
 #pragma warning disable 1591,0419,1574,1587
 
+using System.Diagnostics;
 using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
@@ -43,6 +44,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 		public SlicerTests() {}
 
 		[Test]
+		[Ignore("This test case doesn't handle multiple solutions for the same rotation")]
 		public void TestInverseRotationMatrices()
 		{
 			for (int x = 0; x < 360; x += 15)
@@ -54,12 +56,19 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 						VolumeSlicerParams expected = new VolumeSlicerParams(x, y, z);
 						VolumeSlicerParams test = new VolumeSlicerParams(expected.SlicingPlaneRotation);
 
-						Assert.AreEqual(expected.RotateAboutX, test.RotateAboutX, float.Epsilon*10, "Computation Error in X: Q={0},{1},{2}", x, y, z);
-						Assert.AreEqual(expected.RotateAboutY, test.RotateAboutY, float.Epsilon*10, "Computation Error in Y: Q={0},{1},{2}", x, y, z);
-						Assert.AreEqual(expected.RotateAboutZ, test.RotateAboutZ, float.Epsilon*10, "Computation Error in Z: Q={0},{1},{2}", x, y, z);
+						// Within 1 one-thousandth of a degree is close enough, no?
+						Trace.WriteLine(string.Format("Expected: {0},{1},{2} Actual: {3},{4},{5}", expected.RotateAboutX, expected.RotateAboutY, expected.RotateAboutZ, test.RotateAboutX, test.RotateAboutY, test.RotateAboutZ));
+						Assert.AreEqual(expected.RotateAboutX, NormalizeDegrees(test.RotateAboutX), 1e-3, "Computation Error in X: Q={0},{1},{2}", x, y, z);
+						Assert.AreEqual(expected.RotateAboutY, NormalizeDegrees(test.RotateAboutY), 1e-3, "Computation Error in Y: Q={0},{1},{2}", x, y, z);
+						Assert.AreEqual(expected.RotateAboutZ, NormalizeDegrees(test.RotateAboutZ), 1e-3, "Computation Error in Z: Q={0},{1},{2}", x, y, z);
 					}
 				}
 			}
+		}
+
+		private static float NormalizeDegrees(float degrees)
+		{
+			return ((degrees%360) + 360)%360;
 		}
 	}
 }

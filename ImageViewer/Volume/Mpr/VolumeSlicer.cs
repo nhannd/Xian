@@ -146,7 +146,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				pointIndex++;
 
 				// Don't generate slice if point is not in volume
-				if (_volume.Volume.IsPointInVolume(throughPoint) == false)
+				if (_volume.Volume.Contains(throughPoint) == false)
 					// If we've already found some slices, or we've reached maxSlices and haven't
 					//	found any, it's time to call it a day
 					if (sliceIndex > 0 || pointIndex > maxSlices)
@@ -227,9 +227,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (settings.AutoSliceSpacing)
 			{
 				// adjust magnitude of vector by whole factor based on max volume spacing
-				if (spacingVector.Magnitude < _volume.Volume.MaxSpacing/2f)
+				if (spacingVector.Magnitude < _volume.Volume.MaximumSpacing/2f)
 				{
-					int spacingFactor = (int) (_volume.Volume.MaxSpacing/spacingVector.Magnitude);
+					int spacingFactor = (int) (_volume.Volume.MaximumSpacing/spacingVector.Magnitude);
 					spacingVector *= spacingFactor;
 				}
 			}
@@ -291,7 +291,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 					reslicer.SetOutputDimensionality(2);
 
 					// Use the volume's padding value for all pixels that are outside the volume
-					reslicer.SetBackgroundLevel(_volume.Volume.PadValue);
+					reslicer.SetBackgroundLevel(_volume.Volume.PaddingValue);
 
 					// This ensures VTK obeys the real spacing, results in all VTK slices being isotropic.
 					//	Effective spacing is the minimum of these three.
@@ -525,7 +525,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			// Because we supply the real spacing to the VTK reslicer, the slices are interpolated
 			//	as if the volume were isotropic. This results in an effective spacing that is the
 			//	minimum spacing for the volume.
-			get { return _volume.Volume.MinSpacing; }
+			get { return _volume.Volume.MinimumSpacing; }
 		}
 
 		#endregion
