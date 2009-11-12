@@ -10,6 +10,7 @@
           <Mandatory>true</Mandatory>
         </item>
       </Recipients>
+      <SuggestOtherRecipients>true</SuggestOtherRecipients>
     </item>
   </Templates>
 </TemplateDefinitions>

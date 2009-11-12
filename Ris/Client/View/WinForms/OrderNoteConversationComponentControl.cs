@@ -70,8 +70,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 			_onBehalf.DataSource = _component.OnBehalfOfGroupChoices;
 			_onBehalf.DataBindings.Add("Value", _component, "OnBehalfOf", true, DataSourceUpdateMode.OnPropertyChanged);
-			_onBehalf.Format += (
-				(source, e) => e.Value = _component.FormatOnBehalfOf(e.ListItem));
+			_onBehalf.DataBindings.Add("Enabled", _component, "IsOnBehalfOfEditable", true, DataSourceUpdateMode.OnPropertyChanged);
+			_onBehalf.Format += ((source, e) => e.Value = _component.FormatOnBehalfOf(e.ListItem));
 
 			_recipients.Table = _component.Recipients;
 			_recipients.MenuModel = _component.RecipientsActionModel;

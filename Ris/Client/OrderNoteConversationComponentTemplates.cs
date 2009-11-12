@@ -63,6 +63,11 @@ namespace ClearCanvas.Ris.Client
 			[DataMember]
 			public bool AllowPostWithoutRecipients;
 
+			/// <summary>
+			/// Specifies whether other suggested recipients should be automatically added based on the conversation history.
+			/// </summary>
+			[DataMember]
+			public bool SuggestOtherRecipients;
 
 			public List<string> GetStaffRecipients()
 			{

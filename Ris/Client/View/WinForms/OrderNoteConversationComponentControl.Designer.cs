@@ -240,9 +240,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.label1.AutoSize = true;
 			this.label1.Location = new System.Drawing.Point(3, 86);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(162, 13);
+			this.label1.Size = new System.Drawing.Size(238, 13);
 			this.label1.TabIndex = 1;
-			this.label1.Text = "Recipients (Staff or Staff Groups)";
+			this.label1.Text = "Require Acknowledgement from (Staff or Groups)";
 			// 
 			// _onBehalf
 			// 
@@ -253,7 +253,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._onBehalf.DataSource = null;
 			this._onBehalf.DisplayMember = "";
 			this._onBehalf.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this._onBehalf.LabelText = "Send on behalf of (Staff Group)";
+			this._onBehalf.LabelText = "Send on behalf of  (Group)";
 			this._onBehalf.Location = new System.Drawing.Point(1, 35);
 			this._onBehalf.Margin = new System.Windows.Forms.Padding(2);
 			this._onBehalf.Name = "_onBehalf";

@@ -110,6 +110,7 @@ namespace ClearCanvas.Ris.Client
 		#region Private Fields
 
 		private EntityRef _orderRef;
+		private List<OrderNoteDetail> _orderNotes;
 
 		private readonly List<TemplateData> _templateChoices;
 		private TemplateData _selectedTemplate;
@@ -122,7 +123,6 @@ namespace ClearCanvas.Ris.Client
 		private string _body;
 
 		private bool _urgent;
-		private bool _newConversation;
 
 		private IList<StaffGroupSummary> _onBehalfOfChoices;
 		private StaffGroupSummary _onBehalfOf;
@@ -200,7 +200,6 @@ namespace ClearCanvas.Ris.Client
 			UpdateSoftKeys();
 
 			// load the existing conversation, plus editor form data
-			var orderNotes = new List<OrderNoteDetail>();
 			GetConversationEditorFormDataResponse formDataResponse = null;
 			Platform.GetService<IOrderNoteService>(
 				service =>
@@ -214,26 +213,16 @@ namespace ClearCanvas.Ris.Client
 					var response = service.GetConversation(request);
 
 					_orderRef = response.OrderRef;
-					orderNotes = response.OrderNotes;
+					_orderNotes = response.OrderNotes;
 				});
-
-			_newConversation = orderNotes.Count == 0;
 
 
 			// init on-behalf of choices
 			_onBehalfOfChoices = formDataResponse.OnBehalfOfGroupChoices;
 			_onBehalfOfChoices.Insert(0, _emptyStaffGroup);
 
-			// if there is a selected template, use it to initialize the fields
-			if (_selectedTemplate != null)
-			{
-				InitializeFromTemplate(_selectedTemplate, formDataResponse.RecipientStaffs, formDataResponse.RecipientStaffGroups);
-			}
-			else
-			{
-				// otherwise initialize fields as a reply based on existing notes
-				InitializeReply(orderNotes);
-			}
+			// initialize from template (which may be null)
+			InitializeFromTemplate(_selectedTemplate, formDataResponse.RecipientStaffs, formDataResponse.RecipientStaffGroups);
 
 			// build the action model
 			_recipientsActionModel = new CrudActionModel(true, false, true, new ResourceResolver(this.GetType(), true));
@@ -241,7 +230,7 @@ namespace ClearCanvas.Ris.Client
 			_recipientsActionModel.Delete.SetClickHandler(DeleteRecipient);
 
 			// init conversation view component
-			_orderNoteViewComponent = new OrderNoteViewComponent(orderNotes);
+			_orderNoteViewComponent = new OrderNoteViewComponent(_orderNotes);
 			_orderNoteViewComponent.CheckedItemsChanged += delegate { NotifyPropertyChanged("CompleteButtonLabel"); };
 			_orderNotesComponentHost = new ChildComponentHost(this.Host, _orderNoteViewComponent);
 			_orderNotesComponentHost.StartComponent();
@@ -295,6 +284,7 @@ namespace ClearCanvas.Ris.Client
 				{
 					_selectedTemplate = (TemplateData)value;
 					NotifyPropertyChanged("SelectedTemplate");
+					NotifyPropertyChanged("IsOnBehalfOfEditable");
 					InitializeFromTemplate(_selectedTemplate);
 				}
 			}
@@ -349,6 +339,15 @@ namespace ClearCanvas.Ris.Client
 					NotifyPropertyChanged("OnBehalfOf");
 					OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName = _onBehalfOf != null ? _onBehalfOf.Name : string.Empty;
 				}
+			}
+		}
+
+		public bool IsOnBehalfOfEditable
+		{
+			get
+			{
+				// only editable if no template in effect
+				return _selectedTemplate == null;
 			}
 		}
 
@@ -494,19 +493,23 @@ namespace ClearCanvas.Ris.Client
 		{
 			var staffRecips = new List<StaffSummary>();
 			var groupRecips = new List<StaffGroupSummary>();
-			var staffRecipIds = template.GetStaffRecipients();
-			var groupRecipIds = template.GetGroupRecipients();
-			if (staffRecipIds.Count > 0 || groupRecipIds.Count > 0)
+
+			if(template != null)
 			{
-				// load the recipient staff/groups defined in the template
-				Platform.GetService<IOrderNoteService>(
-					service =>
-					{
-						var formDataRequest = new GetConversationEditorFormDataRequest(staffRecipIds, groupRecipIds);
-						var formDataResponse = service.GetConversationEditorFormData(formDataRequest);
-						staffRecips = formDataResponse.RecipientStaffs;
-						groupRecips = formDataResponse.RecipientStaffGroups;
-					});
+				var staffRecipIds = template.GetStaffRecipients();
+				var groupRecipIds = template.GetGroupRecipients();
+				if (staffRecipIds.Count > 0 || groupRecipIds.Count > 0)
+				{
+					// load the recipient staff/groups defined in the template
+					Platform.GetService<IOrderNoteService>(
+						service =>
+						{
+							var formDataRequest = new GetConversationEditorFormDataRequest(staffRecipIds, groupRecipIds);
+							var formDataResponse = service.GetConversationEditorFormData(formDataRequest);
+							staffRecips = formDataResponse.RecipientStaffs;
+							groupRecips = formDataResponse.RecipientStaffGroups;
+						});
+				}
 			}
 
 			InitializeFromTemplate(template, staffRecips, groupRecips);
@@ -516,74 +519,74 @@ namespace ClearCanvas.Ris.Client
 			List<StaffSummary> templateStaffs,
 			List<StaffGroupSummary> templateGroups)
 		{
-			// take from template, and update the user prefs
-			var groupName = template.OnBehalfOfGroup;
-			OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName = groupName;
-			OrderNoteConversationComponentSettings.Default.Save();
+			InitializeOnBehalfOf(template);
+			InitializeRecipients(template, templateStaffs, templateGroups);
 
-			_onBehalfOf = CollectionUtils.SelectFirst(_onBehalfOfChoices, group => group.Name == groupName);
-
-			_recipients.Items.Clear();
-
-			// add recipients
-			foreach (var recipient in template.Recipients)
+			if(template != null)
 			{
-				var staffOrGroup = recipient.Type == RecipientType.Staff ?
-					(object)CollectionUtils.SelectFirst(templateStaffs, s => s.StaffId == recipient.Id)
-					: CollectionUtils.SelectFirst(templateGroups, g => g.Name == recipient.Id);
-
-				_recipients.Add(staffOrGroup, recipient.Mandatory, true);
+				// set note content
+				this.Body = template.NoteContent;
 			}
-
-			// set note content
-			this.Body = template.NoteContent;
 		}
 
-		private void InitializeReply(List<OrderNoteDetail> orderNotes)
+		private void InitializeOnBehalfOf(TemplateData template)
 		{
-			// find all staff groups with acknowledgements pending, which the current user belongs to
-			var myGroupsPendingAck = AggregateRecipients(orderNotes,
-										n => n.GroupRecipients,
-										gr => !gr.IsAcknowledged,
-										gr => gr.Group,
-										g => _onBehalfOfChoices.Contains(g));
+			if (template != null)
+			{
+				// take from template, and update the user prefs
+				var groupName = template.OnBehalfOfGroup;
+				OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName = StringUtilities.EmptyIfNull(groupName);
+				OrderNoteConversationComponentSettings.Default.Save();
 
-			// get the saved 'preferred' group
-			var preferredGroup = CollectionUtils.SelectFirst(_onBehalfOfChoices,
-				g => g.Name == OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName);
+				_onBehalfOf = CollectionUtils.SelectFirst(_onBehalfOfChoices, group => group.Name == groupName);
+			}
+			else
+			{
+				// if not set from template, use the saved setting value
+				_onBehalfOf = CollectionUtils.SelectFirst(_onBehalfOfChoices,
+														  g => g.Name == OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName);
+			}
+		}
 
-			// use preferred group if a) it is one of those pending ack, or b) there are no pending acks,
-			// otherwise just take the 1st group pending ack
-			_onBehalfOf = (preferredGroup != null && myGroupsPendingAck.Contains(preferredGroup) || myGroupsPendingAck.Count == 0) ?
-									preferredGroup : CollectionUtils.FirstElement(myGroupsPendingAck);
+		private void InitializeRecipients(TemplateData template, List<StaffSummary> templateStaffs, List<StaffGroupSummary> templateGroups)
+		{
+			_recipients.Items.Clear();
 
-			// compute the recipients based on the following rules
-			var ackableNotes = CollectionUtils.Select(orderNotes, n => n.CanAcknowledge);
-			var sendersPendingAck = CollectionUtils.Map<OrderNoteDetail, object>(ackableNotes, n => n.OnBehalfOfGroup ?? (object)n.Author);
+			// add recipients from template if not null
+			if (template != null)
+			{
+				foreach (var recipient in template.Recipients)
+				{
+					var staffOrGroup = recipient.Type == RecipientType.Staff ?
+										(object)CollectionUtils.SelectFirst(templateStaffs, s => s.StaffId == recipient.Id)
+										: CollectionUtils.SelectFirst(templateGroups, g => g.Name == recipient.Id);
 
-			// 1. add any senders (staff or groups) of notes that current user can ack
-			// these recips are checked by default
-			_recipients.AddRange(sendersPendingAck, false, true);
+					_recipients.Add(staffOrGroup, recipient.Mandatory, true);
+				}
+			}
+
+			if(template == null || template.SuggestOtherRecipients)
+			{
+				// add additional recipients according to following algorithm
+
+				// find all notes sent either directly to the current user, or to a group to which current user belongs
+				var notesSentToCurrentUser =
+					CollectionUtils.Select(_orderNotes,
+										   n => CollectionUtils.Contains(n.StaffRecipients, sr => IsStaffCurrentUser(sr.Staff)) ||
+												CollectionUtils.Contains(n.GroupRecipients, gr => _onBehalfOfChoices.Contains(gr.Group)));
+
+				// get the set of senders (staff or groups) that posted notes to the current user
+				var sendersOfNotesToCurrentUser =
+					CollectionUtils.Map(notesSentToCurrentUser, (OrderNoteDetail n) => n.OnBehalfOfGroup ?? (object)n.Author);
+
+				// remove the current user from this list
+				sendersOfNotesToCurrentUser = CollectionUtils.Reject(sendersOfNotesToCurrentUser,
+					sender => sender is StaffSummary && IsStaffCurrentUser((StaffSummary)sender));
 
 
-			// 2. add all other groups that were party to the conversation, excluding any covered by rule 1, and the OnBehalfOf group
-			// these recips are checked by default iff there are no sendersPendingAck
-			var otherGroups = AggregateRecipients(orderNotes,
-										n => n.GroupRecipients,
-										gr => true,
-										gr => gr.Group,
-										g => !Equals(g, _onBehalfOf) && !sendersPendingAck.Contains(g));
-			_recipients.AddRange(otherGroups, false, sendersPendingAck.Count == 0);
-
-
-			// 3. add all other staff that were party to the conversation, excluding any covered by rule 1, and the current user
-			// these recips are not checked by default
-			var otherStaff = AggregateRecipients(orderNotes,
-										n => n.StaffRecipients,
-										sr => true,
-										sr => sr.Staff,
-										s => !IsStaffCurrentUser(s) && !sendersPendingAck.Contains(s));
-			_recipients.AddRange(otherStaff, false, sendersPendingAck.Count == 0);
+				// add these senders, unchecked by default
+				_recipients.AddRange(sendersOfNotesToCurrentUser, false, false);
+			}
 		}
 
 		private static bool IsStaffCurrentUser(StaffSummary staff)
