@@ -35,8 +35,6 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-	//TODO (cr Oct 2009): put back the deleted properties.
-
 	/// <summary>
 	/// A DICOM series.
 	/// </summary>
@@ -101,6 +99,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _sop.SeriesNumber; }
 		}
 
+		/// <summary>
+		/// Gets the number of composite object instances belonging to the identified series.
+		/// </summary>
 		public int NumberOfSeriesRelatedInstances
 		{
 			get { return Sops.Count; }
@@ -112,6 +113,102 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Gets the laterality.
+		/// </summary>
+		public string Laterality 
+		{ 
+			get { return _sop.Laterality; } 
+		}
+
+		/// <summary>
+		/// Gets the series date.
+		/// </summary>
+		public string SeriesDate 
+		{ 
+			get { return _sop.SeriesDate; } 
+		}
+
+		/// <summary>
+		/// Gets the series time.
+		/// </summary>
+		public string SeriesTime 
+		{ 
+			get { return _sop.SeriesTime; } 
+		}
+
+		/// <summary>
+		/// Gets the names of performing physicians.
+		/// </summary>
+		public PersonName[] PerformingPhysiciansName 
+		{ 
+			get { return _sop.PerformingPhysiciansName; } 
+		}
+
+		/// <summary>
+		/// Gets the names of operators.
+		/// </summary>
+		public PersonName[] OperatorsName 
+		{ 
+			get { return _sop.OperatorsName; } 
+		}
+
+		/// <summary>
+		/// Gets the body part examined.
+		/// </summary>
+		public string BodyPartExamined 
+		{ 
+			get { return _sop.BodyPartExamined; } 
+		}
+
+		/// <summary>
+		/// Gets the patient position.
+		/// </summary>
+		public string PatientPosition 
+		{ 
+			get { return _sop.PatientPosition; } 
+		}
+
+		/// <summary>
+		/// Gets the manufacturer.
+		/// </summary>
+		public string Manufacturer 
+		{ 
+			get { return _sop.Manufacturer; } 
+		}
+
+		/// <summary>
+		/// Gets the institution name.
+		/// </summary>
+		public string InstitutionName 
+		{ 
+			get { return _sop.InstitutionName; } 
+		}
+
+		/// <summary>
+		/// Gets the station name.
+		/// </summary>
+		public string StationName 
+		{ 
+			get { return _sop.StationName; } 
+		}
+
+		/// <summary>
+		/// Gets the institutional department name.
+		/// </summary>
+		public string InstitutionalDepartmentName 
+		{ 
+			get { return _sop.InstitutionalDepartmentName; } 
+		}
+
+		/// <summary>
+		/// Gets the manufacturer's model name.
+		/// </summary>
+		public string ManufacturersModelName 
+		{ 
+			get { return _sop.ManufacturersModelName; }
+		} 
 
 		public ISeriesIdentifier GetIdentifier()
 		{

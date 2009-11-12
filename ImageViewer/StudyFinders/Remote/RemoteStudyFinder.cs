@@ -69,8 +69,6 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 			requestCollection[DicomTags.PatientsBirthDate].SetStringValue("");
 			requestCollection[DicomTags.ModalitiesInStudy].SetStringValue(queryParams["ModalitiesInStudy"]);
 			requestCollection[DicomTags.NumberOfStudyRelatedInstances].SetStringValue("");
-        	//TODO (cr Oct 2009): not supposed to set this!
-			requestCollection[DicomTags.SpecificCharacterSet].SetStringValue("");
 			requestCollection[DicomTags.InstanceAvailability].SetStringValue("");
 
 			IList<DicomAttributeCollection> results = Query(selectedServer, requestCollection);

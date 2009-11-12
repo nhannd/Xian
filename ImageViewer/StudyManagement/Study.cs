@@ -38,7 +38,6 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-	//TODO (cr Oct 2009): make sure old properties not deleted.
 	/// <summary>
 	/// A DICOM study.
 	/// </summary>
@@ -122,16 +121,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _sop.AccessionNumber; }
 		}
 
-		public PersonName ReferringPhysiciansName
-		{
-			get { return _sop.ReferringPhysiciansName; }
-		}
-
 		string IStudyData.ReferringPhysiciansName
 		{
 			get { return _sop.ReferringPhysiciansName; }
 		}
 
+		/// <summary>
+		/// Gets the number of series belonging to the identified study.
+		/// </summary>
 		public int NumberOfStudyRelatedSeries
 		{
 			get { return Series.Count; }
@@ -142,6 +139,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return NumberOfStudyRelatedSeries; }
 		}
 
+		/// <summary>
+		/// Gets the number of composite object instances belonging to the identified study.
+		/// </summary>
 		public int NumberOfStudyRelatedInstances
 		{
 			get
@@ -159,6 +159,46 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Gets the referring physician's name.
+		/// </summary>
+		public PersonName ReferringPhysiciansName
+		{
+			get { return _sop.ReferringPhysiciansName; }
+		}
+
+		/// <summary>
+		/// Gets the names of physicians reading the study.
+		/// </summary>
+		public PersonName[] NameOfPhysiciansReadingStudy
+		{
+			get { return _sop.NameOfPhysiciansReadingStudy; }
+		}
+
+		/// <summary>
+		/// Gets the patient's age at the time of the study.
+		/// </summary>
+		public string PatientsAge
+		{
+			get { return _sop.PatientsAge; }
+		}
+
+		/// <summary>
+		/// Gets the admitting diagnoses descriptions.
+		/// </summary>
+		public string[] AdmittingDiagnosesDescription
+		{
+			get { return _sop.AdmittingDiagnosesDescription; }
+		}
+
+		/// <summary>
+		/// Gets the additional patient's history.
+		/// </summary>
+		public string AdditionalPatientsHistory
+		{
+			get { return _sop.AdditionalPatientsHistory; }
+		}
 
 		public IStudyRootStudyIdentifier GetIdentifier()
 		{
