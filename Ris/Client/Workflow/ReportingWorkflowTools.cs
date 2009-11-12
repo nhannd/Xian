@@ -254,7 +254,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		protected override bool Execute(ReportingWorklistItem item)
 		{
 			// show PD dialog if required
-			if (!PreliminaryDiagnosis.ShowDialogIfRequired(item, this.Context.DesktopWindow))
+			if (!PreliminaryDiagnosis.ShowDialogOnVerifyIfRequired(item, this.Context.DesktopWindow))
 			{
 				return false; // user cancelled out
 			}

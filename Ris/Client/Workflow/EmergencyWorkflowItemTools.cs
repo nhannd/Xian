@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				return PreliminaryDiagnosisSettings.Default.EmergencyDiagnosisTemplatesXml;
+				return PreliminaryDiagnosisSettings.Default.EmergencyTemplatesXml;
 			}
 		}
 
@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				return PreliminaryDiagnosisSettings.Default.EmergencyDiagnosisSoftKeysXml;
+				return PreliminaryDiagnosisSettings.Default.EmergencySoftKeysXml;
 			}
 		}
 	}

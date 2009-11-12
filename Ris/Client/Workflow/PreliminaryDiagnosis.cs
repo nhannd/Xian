@@ -48,7 +48,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <param name="worklistItem"></param>
 		/// <param name="desktopWindow"></param>
 		/// <returns>True if the dialog was shown and accepted, or if it was not required.  False if the user cancelled out of the dialog.</returns>
-		public static bool ShowDialogIfRequired(ReportingWorklistItem worklistItem, IDesktopWindow desktopWindow)
+		public static bool ShowDialogOnVerifyIfRequired(ReportingWorklistItem worklistItem, IDesktopWindow desktopWindow)
 		{
 
 			var existingConv = ConversationExists(worklistItem.OrderRef);
@@ -74,8 +74,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 				AccessionFormat.Format(worklistItem.AccessionNumber));
 
 			var component = new OrderNoteConversationComponent(worklistItem.OrderRef, OrderNoteCategory.PreliminaryDiagnosis.Key,
-															   PreliminaryDiagnosisSettings.Default.RadiologyDiagnosisTemplatesXml,
-															   PreliminaryDiagnosisSettings.Default.RadiologyDiagnosisSoftKeysXml);
+															   PreliminaryDiagnosisSettings.Default.VerificationTemplatesXml,
+															   PreliminaryDiagnosisSettings.Default.VerificationSoftKeysXml);
 
         	return ApplicationComponent.LaunchAsDialog(desktopWindow, component, title) == ApplicationComponentExitCode.Accepted;
 		}

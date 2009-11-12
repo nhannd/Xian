@@ -1,7 +1,7 @@
 ﻿<TemplateDefinitions hash="true">
   <Templates array="true">
     <item hash="true">
-      <DisplayName>Notify ER</DisplayName>
+      <DisplayName>Review Required</DisplayName>
       <OnBehalfOfGroup>Radiology Department</OnBehalfOfGroup>
       <Recipients array="true">
         <item hash="true">
@@ -10,7 +10,12 @@
           <Mandatory>true</Mandatory>
         </item>
       </Recipients>
-      <SoftKeys/>
+      <NoteContent>Review Required</NoteContent>
+    </item>
+    <item hash="true">
+      <DisplayName>No Review Required</DisplayName>
+      <OnBehalfOfGroup>Radiology Department</OnBehalfOfGroup>
+      <NoteContent>No Review Required</NoteContent>
     </item>
   </Templates>
 </TemplateDefinitions>

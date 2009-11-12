@@ -439,6 +439,8 @@
     <EmbeddedResource Include="PreliminaryDiagnosisFromEmergencyTemplates.xml" />
     <EmbeddedResource Include="PreliminaryDiagnosisFromEmergencySoftKeys.xml" />
     <EmbeddedResource Include="PreliminaryDiagnosisFromRadiologySoftKeys.xml" />
+    <EmbeddedResource Include="PreliminaryDiagnosisFromVerificationTemplates.xml" />
+    <EmbeddedResource Include="PreliminaryDiagnosisFromVerificationSoftKeys.xml" />
     <Content Include="Icons\ClearFilterLarge.png" />
     <Content Include="Icons\ClearFilterMedium.png" />
     <Content Include="Icons\ClearFilterSmall.png" />

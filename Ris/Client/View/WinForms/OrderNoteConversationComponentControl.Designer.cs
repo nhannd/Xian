@@ -310,7 +310,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._template.DataSource = null;
 			this._template.DisplayMember = "";
 			this._template.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this._template.LabelText = "Template";
+			this._template.LabelText = "Select an action";
 			this._template.Location = new System.Drawing.Point(2, 2);
 			this._template.Margin = new System.Windows.Forms.Padding(2);
 			this._template.Name = "_template";

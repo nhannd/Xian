@@ -164,8 +164,10 @@ namespace ClearCanvas.Ris.Client
 				delegate
 				{
 					// if body is non-empty (a new note is being posted), must have at least 1 recip
+					// unless template explicitly specified that notes can be posted without recipients
 					var atLeastOneRecipient = CollectionUtils.Contains(_recipients.Items, r => r.IsChecked);
-					return new ValidationResult(atLeastOneRecipient || IsBodyEmpty, SR.MessageNoRecipientsSelected);
+					var allowPostWithoutRecips = _selectedTemplate != null && _selectedTemplate.AllowPostWithoutRecipients;
+					return new ValidationResult(allowPostWithoutRecips || atLeastOneRecipient || IsBodyEmpty, SR.MessageNoRecipientsSelected);
 				}));
 
 			this.Validation.Add(new ValidationRule("Body",
@@ -222,8 +224,8 @@ namespace ClearCanvas.Ris.Client
 			_onBehalfOfChoices = formDataResponse.OnBehalfOfGroupChoices;
 			_onBehalfOfChoices.Insert(0, _emptyStaffGroup);
 
-			// if there is no existing conversation, and there is a selected template, use it to initialize the fields
-			if (_newConversation && _selectedTemplate != null)
+			// if there is a selected template, use it to initialize the fields
+			if (_selectedTemplate != null)
 			{
 				InitializeFromTemplate(_selectedTemplate, formDataResponse.RecipientStaffs, formDataResponse.RecipientStaffGroups);
 			}
@@ -274,7 +276,7 @@ namespace ClearCanvas.Ris.Client
 
 		public bool TemplateChoicesVisible
 		{
-			get { return _newConversation && _templateChoices.Count > 1; }
+			get { return _templateChoices.Count > 1; }
 		}
 
 		public object FormatTemplate(object p)
@@ -283,6 +285,7 @@ namespace ClearCanvas.Ris.Client
 			return template.DisplayName;
 		}
 
+		[ValidateNotNull]
 		public object SelectedTemplate
 		{
 			get { return _selectedTemplate; }

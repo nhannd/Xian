@@ -710,7 +710,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					return;
 
 
-				if (!PreliminaryDiagnosis.ShowDialogIfRequired(this.WorklistItem, this.Host.DesktopWindow))
+				if (!PreliminaryDiagnosis.ShowDialogOnVerifyIfRequired(this.WorklistItem, this.Host.DesktopWindow))
 				{
 					return; // user cancelled out
 				}

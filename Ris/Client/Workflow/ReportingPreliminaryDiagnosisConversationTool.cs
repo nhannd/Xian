@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				return PreliminaryDiagnosisSettings.Default.RadiologyDiagnosisTemplatesXml;
+				return PreliminaryDiagnosisSettings.Default.RadiologyTemplatesXml;
 			}
 		}
 
@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				return PreliminaryDiagnosisSettings.Default.RadiologyDiagnosisSoftKeysXml;
+				return PreliminaryDiagnosisSettings.Default.RadiologySoftKeysXml;
 			}
 		}
 	}

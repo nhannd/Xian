@@ -57,6 +57,12 @@ namespace ClearCanvas.Ris.Client
 			[DataMember]
 			public string NoteContent;
 
+			/// <summary>
+			/// Specifies whether a note can be posted without any recipients.
+			/// </summary>
+			[DataMember]
+			public bool AllowPostWithoutRecipients;
+
 
 			public List<string> GetStaffRecipients()
 			{
