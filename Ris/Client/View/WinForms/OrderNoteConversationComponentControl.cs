@@ -86,9 +86,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 			_component.NewRecipientAdded += _component_NewRecipientAdded;
 
-			_onBehalf.DataBindings.Add("Enabled", _component, "IsRecipientChangeEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-			_recipients.DataBindings.Add("Enabled", _component, "IsRecipientChangeEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-
 			CreateSoftKeys();
 		}
 

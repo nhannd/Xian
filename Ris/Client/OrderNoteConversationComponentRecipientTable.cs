@@ -53,9 +53,10 @@ namespace ClearCanvas.Ris.Client
 					
 			}
 
-			public RecipientTableItem(object staffOrGroupSummary)
+			public RecipientTableItem(object staffOrGroupSummary, bool mandatory)
 			{
 				this.Recipient = staffOrGroupSummary;
+				this.IsMandatory = mandatory;
 			}
 
 			/// <summary>
@@ -91,6 +92,8 @@ namespace ClearCanvas.Ris.Client
 
 			public StaffGroupSummary StaffGroupSummary { get; private set; }
 
+			public bool IsMandatory { get; private set; }
+
 			public static string Format(object staffOrGroup)
 			{
 				return (staffOrGroup is StaffSummary)
@@ -109,26 +112,31 @@ namespace ClearCanvas.Ris.Client
 			public RecipientTable(OrderNoteConversationComponent owner)
 			{
 				_owner = owner;
-				this.Columns.Add(new TableColumn<Checkable<RecipientTableItem>, bool>(
+				var checkColumn = new TableColumn<Checkable<RecipientTableItem>, bool>(
 					"Select",
 					item => item.IsChecked,
-					delegate(Checkable<RecipientTableItem> item, bool value)
+					(item, value) =>
 					{
 						item.IsChecked = value;
 						// bug: #2594: forces validation to refresh otherwise the screen doesn't update 
 						// only when validation is visible
-						if(_owner.ValidationVisible)
+						if (_owner.ValidationVisible)
 							_owner.ShowValidation(true);
 					},
-					0.4f));
+					0.4f) { EditableHandler = (x => !x.Item.IsMandatory) };
+
+				this.Columns.Add(checkColumn);
 
 				var nameColumn = new TableColumn<Checkable<RecipientTableItem>, object>(
 					"Name",
 					item => item.Item.Recipient,
 					(x, value) => x.Item.Recipient = value,
-					2.0f);
-				nameColumn.ValueFormatter = RecipientTableItem.Format;
-				nameColumn.CellEditor = new LookupHandlerCellEditor(new StaffAndGroupLookupHandler(owner.Host.DesktopWindow));
+					2.0f)
+                 	{
+                 		ValueFormatter = RecipientTableItem.Format,
+                 		CellEditor = new LookupHandlerCellEditor(new StaffAndGroupLookupHandler(owner.Host.DesktopWindow)),
+						EditableHandler = (x => !x.Item.IsMandatory)
+                 	};
 				this.Columns.Add(nameColumn);
 			}
 
@@ -156,22 +164,11 @@ namespace ClearCanvas.Ris.Client
 				}
 			}
 
-			public void Add(object staffOrGroup, bool @checked)
-			{
-				var exists = CollectionUtils.Contains(this.Items,
-				                            item => Equals(item.Item.Recipient, staffOrGroup));
-
-				if(!exists)
-				{
-					this.Items.Add(new Checkable<RecipientTableItem>(new RecipientTableItem(staffOrGroup), @checked));
-				}
-			}
-
-			public void AddRange(IEnumerable staffOrGroups, bool @checked)
+			public void AddRange(IEnumerable staffOrGroups, bool mandatory, bool @checked)
 			{
 				foreach (var item in staffOrGroups)
 				{
-					Add(item, @checked);
+					Add(item, mandatory, @checked);
 				}
 			}
 
@@ -181,6 +178,18 @@ namespace ClearCanvas.Ris.Client
 				this.Items.Add(recip);
 				return recip;
 			}
+
+			public void Add(object staffOrGroup, bool mandatory, bool @checked)
+			{
+				var exists = CollectionUtils.Contains(this.Items,
+											item => Equals(item.Item.Recipient, staffOrGroup));
+
+				if (!exists)
+				{
+					this.Items.Add(new Checkable<RecipientTableItem>(new RecipientTableItem(staffOrGroup, mandatory), mandatory || @checked));
+				}
+			}
+
 		}
 	}
 }

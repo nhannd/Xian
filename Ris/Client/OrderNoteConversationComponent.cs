@@ -195,7 +195,7 @@ namespace ClearCanvas.Ris.Client
 			_selectedTemplate = _templateChoices.Count == 1 ? _templateChoices[0] : null;
 
 			// create soft keys
-			UpdateSoftKeys(_selectedTemplate);
+			UpdateSoftKeys();
 
 			// load the existing conversation, plus editor form data
 			var orderNotes = new List<OrderNoteDetail>();
@@ -292,21 +292,8 @@ namespace ClearCanvas.Ris.Client
 				{
 					_selectedTemplate = (TemplateData)value;
 					NotifyPropertyChanged("SelectedTemplate");
-					NotifyPropertyChanged("IsRecipientChangeEnabled");
 					InitializeFromTemplate(_selectedTemplate);
-					UpdateSoftKeys(_selectedTemplate);
 				}
-			}
-		}
-
-		public bool IsRecipientChangeEnabled
-		{
-			get
-			{
-				// if no template is selected, must be allowed to select recipients
-				// even if a template is selected, but there is an existing conversation,
-				// we must allow user to modify recipients, because the algorithm that selects defaults is not all-knowing
-				return _selectedTemplate == null || !_newConversation;
 			}
 		}
 
@@ -490,18 +477,12 @@ namespace ClearCanvas.Ris.Client
 			get { return string.IsNullOrEmpty(_body); }
 		}
 
-		private void UpdateSoftKeys(TemplateData template)
+		private void UpdateSoftKeys()
 		{
 			_softKeys.Clear();
 
 			// add default soft keys
 			_softKeys.AddRange(_defaultSoftKeys);
-
-			// template may define additional soft keys
-			if (template != null)
-			{
-				_softKeys.AddRange(template.SoftKeys);
-			}
 
 			NotifyPropertyChanged("SoftKeyNames");
 		}
@@ -540,8 +521,19 @@ namespace ClearCanvas.Ris.Client
 			_onBehalfOf = CollectionUtils.SelectFirst(_onBehalfOfChoices, group => group.Name == groupName);
 
 			_recipients.Items.Clear();
-			_recipients.AddRange(templateStaffs, true);
-			_recipients.AddRange(templateGroups, true);
+
+			// add recipients
+			foreach (var recipient in template.Recipients)
+			{
+				var staffOrGroup = recipient.Type == RecipientType.Staff ?
+					(object)CollectionUtils.SelectFirst(templateStaffs, s => s.StaffId == recipient.Id)
+					: CollectionUtils.SelectFirst(templateGroups, g => g.Name == recipient.Id);
+
+				_recipients.Add(staffOrGroup, recipient.Mandatory, true);
+			}
+
+			// set note content
+			this.Body = template.NoteContent;
 		}
 
 		private void InitializeReply(List<OrderNoteDetail> orderNotes)
@@ -568,7 +560,7 @@ namespace ClearCanvas.Ris.Client
 
 			// 1. add any senders (staff or groups) of notes that current user can ack
 			// these recips are checked by default
-			_recipients.AddRange(sendersPendingAck, true);
+			_recipients.AddRange(sendersPendingAck, false, true);
 
 
 			// 2. add all other groups that were party to the conversation, excluding any covered by rule 1, and the OnBehalfOf group
@@ -578,7 +570,7 @@ namespace ClearCanvas.Ris.Client
 										gr => true,
 										gr => gr.Group,
 										g => !Equals(g, _onBehalfOf) && !sendersPendingAck.Contains(g));
-			_recipients.AddRange(otherGroups, sendersPendingAck.Count == 0);
+			_recipients.AddRange(otherGroups, false, sendersPendingAck.Count == 0);
 
 
 			// 3. add all other staff that were party to the conversation, excluding any covered by rule 1, and the current user
@@ -588,7 +580,7 @@ namespace ClearCanvas.Ris.Client
 										sr => true,
 										sr => sr.Staff,
 										s => !IsStaffCurrentUser(s) && !sendersPendingAck.Contains(s));
-			_recipients.AddRange(otherStaff, sendersPendingAck.Count == 0);
+			_recipients.AddRange(otherStaff, false, sendersPendingAck.Count == 0);
 		}
 
 		private static bool IsStaffCurrentUser(StaffSummary staff)
@@ -632,7 +624,7 @@ namespace ClearCanvas.Ris.Client
 
 		private void OnSelectedRecipientChanged()
 		{
-			_recipientsActionModel.Delete.Enabled = _selectedRecipient != null;
+			_recipientsActionModel.Delete.Enabled = _selectedRecipient != null && !_selectedRecipient.Item.IsMandatory;
 			NotifyPropertyChanged("SelectedRecipient");
 		}
 

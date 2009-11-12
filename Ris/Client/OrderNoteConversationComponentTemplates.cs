@@ -52,10 +52,11 @@ namespace ClearCanvas.Ris.Client
 			public List<RecipientData> Recipients;
 
 			/// <summary>
-			/// Set of soft keys.
+			/// Note body.
 			/// </summary>
 			[DataMember]
-			public List<SoftKeyData> SoftKeys;
+			public string NoteContent;
+
 
 			public List<string> GetStaffRecipients()
 			{
@@ -86,6 +87,12 @@ namespace ClearCanvas.Ris.Client
 			/// </summary>
 			[DataMember]
 			public string Id;
+
+			/// <summary>
+			/// Indicates whether the recipient is mandatory, in which case the user cannot remove it.
+			/// </summary>
+			[DataMember]
+			public bool Mandatory;
 		}
 
 		[DataContract]
