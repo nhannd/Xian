@@ -16,6 +16,7 @@
       <DisplayName>No Review Required</DisplayName>
       <OnBehalfOfGroup>Radiology Department</OnBehalfOfGroup>
       <NoteContent>No Review Required</NoteContent>
+      <AllowPostWithoutRecipients>true</AllowPostWithoutRecipients>
     </item>
   </Templates>
 </TemplateDefinitions>
