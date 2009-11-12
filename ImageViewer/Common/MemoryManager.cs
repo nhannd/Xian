@@ -11,6 +11,8 @@ namespace ClearCanvas.ImageViewer.Common
 
 	public static partial class MemoryManager
 	{
+		private const int _defaultWaitTimeMilliseconds = 1000;
+
 		public delegate void RetryableCommand();
 
 		#region Private Fields
@@ -262,7 +264,11 @@ namespace ClearCanvas.ImageViewer.Common
 
 		#region Execute
 
-		//TODO: unsure of how/where this method is being used - review.
+		public static void Execute(RetryableCommand retryableCommand)
+		{
+			Execute(retryableCommand, _defaultWaitTimeMilliseconds);
+		}
+
 		public static void Execute(RetryableCommand retryableCommand, int maxWaitTimeMilliseconds)
 		{
 			Execute(retryableCommand, TimeSpan.FromMilliseconds(maxWaitTimeMilliseconds));
@@ -276,12 +282,16 @@ namespace ClearCanvas.ImageViewer.Common
 
 		#endregion
 
+		public static T[] Allocate<T>(int count)
+		{
+			return Allocate<T>(count, _defaultWaitTimeMilliseconds);
+		}
+
 		public static T[] Allocate<T>(int count, int maxWaitTimeMilliseconds)
 		{
 			return Allocate<T>(count, TimeSpan.FromMilliseconds(maxWaitTimeMilliseconds));
 		}
 
-		//TODO: unsure of how/where this method is being used - review.
 		public static T[] Allocate<T>(int count, TimeSpan maxWaitTime)
 		{
 			T[] returnValue = null;

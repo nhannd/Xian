@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				7, // the high bit is now 7 after upconverting
 				false, false, // overlays aren't signed and don't get inverted
 				1, 0, // overlays have no rescale
-				MemoryManager.Allocate<byte>(rows*columns, 1000)); // new empty pixel buffer
+				MemoryManager.Allocate<byte>(rows*columns)); // new empty pixel buffer
 
 			this.Color = System.Drawing.Color.PeachPuff;
 			base.Graphics.Add(_overlayGraphic);

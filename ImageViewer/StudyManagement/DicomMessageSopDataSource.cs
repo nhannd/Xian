@@ -289,10 +289,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				{
 					DicomUncompressedPixelData pixelData = new DicomUncompressedPixelData(message);
 					// DICOM library uses zero-based frame numbers
-					MemoryManager.Execute(delegate
-					                      	{
-					                      		rawPixelData = pixelData.GetFrame(_frameIndex);
-					                      	}, 500);
+					MemoryManager.Execute(delegate { rawPixelData = pixelData.GetFrame(_frameIndex); });
 
 					ExtractOverlayFrames(rawPixelData, pixelData.BitsAllocated);
 
@@ -302,11 +299,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				{
 					DicomCompressedPixelData pixelData = new DicomCompressedPixelData(message);
 					string pi = null;
-					
-					MemoryManager.Execute(delegate
-					                      	{
-					                      		rawPixelData = pixelData.GetFrame(_frameIndex, out pi);
-											}, 500);
+
+					MemoryManager.Execute(delegate { rawPixelData = pixelData.GetFrame(_frameIndex, out pi); });
 
 					photometricInterpretation = PhotometricInterpretation.FromCodeString(pi);
 				}
@@ -599,7 +593,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			int rows = dicomAttributeProvider[DicomTags.Rows].GetInt32(0, 0);
 			int columns = dicomAttributeProvider[DicomTags.Columns].GetInt32(0, 0);
 			int sizeInBytes = rows * columns * 4;
-			byte[] argbPixelData = MemoryManager.Allocate<byte>(sizeInBytes, 1000);
+			byte[] argbPixelData = MemoryManager.Allocate<byte>(sizeInBytes);
 
 			// Convert palette colour images to ARGB so we don't get interpolation artifacts
 			// when rendering.

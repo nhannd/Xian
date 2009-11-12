@@ -81,7 +81,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this._imageScroller.Size = new System.Drawing.Size(16, 150);
 			this._imageScroller.TabIndex = 0;
 			this._imageScroller.Visible = false;
-			this._imageScroller.ValueChanged += new System.EventHandler(this.ImageScrollerValueChanged);
 			// 
 			// ImageBoxControl
 			// 

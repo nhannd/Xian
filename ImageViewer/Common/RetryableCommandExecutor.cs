@@ -37,16 +37,16 @@ namespace ClearCanvas.ImageViewer.Common
 				catch (OutOfMemoryException)
 				{
 					UpdateWaitTimeRemaining();
-					if (_waitTimeRemaining > TimeSpan.Zero)
-					{
-						if (Platform.IsLogLevelEnabled(LogLevel.Debug))
-						{
-							Platform.Log(LogLevel.Debug, "Detected out of memory condition; retrying for up to {0} seconds.",
-									 _waitTimeRemaining.TotalSeconds);
-						}
+					if (_waitTimeRemaining <= TimeSpan.Zero)
+						throw;
 
-						RetryExecute();
+					if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+					{
+						Platform.Log(LogLevel.Debug, "Detected out of memory condition; retrying for up to {0} seconds.",
+								 _waitTimeRemaining.TotalSeconds);
 					}
+
+					RetryExecute();
 				}
 			}
 

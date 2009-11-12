@@ -200,7 +200,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			/// </remarks>		
 			public override byte[] GetNormalizedPixelData()
 			{
-				//TODO (cr Oct 2009): do we need to use Platform.Time?
 				_largeObjectContainerData.LastAccessTime = DateTime.Now;
 
 				byte[] pixelData = _pixelData;

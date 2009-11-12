@@ -60,6 +60,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			_imageScrollerVisible = _imageScroller.Visible;
 			_imageScroller.GotFocus += ImageScrollerGotFocus;
+			_imageScroller.ValueChanged += ImageScrollerValueChanged;
 
 			this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 			this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
@@ -360,9 +361,14 @@ namespace ClearCanvas.ImageViewer.View.WinForms
     		}
     	}
 
-    	private void ImageScrollerValueChanged(object sender, EventArgs e)
+    	private void ImageScrollerValueChanged(object sender, TrackSlider.ValueChangedEventArgs e)
     	{
-			if (_imageScroller.Focused)
+			if (e.UserAction == TrackSlider.UserAction.None)
+			{
+				//The change has occurred due to external forces ... so, drawing is up to the external force!
+				_imageScroller.Update();
+			}
+			else
 			{
 				//we only draw the image box when focused because the user is actually dragging the scrollbar!
 				_imageBox.TopLeftPresentationImageIndex = _imageScroller.Value;
@@ -372,11 +378,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 				// this ordering of draw makes it look smoother for some reason.
 				_imageBox.Draw();
-			}
-			else
-			{
-				//The change has occurred due to external forces ... so, drawing is up to the external force!
-				_imageScroller.Update();
 			}
     	}
 
@@ -404,7 +405,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 					visibleNow = true;
 
 					int topLeftIndex = _imageBox.TopLeftPresentationImageIndex;
-					_imageScroller.SetValueRange(topLeftIndex, 0, maximum);
+					_imageScroller.SetValueAndRange(topLeftIndex, 0, maximum);
 					_imageScroller.Increment = Math.Max(1, tileCount);
 					_imageScroller.Value = topLeftIndex;
 				}
