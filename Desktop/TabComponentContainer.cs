@@ -33,25 +33,44 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
-    /// <summary>
+	/// <summary>
 	/// Defines an extension point for views onto the <see cref="TabComponentContainer"/>.
-    /// </summary>
+	/// </summary>
 	public sealed class TabComponentContainerViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	{
+	}
 
-    /// <summary>
-    /// Hosts multiple <see cref="IApplicationComponent"/>s in a tabbed view.
-    /// </summary>
+	/// <summary>
+	/// Hosts multiple <see cref="IApplicationComponent"/>s in a tabbed view.
+	/// </summary>
 	[AssociateView(typeof(TabComponentContainerViewExtensionPoint))]
-    public class TabComponentContainer : PagedComponentContainer<TabPage>
-    {
+	public class TabComponentContainer : PagedComponentContainer<TabPage>
+	{
+		private readonly bool _useLightTheme;
 
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        public TabComponentContainer()
-        {
-        }
-    }
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		public TabComponentContainer()
+			: this(true)
+		{
+		}
+
+		/// <summary>
+		/// Constructor which can specify light or dark visual theme for tab container background.
+		/// </summary>
+		/// <param name="useLightTheme"></param>
+		public TabComponentContainer(bool useLightTheme)
+		{
+			_useLightTheme = useLightTheme;
+		}
+
+		/// <summary>
+		/// Indicates if the tab container should use a light background or dark background.
+		/// </summary>
+		public bool UseLightTheme
+		{
+			get { return _useLightTheme; }
+		}
+	}
 }

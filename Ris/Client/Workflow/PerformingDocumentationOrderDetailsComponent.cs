@@ -97,7 +97,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_protocolSummaryComponentHost = new ChildComponentHost(this.Host, new ProtocolSummaryComponent(_context));
 			_protocolSummaryComponentHost.StartComponent();
 
-			_rightHandComponentContainer = new TabComponentContainer();
+			_rightHandComponentContainer = new TabComponentContainer(false);
 			_orderAdditionalInfoComponent = new OrderAdditionalInfoComponent();
 			_orderAdditionalInfoComponent.OrderExtendedProperties = _context.OrderExtendedProperties;
 			_orderAdditionalInfoComponent.HealthcareContext = _worklistItem;

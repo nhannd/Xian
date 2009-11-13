@@ -52,6 +52,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_tabControl.ControlRightOffset = 3;
 			_tabControl.ControlBottomOffset = 3;
 
+			_tabControl.IDE2005Style = _component.UseLightTheme
+				? Crownwood.DotNetMagic.Controls.IDE2005Style.Standard
+				: Crownwood.DotNetMagic.Controls.IDE2005Style.StandardDark;
+
 			foreach (TabPage page in _component.Pages)
 			{
 				Crownwood.DotNetMagic.Controls.TabPage tabPageUI = new Crownwood.DotNetMagic.Controls.TabPage(page.Name);

@@ -120,7 +120,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_protocolEditorComponentHost.Component.ModifiedChanged += ((sender, args) =>
 				this.Modified = this.Modified || _protocolEditorComponentHost.Component.Modified);
 
-			_rightHandComponentContainer = new TabComponentContainer();
+			_rightHandComponentContainer = new TabComponentContainer(false);
 			_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleOrderDetails, _orderDetailViewComponent = new ProtocollingOrderDetailViewComponent(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef)));
 			_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitlePriors, _priorReportsComponent = new PriorReportComponent(this.WorklistItem)));
 			_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleOrderAttachments, _orderAttachmentsComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Order)));

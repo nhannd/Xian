@@ -66,7 +66,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			this._tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._tabControl.Location = new System.Drawing.Point(4, 4);
-			this._tabControl.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._tabControl.Margin = new System.Windows.Forms.Padding(4);
 			this._tabControl.MaximumHeaderWidth = 256;
 			this._tabControl.Name = "_tabControl";
 			this._tabControl.OfficeDockSides = false;
@@ -85,7 +85,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.Control;
 			this.Controls.Add(this._tabControl);
-			this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "TabComponentContainerControl";
 			this.Padding = new System.Windows.Forms.Padding(4, 4, 0, 4);
 			this.Size = new System.Drawing.Size(1033, 558);

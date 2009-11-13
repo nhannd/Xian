@@ -67,7 +67,7 @@ namespace ClearCanvas.Ris.Client
 			_staffGroupSummaryComponent.SummarySelectionChanged += OnSummaryComponentSummarySelectionChanged;
 			_staffGroupSummaryComponent.ItemDoubleClicked += OnSummaryComponentItemDoubleClicked;
 
-			_tabComponentContainer = new TabComponentContainer();
+			_tabComponentContainer = new TabComponentContainer(false);
 			_tabComponentContainer.Pages.Add(new TabPage(SR.TitleStaff, _staffSummaryComponent));
 			_tabComponentContainer.Pages.Add(new TabPage(SR.TitleStaffGroups, _staffGroupSummaryComponent));
 

@@ -416,7 +416,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_bannerHost = new ChildComponentHost(this.Host, new BannerComponent(this.WorklistItem));
 				_bannerHost.StartComponent();
 
-				_rightHandComponentContainer = new TabComponentContainer();
+				_rightHandComponentContainer = new TabComponentContainer(false);
 				_rightHandComponentContainer.ValidationStrategy = new AllComponentsValidationStrategy();
 
 				_orderComponent = new ReportingOrderDetailViewComponent(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef);

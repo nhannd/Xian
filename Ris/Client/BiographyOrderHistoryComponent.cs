@@ -175,7 +175,7 @@ namespace ClearCanvas.Ris.Client
 			_orderDocumentComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Order);
 			_orderAdditionalInfoComponent = new OrderAdditionalInfoComponent(true);
 
-			_rightHandComponentContainer = new TabComponentContainer();
+			_rightHandComponentContainer = new TabComponentContainer(false);
 			_rightHandComponentContainer.Pages.Add(new TabPage("Order Details", _orderDetailComponent));
 			_rightHandComponentContainer.Pages.Add(new TabPage("Visit Details", _visitDetailComponent));
 			_rightHandComponentContainer.Pages.Add(new TabPage("Additional Info", _orderAdditionalInfoComponent));
