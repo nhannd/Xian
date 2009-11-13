@@ -103,6 +103,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			this._folderView.Size = new System.Drawing.Size(637, 545);
 			this._folderView.TabIndex = 200;
 			this._folderView.ItemDoubleClick += new ClearCanvas.Controls.WinForms.FolderViewItemEventHandler(this._folderView_ItemDoubleClick);
+			this._folderView.KeyDown += new System.Windows.Forms.KeyEventHandler(this._folderControl_KeyDown);
 			this._folderView.ItemKeyEnterPressed += new ClearCanvas.Controls.WinForms.FolderViewItemEventHandler(this._folderView_ItemDoubleClick);
 			// 
 			// _folderViewContextMenu
@@ -132,6 +133,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			this._folderTree.Name = "_folderTree";
 			this._folderTree.Size = new System.Drawing.Size(319, 545);
 			this._folderTree.TabIndex = 100;
+			this._folderTree.KeyDown += new System.Windows.Forms.KeyEventHandler(this._folderControl_KeyDown);
 			// 
 			// _folderTreeContextMenu
 			// 

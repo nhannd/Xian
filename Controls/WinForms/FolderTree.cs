@@ -17,6 +17,9 @@ namespace ClearCanvas.Controls.WinForms
 			_folderTreeView = new FolderTreeView();
 			_folderTreeView.AfterBrowse += OnFolderTreeViewAfterBrowse;
 			_folderTreeView.AfterSelect += OnFolderTreeViewAfterSelect;
+			_folderTreeView.KeyDown += OnFolderTreeViewKeyDown;
+			_folderTreeView.KeyPress += OnFolderTreeViewKeyPress;
+			_folderTreeView.KeyUp += OnFolderTreeViewKeyUp;
 			_folderTreeView.Dock = DockStyle.Fill;
 
 			base.SuspendLayout();
@@ -98,6 +101,21 @@ namespace ClearCanvas.Controls.WinForms
 				item = new FolderTreeItem(((FolderTreeNode) _folderTreeView.SelectedNode).Pidl);
 			}
 			this.SelectedItem = item;
+		}
+
+		private void OnFolderTreeViewKeyDown(object sender, KeyEventArgs e)
+		{
+			this.OnKeyDown(e);
+		}
+
+		private void OnFolderTreeViewKeyPress(object sender, KeyPressEventArgs e)
+		{
+			this.OnKeyPress(e);
+		}
+
+		private void OnFolderTreeViewKeyUp(object sender, KeyEventArgs e)
+		{
+			this.OnKeyUp(e);
 		}
 
 		#region FolderTreeItem Class

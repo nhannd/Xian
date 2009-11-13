@@ -23,6 +23,9 @@ namespace ClearCanvas.Controls.WinForms
 			_folderListView = new FolderListView();
 			_folderListView.AfterBrowse += OnFolderListViewAfterBrowse;
 			_folderListView.SelectedIndexChanged += OnFolderListViewSelectedIndexChanged;
+			_folderListView.KeyDown += OnFolderListViewKeyDown;
+			_folderListView.KeyPress += OnFolderListViewKeyPress;
+			_folderListView.KeyUp += OnFolderListViewKeyUp;
 			_folderListView.Dock = DockStyle.Fill;
 			_folderListView.View = View.LargeIcon;
 
@@ -276,6 +279,21 @@ namespace ClearCanvas.Controls.WinForms
 				this.OnSelectedItemsChanged(EventArgs.Empty);
 				this.OnPropertyChanged(new PropertyChangedEventArgs("SelectedItems"));
 			}
+		}
+
+		private void OnFolderListViewKeyDown(object sender, KeyEventArgs e)
+		{
+			this.OnKeyDown(e);
+		}
+
+		private void OnFolderListViewKeyPress(object sender, KeyPressEventArgs e)
+		{
+			this.OnKeyPress(e);
+		}
+
+		private void OnFolderListViewKeyUp(object sender, KeyEventArgs e)
+		{
+			this.OnKeyUp(e);
 		}
 
 		#region FolderViewItem Class
@@ -592,14 +610,6 @@ namespace ClearCanvas.Controls.WinForms
 
 					e.Handled = true;
 					e.SuppressKeyPress = true;
-				}
-				else if (e.KeyData == (Keys.Control | Keys.A))
-				{
-					FolderView control = base.Parent as FolderView;
-					if (control != null)
-						control.SelectAll();
-					e.Handled = true;
-					e.SuppressKeyPress = false;
 				}
 				base.OnKeyDown(e);
 			}

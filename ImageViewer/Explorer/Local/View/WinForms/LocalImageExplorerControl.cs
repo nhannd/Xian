@@ -468,6 +468,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			}
 		}
 
+		private void _folderControl_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyData == (Keys.Control | Keys.A))
+			{
+				_folderView.SelectNextControl(_folderView, true, false, true, false);
+				_folderView.SelectAll();
+				e.Handled = true;
+				e.SuppressKeyPress = true;
+			}
+		}
+
 		private void _folderViewContextMenu_Opening(object sender, CancelEventArgs e)
 		{
 			_lastClickOnFolderView = true;
