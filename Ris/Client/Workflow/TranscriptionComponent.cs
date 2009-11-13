@@ -601,10 +601,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
-				if (!_transcriptionEditor.Save(TranscriptionEditorCloseReason.SaveDraft))
+				if (SupervisorIsInvalid())
 					return;
 
-				if (SupervisorIsInvalid())
+				if (!_transcriptionEditor.Save(TranscriptionEditorCloseReason.SaveDraft))
 					return;
 
 				Platform.GetService<ITranscriptionWorkflowService>(service =>

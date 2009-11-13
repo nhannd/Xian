@@ -701,14 +701,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 					return;
 				}
 
+				if (SupervisorIsInvalid())
+					return;
+
 				CloseImages();
 
 				if (!_reportEditor.Save(ReportEditorCloseReason.Verify))
 					return;
-
-				if (SupervisorIsInvalid())
-					return;
-
 
 				if (!PreliminaryDiagnosis.ShowDialogOnVerifyIfRequired(this.WorklistItem, this.Host.DesktopWindow))
 				{
@@ -770,12 +769,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 					return;
 				}
 
+				if (SupervisorIsInvalid())
+					return;
+
 				CloseImages();
 
 				if (!_reportEditor.Save(ReportEditorCloseReason.SendToBeVerified))
-					return;
-
-				if (SupervisorIsInvalid())
 					return;
 
 				Platform.GetService<IReportingWorkflowService>(service =>
@@ -824,12 +823,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 					return;
 				}
 
+				if (SupervisorIsInvalid())
+					return;
+
 				CloseImages();
 
 				if (!_reportEditor.Save(ReportEditorCloseReason.SendToTranscription))
-					return;
-
-				if (SupervisorIsInvalid())
 					return;
 
 				Platform.GetService<IReportingWorkflowService>(service =>
