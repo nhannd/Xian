@@ -60,11 +60,36 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private volatile Series _parentSeries;
 		private volatile ISopDataCacheItemReference _dataSourceReference;
 
+		public Sop(string filename)
+		{
+			ISopDataSource dataSource = new LocalSopDataSource(filename);
+			try
+			{
+				Initialize(dataSource);
+			}
+			catch (Exception)
+			{
+				dataSource.Dispose();
+				throw;
+			}
+		}
+
 		/// <summary>
 		/// Creates a new instance of <see cref="Sop"/>.
 		/// </summary>
 		public Sop(ISopDataSource dataSource)
 		{
+			Initialize(dataSource);
+		}
+
+		private void Initialize(ISopDataSource dataSource)
+		{
+			//We want to explicitly enforce that image data sources are wrapped in ImageSops.
+			IsImage = this is ImageSop;
+
+			if (dataSource.IsImage != IsImage)
+				throw new ArgumentException("Data source/Sop type mismatch.", "dataSource");
+
 			//silently use shared/cached data source.
 			_dataSourceReference = SopDataCache.Add(dataSource);
 		}
@@ -86,10 +111,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return DataSource.IsStored; }	
 		}
 
-		public bool IsImage
-		{
-			get { return DataSource.IsImage; }	
-		}
+		public bool IsImage { get; private set; }
 
 		/// <summary>
 		/// Gets the parent <see cref="Series"/>.
@@ -907,7 +929,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public static Sop Create(ISopDataSource dataSource)
 		{
-			if (IsImageSop(dataSource.SopClassUid))
+			if (dataSource.IsImage)
 				return new ImageSop(dataSource);
 			else
 				return new Sop(dataSource);

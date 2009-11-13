@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 					{
 						foreach (ISopDataSource slice in slicer.CreateSlices())
 						{
-							using (ImageSop imageSop = ImageSop.Create(slice))
+							using (ImageSop imageSop = new ImageSop(slice))
 							{
 								foreach (IPresentationImage image in PresentationImageFactory.Create(imageSop))
 								{

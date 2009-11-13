@@ -151,10 +151,21 @@ namespace ClearCanvas.Dicom.DataStore
 			get { return _patientsBirthDateRaw; }
 		}
 
-		//TODO: add this to the database!!!
 		public string PatientsBirthTime
 		{
-			get { return String.Empty; }
+			get
+			{
+				//TODO: add this to the database!!!
+				foreach (ISeries series in Series)
+				{
+					foreach (ISopInstance instance in series.GetSopInstances())
+					{
+						return instance[DicomTags.PatientsBirthTime].ToString();
+					}
+				}
+
+				return "";
+			}
 		}
 
 		#endregion

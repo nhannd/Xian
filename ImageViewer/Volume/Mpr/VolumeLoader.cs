@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				{
 					try
 					{
-						loadedImageSops.Add(ImageSop.Create(fileName));
+						loadedImageSops.Add(new ImageSop(fileName));
 					}
 					catch (Exception ex)
 					{

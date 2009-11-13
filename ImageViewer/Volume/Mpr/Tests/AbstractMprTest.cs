@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 				{
 					if (initializer != null)
 						initializer.Invoke(sopDataSource);
-					images.Add(ImageSop.Create(sopDataSource));
+					images.Add(new ImageSop(sopDataSource));
 				}
 
 				using (Volume volume = Volume.Create(EnumerateFrames(images)))

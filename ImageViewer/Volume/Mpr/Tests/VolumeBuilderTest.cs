@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 				// create only 2 slices!!
 				foreach (ISopDataSource sopDataSource in function.CreateSops(100, 100, 2, false))
 				{
-					images.Add(ImageSop.Create(sopDataSource));
+					images.Add(new ImageSop(sopDataSource));
 				}
 
 				// this line *should* throw an exception

@@ -116,7 +116,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 					foreach (ISopDataSource sopDataSource in function.CreateSops(100, 100, 100, false))
 					{
 						this.InitializeSopDataSource(sopDataSource);
-						images.Add(ImageSop.Create(sopDataSource));
+						images.Add(new ImageSop(sopDataSource));
 					}
 
 					MprViewerComponent component = new MprViewerComponent(Volume.Create(EnumerateFrames(images)));

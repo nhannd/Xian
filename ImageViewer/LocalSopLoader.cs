@@ -115,8 +115,7 @@ namespace ClearCanvas.ImageViewer
 			{
 				try
 				{
-					LocalSopDataSource dataSource = new LocalSopDataSource(file);
-					Sop sop = Sop.Create(dataSource);
+					Sop sop = Sop.Create(file);
 					try
 					{
 						_viewer.StudyTree.AddSop(sop);
