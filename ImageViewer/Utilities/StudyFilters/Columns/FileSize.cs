@@ -82,6 +82,16 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 					double value = double.Parse(m.Groups[1].Value);
 					switch (m.Groups[2].Value.ToLowerInvariant())
 					{
+						case "tb":
+						case "tbyte":
+						case "tbytes":
+						case "terabyte":
+						case "terabytes":
+						case "tib":
+						case "tibibyte":
+						case "tibibytes":
+							byteCount = (long) Math.Ceiling(value*1024*1024*1024*1024);
+							break;
 						case "gb":
 						case "gbyte":
 						case "gbytes":
