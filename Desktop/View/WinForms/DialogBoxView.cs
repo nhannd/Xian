@@ -54,6 +54,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         private DialogBoxForm _form;
         private IWin32Window _owner;
         private bool _reallyClose;
+		private bool _showingModal;
+
         private IApplicationComponent _component;
 
 
@@ -129,21 +131,39 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <returns></returns>
         public DialogBoxAction RunModal()
         {
-            DialogResult result = _form.ShowDialog(_owner);
-            switch (result)
-            {
-                case DialogResult.Cancel:
-                    return DialogBoxAction.Cancel;
-                case DialogResult.OK:
-                    return DialogBoxAction.Ok;
-                case DialogResult.No:
-                    return DialogBoxAction.No;
-                case DialogResult.Yes:
-                    return DialogBoxAction.Yes;
-                default:
-                    throw new NotSupportedException();
-            }
+			_showingModal = true;
+        	try
+			{
+				DialogResult result = _form.ShowDialog(_owner);
+				switch (result)
+				{
+					case DialogResult.Cancel:
+						return DialogBoxAction.Cancel;
+					case DialogResult.OK:
+						return DialogBoxAction.Ok;
+					case DialogResult.No:
+						return DialogBoxAction.No;
+					case DialogResult.Yes:
+						return DialogBoxAction.Yes;
+					default:
+						throw new NotSupportedException();
+				}
+			}
+			finally
+			{
+				_showingModal = false;
+				DisposeForm();
+			}
         }
+
+		private void DisposeForm()
+		{
+			if (_form != null)
+			{
+				_form.Dispose();
+				_form = null;
+			}
+		}
 
         /// <summary>
         /// Disposes of this object.
@@ -153,12 +173,20 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             if (disposing)
             {
-                _reallyClose = true;
+				if (_showingModal)
+				{
+					_reallyClose = true;
 
-                // need to call a special DelayedClose method here,
-                // since calling Close directly has no effect here (since we're already in the scope of the FormClosing event)
-                _form.DelayedClose(_component.ExitCode == ApplicationComponentExitCode.Accepted ? DialogBoxAction.Ok : DialogBoxAction.Cancel);
+					// need to call a special DelayedClose method here,
+					// since calling Close directly has no effect here (since we're already in the scope of the FormClosing event)
+					_form.DelayedClose(_component.ExitCode == ApplicationComponentExitCode.Accepted ? DialogBoxAction.Ok : DialogBoxAction.Cancel);
+				}
+				else
+				{
+					DisposeForm();
+				}
             }
+
             base.Dispose(disposing);
         }
 
@@ -186,6 +214,5 @@ namespace ClearCanvas.Desktop.View.WinForms
                 RaiseCloseRequested();
             }
         }
-
     }
 }

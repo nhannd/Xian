@@ -44,9 +44,13 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (_components != null))
+            if (disposing)
             {
-                _components.Dispose();
+				 if(_components != null)
+					_components.Dispose();
+
+				if (_content != null && !_content.IsDisposed)
+					_content.Dispose();
             }
             base.Dispose(disposing);
         }
