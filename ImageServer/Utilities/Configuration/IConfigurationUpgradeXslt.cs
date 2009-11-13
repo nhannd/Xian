@@ -30,15 +30,27 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
 
-namespace ClearCanvas.ImageServer.Model.SqlServer2005.UpgradeScripts
+namespace ClearCanvas.ImageServer.Utilities.Configuration
 {
-	public interface IUpgradeScript
+	public interface IConfigurationUpgradeXslt
 	{
-		string GetScript();
-		DatabaseVersion UpgradeFromVersion { get; }
-		DatabaseVersion UpgradeToVersion { get; }
+		/// <summary>
+		/// The Configuration version for which the transform upgrades from.
+		/// </summary>
+		Version SourceVersion { get; }
+		/// <summary>
+		/// The resultant Configuration version after the transform has been run.
+		/// </summary>
+		Version DestinationVersion { get; }
+		/// <summary>
+		/// The namespace of the configuration file the transform covers.
+		/// </summary>
+		string ConfigurationFile { get; }
+		/// <summary>
+		/// Get a stream containing the Xsl transform document.
+		/// </summary>
+		Stream GetStream();
 	}
 }

@@ -47,6 +47,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CleanupReconcile\ReconcileCleanupLauncher.cs" />
+    <Compile Include="Configuration\ConfigurationUpdateCommandLine.cs" />
+    <Compile Include="Configuration\ConfigurationUpgradeApplication.cs" />
+    <Compile Include="Configuration\ConfigurationUpgradeXsltExtensionPoint.cs" />
+    <Compile Include="Configuration\IConfigurationUpgradeXslt.cs" />
+    <Compile Include="Configuration\Xsl\BaseXsl.cs" />
+    <Compile Include="Configuration\Xsl\ConfigUpgradeFrom_1_5_10852_32944.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CleanupReconcile\MainForm.cs">
       <SubType>Form</SubType>
@@ -93,6 +99,9 @@
     <None Include="ReconcileCleanup.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\Xsl\ConfigUpgradeFrom_1_5_10852_32944.xsl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
