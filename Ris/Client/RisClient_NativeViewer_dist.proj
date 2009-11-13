@@ -32,7 +32,7 @@
 
   <ItemGroup>
     <AppConfigSourceFiles Include="$(DesktopExecutableConfig)" />
-    <AppConfigSourceFiles Include="$(SolutionDir)\app.config" />
+    <AppConfigSourceFiles Include="$(SolutionDir)\LocalFileSettings.config" />
     <AppConfigSourceFiles Include="$(TrunkDirectory)\Ris\Client\RisClient_NativeViewer_dist.config" />
   </ItemGroup>
 
