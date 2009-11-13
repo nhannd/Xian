@@ -29,57 +29,15 @@
 
 #endregion
 
-using System;
-using System.IO;
-using System.Reflection;
+using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageServer.Utilities.Configuration.Xsl
+namespace ClearCanvas.ImageServer.Utilities.Configuration
 {
 	/// <summary>
-	/// Base class for creating upgrade extensions for configuration files.
+	/// Extension point for Configuration upgrade XSLTs that implement <see cref="IConfigurationUpgradeXslt"/>.
 	/// </summary>
-	public class BaseXsl : IConfigurationUpgradeXslt
+	[ExtensionPoint]
+	public class ConfigurationTransformExtensionPoint : ExtensionPoint<IConfigurationTransform>
 	{
-		private readonly Version _upgradeFromVersion;
-		private readonly Version _upgradeToVersion;
-		private readonly string _xslName;
-		private readonly string _configurationFile;
-				
-		public BaseXsl(Version upgradeFromVersion, Version upgradeToVersion, string xslName, string configurationFile)
-		{
-			_upgradeToVersion = upgradeToVersion 
-				?? Assembly.GetExecutingAssembly().GetName().Version;
-
-			_upgradeFromVersion = upgradeFromVersion;
-			_xslName = xslName;
-			_configurationFile = configurationFile;
-		}
-
-		public Stream GetStream()
-		{
-			Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), _xslName);
-			if (stream == null)
-				throw new ApplicationException("Unable to load script resource (is the script an embedded resource?): " + _xslName);
-
-			return stream;
-		}
-
-		public Version SourceVersion
-		{
-			get { return _upgradeFromVersion; }
-		}
-
-		public Version DestinationVersion
-		{
-			get { return _upgradeToVersion; }
-		}
-
-		public string ConfigurationFile
-		{
-			get
-			{
-				return _configurationFile;
-			}
-		}
 	}
 }

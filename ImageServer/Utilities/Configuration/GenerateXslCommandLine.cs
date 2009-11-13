@@ -29,15 +29,34 @@
 
 #endregion
 
-using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Utilities.Configuration
 {
 	/// <summary>
-	/// Extension point for Configuration upgrade XSLTs that implement <see cref="IConfigurationUpgradeXslt"/>.
+	/// Command line attributes for <see cref="ConfigurationUpgradeApplication"/>.
 	/// </summary>
-	[ExtensionPoint]
-	public class ConfigurationUpgradeXsltExtensionPoint : ExtensionPoint<IConfigurationUpgradeXslt>
+	public class GenerateXslCommandLine : CommandLine
 	{
+		/// <summary>
+		/// Specifies the new release's configuration file.
+		/// </summary>
+		[CommandLineParameter(0, "Specifies the path to the current release configuration file.", Required = true)]
+		public string NewConfigFile
+		{ get; set; }
+
+		/// <summary>
+		/// Specifies the current configuration file.
+		/// </summary>
+		[CommandLineParameter(1, "Specifies the path to the source configuration file to upgrade.")]
+		public string OldConfigFile
+		{ get; set; }
+
+		/// <summary>
+		/// Specifies the output configuration file.
+		/// </summary>
+		[CommandLineParameter(2, "Specifies the path of the generated Xsl file.")]
+		public string OutputXslFile
+		{ get; set; }
 	}
 }

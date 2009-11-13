@@ -36,9 +36,9 @@ namespace ClearCanvas.ImageServer.Utilities.Configuration
 	/// <summary>
 	/// Command line attributes for <see cref="ConfigurationUpgradeApplication"/>.
 	/// </summary>
-	public class ConfigurationUpdateCommandLine : CommandLine
+	public class ConfigurationUpgradeCommandLine : CommandLine
 	{
-		public ConfigurationUpdateCommandLine()
+		public ConfigurationUpgradeCommandLine()
 		{
 			Check = false;	
 		}

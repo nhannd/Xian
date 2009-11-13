@@ -30,16 +30,41 @@
 #endregion
 
 using System;
-using ClearCanvas.Common;
+using System.IO;
+using System.Reflection;
 
-namespace ClearCanvas.ImageServer.Utilities.Configuration.Xsl
+namespace ClearCanvas.ImageServer.Utilities.Configuration
 {
-	[ExtensionOf(typeof(ConfigurationUpgradeXsltExtensionPoint))]
-	public class ConfigUpgradeFrom_1_5_10852_32944 : BaseXsl
+	/// <summary>
+	/// Base class for creating upgrade extensions for configuration files.
+	/// </summary>
+	public abstract class ConfigurationTransform : IConfigurationTransform
 	{
-		public ConfigUpgradeFrom_1_5_10852_32944()
-			: base(new Version(1, 5, 10852, 32944), null, "ConfigUpgradeFrom_1_5_10852_32944.xsl", "ClearCanvas.ImageServer.ShredHostService.exe.config")
+		private readonly string _xslName;
+
+		protected ConfigurationTransform(Version upgradeFromVersion, Version upgradeToVersion, string xslName, string configurationFile)
 		{
+			DestinationVersion = upgradeToVersion 
+			                     ?? Assembly.GetExecutingAssembly().GetName().Version;
+
+			SourceVersion = upgradeFromVersion;
+			_xslName = xslName;
+			ConfigurationFile = configurationFile;
 		}
+
+		public Stream GetStream()
+		{
+			Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), _xslName);
+			if (stream == null)
+				throw new ApplicationException("Unable to load script resource (is the script an embedded resource?): " + _xslName);
+
+			return stream;
+		}
+
+		public Version SourceVersion { get; private set; }
+
+		public Version DestinationVersion { get; private set; }
+
+		public string ConfigurationFile { get; private set; }
 	}
 }

@@ -30,27 +30,16 @@
 #endregion
 
 using System;
-using System.IO;
+using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageServer.Utilities.Configuration
+namespace ClearCanvas.ImageServer.Utilities.Configuration.Xsl
 {
-	public interface IConfigurationUpgradeXslt
+	[ExtensionOf(typeof(ConfigurationTransformExtensionPoint))]
+	public class ISShredTransform_1_5_10852_32944 : ConfigurationTransform
 	{
-		/// <summary>
-		/// The Configuration version for which the transform upgrades from.
-		/// </summary>
-		Version SourceVersion { get; }
-		/// <summary>
-		/// The resultant Configuration version after the transform has been run.
-		/// </summary>
-		Version DestinationVersion { get; }
-		/// <summary>
-		/// The namespace of the configuration file the transform covers.
-		/// </summary>
-		string ConfigurationFile { get; }
-		/// <summary>
-		/// Get a stream containing the Xsl transform document.
-		/// </summary>
-		Stream GetStream();
+		public ISShredTransform_1_5_10852_32944()
+			: base(new Version(1, 5, 10852, 32944), null, "ISShredTransform_1_5_10852_32944.xslt", "ClearCanvas.ImageServer.ShredHostService.exe.config")
+		{
+		}
 	}
 }
