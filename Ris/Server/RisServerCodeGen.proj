@@ -8,7 +8,5 @@
     <Exec Command="codegen-gen.bat" WorkingDirectory="..\..\Workflow" />
     <Exec Command="codegen-clean.bat" WorkingDirectory="..\..\Healthcare" ContinueOnError="true" />
     <Exec Command="codegen-gen.bat" WorkingDirectory="..\..\Healthcare" />
-    <Exec Command="codegen-clean.bat" WorkingDirectory="..\..\HL7" ContinueOnError="true" />
-    <Exec Command="codegen-gen.bat" WorkingDirectory="..\..\HL7" />
   </Target>
 </Project>
