@@ -55,6 +55,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
 	{
 		public const string DropDownMenuActionSite = "studyfilters-exportdropdown";
 
+		private string _lastExportCopyFolder = string.Empty;
+		private string _lastExportAnonymizedFolder = string.Empty;
+
 		public ActionModelNode DropDownActionModel
 		{
 			get { return ActionModelRoot.CreateModel(this.GetType().FullName, DropDownMenuActionSite, this.Actions); }
@@ -67,6 +70,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
 				if (base.SelectedItems.Count > 0)
 				{
 					ExportComponent component = new ExportComponent();
+					component.OutputPath = _lastExportAnonymizedFolder;
 
 					foreach (StudyItem item in base.SelectedItems)
 					{
@@ -79,7 +83,8 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
 						}
 					}
 
-					base.DesktopWindow.ShowDialogBox(component, SR.Export);
+					if (DialogBoxAction.Ok == base.DesktopWindow.ShowDialogBox(component, SR.Export))
+						_lastExportAnonymizedFolder = component.OutputPath;
 				}
 			}
 			catch (Exception ex)
@@ -96,9 +101,13 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
 				{
 					SelectFolderDialogCreationArgs args = new SelectFolderDialogCreationArgs();
 					args.Prompt = SR.MessageSelectOutputLocation;
+					args.Path = _lastExportCopyFolder;
+
 					FileDialogResult result = base.DesktopWindow.ShowSelectFolderDialogBox(args);
 					if (result.Action != DialogBoxAction.Ok)
 						return;
+
+					_lastExportCopyFolder = result.FileName;
 
 					string outputDir = result.FileName;
 					int count = 0;

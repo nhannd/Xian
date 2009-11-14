@@ -169,6 +169,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 		{
 			SelectFolderDialogCreationArgs dialogArgs = new SelectFolderDialogCreationArgs(_outputPath);
 			dialogArgs.AllowCreateNewFolder = true;
+			dialogArgs.Path = this.OutputPath;
 			dialogArgs.Prompt = SR.MessageSelectOutputLocation;
 			FileDialogResult result = base.Host.DesktopWindow.ShowSelectFolderDialogBox(dialogArgs);
 			if(result.Action == DialogBoxAction.Ok)

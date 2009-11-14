@@ -61,7 +61,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
         {
 			this._aeTitle = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._port = new ClearCanvas.Desktop.View.WinForms.TextField();
-			this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
 			this._refreshButton = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
@@ -114,7 +113,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 
 		private ClearCanvas.Desktop.View.WinForms.TextField _aeTitle;
 		private ClearCanvas.Desktop.View.WinForms.TextField _port;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.Button _refreshButton;
     }
 }

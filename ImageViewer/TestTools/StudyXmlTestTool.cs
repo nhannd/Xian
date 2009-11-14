@@ -47,6 +47,8 @@ namespace ClearCanvas.ImageViewer.TestTools
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class StudyXmlTestTool : StudyBrowserTool
 	{
+		private string _lastFolder = null;
+
 		public StudyXmlTestTool()
 		{
 		}
@@ -65,10 +67,13 @@ namespace ClearCanvas.ImageViewer.TestTools
 		{
 			
 			SelectFolderDialogCreationArgs args = new SelectFolderDialogCreationArgs();
-			args.Path = @"c:\stewart";
+			args.Path = _lastFolder ?? Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+
 			FileDialogResult result = base.Context.DesktopWindow.ShowSelectFolderDialogBox(args);
 			if (result.Action == DialogBoxAction.Ok)
 			{
+				_lastFolder = result.FileName;
+
 				StudyLoaderExtensionPoint xp = new StudyLoaderExtensionPoint();
 				IStudyLoader loader = (IStudyLoader)CollectionUtils.SelectFirst(xp.CreateExtensions(),
 					delegate(object extension) { return ((IStudyLoader) extension).Name == "DICOM_LOCAL";});
