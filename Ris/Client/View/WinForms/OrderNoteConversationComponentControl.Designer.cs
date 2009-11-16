@@ -78,6 +78,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._template = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._replyBody = new System.Windows.Forms.RichTextBox();
 			this._softKeyFlowPanel = new System.Windows.Forms.FlowLayoutPanel();
+			this.panel1 = new System.Windows.Forms.Panel();
+			this.label2 = new System.Windows.Forms.Label();
 			this._componentTableLayout.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
 			this._componentSplitContainer.Panel1.SuspendLayout();
@@ -89,6 +91,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.panel2.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
 			this._templateSelectionPanel.SuspendLayout();
+			this.panel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _componentTableLayout
@@ -215,7 +218,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// panel2
 			// 
-			this.panel2.Controls.Add(this._urgent);
 			this.panel2.Controls.Add(this.label1);
 			this.panel2.Controls.Add(this._onBehalf);
 			this.panel2.Controls.Add(this._recipients);
@@ -227,8 +229,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _urgent
 			// 
+			this._urgent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this._urgent.AutoSize = true;
-			this._urgent.Location = new System.Drawing.Point(5, 6);
+			this._urgent.Location = new System.Drawing.Point(476, 11);
 			this._urgent.Name = "_urgent";
 			this._urgent.Size = new System.Drawing.Size(58, 17);
 			this._urgent.TabIndex = 1;
@@ -238,7 +241,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(3, 86);
+			this.label1.Location = new System.Drawing.Point(3, 65);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(238, 13);
 			this.label1.TabIndex = 1;
@@ -254,7 +257,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._onBehalf.DisplayMember = "";
 			this._onBehalf.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._onBehalf.LabelText = "Send on behalf of  (Group)";
-			this._onBehalf.Location = new System.Drawing.Point(1, 35);
+			this._onBehalf.Location = new System.Drawing.Point(2, 9);
 			this._onBehalf.Margin = new System.Windows.Forms.Padding(2);
 			this._onBehalf.Name = "_onBehalf";
 			this._onBehalf.Size = new System.Drawing.Size(235, 41);
@@ -266,20 +269,20 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._recipients.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this._recipients.Location = new System.Drawing.Point(3, 102);
+			this._recipients.Location = new System.Drawing.Point(3, 81);
 			this._recipients.Margin = new System.Windows.Forms.Padding(3, 3, 15, 3);
 			this._recipients.Name = "_recipients";
 			this._recipients.ReadOnly = false;
-			this._recipients.Size = new System.Drawing.Size(234, 172);
-			this._recipients.TabIndex = 0;
+			this._recipients.Size = new System.Drawing.Size(234, 193);
+			this._recipients.TabIndex = 1;
 			// 
 			// tableLayoutPanel2
 			// 
 			this.tableLayoutPanel2.ColumnCount = 1;
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel2.Controls.Add(this._templateSelectionPanel, 0, 0);
-			this.tableLayoutPanel2.Controls.Add(this._replyBody, 0, 2);
 			this.tableLayoutPanel2.Controls.Add(this._softKeyFlowPanel, 0, 1);
+			this.tableLayoutPanel2.Controls.Add(this.panel1, 0, 2);
 			this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
 			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -315,7 +318,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._template.Margin = new System.Windows.Forms.Padding(2);
 			this._template.Name = "_template";
 			this._template.Size = new System.Drawing.Size(235, 41);
-			this._template.TabIndex = 1;
+			this._template.TabIndex = 0;
 			this._template.Value = null;
 			// 
 			// _replyBody
@@ -325,11 +328,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this._replyBody.AutoWordSelection = true;
 			this._replyBody.DetectUrls = false;
-			this._replyBody.Location = new System.Drawing.Point(3, 93);
+			this._replyBody.Location = new System.Drawing.Point(3, 31);
 			this._replyBody.Margin = new System.Windows.Forms.Padding(3, 3, 15, 3);
 			this._replyBody.Name = "_replyBody";
-			this._replyBody.Size = new System.Drawing.Size(538, 181);
-			this._replyBody.TabIndex = 2;
+			this._replyBody.Size = new System.Drawing.Size(532, 147);
+			this._replyBody.TabIndex = 0;
 			this._replyBody.Text = "";
 			// 
 			// _softKeyFlowPanel
@@ -340,7 +343,27 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._softKeyFlowPanel.Location = new System.Drawing.Point(3, 56);
 			this._softKeyFlowPanel.Name = "_softKeyFlowPanel";
 			this._softKeyFlowPanel.Size = new System.Drawing.Size(550, 31);
-			this._softKeyFlowPanel.TabIndex = 1;
+			this._softKeyFlowPanel.TabIndex = 0;
+			// 
+			// panel1
+			// 
+			this.panel1.Controls.Add(this.label2);
+			this.panel1.Controls.Add(this._urgent);
+			this.panel1.Controls.Add(this._replyBody);
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel1.Location = new System.Drawing.Point(3, 93);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(550, 181);
+			this.panel1.TabIndex = 4;
+			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(6, 13);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(30, 13);
+			this.label2.TabIndex = 2;
+			this.label2.Text = "Note";
 			// 
 			// OrderNoteConversationComponentControl
 			// 
@@ -366,6 +389,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.tableLayoutPanel2.ResumeLayout(false);
 			this._templateSelectionPanel.ResumeLayout(false);
 			this._templateSelectionPanel.PerformLayout();
+			this.panel1.ResumeLayout(false);
+			this.panel1.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -392,5 +417,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
 		private System.Windows.Forms.FlowLayoutPanel _templateSelectionPanel;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _template;
+		private System.Windows.Forms.Panel panel1;
+		private System.Windows.Forms.Label label2;
     }
 }
