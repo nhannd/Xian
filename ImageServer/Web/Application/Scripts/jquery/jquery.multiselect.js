@@ -1,13 +1,13 @@
 /*
 // jQuery multiSelect
 //
-// Version 1.0 beta
+// Version 1.0.3 beta
 //
 // Cory S.N. LaViska
 // A Beautiful Site (http://abeautifulsite.net/)
-// 06 April 2008
+// 09 September 2009
 //
-// Visit http://abeautifulsite.net/notebook.php?article=62 for more information
+// Visit http://abeautifulsite.net/notebook/62 for more information
 //
 // Usage: $('#control_id').multiSelect( options, callback )
 //
@@ -18,13 +18,25 @@
 //                                (note: you can use % as a placeholder for the number of items selected).
 //                                Use * to show a comma separated list of all selected; default = '% selected'
 //
-// Dependencies:  jQuery 1.2 or higher (http://jquery.com/)
-//                the jQuery Dimensions plugin (http://plugins.jquery.com/project/dimensions)
+// Dependencies:  jQuery 1.2.6 or higher (http://jquery.com/)
+//
+// Change Log:
+//
+//		1.0.1	- Updated to work with jQuery 1.2.6+ (no longer requires the dimensions plugin)
+//				- Changed $(this).offset() to $(this).position(), per James' and Jono's suggestions
+//
+//		1.0.2	- Fixed issue where dropdown doesn't scroll up/down with keyboard shortcuts
+//				- Changed '$' in setTimeout to use 'jQuery' to support jQuery.noConflict
+//				- Renamed from jqueryMultiSelect.* to jquery.multiSelect.* per the standard recommended at
+//				  http://docs.jquery.com/Plugins/Authoring (does not affect API methods)
+//
+//		1.0.3	- Now uses the bgiframe plugin (if it exists) to fix the IE6 layering bug.
+//              - Forces IE6 to use a min-height of 200px (this needs to be added to the options)
 //
 // Licensing & Terms of Use
 // 
-// jQuery File Tree is licensed under a Creative Commons License and is copyrighted (C)2008 by Cory S.N. LaViska.
-// For details, visit http://creativecommons.org/licenses/by/3.0/us/
+// This plugin is dual-licensed under the GNU General Public License and the MIT License and
+// is copyright 2008 A Beautiful Site, LLC. 
 //	
 */
 if(jQuery) (function($){
@@ -151,6 +163,10 @@ if(jQuery) (function($){
 									$(this).next('.multiSelectOptions').find('LABEL:first').addClass('hover');
 								}
 							}
+							
+							// Adjust the viewport if necessary
+							$(this).multiSelectAdjustViewport($(this) );
+							
 							return false;
 						}
 						// Up
@@ -165,6 +181,10 @@ if(jQuery) (function($){
 									$(this).next('.multiSelectOptions').find('LABEL:last').addClass('hover');
 								}
 							}
+							
+							// Adjust the viewport if necessary
+							$(this).multiSelectAdjustViewport($(this) );
+							
 							return false;
 						}
 						// Enter, Space
@@ -217,7 +237,11 @@ if(jQuery) (function($){
 					}
 					// Prevent enter key from submitting form
 					if( e.keyCode == 13 ) return false;
+					
 				});
+				
+				// Apply bgiframe if available on IE6
+				if( $.fn.bgiframe ) $(select).next('.multiSelect').next('.multiSelectOptions').bgiframe();
 				
 				// Eliminate the original form element
 				$(select).remove();
@@ -238,9 +262,19 @@ if(jQuery) (function($){
 			$(this).addClass('active').next('.multiSelectOptions').show();
 			
 			// Position it
-			var offset = $(this).offset();
+			var offset = $(this).position();
 			$(this).next('.multiSelectOptions').css({ top:  offset.top + $(this).outerHeight() + 'px' });
 			$(this).next('.multiSelectOptions').css({ left: offset.left + 'px' });
+			
+			/* IE6 does not support max-height */
+			if( $.browser.msie && typeof document.body.style.maxHeight === "undefined" ) {
+				var listHeight = 0;
+				$(this).next('.multiSelectOptions').children().each(function() {
+					listHeight += this.offsetHeight;
+				});
+				// @todo - made this height configurable
+				if (listHeight > 200) $(this).next('.multiSelectOptions').css({ height: '200px' });
+			}
 			
 			// Disappear on hover out
 			multiSelectCurrent = $(this);
@@ -248,7 +282,7 @@ if(jQuery) (function($){
 			$(this).next('.multiSelectOptions').hover( function() {
 				clearTimeout(timer);
 			}, function() {
-				timer = setTimeout('$(multiSelectCurrent).multiSelectOptionsHide(); $(multiSelectCurrent).unbind("hover");', 250);
+				timer = setTimeout('jQuery(multiSelectCurrent).multiSelectOptionsHide(); $(multiSelectCurrent).unbind("hover");', 250);
 			});
 			
 		},
@@ -273,6 +307,21 @@ if(jQuery) (function($){
 					$(this).prev('INPUT.multiSelect').val( o.oneOrMoreSelected.replace('%', i) );
 				}
 			}
+		},
+		
+		// Ensures that the selected item is always in the visible portion of the dropdown (for keyboard controls)
+		multiSelectAdjustViewport: function(el) {
+			// Calculate positions of elements
+			var i = 0;
+			var selectionTop = 0, selectionHeight = 0;
+			$(el).next('.multiSelectOptions').find('LABEL').each( function() {
+				if( $(this).hasClass('hover') ) { selectionTop = i; selectionHeight = $(this).outerHeight(); return; }
+				i += $(this).outerHeight();
+			});
+			var divScroll = $(el).next('.multiSelectOptions').scrollTop();
+			var divHeight = $(el).next('.multiSelectOptions').height();
+			// Adjust the dropdown scroll position
+			$(el).next('.multiSelectOptions').scrollTop(selectionTop - ((divHeight / 2) - (selectionHeight / 2)));
 		}
 		
 	});
