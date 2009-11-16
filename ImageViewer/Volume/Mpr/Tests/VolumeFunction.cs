@@ -73,19 +73,19 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 		public static VolumeFunction Duel = new VolumeFunction("Duel", (x, y, z) => UnitStep(5 - Distance(x, y, 50, 0.8f*z + 9)) + 2*UnitStep(5 - Distance(z, y, 50, 0.8f*x + 22)));
 
 		/// <summary>
-		/// Three stars at (15,15,15), (75,25,50) and (15,85,15) of radius 5.
+		/// Three stars at (15,15,15), (75,25,50) and (15,85,15) of radius 2.
 		/// </summary>
-		public static VolumeFunction Stars = new VolumeFunction("Stars", (x, y, z) => UnitStep(5 - Distance(x, y, z, 15, 15, 15)) + 2*UnitStep(5 - Distance(x, y, z, 75, 25, 50)) + 3*UnitStep(5 - Distance(x, y, z, 15, 85, 15)));
+		public static VolumeFunction Stars = new VolumeFunction("Stars", (x, y, z) => UnitStep(2 - Distance(x, y, z, 15, 15, 15)) + 2*UnitStep(2 - Distance(x, y, z, 75, 25, 50)) + 3*UnitStep(2 - Distance(x, y, z, 15, 85, 15)));
 
 		/// <summary>
-		/// Three stars at (15,15,15), (75,25,50) and (15,85,15). These should appear as regular spheres of radius 5 if the data is interpreted with a +30 degree gantry tilt about X.
+		/// Three stars at (15,15,15), (75,25,50) and (15,85,15). These should appear as regular spheres of radius 2.5 if the data is interpreted with a +30 degree gantry tilt about X.
 		/// </summary>
-		public static VolumeFunction StarsTilted030X = new VolumeFunction("StarsTilted030X", (x, y, z) => UnitStep(5 - Distance(x, y, z, 15, 15 + (z - 15)*(float) Math.Tan(Math.PI/6), 15)) + 2*UnitStep(5 - Distance(x, y, z, 75, 25 + (z - 50)*(float) Math.Tan(Math.PI/6), 50)) + 3*UnitStep(5 - Distance(x, y, z, 15, 85 + (z - 15)*(float) Math.Tan(Math.PI/6), 15)));
+		public static VolumeFunction StarsTilted030X = new VolumeFunction("StarsTilted030X", (x, y, z) => UnitStep(2.5f - Distance(x, y, z, 15, 15 + (z - 15) * (float)Math.Tan(Math.PI / 6), 15)) + 2 * UnitStep(2.5f - Distance(x, y, z, 75, 25 + (z - 50) * (float)Math.Tan(Math.PI / 6), 50)) + 3 * UnitStep(2.5f - Distance(x, y, z, 15, 85 + (z - 15) * (float)Math.Tan(Math.PI / 6), 15)));
 
 		/// <summary>
-		/// Three stars at (15,15,15), (75,25,50) and (15,85,15). These should appear as regular spheres of radius 5 if the data is interpreted with a -15 degree gantry tilt about X.
+		/// Three stars at (15,15,15), (75,25,50) and (15,85,15). These should appear as regular spheres of radius 2.5 if the data is interpreted with a -15 degree gantry tilt about X.
 		/// </summary>
-		public static VolumeFunction StarsTilted345X = new VolumeFunction("StarsTilted345X", (x, y, z) => UnitStep(5 - Distance(x, y, z, 15, 15 + (z - 15)*(float) Math.Tan(-Math.PI/12), 15)) + 2*UnitStep(5 - Distance(x, y, z, 75, 25 + (z - 50)*(float) Math.Tan(-Math.PI/12), 50)) + 3*UnitStep(5 - Distance(x, y, z, 15, 85 + (z - 15)*(float) Math.Tan(-Math.PI/12), 15)));
+		public static VolumeFunction StarsTilted345X = new VolumeFunction("StarsTilted345X", (x, y, z) => UnitStep(2.5f - Distance(x, y, z, 15, 15 + (z - 15) * (float)Math.Tan(-Math.PI / 12), 15)) + 2 * UnitStep(2.5f - Distance(x, y, z, 75, 25 + (z - 50) * (float)Math.Tan(-Math.PI / 12), 50)) + 3 * UnitStep(2.5f - Distance(x, y, z, 15, 85 + (z - 15) * (float)Math.Tan(-Math.PI / 12), 15)));
 
 		private delegate float VolumeFunctionDelegate(float x, float y, float z);
 
