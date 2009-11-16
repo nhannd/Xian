@@ -177,7 +177,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			UncheckAllServers(serverTree);
 
 			if (initialSelection == null)
-				initialSelection = serverTree.RootNode.ServerGroupNode;
+			{
+				if (serverTreeComponent.ShowLocalDataStoreNode)
+					initialSelection = serverTreeComponent.ServerTree.RootNode.LocalDataStoreNode;
+				else
+					initialSelection = serverTreeComponent.ServerTree.RootNode.ServerGroupNode;
+			}
 
 			serverTreeComponent.SetSelection(initialSelection);
 		}
