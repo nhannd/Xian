@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.View.WinForms
 					float fValue;
 					if (float.TryParse(_sliceSpacingFactor, out fValue))
 					{
-						if (fValue >= float.Epsilon && fValue <= 5)
+						if (fValue > 0 && fValue <= 5)
 						{
 							_component.SliceSpacingFactor = fValue;
 							_errorProvider.SetError(_pnlProportionalSliceSpacing, string.Empty);

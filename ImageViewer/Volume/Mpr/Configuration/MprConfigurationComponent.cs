@@ -17,8 +17,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Configuration
 		private float _sliceSpacingFactor = 1;
 		private bool _autoSliceSpacing = true;
 
-		[ValidateGreaterThan(float.Epsilon, Inclusive = true, Message = "Slice spacing must be greater than zero and less than or equal to 5.")]
-		[ValidateLessThan(5f, Inclusive = false, Message = "Slice spacing must be greater than zero and less than or equal to 5.")]
+		[ValidateGreaterThan(0f, Inclusive = false, Message = "Slice spacing must be greater than zero and less than or equal to 5.")]
+		[ValidateLessThan(5f, Inclusive = true, Message = "Slice spacing must be greater than zero and less than or equal to 5.")]
 		public float SliceSpacingFactor
 		{
 			get { return _sliceSpacingFactor; }
