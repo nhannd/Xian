@@ -342,7 +342,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			this.Validation.Add(new ValidationRule("Supervisor",
 				delegate
 				{
-					var ok = _supervisor != null;
+					var ok = _supervisor != null || SubmitForReviewVisible == false;
 					return new ValidationResult(ok, SR.MessageChooseRadiologist);
 				}));
 
