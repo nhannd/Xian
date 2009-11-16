@@ -48,6 +48,12 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         private readonly TimeSpanStatistics _deleteTime = new TimeSpanStatistics("DeleteDirectoryTime");
         #endregion
 
+        /// <summary>
+        /// Gets or sets a value indicating whether a log will be 
+        /// generated when the specified directory is deleted.
+        /// </summary>
+        public bool Log { get; set; }
+
         #region Constructors
 
         public DeleteDirectoryCommand(string dir, bool failIfError)
@@ -89,6 +95,9 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                     {
                         return;
                     }
+
+                    if (Log)
+                        Platform.Log(LogLevel.Info, "Deleting {0}", _dir);
 
                     Directory.Move(_dir, _dir +".deleted");
                     _sourceDirRenamed = true;

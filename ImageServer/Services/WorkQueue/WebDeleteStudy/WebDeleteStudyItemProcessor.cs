@@ -311,6 +311,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
 
             OnDeletingStudy();
 
+            FindAllRelatedDirectories();
+
             if (Study == null)
                 Platform.Log(LogLevel.Info, "Deleting Study {0} on partition {1}",
                              StorageLocation.StudyInstanceUid, ServerPartition.AeTitle);
