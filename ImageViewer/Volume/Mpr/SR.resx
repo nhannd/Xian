@@ -219,8 +219,8 @@
     <value>File is not a valid, supported DICOM image SOP instance. {0}</value>
     <comment>0 - Filename</comment>
   </data>
-  <data name="MessageSourceDataSetCanOnlyGantryTiltedInOneAxis" xml:space="preserve">
-    <value>Images are tilted along multiple axes. MPR currently only supports gantry tilts along a single axis.</value>
+  <data name="MessageSourceDataSetImagesMayBotBeGantrySlewed" xml:space="preserve">
+    <value>The selected images have a gantry slew. MPR currently only supports gantry tilts.</value>
   </data>
   <data name="MessageSourceDataSetImagesMustBeEvenlySpacedForMpr" xml:space="preserve">
     <value>Inconsistent spacing betweeen images. MPR currently requires evenly spaced images.</value>

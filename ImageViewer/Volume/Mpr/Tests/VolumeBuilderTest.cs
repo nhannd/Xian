@@ -111,7 +111,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 			int n = 0;
 
 			// it doesn't really matter what function we use
-			TestVolume(VolumeFunction.Void, sopDataSource => sopDataSource[DicomTags.ImageOrientationPatient].SetStringValue(string.Format(@"1\0\0\0\{0:f2}\0", Math.Cos(n++))), null);
+			TestVolume(VolumeFunction.Void, sopDataSource => sopDataSource[DicomTags.ImageOrientationPatient].SetStringValue(ConvertXAxialGantryTiltToImageOrientationPatient(n++, false)), null);
 		}
 
 		[Test]
@@ -149,18 +149,38 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 		}
 
 		[Test]
-		public void Test45DegreeXAxialRotationGantryTiltedSource()
+		public void Test030DegreeXAxialRotationGantryTiltedSource()
 		{
-			string imageOrientationPatient = string.Format(@"1\0\0\0\{0:f9}\{0:f9}", Math.Cos(Math.PI/4));
+			string imageOrientationPatient = ConvertXAxialGantryTiltToImageOrientationPatient(30, true);
 
 			// it doesn't really matter what function we use
 			TestVolume(VolumeFunction.Void, sopDataSource => sopDataSource[DicomTags.ImageOrientationPatient].SetStringValue(imageOrientationPatient), null);
 		}
 
 		[Test]
-		public void Test45DegreeYAxialRotationGantryTiltedSource()
+		public void Test330DegreeXAxialRotationGantryTiltedSource()
 		{
-			string imageOrientationPatient = string.Format(@"{0:f9}\0\{0:f9}\0\1\0", Math.Cos(Math.PI/4));
+			string imageOrientationPatient = ConvertXAxialGantryTiltToImageOrientationPatient(-30, true);
+
+			// it doesn't really matter what function we use
+			TestVolume(VolumeFunction.Void, sopDataSource => sopDataSource[DicomTags.ImageOrientationPatient].SetStringValue(imageOrientationPatient), null);
+		}
+
+		[Test]
+		[ExpectedException(typeof(UnsupportedGantryTiltAxisException))]
+		public void Test030DegreeYAxialRotationGantryTiltedSource()
+		{
+			string imageOrientationPatient = ConvertYAxialGantryTiltToImageOrientationPatient(30, true);
+
+			// it doesn't really matter what function we use
+			TestVolume(VolumeFunction.Void, sopDataSource => sopDataSource[DicomTags.ImageOrientationPatient].SetStringValue(imageOrientationPatient), null);
+		}
+
+		[Test]
+		[ExpectedException(typeof (UnsupportedGantryTiltAxisException))]
+		public void Test330DegreeYAxialRotationGantryTiltedSource()
+		{
+			string imageOrientationPatient = ConvertYAxialGantryTiltToImageOrientationPatient(-30, true);
 
 			// it doesn't really matter what function we use
 			TestVolume(VolumeFunction.Void, sopDataSource => sopDataSource[DicomTags.ImageOrientationPatient].SetStringValue(imageOrientationPatient), null);
@@ -169,10 +189,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 		[Test]
 		public void TestFilledVoxelData()
 		{
-			TestVolume(VolumeFunction.Planets, null,
+			TestVolume(VolumeFunction.Stars, null,
 			           volume =>
 			           	{
-			           		foreach (KnownSample sample in PlanetsKnownSamples)
+			           		foreach (KnownSample sample in StarsKnownSamples)
 			           		{
 			           			int actual = volume[(int) sample.Point.X, (int) sample.Point.Y, (int) sample.Point.Z];
 			           			Trace.WriteLine(string.Format("Sample {0} @{1}", actual, sample.Point));
@@ -184,40 +204,17 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 		[Test]
 		public void TestXAxialRotationGantryTiltedVoxelData()
 		{
-			const double TILT = Math.PI/6;
-			string imageOrientationPatient = string.Format(@"1\0\0\0\{0:f9}\{1:f9}", Math.Cos(TILT), Math.Cos(TILT + Math.PI/2));
+			const double angle = Math.PI/6;
+			string imageOrientationPatient = ConvertXAxialGantryTiltToImageOrientationPatient(angle, false);
 
-			TestVolume(VolumeFunction.Planets,
+			TestVolume(VolumeFunction.Stars,
 			           sopDataSource => sopDataSource[DicomTags.ImageOrientationPatient].SetStringValue(imageOrientationPatient),
 			           volume =>
 			           	{
-			           		foreach (KnownSample sample in PlanetsKnownSamples)
+			           		foreach (KnownSample sample in StarsKnownSamples)
 			           		{
 			           			Vector3D realPoint = sample.Point;
-			           			Vector3D paddedPoint = realPoint + new Vector3D(0, (float) (Math.Tan(TILT)*(100 - realPoint.Z)), 0);
-
-			           			int actual = volume[(int) paddedPoint.X, (int) paddedPoint.Y, (int) paddedPoint.Z];
-			           			Trace.WriteLine(string.Format("Sample {0} @{1} ({2} before padding)", actual, paddedPoint, realPoint));
-			           			Assert.AreEqual(sample.Value, actual, "Wrong colour sample @{0} ({1} before padding)", paddedPoint, realPoint);
-			           		}
-			           	});
-		}
-
-		[Test]
-		[Ignore("Y-axial tilts aren't currently supported")]
-		public void TestYAxialRotationGantryTiltedVoxelData()
-		{
-			const double TILT = Math.PI/6;
-			string imageOrientationPatient = string.Format(@"{0:f9}\0\{1:f9}\0\1\0", Math.Cos(TILT), Math.Cos(TILT + Math.PI/2));
-
-			TestVolume(VolumeFunction.Planets,
-			           sopDataSource => sopDataSource[DicomTags.ImageOrientationPatient].SetStringValue(imageOrientationPatient),
-			           volume =>
-			           	{
-			           		foreach (KnownSample sample in PlanetsKnownSamples)
-			           		{
-			           			Vector3D realPoint = sample.Point;
-			           			Vector3D paddedPoint = realPoint + new Vector3D((float) (Math.Tan(TILT)*(realPoint.Z)), 0, 0);
+			           			Vector3D paddedPoint = realPoint + new Vector3D(0, (float) (Math.Tan(angle)*(100 - realPoint.Z)), 0);
 
 			           			int actual = volume[(int) paddedPoint.X, (int) paddedPoint.Y, (int) paddedPoint.Z];
 			           			Trace.WriteLine(string.Format("Sample {0} @{1} ({2} before padding)", actual, paddedPoint, realPoint));

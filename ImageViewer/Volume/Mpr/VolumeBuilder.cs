@@ -421,8 +421,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 						throw new UnevenlySpacedFramesException();
 				}
 
-				// ensure frames are not tilted about multiple axes (the gantry correction algorithm only supports rotations about one)
-				if (IsMultiAxialTilt(_frames[0].Frame.ImageOrientationPatient)) // suffices to check first one... they're all co-planar now!!
+				// ensure frames are not tilted about unsupposed axis combinations (the gantry correction algorithm only supports rotations about X)
+				if (!IsSupportedGantryTilt(_frames[0].Frame.ImageOrientationPatient)) // suffices to check first one... they're all co-planar now!!
 					throw new UnsupportedGantryTiltAxisException();
 			}
 
@@ -430,11 +430,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			#region Gantry Tilt Helpers
 
-			private static bool IsMultiAxialTilt(ImageOrientationPatient imageOrientationPatient)
+			private static bool IsSupportedGantryTilt(ImageOrientationPatient imageOrientationPatient)
 			{
 				Matrix imageOrientationPatientMatrix = ImageOrientationPatientToMatrix(imageOrientationPatient);
-				return !FloatComparer.AreEqual(0f, (float) GetXRotation(imageOrientationPatientMatrix), _gantryTiltTolerance)
-				       && !FloatComparer.AreEqual(0f, (float) GetYRotation(imageOrientationPatientMatrix), _gantryTiltTolerance);
+				return FloatComparer.AreEqual(0f, (float) GetYRotation(imageOrientationPatientMatrix), _gantryTiltTolerance);
 			}
 
 			/// <summary>

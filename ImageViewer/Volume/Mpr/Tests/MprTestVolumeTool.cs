@@ -40,7 +40,6 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
@@ -61,9 +60,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 			volumes.Add(new TestVolume(VolumeFunction.Barcodes));
 			volumes.Add(new TestVolume(VolumeFunction.Duel));
 			volumes.Add(new TestVolume(VolumeFunction.Rebar));
-			volumes.Add(new TestVolume(VolumeFunction.Planets));
+			volumes.Add(new TestVolume(VolumeFunction.Stars));
 			volumes.Add(new XAxialRotationGantryTiledTestVolume(VolumeFunction.Barcodes, 30));
-			volumes.Add(new YAxialRotationGantryTiledTestVolume(VolumeFunction.Barcodes, 30));
+			volumes.Add(new XAxialRotationGantryTiledTestVolume(VolumeFunction.StarsTilted030X, 30));
+			volumes.Add(new XAxialRotationGantryTiledTestVolume(VolumeFunction.StarsTilted345X, -15));
 			_volumes = volumes.AsReadOnly();
 		}
 
@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 			}
 		}
 
-		private class TestVolume
+		private class TestVolume : AbstractMprTest
 		{
 			private readonly VolumeFunction _function;
 
@@ -134,20 +134,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 					DisposeAll(images);
 				}
 			}
-
-			private static IEnumerable<Frame> EnumerateFrames(IEnumerable<ImageSop> imageSops)
-			{
-				foreach (ImageSop imageSop in imageSops)
-					foreach (Frame frame in imageSop.Frames)
-						yield return frame;
-			}
-
-			private static void DisposeAll<T>(IEnumerable<T> disposables) where T : class, IDisposable
-			{
-				foreach (T disposable in disposables)
-					if (disposable != null)
-						disposable.Dispose();
-			}
 		}
 
 		private class XAxialRotationGantryTiledTestVolume : TestVolume
@@ -168,35 +154,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 			{
 				base.InitializeSopDataSource(sopDataSource);
 
-				double radians = _tiltDegrees/180*Math.PI;
-				string imageOrientationPatient = string.Format(@"1\0\0\0\{0:f9}\{1:f9}", Math.Cos(radians), Math.Cos(radians + Math.PI/2));
-				sopDataSource[DicomTags.ImageOrientationPatient].SetStringValue(imageOrientationPatient);
-			}
-		}
-
-		private class YAxialRotationGantryTiledTestVolume : TestVolume
-		{
-			private readonly float _tiltDegrees;
-
-			public YAxialRotationGantryTiledTestVolume(VolumeFunction function, float tiltDegrees)
-				: base(function)
-			{
-				_tiltDegrees = tiltDegrees;
-			}
-
-			public override string Name
-			{
-				get { return string.Format("{0} (Tilt: {1}\u00B0 about Y)", base.Name, _tiltDegrees); }
-			}
-
-			protected override void InitializeSopDataSource(ISopDataSource sopDataSource)
-			{
-				base.InitializeSopDataSource(sopDataSource);
-
-				double radians = _tiltDegrees/180*Math.PI;
-				Vector3D v3 = new Vector3D((float) Math.Cos(radians), 0f, (float) Math.Cos(Math.PI/2 - radians)).Normalize();
-				string imageOrientationPatient = string.Format(@"{0}\{1}\{2}\0\1\0", v3.X, v3.Y, v3.Z);
-				sopDataSource[DicomTags.ImageOrientationPatient].SetStringValue(imageOrientationPatient);
+				sopDataSource[DicomTags.ImageOrientationPatient].SetStringValue(ConvertXAxialGantryTiltToImageOrientationPatient(_tiltDegrees, true));
 			}
 		}
 	}

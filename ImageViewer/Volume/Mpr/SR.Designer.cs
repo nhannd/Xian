@@ -250,11 +250,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Images are tilted along multiple axes. MPR currently only supports gantry tilts along a single axis..
+        ///   Looks up a localized string similar to The selected images have a gantry slew. MPR currently only supports gantry tilts..
         /// </summary>
-        public static string MessageSourceDataSetCanOnlyGantryTiltedInOneAxis {
+        public static string MessageSourceDataSetImagesMayBotBeGantrySlewed {
             get {
-                return ResourceManager.GetString("MessageSourceDataSetCanOnlyGantryTiltedInOneAxis", resourceCulture);
+                return ResourceManager.GetString("MessageSourceDataSetImagesMayBotBeGantrySlewed", resourceCulture);
             }
         }
         

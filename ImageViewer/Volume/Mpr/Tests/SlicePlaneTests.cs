@@ -32,6 +32,7 @@
 #if	UNIT_TESTS
 #pragma warning disable 1591,0419,1574,1587
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using ClearCanvas.Dicom;
@@ -46,45 +47,83 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 	[TestFixture]
 	public class SlicePlaneTests : AbstractMprTest
 	{
-		[Test]
-		public void TestIdentitySlicePlane()
+		private readonly IList<IVolumeSlicerParams> _slicings;
+
+		public SlicePlaneTests()
 		{
-			TestVolume(VolumeFunction.Planets, null, volume => ValidateVolumeSlicePlane(volume, VolumeSlicerParams.Identity, PlanetsKnownSamples));
+			List<IVolumeSlicerParams> slicings = new List<IVolumeSlicerParams>();
+			slicings.Add(VolumeSlicerParams.Identity);
+			slicings.Add(VolumeSlicerParams.OrthogonalX);
+			slicings.Add(VolumeSlicerParams.OrthogonalY);
+			slicings.Add(new VolumeSlicerParams(0, 90, 45));
+			slicings.Add(new VolumeSlicerParams(32, -62, 69));
+			slicings.Add(new VolumeSlicerParams(60, 0, -30));
+			slicings.Add(new VolumeSlicerParams(-15, 126, -30));
+			_slicings = slicings.AsReadOnly();
 		}
 
 		[Test]
-		public void TestOrthoXSlicePlane()
+		public void TestNoTiltSlicings()
 		{
-			TestVolume(VolumeFunction.Planets, null, volume => ValidateVolumeSlicePlane(volume, VolumeSlicerParams.OrthogonalX, PlanetsKnownSamples));
+			TestVolume(VolumeFunction.Stars,
+			           null,
+			           volume =>
+			           	{
+			           		foreach (IVolumeSlicerParams slicing in _slicings)
+			           		{
+			           			ValidateVolumeSlicePoints(volume, slicing, StarsKnownSamples);
+			           		}
+			           	});
 		}
 
 		[Test]
-		public void TestOrthoYSlicePlane()
+		public void TestPositiveXAxialGantryTiltedSlicings()
 		{
-			TestVolume(VolumeFunction.Planets, null, volume => ValidateVolumeSlicePlane(volume, VolumeSlicerParams.OrthogonalY, PlanetsKnownSamples));
+			TestVolume(VolumeFunction.StarsTilted030X,
+			           SetGantryTiltAboutX(30, true),
+			           volume =>
+			           	{
+			           		foreach (IVolumeSlicerParams slicing in _slicings)
+			           		{
+			           			ValidateVolumeSlicePoints(volume, slicing, StarsKnownSamples, 30, 0, true);
+			           		}
+			           	});
 		}
 
 		[Test]
-		public void TestObliqueAlphaSlicePlane()
+		public void TestNegativeXAxialGantryTiltedSlicings()
 		{
-			TestVolume(VolumeFunction.Planets, null, volume => ValidateVolumeSlicePlane(volume, new VolumeSlicerParams(0, 90, 45), PlanetsKnownSamples));
+			TestVolume(VolumeFunction.StarsTilted345X,
+			           SetGantryTiltAboutX(-15, true),
+			           volume =>
+			           	{
+			           		foreach (IVolumeSlicerParams slicing in _slicings)
+			           		{
+			           			ValidateVolumeSlicePoints(volume, slicing, StarsKnownSamples, -15, 0, true);
+			           		}
+			           	});
 		}
 
-		[Test]
-		public void TestObliqueBetaSlicePlane()
+		protected static InitializeSopDataSourceDelegate SetGantryTiltAboutX(double angle, bool degrees)
 		{
-			TestVolume(VolumeFunction.Planets, null, volume => ValidateVolumeSlicePlane(volume, new VolumeSlicerParams(32, -62, 69), PlanetsKnownSamples));
+			return sopDataSource => sopDataSource[DicomTags.ImageOrientationPatient].SetStringValue(ConvertXAxialGantryTiltToImageOrientationPatient(angle, degrees));
 		}
 
-		[Test]
-		public void TestObliqueGammaSlicePlane()
+		protected static void ValidateVolumeSlicePoints(Volume volume, IVolumeSlicerParams slicerParams, IList<KnownSample> expectedPoints)
 		{
-			TestVolume(VolumeFunction.Planets, null, volume => ValidateVolumeSlicePlane(volume, new VolumeSlicerParams(60, 0, -30), PlanetsKnownSamples));
+			ValidateVolumeSlicePoints(volume, slicerParams, expectedPoints, 0, 0, false);
 		}
 
-		protected static void ValidateVolumeSlicePlane(Volume volume, IVolumeSlicerParams slicerParams, IList<KnownSample> samplePoints)
+		protected static void ValidateVolumeSlicePoints(Volume volume, IVolumeSlicerParams slicerParams, IList<KnownSample> expectedPoints,
+		                                                double xAxialGantryTilt, double yAxialGantryTilt, bool gantryTiltInDegrees)
 		{
-			Trace.WriteLine(string.Format("Using slice plane: {0}", slicerParams));
+			if (gantryTiltInDegrees)
+			{
+				xAxialGantryTilt *= Math.PI/180;
+				yAxialGantryTilt *= Math.PI/180;
+			}
+
+			Trace.WriteLine(string.Format("Using slice plane: {0}", slicerParams.Description));
 			using (VolumeSlicer slicer = new VolumeSlicer(volume, slicerParams, DicomUid.GenerateUid().UID))
 			{
 				foreach (ISopDataSource slice in slicer.CreateSlices())
@@ -96,13 +135,27 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 							IImageGraphicProvider imageGraphicProvider = (IImageGraphicProvider) image;
 							DicomImagePlane dip = DicomImagePlane.FromImage(image);
 
-							foreach (KnownSample sample in samplePoints)
+							foreach (KnownSample sample in expectedPoints)
 							{
-								Vector3D point = dip.ConvertToImagePlane(sample.Point);
-								if (point.Z > -0.5 && point.Z < 0.5)
+								Vector3D patientPoint = sample.Point;
+								if (xAxialGantryTilt != 0 && yAxialGantryTilt == 0)
 								{
-									int actual = imageGraphicProvider.ImageGraphic.PixelData.GetPixel((int) point.X, (int) point.Y);
-									Trace.WriteLine(string.Format("Sample {0} @{1} ({2} in this slice plane)", actual, sample.Point, point));
+									float cos = (float) Math.Cos(xAxialGantryTilt);
+									float sin = (float) Math.Sin(xAxialGantryTilt);
+									patientPoint = new Vector3D(patientPoint.X,
+									                            patientPoint.Y*cos + (xAxialGantryTilt > 0 ? 100*sin : 0),
+									                            patientPoint.Z/cos - patientPoint.Y*sin - (xAxialGantryTilt > 0 ? 100*sin*sin/cos : 0));
+								}
+								else if (yAxialGantryTilt != 0)
+								{
+									Assert.Fail("Unit test not designed to work with gantry tilts about Y (i.e. slew)");
+								}
+
+								Vector3D slicedPoint = dip.ConvertToImagePlane(patientPoint);
+								if (slicedPoint.Z > -0.5 && slicedPoint.Z < 0.5)
+								{
+									int actual = imageGraphicProvider.ImageGraphic.PixelData.GetPixel((int) slicedPoint.X, (int) slicedPoint.Y);
+									Trace.WriteLine(string.Format("Sample {0} @{1} (SLICE: {2}; PATIENT: {3})", actual, FormatVector(sample.Point), FormatVector(slicedPoint), FormatVector(patientPoint)));
 									Assert.AreEqual(sample.Value, actual, "Wrong colour sample @{0}", sample.Point);
 								}
 							}

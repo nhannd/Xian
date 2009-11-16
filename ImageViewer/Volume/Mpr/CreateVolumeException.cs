@@ -74,7 +74,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 	public class UnsupportedGantryTiltAxisException : CreateVolumeException
 	{
-		public UnsupportedGantryTiltAxisException() : base("Multi-axial gantry tilted source frames are currently not supported.") {}
+		public UnsupportedGantryTiltAxisException() : base("Source frames have a gantry tilt about an unsupported axis.") {}
 	}
 
 	[ExceptionPolicyFor(typeof (CreateVolumeException))]
@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			else if (ex is UnevenlySpacedFramesException)
 				message = SR.MessageSourceDataSetImagesMustBeEvenlySpacedForMpr;
 			else if (ex is UnsupportedGantryTiltAxisException)
-				message = SR.MessageSourceDataSetCanOnlyGantryTiltedInOneAxis;
+				message = SR.MessageSourceDataSetImagesMayBotBeGantrySlewed;
 			exceptionHandlingContext.ShowMessageBox(message);
 		}
 	}
