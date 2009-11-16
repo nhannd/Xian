@@ -562,7 +562,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(_worklistItem));
 			_bannerComponentHost.StartComponent();
 
-			_documentationTabContainer = new TabComponentContainer(false) { ValidationStrategy = new AllComponentsValidationStrategy() };
+			_documentationTabContainer = new TabComponentContainer { ValidationStrategy = new AllComponentsValidationStrategy() };
 
 			_orderDetailsComponent = new PerformingDocumentationOrderDetailsComponent(context, _worklistItem);
 			_documentationTabContainer.Pages.Add(new TabPage("Order", _orderDetailsComponent));

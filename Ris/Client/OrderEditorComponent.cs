@@ -1181,7 +1181,7 @@ namespace ClearCanvas.Ris.Client
 			_orderNoteSummaryComponentHost = new ChildComponentHost(this.Host, _noteSummaryComponent);
 			_orderNoteSummaryComponentHost.StartComponent();
 
-			_rightHandComponentContainer = new TabComponentContainer(false);
+			_rightHandComponentContainer = new TabComponentContainer();
 			_rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
 
 			_rightHandComponentContainer.Pages.Add(new TabPage("Additional Info", _orderAdditionalInfoComponent));

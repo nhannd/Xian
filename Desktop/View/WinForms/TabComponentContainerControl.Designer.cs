@@ -65,6 +65,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// _tabControl
 			// 
 			this._tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._tabControl.IDE2005Style = Crownwood.DotNetMagic.Controls.IDE2005Style.StandardDark;
 			this._tabControl.Location = new System.Drawing.Point(4, 4);
 			this._tabControl.Margin = new System.Windows.Forms.Padding(4);
 			this._tabControl.MaximumHeaderWidth = 256;
