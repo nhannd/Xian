@@ -250,8 +250,10 @@ namespace ClearCanvas.Ris.Client
 
 					_interpretedByFilterComponent = new StaffSelectorEditorComponent(
 						formDataResponse.StaffChoices, _worklistDetail.InterpretedByStaff.Staff, _worklistDetail.InterpretedByStaff.IncludeCurrentUser);
+
 					_transcribedByFilterComponent = new StaffSelectorEditorComponent(
 						formDataResponse.StaffChoices, _worklistDetail.TranscribedByStaff.Staff, _worklistDetail.TranscribedByStaff.IncludeCurrentUser);
+
 					_verifiedByFilterComponent = new StaffSelectorEditorComponent(
 						formDataResponse.StaffChoices, _worklistDetail.VerifiedByStaff.Staff, _worklistDetail.VerifiedByStaff.IncludeCurrentUser);
 					_supervisedByFilterComponent = new StaffSelectorEditorComponent(
@@ -279,7 +281,10 @@ namespace ClearCanvas.Ris.Client
 			this.Pages.Add(_patientLocationComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodePatientLocations", _locationFilterComponent));
 
 			_interpretedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeInterpretedBy", _interpretedByFilterComponent);
-			_transcribedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeTranscribedBy", _transcribedByFilterComponent);
+
+			if (WorklistEditorComponentSettings.Default.ShowTranscribedByPage)
+				_transcribedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeTranscribedBy", _transcribedByFilterComponent);
+
 			_verifiedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeVerifiedBy", _verifiedByFilterComponent);
 			_supervisedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeSupervisedBy", _supervisedByFilterComponent);
 
@@ -323,8 +328,17 @@ namespace ClearCanvas.Ris.Client
 		{
 			var showStaffFilters = ShowStaffRoleFilterPages;
 			ShowAfterPage(_interpretedByFilterComponentPage, showStaffFilters, _patientLocationComponentPage);
-			ShowAfterPage(_transcribedByFilterComponentPage, showStaffFilters, _interpretedByFilterComponentPage);
-			ShowAfterPage(_verifiedByFilterComponentPage, showStaffFilters, _transcribedByFilterComponentPage);
+
+			if (WorklistEditorComponentSettings.Default.ShowTranscribedByPage)
+			{
+				ShowAfterPage(_transcribedByFilterComponentPage, showStaffFilters, _interpretedByFilterComponentPage);
+				ShowAfterPage(_verifiedByFilterComponentPage, showStaffFilters, _transcribedByFilterComponentPage);
+			}
+			else
+			{
+				ShowAfterPage(_verifiedByFilterComponentPage, showStaffFilters, _interpretedByFilterComponentPage);
+			}
+
 			ShowAfterPage(_supervisedByFilterComponentPage, showStaffFilters, _verifiedByFilterComponentPage);
 
 			ShowBeforePage(_timeWindowComponentPage, ShowTimeFilterPage, _summaryComponentPage);
