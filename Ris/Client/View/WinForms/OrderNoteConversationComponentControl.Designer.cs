@@ -63,28 +63,24 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._completeButton = new System.Windows.Forms.Button();
-			this._componentSplitContainer = new System.Windows.Forms.SplitContainer();
 			this._notesGroupBox = new System.Windows.Forms.GroupBox();
 			this._orderNotesPanel = new System.Windows.Forms.Panel();
 			this._replyGroupBox = new System.Windows.Forms.GroupBox();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.panel2 = new System.Windows.Forms.Panel();
-			this._urgent = new System.Windows.Forms.CheckBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this._onBehalf = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._recipients = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
 			this._templateSelectionPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this._template = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
-			this._replyBody = new System.Windows.Forms.RichTextBox();
 			this._softKeyFlowPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.label2 = new System.Windows.Forms.Label();
+			this._urgent = new System.Windows.Forms.CheckBox();
+			this._replyBody = new System.Windows.Forms.RichTextBox();
 			this._componentTableLayout.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
-			this._componentSplitContainer.Panel1.SuspendLayout();
-			this._componentSplitContainer.Panel2.SuspendLayout();
-			this._componentSplitContainer.SuspendLayout();
 			this._notesGroupBox.SuspendLayout();
 			this._replyGroupBox.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
@@ -100,18 +96,20 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._componentTableLayout.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._componentTableLayout.ColumnCount = 1;
 			this._componentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this._componentTableLayout.Controls.Add(this.flowLayoutPanel1, 0, 1);
-			this._componentTableLayout.Controls.Add(this._componentSplitContainer, 0, 0);
+			this._componentTableLayout.Controls.Add(this._replyGroupBox, 0, 1);
+			this._componentTableLayout.Controls.Add(this._notesGroupBox, 0, 0);
+			this._componentTableLayout.Controls.Add(this.flowLayoutPanel1, 0, 2);
 			this._componentTableLayout.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._componentTableLayout.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.AddColumns;
 			this._componentTableLayout.Location = new System.Drawing.Point(0, 0);
 			this._componentTableLayout.Margin = new System.Windows.Forms.Padding(0);
 			this._componentTableLayout.Name = "_componentTableLayout";
-			this._componentTableLayout.RowCount = 2;
-			this._componentTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._componentTableLayout.RowCount = 3;
+			this._componentTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this._componentTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this._componentTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._componentTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this._componentTableLayout.Size = new System.Drawing.Size(843, 695);
+			this._componentTableLayout.Size = new System.Drawing.Size(850, 600);
 			this._componentTableLayout.TabIndex = 0;
 			// 
 			// flowLayoutPanel1
@@ -121,15 +119,15 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.flowLayoutPanel1.Controls.Add(this._cancelButton);
 			this.flowLayoutPanel1.Controls.Add(this._completeButton);
 			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 663);
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 567);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
 			this.flowLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(837, 29);
-			this.flowLayoutPanel1.TabIndex = 0;
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(844, 30);
+			this.flowLayoutPanel1.TabIndex = 1;
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Location = new System.Drawing.Point(759, 3);
+			this._cancelButton.Location = new System.Drawing.Point(766, 3);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 1;
@@ -140,7 +138,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _completeButton
 			// 
 			this._completeButton.AutoSize = true;
-			this._completeButton.Location = new System.Drawing.Point(671, 3);
+			this._completeButton.Location = new System.Drawing.Point(678, 3);
 			this._completeButton.Name = "_completeButton";
 			this._completeButton.Size = new System.Drawing.Size(82, 23);
 			this._completeButton.TabIndex = 0;
@@ -148,35 +146,15 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._completeButton.UseVisualStyleBackColor = true;
 			this._completeButton.Click += new System.EventHandler(this._completeButton_Click);
 			// 
-			// _componentSplitContainer
-			// 
-			this._componentSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._componentSplitContainer.Location = new System.Drawing.Point(3, 3);
-			this._componentSplitContainer.Name = "_componentSplitContainer";
-			this._componentSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
-			// 
-			// _componentSplitContainer.Panel1
-			// 
-			this._componentSplitContainer.Panel1.Controls.Add(this._notesGroupBox);
-			// 
-			// _componentSplitContainer.Panel2
-			// 
-			this._componentSplitContainer.Panel2.Controls.Add(this._replyGroupBox);
-			this._componentSplitContainer.Size = new System.Drawing.Size(837, 654);
-			this._componentSplitContainer.SplitterDistance = 348;
-			this._componentSplitContainer.TabIndex = 1;
-			this._componentSplitContainer.TabStop = false;
-			// 
 			// _notesGroupBox
 			// 
-			this._notesGroupBox.AutoSize = true;
 			this._notesGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._notesGroupBox.Controls.Add(this._orderNotesPanel);
 			this._notesGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._notesGroupBox.Location = new System.Drawing.Point(0, 0);
+			this._notesGroupBox.Location = new System.Drawing.Point(3, 3);
 			this._notesGroupBox.Name = "_notesGroupBox";
-			this._notesGroupBox.Size = new System.Drawing.Size(837, 348);
-			this._notesGroupBox.TabIndex = 0;
+			this._notesGroupBox.Size = new System.Drawing.Size(844, 276);
+			this._notesGroupBox.TabIndex = 2;
 			this._notesGroupBox.TabStop = false;
 			this._notesGroupBox.Text = "Conversation";
 			// 
@@ -185,7 +163,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._orderNotesPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._orderNotesPanel.Location = new System.Drawing.Point(3, 16);
 			this._orderNotesPanel.Name = "_orderNotesPanel";
-			this._orderNotesPanel.Size = new System.Drawing.Size(831, 329);
+			this._orderNotesPanel.Size = new System.Drawing.Size(838, 257);
 			this._orderNotesPanel.TabIndex = 0;
 			// 
 			// _replyGroupBox
@@ -193,9 +171,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._replyGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._replyGroupBox.Controls.Add(this.tableLayoutPanel1);
 			this._replyGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._replyGroupBox.Location = new System.Drawing.Point(0, 0);
+			this._replyGroupBox.Location = new System.Drawing.Point(3, 285);
 			this._replyGroupBox.Name = "_replyGroupBox";
-			this._replyGroupBox.Size = new System.Drawing.Size(837, 302);
+			this._replyGroupBox.Size = new System.Drawing.Size(844, 276);
 			this._replyGroupBox.TabIndex = 0;
 			this._replyGroupBox.TabStop = false;
 			this._replyGroupBox.Text = "Add a note to the conversation";
@@ -213,8 +191,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
 			this.tableLayoutPanel1.RowCount = 1;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(831, 283);
-			this.tableLayoutPanel1.TabIndex = 1;
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(838, 257);
+			this.tableLayoutPanel1.TabIndex = 0;
 			// 
 			// panel2
 			// 
@@ -222,21 +200,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.panel2.Controls.Add(this._onBehalf);
 			this.panel2.Controls.Add(this._recipients);
 			this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel2.Location = new System.Drawing.Point(565, 3);
+			this.panel2.Location = new System.Drawing.Point(572, 3);
 			this.panel2.Name = "panel2";
-			this.panel2.Size = new System.Drawing.Size(263, 277);
+			this.panel2.Size = new System.Drawing.Size(263, 251);
 			this.panel2.TabIndex = 1;
-			// 
-			// _urgent
-			// 
-			this._urgent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this._urgent.AutoSize = true;
-			this._urgent.Location = new System.Drawing.Point(476, 11);
-			this._urgent.Name = "_urgent";
-			this._urgent.Size = new System.Drawing.Size(58, 17);
-			this._urgent.TabIndex = 1;
-			this._urgent.Text = "Urgent";
-			this._urgent.UseVisualStyleBackColor = true;
 			// 
 			// label1
 			// 
@@ -273,8 +240,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._recipients.Margin = new System.Windows.Forms.Padding(3, 3, 15, 3);
 			this._recipients.Name = "_recipients";
 			this._recipients.ReadOnly = false;
-			this._recipients.Size = new System.Drawing.Size(234, 193);
-			this._recipients.TabIndex = 1;
+			this._recipients.Size = new System.Drawing.Size(234, 167);
+			this._recipients.TabIndex = 2;
 			// 
 			// tableLayoutPanel2
 			// 
@@ -290,8 +257,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel2.Size = new System.Drawing.Size(556, 277);
-			this.tableLayoutPanel2.TabIndex = 2;
+			this.tableLayoutPanel2.Size = new System.Drawing.Size(563, 251);
+			this.tableLayoutPanel2.TabIndex = 0;
 			// 
 			// _templateSelectionPanel
 			// 
@@ -301,8 +268,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._templateSelectionPanel.Controls.Add(this._template);
 			this._templateSelectionPanel.Location = new System.Drawing.Point(3, 3);
 			this._templateSelectionPanel.Name = "_templateSelectionPanel";
-			this._templateSelectionPanel.Size = new System.Drawing.Size(550, 47);
-			this._templateSelectionPanel.TabIndex = 3;
+			this._templateSelectionPanel.Size = new System.Drawing.Size(557, 47);
+			this._templateSelectionPanel.TabIndex = 0;
 			// 
 			// _template
 			// 
@@ -321,6 +288,47 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._template.TabIndex = 0;
 			this._template.Value = null;
 			// 
+			// _softKeyFlowPanel
+			// 
+			this._softKeyFlowPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._softKeyFlowPanel.AutoScroll = true;
+			this._softKeyFlowPanel.Location = new System.Drawing.Point(3, 56);
+			this._softKeyFlowPanel.Name = "_softKeyFlowPanel";
+			this._softKeyFlowPanel.Size = new System.Drawing.Size(557, 31);
+			this._softKeyFlowPanel.TabIndex = 2;
+			// 
+			// panel1
+			// 
+			this.panel1.Controls.Add(this.label2);
+			this.panel1.Controls.Add(this._urgent);
+			this.panel1.Controls.Add(this._replyBody);
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel1.Location = new System.Drawing.Point(3, 93);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(557, 155);
+			this.panel1.TabIndex = 1;
+			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(6, 13);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(30, 13);
+			this.label2.TabIndex = 0;
+			this.label2.Text = "Note";
+			// 
+			// _urgent
+			// 
+			this._urgent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this._urgent.AutoSize = true;
+			this._urgent.Location = new System.Drawing.Point(483, 11);
+			this._urgent.Name = "_urgent";
+			this._urgent.Size = new System.Drawing.Size(58, 17);
+			this._urgent.TabIndex = 2;
+			this._urgent.Text = "Urgent";
+			this._urgent.UseVisualStyleBackColor = true;
+			// 
 			// _replyBody
 			// 
 			this._replyBody.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -331,56 +339,23 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._replyBody.Location = new System.Drawing.Point(3, 31);
 			this._replyBody.Margin = new System.Windows.Forms.Padding(3, 3, 15, 3);
 			this._replyBody.Name = "_replyBody";
-			this._replyBody.Size = new System.Drawing.Size(532, 147);
-			this._replyBody.TabIndex = 0;
+			this._replyBody.Size = new System.Drawing.Size(539, 133);
+			this._replyBody.TabIndex = 1;
 			this._replyBody.Text = "";
-			// 
-			// _softKeyFlowPanel
-			// 
-			this._softKeyFlowPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this._softKeyFlowPanel.AutoScroll = true;
-			this._softKeyFlowPanel.Location = new System.Drawing.Point(3, 56);
-			this._softKeyFlowPanel.Name = "_softKeyFlowPanel";
-			this._softKeyFlowPanel.Size = new System.Drawing.Size(550, 31);
-			this._softKeyFlowPanel.TabIndex = 0;
-			// 
-			// panel1
-			// 
-			this.panel1.Controls.Add(this.label2);
-			this.panel1.Controls.Add(this._urgent);
-			this.panel1.Controls.Add(this._replyBody);
-			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel1.Location = new System.Drawing.Point(3, 93);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(550, 181);
-			this.panel1.TabIndex = 4;
-			// 
-			// label2
-			// 
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(6, 13);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(30, 13);
-			this.label2.TabIndex = 2;
-			this.label2.Text = "Note";
 			// 
 			// OrderNoteConversationComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.CancelButton = this._cancelButton;
 			this.Controls.Add(this._componentTableLayout);
 			this.Name = "OrderNoteConversationComponentControl";
-			this.Size = new System.Drawing.Size(843, 695);
+			this.Size = new System.Drawing.Size(850, 600);
 			this._componentTableLayout.ResumeLayout(false);
 			this._componentTableLayout.PerformLayout();
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.flowLayoutPanel1.PerformLayout();
-			this._componentSplitContainer.Panel1.ResumeLayout(false);
-			this._componentSplitContainer.Panel1.PerformLayout();
-			this._componentSplitContainer.Panel2.ResumeLayout(false);
-			this._componentSplitContainer.ResumeLayout(false);
 			this._notesGroupBox.ResumeLayout(false);
 			this._replyGroupBox.ResumeLayout(false);
 			this.tableLayoutPanel1.ResumeLayout(false);
@@ -406,7 +381,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private System.Windows.Forms.GroupBox _replyGroupBox;
 		private System.Windows.Forms.CheckBox _urgent;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _onBehalf;
-		private System.Windows.Forms.SplitContainer _componentSplitContainer;
 		private System.Windows.Forms.Panel _orderNotesPanel;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 		private System.Windows.Forms.RichTextBox _replyBody;
