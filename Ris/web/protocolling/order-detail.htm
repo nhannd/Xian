@@ -53,7 +53,7 @@
 						Preview.ProceduresTable.create($("proceduresSection"), orderDetail.Procedures);
 						
 						var notes = orderDetail.Notes.select(function(note) { return note.Category == "General"; });
-						Preview.OrderNotesTable.create($("generalNotesSection"), notes, "Order Notes", false);
+						Preview.OrderNotesTable.create($("generalNotesSection"), notes, "Order Notes", true);
 					}
 					else
 					{
