@@ -372,10 +372,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private bool _rememberSupervisor;
 		private Dictionary<string, string> _reportPartExtendedProperties;
 
-		private PriorReportComponent _priorReportComponent;
 		private ReportingOrderDetailViewComponent _orderComponent;
-		private OrderAdditionalInfoComponent _additionalInfoComponent;
 		private AttachedDocumentPreviewComponent _orderAttachmentsComponent;
+		private OrderAdditionalInfoComponent _additionalInfoComponent;
+		private PriorReportComponent _priorReportComponent;
 
 		private List<IReportingPage> _extensionPages;
 		private bool _userCancelled;
@@ -425,13 +425,17 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_orderComponent = new ReportingOrderDetailViewComponent(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef);
 				_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleOrder, _orderComponent));
 
-				_priorReportComponent = new PriorReportComponent(this.WorklistItem);
-				_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitlePriors, _priorReportComponent));
+				_orderAttachmentsComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Order);
+				_orderAttachmentsComponent.OrderRef = this.WorklistItem.OrderRef;
+				_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleOrderAttachments, _orderAttachmentsComponent));
 
 				_additionalInfoComponent = new OrderAdditionalInfoComponent(true);
 				_additionalInfoComponent.OrderExtendedProperties = _orderDetail.ExtendedProperties;
 				_additionalInfoComponent.HealthcareContext = this.WorklistItem;
 				_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleAdditionalInfo, _additionalInfoComponent));
+
+				_priorReportComponent = new PriorReportComponent(this.WorklistItem);
+				_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitlePriors, _priorReportComponent));
 
 				// instantiate all extension pages
 				_extensionPages = new List<IReportingPage>();
@@ -446,10 +450,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 				{
 					_rightHandComponentContainer.Pages.Add(new TabPage(page.Path, page.GetComponent()));
 				}
-
-				_orderAttachmentsComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Order);
-				_orderAttachmentsComponent.OrderRef = this.WorklistItem.OrderRef;
-				_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleOrderAttachments, _orderAttachmentsComponent));
 
 				_rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
 				_rightHandComponentContainerHost.StartComponent();

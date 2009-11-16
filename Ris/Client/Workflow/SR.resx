@@ -668,9 +668,6 @@ Choose "No" to verify this report without further action.</value>
   <data name="TitleOrderAttachments" xml:space="preserve">
     <value>Order Attachments</value>
   </data>
-  <data name="TitleOrderDetails" xml:space="preserve">
-    <value>Order Details</value>
-  </data>
   <data name="TitlePriors" xml:space="preserve">
     <value>Priors</value>
   </data>

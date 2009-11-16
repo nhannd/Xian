@@ -213,13 +213,18 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
 			var noteDetails = GetNoteDetails(assignmentStep.Procedure.Order, request.NoteCategory);
 
+			var orderAssembler = new OrderAssembler();
+			var orderDetail = orderAssembler.CreateOrderDetail(assignmentStep.Procedure.Order, this.PersistenceContext,
+				false, false, false, null, false, false, true);
+
 			this.PersistenceContext.SynchState();
 
 			return new StartProtocolResponse(
 				assignmentStep.GetRef(),
 				assignedStaff == null ? null : assignedStaff.GetRef(),
 				protocolClaimed,
-				noteDetails);
+				noteDetails,
+				orderDetail);
 		}
 
 		[UpdateOperation]

@@ -214,9 +214,9 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._urgency.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._urgency.LabelText = "Urgency";
 			this._urgency.Location = new System.Drawing.Point(2, 561);
-			this._urgency.Margin = new System.Windows.Forms.Padding(2, 2, 30, 2);
+			this._urgency.Margin = new System.Windows.Forms.Padding(2, 2, 29, 2);
 			this._urgency.Name = "_urgency";
-			this._urgency.Size = new System.Drawing.Size(495, 41);
+			this._urgency.Size = new System.Drawing.Size(496, 41);
 			this._urgency.TabIndex = 1;
 			this._urgency.Value = null;
 			// 

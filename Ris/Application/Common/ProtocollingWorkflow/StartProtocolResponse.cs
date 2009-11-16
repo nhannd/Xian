@@ -42,12 +42,14 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 			EntityRef protocolAssignmentStepRef,
 			EntityRef assignedStaffRef,
 			bool protocolClaimed,
-			List<OrderNoteDetail> protocolNotes)
+			List<OrderNoteDetail> protocolNotes,
+			OrderDetail order)
 		{
 			this.ProtocolAssignmentStepRef = protocolAssignmentStepRef;
 			this.AssignedStaffRef = assignedStaffRef;
 			this.ProtocolClaimed = protocolClaimed;
 			this.ProtocolNotes = protocolNotes;
+			this.Order = order;
 		}
 
 		[DataMember]
@@ -61,5 +63,8 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 
 		[DataMember]
 		public List<OrderNoteDetail> ProtocolNotes;
+
+		[DataMember]
+		public OrderDetail Order;
 	}
 }

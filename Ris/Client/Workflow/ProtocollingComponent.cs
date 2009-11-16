@@ -65,6 +65,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private EntityRef _protocolAssignmentStepRef;
 		private EntityRef _assignedStaffRef;
 		private List<OrderNoteDetail> _notes;
+		private OrderDetail _orderDetail;
 
 		private ChildComponentHost _bannerComponentHost;
 		private ChildComponentHost _protocolEditorComponentHost;
@@ -73,8 +74,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private TabComponentContainer _rightHandComponentContainer;
 
 		private ProtocollingOrderDetailViewComponent _orderDetailViewComponent;
-		private PriorReportComponent _priorReportsComponent;
+		private OrderAdditionalInfoComponent _additionalInfoComponent;
 		private AttachedDocumentPreviewComponent _orderAttachmentsComponent;
+		private PriorReportComponent _priorReportsComponent;
 
 		private bool _acceptEnabled;
 		private bool _submitForApprovalEnabled;
@@ -121,10 +123,20 @@ namespace ClearCanvas.Ris.Client.Workflow
 				this.Modified = this.Modified || _protocolEditorComponentHost.Component.Modified);
 
 			_rightHandComponentContainer = new TabComponentContainer();
-			_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleOrderDetails, _orderDetailViewComponent = new ProtocollingOrderDetailViewComponent(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef)));
-			_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitlePriors, _priorReportsComponent = new PriorReportComponent(this.WorklistItem)));
-			_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleOrderAttachments, _orderAttachmentsComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Order)));
+
+			_orderDetailViewComponent = new ProtocollingOrderDetailViewComponent(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef);
+			_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleOrder, _orderDetailViewComponent));
+
+			_orderAttachmentsComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Order);
 			_orderAttachmentsComponent.OrderRef = this.WorklistItem.OrderRef;
+			_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleOrderAttachments, _orderAttachmentsComponent));
+	
+			_additionalInfoComponent = new OrderAdditionalInfoComponent(true);
+			_additionalInfoComponent.OrderExtendedProperties = _orderDetail.ExtendedProperties;
+			_additionalInfoComponent.HealthcareContext = this.WorklistItem;
+			_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleAdditionalInfo, _additionalInfoComponent));
+
+			_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitlePriors, _priorReportsComponent = new PriorReportComponent(this.WorklistItem)));
 
 			_rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
 			_rightHandComponentContainerHost.StartComponent();
@@ -522,6 +534,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_assignedStaffRef = response.AssignedStaffRef;
 
 				_notes = response.ProtocolNotes;
+				_orderDetail = response.Order;
 
 				if (response.ProtocolClaimed == shouldClaim)
 				{

@@ -1425,15 +1425,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Order Details.
-        /// </summary>
-        internal static string TitleOrderDetails {
-            get {
-                return ResourceManager.GetString("TitleOrderDetails", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Order Notes.
         /// </summary>
         internal static string TitleOrderNoteboxFolderSystem {

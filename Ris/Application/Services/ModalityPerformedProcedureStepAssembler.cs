@@ -43,8 +43,6 @@ namespace ClearCanvas.Ris.Application.Services
     {
         public ModalityPerformedProcedureStepDetail CreateModalityPerformedProcedureStepDetail(ModalityPerformedProcedureStep mpps, IPersistenceContext context)
         {
-            string name = StringUtilities.Combine(mpps.Activities, " / ", delegate(Activity a) { return a.As<ModalityProcedureStep>().Description; });
-
             ProcedureStepAssembler assembler = new ProcedureStepAssembler();
 
             // include the details of each MPS in the mpps summary
@@ -65,7 +63,7 @@ namespace ClearCanvas.Ris.Application.Services
 
         	return new ModalityPerformedProcedureStepDetail(
         		mpps.GetRef(),
-        		name,
+        		FormatMppsDescription(mpps),
         		EnumUtils.GetEnumValueInfo(mpps.State, context),
         		mpps.StartTime,
         		mpps.EndTime,
@@ -74,5 +72,17 @@ namespace ClearCanvas.Ris.Application.Services
 				dicomSeries,
                 new Dictionary<string, string>(mpps.ExtendedProperties));
         }
+
+		private string FormatMppsDescription(ModalityPerformedProcedureStep mpps)
+		{
+			string description = StringUtilities.Combine(mpps.Activities, " / ", 
+				delegate(Activity a)
+					{
+						var mps = a.As<ModalityProcedureStep>();
+						return mps.Description;
+					});
+
+			return description;
+		}
     }
 }
