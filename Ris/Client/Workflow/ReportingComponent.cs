@@ -174,9 +174,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 		bool CanSendToTranscription { get; }
 
 		/// <summary>
-		/// Gets or sets the supervisor for the active report part.
+		/// Gets the supervisor for the active report part.
 		/// </summary>
-		StaffSummary Supervisor { get; set; }
+		StaffSummary Supervisor { get; }
 	}
 
 	/// <summary>
@@ -334,10 +334,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			public StaffSummary Supervisor
 			{
 				get { return Owner._supervisor; }
-				set
-				{
-					Owner.SetSupervisor(value);
-				}
 			}
 
 			public void RequestClose(ReportEditorCloseReason reason)
@@ -400,6 +396,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public override void Start()
 		{
+			this.Validation.Add(new ValidationRule("Supervisor",
+				delegate
+				{
+					var ok = _supervisor != null || Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.OmitSupervisor);
+					return new ValidationResult(ok, SR.MessageChooseRadiologist);
+				}));
+
 			// create supervisor lookup handler, using filters supplied in application settings
 			var filters = ReportingSettings.Default.SupervisorStaffTypeFilters;
 			var staffTypes = string.IsNullOrEmpty(filters)
@@ -701,18 +704,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 					return;
 				}
 
-				if (SupervisorIsInvalid())
-					return;
+				if (!PreliminaryDiagnosis.ShowDialogOnVerifyIfRequired(this.WorklistItem, this.Host.DesktopWindow))
+				{
+					return; // user cancelled out
+				}
 
 				CloseImages();
 
 				if (!_reportEditor.Save(ReportEditorCloseReason.Verify))
 					return;
-
-				if (!PreliminaryDiagnosis.ShowDialogOnVerifyIfRequired(this.WorklistItem, this.Host.DesktopWindow))
-				{
-					return; // user cancelled out
-				}
 
 				if (_canCompleteInterpretationAndVerify)
 				{
@@ -769,9 +769,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 					return;
 				}
 
-				if (SupervisorIsInvalid())
-					return;
-
 				CloseImages();
 
 				if (!_reportEditor.Save(ReportEditorCloseReason.SendToBeVerified))
@@ -822,9 +819,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 					this.ShowValidation(true);
 					return;
 				}
-
-				if (SupervisorIsInvalid())
-					return;
 
 				CloseImages();
 
@@ -993,17 +987,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public bool UserCancelled
 		{
 			get { return _userCancelled; }
-		}
-
-		private bool SupervisorIsInvalid()
-		{
-			var invalid = !Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.OmitSupervisor)
-						   && _supervisor == null;
-			if (invalid)
-			{
-				this.Host.DesktopWindow.ShowMessageBox(SR.MessageChooseRadiologist, MessageBoxActions.Ok);
-			}
-			return invalid;
 		}
 
 		private void SetSupervisor(StaffSummary supervisor)

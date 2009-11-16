@@ -339,6 +339,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// </summary>
 		public override void Start()
 		{
+			this.Validation.Add(new ValidationRule("Supervisor",
+				delegate
+				{
+					var ok = _supervisor != null;
+					return new ValidationResult(ok, SR.MessageChooseRadiologist);
+				}));
+
 			//// create supervisor lookup handler, using filters supplied in application settings
 			var filters = TranscriptionSettings.Default.SupervisorStaffTypeFilters;
 			var staffTypes = string.IsNullOrEmpty(filters)
@@ -601,8 +608,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
-				if (SupervisorIsInvalid())
+				if (this.HasValidationErrors)
+				{
+					this.ShowValidation(true);
 					return;
+				}
 
 				if (!_transcriptionEditor.Save(TranscriptionEditorCloseReason.SaveDraft))
 					return;
@@ -890,16 +900,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			this.Host.Title = ReportDocument.GetTitle(this.WorklistItem);
 
 			NotifyPropertyChanged("StatusText");
-		}
-
-		private bool SupervisorIsInvalid()
-		{
-			if (_supervisor == null)
-			{
-				this.Host.DesktopWindow.ShowMessageBox(SR.MessageChooseRadiologist, MessageBoxActions.Ok);
-				return true;
-			}
-			return false;
 		}
 
 		private void SetSupervisor(StaffSummary supervisor)
