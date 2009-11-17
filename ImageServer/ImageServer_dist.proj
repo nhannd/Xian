@@ -77,6 +77,9 @@
 	
   </ItemGroup>
 
+  <ItemGroup Condition="$(ExecutableBuild)">
+	<PluginFiles Include="$(SolutionDir)\..\Utilities\bin\$(Configuration)\ClearCanvas.Utilities.dll" />
+  </ItemGroup>
 
   <ItemGroup Condition="$(ShredHostBuild)">
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Archiving\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Archiving.dll" />
