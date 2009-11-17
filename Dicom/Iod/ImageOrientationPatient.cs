@@ -289,8 +289,8 @@ namespace ClearCanvas.Dicom.Iod
 			double[] rowCosines = new double[] {_rowX, _rowY, _rowZ};
 			double secondaryCosine = rowCosines[Math.Abs(_secondaryRowDirection) - 1];
 
-			// since degreesTolerance is [0,10], the RHS will always be positive
-			if (Math.Abs(secondaryCosine) < 1 - Math.Cos(degreesTolerance*Math.PI/180))
+			// report no secondary direction if the secondary cosine is within degrees of 90 - that is, nearly perpendicular to the given direction
+			if (90 - 180*Math.Acos(Math.Abs(secondaryCosine))/Math.PI < degreesTolerance)
 				return Directions.None;
 			return this.GetSecondaryRowDirection(opposingDirection);
 		}
@@ -325,8 +325,8 @@ namespace ClearCanvas.Dicom.Iod
 			double[] columnCosines = new double[] {_columnX, _columnY, _columnZ};
 			double secondaryCosine = columnCosines[Math.Abs(_secondaryColumnDirection) - 1];
 
-			// since degreesTolerance is [0,10], the RHS will always be positive
-			if (Math.Abs(secondaryCosine) < 1 - Math.Cos(degreesTolerance*Math.PI/180))
+			// report no secondary direction if the secondary cosine is within degrees of 90 - that is, nearly perpendicular to the given direction
+			if (90 - 180 * Math.Acos(Math.Abs(secondaryCosine)) / Math.PI < degreesTolerance)
 				return Directions.None;
 			return this.GetSecondaryColumnDirection(opposingDirection);
 		}
