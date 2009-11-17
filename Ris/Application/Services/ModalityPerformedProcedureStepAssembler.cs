@@ -35,41 +35,39 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-    public class ModalityPerformedProcedureStepAssembler
-    {
-        public ModalityPerformedProcedureStepDetail CreateModalityPerformedProcedureStepDetail(ModalityPerformedProcedureStep mpps, IPersistenceContext context)
-        {
-            ModalityProcedureStepAssembler assembler = new ModalityProcedureStepAssembler();
+	public class ModalityPerformedProcedureStepAssembler
+	{
+		public ModalityPerformedProcedureStepDetail CreateModalityPerformedProcedureStepDetail(ModalityPerformedProcedureStep mpps, IPersistenceContext context)
+		{
+			var assembler = new ModalityProcedureStepAssembler();
 
-            // include the details of each MPS in the mpps summary
-            List<ModalityProcedureStepSummary> mpsDetails = CollectionUtils.Map<ProcedureStep, ModalityProcedureStepSummary>(
-                mpps.Activities,
-                delegate(ProcedureStep mps) { return assembler.CreateProcedureStepSummary(mps.As<ModalityProcedureStep>(), context); });
+			// include the details of each MPS in the mpps summary
+			var mpsDetails = CollectionUtils.Map(mpps.Activities,
+				(ProcedureStep mps) => assembler.CreateProcedureStepSummary(mps.As<ModalityProcedureStep>(), context));
 
-			DicomSeriesAssembler dicomSeriesAssembler = new DicomSeriesAssembler();
-        	List<DicomSeriesDetail> dicomSeries = dicomSeriesAssembler.GetDicomSeriesDetails(mpps.DicomSeries);;
+			var dicomSeriesAssembler = new DicomSeriesAssembler();
+			var dicomSeries = dicomSeriesAssembler.GetDicomSeriesDetails(mpps.DicomSeries);
 
-        	StaffSummary mppsPerformer = null;
-        	ProcedureStepPerformer performer = mpps.Performer as ProcedureStepPerformer;
+			StaffSummary mppsPerformer = null;
+			var performer = mpps.Performer as ProcedureStepPerformer;
 			if (performer != null)
 			{
-				StaffAssembler staffAssembler = new StaffAssembler();
+				var staffAssembler = new StaffAssembler();
 				mppsPerformer = staffAssembler.CreateStaffSummary(performer.Staff, context);
 			}
 
-        	return new ModalityPerformedProcedureStepDetail(
-        		mpps.GetRef(),
-        		EnumUtils.GetEnumValueInfo(mpps.State, context),
-        		mpps.StartTime,
-        		mpps.EndTime,
-        		mppsPerformer,
-        		mpsDetails,
+			return new ModalityPerformedProcedureStepDetail(
+				mpps.GetRef(),
+				EnumUtils.GetEnumValueInfo(mpps.State, context),
+				mpps.StartTime,
+				mpps.EndTime,
+				mppsPerformer,
+				mpsDetails,
 				dicomSeries,
-                new Dictionary<string, string>(mpps.ExtendedProperties));
-        }
-    }
+				new Dictionary<string, string>(mpps.ExtendedProperties));
+		}
+	}
 }

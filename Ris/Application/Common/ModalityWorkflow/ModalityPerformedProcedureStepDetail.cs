@@ -36,46 +36,46 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
-    [DataContract]
-    public class ModalityPerformedProcedureStepDetail : DataContractBase
-    {
-        public ModalityPerformedProcedureStepDetail(EntityRef modalityPerformendProcedureStepRef, EnumValueInfo state, DateTime startTime, DateTime? endTime, StaffSummary performer, List<ModalityProcedureStepSummary> modalityProcedureSteps, List<DicomSeriesDetail> dicomSeries, Dictionary<string, string> extendedProperties)
-        {
-            this.ModalityPerformendProcedureStepRef = modalityPerformendProcedureStepRef;
-            this.State = state;
-            this.StartTime = startTime;
-            this.EndTime = endTime;
-            this.Performer = performer;
-            this.ModalityProcedureSteps = modalityProcedureSteps;
-        	this.DicomSeries = dicomSeries;
-            this.ExtendedProperties = extendedProperties;
-        }
+	[DataContract]
+	public class ModalityPerformedProcedureStepDetail : DataContractBase
+	{
+		public ModalityPerformedProcedureStepDetail(EntityRef modalityPerformendProcedureStepRef, EnumValueInfo state, DateTime startTime, DateTime? endTime, StaffSummary performer, List<ModalityProcedureStepSummary> modalityProcedureSteps, List<DicomSeriesDetail> dicomSeries, Dictionary<string, string> extendedProperties)
+		{
+			this.ModalityPerformendProcedureStepRef = modalityPerformendProcedureStepRef;
+			this.State = state;
+			this.StartTime = startTime;
+			this.EndTime = endTime;
+			this.Performer = performer;
+			this.ModalityProcedureSteps = modalityProcedureSteps;
+			this.DicomSeries = dicomSeries;
+			this.ExtendedProperties = extendedProperties;
+		}
 
-        [DataMember]
-        public EntityRef ModalityPerformendProcedureStepRef;
+		[DataMember]
+		public EntityRef ModalityPerformendProcedureStepRef;
 
-        [DataMember]
-        public EnumValueInfo State;
+		[DataMember]
+		public EnumValueInfo State;
 
-        [DataMember]
-        public DateTime StartTime;
+		[DataMember]
+		public DateTime StartTime;
 
-        [DataMember]
-        public DateTime? EndTime;
+		[DataMember]
+		public DateTime? EndTime;
 
-        [DataMember]
-        public StaffSummary Performer;
+		[DataMember]
+		public StaffSummary Performer;
 
-        /// <summary>
-        /// Modality procedure steps that were performed with this performed procedure step.
-        /// </summary>
-        [DataMember]
-        public List<ModalityProcedureStepSummary> ModalityProcedureSteps;
+		/// <summary>
+		/// Modality procedure steps that were performed with this performed procedure step.
+		/// </summary>
+		[DataMember]
+		public List<ModalityProcedureStepSummary> ModalityProcedureSteps;
 
 		[DataMember]
 		public List<DicomSeriesDetail> DicomSeries;
 
-        [DataMember]
-        public Dictionary<string, string> ExtendedProperties;
-    }
+		[DataMember]
+		public Dictionary<string, string> ExtendedProperties;
+	}
 }

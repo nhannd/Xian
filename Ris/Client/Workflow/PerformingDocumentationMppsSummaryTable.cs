@@ -29,59 +29,53 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-    public class PerformingDocumentationMppsSummaryTable : Table<ModalityPerformedProcedureStepDetail>
-    {
-        public PerformingDocumentationMppsSummaryTable()
-        {
-            this.Columns.Add(new TableColumn<ModalityPerformedProcedureStepDetail, string>(
-                                 SR.ColumnName,
-                                 delegate(ModalityPerformedProcedureStepDetail mpps) { return FormatDescription(mpps); },
-                                 5.0f));
+	public class PerformingDocumentationMppsSummaryTable : Table<ModalityPerformedProcedureStepDetail>
+	{
+		public PerformingDocumentationMppsSummaryTable()
+		{
+			this.Columns.Add(new TableColumn<ModalityPerformedProcedureStepDetail, string>(
+								 SR.ColumnName,
+								 FormatDescription,
+								 5.0f));
 
-            this.Columns.Add(new TableColumn<ModalityPerformedProcedureStepDetail, string>(
-                                 SR.ColumnState,
-                                 delegate(ModalityPerformedProcedureStepDetail mpps) { return FormatStatus(mpps); },
-                                 1.2f));
+			this.Columns.Add(new TableColumn<ModalityPerformedProcedureStepDetail, string>(
+								 SR.ColumnState,
+								 FormatStatus,
+								 1.2f));
 
-			DateTimeTableColumn<ModalityPerformedProcedureStepDetail> sortColumn = 
-                new DateTimeTableColumn<ModalityPerformedProcedureStepDetail>(
-                                 SR.ColumnStartTime,
-                                 delegate(ModalityPerformedProcedureStepDetail mpps) { return mpps.StartTime; },
-                                 1.5f);
+			var sortColumn = 
+				new DateTimeTableColumn<ModalityPerformedProcedureStepDetail>(
+								 SR.ColumnStartTime,
+								 mpps => mpps.StartTime,
+								 1.5f);
 
 			this.Columns.Add(sortColumn);
 			this.Sort(new TableSortParams(sortColumn, true));
 
-            DateTimeTableColumn<ModalityPerformedProcedureStepDetail> endTimeColumn =
-				new DateTimeTableColumn<ModalityPerformedProcedureStepDetail>(
-                                 SR.ColumnEndTime,
-                                 delegate(ModalityPerformedProcedureStepDetail mpps) { return mpps.EndTime; },
-                                 1.5f);
+			var endTimeColumn = new DateTimeTableColumn<ModalityPerformedProcedureStepDetail>(
+								 SR.ColumnEndTime,
+								 mpps => mpps.EndTime,
+								 1.5f);
 
 			this.Columns.Add(endTimeColumn);
-        }
+		}
 
-        private static string FormatStatus(ModalityPerformedProcedureStepDetail mpps)
-        {
-            if (mpps.State.Code == "CM")
-                return "Performed";
-            else
-                return mpps.State.Value;
-        }
+		private static string FormatStatus(ModalityPerformedProcedureStepDetail mpps)
+		{
+			return mpps.State.Code == "CM" ? "Performed" : mpps.State.Value;
+		}
 
 		private static string FormatDescription(ModalityPerformedProcedureStepDetail mpps)
 		{
-			string description = StringUtilities.Combine(mpps.ModalityProcedureSteps, " / ",
+			var description = StringUtilities.Combine(mpps.ModalityProcedureSteps, " / ",
 				delegate(ModalityProcedureStepSummary mps)
 				{
 					var modifier = ProcedureFormat.FormatModifier(mps.Procedure.Portable, mps.Procedure.Laterality);

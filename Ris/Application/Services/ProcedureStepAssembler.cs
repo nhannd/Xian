@@ -48,8 +48,8 @@ namespace ClearCanvas.Ris.Application.Services
 	{
 		public ProcedureStepSummary CreateProcedureStepSummary(ProcedureStep ps, IPersistenceContext context)
 		{
-			ProcedureAssembler assembler = new ProcedureAssembler();
-			ModalityAssembler modalityAssembler = new ModalityAssembler();
+			var assembler = new ProcedureAssembler();
+			var modalityAssembler = new ModalityAssembler();
 			return new ProcedureStepSummary(
 				ps.GetRef(),
 				ps.Name,
@@ -62,13 +62,13 @@ namespace ClearCanvas.Ris.Application.Services
 
 		public ProcedureStepDetail CreateProcedureStepDetail(ProcedureStep ps, IPersistenceContext context)
 		{
-			StaffAssembler staffAssembler = new StaffAssembler();
-			ModalityAssembler modalityAssembler = new ModalityAssembler();
+			var staffAssembler = new StaffAssembler();
+			var modalityAssembler = new ModalityAssembler();
 
 			return new ProcedureStepDetail(
 				ps.GetRef(),
 				ps.Name,
-                ps.GetClass().Name,
+				ps.GetClass().Name,
 				ps.Is<ModalityProcedureStep>() ? ps.As<ModalityProcedureStep>().Description : null,
 				EnumUtils.GetEnumValueInfo(ps.State, context),
 				ps.CreationTime,

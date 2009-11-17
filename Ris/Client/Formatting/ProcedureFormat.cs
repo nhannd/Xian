@@ -124,13 +124,13 @@ namespace ClearCanvas.Ris.Client.Formatting
 		/// <param name="format"></param>
 		/// <returns></returns>
 		public static string Format(string typeName, bool portable, EnumValueInfo laterality, string format)
-        {
+		{
 			var modifier = FormatModifier(portable, laterality, format);
 
 			return string.IsNullOrEmpty(modifier) 
 				? typeName 
 				: string.Format("{0} ({1})", typeName, modifier);
-        }
+		}
 
 		/// <summary>
 		/// Formats the procedure portable and laterality similar to "Portable/Laterality".  
