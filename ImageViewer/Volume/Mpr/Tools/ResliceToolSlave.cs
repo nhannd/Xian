@@ -107,6 +107,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 
 				if (containingDisplaySet != null && containingDisplaySet.ImageBox == e.ImageBox)
 				{
+					// translocate the graphic if the user is stacking through the display set that the graphic sits in
+					// do not add this command to history - the stack command generates the actual action command
 					if (_lastTopLeftPresentationImageIndex != e.ImageBox.TopLeftPresentationImageIndex)
 					{
 						_lastTopLeftPresentationImageIndex = e.ImageBox.TopLeftPresentationImageIndex;
@@ -119,6 +121,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 					IPresentationImage firstReslicedImage = imageBox.TopLeftPresentationImage;
 					ColorizeDisplaySetDescription(firstReslicedImage, this.NormalColor);
 
+					// and realign the slice line with the stacked position
 					if (_resliceGraphic.ParentPresentationImage != null && _resliceGraphic.ParentPresentationImage != firstReslicedImage)
 					{
 						_resliceGraphic.SetLine(imageBox.TopLeftPresentationImage, _resliceGraphic.ParentPresentationImage);
