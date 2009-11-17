@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace ClearCanvas.Controls.WinForms
 {
@@ -12,6 +13,11 @@ namespace ClearCanvas.Controls.WinForms
 		/// as consumers will not take over ownership and disposal responsibility of the returned object.
 		/// </remarks>
 		Pidl Pidl { get; }
+
+		/// <summary>
+		/// Fired before <see cref="Pidl"/> changes.
+		/// </summary>
+		event CancelEventHandler PidlChanging;
 
 		/// <summary>
 		/// Fired when <see cref="Pidl"/> changes.

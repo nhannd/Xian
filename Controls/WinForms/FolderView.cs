@@ -21,6 +21,7 @@ namespace ClearCanvas.Controls.WinForms
 		public FolderView()
 		{
 			_folderListView = new FolderListView();
+			_folderListView.BeforeBrowse += OnFolderListViewBeforeBrowse;
 			_folderListView.AfterBrowse += OnFolderListViewAfterBrowse;
 			_folderListView.SelectedIndexChanged += OnFolderListViewSelectedIndexChanged;
 			_folderListView.KeyDown += OnFolderListViewKeyDown;
@@ -82,6 +83,29 @@ namespace ClearCanvas.Controls.WinForms
 		private void ResetAutoDrillDown()
 		{
 			this.AutoDrillDown = true;
+		}
+
+		#endregion
+
+		#region AutoWaitCursor
+
+		[DefaultValue(true)]
+		public bool AutoWaitCursor
+		{
+			get { return _folderListView.AutoWaitCursor; }
+			set
+			{
+				if (_folderListView.AutoWaitCursor != value)
+				{
+					_folderListView.AutoWaitCursor = value;
+					this.OnPropertyChanged(new PropertyChangedEventArgs("AutoWaitCursor"));
+				}
+			}
+		}
+
+		private void ResetAutoWaitCursor()
+		{
+			this.AutoWaitCursor = true;
 		}
 
 		#endregion
@@ -264,10 +288,20 @@ namespace ClearCanvas.Controls.WinForms
 			}
 		}
 
+		private void OnFolderListViewBeforeBrowse(object sender, CancelEventArgs e)
+		{
+			e.Cancel |= this.NotifyCoordinatorPidlChanging();
+			if (!e.Cancel)
+			{
+				this.OnBeginBrowse(EventArgs.Empty);
+			}
+		}
+
 		private void OnFolderListViewAfterBrowse(object sender, EventArgs e)
 		{
 			this.OnCurrentPidlChanged(EventArgs.Empty);
 			this.NotifyCoordinatorPidlChanged();
+			this.OnEndBrowse(EventArgs.Empty);
 		}
 
 		private void OnFolderListViewSelectedIndexChanged(object sender, EventArgs e)
@@ -438,8 +472,9 @@ namespace ClearCanvas.Controls.WinForms
 
 		private class FolderListView : ListView
 		{
+			public event CancelEventHandler BeforeBrowse;
 			public event EventHandler AfterBrowse;
-			private bool _suppressAfterBrowse = false;
+			private bool _suppressBrowseEvents = false;
 
 			private const string COLUMN_NAME = "Name";
 			private const string COLUMN_SIZE = "Size";
@@ -451,6 +486,8 @@ namespace ClearCanvas.Controls.WinForms
 			private ShellItem _currentShellItem = null;
 
 			private bool _autoDrillDown = true;
+			private bool _autoWaitCursor = true;
+			private Cursor _oldCursor = null;
 
 			public FolderListView() : base()
 			{
@@ -637,6 +674,12 @@ namespace ClearCanvas.Controls.WinForms
 				set { _autoDrillDown = value; }
 			}
 
+			public bool AutoWaitCursor
+			{
+				get { return _autoWaitCursor; }
+				set { _autoWaitCursor = value; }
+			}
+
 			public new View View
 			{
 				get { return base.View; }
@@ -663,6 +706,24 @@ namespace ClearCanvas.Controls.WinForms
 				}
 			}
 
+			private void BeginWaitCursor()
+			{
+				if (_autoWaitCursor)
+				{
+					_oldCursor = this.Cursor;
+					this.Cursor = Cursors.WaitCursor;
+				}
+			}
+
+			private void EndWaitCursor()
+			{
+				if (_oldCursor != null)
+				{
+					this.Cursor = _oldCursor;
+					_oldCursor = null;
+				}
+			}
+
 			public void Sort(SortKey sortKey)
 			{
 				((FolderListViewItemComparer) this.ListViewItemSorter).SortOn(sortKey);
@@ -671,7 +732,7 @@ namespace ClearCanvas.Controls.WinForms
 
 			public void BrowseToPidl(Pidl pidl)
 			{
-				_suppressAfterBrowse = true;
+				_suppressBrowseEvents = true;
 				try
 				{
 					this.Browse(new ShellItem(pidl, _rootShellItem, false));
@@ -682,7 +743,7 @@ namespace ClearCanvas.Controls.WinForms
 				}
 				finally
 				{
-					_suppressAfterBrowse = false;
+					_suppressBrowseEvents = false;
 				}
 			}
 
@@ -690,6 +751,12 @@ namespace ClearCanvas.Controls.WinForms
 			{
 				if (_currentShellItem != destination)
 				{
+					CancelEventArgs e = new CancelEventArgs();
+					if (!_suppressBrowseEvents && this.BeforeBrowse != null)
+						this.BeforeBrowse.Invoke(this, e);
+					if (e.Cancel)
+						return;
+
 					this.SuspendLayout();
 					try
 					{
@@ -717,20 +784,28 @@ namespace ClearCanvas.Controls.WinForms
 						this.ResumeLayout(true);
 					}
 
-					if (!_suppressAfterBrowse && this.AfterBrowse != null)
+					if (!_suppressBrowseEvents && this.AfterBrowse != null)
 						this.AfterBrowse.Invoke(this, EventArgs.Empty);
 				}
 			}
 
 			private void PopulateItems()
 			{
-				List<FolderListViewItem> items = new List<FolderListViewItem>();
-				foreach (Pidl pidl in _currentShellItem.EnumerateChildPidls())
+				this.BeginWaitCursor();
+				try
 				{
-					items.Add(new FolderListViewItem(new Pidl(_currentShellItem.Pidl, pidl), _myDocumentsReferencePidl));
-					pidl.Dispose(); // the enumerator makes relative PIDLs, but the FolderListViewItem needs an absolute one
+					List<FolderListViewItem> items = new List<FolderListViewItem>();
+					foreach (Pidl pidl in _currentShellItem.EnumerateChildPidls())
+					{
+						items.Add(new FolderListViewItem(new Pidl(_currentShellItem.Pidl, pidl), _myDocumentsReferencePidl));
+						pidl.Dispose(); // the enumerator makes relative PIDLs, but the FolderListViewItem needs an absolute one
+					}
+					this.Items.AddRange(items.ToArray());
 				}
-				this.Items.AddRange(items.ToArray());
+				finally
+				{
+					this.EndWaitCursor();
+				}
 			}
 
 			private void HandleBrowseException(Exception exception)

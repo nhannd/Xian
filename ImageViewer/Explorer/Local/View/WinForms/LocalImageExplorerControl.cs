@@ -479,6 +479,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			}
 		}
 
+		private void _folderControl_BeginBrowse(object sender, EventArgs e)
+		{
+			this.Cursor = Cursors.WaitCursor;
+		}
+
+		private void _folderControl_EndBrowse(object sender, EventArgs e)
+		{
+			this.ResetCursor();
+		}
+
 		private void _folderViewContextMenu_Opening(object sender, CancelEventArgs e)
 		{
 			_lastClickOnFolderView = true;

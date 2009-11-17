@@ -11,10 +11,12 @@ namespace ClearCanvas.Controls.WinForms
 		private event EventHandler _selectedItemChanged;
 		private readonly FolderTreeView _folderTreeView;
 		private FolderTreeItem _selectedItem = null;
+		private bool _suspendBeforeBrowse = false;
 
 		public FolderTree()
 		{
 			_folderTreeView = new FolderTreeView();
+			_folderTreeView.BeforeBrowse += OnFolderTreeViewBeforeBrowse;
 			_folderTreeView.AfterBrowse += OnFolderTreeViewAfterBrowse;
 			_folderTreeView.AfterSelect += OnFolderTreeViewAfterSelect;
 			_folderTreeView.KeyDown += OnFolderTreeViewKeyDown;
@@ -26,6 +28,33 @@ namespace ClearCanvas.Controls.WinForms
 			base.Controls.Add(_folderTreeView);
 			base.ResumeLayout(false);
 		}
+
+		#region Designer Properties
+
+		#region AutoWaitCursor
+
+		[DefaultValue(true)]
+		public bool AutoWaitCursor
+		{
+			get { return _folderTreeView.AutoWaitCursor; }
+			set
+			{
+				if (_folderTreeView.AutoWaitCursor != value)
+				{
+					_folderTreeView.AutoWaitCursor = value;
+					this.OnPropertyChanged(new PropertyChangedEventArgs("AutoWaitCursor"));
+				}
+			}
+		}
+
+		private void ResetAutoWaitCursor()
+		{
+			this.AutoWaitCursor = true;
+		}
+
+		#endregion
+
+		#endregion
 
 		#region SelectedItem
 
@@ -70,6 +99,7 @@ namespace ClearCanvas.Controls.WinForms
 		public override void Reload()
 		{
 			Pidl selectedPidl = _folderTreeView.CurrentPidl.Clone();
+			_suspendBeforeBrowse = true;
 			try
 			{
 				foreach (FolderTreeNode node in _folderTreeView.Nodes)
@@ -83,7 +113,20 @@ namespace ClearCanvas.Controls.WinForms
 			}
 			finally
 			{
+				_suspendBeforeBrowse = false;
 				selectedPidl.Dispose();
+			}
+		}
+
+		private void OnFolderTreeViewBeforeBrowse(object sender, CancelEventArgs e)
+		{
+			if (_suspendBeforeBrowse)
+				return;
+
+			e.Cancel |= this.NotifyCoordinatorPidlChanging();
+			if (!e.Cancel)
+			{
+				this.OnBeginBrowse(EventArgs.Empty);
 			}
 		}
 
@@ -91,6 +134,7 @@ namespace ClearCanvas.Controls.WinForms
 		{
 			this.OnCurrentPidlChanged(EventArgs.Empty);
 			this.NotifyCoordinatorPidlChanged();
+			this.OnEndBrowse(EventArgs.Empty);
 		}
 
 		private void OnFolderTreeViewAfterSelect(object sender, TreeViewEventArgs e)
@@ -162,8 +206,14 @@ namespace ClearCanvas.Controls.WinForms
 				get { return _shellItem.Pidl; }
 			}
 
+			private new FolderTreeView TreeView
+			{
+				get { return (FolderTreeView) base.TreeView; }
+			}
+
 			public void Reload()
 			{
+				this.TreeView.BeginWaitCursor();
 				this.TreeView.SuspendLayout();
 				try
 				{
@@ -185,6 +235,7 @@ namespace ClearCanvas.Controls.WinForms
 				finally
 				{
 					this.TreeView.ResumeLayout(true);
+					this.TreeView.EndWaitCursor();
 				}
 			}
 		}
@@ -195,8 +246,11 @@ namespace ClearCanvas.Controls.WinForms
 
 		private class FolderTreeView : TreeView
 		{
+			public event CancelEventHandler BeforeBrowse;
 			public event EventHandler AfterBrowse;
-			private bool _suppressAfterBrowse = false;
+			private bool _suppressBrowseEvents = false;
+			private bool _autoWaitCursor = true;
+			private Cursor _oldCursor = null;
 
 			private ShellItem _rootShellItem = new ShellItem();
 
@@ -272,13 +326,25 @@ namespace ClearCanvas.Controls.WinForms
 				base.OnBeforeExpand(e);
 			}
 
+			protected override void OnBeforeSelect(TreeViewCancelEventArgs e)
+			{
+				if (e.Node != null)
+				{
+					CancelEventArgs ce = new CancelEventArgs();
+					if (!_suppressBrowseEvents && this.BeforeBrowse != null)
+						this.BeforeBrowse.Invoke(this, ce);
+					e.Cancel |= ce.Cancel;
+				}
+				base.OnBeforeSelect(e);
+			}
+
 			protected override void OnAfterSelect(TreeViewEventArgs e)
 			{
 				if (this.SelectedNode != null)
 				{
 					try
 					{
-						if (!_suppressAfterBrowse && this.AfterBrowse != null)
+						if (!_suppressBrowseEvents && this.AfterBrowse != null)
 							this.AfterBrowse.Invoke(this, EventArgs.Empty);
 					}
 					catch (Exception ex)
@@ -299,9 +365,33 @@ namespace ClearCanvas.Controls.WinForms
 				}
 			}
 
+			public bool AutoWaitCursor
+			{
+				get { return _autoWaitCursor; }
+				set { _autoWaitCursor = value; }
+			}
+
+			public void BeginWaitCursor()
+			{
+				if (_autoWaitCursor)
+				{
+					_oldCursor = this.Cursor;
+					this.Cursor = Cursors.WaitCursor;
+				}
+			}
+
+			public void EndWaitCursor()
+			{
+				if (_oldCursor != null)
+				{
+					this.Cursor = _oldCursor;
+					_oldCursor = null;
+				}
+			}
+
 			public void BrowseTo(Pidl absolutePidl)
 			{
-				_suppressAfterBrowse = true;
+				_suppressBrowseEvents = true;
 				try
 				{
 					if (absolutePidl != null)
@@ -334,7 +424,7 @@ namespace ClearCanvas.Controls.WinForms
 				}
 				finally
 				{
-					_suppressAfterBrowse = false;
+					_suppressBrowseEvents = false;
 				}
 			}
 

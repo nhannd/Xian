@@ -8,6 +8,7 @@ namespace ClearCanvas.Controls.WinForms
 	public sealed class FolderCoordinator : Component, INotifyPropertyChanged
 	{
 		private event PropertyChangedEventHandler _propertyChanged;
+		private event CancelEventHandler _currentPidlChanging;
 		private event EventHandler _currentPidlChanged;
 
 		private ShellItem _rootShellItem = new ShellItem();
@@ -291,6 +292,18 @@ namespace ClearCanvas.Controls.WinForms
 				_propertyChanged.Invoke(this, e);
 		}
 
+		public event CancelEventHandler CurrentPidlChanging
+		{
+			add { _currentPidlChanging += value; }
+			remove { _currentPidlChanging -= value; }
+		}
+
+		private void OnCurrentPidlChanging(CancelEventArgs e)
+		{
+			if (_currentPidlChanging != null && base.CanRaiseEvents)
+				_currentPidlChanging(this, e);
+		}
+
 		public event EventHandler CurrentPidlChanged
 		{
 			add { _currentPidlChanged += value; }
@@ -329,6 +342,11 @@ namespace ClearCanvas.Controls.WinForms
 		{
 			if (pidl == null)
 				throw new ArgumentNullException("pidl");
+
+			CancelEventArgs e = new CancelEventArgs();
+			this.OnCurrentPidlChanging(e);
+			if (e.Cancel)
+				return;
 
 			Pidl current = this.BrowseToCore(pidl);
 			foreach (IFolderCoordinatee coordinatee in _list)
@@ -531,8 +549,11 @@ namespace ClearCanvas.Controls.WinForms
 
 		private Pidl BrowseHistoryCore(int countForward)
 		{
+			CancelEventArgs e = new CancelEventArgs();
+			this.OnCurrentPidlChanging(e);
+
 			// try to go forward or back
-			if (_browseHistory.Go(countForward))
+			if (!e.Cancel && _browseHistory.Go(countForward))
 			{
 				this.UpdateProperties();
 				this.OnCurrentPidlChanged(EventArgs.Empty);
@@ -556,6 +577,13 @@ namespace ClearCanvas.Controls.WinForms
 		#endregion
 
 		#region IFolderCoordinatee Event Handlers
+
+		private void OnFolderCoordinateePidlChanging(object sender, CancelEventArgs e)
+		{
+			CancelEventArgs ce = new CancelEventArgs();
+			this.OnCurrentPidlChanging(ce);
+			e.Cancel |= ce.Cancel;
+		}
 
 		private void OnFolderCoordinateePidlChanged(object sender, EventArgs e)
 		{
@@ -588,6 +616,7 @@ namespace ClearCanvas.Controls.WinForms
 			bool result = !_list.Contains(coordinatee);
 			if (result)
 			{
+				coordinatee.PidlChanging += OnFolderCoordinateePidlChanging;
 				coordinatee.PidlChanged += OnFolderCoordinateePidlChanged;
 				_list.Add(coordinatee);
 			}
@@ -600,6 +629,7 @@ namespace ClearCanvas.Controls.WinForms
 			if (result)
 			{
 				coordinatee.PidlChanged -= OnFolderCoordinateePidlChanged;
+				coordinatee.PidlChanging -= OnFolderCoordinateePidlChanging;
 			}
 			return result;
 		}

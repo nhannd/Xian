@@ -8,7 +8,10 @@ namespace ClearCanvas.Controls.WinForms
 	public abstract class FolderControl : Control, IFolderCoordinatee, INotifyPropertyChanged
 	{
 		private event PropertyChangedEventHandler _propertyChanged;
+		private event CancelEventHandler _pidlChanging;
 		private event EventHandler _pidlChanged;
+		private event EventHandler _beginBrowse;
+		private event EventHandler _endBrowse;
 		private FolderCoordinator _folderCoordinator = null;
 
 		protected FolderControl() {}
@@ -65,7 +68,31 @@ namespace ClearCanvas.Controls.WinForms
 				_propertyChanged.Invoke(this, e);
 		}
 
-		protected virtual void OnCurrentPidlChanged(EventArgs e) {}
+		protected virtual void OnCurrentPidlChanged(EventArgs e) { }
+
+		public event EventHandler BeginBrowse
+		{
+			add { _beginBrowse += value; }
+			remove { _beginBrowse -= value; }
+		}
+
+		protected virtual void OnBeginBrowse(EventArgs e)
+		{
+			if (_beginBrowse != null)
+				_beginBrowse.Invoke(this, e);
+		}
+
+		public event EventHandler EndBrowse
+		{
+			add { _endBrowse += value; }
+			remove { _endBrowse -= value; }
+		}
+
+		protected virtual void OnEndBrowse(EventArgs e)
+		{
+			if (_endBrowse != null)
+				_endBrowse.Invoke(this, e);
+		}
 
 		#endregion
 
@@ -74,6 +101,12 @@ namespace ClearCanvas.Controls.WinForms
 		Pidl IFolderCoordinatee.Pidl
 		{
 			get { return this.CurrentPidlCore; }
+		}
+
+		event CancelEventHandler IFolderCoordinatee.PidlChanging
+		{
+			add { _pidlChanging += value; }
+			remove { _pidlChanging -= value; }
 		}
 
 		event EventHandler IFolderCoordinatee.PidlChanged
@@ -100,6 +133,9 @@ namespace ClearCanvas.Controls.WinForms
 			{
 				if (this.CurrentPidlCore != value)
 				{
+					if (this.NotifyCoordinatorPidlChanging())
+						return;
+
 					this.BrowseToCore(value);
 					this.OnCurrentPidlChanged(EventArgs.Empty);
 					this.NotifyCoordinatorPidlChanged();
@@ -112,6 +148,14 @@ namespace ClearCanvas.Controls.WinForms
 		protected abstract void BrowseToCore(Pidl pidl);
 
 		public abstract void Reload();
+
+		protected bool NotifyCoordinatorPidlChanging()
+		{
+			CancelEventArgs e = new CancelEventArgs();
+			if (_pidlChanging != null)
+				_pidlChanging.Invoke(this, e);
+			return e.Cancel;
+		}
 
 		protected void NotifyCoordinatorPidlChanged()
 		{

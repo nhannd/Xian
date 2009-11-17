@@ -95,6 +95,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			// 
 			// _folderView
 			// 
+			this._folderView.AutoWaitCursor = false;
 			this._folderView.ContextMenuStrip = this._folderViewContextMenu;
 			this._folderView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._folderView.FolderCoordinator = this._folderCoordinator;
@@ -102,6 +103,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			this._folderView.Name = "_folderView";
 			this._folderView.Size = new System.Drawing.Size(637, 545);
 			this._folderView.TabIndex = 200;
+			this._folderView.EndBrowse += new System.EventHandler(this._folderControl_EndBrowse);
+			this._folderView.BeginBrowse += new System.EventHandler(this._folderControl_BeginBrowse);
 			this._folderView.ItemDoubleClick += new ClearCanvas.Controls.WinForms.FolderViewItemEventHandler(this._folderView_ItemDoubleClick);
 			this._folderView.KeyDown += new System.Windows.Forms.KeyEventHandler(this._folderControl_KeyDown);
 			this._folderView.ItemKeyEnterPressed += new ClearCanvas.Controls.WinForms.FolderViewItemEventHandler(this._folderView_ItemDoubleClick);
@@ -126,6 +129,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			// 
 			// _folderTree
 			// 
+			this._folderTree.AutoWaitCursor = false;
 			this._folderTree.ContextMenuStrip = this._folderTreeContextMenu;
 			this._folderTree.Dock = System.Windows.Forms.DockStyle.Left;
 			this._folderTree.FolderCoordinator = this._folderCoordinator;
@@ -133,6 +137,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			this._folderTree.Name = "_folderTree";
 			this._folderTree.Size = new System.Drawing.Size(319, 545);
 			this._folderTree.TabIndex = 100;
+			this._folderTree.EndBrowse += new System.EventHandler(this._folderControl_EndBrowse);
+			this._folderTree.BeginBrowse += new System.EventHandler(this._folderControl_BeginBrowse);
 			this._folderTree.KeyDown += new System.Windows.Forms.KeyEventHandler(this._folderControl_KeyDown);
 			// 
 			// _folderTreeContextMenu
