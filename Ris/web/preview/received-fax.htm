@@ -40,6 +40,7 @@
 					{
 						Field.setValue($("senderNumber"), Ris.formatStringTelephone(faxboxItem.SenderNumber));
 						Field.setValue($("receivedAtNumber"), Ris.formatStringTelephone(faxboxItem.ReceivedAt.Number));
+						Field.setValue($("receivedTime"), Ris.formatDateTime(faxboxItem.ReceivedTime));
 						Field.setValue($("pages"), faxboxItem.Document.Pages);
 						Field.setValue($("status"), faxboxItem.Status.Value);
 					}
@@ -85,6 +86,7 @@
 				<tr>
 					<td valign="top" class="DemographicsLabel" nowrap="nowrap">From #: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="senderNumber"/></td>
 					<td valign="top" class="DemographicsLabel" nowrap="nowrap">To #: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="receivedAtNumber"/></td>
+					<td valign="top" class="DemographicsLabel" nowrap="nowrap">Received: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="receivedTime"/></td>
 				</tr>
 				<tr>
 					<td valign="top" class="DemographicsLabel" nowrap="nowrap">Pages: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="pages"/></td>
