@@ -104,6 +104,7 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms
 			// 
 			// _btnRemove
 			// 
+			this._btnRemove.Enabled = false;
 			this._btnRemove.Location = new System.Drawing.Point(144, 6);
 			this._btnRemove.Name = "_btnRemove";
 			this._btnRemove.Size = new System.Drawing.Size(132, 29);

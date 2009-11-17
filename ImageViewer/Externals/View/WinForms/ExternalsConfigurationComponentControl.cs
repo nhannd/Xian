@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms
 
 		private void _listExternals_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			_btnEdit.Enabled = this.SelectedItem != null;
+			_btnEdit.Enabled = _btnRemove.Enabled = this.SelectedItem != null;
 		}
 
 		private void _listExternals_AfterLabelEdit(object sender, LabelEditEventArgs e)
@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms
 			try
 			{
 				AddNewExternalComponent component = new AddNewExternalComponent();
-				if (_component.DesktopWindow.ShowDialogBox(component, Resources.TitleNew) == DialogBoxAction.Ok)
+				if (_component.DesktopWindow.ShowDialogBox(component, Resources.TitleNewExternal) == DialogBoxAction.Ok)
 				{
 					IExternal external = component.External;
 					_component.Externals.Add(external);

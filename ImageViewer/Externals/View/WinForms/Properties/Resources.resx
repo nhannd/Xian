@@ -129,7 +129,7 @@
   <data name="TitleEditProperties" xml:space="preserve">
     <value>Edit Properties of {0}</value>
   </data>
-  <data name="TitleNew" xml:space="preserve">
-    <value>New...</value>
+  <data name="TitleNewExternal" xml:space="preserve">
+    <value>New External</value>
   </data>
 </root>

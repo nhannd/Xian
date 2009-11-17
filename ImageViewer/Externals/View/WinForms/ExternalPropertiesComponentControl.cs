@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms
 			if (control != null)
 			{
 				Size size = control.Size;
-				size.Height += _pnlExternalType.Height + _pnlName.Height;
+				size.Height = (int)(size.Height * 1.05) + _pnlExternalType.Height + _pnlName.Height + _pnlButtons.Height;
 				this.Size = size;
 
 				control.Dock = DockStyle.Fill;

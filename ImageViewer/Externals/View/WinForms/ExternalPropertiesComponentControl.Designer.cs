@@ -24,7 +24,7 @@
 		/// </summary>
 		private void InitializeComponent() {
 			System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-			System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
+			this._pnlButtons = new System.Windows.Forms.FlowLayoutPanel();
 			this._btnCancel = new System.Windows.Forms.Button();
 			this._btnOk = new System.Windows.Forms.Button();
 			this._pnlExternalType = new System.Windows.Forms.Panel();
@@ -36,8 +36,7 @@
 			this._txtName = new System.Windows.Forms.TextBox();
 			this._lblName = new System.Windows.Forms.Label();
 			flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-			flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
-			flowLayoutPanel2.SuspendLayout();
+			this._pnlButtons.SuspendLayout();
 			this._pnlExternalType.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this._pnlName.SuspendLayout();
@@ -53,17 +52,17 @@
 			flowLayoutPanel1.Size = new System.Drawing.Size(453, 334);
 			flowLayoutPanel1.TabIndex = 2;
 			// 
-			// flowLayoutPanel2
+			// _pnlButtons
 			// 
-			flowLayoutPanel2.Controls.Add(this._btnCancel);
-			flowLayoutPanel2.Controls.Add(this._btnOk);
-			flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-			flowLayoutPanel2.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-			flowLayoutPanel2.Location = new System.Drawing.Point(0, 334);
-			flowLayoutPanel2.Name = "flowLayoutPanel2";
-			flowLayoutPanel2.Padding = new System.Windows.Forms.Padding(5);
-			flowLayoutPanel2.Size = new System.Drawing.Size(453, 43);
-			flowLayoutPanel2.TabIndex = 1;
+			this._pnlButtons.Controls.Add(this._btnCancel);
+			this._pnlButtons.Controls.Add(this._btnOk);
+			this._pnlButtons.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this._pnlButtons.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+			this._pnlButtons.Location = new System.Drawing.Point(0, 334);
+			this._pnlButtons.Name = "_pnlButtons";
+			this._pnlButtons.Padding = new System.Windows.Forms.Padding(5);
+			this._pnlButtons.Size = new System.Drawing.Size(453, 43);
+			this._pnlButtons.TabIndex = 1;
 			// 
 			// _btnCancel
 			// 
@@ -175,10 +174,10 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.panel1);
 			this.Controls.Add(flowLayoutPanel1);
-			this.Controls.Add(flowLayoutPanel2);
+			this.Controls.Add(this._pnlButtons);
 			this.Name = "ExternalPropertiesComponentControl";
 			this.Size = new System.Drawing.Size(453, 377);
-			flowLayoutPanel2.ResumeLayout(false);
+			this._pnlButtons.ResumeLayout(false);
 			this._pnlExternalType.ResumeLayout(false);
 			this.panel1.ResumeLayout(false);
 			this._pnlName.ResumeLayout(false);
@@ -199,5 +198,6 @@
 		private System.Windows.Forms.Panel _pnlName;
 		private System.Windows.Forms.TextBox _txtName;
 		private System.Windows.Forms.Label _lblName;
+		private System.Windows.Forms.FlowLayoutPanel _pnlButtons;
 	}
 }

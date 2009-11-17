@@ -97,11 +97,11 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to New....
+        ///   Looks up a localized string similar to New External.
         /// </summary>
-        internal static string TitleNew {
+        internal static string TitleNewExternal {
             get {
-                return ResourceManager.GetString("TitleNew", resourceCulture);
+                return ResourceManager.GetString("TitleNewExternal", resourceCulture);
             }
         }
     }
