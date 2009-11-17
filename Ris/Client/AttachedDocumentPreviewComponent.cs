@@ -154,8 +154,8 @@ namespace ClearCanvas.Ris.Client
 
 		// Summary component members
 		private AttachmentMode _mode;
-		private ISelection _selection;
-		private ISelection _initialSelection;
+		private AttachmentSummary _selectedAttachment;
+		private AttachmentSummary _initialSelection;
 		private event EventHandler _changeCommitted;
 		private event EventHandler _selectedDocumentChanged;
 
@@ -329,15 +329,16 @@ namespace ClearCanvas.Ris.Client
 
 		public ISelection Selection
 		{
-			get { return _selection; }
+			get { return new Selection(_selectedAttachment); }
 			set
 			{
-				if (_selection != value)
+				var newSelection = (AttachmentSummary)value.Item;
+				if (_selectedAttachment != newSelection)
 				{
-					_selection = value;
-					_previewComponent.Refresh();
+					_selectedAttachment = newSelection;
 					NotifyPropertyChanged("Selection");
 					EventsHelper.Fire(_selectedDocumentChanged, this, EventArgs.Empty);
+					_previewComponent.Refresh();
 				}
 			}
 		}
@@ -345,12 +346,12 @@ namespace ClearCanvas.Ris.Client
 		public void OnControlLoad()
 		{
 			if (_initialSelection != null)
-				this.Selection = _initialSelection;
+				this.Selection = new Selection(_initialSelection);
 		}
 
 		public void SetInitialSelection(AttachmentSummary attachmentSummary)
 		{
-			_initialSelection = new Selection(attachmentSummary);
+			_initialSelection = attachmentSummary;
 		}
 
 		#endregion
@@ -359,20 +360,20 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				if (_selection == null)
+				if (_selectedAttachment == null)
 					return null;
 
-				var attachment = (AttachmentSummary) _selection.Item;
+				var attachment = _selectedAttachment;
 				return attachment == null ? null : attachment.Document;
 			}
 		}
 
 		private void RemoveSelectedDocument()
 		{
-			if (_selection == null)
+			if (_selectedAttachment == null)
 				return;
 
-			this.AttachmentTable.Items.Remove(_selection.Item);
+			this.AttachmentTable.Items.Remove(_selectedAttachment);
 			this.Modified = true;
 		}
 
