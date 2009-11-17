@@ -74,5 +74,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 		{
 			_component.Abort();
 		}
+
+		protected override bool ProcessDialogKey(Keys keyData)
+		{
+			if (keyData == Keys.Escape)
+			{
+				_component.Abort();
+				return true;
+			}
+			return base.ProcessDialogKey(keyData);
+		}
 	}
 }
