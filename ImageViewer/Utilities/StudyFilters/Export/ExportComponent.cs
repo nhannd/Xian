@@ -197,14 +197,21 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 			studyData.StudyDescription = _studyDescription;
 			studyData.StudyId = _studyId;
 
-			DicomAnonymizer anonymizer = new DicomAnonymizer();
-			anonymizer.StudyDataPrototype = studyData;
-
-			foreach (DicomFile file in _files)
+			try
 			{
-				anonymizer.Anonymize(file);
-				file.Filename = System.IO.Path.Combine(_outputPath, string.Format("{0}.{1}", file.MediaStorageSopInstanceUid, "dcm"));
-				file.Save();
+				DicomAnonymizer anonymizer = new DicomAnonymizer();
+				anonymizer.StudyDataPrototype = studyData;
+
+				foreach (DicomFile file in _files)
+				{
+					anonymizer.Anonymize(file);
+					file.Filename = System.IO.Path.Combine(_outputPath, string.Format("{0}.{1}", file.MediaStorageSopInstanceUid, "dcm"));
+					file.Save();
+				}
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, base.Host.DesktopWindow);
 			}
 
 			base.Exit(ApplicationComponentExitCode.Accepted);
