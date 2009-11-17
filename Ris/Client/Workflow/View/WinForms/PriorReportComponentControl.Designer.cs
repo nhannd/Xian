@@ -75,14 +75,20 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-			this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+			this.splitContainer1.Location = new System.Drawing.Point(3, 0);
 			this.splitContainer1.Name = "splitContainer1";
 			this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
 			// 
 			// splitContainer1.Panel1
 			// 
 			this.splitContainer1.Panel1.Controls.Add(this.tableLayoutPanel1);
-			this.splitContainer1.Size = new System.Drawing.Size(443, 428);
+			// 
+			// splitContainer1.Panel2
+			// 
+			this.splitContainer1.Panel2.BackColor = System.Drawing.SystemColors.ControlDark;
+			this.splitContainer1.Panel2.Margin = new System.Windows.Forms.Padding(3);
+			this.splitContainer1.Panel2.Padding = new System.Windows.Forms.Padding(1);
+			this.splitContainer1.Size = new System.Drawing.Size(437, 425);
 			this.splitContainer1.SplitterDistance = 181;
 			this.splitContainer1.TabIndex = 1;
 			// 
@@ -98,7 +104,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel1.RowCount = 2;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(443, 181);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(437, 181);
 			this.tableLayoutPanel1.TabIndex = 0;
 			// 
 			// _reportList
@@ -106,7 +112,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._reportList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this._reportList.Location = new System.Drawing.Point(3, 51);
+			this._reportList.Location = new System.Drawing.Point(0, 51);
+			this._reportList.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
 			this._reportList.MultiSelect = false;
 			this._reportList.Name = "_reportList";
 			this._reportList.ReadOnly = false;
@@ -120,7 +127,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this.groupBox1.Controls.Add(this._radioAllPriors);
 			this.groupBox1.Controls.Add(this._radioRelevantPriors);
-			this.groupBox1.Location = new System.Drawing.Point(3, 3);
+			this.groupBox1.Location = new System.Drawing.Point(0, 3);
+			this.groupBox1.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(437, 42);
 			this.groupBox1.TabIndex = 0;
@@ -153,8 +161,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.BackColor = System.Drawing.Color.Transparent;
 			this.Controls.Add(this.splitContainer1);
 			this.Name = "PriorReportComponentControl";
+			this.Padding = new System.Windows.Forms.Padding(3, 0, 3, 3);
 			this.Size = new System.Drawing.Size(443, 428);
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.ResumeLayout(false);

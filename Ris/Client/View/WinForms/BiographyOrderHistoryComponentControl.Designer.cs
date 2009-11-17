@@ -61,8 +61,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         {
 			this._orderList = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+			this._banner = new System.Windows.Forms.Label();
 			this._tabHostPanel = new System.Windows.Forms.Panel();
-			this._banner = new System.Windows.Forms.TextBox();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
@@ -74,7 +74,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._orderList.Location = new System.Drawing.Point(0, 0);
 			this._orderList.MultiSelect = false;
 			this._orderList.Name = "_orderList";
+			this._orderList.Padding = new System.Windows.Forms.Padding(4, 2, 0, 7);
 			this._orderList.ReadOnly = false;
+			this._orderList.ShowToolbar = false;
 			this._orderList.Size = new System.Drawing.Size(465, 592);
 			this._orderList.TabIndex = 0;
 			// 
@@ -92,12 +94,24 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// splitContainer1.Panel2
 			// 
 			this.splitContainer1.Panel2.AutoScroll = true;
-			this.splitContainer1.Panel2.Controls.Add(this._tabHostPanel);
 			this.splitContainer1.Panel2.Controls.Add(this._banner);
+			this.splitContainer1.Panel2.Controls.Add(this._tabHostPanel);
 			this.splitContainer1.Size = new System.Drawing.Size(948, 592);
 			this.splitContainer1.SplitterDistance = 465;
 			this.splitContainer1.TabIndex = 1;
 			this.splitContainer1.TabStop = false;
+			// 
+			// _banner
+			// 
+			this._banner.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._banner.BackColor = System.Drawing.Color.Transparent;
+			this._banner.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold);
+			this._banner.Location = new System.Drawing.Point(2, 4);
+			this._banner.Name = "_banner";
+			this._banner.Size = new System.Drawing.Size(473, 69);
+			this._banner.TabIndex = 3;
+			this._banner.Text = "Banner Message";
 			// 
 			// _tabHostPanel
 			// 
@@ -105,35 +119,22 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this._tabHostPanel.Location = new System.Drawing.Point(3, 78);
+			this._tabHostPanel.Margin = new System.Windows.Forms.Padding(0);
 			this._tabHostPanel.Name = "_tabHostPanel";
 			this._tabHostPanel.Size = new System.Drawing.Size(473, 511);
 			this._tabHostPanel.TabIndex = 2;
-			// 
-			// _banner
-			// 
-			this._banner.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this._banner.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this._banner.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this._banner.Location = new System.Drawing.Point(3, 3);
-			this._banner.Multiline = true;
-			this._banner.Name = "_banner";
-			this._banner.ReadOnly = true;
-			this._banner.Size = new System.Drawing.Size(473, 69);
-			this._banner.TabIndex = 1;
-			this._banner.TabStop = false;
-			this._banner.Text = "Banner Message";
 			// 
 			// BiographyOrderHistoryComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.BackColor = System.Drawing.SystemColors.Control;
 			this.Controls.Add(this.splitContainer1);
+			this.Margin = new System.Windows.Forms.Padding(0);
 			this.Name = "BiographyOrderHistoryComponentControl";
 			this.Size = new System.Drawing.Size(948, 592);
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel2.ResumeLayout(false);
-			this.splitContainer1.Panel2.PerformLayout();
 			this.splitContainer1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
@@ -143,7 +144,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         private ClearCanvas.Desktop.View.WinForms.TableView _orderList;
 		private System.Windows.Forms.SplitContainer splitContainer1;
-		private System.Windows.Forms.TextBox _banner;
 		private System.Windows.Forms.Panel _tabHostPanel;
+		private System.Windows.Forms.Label _banner;
     }
 }

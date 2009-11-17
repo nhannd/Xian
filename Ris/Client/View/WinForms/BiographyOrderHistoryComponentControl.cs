@@ -34,23 +34,23 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="BiographyOrderHistoryComponentControl"/>
-    /// </summary>
-    public partial class BiographyOrderHistoryComponentControl : ApplicationComponentUserControl
-    {
-        private readonly BiographyOrderHistoryComponent _component;
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="BiographyOrderHistoryComponentControl"/>
+	/// </summary>
+	public partial class BiographyOrderHistoryComponentControl : ApplicationComponentUserControl
+	{
+		private readonly BiographyOrderHistoryComponent _component;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public BiographyOrderHistoryComponentControl(BiographyOrderHistoryComponent component)
-        {
-            InitializeComponent();
-            _component = component;
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public BiographyOrderHistoryComponentControl(BiographyOrderHistoryComponent component)
+		{
+			InitializeComponent();
+			_component = component;
 
-            _orderList.Table = _component.Orders;
-            _orderList.DataBindings.Add("Selection", _component, "SelectedOrder", true, DataSourceUpdateMode.OnPropertyChanged);
+			_orderList.Table = _component.Orders;
+			_orderList.DataBindings.Add("Selection", _component, "SelectedOrder", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			// Load initial value
 			_banner.Text = _component.BannerText;
@@ -60,5 +60,5 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			content.Dock = DockStyle.Fill;
 			_tabHostPanel.Controls.Add(content);
 		}
-    }
+	}
 }

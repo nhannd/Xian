@@ -37,7 +37,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _splitContainer
 			// 
 			this._splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._splitContainer.Location = new System.Drawing.Point(0, 0);
+			this._splitContainer.Location = new System.Drawing.Point(4, 2);
 			this._splitContainer.Name = "_splitContainer";
 			this._splitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
 			// 
@@ -45,7 +45,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this._splitContainer.Panel1.Controls.Add(this._attachments);
 			this._splitContainer.Panel1MinSize = 100;
-			this._splitContainer.Size = new System.Drawing.Size(415, 440);
+			// 
+			// _splitContainer.Panel2
+			// 
+			this._splitContainer.Panel2.BackColor = System.Drawing.SystemColors.ControlDark;
+			this._splitContainer.Panel2.Padding = new System.Windows.Forms.Padding(1);
+			this._splitContainer.Size = new System.Drawing.Size(409, 431);
 			this._splitContainer.SplitterDistance = 100;
 			this._splitContainer.TabIndex = 1;
 			// 
@@ -57,15 +62,17 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._attachments.MultiSelect = false;
 			this._attachments.Name = "_attachments";
 			this._attachments.ReadOnly = false;
-			this._attachments.Size = new System.Drawing.Size(415, 100);
+			this._attachments.Size = new System.Drawing.Size(409, 100);
 			this._attachments.TabIndex = 0;
 			// 
 			// AttachedDocumentPreviewComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.BackColor = System.Drawing.Color.Transparent;
 			this.Controls.Add(this._splitContainer);
 			this.Name = "AttachedDocumentPreviewComponentControl";
+			this.Padding = new System.Windows.Forms.Padding(4, 2, 2, 7);
 			this.Size = new System.Drawing.Size(415, 440);
 			this.Load += new System.EventHandler(this.AttachedDocumentPreviewComponentControl_Load);
 			this._splitContainer.Panel1.ResumeLayout(false);
