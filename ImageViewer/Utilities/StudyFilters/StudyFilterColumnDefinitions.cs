@@ -52,17 +52,21 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 
 		public static ColumnDefinition GetColumnDefinition(string key)
 		{
-			// initialize defintion table
+			// force initialize definition table
 			StudyFilterColumn.SpecialColumnDefinitions.GetHashCode();
 
 			if (_specialColumnDefinitions.ContainsKey(key))
 				return _specialColumnDefinitions[key];
 
-			// initialize defintion table
+			// force initialize definition table
 			StudyFilterColumn.DicomTagColumnDefinitions.GetHashCode();
 
 			if (_dicomColumnDefinitions.ContainsKey(key))
 				return _dicomColumnDefinitions[key];
+
+			uint dicomTag;
+			if (uint.TryParse(key, System.Globalization.NumberStyles.AllowHexSpecifier, System.Globalization.CultureInfo.InvariantCulture, out dicomTag))
+				return StudyFilterColumn.GetColumnDefinition(dicomTag);
 
 			return null;
 		}

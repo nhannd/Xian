@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 			base.DataGridView.ColumnHeaderMouseClick += DataGridView_ColumnHeaderMouseClick;
 			base.DataGridView.CellMouseClick += DataGridView_CellMouseClick;
 
-			base.DataGridView.AllowUserToResizeRows = true;
+			base.DataGridView.AllowUserToResizeRows = false;
 
 			_components = new Container();
 			_contextMenuStrip = new ContextMenuStrip(_components);
