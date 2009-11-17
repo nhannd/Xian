@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer
 		#region Private fields
 
 		private event EventHandler<ImageDrawingEventArgs> _imageDrawingEvent;
-
+		private event EventHandler<ImageBoxDrawingEventArgs> _imageBoxDrawingEvent;
 		private event EventHandler<ImageBoxSelectedEventArgs> _imageBoxSelectedEvent;
 		private event EventHandler<DisplaySetSelectedEventArgs> _displaySetSelectedEvent;
 		private event EventHandler<TileSelectedEventArgs> _tileSelectedEvent;
@@ -86,6 +86,20 @@ namespace ClearCanvas.ImageViewer
 		internal void OnImageDrawing(ImageDrawingEventArgs args)
 		{
 			EventsHelper.Fire(_imageDrawingEvent, this, args);
+		}
+
+		/// <summary>
+		/// Occurs when a <see cref="IImageBox"/> is about to be drawn.
+		/// </summary>
+		public event EventHandler<ImageBoxDrawingEventArgs> ImageBoxDrawing
+		{
+			add { _imageBoxDrawingEvent += value; }
+			remove { _imageBoxDrawingEvent -= value; }
+		}
+
+		internal void OnImageBoxDrawing(ImageBoxDrawingEventArgs args)
+		{
+			EventsHelper.Fire(_imageBoxDrawingEvent, this, args);
 		}
 
 		/// <summary>

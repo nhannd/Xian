@@ -428,12 +428,12 @@ namespace ClearCanvas.ImageViewer
 			drawArgs.SceneGraph = this.SceneGraph;
 			_clientRectangle = drawArgs.RenderingSurface.ClientRectangle;
 
-			OnDrawing();
-
 			// Let others know that we're about to draw
 			ImageDrawingEventArgs args = new ImageDrawingEventArgs(this);
 			if (this.ImageViewer != null && this.ImageViewer.EventBroker != null)
 				this.ImageViewer.EventBroker.OnImageDrawing(args);
+
+			OnDrawing();
 
 			this.ImageRenderer.Draw(drawArgs);
 		}

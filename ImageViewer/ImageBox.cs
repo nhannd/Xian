@@ -637,6 +637,11 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public void Draw()
 		{
+			// Let others know that we're about to draw
+			ImageBoxDrawingEventArgs args = new ImageBoxDrawingEventArgs(this);
+			if (this.ImageViewer != null && this.ImageViewer.EventBroker != null)
+				this.ImageViewer.EventBroker.OnImageBoxDrawing(args);
+
 			EventsHelper.Fire(_drawingEvent, this, EventArgs.Empty);
 		}
 

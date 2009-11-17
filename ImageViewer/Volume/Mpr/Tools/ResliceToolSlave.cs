@@ -65,6 +65,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 			private Color _hotColor = Color.SkyBlue;
 			private Color _normalColor = Color.CornflowerBlue;
 
+			private int _lastTopLeftPresentationImageIndex = -1;
+
 			public ResliceToolSlave()
 			{
 				base.Behaviour |= MouseButtonHandlerBehaviour.SuppressOnTileActivate;
@@ -95,6 +97,36 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				set { _normalColor = value; }
 			}
 
+			private void OnImageViewerImageBoxDrawing(object sender, ImageBoxDrawingEventArgs e)
+			{
+				IImageBox imageBox = this.SliceImageBox;
+
+				IDisplaySet containingDisplaySet = null;
+				if (_resliceGraphic.ParentPresentationImage != null)
+					containingDisplaySet = _resliceGraphic.ParentPresentationImage.ParentDisplaySet;
+
+				if (containingDisplaySet != null && containingDisplaySet.ImageBox == e.ImageBox)
+				{
+					if (_lastTopLeftPresentationImageIndex != e.ImageBox.TopLeftPresentationImageIndex)
+					{
+						_lastTopLeftPresentationImageIndex = e.ImageBox.TopLeftPresentationImageIndex;
+						TranslocateGraphic(_resliceGraphic, e.ImageBox.TopLeftPresentationImage);
+					}
+				}
+				else if (imageBox != null && imageBox == e.ImageBox)
+				{
+					// we're stacking on the set we control, so make sure the colourised display set name is replicated
+					IPresentationImage firstReslicedImage = imageBox.TopLeftPresentationImage;
+					ColorizeDisplaySetDescription(firstReslicedImage, this.NormalColor);
+
+					if (_resliceGraphic.ParentPresentationImage != null && _resliceGraphic.ParentPresentationImage != firstReslicedImage)
+					{
+						_resliceGraphic.SetLine(imageBox.TopLeftPresentationImage, _resliceGraphic.ParentPresentationImage);
+						_resliceGraphic.Draw();
+					}
+				}
+			}
+
 			protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
 			{
 				base.OnPresentationImageSelected(sender, e);
@@ -108,26 +140,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				// only allow tool if we're in a MprViewerComponent, and we're not going to be operating on ourself!
 				base.Enabled = (this.ImageViewer != null) &&
 							   (imageBox != null && selectedDisplaySet != null && selectedDisplaySet != imageBox.DisplaySet);
-
-				if (selectedDisplaySet == _resliceGraphic.ParentPresentationImage.ParentDisplaySet)
-				{
-					// translocate the graphic if the user is stacking through the display set that the graphic sits in
-					// do not add this command to history - the stack command generates the actual action command
-					TranslocateGraphic(_resliceGraphic, this.SelectedPresentationImage);
-				}
-				else if (imageBox != null && selectedDisplaySet == imageBox.DisplaySet)
-				{
-					// we're stacking on the set we control, so make sure the colourised display set name is replicated
-					IPresentationImage firstReslicedImage = imageBox.TopLeftPresentationImage;
-					ColorizeDisplaySetDescription(firstReslicedImage, this.NormalColor);
-
-					// and realign the slice line with the stacked position
-					if (_resliceGraphic.ParentPresentationImage != null && _resliceGraphic.ParentPresentationImage != firstReslicedImage)
-					{
-						_resliceGraphic.SetLine(imageBox.TopLeftPresentationImage, _resliceGraphic.ParentPresentationImage);
-						_resliceGraphic.Draw();
-					}
-				}
 			}
 
 			#region Controlled SliceSet
@@ -208,10 +220,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 					}
 				}
 				ColorizeDisplaySetDescription(this.SliceImageBox.TopLeftPresentationImage, this.NormalColor);
+
+				this.ImageViewer.EventBroker.ImageBoxDrawing += OnImageViewerImageBoxDrawing;
 			}
 
 			protected override void Dispose(bool disposing)
 			{
+				this.ImageViewer.EventBroker.ImageBoxDrawing -= OnImageViewerImageBoxDrawing;
+
 				if (disposing)
 				{
 					if (this.SliceSet != null)
@@ -309,6 +325,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				_graphicTranslocationCommand = null;
 
 				RemoveGraphicBuilder();
+
+				_lastTopLeftPresentationImageIndex = this.SliceImageBox.TopLeftPresentationImageIndex;
 			}
 
 			private class ResliceDrawable : IDrawable
