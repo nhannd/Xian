@@ -39,10 +39,9 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     [DataContract]
     public class ModalityPerformedProcedureStepDetail : DataContractBase
     {
-        public ModalityPerformedProcedureStepDetail(EntityRef modalityPerformendProcedureStepRef, string description, EnumValueInfo state, DateTime startTime, DateTime? endTime, StaffSummary performer, List<ProcedureStepSummary> modalityProcedureSteps, List<DicomSeriesDetail> dicomSeries, Dictionary<string, string> extendedProperties)
+        public ModalityPerformedProcedureStepDetail(EntityRef modalityPerformendProcedureStepRef, EnumValueInfo state, DateTime startTime, DateTime? endTime, StaffSummary performer, List<ModalityProcedureStepSummary> modalityProcedureSteps, List<DicomSeriesDetail> dicomSeries, Dictionary<string, string> extendedProperties)
         {
             this.ModalityPerformendProcedureStepRef = modalityPerformendProcedureStepRef;
-            this.Description = description;
             this.State = state;
             this.StartTime = startTime;
             this.EndTime = endTime;
@@ -54,9 +53,6 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 
         [DataMember]
         public EntityRef ModalityPerformendProcedureStepRef;
-
-        [DataMember]
-        public string Description;
 
         [DataMember]
         public EnumValueInfo State;
@@ -74,7 +70,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         /// Modality procedure steps that were performed with this performed procedure step.
         /// </summary>
         [DataMember]
-        public List<ProcedureStepSummary> ModalityProcedureSteps;
+        public List<ModalityProcedureStepSummary> ModalityProcedureSteps;
 
 		[DataMember]
 		public List<DicomSeriesDetail> DicomSeries;

@@ -35,6 +35,15 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
+	public class ModalityProcedureStepAssembler
+	{
+		public ModalityProcedureStepSummary CreateProcedureStepSummary(ModalityProcedureStep mps, IPersistenceContext context)
+		{
+			var psSummary = new ProcedureStepAssembler().CreateProcedureStepSummary(mps, context);
+			return new ModalityProcedureStepSummary(psSummary, mps.Description);
+		}
+	}
+	
 	public class ProcedureStepAssembler
 	{
 		public ProcedureStepSummary CreateProcedureStepSummary(ProcedureStep ps, IPersistenceContext context)

@@ -29,13 +29,9 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.BrowsePatientData;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Formatting
 {
@@ -97,6 +93,23 @@ namespace ClearCanvas.Ris.Client.Formatting
 		}
 
 		/// <summary>
+		/// Formats the procedure portable and laterality similar to "Portable/Laterality".  
+		/// Name is formatted according to the default person name format as specified in <see cref="FormatSettings"/>
+		/// </summary>
+		/// <remarks>
+		/// Valid format specifiers are as follows:
+		///     %P - portable
+		///     %L - laterality
+		/// </remarks>
+		/// <param name="portable"></param>
+		/// <param name="laterality"></param>
+		/// <returns></returns>
+		public static string FormatModifier(bool portable, EnumValueInfo laterality)
+		{
+			return FormatModifier(portable, laterality, FormatSettings.Default.ProcedurePortableLateralityDefaultFormat);
+		}
+
+		/// <summary>
 		/// Formats the procedure name, portable and laterality similar to "Name (Portable/Laterality)".  
 		/// Name is formatted according to the default person name format as specified in <see cref="FormatSettings"/>
 		/// </summary>
@@ -112,21 +125,43 @@ namespace ClearCanvas.Ris.Client.Formatting
 		/// <returns></returns>
 		public static string Format(string typeName, bool portable, EnumValueInfo laterality, string format)
         {
+			var modifier = FormatModifier(portable, laterality, format);
+
+			return string.IsNullOrEmpty(modifier) 
+				? typeName 
+				: string.Format("{0} ({1})", typeName, modifier);
+        }
+
+		/// <summary>
+		/// Formats the procedure portable and laterality similar to "Portable/Laterality".  
+		/// Name is formatted according to the default person name format as specified in <see cref="FormatSettings"/>
+		/// </summary>
+		/// <remarks>
+		/// Valid format specifiers are as follows:
+		///     %P - portable
+		///     %L - laterality
+		/// </remarks>
+		/// <param name="portable"></param>
+		/// <param name="laterality"></param>
+		/// <param name="format"></param>
+		/// <returns></returns>
+		public static string FormatModifier(bool portable, EnumValueInfo laterality, string format)
+		{
 			string result = format;
-            result = result.Replace("%P", portable == false ? "" : "Portable");
+			result = result.Replace("%P", portable == false ? "" : "Portable");
 			result = result.Replace("%L", laterality == null || laterality.Code == "N" ? "" : laterality.Value);
 
 			string nullResult = format;
-            nullResult = nullResult.Replace("%P", "");
+			nullResult = nullResult.Replace("%P", "");
 			nullResult = nullResult.Replace("%L", "");
 
 			if (string.Compare(result, nullResult) == 0)
-				return typeName;
+				return null;
 
 			if (portable == false || laterality == null || laterality.Code == "N")
 				result = result.Replace(nullResult, "");
 
-			return string.Format("{0} ({1})", typeName, result.Trim());
-        }
+			return result.Trim();
+		}
 	}
 }

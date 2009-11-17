@@ -30,9 +30,12 @@
 #endregion
 
 using System;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Desktop;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -42,7 +45,7 @@ namespace ClearCanvas.Ris.Client.Workflow
         {
             this.Columns.Add(new TableColumn<ModalityPerformedProcedureStepDetail, string>(
                                  SR.ColumnName,
-                                 delegate(ModalityPerformedProcedureStepDetail mpps) { return mpps.Description; },
+                                 delegate(ModalityPerformedProcedureStepDetail mpps) { return FormatDescription(mpps); },
                                  5.0f));
 
             this.Columns.Add(new TableColumn<ModalityPerformedProcedureStepDetail, string>(
@@ -75,5 +78,19 @@ namespace ClearCanvas.Ris.Client.Workflow
             else
                 return mpps.State.Value;
         }
-    }
+
+		private static string FormatDescription(ModalityPerformedProcedureStepDetail mpps)
+		{
+			string description = StringUtilities.Combine(mpps.ModalityProcedureSteps, " / ",
+				delegate(ModalityProcedureStepSummary mps)
+				{
+					var modifier = ProcedureFormat.FormatModifier(mps.Procedure.Portable, mps.Procedure.Laterality);
+					return string.IsNullOrEmpty(modifier) 
+						? mps.Description 
+						: string.Format("{0} ({1})", mps.Description, modifier);
+				});
+
+			return description;
+		}
+	}
 }
