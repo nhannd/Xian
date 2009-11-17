@@ -347,19 +347,32 @@ namespace ClearCanvas.ImageViewer.Imaging
 			Platform.CheckArgumentRange(top, 0, _rows - 1, "top");
 			Platform.CheckArgumentRange(bottom, 0, _rows - 1, "bottom");
 
-			int pixelIndex = top * _columns + left;
-			int offset = (_columns - right) + left - 1;
+			bool usingGetter = _pixelData == null;
 
-			for (int y = top; y <= bottom; y++)
+			try
 			{
-				for (int x = left; x <= right; x++)
-				{
-					processor(i, x, y, pixelIndex);
-					pixelIndex++;
-					i++;
-				}
+				if (usingGetter)
+				    _pixelData = _pixelDataGetter(); //store pixel data temporarily.
 
-				pixelIndex += offset;
+				int pixelIndex = top * _columns + left;
+				int offset = (_columns - right) + left - 1;
+
+				for (int y = top; y <= bottom; y++)
+				{
+					for (int x = left; x <= right; x++)
+					{
+						processor(i, x, y, pixelIndex);
+						pixelIndex++;
+						i++;
+					}
+
+					pixelIndex += offset;
+				}
+			}
+			finally
+			{
+				if (usingGetter)
+					_pixelData = null;
 			}
 		}
 

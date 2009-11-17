@@ -16,8 +16,10 @@ namespace ClearCanvas.ImageViewer.Common
 		private int _lockCount;
 		private volatile int _largeObjectCount;
 		private long _totalBytesHeld;
-		private DateTime _lastAccessTime;
 		private volatile RegenerationCost _regenerationCost;
+		private DateTime _lastAccessTime;
+		private uint _lastAccessTimeAccuracyMilliseconds = 500;
+		private int _lastAccessUpdateTickCount;
 
 		public LargeObjectContainerData(Guid identifier)
 		{
@@ -43,10 +45,15 @@ namespace ClearCanvas.ImageViewer.Common
 			set { _totalBytesHeld = value; }
 		}
 
+		public uint LastAccessTimeAccuracyMilliseconds
+		{
+			get { return _lastAccessTimeAccuracyMilliseconds; }
+			set { _lastAccessTimeAccuracyMilliseconds = value; }
+		}
+
 		public DateTime LastAccessTime
 		{
 			get { return _lastAccessTime; }
-			set { _lastAccessTime = value; }
 		}
 
 		public RegenerationCost RegenerationCost
@@ -58,6 +65,17 @@ namespace ClearCanvas.ImageViewer.Common
 		public bool IsLocked
 		{
 			get { return Thread.VolatileRead(ref _lockCount) > 0; }
+		}
+
+		public void UpdateLastAccessTime()
+		{
+			//DateTime.Now is extremely expensive if called in a tight loop, so we minimize the potential impact
+			//of this problem occurring by only updating the last access time every second or so.
+			if (Environment.TickCount - _lastAccessUpdateTickCount < _lastAccessTimeAccuracyMilliseconds)
+				return;
+
+			_lastAccessUpdateTickCount = Environment.TickCount;
+			_lastAccessTime = DateTime.Now;
 		}
 
 		public void Lock()

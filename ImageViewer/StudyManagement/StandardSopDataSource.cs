@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public override bool IsImage
 		{
-			get { return Sop.IsImageSop(SopClass.GetSopClass(this.SopClassUid)); }
+			get { return _frameData != null || Sop.IsImageSop(SopClass.GetSopClass(this.SopClassUid)); }
 		}
 
 		/// <summary>
@@ -200,7 +200,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			/// </remarks>		
 			public override byte[] GetNormalizedPixelData()
 			{
-				_largeObjectContainerData.LastAccessTime = DateTime.Now;
+				_largeObjectContainerData.UpdateLastAccessTime();
 
 				byte[] pixelData = _pixelData;
 				if (pixelData == null)
@@ -262,7 +262,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			/// <returns>A byte buffer containing the normalized overlay pixel data.</returns>
 			public override byte[] GetNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber)
 			{
-				_largeObjectContainerData.LastAccessTime = DateTime.Now;
+				_largeObjectContainerData.UpdateLastAccessTime();
 
 				if(overlayGroupNumber < 1)
 					throw new ArgumentOutOfRangeException("overlayGroupNumber", overlayGroupNumber, "Must be a positive, non-zero number.");
@@ -312,7 +312,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				lock (this.SyncLock)
 				{
-					_largeObjectContainerData.LastAccessTime = DateTime.Now;
+					_largeObjectContainerData.UpdateLastAccessTime();
 
 					ReportLargeObjectsUnloaded();
 

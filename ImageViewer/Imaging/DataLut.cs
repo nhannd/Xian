@@ -134,9 +134,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				Platform.CheckMemberIsSet(Data, "Data");
-				Platform.CheckTrue(Data.Length == Length, "Data Lut length check");
-
 				if (index <= FirstMappedPixelValue)
 					return Data[0];
 				else if (index >= LastMappedPixelValue)
