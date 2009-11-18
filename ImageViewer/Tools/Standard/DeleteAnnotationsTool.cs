@@ -48,16 +48,33 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 		}
 
+		private static bool IsGraphicInCollection(IGraphic graphic, GraphicCollection graphicCollection)
+		{
+			IGraphic testGraphic = graphic;
+			while(testGraphic != null)
+			{
+				if (graphicCollection.Contains(testGraphic))
+					return true;
+
+				testGraphic = testGraphic.ParentGraphic;
+			}
+
+			return false;
+		}
+
 		public void Delete()
 		{
-			if (base.SelectedPresentationImage != null && base.SelectedPresentationImage.SelectedGraphic != null)
-			{
-				DrawableUndoableCommand command = new DrawableUndoableCommand(base.SelectedPresentationImage);
-				command.Enqueue(new RemoveGraphicUndoableCommand(base.SelectedPresentationImage.SelectedGraphic));
-				command.Execute();
-				command.Name = SR.CommandDeleteAnnotation;
-				base.SelectedPresentationImage.ImageViewer.CommandHistory.AddCommand(command);
-			}
+			if (SelectedOverlayGraphicsProvider == null || SelectedPresentationImage == null)
+				return;
+
+			if (!IsGraphicInCollection(base.SelectedPresentationImage.SelectedGraphic, SelectedOverlayGraphicsProvider.OverlayGraphics))
+				return;
+
+			DrawableUndoableCommand command = new DrawableUndoableCommand(base.SelectedPresentationImage);
+			command.Enqueue(new RemoveGraphicUndoableCommand(base.SelectedPresentationImage.SelectedGraphic));
+			command.Execute();
+			command.Name = SR.CommandDeleteAnnotation;
+			base.SelectedPresentationImage.ImageViewer.CommandHistory.AddCommand(command);
 		}
 	}
 
