@@ -320,7 +320,14 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
 		private void OnLocalDataStoreNodeUpdated(object sender, EventArgs e)
 		{
-			_aeTreeView.Nodes[0].ToolTipText = _component.ServerTree.RootNode.LocalDataStoreNode.ToString();
+			if (InvokeRequired)
+			{
+				Invoke(new EventHandler(OnLocalDataStoreNodeUpdated));
+			}
+			else
+			{
+				_aeTreeView.Nodes[0].ToolTipText = _component.ServerTree.RootNode.LocalDataStoreNode.ToString();
+			}
 		}
 
         private void OnServerTreeUpdated(object sender, EventArgs e)

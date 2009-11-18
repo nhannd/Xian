@@ -573,7 +573,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		/// </summary>
 		public static string LocalAETitle
 		{
-			get { return DicomServerConfigurationHelper.OfflineAETitle; }
+			get { return DicomServerConfigurationHelper.GetOfflineAETitle(false); }
 		}
 
 		private static string LocalHostname

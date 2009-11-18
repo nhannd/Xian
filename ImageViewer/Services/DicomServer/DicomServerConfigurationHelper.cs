@@ -182,13 +182,23 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 			}
 			set
 			{
+
+				Delegate[] delegates = null;
+
 				lock (_syncLock)
 				{
 					if (_configuration == value)
 						return;
 
 					_configuration = value;
-					EventsHelper.Fire(_changed, null, EventArgs.Empty);
+					if (_changed != null)
+						delegates = _changed.GetInvocationList();
+				}
+
+				if (delegates != null)
+				{
+					foreach (Delegate @delegate in delegates)
+						@delegate.DynamicInvoke(null, EventArgs.Empty);
 				}
 			}
 		}
@@ -216,21 +226,34 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 		/// </summary>
 		public static string OfflineAETitle
 		{
-			get
+			get { return GetOfflineAETitle(true); }
+		}
+
+		public static string GetOfflineAETitle(bool wait)
+		{
+			if (wait)
 			{
 				try
 				{
 					Refresh(false);
 					_offlineAeTitle = DicomServerConfiguration.AETitle;
 				}
-				catch(Exception)
+				catch (Exception e)
 				{
-					if (_offlineAeTitle == null)
-						_offlineAeTitle = new ServerTree.ServerTree().RootNode.LocalDataStoreNode.OfflineAE;
+					Platform.Log(LogLevel.Debug, e);
 				}
-
-				return _offlineAeTitle;
 			}
+			else
+			{
+				RefreshAsync();
+				if (DicomServerConfiguration != null)
+					_offlineAeTitle = DicomServerConfiguration.AETitle;
+			}
+
+			if (_offlineAeTitle == null)
+				_offlineAeTitle = new ServerTree.ServerTree().RootNode.LocalDataStoreNode.OfflineAE;
+
+			return _offlineAeTitle;
 		}
 
 		public static int Port
