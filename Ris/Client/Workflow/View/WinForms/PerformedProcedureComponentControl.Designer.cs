@@ -64,16 +64,18 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._mppsTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._procedurePlanSummary = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._mppsDetailsPanel = new System.Windows.Forms.Panel();
+			this.panel1 = new System.Windows.Forms.Panel();
 			this.splitContainerDocumentationDetails.Panel1.SuspendLayout();
 			this.splitContainerDocumentationDetails.Panel2.SuspendLayout();
 			this.splitContainerDocumentationDetails.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
+			this.panel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// splitContainerDocumentationDetails
 			// 
 			this.splitContainerDocumentationDetails.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.splitContainerDocumentationDetails.Location = new System.Drawing.Point(0, 0);
+			this.splitContainerDocumentationDetails.Location = new System.Drawing.Point(4, 4);
 			this.splitContainerDocumentationDetails.Name = "splitContainerDocumentationDetails";
 			this.splitContainerDocumentationDetails.Orientation = System.Windows.Forms.Orientation.Horizontal;
 			// 
@@ -84,8 +86,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// splitContainerDocumentationDetails.Panel2
 			// 
 			this.splitContainerDocumentationDetails.Panel2.Controls.Add(this._mppsDetailsPanel);
-			this.splitContainerDocumentationDetails.Size = new System.Drawing.Size(760, 509);
-			this.splitContainerDocumentationDetails.SplitterDistance = 115;
+			this.splitContainerDocumentationDetails.Size = new System.Drawing.Size(750, 498);
+			this.splitContainerDocumentationDetails.SplitterDistance = 112;
 			this.splitContainerDocumentationDetails.TabIndex = 1;
 			// 
 			// tableLayoutPanel1
@@ -102,7 +104,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
 			this.tableLayoutPanel1.RowCount = 1;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(760, 115);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(750, 112);
 			this.tableLayoutPanel1.TabIndex = 0;
 			// 
 			// _mppsTableView
@@ -110,12 +112,12 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._mppsTableView.AutoSize = true;
 			this._mppsTableView.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._mppsTableView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._mppsTableView.Location = new System.Drawing.Point(384, 4);
-			this._mppsTableView.Margin = new System.Windows.Forms.Padding(4);
+			this._mppsTableView.Location = new System.Drawing.Point(378, 3);
+			this._mppsTableView.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
 			this._mppsTableView.MultiSelect = false;
 			this._mppsTableView.Name = "_mppsTableView";
 			this._mppsTableView.ReadOnly = false;
-			this._mppsTableView.Size = new System.Drawing.Size(372, 107);
+			this._mppsTableView.Size = new System.Drawing.Size(372, 106);
 			this._mppsTableView.TabIndex = 1;
 			// 
 			// _procedurePlanSummary
@@ -124,27 +126,43 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._procedurePlanSummary.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._procedurePlanSummary.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._procedurePlanSummary.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this._procedurePlanSummary.Location = new System.Drawing.Point(3, 3);
+			this._procedurePlanSummary.Location = new System.Drawing.Point(0, 3);
+			this._procedurePlanSummary.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
 			this._procedurePlanSummary.Name = "_procedurePlanSummary";
 			this._procedurePlanSummary.ReadOnly = false;
-			this._procedurePlanSummary.Size = new System.Drawing.Size(374, 109);
+			this._procedurePlanSummary.Size = new System.Drawing.Size(372, 106);
 			this._procedurePlanSummary.TabIndex = 0;
 			// 
 			// _mppsDetailsPanel
 			// 
+			this._mppsDetailsPanel.BackColor = System.Drawing.SystemColors.ControlDark;
 			this._mppsDetailsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._mppsDetailsPanel.Location = new System.Drawing.Point(0, 0);
 			this._mppsDetailsPanel.Name = "_mppsDetailsPanel";
-			this._mppsDetailsPanel.Size = new System.Drawing.Size(760, 390);
+			this._mppsDetailsPanel.Padding = new System.Windows.Forms.Padding(1);
+			this._mppsDetailsPanel.Size = new System.Drawing.Size(750, 382);
 			this._mppsDetailsPanel.TabIndex = 0;
+			// 
+			// panel1
+			// 
+			this.panel1.BackColor = System.Drawing.SystemColors.Control;
+			this.panel1.Controls.Add(this.splitContainerDocumentationDetails);
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel1.Location = new System.Drawing.Point(1, 1);
+			this.panel1.Name = "panel1";
+			this.panel1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 5);
+			this.panel1.Size = new System.Drawing.Size(758, 507);
+			this.panel1.TabIndex = 2;
 			// 
 			// PerformedProcedureComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.splitContainerDocumentationDetails);
+			this.BackColor = System.Drawing.SystemColors.ControlDark;
+			this.Controls.Add(this.panel1);
 			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "PerformedProcedureComponentControl";
+			this.Padding = new System.Windows.Forms.Padding(1);
 			this.Size = new System.Drawing.Size(760, 509);
 			this.splitContainerDocumentationDetails.Panel1.ResumeLayout(false);
 			this.splitContainerDocumentationDetails.Panel1.PerformLayout();
@@ -152,6 +170,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.splitContainerDocumentationDetails.ResumeLayout(false);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
+			this.panel1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
         }
@@ -163,6 +182,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         private System.Windows.Forms.Panel _mppsDetailsPanel;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private ClearCanvas.Desktop.View.WinForms.TableView _procedurePlanSummary;
+		private System.Windows.Forms.Panel panel1;
 
     }
 }
