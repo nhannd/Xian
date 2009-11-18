@@ -100,13 +100,14 @@
     <Compile Include="Tests\SlicerFidelityTests.cs" />
     <Compile Include="Tests\VolumeFunction.cs" />
     <Compile Include="Tests\MprTestVolumeTool.cs" />
+    <Compile Include="Tools\ResliceToolResetAll.cs" />
     <Compile Include="Tools\ResliceToolGraphic.cs" />
     <Compile Include="Utilities\DicomImagePlane.cs" />
     <Compile Include="Utilities\MouseImageViewerToolGroup.cs" />
-    <Compile Include="Tools\ResliceTool.cs">
+    <Compile Include="Tools\ResliceToolGroup.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tools\ResliceToolSlave.cs">
+    <Compile Include="Tools\ResliceToolX.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utilities\ObservableDisposableList.cs" />
@@ -183,6 +184,11 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>MprSettings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ResetAllToolLarge.png" />
+    <EmbeddedResource Include="Icons\ResetAllToolMedium.png" />
+    <EmbeddedResource Include="Icons\ResetAllToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\..\Common\ClearCanvas.Strings.targets" />

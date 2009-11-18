@@ -42,7 +42,7 @@ using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 {
-	partial class ResliceTool
+	partial class ResliceToolGroup
 	{
 		private class ResliceToolGraphic : CompositeGraphic, IPointsGraphic, IMemorable
 		{
@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				set { _sliceControlGraphic.Text = value; }
 			}
 
-			public void SetLine(IPresentationImage referenceImage, IPresentationImage targetImage)
+			public bool SetLine(IPresentationImage referenceImage, IPresentationImage targetImage)
 			{
 				DicomImagePlane thisImagePlane = DicomImagePlane.FromImage(referenceImage);
 				DicomImagePlane imagePlane = DicomImagePlane.FromImage(targetImage);
@@ -137,7 +137,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 					this.Points.Clear();
 					this.Points.Add(imagePlane.ConvertToImage(new PointF(imagePt1.X, imagePt1.Y)));
 					this.Points.Add(imagePlane.ConvertToImage(new PointF(imagePt2.X, imagePt2.Y)));
+					return true;
 				}
+				return false;
 			}
 
 			#region IMemorable Members

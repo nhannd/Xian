@@ -249,4 +249,13 @@
   <data name="MenuDebug" xml:space="preserve">
     <value>&amp;Debug</value>
   </data>
+  <data name="MenuResetAll" xml:space="preserve">
+    <value>&amp;Reset All</value>
+  </data>
+  <data name="ToolbarResetAll" xml:space="preserve">
+    <value>Reset All</value>
+  </data>
+  <data name="TooltipResetAll" xml:space="preserve">
+    <value>Resets all MPR slice views</value>
+  </data>
 </root>

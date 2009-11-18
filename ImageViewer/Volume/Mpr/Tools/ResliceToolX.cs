@@ -44,7 +44,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 {
-	partial class ResliceTool
+	partial class ResliceToolGroup
 	{
 		[MenuAction("activate", "imageviewer-contextmenu/MenuReslice", "Select", Flags = ClickActionFlags.CheckAction)]
 		[MenuAction("activate", "global-menus/MenuTools/MenuMpr/MenuReslice", "Select", Flags = ClickActionFlags.CheckAction)]
@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 		[LabelValueObserver("activate", "Label", "SliceSetChanged")]
 		[GroupHint("activate", "Tools.Volume.MPR.Reslicing")]
 		[MouseToolButton(XMouseButtons.Left, false)]
-		private class ResliceToolSlave : MprViewerTool
+		private class ResliceTool : MprViewerTool
 		{
 			private ResliceToolGraphic _resliceGraphic;
 			private InteractivePolylineGraphicBuilder _lineGraphicBuilder;
@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 
 			private int _lastTopLeftPresentationImageIndex = -1;
 
-			public ResliceToolSlave()
+			public ResliceTool()
 			{
 				base.Behaviour |= MouseButtonHandlerBehaviour.SuppressOnTileActivate;
 			}
@@ -211,15 +211,16 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				_resliceGraphic.Points.PointChanged += OnAnchorPointChanged;
 				_resliceGraphic.Text = this.SliceImageBox.DisplaySet.Description;
 
-				// draw the reslice graphic on the first imagebox that isn't showing the slicing this tool controls
+				// draw the reslice graphic on the first imagebox that isn't showing the slicing this tool controls and is not parallel
 				foreach (IImageBox imageBox in this.ImageViewer.PhysicalWorkspace.ImageBoxes)
 				{
 					if (imageBox != this.SliceImageBox)
 					{
-						_resliceGraphic.SetLine(this.SliceImageBox.TopLeftPresentationImage, imageBox.TopLeftPresentationImage);
-						TranslocateGraphic(_resliceGraphic, imageBox.TopLeftPresentationImage);
-
-						break;
+						if (_resliceGraphic.SetLine(this.SliceImageBox.TopLeftPresentationImage, imageBox.TopLeftPresentationImage))
+						{
+							TranslocateGraphic(_resliceGraphic, imageBox.TopLeftPresentationImage);
+							break;
+						}
 					}
 				}
 				ColorizeDisplaySetDescription(this.SliceImageBox.TopLeftPresentationImage, this.NormalColor);
@@ -472,6 +473,45 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 					return _lineGraphicBuilder.GetCursorToken(point);
 
 				return base.GetCursorToken(point);
+			}
+
+			/// <summary>
+			/// Gets the image on which the slice line is defined.
+			/// </summary>
+			public IPresentationImage ReferenceImage
+			{
+				get { return _resliceGraphic.ParentPresentationImage; }
+			}
+
+			/// <summary>
+			/// Sets the image on which the slice line is defined.
+			/// </summary>
+			/// <param name="referenceImage"></param>
+			/// <returns>True if the reference image was successfully changed; False otherwise (e.g. the specified image does not intersect the sliced images)</returns>
+			public bool SetReferenceImage(IPresentationImage referenceImage)
+			{
+				if (_resliceGraphic.ParentPresentationImage != referenceImage)
+				{
+					if (referenceImage == null)
+					{
+						// if we change the reference image to nothing, hide the graphic
+						TranslocateGraphic(_resliceGraphic, null);
+						return true;
+					}
+					else if (_resliceGraphic.SetLine(this.SliceImageBox.TopLeftPresentationImage, referenceImage))
+					{
+						// if we change the reference image to something and we know how they intersect, move the graphic over
+						TranslocateGraphic(_resliceGraphic, referenceImage);
+						return true;
+					}
+					else
+					{
+						// if we change the reference image to something and they don't actually intersect (it happens in odd cases), hide the graphic but report failure
+						TranslocateGraphic(_resliceGraphic, null);
+						return false;
+					}
+				}
+				return false;
 			}
 		}
 	}

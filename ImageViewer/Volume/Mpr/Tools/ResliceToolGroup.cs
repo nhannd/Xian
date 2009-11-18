@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 	[GroupHint("dropdown", "Tools.Volume.MPR.Reslicing")]
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[ExtensionOf(typeof (MprViewerToolExtensionPoint))]
-	public partial class ResliceTool : MouseImageViewerToolGroup<MprViewerTool>
+	public partial class ResliceToolGroup : MouseImageViewerToolGroup<MprViewerTool>
 	{
 		private static readonly Color[,] _colors = {
 		                                           	{Color.Red, Color.Salmon},
@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 		                                           	{Color.White, Color.LightGray}
 		                                           };
 
-		private ResliceToolSlave _lastSelectedTool;
+		private ResliceTool _lastSelectedTool;
 
 		protected override IEnumerable<MprViewerTool> CreateTools()
 		{
@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 					IMprStandardSliceSet standardSliceSet = sliceSet as IMprStandardSliceSet;
 					if (standardSliceSet != null && !standardSliceSet.IsReadOnly)
 					{
-						ResliceToolSlave tool = new ResliceToolSlave();
+						ResliceTool tool = new ResliceTool();
 						tool.SliceSet = standardSliceSet;
 						tool.HotColor = _colors[index, 0];
 						tool.NormalColor = _colors[index, 1];
@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 		{
 			base.Initialize();
 			base.TooltipPrefix = SR.MenuReslice;
-
+			this.InitializeResetAll();
 			if (this.ImageViewer != null)
 			{
 				this.ImageViewer.PhysicalWorkspace.LayoutCompleted += PhysicalWorkspace_LayoutCompleted;
@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 					this.ImageViewer.PhysicalWorkspace.LayoutCompleted -= PhysicalWorkspace_LayoutCompleted;
 				}
 			}
-
+			this.DisposeResetAll();
 			base.Dispose(disposing);
 		}
 
@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 		protected override void OnToolSelected(MprViewerTool tool)
 		{
 			base.OnToolSelected(tool);
-			_lastSelectedTool = (ResliceToolSlave) tool;
+			_lastSelectedTool = (ResliceTool) tool;
 
 			if (_lastSelectedTool == null)
 				base.TooltipPrefix = SR.ToolbarReslice;
@@ -145,7 +145,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				return;
 			if (_lastSelectedTool == null)
 				tools[0].Select();
-			_lastSelectedTool.Select();
+			else
+				_lastSelectedTool.Select();
 		}
 
 		public string Label

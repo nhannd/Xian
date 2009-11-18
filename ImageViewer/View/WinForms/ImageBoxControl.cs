@@ -427,7 +427,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				{
 					visibleNow = true;
 
-					int topLeftIndex = _imageBox.TopLeftPresentationImageIndex;
+					int topLeftIndex = Math.Max(0, _imageBox.TopLeftPresentationImageIndex);
 					_imageScroller.SetValueAndRange(topLeftIndex, 0, maximum);
 					_imageScroller.Increment = Math.Max(1, tileCount);
 					_imageScroller.Value = topLeftIndex;

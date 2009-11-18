@@ -178,6 +178,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &amp;Reset All.
+        /// </summary>
+        public static string MenuResetAll {
+            get {
+                return ResourceManager.GetString("MenuResetAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reslice.
         /// </summary>
         public static string MenuReslice {
@@ -385,6 +394,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reset All.
+        /// </summary>
+        public static string ToolbarResetAll {
+            get {
+                return ResourceManager.GetString("ToolbarResetAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reslice.
         /// </summary>
         public static string ToolbarReslice {
@@ -399,6 +417,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr {
         public static string ToolbarResliceFor {
             get {
                 return ResourceManager.GetString("ToolbarResliceFor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resets all MPR slice views.
+        /// </summary>
+        public static string TooltipResetAll {
+            get {
+                return ResourceManager.GetString("TooltipResetAll", resourceCulture);
             }
         }
         
