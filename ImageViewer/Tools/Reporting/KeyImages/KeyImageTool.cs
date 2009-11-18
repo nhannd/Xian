@@ -126,7 +126,8 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			          LocalDataStoreActivityMonitor.IsConnected &&
 					  PermissionsHelper.IsInRole(AuthorityTokens.KeyImages);
 
-			this.ShowEnabled = LocalDataStoreActivityMonitor.IsConnected;
+			this.ShowEnabled = LocalDataStoreActivityMonitor.IsConnected &&
+					  PermissionsHelper.IsInRole(AuthorityTokens.KeyImages);
 		}
 
 		private void OnConnected(object sender, EventArgs e)

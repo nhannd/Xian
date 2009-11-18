@@ -40,7 +40,6 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
-	//TODO (cr Oct 2009): DicomMessageSopDataSource does the locking for us, but StandardSopDataSource does not!
 	public class VolumeSliceSopDataSource : StandardSopDataSource, ISopDataSource
 	{
 		private readonly IVolumeReference _volumeReference;
@@ -115,10 +114,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			get
 			{
-				DicomAttribute attribute;
-				if (_volumeReference.Volume.DataSet.TryGetAttribute(tag, out attribute))
-					return attribute;
-				return _instanceDataSet[tag];
+				lock (base.SyncLock)
+				{
+					DicomAttribute attribute;
+					if (_volumeReference.Volume.DataSet.TryGetAttribute(tag, out attribute))
+						return attribute;
+					return _instanceDataSet[tag];
+				}
 			}
 		}
 
@@ -126,25 +128,34 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			get
 			{
-				DicomAttribute attribute;
-				if (_volumeReference.Volume.DataSet.TryGetAttribute(tag, out attribute))
-					return attribute;
-				return _instanceDataSet[tag];
+				lock (base.SyncLock)
+				{
+					DicomAttribute attribute;
+					if (_volumeReference.Volume.DataSet.TryGetAttribute(tag, out attribute))
+						return attribute;
+					return _instanceDataSet[tag];
+				}
 			}
 		}
 
 		public override bool TryGetAttribute(DicomTag tag, out DicomAttribute attribute)
 		{
-			if (_volumeReference.Volume.DataSet.TryGetAttribute(tag, out attribute))
-				return true;
-			return _instanceDataSet.TryGetAttribute(tag, out attribute);
+			lock (base.SyncLock)
+			{
+				if (_volumeReference.Volume.DataSet.TryGetAttribute(tag, out attribute))
+					return true;
+				return _instanceDataSet.TryGetAttribute(tag, out attribute);
+			}
 		}
 
 		public override bool TryGetAttribute(uint tag, out DicomAttribute attribute)
 		{
-			if (_volumeReference.Volume.DataSet.TryGetAttribute(tag, out attribute))
-				return true;
-			return _instanceDataSet.TryGetAttribute(tag, out attribute);
+			lock (base.SyncLock)
+			{
+				if (_volumeReference.Volume.DataSet.TryGetAttribute(tag, out attribute))
+					return true;
+				return _instanceDataSet.TryGetAttribute(tag, out attribute);
+			}
 		}
 
 		protected override StandardSopFrameData CreateFrameData(int frameNumber)
@@ -190,10 +201,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				return new byte[0];
 			}
 		}
-
-		#region Slcing
-
-		#endregion
 
 		#region Misc Helpers for computing SOP attribute values, originally in VolumeSlicer.cs
 
