@@ -293,6 +293,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		private static Queue GetOffScreenImageBoxMementos(IPhysicalWorkspace physicalWorkspace, object[,] oldImageBoxMementos)
 		{
+			//TODO (cr Oct 2009): this whole thing with mementos wouldn't be necessary
+			//if we had a SetImageBoxGrid(imageBox[,])
+
 			int oldRows = oldImageBoxMementos.GetLength(0);
 			int oldColumns = oldImageBoxMementos.GetLength(1);
 
@@ -457,6 +460,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			{
 				SetImageBoxLayoutSimple(physicalWorkspace, rows, columns);
 			}
+
 
 			physicalWorkspace.Draw();
 			physicalWorkspace.SelectDefaultImageBox();

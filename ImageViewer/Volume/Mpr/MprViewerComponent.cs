@@ -103,37 +103,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return string.Format(SR.FormatMprWorkspaceTitle, StringUtilities.Combine(this.Volumes, String.Format(" {0} ", SR.VolumeLabelSeparator), delegate(IMprVolume volume) { return volume.Description; }));
 		}
 
-		public override IActionSet ExportedActions
-		{
-			get { return base.ExportedActions.Select(ImageViewerToolActionPredicate); }
-		}
-
-		public override ActionModelNode GetContextMenuModel(IMouseInformation mouseInformation)
-		{
-			return ActionModelRoot.CreateModel(typeof (MprViewerComponent).FullName, "imageviewer-contextmenu", this.ExportedActions);
-		}
-
-		private static bool ImageViewerToolActionPredicate(IAction action)
-		{
-			// exclude all Layout tools because we have our own fixed layout manager
-			if (action.ActionID.StartsWith("ClearCanvas.ImageViewer.Layout.Basic."))
-				return false;
-
-			// exclude all Reporting tools because we would need to store the secondary capture for any reporting to work
-			if (action.ActionID.StartsWith("ClearCanvas.ImageViewer.Tools.Reporting."))
-				return false;
-
-			// default: include
-			return true;
-		}
-
 		protected override IEnumerable CreateTools()
 		{
 			ArrayList results = new ArrayList();
 			foreach (object tool in base.CreateTools())
 				results.Add(tool);
+
 			foreach (object tool in new MprViewerToolExtensionPoint().CreateExtensions())
 				results.Add(tool);
+			
 			return results;
 		}
 
@@ -343,6 +321,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 					}
 
 					imageBox.DisplaySet = mprWorkspace.ImageSets[imageSetIndex].DisplaySets[displaySetIndex];
+					imageBox.DisplaySetLocked = true;
 					displaySetIndex++;
 				}
 

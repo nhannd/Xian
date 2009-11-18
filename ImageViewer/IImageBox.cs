@@ -89,10 +89,21 @@ namespace ClearCanvas.ImageViewer
 		/// Setting this property to an <see cref="IDisplaySet"/> automatically populates the tiles
 		/// in this <see cref="IImageBox"/> with presentation images contained in the 
 		/// <see cref="IDisplaySet"/>.  Any <see cref="IDisplaySet"/> previously associated with
-		/// this <see cref="IImageBox"/> is removed.  Setting this property to <b>null</b>
+		/// this <see cref="IImageBox"/> are removed.  Setting this property to <b>null</b>
 		/// results in an empty <see cref="IImageBox"/> and empty tiles.
 		/// </remarks>
+		/// <exception cref="InvalidOperationException">Thrown when <see cref="DisplaySetLocked"/> is true.</exception>
 		IDisplaySet DisplaySet { get; set; }
+
+		/// <summary>
+		/// Gets or sets whether or not <see cref="DisplaySet"/> is locked and cannot currently be changed.
+		/// </summary>
+		/// <remarks>
+		/// The intended usage of this property is such that code responsible for the layout
+		/// of the <see cref="IImageViewer"/> manage this property's state, and other parts of the code,
+		/// like tools for example, should simply check the value and respond appropriately.
+		/// </remarks>
+		bool DisplaySetLocked { get; set; }
 
 		/// <summary>
 		/// Gets a value indicating whether this <see cref="IImageBox"/> is

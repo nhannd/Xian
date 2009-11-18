@@ -103,6 +103,8 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		event EventHandler EnabledChanged;
 
+		//TODO (cr Oct 2009): LayoutLocked?
+
 		/// <summary>
 		/// Gets or sets whether or not the <see cref="IPhysicalWorkspace"/>'s <see cref="IImageBox"/> layout
 		/// should be locked.

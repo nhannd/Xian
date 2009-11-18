@@ -178,6 +178,9 @@ namespace ClearCanvas.ImageViewer
 			get { return _displaySet; }
 			set
 			{
+				if (DisplaySetLocked)
+					throw new InvalidOperationException("The display set is currently locked.");
+
 				DisplaySetChangedEventArgs eventArgs = null;
 
 				// If the display set has changed, remember the change
@@ -230,6 +233,8 @@ namespace ClearCanvas.ImageViewer
 				}
 			}
 		}
+
+		public bool DisplaySetLocked { get; set; }
 
 		/// <summary>
 		/// Gets a value indicating whether this <see cref="ImageBox"/> is
@@ -466,12 +471,6 @@ namespace ClearCanvas.ImageViewer
 			set { _enabled = value; }
 		}
 
-		internal bool Locked
-		{
-			get { return Tiles.Locked; }
-			set  { Tiles.Locked = value; }
-		}
-
 		#endregion
 
 		#region Public events
@@ -693,6 +692,7 @@ namespace ClearCanvas.ImageViewer
 
 			ImageBoxMemento imageBoxMemento =
 					new ImageBoxMemento(this.DisplaySet,
+										this.DisplaySetLocked,
 										displaySetMemento,
 										this.Rows,
 										this.Columns,
@@ -728,18 +728,17 @@ namespace ClearCanvas.ImageViewer
 
 			_normalizedRectangle = RectangleF.Empty;
 
+			DisplaySetLocked = false;
 			this.DisplaySet = imageBoxMemento.DisplaySet;
 			if (this.DisplaySet != null)
 				this.DisplaySet.SetMemento(imageBoxMemento.DisplaySetMemento);
+			
+			this.DisplaySetLocked = imageBoxMemento.DisplaySetLocked;
 
 			this.NormalizedRectangle = imageBoxMemento.NormalizedRectangle;
 
 			if (imageBoxMemento.TopLeftPresentationImageIndex != -1)
 				this.TopLeftPresentationImageIndex = imageBoxMemento.TopLeftPresentationImageIndex;
-
-			//NOTE:  why was this not at the end?  doesn't seem to have matter - tested it and it seems fine.
-			//SetMemento should not draw anything - the command in the command history or a tool should.
-			//Draw();
 
 			if (imageBoxMemento.IndexOfSelectedTile != -1)
 			{

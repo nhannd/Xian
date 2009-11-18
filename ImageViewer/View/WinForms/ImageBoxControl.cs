@@ -124,6 +124,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		internal void Draw()
 		{
+			_imageBox.Draw();	
+		}
+
+		private void DoDraw()
+		{
 			foreach (TileControl control in this.TileControls)
 				control.Draw();
 			
@@ -186,7 +191,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private void OnDrawing(object sender, EventArgs e)
 		{
-			Draw();
+			DoDraw();
 		}
 
 		private void OnTileControlDrawing(object sender, EventArgs e)

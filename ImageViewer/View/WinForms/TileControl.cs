@@ -186,6 +186,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		public void Draw()
 		{
+			_tile.Draw();
+		}
+
+		public void DoDraw()
+		{
 			EventsHelper.Fire(_drawing, this, EventArgs.Empty);
 
 			CodeClock clock = new CodeClock();
@@ -267,7 +272,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private void OnTileDrawing(object sender, EventArgs e)
 		{
-			Draw();
+			DoDraw();
 		}
 
 		private void OnRendererChanged(object sender, EventArgs e)
@@ -387,7 +392,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				_tileController.TileClientRectangle = this.ClientRectangle;
 
 			if (!_suppressDrawOnSizeChanged)
-				Draw();
+				DoDraw();
 		}
 
 		#region Mouse/Keyboard Overrides
@@ -511,7 +516,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		protected override void OnDragOver(DragEventArgs drgevent)
 		{
-			if (drgevent.Data.GetDataPresent(typeof (DisplaySet)))
+			if (drgevent.Data.GetDataPresent(typeof (DisplaySet)) && !_tile.ParentImageBox.DisplaySetLocked)
 				drgevent.Effect = DragDropEffects.Move;
 			else
 				drgevent.Effect = DragDropEffects.None;

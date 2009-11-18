@@ -357,12 +357,15 @@ namespace ClearCanvas.ImageViewer
 		{
 			ImageBoxes.Locked = value;
 			foreach (IImageBox box in ImageBoxes)
-				((ImageBox)box).Locked = value;
+				box.Tiles.Locked = value;
 		}
 
 		#endregion
 
 		#region Public methods
+
+		//TODO (cr Oct 2009): SetImageBoxGrid(imageBox[,]) would allow the same physical image box to be reused
+		//which has a lot of advantages.
 
 		/// <summary>
 		/// Creates a rectangular <see cref="IImageBox"/> grid.
@@ -532,6 +535,7 @@ namespace ClearCanvas.ImageViewer
 			if (e.Item.Selected)
 				this.SelectedImageBox = null;
 
+			e.Item.DisplaySetLocked = false;
 			e.Item.DisplaySet = null;
 		}
 

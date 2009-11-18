@@ -84,17 +84,21 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			{
 				List<IAction> actions = new List<IAction>();
 
-				foreach (IDisplaySet displaySet in context.ImageSet.DisplaySets)
+				IImageBox imageBox = context.ImageViewer.SelectedImageBox;
+				if (imageBox != null && !imageBox.DisplaySetLocked)
 				{
-					IDisplaySet theDisplaySet = displaySet;
-					MenuAction action = CreateMenuAction(context, displaySet.Name,
-						delegate { AssignDisplaySetToImageBox(context.ImageViewer, theDisplaySet); });
+					foreach (IDisplaySet displaySet in context.ImageSet.DisplaySets)
+					{
+						IDisplaySet theDisplaySet = displaySet;
+						MenuAction action = CreateMenuAction(context, displaySet.Name,
+											() => AssignDisplaySetToImageBox(context.ImageViewer, theDisplaySet));
 
-					action.Checked = context.ImageViewer.SelectedImageBox != null &&
-						context.ImageViewer.SelectedImageBox.DisplaySet != null &&
-						context.ImageViewer.SelectedImageBox.DisplaySet.Uid == theDisplaySet.Uid;
+						action.Checked = context.ImageViewer.SelectedImageBox != null &&
+							context.ImageViewer.SelectedImageBox.DisplaySet != null &&
+							context.ImageViewer.SelectedImageBox.DisplaySet.Uid == theDisplaySet.Uid;
 
-					actions.Add(action);
+						actions.Add(action);
+					}
 				}
 
 				return actions.ToArray();

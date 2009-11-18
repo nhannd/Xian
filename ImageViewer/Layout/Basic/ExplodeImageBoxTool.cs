@@ -212,14 +212,22 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			//set this here so checked will be correct.
 			_unexplodeMemento = memorableCommand.BeginState;
 			_oldImageBox = imageBox;
-			IDisplaySet displaySet = imageBox.DisplaySet;
-			IPresentationImage selectedImage = imageBox.SelectedTile.PresentationImage;
+			IDisplaySet displaySet = _oldImageBox.DisplaySet;
+			IPresentationImage selectedImage = _oldImageBox.SelectedTile.PresentationImage;
 
-			object imageBoxMemento = imageBox.CreateMemento();
+			object imageBoxMemento = _oldImageBox.CreateMemento();
 			workspace.SetImageBoxGrid(1, 1);
-			workspace.ImageBoxes[0].SetMemento(imageBoxMemento);
-			workspace.ImageBoxes[0].DisplaySet = displaySet;
-			workspace.ImageBoxes[0].TopLeftPresentationImage = selectedImage;
+			IImageBox newImageBox = workspace.ImageBoxes[0];
+			newImageBox.SetMemento(imageBoxMemento);
+
+			//TODO (architecture): this wouldn't be necessary if we had a SetImageBoxGrid(imageBox[,]).
+			//This stuff with mementos is actually a hacky workaround.
+
+			bool locked = newImageBox.DisplaySetLocked;
+			newImageBox.DisplaySetLocked = false;
+			newImageBox.DisplaySet = displaySet;
+			newImageBox.TopLeftPresentationImage = selectedImage;
+			newImageBox.DisplaySetLocked = locked;
 
 			workspace.SelectDefaultImageBox();
 			

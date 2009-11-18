@@ -96,7 +96,14 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 				imageBox.SetMemento(unexplodeMemento);
 
+				//TODO (architecture): this wouldn't be necessary if we had a SetImageBoxGrid(imageBox[,]).
+				//This stuff with mementos is actually a hacky workaround.
+
+				bool locked = imageBox.DisplaySetLocked;
+				imageBox.DisplaySetLocked = false;
 				imageBox.DisplaySet = displaySet;
+				imageBox.DisplaySetLocked = locked;
+
 				if (selectedImage != null)
 					imageBox.TopLeftPresentationImage = selectedImage;
 
@@ -188,7 +195,15 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			IDisplaySet displaySet = imageBox.DisplaySet;
 			IPresentationImage selectedImage = imageBox.SelectedTile.PresentationImage;
 			imageBox.SetTileGrid(1, 1);
+
+			//TODO (architecture): this wouldn't be necessary if we had a SetImageBoxGrid(imageBox[,]).
+			//This stuff with mementos is actually a hacky workaround.
+
+			bool locked = imageBox.DisplaySetLocked;
+			imageBox.DisplaySetLocked = false;
 			imageBox.DisplaySet = displaySet;
+			imageBox.DisplaySetLocked = locked;
+
 			imageBox.TopLeftPresentationImage = selectedImage;
 			imageBox.SelectDefaultTile();
 

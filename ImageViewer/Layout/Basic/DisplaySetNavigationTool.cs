@@ -103,7 +103,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			UpdateEnabled();
 		}
 
-		private void OnImageBoxSelected(object sender, ImageBoxSelectedEventArgs e)
+		private void OnImageBoxDrawing(object sender, ImageBoxDrawingEventArgs e)
 		{
 			UpdateEnabled();
 		}
@@ -128,8 +128,16 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		private void UpdateEnabled()
 		{
-			IDisplaySet sourceDisplaySet = GetSourceDisplaySet();
-			Enabled = sourceDisplaySet != null && sourceDisplaySet.ParentImageSet.DisplaySets.Count > 1;
+			IImageBox imageBox = base.Context.Viewer.SelectedImageBox;
+			if (imageBox == null || imageBox.DisplaySetLocked)
+			{
+				Enabled = false;
+			}
+			else
+			{
+				IDisplaySet sourceDisplaySet = GetSourceDisplaySet();
+				Enabled = sourceDisplaySet != null && sourceDisplaySet.ParentImageSet.DisplaySets.Count > 1;
+			}
 		}
 
 		public override void Initialize()
@@ -140,7 +148,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			base.Context.Viewer.EventBroker.ImageLoaded += OnImageLoaded;
 			base.Context.Viewer.EventBroker.StudyLoaded += OnStudyLoaded;
-			base.Context.Viewer.EventBroker.ImageBoxSelected += OnImageBoxSelected;
+			base.Context.Viewer.EventBroker.ImageBoxDrawing += OnImageBoxDrawing;
 			base.Context.Viewer.EventBroker.DisplaySetSelected += OnDisplaySetSelected;
 		}
 
@@ -148,7 +156,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 			base.Context.Viewer.EventBroker.ImageLoaded -= OnImageLoaded;
 			base.Context.Viewer.EventBroker.StudyLoaded -= OnStudyLoaded;
-			base.Context.Viewer.EventBroker.ImageBoxSelected -= OnImageBoxSelected;
+			base.Context.Viewer.EventBroker.ImageBoxDrawing -= OnImageBoxDrawing;
 			base.Context.Viewer.EventBroker.DisplaySetSelected -= OnDisplaySetSelected;
 
 			base.Dispose(disposing);
@@ -166,6 +174,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		public void AdvanceDisplaySet(int direction)
 		{
+			if (!Enabled)
+				return;
+
 			IDisplaySet sourceDisplaySet = GetSourceDisplaySet();
 			if (sourceDisplaySet == null)
 				return;
