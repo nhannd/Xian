@@ -176,6 +176,13 @@ namespace ClearCanvas.Ris.Client
 					var isNotEmptyNewNote = !(this.IsBodyEmpty && !_orderNoteViewComponent.HasAcknowledgeableNotes);
 					return new ValidationResult(isNotEmptyNewNote, SR.MessageBodyCannotBeEmpty);
 				}));
+
+			this.Validation.Add(new ValidationRule("SelectedTemplate",
+				delegate
+				{
+					var nonNullWhenChoicesExist = !(_selectedTemplate == null && this.TemplateChoicesVisible);
+					return new ValidationResult(nonNullWhenChoicesExist, SR.MessageMustSelectTemplate);
+				}));
 		}
 
 		#endregion
@@ -274,7 +281,6 @@ namespace ClearCanvas.Ris.Client
 			return template.DisplayName;
 		}
 
-		[ValidateNotNull]
 		public object SelectedTemplate
 		{
 			get { return _selectedTemplate; }
@@ -298,6 +304,11 @@ namespace ClearCanvas.Ris.Client
 				_body = value;
 				NotifyPropertyChanged("Body");
 			}
+		}
+
+		public bool IsPosting
+		{
+			get { return !string.IsNullOrEmpty(_body); }
 		}
 
 		public bool Urgent
@@ -347,7 +358,7 @@ namespace ClearCanvas.Ris.Client
 			get
 			{
 				// only editable if no template in effect
-				return _selectedTemplate == null;
+				return _selectedTemplate == null && this.IsPosting;
 			}
 		}
 

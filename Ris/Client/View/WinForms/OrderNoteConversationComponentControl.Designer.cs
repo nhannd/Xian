@@ -60,11 +60,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private void InitializeComponent()
         {
 			this._componentTableLayout = new System.Windows.Forms.TableLayoutPanel();
-			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-			this._cancelButton = new System.Windows.Forms.Button();
-			this._completeButton = new System.Windows.Forms.Button();
-			this._notesGroupBox = new System.Windows.Forms.GroupBox();
-			this._orderNotesPanel = new System.Windows.Forms.Panel();
 			this._replyGroupBox = new System.Windows.Forms.GroupBox();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.panel2 = new System.Windows.Forms.Panel();
@@ -79,15 +74,20 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.label2 = new System.Windows.Forms.Label();
 			this._urgent = new System.Windows.Forms.CheckBox();
 			this._replyBody = new System.Windows.Forms.RichTextBox();
+			this._notesGroupBox = new System.Windows.Forms.GroupBox();
+			this._orderNotesPanel = new System.Windows.Forms.Panel();
+			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+			this._cancelButton = new System.Windows.Forms.Button();
+			this._completeButton = new System.Windows.Forms.Button();
 			this._componentTableLayout.SuspendLayout();
-			this.flowLayoutPanel1.SuspendLayout();
-			this._notesGroupBox.SuspendLayout();
 			this._replyGroupBox.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.panel2.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
 			this._templateSelectionPanel.SuspendLayout();
 			this.panel1.SuspendLayout();
+			this._notesGroupBox.SuspendLayout();
+			this.flowLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _componentTableLayout
@@ -111,60 +111,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._componentTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this._componentTableLayout.Size = new System.Drawing.Size(850, 600);
 			this._componentTableLayout.TabIndex = 0;
-			// 
-			// flowLayoutPanel1
-			// 
-			this.flowLayoutPanel1.AutoSize = true;
-			this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.flowLayoutPanel1.Controls.Add(this._cancelButton);
-			this.flowLayoutPanel1.Controls.Add(this._completeButton);
-			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 567);
-			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(844, 30);
-			this.flowLayoutPanel1.TabIndex = 1;
-			// 
-			// _cancelButton
-			// 
-			this._cancelButton.Location = new System.Drawing.Point(766, 3);
-			this._cancelButton.Name = "_cancelButton";
-			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 1;
-			this._cancelButton.Text = "Cancel";
-			this._cancelButton.UseVisualStyleBackColor = true;
-			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
-			// 
-			// _completeButton
-			// 
-			this._completeButton.AutoSize = true;
-			this._completeButton.Location = new System.Drawing.Point(678, 3);
-			this._completeButton.Name = "_completeButton";
-			this._completeButton.Size = new System.Drawing.Size(82, 23);
-			this._completeButton.TabIndex = 0;
-			this._completeButton.Text = "Acknowledge";
-			this._completeButton.UseVisualStyleBackColor = true;
-			this._completeButton.Click += new System.EventHandler(this._completeButton_Click);
-			// 
-			// _notesGroupBox
-			// 
-			this._notesGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._notesGroupBox.Controls.Add(this._orderNotesPanel);
-			this._notesGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._notesGroupBox.Location = new System.Drawing.Point(3, 3);
-			this._notesGroupBox.Name = "_notesGroupBox";
-			this._notesGroupBox.Size = new System.Drawing.Size(844, 276);
-			this._notesGroupBox.TabIndex = 2;
-			this._notesGroupBox.TabStop = false;
-			this._notesGroupBox.Text = "Conversation";
-			// 
-			// _orderNotesPanel
-			// 
-			this._orderNotesPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._orderNotesPanel.Location = new System.Drawing.Point(3, 16);
-			this._orderNotesPanel.Name = "_orderNotesPanel";
-			this._orderNotesPanel.Size = new System.Drawing.Size(838, 257);
-			this._orderNotesPanel.TabIndex = 0;
 			// 
 			// _replyGroupBox
 			// 
@@ -343,6 +289,60 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._replyBody.TabIndex = 1;
 			this._replyBody.Text = "";
 			// 
+			// _notesGroupBox
+			// 
+			this._notesGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._notesGroupBox.Controls.Add(this._orderNotesPanel);
+			this._notesGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._notesGroupBox.Location = new System.Drawing.Point(3, 3);
+			this._notesGroupBox.Name = "_notesGroupBox";
+			this._notesGroupBox.Size = new System.Drawing.Size(844, 276);
+			this._notesGroupBox.TabIndex = 2;
+			this._notesGroupBox.TabStop = false;
+			this._notesGroupBox.Text = "Conversation";
+			// 
+			// _orderNotesPanel
+			// 
+			this._orderNotesPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._orderNotesPanel.Location = new System.Drawing.Point(3, 16);
+			this._orderNotesPanel.Name = "_orderNotesPanel";
+			this._orderNotesPanel.Size = new System.Drawing.Size(838, 257);
+			this._orderNotesPanel.TabIndex = 0;
+			// 
+			// flowLayoutPanel1
+			// 
+			this.flowLayoutPanel1.AutoSize = true;
+			this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.flowLayoutPanel1.Controls.Add(this._cancelButton);
+			this.flowLayoutPanel1.Controls.Add(this._completeButton);
+			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 567);
+			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+			this.flowLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(844, 30);
+			this.flowLayoutPanel1.TabIndex = 1;
+			// 
+			// _cancelButton
+			// 
+			this._cancelButton.Location = new System.Drawing.Point(766, 3);
+			this._cancelButton.Name = "_cancelButton";
+			this._cancelButton.Size = new System.Drawing.Size(75, 23);
+			this._cancelButton.TabIndex = 1;
+			this._cancelButton.Text = "Cancel";
+			this._cancelButton.UseVisualStyleBackColor = true;
+			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
+			// 
+			// _completeButton
+			// 
+			this._completeButton.AutoSize = true;
+			this._completeButton.Location = new System.Drawing.Point(678, 3);
+			this._completeButton.Name = "_completeButton";
+			this._completeButton.Size = new System.Drawing.Size(82, 23);
+			this._completeButton.TabIndex = 0;
+			this._completeButton.Text = "Acknowledge";
+			this._completeButton.UseVisualStyleBackColor = true;
+			this._completeButton.Click += new System.EventHandler(this._completeButton_Click);
+			// 
 			// OrderNoteConversationComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -354,9 +354,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Size = new System.Drawing.Size(850, 600);
 			this._componentTableLayout.ResumeLayout(false);
 			this._componentTableLayout.PerformLayout();
-			this.flowLayoutPanel1.ResumeLayout(false);
-			this.flowLayoutPanel1.PerformLayout();
-			this._notesGroupBox.ResumeLayout(false);
 			this._replyGroupBox.ResumeLayout(false);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.panel2.ResumeLayout(false);
@@ -366,6 +363,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._templateSelectionPanel.PerformLayout();
 			this.panel1.ResumeLayout(false);
 			this.panel1.PerformLayout();
+			this._notesGroupBox.ResumeLayout(false);
+			this.flowLayoutPanel1.ResumeLayout(false);
+			this.flowLayoutPanel1.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

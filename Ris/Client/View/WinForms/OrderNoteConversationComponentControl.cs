@@ -67,6 +67,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_cannedTextSupport = new CannedTextSupport(_replyBody, _component.CannedTextLookupHandler);
 
 			_urgent.DataBindings.Add("Checked", _component, "Urgent", true, DataSourceUpdateMode.OnPropertyChanged);
+			_urgent.DataBindings.Add("Enabled", _component, "IsPosting", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_onBehalf.DataSource = _component.OnBehalfOfGroupChoices;
 			_onBehalf.DataBindings.Add("Value", _component, "OnBehalfOf", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -77,6 +78,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_recipients.MenuModel = _component.RecipientsActionModel;
 			_recipients.ToolbarModel = _component.RecipientsActionModel;
 			_recipients.DataBindings.Add("Selection", _component, "SelectedRecipient", true, DataSourceUpdateMode.OnPropertyChanged);
+			_recipients.DataBindings.Add("Enabled", _component, "IsPosting", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_completeButton.DataBindings.Add("Text", _component, "CompleteButtonLabel", true, DataSourceUpdateMode.OnPropertyChanged);
 

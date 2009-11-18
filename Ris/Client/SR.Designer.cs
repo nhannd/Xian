@@ -1519,6 +1519,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An action must be selected..
+        /// </summary>
+        internal static string MessageMustSelectTemplate {
+            get {
+                return ResourceManager.GetString("MessageMustSelectTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to At least one active procedure is required..
         /// </summary>
         internal static string MessageNoActiveProcedures {

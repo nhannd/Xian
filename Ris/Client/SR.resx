@@ -912,4 +912,7 @@
   <data name="MessageResetAllFolders" xml:space="preserve">
     <value>Reset all folders in the selected folder system</value>
   </data>
+  <data name="MessageMustSelectTemplate" xml:space="preserve">
+    <value>An action must be selected.</value>
+  </data>
 </root>
