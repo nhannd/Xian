@@ -107,7 +107,7 @@
     <Compile Include="Tools\ResliceToolGroup.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tools\ResliceToolX.cs">
+    <Compile Include="Tools\ResliceTool.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utilities\ObservableDisposableList.cs" />
