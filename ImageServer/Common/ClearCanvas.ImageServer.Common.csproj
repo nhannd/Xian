@@ -125,6 +125,7 @@
     <Compile Include="ServerFilesystemInfo.cs" />
     <Compile Include="ServerPartitionMonitor.cs" />
     <Compile Include="FileStreamOpener.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>

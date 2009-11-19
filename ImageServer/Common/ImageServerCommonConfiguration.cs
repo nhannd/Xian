@@ -86,15 +86,6 @@ namespace ClearCanvas.ImageServer.Common
             }
         }
 
-        static public bool EnablePatientsNameAutoCorrection
-        {
-            get
-            {
-                return Settings.Default.EnablePatientsNameAutoCorrection;
-            }
-        }
-
-
         public static String TemporaryPath
         {
             get

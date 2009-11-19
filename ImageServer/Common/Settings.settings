@@ -29,9 +29,6 @@
     <Setting Name="DeviceConfig_MaxConnections" Type="System.Int16" Scope="Application">
       <Value Profile="(Default)">15</Value>
     </Setting>
-    <Setting Name="EnablePatientsNameAutoCorrection" Type="System.Boolean" Scope="Application">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
     <Setting Name="TemporaryPath" Type="System.String" Scope="Application">
       <Value Profile="(Default)" />
     </Setting>
