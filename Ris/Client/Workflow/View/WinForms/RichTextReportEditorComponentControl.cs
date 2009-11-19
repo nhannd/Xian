@@ -56,17 +56,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_richText.DataBindings.Add("Text", _component, "EditorText", true, DataSourceUpdateMode.OnPropertyChanged);
 			_cannedTextSupport = new CannedTextSupport(_richText, _component.CannedTextLookupHandler);
 
-			if (_component.PreviewVisible)
-			{
-				Control reportPreview = (Control)_component.ReportPreviewHost.ComponentView.GuiElement;
-				reportPreview.Dock = DockStyle.Fill;
-				_splitContainer.Panel1.Controls.Add(reportPreview);
-				_splitContainer.Panel1Collapsed = false;
-			}
-			else
-			{
-				_splitContainer.Panel1Collapsed = true;
-			}
+			Control reportPreview = (Control)_component.ReportPreviewHost.ComponentView.GuiElement;
+			reportPreview.Dock = DockStyle.Fill;
+			_splitContainer.Panel1.Controls.Add(reportPreview);
+			UpdatePreviewVisibility();
 
 			((INotifyPropertyChanged)_component).PropertyChanged += _component_PropertyChanged;
 		}
@@ -77,6 +70,15 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			{
 				_richText.Text = _component.EditorText;
 			}
+			else if (e.PropertyName == "PreviewVisible")
+			{
+				UpdatePreviewVisibility();
+			}
+		}
+
+		private void UpdatePreviewVisibility()
+		{
+			_splitContainer.Panel1Collapsed = !_component.PreviewVisible;
 		}
 	}
 }

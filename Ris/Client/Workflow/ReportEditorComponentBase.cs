@@ -139,6 +139,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 			_previewComponent.Refresh();
 			NotifyPropertyChanged("EditorText");
+			NotifyPropertyChanged("PreviewVisible");
 		}
 
 		protected virtual void LoadOrCreateReportContent()
