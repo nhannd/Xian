@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                              ConditionalCheckBox != null ? ConditionalCheckBox.ClientID : "null");
             template.Replace("@@VALIDATE_WHEN_UNCHECKED@@", ValidateWhenUnchecked ? "true" : "false");
             template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue ? "true" : "false");
-            template.Replace("@@DATE_FORMAT@@", string.IsNullOrEmpty(_dateFormat) ? CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern : _dateFormat);
+            template.Replace("@@DATE_FORMAT@@", string.IsNullOrEmpty(_dateFormat) ? UISettings.Default.InputDateFormat : _dateFormat);
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);
         }
     }
