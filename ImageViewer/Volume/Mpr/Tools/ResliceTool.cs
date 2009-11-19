@@ -55,22 +55,26 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 		[LabelValueObserver("activate", "Label", "SliceSetChanged")]
 		[GroupHint("activate", "Tools.Volume.MPR.Reslicing")]
 		[MouseToolButton(XMouseButtons.Left, false)]
-		private class ResliceTool : MprViewerTool
+		private class ResliceTool : MprViewerTool, IMemorable
 		{
 			private ResliceToolGraphic _resliceGraphic;
 			private InteractivePolylineGraphicBuilder _lineGraphicBuilder;
 
-			private object _graphicBuilderMemento;
-			private TranslocateGraphicUndoableCommand _graphicTranslocationCommand;
+			private object _originalWorkspaceState;
+			private object _originalResliceToolsState;
 
 			private Color _hotColor = Color.SkyBlue;
 			private Color _normalColor = Color.CornflowerBlue;
 
+			private ResliceToolGroup _resliceToolGroup;
+
 			private int _lastTopLeftPresentationImageIndex = -1;
 
-			public ResliceTool()
+			public ResliceTool(ResliceToolGroup resliceToolGroup)
 			{
 				base.Behaviour |= MouseButtonHandlerBehaviour.SuppressOnTileActivate;
+
+				_resliceToolGroup = resliceToolGroup;
 			}
 
 			public string Label
@@ -249,6 +253,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 					}
 				}
 
+				_resliceToolGroup = null;
 				base.Dispose(disposing);
 			}
 
@@ -269,11 +274,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				if (provider == null)
 					return false;
 
-				_graphicBuilderMemento = _resliceGraphic.CreateMemento();
+				// these mementos will be consumed when the graphic builder is completed or cancelled
+				_originalWorkspaceState = _resliceToolGroup._mprWorkspaceState.CreateMemento();
+				_originalResliceToolsState = _resliceToolGroup._resliceToolsState.CreateMemento();
 
-				// if we are reslicing on a different (i.e. not the one it previously existed on) display set, set this field variable
-				// which will be consumed when the graphic builder is completed or cancelled
-				_graphicTranslocationCommand = TranslocateGraphic(_resliceGraphic, this.SelectedPresentationImage);
+				TranslocateGraphic(_resliceGraphic, this.SelectedPresentationImage);
 
 				// The interactive graphic builders typically operate on new, pristine graphics
 				// Since our graphic isn't new, clear the points from it! (Otherwise you'll end up with a polyline)
@@ -296,104 +301,45 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 			{
 				if (base.ImageViewer.CommandHistory != null)
 				{
-					DrawableUndoableCommand compositeCommand;
+					DrawableUndoableCommand compositeCommand = new DrawableUndoableCommand(new ImageBoxesDrawable(this.ImageViewer.PhysicalWorkspace));
 
-					// if we had to translocate the graphic to start the builder, we will need to draw both the old and new parent images
-					if (_graphicTranslocationCommand != null)
-					{
-						// disable automatic drawing by the translocation command
-						_graphicTranslocationCommand.DrawOnExecuteUnexecute = false;
+					MemorableUndoableCommand resliceToolGraphicsStateBeginCommand = new MemorableUndoableCommand(_resliceToolGroup._resliceToolsState);
+					resliceToolGraphicsStateBeginCommand.BeginState = _originalResliceToolsState;
+					resliceToolGraphicsStateBeginCommand.EndState = null;
+					compositeCommand.Enqueue(resliceToolGraphicsStateBeginCommand);
 
-						// add the translocation command to the composite, and make that responsible for drawing
-						compositeCommand = new DrawableUndoableCommand(new ResliceDrawable(_graphicTranslocationCommand.Drawable, this.Reslice));
-					}
-					else
-					{
-						// otherwise, we can get away with just drawing the graphic
-						compositeCommand = new DrawableUndoableCommand(new ResliceDrawable(_resliceGraphic, this.Reslice));
-					}
+					MemorableUndoableCommand mprWorkspaceStateCommand = new MemorableUndoableCommand(_resliceToolGroup._mprWorkspaceState);
+					mprWorkspaceStateCommand.BeginState = _originalWorkspaceState;
+					mprWorkspaceStateCommand.EndState = _resliceToolGroup._mprWorkspaceState.CreateMemento();
+					compositeCommand.Enqueue(mprWorkspaceStateCommand);
 
-					// enqueue the translocate command
-					if (_graphicTranslocationCommand != null)
-						compositeCommand.Enqueue(_graphicTranslocationCommand);
-
-					// enqueue the memento command
-					MemorableUndoableCommand memorableCommand = new MemorableUndoableCommand(_resliceGraphic);
-					memorableCommand.BeginState = _graphicBuilderMemento;
-					memorableCommand.EndState = _resliceGraphic.CreateMemento();
-					compositeCommand.Enqueue(memorableCommand);
+					MemorableUndoableCommand resliceToolGraphicsStateEndCommand = new MemorableUndoableCommand(_resliceToolGroup._resliceToolsState);
+					resliceToolGraphicsStateEndCommand.BeginState = null;
+					resliceToolGraphicsStateEndCommand.EndState = _resliceToolGroup._resliceToolsState.CreateMemento();
+					compositeCommand.Enqueue(resliceToolGraphicsStateEndCommand);
 
 					base.ImageViewer.CommandHistory.AddCommand(compositeCommand);
 				}
 
-				_graphicBuilderMemento = null;
-				_graphicTranslocationCommand = null;
+				_originalResliceToolsState = null;
+				_originalWorkspaceState = null;
 
 				RemoveGraphicBuilder();
 
 				_lastTopLeftPresentationImageIndex = this.SliceImageBox.TopLeftPresentationImageIndex;
 			}
 
-			private class ResliceDrawable : IDrawable
-			{
-				public delegate IDrawable ResliceCommandDelegate();
-
-				private readonly IDrawable _drawable;
-				private readonly ResliceCommandDelegate _resliceCommand;
-
-				public ResliceDrawable(IDrawable drawable1, ResliceCommandDelegate drawable2)
-				{
-					_drawable = drawable1;
-					_resliceCommand = drawable2;
-				}
-
-				public void Draw()
-				{
-					// reslicing takes the longest, so run it first
-					IDrawable drawable2 = _resliceCommand();
-					if (drawable2 != null)
-						drawable2.Draw();
-					if (_drawable != null)
-						_drawable.Draw();
-				}
-
-				public event EventHandler Drawing
-				{
-					add { }
-					remove { }
-				}
-			}
-
 			private void OnGraphicBuilderCancelled(object sender, GraphicEventArgs e)
 			{
-				IDrawable affectedDrawables;
+				_resliceToolGroup._mprWorkspaceState.SetMemento(_originalWorkspaceState);
+				_resliceToolGroup._resliceToolsState.SetMemento(_originalResliceToolsState);
 
-				// if we had to translocate the graphic to start the builder, undo that now
-				if (_graphicTranslocationCommand != null)
-				{
-					affectedDrawables = _graphicTranslocationCommand.Drawable;
-					_graphicTranslocationCommand.DrawOnExecuteUnexecute = false;
-					_graphicTranslocationCommand.Unexecute();
-					_graphicTranslocationCommand = null;
-				}
-				else
-				{
-					affectedDrawables = _resliceGraphic;
-				}
-
-				if (_graphicBuilderMemento != null)
-				{
-					_resliceGraphic.SetMemento(_graphicBuilderMemento);
-					_graphicBuilderMemento = null;
-					IDrawable resliceResult = this.Reslice();
-					if (resliceResult != null)
-						resliceResult.Draw();
-
-					affectedDrawables.Draw();
-				}
-
+				_originalResliceToolsState = null;
+				_originalWorkspaceState = null;
 
 				RemoveGraphicBuilder();
+
+				new ImageBoxesDrawable(this.ImageViewer.PhysicalWorkspace).Draw();
 			}
 
 			private void OnAnchorPointChanged(object sender, IndexEventArgs e)
@@ -481,7 +427,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 			/// </summary>
 			public IPresentationImage ReferenceImage
 			{
-				get { return _resliceGraphic.ParentPresentationImage; }
+				get
+				{
+					if (_resliceGraphic.ParentPresentationImage == null || _resliceGraphic.ParentPresentationImage.ParentDisplaySet == null)
+						return null;
+					return _resliceGraphic.ParentPresentationImage; 
+				}
 			}
 
 			/// <summary>
@@ -514,6 +465,28 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				}
 				return false;
 			}
+
+			#region IMemorable
+
+			public object CreateMemento()
+			{
+				return new ImageHint(this.ReferenceImage);
+			}
+
+			public void SetMemento(object memento)
+			{
+				ImageHint state = memento as ImageHint;
+				if (state == null)
+					return;
+
+				if (this.SliceSet != null && !this.SliceSet.IsReadOnly)
+				{
+					// don't check for null - if the hint image doesn't exist, then we're going to hide the graphic
+					this.SetReferenceImage(state.Image);
+				}
+			}
+
+			#endregion
 		}
 	}
 }

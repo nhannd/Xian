@@ -108,5 +108,46 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 					base.PresentationImages.Add(image);
 			}
 		}
+
+		public override object CreateMemento()
+		{
+			object baseDisplaySetMemento = base.CreateMemento();
+
+			return new MprDisplaySetMemento(this, baseDisplaySetMemento);
+		}
+
+		public override void SetMemento(object memento)
+		{
+			MprDisplaySetMemento mprDisplaySetMemento = memento as MprDisplaySetMemento;
+			if (mprDisplaySetMemento == null)
+				return;
+
+			IMprStandardSliceSet sliceSet = _sliceSet as IMprStandardSliceSet;
+			if (sliceSet != null && !sliceSet.IsReadOnly && mprDisplaySetMemento.SlicerParams != null)
+				sliceSet.SlicerParams = mprDisplaySetMemento.SlicerParams;
+
+			if (this.ImageBox != null && mprDisplaySetMemento.SliceIndex >= 0 && mprDisplaySetMemento.SliceIndex < this.PresentationImages.Count)
+				this.ImageBox.TopLeftPresentationImage = this.PresentationImages[mprDisplaySetMemento.SliceIndex];
+
+			base.SetMemento(mprDisplaySetMemento.DisplaySetMemento);
+		}
+
+		private class MprDisplaySetMemento
+		{
+			public readonly IVolumeSlicerParams SlicerParams;
+			public readonly int SliceIndex;
+			public readonly object DisplaySetMemento;
+
+			public MprDisplaySetMemento(MprDisplaySet mprDisplaySet, object displaySetMemento)
+			{
+				if (mprDisplaySet.ImageBox != null)
+					this.SliceIndex = mprDisplaySet.ImageBox.TopLeftPresentationImageIndex;
+
+				if (mprDisplaySet.SliceSet is IMprStandardSliceSet)
+					this.SlicerParams = ((IMprStandardSliceSet) mprDisplaySet.SliceSet).SlicerParams;
+
+				this.DisplaySetMemento = displaySetMemento;
+			}
+		}
 	}
 }

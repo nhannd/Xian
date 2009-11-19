@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 					IMprStandardSliceSet standardSliceSet = sliceSet as IMprStandardSliceSet;
 					if (standardSliceSet != null && !standardSliceSet.IsReadOnly)
 					{
-						ResliceTool tool = new ResliceTool();
+						ResliceTool tool = new ResliceTool(this);
 						tool.SliceSet = standardSliceSet;
 						tool.HotColor = _colors[index, 0];
 						tool.NormalColor = _colors[index, 1];
@@ -102,6 +102,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 		{
 			base.Initialize();
 			base.TooltipPrefix = SR.MenuReslice;
+
+			_mprWorkspaceState = new MprWorkspaceState(this.ImageViewer);
+			_resliceToolsState = new ResliceToolGraphicsState(this);
+
 			this.InitializeResetAll();
 			if (this.ImageViewer != null)
 			{
@@ -116,6 +120,18 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				if (this.ImageViewer != null)
 				{
 					this.ImageViewer.PhysicalWorkspace.LayoutCompleted -= PhysicalWorkspace_LayoutCompleted;
+				}
+
+				if (_mprWorkspaceState != null)
+				{
+					_mprWorkspaceState.Dispose();
+					_mprWorkspaceState = null;
+				}
+
+				if (_resliceToolsState != null)
+				{
+					_resliceToolsState.Dispose();
+					_resliceToolsState = null;
 				}
 			}
 			this.DisposeResetAll();
@@ -164,6 +180,134 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 			get { return ActionModelRoot.CreateModel(this.GetType().FullName, "mprviewer-reslicemenu", this.Actions); }
 		}
 
+		#region MPR Workspace State
+
+		private MprWorkspaceState _mprWorkspaceState;
+		private ResliceToolGraphicsState _resliceToolsState;
+
+		private class ResliceToolGraphicsState : IMemorable, IDisposable
+		{
+			private ResliceToolGroup _owner;
+			private object _initialState;
+
+			public ResliceToolGraphicsState(ResliceToolGroup owner)
+			{
+				_owner = owner;
+				_initialState = this.CreateMemento();
+			}
+
+			public void Dispose()
+			{
+				_owner = null;
+				_initialState = null;
+			}
+
+			public object InitialState
+			{
+				get { return _initialState; }
+			}
+
+			public object CreateMemento()
+			{
+				ResliceToolGraphicsStateMemento state = new ResliceToolGraphicsStateMemento();
+				foreach (ResliceTool tool in _owner.SlaveTools)
+				{
+					if (tool.SliceSet != null)
+						state.Add(tool, tool.CreateMemento());
+				}
+				return state;
+			}
+
+			public void SetMemento(object memento)
+			{
+				ResliceToolGraphicsStateMemento state = memento as ResliceToolGraphicsStateMemento;
+				if (state == null)
+					return;
+
+				foreach (ResliceTool tool in _owner.SlaveTools)
+				{
+					if (tool.SliceSet != null && state.ContainsKey(tool))
+						tool.SetMemento(state[tool]);
+				}
+			}
+
+			private class ResliceToolGraphicsStateMemento : Dictionary<ResliceTool, object> {}
+		}
+
+		private class MprWorkspaceState : IMemorable, IDisposable
+		{
+			private MprViewerComponent _mprViewer;
+			private object _initialState;
+
+			public MprWorkspaceState(MprViewerComponent mprViewer)
+			{
+				_mprViewer = mprViewer;
+				_initialState = this.CreateMemento();
+			}
+
+			public void Dispose()
+			{
+				_mprViewer = null;
+				_initialState = null;
+			}
+
+			public object InitialState
+			{
+				get { return _initialState; }
+			}
+
+			public object CreateMemento()
+			{
+				MprWorkspaceStateMemento state = new MprWorkspaceStateMemento();
+				foreach (IImageSet imageSet in _mprViewer.MprWorkspace.ImageSets)
+				{
+					foreach (MprDisplaySet displaySet in imageSet.DisplaySets)
+						state.Add(displaySet, displaySet.CreateMemento());
+				}
+				return state;
+			}
+
+			public void SetMemento(object memento)
+			{
+				MprWorkspaceStateMemento state = memento as MprWorkspaceStateMemento;
+				if (state == null)
+					return;
+
+				foreach (KeyValuePair<MprDisplaySet, object> pair in state)
+					pair.Key.SetMemento(pair.Value);
+			}
+
+			private class MprWorkspaceStateMemento : Dictionary<MprDisplaySet, object> {}
+		}
+
+		private class ImageHint
+		{
+			private readonly int _imageIndex = -1;
+			private readonly MprDisplaySet _displaySet = null;
+
+			public ImageHint(IPresentationImage image)
+			{
+				if (image != null)
+				{
+					_displaySet = image.ParentDisplaySet as MprDisplaySet;
+					if (_displaySet != null)
+						_imageIndex = _displaySet.PresentationImages.IndexOf(image);
+				}
+			}
+
+			public IPresentationImage Image
+			{
+				get
+				{
+					if (_displaySet != null && _imageIndex >= 0 && _imageIndex < _displaySet.PresentationImages.Count)
+						return _displaySet.PresentationImages[_imageIndex];
+					return null;
+				}
+			}
+		}
+
+		#endregion
+
 		#region Static Helpers - Finding ImageBoxes
 
 		/// <summary>
@@ -211,92 +355,21 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 		/// <summary>
 		/// Moves the graphic from where ever it is to the target image.
 		/// </summary>
-		private static TranslocateGraphicUndoableCommand TranslocateGraphic(IGraphic graphic, IPresentationImage targetImage)
+		private static void TranslocateGraphic(IGraphic graphic, IPresentationImage targetImage)
 		{
-			TranslocateGraphicUndoableCommand command = null;
 			IPresentationImage oldImage = graphic.ParentPresentationImage;
 			if (oldImage != targetImage)
 			{
-				command = new TranslocateGraphicUndoableCommand(graphic, targetImage as IApplicationGraphicsProvider, oldImage as IApplicationGraphicsProvider);
-				command.Execute();
+				IApplicationGraphicsProvider imageOnUnexecute = oldImage as IApplicationGraphicsProvider;
+				if (imageOnUnexecute != null)
+					imageOnUnexecute.ApplicationGraphics.Remove(graphic);
+
+				IApplicationGraphicsProvider imageOnExecute = targetImage as IApplicationGraphicsProvider;
+				if (imageOnExecute != null)
+					imageOnExecute.ApplicationGraphics.Add(graphic);
 
 				if (oldImage != null)
 					oldImage.Draw();
-			}
-			return command;
-		}
-
-		private class TranslocateGraphicUndoableCommand : UndoableCommand
-		{
-			private readonly IGraphic _graphic;
-			private readonly IApplicationGraphicsProvider _targetOnExecute;
-			private readonly IApplicationGraphicsProvider _targetOnUnexecute;
-			private readonly DrawableComposite _drawable;
-			private bool _drawOnExecuteUnexecute = false;
-
-			public TranslocateGraphicUndoableCommand(IGraphic graphic, IApplicationGraphicsProvider targetOnExecute, IApplicationGraphicsProvider targetOnUnexecute)
-			{
-				_graphic = graphic;
-				_targetOnExecute = targetOnExecute;
-				_targetOnUnexecute = targetOnUnexecute;
-				_drawable = new DrawableComposite(targetOnExecute as IDrawable, targetOnUnexecute as IDrawable);
-			}
-
-			public IDrawable Drawable
-			{
-				get { return _drawable; }
-			}
-
-			public bool DrawOnExecuteUnexecute
-			{
-				get { return _drawOnExecuteUnexecute; }
-				set { _drawOnExecuteUnexecute = value; }
-			}
-
-			public override void Execute()
-			{
-				if (_targetOnUnexecute != null)
-					_targetOnUnexecute.ApplicationGraphics.Remove(_graphic);
-				if (_targetOnExecute != null)
-					_targetOnExecute.ApplicationGraphics.Add(_graphic);
-				if (_drawOnExecuteUnexecute)
-					_drawable.Draw();
-			}
-
-			public override void Unexecute()
-			{
-				if (_targetOnExecute != null)
-					_targetOnExecute.ApplicationGraphics.Remove(_graphic);
-				if (_targetOnUnexecute != null)
-					_targetOnUnexecute.ApplicationGraphics.Add(_graphic);
-				if (_drawOnExecuteUnexecute)
-					_drawable.Draw();
-			}
-
-			private class DrawableComposite : IDrawable
-			{
-				private readonly IDrawable _drawable1;
-				private readonly IDrawable _drawable2;
-
-				public DrawableComposite(IDrawable drawable1, IDrawable drawable2)
-				{
-					_drawable1 = drawable1;
-					_drawable2 = drawable2;
-				}
-
-				public void Draw()
-				{
-					if (_drawable1 != null)
-						_drawable1.Draw();
-					if (_drawable2 != null)
-						_drawable2.Draw();
-				}
-
-				public event EventHandler Drawing
-				{
-					add { }
-					remove { }
-				}
 			}
 		}
 
