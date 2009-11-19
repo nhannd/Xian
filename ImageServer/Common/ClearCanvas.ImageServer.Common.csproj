@@ -92,11 +92,6 @@
     <Compile Include="CommandProcessor\MoveDirectoryCommand.cs" />
     <Compile Include="FilesystemSelector.cs" />
     <Compile Include="InProcessImageServerServiceProvider.cs" />
-    <Compile Include="PatientNameSettings.Designer.cs">
-      <DependentUpon>PatientNameSettings.settings</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
     <Compile Include="ServiceModel\IFilesystemService.cs" />
     <Compile Include="ServiceMount.cs" />
     <Compile Include="Helpers\StudyComparer.cs" />
@@ -185,10 +180,6 @@
     <None Include="Diagnostics\DiagnosticSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DiagnosticSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="PatientNameSettings.settings">
-      <Generator>PublicSettingsSingleFileGenerator</Generator>
-      <LastGenOutput>PatientNameSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="RemoteImageServerServiceSettings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>

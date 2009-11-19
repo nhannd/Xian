@@ -35,7 +35,6 @@ using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Data;
@@ -206,14 +205,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     string newPatientName = record.ConflictingImageDetails.StudyInfo.PatientInfo.Name;
                     if (!String.IsNullOrEmpty(newPatientName))
                     {
-                        if (PatientNameSettings.Default.RemoveRedundantSpaces)
+                        string acceptableName = PatientNameRules.GetAcceptableName(newPatientName);
+                        if (!acceptableName.Equals(newPatientName))
                         {
-                            string acceptableName = PatientNameRules.GetAcceptableName(newPatientName);
-                            if (!acceptableName.Equals(newPatientName))
-                            {
-                                //override the value
-                                newPatientName = acceptableName;
-                            }
+                            //override the value
+                            newPatientName = acceptableName;
                         }
                     }
                     command.Commands.Add(new SetTagCommand(DicomTags.PatientsName, record.ExistingStudyInfo.PatientInfo.Name, newPatientName));
@@ -233,14 +229,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
                     if (!String.IsNullOrEmpty(patientName))
                     {
-                        if (PatientNameSettings.Default.RemoveRedundantSpaces)
+                        string acceptableName = PatientNameRules.GetAcceptableName(patientName);
+                        if (!acceptableName.Equals(patientName))
                         {
-                            string acceptableName = PatientNameRules.GetAcceptableName(patientName);
-                            if (!acceptableName.Equals(patientName))
-                            {
-                                //override the value
-                                patientName = acceptableName;
-                            }
+                            //override the value
+                            patientName = acceptableName;
                         }
                     }
                     

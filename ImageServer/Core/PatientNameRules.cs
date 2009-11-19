@@ -33,7 +33,6 @@ using System;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Helpers;
@@ -60,8 +59,8 @@ namespace ClearCanvas.ImageServer.Core
 
         /// <summary>
         /// Updates the Patient's Name tag in the specified <see cref="DicomFile"/>
-        /// based on the settings in <see cref="PatientNameSettings"/>
-        /// and the specified <see cref="StudyStorageLocation"/>
+        /// based on the specified <see cref="StudyStorageLocation"/>. Normalization
+        /// may occur.
         /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>
@@ -97,37 +96,38 @@ namespace ClearCanvas.ImageServer.Core
             bool updated = false;
             string orginalPatientsNameInFile = file.DataSet[DicomTags.PatientsName].ToString();
 
-            if (_theStudy != null)
+            if (_theStudy==null)
             {
-                StudyComparer comparer = new StudyComparer();
-                ServerPartition partition = ServerPartitionMonitor.Instance.FindPartition(_theStudy.ServerPartitionKey);
-                DifferenceCollection list = comparer.Compare(file, _theStudy, partition.GetComparisonOptions());
+                return false;
+            }
 
-                if (list.Count == 1)
+            StudyComparer comparer = new StudyComparer();
+            ServerPartition partition = ServerPartitionMonitor.Instance.FindPartition(_theStudy.ServerPartitionKey);
+            DifferenceCollection list = comparer.Compare(file, _theStudy, partition.GetComparisonOptions());
+
+            if (list.Count == 1)
+            {
+                ComparisionDifference different = list[0];
+                if (different.DicomTag.TagValue == DicomTags.PatientsName)
                 {
-                    ComparisionDifference different = list[0];
-                    if (different.DicomTag.TagValue == DicomTags.PatientsName)
+                    if (DicomNameUtils.LookLikeSameNames(orginalPatientsNameInFile, _theStudy.PatientsName))
                     {
-                        if (DicomNameUtils.LookLikeSameNames(orginalPatientsNameInFile, _theStudy.PatientsName))
+                        using (ServerCommandProcessor processor = new ServerCommandProcessor("Update Patient's Name"))
                         {
-                            using ( ServerCommandProcessor processor = new ServerCommandProcessor("Update Patient's Name"))
+                            SetTagCommand command = new SetTagCommand(file, DicomTags.PatientsName, orginalPatientsNameInFile, _theStudy.PatientsName);
+                            processor.AddCommand(command);
+
+                            if (!processor.Execute())
                             {
-                                SetTagCommand command = new SetTagCommand(file, DicomTags.PatientsName, orginalPatientsNameInFile, _theStudy.PatientsName);
-                                processor.AddCommand(command);
-
-                                if (!processor.Execute())
-                                {
-                                    throw new ApplicationException(String.Format("AUTO-CORRECTION Failed: Unable to correct the patient's name in the image. Reason: {0}",
-                                                                                 processor.FailureReason), processor.FailureException);
-                                }
-
-                                updated = true;
+                                throw new ApplicationException(String.Format("AUTO-CORRECTION Failed: Unable to correct the patient's name in the image. Reason: {0}",
+                                                                             processor.FailureReason), processor.FailureException);
                             }
+
+                            updated = true;
                         }
                     }
                 }
             }
-
             return updated;
         }
 
@@ -141,6 +141,7 @@ namespace ClearCanvas.ImageServer.Core
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Update Patient's Name"))
             {
                 string normPatName = GetAcceptableName(orginalPatientsNameInFile);
+
                 if (!orginalPatientsNameInFile.Equals(normPatName, StringComparison.InvariantCultureIgnoreCase))
                 {
                     processor.AddCommand(new SetTagCommand(file, DicomTags.PatientsName, orginalPatientsNameInFile, normPatName));
@@ -157,17 +158,13 @@ namespace ClearCanvas.ImageServer.Core
         }
 
         /// <summary>
-        /// Returns an acceptable name for the given name, taken in account
-        /// settings in <see cref="PatientNameSettings"/>
+        /// Returns an acceptable name for the given name.
         /// </summary>
         /// <param name="originalName"></param>
         /// <returns></returns>
         static public string GetAcceptableName(string originalName)
         {
-            if (PatientNameSettings.Default.RemoveRedundantSpaces)
-                return DicomNameUtils.Normalize(originalName, DicomNameUtils.NormalizeOptions.TrimSpaces);
-            
-            return originalName;
+            return DicomNameUtils.Normalize(originalName, DicomNameUtils.NormalizeOptions.TrimSpaces | DicomNameUtils.NormalizeOptions.TrimEmptyEndingComponents);
         }
 
         #endregion
