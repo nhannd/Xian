@@ -124,19 +124,32 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				set { _sliceControlGraphic.Text = value; }
 			}
 
-			public bool SetLine(IPresentationImage referenceImage, IPresentationImage targetImage)
+			/// <summary>
+			/// Sets this line segment's end points to be the intersection of the <paramref name="sliceImage"/> on the infinite plane of the <paramref name="referenceImage"/>.
+			/// </summary>
+			/// <remarks>
+			/// In practice, a call to this method should have <paramref name="referenceImage"/> being equal to this line's <see cref="Graphic.ParentPresentationImage"/> or,
+			/// if not, then followed by a call to <see cref="ResliceToolGroup.TranslocateGraphic">translocate</see> the line to the <paramref name="referenceImage"/>.
+			/// Any other use may constitute a defect involving reference line bounds, and you should thusly inspect your code and explain why this is the case.
+			/// </remarks>
+			/// <param name="sliceImage">The slice whose position is controlled by this line.</param>
+			/// <param name="referenceImage">The image on which the line is (or is to be) defined.</param>
+			/// <returns>Returns true if a solution exists and the end points were updated.</returns>
+			public bool SetLine(IPresentationImage sliceImage, IPresentationImage referenceImage)
 			{
-				DicomImagePlane thisImagePlane = DicomImagePlane.FromImage(referenceImage);
-				DicomImagePlane imagePlane = DicomImagePlane.FromImage(targetImage);
-				Vector3D patientPt1, patientPt2;
-				if (thisImagePlane.GetIntersectionPoints(imagePlane, out patientPt1, out patientPt2))
-				{
-					Vector3D imagePt1 = imagePlane.ConvertToImagePlane(patientPt1);
-					Vector3D imagePt2 = imagePlane.ConvertToImagePlane(patientPt2);
+				DicomImagePlane sliceImagePlane = DicomImagePlane.FromImage(sliceImage);
+				DicomImagePlane referenceImagePlane = DicomImagePlane.FromImage(referenceImage);
 
+				if (!sliceImagePlane.IsParallelTo(referenceImagePlane, 1f))
+				{
+					Vector3D imagePt1 = referenceImagePlane.ConvertToImagePlane(sliceImagePlane.PositionPatientTopLeft);
+					Vector3D imagePt2 = referenceImagePlane.ConvertToImagePlane(sliceImagePlane.PositionPatientTopRight);
+
+					this.Points.SuspendEvents();
 					this.Points.Clear();
-					this.Points.Add(imagePlane.ConvertToImage(new PointF(imagePt1.X, imagePt1.Y)));
-					this.Points.Add(imagePlane.ConvertToImage(new PointF(imagePt2.X, imagePt2.Y)));
+					this.Points.Add(referenceImagePlane.ConvertToImage(new PointF(imagePt1.X, imagePt1.Y)));
+					this.Points.Add(referenceImagePlane.ConvertToImage(new PointF(imagePt2.X, imagePt2.Y)));
+					this.Points.ResumeEvents();
 					return true;
 				}
 				return false;

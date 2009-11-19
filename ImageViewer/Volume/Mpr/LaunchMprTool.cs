@@ -44,7 +44,7 @@ using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
-	[ButtonAction("open", "global-toolbars/ToolbarOpenSelectionWithMpr", "LaunchMpr")]
+	[ButtonAction("open", "global-toolbars/ToolbarMpr/ToolbarOpenSelectionWithMpr", "LaunchMpr")]
 	[MenuAction("open", "imageviewer-contextmenu/MenuOpenWithMpr", "LaunchMpr")]
 	[MenuAction("open", "global-menus/MenuTools/MenuMpr/MenuOpenSelectionWithMpr", "LaunchMpr")]
 	[IconSet("open", IconScheme.Colour, "Icons.LaunchMprToolSmall.png", "Icons.LaunchMprToolMedium.png", "Icons.LaunchMprToolLarge.png")]

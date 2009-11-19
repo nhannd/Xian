@@ -161,7 +161,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 
 		public ActionModelNode DropDownModel
 		{
-			get { return ActionModelRoot.CreateModel(this.GetType().FullName, "imageviewer-contextmenu", base.SlaveActions); }
+			get { return ActionModelRoot.CreateModel(this.GetType().FullName, "mprviewer-reslicemenu", this.Actions); }
 		}
 
 		#region Static Helpers - Finding ImageBoxes

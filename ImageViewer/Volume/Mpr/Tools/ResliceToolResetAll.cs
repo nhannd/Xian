@@ -37,13 +37,13 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 {
+	[MenuAction("resetAll", "mprviewer-reslicemenu/MenuResetAll", "ResetAll")]
 	[MenuAction("resetAll", "imageviewer-contextmenu/MenuResetAll", "ResetAll")]
 	[MenuAction("resetAll", "global-menus/MenuTools/MenuMpr/MenuResetAll", "ResetAll")]
-	[ButtonAction("resetAll", "global-toolbars/ToolbarMpr/ToolbarResetAll", "ResetAll")]
 	[EnabledStateObserver("resetAll", "CanReset", "CanResetChanged")]
 	[IconSet("resetAll", IconScheme.Colour, "Icons.ResetAllToolSmall.png", "Icons.ResetAllToolMedium.png", "Icons.ResetAllToolLarge.png")]
 	[Tooltip("resetAll", "TooltipResetAll")]
-	[GroupHint("resetAll", "Tools.Volume.MPR.Reslicing")]
+	[GroupHint("resetAll", "Tools.Volume.MPR.ResetSlicing")]
 	partial class ResliceToolGroup
 	{
 		private event EventHandler _canResetChanged;
