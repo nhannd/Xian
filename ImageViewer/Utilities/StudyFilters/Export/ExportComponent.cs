@@ -30,40 +30,48 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Utilities.Anonymization;
-using Path=ClearCanvas.Desktop.Path;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 {
 	[ExtensionPoint]
-	public sealed class ExportComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> {}
+	public sealed class ExportComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
 	[AssociateView(typeof (ExportComponentViewExtensionPoint))]
 	public class ExportComponent : ApplicationComponent
 	{
-		private readonly List<DicomFile> _files = new List<DicomFile>();
-		private string _patientId = "";
-		private string _patientsName = "PATIENT^ANONYMOUS";
-		private DateTime? _patientsDateOfBirth = DateTime.Today;
+		private string _patientId = "12345678";
+		private string _patientsName = "Patient^Anonymous";
+		private DateTime? _patientsDateOfBirth = Platform.Time;
 		private string _studyId = "";
 		private string _studyDescription = "";
 		private string _accessionNumber = "00000001";
-		private DateTime? _studyDateTime = DateTime.Today;
+		private DateTime? _studyDate = Platform.Time;
 
 		private string _outputPath = "";
 
-		public ExportComponent() {}
-
-		public IList<DicomFile> Files
+		internal ExportComponent()
 		{
-			get { return _files; }
 		}
 
+		[ValidationMethodFor("OutputPath")]
+		private ValidationResult ValidateOutputPath()
+		{
+			if (String.IsNullOrEmpty(OutputPath))
+				return new ValidationResult(false, SR.MessageOutputPathMustBeSpecified);
+
+			if (!Directory.Exists(OutputPath))
+				return new ValidationResult(false, SR.MessageDirectoryDoesNotExist);
+
+			return new ValidationResult(true, "");
+		}
+
+		//[ValidateLength(1, Message = "MessagePatientIdCannotBeEmpty")]
 		public string PatientId
 		{
 			get { return _patientId; }
@@ -77,6 +85,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 			}
 		}
 
+		//[ValidateLength(1, Message = "MessagePatientNameCannotBeEmpty")]
 		public string PatientsName
 		{
 			get { return _patientsName; }
@@ -103,10 +112,13 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 			}
 		}
 
-		public string StudyId {
+		public string StudyId
+		{
 			get { return _studyId; }
-			set {
-				if (_studyId != value) {
+			set
+			{
+				if (_studyId != value)
+				{
 					_studyId = value;
 					base.NotifyPropertyChanged("StudyId");
 				}
@@ -139,15 +151,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 			}
 		}
 
-		public DateTime? StudyDateTime
+		public DateTime? StudyDate
 		{
-			get { return _studyDateTime; }
+			get { return _studyDate; }
 			set
 			{
-				if (_studyDateTime != value)
+				if (_studyDate != value)
 				{
-					_studyDateTime = value;
-					base.NotifyPropertyChanged("StudyDateTime");
+					_studyDate = value;
+					base.NotifyPropertyChanged("StudyDate");
 				}
 			}
 		}
@@ -157,7 +169,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 			get { return _outputPath; }
 			set
 			{
-				if(_outputPath!=value)
+				if (_outputPath != value)
 				{
 					_outputPath = value;
 					base.NotifyPropertyChanged("OutputPath");
@@ -165,59 +177,34 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 			}
 		}
 
-		public bool ShowOutputPathDialog()
+		public void ShowOutputPathDialog()
 		{
 			SelectFolderDialogCreationArgs dialogArgs = new SelectFolderDialogCreationArgs(_outputPath);
 			dialogArgs.AllowCreateNewFolder = true;
 			dialogArgs.Path = this.OutputPath;
 			dialogArgs.Prompt = SR.MessageSelectOutputLocation;
 			FileDialogResult result = base.Host.DesktopWindow.ShowSelectFolderDialogBox(dialogArgs);
-			if(result.Action == DialogBoxAction.Ok)
-			{
-				this.OutputPath = result.FileName;
-				return true;
-			}
-			return false;
+			if (result.Action == DialogBoxAction.Ok)
+				OutputPath = result.FileName;
+
+			if (!this.HasValidationErrors)
+				base.ShowValidation(true);
 		}
 
-		public void Anonymize()
+		public void Accept()
 		{
-			if (string.IsNullOrEmpty(_outputPath) || !Directory.Exists(_outputPath))
+			if (this.HasValidationErrors)
 			{
-				if (!ShowOutputPathDialog())
-					return;
+				base.ShowValidation(true);
 			}
-
-			StudyData studyData = new StudyData();
-			studyData.AccessionNumber = _accessionNumber;
-			studyData.PatientId = _patientId;
-			studyData.PatientsBirthDate = _patientsDateOfBirth;
-			studyData.PatientsNameRaw = _patientsName;
-			studyData.StudyDate = _studyDateTime;
-			studyData.StudyDescription = _studyDescription;
-			studyData.StudyId = _studyId;
-
-			try
+			else
 			{
-				DicomAnonymizer anonymizer = new DicomAnonymizer();
-				anonymizer.StudyDataPrototype = studyData;
-
-				foreach (DicomFile file in _files)
-				{
-					anonymizer.Anonymize(file);
-					file.Filename = System.IO.Path.Combine(_outputPath, string.Format("{0}.{1}", file.MediaStorageSopInstanceUid, "dcm"));
-					file.Save();
-				}
+				this.ExitCode = ApplicationComponentExitCode.Accepted;
+				this.Host.Exit();
 			}
-			catch (Exception e)
-			{
-				ExceptionHandler.Report(e, base.Host.DesktopWindow);
-			}
-
-			base.Exit(ApplicationComponentExitCode.Accepted);
 		}
-
-		public void Abort()
+        
+		public void Cancel()
 		{
 			base.Exit(ApplicationComponentExitCode.None);
 		}

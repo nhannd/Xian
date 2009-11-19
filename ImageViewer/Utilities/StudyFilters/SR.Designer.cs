@@ -520,6 +520,24 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified directory does not exist..
+        /// </summary>
+        internal static string MessageDirectoryDoesNotExist {
+            get {
+                return ResourceManager.GetString("MessageDirectoryDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exporting file {0} of {1}.
+        /// </summary>
+        internal static string MessageFormatExportingFiles {
+            get {
+                return ResourceManager.GetString("MessageFormatExportingFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid path or filename: {0}.
         /// </summary>
         internal static string MessageInvalidPath {
@@ -534,6 +552,33 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         internal static string MessageLoading {
             get {
                 return ResourceManager.GetString("MessageLoading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The output path must be specified..
+        /// </summary>
+        internal static string MessageOutputPathMustBeSpecified {
+            get {
+                return ResourceManager.GetString("MessageOutputPathMustBeSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The patient id cannot be empty..
+        /// </summary>
+        internal static string MessagePatientIdCannotBeEmpty {
+            get {
+                return ResourceManager.GetString("MessagePatientIdCannotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The patient&apos;s name cannot be empty..
+        /// </summary>
+        internal static string MessagePatientNameCannotBeEmpty {
+            get {
+                return ResourceManager.GetString("MessagePatientNameCannotBeEmpty", resourceCulture);
             }
         }
         

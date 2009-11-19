@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseTools\ClearFiltersTool.cs" />
+    <Compile Include="Export\DicomFileExporter.cs" />
     <Compile Include="BaseTools\ToggleFiltersTool.cs" />
     <Compile Include="Columns\AttributeTagDicomTagColumn.cs" />
     <Compile Include="Columns\BinaryDicomTagColumn.cs" />

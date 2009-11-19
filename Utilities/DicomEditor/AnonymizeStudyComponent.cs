@@ -221,9 +221,9 @@ namespace ClearCanvas.Utilities.DicomEditor
 		public override void Start()
 		{
 			_anonymized.PatientsNameRaw = "Patient^Anonymous";
-			_anonymized.PatientId = "12345";
+			_anonymized.PatientId = "12345678";
 			_anonymized.StudyDate = Platform.Time;
-			_anonymized.AccessionNumber = "A12345";
+			_anonymized.AccessionNumber = "00000001";
 			_preserveSeriesData = true;
 
 			if (_anonymized.PatientsBirthDate != null)

@@ -32,15 +32,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._okButton = new System.Windows.Forms.Button();
 			this._studyId = new ClearCanvas.Desktop.View.WinForms.TextField();
-			this.label1 = new System.Windows.Forms.Label();
-			this._outputPath = new System.Windows.Forms.TextBox();
 			this._browse = new System.Windows.Forms.Button();
+			this._outputPath = new System.Windows.Forms.TextBox();
+			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// _studyDescription
 			// 
 			this._studyDescription.LabelText = "Study Description";
-			this._studyDescription.Location = new System.Drawing.Point(15, 153);
+			this._studyDescription.Location = new System.Drawing.Point(15, 156);
 			this._studyDescription.Margin = new System.Windows.Forms.Padding(2);
 			this._studyDescription.Mask = "";
 			this._studyDescription.Name = "_studyDescription";
@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 			// _accessionNumber
 			// 
 			this._accessionNumber.LabelText = "Accession Number";
-			this._accessionNumber.Location = new System.Drawing.Point(15, 243);
+			this._accessionNumber.Location = new System.Drawing.Point(15, 248);
 			this._accessionNumber.Margin = new System.Windows.Forms.Padding(2);
 			this._accessionNumber.Mask = "";
 			this._accessionNumber.Name = "_accessionNumber";
@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 			// _patientsName
 			// 
 			this._patientsName.LabelText = "Patient\'s Name";
-			this._patientsName.Location = new System.Drawing.Point(15, 63);
+			this._patientsName.Location = new System.Drawing.Point(15, 64);
 			this._patientsName.Margin = new System.Windows.Forms.Padding(2);
 			this._patientsName.Mask = "";
 			this._patientsName.Name = "_patientsName";
@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 			// _dateOfBirth
 			// 
 			this._dateOfBirth.LabelText = "Date of Birth";
-			this._dateOfBirth.Location = new System.Drawing.Point(15, 108);
+			this._dateOfBirth.Location = new System.Drawing.Point(15, 110);
 			this._dateOfBirth.Margin = new System.Windows.Forms.Padding(2);
 			this._dateOfBirth.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
 			this._dateOfBirth.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 			// _studyDate
 			// 
 			this._studyDate.LabelText = "Study Date";
-			this._studyDate.Location = new System.Drawing.Point(15, 288);
+			this._studyDate.Location = new System.Drawing.Point(15, 294);
 			this._studyDate.Margin = new System.Windows.Forms.Padding(2);
 			this._studyDate.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
 			this._studyDate.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
@@ -117,20 +117,20 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Location = new System.Drawing.Point(171, 412);
+			this._cancelButton.Location = new System.Drawing.Point(171, 410);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 1000;
+			this._cancelButton.TabIndex = 10;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
 			// 
 			// _okButton
 			// 
-			this._okButton.Location = new System.Drawing.Point(90, 412);
+			this._okButton.Location = new System.Drawing.Point(90, 410);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
-			this._okButton.TabIndex = 990;
+			this._okButton.TabIndex = 9;
 			this._okButton.Text = "OK";
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 			// _studyId
 			// 
 			this._studyId.LabelText = "Study ID";
-			this._studyId.Location = new System.Drawing.Point(13, 198);
+			this._studyId.Location = new System.Drawing.Point(15, 202);
 			this._studyId.Margin = new System.Windows.Forms.Padding(2);
 			this._studyId.Mask = "";
 			this._studyId.Name = "_studyId";
@@ -148,25 +148,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 			this._studyId.ToolTip = null;
 			this._studyId.Value = null;
 			// 
-			// label1
-			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(21, 345);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(71, 13);
-			this.label1.TabIndex = 9;
-			this.label1.Text = "Output Folder";
-			// 
-			// _outputPath
-			// 
-			this._outputPath.Location = new System.Drawing.Point(15, 361);
-			this._outputPath.Name = "_outputPath";
-			this._outputPath.Size = new System.Drawing.Size(165, 20);
-			this._outputPath.TabIndex = 7;
-			// 
 			// _browse
 			// 
-			this._browse.Location = new System.Drawing.Point(186, 361);
+			this._browse.Location = new System.Drawing.Point(186, 365);
 			this._browse.Name = "_browse";
 			this._browse.Size = new System.Drawing.Size(56, 20);
 			this._browse.TabIndex = 8;
@@ -174,13 +158,28 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 			this._browse.UseVisualStyleBackColor = true;
 			this._browse.Click += new System.EventHandler(this._browse_Click);
 			// 
+			// _outputPath
+			// 
+			this._outputPath.Location = new System.Drawing.Point(17, 365);
+			this._outputPath.Name = "_outputPath";
+			this._outputPath.Size = new System.Drawing.Size(163, 20);
+			this._outputPath.TabIndex = 7;
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(17, 349);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(64, 13);
+			this.label1.TabIndex = 12;
+			this.label1.Text = "Output Path";
+			// 
 			// ExportComponentPanel
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._browse);
 			this.Controls.Add(this._outputPath);
-			this.Controls.Add(this.label1);
+			this.Controls.Add(this._browse);
 			this.Controls.Add(this._studyId);
 			this.Controls.Add(this._studyDescription);
 			this.Controls.Add(this._patientId);
@@ -190,8 +189,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 			this.Controls.Add(this._studyDate);
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._okButton);
+			this.Controls.Add(this.label1);
 			this.Name = "ExportComponentPanel";
-			this.Size = new System.Drawing.Size(267, 450);
+			this.Size = new System.Drawing.Size(264, 450);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -208,8 +208,8 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 		private System.Windows.Forms.Button _cancelButton;
 		private System.Windows.Forms.Button _okButton;
 		private ClearCanvas.Desktop.View.WinForms.TextField _studyId;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.TextBox _outputPath;
 		private System.Windows.Forms.Button _browse;
+		private System.Windows.Forms.TextBox _outputPath;
+		private System.Windows.Forms.Label label1;
 	}
 }

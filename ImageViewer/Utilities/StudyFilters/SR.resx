@@ -347,4 +347,19 @@
   <data name="TooltipFiltersAreOn" xml:space="preserve">
     <value>The list is currently filtered. Click here to temporarily disable filters.</value>
   </data>
+  <data name="MessageDirectoryDoesNotExist" xml:space="preserve">
+    <value>The specified directory does not exist.</value>
+  </data>
+  <data name="MessageFormatExportingFiles" xml:space="preserve">
+    <value>Exporting file {0} of {1}</value>
+  </data>
+  <data name="MessageOutputPathMustBeSpecified" xml:space="preserve">
+    <value>The output path must be specified.</value>
+  </data>
+  <data name="MessagePatientIdCannotBeEmpty" xml:space="preserve">
+    <value>The patient id cannot be empty.</value>
+  </data>
+  <data name="MessagePatientNameCannotBeEmpty" xml:space="preserve">
+    <value>The patient's name cannot be empty.</value>
+  </data>
 </root>

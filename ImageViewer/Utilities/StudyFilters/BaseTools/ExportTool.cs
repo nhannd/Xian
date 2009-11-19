@@ -30,14 +30,15 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Anonymization;
 using ClearCanvas.ImageViewer.Utilities.StudyFilters.Export;
-using Path=System.IO.Path;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
 {
@@ -65,27 +66,22 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
 
 		public void ExportAnonymized()
 		{
+			if (base.SelectedItems.Count == 0)
+				return;
+
 			try
 			{
-				if (base.SelectedItems.Count > 0)
-				{
-					ExportComponent component = new ExportComponent();
-					component.OutputPath = _lastExportAnonymizedFolder;
+				List<FileInfo> files = CollectionUtils.Map(base.SelectedItems, (StudyItem item) => item.File);
+				DicomFileExporter exporter = new DicomFileExporter(files)
+				                        	{
+				                        		OutputPath = _lastExportAnonymizedFolder, 
+												Anonymize = true
+				                        	};
+				if (!exporter.Export())
+					return;
 
-					foreach (StudyItem item in base.SelectedItems)
-					{
-						FileInfo file = item.File;
-						if (file.Exists)
-						{
-							DicomFile dcf = new DicomFile(file.FullName);
-							dcf.Load();
-							component.Files.Add(dcf);
-						}
-					}
-
-					if (DialogBoxAction.Ok == base.DesktopWindow.ShowDialogBox(component, SR.Export))
-						_lastExportAnonymizedFolder = component.OutputPath;
-				}
+				_lastExportAnonymizedFolder = exporter.OutputPath;
+				Process.Start(_lastExportAnonymizedFolder);
 			}
 			catch (Exception ex)
 			{
@@ -95,42 +91,19 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
 
 		public void ExportCopy()
 		{
+			if (base.SelectedItems.Count == 0)
+				return;
+
 			try
 			{
-				if (base.SelectedItems.Count > 0)
-				{
-					SelectFolderDialogCreationArgs args = new SelectFolderDialogCreationArgs();
-					args.Prompt = SR.MessageSelectOutputLocation;
-					args.Path = _lastExportCopyFolder;
+				List<FileInfo> files = CollectionUtils.Map(base.SelectedItems, (StudyItem item) => item.File);
+				DicomFileExporter exporter = new DicomFileExporter(files) { OutputPath = _lastExportCopyFolder };
 
-					FileDialogResult result = base.DesktopWindow.ShowSelectFolderDialogBox(args);
-					if (result.Action != DialogBoxAction.Ok)
-						return;
+				if (!exporter.Export())
+					return;
 
-					_lastExportCopyFolder = result.FileName;
-
-					string outputDir = result.FileName;
-					int count = 0;
-
-					foreach (StudyItem item in base.SelectedItems)
-					{
-						FileInfo file = item.File;
-						if (file.Exists)
-						{
-							string newpath = Path.Combine(outputDir, file.Name);
-							if (!File.Exists(newpath))
-							{
-								file.CopyTo(newpath);
-								count++;
-							}
-						}
-					}
-
-					if (count > 0)
-					{
-						Process p = Process.Start(outputDir);
-					}
-				}
+				_lastExportCopyFolder = exporter.OutputPath;
+				Process.Start(_lastExportCopyFolder);
 			}
 			catch (Exception ex)
 			{
