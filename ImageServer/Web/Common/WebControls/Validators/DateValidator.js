@@ -40,30 +40,27 @@ function @@CLIENTID@@_ClientSideEvaluator()
         {
             return result;
         }
-                        
+                                 
         if (this.input.value==null)
         {
             result.OK = false;
         } 
         else if(isDate(this.input.value, '@@DATE_FORMAT@@') == false)
         {
-            alert('Failed');
             result.OK = false;
             validDateFormat = false;
         } 
         else {       
             var today = new Date();
             
-            var date = new Date(this.input.value);
-
-            if(today.getTime() - date.getTime() < 0) {
+            if(today.getTime() - getDateFromFormat(this.input.value, '@@DATE_FORMAT@@') < 0) {
                 result.OK = false;
                 dateInFuture = true;
             }
         }
     
         if (result.OK == false)
-        {
+        {        
             if ('@@ERROR_MESSAGE@@' == null || '@@ERROR_MESSAGE@@'=='')
             {
                 if(!validDateFormat) result.Message = 'Provided date \'' + this.input.value + '\' is not in the format \'@@DATE_FORMAT@@\'.';
@@ -77,4 +74,5 @@ function @@CLIENTID@@_ClientSideEvaluator()
         
         return  result;
 };
+
 

@@ -408,19 +408,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
             //The mask doesn't work well if the Date separator isn't "/", so disable it.
             //DateValidator will handle invalid date values if the mask is disabled.
-            if(!CultureInfo.CurrentCulture.DateTimeFormat.DateSeparator.Equals("/"))
+            if(!UISettings.Default.InputDateFormat.Contains("/"))
             {
                 PatientBirthDateMaskExtender.Enabled = false;
             } else
             {
                 //Set the mask to be the format of the ShortDatePattern, but with 9's.
-                PatientBirthDateMaskExtender.Mask =
-                    CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern.Replace("d", "9").Replace("M", "9").Replace(
+                PatientBirthDateMaskExtender.Mask = UISettings.Default.InputDateFormat.Replace("d", "9").Replace("M", "9").Replace(
                         "y", "9");
                 PatientBirthDateMaskExtender.MaskType = AjaxControlToolkit.MaskedEditType.Date;
             }
             
-            PatientBirthDateCalendarExtender.Format = CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern;
+            PatientBirthDateCalendarExtender.Format = UISettings.Default.InputDateFormat;
             StudyDateValidator.DateFormat = UISettings.Default.DateFormat;
         }
 
