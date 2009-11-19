@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             }
 
             String dicomBirthDate = !(string.IsNullOrEmpty(PatientBirthDate.Text))
-                                        ? DateTime.Parse(PatientBirthDate.Text).ToString(DicomConstants.DicomDate)
+                                        ? DateTime.ParseExact(PatientBirthDate.Text, UISettings.Default.InputDateFormat, null).ToString(DicomConstants.DicomDate)
                                         : "";
             if (AreDifferent(Study.PatientsBirthDate, dicomBirthDate))
             {
