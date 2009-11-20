@@ -61,6 +61,15 @@ namespace ClearCanvas.ImageViewer.View.WinForms {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Stack.
+        /// </summary>
+        public static string CommandNameStackImageScroller {
+            get {
+                return ResourceManager.GetString("CommandNameStackImageScroller", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to PresentationImage not associated with an IRenderer..
         /// </summary>
         public static string ExceptionPresentationImageNotAssociatedWithARenderer {

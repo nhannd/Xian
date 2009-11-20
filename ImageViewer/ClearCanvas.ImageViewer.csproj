@@ -151,6 +151,7 @@
     <Compile Include="Common\MemoryManager.cs" />
     <Compile Include="Common\PermissionsHelper.cs" />
     <Compile Include="ImageBoxDrawingEventArgs.cs" />
+    <Compile Include="InputManagement\LostFocusMessage.cs" />
     <Compile Include="RoiGraphics\Tests\ContainsPointTest.cs" />
     <Compile Include="RoiGraphics\Tests\EllipticalRoiTests.cs" />
     <Compile Include="RoiGraphics\Tests\PolygonalRoiTests.cs" />

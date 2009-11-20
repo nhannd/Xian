@@ -189,7 +189,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_tile.Draw();
 		}
 
-		public void DoDraw()
+		private void DoDraw()
 		{
 			EventsHelper.Fire(_drawing, this, EventArgs.Empty);
 
@@ -396,6 +396,17 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		}
 
 		#region Mouse/Keyboard Overrides
+
+		protected override void OnLostFocus(EventArgs e)
+		{
+			base.OnLostFocus(e);
+			object message = _inputTranslator.OnLostFocus();
+			if (message == null)
+				return;
+
+			if (_tileController != null)
+				_tileController.ProcessMessage(message);
+		}
 
 		protected override void OnMouseLeave(EventArgs e)
 		{

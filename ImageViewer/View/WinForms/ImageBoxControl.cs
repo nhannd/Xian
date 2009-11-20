@@ -47,6 +47,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         private ImageBox _imageBox;
 		private Rectangle _parentRectangle;
 		private bool _imageScrollerVisible;
+		private CompositeUndoableCommand _historyCommand;
+		private MemorableUndoableCommand _imageBoxCommand;
 
         /// <summary>
         /// Constructor
@@ -59,7 +61,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			InitializeComponent();
 
 			_imageScrollerVisible = _imageScroller.Visible;
-			_imageScroller.MouseDown += ImageScrollerClicked;
+			_imageScroller.MouseDown += ImageScrollerMouseDown;
+			_imageScroller.MouseUp += ImageScrollerMouseUp;
 			_imageScroller.ValueChanged += ImageScrollerValueChanged;
 
 			this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
@@ -226,7 +229,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			if (_imageScroller != null)
 			{
 				_imageScroller.ValueChanged -= ImageScrollerValueChanged;
-				_imageScroller.MouseDown -= ImageScrollerClicked;
+				_imageScroller.MouseDown -= ImageScrollerMouseDown;
+				_imageScroller.MouseUp -= ImageScrollerMouseUp;
 			}
 
 			DisposeControls(new List<TileControl>(this.TileControls));
@@ -367,8 +371,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
     			return clientRectangle;
     		}
     	}
-
-    	private void ImageScrollerClicked(object sender, EventArgs e)
+        
+    	private void ImageScrollerMouseDown(object sender, EventArgs e)
     	{
     		if(_imageBox != null)
     		{
@@ -380,9 +384,42 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 					TileControl tileControl = GetTileControl(_imageBox.SelectedTile);
 					if (tileControl != null)
 						tileControl.Focus();
+
+					BeginCaptureUndo();
 				}
     		}
     	}
+
+		private void ImageScrollerMouseUp(object sender, EventArgs e)
+		{
+			EndCaptureUndo();
+		}
+
+		private void BeginCaptureUndo()
+		{
+			_historyCommand = new CompositeUndoableCommand();
+			DrawableUndoableCommand drawableUndoableCommand = new DrawableUndoableCommand(_imageBox);
+			_imageBoxCommand = new MemorableUndoableCommand(_imageBox);
+			_imageBoxCommand.BeginState = _imageBox.CreateMemento();
+			drawableUndoableCommand.Enqueue(_imageBoxCommand);
+			_historyCommand.Enqueue(drawableUndoableCommand);
+		}
+
+		private void EndCaptureUndo()
+		{
+			if (_imageBoxCommand != null)
+			{
+				_imageBoxCommand.EndState = _imageBox.CreateMemento();
+				if (!_imageBoxCommand.BeginState.Equals(_imageBoxCommand.EndState))
+				{
+					_historyCommand.Name = SR.CommandNameStackImageScroller;
+					_imageBox.ImageViewer.CommandHistory.AddCommand(_historyCommand);
+				}
+			}
+
+			_imageBoxCommand = null;
+			_historyCommand = null;
+		}
 
     	private void ImageScrollerValueChanged(object sender, TrackSlider.ValueChangedEventArgs e)
     	{

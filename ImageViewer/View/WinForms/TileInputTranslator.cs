@@ -101,6 +101,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			return false;
 		}
 
+		public object OnLostFocus()
+		{
+			return new LostFocusMessage();
+		}
+
 		public object OnMouseLeave()
 		{
 			return new MouseLeaveMessage();

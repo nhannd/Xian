@@ -733,7 +733,12 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		/// </summary>
 		public bool ProcessMessage(object message)
 		{
-			if (message is KeyboardButtonDownPreview)
+			if (message is LostFocusMessage)
+			{
+				this.CaptureMouseWheelHandler = null;
+				return true;
+			}
+			else if (message is KeyboardButtonDownPreview)
 			{
 				//Right now, we can't determine what these keystrokes are going to do, so we just release mouse wheel capture.
 				KeyboardButtonDownPreview preview = message as KeyboardButtonDownPreview;
