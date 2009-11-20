@@ -59,6 +59,7 @@
     <Compile Include="HsmStudyRestore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RestoreProcessorContext.cs" />
+    <Compile Include="StudyStorageValidator.cs" />
     <Compile Include="UpdateStudySizeInDBCommand.cs" />
     <Compile Include="UpdateStudyStateCommand.cs" />
   </ItemGroup>

@@ -31,6 +31,7 @@
 
 using System;
 using System.Text;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Core.Validation
 {
@@ -54,6 +55,18 @@ namespace ClearCanvas.ImageServer.Core.Validation
     	public string StudyDate { get; set; }
 
     	#endregion
+
+        public ValidationStudyInfo(){}
+
+        public ValidationStudyInfo(Study theStudy, ServerPartition partition)
+        {
+            ServerAE = partition.AeTitle;
+            PatientsName = theStudy.PatientsName;
+            PatientsId = theStudy.PatientId;
+            StudyInstaneUid = theStudy.StudyInstanceUid;
+            AccessionNumber = theStudy.AccessionNumber;
+            StudyDate = theStudy.StudyDate;
+        }
 
         public override string ToString()
         {

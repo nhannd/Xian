@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
@@ -37,7 +38,9 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Core.Rebuild;
+using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
@@ -163,10 +166,11 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                         stream.Close();
                         stream.Dispose();
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         DateTime scheduledTime = Platform.Time.AddSeconds(HsmSettings.Default.ReadFailRescheduleDelaySeconds);
-                        Platform.Log(LogLevel.Warn, "Study {0} is unreadable, rescheduling restore to {1}", _studyStorage == null ? (_location == null ? string.Empty : _location.StudyInstanceUid) : _studyStorage.StudyInstanceUid,
+                        Platform.Log(LogLevel.Error, ex, "Archive {0} for Study  {1} is unreadable, rescheduling restore to {2}",
+                                     zipFile, _studyStorage == null ? (_location == null ? string.Empty : _location.StudyInstanceUid) : _studyStorage.StudyInstanceUid,
                                      scheduledTime);
                         // Just reschedule in "Restoring" state, the file is unreadable.
                         _hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Restoring,
@@ -203,6 +207,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				return;
 			}
 
+		    StudyStorageLocation restoredLocation = null;
 			try
 			{
 				using (ServerCommandProcessor processor = 
@@ -242,6 +247,8 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 					}
 					else
 					{
+					    restoredLocation = insertStorageCommand.Location;
+
 						// Unlock the Queue Entry
 						using (
 							IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
@@ -267,11 +274,17 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 							Platform.Log(LogLevel.Info, "Successfully restored study: {0} on archive {1}", _studyStorage.StudyInstanceUid,
 										 _hsmArchive.PartitionArchive.Description);
 
-                            OnStudyRestored(insertStorageCommand.Location);
+                            OnStudyRestored(restoredLocation);
 						}
 					}
 				}
 			}
+            catch(StudyIntegrityValidationFailure ex)
+            {
+                Debug.Assert(restoredLocation != null);
+                // study has been restored but it seems corrupted. Need to reprocess it.
+                ReprocessStudy(restoredLocation, ex.Message);
+            }
 			catch (Exception e)
 			{
 				Platform.Log(LogLevel.Error, e, "Unexpected exception processing restore request for {0} on archive {1}",
@@ -280,8 +293,21 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			}
 		}
 
+        private void ReprocessStudy(StudyStorageLocation restoredLocation, string reason)
+        {
+            StudyReprocessor reprocessor = new StudyReprocessor();
+            String reprocessReason = String.Format("Restore Validation Error: {0}", reason);
+            reprocessor.ReprocessStudy(reprocessReason, restoredLocation, Platform.Time);
+            string message = string.Format("Study {0} has been restored but failed the validation. Reprocess Study has been triggerred. Reason for validation failure: {1}", restoredLocation.StudyInstanceUid, reason);
+            Platform.Log(LogLevel.Warn, message);
+
+            ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Informational, "Restore", 0, null, TimeSpan.Zero, message);
+        }
+
         private static void OnStudyRestored(StudyStorageLocation location)
         {
+            ValidateStudy(location);
+
             using(ServerCommandProcessor processor = new ServerCommandProcessor("Update Study Size In DB"))
             {
                 processor.AddCommand(new UpdateStudySizeInDBCommand(location));
@@ -290,6 +316,12 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                     Platform.Log(LogLevel.Error, "Unexpected error when trying to update the study size in DB:", processor.FailureReason);
                 }
             }
+        }
+
+        private static void ValidateStudy(StudyStorageLocation location)
+        {
+            StudyStorageValidator validator = new StudyStorageValidator();
+            validator.Validate(location, ValidationLevels.Study | ValidationLevels.Series);
         }
 
         private void RestoreOnlineStudy(RestoreQueue queueItem, string zipFile, string destinationFolder)
