@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{12DB8195-F96E-471E-B5FC-73C098CAF8C7}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -10,6 +10,7 @@
     <RootNamespace>ClearCanvas.Utilities.RebuildDatabase</RootNamespace>
     <AssemblyName>ClearCanvas.Utilities.RebuildDatabase</AssemblyName>
     <ApplicationIcon>App.ico</ApplicationIcon>
+    <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
