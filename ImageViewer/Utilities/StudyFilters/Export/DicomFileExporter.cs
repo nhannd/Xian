@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Anonymization;
 using ClearCanvas.Common;
 using System.IO;
+using ClearCanvas.ImageViewer.Services.Auditing;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 {
@@ -15,6 +15,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 		private readonly ICollection<FileInfo> _files;
 		private DicomAnonymizer _anonymizer;
 		private volatile bool _canceled;
+		private volatile AuditedInstances _exportedInstances;
 
 		public DicomFileExporter(ICollection<FileInfo> files)
 		{
@@ -27,26 +28,45 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 
 		public bool Export()
 		{
-			_canceled = false;
-
 			if (!Initialize())
 				return false;
 
-			if (_files.Count > 10)
+			EventResult result = EventResult.Success;
+
+			try
 			{
-				BackgroundTask task = new BackgroundTask(DoExport, true);
-				ProgressDialog.Show(task, Application.ActiveDesktopWindow, true, ProgressBarStyle.Continuous);
-				return !_canceled;
+				if (_files.Count > 10)
+				{
+					BackgroundTask task = new BackgroundTask(DoExport, true);
+					ProgressDialog.Show(task, Application.ActiveDesktopWindow, true, ProgressBarStyle.Continuous);
+					
+					if (_canceled)
+						result = EventResult.MinorFailure;
+
+					return !_canceled;
+				}
+				else
+				{
+					BlockingOperation.Run(DoExport);
+					return true;
+				}
 			}
-			else
+			catch
 			{
-				BlockingOperation.Run(DoExport);
-				return true;
+				result = EventResult.MinorFailure;
+				throw;
+			}
+			finally
+			{
+				AuditHelper.LogExportStudies(_exportedInstances, EventSource.CurrentUser, result);
 			}
 		}
 
 		private bool Initialize()
 		{
+			_exportedInstances = new AuditedInstances();
+			_canceled = false;
+
 			if (Anonymize)
 			{
 				ExportComponent component = new ExportComponent();
@@ -94,13 +114,24 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 			{
 				DicomFile dicomFile = new DicomFile(file.FullName);
 				dicomFile.Load(); 
+
 				_anonymizer.Anonymize(dicomFile);
+
+				//anonymize first, then audit, since this is what gets exported.
+				_exportedInstances.AddInstance(
+				dicomFile.DataSet[DicomTags.PatientId].ToString(),
+				dicomFile.DataSet[DicomTags.PatientsName].ToString(),
+				dicomFile.DataSet[DicomTags.StudyInstanceUid].ToString(),
+				file.FullName);
+				
 				string fileName = System.IO.Path.Combine(OutputPath, dicomFile.MediaStorageSopInstanceUid);
 				fileName += ".dcm";
 				dicomFile.Save(fileName);
 			}
 			else
 			{
+				_exportedInstances.AddPath(file.FullName, false);
+
 				string newpath = System.IO.Path.Combine(OutputPath, file.Name);
 				if (!File.Exists(newpath))
 					file.CopyTo(newpath);

@@ -37,7 +37,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Dicom.Utilities.Anonymization;
 using ClearCanvas.ImageViewer.Utilities.StudyFilters.Export;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
@@ -45,12 +44,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
 	[DropDownAction("export", DefaultToolbarActionSite + "/ToolbarExport", "DropDownActionModel")]
 	[IconSet("export", IconScheme.Colour, "Icons.SaveToolSmall.png", "Icons.SaveToolMedium.png", "Icons.SaveToolLarge.png")]
 	[EnabledStateObserver("export", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
+
 	[MenuAction("exportAnonymized", DropDownMenuActionSite + "/MenuExportAnonymized", "ExportAnonymized")]
 	[MenuAction("exportAnonymized", DefaultContextMenuActionSite + "/MenuExportAnonymized", "ExportAnonymized")]
 	[VisibleStateObserver("exportAnonymized", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
+	
 	[MenuAction("exportCopy", DropDownMenuActionSite + "/MenuExportCopy", "ExportCopy")]
 	[MenuAction("exportCopy", DefaultContextMenuActionSite + "/MenuExportCopy", "ExportCopy")]
 	[VisibleStateObserver("exportCopy", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
+	
 	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]
 	public class ExportTool : StudyFilterTool
 	{
@@ -77,11 +79,12 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
 				                        		OutputPath = _lastExportAnonymizedFolder, 
 												Anonymize = true
 				                        	};
-				if (!exporter.Export())
-					return;
-
+				
+				bool success = exporter.Export();
 				_lastExportAnonymizedFolder = exporter.OutputPath;
-				Process.Start(_lastExportAnonymizedFolder);
+				
+				if (success)
+					Process.Start(_lastExportAnonymizedFolder);
 			}
 			catch (Exception ex)
 			{
@@ -99,11 +102,10 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
 				List<FileInfo> files = CollectionUtils.Map(base.SelectedItems, (StudyItem item) => item.File);
 				DicomFileExporter exporter = new DicomFileExporter(files) { OutputPath = _lastExportCopyFolder };
 
-				if (!exporter.Export())
-					return;
-
+				bool success = exporter.Export();
 				_lastExportCopyFolder = exporter.OutputPath;
-				Process.Start(_lastExportCopyFolder);
+				if (success)
+					Process.Start(_lastExportCopyFolder);
 			}
 			catch (Exception ex)
 			{

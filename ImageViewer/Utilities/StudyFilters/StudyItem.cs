@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 		{
 			_file = new FileInfo(filename);
 			_dcf = new DicomFile(filename);
-			_dcf.Load(DicomReadOptions.StorePixelDataReferences);
+			_dcf.Load(DicomReadOptions.Default | DicomReadOptions.StorePixelDataReferences);
 		}
 
 		public FileInfo File

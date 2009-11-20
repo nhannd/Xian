@@ -84,7 +84,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 				try
 				{
 					DicomFile dcf = new DicomFile(path);
-					dcf.Load(DicomReadOptions.DoNotStorePixelDataInDataSet);
+					dcf.Load(DicomReadOptions.Default | DicomReadOptions.DoNotStorePixelDataInDataSet);
 
 					List<string> s = InternalAddStudy(dcf.DataSet[DicomTags.PatientId].ToString(), dcf.DataSet[DicomTags.PatientsName].ToString(), dcf.DataSet[DicomTags.StudyInstanceUid].ToString());
 					s.Add(path);
