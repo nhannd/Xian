@@ -46,6 +46,8 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms.General
 		{
 			InitializeComponent();
 
+			base.ErrorProvider.SetIconPadding(_txtCommand, _btnCommand.Width);
+
 			_helpMessage = component.ArgumentFieldsHelpText;
 			_lnkHelpFields.Visible = !string.IsNullOrEmpty(_helpMessage);
 

@@ -123,10 +123,10 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="_lblCommand.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 10</value>
+    <value>25, 10</value>
   </data>
   <data name="_lblCommand.Size" type="System.Drawing.Size, System.Drawing">
-    <value>376, 16</value>
+    <value>346, 16</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="_lblCommand.TabIndex" type="System.Int32, mscorlib">
@@ -151,10 +151,10 @@
     <value>Fill</value>
   </data>
   <data name="_txtCommand.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 26</value>
+    <value>25, 26</value>
   </data>
   <data name="_txtCommand.Size" type="System.Drawing.Size, System.Drawing">
-    <value>351, 20</value>
+    <value>321, 20</value>
   </data>
   <data name="_txtCommand.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -175,10 +175,10 @@
     <value>Top</value>
   </data>
   <data name="_lblWorkingDir.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 10</value>
+    <value>25, 10</value>
   </data>
   <data name="_lblWorkingDir.Size" type="System.Drawing.Size, System.Drawing">
-    <value>376, 16</value>
+    <value>346, 16</value>
   </data>
   <data name="_lblWorkingDir.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -202,10 +202,10 @@
     <value>Fill</value>
   </data>
   <data name="_txtWorkingDir.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 26</value>
+    <value>25, 26</value>
   </data>
   <data name="_txtWorkingDir.Size" type="System.Drawing.Size, System.Drawing">
-    <value>376, 20</value>
+    <value>346, 20</value>
   </data>
   <data name="_txtWorkingDir.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -226,10 +226,10 @@
     <value>Top</value>
   </data>
   <data name="_lblArguments.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 10</value>
+    <value>25, 10</value>
   </data>
   <data name="_lblArguments.Size" type="System.Drawing.Size, System.Drawing">
-    <value>376, 16</value>
+    <value>346, 16</value>
   </data>
   <data name="_lblArguments.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -253,13 +253,13 @@
     <value>Fill</value>
   </data>
   <data name="_txtArguments.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 26</value>
+    <value>25, 26</value>
   </data>
   <data name="_txtArguments.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="_txtArguments.Size" type="System.Drawing.Size, System.Drawing">
-    <value>376, 92</value>
+    <value>346, 92</value>
   </data>
   <data name="_txtArguments.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -280,10 +280,10 @@
     <value>Bottom</value>
   </data>
   <data name="_lnkHelpFields.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 118</value>
+    <value>25, 118</value>
   </data>
   <data name="_lnkHelpFields.Size" type="System.Drawing.Size, System.Drawing">
-    <value>376, 16</value>
+    <value>346, 16</value>
   </data>
   <data name="_lnkHelpFields.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -310,7 +310,7 @@
     <value>Right</value>
   </data>
   <data name="_btnCommand.Location" type="System.Drawing.Point, System.Drawing">
-    <value>361, 26</value>
+    <value>346, 26</value>
   </data>
   <data name="_btnCommand.Size" type="System.Drawing.Size, System.Drawing">
     <value>25, 20</value>
@@ -343,7 +343,7 @@
     <value>5, 5, 5, 5</value>
   </data>
   <data name="_pnlCommand.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>10, 10, 10, 10</value>
+    <value>25, 10, 25, 10</value>
   </data>
   <data name="_pnlCommand.Size" type="System.Drawing.Size, System.Drawing">
     <value>396, 56</value>
@@ -373,7 +373,7 @@
     <value>5, 5, 5, 5</value>
   </data>
   <data name="_pnlWorkingDir.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>10, 10, 10, 10</value>
+    <value>25, 10, 25, 10</value>
   </data>
   <data name="_pnlWorkingDir.Size" type="System.Drawing.Size, System.Drawing">
     <value>396, 55</value>
@@ -403,7 +403,7 @@
     <value>5, 5, 5, 5</value>
   </data>
   <data name="_pnlArguments.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>10, 10, 10, 10</value>
+    <value>25, 10, 25, 10</value>
   </data>
   <data name="_pnlArguments.Size" type="System.Drawing.Size, System.Drawing">
     <value>396, 144</value>
@@ -430,10 +430,10 @@
     <value>Top</value>
   </data>
   <data name="_chkAutoQuoteArguments.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 48</value>
+    <value>25, 48</value>
   </data>
   <data name="_chkAutoQuoteArguments.Size" type="System.Drawing.Size, System.Drawing">
-    <value>376, 17</value>
+    <value>346, 17</value>
   </data>
   <data name="_chkAutoQuoteArguments.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -514,13 +514,13 @@
     <value>Top</value>
   </data>
   <data name="_pnlMultiValueFieldSeparator.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 27</value>
+    <value>25, 27</value>
   </data>
   <data name="_pnlMultiValueFieldSeparator.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>20, 0, 0, 0</value>
   </data>
   <data name="_pnlMultiValueFieldSeparator.Size" type="System.Drawing.Size, System.Drawing">
-    <value>376, 21</value>
+    <value>346, 21</value>
   </data>
   <data name="_pnlMultiValueFieldSeparator.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -544,10 +544,10 @@
     <value>Top</value>
   </data>
   <data name="_chkAllowMultiValueFields.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 10</value>
+    <value>25, 10</value>
   </data>
   <data name="_chkAllowMultiValueFields.Size" type="System.Drawing.Size, System.Drawing">
-    <value>376, 17</value>
+    <value>346, 17</value>
   </data>
   <data name="_chkAllowMultiValueFields.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -577,7 +577,7 @@
     <value>5, 5, 5, 5</value>
   </data>
   <data name="_pnlOptions.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>10, 10, 10, 10</value>
+    <value>25, 10, 25, 10</value>
   </data>
   <data name="_pnlOptions.Size" type="System.Drawing.Size, System.Drawing">
     <value>396, 82</value>
@@ -610,10 +610,10 @@
     <value>Fill</value>
   </data>
   <data name="_txtName.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 27</value>
+    <value>25, 27</value>
   </data>
   <data name="_txtName.Size" type="System.Drawing.Size, System.Drawing">
-    <value>376, 20</value>
+    <value>346, 20</value>
   </data>
   <data name="_txtName.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -634,10 +634,10 @@
     <value>Top</value>
   </data>
   <data name="_lblName.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 10</value>
+    <value>25, 10</value>
   </data>
   <data name="_lblName.Size" type="System.Drawing.Size, System.Drawing">
-    <value>376, 17</value>
+    <value>346, 17</value>
   </data>
   <data name="_lblName.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -667,7 +667,7 @@
     <value>0, 0</value>
   </data>
   <data name="_pnlName.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>10, 10, 10, 10</value>
+    <value>25, 10, 25, 10</value>
   </data>
   <data name="_pnlName.Size" type="System.Drawing.Size, System.Drawing">
     <value>396, 57</value>
