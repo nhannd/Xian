@@ -141,6 +141,10 @@
       <Name>ClearCanvas.ImageViewer</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\..\Services\ClearCanvas.ImageViewer.Services.csproj">
+      <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
+      <Name>ClearCanvas.ImageViewer.Services</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

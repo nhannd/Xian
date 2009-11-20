@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 	[VisibleStateObserver("activate", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
 	[Tooltip("activate", "TooltipDumpFiles")]
 	[IconSet("activate", IconScheme.Colour, "Icons.DicomEditorToolSmall.png", "Icons.DicomEditorToolMedium.png", "Icons.DicomEditorToolLarge.png")]
-	[ActionPermission("activate", ClearCanvas.Utilities.DicomEditor.AuthorityTokens.DicomEditor)]
+	[ViewerActionPermission("activate", ClearCanvas.Utilities.DicomEditor.AuthorityTokens.DicomEditor)]
 	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]
 	public class DicomEditorTool : LocalExplorerStudyFilterToolProxy<ShowDicomEditorTool>
 	{

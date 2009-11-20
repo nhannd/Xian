@@ -39,7 +39,8 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
 	[MenuAction("launch", DefaultContextMenuActionSite + "/MenuLaunchInViewer", "Launch")]
 	[VisibleStateObserver("launch", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
 	[IconSet("launch", IconScheme.Colour, "OpenToolSmall.png", "OpenToolSmall.png", "OpenToolSmall.png")]
-	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]
+	[ViewerActionPermission("launch", AuthorityTokens.ViewerVisible)]
+	[ExtensionOf(typeof(StudyFilterToolExtensionPoint))]
 	public class LaunchViewerTool : StudyFilterTool
 	{
 		public void Launch()

@@ -50,7 +50,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 	[IconSet("activate", IconScheme.Colour, "Icons.DicomEditorToolSmall.png", "Icons.DicomEditorToolMedium.png", "Icons.DicomEditorToolLarge.png")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[GroupHint("activate", "Tools.Dicom.Editor")]
-	[ActionPermission("activate", AuthorityTokens.DicomEditor)]
+	[ViewerActionPermission("activate", AuthorityTokens.DicomEditor)]
 	
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     [ExtensionOf(typeof(LocalImageExplorerToolExtensionPoint))]
