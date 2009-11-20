@@ -1814,25 +1814,19 @@ Preview.ConversationNote = function() {
 				//+ '</span></td>';
 			html += '		<td style="{padding-right: 10px; text-align:right; color: #205F87; font-weight: bold;}" NOWRAP title="' +  Ris.formatDateTime(note.PostTime) + '">' + Ris.formatDateTime(note.PostTime) + '</td>';
 			html += '	</tr>';
-			if (note.CanAcknowledge) {
-				html += '	<tr id="notAcknowledgedRow">';
-				html += '		<td valign="middle" colspan="2" ><input type="checkbox" id="' + checkBoxId + '"/><span style="{margin-left: 5px; margin-right: 10px;}">Waiting For Acknowledgement:</span>';
-				html += '		' + _formatNotAcknowledged(notAcknowledgedGroups, notAcknowledgedStaffs).replaceLineBreak() + '</td>';
+			if (acknowledgedGroups.length > 0 || acknowledgedStaffs.length > 0) {
+				html += '	<tr id="acknowledgedRow">';
+				html += '		<td colspan="2" NOWRAP valign="top"><span style="{color: #205F87; font-weight: bold; padding-right: 10px;}">Acknowledged By:</span>';
+				html += '		' + _formatAcknowledged(acknowledgedGroups, acknowledgedStaffs).replaceLineBreak() + '<div id="acknowledged"></td>';
 				html += '	</tr>';
 			}
-			else {
-				if (acknowledgedGroups.length > 0 || acknowledgedStaffs.length > 0) {
-					html += '	<tr id="acknowledgedRow">';
-					html += '		<td colspan="2" NOWRAP valign="top"><span style="{color: #205F87; font-weight: bold; padding-right: 10px;}">Acknowledged By:</span>';
-					html += '		' + _formatAcknowledged(acknowledgedGroups, acknowledgedStaffs).replaceLineBreak() + '<div id="acknowledged"></td>';
-					html += '	</tr>';
-				}
-				if (notAcknowledgedGroups.length > 0 || notAcknowledgedStaffs.length > 0) {
-					html += '	<tr id="notAcknowledgedRow">';
-					html += '		<td colspan="2" NOWRAP valign="top"><span style="{padding-right: 10px;}">Waiting For Acknowledgement:</span>';
-					html += '		' + _formatNotAcknowledged(notAcknowledgedGroups, notAcknowledgedStaffs).replaceLineBreak() + '</td>';
-					html += '	</tr>';
-				}
+			if (notAcknowledgedGroups.length > 0 || notAcknowledgedStaffs.length > 0) {
+				html += '	<tr id="notAcknowledgedRow">';
+				html += note.CanAcknowledge
+						? '		<td valign="middle" colspan="2" ><input type="checkbox" id="' + checkBoxId + '"/><span style="{margin-left: 5px; margin-right: 10px;}">Waiting For Acknowledgement:</span>'
+						: '		<td colspan="2" NOWRAP valign="top"><span style="{padding-right: 10px;}">Waiting For Acknowledgement:</span>';
+				html += '		' + _formatNotAcknowledged(notAcknowledgedGroups, notAcknowledgedStaffs).replaceLineBreak() + '</td>';
+				html += '	</tr>';
 			}
 			html += '   </table>';
 			html += '   </td><td class="ConversationNote_right_upper"></td></tr>';
