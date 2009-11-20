@@ -312,7 +312,7 @@
     <value>Filter</value>
   </data>
   <data name="ToolbarLaunchInViewer" xml:space="preserve">
-    <value>Launch in Viewer</value>
+    <value>Open in Viewer</value>
   </data>
   <data name="ToolbarRemoveItems" xml:space="preserve">
     <value>Remove Items</value>

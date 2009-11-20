@@ -41,8 +41,8 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.CoreTools
 	[DropDownAction("add", DefaultToolbarActionSite + "/ToolbarAddItems", "DropDownActionModel")]
 	[IconSet("add", IconScheme.Colour, "Icons.AddItemsToolSmall.png", "Icons.AddItemsToolMedium.png", "Icons.AddItemsToolLarge.png")]
 	//
-	[ButtonAction("addFiles", DropDownMenuActionSite + "/MenuAddFiles", "AddItems")]
-	[ButtonAction("addFolders", DropDownMenuActionSite + "/MenuAddFolders", "AddItemsByFolder")]
+	[MenuAction("addFiles", DropDownMenuActionSite + "/MenuAddFiles", "AddItems")]
+	[MenuAction("addFolders", DropDownMenuActionSite + "/MenuAddFolders", "AddItemsByFolder")]
 	//
 	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]
 	public class AddItemsTool : StudyFilterTool

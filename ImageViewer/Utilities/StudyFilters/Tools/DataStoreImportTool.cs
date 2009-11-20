@@ -35,8 +35,9 @@ using ClearCanvas.ImageViewer.Services.Tools;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 {
+	[ButtonAction("import", DefaultToolbarActionSite + "/ToolbarImportToLocalDataStore", "Import")]
 	[MenuAction("import", DefaultContextMenuActionSite + "/MenuImportToLocalDataStore", "Import")]
-	[VisibleStateObserver("import", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
+	[EnabledStateObserver("import", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
 	[Tooltip("import", "TooltipImportToLocalDataStore")]
 	[ViewerActionPermission("import", Services.AuthorityTokens.Study.Import)]
 	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]

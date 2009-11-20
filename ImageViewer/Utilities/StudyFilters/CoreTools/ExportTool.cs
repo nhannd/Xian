@@ -47,11 +47,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.CoreTools
 
 	[MenuAction("exportAnonymized", DropDownMenuActionSite + "/MenuExportAnonymized", "ExportAnonymized")]
 	[MenuAction("exportAnonymized", DefaultContextMenuActionSite + "/MenuExportAnonymized", "ExportAnonymized")]
-	[VisibleStateObserver("exportAnonymized", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
+	[EnabledStateObserver("exportAnonymized", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
 	
 	[MenuAction("exportCopy", DropDownMenuActionSite + "/MenuExportCopy", "ExportCopy")]
 	[MenuAction("exportCopy", DefaultContextMenuActionSite + "/MenuExportCopy", "ExportCopy")]
-	[VisibleStateObserver("exportCopy", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
+	[EnabledStateObserver("exportCopy", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
 	
 	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]
 	public class ExportTool : StudyFilterTool

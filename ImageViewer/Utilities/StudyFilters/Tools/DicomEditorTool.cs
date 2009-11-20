@@ -37,8 +37,9 @@ using ClearCanvas.Utilities.DicomEditor;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 {
+	[ButtonAction("activate", DefaultToolbarActionSite + "/ToolbarDumpFiles", "Dump")]
 	[MenuAction("activate", DefaultContextMenuActionSite + "/MenuDumpFiles", "Dump")]
-	[VisibleStateObserver("activate", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
+	[EnabledStateObserver("activate", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
 	[Tooltip("activate", "TooltipDumpFiles")]
 	[IconSet("activate", IconScheme.Colour, "Icons.DicomEditorToolSmall.png", "Icons.DicomEditorToolMedium.png", "Icons.DicomEditorToolLarge.png")]
 	[ViewerActionPermission("activate", ClearCanvas.Utilities.DicomEditor.AuthorityTokens.DicomEditor)]

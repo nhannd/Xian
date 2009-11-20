@@ -727,7 +727,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Launch in Viewer.
+        ///   Looks up a localized string similar to Open in Viewer.
         /// </summary>
         internal static string ToolbarLaunchInViewer {
             get {
