@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -32,40 +32,28 @@
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tools;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.CoreTools
 {
-	[MenuAction("Open", "global-menus/MenuTools/MenuUtilities/MenuStudyFilters", "Open")]
-	[IconSet("Open", IconScheme.Colour, "Icons.StudyFilterToolSmall.png", "Icons.StudyFilterToolMedium.png", "Icons.StudyFilterToolLarge.png")]
-	[ViewerActionPermission("Open", AuthorityTokens.ViewerVisible)]
-	[ExtensionOf(typeof (DesktopToolExtensionPoint))]
-	public class LaunchStudyFiltersTool : Tool<IDesktopToolContext>
+	[ButtonAction("show", DefaultToolbarActionSite + "/ToolbarAddRemoveColumns", "Show")]
+	[IconSet("show", IconScheme.Colour, "Icons.AddRemoveColumnsToolSmall.png", "Icons.AddRemoveColumnsToolMedium.png", "Icons.AddRemoveColumnsToolLarge.png")]
+	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]
+	public class AddRemoveColumnsTool : StudyFilterTool
 	{
-		private string _lastFolder = string.Empty;
-
-		public void Open()
+		public void Show()
 		{
-			SelectFolderDialogCreationArgs args = new SelectFolderDialogCreationArgs();
-			args.AllowCreateNewFolder = false;
-			args.Path = _lastFolder;
-			args.Prompt = SR.MessageSelectFolderToFilter;
-
-			FileDialogResult result = base.Context.DesktopWindow.ShowSelectFolderDialogBox(args);
-			if (result.Action == DialogBoxAction.Ok)
+			ColumnPickerComponent component = new ColumnPickerComponent(base.Columns);
+			SimpleComponentContainer container = new SimpleComponentContainer(component);
+			DialogBoxAction action = base.DesktopWindow.ShowDialogBox(container, SR.AddRemoveColumns);
+			if (action == DialogBoxAction.Ok)
 			{
-				_lastFolder = result.FileName;
-
-				StudyFilterComponent component = new StudyFilterComponent();
-				component.BulkOperationsMode = true;
-
-				if (component.Load(base.Context.DesktopWindow, true, result.FileName))
+				base.Columns.Clear();
+				foreach (StudyFilterColumn.ColumnDefinition column in component.Columns)
 				{
-					component.Refresh(true);
-					base.Context.DesktopWindow.Workspaces.AddNew(component, SR.StudyFilters);
+					base.Columns.Add(column.Create());
 				}
 
-				component.BulkOperationsMode = false;
+				base.RefreshTable();
 			}
 		}
 	}

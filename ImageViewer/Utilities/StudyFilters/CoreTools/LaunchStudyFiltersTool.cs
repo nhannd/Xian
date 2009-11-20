@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,58 +29,43 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.CoreTools
 {
-	[MenuAction("launch", DefaultContextMenuActionSite + "/MenuLaunchInViewer", "Launch")]
-	[VisibleStateObserver("launch", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
-	[IconSet("launch", IconScheme.Colour, "OpenToolSmall.png", "OpenToolSmall.png", "OpenToolSmall.png")]
-	[ViewerActionPermission("launch", AuthorityTokens.ViewerVisible)]
-	[ExtensionOf(typeof(StudyFilterToolExtensionPoint))]
-	public class LaunchViewerTool : StudyFilterTool
+	[MenuAction("Open", "global-menus/MenuTools/MenuUtilities/MenuStudyFilters", "Open")]
+	[IconSet("Open", IconScheme.Colour, "Icons.StudyFilterToolSmall.png", "Icons.StudyFilterToolMedium.png", "Icons.StudyFilterToolLarge.png")]
+	[ViewerActionPermission("Open", AuthorityTokens.ViewerVisible)]
+	[ExtensionOf(typeof (DesktopToolExtensionPoint))]
+	public class LaunchStudyFiltersTool : Tool<IDesktopToolContext>
 	{
-		public void Launch()
+		private string _lastFolder = string.Empty;
+
+		public void Open()
 		{
-			if (base.SelectedItems == null || base.SelectedItems.Count == 0)
-				return;
+			SelectFolderDialogCreationArgs args = new SelectFolderDialogCreationArgs();
+			args.AllowCreateNewFolder = false;
+			args.Path = _lastFolder;
+			args.Prompt = SR.MessageSelectFolderToFilter;
 
-			int n = 0;
-			string[] selection = new string[base.SelectedItems.Count];
-			foreach (StudyItem item in base.SelectedItems)
+			FileDialogResult result = base.Context.DesktopWindow.ShowSelectFolderDialogBox(args);
+			if (result.Action == DialogBoxAction.Ok)
 			{
-				selection[n++] = item.File.FullName;
-			}
+				_lastFolder = result.FileName;
 
-			bool cancelled = true;
-			ImageViewerComponent viewer = new ImageViewerComponent();
-			try
-			{
-				viewer.LoadImages(selection, base.Context.DesktopWindow, out cancelled);
-			}
-			catch (Exception ex)
-			{
-				base.DesktopWindow.ShowMessageBox(ex.Message, MessageBoxActions.Ok);
-			}
+				StudyFilterComponent component = new StudyFilterComponent();
+				component.BulkOperationsMode = true;
 
-			if (cancelled)
-			{
-				viewer.Dispose();
-				return;
-			}
+				if (component.Load(base.Context.DesktopWindow, true, result.FileName))
+				{
+					component.Refresh(true);
+					base.Context.DesktopWindow.Workspaces.AddNew(component, SR.StudyFilters);
+				}
 
-			try
-			{
-				LaunchImageViewerArgs launchArgs = new LaunchImageViewerArgs(WindowBehaviour.Auto);
-				ImageViewerComponent.Launch(viewer, launchArgs);
-			}
-			catch (Exception ex)
-			{
-				base.DesktopWindow.ShowMessageBox(ex.Message, MessageBoxActions.Ok);
-				Platform.Log(LogLevel.Error, ex, "ImageViewerComponent launch failure.");
+				component.BulkOperationsMode = false;
 			}
 		}
 	}

@@ -36,7 +36,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.CoreTools
 {
 	[ButtonAction("toggle", DefaultToolbarActionSite + "/ToolbarFiltersAreOn", "Toggle")]
 	[IconSet("toggle", IconScheme.Colour, "Icons.ToggleFiltersToolSmall.png", "Icons.ToggleFiltersToolMedium.png", "Icons.ToggleFiltersToolLarge.png")]

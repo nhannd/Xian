@@ -34,7 +34,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.CoreTools
 {
 	[ButtonAction("removeItemsContext", DefaultContextMenuActionSite + "/MenuRemoveItems", "RemoveItems")]
 	[VisibleStateObserver("removeItemsContext", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]

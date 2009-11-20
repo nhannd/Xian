@@ -39,9 +39,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseTools\ClearFiltersTool.cs" />
+    <Compile Include="CoreTools\ClearFiltersTool.cs" />
     <Compile Include="Export\DicomFileExporter.cs" />
-    <Compile Include="BaseTools\ToggleFiltersTool.cs" />
+    <Compile Include="CoreTools\ToggleFiltersTool.cs" />
     <Compile Include="Columns\AttributeTagDicomTagColumn.cs" />
     <Compile Include="Columns\BinaryDicomTagColumn.cs" />
     <Compile Include="Columns\DateTimeDicomTagColumn.cs" />
@@ -74,7 +74,7 @@
     <Compile Include="StudyFilterColumnDefinitions.cs" />
     <Compile Include="AutoFilters\Actions\CompareFilterMenuAction.cs" />
     <Compile Include="AutoFilters\Actions\IFilterMenuActionOwner.cs" />
-    <Compile Include="BaseTools\AddItemsTool.cs" />
+    <Compile Include="CoreTools\AddItemsTool.cs" />
     <Compile Include="AutoFilters\AutoFilterTool.cs" />
     <Compile Include="AutoFilters\Actions\ListFilterMenuAction.cs" />
     <Compile Include="AutoFilters\ClearColumnFiltersTool.cs" />
@@ -83,17 +83,17 @@
     <Compile Include="AutoFilters\ColumnSortTool.cs" />
     <Compile Include="Columns\DicomObjectArray.cs" />
     <Compile Include="Columns\DicomArray.cs" />
-    <Compile Include="BaseTools\LaunchStudyFiltersTool.cs" />
-    <Compile Include="BaseTools\RemoveItemsTool.cs" />
+    <Compile Include="CoreTools\LaunchStudyFiltersTool.cs" />
+    <Compile Include="CoreTools\RemoveItemsTool.cs" />
     <Compile Include="StudyFilterComponentBackgroundFileLoader.cs" />
     <Compile Include="Utilities\ExtendedOpenFilesDialog.cs" />
     <Compile Include="Utilities\FilterPredicate.cs" />
     <Compile Include="IStudyFilter.cs" />
     <Compile Include="Utilities\SortPredicate.cs" />
     <Compile Include="StudyFilterSettings.cs" />
-    <Compile Include="BaseTools\AddRemoveColumnsTool.cs" />
-    <Compile Include="BaseTools\ExportTool.cs" />
-    <Compile Include="BaseTools\LaunchViewerTool.cs" />
+    <Compile Include="CoreTools\AddRemoveColumnsTool.cs" />
+    <Compile Include="CoreTools\ExportTool.cs" />
+    <Compile Include="CoreTools\LaunchViewerTool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>

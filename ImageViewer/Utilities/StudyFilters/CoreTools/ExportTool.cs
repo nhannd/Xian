@@ -39,7 +39,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Utilities.StudyFilters.Export;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.CoreTools
 {
 	[DropDownAction("export", DefaultToolbarActionSite + "/ToolbarExport", "DropDownActionModel")]
 	[IconSet("export", IconScheme.Colour, "Icons.SaveToolSmall.png", "Icons.SaveToolMedium.png", "Icons.SaveToolLarge.png")]

@@ -36,7 +36,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.CoreTools
 {
 	[ButtonAction("clear", DefaultToolbarActionSite + "/ToolbarClearFilters", "ClearAll")]
 	[IconSet("clear", IconScheme.Colour, "Icons.ClearFiltersToolSmall.png", "Icons.ClearFiltersToolMedium.png", "Icons.ClearFiltersToolLarge.png")]

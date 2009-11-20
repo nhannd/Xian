@@ -36,7 +36,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities;
 using Path=System.IO.Path;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.CoreTools
 {
 	[DropDownAction("add", DefaultToolbarActionSite + "/ToolbarAddItems", "DropDownActionModel")]
 	[IconSet("add", IconScheme.Colour, "Icons.AddItemsToolSmall.png", "Icons.AddItemsToolMedium.png", "Icons.AddItemsToolLarge.png")]

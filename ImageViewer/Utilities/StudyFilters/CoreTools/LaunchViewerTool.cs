@@ -29,31 +29,58 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.CoreTools
 {
-	[ButtonAction("show", DefaultToolbarActionSite + "/ToolbarAddRemoveColumns", "Show")]
-	[IconSet("show", IconScheme.Colour, "Icons.AddRemoveColumnsToolSmall.png", "Icons.AddRemoveColumnsToolMedium.png", "Icons.AddRemoveColumnsToolLarge.png")]
-	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]
-	public class AddRemoveColumnsTool : StudyFilterTool
+	[MenuAction("launch", DefaultContextMenuActionSite + "/MenuLaunchInViewer", "Launch")]
+	[VisibleStateObserver("launch", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
+	[IconSet("launch", IconScheme.Colour, "OpenToolSmall.png", "OpenToolSmall.png", "OpenToolSmall.png")]
+	[ViewerActionPermission("launch", AuthorityTokens.ViewerVisible)]
+	[ExtensionOf(typeof(StudyFilterToolExtensionPoint))]
+	public class LaunchViewerTool : StudyFilterTool
 	{
-		public void Show()
+		public void Launch()
 		{
-			ColumnPickerComponent component = new ColumnPickerComponent(base.Columns);
-			SimpleComponentContainer container = new SimpleComponentContainer(component);
-			DialogBoxAction action = base.DesktopWindow.ShowDialogBox(container, SR.AddRemoveColumns);
-			if (action == DialogBoxAction.Ok)
-			{
-				base.Columns.Clear();
-				foreach (StudyFilterColumn.ColumnDefinition column in component.Columns)
-				{
-					base.Columns.Add(column.Create());
-				}
+			if (base.SelectedItems == null || base.SelectedItems.Count == 0)
+				return;
 
-				base.RefreshTable();
+			int n = 0;
+			string[] selection = new string[base.SelectedItems.Count];
+			foreach (StudyItem item in base.SelectedItems)
+			{
+				selection[n++] = item.File.FullName;
+			}
+
+			bool cancelled = true;
+			ImageViewerComponent viewer = new ImageViewerComponent();
+			try
+			{
+				viewer.LoadImages(selection, base.Context.DesktopWindow, out cancelled);
+			}
+			catch (Exception ex)
+			{
+				base.DesktopWindow.ShowMessageBox(ex.Message, MessageBoxActions.Ok);
+			}
+
+			if (cancelled)
+			{
+				viewer.Dispose();
+				return;
+			}
+
+			try
+			{
+				LaunchImageViewerArgs launchArgs = new LaunchImageViewerArgs(WindowBehaviour.Auto);
+				ImageViewerComponent.Launch(viewer, launchArgs);
+			}
+			catch (Exception ex)
+			{
+				base.DesktopWindow.ShowMessageBox(ex.Message, MessageBoxActions.Ok);
+				Platform.Log(LogLevel.Error, ex, "ImageViewerComponent launch failure.");
 			}
 		}
 	}
