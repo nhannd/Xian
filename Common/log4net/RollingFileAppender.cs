@@ -427,7 +427,7 @@ namespace ClearCanvas.Common.log4net
                         m_rollDate = false;
                         m_rollSize = false;
 
-                        this.AppendToFile = false;
+                        AppendToFile = false;
                         break;
 
                     case RollingMode.Size:
@@ -982,7 +982,7 @@ namespace ClearCanvas.Common.log4net
                 LogLog.Debug("RollingFileAppender: Type = [" + i + "], r0 = [" + r0 + "], r1 = [" + r1 + "]");
 
                 // Check if the string representations are different
-                if (r0 != null && r1 != null && !r0.Equals(r1))
+                if (!r0.Equals(r1))
                 {
                     // Found highest precision roll point
                     return (RollPoint)i;
@@ -1104,7 +1104,7 @@ namespace ClearCanvas.Common.log4net
                 if (fileIsOpen)
                 {
                     // close current file, and rename it to datedFilename
-                    this.CloseFile();
+                    CloseFile();
                 }
 
                 //we may have to roll over a large number of backups here
@@ -1127,7 +1127,11 @@ namespace ClearCanvas.Common.log4net
             if (fileIsOpen)
             {
                 // This will also close the file. This is OK since multiple close operations are safe.
-                SafeOpenFile(m_baseFileName, false);
+				// SRW: 11/20/2009, Changed append parameter to true here.  The append = false setting
+				// was causing us to delete the log file whenever a new app domain detected that the 
+				// file should be rolled over.  This preserves the other logs that were logged in the 
+				// mean time before the current app domain detected the rollover condition.
+                SafeOpenFile(m_baseFileName, true);
             }
         }
 
@@ -1277,7 +1281,7 @@ namespace ClearCanvas.Common.log4net
         /// </remarks>
         protected void RollOverSize()
         {
-            this.CloseFile(); // keep windows happy.
+            CloseFile(); // keep windows happy.
 
             LogLog.Debug("RollingFileAppender: rolling over count [" + ((CountingQuietTextWriter)QuietWriter).Count + "]");
             LogLog.Debug("RollingFileAppender: maxSizeRollBackups [" + m_maxSizeRollBackups + "]");
