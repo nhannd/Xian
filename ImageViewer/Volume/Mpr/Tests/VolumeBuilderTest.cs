@@ -111,7 +111,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 			int n = 0;
 
 			// it doesn't really matter what function we use
-			TestVolume(VolumeFunction.Void, sopDataSource => sopDataSource[DicomTags.ImageOrientationPatient].SetStringValue(ConvertXAxialGantryTiltToImageOrientationPatient(n++, false)), null);
+			TestVolume(VolumeFunction.Void, sopDataSource => sopDataSource[DicomTags.ImageOrientationPatient].SetStringValue(DataSetOrientation.CreateGantryTiltedAboutX(n++).ImageOrientationPatient), null);
 		}
 
 		[Test]
@@ -151,39 +151,102 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 		[Test]
 		public void Test030DegreeXAxialRotationGantryTiltedSource()
 		{
-			string imageOrientationPatient = ConvertXAxialGantryTiltToImageOrientationPatient(30, true);
+			DataSetOrientation orientation = DataSetOrientation.CreateGantryTiltedAboutX(30);
 
 			// it doesn't really matter what function we use
-			TestVolume(VolumeFunction.Void, sopDataSource => sopDataSource[DicomTags.ImageOrientationPatient].SetStringValue(imageOrientationPatient), null);
+			TestVolume(VolumeFunction.Void, orientation.Initialize, null);
 		}
 
 		[Test]
 		public void Test330DegreeXAxialRotationGantryTiltedSource()
 		{
-			string imageOrientationPatient = ConvertXAxialGantryTiltToImageOrientationPatient(-30, true);
+			DataSetOrientation orientation = DataSetOrientation.CreateGantryTiltedAboutX(-30);
 
 			// it doesn't really matter what function we use
-			TestVolume(VolumeFunction.Void, sopDataSource => sopDataSource[DicomTags.ImageOrientationPatient].SetStringValue(imageOrientationPatient), null);
+			TestVolume(VolumeFunction.Void, orientation.Initialize, null);
 		}
 
 		[Test]
-		[ExpectedException(typeof(UnsupportedGantryTiltAxisException))]
+		[ExpectedException(typeof (UnsupportedGantryTiltAxisException))]
 		public void Test030DegreeYAxialRotationGantryTiltedSource()
 		{
-			string imageOrientationPatient = ConvertYAxialGantryTiltToImageOrientationPatient(30, true);
+			DataSetOrientation orientation = DataSetOrientation.CreateGantryTiltedAboutY(30);
 
 			// it doesn't really matter what function we use
-			TestVolume(VolumeFunction.Void, sopDataSource => sopDataSource[DicomTags.ImageOrientationPatient].SetStringValue(imageOrientationPatient), null);
+			TestVolume(VolumeFunction.Void, orientation.Initialize, null);
 		}
 
 		[Test]
 		[ExpectedException(typeof (UnsupportedGantryTiltAxisException))]
 		public void Test330DegreeYAxialRotationGantryTiltedSource()
 		{
-			string imageOrientationPatient = ConvertYAxialGantryTiltToImageOrientationPatient(-30, true);
+			DataSetOrientation orientation = DataSetOrientation.CreateGantryTiltedAboutY(-30);
 
 			// it doesn't really matter what function we use
-			TestVolume(VolumeFunction.Void, sopDataSource => sopDataSource[DicomTags.ImageOrientationPatient].SetStringValue(imageOrientationPatient), null);
+			TestVolume(VolumeFunction.Void, orientation.Initialize, null);
+		}
+
+		[Test]
+		public void Test030DegreeXAxialRotationCouchTiltedSource()
+		{
+			DataSetOrientation orientation = DataSetOrientation.CreateCouchTiltedAboutX(30);
+
+			// it doesn't really matter what function we use
+			TestVolume(VolumeFunction.Void, orientation.Initialize, null);
+		}
+
+		[Test]
+		public void Test330DegreeXAxialRotationCouchTiltedSource()
+		{
+			DataSetOrientation orientation = DataSetOrientation.CreateCouchTiltedAboutX(-30);
+
+			// it doesn't really matter what function we use
+			TestVolume(VolumeFunction.Void, orientation.Initialize, null);
+		}
+
+		[Test]
+		public void Test030DegreeYAxialRotationCouchTiltedSource()
+		{
+			DataSetOrientation orientation = DataSetOrientation.CreateCouchTiltedAboutY(30);
+
+			// it doesn't really matter what function we use
+			TestVolume(VolumeFunction.Void, orientation.Initialize, null);
+		}
+
+		[Test]
+		public void Test330DegreeYAxialRotationCouchTiltedSource()
+		{
+			DataSetOrientation orientation = DataSetOrientation.CreateCouchTiltedAboutY(-30);
+
+			// it doesn't really matter what function we use
+			TestVolume(VolumeFunction.Void, orientation.Initialize, null);
+		}
+
+		[Test]
+		public void TestAxialSource()
+		{
+			DataSetOrientation orientation = DataSetOrientation.CreateAxial(false);
+
+			// it doesn't really matter what function we use
+			TestVolume(VolumeFunction.Void, orientation.Initialize, null);
+		}
+
+		[Test]
+		public void TestCoronalSource()
+		{
+			DataSetOrientation orientation = DataSetOrientation.CreateCoronal(false);
+
+			// it doesn't really matter what function we use
+			TestVolume(VolumeFunction.Void, orientation.Initialize, null);
+		}
+
+		[Test]
+		public void TestSagittalSource()
+		{
+			DataSetOrientation orientation = DataSetOrientation.CreateSagittal(false);
+
+			// it doesn't really matter what function we use
+			TestVolume(VolumeFunction.Void, orientation.Initialize, null);
 		}
 
 		[Test]
@@ -204,17 +267,17 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 		[Test]
 		public void TestXAxialRotationGantryTiltedVoxelData()
 		{
-			const double angle = Math.PI/6;
-			string imageOrientationPatient = ConvertXAxialGantryTiltToImageOrientationPatient(angle, false);
+			const double angle = 30;
+			DataSetOrientation orientation = DataSetOrientation.CreateGantryTiltedAboutX(angle);
 
 			TestVolume(VolumeFunction.Stars,
-			           sopDataSource => sopDataSource[DicomTags.ImageOrientationPatient].SetStringValue(imageOrientationPatient),
+			           orientation.Initialize,
 			           volume =>
 			           	{
 			           		foreach (KnownSample sample in StarsKnownSamples)
 			           		{
 			           			Vector3D realPoint = sample.Point;
-			           			Vector3D paddedPoint = realPoint + new Vector3D(0, (float) (Math.Tan(angle)*(100 - realPoint.Z)), 0);
+			           			Vector3D paddedPoint = realPoint + new Vector3D(0, (float) (Math.Tan(angle*Math.PI/180)*(100 - realPoint.Z)), 0);
 
 			           			int actual = volume[(int) paddedPoint.X, (int) paddedPoint.Y, (int) paddedPoint.Z];
 			           			Trace.WriteLine(string.Format("Sample {0} @{1} ({2} before padding)", actual, paddedPoint, realPoint));

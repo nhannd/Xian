@@ -92,6 +92,7 @@
     <Compile Include="MprVolume.cs" />
     <Compile Include="ReadOnlyVolumeSlicerParams.cs" />
     <Compile Include="Tests\AbstractMprTest.cs" />
+    <Compile Include="Tests\DataSetOrientation.cs" />
     <Compile Include="Tests\MprProbeTool.cs" />
     <Compile Include="Tests\SlicerTests.cs" />
     <Compile Include="Tests\SlicePlaneTests.cs" />

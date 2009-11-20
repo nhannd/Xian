@@ -139,32 +139,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 			}
 		}
 
-		/// <summary>
-		/// Converts a gantry tilt about the X-axis (&quot;gantry tilt&quot;) into an ImageOrientationPatient vector.
-		/// </summary>
-		/// <param name="angle">The tilt angle.</param>
-		/// <param name="degrees">True if the tilt angle is in degrees, False if the tilt angle is in radians.</param>
-		/// <returns>An ImageOrientationPatient vector.</returns>
-		protected static string ConvertXAxialGantryTiltToImageOrientationPatient(double angle, bool degrees)
-		{
-			if (degrees)
-				angle = angle*Math.PI/180;
-			return string.Format(@"1\0\0\0\{0:f9}\{1:f9}", Math.Cos(angle), Math.Cos(angle + Math.PI/2));
-		}
-
-		/// <summary>
-		/// Converts a gantry tilt about the Y-axis (&quot;gantry slew&quot;) into an ImageOrientationPatient vector.
-		/// </summary>
-		/// <param name="angle">The slew angle.</param>
-		/// <param name="degrees">True if the slew angle is in degrees, False if the slew angle is in radians.</param>
-		/// <returns>An ImageOrientationPatient vector.</returns>
-		protected static string ConvertYAxialGantryTiltToImageOrientationPatient(double angle, bool degrees)
-		{
-			if (degrees)
-				angle = angle*Math.PI/180;
-			return string.Format(@"{0:f9}\0\{1:f9}\0\1\0", Math.Cos(angle), Math.Cos(angle + Math.PI/2));
-		}
-
 		protected static string FormatVector(Vector3D vector)
 		{
 			if (vector == null)

@@ -39,7 +39,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
@@ -107,8 +106,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 
 			protected virtual void InitializeSopDataSource(ISopDataSource sopDataSource) {}
 
+			protected virtual void OnBeforeExecute() {}
+			protected virtual void OnAfterExecute() {}
+
 			public void Execute()
 			{
+				this.OnBeforeExecute();
 				List<ImageSop> images = new List<ImageSop>();
 				try
 				{
@@ -133,16 +136,19 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 				{
 					DisposeAll(images);
 				}
+				this.OnAfterExecute();
 			}
 		}
 
 		private class XAxialRotationGantryTiledTestVolume : TestVolume
 		{
 			private readonly float _tiltDegrees;
+			private readonly DataSetOrientation _dataSetOrientation;
 
 			public XAxialRotationGantryTiledTestVolume(VolumeFunction function, float tiltDegrees) : base(function)
 			{
 				_tiltDegrees = tiltDegrees;
+				_dataSetOrientation = DataSetOrientation.CreateGantryTiltedAboutX(tiltDegrees);
 			}
 
 			public override string Name
@@ -150,11 +156,16 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 				get { return string.Format("{0} (Tilt: {1}\u00B0 about X)", base.Name, _tiltDegrees); }
 			}
 
+			protected override void OnBeforeExecute()
+			{
+				base.OnBeforeExecute();
+				_dataSetOrientation.ResetImagePositionPatient();
+			}
+
 			protected override void InitializeSopDataSource(ISopDataSource sopDataSource)
 			{
 				base.InitializeSopDataSource(sopDataSource);
-
-				sopDataSource[DicomTags.ImageOrientationPatient].SetStringValue(ConvertXAxialGantryTiltToImageOrientationPatient(_tiltDegrees, true));
+				_dataSetOrientation.Initialize(sopDataSource);
 			}
 		}
 	}

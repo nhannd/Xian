@@ -79,8 +79,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 		[Test]
 		public void TestPositiveXAxialGantryTiltedSlicings()
 		{
+			DataSetOrientation orientation = DataSetOrientation.CreateGantryTiltedAboutX(30);
 			TestVolume(VolumeFunction.StarsTilted030X,
-			           SetGantryTiltAboutX(30, true),
+			           orientation.Initialize,
 			           volume =>
 			           	{
 			           		foreach (IVolumeSlicerParams slicing in _slicings)
@@ -93,8 +94,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 		[Test]
 		public void TestNegativeXAxialGantryTiltedSlicings()
 		{
+			DataSetOrientation orientation = DataSetOrientation.CreateGantryTiltedAboutX(-15);
 			TestVolume(VolumeFunction.StarsTilted345X,
-			           SetGantryTiltAboutX(-15, true),
+			           orientation.Initialize,
 			           volume =>
 			           	{
 			           		foreach (IVolumeSlicerParams slicing in _slicings)
@@ -102,11 +104,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 			           			ValidateVolumeSlicePoints(volume, slicing, StarsKnownSamples, -15, 0, true);
 			           		}
 			           	});
-		}
-
-		protected static InitializeSopDataSourceDelegate SetGantryTiltAboutX(double angle, bool degrees)
-		{
-			return sopDataSource => sopDataSource[DicomTags.ImageOrientationPatient].SetStringValue(ConvertXAxialGantryTiltToImageOrientationPatient(angle, degrees));
 		}
 
 		protected static void ValidateVolumeSlicePoints(Volume volume, IVolumeSlicerParams slicerParams, IList<KnownSample> expectedPoints)

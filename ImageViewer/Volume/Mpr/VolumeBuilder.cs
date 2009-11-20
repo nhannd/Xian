@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer;
@@ -422,7 +423,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				}
 
 				// ensure frames are not tilted about unsupposed axis combinations (the gantry correction algorithm only supports rotations about X)
-				if (!IsSupportedGantryTilt(_frames[0].Frame.ImageOrientationPatient)) // suffices to check first one... they're all co-planar now!!
+				if (!IsSupportedGantryTilt(_frames)) // suffices to check first one... they're all co-planar now!!
 					throw new UnsupportedGantryTiltAxisException();
 			}
 
@@ -430,10 +431,35 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			#region Gantry Tilt Helpers
 
-			private static bool IsSupportedGantryTilt(ImageOrientationPatient imageOrientationPatient)
+			private static bool IsSupportedGantryTilt(IList<IFrameReference> frames)
 			{
-				Matrix imageOrientationPatientMatrix = ImageOrientationPatientToMatrix(imageOrientationPatient);
-				return FloatComparer.AreEqual(0f, (float) GetYRotation(imageOrientationPatientMatrix), _gantryTiltTolerance);
+				try
+				{
+					using (IPresentationImage firstImage = PresentationImageFactory.Create(frames[0].Frame))
+					{
+						using (IPresentationImage lastImage = PresentationImageFactory.Create(frames[frames.Count - 1].Frame))
+						{
+							// neither of these should return null since we already checked for image orientation and position (patient)
+							DicomImagePlane firstImagePlane = DicomImagePlane.FromImage(firstImage);
+							DicomImagePlane lastImagePlane = DicomImagePlane.FromImage(lastImage);
+
+							Vector3D stackZ = lastImagePlane.PositionPatientTopLeft - firstImagePlane.PositionPatientTopLeft;
+							Vector3D imageX = firstImagePlane.PositionPatientTopRight - firstImagePlane.PositionPatientTopLeft;
+
+							if (!stackZ.IsOrthogonalTo(imageX, _gantryTiltTolerance))
+							{
+								// this is a gantry slew (gantry tilt about Y axis)
+								return false;
+							}
+						}
+					}
+					return true;
+				}
+				catch (Exception ex)
+				{
+					Platform.Log(LogLevel.Debug, ex, "Unexpected exception encountered while checking for supported gantry tilts");
+					return false;
+				}
 			}
 
 			/// <summary>
