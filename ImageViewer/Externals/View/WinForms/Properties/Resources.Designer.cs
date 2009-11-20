@@ -97,6 +97,15 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Help on Special Fields.
+        /// </summary>
+        internal static string TitleHelpSpecialFields {
+            get {
+                return ResourceManager.GetString("TitleHelpSpecialFields", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to New External.
         /// </summary>
         internal static string TitleNewExternal {

@@ -337,7 +337,7 @@
     <value>Top</value>
   </data>
   <data name="_pnlCommand.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
+    <value>0, 57</value>
   </data>
   <data name="_pnlCommand.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>5, 5, 5, 5</value>
@@ -349,7 +349,7 @@
     <value>396, 56</value>
   </data>
   <data name="_pnlCommand.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="&gt;&gt;_pnlCommand.Name" xml:space="preserve">
     <value>_pnlCommand</value>
@@ -367,7 +367,7 @@
     <value>Top</value>
   </data>
   <data name="_pnlWorkingDir.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 56</value>
+    <value>0, 113</value>
   </data>
   <data name="_pnlWorkingDir.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>5, 5, 5, 5</value>
@@ -379,7 +379,7 @@
     <value>396, 55</value>
   </data>
   <data name="_pnlWorkingDir.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="&gt;&gt;_pnlWorkingDir.Name" xml:space="preserve">
     <value>_pnlWorkingDir</value>
@@ -397,7 +397,7 @@
     <value>Top</value>
   </data>
   <data name="_pnlArguments.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 111</value>
+    <value>0, 168</value>
   </data>
   <data name="_pnlArguments.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>5, 5, 5, 5</value>
@@ -409,7 +409,7 @@
     <value>396, 144</value>
   </data>
   <data name="_pnlArguments.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="&gt;&gt;_pnlArguments.Name" xml:space="preserve">
     <value>_pnlArguments</value>
@@ -571,7 +571,7 @@
     <value>Top</value>
   </data>
   <data name="_pnlOptions.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 255</value>
+    <value>0, 312</value>
   </data>
   <data name="_pnlOptions.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>5, 5, 5, 5</value>
@@ -583,7 +583,7 @@
     <value>396, 82</value>
   </data>
   <data name="_pnlOptions.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="&gt;&gt;_pnlOptions.Name" xml:space="preserve">
     <value>_pnlOptions</value>
@@ -606,6 +606,87 @@
   <data name="_dlgCommand.Title" xml:space="preserve">
     <value>Browse for Executable</value>
   </data>
+  <data name="_txtName.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="_txtName.Location" type="System.Drawing.Point, System.Drawing">
+    <value>10, 27</value>
+  </data>
+  <data name="_txtName.Size" type="System.Drawing.Size, System.Drawing">
+    <value>376, 20</value>
+  </data>
+  <data name="_txtName.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;_txtName.Name" xml:space="preserve">
+    <value>_txtName</value>
+  </data>
+  <data name="&gt;&gt;_txtName.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_txtName.Parent" xml:space="preserve">
+    <value>_pnlName</value>
+  </data>
+  <data name="&gt;&gt;_txtName.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="_lblName.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="_lblName.Location" type="System.Drawing.Point, System.Drawing">
+    <value>10, 10</value>
+  </data>
+  <data name="_lblName.Size" type="System.Drawing.Size, System.Drawing">
+    <value>376, 17</value>
+  </data>
+  <data name="_lblName.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="_lblName.Text" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="_lblName.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;_lblName.Name" xml:space="preserve">
+    <value>_lblName</value>
+  </data>
+  <data name="&gt;&gt;_lblName.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_lblName.Parent" xml:space="preserve">
+    <value>_pnlName</value>
+  </data>
+  <data name="&gt;&gt;_lblName.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="_pnlName.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="_pnlName.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="_pnlName.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>10, 10, 10, 10</value>
+  </data>
+  <data name="_pnlName.Size" type="System.Drawing.Size, System.Drawing">
+    <value>396, 57</value>
+  </data>
+  <data name="_pnlName.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;_pnlName.Name" xml:space="preserve">
+    <value>_pnlName</value>
+  </data>
+  <data name="&gt;&gt;_pnlName.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_pnlName.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;_pnlName.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -613,7 +694,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>396, 338</value>
+    <value>396, 410</value>
   </data>
   <data name="&gt;&gt;_dlgCommand.Name" xml:space="preserve">
     <value>_dlgCommand</value>
@@ -622,9 +703,9 @@
     <value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>CommandLineExternalConfigurationControl</value>
+    <value>CommandLineExternalPropertiesComponentControl</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>ClearCanvas.Desktop.View.WinForms.ApplicationComponentUserControl, ClearCanvas.Desktop.View.WinForms, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

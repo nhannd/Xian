@@ -29,37 +29,42 @@
 
 #endregion
 
+using System;
 using System.Windows.Forms;
+using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.ImageViewer.Externals.General;
+using ClearCanvas.ImageViewer.Externals.View.WinForms.Properties;
+using MessageBox=System.Windows.Forms.MessageBox;
 
 namespace ClearCanvas.ImageViewer.Externals.View.WinForms.General
 {
-	public partial class CommandLineExternalConfigurationControl : UserControl
+	public partial class CommandLineExternalPropertiesComponentControl : ApplicationComponentUserControl
 	{
 		private readonly string _helpMessage = string.Empty;
 
-		public CommandLineExternalConfigurationControl(CommandLineExternal launcher)
+		public CommandLineExternalPropertiesComponentControl(CommandLineExternalPropertiesComponent component) : base(component)
 		{
 			InitializeComponent();
 
-			_helpMessage = launcher.ArgumentFieldsHelpText;
+			_helpMessage = component.ArgumentFieldsHelpText;
 			_lnkHelpFields.Visible = !string.IsNullOrEmpty(_helpMessage);
 
-			_txtCommand.DataBindings.Add("Text", launcher, "Command", false, DataSourceUpdateMode.OnPropertyChanged);
-			_txtWorkingDir.DataBindings.Add("Text", launcher, "WorkingDirectory", false, DataSourceUpdateMode.OnPropertyChanged);
-			_txtArguments.DataBindings.Add("Text", launcher, "ArgumentString", false, DataSourceUpdateMode.OnPropertyChanged);
-			_chkAllowMultiValueFields.DataBindings.Add("Checked", launcher, "AllowMultiValueFields", false, DataSourceUpdateMode.OnPropertyChanged);
-			_chkAutoQuoteArguments.DataBindings.Add("Checked", launcher, "AutoQuoteArguments", false, DataSourceUpdateMode.OnPropertyChanged);
-			_txtMultiValueFieldSeparator.DataBindings.Add("Text", launcher, "MultiValueFieldSeparator", false, DataSourceUpdateMode.OnPropertyChanged);
-			_txtMultiValueFieldSeparator.DataBindings.Add("Enabled", launcher, "AllowMultiValueFields", false, DataSourceUpdateMode.OnPropertyChanged);
+			_txtName.DataBindings.Add("Text", component, "Label", false, DataSourceUpdateMode.OnPropertyChanged);
+			_txtCommand.DataBindings.Add("Text", component, "Command", false, DataSourceUpdateMode.OnPropertyChanged);
+			_txtWorkingDir.DataBindings.Add("Text", component, "WorkingDirectory", false, DataSourceUpdateMode.OnPropertyChanged);
+			_txtArguments.DataBindings.Add("Text", component, "ArgumentString", false, DataSourceUpdateMode.OnPropertyChanged);
+			_chkAllowMultiValueFields.DataBindings.Add("Checked", component, "AllowMultiValueFields", false, DataSourceUpdateMode.OnPropertyChanged);
+			_chkAutoQuoteArguments.DataBindings.Add("Checked", component, "AutoQuoteArguments", false, DataSourceUpdateMode.OnPropertyChanged);
+			_txtMultiValueFieldSeparator.DataBindings.Add("Text", component, "MultiValueFieldSeparator", false, DataSourceUpdateMode.OnPropertyChanged);
+			_txtMultiValueFieldSeparator.DataBindings.Add("Enabled", component, "AllowMultiValueFields", false, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
 		private void _lnkHelpFields_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			MessageBox.Show(this, _helpMessage);
+			MessageBox.Show(this, _helpMessage, Resources.TitleHelpSpecialFields);
 		}
 
-		private void _btnCommand_Click(object sender, System.EventArgs e)
+		private void _btnCommand_Click(object sender, EventArgs e)
 		{
 			_dlgCommand.FileName = _txtCommand.Text;
 			if (_dlgCommand.ShowDialog(this) == DialogResult.OK)

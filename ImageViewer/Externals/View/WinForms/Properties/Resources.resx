@@ -129,6 +129,9 @@
   <data name="TitleEditProperties" xml:space="preserve">
     <value>Edit Properties of {0}</value>
   </data>
+  <data name="TitleHelpSpecialFields" xml:space="preserve">
+    <value>Help on Special Fields</value>
+  </data>
   <data name="TitleNewExternal" xml:space="preserve">
     <value>New External</value>
   </data>

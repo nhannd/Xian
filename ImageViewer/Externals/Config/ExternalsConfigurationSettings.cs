@@ -29,13 +29,32 @@
 
 #endregion
 
+using System;
 using System.Configuration;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Externals.Config
 {
 	[SettingsGroupDescription("Settings for external applications.")]
-	[SettingsProvider(typeof(LocalFileSettingsProvider))]
+	[SettingsProvider(typeof (LocalFileSettingsProvider))]
 	internal sealed partial class ExternalsConfigurationSettings
 	{
+		private event EventHandler _externalsChanged;
+
+		public event EventHandler ExternalsChanged
+		{
+			add { _externalsChanged += value; }
+			remove { _externalsChanged -= value; }
+		}
+
+		protected override void OnSettingChanging(object sender, SettingChangingEventArgs e)
+		{
+			base.OnSettingChanging(sender, e);
+
+			if (e.SettingName == "Externals")
+			{
+				EventsHelper.Fire(_externalsChanged, this, EventArgs.Empty);
+			}
+		}
 	}
 }

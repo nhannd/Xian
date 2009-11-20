@@ -29,33 +29,37 @@
 
 #endregion
 
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.View.WinForms;
+using System;
+using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.Externals.Config;
 
-namespace ClearCanvas.ImageViewer.Externals.View.WinForms
+namespace ClearCanvas.ImageViewer.Externals.CoreTools
 {
-	[ExtensionOf(typeof (ExternalPropertiesComponentViewExtensionPoint))]
-	public class ExternalPropertiesComponentView : WinFormsView, IApplicationComponentView
+	public abstract class ExternalToolBase : ImageViewerTool
 	{
-		private ExternalPropertiesComponent _component;
-		private ExternalPropertiesComponentControl _control;
+		private ExternalsConfigurationSettings _settings;
 
-		public void SetComponent(IApplicationComponent component)
+		public override void Initialize()
 		{
-			_component = (ExternalPropertiesComponent) component;
+			base.Initialize();
+
+			_settings = ExternalsConfigurationSettings.Default;
+			_settings.ExternalsChanged += Settings_ExternalsChanged;
 		}
 
-		public override object GuiElement
+		protected override void Dispose(bool disposing)
 		{
-			get
-			{
-				if (_control == null)
-				{
-					_control = new ExternalPropertiesComponentControl(_component);
-				}
-				return _control;
-			}
+			_settings.ExternalsChanged -= Settings_ExternalsChanged;
+			_settings = null;
+
+			base.Dispose(disposing);
+		}
+
+		protected virtual void OnExternalsChanged(EventArgs e) {}
+
+		private void Settings_ExternalsChanged(object sender, EventArgs e)
+		{
+			this.OnExternalsChanged(e);
 		}
 	}
 }

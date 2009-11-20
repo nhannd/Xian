@@ -95,6 +95,7 @@ namespace ClearCanvas.ImageViewer.Externals.Config
 		{
 			try
 			{
+				_externals.Sort();
 				_settings.Externals = _externals.Serialize();
 			}
 			catch(Exception ex)

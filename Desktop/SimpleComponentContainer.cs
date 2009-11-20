@@ -132,6 +132,17 @@ namespace ClearCanvas.Desktop
             base.Stop();
         }
 
+		public override bool HasValidationErrors
+		{
+			get { return _componentHost.Component.HasValidationErrors || base.HasValidationErrors; }
+		}
+
+		public override void ShowValidation(bool show)
+		{
+			base.ShowValidation(show);
+			_componentHost.Component.ShowValidation(show);
+		}
+
         #endregion
 
         #region ApplicationComponentContainer overrides
@@ -182,8 +193,13 @@ namespace ClearCanvas.Desktop
 		/// Called by the view to indicate the user dismissed the dialog with "Ok"; the <see cref="ApplicationComponent.ExitCode"/>
 		/// is set to <see cref="ApplicationComponentExitCode.Accepted"/>.
 		/// </summary>
-        public void OK()
+		public void OK()
 		{
+			if (this.HasValidationErrors)
+			{
+				this.ShowValidation(true);
+				return;
+			}
 			base.ExitCode = ApplicationComponentExitCode.Accepted;
 			base.Host.Exit();
 		}

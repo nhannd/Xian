@@ -113,6 +113,11 @@ namespace ClearCanvas.ImageViewer.Externals
 
 		#endregion
 
+		public void Sort()
+		{
+			_definitions.Sort((x, y) => string.Compare(x.Label, y.Label, StringComparison.CurrentCultureIgnoreCase));
+		}
+
 		public string Serialize()
 		{
 			return SerializeXml(this);

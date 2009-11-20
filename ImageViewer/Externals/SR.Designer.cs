@@ -88,16 +88,18 @@ namespace ClearCanvas.ImageViewer.Externals {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following argument fields may be used when the external is launched with a single image:
+        ///   Looks up a localized string similar to The following argument fields may be used when the external is with images on a file system:
         ///* $FILENAME$ (e.g. c:\datastore\image.dcm)
         ///* $DIRECTORY$ (e.g. c:\datastore)
         ///* $FILENAMEONLY$ (e.g. image.dcm)
         ///* $EXTENSIONONLY$ (e.g. dcm)
         ///
-        ///The following argument fields may be used when the external is launched with a display set:
-        ///* $FILENAMES$ (e.g. c:\datastore\image.dcm c:\other\image2.dcm c:\other\image3.jpg)
-        ///* $DIRECTORIES$ (e.g. c:\datastore c:\other)
-        ///* $FILENAMESONLY$ (e.g. image.dcm image2.dcm ima [rest of string was truncated]&quot;;.
+        ///Use $ggggeeee$ to insert the value of a DICOM attribute from the first image in the display set:
+        ///* $00100010$ (Patient Name, e.g. SMITH^JOHN)
+        ///* $0020000D$ (Study Instance UID, e.g. 1.2.276.0.7230010.3.200.12)
+        ///* $00280030$ (Pixel Aspect Ratio, e.g. 0.5\0.5)
+        ///
+        ///The field [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HelpCommandLineExternalArgumentFields {
             get {
@@ -111,6 +113,15 @@ namespace ClearCanvas.ImageViewer.Externals {
         internal static string MenuExternals {
             get {
                 return ResourceManager.GetString("MenuExternals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Value cannot be empty.
+        /// </summary>
+        internal static string MessageValueCannotBeEmpty {
+            get {
+                return ResourceManager.GetString("MessageValueCannotBeEmpty", resourceCulture);
             }
         }
         

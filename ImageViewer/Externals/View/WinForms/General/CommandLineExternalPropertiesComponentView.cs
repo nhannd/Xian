@@ -32,18 +32,19 @@
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.ImageViewer.Externals.General;
 
-namespace ClearCanvas.ImageViewer.Externals.View.WinForms
+namespace ClearCanvas.ImageViewer.Externals.View.WinForms.General
 {
-	[ExtensionOf(typeof (AddNewExternalComponentViewExtensionPoint))]
-	public class AddNewExternalComponentView : WinFormsView, IApplicationComponentView
+	[ExtensionOf(typeof (CommandLineExternalPropertiesComponentViewExtensionPoint))]
+	public class CommandLineExternalPropertiesComponentView : WinFormsView, IApplicationComponentView
 	{
-		private AddNewExternalComponent _component;
-		private ExternalPropertiesComponentControl _control;
+		private CommandLineExternalPropertiesComponent _component;
+		private CommandLineExternalPropertiesComponentControl _control;
 
 		public void SetComponent(IApplicationComponent component)
 		{
-			_component = (AddNewExternalComponent) component;
+			_component = (CommandLineExternalPropertiesComponent)component;
 		}
 
 		public override object GuiElement
@@ -52,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms
 			{
 				if (_control == null)
 				{
-					_control = new ExternalPropertiesComponentControl(_component);
+					_control = new CommandLineExternalPropertiesComponentControl(_component);
 				}
 				return _control;
 			}

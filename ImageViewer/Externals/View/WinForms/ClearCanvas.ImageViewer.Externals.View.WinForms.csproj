@@ -55,21 +55,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddNewExternalComponent.cs" />
-    <Compile Include="AddNewExternalComponentView.cs" />
-    <Compile Include="ExternalPropertiesComponent.cs" />
-    <Compile Include="ExternalPropertiesComponentControl.cs">
+    <Compile Include="General\CommandLineExternalPropertiesComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ExternalPropertiesComponentControl.Designer.cs">
-      <DependentUpon>ExternalPropertiesComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ExternalPropertiesComponentView.cs" />
-    <Compile Include="General\CommandLineExternalConfigurationControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="General\CommandLineExternalConfigurationControl.Designer.cs">
-      <DependentUpon>CommandLineExternalConfigurationControl.cs</DependentUpon>
+    <Compile Include="General\CommandLineExternalPropertiesComponentControl.Designer.cs">
+      <DependentUpon>CommandLineExternalPropertiesComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ExternalsConfigurationComponentView.cs" />
     <Compile Include="ExternalsConfigurationComponentControl.cs">
@@ -78,7 +68,7 @@
     <Compile Include="ExternalsConfigurationComponentControl.Designer.cs">
       <DependentUpon>ExternalsConfigurationComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="General\CommandLineExternalConfigurationView.cs" />
+    <Compile Include="General\CommandLineExternalPropertiesComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -137,12 +127,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ExternalPropertiesComponentControl.resx">
-      <DependentUpon>ExternalPropertiesComponentControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="General\CommandLineExternalConfigurationControl.resx">
-      <DependentUpon>CommandLineExternalConfigurationControl.cs</DependentUpon>
+    <EmbeddedResource Include="General\CommandLineExternalPropertiesComponentControl.resx">
+      <DependentUpon>CommandLineExternalPropertiesComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ExternalsConfigurationComponentControl.resx">

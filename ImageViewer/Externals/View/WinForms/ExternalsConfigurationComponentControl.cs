@@ -30,6 +30,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -41,12 +43,30 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms
 	public partial class ExternalsConfigurationComponentControl : UserControl
 	{
 		private ExternalsConfigurationComponent _component;
+		private IList<ExternalType> _externalTypes;
 
 		public ExternalsConfigurationComponentControl(ExternalsConfigurationComponent component)
 		{
 			InitializeComponent();
 
 			_component = component;
+
+			SortedList<string, ExternalType> externalTypes = new SortedList<string, ExternalType>();
+			ExternalFactoryExtensionPoint extensionPoint = new ExternalFactoryExtensionPoint();
+			foreach (IExternalFactory externalFactory in extensionPoint.CreateExtensions())
+			{
+				ExternalType externalType = new ExternalType(externalFactory);
+				externalTypes.Add(externalType.ToString(), externalType);
+			}
+			_externalTypes = externalTypes.Values;
+
+			foreach (ExternalType externalType in _externalTypes)
+			{
+				ToolStripMenuItem item = new ToolStripMenuItem(externalType.ToString());
+				item.Tag = externalType;
+				item.Click += _mnuAdd_Click;
+				_mnuExternalTypes.Items.Add(item);
+			}
 
 			ResetExternalList();
 		}
@@ -124,14 +144,20 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms
 			_component.FlagModified();
 		}
 
-		private void _btnAdd_Click(object sender, EventArgs e)
+		private void _mnuAdd_Click(object sender, EventArgs e)
 		{
 			try
 			{
-				AddNewExternalComponent component = new AddNewExternalComponent();
-				if (_component.DesktopWindow.ShowDialogBox(component, Resources.TitleNewExternal) == DialogBoxAction.Ok)
+				ExternalType externalType = (ExternalType) ((ToolStripMenuItem) sender).Tag;
+				IExternal external = externalType.CreateExternal();
+
+				IExternalPropertiesComponent component = externalType.CreateExternalPropertiesComponent();
+				component.Load(external);
+
+				SimpleComponentContainer container = new SimpleComponentContainer(component);
+				if (_component.DesktopWindow.ShowDialogBox(container, Resources.TitleNewExternal) == DialogBoxAction.Ok)
 				{
-					IExternal external = component.External;
+					component.Update(external);
 					_component.Externals.Add(external);
 					ListViewItem lvi = CreateItem(external);
 					_listExternals.Items.Add(lvi);
@@ -146,6 +172,11 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms
 			}
 		}
 
+		private void _btnAdd_Click(object sender, EventArgs e)
+		{
+			_mnuExternalTypes.Show(_btnAdd, new Point(0, _btnAdd.Height));
+		}
+
 		private void _btnEdit_Click(object sender, EventArgs e)
 		{
 			if (this.SelectedItem != null)
@@ -155,19 +186,30 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms
 					IExternal external = this.SelectedItem.Tag as IExternal;
 					if (external != null)
 					{
-						ExternalPropertiesComponent component = new ExternalPropertiesComponent(external);
-						if (_component.DesktopWindow.ShowDialogBox(component, string.Format(Resources.TitleEditProperties, external.Label)) == DialogBoxAction.Ok)
+						foreach (ExternalType externalType in _externalTypes)
 						{
-							ResetExternalList();
-							foreach (ListViewItem item in _listExternals.Items)
+							if (externalType.SupportsExternal(external))
 							{
-								if (item.Tag == external)
+								IExternalPropertiesComponent component = externalType.CreateExternalPropertiesComponent();
+								component.Load(external);
+
+								SimpleComponentContainer container = new SimpleComponentContainer(component);
+								if (_component.DesktopWindow.ShowDialogBox(container, string.Format(Resources.TitleEditProperties, external.Label)) == DialogBoxAction.Ok)
 								{
-									item.Selected = true;
-									break;
+									component.Update(external);
+									ResetExternalList();
+									foreach (ListViewItem item in _listExternals.Items)
+									{
+										if (item.Tag == external)
+										{
+											item.Selected = true;
+											break;
+										}
+									}
+									_component.FlagModified();
 								}
+								break;
 							}
-							_component.FlagModified();
 						}
 					}
 				}
@@ -182,6 +224,38 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms
 		private void _listExternals_DoubleClick(object sender, EventArgs e)
 		{
 			_btnEdit.PerformClick();
+		}
+
+		private class ExternalType
+		{
+			private readonly IExternalFactory _externalFactory;
+
+			internal ExternalType(IExternalFactory externalFactory)
+			{
+				_externalFactory = externalFactory;
+			}
+
+			public bool SupportsExternal(IExternal external)
+			{
+				if (external == null)
+					return false;
+				return _externalFactory.ExternalType.IsAssignableFrom(external.GetType());
+			}
+
+			public IExternal CreateExternal()
+			{
+				return _externalFactory.CreateNew();
+			}
+
+			public IExternalPropertiesComponent CreateExternalPropertiesComponent()
+			{
+				return _externalFactory.CreatePropertiesComponent();
+			}
+
+			public override string ToString()
+			{
+				return _externalFactory.Description;
+			}
 		}
 	}
 }

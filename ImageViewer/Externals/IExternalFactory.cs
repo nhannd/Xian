@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Externals
@@ -39,7 +40,9 @@ namespace ClearCanvas.ImageViewer.Externals
 	public interface IExternalFactory
 	{
 		string Description { get; }
+		Type ExternalType { get; }
 		IExternal CreateNew();
+		IExternalPropertiesComponent CreatePropertiesComponent();
 	}
 
 	public abstract class ExternalFactoryBase<T> : IExternalFactory where T : IExternal, new()
@@ -56,6 +59,11 @@ namespace ClearCanvas.ImageViewer.Externals
 			get { return _description; }
 		}
 
+		public Type ExternalType
+		{
+			get { return typeof (T); }
+		}
+
 		public IExternal CreateNew()
 		{
 			T t = new T();
@@ -64,5 +72,7 @@ namespace ClearCanvas.ImageViewer.Externals
 			t.WindowStyle = WindowStyle.Normal;
 			return t;
 		}
+
+		public abstract IExternalPropertiesComponent CreatePropertiesComponent();
 	}
 }

@@ -35,12 +35,11 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Externals.CoreTools
 {
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
-	public class PresentationImageExternalTool : ImageViewerTool
+	public class PresentationImageExternalTool : ExternalToolBase
 	{
 		private readonly IResourceResolver _resourceResolver = new ResourceResolver(typeof (PresentationImageExternalTool).Assembly);
 
@@ -94,6 +93,12 @@ namespace ClearCanvas.ImageViewer.Externals.CoreTools
 				_selectedPresentationImage = this.SelectedPresentationImage;
 				_actions = null;
 			}
+		}
+
+		protected override void OnExternalsChanged(EventArgs e)
+		{
+			base.OnExternalsChanged(e);
+			_actions = null;
 		}
 	}
 }

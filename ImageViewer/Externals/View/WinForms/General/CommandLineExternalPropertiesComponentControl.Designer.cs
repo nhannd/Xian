@@ -1,6 +1,6 @@
 ﻿namespace ClearCanvas.ImageViewer.Externals.View.WinForms.General
 {
-	partial class CommandLineExternalConfigurationControl {
+	partial class CommandLineExternalPropertiesComponentControl {
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
@@ -24,7 +24,7 @@
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CommandLineExternalConfigurationControl));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CommandLineExternalPropertiesComponentControl));
 			this._lblCommand = new System.Windows.Forms.Label();
 			this._txtCommand = new System.Windows.Forms.TextBox();
 			this._lblWorkingDir = new System.Windows.Forms.Label();
@@ -43,11 +43,15 @@
 			this._lblMultiValueFieldSeparator = new System.Windows.Forms.Label();
 			this._chkAllowMultiValueFields = new System.Windows.Forms.CheckBox();
 			this._dlgCommand = new System.Windows.Forms.OpenFileDialog();
+			this._pnlName = new System.Windows.Forms.Panel();
+			this._txtName = new System.Windows.Forms.TextBox();
+			this._lblName = new System.Windows.Forms.Label();
 			this._pnlCommand.SuspendLayout();
 			this._pnlWorkingDir.SuspendLayout();
 			this._pnlArguments.SuspendLayout();
 			this._pnlOptions.SuspendLayout();
 			this._pnlMultiValueFieldSeparator.SuspendLayout();
+			this._pnlName.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _lblCommand
@@ -159,7 +163,24 @@
 			this._dlgCommand.DefaultExt = "exe";
 			resources.ApplyResources(this._dlgCommand, "_dlgCommand");
 			// 
-			// CommandLineExternalConfigurationControl
+			// _pnlName
+			// 
+			this._pnlName.Controls.Add(this._txtName);
+			this._pnlName.Controls.Add(this._lblName);
+			resources.ApplyResources(this._pnlName, "_pnlName");
+			this._pnlName.Name = "_pnlName";
+			// 
+			// _txtName
+			// 
+			resources.ApplyResources(this._txtName, "_txtName");
+			this._txtName.Name = "_txtName";
+			// 
+			// _lblName
+			// 
+			resources.ApplyResources(this._lblName, "_lblName");
+			this._lblName.Name = "_lblName";
+			// 
+			// CommandLineExternalPropertiesComponentControl
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -167,7 +188,8 @@
 			this.Controls.Add(this._pnlArguments);
 			this.Controls.Add(this._pnlWorkingDir);
 			this.Controls.Add(this._pnlCommand);
-			this.Name = "CommandLineExternalConfigurationControl";
+			this.Controls.Add(this._pnlName);
+			this.Name = "CommandLineExternalPropertiesComponentControl";
 			this._pnlCommand.ResumeLayout(false);
 			this._pnlCommand.PerformLayout();
 			this._pnlWorkingDir.ResumeLayout(false);
@@ -178,6 +200,8 @@
 			this._pnlOptions.PerformLayout();
 			this._pnlMultiValueFieldSeparator.ResumeLayout(false);
 			this._pnlMultiValueFieldSeparator.PerformLayout();
+			this._pnlName.ResumeLayout(false);
+			this._pnlName.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -202,5 +226,8 @@
 		private System.Windows.Forms.Panel _pnlMultiValueFieldSeparator;
 		private System.Windows.Forms.Button _btnCommand;
 		private System.Windows.Forms.OpenFileDialog _dlgCommand;
+		private System.Windows.Forms.Panel _pnlName;
+		private System.Windows.Forms.TextBox _txtName;
+		private System.Windows.Forms.Label _lblName;
 	}
 }

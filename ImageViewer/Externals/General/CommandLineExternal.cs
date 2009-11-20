@@ -37,20 +37,20 @@ using System.Security;
 using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Externals.General
 {
 	[ExtensionOf(typeof (ExternalFactoryExtensionPoint))]
 	public sealed class CommandLineExternalDefinitionFactory : ExternalFactoryBase<CommandLineExternal>
 	{
-		public CommandLineExternalDefinitionFactory() : base("Launch via Command Line") {}
+		public CommandLineExternalDefinitionFactory() : base("Launch via Command Line") { }
+
+		public override IExternalPropertiesComponent CreatePropertiesComponent()
+		{
+			return new CommandLineExternalPropertiesComponent();
+		}
 	}
 
-	[ExtensionPoint]
-	public sealed class CommandLineExternalConfigurationViewExtensionPoint : ExtensionPoint<IExternalPropertiesView> {}
-
-	[AssociateView(typeof (CommandLineExternalConfigurationViewExtensionPoint))]
 	public class CommandLineExternal : ExternalBase
 	{
 		private string _argumentString = string.Empty;
@@ -137,6 +137,9 @@ namespace ClearCanvas.ImageViewer.Externals.General
 			{
 				if (this._password != value)
 				{
+					if (this._password != null)
+						this._password.Dispose();
+
 					this._password = value;
 					base.NotifyPropertyChanged("SecurePassword");
 					base.NotifyPropertyChanged("Password");
@@ -157,13 +160,14 @@ namespace ClearCanvas.ImageViewer.Externals.General
 			}
 			set
 			{
-				if (this._password != null)
-					this._password.Dispose();
-				this._password = new SecureString();
-				foreach (char c in value)
-					this._password.AppendChar(c);
-				base.NotifyPropertyChanged("SecurePassword");
-				base.NotifyPropertyChanged("Password");
+				SecureString newPassword = null;
+				if (value != null)
+				{
+					newPassword = new SecureString();
+					foreach (char c in value)
+						newPassword.AppendChar(c);
+				}
+				this.SecurePassword = newPassword;
 			}
 		}
 
@@ -204,11 +208,6 @@ namespace ClearCanvas.ImageViewer.Externals.General
 					base.NotifyPropertyChanged("MultiValueFieldSeparator");
 				}
 			}
-		}
-
-		public string ArgumentFieldsHelpText
-		{
-			get { return SR.HelpCommandLineExternalArgumentFields; }
 		}
 
 		public override bool IsValid

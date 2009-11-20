@@ -63,9 +63,11 @@
       <DependentUpon>ExternalsConfigurationSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="CoreTools\DisplaySetExternalTool.cs" />
+    <Compile Include="CoreTools\ExternalToolBase.cs" />
     <Compile Include="CoreTools\PresentationImageExternalTool.cs" />
     <Compile Include="ExternalCollection.cs" />
     <Compile Include="General\CommandLineExternal.cs" />
+    <Compile Include="General\CommandLineExternalPropertiesComponent.cs" />
     <Compile Include="General\ExternalBase.cs" />
     <Compile Include="General\FileArgumentHint.cs" />
     <Compile Include="General\FileSetArgumentHint.cs" />
@@ -73,8 +75,8 @@
     <Compile Include="General\IArgumentHintResolver.cs" />
     <Compile Include="General\SopArgumentHint.cs" />
     <Compile Include="IExternal.cs" />
+    <Compile Include="IExternalPropertiesComponent.cs" />
     <Compile Include="IExternalFactory.cs" />
-    <Compile Include="IExternalPropertiesView.cs" />
     <Compile Include="IPhysicalWorkspaceExternal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">

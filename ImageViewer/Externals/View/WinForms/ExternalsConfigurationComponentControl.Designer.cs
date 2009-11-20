@@ -24,6 +24,7 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
+			this.components = new System.ComponentModel.Container();
 			System.Windows.Forms.Panel _pnlContent;
 			System.Windows.Forms.FlowLayoutPanel _pnlButtons;
 			this._listExternals = new System.Windows.Forms.ListView();
@@ -32,6 +33,7 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms
 			this._btnAdd = new System.Windows.Forms.Button();
 			this._btnRemove = new System.Windows.Forms.Button();
 			this._btnEdit = new System.Windows.Forms.Button();
+			this._mnuExternalTypes = new System.Windows.Forms.ContextMenuStrip(this.components);
 			_pnlContent = new System.Windows.Forms.Panel();
 			_pnlButtons = new System.Windows.Forms.FlowLayoutPanel();
 			_pnlContent.SuspendLayout();
@@ -124,6 +126,11 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms
 			this._btnEdit.UseVisualStyleBackColor = true;
 			this._btnEdit.Click += new System.EventHandler(this._btnEdit_Click);
 			// 
+			// _mnuExternalTypes
+			// 
+			this._mnuExternalTypes.Name = "_mnuExternalTypes";
+			this._mnuExternalTypes.Size = new System.Drawing.Size(61, 4);
+			// 
 			// ExternalsConfigurationComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -145,5 +152,6 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms
 		private System.Windows.Forms.Button _btnRemove;
 		private System.Windows.Forms.ColumnHeader colDescription;
 		private System.Windows.Forms.Button _btnEdit;
+		private System.Windows.Forms.ContextMenuStrip _mnuExternalTypes;
 	}
 }
