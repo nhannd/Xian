@@ -46,10 +46,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Configuration
 
 		private MprSettings _settings;
 		private float _sliceSpacingFactor = 1;
-		private bool _autoSliceSpacing = true;
+		private bool _automaticSliceSpacing = true;
 
-		[ValidateGreaterThan(0f, Inclusive = false, Message = "Slice spacing must be greater than zero and less than or equal to 5.")]
-		[ValidateLessThan(5f, Inclusive = true, Message = "Slice spacing must be greater than zero and less than or equal to 5.")]
+		[ValidateGreaterThan(0.5f, Inclusive = true, Message = "MessageValidateSliceSpacing")]
+		[ValidateLessThan(10f, Inclusive = true, Message = "MessageValidateSliceSpacing")]
 		public float SliceSpacingFactor
 		{
 			get { return _sliceSpacingFactor; }
@@ -64,16 +64,26 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Configuration
 			}
 		}
 
-		public bool AutoSliceSpacing
+		public bool ProportionalSliceSpacing
 		{
-			get { return _autoSliceSpacing; }
+			get { return !_automaticSliceSpacing; }	
 			set
 			{
-				if (_autoSliceSpacing != value)
+				AutomaticSliceSpacing = !value;
+			}
+		}
+
+		public bool AutomaticSliceSpacing
+		{
+			get { return _automaticSliceSpacing; }
+			set
+			{
+				if (_automaticSliceSpacing != value)
 				{
-					_autoSliceSpacing = value;
+					_automaticSliceSpacing = value;
 					this.Modified = true;
 					this.NotifyPropertyChanged("AutoSliceSpacing");
+					this.NotifyPropertyChanged("ProportionalSliceSpacing");
 				}
 			}
 		}
@@ -84,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Configuration
 
 			_settings = MprSettings.Default;
 			_sliceSpacingFactor = _settings.SliceSpacingFactor;
-			_autoSliceSpacing = _settings.AutoSliceSpacing;
+			_automaticSliceSpacing = _settings.AutoSliceSpacing;
 		}
 
 		public override void Stop()
@@ -96,7 +106,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Configuration
 
 		public override void Save()
 		{
-			_settings.AutoSliceSpacing = _autoSliceSpacing;
+			_settings.AutoSliceSpacing = _automaticSliceSpacing;
 			_settings.SliceSpacingFactor = _sliceSpacingFactor;
 			_settings.Save();
 		}

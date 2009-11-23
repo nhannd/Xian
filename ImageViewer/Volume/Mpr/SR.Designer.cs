@@ -358,6 +358,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Slice spacing must be greater than or equal to 0.5 and less than or equal to 10..
+        /// </summary>
+        public static string MessageValidateSliceSpacing {
+            get {
+                return ResourceManager.GetString("MessageValidateSliceSpacing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to MPR.
         /// </summary>
         public static string Mpr {
