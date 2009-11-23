@@ -178,4 +178,7 @@
   <data name="LabelKeyboardShortcut" xml:space="preserve">
     <value>Shortcut</value>
   </data>
+  <data name="MessageErrorRetrievingSubtree" xml:space="preserve">
+    <value>Error retrieving data</value>
+  </data>
 </root>

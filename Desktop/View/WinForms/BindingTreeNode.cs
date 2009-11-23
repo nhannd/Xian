@@ -189,7 +189,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				// add a dummy child so that we get a "plus" sign next to the node
 				if (_parentTree.Binding.CanHaveSubTree(_item) && this.Nodes.Count == 0)
 				{
-					this.Nodes.Add(new TreeNode("dummy"));
+					this.Nodes.Add(new TreeNode(SR.MessageErrorRetrievingSubtree));
 				}
 			}
 
