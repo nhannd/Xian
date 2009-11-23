@@ -1198,7 +1198,10 @@ Preview.ReportPreview = function () {
 		
 		toggleTranscriptionErrors: function(hasErrors)
 		{
-			Field.show($("transcriptionErrorsDiv"), hasErrors);
+			if($("transcriptionErrorsDiv"))
+			{
+				Field.show($("transcriptionErrorsDiv"), hasErrors);
+			}
 		}
 	};
 }();
