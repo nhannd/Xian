@@ -384,7 +384,8 @@ img {
 	background-image: expression(
 		this.runtimeStyle.backgroundImage = "none",
 		this.runtimeStyle.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + this.src + "', sizingMethod='image')",
-		this.src = "../images/blank.gif"
+		imagePath = imagePath || "../images",
+		this.src = imagePath + "/blank.gif"
 	);
 }
 
