@@ -167,7 +167,6 @@ namespace ClearCanvas.Enterprise.Desktop
 		private bool _readOnly;
 		private bool _setModifiedOnListChange;
 
-		private readonly bool _showActiveColumn;
 		private event EventHandler _summarySelectionChanged;
 		private event EventHandler _itemDoubleClicked;
 
@@ -182,9 +181,8 @@ namespace ClearCanvas.Enterprise.Desktop
 			_summaryTable = new TTable();
 			_selectedItems = new List<TSummary>();
 
-			// by default, we show the "active" column if not in dialog mode (e.g. running as an admin screen)
-			// we could expose this for customization if exceptions to this rule are found
-			_showActiveColumn = !_dialogMode;
+			// by default, we do not include de-activated items in dialog mode
+			this.IncludeDeactivatedItems = !_dialogMode;
 		}
 
 		/// <summary>
@@ -218,6 +216,11 @@ namespace ClearCanvas.Enterprise.Desktop
 			set { _readOnly = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets whether this component includes de-activated items in the list.
+		/// </summary>
+		public bool IncludeDeactivatedItems { get; set; }
+
 		#region ApplicationComponent overrides
 
 		public override void Start()
@@ -225,7 +228,7 @@ namespace ClearCanvas.Enterprise.Desktop
 			InitializeTable(_summaryTable);
 
 			// add the "Active" column if needed
-			if (_showActiveColumn && SupportsDeactivation)
+			if (SupportsDeactivation && IncludeDeactivatedItems)
 			{
 				_summaryTable.Columns.Add(new TableColumn<TSummary, bool>("Active",
 					delegate(TSummary item)
@@ -744,7 +747,7 @@ namespace ClearCanvas.Enterprise.Desktop
 			TListRequest request = new TListRequest();
 			request.Page.FirstRow = firstRow;
 			request.Page.MaxRows = maxRows;
-			request.IncludeDeactivated = !this.DialogMode;	// generally, include de-activated for admin scenario, but not dialog mode
+			request.IncludeDeactivated = this.IncludeDeactivatedItems;
 
 			return ListItems(request);
 		}

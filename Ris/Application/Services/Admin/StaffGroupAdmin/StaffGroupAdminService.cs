@@ -98,6 +98,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
 			where.Name.SortAsc(0);
 			if (request.ElectiveGroupsOnly)
 				where.Elective.EqualTo(true);
+			if (!request.IncludeDeactivated)
+				where.Deactivated.EqualTo(false);
 
             IStaffGroupBroker broker = PersistenceContext.GetBroker<IStaffGroupBroker>();
 			IList<StaffGroup> items = broker.Find(where, request.Page);
