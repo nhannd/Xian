@@ -790,7 +790,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following procedure(s) are being checked-in earlier/later than expected.  The check-in time should be no more than {0} prior to and {1} after the scheduled time..
+        ///   Looks up a localized string similar to The following procedure(s) are either unscheduled, or they are being checked-in earlier/later than expected.  The check-in time should be no more than {0} prior to and {1} after the scheduled time..
         /// </summary>
         internal static string MessageCheckInProceduresTooLateOrTooEarly {
             get {

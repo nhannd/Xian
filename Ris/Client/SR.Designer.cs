@@ -1339,6 +1339,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The procedure has not been scheduled..
+        /// </summary>
+        internal static string MessageCheckInUnscheduledProcedure {
+            get {
+                return ResourceManager.GetString("MessageCheckInUnscheduledProcedure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A communication error occured while attempting to contact the server..
         /// </summary>
         internal static string MessageCommunicationError {

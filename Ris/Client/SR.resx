@@ -915,4 +915,7 @@
   <data name="MessageMustSelectTemplate" xml:space="preserve">
     <value>An action must be selected.</value>
   </data>
+  <data name="MessageCheckInUnscheduledProcedure" xml:space="preserve">
+    <value>The procedure has not been scheduled.</value>
+  </data>
 </root>

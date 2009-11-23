@@ -36,7 +36,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
@@ -118,63 +117,19 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public void Accept()
 		{
-			var earlyProcedures = new List<ProcedureSummary>();
-			var lateProcedures = new List<ProcedureSummary>();
-			var checkedProcedureRefs = new List<EntityRef>();
+			var checkedEntries = CollectionUtils.Select(_checkInOrderTable.Items, entry => entry.Checked);
 
-			// Get the list of Order EntityRef from the table
-			foreach (var entry in _checkInOrderTable.Items)
-			{
-				if (!entry.Checked)
-					continue;
-
-				checkedProcedureRefs.Add(entry.Procedure.ProcedureRef);
-
-				string checkInValidationMessage;
-				var result = CheckInSettings.Validate(entry.Procedure.ScheduledStartTime, _checkInTime, out checkInValidationMessage);
-				switch (result)
-				{
-					case CheckInSettings.ValidateResult.CheckingInTooEarly:
-						earlyProcedures.Add(entry.Procedure);
-						break;
-					case CheckInSettings.ValidateResult.CheckingInTooLate:
-						lateProcedures.Add(entry.Procedure);
-						break;
-					default:
-						break;
-				}
-			}
-
-			if (earlyProcedures.Count > 0 || lateProcedures.Count > 0)
-			{
-				var earlyThreshold = TimeSpan.FromMinutes(CheckInSettings.Default.EarlyCheckInWarningThreshold);
-				var lateThreshold = TimeSpan.FromMinutes(CheckInSettings.Default.LateCheckInWarningThreshold);
-
-
-				var messageBuilder = new StringBuilder();
-				messageBuilder.AppendFormat(SR.MessageCheckInProceduresTooLateOrTooEarly,
-					TimeSpanFormat.FormatDescriptive(earlyThreshold),
-					TimeSpanFormat.FormatDescriptive(lateThreshold));
-				messageBuilder.AppendLine();
-				messageBuilder.AppendLine();
-				CollectionUtils.ForEach(earlyProcedures, procedure => messageBuilder.AppendLine(ProcedureFormat.Format(procedure)));
-				CollectionUtils.ForEach(lateProcedures, procedure => messageBuilder.AppendLine(ProcedureFormat.Format(procedure)));
-				messageBuilder.AppendLine();
-				messageBuilder.Append(SR.MessageConfirmCheckInProcedures);
-
-				if (DialogBoxAction.No == this.Host.DesktopWindow.ShowMessageBox(messageBuilder.ToString(), MessageBoxActions.YesNo))
-				{
-					return;
-				}
-			}
+			if (!Confirm(checkedEntries))
+				return;
 
 			try
 			{
-				Platform.GetService( (IRegistrationWorkflowService service) => service.CheckInProcedure(
+				var checkedProcedureRefs = CollectionUtils.Map(checkedEntries, (CheckInOrderTableEntry entry) => entry.Procedure.ProcedureRef);
+				Platform.GetService((IRegistrationWorkflowService service) => service.CheckInProcedure(
 					new CheckInProcedureRequest(checkedProcedureRefs, 
 						DowntimeRecovery.InDowntimeRecoveryMode ? (DateTime?) _checkInTime : null)));
 
-				this.Exit(ApplicationComponentExitCode.Accepted);
+				Exit(ApplicationComponentExitCode.Accepted);
 			}
 			catch (Exception e)
 			{
@@ -184,12 +139,58 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public void Cancel()
 		{
-			this.Exit(ApplicationComponentExitCode.None);
+			Exit(ApplicationComponentExitCode.None);
 		}
 
 		private void OrderCheckedStateChangedEventHandler(object sender, EventArgs e)
 		{
 			NotifyPropertyChanged("AcceptEnabled");
 		}
+
+		private bool Confirm(IEnumerable<CheckInOrderTableEntry> checkedEntries)
+		{
+			var warnProcedures = new List<ProcedureSummary>();
+
+			// Get the list of Order EntityRef from the table
+			foreach (var entry in checkedEntries)
+			{
+				string checkInValidationMessage;
+				var result = CheckInSettings.Validate(entry.Procedure.ScheduledStartTime, _checkInTime, out checkInValidationMessage);
+				switch (result)
+				{
+					case CheckInSettings.ValidateResult.TooEarly:
+					case CheckInSettings.ValidateResult.TooLate:
+					case CheckInSettings.ValidateResult.NotScheduled:
+						warnProcedures.Add(entry.Procedure);
+						break;
+					default:
+						break;
+				}
+			}
+
+			if (warnProcedures.Count > 0)
+			{
+				var earlyThreshold = TimeSpan.FromMinutes(CheckInSettings.Default.EarlyCheckInWarningThreshold);
+				var lateThreshold = TimeSpan.FromMinutes(CheckInSettings.Default.LateCheckInWarningThreshold);
+
+
+				var messageBuilder = new StringBuilder();
+				messageBuilder.AppendFormat(SR.MessageCheckInProceduresTooLateOrTooEarly,
+											TimeSpanFormat.FormatDescriptive(earlyThreshold),
+											TimeSpanFormat.FormatDescriptive(lateThreshold));
+				messageBuilder.AppendLine();
+				messageBuilder.AppendLine();
+				CollectionUtils.ForEach(warnProcedures, procedure => messageBuilder.AppendLine(ProcedureFormat.Format(procedure)));
+				messageBuilder.AppendLine();
+				messageBuilder.Append(SR.MessageConfirmCheckInProcedures);
+
+				if (DialogBoxAction.No == this.Host.DesktopWindow.ShowMessageBox(messageBuilder.ToString(), MessageBoxActions.YesNo))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
 	}
 }

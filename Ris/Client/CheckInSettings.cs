@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -86,13 +86,16 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		public enum ValidateResult { Success, CheckingInTooEarly, CheckingInTooLate }
+		public enum ValidateResult { Success, TooEarly, TooLate, NotScheduled }
 
 		public static ValidateResult Validate(DateTime? scheduledTime, DateTime checkInTime, out string message)
 		{
 			message = "";
 			if (scheduledTime == null)
-				return ValidateResult.Success;
+			{
+				message = SR.MessageCheckInUnscheduledProcedure;
+				return ValidateResult.NotScheduled;
+			}
 
 			var earlyBound = scheduledTime.Value.AddMinutes(-Default.EarlyCheckInWarningThreshold);
 			var lateBound = scheduledTime.Value.AddMinutes(Default.LateCheckInWarningThreshold);
@@ -101,14 +104,14 @@ namespace ClearCanvas.Ris.Client
 			{
 				var threshold = TimeSpan.FromMinutes(Default.EarlyCheckInWarningThreshold);
 				message = string.Format(SR.MessageAlertCheckingInTooEarly, TimeSpanFormat.FormatDescriptive(threshold));
-				return ValidateResult.CheckingInTooEarly;
+				return ValidateResult.TooEarly;
 			}
 
 			if (checkInTime > lateBound)
 			{
 				var threshold = TimeSpan.FromMinutes(Default.LateCheckInWarningThreshold);
 				message = string.Format(SR.MessageAlertCheckingInTooLate, TimeSpanFormat.FormatDescriptive(threshold));
-				return ValidateResult.CheckingInTooLate;
+				return ValidateResult.TooLate;
 			}
 
 			return ValidateResult.Success;
