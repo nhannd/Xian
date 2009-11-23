@@ -1119,7 +1119,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				else if (item == _sortDescendingButton)
 					this.SortDescendingButtonCheck = _table.SortParams.Ascending == false;
 				else if (item == _sortSeparator)
-					return;
+					continue;
 				else
 				{
 					if (item.Name.Equals(_table.SortParams.Column.Name))
