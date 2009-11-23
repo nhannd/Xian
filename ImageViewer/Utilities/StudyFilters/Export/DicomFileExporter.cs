@@ -7,6 +7,7 @@ using ClearCanvas.Dicom.Utilities.Anonymization;
 using ClearCanvas.Common;
 using System.IO;
 using ClearCanvas.ImageViewer.Services.Auditing;
+using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 {
@@ -14,8 +15,10 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 	{
 		private readonly ICollection<FileInfo> _files;
 		private DicomAnonymizer _anonymizer;
+		private volatile bool _overwrite;
 		private volatile bool _canceled;
 		private volatile AuditedInstances _exportedInstances;
+		private SynchronizationContext _synchronizationContext;
 
 		public DicomFileExporter(ICollection<FileInfo> files)
 		{
@@ -35,21 +38,13 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 
 			try
 			{
-				if (_files.Count > 10)
-				{
-					BackgroundTask task = new BackgroundTask(DoExport, true);
-					ProgressDialog.Show(task, Application.ActiveDesktopWindow, true, ProgressBarStyle.Continuous);
-					
-					if (_canceled)
-						result = EventResult.MinorFailure;
+				BackgroundTask task = new BackgroundTask(DoExport, true);
+				ProgressDialog.Show(task, Application.ActiveDesktopWindow, true, ProgressBarStyle.Continuous);
+				
+				if (_canceled)
+					result = EventResult.MinorFailure;
 
-					return !_canceled;
-				}
-				else
-				{
-					BlockingOperation.Run(DoExport);
-					return true;
-				}
+				return !_canceled;
 			}
 			catch
 			{
@@ -64,8 +59,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 
 		private bool Initialize()
 		{
+			_synchronizationContext = SynchronizationContext.Current;
+
 			_exportedInstances = new AuditedInstances();
 			_canceled = false;
+			_overwrite = false;
 
 			if (Anonymize)
 			{
@@ -126,22 +124,37 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 				
 				string fileName = System.IO.Path.Combine(OutputPath, dicomFile.MediaStorageSopInstanceUid);
 				fileName += ".dcm";
+				CheckFileExists(fileName); // this will never happen for anonymized images.
+				if (_canceled)
+					return;
+
 				dicomFile.Save(fileName);
 			}
 			else
 			{
 				_exportedInstances.AddPath(file.FullName, false);
 
-				string newpath = System.IO.Path.Combine(OutputPath, file.Name);
-				if (!File.Exists(newpath))
-					file.CopyTo(newpath);
+				string fileName = System.IO.Path.Combine(OutputPath, file.Name);
+				CheckFileExists(fileName);
+				if (_canceled)
+					return;
+
+				file.CopyTo(fileName, true);
 			}
 		}
 
-		private void DoExport()
+		private void CheckFileExists(string fileName)
 		{
-			foreach (FileInfo file in _files)
-				SaveFile(file);
+			if (_overwrite || !File.Exists(fileName))
+				return;
+
+			_synchronizationContext.Send(
+				delegate
+				{
+					_canceled = DialogBoxAction.No == Application.ActiveDesktopWindow.ShowMessageBox(SR.MessageConfirmOverwriteFiles, MessageBoxActions.YesNo);
+				}, null);
+
+			_overwrite = !_canceled;
 		}
 
 		private void DoExport(IBackgroundTaskContext context)
@@ -155,11 +168,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 				{
 					string message = String.Format(SR.MessageFormatExportingFiles, i + 1, fileCount);
 					BackgroundTaskProgress progress = new BackgroundTaskProgress(i, fileCount, message);
+					context.ReportProgress(progress);
 
 					SaveFile(file);
-
-					context.ReportProgress(progress);
-					if (context.CancelRequested)
+					
+					if (_canceled || context.CancelRequested)
 					{
 						_canceled = true;
 						context.Cancel();

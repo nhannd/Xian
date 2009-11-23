@@ -362,4 +362,9 @@
   <data name="MessagePatientNameCannotBeEmpty" xml:space="preserve">
     <value>The patient's name cannot be empty.</value>
   </data>
+  <data name="MessageConfirmOverwriteFiles" xml:space="preserve">
+    <value>A file exists with the same name as the one that is about to be saved.
+
+Would you like to continue and overwrite all conflicting files?</value>
+  </data>
 </root>

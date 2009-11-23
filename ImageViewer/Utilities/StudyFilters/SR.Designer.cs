@@ -511,6 +511,17 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A file exists with the same name as the one that is about to be saved.
+        ///
+        ///Would you like to continue and overwrite all conflicting files?.
+        /// </summary>
+        internal static string MessageConfirmOverwriteFiles {
+            get {
+                return ResourceManager.GetString("MessageConfirmOverwriteFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid DICOM file: {0}.
         /// </summary>
         internal static string MessageDicomException {
