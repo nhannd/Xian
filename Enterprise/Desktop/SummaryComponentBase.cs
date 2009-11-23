@@ -164,18 +164,17 @@ namespace ClearCanvas.Enterprise.Desktop
 
 		private readonly bool _dialogMode;
 		private bool _hostedMode;
-		private bool _readOnly;
 		private bool _setModifiedOnListChange;
 
 		private event EventHandler _summarySelectionChanged;
 		private event EventHandler _itemDoubleClicked;
 
-		public SummaryComponentBase()
+		protected SummaryComponentBase()
 			: this(false)
 		{
 		}
 
-		public SummaryComponentBase(bool dialogMode)
+		protected SummaryComponentBase(bool dialogMode)
 		{
 			_dialogMode = dialogMode;
 			_summaryTable = new TTable();
@@ -210,11 +209,7 @@ namespace ClearCanvas.Enterprise.Desktop
 		/// Gets or sets whether this component is in a read-only mode.  If true, the defaul add, edit, delete, and toggle activation
 		/// actions will be hidden.
 		/// </summary>
-		public bool ReadOnly
-		{
-			get { return _readOnly; }
-			set { _readOnly = value; }
-		}
+		public bool ReadOnly { get; set; }
 
 		/// <summary>
 		/// Gets or sets whether this component includes de-activated items in the list.
@@ -230,11 +225,7 @@ namespace ClearCanvas.Enterprise.Desktop
 			// add the "Active" column if needed
 			if (SupportsDeactivation && IncludeDeactivatedItems)
 			{
-				_summaryTable.Columns.Add(new TableColumn<TSummary, bool>("Active",
-					delegate(TSummary item)
-					{
-						return !GetItemDeactivated(item);
-					}, 0.15f));
+				_summaryTable.Columns.Add(new TableColumn<TSummary, bool>("Active", item => !GetItemDeactivated(item), 0.15f));
 			}
 
 			// build the action model
@@ -277,13 +268,7 @@ namespace ClearCanvas.Enterprise.Desktop
 			// setup paging
 			if (SupportsPaging)
 			{
-				_pagingController = new PagingController<TSummary>(
-					delegate(int firstRow, int maxRows)
-					{
-						return ListItems(firstRow, maxRows);
-					}
-				);
-
+				_pagingController = new PagingController<TSummary>(ListItems);
 				_actionModel.Merge(new PagingActionModel<TSummary>(_pagingController, _summaryTable, Host.DesktopWindow));
 
 				_summaryTable.Items.AddRange(_pagingController.GetFirst());
@@ -330,7 +315,7 @@ namespace ClearCanvas.Enterprise.Desktop
 			}
 			set
 			{
-				Selection previousSelection = new Selection(_selectedItems);
+				var previousSelection = new Selection(_selectedItems);
 				if (!previousSelection.Equals(value))
 				{
 					_selectedItems = new TypeSafeListWrapper<TSummary>(value.Items);
@@ -402,11 +387,9 @@ namespace ClearCanvas.Enterprise.Desktop
 				IList<TSummary> editedItems;
 				if (EditItems(_selectedItems, out editedItems))
 				{
-					foreach (TSummary item in editedItems)
+					foreach (var item in editedItems)
 					{
-						_summaryTable.Items.Replace(
-							delegate(TSummary x) { return IsSameItem(item, x); },
-							item);
+						_summaryTable.Items.Replace(x => IsSameItem(item, x), item);
 					}
 
 					this.SummarySelection = new Selection(editedItems);
@@ -429,7 +412,7 @@ namespace ClearCanvas.Enterprise.Desktop
 			{
 				if (_selectedItems.Count == 0) return;
 
-				DialogBoxAction action = this.Host.ShowMessageBox(SR.MessageConfirmDeleteSelectedItems, MessageBoxActions.YesNo);
+				var action = this.Host.ShowMessageBox(SR.MessageConfirmDeleteSelectedItems, MessageBoxActions.YesNo);
 				if (action == DialogBoxAction.Yes)
 				{
 					string failureMessage;
@@ -437,7 +420,7 @@ namespace ClearCanvas.Enterprise.Desktop
 
 					if (DeleteItems(_selectedItems, out deletedItems, out failureMessage))
 					{
-						List<TSummary> notDeletedItems = new List<TSummary>(_selectedItems);
+						var notDeletedItems = new List<TSummary>(_selectedItems);
 
 						// remove from table
 						CollectionUtils.ForEach(deletedItems, 
@@ -472,11 +455,9 @@ namespace ClearCanvas.Enterprise.Desktop
 				IList<TSummary> editedItems;
 				if (UpdateItemsActivation(_selectedItems, out editedItems))
 				{
-					foreach (TSummary item in editedItems)
+					foreach (var item in editedItems)
 					{
-						_summaryTable.Items.Replace(
-							delegate(TSummary x) { return IsSameItem(item, x); },
-							item);
+						_summaryTable.Items.Replace(x => IsSameItem(item, x), item);
 					}
 
 					this.SummarySelection = new Selection(editedItems);
@@ -662,7 +643,7 @@ namespace ClearCanvas.Enterprise.Desktop
 		{
 			get
 			{
-				FieldInfo f = GetDeactivatedField();
+				var f = GetDeactivatedField();
 				return f != null && f.FieldType.Equals(typeof (bool));
 			}
 		}
@@ -675,7 +656,7 @@ namespace ClearCanvas.Enterprise.Desktop
 		/// <returns></returns>
 		protected virtual bool GetItemDeactivated(TSummary item)
 		{
-			FieldInfo field = GetDeactivatedField();
+			var field = GetDeactivatedField();
 			return field == null ? false : (bool)field.GetValue(item);
 		}
 
@@ -744,10 +725,11 @@ namespace ClearCanvas.Enterprise.Desktop
 
 		protected override IList<TSummary> ListItems(int firstRow, int maxRows)
 		{
-			TListRequest request = new TListRequest();
-			request.Page.FirstRow = firstRow;
-			request.Page.MaxRows = maxRows;
-			request.IncludeDeactivated = this.IncludeDeactivatedItems;
+			var request = new TListRequest
+			              	{
+			              		Page = {FirstRow = firstRow, MaxRows = maxRows},
+			              		IncludeDeactivated = this.IncludeDeactivatedItems
+			              	};
 
 			return ListItems(request);
 		}

@@ -57,15 +57,11 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
-			_staffSummaryComponent = new StaffSummaryComponent();
-			_staffSummaryComponent.IncludeDeactivatedItems = false;
-			_staffSummaryComponent.HostedMode = true;
+			_staffSummaryComponent = new StaffSummaryComponent {IncludeDeactivatedItems = false, HostedMode = true};
 			_staffSummaryComponent.SummarySelectionChanged += OnSummaryComponentSummarySelectionChanged;
 			_staffSummaryComponent.ItemDoubleClicked += OnSummaryComponentItemDoubleClicked;
 
-			_staffGroupSummaryComponent = new StaffGroupSummaryComponent();
-			_staffGroupSummaryComponent.IncludeDeactivatedItems = false;
-			_staffGroupSummaryComponent.HostedMode = true;
+			_staffGroupSummaryComponent = new StaffGroupSummaryComponent {IncludeDeactivatedItems = false, HostedMode = true};
 			_staffGroupSummaryComponent.SummarySelectionChanged += OnSummaryComponentSummarySelectionChanged;
 			_staffGroupSummaryComponent.ItemDoubleClicked += OnSummaryComponentItemDoubleClicked;
 

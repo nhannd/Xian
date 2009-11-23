@@ -29,8 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -56,35 +54,25 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
         [ReadOperation]
         public TextQueryResponse<StaffGroupSummary> TextQuery(StaffGroupTextQueryRequest request)
         {
-            IStaffGroupBroker broker = PersistenceContext.GetBroker<IStaffGroupBroker>();
-            StaffGroupAssembler assembler = new StaffGroupAssembler();
+            var broker = PersistenceContext.GetBroker<IStaffGroupBroker>();
+            var assembler = new StaffGroupAssembler();
 
-            TextQueryHelper<StaffGroup, StaffGroupSearchCriteria, StaffGroupSummary> helper
-                = new TextQueryHelper<StaffGroup, StaffGroupSearchCriteria, StaffGroupSummary>(
+            var helper = new TextQueryHelper<StaffGroup, StaffGroupSearchCriteria, StaffGroupSummary>(
                     delegate
                     {
-                        string rawQuery = request.TextQuery;
+                        var rawQuery = request.TextQuery;
 
                         // allow matching on name (assume entire query is a name which may contain spaces)
-                        StaffGroupSearchCriteria nameCriteria = new StaffGroupSearchCriteria();
+                        var nameCriteria = new StaffGroupSearchCriteria();
                         nameCriteria.Name.StartsWith(rawQuery);
 						if(request.ElectiveGroupsOnly)
 							nameCriteria.Elective.EqualTo(true);
 
-                        return new StaffGroupSearchCriteria[]{ nameCriteria };
+                        return new []{ nameCriteria };
                     },
-                    delegate(StaffGroup group)
-                    {
-                        return assembler.CreateSummary(group);
-                    },
-                    delegate(StaffGroupSearchCriteria[] criteria, int threshold)
-                    {
-                        return broker.Count(criteria) <= threshold;
-                    },
-                    delegate(StaffGroupSearchCriteria[] criteria, SearchResultPage page)
-                    {
-                        return broker.Find(criteria, page);
-                    });
+                    assembler.CreateSummary,
+                    (criteria, threshold) => broker.Count(criteria) <= threshold,
+                    broker.Find);
 
             return helper.Query(request);
         }
@@ -94,23 +82,19 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
         {
             Platform.CheckForNullReference(request, "request");
 
-        	StaffGroupSearchCriteria where = new StaffGroupSearchCriteria();
+        	var where = new StaffGroupSearchCriteria();
 			where.Name.SortAsc(0);
 			if (request.ElectiveGroupsOnly)
 				where.Elective.EqualTo(true);
 			if (!request.IncludeDeactivated)
 				where.Deactivated.EqualTo(false);
 
-            IStaffGroupBroker broker = PersistenceContext.GetBroker<IStaffGroupBroker>();
-			IList<StaffGroup> items = broker.Find(where, request.Page);
+            var broker = PersistenceContext.GetBroker<IStaffGroupBroker>();
+			var items = broker.Find(where, request.Page);
 
-            StaffGroupAssembler assembler = new StaffGroupAssembler();
+            var assembler = new StaffGroupAssembler();
             return new ListStaffGroupsResponse(
-                CollectionUtils.Map<StaffGroup, StaffGroupSummary>(items,
-                    delegate(StaffGroup item)
-                    {
-                        return assembler.CreateSummary(item);
-                    })
+                CollectionUtils.Map(items, (StaffGroup item) => assembler.CreateSummary(item))
                 );
         }
 
@@ -121,34 +105,33 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.StaffGroupRef, "request.StaffGroupRef");
 
-            StaffGroup item = PersistenceContext.Load<StaffGroup>(request.StaffGroupRef);
+            var item = PersistenceContext.Load<StaffGroup>(request.StaffGroupRef);
 
-            StaffGroupAssembler assembler = new StaffGroupAssembler();
+            var assembler = new StaffGroupAssembler();
             return new LoadStaffGroupForEditResponse(assembler.CreateDetail(item, PersistenceContext));
         }
 
         [ReadOperation]
         public LoadStaffGroupEditorFormDataResponse LoadStaffGroupEditorFormData(LoadStaffGroupEditorFormDataRequest request)
         {
-			IList<Staff> allStaff = PersistenceContext.GetBroker<IStaffBroker>().FindAll(false);
+			var allStaff = PersistenceContext.GetBroker<IStaffBroker>().FindAll(false);
 
-			List<Type> worklistClasses = WorklistAdminService.ListClassesHelper(null, null, false);
+			var worklistClasses = WorklistAdminService.ListClassesHelper(null, null, false);
 
 			// grab the persistent worklists
-			IWorklistBroker broker = PersistenceContext.GetBroker<IWorklistBroker>();
-			List<string> persistentClassNames = CollectionUtils.Select(worklistClasses,
-				delegate(Type t) { return !Worklist.GetIsStatic(t); })
-				.ConvertAll<string>(delegate(Type t) { return Worklist.GetClassName(t); });
+			var broker = PersistenceContext.GetBroker<IWorklistBroker>();
+			var persistentClassNames = 
+				CollectionUtils.Select(worklistClasses, t => !Worklist.GetIsStatic(t))
+				.ConvertAll(t => Worklist.GetClassName(t));
 
-			IList<Worklist> adminWorklists = broker.Find(null, false, persistentClassNames, null);
+			var adminWorklists = broker.Find(null, false, persistentClassNames, null);
 			
-			StaffAssembler staffAssembler = new StaffAssembler();
-			WorklistAssembler worklistAssembler = new WorklistAssembler();
+			var staffAssembler = new StaffAssembler();
+			var worklistAssembler = new WorklistAssembler();
             return new LoadStaffGroupEditorFormDataResponse(
-                CollectionUtils.Map<Staff, StaffSummary>(allStaff,
-					delegate(Staff staff) { return staffAssembler.CreateStaffSummary(staff, PersistenceContext); }),
-				CollectionUtils.Map<Worklist, WorklistSummary>(adminWorklists,
-					delegate(Worklist worklist) { return worklistAssembler.GetWorklistSummary(worklist, PersistenceContext); }));
+                CollectionUtils.Map(allStaff, (Staff staff) => staffAssembler.CreateStaffSummary(staff, PersistenceContext)),
+				CollectionUtils.Map(adminWorklists, (Worklist worklist) => worklistAssembler.GetWorklistSummary(worklist, PersistenceContext))
+				);
         }
 
         [UpdateOperation]
@@ -158,12 +141,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.StaffGroup, "request.StaffGroup");
 
-            StaffGroup item = new StaffGroup();
+            var item = new StaffGroup();
 
-            StaffGroupAssembler assembler = new StaffGroupAssembler();
-			bool worklistEditable = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.Worklist);
-        	bool isNewStaffGroup = true;
-			assembler.UpdateStaffGroup(item, request.StaffGroup, worklistEditable, isNewStaffGroup, PersistenceContext);
+            var assembler = new StaffGroupAssembler();
+			var worklistEditable = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.Worklist);
+			assembler.UpdateStaffGroup(item, request.StaffGroup, worklistEditable, true, PersistenceContext);
 
             PersistenceContext.Lock(item, DirtyState.New);
             PersistenceContext.SynchState();
@@ -179,12 +161,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
             Platform.CheckMemberIsSet(request.StaffGroup, "request.StaffGroup");
             Platform.CheckMemberIsSet(request.StaffGroup.StaffGroupRef, "request.StaffGroup.StaffGroupRef");
 
-            StaffGroup item = PersistenceContext.Load<StaffGroup>(request.StaffGroup.StaffGroupRef);
+            var item = PersistenceContext.Load<StaffGroup>(request.StaffGroup.StaffGroupRef);
 
-            StaffGroupAssembler assembler = new StaffGroupAssembler();
-			bool worklistEditable = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.Worklist);
-			bool isNewStaffGroup = false;
-			assembler.UpdateStaffGroup(item, request.StaffGroup, worklistEditable, isNewStaffGroup, PersistenceContext);
+            var assembler = new StaffGroupAssembler();
+			var worklistEditable = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.Worklist);
+			assembler.UpdateStaffGroup(item, request.StaffGroup, worklistEditable, false, PersistenceContext);
 
             PersistenceContext.SynchState();
 
@@ -197,13 +178,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
 		{
 			try
 			{
-				IStaffGroupBroker broker = PersistenceContext.GetBroker<IStaffGroupBroker>();
-				StaffGroup item = broker.Load(request.StaffGroupRef, EntityLoadFlags.Proxy);
+				var broker = PersistenceContext.GetBroker<IStaffGroupBroker>();
+				var item = broker.Load(request.StaffGroupRef, EntityLoadFlags.Proxy);
 
 				// Remove worklist association before deleting a staff group
-				IList<Worklist> worklists = PersistenceContext.GetBroker<IWorklistBroker>().Find(item);
-				CollectionUtils.ForEach(worklists,
-					delegate(Worklist worklist) { worklist.GroupSubscribers.Remove(item); });
+				var worklists = PersistenceContext.GetBroker<IWorklistBroker>().Find(item);
+				CollectionUtils.ForEach(worklists, worklist => worklist.GroupSubscribers.Remove(item));
 				
 				broker.Delete(item);
 				PersistenceContext.SynchState();
