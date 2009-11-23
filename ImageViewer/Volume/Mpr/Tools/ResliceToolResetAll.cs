@@ -77,22 +77,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 
 		public void ResetAll()
 		{
-			DrawableUndoableCommand command = new DrawableUndoableCommand(new ImageBoxesDrawable(this.ImageViewer.PhysicalWorkspace));
+			DrawableUndoableCommand command = new DrawableUndoableCommand(this.ImageViewer.PhysicalWorkspace);
+			command.Name = SR.CommandMprReset;
 
-			MemorableUndoableCommand resliceToolGraphicsStateBeginCommand = new MemorableUndoableCommand(_resliceToolsState);
-			resliceToolGraphicsStateBeginCommand.BeginState = _resliceToolsState.CreateMemento();
-			resliceToolGraphicsStateBeginCommand.EndState = null;
-			command.Enqueue(resliceToolGraphicsStateBeginCommand);
-
-			MemorableUndoableCommand mprWorkspaceStateCommand = new MemorableUndoableCommand(_mprWorkspaceState);
-			mprWorkspaceStateCommand.BeginState = _mprWorkspaceState.CreateMemento();
-			mprWorkspaceStateCommand.EndState = _mprWorkspaceState.InitialState;
-			command.Enqueue(mprWorkspaceStateCommand);
-
-			MemorableUndoableCommand resliceToolGraphicsStateEndCommand = new MemorableUndoableCommand(_resliceToolsState);
-			resliceToolGraphicsStateEndCommand.BeginState = null;
-			resliceToolGraphicsStateEndCommand.EndState = _resliceToolsState.InitialState;
-			command.Enqueue(resliceToolGraphicsStateEndCommand);
+			MemorableUndoableCommand toolGroupStateCommand = new MemorableUndoableCommand(this.ToolGroupState);
+			toolGroupStateCommand.BeginState = this.ToolGroupState.CreateMemento();
+			toolGroupStateCommand.EndState = this.InitialToolGroupStateMemento;
+			command.Enqueue(toolGroupStateCommand);
 
 			command.Execute();
 
@@ -125,23 +116,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 		{
 			// if this event fires as a result of a ResetAll operation, then CanReset is already true and this won't trigger CanResetChanged anyway
 			this.CanReset = true;
-		}
-
-		private class ImageBoxesDrawable : IDrawable
-		{
-			public event EventHandler Drawing;
-			private readonly IPhysicalWorkspace _physicalWorkspace;
-
-			public ImageBoxesDrawable(IPhysicalWorkspace physicalWorkspace)
-			{
-				_physicalWorkspace = physicalWorkspace;
-			}
-
-			public void Draw()
-			{
-				foreach (IImageBox imageBox in _physicalWorkspace.ImageBoxes)
-					imageBox.Draw();
-			}
 		}
 	}
 }

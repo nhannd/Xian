@@ -61,6 +61,33 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Move MPR.
+        /// </summary>
+        public static string CommandMprMove {
+            get {
+                return ResourceManager.GetString("CommandMprMove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset MPR.
+        /// </summary>
+        public static string CommandMprReset {
+            get {
+                return ResourceManager.GetString("CommandMprReset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reslice MPR.
+        /// </summary>
+        public static string CommandMprReslice {
+            get {
+                return ResourceManager.GetString("CommandMprReslice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to load the selected images in MPR.
         /// </summary>
         public static string ExceptionMprLoadFailure {

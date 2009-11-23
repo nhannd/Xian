@@ -49,12 +49,20 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 			private LineGraphic _lineGraphic;
 			private SliceControlGraphic _sliceControlGraphic;
 			private StandardStatefulGraphic _stateControlGraphic;
+			private ResliceTool _owner;
+			private object _controlGraphicBeginState;
 
-			public ResliceToolGraphic()
+			public ResliceToolGraphic(ResliceTool owner)
 			{
 				LineGraphic lineGraphic = new LineGraphic();
-				MoveControlGraphic moveControlGraphic = new MoveControlGraphic(lineGraphic);
-				LineSegmentStretchControlGraphic lineControlGraphic = new LineSegmentStretchControlGraphic(moveControlGraphic);
+				MprMoveControlGraphic moveControlGraphic = new MprMoveControlGraphic(lineGraphic);
+				moveControlGraphic.UndoableOperationStart += OnControlGraphicUndoableOperationStart;
+				moveControlGraphic.UndoableOperationStop += OnControlGraphicUndoableOperationStop;
+				moveControlGraphic.UndoableOperationCancel += OnControlGraphicUndoableOperationCancel;
+				MprLineStretchControlGraphic lineControlGraphic = new MprLineStretchControlGraphic(moveControlGraphic);
+				lineControlGraphic.UndoableOperationStart += OnControlGraphicUndoableOperationStart;
+				lineControlGraphic.UndoableOperationStop += OnControlGraphicUndoableOperationStop;
+				lineControlGraphic.UndoableOperationCancel += OnControlGraphicUndoableOperationCancel;
 				SliceControlGraphic sliceControlGraphic = new SliceControlGraphic(lineControlGraphic, this);
 				StandardStatefulGraphic statefulGraphic = new StandardStatefulGraphic(sliceControlGraphic);
 				statefulGraphic.State = statefulGraphic.CreateInactiveState();
@@ -63,24 +71,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				_stateControlGraphic = statefulGraphic;
 				_sliceControlGraphic = sliceControlGraphic;
 				_lineGraphic = lineGraphic;
+				_owner = owner;
 			}
 
 			protected override void Dispose(bool disposing)
 			{
-				if (_lineGraphic != null)
-				{
-					_lineGraphic = null;
-				}
-
-				if (_sliceControlGraphic != null)
-				{
-					_sliceControlGraphic = null;
-				}
-
-				if (_stateControlGraphic != null)
-				{
-					_stateControlGraphic = null;
-				}
+				_owner = null;
+				_lineGraphic = null;
+				_sliceControlGraphic = null;
+				_stateControlGraphic = null;
 
 				base.Dispose(disposing);
 			}
@@ -159,47 +158,43 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 
 			public object CreateMemento()
 			{
-				_lineGraphic.CoordinateSystem = CoordinateSystem.Source;
-				try
-				{
-					return new ResliceToolGraphicMemento(_lineGraphic.StartPoint, _lineGraphic.EndPoint);
-				}
-				finally
-				{
-					_lineGraphic.ResetCoordinateSystem();
-				}
+				// this graphic is memorable, yes, but it's not the position of the line that is important, but rather the entire MPR state
+				// the graphic only implements IMemorable because the move and drag endpoint control graphics will automatically insert
+				// history commands for these operations for us.
+				return _owner.ToolGroup.ToolGroupState.CreateMemento();
 			}
 
 			public void SetMemento(object obj)
 			{
-				ResliceToolGraphicMemento memento = obj as ResliceToolGraphicMemento;
-				if (memento == null)
-					return;
-
-				_lineGraphic.Points.SuspendEvents();
-				_lineGraphic.CoordinateSystem = CoordinateSystem.Source;
-				try
-				{
-					_lineGraphic.StartPoint = memento.Point1;
-					_lineGraphic.EndPoint = memento.Point2;
-				}
-				finally
-				{
-					_lineGraphic.ResetCoordinateSystem();
-					_lineGraphic.Points.ResumeEvents();
-				}
+				_owner.ToolGroup.ToolGroupState.SetMemento(obj);
 			}
 
-			private class ResliceToolGraphicMemento
+			private void OnControlGraphicUndoableOperationStart(object sender, EventArgs e)
 			{
-				public readonly PointF Point1;
-				public readonly PointF Point2;
+				_controlGraphicBeginState = this.CreateMemento();
+			}
 
-				public ResliceToolGraphicMemento(PointF point1, PointF point2)
+			private void OnControlGraphicUndoableOperationCancel(object sender, EventArgs e)
+			{
+				_controlGraphicBeginState = null;
+			}
+
+			private void OnControlGraphicUndoableOperationStop(object sender, EventArgs e)
+			{
+				if (base.ImageViewer.CommandHistory != null)
 				{
-					this.Point1 = point1;
-					this.Point2 = point2;
+					DrawableUndoableCommand compositeCommand = new DrawableUndoableCommand(this.ImageViewer.PhysicalWorkspace);
+					compositeCommand.Name = ((ControlGraphic) sender).CommandName;
+
+					MemorableUndoableCommand toolGroupStateCommand = new MemorableUndoableCommand(this);
+					toolGroupStateCommand.BeginState = _controlGraphicBeginState;
+					toolGroupStateCommand.EndState = this.CreateMemento();
+					compositeCommand.Enqueue(toolGroupStateCommand);
+
+					base.ImageViewer.CommandHistory.AddCommand(compositeCommand);
 				}
+
+				_controlGraphicBeginState = null;
 			}
 
 			#endregion

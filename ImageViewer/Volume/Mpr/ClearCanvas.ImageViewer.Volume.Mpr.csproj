@@ -104,6 +104,7 @@
     <Compile Include="Tools\ResliceToolResetAll.cs" />
     <Compile Include="Tools\ResliceToolGraphic.cs" />
     <Compile Include="Utilities\DicomImagePlane.cs" />
+    <Compile Include="Tools\MprLineStretchControlGraphic.cs" />
     <Compile Include="Utilities\MouseImageViewerToolGroup.cs" />
     <Compile Include="Tools\ResliceToolGroup.cs">
       <SubType>Code</SubType>
@@ -111,6 +112,7 @@
     <Compile Include="Tools\ResliceTool.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tools\MprMoveControlGraphic.cs" />
     <Compile Include="Utilities\ObservableDisposableList.cs" />
     <Compile Include="Utilities\ProgressTask.cs" />
     <Compile Include="VolumeReference.cs" />

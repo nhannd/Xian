@@ -60,7 +60,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 			private ResliceToolGraphic _resliceGraphic;
 			private InteractivePolylineGraphicBuilder _lineGraphicBuilder;
 
-			private object _originalWorkspaceState;
 			private object _originalResliceToolsState;
 
 			private Color _hotColor = Color.SkyBlue;
@@ -75,6 +74,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				base.Behaviour |= MouseButtonHandlerBehaviour.SuppressOnTileActivate;
 
 				_resliceToolGroup = resliceToolGroup;
+			}
+
+			public ResliceToolGroup ToolGroup
+			{
+				get { return _resliceToolGroup; }
 			}
 
 			public string Label
@@ -210,7 +214,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				if (this.SliceImageBox == null)
 					throw new InvalidOperationException("Tool has nothing to control because the specified slice set is not visible.");
 
-				_resliceGraphic = new ResliceToolGraphic();
+				_resliceGraphic = new ResliceToolGraphic(this);
 				_resliceGraphic.Color = this.NormalColor;
 				_resliceGraphic.HotColor = this.HotColor;
 				_resliceGraphic.Points.PointChanged += OnAnchorPointChanged;
@@ -274,9 +278,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				if (provider == null)
 					return false;
 
-				// these mementos will be consumed when the graphic builder is completed or cancelled
-				_originalWorkspaceState = _resliceToolGroup._mprWorkspaceState.CreateMemento();
-				_originalResliceToolsState = _resliceToolGroup._resliceToolsState.CreateMemento();
+				// this memento will be consumed when the graphic builder is completed or cancelled
+				_originalResliceToolsState = _resliceToolGroup.ToolGroupState.CreateMemento();
 
 				TranslocateGraphic(_resliceGraphic, this.SelectedPresentationImage);
 
@@ -301,28 +304,18 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 			{
 				if (base.ImageViewer.CommandHistory != null)
 				{
-					DrawableUndoableCommand compositeCommand = new DrawableUndoableCommand(new ImageBoxesDrawable(this.ImageViewer.PhysicalWorkspace));
+					DrawableUndoableCommand compositeCommand = new DrawableUndoableCommand(this.ImageViewer.PhysicalWorkspace);
+					compositeCommand.Name = SR.CommandMprReslice;
 
-					MemorableUndoableCommand resliceToolGraphicsStateBeginCommand = new MemorableUndoableCommand(_resliceToolGroup._resliceToolsState);
-					resliceToolGraphicsStateBeginCommand.BeginState = _originalResliceToolsState;
-					resliceToolGraphicsStateBeginCommand.EndState = null;
-					compositeCommand.Enqueue(resliceToolGraphicsStateBeginCommand);
-
-					MemorableUndoableCommand mprWorkspaceStateCommand = new MemorableUndoableCommand(_resliceToolGroup._mprWorkspaceState);
-					mprWorkspaceStateCommand.BeginState = _originalWorkspaceState;
-					mprWorkspaceStateCommand.EndState = _resliceToolGroup._mprWorkspaceState.CreateMemento();
-					compositeCommand.Enqueue(mprWorkspaceStateCommand);
-
-					MemorableUndoableCommand resliceToolGraphicsStateEndCommand = new MemorableUndoableCommand(_resliceToolGroup._resliceToolsState);
-					resliceToolGraphicsStateEndCommand.BeginState = null;
-					resliceToolGraphicsStateEndCommand.EndState = _resliceToolGroup._resliceToolsState.CreateMemento();
-					compositeCommand.Enqueue(resliceToolGraphicsStateEndCommand);
+					MemorableUndoableCommand toolGroupStateCommand = new MemorableUndoableCommand(_resliceToolGroup.ToolGroupState);
+					toolGroupStateCommand.BeginState = _originalResliceToolsState;
+					toolGroupStateCommand.EndState = _resliceToolGroup.ToolGroupState.CreateMemento();
+					compositeCommand.Enqueue(toolGroupStateCommand);
 
 					base.ImageViewer.CommandHistory.AddCommand(compositeCommand);
 				}
 
 				_originalResliceToolsState = null;
-				_originalWorkspaceState = null;
 
 				RemoveGraphicBuilder();
 
@@ -331,15 +324,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 
 			private void OnGraphicBuilderCancelled(object sender, GraphicEventArgs e)
 			{
-				_resliceToolGroup._mprWorkspaceState.SetMemento(_originalWorkspaceState);
-				_resliceToolGroup._resliceToolsState.SetMemento(_originalResliceToolsState);
+				_resliceToolGroup.ToolGroupState.SetMemento(_originalResliceToolsState);
 
 				_originalResliceToolsState = null;
-				_originalWorkspaceState = null;
 
 				RemoveGraphicBuilder();
 
-				new ImageBoxesDrawable(this.ImageViewer.PhysicalWorkspace).Draw();
+				this.ImageViewer.PhysicalWorkspace.Draw();
 			}
 
 			private void OnAnchorPointChanged(object sender, IndexEventArgs e)

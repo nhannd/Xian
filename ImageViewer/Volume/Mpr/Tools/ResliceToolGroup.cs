@@ -103,8 +103,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 			base.Initialize();
 			base.TooltipPrefix = SR.MenuReslice;
 
-			_mprWorkspaceState = new MprWorkspaceState(this.ImageViewer);
-			_resliceToolsState = new ResliceToolGraphicsState(this);
+			_resliceToolGroupState = new ResliceToolGroupState(this);
 
 			this.InitializeResetAll();
 			if (this.ImageViewer != null)
@@ -122,16 +121,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 					this.ImageViewer.PhysicalWorkspace.LayoutCompleted -= PhysicalWorkspace_LayoutCompleted;
 				}
 
-				if (_mprWorkspaceState != null)
+				if (_resliceToolGroupState != null)
 				{
-					_mprWorkspaceState.Dispose();
-					_mprWorkspaceState = null;
-				}
-
-				if (_resliceToolsState != null)
-				{
-					_resliceToolsState.Dispose();
-					_resliceToolsState = null;
+					_resliceToolGroupState.Dispose();
+					_resliceToolGroupState = null;
 				}
 			}
 			this.DisposeResetAll();
@@ -180,17 +173,26 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 			get { return ActionModelRoot.CreateModel(this.GetType().FullName, "mprviewer-reslicemenu", this.Actions); }
 		}
 
-		#region MPR Workspace State
+		#region Reslice Tool Group State
 
-		private MprWorkspaceState _mprWorkspaceState;
-		private ResliceToolGraphicsState _resliceToolsState;
+		private ResliceToolGroupState _resliceToolGroupState;
 
-		private class ResliceToolGraphicsState : IMemorable, IDisposable
+		public IMemorable ToolGroupState
+		{
+			get { return _resliceToolGroupState; }
+		}
+
+		public object InitialToolGroupStateMemento
+		{
+			get { return _resliceToolGroupState.InitialState; }
+		}
+
+		private class ResliceToolGroupState : IMemorable, IDisposable
 		{
 			private ResliceToolGroup _owner;
 			private object _initialState;
 
-			public ResliceToolGraphicsState(ResliceToolGroup owner)
+			public ResliceToolGroupState(ResliceToolGroup owner)
 			{
 				_owner = owner;
 				_initialState = this.CreateMemento();
@@ -209,75 +211,46 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 
 			public object CreateMemento()
 			{
-				ResliceToolGraphicsStateMemento state = new ResliceToolGraphicsStateMemento();
+				ResliceToolGroupStateMemento state = new ResliceToolGroupStateMemento();
+
+				foreach (IImageSet imageSet in _owner.ImageViewer.MprWorkspace.ImageSets)
+				{
+					foreach (MprDisplaySet displaySet in imageSet.DisplaySets)
+						state.SlicingStates.Add(displaySet, displaySet.CreateMemento());
+				}
+
 				foreach (ResliceTool tool in _owner.SlaveTools)
 				{
 					if (tool.SliceSet != null)
-						state.Add(tool, tool.CreateMemento());
+						state.ToolStates.Add(tool, tool.CreateMemento());
 				}
+
 				return state;
 			}
 
 			public void SetMemento(object memento)
 			{
-				ResliceToolGraphicsStateMemento state = memento as ResliceToolGraphicsStateMemento;
+				ResliceToolGroupStateMemento state = memento as ResliceToolGroupStateMemento;
 				if (state == null)
 					return;
+
+				foreach (KeyValuePair<MprDisplaySet, object> pair in state.SlicingStates)
+				{
+					pair.Key.SetMemento(pair.Value);
+				}
 
 				foreach (ResliceTool tool in _owner.SlaveTools)
 				{
-					if (tool.SliceSet != null && state.ContainsKey(tool))
-						tool.SetMemento(state[tool]);
+					if (tool.SliceSet != null && state.ToolStates.ContainsKey(tool))
+						tool.SetMemento(state.ToolStates[tool]);
 				}
 			}
 
-			private class ResliceToolGraphicsStateMemento : Dictionary<ResliceTool, object> {}
-		}
-
-		private class MprWorkspaceState : IMemorable, IDisposable
-		{
-			private MprViewerComponent _mprViewer;
-			private object _initialState;
-
-			public MprWorkspaceState(MprViewerComponent mprViewer)
+			private class ResliceToolGroupStateMemento
 			{
-				_mprViewer = mprViewer;
-				_initialState = this.CreateMemento();
+				public readonly Dictionary<ResliceTool, object> ToolStates = new Dictionary<ResliceTool, object>();
+				public readonly Dictionary<MprDisplaySet, object> SlicingStates = new Dictionary<MprDisplaySet, object>();
 			}
-
-			public void Dispose()
-			{
-				_mprViewer = null;
-				_initialState = null;
-			}
-
-			public object InitialState
-			{
-				get { return _initialState; }
-			}
-
-			public object CreateMemento()
-			{
-				MprWorkspaceStateMemento state = new MprWorkspaceStateMemento();
-				foreach (IImageSet imageSet in _mprViewer.MprWorkspace.ImageSets)
-				{
-					foreach (MprDisplaySet displaySet in imageSet.DisplaySets)
-						state.Add(displaySet, displaySet.CreateMemento());
-				}
-				return state;
-			}
-
-			public void SetMemento(object memento)
-			{
-				MprWorkspaceStateMemento state = memento as MprWorkspaceStateMemento;
-				if (state == null)
-					return;
-
-				foreach (KeyValuePair<MprDisplaySet, object> pair in state)
-					pair.Key.SetMemento(pair.Value);
-			}
-
-			private class MprWorkspaceStateMemento : Dictionary<MprDisplaySet, object> {}
 		}
 
 		private class ImageHint
