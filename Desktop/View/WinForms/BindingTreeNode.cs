@@ -32,7 +32,6 @@
 using System;
 using System.Windows.Forms;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Trees;
 
 namespace ClearCanvas.Desktop.View.WinForms
@@ -149,9 +148,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			if (treeViewImageList != null)
 			{
-				IResourceResolver resolver = _parentTree.Binding.GetResourceResolver(_item);
-				IconSet iconSet = _parentTree.Binding.GetIconSet(_item);
-				ImageList.ImageCollection imageCollection = treeViewImageList.Images;
+				var resolver = _parentTree.Binding.GetResourceResolver(_item);
+				var iconSet = _parentTree.Binding.GetIconSet(_item);
+				var imageCollection = treeViewImageList.Images;
 				if (iconSet == null)
 				{
 					this.ImageIndex = -1;
@@ -218,7 +217,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// get the sub-tree from the binding
 			// note: there is no guarantee that successive calls will return the same ITree instance,
 			// which is why we create a new BindingTreeLevelManager
-            ITree subTree = _parentTree.Binding.GetSubTree(_item);
+            var subTree = _parentTree.Binding.GetSubTree(_item);
             if (subTree != null)
             {
 				_subtreeManager = new BindingTreeLevelManager(subTree, this.Nodes, _treeView);
