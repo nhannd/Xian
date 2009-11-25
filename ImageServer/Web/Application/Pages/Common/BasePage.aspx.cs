@@ -47,6 +47,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
             //Set the Page Theme, then set the Page object on the ImageServerConstants
             Page.Theme = ImageServerConstants.Default;
             ImageServerConstants.Theme = Page.Theme;
+
+            // This is necessary because Safari and Chrome browsers don't display the Menu control correctly.
+            if (Request.ServerVariables["http_user_agent"].IndexOf("Safari", StringComparison.CurrentCultureIgnoreCase) != -1)
+              Page.ClientTarget = "uplevel";
         }
 
         protected void SetPageTitle(string title)
