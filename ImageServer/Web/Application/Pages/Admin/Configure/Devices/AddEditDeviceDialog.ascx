@@ -3,8 +3,6 @@
 <%@ Register Src="ThrottleSettingsTab.ascx" TagName="ThrottleSettingsTab" TagPrefix="localAsp" %>
 <ccAsp:ModalDialog ID="ModalDialog1" runat="server" Width="450px">
     <ContentTemplate>
-        <ccAsp:JQuery runat="server" />
-
         <script type="text/javascript">
 
             function AllowStorage_Changed() {
@@ -32,7 +30,7 @@
                 }
                 if ($("#<%=AcceptKOPR.ClientID %>").attr('checked') == true)
                     $("#<%=AllowStorageCheckBox.ClientID %>").attr('checked', true);
-            });       
+            }       
 
 
         </script>

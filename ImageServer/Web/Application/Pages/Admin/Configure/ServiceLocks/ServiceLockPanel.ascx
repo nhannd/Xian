@@ -3,8 +3,6 @@
 <%@ Register Src="ServiceLockGridView.ascx" TagName="ServiceLockGridView" TagPrefix="localAsp" %>
 <%@ Register Src="EditServiceLockDialog.ascx" TagName="EditServiceLockDialog" TagPrefix="localAsp" %>
 
-<ccAsp:JQuery ID="JQuery1" runat="server" MultiSelect="true" />
-
 <asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
        
@@ -55,7 +53,7 @@ function MultiSelect() {
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
-                        <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
+                        <table width="100%" cellpadding="3" cellspacing="0" class="ToolbarButtonPanel">
                             <tr><td >
                             <asp:UpdatePanel ID="ToolbarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>

@@ -19,7 +19,6 @@
 	border-bottom: #3D98D1 solid 1px;	
 	border-left: #3D98D1 solid 5px;
 	border-top: #3D98D1 solid 5px;
-	width: 30px;
 }
 
 .DefaultModalDialogTitleBarTitle
@@ -46,7 +45,7 @@
 .DefaultModalDialogTitleBarRight
 {
 	cursor: move;
-	text-align: center;
+	text-align: right;
 	padding-top: 5px;
 	color: #205F87;
 	font-family: Sans-Serif;
@@ -58,7 +57,6 @@
 	border-bottom: #3D98D1 solid 1px;	
 	border-right: #3D98D1 solid 5px;
 	border-top: #3D98D1 solid 5px;
-	width: 30px;
 }
 
 .DefaultModalDialogContent
@@ -69,7 +67,6 @@
 	border-left: #3D98D1 5px solid;
 	border-right: #3D98D1 5px solid;
 	border-bottom: #3D98D1 5px solid;
-	
 }
 
 .DefaultModalDialogButtonPanel
@@ -118,6 +115,11 @@
 	margin-left: 3px;
 	margin-right: 3px;
 	border: solid 1px #618FAD;
+}
+
+.DialogTextArea
+{
+    background: white;
 }
 
 .DialogTextBoxInvalidInput

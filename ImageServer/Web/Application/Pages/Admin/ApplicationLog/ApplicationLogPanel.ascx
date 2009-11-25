@@ -92,6 +92,7 @@
 			<asp:TableRow Height="100%">
 				<asp:TableCell>
 					<table width="100%" cellpadding="0" cellspacing="0" >
+<!--
 						<tr>
 							<td>
 								<asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
@@ -102,9 +103,10 @@
 								</asp:UpdatePanel>
 							</td>
 						</tr>
+-->						
 						<tr>
 							<td>
-								<asp:Panel ID="Panel2" runat="server" Style="border: solid 1px #3d98d1;">
+								<asp:Panel ID="Panel2" runat="server" >
 									<table width="100%" cellpadding="0" cellspacing="0">
 										<tr>
 											<td style="border-bottom: solid 1px #3d98d1">

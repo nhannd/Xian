@@ -37,7 +37,7 @@
 </div>
 </div>
 </td>
-<td>
+<td valign="top">
 <div class="DashboardItemContainer">
 <div class="DashboardItemHeader"><a href="../Configure/FileSystems/Default.aspx">File Systems</a></div>
 <div class="DashboardInfoContainer">

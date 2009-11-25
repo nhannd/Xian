@@ -3,10 +3,8 @@
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.SearchPanel" %>
 <%@ Register Src="WorkQueueItemList.ascx" TagName="WorkQueueItemList" TagPrefix="localAsp" %>
     
-   
 <asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-        <ccAsp:JQuery runat="server" ID="JQuery1" MultiSelect="true" Effects="true" />
         <script type="text/Javascript">
         Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(MultiSelect);
         Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(InputHover);
@@ -79,7 +77,7 @@
                 </asp:TableRow>
                      <asp:TableRow>
                         <asp:TableCell>
-                        <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
+                        <table width="100%" cellpadding="3" cellspacing="0" class="ToolbarButtonPanel">
                             <tr><td >
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>

@@ -439,11 +439,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             
             ModalPopupExtender.Show();
             
-            if (State==ShowState.Hide)
-            {
-                // need refresh
-                RefreshUI();
-            }
+            // need to refresh to ensure that dialog is visible.
+            RefreshUI();
 
             State = ShowState.Show;
         }

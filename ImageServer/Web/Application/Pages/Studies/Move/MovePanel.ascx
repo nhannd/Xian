@@ -5,8 +5,7 @@
 
 <asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-    
-    <ccAsp:JQuery runat="server" ID="JQuery1" MultiSelect="true" Effects="true" />    
+
     <script>
         Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(InputHover);
         Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(MultiSelect);
@@ -45,7 +44,7 @@
   <tr><td style="background-color: #3D98D1"><asp:Image ID="Image2" runat="server" SkinID="Spacer" Height="4" /></td></tr>  
 
   <tr>
-  <td style="border-bottom: solid 1px #3d98d1;" class="ToolbarButtonPanel" style="width: 100%; color: #205F87; font-family: Sans-serif; font-weight: bold; font-size: 18px; padding-left: 5px;">Destination Devices</td>
+  <td class="ToolbarButtonPanel" style="width: 100%; color: #205F87; font-family: Sans-serif; font-weight: bold; font-size: 18px; padding-left: 5px; border-bottom: solid 1px #3d98d1;">Destination Devices</td>
   </tr>
 
   <tr>

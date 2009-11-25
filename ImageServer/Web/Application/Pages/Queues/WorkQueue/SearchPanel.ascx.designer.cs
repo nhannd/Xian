@@ -23,15 +23,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue {
         protected global::System.Web.UI.UpdatePanel SearchUpdatePanel;
         
         /// <summary>
-        /// JQuery1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.JQuery JQuery1;
-        
-        /// <summary>
         /// Table control.
         /// </summary>
         /// <remarks>

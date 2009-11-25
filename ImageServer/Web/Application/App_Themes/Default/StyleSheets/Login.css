@@ -1,9 +1,9 @@
-.LoginBody {
-	    text-align: center;
-	    min-width: 600px;
-	    margin: 0;
-	    background-color: #c5dee7;
-    }
+.LoginBody 
+{
+    min-width: 600px;
+    margin: 0;
+    background-color: #c5dee7;
+}
 
 #LoginSplash
 {
@@ -13,7 +13,6 @@
     margin-right: auto;
     width: 686px;
     height: 400px;
-    text-align: right;
     background: white url(../images/LoginSplash.png) no-repeat;  
 }
 
@@ -83,9 +82,9 @@ a.LoginLink:hover
 	font-family: sans-serif;
 	text-align: right;
     color: #666666;
-	position: relative; 
-	top: 20px;
-	right: 25px;
+    position: absolute;
+    top: 20px;
+    left: 550px;
 }
 
 .LoginErrorMessagePanel
@@ -94,8 +93,8 @@ a.LoginLink:hover
     padding: 5px 7px 5px 7px;
     border: solid 1px #ff0000;
     position: relative; 
-    top: 365px; 
-    left: -7px;   
+    top: 404px; 
+    left: 6px;   
     width: 657px;
     font-size: 14px;
     font-weight: bold;

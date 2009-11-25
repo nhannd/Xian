@@ -3,8 +3,6 @@
 
 <%@ Register Src="StudyIntegrityQueueItemList.ascx" TagName="StudyIntegrityQueueItemList" TagPrefix="localAsp" %>
 
-<ccAsp:JQuery ID="JQuery1" runat="server" MultiSelect="true" />
-
 <asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="conditional">
     <ContentTemplate>
     

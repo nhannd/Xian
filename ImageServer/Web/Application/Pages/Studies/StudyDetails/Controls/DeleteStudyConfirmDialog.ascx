@@ -99,7 +99,7 @@
                 </tr>
                 </table>
             </div>
-            <div id="ReasonPanel">
+            <div id="ReasonPanel" class="DeleteStudyReasonPanel">
                 <table border="0">
                    <tr valign="top">
                         <td>

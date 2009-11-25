@@ -40,7 +40,7 @@
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
-                        <table width="100%" cellpadding="0" cellspacing="0" class="ToolbarButtonPanel">
+                        <table width="100%" cellpadding="3" cellspacing="0" class="ToolbarButtonPanel">
                             <tr><td >
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>

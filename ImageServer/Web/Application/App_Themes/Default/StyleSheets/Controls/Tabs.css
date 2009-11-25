@@ -38,10 +38,10 @@
 .TabControl .ajax__tab_tab
 {
 	padding: 6px 5px 3px 5px;
-	font-family: san-Serif;
+	font-family: Sans-Serif;
 	color: #3a74ae;
 	font-size: 12px;
-	font-weight:bold;
+	font-weight: bold;
 	background: url(../../../../PersistantImage.ashx?key=TabInactiveMiddle) repeat-x;
 }
 .TabControl .ajax__tab_hover .ajax__tab_outer
@@ -55,6 +55,7 @@
 .TabControl .ajax__tab_hover .ajax__tab_tab
 {
     color: #618FAD;
+    font-family: Sans-Serif;
 }
 
 .TabControl .ajax__tab_active .ajax__tab_outer
@@ -70,4 +71,5 @@
 	background: url(../../../../PersistantImage.ashx?key=TabActiveMiddle) repeat-x;
 	color: #3a74ae;
 	font-weight: bold;
+	font-family: Sans-Serif;
 }

@@ -3,8 +3,6 @@
 <%@ Register Src="DeviceGridView.ascx" TagName="DeviceGridView" TagPrefix="localAsp" %>
 <asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-        <ccAsp:JQuery runat="server" ID="JQuery1" MultiSelect="true" Effects="true" />
-
         <script>
         Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(InputHover);
         Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(MultiSelect);
@@ -66,7 +64,7 @@
                 </asp:TableRow>
                 <asp:TableRow Height="100%">
                     <asp:TableCell>
-                        <table width="100%" cellpadding="0" cellspacing="0" class="ToolbarButtonPanel">
+                        <table width="100%" cellpadding="3" cellspacing="0" class="ToolbarButtonPanel">
                             <tr>
                                 <td>
                                     <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
@@ -93,7 +91,6 @@
                                             <tr>
                                                 <td style="background-color: white;">
                                                     <localAsp:DeviceGridView ID="DeviceGridViewControl1" Height="500px" runat="server" />
-                                                    </localAsp:DeviceGridView>
                                                 </td>
                                             </tr>
                                         </table>

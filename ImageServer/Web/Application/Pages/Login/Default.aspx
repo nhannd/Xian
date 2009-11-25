@@ -12,7 +12,6 @@
 </head>
 <body class="LoginBody">
     
-    
     <form runat="server">
 
     <ccAsp:CheckJavascript runat="server" ID="CheckJavascript" />            
@@ -23,12 +22,13 @@
                 
     <asp:Panel ID="LoginSplash" DefaultButton="LoginButton" runat="server">
 
-        <div align="right" id="VersionInfoPanel">
+        <div id="VersionInfoPanel" style="text-align: right">
             <table cellpadding="1">
-            <tr><td>Version:</td><td align="left"><%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%></td></tr>
-            <tr><td>Mode:</td><td><%= EnterpriseMode ? "Enterprise" : "Stand-alone"%></td></tr>
+            <tr><td align="right">Version:</td><td align="left"><%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%></td></tr>
+            <tr><td align="right">Mode:</td><td><%= EnterpriseMode ? "Enterprise" : "Stand-alone"%></td></tr>
             </table>
-        </div>
+        </div>            
+
     
         <div id="LoginCredentials">
         

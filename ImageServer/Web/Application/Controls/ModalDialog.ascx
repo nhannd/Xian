@@ -16,18 +16,18 @@
                                 <asp:Panel runat="server" ID="DefaultTitlePanel">
                                     <asp:Table ID="Table3" runat="server" CellPadding="0" CellSpacing="0" Width="100%">
                                         <asp:TableRow>
-                                            <asp:TableCell ID="TitleBarLeft" CssClass="DefaultModalDialogTitleBarLeft" Width="10px">
+                                            <asp:TableCell ID="TitleBarLeft" CssClass="DefaultModalDialogTitleBarLeft">
                                             </asp:TableCell>
-                                            <asp:TableCell ID="TitleBarCenter" CssClass="DefaultModalDialogTitleBarTitle">
+                                            <asp:TableCell ID="TitleBarCenter" CssClass="DefaultModalDialogTitleBarTitle" Width="100%">
                                                     <asp:Panel runat="server" style="padding-bottom: 4px">
                                                         <asp:Label ID="TitleLabel" runat="server" Text="&nbsp;"></asp:Label>
                                                         </asp:Panel>                                                    
                                             </asp:TableCell>
-                                            <asp:TableCell CssClass="DefaultModalDialogTitleBarRight">
+                                            <asp:TableCell CssClass="DefaultModalDialogTitleBarRight" HorizontalAlign="Right">
                                                 <asp:UpdateProgress runat="server" ID="UpdateProgress" AssociatedUpdatePanelID="UpdatePanel1" DisplayAfter="1000">
-                                                        <ProgressTemplate>
-                                                            <asp:Image ID="Image5" runat="server" SkinID="AjaxLoadingIndicator" style="display:block; padding-right: 5px; padding-bottom: 5px;" />     
-                                                        </ProgressTemplate>
+                                                    <ProgressTemplate>
+                                                        <asp:Image ID="Image5" runat="server" SkinID="AjaxLoadingIndicator" style="display:block; padding-right: 5px; padding-bottom: 5px;"/>     
+                                                    </ProgressTemplate>
                                                 </asp:UpdateProgress>
                                             </asp:TableCell>
                                         </asp:TableRow>

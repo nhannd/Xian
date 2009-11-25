@@ -159,7 +159,7 @@
                                                 <div class="SeriesInformation">
                                                 <table cellpadding="0" cellspacing="0" width="100%">
                                                         <tr><td style="padding: 0px 12px 0px 4px;">
-                                                <div class="ReconcileGridViewPanel" style="height:90px;">
+                                                <div class="ReconcileGridViewPanel" style="height:90px; margin-bottom: 10px;">
                                                 <asp:GridView runat="server" CssClass="ReconcileComparisonResultGridView" ID="ComparisonResultGridView" Width="100%" BackColor="white" GridLines="Horizontal" BorderColor="Transparent" AutoGenerateColumns="false">
                                                 <Columns>
                                                     <asp:BoundField HeaderText="Tag" DataField="TagName" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" ItemStyle-Wrap="false" ItemStyle-VerticalAlign="Top" />
@@ -251,15 +251,21 @@
                                         <asp:TableRow>
                                             <asp:TableCell style="padding: 0px 10px 10px 10px;">
                                                 <asp:Panel ID="Panel2" runat="server" CssClass="ReconcileButtonsTable">
-                                                    <asp:Table runat="server" ID="OptionTable" Width="100%" CellPadding="0" CellSpacing="0">
-                                                        <asp:TableRow style="padding-left: 5px; padding-top: 5px;">
+                                                    <asp:Table runat="server" ID="OptionTable" Width="100%" CellPadding="0" CellSpacing="0" style="margin-left: 5px;">
+                                                        <asp:TableRow>
+                                                            <asp:TableCell ColumnSpan="2"><span style="font-size: 8px;">&nbsp;</span></asp:TableCell>
+                                                        </asp:TableRow>
+                                                        <asp:TableRow>
                                                             <asp:TableCell><asp:radiobutton runat="server" ID="UseExistingSopRadioButton" Text=" Use Existing Demographics" GroupName="DuplicateSopDecision" Checked="true"/></asp:TableCell>
                                                             <asp:TableCell><asp:radiobutton runat="server" ID="UseDuplicateRadioButton" Text=" Use Duplicate Demographics" GroupName="DuplicateSopDecision" Checked="false"/></asp:TableCell>
                                                         </asp:TableRow>
-                                                        <asp:TableRow style="padding-left: 5px; padding-top: 5px;padding-bottom: 5px;">
+                                                        <asp:TableRow >
                                                             <asp:TableCell><asp:radiobutton runat="server" ID="ReplaceAsIsRadioButton" Text=" Replace As Is" GroupName="DuplicateSopDecision" Checked="false"/></asp:TableCell>
                                                             <asp:TableCell><asp:radiobutton runat="server" ID="DeleteDuplicateRadioButton" Text=" Delete Duplicates" GroupName="DuplicateSopDecision" CssClass="ReconcileRadioButton"/></asp:TableCell>
                                                         </asp:TableRow>
+                                                        <asp:TableRow>
+                                                            <asp:TableCell ColumnSpan="2">&nbsp;</asp:TableCell>
+                                                        </asp:TableRow>                                                        
                                                         <asp:TableRow runat="server" ID="OverwritewWarningPanel" style="padding: 5px;">
                                                             <asp:TableCell ColumnSpan="2">
                                                                 <asp:Panel runat="server" ID="UseExistingWarningPanel" CssClass="OverwritewWarningPanel">

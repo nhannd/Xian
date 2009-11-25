@@ -3,8 +3,6 @@
 <%@ Register Src="StudyListGridView.ascx" TagName="StudyListGridView" TagPrefix="localAsp" %>
 <%@ Register Src="StudyDetails/Controls/DeleteStudyConfirmDialog.ascx" TagName="DeleteStudyConfirmDialog" TagPrefix="localAsp" %>
 
-<ccAsp:JQuery ID="JQuery1" runat="server" MultiSelect="true" />
-
 <asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="conditional">
     <ContentTemplate>
 
@@ -131,7 +129,7 @@ function MultiSelect() {
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
-                        <table width="100%" cellpadding="0" cellspacing="0" class="ToolbarButtonPanel">
+                        <table width="100%" cellpadding="3" cellspacing="0" class="ToolbarButtonPanel">
                             <tr><td >
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>

@@ -3,7 +3,6 @@
 <%@ Import Namespace="ClearCanvas.ImageServer.Common.CommandProcessor" %>
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="EditHistoryDetailsColumn.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.EditHistoryDetailsColumn" %>
-<ccAsp:JQuery runat="server" />
 
 <script type="text/javascript">
 

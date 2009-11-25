@@ -131,6 +131,11 @@ Global.css - Defines the global styles for the entire web application relating
     position: relative;
 }
 
+.UserInformationPanel
+{
+    text-align: -moz-right; /* For Mozilla */
+}
+
 .UserInformationLink
 {
     color: red; 
@@ -218,7 +223,8 @@ Global.css - Defines the global styles for the entire web application relating
   height:1px;
   overflow:hidden;
   font-size:.01em;
-  background:#3d98d1}
+  background:#3d98d1;
+}
 .MainContentCorners1{
   margin-left:3px;
   margin-right:3px;
@@ -268,7 +274,6 @@ Global.css - Defines the global styles for the entire web application relating
 {
     background: #B8D9EE url(../../../PersistantImage.ashx?key=ToolbarButtonPanelBackground) repeat-x;
     height: 28px;
-    padding-top: 5px;
     border-top: solid 1px white;
 }
 
@@ -480,6 +485,7 @@ pre
 	filter: alpha(opacity=100); /* IE */
 	z-index: 10000000; /* make it top-most , hopefully it's enough*/
 	border-bottom: solid 1px #ff0000;  
+	width: 100%;
 }	
 
 .SessionTimeoutWarningMessage
@@ -493,6 +499,7 @@ pre
 	z-index: 10000000;
 	padding: 5px;
 	color: #ff0000;
+	width: 100%;
 }
 
 .CountdownEffectPanel
@@ -514,4 +521,15 @@ pre
 	width:100%;
 	font-weight: bold;
 	color: #ff0000;
+}
+
+.FixedPos {
+  /* used by Opera 5+, Netscape6+/Mozilla, Konqueror, Safari, OmniWeb 4.5+, iCab, ICEbrowser */
+  position: fixed;
+  width: 100%;
+}
+
+* html .FixedPos {
+    position: absolute;
+    width: 100%;
 }

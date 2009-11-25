@@ -1,4 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="GridPager.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Controls.GridPager" %>
+
 <table width="100%" cellpadding="0" cellspacing="0" class="GlobalGridPager">
     <tr>
         <td align="left" style="padding-left: 6px;">
@@ -6,18 +7,20 @@
                                    { %>
             <table cellspacing="0" cellpadding="0">
                 <tr>
-                    <td valign="bottom">
+                    <td>
                         <asp:Image runat="server" ImageUrl="~/App_Themes/Default/images/Controls/GridView/GridViewPagerTotalStudiesLeft.png" />
                     </td>
                     <td>
-
-                        <div style="background: #e1eff7; border-bottom: solid 1px #b8d9ee; padding-top: 1px;
-                            padding-bottom: 1px; width: 175px; text-align: center;">
+                        <%
+                        if(Request.Browser.Type.Contains("IE")) {%>
+                        <div id="ItemCountContainer">
+                        <%} else {%>
+                        <div id="ItemCountContainer_FF">
+                        <%}%>                    
                             <asp:Label ID="ItemCountLabel" runat="server" Text="Label" CssClass="GlobalGridPagerLabel" />
                         </div>
-
                     </td>
-                    <td valign="bottom">
+                    <td>
                         <asp:Image ID="Image1" runat="server" ImageUrl="~/App_Themes/Default/images/Controls/GridView/GridViewPagerTotalStudiesRight.png" />
                     </td>
                 </tr>
@@ -49,8 +52,12 @@
                             OnCommand="PageButtonClick" CssClass="GlobalGridPagerLink" />
                     </td>
                     <td>
-                        <div style="background: #e1eff7; border-bottom: solid 1px #b8d9ee; padding-left: 6px;
-                            padding-right: 6px; padding-top: 1px; margin-bottom: 1px;">
+                        <%
+                        if(Request.Browser.Type.Contains("IE")) {%>
+                        <div id="CurrentPageContainer">
+                        <%} else {%>
+                        <div id="CurrentPageContainer_FF">
+                        <%}%>
                             <asp:Label ID="Label3" runat="server" Text="Page" CssClass="GlobalGridPagerLabel" />
                             <asp:TextBox ID="CurrentPage" runat="server" Width="85px" CssClass="GridViewTextBox"
                                 Style="font-size: 12px;" />

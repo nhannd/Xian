@@ -31,6 +31,8 @@
 
 using System;
 using System.Xml;
+using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 {
@@ -40,6 +42,11 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
     /// </summary>
     public class ServerRuleValidator : WebServiceValidator
     {
+        public string RuleTypeControl
+        {
+            get; set;
+        }
+
         protected override bool OnServerSideEvaluate()
         {
             String ruleXml = GetControlValidationValue(ControlToValidate);
@@ -68,12 +75,12 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             // when trying to validate input.  The Web service already does the validation before
             // we get to this point, so this should be fine that we can't do the check here.
 
-            //string error;
-            //if (false == Rule.ValidateRule(ServerRuleTypeEnum.StudyCompress, theDoc, out error))
-            //{
-            //ErrorMessage = error;
-            //return false;
-            //}
+            string error;
+            if (false == Rule.ValidateRule(ServerRuleTypeEnum.GetEnum(RuleTypeControl), theDoc, out error))
+            {
+                ErrorMessage = error;
+                return false;
+            }
 
             return true;
         }

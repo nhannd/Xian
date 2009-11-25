@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
         protected void LoginClicked(object sender, EventArgs e)
         {
             try
-            {
+            {               
                 SessionManager.InitializeSession(UserName.Text, Password.Text);
 
 				UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,

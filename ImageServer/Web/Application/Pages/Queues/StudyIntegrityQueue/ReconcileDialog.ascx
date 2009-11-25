@@ -156,11 +156,12 @@
                                </asp:TableCell>
                             </asp:TableRow>
                             <asp:TableRow runat="server" ID="OptionRow">
-                                <asp:TableCell style="padding: 0px 10px 6px 10px;">
+                                <asp:TableCell style="padding: 0px 10px 10px 10px;">
                                     <table cellpadding="0" cellspacing="0" width="100%" class="ReconcileButtonsTable">
-                                        <tr style="padding-left: 5px; padding-top: 5px;"><td ><asp:radiobutton runat="server" ID="MergeUsingExistingStudy" Text=" Merge Using Existing Study" GroupName="ReconcileStudy" Checked="true"/></td><td><asp:radiobutton runat="server" ID="CreateNewStudy" Text=" Create New Study" GroupName="ReconcileStudy" CssClass="ReconcileRadioButton"/></td></tr>
-                                        <tr style="padding-left: 5px; "><td ><asp:radiobutton runat="server" ID="MergeUsingConflictingStudy" Text=" Merge Using Conflicting Study" GroupName="ReconcileStudy"/></td><td><asp:radiobutton runat="server" ID="DiscardStudy" Text=" Discard Study" GroupName="ReconcileStudy"/></td></tr>
-                                        <tr style="padding-left: 5px; padding-bottom: 8px;"><td ></td><td><asp:radiobutton runat="server" ID="IgnoreConflict" Text=" Ignore (Process As Is)" GroupName="ReconcileStudy"/></td></tr>
+                                        <tr><td style="padding-left: 5px; padding-top: 5px;"><asp:radiobutton runat="server" ID="MergeUsingExistingStudy" Text=" Merge Using Existing Study" GroupName="ReconcileStudy" Checked="true"/></td><td><asp:radiobutton runat="server" ID="CreateNewStudy" Text=" Create New Study" GroupName="ReconcileStudy" CssClass="ReconcileRadioButton"/></td></tr>
+                                        <tr><td style="padding-left: 5px;"><asp:radiobutton runat="server" ID="MergeUsingConflictingStudy" Text=" Merge Using Conflicting Study" GroupName="ReconcileStudy"/></td><td><asp:radiobutton runat="server" ID="DiscardStudy" Text=" Discard Study" GroupName="ReconcileStudy"/></td></tr>
+                                        <tr><td style="padding-left: 5px;"></td><td><asp:radiobutton runat="server" ID="IgnoreConflict" Text=" Ignore (Process As Is)" GroupName="ReconcileStudy"/></td></tr>
+                                        <tr><td colspan="2">&nbsp;</td></tr>
                                     </table>                                        
                                 </asp:TableCell>
                             </asp:TableRow>

@@ -1,21 +1,15 @@
 function addLoadEvent(func) {
-    var oldonload = window.onload;
-    if (typeof window.onload != 'function') {
-        window.onload = func;
-    } else {
-        window.onload = function() {
-          if (oldonload) {
-              oldonload();
-          }
-          func();
-        }
-    }
+    if (window.attachEvent) { window.attachEvent('onload', func); }
+    else if (window.addEventListener) { window.addEventListener('load', func, false); }
+    else { document.addEventListener('load', func, false); }
 }
 
-function initwebservice()
-{
-    service.useService('@@WEBSERVICE_URL@@?WSDL','ValidationServices');
-    service.onserviceavailable = onserviceavailable();
+function initwebservice() {
+    //service is defined in the Master Page. This method only works in IE, other browsers will be server-side validated.
+    if (navigator.appName == "Microsoft Internet Explorer") {
+        service.useService('@@WEBSERVICE_URL@@?WSDL', 'ValidationServices');
+        service.onserviceavailable = onserviceavailable();
+    }
 }
    
 function onserviceavailable(){

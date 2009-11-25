@@ -1470,14 +1470,12 @@
     <Content Include="App_Themes\Default\images\Pages\Dashboard\UserOverviewBackground.png" />
     <Content Include="App_Themes\Default\StyleSheets\Admin.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\PartitionTabs.css" />
-    <Content Include="App_Themes\Default\StyleSheets\Controls\DeleteStudyConfirmDialog.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\GridView.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\InvalidInputIndicator.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\jqueryMultiSelect.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\ReconcileDialog.css" />
     <Content Include="App_Themes\Default\StyleSheets\Error.css" />
     <Content Include="App_Themes\Default\StyleSheets\Global.css" />
-    <Content Include="App_Themes\Default\StyleSheets\Layout.css" />
     <Content Include="App_Themes\Default\StyleSheets\Login.css" />
     <Content Include="App_Themes\Default\StyleSheets\Studies.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\Calendar.css" />

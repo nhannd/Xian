@@ -32,7 +32,7 @@
             <tr>
                 <td><asp:Literal ID="Literal1" runat="server" Text="<%$Resources:Titles,WorkQueue%>" /></td>
                 <td>
-                    <div style="position: absolute; right: 5px; top: 1px; font-size: 12px; width: 200px; text-align: right;">
+                    <div class="RefreshContainer">
                         <table>
                             <tr>
                                 <td>

@@ -12,8 +12,8 @@
     <style runat="server" type="text/css" id="IE6PNGBugFixCSS" />
     <link rel="shortcut icon" type="image/ico" runat="server" href="~/Images/favicon.ico" />
     
-    <ccAsp:JQuery ID="MainJQuery" runat="server" />
-    
+    <ccAsp:JQuery ID="MainJQuery" MultiSelect="true" Effects="true" runat="server" />
+        
 </head>
 <body id="MasterBody" class="GlobalBody">
     
@@ -114,8 +114,10 @@
                                                                 </asp:tablecell>
                                                             </asp:tablerow>
                                                             <asp:tablerow>
-                                                                <asp:tablecell CssClass="MainContentBorder">
-                                                                    <asp:ContentPlaceHolder ID="MainContentPlaceHolder" runat="server" />
+                                                                <asp:tablecell>
+                                                                   <div class="MainContentBorder">
+                                                                        <asp:ContentPlaceHolder ID="MainContentPlaceHolder" runat="server" />
+                                                                   </div>                                                                    
                                                                 </asp:tableCell>
                                                             </asp:TableRow>
                                                         </asp:Table>

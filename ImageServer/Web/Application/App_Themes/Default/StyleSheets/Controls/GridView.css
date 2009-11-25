@@ -13,7 +13,12 @@
     height: 23px;
 	text-align: left;
 	padding-left: 8px;
-	color: #205F87;
+    color: #205F87;
+}
+
+.GlobalGridViewHeader th
+{
+    padding-left: 8px;
 }
 
 .GlobalGridViewRow
@@ -96,6 +101,44 @@
     text-decoration: none;
     color: #55be50; 
     vertical-align: middle;
+}
+
+#ItemCountContainer
+{
+    background: #e1eff7; 
+    border-bottom: solid 1px #b8d9ee; 
+    padding-top: 1px;
+    width: 175px; 
+    text-align: center;
+}
+
+#ItemCountContainer_FF
+{
+    background: #e1eff7; 
+    border-bottom: solid 1px #b8d9ee; 
+    padding-top: 1px;
+    padding-bottom: 3px;
+    width: 175px; 
+    text-align: center;
+}
+
+#CurrentPageContainer
+{
+    background: #e1eff7; 
+    border-bottom: solid 1px #b8d9ee; 
+    padding-top: 1px;
+    width: 175px; 
+    text-align: center;
+}
+
+#CurrentPageContainer_FF
+{
+    background: #e1eff7; 
+    border-bottom: solid 1px #b8d9ee; 
+    padding-top: 1px;
+    padding-bottom: 2px;
+    width: 175px; 
+    text-align: center;
 }
 
 .GlobalGridPagerLinkDisabled

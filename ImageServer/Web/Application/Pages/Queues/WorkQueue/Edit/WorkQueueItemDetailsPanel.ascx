@@ -21,11 +21,11 @@
         <ContentTemplate>   
          
            <table width="100%" cellpadding="0" cellspacing="0">
-                <tr  class="MainContentTitle">
-                    <td>
+                <tr>
+                    <td class="MainContentTitle">
                         <asp:Label ID="WorkQueueItemTitle" runat="server" Text="Work Queue Item Details"></asp:Label>
                     </td>
-                    <td align="right">                        
+                    <td align="right" class="MainContentTitle">                        
                          <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="UpdatePanel" DisplayAfter="0">
                             <ProgressTemplate>
                                 <asp:Image ID="RefreshingIndicator" runat="server" SkinID="AjaxLoadingBlue" />

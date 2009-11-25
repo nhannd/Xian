@@ -4,7 +4,6 @@
 <%@ Import Namespace="ClearCanvas.ImageServer.Core.Data" %>
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Utilities" %>
 <%@ Import Namespace="ClearCanvas.ImageServer.Common.CommandProcessor" %>
-<ccAsp:JQuery ID="JQuery1" runat="server" />
 
 <script type="text/javascript">
 

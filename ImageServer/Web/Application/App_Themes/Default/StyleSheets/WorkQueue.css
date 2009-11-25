@@ -6,3 +6,19 @@
     font-size: 16px; 
     color: #205F87;
 }
+
+.RefreshContainer
+{
+    position: absolute; 
+    right: 5px; 
+    top: 1px; 
+    font-size: 12px; 
+    width: 200px; 
+    text-align: right; 
+}
+
+div .RefreshContainer
+{
+    text-align: -moz-right;     
+}
+
