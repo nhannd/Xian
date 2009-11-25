@@ -142,8 +142,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 									@"        myEle = document.createElement('option') ;
                     myEle.value = '{0}';
                     myEle.text = '{1}' ;
-                    sampleList.add(myEle) ;",
-									extension.Name, extension.Description);
+                    if(navigator.appName == 'Microsoft Internet Explorer') sampleList.add(myEle);
+                    else sampleList.add(myEle, null);", 
+                        extension.Name, extension.Description);				
 				}
 			}
 			string enumList = string.Empty;
@@ -157,7 +158,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 						enumList += String.Format(@"myEle = document.createElement('option') ;
                     myEle.value = '{0}';
                     myEle.text = '{1}';
-                    applyTimeList.add(myEle) ;", applyTimeEnum.Lookup, applyTimeEnum.Description);
+                    if(navigator.appName == 'Microsoft Internet Explorer') applyTimeList.add(myEle);
+                    else applyTimeList.add(myEle, null);", 
+                        applyTimeEnum.Lookup, applyTimeEnum.Description);
 					}
 					break;
 				}
@@ -169,7 +172,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
                     myEle = document.createElement('option') ;
                     myEle.value = '';
                     myEle.text = '' ;
-                    sampleList.add(myEle) ;
+                    if(navigator.appName == 'Microsoft Internet Explorer') sampleList.add(myEle);
+                    else sampleList.add(myEle, null);
                     {2}
                 }}", typeEnum.Lookup, enumList, sampleList);
 		}
@@ -184,10 +188,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 			ServerPartitionTabContainer.ActiveTabIndex = 0;
 
 			Dictionary<ServerRuleTypeEnum, IList<ServerRuleApplyTimeEnum>> ruleTypeList = LoadRuleTypes(extensions);
-			
+
 
 			SampleRuleDropDownList.Attributes.Add("onchange", "webServiceScript(this, this.SelectedIndex);");
 			RuleTypeDropDownList.Attributes.Add("onchange", "selectRuleType(this);");
+
+            RuleTypeDropDownList.TextChanged += delegate(object o, EventArgs args) {
+                                                                                       ServerRuleValidator.
+                                                                                           RuleTypeControl =
+                                                                                           RuleTypeDropDownList.
+                                                                                               SelectedValue; };
 
 			string javascript =
 				@"<script type='text/javascript'>
@@ -206,7 +216,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             }
 
             function selectRuleType(oList, selectedIndex)
-            {         
+            {                         
                 var val = oList.value; 
                 var sampleList = document.getElementById('" +
 				SampleRuleDropDownList.ClientID +
@@ -214,6 +224,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
                 var applyTimeList = document.getElementById('" +
 				RuleApplyTimeDropDownList.ClientID +
 				@"');
+                
                 for (var q=sampleList.options.length; q>=0; q--) sampleList.options[q]=null;
                 for (var q=applyTimeList.options.length; q>=0; q--) applyTimeList.options[q]=null;
 				";
@@ -273,6 +284,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             function HighlightXML() {
                 CodeMirrorEditor = CodeMirror.fromTextArea('" + RuleXmlTextBox.ClientID + @"', {parserfile: 'parsexml.js',path: '../../../../Scripts/CodeMirror/js/', stylesheet: '../../../../Scripts/CodeMirror/css/xmlcolors.css'});
             }
+
+	        function UpdateRuleXML() {
+                RsltElem = document.getElementById('" +
+                                RuleXmlTextBox.ClientID +
+                                @"');	            
+
+                RsltElem.value = CodeMirrorEditor.getCode();    
+	        }
   
             var CodeMirrorEditor = null;
             </script>";
@@ -381,7 +400,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 		/// </summary>
 		public void Show()
 		{
-			// update the dropdown list
+            //If the validation failed, keep everything as is, and 
+            //make sure the dialog stays visible.
+            if (!Page.IsValid)
+            {
+                RuleXmlTabPanel.TabIndex = 0;
+                ModalDialog.Show();
+                return;
+            }
+
+            // update the dropdown list
 			RuleApplyTimeDropDownList.Items.Clear();
 			RuleTypeDropDownList.Items.Clear();
 			RuleXmlTabPanel.TabIndex = 0;

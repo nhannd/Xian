@@ -7,7 +7,7 @@
 	</Services>
 </asp:ScriptManagerProxy>
 <ccAsp:ModalDialog ID="ModalDialog" runat="server" Width="800px">
-	<ContentTemplate>
+	<ContentTemplate>	
             <asp:ValidationSummary ID="EditServerRuleValidationSummary" ShowMessageBox="false" ShowSummary="true" DisplayMode="SingleParagraph"
                 EnableClientScript="true" runat="server" ValidationGroup="AddEditServerRuleValidationGroup" CssClass="DialogValidationErrorMessage" />   			
 			<aspAjax:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0"
@@ -91,7 +91,7 @@
 									<td>
 										<div style="border: solid 1px #618FAD;" >
 										    <asp:TextBox ID="RuleXmlTextBox" runat="server" EnableViewState="true" Width="100%"
-											    Rows="16" TextMode="MultiLine" CssClass="DialogTextArea"></asp:TextBox>
+											    Rows="16" TextMode="MultiLine" CssClass="DialogTextArea" BackColor="White"></asp:TextBox>
                                         </div>											
 									</td>
 									<td>
@@ -100,7 +100,7 @@
 											InputName="Server Rule XML" InvalidInputCSS="DialogTextBoxInvalidInput" InvalidInputIndicatorID="InvalidRuleHint"
 											ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateServerRule"
 											ParamsFunction="ValidationServerRuleParams" Text="Invalid Server Rule"
-											Display="None" ValidationGroup="AddEditServerRuleValidationGroup" />
+											Display="None" ValidationGroup="AddEditServerRuleValidationGroup"  />
 									</td>
 								</tr>
 							</table>
@@ -114,7 +114,7 @@
                 <tr align="right">
                     <td>
                             <asp:Panel ID="Panel3" runat="server" CssClass="DefaultModalDialogButtonPanel">
-                                <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="AddButton" OnClick="OKButton_Click" ValidationGroup="AddEditServerRuleValidationGroup" />
+                                <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="AddButton" OnClick="OKButton_Click" ValidationGroup="AddEditServerRuleValidationGroup" OnClientClick="UpdateRuleXML()" />
                                 <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="CancelButton" OnClick="CancelButton_Click" />
                             </asp:Panel>
                     </td>
