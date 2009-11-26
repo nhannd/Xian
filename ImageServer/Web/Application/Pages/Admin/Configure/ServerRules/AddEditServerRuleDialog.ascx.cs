@@ -1,4 +1,4 @@
-﻿    #region License
+﻿#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -39,134 +39,144 @@ using System.Xml;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules
 {
-	public partial class AddEditServerRuleDialog : UserControl
-	{
-		#region private variables
+    public partial class AddEditServerRuleDialog : UserControl
+    {
+        #region private variables
 
-		// The server partitions that the new device can be associated with
-		// This list will be determined by the user level permission.
-		private ServerPartition _partition;
+        // The server partitions that the new device can be associated with
+        // This list will be determined by the user level permission.
 
-		private bool _editMode;
-		private ServerRule _rule;
-														
-		#endregion
+        private bool _editMode;
+        private ServerPartition _partition;
+        private ServerRule _rule;
 
-		#region public members
+        #endregion
 
-		/// <summary>
-		/// Sets the list of partitions users allowed to pick.
-		/// </summary>
-		public ServerPartition Partition
-		{
-			set
-			{
-				_partition = value;
-				ViewState[ "_ServerPartition"] = value;
-			}
+        #region public members
 
-			get { return _partition; }
-		}
+        /// <summary>
+        /// Sets the list of partitions users allowed to pick.
+        /// </summary>
+        public ServerPartition Partition
+        {
+            set
+            {
+                _partition = value;
+                ViewState["_ServerPartition"] = value;
+            }
 
-		/// <summary>
-		/// Sets or gets the value which indicates whether the dialog is in edit mode.
-		/// </summary>
-		public bool EditMode
-		{
-			get { return _editMode; }
-			set
-			{
-				_editMode = value;
-				ViewState[ "_EditMode"] = value;
-			}
-		}
+            get { return _partition; }
+        }
 
-		/// <summary>
-		/// Sets/Gets the current editing device.
-		/// </summary>
-		public ServerRule ServerRule
-		{
-			set
-			{
-				_rule = value;
-				// put into viewstate to retrieve later
-				if (_rule != null)
-					ViewState[ "_EdittedRule"] = _rule.GetKey();
-			}
-			get { return _rule; }
-		}
+        /// <summary>
+        /// Sets or gets the value which indicates whether the dialog is in edit mode.
+        /// </summary>
+        public bool EditMode
+        {
+            get { return _editMode; }
+            set
+            {
+                _editMode = value;
+                ViewState["_EditMode"] = value;
+            }
+        }
 
-		#endregion // public members
+        /// <summary>
+        /// Sets/Gets the current editing device.
+        /// </summary>
+        public ServerRule ServerRule
+        {
+            set
+            {
+                _rule = value;
+                // put into viewstate to retrieve later
+                if (_rule != null)
+                    ViewState["_EdittedRule"] = _rule.GetKey();
+            }
+            get { return _rule; }
+        }
 
-		#region Events
+        #endregion // public members
 
-		/// <summary>
-		/// Defines the event handler for <seealso cref="OKClicked"/>.
-		/// </summary>
-		/// <param name="rule">The device being added.</param>
-		public delegate void OnOKClickedEventHandler(ServerRule rule);
+        #region Events
 
-		/// <summary>
-		/// Occurs when users click on "OK".
-		/// </summary>
-		public event OnOKClickedEventHandler OKClicked;
+        #region Delegates
 
-		#endregion Events
+        /// <summary>
+        /// Defines the event handler for <seealso cref="OKClicked"/>.
+        /// </summary>
+        /// <param name="rule">The device being added.</param>
+        public delegate void OnOKClickedEventHandler(ServerRule rule);
 
-		#region Protected Methods
-		private static Dictionary<ServerRuleTypeEnum,IList<ServerRuleApplyTimeEnum>> LoadRuleTypes(object[] extensions)
-		{
-			Dictionary<ServerRuleTypeEnum, IList<ServerRuleApplyTimeEnum>> ruleTypeList = new Dictionary<ServerRuleTypeEnum, IList<ServerRuleApplyTimeEnum>>();
-			foreach (ISampleRule extension in extensions)
-			{
-				if (!ruleTypeList.ContainsKey(extension.Type))
-					ruleTypeList.Add(extension.Type, extension.ApplyTimeList);
-			}
+        #endregion
 
-			return ruleTypeList;
-		}
+        /// <summary>
+        /// Occurs when users click on "OK".
+        /// </summary>
+        public event OnOKClickedEventHandler OKClicked;
 
-		private static string GetJavascriptForSampleRule(ServerRuleTypeEnum typeEnum, object[] extensions )
-		{
-			string sampleList = string.Empty;
+        #endregion Events
 
-			foreach (ISampleRule extension in extensions)
-			{
-				if (extension.Type.Equals(typeEnum))
-				{
-							sampleList +=
-								String.Format(
-									@"        myEle = document.createElement('option') ;
+        #region Protected Methods
+
+        private static Dictionary<ServerRuleTypeEnum, IList<ServerRuleApplyTimeEnum>> LoadRuleTypes(object[] extensions)
+        {
+            var ruleTypeList = new Dictionary<ServerRuleTypeEnum, IList<ServerRuleApplyTimeEnum>>();
+            foreach (ISampleRule extension in extensions)
+            {
+                if (!ruleTypeList.ContainsKey(extension.Type))
+                    ruleTypeList.Add(extension.Type, extension.ApplyTimeList);
+            }
+
+            return ruleTypeList;
+        }
+
+        private static string GetJavascriptForSampleRule(ServerRuleTypeEnum typeEnum, object[] extensions)
+        {
+            string sampleList = string.Empty;
+
+            foreach (ISampleRule extension in extensions)
+            {
+                if (extension.Type.Equals(typeEnum))
+                {
+                    sampleList +=
+                        String.Format(
+                            @"        myEle = document.createElement('option') ;
                     myEle.value = '{0}';
                     myEle.text = '{1}' ;
                     if(navigator.appName == 'Microsoft Internet Explorer') sampleList.add(myEle);
-                    else sampleList.add(myEle, null);", 
-                        extension.Name, extension.Description);				
-				}
-			}
-			string enumList = string.Empty;
+                    else sampleList.add(myEle, null);",
+                            extension.Name, extension.Description);
+                }
+            }
+            string enumList = string.Empty;
 
-			foreach (ISampleRule extension in extensions)
-			{
-				if (extension.Type.Equals(typeEnum))
-				{
-					foreach (ServerRuleApplyTimeEnum applyTimeEnum in extension.ApplyTimeList)
-					{
-						enumList += String.Format(@"myEle = document.createElement('option') ;
+            foreach (ISampleRule extension in extensions)
+            {
+                if (extension.Type.Equals(typeEnum))
+                {
+                    foreach (ServerRuleApplyTimeEnum applyTimeEnum in extension.ApplyTimeList)
+                    {
+                        enumList +=
+                            String.Format(
+                                @"myEle = document.createElement('option') ;
                     myEle.value = '{0}';
                     myEle.text = '{1}';
                     if(navigator.appName == 'Microsoft Internet Explorer') applyTimeList.add(myEle);
-                    else applyTimeList.add(myEle, null);", 
-                        applyTimeEnum.Lookup, applyTimeEnum.Description);
-					}
-					break;
-				}
-			}
-			
-			return String.Format(@"if (val == '{0}')
+                    else applyTimeList.add(myEle, null);",
+                                applyTimeEnum.Lookup, applyTimeEnum.Description);
+                    }
+                    break;
+                }
+            }
+
+            return
+                String.Format(
+                    @"if (val == '{0}')
                 {{
 					{1}
                     myEle = document.createElement('option') ;
@@ -175,42 +185,45 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
                     if(navigator.appName == 'Microsoft Internet Explorer') sampleList.add(myEle);
                     else sampleList.add(myEle, null);
                     {2}
-                }}", typeEnum.Lookup, enumList, sampleList);
-		}
+                }}",
+                    typeEnum.Lookup, enumList, sampleList);
+        }
 
-		protected override void OnInit(EventArgs e)
-		{
-			base.OnInit(e);
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
 
-			SampleRuleExtensionPoint ep = new SampleRuleExtensionPoint();
-			object[] extensions = ep.CreateExtensions();
+            var ep = new SampleRuleExtensionPoint();
+            object[] extensions = ep.CreateExtensions();
 
-			ServerPartitionTabContainer.ActiveTabIndex = 0;
+            ServerPartitionTabContainer.ActiveTabIndex = 0;
 
-			Dictionary<ServerRuleTypeEnum, IList<ServerRuleApplyTimeEnum>> ruleTypeList = LoadRuleTypes(extensions);
+            Dictionary<ServerRuleTypeEnum, IList<ServerRuleApplyTimeEnum>> ruleTypeList = LoadRuleTypes(extensions);
 
 
-			SampleRuleDropDownList.Attributes.Add("onchange", "webServiceScript(this, this.SelectedIndex);");
-			RuleTypeDropDownList.Attributes.Add("onchange", "selectRuleType(this);");
+            SampleRuleDropDownList.Attributes.Add("onchange", "webServiceScript(this, this.SelectedIndex);");
+            RuleTypeDropDownList.Attributes.Add("onchange", "selectRuleType(this);");
 
-            RuleTypeDropDownList.TextChanged += delegate(object o, EventArgs args) {
-                                                                                       ServerRuleValidator.
-                                                                                           RuleTypeControl =
-                                                                                           RuleTypeDropDownList.
-                                                                                               SelectedValue; };
+            RuleTypeDropDownList.TextChanged += delegate
+                                                    {
+                                                        ServerRuleValidator.
+                                                            RuleTypeControl =
+                                                            RuleTypeDropDownList.
+                                                                SelectedValue;
+                                                    };
 
-			string javascript =
-				@"<script type='text/javascript'>
+            string javascript =
+                @"<script type='text/javascript'>
             function ValidationServerRuleParams()
             {
                 control = document.getElementById('" +
-				RuleXmlTextBox.ClientID +
+                RuleXmlTextBox.ClientID +
                 @"');
                 params = new Array();
                 params.serverRule=escape(CodeMirrorEditor.getCode());
 				var oList = document.getElementById('" +
-								RuleTypeDropDownList.ClientID +
-								@"');
+                RuleTypeDropDownList.ClientID +
+                @"');
 				params.ruleType = oList.options[oList.selectedIndex].value;
                 return params;
             }
@@ -219,31 +232,31 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             {                         
                 var val = oList.value; 
                 var sampleList = document.getElementById('" +
-				SampleRuleDropDownList.ClientID +
-				@"');
+                SampleRuleDropDownList.ClientID +
+                @"');
                 var applyTimeList = document.getElementById('" +
-				RuleApplyTimeDropDownList.ClientID +
-				@"');
+                RuleApplyTimeDropDownList.ClientID +
+                @"');
                 
                 for (var q=sampleList.options.length; q>=0; q--) sampleList.options[q]=null;
                 for (var q=applyTimeList.options.length; q>=0; q--) applyTimeList.options[q]=null;
 				";
 
-			bool first = true;
-			foreach (ServerRuleTypeEnum type in ruleTypeList.Keys)
-			{
-				if (!first)
-				{
-					javascript += "else ";
-				}
-				else
-					first = false;
+            bool first = true;
+            foreach (ServerRuleTypeEnum type in ruleTypeList.Keys)
+            {
+                if (!first)
+                {
+                    javascript += "else ";
+                }
+                else
+                    first = false;
 
-				javascript += GetJavascriptForSampleRule(type,extensions);
-			}
+                javascript += GetJavascriptForSampleRule(type, extensions);
+            }
 
-			javascript +=
-                                @"}
+            javascript +=
+                @"}
 
             // This function calls the Web Service method.  
             function webServiceScript(oList)
@@ -263,13 +276,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             function OnSucess(result)
             {
                 var oList = document.getElementById('" +
-								SampleRuleDropDownList.ClientID +
-								@"');
+                SampleRuleDropDownList.ClientID +
+                @"');
                 var sValue = oList.options[oList.selectedIndex].value;
              
                 RsltElem = document.getElementById('" +
-								RuleXmlTextBox.ClientID +
-                                @"');
+                RuleXmlTextBox.ClientID +
+                @"');
 
                 //Set the value on the TextArea and then set the value in the Editor.
                 //CodeMirror doesn't monitor changes to the textarea.
@@ -278,17 +291,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             }
            
             function pageLoad(){
-                $find('" + ModalDialog.PopupExtenderID + @"').add_shown(HighlightXML);
+                $find('" +
+                ModalDialog.PopupExtenderID +
+                @"').add_shown(HighlightXML);
             }
 
             function HighlightXML() {
-                CodeMirrorEditor = CodeMirror.fromTextArea('" + RuleXmlTextBox.ClientID + @"', {parserfile: 'parsexml.js',path: '../../../../Scripts/CodeMirror/js/', stylesheet: '../../../../Scripts/CodeMirror/css/xmlcolors.css'});
+                CodeMirrorEditor = CodeMirror.fromTextArea('" +
+                RuleXmlTextBox.ClientID +
+                @"', {parserfile: 'parsexml.js',path: '../../../../Scripts/CodeMirror/js/', stylesheet: '../../../../Scripts/CodeMirror/css/xmlcolors.css'});
             }
 
 	        function UpdateRuleXML() {
                 RsltElem = document.getElementById('" +
-                                RuleXmlTextBox.ClientID +
-                                @"');	            
+                RuleXmlTextBox.ClientID +
+                @"');	            
 
                 RsltElem.value = CodeMirrorEditor.getCode();    
 	        }
@@ -296,110 +313,111 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             var CodeMirrorEditor = null;
             </script>";
 
-			Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID, javascript);
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID, javascript);
 
-            Page.ClientScript.RegisterClientScriptInclude(GetType(), "CodeMirrorLibrary", "../../../../Scripts/CodeMirror/js/codemirror.js");
+            Page.ClientScript.RegisterClientScriptInclude(GetType(), "CodeMirrorLibrary",
+                                                          "../../../../Scripts/CodeMirror/js/codemirror.js");
 
-            EditServerRuleValidationSummary.HeaderText = App_GlobalResources.ErrorMessages.EditServerRuleValidationError;
-		}
+            EditServerRuleValidationSummary.HeaderText = ErrorMessages.EditServerRuleValidationError;
+        }
 
-		protected void Page_Load(object sender, EventArgs e)
-		{
-			if (Page.IsPostBack)
-			{
-				if (ViewState[ "_EditMode"] != null)
-					_editMode = (bool) ViewState[ "_EditMode"];
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (Page.IsPostBack)
+            {
+                if (ViewState["_EditMode"] != null)
+                    _editMode = (bool) ViewState["_EditMode"];
 
-				if (ViewState[ "_ServerPartition"] != null)
-					_partition = (ServerPartition) ViewState[ "_ServerPartition"];
+                if (ViewState["_ServerPartition"] != null)
+                    _partition = (ServerPartition) ViewState["_ServerPartition"];
 
-				if (ViewState[ "_EdittedRule"] != null)
-				{
-					ServerEntityKey ruleKey = ViewState[ "_EdittedRule"] as ServerEntityKey;
-					_rule = ServerRule.Load(ruleKey);
-				}
-			}
-		}
+                if (ViewState["_EdittedRule"] != null)
+                {
+                    var ruleKey = ViewState["_EdittedRule"] as ServerEntityKey;
+                    _rule = ServerRule.Load(ruleKey);
+                }
+            }
+        }
 
-		protected void OKButton_Click(object sender, EventArgs e)
-		{
-			if (Page.IsValid)
-			{
-				SaveData();
-				if (OKClicked != null)
-				{
-					OKClicked(ServerRule);
-				}
+        protected void OKButton_Click(object sender, EventArgs e)
+        {
+            if (Page.IsValid)
+            {
+                SaveData();
+                if (OKClicked != null)
+                {
+                    OKClicked(ServerRule);
+                }
 
-				Close();
-			}
-			else
-			{
-				Show();
-			}
-		}
+                Close();
+            }
+            else
+            {
+                Show();
+            }
+        }
 
-		protected void CancelButton_Click(object sender, EventArgs e)
-		{
-			Close();
-		}
-		#endregion Protected Methods
+        protected void CancelButton_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        #endregion Protected Methods
+
+        #region Private Methods
+
+        private void SaveData()
+        {
+            if (_rule == null)
+            {
+                _rule = new ServerRule();
+            }
 
 
-		#region Private Methods
+            if (RuleXmlTextBox.Text.Length > 0)
+            {
+                _rule.RuleXml = new XmlDocument();
+                _rule.RuleXml.Load(new StringReader(RuleXmlTextBox.Text));
+            }
 
-		private void SaveData()
-		{
-			if (_rule == null)
-			{
-				_rule = new ServerRule();
-			}
+            _rule.RuleName = RuleNameTextBox.Text;
 
+            _rule.ServerRuleTypeEnum = ServerRuleTypeEnum.GetEnum(RuleTypeDropDownList.SelectedItem.Value);
 
-			if (RuleXmlTextBox.Text.Length > 0)
-			{
-				_rule.RuleXml = new XmlDocument();
-				_rule.RuleXml.Load(new StringReader(RuleXmlTextBox.Text));
-			}
+            var ep = new SampleRuleExtensionPoint();
+            object[] extensions = ep.CreateExtensions();
 
-			_rule.RuleName = RuleNameTextBox.Text;
+            Dictionary<ServerRuleTypeEnum, IList<ServerRuleApplyTimeEnum>> ruleTypeList = LoadRuleTypes(extensions);
 
-			_rule.ServerRuleTypeEnum = ServerRuleTypeEnum.GetEnum(RuleTypeDropDownList.SelectedItem.Value);
+            if (ruleTypeList.ContainsKey(_rule.ServerRuleTypeEnum))
+            {
+                string val = Request[RuleApplyTimeDropDownList.UniqueID];
+                foreach (ServerRuleApplyTimeEnum applyTime in ruleTypeList[_rule.ServerRuleTypeEnum])
+                {
+                    _rule.ServerRuleApplyTimeEnum = applyTime;
+                    if (val.Equals(applyTime.Lookup))
+                    {
+                        _rule.ServerRuleApplyTimeEnum = applyTime;
+                        break;
+                    }
+                }
+            }
 
-			SampleRuleExtensionPoint ep = new SampleRuleExtensionPoint();
-			object[] extensions = ep.CreateExtensions();
+            _rule.Enabled = EnabledCheckBox.Checked;
+            _rule.DefaultRule = DefaultCheckBox.Checked;
+            _rule.ServerPartitionKey = Partition.GetKey();
+            _rule.ExemptRule = ExemptRuleCheckBox.Checked;
+        }
 
-			Dictionary<ServerRuleTypeEnum, IList<ServerRuleApplyTimeEnum>> ruleTypeList = LoadRuleTypes(extensions);
+        #endregion Private Methods
 
-			if (ruleTypeList.ContainsKey(_rule.ServerRuleTypeEnum))
-			{
-				string val = Request[RuleApplyTimeDropDownList.UniqueID];
-				foreach (ServerRuleApplyTimeEnum applyTime in ruleTypeList[_rule.ServerRuleTypeEnum])
-				{
-					_rule.ServerRuleApplyTimeEnum = applyTime;
-					if (val.Equals(applyTime.Lookup))
-					{
-						_rule.ServerRuleApplyTimeEnum = applyTime;
-						break;
-					}
-				}
-			}
-			
-			_rule.Enabled = EnabledCheckBox.Checked;
-			_rule.DefaultRule = DefaultCheckBox.Checked;
-			_rule.ServerPartitionKey = Partition.GetKey();
-			_rule.ExemptRule = ExemptRuleCheckBox.Checked;
-		}
+        #region Public methods
 
-		#endregion Private Methods
-
-		#region Public methods
-
-		/// <summary>
-		/// Displays the add/edit device dialog box.
-		/// </summary>
-		public void Show()
-		{
+        /// <summary>
+        /// Displays the add/edit device dialog box.
+        /// </summary>
+        public void Show()
+        {
             //If the validation failed, keep everything as is, and 
             //make sure the dialog stays visible.
             if (!Page.IsValid)
@@ -410,140 +428,143 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             }
 
             // update the dropdown list
-			RuleApplyTimeDropDownList.Items.Clear();
-			RuleTypeDropDownList.Items.Clear();
-			RuleXmlTabPanel.TabIndex = 0;
-			ServerPartitionTabContainer.ActiveTabIndex = 0;
+            RuleApplyTimeDropDownList.Items.Clear();
+            RuleTypeDropDownList.Items.Clear();
+            RuleXmlTabPanel.TabIndex = 0;
+            ServerPartitionTabContainer.ActiveTabIndex = 0;
 
-			SampleRuleExtensionPoint ep = new SampleRuleExtensionPoint();
-			object[] extensions = ep.CreateExtensions();
+            var ep = new SampleRuleExtensionPoint();
+            object[] extensions = ep.CreateExtensions();
 
-			Dictionary<ServerRuleTypeEnum, IList<ServerRuleApplyTimeEnum>> ruleTypeList = LoadRuleTypes(extensions);
+            Dictionary<ServerRuleTypeEnum, IList<ServerRuleApplyTimeEnum>> ruleTypeList = LoadRuleTypes(extensions);
 
-			if (EditMode)
-			{
-				ModalDialog.Title = App_GlobalResources.SR.DialogEditServerRuleTitle;
+            if (EditMode)
+            {
+                ModalDialog.Title = SR.DialogEditServerRuleTitle;
                 OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
                 OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
 
-				DefaultCheckBox.Checked = _rule.DefaultRule;
-				EnabledCheckBox.Checked = _rule.Enabled;
-				ExemptRuleCheckBox.Checked = _rule.ExemptRule;
+                DefaultCheckBox.Checked = _rule.DefaultRule;
+                EnabledCheckBox.Checked = _rule.Enabled;
+                ExemptRuleCheckBox.Checked = _rule.ExemptRule;
 
-				//if (_rule.DefaultRule)
-				//	DefaultCheckBox.Enabled = false;
+                //if (_rule.DefaultRule)
+                //	DefaultCheckBox.Enabled = false;
 
-				RuleNameTextBox.Text = _rule.RuleName;
+                RuleNameTextBox.Text = _rule.RuleName;
 
-				SampleRuleDropDownList.Visible = false;
-				SelectSampleRuleLabel.Visible = false;
+                SampleRuleDropDownList.Visible = false;
+                SelectSampleRuleLabel.Visible = false;
 
-				// Fill in the drop down menus
-				RuleTypeDropDownList.Items.Add(new ListItem(
-				                               	_rule.ServerRuleTypeEnum.Description,
-				                               	_rule.ServerRuleTypeEnum.Lookup));
+                // Fill in the drop down menus
+                RuleTypeDropDownList.Items.Add(new ListItem(
+                                                   _rule.ServerRuleTypeEnum.Description,
+                                                   _rule.ServerRuleTypeEnum.Lookup));
 
-				IList<ServerRuleApplyTimeEnum> list = new List<ServerRuleApplyTimeEnum>();
-
-
-				if (ruleTypeList.ContainsKey(_rule.ServerRuleTypeEnum))
-					list = ruleTypeList[_rule.ServerRuleTypeEnum];
-
-				foreach (ServerRuleApplyTimeEnum applyTime in list)
-					RuleApplyTimeDropDownList.Items.Add(new ListItem(
-															applyTime.Description,
-															applyTime.Lookup));
+                IList<ServerRuleApplyTimeEnum> list = new List<ServerRuleApplyTimeEnum>();
 
 
-				if (RuleApplyTimeDropDownList.Items.FindByValue(_rule.ServerRuleApplyTimeEnum.Lookup) != null)
-					RuleApplyTimeDropDownList.SelectedValue = _rule.ServerRuleApplyTimeEnum.Lookup;
+                if (ruleTypeList.ContainsKey(_rule.ServerRuleTypeEnum))
+                    list = ruleTypeList[_rule.ServerRuleTypeEnum];
 
-				RuleTypeDropDownList.SelectedValue = _rule.ServerRuleTypeEnum.Lookup;
+                foreach (ServerRuleApplyTimeEnum applyTime in list)
+                    RuleApplyTimeDropDownList.Items.Add(new ListItem(
+                                                            applyTime.Description,
+                                                            applyTime.Lookup));
 
 
-				// Fill in the Rule XML
-				StringWriter sw = new StringWriter();
+                if (RuleApplyTimeDropDownList.Items.FindByValue(_rule.ServerRuleApplyTimeEnum.Lookup) != null)
+                    RuleApplyTimeDropDownList.SelectedValue = _rule.ServerRuleApplyTimeEnum.Lookup;
 
-				XmlWriterSettings xmlSettings = new XmlWriterSettings();
+                RuleTypeDropDownList.SelectedValue = _rule.ServerRuleTypeEnum.Lookup;
 
-				xmlSettings.Encoding = Encoding.UTF8;
-				xmlSettings.ConformanceLevel = ConformanceLevel.Fragment;
-				xmlSettings.Indent = true;
-				xmlSettings.NewLineOnAttributes = false;
-				xmlSettings.CheckCharacters = true;
-				xmlSettings.IndentChars = "  ";
 
-				XmlWriter tw = XmlWriter.Create(sw, xmlSettings);
+                // Fill in the Rule XML
+                var sw = new StringWriter();
 
-				_rule.RuleXml.WriteTo(tw);
+                var xmlSettings = new XmlWriterSettings();
 
-				tw.Close();
+                xmlSettings.Encoding = Encoding.UTF8;
+                xmlSettings.ConformanceLevel = ConformanceLevel.Fragment;
+                xmlSettings.Indent = true;
+                xmlSettings.NewLineOnAttributes = false;
+                xmlSettings.CheckCharacters = true;
+                xmlSettings.IndentChars = "  ";
 
-				RuleXmlTextBox.Text = sw.ToString();
-			}
-			else
-			{
-				ModalDialog.Title = App_GlobalResources.SR.DialogAddServerRuleTitle;
+                XmlWriter tw = XmlWriter.Create(sw, xmlSettings);
+
+                _rule.RuleXml.WriteTo(tw);
+
+                tw.Close();
+
+                RuleXmlTextBox.Text = sw.ToString();
+
+                ServerRuleValidator.RuleTypeControl = RuleTypeDropDownList.SelectedValue;
+            }
+            else
+            {
+                ModalDialog.Title = SR.DialogAddServerRuleTitle;
                 OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
                 OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
 
-				DefaultCheckBox.Checked = false;
-				EnabledCheckBox.Checked = true;
-				ExemptRuleCheckBox.Checked = false;
+                DefaultCheckBox.Checked = false;
+                EnabledCheckBox.Checked = true;
+                ExemptRuleCheckBox.Checked = false;
 
-				RuleNameTextBox.Text = string.Empty;
-				RuleXmlTextBox.Text = string.Empty;
+                RuleNameTextBox.Text = string.Empty;
+                RuleXmlTextBox.Text = string.Empty;
 
-				SampleRuleDropDownList.Visible = true;
-				SelectSampleRuleLabel.Visible = true;
+                SampleRuleDropDownList.Visible = true;
+                SelectSampleRuleLabel.Visible = true;
 
-				// Do the drop down lists
-				bool first = true;
-				List<ServerRuleTypeEnum> list = new List<ServerRuleTypeEnum>();
-				list.AddRange(ruleTypeList.Keys);
+                // Do the drop down lists
+                bool first = true;
+                var list = new List<ServerRuleTypeEnum>();
+                list.AddRange(ruleTypeList.Keys);
 
-				// Sort the list by description
-				list.Sort(new Comparison<ServerRuleTypeEnum>(delegate (ServerRuleTypeEnum type1, ServerRuleTypeEnum type2)
-				                                             	{
-				                                             		return type1.Description.CompareTo(type2.Description);
-				                                             	}));
-				
-				foreach (ServerRuleTypeEnum type in list)
-				{
-					if (first)
-					{
-						first = false;
-						SampleRuleDropDownList.Items.Clear();
-						SampleRuleDropDownList.Items.Add(new ListItem(string.Empty, string.Empty));
+                // Sort the list by description
+                list.Sort(
+                    new Comparison<ServerRuleTypeEnum>(
+                        delegate(ServerRuleTypeEnum type1, ServerRuleTypeEnum type2) { return type1.Description.CompareTo(type2.Description); }));
 
-						foreach (ISampleRule extension in extensions)
-						{
-							if (extension.Type.Equals(type))
-							{
-								SampleRuleDropDownList.Items.Add(new ListItem(extension.Description, extension.Name));
-							}
-						}
-		
-						foreach (ServerRuleApplyTimeEnum applyTime in ruleTypeList[type])
-							RuleApplyTimeDropDownList.Items.Add(new ListItem(
-							                                    	applyTime.Description,
-							                                    	applyTime.Lookup));
-					}
+                foreach (ServerRuleTypeEnum type in list)
+                {
+                    if (first)
+                    {
+                        first = false;
+                        SampleRuleDropDownList.Items.Clear();
+                        SampleRuleDropDownList.Items.Add(new ListItem(string.Empty, string.Empty));
 
-					RuleTypeDropDownList.Items.Add(new ListItem(
-					                               	type.Description, type.Lookup));
-				}
-			}
+                        foreach (ISampleRule extension in extensions)
+                        {
+                            if (extension.Type.Equals(type))
+                            {
+                                SampleRuleDropDownList.Items.Add(new ListItem(extension.Description, extension.Name));
+                            }
+                        }
 
-			ModalDialog.Show();
-			return;
-		}
+                        foreach (ServerRuleApplyTimeEnum applyTime in ruleTypeList[type])
+                            RuleApplyTimeDropDownList.Items.Add(new ListItem(
+                                                                    applyTime.Description,
+                                                                    applyTime.Lookup));
+                    }
 
-		public void Close()
-		{
-			ModalDialog.Hide();
-		}
+                    RuleTypeDropDownList.Items.Add(new ListItem(
+                                                       type.Description, type.Lookup));
+                }
 
-		#endregion
-	}
+                ServerRuleValidator.RuleTypeControl = RuleTypeDropDownList.SelectedValue;
+            }
+
+            ModalDialog.Show();
+            return;
+        }
+
+        public void Close()
+        {
+            ModalDialog.Hide();
+        }
+
+        #endregion
+    }
 }

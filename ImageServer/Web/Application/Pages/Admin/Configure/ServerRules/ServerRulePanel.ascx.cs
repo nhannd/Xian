@@ -35,24 +35,22 @@ using System.Web.UI.WebControls;
 using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPartitions;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
-[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules.ServerRulePanel.js", "application/x-javascript")]
+[assembly:
+    WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules.ServerRulePanel.js",
+        "application/x-javascript")]
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules
 {
-    [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules.ServerRulePanel", ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules.ServerRulePanel.js")]
+    [ClientScriptResource(
+        ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules.ServerRulePanel",
+        ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules.ServerRulePanel.js")]
     public partial class ServerRulePanel : AJAXScriptControl
     {
-        #region Private Members
         private readonly ServerRuleController _controller = new ServerRuleController();
-        private ServerPartition _partition;
-        private Default _enclosingPage;
-
-        #endregion Private Members
-
 
         #region Public Properties
 
@@ -77,17 +75,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             get { return ServerRuleGridViewControl.TheGrid.ClientID; }
         }
 
-        public ServerPartition ServerPartition
-        {
-            get { return _partition; }
-            set { _partition = value; }
-        }
+        public ServerPartition ServerPartition { get; set; }
 
-        public Default EnclosingPage
-        {
-            get { return _enclosingPage; }
-            set { _enclosingPage = value; }
-        }
+        public Default EnclosingPage { get; set; }
 
         #endregion Public Properties
 
@@ -95,7 +85,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 
         public void LoadRules()
         {
-            ServerRuleSelectCriteria criteria = new ServerRuleSelectCriteria();
+            var criteria = new ServerRuleSelectCriteria();
 
             // only query for device in this partition
             criteria.ServerPartitionKey.EqualTo(ServerPartition.GetKey());
@@ -104,7 +94,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             {
                 if (!RuleApplyTimeDropDownList.Text.Equals("All"))
                 {
-                    ServerRuleApplyTimeEnum en = ServerRuleApplyTimeEnum.GetEnum(RuleApplyTimeDropDownList.SelectedItem.Value);
+                    ServerRuleApplyTimeEnum en =
+                        ServerRuleApplyTimeEnum.GetEnum(RuleApplyTimeDropDownList.SelectedItem.Value);
                     criteria.ServerRuleApplyTimeEnum.EqualTo(en);
                 }
             }
@@ -163,9 +154,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
         {
         }
 
-
         #endregion Public Methods
-
 
         #region Protected Methods
 
@@ -174,9 +163,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             ServerRuleGridViewControl.ServerRulePanel = this;
 
             // setup child controls
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerServerRulesSingleItem,
-                                             App_GlobalResources.SR.GridPagerServerRulesMultipleItems,
-                                             ServerRuleGridViewControl.TheGrid, delegate { return ServerRuleGridViewControl.ServerRules==null? 0:ServerRuleGridViewControl.ServerRules.Count; },
+            GridPagerTop.InitializeGridPager(SR.GridPagerServerRulesSingleItem,
+                                             SR.GridPagerServerRulesMultipleItems,
+                                             ServerRuleGridViewControl.TheGrid,
+                                             () => ServerRuleGridViewControl.ServerRules == null
+                                                       ? 0
+                                                       : ServerRuleGridViewControl.ServerRules.Count,
                                              ImageServerConstants.GridViewPagerPosition.Top);
             ServerRuleGridViewControl.Pager = GridPagerTop;
             GridPagerTop.Reset();
@@ -184,7 +176,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 
             int prevSelectIndex = RuleApplyTimeDropDownList.SelectedIndex;
             RuleApplyTimeDropDownList.Items.Clear();
-            RuleApplyTimeDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.All));
+            RuleApplyTimeDropDownList.Items.Add(new ListItem(SR.All));
             foreach (ServerRuleApplyTimeEnum applyTimeEnum in ServerRuleApplyTimeEnum.GetAll())
             {
                 RuleApplyTimeDropDownList.Items.Add(
@@ -195,7 +187,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 
             prevSelectIndex = RuleTypeDropDownList.SelectedIndex;
             RuleTypeDropDownList.Items.Clear();
-            RuleTypeDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.All));
+            RuleTypeDropDownList.Items.Add(new ListItem(SR.All));
             foreach (ServerRuleTypeEnum typeEnum in ServerRuleTypeEnum.GetAll())
             {
                 RuleTypeDropDownList.Items.Add(new ListItem(typeEnum.Description, typeEnum.Lookup));
@@ -204,20 +196,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 
             if (Page.IsPostBack)
                 DataBind();
-            
         }
 
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
-            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
-            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Enabled));
-            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Disabled));
+            StatusFilter.Items.Add(new ListItem(SR.All));
+            StatusFilter.Items.Add(new ListItem(SR.Enabled));
+            StatusFilter.Items.Add(new ListItem(SR.Disabled));
 
-            DefaultFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
-            DefaultFilter.Items.Add(new ListItem(App_GlobalResources.SR.Default));
-            DefaultFilter.Items.Add(new ListItem(App_GlobalResources.SR.NotDefault));
+            DefaultFilter.Items.Add(new ListItem(SR.All));
+            DefaultFilter.Items.Add(new ListItem(SR.Default));
+            DefaultFilter.Items.Add(new ListItem(SR.NotDefault));
         }
 
         protected override void OnPreRender(EventArgs e)
@@ -274,6 +265,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
         }
 
         #endregion Protected Methods
-
     }
 }

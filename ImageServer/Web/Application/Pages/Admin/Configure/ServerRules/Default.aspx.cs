@@ -31,84 +31,84 @@
 
 using System;
 using System.Security.Permissions;
-using System.Web.UI;
 using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Enterprise.Authentication;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
-using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules
 {
     [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Configuration.ServerRules)]
     public partial class Default : BasePage
     {
-        #region Private Members
-        private ServerRuleController _controller = new ServerRuleController();
-
-        #endregion Private Members
+        private readonly ServerRuleController _controller = new ServerRuleController();
 
         #region Protected Methods
 
         protected override void OnInit(EventArgs e)
-        {            
-            ServerPartitionTabs.SetupLoadPartitionTabs( delegate(ServerPartition partition)
-                                                       {
-                                                           ServerRulePanel panel =
-                                                               LoadControl("ServerRulePanel.ascx") as ServerRulePanel;
-                                                           panel.ServerPartition = partition;
-                                                           panel.ID = "ServerRulePanel_" + partition.AeTitle;
+        {
+            ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
+                                                           {
+                                                               var panel =
+                                                                   LoadControl("ServerRulePanel.ascx") as
+                                                                   ServerRulePanel;
+                                                               if (panel != null)
+                                                               {
+                                                                   panel.ServerPartition = partition;
+                                                                   panel.ID = "ServerRulePanel_" + partition.AeTitle;
 
-                                                           panel.EnclosingPage = this;
-
-                                                           return panel;
-                                                       });
+                                                                   panel.EnclosingPage = this;
+                                                               }
+                                                               return panel;
+                                                           });
 
             ConfirmDialog.Confirmed += delegate(object data)
-                                        {
-                                            // delete the device and reload the affected partition.
-                                            ServerEntityKey key = data as ServerEntityKey;
+                                           {
+                                               // delete the device and reload the affected partition.
+                                               var key = data as ServerEntityKey;
 
-                                            ServerRule rule = ServerRule.Load(key);
+                                               ServerRule rule = ServerRule.Load(key);
 
-                                            _controller.DeleteServerRule(rule);
+                                               _controller.DeleteServerRule(rule);
 
-                                            ServerPartitionTabs.Update(rule.ServerPartitionKey);
-                                        };
-            
-            
+                                               ServerPartitionTabs.Update(rule.ServerPartitionKey);
+                                           };
+
+
             AddEditServerRuleControl.OKClicked += delegate(ServerRule rule)
-                                               {
-                                                   if (AddEditServerRuleControl.EditMode)
-                                                   {
-                                                       // Commit the change into database
-                                                       if (_controller.UpdateServerRule(rule))
-                                                       {
-                                                       }
-                                                       else
-                                                       {
-                                                           // TODO: alert user
-                                                       }
-                                                   }
-                                                   else
-                                                   {
-                                                       // Create new device in the database
-                                                       ServerRule newRule = _controller.AddServerRule(rule);
-                                                       if ( newRule!=null)
-                                                       {
-                                                       }
-                                                       else
-                                                       {
-                                                           //TODO: alert user
-                                                       }
-                                                   }
+                                                      {
+                                                          if (AddEditServerRuleControl.EditMode)
+                                                          {
+                                                              // Commit the change into database
+                                                              if (_controller.UpdateServerRule(rule))
+                                                              {
+                                                              }
+                                                              else
+                                                              {
+                                                                  // TODO: alert user
+                                                              }
+                                                          }
+                                                          else
+                                                          {
+                                                              // Create new device in the database
+                                                              ServerRule newRule = _controller.AddServerRule(rule);
+                                                              if (newRule != null)
+                                                              {
+                                                              }
+                                                              else
+                                                              {
+                                                                  //TODO: alert user
+                                                              }
+                                                          }
 
-                                                   ServerPartitionTabs.Update(rule.ServerPartitionKey);
-                                               };
-            
+                                                          ServerPartitionTabs.Update(rule.ServerPartitionKey);
+                                                      };
 
-            SetPageTitle(App_GlobalResources.Titles.ServerRulesPageTitle);
+
+            SetPageTitle(Titles.ServerRulesPageTitle);
 
             base.OnInit(e);
         }
@@ -124,7 +124,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
         }
 
         #endregion Protected Methods
-
 
         #region Public Methods
 
@@ -148,7 +147,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
         /// <param name="partition"></param>
         public void OnDeleteRule(ServerRule rule, ServerPartition partition)
         {
-            ConfirmDialog.Message = string.Format("Are you sure you want to remove rule \"{0}\" from partition {1}?", rule.RuleName, partition.AeTitle);
+            ConfirmDialog.Message = string.Format("Are you sure you want to remove rule \"{0}\" from partition {1}?",
+                                                  rule.RuleName, partition.AeTitle);
             ConfirmDialog.MessageType = MessageBox.MessageTypeEnum.YESNO;
             ConfirmDialog.Data = rule.GetKey();
             ConfirmDialog.Show();
