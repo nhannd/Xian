@@ -44,7 +44,14 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
     {
         public string RuleTypeControl
         {
-            get; set;
+            get
+            {
+                return ViewState["RULE_TYPE"].ToString();
+            } 
+            set
+            {
+                ViewState["RULE_TYPE"] = value;
+            }
         }
 
         protected override bool OnServerSideEvaluate()
