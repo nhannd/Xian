@@ -266,13 +266,13 @@
                                                         <asp:TableRow>
                                                             <asp:TableCell ColumnSpan="2">&nbsp;</asp:TableCell>
                                                         </asp:TableRow>                                                        
-                                                        <asp:TableRow runat="server" ID="OverwritewWarningPanel" style="padding: 5px;">
+                                                        <asp:TableRow runat="server" ID="OverwritewWarningPanel" style="padding: 2px;">
                                                             <asp:TableCell ColumnSpan="2">
-                                                                <asp:Panel runat="server" ID="UseExistingWarningPanel" CssClass="OverwritewWarningPanel">
+                                                                <asp:Panel runat="server" ID="UseExistingWarningPanel" CssClass="OverwritewWarningPanel" style="margin-right: 10px; margin-bottom: 10px;">
                                                                     WARNING: Duplicates contain information which does not match the existing study.
                                                                     This information will be lost when the existing SOPs are overwritten.
                                                                 </asp:Panel>      
-                                                                <asp:Panel runat="server" ID="UseDuplicateWarningPanel" CssClass="OverwritewWarningPanel">
+                                                                <asp:Panel runat="server" ID="UseDuplicateWarningPanel" CssClass="OverwritewWarningPanel" style="margin-right: 10px; margin-bottom: 10px;">
                                                                     WARNING: Duplicates contain information which does not match the existing study.
                                                                     The information in the study (and all existing images) will be replaced.
                                                                 </asp:Panel>                                                                        

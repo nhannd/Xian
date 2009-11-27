@@ -144,6 +144,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 ReprocessStudyButton.Enabled = Study.CanReprocess(out reason);
                 if (!ReprocessStudyButton.Enabled)
                     ReprocessStudyButton.ToolTip = reason;
+
+                
             }
 
             SearchUpdatePanel.Update();// force update

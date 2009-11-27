@@ -312,6 +312,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 StudyTimeSeconds.Text = "00";
             }
 
+            Reason.Text = string.Empty;
+            ReasonListBox.SelectedIndex = 0;
+
             DataBind();
         }
 
@@ -480,7 +483,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         /// Displays the edit Study Details dialog box.
         /// </summary>
         public void Show(bool updateFields)
-        {
+        {            
             if(updateFields) UpdateFields();
             EditStudyModalDialog.Show();
         }

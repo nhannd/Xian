@@ -156,10 +156,10 @@
 
 .OverwritewWarningPanel
 {
-	border-right: orange 1px solid;
-	border-top: orange 1px solid;
-	border-left: orange 1px solid;
-	border-bottom: orange 1px solid;
+	border-right: red 1px solid;
+	border-top: red 1px solid;
+	border-left: red 1px solid;
+	border-bottom: red 1px solid;
 	padding: 5px;
 	background-color: #ffffcc;
 	color: #ff3333;

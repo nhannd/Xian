@@ -249,6 +249,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
         {
             if (updateUI)
                 UpdateUI();
+            else
+            {
+                if (EditMode)
+                {
+                    ModalDialog.Title = App_GlobalResources.Titles.EditPartitionArchiveTitle;
+                }
+                else
+                {
+                    ModalDialog.Title = App_GlobalResources.Titles.AddPartitionArchiveTitle;
+                }
+            }
+
 
             if (Page.IsValid)
             {

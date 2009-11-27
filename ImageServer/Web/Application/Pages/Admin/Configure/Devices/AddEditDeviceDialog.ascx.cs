@@ -325,6 +325,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         {
             if (updateUi)
                 UpdateUI();
+            else
+            {
+                if (EditMode)
+                {
+                    ModalDialog1.Title = SR.DialogEditDeviceTitle;
+                } else
+                {
+                    ModalDialog1.Title = SR.DialogAddDeviceTitle;
+                }
+            }
 
             IPAddressTextBox.Enabled = !DHCPCheckBox.Checked;
 

@@ -19,7 +19,7 @@
                 }
                 else //Firefox
                 {
-                    listbox.addEventListener('onchange', seriesReasonSelectionChanged, false);
+                    listbox.addEventListener('change', seriesReasonSelectionChanged, false);
                 }
             }
             

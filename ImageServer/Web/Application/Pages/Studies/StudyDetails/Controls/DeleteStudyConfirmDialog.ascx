@@ -18,7 +18,7 @@
                 }
                 else //Firefox
                 {
-                    listbox.addEventListener('onchange', studyReasonSelectionChanged, false);
+                    listbox.addEventListener('change', studyReasonSelectionChanged, false);
                 }
             }
             
@@ -26,6 +26,7 @@
             {
                 var listbox = $get('<%= ReasonListBox.ClientID %>');
                 var textbox = $get('<%= Reason.ClientID %>');
+                
                 textbox.value = listbox.options[listbox.selectedIndex].value;
                 
             }

@@ -33,7 +33,7 @@
                                                     <ccAsp:InvalidInputIndicator ID="InvalidDescriptionHint" runat="server" SkinID="InvalidInputIndicator"></ccAsp:InvalidInputIndicator>
                                                     <ccValidator:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1"
                                                         runat="server" ControlToValidate="DescriptionTextBox" InvalidInputCSS="DialogTextBoxInvalidInput"
-                                                        ValidationGroup="AddEditFileSystemValidationGroup" Text="Description is required!!" Display="None"
+                                                        ValidationGroup="AddEditFileSystemValidationGroup" Text="Description is required" Display="None"
                                                         InvalidInputIndicatorID="InvalidDescriptionHint" RequiredWhenChecked="False">
                                                     </ccValidator:ConditionalRequiredFieldValidator>
                                                 </td>
@@ -104,7 +104,7 @@
                 </aspAjax:TabPanel>
                 <aspAjax:TabPanel ID="TabPanel2" runat="server" HeaderText="Watermarks Tab" OnClientClick="LoadFilesystemInfo">
                     <ContentTemplate>
-                            <table id="TABLE2" runat="server" cellspacing="4">
+                            <table id="TABLE2" runat="server" cellspacing="4" border="0">
                                 <!-- total size -->
                                 <tr id="Tr4" align="left" valign="bottom">
                                     <td>
@@ -126,7 +126,7 @@
                                 <tr id="Tr3" align="left" valign="bottom">
                                     <td>
                                         <asp:Panel runat="server" ID="AvailableSizePanel">
-                                            <table>
+                                            <table width="100%">
                                                 <tr>
                                                     <td width="120px" align="left" valign="bottom">
                                                         <asp:Label ID="Label8" runat="server" Text="Used" CssClass="DialogTextBoxLabel" />
@@ -145,7 +145,7 @@
                                         <asp:Panel runat="server" ID="HighWatermarkPanel">
                                             <table>
                                                 <tr>
-                                                    <td width="120px" align="left" valign="bottom">
+                                                    <td width="150px" align="left" valign="bottom">
                                                         <asp:Label ID="Label4" runat="server" Text="High Watermark" CssClass="DialogTextBoxLabel" /><br />
                                                         <asp:TextBox ID="HighWatermarkTextBox" runat="server" CssClass="DialogTextBox"
                                                             ValidationGroup="AddEditFileSystemValidationGroup" MaxLength="8" />%
@@ -174,7 +174,7 @@
                                         <asp:Panel runat="server" ID="Panel4">
                                             <table>
                                                 <tr>
-                                                    <td width="120px" align="left" valign="bottom">
+                                                    <td width="150px" align="left" valign="bottom">
                                                         <asp:Label ID="Label5" runat="server" Text="Low Watermark" CssClass="DialogTextBoxLabel" /><br />
                                                         <asp:TextBox ID="LowWatermarkTextBox" runat="server" CssClass="DialogTextBox" ValidationGroup="AddEditFileSystemValidationGroup" MaxLength="8" />%
                                                     </td>

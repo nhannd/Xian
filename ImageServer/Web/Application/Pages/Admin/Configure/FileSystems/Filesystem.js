@@ -90,7 +90,8 @@ function ValidationFilesystemPathParams()
 
 function OnLoadFilesystemInfoError(result)
 {
-    alert('Error: ' + result.get_message());
+    if (result.get_message() != "Index was outside the bounds of the array.") 
+        alert('Error: ' + result.get_message());
 }
 
 

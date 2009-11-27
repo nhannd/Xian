@@ -286,6 +286,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
         {
             if (updateUI)
                 UpdateUI();
+            else
+            {
+                if (EditMode)
+                {
+                    ModalDialog.Title = App_GlobalResources.SR.DialogEditFileSystemTitle;
+                } else
+                {
+                    ModalDialog.Title = App_GlobalResources.SR.DialogAddFileSystemTitle;
+                }
+            }
+
 
             if (Page.IsValid)
             {

@@ -14,7 +14,7 @@
                 }
                 else //Firefox
                 {
-                    listbox.addEventListener('onchange', editReasonSelectionChanged, false);
+                    listbox.addEventListener('change', editReasonSelectionChanged, false);
                 }
             }
             

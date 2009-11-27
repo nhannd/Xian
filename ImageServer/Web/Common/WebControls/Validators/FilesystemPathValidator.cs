@@ -96,7 +96,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                 return false;
             }
 
-
             try
             {
                 FilesystemInfo fsInfo = ServerUtility.GetFilesystemInfo(path);
@@ -107,6 +106,11 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             {
                 ErrorMessage = e.Message;
                 return true;
+            }
+            catch (IndexOutOfRangeException e)
+            {
+                ErrorMessage = "Invalid Path: " + path;
+                return false;
             }
             catch (Exception e)
             {
