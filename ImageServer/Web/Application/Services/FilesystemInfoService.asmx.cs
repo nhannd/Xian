@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Web.Script.Services;
 using System.Web.Services;
 using System.ComponentModel;

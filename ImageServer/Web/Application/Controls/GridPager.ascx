@@ -12,9 +12,13 @@
                     </td>
                     <td>
                         <%
-                        if(Request.Browser.Type.Contains("IE")) {%>
+                            if (Request.UserAgent.Contains("Chrome"))
+                            {%>
+                        <div id="ItemCountContainer_Chrome">
+                        <%} else if (Request.UserAgent.Contains("MSIE")) {%>
                         <div id="ItemCountContainer">
-                        <%} else {%>
+                        <%}%>       
+                        <% else {%>
                         <div id="ItemCountContainer_FF">
                         <%}%>                    
                             <asp:Label ID="ItemCountLabel" runat="server" Text="Label" CssClass="GlobalGridPagerLabel" />
@@ -53,11 +57,18 @@
                     </td>
                     <td>
                         <%
-                        if(Request.Browser.Type.Contains("IE")) {%>
+                            if (Request.UserAgent.Contains("Chrome"))
+                            {%>
+                        <div id="CurrentPageContainer_Chrome">
+                        <%}
+                            else if (Request.UserAgent.Contains("MSIE"))
+                            {%>
                         <div id="CurrentPageContainer">
-                        <%} else {%>
+                        <%}
+                            else
+                            {%>
                         <div id="CurrentPageContainer_FF">
-                        <%}%>
+                        <%} %>
                             <asp:Label ID="Label3" runat="server" Text="Page" CssClass="GlobalGridPagerLabel" />
                             <asp:TextBox ID="CurrentPage" runat="server" Width="85px" CssClass="GridViewTextBox"
                                 Style="font-size: 12px;" />
