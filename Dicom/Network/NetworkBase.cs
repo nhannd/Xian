@@ -1804,7 +1804,7 @@ namespace ClearCanvas.Dicom.Network
 		private void SendNCreateNSetNDeleteHelper(DicomCommandField commandField, byte presentationId, ushort messageId, DicomMessage message, DicomStatus status)
 		{
 			message.CommandField = commandField;
-			message.MessageId = messageId;
+			message.MessageIdBeingRespondedTo = messageId;
 			message.AffectedSopClassUid = message.AffectedSopClassUid;
 			if (!message.CommandSet.Contains(DicomTags.Priority))
 				message.Priority = DicomPriority.Medium;
@@ -1815,7 +1815,6 @@ namespace ClearCanvas.Dicom.Network
 				message.DataSetType = 0x202;
 			message.Status = status;
 			SendDimse(presentationId, message.CommandSet, message.DataSet);
-
 		}
       
         private static void LogSendReceive(bool receive, DicomAttributeCollection metaInfo, DicomAttributeCollection dataSet)
