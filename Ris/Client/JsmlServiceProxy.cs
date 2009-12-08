@@ -34,10 +34,27 @@ using System.Runtime.InteropServices;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Jsml;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
-    /// <summary>
+	/// <summary>
+	/// AsyncInvocationCompletedEventArgs event args.
+	/// </summary>
+	public class AsyncInvocationCompletedEventArgs : EventArgs
+	{
+		public AsyncInvocationCompletedEventArgs(string invocationId, string response)
+		{
+			this.InvocationId = invocationId;
+			this.Response = response;
+		}
+
+		public string InvocationId { get; private set; }
+
+		public string Response { get; private set; }
+	}
+
+	/// <summary>
     /// Service proxy for use by javascript code.
     /// </summary>
     /// <remarks>
@@ -80,6 +97,8 @@ namespace ClearCanvas.Ris.Client
     [ComVisible(true)]
     public class JsmlServiceProxy
     {
+
+
 		/// <summary>
 		/// Dynamic dispatch style shim
 		/// </summary>
@@ -136,9 +155,24 @@ namespace ClearCanvas.Ris.Client
 		}
 
 
+		private delegate string InvokeDelegate(string operation, string requestJsml);
+
+		class AsyncData
+		{
+			public AsyncData(InvokeDelegate invocationTarget, string invocationId)
+			{
+				InvocationTarget = invocationTarget;
+				InvocationId = invocationId;
+			}
+
+			public InvokeDelegate InvocationTarget { get; private set; }
+
+			public string InvocationId { get; private set; }
+		}
 
         private readonly string _serviceContractName;
     	private readonly IShim _shim;
+    	private EventHandler<AsyncInvocationCompletedEventArgs> _asyncInvocationCompleted;
 
         /// <summary>
         /// Constructs a proxy instance.
@@ -150,6 +184,15 @@ namespace ClearCanvas.Ris.Client
             _serviceContractName = serviceContractInterfaceName;
         	_shim = useServerSideShim ? (IShim) new ServerSideShim() : new ClientSideShim();
         }
+
+		/// <summary>
+		/// Occurs to notify that an asynchronous invocation, initiated with <see cref="InvokeOperationAsync"/>, has completed.
+		/// </summary>
+		public event EventHandler<AsyncInvocationCompletedEventArgs> AsyncInvocationCompleted
+		{
+			add { _asyncInvocationCompleted += value; }
+			remove { _asyncInvocationCompleted -= value; }
+		}
 
         /// <summary>
         /// Returns the names of the operations provided by the service.
@@ -168,7 +211,50 @@ namespace ClearCanvas.Ris.Client
         /// <returns>The response object, as JSML.</returns>
         public string InvokeOperation(string operationName, string requestJsml)
         {
-        	return _shim.InvokeOperation(_serviceContractName, operationName, requestJsml);
+        	return InvokeHelper(operationName, requestJsml);
         }
-    }
+
+    	public string InvokeOperationAsync(string operationName, string requestJsml)
+		{
+    		var id = Guid.NewGuid().ToString();
+			//var invocation = new InvokeDelegate(InvokeHelper);
+			//var asyncData = new AsyncData(invocation, id);
+			//invocation.BeginInvoke(operationName, requestJsml, OnInvocationCompleted, asyncData);
+
+    		var asyncLoader = new AsyncLoader();
+    		string response = null;
+			asyncLoader.Run(
+				delegate
+				{
+					response = InvokeHelper(operationName, requestJsml);
+				},
+				delegate(Exception e)
+				{
+					if(e == null)
+					{
+						OnInvocationCompleted(id, response);
+					}
+					else
+					{
+						//TODO: how do we handle errors?
+						Platform.Log(LogLevel.Error, e);
+					}
+				});
+
+
+    		return id;
+		}
+
+    	private string InvokeHelper(string operationName, string requestJsml)
+		{
+			return _shim.InvokeOperation(_serviceContractName, operationName, requestJsml);
+		}
+
+		private void OnInvocationCompleted(string id, string responseJsml)
+		{
+			var args = new AsyncInvocationCompletedEventArgs(id, responseJsml);
+			EventsHelper.Fire(_asyncInvocationCompleted, this, args);
+		}
+
+	}
 }

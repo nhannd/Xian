@@ -83,6 +83,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _component.DataSaving += _component_DataSaving;
 
         	_component.PrintDocumentRequested += _component_PrintDocument;
+			_component.AsyncInvocationCompleted += _component_AsyncInvocationCompleted;
         }
 
         private void _component_PrintDocument(object sender, EventArgs e)
@@ -105,6 +106,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 				_webBrowser.Document.InvokeScript("showValidation", new object[] {_component.ValidationVisible});
 			}
         }
+
+		private void _component_AsyncInvocationCompleted(object sender, AsyncInvocationCompletedEventArgs e)
+		{
+			if (_webBrowser.Document != null)
+			{
+				_webBrowser.Document.InvokeScript("__asyncInvocationCompleted", new object[] { e.InvocationId, e.Response });
+			}
+		}
 
         private void AllPropertiesChangedEventHandler(object sender, EventArgs e)
         {

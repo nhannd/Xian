@@ -16,6 +16,21 @@ if(window.external)
 			return value;
 		},
 		
+		// map used to store async callback functions
+		_asyncCallbackMap: {},
+		
+		// callback from an async service operation (see GetServiceProxy)
+		_asyncInvocationCompleted: function(invocationId, responseJsml)
+		{
+			// look up the callback function, by invocation ID
+			var callbackFunc = this._asyncCallbackMap[invocationId];
+			if(callbackFunc)
+			{
+				// convert response JSML to an object, and invoke the callback function
+				callbackFunc(JSML.parse(responseJsml));
+			}
+		},
+		
 		// equivalent of the window.confirm function, but routes the message through the RIS client desktop application
 		// message - confirmation message to display
 		// type - a string containing either "YesNo" or "OkCancel" (not case-sensitive)
@@ -198,7 +213,8 @@ if(window.external)
 			var innerProxy = window.external.GetServiceProxy(serviceContractName);
 			var operations = JSML.parse(innerProxy.GetOperationNames());
 			
-			var proxy = { _innerProxy: innerProxy };
+			var proxy = {};
+			var risObj = this;
 			operations.each(
 				function(operation)
 				{
@@ -209,7 +225,16 @@ if(window.external)
 						proxy[operation] = proxy[ccOperation] = 
 							function(request)
 							{
-								return JSML.parse( this._innerProxy.InvokeOperation(operation, JSML.create(request, "requestData")) );
+								return JSML.parse( innerProxy.InvokeOperation(operation, JSML.create(request, "requestData")) );
+							};
+						proxy[operation + "Async"] = proxy[ccOperation + "Async"] = 
+							function(request, callbackFunc)
+							{
+								// invoke the operation asynchronously
+								var id = innerProxy.InvokeOperationAsync(operation, JSML.create(request, "requestData"));
+								
+								// store the callback function, associated with the invocation ID
+								risObj._asyncCallbackMap[id] = callbackFunc;
 							};
 				});
 			return proxy;
@@ -266,6 +291,13 @@ if(window.external)
 			return window.external.GetAttachedDocumentUrl(JSML.create(attachedDocumentSummary, "AttachedDocument"));
 		}
 	};
+	
+	// this function must be defined at global scope, as it is invoked programmatically from C# code
+	function __asyncInvocationCompleted(invocationId, responseJsml)
+	{
+		// forward to the Ris object
+		Ris._asyncInvocationCompleted(invocationId, responseJsml);
+	}
 	
 	// install global JSML parser filter
 	JSML.setParseFilter(Ris._jsmlParserFilter);
