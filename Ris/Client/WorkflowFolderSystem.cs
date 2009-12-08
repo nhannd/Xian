@@ -229,6 +229,8 @@ namespace ClearCanvas.Ris.Client
 		private readonly Dictionary<Type, List<object>> _mapFolderClassToDropHandlers = new Dictionary<Type, List<object>>();
 		private readonly List<DoubleClickHandlerRegistration> _doubleClickHandlers = new List<DoubleClickHandlerRegistration>();
 
+		private AsyncLoader _operationEnablementLoader;
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -519,6 +521,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			if (disposing)
 			{
+				if(_operationEnablementLoader != null)
+				{
+					_operationEnablementLoader.Dispose();
+					_operationEnablementLoader = null;
+				}
+
 				foreach (var folder in _workflowFolders)
 				{
 					if (folder is IDisposable)
@@ -632,21 +640,36 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="args"></param>
 		private void SelectedItemsChangedEventHandler(object sender, EventArgs args)
 		{
-			try
+			// cancel any previous operation enablement queries
+			if (_operationEnablementLoader != null)
 			{
-				BlockingOperation.Run(
-					delegate
-					{
-						_workflowEnablement = this.Selection.Equals(Desktop.Selection.Empty) ? null :
-							QueryOperationEnablement(this.Selection);
-					});
-			}
-			catch (Exception ex)
-			{
-				Platform.Log(LogLevel.Error, ex);
+				_operationEnablementLoader.Dispose();
+				_operationEnablementLoader = null;
 			}
 
-			EventsHelper.Fire(_selectedItemsChanged, this, EventArgs.Empty);
+			// if selection is empty, there is no need to query operation enablement
+			if (this.Selection.Equals(Desktop.Selection.Empty))
+			{
+				_workflowEnablement = null;
+				EventsHelper.Fire(_selectedItemsChanged, this, EventArgs.Empty);
+				return;
+			}
+
+			// query for operation enablement asynchronously
+			_operationEnablementLoader = new AsyncLoader();
+			_operationEnablementLoader.Run(
+				delegate
+				{
+					_workflowEnablement = QueryOperationEnablement(this.Selection);
+				},
+				delegate(Exception e)
+				{
+					if(e != null)
+					{
+						Platform.Log(LogLevel.Error, e);
+					}
+					EventsHelper.Fire(_selectedItemsChanged, this, EventArgs.Empty);
+				});
 		}
 
 		/// <summary>
