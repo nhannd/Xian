@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Windows.Forms;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Desktop.View.WinForms;
 
@@ -39,7 +37,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 {
     public partial class DHtmlComponentControl : ApplicationComponentUserControl
     {
-        private DHtmlComponent _component;
+        private readonly DHtmlComponent _component;
 
         /// <summary>
         /// Constructor
@@ -71,11 +69,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _component.Validation.Add(new ValidationRule("DUMMY_PROPERTY",
                 delegate
                 {
-					object result = _webBrowser.Document != null ? _webBrowser.Document.InvokeScript("hasValidationErrors") : null;
+					var result = _webBrowser.Document != null ? _webBrowser.Document.InvokeScript("hasValidationErrors") : null;
 
                     // if result == null, the hasValidationErrors method is not implemented by the page
                     // in this case, assume there are no errors
-                    bool hasErrors = (result == null) ? false : (bool)result;
+                    var hasErrors = (result == null) ? false : (bool)result;
                     return new ValidationResult(!hasErrors, "");
                 }));
 
@@ -84,6 +82,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         	_component.PrintDocumentRequested += _component_PrintDocument;
 			_component.AsyncInvocationCompleted += _component_AsyncInvocationCompleted;
+			_component.AsyncInvocationError += _component_AsyncInvocationError;
         }
 
         private void _component_PrintDocument(object sender, EventArgs e)
@@ -112,6 +111,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			if (_webBrowser.Document != null)
 			{
 				_webBrowser.Document.InvokeScript("__asyncInvocationCompleted", new object[] { e.InvocationId, e.Response });
+			}
+		}
+
+		private void _component_AsyncInvocationError(object sender, AsyncInvocationErrorEventArgs e)
+		{
+			if (_webBrowser.Document != null)
+			{
+				_webBrowser.Document.InvokeScript("__asyncInvocationError", new object[] { e.InvocationId, e.Error.Message });
 			}
 		}
 

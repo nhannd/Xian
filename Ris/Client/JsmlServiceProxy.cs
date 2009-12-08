@@ -49,9 +49,37 @@ namespace ClearCanvas.Ris.Client
 			this.Response = response;
 		}
 
+		/// <summary>
+		/// Gets the string ID assigned to the invocation.
+		/// </summary>
 		public string InvocationId { get; private set; }
 
+		/// <summary>
+		/// Gets the JSML-encoded response.
+		/// </summary>
 		public string Response { get; private set; }
+	}
+
+	/// <summary>
+	/// AsyncInvocationCompletedEventArgs event args.
+	/// </summary>
+	public class AsyncInvocationErrorEventArgs : EventArgs
+	{
+		public AsyncInvocationErrorEventArgs(string invocationId, Exception e)
+		{
+			this.InvocationId = invocationId;
+			this.Error = e;
+		}
+
+		/// <summary>
+		/// Gets the string ID assigned to the invocation.
+		/// </summary>
+		public string InvocationId { get; private set; }
+
+		/// <summary>
+		/// Gets the exception object for the error that occured.
+		/// </summary>
+		public Exception Error { get; private set; }
 	}
 
 	/// <summary>
@@ -115,7 +143,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			public string GetOperationNames(string serviceContractName)
 			{
-				string[] names = ShimUtil.GetOperationNames(serviceContractName);
+				var names = ShimUtil.GetOperationNames(serviceContractName);
 				return JsmlSerializer.Serialize(names, "operationNames");
 			}
 
@@ -134,10 +162,7 @@ namespace ClearCanvas.Ris.Client
 			{
 				string[] names = null;
 				Platform.GetService<IJsmlShimService>(
-					delegate(IJsmlShimService service)
-					{
-						names = service.GetOperationNames(new GetOperationNamesRequest(serviceContractName)).OperationNames;
-					});
+					service => names = service.GetOperationNames(new GetOperationNamesRequest(serviceContractName)).OperationNames);
 				return JsmlSerializer.Serialize(names, "operationNames");
 			}
 
@@ -145,34 +170,19 @@ namespace ClearCanvas.Ris.Client
 			{
 				string responseJsml = null;
 				Platform.GetService<IJsmlShimService>(
-					delegate(IJsmlShimService service)
+					service =>
 					{
-						InvokeOperationRequest request = new InvokeOperationRequest(serviceContractName, operationName, new JsmlBlob(requestJsml));
+						var request = new InvokeOperationRequest(serviceContractName, operationName, new JsmlBlob(requestJsml));
 						responseJsml = service.InvokeOperation(request).ResponseJsml.Value;
 					});
 				return responseJsml;
 			}
 		}
 
-
-		private delegate string InvokeDelegate(string operation, string requestJsml);
-
-		class AsyncData
-		{
-			public AsyncData(InvokeDelegate invocationTarget, string invocationId)
-			{
-				InvocationTarget = invocationTarget;
-				InvocationId = invocationId;
-			}
-
-			public InvokeDelegate InvocationTarget { get; private set; }
-
-			public string InvocationId { get; private set; }
-		}
-
         private readonly string _serviceContractName;
     	private readonly IShim _shim;
     	private EventHandler<AsyncInvocationCompletedEventArgs> _asyncInvocationCompleted;
+		private EventHandler<AsyncInvocationErrorEventArgs> _asyncInvocationError;
 
         /// <summary>
         /// Constructs a proxy instance.
@@ -194,6 +204,15 @@ namespace ClearCanvas.Ris.Client
 			remove { _asyncInvocationCompleted -= value; }
 		}
 
+		/// <summary>
+		/// Occurs to notify that an asynchronous invocation, initiated with <see cref="InvokeOperationAsync"/>, has resulted in an error.
+		/// </summary>
+		public event EventHandler<AsyncInvocationErrorEventArgs> AsyncInvocationError
+		{
+			add { _asyncInvocationError += value; }
+			remove { _asyncInvocationError -= value; }
+		}
+
         /// <summary>
         /// Returns the names of the operations provided by the service.
         /// </summary>
@@ -204,7 +223,7 @@ namespace ClearCanvas.Ris.Client
         }
 
         /// <summary>
-        /// Invokes the specified operation, passing the specified request, and returns the result of the operation.
+        /// Invokes the specified operation.
         /// </summary>
         /// <param name="operationName">The name of the operation to invoke.</param>
         /// <param name="requestJsml">The request object, as JSML.</param>
@@ -214,13 +233,22 @@ namespace ClearCanvas.Ris.Client
         	return InvokeHelper(operationName, requestJsml);
         }
 
-    	public string InvokeOperationAsync(string operationName, string requestJsml)
+		/// <summary>
+		/// Invokes the specified operation asynchronously.
+		/// </summary>
+		/// <remarks>
+		/// The <cref="AsyncInvocationCompleted"/> event will be fired when the request completes, and the response
+		/// will be available from the event args.
+		/// </remarks>
+		/// <param name="operationName">The name of the operation to invoke.</param>
+		/// <param name="requestJsml">The request object, as JSML.</param>
+		/// <returns>An invocation ID string.</returns>
+		public string InvokeOperationAsync(string operationName, string requestJsml)
 		{
+			// generate an invocation ID
     		var id = Guid.NewGuid().ToString();
-			//var invocation = new InvokeDelegate(InvokeHelper);
-			//var asyncData = new AsyncData(invocation, id);
-			//invocation.BeginInvoke(operationName, requestJsml, OnInvocationCompleted, asyncData);
 
+			// invoke operation asynchronously
     		var asyncLoader = new AsyncLoader();
     		string response = null;
 			asyncLoader.Run(
@@ -228,15 +256,23 @@ namespace ClearCanvas.Ris.Client
 				{
 					response = InvokeHelper(operationName, requestJsml);
 				},
-				delegate(Exception e)
+				delegate(Exception error)
 				{
-					if(e == null)
+					try
 					{
-						OnInvocationCompleted(id, response);
+						if (error == null)
+						{
+							OnInvocationCompleted(id, response);
+						}
+						else
+						{
+							OnInvocationError(id, error);
+						}
+
 					}
-					else
+					catch (Exception e)
 					{
-						//TODO: how do we handle errors?
+						// any exceptions thrown from the callback should just be logged
 						Platform.Log(LogLevel.Error, e);
 					}
 				});
@@ -254,6 +290,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			var args = new AsyncInvocationCompletedEventArgs(id, responseJsml);
 			EventsHelper.Fire(_asyncInvocationCompleted, this, args);
+		}
+
+		private void OnInvocationError(string id, Exception error)
+		{
+			var args = new AsyncInvocationErrorEventArgs(id, error);
+			EventsHelper.Fire(_asyncInvocationError, this, args);
 		}
 
 	}

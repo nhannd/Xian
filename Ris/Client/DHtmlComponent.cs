@@ -340,6 +340,7 @@ namespace ClearCanvas.Ris.Client
 
 				// subscribe to the proxy's async completion event, in order to route callbacks back to the script
 				proxy.AsyncInvocationCompleted += _component.AsyncInvocationCompletedEventHandler;
+				proxy.AsyncInvocationError += _component.AsyncInvocationErrorEventHandler;
 				return proxy;
 			}
 
@@ -469,6 +470,7 @@ namespace ClearCanvas.Ris.Client
 		private event EventHandler _printDocumentRequested;
 		private event EventHandler _scriptCompleted;
 		private event EventHandler<AsyncInvocationCompletedEventArgs> _asyncInvocationCompleted;
+		private event EventHandler<AsyncInvocationErrorEventArgs> _asyncInvocationError;
 
 
 		/// <summary>
@@ -616,6 +618,15 @@ namespace ClearCanvas.Ris.Client
 			remove { _asyncInvocationCompleted -= value; }
 		}
 
+		/// <summary>
+		/// Notifies the view that an asynchronous service operation has resulted in an error.
+		/// </summary>
+		public event EventHandler<AsyncInvocationErrorEventArgs> AsyncInvocationError
+		{
+			add { _asyncInvocationError += value; }
+			remove { _asyncInvocationError -= value; }
+		}
+
 		#endregion
 
 		#region Protected API
@@ -728,6 +739,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			// forward the event on to the view layer
 			EventsHelper.Fire(_asyncInvocationCompleted, sender, e);
+		}
+
+		public void AsyncInvocationErrorEventHandler(object sender, AsyncInvocationErrorEventArgs e)
+		{
+			// forward the event on to the view layer
+			EventsHelper.Fire(_asyncInvocationError, sender, e);
 		}
 
 		#endregion

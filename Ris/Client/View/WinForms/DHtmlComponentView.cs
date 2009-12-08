@@ -29,16 +29,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Reflection;
-
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Common.Scripting;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.Common;
 

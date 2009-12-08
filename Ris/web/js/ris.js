@@ -31,6 +31,12 @@ if(window.external)
 			}
 		},
 		
+		// callback from an async service operation (see GetServiceProxy)
+		_asyncInvocationError: function(invocationId, errorMessage)
+		{
+			//TODO what is the best way to handle async errors?
+		},
+		
 		// equivalent of the window.confirm function, but routes the message through the RIS client desktop application
 		// message - confirmation message to display
 		// type - a string containing either "YesNo" or "OkCancel" (not case-sensitive)
@@ -297,6 +303,13 @@ if(window.external)
 	{
 		// forward to the Ris object
 		Ris._asyncInvocationCompleted(invocationId, responseJsml);
+	}
+	
+	// this function must be defined at global scope, as it is invoked programmatically from C# code
+	function __asyncInvocationError(invocationId, errorMessage)
+	{
+		// forward to the Ris object
+		Ris._asyncInvocationError(invocationId, errorMessage);
 	}
 	
 	// install global JSML parser filter
