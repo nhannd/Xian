@@ -135,18 +135,17 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public override void Start()
 		{
 			// create supervisor lookup handler, using filters supplied in application settings
-			string filters = ReportingSettings.Default.SupervisorStaffTypeFilters;
-			string[] staffTypes = string.IsNullOrEmpty(filters)
+			var filters = ReportingSettings.Default.SupervisorStaffTypeFilters;
+			var staffTypes = string.IsNullOrEmpty(filters)
 				? new string[] { }
-				: CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
+				: CollectionUtils.Map<string, string>(filters.Split(','), s => s.Trim()).ToArray();
 			_supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, staffTypes);
 
 			_rememberSupervisor = ProtocollingSettings.Default.ShouldApplyDefaultSupervisor;
 
-			Platform.GetService<IProtocollingWorkflowService>(
-				delegate(IProtocollingWorkflowService service)
+			Platform.GetService<IProtocollingWorkflowService>(service =>
 				{
-					GetProtocolFormDataResponse response = service.GetProtocolFormData(new GetProtocolFormDataRequest());
+					var response = service.GetProtocolFormData(new GetProtocolFormDataRequest());
 					_protocolUrgencyChoices = response.ProtocolUrgencyChoices;
 					_protocolUrgencyChoices.Insert(0, _protocolUrgencyNone);
 
@@ -166,10 +165,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_worklistItem = value;
 
 				Platform.GetService<IProtocollingWorkflowService>(
-					delegate(IProtocollingWorkflowService service)
-					{
-						LoadWorklistItem(service);
-					});
+					service => LoadWorklistItem(service));
 			}
 		}
 
@@ -180,59 +176,57 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void LoadWorklistItem(IProtocollingWorkflowService service)
 		{
-			if (_worklistItem != null)
+			if (_worklistItem == null)
+				return;
+
+			var protocolRequest = new GetProcedureProtocolRequest(_worklistItem.ProcedureRef);
+			var protocolResponse = service.GetProcedureProtocol(protocolRequest);
+
+			_protocolDetail = protocolResponse.ProtocolDetail;
+
+			var sb = new StringBuilder();
+			foreach (var procedure in _protocolDetail.Procedures)
 			{
-				GetProcedureProtocolRequest protocolRequest = new GetProcedureProtocolRequest(_worklistItem.ProcedureRef);
-				GetProcedureProtocolResponse protocolResponse = service.GetProcedureProtocol(protocolRequest);
-
-				_protocolDetail = protocolResponse.ProtocolDetail;
-
-				StringBuilder sb = new StringBuilder();
-				foreach (ProcedureDetail procedure in _protocolDetail.Procedures)
-				{
-					sb.Append(ProcedureFormat.Format(procedure) + ", ");
-				}
-
-				_proceduresText = sb.ToString().TrimEnd(", ".ToCharArray());
-
-				// Load available protocol groups
-				ListProtocolGroupsForProcedureRequest request = new ListProtocolGroupsForProcedureRequest(_worklistItem.ProcedureRef);
-				ListProtocolGroupsForProcedureResponse response = service.ListProtocolGroupsForProcedure(request);
-
-				_protocolGroupChoices = response.ProtocolGroups;
-				_protocolGroup = GetInitialProtocolGroup();
-
-				RefreshAvailableProtocolCodes(_protocolDetail.Codes, service);
-
-				// fill out selected item codes
-				_selectedProtocolCodes.Items.Clear();
-				_selectedProtocolCodes.Items.AddRange(_protocolDetail.Codes);
-
-				if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview)
-					&& _protocolDetail.Supervisor == null)
-				{
-					// if this user has a default supervisor, retreive it, otherwise leave supervisor as null
-					if (_rememberSupervisor && !String.IsNullOrEmpty(ProtocollingSettings.Default.SupervisorID))
-					{
-						_protocolDetail.Supervisor = GetStaffByID(ProtocollingSettings.Default.SupervisorID);
-					}
-				}
-
-				NotifyPropertyChanged("ProtocolGroupChoices");
-				NotifyPropertyChanged("ProtocolGroup");
-				NotifyPropertyChanged("SetDefaultProtocolGroupEnabled");
-				NotifyPropertyChanged("Urgency");
+				sb.Append(ProcedureFormat.Format(procedure) + ", ");
 			}
+
+			_proceduresText = sb.ToString().TrimEnd(", ".ToCharArray());
+
+			// Load available protocol groups
+			var request = new ListProtocolGroupsForProcedureRequest(_worklistItem.ProcedureRef);
+			var response = service.ListProtocolGroupsForProcedure(request);
+
+			_protocolGroupChoices = response.ProtocolGroups;
+			_protocolGroup = GetInitialProtocolGroup();
+
+			RefreshAvailableProtocolCodes(_protocolDetail.Codes, service);
+
+			// fill out selected item codes
+			_selectedProtocolCodes.Items.Clear();
+			_selectedProtocolCodes.Items.AddRange(_protocolDetail.Codes);
+
+			if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview)
+				&& _protocolDetail.Supervisor == null)
+			{
+				// if this user has a default supervisor, retreive it, otherwise leave supervisor as null
+				if (_rememberSupervisor && !String.IsNullOrEmpty(ProtocollingSettings.Default.SupervisorID))
+				{
+					_protocolDetail.Supervisor = GetStaffByID(ProtocollingSettings.Default.SupervisorID);
+				}
+			}
+
+			NotifyPropertyChanged("ProtocolGroupChoices");
+			NotifyPropertyChanged("ProtocolGroup");
+			NotifyPropertyChanged("SetDefaultProtocolGroupEnabled");
+			NotifyPropertyChanged("Urgency");
 		}
 
 		private StaffSummary GetStaffByID(string id)
 		{
 			StaffSummary staff = null;
-			Platform.GetService<IStaffAdminService>(
-				delegate(IStaffAdminService service)
+			Platform.GetService<IStaffAdminService>(service =>
 				{
-					ListStaffResponse response = service.ListStaff(
-						new ListStaffRequest(id, null, null, null));
+					var response = service.ListStaff(new ListStaffRequest(id, null, null, null));
 					staff = CollectionUtils.FirstElement(response.Staffs);
 				});
 			return staff;
@@ -246,14 +240,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				if (_protocolDetail != null)
-				{
-					return _protocolDetail.Supervisor;
-				}
-				else
-				{
-					return null;
-				}
+				return _protocolDetail != null ? _protocolDetail.Supervisor : null;
 			}
 			set
 			{
@@ -330,10 +317,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 				{
 					return !String.Equals(LoginSession.Current.Staff.StaffId, _protocolDetail.Author.StaffId);
 				}
-				else
-				{
-					return false;
-				}
+
+				return false;
 			}
 		}
 
@@ -364,7 +349,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				return CollectionUtils.Map<ProtocolGroupSummary, string>(
 					_protocolGroupChoices,
-					delegate(ProtocolGroupSummary summary) { return AppendDefaultText(summary.Name); });
+					summary => AppendDefaultText(summary.Name));
 			}
 		}
 
@@ -374,10 +359,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 			set
 			{
 				_protocolGroup = (value == null)
-									? null
-									: CollectionUtils.SelectFirst<ProtocolGroupSummary>(
-										_protocolGroupChoices,
-										delegate(ProtocolGroupSummary summary) { return summary.Name == RemoveDefaultText(value); });
+					? null
+					: CollectionUtils.SelectFirst(_protocolGroupChoices, summary => summary.Name == RemoveDefaultText(value));
 
 				ProtocolGroupSelectionChanged();
 			}
@@ -442,24 +425,23 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			_availableProtocolCodes.Items.Clear();
 
-			if (_protocolGroup != null)
+			if (_protocolGroup == null)
+				return;
+
+			var protocolCodesDetailResponse = service.GetProtocolGroupDetail(new GetProtocolGroupDetailRequest(_protocolGroup));
+
+			_availableProtocolCodes.Items.AddRange(protocolCodesDetailResponse.ProtocolGroup.Codes);
+
+			// Make existing code selections unavailable
+			foreach (var code in existingSelectedCodes)
 			{
-				GetProtocolGroupDetailRequest protocolCodesDetailRequest = new GetProtocolGroupDetailRequest(_protocolGroup);
-				GetProtocolGroupDetailResponse protocolCodesDetailResponse = service.GetProtocolGroupDetail(protocolCodesDetailRequest);
-
-				_availableProtocolCodes.Items.AddRange(protocolCodesDetailResponse.ProtocolGroup.Codes);
-
-				// Make existing code selections unavailable
-				foreach (ProtocolCodeSummary code in existingSelectedCodes)
-				{
-					_availableProtocolCodes.Items.Remove(code);
-				}
+				_availableProtocolCodes.Items.Remove(code);
 			}
 		}
 
 		private void SelectedProtocolCodesChanged(object sender, ItemChangedEventArgs e)
 		{
-			ProtocolCodeSummary code = (ProtocolCodeSummary)e.Item;
+			var code = (ProtocolCodeSummary)e.Item;
 			switch (e.ChangeType)
 			{
 				case ItemChangeType.ItemAdded:
@@ -486,9 +468,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			if (string.IsNullOrEmpty(_defaultProtocolGroupName) == false)
 			{
-				defaultProtocolGroup = CollectionUtils.SelectFirst<ProtocolGroupSummary>(
+				defaultProtocolGroup = CollectionUtils.SelectFirst(
 					_protocolGroupChoices,
-					delegate(ProtocolGroupSummary summary) { return summary.Name == _defaultProtocolGroupName; });
+					summary => summary.Name == _defaultProtocolGroupName);
 			}
 
 			defaultProtocolGroup = defaultProtocolGroup ?? CollectionUtils.FirstElement(_protocolGroupChoices);
@@ -498,16 +480,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private string GetSuggestedDefault()
 		{
-			if (CollectionUtils.Contains(
-				_protocolGroupChoices,
-				delegate(ProtocolGroupSummary pgs) { return pgs.Name == _defaultProtocolGroupProvider.GetSuggestedDefault(); }))
-			{
-				return _defaultProtocolGroupProvider.GetSuggestedDefault();
-			}
-			else
-			{
-				return null;
-			}
+			var suggestedDefault = _defaultProtocolGroupProvider.GetSuggestedDefault();
+			return CollectionUtils.Contains(_protocolGroupChoices, pgs => pgs.Name == suggestedDefault)
+				? suggestedDefault
+				: null;
 		}
 
 		private void ProtocolGroupSelectionChanged()
@@ -515,10 +491,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			try
 			{
 				Platform.GetService<IProtocollingWorkflowService>(
-					delegate(IProtocollingWorkflowService service)
-					{
-						RefreshAvailableProtocolCodes(_protocolDetail.Codes, service);
-					});
+					service => RefreshAvailableProtocolCodes(_protocolDetail.Codes, service));
 			}
 			catch (Exception e)
 			{
