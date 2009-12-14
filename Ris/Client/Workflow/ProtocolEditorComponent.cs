@@ -97,7 +97,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private ReportingWorklistItem _worklistItem;
 
 		private List<EnumValueInfo> _protocolUrgencyChoices;
-		private readonly EnumValueInfo _protocolUrgencyNone = new EnumValueInfo(null, "(None)");
 
 		private ProtocolDetail _protocolDetail;
 		private string _proceduresText;
@@ -147,7 +146,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 				{
 					var response = service.GetProtocolFormData(new GetProtocolFormDataRequest());
 					_protocolUrgencyChoices = response.ProtocolUrgencyChoices;
-					_protocolUrgencyChoices.Insert(0, _protocolUrgencyNone);
 
 					LoadWorklistItem(service);
 				});
@@ -324,16 +322,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public EnumValueInfo Urgency
 		{
-			get
-			{
-				if (_protocolDetail == null || _protocolDetail.Urgency == null)
-					return _protocolUrgencyNone;
-
-				return _protocolDetail.Urgency;
-			}
+			get { return _protocolDetail == null ? null : _protocolDetail.Urgency; }
 			set
 			{
-				_protocolDetail.Urgency = value == _protocolUrgencyNone ? null : value;
+				_protocolDetail.Urgency = value;
 				this.Modified = true;
 			}
 		}
