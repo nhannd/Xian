@@ -207,26 +207,18 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				}
 			}
         	WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
-        	WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns
-        	                                 	{
-        	                                 		WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy,
-        	                                 		WorkQueueStatusEnum = WorkQueueStatusEnum.Pending,
-        	                                 		ServerPartitionKey = study.ServerPartitionKey
-        	                                 	};
-
-        	StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
-        	StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
-        	criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
-        	criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
-
-        	StudyStorage storage = studyStorageAdaptor.GetFirst(criteria);
-
-        	columns.StudyStorageKey = storage.Key;
-        	DateTime time = Platform.Time;
-        	columns.ScheduledTime = time;
-        	columns.ExpirationTime = time.AddMinutes(4);
-        	columns.FailureCount = 0;
-        	columns.DeviceKey = device.Key;
+			DateTime time = Platform.Time;
+			WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns
+			                                 	{
+			                                 		WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy,
+			                                 		WorkQueueStatusEnum = WorkQueueStatusEnum.Pending,
+			                                 		ServerPartitionKey = study.ServerPartitionKey,
+			                                 		StudyStorageKey = study.StudyStorageKey,
+			                                 		FailureCount = 0,
+			                                 		DeviceKey = device.Key,
+			                                 		ScheduledTime = time,
+			                                 		ExpirationTime = time.AddMinutes(4)
+			                                 	};
 
         	workqueueAdaptor.Add(columns);
 
@@ -264,19 +256,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public bool CanManipulateSeries(Study study)
         {
-            StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
-            StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
-            criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
-            criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
-
-            StudyStorage storage = studyStorageAdaptor.GetFirst(criteria);
+            StudyStorage storage = StudyStorage.Load(study.StudyStorageKey);
             
-            if(!storage.QueueStudyStateEnum.Equals(QueueStudyStateEnum.Idle))
-            {
-                return false;
-            }
-            
-            return true;
+            return storage.QueueStudyStateEnum.Equals(QueueStudyStateEnum.Idle);
         }
 
         /// <summary>
@@ -285,39 +267,31 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <param name="study"></param>
         /// <param name="workQueueType"></param>
         /// <returns></returns>           
-        private static bool IsStudyInWorkQueue(Study study, WorkQueueTypeEnum workQueueType)
+		private static bool IsStudyInWorkQueue(Study study, WorkQueueTypeEnum workQueueType)
         {
-            Platform.CheckForNullReference(study, "Study");
-            
-            StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
-            StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
-            criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
-            criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
+        	Platform.CheckForNullReference(study, "Study");
 
-            IList<StudyStorage> storages = studyStorageAdaptor.Get(criteria);
-            foreach (StudyStorage storage in storages)
-            {
-                WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
-                WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
-                workQueueCriteria.WorkQueueTypeEnum.EqualTo(workQueueType);
-                workQueueCriteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
-                workQueueCriteria.StudyStorageKey.EqualTo(storage.Key);
+        	WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
+        	WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
+        	workQueueCriteria.WorkQueueTypeEnum.EqualTo(workQueueType);
+        	workQueueCriteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
+        	workQueueCriteria.StudyStorageKey.EqualTo(study.StudyStorageKey);
 
-                workQueueCriteria.WorkQueueStatusEnum.EqualTo(WorkQueueStatusEnum.Pending);
+        	workQueueCriteria.WorkQueueStatusEnum.EqualTo(WorkQueueStatusEnum.Pending);
 
-                IList<WorkQueue> list = adaptor.Get(workQueueCriteria);
-                if (list != null && list.Count > 0)
-                    return true;
+        	IList<WorkQueue> list = adaptor.Get(workQueueCriteria);
+        	if (list != null && list.Count > 0)
+        		return true;
 
-            	workQueueCriteria.WorkQueueStatusEnum.EqualTo(WorkQueueStatusEnum.Idle); // not likely but who knows
-            	list = adaptor.Get(workQueueCriteria);
-            	if (list != null && list.Count > 0)
-            		return true;
-            }
-            return false;
+        	workQueueCriteria.WorkQueueStatusEnum.EqualTo(WorkQueueStatusEnum.Idle); // not likely but who knows
+        	list = adaptor.Get(workQueueCriteria);
+        	if (list != null && list.Count > 0)
+        		return true;
+
+        	return false;
         }
 
-		/// <summary>
+    	/// <summary>
 		/// Returns a value indicating whether the specified study has been scheduled for delete.
 		/// </summary>
 		/// <param name="study"></param>

@@ -31,7 +31,6 @@
 
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
@@ -65,12 +64,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
             if (study.StudyInstanceUid != null)
             {
-                var adaptor = new StudyStorageAdaptor();
-                var criteria = new StudyStorageSelectCriteria();
-                criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
-                criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
-
-                StudyStorage storages = adaptor.GetFirst(criteria);
+            	StudyStorage storages = StudyStorage.Load(study.StudyStorageKey);
                 if (storages != null)
                 {
                     details.WriteLock = storages.WriteLock;
