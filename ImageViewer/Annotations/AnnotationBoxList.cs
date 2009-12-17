@@ -50,6 +50,10 @@ namespace ClearCanvas.ImageViewer.Annotations
 				this.Add(box.Clone());
 		}
 
+		/// <summary>
+		/// Creates a deep clone of this <see cref="AnnotationBoxList"/>.
+		/// </summary>
+		/// <returns>A deep clone of this <see cref="AnnotationBoxList"/>.</returns>
 		public AnnotationBoxList Clone()
 		{
 			AnnotationBoxList clone = new AnnotationBoxList();

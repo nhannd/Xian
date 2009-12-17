@@ -38,8 +38,17 @@ namespace ClearCanvas.Desktop
 	/// </summary>
 	public enum IconSize
 	{
+		/// <summary>
+		/// Small icon.
+		/// </summary>
 		Small, 
+		/// <summary>
+		/// Medium icon.
+		/// </summary>
 		Medium, 
+		/// <summary>
+		/// Large icon.
+		/// </summary>
 		Large
 	};
 

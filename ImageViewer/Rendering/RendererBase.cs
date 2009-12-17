@@ -114,6 +114,11 @@ namespace ClearCanvas.ImageViewer.Rendering
 				Platform.Log(LogLevel.Error, e);
 				ShowErrorMessage(e.Message);
 			}
+			finally
+			{
+				_sceneGraph = null;
+				_surface = null;
+			}
 		}
 
 		/// <summary>

@@ -158,6 +158,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="StudyItem"/>.
+		/// </summary>
 		public StudyItem(StudyItem other)
 			: this(other, other.Server, other.StudyLoaderName)
 		{
@@ -174,11 +177,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_studyInstanceUid = studyInstanceUid;
 		}
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="StudyItem"/>.
+		/// </summary>
 		public StudyItem(IStudyRootData other, object server, string studyLoaderName)
 			: this(other, other, server, studyLoaderName)
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="StudyItem"/>.
+		/// </summary>
 		public StudyItem(IPatientData patient, IStudyData study, object server, string studyLoaderName)
 			: this(server, studyLoaderName)
 		{
@@ -254,12 +263,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			set { _patientsBirthDate = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the patient's birthtime.
+		/// </summary>
 		public string PatientsBirthTime
 		{
 			get { return _patientsBirthTime; }
 			set { _patientsBirthTime = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the patient's sex.
+		/// </summary>
 		public string PatientsSex
 		{
 			get { return _patientsSex; }
@@ -302,6 +317,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             set { _studyDescription = value; }
         }
 
+		/// <summary>
+		/// Gets or sets the study ID.
+		/// </summary>
 		public string StudyId
 		{
 			get { return _studyId; }
@@ -326,6 +344,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			set { _studyTime = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the modalities in the study.
+		/// </summary>
 		public string[] ModalitiesInStudy
 		{
 			get { return _modalitiesInStudy ?? new string[0]; }
@@ -341,6 +362,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			set { _studyInstanceUid = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the number of series belonging to the study.
+		/// </summary>
 		public int? NumberOfStudyRelatedSeries
 		{
 			get { return _numberOfStudyRelatedSeries; }
@@ -409,11 +433,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			set { _studyLoaderName = value; }
 		}
 
+		/// <summary>
+		/// Converts this <see cref="StudyItem"/> into a <see cref="StudyRootStudyIdentifier"/>.
+		/// </summary>
 		public StudyRootStudyIdentifier ToStudyRootIdentifier()
 		{
 			return new StudyRootStudyIdentifier(this);
 		}
 
+		/// <summary>
+		/// Converts this <see cref="StudyItem"/> into a <see cref="StudyRootStudyIdentifier"/>.
+		/// </summary>
 		public static explicit operator StudyRootStudyIdentifier(StudyItem item)
 		{
 			return item.ToStudyRootIdentifier();

@@ -191,13 +191,13 @@ namespace ClearCanvas.Dicom.Utilities
 					if (dateValue == String.Empty)
 					{
 						if (timeValue.IndexOf(".") == -1)
-							outDateTime = DateTime.ParseExact(timeValue, "HHmmss", CultureInfo.CurrentCulture);
+							outDateTime = DateTime.ParseExact(timeValue, "HHmmss", CultureInfo.InvariantCulture);
 						else
-							outDateTime = DateTime.ParseExact(timeValue, "HHmmss.ffffff", CultureInfo.CurrentCulture);
+							outDateTime = DateTime.ParseExact(timeValue, "HHmmss.ffffff", CultureInfo.InvariantCulture);
 					}
 					else if (timeValue == String.Empty)
 					{
-						outDateTime = DateTime.ParseExact(dateValue, "yyyyMMdd", CultureInfo.CurrentCulture);
+						outDateTime = DateTime.ParseExact(dateValue, "yyyyMMdd", CultureInfo.InvariantCulture);
 					}
 					else
 					{
@@ -228,7 +228,7 @@ namespace ClearCanvas.Dicom.Utilities
 					date_formats[11] = "MM/dd/yyyy HH:mm:ss t";
 					date_formats[12] = "MM/dd/yyyy HH:mm:ss";
 					date_formats[13] = "MM/dd/yyyy";
-					outDateTime = DateTime.ParseExact(dateTimeConcat, date_formats, CultureInfo.CurrentCulture, DateTimeStyles.NoCurrentDateDefault);
+					outDateTime = DateTime.ParseExact(dateTimeConcat, date_formats, CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault);
 
 				}
 

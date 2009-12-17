@@ -232,6 +232,9 @@ namespace ClearCanvas.Desktop
             return true;
         }
 
+		/// <summary>
+		/// Gets whether or not this instance is equal to <paramref name="other"/>.
+		/// </summary>
     	public bool Equals(Path other)
     	{
     		if (ReferenceEquals(null, other)) return false;
@@ -239,22 +242,34 @@ namespace ClearCanvas.Desktop
     		return CollectionUtils.Equal<PathSegment>(other._segments, _segments, true);
     	}
 
-    	public override bool Equals(object obj)
+		/// <summary>
+		/// Gets whether or not this instance is equal to <paramref name="obj"/>.
+		/// </summary>
+		public override bool Equals(object obj)
     	{
     		return Equals(obj as Path);
     	}
 
-    	public override int GetHashCode()
+    	/// <summary>
+    	/// Gets a hash code.
+    	/// </summary>
+		public override int GetHashCode()
     	{
     		return _segments.GetHashCode();
     	}
 
+		/// <summary>
+		/// Determines whether <paramref name="left"/> is equivalent to <paramref name="right"/>.
+		/// </summary>
     	public static bool operator ==(Path left, Path right)
     	{
     		return Equals(left, right);
     	}
 
-    	public static bool operator !=(Path left, Path right)
+		/// <summary>
+		/// Determines whether <paramref name="left"/> is not equivalent to <paramref name="right"/>.
+		/// </summary>
+		public static bool operator !=(Path left, Path right)
     	{
     		return !Equals(left, right);
 		}

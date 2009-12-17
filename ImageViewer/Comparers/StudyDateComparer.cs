@@ -115,11 +115,21 @@ namespace ClearCanvas.ImageViewer.Comparers
 			yield return sop.StudyDescription;
 		}
 
+		/// <summary>
+		/// Compares two <see cref="IImageSet"/>s.
+		/// </summary>
 		public override int Compare(IImageSet x, IImageSet y)
 		{
 			return Compare(GetCompareValues(x), GetCompareValues(y));
 		}
 
+		/// <summary>
+		/// Compares two <see cref="ImageSop"/>s.
+		/// </summary>
+		/// <remarks>
+		/// The relevant DICOM study property to be compared
+		/// is taken from the <see cref="ImageSop"/>.
+		/// </remarks>
 		public override int Compare(Sop x, Sop y)
 		{
 			return Compare(GetCompareValues(x), GetCompareValues(y));
@@ -127,6 +137,9 @@ namespace ClearCanvas.ImageViewer.Comparers
 
 		#region IComparer<IStudyData> Members
 
+		/// <summary>
+		/// Compares two <see cref="IStudyData"/> objects.
+		/// </summary>
 		public int Compare(IStudyData x, IStudyData y)
 		{
 			return base.Compare(GetCompareValues(x), GetCompareValues(y));

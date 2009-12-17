@@ -33,9 +33,7 @@ using System;
 using System.Collections;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
-using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Volume.Mpr.Tools;
 using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 
@@ -124,6 +122,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			if (disposing)
 			{
+				if (_mprWorkspace != null)
+				{
+					_mprWorkspace.Dispose();
+					_mprWorkspace = null;
+				}
+
 				if (_volumes != null)
 				{
 					_volumes.Dispose();

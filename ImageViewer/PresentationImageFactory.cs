@@ -42,12 +42,29 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// Defines the factory methods for creating <see cref="IPresentationImage"/>s.
+	/// </summary>
 	public interface IPresentationImageFactory
 	{
+		/// <summary>
+		/// Sets the <see cref="StudyTree"/> to be used by the <see cref="IPresentationImageFactory"/> when resolving referenced SOPs.
+		/// </summary>
+		/// <param name="studyTree">The <see cref="StudyTree"/> to be used for resolving referenced SOPs.</param>
 		void SetStudyTree(StudyTree studyTree);
 
+		/// <summary>
+		/// Creates the presentation images for a given image SOP.
+		/// </summary>
+		/// <param name="sop">The image SOP from which presentation images are to be created.</param>
+		/// <returns>A list of created presentation images.</returns>
 		List<IPresentationImage> CreateImages(Sop sop);
 
+		/// <summary>
+		/// Creates the presentation image for a given image frame.
+		/// </summary>
+		/// <param name="frame">The image frame from which a presentation image is to be created.</param>
+		/// <returns>The created presentation image.</returns>
 		IPresentationImage CreateImage(Frame frame);
 	}
 
@@ -58,10 +75,16 @@ namespace ClearCanvas.ImageViewer
 	{
 		private StudyTree _studyTree;
 
+		/// <summary>
+		/// Constructs a <see cref="PresentationImageFactory"/>.
+		/// </summary>
 		public PresentationImageFactory()
 		{
 		}
 
+		/// <summary>
+		/// Gets the <see cref="StudyTree"/> used by the factory to resolve referenced SOPs.
+		/// </summary>
 		protected StudyTree StudyTree
 		{
 			get { return _studyTree; }
@@ -81,6 +104,11 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		/// <summary>
+		/// Creates the presentation image for a given image frame.
+		/// </summary>
+		/// <param name="frame">The image frame from which a presentation image is to be created.</param>
+		/// <returns>The created presentation image.</returns>
 		protected virtual IPresentationImage CreateImage(Frame frame)
 		{
 			return Create(frame);
@@ -96,6 +124,11 @@ namespace ClearCanvas.ImageViewer
 			return Create(imageSop);
 		}
 
+		/// <summary>
+		/// Creates the presentation images for a given image SOP.
+		/// </summary>
+		/// <param name="sop">The image SOP from which presentation images are to be created.</param>
+		/// <returns>A list of created presentation images.</returns>
 		public virtual List<IPresentationImage> CreateImages(Sop sop)
 		{
 			if (sop is ImageSop)

@@ -180,11 +180,6 @@ namespace ClearCanvas.ImageViewer.Externals.General
 			get { return SR.HelpCommandLineExternalArgumentFields; }
 		}
 
-		public IList<string> Arguments
-		{
-			get { return new List<string>(_argumentString.Split(new string[] {Environment.NewLine}, StringSplitOptions.None)); }
-		}
-
 		public override void Load(CommandLineExternal external)
 		{
 			base.Load(external);

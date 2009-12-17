@@ -132,11 +132,18 @@ namespace ClearCanvas.Desktop
             base.Stop();
         }
 
+		/// <summary>
+		/// Gets a value indicating whether there are any data validation errors.
+		/// </summary>
 		public override bool HasValidationErrors
 		{
 			get { return _componentHost.Component.HasValidationErrors || base.HasValidationErrors; }
 		}
 
+		/// <summary>
+		/// Sets the <see cref="ApplicationComponent.ValidationVisible"/> property and raises the 
+		/// <see cref="ApplicationComponent.ValidationVisibleChanged"/> event.
+		/// </summary>
 		public override void ShowValidation(bool show)
 		{
 			base.ShowValidation(show);

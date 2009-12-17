@@ -154,6 +154,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public bool LoadPriors { get; set; }
 
+		/// <summary>
+		/// Gets or sets whether or not to allow an empty viewer to be opened (e.g. with no studies loaded).
+		/// </summary>
 		public bool AllowEmptyViewer { get; set; }
 		
 		#endregion

@@ -134,6 +134,26 @@ namespace ClearCanvas.ImageViewer
 		[Obsolete("This method has been deprecated and will be removed in the future. Use the LoadStudy(LoadStudyArgs) overload instead.")]
 		void LoadStudy(string studyInstanceUID, string source);
 
+		/// <summary>
+		/// Loads a study using the specified parameters.
+		/// </summary>
+		/// <remarks>After this method is executed, the image viewer's <see cref="StudyTree"/>
+		/// will be populated with the appropriate <see cref="Study"/>, <see cref="Series"/> 
+		/// and <see cref="Sop"/> objects.
+		/// 
+		/// By default, the Framework provides an implementation of 
+		/// <see cref="IStudyLoader"/> called <b>LocalDataStoreStudyLoader</b> which loads
+		/// studies from the local database.  If you have implemented your own 
+		/// <see cref="IStudyLoader"/> and want to load a study using that implementation,
+		/// just pass in the name provided by <see cref="IStudyLoader.Name"/> as the source.
+		/// </remarks>
+		/// <param name="loadStudyArgs">A <see cref="LoadStudyArgs"/> object containing information about the study to be loaded.</param>
+		/// <exception cref="InUseLoadStudyException">The specified study is in use and cannot be opened at this time.</exception>
+		/// <exception cref="NearlineLoadStudyException">The specified study is nearline and cannot be opened at this time.</exception>
+		/// <exception cref="OfflineLoadStudyException">The specified study is offline and cannot be opened at this time.</exception>
+		/// <exception cref="NotFoundLoadStudyException">The specified study could not be found.</exception>
+		/// <exception cref="LoadStudyException">One or more images could not be opened, or an unspecified error has occurred.</exception>
+		/// <exception cref="StudyLoaderNotFoundException">The specified <see cref="IStudyLoader"/> could not be found.</exception>
 		void LoadStudy(LoadStudyArgs loadStudyArgs);
 
 		/// <summary>

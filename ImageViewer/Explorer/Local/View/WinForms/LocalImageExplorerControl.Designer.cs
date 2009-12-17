@@ -111,6 +111,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			// 
 			// _folderViewContextMenu
 			// 
+			this._folderViewContextMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this._folderViewContextMenu.Name = "_folderViewContextMenu";
 			this._folderViewContextMenu.Size = new System.Drawing.Size(61, 4);
 			this._folderViewContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this._folderViewContextMenu_Opening);
@@ -143,6 +144,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			// 
 			// _folderTreeContextMenu
 			// 
+			this._folderTreeContextMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this._folderTreeContextMenu.Name = "_folderTreeContextMenu";
 			this._folderTreeContextMenu.Size = new System.Drawing.Size(61, 4);
 			this._folderTreeContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this._folderTreeContextMenu_Opening);

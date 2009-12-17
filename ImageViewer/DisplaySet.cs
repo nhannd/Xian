@@ -125,6 +125,9 @@ namespace ClearCanvas.ImageViewer
 			Uid = uid;
 		}
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="DisplaySet"/> with the given <see cref="DisplaySetDescriptor"/>.
+		/// </summary>
 		public DisplaySet(DisplaySetDescriptor descriptor)
 		{
 			Platform.CheckForNullReference(descriptor, "descriptor");
@@ -213,6 +216,9 @@ namespace ClearCanvas.ImageViewer
 			internal set { _imageBox = value as ImageBox; }
 		}
 
+		/// <summary>
+		/// Gets the <see cref="IDisplaySetDescriptor"/> that describes this <see cref="IDisplaySet"/>.
+		/// </summary>
 		public DisplaySetDescriptor Descriptor
 		{
 			get { return _descriptor; }
@@ -488,12 +494,20 @@ namespace ClearCanvas.ImageViewer
 			OnPresentationImageRemoved((PresentationImage)e.Item);
 		}
 
+		/// <summary>
+		/// Called when a <see cref="PresentationImage"/> has been added to the display set.
+		/// </summary>
+		/// <param name="image">The image that was added to the display set.</param>
 		protected virtual void OnPresentationImageAdded(PresentationImage image)
 		{
 			image.ParentDisplaySet = this;
 			image.ImageViewer = this.ImageViewer;
 		}
 
+		/// <summary>
+		/// Called when a <see cref="PresentationImage"/> has been removed from the display set.
+		/// </summary>
+		/// <param name="image">The image that was removed from the display set.</param>
 		protected virtual void OnPresentationImageRemoved(PresentationImage image)
 		{
 			image.ParentDisplaySet = null;

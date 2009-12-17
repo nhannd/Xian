@@ -31,6 +31,9 @@
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/// <summary>
+	/// Interface to an entity responsible for managing installation of VOI LUTs.
+	/// </summary>
 	public interface IVoiLutInstaller
 	{
 		/// <summary>

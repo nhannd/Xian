@@ -60,6 +60,9 @@ namespace ClearCanvas.ImageViewer
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="ImageSet"/>.
+		/// </summary>
 		public ImageSet(ImageSetDescriptor descriptor)
 		{
 			_displaySetCopies = new List<IDisplaySet>();
@@ -162,6 +165,9 @@ namespace ClearCanvas.ImageViewer
 			get { return _descriptor; }
 		}
 
+		/// <summary>
+		/// Gets the <see cref="IImageSetDescriptor"/> describing this <see cref="IImageSet"/>.
+		/// </summary>
 		public ImageSetDescriptor Descriptor
 		{
 			get { return _descriptor; }
@@ -318,12 +324,18 @@ namespace ClearCanvas.ImageViewer
 			OnDisplaySetRemoved((DisplaySet)e.Item);
 		}
 
+		/// <summary>
+		/// Called when a new <see cref="DisplaySet"/> has been added.
+		/// </summary>
 		protected virtual void OnDisplaySetAdded(DisplaySet displaySet)
 		{
 			displaySet.ParentImageSet = this;
 			displaySet.ImageViewer = this.ImageViewer;
 		}
 
+		/// <summary>
+		/// Called when a <see cref="DisplaySet"/> has been removed.
+		/// </summary>
 		protected virtual void OnDisplaySetRemoved(DisplaySet displaySet)
 		{
 			displaySet.ParentImageSet = null;

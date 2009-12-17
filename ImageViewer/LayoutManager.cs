@@ -66,6 +66,9 @@ namespace ClearCanvas.ImageViewer
 			get { return _imageViewer; }
 		}
 
+		/// <summary>
+		/// Convenience property for retrieving the <see cref="IImageViewer.StudyTree"/>.
+		/// </summary>
 		protected StudyTree StudyTree
 		{
 			get 
@@ -78,7 +81,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Convenience property for retrieving the owner <see cref="IImageViewer.PhysicalWorkspace"/> property.
+		/// Convenience property for retrieving the <see cref="IImageViewer.PhysicalWorkspace"/> property.
 		/// </summary>
 		protected IPhysicalWorkspace PhysicalWorkspace
 		{
@@ -92,7 +95,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Convenience property for retrieving the owner <see cref="IImageViewer.LogicalWorkspace"/> property.
+		/// Convenience property for retrieving the <see cref="IImageViewer.LogicalWorkspace"/> property.
 		/// </summary>
 		protected ILogicalWorkspace LogicalWorkspace
 		{
@@ -105,6 +108,9 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets whether or not to allow an empty <see cref="IImageViewer"/> (e.g. no studies loaded).
+		/// </summary>
 		protected bool AllowEmptyViewer
 		{
 			get { return _allowEmptyViewer; }
@@ -127,9 +133,12 @@ namespace ClearCanvas.ImageViewer
 		/// Builds the <see cref="ILogicalWorkspace"/>, lays out and fills the <see cref="IPhysicalWorkspace"/>.
 		/// </summary>
 		/// <remarks>
-		/// Internally, this method calls <see cref="BuildLogicalWorkspace"/>, <see cref="LayoutPhysicalWorkspace"/>, <see cref="SortDisplaySets()"/>,
-		/// <see cref="FillPhysicalWorkspace"/> and <see cref="SortImageSets()"/> in that order, followed by a call to <see cref="IDrawable.Draw">IPhysicalWorkspace.Draw</see>.
+		/// Internally, this method calls <see cref="BuildLogicalWorkspace"/>, <see cref="ValidateLogicalWorkspace"/>,
+		/// <see cref="LayoutPhysicalWorkspace"/>, <see cref="FillPhysicalWorkspace"/> and <see cref="SortImageSets()"/> in that order,
+		/// followed by a call to <see cref="IDrawable.Draw">IPhysicalWorkspace.Draw</see>, and finally <see cref="OnLayoutCompleted"/>.
 		/// You can override this method entirely, or you can override any of the 5 methods called by this method.
+		/// Note that you must draw the <see cref="IPhysicalWorkspace"/> and call <see cref="OnLayoutCompleted"/> if you choose
+		/// to override this method completely.
 		/// </remarks>
 		public virtual void Layout()
 		{
@@ -163,16 +172,16 @@ namespace ClearCanvas.ImageViewer
 
 		#region Virtual
 		/// <summary>
-		/// Builds the <see cref="ILogicalWorkspace"/>, creating and populating <see cref="ILogicalWorkspace.ImageSets"/>
-		/// from the contents of <see cref="IImageViewer.StudyTree"/>.
+		/// Builds the <see cref="LogicalWorkspace"/>, creating and populating <see cref="ILogicalWorkspace.ImageSets">Image Sets</see>
+		/// from the contents of <see cref="StudyTree"/>.
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// By default, this method simply creates an <see cref="IDisplaySet"/> for each <see cref="Series"/>
-		/// in <see cref="IImageViewer.StudyTree"/>.
+		/// By default, this method simply creates a <see cref="IDisplaySet">Display Set</see> for each <see cref="Series"/>
+		/// in <see cref="StudyTree"/>.
 		/// </para>
 		/// <para>
-		/// Override this method to change how the <see cref="IDisplaySet"/>s are constructed.
+		/// Override this method to change how <see cref="IDisplaySet">Display Sets</see> are constructed.
 		/// </para>
 		/// </remarks>
 		protected virtual void BuildLogicalWorkspace()
@@ -281,47 +290,79 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Creates a <see cref="DicomImageSetDescriptor"/> for the given <see cref="IStudyRootStudyIdentifier">study</see>.
+		/// </summary>
 		protected virtual DicomImageSetDescriptor CreateImageSetDescriptor(IStudyRootStudyIdentifier studyData)
 		{
 			return new DicomImageSetDescriptor(studyData);
 		}
 
+		/// <summary>
+		/// Creates, but does not populate, an <see cref="IImageSet"/> for the given <see cref="IStudyRootStudyIdentifier">study</see>.
+		/// </summary>
 		protected virtual IImageSet CreateImageSet(IStudyRootStudyIdentifier studyData)
 		{
 			return new ImageSet(CreateImageSetDescriptor(studyData));
 		}
-
+		
+		/// <summary>
+		/// Updates the contents of the given <see cref="IImageSet"/> by populating it with <see cref="IDisplaySet"/>s created
+		/// from the given <see cref="Series"/>.
+		/// </summary>
 		protected virtual void UpdateImageSet(IImageSet imageSet, Series series)
 		{
 			foreach (IDisplaySet displaySet in BasicDisplaySetFactory.CreateSeriesDisplaySets(series, StudyTree))
 				imageSet.DisplaySets.Add(displaySet);
 		}
 
+		/// <summary>
+		/// Sorts the given <see cref="SopCollection"/>.
+		/// </summary>
+		/// <param name="sops"></param>
 		protected virtual void SortSops(SopCollection sops)
 		{
 			sops.Sort(GetSopComparer());
 		}
 
+		/// <summary>
+		/// Creates a comparer for <see cref="Sop"/>s.
+		/// </summary>
+		/// <returns></returns>
 		protected virtual IComparer<Sop> GetSopComparer()
 		{
 			return new InstanceNumberComparer();
 		}
 
+		/// <summary>
+		/// Sorts the given <see cref="SeriesCollection"/>.
+		/// </summary>
+		/// <param name="series"></param>
 		protected virtual void SortSeries(SeriesCollection series)
 		{
 			series.Sort(GetSeriesComparer());
 		}
 
+		/// <summary>
+		/// Creates a comparer for <see cref="Series"/>.
+		/// </summary>
 		protected virtual IComparer<Series> GetSeriesComparer()
 		{
 			return new SeriesNumberComparer();
 		}
 
+		/// <summary>
+		/// Sorts the given <see cref="StudyCollection"/>.
+		/// </summary>
 		protected virtual void SortStudies(StudyCollection studies)
 		{
 			studies.Sort(GetStudyComparer());
 		}
 
+		/// <summary>
+		/// Creates a comparer for <see cref="Study">studies</see>.
+		/// </summary>
+		/// <returns></returns>
 		protected virtual IComparer<Study> GetStudyComparer()
 		{
 			return new StudyDateComparer();

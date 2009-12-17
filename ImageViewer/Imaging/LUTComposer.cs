@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
@@ -45,27 +43,22 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#region Private Fields
 
 		private LutCollection _lutCollection;
-		private int[] _composedLut;
 		private bool _recalculate = true;
-		private bool _validated = false;
-
+		private ComposedLutCache.ICachedLut _cachedLut;
 		private int _minInputValue = int.MinValue;
 		private int _maxInputValue = int.MaxValue;
-
-		private ComposedLutPool _lutPool;
-		private string _key = String.Empty;
 
 		#endregion
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="LutComposer"/>.
 		/// </summary>
-		public LutComposer() : base()
+		public LutComposer()
 		{
-			this.LutCollection.ItemAdded += OnLutAdded;
-			this.LutCollection.ItemChanging += OnLutChanging;
-			this.LutCollection.ItemChanged += OnLutChanged;
-			this.LutCollection.ItemRemoved += OnLutRemoved;
+			LutCollection.ItemAdded += OnLutAdded;
+			LutCollection.ItemChanging += OnLutChanging;
+			LutCollection.ItemChanged += OnLutChanged;
+			LutCollection.ItemRemoved += OnLutRemoved;
 		}
 
 		/// <summary>
@@ -116,98 +109,30 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#endregion
 
-		#region Private Members
-		#region Methods
-
-		private unsafe void Compose(int[] data)
+		private void OnLutChanged()
 		{
-
-#if DEBUG
-			CodeClock counter = new CodeClock();
-			counter.Start();
-#endif
-			fixed (int* composedLutData = data)
-			{
-				int* pLutData = composedLutData;
-				int min = MinInputValue;
-				int max = MaxInputValue + 1;
-				int lutCount = LutCollection.Count;
-
-				for (int i = min; i < max; ++i)
-				{
-					int val = i;
-
-					for (int j = 0; j < lutCount; ++j)
-						val = this.LutCollection[j][val];
-
-					*pLutData = val;
-					++pLutData;
-				}
-			}
-#if DEBUG
-			counter.Stop();
-
-			string str = String.Format("Compose: {0}\n", counter.ToString());
-			Trace.Write(str);
-#endif
-		}
-
-		private void ValidateLutCollection()
-		{
-			// Make sure we have at least one LUT
-			if (this.LutCollection.Count == 0)
-				throw new InvalidOperationException(SR.ExceptionLUTNotAdded);
-
-			// Check for null LUTs
-			foreach (IComposableLut lut in this.LutCollection)
-			{
-				if (lut == null)
-					throw new InvalidOperationException(SR.ExceptionLUTNotAdded);
-			}
-
-			// If we only have one LUT then no further validation is required
-			if (this.LutCollection.Count == 1)
-				return;
-
-			// Verify that the input range of the nth LUT is equal to the output
-			// range of the n-1th LUT.
-			for (int i = 1; i < this.LutCollection.Count; i++)
-			{
-				IComposableLut curLut = this.LutCollection[i];
-				IComposableLut prevLut = this.LutCollection[i - 1];
-
-				if (prevLut.MinOutputValue != curLut.MinInputValue ||
-					prevLut.MaxOutputValue != curLut.MaxInputValue)
-					throw new InvalidOperationException(SR.ExceptionLUTInputOutputRange);
-			}
-		}
-
-		private IEnumerable<string> GetKeys()
-		{
-			foreach (IComposableLut lut in this.LutCollection)
-				yield return lut.GetKey();
-		}
-
-		private string GetKey()
-		{
-			return StringUtilities.Combine(GetKeys(), "/");
+			SyncMinMaxValues();
+			_recalculate = true;
 		}
 
 		private void SyncMinMaxValues()
 		{
-			if (this.LutCollection.Count > 0)
+			if (LutCollection.Count > 0)
 			{
-				this.LutCollection[0].MinInputValue = _minInputValue;
-				this.LutCollection[0].MaxInputValue = _maxInputValue;
+				IComposableLut firstLut = LutCollection[0];
+				firstLut.MinInputValue = _minInputValue;
+				firstLut.MaxInputValue = _maxInputValue;
 			}
 
-			for (int i = 1; i < this.LutCollection.Count; ++i)
-			{
-				IComposableLut curLut = this.LutCollection[i];
-				IComposableLut prevLut = this.LutCollection[i - 1];
+			LutCollection.SyncMinMaxValues();
+		}
 
-				curLut.MinInputValue = prevLut.MinOutputValue;
-				curLut.MaxInputValue = prevLut.MaxOutputValue;
+		private void DisposeCachedLut()
+		{
+			if (_cachedLut != null)
+			{
+				_cachedLut.Dispose();
+				_cachedLut = null;
 			}
 		}
 
@@ -221,87 +146,46 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private void OnLutChanged(object sender, ListEventArgs<IComposableLut> e)
 		{
 			e.Item.LutChanged += OnLutValuesChanged;
-			SyncMinMaxValues();
-			_recalculate = true;
-			_validated = false;
+			OnLutChanged();
 		}
 
 		private void OnLutRemoved(object sender, ListEventArgs<IComposableLut> e)
 		{
 			e.Item.LutChanged -= OnLutValuesChanged;
-			SyncMinMaxValues();
-			_recalculate = true;
-			_validated = false;
+			OnLutChanged();
 		}
 
 		private void OnLutAdded(object sender, ListEventArgs<IComposableLut> e)
 		{
 			e.Item.LutChanged += OnLutValuesChanged;
-			SyncMinMaxValues();
-			_recalculate = true;
-			_validated = false;
+			OnLutChanged();
 		}
 
 		private void OnLutValuesChanged(object sender, EventArgs e)
 		{
-			_recalculate = true;
-			SyncMinMaxValues();
+			OnLutChanged();
 		}
 
-		#endregion
 		#endregion
 
 		#region Properties
-
-		private ComposedLutPool LutPool
-		{
-			get
-			{
-				if (_lutPool == null)
-					_lutPool = ComposedLutPool.NewInstance;
-
-				return _lutPool;
-			}
-		}
-
 		/// <summary>
 		/// The output LUT of the pipeline.
 		/// </summary>
-		private int[] ComposedLut
-		{
-			get 
-			{
-				if (_recalculate)
-				{
-					if (!_validated)
-					{
-						ValidateLutCollection();
-						_validated = true;
-					}
-
-					this.LutPool.Return(_key);
-
-					_key = GetKey();
-
-					_composedLut = this.LutPool.Retrieve(_key, Length, Compose);
-					_recalculate = false;
-				}
-
-				return _composedLut; 
-			}
-		}
-
-		private int Length
-		{
-			get { return MaxInputValue - MinInputValue + 1; }
-		}
-
-		private IComposableLut FirstLut
+		private IComposedLut ComposedLut
 		{
 			get
 			{
-				ValidateLutCollection();
-				return LutCollection[0];
+				if (_recalculate)
+				{
+					DisposeCachedLut();
+					_recalculate = false;
+				}
+
+				if (_cachedLut == null)
+					_cachedLut = ComposedLutCache.GetLut(LutCollection);
+
+				return _cachedLut;
 			}
 		}
 
@@ -309,12 +193,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				ValidateLutCollection();
+				LutCollection.Validate();
 				return LutCollection[LutCollection.Count - 1];
 			}
 		}
 
-		#endregion
 		#endregion
 
 		#region IComposedLut Members
@@ -328,10 +211,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </remarks>
 		public int[] Data
 		{
-			get
-			{
-				return ComposedLut;
-			}
+			get { return ComposedLut.Data; }
 		}
 
 		#endregion
@@ -349,10 +229,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 				if (_minInputValue != value)
 				{
 					_minInputValue = value;
-
-					SyncMinMaxValues();
-					_recalculate = true;
-					_validated = false;
+					OnLutChanged();
 				}
 			}
 		}
@@ -368,10 +245,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 				if (_maxInputValue != value)
 				{
 					_maxInputValue = value;
-
-					SyncMinMaxValues();
-					_recalculate = true;
-					_validated = false;
+					OnLutChanged();
 				}
 			}
 		}
@@ -397,15 +271,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public int this[int index]
 		{
-			get
-			{
-				if (index <= MinInputValue)
-					return this.ComposedLut[0];
-				else if (index >= MaxInputValue)
-					return this.ComposedLut[Length - 1];
-
-				return this.ComposedLut[index - MinInputValue];
-			}
+			get { return ComposedLut[index]; }
 		}
 
 		#region Disposal
@@ -419,18 +285,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			try
 			{
-				this.LutCollection.ItemAdded -= OnLutAdded;
-				this.LutCollection.ItemChanging -= OnLutChanging;
-				this.LutCollection.ItemChanged -= OnLutChanged;
-				this.LutCollection.ItemRemoved -= OnLutRemoved;
-
 				Dispose(true);
 				GC.SuppressFinalize(this);
 			}
 			catch (Exception e)
 			{
 				// shouldn't throw anything from inside Dispose()
-				Platform.Log(LogLevel.Error, e);
+				Platform.Log(LogLevel.Debug, e);
 			}
 		}
 
@@ -444,13 +305,15 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			if (disposing)
 			{
+				LutCollection.ItemAdded -= OnLutAdded;
+				LutCollection.ItemChanging -= OnLutChanging;
+				LutCollection.ItemChanged -= OnLutChanged;
+				LutCollection.ItemRemoved -= OnLutRemoved;
+
+				DisposeCachedLut();
+
 				if (_lutCollection != null)
 					_lutCollection.Clear();
-
-				if (_lutPool != null)
-					_lutPool.Dispose();
-
-				_composedLut = null;
 			}
 		}
 

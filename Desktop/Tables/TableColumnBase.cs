@@ -325,6 +325,9 @@ namespace ClearCanvas.Desktop.Tables
     		return _cellEditor;
     	}
 
+		/// <summary>
+		/// Gets whether or not the specified <paramref name="item"/> can be edited.
+		/// </summary>
     	public bool IsEditable(object item)
     	{
 			if (this.ReadOnly)

@@ -54,6 +54,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// </remarks>
 	public interface IColorMapManager : IColorMapInstaller, IMemorable
 	{
+		/// <summary>
+		/// Gets the currently installed color map.
+		/// </summary>
 		[Obsolete("Use the ColorMap property instead.")]
 		IDataLut GetColorMap();
 	}

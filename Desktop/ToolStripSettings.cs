@@ -37,6 +37,9 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
+	/// <summary>
+	/// Stores general settings for toolbars and menus.
+	/// </summary>
 	[SettingsGroupDescription("Stores general settings for toolbars and menus.")]
 	[SettingsProvider(typeof (StandardSettingsProvider))]
 	public sealed partial class ToolStripSettings {}

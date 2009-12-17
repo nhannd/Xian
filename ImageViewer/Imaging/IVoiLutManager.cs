@@ -47,9 +47,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <seealso cref="IComposableLut"/>
 	public interface IVoiLutManager : IVoiLutInstaller, IMemorable
 	{
+		/// <summary>
+		/// Gets the currently installed Voi Lut.
+		/// </summary>
+		/// <returns>The Voi Lut as an <see cref="IComposableLut"/>.</returns>
 		[Obsolete("Use the VoiLut property instead.")]
 		IComposableLut GetLut();
 
+		/// <summary>
+		/// Installs a new Voi Lut.
+		/// </summary>
+		/// <param name="voiLut">The Lut to be installed.</param>
 		[Obsolete("Use the InstallVoiLut method instead.")]
 		void InstallLut(IComposableLut voiLut);
 

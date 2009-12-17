@@ -48,6 +48,10 @@ namespace ClearCanvas.ImageViewer.Common
 		private const long ThreeGigabytes = 3 * OneGigabyte;
 		private const long EightGigabytes = 8 * OneGigabyte;
 
+		private const float TwentyFivePercent = 0.25F;
+		private const float FortyPercent = 0.40F;
+		private const float NinetyPercent = 0.90F;
+
 		private IEnumerator<ILargeObjectContainer> _largeObjectEnumerator;
 		
 		private RegenerationCost _regenerationCost;
@@ -61,6 +65,11 @@ namespace ClearCanvas.ImageViewer.Common
 		private long _totalBytesCollected;
 		private int _totalLargeObjectsCollected;
 		private int _totalContainersUnloaded;
+
+		private long _processVirtualMemoryBytes;
+		private long _processPrivateBytes;
+		private long _processWorkingSetBytes;
+		private long _gcTotalBytesAllocated;
 
 		public DefaultMemoryManagementStrategy()
 		{
@@ -119,8 +128,13 @@ namespace ClearCanvas.ImageViewer.Common
 				MemoryCollectedEventArgs finalArgs = new MemoryCollectedEventArgs(
 					_totalContainersUnloaded, _totalLargeObjectsCollected, _totalBytesCollected, totalElapsed, true);
 
-				Platform.Log(LogLevel.Info, "Large object collection summary: freed {0} MB in {1} seconds and {2} iterations.",
-							 finalArgs.BytesCollectedCount / (float)OneMegabyte, finalArgs.ElapsedTime.TotalSeconds, _totalNumberOfCollections);
+				Platform.Log(LogLevel.Info, 
+					"Large object collection summary: freed {0} MB in {1} seconds and {2} iterations, Total Containers: {3}, Total Large Objects: {4}",
+					_totalBytesCollected/(float)OneMegabyte,
+					totalElapsed.TotalSeconds,
+					_totalNumberOfCollections,
+					_totalContainersUnloaded,
+					_totalLargeObjectsCollected);
 
 				OnMemoryCollected(finalArgs);
 			}
@@ -130,71 +144,31 @@ namespace ClearCanvas.ImageViewer.Common
 
 		private bool Is3GigEnabled()
 		{
-			//TODO: can't actually figure this out - 1GB of image memory is pretty good :)
+			//TODO: can't actually figure this out ...
 			return false;
 		}
 
-		private long GetProcessVirtualMemorySizeBytes()
+		private void UpdateProcessMemoryData()
 		{
 			CodeClock clock = new CodeClock();
 			clock.Start();
 
-			try
-			{
-				Process currentProcess = Process.GetCurrentProcess();
-				currentProcess.Refresh();
+			Process currentProcess = Process.GetCurrentProcess();
+			currentProcess.Refresh();
 
-				//Private bytes is what's reported as VM size in task manager.
-				//return currentProcess.PrivateMemorySize64;
+			_processVirtualMemoryBytes = currentProcess.VirtualMemorySize64;
+			_processPrivateBytes = currentProcess.PrivateMemorySize64;
+			_processWorkingSetBytes = currentProcess.WorkingSet64;
+			_gcTotalBytesAllocated = GC.GetTotalMemory(false);
 
-				//actual virtual memory size of the process.
-				return currentProcess.VirtualMemorySize64;
-			}
-			catch (PlatformNotSupportedException)
-			{
-				//This is unlikely to occur, but will give a reasonable estimate.
-				return GetTotalLargeObjectBytes();
-			}
-			finally
-			{
-				clock.Stop();
-				PerformanceReportBroker.PublishReport("Memory", "GetProcessVirtualMemorySize", clock.Seconds);
-			}
-		}
+			clock.Stop();
 
-		private long GetTotalLargeObjectBytes()
-		{
-			long largeObjectBytes = 0;
-			bool alreadyLogged = false;
-
-			_largeObjectEnumerator.Reset();
-			while (_largeObjectEnumerator.MoveNext())
-			{
-				try
-				{
-					largeObjectBytes += _largeObjectEnumerator.Current.BytesHeldCount;
-				}
-				catch (Exception e)
-				{
-					if (!alreadyLogged)
-					{
-						alreadyLogged = true;
-						Platform.Log(LogLevel.Warn, e, "Unexpected error while estimating large object bytes.");
-					}
-				}
-			}
-
-			_largeObjectEnumerator.Reset();
-
-			return largeObjectBytes;
+			PerformanceReportBroker.PublishReport("Memory", "UpdateProcessMemoryData", clock.Seconds);
 		}
 
 		private long GetMaxVirtualMemorySizeBytes()
 		{
-			CodeClock clock = new CodeClock();
-			clock.Start();
-
-			long currentVirtualMemorySize = GetProcessVirtualMemorySizeBytes();
+			long currentVirtualMemorySize = _processVirtualMemoryBytes;
 			long maxTheoreticalVirtualMemorySize = currentVirtualMemorySize + SystemResources.GetAvailableMemory(SizeUnits.Bytes);
 			long maxVirtualMemorySizeBytes;
 
@@ -209,16 +183,13 @@ namespace ClearCanvas.ImageViewer.Common
 				maxVirtualMemorySizeBytes = Math.Min(EightGigabytes, maxTheoreticalVirtualMemorySize);
 			}
 
-			clock.Stop();
-			PerformanceReportBroker.PublishReport("Memory", "GetMaxVirtualMemorySizeBytes", clock.Seconds);
-
 			return maxVirtualMemorySizeBytes;
 		}
 
-		private long GetVirtualMemoryHighWatermarkBytes()
+		private long GetMemoryHighWatermarkBytes()
 		{
 			if (MemoryManagementSettings.Default.HighWatermarkMegaBytes < 0)
-				return GetMaxVirtualMemorySizeBytes() / 2;
+				return (long)(GetMaxVirtualMemorySizeBytes() * FortyPercent);
 			else
 				return MemoryManagementSettings.Default.HighWatermarkMegaBytes * OneMegabyte;
 		}
@@ -226,16 +197,9 @@ namespace ClearCanvas.ImageViewer.Common
 		private long GetMemoryLowWatermarkBytes(long highWatermark)
 		{
 			if (MemoryManagementSettings.Default.LowWatermarkMegaBytes < 0)
-			{
-				//free up 1/4 of the total large object memory.
-				const float twentyFivePercent = 0.25F;
-				return (long)(highWatermark - MemoryManager.LargeObjectBytesCount * twentyFivePercent);
-			}
+				return (long)(highWatermark - MemoryManager.LargeObjectBytesCount * TwentyFivePercent);
 			else
-			{
-				const float ninetyPercent = 0.9F;
-				return Math.Min(MemoryManagementSettings.Default.LowWatermarkMegaBytes * OneMegabyte, (long)(highWatermark * ninetyPercent));
-			}
+				return Math.Min(MemoryManagementSettings.Default.LowWatermarkMegaBytes * OneMegabyte, (long)(highWatermark * NinetyPercent));
 		}
 
 		private IEnumerable<ILargeObjectContainer> GetNextBatchOfContainersToCollect(int batchSize)
@@ -277,29 +241,59 @@ namespace ClearCanvas.ImageViewer.Common
 
 		private void Collect()
 		{
-			long processVirtualMemorySize = GetProcessVirtualMemorySizeBytes();
-			long highWatermark = GetVirtualMemoryHighWatermarkBytes();
-			long lowWatermark = GetMemoryLowWatermarkBytes(highWatermark);
+			Collect(GetBytesToCollect());
+		}
 
-			long bytesAboveHighWatermark = processVirtualMemorySize - highWatermark;
-			long bytesToCollect = processVirtualMemorySize - lowWatermark;
-			
-			bool continueCollecting;
-			int collectionNumber = 0;
-
-			if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+		private long GetBytesToCollect()
+		{
+			try
 			{
-				Platform.Log(LogLevel.Debug,
-					"Process Virtual Memory (MB): {0}, High Watermark (MB): {1}, Low Watermark (MB): {2}, MB Above: {3}, MB To Collect: {4}",
-					processVirtualMemorySize / (float)OneMegabyte,
-					highWatermark / (float)OneMegabyte,
-					lowWatermark / (float)OneMegabyte,
-					bytesAboveHighWatermark / (float)OneMegabyte,
-					bytesToCollect / (float)OneMegabyte);
-			}
+				UpdateProcessMemoryData();
 
+				long highWatermark = GetMemoryHighWatermarkBytes();
+				long lowWatermark = GetMemoryLowWatermarkBytes(highWatermark);
+
+				long bytesAboveHighWatermark = _processPrivateBytes - highWatermark;
+				long bytesToCollect = _processPrivateBytes - lowWatermark;
+
+				if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+				{
+					Platform.Log(LogLevel.Debug,
+						"Virtual Memory (MB): {0}, Private Bytes (MB): {1}, Working Set (MB): {2}, GC Total Bytes Allocated (MB): {3}",
+						_processVirtualMemoryBytes / (float)OneMegabyte,
+						_processPrivateBytes / (float)OneMegabyte,
+						_processWorkingSetBytes / (float)OneMegabyte,
+						_gcTotalBytesAllocated / (float)OneMegabyte);
+
+					Platform.Log(LogLevel.Debug,
+						"Large Object Containers: {0}, Large Objects Held: {1}, Total Large Object Bytes (MB): {2}",
+						MemoryManager.LargeObjectContainerCount,
+						MemoryManager.LargeObjectCount,
+						MemoryManager.LargeObjectBytesCount / (float)OneMegabyte);
+
+					Platform.Log(LogLevel.Debug,
+						"High Watermark (MB): {0}, Low Watermark (MB): {1}, MB Above: {2}, MB To Collect: {3}",
+						highWatermark/(float)OneMegabyte,
+						lowWatermark/(float)OneMegabyte,
+						bytesAboveHighWatermark/(float)OneMegabyte,
+						bytesToCollect/(float)OneMegabyte);
+				}
+
+				return (bytesAboveHighWatermark > 0) ? bytesToCollect : 0;
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Debug, e, "Failure when trying to determine number of bytes to collect; collecting 25% of held memory ...");
+				return (long)(MemoryManager.LargeObjectBytesCount * TwentyFivePercent);
+			}
+		}
+
+		private void Collect(long bytesToCollect)
+		{
+			bool continueCollecting = false;
 			bool needMoreMemorySignalled = false;
-			if (bytesAboveHighWatermark <= 0)
+
+			if (bytesToCollect <= 0)
 			{
 				Platform.Log(LogLevel.Debug,
 					"Memory is not above high watermark; firing collected event to check if more memory is required.");
@@ -314,7 +308,11 @@ namespace ClearCanvas.ImageViewer.Common
 				Platform.Log(LogLevel.Debug, "Memory *is* above high watermark; collecting ...");
 			}
 
+			if (!continueCollecting)
+				return;
+
 			int batchSize = 10;
+			int collectionNumber = 0;
 
 			while (continueCollecting)
 			{
@@ -340,8 +338,10 @@ namespace ClearCanvas.ImageViewer.Common
 						long bytesHeldAfter = container.BytesHeldCount;
 						int largeObjectsHeldAfter = container.LargeObjectCount;
 
-						++containersUnloaded;
-						largeObjectsCollected += (largeObjectsHeldBefore - largeObjectsHeldAfter);
+						int largeObjectsHeldDifference = largeObjectsHeldBefore - largeObjectsHeldAfter;
+						largeObjectsCollected += largeObjectsHeldDifference;
+						if (largeObjectsHeldDifference > 0)
+							++containersUnloaded;
 
 						long bytesDifference = (bytesHeldBefore - bytesHeldAfter);
 						bytesCollected += bytesDifference;
@@ -363,33 +363,44 @@ namespace ClearCanvas.ImageViewer.Common
 				_totalLargeObjectsCollected += largeObjectsCollected;
 				++_totalNumberOfCollections;
 
-				GC.Collect();
-
 				clock.Stop();
 
 				continueCollecting = i > 0;
+				if (!continueCollecting)
+					continue;
 
-				if (continueCollecting)
+				PerformanceReportBroker.PublishReport("Memory", "CollectionIteration", clock.Seconds);
+
+				MemoryCollectedEventArgs args = new MemoryCollectedEventArgs(
+					containersUnloaded, largeObjectsCollected, bytesCollected, TimeSpan.FromSeconds(clock.Seconds), false);
+
+				OnMemoryCollected(args);
+
+				needMoreMemorySignalled = args.NeedMoreMemory;
+				continueCollecting = needMoreMemorySignalled || _totalBytesCollected < bytesToCollect;
+
+				if (Platform.IsLogLevelEnabled(LogLevel.Debug))
 				{
-					PerformanceReportBroker.PublishReport("Memory", "CollectionIteration", clock.Seconds);
-
-					MemoryCollectedEventArgs args = new MemoryCollectedEventArgs(
-						containersUnloaded, largeObjectsCollected, bytesCollected, TimeSpan.FromSeconds(clock.Seconds), false);
-
-					OnMemoryCollected(args);
-
-					needMoreMemorySignalled = args.NeedMoreMemory;
-					continueCollecting = needMoreMemorySignalled || _totalBytesCollected < bytesToCollect;
-
-					if (Platform.IsLogLevelEnabled(LogLevel.Debug))
-					{
-						Platform.Log(LogLevel.Debug, 
-							"Large object collection #{0}: freed {1} MB in {2}, Containers Unloaded: {3}, Large Objects Collected: {4}, Need More Memory: {5}, Last Batch: {6}",
-							++collectionNumber, args.BytesCollectedCount / (float)OneMegabyte, clock,
-							containersUnloaded, largeObjectsCollected, needMoreMemorySignalled, i);
-					}
+					Platform.Log(LogLevel.Debug, 
+					             "Large object collection #{0}: freed {1} MB in {2}, Containers Unloaded: {3}, Large Objects Collected: {4}, Need More Memory: {5}, Last Batch: {6}",
+					             ++collectionNumber, args.BytesCollectedCount / (float)OneMegabyte, clock,
+					             containersUnloaded, largeObjectsCollected, needMoreMemorySignalled, i);
 				}
 			}
+
+			CollectGarbage();
+		}
+
+		private void CollectGarbage()
+		{
+			CodeClock clock = new CodeClock();
+			clock.Start();
+
+			Platform.Log(LogLevel.Debug, "Performing garbage collection.");
+			GC.Collect();
+
+			clock.Stop();
+			PerformanceReportBroker.PublishReport("Memory", "GarbageCollection", clock.Seconds);
 		}
 	}
 }

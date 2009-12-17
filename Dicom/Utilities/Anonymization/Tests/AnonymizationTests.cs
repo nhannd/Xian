@@ -93,6 +93,14 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 			file.DataSet[DicomTags.PatientsName].SetStringValue("Doe^Jon^Mr");
 
 			//NOTE: this is not intended to be a realistic dataset; we're just testing the anonymizer.
+
+			//set fixed values for dates (SetupMultiframeXA uses today's date)
+			file.DataSet[DicomTags.InstanceCreationDate].SetStringValue("20080219");
+			file.DataSet[DicomTags.InstanceCreationTime].SetStringValue("143600");
+			file.DataSet[DicomTags.StudyDate].SetStringValue("20080219");
+			file.DataSet[DicomTags.StudyTime].SetStringValue("143600");
+			file.DataSet[DicomTags.SeriesDate].SetStringValue("20080219");
+			file.DataSet[DicomTags.SeriesTime].SetStringValue("143700");
 			
 			//add a couple of the dates that get adjusted.
 			file.DataSet[DicomTags.ContentDate].SetStringValue("20080219");
@@ -191,11 +199,10 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 			AfterAnonymize(studyPrototype, seriesPrototype);
 
 			//validate the adjusted dates.
-			Assert.AreEqual(_anonymizedDateData.InstanceCreationDate, "20080220");
-			Assert.AreEqual(_anonymizedDateData.SeriesDate, "20080220");
-
-			Assert.AreEqual(_anonymizedDateData.ContentDate, "20080220");
-			Assert.AreEqual(_anonymizedDateData.AcquisitionDatetime, "20080220100406");
+			Assert.AreEqual("20080220", _anonymizedDateData.InstanceCreationDate, "Anonymized InstanceCreationDate doesn't match StudyDate");
+			Assert.AreEqual("20080220", _anonymizedDateData.SeriesDate, "Anonymized SeriesDate doesn't match StudyDate");
+			Assert.AreEqual("20080220", _anonymizedDateData.ContentDate, "Anonymized ContentDate doesn't match StudyDate");
+			Assert.AreEqual("20080220100406", _anonymizedDateData.AcquisitionDatetime, "Anonymized AcquisitionDatetime doesn't match StudyDate/Time");
 		}
 
 		[Test]
@@ -341,6 +348,17 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 			DicomAnonymizer anonymizer = new DicomAnonymizer();
 			anonymizer.StudyDataPrototype = studyPrototype;
 			anonymizer.Anonymize(_file);
+		}
+
+		[Test]
+		public void EnsureUniqueTags()
+		{
+			List<uint> uniques = new List<uint>();
+			foreach (uint tag in DicomAnonymizer.AllProcessedTags)
+			{
+				Assert.IsFalse(uniques.Contains(tag), "The tag ({0:x4},{1:x4}) is being processed twice by the anonymizer!", tag >> 16, tag & 0x0000ffff);
+				uniques.Add(tag);
+			}
 		}
 
 		[Test]

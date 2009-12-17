@@ -36,13 +36,13 @@ namespace ClearCanvas.Dicom.Iod
 	public interface ISeriesData
 	{
 		/// <summary>
-		/// Gets the Study Instance Uid of the identified series.
+		/// Gets the Study Instance UID of the identified series.
 		/// </summary>
 		[DicomField(DicomTags.StudyInstanceUid)]
 		string StudyInstanceUid { get; }
 
 		/// <summary>
-		/// Gets the Series Instance Uid of the identified series.
+		/// Gets the Series Instance UID of the identified series.
 		/// </summary>
 		[DicomField(DicomTags.SeriesInstanceUid)]
 		string SeriesInstanceUid { get; }

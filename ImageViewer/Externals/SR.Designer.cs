@@ -61,6 +61,15 @@ namespace ClearCanvas.ImageViewer.Externals {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Launch via Command Line.
+        /// </summary>
+        internal static string DescriptionCommandLineExternal {
+            get {
+                return ResourceManager.GetString("DescriptionCommandLineExternal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to External Applications.
         /// </summary>
         internal static string ExternalApplications {

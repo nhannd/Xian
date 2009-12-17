@@ -73,6 +73,9 @@ namespace ClearCanvas.Desktop
         /// </summary>
         public IconScheme Scheme { get { return _scheme; } }
 
+		/// <summary>
+		/// Gets the name of the resource for the specified <see cref="IconSize"/>.
+		/// </summary>
     	public string this[IconSize iconSize]
     	{
     		get

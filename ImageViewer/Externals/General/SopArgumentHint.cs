@@ -58,8 +58,8 @@ namespace ClearCanvas.ImageViewer.Externals.General
 				uint tag;
 				if (!uint.TryParse(key, NumberStyles.AllowHexSpecifier, CultureInfo.CurrentCulture.NumberFormat, out tag))
 					return ArgumentHintValue.Empty;
-				DicomAttribute attribute = _dataSource[tag];
-				if (attribute.IsEmpty)
+				DicomAttribute attribute;
+				if (!_dataSource.TryGetAttribute(tag, out attribute) || attribute == null || attribute.IsEmpty)
 					return ArgumentHintValue.Empty;
 				return new ArgumentHintValue(attribute.ToString());
 			}

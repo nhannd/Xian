@@ -36,10 +36,16 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Common
 {
+	/// <summary>
+	/// <see cref="EventArgs"/> for <see cref="IMemoryManagementStrategy.MemoryCollected"/> events.
+	/// </summary>
 	public class MemoryCollectedEventArgs : EventArgs
 	{
 		private bool _needMoreMemory = false;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public MemoryCollectedEventArgs(int largeObjectContainersUnloadedCount,
 			int largeObjectsCollectedCount, long bytesCollectedCount, TimeSpan elapsedTime, bool isLast)
 		{
@@ -50,12 +56,42 @@ namespace ClearCanvas.ImageViewer.Common
 			IsLast = isLast;
 		}
 
+		/// <summary>
+		/// The total time taken to collect memory.
+		/// </summary>
 		public readonly TimeSpan ElapsedTime;
+
+		/// <summary>
+		/// The total number of <see cref="ILargeObjectContainer"/>s that were unloaded.
+		/// </summary>
 		public readonly int LargeObjectContainersUnloadedCount;
+		/// <summary>
+		/// The total number of large objects collected.
+		/// </summary>
 		public readonly int LargeObjectsCollectedCount;
+		/// <summary>
+		/// The total number of bytes collected.
+		/// </summary>
 		public readonly long BytesCollectedCount;
+		/// <summary>
+		/// Indicates whether or not this is the last <see cref="IMemoryManagementStrategy.MemoryCollected"/> event
+		/// for the current collection.
+		/// </summary>
 		public readonly bool IsLast;
 
+		/// <summary>
+		/// Gets or sets whether or not more memory is needed by any entity currently observing the
+		/// <see cref="IMemoryManagementStrategy.MemoryCollected"/> event.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// The <see cref="IMemoryManagementStrategy">memory management strategy</see> will look at this value
+		/// when determining whether or not to continue collecting memory.
+		/// </para>
+		/// <para>
+		/// Once set to true, the value cannot be set back to false.
+		/// </para>
+		/// </remarks>
 		public bool NeedMoreMemory
 		{
 			get { return _needMoreMemory; }
@@ -67,6 +103,9 @@ namespace ClearCanvas.ImageViewer.Common
 		}
 	}
 
+	/// <summary>
+	/// Argument class passed to the <see cref="IMemoryManagementStrategy"/>.
+	/// </summary>
 	public class MemoryCollectionArgs
 	{
 		internal MemoryCollectionArgs(IEnumerable<ILargeObjectContainer> largeObjectContainers)
@@ -74,15 +113,38 @@ namespace ClearCanvas.ImageViewer.Common
 			LargeObjectContainers = largeObjectContainers;
 		}
 
+		/// <summary>
+		/// Gets all the <see cref="ILargeObjectContainer"/>s currently being managed by the <see cref="MemoryManager"/>.
+		/// </summary>
 		public readonly IEnumerable<ILargeObjectContainer> LargeObjectContainers;
 	}
 
+	/// <summary>
+	/// Defines the interface to a memory management strategy.
+	/// </summary>
+	/// <remarks>
+	/// Implementers must mark their class as an extension of <see cref="MemoryManagementStrategyExtensionPoint"/> in order
+	/// to override the default strategy.
+	/// </remarks>
 	public interface IMemoryManagementStrategy
 	{
+		/// <summary>
+		/// Called by the <see cref="MemoryManager"/> to collect memory from
+		/// <see cref="ILargeObjectContainer"/>s, if necessary.  See <see cref="MemoryManager"/> for more details.
+		/// </summary>
 		void Collect(MemoryCollectionArgs collectionArgs);
+		/// <summary>
+		/// Fired when memory has been collected.
+		/// </summary>
+		/// <remarks>The event must be fired at least once, but may be fired repeatedly in order to try
+		/// and return control to waiting threads as quickly as possible.
+		/// </remarks>
 		event EventHandler<MemoryCollectedEventArgs> MemoryCollected;
 	}
 
+	/// <summary>
+	/// Abstract base implementation <see cref="IMemoryManagementStrategy"/>.
+	/// </summary>
 	public abstract class MemoryManagementStrategy : IMemoryManagementStrategy
 	{
 		private class NullMemoryManagementStrategy : IMemoryManagementStrategy
@@ -106,14 +168,27 @@ namespace ClearCanvas.ImageViewer.Common
 
 		private event EventHandler<MemoryCollectedEventArgs> _memoryCollected;
 		
+		/// <summary>
+		/// Protected constructor.
+		/// </summary>
 		protected MemoryManagementStrategy()
 		{
 		}
 
 		#region IMemoryManagementStrategy Members
 
+		/// <summary>
+		/// Called by the <see cref="MemoryManager"/> to collect memory from
+		/// <see cref="ILargeObjectContainer"/>s, if necessary.  See <see cref="MemoryManager"/> for more details.
+		/// </summary>
 		public abstract void Collect(MemoryCollectionArgs collectionArgs);
 
+		/// <summary>
+		/// Fired when memory has been collected.
+		/// </summary>
+		/// <remarks>The event must be fired at least once, but may be fired repeatedly in order to try
+		/// and return control to waiting threads as quickly as possible.
+		/// </remarks>
 		public event EventHandler<MemoryCollectedEventArgs> MemoryCollected
 		{
 			add { _memoryCollected += value; }
@@ -122,6 +197,9 @@ namespace ClearCanvas.ImageViewer.Common
 
 		#endregion
 
+		/// <summary>
+		/// Fires the <see cref="MemoryCollected"/> event.
+		/// </summary>
 		protected void OnMemoryCollected(MemoryCollectedEventArgs args)
 		{
 			try

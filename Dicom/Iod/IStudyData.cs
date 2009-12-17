@@ -38,7 +38,7 @@ namespace ClearCanvas.Dicom.Iod
 	public interface IStudyData
 	{
 		/// <summary>
-		/// Gets the Study Instance Uid of the identified study.
+		/// Gets the Study Instance UID of the identified study.
 		/// </summary>
 		[DicomField(DicomTags.StudyInstanceUid)]
 		string StudyInstanceUid { get; }
@@ -56,7 +56,7 @@ namespace ClearCanvas.Dicom.Iod
 		string StudyDescription { get; }
 
 		/// <summary>
-		/// Gets the study id of the identified study.
+		/// Gets the study ID of the identified study.
 		/// </summary>
 		[DicomField(DicomTags.StudyId)]
 		string StudyId { get; }

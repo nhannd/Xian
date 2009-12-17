@@ -92,10 +92,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			int j = 0;
 			int maxGrayLevel = this.Length - 1;
+			int min = MinInputValue;
+			int max = MaxInputValue;
 
-			for (int i = this.MinInputValue; i <= this.MaxInputValue; i++)
+			for (int i = min; i <= max; i++)
 			{
-				float scale = (float)j / (float)maxGrayLevel;
+				float scale = j / (float)maxGrayLevel;
 				j++;
 
 				int value = (int)(byte.MaxValue * scale);

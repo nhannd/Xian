@@ -285,9 +285,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		/// <remarks>
 		/// This method is not to be confused with <b>equality</b>, since some Luts can be
-		/// dependent upon the actual image to which it belongs.  The method should simply 
-		/// be used to determine if a lut in the <see cref="ComposedLutPool"/> is the same 
-		/// as an existing one.
+		/// dependent upon the actual image to which it belongs.
 		/// </remarks>
 		public override string GetKey()
 		{

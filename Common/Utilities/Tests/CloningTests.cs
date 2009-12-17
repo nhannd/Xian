@@ -161,27 +161,36 @@ namespace ClearCanvas.Common.Utilities.Tests
 		[Test]
 		public void Test()
 		{
-			SimpleCloneableObject simple = new SimpleCloneableObject();
+			try
+			{
+				SimpleCloneableObject simple = new SimpleCloneableObject();
 
-			TestDerivedClass test = new TestDerivedClass();
+				TestDerivedClass.Cloning = false;
 
-			TestDerivedClass.Cloning = true; 
+				TestDerivedClass test = new TestDerivedClass();
 
-			test.IgnoredValue = simple;
-			test.Value = 4;
-			test.TestField = 5;
-			test.CloneableObject = simple;
-			test.CopyReferenceObject = simple;
+				TestDerivedClass.Cloning = true;
 
-			TestDerivedClass clone = (TestDerivedClass)CloneBuilder.Clone(test);
+				test.IgnoredValue = simple;
+				test.Value = 4;
+				test.TestField = 5;
+				test.CloneableObject = simple;
+				test.CopyReferenceObject = simple;
 
-			Assert.AreEqual(clone.IgnoredValue, null); 
-			Assert.AreEqual(test.Value, clone.Value);
-			Assert.AreEqual(test.TestField, clone.TestField);
-			Assert.AreEqual(clone.CloneInitializeCalled, true);
-			Assert.AreEqual(clone.CloneCompleteCalled, true);
-			Assert.AreSame(clone.CopyReferenceObject, simple);
-			Assert.AreNotSame(clone.CloneableObject, simple);
+				TestDerivedClass clone = (TestDerivedClass) CloneBuilder.Clone(test);
+
+				Assert.AreEqual(clone.IgnoredValue, null);
+				Assert.AreEqual(test.Value, clone.Value);
+				Assert.AreEqual(test.TestField, clone.TestField);
+				Assert.AreEqual(clone.CloneInitializeCalled, true);
+				Assert.AreEqual(clone.CloneCompleteCalled, true);
+				Assert.AreSame(clone.CopyReferenceObject, simple);
+				Assert.AreNotSame(clone.CloneableObject, simple);
+			}
+			finally
+			{
+				TestDerivedClass.Cloning = false;
+			}
 		}
 	}
 }

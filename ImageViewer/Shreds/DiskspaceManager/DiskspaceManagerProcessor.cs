@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.ServiceModel;
 using System.Threading;
 using ClearCanvas.Common;
@@ -207,8 +208,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 				{
 					foreach (ISopInstance sopInstance in study.GetSopInstances())
 					{
-						System.IO.FileInfo info;
-						info = new System.IO.FileInfo(sopInstance.GetLocationUri().LocalDiskPath);
+						FileInfo info = new FileInfo(sopInstance.GetLocationUri().LocalDiskPath);
 						if (info.Exists)
 							expectedFreeSpace += info.Length;
 					}
@@ -223,17 +223,23 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 				totalExpectedFreeSpace += expectedFreeSpace;
 				deleteStudyUids.Add(study.StudyInstanceUid);
 
-				if (_enforceStudyLimit)
+				//When either the high watermark or the study limit have been exceeded,
+				//always try to delete down to the low watermark.
+				bool continueDeleting = false;
+
+				if (totalExpectedFreeSpace < _currentDriveInfo.BytesOverLowWaterMark)
 				{
-					//keep adding studies to delete until the max# is reached.
+					continueDeleting = true;
+				}
+				else if (_enforceStudyLimit)
+				{
+					//Regardless of watermarks, make sure to always keep the #studies at or below the limit.
 					int numberOfStudiesAfterDelete = _lastStudyCount - deleteStudyUids.Count;
 					if (numberOfStudiesAfterDelete > _studyLimit)
-						continue;
-					else
-						break;
+						continueDeleting = true;
 				}
 
-				if (totalExpectedFreeSpace >= _currentDriveInfo.BytesOverLowWaterMark)
+				if (!continueDeleting)
 					break;
 			}
 

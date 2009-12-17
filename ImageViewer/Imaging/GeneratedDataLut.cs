@@ -83,7 +83,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 				{
 					_data = new int[base.Length];
 					Create();
-					base.OnLutChanged();
 				}
 
 				return _data;
@@ -129,7 +128,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public void Clear()
 		{
 			_data = null;
-			base.OnLutChanged();
 		}
 
 		#endregion

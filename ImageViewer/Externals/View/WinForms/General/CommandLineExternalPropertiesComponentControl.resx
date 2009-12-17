@@ -235,7 +235,7 @@
     <value>0</value>
   </data>
   <data name="_lblArguments.Text" xml:space="preserve">
-    <value>Arguments (one per line)</value>
+    <value>Arguments</value>
   </data>
   <data name="&gt;&gt;_lblArguments.Name" xml:space="preserve">
     <value>_lblArguments</value>
@@ -255,11 +255,8 @@
   <data name="_txtArguments.Location" type="System.Drawing.Point, System.Drawing">
     <value>25, 26</value>
   </data>
-  <data name="_txtArguments.Multiline" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
   <data name="_txtArguments.Size" type="System.Drawing.Size, System.Drawing">
-    <value>346, 92</value>
+    <value>346, 20</value>
   </data>
   <data name="_txtArguments.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -280,7 +277,7 @@
     <value>Bottom</value>
   </data>
   <data name="_lnkHelpFields.Location" type="System.Drawing.Point, System.Drawing">
-    <value>25, 118</value>
+    <value>25, 50</value>
   </data>
   <data name="_lnkHelpFields.Size" type="System.Drawing.Size, System.Drawing">
     <value>346, 16</value>
@@ -406,7 +403,7 @@
     <value>25, 10, 25, 10</value>
   </data>
   <data name="_pnlArguments.Size" type="System.Drawing.Size, System.Drawing">
-    <value>396, 144</value>
+    <value>396, 76</value>
   </data>
   <data name="_pnlArguments.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -441,6 +438,9 @@
   <data name="_chkAutoQuoteArguments.Text" xml:space="preserve">
     <value>Automatically quote arguments containing spaces</value>
   </data>
+  <data name="_chkAutoQuoteArguments.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="&gt;&gt;_chkAutoQuoteArguments.Name" xml:space="preserve">
     <value>_chkAutoQuoteArguments</value>
   </data>
@@ -459,11 +459,8 @@
   <data name="_txtMultiValueFieldSeparator.Location" type="System.Drawing.Point, System.Drawing">
     <value>105, 0</value>
   </data>
-  <data name="_txtMultiValueFieldSeparator.MaxLength" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
   <data name="_txtMultiValueFieldSeparator.Size" type="System.Drawing.Size, System.Drawing">
-    <value>29, 20</value>
+    <value>85, 20</value>
   </data>
   <data name="_txtMultiValueFieldSeparator.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -571,7 +568,7 @@
     <value>Top</value>
   </data>
   <data name="_pnlOptions.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 312</value>
+    <value>0, 244</value>
   </data>
   <data name="_pnlOptions.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>5, 5, 5, 5</value>
@@ -694,7 +691,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>396, 410</value>
+    <value>396, 344</value>
   </data>
   <data name="&gt;&gt;_dlgCommand.Name" xml:space="preserve">
     <value>_dlgCommand</value>

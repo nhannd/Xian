@@ -68,6 +68,8 @@ namespace ClearCanvas.ImageViewer.Externals.General
 					if (image is IImageSopProvider)
 					{
 						IImageSopProvider imageSopProvider = (IImageSopProvider) image;
+						hints.Add(new SopArgumentHint(imageSopProvider.Sop));
+
 						if (imageSopProvider.Sop.DataSource is ILocalSopDataSource)
 						{
 							ILocalSopDataSource localSopDataSource = (ILocalSopDataSource) imageSopProvider.Sop.DataSource;

@@ -60,6 +60,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private volatile Series _parentSeries;
 		private volatile ISopDataCacheItemReference _dataSourceReference;
 
+		/// <summary>
+		/// Creates a new instance of <see cref="Sop"/> from a local file.
+		/// </summary>
+		/// <param name="filename">The path to a local DICOM Part 10 file.</param>
 		public Sop(string filename)
 		{
 			ISopDataSource dataSource = new LocalSopDataSource(filename);
@@ -111,6 +115,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return DataSource.IsStored; }	
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether or not the SOP instance is an image class.
+		/// </summary>
 		public bool IsImage { get; private set; }
 
 		/// <summary>
@@ -122,6 +129,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			internal set { _parentSeries = value; }
 		}
 
+		/// <summary>
+		/// Gets an <see cref="IImageIdentifier"/> for this <see cref="Sop"/>.
+		/// </summary>
+		/// <remarks>An <see cref="IImageIdentifier"/> can be used in situations where you only
+		/// need some data about the <see cref="Sop"/>, but not the <see cref="Sop"/> itself.  It can be problematic
+		/// to hold references to <see cref="Sop"/> objects outside the context of an <see cref="IImageViewer"/>
+		/// <b>without creating a <see cref="ISopReference">transient reference</see></b>
+		/// because they are no longer valid when the viewer is closed; in these situations, it may be appropriate to
+		/// use an identifier.
+		/// </remarks>
 		public IImageIdentifier GetIdentifier()
 		{
 			StudyItem studyIdentifier = new StudyItem(StudyInstanceUid, DataSource.Server, DataSource.StudyLoaderName);
@@ -496,6 +513,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		/// <summary>
+		/// Gets the series instance UID.
+		/// </summary>
 		public virtual string SeriesInstanceUid
 		{
 			get { return DataSource.SeriesInstanceUid; }

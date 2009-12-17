@@ -212,24 +212,43 @@ namespace ClearCanvas.ImageViewer
 		}
 	}
 
+	/// <summary>
+	/// A <see cref="DisplaySetFactory"/> for the most typical cases; creating a <see cref="IDisplaySet"/> that
+	/// contains <see cref="IPresentationImage"/>s for the entire series, and creating a single <see cref="IDisplaySet"/> for
+	/// each image in the series.
+	/// </summary>
 	public class BasicDisplaySetFactory : DisplaySetFactory
 	{
 		private readonly List<string> _singleImageModalities = new List<string>();
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public BasicDisplaySetFactory()
 		{
 		}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="presentationImageFactory">The <see cref="IPresentationImageFactory"/>
+		/// used to create the <see cref="IPresentationImage"/>s that populate the constructed <see cref="IDisplaySet"/>s.</param>
 		public BasicDisplaySetFactory(IPresentationImageFactory presentationImageFactory)
 			:base(presentationImageFactory)
 		{
 		}
 
+		/// <summary>
+		/// The list of modalities that should have an <see cref="IDisplaySet"/> created for each image in the series.
+		/// </summary>
 		public List<string> SingleImageModalities
 		{
 			get { return _singleImageModalities; }
 		}
 
+		/// <summary>
+		/// Creates <see cref="IDisplaySet"/>s from the given <see cref="Series"/>.
+		/// </summary>
 		public override List<IDisplaySet> CreateDisplaySets(Series series)
 		{
 			if (_singleImageModalities.Contains(series.Modality))
@@ -390,15 +409,33 @@ namespace ClearCanvas.ImageViewer
 		}
 	}
 
+	/// <summary>
+	/// A <see cref="DisplaySetFactory"/> that splits MR series with multiple echoes into multiple <see cref="IDisplaySet"/>s; one per echo.
+	/// </summary>
 	public class MREchoDisplaySetFactory : DisplaySetFactory
 	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public MREchoDisplaySetFactory()
 		{}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="presentationImageFactory">The <see cref="IPresentationImageFactory"/>
+		/// used to create the <see cref="IPresentationImage"/>s that populate the constructed <see cref="IDisplaySet"/>s.</param>
 		public MREchoDisplaySetFactory(IPresentationImageFactory presentationImageFactory)
 			: base(presentationImageFactory)
 		{ }
 
+		/// <summary>
+		/// Creates zero or more <see cref="IDisplaySet"/>s from the given <see cref="Series"/>.
+		/// </summary>
+		/// <remarks>
+		/// When the input <see cref="Series"/> does not have multiple echoes, no <see cref="IDisplaySet"/>s will be returned.
+		/// Otherwise, at least 2 <see cref="IDisplaySet"/>s will be returned.
+		/// </remarks>
 		public override List<IDisplaySet> CreateDisplaySets(Series series)
 		{
 			List<IDisplaySet> displaySets = new List<IDisplaySet>();
@@ -542,15 +579,45 @@ namespace ClearCanvas.ImageViewer
 		}
 	}
 
+	/// <summary>
+	/// A <see cref="DisplaySetFactory"/> that splits series with multiple single or multiframe images into
+	/// separate <see cref="IDisplaySet"/>s.
+	/// </summary>
+	/// <remarks>
+	/// This factory will only create <see cref="IDisplaySet"/>s when the following is true.
+	/// <list type="bullet">
+	/// <item>The input series contains more than one multiframe image.</item>
+	/// <item>The input series contains at least one multiframe image and at least one single frame image.</item>
+	/// </list>
+	/// For typical series, consisting only of single frame images, no <see cref="IDisplaySet"/>s will be created.
+	/// The <see cref="IDisplaySet"/>s that are created are:
+	/// <list type="bullet">
+	/// <item>One <see cref="IDisplaySet"/> per multiframe image.</item>
+	/// <item>One <see cref="IDisplaySet"/> containing all the single frame images, if any.</item>
+	/// </list>
+	/// </remarks>
 	public class MixedMultiFrameDisplaySetFactory : DisplaySetFactory
 	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public MixedMultiFrameDisplaySetFactory()
 		{}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="presentationImageFactory">The <see cref="IPresentationImageFactory"/>
+		/// used to create the <see cref="IPresentationImage"/>s that populate the constructed <see cref="IDisplaySet"/>s.</param>
 		public MixedMultiFrameDisplaySetFactory(IPresentationImageFactory presentationImageFactory)
 			: base(presentationImageFactory)
 		{ }
 
+		/// <summary>
+		/// Creates zero or more <see cref="IDisplaySet"/>s from the given <see cref="Series"/>.
+		/// </summary>
+		/// <remarks>When the input series does not contain a mixture of single and multiframe
+		/// images, no <see cref="IDisplaySet"/>s will be returned.</remarks>
 		public override List<IDisplaySet> CreateDisplaySets(Series series)
 		{
 			List<IDisplaySet> displaySets = new List<IDisplaySet>();

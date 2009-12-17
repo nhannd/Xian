@@ -33,16 +33,34 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/// <summary>
+	/// Interface to an entity responsible for managing installation of color maps.
+	/// </summary>
 	public interface IColorMapInstaller
 	{
+		/// <summary>
+		/// Gets the currently installed color map.
+		/// </summary>
 		IDataLut ColorMap { get; }
 
+		/// <summary>
+		/// Installs a color map by name.
+		/// </summary>
 		void InstallColorMap(string name);
 
+		/// <summary>
+		/// Installs a color map by <see cref="ColorMapDescriptor">descriptor</see>.
+		/// </summary>
 		void InstallColorMap(ColorMapDescriptor descriptor);
 
+		/// <summary>
+		/// Installs a color map.
+		/// </summary>
 		void InstallColorMap(IDataLut colorMap);
 
+		/// <summary>
+		/// Gets <see cref="ColorMapDescriptor"/>s for all the different types of available color maps.
+		/// </summary>
 		IEnumerable<ColorMapDescriptor> AvailableColorMaps { get; }
 	}
 }

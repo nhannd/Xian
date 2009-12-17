@@ -234,6 +234,14 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets whether or not <see cref="DisplaySet"/> is locked and cannot currently be changed.
+		/// </summary>
+		/// <remarks>
+		/// The intended usage of this property is such that code responsible for the layout
+		/// of the <see cref="IImageViewer"/> manage this property's state, and other parts of the code,
+		/// like tools for example, should simply check the value and respond appropriately.
+		/// </remarks>
 		public bool DisplaySetLocked { get; set; }
 
 		/// <summary>

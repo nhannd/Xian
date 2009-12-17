@@ -821,16 +821,25 @@ namespace ClearCanvas.ImageViewer
 
 		#region Utility Methods
 
+		/// <summary>
+		/// Gets whether or not the specified, named, <see cref="IStudyFinder"/> is supported.
+		/// </summary>
 		public static bool IsStudyFinderSupported(string studyFinderName)
 		{
 			return StudyFinderMap.IsStudyFinderSupported(studyFinderName);
 		}
 
+		/// <summary>
+		/// Gets whether or not the specified, named, <see cref="IStudyLoader"/> is supported.
+		/// </summary>
 		public static bool IsStudyLoaderSupported(string studyLoaderName)
 		{
 			return StudyLoaderMap.IsStudyLoaderSupported(studyLoaderName);
 		}
 
+		/// <summary>
+		/// Creates the default title for an <see cref="ImageViewerComponent"/>, based on the given patient information.
+		/// </summary>
 		public static string CreateTitle(IEnumerable<IPatientData> patientData)
 		{
 			return StringUtilities.Combine(patientData, String.Format(" {0} ", SR.SeparatorPatientsLoaded),

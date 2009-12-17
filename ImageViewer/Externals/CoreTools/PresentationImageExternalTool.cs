@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Externals.CoreTools
 					List<IAction> actions = new List<IAction>();
 					foreach (IExternal external in ExternalCollection.SavedExternals)
 					{
-						if (!external.IsValid)
+						if (!external.IsValid || string.IsNullOrEmpty(external.Label))
 							continue;
 
 						IPresentationImageExternal consumer = external as IPresentationImageExternal;

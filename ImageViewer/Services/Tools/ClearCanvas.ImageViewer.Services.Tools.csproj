@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{EF1E3BC4-21CA-467A-B84F-9B692846F459}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -165,6 +165,11 @@
     <EmbeddedResource Include="Icons\StopServiceToolLarge.png" />
     <EmbeddedResource Include="Icons\StopServiceToolMedium.png" />
     <EmbeddedResource Include="Icons\StopServiceToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DicomFileImportToolLarge.png" />
+    <EmbeddedResource Include="Icons\DicomFileImportToolMedium.png" />
+    <EmbeddedResource Include="Icons\DicomFileImportToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

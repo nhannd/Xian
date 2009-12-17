@@ -259,6 +259,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 			remove { this.EndPointChanged -= value; }
 		}
 
+		/// <summary>
+		/// Moves the <see cref="ArrowGraphic"/> by a specified delta.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this property is in source or destination coordinates.
+		/// </remarks>
+		/// <param name="delta">The offset by which the graphic is to be moved.</param>
 		public override void Move(SizeF delta)
 		{
 			_enablePointChangeEvents = false;

@@ -36,12 +36,21 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Comparers
 {
+	/// <summary>
+	/// Compares two <see cref="Sop"/>s based on Instance Number.
+	/// </summary>
 	public class InstanceNumberComparer : DicomSopComparer
 	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public InstanceNumberComparer()
 		{
 		}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public InstanceNumberComparer(bool reverse)
 			: base(reverse)
 		{
@@ -55,6 +64,9 @@ namespace ClearCanvas.ImageViewer.Comparers
 			yield return sop.InstanceNumber;
 		}
 
+		/// <summary>
+		/// Compares 2 <see cref="Sop"/>s based on Instance Number.
+		/// </summary>
 		public override int Compare(Sop x, Sop y)
 		{
 			return Compare(GetCompareValues(x), GetCompareValues(y));

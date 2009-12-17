@@ -112,6 +112,9 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		bool Linked { get; set; }
 
+		/// <summary>
+		/// Gets the <see cref="IDisplaySetDescriptor"/> that describes this <see cref="IDisplaySet"/>.
+		/// </summary>
 		IDisplaySetDescriptor Descriptor { get; }
 
 		/// <summary>

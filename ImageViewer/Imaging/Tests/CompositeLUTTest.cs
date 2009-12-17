@@ -34,12 +34,17 @@
 
 using System;
 using NUnit.Framework;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging.Tests
 {
 	[TestFixture]
 	public class CompositeLUTTest
 	{
+		private LutFactory _lutFactory;
+
 		public CompositeLUTTest()
 		{
 		}
@@ -47,11 +52,15 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		[TestFixtureSetUp]
 		public void Init()
 		{
+			Platform.SetExtensionFactory(new NullExtensionFactory());
+			MemoryManager.Enabled = false;
+			_lutFactory = LutFactory.Create();
 		}
 		
 		[TestFixtureTearDown]
 		public void Cleanup()
 		{
+			_lutFactory.Dispose();
 		}
 
 		[Test]
@@ -64,7 +73,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 0.5;
 			double rescaleIntercept = 10;
 
-			ModalityLutLinear modalityLUT = new ModalityLutLinear(
+			IComposableLut modalityLUT = _lutFactory.GetModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
@@ -113,7 +122,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 0.683760684;
 			double rescaleIntercept = 200;
 
-			ModalityLutLinear modalityLUT = new ModalityLutLinear(
+			IComposableLut modalityLUT = _lutFactory.GetModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
@@ -157,7 +166,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 1;
 			double rescaleIntercept = -1024;
 
-			ModalityLutLinear modalityLUT = new ModalityLutLinear(
+			IComposableLut modalityLUT = _lutFactory.GetModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
@@ -211,7 +220,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 0.5;
 			double rescaleIntercept = 10;
 
-			ModalityLutLinear modalityLUT = new ModalityLutLinear(
+			IComposableLut modalityLUT = _lutFactory.GetModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
@@ -254,7 +263,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 1.0;
 			double rescaleIntercept = 0;
 
-			ModalityLutLinear modalityLUT = new ModalityLutLinear(
+			IComposableLut modalityLUT = _lutFactory.GetModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
@@ -274,7 +283,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			LutComposer lutComposer = new LutComposer(bitsStored, isSigned);
 			lutComposer.LutCollection.Add(modalityLUT);
 			lutComposer.LutCollection.Add(voiLUT);
-			lutComposer.LutCollection.Add(new GrayscaleColorMap());
+			lutComposer.LutCollection.Add(_lutFactory.GetGrayscaleColorMap());
 
 			Assert.AreEqual(-2048, voiLUT.MinInputValue);
 			Assert.AreEqual(2047, voiLUT.MaxInputValue);
@@ -300,7 +309,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 1;
 			double rescaleIntercept = -1024;
 
-			ModalityLutLinear modalityLUT = new ModalityLutLinear(
+			IComposableLut modalityLUT = _lutFactory.GetModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 

@@ -34,6 +34,10 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/// <summary>
+	/// A VOI LUT Manager, which is responsible for managing installation and restoration
+	/// of VOI LUTs via the Memento pattern.
+	/// </summary>
 	public sealed class VoiLutManager : IVoiLutManager
 	{
 		#region Private Fields
@@ -43,6 +47,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private bool _allowDisable;
 		#endregion
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public VoiLutManager(IVoiLutInstaller voiLutInstaller, bool allowDisable)
 		{
 			Platform.CheckForNullReference(voiLutInstaller, "voiLutInstaller");
@@ -52,11 +59,19 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region IVoiLutManager Members
 
+		/// <summary>
+		/// Gets the currently installed Voi Lut.
+		/// </summary>
+		/// <returns>The Voi Lut as an <see cref="IComposableLut"/>.</returns>
 		public IComposableLut GetLut()
 		{
 			return _voiLutInstaller.VoiLut;
 		}
 
+		/// <summary>
+		/// Installs a new Voi Lut.
+		/// </summary>
+		/// <param name="lut">The Lut to be installed.</param>
 		public void InstallLut(IComposableLut lut)
 		{
 			InstallVoiLut(lut);
@@ -66,11 +81,19 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region IVoiLutInstaller Members
 
+		/// <summary>
+		/// Gets the currently installed Voi Lut.
+		/// </summary>
+		/// <returns>The Voi Lut as an <see cref="IComposableLut"/>.</returns>
 		public IComposableLut VoiLut
 		{
 			get { return _voiLutInstaller.VoiLut; }	
 		}
 
+		/// <summary>
+		/// Installs a new Voi Lut.
+		/// </summary>
+		/// <param name="lut">The Lut to be installed.</param>
 		public void InstallVoiLut(IComposableLut lut)
 		{
 			IComposableLut existingLut = GetLut();
@@ -83,25 +106,28 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_voiLutInstaller.InstallVoiLut(lut);
 		}
 
+		/// <summary>
+		/// Gets or sets whether the output of the VOI LUT should be inverted for display.
+		/// </summary>
 		public bool Invert
 		{
 			get { return _voiLutInstaller.Invert; }
 			set { _voiLutInstaller.Invert = value; }
 		}
 
+		/// <summary>
+		/// Toggles the state of the <see cref="IVoiLutInstaller.Invert"/> property.
+		/// </summary>
 		public void ToggleInvert()
 		{
 			_voiLutInstaller.Invert = !_voiLutInstaller.Invert;
 		}
 
 		/// <summary>
-		/// This property is not relevant to this class.
+		/// Gets or sets a value indicating whether the LUT should be used in rendering the parent object.
 		/// </summary>
-		/// <remarks>
-		/// LUTs are always enabled on this class. Attempting to set this property will throw a <see cref="NotSupportedException"/>.
-		/// </remarks>
-		/// <exception cref="NotSupportedException">Thrown if the set accessor is called.</exception>
-		bool IVoiLutManager.Enabled
+		/// <exception cref="InvalidOperationException">Thrown if LUTs may not be disabled for rendering the parent object.</exception>
+		public bool Enabled
 		{
 			get { return _enabled; }
 			set
@@ -117,11 +143,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region IMemorable Members
 
+		/// <summary>
+		/// Captures enough information to restore the currently installed lut.
+		/// </summary>
 		public object CreateMemento()
 		{
 			return new VoiLutMemento(_voiLutInstaller.VoiLut, _voiLutInstaller.Invert);
 		}
 
+		/// <summary>
+		/// Restores the previously installed lut and/or it's state.
+		/// </summary>
 		public void SetMemento(object memento)
 		{
 			VoiLutMemento lutMemento = (VoiLutMemento) memento;

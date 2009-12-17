@@ -38,7 +38,7 @@ using System;
 using NUnit.Framework;
 
 
-namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
+namespace ClearCanvas.Desktop.Tests
 {
 	[TestFixture]
 	public class CommandHistoryTest

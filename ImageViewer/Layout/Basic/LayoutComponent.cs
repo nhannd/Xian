@@ -352,9 +352,28 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			}
 		}
 
+		private static List<IImageSet> GetVisibleImageSets(IPhysicalWorkspace physicalWorkspace)
+		{
+			List<IImageSet> visibleImageSets = new List<IImageSet>();
+			foreach (IImageBox imageBox in physicalWorkspace.ImageBoxes)
+			{
+				IDisplaySet displaySet = imageBox.DisplaySet;
+				if (displaySet == null)
+					continue;
+
+				IImageSet imageSet = displaySet.ParentImageSet;
+				if (imageSet == null || visibleImageSets.Contains(imageSet))
+					continue;
+
+				visibleImageSets.Add(imageSet);
+			}
+
+			return visibleImageSets;
+		}
+
 		private static IDisplaySet GetNextDisplaySet(IPhysicalWorkspace physicalWorkspace)
 		{
-			foreach (IImageSet imageSet in physicalWorkspace.LogicalWorkspace.ImageSets)
+			foreach (IImageSet imageSet in GetVisibleImageSets(physicalWorkspace))
 			{
 				foreach (IDisplaySet displaySet in imageSet.DisplaySets)
 				{
@@ -460,7 +479,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			{
 				SetImageBoxLayoutSimple(physicalWorkspace, rows, columns);
 			}
-
 
 			physicalWorkspace.Draw();
 			physicalWorkspace.SelectDefaultImageBox();

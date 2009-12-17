@@ -233,6 +233,9 @@ namespace ClearCanvas.ImageViewer.Common
 				}
 			}
 
+			if (Platform.IsLogLevelEnabled(LogLevel.Debug) && keysToRemove.Count > 0)
+				Platform.Log(LogLevel.Debug, "Removing {0} dead items from Large Object Container Cache", keysToRemove.Count);
+
 			foreach (Guid keyToRemove in keysToRemove)
 				_largeObjectContainers.Remove(keyToRemove);
 

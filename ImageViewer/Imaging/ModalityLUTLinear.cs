@@ -147,10 +147,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		protected override void Create()
 		{
-			for (int i = this.MinInputValue; i <= this.MaxInputValue; i++)
-			{
-				base[i] = (int) (this.RescaleSlope * i + this.RescaleIntercept);
-			}
+			int min = MinInputValue;
+			int max = MaxInputValue;
+			
+			for (int i = min; i <= max; i++)
+				base[i] = (int) (_rescaleSlope * i + _rescaleIntercept);
 		}
 
 		public override string GetKey()

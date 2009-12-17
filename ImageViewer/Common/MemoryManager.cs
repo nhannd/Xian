@@ -37,13 +37,45 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Common
 {
+	/// <summary>
+	/// Extension point for custom implementations of <see cref="IMemoryManagementStrategy"/>.
+	/// </summary>
 	public sealed class MemoryManagementStrategyExtensionPoint : ExtensionPoint<IMemoryManagementStrategy>
 	{ }
 
+	/// <summary>
+	/// The memory manager.
+	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// The memory manager is responsible for managing <see cref="ILargeObjectContainer"/>s that have
+	/// registered themselves with the memory manager as candidates for unloading when memory usage
+	/// starts to get high.  The memory manager defers the actual collection mechanism to the
+	/// <see cref="IMemoryManagementStrategy"/>, of which there is a default implementation, but it can
+	/// be replaced via the <see cref="MemoryManagementStrategyExtensionPoint"/>.
+	/// </para>
+	/// <para>
+	/// When there are <see cref="ILargeObjectContainer"/>s to be managed, the <see cref="MemoryManager"/>
+	/// starts a collection thread that will call <see cref="IMemoryManagementStrategy.Collect"/> periodically.
+	/// The <see cref="IMemoryManagementStrategy"/> is then responsible for analyzing the current memory
+	/// usage of the process and determining which, if any, <see cref="ILargeObjectContainer"/>s should be unloaded.
+	/// </para>
+	/// <para>
+	/// Once unloaded, it is good practice for the <see cref="ILargeObjectContainer"/> to remove itself
+	/// from the <see cref="MemoryManager"/> by calling <see cref="Remove"/> since it is no longer necessary to keep
+	/// track of it until it has been loaded again, at which time it should re-add itself by calling <see cref="Add"/>.
+	/// </para>
+	/// </remarks>
 	public static partial class MemoryManager
 	{
 		private const int _defaultWaitTimeMilliseconds = 1000;
 
+		/// <summary>
+		/// A command that can be executed repeatedly until it succeeds.
+		/// </summary>
+		/// <exception cref="OutOfMemoryException">When thrown by the command, the <see cref="MemoryManager"/>
+		/// will continue to retry by executing the command repeatedly.
+		/// See <see cref="MemoryManager.Execute(ClearCanvas.ImageViewer.Common.MemoryManager.RetryableCommand,System.TimeSpan)"/> for more details.</exception>
 		public delegate void RetryableCommand();
 
 		#region Private Fields
@@ -59,6 +91,12 @@ namespace ClearCanvas.ImageViewer.Common
 		private static volatile bool _collecting = false;
 		private static int _waitingClients = 0;
 		private static event EventHandler<MemoryCollectedEventArgs> _memoryCollected;
+
+#if UNIT_TESTS
+#pragma warning disable 1591
+		public static bool Enabled = true;
+#pragma warning restore 1591
+#endif
 
 		#endregion
 
@@ -88,15 +126,25 @@ namespace ClearCanvas.ImageViewer.Common
 
 		#region Properties
 
+		/// <summary>
+		/// Gets the total number of bytes held by all the <see cref="ILargeObjectContainer"/>s currently being managed by the memory manager.
+		/// </summary>
 		public static long LargeObjectBytesCount
 		{
 			get { return _containerCache.LastLargeObjectBytesCount; }	
 		}
 
+		/// <summary>
+		/// Gets the total number of <see cref="ILargeObjectContainer"/>s held by all the <see cref="ILargeObjectContainer"/>s currently being managed by the memory manager.
+		/// </summary>
 		public static long LargeObjectContainerCount
 		{
 			get { return _containerCache.LastLargeObjectContainerCount; }
 		}
+
+		/// <summary>
+		/// Gets the total number of "large objects" held by all the <see cref="ILargeObjectContainer"/>s currently being managed by the memory manager.
+		/// </summary>
 
 		public static long LargeObjectCount
 		{
@@ -105,6 +153,9 @@ namespace ClearCanvas.ImageViewer.Common
 
 		#endregion
 
+		/// <summary>
+		/// Forwards the <see cref="IMemoryManagementStrategy.MemoryCollected"/> event.
+		/// </summary>
 		public static event EventHandler<MemoryCollectedEventArgs> MemoryCollected
 		{
 			add
@@ -163,7 +214,7 @@ namespace ClearCanvas.ImageViewer.Common
 
 					_collectionThread = new Thread(RunCollectionThread)
 					                    	{
-					                    		Priority = ThreadPriority.BelowNormal, 
+					                    		Priority = ThreadPriority.Highest, 
 												IsBackground = true
 					                    	};
 
@@ -202,6 +253,7 @@ namespace ClearCanvas.ImageViewer.Common
 						if (_waitingClients == 0 && _containerCache.IsEmpty)
 						{
 							Platform.Log(LogLevel.Debug, "Exiting collection thread, container cache is empty.");
+							_containerCache.CleanupDeadItems(true); //updates the estimates
 							_collectionThread = null;
 							break;
 						}
@@ -232,8 +284,15 @@ namespace ClearCanvas.ImageViewer.Common
 			}
 		}
 
+		/// <summary>
+		/// Adds an <see cref="ILargeObjectContainer"/> to the memory manager's list.
+		/// </summary>
 		public static void Add(ILargeObjectContainer container)
 		{
+#if UNIT_TESTS
+			if (!Enabled)
+				return;
+#endif
 			lock(_syncLock)
 			{
 				_containersToRemove.Remove(container);
@@ -245,6 +304,9 @@ namespace ClearCanvas.ImageViewer.Common
 			}
 		}
 
+		/// <summary>
+		/// Removes an <see cref="ILargeObjectContainer"/> from the memory manager's list.
+		/// </summary>
 		public static void Remove(ILargeObjectContainer container)
 		{
 			lock (_syncLock)
@@ -258,11 +320,23 @@ namespace ClearCanvas.ImageViewer.Common
 
 		#region Collect
 
+		/// <summary>
+		/// Triggers an immediate call to <see cref="IMemoryManagementStrategy.Collect"/>
+		/// and does not wait for it to complete.
+		/// </summary>
+		/// <remarks>Note that this call does not guarantee that any memory will be
+		/// collected by the <see cref="IMemoryManagementStrategy"/>.</remarks>
 		public static void Collect()
 		{
 			Collect(false);
 		}
 
+		/// <summary>
+		/// Triggers an immediate call to <see cref="IMemoryManagementStrategy.Collect"/>
+		/// and will wait for it to complete, if <paramref name="wait"/> is true.
+		/// </summary>
+		/// <remarks>Note that this call does not guarantee that any memory will be
+		/// collected by the <see cref="IMemoryManagementStrategy"/>.</remarks>
 		public static void Collect(bool wait)
 		{
 			if (wait)
@@ -271,11 +345,23 @@ namespace ClearCanvas.ImageViewer.Common
 				Collect(0);
 		}
 
+		/// <summary>
+		/// Triggers an immediate call to <see cref="IMemoryManagementStrategy.Collect"/>
+		/// and will wait up to <paramref name="waitTimeoutMilliseconds"/> for it to complete.
+		/// </summary>
+		/// <remarks>Note that this call does not guarantee that any memory will be
+		/// collected by the <see cref="IMemoryManagementStrategy"/>.</remarks>
 		public static void Collect(int waitTimeoutMilliseconds)
 		{
 			Collect(TimeSpan.FromMilliseconds(waitTimeoutMilliseconds));
 		}
 
+		/// <summary>
+		/// Triggers an immediate call to <see cref="IMemoryManagementStrategy.Collect"/>
+		/// and will wait up to <paramref name="waitTimeout"/> for it to complete.
+		/// </summary>
+		/// <remarks>Note that this call does not guarantee that any memory will be
+		/// collected by the <see cref="IMemoryManagementStrategy"/>.</remarks>
 		public static void Collect(TimeSpan waitTimeout)
 		{
 			CodeClock clock = new CodeClock();
@@ -295,16 +381,49 @@ namespace ClearCanvas.ImageViewer.Common
 
 		#region Execute
 
+		/// <summary>
+		/// Executes the given <see cref="RetryableCommand"/> inside the memory manager.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="RetryableCommand"/> will be executed at least once, but may be called
+		/// repeatedly in the case where it throws an <see cref="OutOfMemoryException"/>.  When the
+		/// <see cref="RetryableCommand"/> does throw an <see cref="OutOfMemoryException"/>, a memory
+		/// collection will be triggered and the memory manager will continue to call the <see cref="RetryableCommand"/>
+		/// until the call succeeds or the default timeout of 1 second has elapsed.  If the timeout
+		/// has elapsed and the call fails, the <see cref="OutOfMemoryException"/> is rethrown.
+		/// </remarks>
 		public static void Execute(RetryableCommand retryableCommand)
 		{
 			Execute(retryableCommand, _defaultWaitTimeMilliseconds);
 		}
 
+		/// <summary>
+		/// Executes the given <see cref="RetryableCommand"/> inside the memory manager.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="RetryableCommand"/> will be executed at least once, but may be called
+		/// repeatedly in the case where it throws an <see cref="OutOfMemoryException"/>.  When the
+		/// <see cref="RetryableCommand"/> does throw an <see cref="OutOfMemoryException"/>, a memory
+		/// collection will be triggered and the memory manager will continue to call the <see cref="RetryableCommand"/>
+		/// until the call succeeds or <paramref name="maxWaitTimeMilliseconds"/> has elapsed.  If the timeout
+		/// has elapsed and the call fails, the <see cref="OutOfMemoryException"/> is rethrown.
+		/// </remarks>
 		public static void Execute(RetryableCommand retryableCommand, int maxWaitTimeMilliseconds)
 		{
 			Execute(retryableCommand, TimeSpan.FromMilliseconds(maxWaitTimeMilliseconds));
 		}
 
+		/// <summary>
+		/// Executes the given <see cref="RetryableCommand"/> inside the memory manager.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="RetryableCommand"/> will be executed at least once, but may be called
+		/// repeatedly in the case where it throws an <see cref="OutOfMemoryException"/>.  When the
+		/// <see cref="RetryableCommand"/> does throw an <see cref="OutOfMemoryException"/>, a memory
+		/// collection will be triggered and the memory manager will continue to call the <see cref="RetryableCommand"/>
+		/// until the call succeeds or <paramref name="maxWaitTime"/> has elapsed.  If the timeout
+		/// has elapsed and the call fails, the <see cref="OutOfMemoryException"/> is rethrown.
+		/// </remarks>
 		public static void Execute(RetryableCommand retryableCommand, TimeSpan maxWaitTime)
 		{
 			new RetryableCommandExecutor(retryableCommand, maxWaitTime).Execute();
@@ -313,16 +432,43 @@ namespace ClearCanvas.ImageViewer.Common
 
 		#endregion
 
+		/// <summary>
+		/// Attempts to allocate an array of the specified type.
+		/// </summary>
+		/// <remarks>The memory manager will try to allocate a buffer of the requested size.  If an
+		/// <see cref="OutOfMemoryException"/> is detected, a memory
+		/// collection will be triggered and the memory manager will continue to try and allocate the buffer
+		/// until it is successful, or the default timeout of 1 second has elapsed.  If the timeout
+		/// has elapsed and the allocation fails, the <see cref="OutOfMemoryException"/> is rethrown.
+		/// </remarks>
 		public static T[] Allocate<T>(int count)
 		{
 			return Allocate<T>(count, _defaultWaitTimeMilliseconds);
 		}
 
+		/// <summary>
+		/// Attempts to allocate an array of the specified type.
+		/// </summary>
+		/// <remarks>The memory manager will try to allocate a buffer of the requested size.  If an
+		/// <see cref="OutOfMemoryException"/> is detected, a memory
+		/// collection will be triggered and the memory manager will continue to try and allocate the buffer
+		/// until it is successful, or <paramref name="maxWaitTimeMilliseconds"/> has elapsed.  If the timeout
+		/// has elapsed and the allocation fails, the <see cref="OutOfMemoryException"/> is rethrown.
+		/// </remarks>
 		public static T[] Allocate<T>(int count, int maxWaitTimeMilliseconds)
 		{
 			return Allocate<T>(count, TimeSpan.FromMilliseconds(maxWaitTimeMilliseconds));
 		}
 
+		/// <summary>
+		/// Attempts to allocate an array of the specified type.
+		/// </summary>
+		/// <remarks>The memory manager will try to allocate a buffer of the requested size.  If an
+		/// <see cref="OutOfMemoryException"/> is detected, a memory
+		/// collection will be triggered and the memory manager will continue to try and allocate the buffer
+		/// until it is successful, or or <paramref name="maxWaitTime"/> has elapsed.  If the timeout
+		/// has elapsed and the allocation fails, the <see cref="OutOfMemoryException"/> is rethrown.
+		/// </remarks>
 		public static T[] Allocate<T>(int count, TimeSpan maxWaitTime)
 		{
 			T[] returnValue = null;

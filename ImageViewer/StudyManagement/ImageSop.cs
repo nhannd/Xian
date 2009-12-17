@@ -56,6 +56,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private readonly object _syncLock = new object();
 		private volatile FrameCollection _frames;
 
+		/// <summary>
+		/// Constructs a new instance of <see cref="ImageSop"/> from a local file.
+		/// </summary>
+		/// <param name="filename">The path to a local DICOM Part 10 file.</param>
 		public ImageSop(string filename)
 			: base(filename)
 		{

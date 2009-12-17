@@ -60,9 +60,6 @@ namespace ClearCanvas.ImageViewer.Comparers
 		/// <summary>
 		/// Compares two <see cref="IDisplaySet"/>s.
 		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <returns></returns>
 		public override int Compare(IDisplaySet x, IDisplaySet y)
 		{
 			if (x.PresentationImages.Count == 0 || y.PresentationImages.Count == 0)
@@ -89,6 +86,11 @@ namespace ClearCanvas.ImageViewer.Comparers
 
 		#endregion
 
+		/// <summary>
+		/// Compares two <see cref="Series"/>.
+		/// </summary>
+		/// <remarks>Simply calls <see cref="Compare(ClearCanvas.ImageViewer.StudyManagement.Sop,ClearCanvas.ImageViewer.StudyManagement.Sop)"/>,
+		/// passing the first <see cref="Sop"/> in each <see cref="Series"/>.</remarks>
 		public int Compare(Series x, Series y)
 		{
 			if (x.Sops.Count == 0 || y.Sops.Count == 0)
@@ -100,9 +102,6 @@ namespace ClearCanvas.ImageViewer.Comparers
 		/// <summary>
 		/// Compares two <see cref="ImageSop"/>s.
 		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <returns></returns>
 		/// <remarks>
 		/// The relevant DICOM series property to be compared
 		/// is taken from the <see cref="ImageSop"/>.

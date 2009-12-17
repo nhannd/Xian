@@ -45,6 +45,7 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms.General
 		public CommandLineExternalPropertiesComponentControl(CommandLineExternalPropertiesComponent component) : base(component)
 		{
 			InitializeComponent();
+			component.AutoQuoteArguments = false;
 
 			base.ErrorProvider.SetIconPadding(_txtCommand, _btnCommand.Width);
 

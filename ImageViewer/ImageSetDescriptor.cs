@@ -39,11 +39,22 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// Definition of an <see cref="IImageSetDescriptor"/> whose contents are based on
+	/// a DICOM Study.
+	/// </summary>
 	public interface IDicomImageSetDescriptor : IImageSetDescriptor
 	{
+		/// <summary>
+		/// Gets the <see cref="IStudyRootStudyIdentifier"/> for the DICOM study from which
+		/// the <see cref="IImageSet"/> was created.
+		/// </summary>
 		IStudyRootStudyIdentifier SourceStudy { get; }
 	}
 
+	/// <summary>
+	/// Implementation of <see cref="IDicomImageSetDescriptor"/>.
+	/// </summary>
 	public class DicomImageSetDescriptor : ImageSetDescriptor, IDicomImageSetDescriptor
 	{
 		private readonly IStudyRootStudyIdentifier _sourceStudy;
@@ -52,17 +63,27 @@ namespace ClearCanvas.ImageViewer
 		private string _patientInfo;
 		private string _uid;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public DicomImageSetDescriptor(IStudyRootStudyIdentifier sourceStudy)
 		{
 			Platform.CheckForNullReference(sourceStudy, "sourceStudy");
 			_sourceStudy = sourceStudy;
 		}
 
+		/// <summary>
+		/// Gets the <see cref="IStudyRootStudyIdentifier"/> for the DICOM study from which
+		/// the <see cref="IImageSet"/> was created.
+		/// </summary>
 		public IStudyRootStudyIdentifier SourceStudy
 		{
 			get { return _sourceStudy; }
 		}
 
+		/// <summary>
+		/// Gets the descriptive name of the <see cref="IImageSet"/>.
+		/// </summary>
 		public override string Name
 		{
 			get
@@ -74,6 +95,9 @@ namespace ClearCanvas.ImageViewer
 			set { throw new InvalidOperationException("The Name property cannot be set publicly."); }
 		}
 
+		/// <summary>
+		/// Gets a description of the patient whose images are contained in the <see cref="IImageSet"/>.
+		/// </summary>
 		public override string PatientInfo
 		{
 			get
@@ -85,6 +109,9 @@ namespace ClearCanvas.ImageViewer
 			set { throw new InvalidOperationException("The PatientInfo property cannot be set publicly."); }
 		}
 
+		/// <summary>
+		/// Gets a unique identifier for the <see cref="IImageSet"/>.
+		/// </summary>
 		public override string Uid
 		{
 			get
@@ -96,6 +123,9 @@ namespace ClearCanvas.ImageViewer
 			set { throw new InvalidOperationException("The Uid property cannot be set publicly."); }
 		}
 
+		/// <summary>
+		/// Gets the descriptive name of the <see cref="IImageSet"/>.
+		/// </summary>
 		protected virtual string GetName()
 		{
 			DateTime studyDate;
@@ -112,38 +142,59 @@ namespace ClearCanvas.ImageViewer
 										  _sourceStudy.StudyDescription);
 		}
 
+		/// <summary>
+		/// Gets a description of the patient whose images are contained in the <see cref="IImageSet"/>.
+		/// </summary>
 		protected virtual string GetPatientInfo()
 		{
-			return String.Format("{0} � {1}", new PersonName(_sourceStudy.PatientsName).FormattedName, _sourceStudy.PatientId);
+			return String.Format("{0} \u00B7 {1}", new PersonName(_sourceStudy.PatientsName).FormattedName, _sourceStudy.PatientId);
 		}
 
+		/// <summary>
+		/// Gets a unique identifier for the <see cref="IImageSet"/>.
+		/// </summary>
 		protected virtual string GetUid()
 		{
 			return _sourceStudy.StudyInstanceUid;
 		}
 	}
 
+	/// <summary>
+	/// Default implementation of <see cref="IImageSetDescriptor"/>.
+	/// </summary>
 	public class BasicImageSetDescriptor : ImageSetDescriptor
 	{
 		private string _name;
 		private string _patientInfo;
 		private string _uid;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public BasicImageSetDescriptor()
 		{}
 
+		/// <summary>
+		/// Gets the descriptive name of the <see cref="IImageSet"/>.
+		/// </summary>
 		public override string Name
 		{
 			get { return _name ?? ""; }
 			set { _name = value; }
 		}
 
+		/// <summary>
+		/// Gets a description of the patient whose images are contained in the <see cref="IImageSet"/>.
+		/// </summary>
 		public override string PatientInfo
 		{
 			get { return _patientInfo ?? ""; }
 			set { _patientInfo = value; }
 		}
 
+		/// <summary>
+		/// Gets a unique identifier for the <see cref="IImageSet"/>.
+		/// </summary>
 		public override string Uid
 		{
 			get { return _uid ?? ""; }
@@ -151,19 +202,42 @@ namespace ClearCanvas.ImageViewer
 		}
 	}
 
+	/// <summary>
+	/// Definition of an object that describes the contents of an <see cref="IDisplaySet"/>.
+	/// </summary>
 	public interface IImageSetDescriptor
 	{
+		/// <summary>
+		/// Gets the <see cref="IImageSet"/> that this object describes.
+		/// </summary>
 		IImageSet ImageSet { get; }
 
+		/// <summary>
+		/// Gets the descriptive name of the <see cref="IImageSet"/>.
+		/// </summary>
 		string Name { get; }
+
+		/// <summary>
+		/// Gets a description of the patient whose images are contained in the <see cref="IImageSet"/>.
+		/// </summary>
 		string PatientInfo { get; }
+
+		/// <summary>
+		/// Gets a unique identifier for the <see cref="IImageSet"/>.
+		/// </summary>
 		string Uid { get; }
 	}
 
+	/// <summary>
+	/// Abstract base implementation of <see cref="IImageSetDescriptor"/>.
+	/// </summary>
 	public abstract class ImageSetDescriptor : IImageSetDescriptor
 	{
 		private ImageSet _imageSet;
 
+		/// <summary>
+		/// Protected constructor.
+		/// </summary>
 		protected ImageSetDescriptor()
 		{
 		}
@@ -175,20 +249,35 @@ namespace ClearCanvas.ImageViewer
 			get { return _imageSet; }	
 		}
 
+		/// <summary>
+		/// Gets the <see cref="IImageSet"/> that this object describes.
+		/// </summary>
 		public virtual ImageSet ImageSet
 		{
 			get { return _imageSet; }
 			internal set { _imageSet = value; }
 		}
 
+		/// <summary>
+		/// Gets the descriptive name of the <see cref="IImageSet"/>.
+		/// </summary>
 		public abstract string Name { get; set; }
 
+		/// <summary>
+		/// Gets a description of the patient whose images are contained in the <see cref="IImageSet"/>.
+		/// </summary>
 		public abstract string PatientInfo { get; set; }
 
+		/// <summary>
+		/// Gets a unique identifier for the <see cref="IImageSet"/>.
+		/// </summary>
 		public abstract string Uid { get; set; }
 
 		#endregion
 
+		/// <summary>
+		/// Gets a text description of this <see cref="IImageSetDescriptor"/>.
+		/// </summary>
 		public override string ToString()
 		{
 			return StringUtilities.Combine(new string[] { PatientInfo, Name, Uid }, " | ", true);

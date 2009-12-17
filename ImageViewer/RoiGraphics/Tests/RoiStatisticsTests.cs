@@ -194,11 +194,11 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 					dcf.DataSet[DicomTags.StudyInstanceUid].SetStringValue("1");
 					dcf.DataSet[DicomTags.SeriesInstanceUid].SetStringValue("2");
 					dcf.DataSet[DicomTags.SopInstanceUid].SetStringValue("3");
-					dcf.DataSet[DicomTags.SopClassUid].SetStringValue(SopClass.RawDataStorageUid);
+					dcf.DataSet[DicomTags.SopClassUid].SetStringValue(SopClass.SecondaryCaptureImageStorageUid);
 					dcf.DataSet[DicomTags.InstanceNumber].SetStringValue("1");
 					dcf.DataSet[DicomTags.NumberOfFrames].SetStringValue("1");
 					dcf.MetaInfo[DicomTags.TransferSyntaxUid].SetStringValue(TransferSyntax.ImplicitVrLittleEndianUid);
-					dcf.MetaInfo[DicomTags.MediaStorageSopClassUid].SetStringValue(SopClass.RawDataStorageUid);
+					dcf.MetaInfo[DicomTags.MediaStorageSopClassUid].SetStringValue(SopClass.SecondaryCaptureImageStorageUid);
 					dcf.MetaInfo[DicomTags.MediaStorageSopInstanceUid].SetStringValue("3");
 					_imageSop = new ImageSop(new TestDataSource(dcf));
 				}

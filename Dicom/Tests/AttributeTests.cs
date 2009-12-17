@@ -45,6 +45,18 @@ namespace ClearCanvas.Dicom.Tests
     {
 		public static readonly CultureInfo CultureInfo = new CultureInfo("en-US");
 
+		[TestFixtureSetUp]
+		public void TestFixtureSetUp()
+		{
+			DicomImplementation.UnitTest = true;
+		}
+
+		[TestFixtureTearDown]
+		public void TestFixtureTearDown()
+		{
+			DicomImplementation.UnitTest = false;
+		}
+
         #region DicomAttributeAE Test
         [Test]
         public void AttributeAETest()

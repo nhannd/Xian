@@ -491,6 +491,9 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		/// <summary>
+		/// Renders the <see cref="PresentationImage"/> without firing any events.
+		/// </summary>
 		protected void DrawNoEvents(DrawArgs drawArgs)
 		{
 			drawArgs.SceneGraph = this.SceneGraph;

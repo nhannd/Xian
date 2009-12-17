@@ -217,5 +217,25 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 			
 			//yield return DicomTags.SourceStrengthReferenceDate;
 		}
+
+#if UNIT_TESTS
+		/// <summary>
+		/// For unit tests. This list should contain only unique entries!!
+		/// </summary>
+		internal static IEnumerable<uint> AllProcessedTags
+		{
+			get
+			{
+				foreach (uint tag in DateTimeTagsToAdjust)
+					yield return tag;
+				foreach (uint tag in TagsToNull)
+					yield return tag;
+				foreach (uint tag in TagsToRemove)
+					yield return tag;
+				foreach (uint tag in UidsToRemap)
+					yield return tag;
+			}
+		}
+#endif
 	}
 }

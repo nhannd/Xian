@@ -37,24 +37,59 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// Definition of an <see cref="IDisplaySetDescriptor"/> whose contents are based on
+	/// a DICOM Series.
+	/// </summary>
 	public interface IDicomDisplaySetDescriptor : IDisplaySetDescriptor
 	{
+		/// <summary>
+		/// Gets the <see cref="ISeriesIdentifier"/> for the series used to 
+		/// generate the <see cref="IDisplaySet"/>.
+		/// </summary>
+		/// <remarks>
+		/// The series used to create the <see cref="IDisplaySet"/> is not necessarily
+		/// the same as the series that the contained <see cref="IPresentationImage"/>s
+		/// belong to.  For example, the <see cref="SourceSeries"/> could be a Key Object
+		/// series that simply references images in other series.
+		/// </remarks>
 		ISeriesIdentifier SourceSeries { get; }
 
 		//TODO: put this stuff back when we actually support dynamically updating the viewer.
 		//bool Update(Sop sop);
 	}
 
+	/// <summary>
+	/// Definition of an object that describes the contents of an <see cref="IDisplaySet"/>.
+	/// </summary>
 	public interface IDisplaySetDescriptor
 	{
+		/// <summary>
+		/// The <see cref="IDisplaySet"/> described by this object.
+		/// </summary>
 		IDisplaySet DisplaySet { get; }
-
+		/// <summary>
+		/// Gets the descriptive name of the <see cref="IDisplaySet"/>.
+		/// </summary>
 		string Name { get; }
+		/// <summary>
+		/// Gets a description of the <see cref="IDisplaySet"/>.
+		/// </summary>
 		string Description { get; }
+		/// <summary>
+		/// Gets a numeric identifier for the <see cref="IDisplaySet"/>, which usually corresponds
+		/// to a DICOM Series Number.
+		/// </summary>
 		int Number { get; }
+		/// <summary>
+		/// Gets the unique identifier for the <see cref="IDisplaySet"/>.
+		/// </summary>
 		string Uid { get; }
 	}
 
+	/// <summary>
+	/// Abstract base implementation of an <see cref="IDicomDisplaySetDescriptor"/>.
+	/// </summary>
 	[Cloneable(false)]
 	public abstract class DicomDisplaySetDescriptor : DisplaySetDescriptor, IDicomDisplaySetDescriptor
 	{
@@ -68,11 +103,17 @@ namespace ClearCanvas.ImageViewer
 		private int? _number;
 		private string _uid;
 
+		/// <summary>
+		/// Protected constructor.
+		/// </summary>
 		protected DicomDisplaySetDescriptor(ISeriesIdentifier sourceSeries)
 			: this(sourceSeries, null)
 		{
 		}
 
+		/// <summary>
+		/// Protected constructor.
+		/// </summary>
 		protected DicomDisplaySetDescriptor(ISeriesIdentifier sourceSeries, IPresentationImageFactory presentationImageFactory)
 		{
 			Platform.CheckForNullReference(sourceSeries, "sourceSeries");
@@ -80,6 +121,9 @@ namespace ClearCanvas.ImageViewer
 			_presentationImageFactory = presentationImageFactory;
 		}
 
+		/// <summary>
+		/// Protected constructor.
+		/// </summary>
 		protected DicomDisplaySetDescriptor(DicomDisplaySetDescriptor source, ICloningContext context)
 		{
 			context.CloneFields(source, this);
@@ -87,6 +131,16 @@ namespace ClearCanvas.ImageViewer
 
 		#region IDicomDisplaySetDescriptor Members
 
+		/// <summary>
+		/// Gets the <see cref="ISeriesIdentifier"/> for the series used to 
+		/// generate the <see cref="IDisplaySet"/>.
+		/// </summary>
+		/// <remarks>
+		/// The series used to create the <see cref="IDisplaySet"/> is not necessarily
+		/// the same as the series that the contained <see cref="IPresentationImage"/>s
+		/// belong to.  For example, the <see cref="IDicomDisplaySetDescriptor.SourceSeries"/> could be a Key Object
+		/// series that simply references images in other series.
+		/// </remarks>
 		public ISeriesIdentifier SourceSeries
 		{
 			get { return _sourceSeries; }
@@ -94,6 +148,9 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		/// <summary>
+		/// Gets the descriptive name of the <see cref="IDisplaySet"/>.
+		/// </summary>
 		public override string Name
 		{
 			get
@@ -105,6 +162,9 @@ namespace ClearCanvas.ImageViewer
 			set { throw new InvalidOperationException("The Name property cannot be set publicly."); }
 		}
 
+		/// <summary>
+		/// Gets a description of the <see cref="IDisplaySet"/>.
+		/// </summary>
 		public override string Description
 		{
 			get
@@ -116,6 +176,9 @@ namespace ClearCanvas.ImageViewer
 			set { throw new InvalidOperationException("The Description property cannot be set publicly."); }
 		}
 
+		/// <summary>
+		/// Gets the unique identifier for the <see cref="IDisplaySet"/>.
+		/// </summary>
 		public override string Uid
 		{
 			get
@@ -127,6 +190,10 @@ namespace ClearCanvas.ImageViewer
 			set { throw new InvalidOperationException("The Uid property cannot be set publicly."); }
 		}
 
+		/// <summary>
+		/// Gets a numeric identifier for the <see cref="IDisplaySet"/>, which usually corresponds
+		/// to a DICOM Series Number.
+		/// </summary>
 		public override int Number
 		{
 			get
@@ -138,10 +205,23 @@ namespace ClearCanvas.ImageViewer
 			set { throw new InvalidOperationException("The Uid property cannot be set publicly."); }
 		}
 
+		/// <summary>
+		/// Gets the descriptive name of the <see cref="IDisplaySet"/>.
+		/// </summary>
 		protected abstract string GetName();
+		/// <summary>
+		/// Gets a description of the <see cref="IDisplaySet"/>.
+		/// </summary>
 		protected abstract string GetDescription();
+		/// <summary>
+		/// Gets the unique identifier for the <see cref="IDisplaySet"/>.
+		/// </summary>
 		protected abstract string GetUid();
 
+		/// <summary>
+		/// Gets a numeric identifier for the <see cref="IDisplaySet"/>, which usually corresponds
+		/// to a DICOM Series Number.
+		/// </summary>
 		protected virtual int GetNumber()
 		{
 			return SourceSeries.SeriesNumber ?? default(int);
@@ -174,6 +254,9 @@ namespace ClearCanvas.ImageViewer
 		}
 	}
 
+	/// <summary>
+	/// Default implementation of <see cref="IDisplaySetDescriptor"/>.
+	/// </summary>
 	[Cloneable(true)]
 	public class BasicDisplaySetDescriptor : DisplaySetDescriptor
 	{
@@ -182,28 +265,43 @@ namespace ClearCanvas.ImageViewer
 		private int _number;
 		private string _uid = "";
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public BasicDisplaySetDescriptor()
 		{
 		}
 
+		/// <summary>
+		/// Gets or sets the descriptive name of the <see cref="IDisplaySet"/>.
+		/// </summary>
 		public override string Name
 		{
 			get { return _name ?? ""; }
 			set { _name = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the description of the <see cref="IDisplaySet"/>.
+		/// </summary>
 		public override string Description
 		{
 			get { return _description ?? ""; }
 			set { _description = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the numeric identifier for the <see cref="IDisplaySet"/>.
+		/// </summary>
 		public override int Number
 		{
 			get { return _number; }
 			set { _number = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the unique identifier for the <see cref="IDisplaySet"/>.
+		/// </summary>
 		public override string Uid
 		{
 			get { return _uid ?? ""; }
@@ -211,13 +309,19 @@ namespace ClearCanvas.ImageViewer
 		}	
 	}
 
+	/// <summary>
+	/// Abstract base implementation of <see cref="IDisplaySetDescriptor"/>.
+	/// </summary>
 	[Cloneable(true)]
 	public abstract class DisplaySetDescriptor : IDisplaySetDescriptor
 	{
 		[CloneIgnore]
 		private DisplaySet _displaySet;
 
-		public DisplaySetDescriptor()
+		/// <summary>
+		/// Protected constructor.
+		/// </summary>
+		protected DisplaySetDescriptor()
 		{
 		}
 
@@ -228,6 +332,9 @@ namespace ClearCanvas.ImageViewer
 			get { return _displaySet; }
 		}
 
+		/// <summary>
+		/// The <see cref="IDisplaySet"/> described by this object.
+		/// </summary>
 		public virtual DisplaySet DisplaySet
 		{
 			get { return _displaySet; }
@@ -238,21 +345,40 @@ namespace ClearCanvas.ImageViewer
 
 		#region IDisplaySetDescriptor Members
 
+		/// <summary>
+		/// Gets the descriptive name of the <see cref="IDisplaySet"/>.
+		/// </summary>
 		public abstract string Name { get; set; }
 
+		/// <summary>
+		/// Gets a description of the <see cref="IDisplaySet"/>.
+		/// </summary>
 		public abstract string Description { get; set; }
 
+		/// <summary>
+		/// Gets a numeric identifier for the <see cref="IDisplaySet"/>, which usually corresponds
+		/// to a DICOM Series Number.
+		/// </summary>
 		public abstract int Number { get; set; }
 
+		/// <summary>
+		/// Gets the unique identifier for the <see cref="IDisplaySet"/>.
+		/// </summary>
 		public abstract string Uid { get; set; }
 
 		#endregion
 
+		///<summary>
+		/// Creates a copy of this object.
+		///</summary>
 		public DisplaySetDescriptor Clone()
 		{
 			return (DisplaySetDescriptor)CloneBuilder.Clone(this);
 		}
 
+		/// <summary>
+		/// Gets a text description of this object.
+		/// </summary>
 		public override string ToString()
 		{
 			return StringUtilities.Combine(new string[] { Name, Uid}, " | ", true);

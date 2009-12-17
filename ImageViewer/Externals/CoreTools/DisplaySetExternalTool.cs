@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Externals.CoreTools
 					{
 						foreach (IExternal external in ExternalCollection.SavedExternals)
 						{
-							if (!external.IsValid)
+							if (!external.IsValid || string.IsNullOrEmpty(external.Label))
 								continue;
 
 							IDisplaySetExternal consumer = external as IDisplaySetExternal;

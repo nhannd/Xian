@@ -31,9 +31,14 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/// <summary>
+	/// A Color Map Manager, which is responsible for managing installation and restoration
+	/// of color maps via the Memento pattern.
+	/// </summary>
 	public sealed class ColorMapManager : IColorMapManager
 	{
 		#region Private Fields
@@ -42,6 +47,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		
 		#endregion
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public ColorMapManager(IColorMapInstaller colorMapInstaller)
 		{
 			Platform.CheckForNullReference(colorMapInstaller, "colorMapInstaller");
@@ -50,6 +58,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region IColorMapManager Members
 
+		/// <summary>
+		/// Gets the currently installed color map.
+		/// </summary>
 		public IDataLut GetColorMap()
 		{
 			return _colorMapInstaller.ColorMap;
@@ -59,26 +70,41 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region IColorMapInstaller Members
 
+		/// <summary>
+		/// Gets the currently installed color map.
+		/// </summary>
 		public IDataLut ColorMap
 		{
 			get { return _colorMapInstaller.ColorMap; }
 		}
 
+		/// <summary>
+		/// Installs a color map by name.
+		/// </summary>
 		public void InstallColorMap(string name)
 		{
 			_colorMapInstaller.InstallColorMap(name);
 		}
 
+		/// <summary>
+		/// Installs a color map by <see cref="ColorMapDescriptor">descriptor</see>.
+		/// </summary>
 		public void InstallColorMap(ColorMapDescriptor descriptor)
 		{
 			_colorMapInstaller.InstallColorMap(descriptor);
 		}
 
+		/// <summary>
+		/// Installs a color map.
+		/// </summary>
 		public void InstallColorMap(IDataLut colorMap)
 		{
 			_colorMapInstaller.InstallColorMap(colorMap);
 		}
 
+		/// <summary>
+		/// Gets <see cref="ColorMapDescriptor"/>s for all the different types of available color maps.
+		/// </summary>
 		public IEnumerable<ColorMapDescriptor> AvailableColorMaps
 		{
 			get
@@ -91,11 +117,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region IMemorable Members
 
+		/// <summary>
+		/// Captures enough information to restore the currently installed color map.
+		/// </summary>
 		public object CreateMemento()
 		{
 			return new ComposableLutMemento(_colorMapInstaller.ColorMap);
 		}
 
+		/// <summary>
+		/// Restores the previously installed color map and/or it's state.
+		/// </summary>
 		public void SetMemento(object memento)
 		{
 			ComposableLutMemento lutMemento = (ComposableLutMemento) memento;

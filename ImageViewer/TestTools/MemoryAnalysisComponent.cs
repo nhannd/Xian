@@ -159,6 +159,7 @@ namespace ClearCanvas.ImageViewer.TestTools
 		public void Collect()
 		{
 			MemoryManager.Collect(true);
+			GC.Collect();
 		}
 
 		public override void Start()
@@ -190,31 +191,33 @@ namespace ClearCanvas.ImageViewer.TestTools
 
 		public void UnloadPixelData()
 		{
-			IImageViewer viewer = ImageViewerComponent.GetAsImageViewer(Application.ActiveDesktopWindow.ActiveWorkspace);
-			if (viewer == null)
-				return;
+			bool keepGoing = true;
+			EventHandler<MemoryCollectedEventArgs> del = delegate(object sender, MemoryCollectedEventArgs args)
+															{
+																if (args.IsLast)
+																	keepGoing = args.BytesCollectedCount > 0;
+															};
 
-			foreach (Patient patient in viewer.StudyTree.Patients)
+			MemoryManager.MemoryCollected += del;
+
+			try
 			{
-				foreach (Study study in patient.Studies)
-				{
-					foreach (Series series in study.Series)
-					{
-						foreach (Sop sop in series.Sops)
-						{
-							if (sop.IsImage)
-							{
-								foreach (Frame frame in ((ImageSop)sop).Frames)
-								{
-									frame.UnloadPixelData();
-								}
-							}
-						}
-					}
-				}
+
+				MemoryManager.Execute(delegate
+				                      	{
+											if (keepGoing)
+				                      			throw new OutOfMemoryException();
+				                      	}, TimeSpan.FromSeconds(30));
 			}
-			NotifyPropertyChanged("HeapMemoryKB");
-			NotifyPropertyChanged("MemoryDifferenceKB");
+			catch (Exception)
+			{
+			}
+			finally
+			{
+				MemoryManager.MemoryCollected -= del;
+			}
+
+			GC.Collect();
 			NotifyPropertyChanged("TotalLargeObjectMemoryKB");
 		}
 	}

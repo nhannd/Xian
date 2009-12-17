@@ -77,11 +77,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#region IStudyData Members
 
+		/// <summary>
+		/// Gets the Study Instance UID of the identified study.
+		/// </summary>
 		public string StudyInstanceUid
 		{
 			get { return _sop.StudyInstanceUid; }
 		}
 
+		/// <summary>
+		/// Gets the modalities in the identified study.
+		/// </summary>
 		public string[] ModalitiesInStudy
 		{
 			get
@@ -96,26 +102,41 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}	
 		}
 
+		/// <summary>
+		/// Gets the study description of the identified study.
+		/// </summary>
 		public string StudyDescription
 		{
 			get { return _sop.StudyDescription; }
 		}
 
+		/// <summary>
+		/// Gets the study ID of the identified study.
+		/// </summary>
 		public string StudyId
 		{
 			get { return _sop.StudyId; }
 		}
 
+		/// <summary>
+		/// Gets the study date of the identified study.
+		/// </summary>
 		public string StudyDate
 		{
 			get { return _sop.StudyDate; }
 		}
 
+		/// <summary>
+		/// Gets the study time of the identified study.
+		/// </summary>
 		public string StudyTime
 		{
 			get { return _sop.StudyTime; }
 		}
 
+		/// <summary>
+		/// Gets the accession number of the identified study.
+		/// </summary>
 		public string AccessionNumber
 		{
 			get { return _sop.AccessionNumber; }
@@ -200,6 +221,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _sop.AdditionalPatientsHistory; }
 		}
 
+		/// <summary>
+		/// Gets an <see cref="IStudyRootStudyIdentifier"/> for this <see cref="Study"/>.
+		/// </summary>
+		/// <remarks>An <see cref="IStudyRootStudyIdentifier"/> can be used in situations where you only
+		/// need some data about the <see cref="Study"/>, but not the <see cref="Study"/> itself.  It can be problematic
+		/// to hold references to <see cref="Study"/> objects outside the context of an <see cref="IImageViewer"/>
+		/// because they are no longer valid when the viewer is closed; in these situations, it may be appropriate to
+		/// use an identifier.
+		/// </remarks>
 		public IStudyRootStudyIdentifier GetIdentifier()
 		{
 			StudyItem identifier = new StudyItem(_parentPatient, this, _sop.DataSource.Server, _sop.DataSource.StudyLoaderName);

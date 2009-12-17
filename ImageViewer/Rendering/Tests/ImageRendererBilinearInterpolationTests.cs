@@ -37,6 +37,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
 using NUnit.Framework;
@@ -111,7 +112,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 		public void Init()
 		{
 			Platform.SetExtensionFactory(new NullExtensionFactory());
-
+			MemoryManager.Enabled = false;
 			//_tracePhantom = true;
 			//_traceBitmap = true;
 			//_trace = true;

@@ -17,6 +17,9 @@ namespace ClearCanvas.Desktop {
         
         private static ToolStripSettings defaultInstance = ((ToolStripSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new ToolStripSettings())));
         
+		/// <summary>
+		/// Gets the single instance of this class.
+		/// </summary>
         public static ToolStripSettings Default {
             get {
                 return defaultInstance;

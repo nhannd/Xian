@@ -38,6 +38,9 @@ using System.Text;
 
 namespace ClearCanvas.Common
 {
+	/// <summary>
+	/// Provides some basic information about the product, such as the name and version.
+	/// </summary>
 	public static class ProductInformation
 	{
 		private static string _name;
@@ -60,6 +63,9 @@ namespace ClearCanvas.Common
 			_license = null;
 		}
 
+		/// <summary>
+		/// Gets the product name.
+		/// </summary>
 		public static string Name
 		{
 			get
@@ -71,6 +77,9 @@ namespace ClearCanvas.Common
 			}
 		}
 
+		/// <summary>
+		/// Gets the product version.
+		/// </summary>
 		public static Version Version
 		{
 			get
@@ -88,17 +97,29 @@ namespace ClearCanvas.Common
 			}
 		}
 
+		/// <summary>
+		/// Gets the product version suffix (e.g. "SP1").
+		/// </summary>
 		public static string VersionSuffix
 		{
 			get
 			{
 				if (_versionSuffix == null)
-					_versionSuffix = Decrypt(ProductSettings.Default.VersionSuffix);
+				{
+					string versionSuffix = Decrypt(ProductSettings.Default.VersionSuffix);
+					if (String.IsNullOrEmpty(versionSuffix) || versionSuffix[0] != '*')
+						_versionSuffix = "Unverified Build";
+					else
+						_versionSuffix = versionSuffix.Substring(1);
+				}
 
 				return _versionSuffix;
 			}
 		}
 
+		/// <summary>
+		/// Gets the product copyright (e.g. "Copyright 2009 ClearCanvas Inc.").
+		/// </summary>
 		public static string Copyright
 		{
 			get
@@ -110,6 +131,9 @@ namespace ClearCanvas.Common
 			}
 		}
 
+		/// <summary>
+		/// Gets the product license.
+		/// </summary>
 		public static string License
 		{
 			get
@@ -126,15 +150,50 @@ namespace ClearCanvas.Common
 			if (String.IsNullOrEmpty(@string))
 				return @string;
 
-			byte[] bytes = Convert.FromBase64String(@string);
-			return Encoding.UTF8.GetString(bytes);
+			string result;
+			try
+			{
+				byte[] bytes = Convert.FromBase64String(@string);
+				using (MemoryStream dataStream = new MemoryStream(bytes))
+				{
+					RC2CryptoServiceProvider cryptoService = new RC2CryptoServiceProvider();
+					cryptoService.Key = Encoding.UTF8.GetBytes("ClearCanvas");
+					cryptoService.IV = Encoding.UTF8.GetBytes("IsSoCool");
+					cryptoService.UseSalt = false;
+					using (CryptoStream cryptoStream = new CryptoStream(dataStream, cryptoService.CreateDecryptor(), CryptoStreamMode.Read))
+					{
+						using (StreamReader reader = new StreamReader(cryptoStream, Encoding.UTF8))
+						{
+							result = reader.ReadToEnd();
+							reader.Close();
+						}
+						cryptoStream.Close();
+					}
+					dataStream.Close();
+				}
+			}
+			catch (Exception)
+			{
+				result = string.Empty;
+			}
+			return result;
 		}
 
+		/// <summary>
+		/// Gets a string containing both the product name and version.
+		/// </summary>
+		/// <param name="includeBuildAndRevision">Specifies whether to include the build and revision numbers in the version; false means only the major and minor numbers are included.</param>
+		/// <param name="includeVersionSuffix">Specifies whether to include the version suffix.</param>
 		public static string GetNameAndVersion(bool includeBuildAndRevision, bool includeVersionSuffix)
 		{
 			return String.Format("{0} {1}", Name, GetVersion(includeBuildAndRevision, includeVersionSuffix));
 		}
 
+		/// <summary>
+		/// Gets the version as a string, formatted based on the input options.
+		/// </summary>
+		/// <param name="includeBuildAndRevision">Specifies whether to include the build and revision numbers in the version; false means only the major and minor numbers are included.</param>
+		/// <param name="includeVersionSuffix">Specifies whether to include the version suffix.</param>
 		public static string GetVersion(bool includeBuildAndRevision, bool includeVersionSuffix)
 		{
 			string versionString;

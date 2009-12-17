@@ -373,7 +373,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get
 			{
 				if (_lutFactory == null)
-					_lutFactory = LutFactory.NewInstance;
+					_lutFactory = LutFactory.Create();
 
 				return _lutFactory;
 			}
@@ -392,10 +392,16 @@ namespace ClearCanvas.ImageViewer.Graphics
 			if (disposing)
 			{
 				if (_lutFactory != null)
+				{
 					_lutFactory.Dispose();
+					_lutFactory = null;
+				}
 
 				if (_lutComposer != null)
+				{
 					_lutComposer.Dispose();
+					_lutComposer = null;
+				}
 			}
 		}
 

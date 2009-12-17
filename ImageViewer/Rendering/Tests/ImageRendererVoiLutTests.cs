@@ -77,14 +77,14 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 			{
 				control.VoiLutManager.Enabled = false;
 			}
-			catch (NotSupportedException) {}
+			catch (InvalidOperationException) { }
 
 			T withLut = @delegate(size);
 			try
 			{
 				control.VoiLutManager.Enabled = true;
 			}
-			catch (NotSupportedException) {}
+			catch (InvalidOperationException) { }
 			withLut.VoiLutManager.InstallVoiLut(new IdentityVoiLinearLut());
 
 			Statistics stats = RenderAndDiff(control, withLut, string.Format("{0}.Lut0.bmp", testName), string.Format("{0}.Lut1.bmp", testName));

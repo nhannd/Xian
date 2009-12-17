@@ -207,7 +207,7 @@ namespace ClearCanvas.ImageViewer.Externals
 			foreach (IExternal launcher in this)
 			{
 				writer.WriteStartElement(typeof(IExternal).Name);
-				writer.WriteAttributeString(_concreteTypeElement, launcher.GetType().FullName);
+				writer.WriteAttributeString(_concreteTypeElement, launcher.GetType().AssemblyQualifiedName);
 				string s = SerializeXml(launcher);
 				writer.WriteCData(s);
 				writer.WriteEndElement();

@@ -111,7 +111,7 @@ namespace ClearCanvas.ImageViewer.Externals
 
 		public virtual bool IsValid
 		{
-			get { return !string.IsNullOrEmpty(_label) && !string.IsNullOrEmpty(_name); }
+			get { return true; }
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged

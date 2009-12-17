@@ -61,9 +61,6 @@ namespace ClearCanvas.ImageViewer.Comparers
 		/// <summary>
 		/// Compares two <see cref="IImageSet"/>s.
 		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <returns></returns>
 		public override int Compare(IImageSet x, IImageSet y)
 		{
 			if (x.DisplaySets.Count == 0 || y.DisplaySets.Count == 0)
@@ -102,6 +99,11 @@ namespace ClearCanvas.ImageViewer.Comparers
 
 		#endregion
 
+		/// <summary>
+		/// Compares two <see cref="Study"/> instances.
+		/// </summary>
+		/// <remarks>Simply calls <see cref="Compare(ClearCanvas.ImageViewer.StudyManagement.Sop,ClearCanvas.ImageViewer.StudyManagement.Sop)"/>,
+		/// passing the first <see cref="Sop"/> in each <see cref="Study"/>.</remarks>
 		public int Compare(Study x, Study y)
 		{
 			if (x.Series.Count == 0 || y.Series.Count == 0)

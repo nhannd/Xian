@@ -35,6 +35,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.Common;
 using System.Threading;
+using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -145,10 +146,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			/// <exception cref="ArgumentNullException">Thrown if <paramref name="parent"/> is null.</exception>
 			/// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="frameNumber"/> is zero or negative.</exception>
 			protected StandardSopFrameData(int frameNumber, StandardSopDataSource parent)
-				: this(frameNumber, parent, RegenerationCost.Low)
+				: this(frameNumber, parent, RegenerationCost.Medium)
 			{
 			}
 
+			/// <summary>
+			/// Constructs a new <see cref="StandardSopFrameData"/>.
+			/// </summary>
+			/// <param name="frameNumber">The 1-based number of this frame.</param>
+			/// <param name="parent">The parent <see cref="ISopDataSource"/> that this frame belongs to.</param>
+			/// <param name="regenerationCost">The approximate cost to regenerate the pixel and/or overlay data.</param>
+			/// <exception cref="ArgumentNullException">Thrown if <paramref name="parent"/> is null.</exception>
+			/// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="frameNumber"/> is zero or negative.</exception>
 			protected StandardSopFrameData(int frameNumber, StandardSopDataSource parent, RegenerationCost regenerationCost) 
 				: base(frameNumber, parent)
 			{
@@ -163,6 +172,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				get { return (StandardSopDataSource) base.Parent; }
 			}
 
+			/// <summary>
+			/// Gets or sets the approximate cost to regenerate the pixel and/or overlay data.
+			/// </summary>
 			protected RegenerationCost RegenerationCost
 			{
 				get { return _largeObjectContainerData.RegenerationCost; }
@@ -213,7 +225,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 							pixelData = _pixelData = CreateNormalizedPixelData();
 							if (pixelData != null)
 							{
-								Platform.Log(LogLevel.Debug, "Created pixel data of length {0}", pixelData.Length);
+								//Platform.Log(LogLevel.Debug, "Created pixel data of length {0}", pixelData.Length);
 								UpdateLargeObjectInfo();
 								MemoryManager.Add(this);
 								Diagnostics.OnLargeObjectAllocated(pixelData.Length);
@@ -242,7 +254,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				foreach (KeyValuePair<int, byte[]> pair in _overlayData)
 				{
 					if (pair.Value != null)
-						_largeObjectContainerData.BytesHeldCount += (long)pair.Value.Length;
+						_largeObjectContainerData.BytesHeldCount += pair.Value.Length;
 				}
 			}
 

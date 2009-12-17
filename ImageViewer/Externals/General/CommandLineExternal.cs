@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Externals.General
 	[ExtensionOf(typeof (ExternalFactoryExtensionPoint))]
 	public sealed class CommandLineExternalDefinitionFactory : ExternalFactoryBase<CommandLineExternal>
 	{
-		public CommandLineExternalDefinitionFactory() : base("Launch via Command Line") { }
+		public CommandLineExternalDefinitionFactory() : base(SR.DescriptionCommandLineExternal) { }
 
 		public override IExternalPropertiesComponent CreatePropertiesComponent()
 		{
@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Externals.General
 
 	public class CommandLineExternal : ExternalBase
 	{
-		private string _argumentString = string.Empty;
+		private List<string> _arguments = new List<string>();
 		private string _command = string.Empty;
 		private string _workingDirectory = string.Empty;
 
@@ -93,14 +93,14 @@ namespace ClearCanvas.ImageViewer.Externals.General
 
 		public string ArgumentString
 		{
-			get { return _argumentString; }
+			get { return string.Join(Environment.NewLine, _arguments.ToArray()); }
 			set
 			{
-				if (_argumentString != value)
-				{
-					_argumentString = value;
-					this.NotifyPropertyChanged("ArgumentString");
-				}
+				if (value == null)
+					_arguments = new List<string>();
+				else
+					_arguments = new List<string>(value.Split(new string[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries));
+				this.NotifyPropertyChanged("ArgumentString");
 			}
 		}
 
@@ -217,7 +217,7 @@ namespace ClearCanvas.ImageViewer.Externals.General
 
 		public IList<string> Arguments
 		{
-			get { return new List<string>(_argumentString.Split(new string[] {Environment.NewLine}, StringSplitOptions.None)); }
+			get { return _arguments; }
 		}
 
 		protected override bool CanLaunch(IArgumentHintResolver hintResolver)

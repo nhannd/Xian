@@ -74,26 +74,41 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#region ISeriesData Members
 
+		/// <summary>
+		/// Gets the Study Instance UID of the identified series.
+		/// </summary>
 		public string StudyInstanceUid
 		{
 			get { return _sop.StudyInstanceUid; }
 		}
 
+		/// <summary>
+		/// Gets the Series Instance UID of the identified series.
+		/// </summary>
 		public string SeriesInstanceUid
 		{
 			get { return _sop.SeriesInstanceUid; }
 		}
 
+		/// <summary>
+		/// Gets the modality of the identified series.
+		/// </summary>
 		public string Modality
 		{
 			get { return _sop.Modality; }
 		}
 
+		/// <summary>
+		/// Gets the series description of the identified series.
+		/// </summary>
 		public string SeriesDescription
 		{
 			get { return _sop.SeriesDescription; }
 		}
 
+		/// <summary>
+		/// Gets the series number of the identified series.
+		/// </summary>
 		public int SeriesNumber
 		{
 			get { return _sop.SeriesNumber; }
@@ -208,8 +223,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public string ManufacturersModelName 
 		{ 
 			get { return _sop.ManufacturersModelName; }
-		} 
+		}
 
+		/// <summary>
+		/// Gets an <see cref="ISeriesIdentifier"/> for this <see cref="Series"/>.
+		/// </summary>
+		/// <remarks>An <see cref="ISeriesIdentifier"/> can be used in situations where you only
+		/// need some data about the <see cref="Series"/>, but not the <see cref="Series"/> itself.  It can be problematic
+		/// to hold references to <see cref="Series"/> objects outside the context of an <see cref="IImageViewer"/>
+		/// because they are no longer valid when the viewer is closed; in these situations, it may be appropriate to
+		/// use an identifier.
+		/// </remarks>
 		public ISeriesIdentifier GetIdentifier()
 		{
 			StudyItem studyIdentifier = new StudyItem(StudyInstanceUid, _sop.DataSource.Server, _sop.DataSource.StudyLoaderName);

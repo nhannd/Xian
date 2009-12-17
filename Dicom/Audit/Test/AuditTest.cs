@@ -29,19 +29,26 @@
 
 #endregion
 
+#if UNIT_TESTS
+
 using System.Net;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Tests;
 using NUnit.Framework;
 
-#if UNIT_TESTS
 namespace ClearCanvas.Dicom.Audit.Test
 {
 
     [TestFixture]
     public class AuditTest : AbstractTest
     {
+		[TestFixtureSetUp]
+		public void TestFixtureSetUp()
+		{
+			ClearCanvas.Common.Platform.SetExtensionFactory(new ClearCanvas.Common.Utilities.NullExtensionFactory());
+		}
+
 		[Test]
 		public void ApplicationActivityAuditTest()
 		{

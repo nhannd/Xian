@@ -212,7 +212,7 @@ namespace ClearCanvas.Dicom.Validation
                 decimal decVal;
                 foreach (string s in temp)
                 {
-                    if (s != null && s != "" && !decimal.TryParse(s, NumberStyles.Number|NumberStyles.AllowExponent, CultureInfo.CurrentCulture, out decVal))
+                    if (s != null && s != "" && !decimal.TryParse(s, NumberStyles.Number|NumberStyles.AllowExponent, CultureInfo.InvariantCulture, out decVal))
                     {
                         throw new DicomDataException(string.Format("Invalid DS value '{0}' for {1}", stringValue, tag.ToString()));
                     }
@@ -352,7 +352,7 @@ namespace ClearCanvas.Dicom.Validation
                 decimal decVal;
                 foreach (string s in temp)
                 {
-                    if (s != null && s != "" && !decimal.TryParse(s, NumberStyles.Integer, CultureInfo.CurrentCulture, out decVal))
+                    if (s != null && s != "" && !decimal.TryParse(s, NumberStyles.Integer, CultureInfo.InvariantCulture, out decVal))
                     {
                         throw new DicomDataException(string.Format("Invalid IS value {0} for {1}", stringValue, tag.ToString()));
                     }

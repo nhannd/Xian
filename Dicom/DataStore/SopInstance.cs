@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom.Utilities.Xml;
 
 namespace ClearCanvas.Dicom.DataStore
@@ -108,11 +109,16 @@ namespace ClearCanvas.Dicom.DataStore
 
 		public bool IsStoredTag(uint tag)
 		{
-			return IsStoredTag(DicomTagDictionary.GetDicomTag(tag));
+			DicomTag dicomTag = DicomTagDictionary.GetDicomTag(tag);
+			if (dicomTag == null)
+				return false;
+			return IsStoredTag(dicomTag);
 		}
 
 		public bool IsStoredTag(DicomTag tag)
 		{
+			Platform.CheckForNullReference(tag, "tag");
+
 			if (_xml.IsTagExcluded(tag.TagValue))
 				return false;
 

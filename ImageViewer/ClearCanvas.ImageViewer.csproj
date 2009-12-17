@@ -136,6 +136,7 @@
     <Compile Include="BaseTools\DefaultMouseToolButtonAttribute.cs" />
     <Compile Include="CloningExceptions.cs" />
     <Compile Include="AuthorityTokens.cs" />
+    <Compile Include="Common\BufferCache.cs" />
     <Compile Include="Common\DefaultMemoryManagementStrategy.cs" />
     <Compile Include="Common\Diagnostics.cs" />
     <Compile Include="Common\LargeObjectContainer.cs" />
@@ -151,6 +152,7 @@
     <Compile Include="Common\MemoryManager.cs" />
     <Compile Include="Common\PermissionsHelper.cs" />
     <Compile Include="ImageBoxDrawingEventArgs.cs" />
+    <Compile Include="Imaging\ComposedLut.cs" />
     <Compile Include="InputManagement\LostFocusMessage.cs" />
     <Compile Include="RoiGraphics\Tests\ContainsPointTest.cs" />
     <Compile Include="RoiGraphics\Tests\EllipticalRoiTests.cs" />
@@ -410,7 +412,7 @@
     <Compile Include="Imaging\IBasicVoiLutLinear.cs" />
     <Compile Include="Graphics\PointPrimitive.cs" />
     <Compile Include="GrayscalePresentationImage.cs" />
-    <Compile Include="Imaging\ComposedLutPool.cs" />
+    <Compile Include="Imaging\ComposedLutCache.cs" />
     <Compile Include="Imaging\StandardColorMaps.cs" />
     <Compile Include="Imaging\ColorMapManager.cs" />
     <Compile Include="Imaging\IColorMapProvider.cs" />
