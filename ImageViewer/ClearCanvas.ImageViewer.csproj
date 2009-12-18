@@ -181,6 +181,7 @@
     <Compile Include="PresentationStates\Dicom\Institution.cs" />
     <Compile Include="Imaging\IVoiLutInstaller.cs" />
     <Compile Include="Rendering\Tests\ImageRendererVoiLutTests.cs" />
+    <Compile Include="Tests\DisplaySetFactoryTests.cs" />
     <Compile Include="Tests\TestPattern.cs" />
     <Compile Include="ViewerActionPermissionAttribute.cs" />
     <Compile Include="Comparers\AcquisitionTimeComparer.cs" />
