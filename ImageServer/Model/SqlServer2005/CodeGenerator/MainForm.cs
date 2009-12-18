@@ -52,6 +52,8 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 			textBoxEntityInterfaceFolder.Text = Path.Combine(_basePath, "EntityBrokers");
 			textBoxEntityImplementationFolder.Text = Path.Combine(Path.Combine(_basePath, "SqlServer2005"), "EntityBrokers");
 
+			comboBoxDatabase.Items.Add("ImageServer");
+			comboBoxDatabase.Items.Add("MigrationTool");
 		}
 
 		private void buttonGenerateCode_Click(object sender, EventArgs e)
@@ -66,6 +68,15 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 
 			generator.EntityInterfaceFolder = textBoxEntityInterfaceFolder.Text;
 			generator.EntityInterfaceNamespace = textBoxEntityInterfaceNamespace.Text;
+
+			if (comboBoxDatabase.SelectedText.Equals("ImageServer"))
+			{
+				generator.ConnectionStringName = "ImageServerConnectString";
+			}
+			else
+			{
+				generator.ConnectionStringName = "MonarchConnectString";
+			}
 
 			generator.Generate();
 		}
@@ -86,6 +97,29 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 		private void textBoxEntityImplementationNamespace_TextChanged(object sender, EventArgs e)
 		{
 
+		}
+
+		private void comboBoxDatabase_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (comboBoxDatabase.SelectedItem.Equals("ImageServer"))
+			{
+				textBoxModelNamespace.Text = "ClearCanvas.ImageServer.Model";
+				textBoxEntityInterfaceNamespace.Text = "ClearCanvas.ImageServer.Model.EntityBrokers";
+				textBoxEntityImplementationNamespace.Text = "ClearCanvas.ImageServer.Model.SqlServer2005.EntityBrokers";
+				textBoxModelFolder.Text = "c:\\Projects\\ClearCanvas\\ImageServer\\Model";
+				textBoxEntityInterfaceFolder.Text = "c:\\Projects\\ClearCanvas\\ImageServer\\Model\\EntityBrokers";
+				textBoxEntityImplementationFolder.Text = "c:\\Projects\\ClearCanvas\\ImageServer\\Model\\SqlServer2005\\EntityBrokers";
+			}
+			if (comboBoxDatabase.SelectedItem.Equals("MigrationTool"))
+			{
+				textBoxModelNamespace.Text = "ClearCanvas.Monarch.Model";
+				textBoxEntityInterfaceNamespace.Text = "ClearCanvas.Monarch.Model.EntityBrokers";
+				textBoxEntityImplementationNamespace.Text = "ClearCanvas.Monarch.Model.SqlServer2005.EntityBrokers";
+				textBoxModelFolder.Text = "c:\\Projects\\Monarch\\Monarch\\Model";
+				textBoxEntityInterfaceFolder.Text = "c:\\Projects\\Monarch\\Monarch\\Model\\EntityBrokers";
+				textBoxEntityImplementationFolder.Text = "c:\\Projects\\Monarch\\Monarch\\Model\\SqlServer2005\\EntityBrokers";
+			}
+			this.Refresh();
 		}
 	}
 }

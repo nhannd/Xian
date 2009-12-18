@@ -103,23 +103,14 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 
 		#region Private Members
 		private readonly List<Table> _tableList = new List<Table>();
-		private string _imageServerModelFolder;
-		private string _namespace;
 		private readonly string _selectCriteriaFolder = Path.Combine("Model", "Criteria");
 		private readonly string _entityBrokerFolder = Path.Combine("Model", "EntityBrokers");
 
-		private string _entityInterfaceFolder;
-		private string _entityInterfaceNamespace;
-		private string _entityImplementationNamespace;
-		private string _entityImplementationFolder;
 		#endregion
 
 		#region Public Properties
-		public string ModelNamespace
-		{
-			get { return _namespace; }
-			set { _namespace = value; }
-		}
+
+		public string ModelNamespace { get; set; }
 
 		private List<Table> TableList
 		{
@@ -136,51 +127,35 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 			get { return _entityBrokerFolder; }
 		}
 
-		public string ImageServerModelFolder
-		{
-			get { return _imageServerModelFolder; }
-			set { _imageServerModelFolder = value; }
-		}
+		public string ImageServerModelFolder { get; set; }
 
-		public string EntityInterfaceFolder
-		{
-			get { return _entityInterfaceFolder; }
-			set { _entityInterfaceFolder = value; }
-		}
+		public string EntityInterfaceFolder { get; set; }
 
-		public string EntityInterfaceNamespace
-		{
-			get { return _entityInterfaceNamespace; }
-			set { _entityInterfaceNamespace = value; }
-		}
+		public string EntityInterfaceNamespace { get; set; }
 
-		public string EntityImplementationNamespace
-		{
-			get { return _entityImplementationNamespace; }
-			set { _entityImplementationNamespace = value; }
-		}
+		public string EntityImplementationNamespace { get; set; }
 
-		public string EntityImplementationFolder
+		public string EntityImplementationFolder { get; set; }
+
+		public string ConnectionStringName
 		{
-			get { return _entityImplementationFolder; }
-			set { _entityImplementationFolder = value; }
+			get; set;
 		}
 
 		#endregion
 
 		public void LoadTableInfo()
 		{
-			SqlConnection connection;
-			connection = new SqlConnection();
+			SqlConnection connection = new SqlConnection();
 
 			ConnectionStringSettings settings =
-				ConfigurationManager.ConnectionStrings["ImageServerConnectString"];
+				ConfigurationManager.ConnectionStrings[ConnectionStringName];
 
 			connection.ConnectionString = settings.ConnectionString;
 			connection.Open();
 
 
-			DataTable dataTable = connection.GetSchema("Tables", new string[] { null, "dbo", null, null });
+			DataTable dataTable = connection.GetSchema("Tables", new[] { null, "dbo", null, null });
 
 			DataColumn colTableName = dataTable.Columns["TABLE_NAME"];
 			if (colTableName != null)
@@ -194,7 +169,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 						{
 							Table table = new Table(tableName);
 
-							DataTable dt = connection.GetSchema("Columns", new string[] { null, null, tableName });
+							DataTable dt = connection.GetSchema("Columns", new[] { null, null, tableName });
 
 							DataColumn colColumnName = dt.Columns["COLUMN_NAME"];
 							DataColumn colColumnType = dt.Columns["DATA_TYPE"];
@@ -215,7 +190,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 				}
 		}
 
-		private static void WriterHeader(StreamWriter writer, string nameSpace)
+		private static void WriterHeader(TextWriter writer, string nameSpace)
 		{
 			writer.WriteLine("#region License");
 			writer.WriteLine("");
@@ -254,7 +229,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 			writer.WriteLine("{");
 		}
 
-		private static void WriteFooter(StreamWriter writer)
+		private static void WriteFooter(TextWriter writer)
 		{
 			writer.WriteLine("}");
 		}
@@ -354,13 +329,13 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 			writer.Close();
 		}
 
-		private void WritePredefinedEnums(Table table, StreamWriter writer)
+		private void WritePredefinedEnums(Table table, TextWriter writer)
 		{
-			Dictionary<string, string> _enumValues = new Dictionary<string, string>();
+			Dictionary<string, string> enumValues = new Dictionary<string, string>();
 
 			using (SqlConnection connection = new SqlConnection())
 			{
-				ConnectionStringSettings settings = ConfigurationManager.ConnectionStrings["ImageServerConnectString"];
+				ConnectionStringSettings settings = ConfigurationManager.ConnectionStrings[ConnectionStringName];
 				connection.ConnectionString = settings.ConnectionString;
 				connection.Open();
 
@@ -369,16 +344,17 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 				SqlCommand cmdSelect = new SqlCommand(cmd.ToString(), connection);
 
 				SqlDataReader myReader = cmdSelect.ExecuteReader();
-				while (myReader.Read())
-				{
-					string lookup = (string)myReader["Lookup"];
-					string longDescription = (string)myReader["LongDescription"];
+				if (myReader != null)
+					while (myReader.Read())
+					{
+						string lookup = (string)myReader["Lookup"];
+						string longDescription = (string)myReader["LongDescription"];
 
-					_enumValues.Add(lookup, longDescription);
-				}
+						enumValues.Add(lookup, longDescription);
+					}
 
 				writer.WriteLine("      #region Private Static Members");
-				foreach (string lookupValue in _enumValues.Keys)
+				foreach (string lookupValue in enumValues.Keys)
 				{
 					string fieldName = lookupValue.Replace(" ", "");
 					writer.WriteLine("      private static readonly {0} _{1} = GetEnum(\"{2}\");", table.TableName, fieldName, lookupValue);
@@ -387,10 +363,10 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 				writer.WriteLine("");
 
 				writer.WriteLine("      #region Public Static Properties");
-				foreach (string lookupValue in _enumValues.Keys)
+				foreach (string lookupValue in enumValues.Keys)
 				{
 					string fieldName = lookupValue.Replace(" ", "");
-					string description = _enumValues[lookupValue];
+					string description = enumValues[lookupValue];
 
 					writer.WriteLine("      /// <summary>");
 					writer.WriteLine("      /// {0}", description);

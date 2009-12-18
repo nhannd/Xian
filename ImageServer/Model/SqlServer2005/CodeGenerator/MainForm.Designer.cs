@@ -46,9 +46,12 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
+			this.groupBox4 = new System.Windows.Forms.GroupBox();
+			this.comboBoxDatabase = new System.Windows.Forms.ComboBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
+			this.groupBox4.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// textBoxModelNamespace
@@ -70,7 +73,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 			// 
 			// buttonGenerateCode
 			// 
-			this.buttonGenerateCode.Location = new System.Drawing.Point(12, 346);
+			this.buttonGenerateCode.Location = new System.Drawing.Point(12, 403);
 			this.buttonGenerateCode.Name = "buttonGenerateCode";
 			this.buttonGenerateCode.Size = new System.Drawing.Size(100, 23);
 			this.buttonGenerateCode.TabIndex = 2;
@@ -159,7 +162,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 			// label6
 			// 
 			this.label6.AutoSize = true;
-			this.label6.Location = new System.Drawing.Point(6, 59);
+			this.label6.Location = new System.Drawing.Point(8, 59);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(184, 13);
 			this.label6.TabIndex = 12;
@@ -180,7 +183,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 			this.groupBox1.Controls.Add(this.textBoxModelFolder);
 			this.groupBox1.Controls.Add(this.buttonBrowse);
 			this.groupBox1.Controls.Add(this.label2);
-			this.groupBox1.Location = new System.Drawing.Point(12, 12);
+			this.groupBox1.Location = new System.Drawing.Point(12, 69);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(456, 106);
 			this.groupBox1.TabIndex = 14;
@@ -193,7 +196,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 			this.groupBox2.Controls.Add(this.label4);
 			this.groupBox2.Controls.Add(this.textBoxEntityInterfaceFolder);
 			this.groupBox2.Controls.Add(this.label3);
-			this.groupBox2.Location = new System.Drawing.Point(13, 124);
+			this.groupBox2.Location = new System.Drawing.Point(13, 181);
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(455, 106);
 			this.groupBox2.TabIndex = 15;
@@ -206,18 +209,38 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 			this.groupBox3.Controls.Add(this.label5);
 			this.groupBox3.Controls.Add(this.label6);
 			this.groupBox3.Controls.Add(this.textBoxEntityImplementationFolder);
-			this.groupBox3.Location = new System.Drawing.Point(13, 236);
+			this.groupBox3.Location = new System.Drawing.Point(13, 293);
 			this.groupBox3.Name = "groupBox3";
 			this.groupBox3.Size = new System.Drawing.Size(455, 104);
 			this.groupBox3.TabIndex = 16;
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Entity Broker Implementation";
 			// 
+			// groupBox4
+			// 
+			this.groupBox4.Controls.Add(this.comboBoxDatabase);
+			this.groupBox4.Location = new System.Drawing.Point(12, 13);
+			this.groupBox4.Name = "groupBox4";
+			this.groupBox4.Size = new System.Drawing.Size(456, 50);
+			this.groupBox4.TabIndex = 17;
+			this.groupBox4.TabStop = false;
+			this.groupBox4.Text = "Database";
+			// 
+			// comboBoxDatabase
+			// 
+			this.comboBoxDatabase.FormattingEnabled = true;
+			this.comboBoxDatabase.Location = new System.Drawing.Point(7, 20);
+			this.comboBoxDatabase.Name = "comboBoxDatabase";
+			this.comboBoxDatabase.Size = new System.Drawing.Size(352, 21);
+			this.comboBoxDatabase.TabIndex = 0;
+			this.comboBoxDatabase.SelectedIndexChanged += new System.EventHandler(this.comboBoxDatabase_SelectedIndexChanged);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(480, 381);
+			this.ClientSize = new System.Drawing.Size(495, 437);
+			this.Controls.Add(this.groupBox4);
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox1);
@@ -230,6 +253,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 			this.groupBox2.PerformLayout();
 			this.groupBox3.ResumeLayout(false);
 			this.groupBox3.PerformLayout();
+			this.groupBox4.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -254,5 +278,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.GroupBox groupBox2;
 		private System.Windows.Forms.GroupBox groupBox3;
+		private System.Windows.Forms.GroupBox groupBox4;
+		private System.Windows.Forms.ComboBox comboBoxDatabase;
 	}
 }
