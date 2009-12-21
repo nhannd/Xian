@@ -30,19 +30,35 @@
 #if _DEBUG
 using namespace System;
 using namespace NUnit::Framework;
+using namespace ClearCanvas::Common;
 using namespace ClearCanvas::Dicom;
 using namespace ClearCanvas::Dicom::Codec;
 using namespace ClearCanvas::Dicom::Codec::Tests;
+
+#include "DicomJpegCodecFactory.h"
 
 namespace ClearCanvas {
 namespace Dicom {
 namespace Codec {
 namespace Jpeg {
 
+public ref class StubExtensionFactory : IExtensionFactory
+{
+public:
+
+virtual array<Object^>^ CreateExtensions(ExtensionPoint^ extensionPoint, ExtensionFilter^ filter, bool justOne);
+
+virtual array<ExtensionInfo^>^ ListExtensions(ExtensionPoint^ extensionPoint, ExtensionFilter^ filter);
+
+};
+
 [NUnit::Framework::TestFixture]
 public ref class DicomJpegCodecTest : AbstractCodecTest
 {
 public:
+
+	[NUnit::Framework::TestFixtureSetUp]
+	void DicomJpegCodecTest::Init();
 
 	[NUnit::Framework::Test]
 	void DicomJpegCodecTest::DicomJpegProcess1CodecTest();

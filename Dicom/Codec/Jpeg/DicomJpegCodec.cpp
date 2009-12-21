@@ -160,7 +160,7 @@ void DicomJpegCodec::Decode(DicomCompressedPixelData^ oldPixelData, DicomUncompr
 		codec->Decode(oldPixelData, newPixelData, jparams, frame);	
 
 		if (oldPixelData->PhotometricInterpretation->StartsWith("YBR_")) {
-			if (jparams->ConvertYBRtoRGB && codec->Mode != JpegMode::Lossless) {
+			if (jparams->ConvertYBRtoRGB) {
 				newPixelData->PhotometricInterpretation = "RGB";
 			}
 		}
@@ -188,7 +188,7 @@ void DicomJpegCodec::DecodeFrame(int frame, DicomCompressedPixelData^ oldPixelDa
 	codec->Decode(oldPixelData, newPixelData, jparams, frame);	
 
 	if (oldPixelData->PhotometricInterpretation->StartsWith("YBR_")) {
-		if (jparams->ConvertYBRtoRGB && codec->Mode != JpegMode::Lossless) {
+		if (jparams->ConvertYBRtoRGB) {
 			newPixelData->PhotometricInterpretation = "RGB";
 		}
 	}

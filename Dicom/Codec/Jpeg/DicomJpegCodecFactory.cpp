@@ -114,7 +114,7 @@ namespace Jpeg {
 		DicomJpegParameters^ codecParms = gcnew DicomJpegParameters();
 
 		codecParms->Quality = 1;
-		codecParms->ConvertYBRtoRGB = true;
+		codecParms->ConvertYBRtoRGB = false;
 		codecParms->ConvertPaletteToRGB = true;
 
 		return codecParms;
@@ -124,7 +124,7 @@ namespace Jpeg {
 		DicomJpegParameters^ codecParms = gcnew DicomJpegParameters();
 
 		codecParms->Quality = 1;
-		codecParms->ConvertYBRtoRGB = true;
+		codecParms->ConvertYBRtoRGB = false;
 
 		XmlElement^ element = parms->DocumentElement;
 		if (element->Attributes["convertFromPalette"])
@@ -156,7 +156,7 @@ namespace Jpeg {
 		DicomJpegParameters^ codecParms = gcnew DicomJpegParameters();
 
 		codecParms->Quality = 1;
-		codecParms->ConvertYBRtoRGB = true;
+		codecParms->ConvertYBRtoRGB = false;
 		codecParms->ConvertPaletteToRGB = true;
 		
 		return codecParms;
@@ -166,7 +166,7 @@ namespace Jpeg {
 		DicomJpegParameters^ codecParms = gcnew DicomJpegParameters();
 
 		codecParms->Quality = 1;
-		codecParms->ConvertYBRtoRGB = true;
+		codecParms->ConvertYBRtoRGB = false;
 
 		XmlElement^ element = parms->DocumentElement;
 		if (element->Attributes["convertFromPalette"])

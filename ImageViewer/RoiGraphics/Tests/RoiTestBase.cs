@@ -294,11 +294,18 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 			foreach (ImageKey imageKey in Enum.GetValues(typeof (ImageKey)))
 			{
 				string filename = string.Format(_testImagePathFormat, imageKey.ToString());
+				filename = Path.GetFullPath(filename);
+				string directoryName = Path.GetDirectoryName(filename);
+
 				if (!File.Exists(filename))
 				{
-					Trace.WriteLine(string.Format("The required test image {0} is missing", filename));
-					Trace.WriteLine(@"Please copy the contents of RoiGraphics\Tests\Images source folder to TestImages in the working directory in order to execute these tests.");
-					Assert.Fail("Missing test images.");
+					string message = String.Format(
+						@"The required test image {0} is missing. " + 
+						@"Please copy the contents of <TrunkPath>\RoiGraphics\Tests\Images " + 
+						@"to {1} in order to execute these tests.", filename, directoryName);
+
+					Trace.WriteLine(message);
+					Assert.Fail(message);
 				}
 			}
 		}

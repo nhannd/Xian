@@ -43,8 +43,8 @@
     <PackageOption>Thin</PackageOption>
     <!-- Default, triceratops options -->
     <TriceratopsOptions>ExcludeHttpDesktopServices+ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyBrowser+ExcludeStudyComposer+ExcludeDicomEditor+ExcludeHelpUpdate+ExcludeDatabase+ExcludeShredHostService+ExcludeServiceTools+ExcludeStudyFilters+ExcludeReporting+ExcludeMpr</TriceratopsOptions>
-    <ThinViewerOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyComposer+ExcludeHelpUpdate+ExcludeDatabase+ExcludeShredHostService+ExcludeServiceTools+ExcludeStudyFilters+ExcludeMpr</ThinViewerOptions>
-    <FullViewerOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeMpr</FullViewerOptions>
+    <ThinViewerOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyComposer+ExcludeHelpUpdate+ExcludeDatabase+ExcludeShredHostService+ExcludeServiceTools</ThinViewerOptions>
+    <FullViewerOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyComposer</FullViewerOptions>
   </PropertyGroup>
 
   <Choose>

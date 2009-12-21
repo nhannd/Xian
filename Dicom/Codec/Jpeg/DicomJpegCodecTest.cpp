@@ -31,6 +31,7 @@
 
 using namespace System;
 using namespace NUnit::Framework;
+using namespace ClearCanvas::Common;
 using namespace ClearCanvas::Dicom;
 using namespace ClearCanvas::Dicom::Codec;
 using namespace ClearCanvas::Dicom::Codec::Tests;
@@ -39,6 +40,34 @@ namespace ClearCanvas {
 namespace Dicom {
 namespace Codec {
 namespace Jpeg {
+
+
+array<Object^>^ StubExtensionFactory::CreateExtensions(ExtensionPoint^ extensionPoint, ExtensionFilter^ filter, bool justOne)
+{
+	if (extensionPoint->GetType() != DicomCodecFactoryExtensionPoint::typeid)
+		return gcnew array<Object^>(0);
+
+	array<Object^>^ theArray = gcnew array<Object^>(4);
+	theArray[0] = gcnew DicomJpegProcess1CodecFactory;
+	theArray[1] = gcnew DicomJpegProcess24CodecFactory;
+	theArray[2] = gcnew DicomJpegLossless14CodecFactory;
+	theArray[3] = gcnew DicomJpegLossless14SV1CodecFactory;
+	return theArray;
+}
+
+array<ExtensionInfo^>^ StubExtensionFactory::ListExtensions(ExtensionPoint^ extensionPoint, ExtensionFilter^ filter)
+{
+	return gcnew array<ExtensionInfo^>(0);
+}
+
+void DicomJpegCodecTest::Init()
+{
+	Platform::SetExtensionFactory(gcnew StubExtensionFactory());
+
+	//HACK: for now, call the static constructor again, so it will repopulate the dictionary
+	System::Reflection::ConstructorInfo^ staticConstructor = DicomCodecRegistry::typeid->TypeInitializer;
+	staticConstructor->Invoke(nullptr, nullptr);
+}
 
 void DicomJpegCodecTest::DicomJpegProcess1CodecTest()
 {

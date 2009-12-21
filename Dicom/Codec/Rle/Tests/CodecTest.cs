@@ -32,6 +32,8 @@
 #if UNIT_TESTS
 using ClearCanvas.Dicom.Codec.Tests;
 using NUnit.Framework;
+using ClearCanvas.Common;
+using System.Reflection;
 
 namespace ClearCanvas.Dicom.Codec.Rle.Tests
 {
@@ -39,6 +41,35 @@ namespace ClearCanvas.Dicom.Codec.Rle.Tests
     [TestFixture]
     public class CodecTest : AbstractCodecTest
     {
+		private class StubExtensionFactory : IExtensionFactory
+		{
+			#region IExtensionFactory Members
+
+			public object[] CreateExtensions(ExtensionPoint extensionPoint, ExtensionFilter filter, bool justOne)
+			{
+				if (extensionPoint.GetType() == typeof(DicomCodecFactoryExtensionPoint))
+					return new object[]{ new DicomRleCodecFactory() };
+
+				return new object[0];
+			}
+
+			public ExtensionInfo[] ListExtensions(ExtensionPoint extensionPoint, ExtensionFilter filter)
+			{
+				return new ExtensionInfo[0];
+			}
+
+			#endregion
+		}
+
+		[TestFixtureSetUp]
+		public void Init()
+		{
+			Platform.SetExtensionFactory(new StubExtensionFactory());
+			//HACK: for now, call the static constructor again, so it will repopulate the dictionary
+			ConstructorInfo staticConstructor = typeof(DicomCodecRegistry).TypeInitializer;
+			staticConstructor.Invoke(null, null);
+		}
+
         [Test]
         public void RleTest()
         {

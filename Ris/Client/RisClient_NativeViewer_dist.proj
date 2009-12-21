@@ -7,7 +7,7 @@
 
   <PropertyGroup>
     <TrunkDirectory>$(MSBuildProjectDirectory)\..\..\</TrunkDirectory>
-    <DefaultOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyComposer+ExcludeHelpUpdate+ExcludeDatabase+ExcludeShredHostService+ExcludeServiceTools+ExcludeStudyFilters+ExcludeMpr</DefaultOptions>
+    <DefaultOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyComposer</DefaultOptions>
     <DesktopExecutableConfig>$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.config</DesktopExecutableConfig>
     <ShredHostExecutableConfig>$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config</ShredHostExecutableConfig>
   </PropertyGroup>
