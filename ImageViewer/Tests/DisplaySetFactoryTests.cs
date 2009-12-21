@@ -29,6 +29,10 @@
 
 #endregion
 
+#if	UNIT_TESTS
+
+#pragma warning disable 1591,0419,1574,1587
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -42,10 +46,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.KeyObjects;
 using ClearCanvas.ImageViewer.Common;
-
-#if	UNIT_TESTS
-
-#pragma warning disable 1591,0419,1574,1587
 
 namespace ClearCanvas.ImageViewer.Tests
 {
