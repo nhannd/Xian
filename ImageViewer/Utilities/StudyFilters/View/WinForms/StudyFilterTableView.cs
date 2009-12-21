@@ -63,6 +63,8 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 
 			_components = new Container();
 			_contextMenuStrip = new ContextMenuStrip(_components);
+			_contextMenuStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
+
 			_columnFilterMenuStrip = new ContextMenuStrip(_components);
 			_columnFilterMenuStrip.Closing += ColumnFilterMenuStrip_Closing;
 			_columnFilterMenuStrip.Closed += ColumnFilterMenuStrip_Closed;

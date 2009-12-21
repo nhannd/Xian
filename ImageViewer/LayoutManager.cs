@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		/// <remarks>
 		/// Internally, this method calls <see cref="BuildLogicalWorkspace"/>, <see cref="ValidateLogicalWorkspace"/>,
-		/// <see cref="LayoutPhysicalWorkspace"/>, <see cref="FillPhysicalWorkspace"/> and <see cref="SortImageSets()"/> in that order,
+		/// <see cref="LayoutPhysicalWorkspace"/>, <see cref="FillPhysicalWorkspace"/> and <see cref="SortStudies"/> in that order,
 		/// followed by a call to <see cref="IDrawable.Draw">IPhysicalWorkspace.Draw</see>, and finally <see cref="OnLayoutCompleted"/>.
 		/// You can override this method entirely, or you can override any of the 5 methods called by this method.
 		/// Note that you must draw the <see cref="IPhysicalWorkspace"/> and call <see cref="OnLayoutCompleted"/> if you choose
@@ -150,7 +150,7 @@ namespace ClearCanvas.ImageViewer
 			LayoutPhysicalWorkspace();
 			FillPhysicalWorkspace();
 			
-			// Now, only after showing the "primary study", sort the image sets according to study date.
+			// Now, only after showing the "primary study", sort the image sets according to study order. (yes, this calls SortStudies)
 			SortImageSets();
 
 			ImageViewer.PhysicalWorkspace.Draw();
@@ -177,11 +177,11 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// By default, this method simply creates a <see cref="IDisplaySet">Display Set</see> for each <see cref="Series"/>
-		/// in <see cref="StudyTree"/>.
+		/// By default, this method simply creates <see cref="IImageSet">Image Sets</see> and <see cref="IDisplaySet">Display Sets</see>
+		/// to match the <see cref="Study"/> and <see cref="Series"/> hierarchy in <see cref="StudyTree"/>.
 		/// </para>
 		/// <para>
-		/// Override this method to change how <see cref="IDisplaySet">Display Sets</see> are constructed.
+		/// Override this method to change how <see cref="IImageSet">Image Sets</see> and <see cref="IDisplaySet">Display Sets</see> are constructed.
 		/// </para>
 		/// </remarks>
 		protected virtual void BuildLogicalWorkspace()

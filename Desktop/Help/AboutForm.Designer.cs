@@ -85,7 +85,7 @@ namespace ClearCanvas.Desktop.Help
 			// 
 			this._version.BackColor = System.Drawing.Color.Transparent;
 			this._version.ForeColor = System.Drawing.Color.White;
-			this._version.Location = new System.Drawing.Point(447, 292);
+			this._version.Location = new System.Drawing.Point(447, 309);
 			this._version.Name = "_version";
 			this._version.Size = new System.Drawing.Size(214, 13);
 			this._version.TabIndex = 4;
