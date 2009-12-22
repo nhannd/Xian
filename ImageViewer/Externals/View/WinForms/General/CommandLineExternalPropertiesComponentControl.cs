@@ -45,7 +45,6 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms.General
 		public CommandLineExternalPropertiesComponentControl(CommandLineExternalPropertiesComponent component) : base(component)
 		{
 			InitializeComponent();
-			component.AutoQuoteArguments = false;
 
 			base.ErrorProvider.SetIconPadding(_txtCommand, _btnCommand.Width);
 
@@ -55,9 +54,8 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms.General
 			_txtName.DataBindings.Add("Text", component, "Label", false, DataSourceUpdateMode.OnPropertyChanged);
 			_txtCommand.DataBindings.Add("Text", component, "Command", false, DataSourceUpdateMode.OnPropertyChanged);
 			_txtWorkingDir.DataBindings.Add("Text", component, "WorkingDirectory", false, DataSourceUpdateMode.OnPropertyChanged);
-			_txtArguments.DataBindings.Add("Text", component, "ArgumentString", false, DataSourceUpdateMode.OnPropertyChanged);
+			_txtArguments.DataBindings.Add("Text", component, "Arguments", false, DataSourceUpdateMode.OnPropertyChanged);
 			_chkAllowMultiValueFields.DataBindings.Add("Checked", component, "AllowMultiValueFields", false, DataSourceUpdateMode.OnPropertyChanged);
-			_chkAutoQuoteArguments.DataBindings.Add("Checked", component, "AutoQuoteArguments", false, DataSourceUpdateMode.OnPropertyChanged);
 			_txtMultiValueFieldSeparator.DataBindings.Add("Text", component, "MultiValueFieldSeparator", false, DataSourceUpdateMode.OnPropertyChanged);
 			_txtMultiValueFieldSeparator.DataBindings.Add("Enabled", component, "AllowMultiValueFields", false, DataSourceUpdateMode.OnPropertyChanged);
 		}

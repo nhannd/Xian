@@ -109,44 +109,7 @@ namespace ClearCanvas.ImageViewer.Externals.General.Tests
 			{
 				CommandLineExternal external = new CommandLineExternal();
 				external.Command = command.ScriptFilename;
-				external.Arguments.Add("Strike");
-				external.Arguments.Add("Duel");
-				external.Arguments.Add("Blitz");
-				external.Arguments.Add("Aegis");
-				external.Arguments.Add("Buster");
-
-				using (MockDicomPresentationImage image = new MockDicomPresentationImage())
-				{
-					external.Launch(image);
-
-					Thread.Sleep(_processEndWaitDelay); // wait for the external to finish
-					command.Refresh();
-
-					Trace.WriteLine(string.Format("Command Execution Report"));
-					Trace.WriteLine(command.ExecutionReport);
-
-					Assert.AreEqual("Strike", command.ExecutedArguments[0], "Wrong argument passed at index {0}", 0);
-					Assert.AreEqual("Duel", command.ExecutedArguments[1], "Wrong argument passed at index {0}", 1);
-					Assert.AreEqual("Blitz", command.ExecutedArguments[2], "Wrong argument passed at index {0}", 2);
-					Assert.AreEqual("Aegis", command.ExecutedArguments[3], "Wrong argument passed at index {0}", 3);
-					Assert.AreEqual("Buster", command.ExecutedArguments[4], "Wrong argument passed at index {0}", 4);
-				}
-			}
-		}
-
-		[Test]
-		public void TestArgumentsWithAutoQuoting()
-		{
-			using (MockCommandLine command = new MockCommandLine())
-			{
-				CommandLineExternal external = new CommandLineExternal();
-				external.Command = command.ScriptFilename;
-				external.AutoQuoteArguments = true;
-				external.Arguments.Add("USS Enterprise");
-				external.Arguments.Add("USS Defiant");
-				external.Arguments.Add("USS Voyager");
-				external.Arguments.Add("USS Excelsior");
-				external.Arguments.Add("USS Reliant");
+				external.Arguments = "\"USS Enterprise\" \"USS Defiant\" \"USS Voyager\" \"USS Excelsior\" \"USS Reliant\"";
 
 				using (MockDicomPresentationImage image = new MockDicomPresentationImage())
 				{
@@ -168,51 +131,19 @@ namespace ClearCanvas.ImageViewer.Externals.General.Tests
 		}
 
 		[Test]
-		public void TestArgumentsWithoutAutoQuoting()
-		{
-			using (MockCommandLine command = new MockCommandLine())
-			{
-				CommandLineExternal external = new CommandLineExternal();
-				external.Command = command.ScriptFilename;
-				external.AutoQuoteArguments = false;
-				external.Arguments.Add("USS Enterprise");
-				external.Arguments.Add("USS Defiant");
-
-				using (MockDicomPresentationImage image = new MockDicomPresentationImage())
-				{
-					external.Launch(image);
-
-					Thread.Sleep(_processEndWaitDelay); // wait for the external to finish
-					command.Refresh();
-
-					Trace.WriteLine(string.Format("Command Execution Report"));
-					Trace.WriteLine(command.ExecutionReport);
-
-					Assert.AreEqual("USS", command.ExecutedArguments[0], "Wrong argument passed at index {0}", 0);
-					Assert.AreEqual("Enterprise", command.ExecutedArguments[1], "Wrong argument passed at index {0}", 1);
-					Assert.AreEqual("USS", command.ExecutedArguments[2], "Wrong argument passed at index {0}", 2);
-					Assert.AreEqual("Defiant", command.ExecutedArguments[3], "Wrong argument passed at index {0}", 3);
-				}
-			}
-		}
-
-		[Test]
 		public void TestArgumentFields()
 		{
 			using (MockCommandLine command = new MockCommandLine())
 			{
 				CommandLineExternal external = new CommandLineExternal();
 				external.Command = command.ScriptFilename;
-				external.AutoQuoteArguments = true;
-				external.Arguments.Add("$$");
-				external.Arguments.Add("$FILENAME$");
-				external.Arguments.Add("$filename$");
+				external.Arguments = "$$ \"$filename$\"";
 
 				using (MockDicomPresentationImage image = new MockDicomPresentationImage())
 				{
 					Assert.IsFalse(external.CanLaunch(image), "Fields are case sensitive - unresolved field should fail the launch");
 
-					external.Arguments.RemoveAt(2);
+					external.Arguments = "$$ \"$FILENAME$\"";
 
 					Assert.IsTrue(external.CanLaunch(image), "Fields are case sensitive - unresolved field should fail the launch");
 
@@ -239,14 +170,8 @@ namespace ClearCanvas.ImageViewer.Externals.General.Tests
 			{
 				CommandLineExternal external = new CommandLineExternal();
 				external.Command = command.ScriptFilename;
-				external.AutoQuoteArguments = true;
 				external.AllowMultiValueFields = false;
-				external.Arguments.Add("$FILENAME$");
-				external.Arguments.Add("$DIRECTORY$");
-				external.Arguments.Add("$EXTENSIONONLY$");
-				external.Arguments.Add("$FILENAMEONLY$");
-				external.Arguments.Add("$00100020$");
-				external.Arguments.Add("$00100021$");
+				external.Arguments = "\"$FILENAME$\" \"$DIRECTORY$\" \"$EXTENSIONONLY$\" \"$FILENAMEONLY$\" \"$00100020$\" \"$00100021$\"";
 
 				using (MockDicomPresentationImage image = new MockDicomPresentationImage())
 				{
@@ -270,10 +195,10 @@ namespace ClearCanvas.ImageViewer.Externals.General.Tests
 						// these file paths may or may not have spaces in them, but we don't care either way for this test
 						AssertAreEqualIgnoreCase(image.Filename, command.ExecutedArguments[0].Trim('"'), "Wrong argument for filename field");
 						AssertAreEqualIgnoreCase(Path.GetDirectoryName(image.Filename), command.ExecutedArguments[1].Trim('"'), "Wrong argument for directory field");
-						AssertAreEqualIgnoreCase(Path.GetExtension(image.Filename), command.ExecutedArguments[2], "Wrong argument for extension field");
-						AssertAreEqualIgnoreCase(Path.GetFileName(image.Filename), command.ExecutedArguments[3], "Wrong argument for filename only field");
-						Assert.AreEqual("\"I've got a lovely bunch of coconuts\"", command.ExecutedArguments[4], "Wrong argument for 00100020 field");
-						Assert.AreEqual("\"Here they are all standing in a row\"", command.ExecutedArguments[5], "Wrong argument for 00100021 field");
+						AssertAreEqualIgnoreCase(Path.GetExtension(image.Filename), command.ExecutedArguments[2].Trim('"'), "Wrong argument for extension field");
+						AssertAreEqualIgnoreCase(Path.GetFileName(image.Filename), command.ExecutedArguments[3].Trim('"'), "Wrong argument for filename only field");
+						Assert.AreEqual("I've got a lovely bunch of coconuts", command.ExecutedArguments[4].Trim('"'), "Wrong argument for 00100020 field");
+						Assert.AreEqual("Here they are all standing in a row", command.ExecutedArguments[5].Trim('"'), "Wrong argument for 00100021 field");
 					}
 				}
 			}
@@ -286,13 +211,9 @@ namespace ClearCanvas.ImageViewer.Externals.General.Tests
 			{
 				CommandLineExternal external = new CommandLineExternal();
 				external.Command = command.ScriptFilename;
-				external.AutoQuoteArguments = true;
 				external.AllowMultiValueFields = true;
-				external.MultiValueFieldSeparator = " ";
-				external.Arguments.Add("$FILENAME$");
-				external.Arguments.Add("$DIRECTORY$");
-				external.Arguments.Add("$EXTENSIONONLY$");
-				external.Arguments.Add("$FILENAMEONLY$");
+				external.MultiValueFieldSeparator = "\" \"";
+				external.Arguments = "\"$FILENAME$\" \"$DIRECTORY$\" \"$EXTENSIONONLY$\" \"$FILENAMEONLY$\"";
 
 				using (MockDicomPresentationImage image = new MockDicomPresentationImage())
 				{
@@ -315,7 +236,7 @@ namespace ClearCanvas.ImageViewer.Externals.General.Tests
 							AssertAreEqualIgnoreCase(otherImage.Filename, command.ExecutedArguments[1].Replace("\"", ""), "Wrong argument for 2nd filename field");
 							AssertAreEqualIgnoreCase(thirdImage.Filename, command.ExecutedArguments[2].Replace("\"", ""), "Wrong argument for 3rd filename field");
 							AssertAreEqualIgnoreCase(Path.GetDirectoryName(image.Filename), command.ExecutedArguments[3].Replace("\"", ""), "Wrong argument for directory field");
-							AssertAreEqualIgnoreCase(Path.GetExtension(image.Filename), command.ExecutedArguments[4], "Wrong argument for extension field");
+							AssertAreEqualIgnoreCase(Path.GetExtension(image.Filename), command.ExecutedArguments[4].Replace("\"", ""), "Wrong argument for extension field");
 							AssertAreEqualIgnoreCase(Path.GetFileName(image.Filename), command.ExecutedArguments[5].Replace("\"", ""), "Wrong argument for 1st filename only field");
 							AssertAreEqualIgnoreCase(Path.GetFileName(otherImage.Filename), command.ExecutedArguments[6].Replace("\"", ""), "Wrong argument for 2nd filename only field");
 							AssertAreEqualIgnoreCase(Path.GetFileName(thirdImage.Filename), command.ExecutedArguments[7].Replace("\"", ""), "Wrong argument for 3rd filename only field");
@@ -332,11 +253,9 @@ namespace ClearCanvas.ImageViewer.Externals.General.Tests
 			{
 				CommandLineExternal external = new CommandLineExternal();
 				external.Command = command.ScriptFilename;
-				external.AutoQuoteArguments = true;
 				external.AllowMultiValueFields = true;
 				external.MultiValueFieldSeparator = " ";
-				external.Arguments.Add("$00100020$");
-				external.Arguments.Add("$00100021$");
+				external.Arguments = "\"$00100020$\" \"$00100021$\"";
 
 				using (MockDicomPresentationImage image = new MockDicomPresentationImage())
 				{

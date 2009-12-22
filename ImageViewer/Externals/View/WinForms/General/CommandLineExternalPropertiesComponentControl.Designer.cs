@@ -37,7 +37,6 @@
 			this._pnlWorkingDir = new System.Windows.Forms.Panel();
 			this._pnlArguments = new System.Windows.Forms.Panel();
 			this._pnlOptions = new System.Windows.Forms.Panel();
-			this._chkAutoQuoteArguments = new System.Windows.Forms.CheckBox();
 			this._pnlMultiValueFieldSeparator = new System.Windows.Forms.Panel();
 			this._txtMultiValueFieldSeparator = new System.Windows.Forms.TextBox();
 			this._lblMultiValueFieldSeparator = new System.Windows.Forms.Label();
@@ -123,17 +122,10 @@
 			// 
 			// _pnlOptions
 			// 
-			this._pnlOptions.Controls.Add(this._chkAutoQuoteArguments);
 			this._pnlOptions.Controls.Add(this._pnlMultiValueFieldSeparator);
 			this._pnlOptions.Controls.Add(this._chkAllowMultiValueFields);
 			resources.ApplyResources(this._pnlOptions, "_pnlOptions");
 			this._pnlOptions.Name = "_pnlOptions";
-			// 
-			// _chkAutoQuoteArguments
-			// 
-			resources.ApplyResources(this._chkAutoQuoteArguments, "_chkAutoQuoteArguments");
-			this._chkAutoQuoteArguments.Name = "_chkAutoQuoteArguments";
-			this._chkAutoQuoteArguments.UseVisualStyleBackColor = true;
 			// 
 			// _pnlMultiValueFieldSeparator
 			// 
@@ -222,7 +214,6 @@
 		private System.Windows.Forms.CheckBox _chkAllowMultiValueFields;
 		private System.Windows.Forms.TextBox _txtMultiValueFieldSeparator;
 		private System.Windows.Forms.Label _lblMultiValueFieldSeparator;
-		private System.Windows.Forms.CheckBox _chkAutoQuoteArguments;
 		private System.Windows.Forms.Panel _pnlMultiValueFieldSeparator;
 		private System.Windows.Forms.Button _btnCommand;
 		private System.Windows.Forms.OpenFileDialog _dlgCommand;

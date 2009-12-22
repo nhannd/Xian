@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Externals.General.Tests
 		{
 			if (Environment.OSVersion.Platform == PlatformID.Win32NT || Environment.OSVersion.Platform == PlatformID.Win32Windows)
 			{
-				_scriptFile = Path.Combine(Environment.CurrentDirectory, "command_line_external_test_payload.bat");
+				_scriptFile = Path.Combine(Environment.CurrentDirectory, "command_line_external_test_payload.cmd");
 				_outputFile = Path.Combine(Environment.CurrentDirectory, string.Format("command_line_external_test_output.{0}.out", Guid.NewGuid()));
 				_scriptContent = string.Concat(
 					"@echo off\r\n",

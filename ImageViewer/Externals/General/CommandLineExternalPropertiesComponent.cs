@@ -29,10 +29,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.Security;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
@@ -45,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Externals.General
 	[AssociateView(typeof (CommandLineExternalPropertiesComponentViewExtensionPoint))]
 	public class CommandLineExternalPropertiesComponent : ExternalPropertiesComponent<CommandLineExternal>
 	{
-		private string _argumentString = string.Empty;
+		private string _arguments = string.Empty;
 		private string _command = string.Empty;
 		private string _workingDirectory = string.Empty;
 
@@ -53,7 +50,6 @@ namespace ClearCanvas.ImageViewer.Externals.General
 		private string _domain = string.Empty;
 		private SecureString _password = null;
 
-		private bool _autoQuoteArguments = true;
 		private bool _allowMultiValueFields = true;
 		private string _multiValueFieldSeparator;
 
@@ -84,15 +80,15 @@ namespace ClearCanvas.ImageViewer.Externals.General
 			}
 		}
 
-		public string ArgumentString
+		public string Arguments
 		{
-			get { return _argumentString; }
+			get { return _arguments; }
 			set
 			{
-				if (_argumentString != value)
+				if (_arguments != value)
 				{
-					_argumentString = value;
-					this.NotifyPropertyChanged("ArgumentString");
+					_arguments = value;
+					this.NotifyPropertyChanged("Arguments");
 				}
 			}
 		}
@@ -136,19 +132,6 @@ namespace ClearCanvas.ImageViewer.Externals.General
 			}
 		}
 
-		public bool AutoQuoteArguments
-		{
-			get { return this._autoQuoteArguments; }
-			set
-			{
-				if (this._autoQuoteArguments != value)
-				{
-					this._autoQuoteArguments = value;
-					base.NotifyPropertyChanged("AutoQuoteArguments");
-				}
-			}
-		}
-
 		public bool AllowMultiValueFields
 		{
 			get { return this._allowMultiValueFields; }
@@ -186,11 +169,10 @@ namespace ClearCanvas.ImageViewer.Externals.General
 
 			this.Command = external.Command;
 			this.WorkingDirectory = external.WorkingDirectory;
-			this.ArgumentString = external.ArgumentString;
+			this.Arguments = external.Arguments;
 			this.Username = external.Username;
 			this.Domain = external.Domain;
 			this.Password = external.SecurePassword;
-			this.AutoQuoteArguments = external.AutoQuoteArguments;
 			this.AllowMultiValueFields = external.AllowMultiValueFields;
 			this.MultiValueFieldSeparator = external.MultiValueFieldSeparator;
 
@@ -203,11 +185,10 @@ namespace ClearCanvas.ImageViewer.Externals.General
 
 			external.Command = this.Command;
 			external.WorkingDirectory = this.WorkingDirectory;
-			external.ArgumentString = this.ArgumentString;
+			external.Arguments = this.Arguments;
 			external.Username = this.Username;
 			external.Domain = this.Domain;
 			external.SecurePassword = this.Password;
-			external.AutoQuoteArguments = this.AutoQuoteArguments;
 			external.AllowMultiValueFields = this.AllowMultiValueFields;
 			external.MultiValueFieldSeparator = this.MultiValueFieldSeparator;
 		}

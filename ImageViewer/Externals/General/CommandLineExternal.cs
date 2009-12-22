@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Security;
@@ -53,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Externals.General
 
 	public class CommandLineExternal : ExternalBase
 	{
-		private List<string> _arguments = new List<string>();
+		private string _arguments = string.Empty;
 		private string _command = string.Empty;
 		private string _workingDirectory = string.Empty;
 
@@ -61,7 +60,6 @@ namespace ClearCanvas.ImageViewer.Externals.General
 		private string _domain = string.Empty;
 		private SecureString _password = null;
 
-		private bool _autoQuoteArguments = true;
 		private bool _allowMultiValueFields = true;
 		private string _multiValueFieldSeparator;
 
@@ -91,16 +89,16 @@ namespace ClearCanvas.ImageViewer.Externals.General
 			}
 		}
 
-		public string ArgumentString
+		public string Arguments
 		{
-			get { return string.Join(Environment.NewLine, _arguments.ToArray()); }
+			get { return _arguments; }
 			set
 			{
-				if (value == null)
-					_arguments = new List<string>();
-				else
-					_arguments = new List<string>(value.Split(new string[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries));
-				this.NotifyPropertyChanged("ArgumentString");
+				if (this._arguments != value)
+				{
+					this._arguments = value;
+					this.NotifyPropertyChanged("Arguments");
+				}
 			}
 		}
 
@@ -171,19 +169,6 @@ namespace ClearCanvas.ImageViewer.Externals.General
 			}
 		}
 
-		public bool AutoQuoteArguments
-		{
-			get { return this._autoQuoteArguments; }
-			set
-			{
-				if (this._autoQuoteArguments != value)
-				{
-					this._autoQuoteArguments = value;
-					base.NotifyPropertyChanged("AutoQuoteArguments");
-				}
-			}
-		}
-
 		public bool AllowMultiValueFields
 		{
 			get { return this._allowMultiValueFields; }
@@ -215,19 +200,11 @@ namespace ClearCanvas.ImageViewer.Externals.General
 			get { return base.IsValid && !string.IsNullOrEmpty(_command); }
 		}
 
-		public IList<string> Arguments
-		{
-			get { return _arguments; }
-		}
-
 		protected override bool CanLaunch(IArgumentHintResolver hintResolver)
 		{
-			foreach (string argument in this.Arguments)
-			{
-				string resolvedArgument = hintResolver.Resolve(argument, _allowMultiValueFields, " ");
-				if (resolvedArgument == null)
-					return false;
-			}
+			string resolvedArgument = hintResolver.Resolve(this.Arguments, _allowMultiValueFields, " ");
+			if (resolvedArgument == null)
+				return false;
 			return true;
 		}
 
@@ -236,22 +213,10 @@ namespace ClearCanvas.ImageViewer.Externals.General
 			string multiValueSeparator = _multiValueFieldSeparator;
 			if (string.IsNullOrEmpty(multiValueSeparator))
 				multiValueSeparator = " ";
-			if (_autoQuoteArguments && multiValueSeparator == " ")
-				multiValueSeparator = "\" \"";
 
-			StringBuilder argumentsBuilder = new StringBuilder();
-			foreach (string argument in this.Arguments)
-			{
-				string resolvedArgument = hintResolver.Resolve(argument, _allowMultiValueFields, multiValueSeparator);
-				if (_autoQuoteArguments && (string.IsNullOrEmpty(resolvedArgument) || resolvedArgument.Contains(" ")))
-					resolvedArgument = string.Format("\"{0}\"", resolvedArgument);
-				argumentsBuilder.Append(resolvedArgument);
-				argumentsBuilder.Append(' ');
-			}
-
-			string command = hintResolver.Resolve(this._command);
-			string workingDirectory = hintResolver.Resolve(this._workingDirectory);
-			string arguments = argumentsBuilder.ToString().TrimEnd(' ');
+			string command = hintResolver.Resolve(this._command, _allowMultiValueFields, multiValueSeparator);
+			string workingDirectory = hintResolver.Resolve(this._workingDirectory, _allowMultiValueFields, multiValueSeparator);
+			string arguments = hintResolver.Resolve(this._arguments, _allowMultiValueFields, multiValueSeparator);
 
 			ProcessStartInfo nfo;
 			if (string.IsNullOrEmpty(arguments))
@@ -297,8 +262,8 @@ namespace ClearCanvas.ImageViewer.Externals.General
 		public override string ToString()
 		{
 			StringBuilder sb = new StringBuilder(this.Command);
-			foreach (string argument in Arguments)
-				sb.AppendFormat(" {0}", argument);
+			if (!string.IsNullOrEmpty(this.Arguments))
+				sb.AppendFormat(" {0}", this.Arguments);
 			return sb.ToString();
 		}
 
@@ -312,16 +277,12 @@ namespace ClearCanvas.ImageViewer.Externals.General
 			root.AppendChild(WriteProperty(doc, "WindowStyle", base.WindowStyle.ToString()));
 			root.AppendChild(WriteProperty(doc, "Command", this.Command));
 			root.AppendChild(WriteProperty(doc, "WorkingDirectory", this.WorkingDirectory));
-			root.AppendChild(WriteProperty(doc, "AutoQuoteArguments", this.AutoQuoteArguments.ToString()));
 			root.AppendChild(WriteProperty(doc, "AllowMultiValueFields", this.AllowMultiValueFields.ToString()));
 			root.AppendChild(WriteProperty(doc, "MultiValueFieldSeparator", this.MultiValueFieldSeparator));
 			root.AppendChild(WriteProperty(doc, "Username", this.Username));
 			root.AppendChild(WriteProperty(doc, "Domain", this.Domain));
 			root.AppendChild(WriteProperty(doc, "Password", this.Password));
-			foreach (string argument in this.Arguments)
-			{
-				root.AppendChild(WriteProperty(doc, "Argument", argument));
-			}
+			root.AppendChild(WriteProperty(doc, "Arguments", this.Arguments));
 			doc.AppendChild(root);
 			return doc.InnerXml;
 		}
@@ -345,8 +306,6 @@ namespace ClearCanvas.ImageViewer.Externals.General
 				if (root == null)
 					throw new Exception("Root node not found.");
 
-				StringBuilder arguments = new StringBuilder();
-
 				base.Name = root.GetAttribute("name");
 				base.Label = root.GetAttribute("label");
 				base.Enabled = bool.Parse(root.GetAttribute("enabled"));
@@ -366,11 +325,8 @@ namespace ClearCanvas.ImageViewer.Externals.General
 							case "WorkingDirectory":
 								this.WorkingDirectory = data;
 								break;
-							case "Argument":
-								arguments.AppendLine(data);
-								break;
-							case "AutoQuoteArguments":
-								this.AutoQuoteArguments = bool.Parse(data);
+							case "Arguments":
+								this.Arguments = data;
 								break;
 							case "AllowMultiValueFields":
 								this.AllowMultiValueFields = bool.Parse(data);
@@ -390,7 +346,6 @@ namespace ClearCanvas.ImageViewer.Externals.General
 						}
 					}
 				}
-				this.ArgumentString = arguments.ToString();
 			}
 			catch (Exception ex)
 			{
