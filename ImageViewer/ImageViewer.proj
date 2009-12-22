@@ -1,6 +1,7 @@
 <Project DefaultTargets="BuildSolution" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.CombineStrings" AssemblyFile="$(MSBuildProjectDirectory)\..\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll" />
+  <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.FileReplaceText" AssemblyFile="$(MSBuildProjectDirectory)\..\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
 
   <Choose>
     <When Condition=" '$(PROCESSOR_ARCHITEW6432)' == 'IA64' Or '$(PROCESSOR_ARCHITEW6432)' == 'AMD64' Or '$(PROCESSOR_ARCHITECTURE)' == 'IA64' Or '$(PROCESSOR_ARCHITECTURE)' == 'AMD64'">
@@ -33,12 +34,14 @@
   <Choose>
     <When Condition="'$(TargetPlatform)' == 'x64'">
       <PropertyGroup>
+        <PlatformName>x64</PlatformName>
         <PlatformSubFolder>x64</PlatformSubFolder>
       </PropertyGroup>
     </When>
     <Otherwise>
       <!-- assumes Win32 -->
       <PropertyGroup>
+        <PlatformName>x86</PlatformName>
         <PlatformSubFolder></PlatformSubFolder>
       </PropertyGroup>
     </Otherwise>
@@ -118,6 +121,12 @@
 
   <Target Name="BuildSolution" >
     <RemoveDir Condition="$(DistributionBuild)" Directories="$(DistributionDir)" />
+    
+    <!-- This makes platform specific builds of the bootstrapper exe for distribution (by default, it is AnyCPU for ease of developer use) -->
+    <FileReplaceText Condition="$(DistributionBuild) And '$(PlatformName)' != ''" FilePath="$(MSBuildProjectDirectory)\..\Desktop\Executable\ClearCanvas.Desktop.Executable.csproj" TextToReplace="&lt;PlatformTarget&gt;AnyCPU&lt;/PlatformTarget&gt;" ReplacementText="&lt;PlatformTarget&gt;$(PlatformName)&lt;/PlatformTarget&gt;"/>
+    
+    <!-- This modifies the bootstrapper exe to be /LargeAddressAware for x86 distribution builds (in case the target user has the /3GB switch enabled) -->
+    <FileReplaceText Condition="$(DistributionBuild) And '$(PlatformName)' == 'x86'" FilePath="$(MSBuildProjectDirectory)\..\Desktop\Executable\ClearCanvas.Desktop.Executable.csproj" TextToReplace="&lt;PostBuildEvent&gt;" ReplacementText="&lt;PostBuildEvent&gt;editbin /LargeAddressAware %24%28ProjectDir%29\%24%28OutDir%29\ClearCanvas.Desktop.Executable.exe&#x0D;&#x0A;"/>
 
     <MSBuild Projects="ImageViewer.sln" Properties="$(ImageViewerProperties)" />
   </Target>
