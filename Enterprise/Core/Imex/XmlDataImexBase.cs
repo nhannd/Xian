@@ -77,7 +77,7 @@ namespace ClearCanvas.Enterprise.Core.Imex
         /// <param name="data"></param>
         protected static void Write(XmlWriter writer, object data)
         {
-            JsmlSerializer.Serialize(writer, data, data.GetType().Name, false);
+            JsmlSerializer.Serialize(writer, data, data.GetType().Name);
         }
 
         /// <summary>

@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
 				object innerRequest = JsmlSerializer.Deserialize(parameters[0].ParameterType, jsmlRequest);
 				object innerResponse = operation.Invoke(service, new object[] { innerRequest });
 
-				return JsmlSerializer.Serialize(innerResponse, "responseData", false);
+				return JsmlSerializer.Serialize(innerResponse, "responseData");
 			}
 			finally
 			{

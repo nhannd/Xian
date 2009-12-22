@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public string ToJsml()
 		{
-			return JsmlSerializer.Serialize(this, "Report", false);
+			return JsmlSerializer.Serialize(this, "Report");
 		}
 	}
 }

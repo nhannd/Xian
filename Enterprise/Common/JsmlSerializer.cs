@@ -53,17 +53,8 @@ namespace ClearCanvas.Enterprise.Common
 				this.MemberFilter = delegate { return true; };
 			}
 
-
-			/// <summary>
-			/// Specifies whether or not to serialize null-valued properties.
-			/// If there are many null-valued properties, this will significantly affect the size of the JSML document.
-			/// </summary>
-			public bool IncludeEmptyTags { get; set; }
-
 			public Predicate<MemberInfo> MemberFilter { get; set; }
 		}
-
-
 
         /// <summary>
         /// Serializes the specified object to JSML format, using the specified objectName as the outermost tag name.
@@ -74,18 +65,6 @@ namespace ClearCanvas.Enterprise.Common
         public static string Serialize(object dataObject, string objectName)
         {
             return Serialize(dataObject, objectName, SerializeOptions.Default);
-        }
-
-        /// <summary>
-        /// Serializes the specified object to JSML format, using the specified objectName as the outermost tag name.
-        /// </summary>
-        /// <param name="dataObject"></param>
-        /// <param name="objectName"></param>
-		/// <param name="includeEmptyTags"></param>
-        /// <returns></returns>
-		public static string Serialize(object dataObject, string objectName, bool includeEmptyTags)
-        {
-        	return Serialize(dataObject, objectName, new SerializeOptions {IncludeEmptyTags = includeEmptyTags});
         }
 
         /// <summary>
@@ -109,10 +88,10 @@ namespace ClearCanvas.Enterprise.Common
             }
         }
 
-		public static void Serialize(XmlWriter writer, object obj, string objectName, bool includeEmptyTags)
-        {
-			Serialize(writer, obj, objectName, new SerializeOptions { IncludeEmptyTags = includeEmptyTags });
-        }
+		public static void Serialize(XmlWriter writer, object obj, string objectName)
+		{
+			Serialize(writer, obj, objectName, SerializeOptions.Default);
+		}
 
         public static void Serialize(XmlWriter writer, object obj, string objectName, SerializeOptions options)
         {
@@ -130,7 +109,6 @@ namespace ClearCanvas.Enterprise.Common
         /// <param name="jsml"></param>
         /// <returns></returns>
         public static T Deserialize<T>(string jsml)
-            where T : new()
         {
             return (T)Deserialize(typeof(T), jsml);
         }
@@ -178,11 +156,9 @@ namespace ClearCanvas.Enterprise.Common
         private static void SerializeHelper(object dataObject, string objectName, XmlWriter writer, SerializeOptions options)
         {
             if (dataObject == null)
-            {
-                if (options.IncludeEmptyTags)
-                    writer.WriteElementString(objectName, String.Empty);
-            }
-            else if (dataObject is EntityRef)
+            	return;
+
+            if (dataObject is EntityRef)
             {
                 writer.WriteElementString(objectName, ((EntityRef)dataObject).Serialize());
             }
