@@ -41,19 +41,19 @@ namespace ClearCanvas.Ris.Client
 			: base(3)
 		{
 			this.Columns.Add(new DateTimeTableColumn<OrderListItem>(SR.ColumnCreatedOn, order => order.EnteredTime, 0.5f));
-			this.Columns.Add(new DateTimeTableColumn<OrderListItem>("Scheduled For", order => order.OrderScheduledStartTime, 0.5f));
+			this.Columns.Add(new DateTimeTableColumn<OrderListItem>(SR.ColumnScheduledFor, order => order.OrderScheduledStartTime, 0.5f));
 			this.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnImagingService, order => order.DiagnosticService.Name, 1.5f));
 
 			this.Columns.Add(new TableColumn<OrderListItem, string>(
 				SR.ColumnStatus,
 				order => order.OrderStatus.Code == "SC" && order.OrderScheduledStartTime == null
-					? "Unscheduled"
+					? SR.MessageUnscheduled
 					: order.OrderStatus.Value,
 				0.5f));
 
 			this.Columns.Add(new TableColumn<OrderListItem, string>(
-				"MoreInfo",
-				order => string.Format("{0} Ordered by {1}, Facility: {2}",
+				SR.ColumnMoreInfo,
+				order => string.Format(SR.FormatMoreInfo,
 					AccessionFormat.Format(order.AccessionNumber),
 					PersonNameFormat.Format(order.OrderingPractitioner.Name),
 					order.OrderingFacility.Code),

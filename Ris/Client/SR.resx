@@ -918,4 +918,16 @@
   <data name="MessageCheckInUnscheduledProcedure" xml:space="preserve">
     <value>The procedure has not been scheduled.</value>
   </data>
+  <data name="ColumnMoreInfo" xml:space="preserve">
+    <value>More Info</value>
+  </data>
+  <data name="ColumnScheduledFor" xml:space="preserve">
+    <value>Scheduled For</value>
+  </data>
+  <data name="FormatMoreInfo" xml:space="preserve">
+    <value>{0} Ordered by {1}, Facility: {2}</value>
+  </data>
+  <data name="MessageUnscheduled" xml:space="preserve">
+    <value>Unscheduled</value>
+  </data>
 </root>

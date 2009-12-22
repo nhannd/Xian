@@ -457,6 +457,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to More Info.
+        /// </summary>
+        internal static string ColumnMoreInfo {
+            get {
+                return ResourceManager.GetString("ColumnMoreInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to MRN.
         /// </summary>
         internal static string ColumnMRN {
@@ -651,6 +660,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string ColumnRole {
             get {
                 return ResourceManager.GetString("ColumnRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scheduled For.
+        /// </summary>
+        internal static string ColumnScheduledFor {
+            get {
+                return ResourceManager.GetString("ColumnScheduledFor", resourceCulture);
             }
         }
         
@@ -1110,6 +1128,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string FormatFromOnBehalf {
             get {
                 return ResourceManager.GetString("FormatFromOnBehalf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} Ordered by {1}, Facility: {2}.
+        /// </summary>
+        internal static string FormatMoreInfo {
+            get {
+                return ResourceManager.GetString("FormatMoreInfo", resourceCulture);
             }
         }
         
@@ -1632,6 +1659,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string MessageUnknownErrorCommunicatingWithServer {
             get {
                 return ResourceManager.GetString("MessageUnknownErrorCommunicatingWithServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unscheduled.
+        /// </summary>
+        internal static string MessageUnscheduled {
+            get {
+                return ResourceManager.GetString("MessageUnscheduled", resourceCulture);
             }
         }
         
