@@ -52,7 +52,7 @@ namespace ClearCanvas.Common {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("SQpazixeCBAFvchs8EdzurzY26fdTy84Iy9CrW+T5HEmtr/+kZ3NKublAqJW+H/Zu3Tt/jlLRn8=")]
+        [global::System.Configuration.DefaultSettingValueAttribute("SQpazixeCBBvq0bzF3/Un/1Jj+VVYb1ASJnvtW5wOq0MkD6q0e5fsBbTSf/1f3YmOupFw9rtXbA=")]
         public string Copyright {
             get {
                 return ((string)(this["Copyright"]));
@@ -61,32 +61,32 @@ namespace ClearCanvas.Common {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("SQpazixeCBD4G1zRA+eXWqlv7sR2nXz/oldPqa6MO74T+E6BYIBFj7c4rNZ587UsMBBAvLiEjbxdDppLc" +
-            "z87opKhC0eS/HnUbmWwPi36rNSA2dYHKpxbXjeBRYKZUiWwEvaI7zZz1iLFR1brgV/eHzBpLtxuX2VJu" +
-            "QAoMSBT1P1BHPblnBF+hPasQ/XqLXWXlTAIXomlgA6XJreuqKBswD9pecXmqi27ZOkCVdglih23IB+Pm" +
-            "RnC0NcJrygbJAAOzJKmRtUmF582webRPY7Rx30qNp5nhYIhQK8BEmAiq4reL13JGZ0Z0CBYEXbKtgyQr" +
-            "KHSMETWTGz+N81pu0NWCBOCTq8mfbwA4SnaOyGm9OTC1l5UaqbGnGdlJywjdvqpnasLs0Za3H/u3gmn3" +
-            "cEpONI84mkmjdP1R5gA/nmXSJ+8BbF+AmF9Zj3/GN349al6QqjFlUeoEURuvhsOEX7JGp+HTNQqeYXlQ" +
-            "yAGGTbh3/rT/ATSu5AZie4zf19G85CKgUS8Kh8L6Nn093207daelVnU3I/rmSdTfRb7cK2BKLyylIZBW" +
-            "12o572M1xhswbMn1RAgw74WbMZJ+MDhs+qJFf9WfgyqRdA4FrM9ocy27geS3RHPyo3H83YMFlHdBD0sB" +
-            "Vu1psY75hsbkYvCq58XtxTvdT2Y5UGD663FLuTB3wk5nY98xuyr4Duv9nnaHTo6lA4bOl4JX1Uv8ez3n" +
-            "xOOU63Q2hYM9g6fU5HxfzusCiWu5y+G6DcXnz42O6yt42Cwclzxzi/it7xz+NkpvEjOJjEW26ILibkEo" +
-            "+dYj+gIhpSfkTI6VR4kx423Daf/r3IUGqoE6P3oYPI3HuYM8k2fZcmCxXes6cQgFrCo0MgNXehqys8cB" +
-            "WQHrlLsWVkPsf/1IbpDi5J6R5CZTg546PzllExmlZ7xD/P1dIzfw/3/yGIL+5ryB/QGvkxaG6eGO7Cei" +
-            "2ZI/UctS04LFNB13UIJ3xdnnQlqUZw5L0lnNiVS9lRqSV6axYZGRcTtXdKnqUgTytA98ZdBR1CwFmpqs" +
-            "tF1sF+8w5WB3ZZecW0AgA/ar5BNHjSOsGpNzgUVpnQkhuYryTNbiK4lDBRmBbCe2NPuKwIIMebPs6K1L" +
-            "LEyShNKxuTppUIaI1445OKs/xUWFRbiOogvOKjUp5kYaY5n6r7YD77uacNjP1uswkqW4XInqh9wDdxv8" +
-            "1AbIxqiZhmcAONkyRHQfT9D89jsmcBR8trT0LGwv6JW4V3Zt5AXerrRKXQmCnI9vuIAMmG4CrT/kaRc8" +
-            "KVH1Ws9O1uLdVNLqlFV4zDv2gxBMTbfV475ltqq6v3GB2wbufdZAzm9phP6OGhuScqT/3bPT9OKZP2p7" +
-            "ydqBVEH75kzTNjF7byB+YyJKr9Th8WdEO9H3XrtdLqK8fCh9ZqdWCgdmQoHgTm3as05pgZqujZkJdaxC" +
-            "W6bouiF3I57L7+9RtQtMSA3OuAlbJGiZQ/xS9HRM+pkNefUAlP9CzlekTMt4GW9UO+875zrOY2u3ionD" +
-            "ILtRyEYzayTPFdCdDfd1hXXW6kvMeH+yDELNJ8gvkoIongQJQh2rtEkWEELtc/GojofLSiBm8YBGaK9i" +
-            "ah/xEJcjOaNbnuTY8+H8DY+RdISgwGllZZpHn5UzWFAjSYzTyslGgzLrxPJydy4APXCX+a37tS382xX8" +
-            "W0pe01bXt7gxMGKUApBsOSgSkR27k9MaispKb7ytjNu8ZSttjp/7dn3gvOHeNtKS+wUVqOVTBkkbbiNI" +
-            "aDduUyUefH9iZyrHVPL3TxeIn6YuFEcy9KN3tpyWgPzMKCAneJCnLl582qBjem0Yyn8qrbbkOmlUFkvz" +
-            "NIj0am+V+Bg8fbfuyTkPSKBu1ZRf6W6hcRSCntdd1eOAhlO7IutuCRa2iR1t2Z2FvZrK9LkpwvqFQzWW" +
-            "KgGr40XK+B7zQNC6t3fxsD2nUrqY16CJPws3uWqrwJDIASVMoCwG1dTMETnvECI62xuR/mRhVOC7JXWj" +
-            "RHQdTV/N8kE0jxilCN960fwnABCkoxqtP5zwiuFEotTTZj2AIEGB1FlnFNbKsHBaRFu/g==")]
+        [global::System.Configuration.DefaultSettingValueAttribute("SQpazixeCBD4G1zRA+eXWoOkhHpv4j+3ZFb8u6nTqdHUCrHs03TmjVNqz3nFBQnQrGTwhxAjmuQ2KUyxV" +
+            "mBfbg/hLi3m8r0bYKXa9a6foVJlnsKNIF+G9nRcvoS/pdxl06SqZSVpXXPoo8P+nHoZtOSwu/rZQ+O7g" +
+            "ZBp2NfiRVvUu+/Sf+jfe+s2Gey9zZNv28ef2/DfG5P7MtZOrs0YUn6l6ypji7hM6Uobeh0b83fWi1VF0" +
+            "SiuUqtxmlJXlwaCKXLY+hzItghHh8w/D/nOvL1fMtuTc3nqAcPurWNpJ49wp6gRMZulCfiJaT7/6QR0G" +
+            "imZhkIGUYDioGYgg/125UkflJ1URvkAIrGBmEDABT0nMocYNfVQwi9Uk+BCwPiYInCmHtb9g8RG8Y9Ey" +
+            "g+vhvtPgggiy0/oIFeaAv1IILMYheeXkT3+cIRiggptUm1W4Sb9OHfEWm4AlaQWc5usJzxBsF6gNAYgP" +
+            "xw0xyx+Wayiu+NEPT63XEsMQfhUS1cviALvlPp0qi1Ly9aArwtL3VoHaHXvAdU7b3Tf992f3NA+gDZZT" +
+            "ft74DqLZLD0HfP6n4b0uX/hbIBCIn9jzEIS9Nuo03LIUEBC/U/HjiU05Iyx2k+vXZp7NBfI4Wb1aI857" +
+            "tLb5oO4Fefmz+G5z+m9XPWgFtWLKosLnt3FrKWizjTVOqkqeadjHGy+8kjlzVHkaBOz2xYqglb3kMO4i" +
+            "bmrbEnowwB/87OPySVktJ5+Tud14Lw+WdpL0AFFKB7CdEHE5gfo7xQfhtfHTtHYVZoe1fgsOZnVe5f4f" +
+            "p8G9ZoY/D0AEdMMQ06w1A1fTeuuAbjZHmlr9pleeKWlh4us+RMDfy43WC3AX5osQ8mKCEosNj1oJL+uw" +
+            "qxp9aXY2x3hGGu53LzyNb8vcJpxAiVfiOrSkjTYVKOtqAkq7B/P5UiNhv9+57hf4m1ZNJjcrfTiXfvrv" +
+            "NKipUG2YZABiqRGS4rDczxLKs9u9XUKRG4TmQCdYMqZSqr9TXeT4LSocf76ehOmXaJ294NZqQIULqpQM" +
+            "x5/06CEpGU4mrASjd+Fyb/E8ClK8z1pGeXN0M83zfhYNSTF7O6eYJ7gPGuZCQO++HrfgUF1gqrqe9seS" +
+            "YDAKaaPeu+UKJe/MCv9833ptWsNqrVSqdQBEfcAJNCFguHftmwctrBVKu/x9g6XLAzOHq9yTB3cxZUGN" +
+            "293TX3pzvOf+5xogCZxflYNRD88odHbHNawlVuRyo2Q0WVK4x9qubg6v6Ao3FW+aOPCK6EN19igUwVQ0" +
+            "F9FIw0T8pEZgKQ2E0RwDcSXJz6m1IPv/H0/eH2FkNkhy3MUYGZ5kot8QmpKP+zJESsyc9alUVG1evwwG" +
+            "9M1JD/p3v3/kbgKihVPumOI2z+X5YqHSFpqbQWhTaX8pLFK9G1v4Tm7H+7vX5696IH9QEV1jXWY5qQBA" +
+            "fcI9EMZkt/K6km4IqqA2Hq9KucIJG9Gha65UG97Q1QCoN9hSKJifYdcgxIuQRXvDb+ua+sqVWxlJQxrt" +
+            "o41eaNblaSqjnRorNTzlDGg3Pn+ioMrjdThXlSizH7URFNrTylppNvEWvn/pTfoP5LC3JF0A1tKEw/KD" +
+            "RubJ2uhhnpj8Hg3+8MF+YMoCCIPW5qAZbzaZIBYI16E9FNKagDHa+6kAY4x55ZNxCKAZBDDqNqI08A6v" +
+            "ASS9RACxmyoBaDIzu0YJPf26d5LyrMqxU05/w3Y4pcAMvtTlbqaiofy335PaO3eohGjwd91AUcdlPnYZ" +
+            "GSHvv8xEjuhhRKOb9P6B9ZCDg5CE5AGpdhhhazgFRI+hMEMVBPPkcti4rZNS1zpe85toks1rinv2uTQW" +
+            "GYJgk8ebBxM4WskpAf18KJarFre6/PpFBxUvIqWkCwysQ5OU3oQrrW7zBfHp6rVVFB54cL/UILt8vn78" +
+            "WRIHFBlGmSPaJlQ0H2ua/l2o1gpjw6uKEVO3s8ZXroTKbcD89KkaT5HtIqPL3AB3oDaszvbzw2L22mXv" +
+            "L05QhXudrzPEC20yZ7/NcIuQroam+MKWUoL5QeqCwwmk3fV4d4qchFygq9Fj921QRoe4Q==")]
         public string License {
             get {
                 return ((string)(this["License"]));
