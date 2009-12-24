@@ -36,7 +36,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Desktop.Tools;
-using System.Collections.Generic;
 
 namespace ClearCanvas.Desktop
 {
@@ -103,7 +102,7 @@ namespace ClearCanvas.Desktop
             string title,
             ApplicationComponentExitDelegate exitCallback)
         {
-            WorkspaceCreationArgs args = new WorkspaceCreationArgs(component, title, null);
+            var args = new WorkspaceCreationArgs(component, title, null);
             return LaunchAsWorkspace(desktopWindow, args, exitCallback);
         }
 
@@ -128,7 +127,7 @@ namespace ClearCanvas.Desktop
             Platform.CheckForNullReference(desktopWindow, "desktopWindow");
             Platform.CheckForNullReference(component, "component");
 
-            WorkspaceCreationArgs args = new WorkspaceCreationArgs(component, title, name);
+            var args = new WorkspaceCreationArgs(component, title, name);
 
         	return LaunchAsWorkspace(desktopWindow, args, exitCallback);
         }
@@ -154,7 +153,7 @@ namespace ClearCanvas.Desktop
             Platform.CheckForNullReference(desktopWindow, "desktopWindow");
             Platform.CheckForNullReference(component, "component");
 
-            WorkspaceCreationArgs args = new WorkspaceCreationArgs(component, title, name);
+            var args = new WorkspaceCreationArgs(component, title, name);
 
             return LaunchAsWorkspace(desktopWindow, args, null);
         }
@@ -178,7 +177,7 @@ namespace ClearCanvas.Desktop
             Platform.CheckForNullReference(desktopWindow, "desktopWindow");
             Platform.CheckForNullReference(component, "component");
 
-            WorkspaceCreationArgs args = new WorkspaceCreationArgs(component, title, null);
+            var args = new WorkspaceCreationArgs(component, title, null);
 
             return LaunchAsWorkspace(desktopWindow, args, null);
         }
@@ -215,13 +214,10 @@ namespace ClearCanvas.Desktop
 			Platform.CheckForNullReference(desktopWindow, "desktopWindow");
 			Platform.CheckForNullReference(creationArgs, "creationArgs");
 
-			Workspace workspace = desktopWindow.Workspaces.AddNew(creationArgs);
+			var workspace = desktopWindow.Workspaces.AddNew(creationArgs);
 			if (exitCallback != null)
 			{
-				workspace.Closed += delegate(object sender, ClosedEventArgs e)
-				{
-					exitCallback(creationArgs.Component);
-				};
+				workspace.Closed += ((sender, e) => exitCallback(creationArgs.Component));
 			}
 			return workspace;
 		}
@@ -252,7 +248,7 @@ namespace ClearCanvas.Desktop
             ShelfDisplayHint displayHint,
             ApplicationComponentExitDelegate exitCallback)
         {
-            ShelfCreationArgs args = new ShelfCreationArgs(component, title, null, displayHint);
+            var args = new ShelfCreationArgs(component, title, null, displayHint);
             return LaunchAsShelf(desktopWindow, args, exitCallback);
         }
 
@@ -283,7 +279,7 @@ namespace ClearCanvas.Desktop
             Platform.CheckForNullReference(desktopWindow, "desktopWindow");
             Platform.CheckForNullReference(component, "component");
 
-            ShelfCreationArgs args = new ShelfCreationArgs(component, title, name, displayHint);
+            var args = new ShelfCreationArgs(component, title, name, displayHint);
             return LaunchAsShelf(desktopWindow, args, exitCallback);
         }
 
@@ -310,7 +306,7 @@ namespace ClearCanvas.Desktop
             Platform.CheckForNullReference(desktopWindow, "desktopWindow");
             Platform.CheckForNullReference(component, "component");
 
-            ShelfCreationArgs args = new ShelfCreationArgs(component, title, name, displayHint);
+            var args = new ShelfCreationArgs(component, title, name, displayHint);
             return LaunchAsShelf(desktopWindow, args, null);
         }
 
@@ -332,7 +328,7 @@ namespace ClearCanvas.Desktop
             string title,
             ShelfDisplayHint displayHint)
         {
-            ShelfCreationArgs args = new ShelfCreationArgs(component, title, null, displayHint);
+            var args = new ShelfCreationArgs(component, title, null, displayHint);
             return LaunchAsShelf(desktopWindow, args, null);
         }
 
@@ -364,7 +360,7 @@ namespace ClearCanvas.Desktop
             ShelfCreationArgs args,
             ApplicationComponentExitDelegate exitCallback)
         {
-            Shelf shelf = desktopWindow.Shelves.AddNew(args);
+            var shelf = desktopWindow.Shelves.AddNew(args);
             if (exitCallback != null)
             {
                 shelf.Closed += delegate
@@ -396,7 +392,7 @@ namespace ClearCanvas.Desktop
             IApplicationComponent component,
             string title)
         {
-            DialogBoxCreationArgs args = new DialogBoxCreationArgs(component, title, null);
+            var args = new DialogBoxCreationArgs(component, title, null);
             return LaunchAsDialog(desktopWindow, args);
         }
 
@@ -465,8 +461,6 @@ namespace ClearCanvas.Desktop
         private bool _showValidationErrors;
         private event EventHandler _validationVisibleChanged;
 
-        private IResourceResolver _resourceResolver;
-
         private ToolSet _toolSet;
 
 
@@ -476,9 +470,6 @@ namespace ClearCanvas.Desktop
         protected ApplicationComponent()
         {
             _exitCode = ApplicationComponentExitCode.None;    // default exit code
-
-            // default resource resolver
-            _resourceResolver = new ResourceResolver(this.GetType().Assembly);
 
 			// create default validation rule set containing rules for this type
 			_validation = new ValidationRuleSet(ValidationCache.GetRules(this.GetType()));
@@ -529,7 +520,7 @@ namespace ClearCanvas.Desktop
         /// Convenience method to fire the <see cref="ModifiedChanged"/> event.
 		/// </summary>
 		/// <remarks>
-        /// Note that it is not necessary to explicitly call this method if the 
+        /// It is not necessary to explicitly call this method if the 
         /// default implementation of the <see cref="Modified"/> property is used,
         /// since the event is fired automatically when the property is set.
         /// This method is provided for situations where the subclass has chosen
@@ -777,7 +768,7 @@ namespace ClearCanvas.Desktop
             {
                 AssertStarted();
 
-                return this.Validation.GetResults(this).FindAll(delegate(ValidationResult r) { return !r.Success; }).Count > 0;
+                return this.Validation.GetResults(this).FindAll(r => !r.Success).Count > 0;
             }
         }
 
@@ -845,15 +836,12 @@ namespace ClearCanvas.Desktop
         {
             get
             {
-                if (_showValidationErrors && _validation != null)
+            	if (_showValidationErrors && _validation != null)
                 {
-                    ValidationResult result = ValidationResult.Combine(_validation.GetResults(this, propertyName));
+                    var result = ValidationResult.Combine(_validation.GetResults(this, propertyName));
                     return result.Success ? null : result.GetMessageString("\n");
                 }
-                else
-                {
-                    return null;
-                }
+            	return null;
             }
         }
 
