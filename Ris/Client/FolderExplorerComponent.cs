@@ -53,12 +53,18 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(FolderExplorerComponentViewExtensionPoint))]
     public class FolderExplorerComponent : ApplicationComponent
     {
+		enum InitializationState
+		{
+			NotInitialized,
+			Initializing,
+			Initialized
+		}
+
 		private readonly FolderTreeRoot _folderTreeRoot;
 		private FolderTreeNode _selectedTreeNode;
         private event EventHandler _selectedFolderChanged;
     	private event EventHandler _intialized;
-    	private bool _isInitialized;
-    	private AsyncLoader _initializeLoader;
+		private InitializationState _initializationState;
 
         private readonly IFolderSystem _folderSystem;
     	private Timer _folderInvalidateTimer;
@@ -92,7 +98,7 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
     	internal bool IsInitialized
     	{
-			get { return _isInitialized; }
+			get { return _initializationState == InitializationState.Initialized; }
     	}
 
 		/// <summary>
@@ -100,55 +106,35 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		internal void Initialize()
 		{
-			// check already initialized
-			if (_isInitialized)
+			// check already initialized, or initialization in progress
+			if (_initializationState != InitializationState.NotInitialized)
 				return;
 
-			// check for initialization in progress
-			if (_initializeLoader != null)
-				return;
+			_initializationState = InitializationState.Initializing;
 
-			_initializeLoader = new AsyncLoader();
-			_initializeLoader.Run(
+			Async.Invoke(this,
+			    () => _folderSystem.Initialize(),
 				delegate
 				{
-					_folderSystem.Initialize();
-				},
-				delegate(Exception e)
-				{
-					try
-					{
-						if (e != null)
-						{
-							Platform.Log(LogLevel.Error, e);
-							return;
-						}
+					// subscribe to events
+					_folderSystem.Folders.ItemAdded += FolderAddedEventHandler;
+					_folderSystem.Folders.ItemRemoved += FolderRemovedEventHandler;
+					_folderSystem.FoldersChanged += FoldersChangedEventHandler;
+					_folderSystem.FoldersInvalidated += FoldersInvalidatedEventHandler;
+					_folderSystem.FolderPropertiesChanged += FolderPropertiesChangedEventHandler;
 
-						// subscribe to events
-						_folderSystem.Folders.ItemAdded += FolderAddedEventHandler;
-						_folderSystem.Folders.ItemRemoved += FolderRemovedEventHandler;
-						_folderSystem.FoldersChanged += FoldersChangedEventHandler;
-						_folderSystem.FoldersInvalidated += FoldersInvalidatedEventHandler;
-						_folderSystem.FolderPropertiesChanged += FolderPropertiesChangedEventHandler;
+					// build the initial folder tree, but do not udpate it, as this will be done on demand
+					// when this folder system is selected
+					BuildFolderTree();
 
-						// build the initial folder tree, but do not udpate it, as this will be done on demand
-						// when this folder system is selected
-						BuildFolderTree();
+					// this timer is responsible for monitoring the auto-invalidation of all folders
+					// in the folder system, and performing the appropriate invalidations
+					_folderInvalidateTimer = new Timer(delegate { AutoInvalidateFolders(); }) {IntervalMilliseconds = 1000};
+					_folderInvalidateTimer.Start();
 
-						// this timer is responsible for monitoring the auto-invalidation of all folders
-						// in the folder system, and performing the appropriate invalidations
-						_folderInvalidateTimer = new Timer(delegate { AutoInvalidateFolders(); }) {IntervalMilliseconds = 1000};
-						_folderInvalidateTimer.Start();
-
-						// notify that this folder system is now initialized
-						_isInitialized = true;
-						EventsHelper.Fire(_intialized, this, EventArgs.Empty);
-					}
-					finally
-					{
-						_initializeLoader.Dispose();
-						_initializeLoader = null;
-					}
+					// notify that this folder system is now initialized
+					_initializationState = InitializationState.Initialized;
+					EventsHelper.Fire(_intialized, this, EventArgs.Empty);
 				});
 		}
 
@@ -158,7 +144,7 @@ namespace ClearCanvas.Ris.Client
 		internal void InvalidateFolders()
 		{
 			// check initialized
-			if (!_isInitialized)
+			if (!IsInitialized)
 				return;
 
 			// invalidate all folders, and update starting at the root
@@ -172,7 +158,7 @@ namespace ClearCanvas.Ris.Client
 		internal void ExecuteSearch(SearchParams searchParams)
 		{
 			// check initialized
-			if (!_isInitialized)
+			if (!IsInitialized)
 				return;
 
 			if (_folderSystem.SearchEnabled)

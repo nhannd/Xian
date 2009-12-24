@@ -90,7 +90,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private List<PriorProcedureSummary> _allPriors;
 
 		private ChildComponentHost _reportViewComponentHost;
-		private AsyncLoader _loader;
 
 		/// <summary>
 		/// Constructor for showing priors based on a reporting step.
@@ -108,8 +107,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_reportViewComponentHost = new ChildComponentHost(this.Host, new ReportViewComponent(this));
 			_reportViewComponentHost.StartComponent();
 
-			_loader = new AsyncLoader();
-
 			UpdateReportList();
 
 			base.Start();
@@ -117,8 +114,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public override void Stop()
 		{
-			_loader.Dispose();
-
 			if (_reportViewComponentHost != null)
 			{
 				_reportViewComponentHost.StopComponent();
@@ -178,38 +173,37 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void UpdateReportList()
 		{
+			// cancel any pending requests
+			Async.CancelPending(this);
+
+			// clear table
 			_reportList.Items.Clear();
+
 			if (_relevantPriorsOnly)
 			{
-				_loader.Run(
+				Async.Invoke(this,
 					delegate
 					{
 						if (_relevantPriors == null)
 							_relevantPriors = LoadPriors(true);
 					},
-					delegate(Exception e)
+					delegate
 					{
-						if (e == null)
-							_reportList.Items.AddRange(_relevantPriors);
-						else
-							Platform.Log(LogLevel.Error, e);
+						_reportList.Items.AddRange(_relevantPriors);
 					});
 
 			}
 			else
 			{
-				_loader.Run(
+				Async.Invoke(this,
 					delegate
 					{
 						if (_allPriors == null)
 							_allPriors = LoadPriors(false);
 					},
-					delegate(Exception e)
+					delegate
 					{
-						if (e == null)
-							_reportList.Items.AddRange(_allPriors);
-						else
-							Platform.Log(LogLevel.Error, e);
+						_reportList.Items.AddRange(_allPriors);
 					});
 			}
 		}

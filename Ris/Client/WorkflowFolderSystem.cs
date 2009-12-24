@@ -229,7 +229,7 @@ namespace ClearCanvas.Ris.Client
 		private readonly Dictionary<Type, List<object>> _mapFolderClassToDropHandlers = new Dictionary<Type, List<object>>();
 		private readonly List<DoubleClickHandlerRegistration> _doubleClickHandlers = new List<DoubleClickHandlerRegistration>();
 
-		private AsyncLoader _operationEnablementLoader;
+		private AsyncTask _operationEnablementTask;
 
 		/// <summary>
 		/// Constructor.
@@ -243,6 +243,8 @@ namespace ClearCanvas.Ris.Client
 			_resourceResolver = new ResourceResolver(this.GetType(), true);
 
 			_workflowFolders = new FolderList(this);
+
+			_operationEnablementTask = new AsyncTask();
 		}
 
 
@@ -521,10 +523,10 @@ namespace ClearCanvas.Ris.Client
 		{
 			if (disposing)
 			{
-				if(_operationEnablementLoader != null)
+				if(_operationEnablementTask != null)
 				{
-					_operationEnablementLoader.Dispose();
-					_operationEnablementLoader = null;
+					_operationEnablementTask.Dispose();
+					_operationEnablementTask = null;
 				}
 
 				foreach (var folder in _workflowFolders)
@@ -641,11 +643,7 @@ namespace ClearCanvas.Ris.Client
 		private void SelectedItemsChangedEventHandler(object sender, EventArgs args)
 		{
 			// cancel any previous operation enablement queries
-			if (_operationEnablementLoader != null)
-			{
-				_operationEnablementLoader.Dispose();
-				_operationEnablementLoader = null;
-			}
+			_operationEnablementTask.Cancel();
 
 			// if selection is empty, there is no need to query operation enablement
 			if (this.Selection.Equals(Desktop.Selection.Empty))
@@ -656,18 +654,22 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			// query for operation enablement asynchronously
-			_operationEnablementLoader = new AsyncLoader();
-			_operationEnablementLoader.Run(
+			IDictionary<string, bool> enablement = null;
+			_operationEnablementTask.Run(
 				delegate
 				{
-					_workflowEnablement = QueryOperationEnablement(this.Selection);
+					enablement = QueryOperationEnablement(this.Selection);
+				},
+				delegate
+				{
+					_workflowEnablement = enablement;
+					EventsHelper.Fire(_selectedItemsChanged, this, EventArgs.Empty);
 				},
 				delegate(Exception e)
 				{
-					if(e != null)
-					{
-						Platform.Log(LogLevel.Error, e);
-					}
+					Platform.Log(LogLevel.Error, e);
+
+					// still need to fire the event, so that enablement of tools is updated
 					EventsHelper.Fire(_selectedItemsChanged, this, EventArgs.Empty);
 				});
 		}

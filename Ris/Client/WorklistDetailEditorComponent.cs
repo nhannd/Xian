@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -66,7 +65,6 @@ namespace ClearCanvas.Ris.Client
 
 		private bool _hasWorklistCountError;
 		private string _worklistCountErrorMessage;
-		private AsyncLoader _asyncLoader;
 
 		/// <summary>
 		/// Constructor
@@ -119,16 +117,9 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
-			_asyncLoader = new AsyncLoader();
 			ValidateWorklistCount();
 
 			base.Start();
-		}
-
-		public override void Stop()
-		{
-			_asyncLoader.Dispose();
-			base.Stop();
 		}
 
 		#region Presentation Model
@@ -307,38 +298,32 @@ namespace ClearCanvas.Ris.Client
 
 		private void ValidateWorklistCount()
 		{
+			Async.CancelPending(this);
+
 			if (_editorMode == WorklistEditorMode.Edit && !this.IsPersonalGroupSelectionEnabled)
 				return;
 
 			_hasWorklistCountError = false;
 			_worklistCountErrorMessage = null;
 
-			_asyncLoader.Run(
-				delegate
-				{
-					Platform.GetService(
-						delegate(IWorklistAdminService service)
-						{
-							var request = new GetWorklistEditFormDataRequest
-							{
-								GetWorklistEditValidationRequest = new GetWorklistEditValidationRequest(!_adminMode, _worklistDetail.OwnerGroup)
-							};
+			Async.Request(this,
+				 (IWorklistAdminService service) =>
+				 {
+             		var request = new GetWorklistEditFormDataRequest
+             	              		{
+             	              			GetWorklistEditValidationRequest =
+             	              				new GetWorklistEditValidationRequest(!_adminMode, _worklistDetail.OwnerGroup)
+             	              		};
 
-							var response = service.GetWorklistEditFormData(request);
-							_hasWorklistCountError = response.GetWorklistEditValidationResponse.HasError;
-							_worklistCountErrorMessage = response.GetWorklistEditValidationResponse.ErrorMessage;
-						});
-				},
-				delegate(Exception e)
-				{
-					if (e == null)
-					{
-						if (_hasWorklistCountError)
-							ShowValidation(true);
-					}
-					else
-						Platform.Log(LogLevel.Error, e);
-				});
+             		return service.GetWorklistEditFormData(request);
+				 },
+				 response =>
+				 {
+             		_hasWorklistCountError = response.GetWorklistEditValidationResponse.HasError;
+             		_worklistCountErrorMessage = response.GetWorklistEditValidationResponse.ErrorMessage;
+             		if (_hasWorklistCountError)
+             			ShowValidation(true);
+				 });
 		}
 
 	}

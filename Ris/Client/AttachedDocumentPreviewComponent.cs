@@ -168,7 +168,6 @@ namespace ClearCanvas.Ris.Client
 		private ToolSet _toolSet;
 		private bool _readonly;
 
-		private AsyncLoader _loader;
 		private EntityRef _patientProfileRef;
 		private EntityRef _orderRef;
 
@@ -211,7 +210,6 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			_toolSet.Dispose();
-			_loader.Dispose();
 
 			base.Stop();
 		}
@@ -382,35 +380,25 @@ namespace ClearCanvas.Ris.Client
 			if (_patientProfileRef == null)
 				return;
 
-			GetDataResponse response = null;
-			var request = new GetDataRequest
+			Async.Request(
+				this,
+				(IBrowsePatientDataService service) =>
 				{
-					GetPatientProfileDetailRequest = new GetPatientProfileDetailRequest
-						{
-							PatientProfileRef = _patientProfileRef,
-							IncludeAttachments = true
-						}
-				};
-
-			if (_loader == null)
-				_loader = new AsyncLoader();
-
-			_loader.Run(
-				delegate
-				{
-					Platform.GetService<IBrowsePatientDataService>(
-						service => response = service.GetData(request));
+					var request = new GetDataRequest
+		          	{
+		          		GetPatientProfileDetailRequest = new GetPatientProfileDetailRequest
+                     	{
+                     		PatientProfileRef = _patientProfileRef,
+                     		IncludeAttachments = true
+                     	}
+		          	};
+					return service.GetData(request);
 				},
-				delegate(Exception e)
+				response =>
 				{
-					if (e == null)
-					{
-						this.PatientAttachments = response.GetPatientProfileDetailResponse.PatientProfile.Attachments;
-						if (this.PatientAttachments.Count > 0)
-							this.SetInitialSelection(this.PatientAttachments[0]);
-					}
-					else
-						Platform.Log(LogLevel.Error, e);
+					this.PatientAttachments = response.GetPatientProfileDetailResponse.PatientProfile.Attachments;
+					if (this.PatientAttachments.Count > 0)
+						this.SetInitialSelection(this.PatientAttachments[0]);
 				});
 		}
 
@@ -419,35 +407,25 @@ namespace ClearCanvas.Ris.Client
 			if (_orderRef == null)
 				return;
 
-			GetDataResponse response = null;
-			var request = new GetDataRequest
-			{
-				GetOrderDetailRequest = new GetOrderDetailRequest
+			Async.Request(
+				this,
+				(IBrowsePatientDataService service) =>
 				{
-					OrderRef = _orderRef,
-					IncludeAttachments = true
-				}
-			};
-
-			if (_loader == null)
-				_loader = new AsyncLoader();
-
-			_loader.Run(
-				delegate
-				{
-					Platform.GetService<IBrowsePatientDataService>(
-						service => response = service.GetData(request));
-				},
-				delegate(Exception e)
-				{
-					if (e == null)
+					var request = new GetDataRequest
 					{
-						this.OrderAttachments = response.GetOrderDetailResponse.Order.Attachments;
-						if (this.OrderAttachments.Count > 0)
-							this.SetInitialSelection(this.OrderAttachments[0]);
-					}
-					else
-						Platform.Log(LogLevel.Error, e);
+						GetOrderDetailRequest = new GetOrderDetailRequest
+						{
+							OrderRef = _orderRef,
+							IncludeAttachments = true
+						}
+					};
+					return service.GetData(request);
+				},
+				response =>
+				{
+					this.OrderAttachments = response.GetOrderDetailResponse.Order.Attachments;
+					if (this.OrderAttachments.Count > 0)
+						this.SetInitialSelection(this.OrderAttachments[0]);
 				});
 		}
 	}

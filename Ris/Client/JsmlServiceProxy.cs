@@ -249,34 +249,15 @@ namespace ClearCanvas.Ris.Client
     		var id = Guid.NewGuid().ToString();
 
 			// invoke operation asynchronously
-    		var asyncLoader = new AsyncLoader();
+    		var asyncTask = new AsyncTask();
     		string response = null;
-			asyncLoader.Run(
+			asyncTask.Run(
 				delegate
 				{
 					response = InvokeHelper(operationName, requestJsml);
 				},
-				delegate(Exception error)
-				{
-					try
-					{
-						if (error == null)
-						{
-							OnInvocationCompleted(id, response);
-						}
-						else
-						{
-							OnInvocationError(id, error);
-						}
-
-					}
-					catch (Exception e)
-					{
-						// any exceptions thrown from the callback should just be logged
-						Platform.Log(LogLevel.Error, e);
-					}
-				});
-
+				() => OnInvocationCompleted(id, response),
+				error => OnInvocationError(id, error));
 
     		return id;
 		}
