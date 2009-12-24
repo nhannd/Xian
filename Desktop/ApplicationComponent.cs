@@ -31,12 +31,12 @@
 
 using System;
 using System.ComponentModel;
-using System.Reflection;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Desktop.Tools;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Desktop
 {
@@ -451,7 +451,10 @@ namespace ClearCanvas.Desktop
         private IApplicationComponentHost _host;
         private ApplicationComponentExitCode _exitCode;
 
-        private bool _started;
+        private bool _isStarted;
+    	private event EventHandler _started;
+		private event EventHandler _stopped;
+
         private bool _modified;
         private event EventHandler _modifiedChanged;
 
@@ -476,10 +479,10 @@ namespace ClearCanvas.Desktop
 
             // default resource resolver
             _resourceResolver = new ResourceResolver(this.GetType().Assembly);
-            
-            // create default validation rule set containing rules for this type
-            _validation = new ValidationRuleSet(ValidationCache.GetRules(this.GetType()));
-        }
+
+			// create default validation rule set containing rules for this type
+			_validation = new ValidationRuleSet(ValidationCache.GetRules(this.GetType()));
+		}
 
 
         /// <summary>
@@ -597,13 +600,25 @@ namespace ClearCanvas.Desktop
         {
             AssertNotStarted();
 
-            _toolSet = new ToolSet(new ApplicationComponentMetaToolExtensionPoint(),
+			// create meta-tools
+			_toolSet = new ToolSet(new ApplicationComponentMetaToolExtensionPoint(),
                 new ApplicationComponentMetaToolContext(this, _host.DesktopWindow));
 
-            _started = true;
+            _isStarted = true;
+
+			EventsHelper.Fire(_started, this, EventArgs.Empty);
         }
 
-        /// <summary>
+    	/// <summary>
+    	/// Occurs after the component has started.
+    	/// </summary>
+    	public event EventHandler Started
+		{
+			add { _started += value; }
+			remove { _started -= value; }
+		}
+
+    	/// <summary>
         /// Called by the host when the application component is being terminated.
         /// </summary>
         /// <remarks>
@@ -619,15 +634,26 @@ namespace ClearCanvas.Desktop
                 _toolSet = null;
             }
 
-            _started = false;
-        }
+            _isStarted = false;
 
-        /// <summary>
+			EventsHelper.Fire(_stopped, this, EventArgs.Empty);
+		}
+
+    	/// <summary>
+    	/// Occurs after the component has stopped.
+    	/// </summary>
+    	public event EventHandler Stopped
+		{
+			add { _stopped += value; }
+			remove { _stopped -= value; }
+		}
+
+		/// <summary>
         /// Gets a value indicating whether this component is live or not. 
         /// </summary>
         public bool IsStarted
         {
-            get { return _started; }
+            get { return _isStarted; }
         }
 
         /// <summary>
@@ -761,7 +787,7 @@ namespace ClearCanvas.Desktop
         public virtual void ShowValidation(bool show)
         {
             _showValidationErrors = show;
-            if (_started)
+            if (_isStarted)
             {
                 EventsHelper.Fire(_validationVisibleChanged, this, EventArgs.Empty);
             }
@@ -835,15 +861,15 @@ namespace ClearCanvas.Desktop
 
         #region Helper methods
 
-        private void AssertStarted()
+		private void AssertStarted()
         {
-            if (!_started)
+            if (!_isStarted)
                 throw new InvalidOperationException(SR.ExceptionComponentNeverStarted);
         }
 
         private void AssertNotStarted()
         {
-            if (_started)
+            if (_isStarted)
                 throw new InvalidOperationException(SR.ExceptionComponentAlreadyStarted);
         }
 

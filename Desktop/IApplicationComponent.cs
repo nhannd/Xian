@@ -154,5 +154,15 @@ namespace ClearCanvas.Desktop
         /// Gets or sets the exit code for the component.
         /// </summary>
         ApplicationComponentExitCode ExitCode { get; }
+
+		/// <summary>
+		/// Occurs after the component has started.
+		/// </summary>
+    	event EventHandler Started;
+
+		/// <summary>
+		/// Occurs after the component has stopped.
+		/// </summary>
+    	event EventHandler Stopped;
     }
 }
