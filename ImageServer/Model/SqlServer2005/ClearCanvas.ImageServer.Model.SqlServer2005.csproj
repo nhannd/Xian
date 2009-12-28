@@ -148,6 +148,7 @@
     <Compile Include="UpgradeScripts\UpgradeFrom_1_5_10588_32543.cs" />
     <Compile Include="UpgradeScripts\UpgradeFrom_1_5_10676_32680.cs" />
     <Compile Include="UpgradeScripts\UpgradeFrom_1_5_10852_32944.cs" />
+    <Compile Include="UpgradeScripts\UpgradeFrom_1_5_12104_35993 .cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
@@ -180,7 +181,7 @@
     <None Include="Scripts\ImageServerDefaultData.sql" />
     <EmbeddedResource Include="Scripts\ImageServerStoredProcedures.sql" />
     <None Include="Scripts\ImageServerTables.sql" />
-    <EmbeddedResource Include="UpgradeScripts\UpgradeFrom_1_5_10852_32944.sql" />
+    <EmbeddedResource Include="UpgradeScripts\UpgradeFrom_1_5_12104_35993.sql" />
     <EmbeddedResource Include="UpgradeScripts\UpgradeFrom_1_5_10019_31163.sql" />
     <EmbeddedResource Include="UpgradeScripts\UpgradeFrom_NoOp.sql" />
     <EmbeddedResource Include="UpgradeScripts\UpgradeFrom_1_4_9277_29698.sql" />
