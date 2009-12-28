@@ -155,12 +155,11 @@ namespace ClearCanvas.Ris.Client.Admin
         private const string tagValidationRules = "validation-rules";
 
         private readonly Type _applicationComponentClass;
-        private XmlDocument _xmlDoc;
 
         private readonly Table<Rule> _rules;
         private Rule _selectedRule;
 
-        private IConfigurationStore _configStore;
+		private XmlValidationManager _xmlValidationManager;
 
         private readonly ApplicationComponent _liveComponent;
 
@@ -178,8 +177,6 @@ namespace ClearCanvas.Ris.Client.Admin
         public ValidationEditorComponent(Type applicationComponentClass)
         {
             _applicationComponentClass = applicationComponentClass;
-            _xmlDoc = new XmlDocument();
-            _xmlDoc.PreserveWhitespace = true;
 
             _rules = new Table<Rule>();
             _rules.Columns.Add(new TableColumn<Rule, string>("Name",
@@ -198,19 +195,14 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            // try to get the config store
-            // if this fails, an exception will be thrown, preventing this component from starting
-            _configStore = ConfigurationStoreFactory.GetDefaultStore();
+			_xmlValidationManager = XmlValidationManager.Instance;
 
-            // load existing validation rules
-            // if this fails, an exception will be thrown, preventing this component from starting
-            LoadValidationDocument();
+			// try to load existing rules
+			// if this fails, an exception will be thrown, preventing this component from starting
+			var rules = CollectionUtils.Map(_xmlValidationManager.GetRules(_applicationComponentClass),
+				(XmlElement node) => new Rule(node.OuterXml, _liveComponent));
 
-            XmlNodeList ruleNodes = _xmlDoc.SelectNodes("validation-rules/validation-rule");
-            foreach (XmlElement node in ruleNodes)
-            {
-                _rules.Items.Add(new Rule(node.OuterXml, _liveComponent));
-            }
+			_rules.Items.AddRange(rules);
 
             _componentProperties = CollectionUtils.Select(_applicationComponentClass.GetProperties(),
                               delegate(PropertyInfo p)
@@ -321,21 +313,24 @@ namespace ClearCanvas.Ris.Client.Admin
 
             try
             {
-                if (!UpdateLocalDocument())
+				XmlElement rulesNode;
+                if (!CreateRulesXml(out rulesNode))
                     return;
 
-                SaveValidationDocument();
+				_xmlValidationManager.SetRules(_applicationComponentClass, rulesNode);
+				_xmlValidationManager.Save();
 
-                ValidationCache.Invalidate(_applicationComponentClass);
+				// invalidate cache for this component to cause rules to re-compile on next load
+                ValidationCache.Instance.Invalidate(_applicationComponentClass);
 
-                this.Exit(ApplicationComponentExitCode.Accepted);
+                Exit(ApplicationComponentExitCode.Accepted);
             }
             catch (Exception e)
             {
                 ExceptionHandler.Report(e, SR.ExceptionSaveValidationRules, this.Host.DesktopWindow,
                     delegate
                     {
-                        this.Exit(ApplicationComponentExitCode.Error);
+                        Exit(ApplicationComponentExitCode.Error);
                     });
             }
         }
@@ -386,19 +381,13 @@ namespace ClearCanvas.Ris.Client.Admin
             _rulesActionModel.Delete.Enabled = (_selectedRule != null);
         }
 
-        private XmlElement GetRuleXml(string id)
+        private bool CreateRulesXml(out XmlElement rulesNode)
         {
-            return (XmlElement)CollectionUtils.SelectFirst(_xmlDoc.GetElementsByTagName(tagValidationRule),
-                delegate(object node) { return ((XmlElement)node).GetAttribute("id") == id; });
-        }
+			var xmlDoc = new XmlDocument();
+			xmlDoc.PreserveWhitespace = true;
+			rulesNode = xmlDoc.CreateElement(tagValidationRules);
 
-        private bool UpdateLocalDocument()
-        {
-            _xmlDoc = new XmlDocument();
-            XmlElement rulesNode = _xmlDoc.CreateElement(tagValidationRules);
-            _xmlDoc.AppendChild(rulesNode);
-
-            foreach (Rule rule in _rules.Items)
+			foreach (Rule rule in _rules.Items)
             {
                 if(!CollectionUtils.Contains(_componentProperties, delegate (PropertyInfo p) { return p.Name == rule.BoundProperty; }))
                 {
@@ -412,7 +401,7 @@ namespace ClearCanvas.Ris.Client.Admin
                     return false;
                 }
 
-                XmlDocumentFragment fragment = _xmlDoc.CreateDocumentFragment();
+				XmlDocumentFragment fragment = xmlDoc.CreateDocumentFragment();
                 try
                 {
                     fragment.InnerXml = rule.RuleXml;
@@ -432,44 +421,6 @@ namespace ClearCanvas.Ris.Client.Admin
             }
 
             return true;
-        }
-
-        private void LoadValidationDocument()
-        {
-            try
-            {
-                TextReader reader = _configStore.GetDocument(
-                    GetDocumentName(_applicationComponentClass),
-                    _applicationComponentClass.Assembly.GetName().Version,
-                    null,
-                    null);
-                _xmlDoc.Load(reader);
-            }
-            catch (ConfigurationDocumentNotFoundException)
-            {
-                // create blank document
-                _xmlDoc.LoadXml(string.Format("<{0}/>", tagValidationRules));
-            }
-        }
-
-        private void SaveValidationDocument()
-        {
-            StringBuilder sb = new StringBuilder();
-            XmlTextWriter writer = new XmlTextWriter(new StringWriter(sb));
-            writer.Formatting = System.Xml.Formatting.Indented;
-            _xmlDoc.Save(writer);
-            _configStore.PutDocument(
-                GetDocumentName(_applicationComponentClass),
-                _applicationComponentClass.Assembly.GetName().Version,
-                null,
-                null,
-                new StringReader(sb.ToString())
-                );
-        }
-
-        private static string GetDocumentName(Type appComponentClass)
-        {
-            return string.Format("{0}.val.xml", appComponentClass.FullName);
         }
     }
 }

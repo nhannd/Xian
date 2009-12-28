@@ -472,7 +472,7 @@ namespace ClearCanvas.Desktop
             _exitCode = ApplicationComponentExitCode.None;    // default exit code
 
 			// create default validation rule set containing rules for this type
-			_validation = new ValidationRuleSet(ValidationCache.GetRules(this.GetType()));
+			_validation = new ValidationRuleSet(ValidationCache.Instance.GetRules(this.GetType()));
 		}
 
 
