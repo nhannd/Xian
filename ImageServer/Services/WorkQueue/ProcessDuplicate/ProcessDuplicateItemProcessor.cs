@@ -108,13 +108,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             return true; // it is being locked by me
         }
 
-        protected override void Initialize(Model.WorkQueue item)
+		protected override bool Initialize(Model.WorkQueue item, out string failureDescription)
         {
-            base.Initialize(item);
+            if (!base.Initialize(item, out failureDescription))
+            	return false;
 
             _processDuplicateEntry = new WorkQueueProcessDuplicateSop(item);
             _patientNameRules = new PatientNameRules(Study);
             HistoryLogged = _processDuplicateEntry.QueueData != null && _processDuplicateEntry.QueueData.State.HistoryLogged;
+        	return true;
         }
 
         protected override void ProcessItem(Model.WorkQueue item)

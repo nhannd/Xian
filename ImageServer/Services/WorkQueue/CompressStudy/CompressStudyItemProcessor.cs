@@ -67,13 +67,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
         protected TransferSyntax CompressTransferSyntax { get; private set; }
         
         #endregion
-        protected override void Initialize(Model.WorkQueue item)
+
+		protected override bool Initialize(Model.WorkQueue item, out string failureDescription)
         {
-            base.Initialize(item);
+            if (!base.Initialize(item, out failureDescription))
+            	return false;
 
             XmlElement element = WorkQueueItem.Data.DocumentElement;
             string syntax = element.Attributes["syntax"].Value;
-            CompressTransferSyntax = TransferSyntax.GetTransferSyntax(syntax);   
+            CompressTransferSyntax = TransferSyntax.GetTransferSyntax(syntax);
+        	return true;
         }
 
         #region Private Methods

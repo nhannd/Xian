@@ -1411,9 +1411,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// <summary>
         /// Called by the base to initialize the processor.
         /// </summary>
-        protected virtual void Initialize(Model.WorkQueue item)
+        protected virtual bool Initialize(Model.WorkQueue item, out string failureDescription)
         {
-            
+        	failureDescription = string.Empty;
+        	return true;
         }
 
         /// <summary>
@@ -1502,12 +1503,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
             using (new WorkQueueProcessorContext(item))
             {
-                Initialize(item);
+            	string failureDescription;
+                if (!Initialize(item, out failureDescription))
+                {
+                	PostponeItem(failureDescription);
+                	return;
+                }
 
                 if (!LoadWritableStorageLocation(item))
                 {
-                    PostponeItem("Unable to find readable StorageLocation.");
-
+                    PostponeItem("Unable to find writeable StorageLocation.");
                     return;
                 }
 

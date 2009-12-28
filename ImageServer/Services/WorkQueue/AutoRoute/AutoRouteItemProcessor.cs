@@ -179,13 +179,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 
         #region Overridden Protected Method
 
-        protected override void Initialize(Model.WorkQueue item)
+		protected override bool Initialize(Model.WorkQueue item, out string failureDescription)
         {
-            base.Initialize(item);
+            if (!base.Initialize(item, out failureDescription))
+            	return false;
 
-            LoadReadableStorageLocation(item);
-            LoadUids(item);
+			if (!LoadReadableStorageLocation(item))
+			{
+				failureDescription = "Unable to find readable storage location";
+				Platform.Log(LogLevel.Warn, "Unable to find readable storage location for WorkQueue item: {0}", item.Key);
+				return false;
+			}
+
+        	LoadUids(item);
             InstanceList = new List<StorageInstance>(GetStorageInstanceList());
+        	return true;
         }
 
         public bool HasPendingItems
