@@ -38,6 +38,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
@@ -48,7 +49,8 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
         public string Path { get; set; }
         public DateTime StudyInsertTime { get; set; }
         public string StudyInstanceUid { get; set; }
-        public bool Skipped { get; set; }
+		public ServerEntityKey ServerPartitionKey { get; set; }
+		public bool Skipped { get; set; }
         public bool IsInSIQ { get; set; }
         public bool BackupFilesOnly { get; set; }
         public bool IsEmpty { get; set; }
@@ -95,7 +97,7 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
         private IList<StudyDeleteRecord> _deletedStudies;
         private BackgroundTask _worker;
         private int _foldersCount;
-        private List<StudyIntegrityQueue> SIQEntries = new List<StudyIntegrityQueue>();
+        private List<StudyIntegrityQueue> _siqEntries = new List<StudyIntegrityQueue>();
         
         public ScanResultSet ScanResultSet { get; private set; }
 
@@ -107,7 +109,7 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
             using(IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 IStudyIntegrityQueueEntityBroker broker = ctx.GetBroker<IStudyIntegrityQueueEntityBroker>();
-                SIQEntries = new List<StudyIntegrityQueue>(broker.Find(new StudyIntegrityQueueSelectCriteria()));
+                _siqEntries = new List<StudyIntegrityQueue>(broker.Find(new StudyIntegrityQueueSelectCriteria()));
             }
            
         }
@@ -132,7 +134,22 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
                 
                 DirectoryInfo[] subDirs = dir.GetDirectories();
                 _foldersCount = subDirs.Length;
-                
+
+            	string path = dir.FullName.TrimEnd(new[] {System.IO.Path.DirectorySeparatorChar});
+
+				string[] dirs = path.Split(new [] { System.IO.Path.DirectorySeparatorChar });
+
+				string partitionFolder = dirs.Length >= 2
+											? dirs[dirs.Length - 2]
+											: string.Empty;
+
+            	ServerEntityKey partitionKey = GetPartitionKey(partitionFolder);
+				if (partitionKey==null)
+				{
+					context.ReportProgress(new BackgroundTaskProgress(100, "Folder does not match a partition..."));
+					return;
+				}
+
                 foreach (DirectoryInfo subDir in subDirs)
                 {
                     if (context.CancelRequested)
@@ -142,7 +159,7 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
                   
                     try
                     {
-                        var result = ProcessDir(subDir);
+                        var result = ProcessDir(subDir, partitionKey);
                         ScanResultSet.Results.Add(result);
                     }
                     catch (Exception ex)
@@ -162,7 +179,7 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
 
         }
 
-        private ScanResultEntry ProcessDir(DirectoryInfo groupDir)
+        private ScanResultEntry ProcessDir(DirectoryInfo groupDir, ServerEntityKey partitionKey)
         {
 
             var result = new ScanResultEntry
@@ -173,7 +190,7 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
 
             if (groupDir.LastWriteTimeUtc >= Platform.Time.ToUniversalTime() - TimeSpan.FromMinutes(30))
             {
-                return new ScanResultEntry { Path = groupDir.FullName, Skipped = true };
+               // return new ScanResultEntry { Path = groupDir.FullName, Skipped = true };
             }
 
             if (CheckInSIQ(groupDir, result))
@@ -187,15 +204,16 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
             if (ContainsOnlyBackupFiles(groupDir, result))
                 return result;
 
-            result.StudyInstanceUid = FindStudyUid(groupDir);
-            
-            if (CheckIfStudyNoLongerExists(groupDir, result))
+        	result.StudyInstanceUid = FindStudyUid(groupDir);
+        	result.ServerPartitionKey = partitionKey;
+
+            if (CheckIfStudyNoLongerExists(result))
             {
                 return result;
             }
 
             Debug.Assert(result.Storage != null);
-            if (CheckIfStudyIsInWorkQueue(groupDir, result))
+            if (CheckIfStudyIsInWorkQueue(result))
                 return result;
             
             if (CheckIfStudyWasDeletedAfterward(groupDir, result))
@@ -209,7 +227,23 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
             return result;
         }
 
-        private bool CheckIfStudyIsInWorkQueue(DirectoryInfo dir, ScanResultEntry scanResult)
+		private static ServerEntityKey GetPartitionKey(string partitionFolder)
+		{
+
+			using (IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+			{
+				IServerPartitionEntityBroker broker = ctx.GetBroker<IServerPartitionEntityBroker>();
+				ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
+				criteria.PartitionFolder.EqualTo(partitionFolder);
+				ServerPartition partition = broker.FindOne(criteria);
+				if (partition != null)
+					return partition.Key;
+			}
+
+			return null;
+		}
+
+        private static bool CheckIfStudyIsInWorkQueue(ScanResultEntry scanResult)
         {
 
             using (IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
@@ -224,7 +258,7 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
             return scanResult.IsInWorkQueue;
         }
 
-        private bool CheckIfFolderIsEmpty(DirectoryInfo dir, ScanResultEntry scanResult)
+        private static bool CheckIfFolderIsEmpty(DirectoryInfo dir, ScanResultEntry scanResult)
         {
             DirectoryInfo[] subDirs = dir.GetDirectories();
             FileInfo[] files = dir.GetFiles();
@@ -253,16 +287,16 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
             return true;
         }
 
-        private bool CheckIfStudyWasInsertedAfter(DirectoryInfo dir, ScanResultEntry scanResult)
+        private static bool CheckIfStudyWasInsertedAfter(FileSystemInfo dir, ScanResultEntry scanResult)
         {
             scanResult.StudyWasResent = dir.LastWriteTimeUtc < scanResult.StudyInsertTime.ToUniversalTime();
 
             return scanResult.StudyWasResent;
         }
 
-        private bool CheckIfStudyNoLongerExists(DirectoryInfo dir, ScanResultEntry scanResult)
+        private static bool CheckIfStudyNoLongerExists(ScanResultEntry scanResult)
         {
-            StudyStorage storage = FindStudyStorage(scanResult.StudyInstanceUid);
+            StudyStorage storage = FindStudyStorage(scanResult);
 
             scanResult.StudyNoLongerExists = storage == null;
             if (storage != null)
@@ -274,7 +308,7 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
             return scanResult.StudyNoLongerExists;
         }
 
-        private bool CheckInSIQ(DirectoryInfo groupDir, ScanResultEntry scanResult)
+        private bool CheckInSIQ(FileSystemInfo groupDir, ScanResultEntry scanResult)
         {
             Guid guid = Guid.Empty;
             try
@@ -289,13 +323,14 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
             return scanResult.IsInSIQ;
         }
 
-        private StudyStorage FindStudyStorage(string uid)
+		private static StudyStorage FindStudyStorage(ScanResultEntry result)
         {
             using(IReadContext ctx= PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 IStudyStorageEntityBroker broker = ctx.GetBroker<IStudyStorageEntityBroker>();
                 StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
-                criteria.StudyInstanceUid.EqualTo(uid);
+                criteria.StudyInstanceUid.EqualTo(result.StudyInstanceUid);
+            	criteria.ServerPartitionKey.EqualTo(result.ServerPartitionKey);
                 return broker.FindOne(criteria);
             }
         }
@@ -341,7 +376,7 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
             return true;
         }
 
-        private bool CheckIfStudyWasDeletedAfterward(DirectoryInfo dir, ScanResultEntry scanResult)
+        private bool CheckIfStudyWasDeletedAfterward(FileSystemInfo dir, ScanResultEntry scanResult)
         {
             scanResult.StudyWasOnceDeleted = (null != CollectionUtils.SelectFirst(_deletedStudies,
                                                                                   record => record.StudyInstanceUid == scanResult.StudyInstanceUid && record.Timestamp.ToUniversalTime() > dir.LastWriteTimeUtc
@@ -352,7 +387,7 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
 
         private bool FindSIQByGuid(Guid guid)
         {
-            return null != SIQEntries.Find(entry => entry.Key.Key.Equals(guid));
+            return null != _siqEntries.Find(entry => entry.Key.Key.Equals(guid));
         }
 
         private static FileInfo GetFirstFile(DirectoryInfo dir)
@@ -374,7 +409,7 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
 
         private bool FindSIQByGroupID(string group)
         {
-            return null != SIQEntries.Find(row => row.GroupID != null && row.GroupID.Equals(group));
+            return null != _siqEntries.Find(row => row.GroupID != null && row.GroupID.Equals(group));
         }
 
         public void StartAsync()
