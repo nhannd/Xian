@@ -100,7 +100,9 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 				studyItemList.Add(item);
 			}
 
-			AuditHelper.LogQueryIssued(selectedServer.AETitle, selectedServer.Host, EventSource.CurrentUser, EventResult.Success);
+        	AuditHelper.LogQueryIssued(selectedServer.AETitle, selectedServer.Host, EventSource.CurrentUser,
+        	                           EventResult.Success, SopClass.StudyRootQueryRetrieveInformationModelFindUid,
+        	                           requestCollection);
 
 			return studyItemList;
         }

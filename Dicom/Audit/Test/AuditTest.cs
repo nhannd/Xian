@@ -346,14 +346,31 @@ namespace ClearCanvas.Dicom.Audit.Test
     	[Test]
         public void QueryAuditTest()
         {
+			DicomAttributeCollection query = new DicomAttributeCollection();
+    		query[DicomTags.QueryRetrieveLevel].SetStringValue("STUDY");
+			query[DicomTags.StudyInstanceUid].SetNullValue();
+			query[DicomTags.PatientId].SetNullValue();
+			query[DicomTags.AccessionNumber].SetNullValue();
+			query[DicomTags.PatientsName].SetStringValue("*W*");
+			query[DicomTags.ReferringPhysiciansName].SetNullValue();
+			query[DicomTags.StudyDate].SetNullValue();
+			query[DicomTags.StudyTime].SetNullValue();
+			query[DicomTags.StudyDescription].SetNullValue();
+			query[DicomTags.PatientsBirthDate].SetNullValue();
+			query[DicomTags.ModalitiesInStudy].SetNullValue();
+			query[DicomTags.NumberOfStudyRelatedInstances].SetNullValue();
+    		query[DicomTags.InstanceAvailability].SetNullValue();
+
         	AssociationParameters parms = new ClientAssociationParameters("CLIENT", "SERVER",
         	                                                         new IPEndPoint(new IPAddress(new byte[] {2, 2, 2, 2}),
         	                                                                       2));
 			parms.LocalEndPoint = new IPEndPoint(new IPAddress(new byte[] {1, 1, 1, 1}),
         	                                                                       1);
 
-        	QueryAuditHelper helper =
-        		new QueryAuditHelper(new DicomAuditSource("testApplication"), EventIdentificationTypeEventOutcomeIndicator.Success, parms);
+    		QueryAuditHelper helper =
+    			new QueryAuditHelper(new DicomAuditSource("testApplication"),
+    			                     EventIdentificationTypeEventOutcomeIndicator.Success, parms,
+    			                     SopClass.StudyRootQueryRetrieveInformationModelFindUid, query);
 
 			helper.AddOtherParticipant(new AuditPersonActiveParticipant("testUser","test@test","Test Name"));
         	helper.AddPatientParticipantObject(new AuditPatientParticipantObject("id1234", "Test Patient"));
@@ -371,7 +388,11 @@ namespace ClearCanvas.Dicom.Audit.Test
 
         	Assert.IsTrue(result, failure);
 
-			helper = new QueryAuditHelper(new DicomAuditSource("testApplication2","enterpriseId", AuditSourceTypeCodeEnum.EndUserInterface),EventIdentificationTypeEventOutcomeIndicator.Success, parms);
+    		helper =
+    			new QueryAuditHelper(
+    				new DicomAuditSource("testApplication2", "enterpriseId", AuditSourceTypeCodeEnum.EndUserInterface),
+    				EventIdentificationTypeEventOutcomeIndicator.Success, parms,
+    				SopClass.StudyRootQueryRetrieveInformationModelFindUid, query);
 			helper.AddStudyParticipantObject(new AuditStudyParticipantObject("1.2.3.4.5"));
 
 			output = helper.Serialize(true);

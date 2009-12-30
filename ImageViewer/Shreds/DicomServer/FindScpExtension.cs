@@ -126,7 +126,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					}
 					finally
 					{
-						AuditHelper.LogQueryReceived(association.CallingAE, GetRemoteHostName(association), EventResult.SeriousFailure);
+						AuditHelper.LogQueryReceived(association.CallingAE, GetRemoteHostName(association), EventResult.SeriousFailure,
+						                             message.AffectedSopClassUid, message.DataSet);
 					}
 				}
 
@@ -135,12 +136,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					DicomMessage finalResponse = new DicomMessage();
 					server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
 
-					AuditHelper.LogQueryReceived(association.CallingAE, GetRemoteHostName(association), EventResult.Success);
+					AuditHelper.LogQueryReceived(association.CallingAE, GetRemoteHostName(association), EventResult.Success,
+					                             message.AffectedSopClassUid, message.DataSet);
 					return true;
 				}
 				catch
 				{
-					AuditHelper.LogQueryReceived(association.CallingAE, GetRemoteHostName(association), EventResult.SeriousFailure);
+					AuditHelper.LogQueryReceived(association.CallingAE, GetRemoteHostName(association), EventResult.SeriousFailure,
+					                             message.AffectedSopClassUid, message.DataSet);
 					throw;
 				}
 			}
@@ -154,7 +157,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 			finally
 			{
-				AuditHelper.LogQueryReceived(association.CallingAE, GetRemoteHostName(association), EventResult.SeriousFailure);
+				AuditHelper.LogQueryReceived(association.CallingAE, GetRemoteHostName(association), EventResult.SeriousFailure,
+				                             message.AffectedSopClassUid, message.DataSet);
 			}
 		}
 	}

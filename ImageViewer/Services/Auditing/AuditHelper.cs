@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Net;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Audit;
+using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Audit;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 
@@ -178,7 +179,9 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		/// <param name="sourceAETitle">The application entity that issued the query.</param>
 		/// <param name="sourceHostName">The hostname of the application entity that issued the query.</param>
 		/// <param name="eventResult">The result of the operation.</param>
-		public static void LogQueryReceived(string sourceAETitle, string sourceHostName, EventResult eventResult)
+		/// <param name="sopClassUid">The SOP Class Uid of the type of DICOM Query being received.</param>
+		/// <param name="ds">The dataset containing the DICOM query received.</param>
+		public static void LogQueryReceived(string sourceAETitle, string sourceHostName, EventResult eventResult, string sopClassUid, DicomAttributeCollection ds)
 		{
 			if (!_auditingEnabled)
 				return;
@@ -186,7 +189,8 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 			try
 			{
 				QueryAuditHelper auditHelper = new QueryAuditHelper(EventSource.CurrentProcess, eventResult,
-					sourceAETitle ?? LocalAETitle, sourceHostName ?? LocalHostname, LocalAETitle, LocalHostname);
+					sourceAETitle ?? LocalAETitle, sourceHostName ?? LocalHostname, LocalAETitle, LocalHostname,
+				                                                    sopClassUid, ds);
 				Log(auditHelper);
 			}
 			catch (Exception ex)
@@ -203,7 +207,9 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		/// <param name="remoteHostName">The hostname of the application entity on which the query is taking place.</param>
 		/// <param name="eventSource">The source user or application entity which invoked the operation.</param>
 		/// <param name="eventResult">The result of the operation.</param>
-		public static void LogQueryIssued(string remoteAETitle, string remoteHostName, EventSource eventSource, EventResult eventResult)
+		/// <param name="sopClassUid">The SOP Class Uid of the type of DICOM Query being issued</param>
+		/// <param name="ds">The dataset containing the DICOM query being issued</param>
+		public static void LogQueryIssued(string remoteAETitle, string remoteHostName, EventSource eventSource, EventResult eventResult, string sopClassUid, DicomAttributeCollection ds)
 		{
 			if (!_auditingEnabled)
 				return;
@@ -211,7 +217,9 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 			try
 			{
 				QueryAuditHelper auditHelper = new QueryAuditHelper(eventSource, eventResult,
-					LocalAETitle, LocalHostname, remoteAETitle ?? LocalAETitle, remoteHostName ?? LocalHostname);
+				                                                    LocalAETitle, LocalHostname, remoteAETitle ?? LocalAETitle,
+				                                                    remoteHostName ?? LocalHostname,
+				                                                    sopClassUid, ds);
 				if (eventSource != EventSource.CurrentProcess)
 					auditHelper.AddOtherParticipant(EventSource.CurrentProcess);
 				Log(auditHelper);

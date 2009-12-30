@@ -93,7 +93,8 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 				}
 			}
 
-			AuditHelper.LogQueryIssued(null, null, EventSource.CurrentUser, EventResult.Success);
+        	AuditHelper.LogQueryIssued(null, null, EventSource.CurrentUser, EventResult.Success,
+        	                           SopClass.StudyRootQueryRetrieveInformationModelFindUid, collection);
 
             return studyItemList;
         }

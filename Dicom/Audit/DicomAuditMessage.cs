@@ -320,6 +320,9 @@ namespace ClearCanvas.Dicom.Audit
 			if (!string.IsNullOrEmpty(item.ParticipantObjectName))
 				Item = item.ParticipantObjectName;
 
+			if (item.ParticipantObjectQuery != null)
+				Item = item.ParticipantObjectQuery;
+
 			ParticipantObjectDescriptionType description = new ParticipantObjectDescriptionType();
 			if (!String.IsNullOrEmpty(item.AccessionNumber))
 				description.Accession = new ParticipantObjectDescriptionTypeAccession[] { new ParticipantObjectDescriptionTypeAccession(item.AccessionNumber) };

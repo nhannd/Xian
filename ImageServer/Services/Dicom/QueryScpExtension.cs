@@ -88,15 +88,19 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// </summary>
         public QueryScpExtension()
         {
-            SupportedSop sop = new SupportedSop();
-            sop.SopClass = SopClass.PatientRootQueryRetrieveInformationModelFind;
-            sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
+            SupportedSop sop = new SupportedSop
+                               	{
+                               		SopClass = SopClass.PatientRootQueryRetrieveInformationModelFind
+                               	};
+			sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
             sop.SyntaxList.Add(TransferSyntax.ImplicitVrLittleEndian);
             _list.Add(sop);
 
-            sop = new SupportedSop();
-            sop.SopClass = SopClass.StudyRootQueryRetrieveInformationModelFind;
-            sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
+            sop = new SupportedSop
+                  	{
+                  		SopClass = SopClass.StudyRootQueryRetrieveInformationModelFind
+                  	};
+			sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
             sop.SyntaxList.Add(TransferSyntax.ImplicitVrLittleEndian);
             _list.Add(sop);
         }
@@ -110,10 +114,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 		/// </summary>
 		/// <param name="parms"></param>
 		/// <param name="outcome"></param>
-		private static void AuditLog(AssociationParameters parms, EventIdentificationTypeEventOutcomeIndicator outcome)
+		/// <param name="msg">The query message to be audited</param>
+		private static void AuditLog(AssociationParameters parms, EventIdentificationTypeEventOutcomeIndicator outcome, DicomMessage msg)
 		{
 			QueryAuditHelper helper = new QueryAuditHelper(ServerPlatform.AuditSource,
-			                                               outcome, parms);
+			                                               outcome, parms, msg.AffectedSopClassUid, msg.DataSet);
 			ServerPlatform.LogAuditMessage(helper);
 		}
 
@@ -123,24 +128,21 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// </summary>
         /// <param name="read">The connection to use to read the values.</param>
         /// <param name="response">The message to add the value into.</param>
-        /// <param name="row">The <see cref="Study"/> entity to find the values for.</param>
-        private static void LoadModalitiesInStudy(IPersistenceContext read, DicomMessage response, Study row)
+        /// <param name="key">The <see cref="ServerEntityKey"/> for the <see cref="Study"/>.</param>
+        private static void LoadModalitiesInStudy(IPersistenceContext read, DicomMessageBase response, ServerEntityKey key)
         {
             IQueryModalitiesInStudy select = read.GetBroker<IQueryModalitiesInStudy>();
 
-            ModalitiesInStudyQueryParameters parms = new ModalitiesInStudyQueryParameters();
+            ModalitiesInStudyQueryParameters parms = new ModalitiesInStudyQueryParameters {StudyKey = key};
 
-            parms.StudyKey = row.GetKey();
-
-            IList<Series> list = select.Find(parms);
+        	IList<Series> list = select.Find(parms);
 
             string value = "";
             foreach (Series series in list)
             {
-                if (value.Length == 0)
-                    value = series.Modality;
-                else
-                    value = String.Format("{0}\\{1}", value, series.Modality);
+                value = value.Length == 0 
+					? series.Modality 
+					: String.Format("{0}\\{1}", value, series.Modality);
             }
             response.DataSet[DicomTags.ModalitiesInStudy].SetStringValue(value);
         }
@@ -152,7 +154,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="read">The connection to use to read the values.</param>
         /// <param name="response">The message to add the values into.</param>
         /// <param name="row">The <see cref="Series"/> entity to load the related <see cref="RequestAttributes"/> entity for.</param>
-        private static void LoadRequestAttributes(IPersistenceContext read, DicomMessage response, Series row)
+        private static void LoadRequestAttributes(IPersistenceContext read, DicomMessageBase response, Series row)
         {
 			IRequestAttributesEntityBroker select = read.GetBroker<IRequestAttributesEntityBroker>();
 
@@ -211,7 +213,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="response">The response message to populate with results.</param>
         /// <param name="tagList">The list of tags to populate.</param>
         /// <param name="row">The <see cref="Patient"/> table to populate from.</param>
-        private void PopulatePatient(DicomMessage response, IEnumerable<uint> tagList, Patient row)
+        private void PopulatePatient(DicomMessageBase response, IEnumerable<uint> tagList, Patient row)
         {
             DicomAttributeCollection dataSet = response.DataSet;
 
@@ -298,7 +300,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="tagList"></param>
 	    /// <param name="row">The <see cref="Study"/> table to populate the response from.</param>
 	    /// <param name="availability">Instance availability string.</param>
-        private void PopulateStudy(IReadContext read, DicomMessage response, IList<uint> tagList, Study row, string availability)
+        private void PopulateStudy(IPersistenceContext read, DicomMessageBase response, IEnumerable<uint> tagList, Study row, string availability)
         {
             DicomAttributeCollection dataSet = response.DataSet;
 
@@ -361,7 +363,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                                 row.NumberOfStudyRelatedInstances);
                             break;
                         case DicomTags.ModalitiesInStudy:
-                            LoadModalitiesInStudy(read, response, row);
+                            LoadModalitiesInStudy(read, response, row.Key);
                             break;
                         case DicomTags.QueryRetrieveLevel:
                             dataSet[DicomTags.QueryRetrieveLevel].SetStringValue("STUDY");
@@ -394,7 +396,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="response"></param>
         /// <param name="tagList"></param>
         /// <param name="row">The <see cref="Series"/> table to populate the row from.</param>
-        private void PopulateSeries(IReadContext read, DicomMessage request, DicomMessage response, IList<uint> tagList,
+        private void PopulateSeries(IPersistenceContext read, DicomMessageBase request, DicomMessageBase response, IEnumerable<uint> tagList,
                                     Series row)
         {
             DicomAttributeCollection dataSet = response.DataSet;
@@ -739,7 +741,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 												 DicomStatuses.Success);
 						AuditLog(server.AssociationParams,
-								 EventIdentificationTypeEventOutcomeIndicator.Success);
+								 EventIdentificationTypeEventOutcomeIndicator.Success, message);
 					}
 					else
 					{
@@ -748,7 +750,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 						                         DicomStatuses.QueryRetrieveUnableToProcess);
 						AuditLog(server.AssociationParams,
-								 EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated);
+								 EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated, message);
 					}
                 	return;
                 }
@@ -756,7 +758,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             DicomMessage finalResponse = new DicomMessage();
             server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
-			AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success);
+			AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success, message);
         	return;
         }
 
@@ -907,7 +909,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						DicomMessage errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 												 DicomStatuses.Cancel);
-						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success);
+						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success, message);
         
 					}
 					else if (DicomSettings.Default.MaxQueryResponses != -1
@@ -917,7 +919,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						DicomMessage errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 												 DicomStatuses.Success);
-						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success);
+						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success, message);
         
 					}
 					else
@@ -927,7 +929,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 						                         DicomStatuses.ProcessingFailure);
 						AuditLog(server.AssociationParams,
-						         EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated);
+								 EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated, message);
 
 					}
                 	return;
@@ -937,7 +939,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             DicomMessage finalResponse = new DicomMessage();
             server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
 
-			AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success);
+			AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success, message);
         
         	return;
         }
@@ -1038,7 +1040,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						DicomMessage errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 												 DicomStatuses.Cancel);
-						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success);
+						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success, message);
         
 					}
 					else if (DicomSettings.Default.MaxQueryResponses != -1
@@ -1049,7 +1051,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						DicomMessage errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 												 DicomStatuses.Success);
-						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success);
+						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success, message);
         
 					}
 					else
@@ -1058,7 +1060,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						DicomMessage errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 						                         DicomStatuses.ProcessingFailure);
-						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated);
+						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated, message);
         
 					}
                 	return;
@@ -1067,7 +1069,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 DicomMessage finalResponse = new DicomMessage();
                 server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
 
-				AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success);
+				AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success, message);
         
             	return;
             }
@@ -1080,7 +1082,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="matchTagList"></param>
         /// <param name="instanceStream"></param>
         /// <returns></returns>
-        private static bool CompareInstanceMatch(DicomMessage queryMessage, IEnumerable<uint> matchTagList,
+        private static bool CompareInstanceMatch(DicomMessageBase queryMessage, IEnumerable<uint> matchTagList,
                                                  InstanceXml instanceStream)
         {
             foreach (uint tag in matchTagList)
@@ -1145,7 +1147,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 				server.SendCFindResponse(presentationID, message.MessageId, failureResponse,
                                          DicomStatuses.QueryRetrieveUnableToProcess);
 
-				AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated);
+				AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated, message);
 
             	return;
             }
@@ -1157,7 +1159,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 			if (seriesXml == null)
 			{
 				server.SendCFindResponse(presentationID, message.MessageId, new DicomMessage(), DicomStatuses.QueryRetrieveUnableToProcess);
-				AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated);
+				AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated, message);
 				return;
 			}
 
@@ -1183,7 +1185,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 												 DicomStatuses.Cancel);
 
-						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success);
+						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success, message);
 						return;
 					}
                 	resultCount++;
@@ -1209,7 +1211,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             DicomMessage finalResponse = new DicomMessage();
             server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
 
-			AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success);
+			AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success, message);
 
         	return;
         }

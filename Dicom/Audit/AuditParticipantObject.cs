@@ -31,7 +31,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.IO;
 using ClearCanvas.Dicom.Network.Scu;
 
 namespace ClearCanvas.Dicom.Audit
@@ -117,7 +119,7 @@ namespace ClearCanvas.Dicom.Audit
 		protected string _participantObjectSensitivity = null;
 		protected string _participantObjectId = null;
 		protected string _participantObjectName = null;
-		protected string _participantObjectQuery = null;
+		protected byte[] _participantObjectQuery = null;
 		protected string _participantObjectDetail = null;
 		protected CodedValueType _typeCodeCodedValue;
 		protected Dictionary<string,AuditSopClass> _sopClassList = new Dictionary<string, AuditSopClass>();
@@ -195,6 +197,7 @@ namespace ClearCanvas.Dicom.Audit
 		public string ParticipantObjectId
 		{
 			get { return _participantObjectId; }
+			set { _participantObjectId = value; }
 		}
 
 		/// <summary>
@@ -209,9 +212,10 @@ namespace ClearCanvas.Dicom.Audit
 		/// <summary>
 		///    The actual query for a query-type participant object.
 		/// </summary>
-		public string ParticipantObjectQuery
+		public byte[] ParticipantObjectQuery
 		{
 			get { return _participantObjectQuery; }
+			set { _participantObjectQuery = value; }
 		}
 
 		/// <summary>
@@ -367,6 +371,27 @@ namespace ClearCanvas.Dicom.Audit
 			ParticipantObjectIdTypeCode = objectIdType;
 			_participantObjectId = participantObjectId;
 			_participantObjectName = participantObjectName;
+		}
+	}
+
+	public class AuditQueryMessageParticipantObject : AuditParticipantObject
+	{
+		public AuditQueryMessageParticipantObject(string sopClassUid, DicomAttributeCollection msg)
+		{
+			ParticipantObjectTypeCode = ParticipantObjectTypeCodeEnum.SystemObject;
+			ParticipantObjectTypeCodeRole = ParticipantObjectTypeCodeRoleEnum.Report;
+			ParticipantObjectIdTypeCodedValue = CodedValueType.ClassUID;
+			ParticipantObjectId = sopClassUid;
+			ParticipantObjectDetail = TransferSyntax.ExplicitVrLittleEndianUid;
+
+			MemoryStream ms = new MemoryStream();
+			DicomStreamWriter writer = new DicomStreamWriter(ms)
+			                           	{
+			                           		TransferSyntax = TransferSyntax.ExplicitVrLittleEndian
+			                           	};
+			writer.Write(TransferSyntax.ExplicitVrLittleEndian, msg, DicomWriteOptions.Default);
+
+			ParticipantObjectQuery = ms.ToArray();
 		}
 	}
 }
