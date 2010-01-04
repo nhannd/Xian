@@ -88,6 +88,14 @@ namespace ClearCanvas.Desktop.Validation
             _rules.Add(rule);
         }
 
+		/// <summary>
+		/// Adds rules to the set.
+		/// </summary>
+		public void AddRange(IEnumerable<IValidationRule> rules)
+		{
+			_rules.AddRange(rules);
+		}
+
     	/// <summary>
     	/// Removes a rule from the set.
     	/// </summary>

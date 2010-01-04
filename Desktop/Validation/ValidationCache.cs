@@ -31,8 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Common.Configuration;
-using ClearCanvas.Common;
 using System.Reflection;
 using ClearCanvas.Common.Utilities;
 using System.Xml;
@@ -42,6 +40,9 @@ namespace ClearCanvas.Desktop.Validation
 	/// <summary>
 	/// Caches attribute and XML-based validation rules for application components.
 	/// </summary>
+	/// <remarks>
+	/// All operations on this class are safe for use by multiple threads.
+	/// </remarks>
 	public class ValidationCache
 	{
 		private static readonly ValidationCache _instance = new ValidationCache();
@@ -67,8 +68,6 @@ namespace ClearCanvas.Desktop.Validation
 		/// Retrieves rules from cache, or builds rules if not cached.
 		/// </summary>
 		/// <param name="applicationComponentClass"></param>
-		/// <param name="cache"></param>
-		/// <param name="buildCallback"></param>
 		/// <returns></returns>
 		public IList<IValidationRule> GetRules(Type applicationComponentClass)
 		{
@@ -118,7 +117,7 @@ namespace ClearCanvas.Desktop.Validation
 
 		#region Helpers
 
-		private List<IValidationRule> ProcessCustomRules(Type applicationComponentClass)
+		private static List<IValidationRule> ProcessCustomRules(Type applicationComponentClass)
 		{
 			// if not supported, there are no custom rules
 			if (!XmlValidationManager.Instance.IsSupported)

@@ -9,6 +9,9 @@ using System.IO;
 
 namespace ClearCanvas.Desktop.Validation
 {
+	/// <summary>
+	/// Manages an XML document containing custom validation rules.
+	/// </summary>
 	public class XmlValidationManager
 	{
 		private static readonly XmlValidationManager _instance = new XmlValidationManager();
@@ -18,14 +21,14 @@ namespace ClearCanvas.Desktop.Validation
 		/// </summary>
 		public static XmlValidationManager Instance { get { return _instance; } }
 
-		const string _documentName = "ClearCanvas.Desktop.Validation.CustomRules.xml";
-		const string tagValidation = "validation";
-		const string tagValidationRules = "validation-rules";
-		const string tagValidationRule = "validation-rule";
-		const string attrComponentClass = "componentClass";
+		const string DocumentName = "ClearCanvas.Desktop.Validation.CustomRules.xml";
+		const string TagValidation = "validation";
+		const string TagValidationRules = "validation-rules";
+		const string TagValidationRule = "validation-rule";
+		const string AttrComponentClass = "componentClass";
 
+		private readonly IConfigurationStore _configStore;
 		private XmlDocument _rulesDoc;
-		private IConfigurationStore _configStore;
 
 		/// <summary>
 		/// Constructor
@@ -44,11 +47,19 @@ namespace ClearCanvas.Desktop.Validation
 
 		#region Public API
 
+		/// <summary>
+		/// Gets a value indicating whether custom validation rules are supported.
+		/// </summary>
 		public bool IsSupported
 		{
 			get { return _configStore != null; }
 		}
 
+		/// <summary>
+		/// Gets the custom rules for the specified application component class, as a set of XML elements where each element represents a rule.
+		/// </summary>
+		/// <param name="componentClass"></param>
+		/// <returns></returns>
 		public IEnumerable<XmlElement> GetRules(Type componentClass)
 		{
 			CheckSupported();
@@ -61,29 +72,34 @@ namespace ClearCanvas.Desktop.Validation
 				// don't allow modification of our document
 				var copy = (XmlElement)rulesNode.CloneNode(true);
 
-				return new TypeSafeEnumerableWrapper<XmlElement>(copy.GetElementsByTagName(tagValidationRule));
+				return new TypeSafeEnumerableWrapper<XmlElement>(copy.GetElementsByTagName(TagValidationRule));
 			}
 
 			// if not exist, return an empty list
 			return new XmlElement[0];
 		}
 
+		/// <summary>
+		/// Sets the custom rules for the specified application component class.  The rules are child elements of the specified parent node.
+		/// </summary>
+		/// <param name="componentClass"></param>
+		/// <param name="parentNode"></param>
 		public void SetRules(Type componentClass, XmlElement parentNode)
 		{
 			CheckSupported();
 			InitializeOnce();
 
 			// find node for specified class
-			var rulesNode = FindRulesNode(componentClass);
-
 			// if not exist, create
-			if (rulesNode == null)
-				rulesNode = CreateRulesNode(componentClass);
+			var rulesNode = FindRulesNode(componentClass) ?? CreateRulesNode(componentClass);
 
 			// set inner XML from specified node
 			rulesNode.InnerXml = parentNode.InnerXml;
 		}
 
+		/// <summary>
+		/// Saves all changes made to the document via <see cref="SetRules"/>.
+		/// </summary>
 		public void Save()
 		{
 			CheckSupported();
@@ -91,13 +107,12 @@ namespace ClearCanvas.Desktop.Validation
 			if (!Initialized)
 				return;
 
-			StringBuilder sb = new StringBuilder();
-			XmlTextWriter writer = new XmlTextWriter(new StringWriter(sb));
-			writer.Formatting = System.Xml.Formatting.Indented;
+			var sb = new StringBuilder();
+			var writer = new XmlTextWriter(new StringWriter(sb)) {Formatting = Formatting.Indented};
 			_rulesDoc.Save(writer);
 
 			_configStore.PutDocument(
-				_documentName,
+				DocumentName,
 				this.GetType().Assembly.GetName().Version,
 				null,
 				null,
@@ -117,12 +132,11 @@ namespace ClearCanvas.Desktop.Validation
 			if (Initialized)
 				return;
 
-			_rulesDoc = new XmlDocument();
-			_rulesDoc.PreserveWhitespace = true;
+			_rulesDoc = new XmlDocument {PreserveWhitespace = true};
 			try
 			{
 				using (var reader = _configStore.GetDocument(
-					_documentName, this.GetType().Assembly.GetName().Version, null, null))
+					DocumentName, this.GetType().Assembly.GetName().Version, null, null))
 				{
 					_rulesDoc.Load(reader);
 				}
@@ -134,7 +148,7 @@ namespace ClearCanvas.Desktop.Validation
 				Platform.Log(LogLevel.Debug, e);
 
 				// create an empty document
-				_rulesDoc.LoadXml(string.Format("<{0}/>", tagValidation));
+				_rulesDoc.LoadXml(string.Format("<{0}/>", TagValidation));
 			}
 		}
 
@@ -147,13 +161,13 @@ namespace ClearCanvas.Desktop.Validation
 		private XmlElement FindRulesNode(Type componentClass)
 		{
 			return (XmlElement)_rulesDoc.SelectSingleNode(
-				string.Format("/{0}/{1}[@{2}='{3}']", tagValidation, tagValidationRules, attrComponentClass, componentClass.FullName));
+				string.Format("/{0}/{1}[@{2}='{3}']", TagValidation, TagValidationRules, AttrComponentClass, componentClass.FullName));
 		}
 
 		private XmlElement CreateRulesNode(Type componentClass)
 		{
-			var rulesNode = _rulesDoc.CreateElement(tagValidationRules);
-			rulesNode.SetAttribute(attrComponentClass, componentClass.FullName);
+			var rulesNode = _rulesDoc.CreateElement(TagValidationRules);
+			rulesNode.SetAttribute(AttrComponentClass, componentClass.FullName);
 			_rulesDoc.DocumentElement.AppendChild(rulesNode);
 			return rulesNode;
 		}
