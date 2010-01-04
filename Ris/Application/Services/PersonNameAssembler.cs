@@ -58,12 +58,17 @@ namespace ClearCanvas.Ris.Application.Services
 
         public void UpdatePersonName(PersonNameDetail detail, PersonName personName)
         {
-            personName.FamilyName = detail.FamilyName;
-            personName.GivenName = detail.GivenName;
-            personName.MiddleName = detail.MiddleName;
-            personName.Prefix = detail.Prefix;
-            personName.Suffix = detail.Suffix;
-            personName.Degree = detail.Degree;
-        }    
+            personName.FamilyName = TrimDetail(detail.FamilyName);
+            personName.GivenName = TrimDetail(detail.GivenName);
+            personName.MiddleName = TrimDetail(detail.MiddleName);
+            personName.Prefix = TrimDetail(detail.Prefix);
+            personName.Suffix = TrimDetail(detail.Suffix);
+            personName.Degree = TrimDetail(detail.Degree);
+        }
+
+		private static string TrimDetail(string detail)
+		{
+			return string.IsNullOrEmpty(detail) ? detail : detail.Trim();
+		}
     }
 }
