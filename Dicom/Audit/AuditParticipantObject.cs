@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.IO;
 using ClearCanvas.Dicom.Network.Scu;
@@ -120,7 +121,8 @@ namespace ClearCanvas.Dicom.Audit
 		protected string _participantObjectId = null;
 		protected string _participantObjectName = null;
 		protected byte[] _participantObjectQuery = null;
-		protected string _participantObjectDetail = null;
+		protected TypeValuePairType _participantObjectDetail = null;
+		protected string _participantObjectDetailString = null;
 		protected CodedValueType _typeCodeCodedValue;
 		protected Dictionary<string,AuditSopClass> _sopClassList = new Dictionary<string, AuditSopClass>();
 		protected string _accession = null;
@@ -227,10 +229,16 @@ namespace ClearCanvas.Dicom.Audit
 		/// Used as defined in RFC 3881.  DICOM does not specify any additional use for this attribute.
 		/// Note: The value field is base64 encoded, making this attribute suitable for conveying binary data.
 		/// </remarks>
-		public string ParticipantObjectDetail
+		public TypeValuePairType ParticipantObjectDetail
 		{
 			get { return _participantObjectDetail; }
 			set { _participantObjectDetail = value; }
+		}
+
+		public string ParticipantObjectDetailString
+		{
+			get { return _participantObjectDetailString; }
+			set { _participantObjectDetailString = value; }
 		}
 
 		public string ParticipantObjectDescription
@@ -382,7 +390,11 @@ namespace ClearCanvas.Dicom.Audit
 			ParticipantObjectTypeCodeRole = ParticipantObjectTypeCodeRoleEnum.Report;
 			ParticipantObjectIdTypeCodedValue = CodedValueType.ClassUID;
 			ParticipantObjectId = sopClassUid;
-			ParticipantObjectDetail = TransferSyntax.ExplicitVrLittleEndianUid;
+			ParticipantObjectDetail = new TypeValuePairType()
+			                          	{
+			                          		type = "TransferSyntax",
+			                          		value = System.Text.Encoding.ASCII.GetBytes(TransferSyntax.ExplicitVrLittleEndianUid)
+			                          	};
 
 			MemoryStream ms = new MemoryStream();
 			DicomStreamWriter writer = new DicomStreamWriter(ms)
@@ -392,6 +404,56 @@ namespace ClearCanvas.Dicom.Audit
 			writer.Write(TransferSyntax.ExplicitVrLittleEndian, msg, DicomWriteOptions.Default);
 
 			ParticipantObjectQuery = ms.ToArray();
+
+			ParticipantObjectDetailString = CreateDetailsString(msg);
+		}
+
+		public AuditQueryMessageParticipantObject(string queryParameters)
+		{
+			ParticipantObjectTypeCode = ParticipantObjectTypeCodeEnum.SystemObject;
+			ParticipantObjectTypeCodeRole = ParticipantObjectTypeCodeRoleEnum.Report;
+			ParticipantObjectIdTypeCode = ParticipantObjectIdTypeCodeEnum.SearchCriteria;
+			ParticipantObjectDetailString = queryParameters;
+
+		}
+
+		private static string CreateDetailsString(IEnumerable<DicomAttribute> msg)
+		{
+			StringBuilder sb = new StringBuilder();
+			foreach (DicomAttribute item in msg)
+			{
+				if (item.Count == 0) continue;
+
+				if (item.IsEmpty || item.IsNull) continue;
+
+				if (item.Tag.VR.IsTextVR)
+				{
+					if (item.Tag.VR == DicomVr.UIvr)
+					{
+						DicomUid uid;
+						bool ok = item.TryGetUid(0, out uid);
+
+						if (ok && uid.Type != UidType.Unknown)
+						{
+							sb.AppendFormat("{0}={1};", item.Tag.VariableName, uid.Description);
+						}
+						else
+						{
+							sb.AppendFormat("{0}={1};", item.Tag.VariableName, item);
+						}
+					}
+					else
+					{
+						sb.AppendFormat("{0}={1};", item.Tag.VariableName, item);
+					}
+				}
+				else
+				{
+					sb.AppendFormat("{0}={1};", item.Tag.VariableName, item);
+				}
+			}
+
+			return sb.ToString();
 		}
 	}
 }

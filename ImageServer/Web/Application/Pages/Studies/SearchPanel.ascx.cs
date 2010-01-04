@@ -31,11 +31,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using AjaxControlToolkit;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.Audit;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -44,6 +47,7 @@ using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
+using ClearCanvas.ImageServer.Web.Common.Security;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
 
@@ -295,7 +299,45 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             } else
             {
                 StudyListGridView.Refresh();    
-            }            
+            }
+        	StringBuilder sb = new StringBuilder();
+			if(!String.IsNullOrEmpty(PatientId.Text))
+				sb.AppendFormat("PatientId={0};", PatientId.Text);
+            if(!String.IsNullOrEmpty(PatientName.Text))
+				sb.AppendFormat("PatientsName={0};", PatientName.Text);
+            if(!String.IsNullOrEmpty(AccessionNumber.Text))
+				sb.AppendFormat("AccessionNumber={0};", AccessionNumber.Text);
+            if(!String.IsNullOrEmpty(ToStudyDate.Text)||!String.IsNullOrEmpty(FromStudyDate.Text))
+				sb.AppendFormat("AccessionNumber={0}-{1};", FromStudyDate.Text, ToStudyDate.Text);
+            if(!String.IsNullOrEmpty(StudyDescription.Text))
+				sb.AppendFormat("StudyDescription={0};", StudyDescription.Text);
+			if (ModalityListBox.SelectedIndex < 0)
+			{
+				bool first = true;
+				foreach (ListItem item in ModalityListBox.Items)
+				{
+					if (!item.Selected) continue;
+
+					if (first)
+					{
+						sb.AppendFormat("ModalitiesInStudy={0}", item.Value);
+						first = false;
+					}
+					else
+					{
+						sb.AppendFormat(",{0}", item.Value);
+					}
+				}
+				if (!first)
+					sb.Append(';');
+			}
+
+        	QueryAuditHelper helper = new QueryAuditHelper(ServerPlatform.AuditSource, EventIdentificationTypeEventOutcomeIndicator.Success,
+				new AuditPersonActiveParticipant(SessionManager.Current.Credentials.UserName,
+											 null,
+											 SessionManager.Current.Credentials.DisplayName),
+				ServerPartition.AeTitle,ServerPlatform.HostId,sb.ToString());
+			ServerPlatform.LogAuditMessage(helper);
         }
         
 		protected void RestoreStudyButton_Click(object sender, ImageClickEventArgs e)

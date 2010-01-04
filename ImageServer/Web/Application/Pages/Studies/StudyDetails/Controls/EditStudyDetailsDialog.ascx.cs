@@ -357,7 +357,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 item => String.Format("Tag=\"{0}\" Value=\"{1}\"", item.DicomTag.Name, item.Value)
                 );
 
-            participant.ParticipantObjectDetail = updateDescription;
+            participant.ParticipantObjectDetailString = updateDescription;
             helper.AddStudyParticipantObject(participant);
             ServerPlatform.LogAuditMessage(helper);
         }

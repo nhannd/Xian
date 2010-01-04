@@ -309,9 +309,12 @@ namespace ClearCanvas.Dicom.Audit
 					new ParticipantObjectIdentificationTypeParticipantObjectIDTypeCode(item.ParticipantObjectIdTypeCodedValue);
 			}
 
-			if (!string.IsNullOrEmpty(item.ParticipantObjectDetail))
+			if (item.ParticipantObjectDetail != null)
+				ParticipantObjectDetail = new[] {item.ParticipantObjectDetail};
+
+			if (!string.IsNullOrEmpty(item.ParticipantObjectDetailString))
 			{
-				ParticipantObjectDetailString = new string[] {item.ParticipantObjectDetail};
+				ParticipantObjectDetailString = new[] {item.ParticipantObjectDetailString};
 			}
 
 			if (!string.IsNullOrEmpty(item.ParticipantObjectId))
@@ -325,9 +328,9 @@ namespace ClearCanvas.Dicom.Audit
 
 			ParticipantObjectDescriptionType description = new ParticipantObjectDescriptionType();
 			if (!String.IsNullOrEmpty(item.AccessionNumber))
-				description.Accession = new ParticipantObjectDescriptionTypeAccession[] { new ParticipantObjectDescriptionTypeAccession(item.AccessionNumber) };
+				description.Accession = new[] { new ParticipantObjectDescriptionTypeAccession(item.AccessionNumber) };
 			if (!String.IsNullOrEmpty(item.MppsUid))
-				description.MPPS = new ParticipantObjectDescriptionTypeMPPS[] { new ParticipantObjectDescriptionTypeMPPS(item.MppsUid) };
+				description.MPPS = new[] { new ParticipantObjectDescriptionTypeMPPS(item.MppsUid) };
 
 			if (item.SopClassDictionary != null && item.SopClassDictionary.Count > 0)
 			{

@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Net;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scu;
@@ -68,6 +69,39 @@ namespace ClearCanvas.Dicom.Audit
 	/// </remarks>
 	public class QueryAuditHelper : DicomAuditHelper
 	{
+		public QueryAuditHelper(DicomAuditSource auditSource,
+	EventIdentificationTypeEventOutcomeIndicator outcome,
+	AuditActiveParticipant sourceUser, string destinationAE, string destinationHost, string queryParameters)
+			: base("Query")
+		{
+			AuditMessage.EventIdentification = new EventIdentificationType
+			{
+				EventID = CodedValueType.Query,
+				EventActionCode = EventIdentificationTypeEventActionCode.E,
+				EventActionCodeSpecified = true,
+				EventDateTime = Platform.Time.ToUniversalTime(),
+				EventOutcomeIndicator = outcome
+			};
+
+			InternalAddAuditSource(auditSource);
+
+			InternalAddActiveParticipant(sourceUser);
+
+			IPAddress x;
+			_participantList.Add(new AuditMessageActiveParticipant(CodedValueType.Destination, "AETITLE=" + destinationAE, null,
+			                                                       null,
+			                                                       destinationHost,
+			                                                       IPAddress.TryParse(destinationHost, out x)
+			                                                       	? NetworkAccessPointTypeEnum.IpAddress
+			                                                       	: NetworkAccessPointTypeEnum.MachineName, null));
+
+			AuditQueryMessageParticipantObject o =
+				new AuditQueryMessageParticipantObject(queryParameters);
+
+			InternalAddParticipantObject("Query", o);
+			
+		}
+
 		public QueryAuditHelper(DicomAuditSource auditSource,
 			EventIdentificationTypeEventOutcomeIndicator outcome,
 			string sourceAE, string sourceHost, string destinationAE, string destinationHost, string sopClassUid, DicomAttributeCollection msg)
