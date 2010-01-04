@@ -148,8 +148,14 @@ namespace ClearCanvas.Enterprise.Common.Test
 			DeserializeHelper("1234567890", "<Tag>1234567890</Tag>");
 
 			// Unusual characters
-			SerializeHelper(@"`~!@#$%^*()-_=+[{]}\|;:',./?", @"<Tag>`~!@#$%^*()-_=+[{]}\|;:',./?</Tag>");
-			DeserializeHelper(@"`~!@#$%^*()-_=+[{]}\|;:',./?", @"<Tag>`~!@#$%^*()-_=+[{]}\|;:',./?</Tag>");
+			SerializeHelper(@"`~!@#$%^*()-_=+[{]}\|;:,./?", @"<Tag>`~!@#$%^*()-_=+[{]}\|;:,./?</Tag>");
+			DeserializeHelper(@"`~!@#$%^*()-_=+[{]}\|;:,./?", @"<Tag>`~!@#$%^*()-_=+[{]}\|;:,./?</Tag>");
+
+			// Single and double quotes
+			SerializeHelper("''", @"<Tag>''</Tag>");
+			DeserializeHelper("''", @"<Tag>''</Tag>");
+			SerializeHelper(@"""", @"<Tag>""</Tag>");
+			DeserializeHelper(@"""", @"<Tag>""</Tag>");
 
 			// Escaped characters
 			SerializeHelper(@"&<>", @"<Tag>&amp;&lt;&gt;</Tag>");
@@ -228,12 +234,15 @@ namespace ClearCanvas.Enterprise.Common.Test
 			SerializeHelper(0.001, "<Tag>0.001</Tag>");
 			DeserializeHelper(0.001, "<Tag>0.001</Tag>");
 
+			// Scientific notations.  Not that the serialized is always capitalized and padded.  i.e. E-08 rather than E-8
+			// Make sure the lower case and e-8 and e-08 can all be deserialized.
 			SerializeHelper(0.000000015, "<Tag>1.5E-08</Tag>");
-			DeserializeHelper(0.000000015, "<Tag>1.5E-08</Tag>");
-	
 			SerializeHelper(1.5E-08, "<Tag>1.5E-08</Tag>");
 			SerializeHelper(15E-09, "<Tag>1.5E-08</Tag>");
+			DeserializeHelper(0.000000015, "<Tag>1.5E-08</Tag>");
 			DeserializeHelper(1.5E-8, "<Tag>1.5E-08</Tag>");
+			DeserializeHelper(1.5E-8, "<Tag>1.5e-8</Tag>");
+			DeserializeHelper(1.5E-8, "<Tag>1.5e-08</Tag>");
 		}
 
 		[Test]
@@ -286,51 +295,49 @@ namespace ClearCanvas.Enterprise.Common.Test
 		[Test]
 		public void Test_List()
 		{
-			var stringList = new List<string>();
-			SerializeHelper(stringList, "<Tag array=\"true\" />");
-			stringList.Add("1");
+			var emptyList = new List<object>();
+			SerializeHelper(emptyList, "<Tag array=\"true\" />");
+			DeserializeHelper(emptyList, "<Tag array=\"true\" />");
+			DeserializeHelper(emptyList, "<Tag array=\"true\"></Tag>");
+
+			var stringList = new List<string> {"1"};
 			SerializeHelper(stringList, "<Tag array=\"true\">\r\n  <item>1</item>\r\n</Tag>");
 			DeserializeHelper(stringList, "<Tag array=\"true\">\r\n  <item>1</item>\r\n</Tag>");
+			DeserializeHelper(stringList, "<Tag array=\"true\"><item>1</item></Tag>");
 
-			var intList = new List<int>();
-			SerializeHelper(intList, "<Tag array=\"true\" />");
-			DeserializeHelper(intList, "<Tag array=\"true\" />");
-			intList.Add(1);
+			var intList = new List<int> {1};
 			SerializeHelper(intList, "<Tag array=\"true\">\r\n  <item>1</item>\r\n</Tag>");
 			DeserializeHelper(intList, "<Tag array=\"true\">\r\n  <item>1</item>\r\n</Tag>");
+			DeserializeHelper(intList, "<Tag array=\"true\"><item>1</item></Tag>");
 
-			var doubleList = new List<double>();
-			SerializeHelper(doubleList, "<Tag array=\"true\" />");
-			DeserializeHelper(doubleList, "<Tag array=\"true\" />");
-			doubleList.Add(1.0);
+			var doubleList = new List<double> {1.0};
 			SerializeHelper(doubleList, "<Tag array=\"true\">\r\n  <item>1</item>\r\n</Tag>");
 			DeserializeHelper(doubleList, "<Tag array=\"true\">\r\n  <item>1</item>\r\n</Tag>");
+			DeserializeHelper(doubleList, "<Tag array=\"true\"><item>1</item></Tag>");
 
-			var boolList = new List<bool>();
-			SerializeHelper(boolList, "<Tag array=\"true\" />");
-			DeserializeHelper(boolList, "<Tag array=\"true\" />");
-			boolList.Add(true);
-			boolList.Add(false);
+			var boolList = new List<bool> {true, false};
 			SerializeHelper(boolList, "<Tag array=\"true\">\r\n  <item>true</item>\r\n  <item>false</item>\r\n</Tag>");
 			DeserializeHelper(boolList, "<Tag array=\"true\">\r\n  <item>true</item>\r\n  <item>false</item>\r\n</Tag>");
+			DeserializeHelper(boolList, "<Tag array=\"true\"><item>true</item><item>false</item></Tag>");
 		}
 
 		[Test]
 		public void Test_Dictionary()
 		{
-			var strStrDictionary = new Dictionary<string, string>();
-			SerializeHelper(strStrDictionary, "<Tag hash=\"true\" />");
-			DeserializeHelper(strStrDictionary, "<Tag hash=\"true\" />");
-			strStrDictionary["key"] = "value";
+			var emptyDictionary = new Dictionary<string, string>();
+			SerializeHelper(emptyDictionary, "<Tag hash=\"true\" />");
+			DeserializeHelper(emptyDictionary, "<Tag hash=\"true\" />");
+			DeserializeHelper(emptyDictionary, "<Tag hash=\"true\"></Tag>");
+
+			var strStrDictionary = new Dictionary<string, string> {{"key", "value"}};
 			SerializeHelper(strStrDictionary, "<Tag hash=\"true\">\r\n  <key>value</key>\r\n</Tag>");
 			DeserializeHelper(strStrDictionary, "<Tag hash=\"true\">\r\n  <key>value</key>\r\n</Tag>");
+			DeserializeHelper(strStrDictionary, "<Tag hash=\"true\"><key>value</key></Tag>");
 
-			var strIntDictionary = new Dictionary<string, int>();
-			SerializeHelper(strIntDictionary, "<Tag hash=\"true\" />");
-			DeserializeHelper(strIntDictionary, "<Tag hash=\"true\" />");
-			strIntDictionary["key"] = 5;
+			var strIntDictionary = new Dictionary<string, int> {{"key", 5}};
 			SerializeHelper(strIntDictionary, "<Tag hash=\"true\">\r\n  <key>5</key>\r\n</Tag>");
 			DeserializeHelper(strIntDictionary, "<Tag hash=\"true\">\r\n  <key>5</key>\r\n</Tag>");
+			DeserializeHelper(strIntDictionary, "<Tag hash=\"true\"><key>5</key></Tag>");
 		}
 
 		[Test]

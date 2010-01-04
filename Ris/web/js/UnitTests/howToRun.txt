@@ -1,0 +1,3 @@
+1. Open the "jsunit/testRunner.html" in Internet Explorer
+2. Enter the full path of jsmlTest.html in the test page location
+3. Click on Run to run unit tests
