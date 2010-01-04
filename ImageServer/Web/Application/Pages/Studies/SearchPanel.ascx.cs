@@ -308,7 +308,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             if(!String.IsNullOrEmpty(AccessionNumber.Text))
 				sb.AppendFormat("AccessionNumber={0};", AccessionNumber.Text);
             if(!String.IsNullOrEmpty(ToStudyDate.Text)||!String.IsNullOrEmpty(FromStudyDate.Text))
-				sb.AppendFormat("AccessionNumber={0}-{1};", FromStudyDate.Text, ToStudyDate.Text);
+				sb.AppendFormat("StudyDate={0}-{1};", FromStudyDate.Text, ToStudyDate.Text);
             if(!String.IsNullOrEmpty(StudyDescription.Text))
 				sb.AppendFormat("StudyDescription={0};", StudyDescription.Text);
 			if (ModalityListBox.SelectedIndex < 0)
