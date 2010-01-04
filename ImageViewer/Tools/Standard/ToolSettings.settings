@@ -17,5 +17,8 @@
     <Setting Name="MagnificationFactor" Type="System.Single" Scope="User">
       <Value Profile="(Default)">2</Value>
     </Setting>
+    <Setting Name="InvertedZoomToolOperation" Description="Inverts the operation of the Zoom tool such that moving the mouse up zooms out, and moving down zooms in." Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

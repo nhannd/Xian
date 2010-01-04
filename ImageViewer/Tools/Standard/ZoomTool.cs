@@ -60,6 +60,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		internal static readonly float DefaultMinimumZoom = 0.25F;
 		internal static readonly float DefaultMaximumZoom = 64F;
 
+		private readonly bool _invertedOperation;
 		private readonly ImageSpatialTransformImageOperation _operation; 
 		private MemorableUndoableCommand _memorableCommand;
 		private ImageOperationApplicator _applicator;
@@ -69,6 +70,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			this.CursorToken = new CursorToken("Icons.ZoomToolSmall.png", this.GetType().Assembly);
 			_operation = new ImageSpatialTransformImageOperation(Apply);
+
+			try
+			{
+				_invertedOperation = ToolSettings.Default.InvertedZoomToolOperation;
+			}
+			catch(Exception)
+			{
+				_invertedOperation = false;
+			}
 		}
 
 		public override event EventHandler TooltipChanged
@@ -240,7 +250,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Track(mouseInformation);
 
-			IncrementScale((float)base.DeltaY * 0.025F);
+			float increment = -base.DeltaY*0.025f;
+			increment *= _invertedOperation ? -1f : 1f;
+			IncrementScale(increment);
 
 			return true;
 		}
@@ -271,13 +283,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		protected override void WheelBack()
 		{
-			float increment = 0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
+			float increment = -0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
+			increment *= _invertedOperation ? -1f : 1f;
 			IncrementScale(increment);
 		}
 
 		protected override void WheelForward()
 		{
-			float increment = -0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
+			float increment = 0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
+			increment *= _invertedOperation ? -1f : 1f;
 			IncrementScale(increment);
 		}
 
