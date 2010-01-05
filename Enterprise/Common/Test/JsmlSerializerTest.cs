@@ -131,19 +131,26 @@ namespace ClearCanvas.Enterprise.Common.Test
 		[Test]
 		public void Test_Null()
 		{
-			SerializeHelper(null, "");
+			SerializeHelper(null, null);
+			DeserializeHelper<object>(null, null);
 			DeserializeHelper<object>(null, "");
 		}
 
 		[Test]
 		public void Test_String()
 		{
+			// Empty string
+			SerializeHelper("", "<Tag />");
+			DeserializeHelper("", "<Tag />");
+			DeserializeHelper("", "<Tag></Tag>");
+
+			// Alphabets
 			SerializeHelper("abcdefghijklmnopqrstuvwxyz", "<Tag>abcdefghijklmnopqrstuvwxyz</Tag>");
 			DeserializeHelper("abcdefghijklmnopqrstuvwxyz", "<Tag>abcdefghijklmnopqrstuvwxyz</Tag>");
 
+			// Numbers
 			SerializeHelper("000", "<Tag>000</Tag>");
 			DeserializeHelper("000", "<Tag>000</Tag>");
-
 			SerializeHelper("1234567890", "<Tag>1234567890</Tag>");
 			DeserializeHelper("1234567890", "<Tag>1234567890</Tag>");
 
@@ -160,38 +167,54 @@ namespace ClearCanvas.Enterprise.Common.Test
 			// Escaped characters
 			SerializeHelper(@"&<>", @"<Tag>&amp;&lt;&gt;</Tag>");
 			DeserializeHelper(@"&<>", @"<Tag>&amp;&lt;&gt;</Tag>");
-
-			// Line breaks
-			SerializeHelper("ABC\r\nDEF", "<Tag>ABC\r\nDEF</Tag>");
-			DeserializeHelper("ABC\r\nDEF", "<Tag>ABC\r\nDEF</Tag>");
-
-			SerializeHelper("\r\nDEF", "<Tag>\r\nDEF</Tag>");
-			DeserializeHelper("\r\nDEF", "<Tag>\r\nDEF</Tag>");
-
-			SerializeHelper("ABC\r\n", "<Tag>ABC\r\n</Tag>");
-			DeserializeHelper("ABC\r\n", "<Tag>ABC\r\n</Tag>");
-
-			SerializeHelper("\r\n", "<Tag>\r\n</Tag>");
-			SerializeHelper("\r\n\r\n", "<Tag>\r\n\r\n</Tag>");
-			SerializeHelper(" ", "<Tag> </Tag>");
-			SerializeHelper("  ", "<Tag>  </Tag>");
-			SerializeHelper(" \r\n", "<Tag> \r\n</Tag>");
-			SerializeHelper("  \r\n", "<Tag>  \r\n</Tag>");
 		}
 
 		[Test]
-		public void Test_String_SpecialCase()
+		public void Test_CR_LF_Spaces()
 		{
-			// Due to nature of Xml, a tag that contains only empty spaces and newline characters will deserialize to an empty string.
-			// We will allow empty string for now.  If it causes problem in the future, we can wrap the info within the tag in cdata.
-			var value = JsmlSerializer.Deserialize<string>("<Tag>\r\n</Tag>");
-			Assert.IsTrue(value == "" || value == "\r\n");
+			// CR, LF, spaces between words
+			SerializeHelper("ABC\r\nDEF", "<Tag>ABC\r\nDEF</Tag>");
+			DeserializeHelper("ABC\r\nDEF", "<Tag>ABC\r\nDEF</Tag>");
+			SerializeHelper("ABC\rDEF", "<Tag>ABC\rDEF</Tag>");
+			DeserializeHelper("ABC\rDEF", "<Tag>ABC\rDEF</Tag>");
+			SerializeHelper("ABC\nDEF", "<Tag>ABC\nDEF</Tag>");
+			DeserializeHelper("ABC\nDEF", "<Tag>ABC\nDEF</Tag>");
+			SerializeHelper(" ABC DEF ", "<Tag> ABC DEF </Tag>");
+			DeserializeHelper(" ABC DEF ", "<Tag> ABC DEF </Tag>");
 
-			value = JsmlSerializer.Deserialize<string>("<Tag> </Tag>");
-			Assert.IsTrue(value == "" || value == " ");
+			// CR, LF, spaces before words
+			SerializeHelper("\r\nDEF", "<Tag>\r\nDEF</Tag>");
+			DeserializeHelper("\r\nDEF", "<Tag>\r\nDEF</Tag>");
+			SerializeHelper("\rDEF", "<Tag>\rDEF</Tag>");
+			DeserializeHelper("\rDEF", "<Tag>\rDEF</Tag>");
+			SerializeHelper("\nDEF", "<Tag>\nDEF</Tag>");
+			DeserializeHelper("\nDEF", "<Tag>\nDEF</Tag>");
+			SerializeHelper("  DEF", "<Tag>  DEF</Tag>");
+			DeserializeHelper("  DEF", "<Tag>  DEF</Tag>");
 
-			value = JsmlSerializer.Deserialize<string>("<Tag> \r\n</Tag>");
-			Assert.IsTrue(value == "" || value == " \r\n");
+			// CR, LF, spaces after words
+			SerializeHelper("ABC\r\n", "<Tag>ABC\r\n</Tag>");
+			DeserializeHelper("ABC\r\n", "<Tag>ABC\r\n</Tag>");
+			SerializeHelper("ABC\r", "<Tag>ABC\r</Tag>");
+			DeserializeHelper("ABC\r", "<Tag>ABC\r</Tag>");
+			SerializeHelper("ABC\n", "<Tag>ABC\n</Tag>");
+			DeserializeHelper("ABC\n", "<Tag>ABC\n</Tag>");
+			SerializeHelper("ABC  ", "<Tag>ABC  </Tag>");
+			DeserializeHelper("ABC  ", "<Tag>ABC  </Tag>");
+
+			// CR, LF, whitespace by themselves
+			SerializeHelper("\r\n", "<Tag>\r\n</Tag>");
+			DeserializeHelper("\r\n", "<Tag>\r\n</Tag>");
+			SerializeHelper("\r\n\r\n", "<Tag>\r\n\r\n</Tag>");
+			DeserializeHelper("\r\n\r\n", "<Tag>\r\n\r\n</Tag>");
+			SerializeHelper(" ", "<Tag> </Tag>");
+			DeserializeHelper(" ", "<Tag> </Tag>");
+			SerializeHelper("  ", "<Tag>  </Tag>");
+			DeserializeHelper("  ", "<Tag>  </Tag>");
+			SerializeHelper(" \r\n", "<Tag> \r\n</Tag>");
+			DeserializeHelper(" \r\n", "<Tag> \r\n</Tag>");
+			SerializeHelper("  \r\n", "<Tag>  \r\n</Tag>");
+			DeserializeHelper("  \r\n", "<Tag>  \r\n</Tag>");
 		}
 
 		[Test]
@@ -288,8 +311,8 @@ namespace ClearCanvas.Enterprise.Common.Test
 			DeserializeHelper(nullable, string.Format("<Tag>{0}</Tag>", DateTimeUtils.FormatISO(nullable.Value)));
 
 			nullable = null;
-			SerializeHelper(nullable, "");
-			DeserializeHelper(nullable, "");
+			SerializeHelper(nullable, null);
+			DeserializeHelper(nullable, null);
 		}
 
 		[Test]
@@ -451,9 +474,9 @@ namespace ClearCanvas.Enterprise.Common.Test
 		{
 			var value = JsmlSerializer.Deserialize<T>(jsml);
 
-			if (null == value)
+			if (null == expectedValue)
 			{
-				Assert.IsNull(expectedValue);
+				Assert.IsNull(value);
 			}
 			else if (expectedValue is ICollection)
 			{

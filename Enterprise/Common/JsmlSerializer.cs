@@ -77,7 +77,7 @@ namespace ClearCanvas.Enterprise.Common
 		public static string Serialize(object dataObject, string objectName, SerializeOptions options)
         {
             if (dataObject == null)
-                return "";
+                return null;
 
             using (var sw = new StringWriter())
             {
@@ -125,6 +125,7 @@ namespace ClearCanvas.Enterprise.Common
                 return null;
 
             var xmlDoc = new XmlDocument();
+        	xmlDoc.PreserveWhitespace = true;
             xmlDoc.LoadXml(jsml);
 
             return DeserializeHelper(dataContract, xmlDoc.DocumentElement);

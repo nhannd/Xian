@@ -9,28 +9,28 @@
 		// A global variable that is included in the assert messages.  Helps to identify which test is currently running
 		var currentTest = "";
 
-/*
-
-Found 3 problems with the unit tests that failed:
-
-#1. Jsml.create does not check for null value
-#2. Jsml.parse failed to parse \r
-#3. Jsml.parse convert empty string (including only \r\n or spaces) into null, rather than empty string.  Inconsistent with .Net JsmlSerializer
-#4. Jsml.create produces <Tag array=\"true\"></Tag>.  This is inconsistent with the <Tag array=\"true\"/> produced with .Net JsmlSerializer
-
-
-*/
+		/* The Javascript Jsml parser differs slightly from the .Net parser.  The javascript Jsml.parse always failed to parse \r.
+		* See http://support.microsoft.com/kb/261293 for explaination.
+		* Versions of MSXML prior to 2.5 used both carriage return and linefeed (CRLF) characters to indicate the end of a line of text. 
+		* However, starting with MSXML version 2.5, this behavior is different. Methods of the XML Document Object Model (DOM) now 
+		* return text by using only the linefeed character. This change was made to comply with the World Wide Web (W3C) specification 
+		* for how XML output should be generated.*/
 
 		function testNull()
 		{
 			currentTest = "Null value";
-//#1			SerializeHelper(null, "");
-			DeserializeHelper(null, "");
+			SerializeHelper(null, null);
 			DeserializeHelper(null, null);
-}
+			DeserializeHelper(null, "");
+		}
 
 		function testString()
 		{
+			currentTest = "Empty string";
+			SerializeHelper("", "<Tag></Tag>");
+			DeserializeHelper("", "<Tag></Tag>");
+			DeserializeHelper("", "<Tag />");
+
 			currentTest = "Alphabets";
 			SerializeHelper("abcdefghijklmnopqrstuvwxyz", "<Tag>abcdefghijklmnopqrstuvwxyz</Tag>");
 			DeserializeHelper("abcdefghijklmnopqrstuvwxyz", "<Tag>abcdefghijklmnopqrstuvwxyz</Tag>");
@@ -54,45 +54,63 @@ Found 3 problems with the unit tests that failed:
 			currentTest = "Escaped characters";
 			SerializeHelper("&<>", "<Tag>&amp;&lt;&gt;</Tag>");
 			DeserializeHelper("&<>", "<Tag>&amp;&lt;&gt;</Tag>");
-
-			currentTest = "Line breaks";
-			SerializeHelper("ABC\n", "<Tag>ABC\n</Tag>");
-			DeserializeHelper("ABC\n", "<Tag>ABC\n</Tag>");
-
-			SerializeHelper("ABC\r", "<Tag>ABC\r</Tag>");
-//#2		DeserializeHelper("ABC\r", "<Tag>ABC\r</Tag>");
-
-			SerializeHelper("ABC\r\nDEF", "<Tag>ABC\r\nDEF</Tag>");
-//#2		DeserializeHelper("ABC\r\nDEF", "<Tag>ABC\r\nDEF</Tag>");
-
-			SerializeHelper("\r\nDEF", "<Tag>\r\nDEF</Tag>");
-//#2		DeserializeHelper("\r\nDEF", "<Tag>\r\nDEF</Tag>");
-
-			SerializeHelper("ABC\r\n", "<Tag>ABC\r\n</Tag>");
-//#2		DeserializeHelper("ABC\r\n", "<Tag>ABC\r\n</Tag>");
-
-			SerializeHelper("\r\n", "<Tag>\r\n</Tag>");
-			SerializeHelper("\r\n\r\n", "<Tag>\r\n\r\n</Tag>");
-			SerializeHelper(" ", "<Tag> </Tag>");
-			SerializeHelper("  ", "<Tag>  </Tag>");
-
-			SerializeHelper(" \r\n", "<Tag> \r\n</Tag>");
-			SerializeHelper("  \r\n", "<Tag>  \r\n</Tag>");
 		}
 
-
-		function testString_SpecialCase()
+		function test_CR_LF_Spaces()
 		{
-			// Due to nature of Xml, a tag that contains only empty spaces and newline characters will deserialize to an empty string.
-			// We will allow empty string for now.  If it causes problem in the future, we can wrap the info within the tag in cdata.
-			var value = JSML.parse("<Tag>\r\n</Tag>");
-//#3		assertTrue(value == "" || value == "\r\n");
+			currentTest = "Testing Carriage Return \r";
+			SerializeHelper("ABC\r", "<Tag>ABC\r</Tag>");
 
-			value = JSML.parse("<Tag> </Tag>");
-//#3		assertTrue(value == "" || value == " ");
+			//This test is supposed to pass as described in http://support.microsoft.com/kb/261293
+			DeserializeHelper("ABC\n", "<Tag>ABC\r</Tag>");
 
-			value = JSML.parse("<Tag> \r\n</Tag>");
-//#3		assertTrue(value == "" || value == " \r\n");
+			//This test is supposed to failed as described in http://support.microsoft.com/kb/261293
+			// DeserializeHelper("ABC\r", "<Tag>ABC\r</Tag>");
+
+			// Because of the \r problem, all subsequent tests will ignore deserializing \r.
+			currentTest = "CR, LF, spaces between words";
+			SerializeHelper("ABC\nDEF", "<Tag>ABC\nDEF</Tag>");
+			DeserializeHelper("ABC\nDEF", "<Tag>ABC\nDEF</Tag>");
+			SerializeHelper("ABCDEF", "<Tag>ABCDEF</Tag>");
+			DeserializeHelper("ABCDEF", "<Tag>ABCDEF</Tag>");
+			SerializeHelper("ABC\nDEF", "<Tag>ABC\nDEF</Tag>");
+			DeserializeHelper("ABC\nDEF", "<Tag>ABC\nDEF</Tag>");
+			SerializeHelper(" ABC DEF ", "<Tag> ABC DEF </Tag>");
+			DeserializeHelper(" ABC DEF ", "<Tag> ABC DEF </Tag>");
+
+			currentTest = "CR, LF, spaces before words";
+			SerializeHelper("\nDEF", "<Tag>\nDEF</Tag>");
+			DeserializeHelper("\nDEF", "<Tag>\nDEF</Tag>");
+			SerializeHelper("DEF", "<Tag>DEF</Tag>");
+			DeserializeHelper("DEF", "<Tag>DEF</Tag>");
+			SerializeHelper("\nDEF", "<Tag>\nDEF</Tag>");
+			DeserializeHelper("\nDEF", "<Tag>\nDEF</Tag>");
+			SerializeHelper("  DEF", "<Tag>  DEF</Tag>");
+			DeserializeHelper("  DEF", "<Tag>  DEF</Tag>");
+
+			currentTest = "CR, LF, spaces after words";
+			SerializeHelper("ABC\n", "<Tag>ABC\n</Tag>");
+			DeserializeHelper("ABC\n", "<Tag>ABC\n</Tag>");
+			SerializeHelper("ABC", "<Tag>ABC</Tag>");
+			DeserializeHelper("ABC", "<Tag>ABC</Tag>");
+			SerializeHelper("ABC\n", "<Tag>ABC\n</Tag>");
+			DeserializeHelper("ABC\n", "<Tag>ABC\n</Tag>");
+			SerializeHelper("ABC  ", "<Tag>ABC  </Tag>");
+			DeserializeHelper("ABC  ", "<Tag>ABC  </Tag>");
+
+			currentTest = "CR, LF, whitespace by themselves";
+			SerializeHelper("\n", "<Tag>\n</Tag>");
+			DeserializeHelper("\n", "<Tag>\n</Tag>");
+			SerializeHelper("\n\n", "<Tag>\n\n</Tag>");
+			DeserializeHelper("\n\n", "<Tag>\n\n</Tag>");
+			SerializeHelper(" ", "<Tag> </Tag>");
+			DeserializeHelper(" ", "<Tag> </Tag>");
+			SerializeHelper("  ", "<Tag>  </Tag>");
+			DeserializeHelper("  ", "<Tag>  </Tag>");
+			SerializeHelper(" \n", "<Tag> \n</Tag>");
+			DeserializeHelper(" \n", "<Tag> \n</Tag>");
+			SerializeHelper("  \n", "<Tag>  \n</Tag>");
+			DeserializeHelper("  \n", "<Tag>  \n</Tag>");
 		}
 
 		function testInt()
@@ -173,7 +191,7 @@ Found 3 problems with the unit tests that failed:
 			
 			currentTest = "Null-DateTime";
 			nowWithoutMilliseconds = null;
-//#1		SerializeHelper(nowWithoutMilliseconds, "");
+			SerializeHelper(nowWithoutMilliseconds, null);
 			DeserializeDate(nowWithoutMilliseconds, null);
 			DeserializeDate(nowWithoutMilliseconds, "");
 }
@@ -182,7 +200,6 @@ Found 3 problems with the unit tests that failed:
 		{
 			currentTest = "Empty List";
 			var emptylist = [];
-//#4		SerializeHelper(emptylist, "<Tag array=\"true\" />");
 			SerializeHelper(emptylist, "<Tag array=\"true\"></Tag>");
 			DeserializeHelper(emptylist, "<Tag array=\"true\" />");
 			DeserializeHelper(emptylist, "<Tag array=\"true\"></Tag>");
@@ -404,10 +421,7 @@ Found 3 problems with the unit tests that failed:
 			for(var i = 0; i < x.length; i++)
 			{
 				if (x[i] != y[i])
-				{
-					alert(i + " " + x[i] + ", " + y[i]);
 					return false;
-				}
 			}
 
 			return true;

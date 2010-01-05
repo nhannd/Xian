@@ -135,8 +135,10 @@ var JSML = {
            else if (window.ActiveXObject) {
                  dom = new ActiveXObject('Microsoft.XMLDOM');
                  dom.async = false;
+				 dom.preserveWhiteSpace = true;
                  if (!dom.loadXML(xml)) // parse error ..
                     throw (dom.parseError.reason + dom.parseError.srcText);
+
                  return dom;
            }
         }
@@ -175,9 +177,9 @@ var JSML = {
             else // node contains text
             {
 				// find the first non-empty text node
-				var textNodes = getChildNodes(xmlNode).select(function(n) { return n.nodeType==3 && n.nodeValue.match(/[^ \f\n\r\t\v]/); });
-				var value = textNodes.length > 0 ? textNodes[0].nodeValue : null;
-				return value ? parseValue(value) : null;
+				var textNodes = getChildNodes(xmlNode).select(function(n) { return n.nodeType==3; }); // && n.nodeValue.match(/[^ \f\n\r\t\v]/); });
+				var value = textNodes.length > 0 ? textNodes[0].nodeValue : "";
+				return value != null ? parseValue(value) : null;
             }
         }
         
@@ -226,6 +228,10 @@ var JSML = {
         // if it does not have an implementation of toJsml defined, then convert it to a string first
         // (this is a bit of hack to deal with window.location and other such DOM objects that essentially 
         // act as strings but are not technically Javascript string objects)
+
+		if (obj == null)
+			return null;
+
         var r = obj.toJsml ? obj.toJsml() : obj.toString().toJsml();
 		var objJsml = r[0];
 		var typeAttr = r[1];
