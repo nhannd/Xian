@@ -88,7 +88,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 					}
 				};
 
-			return true;
+			// Return false because even though the modify order component is opened, no workflow action has actually taken place.
+			return false;
 		}
 	}
 
