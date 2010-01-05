@@ -257,7 +257,7 @@ namespace ClearCanvas.Enterprise.Common.Test
 			SerializeHelper(0.001, "<Tag>0.001</Tag>");
 			DeserializeHelper(0.001, "<Tag>0.001</Tag>");
 
-			// Scientific notations.  Not that the serialized is always capitalized and padded.  i.e. E-08 rather than E-8
+			// Scientific notations.  Note that the serialized is always capitalized and padded.  i.e. E-08 rather than E-8
 			// Make sure the lower case and e-8 and e-08 can all be deserialized.
 			SerializeHelper(0.000000015, "<Tag>1.5E-08</Tag>");
 			SerializeHelper(1.5E-08, "<Tag>1.5E-08</Tag>");

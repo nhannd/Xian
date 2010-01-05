@@ -353,8 +353,8 @@
 			}
 		}
 
-		// Customize deserialize helper for date values.  When parsed, an date object is in its default format
-		// which causes assert to fail when we compare a non ISO format with a ISO formatted date.
+		// Customize deserialize helper for simple hased objects that behave like .Net dictionary. 
+		// If the javascript object is a tree, there would only be the parent and the children level.  Nested object is not supported here.
 		function DeserializeDictionary(expectedValue, jsml)
 		{
 			var value = JSML.parse(jsml);
