@@ -43,6 +43,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
 
             return new RegistrationWorklistItem(
+				domainItem.ProcedureRef,
                 domainItem.OrderRef,
                 domainItem.PatientRef,
                 domainItem.PatientProfileRef,

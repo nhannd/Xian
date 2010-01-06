@@ -39,6 +39,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     public class RegistrationWorklistItem : WorklistItemSummaryBase
     {
         public RegistrationWorklistItem(
+			EntityRef procedureRef,
             EntityRef orderRef,
             EntityRef patientRef,
             EntityRef profileRef,
@@ -57,7 +58,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             EnumValueInfo sex)
             :base(
                 null,
-                null,
+                procedureRef,
                 orderRef,
                 patientRef,
                 profileRef,

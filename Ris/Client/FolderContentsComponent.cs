@@ -278,9 +278,7 @@ namespace ClearCanvas.Ris.Client
 			// note: there are some subtleties here when attempting re-select the "same" items
 			// if the items support IVersionedEquatable, then we need to compare them using a version-insensitive comparison,
 			// but the new selection must consist of the instances that have the most current version
-			_selectedItems = _selectedFolder == null
-				? new Selection(CollectionUtils.FirstElement(_selectedFolder.ItemsTable.Items))
-				: new Selection(CollectionUtils.Select(_selectedFolder.ItemsTable.Items,
+			_selectedItems = new Selection(CollectionUtils.Select(_selectedFolder.ItemsTable.Items,
 					delegate(object item)
 					{
 						return CollectionUtils.Contains(_selectedItems.Items,
