@@ -988,6 +988,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error has occurred on the server. The most likely cause is that there are too many matching results to sort through given the provided search parameters. You may wish to try your search again with more specific parameters..
+        /// </summary>
+        internal static string ExceptionFailedToFindSearchResults {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToFindSearchResults", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to merge duplicate contact points..
         /// </summary>
         internal static string ExceptionFailedToMergeDuplicateContactPoints {

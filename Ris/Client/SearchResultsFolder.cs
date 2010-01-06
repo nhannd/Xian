@@ -188,7 +188,7 @@ namespace ClearCanvas.Ris.Client
 						}
 						catch (Exception e)
 						{
-							taskContext.Error(e);
+							taskContext.Error(new Exception(SR.ExceptionFailedToFindSearchResults, e));
 						}
 					},
 					false);

@@ -930,4 +930,7 @@
   <data name="MessageUnscheduled" xml:space="preserve">
     <value>Unscheduled</value>
   </data>
+  <data name="ExceptionFailedToFindSearchResults" xml:space="preserve">
+    <value>An error has occurred on the server. The most likely cause is that there are too many matching results to sort through given the provided search parameters. You may wish to try your search again with more specific parameters.</value>
+  </data>
 </root>
