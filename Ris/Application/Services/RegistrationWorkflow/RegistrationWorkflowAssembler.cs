@@ -35,32 +35,32 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
-    public class RegistrationWorkflowAssembler
-    {
-        public RegistrationWorklistItem CreateWorklistItemSummary(WorklistItem domainItem, IPersistenceContext context)
-        {
-            PersonNameAssembler nameAssembler = new PersonNameAssembler();
-            HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
+	public class RegistrationWorkflowAssembler
+	{
+		public RegistrationWorklistItem CreateWorklistItemSummary(WorklistItem domainItem, IPersistenceContext context)
+		{
+			var nameAssembler = new PersonNameAssembler();
+			var healthcardAssembler = new HealthcardAssembler();
 
-            return new RegistrationWorklistItem(
+			return new RegistrationWorklistItem(
 				domainItem.ProcedureRef,
-                domainItem.OrderRef,
-                domainItem.PatientRef,
-                domainItem.PatientProfileRef,
-                new MrnAssembler().CreateMrnDetail(domainItem.Mrn),
-                nameAssembler.CreatePersonNameDetail(domainItem.PatientName),
-                domainItem.AccessionNumber,
-                EnumUtils.GetEnumValueInfo(domainItem.OrderPriority, context),
-                EnumUtils.GetEnumValueInfo(domainItem.PatientClass),
-                domainItem.DiagnosticServiceName,
+				domainItem.OrderRef,
+				domainItem.PatientRef,
+				domainItem.PatientProfileRef,
+				new MrnAssembler().CreateMrnDetail(domainItem.Mrn),
+				nameAssembler.CreatePersonNameDetail(domainItem.PatientName),
+				domainItem.AccessionNumber,
+				EnumUtils.GetEnumValueInfo(domainItem.OrderPriority, context),
+				EnumUtils.GetEnumValueInfo(domainItem.PatientClass),
+				domainItem.DiagnosticServiceName,
 				domainItem.ProcedureName,
 				domainItem.ProcedurePortable,
 				EnumUtils.GetEnumValueInfo(domainItem.ProcedureLaterality, context),
-                domainItem.Time,
-                healthcardAssembler.CreateHealthcardDetail(domainItem.HealthcardNumber),
-                domainItem.DateOfBirth,
-                EnumUtils.GetEnumValueInfo(domainItem.Sex, context)
-                );
-        }
-    }
+				domainItem.Time,
+				healthcardAssembler.CreateHealthcardDetail(domainItem.HealthcardNumber),
+				domainItem.DateOfBirth,
+				EnumUtils.GetEnumValueInfo(domainItem.Sex, context)
+				);
+		}
+	}
 }

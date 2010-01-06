@@ -35,60 +35,60 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 {
-    [DataContract]
-    public class RegistrationWorklistItem : WorklistItemSummaryBase
-    {
-        public RegistrationWorklistItem(
+	[DataContract]
+	public class RegistrationWorklistItem : WorklistItemSummaryBase
+	{
+		public RegistrationWorklistItem(
 			EntityRef procedureRef,
-            EntityRef orderRef,
-            EntityRef patientRef,
-            EntityRef profileRef,
-            CompositeIdentifierDetail mrn,
-            PersonNameDetail name,
-            string accessionNumber,
-            EnumValueInfo orderPriority,
-            EnumValueInfo patientClass,
-            string diagnosticServiceName,
+			EntityRef orderRef,
+			EntityRef patientRef,
+			EntityRef profileRef,
+			CompositeIdentifierDetail mrn,
+			PersonNameDetail name,
+			string accessionNumber,
+			EnumValueInfo orderPriority,
+			EnumValueInfo patientClass,
+			string diagnosticServiceName,
 			string procedureName,
 			bool procedurePortable,
 			EnumValueInfo procedureLaterality,
-            DateTime? time,
-            HealthcardDetail healthcard,
-            DateTime? dateOfBirth,
-            EnumValueInfo sex)
-            :base(
-                null,
-                procedureRef,
-                orderRef,
-                patientRef,
-                profileRef,
-                mrn,
-                name,
-                accessionNumber,
-                orderPriority,
-                patientClass,
-                diagnosticServiceName,
+			DateTime? time,
+			HealthcardDetail healthcard,
+			DateTime? dateOfBirth,
+			EnumValueInfo sex)
+			:base(
+				null,
+				procedureRef,
+				orderRef,
+				patientRef,
+				profileRef,
+				mrn,
+				name,
+				accessionNumber,
+				orderPriority,
+				patientClass,
+				diagnosticServiceName,
 				procedureName,
 				procedurePortable,
 				procedureLaterality,
-                null,
-                time
-            )
-        {
-            this.Healthcard = healthcard;
-            this.DateOfBirth = dateOfBirth;
-            this.Sex = sex;
-        }
+				null,
+				time
+			)
+		{
+			this.Healthcard = healthcard;
+			this.DateOfBirth = dateOfBirth;
+			this.Sex = sex;
+		}
 
 
-        [DataMember]
-        public HealthcardDetail Healthcard;
+		[DataMember]
+		public HealthcardDetail Healthcard;
 
-        [DataMember]
-        public DateTime? DateOfBirth;
+		[DataMember]
+		public DateTime? DateOfBirth;
 
-        [DataMember]
-        public EnumValueInfo Sex;
+		[DataMember]
+		public EnumValueInfo Sex;
 
-    }
+	}
 }

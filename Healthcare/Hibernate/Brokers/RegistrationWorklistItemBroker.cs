@@ -30,75 +30,73 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Registration;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
-    /// <summary>
-    /// Implementation of <see cref="IRegistrationWorklistItemBroker"/>.
-    /// </summary>
-    [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class RegistrationWorklistItemBroker : WorklistItemBrokerBase<WorklistItem>, IRegistrationWorklistItemBroker
-    {
-        #region HQL Constants
+	/// <summary>
+	/// Implementation of <see cref="IRegistrationWorklistItemBroker"/>.
+	/// </summary>
+	[ExtensionOf(typeof(BrokerExtensionPoint))]
+	public class RegistrationWorklistItemBroker : WorklistItemBrokerBase<WorklistItem>, IRegistrationWorklistItemBroker
+	{
+		#region HQL Constants
 
-        private static readonly HqlJoin[] WorklistItemJoins
-            = {
-                  JoinOrder,
-				  JoinProcedureType,
-                  JoinDiagnosticService,
-                  JoinVisit,
-                  JoinPatient,
-                  JoinPatientProfile
-              };
+		private static readonly HqlJoin[] WorklistItemJoins
+			= {
+				JoinOrder,
+				JoinProcedureType,
+				JoinDiagnosticService,
+				JoinVisit,
+				JoinPatient,
+				JoinPatientProfile
+			};
 
-        private static readonly HqlFrom WorklistItemFrom = new HqlFrom("Procedure", "rp", WorklistItemJoins);
+		private static readonly HqlFrom WorklistItemFrom = new HqlFrom("Procedure", "rp", WorklistItemJoins);
 
-        #endregion
+		#endregion
 
-        #region Overrides
+		#region Overrides
 
-        /// <summary>
-        /// Creates an <see cref="HqlProjectionQuery"/> that queries for worklist items based on the specified
-        /// procedure-step class.
-        /// </summary>
-        /// <param name="criteria"></param>
-        /// <returns></returns>
-        /// <remarks>
-        /// Subclasses may override this method to customize the query or return an entirely different query.
-        /// </remarks>
-        protected override HqlProjectionQuery CreateBaseItemQuery(WorklistItemSearchCriteria[] criteria)
-        {
-            Type procedureStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
-            WorklistTimeField timeField = CollectionUtils.FirstElement(criteria).TimeField;
-            return new HqlProjectionQuery(GetFromClause(procedureStepClass), GetWorklistItemProjection(timeField));
-        }
+		/// <summary>
+		/// Creates an <see cref="HqlProjectionQuery"/> that queries for worklist items based on the specified
+		/// procedure-step class.
+		/// </summary>
+		/// <param name="criteria"></param>
+		/// <returns></returns>
+		/// <remarks>
+		/// Subclasses may override this method to customize the query or return an entirely different query.
+		/// </remarks>
+		protected override HqlProjectionQuery CreateBaseItemQuery(WorklistItemSearchCriteria[] criteria)
+		{
+			var procedureStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
+			var timeField = CollectionUtils.FirstElement(criteria).TimeField;
+			return new HqlProjectionQuery(GetFromClause(procedureStepClass), GetWorklistItemProjection(timeField));
+		}
 
-        /// <summary>
-        /// Creates an <see cref="HqlProjectionQuery"/> that queries for the count of worklist items based on the specified
-        /// procedure-step class.
-        /// </summary>
-        /// <param name="criteria"></param>
-        /// <returns></returns>
-        /// <remarks>
-        /// Subclasses may override this method to customize the query or return an entirely different query.
-        /// </remarks>
-        protected override HqlProjectionQuery CreateBaseCountQuery(WorklistItemSearchCriteria[] criteria)
-        {
-            Type procedureStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
-            return new HqlProjectionQuery(GetFromClause(procedureStepClass), DefaultCountProjection);
-        }
+		/// <summary>
+		/// Creates an <see cref="HqlProjectionQuery"/> that queries for the count of worklist items based on the specified
+		/// procedure-step class.
+		/// </summary>
+		/// <param name="criteria"></param>
+		/// <returns></returns>
+		/// <remarks>
+		/// Subclasses may override this method to customize the query or return an entirely different query.
+		/// </remarks>
+		protected override HqlProjectionQuery CreateBaseCountQuery(WorklistItemSearchCriteria[] criteria)
+		{
+			var procedureStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
+			return new HqlProjectionQuery(GetFromClause(procedureStepClass), DefaultCountProjection);
+		}
 
 		protected override HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where, bool countQuery)
 		{
-			Type procedureStepClass = CollectionUtils.FirstElement(where).ProcedureStepClass;
+			var procedureStepClass = CollectionUtils.FirstElement(where).ProcedureStepClass;
 
 			// if the search is coming from the Registration folder system, the ps class will be null,
 			// in which case there is no point doing a search for worklist items, because the patient/order search performed
@@ -115,59 +113,57 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 					sc.TimeField = WorklistTimeField.ProcedureScheduledStartTime;
 				});
 
-			HqlProjectionQuery query = countQuery ? CreateBaseCountQuery(where) : CreateBaseItemQuery(where);
+			var query = countQuery ? CreateBaseCountQuery(where) : CreateBaseItemQuery(where);
 			query.Conditions.Add(ConditionActiveProcedureStep);
 			AddConditions(query, where, true, !countQuery);
 
 			return query;
 		}
 
-        #endregion
+		#endregion
 
-        #region Private Helpers
+		#region Private Helpers
 
-        private HqlFrom GetFromClause(Type stepClass)
-        {
-            if (stepClass == null)
-                return WorklistItemFrom;
-            else
-            {
-                HqlFrom from = new HqlFrom(stepClass.Name, "ps");
-                from.Joins.Add(JoinProtocol);
-                from.Joins.Add(JoinProcedure);
-                from.Joins.AddRange(WorklistItemJoins);
-                return from;
-            }
-        }
+		private static HqlFrom GetFromClause(Type stepClass)
+		{
+			if (stepClass == null)
+				return WorklistItemFrom;
 
-        private HqlSelect[] GetWorklistItemProjection(WorklistTimeField timeField)
-        {
-            HqlSelect selectTime;
-            MapTimeFieldToHqlSelect(timeField, out selectTime);
+			var from = new HqlFrom(stepClass.Name, "ps");
+			from.Joins.Add(JoinProtocol);
+			from.Joins.Add(JoinProcedure);
+			from.Joins.AddRange(WorklistItemJoins);
+			return from;
+		}
 
-            return new HqlSelect[]
-                {
-                      SelectProcedure,
-                      SelectOrder,
-                      SelectPatient,
-                      SelectPatientProfile,
-                      SelectMrn,
-                      SelectPatientName,
-                      SelectAccessionNumber,
-                      SelectPriority,
-                      SelectPatientClass,
-                      SelectDiagnosticServiceName,
-					  SelectProcedureTypeName,
-					  SelectProcedurePortable,
-					  SelectProcedureLaterality,
-                      selectTime,
-                      SelectHealthcard,
-                      SelectDateOfBirth,
-                      SelectSex
-                  };
-        }
+		private HqlSelect[] GetWorklistItemProjection(WorklistTimeField timeField)
+		{
+			HqlSelect selectTime;
+			MapTimeFieldToHqlSelect(timeField, out selectTime);
 
-        #endregion
+			return new[]
+				{
+					SelectProcedure,
+					SelectOrder,
+					SelectPatient,
+					SelectPatientProfile,
+					SelectMrn,
+					SelectPatientName,
+					SelectAccessionNumber,
+					SelectPriority,
+					SelectPatientClass,
+					SelectDiagnosticServiceName,
+					SelectProcedureTypeName,
+					SelectProcedurePortable,
+					SelectProcedureLaterality,
+					selectTime,
+					SelectHealthcard,
+					SelectDateOfBirth,
+					SelectSex
+				};
+		}
 
-    }
+		#endregion
+
+	}
 }
