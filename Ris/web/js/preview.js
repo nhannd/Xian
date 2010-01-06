@@ -1214,6 +1214,10 @@ Preview.ImagingServiceSection = function () {
 		'<div class="SectionTableContainer">' +
 		'<table width="100%" border="0" cellspacing="5">'+
 		'	<tr>'+
+		'		<td width="120" class="propertyname">Imaging Service</td>'+
+		'		<td colspan="3"><div id="DiagnosticServiceName"/></td>'+
+		'	</tr>'+
+		'	<tr>'+
 		'		<td width="120" class="propertyname">Accession Number</td>'+
 		'		<td width="200"><div id="AccessionNumber"/></td>'+
 		'		<td width="120" class="propertyname">Priority</td>'+
@@ -1267,7 +1271,7 @@ Preview.ImagingServiceSection = function () {
 		'		</td>'+
 		'	</tr>'+
 		'</table></div>';
-		
+
 	var GetPractitionerContactPoint = function(practitioner, recipients)
 	{
 		var contactPoint = null;
@@ -1280,15 +1284,16 @@ Preview.ImagingServiceSection = function () {
 		});
 		return contactPoint;
 	}
-		
+
 	return {
 		create: function (element, orderDetail, options)
 		{
 			if(orderDetail == null)
 				return;
-				
+
 			element.innerHTML = _html;
-		
+
+			Field.setValue($("DiagnosticServiceName"), orderDetail.DiagnosticService.Name);
 			Field.setValue($("AccessionNumber"), Ris.formatAccessionNumber(orderDetail.AccessionNumber));
 			Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
 			Field.setLink($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name), function() { Ris.openPractitionerDetails(orderDetail.OrderingPractitioner); });
@@ -1311,12 +1316,12 @@ Preview.ImagingServiceSection = function () {
 			Field.show($("CancelledBySection"), false);
 			Field.show($("AlertsSection"), false);
 			Field.show($("OrderingPhysicianContactPointDetails"), false);
-			
+
 			if (options)
 			{
 				Field.show($("EnteredBySection"), options.ShowEnterCancelByStaff);
 				Field.show($("CancelledBySection"), options.ShowEnterCancelByStaff);
-				
+
 				if (options.Alerts && options.Alerts.length > 0)
 				{
 					Field.show($("AlertsSection"), true);
@@ -1341,7 +1346,7 @@ Preview.ImagingServiceSection = function () {
 					Field.setValue($("OrderingPhysicianEmail"), contactPoint.CurrentEmailAddress ? contactPoint.CurrentEmailAddress.Address : "");
 				}
 			}
-			
+
 			Preview.SectionContainer.create(element, "Imaging Service");
 		}
 	};
