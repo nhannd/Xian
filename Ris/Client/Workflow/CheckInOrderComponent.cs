@@ -150,6 +150,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private bool Confirm(IEnumerable<CheckInOrderTableEntry> checkedEntries)
 		{
 			var warnProcedures = new List<ProcedureSummary>();
+			var errorProcedures = new List<ProcedureSummary>();
 
 			// Get the list of Order EntityRef from the table
 			foreach (var entry in checkedEntries)
@@ -160,19 +161,32 @@ namespace ClearCanvas.Ris.Client.Workflow
 				{
 					case CheckInSettings.ValidateResult.TooEarly:
 					case CheckInSettings.ValidateResult.TooLate:
-					case CheckInSettings.ValidateResult.NotScheduled:
 						warnProcedures.Add(entry.Procedure);
+						break;
+					case CheckInSettings.ValidateResult.NotScheduled:
+						errorProcedures.Add(entry.Procedure);
 						break;
 					default:
 						break;
 				}
 			}
 
+			if (errorProcedures.Count > 0)
+			{
+				var messageBuilder = new StringBuilder();
+				messageBuilder.Append(SR.MessageCheckInProceduresNotScheduled);
+				messageBuilder.AppendLine();
+				messageBuilder.AppendLine();
+				CollectionUtils.ForEach(errorProcedures, procedure => messageBuilder.AppendLine(ProcedureFormat.Format(procedure)));
+
+				this.Host.DesktopWindow.ShowMessageBox(messageBuilder.ToString(), MessageBoxActions.Ok);
+				return false;
+			}
+
 			if (warnProcedures.Count > 0)
 			{
 				var earlyThreshold = TimeSpan.FromMinutes(CheckInSettings.Default.EarlyCheckInWarningThreshold);
 				var lateThreshold = TimeSpan.FromMinutes(CheckInSettings.Default.LateCheckInWarningThreshold);
-
 
 				var messageBuilder = new StringBuilder();
 				messageBuilder.AppendFormat(SR.MessageCheckInProceduresTooLateOrTooEarly,

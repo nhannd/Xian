@@ -367,7 +367,7 @@
     <value>The operation cannot be completed because modifications have been made by another user.  The workspace must be closed and re-opened.</value>
   </data>
   <data name="MessageCheckInProceduresTooLateOrTooEarly" xml:space="preserve">
-    <value>The following procedure(s) are either unscheduled, or they are being checked-in earlier/later than expected.  The check-in time should be no more than {0} prior to and {1} after the scheduled time.</value>
+    <value>The following procedure(s) are being checked-in earlier/later than expected.  The check-in time should be no more than {0} prior to and {1} after the scheduled time.</value>
   </data>
   <data name="MessageConfirmDiscardSelectedAddendum" xml:space="preserve">
     <value>Discard the selected addendum?</value>
@@ -670,5 +670,8 @@ Choose "No" to verify this report without further action.</value>
   </data>
   <data name="TitlePriors" xml:space="preserve">
     <value>Priors</value>
+  </data>
+  <data name="MessageCheckInProceduresNotScheduled" xml:space="preserve">
+    <value>The following procedure(s) are unscheduled.  Please schedule them before checking-in.</value>
   </data>
 </root>
