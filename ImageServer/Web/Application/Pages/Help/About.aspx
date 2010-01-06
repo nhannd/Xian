@@ -10,14 +10,54 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
 
-  <div id="VersionInfoPanel">
-            Version: <%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%>
-  </div>
+   <script type="text/javascript">
+       $(document).ready(function() {
+            $("#mDCMLicense").hide();
+            $("#ajaxLicense").hide();
+            $("#nUnitLicense").hide();
+            $("#jpegLicense").hide();
+            $("#log4NetLicense").hide();
+            $("#nhibernateLicense").hide();
+            $("#codeMirrorLicense").hide();
+            $("#aspectLicense").hide();
+        });
+
+        function showLicense(divName) {
+            $("#" + divName).toggle();
+        }
+   
+   </script>
   
+  <style>
+   .pre 
+   {
+    font-family: Sans-Serif; 
+    font-size: 14px; 
+   }
+   .LicenseLink
+   {
+       font-weight: bold;
+       padding-top: 5px;
+   }
+   
+   .LicenseLink a
+   {
+       color: #205F87;       
+   }
+   
+   .License
+   {
+       padding: 10px 0px 10px 10px;
+   }
+  </style>
+  
+  <div class="AboutBackground">
+  <table>
+  <tr><td>
   <table cellpadding="0" cellspacing="0" width="100%">
   <tr><td style="padding-top: 1px;">
-    <asp:Panel runat="server" ScrollBars="Vertical" Height="500" BackColor="white"  CssClass="AboutPanel">
-<pre style="font-family: Sans-Serif; font-size: 14px;">
+    <asp:Panel runat="server" ScrollBars="Vertical" Height="700" CssClass="AboutPanel" style="padding-top: 5px;">
+<pre>
 <b>ClearCanvas Inc.</b>
 Copyright (c) 2009, ClearCanvas Inc.
 All rights reserved.
@@ -44,9 +84,10 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
 LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
 OF THE POSSIBILITY OF SUCH DAMAGE.
-<b>
-mDCM: A C# DICOM library
-</b>
+</pre>
+<p></p>
+<div class="LicenseLink"><b><a href="#" onclick="showLicense('mDCMLicense')">mDCM: A C# DICOM library</a></b></div>
+<div id="mDCMLicense" class="License"><pre>
 Copyright (c) 2008  Colby Dillion
 
 This library is free software; you can redistribute it and/or
@@ -65,14 +106,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 Author:
    Colby Dillion (colby.dillion@gmail.com)
-
-<b>
-AJAX Control Toolkit
-</b>
-and
-<b>
-DotNetZip Library
-</b>
+</pre></div>
+<div class="LicenseLink"><a href="#" onclick="showLicense('ajaxLicense')"><b>AJAX Control Toolkit</b> and <b>DotNetZip Library</b></a></div>
+<div id="ajaxLicense" class="License"><pre>
 License: Microsoft Public License (Ms-PL)
 Microsoft Public License (Ms-PL)
 
@@ -126,10 +162,10 @@ no express warranties, guarantees or conditions. You may have additional consume
 under your local laws which this license cannot change. To the extent permitted under 
 your local laws, the contributors exclude the implied warranties of merchantability, fitness 
 for a particular purpose and non-infringement.
+</pre></div>
 
-<b>
-Independent JPEG Group Toolkit Version 6b
-</b>
+<div class="LicenseLink"><a href="#" onclick="showLicense('jpegLicense')"><b>Independent JPEG Group Toolkit Version 6b</b></a></div>
+<div id="jpegLicense" class="License"><pre>
 /*
  *  The authors make NO WARRANTY or representation, either express or implied,
  *  with respect to this software, its quality, accuracy, merchantability, or
@@ -166,11 +202,10 @@ Independent JPEG Group Toolkit Version 6b
  *  commercial products, provided that all warranty or liability claims are
  *  assumed by the product vendor.
  */
+</pre></div>
 
-
-<b>
-Log4Net
-</b>
+<div class="LicenseLink"><a href="#" onclick="showLicense('log4NetLicense')"><b>Log4Net</b></a></div>
+<div id="log4NetLicense" class="License"><pre>
 Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/
@@ -388,11 +423,12 @@ Apache License
 
    This product includes software developed at
    The Apache Software Foundation (http://www.apache.org/).
+</pre></div>   
    
-   
-<b>
-Code Mirror
-</b>
+<div class="LicenseLink"><a href="#" onclick="showLicense('codeMirrorLicense')"><b>Code Mirror</b></a></div>
+
+<div id="codeMirrorLicense" class="License">
+<pre>
  Copyright (c) 2007-2009 Marijn Haverbeke
 
  This software is provided 'as-is', without any express or implied
@@ -416,15 +452,13 @@ Code Mirror
 
  Marijn Haverbeke
  marijnh at gmail
+</pre></div>
  
- 
-<b>
-Aspect#, Castle Project
-</b>
-Released under Apache Software Foundation License 2.0 (see above).
-<b>
-NHibernate
-</b>
+<div class="LicenseLink"><a href="#" onclick="showLicense('aspectLicense')"><b>Aspect#, Castle Project</b></a></div>
+<div id="aspectLicense" class="License"><pre>Released under Apache Software Foundation License 2.0 (see above).</pre></div>
+<div class="LicenseLink"><a href="#" onclick="showLicense('nhibernateLicense')"><b>NHibernate</b></a></div>
+<div id="nhibernateLicense" class="License">
+<pre>
 		  GNU LESSER GENERAL PUBLIC LICENSE
 		       Version 2.1, February 1999
 
@@ -927,9 +961,11 @@ necessary.  Here is a sample; alter the names:
   Ty Coon, President of Vice
 
 That's all there is to it!
-<b>
-NUnit
-</b>
+</pre></div>
+
+<div class="LicenseLink"><a href="#" onclick="showLicense('nUnitLicense')"><b>NUnit</b></a></div>
+<div id="nUnitLicense" class="License">
+<pre>
 Copyright © 2002-2004 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole
 Copyright © 2000-2004 Philip A. Craig
 
@@ -961,11 +997,33 @@ and to give credit to the NUnit contributors for their efforts. While this
 license allows shipping NUnit in source and binary form, if shipping a NUnit 
 variant is the sole purpose of your product, please let us know.
 
-</pre> 
-  <span style="font-size:x-small">
-  Server Regional Settings: <%=System.Globalization.CultureInfo.CurrentCulture %>, <%=System.Globalization.CultureInfo.CurrentUICulture %>
-  </span>
+</pre></div>
+  
   </asp:Panel>
   </td></tr>
   </table>
+  </td><td valign="top" width="32%">
+  
+  <div style="margin-left: 20px; margin-top: 20px; font-size: 20px; color: #205F87">
+  <span style="font-weight: bold; font-size: 22px; ">Build Version: <%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%></span><br />
+  <div style="font-weight: bold; font-size: 16px; ">Part of the ClearCanvas RIS/PACS</div>
+  <span style="color: #999999; font-size: 12px; font-weight: bold;">Server Regional Settings: <%=System.Globalization.CultureInfo.CurrentCulture %>, <%=System.Globalization.CultureInfo.CurrentUICulture %></span><br />
+  <span style="color: #999999; font-size: 12px; font-weight: bold;">Mode: <%= EnterpriseMode ? "Enterprise" : "Stand-alone"%></span><br />  
+
+
+<p><b>ClearCanvas Inc.</b><br />
+620-438 Richmond St. W.<br />
+Toronto, ON M5V 3S6
+</p>
+
+<p style="font-weight: bold;">
+<a style="color: #205F87" href="http://www.clearcanvas.ca" target=_blank>www.clearcanvas.ca</a><br />
+<a style="color: #205F87" href="http://www.youtube.com/ClearCanvas" target=_blank>ClearCanvas YouTube Channel</a><br />
+</p>
+
+  </div>    
+  </td></tr>
+  </table>
+</div>  
+  
 </asp:Content>

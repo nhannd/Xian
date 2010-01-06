@@ -533,3 +533,12 @@ pre
     position: absolute;
     width: 100%;
 }
+
+/*================
+    About Page
+================*/
+
+.AboutBackground
+{
+    background: white url('../images/AboutBackground.png') no-repeat top left;
+}
