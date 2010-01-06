@@ -1005,20 +1005,20 @@ variant is the sole purpose of your product, please let us know.
   </td><td valign="top" width="32%">
   
   <div style="margin-left: 20px; margin-top: 20px; font-size: 20px; color: #205F87">
-  <span style="font-weight: bold; font-size: 22px; ">Build Version: <%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%></span><br />
+  <span style="font-weight: bold; font-size: 16px; ">ClearCanvas ImageServer v.2.0 [<%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%>]</span><br />
   <div style="font-weight: bold; font-size: 16px; ">Part of the ClearCanvas RIS/PACS</div>
-  <span style="color: #999999; font-size: 12px; font-weight: bold;">Server Regional Settings: <%=System.Globalization.CultureInfo.CurrentCulture %>, <%=System.Globalization.CultureInfo.CurrentUICulture %></span><br />
-  <span style="color: #999999; font-size: 12px; font-weight: bold;">Mode: <%= EnterpriseMode ? "Enterprise" : "Stand-alone"%></span><br />  
-
 
 <p><b>ClearCanvas Inc.</b><br />
 620-438 Richmond St. W.<br />
 Toronto, ON M5V 3S6
 </p>
+  <span style="color: #999999; font-size: 12px; font-weight: bold;">Server Regional Settings: <%=System.Globalization.CultureInfo.CurrentCulture %>, <%=System.Globalization.CultureInfo.CurrentUICulture %></span><br />
+  <span style="color: #999999; font-size: 12px; font-weight: bold;">Mode: <%= EnterpriseMode ? "Enterprise" : "Stand-alone"%></span><br />  
 
 <p style="font-weight: bold;">
 <a style="color: #205F87" href="http://www.clearcanvas.ca" target=_blank>www.clearcanvas.ca</a><br />
 <a style="color: #205F87" href="http://www.youtube.com/ClearCanvas" target=_blank>ClearCanvas YouTube Channel</a><br />
+<a style="color: #205F87" href="http://www.clearcanvas.ca/dnn/Resources/Documentation/tabid/107/Default.aspx" target=_blank>ClearCanvas Documentation</a><br />
 </p>
 
   </div>    
