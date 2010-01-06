@@ -104,11 +104,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			base.Size = _defaultSize = new Size(Math.Max(base.Width, idealPickerWidth), idealPickerHeight + _label.Height);
 		}
 
-		~LayoutChangerToolStripItem()
-		{
-			this.MyOwner = null;
-		}
-
 		protected override Size DefaultSize
 		{
 			get { return _defaultSize; }
@@ -200,6 +195,14 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 		{
 			this.MyOwner = base.Owner;
 			base.OnOwnerChanged(e);
+		}
+		
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+				MyOwner = null;	
+
+			base.Dispose(disposing);
 		}
 
 		private void OnOwnerResize(object sender, EventArgs e)
