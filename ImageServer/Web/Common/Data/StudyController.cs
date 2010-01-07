@@ -201,9 +201,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 					    seriesUids.Add(series.SeriesInstanceUid);    
 					}
 
-                    StudyEditorHelper.MoveSeries(context, partition, study.StudyInstanceUid, device.Key, seriesUids);
+                    IList<WorkQueue> entries = StudyEditorHelper.MoveSeries(context, partition, study.StudyInstanceUid, device.Key, seriesUids);
+                        if(entries != null) context.Commit();
 
-					return true;
+				    return true;
 				}
 			}
         	WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
