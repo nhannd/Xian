@@ -32,6 +32,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Tests;
 using NUnit.Framework;
 
@@ -149,6 +150,27 @@ namespace ClearCanvas.Dicom.Codec.Tests
 			Assert.IsFalse(newFile.DataSet[DicomTags.LossyImageCompressionMethod].IsNull);
 			Assert.IsFalse(newFile.DataSet[DicomTags.LossyImageCompressionRatio].IsNull);
 
+			// Make copies of datasets, delete the tags that don't match, and ensure the same
+			DicomAttributeCollection newDataSet = newFile.DataSet.Copy(true, true, true);
+			DicomAttributeCollection oldDataSet = theFile.DataSet.Copy(true, true, true);
+
+			oldDataSet.RemoveAttribute(DicomTags.PixelData);
+			newDataSet.RemoveAttribute(DicomTags.PixelData);
+			oldDataSet.RemoveAttribute(DicomTags.DerivationDescription);
+			newDataSet.RemoveAttribute(DicomTags.DerivationDescription);
+			oldDataSet.RemoveAttribute(DicomTags.LossyImageCompression);
+			newDataSet.RemoveAttribute(DicomTags.LossyImageCompression);
+			oldDataSet.RemoveAttribute(DicomTags.LossyImageCompressionMethod);
+			newDataSet.RemoveAttribute(DicomTags.LossyImageCompressionMethod);
+			oldDataSet.RemoveAttribute(DicomTags.LossyImageCompressionRatio);
+			newDataSet.RemoveAttribute(DicomTags.LossyImageCompressionRatio);
+			oldDataSet.RemoveAttribute(DicomTags.PhotometricInterpretation);
+			newDataSet.RemoveAttribute(DicomTags.PhotometricInterpretation);
+
+			List<DicomAttributeComparisonResult> results = new List<DicomAttributeComparisonResult>();
+
+			bool check = oldDataSet.Equals(newDataSet, ref results);
+			Assert.IsTrue(check, results.Count > 0 ? CollectionUtils.FirstElement(results).Details : string.Empty);
 		}
 
 		public static void ExpectedFailureTest(TransferSyntax syntax, DicomFile theFile)
