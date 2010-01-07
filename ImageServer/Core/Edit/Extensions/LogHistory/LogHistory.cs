@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageServer.Core.Edit.Extensions.LogHistory
 	/// Plugin for WebEditStudy processor to log the history record.
 	/// </summary>
 	[ExtensionOf(typeof(WebEditStudyProcessorExtensionPoint))]
-	class LogHistory:IWebEditStudyProcessorExtension
+	public class LogHistory:IWebEditStudyProcessorExtension
 	{
 		#region Private Fields
 		private StudyInformation _studyInfo;
