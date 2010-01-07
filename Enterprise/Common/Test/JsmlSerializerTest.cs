@@ -34,18 +34,23 @@ namespace ClearCanvas.Enterprise.Common.Test
 
 					if (this.EntityRef != null)
 					{
-						builder.Append("<Tag hash=\"true\">");
+						builder.Append("<Tag type=\"hash\">");
 						builder.Append("\r\n  ");
 						builder.AppendFormat("<EntityRef>{0}</EntityRef>", this.EntityRef.Serialize());
 						builder.Append("\r\n</Tag>");
 					}
 					else
 					{
-						builder.Append("<Tag hash=\"true\" />");
+						builder.Append("<Tag type=\"hash\" />");
 					}
 
 					return builder.ToString();
 				}
+			}
+
+			public string LegacyJsml
+			{
+				get { return this.Jsml.Replace("type=\"hash\"", "hash=\"true\"").Replace("type=\"array\"", "array=\"true\""); }
 			}
 
 			public override bool Equals(object obj)
@@ -78,10 +83,15 @@ namespace ClearCanvas.Enterprise.Common.Test
 				get { return GetJsml(false); }
 			}
 
+			public string LegacyJsml
+			{
+				get { return this.Jsml.Replace("type=\"hash\"", "hash=\"true\"").Replace("type=\"array\"", "array=\"true\""); }
+			}
+
 			public string GetJsml(bool filteredOutDouble)
 			{
 				var builder = new StringBuilder();
-				builder.Append("<Tag hash=\"true\">");
+				builder.Append("<Tag type=\"hash\">");
 
 				if (!filteredOutDouble)
 				{
@@ -101,7 +111,7 @@ namespace ClearCanvas.Enterprise.Common.Test
 				if (this.ExtendedProperties != null)
 				{
 					builder.Append("\r\n  ");
-					builder.Append("<ExtendedProperties hash=\"true\">");
+					builder.Append("<ExtendedProperties type=\"hash\">");
 					foreach (var kvp in this.ExtendedProperties)
 					{
 						builder.Append("\r\n    ");
@@ -319,27 +329,37 @@ namespace ClearCanvas.Enterprise.Common.Test
 		public void Test_List()
 		{
 			var emptyList = new List<object>();
-			SerializeHelper(emptyList, "<Tag array=\"true\" />");
+			SerializeHelper(emptyList, "<Tag type=\"array\" />");
+			DeserializeHelper(emptyList, "<Tag type=\"array\" />");
+			DeserializeHelper(emptyList, "<Tag type=\"array\"></Tag>");
 			DeserializeHelper(emptyList, "<Tag array=\"true\" />");
 			DeserializeHelper(emptyList, "<Tag array=\"true\"></Tag>");
 
 			var stringList = new List<string> {"1"};
-			SerializeHelper(stringList, "<Tag array=\"true\">\r\n  <item>1</item>\r\n</Tag>");
+			SerializeHelper(stringList, "<Tag type=\"array\">\r\n  <item>1</item>\r\n</Tag>");
+			DeserializeHelper(stringList, "<Tag type=\"array\">\r\n  <item>1</item>\r\n</Tag>");
+			DeserializeHelper(stringList, "<Tag type=\"array\"><item>1</item></Tag>");
 			DeserializeHelper(stringList, "<Tag array=\"true\">\r\n  <item>1</item>\r\n</Tag>");
 			DeserializeHelper(stringList, "<Tag array=\"true\"><item>1</item></Tag>");
 
 			var intList = new List<int> {1};
-			SerializeHelper(intList, "<Tag array=\"true\">\r\n  <item>1</item>\r\n</Tag>");
+			SerializeHelper(intList, "<Tag type=\"array\">\r\n  <item>1</item>\r\n</Tag>");
+			DeserializeHelper(intList, "<Tag type=\"array\">\r\n  <item>1</item>\r\n</Tag>");
+			DeserializeHelper(intList, "<Tag type=\"array\"><item>1</item></Tag>");
 			DeserializeHelper(intList, "<Tag array=\"true\">\r\n  <item>1</item>\r\n</Tag>");
 			DeserializeHelper(intList, "<Tag array=\"true\"><item>1</item></Tag>");
 
 			var doubleList = new List<double> {1.0};
-			SerializeHelper(doubleList, "<Tag array=\"true\">\r\n  <item>1</item>\r\n</Tag>");
+			SerializeHelper(doubleList, "<Tag type=\"array\">\r\n  <item>1</item>\r\n</Tag>");
+			DeserializeHelper(doubleList, "<Tag type=\"array\">\r\n  <item>1</item>\r\n</Tag>");
+			DeserializeHelper(doubleList, "<Tag type=\"array\"><item>1</item></Tag>");
 			DeserializeHelper(doubleList, "<Tag array=\"true\">\r\n  <item>1</item>\r\n</Tag>");
 			DeserializeHelper(doubleList, "<Tag array=\"true\"><item>1</item></Tag>");
 
 			var boolList = new List<bool> {true, false};
-			SerializeHelper(boolList, "<Tag array=\"true\">\r\n  <item>true</item>\r\n  <item>false</item>\r\n</Tag>");
+			SerializeHelper(boolList, "<Tag type=\"array\">\r\n  <item>true</item>\r\n  <item>false</item>\r\n</Tag>");
+			DeserializeHelper(boolList, "<Tag type=\"array\">\r\n  <item>true</item>\r\n  <item>false</item>\r\n</Tag>");
+			DeserializeHelper(boolList, "<Tag type=\"array\"><item>true</item><item>false</item></Tag>");
 			DeserializeHelper(boolList, "<Tag array=\"true\">\r\n  <item>true</item>\r\n  <item>false</item>\r\n</Tag>");
 			DeserializeHelper(boolList, "<Tag array=\"true\"><item>true</item><item>false</item></Tag>");
 		}
@@ -348,17 +368,23 @@ namespace ClearCanvas.Enterprise.Common.Test
 		public void Test_Dictionary()
 		{
 			var emptyDictionary = new Dictionary<string, string>();
-			SerializeHelper(emptyDictionary, "<Tag hash=\"true\" />");
+			SerializeHelper(emptyDictionary, "<Tag type=\"hash\" />");
+			DeserializeHelper(emptyDictionary, "<Tag type=\"hash\" />");
+			DeserializeHelper(emptyDictionary, "<Tag type=\"hash\"></Tag>");
 			DeserializeHelper(emptyDictionary, "<Tag hash=\"true\" />");
 			DeserializeHelper(emptyDictionary, "<Tag hash=\"true\"></Tag>");
 
 			var strStrDictionary = new Dictionary<string, string> {{"key", "value"}};
-			SerializeHelper(strStrDictionary, "<Tag hash=\"true\">\r\n  <key>value</key>\r\n</Tag>");
+			SerializeHelper(strStrDictionary, "<Tag type=\"hash\">\r\n  <key>value</key>\r\n</Tag>");
+			DeserializeHelper(strStrDictionary, "<Tag type=\"hash\">\r\n  <key>value</key>\r\n</Tag>");
+			DeserializeHelper(strStrDictionary, "<Tag type=\"hash\"><key>value</key></Tag>");
 			DeserializeHelper(strStrDictionary, "<Tag hash=\"true\">\r\n  <key>value</key>\r\n</Tag>");
 			DeserializeHelper(strStrDictionary, "<Tag hash=\"true\"><key>value</key></Tag>");
 
 			var strIntDictionary = new Dictionary<string, int> {{"key", 5}};
-			SerializeHelper(strIntDictionary, "<Tag hash=\"true\">\r\n  <key>5</key>\r\n</Tag>");
+			SerializeHelper(strIntDictionary, "<Tag type=\"hash\">\r\n  <key>5</key>\r\n</Tag>");
+			DeserializeHelper(strIntDictionary, "<Tag type=\"hash\">\r\n  <key>5</key>\r\n</Tag>");
+			DeserializeHelper(strIntDictionary, "<Tag type=\"hash\"><key>5</key></Tag>");
 			DeserializeHelper(strIntDictionary, "<Tag hash=\"true\">\r\n  <key>5</key>\r\n</Tag>");
 			DeserializeHelper(strIntDictionary, "<Tag hash=\"true\"><key>5</key></Tag>");
 		}
@@ -370,7 +396,8 @@ namespace ClearCanvas.Enterprise.Common.Test
 			// Only IDictionary<string, T>, where T is a JSML-serializable type, is supported.
 			var intStrDictionary = new Dictionary<int, string>();
 			intStrDictionary[0] = "value";
-			SerializeHelper(intStrDictionary, "<Tag hash=\"true\">\r\n  <0>value</0>\r\n</Tag>");
+			SerializeHelper(intStrDictionary, "<Tag type=\"hash\">\r\n  <0>value</0>\r\n</Tag>");
+			DeserializeHelper(intStrDictionary, "<Tag type=\"hash\">\r\n  <0>value</0>\r\n</Tag>");
 			DeserializeHelper(intStrDictionary, "<Tag hash=\"true\">\r\n  <0>value</0>\r\n</Tag>");
 		}
 
@@ -381,7 +408,8 @@ namespace ClearCanvas.Enterprise.Common.Test
 			// Only IDictionary<string, T>, where T is a JSML-serializable type, is supported.
 			var dictionary = new Dictionary<string, TimeSpan>();
 			dictionary["key"] = new TimeSpan(1, 0, 0);
-			SerializeHelper(dictionary, "<Tag hash=\"true\">\r\n  <key>01:00:00</key>\r\n</Tag>");
+			SerializeHelper(dictionary, "<Tag type=\"hash\">\r\n  <key>01:00:00</key>\r\n</Tag>");
+			DeserializeHelper(dictionary, "<Tag type=\"hash\">\r\n  <key>01:00:00</key>\r\n</Tag>");
 			DeserializeHelper(dictionary, "<Tag hash=\"true\">\r\n  <key>01:00:00</key>\r\n</Tag>");
 		}
 
@@ -422,14 +450,17 @@ namespace ClearCanvas.Enterprise.Common.Test
 			var contract1 = new TestContract1();
 			SerializeHelper(contract1, contract1.Jsml);
 			DeserializeHelper(contract1, contract1.Jsml);
+			DeserializeHelper(contract1, contract1.LegacyJsml);
 
 			contract1.EntityRef = new EntityRef("ClearCanvas.Healthcare.ExternalPractitioner, ClearCanvas.Healthcare:G:0fa8fdae-4678-40d7-bc54-9ca700e646d9:2");
 			SerializeHelper(contract1, contract1.Jsml);
 			DeserializeHelper(contract1, contract1.Jsml);
+			DeserializeHelper(contract1, contract1.LegacyJsml);
 
 			var contract2 = new TestContract2();
 			SerializeHelper(contract2, contract2.Jsml);
 			DeserializeHelper(contract2, contract2.Jsml);
+			DeserializeHelper(contract2, contract2.LegacyJsml);
 
 			var now = DateTime.Now;
 			contract2.Double = 5.0;
@@ -438,6 +469,7 @@ namespace ClearCanvas.Enterprise.Common.Test
 			contract2.ExtendedProperties = new Dictionary<string, string> { { "key1", "value1" }, { "key2", "value2" } };
 			SerializeHelper(contract2, contract2.Jsml);
 			DeserializeHelper(contract2, contract2.Jsml);
+			DeserializeHelper(contract2, contract2.LegacyJsml);
 		}
 
 		[Test]

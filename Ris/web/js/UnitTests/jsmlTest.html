@@ -200,31 +200,41 @@
 		{
 			currentTest = "Empty List";
 			var emptylist = [];
-			SerializeHelper(emptylist, "<Tag array=\"true\"></Tag>");
+			SerializeHelper(emptylist, "<Tag type=\"array\"></Tag>");
+			DeserializeHelper(emptylist, "<Tag type=\"array\" />");
+			DeserializeHelper(emptylist, "<Tag type=\"array\"></Tag>");
 			DeserializeHelper(emptylist, "<Tag array=\"true\" />");
 			DeserializeHelper(emptylist, "<Tag array=\"true\"></Tag>");
 
 			currentTest = "String List";
 			stringList = [ "1" ];
-			SerializeHelper(stringList, "<Tag array=\"true\"><item>1</item></Tag>");
+			SerializeHelper(stringList, "<Tag type=\"array\"><item>1</item></Tag>");
+			DeserializeHelper(stringList, "<Tag type=\"array\"><item>1</item></Tag>");
+			DeserializeHelper(stringList, "<Tag type=\"array\">\r\n  <item>1</item>\r\n</Tag>");
 			DeserializeHelper(stringList, "<Tag array=\"true\"><item>1</item></Tag>");
 			DeserializeHelper(stringList, "<Tag array=\"true\">\r\n  <item>1</item>\r\n</Tag>");
 
 			currentTest = "Integer List";
 			intList = [ 1 ];
-			SerializeHelper(intList, "<Tag array=\"true\"><item>1</item></Tag>");
+			SerializeHelper(intList, "<Tag type=\"array\"><item>1</item></Tag>");
+			DeserializeHelper(intList, "<Tag type=\"array\"><item>1</item></Tag>");
+			DeserializeHelper(intList, "<Tag type=\"array\">\r\n  <item>1</item>\r\n</Tag>");
 			DeserializeHelper(intList, "<Tag array=\"true\"><item>1</item></Tag>");
 			DeserializeHelper(intList, "<Tag array=\"true\">\r\n  <item>1</item>\r\n</Tag>");
 
 			currentTest = "Double List";
 			doubleList = [ 1.0 ];
-			SerializeHelper(doubleList, "<Tag array=\"true\"><item>1</item></Tag>");
+			SerializeHelper(doubleList, "<Tag type=\"array\"><item>1</item></Tag>");
+			DeserializeHelper(doubleList, "<Tag type=\"array\"><item>1</item></Tag>");
+			DeserializeHelper(doubleList, "<Tag type=\"array\">\r\n  <item>1</item>\r\n</Tag>");
 			DeserializeHelper(doubleList, "<Tag array=\"true\"><item>1</item></Tag>");
 			DeserializeHelper(doubleList, "<Tag array=\"true\">\r\n  <item>1</item>\r\n</Tag>");
 
 			currentTest = "Boolean List";
 			boolList = [ true, false ];
-			SerializeHelper(boolList, "<Tag array=\"true\"><item>true</item><item>false</item></Tag>");
+			SerializeHelper(boolList, "<Tag type=\"array\"><item>true</item><item>false</item></Tag>");
+			DeserializeHelper(boolList, "<Tag type=\"array\"><item>true</item><item>false</item></Tag>");
+			DeserializeHelper(boolList, "<Tag type=\"array\">\r\n  <item>true</item>\r\n  <item>false</item>\r\n</Tag>");
 			DeserializeHelper(boolList, "<Tag array=\"true\"><item>true</item><item>false</item></Tag>");
 			DeserializeHelper(boolList, "<Tag array=\"true\">\r\n  <item>true</item>\r\n  <item>false</item>\r\n</Tag>");
 		}
@@ -233,19 +243,25 @@
 		{
 			currentTest = "Empty Dictionary";
 			var emptyDictionary = {};
-			SerializeHelper(emptyDictionary, "<Tag hash=\"true\"></Tag>");
+			SerializeHelper(emptyDictionary, "<Tag type=\"hash\"></Tag>");
+			DeserializeDictionary(emptyDictionary, "<Tag type=\"hash\" />");
+			DeserializeDictionary(emptyDictionary, "<Tag type=\"hash\"></Tag>");
 			DeserializeDictionary(emptyDictionary, "<Tag hash=\"true\" />");
 			DeserializeDictionary(emptyDictionary, "<Tag hash=\"true\"></Tag>");
 
 			currentTest = "Str-Str Dictionary";
 			var strStrDictionary = { "key": "value" };
-			SerializeHelper(strStrDictionary, "<Tag hash=\"true\"><key>value</key></Tag>");
+			SerializeHelper(strStrDictionary, "<Tag type=\"hash\"><key>value</key></Tag>");
+			DeserializeDictionary(strStrDictionary, "<Tag type=\"hash\">\r\n  <key>value</key>\r\n</Tag>");
+			DeserializeDictionary(strStrDictionary, "<Tag type=\"hash\"><key>value</key></Tag>");
 			DeserializeDictionary(strStrDictionary, "<Tag hash=\"true\">\r\n  <key>value</key>\r\n</Tag>");
 			DeserializeDictionary(strStrDictionary, "<Tag hash=\"true\"><key>value</key></Tag>");
 
 			currentTest = "Str-Int Dictionary";
 			var strIntDictionary = { "key": 5 };
-			SerializeHelper(strIntDictionary, "<Tag hash=\"true\"><key>5</key></Tag>");
+			SerializeHelper(strIntDictionary, "<Tag type=\"hash\"><key>5</key></Tag>");
+			DeserializeDictionary(strIntDictionary, "<Tag type=\"hash\">\r\n  <key>5</key>\r\n</Tag>");
+			DeserializeDictionary(strIntDictionary, "<Tag type=\"hash\"><key>5</key></Tag>");
 			DeserializeDictionary(strIntDictionary, "<Tag hash=\"true\">\r\n  <key>5</key>\r\n</Tag>");
 			DeserializeDictionary(strIntDictionary, "<Tag hash=\"true\"><key>5</key></Tag>");
 		}
@@ -255,15 +271,27 @@
 			// This is not supported by the .Net JsmlSerializer.  But is supported in javascript counterpart.
 			currentTest = "Int-Str Dictionary";
 			var intStrDictionary = { 0: "value" };
-			SerializeHelper(intStrDictionary, "<Tag hash=\"true\"><0>value</0></Tag>");
+			var jsml = "<Tag type=\"hash\"><0>value</0></Tag>"
+			SerializeHelper(intStrDictionary, jsml);
 
 			try
 			{
-				DeserializeDictionary(intStrDictionary, "<Tag hash=\"true\"><0>value</0></Tag>");
+				DeserializeDictionary(intStrDictionary, jsml);
 			}
 			catch (e)
 			{
-				var expectedMessage = "A name was started with an invalid character.\r\n" + "<Tag hash=\"true\"><0>value</0></Tag>";
+				var expectedMessage = "A name was started with an invalid character.\r\n" + jsml;
+				assertTrue(e == expectedMessage);
+			}
+
+			try
+			{
+				jsml = "<Tag hash=\"true\"><0>value</0></Tag>";
+				DeserializeDictionary(intStrDictionary, jsml);
+			}
+			catch (e)
+			{
+				var expectedMessage = "A name was started with an invalid character.\r\n" + jsml;
 				assertTrue(e == expectedMessage);
 			}
 		}
@@ -272,7 +300,7 @@
 		{
 			currentTest = "Empty Contract";
 			var emptyContract = {};
-			SerializeHelper(emptyContract, "<Tag hash=\"true\"></Tag>");
+			SerializeHelper(emptyContract, "<Tag type=\"hash\"></Tag>");
 			// not sure how to test parsing of  empty contract
 
 			currentTest = "Populated Contract";
@@ -285,15 +313,19 @@
 					ExtendedProperties: { key1: "value1" , key2: "value2" },
 					ExpectedJsml: function()
 						{
-							return "<Tag hash=\"true\">"
+							return "<Tag type=\"hash\">"
 								+ "<Double>" + this.Double + "</Double>"
 								+ "<Bool>" + this.Bool + "</Bool>"
 								+ "<DateTime>" + this.DateTime.toISOString() + "</DateTime>"
-								+ "<ExtendedProperties hash=\"true\">"
+								+ "<ExtendedProperties type=\"hash\">"
 									+ "<key1>" + this.ExtendedProperties.key1 + "</key1>"
 									+ "<key2>" + this.ExtendedProperties.key2 + "</key2>"
 								+ "</ExtendedProperties>"
 								+ "</Tag>";
+						},
+					LegacyJsml: function()
+						{
+							return this.ExpectedJsml().replace("type=\"hash\"", "hash=\"true\"").replace("type=\"array\"", "array=\"true\"");
 						},
 					Equals: function(that)
 						{
@@ -308,6 +340,9 @@
 				
 			SerializeHelper(contract, contract.ExpectedJsml());
 			var parsedValue = JSML.parse(contract.ExpectedJsml());
+			assertTrue(currentTest, contract.Equals(parsedValue));
+
+			parsedValue = JSML.parse(contract.LegacyJsml());
 			assertTrue(currentTest, contract.Equals(parsedValue));
 		}
 

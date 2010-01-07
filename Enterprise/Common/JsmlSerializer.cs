@@ -169,7 +169,7 @@ namespace ClearCanvas.Enterprise.Common
                 if (dataMemberFields.Count > 0)
                 {
                     writer.WriteStartElement(objectName);
-					writer.WriteAttributeString("hash", "true");
+					writer.WriteAttributeString("type", "hash");
 					foreach (var context in dataMemberFields)
                     {
 						SerializeHelper(context.MemberValue, context.Member.Name, writer, options);
@@ -187,7 +187,7 @@ namespace ClearCanvas.Enterprise.Common
                 var dic = (IDictionary) dataObject;
 
 				writer.WriteStartElement(objectName);
-				writer.WriteAttributeString("hash", "true");
+				writer.WriteAttributeString("type", "hash");
 				foreach (DictionaryEntry entry in dic)
                 {
                     SerializeHelper(entry.Value, entry.Key.ToString(), writer, options);
@@ -217,7 +217,7 @@ namespace ClearCanvas.Enterprise.Common
             else if (dataObject is IList)
             {
                 writer.WriteStartElement(objectName);
-                writer.WriteAttributeString("array", "true");
+                writer.WriteAttributeString("type", "array");
 
                 foreach (var item in (IList)dataObject)
                 {
@@ -231,7 +231,7 @@ namespace ClearCanvas.Enterprise.Common
                 // this clause supports serialization of an embedded JSML document inline with the
                 // output of the serializer
 				writer.WriteStartElement(objectName);
-				writer.WriteAttributeString("hash", "true");
+				writer.WriteAttributeString("type", "hash");
 				var xmlDoc = (XmlDocument)dataObject;
                 if(xmlDoc.DocumentElement != null)
                 {

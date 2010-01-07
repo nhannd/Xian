@@ -156,15 +156,19 @@ var JSML = {
         function toObj(xmlNode)
         {
             var subElements = getChildNodes(xmlNode).select(function(n) { return n.nodeType == 1; });   // select element nodes
-            var arrayAttr = xmlNode.attributes.getNamedItem("array");
-            var hashAttr = xmlNode.attributes.getNamedItem("hash");
-           
-            if(arrayAttr && arrayAttr.text == "true")
+            var arrayAttr = xmlNode.attributes.getNamedItem("array");  // for backward compatibility
+            var hashAttr = xmlNode.attributes.getNamedItem("hash");  // for backward compatibility
+            var typeAttr = xmlNode.attributes.getNamedItem("type");
+
+			var isArray = (arrayAttr && arrayAttr.text == "true") || (typeAttr && typeAttr.text == "array");
+			var isHash = (hashAttr && hashAttr.text == "true") || (typeAttr && typeAttr.text == "hash");
+
+            if(isArray)
             {
                 // collect sub-elements in an array
                 return subElements.reduce([], function(a, node) { a.push(toObj(node)); return a; });
             }
-			else if(hashAttr && hashAttr.text == "true")
+			else if(isHash)
 			{
 				// treat sub-elements as independent properties
 				return subElements.reduce({},
@@ -237,6 +241,6 @@ var JSML = {
 		var typeAttr = r[1];
         
         // embed in tag
-        return '<'+tagName+((typeAttr) ? (' '+typeAttr+'="true"'):'')+'>' + objJsml + '</'+tagName+'>';
+        return '<'+tagName+((typeAttr) ? (' type="'+typeAttr+'"'):'')+'>' + objJsml + '</'+tagName+'>';
     }    
 };
