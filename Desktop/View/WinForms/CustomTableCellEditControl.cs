@@ -311,6 +311,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				case Keys.End:
 				case Keys.PageDown:
 				case Keys.PageUp:
+				case Keys.Escape:
 					return true;
 				default:
 					return !dataGridViewWantsInputKey;
