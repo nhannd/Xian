@@ -33,6 +33,7 @@ using System;
 
 namespace ClearCanvas.Dicom
 {
+	[Serializable]
     public class DicomDataException : DicomException
     {
         public DicomDataException(String desc)

@@ -267,21 +267,19 @@ namespace ClearCanvas.Dicom.Network.Scu
 				Platform.Log(LogLevel.Error, message);
 				throw new ApplicationException(message);
 			}
-			else
-			{
-				Platform.Log(LogLevel.Info, "Preparing to connect to AE {0} on host {1} on port {2} and sending {3} images.",
-				             RemoteAE, RemoteHost, RemotePort, _storageInstanceList.Count);
 
-				try
-				{
-					// the connect launches the actual send in a background thread.
-					Connect();
-				}
-				catch
-				{
-					FailRemaining(DicomStatuses.QueryRetrieveMoveDestinationUnknown);
-					throw;
-				}
+			Platform.Log(LogLevel.Info, "Preparing to connect to AE {0} on host {1} on port {2} and sending {3} images.",
+			             RemoteAE, RemoteHost, RemotePort, _storageInstanceList.Count);
+
+			try
+			{
+				// the connect launches the actual send in a background thread.
+				Connect();
+			}
+			catch
+			{
+				FailRemaining(DicomStatuses.QueryRetrieveMoveDestinationUnknown);
+				throw;
 			}
 		}
 
@@ -310,7 +308,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <returns></returns>
 		public IAsyncResult BeginSend(AsyncCallback callback, object asyncState)
 		{
-			SendDelegate sendDelegate = this.Send;
+			SendDelegate sendDelegate = Send;
 			return sendDelegate.BeginInvoke(callback, asyncState);
 		}
 
@@ -321,15 +319,22 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <param name="ar">The ar.</param>
 		public void EndSend(IAsyncResult ar)
 		{
-			SendDelegate sendDelegate = ((System.Runtime.Remoting.Messaging.AsyncResult)ar).AsyncDelegate as SendDelegate;
+			try
+			{
+				SendDelegate sendDelegate = ((System.Runtime.Remoting.Messaging.AsyncResult) ar).AsyncDelegate as SendDelegate;
 
-			if (sendDelegate != null)
-			{
-				sendDelegate.EndInvoke(ar);
+				if (sendDelegate != null)
+				{
+					sendDelegate.EndInvoke(ar);
+				}
+				else
+				{
+					throw new InvalidOperationException("cannot end invoke, asynchresult is null");
+				}
 			}
-			else
+			catch (Exception e)
 			{
-				throw new InvalidOperationException("cannot end invoke, asynchresult is null");
+				Platform.Log(LogLevel.Warn,e,"Unexpected exception when sending send operation in StorageScu, ignoring");
 			}
 		}
 

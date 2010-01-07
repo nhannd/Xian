@@ -33,6 +33,7 @@ using System;
 
 namespace ClearCanvas.Dicom.Network
 {
+	[Serializable]
     public class DicomNetworkException : DicomException
     {
         public DicomNetworkException(String desc)
