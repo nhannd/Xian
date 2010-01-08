@@ -299,7 +299,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			catch(Exception e)
 			{
-				ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
+				if (!cancelled) // silence any exceptions if the operation was cancelled
+					ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
 			}
 
 			if (cancelled || !AnySopsLoaded(imageViewer))
