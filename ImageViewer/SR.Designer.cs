@@ -1060,6 +1060,24 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The referenced key image was found, but does not contain the specified frame..
+        /// </summary>
+        public static string MessageReferencedKeyImageFrameNotFound {
+            get {
+                return ResourceManager.GetString("MessageReferencedKeyImageFrameNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The referenced key image could not be displayed because it is not part of the loaded study..
+        /// </summary>
+        public static string MessageReferencedKeyImageFromOtherStudy {
+            get {
+                return ResourceManager.GetString("MessageReferencedKeyImageFromOtherStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error has occurred while analyzing the Roi.
         ///Please check the log for more details..
         /// </summary>

@@ -157,28 +157,81 @@ namespace ClearCanvas.ImageViewer
 			}
 			else
 			{
-				IList<KeyObjectContentItem> content = new KeyImageDeserializer(keyObjectDocument, _studyTree).Deserialize();
-				foreach (KeyObjectContentItem item in content)
+				IList<IKeyObjectContentItem> content = new KeyImageDeserializer(keyObjectDocument).Deserialize();
+				foreach (IKeyObjectContentItem item in content)
 				{
-					IPresentationImage image = Create(item.Frame);
-					if (item.PresentationStateSop != null && image is IDicomSoftcopyPresentationStateProvider)
+					if (item is KeyImageContentItem)
 					{
-						try
-						{
-							IDicomSoftcopyPresentationStateProvider presentationStateProvider = (IDicomSoftcopyPresentationStateProvider)image;
-							presentationStateProvider.PresentationState = DicomSoftcopyPresentationState.Load(item.PresentationStateSop.DataSource);
-						}
-						catch (Exception ex)
-						{
-							Platform.Log(LogLevel.Warn, ex, SR.MessagePresentationStateReadFailure);
-						}
+						images.AddRange(CreateImages((KeyImageContentItem) item));
 					}
-
-					images.Add(image);
+					else
+					{
+						Platform.Log(LogLevel.Warn, "Unsupported key object content value type");
+						continue;
+					}
 				}
 			}
 			return images;
 		}
+
+		protected virtual List<IPresentationImage> CreateImages(KeyImageContentItem item)
+		{
+			List<IPresentationImage> images = new List<IPresentationImage>();
+
+			ImageSop imageSop = FindReferencedImageSop(item.ReferencedImageSopInstanceUid, item.Source.GeneralStudy.StudyInstanceUid);
+			if (imageSop != null)
+			{
+
+				int frameNumber = item.FrameNumber.GetValueOrDefault(-1);
+				if (item.FrameNumber.HasValue)
+				{
+					if (frameNumber >= 0 && frameNumber < imageSop.Frames.Count)
+					{
+						images.Add(Create(imageSop.Frames[frameNumber]));
+					}
+					else
+					{
+						Platform.Log(LogLevel.Error, "The referenced key image {0} does not have a frame {1} (referenced in Key Object Selection {2})", item.ReferencedImageSopInstanceUid, frameNumber, item.Source.SopCommon.SopInstanceUid);
+						images.Add(new KeyObjectPlaceholderImage(SR.MessageReferencedKeyImageFrameNotFound));
+					}
+				}
+				else
+				{
+					foreach (Frame frame in imageSop.Frames)
+					{
+						images.Add(Create(frame));
+					}
+				}
+
+				Sop presentationStateSop = FindReferencedSop(item.PresentationStateSopInstanceUid, item.Source.GeneralStudy.StudyInstanceUid);
+				if (presentationStateSop != null)
+				{
+					foreach (IPresentationImage image in images)
+					{
+						if (image is IDicomSoftcopyPresentationStateProvider)
+						{
+							try
+							{
+								IDicomSoftcopyPresentationStateProvider presentationStateProvider = (IDicomSoftcopyPresentationStateProvider) image;
+								presentationStateProvider.PresentationState = DicomSoftcopyPresentationState.Load(presentationStateSop.DataSource);
+							}
+							catch (Exception ex)
+							{
+								Platform.Log(LogLevel.Warn, ex, SR.MessagePresentationStateReadFailure);
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				Platform.Log(LogLevel.Warn, "The referenced key image {0} is not loaded as part of the current study (referenced in Key Object Selection {1})", item.ReferencedImageSopInstanceUid, item.Source.SopCommon.SopInstanceUid);
+				images.Add(new KeyObjectPlaceholderImage(SR.MessageReferencedKeyImageFromOtherStudy));
+			}
+
+			return images;
+		}
+
 		/// <summary>
 		/// Creates an appropriate subclass of <see cref="BasicPresentationImage"/>
 		/// for each <see cref="Frame"/> in the input <see cref="ImageSop"/>.
@@ -207,5 +260,51 @@ namespace ClearCanvas.ImageViewer
 				return new DicomColorPresentationImage(frame);
 			}
 		}
+
+		#region Private KO Helpers
+
+		private ImageSop FindReferencedImageSop(string sopInstanceUid, string studyInstanceUid)
+		{
+			if (string.IsNullOrEmpty(sopInstanceUid))
+				return null;
+
+			string sameStudyUid = studyInstanceUid;
+			Study sameStudy = _studyTree.GetStudy(sameStudyUid);
+
+			if (sameStudy != null)
+			{
+				foreach (Series series in sameStudy.Series)
+				{
+					Sop referencedSop = series.Sops[sopInstanceUid];
+					if (referencedSop != null)
+						return referencedSop as ImageSop;
+				}
+			}
+
+			return null;
+		}
+
+		private Sop FindReferencedSop(string sopInstanceUid, string studyInstanceUid)
+		{
+			if (string.IsNullOrEmpty(sopInstanceUid))
+				return null;
+
+			string sameStudyUid = studyInstanceUid;
+			Study sameStudy = _studyTree.GetStudy(sameStudyUid);
+
+			if (sameStudy != null)
+			{
+				foreach (Series series in sameStudy.Series)
+				{
+					Sop referencedSop = series.Sops[sopInstanceUid];
+					if (referencedSop != null)
+						return referencedSop;
+				}
+			}
+
+			return null;
+		}
+
+		#endregion
 	}
 }

@@ -154,6 +154,8 @@
     <Compile Include="ImageBoxDrawingEventArgs.cs" />
     <Compile Include="Imaging\ComposedLut.cs" />
     <Compile Include="InputManagement\LostFocusMessage.cs" />
+    <Compile Include="KeyObjects\IKeyObjectContentItem.cs" />
+    <Compile Include="KeyObjects\KeyObjectPlaceholderImage.cs" />
     <Compile Include="RoiGraphics\Tests\ContainsPointTest.cs" />
     <Compile Include="RoiGraphics\Tests\EllipticalRoiTests.cs" />
     <Compile Include="RoiGraphics\Tests\PolygonalRoiTests.cs" />

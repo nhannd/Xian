@@ -513,4 +513,10 @@ Please check the log for more details.</value>
   <data name="SuffixFormatSingleReferencedImageDisplaySetWithLateralityViewPosition" xml:space="preserve">
     <value>{0} (Series/Image#: {1}/{2})</value>
   </data>
+  <data name="MessageReferencedKeyImageFrameNotFound" xml:space="preserve">
+    <value>The referenced key image was found, but does not contain the specified frame.</value>
+  </data>
+  <data name="MessageReferencedKeyImageFromOtherStudy" xml:space="preserve">
+    <value>The referenced key image could not be displayed because it is not part of the loaded study.</value>
+  </data>
 </root>

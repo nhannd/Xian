@@ -32,7 +32,6 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod.Iods;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Macros.DocumentRelationship;
@@ -44,49 +43,6 @@ using ValueType=ClearCanvas.Dicom.Iod.ValueType;
 namespace ClearCanvas.ImageViewer.KeyObjects
 {
 	/// <summary>
-	/// Represents a single key image content item being serialized in the key object document.
-	/// </summary>
-	/// <remarks>
-	/// <para>Due to the relatively new nature of key object support in the ClearCanvas Framework, this API may be more prone to changes in the next release.</para>
-	/// </remarks>
-	public class KeyObjectContentItem
-	{
-		internal KeyObjectContentItem(Frame frame, Sop presentationStateSop)
-		{
-			this.Frame = frame;
-			this.PresentationStateSop = presentationStateSop;
-
-			if (presentationStateSop != null)
-			{
-				if (presentationStateSop.SopClassUid == SopClass.GrayscaleSoftcopyPresentationStateStorageSopClassUid)
-					GrayscalePresentationStateIod = new GrayscaleSoftcopyPresentationStateIod(presentationStateSop.DataSource);
-				else if (presentationStateSop.SopClassUid == SopClass.ColorSoftcopyPresentationStateStorageSopClassUid)
-					ColorPresentationStateIod = new ColorSoftcopyPresentationStateIod(presentationStateSop.DataSource);
-			}
-		}
-
-		/// <summary>
-		/// Gets the frame that is being serialized.
-		/// </summary>
-		public readonly Frame Frame;
-
-		/// <summary>
-		/// Gets the presentation state SOP instance associated with this frame.
-		/// </summary>
-		public readonly Sop PresentationStateSop;
-
-		/// <summary>
-		/// Gets the grayscale softcopy presentation state decoded from the <see cref="PresentationStateSop"/>.
-		/// </summary>
-		public readonly GrayscaleSoftcopyPresentationStateIod GrayscalePresentationStateIod;
-
-		/// <summary>
-		/// Gets the color softcopy presentation state decoded from the <see cref="PresentationStateSop"/>.
-		/// </summary>
-		public readonly ColorSoftcopyPresentationStateIod ColorPresentationStateIod;
-	}
-
-	/// <summary>
 	/// A class for deserializing a key image series into the constituent images and associated presentation states.
 	/// </summary>
 	/// <remarks>
@@ -94,7 +50,6 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 	/// </remarks>
 	public class KeyImageDeserializer
 	{
-		private readonly StudyTree _studyTree;
 		private readonly KeyObjectSelectionDocumentIod _document;
 
 		/// <summary>
@@ -103,9 +58,8 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 		/// <remarks>
 		/// <para>Due to the relatively new nature of key object support in the ClearCanvas Framework, this API may be more prone to changes in the next release.</para>
 		/// </remarks>
-		public KeyImageDeserializer(Sop sourceSop, StudyTree studyTree)
+		public KeyImageDeserializer(Sop sourceSop)
 		{
-			_studyTree = studyTree;
 			_document = new KeyObjectSelectionDocumentIod(sourceSop.DataSource);
 		}
 
@@ -115,18 +69,17 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 		/// <remarks>
 		/// <para>Due to the relatively new nature of key object support in the ClearCanvas Framework, this API may be more prone to changes in the next release.</para>
 		/// </remarks>
-		public KeyImageDeserializer(KeyObjectSelectionDocumentIod iod, StudyTree studyTree)
+		public KeyImageDeserializer(KeyObjectSelectionDocumentIod iod)
 		{
-			_studyTree = studyTree;
 			_document = iod;
 		}
 
 		/// <summary>
 		/// Deserializes the key object selection SOP instance into a list of constituent images and associated presentation states.
 		/// </summary>
-		public IList<KeyObjectContentItem> Deserialize()
+		public IList<IKeyObjectContentItem> Deserialize()
 		{
-			List<KeyObjectContentItem> contentItems = new List<KeyObjectContentItem>();
+			List<IKeyObjectContentItem> contentItems = new List<IKeyObjectContentItem>();
 
 			SrDocumentContentModuleIod srDocument = _document.SrDocumentContent;
 			foreach (IContentSequence contentItem in srDocument.ContentSequence)
@@ -135,52 +88,30 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 				{
 					if (contentItem.ValueType == ValueType.Image)
 					{
-						try
+						IImageReferenceMacro imageReference = contentItem;
+						string referencedSopInstanceUid = imageReference.ReferencedSopSequence.ReferencedSopInstanceUid;
+						string presentationStateSopInstanceUid = null;
+
+						if(imageReference.ReferencedSopSequence.ReferencedSopSequence != null)
 						{
-							IImageReferenceMacro imageReference = contentItem;
-							string referencedSopInstanceUid = imageReference.ReferencedSopSequence.ReferencedSopInstanceUid;
-							ImageSop referencedImage = FindReferencedImageSop(referencedSopInstanceUid);
-							if (referencedImage == null)
-							{
-								Platform.Log(LogLevel.Warn, "Unable to find referenced image '{0}'.", referencedSopInstanceUid);
-								continue;
-							}
+							presentationStateSopInstanceUid = imageReference.ReferencedSopSequence.ReferencedSopSequence.ReferencedSopInstanceUid;
+						}
 
-							Sop presentationState = null;
-							if(imageReference.ReferencedSopSequence.ReferencedSopSequence != null)
+						string referencedFrameNumbers = imageReference.ReferencedSopSequence.ReferencedFrameNumber;
+						int[] frameNumbers;
+						if (!string.IsNullOrEmpty(referencedFrameNumbers)
+							&& DicomStringHelper.TryGetIntArray(referencedFrameNumbers, out frameNumbers) && frameNumbers.Length > 0)
+						{
+							foreach (int frameNumber in frameNumbers)
 							{
-								presentationState = FindReferencedSop(imageReference.ReferencedSopSequence.ReferencedSopSequence.ReferencedSopInstanceUid);
-							}
-
-							string referencedFrameNumbers = imageReference.ReferencedSopSequence.ReferencedFrameNumber;
-							int[] frameNumbers;
-							if (DicomStringHelper.TryGetIntArray(referencedFrameNumbers, out frameNumbers) && frameNumbers.Length > 0)
-							{
-								foreach (int frameNumber in frameNumbers)
-								{
-									if (frameNumber > referencedImage.Frames.Count)
-									{
-										Platform.Log(LogLevel.Warn, "Unable to find referenced frame number {0} for instance '{1}'.", frameNumber, referencedSopInstanceUid);
-									}
-									else
-									{
-										KeyObjectContentItem item = new KeyObjectContentItem(referencedImage.Frames[frameNumber], presentationState);
-										contentItems.Add(item);
-									}
-								}
-							}
-							else
-							{
-								foreach (Frame frame in referencedImage.Frames) {
-									KeyObjectContentItem item = new KeyObjectContentItem(frame, presentationState);
-									contentItems.Add(item);
-								}
+								KeyImageContentItem item = new KeyImageContentItem(referencedSopInstanceUid, frameNumber, presentationStateSopInstanceUid, _document);
+								contentItems.Add(item);
 							}
 						}
-						catch (Exception ex)
+						else
 						{
-							Platform.Log(LogLevel.Warn, ex, "Error realizing key object selection content item of value type {0}.", contentItem.ValueType);
-							continue;
+							KeyImageContentItem item = new KeyImageContentItem(referencedSopInstanceUid, presentationStateSopInstanceUid, _document);
+							contentItems.Add(item);
 						}
 					}
 					else
@@ -193,39 +124,6 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			}
 
 			return contentItems.AsReadOnly();
-		}
-
-		private ImageSop FindReferencedImageSop(string sopInstanceUid)
-		{
-			string sameStudyUid = _document.GeneralStudy.StudyInstanceUid;
-			Study sameStudy = _studyTree.GetStudy(sameStudyUid);
-			
-			if (sameStudy != null)
-			{
-				foreach (Series series in sameStudy.Series)
-				{
-					Sop referencedSop = series.Sops[sopInstanceUid];
-					if (referencedSop != null)
-						return referencedSop as ImageSop;
-				}
-			}
-
-			return null;
-		}
-
-		private Sop FindReferencedSop(string sopInstanceUid) {
-			string sameStudyUid = _document.GeneralStudy.StudyInstanceUid;
-			Study sameStudy = _studyTree.GetStudy(sameStudyUid);
-
-			if (sameStudy != null) {
-				foreach (Series series in sameStudy.Series) {
-					Sop referencedSop = series.Sops[sopInstanceUid];
-					if (referencedSop != null)
-						return referencedSop;
-				}
-			}
-
-			return null;
 		}
 	}
 }
