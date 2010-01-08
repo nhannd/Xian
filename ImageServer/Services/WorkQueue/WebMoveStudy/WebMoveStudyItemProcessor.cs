@@ -89,6 +89,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
                                                		TransferSyntax = instanceXml.TransferSyntax,
                                                		SopInstanceUid = instanceXml.SopInstanceUid,
                                                		StudyInstanceUid = studyXml.StudyInstanceUid,
+													SeriesInstanceUid = seriesXml.SeriesInstanceUid,
                                                		PatientId = studyXml.PatientId,
                                                		PatientsName = studyXml.PatientsName
                                                	};

@@ -41,15 +41,11 @@ namespace ClearCanvas.Dicom.Network.Scu
 	{
 		#region Private Variables...
 		private string _filename;
-		private DicomStatus _sendStatus;
 		private SopClass _sopClass;
-		private string _sopInstanceUid;
 		private TransferSyntax _syntax;
 		private bool _infoLoaded = false;
-		private string _extendedFailureDescription;
 		private string _patientId = string.Empty;
 		private string _patientsName = string.Empty;
-		private string _studyInstanceUid = string.Empty;
 		private DicomFile _dicomFile = null;
 		#endregion
 
@@ -80,20 +76,17 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <summary>
 		/// The SOP Instance Uid of the storage instance.
 		/// </summary>
-		public string SopInstanceUid
-		{
-			get { return _sopInstanceUid; }
-			set { _sopInstanceUid = value; }
-		}
+		public string SopInstanceUid { get; set; }
 
 		/// <summary>
 		/// The Study Instance Uid of the storage instance.
 		/// </summary>
-		public string StudyInstanceUid
-		{
-			get { return _studyInstanceUid; }
-			set { _studyInstanceUid = value; }
-		}
+		public string StudyInstanceUid { get; set; }
+
+		/// <summary>
+		/// The Study Instance Uid of the storage instance.
+		/// </summary>
+		public string SeriesInstanceUid { get; set; }
 
 		/// <summary>
 		/// The Patient's Name of the storage instance.
@@ -130,20 +123,13 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <summary>
 		/// The <see cref="DicomStatus"/> returned from the remote SCP when the storage instance was trasferred.
 		/// </summary>
-		public DicomStatus SendStatus
-		{
-			get { return _sendStatus; }
-			set { _sendStatus = value; }
-		}
+		public DicomStatus SendStatus { get; set; }
 
 		/// <summary>
 		/// An extended failure description if <see cref="SendStatus"/> is a failure status.
 		/// </summary>
-		public string ExtendedFailureDescription
-		{
-			get { return _extendedFailureDescription; }
-			set { _extendedFailureDescription = value; }
-		}
+		public string ExtendedFailureDescription { get; set; }
+
 		#endregion
 
 		#region Constructors
@@ -171,12 +157,13 @@ namespace ClearCanvas.Dicom.Network.Scu
 				_sopClass = _dicomFile.SopClass;
 
 			_syntax = _dicomFile.TransferSyntax;
-			_sopInstanceUid = _dicomFile.MediaStorageSopInstanceUid;
+			SopInstanceUid = _dicomFile.MediaStorageSopInstanceUid;
 			_filename = dicomFile.Filename;
 
-			_studyInstanceUid = _dicomFile.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
-			_patientsName = _dicomFile.DataSet[DicomTags.PatientsName].GetString(0, string.Empty);
-			_patientId = _dicomFile.DataSet[DicomTags.PatientId].GetString(0, string.Empty);
+			StudyInstanceUid = _dicomFile.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
+			SeriesInstanceUid = _dicomFile.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
+			PatientsName = _dicomFile.DataSet[DicomTags.PatientsName].GetString(0, string.Empty);
+			PatientId = _dicomFile.DataSet[DicomTags.PatientId].GetString(0, string.Empty);
 			_infoLoaded = true;
 		}
 
@@ -185,11 +172,12 @@ namespace ClearCanvas.Dicom.Network.Scu
 			_sopClass = msg.SopClass;
 
 			_syntax = msg.TransferSyntax;
-			_sopInstanceUid = msg.DataSet[DicomTags.SopInstanceUid].GetString(0, string.Empty);
+			SopInstanceUid = msg.DataSet[DicomTags.SopInstanceUid].GetString(0, string.Empty);
 
-			_studyInstanceUid = msg.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
-			_patientsName = msg.DataSet[DicomTags.PatientsName].GetString(0, string.Empty);
-			_patientId = msg.DataSet[DicomTags.PatientId].GetString(0, string.Empty);
+			StudyInstanceUid = _dicomFile.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
+			SeriesInstanceUid = _dicomFile.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
+			PatientsName = _dicomFile.DataSet[DicomTags.PatientsName].GetString(0, string.Empty);
+			PatientId = _dicomFile.DataSet[DicomTags.PatientId].GetString(0, string.Empty);
 			_infoLoaded = true;
 		}
 
@@ -200,6 +188,9 @@ namespace ClearCanvas.Dicom.Network.Scu
 		public StorageInstance(string filename)
 		{
 			_filename = filename;
+			StudyInstanceUid = string.Empty;
+			SeriesInstanceUid = string.Empty;
+			SopInstanceUid = string.Empty;
 		}
 
 		/// <summary>
@@ -210,7 +201,9 @@ namespace ClearCanvas.Dicom.Network.Scu
 		public StorageInstance(SopClass sopClass, string sopInstanceUid)
 		{
 			_sopClass = sopClass;
-			_sopInstanceUid = sopInstanceUid;
+			SopInstanceUid = sopInstanceUid;
+			StudyInstanceUid = string.Empty;
+			SeriesInstanceUid = string.Empty;
 			_filename = String.Empty;
 		}
 		#endregion
@@ -234,7 +227,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 			theFile.Load(DicomReadOptions.StorePixelDataReferences);
 
-			_studyInstanceUid = theFile.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
+			StudyInstanceUid = theFile.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
 			_patientsName = theFile.DataSet[DicomTags.PatientsName].GetString(0, string.Empty);
 			_patientId = theFile.DataSet[DicomTags.PatientId].GetString(0, string.Empty);
 
@@ -268,7 +261,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 				_sopClass = theFile.SopClass;
 
 			_syntax = theFile.TransferSyntax;
-			_sopInstanceUid = theFile.MediaStorageSopInstanceUid;
+			SopInstanceUid = theFile.MediaStorageSopInstanceUid;
 
 			_infoLoaded = true;
 		}

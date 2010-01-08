@@ -206,7 +206,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
         /// </summary>
         protected override void ProcessItem(Model.WorkQueue item)
         {
-            if (WorkQueueItem.ScheduledTime >= WorkQueueItem.ExpirationTime)
+            if (WorkQueueItem.ScheduledTime >= WorkQueueItem.ExpirationTime && !HasPendingItems)
             {
                 Platform.Log(LogLevel.Debug, "Removing Idle {0} entry : {1}", item.WorkQueueTypeEnum, item.GetKey().Key);
                 base.PostProcessing(item, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.None);
@@ -397,10 +397,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                     _uidMaps = new Dictionary<string, List<WorkQueueUid>>();
                     foreach (WorkQueueUid uid in WorkQueueUidList)
                     {
-                        if (!_uidMaps.ContainsKey(uid.SopInstanceUid))
-                            _uidMaps.Add(uid.SopInstanceUid, new List<WorkQueueUid>());
+						if (!String.IsNullOrEmpty(uid.SopInstanceUid))
+						{
+							if (!_uidMaps.ContainsKey(uid.SopInstanceUid))
+								_uidMaps.Add(uid.SopInstanceUid, new List<WorkQueueUid>());
 
-                        _uidMaps[uid.SopInstanceUid].Add(uid);
+							_uidMaps[uid.SopInstanceUid].Add(uid);
+						}
+						else
+						{
+							_uidMaps = null;
+							if (uid.SeriesInstanceUid.Equals(instance.SeriesInstanceUid))
+							{
+								return new List<WorkQueueUid>(1) { uid };
+							}
+						}
                     }
                 }
             }
