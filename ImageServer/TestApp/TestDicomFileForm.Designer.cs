@@ -65,6 +65,7 @@ namespace ClearCanvas.ImageServer.TestApp
 			this.button1 = new System.Windows.Forms.Button();
 			this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.buttonSearchForStudies = new System.Windows.Forms.Button();
+			this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
 			this.SuspendLayout();
 			// 
 			// checkBoxLoadTest
@@ -84,7 +85,7 @@ namespace ClearCanvas.ImageServer.TestApp
 			this.buttonScanDirectory.Name = "buttonScanDirectory";
 			this.buttonScanDirectory.Size = new System.Drawing.Size(162, 23);
 			this.buttonScanDirectory.TabIndex = 1;
-			this.buttonScanDirectory.Text = "Scan Directory";
+			this.buttonScanDirectory.Text = "Scan Directories";
 			this.buttonScanDirectory.UseVisualStyleBackColor = true;
 			this.buttonScanDirectory.Click += new System.EventHandler(this.buttonSelectDirectory_Click);
 			// 
@@ -95,11 +96,11 @@ namespace ClearCanvas.ImageServer.TestApp
 			// 
 			// button1
 			// 
-			this.button1.Location = new System.Drawing.Point(13, 109);
+			this.button1.Location = new System.Drawing.Point(13, 94);
 			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(95, 23);
+			this.button1.Size = new System.Drawing.Size(162, 23);
 			this.button1.TabIndex = 2;
-			this.button1.Text = "CheckRule";
+			this.button1.Text = "Modify File";
 			this.button1.UseVisualStyleBackColor = true;
 			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
@@ -142,6 +143,7 @@ namespace ClearCanvas.ImageServer.TestApp
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
 		private System.Windows.Forms.Button buttonSearchForStudies;
+		private System.Windows.Forms.SaveFileDialog saveFileDialog;
     }
 }
 

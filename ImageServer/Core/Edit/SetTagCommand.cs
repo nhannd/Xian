@@ -194,7 +194,17 @@ namespace ClearCanvas.ImageServer.Core.Edit
 				if (attr != null)
 				{
 				    UpdateEntry.OriginalValue = attr.ToString();
-				    attr.SetStringValue(UpdateEntry.GetStringValue());
+					try
+					{
+						attr.SetStringValue(UpdateEntry.GetStringValue());
+					}
+					catch (DicomDataException)
+					{
+						Platform.Log(LogLevel.Warn, "Unexpected exception when updating tag {0} to value {1}, leaving current value: {2}",
+						             UpdateEntry.TagPath, UpdateEntry.GetStringValue(),
+						             attr.ToString());
+						UpdateEntry.Value = attr.ToString();
+					}
 				}
 			}
 

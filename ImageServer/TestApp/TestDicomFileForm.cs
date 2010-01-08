@@ -170,8 +170,9 @@ namespace ClearCanvas.ImageServer.TestApp
         private void button1_Click(object sender, EventArgs e)
         {
             //CopyTest();
-            
-            openFileDialog.ShowDialog();
+
+			openFileDialog.Filter = "DICOM|*.dcm";
+			openFileDialog.ShowDialog();
 
             if (!File.Exists(openFileDialog.FileName))
                 return;
@@ -180,27 +181,24 @@ namespace ClearCanvas.ImageServer.TestApp
 
             dicomFile.Load();
 
-            double val;
-            dicomFile.DataSet[DicomTags.RescaleSlope].TryGetFloat64(0, out val);
+            //dicomFile.DataSet[DicomTags.PatientsName].SetEmptyValue();
+			//dicomFile.DataSet[DicomTags.PatientId].SetEmptyValue();
+        	dicomFile.DataSet[DicomTags.SopInstanceUid].SetStringValue(DicomUid.GenerateUid().UID);
 
-        
-            dicomFile.DataSet[DicomTags.StationName].SetStringValue("AE");
+			try
+			{
+				dicomFile.DataSet[DicomTags.PatientsBirthDate].SetStringValue("12/12/2009");
+			}
+			catch (Exception x)
+			{
+				
+			}
 
-            string folder = @"..\";
-            DicomDirectory dicomDirectory = new DicomDirectory("TESTAE");
-            dicomDirectory.ImplementationVersionName = "VETPACS2006";
-            dicomDirectory.SourceApplicationEntityTitle = "LEADTOOLS";
-            dicomDirectory.ImplementationClassUid = "1.2.840.114387.4";
-            dicomDirectory.MediaStorageSopInstanceUid = "1.2.840.114257.0.14168379392050430457204051014614771104832";
-            dicomDirectory.FileSetId = "SVCD_6/5/2007";
-            //dicomDirectoryWriter.PrivateInformationCreatorUid = "";
-            //dicomDirectoryWriter.AddFile(openFileDialog.FileName, @"DIR00001\IMAGE001");
-            dicomDirectory.AddFile(folder + @"DIR00001\IMAGE001", @"DIR00001\IMAGE001");
-            dicomDirectory.AddFile(folder + @"DIR00001\IMAGE002", @"DIR00001\IMAGE002");
-            dicomDirectory.AddFile(folder + @"DIR00001\IMAGE003", @"DIR00001\IMAGE003");
-            dicomDirectory.Save(folder + @"DIR00001\DICOMDIR2");
-            File.WriteAllText(folder + @"DIR00001\DICOMDIR2dump.txt", dicomDirectory.Dump("", DicomDumpOptions.Default));
-            
+			saveFileDialog.Filter = "DICOM|*.dcm";
+			if (DialogResult.OK == saveFileDialog.ShowDialog())
+			{
+				dicomFile.Save(saveFileDialog.FileName);
+			}
         }
 
 		private void buttonSelectDirectory_Click(object sender, EventArgs e)

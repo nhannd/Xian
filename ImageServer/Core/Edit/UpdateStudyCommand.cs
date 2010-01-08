@@ -231,10 +231,16 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		{
             IPatientEntityBroker patientFindBroker = context.GetBroker<IPatientEntityBroker>();
 			PatientSelectCriteria criteria = new PatientSelectCriteria();
-			criteria.PatientId.EqualTo(patientInfo.PatientId);
+
+			if (!String.IsNullOrEmpty(patientInfo.PatientId))
+				criteria.PatientId.EqualTo(patientInfo.PatientId);
+			else
+				criteria.PatientId.IsNull();
 
 			if (!String.IsNullOrEmpty(patientInfo.Name))
                 criteria.PatientsName.EqualTo(patientInfo.Name);
+			else
+				criteria.PatientsName.IsNull();
 
 			return patientFindBroker.FindOne(criteria);
 		}
