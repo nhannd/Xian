@@ -195,16 +195,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
             int i = 0;
             foreach (object val in _where.Parameters)
             {
-                if (val is Enum)
-                {
-                    // convert to string, since nhibernate doesn't know what to do with enums
-                    q.SetParameter(i++, val.ToString());
-                }
-                else
-                {
-                    q.SetParameter(i++, val);
-                }
-
+	            q.SetParameter(i++, val);
             }
 
             // if limits were specified, pass them to nhibernate

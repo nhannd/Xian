@@ -29,14 +29,10 @@
 
 #endregion
 
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Enterprise.Common;
 using NHibernate.Type;
 using ClearCanvas.Common.Utilities;
-using NHibernate.Collection;
 using NHibernate;
 
 namespace ClearCanvas.Enterprise.Hibernate
