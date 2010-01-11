@@ -36,14 +36,14 @@
   <ItemGroup>
     <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
     <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll" />
-    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.0\Iesi.Collections.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.1\Iesi.Collections.dll" />
 
     <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Hibernate\bin\$(Configuration)\ClearCanvas.Enterprise.Hibernate.dll" />
     <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Hibernate\DdlWriter\bin\$(Configuration)\ClearCanvas.Enterprise.Hibernate.DdlWriter.dll" />
-    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.0\Castle.Core.dll" />
-    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.0\Castle.DynamicProxy2.dll" />
-    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.0\NHibernate.dll" />
-    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.0\NHibernate.Caches.SysCache.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.1\Castle.Core.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.1\Castle.DynamicProxy2.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.1\NHibernate.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.1\NHibernate.Caches.SysCache.dll" />
 
     <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Configuration\bin\$(Configuration)\ClearCanvas.Enterprise.Configuration.dll" />
     <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Configuration\Hibernate\bin\$(Configuration)\ClearCanvas.Enterprise.Configuration.Hibernate.dll" />
