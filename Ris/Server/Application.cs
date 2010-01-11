@@ -118,6 +118,9 @@ namespace ClearCanvas.Ris.Server
 
             Platform.Log(LogLevel.Info, "WCF Services started on {0}", WebServicesSettings.Default.BaseUrl);
 
+			if (PersistentStoreProfilerSettings.Default.Enabled)
+				PersistentStoreProfilerRegistry.Initialize();
+
 			// kick NHibernate, rather than waiting for it to load on demand
 			PersistentStoreRegistry.GetDefaultStore();
 
