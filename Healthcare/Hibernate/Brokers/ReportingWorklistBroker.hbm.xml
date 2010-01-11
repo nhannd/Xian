@@ -13,7 +13,7 @@
 		join otherProcedure.Type otherProcedureType,
 		InterpretationStep refStep
 		join refStep.Procedure refProcedure
-		join refProcedure.Type refProcedureType,
+		join refProcedure.Type refProcedureType
 		where
 		refStep = ?
 
@@ -54,7 +54,7 @@
 		join otherProcedure.Type otherProcedureType,
 		ProtocolAssignmentStep refStep
 		join refStep.Procedure refProcedure
-		join refProcedure.Type refProcedureType,
+		join refProcedure.Type refProcedureType
 		where
 		refStep = ?
 

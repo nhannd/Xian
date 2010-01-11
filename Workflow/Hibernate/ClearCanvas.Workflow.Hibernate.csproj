@@ -35,7 +35,7 @@
   <ItemGroup>
     <Reference Include="NHibernate, Version=2.0.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ReferencedAssemblies\NHibernate2.0\NHibernate.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\NHibernate2.1\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

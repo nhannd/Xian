@@ -21,8 +21,8 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.0\Castle.Core.dll "/>
-    <SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.0\Castle.DynamicProxy2.dll" />
+    <SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.1\Castle.Core.dll "/>
+    <SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.1\Castle.DynamicProxy2.dll" />
     <SharedLibraryFiles Include="$(TrunkDirectory)\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
 		<SharedLibraryFiles Include="$(TrunkDirectory)\Ris\Application\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Common.dll" />
   </ItemGroup>

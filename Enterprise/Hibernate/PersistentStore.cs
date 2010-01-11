@@ -37,6 +37,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using NHibernate;
 using NHibernate.Mapping;
+using NHibernate.Metadata;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
@@ -123,7 +124,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             get { return _cfg; }
         }
 
-        public IDictionary Metadata
+        public IDictionary<string, IClassMetadata> Metadata
         {
             get { return _sessionFactory.GetAllClassMetadata(); }
         }
@@ -145,7 +146,7 @@ namespace ClearCanvas.Enterprise.Hibernate
                     // (we might even be ok with a read-only strategy, but we'd have to try it out)
                     if (classMapping.MappedClass.IsSubclassOf(typeof(EnumValue)))
                     {
-                        _cfg.SetCacheConcurrencyStrategy(classMapping.MappedClass, NHibernate.Cache.CacheFactory.NonstrictReadWrite);
+                        _cfg.SetCacheConcurrencyStrategy(classMapping.MappedClass.FullName, NHibernate.Cache.CacheFactory.NonstrictReadWrite);
                     }
                     else if(classMapping.MappedClass.IsSubclassOf(typeof(Entity)))
                     {

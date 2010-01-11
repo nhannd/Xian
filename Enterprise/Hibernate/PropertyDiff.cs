@@ -83,10 +83,6 @@ namespace ClearCanvas.Enterprise.Hibernate
 				// if we're dealing with a collection property
 				if(IsCollectionProperty)
 				{
-                    // see if the collection object itself is different
-                    if (!ReferenceEquals(_oldValue, _newValue))
-                        return true;
-
                     // an uninitialized collection cannot have changed
                     if (!NHibernateUtil.IsInitialized(_newValue))
                         return false;

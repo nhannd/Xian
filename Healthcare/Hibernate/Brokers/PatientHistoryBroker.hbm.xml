@@ -10,7 +10,6 @@
     from Procedure rp
     join rp.Order o
     join fetch rp.Order
-    join fetch o.Visit
     where o.Patient = ?
   </query>
   
@@ -35,8 +34,6 @@
     join r.Procedures rp
     join rp.Order o
     join fetch r.Procedures
-    join fetch rp.Order
-    join fetch o.Visit
     where o.Patient = ?
     and r.Status not in ('X')
   </query>
@@ -51,8 +48,6 @@
     join r.Procedures rp
     join rp.Order o
     join fetch r.Procedures
-    join fetch rp.Order
-    join fetch o.Visit
     where o = ?
     and r.Status not in ('X')
   </query>

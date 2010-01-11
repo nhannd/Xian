@@ -252,7 +252,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 			}
 
 			// it is dirty, so we need to get the snapshot
-			var snapshot = collection.CollectionSnapshot.Snapshot;
+			var snapshot = collection.StoredSnapshot;
 
 			// sometimes it seems there is no snapshot - in this case we just return null
 			// to indicate that the snapshot is empty
@@ -264,7 +264,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 			{
 				// "set"
 				// we return an untyped set - this is a bit lazy, we could create a typed set with some extra effort, but do we need it?
-				return new HybridSet(((IDictionary)snapshot).Values);
+				return new HybridSet((ICollection)snapshot);
 			}
 			if(collection is IList && snapshot is IDictionary)
 			{

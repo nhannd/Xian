@@ -66,9 +66,9 @@
   </ItemGroup>
 
   <ItemGroup>
-	<ImageServerCommonFiles Include="$(SolutionDir)\..\ReferencedAssemblies\NHibernate2.0\Iesi.Collections.dll" />
-	<ImageServerCommonFiles Include="$(SolutionDir)\..\ReferencedAssemblies\NHibernate2.0\Castle.DynamicProxy2.dll" />
-	<ImageServerCommonFiles Include="$(SolutionDir)\..\ReferencedAssemblies\NHibernate2.0\Castle.Core.dll" />
+	<ImageServerCommonFiles Include="$(SolutionDir)\..\ReferencedAssemblies\NHibernate2.1\Iesi.Collections.dll" />
+	<ImageServerCommonFiles Include="$(SolutionDir)\..\ReferencedAssemblies\NHibernate2.1\Castle.DynamicProxy2.dll" />
+	<ImageServerCommonFiles Include="$(SolutionDir)\..\ReferencedAssemblies\NHibernate2.1\Castle.Core.dll" />
 	<ImageServerCommonFiles Include="$(SolutionDir)\..\ReferencedAssemblies\log4net.dll" />
 	<ImageServerCommonFiles Include="$(SolutionDir)\..\ReferencedAssemblies\nunit.framework.dll" />
 	<ImageServerCommonFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Ionic.Zip.dll" />
