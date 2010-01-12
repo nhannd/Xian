@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright (c) 2009, ClearCanvas Inc.
+// Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -34,38 +34,38 @@ using System;
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
-	/// Provides data for the <see cref="EventBroker.GraphicSelectionChanged"/> event.
+	/// Provides data for the <see cref="EventBroker.GraphicFocusChanged"/> event.
 	/// </summary>
-	public class GraphicSelectionChangedEventArgs : EventArgs
+	public class GraphicFocusChangedEventArgs : EventArgs
 	{
-		private readonly ISelectableGraphic _selectedGraphic;
-		private readonly ISelectableGraphic _deselectedGraphic;
+		private readonly IFocussableGraphic _focusedGraphic;
+		private readonly IFocussableGraphic _unfocusedGraphic;
 
 		/// <summary>
-		/// Intializes a new instance of <see cref="GraphicSelectionChangedEventArgs"/>.
+		/// Intializes a new instance of <see cref="GraphicFocusChangedEventArgs"/>.
 		/// </summary>
-		/// <param name="selectedGraphic">The graphic that was selected. Can be <b>null</b> if there is no currently selected graphic.</param>
-		/// <param name="deselectedGraphic">The graphic that was previously selected. Can be <b>null</b> if there was previously no selected graphic.</param>
-		internal GraphicSelectionChangedEventArgs(ISelectableGraphic selectedGraphic, ISelectableGraphic deselectedGraphic)
+		/// <param name="focusedGraphic">The graphic that was focused. Can be <b>null</b> if there is no currently focused graphic.</param>
+		/// <param name="unfocusedGraphic">The graphic that was previously focused. Can be <b>null</b> if there was previously no focused graphic.</param>
+		internal GraphicFocusChangedEventArgs(IFocussableGraphic focusedGraphic, IFocussableGraphic unfocusedGraphic)
 		{
-			_selectedGraphic = selectedGraphic;
-			_deselectedGraphic = deselectedGraphic;
+			_focusedGraphic = focusedGraphic;
+			_unfocusedGraphic = unfocusedGraphic;
 		}
 
 		/// <summary>
-		/// Gets the selected <see cref="IGraphic"/>. Can be <b>null</b> if there is no currently selected graphic.
+		/// Gets the focused <see cref="IGraphic"/>. Can be <b>null</b> if there is no currently focused graphic.
 		/// </summary>
-		public ISelectableGraphic SelectedGraphic
+		public IFocussableGraphic FocusedGraphic
 		{
-			get { return _selectedGraphic; }
+			get { return _focusedGraphic; }
 		}
 
 		/// <summary>
-		/// Gets the deselected <see cref="IGraphic"/>. Can be <b>null</b> if there was previously no selected graphic.
+		/// Gets the deselected <see cref="IGraphic"/>. Can be <b>null</b> if there was previously no focused graphic.
 		/// </summary>
-		public ISelectableGraphic DeselectedGraphic
+		public IFocussableGraphic UnfocusedGraphic
 		{
-			get { return _deselectedGraphic; }
+			get { return _unfocusedGraphic; }
 		}
 	}
 }

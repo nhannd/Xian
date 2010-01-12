@@ -151,6 +151,7 @@
     <Compile Include="Common\MemoryManagementStrategy.cs" />
     <Compile Include="Common\MemoryManager.cs" />
     <Compile Include="Common\PermissionsHelper.cs" />
+    <Compile Include="Graphics\GraphicFocusChangedEventArgs.cs" />
     <Compile Include="ImageBoxDrawingEventArgs.cs" />
     <Compile Include="Imaging\ComposedLut.cs" />
     <Compile Include="InputManagement\LostFocusMessage.cs" />

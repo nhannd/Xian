@@ -50,7 +50,9 @@ namespace ClearCanvas.ImageViewer
 		private event EventHandler<DisplaySetSelectedEventArgs> _displaySetSelectedEvent;
 		private event EventHandler<TileSelectedEventArgs> _tileSelectedEvent;
 		private event EventHandler<PresentationImageSelectedEventArgs> _presentationImageSelectedEvent;
+
 		private event EventHandler<GraphicSelectionChangedEventArgs> _graphicSelectionChangedEvent;
+		private event EventHandler<GraphicFocusChangedEventArgs> _graphicFocusChangedEvent;
 
 		private event EventHandler<StudyLoadedEventArgs> _studyLoadedEvent;
 		private event EventHandler<StudyLoadFailedEventArgs> _studyLoadFailedEvent;
@@ -159,7 +161,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Occurs when the selected <see cref="Graphic"/> in the currently selected
+		/// Occurs when the selected <see cref="IGraphic"/> in the currently selected
 		/// <see cref="PresentationImage"/>'s scene graph has changed.
 		/// </summary>
 		public event EventHandler<GraphicSelectionChangedEventArgs> GraphicSelectionChanged
@@ -173,6 +175,20 @@ namespace ClearCanvas.ImageViewer
 			EventsHelper.Fire(_graphicSelectionChangedEvent, this, args);
 		}
 
+		/// <summary>
+		/// Occurs when the focused <see cref="IGraphic"/> in the currently selected
+		/// <see cref="PresentationImage"/>'s scene graph has changed.
+		/// </summary>
+		public event EventHandler<GraphicFocusChangedEventArgs> GraphicFocusChanged
+		{
+			add { _graphicFocusChangedEvent += value; }
+			remove { _graphicFocusChangedEvent -= value; }
+		}
+
+        internal void OnGraphicFocusChanged(GraphicFocusChangedEventArgs args)
+        {
+        	EventsHelper.Fire(_graphicFocusChangedEvent, this, args);
+        }
 
 		/// <summary>
 		/// Occurs when a DICOM study is loaded.

@@ -255,11 +255,12 @@ namespace ClearCanvas.ImageViewer
 
 				// Let everyone know
 				if (this.ImageViewer != null)
+				{
 					if (this.ImageViewer.EventBroker != null)
-						this.ImageViewer.EventBroker.OnGraphicSelectionChanged(
-							new GraphicSelectionChangedEventArgs(
-							_selectedGraphic,
-							deselectedGraphic));
+					{
+						this.ImageViewer.EventBroker.OnGraphicSelectionChanged(new GraphicSelectionChangedEventArgs(_selectedGraphic, deselectedGraphic));
+					}
+				}
 			}
 		}
 
@@ -285,7 +286,17 @@ namespace ClearCanvas.ImageViewer
 				if (_focussedGraphic != null)
 					_focussedGraphic.Focussed = false;
 
+				IFocussableGraphic unfocusedGraphic = _focussedGraphic;
 				_focussedGraphic = value;
+
+				// Let everyone know
+				if (this.ImageViewer != null)
+				{
+					if (this.ImageViewer.EventBroker != null)
+					{
+						this.ImageViewer.EventBroker.OnGraphicFocusChanged(new GraphicFocusChangedEventArgs(_focussedGraphic, unfocusedGraphic));
+					}
+				}
 			}
 		}
 
