@@ -324,7 +324,6 @@
       <DependentUpon>ProductSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="Scripting\ScriptEngineOptionsAttribute.cs" />
-    <Compile Include="Scripting\ScriptEngineThreadingMode.cs" />
     <Compile Include="Scripting\SynchronizedScriptEngineWrapper.cs" />
     <Compile Include="Shreds\IShred.cs" />
     <Compile Include="Shreds\QueueProcessor.cs" />

@@ -37,10 +37,10 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common.Scripting
 {
-    /// <summary>
-    /// Represents an instance of an active template.
-    /// </summary>
-    /// <remarks>
+	/// <summary>
+	/// Represents an instance of an active template.
+	/// </summary>
+	/// <remarks>
 	/// <para>
 	/// An active template is equivalent to a classic ASP page: that is,
 	/// it is a template that contains snippets of script code that can call back into the context in which the script
@@ -51,51 +51,51 @@ namespace ClearCanvas.Common.Scripting
 	/// can then be evaluated within a given context by calling one of the <b>Evaluate</b> methods.
 	/// </para>
 	/// </remarks>
-    public class ActiveTemplate
-    {
-        private string _inversion;
-        private IExecutableScript _script;
+	public class ActiveTemplate
+	{
+		private readonly string _inversion;
+		private IExecutableScript _script;
 
-        /// <summary>
-        /// Constructs a template from the specified content.
-        /// </summary>
-        public ActiveTemplate(TextReader content)
-        {
-            _inversion = ComputeInversion(content);
-        }
+		/// <summary>
+		/// Constructs a template from the specified content.
+		/// </summary>
+		public ActiveTemplate(TextReader content)
+		{
+			_inversion = ComputeInversion(content);
+		}
 
-        /// <summary>
-        /// Overload that allows the output of the template evaluation to be written directly to a <see cref="TextWriter"/>.
-        /// </summary>
-        /// <param name="context">A dictionary of objects to pass into the script.</param>
-        /// <param name="output">A text writer to which the output should be written.</param>
-        public void Evaluate(IDictionary context, TextWriter output)
-        {
-            try
-            {
-                // add a variable for the output stream to the context
-                context["__out__"] = output;
+		/// <summary>
+		/// Overload that allows the output of the template evaluation to be written directly to a <see cref="TextWriter"/>.
+		/// </summary>
+		/// <param name="context">A dictionary of objects to pass into the script.</param>
+		/// <param name="output">A text writer to which the output should be written.</param>
+		public void Evaluate(IDictionary context, TextWriter output)
+		{
+			try
+			{
+				// add a variable for the output stream to the context
+				context["__out__"] = output;
 
-                // create executable script if not created
-                if (_script == null)
-                {
-                    string[] variables = CollectionUtils.Map<string, string>(context.Keys, delegate(string s) { return s; }).ToArray();
-                    _script = ScriptEngineFactory.GetEngine("jscript").CreateScript(_inversion, variables);
-                }
+				// create executable script if not created
+				if (_script == null)
+				{
+					var variables = CollectionUtils.Map(context.Keys, (string s) => s).ToArray();
+					_script = ScriptEngineFactory.GetEngine("jscript").CreateScript(_inversion, variables);
+				}
 
-                _script.Run(context);
+				_script.Run(context);
 
-            }
-            catch (Exception e)
-            {
+			}
+			catch (Exception e)
+			{
 				throw new ActiveTemplateException(SR.ExceptionTemplateEvaluation, e);
-            }
-        }
+			}
+		}
 
-        /// <summary>
-        /// Evaluates this template in the specified context.
-        /// </summary>
-        /// <remarks>
+		/// <summary>
+		/// Evaluates this template in the specified context.
+		/// </summary>
+		/// <remarks>
 		/// The context parameter allows a set of named objects to be passed into 
 		/// the scripting environment.  Within the scripting environment
 		/// these objects can be referenced directly as properties of "this".  For example,
@@ -110,66 +110,66 @@ namespace ClearCanvas.Common.Scripting
 		///     &lt;%= this.Patient.Name %&gt;
 		/// </code>
 		/// </remarks>
-        /// <param name="context">A dictionary of objects to pass into the script.</param>
-        /// <returns>The result of the template evaluation as a string.</returns>
-        public string Evaluate(IDictionary context)
-        {
-            StringWriter output = new StringWriter();
-            Evaluate(context, output);
-            return output.ToString();
-        }
+		/// <param name="context">A dictionary of objects to pass into the script.</param>
+		/// <returns>The result of the template evaluation as a string.</returns>
+		public string Evaluate(IDictionary context)
+		{
+			var output = new StringWriter();
+			Evaluate(context, output);
+			return output.ToString();
+		}
 
-        /// <summary>
-        /// Inverts the template content, returning a Jscript script that, when evaluated, will return
-        /// the full result of the template.
-        /// </summary>
-        private string ComputeInversion(TextReader template)
-        {
-            StringBuilder inversion = new StringBuilder();
-            string line = null;
-            bool inCode = false;    // keep track of whether we are inside a <% %> or not
+		/// <summary>
+		/// Inverts the template content, returning a Jscript script that, when evaluated, will return
+		/// the full result of the template.
+		/// </summary>
+		private static string ComputeInversion(TextReader template)
+		{
+			var inversion = new StringBuilder();
+			string line;
+			var inCode = false;    // keep track of whether we are inside a <% %> or not
 
-            // process each line of the template
-            while ((line = template.ReadLine()) != null)
-            {
-                inCode = ProcessLine(line, inCode, inversion);
-                
-                // preserve the formatting of the original template by writing new lines appropriately
-                if(!inCode)
-                    inversion.AppendLine("this.__out__.WriteLine();");
-            }
+			// process each line of the template
+			while ((line = template.ReadLine()) != null)
+			{
+				inCode = ProcessLine(line, inCode, inversion);
 
-            return inversion.ToString();
-        }
+				// preserve the formatting of the original template by writing new lines appropriately
+				if (!inCode)
+					inversion.AppendLine("this.__out__.WriteLine();");
+			}
 
-        private static bool ProcessLine(string line, bool inCode, StringBuilder inversion)
-        {
-            inCode = !inCode;   // just make the loop work correctly
+			return inversion.ToString();
+		}
 
-            // break the line up into code/non-code parts
-            string[] parts = line.Split(new string[] { "<%", "%>" }, StringSplitOptions.None);
-            foreach (string part in parts)
-            {
-                inCode = !inCode;
-                if (inCode)
-                {
-                    if (part.StartsWith("="))
-                    {
-                        inversion.AppendLine(string.Format("this.__out__.Write({0});", part.Substring(1)));
-                    }
-                    else
-                    {
-                        inversion.Append(part);
-                        inversion.AppendLine();
-                    }
-                }
-                else
-                {
-                    string escaped = part.Replace("\"", "\\\"");  // escape any " characters
-                    inversion.AppendLine(string.Format("this.__out__.Write(\"{0}\");", escaped));
-                }
-            }
-            return inCode;
-        }
-    }
+		private static bool ProcessLine(string line, bool inCode, StringBuilder inversion)
+		{
+			inCode = !inCode;   // just make the loop work correctly
+
+			// break the line up into code/non-code parts
+			var parts = line.Split(new [] { "<%", "%>" }, StringSplitOptions.None);
+			foreach (var part in parts)
+			{
+				inCode = !inCode;
+				if (inCode)
+				{
+					if (part.StartsWith("="))
+					{
+						inversion.AppendLine(string.Format("this.__out__.Write({0});", part.Substring(1)));
+					}
+					else
+					{
+						inversion.Append(part);
+						inversion.AppendLine();
+					}
+				}
+				else
+				{
+					var escaped = part.Replace("\"", "\\\"");  // escape any " characters
+					inversion.AppendLine(string.Format("this.__out__.Write(\"{0}\");", escaped));
+				}
+			}
+			return inCode;
+		}
+	}
 }

@@ -28,9 +28,9 @@ package ClearCanvas.Jscript
 	/// The intended effect of setting these options is that all calls into the jscript runtime are externally
 	/// synchronized - that is, multiple threads will never execute code concurrently that calls into the jscript runtime
     public 
-    ClearCanvas.Common.ExtensionOf(ScriptEngineExtensionPoint)
-    ClearCanvas.Common.Scripting.LanguageSupport("jscript")
-	ClearCanvas.Common.Scripting.ScriptEngineOptions(Singleton = true, ThreadingMode = ClearCanvas.Common.Scripting.ScriptEngineThreadingMode.Synchronized)
+    ExtensionOf(ScriptEngineExtensionPoint)
+    LanguageSupport("jscript")
+	ScriptEngineOptions(Singleton = true, SynchronizeAccess = true)
     class Engine implements IScriptEngine
     {
 	    function Run(script: String, context: IDictionary)

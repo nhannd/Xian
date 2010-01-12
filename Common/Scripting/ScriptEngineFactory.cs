@@ -35,26 +35,26 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.Common.Scripting
 {
-    /// <summary>
+	/// <summary>
 	/// Extension point for <see cref="IScriptEngine"/>s.
-    /// </summary>
-    [ExtensionPoint]
-    public sealed class ScriptEngineExtensionPoint : ExtensionPoint<IScriptEngine>
-    {
-    }
+	/// </summary>
+	[ExtensionPoint]
+	public sealed class ScriptEngineExtensionPoint : ExtensionPoint<IScriptEngine>
+	{
+	}
 
-    /// <summary>
+	/// <summary>
 	/// Factory for creating instances of <see cref="IScriptEngine"/>s that support a given language.
-    /// </summary>
-    public static class ScriptEngineFactory
-    {
+	/// </summary>
+	public static class ScriptEngineFactory
+	{
 		private static readonly Dictionary<string, IScriptEngine> _singletonEngineInstances = new Dictionary<string, IScriptEngine>();
 		private static readonly object _syncLock = new object();
 
-        /// <summary>
-        /// Attempts to instantiate a script engine for the specified language. 
-        /// </summary>
-        /// <remarks>
+		/// <summary>
+		/// Attempts to instantiate a script engine for the specified language. 
+		/// </summary>
+		/// <remarks>
 		/// <para>
 		/// Internally, this class looks for an extension of <see cref="ScriptEngineExtensionPoint"/> 
 		/// that is capable of running scripts in the specified language.
@@ -69,9 +69,9 @@ namespace ClearCanvas.Common.Scripting
 		/// This method can safely be called by multiple threads.
 		/// </para>
 		/// </remarks>
-        /// <param name="language">The case-insensitive script language, so jscript is equivalent to JScript.</param>
-        public static IScriptEngine GetEngine(string language)
-        {
+		/// <param name="language">The case-insensitive script language, so jscript is equivalent to JScript.</param>
+		public static IScriptEngine GetEngine(string language)
+		{
 			lock (_syncLock)
 			{
 				// check for a cached singleton engine instance for this language
@@ -80,13 +80,13 @@ namespace ClearCanvas.Common.Scripting
 					return engine;
 
 				// create a new engine instance
-				engine = CreateNewEngine(language);
+				engine = CreateEngine(language);
 
 				var optionsAttr = AttributeUtils.GetAttribute<ScriptEngineOptionsAttribute>(engine.GetType());
 				if (optionsAttr != null)
 				{
 					// if the engine requires synchronization, wrap it
-					if (optionsAttr.ThreadingMode == ScriptEngineThreadingMode.Synchronized)
+					if (optionsAttr.SynchronizeAccess)
 					{
 						engine = new SynchronizedScriptEngineWrapper(engine);
 					}
@@ -101,17 +101,17 @@ namespace ClearCanvas.Common.Scripting
 			}
 		}
 
-    	private static IScriptEngine CreateNewEngine(string language)
-    	{
-            try
-            {
-    			var xp = new ScriptEngineExtensionPoint();
-    			return (IScriptEngine)xp.CreateExtension(new AttributeExtensionFilter(new LanguageSupportAttribute(language)));
+		private static IScriptEngine CreateEngine(string language)
+		{
+			try
+			{
+				var xp = new ScriptEngineExtensionPoint();
+				return (IScriptEngine)xp.CreateExtension(new AttributeExtensionFilter(new LanguageSupportAttribute(language)));
 			}
 			catch (NotSupportedException e)
 			{
 				throw new NotSupportedException(string.Format(SR.ExceptionScriptEngineLanguage, language), e);
 			}
 		}
-    }
+	}
 }
