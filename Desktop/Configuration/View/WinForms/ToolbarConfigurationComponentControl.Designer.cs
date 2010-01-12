@@ -90,9 +90,9 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms {
 			this._wrapToolbars.AutoSize = true;
 			this._wrapToolbars.Location = new System.Drawing.Point(3, 3);
 			this._wrapToolbars.Name = "_wrapToolbars";
-			this._wrapToolbars.Size = new System.Drawing.Size(147, 17);
+			this._wrapToolbars.Size = new System.Drawing.Size(115, 17);
 			this._wrapToolbars.TabIndex = 0;
-			this._wrapToolbars.Text = "Wrap toolbars horizontally";
+			this._wrapToolbars.Text = "Wrap long toolbars";
 			this._wrapToolbars.UseVisualStyleBackColor = true;
 			// 
 			// ToolbarConfigurationComponentControl

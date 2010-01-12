@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
@@ -60,6 +61,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			SplashScreenManager.DismissSplashScreen(this);
 #endif
 			InitializeComponent();
+
+			// manually subscribe this event handler *after* the call to InitializeComponent()
+			_toolbar.ParentChanged += OnToolbarParentChanged;
 
             _dockingManager = new DockingManager(_toolStripContainer.ContentPanel, VisualStyle.IDE2005);
             _dockingManager.ActiveColor = SystemColors.Control;
@@ -139,23 +143,48 @@ namespace ClearCanvas.Desktop.View.WinForms
 
     	private void OnToolStripSettingsPropertyChanged(object sender, PropertyChangedEventArgs e)
     	{
-    		if (e.PropertyName == "WrapLongToolstrips")
+    		ToolStripSettings settings = ToolStripSettings.Default;
+    		if (e.PropertyName == "WrapLongToolstrips" || e.PropertyName == "ToolStripDock")
     		{
-    			if (ToolStripSettings.Default.WrapLongToolstrips && _toolbar.Orientation == Orientation.Vertical)
+				// handle both wrapping and docking together because both affect flow direction
+    			bool verticalOrientation = ReferenceEquals(_toolbar.Parent, _toolStripContainer.LeftToolStripPanel)
+    			                           || ReferenceEquals(_toolbar.Parent, _toolStripContainer.RightToolStripPanel);
+
+    			_toolbar.SuspendLayout();
+    			_toolbar.LayoutStyle = settings.WrapLongToolstrips ? ToolStripLayoutStyle.Flow : ToolStripLayoutStyle.StackWithOverflow;
+    			if (settings.WrapLongToolstrips)
+    				((FlowLayoutSettings) _toolbar.LayoutSettings).FlowDirection = verticalOrientation ? FlowDirection.TopDown : FlowDirection.LeftToRight;
+    			_toolbar.ResumeLayout(true);
+
+    			ToolStripPanel targetParent = ConvertToToolStripPanel(_toolStripContainer, settings.ToolStripDock);
+    			if (targetParent != null && !ReferenceEquals(targetParent, _toolbar.Parent))
     			{
-    				// for some reason, switching to flow layout while vertical causes the toolbar to take up the entire screen
-    				// thus, we force the toolbar to the horizontal orientation in the top panel when wrapped.
     				_toolStripContainer.SuspendLayout();
-    				_toolStripContainer.TopToolStripPanel.Join(_toolbar);
-    				_toolStripContainer.TopToolStripPanel.Join(_mainMenu);
+    				targetParent.Join(_toolbar);
+
+    				// this keeps the main menu above the toolbar.
+    				// very hacky, but until we have a better way of serializing the entire state of *all* toolstrips and their relationships with each other...
+    				if (ReferenceEquals(targetParent, _toolStripContainer.TopToolStripPanel))
+    					_toolStripContainer.TopToolStripPanel.Join(_mainMenu);
+
     				_toolStripContainer.ResumeLayout(true);
     			}
-				_toolbar.LayoutStyle = ToolStripSettings.Default.WrapLongToolstrips ? ToolStripLayoutStyle.Flow : ToolStripLayoutStyle.StackWithOverflow;
     		}
 			else if (e.PropertyName == "IconSize")
 			{
-				ToolStripBuilder.ChangeIconSize(_toolbar, ToolStripSettings.Default.IconSize);
+				ToolStripBuilder.ChangeIconSize(_toolbar, settings.IconSize);
 			}
+    	}
+
+    	private void OnToolbarParentChanged(object sender, EventArgs e)
+    	{
+    		ToolStripDock dock = ConvertToToolStripDock(_toolStripContainer, _toolbar);
+    		if (dock != ToolStripDock.None)
+    		{
+    			ToolStripSettings settings = ToolStripSettings.Default;
+    			settings.ToolStripDock = dock;
+    			settings.Save();
+    		}
     	}
 
         #endregion
@@ -214,6 +243,39 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             toolStrip.ResumeLayout();
         }
+
+    	private static ToolStripPanel ConvertToToolStripPanel(ToolStripContainer toolStripContainer, ToolStripDock dock)
+    	{
+    		switch (dock)
+    		{
+    			case ToolStripDock.Left:
+    				return toolStripContainer.LeftToolStripPanel;
+    			case ToolStripDock.Top:
+    				return toolStripContainer.TopToolStripPanel;
+    			case ToolStripDock.Right:
+    				return toolStripContainer.RightToolStripPanel;
+    			case ToolStripDock.Bottom:
+    				return toolStripContainer.BottomToolStripPanel;
+    			case ToolStripDock.None:
+    			default:
+    				return null;
+    		}
+    	}
+
+    	private static ToolStripDock ConvertToToolStripDock(ToolStripContainer toolStripContainer, ToolStrip toolStrip)
+    	{
+    		ToolStripPanel parent = toolStrip.Parent as ToolStripPanel;
+    		if (ReferenceEquals(parent, toolStripContainer.TopToolStripPanel))
+    			return ToolStripDock.Top;
+    		else if (ReferenceEquals(parent, toolStripContainer.LeftToolStripPanel))
+    			return ToolStripDock.Left;
+    		else if (ReferenceEquals(parent, toolStripContainer.BottomToolStripPanel))
+    			return ToolStripDock.Bottom;
+    		else if (ReferenceEquals(parent, toolStripContainer.RightToolStripPanel))
+    			return ToolStripDock.Right;
+			else
+				return ToolStripDock.None;
+    	}
 
         #endregion
     }
