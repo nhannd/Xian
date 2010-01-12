@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Specifications;
+using ClearCanvas.Enterprise.Common.Caching;
 
 namespace ClearCanvas.Enterprise.Core.Modelling
 {
@@ -39,32 +40,17 @@ namespace ClearCanvas.Enterprise.Core.Modelling
     {
         private static readonly Dictionary<Type, ValidationRuleSet> _invariantRuleSets = new Dictionary<Type, ValidationRuleSet>();
 
-        public static ValidationRuleSet GetInvariantRules(Type entityClass)
+		private const string CacheId = "ClearCanvas.Enterprise.Core.Modelling.EntityValidationRuleSetCache";
+    	private const string CacheRegion = "default";
+
+
+		#region Public API
+
+		public static void Validate(DomainObject obj, Predicate<ISpecification> ruleFilter)
         {
-            lock (_invariantRuleSets)
-            {
-                ValidationRuleSet rules;
-
-                // return cached rules if possible
-                if (_invariantRuleSets.TryGetValue(entityClass, out rules))
-                    return rules;
-
-                // build rules for entityClass, and put in cache
-                var builder = new ValidationBuilder();
-                rules = builder.BuildRuleSet(entityClass);
-                _invariantRuleSets.Add(entityClass, rules);
-                return rules;
-            }
-        }
-
-        public static ValidationRuleSet GetInvariantRules(DomainObject obj)
-        {
-            return GetInvariantRules(obj.GetClass());
-        }
-
-        public static void Validate(DomainObject obj, Predicate<ISpecification> ruleFilter)
-        {
-            var rules = GetInvariantRules(obj);
+			var entityClass = obj.GetClass();
+			var rules = GetInvariantRules(entityClass)
+				.Combine(GetCustomRules(entityClass));
 
             var result = rules.Test(obj, ruleFilter);
             if (result.Fail)
@@ -76,7 +62,48 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
         public static void Validate(DomainObject obj)
         {
-            Validate(obj, null);
-        }
-    }
+			// validate all rules
+            Validate(obj, rule => true);
+		}
+
+		#endregion
+
+		private static ValidationRuleSet GetInvariantRules(Type entityClass)
+		{
+			lock (_invariantRuleSets)
+			{
+				ValidationRuleSet rules;
+
+				// return cached rules if possible
+				if (_invariantRuleSets.TryGetValue(entityClass, out rules))
+					return rules;
+
+				// build rules for entityClass, and put in cache
+				var builder = new ValidationBuilder();
+				rules = builder.BuildRuleSet(entityClass);
+				_invariantRuleSets.Add(entityClass, rules);
+				return rules;
+			}
+		}
+
+		private static ValidationRuleSet GetCustomRules(Type entityClass)
+		{
+			// Because custom rules may potentially be modified by an administrator, they cannot
+			// be cached in a static variable like the invariant rules.
+			// instead they are cached using the Cache object with an absolute expiry time, which should be relatively short (a few minutes)
+			// This ensures that changes made to these rules will be applied eventually, when the cache expires.
+
+			using (var cacheClient = Cache.CreateClient(CacheId))
+			{
+				var ruleSet = (ValidationRuleSet)cacheClient.Get(entityClass.FullName, new CacheGetOptions(CacheRegion));
+				if (ruleSet != null)
+					return ruleSet;
+
+				var builder = new XmlValidationBuilder();
+				ruleSet = builder.GetRuleset(entityClass);
+				cacheClient.Put(entityClass.FullName, ruleSet, new CachePutOptions(CacheRegion, TimeSpan.FromMinutes(2), false));
+				return ruleSet;
+			}
+		}
+	}
 }

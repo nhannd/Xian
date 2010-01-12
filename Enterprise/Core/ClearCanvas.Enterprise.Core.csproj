@@ -72,6 +72,7 @@
     <Compile Include="AuditLogEntry.cs" />
     <Compile Include="Audit\AuditLogEntryAssembler.cs" />
     <Compile Include="Audit\AuditService.cs" />
+    <Compile Include="Modelling\XmlValidationBuilder.cs" />
     <Compile Include="IPersistentStoreProfiler.cs" />
     <Compile Include="PersistentStoreProfilerRegistry.cs" />
     <Compile Include="ResponseCachingAdvice.cs" />
@@ -224,6 +225,7 @@
     <None Include="persistence.cd" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Modelling\CustomEntityValidationRules.xml" />
     <Content Include="Modelling\Tests\XMLFile1.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
