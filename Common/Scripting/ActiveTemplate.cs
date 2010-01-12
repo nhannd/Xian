@@ -80,7 +80,7 @@ namespace ClearCanvas.Common.Scripting
                 if (_script == null)
                 {
                     string[] variables = CollectionUtils.Map<string, string>(context.Keys, delegate(string s) { return s; }).ToArray();
-                    _script = ScriptEngineFactory.CreateEngine("jscript").CreateScript(_inversion, variables);
+                    _script = ScriptEngineFactory.GetEngine("jscript").CreateScript(_inversion, variables);
                 }
 
                 _script.Run(context);

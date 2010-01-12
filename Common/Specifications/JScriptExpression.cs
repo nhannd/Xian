@@ -99,7 +99,7 @@ namespace ClearCanvas.Common.Specifications
             {
                 if (_scriptEngine == null)
                 {
-                    _scriptEngine = ScriptEngineFactory.CreateEngine("jscript");
+                    _scriptEngine = ScriptEngineFactory.GetEngine("jscript");
                 }
                 return _scriptEngine;
             }

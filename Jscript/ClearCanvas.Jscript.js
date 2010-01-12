@@ -21,9 +21,16 @@ package ClearCanvas.Jscript
     ///
     /// The script must use the "return" keyword to return an object to the caller. This is because
     /// the Run(...) method packages the script into its own function before executing it.
+	
+	/// The ScriptEngineOptions attribute is used to mark this engine as being a singleton, and requiring
+	/// thread synchronization.  This is because the JScript.NET runtime is not designed to be thread-safe,
+	/// as noted here: http://msdn.microsoft.com/en-us/library/ye921ye4%28VS.71%29.aspx.
+	/// The intended effect of setting these options is that all calls into the jscript runtime are externally
+	/// synchronized - that is, multiple threads will never execute code concurrently that calls into the jscript runtime
     public 
     ClearCanvas.Common.ExtensionOf(ScriptEngineExtensionPoint)
     ClearCanvas.Common.Scripting.LanguageSupport("jscript")
+	ClearCanvas.Common.Scripting.ScriptEngineOptions(Singleton = true, ThreadingMode = ClearCanvas.Common.Scripting.ScriptEngineThreadingMode.Synchronized)
     class Engine implements IScriptEngine
     {
 	    function Run(script: String, context: IDictionary)
