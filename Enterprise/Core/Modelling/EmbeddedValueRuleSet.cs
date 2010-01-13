@@ -58,7 +58,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
 		public TestResult Test(object obj)
 		{
-			return TestCore(obj, null);
+			return TestCore(obj, spec => true);
 		}
 
 		#endregion

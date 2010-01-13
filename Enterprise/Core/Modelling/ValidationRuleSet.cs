@@ -74,26 +74,15 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 		{
 		}
 
-		public ValidationRuleSet(IEnumerable<ISpecification> rules, ISpecification applicability)
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="rules"></param>
+		/// <param name="applicabilityRule"></param>
+		public ValidationRuleSet(IEnumerable<ISpecification> rules, ISpecification applicabilityRule)
 		{
 			_rules = new List<ISpecification>(rules);
-			_applicabilityRule = applicability;
-		}
-
-		/// <summary>
-		/// Gets the list of rules contained in this rule set.
-		/// </summary>
-		public IList<ISpecification> Rules
-		{
-			get { return _rules.AsReadOnly(); }
-		}
-
-		/// <summary>
-		/// Gets the specification that indicates whether this rule-set is applicable to a given test object.
-		/// </summary>
-		public ISpecification ApplicabilityRule
-		{
-			get { return _applicabilityRule; }
+			_applicabilityRule = applicabilityRule;
 		}
 
 		/// <summary>
@@ -145,7 +134,23 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
 		#endregion
 
-		public TestResult TestCore(object obj, Predicate<ISpecification> filter)
+		/// <summary>
+		/// Gets the list of rules contained in this rule set.
+		/// </summary>
+		internal IList<ISpecification> Rules
+		{
+			get { return _rules.AsReadOnly(); }
+		}
+
+		/// <summary>
+		/// Gets the specification that indicates whether this rule-set is applicable to a given test object.
+		/// </summary>
+		internal ISpecification ApplicabilityRule
+		{
+			get { return _applicabilityRule; }
+		}
+
+		private TestResult TestCore(object obj, Predicate<ISpecification> filter)
 		{
 			Platform.CheckForNullReference(obj, "obj");
 

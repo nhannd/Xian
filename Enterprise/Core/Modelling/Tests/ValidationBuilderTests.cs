@@ -139,7 +139,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling.Tests
 			foo.EmbeddedFoo = new FooA {Name = "Bob"};
 			Assert.IsTrue(ruleSet.Test(foo).Success);
 
-			// should fail
+			// should fail because Robert is longer than 5 chars
 			foo.EmbeddedFoo.Name = "Robert";
 			Assert.IsFalse(ruleSet.Test(foo).Success);
 		}
