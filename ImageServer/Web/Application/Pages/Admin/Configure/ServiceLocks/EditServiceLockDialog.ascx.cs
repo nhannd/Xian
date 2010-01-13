@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
     public partial class EditServiceLockDialog : UserControl
     {
         #region Constants
-        private const string TIME_FORMAT = "hh:mm tt";
+        private const string TIME_FORMAT = "HH:mm";
         private const int DEFAULT_TIME_GAP_MINS = 15; // minutes
         private ServiceLock _serviceLock;
 
