@@ -41,6 +41,14 @@ namespace ClearCanvas.Common.Specifications.Tests
 	[TestFixture]
 	public class EqualitySpecificationTests : TestsBase
 	{
+		enum Color
+		{
+			Red,
+			Blue,
+			Green
+		}
+
+
 		[Test]
 		public void Test_Equal_ValueType()
 		{
@@ -77,7 +85,6 @@ namespace ClearCanvas.Common.Specifications.Tests
 		}
 
 		[Test]
-		// This test is currently failing because coercion code hasn't been merged to trunk yet
 		public void Test_Equal_CoerceTypes()
 		{
 			EqualSpecification s = new EqualSpecification();
@@ -90,6 +97,25 @@ namespace ClearCanvas.Common.Specifications.Tests
 			Assert.IsFalse(s.Test(0).Success);
 			Assert.IsFalse(s.Test(0.0).Success);
 			Assert.IsFalse(s.Test("0").Success);
+		}
+
+		[Test]
+		// this test is related to bug #5909 - should be able to compare enums to strings
+		public void Test_Equal_CoerceEnum()
+		{
+			EqualSpecification s = new EqualSpecification();
+
+			s.RefValueExpression = new ConstantExpression("Blue");
+			Assert.IsTrue(s.Test(Color.Blue).Success);
+			Assert.IsFalse(s.Test(null).Success);
+			Assert.IsFalse(s.Test(Color.Red).Success);
+
+			s.RefValueExpression = new ConstantExpression(Color.Red);
+			Assert.IsTrue(s.Test(Color.Red).Success);
+			Assert.IsTrue(s.Test("Red").Success);
+			Assert.IsFalse(s.Test(null).Success);
+			Assert.IsFalse(s.Test("").Success);
+			Assert.IsFalse(s.Test(Color.Blue).Success);
 		}
 
 		[Test]

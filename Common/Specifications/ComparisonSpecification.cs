@@ -63,19 +63,35 @@ namespace ClearCanvas.Common.Specifications
 			// if the coercion fails, the comparison will be performed on the raw refValue
 			if(!_strict && exp != null && refValue != null && exp.GetType() != refValue.GetType())
 			{
-				try
+				// try to coerce the reference value to the expression type
+				var success = TryCoerce(ref refValue, exp.GetType());
+
+				// bug #5909: if that didn't work, try coercing the expression value to the reference value type
+				if(!success)
 				{
-					refValue = Convert.ChangeType(refValue, exp.GetType());
+					TryCoerce(ref exp, refValue.GetType());
 				}
-				catch (InvalidCastException)
-				{
-					// unable to perform coercion - continue using raw refValue
-				}
+
+				// if neither of the above worked, then we just proceed to compare the raw values
 			}
 
             return DefaultTestResult(CompareValues(exp, refValue));
         }
 
         protected abstract bool CompareValues(object testValue, object refValue);
+
+		private static bool TryCoerce(ref object value, Type type)
+		{
+			try
+			{
+				value = Convert.ChangeType(value, type);
+				return true;
+			}
+			catch (InvalidCastException)
+			{
+				// unable to cast - "value" is not modified
+				return false;
+			}
+		}
     }
 }
