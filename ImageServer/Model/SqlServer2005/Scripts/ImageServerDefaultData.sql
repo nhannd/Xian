@@ -1026,7 +1026,7 @@ INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[De
      VALUES(newid(),112,'ReprocessScheduled','Reprocess Scheduled','The study is scheduled for reprocessing')
 GO
 INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
-     VALUES(newid(),113,'RestoreScheduled','Restore Scheduled','The study is scheduled for restoring')
+     VALUES(newid(),113,'RestoreScheduled','Restore Scheduled','The study is scheduled for restore')
 GO
 INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES(newid(),114,'ArchiveScheduled','Archive Scheduled','The study is scheduled for archiving')
