@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageServer.Common.Exceptions
     {
         private readonly bool _restoreRequested;
 
-        public StudyIsNearlineException(bool restoreRequested) : base("Study is in Nearline state. Can't accept new images.")
+        public StudyIsNearlineException(bool restoreRequested) : base("Study is in Nearline state.")
         {
             _restoreRequested = restoreRequested;
         }
