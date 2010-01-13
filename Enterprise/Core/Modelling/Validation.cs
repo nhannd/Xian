@@ -101,7 +101,13 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
 				var builder = new XmlValidationBuilder();
 				ruleSet = builder.GetRuleset(entityClass);
-				cacheClient.Put(entityClass.FullName, ruleSet, new CachePutOptions(CacheRegion, TimeSpan.FromMinutes(2), false));
+
+				var settings = new EntityValidationSettings();
+				var ttl = TimeSpan.FromSeconds(settings.CustomRulesCachingTimeToLiveSeconds);
+				if(ttl > TimeSpan.Zero)
+				{
+					cacheClient.Put(entityClass.FullName, ruleSet, new CachePutOptions(CacheRegion, ttl, false));
+				}
 				return ruleSet;
 			}
 		}

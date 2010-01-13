@@ -50,6 +50,7 @@
       <HintPath>..\..\ReferencedAssemblies\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.IdentityModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -72,6 +73,12 @@
     <Compile Include="AuditLogEntry.cs" />
     <Compile Include="Audit\AuditLogEntryAssembler.cs" />
     <Compile Include="Audit\AuditService.cs" />
+    <Compile Include="Modelling\EntityValidationSettings.cs" />
+    <Compile Include="Modelling\EntityValidationSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>EntityValidationSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Modelling\XmlValidationBuilder.cs" />
     <Compile Include="IPersistentStoreProfiler.cs" />
     <Compile Include="PersistentStoreProfilerRegistry.cs" />
@@ -222,6 +229,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Modelling\EntityValidationSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>EntityValidationSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="persistence.cd" />
   </ItemGroup>
   <ItemGroup>

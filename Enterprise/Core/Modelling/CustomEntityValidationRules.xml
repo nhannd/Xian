@@ -34,11 +34,5 @@
       <not-null test="$.ActivationDate" failMessage="Activation date must be specified"/>
     </validation-rule>
   </validation-ruleset>
-  
-  <validation-ruleset entityClass="ClearCanvas.Healthcare.Staff" id="">
-    <validation-rule id="middleNameRequired">
-      <not-null test="$.Name.MiddleName" failMessage="Middle name is required."/>
-    </validation-rule>
-  </validation-ruleset>
 
 </validation>

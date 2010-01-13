@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using System.Xml;
-using ClearCanvas.Common;
-using ClearCanvas.Common.Configuration;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
 
@@ -13,7 +9,6 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 	internal class XmlValidationBuilder
 	{
 		const string ScriptLanguage = "jscript";
-		const string DocumentName = "ClearCanvas.Enterprise.Core.Modelling.CustomEntityValidationRules.xml";
 		const string TagValidation = "validation";
 		const string TagValidationRuleset = "validation-ruleset";
 		const string TagValidationRule = "validation-rule";
@@ -21,33 +16,9 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 		const string AttrEntityClass = "entityClass";
 		const string AttrName = "name";
 
-		private readonly IConfigurationStore _configStore;
 		private XmlDocument _rulesDoc;
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		internal XmlValidationBuilder()
-		{
-			try
-			{
-				_configStore = ConfigurationStoreFactory.GetDefaultStore();
-			}
-			catch (NotSupportedException e)
-			{
-				Platform.Log(LogLevel.Debug, e);
-			}
-		}
-
 		#region Public API
-
-		/// <summary>
-		/// Gets a value indicating whether custom validation rules are supported.
-		/// </summary>
-		public bool IsSupported
-		{
-			get { return _configStore != null; }
-		}
 
 		/// <summary>
 		/// Gets the complete rule set defined for the specified entity class, which includes all named rule sets.
@@ -56,7 +27,6 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 		/// <returns></returns>
 		public ValidationRuleSet GetRuleset(Type entityClass)
 		{
-			CheckSupported();
 			InitializeOnce();
 
 			// find node for the specified class
@@ -74,7 +44,6 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 		/// <returns></returns>
 		public IEnumerable<XmlElement> GetRuleset(Type entityClass, string name)
 		{
-			CheckSupported();
 			InitializeOnce();
 
 			// find node for the specified class
@@ -99,7 +68,6 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 		/// <param name="parentNode"></param>
 		public void SetRules(Type entityClass, string name, XmlElement parentNode)
 		{
-			CheckSupported();
 			InitializeOnce();
 
 			// find node for specified class
@@ -110,28 +78,6 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 			rulesetNode.InnerXml = parentNode.InnerXml;
 		}
 
-		/// <summary>
-		/// Saves all changes made to the document via <see cref="SetRules"/>.
-		/// </summary>
-		public void Save()
-		{
-			CheckSupported();
-
-			if (!Initialized)
-				return;
-
-			var sb = new StringBuilder();
-			var writer = new XmlTextWriter(new StringWriter(sb)) {Formatting = Formatting.Indented};
-			_rulesDoc.Save(writer);
-
-			_configStore.PutDocument(
-				DocumentName,
-				this.GetType().Assembly.GetName().Version,
-				null,
-				null,
-				new StringReader(sb.ToString())
-				);
-		}
 
 		#endregion
 
@@ -145,34 +91,9 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 			if (Initialized)
 				return;
 
-			_rulesDoc = new XmlDocument {PreserveWhitespace = true};
-			try
-			{
-				using (var reader = _configStore.GetDocument(
-					DocumentName, this.GetType().Assembly.GetName().Version, null, null))
-				{
-					_rulesDoc.Load(reader);
-				}
-			}
-			catch (ConfigurationDocumentNotFoundException e)
-			{
-				// no validation document exists yet
-				// this is not an error, but might be useful to know this for debugging
-				Platform.Log(LogLevel.Debug, e);
-
-				// create an empty document
-				var resolver = new ResourceResolver(this.GetType().Assembly);
-				using(var resource = resolver.OpenResource(DocumentName))
-				{
-					_rulesDoc.Load(resource);
-				}
-			}
-		}
-
-		private void CheckSupported()
-		{
-			if (!IsSupported)
-				throw new NotSupportedException("XML validation rules are not supported because there is no configuration store.");
+			var settings = new EntityValidationSettings();
+			_rulesDoc = new XmlDocument { PreserveWhitespace = true };
+			_rulesDoc.LoadXml(settings.CustomRulesXml);
 		}
 
 		private static ValidationRuleSet CompileRuleset(XmlElement rulesetNode)
