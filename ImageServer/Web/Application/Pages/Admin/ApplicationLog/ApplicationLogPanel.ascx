@@ -44,7 +44,7 @@
                                                 <ccValidator:RegularExpressionFieldValidator
                                                         ID="FromTimeValidator" runat="server" ControlToValidate="FromTimeFilter" InvalidInputIndicatorID="FromTimeHelp"
                                                         InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AppLogValidationGroup" 
-                                                        ValidationExpression="(0[0-9]*|1[0-9]*|2[0-3]):[0-5][0-9]" Text="Invalid Time" Display="None" IgnoreEmptyValue="true">
+                                                        ValidationExpression="(0[0-9]*|1[0-9]*|2[0-3]):[0-5][0-9]:[0-5][0-9]:[0-9][0-9][0-9]" Text="Invalid Time" Display="None" IgnoreEmptyValue="true">
                                                 </ccValidator:RegularExpressionFieldValidator>
                                             </td>
                                             <td align="left" valign="bottom">
@@ -58,7 +58,7 @@
                                                 <ccValidator:RegularExpressionFieldValidator
                                                         ID="ToTimeValidator" runat="server" ControlToValidate="ToTimeFilter" IgnoreEmptyValue="true"
                                                         InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AppLogValidationGroup" InvalidInputIndicatorID="ToTimeHelp"
-                                                        ValidationExpression="(0[0-9]*|1[0-9]*|2[0-3]):[0-5][0-9]" Text="Invalid Time" Display="None">
+                                                        ValidationExpression="(0[0-9]*|1[0-9]*|2[0-3]):[0-5][0-9]:[0-5][0-9]:[0-9][0-9][0-9]" Text="Invalid Time" Display="None">
                                                 </ccValidator:RegularExpressionFieldValidator>
                                             </td>                                            
 											<td align="left" valign="bottom">
