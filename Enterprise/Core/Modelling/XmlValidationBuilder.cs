@@ -33,7 +33,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 			var ruleSets = FindRulesetNodes(entityClass);
 
 			// return a single rule set that combines all rule sets
-			return ValidationRuleSet.Combine(CollectionUtils.Map<XmlElement, ValidationRuleSet>(ruleSets, CompileRuleset));
+			return ValidationRuleSet.Add(CollectionUtils.Map<XmlElement, ValidationRuleSet>(ruleSets, CompileRuleset));
 		}
 
 		/// <summary>

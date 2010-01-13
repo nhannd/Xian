@@ -37,15 +37,15 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Core.Modelling
 {
-    /// <summary>
-    /// Encapsulates a set of validation rules.
-    /// </summary>
-    /// <remarks>
-    /// Instances of this class are immutable.
-    /// </remarks>
-    public class ValidationRuleSet : IValidationRuleSet
-    {
-		class AlwaysApplicable : ISpecification
+	/// <summary>
+	/// Encapsulates a set of validation rules.
+	/// </summary>
+	/// <remarks>
+	/// Instances of this class are immutable.
+	/// </remarks>
+	public class ValidationRuleSet : IValidationRuleSet
+	{
+		class AlwaysTrue : ISpecification
 		{
 			public TestResult Test(object obj)
 			{
@@ -54,112 +54,122 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 		}
 
 
-        private readonly List<ISpecification> _rules;
-    	private readonly ISpecification _applicability;
+		private readonly List<ISpecification> _rules;
+		private readonly ISpecification _applicabilityRule;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public ValidationRuleSet()
-			: this(new List<ISpecification>(), new AlwaysApplicable())
-        {
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="rules"></param>
-        public ValidationRuleSet(IEnumerable<ISpecification> rules)
-			:this(rules, new AlwaysApplicable())
-        {
-        }
-
-		public ValidationRuleSet(IEnumerable<ISpecification> rules, ISpecification applicability)
-    	{
-			_rules = new List<ISpecification>(rules);
-			_applicability = applicability;
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public ValidationRuleSet()
+			: this(new List<ISpecification>(), new AlwaysTrue())
+		{
 		}
 
-        /// <summary>
-        /// Gets the list of rules contained in this rule set.
-        /// </summary>
-        public IList<ISpecification> Rules
-        {
-            get { return _rules.AsReadOnly(); }
-        }
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="rules"></param>
+		public ValidationRuleSet(IEnumerable<ISpecification> rules)
+			: this(rules, new AlwaysTrue())
+		{
+		}
+
+		public ValidationRuleSet(IEnumerable<ISpecification> rules, ISpecification applicability)
+		{
+			_rules = new List<ISpecification>(rules);
+			_applicabilityRule = applicability;
+		}
+
+		/// <summary>
+		/// Gets the list of rules contained in this rule set.
+		/// </summary>
+		public IList<ISpecification> Rules
+		{
+			get { return _rules.AsReadOnly(); }
+		}
 
 		/// <summary>
 		/// Gets the specification that indicates whether this rule-set is applicable to a given test object.
 		/// </summary>
-    	public ISpecification Applicability
-    	{
-			get { return _applicability; }
-    	}
-
-		public ValidationRuleSet Combine(ValidationRuleSet other)
+		public ISpecification ApplicabilityRule
 		{
-			return new ValidationRuleSet(new [] {this, other});
+			get { return _applicabilityRule; }
 		}
 
-		public static ValidationRuleSet Combine(IList<ValidationRuleSet> ruleSets)
+		/// <summary>
+		/// Returns a new rule set representing the addition of this rule set and the other.
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		public ValidationRuleSet Add(ValidationRuleSet other)
+		{
+			return new ValidationRuleSet(new[] { this, other });
+		}
+
+		/// <summary>
+		/// Returns a new rule set representing the addition of the specified rule sets.
+		/// </summary>
+		/// <param name="ruleSets"></param>
+		/// <returns></returns>
+		public static ValidationRuleSet Add(IList<ValidationRuleSet> ruleSets)
 		{
 			return new ValidationRuleSet(CollectionUtils.Map<ValidationRuleSet, ISpecification>(ruleSets, r => r));
 		}
 
-        #region ISpecification Members
+		#region ISpecification Members
 
-        /// <summary>
-        /// Tests all rules against the specified object.
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public TestResult Test(object obj)
-        {
-            return TestCore(obj, null);
-        }
+		/// <summary>
+		/// Tests all rules against the specified object.
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public TestResult Test(object obj)
+		{
+			return TestCore(obj, null);
+		}
 
-        #endregion
+		#endregion
 
-        #region IValidationRuleSet Members
+		#region IValidationRuleSet Members
 
-        /// <summary>
-        /// Tests the subset of rules (those that are selected by the filter) against the specified object.
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="filter"></param>
-        /// <returns></returns>
-        public TestResult Test(object obj, Predicate<ISpecification> filter)
-        {
-            return TestCore(obj, filter);
-        }
+		/// <summary>
+		/// Tests the subset of rules (those that are selected by the filter) against the specified object.
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <param name="filter"></param>
+		/// <returns></returns>
+		public TestResult Test(object obj, Predicate<ISpecification> filter)
+		{
+			return TestCore(obj, filter);
+		}
 
-        #endregion
+		#endregion
 
-        public TestResult TestCore(object obj, Predicate<ISpecification> filter)
-        {
-            Platform.CheckForNullReference(obj, "obj");
+		public TestResult TestCore(object obj, Predicate<ISpecification> filter)
+		{
+			Platform.CheckForNullReference(obj, "obj");
 
 			// test applicability of this rule set - if it fails, this rule set is not applicable, hence the result of testing it is success
-			if(_applicability.Test(obj).Fail)
+			if (_applicabilityRule.Test(obj).Fail)
 				return new TestResult(true);
 
-            // test every specification in the set of rules
-            var failureReasons = new List<TestResultReason>();
-            foreach (var rule in _rules)
-            {
-                // if there is no filter, or the fitler accepts the rule, test it
-                if (filter == null || filter(rule))
-                {
-                    // if the rule is itself a ruleset, then apply the filter recursively
-                    var result = (rule is IValidationRuleSet) ? (rule as IValidationRuleSet).Test(obj, filter) : rule.Test(obj);
-                    if (result.Fail)
-                    {
-                        failureReasons.AddRange(result.Reasons);
-                    }
-                }
-            }
+			// test every specification in the set of rules
+			var failureReasons = new List<TestResultReason>();
+			foreach (var rule in _rules)
+			{
+				// if there is no filter, or the fitler accepts the rule, test it
+				if (filter == null || filter(rule))
+				{
+					// if the rule is itself a ruleset, then apply the filter recursively
+					var result = (rule is IValidationRuleSet) ? (rule as IValidationRuleSet).Test(obj, filter) : rule.Test(obj);
+					if (result.Fail)
+					{
+						failureReasons.AddRange(result.Reasons);
+					}
+				}
+			}
 
-            return new TestResult(failureReasons.Count == 0, failureReasons.ToArray());
-        }
-    }
+			return new TestResult(failureReasons.Count == 0, failureReasons.ToArray());
+		}
+	}
 }

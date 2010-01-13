@@ -144,7 +144,7 @@
     <Compile Include="LogEntry.cs" />
     <Compile Include="Modelling\DeactivationFlagAttribute.cs" />
     <Compile Include="Modelling\EmbeddedValueAttribute.cs" />
-    <Compile Include="Modelling\EmbeddeValueRuleSet.cs" />
+    <Compile Include="Modelling\EmbeddedValueRuleSet.cs" />
     <Compile Include="Modelling\ExtendedPropertiesCollectionAttribute.cs" />
     <Compile Include="Modelling\IPropertyBoundRule.cs" />
     <Compile Include="Modelling\IUniqueConstraintValidationBroker.cs" />
@@ -238,7 +238,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Modelling\CustomEntityValidationRules.xml" />
-    <Content Include="Modelling\Tests\XMLFile1.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

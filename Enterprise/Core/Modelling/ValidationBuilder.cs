@@ -40,8 +40,8 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 	/// <summary>
 	/// Utility class for building a <see cref="ValidationRuleSet"/> based on attributes defined on an entity class.
 	/// </summary>
-    internal class ValidationBuilder
-    {
+	internal class ValidationBuilder
+	{
 		class AttributeEntityClassPair
 		{
 			public Type EntityClass { get; set; }
@@ -56,115 +56,115 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 		/// <param name="entityClass"></param>
 		/// <returns></returns>
 		public ValidationRuleSet BuildRuleSet(Type entityClass)
-        {
-            var rules = new List<ISpecification>();
-            ProcessClassProperties(entityClass, rules);
+		{
+			var rules = new List<ISpecification>();
+			ProcessClassProperties(entityClass, rules);
 
 
-            // process class-level attributes
-            foreach (var pair in GetClassAttributes(entityClass))
-            {
+			// process class-level attributes
+			foreach (var pair in GetClassAttributes(entityClass))
+			{
 				ProcessEntityAttribute(entityClass, pair, rules);
-            }
+			}
 
-            return new ValidationRuleSet(rules);
+			return new ValidationRuleSet(rules);
 		}
 
 		#endregion
 
 		private static void ProcessEntityAttribute(Type entityClass, AttributeEntityClassPair pair, ICollection<ISpecification> rules)
-        {
-            // TODO: this could be changed to a dictionary of delegates, or a visitor pattern of some kind
+		{
+			// TODO: this could be changed to a dictionary of delegates, or a visitor pattern of some kind
 
-            if (pair.Attribute is UniqueKeyAttribute)
-                ProcessUniqueKeyAttribute(entityClass, pair, rules);
-        }
+			if (pair.Attribute is UniqueKeyAttribute)
+				ProcessUniqueKeyAttribute(entityClass, pair, rules);
+		}
 
 		private static void ProcessUniqueKeyAttribute(Type entityClass, AttributeEntityClassPair pair, ICollection<ISpecification> rules)
-        {
-            var uka = (UniqueKeyAttribute)pair.Attribute;
-            rules.Add(new UniqueKeySpecification(pair.EntityClass, uka.LogicalName, uka.MemberProperties));
-        }
+		{
+			var uka = (UniqueKeyAttribute)pair.Attribute;
+			rules.Add(new UniqueKeySpecification(pair.EntityClass, uka.LogicalName, uka.MemberProperties));
+		}
 
-        private void ProcessClassProperties(Type domainClass, ICollection<ISpecification> rules)
-        {
-            // note: this will return all properties, including those that are inherited from a base class
-            var properties = domainClass.GetProperties(BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance);
-            foreach(var property in properties)
-            {
-                foreach (Attribute attr in property.GetCustomAttributes(false))
-                {
-                    ProcessPropertyAttribute(property, attr, rules);
-                }
-            }
-        }
+		private void ProcessClassProperties(Type domainClass, ICollection<ISpecification> rules)
+		{
+			// note: this will return all properties, including those that are inherited from a base class
+			var properties = domainClass.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+			foreach (var property in properties)
+			{
+				foreach (Attribute attr in property.GetCustomAttributes(false))
+				{
+					ProcessPropertyAttribute(property, attr, rules);
+				}
+			}
+		}
 
-        private void ProcessPropertyAttribute(PropertyInfo property, Attribute attr, ICollection<ISpecification> rules)
-        {
-            // TODO: this could be changed to a dictionary of delegates, or a visitor pattern of some kind
+		private void ProcessPropertyAttribute(PropertyInfo property, Attribute attr, ICollection<ISpecification> rules)
+		{
+			// TODO: this could be changed to a dictionary of delegates, or a visitor pattern of some kind
 
-            if (attr is RequiredAttribute)
-                ProcessRequiredAttribute(property, attr, rules);
+			if (attr is RequiredAttribute)
+				ProcessRequiredAttribute(property, attr, rules);
 
-            if (attr is LengthAttribute)
-                ProcessLengthAttribute(property, attr, rules);
+			if (attr is LengthAttribute)
+				ProcessLengthAttribute(property, attr, rules);
 
-            if (attr is EmbeddedValueAttribute)
-                ProcessEmbeddedValueAttribute(property, attr, rules);
+			if (attr is EmbeddedValueAttribute)
+				ProcessEmbeddedValueAttribute(property, attr, rules);
 
-            if (attr is EmbeddedValueCollectionAttribute)
-                ProcessEmbeddedValueCollectionAttribute(property, attr, rules);
+			if (attr is EmbeddedValueCollectionAttribute)
+				ProcessEmbeddedValueCollectionAttribute(property, attr, rules);
 
-            if (attr is UniqueAttribute)
-                ProcessUniqueAttribute(property, attr, rules);
-        }
+			if (attr is UniqueAttribute)
+				ProcessUniqueAttribute(property, attr, rules);
+		}
 
-        private static void ProcessUniqueAttribute(PropertyInfo property, Attribute attr, ICollection<ISpecification> rules)
-        {
-            rules.Add(new UniqueSpecification(property));
-        }
+		private static void ProcessUniqueAttribute(PropertyInfo property, Attribute attr, ICollection<ISpecification> rules)
+		{
+			rules.Add(new UniqueSpecification(property));
+		}
 
-        private static void ProcessRequiredAttribute(PropertyInfo property, Attribute attr, ICollection<ISpecification> rules)
-        {
-            rules.Add(new RequiredSpecification(property));
-        }
+		private static void ProcessRequiredAttribute(PropertyInfo property, Attribute attr, ICollection<ISpecification> rules)
+		{
+			rules.Add(new RequiredSpecification(property));
+		}
 
-        private static void ProcessLengthAttribute(PropertyInfo property, Attribute attr, ICollection<ISpecification> rules)
-        {
-            CheckAttributeValidOnProperty(attr, property, typeof(string));
+		private static void ProcessLengthAttribute(PropertyInfo property, Attribute attr, ICollection<ISpecification> rules)
+		{
+			CheckAttributeValidOnProperty(attr, property, typeof(string));
 
-            var la = (LengthAttribute)attr;
-            rules.Add(new LengthSpecification(property, la.Min, la.Max));
-        }
+			var la = (LengthAttribute)attr;
+			rules.Add(new LengthSpecification(property, la.Min, la.Max));
+		}
 
-        private void ProcessEmbeddedValueAttribute(PropertyInfo property, Attribute attr, ICollection<ISpecification> rules)
-        {
-            var innerRules = new List<ISpecification>();
-            ProcessClassProperties(property.PropertyType, innerRules);
-            if (innerRules.Count > 0)
-            {
-                rules.Add(new EmbeddedValueRuleSet(property, new ValidationRuleSet(innerRules), false));
-            }
-        }
+		private void ProcessEmbeddedValueAttribute(PropertyInfo property, Attribute attr, ICollection<ISpecification> rules)
+		{
+			var innerRules = new List<ISpecification>();
+			ProcessClassProperties(property.PropertyType, innerRules);
+			if (innerRules.Count > 0)
+			{
+				rules.Add(new EmbeddedValueRuleSet(property, new ValidationRuleSet(innerRules), false));
+			}
+		}
 
-        private void ProcessEmbeddedValueCollectionAttribute(PropertyInfo property, Attribute attr, ICollection<ISpecification> rules)
-        {
-            var ca = (EmbeddedValueCollectionAttribute)attr;
+		private void ProcessEmbeddedValueCollectionAttribute(PropertyInfo property, Attribute attr, ICollection<ISpecification> rules)
+		{
+			var ca = (EmbeddedValueCollectionAttribute)attr;
 
-            var innerRules = new List<ISpecification>();
-            ProcessClassProperties(ca.ElementType, innerRules);
-            if (innerRules.Count > 0)
-            {
-                rules.Add(new EmbeddedValueRuleSet(property, new ValidationRuleSet(innerRules), true));
-            }
-        }
+			var innerRules = new List<ISpecification>();
+			ProcessClassProperties(ca.ElementType, innerRules);
+			if (innerRules.Count > 0)
+			{
+				rules.Add(new EmbeddedValueRuleSet(property, new ValidationRuleSet(innerRules), true));
+			}
+		}
 
-        private static void CheckAttributeValidOnProperty(Attribute attr, PropertyInfo property, params Type[] types)
-        {
-            if (!CollectionUtils.Contains(types, t => t.IsAssignableFrom(property.PropertyType)))
-                throw new ModellingException(
-                    string.Format("{0} attribute cannot be applied to property of type {1}.", attr.GetType().Name, property.PropertyType.FullName));
-        }
+		private static void CheckAttributeValidOnProperty(Attribute attr, PropertyInfo property, params Type[] types)
+		{
+			if (!CollectionUtils.Contains(types, t => t.IsAssignableFrom(property.PropertyType)))
+				throw new ModellingException(
+					string.Format("{0} attribute cannot be applied to property of type {1}.", attr.GetType().Name, property.PropertyType.FullName));
+		}
 
 		private static List<AttributeEntityClassPair> GetClassAttributes(Type entityClass)
 		{
@@ -174,10 +174,10 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
 			// recur on base class
 			var baseClass = entityClass.BaseType;
-			if(baseClass != typeof(object))
+			if (baseClass != typeof(object))
 				pairs.AddRange(GetClassAttributes(baseClass));
 
 			return pairs;
 		}
-    }
+	}
 }

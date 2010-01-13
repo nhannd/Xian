@@ -31,226 +31,174 @@
 
 #if UNIT_TESTS
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using NUnit.Framework;
-using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
-using System.Reflection;
 
 namespace ClearCanvas.Enterprise.Core.Modelling.Tests
 {
-    [TestFixture]
-    public class ValidationBuilderTests
-    {
-        class FooA
-        {
-            private string _name;
+	[TestFixture]
+	public class ValidationBuilderTests
+	{
+		class FooA
+		{
+			[Length(5)]
+			public string Name { get; set; }
+		}
 
-            [Length(5)]
-            public string Name
-            {
-                get { return _name; }
-                set { _name = value; }
-            }
-        }
+		class FooB
+		{
+			[Required]
+			public string Name { get; set; }
+		}
 
-        class FooB
-        {
-            private string _name;
+		class FooC
+		{
+			[EmbeddedValue]
+			public FooA EmbeddedFoo { get; set; }
+		}
 
-            [Required]
-            public string Name
-            {
-                get { return _name; }
-                set { _name = value; }
-            }
-        }
+		class FooD
+		{
+			[Length(5)]
+			[Required]
+			public string Name { get; set; }
+		}
 
-        class FooC
-        {
-            private FooA _embeddedFoo;
+		class FooE
+		{
+			[Length(5)]
+			public string Name { get; set; }
 
-            [EmbeddedValue]
-            public FooA EmbeddedFoo
-            {
-                get { return _embeddedFoo; }
-                set { _embeddedFoo = value; }
-            }
-        }
+			[Required]
+			public string Color { get; set; }
+		}
 
-        class FooD
-        {
-            private string _name;
+		[Test]
+		public void Test_LengthSpecification()
+		{
+			var builder = new ValidationBuilder();
+			var ruleSet = builder.BuildRuleSet(typeof(FooA));
 
-            [Length(5)]
-            [Required]
-            public string Name
-            {
-                get { return _name; }
-                set { _name = value; }
-            }
-        }
+			Assert.AreEqual(1, ruleSet.Rules.Count);
+			object rule = ruleSet.Rules[0];
+			Assert.IsInstanceOfType(typeof(LengthSpecification), rule);
+			var property = CollectionUtils.FirstElement((rule as IPropertyBoundRule).Properties);
+			Assert.AreEqual(typeof(FooA).GetProperty("Name"), property);
 
-        class FooE
-        {
-            private string _name;
+			var fooA = new FooA {Name = "Bob"};
 
-            [Length(5)]
-            public string Name
-            {
-                get { return _name; }
-                set { _name = value; }
-            }
+			Assert.IsTrue(ruleSet.Test(fooA).Success);
 
-            private string _color;
+			fooA.Name = "Robert";
 
-            [Required]
-            public string Color
-            {
-                get { return _color; }
-                set { _color = value; }
-            }
-        }
+			Assert.IsFalse(ruleSet.Test(fooA).Success);
+		}
 
+		[Test]
+		public void Test_RequiredSpecification()
+		{
+			var builder = new ValidationBuilder();
+			var ruleSet = builder.BuildRuleSet(typeof(FooB));
 
-        public ValidationBuilderTests()
-        {
+			Assert.AreEqual(1, ruleSet.Rules.Count);
+			object rule = ruleSet.Rules[0];
+			Assert.IsInstanceOfType(typeof(RequiredSpecification), rule);
+			var property = CollectionUtils.FirstElement((rule as IPropertyBoundRule).Properties);
+			Assert.AreEqual(typeof(FooB).GetProperty("Name"), property);
 
-        }
+			var foo = new FooB {Name = "Bob"};
 
-        [Test]
-        public void Test_LengthSpecification()
-        {
-            ValidationBuilder builder = new ValidationBuilder();
-            ValidationRuleSet ruleSet = builder.BuildRuleSet(typeof(FooA));
+			Assert.IsTrue(ruleSet.Test(foo).Success);
 
-            Assert.AreEqual(1, ruleSet.Rules.Count);
-            object rule = ruleSet.Rules[0];
-            Assert.IsInstanceOfType(typeof(LengthSpecification), rule);
-            PropertyInfo property = CollectionUtils.FirstElement<PropertyInfo>((rule as IPropertyBoundRule).Properties);
-            Assert.AreEqual(typeof(FooA).GetProperty("Name"), property);
+			// should fail
+			foo.Name = null;
+			Assert.IsFalse(ruleSet.Test(foo).Success);
 
-            FooA fooA = new FooA();
-            fooA.Name = "Bob";
+			// emtpy string should fail as well
+			foo.Name = "";
+			Assert.IsFalse(ruleSet.Test(foo).Success);
+		}
 
-            Assert.IsTrue(ruleSet.Test(fooA).Success);
+		[Test]
+		public void Test_EmbeddedValue()
+		{
+			var builder = new ValidationBuilder();
+			var ruleSet = builder.BuildRuleSet(typeof(FooC));
 
-            fooA.Name = "Robert";
+			Assert.AreEqual(1, ruleSet.Rules.Count);
+			object rule = ruleSet.Rules[0];
+			var property = CollectionUtils.FirstElement((rule as IPropertyBoundRule).Properties);
+			Assert.AreEqual(typeof(FooC).GetProperty("EmbeddedFoo"), property);
 
-            Assert.IsFalse(ruleSet.Test(fooA).Success);
-        }
+			var foo = new FooC {EmbeddedFoo = null};
 
-        [Test]
-        public void Test_RequiredSpecification()
-        {
-            ValidationBuilder builder = new ValidationBuilder();
-            ValidationRuleSet ruleSet = builder.BuildRuleSet(typeof(FooB));
+			// this should pass, because rules on the embedded value class are not evaluated when the property is null
+			Assert.IsTrue(ruleSet.Test(foo).Success);
 
-            Assert.AreEqual(1, ruleSet.Rules.Count);
-            object rule = ruleSet.Rules[0];
-            Assert.IsInstanceOfType(typeof(RequiredSpecification), rule);
-            PropertyInfo property = CollectionUtils.FirstElement<PropertyInfo>((rule as IPropertyBoundRule).Properties);
-            Assert.AreEqual(typeof(FooB).GetProperty("Name"), property);
+			// should pass
+			foo.EmbeddedFoo = new FooA {Name = "Bob"};
+			Assert.IsTrue(ruleSet.Test(foo).Success);
 
-            FooB foo = new FooB();
-            foo.Name = "Bob";
+			// should fail
+			foo.EmbeddedFoo.Name = "Robert";
+			Assert.IsFalse(ruleSet.Test(foo).Success);
+		}
 
-            Assert.IsTrue(ruleSet.Test(foo).Success);
+		[Test]
+		public void Test_CombinationOfRequiredAndLengthOnSameProperty()
+		{
+			var builder = new ValidationBuilder();
+			var ruleSet = builder.BuildRuleSet(typeof(FooD));
 
-            // should fail
-            foo.Name = null;
-            Assert.IsFalse(ruleSet.Test(foo).Success);
+			var foo = new FooD();
 
-            // emtpy string should fail as well
-            foo.Name = "";
-            Assert.IsFalse(ruleSet.Test(foo).Success);
-        }
+			// should fail the "required" but not the "length" test
+			var result = ruleSet.Test(foo);
+			Assert.IsFalse(result.Success);
+			Assert.AreEqual(1, result.Reasons.Length);
 
-        [Test]
-        public void Test_EmbeddedValue()
-        {
-            ValidationBuilder builder = new ValidationBuilder();
-            ValidationRuleSet ruleSet = builder.BuildRuleSet(typeof(FooC));
+			// should fail the "length" test but not the "required" test
+			foo.Name = "Robert";
+			result = ruleSet.Test(foo);
+			Assert.IsFalse(result.Success);
+			Assert.AreEqual(1, result.Reasons.Length);
 
-            Assert.AreEqual(1, ruleSet.Rules.Count);
-            object rule = ruleSet.Rules[0];
-            PropertyInfo property = CollectionUtils.FirstElement<PropertyInfo>((rule as IPropertyBoundRule).Properties);
-            Assert.AreEqual(typeof(FooC).GetProperty("EmbeddedFoo"), property);
+			// should fail neither
+			foo.Name = "Bob";
+			result = ruleSet.Test(foo);
+			Assert.IsTrue(result.Success);
+			Assert.AreEqual(0, result.Reasons.Length);
+		}
 
-            FooC foo = new FooC();
+		public void Test_MultipleBrokenRules()
+		{
+			var builder = new ValidationBuilder();
+			var ruleSet = builder.BuildRuleSet(typeof(FooE));
 
-            // this should pass, because rules on the embedded value class are not evaluated when the property is null
-            foo.EmbeddedFoo = null;
-            Assert.IsTrue(ruleSet.Test(foo).Success);
+			var foo = new FooE {Name = "Robert"};
 
-            // should pass
-            foo.EmbeddedFoo = new FooA();
-            foo.EmbeddedFoo.Name = "Bob";
-            Assert.IsTrue(ruleSet.Test(foo).Success);
+			// should fail both
+			var result = ruleSet.Test(foo);
+			Assert.IsFalse(result.Success);
+			Assert.AreEqual(2, result.Reasons.Length);
 
-            // should fail
-            foo.EmbeddedFoo.Name = "Robert";
-            Assert.IsFalse(ruleSet.Test(foo).Success);
-        }
+			// should fail only Name length
+			foo.Color = "Blue";
+			Assert.IsFalse(result.Success);
+			Assert.AreEqual(1, result.Reasons.Length);
 
-        [Test]
-        public void Test_CombinationOfRequiredAndLengthOnSameProperty()
-        {
-            ValidationBuilder builder = new ValidationBuilder();
-            ValidationRuleSet ruleSet = builder.BuildRuleSet(typeof(FooD));
+			// should fail neither
+			foo.Name = "Bot";
+			Assert.IsTrue(result.Success);
+			Assert.AreEqual(0, result.Reasons.Length);
 
-            FooD foo = new FooD();
+			// should fail Name required
+			foo.Name = null;
+			Assert.IsFalse(result.Success);
+			Assert.AreEqual(1, result.Reasons.Length);
+		}
 
-            // should fail the "required" but not the "length" test
-            TestResult result = ruleSet.Test(foo);
-            Assert.IsFalse(result.Success);
-            Assert.AreEqual(1, result.Reasons.Length);
-
-            // should fail the "length" test but not the "required" test
-            foo.Name = "Robert";
-            result = ruleSet.Test(foo);
-            Assert.IsFalse(result.Success);
-            Assert.AreEqual(1, result.Reasons.Length);
-
-            // should fail neither
-            foo.Name = "Bob";
-            result = ruleSet.Test(foo);
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(0, result.Reasons.Length);
-        }
-
-        public void Test_MultipleBrokenRules()
-        {
-            ValidationBuilder builder = new ValidationBuilder();
-            ValidationRuleSet ruleSet = builder.BuildRuleSet(typeof(FooE));
-
-            FooE foo = new FooE();
-            foo.Name = "Robert";
-
-            // should fail both
-            TestResult result = ruleSet.Test(foo);
-            Assert.IsFalse(result.Success);
-            Assert.AreEqual(2, result.Reasons.Length);
-
-            // should fail only Name length
-            foo.Color = "Blue";
-            Assert.IsFalse(result.Success);
-            Assert.AreEqual(1, result.Reasons.Length);
-
-            // should fail neither
-            foo.Name = "Bot";
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(0, result.Reasons.Length);
-
-            // should fail Name required
-            foo.Name = null;
-            Assert.IsFalse(result.Success);
-            Assert.AreEqual(1, result.Reasons.Length);
-        }
-
-    }
+	}
 }
 
 #endif
