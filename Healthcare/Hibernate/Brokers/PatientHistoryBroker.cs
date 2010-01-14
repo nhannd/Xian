@@ -29,47 +29,42 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Healthcare.Brokers;
-using NHibernate;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
-    [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class PatientHistoryBroker : Broker, IPatientHistoryBroker
-    {
-    	/// <summary>
-    	/// Obtains the set of all orders for the specified patient.
-    	/// </summary>
-    	/// <param name="patient"></param>
-    	/// <returns></returns>
-    	public IList<Order> GetOrderHistory(Patient patient)
-        {
-			NHibernate.IQuery q = this.Context.GetNamedHqlQuery("orderHistory");
-			q.SetParameter(0, patient);
+	[ExtensionOf(typeof(BrokerExtensionPoint))]
+	public class PatientHistoryBroker : Broker, IPatientHistoryBroker
+	{
+		/// <summary>
+		/// Obtains the set of all orders for the specified patient.
+		/// </summary>
+		/// <param name="patient"></param>
+		/// <returns></returns>
+		public IList<Order> GetOrderHistory(Patient patient)
+		{
+			var namedHqlQuery = this.Context.GetNamedHqlQuery("orderHistory");
+			namedHqlQuery.SetParameter(0, patient);
 
 			// uniquefy the results in case fetch joins added additional lines
-			return CollectionUtils.Unique(q.List<Order>());
-        }
+			return CollectionUtils.Unique(namedHqlQuery.List<Order>());
+		}
 
-    	/// <summary>
-    	/// Obtains the set of all procedures for the specified patient.
-    	/// </summary>
-    	/// <param name="patient"></param>
-    	/// <returns></returns>
-    	public IList<Procedure> GetProcedureHistory(Patient patient)
-        {
-			NHibernate.IQuery q = this.Context.GetNamedHqlQuery("procedureHistory");
-			q.SetParameter(0, patient);
-	
-			var procedures = CollectionUtils.Map<object[], Procedure>(q.List(), tuple => (Procedure)tuple[0]);
+		/// <summary>
+		/// Obtains the set of all procedures for the specified patient.
+		/// </summary>
+		/// <param name="patient"></param>
+		/// <returns></returns>
+		public IList<Procedure> GetProcedureHistory(Patient patient)
+		{
+			var namedHqlQuery = this.Context.GetNamedHqlQuery("procedureHistory");
+			namedHqlQuery.SetParameter(0, patient);
+
+			var procedures = CollectionUtils.Map<object[], Procedure>(namedHqlQuery.List(), tuple => (Procedure)tuple[0]);
 
 			// uniquefy the results in case fetch joins added additional lines)
 			return CollectionUtils.Unique(procedures);
@@ -82,11 +77,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		/// <returns></returns>
 		public IList<Report> GetReportHistory(Patient patient)
 		{
-			NHibernate.IQuery q = this.Context.GetNamedHqlQuery("reportHistory");
-			q.SetParameter(0, patient);
+			var namedHqlQuery = this.Context.GetNamedHqlQuery("reportHistory");
+			namedHqlQuery.SetParameter(0, patient);
 
 			// uniquefy the results in case fetch joins added additional lines
-			return CollectionUtils.Unique(q.List<Report>());
+			return CollectionUtils.Unique(namedHqlQuery.List<Report>());
 		}
 
 		/// <summary>
@@ -96,11 +91,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		/// <returns></returns>
 		public IList<Report> GetReportsForOrder(Order order)
 		{
-			NHibernate.IQuery q = this.Context.GetNamedHqlQuery("reportsForOrder");
-			q.SetParameter(0, order);
+			var namedHqlQuery = this.Context.GetNamedHqlQuery("reportsForOrder");
+			namedHqlQuery.SetParameter(0, order);
 
 			// uniquefy the results in case fetch joins added additional lines
-			return CollectionUtils.Unique(q.List<Report>());
+			return CollectionUtils.Unique(namedHqlQuery.List<Report>());
 		}
 	}
 
