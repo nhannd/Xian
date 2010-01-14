@@ -330,12 +330,13 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		public LoadReportForEditResponse LoadReportForEdit(LoadReportForEditRequest request)
 		{
 			var step = this.PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
-			var reportAssembler = new ReportAssembler();
-			var orderAssembler = new OrderAssembler();
 
+			var reportAssembler = new ReportAssembler();
 			var reportDetail = reportAssembler.CreateReportDetail(step.ReportPart.Report, false, this.PersistenceContext);
-			var orderDetail = orderAssembler.CreateOrderDetail(step.Procedure.Order, this.PersistenceContext,
-				false, false, false, null, false, false, true);
+
+			var orderAssembler = new OrderAssembler();
+			var orderDetailOptions = new OrderAssembler.CreateOrderDetailOptions(false, false, false, null, false, false, true);
+			var orderDetail = orderAssembler.CreateOrderDetail(step.Procedure.Order, orderDetailOptions, this.PersistenceContext);
 
 			return new LoadReportForEditResponse(
 				reportDetail,

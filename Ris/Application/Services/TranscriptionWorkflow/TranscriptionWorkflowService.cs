@@ -95,11 +95,11 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 			ReportAssembler assembler = new ReportAssembler();
 			OrderAssembler orderAssembler = new OrderAssembler();
 
+			var orderDetailOptions = new OrderAssembler.CreateOrderDetailOptions(false, false, false, null, false, false, true);
 			LoadTranscriptionForEditResponse response = new LoadTranscriptionForEditResponse(
 				assembler.CreateReportDetail(step.ReportPart.Report, false, this.PersistenceContext),
 				step.ReportPart.Index,
-				orderAssembler.CreateOrderDetail(step.Procedure.Order, PersistenceContext, false, false, false, null, false,
-												 false, true));
+				orderAssembler.CreateOrderDetail(step.Procedure.Order, orderDetailOptions, PersistenceContext));
 
 			return response;
 		}
