@@ -291,7 +291,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 DateTime? studyTime = TimeParser.Parse(Study.StudyTime);
                 if (studyTime!=null)
                 {
-                    StudyTimeHours.Text = studyTime.Value.Hour == 0 ? "12" : String.Format("{0:00}",studyTime.Value.Hour <= 12 ? studyTime.Value.Hour : studyTime.Value.Hour - 12);
+                    StudyTimeHours.Text = String.Format("{0:00}",studyTime.Value.Hour);
 
                     StudyTimeMinutes.Text = String.Format("{0:00}", studyTime.Value.Minute);
                     StudyTimeSeconds.Text = String.Format("{0:00}", studyTime.Value.Second);
