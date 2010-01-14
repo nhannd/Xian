@@ -68,9 +68,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         {
 			NHibernate.IQuery q = this.Context.GetNamedHqlQuery("procedureHistory");
 			q.SetParameter(0, patient);
+	
+			var procedures = CollectionUtils.Map<object[], Procedure>(q.List(), tuple => (Procedure)tuple[0]);
 
-			// uniquefy the results in case fetch joins added additional lines
-			return CollectionUtils.Unique(q.List<Procedure>());
+			// uniquefy the results in case fetch joins added additional lines)
+			return CollectionUtils.Unique(procedures);
 		}
 
 		/// <summary>
