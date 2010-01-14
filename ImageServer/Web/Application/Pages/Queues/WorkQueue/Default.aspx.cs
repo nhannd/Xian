@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
     {
 
         #region Private members
-
+        private readonly Dictionary<string, SearchPanel> _partitionPanelMap = new Dictionary<string, SearchPanel>();
         #endregion
 
         /// <summary>
@@ -135,6 +135,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                                                                panel.ID = "SearchPanel_" + partition.AeTitle;
 
                                                                panel.EnclosingPage = this;
+
+                                                               _partitionPanelMap.Add(partition.GetKey().ToString(), panel);
 
                                                                return panel;
                                                            });
@@ -313,7 +315,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         void DeleteWorkQueueDialog_WorkQueueItemDeleted(Model.WorkQueue item)
         {
             ServerEntityKey partitionKey = item.ServerPartitionKey;
-            ServerPartitionTabs.Update(partitionKey);
+            if (_partitionPanelMap.ContainsKey(partitionKey.ToString()))
+                _partitionPanelMap[partitionKey.ToString()].Refresh();
         }
 
         void ConfirmationContinueDialog_Confirmed(object data)

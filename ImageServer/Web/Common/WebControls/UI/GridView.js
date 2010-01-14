@@ -114,6 +114,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
         },
 
         selectRow: function(rowIndex) {
+            debugger;
             var row = this.get_element().rows[rowIndex];
             if (row != null && row != undefined)
                 this._selectRow(row);
@@ -333,6 +334,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
                     for (var i = 0; i < rows.length; i++) {
                         if (rows[i].getAttribute('isdatarow') == 'true') {
                             if (this._containsDataKey(rows[i].getAttribute('dataKey'))) this._selectRow(rows[i]);
+                            else this._unselectRow(rows[i]);
                         }
                     }
                 }

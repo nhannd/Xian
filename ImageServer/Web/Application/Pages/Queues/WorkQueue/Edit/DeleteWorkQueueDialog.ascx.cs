@@ -219,7 +219,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             }
         }
 
+        public ServerEntityKey ServerPartitionKey
+        {
+            get { return WorkQueue.ServerPartitionKey; }
+        }
+
         #region Public Methods
+
+
 
         public override void DataBind()
         {

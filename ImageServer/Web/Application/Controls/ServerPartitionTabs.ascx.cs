@@ -184,7 +184,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                         panel.Update();
                     }
                 }
+
             }
+            
 
         }
 
