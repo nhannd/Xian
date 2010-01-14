@@ -42,7 +42,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Application.Common.TranscriptionWorkflow;
 using ClearCanvas.Ris.Application.Services.ReportingWorkflow;
-using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 {
@@ -55,33 +55,27 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 		[ReadOperation]
 		public TextQueryResponse<ReportingWorklistItem> SearchWorklists(WorklistItemTextQueryRequest request)
 		{
-			ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();
-			IReportingWorklistItemBroker broker = PersistenceContext.GetBroker<IReportingWorklistItemBroker>();
+			var assembler = new ReportingWorkflowAssembler();
+			var broker = this.PersistenceContext.GetBroker<IReportingWorklistItemBroker>();
 
-			return SearchHelper<WorklistItem, ReportingWorklistItem>(request, broker,
-				 delegate(WorklistItem item)
-				 {
-					 return assembler.CreateWorklistItemSummary(item, PersistenceContext);
-				 });
+			return SearchHelper(request, broker, item => assembler.CreateWorklistItemSummary(item, this.PersistenceContext));
 		}
 
 		[ReadOperation]
 		public QueryWorklistResponse<ReportingWorklistItem> QueryWorklist(QueryWorklistRequest request)
 		{
-			ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();
+			var assembler = new ReportingWorkflowAssembler();
 
-			return QueryWorklistHelper<WorklistItem, ReportingWorklistItem>(request,
-				delegate(WorklistItem item)
-				{
-					return assembler.CreateWorklistItemSummary(item, this.PersistenceContext);
-				});
+			return QueryWorklistHelper<WorklistItem, ReportingWorklistItem>(
+				request,
+				item => assembler.CreateWorklistItemSummary(item, this.PersistenceContext));
 		}
 
 		[ReadOperation]
 		public GetRejectReasonChoicesResponse GetRejectReasonChoices(GetRejectReasonChoicesRequest request)
 		{
-			List<EnumValueInfo> choices = EnumUtils.GetEnumValueList<TranscriptionRejectReasonEnum>(this.PersistenceContext);
-			return new GetRejectReasonChoicesResponse(choices);
+			return new GetRejectReasonChoicesResponse(
+				EnumUtils.GetEnumValueList<TranscriptionRejectReasonEnum>(this.PersistenceContext));
 		}
 
 		#endregion
@@ -91,26 +85,24 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 		[ReadOperation]
 		public LoadTranscriptionForEditResponse LoadTranscriptionForEdit(LoadTranscriptionForEditRequest request)
 		{
-			ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
-			ReportAssembler assembler = new ReportAssembler();
-			OrderAssembler orderAssembler = new OrderAssembler();
+			var step = this.PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
+			var reportAssembler = new ReportAssembler();
+			var orderAssembler = new OrderAssembler();
 
 			var orderDetailOptions = new OrderAssembler.CreateOrderDetailOptions(false, false, false, null, false, false, true);
-			LoadTranscriptionForEditResponse response = new LoadTranscriptionForEditResponse(
-				assembler.CreateReportDetail(step.ReportPart.Report, false, this.PersistenceContext),
+			return new LoadTranscriptionForEditResponse(
+				reportAssembler.CreateReportDetail(step.ReportPart.Report, false, this.PersistenceContext),
 				step.ReportPart.Index,
-				orderAssembler.CreateOrderDetail(step.Procedure.Order, orderDetailOptions, PersistenceContext));
-
-			return response;
+				orderAssembler.CreateOrderDetail(step.Procedure.Order, orderDetailOptions, this.PersistenceContext));
 		}
 
 		[UpdateOperation]
 		[OperationEnablement("CanStartTranscription")]
 		public StartTranscriptionResponse StartTranscription(StartTranscriptionRequest request)
 		{
-			TranscriptionStep transcriptionStep = this.PersistenceContext.Load<TranscriptionStep>(request.TranscriptionStepRef);
+			var transcriptionStep = this.PersistenceContext.Load<TranscriptionStep>(request.TranscriptionStepRef);
 
-			TranscriptionOperations.StartTranscription op = new TranscriptionOperations.StartTranscription();
+			var op = new TranscriptionOperations.StartTranscription();
 			op.Execute(transcriptionStep, this.CurrentUserStaff);
 
 			this.PersistenceContext.SynchState();
@@ -122,9 +114,9 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 		[OperationEnablement("CanDiscardTranscription")]
 		public DiscardTranscriptionResponse DiscardTranscription(DiscardTranscriptionRequest request)
 		{
-			TranscriptionStep transcriptionStep = this.PersistenceContext.Load<TranscriptionStep>(request.TranscriptionStepRef);
+			var transcriptionStep = this.PersistenceContext.Load<TranscriptionStep>(request.TranscriptionStepRef);
 
-			TranscriptionOperations.DiscardTranscription op = new TranscriptionOperations.DiscardTranscription();
+			var op = new TranscriptionOperations.DiscardTranscription();
 			op.Execute(transcriptionStep, this.CurrentUserStaff);
 
 			this.PersistenceContext.SynchState();
@@ -136,10 +128,10 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 		[OperationEnablement("CanSaveTranscription")]
 		public SaveTranscriptionResponse SaveTranscription(SaveTranscriptionRequest request)
 		{
-			TranscriptionStep transcriptionStep = this.PersistenceContext.Load<TranscriptionStep>(request.TranscriptionStepRef);
-			Staff supervisor = request.SupervisorRef == null 
-				? null 
-				: PersistenceContext.Load<Staff>(request.SupervisorRef, EntityLoadFlags.Proxy);
+			var transcriptionStep = this.PersistenceContext.Load<TranscriptionStep>(request.TranscriptionStepRef);
+			var supervisor = request.SupervisorRef == null
+				? null
+				: this.PersistenceContext.Load<Staff>(request.SupervisorRef, EntityLoadFlags.Proxy);
 
 			SaveReportHelper(transcriptionStep, request.ReportPartExtendedProperties, supervisor);
 
@@ -152,15 +144,15 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 		[OperationEnablement("CanSubmitTranscriptionForReview")]
 		public SubmitTranscriptionForReviewResponse SubmitTranscriptionForReview(SubmitTranscriptionForReviewRequest request)
 		{
-			TranscriptionStep transcriptionStep = this.PersistenceContext.Load<TranscriptionStep>(request.TranscriptionStepRef);
-			Staff supervisor = ResolveSupervisor(transcriptionStep, request.SupervisorRef);
+			var transcriptionStep = this.PersistenceContext.Load<TranscriptionStep>(request.TranscriptionStepRef);
+			var supervisor = ResolveSupervisor(transcriptionStep, request.SupervisorRef);
 
-			if(supervisor == null)
+			if (supervisor == null)
 				throw new RequestValidationException("A supervisor is required.");
 
 			SaveReportHelper(transcriptionStep, request.ReportPartExtendedProperties, supervisor);
 
-			TranscriptionOperations.SubmitTranscriptionForReview op = new TranscriptionOperations.SubmitTranscriptionForReview();
+			var op = new TranscriptionOperations.SubmitTranscriptionForReview();
 			op.Execute(transcriptionStep, this.CurrentUserStaff, supervisor);
 
 			this.PersistenceContext.SynchState();
@@ -172,11 +164,11 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 		[OperationEnablement("CanCompleteTranscription")]
 		public CompleteTranscriptionResponse CompleteTranscription(CompleteTranscriptionRequest request)
 		{
-			TranscriptionStep transcriptionStep = this.PersistenceContext.Load<TranscriptionStep>(request.TranscriptionStepRef);
+			var transcriptionStep = this.PersistenceContext.Load<TranscriptionStep>(request.TranscriptionStepRef);
 
 			SaveReportHelper(transcriptionStep, request.ReportPartExtendedProperties);
 
-			TranscriptionOperations.CompleteTranscription op = new TranscriptionOperations.CompleteTranscription();
+			var op = new TranscriptionOperations.CompleteTranscription();
 			op.Execute(transcriptionStep, this.CurrentUserStaff);
 
 			this.PersistenceContext.SynchState();
@@ -188,15 +180,14 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 		[OperationEnablement("CanRejectTranscription")]
 		public RejectTranscriptionResponse RejectTranscription(RejectTranscriptionRequest request)
 		{
-			TranscriptionStep transcriptionStep = this.PersistenceContext.Load<TranscriptionStep>(request.TranscriptionStepRef);
+			var transcriptionStep = this.PersistenceContext.Load<TranscriptionStep>(request.TranscriptionStepRef);
 
 			SaveReportHelper(transcriptionStep, request.ReportPartExtendedProperties);
 
-			TranscriptionRejectReasonEnum reason =
-				EnumUtils.GetEnumValue<TranscriptionRejectReasonEnum>(request.RejectReason, this.PersistenceContext);
+			var rejectReason = EnumUtils.GetEnumValue<TranscriptionRejectReasonEnum>(request.RejectReason, this.PersistenceContext);
 
-			TranscriptionOperations.RejectTranscription op = new TranscriptionOperations.RejectTranscription();
-			op.Execute(transcriptionStep, this.CurrentUserStaff, reason);
+			var op = new TranscriptionOperations.RejectTranscription();
+			op.Execute(transcriptionStep, this.CurrentUserStaff, rejectReason);
 
 			AddAdditionalCommentsNote(request.AdditionalComments, transcriptionStep.Procedure.Order);
 
@@ -250,7 +241,7 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 			if (itemKey.ProcedureStepRef == null)
 				return false;
 
-			ProcedureStep step = PersistenceContext.Load<ProcedureStep>(itemKey.ProcedureStepRef);
+			var step = this.PersistenceContext.Load<ProcedureStep>(itemKey.ProcedureStepRef);
 
 			// for now, all of these operations assume they are operating on a 
 			// this may need to change in future
@@ -274,7 +265,7 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 			if (reportPartExtendedProperties == null)
 				return;
 
-			TranscriptionOperations.SaveTranscription op = new TranscriptionOperations.SaveTranscription();
+			var op = new TranscriptionOperations.SaveTranscription();
 			op.Execute(step, reportPartExtendedProperties);
 		}
 
@@ -283,7 +274,7 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 			if (reportPartExtendedProperties == null)
 				return;
 
-			TranscriptionOperations.SaveTranscription op = new TranscriptionOperations.SaveTranscription();
+			var op = new TranscriptionOperations.SaveTranscription();
 			op.Execute(step, reportPartExtendedProperties, supervisor);
 		}
 
@@ -295,7 +286,7 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 		/// <returns></returns>
 		private Staff ResolveSupervisor(TranscriptionStep step, EntityRef newSupervisorRef)
 		{
-			Staff supervisor = newSupervisorRef == null ? null : PersistenceContext.Load<Staff>(newSupervisorRef, EntityLoadFlags.Proxy);
+			var supervisor = newSupervisorRef == null ? null : this.PersistenceContext.Load<Staff>(newSupervisorRef, EntityLoadFlags.Proxy);
 
 			if (supervisor == null && step.ReportPart != null)
 				supervisor = step.ReportPart.TranscriptionSupervisor;
@@ -305,11 +296,10 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 
 		private void AddAdditionalCommentsNote(OrderNoteDetail detail, Order order)
 		{
-			if (detail != null)
-			{
-				OrderNoteAssembler noteAssembler = new OrderNoteAssembler();
-				noteAssembler.CreateOrderNote(detail, order, this.CurrentUserStaff, true, this.PersistenceContext);
-			}
+			if (detail == null) return;
+
+			var noteAssembler = new OrderNoteAssembler();
+			noteAssembler.CreateOrderNote(detail, order, this.CurrentUserStaff, true, this.PersistenceContext);
 		}
 
 		#endregion

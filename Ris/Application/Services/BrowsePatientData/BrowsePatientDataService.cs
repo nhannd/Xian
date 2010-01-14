@@ -177,8 +177,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 
 			var response = new GetOrderDetailResponse();
 			var orderAssembler = new OrderAssembler();
-			response.Order = orderAssembler.CreateOrderDetail(order,
-				this.PersistenceContext,
+			var createOrderDetailOptions = new OrderAssembler.CreateOrderDetailOptions(
 				request.IncludeVisit,
 				request.IncludeProcedures,
 				request.IncludeNotes,
@@ -186,6 +185,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 				request.IncludeAttachments,
 				request.IncludeResultRecipients,
 				request.IncludeExtendedProperties);
+			response.Order = orderAssembler.CreateOrderDetail(order, createOrderDetailOptions, this.PersistenceContext);
 
 			if (request.IncludeAlerts)
 			{
