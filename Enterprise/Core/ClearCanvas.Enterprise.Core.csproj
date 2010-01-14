@@ -79,8 +79,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>EntityValidationSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Modelling\XmlValidationBuilder.cs" />
+    <Compile Include="Modelling\IValidationRuleSetSource.cs" />
     <Compile Include="IPersistentStoreProfiler.cs" />
+    <Compile Include="Modelling\XmlValidationRuleSetSource.cs" />
     <Compile Include="PersistentStoreProfilerRegistry.cs" />
     <Compile Include="ResponseCachingAdvice.cs" />
     <Compile Include="ResponseCachingAttribute.cs" />
@@ -235,9 +236,6 @@
       <LastGenOutput>EntityValidationSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="persistence.cd" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Modelling\CustomEntityValidationRules.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -86,6 +86,11 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 		}
 
 		/// <summary>
+		/// Gets a value indicating whether this rule set is empty.
+		/// </summary>
+		public bool IsEmpty { get { return _rules.Count == 0; } }
+
+		/// <summary>
 		/// Returns a new rule set representing the addition of this rule set and the other.
 		/// </summary>
 		/// <param name="other"></param>

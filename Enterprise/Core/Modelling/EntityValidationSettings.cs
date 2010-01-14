@@ -1,12 +1,9 @@
-using System;
 using System.Configuration;
-using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Enterprise.Core.Modelling
 {
 
-	// TODO add a description of the purpose of the settings group here
-	[SettingsGroupDescription("")]
+	[SettingsGroupDescription("Settings that affect the behaviour of custom entity validation rules.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class EntityValidationSettings
 	{
@@ -16,7 +13,6 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 		///</summary>
 		public EntityValidationSettings()
 		{
-			// Note: server-side settings classes do not register in the <see cref="ApplicationSettingsRegistry"/>
 		}
 	}
 }

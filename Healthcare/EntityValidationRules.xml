@@ -3,10 +3,10 @@
   <!--
     USAGE NOTES:
     
-    A ruleset must specify the entity class to which it applies, hence the entityClass attribute is required.
+    A ruleset must specify the entity class to which it applies, hence the class attribute is required.
     A ruleset may optionally specify an id, although this currently is not used by the application.
     The default version of this document defines two rulesets for a hypothetical entity named 
-    ClearCanvas.Enterprise.Foo.  These rulesets will have no effect (unless you happen to define such an entity).
+    ClearCanvas.Healthcare.Foo.  These rulesets will have no effect (unless you happen to define such an entity).
   
     Each rule-set may define any number of validation-rule entries, and may optionally define a single applicability-rule.
     For example, the first example ruleset (id = "default") defines 2 validation-rules, nameRequired and ageRequired.
@@ -17,7 +17,7 @@
   -->
   
   
-  <validation-ruleset entityClass="ClearCanvas.Enterprise.Foo" id="default">
+  <validation-ruleset class="ClearCanvas.Healthcare.Foo" id="default">
     <validation-rule id="nameRequired">
       <not-null test="$.Name" failMessage="Name must not be null"/>
     </validation-rule>
@@ -26,7 +26,7 @@
     </validation-rule>
   </validation-ruleset>
   
-  <validation-ruleset entityClass="ClearCanvas.Enterprise.Foo" id="active">
+  <validation-ruleset class="ClearCanvas.Healthcare.Foo" id="active">
     <applicability-rule>
       <equal test="$.State" refValue="'Active'"/>
     </applicability-rule>

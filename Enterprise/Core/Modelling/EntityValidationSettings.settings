@@ -2,9 +2,6 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Enterprise.Core.Modelling" GeneratedClassName="EntityValidationSettings">
   <Profiles />
   <Settings>
-    <Setting Name="CustomRulesXml" Description="XML document containing custom entity validation rulesets" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">CustomEntityValidationRules.xml</Value>
-    </Setting>
     <Setting Name="CustomRulesCachingTimeToLiveSeconds" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">60</Value>
     </Setting>

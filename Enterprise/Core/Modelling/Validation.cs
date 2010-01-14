@@ -31,11 +31,21 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Enterprise.Common.Caching;
 
 namespace ClearCanvas.Enterprise.Core.Modelling
 {
+	/// <summary>
+	/// Defines an extension point for extensions that act as sources of validation rules.
+	/// </summary>
+	[ExtensionPoint]
+	public class EntityValidationRuleSetSourceExtensionPoint : ExtensionPoint<IValidationRuleSetSource>
+	{
+	}
+
+
 	/// <summary>
 	/// Provides domain object validation functionality.
 	/// </summary>
@@ -128,8 +138,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 					return ruleSet;
 
 				// no cached, so compile the ruleset for the specified domain class
-				var builder = new XmlValidationBuilder();
-				ruleSet = builder.GetRuleset(domainClass);
+				ruleSet = BuildRules(domainClass);
 
 				// cache the ruleset if desired
 				var settings = new EntityValidationSettings();
@@ -141,6 +150,21 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
 				return ruleSet;
 			}
+		}
+
+		private static ValidationRuleSet BuildRules(Type domainClass)
+		{
+			var ruleset = new ValidationRuleSet();
+
+			// combine rules from all sources
+			var sources = new EntityValidationRuleSetSourceExtensionPoint().CreateExtensions();
+			foreach (IValidationRuleSetSource source in sources)
+			{
+				var r = source.GetRuleSet(domainClass.FullName);
+				if (!r.IsEmpty)
+					ruleset = ruleset.Add(r);
+			}
+			return ruleset;
 		}
 	}
 }

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{748C08F1-FD6E-49F6-90BB-90C3A323C714}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -93,6 +93,12 @@
     <Compile Include="CannedText.cs" />
     <Compile Include="DicomSeries.cs" />
     <Compile Include="EmergencyWorklists.cs" />
+    <Compile Include="EntityValidationRulesSettings.cs" />
+    <Compile Include="EntityValidationRulesSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>EntityValidationRulesSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="GroupNotePosting.cs" />
     <Compile Include="ImageAvailability.cs" />
     <Compile Include="Imex\CannedTextImex.cs" />
@@ -342,6 +348,10 @@
       <LastGenOutput>AlertsSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="app.config" />
+    <None Include="EntityValidationRulesSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>EntityValidationRulesSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Workflow\Reporting\ReportingWorkflowSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ReportingWorkflowSettings.Designer.cs</LastGenOutput>
@@ -381,6 +391,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TranscriptionRejectReasonEnum.enum.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="EntityValidationRules.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Workflow\Modality\Tests\" />

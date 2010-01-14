@@ -8,16 +8,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Enterprise.Core.Modelling {
+namespace ClearCanvas.Healthcare {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "9.0.0.0")]
-    internal sealed partial class EntityValidationSettings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class EntityValidationRulesSettings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static EntityValidationSettings defaultInstance = ((EntityValidationSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new EntityValidationSettings())));
+        private static EntityValidationRulesSettings defaultInstance = ((EntityValidationRulesSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new EntityValidationRulesSettings())));
         
-        public static EntityValidationSettings Default {
+        public static EntityValidationRulesSettings Default {
             get {
                 return defaultInstance;
             }
@@ -25,10 +25,10 @@ namespace ClearCanvas.Enterprise.Core.Modelling {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("60")]
-        public int CustomRulesCachingTimeToLiveSeconds {
+        [global::System.Configuration.DefaultSettingValueAttribute("EntityValidationRules.xml")]
+        public string CustomRulesXml {
             get {
-                return ((int)(this["CustomRulesCachingTimeToLiveSeconds"]));
+                return ((string)(this["CustomRulesXml"]));
             }
         }
     }

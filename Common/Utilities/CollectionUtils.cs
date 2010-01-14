@@ -1058,10 +1058,10 @@ namespace ClearCanvas.Common.Utilities
 		/// <typeparam name="TItem"></typeparam>
 		/// <param name="targets"></param>
 		/// <returns></returns>
-		public static List<TItem> Concat<TItem>(List<List<TItem>> targets)
+		public static List<TItem> Concat<TItem>(List<IList<TItem>> targets)
 		{
 			List<TItem> result = new List<TItem>();
-			foreach (List<TItem> target in targets)
+			foreach (IList<TItem> target in targets)
 			{
 				result.AddRange(target);
 			}
