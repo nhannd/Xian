@@ -238,7 +238,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			{
 				if (_lineGraphic.Color != value)
 				{
-					_lineGraphic.Color = _textControlGraphic.Color = value;
+					_lineGraphic.Color = _textControlGraphic.Color = this.TextGraphic.Color = this.PointGraphic.Color = value;
 					this.OnColorChanged();
 				}
 			}
