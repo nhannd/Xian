@@ -318,6 +318,12 @@
     <Compile Include="Tools\ToolContext.cs" />
     <Compile Include="Tools\ToolSet.cs" />
     <Compile Include="MemorableUndoableCommand.cs" />
+    <Compile Include="Validation\ValidationRulesSettings.cs" />
+    <Compile Include="Validation\ValidationRulesSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ValidationRulesSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Validation\XmlValidationCompiler.cs" />
     <Compile Include="Validation\XmlValidationManager.cs" />
     <Compile Include="ViewFactory.cs" />
@@ -368,6 +374,10 @@
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>ToolStripSettings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Validation\ValidationRulesSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ValidationRulesSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\AddToolSmall.png" />
@@ -410,6 +420,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Validation\ValidationRules.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tools\Tests\" />
