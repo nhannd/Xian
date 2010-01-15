@@ -62,7 +62,7 @@
                                                                                         <td align="left" valign="bottom">
                                                 <asp:Label ID="Label4" runat="server" Text="Server" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:TextBox ID="ProcessingServer" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Patient Id" />
+                                                <asp:TextBox ID="ProcessingServer" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Processing Server" />
                                             </td>    
                                             <td valign="bottom">
                                                 <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="SearchIcon" OnClick="SearchButton_Click" /></asp:Panel>
