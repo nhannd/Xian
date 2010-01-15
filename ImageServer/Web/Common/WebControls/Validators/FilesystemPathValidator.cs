@@ -107,7 +107,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                 ErrorMessage = e.Message;
                 return true;
             }
-            catch (IndexOutOfRangeException e)
+            catch (IndexOutOfRangeException)
             {
                 ErrorMessage = "Invalid Path: " + path;
                 return false;

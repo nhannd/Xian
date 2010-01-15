@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageServer.Core.Data
 		#region Private Members
 
 		private int _numberOfInstances;
-        private string _seriesNumber;
+       // private string _seriesNumber;
 		#endregion
 
 		#region Constructors

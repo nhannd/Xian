@@ -174,10 +174,10 @@ namespace ClearCanvas.Dicom.Network.Scu
 			_syntax = msg.TransferSyntax;
 			SopInstanceUid = msg.DataSet[DicomTags.SopInstanceUid].GetString(0, string.Empty);
 
-			StudyInstanceUid = _dicomFile.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
-			SeriesInstanceUid = _dicomFile.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
-			PatientsName = _dicomFile.DataSet[DicomTags.PatientsName].GetString(0, string.Empty);
-			PatientId = _dicomFile.DataSet[DicomTags.PatientId].GetString(0, string.Empty);
+			StudyInstanceUid = msg.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
+			SeriesInstanceUid = msg.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
+			PatientsName = msg.DataSet[DicomTags.PatientsName].GetString(0, string.Empty);
+			PatientId = msg.DataSet[DicomTags.PatientId].GetString(0, string.Empty);
 			_infoLoaded = true;
 		}
 

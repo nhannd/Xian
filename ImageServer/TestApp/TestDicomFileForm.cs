@@ -189,7 +189,7 @@ namespace ClearCanvas.ImageServer.TestApp
 			{
 				dicomFile.DataSet[DicomTags.PatientsBirthDate].SetStringValue("12/12/2009");
 			}
-			catch (Exception x)
+			catch (Exception)
 			{
 				
 			}
