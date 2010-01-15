@@ -107,27 +107,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				_showAnglesToolGraphic.Set(_selectedLine.Points[0], _selectedLine.Points[1], _focusedLine.Points[0], _focusedLine.Points[1]);
 				_showAnglesToolGraphic.Draw();
 			}
-
-
-			//IOverlayGraphicsProvider overlayGraphicsProvider;
-			//if (_showAngles && _selectedLine != _focusedLine
-			//    && _selectedLine != null && _selectedLine.Points.Count == 2
-			//    && _focusedLine != null && _focusedLine.Points.Count == 2
-			//    && _selectedLine.ParentPresentationImage == _focusedLine.ParentPresentationImage) {
-			//    // base.SelectedOverlayGraphicsProvider is NOT necessarily the same as _selectedLine.ParentPresentationImage
-			//    overlayGraphicsProvider = _selectedLine.ParentPresentationImage as IOverlayGraphicsProvider;
-			//    if (overlayGraphicsProvider != null) {
-			//        TranslocateGraphic(_showAnglesToolGraphic, overlayGraphicsProvider.OverlayGraphics);
-
-			//        // the graphic must be moved before setting the data points, due to need for source/destination image coordinate conversion
-			//        _showAnglesToolGraphic.Set(_selectedLine.Points[0], _selectedLine.Points[1], _focusedLine.Points[0], _focusedLine.Points[1]);
-			//        _showAnglesToolGraphic.Draw();
-			//    } else {
-			//        TranslocateGraphic(_showAnglesToolGraphic, null);
-			//    }
-			//} else {
-			//    TranslocateGraphic(_showAnglesToolGraphic, null);
-			//}
 		}
 
 		public bool ShowAngles

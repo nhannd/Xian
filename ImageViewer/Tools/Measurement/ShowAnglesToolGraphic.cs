@@ -41,22 +41,54 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
 	partial class ShowAnglesTool
 	{
-		[Cloneable(true)]
+		[Cloneable]
 		private class ShowAnglesToolGraphic : CompositeGraphic
 		{
 			[CloneIgnore]
-			private PointsList _endPoints;
+			private readonly PointsList _endPoints;
 
-			private AngleCalloutGraphic _angleCalloutGraphic;
-			private AngleCalloutGraphic _complementaryAngleCalloutGraphic;
+			[CloneIgnore]
+			private AngleCalloutGraphic _angleCalloutGraphic1;
+
+			[CloneIgnore]
+			private AngleCalloutGraphic _angleCalloutGraphic2;
+
+			[CloneIgnore]
+			private ILineSegmentGraphic _extenderLine1;
+
+			[CloneIgnore]
+			private ILineSegmentGraphic _extenderLine2;
 
 			public ShowAnglesToolGraphic()
 			{
-				_endPoints = new PointsList(new PointF[] {PointF.Empty, PointF.Empty, PointF.Empty, PointF.Empty}, this);
+				base.Graphics.Add(_angleCalloutGraphic1 = new AngleCalloutGraphic());
+				base.Graphics.Add(_angleCalloutGraphic2 = new AngleCalloutGraphic());
+				base.Graphics.Add(_extenderLine1 = new LinePrimitive());
+				base.Graphics.Add(_extenderLine2 = new LinePrimitive());
 
-				base.Graphics.Add(_angleCalloutGraphic = new AngleCalloutGraphic());
-				base.Graphics.Add(_complementaryAngleCalloutGraphic = new AngleCalloutGraphic());
+				_angleCalloutGraphic1.ShowArrowhead = _angleCalloutGraphic2.ShowArrowhead = false;
+				_angleCalloutGraphic1.Color = _angleCalloutGraphic2.Color = Color.LimeGreen;
+				_angleCalloutGraphic1.LineStyle = _angleCalloutGraphic2.LineStyle = LineStyle.Dash;
+				_extenderLine1.LineStyle = _extenderLine2.LineStyle = LineStyle.Dot;
+				_extenderLine1.Color = _extenderLine2.Color = Color.LimeGreen;
+
+				_endPoints = new PointsList(new PointF[] {PointF.Empty, PointF.Empty, PointF.Empty, PointF.Empty}, this);
 			}
+
+			/// <summary>
+			/// Cloning constructor.
+			/// </summary>
+			/// <param name="source">The source object from which to clone.</param>
+			/// <param name="context">The cloning context object.</param>
+			protected ShowAnglesToolGraphic(ShowAnglesToolGraphic source, ICloningContext context) : base()
+			{
+				context.CloneFields(source, this);
+
+				_endPoints = new PointsList(source._endPoints, this);
+			}
+
+			[OnCloneComplete]
+			private void OnCloneComplete() {}
 
 			public void Set(PointF p1, PointF p2, PointF q1, PointF q2)
 			{
@@ -66,6 +98,129 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				_endPoints[3] = q2;
 
 				this.Update();
+			}
+
+			private void Update()
+			{
+				SetAngleCallout(_angleCalloutGraphic1, string.Empty, PointF.Empty, PointF.Empty);
+				SetAngleCallout(_angleCalloutGraphic2, string.Empty, PointF.Empty, PointF.Empty);
+				_extenderLine1.Visible = _extenderLine2.Visible = false;
+
+				if (this.ParentPresentationImage == null)
+					return;
+
+				this.CoordinateSystem = CoordinateSystem.Destination;
+				try
+				{
+					PointF p1 = _endPoints[0];
+					PointF p2 = _endPoints[1];
+					PointF q1 = _endPoints[2];
+					PointF q2 = _endPoints[3];
+					RectangleF bounds = base.ParentPresentationImage.ClientRectangle;
+
+					if (!RestrictLines(ref p1, ref p2, bounds) || !RestrictLines(ref q1, ref q2, bounds))
+						return;
+
+					PointF intersection;
+					Vector.LineSegments result = Vector.LineSegmentIntersection(p1, p2, q1, q2, out intersection);
+
+					if (result == Vector.LineSegments.Intersect)
+					{
+						// the line segments intersect onscreen, so just draw callouts at the intersection
+						DrawIntersection(p1, p2, q1, q2, intersection);
+					}
+					else if (result == Vector.LineSegments.DoNotIntersect)
+					{
+						const int threshold = 36;
+						// the line segments do not intersect onscreen, so figure out where they would have intersected and decide from there
+						intersection = Intersect(p1, p2, q1, q2);
+
+						if (base.ParentPresentationImage.ClientRectangle.Contains(Point.Round(intersection)))
+						{
+							PointF pC = PointF.Empty;
+							PointF qC = PointF.Empty;
+							double pD = Vector.DistanceFromPointToLine(intersection, p1, p2, ref pC);
+							double qD = Vector.DistanceFromPointToLine(intersection, q1, q2, ref qC);
+
+							if (true || pD < threshold || qD < threshold)
+							{
+								if (pD > 0.1)
+								{
+									_extenderLine1.Visible = true;
+									_extenderLine1.Point1 = pC;
+									_extenderLine1.Point2 = intersection;
+
+									if (Vector.Distance(p1, pC) < 0.5)
+										p1 = intersection;
+									else
+										p2 = intersection;
+								}
+
+								if (qD > 0.1)
+								{
+									_extenderLine2.Visible = true;
+									_extenderLine2.Point1 = qC;
+									_extenderLine2.Point2 = intersection;
+
+									if (Vector.Distance(q1, qC) < 0.5)
+										q1 = intersection;
+									else
+										q2 = intersection;
+								}
+
+								DrawIntersection(p1, p2, q1, q2, intersection);
+							}
+							else
+							{
+								// Cobb angle type implementation - need extenders plus risers
+							}
+						}
+						else
+						{
+							// Cobb angle type implementation - need extenders plus risers
+						}
+					}
+				}
+				finally
+				{
+					this.ResetCoordinateSystem();
+				}
+			}
+
+			private void DrawIntersection(PointF p1, PointF p2, PointF q1, PointF q2, PointF intersection)
+			{
+				const int threshold = 36;
+				const float calloutOffset = 36;
+				const float largerCalloutOffset = 64;
+
+				double angle = this.ComputeAngle();
+				string textAngle = string.Format(SR.ToolsMeasurementFormatDegrees, angle);
+				string textComplementaryAngle = string.Format(SR.ToolsMeasurementFormatDegrees, 180 - angle);
+
+				bool p1MeetsThreshold = Vector.Distance(p1, intersection) > threshold;
+				bool p2MeetsThreshold = Vector.Distance(p2, intersection) > threshold;
+				bool q1MeetsThreshold = Vector.Distance(q1, intersection) > threshold;
+				bool q2MeetsThreshold = Vector.Distance(q2, intersection) > threshold;
+
+				if (p2MeetsThreshold && q2MeetsThreshold)
+					SetAngleCallout(_angleCalloutGraphic1, textAngle, intersection, BisectAngle(p2, intersection, q2, angle > 30 ? calloutOffset : largerCalloutOffset));
+				else if (p1MeetsThreshold && q1MeetsThreshold)
+					SetAngleCallout(_angleCalloutGraphic1, textAngle, intersection, BisectAngle(p1, intersection, q1, angle > 30 ? calloutOffset : largerCalloutOffset));
+
+				if (p1MeetsThreshold && q2MeetsThreshold)
+					SetAngleCallout(_angleCalloutGraphic2, textComplementaryAngle, intersection, BisectAngle(q2, intersection, p1, angle < 150 ? calloutOffset : largerCalloutOffset));
+				else if (p2MeetsThreshold && q1MeetsThreshold)
+					SetAngleCallout(_angleCalloutGraphic2, textComplementaryAngle, intersection, BisectAngle(q1, intersection, p2, angle < 150 ? calloutOffset : largerCalloutOffset));
+			}
+
+			private void SetAngleCallout(AngleCalloutGraphic callout, string text, PointF anchor, PointF location)
+			{
+				callout.Text = text;
+				callout.Visible = !string.IsNullOrEmpty(text);
+				callout.CoordinateSystem = this.CoordinateSystem;
+				callout.AnchorPoint = anchor;
+				callout.TextLocation = location;
+				callout.ResetCoordinateSystem();
 			}
 
 			private double ComputeAngle()
@@ -81,79 +236,29 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				}
 			}
 
-			private void Update()
+			private static bool RestrictLines(ref PointF p1, ref PointF p2, RectangleF bounds)
 			{
-				const int threshold = 36;
-				const float calloutOffset = 36;
-				const float largerCalloutOffset = 64;
+				bool p1Inside = bounds.Contains(p1);
+				bool p2Inside = bounds.Contains(p2);
 
-				double angle = this.ComputeAngle();
-				string textAngle = string.Format(SR.ToolsMeasurementFormatDegrees, angle);
-				string textComplementaryAngle = string.Format(SR.ToolsMeasurementFormatDegrees, 180 - angle);
+				if (p1Inside && p2Inside)
+					return true;
 
-				SetAngleCallout(_angleCalloutGraphic, string.Empty, PointF.Empty, PointF.Empty);
-				SetAngleCallout(_complementaryAngleCalloutGraphic, string.Empty, PointF.Empty, PointF.Empty);
+				PointF[] sides = new PointF[] {new PointF(bounds.Left, bounds.Top), new PointF(bounds.Right, bounds.Top), new PointF(bounds.Right, bounds.Bottom), new PointF(bounds.Left, bounds.Bottom)};
 
-				this.CoordinateSystem = CoordinateSystem.Destination;
-				try
+				for (int n = 0; n < 4; n++)
 				{
-					PointF p1 = _endPoints[0];
-					PointF p2 = _endPoints[1];
-					PointF q1 = _endPoints[2];
-					PointF q2 = _endPoints[3];
 					PointF intersection;
-					Vector.LineSegments result = Vector.LineSegmentIntersection(p1, p2, q1, q2, out intersection);
-
-					if (result == Vector.LineSegments.Intersect)
+					if (Vector.LineSegmentIntersection(p1, p2, sides[n], sides[(n + 1)%4], out intersection) == Vector.LineSegments.Intersect)
 					{
-						// the line segments intersect onscreen, so draw callouts at intersection
-
-						bool p1MeetsThreshold = Vector.Distance(p1, intersection) > threshold;
-						bool p2MeetsThreshold = Vector.Distance(p2, intersection) > threshold;
-						bool q1MeetsThreshold = Vector.Distance(q1, intersection) > threshold;
-						bool q2MeetsThreshold = Vector.Distance(q2, intersection) > threshold;
-
-						if (p2MeetsThreshold && q2MeetsThreshold)
-							SetAngleCallout(_angleCalloutGraphic, textAngle, intersection, BisectAngle(p2, intersection, q2, angle > 30 ? calloutOffset : largerCalloutOffset));
-						else if (p1MeetsThreshold && q1MeetsThreshold)
-							SetAngleCallout(_angleCalloutGraphic, textAngle, intersection, BisectAngle(p1, intersection, q1, angle > 30 ? calloutOffset : largerCalloutOffset));
-
-						if (p1MeetsThreshold && q2MeetsThreshold)
-							SetAngleCallout(_complementaryAngleCalloutGraphic, textComplementaryAngle, intersection, BisectAngle(q2, intersection, p1, angle < 150 ? calloutOffset : largerCalloutOffset));
-						else if (p2MeetsThreshold && q1MeetsThreshold)
-							SetAngleCallout(_complementaryAngleCalloutGraphic, textComplementaryAngle, intersection, BisectAngle(q1, intersection, p2, angle < 150 ? calloutOffset : largerCalloutOffset));
-
-						//if (p2MeetsThreshold && q2MeetsThreshold)
-						//    _calloutRoseGraphic.AddCallout(textAngle, BisectAngle(p2, intersection, q2, angle > 30 ? calloutOffset : largerCalloutOffset));
-						//else if (p1MeetsThreshold && q1MeetsThreshold)
-						//    _calloutRoseGraphic.AddCallout(textAngle, BisectAngle(p1, intersection, q1, angle > 30 ? calloutOffset : largerCalloutOffset));
-
-						//if (p1MeetsThreshold && q2MeetsThreshold)
-						//    _calloutRoseGraphic.AddCallout(textComplementaryAngle, BisectAngle(q2, intersection, p1, angle < 150 ? calloutOffset : largerCalloutOffset));
-						//else if (p2MeetsThreshold && q1MeetsThreshold)
-						//    _calloutRoseGraphic.AddCallout(textComplementaryAngle, BisectAngle(q1, intersection, p2, angle < 150 ? calloutOffset : largerCalloutOffset));
-					}
-					else if (result == Vector.LineSegments.DoNotIntersect)
-					{
-						// the line segments do not intersect onscreen, so figure out where they would have intersected and decide from there
-
-						intersection = Intersect(p1, p2, q1, q2);
+						if (p1Inside)
+							p2 = intersection;
+						else if (p2Inside)
+							p1 = intersection;
+						return true;
 					}
 				}
-				finally
-				{
-					this.ResetCoordinateSystem();
-				}
-			}
-
-			private void SetAngleCallout(AngleCalloutGraphic callout, string text, PointF anchor, PointF location)
-			{
-				callout.Text = text;
-				callout.Visible = !string.IsNullOrEmpty(text);
-				callout.CoordinateSystem = this.CoordinateSystem;
-				callout.AnchorPoint = anchor;
-				callout.TextLocation = location;
-				callout.ResetCoordinateSystem();
+				return false;
 			}
 
 			private static PointF Intersect(PointF p1, PointF p2, PointF q1, PointF q2)
@@ -207,12 +312,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		[Cloneable]
 		private class AngleCalloutGraphic : CalloutGraphic
 		{
-			public AngleCalloutGraphic()
-			{
-				this.ShowArrowhead = false;
-				this.Color = Color.LemonChiffon;
-				this.LineStyle = LineStyle.Dash;
-			}
+			public AngleCalloutGraphic() {}
 
 			/// <summary>
 			/// Cloning constructor.
