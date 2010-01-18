@@ -483,6 +483,9 @@
   <data name="ReportingTrackingPreliminaryWorklistDescription" xml:space="preserve">
     <value>Lists procoedures with reports that are in preliminary status.</value>
   </data>
+  <data name="ReportPart" xml:space="preserve">
+    <value>Report Part</value>
+  </data>
   <data name="SexEnum" xml:space="preserve">
     <value>Sex</value>
   </data>

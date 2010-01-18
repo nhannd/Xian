@@ -6,7 +6,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Healthcare
 {
 	[ExtensionOf(typeof(EntityValidationRuleSetSourceExtensionPoint))]
-	public class Foo : XmlValidationRuleSetSource
+	public class HealthcareXmlValidationRuleSetSource : XmlValidationRuleSetSource
 	{
 		protected override XmlDocument RuleSetDocument
 		{

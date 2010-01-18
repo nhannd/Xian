@@ -138,7 +138,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 					return ruleSet;
 
 				// no cached, so compile the ruleset for the specified domain class
-				ruleSet = BuildRules(domainClass);
+				ruleSet = BuildCustomRules(domainClass);
 
 				// cache the ruleset if desired
 				var settings = new EntityValidationSettings();
@@ -152,19 +152,28 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 			}
 		}
 
-		private static ValidationRuleSet BuildRules(Type domainClass)
+		private static ValidationRuleSet BuildCustomRules(Type domainClass)
 		{
-			var ruleset = new ValidationRuleSet();
-
-			// combine rules from all sources
-			var sources = new EntityValidationRuleSetSourceExtensionPoint().CreateExtensions();
-			foreach (IValidationRuleSetSource source in sources)
+			try
 			{
-				var r = source.GetRuleSet(domainClass.FullName);
-				if (!r.IsEmpty)
-					ruleset = ruleset.Add(r);
+				var ruleset = new ValidationRuleSet();
+
+				// combine rules from all sources
+				var sources = new EntityValidationRuleSetSourceExtensionPoint().CreateExtensions();
+				foreach (IValidationRuleSetSource source in sources)
+				{
+					var r = source.GetRuleSet(domainClass.FullName);
+					if (!r.IsEmpty)
+						ruleset = ruleset.Add(r);
+				}
+				return ruleset;
 			}
-			return ruleset;
+			catch (Exception e)
+			{
+				// any exceptions here must be logged and ignored, as their is really no good way to handle them
+				Platform.Log(LogLevel.Error, e, "Error attempting to compile custom validation rules");
+				return new ValidationRuleSet();
+			}
 		}
 	}
 }

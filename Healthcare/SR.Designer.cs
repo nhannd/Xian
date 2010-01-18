@@ -1159,6 +1159,15 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Report Part.
+        /// </summary>
+        internal static string ReportPart {
+            get {
+                return ResourceManager.GetString("ReportPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sex.
         /// </summary>
         internal static string SexEnum {
