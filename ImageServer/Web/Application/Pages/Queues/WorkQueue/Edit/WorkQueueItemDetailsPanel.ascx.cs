@@ -281,6 +281,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                     _detailsView = LoadControl("TierMigrationWorkQueueDetailsView.ascx") as WorkQueueDetailsViewBase;
                     WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
                 }
+                else if (WorkQueue.WorkQueueTypeEnum == WorkQueueTypeEnum.ProcessDuplicate)
+                {
+                    _detailsView = LoadControl("ProcessDuplicateWorkQueueDetailsView.ascx") as WorkQueueDetailsViewBase;
+                    WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
+                }
                 else
                 {
                     _detailsView = LoadControl("GeneralWorkQueueDetailsView.ascx") as WorkQueueDetailsViewBase;

@@ -31,6 +31,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
@@ -58,6 +59,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             {
                 return CreateWebMoveStudyWorkQueueItemDetails(workqueue);
             }
+
+            if (workqueue.WorkQueueTypeEnum == WorkQueueTypeEnum.ProcessDuplicate)
+            {
+                return CreateProcessDuplicateWorkQueueItemDetails(workqueue);
+            }
             
             return CreateGeneralWorkQueueItemDetails(workqueue);
             
@@ -82,6 +88,64 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
             StudyStorageLocation storage = WorkQueueController.GetLoadStorageLocation(item);
             detail.StorageLocationPath = storage.GetStudyPath();
+
+            // Fetch UIDs
+            var wqUidsAdaptor = new WorkQueueUidAdaptor();
+            var uidCriteria = new WorkQueueUidSelectCriteria();
+            uidCriteria.WorkQueueKey.EqualTo(item.GetKey());
+            IList<WorkQueueUid> uids = wqUidsAdaptor.Get(uidCriteria);
+
+            var mapSeries = new Hashtable();
+            foreach (WorkQueueUid uid in uids)
+            {
+                if (mapSeries.ContainsKey(uid.SeriesInstanceUid) == false)
+                    mapSeries.Add(uid.SeriesInstanceUid, uid.SopInstanceUid);
+            }
+
+            detail.NumInstancesPending = uids.Count;
+            detail.NumSeriesPending = mapSeries.Count;
+
+
+            // Fetch the study and patient info
+            var ssAdaptor = new StudyStorageAdaptor();
+            StudyStorage storages = ssAdaptor.Get(item.StudyStorageKey);
+
+            var studyAdaptor = new StudyAdaptor();
+            var studycriteria = new StudySelectCriteria();
+            studycriteria.StudyInstanceUid.EqualTo(storages.StudyInstanceUid);
+            studycriteria.ServerPartitionKey.EqualTo(item.ServerPartitionKey);
+            Study study = studyAdaptor.GetFirst(studycriteria);
+
+            // Study may not be available until the images are processed.
+            if (study != null)
+            {
+                var studyAssembler = new StudyDetailsAssembler();
+                detail.Study = studyAssembler.CreateStudyDetail(study);
+            }
+            return detail;
+        }
+
+        private static WorkQueueDetails CreateProcessDuplicateWorkQueueItemDetails(Model.WorkQueue item)
+        {
+            var detail = new WorkQueueDetails();
+
+            detail.Key = item.Key;
+            detail.ScheduledDateTime = item.ScheduledTime;
+            detail.ExpirationTime = item.ExpirationTime;
+            detail.InsertTime = item.InsertTime;
+            detail.FailureCount = item.FailureCount;
+            detail.Type = item.WorkQueueTypeEnum;
+            detail.Status = item.WorkQueueStatusEnum;
+            detail.Priority = item.WorkQueuePriorityEnum;
+            detail.FailureDescription = item.FailureDescription;
+            detail.ServerDescription = item.ProcessorID;
+
+            StudyStorageLocation storage = WorkQueueController.GetLoadStorageLocation(item);
+            detail.StorageLocationPath = storage.GetStudyPath();
+
+            XmlDocument doc = item.Data;
+            XmlNodeList nodeList = doc.GetElementsByTagName("DuplicateSopFolder");
+            detail.DuplicateStorageLocationPath = nodeList[0].InnerText;
 
             // Fetch UIDs
             var wqUidsAdaptor = new WorkQueueUidAdaptor();

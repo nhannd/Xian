@@ -30,15 +30,16 @@
 #endregion
 
 using System;
-using ClearCanvas.ImageServer.Enterprise;
+using System.Collections.Generic;
+using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 {
     /// <summary>
-    /// Base class encapsulating the detailed information of a <see cref="WorkQueue"/> item in the context of a WorkQueue details page.
+    /// The defails view control for the <see cref="WorkQueue"/> inside the <see cref="WorkQueueItemDetailsPanel"/>
     /// </summary>
-    public class WorkQueueDetails
+    public partial class ProcessDuplicateWorkQueueDetailsView : WorkQueueDetailsViewBase
     {
         #region Private members
 
@@ -46,36 +47,51 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         #region Public Properties
 
-        public DateTime ScheduledDateTime { get; set; }
-
-        public DateTime ExpirationTime { get; set; }
-
-        public DateTime InsertTime { get; set; }
-
-        public int FailureCount { get; set; }
-
-        public WorkQueueTypeEnum Type { get; set; }
-
-        public WorkQueueStatusEnum Status { get; set; }
-
-        public StudyDetails Study { get; set; }
-
-        public string ServerDescription { get; set; }
-
-        public int NumInstancesPending { get; set; }
-
-        public int NumSeriesPending { get; set; }
-
-        public ServerEntityKey Key { get; set; }
-
-        public WorkQueuePriorityEnum Priority { get; set; }
-
-        public string FailureDescription { get; set; }
-
-        public string StorageLocationPath { get; set; }
-
-        public string DuplicateStorageLocationPath { get; set; }
+        /// <summary>
+        /// Sets or gets the width of work queue details view panel
+        /// </summary>
+        public override Unit Width
+        {
+            get { return base.Width; }
+            set
+            {
+                base.Width = value;
+                ProcessDuplicateInfoDetailsView.Width = value;
+            }
+        }
 
         #endregion Public Properties
+
+        #region Protected Methods
+
+        #endregion Protected Methods
+
+        #region Public Methods
+
+        public override void DataBind()
+        {
+            if (WorkQueue != null)
+            {
+                var detailsList = new List<WorkQueueDetails>();
+                detailsList.Add(WorkQueueDetailsAssembler.CreateWorkQueueDetail(WorkQueue));
+                ProcessDuplicateInfoDetailsView.DataSource = detailsList;
+            }
+            else
+                ProcessDuplicateInfoDetailsView.DataSource = null;
+
+
+            base.DataBind();
+        }
+
+
+        protected void GeneralInfoDetailsView_DataBound(object sender, EventArgs e)
+        {
+            var item = ProcessDuplicateInfoDetailsView.DataItem as WorkQueueDetails;
+            if (item != null)
+            {
+            }
+        }
+
+        #endregion Public Methods
     }
 }
