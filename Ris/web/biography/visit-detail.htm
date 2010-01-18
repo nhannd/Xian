@@ -14,6 +14,7 @@
 			{
 				if(!Ris)
 					return;
+
 				try
 				{
 					var context = Ris.getHealthcareContext();
@@ -23,33 +24,7 @@
 						return;
 					}
 
-					// construct request object
-					var request = {
-						GetVisitDetailRequest:
-							 { 
-								VisitRef: context.VisitRef
-							}
-					};
-
-					var service = Ris.getPatientDataService();
-					var data = service.getData(request);
-
-					if (data == null || data.length == 0)
-					{
-						Field.setValue($("myForm"), "");
-						return;
-					}
-
-					var visitDetail = data.GetVisitDetailResponse.Visit;
-					if(visitDetail)
-					{
-						Preview.VisitDetailsSection.create($("visitDetailsSection"), visitDetail);
-
-						if (visitDetail.ExtendedProperties)
-						{
-							Preview.PhysiciansSection.create($("physiciansSection"), visitDetail);
-						}
-					}
+					Ris.getPatientDataService().getDataAsync(CreateRequest(context), OnPatientDataLoaded);
 				}
 				catch(e)
 				{
@@ -57,9 +32,39 @@
 					Field.setValue($("myForm"), message);
 				}
 			}
+
+			function CreateRequest(context)
+			{
+				return {
+					GetVisitDetailRequest:
+						 { 
+							VisitRef: context.VisitRef
+						}
+				};
+			}
+
+			function OnPatientDataLoaded(data)
+			{
+				if (data == null || data.length == 0)
+				{
+					Field.setValue($("myForm"), "");
+					return;
+				}
+
+				var visitDetail = data.GetVisitDetailResponse.Visit;
+				if(visitDetail)
+				{
+					Preview.VisitDetailsSection.create($("visitDetailsSection"), visitDetail);
+
+					if (visitDetail.ExtendedProperties)
+					{
+						Preview.PhysiciansSection.create($("physiciansSection"), visitDetail);
+					}
+				}
+			}
 		</script>
 	</head>
-	<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
+	<body onload="javascript: onBodyLoad()">
 		<form id="myForm">
 			<div id="visitDetailsSection"></div>
 			<div id="physiciansSection"></div>

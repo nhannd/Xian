@@ -25,46 +25,49 @@
 						return;
 					}
 
-					// construct request object
-					var request = {
-						GetOrderDetailRequest: context.OrderRef == null ? null : 
-							{ 
-								OrderRef: context.OrderRef,
-								IncludeProcedures: true,
-								IncludeVisit: true,
-								IncludeNotes: true,
-								NoteCategoriesFilter: ["General"]
-							}
-					};
-
-					var service = Ris.getPatientDataService();
-					var data = service.getData(request);
-
-					if (data == null || data.length == 0)
-					{
-						Field.setValue($("myForm"), "");
-						return;
-					}
-
-					var orderDetail = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.Order : null;
-					if(orderDetail)
-					{
-						Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail);
-						Preview.ProceduresTable.create($("proceduresSection"), orderDetail.Procedures);
-						
-						var notes = orderDetail.Notes.select(function(note) { return note.Category == "General"; });
-						Preview.OrderNotesTable.create($("generalNotesSection"), notes, "Order Notes", true);
-					}
-					else
-					{
-						Field.show($("orderDetailsSection"), false);
-					}
-
+					Ris.getPatientDataService().getDataAsync(CreateRequest(context), OnPatientDataLoaded);
 				}
 				catch(e)
 				{
 					var message = "Failed to load editor page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
 					Field.setValue($("myForm"), message);
+				}
+			}
+
+			function CreateRequest(context)
+			{
+				return {
+					GetOrderDetailRequest: context.OrderRef == null ? null : 
+						{ 
+							OrderRef: context.OrderRef,
+							IncludeProcedures: true,
+							IncludeVisit: true,
+							IncludeNotes: true,
+							NoteCategoriesFilter: ["General"]
+						}
+				};
+			}
+
+			function OnPatientDataLoaded(data)
+			{
+				if (data == null || data.length == 0)
+				{
+					Field.setValue($("myForm"), "");
+					return;
+				}
+
+				var orderDetail = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.Order : null;
+				if(orderDetail)
+				{
+					Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail);
+					Preview.ProceduresTable.create($("proceduresSection"), orderDetail.Procedures);
+					
+					var notes = orderDetail.Notes.select(function(note) { return note.Category == "General"; });
+					Preview.OrderNotesTable.create($("generalNotesSection"), notes, "Order Notes", true);
+				}
+				else
+				{
+					Field.show($("orderDetailsSection"), false);
 				}
 			}
 		</script>

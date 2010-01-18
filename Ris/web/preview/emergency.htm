@@ -1,39 +1,44 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-	<title>Emergency Preview</title>
-	<link href="../css/default.css" rel="stylesheet" type="text/css" />
-	<script type="text/javascript" src="../js/jsx.js"></script>
-	<script type="text/javascript" src="../js/jsml.js"></script>
-	<script type="text/javascript" src="../js/ui.js"></script>
-	<script type="text/javascript" src="../js/ris.js"></script>
-	<script type="text/javascript" src="../js/preview.js"></script>
-	<script type="text/javascript" src="../js/layout.js"></script>
-	<script type="text/javascript" >
-		var errorProvider = new ErrorProvider();
-		var imagePath = "../images";
+	<head>
+		<title>Emergency Preview</title>
+		<link href="../css/default.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="../js/jsx.js"></script>
+		<script type="text/javascript" src="../js/jsml.js"></script>
+		<script type="text/javascript" src="../js/ui.js"></script>
+		<script type="text/javascript" src="../js/ris.js"></script>
+		<script type="text/javascript" src="../js/preview.js"></script>
+		<script type="text/javascript" >
+			var errorProvider = new ErrorProvider();
+			var imagePath = "../images";
 
-		function onBodyLoad()
-		{
-			scaleWidth();
-
-			if(!Ris)
-				return;
-
-			try
-
+			function onBodyLoad()
 			{
-				var worklistItem = Ris.getHealthcareContext();
-				if (worklistItem == null)
-				{
-					Field.setValue($("myForm"), "");
+				if(!Ris)
 					return;
-				}
 
-				// construct request object
-				var request = 
+				try
 				{
- 					GetPatientProfileDetailRequest:
+					var worklistItem = Ris.getHealthcareContext();
+					if (worklistItem == null)
+					{
+						Field.setValue($("myForm"), "");
+						return;
+					}
+
+					Ris.getPatientDataService().getDataAsync(CreateRequest(worklistItem), OnPatientDataLoaded);
+				}
+				catch(e)
+				{
+					var message = "Failed to load preview page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+					Field.setValue($("myForm"), message);
+				}
+			}
+
+			function CreateRequest(worklistItem)
+			{
+				return {
+					GetPatientProfileDetailRequest:
 						{
 							PatientProfileRef: worklistItem.PatientProfileRef,
 							IncludeAlerts: true
@@ -57,10 +62,10 @@
 							QueryDetailLevel: "Procedure"
 						}
 				};
+			}
 
-				var service = Ris.getPatientDataService();
-				var data = service.getData(request);
-
+			function OnPatientDataLoaded(data)
+			{
 				if (data == null || data.length == 0)
 				{
 					Field.setValue($("myForm"), "");
@@ -82,8 +87,8 @@
 					Preview.ProceduresTable.create($("proceduresSection"), orderDetail.Procedures);
 
 					// select CT and MRI procedures
-					var filteredProcedures = Preview.filterProcedureByModality(orderDetail.Procedures, ["10003", "10004"]);					
-					var filteredNotes = orderDetail.Notes.select(function(note) { return note.Category == "Protocol"; });						
+					var filteredProcedures = Preview.filterProcedureByModality(orderDetail.Procedures, ["10003", "10004"]);
+					var filteredNotes = orderDetail.Notes.select(function(note) { return note.Category == "Protocol"; });
 					Preview.ProtocolProceduresTable.create($("protocolProceduresSection"), filteredProcedures, filteredNotes);
 
 					var notes = orderDetail.Notes.select(function(note) { return note.Category == "PrelimDiagnosis"; });
@@ -112,33 +117,26 @@
 					Preview.ImagingServiceTable.createPast($("pastProceduresSection"), patientOrderData);
 				}
 			}
-			catch(e)
-			{
-				var message = "Failed to load preview page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
-				Field.setValue($("myForm"), message);
-			}
-		}
-</script>
-</head>
-<body onload="javascript: onBodyLoad()">
-	<form id="myForm">
-		<div id="patientBanner">
-			<div id="patientBannerSection"></div>
-			<div id="patientDemographicsSection"></div>
-		</div>
+		</script>
+	</head>
+	<body onload="javascript: onBodyLoad()">
+		<form id="myForm">
+			<div id="patientBanner">
+				<div id="patientBannerSection"></div>
+				<div id="patientDemographicsSection"></div>
+			</div>
 
-		<div id="orderDetailsSection">
-			<div id="imagingServiceSection"></div>
-			<div id="proceduresSection"></div>
-			<div id="protocolProceduresSection"></div>
-			<div id="prelimDiagnosisNotesSection"></div>
-			<div id="generalNotesSection"></div>
-		</div>
+			<div id="orderDetailsSection">
+				<div id="imagingServiceSection"></div>
+				<div id="proceduresSection"></div>
+				<div id="protocolProceduresSection"></div>
+				<div id="prelimDiagnosisNotesSection"></div>
+				<div id="generalNotesSection"></div>
+			</div>
 
-		<div id="reportListSection"></div>
-
-		<div id="activeProceduresSection"></div>
-		<div id="pastProceduresSection"></div>
-	</form>
-</body>
+			<div id="reportListSection"></div>
+			<div id="activeProceduresSection"></div>
+			<div id="pastProceduresSection"></div>
+		</form>
+	</body>
 </html>

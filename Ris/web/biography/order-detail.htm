@@ -25,53 +25,57 @@
 						return;
 					}
 
-					// construct request object
-					var request = {
-						GetOrderDetailRequest:
-							 { 
-								OrderRef: context.OrderRef,
-								IncludeAlerts: true, 
-								IncludeProcedures: true,
-								IncludeVisit: true,
-								IncludeNotes: true,
-								IncludeResultRecipients: true
-							}
-					};
-
-					var service = Ris.getPatientDataService();
-					var data = service.getData(request);
-
-					if (data == null || data.length == 0)
-					{
-						Field.setValue($("myForm"), "");
-						return;
-					}
-
-					var orderDetail = data.GetOrderDetailResponse.Order;
-					if (orderDetail)
-					{
-						var orderAlerts = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.OrderAlerts : null;
-						Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail, { ShowEnterCancelByStaff: true, Alerts: orderAlerts, ShowOrderingPhysicianContactPointDetails: true });
-						Preview.OrderedProceduresTable.create($("orderedProceduresSection"), orderDetail.Procedures);
-
-						var notes = orderDetail.Notes.select(function(note) { return note.Category == "PrelimDiagnosis"; });
-						Preview.OrderNotesTable.create($("prelimDiagnosisNotesSection"), notes, "Preliminary Diagnosis", false);
-
-						notes = orderDetail.Notes.select(function(note) { return note.Category == "General"; });
-						Preview.OrderNotesTable.create($("generalNotesSection"), notes, "Order Notes", false);
-
-						notes = orderDetail.Notes.select(function(note) { return note.Category == "Protocol"; });
-						Preview.OrderNotesTable.create($("protocolNotesSection"), notes, "Protocol Notes", true);
-					}
-					else
-					{
-						Field.show($("orderDetailsSection"), false);
-					}
+					Ris.getPatientDataService().getDataAsync(CreateRequest(context), OnPatientDataLoaded);
 				}
 				catch(e)
 				{
 					var message = "Failed to load editor page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
 					Field.setValue($("myForm"), message);
+				}
+			}
+
+			function CreateRequest(context)
+			{
+				return {
+					GetOrderDetailRequest:
+						 { 
+							OrderRef: context.OrderRef,
+							IncludeAlerts: true, 
+							IncludeProcedures: true,
+							IncludeVisit: true,
+							IncludeNotes: true,
+							IncludeResultRecipients: true
+						}
+				};
+			}
+
+			function OnPatientDataLoaded(data)
+			{
+				if (data == null || data.length == 0)
+				{
+					Field.setValue($("myForm"), "");
+					return;
+				}
+
+				var orderDetail = data.GetOrderDetailResponse.Order;
+				if (orderDetail)
+				{
+					var orderAlerts = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.OrderAlerts : null;
+					Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail, { ShowEnterCancelByStaff: true, Alerts: orderAlerts, ShowOrderingPhysicianContactPointDetails: true });
+					Preview.OrderedProceduresTable.create($("orderedProceduresSection"), orderDetail.Procedures);
+
+					var notes = orderDetail.Notes.select(function(note) { return note.Category == "PrelimDiagnosis"; });
+					Preview.OrderNotesTable.create($("prelimDiagnosisNotesSection"), notes, "Preliminary Diagnosis", false);
+
+					notes = orderDetail.Notes.select(function(note) { return note.Category == "General"; });
+					Preview.OrderNotesTable.create($("generalNotesSection"), notes, "Order Notes", false);
+
+					notes = orderDetail.Notes.select(function(note) { return note.Category == "Protocol"; });
+					Preview.OrderNotesTable.create($("protocolNotesSection"), notes, "Protocol Notes", true);
+				}
+				else
+				{
+					Field.show($("orderDetailsSection"), false);
 				}
 			}
 		</script>

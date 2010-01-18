@@ -30,30 +30,33 @@
 						return;
 					}
 
-					// construct request object
-					var request = 
-					{
-						// only request the report detail if there is a report     
-						GetReportDetailRequest:{ ReportRef: reportRef }
-					};
-
-					var service = Ris.getPatientDataService();
-					var data = service.getData(request);
-
-					if (data == null || data.length == 0)
-					{
-						Field.setValue($("myForm"), "");
-						return;
-					}
-
-					var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
-					Preview.ReportPreview.create($("reportSection"), reportDetail);
+					Ris.getPatientDataService().getDataAsync(CreateRequest(context), OnPatientDataLoaded);
 				}
 				catch(e)
 				{
 					var message = "Failed to load preview page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
 					Field.setValue($("myForm"), message);
 				}
+			}
+
+			function CreateRequest(context)
+			{
+				return {
+					// only request the report detail if there is a report     
+					GetReportDetailRequest:{ ReportRef: reportRef }
+				};
+			}
+
+			function OnPatientDataLoaded(data)
+			{
+				if (data == null || data.length == 0)
+				{
+					Field.setValue($("myForm"), "");
+					return;
+				}
+
+				var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
+				Preview.ReportPreview.create($("reportSection"), reportDetail);
 			}
 		</script>
 	</head>

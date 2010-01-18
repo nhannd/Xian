@@ -8,7 +8,7 @@
 		<script type="text/javascript" src="../js/ui.js"></script>
 		<script type="text/javascript" src="../js/ris.js"></script>
 		<script type="text/javascript" src="../js/preview.js"></script>
-		<script type="text/javascript" src="../js/layout.js"></script>
+
 		<script type="text/javascript" >
 			var errorProvider = new ErrorProvider();
 			var imagePath = "../images";
@@ -27,72 +27,74 @@
 						return;
 					}
 
-					// construct request object
-					var request = 
-					{
-						GetPatientProfileDetailRequest:
-							{
-								PatientProfileRef: context.PatientProfileRef,
-								IncludeAlerts: true
-							},
-						GetOrderDetailRequest:
-							{
-								OrderRef: context.OrderRef,
-								IncludeAlerts: true,
-								IncludeProcedures: true,
-								IncludeVisit: true,
-								IncludeNotes: true
-							},
-						
-						ListReportsRequest:
-							{
-								OrderRef: context.OrderRef
-							}
-					};
-
-					var service = Ris.getPatientDataService();
-					var data = service.getData(request);
-
-					if (data == null || data.length == 0)
-					{
-						Field.setValue($("myForm"), "");
-						return;
-
-					}
-
-					var patientProfile = data.GetPatientProfileDetailResponse.PatientProfile;
-					var patientAlerts = data.GetPatientProfileDetailResponse.PatientAlerts;
-					var orderAlerts = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.OrderAlerts : [];
-					var alerts = patientAlerts.concat(orderAlerts);
-
-					Preview.PatientBannerSection.create($("patientBannerSection"), patientProfile, alerts);
-					Preview.PatientDemographicsSection.create($("patientDemographicsSection"), patientProfile);
-
-					var orderDetail = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.Order : null;
-					if (orderDetail)
-					{
-						Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail);
-						Preview.ProceduresTable.create($("proceduresSection"), orderDetail.Procedures);
-
-						var notes = orderDetail.Notes.select(function(note) { return note.Category == "PrelimDiagnosis"; });
-						Preview.OrderNotesTable.create($("prelimDiagnosisNotesSection"), notes, "Preliminary Diagnosis", false);
-
-						notes = orderDetail.Notes.select(function(note) { return note.Category == "General"; });
-						Preview.OrderNotesTable.create($("generalNotesSection"), notes, "Order Notes", true);
-					}
-					else
-					{
-						Field.show($("orderDetailsSection"), false);
-					}
-
-					var reports = data.ListReportsResponse ? data.ListReportsResponse.Reports : null;
-					Preview.ReportListTable.create($("reportListSection"), reports);
+					Ris.getPatientDataService().getDataAsync(CreateRequest(context), OnPatientDataLoaded);
 				}
 				catch(e)
 				{
 					var message = "Failed to load preview page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
 					Field.setValue($("myForm"), message);
 				}
+			}
+
+			function CreateRequest(context)
+			{
+				return {
+					GetPatientProfileDetailRequest:
+						{
+							PatientProfileRef: context.PatientProfileRef,
+							IncludeAlerts: true
+						},
+					GetOrderDetailRequest:
+						{
+							OrderRef: context.OrderRef,
+							IncludeAlerts: true,
+							IncludeProcedures: true,
+							IncludeVisit: true,
+							IncludeNotes: true
+						},
+					
+					ListReportsRequest:
+						{
+							OrderRef: context.OrderRef
+						}
+				};
+			}
+
+			function OnPatientDataLoaded(data)
+			{
+				if (data == null || data.length == 0)
+				{
+					Field.setValue($("myForm"), "");
+					return;
+				}
+
+				var patientProfile = data.GetPatientProfileDetailResponse.PatientProfile;
+				var patientAlerts = data.GetPatientProfileDetailResponse.PatientAlerts;
+				var orderAlerts = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.OrderAlerts : [];
+				var alerts = patientAlerts.concat(orderAlerts);
+
+				Preview.PatientBannerSection.create($("patientBannerSection"), patientProfile, alerts);
+				Preview.PatientDemographicsSection.create($("patientDemographicsSection"), patientProfile);
+
+				var orderDetail = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.Order : null;
+				if (orderDetail)
+				{
+					Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail);
+					Preview.ProceduresTable.create($("proceduresSection"), orderDetail.Procedures);
+
+					var notes = orderDetail.Notes.select(function(note) { return note.Category == "PrelimDiagnosis"; });
+					Preview.OrderNotesTable.create($("prelimDiagnosisNotesSection"), notes, "Preliminary Diagnosis", false);
+
+					notes = orderDetail.Notes.select(function(note) { return note.Category == "General"; });
+					Preview.OrderNotesTable.create($("generalNotesSection"), notes, "Order Notes", true);
+				}
+				else
+				{
+					Field.show($("orderDetailsSection"), false);
+				}
+
+				var reports = data.ListReportsResponse ? data.ListReportsResponse.Reports : null;
+				Preview.ReportListTable.create($("reportListSection"), reports);
 			}
 		</script>
 	</head>

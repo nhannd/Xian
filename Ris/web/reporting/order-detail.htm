@@ -26,71 +26,75 @@
 						return;
 					}
 
-					// construct request object
-					var request = {
-						GetOrderDetailRequest:
-							{ 
-								OrderRef: context.OrderRef,
-								IncludeProcedures: true,
-								IncludeVisit: true,
-								IncludeNotes: true
-							},
-							
-						// list other relevant orders
-						ListOrdersRequest:
-							{
-								PatientRef: context.PatientRef,
-								QueryDetailLevel: "Procedure"
-							}
-					};
-
-					var service = Ris.getPatientDataService();
-					var data = service.getData(request);
-
-					if (data == null || data.length == 0)
-					{
-						Field.setValue($("myForm"), "");
-						return;
-					}
-
-					var orderDetail = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.Order : null;
-					if(orderDetail)
-					{
-						Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail);
-						Preview.ReportingProceduresTable.create($("reportingProceduresSection"), orderDetail.Procedures);
-
-						// select CT and MRI procedures
-						var filteredProcedures = Preview.filterProcedureByModality(orderDetail.Procedures, ["10003", "10004"]);
-						var notes = orderDetail.Notes.select(function(note) { return note.Category == "Protocol"; });
-						Preview.ProtocolProceduresTable.create($("protocolProceduresSection"), filteredProcedures, notes);
-						
-						notes = orderDetail.Notes.select(function(note) { return note.Category == "PrelimDiagnosis"; });
-						Preview.OrderNotesTable.create($("prelimDiagnosisNotesSection"), notes, "Preliminary Diagnosis", false);
-						
-						notes = orderDetail.Notes.select(function(note) { return note.Category == "General"; });
-						Preview.OrderNotesTable.create($("generalNotesSection"), notes, "Order Notes", true);
-					}
-					else
-					{
-						Field.show($("orderDetailsSection"), false);
-					}
-
-					// update active and past RIC tables
-					var patientOrderData = data.ListOrdersResponse.Orders;
-					if (patientOrderData)
-					{
-						// exclude the current order from the imaging service tables
-						if (orderDetail)
-							patientOrderData = patientOrderData.select(function(data) { return data.AccessionNumber != orderDetail.AccessionNumber; });
-
-						Preview.ImagingServiceTable.createActive($("activeProceduresSection"), patientOrderData);
-						Preview.ImagingServiceTable.createPast($("pastProceduresSection"), patientOrderData);
-					}
+					Ris.getPatientDataService().getDataAsync(CreateRequest(context), OnPatientDataLoaded);
 				}
 				catch(e)
 				{
 					var message = "Failed to load editor page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
 					Field.setValue($("myForm"), message);
+				}
+			}
+
+			function CreateRequest(context)
+			{
+				return {
+					GetOrderDetailRequest:
+						{ 
+							OrderRef: context.OrderRef,
+							IncludeProcedures: true,
+							IncludeVisit: true,
+							IncludeNotes: true
+						},
+						
+					// list other relevant orders
+					ListOrdersRequest:
+						{
+							PatientRef: context.PatientRef,
+							QueryDetailLevel: "Procedure"
+						}
+				};
+			}
+
+			function OnPatientDataLoaded(data)
+			{
+				if (data == null || data.length == 0)
+				{
+					Field.setValue($("myForm"), "");
+					return;
+				}
+
+				var orderDetail = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.Order : null;
+				if(orderDetail)
+				{
+					Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail);
+					Preview.ReportingProceduresTable.create($("reportingProceduresSection"), orderDetail.Procedures);
+
+					// select CT and MRI procedures
+					var filteredProcedures = Preview.filterProcedureByModality(orderDetail.Procedures, ["10003", "10004"]);
+					var notes = orderDetail.Notes.select(function(note) { return note.Category == "Protocol"; });
+					Preview.ProtocolProceduresTable.create($("protocolProceduresSection"), filteredProcedures, notes);
+
+					notes = orderDetail.Notes.select(function(note) { return note.Category == "PrelimDiagnosis"; });
+					Preview.OrderNotesTable.create($("prelimDiagnosisNotesSection"), notes, "Preliminary Diagnosis", false);
+
+					notes = orderDetail.Notes.select(function(note) { return note.Category == "General"; });
+					Preview.OrderNotesTable.create($("generalNotesSection"), notes, "Order Notes", true);
+				}
+				else
+				{
+					Field.show($("orderDetailsSection"), false);
+				}
+
+				// update active and past RIC tables
+				var patientOrderData = data.ListOrdersResponse.Orders;
+				if (patientOrderData)
+				{
+					// exclude the current order from the imaging service tables
+					if (orderDetail)
+						patientOrderData = patientOrderData.select(function(data) { return data.AccessionNumber != orderDetail.AccessionNumber; });
+
+					Preview.ImagingServiceTable.createActive($("activeProceduresSection"), patientOrderData);
+					Preview.ImagingServiceTable.createPast($("pastProceduresSection"), patientOrderData);
 				}
 			}
 		</script>
@@ -104,7 +108,6 @@
 				<div id="prelimDiagnosisNotesSection"></div>
 				<div id="generalNotesSection"></div>
 			</div>
-			
 			<div id="activeProceduresSection"></div>
 			<div id="pastProceduresSection"></div>
 		</form>

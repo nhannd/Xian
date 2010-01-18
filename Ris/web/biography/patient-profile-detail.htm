@@ -26,72 +26,76 @@
 						return;
 					}
 
-					var request = {
-							GetPatientProfileDetailRequest: {
-								PatientProfileRef: context.PatientProfileRef,
-								IncludeAlerts: true,
-								IncludeAddresses: true,
-								IncludeTelephoneNumbers: true,
-								IncludeEmailAddresses: true,
-								IncludeContactPersons: true
-						}
-					};
-
-					var service = Ris.getPatientDataService();
-					var data = service.getData(request);
-					if (data == null || data.length == 0)
-					{
-							Field.setValue($("myForm"), "");
-							return;
-					}
-
-					// update patient demography
-					var patientProfile = data.GetPatientProfileDetailResponse.PatientProfile;
-					var patientName = Ris.formatPersonName(patientProfile.Name);
-					if (patientProfile)
-					{
-						Field.setValue($("name"), patientName);
-						Field.setValue($("mrn"), Ris.formatMrn(patientProfile.Mrn));
-						Field.setValue($("age"), Preview.getPatientAge(patientProfile.DateOfBirth, patientProfile.DeathIndicator, patientProfile.TimeOfDeath));
-						Field.setValue($("sex"), patientProfile.Sex.Value);	
-						Field.setValue($("dateOfBirth"), Ris.formatDate(patientProfile.DateOfBirth));
-						Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
-						Field.setValue($("currentHomePhone"), Ris.formatTelephone(patientProfile.CurrentHomePhone));
-						Field.setValue($("currentHomeAddress"), Ris.formatAddress(patientProfile.CurrentHomeAddress));
-						Preview.SectionContainer.create($("PrimaryDemographicsSection"), "Primary Demographic");
-
-						Preview.SectionContainer.create($("CultureSection"), "Culture");
-						if(patientProfile.PrimaryLanguage)
-							Field.setValue($("primaryLanguage"), patientProfile.PrimaryLanguage.Value);
-						if(patientProfile.Religion)
-							Field.setValue($("religion"), patientProfile.Religion.Value);
-
-						Preview.SectionContainer.create($("AddressesSection"), "Addresses");
-						initAddressTable($("addressTable"), patientProfile.Addresses); 
-
-						Preview.SectionContainer.create($("PhoneNumbersSection"), "Phone Numbers");
-						initPhoneTable($("phoneTable"), patientProfile.TelephoneNumbers); 
-
-						Preview.SectionContainer.create($("EmailAddressesSection"), "Email Addresses");
-						initEmailTable($("emailTable"), patientProfile.EmailAddresses); 
-
-						Preview.SectionContainer.create($("ContactsSection"), "Contacts");
-						initContactTable($("contactTable"), patientProfile.ContactPersons);
-						
-					}
-					
-
-					// update alerts
-					var alertNotifications = data.GetPatientProfileDetailResponse.PatientAlerts;
-					var alertHtml = "";
-					alertNotifications.each(function(item) { alertHtml += Preview.getAlertHtml(item, patientName); });
-					$("alerts").innerHTML = alertHtml;
+					Ris.getPatientDataService().getDataAsync(CreateRequest(context), OnPatientDataLoaded);
 				}
 				catch(e)
 				{
 					var message = "Failed to load preview page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
 					Field.setValue($("myForm"), message);
 				}
+			}
+
+			function CreateRequest(context)
+			{
+				return {
+					GetPatientProfileDetailRequest: {
+						PatientProfileRef: context.PatientProfileRef,
+						IncludeAlerts: true,
+						IncludeAddresses: true,
+						IncludeTelephoneNumbers: true,
+						IncludeEmailAddresses: true,
+						IncludeContactPersons: true
+					}
+				};
+			}
+
+			function OnPatientDataLoaded(data)
+			{
+				if (data == null || data.length == 0)
+				{
+					Field.setValue($("myForm"), "");
+					return;
+				}
+
+				// update patient demography
+				var patientProfile = data.GetPatientProfileDetailResponse.PatientProfile;
+				var patientName = Ris.formatPersonName(patientProfile.Name);
+				if (patientProfile)
+				{
+					Field.setValue($("name"), patientName);
+					Field.setValue($("mrn"), Ris.formatMrn(patientProfile.Mrn));
+					Field.setValue($("age"), Preview.getPatientAge(patientProfile.DateOfBirth, patientProfile.DeathIndicator, patientProfile.TimeOfDeath));
+					Field.setValue($("sex"), patientProfile.Sex.Value);	
+					Field.setValue($("dateOfBirth"), Ris.formatDate(patientProfile.DateOfBirth));
+					Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
+					Field.setValue($("currentHomePhone"), Ris.formatTelephone(patientProfile.CurrentHomePhone));
+					Field.setValue($("currentHomeAddress"), Ris.formatAddress(patientProfile.CurrentHomeAddress));
+					Preview.SectionContainer.create($("PrimaryDemographicsSection"), "Primary Demographic");
+
+					Preview.SectionContainer.create($("CultureSection"), "Culture");
+					if(patientProfile.PrimaryLanguage)
+						Field.setValue($("primaryLanguage"), patientProfile.PrimaryLanguage.Value);
+					if(patientProfile.Religion)
+						Field.setValue($("religion"), patientProfile.Religion.Value);
+
+					Preview.SectionContainer.create($("AddressesSection"), "Addresses");
+					initAddressTable($("addressTable"), patientProfile.Addresses); 
+
+					Preview.SectionContainer.create($("PhoneNumbersSection"), "Phone Numbers");
+					initPhoneTable($("phoneTable"), patientProfile.TelephoneNumbers); 
+
+					Preview.SectionContainer.create($("EmailAddressesSection"), "Email Addresses");
+					initEmailTable($("emailTable"), patientProfile.EmailAddresses); 
+
+					Preview.SectionContainer.create($("ContactsSection"), "Contacts");
+					initContactTable($("contactTable"), patientProfile.ContactPersons);
+				}
+
+				// update alerts
+				var alertNotifications = data.GetPatientProfileDetailResponse.PatientAlerts;
+				var alertHtml = "";
+				alertNotifications.each(function(item) { alertHtml += Preview.getAlertHtml(item, patientName); });
+				$("alerts").innerHTML = alertHtml;
 			}
 
 			function initAddressTable(htmlTable, addresses)
