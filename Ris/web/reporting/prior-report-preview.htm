@@ -18,6 +18,8 @@
 
 			function onBodyLoad()
 			{
+				scaleWidth();
+
 				if(!Ris)
 					return;
 
@@ -30,41 +32,31 @@
 						return;
 					}
 
-					Ris.getPatientDataService().getDataAsync(CreateRequest(context), OnPatientDataLoaded);
+					// construct request object
+					var request = {
+						GetOrderDetailRequest:
+						{ 
+							OrderRef: context.OrderRef,
+							IncludeProcedures: true,
+							IncludeNotes: true
+						},
+						GetReportDetailRequest: { ReportRef: context.ReportRef }
+					};
+
+					var service = Ris.getPatientDataService();
+					var data = service.getData(request);
+
+					var report = data.GetReportDetailResponse.Report;
+					Preview.ReportPreview.create($("reportSection"), report);
+
+					var orderDetail = data.GetOrderDetailResponse.Order;
+					Preview.OrderNotesTable.create($("notesSection"), orderDetail.Notes, Preview.OrderNotesTable.defaultSubsections);
 				}
 				catch(e)
 				{
 					var message = "Failed to load preview page.	An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
 					Field.setValue($("myForm"), message);
 				}
-			}
-
-			function CreateRequest(context)
-			{
-				return {
-					GetOrderDetailRequest:
-					{ 
-						OrderRef: context.OrderRef,
-						IncludeProcedures: true,
-						IncludeNotes: true
-					},
-					GetReportDetailRequest: { ReportRef: context.ReportRef }
-				};
-			}
-
-			function OnPatientDataLoaded(data)
-			{
-				if (data == null || data.length == 0)
-				{
-					Field.setValue($("myForm"), "");
-					return;
-				}
-
-				var report = data.GetReportDetailResponse.Report;
-				Preview.ReportPreview.create($("reportSection"), report);
-
-				var orderDetail = data.GetOrderDetailResponse.Order;
-				Preview.OrderNotesTable.create($("notesSection"), orderDetail.Notes, Preview.OrderNotesTable.defaultSubsections);
 			}
 		</script>
 	</head>
