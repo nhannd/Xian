@@ -74,6 +74,11 @@ namespace ClearCanvas.Desktop.Trees
         /// </summary>
         IconSet GetIconSet(object item);
 
+    	/// <summary>
+    	/// Gets whether the specified item should be highlighted.
+    	/// </summary>
+    	bool GetIsHighlighted(object item);
+
         /// <summary>
         /// Gets the resource resolver used to resolve the icon(s).
         /// </summary>

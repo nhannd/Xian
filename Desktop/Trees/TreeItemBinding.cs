@@ -67,6 +67,7 @@ namespace ClearCanvas.Desktop.Trees
         private Converter<TItem, ITree> _subTreeProvider;
         private CanAcceptDropDelegate<TItem> _canAcceptDropHandler;
         private AcceptDropDelegate<TItem> _acceptDropHandler;
+    	private Converter<TItem, bool> _isHighlightedProvider;
 
 
         /// <summary>
@@ -222,6 +223,23 @@ namespace ClearCanvas.Desktop.Trees
             get { return _acceptDropHandler; }
             set { _acceptDropHandler = value; }
         }
+
+		/// <summary>
+		/// Gets or sets the handler that indicate whether the node should be highlighted in the tree.
+		/// </summary>
+    	public Converter<TItem, bool> IsHighlightedProvider
+    	{
+    		get { return _isHighlightedProvider; }
+			set { _isHighlightedProvider = value; }
+    	}
+
+		/// <summary>
+		/// Gets whether the specified item should be highlighted.
+		/// </summary>
+		public override bool GetIsHighlighted(object item)
+		{
+			return _isHighlightedProvider == null ? false : _isHighlightedProvider((TItem)item);
+		}
 
     	///<summary>
     	/// Gets the text to display for the node representing the specified item.

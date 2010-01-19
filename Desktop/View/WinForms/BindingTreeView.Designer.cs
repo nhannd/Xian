@@ -62,11 +62,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.components = new System.ComponentModel.Container();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._toolStrip = new System.Windows.Forms.ToolStrip();
+			this._searchTextBox = new System.Windows.Forms.ToolStripTextBox();
+			this._applySearchButton = new System.Windows.Forms.ToolStripButton();
+			this._clearSearchButton = new System.Windows.Forms.ToolStripButton();
 			this._treeCtrl = new System.Windows.Forms.TreeView();
 			this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this._imageList = new System.Windows.Forms.ImageList(this.components);
 			this._toolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.tableLayoutPanel1.SuspendLayout();
+			this._toolStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// tableLayoutPanel1
@@ -88,11 +92,55 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// _toolStrip
 			// 
 			this._toolStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
+			this._toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this._searchTextBox,
+            this._applySearchButton,
+            this._clearSearchButton});
 			this._toolStrip.Location = new System.Drawing.Point(0, 0);
 			this._toolStrip.Name = "_toolStrip";
 			this._toolStrip.Size = new System.Drawing.Size(364, 25);
 			this._toolStrip.TabIndex = 0;
 			this._toolStrip.Text = "toolStrip1";
+			// 
+			// _searchTextBox
+			// 
+			this._searchTextBox.Margin = new System.Windows.Forms.Padding(1, 1, 0, 1);
+			this._searchTextBox.Name = "_searchTextBox";
+			this._searchTextBox.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
+			this._searchTextBox.Size = new System.Drawing.Size(100, 23);
+			this._searchTextBox.ToolTipText = "Enter text here to search tree";
+			this._searchTextBox.Visible = false;
+			this._searchTextBox.TextChanged += new System.EventHandler(this._searchTextBox_TextChanged);
+			// 
+			// _applySearchButton
+			// 
+			this._applySearchButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this._applySearchButton.Enabled = false;
+			this._applySearchButton.Image = global::ClearCanvas.Desktop.View.WinForms.SR.SearchToolMini;
+			this._applySearchButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+			this._applySearchButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this._applySearchButton.Margin = new System.Windows.Forms.Padding(0, 0, 1, 0);
+			this._applySearchButton.Name = "_applySearchButton";
+			this._applySearchButton.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
+			this._applySearchButton.Size = new System.Drawing.Size(23, 25);
+			this._applySearchButton.Text = "Apply Search";
+			this._applySearchButton.Visible = false;
+			this._applySearchButton.Click += new System.EventHandler(this._applySearchButton_Click);
+			// 
+			// _clearSearchButton
+			// 
+			this._clearSearchButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this._clearSearchButton.Enabled = false;
+			this._clearSearchButton.Image = global::ClearCanvas.Desktop.View.WinForms.SR.ClearFilterMini;
+			this._clearSearchButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+			this._clearSearchButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this._clearSearchButton.Margin = new System.Windows.Forms.Padding(0, 0, 1, 0);
+			this._clearSearchButton.Name = "_clearSearchButton";
+			this._clearSearchButton.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
+			this._clearSearchButton.Size = new System.Drawing.Size(23, 25);
+			this._clearSearchButton.Text = "Clear Search";
+			this._clearSearchButton.Visible = false;
+			this._clearSearchButton.Click += new System.EventHandler(this._clearSearchButton_Click);
 			// 
 			// _treeCtrl
 			// 
@@ -123,7 +171,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			this._contextMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this._contextMenu.Name = "_contextMenu";
-			this._contextMenu.Size = new System.Drawing.Size(153, 26);
+			this._contextMenu.Size = new System.Drawing.Size(61, 4);
 			this._contextMenu.Opened += new System.EventHandler(this._contextMenu_Opened);
 			this._contextMenu.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this._contextMenu_Closed);
 			this._contextMenu.Opening += new System.ComponentModel.CancelEventHandler(this._contextMenu_Opening);
@@ -151,6 +199,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.Load += new System.EventHandler(this.BindingTreeView_Load);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
+			this._toolStrip.ResumeLayout(false);
+			this._toolStrip.PerformLayout();
 			this.ResumeLayout(false);
 
         }
@@ -163,5 +213,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         private System.Windows.Forms.ContextMenuStrip _contextMenu;
         private System.Windows.Forms.ImageList _imageList;
 		private System.Windows.Forms.ToolTip _toolTip;
+		private System.Windows.Forms.ToolStripButton _clearSearchButton;
+		private System.Windows.Forms.ToolStripTextBox _searchTextBox;
+		private System.Windows.Forms.ToolStripButton _applySearchButton;
     }
 }

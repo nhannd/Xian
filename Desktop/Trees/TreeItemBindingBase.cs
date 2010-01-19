@@ -103,6 +103,14 @@ namespace ClearCanvas.Desktop.Trees
             return null;
         }
 
+		/// <summary>
+		/// Gets whether the specified item should be highlighted.
+		/// </summary>
+		public virtual bool GetIsHighlighted(object item)
+		{
+			return false;
+		}
+
     	/// <summary>
     	/// Gets the resource resolver used to resolve the icon(s).
     	/// </summary>

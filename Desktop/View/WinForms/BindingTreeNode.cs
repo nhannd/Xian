@@ -146,6 +146,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			this.Checked = _parentTree.Binding.GetIsChecked(_item);
 
+			if (_parentTree.Binding.GetIsHighlighted(_item))
+				this.BackColor = System.Drawing.Color.FromArgb(124, 177, 221);
+
 			if (treeViewImageList != null)
 			{
 				var resolver = _parentTree.Binding.GetResourceResolver(_item);

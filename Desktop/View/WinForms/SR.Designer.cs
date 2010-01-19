@@ -217,11 +217,27 @@ namespace ClearCanvas.Desktop.View.WinForms {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search by: {0}.
+        /// </summary>
+        internal static string MessageSearchBy {
+            get {
+                return ResourceManager.GetString("MessageSearchBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sort by: {0}.
         /// </summary>
         internal static string MessageSortBy {
             get {
                 return ResourceManager.GetString("MessageSortBy", resourceCulture);
+            }
+        }
+        
+        internal static System.Drawing.Bitmap SearchToolMini {
+            get {
+                object obj = ResourceManager.GetObject("SearchToolMini", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
