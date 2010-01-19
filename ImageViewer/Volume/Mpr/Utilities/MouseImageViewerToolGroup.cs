@@ -120,7 +120,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 					IActionSet actionSet = new ActionSet();
 					foreach (T tool in _toolSet.Tools)
 						actionSet = actionSet.Union(new ActionSet(CustomActionAttributeProcessor.Process(tool)));
-					//UpdateMouseButtonIconSet(actionSet, this.MouseButton);
 					_actionSet = actionSet;
 				}
 				return _actionSet.Union(base.Actions);
