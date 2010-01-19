@@ -33,6 +33,7 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.InputManagement;
 
@@ -88,7 +89,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 	/// </remarks>
 	/// <seealso cref="MouseToolButtonAttribute"/>
 	/// <seealso cref="DefaultMouseToolButtonAttribute"/>
-	public abstract class MouseImageViewerTool :
+	public abstract partial class MouseImageViewerTool :
 		ImageViewerTool,
 		IMouseButtonHandler,
 		IMouseWheelHandler,
@@ -100,6 +101,8 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		private int _lastY;
 		private int _deltaX;
 		private int _deltaY;
+
+    	private bool _actionsInitialized = false;
 
 		private string _tooltipPrefix;
 		private event EventHandler _tooltipChangedEvent;
@@ -156,7 +159,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 					return;
 
 				_tooltipPrefix = value;
-				EventsHelper.Fire(_tooltipChangedEvent, this, EventArgs.Empty);
+				this.OnTooltipChanged();
 			}
 		}
 
@@ -244,6 +247,14 @@ namespace ClearCanvas.ImageViewer.BaseTools
     	protected virtual void OnActivationChanged()
     	{
     		EventsHelper.Fire(_activationChangedEvent, this, new EventArgs());
+		}
+
+    	/// <summary>
+    	/// Called when the <see cref="Tooltip"/> property changes, thereby firing the <see cref="TooltipChanged"/> event.
+    	/// </summary>
+    	protected virtual void OnTooltipChanged()
+    	{
+    		EventsHelper.Fire(_tooltipChangedEvent, this, EventArgs.Empty);
     	}
 
     	/// <summary>
@@ -263,6 +274,30 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			add { _activationChangedEvent += value; }
 			remove { _activationChangedEvent -= value; }
 		}
+
+    	/// <summary>
+    	/// Gets the set of actions that act on this tool.
+    	/// </summary>
+    	/// <remarks>
+    	/// <see cref="ITool.Actions"/> mentions that this property should not be considered dynamic.
+    	/// This implementation assumes that the actions are <b>not</b> dynamic by lazily initializing
+    	/// the actions and storing them.  If you wish to return actions dynamically, you must override
+    	/// this property.
+    	/// </remarks>
+    	public override IActionSet Actions
+    	{
+    		get
+    		{
+    			try
+    			{
+    				return base.Actions;
+    			}
+    			finally
+    			{
+    				_actionsInitialized = true;
+    			}
+    		}
+    	}
 
 		/// <summary>
 		/// Overrides <see cref="ToolBase.Initialize"/>.
@@ -301,10 +336,14 @@ namespace ClearCanvas.ImageViewer.BaseTools
 					return;
 
 				_mouseButton = value;
-				EventsHelper.Fire(_mouseButtonChanged, this, EventArgs.Empty);
+
+				if (_actionsInitialized)
+					UpdateMouseButtonIconSet(this.Actions, _mouseButton);
+
+				this.OnMouseButtonChanged();
 
 				//the mouse button assignment affects the tooltip.
-				EventsHelper.Fire(_tooltipChangedEvent, this, EventArgs.Empty);
+				this.OnTooltipChanged();
 			}
 		}
 
@@ -320,7 +359,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 						return;
 
 				_defaultMouseButtonShortcut = value;
-				EventsHelper.Fire(_defaultMouseButtonShortcutChanged, this, EventArgs.Empty);
+				this.OnDefaultMouseButtonShortcutChanged();
 			}
 		}
 
@@ -347,8 +386,32 @@ namespace ClearCanvas.ImageViewer.BaseTools
 					return;
 
 				_mouseWheelShortcut = value;
-				EventsHelper.Fire(_mouseWheelShortcutChanged, this, EventArgs.Empty);
+				this.OnMouseWheelShortcutChanged();
 			}
+		}
+
+		/// <summary>
+		/// Called when the <see cref="MouseButton"/> property changes, thereby firing the <see cref="MouseButtonChanged"/> event.
+		/// </summary>
+		protected virtual void OnMouseButtonChanged()
+		{
+			EventsHelper.Fire(_mouseButtonChanged, this, EventArgs.Empty);
+		}
+
+		/// <summary>
+		/// Called when the <see cref="DefaultMouseButtonShortcut"/> property changes, thereby firing the <see cref="DefaultMouseButtonShortcutChanged"/> event.
+		/// </summary>
+		protected virtual void OnDefaultMouseButtonShortcutChanged()
+		{
+			EventsHelper.Fire(_defaultMouseButtonShortcutChanged, this, EventArgs.Empty);
+		}
+
+		/// <summary>
+		/// Called when the <see cref="MouseWheelShortcut"/> property changes, thereby firing the <see cref="MouseWheelShortcutChanged"/> event.
+		/// </summary>
+		protected virtual void OnMouseWheelShortcutChanged()
+		{
+			EventsHelper.Fire(_mouseWheelShortcutChanged, this, EventArgs.Empty);
 		}
 
 		/// <summary>

@@ -326,7 +326,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				{
 					Image oldImage = this.Image;
 
-					this.Image = IconFactory.CreateIcon(_action.IconSet[_iconSize], _action.ResourceResolver);
+					this.Image = _action.IconSet.CreateIcon(_iconSize, _action.ResourceResolver);
 					if (oldImage != null)
 						oldImage.Dispose();
 

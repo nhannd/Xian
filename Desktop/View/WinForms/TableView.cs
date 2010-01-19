@@ -1277,7 +1277,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 					// try to create the icon
 					var iconSet = (IconSet)e.Value;
 					if (iconSet != null)
-						e.Value = IconFactory.CreateIcon(iconSet.SmallIcon, column.ResourceResolver);
+						e.Value = iconSet.CreateIcon(IconSize.Small, column.ResourceResolver);
 				}
 				catch (Exception ex)
 				{

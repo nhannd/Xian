@@ -29,6 +29,9 @@
 
 #endregion
 
+using System.Drawing;
+using ClearCanvas.Common.Utilities;
+
 namespace ClearCanvas.Desktop
 {
     /// <summary>
@@ -103,5 +106,16 @@ namespace ClearCanvas.Desktop
         /// The resource name of the large icon.
         /// </summary>
         public string LargeIcon { get { return _large; } }
+
+		/// <summary>
+		/// Creates an icon using the specified icon resource and resource resolver.
+		/// </summary>
+		/// <param name="iconSize">The size of the desired icon.</param>
+		/// <param name="resourceResolver">The resource resolver with which to resolve the requested icon resource.</param>
+		/// <returns>An <see cref="Image"/> constructed from the requested resource.</returns>
+		public virtual Image CreateIcon(IconSize iconSize, IResourceResolver resourceResolver)
+		{
+			return new Bitmap(resourceResolver.OpenResource(this[iconSize]));
+		}
     }
 }

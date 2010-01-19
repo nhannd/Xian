@@ -134,6 +134,7 @@
     <Compile Include="Annotations\IAnnotationResourceResolver.cs" />
     <Compile Include="BaseTools\GraphicTool.cs" />
     <Compile Include="BaseTools\DefaultMouseToolButtonAttribute.cs" />
+    <Compile Include="BaseTools\MouseButtonIconSet.cs" />
     <Compile Include="CloningExceptions.cs" />
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="Common\BufferCache.cs" />
@@ -765,6 +766,17 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="BaseTools\LeftMouseButtonOverlayLarge.png" />
+    <EmbeddedResource Include="BaseTools\LeftMouseButtonOverlayMedium.png" />
+    <EmbeddedResource Include="BaseTools\LeftMouseButtonOverlaySmall.png" />
+    <EmbeddedResource Include="BaseTools\MiddleMouseButtonOverlayLarge.png" />
+    <EmbeddedResource Include="BaseTools\MiddleMouseButtonOverlayMedium.png" />
+    <EmbeddedResource Include="BaseTools\MiddleMouseButtonOverlaySmall.png" />
+    <EmbeddedResource Include="BaseTools\RightMouseButtonOverlayLarge.png" />
+    <EmbeddedResource Include="BaseTools\RightMouseButtonOverlayMedium.png" />
+    <EmbeddedResource Include="BaseTools\RightMouseButtonOverlaySmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\Common\ClearCanvas.Strings.targets" />

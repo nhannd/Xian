@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	[ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarRuler", "Select", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
-	[IconSet("activate", IconScheme.Colour, "Icons.RulerToolSmall.png", "Icons.RulerToolMedium.png", "Icons.RulerToolLarge.png")]
+	[MouseButtonIconSet("activate", IconScheme.Colour, "Icons.RulerToolSmall.png", "Icons.RulerToolMedium.png", "Icons.RulerToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Measurement.Roi.Linear")]
 
 	[MouseToolButton(XMouseButtons.Left, false)]

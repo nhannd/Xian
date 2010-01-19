@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	[CheckedStateObserver("explodeImageBox", "Checked", "CheckedChanged")]
 	[EnabledStateObserver("explodeImageBox", "Enabled", "EnabledChanged")]
 	[Tooltip("explodeImageBox", "TooltipExplodeImageBox")]
-	[IconSet("explodeImageBox", IconScheme.Colour, "Icons.ExplodeImageBoxToolSmall.png", "Icons.ExplodeImageBoxMedium.png", "Icons.ExplodeImageBoxLarge.png")]
+	[MouseButtonIconSet("explodeImageBox", IconScheme.Colour, "Icons.ExplodeImageBoxToolSmall.png", "Icons.ExplodeImageBoxMedium.png", "Icons.ExplodeImageBoxLarge.png")]
 	[GroupHint("explodeImageBox", "Tools.Layout.ImageBox.Explode")]
 
 	[DefaultMouseToolButton(XMouseButtons.Left)]

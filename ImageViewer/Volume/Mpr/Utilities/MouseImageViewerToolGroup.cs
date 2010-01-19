@@ -120,6 +120,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 					IActionSet actionSet = new ActionSet();
 					foreach (T tool in _toolSet.Tools)
 						actionSet = actionSet.Union(new ActionSet(CustomActionAttributeProcessor.Process(tool)));
+					//UpdateMouseButtonIconSet(actionSet, this.MouseButton);
 					_actionSet = actionSet;
 				}
 				return _actionSet.Union(base.Actions);
@@ -145,6 +146,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 		{
 			foreach (ITool tool in tools)
 				yield return (T) tool;
+		}
+
+		private static void UpdateMouseButtonIconSet(IActionSet actions, XMouseButtons mouseButton)
+		{
+			foreach (IAction action in actions)
+			{
+				if (action.IconSet is MouseButtonIconSet)
+					((MouseButtonIconSet) action.IconSet).AssignedButton = mouseButton;
+			}
 		}
 
 		#endregion
@@ -275,6 +285,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 
 		protected virtual void OnToolMouseButtonChanged(object sender, EventArgs e)
 		{
+			T senderTool = (T) sender;
+			UpdateMouseButtonIconSet(senderTool.Actions, senderTool.MouseButton);
+
 			if (this.SelectedTool == sender)
 				this.MouseButton = this.SelectedTool.MouseButton;
 		}

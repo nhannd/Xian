@@ -29,11 +29,13 @@
 
 #endregion
 
+using System;
 using System.Drawing;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
+	[Obsolete("Construct a System.Drawing.Bitmap directly from the resolved System.IO.Stream")]
     public static class IconFactory
     {
         /// <summary>

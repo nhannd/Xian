@@ -79,7 +79,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_titleBar.Text = _page.Title;
 			_titleBar.PostText = String.Empty;
 			if (_page.IconSet != null)
-				_titleBar.Image = IconFactory.CreateIcon(_page.IconSet.SmallIcon, _page.ResourceResolver);
+				_titleBar.Image = _page.IconSet.CreateIcon(IconSize.Small, _page.ResourceResolver);
 
 			_page.TitleChanged += OnPageTitleChanged;
 			_page.IconSetChanged += OnPageIconChanged;
@@ -97,7 +97,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private void OnPageIconChanged(object sender, EventArgs e)
 		{
 			if (_page.IconSet != null)
-				_titleBar.Image = IconFactory.CreateIcon(_page.IconSet.SmallIcon, _page.ResourceResolver);
+				_titleBar.Image = _page.IconSet.CreateIcon(IconSize.Small, _page.ResourceResolver);
 			else
 				_titleBar.Image = null;
 		}

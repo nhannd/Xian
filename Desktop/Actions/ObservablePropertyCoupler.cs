@@ -145,10 +145,10 @@ namespace ClearCanvas.Common.Utilities
         {
             // only do the assignment if the value is actually different
             // otherwise we may get infinite recursion in the bi-directional case
-            if (!dst.PropertyValue.Equals(src.PropertyValue))
-            {
-                dst.PropertyValue = src.PropertyValue;
-            }
+        	if (!object.Equals(dst.PropertyValue, src.PropertyValue))
+        	{
+        		dst.PropertyValue = src.PropertyValue;
+        	}
         }
     }
 }

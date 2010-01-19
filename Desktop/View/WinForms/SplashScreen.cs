@@ -227,7 +227,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 					try
 					{
 						IResourceResolver resolver = new ResourceResolver(pluginAssembly);
-						Bitmap icon = IconFactory.CreateIcon(pluginAttribute.Icon, resolver);
+						Bitmap icon = new Bitmap(resolver.OpenResource(pluginAttribute.Icon));
 
 						// Burn the icon into the background image
 						Graphics g = Graphics.FromImage(this.BackgroundImage);

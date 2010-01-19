@@ -166,7 +166,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				{
 					try
 					{
-						imageCollection.Add(iconSet.MediumIcon, IconFactory.CreateIcon(iconSet.MediumIcon, resolver));
+						imageCollection.Add(iconSet.MediumIcon, iconSet.CreateIcon(IconSize.Medium, resolver));
 						this.ImageIndex = imageCollection.IndexOfKey(iconSet.MediumIcon);
 					}
 					catch (Exception e)
