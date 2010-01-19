@@ -33,7 +33,8 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom.Iod;
+using ClearCanvas.ImageViewer.PresentationStates;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Configuration;
@@ -41,31 +42,97 @@ using ClearCanvas.ImageViewer.Configuration;
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
 	[ExtensionOf(typeof(LayoutManagerExtensionPoint))]
-	public class LayoutManager : ClearCanvas.ImageViewer.LayoutManager
+	public class LayoutManager : ImageViewer.LayoutManager
 	{
-		readonly List<StoredDisplaySetCreationOptions> _options = DisplaySetCreationSettings.Default.GetStoredOptions();
+		private class DisplaySetFactory : ImageViewer.DisplaySetFactory
+		{
+			private readonly StoredDisplaySetCreationSetting _creationSetting;
 
-		private readonly MixedMultiFrameDisplaySetFactory _mixedMultiFrameFactory = new MixedMultiFrameDisplaySetFactory();
-		private readonly MREchoDisplaySetFactory _echoFactory = new MREchoDisplaySetFactory();
-		private readonly BasicDisplaySetFactory _basicFactory = new BasicDisplaySetFactory();
+			private readonly MREchoDisplaySetFactory _echoFactory;
+			private readonly MixedMultiFrameDisplaySetFactory _mixedMultiFrameFactory;
+			private readonly BasicDisplaySetFactory _basicFactory;
+
+			public DisplaySetFactory(StoredDisplaySetCreationSetting creationSetting)
+			{
+				_creationSetting = creationSetting;
+
+				PresentationState defaultPresentationState = new BasicDicomPresentationState 
+																{ ShowGrayscaleInverted = creationSetting.ShowGrayscaleInverted };
+
+				PresentationImageFactory imageFactory = (PresentationImageFactory)PresentationImageFactory;
+				imageFactory.DefaultPresentationState = defaultPresentationState;
+
+				_basicFactory = new BasicDisplaySetFactory(imageFactory) 
+										{ CreateSingleImageDisplaySets = _creationSetting.CreateSingleImageDisplaySets };
+
+				if (creationSetting.SplitMultiEchoSeries)
+					_echoFactory = new MREchoDisplaySetFactory(imageFactory);
+
+				if (_creationSetting.SplitMixedMultiframes)
+					_mixedMultiFrameFactory = new MixedMultiFrameDisplaySetFactory(imageFactory);
+			}
+
+			private bool SplitMultiEchoSeries { get { return _creationSetting.SplitMultiEchoSeries; } }
+			private bool ShowOriginalMREchoSeries { get { return _creationSetting.ShowOriginalMultiEchoSeries; } }
+
+			private bool SplitMixedMultiframeSeries { get { return _creationSetting.SplitMixedMultiframes; } }
+			private bool ShowOriginalMixedMultiframeSeries { get { return _creationSetting.ShowOriginalMixedMultiframeSeries; } }
+
+			public override void  SetStudyTree(StudyTree studyTree)
+			{
+				base.SetStudyTree(studyTree);
+
+				_basicFactory.SetStudyTree(studyTree);
+				
+				if (_echoFactory != null)
+					_echoFactory.SetStudyTree(studyTree);
+
+				if (_mixedMultiFrameFactory != null)
+					_mixedMultiFrameFactory.SetStudyTree(studyTree);
+			}
+
+			public override List<IDisplaySet> CreateDisplaySets(Series series)
+			{
+				List<IDisplaySet> displaySets = new List<IDisplaySet>();
+
+				bool showOriginal = true;
+
+				if (SplitMultiEchoSeries)
+				{
+					List<IDisplaySet> echoDisplaySets = _echoFactory.CreateDisplaySets(series);
+					if (echoDisplaySets.Count > 0 && !ShowOriginalMREchoSeries)
+						showOriginal = false;
+
+					displaySets.AddRange(echoDisplaySets);
+				}
+
+				if (SplitMixedMultiframeSeries)
+				{
+					List<IDisplaySet> multiFrameDisplaySets = _mixedMultiFrameFactory.CreateDisplaySets(series);
+					if (multiFrameDisplaySets.Count > 0 && showOriginal && !ShowOriginalMixedMultiframeSeries)
+						showOriginal = false;
+
+					displaySets.AddRange(multiFrameDisplaySets);
+				}
+
+				if (showOriginal)
+				{
+					foreach (IDisplaySet displaySet in _basicFactory.CreateDisplaySets(series))
+						displaySets.Add(displaySet);
+				}
+
+				return displaySets;
+			}
+		}
 
 		private readonly DefaultPatientReconciliationStrategy _reconciliationStrategy = new DefaultPatientReconciliationStrategy();
+		private readonly Dictionary<string, IDisplaySetFactory> _modalityDisplaySetFactories = new Dictionary<string, IDisplaySetFactory>();
+		private const string _defaultModality = "";
 
 		public LayoutManager()
 		{
-			List<string> singleImageModalities = CollectionUtils.Map(_options,
-				delegate(StoredDisplaySetCreationOptions options)
-				{
-					if (options.CreateSingleImageDisplaySets)
-						return options.Modality;
-
-					return "";
-				});
-
-			singleImageModalities = CollectionUtils.Select(singleImageModalities,
-				delegate(string modality) { return !String.IsNullOrEmpty(modality); });
-
-			_basicFactory.SingleImageModalities.AddRange(singleImageModalities);
+			foreach (StoredDisplaySetCreationSetting setting in DisplaySetCreationSettings.Default.GetStoredSettings())
+				_modalityDisplaySetFactories[setting.Modality] = new DisplaySetFactory(setting);
 
 			base.AllowEmptyViewer = ViewerLaunchSettings.AllowEmptyViewer;
 		}
@@ -78,56 +145,24 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			if (imageViewer != null)
 				studyTree = imageViewer.StudyTree;
 
-			_echoFactory.SetStudyTree(studyTree);
-			_mixedMultiFrameFactory.SetStudyTree(studyTree);
-			_basicFactory.SetStudyTree(studyTree);
+			foreach (IDisplaySetFactory displaySetFactory in _modalityDisplaySetFactories.Values)
+				displaySetFactory.SetStudyTree(studyTree);
+
+			_modalityDisplaySetFactories[_defaultModality] = new BasicDisplaySetFactory();
+		}
+
+		private IDisplaySetFactory GetDisplaySetFactory(string modality)
+		{
+			modality = modality ?? _defaultModality;
+
+			IDisplaySetFactory factory;
+			if (_modalityDisplaySetFactories.TryGetValue(modality, out factory))
+				return factory;
+
+			return _modalityDisplaySetFactories[_defaultModality];
 		}
 
 		#region Logical Workspace building 
-
-		private bool SplitMixedMultiframeSeries(string modality)
-		{
-			StoredDisplaySetCreationOptions options = CollectionUtils.SelectFirst(_options,
-					delegate(StoredDisplaySetCreationOptions opt) { return opt.Modality == modality; });
-
-			if (options != null)
-				return options.SplitMixedMultiframesEnabled && options.SplitMixedMultiframes;
-			else
-				return true;
-		}
-
-		private bool ShowOriginalMixedMultiframeSeries(string modality)
-		{
-			StoredDisplaySetCreationOptions options = CollectionUtils.SelectFirst(_options,
-					delegate(StoredDisplaySetCreationOptions opt) { return opt.Modality == modality; });
-
-			if (options != null)
-				return options.ShowOriginalMixedMultiframeSeries;
-			else
-				return true;
-		}
-
-		private bool SplitMultiEchoSeries(string modality)
-		{
-			StoredDisplaySetCreationOptions options = CollectionUtils.SelectFirst(_options,
-					delegate(StoredDisplaySetCreationOptions opt) { return opt.Modality == modality; });
-
-			if (options != null)
-				return options.SplitMultiEchoSeries && options.SplitMultiEchoSeriesEnabled;
-			else
-				return true;
-		}
-
-		private bool ShowOriginalMREchoSeries()
-		{
-			StoredDisplaySetCreationOptions options = CollectionUtils.SelectFirst(_options,
-					delegate(StoredDisplaySetCreationOptions opt) { return opt.Modality == "MR"; });
-
-			if (options != null)
-				return options.ShowOriginalMultiEchoSeries;
-			else
-				return true;
-		}
 
 		protected override DicomImageSetDescriptor CreateImageSetDescriptor(IStudyRootStudyIdentifier studyRootData)
 		{
@@ -143,34 +178,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		protected override void UpdateImageSet(IImageSet imageSet, Series series)
 		{
-			List<IDisplaySet> displaySets = new List<IDisplaySet>();
-
-			bool showOriginal = true;
-
-			if (SplitMultiEchoSeries(series.Modality))
-			{
-				List<IDisplaySet> echoDisplaySets = _echoFactory.CreateDisplaySets(series);
-				if (echoDisplaySets.Count > 0 && !ShowOriginalMREchoSeries())
-					showOriginal = false;
-
-				displaySets.AddRange(echoDisplaySets);
-			}
-
-			if (SplitMixedMultiframeSeries(series.Modality))
-			{
-				List<IDisplaySet> multiFrameDisplaySets = _mixedMultiFrameFactory.CreateDisplaySets(series);
-				if (multiFrameDisplaySets.Count > 0 && showOriginal && !ShowOriginalMixedMultiframeSeries(series.Modality))
-					showOriginal = false;
-
-				displaySets.AddRange(multiFrameDisplaySets);
-			}
-
-			if (showOriginal)
-			{
-				foreach(IDisplaySet displaySet in _basicFactory.CreateDisplaySets(series))
-					displaySets.Add(displaySet);
-			}
-
+			List<IDisplaySet> displaySets = GetDisplaySetFactory(series.Modality).CreateDisplaySets(series);
 			foreach (IDisplaySet displaySet in displaySets)
 				imageSet.DisplaySets.Add(displaySet);
 		}

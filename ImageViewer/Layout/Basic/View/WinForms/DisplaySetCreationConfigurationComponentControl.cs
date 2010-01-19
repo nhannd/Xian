@@ -78,6 +78,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 
 			_showOriginalMixedMultiframeSeries.DataBindings.Add("Checked", _bindingSource, "ShowOriginalMixedMultiframeSeries", false, DataSourceUpdateMode.OnPropertyChanged);
 			_showOriginalMixedMultiframeSeries.DataBindings.Add("Enabled", _bindingSource, "ShowOriginalMixedMultiframeSeriesEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
+
+			_invertImages.DataBindings.Add("Checked", _bindingSource, "ShowGrayscaleInverted", false, DataSourceUpdateMode.OnPropertyChanged);
+			_invertImages.DataBindings.Add("Enabled", _bindingSource, "ShowGrayscaleInvertedEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
 		}
     }
 }

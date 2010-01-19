@@ -145,16 +145,6 @@ namespace ClearCanvas.ImageViewer.Externals.General.Tests
 
 		#endregion
 
-		#region IDicomSoftcopyPresentationStateProvider Members
-
-		DicomSoftcopyPresentationState IDicomSoftcopyPresentationStateProvider.PresentationState
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
-
-		#endregion
-
 		private class MockFrame : Frame
 		{
 			public MockFrame(ImageSop parent, int number) : base(parent, number) {}

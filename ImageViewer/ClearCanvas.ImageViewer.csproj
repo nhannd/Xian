@@ -343,7 +343,6 @@
     <Compile Include="PresentationStates\Dicom\DicomGraphicsPlane.cs" />
     <Compile Include="PresentationStates\Dicom\DicomSerializableGraphicAnnotationAttribute.cs" />
     <Compile Include="PresentationStates\Dicom\DisplayAreaSerializationOption.cs" />
-    <Compile Include="PresentationStates\Dicom\IDicomSoftcopyPresentationStateProvider.cs" />
     <Compile Include="LayoutManager.cs" />
     <Compile Include="LoadStudyArgs.cs" />
     <Compile Include="Mathematics\PolygonF.cs" />

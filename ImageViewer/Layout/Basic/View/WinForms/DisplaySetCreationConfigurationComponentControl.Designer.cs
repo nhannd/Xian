@@ -66,8 +66,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			this._showOriginalMixedMultiframeSeries = new System.Windows.Forms.CheckBox();
 			this._modality = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.groupBox1.SuspendLayout();
+			this._creationGroup = new System.Windows.Forms.GroupBox();
+			this._presentationGroupBox = new System.Windows.Forms.GroupBox();
+			this._invertImages = new System.Windows.Forms.CheckBox();
+			this._creationGroup.SuspendLayout();
+			this._presentationGroupBox.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _createSingleImageDisplaySets
@@ -139,30 +142,54 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			this.label1.TabIndex = 8;
 			this.label1.Text = "Modality";
 			// 
-			// groupBox1
+			// _creationGroup
 			// 
-			this.groupBox1.Controls.Add(this._showOriginalMultiEchoSeries);
-			this.groupBox1.Controls.Add(this._createSingleImageDisplaySets);
-			this.groupBox1.Controls.Add(this._splitEchos);
-			this.groupBox1.Controls.Add(this._showOriginalMixedMultiframeSeries);
-			this.groupBox1.Controls.Add(this._splitMixedMultiframeSeries);
-			this.groupBox1.Location = new System.Drawing.Point(15, 52);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(203, 149);
-			this.groupBox1.TabIndex = 1;
-			this.groupBox1.TabStop = false;
+			this._creationGroup.Controls.Add(this._showOriginalMultiEchoSeries);
+			this._creationGroup.Controls.Add(this._createSingleImageDisplaySets);
+			this._creationGroup.Controls.Add(this._splitEchos);
+			this._creationGroup.Controls.Add(this._showOriginalMixedMultiframeSeries);
+			this._creationGroup.Controls.Add(this._splitMixedMultiframeSeries);
+			this._creationGroup.Location = new System.Drawing.Point(15, 52);
+			this._creationGroup.Name = "_creationGroup";
+			this._creationGroup.Size = new System.Drawing.Size(203, 149);
+			this._creationGroup.TabIndex = 1;
+			this._creationGroup.TabStop = false;
+			this._creationGroup.Text = "Creation";
+			// 
+			// _presentationGroupBox
+			// 
+			this._presentationGroupBox.Controls.Add(this._invertImages);
+			this._presentationGroupBox.Location = new System.Drawing.Point(15, 207);
+			this._presentationGroupBox.Name = "_presentationGroupBox";
+			this._presentationGroupBox.Size = new System.Drawing.Size(203, 45);
+			this._presentationGroupBox.TabIndex = 7;
+			this._presentationGroupBox.TabStop = false;
+			this._presentationGroupBox.Text = "Presentation";
+			// 
+			// _invertImages
+			// 
+			this._invertImages.AutoSize = true;
+			this._invertImages.Location = new System.Drawing.Point(15, 19);
+			this._invertImages.Name = "_invertImages";
+			this._invertImages.Size = new System.Drawing.Size(137, 17);
+			this._invertImages.TabIndex = 8;
+			this._invertImages.Text = "Invert grayscale images";
+			this._invertImages.UseVisualStyleBackColor = true;
 			// 
 			// DisplaySetCreationConfigurationComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.groupBox1);
+			this.Controls.Add(this._presentationGroupBox);
+			this.Controls.Add(this._creationGroup);
 			this.Controls.Add(this._modality);
 			this.Controls.Add(this.label1);
 			this.Name = "DisplaySetCreationConfigurationComponentControl";
-			this.Size = new System.Drawing.Size(235, 222);
-			this.groupBox1.ResumeLayout(false);
-			this.groupBox1.PerformLayout();
+			this.Size = new System.Drawing.Size(235, 271);
+			this._creationGroup.ResumeLayout(false);
+			this._creationGroup.PerformLayout();
+			this._presentationGroupBox.ResumeLayout(false);
+			this._presentationGroupBox.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -177,6 +204,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 		private System.Windows.Forms.CheckBox _showOriginalMixedMultiframeSeries;
 		private System.Windows.Forms.ComboBox _modality;
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.GroupBox groupBox1;
+		private System.Windows.Forms.GroupBox _creationGroup;
+		private System.Windows.Forms.GroupBox _presentationGroupBox;
+		private System.Windows.Forms.CheckBox _invertImages;
     }
 }

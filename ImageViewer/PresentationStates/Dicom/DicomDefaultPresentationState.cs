@@ -46,7 +46,10 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 	[Cloneable(true)]
 	internal sealed class DicomDefaultPresentationState : PresentationState
 	{
-		internal DicomDefaultPresentationState() : base() {}
+		internal static readonly DicomDefaultPresentationState Instance = new DicomDefaultPresentationState();
+
+		private DicomDefaultPresentationState()
+		{}
 
 		private static void Deserialize(IDicomPresentationImage image)
 		{
@@ -112,7 +115,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		public override void Serialize(IEnumerable<IPresentationImage> images)
 		{
-			throw new NotSupportedException();
+			throw new NotSupportedException("The default presentation state cannot be serialized.");
 		}
 
 		public override void Deserialize(IEnumerable<IPresentationImage> images)
@@ -126,6 +129,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			}
 		}
 
-		public override void Clear(IEnumerable<IPresentationImage> image) {}
+		public override void Clear(IEnumerable<IPresentationImage> image)
+		{
+		}
 	}
 }

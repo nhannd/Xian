@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	[AssociateView(typeof(DisplaySetCreationConfigurationComponentViewExtensionPoint))]
 	public class DisplaySetCreationConfigurationComponent : ConfigurationApplicationComponent
 	{
-		private BindingList<StoredDisplaySetCreationOptions> _options;
+		private BindingList<StoredDisplaySetCreationSetting> _settings;
 
 		public DisplaySetCreationConfigurationComponent()
 		{
@@ -60,20 +60,19 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		public override void Save()
 		{
-			DisplaySetCreationSettings.Default.Save(_options);
+			DisplaySetCreationSettings.Default.Save(_settings);
 		}
 
 		private void Initialize()
 		{
-			List<StoredDisplaySetCreationOptions> sortedOptions = DisplaySetCreationSettings.Default.GetStoredOptions();
-			sortedOptions = CollectionUtils.Sort(sortedOptions, 
-					delegate(StoredDisplaySetCreationOptions options1, StoredDisplaySetCreationOptions options2)
-						{ return options1.Modality.CompareTo(options2.Modality); });
+			List<StoredDisplaySetCreationSetting> sortedSettings = DisplaySetCreationSettings.Default.GetStoredSettings();
+			sortedSettings = CollectionUtils.Sort(sortedSettings,
+			                                      (setting1, setting2) => setting1.Modality.CompareTo(setting2.Modality));
 
-			_options = new BindingList<StoredDisplaySetCreationOptions>(sortedOptions);
+			_settings = new BindingList<StoredDisplaySetCreationSetting>(sortedSettings);
 
-			foreach (StoredDisplaySetCreationOptions options in _options)
-				options.PropertyChanged += OnPropertyChanged;
+			foreach (StoredDisplaySetCreationSetting setting in _settings)
+				setting.PropertyChanged += OnPropertyChanged;
 		}
 
 		private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -81,9 +80,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			this.Modified = true;
 		}
 
-		public BindingList<StoredDisplaySetCreationOptions> Options
+		public BindingList<StoredDisplaySetCreationSetting> Options
 		{
-			get { return _options; }
+			get { return _settings; }
 		}
 	}
 }

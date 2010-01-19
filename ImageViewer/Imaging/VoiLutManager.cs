@@ -118,6 +118,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Toggles the state of the <see cref="IVoiLutInstaller.Invert"/> property.
 		/// </summary>
+		[Obsolete("Use the Invert property instead.")]
 		public void ToggleInvert()
 		{
 			_voiLutInstaller.Invert = !_voiLutInstaller.Invert;

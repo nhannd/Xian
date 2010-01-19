@@ -32,6 +32,7 @@
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 
 namespace ClearCanvas.ImageViewer.PresentationStates
 {
@@ -55,6 +56,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 	[Cloneable(true)]
 	public abstract class PresentationState
 	{
+		public static readonly PresentationState DicomDefault = DicomDefaultPresentationState.Instance;
+
 		/// <summary>
 		/// Constructs a new presentation state.
 		/// </summary>

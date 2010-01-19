@@ -48,8 +48,6 @@ namespace ClearCanvas.ImageViewer
 	[Cloneable]
 	public class DicomColorPresentationImage : ColorPresentationImage, IDicomPresentationImage
 	{
-		private static readonly DicomDefaultPresentationState _defaultPresentationState = new DicomDefaultPresentationState();
-
 		[CloneIgnore]
 		private IFrameReference _frameReference;
 
@@ -82,7 +80,7 @@ namespace ClearCanvas.ImageViewer
 				   frameReference.Frame.GetNormalizedPixelData)
 		{
 			_frameReference = frameReference;
-			base.PresentationState = _defaultPresentationState;
+			base.PresentationState = PresentationState.DicomDefault;
 			Initialize();
 		}
 
@@ -169,20 +167,6 @@ namespace ClearCanvas.ImageViewer
 		Sop ISopProvider.Sop
 		{
 			get { return _frameReference.Sop; }
-		}
-
-		#endregion
-
-
-		#region IDicomSoftcopyPresentationStateProvider Members
-
-		/// <summary>
-		/// Gets or sets the <see cref="DicomSoftcopyPresentationState"/> of the image.
-		/// </summary>
-		public new DicomSoftcopyPresentationState PresentationState
-		{
-			get { return base.PresentationState as DicomSoftcopyPresentationState; }
-			set { base.PresentationState = (PresentationState) value ?? _defaultPresentationState; }
 		}
 
 		#endregion

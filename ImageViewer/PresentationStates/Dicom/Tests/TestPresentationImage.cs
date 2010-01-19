@@ -141,16 +141,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 
 		#endregion
 
-		#region IDicomSoftcopyPresentationStateProvider Members (Not Implemented)
-
-		DicomSoftcopyPresentationState IDicomSoftcopyPresentationStateProvider.PresentationState
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
-
-		#endregion
-
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)

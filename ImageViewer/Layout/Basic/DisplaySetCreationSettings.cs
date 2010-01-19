@@ -40,7 +40,7 @@ using System.ComponentModel;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-	public class StoredDisplaySetCreationOptions : INotifyPropertyChanged
+	public class StoredDisplaySetCreationSetting : INotifyPropertyChanged
 	{
 		private readonly string _modality;
 		
@@ -51,9 +51,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		private bool _splitMixedMultiframes;
 		private bool _showOriginalMixedMultiframeSeries;
 
+		private bool _showGrayscaleInverted = false;
+
 		private event PropertyChangedEventHandler _propertyChanged;
 
-		internal StoredDisplaySetCreationOptions(string modality)
+		internal StoredDisplaySetCreationSetting(string modality)
 		{
 			_modality = modality;
 			SetDefaults();
@@ -174,6 +176,24 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			get { return SplitMixedMultiframes && SplitMixedMultiframesEnabled; }
 		}
 
+		public bool ShowGrayscaleInverted
+		{
+			get { return _showGrayscaleInverted; }
+			set
+			{
+				if (_showGrayscaleInverted == value)
+					return;
+
+				_showGrayscaleInverted = value;
+				NotifyPropertyChanged("ShowGrayscaleInverted");
+			}
+		}
+
+		public bool ShowGrayscaleInvertedEnabled
+		{
+			get { return true; }
+		}
+
 		private void NotifyPropertyChanged(string propertyName)
 		{
 			EventsHelper.Fire(_propertyChanged, this, new PropertyChangedEventArgs(propertyName));
@@ -211,7 +231,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			   delegate(string s) { return s.Trim(); });
 		}
 
-		public List<StoredDisplaySetCreationOptions> GetStoredOptions()
+		public List<StoredDisplaySetCreationSetting> GetStoredSettings()
 		{
 			XmlDocument document = this.DisplaySetCreationSettingsXml;
 			if (document == null)
@@ -222,22 +242,22 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				stream.Close();
 			}
 
-			XmlNodeList optionsNodes = document.SelectNodes("//display-set-creation-options");
-			if (optionsNodes == null || optionsNodes.Count == 0)
+			XmlNodeList settingsNodes = document.SelectNodes("//display-set-creation-settings/setting");
+			if (settingsNodes== null || settingsNodes.Count == 0)
 			{
 				document = new XmlDocument();
 				Stream stream = new ResourceResolver(this.GetType(), false).OpenResource("DisplaySetCreationSettingsDefaults.xml");
 				document.Load(stream);
 				stream.Close();
-				optionsNodes = document.SelectNodes("//display-set-creation-options");
+				settingsNodes = document.SelectNodes("//display-set-creation-settings/setting");
 			}
 
 			List<string> missingModalities = new List<string>(StandardModalities.Modalities);
-			List<StoredDisplaySetCreationOptions> storedDisplaySetOptions = new List<StoredDisplaySetCreationOptions>();
+			List<StoredDisplaySetCreationSetting> storedDisplaySetSettings = new List<StoredDisplaySetCreationSetting>();
 
-			foreach (XmlElement optionsNode in optionsNodes)
+			foreach (XmlElement settingsNode in settingsNodes)
 			{
-				XmlAttribute attribute = optionsNode.Attributes["modality"];
+				XmlAttribute attribute = settingsNode.Attributes["modality"];
 				string modality = "";
 				if (attribute != null)
 				{
@@ -247,24 +267,31 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 				if (!String.IsNullOrEmpty(modality))
 				{
-					XmlNodeList optionNodes = optionsNode.SelectNodes("display-set-creation-option");
-					storedDisplaySetOptions.Add(GetStoredOptions(modality, optionNodes));
+					XmlNodeList optionNodes = settingsNode.SelectNodes("options/option");
+					StoredDisplaySetCreationSetting setting = new StoredDisplaySetCreationSetting(modality);
+					SetOptions(setting, optionNodes);
+					storedDisplaySetSettings.Add(setting);
+
+					XmlNode presentationIntentNode = settingsNode.SelectSingleNode("presentation-intent");
+					if (presentationIntentNode != null)
+					{
+						attribute = presentationIntentNode.Attributes["show-grayscale-inverted"];
+						if (attribute != null)
+							setting.ShowGrayscaleInverted = (attribute.Value == "True");
+					}
 				}
 			}
 
 			foreach (string missingModality in missingModalities)
-				storedDisplaySetOptions.Add(GetStoredOptions(missingModality, null));
+				storedDisplaySetSettings.Add(new StoredDisplaySetCreationSetting(missingModality));
 
-			return storedDisplaySetOptions;
+			return storedDisplaySetSettings;
 		}
 
-		private static StoredDisplaySetCreationOptions GetStoredOptions(string modality, XmlNodeList optionNodes)
+		private static void SetOptions(StoredDisplaySetCreationSetting setting, XmlNodeList optionNodes)
 		{
-			StoredDisplaySetCreationOptions storedOptions = new StoredDisplaySetCreationOptions(modality);
-
 			if (optionNodes != null)
 			{
-				//TODO: maybe one of these days, make this extensible and add an "options tree"
 				foreach (XmlNode optionNode in optionNodes)
 				{
 					XmlAttribute identifierAttribute = optionNode.Attributes["identifier"];
@@ -276,35 +303,35 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 						switch (identifierAttribute.Value)
 						{
 							case "CreateSingleImageDisplaySets":
-								if (storedOptions.CreateSingleImageDisplaySetsEnabled)
+								if (setting.CreateSingleImageDisplaySetsEnabled)
 								{
 									valueAttribute = optionNode.Attributes["value"];
 									if (valueAttribute != null)
-										storedOptions.CreateSingleImageDisplaySets = valueAttribute.Value == "True";
+										setting.CreateSingleImageDisplaySets = valueAttribute.Value == "True";
 								}
 								break;
 							case "SplitEchos":
-								if (storedOptions.SplitMultiEchoSeriesEnabled)
+								if (setting.SplitMultiEchoSeriesEnabled)
 								{
 									valueAttribute = optionNode.Attributes["value"];
 									if (valueAttribute != null)
-										storedOptions.SplitMultiEchoSeries = (valueAttribute.Value == "True");
+										setting.SplitMultiEchoSeries = (valueAttribute.Value == "True");
 
 									showOriginalAttribute = optionNode.Attributes["show-original"];
 									if (showOriginalAttribute != null)
-										storedOptions.ShowOriginalMultiEchoSeries = showOriginalAttribute.Value == "True";
+										setting.ShowOriginalMultiEchoSeries = showOriginalAttribute.Value == "True";
 								}
 								break;
 							case "SplitMixedMultiframes":
-								if (storedOptions.SplitMixedMultiframesEnabled)
+								if (setting.SplitMixedMultiframesEnabled)
 								{
 									valueAttribute = optionNode.Attributes["value"];
 									if (valueAttribute != null)
-										storedOptions.SplitMixedMultiframes = (valueAttribute.Value == "True");
+										setting.SplitMixedMultiframes = (valueAttribute.Value == "True");
 
 									showOriginalAttribute = optionNode.Attributes["show-original"];
 									if (showOriginalAttribute != null)
-										storedOptions.ShowOriginalMixedMultiframeSeries = showOriginalAttribute.Value == "True";
+										setting.ShowOriginalMixedMultiframeSeries = showOriginalAttribute.Value == "True";
 								}
 								break;
 							
@@ -313,53 +340,62 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 					}
 				}
 			}
-
-			return storedOptions;
 		}
 
-		internal void Save(IEnumerable<StoredDisplaySetCreationOptions> storedOptions)
+		public void Save(IEnumerable<StoredDisplaySetCreationSetting> storedSettings)
 		{
 			XmlDocument document = new XmlDocument();
 			XmlElement root = document.CreateElement("display-set-creation-settings");
 			document.AppendChild(root);
 
-			foreach (StoredDisplaySetCreationOptions storedOption in storedOptions)
+			foreach (StoredDisplaySetCreationSetting storedSetting in storedSettings)
 			{
-				XmlElement optionsElement = document.CreateElement("display-set-creation-options");
-				optionsElement.SetAttribute("modality", storedOption.Modality);
+				XmlElement settingElement = document.CreateElement("setting");
+				settingElement.SetAttribute("modality", storedSetting.Modality);
+				
+				XmlElement optionsElement = document.CreateElement("options");
+				settingElement.AppendChild(optionsElement);
 
 				bool append = false;
-				if (storedOption.CreateSingleImageDisplaySetsEnabled)
+				if (storedSetting.CreateSingleImageDisplaySetsEnabled)
 				{
 					append = true;
-					XmlElement createSingleImageDisplaySetsElement = document.CreateElement("display-set-creation-option");
+					XmlElement createSingleImageDisplaySetsElement = document.CreateElement("option");
 					createSingleImageDisplaySetsElement.SetAttribute("identifier", "CreateSingleImageDisplaySets");
-					createSingleImageDisplaySetsElement.SetAttribute("value", storedOption.CreateSingleImageDisplaySets ? "True" : "False");
+					createSingleImageDisplaySetsElement.SetAttribute("value", storedSetting.CreateSingleImageDisplaySets ? "True" : "False");
 					optionsElement.AppendChild(createSingleImageDisplaySetsElement);
 				}
 
-				if (storedOption.SplitMultiEchoSeriesEnabled)
+				if (storedSetting.SplitMultiEchoSeriesEnabled)
 				{
 					append = true;
-					XmlElement splitEchosElement = document.CreateElement("display-set-creation-option");
+					XmlElement splitEchosElement = document.CreateElement("option");
 					splitEchosElement.SetAttribute("identifier", "SplitEchos");
-					splitEchosElement.SetAttribute("value", storedOption.SplitMultiEchoSeries ? "True" : "False");
-					splitEchosElement.SetAttribute("show-original", storedOption.ShowOriginalMultiEchoSeries ? "True" : "False");
+					splitEchosElement.SetAttribute("value", storedSetting.SplitMultiEchoSeries ? "True" : "False");
+					splitEchosElement.SetAttribute("show-original", storedSetting.ShowOriginalMultiEchoSeries ? "True" : "False");
 					optionsElement.AppendChild(splitEchosElement);
 				}
 
-				if (storedOption.SplitMixedMultiframesEnabled)
+				if (storedSetting.SplitMixedMultiframesEnabled)
 				{
 					append = true;
-					XmlElement splitMultiframesElement = document.CreateElement("display-set-creation-option");
+					XmlElement splitMultiframesElement = document.CreateElement("option");
 					splitMultiframesElement.SetAttribute("identifier", "SplitMixedMultiframes");
-					splitMultiframesElement.SetAttribute("value", storedOption.SplitMixedMultiframes ? "True" : "False");
-					splitMultiframesElement.SetAttribute("show-original", storedOption.ShowOriginalMixedMultiframeSeries ? "True" : "False");
+					splitMultiframesElement.SetAttribute("value", storedSetting.SplitMixedMultiframes ? "True" : "False");
+					splitMultiframesElement.SetAttribute("show-original", storedSetting.ShowOriginalMixedMultiframeSeries ? "True" : "False");
 					optionsElement.AppendChild(splitMultiframesElement);
 				}
 
+				if (storedSetting.ShowGrayscaleInverted)
+				{
+					append = true;
+					XmlElement presentationIntentElement = document.CreateElement("presentation-intent");
+					presentationIntentElement.SetAttribute("show-grayscale-inverted", "True");
+					settingElement.AppendChild(presentationIntentElement);
+				}
+
 				if (append)
-					root.AppendChild(optionsElement);
+					root.AppendChild(settingElement);
 			}
 
 			this.DisplaySetCreationSettingsXml = document;

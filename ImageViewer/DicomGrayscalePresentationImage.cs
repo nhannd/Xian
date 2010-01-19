@@ -29,8 +29,6 @@
 
 #endregion
 
-using System;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Annotations;
@@ -38,7 +36,6 @@ using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.PresentationStates;
-using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
@@ -49,8 +46,6 @@ namespace ClearCanvas.ImageViewer
 	[Cloneable]
 	public class DicomGrayscalePresentationImage : GrayscalePresentationImage, IDicomPresentationImage, IDicomVoiLutsProvider
 	{
-		private static readonly DicomDefaultPresentationState _defaultPresentationState = new DicomDefaultPresentationState();
-
 		[CloneIgnore]
 		private IFrameReference _frameReference;
 
@@ -94,7 +89,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			_frameReference = frameReference;
 			_dicomVoiLuts = new DicomVoiLuts(this);
-			base.PresentationState = _defaultPresentationState;
+			base.PresentationState = PresentationState.DicomDefault;
 			Initialize();
 		}
 
@@ -188,19 +183,6 @@ namespace ClearCanvas.ImageViewer
 		Sop ISopProvider.Sop
 		{
 			get { return _frameReference.Sop; }
-		}
-
-		#endregion
-
-		#region IDicomSoftcopyPresentationStateProvider Members
-
-		/// <summary>
-		/// Gets or sets the <see cref="DicomSoftcopyPresentationState"/> of the image.
-		/// </summary>
-		public new DicomSoftcopyPresentationState PresentationState
-		{
-			get { return base.PresentationState as DicomSoftcopyPresentationState; }
-			set { base.PresentationState = (PresentationState)value ?? _defaultPresentationState; }
 		}
 
 		#endregion

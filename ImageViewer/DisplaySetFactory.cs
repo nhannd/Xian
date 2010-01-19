@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Sets the <see cref="StudyManagement.StudyTree"/> where the factory can search for referenced <see cref="Sop"/>s.
 		/// </summary>
-		public void SetStudyTree(StudyTree studyTree)
+		public virtual void SetStudyTree(StudyTree studyTree)
 		{
 			_studyTree = studyTree;
 			PresentationImageFactory.SetStudyTree(_studyTree);

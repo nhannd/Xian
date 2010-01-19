@@ -115,7 +115,6 @@ namespace ClearCanvas.ImageViewer.Tests
 
 			BasicDisplaySetFactory factory = new BasicDisplaySetFactory();
 			factory.SetStudyTree(studyTree);
-			factory.SingleImageModalities.Clear();
 
 			List<IDisplaySet> allDisplaySets = new List<IDisplaySet>();
 
@@ -202,9 +201,7 @@ namespace ClearCanvas.ImageViewer.Tests
 
 			StudyTree studyTree = CreateStudyTree(ConvertToSops(dataSources));
 			BasicDisplaySetFactory factory = new BasicDisplaySetFactory();
-			factory.SetStudyTree(studyTree);
-			factory.SingleImageModalities.Clear();
-			factory.SingleImageModalities.Add("MR");
+			factory.CreateSingleImageDisplaySets = true;
 
 			List<IDisplaySet> allDisplaySets = new List<IDisplaySet>();
 
@@ -345,7 +342,6 @@ namespace ClearCanvas.ImageViewer.Tests
 
 			BasicDisplaySetFactory factory = new BasicDisplaySetFactory();
 			factory.SetStudyTree(studyTree);
-			factory.SingleImageModalities.Clear();
 
 			List<IDisplaySet> displaySets = factory.CreateDisplaySets(sourceSeries);
 			allDisplaySets.AddRange(displaySets);
@@ -386,7 +382,7 @@ namespace ClearCanvas.ImageViewer.Tests
 				studyTree.AddSop(sop);
 
 			if (doSplitting)
-				factory.SingleImageModalities.Add("KO");
+				factory.CreateSingleImageDisplaySets = true;
 
 			try
 			{

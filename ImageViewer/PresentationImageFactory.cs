@@ -39,6 +39,7 @@ using ClearCanvas.Dicom.Iod.Iods;
 using ClearCanvas.ImageViewer.KeyObjects;
 using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.PresentationStates;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -73,6 +74,8 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class PresentationImageFactory : IPresentationImageFactory
 	{
+		private static readonly PresentationImageFactory _defaultInstance = new PresentationImageFactory();
+
 		private StudyTree _studyTree;
 
 		/// <summary>
@@ -81,6 +84,8 @@ namespace ClearCanvas.ImageViewer
 		public PresentationImageFactory()
 		{
 		}
+
+		public PresentationState DefaultPresentationState {get; set; }
 
 		/// <summary>
 		/// Gets the <see cref="StudyTree"/> used by the factory to resolve referenced SOPs.
@@ -111,7 +116,20 @@ namespace ClearCanvas.ImageViewer
 		/// <returns>The created presentation image.</returns>
 		protected virtual IPresentationImage CreateImage(Frame frame)
 		{
-			return Create(frame);
+			if (frame.PhotometricInterpretation == PhotometricInterpretation.Unknown)
+				throw new Exception("Photometric interpretation is unknown.");
+
+			IDicomPresentationImage image;
+
+			if (!frame.PhotometricInterpretation.IsColor)
+				image = new DicomGrayscalePresentationImage(frame);
+			else
+				image = new DicomColorPresentationImage(frame);
+
+			if (image.PresentationState == null || Equals(image.PresentationState, PresentationState.DicomDefault))
+				image.PresentationState = DefaultPresentationState;
+
+			return image;
 		}
 
 		/// <summary>
@@ -121,7 +139,7 @@ namespace ClearCanvas.ImageViewer
 		/// <returns>A list of created presentation images.</returns>
 		protected virtual List<IPresentationImage> CreateImages(ImageSop imageSop)
 		{
-			return Create(imageSop);
+			return CollectionUtils.Map(imageSop.Frames, (Frame frame) => CreateImage(frame));
 		}
 
 		/// <summary>
@@ -131,14 +149,11 @@ namespace ClearCanvas.ImageViewer
 		/// <returns>A list of created presentation images.</returns>
 		public virtual List<IPresentationImage> CreateImages(Sop sop)
 		{
-			if (sop is ImageSop)
-			{
+			if (sop.IsImage)
 				return CreateImages((ImageSop)sop);
-			}
-			else if (sop.SopClassUid == SopClass.KeyObjectSelectionDocumentStorageUid)
-			{
+			
+			if (sop.SopClassUid == SopClass.KeyObjectSelectionDocumentStorageUid)
 				return CreateImages(new KeyObjectSelectionDocumentIod(sop.DataSource));
-			}
 
 			return new List<IPresentationImage>();
 		}
@@ -161,16 +176,12 @@ namespace ClearCanvas.ImageViewer
 				foreach (IKeyObjectContentItem item in content)
 				{
 					if (item is KeyImageContentItem)
-					{
 						images.AddRange(CreateImages((KeyImageContentItem) item));
-					}
 					else
-					{
 						Platform.Log(LogLevel.Warn, "Unsupported key object content value type");
-						continue;
-					}
 				}
 			}
+
 			return images;
 		}
 
@@ -208,11 +219,11 @@ namespace ClearCanvas.ImageViewer
 				{
 					foreach (IPresentationImage image in images)
 					{
-						if (image is IDicomSoftcopyPresentationStateProvider)
+						if (image is IPresentationStateProvider)
 						{
 							try
 							{
-								IDicomSoftcopyPresentationStateProvider presentationStateProvider = (IDicomSoftcopyPresentationStateProvider) image;
+								IPresentationStateProvider presentationStateProvider = (IPresentationStateProvider)image;
 								presentationStateProvider.PresentationState = DicomSoftcopyPresentationState.Load(presentationStateSop.DataSource);
 							}
 							catch (Exception ex)
@@ -238,7 +249,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public static List<IPresentationImage> Create(ImageSop imageSop)
 		{
-			return CollectionUtils.Map(imageSop.Frames, delegate(Frame frame) { return Create(frame); });
+			return _defaultInstance.CreateImages(imageSop);
 		}
 
 		/// <summary>
@@ -247,18 +258,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public static IPresentationImage Create(Frame frame)
 		{
-			if (frame.PhotometricInterpretation == PhotometricInterpretation.Unknown)
-			{
-				throw new Exception("Photometric interpretation is unknown.");
-			}
-			else if (!frame.PhotometricInterpretation.IsColor)
-			{
-				return new DicomGrayscalePresentationImage(frame);
-			}
-			else
-			{
-				return new DicomColorPresentationImage(frame);
-			}
+			return _defaultInstance.CreateImage(frame);
 		}
 
 		#region Private KO Helpers

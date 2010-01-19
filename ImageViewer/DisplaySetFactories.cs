@@ -36,6 +36,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.PresentationStates;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -219,8 +220,6 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class BasicDisplaySetFactory : DisplaySetFactory
 	{
-		private readonly List<string> _singleImageModalities = new List<string>();
-
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -234,26 +233,20 @@ namespace ClearCanvas.ImageViewer
 		/// <param name="presentationImageFactory">The <see cref="IPresentationImageFactory"/>
 		/// used to create the <see cref="IPresentationImage"/>s that populate the constructed <see cref="IDisplaySet"/>s.</param>
 		public BasicDisplaySetFactory(IPresentationImageFactory presentationImageFactory)
-			:base(presentationImageFactory)
+			: base(presentationImageFactory)
 		{
 		}
 
-		/// <summary>
-		/// The list of modalities that should have an <see cref="IDisplaySet"/> created for each image in the series.
-		/// </summary>
-		public List<string> SingleImageModalities
-		{
-			get { return _singleImageModalities; }
-		}
+		public bool CreateSingleImageDisplaySets { get; set; }
 
 		/// <summary>
 		/// Creates <see cref="IDisplaySet"/>s from the given <see cref="Series"/>.
 		/// </summary>
 		public override List<IDisplaySet> CreateDisplaySets(Series series)
 		{
-			if (_singleImageModalities.Contains(series.Modality))
+			if (CreateSingleImageDisplaySets)
 			{
-				return CreateSingleImageDisplaySets(series);
+				return DoCreateSingleImageDisplaySets(series);
 			}
 			else
 			{
@@ -283,7 +276,7 @@ namespace ClearCanvas.ImageViewer
 			return displaySet;
 		}
 
-		private List<IDisplaySet> CreateSingleImageDisplaySets(Series series)
+		private List<IDisplaySet> DoCreateSingleImageDisplaySets(Series series)
 		{
 			List<IDisplaySet> displaySets = new List<IDisplaySet>();
 
