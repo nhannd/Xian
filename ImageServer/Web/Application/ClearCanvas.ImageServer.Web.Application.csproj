@@ -412,6 +412,13 @@
     <Compile Include="Pages\Queues\StudyIntegrityQueue\DuplicateSopDialog.ascx.designer.cs">
       <DependentUpon>DuplicateSopDialog.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Queues\WorkQueue\Edit\ProcessDuplicateWorkQueueDetailsView.ascx.cs">
+      <DependentUpon>ProcessDuplicateWorkQueueDetailsView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Queues\WorkQueue\Edit\ProcessDuplicateWorkQueueDetailsView.ascx.designer.cs">
+      <DependentUpon>ProcessDuplicateWorkQueueDetailsView.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Queues\WorkQueue\WorkQueueAlertPanel.ascx.cs">
       <DependentUpon>WorkQueueAlertPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1529,6 +1536,7 @@
     <Content Include="Pages\Error\CookiesRequired.aspx" />
     <Content Include="Pages\Queues\StudyIntegrityQueue\DuplicateSopDialog.ascx" />
     <EmbeddedResource Include="Pages\Queues\WorkQueue\Edit\WorkQueueItemDetailsPanel.js" />
+    <Content Include="Pages\Queues\WorkQueue\Edit\ProcessDuplicateWorkQueueDetailsView.ascx" />
     <Content Include="Pages\Queues\WorkQueue\WorkQueueAlertPanel.ascx" />
     <Content Include="Pages\Studies\MoveSeries\Default.aspx" />
     <Content Include="Pages\Studies\MoveSeries\DeviceGridView.ascx" />
