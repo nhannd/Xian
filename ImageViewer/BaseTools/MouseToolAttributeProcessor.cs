@@ -52,6 +52,10 @@ namespace ClearCanvas.ImageViewer.BaseTools
 
 		private static void InitializeMouseToolButton(MouseImageViewerTool mouseTool)
 		{
+			XMouseButtons mouseButton = XMouseButtons.Left;
+			bool initiallyActive = false;
+
+			// check for hardcoded assembly default settings
 			object[] buttonAssignment = mouseTool.GetType().GetCustomAttributes(typeof(MouseToolButtonAttribute), true);
 			if (buttonAssignment != null && buttonAssignment.Length > 0)
 			{
@@ -62,10 +66,23 @@ namespace ClearCanvas.ImageViewer.BaseTools
 				}
 				else
 				{
-					mouseTool.MouseButton = attribute.MouseButton;
-					mouseTool.Active = attribute.InitiallyActive;
+					mouseButton = attribute.MouseButton;
+					initiallyActive = attribute.InitiallyActive;
 				}
 			}
+
+			// check settings profile for an override specific to this tool
+			Type mouseToolType = mouseTool.GetType();
+			if (MouseToolSettingsProfile.Current.HasEntry(mouseToolType))
+			{
+				MouseToolSettingsProfile.Setting value = MouseToolSettingsProfile.Current[mouseToolType];
+				mouseButton = value.MouseButton.GetValueOrDefault(mouseButton);
+				initiallyActive = value.InitiallyActive.GetValueOrDefault(initiallyActive);
+			}
+
+			// apply the selected value to the tool (don't write back to the profile! - that's not for us to decide)
+			mouseTool.MouseButton = mouseButton;
+			mouseTool.Active = initiallyActive;
 		}
 
 		private static void InitializeModifiedMouseToolButton(MouseImageViewerTool mouseTool)

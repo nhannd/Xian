@@ -135,6 +135,13 @@
     <Compile Include="BaseTools\GraphicTool.cs" />
     <Compile Include="BaseTools\DefaultMouseToolButtonAttribute.cs" />
     <Compile Include="BaseTools\MouseButtonIconSet.cs" />
+    <Compile Include="BaseTools\MouseToolSettings.cs" />
+    <Compile Include="BaseTools\MouseToolSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>MouseToolSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="BaseTools\MouseToolSettingsProfile.cs" />
     <Compile Include="CloningExceptions.cs" />
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="Common\BufferCache.cs" />
@@ -664,6 +671,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="BaseTools\MouseToolSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>MouseToolSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="ClassDiagrams\AnnotationGraphics.cd" />
     <None Include="ClassDiagrams\Annotations.cd" />
     <None Include="ClassDiagrams\CompositeGraphics.cd" />
