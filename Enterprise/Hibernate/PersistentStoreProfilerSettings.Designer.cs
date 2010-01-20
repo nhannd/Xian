@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Ris.Server {
+namespace ClearCanvas.Enterprise.Hibernate {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

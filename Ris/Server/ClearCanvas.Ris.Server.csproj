@@ -60,12 +60,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
-    <Compile Include="PersistentStoreProfilerSettings.cs" />
-    <Compile Include="PersistentStoreProfilerSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>PersistentStoreProfilerSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -114,10 +108,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="PersistentStoreProfilerSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>PersistentStoreProfilerSettings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="WebServicesSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WebServicesSettings.Designer.cs</LastGenOutput>

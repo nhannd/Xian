@@ -31,7 +31,7 @@
 
 using System.Configuration;
 
-namespace ClearCanvas.Ris.Server
+namespace ClearCanvas.Enterprise.Hibernate
 {
 	[SettingsGroupDescription("")]
 	internal sealed partial class PersistentStoreProfilerSettings

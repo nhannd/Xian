@@ -80,9 +80,7 @@
       <DependentUpon>EntityValidationSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="Modelling\IValidationRuleSetSource.cs" />
-    <Compile Include="IPersistentStoreProfiler.cs" />
     <Compile Include="Modelling\XmlValidationRuleSetSource.cs" />
-    <Compile Include="PersistentStoreProfilerRegistry.cs" />
     <Compile Include="ResponseCachingAdvice.cs" />
     <Compile Include="ResponseCachingAttribute.cs" />
     <Compile Include="Caching\DefaultCacheClient.cs" />
