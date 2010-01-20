@@ -83,7 +83,16 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         	_component.PrintDocumentRequested += _component_PrintDocument;
 			_component.AsyncInvocationCompleted += _component_AsyncInvocationCompleted;
 			_component.AsyncInvocationError += _component_AsyncInvocationError;
-        }
+
+			_webBrowser.Disposed += delegate
+			{
+				_component.ValidationVisibleChanged -= _component_ValidationVisibleChanged;
+				_component.DataSaving -= _component_DataSaving;
+				_component.PrintDocumentRequested -= _component_PrintDocument;
+				_component.AsyncInvocationCompleted -= _component_AsyncInvocationCompleted;
+				_component.AsyncInvocationError -= _component_AsyncInvocationError;
+			};
+		}
 
         private void _component_PrintDocument(object sender, EventArgs e)
         {
