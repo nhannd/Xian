@@ -34,41 +34,41 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 {
-    /// <summary>
-    /// Provides operations to administer staffs
-    /// </summary>
-    [RisApplicationService]
-    [ServiceContract]
-    public interface IExternalPractitionerAdminService
-    {
-        /// <summary>
-        /// Returns a list of practitioners based on a textual query.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [OperationContract]
+	/// <summary>
+	/// Provides operations to administer staffs
+	/// </summary>
+	[RisApplicationService]
+	[ServiceContract]
+	public interface IExternalPractitionerAdminService
+	{
+		/// <summary>
+		/// Returns a list of practitioners based on a textual query.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[OperationContract]
 		TextQueryResponse<ExternalPractitionerSummary> TextQuery(TextQueryRequest request);
 
-        /// <summary>
-        /// Summary list of all practitioners
-        /// </summary>
-        [OperationContract]
-        ListExternalPractitionersResponse ListExternalPractitioners(ListExternalPractitionersRequest request);
+		/// <summary>
+		/// Summary list of all practitioners
+		/// </summary>
+		[OperationContract]
+		ListExternalPractitionersResponse ListExternalPractitioners(ListExternalPractitionersRequest request);
 
-        /// <summary>
-        /// Add a new practitioner.
-        /// </summary>
-        [OperationContract]
-        [FaultContract(typeof(RequestValidationException))]
-        AddExternalPractitionerResponse AddExternalPractitioner(AddExternalPractitionerRequest request);
+		/// <summary>
+		/// Add a new practitioner.
+		/// </summary>
+		[OperationContract]
+		[FaultContract(typeof(RequestValidationException))]
+		AddExternalPractitionerResponse AddExternalPractitioner(AddExternalPractitionerRequest request);
 
-        /// <summary>
-        /// Update a new practitioner.
-        /// </summary>
-        [OperationContract]
-        [FaultContract(typeof(ConcurrentModificationException))]
-        [FaultContract(typeof(RequestValidationException))]
-        UpdateExternalPractitionerResponse UpdateExternalPractitioner(UpdateExternalPractitionerRequest request);
+		/// <summary>
+		/// Update a new practitioner.
+		/// </summary>
+		[OperationContract]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		UpdateExternalPractitionerResponse UpdateExternalPractitioner(UpdateExternalPractitionerRequest request);
 
 		/// <summary>
 		/// Delete duplicate external practitioners.
@@ -78,17 +78,17 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 		[FaultContract(typeof(RequestValidationException))]
 		DeleteExternalPractitionerResponse DeleteExternalPractitioner(DeleteExternalPractitionerRequest request);
 
-        /// <summary>
-        /// Load details for a specified practitioner for editing.
-        /// </summary>
-        [OperationContract]
-        LoadExternalPractitionerForEditResponse LoadExternalPractitionerForEdit(LoadExternalPractitionerForEditRequest request);
+		/// <summary>
+		/// Load details for a specified practitioner for editing.
+		/// </summary>
+		[OperationContract]
+		LoadExternalPractitionerForEditResponse LoadExternalPractitionerForEdit(LoadExternalPractitionerForEditRequest request);
 
-        /// <summary>
-        /// Loads all form data needed to edit a practitioner.
-        /// </summary>
-        [OperationContract]
-        LoadExternalPractitionerEditorFormDataResponse LoadExternalPractitionerEditorFormData(LoadExternalPractitionerEditorFormDataRequest request);
+		/// <summary>
+		/// Loads all form data needed to edit a practitioner.
+		/// </summary>
+		[OperationContract]
+		LoadExternalPractitionerEditorFormDataResponse LoadExternalPractitionerEditorFormData(LoadExternalPractitionerEditorFormDataRequest request);
 
 		/// <summary>
 		/// Merge duplicate external practitioners.
