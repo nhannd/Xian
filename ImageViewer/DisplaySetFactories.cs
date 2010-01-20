@@ -315,12 +315,25 @@ namespace ClearCanvas.ImageViewer
 					//The sop is actually a container for other referenced sops, like key images.
 					foreach (IPresentationImage image in images)
 					{
-						IImageSopProvider provider = (IImageSopProvider)image;
-						DisplaySetDescriptor descriptor;
-						if (provider.ImageSop.NumberOfFrames == 1)
-							descriptor = new SingleImageDisplaySetDescriptor(series.GetIdentifier(), provider.ImageSop, position++);
+						DisplaySetDescriptor descriptor = null;
+						if (image is IImageSopProvider)
+						{
+							IImageSopProvider provider = (IImageSopProvider) image;
+							if (provider.ImageSop.NumberOfFrames == 1)
+								descriptor = new SingleImageDisplaySetDescriptor(series.GetIdentifier(), provider.ImageSop, position++);
+							else
+								descriptor = new SingleFrameDisplaySetDescriptor(series.GetIdentifier(), provider.Frame, position++);
+						}
 						else
-							descriptor = new SingleFrameDisplaySetDescriptor(series.GetIdentifier(), provider.Frame, position++);
+						{
+							//TODO (CR Jan 2010): this because the design here is funny... the factory here should actually know something about the key object series it is building for
+							ISeriesIdentifier sourceSeries = series.GetIdentifier();
+							descriptor = new BasicDisplaySetDescriptor();
+							descriptor.Description = sourceSeries.SeriesDescription;
+							descriptor.Name = string.Format("{0}: {1}", sourceSeries.SeriesNumber, sourceSeries.SeriesDescription);
+							descriptor.Number = sourceSeries.SeriesNumber.GetValueOrDefault(0);
+							descriptor.Uid = sourceSeries.SeriesInstanceUid;
+						}
 
 						DisplaySet displaySet = new DisplaySet(descriptor);
 						displaySet.PresentationImages.Add(image);
