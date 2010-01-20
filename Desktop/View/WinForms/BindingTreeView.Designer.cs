@@ -63,7 +63,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._toolStrip = new System.Windows.Forms.ToolStrip();
 			this._searchTextBox = new System.Windows.Forms.ToolStripTextBox();
-			this._applySearchButton = new System.Windows.Forms.ToolStripButton();
 			this._clearSearchButton = new System.Windows.Forms.ToolStripButton();
 			this._treeCtrl = new System.Windows.Forms.TreeView();
 			this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -94,7 +93,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._toolStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this._toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._searchTextBox,
-            this._applySearchButton,
             this._clearSearchButton});
 			this._toolStrip.Location = new System.Drawing.Point(0, 0);
 			this._toolStrip.Name = "_toolStrip";
@@ -111,21 +109,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._searchTextBox.ToolTipText = "Enter text here to search tree";
 			this._searchTextBox.Visible = false;
 			this._searchTextBox.TextChanged += new System.EventHandler(this._searchTextBox_TextChanged);
-			// 
-			// _applySearchButton
-			// 
-			this._applySearchButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this._applySearchButton.Enabled = false;
-			this._applySearchButton.Image = global::ClearCanvas.Desktop.View.WinForms.SR.SearchToolMini;
-			this._applySearchButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-			this._applySearchButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this._applySearchButton.Margin = new System.Windows.Forms.Padding(0, 0, 1, 0);
-			this._applySearchButton.Name = "_applySearchButton";
-			this._applySearchButton.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
-			this._applySearchButton.Size = new System.Drawing.Size(23, 25);
-			this._applySearchButton.Text = "Apply Search";
-			this._applySearchButton.Visible = false;
-			this._applySearchButton.Click += new System.EventHandler(this._applySearchButton_Click);
 			// 
 			// _clearSearchButton
 			// 
@@ -215,6 +198,5 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private System.Windows.Forms.ToolTip _toolTip;
 		private System.Windows.Forms.ToolStripButton _clearSearchButton;
 		private System.Windows.Forms.ToolStripTextBox _searchTextBox;
-		private System.Windows.Forms.ToolStripButton _applySearchButton;
     }
 }

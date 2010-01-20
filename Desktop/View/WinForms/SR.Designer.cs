@@ -199,6 +199,15 @@ namespace ClearCanvas.Desktop.View.WinForms {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enter text here to search tree.
+        /// </summary>
+        internal static string MessageEmptySearchTree {
+            get {
+                return ResourceManager.GetString("MessageEmptySearchTree", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error retrieving data.
         /// </summary>
         internal static string MessageErrorRetrievingSubtree {

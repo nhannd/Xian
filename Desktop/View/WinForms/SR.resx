@@ -187,4 +187,7 @@
   <data name="MessageSearchBy" xml:space="preserve">
     <value>Search by: {0}</value>
   </data>
+  <data name="MessageEmptySearchTree" xml:space="preserve">
+    <value>Enter text here to search tree</value>
+  </data>
 </root>

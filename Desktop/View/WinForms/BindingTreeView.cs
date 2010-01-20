@@ -73,9 +73,9 @@ namespace ClearCanvas.Desktop.View.WinForms
         private event EventHandler _selectionChanged;
         private event EventHandler _nodeMouseDoubleClicked;
 		private event EventHandler _nodeMouseClicked;
+    	private event EventHandler _searchTextChanged;
 		private event EventHandler<ItemDragEventArgs> _itemDrag;
 		private event EventHandler<ItemDroppedEventArgs> _itemDropped;
-    	private event EventHandler _searchRequested;
 
         private BindingTreeNode _dropTargetNode;
         private DragDropEffects _dropEffect;
@@ -194,6 +194,23 @@ namespace ClearCanvas.Desktop.View.WinForms
 		public string SearchText
 		{
 			get { return _searchTextBox.Text; }
+			set
+			{
+				if (Equals(_searchTextBox.Text, value))
+					return;
+
+				_searchTextBox.Text = value;
+				EventsHelper.Fire(_searchTextChanged, this, EventArgs.Empty);
+			}
+		}
+
+		/// <summary>
+		/// Notifies that the search textbox text has changed
+		/// </summary>
+		public event EventHandler SearchTextChanged
+		{
+			add { _searchTextChanged += value; }
+			remove { _searchTextChanged -= value; }
 		}
 
 		/// <summary>
@@ -221,15 +238,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 		{
 			add { _nodeMouseClicked += value; }
 			remove { _nodeMouseClicked -= value; }
-		}
-
-		/// <summary>
-		/// Notifies that the search is requested.
-		/// </summary>
-		public event EventHandler SearchRequested
-		{
-			add { _searchRequested += value; }
-			remove { _searchRequested -= value; }
 		}
 
 		/// <summary>
@@ -336,7 +344,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			{
 				_searchTextBox.Visible = value;
 				_clearSearchButton.Visible = value;
-				_applySearchButton.Visible = value;
 			}
 		}
 
@@ -800,31 +807,25 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 		}
 
-		private void _applySearchButton_Click(object sender, EventArgs e)
-		{
-			EventsHelper.Fire(_searchRequested, this, e);
-		}
-
 		private void _clearSearchButton_Click(object sender, EventArgs e)
 		{
-			_searchTextBox.Text = "";
-			EventsHelper.Fire(_searchRequested, this, e);
+			this.SearchText = "";
 		}
 
 		private void _searchTextBox_TextChanged(object sender, EventArgs e)
 		{
 			if (String.IsNullOrEmpty(_searchTextBox.Text))
 			{
-				_searchTextBox.ToolTipText = SR.MessageEmptyFilter;
+				_searchTextBox.ToolTipText = SR.MessageEmptySearchTree;
 				_clearSearchButton.Enabled = false;
-				_applySearchButton.Enabled = false;
 			}
 			else
 			{
 				_searchTextBox.ToolTipText = String.Format(SR.MessageSearchBy, _searchTextBox.Text);
 				_clearSearchButton.Enabled = true;
-				_applySearchButton.Enabled = true;
 			}
+
+			EventsHelper.Fire(_searchTextChanged, this, EventArgs.Empty);
 		}
 	}
 }
