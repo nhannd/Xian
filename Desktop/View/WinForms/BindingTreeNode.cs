@@ -148,6 +148,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			if (_parentTree.Binding.GetIsHighlighted(_item))
 				this.BackColor = System.Drawing.Color.FromArgb(124, 177, 221);
+			else
+				this.BackColor = System.Drawing.Color.Empty;
 
 			if (treeViewImageList != null)
 			{
