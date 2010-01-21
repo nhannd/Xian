@@ -7,6 +7,9 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 	/// <summary>
 	/// Provides domain object validation functionality.
 	/// </summary>
+	/// <remarks>
+	/// Instances of this class are not thread-safe and should never be used by more than one thread.
+	/// </remarks>
 	public class DomainObjectValidator
 	{
 		private readonly Dictionary<Type, ValidationRuleSet> _ruleSets = new Dictionary<Type, ValidationRuleSet>();

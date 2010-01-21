@@ -48,6 +48,9 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 	/// <summary>
 	/// Manages validation rules sets for domain object classes.
 	/// </summary>
+	/// <remarks>
+	/// All methods on this class are safe for concurrent access by multiple threads.
+	/// </remarks>
 	internal static class ValidationRuleSetCache
 	{
 		private const string CacheId = "ClearCanvas.Enterprise.Core.Modelling.EntityValidationRuleSetCache";

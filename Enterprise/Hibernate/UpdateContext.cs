@@ -30,183 +30,170 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using NHibernate;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Core.Modelling;
-using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Audit;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
-    /// <summary>
-    /// NHibernate implemenation of <see cref="IUpdateContext"/>.
-    /// </summary>
-    public class UpdateContext : PersistenceContext, IUpdateContext
-    {
-        private UpdateContextInterceptor _interceptor;
-        private IEntityChangeSetRecorder _changeSetRecorder;
-    	private DomainObjectValidator _validator;
+	/// <summary>
+	/// NHibernate implemenation of <see cref="IUpdateContext"/>.
+	/// </summary>
+	public class UpdateContext : PersistenceContext, IUpdateContext
+	{
+		private UpdateContextInterceptor _interceptor;
+		private IEntityChangeSetRecorder _changeSetRecorder;
+		private readonly DomainObjectValidator _validator;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="mode"></param>
-        internal UpdateContext(PersistentStore pstore, UpdateContextSyncMode mode)
-            : base(pstore)
-        {
-            if (mode == UpdateContextSyncMode.Hold)
-                throw new NotSupportedException("UpdateContextSyncMode.Hold is not supported");
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="persistentStore"></param>
+		/// <param name="mode"></param>
+		internal UpdateContext(PersistentStore persistentStore, UpdateContextSyncMode mode)
+			: base(persistentStore)
+		{
+			if (mode == UpdateContextSyncMode.Hold)
+				throw new NotSupportedException("UpdateContextSyncMode.Hold is not supported");
 
-            // create a default change-set logger
-            _changeSetRecorder = new DefaultEntityChangeSetRecorder();
+			// create a default change-set logger
+			_changeSetRecorder = new DefaultEntityChangeSetRecorder();
 			_validator = new DomainObjectValidator();
-        }
+		}
 
-        #region IUpdateContext members
+		#region IUpdateContext members
 
-        /// <summary>
-        /// Gets or sets the change-set logger for auditing.
-        /// </summary>
-        /// <remarks>
-        /// Setting this property to null will disable change-set auditing for this update context.
-        /// </remarks>
-        public IEntityChangeSetRecorder ChangeSetRecorder
-        {
-            get { return _changeSetRecorder; }
-            set { _changeSetRecorder = value; }
-        }
+		/// <summary>
+		/// Gets or sets the change-set logger for auditing.
+		/// </summary>
+		/// <remarks>
+		/// Setting this property to null will disable change-set auditing for this update context.
+		/// </remarks>
+		public IEntityChangeSetRecorder ChangeSetRecorder
+		{
+			get { return _changeSetRecorder; }
+			set { _changeSetRecorder = value; }
+		}
 
-        public void Commit()
-        {
-            try
-            {
-                // sync state prior to commit, this ensures that all entities are validated and changes
-                // recorded by the interceptor
-                SynchStateCore();
+		/// <summary>
+		/// Attempts to flush and commit all changes made within this update context to the persistent store.
+		/// </summary>
+		/// <remarks>
+		/// If this operation succeeds, the state of the persistent store will be syncrhonized with the state
+		/// of all domain objects that are attached to this context, and the context can continue to be used
+		/// for read operations only. If the operation fails, an exception will be thrown.
+		/// </remarks>
+		public void Commit()
+		{
+			try
+			{
+				// sync state prior to commit, this ensures that all entities are validated and changes
+				// recorded by the interceptor
+				SynchStateCore();
 
-                // do audit
-                AuditTransaction();
+				// do audit
+				AuditTransaction();
 
-                // do final commit
-                CommitTransaction();
+				// do final commit
+				CommitTransaction();
+			}
+			catch (Exception e)
+			{
+				HandleHibernateException(e, SR.ExceptionCommitFailure);
+			}
+		}
 
-                /* Transaction notification is non-existent right now
-                if (this.PersistentStore.TransactionNotifier != null)
-                {
-                    this.PersistentStore.TransactionNotifier.Queue(this.Interceptor.EntityChangeSet);
-                }
-                */
-            }
-            catch (Exception e)
-            {
-                HandleHibernateException(e, SR.ExceptionCommitFailure);
-            }
-        }
+		#endregion
 
-        #endregion
+		#region Protected overrides
 
-        #region Protected overrides
+		protected override ISession CreateSession()
+		{
+			return this.PersistentStore.SessionFactory.OpenSession(_interceptor = new UpdateContextInterceptor(_validator));
+		}
 
-        protected override ISession CreateSession()
-        {
-            return this.PersistentStore.SessionFactory.OpenSession(_interceptor = new UpdateContextInterceptor(_validator));
-        }
+		protected override void LockCore(Entity entity, DirtyState dirtyState)
+		{
+			switch (dirtyState)
+			{
+				case DirtyState.Dirty:
+					this.Session.Update(entity);
+					break;
+				case DirtyState.New:
+					PreValidate(entity);
+					this.Session.Save(entity);
+					break;
+				case DirtyState.Clean:
+					this.Session.Lock(entity, LockMode.None);
+					break;
+			}
+		}
 
-        protected override void LockCore(Entity entity, DirtyState dirtyState)
-        {
-            switch (dirtyState)
-            {
-                case DirtyState.Dirty:
-                    this.Session.Update(entity);
-                    break;
-                case DirtyState.New:
-                    PreValidate(entity);
-                    this.Session.Save(entity);
-                    break;
-                case DirtyState.Clean:
-                    this.Session.Lock(entity, LockMode.None);
-                    break;
-            }
-        }
+		private void PreValidate(DomainObject entity)
+		{
+			// This is really a HACK
+			// we need to test the required field rules before NHibernate gets a chance to complain about them
+			// in order to provide more descriptive error message (the NHibernate error messages suck)
+			_validator.Validate(entity, rule => rule is RequiredSpecification);
+		}
 
-        private void PreValidate(Entity entity)
-        {
-            // This is really a HACK
-            // we need to test the required field rules before NHibernate gets a chance to complain about them
-            // in order to provide more descriptive error message (the NHibernate error messages suck)
-            _validator.Validate(entity, 
-                delegate(ISpecification rule)
-                {
-                    return rule is RequiredSpecification;
-                });
-        }
+		internal override bool ReadOnly
+		{
+			get { return false; }
+		}
 
-        internal override bool ReadOnly
-        {
-            get { return false; }
-        }
+		protected override void SynchStateCore()
+		{
+			this.Session.Flush();
+		}
 
-        protected override void SynchStateCore()
-        {
-            this.Session.Flush();
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				try
+				{
+					// assume the transaction failed and rollback
+					RollbackTransaction();
+				}
+				catch (Exception e)
+				{
+					HandleHibernateException(e, SR.ExceptionCloseContext);
+				}
+			}
 
-            // check validation results
-            CheckValidation();
-        }
+			base.Dispose(disposing);
+		}
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                try
-                {
-                    // assume the transaction failed and rollback
-                    RollbackTransaction();
-                }
-                catch (Exception e)
-                {
-                    HandleHibernateException(e, SR.ExceptionCloseContext);
-                }
-            }
+		/// <summary>
+		/// Specifies that the version should be checked.  This makes sense, as a default, in an update context
+		/// to ensure versioning isn't violated.
+		/// </summary>
+		protected override EntityLoadFlags DefaultEntityLoadFlags
+		{
+			get { return EntityLoadFlags.CheckVersion; }
+		}
 
-            base.Dispose(disposing);
-        }
-
-        /// <summary>
-        /// Specifies that the version should be checked.  This makes sense, as a default, in an update context
-        /// to ensure versioning isn't violated.
-        /// </summary>
-        protected override EntityLoadFlags DefaultEntityLoadFlags
-        {
-            get { return EntityLoadFlags.CheckVersion; }
-        }
-
-        #endregion
+		#endregion
 
 
-        #region Helpers
+		#region Helpers
 
-        /// <summary>
-        /// Writes an audit log entry for the current change-set, assuming the
-        /// <see cref="ChangeSetRecorder"/> property is set.
-        /// </summary>
-        private void AuditTransaction()
-        {
-            if (_changeSetRecorder != null)
-            {
+		/// <summary>
+		/// Writes an audit log entry for the current change-set, assuming the
+		/// <see cref="ChangeSetRecorder"/> property is set.
+		/// </summary>
+		private void AuditTransaction()
+		{
+			if (_changeSetRecorder != null)
+			{
 				// write to the "ChangeSet" audit log
-				AuditLog auditLog = new AuditLog(null, "ChangeSet");
-                _changeSetRecorder.WriteLogEntry(_interceptor.EntityChangeSet, auditLog);
-            }
-        }
+				var auditLog = new AuditLog(null, "ChangeSet");
+				_changeSetRecorder.WriteLogEntry(_interceptor.EntityChangeSet, auditLog);
+			}
+		}
 
-        private void CheckValidation()
-        {
-        }
-
-        #endregion
-    }
+		#endregion
+	}
 }
