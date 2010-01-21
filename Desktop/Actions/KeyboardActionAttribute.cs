@@ -61,22 +61,6 @@ namespace ClearCanvas.Desktop.Actions
 		}
 
     	/// <summary>
-    	/// Applies this attribute to an <see cref="IAction"/> instance, via the specified <see cref="IActionBuildingContext"/>.
-    	/// </summary>
-    	/// <remarks>
-    	/// Because this action is an <see cref="ActionInitiatorAttribute"/>, this method actually
-    	/// creates the associated <see cref="ClickAction"/>.  <see cref="ActionDecoratorAttribute"/>s
-    	/// merely modify the properties of the action.
-    	/// </remarks>
-    	public override void Apply(IActionBuildingContext builder)
-		{
-            base.Apply(builder);
-
-            // don't need to persist keyboard actions
-            builder.Action.Persistent = false;
-        }
-
-    	/// <summary>
 		/// Creates the <see cref="KeyboardAction"/> represented by this attribute.
     	/// </summary>
     	/// <param name="actionID">The logical action ID.</param>

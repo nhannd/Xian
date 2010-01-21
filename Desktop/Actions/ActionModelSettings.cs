@@ -68,17 +68,17 @@ namespace ClearCanvas.Desktop.Actions
 		/// The XML model is automatically persisted, and new models that have never before been persisted
 		/// will be added.
 		/// </remarks>
-        /// <param name="namespaze">A namespace to qualify the site.</param>
+        /// <param name="namespace">A namespace to qualify the site.</param>
         /// <param name="site">The site.</param>
         /// <param name="actions">The set of actions to include.</param>
         /// <returns>An <see cref="ActionModelNode"/> representing the root of the action model.</returns>
-        public ActionModelRoot BuildAndSynchronize(string namespaze, string site, IActionSet actions)
+        public ActionModelRoot BuildAndSynchronize(string @namespace, string site, IActionSet actions)
         {
 			// do one time initialization
 			if(_actionModelXmlDoc == null)
 				Initialize();
 
-			string actionModelID = string.Format("{0}:{1}", namespaze, site);
+			string actionModelID = string.Format("{0}:{1}", @namespace, site);
 
 			IDictionary<string, IAction> actionMap = BuildActionMap(actions);
 
@@ -212,6 +212,12 @@ namespace ClearCanvas.Desktop.Actions
 			xmlAction.SetAttribute("id", action.ActionID);
 			xmlAction.SetAttribute("path", action.Path.ToString());
 			xmlAction.SetAttribute("group-hint", action.GroupHint.Hint);
+
+			if (action is IClickAction)
+			{
+				IClickAction clickAction = (IClickAction) action;
+				xmlAction.SetAttribute("keystroke", clickAction.KeyStroke.ToString());
+			}
 			
 			return xmlAction;
 		}
@@ -350,6 +356,20 @@ namespace ClearCanvas.Desktop.Actions
 
 						action.Path = new ActionPath(path, action.ResourceResolver);
 						action.GroupHint = new GroupHint(grouphint);
+						
+						if (action is IClickAction)
+						{
+							IClickAction clickAction = (IClickAction) action;
+							string keystrokeValue = xmlAction.GetAttribute("keystroke");
+							if (!string.IsNullOrEmpty(keystrokeValue))
+							{
+								try
+								{
+									clickAction.KeyStroke = (XKeys) Enum.Parse(typeof (XKeys), keystrokeValue);
+								}
+								catch (ArgumentException) {}
+							}
+						}
 
 						// insert the action into the model
 						model.InsertAction(action);

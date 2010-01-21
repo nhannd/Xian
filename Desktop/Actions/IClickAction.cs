@@ -64,9 +64,9 @@ namespace ClearCanvas.Desktop.Actions
 		bool CheckParents { get; }
 
 		/// <summary>
-		/// Gets the keystroke that the UI should attempt to intercept to invoke the action.
+		/// Gets or sets the keystroke that the UI should attempt to intercept to invoke the action.
 		/// </summary>
-		XKeys KeyStroke { get; }
+		XKeys KeyStroke { get; set; }
 
         /// <summary>
         /// Called by the UI when the user clicks on the action.
