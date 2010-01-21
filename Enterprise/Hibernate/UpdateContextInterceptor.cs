@@ -53,6 +53,12 @@ namespace ClearCanvas.Enterprise.Hibernate
 
 		private readonly ChangeTracker _changeTracker = new ChangeTracker();
 		private readonly Queue<DomainObject> _pendingValidations = new Queue<DomainObject>();
+		private readonly DomainObjectValidator _validator;
+
+		public UpdateContextInterceptor(DomainObjectValidator validator)
+		{
+			_validator = validator;
+		}
 
 		/// <summary>
 		/// Gets the set of <see cref="EntityChange"/> objects representing the changes made in this update context.
@@ -183,14 +189,14 @@ namespace ClearCanvas.Enterprise.Hibernate
 			_changeTracker.RecordChange(entity, changeType, propertyDiffs);
 		}
 
-		private static void Validate(object domainObject, ICollection<string> dirtyProperties)
+		private void Validate(object domainObject, ICollection<string> dirtyProperties)
 		{
-			Validation.Validate((DomainObject)domainObject, rule => ShouldCheckRule(rule, dirtyProperties));
+			_validator.Validate((DomainObject)domainObject, rule => ShouldCheckRule(rule, dirtyProperties));
 		}
 
-		private static void Validate(object domainObject)
+		private void Validate(object domainObject)
 		{
-			Validation.Validate((DomainObject)domainObject);
+			_validator.Validate((DomainObject)domainObject);
 		}
 
 		private static bool ShouldCheckRule(ISpecification rule, ICollection<string> dirtyProperties)

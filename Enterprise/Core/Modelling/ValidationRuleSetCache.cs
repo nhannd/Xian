@@ -32,7 +32,6 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Specifications;
 using ClearCanvas.Enterprise.Common.Caching;
 
 namespace ClearCanvas.Enterprise.Core.Modelling
@@ -47,60 +46,24 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
 
 	/// <summary>
-	/// Provides domain object validation functionality.
+	/// Manages validation rules sets for domain object classes.
 	/// </summary>
-	public static class Validation
+	internal static class ValidationRuleSetCache
 	{
+		private const string CacheId = "ClearCanvas.Enterprise.Core.Modelling.EntityValidationRuleSetCache";
+		private const string CacheRegion = "default";
+
 		/// <summary>
 		/// Invariant rulesets are cached in a static variable, since they cannot change during the lifetime of the process.
 		/// </summary>
 		private static readonly Dictionary<Type, ValidationRuleSet> _invariantRuleSets = new Dictionary<Type, ValidationRuleSet>();
-
-		private const string CacheId = "ClearCanvas.Enterprise.Core.Modelling.EntityValidationRuleSetCache";
-		private const string CacheRegion = "default";
-
-
-		#region Public API
-
-		/// <summary>
-		/// Validates the specified domain object.
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <exception cref="EntityValidationException">Validation failed.</exception>
-		public static void Validate(DomainObject obj)
-		{
-			// validate all rules
-			Validate(obj, rule => true);
-		}
-
-		/// <summary>
-		/// Validates the specified domain object, ignoring any rules that do not satisfy the filter.
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <param name="ruleFilter"></param>
-		/// <exception cref="EntityValidationException">Validation failed.</exception>
-		public static void Validate(DomainObject obj, Predicate<ISpecification> ruleFilter)
-		{
-			var entityClass = obj.GetClass();
-			var rules = GetInvariantRules(entityClass)
-				.Add(GetCustomRules(entityClass));
-
-			var result = rules.Test(obj, ruleFilter);
-			if (result.Fail)
-			{
-				var message = string.Format(SR.ExceptionInvalidEntity, TerminologyTranslator.Translate(obj.GetClass()));
-				throw new EntityValidationException(message, result.Reasons);
-			}
-		}
-
-		#endregion
 
 		/// <summary>
 		/// Gets the invariant rule-set (rules that are hard-coded into the domain model).
 		/// </summary>
 		/// <param name="domainClass"></param>
 		/// <returns></returns>
-		private static ValidationRuleSet GetInvariantRules(Type domainClass)
+		internal static ValidationRuleSet GetInvariantRules(Type domainClass)
 		{
 			lock (_invariantRuleSets)
 			{
@@ -123,7 +86,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 		/// </summary>
 		/// <param name="domainClass"></param>
 		/// <returns></returns>
-		private static ValidationRuleSet GetCustomRules(Type domainClass)
+		internal static ValidationRuleSet GetCustomRules(Type domainClass)
 		{
 			// Because custom rules may potentially be modified by an administrator, they cannot
 			// be cached in a static variable like the invariant rules.
@@ -137,7 +100,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 				if (ruleSet != null)
 					return ruleSet;
 
-				// no cached, so compile the ruleset for the specified domain class
+				// no cached, so compile the ruleset from source
 				ruleSet = BuildCustomRules(domainClass);
 
 				// cache the ruleset if desired
@@ -152,6 +115,11 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 			}
 		}
 
+		/// <summary>
+		/// Builds the custom rule-set (rules that are specified in an XML format).
+		/// </summary>
+		/// <param name="domainClass"></param>
+		/// <returns></returns>
 		private static ValidationRuleSet BuildCustomRules(Type domainClass)
 		{
 			try

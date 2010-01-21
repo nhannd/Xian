@@ -92,6 +92,7 @@ namespace ClearCanvas.Healthcare.Imex
             _context = context;
 
             List<ExternalPractitioner> importedEPs = new List<ExternalPractitioner>();
+        	var validator = new DomainObjectValidator();
 
             foreach (string row in rows)
             {
@@ -158,7 +159,7 @@ namespace ClearCanvas.Healthcare.Imex
                             addressCountry,
                             AddressType.B,
                             new DateTimeRange(addressValidFrom, addressValidUntil));
-                        Validation.Validate(epAddress);
+						validator.Validate(epAddress);
                         contactPoint.Addresses.Add(epAddress);
                     }
                     catch(EntityValidationException) { /* invalid address - ignore */ }
@@ -175,7 +176,7 @@ namespace ClearCanvas.Healthcare.Imex
                             TelephoneEquipment.PH,
                             new DateTimeRange(phoneValidFrom, phoneValidUntil));
 
-                        Validation.Validate(epTelephone);
+						validator.Validate(epTelephone);
                         contactPoint.TelephoneNumbers.Add(epTelephone);
                     }
                     catch (EntityValidationException) { /* invalid phone - ignore */ }
@@ -191,7 +192,7 @@ namespace ClearCanvas.Healthcare.Imex
                             TelephoneEquipment.FX,
                             new DateTimeRange(faxValidFrom, faxValidUntil));
 
-                        Validation.Validate(epFax);
+						validator.Validate(epFax);
                         contactPoint.TelephoneNumbers.Add(epFax);
                     }
                     catch (EntityValidationException) { /* invalid fax - ignore */ }

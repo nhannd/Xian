@@ -73,6 +73,7 @@
     <Compile Include="AuditLogEntry.cs" />
     <Compile Include="Audit\AuditLogEntryAssembler.cs" />
     <Compile Include="Audit\AuditService.cs" />
+    <Compile Include="Modelling\DomainObjectValidator.cs" />
     <Compile Include="Modelling\EntityValidationSettings.cs" />
     <Compile Include="Modelling\EntityValidationSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -161,7 +162,7 @@
     <Compile Include="Modelling\UniqueKeyAttribute.cs" />
     <Compile Include="Modelling\UniqueKeySpecification.cs" />
     <Compile Include="Modelling\UniqueSpecification.cs" />
-    <Compile Include="Modelling\Validation.cs" />
+    <Compile Include="Modelling\ValidationRuleSetCache.cs" />
     <Compile Include="Modelling\ValidationBuilder.cs" />
     <Compile Include="Modelling\ValidationRuleSet.cs" />
     <Compile Include="Modelling\EmbeddedValueCollectionAttribute.cs" />
