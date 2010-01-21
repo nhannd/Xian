@@ -29,52 +29,20 @@
 
 #endregion
 
-using ClearCanvas.Common;
-using ClearCanvas.Common.Authorization;
+using System.Configuration;
+using ClearCanvas.Desktop;
 
-namespace ClearCanvas.ImageViewer.Tools.Reporting
+namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 {
-	[ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint))]
-	internal class DefineAuthorityGroups : IDefineAuthorityGroups
-	{
-		#region IDefineAuthorityGroups Members
 
-		/// <summary>
-		/// Get the authority group definitions.
-		/// </summary>
-		public AuthorityGroupDefinition[] GetAuthorityGroups()
+	// TODO add a description of the purpose of the settings group here
+	[SettingsGroupDescription("")]
+	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+	internal sealed partial class KeyImageSettings
+	{
+		private KeyImageSettings()
 		{
-			return new AuthorityGroupDefinition[]
-            {
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.HealthcareAdministrators,
-				    new string[] 
-				    {
-						AuthorityTokens.KeyImages
-				   }),
-
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.Radiologists,
-				    new string[] 
-				    {
-						AuthorityTokens.KeyImages
-				   }),
-
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.RadiologyResidents,
-				    new string[] 
-				    {
-						AuthorityTokens.KeyImages
-				   })
-            };
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
-
-		#endregion
-	}
-	
-	public static class AuthorityTokens
-	{
-		[AuthorityToken(Description = "Grant access to key image administration, such as publishing configuration.")]
-		public const string KeyImageAdministration = "Viewer/Administration/Key Images";
-		
-		[AuthorityToken(Description = "Grant access to key image functionality.")]
-		public const string KeyImages = "Viewer/Reporting/Key Images";
 	}
 }

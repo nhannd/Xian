@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,52 +29,37 @@
 
 #endregion
 
-using ClearCanvas.Common;
-using ClearCanvas.Common.Authorization;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
 
-namespace ClearCanvas.ImageViewer.Tools.Reporting
+using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.ImageViewer.Tools.Reporting.KeyImages;
+
+namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 {
-	[ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint))]
-	internal class DefineAuthorityGroups : IDefineAuthorityGroups
-	{
-		#region IDefineAuthorityGroups Members
+    /// <summary>
+    /// Provides a Windows Forms user-interface for <see cref="KeyImageConfigurationComponent"/>.
+    /// </summary>
+    public partial class KeyImageConfigurationComponentControl : ApplicationComponentUserControl
+    {
+        private KeyImageConfigurationComponent _component;
 
-		/// <summary>
-		/// Get the authority group definitions.
-		/// </summary>
-		public AuthorityGroupDefinition[] GetAuthorityGroups()
-		{
-			return new AuthorityGroupDefinition[]
-            {
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.HealthcareAdministrators,
-				    new string[] 
-				    {
-						AuthorityTokens.KeyImages
-				   }),
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public KeyImageConfigurationComponentControl(KeyImageConfigurationComponent component)
+            :base(component)
+        {
+			_component = component;
+            InitializeComponent();
 
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.Radiologists,
-				    new string[] 
-				    {
-						AuthorityTokens.KeyImages
-				   }),
-
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.RadiologyResidents,
-				    new string[] 
-				    {
-						AuthorityTokens.KeyImages
-				   })
-            };
-		}
-
-		#endregion
-	}
-	
-	public static class AuthorityTokens
-	{
-		[AuthorityToken(Description = "Grant access to key image administration, such as publishing configuration.")]
-		public const string KeyImageAdministration = "Viewer/Administration/Key Images";
-		
-		[AuthorityToken(Description = "Grant access to key image functionality.")]
-		public const string KeyImages = "Viewer/Reporting/Key Images";
-	}
+			_publishToDefaultServers.DataBindings.Add("Checked", _component, "PublishToDefaultServers", false, DataSourceUpdateMode.OnPropertyChanged);
+			_publishLocalToSourceAE.DataBindings.Add("Checked", _component, "PublishLocalToSourceAE", false, DataSourceUpdateMode.OnPropertyChanged);
+        }
+    }
 }

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{7DE2AD68-75E5-44D0-B94D-7549D3AE7CC3}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -41,10 +41,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorityTokens.cs" />
+    <Compile Include="KeyImages\ConfigurationPageProvider.cs" />
     <Compile Include="KeyImages\DesktopWindowTool.cs" />
     <Compile Include="KeyImages\EditKeyImageInformationTool.cs" />
     <Compile Include="KeyImages\KeyImageClipboardComponent.cs" />
+    <Compile Include="KeyImages\KeyImageConfigurationComponent.cs" />
     <Compile Include="KeyImages\KeyImagePublisher.cs" />
+    <Compile Include="KeyImages\KeyImageSettings.cs" />
+    <Compile Include="KeyImages\KeyImageSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>KeyImageSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="KeyImages\KeyImageTool.cs" />
     <Compile Include="KeyImages\KeyImageClipboard.cs" />
     <Compile Include="KeyImages\KeyImageInformationEditorComponent.cs" />
@@ -99,6 +107,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="KeyImages\KeyImageSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>KeyImageSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\CreateKeyImageToolLarge.png" />

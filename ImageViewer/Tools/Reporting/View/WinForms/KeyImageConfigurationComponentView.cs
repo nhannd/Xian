@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,52 +29,51 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Text;
+
 using ClearCanvas.Common;
-using ClearCanvas.Common.Authorization;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.ImageViewer.Tools.Reporting.KeyImages;
 
-namespace ClearCanvas.ImageViewer.Tools.Reporting
+namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 {
-	[ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint))]
-	internal class DefineAuthorityGroups : IDefineAuthorityGroups
-	{
-		#region IDefineAuthorityGroups Members
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="KeyImageConfigurationComponent"/>.
+    /// </summary>
+    [ExtensionOf(typeof(KeyImageConfigurationComponentViewExtensionPoint))]
+    public class KeyImageConfigurationComponentView : WinFormsView, IApplicationComponentView
+    {
+        private KeyImageConfigurationComponent _component;
+        private KeyImageConfigurationComponentControl _control;
 
-		/// <summary>
-		/// Get the authority group definitions.
-		/// </summary>
-		public AuthorityGroupDefinition[] GetAuthorityGroups()
-		{
-			return new AuthorityGroupDefinition[]
+        #region IApplicationComponentView Members
+
+        /// <summary>
+        /// Called by the host to assign this view to a component.
+        /// </summary>
+        public void SetComponent(IApplicationComponent component)
+        {
+            _component = (KeyImageConfigurationComponent)component;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
+        {
+            get
             {
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.HealthcareAdministrators,
-				    new string[] 
-				    {
-						AuthorityTokens.KeyImages
-				   }),
-
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.Radiologists,
-				    new string[] 
-				    {
-						AuthorityTokens.KeyImages
-				   }),
-
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.RadiologyResidents,
-				    new string[] 
-				    {
-						AuthorityTokens.KeyImages
-				   })
-            };
-		}
-
-		#endregion
-	}
-	
-	public static class AuthorityTokens
-	{
-		[AuthorityToken(Description = "Grant access to key image administration, such as publishing configuration.")]
-		public const string KeyImageAdministration = "Viewer/Administration/Key Images";
-		
-		[AuthorityToken(Description = "Grant access to key image functionality.")]
-		public const string KeyImages = "Viewer/Reporting/Key Images";
-	}
+                if (_control == null)
+                {
+                    _control = new KeyImageConfigurationComponentControl(_component);
+                }
+                return _control;
+            }
+        }
+    }
 }

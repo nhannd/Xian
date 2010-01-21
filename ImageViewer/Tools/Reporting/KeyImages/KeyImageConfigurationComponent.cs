@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -30,51 +30,67 @@
 #endregion
 
 using ClearCanvas.Common;
-using ClearCanvas.Common.Authorization;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Configuration;
 
-namespace ClearCanvas.ImageViewer.Tools.Reporting
+namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 {
-	[ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint))]
-	internal class DefineAuthorityGroups : IDefineAuthorityGroups
+	[ExtensionPoint]
+	public sealed class KeyImageConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
-		#region IDefineAuthorityGroups Members
+	}
 
-		/// <summary>
-		/// Get the authority group definitions.
-		/// </summary>
-		public AuthorityGroupDefinition[] GetAuthorityGroups()
+	[AssociateView(typeof (KeyImageConfigurationComponentViewExtensionPoint))]
+	public class KeyImageConfigurationComponent : ConfigurationApplicationComponent
+	{
+		internal KeyImageConfigurationComponent()
 		{
-			return new AuthorityGroupDefinition[]
-            {
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.HealthcareAdministrators,
-				    new string[] 
-				    {
-						AuthorityTokens.KeyImages
-				   }),
-
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.Radiologists,
-				    new string[] 
-				    {
-						AuthorityTokens.KeyImages
-				   }),
-
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.RadiologyResidents,
-				    new string[] 
-				    {
-						AuthorityTokens.KeyImages
-				   })
-            };
 		}
 
-		#endregion
-	}
-	
-	public static class AuthorityTokens
-	{
-		[AuthorityToken(Description = "Grant access to key image administration, such as publishing configuration.")]
-		public const string KeyImageAdministration = "Viewer/Administration/Key Images";
-		
-		[AuthorityToken(Description = "Grant access to key image functionality.")]
-		public const string KeyImages = "Viewer/Reporting/Key Images";
+		private bool _publishToDefaultServers;
+		private bool _publishLocalToSourceAE;
+
+		public bool PublishToDefaultServers
+		{
+			get { return _publishToDefaultServers; }
+			set
+			{
+				if (value == _publishToDefaultServers)
+					return;
+
+				_publishToDefaultServers = value;
+				base.Modified = true;
+				NotifyPropertyChanged("PublishToDefaultServers");
+			}
+		}
+
+		public bool PublishLocalToSourceAE
+		{
+			get { return _publishLocalToSourceAE; }
+			set
+			{
+				if (value == _publishLocalToSourceAE)
+					return;
+
+				_publishLocalToSourceAE = value;
+				base.Modified = true;
+				NotifyPropertyChanged("PublishLocalToSourceAE");
+			}
+		}
+
+		public override void Start()
+		{
+			PublishToDefaultServers = KeyImageSettings.Default.PublishToDefaultServers;
+			PublishLocalToSourceAE = KeyImageSettings.Default.PublishLocalToSourceAE;
+
+			base.Start();
+		}
+
+		public override void Save()
+		{
+			KeyImageSettings.Default.PublishToDefaultServers = PublishToDefaultServers;
+			KeyImageSettings.Default.PublishLocalToSourceAE = PublishLocalToSourceAE;
+			KeyImageSettings.Default.Save();
+		}
 	}
 }

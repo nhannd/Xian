@@ -52,7 +52,6 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 	internal class KeyImagePublisher
 	{
 		private readonly KeyImageInformation _sourceInformation;
-		private readonly bool _publishToSourceServer;
 
 		private readonly List<DicomFile> _keyObjectDocuments;
 		private readonly Dictionary<Server, List<DicomFile>> _remotePublishingInfo;
@@ -63,15 +62,19 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 		private List<KeyValuePair<Frame, DicomSoftcopyPresentationState>> _framePresentationStates;
 		private Dictionary<string, SeriesInfo> _seriesIndex;
 
-		public KeyImagePublisher(KeyImageInformation information, bool publishToSourceServer)
+		public KeyImagePublisher(KeyImageInformation information)
 		{
 			_sourceInformation = information;
-			_publishToSourceServer = publishToSourceServer;
-
 			_keyObjectDocuments = new List<DicomFile>();
 			_remotePublishingInfo = new Dictionary<Server, List<DicomFile>>();
 			_localPublishingInfo = new List<DicomFile>();
+
+			PublishToDefaultServers = true;
+			PublishLocalToSourceAE = false;
 		}
+
+		public bool PublishToDefaultServers { get; set; }
+		public bool PublishLocalToSourceAE { get; set; }
 
 		private List<KeyValuePair<Frame, DicomSoftcopyPresentationState>> SourceFrames
 		{
@@ -208,45 +211,69 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		private Server GetServer(ApplicationEntity server)
 		{
-			return AllServers.Find(delegate(Server defaultServer)
-									{ return server.AETitle == defaultServer.AETitle; });
+			return GetServer(server.AETitle);
+		}
+
+		private Server GetServer(string aeTitle)
+		{
+			return AllServers.Find(defaultServer => aeTitle == defaultServer.AETitle);
 		}
 
 		private void BuildPublishingInfo()
 		{
-			if (_publishToSourceServer)
+			foreach (KeyValuePair<Frame, DicomSoftcopyPresentationState> frameAndPR in SourceFrames)
 			{
-				foreach (KeyValuePair<Frame, DicomSoftcopyPresentationState> frameAndPR in SourceFrames)
-				{
-					Frame frame = frameAndPR.Key;
-					DicomSoftcopyPresentationState presentationState = frameAndPR.Value;
-					DicomFile presentationStateDocument = null;
-					if(presentationState != null)
-						presentationStateDocument = presentationState.DicomFile;
+				Frame frame = frameAndPR.Key;
+				DicomSoftcopyPresentationState presentationState = frameAndPR.Value;
+				DicomFile presentationStateDocument = null;
+				if(presentationState != null)
+					presentationStateDocument = presentationState.DicomFile;
 
+				if (PublishToDefaultServers)
+				{
 					foreach (Server defaultServer in DefaultServers)
 						AddRemotePublishDocuments(defaultServer, frame, presentationStateDocument);
+				}
 
-					ISopDataSource dataSource = frame.ParentImageSop.DataSource;
-					ApplicationEntity sourceServer = dataSource.Server as ApplicationEntity;
-					if (sourceServer != null)
+				ISopDataSource dataSource = frame.ParentImageSop.DataSource;
+				ApplicationEntity sourceServer = dataSource.Server as ApplicationEntity;
+
+				//Always try to publish back to the source server, whether it's streaming, local, or otherwise.
+				//This keeps the study in sync, which just makes sense.
+				if (sourceServer != null)
+				{
+					Server publishServer = GetServer(sourceServer);
+					if (publishServer != null)
 					{
-						Server publishServer = GetServer(sourceServer);
-						//if it's a default server, then it was already added above.
-						if (publishServer != null && !IsDefaultServer(publishServer))
+						bool alreadyAdded = IsDefaultServer(publishServer) && PublishToDefaultServers;
+						if (!alreadyAdded)
 							AddRemotePublishDocuments(publishServer, frame, presentationStateDocument);
 					}
-					else if (dataSource.StudyLoaderName == "DICOM_LOCAL")
+				}
+				else if (dataSource.StudyLoaderName == "DICOM_LOCAL")
+				{
+					Server sourceAE = null;
+					if (PublishLocalToSourceAE)
 					{
-						DicomFile existingDocument = GetKeyObjectDocument(frame.StudyInstanceUid, _localPublishingInfo);
-						if (existingDocument == null)
-						{
-							DicomFile document = GetKeyObjectDocument(frame.StudyInstanceUid, _keyObjectDocuments);
-							_localPublishingInfo.Add(document);
-						}
+						string sourceAETitle = dataSource[DicomTags.SourceApplicationEntityTitle].GetString(0, "");
+						if (!String.IsNullOrEmpty(sourceAETitle))
+							sourceAE = GetServer(sourceAETitle);
+					}
 
-						if (presentationStateDocument != null)
-							_localPublishingInfo.Add(presentationStateDocument);
+					DicomFile existingDocument = GetKeyObjectDocument(frame.StudyInstanceUid, _localPublishingInfo);
+					if (existingDocument == null)
+					{
+						DicomFile document = GetKeyObjectDocument(frame.StudyInstanceUid, _keyObjectDocuments);
+						_localPublishingInfo.Add(document);
+						if (sourceAE != null)
+							AddRemotePublishDocuments(sourceAE, frame, document);
+					}
+
+					if (presentationStateDocument != null)
+					{
+						_localPublishingInfo.Add(presentationStateDocument);
+						if (sourceAE != null)
+							AddRemotePublishDocuments(sourceAE, frame, presentationStateDocument);
 					}
 				}
 			}

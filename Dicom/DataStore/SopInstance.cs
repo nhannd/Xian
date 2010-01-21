@@ -39,11 +39,27 @@ namespace ClearCanvas.Dicom.DataStore
     {
 		private readonly Series _parentSeries;
 		private readonly InstanceXml _xml;
+		private readonly DicomAttributeCollection _metaInfo;
 
 		internal SopInstance(Series parentSeries, InstanceXml instanceXml)
 		{
 			_parentSeries = parentSeries;
 			_xml = instanceXml;
+			_metaInfo = new DicomAttributeCollection();
+
+			if (instanceXml.TransferSyntax != null)
+			{
+				string transferSyntax = instanceXml.TransferSyntax.UidString;
+				if (!String.IsNullOrEmpty(transferSyntax))
+					_metaInfo[DicomTags.TransferSyntaxUid].SetString(0, transferSyntax);
+			}
+
+			if (instanceXml.SopClass != null)
+			{
+				string sopClass = instanceXml.SopClass.Uid;
+				if (!String.IsNullOrEmpty(sopClass))
+					_metaInfo[DicomTags.SopClassUid].SetString(0, sopClass);
+			}
 		}
 
 		#region ISopInstance Members
@@ -112,12 +128,20 @@ namespace ClearCanvas.Dicom.DataStore
 			DicomTag dicomTag = DicomTagDictionary.GetDicomTag(tag);
 			if (dicomTag == null)
 				return false;
+
 			return IsStoredTag(dicomTag);
 		}
 
 		public bool IsStoredTag(DicomTag tag)
 		{
 			Platform.CheckForNullReference(tag, "tag");
+
+			if (_metaInfo.Contains(tag))
+				return true;
+
+			//if it's meta info, just defer to the file.
+			if (tag.TagValue <= 0x0002FFFF)
+				return false;
 
 			if (_xml.IsTagExcluded(tag.TagValue))
 				return false;
@@ -148,14 +172,25 @@ namespace ClearCanvas.Dicom.DataStore
 
     	public DicomAttribute this[DicomTag tag]
     	{
-			get { return _xml[tag]; }
+			get
+			{
+				DicomAttribute attribute;
+				if (_metaInfo.TryGetAttribute(tag, out attribute))
+					return attribute;
+
+				return _xml[tag];
+			}
     	}
 
 		public DicomAttribute this[uint tag]
 		{
 			get
 			{
-				return this[DicomTagDictionary.GetDicomTag(tag)];
+				DicomAttribute attribute;
+				if (_metaInfo.TryGetAttribute(tag, out attribute))
+					return attribute;
+
+				return _xml[tag];
 			}
 		}
 
