@@ -44,6 +44,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		[Cloneable]
 		private class ShowAnglesToolGraphic : CompositeGraphic
 		{
+			private const int _minLength = 36;
+
 			[CloneIgnore]
 			private readonly PointsList _endPoints;
 
@@ -161,31 +163,10 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 							PointF pV = DrawExtenderLine(_extenderLine1, ref p1, ref p2, intersection);
 							PointF qV = DrawExtenderLine(_extenderLine2, ref q1, ref q2, intersection);
 
-							PointF pW = ExtendRay(pV, intersection, threshold + 1);
-							_riserLine1.Visible = true;
-							_riserLine1.Point1 = pV;
-							_riserLine1.Point2 = pW;
+							DrawRiserLine(_riserLine1, ref p1, ref p2, pV, intersection);
+							DrawRiserLine(_riserLine2, ref q1, ref q2, qV, intersection);
 
-							PointF qW = ExtendRay(qV, intersection, threshold + 1);
-							_riserLine2.Visible = true;
-							_riserLine2.Point1 = qV;
-							_riserLine2.Point2 = qW;
-
-							if (Determinant(pW.X - pV.X, pW.Y - pV.Y, p2.X - p1.X, p2.Y - p1.Y) < 0)
-							{
-								PointF temp = pW;
-								pW = pV;
-								pV = temp;
-							}
-
-							if (Determinant(qW.X - qV.X, qW.Y - qV.Y, q2.X - q1.X, q2.Y - q1.Y) < 0)
-							{
-								PointF temp = qW;
-								qW = qV;
-								qV = temp;
-							}
-
-							DrawIntersection(pV, pW, qV, qW, intersection);
+							DrawIntersection(p1, p2, q1, q2, intersection);
 						}
 					}
 				}
@@ -197,7 +178,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			private void DrawIntersection(PointF p1, PointF p2, PointF q1, PointF q2, PointF intersection)
 			{
-				const int threshold = 36;
 				const float calloutOffset = 36;
 				const float largerCalloutOffset = 64;
 
@@ -207,10 +187,10 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 				Console.WriteLine("Prime Angle: {0:f2}", angle);
 
-				bool p1MeetsThreshold = Vector.Distance(p1, intersection) >= threshold;
-				bool p2MeetsThreshold = Vector.Distance(p2, intersection) >= threshold;
-				bool q1MeetsThreshold = Vector.Distance(q1, intersection) >= threshold;
-				bool q2MeetsThreshold = Vector.Distance(q2, intersection) >= threshold;
+				bool p1MeetsThreshold = Vector.Distance(p1, intersection) >= _minLength;
+				bool p2MeetsThreshold = Vector.Distance(p2, intersection) >= _minLength;
+				bool q1MeetsThreshold = Vector.Distance(q1, intersection) >= _minLength;
+				bool q2MeetsThreshold = Vector.Distance(q2, intersection) >= _minLength;
 
 				if (p2MeetsThreshold && q2MeetsThreshold)
 					DrawAngleCallout(_angleCalloutGraphic1, textAngle, intersection, BisectAngle(p2, intersection, q2, angle > 30 ? calloutOffset : largerCalloutOffset));
@@ -221,6 +201,20 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 					DrawAngleCallout(_angleCalloutGraphic2, textComplementaryAngle, intersection, BisectAngle(q2, intersection, p1, angle < 150 ? calloutOffset : largerCalloutOffset));
 				else if (p2MeetsThreshold && q1MeetsThreshold)
 					DrawAngleCallout(_angleCalloutGraphic2, textComplementaryAngle, intersection, BisectAngle(q1, intersection, p2, angle < 150 ? calloutOffset : largerCalloutOffset));
+			}
+
+			private static void DrawRiserLine(ILineSegmentGraphic riser, ref PointF p1, ref PointF p2, PointF pV, PointF intersection)
+			{
+				PointF pW = ExtendRay(pV, intersection, _minLength + 1);
+				if (Determinant(pW.X - pV.X, pW.Y - pV.Y, p2.X - p1.X, p2.Y - p1.Y) < 0)
+				{
+					PointF temp = pW;
+					pW = pV;
+					pV = temp;
+				}
+				riser.Visible = true;
+				riser.Point1 = p1 = pV;
+				riser.Point2 = p2 = pW;
 			}
 
 			private static PointF DrawExtenderLine(ILineSegmentGraphic extender, ref PointF p1, ref PointF p2, PointF intersection)
