@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	partial class ShowAnglesTool
 	{
 		[Cloneable]
-		private class ShowAnglesToolGraphic : CompositeGraphic
+		private class ShowAnglesToolGraphic : CompositeGraphic, IVectorGraphic
 		{
 			private const int _minLength = 36;
 
@@ -77,14 +77,18 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				base.Graphics.Add(_riserLine2 = new LinePrimitive());
 
 				_angleCalloutGraphic1.ShowArrowhead = _angleCalloutGraphic2.ShowArrowhead = false;
-				_angleCalloutGraphic1.Color = _angleCalloutGraphic2.Color = Color.LightGoldenrodYellow;
 				_angleCalloutGraphic1.LineStyle = _angleCalloutGraphic2.LineStyle = LineStyle.Dash;
-				_extenderLine1.LineStyle = _extenderLine2.LineStyle = LineStyle.Dot;
-				_extenderLine1.Color = _riserLine1.Color = Color.LightGoldenrodYellow;
-				_riserLine1.LineStyle = _riserLine2.LineStyle = LineStyle.Dot;
-				_riserLine2.Color = _extenderLine2.Color = Color.LimeGreen;
+				_angleCalloutGraphic1.Name = "callout1";
+				_angleCalloutGraphic2.Name = "callout2";
+				_extenderLine1.Name = "extender1";
+				_extenderLine2.Name = "extender2";
+				_riserLine1.Name = "riser1";
+				_riserLine2.Name = "riser2";
 
 				_endPoints = new PointsList(new PointF[] {PointF.Empty, PointF.Empty, PointF.Empty, PointF.Empty}, this);
+
+				this.Color = Color.Coral;
+				this.LineStyle = LineStyle.Dot;
 			}
 
 			/// <summary>
@@ -100,7 +104,36 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			}
 
 			[OnCloneComplete]
-			private void OnCloneComplete() {}
+			private void OnCloneComplete()
+			{
+				_angleCalloutGraphic1 = (AngleCalloutGraphic) CollectionUtils.SelectFirst(base.Graphics, g => g.Name == "callout1");
+				_angleCalloutGraphic2 = (AngleCalloutGraphic) CollectionUtils.SelectFirst(base.Graphics, g => g.Name == "callout2");
+				_extenderLine1 = (ILineSegmentGraphic) CollectionUtils.SelectFirst(base.Graphics, g => g.Name == "extender1");
+				_extenderLine2 = (ILineSegmentGraphic) CollectionUtils.SelectFirst(base.Graphics, g => g.Name == "extender2");
+				_riserLine1 = (ILineSegmentGraphic) CollectionUtils.SelectFirst(base.Graphics, g => g.Name == "riser1");
+				_riserLine2 = (ILineSegmentGraphic) CollectionUtils.SelectFirst(base.Graphics, g => g.Name == "riser2");
+			}
+
+			public Color Color
+			{
+				get { return _angleCalloutGraphic1.Color; }
+				set
+				{
+					_angleCalloutGraphic1.Color = _angleCalloutGraphic2.Color = value;
+					_extenderLine1.Color = _extenderLine2.Color = value;
+					_riserLine1.Color = _riserLine2.Color = value;
+				}
+			}
+
+			public LineStyle LineStyle
+			{
+				get { return _angleCalloutGraphic1.LineStyle; }
+				set
+				{
+					_extenderLine1.LineStyle = _extenderLine2.LineStyle = value;
+					_riserLine1.LineStyle = _riserLine2.LineStyle = value;
+				}
+			}
 
 			public void Set(PointF p1, PointF p2, PointF q1, PointF q2)
 			{
@@ -114,8 +147,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			private void Update()
 			{
-				DrawAngleCallout(_angleCalloutGraphic1, string.Empty, PointF.Empty, PointF.Empty);
-				DrawAngleCallout(_angleCalloutGraphic2, string.Empty, PointF.Empty, PointF.Empty);
+				_angleCalloutGraphic1.Visible = _angleCalloutGraphic2.Visible = false;
 				_extenderLine1.Visible = _extenderLine2.Visible = false;
 				_riserLine1.Visible = _riserLine2.Visible = false;
 
@@ -144,7 +176,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 					}
 					else if (result == Vector.LineSegments.DoNotIntersect)
 					{
-						const int threshold = 36;
 						// the line segments do not intersect onscreen, so figure out where they would have intersected and decide from there
 						intersection = Intersect(p1, p2, q1, q2);
 
@@ -185,8 +216,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				string textAngle = string.Format(SR.ToolsMeasurementFormatDegrees, angle);
 				string textComplementaryAngle = string.Format(SR.ToolsMeasurementFormatDegrees, 180 - angle);
 
-				Console.WriteLine("Prime Angle: {0:f2}", angle);
-
 				bool p1MeetsThreshold = Vector.Distance(p1, intersection) >= _minLength;
 				bool p2MeetsThreshold = Vector.Distance(p2, intersection) >= _minLength;
 				bool q1MeetsThreshold = Vector.Distance(q1, intersection) >= _minLength;
@@ -203,10 +232,23 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 					DrawAngleCallout(_angleCalloutGraphic2, textComplementaryAngle, intersection, BisectAngle(q1, intersection, p2, angle < 150 ? calloutOffset : largerCalloutOffset));
 			}
 
+			/// <summary>
+			/// Draws <paramref name="riser"/> to rise from the point <paramref name="pV"/> on the vector P (defined by <paramref name="p1"/> <paramref name="p2"/>)
+			/// to the point <paramref name="intersection"/>. The vector P is redefined to be the vector between <paramref name="pV"/> and
+			/// <paramref name="intersection"/>, with direction depending on original orientation of vector P.
+			/// </summary>
+			/// <param name="p1"></param>
+			/// <param name="p2"></param>
+			/// <param name="pV"></param>
+			/// <param name="intersection"></param>
 			private static void DrawRiserLine(ILineSegmentGraphic riser, ref PointF p1, ref PointF p2, PointF pV, PointF intersection)
 			{
-				PointF pW = ExtendRay(pV, intersection, _minLength + 1);
-				if (Determinant(pW.X - pV.X, pW.Y - pV.Y, p2.X - p1.X, p2.Y - p1.Y) < 0)
+				// extend riser past intersection by a bit
+				PointF pW = new PointF(intersection.X - pV.X, intersection.Y - pV.Y);
+				float pF = 1 + (float) ((_minLength + 1)/Math.Sqrt((pW.X*pW.X + pW.Y*pW.Y)));
+				pW = new PointF(pV.X + pW.X*pF, pV.Y + pW.Y*pF);
+
+				if ((pW.X - pV.X)*(p2.Y - p1.Y) - (pW.Y - pV.Y)*(p2.X - p1.X) < 0)
 				{
 					PointF temp = pW;
 					pW = pV;
@@ -217,10 +259,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				riser.Point2 = p2 = pW;
 			}
 
-			private static PointF DrawExtenderLine(ILineSegmentGraphic extender, ref PointF p1, ref PointF p2, PointF intersection)
+			/// <summary>
+			/// Draws <paramref name="extender"/> to extend the vector P (defined by <paramref name="p1"/> <paramref name="p2"/>)
+			/// to the point where <paramref name="p1"/> <paramref name="pX"/> projects onto P. The projected point is returned.
+			/// Vector P is redefined to be the vector including the project point.
+			/// </summary>
+			private static PointF DrawExtenderLine(ILineSegmentGraphic extender, ref PointF p1, ref PointF p2, PointF pX)
 			{
-				float pF = DotProduct(p1, intersection, p1, p2)/DotProduct(p1, p2, p1, p2);
-				PointF pC = p1 + new SizeF(pF*(p2.X - p1.X), pF*(p2.Y - p1.Y));
+				float pF = DotProduct(p1, pX, p1, p2)/DotProduct(p1, p2, p1, p2);
+				PointF pC = new PointF(p1.X + pF*(p2.X - p1.X), p1.Y + pF*(p2.Y - p1.Y));
 
 				if (pF > 1)
 				{
@@ -238,6 +285,10 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				return pC;
 			}
 
+			/// <summary>
+			/// Draws <paramref name="callout"/> with the specified <paramref name="text"/> at <paramref name="location"/> with the callout
+			/// line originating from <paramref name="anchor"/>.
+			/// </summary>
 			private static void DrawAngleCallout(AngleCalloutGraphic callout, string text, PointF anchor, PointF location)
 			{
 				callout.Text = text;
@@ -284,28 +335,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				return false;
 			}
 
-			private static float Determinant(float m11, float m12, float m21, float m22)
-			{
-				return m11*m22 - m12*m21;
-			}
-
 			private static float DotProduct(PointF p1, PointF p2, PointF q1, PointF q2)
 			{
 				return (p2.X - p1.X)*(q2.X - q1.X) + (p2.Y - p1.Y)*(q2.Y - q1.Y);
-			}
-
-			private static PointF ExtendRay(PointF p1, PointF p2, float magnitude)
-			{
-				PointF v = p2 - new SizeF(p1);
-				float factor = 1+(float) (magnitude/Math.Sqrt((v.X*v.X + v.Y*v.Y)));
-				return p1 + new SizeF(v.X*factor, v.Y*factor);
-			}
-
-			private static PointF ClosestPointOnLine(PointF p1, PointF p2, PointF pX)
-			{
-				PointF v = p2 - new SizeF(p1);
-				float factor = ((pX.X - p1.X)*v.X + (pX.Y - p1.Y)*v.Y)/(v.X*v.X + v.Y*v.Y);
-				return p1 + new SizeF(v.X*factor, v.Y*factor);
 			}
 
 			private static PointF Intersect(PointF p1, PointF p2, PointF q1, PointF q2)

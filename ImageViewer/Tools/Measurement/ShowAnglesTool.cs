@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -48,32 +49,23 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	{
 		private event EventHandler _showAnglesChanged;
 		private DelayedEventPublisher _linesChangedEvent;
-		private ShowAnglesToolGraphic _showAnglesToolGraphic;
 		private IPointsGraphic _selectedLine;
-		private IPointsGraphic _focusedLine;
 		private bool _showAngles = false;
 
 		public override void Initialize()
 		{
 			base.Initialize();
 
-			_linesChangedEvent = new DelayedEventPublisher(OnLinesChanged);
-			_showAnglesToolGraphic = new ShowAnglesToolGraphic();
+			_linesChangedEvent = new DelayedEventPublisher(OnLinesChanged, 15);
 
-			base.ImageViewer.EventBroker.GraphicFocusChanged += OnGraphicFocusChanged;
+			base.ImageViewer.EventBroker.GraphicSelectionChanged += OnGraphicSelectionChanged;
 		}
 
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
-				base.ImageViewer.EventBroker.GraphicFocusChanged -= OnGraphicFocusChanged;
-
-				if (_showAnglesToolGraphic != null)
-				{
-					_showAnglesToolGraphic.Dispose();
-					_showAnglesToolGraphic = null;
-				}
+				base.ImageViewer.EventBroker.GraphicSelectionChanged -= OnGraphicSelectionChanged;
 
 				if (_linesChangedEvent != null)
 				{
@@ -86,27 +78,67 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		private void OnLinesChanged(object sender, EventArgs e)
 		{
-			GraphicCollection targetOverlayGraphics = null;
-			if (_showAngles // only if tool is enabled
-			    && !ReferenceEquals(_selectedLine, _focusedLine) // and we have to distinct lines
-			    && !ReferenceEquals(_selectedLine, null) && !ReferenceEquals(_focusedLine, null) // and neither are null
-			    && _selectedLine.Points.Count == 2 && _focusedLine.Points.Count == 2 // and both have two end points
-			    && _selectedLine.ParentPresentationImage == _focusedLine.ParentPresentationImage) // and both are on the same image
+			if (_selectedLine != null
+			    && _selectedLine.ParentPresentationImage is IOverlayGraphicsProvider)
+			{
+				IOverlayGraphicsProvider overlayGraphicsProvider = ((IOverlayGraphicsProvider) _selectedLine.ParentPresentationImage);
+				IList<IGraphic> freeAngleGraphics = CollectionUtils.Select(overlayGraphicsProvider.OverlayGraphics, g => g is ShowAnglesToolGraphic);
+
+				bool any = false;
+				if (_showAngles)
+				{
+					IList<IGraphic> otherGraphics = new List<IGraphic>(overlayGraphicsProvider.OverlayGraphics);
+					foreach (IGraphic line in otherGraphics)
+					{
+						IPointsGraphic otherLine = null;
+						SetLineGraphic(ref otherLine, line);
+						if (otherLine != null && !ReferenceEquals(otherLine, _selectedLine))
+							any |= DrawAngles(_selectedLine, otherLine, freeAngleGraphics);
+					}
+				}
+
+				any |= freeAngleGraphics.Count > 0;
+				foreach (IGraphic freeAngleGraphic in freeAngleGraphics)
+				{
+					overlayGraphicsProvider.OverlayGraphics.Remove(freeAngleGraphic);
+					freeAngleGraphic.Dispose();
+				}
+
+				if (any)
+					_selectedLine.ParentPresentationImage.Draw();
+			}
+		}
+
+		private static bool DrawAngles(IPointsGraphic _selectedLine, IPointsGraphic _focusedLine, IList<IGraphic> freeAngleGraphics)
+		{
+			if (_selectedLine.Points.Count == 2 && _focusedLine.Points.Count == 2)
 			{
 				// base.SelectedOverlayGraphicsProvider is NOT necessarily the same as _selectedLine.ParentPresentationImage
 				IOverlayGraphicsProvider overlayGraphicsProvider = _selectedLine.ParentPresentationImage as IOverlayGraphicsProvider;
-				if (overlayGraphicsProvider != null)
-					targetOverlayGraphics = overlayGraphicsProvider.OverlayGraphics;
-			}
+				if (overlayGraphicsProvider == null)
+					return false;
 
-			// the graphic must be moved before setting the data points, due to potential need for source/destination coordinate conversion
-			TranslocateGraphic(_showAnglesToolGraphic, targetOverlayGraphics);
+				GraphicCollection targetOverlayGraphics = overlayGraphicsProvider.OverlayGraphics;
 
-			if (targetOverlayGraphics != null)
-			{
-				_showAnglesToolGraphic.Set(_selectedLine.Points[0], _selectedLine.Points[1], _focusedLine.Points[0], _focusedLine.Points[1]);
-				_showAnglesToolGraphic.Draw();
+				ShowAnglesToolGraphic showAnglesToolGraphic = null;
+				if (freeAngleGraphics.Count > 0)
+				{
+					showAnglesToolGraphic = (ShowAnglesToolGraphic) freeAngleGraphics[0];
+					freeAngleGraphics.RemoveAt(0);
+				}
+				else
+				{
+					showAnglesToolGraphic = new ShowAnglesToolGraphic();
+					targetOverlayGraphics.Add(showAnglesToolGraphic);
+				}
+
+				if (targetOverlayGraphics != null)
+				{
+					showAnglesToolGraphic.Set(_selectedLine.Points[0], _selectedLine.Points[1], _focusedLine.Points[0], _focusedLine.Points[1]);
+					return true;
+				}
 			}
+			return false;
 		}
 
 		public bool ShowAngles
@@ -153,49 +185,18 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			_linesChangedEvent.Publish(this, EventArgs.Empty);
 		}
 
-		private void OnGraphicFocusChanged(object sender, GraphicFocusChangedEventArgs e)
+		private void OnGraphicSelectionChanged(object sender, GraphicSelectionChangedEventArgs e)
 		{
-			this.SetLineGraphic(ref _focusedLine, e.FocusedGraphic);
+			this.SetLineGraphic(ref _selectedLine, e.SelectedGraphic);
 
-			if (e.FocusedGraphic == null)
+			if (e.SelectedGraphic == null)
 			{
 				// if we're not focusing on anything, hide the angle immediately
 				_linesChangedEvent.PublishNow(this, EventArgs.Empty);
 			}
 			else
 			{
-				// always pick the selected graphic from the same presentation image as the current focused graphic
-				// there's no advantage to observing selected graphic change events since such an event is invariably preceded by a focus change
-				if (e.FocusedGraphic.ParentPresentationImage != null)
-					this.SetLineGraphic(ref _selectedLine, e.FocusedGraphic.ParentPresentationImage.SelectedGraphic);
-
 				_linesChangedEvent.Publish(this, EventArgs.Empty);
-			}
-		}
-
-		private static void TranslocateGraphic(IGraphic graphic, GraphicCollection target)
-		{
-			try
-			{
-				if (target != null && target.Contains(graphic))
-					return;
-
-				if (graphic.ParentGraphic is CompositeGraphic)
-				{
-					IGraphic oldParent = graphic.ParentGraphic;
-					((CompositeGraphic) graphic.ParentGraphic).Graphics.Remove(graphic);
-					oldParent.Draw();
-				}
-
-				if (target != null)
-				{
-					target.Add(graphic);
-				}
-			}
-			catch (Exception ex)
-			{
-				Platform.Log(LogLevel.Debug, ex, "Unexpected error");
-				throw;
 			}
 		}
 	}
