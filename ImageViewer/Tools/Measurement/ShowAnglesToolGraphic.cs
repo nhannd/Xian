@@ -112,8 +112,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			private void Update()
 			{
-				SetAngleCallout(_angleCalloutGraphic1, string.Empty, PointF.Empty, PointF.Empty);
-				SetAngleCallout(_angleCalloutGraphic2, string.Empty, PointF.Empty, PointF.Empty);
+				DrawAngleCallout(_angleCalloutGraphic1, string.Empty, PointF.Empty, PointF.Empty);
+				DrawAngleCallout(_angleCalloutGraphic2, string.Empty, PointF.Empty, PointF.Empty);
 				_extenderLine1.Visible = _extenderLine2.Visible = false;
 				_riserLine1.Visible = _riserLine2.Visible = false;
 
@@ -148,92 +148,44 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 						if (base.ParentPresentationImage.ClientRectangle.Contains(Point.Round(intersection)))
 						{
-							float pF = DotProduct(p1, intersection, p1, p2) / DotProduct(p1, p2, p1, p2);
-							float qF = DotProduct(q1, intersection, q1, q2) / DotProduct(q1, q2, q1, q2);
+							DrawExtenderLine(_extenderLine1, ref p1, ref p2, intersection);
+							DrawExtenderLine(_extenderLine2, ref q1, ref q2, intersection);
 
-							PointF pC = p1 + new SizeF(pF*(p2.X - p1.X), pF*(p2.Y - p1.Y));
-							PointF qC = q1 + new SizeF(qF*(q2.X - q1.X), qF*(q2.Y - q1.Y));
-
-							if (true)
-							{
-								PointF p1p = p1;
-								PointF p2p = p2;
-								PointF q1p = q1;
-								PointF q2p = q2;
-
-								if (pF > 1)
-								{
-									_extenderLine1.Visible = true;
-									_extenderLine1.Point1 = p2;
-									_extenderLine1.Point2 = p2p = pC;
-								}
-								else if (pF < 0)
-								{
-									_extenderLine1.Visible = true;
-									_extenderLine1.Point1 = p1p = pC;
-									_extenderLine1.Point2 = p1;
-								}
-
-								if (qF > 1)
-								{
-									_extenderLine2.Visible = true;
-									_extenderLine2.Point1 = q2;
-									_extenderLine2.Point2 = q2p = qC;
-								}
-								else if (qF < 0)
-								{
-									_extenderLine2.Visible = true;
-									_extenderLine2.Point1 = q1p = qC;
-									_extenderLine2.Point2 = q1;
-								}
-
-								DrawIntersection(p1p,p2p,q1p,q2p, intersection);
-							}
+							DrawIntersection(p1, p2, q1, q2, intersection);
 						}
 						else
 						{
 							// the virtual intersection isn't onscreen either - average the points to find a suitable intersection onscreen
 							intersection = new PointF((p1.X + p2.X + q1.X + q2.X)/4, (p1.Y + p2.Y + q1.Y + q2.Y)/4);
 
-							PointF pV = ClosestPointOnLine(p1, p2, intersection);
-							PointF qV = ClosestPointOnLine(q1, q2, intersection);
+							PointF pV = DrawExtenderLine(_extenderLine1, ref p1, ref p2, intersection);
+							PointF qV = DrawExtenderLine(_extenderLine2, ref q1, ref q2, intersection);
 
 							PointF pW = ExtendRay(pV, intersection, threshold + 1);
-							PointF qW = ExtendRay(qV, intersection, threshold + 1);
-
 							_riserLine1.Visible = true;
 							_riserLine1.Point1 = pV;
 							_riserLine1.Point2 = pW;
 
+							PointF qW = ExtendRay(qV, intersection, threshold + 1);
 							_riserLine2.Visible = true;
 							_riserLine2.Point1 = qV;
 							_riserLine2.Point2 = qW;
 
-							///
-
-							PointF pC = PointF.Empty;
-							PointF qC = PointF.Empty;
-							double pD = Vector.DistanceFromPointToLine(pV, p1, p2, ref pC);
-							double qD = Vector.DistanceFromPointToLine(qV, q1, q2, ref qC);
-
-							if (pD > 0.1)
+							if (Determinant(pW.X - pV.X, pW.Y - pV.Y, p2.X - p1.X, p2.Y - p1.Y) < 0)
 							{
-								_extenderLine1.Visible = true;
-								_extenderLine1.Point1 = pC;
-								_extenderLine1.Point2 = pV;
+								PointF temp = pW;
+								pW = pV;
+								pV = temp;
 							}
 
-							if (qD > 0.1)
+							if (Determinant(qW.X - qV.X, qW.Y - qV.Y, q2.X - q1.X, q2.Y - q1.Y) < 0)
 							{
-								_extenderLine2.Visible = true;
-								_extenderLine2.Point1 = qC;
-								_extenderLine2.Point2 = qV;
+								PointF temp = qW;
+								qW = qV;
+								qV = temp;
 							}
 
-							///
-
-
-							DrawIntersection(pV, pW, qW, qV, intersection);
+							DrawIntersection(pV, pW, qV, qW, intersection);
 						}
 					}
 				}
@@ -241,11 +193,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				{
 					this.ResetCoordinateSystem();
 				}
-			}
-
-			private void DrawExtender(PointF p1, PointF p2, PointF pW)
-			{
-				
 			}
 
 			private void DrawIntersection(PointF p1, PointF p2, PointF q1, PointF q2, PointF intersection)
@@ -258,30 +205,51 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				string textAngle = string.Format(SR.ToolsMeasurementFormatDegrees, angle);
 				string textComplementaryAngle = string.Format(SR.ToolsMeasurementFormatDegrees, 180 - angle);
 
+				Console.WriteLine("Prime Angle: {0:f2}", angle);
+
 				bool p1MeetsThreshold = Vector.Distance(p1, intersection) >= threshold;
 				bool p2MeetsThreshold = Vector.Distance(p2, intersection) >= threshold;
 				bool q1MeetsThreshold = Vector.Distance(q1, intersection) >= threshold;
 				bool q2MeetsThreshold = Vector.Distance(q2, intersection) >= threshold;
 
 				if (p2MeetsThreshold && q2MeetsThreshold)
-					SetAngleCallout(_angleCalloutGraphic1, textAngle, intersection, BisectAngle(p2, intersection, q2, angle > 30 ? calloutOffset : largerCalloutOffset));
+					DrawAngleCallout(_angleCalloutGraphic1, textAngle, intersection, BisectAngle(p2, intersection, q2, angle > 30 ? calloutOffset : largerCalloutOffset));
 				else if (p1MeetsThreshold && q1MeetsThreshold)
-					SetAngleCallout(_angleCalloutGraphic1, textAngle, intersection, BisectAngle(p1, intersection, q1, angle > 30 ? calloutOffset : largerCalloutOffset));
+					DrawAngleCallout(_angleCalloutGraphic1, textAngle, intersection, BisectAngle(p1, intersection, q1, angle > 30 ? calloutOffset : largerCalloutOffset));
 
 				if (p1MeetsThreshold && q2MeetsThreshold)
-					SetAngleCallout(_angleCalloutGraphic2, textComplementaryAngle, intersection, BisectAngle(q2, intersection, p1, angle < 150 ? calloutOffset : largerCalloutOffset));
+					DrawAngleCallout(_angleCalloutGraphic2, textComplementaryAngle, intersection, BisectAngle(q2, intersection, p1, angle < 150 ? calloutOffset : largerCalloutOffset));
 				else if (p2MeetsThreshold && q1MeetsThreshold)
-					SetAngleCallout(_angleCalloutGraphic2, textComplementaryAngle, intersection, BisectAngle(q1, intersection, p2, angle < 150 ? calloutOffset : largerCalloutOffset));
+					DrawAngleCallout(_angleCalloutGraphic2, textComplementaryAngle, intersection, BisectAngle(q1, intersection, p2, angle < 150 ? calloutOffset : largerCalloutOffset));
 			}
 
-			private void SetAngleCallout(AngleCalloutGraphic callout, string text, PointF anchor, PointF location)
+			private static PointF DrawExtenderLine(ILineSegmentGraphic extender, ref PointF p1, ref PointF p2, PointF intersection)
+			{
+				float pF = DotProduct(p1, intersection, p1, p2)/DotProduct(p1, p2, p1, p2);
+				PointF pC = p1 + new SizeF(pF*(p2.X - p1.X), pF*(p2.Y - p1.Y));
+
+				if (pF > 1)
+				{
+					extender.Visible = true;
+					extender.Point1 = p2;
+					extender.Point2 = p2 = pC;
+				}
+				else if (pF < 0)
+				{
+					extender.Visible = true;
+					extender.Point2 = p1;
+					extender.Point1 = p1 = pC;
+				}
+
+				return pC;
+			}
+
+			private static void DrawAngleCallout(AngleCalloutGraphic callout, string text, PointF anchor, PointF location)
 			{
 				callout.Text = text;
 				callout.Visible = !string.IsNullOrEmpty(text);
-				callout.CoordinateSystem = this.CoordinateSystem;
 				callout.AnchorPoint = anchor;
 				callout.TextLocation = location;
-				callout.ResetCoordinateSystem();
 			}
 
 			private double ComputeAngle()
