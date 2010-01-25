@@ -183,14 +183,17 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			public override Image CreateIcon(IconSize iconSize, IResourceResolver resourceResolver)
 			{
 				Image iconBase = base.CreateIcon(iconSize, resourceResolver);
-				Image iconOverlay = GetButtonOverlay(iconSize);
-				if (iconOverlay != null)
+				if (MouseToolSettings.Default.ShowMouseButtonIconOverlay)
 				{
-					using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(iconBase))
+					Image iconOverlay = GetButtonOverlay(iconSize);
+					if (iconOverlay != null)
 					{
-						g.DrawImageUnscaledAndClipped(iconOverlay, new Rectangle(Point.Empty, iconBase.Size));
+						using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(iconBase))
+						{
+							g.DrawImageUnscaledAndClipped(iconOverlay, new Rectangle(Point.Empty, iconBase.Size));
+						}
+						iconOverlay.Dispose();
 					}
-					iconOverlay.Dispose();
 				}
 				return iconBase;
 			}

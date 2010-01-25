@@ -33,5 +33,17 @@ namespace ClearCanvas.ImageViewer.BaseTools {
                 this["DefaultProfile"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShowMouseButtonIconOverlay {
+            get {
+                return ((bool)(this["ShowMouseButtonIconOverlay"]));
+            }
+            set {
+                this["ShowMouseButtonIconOverlay"] = value;
+            }
+        }
     }
 }
