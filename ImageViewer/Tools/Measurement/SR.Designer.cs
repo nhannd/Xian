@@ -232,6 +232,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Angles.
+        /// </summary>
+        public static string MenuShowAngles {
+            get {
+                return ResourceManager.GetString("MenuShowAngles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Length must be greater than 0 cm..
         /// </summary>
         public static string MessageInvalidLength {
@@ -291,6 +300,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         public static string ToolbarRuler {
             get {
                 return ResourceManager.GetString("ToolbarRuler", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Angles.
+        /// </summary>
+        public static string ToolbarShowAngles {
+            get {
+                return ResourceManager.GetString("ToolbarShowAngles", resourceCulture);
             }
         }
         
@@ -363,6 +381,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         public static string TooltipRuler {
             get {
                 return ResourceManager.GetString("TooltipRuler", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Angles.
+        /// </summary>
+        public static string TooltipShowAngles {
+            get {
+                return ResourceManager.GetString("TooltipShowAngles", resourceCulture);
             }
         }
     }

@@ -41,14 +41,17 @@ using ClearCanvas.ImageViewer.InteractiveGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	[ButtonAction("activate", "global-toolbars/MenuShowAngles", "ToggleShowAngles")]
+	[MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuShowAngles", "ToggleShowAngles")]
+	[ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarShowAngles", "ToggleShowAngles")]
 	[CheckedStateObserver("activate", "ShowAngles", "ShowAnglesChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.ShowAnglesToolSmall.png", "Icons.ShowAnglesToolMedium.png", "Icons.ShowAnglesToolLarge.png")]
+	[Tooltip("activate", "TooltipShowAngles")]
+	[GroupHint("activate", "Tools.Image.Measurement.Angle")]
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	public partial class ShowAnglesTool : ImageViewerTool
 	{
 		private event EventHandler _showAnglesChanged;
-		private DelayedEventPublisher _linesChangedEvent;
+		private DelayedEventPublisher _updateEventPublisher;
 		private IPointsGraphic _selectedLine;
 		private bool _showAngles = false;
 
@@ -56,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			base.Initialize();
 
-			_linesChangedEvent = new DelayedEventPublisher(OnLinesChanged, 15);
+			_updateEventPublisher = new DelayedEventPublisher(OnUpdate, 15);
 
 			base.ImageViewer.EventBroker.GraphicSelectionChanged += OnGraphicSelectionChanged;
 		}
@@ -67,54 +70,98 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			{
 				base.ImageViewer.EventBroker.GraphicSelectionChanged -= OnGraphicSelectionChanged;
 
-				if (_linesChangedEvent != null)
+				if (_updateEventPublisher != null)
 				{
-					_linesChangedEvent.Dispose();
-					_linesChangedEvent = null;
+					_updateEventPublisher.Dispose();
+					_updateEventPublisher = null;
 				}
 			}
 			base.Dispose(disposing);
 		}
 
-		private void OnLinesChanged(object sender, EventArgs e)
+		public IPointsGraphic SelectedLine
 		{
-			if (_selectedLine != null
-			    && _selectedLine.ParentPresentationImage is IOverlayGraphicsProvider)
+			get { return _selectedLine; }
+			set
 			{
-				IOverlayGraphicsProvider overlayGraphicsProvider = ((IOverlayGraphicsProvider) _selectedLine.ParentPresentationImage);
+				if (_selectedLine != value)
+				{
+					if (_selectedLine != null)
+					{
+						_selectedLine.Points.PointAdded -= OnSelectedLinePointChanged;
+						_selectedLine.Points.PointChanged -= OnSelectedLinePointChanged;
+						_selectedLine.Points.PointRemoved -= OnSelectedLinePointChanged;
+						_selectedLine.Points.PointsCleared -= OnSelectedLinePointsCleared;
+					}
+
+					_selectedLine = value;
+
+					if (_selectedLine != null)
+					{
+						_selectedLine.Points.PointAdded += OnSelectedLinePointChanged;
+						_selectedLine.Points.PointChanged += OnSelectedLinePointChanged;
+						_selectedLine.Points.PointRemoved += OnSelectedLinePointChanged;
+						_selectedLine.Points.PointsCleared += OnSelectedLinePointsCleared;
+					}
+				}
+			}
+		}
+
+		private void OnSelectedLinePointsCleared(object sender, EventArgs e)
+		{
+			_updateEventPublisher.Publish(this, EventArgs.Empty);
+		}
+
+		private void OnSelectedLinePointChanged(object sender, IndexEventArgs e)
+		{
+			_updateEventPublisher.Publish(this, EventArgs.Empty);
+		}
+
+		private void OnUpdate(object sender, EventArgs e)
+		{
+			IPresentationImage ownerImage = null;
+			if (this.SelectedLine != null)
+				ownerImage = this.SelectedLine.ParentPresentationImage;
+			else
+				ownerImage = base.SelectedPresentationImage;
+
+			if (ownerImage is IOverlayGraphicsProvider)
+			{
+				IOverlayGraphicsProvider overlayGraphicsProvider = (IOverlayGraphicsProvider) ownerImage;
 				IList<IGraphic> freeAngleGraphics = CollectionUtils.Select(overlayGraphicsProvider.OverlayGraphics, g => g is ShowAnglesToolGraphic);
 
-				bool any = false;
-				if (_showAngles)
+				bool drawRequired = false;
+				if (_showAngles && this.SelectedLine != null)
 				{
 					IList<IGraphic> otherGraphics = new List<IGraphic>(overlayGraphicsProvider.OverlayGraphics);
 					foreach (IGraphic line in otherGraphics)
 					{
-						IPointsGraphic otherLine = null;
-						SetLineGraphic(ref otherLine, line);
-						if (otherLine != null && !ReferenceEquals(otherLine, _selectedLine))
-							any |= DrawAngles(_selectedLine, otherLine, freeAngleGraphics);
+						IPointsGraphic otherLine = GetLine(line);
+						if (otherLine != null && !ReferenceEquals(otherLine, this.SelectedLine))
+							drawRequired |= DrawAngles(this.SelectedLine, otherLine, freeAngleGraphics);
 					}
 				}
 
-				any |= freeAngleGraphics.Count > 0;
+				drawRequired |= freeAngleGraphics.Count > 0;
 				foreach (IGraphic freeAngleGraphic in freeAngleGraphics)
 				{
 					overlayGraphicsProvider.OverlayGraphics.Remove(freeAngleGraphic);
 					freeAngleGraphic.Dispose();
 				}
 
-				if (any)
-					_selectedLine.ParentPresentationImage.Draw();
+				if (drawRequired)
+					ownerImage.Draw();
 			}
 		}
 
-		private static bool DrawAngles(IPointsGraphic _selectedLine, IPointsGraphic _focusedLine, IList<IGraphic> freeAngleGraphics)
+		private static bool DrawAngles(IPointsGraphic baseLine, IPointsGraphic otherLine, IList<IGraphic> freeAngleGraphics)
 		{
-			if (_selectedLine.Points.Count == 2 && _focusedLine.Points.Count == 2)
+			if (baseLine == null || otherLine == null || baseLine.ParentPresentationImage != otherLine.ParentPresentationImage)
+				return false;
+
+			if (baseLine.Points.Count == 2 && otherLine.Points.Count == 2)
 			{
-				// base.SelectedOverlayGraphicsProvider is NOT necessarily the same as _selectedLine.ParentPresentationImage
-				IOverlayGraphicsProvider overlayGraphicsProvider = _selectedLine.ParentPresentationImage as IOverlayGraphicsProvider;
+				IOverlayGraphicsProvider overlayGraphicsProvider = baseLine.ParentPresentationImage as IOverlayGraphicsProvider;
 				if (overlayGraphicsProvider == null)
 					return false;
 
@@ -134,7 +181,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 				if (targetOverlayGraphics != null)
 				{
-					showAnglesToolGraphic.Set(_selectedLine.Points[0], _selectedLine.Points[1], _focusedLine.Points[0], _focusedLine.Points[1]);
+					showAnglesToolGraphic.Set(baseLine.Points[0], baseLine.Points[1], otherLine.Points[0], otherLine.Points[1]);
 					return true;
 				}
 			}
@@ -149,7 +196,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				if (_showAngles != value)
 				{
 					_showAngles = value;
-					_linesChangedEvent.PublishNow(this, EventArgs.Empty);
+					_updateEventPublisher.PublishNow(this, EventArgs.Empty);
 					EventsHelper.Fire(_showAnglesChanged, this, EventArgs.Empty);
 				}
 			}
@@ -166,38 +213,42 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			this.ShowAngles = !this.ShowAngles;
 		}
 
-		private void SetLineGraphic(ref IPointsGraphic lineVariable, IGraphic value)
+		private void HandleGraphicSelectionChange(IGraphic graphic)
 		{
-			if (lineVariable != null)
-				lineVariable.Points.PointChanged -= OnLineGraphicPointChanged;
+			this.SelectedLine = GetLine(graphic);
 
-			if (value is IControlGraphic)
-				lineVariable = ((IControlGraphic) value).Subject as IPointsGraphic;
+			if (graphic == null)
+			{
+				// if we're not focusing on anything, hide the angle immediately
+				_updateEventPublisher.PublishNow(this, EventArgs.Empty);
+			}
 			else
-				lineVariable = value as IPointsGraphic;
-
-			if (lineVariable != null)
-				lineVariable.Points.PointChanged += OnLineGraphicPointChanged;
+			{
+				_updateEventPublisher.Publish(this, EventArgs.Empty);
+			}
 		}
 
-		private void OnLineGraphicPointChanged(object sender, IndexEventArgs e)
+		protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
 		{
-			_linesChangedEvent.Publish(this, EventArgs.Empty);
+			base.OnPresentationImageSelected(sender, e);
+
+			if (e.SelectedPresentationImage != null)
+			{
+				this.HandleGraphicSelectionChange(e.SelectedPresentationImage.SelectedGraphic);
+			}
 		}
 
 		private void OnGraphicSelectionChanged(object sender, GraphicSelectionChangedEventArgs e)
 		{
-			this.SetLineGraphic(ref _selectedLine, e.SelectedGraphic);
+			this.HandleGraphicSelectionChange(e.SelectedGraphic);
+		}
 
-			if (e.SelectedGraphic == null)
-			{
-				// if we're not focusing on anything, hide the angle immediately
-				_linesChangedEvent.PublishNow(this, EventArgs.Empty);
-			}
+		private static IPointsGraphic GetLine(IGraphic graphic)
+		{
+			if (graphic is IControlGraphic)
+				return ((IControlGraphic) graphic).Subject as IPointsGraphic;
 			else
-			{
-				_linesChangedEvent.Publish(this, EventArgs.Empty);
-			}
+				return graphic as IPointsGraphic;
 		}
 	}
 }

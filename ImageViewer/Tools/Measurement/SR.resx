@@ -219,4 +219,13 @@
   <data name="FormatProtractorName" xml:space="preserve">
     <value>Protractor {0}</value>
   </data>
+  <data name="MenuShowAngles" xml:space="preserve">
+    <value>Show Angles</value>
+  </data>
+  <data name="ToolbarShowAngles" xml:space="preserve">
+    <value>Show Angles</value>
+  </data>
+  <data name="TooltipShowAngles" xml:space="preserve">
+    <value>Show Angles</value>
+  </data>
 </root>
