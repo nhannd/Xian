@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
@@ -61,13 +62,25 @@ namespace ClearCanvas.ImageServer.Core.Rebuild
 			foreach (SeriesXml series in currentXml)
 			{
 				string seriesPath = Path.Combine(_rootPath, series.SeriesInstanceUid);
-				foreach (InstanceXml instance in series)
-				{
-					string instancePath = Path.Combine(seriesPath, instance.SopInstanceUid + ServerPlatform.DicomFileExtension);
+                if (!Directory.Exists(seriesPath))
+                {
+                    Platform.Log(LogLevel.Info, "RebuildXML: series folder {0} is missing", seriesPath);
+                    continue;
+                }
 
-					if (!theProcessor.ExecuteSubCommand(this, new InsertInstanceXmlCommand(newXml, instancePath)))
-						throw new ApplicationException(theProcessor.FailureReason);
-				}
+			    foreach (InstanceXml instance in series)
+			    {
+			        string instancePath = Path.Combine(seriesPath, instance.SopInstanceUid + ServerPlatform.DicomFileExtension);
+			        if (!File.Exists(instancePath))
+			        {
+                        Platform.Log(LogLevel.Info, "RebuildXML: file {0} is missing", instancePath);
+			        }
+			        else
+			        {
+			            if (!theProcessor.ExecuteSubCommand(this, new InsertInstanceXmlCommand(newXml, instancePath)))
+			                throw new ApplicationException(theProcessor.FailureReason);
+			        }
+			    }
 			}
 
 			if (!theProcessor.ExecuteSubCommand(this, new SaveXmlCommand(newXml, _rootPath, _studyInstanceUid)))
