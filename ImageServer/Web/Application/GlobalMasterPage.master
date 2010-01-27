@@ -8,12 +8,11 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
+    <meta http-equiv="X-UA-Compatible" content="IE=7" />
     <title></title>
     <style runat="server" type="text/css" id="IE6PNGBugFixCSS" />
-    <link rel="shortcut icon" type="image/ico" runat="server" href="~/Images/favicon.ico" />
-    
-    <ccAsp:JQuery ID="MainJQuery" MultiSelect="true" Effects="true" runat="server" />
-        
+    <link rel="shortcut icon" type="image/ico" runat="server" href="~/Images/favicon.ico" />   
+    <ccAsp:JQuery ID="MainJQuery" MultiSelect="true" Effects="true" runat="server" />        
 </head>
 <body id="MasterBody" class="GlobalBody">
     
