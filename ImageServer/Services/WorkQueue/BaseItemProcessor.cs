@@ -130,17 +130,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         protected Study _theStudy;
     	private bool _cancelPending;
     	private readonly object _syncRoot = new object();
-        private StudyIntegrityValidationModes _validationModes = StudyIntegrityValidationModes.None;
     	private WorkQueueTypeProperties _workQueueProperties;
 
         #endregion
 
         #region Constructors
-
-    	protected BaseItemProcessor()
-        {
-            _validationModes = GetValidationTypes();
-        }
 
         #endregion
 
@@ -256,12 +250,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             }
         }
 
-        protected StudyIntegrityValidationModes ValidationModes
-        {
-            get { return _validationModes; }
-            set { _validationModes = value; }
-        }
-
         #endregion
 
         #region Protected Methods
@@ -352,10 +340,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 case RecoveryModes.Automatic:
                     try
                     {
-                        if (PerformAutoRecovery(item, reason))
+                        AutoRecoveryResult result = PerformAutoRecovery(item, reason);
+                        if (result.Successful)
                         {
-                            Platform.Log(LogLevel.Info, "Auto-recovery was successful (some operations may still be pending). Current {0} entry will resume later.", item.WorkQueueTypeEnum);
-                            PostponeItem("Auto-recovery was triggered.");
+                            if (result.ReprocessWorkQueueEntry != null)
+                            {
+                                Platform.Log(LogLevel.Info, "Study needs to be reprocessed first. Current {0} entry will resume later.", item.WorkQueueTypeEnum);
+                                PostponeItem(String.Format("{0}. Study needs to be reprocessed first.", reason), WorkQueueProcessorFailureType.NonFatal);
+                            }
+                            else
+                            {
+                                // auto-recovery without triggering any ReprocessStudy 
+                                Platform.Log(LogLevel.Info, "Auto-recovery was successful. Current {0} entry will resume later.", item.WorkQueueTypeEnum);
+                                PostponeItem(String.Format("{0}. Auto-recovery was triggered.", reason), WorkQueueProcessorFailureType.NonFatal);
+                            }
                         }
                         else
                         {
@@ -378,6 +376,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             }
 
         }
+
 
         protected void RemoveBadDicomFile(string file, string reason)
         {
@@ -519,11 +518,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             {
                 if (WorkQueueSettings.Instance.EnableStudyIntegrityValidation)
                 {
-                    if (ValidationModes != StudyIntegrityValidationModes.None)
-                    {
-                        Platform.Log(LogLevel.Info, "{0} has completed (GUID={1})", item.WorkQueueTypeEnum, item.GetKey().Key);
-                        VerifyStudy(StorageLocation);
-                    }
+                    Platform.Log(LogLevel.Info, "{0} has completed (GUID={1})", item.WorkQueueTypeEnum, item.GetKey().Key);
+                    VerifyStudy(StorageLocation);
                 }
             }
 
@@ -780,14 +776,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             {
                 try
                 {
+                    int count = retryCount;
                     DBUpdateTime.Add(
                         delegate
                         {
                             #region Fail the WorkQueue entry
                             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                             {
-                                if (retryCount>0)
-                                    Platform.Log(LogLevel.Error, "Abort {0} WorkQueue entry ({1}). Retry # {2}. Reason: {3}", item.WorkQueueTypeEnum, item.GetKey(), retryCount, failureDescription);
+                                if (count>0)
+                                    Platform.Log(LogLevel.Error, "Abort {0} WorkQueue entry ({1}). Retry # {2}. Reason: {3}", item.WorkQueueTypeEnum, item.GetKey(), count, failureDescription);
                                 else
                                     Platform.Log(LogLevel.Error, "Abort {0} WorkQueue entry ({1}). Reason: {2}", item.WorkQueueTypeEnum, item.GetKey(), failureDescription);
                                 IUpdateWorkQueue broker = updateContext.GetBroker<IUpdateWorkQueue>();
@@ -1107,15 +1104,27 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
            return theXml;
         }
 
+
+        private void PostponeItem(string reason, WorkQueueProcessorFailureType errorType)
+        {
+            DateTime newScheduledTime = Platform.Time.AddSeconds(WorkQueueProperties.PostponeDelaySeconds);
+            DateTime expireTime = newScheduledTime.Add(TimeSpan.FromMinutes(2));
+            PostponeItem(newScheduledTime, expireTime, reason, errorType);
+        }
+
         protected void PostponeItem(string reasonText)
         {
             DateTime newScheduledTime = Platform.Time.AddSeconds(WorkQueueProperties.PostponeDelaySeconds);
             DateTime expireTime = newScheduledTime.Add(TimeSpan.FromMinutes(2));
-            PostponeItem(newScheduledTime, expireTime, reasonText);
+            PostponeItem(newScheduledTime, expireTime, reasonText, null);
         }
 
-        
-        protected void PostponeItem(DateTime newScheduledTime, DateTime expireTime, string postponeReason)
+        protected void PostponeItem(DateTime newScheduledTime, DateTime expireTime, string reason)
+        {
+            PostponeItem(newScheduledTime, expireTime, reason, null);
+        }
+
+        protected void PostponeItem(DateTime newScheduledTime, DateTime expireTime, string postponeReason, WorkQueueProcessorFailureType? errorType)
         {
             Model.WorkQueue item = WorkQueueItem;
             DBUpdateTime.Add(
@@ -1133,7 +1142,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                    }
                    else
                    {
-                       InternalPostponeWorkQueue(item, newScheduledTime, expireTime, postponeReason, !updatedBefore);
+                       InternalPostponeWorkQueue(item, newScheduledTime, expireTime, postponeReason, !updatedBefore, errorType);
                    }
                }
                );
@@ -1180,8 +1189,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
             return false;
         }
-        private static void InternalPostponeWorkQueue(Model.WorkQueue item, DateTime newScheduledTime, DateTime expireTime, string reasonText, bool updateWorkQueueEntry)
+        private void InternalPostponeWorkQueue(Model.WorkQueue item, DateTime newScheduledTime, DateTime expireTime, string reasonText,
+            bool updateWorkQueueEntry, WorkQueueProcessorFailureType? errorType)
         {
+            if (errorType!=null)
+            {
+                Platform.Log(LogLevel.Info, "Postpone {0} entry until {1}: {2}. [GUID={3}.] (This transaction is treated as a failure)", 
+                            item.WorkQueueTypeEnum, newScheduledTime, reasonText, item.GetKey());
+                item.FailureDescription = reasonText;
+                PostProcessingFailure(item, WorkQueueProcessorFailureType.NonFatal);
+                return;
+            }
+
             Platform.Log(LogLevel.Info, "Postpone {0} entry until {1}: {2}. [GUID={3}]", item.WorkQueueTypeEnum, newScheduledTime, reasonText, item.GetKey());
 
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
@@ -1285,10 +1304,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             return contextData;
         }
 
+        
 
-
-        protected static bool PerformAutoRecovery(Model.WorkQueue item, string reason)
+        protected static AutoRecoveryResult PerformAutoRecovery(Model.WorkQueue item, string reason)
         {
+            AutoRecoveryResult result;
+
             //Note: need to reload the storage location because it may have changed after the processing (eg, tier migration)
             IList<StudyStorageLocation> storageLocations = StudyStorageLocation.FindStorageLocations(StudyStorage.Load(item.StudyStorageKey));
             // storageLocations cannot be null for this operation
@@ -1322,8 +1343,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 String reprocessReason = String.Format("Auto-recovery from {0}. {1}", item.WorkQueueTypeEnum, reason);
                 Model.WorkQueue reprocessEntry = reprocessor.ReprocessStudy(reprocessReason, storageLocation, Platform.Time);
 
-                return reprocessEntry!=null;
+                result = new AutoRecoveryResult
+                                                {
+                                                    Successful = reprocessEntry!=null, 
+                                                    ReprocessWorkQueueEntry=reprocessEntry
+                                                };
+                return result;
             }
+
         	Log(LogLevel.Info, "AUTO-RECOVERY", "# of study related instances in study Xml ({0}) appears correct. Update database based on study xml", numStudyRelatedInstancesInXml);
         	// update the counts in db to match the study xml
         	// Update count for each series 
@@ -1364,8 +1391,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         			Log(LogLevel.Info, "AUTO-RECOVERY", "Found series in the db which does not exist in the study xml. Force to reprocess the study.");
         			StudyReprocessor reprocessor = new StudyReprocessor();
         			String reprocessReason = String.Format("Auto-recovery from {0}. {1}", item.WorkQueueTypeEnum, reason);
-        			reprocessor.ReprocessStudy(reprocessReason, storageLocation, Platform.Time);
+        			Model.WorkQueue reprocessEntry = reprocessor.ReprocessStudy(reprocessReason, storageLocation, Platform.Time);
+                    result = new AutoRecoveryResult
+                    {
+                        Successful = reprocessEntry != null,
+                        ReprocessWorkQueueEntry = reprocessEntry
+                    };
 
+                    return result;
         		}
         	}
 
@@ -1394,7 +1427,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         	}
 
         	Log(LogLevel.Info, "AUTO-RECOVERY", "Object count in the db have been corrected.");
-        	return true;
+            
+            result = new AutoRecoveryResult
+            {
+                Successful = true
+            };
+
+            return result;
         }
 
         
@@ -1575,9 +1614,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             return mode;
         }
 
-        private StudyIntegrityValidationModes GetValidationTypes()
+        protected virtual StudyIntegrityValidationModes GetValidationMode()
         {
-            if (!_processorsValidationSettings.TryGetValue(GetType(), out _validationModes))
+            StudyIntegrityValidationModes validationModes;
+            if (!_processorsValidationSettings.TryGetValue(GetType(), out validationModes))
             {
                 object[] attributes = GetType().GetCustomAttributes(typeof(StudyIntegrityValidationAttribute), true);
                 if (attributes != null && attributes.Length > 0)
@@ -1588,24 +1628,35 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 }
             }
 
-            return _validationModes;
+            return validationModes;
         }
 
         private void VerifyStudy(StudyStorageLocation studyStorage)
         {
             Platform.CheckForNullReference(studyStorage, "studyStorage");
-            Platform.Log(LogLevel.Info, "Verifying study {0}", studyStorage.StudyInstanceUid);
-            using (new ExecutionContext())
+            StudyIntegrityValidationModes mode = GetValidationMode();
+            if (mode != StudyIntegrityValidationModes.None)
             {
-                StudyIntegrityValidator validator = new StudyIntegrityValidator();
-                validator.ValidateStudyState(WorkQueueItem.WorkQueueTypeEnum.ToString(), studyStorage, ValidationModes);
+                Platform.Log(LogLevel.Info, "Verifying study {0}", studyStorage.StudyInstanceUid);
+                using (new ExecutionContext())
+                {
+                    StudyIntegrityValidator validator = new StudyIntegrityValidator();
+                    validator.ValidateStudyState(WorkQueueItem.WorkQueueTypeEnum.ToString(), studyStorage, mode);
+                }
+                Platform.Log(LogLevel.Info, "Study {0} has been verified", studyStorage.StudyInstanceUid);
             }
-            Platform.Log(LogLevel.Info, "Study {0} has been verified", studyStorage.StudyInstanceUid);
+            
             
         }
 
         #endregion
 
 
+    }
+
+    public class AutoRecoveryResult
+    {
+        public bool Successful { get; set; }
+        public Model.WorkQueue ReprocessWorkQueueEntry { get; set; }
     }
 }

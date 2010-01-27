@@ -63,6 +63,25 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
 
         #region Overridden Protected Methods
 
+        /// <summary>
+        /// Overrides the base method to return the validation mode based on the deletion level
+        /// </summary>
+        /// <returns></returns>
+        protected override StudyIntegrityValidationModes GetValidationMode()
+        {
+            switch(_level)
+            {
+                case DeletionLevel.Study:
+                	// There's no need to verify the study if it will be deleted.
+                    return StudyIntegrityValidationModes.None; 
+
+                case DeletionLevel.Series:
+                    return StudyIntegrityValidationModes.Default;
+            }
+
+            return StudyIntegrityValidationModes.Default;
+        }
+
         protected override void OnProcessItemBegin(Model.WorkQueue item)
         {
             base.OnProcessItemBegin(item);
