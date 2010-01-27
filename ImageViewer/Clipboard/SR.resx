@@ -139,7 +139,7 @@
     <value>Subset (Range)</value>
   </data>
   <data name="DescriptionTiff" xml:space="preserve">
-    <value>Tag Image File Format (TIFF)</value>
+    <value>Tagged Image File Format (TIFF)</value>
   </data>
   <data name="LabelExportFile" xml:space="preserve">
     <value>Destination file</value>
@@ -293,5 +293,8 @@
   </data>
   <data name="TooltipShowClipboard" xml:space="preserve">
     <value>Show Clipboard</value>
+  </data>
+  <data name="DescriptionAvi" xml:space="preserve">
+    <value>AVI Video Files</value>
   </data>
 </root>

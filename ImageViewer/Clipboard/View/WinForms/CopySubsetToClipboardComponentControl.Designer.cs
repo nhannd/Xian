@@ -59,6 +59,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CopySubsetToClipboardComponentControl));
 			this._radioCopyCustom = new System.Windows.Forms.RadioButton();
 			this._radioCopyRange = new System.Windows.Forms.RadioButton();
 			this.label2 = new System.Windows.Forms.Label();
@@ -86,99 +87,64 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			// 
 			// _radioCopyCustom
 			// 
-			this._radioCopyCustom.AutoSize = true;
-			this._radioCopyCustom.Location = new System.Drawing.Point(14, 259);
+			resources.ApplyResources(this._radioCopyCustom, "_radioCopyCustom");
 			this._radioCopyCustom.Name = "_radioCopyCustom";
-			this._radioCopyCustom.Size = new System.Drawing.Size(60, 17);
-			this._radioCopyCustom.TabIndex = 12;
-			this._radioCopyCustom.Text = "Custom";
 			this._radioCopyCustom.UseVisualStyleBackColor = true;
 			// 
 			// _radioCopyRange
 			// 
-			this._radioCopyRange.AutoSize = true;
-			this._radioCopyRange.Location = new System.Drawing.Point(14, 124);
+			resources.ApplyResources(this._radioCopyRange, "_radioCopyRange");
 			this._radioCopyRange.Name = "_radioCopyRange";
-			this._radioCopyRange.Size = new System.Drawing.Size(67, 17);
-			this._radioCopyRange.TabIndex = 3;
-			this._radioCopyRange.Text = "Between";
 			this._radioCopyRange.UseVisualStyleBackColor = true;
 			// 
 			// label2
 			// 
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(181, 126);
+			resources.ApplyResources(this.label2, "label2");
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(25, 13);
-			this.label2.TabIndex = 5;
-			this.label2.Text = "and";
 			// 
 			// _copyRangeStart
 			// 
-			this._copyRangeStart.Location = new System.Drawing.Point(90, 123);
+			resources.ApplyResources(this._copyRangeStart, "_copyRangeStart");
 			this._copyRangeStart.Name = "_copyRangeStart";
-			this._copyRangeStart.Size = new System.Drawing.Size(85, 20);
-			this._copyRangeStart.TabIndex = 4;
 			// 
 			// _copyRangeEnd
 			// 
-			this._copyRangeEnd.Location = new System.Drawing.Point(211, 123);
+			resources.ApplyResources(this._copyRangeEnd, "_copyRangeEnd");
 			this._copyRangeEnd.Name = "_copyRangeEnd";
-			this._copyRangeEnd.Size = new System.Drawing.Size(85, 20);
-			this._copyRangeEnd.TabIndex = 6;
 			// 
 			// _customRange
 			// 
-			this._customRange.Location = new System.Drawing.Point(90, 258);
+			resources.ApplyResources(this._customRange, "_customRange");
 			this._customRange.Name = "_customRange";
-			this._customRange.Size = new System.Drawing.Size(255, 20);
-			this._customRange.TabIndex = 13;
 			// 
 			// _radioCopyRangeAll
 			// 
-			this._radioCopyRangeAll.AutoSize = true;
-			this._radioCopyRangeAll.Location = new System.Drawing.Point(8, 19);
+			resources.ApplyResources(this._radioCopyRangeAll, "_radioCopyRangeAll");
 			this._radioCopyRangeAll.Name = "_radioCopyRangeAll";
-			this._radioCopyRangeAll.Size = new System.Drawing.Size(98, 17);
-			this._radioCopyRangeAll.TabIndex = 8;
-			this._radioCopyRangeAll.Text = "Copy all images";
 			this._radioCopyRangeAll.UseVisualStyleBackColor = true;
 			this._radioCopyRangeAll.CheckedChanged += new System.EventHandler(this.OnRangeCopyAllImagesCheckedChanged);
 			// 
 			// label1
 			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(209, 49);
+			resources.ApplyResources(this.label1, "label1");
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(40, 13);
-			this.label1.TabIndex = 11;
-			this.label1.Text = "images";
 			// 
 			// _radioCopyRangeAtInterval
 			// 
-			this._radioCopyRangeAtInterval.AutoSize = true;
-			this._radioCopyRangeAtInterval.Location = new System.Drawing.Point(8, 47);
+			resources.ApplyResources(this._radioCopyRangeAtInterval, "_radioCopyRangeAtInterval");
 			this._radioCopyRangeAtInterval.Name = "_radioCopyRangeAtInterval";
-			this._radioCopyRangeAtInterval.Size = new System.Drawing.Size(110, 17);
-			this._radioCopyRangeAtInterval.TabIndex = 9;
-			this._radioCopyRangeAtInterval.Text = "Copy at interval of";
 			this._radioCopyRangeAtInterval.UseVisualStyleBackColor = true;
 			this._radioCopyRangeAtInterval.CheckedChanged += new System.EventHandler(this.OnRangeCopyAtIntervalCheckedChanged);
 			// 
 			// _copyRangeInterval
 			// 
-			this._copyRangeInterval.Location = new System.Drawing.Point(121, 46);
+			resources.ApplyResources(this._copyRangeInterval, "_copyRangeInterval");
 			this._copyRangeInterval.Name = "_copyRangeInterval";
-			this._copyRangeInterval.Size = new System.Drawing.Size(85, 20);
-			this._copyRangeInterval.TabIndex = 10;
 			// 
 			// _sendToClipboardButton
 			// 
-			this._sendToClipboardButton.Location = new System.Drawing.Point(235, 296);
+			resources.ApplyResources(this._sendToClipboardButton, "_sendToClipboardButton");
 			this._sendToClipboardButton.Name = "_sendToClipboardButton";
-			this._sendToClipboardButton.Size = new System.Drawing.Size(110, 23);
-			this._sendToClipboardButton.TabIndex = 14;
-			this._sendToClipboardButton.Text = "Copy To Clipboard";
 			this._sendToClipboardButton.UseVisualStyleBackColor = true;
 			this._sendToClipboardButton.Click += new System.EventHandler(this.OnSendToClipboard);
 			// 
@@ -188,75 +154,50 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this._betweenGroup.Controls.Add(this._copyRangeInterval);
 			this._betweenGroup.Controls.Add(this.label1);
 			this._betweenGroup.Controls.Add(this._radioCopyRangeAtInterval);
-			this._betweenGroup.Location = new System.Drawing.Point(90, 149);
+			resources.ApplyResources(this._betweenGroup, "_betweenGroup");
 			this._betweenGroup.Name = "_betweenGroup";
-			this._betweenGroup.Size = new System.Drawing.Size(255, 82);
-			this._betweenGroup.TabIndex = 7;
 			this._betweenGroup.TabStop = false;
 			// 
 			// _rangeSelectionGroup
 			// 
 			this._rangeSelectionGroup.Controls.Add(this._radioUsePositionNumber);
 			this._rangeSelectionGroup.Controls.Add(this._radioUseInstanceNumber);
-			this._rangeSelectionGroup.Location = new System.Drawing.Point(90, 55);
+			resources.ApplyResources(this._rangeSelectionGroup, "_rangeSelectionGroup");
 			this._rangeSelectionGroup.Name = "_rangeSelectionGroup";
-			this._rangeSelectionGroup.Size = new System.Drawing.Size(255, 51);
-			this._rangeSelectionGroup.TabIndex = 0;
 			this._rangeSelectionGroup.TabStop = false;
-			this._rangeSelectionGroup.Text = "Use";
 			// 
 			// _radioUsePositionNumber
 			// 
-			this._radioUsePositionNumber.AutoSize = true;
-			this._radioUsePositionNumber.Location = new System.Drawing.Point(121, 19);
+			resources.ApplyResources(this._radioUsePositionNumber, "_radioUsePositionNumber");
 			this._radioUsePositionNumber.Name = "_radioUsePositionNumber";
-			this._radioUsePositionNumber.Size = new System.Drawing.Size(62, 17);
-			this._radioUsePositionNumber.TabIndex = 2;
-			this._radioUsePositionNumber.Text = "Position";
 			this._radioUsePositionNumber.UseVisualStyleBackColor = true;
 			// 
 			// _radioUseInstanceNumber
 			// 
-			this._radioUseInstanceNumber.AutoSize = true;
-			this._radioUseInstanceNumber.Location = new System.Drawing.Point(6, 19);
+			resources.ApplyResources(this._radioUseInstanceNumber, "_radioUseInstanceNumber");
 			this._radioUseInstanceNumber.Name = "_radioUseInstanceNumber";
-			this._radioUseInstanceNumber.Size = new System.Drawing.Size(94, 17);
-			this._radioUseInstanceNumber.TabIndex = 1;
-			this._radioUseInstanceNumber.Text = "Image Number";
 			this._radioUseInstanceNumber.UseVisualStyleBackColor = true;
 			// 
 			// label3
 			// 
-			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(37, 22);
+			resources.ApplyResources(this.label3, "label3");
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(44, 13);
-			this.label3.TabIndex = 15;
-			this.label3.Text = "Source:";
 			// 
 			// _sourceDisplaySet
 			// 
 			this._sourceDisplaySet.AutoEllipsis = true;
 			this._sourceDisplaySet.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this._sourceDisplaySet.Location = new System.Drawing.Point(90, 16);
+			resources.ApplyResources(this._sourceDisplaySet, "_sourceDisplaySet");
 			this._sourceDisplaySet.Name = "_sourceDisplaySet";
-			this._sourceDisplaySet.Size = new System.Drawing.Size(255, 24);
-			this._sourceDisplaySet.TabIndex = 16;
-			this._sourceDisplaySet.Text = "<source display set>";
-			this._sourceDisplaySet.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// label4
 			// 
-			this.label4.AutoSize = true;
-			this.label4.Location = new System.Drawing.Point(87, 240);
+			resources.ApplyResources(this.label4, "label4");
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(157, 13);
-			this.label4.TabIndex = 17;
-			this.label4.Text = "example: -10, 12, 14, 16-20, 25-";
 			// 
 			// CopySubsetToClipboardComponentControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._sourceDisplaySet);
 			this.Controls.Add(this.label3);
@@ -271,7 +212,6 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this.Controls.Add(this._betweenGroup);
 			this.Controls.Add(this.label4);
 			this.Name = "CopySubsetToClipboardComponentControl";
-			this.Size = new System.Drawing.Size(374, 342);
 			((System.ComponentModel.ISupportInitialize)(this._copyRangeStart)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._copyRangeEnd)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._copyRangeInterval)).EndInit();

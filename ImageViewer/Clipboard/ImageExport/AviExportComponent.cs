@@ -34,10 +34,11 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using System.Runtime.InteropServices;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -60,6 +61,11 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 		private volatile int _frameRate = 20;
 		private volatile ExportOption _exportOption;
 		private volatile float _scale = 1;
+
+		private int _width = 512;
+		private int _height = 512;
+		private Color _backgroundColor = Color.Black;
+		private SizeMode _sizeMode = SizeMode.Scale;
 
 		private readonly List<Avi.Codec> _availableCodecs;
 		private Avi.Codec _selectedCodec;
@@ -151,29 +157,26 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			get { return NumberOfImages / (float)_frameRate; }
 		}
 
-		public bool OptionWysiwyg
+		public string FileExtensionFilter
 		{
-			get
-			{
-				return _exportOption == ExportOption.Wysiwyg;
-			}
-			set
-			{
-				if (!value)
-					_exportOption = ExportOption.CompleteImage;
-			}
+			get { return string.Format("{0}|*.avi", SR.DescriptionAvi); }
 		}
 
-		public bool OptionCompleteImage
+		public string DefaultFileExtension
 		{
-			get
-			{
-				return _exportOption == ExportOption.CompleteImage;
-			}
+			get { return "avi"; }
+		}
+
+		public ExportOption ExportOption
+		{
+			get { return _exportOption; }
 			set
 			{
-				if (!value)
-					_exportOption = ExportOption.Wysiwyg;
+				if (_exportOption != value)
+				{
+					_exportOption = value;
+					this.NotifyPropertyChanged("ExportOption");
+				}
 			}
 		}
 
@@ -197,6 +200,68 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 				_scale = value;
 				NotifyPropertyChanged("Scale");
+			}
+		}
+
+		public int MinimumDimension
+		{
+			get { return 10; }
+		}
+
+		public int MaximumDimension
+		{
+			get { return 100000; }
+		}
+
+		public int Width
+		{
+			get { return _width; }
+			set
+			{
+				if (_width != value)
+				{
+					_width = value;
+					this.NotifyPropertyChanged("Width");
+				}
+			}
+		}
+
+		public int Height
+		{
+			get { return _height; }
+			set
+			{
+				if (_height != value)
+				{
+					_height = value;
+					this.NotifyPropertyChanged("Height");
+				}
+			}
+		}
+
+		public Color BackgroundColor
+		{
+			get { return _backgroundColor; }
+			set
+			{
+				if (_backgroundColor != value)
+				{
+					_backgroundColor = value;
+					this.NotifyPropertyChanged("BackgroundColor");
+				}
+			}
+		}
+
+		public SizeMode SizeMode
+		{
+			get { return _sizeMode; }
+			set
+			{
+				if (_sizeMode != value)
+				{
+					_sizeMode = value;
+					this.NotifyPropertyChanged("SizeMode");
+				}
 			}
 		}
 
@@ -264,6 +329,18 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			{
 				desktopWindow.ShowMessageBox(SR.MessageNoAcceptableCodecsInstalled, MessageBoxActions.Ok);
 				return;
+			}
+
+			// give the width and height values from the item to be exported
+			foreach (IPresentationImage image in (displaySet.PresentationImages))
+			{
+				if (image is IImageGraphicProvider)
+				{
+					IImageGraphicProvider imageGraphicProvider = (IImageGraphicProvider) image;
+					component.Height = imageGraphicProvider.ImageGraphic.Rows;
+					component.Width = imageGraphicProvider.ImageGraphic.Columns;
+					break;
+				}
 			}
 
 			if (ApplicationComponentExitCode.Accepted != LaunchAsDialog(desktopWindow, component, SR.TitleExportToVideo))
@@ -365,6 +442,9 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			exportParams.Scale = Scale;
 			exportParams.ExportOption = _exportOption;
 			exportParams.DisplayRectangle = _clipboardItem.DisplayRectangle;
+			exportParams.SizeMode = SizeMode;
+			exportParams.OutputSize = new Size(Width, Height);
+			exportParams.BackgroundColor = BackgroundColor;
 
 			using (Avi.VideoStreamWriter writer = new Avi.VideoStreamWriter(_selectedCodec))
 			{
@@ -420,36 +500,42 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 		#region Private Methods
 
-		private void LoadSettings()
+		private void LoadSettings() 
 		{
-			_exportOption = (ExportOption)AviExportSettings.Default.ExportOption;
-			_frameRate = AviExportSettings.Default.FrameRate;
+			AviExportSettings settings = AviExportSettings.Default;
+			_exportOption = (ExportOption)settings.ExportOption;
+			_frameRate = settings.FrameRate;
 
-			_selectedCodec = Avi.Codec.GetInstalledCodec(AviExportSettings.Default.PreferredCodecFccCode);
+			_selectedCodec = Avi.Codec.GetInstalledCodec(settings.PreferredCodecFccCode);
 
 			_availableCodecs.AddRange(GetAvailiableCodecs());
 			if (!_availableCodecs.Contains(_selectedCodec))
 				_selectedCodec = Avi.Codec.Find(GetInputFormat(), null); //use whatever the OS provides.
 
-			_quality = AviExportSettings.Default.Quality;
-			UseDefaultQuality = AviExportSettings.Default.UseDefaultQuality;
+			_quality = settings.Quality;
+			UseDefaultQuality = settings.UseDefaultQuality;
+
+			_sizeMode = settings.SizeMode;
+			_backgroundColor = settings.BackgroundColor;
 		}
 
 		private void SaveSettings()
 		{
-			AviExportSettings.Default.ExportOption = (int)_exportOption;
-			AviExportSettings.Default.FrameRate = _frameRate;
-
-			AviExportSettings.Default.Save();
+			AviExportSettings settings = AviExportSettings.Default;
+			settings.ExportOption = (int)_exportOption;
+			settings.FrameRate = _frameRate;
+			settings.SizeMode = SizeMode;
+			settings.BackgroundColor = BackgroundColor;
+			settings.Save();
 		}
 
 		private void SaveAdvancedSettings()
 		{
-			AviExportSettings.Default.PreferredCodecFccCode = _selectedCodec.FourCCCode;
-			AviExportSettings.Default.UseDefaultQuality = UseDefaultQuality;
-			AviExportSettings.Default.Quality = _quality;
-
-			AviExportSettings.Default.Save();
+			AviExportSettings settings = AviExportSettings.Default;
+			settings.PreferredCodecFccCode = _selectedCodec.FourCCCode;
+			settings.UseDefaultQuality = UseDefaultQuality;
+			settings.Quality = _quality;
+			settings.Save();
 		}
 
 		private IEnumerable<Avi.Codec> GetAvailiableCodecs()

@@ -59,6 +59,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AviExportAdvancedComponentControl));
 			this._trackBarQuality = new System.Windows.Forms.TrackBar();
 			this._quality = new System.Windows.Forms.TextBox();
 			this._comboCodec = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
@@ -73,14 +74,11 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			// _trackBarQuality
 			// 
 			this._trackBarQuality.LargeChange = 10;
-			this._trackBarQuality.Location = new System.Drawing.Point(5, 44);
-			this._trackBarQuality.Margin = new System.Windows.Forms.Padding(2);
+			resources.ApplyResources(this._trackBarQuality, "_trackBarQuality");
 			this._trackBarQuality.Maximum = 100;
 			this._trackBarQuality.Minimum = 25;
 			this._trackBarQuality.Name = "_trackBarQuality";
-			this._trackBarQuality.Size = new System.Drawing.Size(287, 42);
 			this._trackBarQuality.SmallChange = 5;
-			this._trackBarQuality.TabIndex = 3;
 			this._trackBarQuality.TickFrequency = 5;
 			this._trackBarQuality.Value = 25;
 			// 
@@ -88,14 +86,10 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			// 
 			this._quality.BackColor = System.Drawing.SystemColors.Control;
 			this._quality.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this._quality.Location = new System.Drawing.Point(238, 30);
+			resources.ApplyResources(this._quality, "_quality");
 			this._quality.Name = "_quality";
 			this._quality.ReadOnly = true;
-			this._quality.Size = new System.Drawing.Size(47, 13);
-			this._quality.TabIndex = 4;
 			this._quality.TabStop = false;
-			this._quality.Text = "quality";
-			this._quality.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// _comboCodec
 			// 
@@ -103,11 +97,8 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this._comboCodec.DisplayMember = "";
 			this._comboCodec.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._comboCodec.LabelText = "Codec";
-			this._comboCodec.Location = new System.Drawing.Point(11, 11);
-			this._comboCodec.Margin = new System.Windows.Forms.Padding(2);
+			resources.ApplyResources(this._comboCodec, "_comboCodec");
 			this._comboCodec.Name = "_comboCodec";
-			this._comboCodec.Size = new System.Drawing.Size(297, 41);
-			this._comboCodec.TabIndex = 0;
 			this._comboCodec.Value = null;
 			// 
 			// _groupQuality
@@ -115,53 +106,39 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this._groupQuality.Controls.Add(this._checkUseDefaultQuality);
 			this._groupQuality.Controls.Add(this._trackBarQuality);
 			this._groupQuality.Controls.Add(this._quality);
-			this._groupQuality.Location = new System.Drawing.Point(11, 57);
+			resources.ApplyResources(this._groupQuality, "_groupQuality");
 			this._groupQuality.Name = "_groupQuality";
-			this._groupQuality.Size = new System.Drawing.Size(297, 91);
-			this._groupQuality.TabIndex = 1;
 			this._groupQuality.TabStop = false;
-			this._groupQuality.Text = "Quality";
 			// 
 			// _checkUseDefaultQuality
 			// 
-			this._checkUseDefaultQuality.AutoSize = true;
-			this._checkUseDefaultQuality.Location = new System.Drawing.Point(13, 22);
+			resources.ApplyResources(this._checkUseDefaultQuality, "_checkUseDefaultQuality");
 			this._checkUseDefaultQuality.Name = "_checkUseDefaultQuality";
-			this._checkUseDefaultQuality.Size = new System.Drawing.Size(82, 17);
-			this._checkUseDefaultQuality.TabIndex = 2;
-			this._checkUseDefaultQuality.Text = "Use Default";
 			this._checkUseDefaultQuality.UseVisualStyleBackColor = true;
 			// 
 			// _buttonCancel
 			// 
-			this._buttonCancel.Location = new System.Drawing.Point(238, 158);
+			resources.ApplyResources(this._buttonCancel, "_buttonCancel");
 			this._buttonCancel.Name = "_buttonCancel";
-			this._buttonCancel.Size = new System.Drawing.Size(70, 23);
-			this._buttonCancel.TabIndex = 6;
-			this._buttonCancel.Text = "Cancel";
 			this._buttonCancel.UseVisualStyleBackColor = true;
 			this._buttonCancel.Click += new System.EventHandler(this.OnCancel);
 			// 
 			// _buttonOk
 			// 
-			this._buttonOk.Location = new System.Drawing.Point(162, 158);
+			resources.ApplyResources(this._buttonOk, "_buttonOk");
 			this._buttonOk.Name = "_buttonOk";
-			this._buttonOk.Size = new System.Drawing.Size(70, 23);
-			this._buttonOk.TabIndex = 5;
-			this._buttonOk.Text = "Ok";
 			this._buttonOk.UseVisualStyleBackColor = true;
 			this._buttonOk.Click += new System.EventHandler(this.OnOk);
 			// 
 			// AviExportAdvancedComponentControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._buttonCancel);
 			this.Controls.Add(this._buttonOk);
 			this.Controls.Add(this._groupQuality);
 			this.Controls.Add(this._comboCodec);
 			this.Name = "AviExportAdvancedComponentControl";
-			this.Size = new System.Drawing.Size(318, 191);
 			((System.ComponentModel.ISupportInitialize)(this._trackBarQuality)).EndInit();
 			this._groupQuality.ResumeLayout(false);
 			this._groupQuality.PerformLayout();

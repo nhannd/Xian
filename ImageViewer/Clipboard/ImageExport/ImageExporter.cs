@@ -35,6 +35,7 @@ using System.Drawing.Imaging;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Mathematics;
 
 #pragma warning disable 0419,1574,1587,1591
 
@@ -91,14 +92,46 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 				ImageSpatialTransform transform = ((ISpatialTransformProvider)image).SpatialTransform as ImageSpatialTransform;
 				if (transform == null)
 					throw new ArgumentException("The image must have a valid ImageSpatialTransform in order to be exported.");
-				
-				if (exportParams.ExportOption == ExportOption.Wysiwyg)
+
+				if (exportParams.SizeMode == SizeMode.Scale)
 				{
-					return DrawWysiwygImageToBitmap(image, exportParams.DisplayRectangle, exportParams.Scale);
+					if (exportParams.ExportOption == ExportOption.Wysiwyg)
+					{
+						return DrawWysiwygImageToBitmap(image, exportParams.DisplayRectangle, exportParams.Scale);
+					}
+					else
+					{
+						return DrawCompleteImageToBitmap(image, exportParams.Scale);
+					}
 				}
 				else
 				{
-					return DrawCompleteImageToBitmap(image, exportParams.Scale);
+					Bitmap paddedImage = new Bitmap(exportParams.OutputSize.Width, exportParams.OutputSize.Height);
+					using (System.Drawing.Graphics graphics = System.Drawing.Graphics.FromImage(paddedImage))
+					{
+						// paint background
+						using (Brush b = new SolidBrush(exportParams.BackgroundColor))
+						{
+							graphics.FillRectangle(b, new Rectangle(Point.Empty, exportParams.OutputSize));
+						}
+
+						// paint image portion
+						Bitmap bmp;
+						if (exportParams.ExportOption == ExportOption.Wysiwyg)
+						{
+							float scale = ScaleToFit(exportParams.DisplayRectangle.Size, exportParams.OutputSize);
+							bmp = DrawWysiwygImageToBitmap(image, exportParams.DisplayRectangle, scale);
+						}
+						else
+						{
+							IImageGraphicProvider sourceImage = (IImageGraphicProvider) image;
+							float scale = ScaleToFit(new Size(sourceImage.ImageGraphic.Columns, sourceImage.ImageGraphic.Rows), exportParams.OutputSize);
+							bmp = DrawCompleteImageToBitmap(image, scale);
+						}
+						graphics.DrawImageUnscaledAndClipped(bmp, new Rectangle(CenterRectangles(bmp.Size, exportParams.OutputSize), bmp.Size));
+						bmp.Dispose();
+					}
+					return paddedImage;
 				}
 			}
 
@@ -149,6 +182,24 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			{
 				transform.SetMemento(restoreMemento);
 			}
+		}
+
+		private static float ScaleToFit(Size source, SizeF destination)
+		{
+			if (source.Width == 0 || source.Height == 0)
+				return 1;
+
+			float aW = destination.Width/source.Width;
+			float aH = destination.Height/source.Height;
+			if (!FloatComparer.IsGreaterThan(aW * source.Height, destination.Height))
+				return aW;
+			else
+				return aH;
+		}
+
+		private static Point CenterRectangles(Size source, Size destination)
+		{
+			return new Point((destination.Width - source.Width)/2, (destination.Height - source.Height)/2);
 		}
 
 		protected static void Export(IPresentationImage image, string filePath, ExportImageParams exportParams, ImageFormat imageFormat)

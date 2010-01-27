@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright (c) 2009, ClearCanvas Inc.
+// Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,61 +29,58 @@
 
 #endregion
 
-using System.Drawing;
-using ClearCanvas.Common;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Globalization;
+using System.Text;
+using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
 
-#pragma warning disable 0419,1574,1587,1591
-
-namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
+namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms.Properties
 {
-	public enum ExportOption
+	[SettingsGroupDescription("View settings in the clipboard component.")]
+	[SettingsProvider(typeof (StandardSettingsProvider))]
+	internal sealed partial class Settings
 	{
-		Wysiwyg = 0,
-		CompleteImage = 1
-	}
-
-	/// <summary>
-	/// Enumeration specifying the image export sizing mode.
-	/// </summary>
-	public enum SizeMode
-	{
-		Scale,
-		Fixed
-	}
-
-	public class ExportImageParams
-	{
-		public ExportImageParams()
+		public Settings()
 		{
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
 
-		public ExportOption ExportOption = ImageExport.ExportOption.Wysiwyg;
-		public Rectangle DisplayRectangle;
-		public SizeMode SizeMode = SizeMode.Scale;
-		public float Scale = 1F;
-		public Size OutputSize;
-		public Color BackgroundColor;
-	}
-
-	public interface IImageExporter
-	{
-		string Identifier { get; }
-		string Description { get; }
-		string[] FileExtensions { get; }
-
-		void Export(IPresentationImage image, string fileName, ExportImageParams exportParams);
-	}
-
-	public interface IConfigurableImageExporter : IImageExporter
-	{
-		IApplicationComponent GetConfigurationComponent();
-	}
-
-	public sealed class ImageExporterExtensionPoint : ExtensionPoint<IImageExporter>
-	{
-		public ImageExporterExtensionPoint()
+		public int[] CustomColorsArray
 		{
+			get
+			{
+				string value = this.CustomColors;
+				if (string.IsNullOrEmpty(value))
+					return new int[0];
+
+				List<int> list = new List<int>();
+				foreach (string s in value.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries))
+				{
+					int v;
+					if (int.TryParse(s, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out v))
+						list.Add(v);
+				}
+				return list.ToArray();
+			}
+			set
+			{
+				if (value == null || value.Length == 0)
+				{
+					this.CustomColors = string.Empty;
+					return;
+				}
+
+				StringBuilder sb = new StringBuilder();
+				foreach (int i in value)
+				{
+					sb.AppendFormat(i.ToString("x6", CultureInfo.InvariantCulture));
+					sb.Append(',');
+				}
+				this.CustomColors = sb.ToString(0, Math.Max(0, sb.Length - 1));
+			}
 		}
 	}
 }

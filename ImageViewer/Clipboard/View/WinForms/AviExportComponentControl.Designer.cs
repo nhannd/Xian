@@ -48,6 +48,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
             {
                 components.Dispose();
             }
+			this.DoDispose(disposing);
             base.Dispose(disposing);
         }
 
@@ -59,100 +60,119 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			this._buttonCancel = new System.Windows.Forms.Button();
-			this._buttonOk = new System.Windows.Forms.Button();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AviExportComponentControl));
 			this._trackBarFrameRate = new System.Windows.Forms.TrackBar();
 			this.label3 = new System.Windows.Forms.Label();
 			this._duration = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
-			this._groupOptions = new System.Windows.Forms.GroupBox();
-			this._scale = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
-			this.scaleLabel = new System.Windows.Forms.Label();
-			this._checkOptionCompleteImage = new System.Windows.Forms.RadioButton();
-			this._checkOptionWysiwyg = new System.Windows.Forms.RadioButton();
 			this._frameRate = new System.Windows.Forms.TextBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this._advanced = new System.Windows.Forms.Button();
+			this._groupOutputSize = new System.Windows.Forms.GroupBox();
+			this._pnlScale = new System.Windows.Forms.Panel();
+			this._scale = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
+			this._lblScalePercent = new System.Windows.Forms.Label();
+			this._pnlFixedSize = new System.Windows.Forms.Panel();
+			this._pnlBackgroundColor = new System.Windows.Forms.Panel();
+			this._backgroundColorSwatch = new System.Windows.Forms.Button();
+			this._lblBackgroundColor = new System.Windows.Forms.Label();
+			this._imageHeight = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
+			this._imageWidth = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
+			this._lblHeight = new System.Windows.Forms.Label();
+			this._lblWidth = new System.Windows.Forms.Label();
+			this._checkOptionFixed = new System.Windows.Forms.RadioButton();
+			this._checkOptionScale = new System.Windows.Forms.RadioButton();
+			this._pnlDialogButtons = new System.Windows.Forms.FlowLayoutPanel();
+			this._buttonCancel = new System.Windows.Forms.Button();
+			this._buttonOk = new System.Windows.Forms.Button();
+			this._groupFieldOfView = new System.Windows.Forms.GroupBox();
+			this._checkOptionCompleteImage = new System.Windows.Forms.RadioButton();
+			this._checkOptionWysiwyg = new System.Windows.Forms.RadioButton();
 			((System.ComponentModel.ISupportInitialize)(this._trackBarFrameRate)).BeginInit();
-			this._groupOptions.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this._scale)).BeginInit();
 			this.groupBox1.SuspendLayout();
+			this._groupOutputSize.SuspendLayout();
+			this._pnlScale.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this._scale)).BeginInit();
+			this._pnlFixedSize.SuspendLayout();
+			this._pnlBackgroundColor.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this._imageHeight)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this._imageWidth)).BeginInit();
+			this._pnlDialogButtons.SuspendLayout();
+			this._groupFieldOfView.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// _buttonCancel
-			// 
-			this._buttonCancel.Location = new System.Drawing.Point(230, 212);
-			this._buttonCancel.Name = "_buttonCancel";
-			this._buttonCancel.Size = new System.Drawing.Size(70, 23);
-			this._buttonCancel.TabIndex = 13;
-			this._buttonCancel.Text = "Cancel";
-			this._buttonCancel.UseVisualStyleBackColor = true;
-			this._buttonCancel.Click += new System.EventHandler(this.OnCancel);
-			// 
-			// _buttonOk
-			// 
-			this._buttonOk.Location = new System.Drawing.Point(154, 212);
-			this._buttonOk.Name = "_buttonOk";
-			this._buttonOk.Size = new System.Drawing.Size(70, 23);
-			this._buttonOk.TabIndex = 12;
-			this._buttonOk.Text = "Ok";
-			this._buttonOk.UseVisualStyleBackColor = true;
-			this._buttonOk.Click += new System.EventHandler(this.OnOk);
 			// 
 			// _trackBarFrameRate
 			// 
 			this._trackBarFrameRate.LargeChange = 1;
-			this._trackBarFrameRate.Location = new System.Drawing.Point(8, 37);
-			this._trackBarFrameRate.Margin = new System.Windows.Forms.Padding(2);
+			resources.ApplyResources(this._trackBarFrameRate, "_trackBarFrameRate");
 			this._trackBarFrameRate.Maximum = 25;
 			this._trackBarFrameRate.Minimum = 1;
 			this._trackBarFrameRate.Name = "_trackBarFrameRate";
-			this._trackBarFrameRate.Size = new System.Drawing.Size(189, 45);
-			this._trackBarFrameRate.TabIndex = 3;
 			this._trackBarFrameRate.Value = 1;
 			// 
 			// label3
 			// 
-			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(14, 20);
+			resources.ApplyResources(this.label3, "label3");
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(97, 13);
-			this.label3.TabIndex = 1;
-			this.label3.Text = "Images per second";
 			// 
 			// _duration
 			// 
 			this._duration.BackColor = System.Drawing.SystemColors.Control;
 			this._duration.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this._duration.Location = new System.Drawing.Point(201, 37);
+			resources.ApplyResources(this._duration, "_duration");
 			this._duration.Name = "_duration";
 			this._duration.ReadOnly = true;
-			this._duration.Size = new System.Drawing.Size(70, 20);
-			this._duration.TabIndex = 5;
 			this._duration.TabStop = false;
 			// 
 			// label5
 			// 
-			this.label5.AutoSize = true;
-			this.label5.Location = new System.Drawing.Point(198, 20);
+			resources.ApplyResources(this.label5, "label5");
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(73, 13);
-			this.label5.TabIndex = 4;
-			this.label5.Text = "Duration (sec)";
-			this.label5.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
-			// _groupOptions
+			// _frameRate
 			// 
-			this._groupOptions.Controls.Add(this._scale);
-			this._groupOptions.Controls.Add(this.scaleLabel);
-			this._groupOptions.Controls.Add(this._checkOptionCompleteImage);
-			this._groupOptions.Controls.Add(this._checkOptionWysiwyg);
-			this._groupOptions.Location = new System.Drawing.Point(14, 127);
-			this._groupOptions.Name = "_groupOptions";
-			this._groupOptions.Size = new System.Drawing.Size(286, 72);
-			this._groupOptions.TabIndex = 7;
-			this._groupOptions.TabStop = false;
-			this._groupOptions.Text = "Image Options";
+			this._frameRate.BackColor = System.Drawing.SystemColors.Control;
+			this._frameRate.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			resources.ApplyResources(this._frameRate, "_frameRate");
+			this._frameRate.Name = "_frameRate";
+			this._frameRate.ReadOnly = true;
+			this._frameRate.TabStop = false;
+			// 
+			// groupBox1
+			// 
+			this.groupBox1.Controls.Add(this._advanced);
+			this.groupBox1.Controls.Add(this._trackBarFrameRate);
+			this.groupBox1.Controls.Add(this.label3);
+			this.groupBox1.Controls.Add(this._frameRate);
+			this.groupBox1.Controls.Add(this._duration);
+			this.groupBox1.Controls.Add(this.label5);
+			resources.ApplyResources(this.groupBox1, "groupBox1");
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.TabStop = false;
+			// 
+			// _advanced
+			// 
+			resources.ApplyResources(this._advanced, "_advanced");
+			this._advanced.Name = "_advanced";
+			this._advanced.UseVisualStyleBackColor = true;
+			this._advanced.Click += new System.EventHandler(this.OnAdvanced);
+			// 
+			// _groupOutputSize
+			// 
+			this._groupOutputSize.Controls.Add(this._pnlScale);
+			this._groupOutputSize.Controls.Add(this._pnlFixedSize);
+			this._groupOutputSize.Controls.Add(this._checkOptionFixed);
+			this._groupOutputSize.Controls.Add(this._checkOptionScale);
+			resources.ApplyResources(this._groupOutputSize, "_groupOutputSize");
+			this._groupOutputSize.Name = "_groupOutputSize";
+			this._groupOutputSize.TabStop = false;
+			// 
+			// _pnlScale
+			// 
+			this._pnlScale.Controls.Add(this._scale);
+			this._pnlScale.Controls.Add(this._lblScalePercent);
+			resources.ApplyResources(this._pnlScale, "_pnlScale");
+			this._pnlScale.Name = "_pnlScale";
 			// 
 			// _scale
 			// 
@@ -162,7 +182,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
             0,
             0,
             65536});
-			this._scale.Location = new System.Drawing.Point(199, 34);
+			resources.ApplyResources(this._scale, "_scale");
 			this._scale.Maximum = new decimal(new int[] {
             20,
             0,
@@ -174,115 +194,200 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
             0,
             65536});
 			this._scale.Name = "_scale";
-			this._scale.Size = new System.Drawing.Size(72, 20);
-			this._scale.TabIndex = 11;
 			this._scale.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
 			// 
-			// scaleLabel
+			// _lblScalePercent
 			// 
-			this.scaleLabel.AutoSize = true;
-			this.scaleLabel.Location = new System.Drawing.Point(196, 18);
-			this.scaleLabel.Name = "scaleLabel";
-			this.scaleLabel.Size = new System.Drawing.Size(34, 13);
-			this.scaleLabel.TabIndex = 10;
-			this.scaleLabel.Text = "Scale";
+			resources.ApplyResources(this._lblScalePercent, "_lblScalePercent");
+			this._lblScalePercent.Name = "_lblScalePercent";
+			// 
+			// _pnlFixedSize
+			// 
+			this._pnlFixedSize.Controls.Add(this._pnlBackgroundColor);
+			this._pnlFixedSize.Controls.Add(this._imageHeight);
+			this._pnlFixedSize.Controls.Add(this._imageWidth);
+			this._pnlFixedSize.Controls.Add(this._lblHeight);
+			this._pnlFixedSize.Controls.Add(this._lblWidth);
+			resources.ApplyResources(this._pnlFixedSize, "_pnlFixedSize");
+			this._pnlFixedSize.Name = "_pnlFixedSize";
+			// 
+			// _pnlBackgroundColor
+			// 
+			this._pnlBackgroundColor.Controls.Add(this._backgroundColorSwatch);
+			this._pnlBackgroundColor.Controls.Add(this._lblBackgroundColor);
+			resources.ApplyResources(this._pnlBackgroundColor, "_pnlBackgroundColor");
+			this._pnlBackgroundColor.Name = "_pnlBackgroundColor";
+			// 
+			// _backgroundColorSwatch
+			// 
+			this._backgroundColorSwatch.BackColor = System.Drawing.Color.Black;
+			resources.ApplyResources(this._backgroundColorSwatch, "_backgroundColorSwatch");
+			this._backgroundColorSwatch.Name = "_backgroundColorSwatch";
+			this._backgroundColorSwatch.UseVisualStyleBackColor = false;
+			this._backgroundColorSwatch.Click += new System.EventHandler(this.OnBackgroundColorSwatchClick);
+			// 
+			// _lblBackgroundColor
+			// 
+			resources.ApplyResources(this._lblBackgroundColor, "_lblBackgroundColor");
+			this._lblBackgroundColor.Name = "_lblBackgroundColor";
+			// 
+			// _imageHeight
+			// 
+			this._imageHeight.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+			resources.ApplyResources(this._imageHeight, "_imageHeight");
+			this._imageHeight.Name = "_imageHeight";
+			this._imageHeight.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			// 
+			// _imageWidth
+			// 
+			this._imageWidth.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+			resources.ApplyResources(this._imageWidth, "_imageWidth");
+			this._imageWidth.Name = "_imageWidth";
+			this._imageWidth.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			// 
+			// _lblHeight
+			// 
+			resources.ApplyResources(this._lblHeight, "_lblHeight");
+			this._lblHeight.Name = "_lblHeight";
+			// 
+			// _lblWidth
+			// 
+			resources.ApplyResources(this._lblWidth, "_lblWidth");
+			this._lblWidth.Name = "_lblWidth";
+			// 
+			// _checkOptionFixed
+			// 
+			resources.ApplyResources(this._checkOptionFixed, "_checkOptionFixed");
+			this._checkOptionFixed.Name = "_checkOptionFixed";
+			this._checkOptionFixed.TabStop = true;
+			this._checkOptionFixed.UseVisualStyleBackColor = true;
+			// 
+			// _checkOptionScale
+			// 
+			resources.ApplyResources(this._checkOptionScale, "_checkOptionScale");
+			this._checkOptionScale.Name = "_checkOptionScale";
+			this._checkOptionScale.TabStop = true;
+			this._checkOptionScale.UseVisualStyleBackColor = true;
+			// 
+			// _pnlDialogButtons
+			// 
+			this._pnlDialogButtons.Controls.Add(this._buttonCancel);
+			this._pnlDialogButtons.Controls.Add(this._buttonOk);
+			resources.ApplyResources(this._pnlDialogButtons, "_pnlDialogButtons");
+			this._pnlDialogButtons.Name = "_pnlDialogButtons";
+			// 
+			// _buttonCancel
+			// 
+			resources.ApplyResources(this._buttonCancel, "_buttonCancel");
+			this._buttonCancel.Name = "_buttonCancel";
+			this._buttonCancel.UseVisualStyleBackColor = true;
+			this._buttonCancel.Click += new System.EventHandler(this.OnCancel);
+			// 
+			// _buttonOk
+			// 
+			resources.ApplyResources(this._buttonOk, "_buttonOk");
+			this._buttonOk.Name = "_buttonOk";
+			this._buttonOk.UseVisualStyleBackColor = true;
+			this._buttonOk.Click += new System.EventHandler(this.OnOk);
+			// 
+			// _groupFieldOfView
+			// 
+			this._groupFieldOfView.Controls.Add(this._checkOptionCompleteImage);
+			this._groupFieldOfView.Controls.Add(this._checkOptionWysiwyg);
+			resources.ApplyResources(this._groupFieldOfView, "_groupFieldOfView");
+			this._groupFieldOfView.Name = "_groupFieldOfView";
+			this._groupFieldOfView.TabStop = false;
 			// 
 			// _checkOptionCompleteImage
 			// 
-			this._checkOptionCompleteImage.AutoSize = true;
-			this._checkOptionCompleteImage.Location = new System.Drawing.Point(89, 35);
+			resources.ApplyResources(this._checkOptionCompleteImage, "_checkOptionCompleteImage");
 			this._checkOptionCompleteImage.Name = "_checkOptionCompleteImage";
-			this._checkOptionCompleteImage.Size = new System.Drawing.Size(101, 17);
-			this._checkOptionCompleteImage.TabIndex = 9;
-			this._checkOptionCompleteImage.Text = "Complete Image";
 			this._checkOptionCompleteImage.UseVisualStyleBackColor = true;
 			// 
 			// _checkOptionWysiwyg
 			// 
-			this._checkOptionWysiwyg.AutoSize = true;
-			this._checkOptionWysiwyg.Location = new System.Drawing.Point(13, 35);
+			resources.ApplyResources(this._checkOptionWysiwyg, "_checkOptionWysiwyg");
 			this._checkOptionWysiwyg.Name = "_checkOptionWysiwyg";
-			this._checkOptionWysiwyg.Size = new System.Drawing.Size(67, 17);
-			this._checkOptionWysiwyg.TabIndex = 8;
-			this._checkOptionWysiwyg.Text = "Wysiwyg";
 			this._checkOptionWysiwyg.UseVisualStyleBackColor = true;
-			// 
-			// _frameRate
-			// 
-			this._frameRate.BackColor = System.Drawing.SystemColors.Control;
-			this._frameRate.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this._frameRate.Location = new System.Drawing.Point(117, 20);
-			this._frameRate.Name = "_frameRate";
-			this._frameRate.ReadOnly = true;
-			this._frameRate.Size = new System.Drawing.Size(47, 13);
-			this._frameRate.TabIndex = 2;
-			this._frameRate.TabStop = false;
-			this._frameRate.Text = "frames/sec";
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Controls.Add(this._advanced);
-			this.groupBox1.Controls.Add(this._trackBarFrameRate);
-			this.groupBox1.Controls.Add(this.label3);
-			this.groupBox1.Controls.Add(this._frameRate);
-			this.groupBox1.Controls.Add(this._duration);
-			this.groupBox1.Controls.Add(this.label5);
-			this.groupBox1.Location = new System.Drawing.Point(14, 10);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(286, 109);
-			this.groupBox1.TabIndex = 0;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Video Options";
-			// 
-			// _advanced
-			// 
-			this._advanced.Location = new System.Drawing.Point(201, 73);
-			this._advanced.Name = "_advanced";
-			this._advanced.Size = new System.Drawing.Size(70, 23);
-			this._advanced.TabIndex = 6;
-			this._advanced.Text = "Advanced";
-			this._advanced.UseVisualStyleBackColor = true;
-			this._advanced.Click += new System.EventHandler(this.OnAdvanced);
 			// 
 			// AviExportComponentControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._groupOutputSize);
+			this.Controls.Add(this._pnlDialogButtons);
+			this.Controls.Add(this._groupFieldOfView);
 			this.Controls.Add(this.groupBox1);
-			this.Controls.Add(this._groupOptions);
-			this.Controls.Add(this._buttonCancel);
-			this.Controls.Add(this._buttonOk);
 			this.Name = "AviExportComponentControl";
-			this.Size = new System.Drawing.Size(314, 248);
 			((System.ComponentModel.ISupportInitialize)(this._trackBarFrameRate)).EndInit();
-			this._groupOptions.ResumeLayout(false);
-			this._groupOptions.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this._scale)).EndInit();
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
+			this._groupOutputSize.ResumeLayout(false);
+			this._groupOutputSize.PerformLayout();
+			this._pnlScale.ResumeLayout(false);
+			this._pnlScale.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this._scale)).EndInit();
+			this._pnlFixedSize.ResumeLayout(false);
+			this._pnlFixedSize.PerformLayout();
+			this._pnlBackgroundColor.ResumeLayout(false);
+			this._pnlBackgroundColor.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this._imageHeight)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this._imageWidth)).EndInit();
+			this._pnlDialogButtons.ResumeLayout(false);
+			this._groupFieldOfView.ResumeLayout(false);
+			this._groupFieldOfView.PerformLayout();
 			this.ResumeLayout(false);
 
         }
 
         #endregion
 
-		private System.Windows.Forms.Button _buttonCancel;
-		private System.Windows.Forms.Button _buttonOk;
 		private System.Windows.Forms.TrackBar _trackBarFrameRate;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox _duration;
 		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.GroupBox _groupOptions;
-		private ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown _scale;
-		private System.Windows.Forms.Label scaleLabel;
-		private System.Windows.Forms.RadioButton _checkOptionCompleteImage;
-		private System.Windows.Forms.RadioButton _checkOptionWysiwyg;
 		private System.Windows.Forms.TextBox _frameRate;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.Button _advanced;
+		private System.Windows.Forms.GroupBox _groupOutputSize;
+		private System.Windows.Forms.Panel _pnlScale;
+		private ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown _scale;
+		private System.Windows.Forms.Label _lblScalePercent;
+		private System.Windows.Forms.Panel _pnlFixedSize;
+		private System.Windows.Forms.Panel _pnlBackgroundColor;
+		private System.Windows.Forms.Button _backgroundColorSwatch;
+		private System.Windows.Forms.Label _lblBackgroundColor;
+		private ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown _imageHeight;
+		private ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown _imageWidth;
+		private System.Windows.Forms.Label _lblHeight;
+		private System.Windows.Forms.Label _lblWidth;
+		private System.Windows.Forms.RadioButton _checkOptionFixed;
+		private System.Windows.Forms.RadioButton _checkOptionScale;
+		private System.Windows.Forms.FlowLayoutPanel _pnlDialogButtons;
+		private System.Windows.Forms.Button _buttonCancel;
+		private System.Windows.Forms.Button _buttonOk;
+		private System.Windows.Forms.GroupBox _groupFieldOfView;
+		private System.Windows.Forms.RadioButton _checkOptionCompleteImage;
+		private System.Windows.Forms.RadioButton _checkOptionWysiwyg;
     }
 }

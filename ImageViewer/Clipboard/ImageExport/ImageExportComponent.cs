@@ -31,10 +31,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
 using Path=System.IO.Path;
@@ -118,6 +120,11 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 		private volatile ExportOption _exportOption;
 		private volatile float _scale = 1;
 
+		private int _width = 512;
+		private int _height = 512;
+		private Color _backgroundColor = Color.Black;
+		private SizeMode _sizeMode = SizeMode.Scale;
+
 		private ImageExportComponent()
 		{
 		}
@@ -139,11 +146,6 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 				return _selectedExporterInfo.SourceImageExporter;
 			}
-		}
-
-		private ExportOption ExportOption
-		{
-			get { return _exportOption; }
 		}
 
 		public override void Start()
@@ -188,29 +190,16 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			set { _exportFilePath = GetCorrectedExportFilePath(value); }
 		}
 
-		public bool OptionWysiwyg
+		public ExportOption ExportOption
 		{
-			get
-			{
-				return _exportOption == ExportOption.Wysiwyg;
-			}
+			get { return _exportOption; }
 			set
 			{
-				if (!value)
-					_exportOption = ExportOption.CompleteImage;
-			}
-		}
-
-		public bool OptionCompleteImage
-		{
-			get
-			{
-				return _exportOption == ExportOption.CompleteImage;
-			}
-			set
-			{
-				if (!value)
-					_exportOption = ExportOption.Wysiwyg;
+				if (_exportOption != value)
+				{
+					_exportOption = value;
+					this.NotifyPropertyChanged("ExportOption");
+				}
 			}
 		}
 
@@ -234,6 +223,68 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 				_scale = value;
 				NotifyPropertyChanged("Scale");
+			}
+		}
+
+		public int MinimumDimension
+		{
+			get { return 10; }
+		}
+
+		public int MaximumDimension
+		{
+			get { return 100000; }
+		}
+
+		public int Width
+		{
+			get { return _width; }
+			set
+			{
+				if (_width != value)
+				{
+					_width = value;
+					this.NotifyPropertyChanged("Width");
+				}
+			}
+		}
+
+		public int Height
+		{
+			get { return _height; }
+			set
+			{
+				if (_height != value)
+				{
+					_height = value;
+					this.NotifyPropertyChanged("Height");
+				}
+			}
+		}
+
+		public Color BackgroundColor
+		{
+			get { return _backgroundColor; }
+			set
+			{
+				if (_backgroundColor != value)
+				{
+					_backgroundColor = value;
+					this.NotifyPropertyChanged("BackgroundColor");
+				}
+			}
+		}
+
+		public SizeMode SizeMode
+		{
+			get { return _sizeMode; }
+			set
+			{
+				if (_sizeMode != value)
+				{
+					_sizeMode = value;
+					this.NotifyPropertyChanged("SizeMode");
+				}
 			}
 		}
 
@@ -371,18 +422,25 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 		private void InitializeOptions()
 		{
-			_exportOption = (ExportOption)ImageExportSettings.Default.SelectedImageExportOption;
+			ImageExportSettings settings = ImageExportSettings.Default;
+			_exportOption = (ExportOption)settings.SelectedImageExportOption;
 
-			_selectedExporterInfo = GetExporterInfo(ImageExportSettings.Default.SelectedImageExporterId);
+			_selectedExporterInfo = GetExporterInfo(settings.SelectedImageExporterId);
 			if (_selectedExporterInfo == null)
 				_selectedExporterInfo = _exporterInfoList[0];
+
+			_sizeMode = settings.SizeMode;
+			_backgroundColor = settings.BackgroundColor;
 		}
 
 		private void SaveOptions()
 		{
-			ImageExportSettings.Default.SelectedImageExportOption = (int)ExportOption;
-			ImageExportSettings.Default.SelectedImageExporterId = SelectedImageExporter.Identifier;
-			ImageExportSettings.Default.Save();
+			ImageExportSettings settings = ImageExportSettings.Default;
+			settings.SelectedImageExportOption = (int)ExportOption;
+			settings.SelectedImageExporterId = SelectedImageExporter.Identifier;
+			settings.SizeMode = SizeMode;
+			settings.BackgroundColor = BackgroundColor;
+			settings.Save();
 		}
 
 		#endregion
@@ -411,6 +469,31 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			ImageExportComponent component = new ImageExportComponent();
 			component.ItemsToExport = clipboardItems;
 			component.NumberOfImagesToExport = numberOfImagesToExport;
+
+			// give the width and height values from the first image to be exported
+			if (clipboardItems.Count > 0)
+			{
+				object item = clipboardItems[0].Item;
+				if (item is IImageGraphicProvider)
+				{
+					IImageGraphicProvider imageGraphicProvider = (IImageGraphicProvider) item;
+					component.Height = imageGraphicProvider.ImageGraphic.Rows;
+					component.Width = imageGraphicProvider.ImageGraphic.Columns;
+				}
+				else if (item is IDisplaySet)
+				{
+					foreach (IPresentationImage image in ((IDisplaySet) item).PresentationImages)
+					{
+						if (image is IImageGraphicProvider)
+						{
+							IImageGraphicProvider imageGraphicProvider = (IImageGraphicProvider) image;
+							component.Height = imageGraphicProvider.ImageGraphic.Rows;
+							component.Width = imageGraphicProvider.ImageGraphic.Columns;
+							break;
+						}
+					}
+				}
+			}
 
 			if (ApplicationComponentExitCode.Accepted != LaunchAsDialog(desktopWindow, component, title))
 				return;
@@ -517,6 +600,9 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			exportParams.ExportOption = ExportOption;
 			exportParams.DisplayRectangle = clipboardItem.DisplayRectangle;
 			exportParams.Scale = Scale;
+			exportParams.SizeMode = SizeMode;
+			exportParams.OutputSize = new Size(Width, Height);
+			exportParams.BackgroundColor = BackgroundColor;
 			return exportParams;
 		}
 
