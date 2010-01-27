@@ -303,11 +303,12 @@ namespace ClearCanvas.ImageServer.Core.Edit
         public MoveSeriesWorkQueueParameters(StudyStorageLocation studyStorageLocation, string seriesInstanceUid, ServerEntityKey deviceKey)
         {
             DateTime now = Platform.Time;
-            WebDeleteSeriesLevelQueueData data = new WebDeleteSeriesLevelQueueData
+			WebMoveSeriesLevelQueueData data = new WebMoveSeriesLevelQueueData
                                                  	{
                                                  		Timestamp = now,
                                                  		UserId = ServerHelper.CurrentUserName
                                                  	};
+			//data.SeriesInstanceUids = new List<string> {seriesInstanceUid};
 
         	WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy;
             StudyStorageKey = studyStorageLocation.Key;

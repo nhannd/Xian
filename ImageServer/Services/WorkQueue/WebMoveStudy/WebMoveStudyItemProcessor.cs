@@ -36,9 +36,14 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core;
+using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
@@ -58,6 +63,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
             Platform.CheckForNullReference(StorageLocation, "StorageLocation");
 
             List<StorageInstance> list = new List<StorageInstance>(); 
+
+			// We alread moved the series
+			if (WorkQueueItem.Data != null && seriesList.Count == 0)
+				return list;
+
             string studyPath = StorageLocation.GetStudyPath();
             StudyXml studyXml = LoadStudyXml(StorageLocation);
             foreach (SeriesXml seriesXml in studyXml)
@@ -103,6 +113,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
 
         protected override void OnComplete()
         {
+			if (WorkQueueItem.Data == null)
+			{
+				AddWorkQueueData();
+			}
+
             // Force the entry to idle and stay for a while
             // Note: the assumption is the code will set ScheduledTime = ExpirationTime = some future time
             // so that the item will be removed when it is processed again.
@@ -111,6 +126,23 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
                            WorkQueueProcessorDatabaseUpdate.None);
         
         }
+
+		private void AddWorkQueueData()
+		{
+			WebMoveWorkQueueEntryData data = new WebMoveWorkQueueEntryData
+			{
+				Timestamp = DateTime.Now,
+				UserId = ServerHelper.CurrentUserName
+			};
+			using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+			{
+				IWorkQueueEntityBroker broker = update.GetBroker<IWorkQueueEntityBroker>();
+				WorkQueueUpdateColumns cols = new WorkQueueUpdateColumns();
+				cols.Data = XmlUtils.SerializeAsXmlDoc(data);
+				broker.Update(WorkQueueItem.Key, cols);
+				update.Commit();
+			}
+		}
 
         protected override bool CanStart()
         {

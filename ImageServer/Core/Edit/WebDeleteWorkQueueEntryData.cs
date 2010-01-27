@@ -145,6 +145,11 @@ namespace ClearCanvas.ImageServer.Core.Edit
     [XmlRoot("WebMoveWorkQueueEntry")]
     public class WebMoveSeriesLevelQueueData : WebMoveWorkQueueEntryData
     {
+		public WebMoveSeriesLevelQueueData()
+		{
+			Level = MoveLevel.Series;
+		}
+
         private List<string> _seriesInstanceUids;
 
         public List<string> SeriesInstanceUids
