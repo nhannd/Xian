@@ -151,7 +151,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
             }
 
             //Hide the UserPanel information
-            MasterProperties master = Master as MasterProperties;
+            IMasterProperties master = Master as IMasterProperties;
             if(master != null) master.DisplayUserInformationPanel = false;
         }
 

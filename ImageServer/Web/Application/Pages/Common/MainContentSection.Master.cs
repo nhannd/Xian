@@ -42,19 +42,19 @@ using System.Web.UI.HtmlControls;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
 {
-    public partial class MainContentSection : MasterPage, MasterProperties
+    public partial class MainContentSection : MasterPage, IMasterProperties
     {
         public bool DisplayUserInformationPanel
         {
             get
             {
-                MasterProperties master = Master as MasterProperties;
+                IMasterProperties master = Master as IMasterProperties;
                 return master.DisplayUserInformationPanel;
             }
 
             set
             {
-                MasterProperties master = Master as MasterProperties;
+                IMasterProperties master = Master as IMasterProperties;
                 master.DisplayUserInformationPanel = value;
             }
         }

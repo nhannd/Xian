@@ -31,6 +31,7 @@
 
 using System;
 using System.Configuration;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
 {
@@ -55,8 +56,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
 
         protected void SetPageTitle(string title)
         {
-            Page.Title = string.IsNullOrEmpty(ConfigurationManager.AppSettings["ServerName"]) ? title : title + " [" + ConfigurationManager.AppSettings["ServerName"] + "]";
-        }
+			if (title.Contains("{0}"))
+				Page.Title = string.IsNullOrEmpty(ConfigurationManager.AppSettings["ServerName"]) ? String.Format(title, ProductInformation.GetNameAndVersion(false, true)) : String.Format(title, ProductInformation.GetNameAndVersion(false, true)) + " [" + ConfigurationManager.AppSettings["ServerName"] + "]";
+			else
+				Page.Title = string.IsNullOrEmpty(ConfigurationManager.AppSettings["ServerName"]) ? title : title + " [" + ConfigurationManager.AppSettings["ServerName"] + "]";
+		}
     }
 
 

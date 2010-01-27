@@ -130,7 +130,7 @@
     <value>Archive Queue</value>
   </data>
   <data name="ArchiveQueuePageTitle" xml:space="preserve">
-    <value>Archive Queue | ClearCanvas ImageServer</value>
+    <value>Archive Queue | {0}</value>
   </data>
   <data name="Configure" xml:space="preserve">
     <value>Configure</value>
@@ -154,7 +154,7 @@
     <value>File Systems</value>
   </data>
   <data name="MoveStudiesPageTitle" xml:space="preserve">
-    <value>Move Studies | ClearCanvas ImageServer</value>
+    <value>Move Studies | {0}</value>
   </data>
   <data name="PartitionArchive" xml:space="preserve">
     <value>Partition Archive</value>
@@ -166,7 +166,7 @@
     <value>Study Integrity Queue</value>
   </data>
   <data name="StudyIntegrityQueuePageTitle" xml:space="preserve">
-    <value>Study Integrity Queue | ClearCanvas ImageServer</value>
+    <value>Study Integrity Queue |  {0}</value>
   </data>
   <data name="ReconcileStudyDialog" xml:space="preserve">
     <value>Reconcile Study</value>
@@ -175,7 +175,7 @@
     <value>Restore Queue</value>
   </data>
   <data name="RestoreQueuePageTitle" xml:space="preserve">
-    <value>Restore Queue | ClearCanvas ImageServer</value>
+    <value>Restore Queue | {0}</value>
   </data>
   <data name="RestoreStudyConfirmation" xml:space="preserve">
     <value>Restore Confirmation</value>
@@ -184,7 +184,7 @@
     <value>Search</value>
   </data>
   <data name="SearchPageTitle" xml:space="preserve">
-    <value>Search | ClearCanvas ImageServer</value>
+    <value>Search | {0}</value>
   </data>
   <data name="Series" xml:space="preserve">
     <value>Series</value>
@@ -205,7 +205,7 @@
     <value>Studies</value>
   </data>
   <data name="StudiesPageTitle" xml:space="preserve">
-    <value>Studies | ClearCanvas ImageServer</value>
+    <value>Studies | {0}</value>
   </data>
   <data name="StudyDetails" xml:space="preserve">
     <value>Study Details</value>
@@ -217,7 +217,7 @@
     <value>Work Queue</value>
   </data>
   <data name="WorkQueuePageTitle" xml:space="preserve">
-    <value>Work Queue | ClearCanvas ImageServer</value>
+    <value>Work Queue | {0}</value>
   </data>
   <data name="DeleteStudyConfirmDialogTitle" xml:space="preserve">
     <value>Delete Study Confirmation</value>
@@ -235,7 +235,7 @@
     <value>Alerts</value>
   </data>
   <data name="AlertsPageTitle" xml:space="preserve">
-    <value>Alerts | Admin | ClearCanvas ImageServer</value>
+    <value>Alerts | Admin | {0}</value>
   </data>
   <data name="ApplicationLog" xml:space="preserve">
     <value>Application Log</value>
@@ -244,7 +244,7 @@
     <value>User Management</value>
   </data>
   <data name="UserManagementPageTitle" xml:space="preserve">
-    <value>Users | User Management | Admin | ClearCanvas ImageServer</value>
+    <value>Users | User Management | Admin | {0}</value>
   </data>
   <data name="AuthorityTokens" xml:space="preserve">
     <value>Authority Tokens</value>
@@ -259,40 +259,40 @@
     <value>History</value>
   </data>
   <data name="AboutPageTitle" xml:space="preserve">
-    <value>About | ClearCanvas ImageServer</value>
+    <value>About | {0}</value>
   </data>
   <data name="ApplicationLogPageTitle" xml:space="preserve">
-    <value>Application Log | Admin | ClearCanvas ImageServer</value>
+    <value>Application Log | Admin | {0}</value>
   </data>
   <data name="DeletedStudiesPageTitle" xml:space="preserve">
-    <value>Deleted Studies | ClearCanvas ImageServer</value>
+    <value>Deleted Studies | {0}</value>
   </data>
   <data name="UserGroupsPageTitle" xml:space="preserve">
-    <value>User Groups | User Management | Admin | ClearCanvas ImageServer</value>
+    <value>User Groups | User Management | Admin | {0}</value>
   </data>
   <data name="DevicesPageTitle" xml:space="preserve">
-    <value>Devices | Configure | ClearCanvas ImageServer</value>
+    <value>Devices | Configure | {0}</value>
   </data>
   <data name="FileSystemsPageTitle" xml:space="preserve">
-    <value>File Systems | Configure | ClearCanvas ImageServer</value>
+    <value>File Systems | Configure | {0}</value>
   </data>
   <data name="PartitionArchivesPageTitle" xml:space="preserve">
-    <value>Partition Archives | Configure | ClearCanvas ImageServer</value>
+    <value>Partition Archives | Configure | {0}</value>
   </data>
   <data name="ServerPartitionsPageTitle" xml:space="preserve">
-    <value>Server Partitions | Configure | ClearCanvas ImageServer</value>
+    <value>Server Partitions | Configure | {0}</value>
   </data>
   <data name="ServerRulesPageTitle" xml:space="preserve">
-    <value>Server Rules | Configure | ClearCanvas ImageServer</value>
+    <value>Server Rules | Configure | {0}</value>
   </data>
   <data name="ServiceSchedulingPageTitle" xml:space="preserve">
-    <value>Service Scheduling | Configure | ClearCanvas ImageServer</value>
+    <value>Service Scheduling | Configure | {0}</value>
   </data>
   <data name="AuthorizationErrorPageTitle" xml:space="preserve">
     <value>Authorization Error</value>
   </data>
   <data name="ErrorPageTitle" xml:space="preserve">
-    <value>ClearCanvas ImageServer</value>
+    <value>Error | {0}</value>
   </data>
   <data name="JavascriptRequiredPageTitle" xml:space="preserve">
     <value>Javascript Required</value>
@@ -310,7 +310,7 @@
     <value>ImageServer Dashboard</value>
   </data>
   <data name="DashboardTitle" xml:space="preserve">
-    <value>Dashboard | ClearCanvas ImageServer</value>
+    <value>Dashboard | {0}</value>
   </data>
   <data name="DashboardMenu" xml:space="preserve">
     <value>Dashboard</value>
@@ -319,9 +319,9 @@
     <value>Cookies Required</value>
   </data>
   <data name="DefaultPageTitle" xml:space="preserve">
-    <value>ClearCanvas ImageServer</value>
+    <value>{0}</value>
   </data>
   <data name="LoginPageTitle" xml:space="preserve">
-    <value>ClearCanvas ImageServer</value>
+    <value>{0}</value>
   </data>
 </root>

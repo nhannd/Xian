@@ -52,9 +52,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
                                                                return panel;
                                                            });
 
-            Page.Title = App_GlobalResources.Titles.RestoreQueuePageTitle;
-
-            
+			SetPageTitle(App_GlobalResources.Titles.RestoreQueuePageTitle);
         }
     }
 }

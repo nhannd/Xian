@@ -42,7 +42,7 @@ using ClearCanvas.ImageServer.Web.Common.Security;
 
 namespace ClearCanvas.ImageServer.Web.Application
 {
-    public partial class GlobalMasterPage : MasterPage, MasterProperties
+    public partial class GlobalMasterPage : MasterPage, IMasterProperties
     {
         private bool _displayUserInfo = true;
 

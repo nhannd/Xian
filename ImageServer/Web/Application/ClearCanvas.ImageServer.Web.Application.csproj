@@ -352,7 +352,7 @@
     <Compile Include="Pages\Admin\UserManagement\Users\UserPanel.ascx.designer.cs">
       <DependentUpon>UserPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Common\MasterProperties.cs" />
+    <Compile Include="Pages\Common\IMasterProperties.cs" />
     <Compile Include="Pages\Error\CookiesRequired.aspx.cs">
       <DependentUpon>CookiesRequired.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1858,7 +1858,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>52519</DevelopmentServerPort>
           <DevelopmentServerVPath>/ImageServer</DevelopmentServerVPath>

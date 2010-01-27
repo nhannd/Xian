@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
         protected void Page_Load(object sender, EventArgs e)
         {
             //Hide the UserPanel information
-            MasterProperties master = Master as MasterProperties;
+            IMasterProperties master = Master as IMasterProperties;
             master.DisplayUserInformationPanel = false;
         }
     }

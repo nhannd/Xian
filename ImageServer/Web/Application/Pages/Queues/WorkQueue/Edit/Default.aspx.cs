@@ -113,7 +113,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             UpdatePanel.Update();
 
             //Hide the UserPanel information
-            var master = Master as MasterProperties;
+            var master = Master as IMasterProperties;
             if(master != null) master.DisplayUserInformationPanel = false;
         }
 
