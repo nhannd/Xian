@@ -1553,11 +1553,12 @@ CREATE NONCLUSTERED INDEX [IX_CannedText_Category] ON [dbo].[CannedText]
 
 
 GO
-/****** Object:  Index [IX_CannedText_Name]    Script Date: 02/23/2009 20:04:33 ******/
-CREATE UNIQUE NONCLUSTERED INDEX [IX_CannedText_Name] ON [dbo].[CannedText] 
+/****** Object:  Index [IX_CannedText]    Script Date: 01/28/2010 15:04:33 ******/
+CREATE UNIQUE NONCLUSTERED INDEX [IX_CannedText] ON [dbo].[CannedText] 
 (
-	[Label] ASC
-)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
+	[Label] ASC,
+	[Category] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 
 /****** Object:  Table [dbo].[DeviceTypeEnum]    Script Date: 01/09/2008 15:03:36 ******/
 SET ANSI_NULLS ON
