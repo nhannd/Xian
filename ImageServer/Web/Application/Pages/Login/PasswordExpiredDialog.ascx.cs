@@ -78,6 +78,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                 {
                     ErrorMessage.Text = ex.Message;
                     ErrorMessagePanel.Visible = true;
+                    NewPassword.Focus();
 					// May want to elimiate this.
 					Platform.Log(LogLevel.Error, ex, "Unexpected exception changing password: {0}.", ex.Message);
 				}

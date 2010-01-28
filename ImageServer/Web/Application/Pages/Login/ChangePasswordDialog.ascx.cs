@@ -123,6 +123,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
         {
             ErrorMessage.Text = error;
             ErrorMessagePanel.Visible = true;
+            ChangePasswordUsername.Focus();
         }
     }
 }
