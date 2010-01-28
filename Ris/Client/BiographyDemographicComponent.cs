@@ -83,6 +83,7 @@ namespace ClearCanvas.Ris.Client
 		private PatientProfileSummary _selectedProfile;
 		private List<PatientProfileSummary> _profileChoices;
 
+		private ProfileViewComponent _profileViewComponent;
 		private ChildComponentHost _profileViewComponentHost;
 
 		/// <summary>
@@ -101,49 +102,29 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
-			Platform.GetService<IBrowsePatientDataService>(
-				delegate(IBrowsePatientDataService service)
-				{
-					GetDataRequest request = new GetDataRequest();
-					request.ListPatientProfilesRequest = new ListPatientProfilesRequest(_patientRef);
-
-					GetDataResponse response = service.GetData(request);
-					_profileChoices = response.ListPatientProfilesResponse.Profiles;
-				});
-
-			if (_defaultProfileRef != null)
-			{
-				_selectedProfile = CollectionUtils.SelectFirst(_profileChoices,
-					delegate(PatientProfileSummary pp) { return pp.PatientProfileRef.Equals(_defaultProfileRef, true); });
-			}
-			else
-			{
-				_selectedProfile = CollectionUtils.FirstElement(_profileChoices);
-			}
-
-			ProfileViewComponent profileViewComponent = new ProfileViewComponent();
-			profileViewComponent.PatientProfile = _selectedProfile;
-
-			_profileViewComponentHost = new ChildComponentHost(this.Host, profileViewComponent);
+			_profileViewComponent = new ProfileViewComponent();
+			_profileViewComponentHost = new ChildComponentHost(this.Host, _profileViewComponent);
 			_profileViewComponentHost.StartComponent();
+
+			LoadPatientProfile();
 
 			base.Start();
 		}
 
-        public override void Stop()
-        {
-            if (_profileViewComponentHost != null)
-            {
-                _profileViewComponentHost.StopComponent();
-                _profileViewComponentHost = null;
-            }
+		public override void Stop()
+		{
+			if (_profileViewComponentHost != null)
+			{
+				_profileViewComponentHost.StopComponent();
+				_profileViewComponentHost = null;
+			}
 
-            base.Stop();
-        }
+			base.Stop();
+		}
 
 		public string FormatPatientProfile(object item)
 		{
-			PatientProfileSummary summary = (PatientProfileSummary)item;
+			var summary = (PatientProfileSummary)item;
 			return String.Format("{0} - {1}", MrnFormat.Format(summary.Mrn), PersonNameFormat.Format(summary.Name));
 		}
 
@@ -173,5 +154,34 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		#endregion
+
+		private void LoadPatientProfile()
+		{
+			Async.CancelPending(this);
+
+			if (_patientRef == null)
+				return;
+
+			Async.Request(this,
+				(IBrowsePatientDataService service) =>
+				{
+					var request = new GetDataRequest
+						{
+							ListPatientProfilesRequest = new ListPatientProfilesRequest(_patientRef)
+						};
+					return service.GetData(request);
+				},
+				response =>
+				{
+					_profileChoices = response.ListPatientProfilesResponse.Profiles;
+
+					_selectedProfile = _defaultProfileRef != null 
+						? CollectionUtils.SelectFirst(_profileChoices, pp => pp.PatientProfileRef.Equals(_defaultProfileRef, true)) 
+						: CollectionUtils.FirstElement(_profileChoices);
+
+					_profileViewComponent.PatientProfile = _selectedProfile;
+				});
+		}
+		
 	}
 }

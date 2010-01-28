@@ -158,17 +158,6 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
-			Platform.GetService<IBrowsePatientDataService>(
-				service =>
-				{
-					var response = service.GetData(new GetDataRequest
-						{
-							ListOrdersRequest = new ListOrdersRequest(_patientRef, PatientOrdersQueryDetailLevel.Order)
-						});
-
-					_orderList.Items.AddRange(response.ListOrdersResponse.Orders);
-				});
-
 			_orderDetailComponent = new BiographyOrderDetailViewComponent();
 			_visitDetailComponent = new BiographyVisitDetailViewComponent();
 			_orderReportsComponent = new BiographyOrderReportsComponent();
@@ -198,6 +187,8 @@ namespace ClearCanvas.Ris.Client
 
 			_rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
 			_rightHandComponentContainerHost.StartComponent();
+
+			LoadOrders();
 
 			base.Start();
 		}
@@ -239,12 +230,11 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				var newSelection = (OrderListItem)value.Item;
-				if (_selectedOrder != newSelection)
-				{
-					_selectedOrder = newSelection;
-					OrderSelectionChanged();
-					NotifyPropertyChanged("SelectedOrder");
-				}
+				if (_selectedOrder == newSelection)
+					return;
+
+				_selectedOrder = newSelection;
+				OrderSelectionChanged();
 			}
 		}
 
@@ -267,32 +257,15 @@ namespace ClearCanvas.Ris.Client
 
 		private void OrderSelectionChanged()
 		{
-			try
+			if (_selectedOrder == null)
 			{
-				if (_selectedOrder != null)
-				{
-					Platform.GetService<IBrowsePatientDataService>(service =>
-					{
-						var response = service.GetData(new GetDataRequest
-							{
-								GetOrderDetailRequest = new GetOrderDetailRequest(_selectedOrder.OrderRef, true, true, false, false, true, false)
-									{
-										IncludeExtendedProperties = true
-									}
-							});
-
-						_orderDetail = response.GetOrderDetailResponse.Order;
-					});
-				}
-
 				UpdatePages();
-			}
-			catch (Exception e)
-			{
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+				NotifyPropertyChanged("SelectedOrder");
+				NotifyAllPropertiesChanged();
+				return;
 			}
 
-			NotifyAllPropertiesChanged();
+			LoadOrderDetail(_selectedOrder.OrderRef);
 		}
 
 		private void UpdatePages()
@@ -317,6 +290,66 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			EventsHelper.Fire(_orderListItemChanged, this, EventArgs.Empty);
+		}
+
+		private void LoadOrders()
+		{
+			Async.CancelPending(this);
+
+			if (_patientRef == null)
+				return;
+
+			Async.Request(
+				this,
+				(IBrowsePatientDataService service) =>
+				{
+					var request = new GetDataRequest
+					{
+						ListOrdersRequest = new ListOrdersRequest(_patientRef, PatientOrdersQueryDetailLevel.Order)
+					};
+
+					return service.GetData(request);
+				},
+				response =>
+				{
+					_orderList.Items.Clear();
+					_orderList.Items.AddRange(response.ListOrdersResponse.Orders);
+				});
+		}
+
+		private void LoadOrderDetail(EntityRef orderRef)
+		{
+			if (orderRef == null)
+				return;
+
+			Async.Request(
+				this,
+				(IBrowsePatientDataService service) =>
+				{
+					var request = new GetDataRequest
+					{
+						GetOrderDetailRequest = new GetOrderDetailRequest(_selectedOrder.OrderRef, true, true, false, false, true, false)
+						{
+							IncludeExtendedProperties = true
+						}
+					};
+
+					return service.GetData(request);
+				},
+				response =>
+				{
+					_orderDetail = response.GetOrderDetailResponse.Order;
+
+					UpdatePages();
+					NotifyPropertyChanged("SelectedOrder");
+					NotifyAllPropertiesChanged();
+				},
+				exception =>
+				{
+					ExceptionHandler.Report(exception, this.Host.DesktopWindow);
+					NotifyPropertyChanged("SelectedOrder");
+					NotifyAllPropertiesChanged();
+				});
 		}
 	}
 }

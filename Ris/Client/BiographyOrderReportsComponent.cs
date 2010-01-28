@@ -244,13 +244,10 @@ namespace ClearCanvas.Ris.Client
 				if (_reportListItems.Count == 0)
 					return string.Empty;
 				
-				string s = string.Join(" / ",
+				var s = string.Join(" / ",
 					CollectionUtils.Map<ReportListItem, string>(
 						_reportListItems, 
-						delegate (ReportListItem item)
-						{
-							return ProcedureFormat.Format(item);
-						}).ToArray());
+						ProcedureFormat.Format).ToArray());
 
 				s += " : " + _reportListItems[0].ReportStatus.Value;
 
@@ -302,16 +299,16 @@ namespace ClearCanvas.Ris.Client
 			base.Start();
 		}
 
-        public override void Stop()
-        {
-            if (_reportPreviewComponentHost != null)
-            {
-                _reportPreviewComponentHost.StopComponent();
-                _reportPreviewComponentHost = null;
-            }
+		public override void Stop()
+		{
+			if (_reportPreviewComponentHost != null)
+			{
+				_reportPreviewComponentHost.StopComponent();
+				_reportPreviewComponentHost = null;
+			}
 
-            base.Stop();
-        }
+			base.Stop();
+		}
 
 		#endregion
 
@@ -327,11 +324,11 @@ namespace ClearCanvas.Ris.Client
 			get { return _selectedReport; }
 			set
 			{
-				if(!Equals(_selectedReport, value))
-				{
-					_selectedReport = value;
-					OnReportSelectionChanged();
-				}
+				if (Equals(_selectedReport, value))
+					return;
+
+				_selectedReport = value;
+				OnReportSelectionChanged();
 			}
 		}
 
@@ -356,7 +353,7 @@ namespace ClearCanvas.Ris.Client
 
 		public string FormatReportListItem(object item)
 		{
-			CommonReportListItem reportListItem = (CommonReportListItem)item;
+			var reportListItem = (CommonReportListItem)item;
 			return reportListItem.ToString();
 		}
 
@@ -416,83 +413,80 @@ namespace ClearCanvas.Ris.Client
 			{
 				_reports = new List<CommonReportListItem>();
 				_selectedReport = null;
+
+				OnReportSelectionChanged();
+				NotifyAllPropertiesChanged();
+				return;
 			}
-			else
-			{
-				LoadReports();
-			}
 
-			OnReportSelectionChanged();
-			NotifyAllPropertiesChanged();
-		}
-
-		private void LoadReports()
-		{
-			try
-			{
-				Platform.GetService<IBrowsePatientDataService>(
-					delegate(IBrowsePatientDataService service)
-					{
-						GetDataRequest request = new GetDataRequest();
-						request.ListReportsRequest = new ListReportsRequest(null, _context.OrderRef);
-						request.ListPatientProfilesRequest = new ListPatientProfilesRequest(_context.PatientRef);
-						request.GetOrderDetailRequest = new GetOrderDetailRequest(_context.OrderRef, false, true, false, false, false, false);
-
-						GetDataResponse response = service.GetData(request);
-
-						ProcedureDetail procedure = response.GetOrderDetailResponse.Order.Procedures[0];
-						if (procedure != null)
-						{
-							string facilityCode = procedure.PerformingFacility.InformationAuthority.Code;
-							PatientProfileSummary matchingProfile = CollectionUtils.SelectFirst(
-								response.ListPatientProfilesResponse.Profiles,
-								delegate(PatientProfileSummary summary)
-								{
-									return summary.Mrn.AssigningAuthority.Code == facilityCode;
-								});
-							_patientProfileRef = matchingProfile != null ? matchingProfile.PatientProfileRef : null;
-						}
-
-
-						List<CommonReportListItem> reports = new List<CommonReportListItem>();
-
-						CollectionUtils.ForEach<ReportListItem>(
-							response.ListReportsResponse.Reports,
-							delegate(ReportListItem item)
-							{
-								CommonReportListItem existingItem = CollectionUtils.SelectFirst(
-									reports,
-									delegate(CommonReportListItem crli)
-									{
-										return Equals(crli.ReportRef, item.ReportRef);
-									});
-
-								if (existingItem != null)
-								{
-									existingItem.AddReportListItem(item);
-								}
-								else
-								{
-									reports.Add(new CommonReportListItem(item.ProcedureRef, item.ReportRef, item));
-								}
-							});
-
-						_reports = reports;
-						_selectedReport = CollectionUtils.FirstElement(_reports);
-					});
-			}
-			catch (Exception e)
-			{
-				_reports = new List<CommonReportListItem>();
-				_selectedReport = null;
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
-			}
+			LoadReports();
 		}
 
 		private void OnReportSelectionChanged()
 		{
 			_reportPreviewComponent.PreviewContext = _selectedReport != null ? new ReportPreviewComponent.ReportPreviewContext(_selectedReport.ReportRef) : null;
 			EventsHelper.Fire(_reportSelectionChanged, this, EventArgs.Empty);
+		}
+
+		private void LoadReports()
+		{
+			Async.CancelPending(this);
+
+			if (_context == null)
+				return;
+
+			Async.Request(
+				this,
+				(IBrowsePatientDataService service) =>
+				{
+					var request = new GetDataRequest
+						{
+							ListReportsRequest = new ListReportsRequest(null, _context.OrderRef),
+							ListPatientProfilesRequest = new ListPatientProfilesRequest(_context.PatientRef),
+							GetOrderDetailRequest = new GetOrderDetailRequest(_context.OrderRef, false, true, false, false, false, false)
+						};
+					return service.GetData(request);
+				},
+				response =>
+				{
+					var procedure = response.GetOrderDetailResponse.Order.Procedures[0];
+					if (procedure != null)
+					{
+						var facilityCode = procedure.PerformingFacility.InformationAuthority.Code;
+						var matchingProfile = CollectionUtils.SelectFirst(
+							response.ListPatientProfilesResponse.Profiles,
+							summary => summary.Mrn.AssigningAuthority.Code == facilityCode);
+						_patientProfileRef = matchingProfile != null ? matchingProfile.PatientProfileRef : null;
+					}
+
+					var reports = new List<CommonReportListItem>();
+
+					CollectionUtils.ForEach(response.ListReportsResponse.Reports,
+						delegate(ReportListItem item)
+						{
+							var existingItem = CollectionUtils.SelectFirst( reports, crli => Equals(crli.ReportRef, item.ReportRef));
+
+							if (existingItem != null)
+								existingItem.AddReportListItem(item);
+							else
+								reports.Add(new CommonReportListItem(item.ProcedureRef, item.ReportRef, item));
+						});
+
+					_reports = reports;
+					_selectedReport = CollectionUtils.FirstElement(_reports);
+
+					OnReportSelectionChanged();
+					NotifyAllPropertiesChanged();
+				},
+				exception =>
+				{
+					_reports = new List<CommonReportListItem>();
+					_selectedReport = null;
+					ExceptionHandler.Report(exception, this.Host.DesktopWindow);
+
+					OnReportSelectionChanged();
+					NotifyAllPropertiesChanged();
+				});
 		}
 	}
 }

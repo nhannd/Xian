@@ -29,17 +29,11 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Desktop.Trees;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.BrowsePatientData;
-using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -60,11 +54,9 @@ namespace ClearCanvas.Ris.Client
 		private readonly EntityRef _patientRef;
 		private readonly VisitListTable _visitList;
 		private VisitListItem _selectedVisit;
-		private VisitDetail _visitDetail;
-
-		private ChildComponentHost _visitDetailComponentHost;
 
 		private VisitDetailViewComponent _visitDetailComponent;
+		private ChildComponentHost _visitDetailComponentHost;
 
 		/// <summary>
 		/// Constructor
@@ -77,33 +69,26 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
-			Platform.GetService<IBrowsePatientDataService>(
-				delegate(IBrowsePatientDataService service)
-				{
-					GetDataRequest request = new GetDataRequest();
-					request.ListVisitsRequest = new ListVisitsRequest(_patientRef);
-					GetDataResponse response = service.GetData(request);
-
-					_visitList.Items.AddRange(response.ListVisitsResponse.Visits);
-				});
-
 			_visitDetailComponent = new BiographyVisitDetailViewComponent();
 			_visitDetailComponentHost = new ChildComponentHost(this.Host, _visitDetailComponent);
 			_visitDetailComponentHost.StartComponent();
+
+			LoadVisits();
 
 			base.Start();
 		}
 
 		public override void Stop()
 		{
-            if (_visitDetailComponentHost != null)
-            {
-                _visitDetailComponentHost.StopComponent();
-                _visitDetailComponentHost = null;
-            }
+			if (_visitDetailComponentHost != null)
+			{
+				_visitDetailComponentHost.StopComponent();
+				_visitDetailComponentHost = null;
+			}
 
 			base.Stop();
 		}
+
 		#region Presentation Model
 
 		public ITable Visits
@@ -116,12 +101,14 @@ namespace ClearCanvas.Ris.Client
 			get { return new Selection(_selectedVisit); }
 			set
 			{
-				VisitListItem newSelection = (VisitListItem)value.Item;
-				if (_selectedVisit != newSelection)
-				{
-					_selectedVisit = newSelection;
-					VisitSelectionChanged();
-				}
+				var newSelection = (VisitListItem)value.Item;
+				if (_selectedVisit == newSelection)
+					return;
+
+				_selectedVisit = newSelection;
+
+				UpdatePages();
+				NotifyAllPropertiesChanged();
 			}
 		}
 
@@ -132,44 +119,36 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
-		private void VisitSelectionChanged()
-		{
-			try
-			{
-				if (_selectedVisit != null)
-				{
-					Platform.GetService<IBrowsePatientDataService>(
-						delegate(IBrowsePatientDataService service)
-						{
-							GetDataRequest request = new GetDataRequest();
-							request.GetVisitDetailRequest = new GetVisitDetailRequest(_selectedVisit.VisitRef);
-							GetDataResponse response = service.GetData(request);
-
-							_visitDetail = response.GetVisitDetailResponse.Visit;
-						});
-				}
-
-				UpdatePages();
-			}
-			catch (Exception e)
-			{
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
-			}
-
-			NotifyAllPropertiesChanged();
-		}
-
 		private void UpdatePages()
 		{
-			if (_selectedVisit == null)
-			{
-				_visitDetailComponent.Context = null;
-			}
-			else
-			{
-				_visitDetailComponent.Context = new VisitDetailViewComponent.VisitContext(_selectedVisit.VisitRef);
-			}
+			_visitDetailComponent.Context = _selectedVisit == null 
+				? null 
+				: new VisitDetailViewComponent.VisitContext(_selectedVisit.VisitRef);
+		}
 
+		private void LoadVisits()
+		{
+			Async.CancelPending(this);
+
+			if (_patientRef == null)
+				return;
+
+			Async.Request(
+				this,
+				(IBrowsePatientDataService service) =>
+				{
+					var request = new GetDataRequest
+					{
+						ListVisitsRequest = new ListVisitsRequest(_patientRef)
+					};
+
+					return service.GetData(request);
+				},
+				response =>
+				{
+					_visitList.Items.Clear();
+					_visitList.Items.AddRange(response.ListVisitsResponse.Visits);
+				});
 		}
 	}
 }
