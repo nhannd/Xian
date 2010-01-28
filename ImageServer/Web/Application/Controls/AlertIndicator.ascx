@@ -1,6 +1,6 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="AlertIndicator.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Controls.AlertIndicator" %>
 
-<div id="AlertLinkPanel" >| <asp:LinkButton ID="AlertLink" runat="server" PostBackUrl="~/Pages/Admin/Alerts/Default.aspx" CssClass="UserInformationLink">Alerts: <asp:Label ID="AlertsCount" runat="server" /></asp:LinkButton>
+<div id="AlertLinkPanel" >| <asp:LinkButton ID="AlertLink" runat="server" PostBackUrl="~/Pages/Admin/Alerts/Default.aspx" CssClass="UserInformationLink">Critical Alerts: <asp:Label ID="AlertsCount" runat="server" /></asp:LinkButton>
 <div id="AlertDetailsPanel" class="AlertDetailsPanel" style="display: none">
     <div>
         <asp:Table runat="server" ID="AlertTable" style="background: white; border: lightsteelblue 1px solid; padding: 2px;">
