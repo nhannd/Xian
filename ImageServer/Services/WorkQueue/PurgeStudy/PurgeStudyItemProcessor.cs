@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
@@ -105,16 +106,62 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
 
 		#endregion
 
+		private void ReinsertFilesystemQueue(TimeSpan delay)
+		{
+			using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+			{
+				IWorkQueueUidEntityBroker broker = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
+				WorkQueueUidSelectCriteria workQueueUidCriteria = new WorkQueueUidSelectCriteria();
+				workQueueUidCriteria.WorkQueueKey.EqualTo(WorkQueueItem.Key);
+				broker.Delete(workQueueUidCriteria);
+
+				FilesystemQueueInsertParameters parms = new FilesystemQueueInsertParameters
+				                                        	{
+				                                        		FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.PurgeStudy,
+				                                        		ScheduledTime = Platform.Time + delay,
+				                                        		StudyStorageKey = WorkQueueItem.StudyStorageKey,
+				                                        		FilesystemKey = StorageLocation.FilesystemKey,
+				                                        		QueueXml = WorkQueueItem.Data
+				                                        	};
+
+				IInsertFilesystemQueue insertQueue = updateContext.GetBroker<IInsertFilesystemQueue>();
+
+				if (false == insertQueue.Execute(parms))
+				{
+					Platform.Log(LogLevel.Error, "Unexpected failure inserting FilesystemQueue entry");
+				}
+				else
+					updateContext.Commit();
+			}
+		} 
+
         protected override bool CanStart()
         {
-            IList<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem,
-                                                                           new []  { WorkQueueTypeEnum.StudyProcess, WorkQueueTypeEnum.ReconcileStudy },
-                                                                           new [] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending });
-            if (! (relatedItems == null || relatedItems.Count == 0))
+        	IList<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem,
+        	                                                                new[]
+        	                                                                	{
+        	                                                                		WorkQueueTypeEnum.StudyProcess,
+        	                                                                		WorkQueueTypeEnum.ReconcileStudy,
+        	                                                                		WorkQueueTypeEnum.WebEditStudy,
+        	                                                                		WorkQueueTypeEnum.CleanupDuplicate,
+        	                                                                		WorkQueueTypeEnum.CleanupStudy
+        	                                                                	},
+        	                                                                new[]
+        	                                                                	{
+        	                                                                		WorkQueueStatusEnum.Idle,
+        	                                                                		WorkQueueStatusEnum.InProgress,
+        	                                                                		WorkQueueStatusEnum.Pending,
+        	                                                                		WorkQueueStatusEnum.Failed
+        	                                                                	});
+			if (!(relatedItems == null || relatedItems.Count == 0) || StorageLocation.IsReconcileRequired)
             {
-                PostponeItem("Study is being processed or reconciled.");
-            	return false;
+				Platform.Log(LogLevel.Info, "PurgeStudy entry for study {0} has existing WorkQueue entry, reinserting into FilesystemQueue", StorageLocation.StudyInstanceUid);
+				TimeSpan delay = TimeSpan.FromMinutes(60);
+				ReinsertFilesystemQueue(delay);
+				PostProcessing(WorkQueueItem, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+				return false;
             }
+
         	return true;
         }
     }

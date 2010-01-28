@@ -49,212 +49,92 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 	public class StudySummary
 	{
 		#region Private members
-		private ServerEntityKey _ref;
-		private string _patientId;
-		private string _patientName;
-		private string _studyDate;
-		private string _accessionNumber;
-		private string _studyInstanceUid;
-		private string _studyDescription;
-		private int _numberOfRelatedSeries;
-		private int _numberOfRelatedInstances;
-		private StudyStatusEnum _studyStatusEnum;
-		private string _modalitiesInStudy;
-		private Study _theStudy;
-		private bool _isReconcileRequired;
-		private ServerPartition _thePartition;
-		private bool _isProcessing;
-		private QueueStudyStateEnum _queueStudyStateEnum;
-		private ArchiveStudyStorage _theArchiveLocation;
-		private bool _isLocked;
-		private StudyStorage _theStudyStorage;
-		private string _referringPhysiciansName;
-		private string _studyTime;
-		private string _studyId;
-	    private bool _hasPendingWorkQueueItems;
-	    private bool? _requiresWorkQueueAttention;
+
+		private bool? _requiresWorkQueueAttention;
 
 	    #endregion Private members
 
 
 		#region Public Properties
 
-		public ServerEntityKey Key
-		{
-			get { return _ref; }
-			set { _ref = value; }
-		}
+		public ServerEntityKey Key { get; set; }
 
-		public string PatientId
-		{
-			get { return _patientId; }
-			set { _patientId = value; }
-		}
+		public string PatientId { get; set; }
 
-		public string PatientsName
-		{
-			get { return _patientName; }
-			set { _patientName = value; }
-		}
+		public string PatientsName { get; set; }
 
-		public string StudyDate
-		{
-			get { return _studyDate; }
-			set { _studyDate = value; }
-		}
+		public string StudyDate { get; set; }
 
-		public string AccessionNumber
-		{
-			get { return _accessionNumber; }
-			set { _accessionNumber = value; }
-		}
+		public string AccessionNumber { get; set; }
 
-		public string StudyDescription
-		{
-			get { return _studyDescription; }
-			set { _studyDescription = value; }
-		}
+		public string StudyDescription { get; set; }
 
-		public int NumberOfStudyRelatedSeries
-		{
-			get { return _numberOfRelatedSeries; }
-			set { _numberOfRelatedSeries = value; }
-		}
+		public int NumberOfStudyRelatedSeries { get; set; }
 
-		public int NumberOfStudyRelatedInstances
-		{
-			get { return _numberOfRelatedInstances; }
-			set { _numberOfRelatedInstances = value; }
-		}
+		public int NumberOfStudyRelatedInstances { get; set; }
 
-		public StudyStatusEnum StudyStatusEnum
-		{
-			get { return _studyStatusEnum; }
-			set { _studyStatusEnum = value; }
-		}
+		public StudyStatusEnum StudyStatusEnum { get; set; }
 
-		public QueueStudyStateEnum QueueStudyStateEnum
-		{
-			get { return _queueStudyStateEnum; }
-			set { _queueStudyStateEnum = value; }
-		}
+		public QueueStudyStateEnum QueueStudyStateEnum { get; set; }
 
 		public string StudyStatusEnumString
 		{
 			get
 			{
-				if (!_queueStudyStateEnum.Equals(QueueStudyStateEnum.Idle))
-					return String.Format("{0}, {1}", _studyStatusEnum.Description, _queueStudyStateEnum.Description);
+				if (!QueueStudyStateEnum.Equals(QueueStudyStateEnum.Idle))
+					return String.Format("{0}, {1}", StudyStatusEnum.Description, QueueStudyStateEnum.Description);
 
-				return _studyStatusEnum.Description;
+				return StudyStatusEnum.Description;
 			}
 		}
 
-		public string ModalitiesInStudy
-		{
-			get { return _modalitiesInStudy; }
-			set { _modalitiesInStudy = value; }
-		}
+		public string ModalitiesInStudy { get; set; }
 
-		public Study TheStudy
-		{
-			get { return _theStudy; }
-			set { _theStudy = value; }
-		}
+		public Study TheStudy { get; set; }
 
-		public ServerPartition ThePartition
-		{
-			get { return _thePartition; }
-			set { _thePartition = value; }
-		}
+		public ServerPartition ThePartition { get; set; }
 
-		public ArchiveStudyStorage TheArchiveLocation
-		{
-			get { return _theArchiveLocation; }
-			set { _theArchiveLocation = value; }
-		}
+		public ArchiveStudyStorage TheArchiveLocation { get; set; }
 
 		public bool IsArchived
 		{
 			get
 			{
-				return _theArchiveLocation != null;
+				return TheArchiveLocation != null;
 			}
 		}
 
 	    public bool IsOnlineLossy
         {
-            get { return _theStudyStorage.StudyStatusEnum.Equals(StudyStatusEnum.OnlineLossy); }
+            get { return TheStudyStorage.StudyStatusEnum.Equals(StudyStatusEnum.OnlineLossy); }
         }
 
-		public bool IsLocked
-		{
-			get
-			{
-				return _isLocked;
-			}
-			set
-			{
-				_isLocked = value;
-			}
-		}
+		public bool IsLocked { get; set; }
 
-		public bool IsProcessing
-		{
-			get { return _isProcessing; }
-			set { _isProcessing = value; }
-		}
+		public bool IsProcessing { get; set; }
 
 		public bool IsArchiving { get; set; }
 
-		public bool IsReconcileRequired
-		{
-			get { return _isReconcileRequired; }
-			set { _isReconcileRequired = value; }
-		}
+		public bool IsReconcileRequired { get; set; }
 
 		public bool IsNearline
 		{
-			get { return _studyStatusEnum == StudyStatusEnum.Nearline; }
+			get { return StudyStatusEnum == StudyStatusEnum.Nearline; }
 		}
 
-		public string StudyInstanceUid
-		{
-			get { return _studyInstanceUid; }
-			set { _studyInstanceUid = value; }
-		}
+		public string StudyInstanceUid { get; set; }
 
-		public string ReferringPhysiciansName
-		{
-			get { return _referringPhysiciansName; }
-			set { _referringPhysiciansName = value; }
-		}
+		public string ReferringPhysiciansName { get; set; }
 
-		public string StudyTime
-		{
-			get { return _studyTime; }
-			set { _studyTime = value; }
-		}
+		public string StudyTime { get; set; }
 
-		public string StudyId
-		{
-			get { return _studyId; }
-			set { _studyId = value;}
-		}
+		public string StudyId { get; set; }
 
-		public StudyStorage TheStudyStorage
-		{
-			get { return _theStudyStorage; }
-			set { _theStudyStorage = value; }
-		}
+		public StudyStorage TheStudyStorage { get; set; }
 
-	    public bool HasPendingWorkQueueItems
-	    {
-            get { return _hasPendingWorkQueueItems; }
-            set { _hasPendingWorkQueueItems = value; }
-	    }
+		public bool HasPendingWorkQueueItems { get; set; }
 
-	    #endregion Public Properties
+		#endregion Public Properties
 
 
         public bool RequiresWorkQueueAttention
@@ -265,7 +145,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                 {
                     _requiresWorkQueueAttention = false;
                     StudyController controller = new StudyController();
-                    IList<WorkQueue> workqueueItems = controller.GetWorkQueueItems(_theStudy);
+                    IList<WorkQueue> workqueueItems = controller.GetWorkQueueItems(TheStudy);
                     foreach (WorkQueue item in workqueueItems)
                     {
                         if (!ServerPlatform.IsActiveWorkQueue(item))
@@ -322,6 +202,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 				return false;
 			}
 
+			if (HasPendingWorkQueueItems)
+			{
+				reason = "There are pending WorkQueue entries for this study.";
+				return false;
+			}
+
 			if (IsReconcileRequired)
 			{
 				reason = "There are images to be reconciled for this study.";
@@ -341,7 +227,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 	    public bool IsArchivedLossless
 	    {
-            get { return _theArchiveLocation != null && _theArchiveLocation.ServerTransferSyntax.Lossless; }
+            get { return TheArchiveLocation != null && TheArchiveLocation.ServerTransferSyntax.Lossless; }
 	    }
 
 	    public bool CanScheduleMove(out string reason)

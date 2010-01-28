@@ -109,7 +109,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                 new []
                 {
                     WorkQueueTypeEnum.StudyProcess,
-                    WorkQueueTypeEnum.ReconcileStudy
+                    WorkQueueTypeEnum.ReconcileStudy,
+					WorkQueueTypeEnum.ProcessDuplicate,
+            		WorkQueueTypeEnum.CleanupDuplicate,
+        	        WorkQueueTypeEnum.CleanupStudy
                 }, null);
 
             if (! (relatedItems == null || relatedItems.Count == 0))

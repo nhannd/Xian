@@ -447,7 +447,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                 new[]
 			    {
 			        WorkQueueTypeEnum.StudyProcess, 
-                    WorkQueueTypeEnum.ReconcileStudy
+                    WorkQueueTypeEnum.ReconcileStudy,
+					WorkQueueTypeEnum.WebEditStudy,
+					WorkQueueTypeEnum.ReprocessStudy,
+					WorkQueueTypeEnum.ReconcilePostProcess,
+					WorkQueueTypeEnum.ReconcileCleanup,
+					WorkQueueTypeEnum.ProcessDuplicate
                 }, null);
 
         	TimeSpan delay;
