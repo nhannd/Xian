@@ -188,7 +188,7 @@ namespace ClearCanvas.Ris.Client
 						}
 						catch (Exception e)
 						{
-							taskContext.Error(new Exception(SR.ExceptionFailedToFindSearchResults, e));
+							taskContext.Error(e);
 						}
 					},
 					false);
@@ -214,7 +214,10 @@ namespace ClearCanvas.Ris.Client
 			}
 			else
 			{
-				ExceptionHandler.Report(args.Exception, this.FolderSystem.DesktopWindow);
+				if (args.Exception is WeakSearchCriteriaException)
+					ExceptionHandler.Report(args.Exception, this.FolderSystem.DesktopWindow);
+				else
+					ExceptionHandler.Report(new Exception(SR.ExceptionFailedToFindSearchResults, args.Exception), this.FolderSystem.DesktopWindow);
 			}
 
 			// dispose of the task
