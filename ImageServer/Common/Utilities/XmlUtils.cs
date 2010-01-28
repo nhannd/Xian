@@ -212,6 +212,36 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             return text;
         }
 
+		/// <summary>
+		/// Scrub invalid characters from an input string.
+		/// </summary>
+		/// <remarks>
+		/// Taken from:
+		/// http://stackoverflow.com/questions/20762/how-do-you-remove-invalid-hexadecimal-characters-from-an-xml-based-data-source-pr
+		/// </remarks>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		public static string XmlCharacterScrub(string input)
+		{
+			if (input == null) return null;
+
+			StringBuilder sbOutput = new StringBuilder();
+
+			for (int i = 0; i < input.Length; i++)
+			{
+				char ch = input[i];
+				if ((ch >= 0x0020 && ch <= 0xD7FF) ||
+						(ch >= 0xE000 && ch <= 0xFFFD) ||
+						ch == 0x0009 ||
+						ch == 0x000A ||
+						ch == 0x000D)
+				{
+					sbOutput.Append(ch);
+				}
+			}
+			return sbOutput.ToString();
+		}
+
     }
 
     /// <summary>

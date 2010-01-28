@@ -54,8 +54,8 @@ namespace ClearCanvas.ImageServer.Core.Edit
         public UpdateItem(uint tag, string originalValue, string newValue)
         {
             DicomTag = DicomTagDictionary.GetDicomTag(tag);
-            OriginalValue = originalValue;
-            Value = newValue;
+            OriginalValue = XmlUtils.XmlCharacterScrub(originalValue);
+            Value = XmlUtils.XmlCharacterScrub(newValue);
         }
 
         [XmlIgnore]
