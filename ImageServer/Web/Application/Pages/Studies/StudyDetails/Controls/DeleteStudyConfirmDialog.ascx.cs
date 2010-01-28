@@ -185,7 +185,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
             if(!SessionManager.Current.User.IsInRole(Enterprise.Authentication.AuthorityTokens.Study.SaveReason))
             {
-//                ReasonSavePanel.Visible = false;    
+                ReasonSavePanel.Visible = false;    
             }
         }
 
