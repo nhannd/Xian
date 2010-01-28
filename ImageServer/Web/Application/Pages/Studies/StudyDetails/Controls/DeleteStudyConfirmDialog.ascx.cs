@@ -185,7 +185,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
             if(!SessionManager.Current.User.IsInRole(Enterprise.Authentication.AuthorityTokens.Study.SaveReason))
             {
-                ReasonSavePanel.Visible = false;    
+//                ReasonSavePanel.Visible = false;    
             }
         }
 
@@ -232,9 +232,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             {
                 try
                 {
+                    string reason = ReasonListBox.SelectedItem.Text;
                     if (!String.IsNullOrEmpty(SaveReasonAsName.Text))
                     {
                         SaveCustomReason();
+                        reason = SaveReasonAsName.Text;
                     }
 
                     OnDeletingStudies();
@@ -243,7 +245,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     {
                         try
                         {
-                            controller.DeleteStudy(study.StudyKey, ReasonListBox.SelectedItem.Text + "::" + Reason.Text);
+                            controller.DeleteStudy(study.StudyKey, reason + "::" + Reason.Text);
 
 							// Audit log
                         	DicomStudyDeletedAuditHelper helper = new DicomStudyDeletedAuditHelper(
