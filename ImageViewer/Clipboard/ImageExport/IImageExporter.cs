@@ -29,7 +29,6 @@
 
 #endregion
 
-using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 
@@ -37,34 +36,8 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 {
-	public enum ExportOption
-	{
-		Wysiwyg = 0,
-		CompleteImage = 1
-	}
-
-	/// <summary>
-	/// Enumeration specifying the image export sizing mode.
-	/// </summary>
-	public enum SizeMode
-	{
-		Scale,
-		Fixed
-	}
-
-	public class ExportImageParams
-	{
-		public ExportImageParams()
-		{
-		}
-
-		public ExportOption ExportOption = ImageExport.ExportOption.Wysiwyg;
-		public Rectangle DisplayRectangle;
-		public SizeMode SizeMode = SizeMode.Scale;
-		public float Scale = 1F;
-		public Size OutputSize;
-		public Color BackgroundColor;
-	}
+	[ExtensionPoint]
+	public sealed class ImageExporterExtensionPoint : ExtensionPoint<IImageExporter> {}
 
 	public interface IImageExporter
 	{
@@ -78,12 +51,5 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 	public interface IConfigurableImageExporter : IImageExporter
 	{
 		IApplicationComponent GetConfigurationComponent();
-	}
-
-	public sealed class ImageExporterExtensionPoint : ExtensionPoint<IImageExporter>
-	{
-		public ImageExporterExtensionPoint()
-		{
-		}
 	}
 }

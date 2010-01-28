@@ -31,9 +31,11 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
+	[Cloneable]
 	internal sealed class StoredAnnotationLayout : IAnnotationLayout
 	{
 		private readonly string _identifier;
@@ -49,7 +51,9 @@ namespace ClearCanvas.ImageViewer.Annotations
 		/// <summary>
 		/// Cloning constructor.
 		/// </summary>
-		private StoredAnnotationLayout(StoredAnnotationLayout source)
+		/// <param name="source">The source object from which to clone.</param>
+		/// <param name="context">This parameter is unused.</param>
+		private StoredAnnotationLayout(StoredAnnotationLayout source, ICloningContext context)
 		{
 			this._identifier = source._identifier;
 			this._visible = source._visible;
@@ -95,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 
 		public StoredAnnotationLayout Clone()
 		{
-			return new StoredAnnotationLayout(this);
+			return new StoredAnnotationLayout(this, null);
 		}
 	}
 }

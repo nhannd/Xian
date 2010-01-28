@@ -83,6 +83,11 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this._lblWidth = new System.Windows.Forms.Label();
 			this._checkOptionFixed = new System.Windows.Forms.RadioButton();
 			this._checkOptionScale = new System.Windows.Forms.RadioButton();
+			this._groupOptions = new System.Windows.Forms.GroupBox();
+			this._chkShowTextOverlay = new System.Windows.Forms.CheckBox();
+			this._pnlWarningPatientPrivacy = new System.Windows.Forms.Panel();
+			this._lblWarningPatientPrivacy = new System.Windows.Forms.Label();
+			this._icoWarningPatientPrivacy = new System.Windows.Forms.Panel();
 			this._groupFieldOfView.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._scale)).BeginInit();
 			this._pnlDialogButtons.SuspendLayout();
@@ -92,6 +97,8 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this._pnlBackgroundColor.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._imageHeight)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._imageWidth)).BeginInit();
+			this._groupOptions.SuspendLayout();
+			this._pnlWarningPatientPrivacy.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _imageExporters
@@ -284,10 +291,46 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this._checkOptionScale.TabStop = true;
 			this._checkOptionScale.UseVisualStyleBackColor = true;
 			// 
+			// _groupOptions
+			// 
+			this._groupOptions.Controls.Add(this._chkShowTextOverlay);
+			resources.ApplyResources(this._groupOptions, "_groupOptions");
+			this._groupOptions.Name = "_groupOptions";
+			this._groupOptions.TabStop = false;
+			// 
+			// _chkShowTextOverlay
+			// 
+			resources.ApplyResources(this._chkShowTextOverlay, "_chkShowTextOverlay");
+			this._chkShowTextOverlay.Name = "_chkShowTextOverlay";
+			this._chkShowTextOverlay.UseVisualStyleBackColor = true;
+			this._chkShowTextOverlay.CheckedChanged += new System.EventHandler(this.OnShowTextOverlayCheckedChanged);
+			// 
+			// _pnlWarningPatientPrivacy
+			// 
+			this._pnlWarningPatientPrivacy.BackColor = System.Drawing.Color.Transparent;
+			this._pnlWarningPatientPrivacy.Controls.Add(this._lblWarningPatientPrivacy);
+			this._pnlWarningPatientPrivacy.Controls.Add(this._icoWarningPatientPrivacy);
+			resources.ApplyResources(this._pnlWarningPatientPrivacy, "_pnlWarningPatientPrivacy");
+			this._pnlWarningPatientPrivacy.Name = "_pnlWarningPatientPrivacy";
+			// 
+			// _lblWarningPatientPrivacy
+			// 
+			this._lblWarningPatientPrivacy.BackColor = System.Drawing.Color.Transparent;
+			resources.ApplyResources(this._lblWarningPatientPrivacy, "_lblWarningPatientPrivacy");
+			this._lblWarningPatientPrivacy.Name = "_lblWarningPatientPrivacy";
+			// 
+			// _icoWarningPatientPrivacy
+			// 
+			this._icoWarningPatientPrivacy.BackColor = System.Drawing.Color.Transparent;
+			resources.ApplyResources(this._icoWarningPatientPrivacy, "_icoWarningPatientPrivacy");
+			this._icoWarningPatientPrivacy.Name = "_icoWarningPatientPrivacy";
+			// 
 			// ImageExportComponentControl
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._pnlWarningPatientPrivacy);
+			this.Controls.Add(this._groupOptions);
 			this.Controls.Add(this._groupOutputSize);
 			this.Controls.Add(this._pnlDialogButtons);
 			this.Controls.Add(this._groupFieldOfView);
@@ -308,6 +351,9 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this._pnlBackgroundColor.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this._imageHeight)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._imageWidth)).EndInit();
+			this._groupOptions.ResumeLayout(false);
+			this._groupOptions.PerformLayout();
+			this._pnlWarningPatientPrivacy.ResumeLayout(false);
 			this.ResumeLayout(false);
 
         }
@@ -336,5 +382,10 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 		private System.Windows.Forms.GroupBox _groupFieldOfView;
 		private System.Windows.Forms.FlowLayoutPanel _pnlDialogButtons;
 		private System.Windows.Forms.GroupBox _groupOutputSize;
+		private System.Windows.Forms.GroupBox _groupOptions;
+		private System.Windows.Forms.CheckBox _chkShowTextOverlay;
+		private System.Windows.Forms.Panel _pnlWarningPatientPrivacy;
+		private System.Windows.Forms.Label _lblWarningPatientPrivacy;
+		private System.Windows.Forms.Panel _icoWarningPatientPrivacy;
     }
 }

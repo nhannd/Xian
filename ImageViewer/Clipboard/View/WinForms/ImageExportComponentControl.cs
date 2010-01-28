@@ -82,6 +82,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			_imageHeight.DataBindings.Add("Minimum", _component, "MinimumDimension", true, DataSourceUpdateMode.Never);
         	_imageHeight.DataBindings.Add("Value", _component, "Height", true, DataSourceUpdateMode.OnPropertyChanged);
         	_backgroundColorSwatch.DataBindings.Add("BackColor", _component, "BackgroundColor", true, DataSourceUpdateMode.Never);
+			_chkShowTextOverlay.DataBindings.Add("Checked", _component, "ShowTextOverlay", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_buttonConfigure.DataBindings.Add("Visible", _component, "ConfigureVisible", true, DataSourceUpdateMode.Never);
 			_buttonConfigure.DataBindings.Add("Enabled", _component, "ConfigureEnabled", true, DataSourceUpdateMode.Never);
@@ -177,6 +178,11 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
     				settings.Save();
     			}
     		}
+    	}
+
+    	private void OnShowTextOverlayCheckedChanged(object sender, EventArgs e)
+    	{
+    		_pnlWarningPatientPrivacy.Visible = _chkShowTextOverlay.Checked;
     	}
 
     	private void OnComponentPropertyChanged(object sender, PropertyChangedEventArgs e)

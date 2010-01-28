@@ -89,6 +89,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			_imageHeight.DataBindings.Add("Minimum", _component, "MinimumDimension", true, DataSourceUpdateMode.Never);
 			_imageHeight.DataBindings.Add("Value", _component, "Height", true, DataSourceUpdateMode.OnPropertyChanged);
 			_backgroundColorSwatch.DataBindings.Add("BackColor", _component, "BackgroundColor", true, DataSourceUpdateMode.Never);
+        	_chkShowTextOverlay.DataBindings.Add("Checked", _component, "ShowTextOverlay", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
     	private void DoDispose(bool disposing)
@@ -171,8 +172,8 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
     			dlg.AllowFullOpen = true;
     			dlg.AnyColor = true;
     			dlg.Color = _component.BackgroundColor;
-				dlg.CustomColors = settings.CustomColorsArray;
-				dlg.FullOpen = settings.ExpandColorDialog;
+    			dlg.CustomColors = settings.CustomColorsArray;
+    			dlg.FullOpen = settings.ExpandColorDialog;
     			dlg.ShowHelp = false;
     			dlg.SolidColorOnly = false;
 
@@ -180,9 +181,14 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
     			{
     				_component.BackgroundColor = dlg.Color;
     				settings.CustomColorsArray = dlg.CustomColors;
-					settings.Save();
+    				settings.Save();
     			}
     		}
+		}
+
+    	private void OnShowTextOverlayCheckedChanged(object sender, EventArgs e)
+    	{
+    		_pnlWarningPatientPrivacy.Visible = _chkShowTextOverlay.Checked;
     	}
 
     	private void OnComponentPropertyChanged(object sender, PropertyChangedEventArgs e)

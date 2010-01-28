@@ -34,6 +34,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
 
@@ -86,13 +87,24 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 		{
 			Platform.CheckForNullReference(image, "image");
 			Platform.CheckForNullReference(exportParams, "exportParams");
-			
-			if (image is ISpatialTransformProvider && image is IImageGraphicProvider)
-			{
-				ImageSpatialTransform transform = ((ISpatialTransformProvider)image).SpatialTransform as ImageSpatialTransform;
-				if (transform == null)
-					throw new ArgumentException("The image must have a valid ImageSpatialTransform in order to be exported.");
 
+			if (!(image is ISpatialTransformProvider) || !(image is IImageGraphicProvider))
+				throw new ArgumentException("The image must implement IImageGraphicProvider and have a valid ImageSpatialTransform in order to be exported.");
+
+			ImageSpatialTransform transform = ((ISpatialTransformProvider) image).SpatialTransform as ImageSpatialTransform;
+			if (transform == null)
+				throw new ArgumentException("The image must have a valid ImageSpatialTransform in order to be exported.");
+
+			bool oldAnnotationLayoutVisible = false;
+			IAnnotationLayoutProvider annotationLayout = image as IAnnotationLayoutProvider;
+			if (annotationLayout != null && annotationLayout.AnnotationLayout != null)
+			{
+				oldAnnotationLayoutVisible = annotationLayout.AnnotationLayout.Visible;
+				annotationLayout.AnnotationLayout.Visible = exportParams.ShowTextOverlay;
+			}
+
+			try
+			{
 				if (exportParams.SizeMode == SizeMode.Scale)
 				{
 					if (exportParams.ExportOption == ExportOption.Wysiwyg)
@@ -134,28 +146,30 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 					return paddedImage;
 				}
 			}
-
-			throw new ArgumentException("The image must implement IImageGraphicProvider and have a valid ImageSpatialTransform in order to be exported.");
+			finally
+			{
+				if (annotationLayout != null && annotationLayout.AnnotationLayout != null)
+					annotationLayout.AnnotationLayout.Visible = oldAnnotationLayoutVisible;
+			}
 		}
 
 		private static Bitmap DrawCompleteImageToBitmap(IPresentationImage image, float scale)
 		{
 			ImageSpatialTransform transform = (ImageSpatialTransform)((ISpatialTransformProvider)image).SpatialTransform;
 			object restoreMemento = transform.CreateMemento();
-
-			ImageGraphic imageGraphic = ((IImageGraphicProvider)image).ImageGraphic;
-			Rectangle imageRectangle = new Rectangle(0, 0, imageGraphic.Columns, imageGraphic.Rows);
-
-			transform.Initialize();
-			transform.ScaleToFit = false;
-			transform.Scale = scale;
-			RectangleF displayRectangle = imageGraphic.SpatialTransform.ConvertToDestination(imageRectangle);
-			int width = (int)Math.Round(displayRectangle.Width);
-			int height = (int)Math.Round(displayRectangle.Height);
-
-			transform.ScaleToFit = true;
 			try
 			{
+				ImageGraphic imageGraphic = ((IImageGraphicProvider) image).ImageGraphic;
+				Rectangle imageRectangle = new Rectangle(0, 0, imageGraphic.Columns, imageGraphic.Rows);
+
+				transform.Initialize();
+				transform.ScaleToFit = false;
+				transform.Scale = scale;
+				RectangleF displayRectangle = imageGraphic.SpatialTransform.ConvertToDestination(imageRectangle);
+				int width = (int) Math.Round(displayRectangle.Width);
+				int height = (int) Math.Round(displayRectangle.Height);
+
+				transform.ScaleToFit = true;
 				return image.DrawToBitmap(width, height);
 			}
 			finally
@@ -166,16 +180,15 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 		private static Bitmap DrawWysiwygImageToBitmap(IPresentationImage image, Rectangle displayRectangle, float scale)
 		{
-			ImageSpatialTransform transform = (ImageSpatialTransform)((ISpatialTransformProvider)image).SpatialTransform;
+			ImageSpatialTransform transform = (ImageSpatialTransform) ((ISpatialTransformProvider) image).SpatialTransform;
 			object restoreMemento = transform.CreateMemento();
-
-			int width = (int)(displayRectangle.Width * scale);
-			int height = (int)(displayRectangle.Height * scale);
-
-			transform.Scale *= scale;
-
 			try
 			{
+				int width = (int) (displayRectangle.Width*scale);
+				int height = (int) (displayRectangle.Height*scale);
+
+				transform.Scale *= scale;
+
 				return image.DrawToBitmap(width, height);
 			}
 			finally

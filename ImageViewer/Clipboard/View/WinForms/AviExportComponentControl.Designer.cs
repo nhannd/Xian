@@ -88,6 +88,11 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this._groupFieldOfView = new System.Windows.Forms.GroupBox();
 			this._checkOptionCompleteImage = new System.Windows.Forms.RadioButton();
 			this._checkOptionWysiwyg = new System.Windows.Forms.RadioButton();
+			this._groupOptions = new System.Windows.Forms.GroupBox();
+			this._chkShowTextOverlay = new System.Windows.Forms.CheckBox();
+			this._pnlWarningPatientPrivacy = new System.Windows.Forms.Panel();
+			this._lblWarningPatientPrivacy = new System.Windows.Forms.Label();
+			this._icoWarningPatientPrivacy = new System.Windows.Forms.Panel();
 			((System.ComponentModel.ISupportInitialize)(this._trackBarFrameRate)).BeginInit();
 			this.groupBox1.SuspendLayout();
 			this._groupOutputSize.SuspendLayout();
@@ -99,6 +104,8 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			((System.ComponentModel.ISupportInitialize)(this._imageWidth)).BeginInit();
 			this._pnlDialogButtons.SuspendLayout();
 			this._groupFieldOfView.SuspendLayout();
+			this._groupOptions.SuspendLayout();
+			this._pnlWarningPatientPrivacy.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _trackBarFrameRate
@@ -330,10 +337,46 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this._checkOptionWysiwyg.Name = "_checkOptionWysiwyg";
 			this._checkOptionWysiwyg.UseVisualStyleBackColor = true;
 			// 
+			// _groupOptions
+			// 
+			this._groupOptions.Controls.Add(this._chkShowTextOverlay);
+			resources.ApplyResources(this._groupOptions, "_groupOptions");
+			this._groupOptions.Name = "_groupOptions";
+			this._groupOptions.TabStop = false;
+			// 
+			// _chkShowTextOverlay
+			// 
+			resources.ApplyResources(this._chkShowTextOverlay, "_chkShowTextOverlay");
+			this._chkShowTextOverlay.Name = "_chkShowTextOverlay";
+			this._chkShowTextOverlay.UseVisualStyleBackColor = true;
+			this._chkShowTextOverlay.CheckedChanged += new System.EventHandler(this.OnShowTextOverlayCheckedChanged);
+			// 
+			// _pnlWarningPatientPrivacy
+			// 
+			this._pnlWarningPatientPrivacy.BackColor = System.Drawing.Color.Transparent;
+			this._pnlWarningPatientPrivacy.Controls.Add(this._lblWarningPatientPrivacy);
+			this._pnlWarningPatientPrivacy.Controls.Add(this._icoWarningPatientPrivacy);
+			resources.ApplyResources(this._pnlWarningPatientPrivacy, "_pnlWarningPatientPrivacy");
+			this._pnlWarningPatientPrivacy.Name = "_pnlWarningPatientPrivacy";
+			// 
+			// _lblWarningPatientPrivacy
+			// 
+			this._lblWarningPatientPrivacy.BackColor = System.Drawing.Color.Transparent;
+			resources.ApplyResources(this._lblWarningPatientPrivacy, "_lblWarningPatientPrivacy");
+			this._lblWarningPatientPrivacy.Name = "_lblWarningPatientPrivacy";
+			// 
+			// _icoWarningPatientPrivacy
+			// 
+			this._icoWarningPatientPrivacy.BackColor = System.Drawing.Color.Transparent;
+			resources.ApplyResources(this._icoWarningPatientPrivacy, "_icoWarningPatientPrivacy");
+			this._icoWarningPatientPrivacy.Name = "_icoWarningPatientPrivacy";
+			// 
 			// AviExportComponentControl
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._pnlWarningPatientPrivacy);
+			this.Controls.Add(this._groupOptions);
 			this.Controls.Add(this._groupOutputSize);
 			this.Controls.Add(this._pnlDialogButtons);
 			this.Controls.Add(this._groupFieldOfView);
@@ -356,6 +399,9 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this._pnlDialogButtons.ResumeLayout(false);
 			this._groupFieldOfView.ResumeLayout(false);
 			this._groupFieldOfView.PerformLayout();
+			this._groupOptions.ResumeLayout(false);
+			this._groupOptions.PerformLayout();
+			this._pnlWarningPatientPrivacy.ResumeLayout(false);
 			this.ResumeLayout(false);
 
         }
@@ -389,5 +435,10 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 		private System.Windows.Forms.GroupBox _groupFieldOfView;
 		private System.Windows.Forms.RadioButton _checkOptionCompleteImage;
 		private System.Windows.Forms.RadioButton _checkOptionWysiwyg;
+		private System.Windows.Forms.GroupBox _groupOptions;
+		private System.Windows.Forms.CheckBox _chkShowTextOverlay;
+		private System.Windows.Forms.Panel _pnlWarningPatientPrivacy;
+		private System.Windows.Forms.Panel _icoWarningPatientPrivacy;
+		private System.Windows.Forms.Label _lblWarningPatientPrivacy;
     }
 }

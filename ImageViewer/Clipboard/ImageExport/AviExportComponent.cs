@@ -67,6 +67,8 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 		private Color _backgroundColor = Color.Black;
 		private SizeMode _sizeMode = SizeMode.Scale;
 
+		private bool _showTextOverlay = false;
+
 		private readonly List<Avi.Codec> _availableCodecs;
 		private Avi.Codec _selectedCodec;
 		private bool _useDefaultQuality;
@@ -265,6 +267,19 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 		}
 
+		public bool ShowTextOverlay
+		{
+			get { return _showTextOverlay; }
+			set
+			{
+				if (_showTextOverlay != value)
+				{
+					_showTextOverlay = value;
+					this.NotifyPropertyChanged("ShowTextOverlay");
+				}
+			}
+		}
+
 		public void ShowAdvanced()
 		{
 			AviExportAdvancedComponent component = new AviExportAdvancedComponent(_availableCodecs);
@@ -445,6 +460,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			exportParams.SizeMode = SizeMode;
 			exportParams.OutputSize = new Size(Width, Height);
 			exportParams.BackgroundColor = BackgroundColor;
+			exportParams.ShowTextOverlay = ShowTextOverlay;
 
 			using (Avi.VideoStreamWriter writer = new Avi.VideoStreamWriter(_selectedCodec))
 			{
@@ -527,6 +543,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			settings.SizeMode = SizeMode;
 			settings.BackgroundColor = BackgroundColor;
 			settings.Save();
+			// NOTE: ShowTextOverlay is deliberately not persisted due to inherent patient privacy risks
 		}
 
 		private void SaveAdvancedSettings()
