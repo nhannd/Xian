@@ -432,6 +432,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         }
 
+        private void CheckIfStudyIsLossy()
+        {
+            if (StorageLocation.StudyStatusEnum == StudyStatusEnum.OnlineLossy && StorageLocation.IsLatestArchiveLossless)
+            {
+                // This should fail the entry and force user to restore the study
+                throw new ApplicationException("Unexpected study state: the study is lossy compressed.");
+            }
+        }
+
 
         #region Protected Methods
 
@@ -506,8 +515,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             Platform.CheckForNullReference(item, "item");
             Platform.CheckForNullReference(StorageLocation, "StorageLocation");
+
+            // Verify the study is not lossy online and lossless in the archive.
+            // This could happen if the images were received WHILE the study was being lossy compressed.
+            // The study state would not be set until the compression was completed or partially completed.
+            CheckIfStudyIsLossy();
+
+
             Statistics.TotalProcessTime.Start();
-            
             bool successful;
         	bool idle = false;
             //Load the specific UIDs that need to be processed.
