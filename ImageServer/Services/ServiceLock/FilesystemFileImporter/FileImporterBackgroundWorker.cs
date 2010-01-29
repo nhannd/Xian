@@ -52,9 +52,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
         private DateTime _startTimeStamp = Platform.Time;
         private readonly DirectoryImporterParameters _parms;
         private readonly List<string> _skippedStudies = new List<String>();
-        private  EventHandler<SopImportedEventArgs> _sopImportedHandlers;
         private SopInstanceImporter _importer;
 
+        private EventHandler<SopImportedEventArgs> _sopImportedHandlers;
+        private EventHandler _restoreTriggerHandlers; 
+        
         #endregion
 
         #region Constructors
@@ -71,6 +73,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
         #endregion
 
         #region Events
+
+
+        public event EventHandler RestoreTriggered
+        {
+            add { _restoreTriggerHandlers+= value; }
+            remove { _restoreTriggerHandlers -= value; }
+        }
+
         public event EventHandler<SopImportedEventArgs> SopImported
         {
             add { _sopImportedHandlers += value; }
@@ -181,6 +191,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                                 {
                                     if (result.DicomStatus == DicomStatuses.StorageStorageOutOfResources)
                                     {
+                                        if (result.RestoreRequested)
+                                            EventsHelper.Fire(_restoreTriggerHandlers, this, null);
+
                                         _skippedStudies.Add(result.StudyInstanceUid);
                                         skipped = true;
                                     }

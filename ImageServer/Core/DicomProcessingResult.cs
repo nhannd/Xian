@@ -46,6 +46,8 @@ namespace ClearCanvas.ImageServer.Core
 		public bool Successful;
 		public String ErrorMessage;
 		public DicomStatus DicomStatus;
+        public bool RestoreRequested;
+
 		/// <summary>
 		/// Indicates whether the sop being processed is a duplicate.
 		/// </summary>

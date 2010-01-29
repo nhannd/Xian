@@ -52,6 +52,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
         private readonly ManualResetEvent _allCompleted = new ManualResetEvent(false);
         private readonly object _sync = new object();
         private int _importedSopCounter;
+        private bool _restoreTriggered;
+
         #endregion
 
         #region IServiceLockItemProcessor Members
@@ -83,7 +85,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
 
                     DirectoryImporterBackgroundProcess process = new DirectoryImporterBackgroundProcess(parms);
                     process.SopImported += delegate { _importedSopCounter++; };
-
+                    process.RestoreTriggered += delegate { _restoreTriggered = true; };
                     _queue.Enqueue(process);
                 }
 
@@ -99,7 +101,16 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                     Platform.Log(LogLevel.Info, "All import processes have completed gracefully.");
             }
 
-            UnlockServiceLock(item, true, Platform.Time.AddSeconds(_importedSopCounter>0? 5: settings.RecheckDelaySeconds));
+            if (_restoreTriggered)
+            {
+                DateTime newScheduledTime = Platform.Time.AddSeconds(Math.Max(settings.RecheckDelaySeconds, 60));
+                Platform.Log(LogLevel.Info, "Some Study/Studies need to be restored first. File Import will resume until {0}", newScheduledTime);
+                UnlockServiceLock(item, true, newScheduledTime);
+            }
+            else
+            {
+                UnlockServiceLock(item, true, Platform.Time.AddSeconds(_importedSopCounter>0? 5: settings.RecheckDelaySeconds));
+            }
         }
 
         #endregion

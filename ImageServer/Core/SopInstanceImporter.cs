@@ -216,6 +216,7 @@ namespace ClearCanvas.ImageServer.Core
                 			}
 
                 			result.SetError(DicomStatuses.StorageStorageOutOfResources, failureMessage);
+                            result.RestoreRequested = true;
                 			return result;
                 		}
                 	}
