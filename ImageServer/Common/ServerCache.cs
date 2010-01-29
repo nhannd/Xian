@@ -137,7 +137,6 @@ namespace ClearCanvas.ImageServer.Common
 				if (!_locations.TryGetValue(key, out theValue))
 					return default(TValue);
 			}
-			theValue.Expiration = Platform.Time.Add(_retentionTime);
 
 			return theValue.Value;
 		}
@@ -157,7 +156,6 @@ namespace ClearCanvas.ImageServer.Common
 				if (!_locations.TryGetValue(key, out theValue))
 					return false;
 			}
-			theValue.Expiration = Platform.Time.Add(_retentionTime);
 
 			val = theValue.Value;
 			return true;

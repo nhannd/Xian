@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageServer.Common
 			{
 				if (!_caches.TryGetValue(theLocation.ServerPartitionKey, out partitionCache))
 				{
-					partitionCache = new ServerCache<string, StudyStorageLocation>(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(1));
+					partitionCache = new ServerCache<string, StudyStorageLocation>(TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
 					_caches.Add(theLocation.ServerPartitionKey,partitionCache);
 				}
 			}

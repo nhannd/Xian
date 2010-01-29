@@ -503,12 +503,17 @@ namespace ClearCanvas.ImageServer.Common
 			{
 				string reason;
 
-				location = _storageLocationCache.GetCachedStudy(partitionKey, studyInstanceUid);
-				if (location != null)
+				if (cache == StudyCache.True)
 				{
-					if (CheckFilesystemWriteable(location.FilesystemKey, out reason))
-						return;
+					location = _storageLocationCache.GetCachedStudy(partitionKey, studyInstanceUid);
+					if (location != null)
+					{
+						if (CheckFilesystemWriteable(location.FilesystemKey, out reason))
+							return;
+					}
 				}
+				else
+					location = null;
 
 				IQueryStudyStorageLocation procedure = context.ReadContext.GetBroker<IQueryStudyStorageLocation>();
 				StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters
