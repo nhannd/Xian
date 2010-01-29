@@ -1478,6 +1478,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 Study theStudy = Study ?? Study.Find(ExecutionContext.Current.ReadContext, item.StudyStorageKey);
                 if (theStudy!=null)
                 {
+					if (item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.MigrateStudy))
+						StorageLocation = CollectionUtils.FirstElement<StudyStorageLocation>( StudyStorageLocation.FindStorageLocations(item.ServerPartitionKey,theStudy.StudyInstanceUid),null);
+
                     StudyXml studyXml = StorageLocation.LoadStudyXml(true /* reload, in case it's changed */);
                     decimal size = (decimal)(studyXml.GetStudySize()/KB);
                     
