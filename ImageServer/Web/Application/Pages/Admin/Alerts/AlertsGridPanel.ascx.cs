@@ -79,14 +79,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                         DataSourceCreated(_dataSource);
                     _dataSource.SelectCount();
                 }
-                if (_dataSource.ResultCount == 0)
-                {
-                    if (DataSourceCreated != null)
-                        DataSourceCreated(_dataSource);
+                if (DataSourceCreated != null)
+                      DataSourceCreated(_dataSource);
 
-                    _dataSource.SelectCount();
-                }
-                return _dataSource.ResultCount;
+                return _dataSource.SelectCount();
             }
         }
 

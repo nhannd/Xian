@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -86,6 +87,20 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         		return storages[0];
         	
+        }
+
+        /// <summary>
+        /// Gets the <see cref="StudyStorageLocation"/> for the study associated with the specified <see cref="WorkQueue"/> item.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        static public String GetLoadDuplicateStorageLocation(WorkQueue item)
+        {
+            XmlDocument document = item.Data;
+            
+           
+            return document.ToString();
+
         }
 
 

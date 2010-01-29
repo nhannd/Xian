@@ -264,8 +264,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 		public int SelectCount()
 		{
-			if (ResultCount != 0) return ResultCount;
-
 			AlertSelectCriteria criteria = GetSelectCriteria();
 
 			ResultCount = _alertController.GetAlertsCount(criteria);

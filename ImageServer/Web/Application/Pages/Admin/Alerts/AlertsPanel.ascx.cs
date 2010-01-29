@@ -210,10 +210,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                                 {
                                     _theController.DeleteAlertItem(keys[i] as ServerEntityKey);
                                 }
-                               
-                                AlertsGridPanel.Refresh();                               
-                                SearchUpdatePanel.Update(); // force refresh
-
                             };
 
             DeleteAllConfirmationBox.Confirmed += DeleteAllConfirmDialog_Confirmed;
@@ -292,7 +288,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 
         public void UpdateUI()
         {
-            AlertsGridPanel.DataBind();   
+            AlertsGridPanel.Refresh();   
             SearchUpdatePanel.Update();
 
         }
