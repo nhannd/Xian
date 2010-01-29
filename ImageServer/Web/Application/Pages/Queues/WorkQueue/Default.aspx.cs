@@ -127,19 +127,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             DeleteWorkQueueDialog.OnHide += delegate() { RefreshTimer.Reset(AutoRefresh); };
             InformationDialog.OnShow += DisableRefresh;
             InformationDialog.OnHide += delegate() { RefreshTimer.Reset(AutoRefresh); };
-            ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
-                                                           {
-                                                               SearchPanel panel =
-                                                                   LoadControl("SearchPanel.ascx") as SearchPanel;
-                                                               panel.ServerPartition = partition;
-                                                               panel.ID = "SearchPanel_" + partition.AeTitle;
-
-                                                               panel.EnclosingPage = this;
-
-                                                               _partitionPanelMap.Add(partition.GetKey().ToString(), panel);
-
-                                                               return panel;
-                                                           });
 
             if (!Page.IsPostBack)
             {
@@ -148,7 +135,50 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                 RefreshTimer.Interval = (int)TimeSpan.FromSeconds(Math.Max(WorkQueueSettings.Default.NormalRefreshIntervalSeconds, 5)).TotalMilliseconds;// min refresh rate: every 5 sec 
                 RefreshRateTextBox.Text = TimeSpan.FromMilliseconds(RefreshTimer.Interval).TotalSeconds.ToString();
             }
-            
+
+            string patientID = string.Empty;
+            string patientName = string.Empty;
+            string partitionKey = string.Empty;
+            string processorID = string.Empty;
+            ServerPartition activePartition = null;
+
+            if (!IsPostBack && !Page.IsAsync)
+            {
+                patientID = Server.UrlDecode(Request["PatientID"]);
+                patientName = Server.UrlDecode(Request["PatientName"]);
+                partitionKey = Request["PartitionKey"];
+                processorID = Request["ProcessorID"];
+
+                if (!string.IsNullOrEmpty(partitionKey))
+                {
+                    ServerPartitionConfigController controller = new ServerPartitionConfigController();
+                    activePartition = controller.GetPartition(new ServerEntityKey("ServerPartition", partitionKey));
+                }
+            }
+
+            ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
+            {
+                SearchPanel panel =
+                    LoadControl("SearchPanel.ascx") as SearchPanel;
+                panel.ServerPartition = partition;
+                panel.ID = "SearchPanel_" + partition.AeTitle;
+
+                panel.EnclosingPage = this;
+
+                panel.PatientNameFromUrl = patientName;
+                panel.PatientIDFromUrl = patientID;
+                panel.ProcessingServerFromUrl = processorID;
+
+                _partitionPanelMap.Add(partition.GetKey().ToString(), panel);
+
+                return panel;
+            });
+
+            if (activePartition != null)
+            {
+                ServerPartitionTabs.SetActivePartition(activePartition.AeTitle);
+            }
+
             SetPageTitle(App_GlobalResources.Titles.WorkQueuePageTitle);
         }
 
@@ -171,6 +201,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
             base.OnPreRender(e);
         }
+
         #endregion Protected Methods
 
 

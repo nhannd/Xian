@@ -72,6 +72,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         #region Public Properties
 
+        public string PatientNameFromUrl
+        {
+            get; set;
+        }
+
+        public string PatientIDFromUrl
+        {
+            get;
+            set;
+        }
+
+        public string ProcessingServerFromUrl
+        {
+            get;
+            set;
+        }
+        
         /// <summary>
         /// Gets the <see cref="Model.ServerPartition"/> associated with this search panel.
         /// </summary>
@@ -204,6 +221,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                                 workQueueItemList.RefreshCurrentPage();
                             };
 
+            if(!string.IsNullOrEmpty(PatientNameFromUrl) || !string.IsNullOrEmpty(PatientIDFromUrl)  || !string.IsNullOrEmpty(ProcessingServerFromUrl))
+            {
+                PatientName.Text = PatientNameFromUrl;
+                PatientId.Text = PatientIDFromUrl;
+                ProcessingServer.Text = ProcessingServerFromUrl;
+
+                workQueueItemList.SetDataSource();
+                workQueueItemList.Refresh();
+            }
         }
 
         /// <summary>
@@ -280,33 +306,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             ResetItemButton.Roles = AuthorityTokens.WorkQueue.Reset;
             RescheduleItemButton.Roles =
                 AuthorityTokens.WorkQueue.Reschedule;
-
-            if (!IsPostBack && !Page.IsAsync)
-            {
-                string patientID = Server.UrlDecode(Request["PatientID"]);
-                string patientName = Server.UrlDecode(Request["PatientName"]);
-                string partitionKey = Request["PartitionKey"];
-                string processorID = Request["ProcessorID"];
-
-                if (patientID != null && patientName != null && partitionKey != null)
-                {
-                    ServerPartitionConfigController controller = new ServerPartitionConfigController();
-                    ServerPartition = controller.GetPartition(new ServerEntityKey("ServerPartition", partitionKey));
-
-                    PatientId.Text = patientID;
-                    PatientName.Text = patientName;
-
-                    workQueueItemList.SetDataSource();
-                    workQueueItemList.Refresh();
-                } else if(processorID != null)
-                {
-                    ProcessingServer.Text = processorID;
-                    workQueueItemList.SetDataSource();
-                    workQueueItemList.Refresh();
-                }
-
-
-            }
         }
 
         public void Refresh()
@@ -366,6 +365,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
             return true;
         }
-
     }
 }
