@@ -160,6 +160,7 @@
     <Compile Include="Common\MemoryManager.cs" />
     <Compile Include="Common\PermissionsHelper.cs" />
     <Compile Include="Graphics\GraphicFocusChangedEventArgs.cs" />
+    <Compile Include="ViewerActionFilter.cs" />
     <Compile Include="ImageBoxDrawingEventArgs.cs" />
     <Compile Include="Imaging\ComposedLut.cs" />
     <Compile Include="InputManagement\LostFocusMessage.cs" />
@@ -577,7 +578,7 @@
     <Compile Include="Annotations\IAnnotationItem.cs" />
     <Compile Include="Annotations\IAnnotationItemProvider.cs" />
     <Compile Include="IImageViewer.cs" />
-    <Compile Include="BaseTools\IImageViewerToolContext.cs" />
+    <Compile Include="ImageViewerToolContext.cs" />
     <Compile Include="ILayoutManager.cs" />
     <Compile Include="ImageBoxCollection.cs" />
     <Compile Include="ImageBoxMemento.cs" />
@@ -654,6 +655,7 @@
     <Compile Include="DrawableUndoableCommand.cs" />
     <Compile Include="UndoableOperation.cs" />
     <Compile Include="UndoableOperationCommand.cs" />
+    <Compile Include="ViewerSetupHelper.cs" />
     <Compile Include="ViewerShortcutManager.cs" />
   </ItemGroup>
   <ItemGroup>

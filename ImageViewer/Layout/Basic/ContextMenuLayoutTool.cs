@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright (c) 2009, ClearCanvas Inc.
+// Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -272,6 +272,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			string pathString = String.Format("{0}/loadingPriors", basePath);
 			ActionPath path = new ActionPath(pathString, null);
 			MenuAction action = new MenuAction(string.Format("{0}:loadingPriors", this.GetType().FullName), path, ClickActionFlags.None, null);
+			action.GroupHint = new GroupHint("DisplaySets");
 			action.Label = SR.LabelLoadingPriors;
 			action.SetClickHandler(delegate { });
 			return action;

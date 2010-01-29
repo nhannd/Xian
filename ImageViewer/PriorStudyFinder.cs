@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright (c) 2009, ClearCanvas Inc.
+// Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,10 +29,20 @@
 
 #endregion
 
+using System;
+using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// Defines an extension point for image layout management.
+	/// </summary>
+	[ExtensionPoint()]
+	public sealed class PriorStudyFinderExtensionPoint : ExtensionPoint<IPriorStudyFinder>
+	{
+	}
+
 	/// <summary>
 	/// Abstract base class for an <see cref="IPriorStudyFinder"/>.
 	/// </summary>
@@ -106,5 +116,19 @@ namespace ClearCanvas.ImageViewer
 		public abstract void Cancel();
 
 		#endregion
+
+		public static IPriorStudyFinder Create()
+		{
+			try
+			{
+				return (IPriorStudyFinder)new PriorStudyFinderExtensionPoint().CreateExtension();
+			}
+			catch (NotSupportedException e)
+			{
+				Platform.Log(LogLevel.Debug, e);
+			}
+
+			return Null;
+		}
 	}
 }

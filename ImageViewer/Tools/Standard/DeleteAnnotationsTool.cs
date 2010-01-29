@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright (c) 2009, ClearCanvas Inc.
+// Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -129,6 +129,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[VisibleStateObserver("deleteall", "DeleteAllVisible", "DeleteAllVisibleChanged")]
 	[IconSet("deleteall", IconScheme.Colour, "DeleteAllAnnotationsToolSmall.png", "DeleteAllAnnotationsToolMedium.png", "DeleteAllAnnotationsToolLarge.png")]
 	[GroupHint("deleteall", "Tools.Image.Annotations.DeleteAll")]
+
+	[ButtonAction("deleteallToolbar", "global-toolbars/ToolbarAnnotation/ToolbarDeleteAllAnnotations", "DeleteAll")]
+	[EnabledStateObserver("deleteallToolbar", "DeleteAllVisible", "DeleteAllVisibleChanged")]
+	[IconSet("deleteallToolbar", IconScheme.Colour, "DeleteAllAnnotationsToolSmall.png", "DeleteAllAnnotationsToolMedium.png", "DeleteAllAnnotationsToolLarge.png")]
+	[Tooltip("deleteallToolbar", "TooltipDeleteAllAnnotations")]
+	[GroupHint("deleteallToolbar", "Tools.Image.Annotations.DeleteAll")]
+
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class DeleteAllAnnotationsTool : ImageViewerTool
 	{
@@ -156,7 +163,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public void DeleteAll()
 		{
-			if (base.SelectedPresentationImage != null)
+			if (DeleteAllVisible && base.SelectedPresentationImage != null)
 				DeleteAll(this.SelectedPresentationImage);
 		}
 

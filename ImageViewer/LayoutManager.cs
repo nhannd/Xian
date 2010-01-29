@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright (c) 2009, ClearCanvas Inc.
+// Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -40,6 +40,33 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// Defines an extension point for image layout management.
+	/// </summary>
+	[ExtensionPoint()]
+	public sealed class LayoutManagerExtensionPoint : ExtensionPoint<ILayoutManager>
+	{
+	}
+
+	/// <summary>
+	/// Specifies how the <see cref="ImageViewerComponent"/>'s <see cref="ILayoutManager"/>
+	/// should be created.
+	/// </summary>
+	public enum LayoutManagerCreationParameters
+	{
+		/// <summary>
+		/// Use a simple layout manager that initializes the layout strictly
+		/// based on the number of <see cref="IDisplaySet"/>s available.
+		/// </summary>
+		Simple,
+
+		/// <summary>
+		/// Use the <see cref="LayoutManagerExtensionPoint"/> to create
+		/// the <see cref="ImageViewerComponent"/>'s <see cref="ILayoutManager"/>.
+		/// </summary>
+		Extended
+	}
+
 	/// <summary>
 	/// A base implementation of <see cref="ILayoutManager"/>.
 	/// </summary>
@@ -559,5 +586,33 @@ namespace ClearCanvas.ImageViewer
 
 			#endregion
 		}
+
+		#region Public Static Factory
+
+		public static ILayoutManager Create()
+		{
+			return Create(LayoutManagerCreationParameters.Extended);
+		}
+
+		internal static ILayoutManager Create(LayoutManagerCreationParameters creationParameters)
+		{
+			ILayoutManager layoutManager = null;
+
+			if (creationParameters == LayoutManagerCreationParameters.Extended)
+			{
+				try
+				{
+					layoutManager = (ILayoutManager)new LayoutManagerExtensionPoint().CreateExtension();
+				}
+				catch (NotSupportedException e)
+				{
+					Platform.Log(LogLevel.Debug, e);
+				}
+			}
+
+			return layoutManager ?? new LayoutManager();
+		}
+
+		#endregion
 	}
 }

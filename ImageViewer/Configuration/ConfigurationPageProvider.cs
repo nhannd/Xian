@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright (c) 2009, ClearCanvas Inc.
+// Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,24 +29,29 @@
 
 #endregion
 
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using ClearCanvas.Desktop.Configuration;
+using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common;
 
-namespace ClearCanvas.ImageViewer.BaseTools
+namespace ClearCanvas.ImageViewer.Configuration
 {
-	/// <summary>
-	/// Defines an image viewer tool context.
-	/// </summary>
-    public interface IImageViewerToolContext : IToolContext
-    {
-		/// <summary>
-		/// Gets the <see cref="IImageViewer"/>.
-		/// </summary>
-        IImageViewer Viewer { get; }
+	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
+	public class ConfigurationPageProvider : IConfigurationPageProvider
+	{
+		#region IConfigurationPageProvider Members
 
-		/// <summary>
-		/// Gets the <see cref="IDesktopWindow"/>.
-		/// </summary>
-		IDesktopWindow DesktopWindow { get; }
-    }
+		public IEnumerable<IConfigurationPage> GetPages()
+		{
+			if (ToolSettings.Default.GetActionFilters().Count > 0 && 
+				PermissionsHelper.IsInRole(ImageViewer.AuthorityTokens.ViewerVisible))
+			{
+				yield return new ConfigurationPage("PathContextMenuConfiguration", new ContextMenuConfigurationPage());
+			}
+		}
+
+		#endregion
+	}
 }

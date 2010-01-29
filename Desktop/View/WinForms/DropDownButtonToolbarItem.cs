@@ -187,6 +187,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_iconSize = iconSize;
 
 			this.DropDown = new ContextMenuStrip();
+			this.DropDown.ImageScalingSize = StandardIconSizes.Small;
 			this.DropDownOpening += new EventHandler(OnDropDownOpening);
 
 			this.Text = _action.Label;

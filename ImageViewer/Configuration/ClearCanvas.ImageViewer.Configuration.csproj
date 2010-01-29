@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{89DF567B-A0D1-456A-A28F-043FD57D7F9A}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -40,6 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorityTokens.cs" />
+    <Compile Include="ConfigurationPageProvider.cs" />
+    <Compile Include="ContextMenuConfigurationPage.cs" />
     <Compile Include="DefaultServersConfigurationPageProvider.cs" />
     <Compile Include="DefaultServers.cs" />
     <Compile Include="DefaultServersConfigurationComponent.cs" />
@@ -67,6 +69,12 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ToolSettings.cs" />
+    <Compile Include="ToolSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ToolSettings.settings</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -148,9 +156,14 @@
     <EmbeddedResource Include="Icons\VerifyServerToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="DefaultServerSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DefaultServerSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="ToolSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ToolSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

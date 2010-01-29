@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 
-// Copyright (c) 2009, ClearCanvas Inc.
+// Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -45,21 +45,6 @@ using System.Threading;
 
 namespace ClearCanvas.ImageViewer
 {
-	/// <summary>
-	/// Defines an extension point for image layout management.
-	/// </summary>
-	[ExtensionPoint()]
-	public sealed class PriorStudyFinderExtensionPoint : ExtensionPoint<IPriorStudyFinder>
-	{
-	}
-
-	/// <summary>
-	/// Defines an extension point for image layout management.
-	/// </summary>
-	[ExtensionPoint()]
-	public sealed class LayoutManagerExtensionPoint : ExtensionPoint<ILayoutManager>
-	{
-	}
 
 	/// <summary>
 	/// An <see cref="ExtensionPoint"/> for views on to the 
@@ -80,25 +65,6 @@ namespace ClearCanvas.ImageViewer
 	[ExtensionPoint]
 	public sealed class ImageViewerToolExtensionPoint : ExtensionPoint<ITool>
 	{
-	}
-
-	/// <summary>
-	/// Specifies how the <see cref="ImageViewerComponent"/>'s <see cref="ILayoutManager"/>
-	/// should be created.
-	/// </summary>
-	public enum LayoutManagerCreationParameters
-	{
-		/// <summary>
-		/// Use a simple layout manager that initializes the layout strictly
-		/// based on the number of <see cref="IDisplaySet"/>s available.
-		/// </summary>
-		Simple,
-
-		/// <summary>
-		/// Use the <see cref="LayoutManagerExtensionPoint"/> to create
-		/// the <see cref="ImageViewerComponent"/>'s <see cref="ILayoutManager"/>.
-		/// </summary>
-		Extended
 	}
 
 	/// <summary>
@@ -164,42 +130,8 @@ namespace ClearCanvas.ImageViewer
 	[AssociateView(typeof(ImageViewerComponentViewExtensionPoint))]
 	public partial class ImageViewerComponent : ApplicationComponent, IImageViewer, IContextMenuProvider
 	{
-		/// <summary>
-		/// A basic implementation of <see cref="IImageViewerToolContext"/>.
-		/// </summary>
-		protected class ImageViewerToolContext : ToolContext, IImageViewerToolContext
-		{
-			private readonly ImageViewerComponent _component;
-
-			/// <summary>
-			/// Constructs a new <see cref="ImageViewerToolContext"/>.
-			/// </summary>
-			/// <param name="component">The <see cref="ImageViewerComponent"/> that owns the tools.</param>
-			public ImageViewerToolContext(ImageViewerComponent component)
-			{
-				_component = component;
-			}
-
-			#region IImageViewerToolContext Members
-
-			/// <summary>
-			/// Gets the <see cref="IImageViewer"/>.
-			/// </summary>
-			public IImageViewer Viewer
-			{
-				get { return _component; }
-			}
-
-			/// <summary>
-			/// Gets the <see cref="IDesktopWindow"/>.
-			/// </summary>
-			public IDesktopWindow DesktopWindow
-			{
-				get { return _component.Host.DesktopWindow; }
-			}
-
-			#endregion
-		}
+		public const string ContextMenuSite = "imageviewer-contextmenu";
+		public const string KeyboardSite = "imageviewer-keyboard";
 
 		#region Private fields
 
@@ -207,15 +139,19 @@ namespace ClearCanvas.ImageViewer
 		private ILogicalWorkspace _logicalWorkspace;
 		private IPhysicalWorkspace _physicalWorkspace;
 		private EventBroker _eventBroker;
+		
 		private ViewerShortcutManager _shortcutManager;
+
+		private readonly IViewerSetupHelper _setupHelper;
 		private ToolSet _toolSet;
+		private IViewerActionFilter _contextMenuFilter;
 		private ILayoutManager _layoutManager;
-		private readonly AsynchronousPriorStudyLoader _priorStudyLoader;
+
+		private AsynchronousPriorStudyLoader _priorStudyLoader;
 		private SynchronizationContext _uiThreadSynchronizationContext;
 
 		private static readonly StudyFinderMap _studyFinders = new StudyFinderMap();
 		private readonly StudyLoaderMap _studyLoaders = new StudyLoaderMap();
-
 
 		private event EventHandler _closingEvent;
 
@@ -246,7 +182,7 @@ namespace ClearCanvas.ImageViewer
 		/// no extension exists, a simple layout manager is used.
 		/// </remarks>
 		public ImageViewerComponent(LayoutManagerCreationParameters creationParameters)
-			: this(CreateLayoutManager(creationParameters))
+			: this(ImageViewer.LayoutManager.Create(creationParameters))
 		{
 		}
 
@@ -255,7 +191,7 @@ namespace ClearCanvas.ImageViewer
 		/// with the specified <see cref="ILayoutManager"/>.
 		/// </summary>
 		public ImageViewerComponent(ILayoutManager layoutManager)
-			: this(layoutManager, CreatePriorStudyFinder())
+			: this(layoutManager, PriorStudyFinder.Create())
 		{
 		}
 
@@ -276,7 +212,7 @@ namespace ClearCanvas.ImageViewer
 		/// </para>
 		/// </remarks>
 		public ImageViewerComponent(LayoutManagerCreationParameters creationParameters, IPriorStudyFinder priorStudyFinder)
-			: this(CreateLayoutManager(creationParameters), priorStudyFinder)
+			: this(ImageViewer.LayoutManager.Create(creationParameters), priorStudyFinder)
 		{
 		}
 
@@ -290,45 +226,17 @@ namespace ClearCanvas.ImageViewer
 		/// </para>
 		/// </remarks>
 		public ImageViewerComponent(ILayoutManager layoutManager, IPriorStudyFinder priorStudyFinder)
+			: this(new ViewerSetupHelper(layoutManager, priorStudyFinder))
 		{
-			Platform.CheckForNullReference(layoutManager, "layoutManager");
-			_priorStudyLoader = new AsynchronousPriorStudyLoader(this, priorStudyFinder ?? PriorStudyFinder.Null);
-
-			_layoutManager = layoutManager;
-			_layoutManager.SetImageViewer(this);
 		}
 
-		private static IPriorStudyFinder CreatePriorStudyFinder()
+		public ImageViewerComponent(IViewerSetupHelper setupHelper)
 		{
-			try
-			{
-				return (IPriorStudyFinder)new PriorStudyFinderExtensionPoint().CreateExtension();
-			}
-			catch(NotSupportedException e)
-			{
-				Platform.Log(LogLevel.Info, e);
-			}
+			Platform.CheckForNullReference(setupHelper, "setupHelper");
+			_setupHelper = setupHelper;
+			_setupHelper.SetImageViewer(this);
 
-			return null;
-		}
-
-		private static ILayoutManager CreateLayoutManager(LayoutManagerCreationParameters creationParameters)
-		{
-			ILayoutManager layoutManager = null;
-			
-			if (creationParameters == LayoutManagerCreationParameters.Extended)
-			{
-				try
-				{
-					layoutManager = new LayoutManagerExtensionPoint().CreateExtension() as ILayoutManager;
-				}
-				catch(NotSupportedException e)
-				{
-					Platform.Log(LogLevel.Info, e);
-				}
-			}
-
-			return layoutManager ?? new LayoutManager();
+			_priorStudyLoader = new AsynchronousPriorStudyLoader(this, _setupHelper.GetPriorStudyFinder());
 		}
 
 		/// <summary>
@@ -342,7 +250,11 @@ namespace ClearCanvas.ImageViewer
 			base.Start();
 
 			_uiThreadSynchronizationContext = SynchronizationContext.Current;
-            _toolSet = new ToolSet(CreateTools(), CreateToolContext());
+
+			_contextMenuFilter = _setupHelper.GetContextMenuFilter() ?? ViewerActionFilter.Null;
+			_contextMenuFilter.SetImageViewer(this);
+
+			_toolSet = new ToolSet(CreateTools(), CreateToolContext());
 
 			_shortcutManager = new ViewerShortcutManager();
 
@@ -527,7 +439,16 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public ILayoutManager LayoutManager
 		{
-			get { return _layoutManager; }
+			get
+			{
+				if (_layoutManager == null)
+				{
+					_layoutManager = _setupHelper.GetLayoutManager() ?? new LayoutManager();
+					_layoutManager.SetImageViewer(this);
+				}
+
+				return _layoutManager;
+			}
 		}
 
 		/// <summary>
@@ -583,7 +504,7 @@ namespace ClearCanvas.ImageViewer
         /// <returns></returns>
         protected virtual IEnumerable CreateTools()
         {
-            return (new ImageViewerToolExtensionPoint()).CreateExtensions();
+			return _setupHelper.GetTools();
         }
 
 		/// <summary>
@@ -592,7 +513,7 @@ namespace ClearCanvas.ImageViewer
 		/// <remarks>
 		/// Subclasses can override this to provide their own custom implementation of an <see cref="IImageViewerToolContext"/>.
 		/// </remarks>
-		protected virtual IImageViewerToolContext CreateToolContext()
+		protected virtual ImageViewerToolContext CreateToolContext()
 		{
 			return new ImageViewerToolContext(this);
 		}
@@ -615,7 +536,8 @@ namespace ClearCanvas.ImageViewer
 		{
 			get
 			{
-				return ActionModelRoot.CreateModel(typeof(ImageViewerComponent).FullName, "imageviewer-contextmenu", _toolSet.Actions);
+				IActionSet actions = _toolSet.Actions.Select(_contextMenuFilter.Evaluate);
+				return ActionModelRoot.CreateModel(typeof(ImageViewerComponent).FullName, ContextMenuSite, actions);
 			}
 		}
 
@@ -623,7 +545,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			get
 			{
-				return ActionModelRoot.CreateModel(typeof(ImageViewerComponent).FullName, "imageviewer-keyboard", _toolSet.Actions);
+				return ActionModelRoot.CreateModel(typeof(ImageViewerComponent).FullName, KeyboardSite, _toolSet.Actions);
 			}
 		}
 

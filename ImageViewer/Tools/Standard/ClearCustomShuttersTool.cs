@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright (c) 2009, ClearCanvas Inc.
+// Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -42,6 +42,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[MenuAction("clear", "imageviewer-contextmenu/MenuClearCustomShutters", "Clear")]
 	[IconSet("clear", IconScheme.Colour, "Icons.ClearCustomShuttersToolSmall.png", "Icons.ClearCustomShuttersToolMedium.png", "Icons.ClearCustomShuttersToolLarge.png")]
 	[VisibleStateObserver("clear", "Visible", "VisibleChanged")]
+
+	[ButtonAction("clearToolbar", "global-toolbars/ToolbarStandard/ToolbarClearCustomShutters", "Clear")]
+	[Tooltip("clearToolbar", "TooltipClearCustomShutters")]
+	[IconSet("clearToolbar", IconScheme.Colour, "Icons.ClearCustomShuttersToolSmall.png", "Icons.ClearCustomShuttersToolMedium.png", "Icons.ClearCustomShuttersToolLarge.png")]
+	[EnabledStateObserver("clearToolbar", "Visible", "VisibleChanged")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ClearCustomShuttersTool : ImageViewerTool

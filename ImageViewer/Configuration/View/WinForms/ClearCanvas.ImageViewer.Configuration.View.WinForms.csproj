@@ -57,6 +57,13 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ContextMenuConfigurationPageControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ContextMenuConfigurationPageControl.Designer.cs">
+      <DependentUpon>ContextMenuConfigurationPageControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ContextMenuConfigurationPageView.cs" />
     <Compile Include="DicomServerEditComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -122,6 +129,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ContextMenuConfigurationPageControl.resx">
+      <DependentUpon>ContextMenuConfigurationPageControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DicomServerEditComponentControl.resx">
       <DependentUpon>DicomServerEditComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>

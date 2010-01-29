@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright (c) 2009, ClearCanvas Inc.
+// Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -32,13 +32,13 @@
 using System;
 using System.Collections;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Volume.Mpr.Tools;
 using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
+	//TODO: try using the new ViewerSetupHelper class instead.
+
 	public class MprViewerComponent : ImageViewerComponent
 	{
 		#region Private fields
@@ -113,7 +113,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return results;
 		}
 
-		protected override IImageViewerToolContext CreateToolContext()
+		protected override ImageViewerToolContext CreateToolContext()
 		{
 			return new MprViewerToolContext(this);
 		}
@@ -140,28 +140,16 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#region Tool Context
 
-		private class MprViewerToolContext : IMprViewerToolContext
+		private class MprViewerToolContext : ImageViewerToolContext, IMprViewerToolContext
 		{
-			private readonly MprViewerComponent _viewer;
-
 			public MprViewerToolContext(MprViewerComponent viewer)
+				: base(viewer)
 			{
-				_viewer = viewer;
 			}
 
-			public MprViewerComponent Viewer
+			public new MprViewerComponent Viewer
 			{
-				get { return _viewer; }
-			}
-
-			IImageViewer IImageViewerToolContext.Viewer
-			{
-				get { return _viewer; }
-			}
-
-			public IDesktopWindow DesktopWindow
-			{
-				get { return _viewer.DesktopWindow; }
+				get { return (MprViewerComponent)base.Viewer; }
 			}
 		}
 

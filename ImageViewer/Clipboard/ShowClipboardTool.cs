@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright (c) 2009, ClearCanvas Inc.
+// Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,17 +29,27 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.Desktop.Tools;
+using System.Collections;
+using ClearCanvas.Common.Utilities;
 
 #pragma warning disable 0419,1574,1587,1591
 
 namespace ClearCanvas.ImageViewer.Clipboard
 {
+	[ExtensionPoint]
+	public sealed class ClipboardToolbarToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
+
 	[MenuAction("show", "global-menus/MenuView/MenuShowClipboard", "Show")]
-	[ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarShowClipboard", "Show")]
+	[DropDownButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarShowClipboard", "Show", "ClipboardMenuModel")]
 	[Tooltip("show", "TooltipShowClipboard")]
 	[IconSet("show", IconScheme.Colour, "Icons.ShowClipboardToolSmall.png", "Icons.ShowClipboardToolMedium.png", "Icons.ShowClipboardToolLarge.png")]
 	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
@@ -47,7 +57,33 @@ namespace ClearCanvas.ImageViewer.Clipboard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ShowClipboardTool : ImageViewerTool
 	{
+		private class ToolContextProxy : IImageViewerToolContext
+		{
+			private readonly IImageViewerToolContext _realContext;
+
+			public ToolContextProxy(IImageViewerToolContext realContext)
+			{ 
+				_realContext = realContext;
+			}
+
+			#region IImageViewerToolContext Members
+
+			public IImageViewer Viewer
+			{
+				get { return _realContext.Viewer; }
+			}
+
+			public IDesktopWindow DesktopWindow
+			{
+				get { return _realContext.DesktopWindow; }
+			}
+
+			#endregion
+		}
+
+		public const string ClipboardToolbarDropdownSite = "clipboard-toolbar-dropdown";
 		private static IShelf _shelf;
+		private ToolSet _toolSet;
 
 		/// <summary>
 		/// Default constructor.
@@ -57,6 +93,45 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		/// </remarks>
 		public ShowClipboardTool()
 		{
+		}
+
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			object[] tools;
+
+			try
+			{
+
+				tools = new ClipboardToolbarToolExtensionPoint().CreateExtensions();
+			}
+			catch(NotSupportedException)
+			{
+				tools = new object[0];
+				Platform.Log(LogLevel.Debug, "No clipboard toolbar drop-down items found.");
+			}
+			catch (Exception e)
+			{
+				tools = new object[0]; 
+				Platform.Log(LogLevel.Debug, "Failed to create clipboard toolbar drop-down items.", e);
+			}
+
+			_toolSet = new ToolSet(tools, new ToolContextProxy(Context));
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			_toolSet.Dispose();
+			base.Dispose(disposing);
+		}
+
+		public ActionModelNode ClipboardMenuModel
+		{
+			get
+			{
+				return ActionModelRoot.CreateModel(typeof(ShowClipboardTool).FullName, ClipboardToolbarDropdownSite, _toolSet.Actions);
+			}	
 		}
 
 		public void Show()

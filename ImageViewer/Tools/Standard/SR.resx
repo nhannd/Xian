@@ -744,4 +744,19 @@ Please check the log for more details.</value>
   <data name="TooltipMatchScale" xml:space="preserve">
     <value>Match Scale</value>
   </data>
+  <data name="MenuView" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="ToolbarImageProperties" xml:space="preserve">
+    <value>Image Properties</value>
+  </data>
+  <data name="TooltipImageProperties" xml:space="preserve">
+    <value>Image Properties</value>
+  </data>
+  <data name="TooltipClearCustomShutters" xml:space="preserve">
+    <value>Clear Custom Shutters</value>
+  </data>
+  <data name="TooltipDeleteAllAnnotations" xml:space="preserve">
+    <value>Delete All Annotations</value>
+  </data>
 </root>

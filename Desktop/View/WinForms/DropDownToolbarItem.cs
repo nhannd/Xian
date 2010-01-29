@@ -83,6 +83,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.ShowDropDownArrow = true;
 
 			this.DropDown = new ContextMenuStrip();
+			this.DropDown.ImageScalingSize = StandardIconSizes.Small;
 			this.DropDownOpening += new EventHandler(OnDropDownOpening);
 		}
 
