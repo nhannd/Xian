@@ -550,6 +550,8 @@ namespace ClearCanvas.ImageServer.Common
 		/// <returns></returns>
         public bool GetWritableStudyStorageLocation(ServerEntityKey studyStorageKey, out StudyStorageLocation location)
 		{
+            // NOTE: THIS METHOD SHOULD NOT LOAD THE RECORD FROM THE CACHE
+
 			using (ExecutionContext context = new ExecutionContext())
 			{
 				IQueryStudyStorageLocation procedure = context.ReadContext.GetBroker<IQueryStudyStorageLocation>();

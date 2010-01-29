@@ -70,7 +70,8 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
 
             try
             {
-                ProcessUidList();
+                if (Context.WorkQueueUidList.Count>0)
+                    ProcessUidList();
             }
             finally
             {
@@ -118,7 +119,9 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
 			// Load the Study XML File
 			StudyXml xml = LoadStudyXml(_destinationStudyStorage);
 
-			foreach (WorkQueueUid uid in Context.WorkQueueUidList)
+		    string lastErrorMessage="";
+
+		    foreach (WorkQueueUid uid in Context.WorkQueueUidList)
 			{
 				string imagePath = GetReconcileUidPath(uid);
 				DicomFile file = new DicomFile(imagePath);
@@ -143,14 +146,27 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
 				}
 				catch (Exception e)
 				{
-					if (e is InstanceAlreadyExistsException
-						|| e.InnerException != null && e.InnerException is InstanceAlreadyExistsException)
-					{
-						DuplicateSopProcessorHelper.CreateDuplicateSIQEntry(file, _destinationStudyStorage, GetReconcileUidPath(uid),
-						                                                   Context.WorkQueueItem, uid);
-					}
+					Platform.Log(LogLevel.Error, e, "Error occurred when processing uid {0}", uid.SopInstanceUid);
+
+                    if (e is InstanceAlreadyExistsException
+                        || e.InnerException != null && e.InnerException is InstanceAlreadyExistsException)
+                    {
+                        DuplicateSopProcessorHelper.CreateDuplicateSIQEntry(file, _destinationStudyStorage, GetReconcileUidPath(uid),
+                                                                           Context.WorkQueueItem, uid);
+                    }
+                    else
+                    {
+                        lastErrorMessage = e.Message;
+                        SopInstanceProcessor.FailUid(uid, true);
+                    }
 				}
 			}
+
+            
+            if (counter == 0)
+            {
+                throw new ApplicationException(lastErrorMessage);
+            }
 		}
 	}
 }

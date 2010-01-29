@@ -102,11 +102,14 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 
             try
             {
-                CreateOrLoadUidMappings();
+                if (Context.WorkQueueUidList.Count > 0)
+                {
+                    CreateOrLoadUidMappings();
 
-                PrintChangeList();
+                    PrintChangeList();
 
-                ProcessUidList();
+                    ProcessUidList();
+                }
             }
             finally
             {
@@ -185,7 +188,9 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 			// Create/Load the Study XML File
 			StudyXml xml = LoadStudyXml(_destinationStudyStorage);
 
-			foreach (WorkQueueUid uid in Context.WorkQueueUidList)
+		    string lastErrorMessage = "";
+
+		    foreach (WorkQueueUid uid in Context.WorkQueueUidList)
 			{
 				string imagePath = GetReconcileUidPath(uid);
 				DicomFile file = new DicomFile(imagePath);
@@ -210,12 +215,21 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 				}
 				catch (Exception e)
 				{
-					Platform.Log(LogLevel.Error, e, "Unexpected exception when processing reconcile item");
+					Platform.Log(LogLevel.Error, e, "Error occurred when processing uid {0}", uid.SopInstanceUid);
+
+				    lastErrorMessage = e.Message;
+
+				    SopInstanceProcessor.FailUid(uid, true);
 				}
 			}
+
+            if (counter == 0)
+            {
+                throw new ApplicationException(lastErrorMessage);
+            }
 		}
 
-		private void CreateDestinationStudyStorage()
+	    private void CreateDestinationStudyStorage()
 		{
 			// This really should never happen;
 			if (Context.History.DestStudyStorageKey != null)

@@ -1860,7 +1860,7 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>52519</DevelopmentServerPort>
+          <DevelopmentServerPort>2628</DevelopmentServerPort>
           <DevelopmentServerVPath>/ImageServer</DevelopmentServerVPath>
           <IISUrl>http://localhost/ImageServerTrunk</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>

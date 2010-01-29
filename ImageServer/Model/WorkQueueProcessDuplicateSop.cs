@@ -100,6 +100,11 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// NOTE: This location is not updated if the filesystem path is changed.
+        /// </summary>
+        /// <returns></returns>
         public string GetDuplicateSopFolder()
         {
             return QueueData.DuplicateSopFolder;

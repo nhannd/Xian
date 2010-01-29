@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 		private readonly bool _complete;
 		private readonly List<BaseImageLevelUpdateCommand> _commands;
 
-		#endregion
+	    #endregion
 
 		#region Properties
 
@@ -102,6 +102,8 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 				UpdateExistingStudy();
             
 			LoadMergedStudyEntities();
+
+            
 
             try
             {
@@ -165,7 +167,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 				log.AppendLine();
 			}
             
-			log.AppendFormat("{0} images have been reconciled and will be processed.", _processedCount);
+			log.AppendFormat("{0} images have been reconciled.", _processedCount);
 			log.AppendLine();
 			Platform.Log(LogLevel.Info, log);
 		}
@@ -188,6 +190,8 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 
 		private void ProcessUidList()
 		{
+		    string lastErrorMessage = "";
+
 			Platform.Log(LogLevel.Info, "Populating new images into study folder.. {0} to go", Context.WorkQueueUidList.Count);
 
 			StudyProcessorContext context = new StudyProcessorContext(_destinationStudyStorage);
@@ -233,18 +237,30 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 				}
 				catch (Exception e)
 				{
-					if (e is InstanceAlreadyExistsException
+                    Platform.Log(LogLevel.Error, e, "Error occurred when processing uid {0}", uid.SopInstanceUid);
+					
+                    if (e is InstanceAlreadyExistsException
 						|| e.InnerException != null && e.InnerException is InstanceAlreadyExistsException)
 					{
 						DuplicateSopProcessorHelper.CreateDuplicateSIQEntry(file, _destinationStudyStorage, GetReconcileUidPath(uid),
 												   Context.WorkQueueItem, uid);
 					}
-					_failedCount++;
+                    else
+                    {
+                        lastErrorMessage = e.Message;
+                        SopInstanceProcessor.FailUid(uid, true);
+                    }
+				    _failedCount++;
 				}
 			}
+
+            if (_processedCount==0)
+            {
+                throw new ApplicationException(lastErrorMessage);
+            }
 		}
 
-		private void LoadMergedStudyEntities()
+	    private void LoadMergedStudyEntities()
 		{
 			StudyStorage storage = StudyStorage.Load(_destinationStudyStorage.Key);
 			_destinationStudyStorage = StudyStorageLocation.FindStorageLocations(storage)[0];

@@ -130,7 +130,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				                             		WorkQueueTypeEnum = WorkQueueTypeEnum.ReconcileStudy,
 				                             		WorkQueueStatusEnum = WorkQueueStatusEnum.Pending,
 				                             		ScheduledTime = Platform.Time,
-				                             		ExpirationTime = Platform.Time.AddHours(1)
+				                             		ExpirationTime = Platform.Time.AddHours(1),
+                                                    GroupID = item.GroupID
 				                             	};
 				WorkQueue newWorkQueueItem = workQueueAdaptor.Add(context, row);
 

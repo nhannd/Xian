@@ -29,9 +29,13 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
 using System.IO;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Core.Reconcile.CreateStudy;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile
 {
@@ -62,13 +66,41 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 
         protected void AddCleanupCommands()
         {
-            DirectoryInfo dir = new DirectoryInfo(Context.ReconcileWorkQueueData.StoragePath);
-            AddCommand( new DeleteDirectoryCommand(dir.FullName, false, true));
-
-            if (dir.Parent!=null)
+            string[] paths = GetFoldersToRemove();
+            foreach(string path in paths)
             {
-                AddCommand(new DeleteDirectoryCommand(dir.Parent.FullName, false, true));
-            }            
+                AddCommand(new DeleteDirectoryCommand(path, false, true));
+            }
+        }
+
+        protected string[] GetFoldersToRemove()
+        {
+            List<string> folders = new List<string>();
+
+            Model.WorkQueue workqueueItem = Context.WorkQueueItem;
+
+            // Path = \\Filesystem Path\Reconcile\GroupID\StudyInstanceUid\*.dcm
+            if (!String.IsNullOrEmpty(workqueueItem.GroupID))
+            {
+                StudyStorageLocation storageLocation = Context.WorkQueueItemStudyStorage;
+                string path = Path.Combine(storageLocation.FilesystemPath, storageLocation.PartitionFolder);
+                path = Path.Combine(path, ServerPlatform.ReconcileStorageFolder);
+                path = Path.Combine(path, workqueueItem.GroupID);
+                
+                string studyFolderPath = Path.Combine(path, storageLocation.StudyInstanceUid);
+
+                folders.Add(studyFolderPath);
+                folders.Add(path);
+            }
+            else
+            {
+                #region BACKWARD-COMPATIBLE CODE
+                string path = Context.ReconcileWorkQueueData.StoragePath;
+                folders.Add(path);
+                #endregion
+            }
+
+            return folders.ToArray();
         }
     }
 }

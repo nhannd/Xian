@@ -34,14 +34,12 @@ using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Utilities.Xml;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Reconcile.CreateStudy;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile
 {
@@ -66,14 +64,36 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 
 	    protected string GetReconcileUidPath(WorkQueueUid sop)
 	    {
-	    	if (String.IsNullOrEmpty(sop.RelativePath))
-			{
-				string path = Context.ReconcileWorkQueueData.StoragePath;
-				path = Path.Combine(path, Context.WorkQueueItemStudyStorage.StudyInstanceUid);
-				path = Path.Combine(path, sop.SopInstanceUid + ServerPlatform.DicomFileExtension);
-				return path;
-			}
-	    	return Path.Combine(Context.ReconcileWorkQueueData.StoragePath, sop.RelativePath);
+            // In 2.0: Path = \\Filesystem Path\Reconcile\GroupID\StudyInstanceUid\*.dcm
+            WorkQueue workqueueItem = Context.WorkQueueItem;
+            if (!String.IsNullOrEmpty(workqueueItem.GroupID))
+            {
+                StudyStorageLocation storageLocation = Context.WorkQueueItemStudyStorage;
+                string path = Path.Combine(storageLocation.FilesystemPath, storageLocation.PartitionFolder);
+                path = Path.Combine(path, ServerPlatform.ReconcileStorageFolder);
+                path = Path.Combine(path, workqueueItem.GroupID);
+                path = Path.Combine(path, storageLocation.StudyInstanceUid);
+                path = Path.Combine(path, sop.SopInstanceUid + ServerPlatform.DicomFileExtension);
+                return path; 
+            }
+            else
+            {
+                #region BACKWARD-COMPATIBLE CODE
+                // 1.5 SP1, RelativePath is NOT populated for Reconcile Study entry
+                // Path = \\Filesystem Path\Reconcile\GUID\*.dcm
+                // where \\Filesystem Path\Reconcile\GUID = Context.ReconcileWorkQueueData.StoragePath
+                if (String.IsNullOrEmpty(sop.RelativePath))
+                {
+                    string path = Context.ReconcileWorkQueueData.StoragePath;
+                    path = Path.Combine(path, sop.SopInstanceUid + ServerPlatform.DicomFileExtension);
+                    return path;
+                }
+
+                // will this ever happen?
+                return Path.Combine(Context.ReconcileWorkQueueData.StoragePath, sop.RelativePath);
+                #endregion
+            }
+	    	
 	    }
 
 		#region IDisposable Members

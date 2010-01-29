@@ -4390,6 +4390,7 @@ EXEC dbo.sp_executesql @statement = N'
 --	History:
 --		Oct 26, 2009: Update the study state when necessary.
 --		Oct 27, 2009: Clear FailureDescription
+--		Jan 29, 2010: Clear WorkQueue FailureCount
 -- =============================================
 CREATE PROCEDURE [dbo].[WebResetWorkQueue]
 	@WorkQueueGUID uniqueidentifier,
@@ -4438,7 +4439,7 @@ BEGIN
 		SET WorkQueueStatusEnum=@PendingStatusEnum,
 			ScheduledTime = @ScheduledTime, ExpirationTime=@ExpirationTime,
 			WorkQueuePriorityEnum=@Priority,
-			FailureDescription = NULL
+			FailureDescription = NULL, FailureCount=0
 		WHERE GUID=@WorkQueueGUID
 
 		UPDATE WorkQueueUid

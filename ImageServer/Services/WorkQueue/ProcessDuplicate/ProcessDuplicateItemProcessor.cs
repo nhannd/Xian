@@ -72,13 +72,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
         {
             get
             {
-                if (_processDuplicateEntry == null)
-                {
-                    _processDuplicateEntry = new WorkQueueProcessDuplicateSop(WorkQueueItem);
-
-                }
-
-                return _processDuplicateEntry.GetDuplicateSopFolder();
+                string path = Path.Combine(StorageLocation.FilesystemPath, StorageLocation.PartitionFolder);
+                path = Path.Combine(path, ServerPlatform.ReconcileStorageFolder);
+                path = Path.Combine(path, WorkQueueItem.GroupID);
+                return path;
             }
         }
 
@@ -130,14 +127,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                 Platform.Log(LogLevel.Info, "{0} is completed. Cleaning up duplicate storage folder. (GUID={1}, action={2})",
                              item.WorkQueueTypeEnum, item.GetKey().Key, _processDuplicateEntry.QueueData.Action);
                 
-                DirectoryInfo duplicateFolder = new DirectoryInfo(DuplicateFolder);
-                if (duplicateFolder.Exists)
-                {
-                	DirectoryUtility.DeleteIfEmpty(duplicateFolder.FullName);
-                	if (duplicateFolder.Parent != null) 
-						DirectoryUtility.DeleteIfEmpty(duplicateFolder.Parent.FullName);
-                }
-            	PostProcessing(item, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+                CleanUpReconcileFolders();
+
+                PostProcessing(item, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
             }
             else
             {
@@ -184,6 +176,28 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 
         }
 
+        private void CleanUpReconcileFolders()
+        {
+            try
+            {
+                DirectoryInfo duplicateStudyFolder =
+                    new DirectoryInfo(Path.Combine(DuplicateFolder, StorageLocation.StudyInstanceUid));
+                if (duplicateStudyFolder.Exists)
+                {
+                    DirectoryUtility.DeleteIfEmpty(duplicateStudyFolder.FullName);
+                }
+
+                if (Directory.Exists(DuplicateFolder))
+                {
+                    DirectoryUtility.DeleteIfEmpty(DuplicateFolder);
+                }
+            }
+            catch(Exception ex)
+            {
+                Platform.Log(LogLevel.Info, ex, "Unable to cleanup some of the folders. Manual deletion is required");
+            }
+        }
+
         private static void EnsureStorageLocationIsWritable(StudyStorageLocation location)
         {
             FilesystemMonitor.Instance.EnsureStorageLocationIsWritable(location);
@@ -195,6 +209,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 
         private void UpdateStudyOrDuplicates()
         {
+            // StorageLocation object must be reloaded if we are overwriting the study
+            // with info in the duplicates. 
+            bool needReload = false;
+
             switch (_processDuplicateEntry.QueueData.Action)
             {
                 case ProcessDuplicateAction.OverwriteUseDuplicates:
@@ -213,6 +231,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                                 throw new ApplicationException(processor.FailureReason, processor.FailureException);
                             }
 
+                            needReload = true;
                             _processDuplicateEntry.QueueData.State.ExistingStudyUpdated = true;
                         }
                     }
@@ -225,6 +244,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                     _duplicateUpdateCommands.AddRange(commandBuilder.BuildCommands<StudyMatchingMap>(StorageLocation));
                     PrintCommands(_duplicateUpdateCommands);
                     break;
+            }
+
+            if (needReload)
+            {
+                StudyStorageLocation updatedStorageLocation;
+                
+                //NOTE: Make sure we are loading the storage location fro the database instead of the cache.
+                if (!FilesystemMonitor.Instance.GetWritableStudyStorageLocation(WorkQueueItem.StudyStorageKey, out updatedStorageLocation))
+                {
+                    // this is odd.. we just updated it and now it's no longer writable?
+                    throw new ApplicationException("Filesystem is not writable");
+                }
+                StorageLocation = updatedStorageLocation;
             }
         }
 
@@ -527,18 +559,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 
         private FileInfo GetDuplicateSopFile(WorkQueueUid uid)
         {
-            string path = Path.Combine(StorageLocation.FilesystemPath, StorageLocation.PartitionFolder);
-			path = Path.Combine(path, ServerPlatform.ReconcileStorageFolder);
-            path = Path.Combine(path, WorkQueueItem.GroupID);
+            string path = DuplicateFolder;
 
-			if (string.IsNullOrEmpty(uid.RelativePath))
-			{
-				path = Path.Combine(path, StorageLocation.StudyInstanceUid);
-				path = Path.Combine(path, uid.SopInstanceUid + "." + uid.Extension);
-			}
-			else path = Path.Combine(path, uid.RelativePath);
+            if (string.IsNullOrEmpty(uid.RelativePath))
+            {
+                path = Path.Combine(path, StorageLocation.StudyInstanceUid);
+                path = Path.Combine(path, uid.SopInstanceUid + "." + uid.Extension);
+            }
+            else path = Path.Combine(path, uid.RelativePath);
 
-			return new FileInfo(path);
+            return new FileInfo(path);
         }
 
         private void PrintCommands(ICollection<BaseImageLevelUpdateCommand> commands)

@@ -61,7 +61,8 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.Discard
 
 			foreach (WorkQueueUid uid in Context.WorkQueueUidList)
 			{
-				string imagePath = Path.Combine(Context.ReconcileWorkQueueData.StoragePath, uid.SopInstanceUid + ServerPlatform.DicomFileExtension);
+
+			    string imagePath = GetReconcileUidPath(uid);
 
 				try
 				{
