@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
             this.Dock = DockStyle.Fill;
 
-            _noteTable.Table = _component.Notes;
+            _noteTable.Table = _component.NoteTable;
             _noteTable.DataBindings.Add("Selection", _component, "SelectedNote", true, DataSourceUpdateMode.OnPropertyChanged);
         }
     }

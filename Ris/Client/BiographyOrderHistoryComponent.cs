@@ -130,7 +130,7 @@ namespace ClearCanvas.Ris.Client
 			#endregion
 		}
 
-		private readonly EntityRef _patientRef;
+		private EntityRef _patientRef;
 		private readonly OrderListTable _orderList;
 		private OrderListItem _selectedOrder;
 		private OrderDetail _orderDetail;
@@ -150,9 +150,8 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public BiographyOrderHistoryComponent(EntityRef patientRef)
+		public BiographyOrderHistoryComponent()
 		{
-			_patientRef = patientRef;
 			_orderList = new OrderListTable();
 		}
 
@@ -202,6 +201,18 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			base.Stop();
+		}
+
+		public EntityRef PatientRef
+		{
+			get { return _patientRef; }
+			set
+			{
+				_patientRef = value;
+
+				if (this.IsStarted)
+					LoadOrders();
+			}
 		}
 
 		#region Presentation Model

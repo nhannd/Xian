@@ -37,58 +37,61 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-    /// <summary>
-    /// Extension point for views onto <see cref="BiographyNoteComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class BiographyNoteComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	/// <summary>
+	/// Extension point for views onto <see cref="BiographyNoteComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class BiographyNoteComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    /// <summary>
-    /// BiographyNoteComponent class
-    /// </summary>
-    [AssociateView(typeof(BiographyNoteComponentViewExtensionPoint))]
-    public class BiographyNoteComponent : ApplicationComponent
-    {
-        private readonly List<PatientNoteDetail> _noteList;
-        private readonly BiographyNoteTable _noteTable;
-        private PatientNoteDetail _selectedNote;
+	/// <summary>
+	/// BiographyNoteComponent class
+	/// </summary>
+	[AssociateView(typeof(BiographyNoteComponentViewExtensionPoint))]
+	public class BiographyNoteComponent : ApplicationComponent
+	{
+		private List<PatientNoteDetail> _noteList;
+		private readonly BiographyNoteTable _noteTable;
+		private PatientNoteDetail _selectedNote;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public BiographyNoteComponent(List<PatientNoteDetail> notes)
-        {
-            _noteTable = new BiographyNoteTable();
-            _noteList = notes;
-        }
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public BiographyNoteComponent()
+		{
+			_noteTable = new BiographyNoteTable();
+		}
 
-        public override void Start()
-        {
-            base.Start();
+		public List<PatientNoteDetail> Notes
+		{
+			get { return _noteList; }
+			set
+			{
+				_noteList = value;
+				_noteTable.Items.Clear();
+				_noteTable.Items.AddRange(value);
+			}
+		}
 
-            _noteTable.Items.AddRange(_noteList);
-        }
+		public ITable NoteTable
+		{
+			get { return _noteTable; }
+		}
 
-        public ITable Notes
-        {
-            get { return _noteTable; }
-        }
+		public ISelection SelectedNote
+		{
+			get { return new Selection(_selectedNote); }
+			set
+			{
+				_selectedNote = (PatientNoteDetail)value.Item;
+				NoteSelectionChanged();
+			}
+		}
 
-        public ISelection SelectedNote
-        {
-            get { return new Selection(_selectedNote); }
-            set
-            {
-                _selectedNote = (PatientNoteDetail)value.Item;
-                NoteSelectionChanged();
-            }
-        }
-
-        private void NoteSelectionChanged()
-        {
-            NotifyAllPropertiesChanged();
-        }
-    }
+		private void NoteSelectionChanged()
+		{
+			NotifyAllPropertiesChanged();
+		}
+	}
 }

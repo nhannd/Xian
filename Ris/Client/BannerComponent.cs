@@ -37,6 +37,10 @@ namespace ClearCanvas.Ris.Client
 	{
 		private DataContractBase _healthcareContext;
 
+		public BannerComponent()
+		{
+		}
+
 		public BannerComponent(DataContractBase healthcareContext)
 		{
 			_healthcareContext = healthcareContext;
@@ -69,7 +73,9 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_healthcareContext = value;
-				Refresh();
+
+				if (this.IsStarted)
+					Refresh();
 			}
 		}
 	}

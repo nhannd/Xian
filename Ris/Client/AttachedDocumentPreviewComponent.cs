@@ -261,7 +261,9 @@ namespace ClearCanvas.Ris.Client
 
 				_mode = AttachmentMode.Patient;
 				_patientProfileRef = value;
-				LoadPatientAttachments();
+
+				if (this.IsStarted)
+					LoadPatientAttachments();
 			}
 		}
 
@@ -385,13 +387,13 @@ namespace ClearCanvas.Ris.Client
 				(IBrowsePatientDataService service) =>
 				{
 					var request = new GetDataRequest
-		          	{
-		          		GetPatientProfileDetailRequest = new GetPatientProfileDetailRequest
-                     	{
-                     		PatientProfileRef = _patientProfileRef,
-                     		IncludeAttachments = true
-                     	}
-		          	};
+					{
+						GetPatientProfileDetailRequest = new GetPatientProfileDetailRequest
+						{
+							PatientProfileRef = _patientProfileRef,
+							IncludeAttachments = true
+						}
+					};
 					return service.GetData(request);
 				},
 				response =>

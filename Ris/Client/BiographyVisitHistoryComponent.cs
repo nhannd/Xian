@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(BiographyVisitHistoryComponentViewExtensionPoint))]
 	public class BiographyVisitHistoryComponent : ApplicationComponent
 	{
-		private readonly EntityRef _patientRef;
+		private EntityRef _patientRef;
 		private readonly VisitListTable _visitList;
 		private VisitListItem _selectedVisit;
 
@@ -61,9 +61,8 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public BiographyVisitHistoryComponent(EntityRef patientRef)
+		public BiographyVisitHistoryComponent()
 		{
-			_patientRef = patientRef;
 			_visitList = new VisitListTable();
 		}
 
@@ -87,6 +86,18 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			base.Stop();
+		}
+
+		public EntityRef PatientRef
+		{
+			get { return _patientRef; }
+			set
+			{
+				_patientRef = value;
+
+				if (this.IsStarted)
+					LoadVisits();
+			}
 		}
 
 		#region Presentation Model

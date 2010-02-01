@@ -76,9 +76,8 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-
-		private readonly EntityRef _defaultProfileRef;
-		private readonly EntityRef _patientRef;
+		private EntityRef _defaultProfileRef;
+		private EntityRef _patientRef;
 
 		private PatientProfileSummary _selectedProfile;
 		private List<PatientProfileSummary> _profileChoices;
@@ -89,14 +88,8 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public BiographyDemographicComponent(EntityRef patientRef, EntityRef defaultProfileRef)
+		public BiographyDemographicComponent()
 		{
-			Platform.CheckForNullReference(patientRef, "patientRef");
-			_patientRef = patientRef;
-
-			// default profile ref may be null
-			_defaultProfileRef = defaultProfileRef;
-
 			_profileChoices = new List<PatientProfileSummary>();
 		}
 
@@ -122,10 +115,22 @@ namespace ClearCanvas.Ris.Client
 			base.Stop();
 		}
 
-		public string FormatPatientProfile(object item)
+		public EntityRef DefaultProfileRef
 		{
-			var summary = (PatientProfileSummary)item;
-			return String.Format("{0} - {1}", MrnFormat.Format(summary.Mrn), PersonNameFormat.Format(summary.Name));
+			get { return _defaultProfileRef; }
+			set { _defaultProfileRef = value; }
+		}
+
+		public EntityRef PatientRef
+		{
+			get { return _patientRef; }
+			set
+			{
+				_patientRef = value;
+
+				if (this.IsStarted)
+					LoadPatientProfile();
+			}
 		}
 
 		#region Presentation Model
@@ -145,12 +150,18 @@ namespace ClearCanvas.Ris.Client
 			get { return _selectedProfile; }
 			set
 			{
-				if (!Equals(value, _selectedProfile))
-				{
-					_selectedProfile = value;
-					((ProfileViewComponent)_profileViewComponentHost.Component).PatientProfile = _selectedProfile;
-				}
+				if (Equals(value, _selectedProfile))
+					return;
+
+				_selectedProfile = value;
+				_profileViewComponent.PatientProfile = _selectedProfile;
 			}
+		}
+
+		public string FormatPatientProfile(object item)
+		{
+			var summary = (PatientProfileSummary)item;
+			return String.Format("{0} - {1}", MrnFormat.Format(summary.Mrn), PersonNameFormat.Format(summary.Name));
 		}
 
 		#endregion
@@ -180,6 +191,19 @@ namespace ClearCanvas.Ris.Client
 						: CollectionUtils.FirstElement(_profileChoices);
 
 					_profileViewComponent.PatientProfile = _selectedProfile;
+
+					NotifyPropertyChanged("SelectedProfile");
+					NotifyAllPropertiesChanged();
+				},
+				exception =>
+				{
+					_profileChoices = new List<PatientProfileSummary>();
+					_selectedProfile = null;
+					_profileViewComponent.PatientProfile = null;
+					ExceptionHandler.Report(exception, this.Host.DesktopWindow);
+
+					NotifyPropertyChanged("SelectedProfile");
+					NotifyAllPropertiesChanged();
 				});
 		}
 		

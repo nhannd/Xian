@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -109,7 +110,12 @@ namespace ClearCanvas.Ris.Client
 
 		private EntityRef _selectedOrderRef;
 		private TabComponentContainer _pagesContainer;
+		private BannerComponent _bannerComponent;
 		private BiographyOrderHistoryComponent _orderHistoryComponent;
+		private BiographyVisitHistoryComponent _visitHistoryComponent;
+		private BiographyDemographicComponent _demographicComponent;
+		private AttachedDocumentPreviewComponent _documentComponent;
+		private BiographyNoteComponent _noteComponent;
 
 		/// <summary>
 		/// Constructor
@@ -122,41 +128,21 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
-			// query for the minimum possible amount of patient profile detail, just enough to populate the title
-			Platform.GetService<IBrowsePatientDataService>(service =>
-				{
-					var response = service.GetData(new GetDataRequest
-						{
-							GetPatientProfileDetailRequest = new GetPatientProfileDetailRequest
-								{
-									PatientProfileRef = _profileRef,
-									// include notes for the notes component
-									IncludeNotes = true,
-									// include attachments for the docs component
-									IncludeAttachments = true
-								}
-						});
-
-					_patientProfile = response.GetPatientProfileDetailResponse.PatientProfile;
-				});
-
-			this.Host.Title = string.Format(SR.TitleBiography, PersonNameFormat.Format(_patientProfile.Name), MrnFormat.Format(_patientProfile.Mrn));
-
 			// Create component for each tab
-			_orderHistoryComponent = new BiographyOrderHistoryComponent(_patientRef);
-			var noteComponent = new BiographyNoteComponent(_patientProfile.Notes);
-			var demographicComponent = new BiographyDemographicComponent(_patientRef, _profileRef);
-			var documentComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Patient);
-			var visitHistoryComponent = new BiographyVisitHistoryComponent(_patientRef);
-			documentComponent.PatientAttachments = _patientProfile.Attachments;
+			_bannerComponent = new BannerComponent();
+			_orderHistoryComponent = new BiographyOrderHistoryComponent {PatientRef = _patientRef};
+			_visitHistoryComponent = new BiographyVisitHistoryComponent { PatientRef = _patientRef };
+			_demographicComponent = new BiographyDemographicComponent { DefaultProfileRef = _profileRef, PatientRef = _patientRef };
+			_documentComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Patient);
+			_noteComponent = new BiographyNoteComponent();
 
 			// Create tab and tab groups
 			_pagesContainer = new TabComponentContainer();
 			_pagesContainer.Pages.Add(new TabPage(SR.TitleOrders, _orderHistoryComponent));
-			_pagesContainer.Pages.Add(new TabPage(SR.TitleVisits, visitHistoryComponent));
-			_pagesContainer.Pages.Add(new TabPage(SR.TitleDemographicProfiles, demographicComponent));
-			_pagesContainer.Pages.Add(new TabPage(SR.TitlePatientAttachments, documentComponent));
-			_pagesContainer.Pages.Add(new TabPage(SR.TitlePatientNotes, noteComponent));
+			_pagesContainer.Pages.Add(new TabPage(SR.TitleVisits, _visitHistoryComponent));
+			_pagesContainer.Pages.Add(new TabPage(SR.TitleDemographicProfiles, _demographicComponent));
+			_pagesContainer.Pages.Add(new TabPage(SR.TitlePatientAttachments, _documentComponent));
+			_pagesContainer.Pages.Add(new TabPage(SR.TitlePatientNotes, _noteComponent));
 
 			var tabGroupContainer = new TabGroupComponentContainer(LayoutDirection.Horizontal);
 			tabGroupContainer.AddTabGroup(new TabGroup(_pagesContainer, 1.0f));
@@ -164,10 +150,12 @@ namespace ClearCanvas.Ris.Client
 			_contentComponentHost = new ChildComponentHost(this.Host, tabGroupContainer);
 			_contentComponentHost.StartComponent();
 
-			_bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(_patientProfile));
+			_bannerComponentHost = new ChildComponentHost(this.Host, _bannerComponent);
 			_bannerComponentHost.StartComponent();
 
 			_toolSet = new ToolSet(new PatientBiographyToolExtensionPoint(), new PatientBiographyToolContext(this));
+
+			LoadPatientProfile();
 
 			base.Start();
 		}
@@ -245,6 +233,56 @@ namespace ClearCanvas.Ris.Client
 
 			if (orderTabPage != null)
 				_pagesContainer.CurrentPage = orderTabPage;
+		}
+
+		private void LoadPatientProfile()
+		{
+			Async.CancelPending(this);
+
+			if (_profileRef == null)
+				return;
+
+			Async.Request(this,
+				(IBrowsePatientDataService service) =>
+				{
+					var request = new GetDataRequest
+						{
+							GetPatientProfileDetailRequest = new GetPatientProfileDetailRequest
+							{
+								PatientProfileRef = _profileRef,
+								// include notes for the notes component
+								IncludeNotes = true,
+								// include attachments for the docs component
+								IncludeAttachments = true
+							}
+						};
+
+					return service.GetData(request);
+				},
+				response =>
+				{
+					_patientProfile = response.GetPatientProfileDetailResponse.PatientProfile;
+
+					this.Host.Title = string.Format(SR.TitleBiography, PersonNameFormat.Format(_patientProfile.Name), MrnFormat.Format(_patientProfile.Mrn));
+					_bannerComponent.HealthcareContext = _patientProfile;
+					_documentComponent.PatientAttachments = _patientProfile.Attachments;
+					_noteComponent.Notes = _patientProfile.Notes;
+
+					NotifyPropertyChanged("SelectedOrder");
+					NotifyAllPropertiesChanged();
+				},
+				exception =>
+				{
+					ExceptionHandler.Report(exception, this.Host.DesktopWindow);
+
+					_patientProfile = null;
+					_bannerComponent.HealthcareContext = null;
+					_documentComponent.PatientAttachments = new List<PatientAttachmentSummary>();
+					_noteComponent.Notes = new List<PatientNoteDetail>();
+
+					NotifyPropertyChanged("SelectedOrder");
+					NotifyAllPropertiesChanged();
+				});
 		}
 	}
 }
