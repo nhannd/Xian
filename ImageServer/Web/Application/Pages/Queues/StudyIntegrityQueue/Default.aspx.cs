@@ -31,10 +31,12 @@
 
 using System;
 using System.Security.Permissions;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Enterprise.Authentication;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
+using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
@@ -45,6 +47,41 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
+
+            string patientID = string.Empty;
+            string patientName = string.Empty;
+            string partitionKey;
+            string reason = string.Empty;
+            string databind = string.Empty;
+            ServerPartition activePartition = null;
+
+            if (!IsPostBack && !Page.IsAsync)
+            {
+                patientID = Request["PatientID"];
+                patientName = Request["PatientName"];
+                partitionKey = Request["PartitionKey"];
+                reason = Request["Reason"];
+                databind = Request["Databind"];
+
+                if (!string.IsNullOrEmpty(patientID) && !string.IsNullOrEmpty(patientName) &&
+                    !string.IsNullOrEmpty(partitionKey))
+                {
+                    if (!string.IsNullOrEmpty(partitionKey))
+                    {
+                        var controller = new ServerPartitionConfigController();
+                        activePartition = controller.GetPartition(new ServerEntityKey("ServerPartition", partitionKey));
+                    }
+                }
+                if (string.IsNullOrEmpty(reason))
+                {
+                    if (!string.IsNullOrEmpty(partitionKey))
+                    {
+                        var controller = new ServerPartitionConfigController();
+                        activePartition = controller.GetPartition(new ServerEntityKey("ServerPartition", partitionKey));
+                    }
+                }
+            }
+
             ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
                                                            {
                                                                var panel =
@@ -53,9 +90,28 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                                                                {
                                                                    panel.ServerPartition = partition;
                                                                    panel.ID = "SearchPanel_" + partition.AeTitle;
+
+                                                                   if (!string.IsNullOrEmpty(patientName) ||
+                                                                       !string.IsNullOrEmpty(patientID) ||
+                                                                       !string.IsNullOrEmpty(reason))
+                                                                   {
+                                                                       panel.PatientNameFromUrl = patientName;
+                                                                       panel.PatientIdFromUrl = patientID;
+                                                                       panel.ReasonFromUrl = reason;
+                                                                   }
+
+                                                                   if (!string.IsNullOrEmpty(databind))
+                                                                   {
+                                                                       panel.DataBindFromUrl = true;
+                                                                   }
                                                                }
                                                                return panel;
                                                            });
+
+            if (activePartition != null)
+            {
+                ServerPartitionTabs.SetActivePartition(activePartition.AeTitle);
+            }
 
             SetPageTitle(Titles.StudyIntegrityQueuePageTitle);
         }

@@ -34,12 +34,10 @@ using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using AjaxControlToolkit;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Enterprise.Authentication;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
-using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
@@ -79,6 +77,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// </summary>
         public ServerPartition ServerPartition { get; set; }
 
+        public string PatientNameFromUrl { get; set; }
+
+        public string PatientIdFromUrl { get; set; }
+
+        public string ReasonFromUrl { get; set; }
+
+        public bool DataBindFromUrl { get; set; }
+
         #endregion Public Properties  
 
         #region Public Methods
@@ -105,52 +111,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
         #region Protected Methods
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            if (!IsPostBack && !Page.IsAsync)
-            {
-                string patientID = Request["PatientID"];
-                string patientName = Request["PatientName"];
-                string partitionKey = Request["PartitionKey"];
-                string reason = Request["Reason"];
-                string databind = Request["Databind"];
-
-                if (patientID != null && patientName != null && partitionKey != null)
-                {
-                    var controller = new ServerPartitionConfigController();
-                    ServerPartition = controller.GetPartition(new ServerEntityKey("ServerPartition", partitionKey));
-
-                    PatientId.Text = patientID;
-                    PatientName.Text = patientName;
-
-                    StudyIntegrityQueueItemList.SetDataSource();
-                    StudyIntegrityQueueItemList.Refresh();
-                }
-                if (reason != null)
-                {
-                    ReasonListBox.Items.FindByValue(reason).Selected = true;
-
-                    StudyIntegrityQueueItemList.SetDataSource();
-                    StudyIntegrityQueueItemList.Refresh();
-                }
-                if (databind != null)
-                {
-                    StudyIntegrityQueueItemList.SetDataSource();
-                    StudyIntegrityQueueItemList.Refresh();
-                }
-            }
-        }
-
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
             ClearFromDateButton.OnClientClick = ScriptHelper.ClearDate(FromDate.ClientID,
-                                                                           FromDateCalendarExtender.ClientID);
+                                                                       FromDateCalendarExtender.ClientID);
             ClearToDateButton.OnClientClick = ScriptHelper.ClearDate(ToDate.ClientID,
-                                                                           ToDateCalendarExtender.ClientID);
-            ToDate.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromDate.ClientID, ToDate.ClientID, ToDate.ClientID, ToDateCalendarExtender.ClientID, "To Date must be greater than From Date");
-            FromDate.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromDate.ClientID, ToDate.ClientID, FromDate.ClientID, FromDateCalendarExtender.ClientID, "From Date must be less than To Date");
+                                                                     ToDateCalendarExtender.ClientID);
+            ToDate.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromDate.ClientID, ToDate.ClientID,
+                                                                        ToDate.ClientID, ToDateCalendarExtender.ClientID,
+                                                                        "To Date must be greater than From Date");
+            FromDate.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromDate.ClientID, ToDate.ClientID,
+                                                                          FromDate.ClientID,
+                                                                          FromDateCalendarExtender.ClientID,
+                                                                          "From Date must be less than To Date");
 
             GridPagerTop.InitializeGridPager(Labels.GridPagerQueueSingleItem,
                                              Labels.GridPagerQueueMultipleItems,
@@ -203,6 +178,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             foreach (StudyIntegrityReasonEnum reason in reasons)
             {
                 ReasonListBox.Items.Add(new ListItem(reason.Description, reason.Lookup));
+            }
+
+            if (!string.IsNullOrEmpty(PatientNameFromUrl) || !string.IsNullOrEmpty(PatientIdFromUrl))
+            {
+                PatientName.Text = PatientNameFromUrl;
+                PatientId.Text = PatientIdFromUrl;
+                if (!string.IsNullOrEmpty(ReasonFromUrl))
+                    ReasonListBox.Items.FindByValue(ReasonFromUrl).Selected = true;
+
+                StudyIntegrityQueueItemList.SetDataSource();
+                StudyIntegrityQueueItemList.Refresh();
+            }
+            else if (DataBindFromUrl)
+            {
+                StudyIntegrityQueueItemList.SetDataSource();
+                StudyIntegrityQueueItemList.Refresh();
             }
         }
 

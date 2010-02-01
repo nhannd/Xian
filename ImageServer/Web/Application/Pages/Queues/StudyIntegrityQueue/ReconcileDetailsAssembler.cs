@@ -45,7 +45,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         public static ReconcileDetails CreateReconcileDetails(StudyIntegrityQueueSummary item)
         {
             ReconcileDetails details = item.TheStudyIntegrityQueueItem.StudyIntegrityReasonEnum.Equals(
-                                           StudyIntegrityReasonEnum.InconsistentData) ? new ReconcileDetails(item.TheStudyIntegrityQueueItem) : new DuplicateEntryDetails(item.TheStudyIntegrityQueueItem);
+                                           StudyIntegrityReasonEnum.InconsistentData)
+                                           ? new ReconcileDetails(item.TheStudyIntegrityQueueItem)
+                                           : new DuplicateEntryDetails(item.TheStudyIntegrityQueueItem);
 
             Study study = item.StudySummary.TheStudy;
             details.StudyInstanceUid = study.StudyInstanceUid;
@@ -164,7 +166,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
                 IList<StudyIntegrityQueueUid> uids = uidBroker.Find(criteria);
 
-                Dictionary<string, List<StudyIntegrityQueueUid>> seriesGroups = CollectionUtils.GroupBy(uids, uid => uid.SeriesInstanceUid);
+                Dictionary<string, List<StudyIntegrityQueueUid>> seriesGroups = CollectionUtils.GroupBy(uids,
+                                                                                                        uid =>
+                                                                                                        uid.
+                                                                                                            SeriesInstanceUid);
 
                 foreach (string seriesUid in seriesGroups.Keys)
                 {
