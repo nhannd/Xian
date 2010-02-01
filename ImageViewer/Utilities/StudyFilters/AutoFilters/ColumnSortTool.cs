@@ -120,11 +120,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters
 				this.Descending = descending;
 			}
 
-			public override int Compare(StudyItem x, StudyItem y)
+			public override int Compare(IStudyItem x, IStudyItem y)
 			{
 				if (this.Descending)
 				{
-					StudyItem z = y;
+					IStudyItem z = y;
 					y = x;
 					x = z;
 				}
@@ -167,11 +167,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters
 				this.Descending = descending;
 			}
 
-			public override int Compare(StudyItem x, StudyItem y)
+			public override int Compare(IStudyItem x, IStudyItem y)
 			{
 				if (this.Descending)
 				{
-					StudyItem z = y;
+					IStudyItem z = y;
 					y = x;
 					x = z;
 				}
@@ -214,11 +214,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters
 				this.Descending = descending;
 			}
 
-			public override int Compare(StudyItem x, StudyItem y)
+			public override int Compare(IStudyItem x, IStudyItem y)
 			{
 				if (this.Descending)
 				{
-					StudyItem z = y;
+					IStudyItem z = y;
 					y = x;
 					x = z;
 				}
@@ -261,11 +261,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters
 				this.Descending = descending;
 			}
 
-			public override int Compare(StudyItem x, StudyItem y)
+			public override int Compare(IStudyItem x, IStudyItem y)
 			{
 				if (this.Descending)
 				{
-					StudyItem z = y;
+					IStudyItem z = y;
 					y = x;
 					x = z;
 				}

@@ -69,6 +69,7 @@
     <Compile Include="Columns\PathColumn.cs" />
     <Compile Include="Export\ExportComponent.cs" />
     <Compile Include="ISortableColumn.cs" />
+    <Compile Include="IStudyItem.cs" />
     <Compile Include="IValueIndexedColumn.cs" />
     <Compile Include="StudyFilterColumnBase.cs" />
     <Compile Include="StudyFilterColumnDefinitions.cs" />

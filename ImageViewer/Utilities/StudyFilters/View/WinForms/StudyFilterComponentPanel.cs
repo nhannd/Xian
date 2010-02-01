@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 
 		private ActionModelNode GetContextMenuModel(int row, int column)
 		{
-			StudyItem activeItem = null;
+			IStudyItem activeItem = null;
 			if (row >= 0 && row < _component.Items.Count)
 				activeItem = _component.Items[row];
 
@@ -107,7 +107,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 				{
 					foreach (object o in selection)
 					{
-						_component.Selection.Add(o as StudyItem);
+						_component.Selection.Add(o as IStudyItem);
 					}
 				}
 			}

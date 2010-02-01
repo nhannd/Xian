@@ -88,6 +88,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loading....
+        /// </summary>
+        internal static string MessageLoading {
+            get {
+                return ResourceManager.GetString("MessageLoading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Study Filters.
         /// </summary>
         internal static string TitleStudyFilters {
@@ -111,6 +120,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools {
         internal static string ToolbarImportToLocalDataStore {
             get {
                 return ResourceManager.GetString("ToolbarImportToLocalDataStore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open in Study Filters.
+        /// </summary>
+        internal static string ToolbarOpenInStudyFilters {
+            get {
+                return ResourceManager.GetString("ToolbarOpenInStudyFilters", resourceCulture);
             }
         }
         

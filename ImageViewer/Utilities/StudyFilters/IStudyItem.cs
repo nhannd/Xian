@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 
-// Copyright (c) 2009, ClearCanvas Inc.
+// Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,38 +29,15 @@
 
 #endregion
 
-using ClearCanvas.Common;
+using System;
+using System.IO;
+using ClearCanvas.Dicom;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 {
-	[ExtensionOf(typeof(SpecialColumnExtensionPoint))]
-	public class PathColumn : SpecialColumn<string>, ILexicalSortableColumn
+	public interface IStudyItem : IDisposable
 	{
-		public const string KEY = "Path";
-
-		public PathColumn() : base(SR.Path, KEY) { }
-
-		public override string GetTypedValue(IStudyItem item)
-		{
-			if (item == null)
-				return string.Empty;
-			return item.Filename;
-		}
-
-		public override bool Parse(string input, out string output)
-		{
-			output = input;
-			return true;
-		}
-
-		public override int Compare(IStudyItem x, IStudyItem y)
-		{
-			return this.CompareLexically(x, y);
-		}
-
-		public int CompareLexically(IStudyItem x, IStudyItem y)
-		{
-			return this.GetTypedValue(x).CompareTo(this.GetTypedValue(y));
-		}
+		string Filename { get; }
+		DicomAttribute this[uint tag] { get; }
 	}
 }

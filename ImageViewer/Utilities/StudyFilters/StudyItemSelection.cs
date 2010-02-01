@@ -37,14 +37,14 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 {
-	public class StudyItemSelection : ICollection<StudyItem>
+	public class StudyItemSelection : ICollection<IStudyItem>
 	{
-		private readonly ICollection<StudyItem> _master;
-		private readonly List<StudyItem> _innerList = new List<StudyItem>();
+		private readonly ICollection<IStudyItem> _master;
+		private readonly List<IStudyItem> _innerList = new List<IStudyItem>();
 		private event EventHandler _selectionChanged;
 		private bool _suspendEvents = false;
 
-		internal StudyItemSelection(ICollection<StudyItem> master)
+		internal StudyItemSelection(ICollection<IStudyItem> master)
 		{
 			_master = master;
 		}
@@ -74,7 +74,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 				EventsHelper.Fire(_selectionChanged, this, new EventArgs());
 		}
 
-		public void Add(StudyItem item)
+		public void Add(IStudyItem item)
 		{
 			if (!_innerList.Contains(item) && _master.Contains(item))
 			{
@@ -92,12 +92,12 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			}
 		}
 
-		public bool Contains(StudyItem item)
+		public bool Contains(IStudyItem item)
 		{
 			return _innerList.Contains(item);
 		}
 
-		public void CopyTo(StudyItem[] array, int arrayIndex)
+		public void CopyTo(IStudyItem[] array, int arrayIndex)
 		{
 			_innerList.CopyTo(array, arrayIndex);
 		}
@@ -107,12 +107,12 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			get { return _innerList.Count; }
 		}
 
-		bool ICollection<StudyItem>.IsReadOnly
+		bool ICollection<IStudyItem>.IsReadOnly
 		{
 			get { return false; }
 		}
 
-		public bool Remove(StudyItem item)
+		public bool Remove(IStudyItem item)
 		{
 			if (_innerList.Remove(item))
 			{
@@ -122,7 +122,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			return false;
 		}
 
-		public IEnumerator<StudyItem> GetEnumerator()
+		public IEnumerator<IStudyItem> GetEnumerator()
 		{
 			return _innerList.GetEnumerator();
 		}

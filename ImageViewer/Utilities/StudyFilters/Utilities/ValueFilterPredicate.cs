@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities
 			this.Value = value;
 		}
 
-		public override bool Evaluate(StudyItem item)
+		public override bool Evaluate(IStudyItem item)
 		{
 			return this.Column.GetValue(item).Equals(this.Value);
 		}
@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities
 			get { return (T) base.Value; }
 		}
 
-		public override bool Evaluate(StudyItem item)
+		public override bool Evaluate(IStudyItem item)
 		{
 			return this.Column.GetTypedValue(item).Equals(this.Value);
 		}
@@ -74,7 +74,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities
 	{
 		public GreaterValueFilterPredicate(StudyFilterColumnBase<T> column, T value) : base(column, value) {}
 
-		public override bool Evaluate(StudyItem item)
+		public override bool Evaluate(IStudyItem item)
 		{
 			return this.Column.GetTypedValue(item).CompareTo(this.Value) > 0;
 		}
@@ -84,7 +84,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities
 	{
 		public LesserValueFilterPredicate(StudyFilterColumnBase<T> column, T value) : base(column, value) {}
 
-		public override bool Evaluate(StudyItem item)
+		public override bool Evaluate(IStudyItem item)
 		{
 			return this.Column.GetTypedValue(item).CompareTo(this.Value) < 0;
 		}
@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities
 	{
 		public GreaterOrEqualValueFilterPredicate(StudyFilterColumnBase<T> column, T value) : base(column, value) {}
 
-		public override bool Evaluate(StudyItem item)
+		public override bool Evaluate(IStudyItem item)
 		{
 			return this.Column.GetTypedValue(item).CompareTo(this.Value) >= 0;
 		}
@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities
 	{
 		public LesserOrEqualValueFilterPredicate(StudyFilterColumnBase<T> column, T value) : base(column, value) {}
 
-		public override bool Evaluate(StudyItem item)
+		public override bool Evaluate(IStudyItem item)
 		{
 			return this.Column.GetTypedValue(item).CompareTo(this.Value) <= 0;
 		}

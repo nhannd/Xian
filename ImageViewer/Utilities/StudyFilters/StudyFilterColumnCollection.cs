@@ -33,6 +33,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 {
@@ -222,6 +223,20 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			IEnumerator IEnumerable.GetEnumerator()
 			{
 				return this.GetEnumerator();
+			}
+
+			IEnumerable<uint> DicomTags
+			{
+				get
+				{
+					foreach (StudyFilterColumn column in this)
+					{
+						if (column is IDicomTagColumn)
+						{
+							yield return ((IDicomTagColumn) column).Tag;
+						}
+					}
+				}
 			}
 		}
 	}

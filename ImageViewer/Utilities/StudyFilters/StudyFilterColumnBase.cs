@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 {
 	public abstract class StudyFilterColumnBase<T> : StudyFilterColumn, IValueIndexedColumn<string>
 	{
-		public override sealed object GetValue(StudyItem item)
+		public override sealed object GetValue(IStudyItem item)
 		{
 			return this.GetTypedValue(item);
 		}
@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			return typeof (T);
 		}
 
-		public abstract T GetTypedValue(StudyItem item);
+		public abstract T GetTypedValue(IStudyItem item);
 
 		public override sealed bool Parse(string input, out object output)
 		{
@@ -64,9 +64,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			return false;
 		}
 
-		internal override sealed TableColumnBase<StudyItem> CreateTableColumn()
+		internal override sealed TableColumnBase<IStudyItem> CreateTableColumn()
 		{
-			return new TableColumn<StudyItem, T>(this.Name, this.GetTypedValue);
+			return new TableColumn<IStudyItem, T>(this.Name, this.GetTypedValue);
 		}
 
 		#region IValueIndexedColumn<string> Members
@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 				SortedDictionary<IndexEntry, string> indexBuilder = new SortedDictionary<IndexEntry, string>();
 				if (base.Owner != null)
 				{
-					foreach (StudyItem item in base.Owner.Items)
+					foreach (IStudyItem item in base.Owner.Items)
 					{
 						IndexEntry entry = new IndexEntry(this.GetTypedValue(item), this.GetText(item));
 						if (!indexBuilder.ContainsKey(entry))

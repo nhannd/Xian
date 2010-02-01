@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters
 				_column = column;
 			}
 
-			public override bool Evaluate(StudyItem item)
+			public override bool Evaluate(IStudyItem item)
 			{
 				foreach (FilterPredicate predicate in base.Predicates)
 				{

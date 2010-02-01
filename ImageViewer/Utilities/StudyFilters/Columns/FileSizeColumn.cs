@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.IO;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
@@ -40,11 +41,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 
 		public FileSizeColumn() : base(SR.FileSize, KEY) { }
 
-		public override FileSize GetTypedValue(StudyItem item)
+		public override FileSize GetTypedValue(IStudyItem item)
 		{
-			if (item == null || !item.File.Exists)
+			if (item == null || !File.Exists(item.Filename))
 				return new FileSize(-1);
-			return new FileSize(item.File.Length);
+			return new FileSize(new FileInfo(item.Filename).Length);
 		}
 
 		public override bool Parse(string input, out FileSize output)
@@ -52,12 +53,12 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 			return Columns.FileSize.TryParse(input, out output);
 		}
 
-		public override int Compare(StudyItem x, StudyItem y)
+		public override int Compare(IStudyItem x, IStudyItem y)
 		{
 			return this.CompareNumerically(x, y);
 		}
 
-		public int CompareNumerically(StudyItem x, StudyItem y)
+		public int CompareNumerically(IStudyItem x, IStudyItem y)
 		{
 			return this.GetTypedValue(x).CompareTo(this.GetTypedValue(y));
 		}

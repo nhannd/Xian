@@ -183,7 +183,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters
 				}
 			}
 
-			public override bool Evaluate(StudyItem item)
+			public override bool Evaluate(IStudyItem item)
 			{
 				foreach (ValueFilterPredicate predicate in _predicates)
 				{
@@ -204,7 +204,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters
 			{
 				public TextValueFilterPredicate(StudyFilterColumn column, object value) : base(column, value) {}
 
-				public override bool Evaluate(StudyItem item)
+				public override bool Evaluate(IStudyItem item)
 				{
 					return this.Column.GetText(item).Equals(this.Value);
 				}

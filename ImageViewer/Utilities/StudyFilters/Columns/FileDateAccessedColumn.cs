@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.IO;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
@@ -40,11 +41,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 
 		public FileDateAccessedColumn() : base(SR.DateAccessed, KEY) { }
 
-		public override FileDateTime GetTypedValue(StudyItem item)
+		public override FileDateTime GetTypedValue(IStudyItem item)
 		{
-			if (item == null || !item.File.Exists)
+			if (item == null || !File.Exists(item.Filename))
 				return new FileDateTime(null);
-			return new FileDateTime(item.File.LastAccessTime);
+			return new FileDateTime(File.GetLastAccessTime(item.Filename));
 		}
 
 		public override bool Parse(string input, out FileDateTime output)
@@ -52,12 +53,12 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 			return FileDateTime.TryParse(input, out output);
 		}
 
-		public override int Compare(StudyItem x, StudyItem y)
+		public override int Compare(IStudyItem x, IStudyItem y)
 		{
 			return this.CompareTemporally(x, y);
 		}
 
-		public int CompareTemporally(StudyItem x, StudyItem y)
+		public int CompareTemporally(IStudyItem x, IStudyItem y)
 		{
 			return this.GetTypedValue(x).CompareTo(this.GetTypedValue(y));
 		}

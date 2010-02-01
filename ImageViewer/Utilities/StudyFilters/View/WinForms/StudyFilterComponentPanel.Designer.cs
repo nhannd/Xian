@@ -33,12 +33,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 			// 
 			// _tableView
 			// 
+			this._tableView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.None;
 			this._tableView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._tableView.Location = new System.Drawing.Point(0, 33);
 			this._tableView.Name = "_tableView";
 			this._tableView.ReadOnly = false;
 			this._tableView.ShowToolbar = false;
 			this._tableView.Size = new System.Drawing.Size(790, 528);
+			this._tableView.SmartColumnSizing = true;
+			this._tableView.StatusBarVisible = true;
 			this._tableView.TabIndex = 0;
 			this._tableView.SelectionChanged += new System.EventHandler(this._tableView_SelectionChanged);
 			// 

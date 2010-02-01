@@ -29,30 +29,78 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.IO;
+using System;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 {
-	public class StudyItem
+	public class SopDataSourceStudyItem : StudyItem
 	{
-		private readonly FileInfo _file;
+		private readonly string _filename;
+		private ISopReference _sopReference;
+
+		public SopDataSourceStudyItem(Sop sop)
+		{
+			if (sop.DataSource is ILocalSopDataSource)
+			{
+				_filename = ((ILocalSopDataSource) sop.DataSource).Filename;
+				_sopReference = sop.CreateTransientReference();
+			}
+		}
+
+		public SopDataSourceStudyItem(ILocalSopDataSource sopDataSource)
+		{
+			_filename = sopDataSource.Filename;
+			using (Sop sop = new Sop(sopDataSource))
+			{
+				_sopReference = sop.CreateTransientReference();
+			}
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (_sopReference != null)
+				{
+					_sopReference.Dispose();
+					_sopReference = null;
+				}
+			}
+			base.Dispose(disposing);
+		}
+
+		public override string Filename
+		{
+			get { return _filename; }
+		}
+
+		public override DicomAttribute this[uint tag]
+		{
+			get { return _sopReference.Sop[tag]; }
+		}
+	}
+
+	public class LocalStudyItem : StudyItem
+	{
+		private readonly string _filename;
 		private readonly DicomFile _dcf;
 
-		public StudyItem(string filename)
+		public LocalStudyItem(string filename)
 		{
-			_file = new FileInfo(filename);
+			_filename = filename;
 			_dcf = new DicomFile(filename);
 			_dcf.Load(DicomReadOptions.Default | DicomReadOptions.StorePixelDataReferences);
 		}
 
-		public FileInfo File
+		public override string Filename
 		{
-			get { return _file; }
+			get { return _filename; }
 		}
 
-		public DicomAttribute this[uint tag]
+		public override DicomAttribute this[uint tag]
 		{
 			get
 			{
@@ -63,6 +111,35 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 						return null;
 				}
 				return attribute;
+			}
+		}
+	}
+
+	public abstract class StudyItem : IStudyItem
+	{
+		protected StudyItem() {}
+
+		~StudyItem()
+		{
+			this.Dispose(false);
+		}
+
+		public abstract string Filename { get; }
+
+		public abstract DicomAttribute this[uint tag] { get; }
+
+		protected virtual void Dispose(bool disposing) {}
+
+		public void Dispose()
+		{
+			try
+			{
+				this.Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Warn, e);
 			}
 		}
 	}

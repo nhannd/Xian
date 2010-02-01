@@ -33,7 +33,7 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities
 {
-	public abstract class SortPredicate : IComparer<StudyItem>
+	public abstract class SortPredicate : IComparer<IStudyItem>
 	{
 		public readonly StudyFilterColumn Column;
 
@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities
 			return 0x00DBFF0B ^ this.GetType().GetHashCode() ^ this.Column.GetHashCode();
 		}
 
-		public virtual int Compare(StudyItem x, StudyItem y)
+		public virtual int Compare(IStudyItem x, IStudyItem y)
 		{
 			return this.Column.Compare(x, y);
 		}
@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities
 	{
 		public DescendingSortPredicate(StudyFilterColumn column) : base(column) {}
 
-		public override int Compare(StudyItem x, StudyItem y)
+		public override int Compare(IStudyItem x, IStudyItem y)
 		{
 			return base.Compare(y, x);
 		}

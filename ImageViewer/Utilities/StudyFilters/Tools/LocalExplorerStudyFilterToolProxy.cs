@@ -88,8 +88,8 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 			{
 				get
 				{
-					foreach (StudyItem item in _owner.SelectedItems)
-						yield return item.File.FullName;
+					foreach (IStudyItem item in _owner.SelectedItems)
+						yield return item.Filename;
 				}
 			}
 

@@ -42,8 +42,8 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 		string Name { get; }
 		string Key { get; }
 		IStudyFilter Owner { get; }
-		string GetText(StudyItem item);
-		object GetValue(StudyItem item);
+		string GetText(IStudyItem item);
+		object GetValue(IStudyItem item);
 		Type GetValueType();
 	}
 

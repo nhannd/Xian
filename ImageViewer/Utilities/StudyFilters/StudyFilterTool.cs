@@ -46,13 +46,13 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 		IDesktopWindow DesktopWindow { get; }
 		IStudyFilter StudyFilter { get; }
 
-		StudyItem ActiveItem { get; }
+		IStudyItem ActiveItem { get; }
 		StudyFilterColumn ActiveColumn { get; }
 		event EventHandler ActiveChanged;
 
 		StudyItemSelection SelectedItems { get; }
 
-		IList<StudyItem> Items { get; }
+		IList<IStudyItem> Items { get; }
 		IStudyFilterColumnCollection Columns { get; }
 
 		bool BulkOperationsMode { get; set; }
@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			get { return base.Context.Columns; }
 		}
 
-		protected IList<StudyItem> Items
+		protected IList<IStudyItem> Items
 		{
 			get { return base.Context.Items; }
 		}
@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			get { return base.Context.SelectedItems; }
 		}
 
-		protected StudyItem ActiveItem
+		protected IStudyItem ActiveItem
 		{
 			get { return base.Context.ActiveItem; }
 		}

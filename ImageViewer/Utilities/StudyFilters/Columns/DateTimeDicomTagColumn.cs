@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 			return DateTime.TryParseExact(s, _dateTimeFormat, CultureInfo.CurrentCulture, DateTimeStyles.None, out result);
 		}
 
-		public override DicomArray<DateTime> GetTypedValue(StudyItem item)
+		public override DicomArray<DateTime> GetTypedValue(IStudyItem item)
 		{
 			DicomAttribute attribute = item[base.Tag];
 
@@ -111,12 +111,12 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 			return false;
 		}
 
-		public override int Compare(StudyItem x, StudyItem y)
+		public override int Compare(IStudyItem x, IStudyItem y)
 		{
 			return this.CompareTemporally(x, y);
 		}
 
-		public int CompareTemporally(StudyItem x, StudyItem y)
+		public int CompareTemporally(IStudyItem x, IStudyItem y)
 		{
 			return DicomArray<DateTime>.Compare(this.GetTypedValue(x), this.GetTypedValue(y));
 		}

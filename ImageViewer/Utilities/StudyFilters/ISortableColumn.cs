@@ -33,25 +33,25 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 {
-	public interface IGenericSortableColumn : IComparer<StudyItem> {}
+	public interface IGenericSortableColumn : IComparer<IStudyItem> {}
 
 	public interface INumericSortableColumn
 	{
-		int CompareNumerically(StudyItem x, StudyItem y);
+		int CompareNumerically(IStudyItem x, IStudyItem y);
 	}
 
 	public interface ILexicalSortableColumn
 	{
-		int CompareLexically(StudyItem x, StudyItem y);
+		int CompareLexically(IStudyItem x, IStudyItem y);
 	}
 
 	public interface ITemporalSortableColumn
 	{
-		int CompareTemporally(StudyItem x, StudyItem y);
+		int CompareTemporally(IStudyItem x, IStudyItem y);
 	}
 
 	public interface ISpatialSortableColumn
 	{
-		int CompareSpatially(StudyItem x, StudyItem y);
+		int CompareSpatially(IStudyItem x, IStudyItem y);
 	}
 }

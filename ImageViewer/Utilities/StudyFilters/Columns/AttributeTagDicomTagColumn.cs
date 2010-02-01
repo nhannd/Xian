@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 
 		public AttributeTagDicomTagColumn(DicomTag dicomTag) : base(dicomTag) {}
 
-		public override DicomArray<uint> GetTypedValue(StudyItem item)
+		public override DicomArray<uint> GetTypedValue(IStudyItem item)
 		{
 			DicomAttribute attribute = item[base.Tag];
 

@@ -57,11 +57,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 		private event EventHandler _isStaleChanged;
 		private event EventHandler _filterPredicatesEnabledChanged;
 
-		private readonly Table<StudyItem> _table;
+		private readonly Table<IStudyItem> _table;
 		private readonly StudyFilterColumnCollection _columns;
 		private readonly StudyItemSelection _selection;
 		private readonly StudyFilterSettings _settings;
-		private readonly ObservableList<StudyItem> _masterList;
+		private readonly ObservableList<IStudyItem> _masterList;
 		private readonly SortPredicateRoot _sortPredicate;
 		private readonly FilterPredicateRoot _filterPredicate;
 		private StudyFilterToolContext _toolContext;
@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 
 		public StudyFilterComponent()
 		{
-			_masterList = new ObservableList<StudyItem>();
+			_masterList = new ObservableList<IStudyItem>();
 			_masterList.ItemAdded += OnMasterListItemAdded;
 			_masterList.ItemChanged += OnMasterListItemAdded;
 			_masterList.ItemChanging += OnMasterListItemRemoved;
@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			_masterList.EnableEvents = true;
 
 			_selection = new StudyItemSelection(_masterList);
-			_table = new Table<StudyItem>();
+			_table = new Table<IStudyItem>();
 			_columns = new StudyFilterColumnCollection(this);
 			_settings = StudyFilterSettings.Default;
 			_sortPredicate = new SortPredicateRoot(this);
@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			set { _bulkOperationsMode = value; }
 		}
 
-		public Table<StudyItem> Table
+		public Table<IStudyItem> Table
 		{
 			get { return _table; }
 		}
@@ -159,7 +159,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 
 		#region Items
 
-		public IList<StudyItem> Items
+		public IList<IStudyItem> Items
 		{
 			get { return _masterList; }
 		}
@@ -181,7 +181,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			remove { _itemRemoved -= value; }
 		}
 
-		private void OnMasterListItemRemoved(object sender, ListEventArgs<StudyItem> e)
+		private void OnMasterListItemRemoved(object sender, ListEventArgs<IStudyItem> e)
 		{
 			if (!_bulkOperationsMode)
 			{
@@ -201,7 +201,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			EventsHelper.Fire(_itemRemoved, this, EventArgs.Empty);
 		}
 
-		private void OnMasterListItemAdded(object sender, ListEventArgs<StudyItem> e)
+		private void OnMasterListItemAdded(object sender, ListEventArgs<IStudyItem> e)
 		{
 			if (!_bulkOperationsMode)
 			{
@@ -255,7 +255,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			{
 				if (File.Exists(path))
 				{
-					_masterList.Add(new StudyItem(path));
+					_masterList.Add(new LocalStudyItem(path));
 					count++;
 				}
 				else if (Directory.Exists(path))
@@ -321,7 +321,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 
 			private event EventHandler _activeChanged;
 
-			private StudyItem _activeItem = null;
+			private IStudyItem _activeItem = null;
 			private StudyFilterColumn _activeColumn = null;
 
 			public StudyFilterToolContext(StudyFilterComponent component)
@@ -339,7 +339,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 				get { return _component; }
 			}
 
-			public StudyItem ActiveItem
+			public IStudyItem ActiveItem
 			{
 				get { return _activeItem; }
 			}
@@ -360,7 +360,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 				get { return _component.Selection; }
 			}
 
-			public IList<StudyItem> Items
+			public IList<IStudyItem> Items
 			{
 				get { return _component.Items; }
 			}
@@ -396,7 +396,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 				_component.Refresh(force);
 			}
 
-			internal void SetActiveCell(StudyItem item, StudyFilterColumn column)
+			internal void SetActiveCell(IStudyItem item, StudyFilterColumn column)
 			{
 				_activeItem = item;
 				_activeColumn = column;
@@ -408,7 +408,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 
 		#region Context Menu Support
 
-		public ActionModelNode GetContextMenuActionModel(StudyItem item, StudyFilterColumn column)
+		public ActionModelNode GetContextMenuActionModel(IStudyItem item, StudyFilterColumn column)
 		{
 			_toolContext.SetActiveCell(item, column);
 			return ActionModelRoot.CreateModel(this.GetType().FullName, StudyFilterTool.DefaultContextMenuActionSite, _actions);
@@ -467,7 +467,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 				{
 					_table.Items.Clear();
 
-					IList<StudyItem> result = _filterPredicate.Filter(_masterList);
+					IList<IStudyItem> result = _filterPredicate.Filter(_masterList);
 					_sortPredicate.Sort(result);
 
 					_table.Items.AddRange(result);
@@ -549,12 +549,12 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			/// <summary>
 			/// Filters a list. O{n}
 			/// </summary>
-			public IList<StudyItem> Filter(IList<StudyItem> list)
+			public IList<IStudyItem> Filter(IList<IStudyItem> list)
 			{
-				IList<StudyItem> filtered = new List<StudyItem>();
+				IList<IStudyItem> filtered = new List<IStudyItem>();
 				if (_enabled)
 				{
-					foreach (StudyItem item in list)
+					foreach (IStudyItem item in list)
 					{
 						if (_predicate.Evaluate(item))
 							filtered.Add(item);
@@ -562,7 +562,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 				}
 				else
 				{
-					((List<StudyItem>) filtered).AddRange(list);
+					((List<IStudyItem>) filtered).AddRange(list);
 				}
 				return filtered;
 			}
@@ -570,7 +570,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			/// <summary>
 			/// Tests the filter on the specified item. O{1}
 			/// </summary>
-			public bool Test(StudyItem item)
+			public bool Test(IStudyItem item)
 			{
 				return !_enabled || _predicate.Evaluate(item);
 			}
@@ -597,9 +597,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			remove { _sortPredicatesChanged -= value; }
 		}
 
-		private class SortPredicateRoot : IComparer<StudyItem>
+		private class SortPredicateRoot : IComparer<IStudyItem>
 		{
-			public readonly ObservableList<SortPredicate> _predicates = new ObservableList<SortPredicate>();
+			private readonly ObservableList<SortPredicate> _predicates = new ObservableList<SortPredicate>();
 			private readonly StudyFilterComponent _owner;
 
 			public SortPredicateRoot(StudyFilterComponent owner)
@@ -619,7 +619,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			/// <summary>
 			/// Sorts a list in place. O{n*log(n)}
 			/// </summary>
-			public void Sort(IList<StudyItem> list)
+			public void Sort(IList<IStudyItem> list)
 			{
 				MergeSort(this, list, 0, list.Count);
 			}
@@ -627,7 +627,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			/// <summary>
 			/// Inserts the specified item into a list. O{log(n)}
 			/// </summary>
-			public void Insert(IList<StudyItem> list, StudyItem item)
+			public void Insert(IList<IStudyItem> list, IStudyItem item)
 			{
 				list.Insert(BinarySearch(this, list, item, 0, list.Count), item);
 			}
@@ -638,7 +638,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 				EventsHelper.Fire(_owner._sortPredicatesChanged, _owner, EventArgs.Empty);
 			}
 
-			int IComparer<StudyItem>.Compare(StudyItem x, StudyItem y)
+			int IComparer<IStudyItem>.Compare(IStudyItem x, IStudyItem y)
 			{
 				if (x == y)
 					return 0;
@@ -662,7 +662,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			/// Performs a stable merge sort on the given <paramref name="list"/> using the given <paramref name="comparer"/>.
 			/// The range of items sorted is [<paramref name="rangeStart"/>, <paramref name="rangeStop"/>).
 			/// </summary>
-			private static void MergeSort(IComparer<StudyItem> comparer, IList<StudyItem> list, int rangeStart, int rangeStop)
+			private static void MergeSort(IComparer<IStudyItem> comparer, IList<IStudyItem> list, int rangeStart, int rangeStop)
 			{
 				int rangeLength = rangeStop - rangeStart;
 				if (rangeLength > 1)
@@ -673,7 +673,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 					MergeSort(comparer, list, rangeMid, rangeStop);
 
 					// merge halves
-					List<StudyItem> merged = new List<StudyItem>(rangeLength);
+					List<IStudyItem> merged = new List<IStudyItem>(rangeLength);
 					int j = rangeStart;
 					int k = rangeMid;
 
@@ -691,7 +691,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 
 					// copy merged to list
 					k = rangeStart;
-					foreach (StudyItem item in merged)
+					foreach (IStudyItem item in merged)
 						list[k++] = item;
 				}
 			}
@@ -705,7 +705,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			/// for the expected index of <paramref name="item"/>.
 			/// The range of items searched is [<paramref name="rangeStart"/>, <paramref name="rangeStop"/>).
 			/// </summary>
-			private static int BinarySearch(IComparer<StudyItem> comparer, IList<StudyItem> list, StudyItem item, int rangeStart, int rangeStop)
+			private static int BinarySearch(IComparer<IStudyItem> comparer, IList<IStudyItem> list, IStudyItem item, int rangeStart, int rangeStop)
 			{
 				int rangeLength = rangeStop - rangeStart;
 

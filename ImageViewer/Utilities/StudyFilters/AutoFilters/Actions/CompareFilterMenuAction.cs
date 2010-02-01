@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters.Actions
 				get { return !string.IsNullOrEmpty(_stringValue); }
 			}
 
-			public override bool Evaluate(StudyItem item)
+			public override bool Evaluate(IStudyItem item)
 			{
 				if (!IsActive)
 					return true;

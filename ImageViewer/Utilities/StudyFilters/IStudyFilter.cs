@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 {
 	public interface IStudyFilter
 	{
-		IList<StudyItem> Items { get; }
+		IList<IStudyItem> Items { get; }
 		StudyItemSelection Selection { get; }
 
 		event EventHandler ItemAdded;

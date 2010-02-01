@@ -126,6 +126,9 @@
   <data name="MenuOpenInStudyFilters" xml:space="preserve">
     <value>Open in Study &amp;Filters...</value>
   </data>
+  <data name="MessageLoading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
   <data name="TitleStudyFilters" xml:space="preserve">
     <value>Study Filters</value>
   </data>
@@ -134,6 +137,9 @@
   </data>
   <data name="ToolbarImportToLocalDataStore" xml:space="preserve">
     <value>Import to Local Data Store</value>
+  </data>
+  <data name="ToolbarOpenInStudyFilters" xml:space="preserve">
+    <value>Open in Study Filters</value>
   </data>
   <data name="TooltipDumpFiles" xml:space="preserve">
     <value>Dumps the selected instances to the DICOM Editor</value>

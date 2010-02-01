@@ -39,7 +39,7 @@ using ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 {
-	public abstract partial class StudyFilterColumn : IComparer<StudyItem>
+	public abstract partial class StudyFilterColumn : IComparer<IStudyItem>
 	{
 		private IStudyFilter _owner;
 
@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 
 		public abstract string Key { get; }
 
-		public virtual string GetText(StudyItem item)
+		public virtual string GetText(IStudyItem item)
 		{
 			object value = this.GetValue(item);
 			if (value == null)
@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			return value.ToString();
 		}
 
-		public abstract object GetValue(StudyItem item);
+		public abstract object GetValue(IStudyItem item);
 
 		public abstract Type GetValueType();
 
@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			return false;
 		}
 
-		public virtual int Compare(StudyItem x, StudyItem y)
+		public virtual int Compare(IStudyItem x, IStudyItem y)
 		{
 			return 0;
 		}
@@ -111,7 +111,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			return this.Name;
 		}
 
-		internal abstract TableColumnBase<StudyItem> CreateTableColumn();
+		internal abstract TableColumnBase<IStudyItem> CreateTableColumn();
 
 		#region Event Handling
 
@@ -206,7 +206,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 
 		private class AutoFilterRootPredicate : CompositeFilterPredicate
 		{
-			public override bool Evaluate(StudyItem item)
+			public override bool Evaluate(IStudyItem item)
 			{
 				foreach (FilterPredicate predicate in base.Predicates)
 				{

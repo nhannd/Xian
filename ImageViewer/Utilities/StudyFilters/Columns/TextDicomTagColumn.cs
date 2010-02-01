@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 	{
 		public TextDicomTagColumn(DicomTag dicomTag) : base(dicomTag) { }
 
-		public override string GetTypedValue(StudyItem item)
+		public override string GetTypedValue(IStudyItem item)
 		{
 			DicomAttribute attribute = item[base.Tag];
 
@@ -55,12 +55,12 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 			return true;
 		}
 
-		public override int Compare(StudyItem x, StudyItem y)
+		public override int Compare(IStudyItem x, IStudyItem y)
 		{
 			return this.CompareLexically(x, y);
 		}
 
-		public int CompareLexically(StudyItem x, StudyItem y)
+		public int CompareLexically(IStudyItem x, IStudyItem y)
 		{
 			return this.GetTypedValue(x).CompareTo(this.GetTypedValue(y));
 		}

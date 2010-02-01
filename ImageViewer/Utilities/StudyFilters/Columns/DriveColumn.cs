@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 
 		public DriveColumn() : base(SR.Drive, KEY) { }
 
-		public override string GetTypedValue(StudyItem item)
+		public override string GetTypedValue(IStudyItem item)
 		{
 			DriveInfo drive = GetDriveInfo(item);
 			if (drive == null)
@@ -56,24 +56,25 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 			return true;
 		}
 
-		public override int Compare(StudyItem x, StudyItem y)
+		public override int Compare(IStudyItem x, IStudyItem y)
 		{
 			return this.CompareLexically(x, y);
 		}
 
-		public int CompareLexically(StudyItem x, StudyItem y)
+		public int CompareLexically(IStudyItem x, IStudyItem y)
 		{
 			return this.GetTypedValue(x).CompareTo(this.GetTypedValue(y));
 		}
 
-		internal static Regex _localDrive = new Regex("^[A-Za-z]:\\\\?$", RegexOptions.Compiled);
+		private static readonly Regex _localDrive = new Regex("^[A-Za-z]:\\\\?$", RegexOptions.Compiled);
 
-		internal static DriveInfo GetDriveInfo(StudyItem item)
+		internal static DriveInfo GetDriveInfo(IStudyItem item)
 		{
 			if (item == null)
 				return null;
-			if (_localDrive.IsMatch(item.File.Directory.Root.FullName))
-				return new DriveInfo(item.File.Directory.Root.FullName[0].ToString());
+			string root = Path.GetPathRoot(item.Filename);
+			if (_localDrive.IsMatch(root))
+				return new DriveInfo(root[0].ToString());
 			return null;
 		}
 	}

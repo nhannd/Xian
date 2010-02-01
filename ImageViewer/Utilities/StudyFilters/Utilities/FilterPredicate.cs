@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities
 			remove { _changed -= value; }
 		}
 
-		public abstract bool Evaluate(StudyItem item);
+		public abstract bool Evaluate(IStudyItem item);
 
 		protected virtual void OnChanged()
 		{
@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities
 			set { _predicate = value; }
 		}
 
-		public override bool Evaluate(StudyItem item)
+		public override bool Evaluate(IStudyItem item)
 		{
 			if (_predicate == null)
 				return true;
@@ -156,7 +156,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities
 
 		public AndFilterPredicate(IEnumerable<FilterPredicate> predicates) : base(predicates) {}
 
-		public override bool Evaluate(StudyItem item)
+		public override bool Evaluate(IStudyItem item)
 		{
 			foreach (FilterPredicate predicate in this.Predicates)
 			{
@@ -173,7 +173,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities
 
 		public OrFilterPredicate(IEnumerable<FilterPredicate> predicates) : base(predicates) {}
 
-		public override bool Evaluate(StudyItem item)
+		public override bool Evaluate(IStudyItem item)
 		{
 			foreach (FilterPredicate predicate in this.Predicates)
 			{

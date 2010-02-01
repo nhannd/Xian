@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 
 		public DriveFormatColumn() : base(SR.DriveFormat, KEY) { }
 
-		public override string GetTypedValue(StudyItem item)
+		public override string GetTypedValue(IStudyItem item)
 		{
 			DriveInfo drive = DriveColumn.GetDriveInfo(item);
 			if (drive == null)
@@ -55,12 +55,12 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 			return true;
 		}
 
-		public override int Compare(StudyItem x, StudyItem y)
+		public override int Compare(IStudyItem x, IStudyItem y)
 		{
 			return this.CompareLexically(x, y);
 		}
 
-		public int CompareLexically(StudyItem x, StudyItem y)
+		public int CompareLexically(IStudyItem x, IStudyItem y)
 		{
 			return this.GetTypedValue(x).CompareTo(this.GetTypedValue(y));
 		}

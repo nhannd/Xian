@@ -45,6 +45,7 @@
     <Compile Include="DicomEditorTool.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="LaunchStudyFiltersDicomExplorerTool.cs" />
     <Compile Include="LaunchStudyFiltersLocalExplorerTool.cs" />
     <Compile Include="LocalExplorerStudyFilterToolProxy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -74,6 +75,10 @@
     <ProjectReference Include="..\..\..\ClearCanvas.ImageViewer.csproj">
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
       <Name>ClearCanvas.ImageViewer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Explorer\Dicom\ClearCanvas.ImageViewer.Explorer.Dicom.csproj">
+      <Project>{14111EC7-C62E-4483-8573-7C04986D048F}</Project>
+      <Name>ClearCanvas.ImageViewer.Explorer.Dicom</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Explorer\Local\ClearCanvas.ImageViewer.Explorer.Local.csproj">
       <Project>{AD9F87CF-0F30-442D-ACCD-80FACC339F22}</Project>

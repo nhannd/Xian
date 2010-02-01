@@ -34,20 +34,32 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 {
-	public abstract class DicomTagColumn<T> : StudyFilterColumnBase<T>
+	public interface IDicomTagColumn
+	{
+		uint Tag { get; }
+		string VR { get; }
+
+		string Name { get; }
+		string Key { get; }
+		IStudyFilter Owner { get; }
+		string GetText(IStudyItem item);
+		object GetValue(IStudyItem item);
+		Type GetValueType();
+	}
+
+	public abstract class DicomTagColumn<T> : StudyFilterColumnBase<T>, IDicomTagColumn
 	{
 		private readonly string _tagName;
-
-		protected readonly uint Tag;
-		protected readonly string VR;
+		private readonly uint _tag;
+		private readonly string _vr;
 
 		protected DicomTagColumn(DicomTag dicomTag)
 		{
-			this.Tag = dicomTag.TagValue;
-			this.VR = dicomTag.VR.Name;
+			_tag = dicomTag.TagValue;
+			_vr = dicomTag.VR.Name;
 
-			uint tagGroup = (this.Tag >> 16) & 0x0000FFFF;
-			uint tagElement = this.Tag & 0x0000FFFF;
+			uint tagGroup = (_tag >> 16) & 0x0000FFFF;
+			uint tagElement = _tag & 0x0000FFFF;
 
 			if (DicomTagDictionary.GetDicomTag(dicomTag.TagValue) == null)
 				_tagName = string.Format(SR.FormatUnknownDicomTag, tagGroup, tagElement);
@@ -62,7 +74,17 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 
 		public override string Key
 		{
-			get { return this.Tag.ToString("x8"); }
+			get { return _tag.ToString("x8"); }
+		}
+
+		public uint Tag
+		{
+			get { return _tag; }
+		}
+
+		public string VR
+		{
+			get { return _vr; }
 		}
 
 		protected static int CountValues(DicomAttribute attribute)

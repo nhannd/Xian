@@ -266,14 +266,24 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 
 		#region Definitions
 
-		private abstract class DicomColumnDefinition : ColumnDefinition
+		public interface IDicomColumnDefinition
 		{
-			protected readonly DicomTag Tag;
+			DicomTag Tag { get; }
+		}
+
+		private abstract class DicomColumnDefinition : ColumnDefinition, IDicomColumnDefinition
+		{
+			private readonly DicomTag _tag;
 
 			protected DicomColumnDefinition(DicomTag tag)
 				: base(tag.TagValue.ToString("x8"), string.Format(SR.FormatDicomTag, tag.Group, tag.Element, tag.Name))
 			{
-				Tag = tag;
+				_tag = tag;
+			}
+
+			public DicomTag Tag
+			{
+				get { return _tag; }
 			}
 		}
 
