@@ -46,12 +46,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.CoreTools
 	{
 		public void RemoveItems()
 		{
-			List<StudyItem> selected = new List<StudyItem>(base.SelectedItems);
+			List<IStudyItem> selected = new List<IStudyItem>(base.SelectedItems);
 			base.Context.BulkOperationsMode = selected.Count > 50;
 			try
 			{
-				foreach (StudyItem item in selected)
+				foreach (IStudyItem item in selected)
+				{
 					base.Items.Remove(item);
+					item.Dispose();
+				}
 				base.RefreshTable();
 			}
 			finally

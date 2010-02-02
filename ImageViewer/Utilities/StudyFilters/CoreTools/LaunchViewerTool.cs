@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.CoreTools
 	[MenuAction("launch", DefaultContextMenuActionSite + "/MenuLaunchInViewer", "Launch")]
 	[EnabledStateObserver("launch", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
 	[IconSet("launch", IconScheme.Colour, "OpenToolSmall.png", "OpenToolSmall.png", "OpenToolSmall.png")]
-	[ViewerActionPermission("launch", AuthorityTokens.ViewerVisible)]
+	[ViewerActionPermission("launch", ImageViewer.AuthorityTokens.Study.Open)]
 	[ExtensionOf(typeof(StudyFilterToolExtensionPoint))]
 	public class LaunchViewerTool : StudyFilterTool
 	{
@@ -51,9 +51,10 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.CoreTools
 
 			int n = 0;
 			string[] selection = new string[base.SelectedItems.Count];
-			foreach (StudyItem item in base.SelectedItems)
+			foreach (IStudyItem item in base.SelectedItems)
 			{
-				selection[n++] = item.File.FullName;
+				if (!string.IsNullOrEmpty(item.Filename))
+					selection[n++] = item.Filename;
 			}
 
 			bool cancelled = true;
