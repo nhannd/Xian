@@ -69,6 +69,28 @@ namespace ClearCanvas.Ris.Client
 	}
 
 	/// <summary>
+	/// Specifies a folder's default description.
+	/// </summary>
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+	public class FolderDescriptionAttribute : Attribute
+	{
+		private readonly string _description;
+
+		public FolderDescriptionAttribute(string description)
+		{
+			_description = description;
+		}
+
+		/// <summary>
+		/// Gets the description, which may be a resource key.
+		/// </summary>
+		public string Description
+		{
+			get { return _description; }
+		}
+	}
+
+	/// <summary>
 	/// Abstract base implementation of <see cref="IFolder"/>.
 	/// </summary>
 	public abstract class Folder : IFolder
@@ -113,11 +135,19 @@ namespace ClearCanvas.Ris.Client
 			_resourceResolver = new ResourceResolver(typeof(Folder).Assembly);
 
 			// Initialize folder Path
-			var attrib = AttributeUtils.GetAttribute<FolderPathAttribute>(this.GetType());
+			var pathAttrib = AttributeUtils.GetAttribute<FolderPathAttribute>(this.GetType());
+			if (pathAttrib != null)
+			{
+				_folderPath = new Path(pathAttrib.Path, _resourceResolver);
+				_startExpanded = pathAttrib.StartExpanded;
+			}
+
+			// Initialize tooltip
+			var attrib = AttributeUtils.GetAttribute<FolderDescriptionAttribute>(this.GetType());
 			if (attrib != null)
 			{
-				_folderPath = new Path(attrib.Path, _resourceResolver);
-				_startExpanded = attrib.StartExpanded;
+				var resolver = new ResourceResolver(this.GetType(), true);
+				this.Tooltip = resolver.LocalizeString(attrib.Description);
 			}
 		}
 

@@ -47,24 +47,28 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 
 		[FolderForWorklistClass(WorklistClassNames.TranscriptionDraftWorklist)]
 		[FolderPath("My Items/Draft")]
+		[FolderDescription("TranscriptionDraftFolderDescription")]
 		public class DraftFolder : TranscriptionWorkflowFolder
 		{
 		}
 
 		[FolderForWorklistClass(WorklistClassNames.TranscriptionToBeReviewedWorklist)]
 		[FolderPath("My Items/To Be Reviewed")]
+		[FolderDescription("TranscriptionToBeReviewedFolderDescription")]
 		public class ToBeReviewedFolder : TranscriptionWorkflowFolder
 		{
 		}
 
 		[FolderForWorklistClass(WorklistClassNames.TranscriptionAwaitingReviewWorklist)]
 		[FolderPath("My Items/Awaiting Review")]
+		[FolderDescription("TranscriptionAwaitingReviewFolderDescription")]
 		public class AwaitingReviewFolder : TranscriptionWorkflowFolder
 		{
 		}
 
 		[FolderForWorklistClass(WorklistClassNames.TranscriptionCompletedWorklist)]
 		[FolderPath("My Items/Completed")]
+		[FolderDescription("TranscriptionCompletedFolderDescription")]
 		public class CompletedFolder : TranscriptionWorkflowFolder
 		{
 		}

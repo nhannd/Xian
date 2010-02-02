@@ -674,4 +674,55 @@ Choose "No" to verify this report without further action.</value>
   <data name="MessageCheckInProceduresNotScheduled" xml:space="preserve">
     <value>The following procedure(s) are unscheduled.  Please schedule them before checking-in.</value>
   </data>
+  <data name="ReportingAssignedFolderDescription" xml:space="preserve">
+    <value>Procedures assigned to me to be reported.</value>
+  </data>
+  <data name="ReportingAssignedForReviewProtocolFolderDescription" xml:space="preserve">
+    <value>Protocols assigned to me for review.</value>
+  </data>
+  <data name="ReportingAssignedToBeProtocolFolderDescription" xml:space="preserve">
+    <value>Procedures assigned to me for protocolling.</value>
+  </data>
+  <data name="ReportingAwaitingApprovalProtocolFolderDescription" xml:space="preserve">
+    <value>My protocols awaiting review by a supervisor/colleague.</value>
+  </data>
+  <data name="ReportingAwaitingReviewFolderDescription" xml:space="preserve">
+    <value>My reports awaiting review by a supervisor/colleague.</value>
+  </data>
+  <data name="ReportingCompletedProtocolFolderDescription" xml:space="preserve">
+    <value>My completed protocols.</value>
+  </data>
+  <data name="ReportingDraftFolderDescription" xml:space="preserve">
+    <value>My draft reports</value>
+  </data>
+  <data name="ReportingDraftProtocolFolderDescription" xml:space="preserve">
+    <value>My draft protocols.</value>
+  </data>
+  <data name="ReportingInTranscriptionFolderDescription" xml:space="preserve">
+    <value>My reports awaiting transcription.</value>
+  </data>
+  <data name="ReportingRejectedProtocolFolderDescription" xml:space="preserve">
+    <value>My rejected protocols.</value>
+  </data>
+  <data name="ReportingReviewTranscriptionFolderDescription" xml:space="preserve">
+    <value>Transcribed reports awaiting my review.</value>
+  </data>
+  <data name="ReportingToBeReviewedFolderDescription" xml:space="preserve">
+    <value>Reports assigned to me for review.</value>
+  </data>
+  <data name="ReportingVerifiedFolderDescription" xml:space="preserve">
+    <value>My verified reports.</value>
+  </data>
+  <data name="TranscriptionAwaitingReviewFolderDescription" xml:space="preserve">
+    <value>My transcriptions awaiting review by a supervisor/colleague.</value>
+  </data>
+  <data name="TranscriptionCompletedFolderDescription" xml:space="preserve">
+    <value>My completed transcriptions.</value>
+  </data>
+  <data name="TranscriptionDraftFolderDescription" xml:space="preserve">
+    <value>My draft transcriptions.</value>
+  </data>
+  <data name="TranscriptionToBeReviewedFolderDescription" xml:space="preserve">
+    <value>Transcriptions assigned to me for review.</value>
+  </data>
 </root>

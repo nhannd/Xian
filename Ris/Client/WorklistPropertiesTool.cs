@@ -86,25 +86,26 @@ namespace ClearCanvas.Ris.Client
 				WorklistSummaryComponent component;
 				if (this.Context.SelectedFolder is FolderTreeNode.ContainerFolder)
 				{
-					WorklistAdminDetail worklistDetail = new WorklistAdminDetail(null, this.Context.SelectedFolder.Name, "Container folder", null);
+					var worklistDetail = new WorklistAdminDetail(null, this.Context.SelectedFolder.Name, "Container folder", null);
 					component = new WorklistSummaryComponent(worklistDetail, false);
 				}
 				else
 				{
-					IWorklistFolder folder = (IWorklistFolder)this.Context.SelectedFolder;
+					var folder = (IWorklistFolder)this.Context.SelectedFolder;
 
 					if (folder.WorklistRef == null)
 					{
-						WorklistAdminDetail worklistDetail = new WorklistAdminDetail(null, folder.Name, "Static folder", null);
+						var description = folder.Tooltip ?? SR.TitleStaticFolder;
+						var worklistDetail = new WorklistAdminDetail(null, folder.Name, description, null);
 						component = new WorklistSummaryComponent(worklistDetail, false);
 					}
 					else
 					{
 						WorklistAdminDetail worklistDetail = null;
-						Platform.GetService<IWorklistAdminService>(
+						Platform.GetService(
 							delegate(IWorklistAdminService service)
 							{
-								LoadWorklistForEditResponse response = service.LoadWorklistForEdit(new LoadWorklistForEditRequest(folder.WorklistRef));
+								var response = service.LoadWorklistForEdit(new LoadWorklistForEditRequest(folder.WorklistRef));
 								worklistDetail = response.Detail;
 							});
 

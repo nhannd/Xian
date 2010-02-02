@@ -993,6 +993,123 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Procedures assigned to me to be reported..
+        /// </summary>
+        internal static string ReportingAssignedFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingAssignedFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Protocols assigned to me for review..
+        /// </summary>
+        internal static string ReportingAssignedForReviewProtocolFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingAssignedForReviewProtocolFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Procedures assigned to me for protocolling..
+        /// </summary>
+        internal static string ReportingAssignedToBeProtocolFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingAssignedToBeProtocolFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to My protocols awaiting review by a supervisor/colleague..
+        /// </summary>
+        internal static string ReportingAwaitingApprovalProtocolFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingAwaitingApprovalProtocolFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to My reports awaiting review by a supervisor/colleague..
+        /// </summary>
+        internal static string ReportingAwaitingReviewFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingAwaitingReviewFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to My completed protocols..
+        /// </summary>
+        internal static string ReportingCompletedProtocolFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingCompletedProtocolFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to My draft reports.
+        /// </summary>
+        internal static string ReportingDraftFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingDraftFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to My draft protocols..
+        /// </summary>
+        internal static string ReportingDraftProtocolFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingDraftProtocolFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to My reports awaiting transcription..
+        /// </summary>
+        internal static string ReportingInTranscriptionFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingInTranscriptionFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to My rejected protocols..
+        /// </summary>
+        internal static string ReportingRejectedProtocolFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingRejectedProtocolFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Transcribed reports awaiting my review..
+        /// </summary>
+        internal static string ReportingReviewTranscriptionFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingReviewTranscriptionFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reports assigned to me for review..
+        /// </summary>
+        internal static string ReportingToBeReviewedFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingToBeReviewedFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to My verified reports..
+        /// </summary>
+        internal static string ReportingVerifiedFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingVerifiedFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to (Any).
         /// </summary>
         internal static string TextAny {
@@ -1718,6 +1835,42 @@ namespace ClearCanvas.Ris.Client.Workflow {
         internal static string TitleVisitSummaryComponent {
             get {
                 return ResourceManager.GetString("TitleVisitSummaryComponent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to My transcriptions awaiting review by a supervisor/colleague..
+        /// </summary>
+        internal static string TranscriptionAwaitingReviewFolderDescription {
+            get {
+                return ResourceManager.GetString("TranscriptionAwaitingReviewFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to My completed transcriptions..
+        /// </summary>
+        internal static string TranscriptionCompletedFolderDescription {
+            get {
+                return ResourceManager.GetString("TranscriptionCompletedFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to My draft transcriptions..
+        /// </summary>
+        internal static string TranscriptionDraftFolderDescription {
+            get {
+                return ResourceManager.GetString("TranscriptionDraftFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Transcriptions assigned to me for review..
+        /// </summary>
+        internal static string TranscriptionToBeReviewedFolderDescription {
+            get {
+                return ResourceManager.GetString("TranscriptionToBeReviewedFolderDescription", resourceCulture);
             }
         }
     }
