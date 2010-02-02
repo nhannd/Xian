@@ -129,7 +129,23 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
             {
                 _visit.DataSource = _component.ActiveVisits;
             }
-        }
+			else if (e.PropertyName == "PriorityChoices")
+			{
+				_priority.DataSource = _component.PriorityChoices;
+			}
+			else if (e.PropertyName == "CancelReasonChoices")
+			{
+				_reorderReason.DataSource = _component.CancelReasonChoices;
+			}
+			else if (e.PropertyName == "OrderingPractitionerContactPointChoices")
+			{
+				_orderingPractitionerContactPoint.DataSource = _component.OrderingPractitionerContactPointChoices;
+			}
+			else if (e.PropertyName == "RecipientContactPointChoices")
+			{
+				_consultantContactPoint.DataSource = _component.RecipientContactPointChoices;
+			}
+		}
 
         private void _placeOrderButton_Click(object sender, EventArgs e)
         {

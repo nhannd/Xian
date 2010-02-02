@@ -64,8 +64,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private PatientProfileTable _targetProfileTable;
 		private ReconciliationCandidateTable _reconciliationProfileTable;
 
-		private IList<ReconciliationCandidate> _candidates;
-		private IList<PatientProfileSummary> _targetProfiles;
+		private readonly IList<ReconciliationCandidate> _candidates;
+		private readonly IList<PatientProfileSummary> _targetProfiles;
 
 		/// <summary>
 		/// Constructor
@@ -170,7 +170,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			catch (Exception e)
 			{
 				ExceptionHandler.Report(e, SR.ExceptionReconcilePatientProfiles, this.Host.DesktopWindow,
-					delegate()
+					delegate
 					{
 						this.ExitCode = ApplicationComponentExitCode.Error;
 						this.Host.Exit();

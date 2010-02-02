@@ -32,7 +32,6 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
-using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.PatientReconciliation;
 
@@ -49,7 +48,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		[DataContract]
 		public class HealthcareContext : DataContractBase
 		{
-			private PatientProfileDiffComponent _owner;
+			private readonly PatientProfileDiffComponent _owner;
 			public HealthcareContext(PatientProfileDiffComponent owner)
 			{
 				_owner = owner;
@@ -190,6 +189,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public PatientProfileDiffComponent()
 		{
 			_fields = new List<Field>();
+			_profileAuthorities = new List<string>();
 		}
 
 		public EntityRef[] ProfilesToCompare
@@ -224,26 +224,30 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			if (_profileRefs != null && _profileRefs.Length == 2)
 			{
-				Platform.GetService<IPatientReconciliationService>(service =>
-				{
-					var diffData =
-						service.LoadPatientProfileDiff(new LoadPatientProfileDiffRequest(_profileRefs[0], _profileRefs[1])).ProfileDiff;
+				Async.Request(this,
+					(IPatientReconciliationService service) => service.LoadPatientProfileDiff(new LoadPatientProfileDiffRequest(_profileRefs[0], _profileRefs[1])),
+					response =>
+					{
+						var diffData = response.ProfileDiff;
 
-					_profileAuthorities =
-						new List<string>(new[] {diffData.LeftProfileAssigningAuthority, diffData.RightProfileAssigningAuthority});
+						_profileAuthorities =
+							new List<string>(new[] { diffData.LeftProfileAssigningAuthority, diffData.RightProfileAssigningAuthority });
 
-					AddField(SR.ColumnHealthcardNumber, diffData.Healthcard);
-					AddField(SR.ColumnFamilyName, diffData.FamilyName);
-					AddField(SR.ColumnGivenName, diffData.GivenName);
-					AddField(SR.ColumnMiddleName, diffData.MiddleName);
-					AddField(SR.ColumnDateOfBirth, diffData.DateOfBirth);
-					AddField(SR.ColumnSex, diffData.Sex);
+						AddField(SR.ColumnHealthcardNumber, diffData.Healthcard);
+						AddField(SR.ColumnFamilyName, diffData.FamilyName);
+						AddField(SR.ColumnGivenName, diffData.GivenName);
+						AddField(SR.ColumnMiddleName, diffData.MiddleName);
+						AddField(SR.ColumnDateOfBirth, diffData.DateOfBirth);
+						AddField(SR.ColumnSex, diffData.Sex);
 
-					AddField(SR.ColumnHomePhone, diffData.HomePhone);
-					AddField(SR.ColumnWorkPhone, diffData.WorkPhone);
-					AddField(SR.ColumnHomeAddress, diffData.HomeAddress);
-					AddField(SR.ColumnWorkAddress, diffData.WorkAddress);
-				});
+						AddField(SR.ColumnHomePhone, diffData.HomePhone);
+						AddField(SR.ColumnWorkPhone, diffData.WorkPhone);
+						AddField(SR.ColumnHomeAddress, diffData.HomeAddress);
+						AddField(SR.ColumnWorkAddress, diffData.WorkAddress);
+
+						SetUrl(WebResourcesSettings.Default.PatientReconciliationPageUrl);
+						NotifyAllPropertiesChanged();
+					});
 			}
 			SetUrl(WebResourcesSettings.Default.PatientReconciliationPageUrl);
 			NotifyAllPropertiesChanged();
