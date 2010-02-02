@@ -6,7 +6,37 @@
 if(window.external)
 {
 	var Ris = {
-	
+		_asyncStarted: false,
+		_asyncCount: 0,
+
+		_registerAsyncCall: function()
+		{
+			if(this._asyncStarted == false)
+			{
+				this._asyncStarted = true;
+
+				var loader = document.createElement("div");
+				loader.id = "loader";
+				loader.className = "loader";
+				document.body.appendChild(loader);
+			}
+
+			this._asyncCount++;
+		},
+		
+		_unregisterAsyncCall: function()
+		{
+			if(this._asyncStarted)
+			{
+				this._asyncCount--;
+
+				if(this._asyncCount === 0 && document.getElementById("loader"))
+				{
+					document.getElementById("loader").style.display = 'none';
+				}
+			}
+		},
+
 		// parse filter to customize some aspects of JSML parsing without modifying the JSML.js script
 		_jsmlParserFilter: function(key, value)
 		{
@@ -29,6 +59,8 @@ if(window.external)
 				// convert response JSML to an object, and invoke the callback function
 				callbackFunc(JSML.parse(responseJsml));
 			}
+
+			this._unregisterAsyncCall();
 		},
 		
 		// callback from an async service operation (see GetServiceProxy)
@@ -236,9 +268,11 @@ if(window.external)
 						proxy[operation + "Async"] = proxy[ccOperation + "Async"] = 
 							function(request, callbackFunc)
 							{
+								risObj._registerAsyncCall();
+
 								// invoke the operation asynchronously
 								var id = innerProxy.InvokeOperationAsync(operation, JSML.create(request, "requestData"));
-								
+
 								// store the callback function, associated with the invocation ID
 								risObj._asyncCallbackMap[id] = callbackFunc;
 							};
