@@ -2392,6 +2392,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Static folder.
+        /// </summary>
+        internal static string TitleStaticFolder {
+            get {
+                return ResourceManager.GetString("TitleStaticFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Update Address....
         /// </summary>
         internal static string TitleUpdateAddress {
