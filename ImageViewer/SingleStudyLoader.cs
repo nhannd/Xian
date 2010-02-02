@@ -43,11 +43,11 @@ namespace ClearCanvas.ImageViewer
 		{
 			private readonly SynchronizationContext _uiThreadContext;
 			private readonly ImageViewerComponent _viewer;
-			private readonly List<Sop> _sops;
 			private readonly LoadStudyArgs _args;
 			private readonly StudyItem _studyItem;
 
-			private readonly object _waitLock = new object();
+			private readonly object _syncLock = new object();
+			private List<Sop> _sops;
 			private bool _disposed;
 
 			public SingleStudyLoader(SynchronizationContext uiThreadContext, ImageViewerComponent viewer, LoadStudyArgs args)
@@ -69,18 +69,20 @@ namespace ClearCanvas.ImageViewer
 				IsValidPrior = false;
 				_uiThreadContext = uiThreadContext;
 				_viewer = viewer;
-				_sops = new List<Sop>();
+				LoadOnlineOnly = false;
 			}
 
 			private bool IsRunningOnUiThread
 			{
-				get { return _uiThreadContext == SynchronizationContext.Current; }	
+				get { return _uiThreadContext == SynchronizationContext.Current; }
 			}
 
 			private bool IsStudyInStudyTree
 			{
 				get { return _viewer.StudyTree.GetStudy(StudyInstanceUid) != null; }
 			}
+
+			public bool LoadOnlineOnly { get; set; }
 
 			public StudyItem StudyItem
 			{
@@ -128,7 +130,18 @@ namespace ClearCanvas.ImageViewer
 			{
 				try
 				{
-					LoadSops();
+					List<Sop> sops = LoadSops();
+					lock (_syncLock)
+					{
+						if (_disposed)
+						{
+							DisposeSops(sops);
+							return;
+						}
+
+						_sops = sops;
+					}
+
 					OnSopsLoaded();
 				}
 				catch (Exception e)
@@ -137,16 +150,32 @@ namespace ClearCanvas.ImageViewer
 				}
 			}
 
-			private void LoadSops()
+			private List<Sop> LoadSops()
 			{
 				//Use a new loader in case this call is asynchronous, we don't want to use the viewer's instance.
 				IStudyLoader studyLoader = new StudyLoaderMap()[StudyLoaderName];
 
 				StudyLoaderArgs args = new StudyLoaderArgs(StudyInstanceUid, Server);
 				int total;
-
+				List<Sop> sops = new List<Sop>();
+				
 				try
 				{
+					if (LoadOnlineOnly && StudyItem != null)
+					{
+						//This stinks, but we pre-emptively throw the offline/nearline exception
+						//to avoid trying to load a prior when we know it's not online.
+						switch (StudyItem.InstanceAvailability)
+						{
+							case "OFFLINE":
+								throw new OfflineLoadStudyException(StudyInstanceUid);
+							case "NEARLINE":
+								throw new NearlineLoadStudyException(StudyInstanceUid);
+							default:
+								break;
+						}
+					}
+
 					total = studyLoader.Start(args);
 					if (total <= 0)
 						throw new NotFoundLoadStudyException(args.StudyInstanceUid);
@@ -168,28 +197,17 @@ namespace ClearCanvas.ImageViewer
 						if (sop == null)
 							break;
 
-						_sops.Add(sop);
+						sops.Add(sop);
 					}
 
-					if (_sops.Count == 0)
+					if (sops.Count == 0)
 						throw new LoadStudyException(args.StudyInstanceUid, total, total);
+
+					return sops;
 				}
 				catch (Exception e)
 				{
-					foreach (Sop sop in _sops)
-					{
-						try
-						{
-							sop.Dispose();
-						}
-						catch(Exception ex)
-						{
-							Platform.Log(LogLevel.Error, ex);
-						}
-					}
-
-					_sops.Clear();
-
+					DisposeSops(sops);
 					throw new LoadStudyException(args.StudyInstanceUid, total, total, e);
 				}
 			}
@@ -208,8 +226,9 @@ namespace ClearCanvas.ImageViewer
 
 				IsValidPrior = true;
 
-				List<Sop> sops = new List<Sop>(_sops);
-				_sops.Clear();
+				List<Sop> sops = _sops;
+				_sops = null;
+
 				foreach (Sop sop in sops)
 				{
 					try
@@ -271,14 +290,14 @@ namespace ClearCanvas.ImageViewer
 			{
 				if (IsRunningOnUiThread)
 				{
-					lock (_waitLock)
+					lock (_syncLock)
 					{
 						if (!_disposed)
 						{
 							try
 							{
 								AddSops();
-								Monitor.Pulse(_waitLock);
+								Monitor.Pulse(_syncLock);
 							}
 							catch (Exception e)
 							{
@@ -289,12 +308,12 @@ namespace ClearCanvas.ImageViewer
 				}
 				else
 				{
-					lock (_waitLock)
+					lock (_syncLock)
 					{
 						if (!_disposed)
 						{
 							_uiThreadContext.Post(delegate { OnSopsLoaded(); }, null);
-							Monitor.Wait(_waitLock);
+							Monitor.Wait(_syncLock);
 						}
 					}
 				}
@@ -304,7 +323,7 @@ namespace ClearCanvas.ImageViewer
 			{
 				if (IsRunningOnUiThread)
 				{
-					lock (_waitLock)
+					lock (_syncLock)
 					{
 						try
 						{
@@ -320,21 +339,54 @@ namespace ClearCanvas.ImageViewer
 						}
 						finally
 						{
-							Monitor.Pulse(_waitLock);
+							Monitor.Pulse(_syncLock);
 						}
 					}
 				}
 				else
 				{
-					lock (_waitLock)
+					lock (_syncLock)
 					{
 						if (!_disposed)
 						{
 							_uiThreadContext.Post(OnLoadPriorStudyFailed, error);
-							Monitor.Wait(_waitLock);
+							Monitor.Wait(_syncLock);
 						}
 					}
 				}
+			}
+
+			private static void DisposeSops(List<Sop> sops)
+			{
+				foreach (Sop sop in sops)
+				{
+					try
+					{
+						sop.Dispose();
+					}
+					catch (Exception ex)
+					{
+						Platform.Log(LogLevel.Error, ex);
+					}
+				}
+
+				sops.Clear();
+			}
+
+			private void DisposeSops()
+			{
+				List<Sop> sops;
+
+				lock(_syncLock)
+				{
+					_disposed = true;
+					sops = _sops;
+					_sops = null;
+					Monitor.Pulse(_syncLock);
+				}
+
+				if (sops != null)
+					DisposeSops(sops);
 			}
 
 			#region IDisposable Members
@@ -343,17 +395,7 @@ namespace ClearCanvas.ImageViewer
 			{
 				try
 				{
-					lock(_waitLock)
-					{
-						_disposed = true;
-						Monitor.Pulse(_waitLock);
-					}
-
-					foreach (Sop sop in _sops)
-						sop.Dispose();
-
-					_sops.Clear();
-
+					DisposeSops();
 					GC.SuppressFinalize(this);
 				}
 				catch (Exception e)

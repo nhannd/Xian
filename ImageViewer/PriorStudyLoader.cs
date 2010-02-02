@@ -211,7 +211,11 @@ namespace ClearCanvas.ImageViewer
 					if (_stop)
 						break;
 
-					SingleStudyLoader loader = new SingleStudyLoader(_synchronizationContext, _imageViewer, result);
+					SingleStudyLoader loader = new SingleStudyLoader(_synchronizationContext, _imageViewer, result)
+					                           	{
+					                           		LoadOnlineOnly = true
+					                           	};
+
 					_singleStudyLoaders.Add(loader);
 					loader.LoadStudy();
 				}
