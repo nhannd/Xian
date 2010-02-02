@@ -67,6 +67,7 @@ namespace ClearCanvas.ImageViewer.Externals.CoreTools
 								ActionPath actionPath = new ActionPath(string.Format("imageviewer-contextmenu/MenuExternals/{0}", id), _resourceResolver);
 								MenuAction action = new MenuAction(id, actionPath, ClickActionFlags.None, _resourceResolver);
 								action.Label = string.Format(SR.FormatOpenDisplaySetWith, consumer.Label);
+								action.SetPermissibility(AuthorityTokens.Externals);
 								action.SetClickHandler(delegate
 								                       	{
 								                       		try

@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Externals.Config
 	{
 		public IEnumerable<IConfigurationPage> GetPages()
 		{
-			if (PermissionsHelper.IsInRole(ImageViewer.AuthorityTokens.ViewerVisible))
+			if (PermissionsHelper.IsInRole(AuthorityTokens.Externals))
 				yield return new ConfigurationPage(ExternalsConfigurationComponent.PATH, new ExternalsConfigurationComponent());
 		}
 	}
