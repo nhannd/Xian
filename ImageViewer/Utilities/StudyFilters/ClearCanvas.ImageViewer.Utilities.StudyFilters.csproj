@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthorityTokens.cs" />
     <Compile Include="CoreTools\ClearFiltersTool.cs" />
     <Compile Include="Export\DicomFileExporter.cs" />
     <Compile Include="CoreTools\ToggleFiltersTool.cs" />

@@ -46,6 +46,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 	[EnabledStateObserver("Open", "Enabled", "EnabledChanged")]
 	[Tooltip("Open", "TooltipOpenInStudyFilters")]
 	[IconSet("Open", IconScheme.Colour, "Icons.StudyFilterToolSmall.png", "Icons.StudyFilterToolMedium.png", "Icons.StudyFilterToolLarge.png")]
+	[ViewerActionPermission("Open", AuthorityTokens.StudyFilters)]
 	[ExtensionOf(typeof (StudyBrowserToolExtensionPoint))]
 	public class LaunchStudyFiltersDicomExplorerTool : StudyBrowserTool
 	{

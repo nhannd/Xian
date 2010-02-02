@@ -41,6 +41,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 	[MenuAction("Open", "explorerlocal-contextmenu/MenuOpenInStudyFilters", "Open")]
 	[Tooltip("Open", "TooltipOpenInStudyFilters")]
 	[IconSet("Open", IconScheme.Colour, "Icons.StudyFilterToolSmall.png", "Icons.StudyFilterToolMedium.png", "Icons.StudyFilterToolLarge.png")]
+	[ViewerActionPermission("Open", AuthorityTokens.StudyFilters)]
 	[ExtensionOf(typeof (LocalImageExplorerToolExtensionPoint))]
 	public class LaunchStudyFiltersLocalExplorerTool : Tool<ILocalImageExplorerToolContext>
 	{
