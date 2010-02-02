@@ -8,19 +8,20 @@ using ClearCanvas.Common;
 using System.IO;
 using ClearCanvas.ImageViewer.Services.Auditing;
 using System.Threading;
+using Path=System.IO.Path;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 {
 	public class DicomFileExporter
 	{
-		private readonly ICollection<FileInfo> _files;
+		private readonly ICollection<string> _files;
 		private DicomAnonymizer _anonymizer;
 		private volatile bool _overwrite;
 		private volatile bool _canceled;
 		private volatile AuditedInstances _exportedInstances;
 		private SynchronizationContext _synchronizationContext;
 
-		public DicomFileExporter(ICollection<FileInfo> files)
+		public DicomFileExporter(ICollection<string> files)
 		{
 			Platform.CheckPositive(files.Count, "files.Count");
 			_files = files;
@@ -106,11 +107,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 			return true;
 		}
 
-		private void SaveFile(FileInfo file)
+		private void SaveFile(string filename)
 		{
 			if (_anonymizer != null)
 			{
-				DicomFile dicomFile = new DicomFile(file.FullName);
+				DicomFile dicomFile = new DicomFile(filename);
 				dicomFile.Load(); 
 
 				_anonymizer.Anonymize(dicomFile);
@@ -120,7 +121,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 				dicomFile.DataSet[DicomTags.PatientId].ToString(),
 				dicomFile.DataSet[DicomTags.PatientsName].ToString(),
 				dicomFile.DataSet[DicomTags.StudyInstanceUid].ToString(),
-				file.FullName);
+				filename);
 				
 				string fileName = System.IO.Path.Combine(OutputPath, dicomFile.MediaStorageSopInstanceUid);
 				fileName += ".dcm";
@@ -132,14 +133,14 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 			}
 			else
 			{
-				_exportedInstances.AddPath(file.FullName, false);
+				_exportedInstances.AddPath(filename, false);
 
-				string fileName = System.IO.Path.Combine(OutputPath, file.Name);
-				CheckFileExists(fileName);
+				string destination = Path.Combine(OutputPath, Path.GetFileName(filename));
+				CheckFileExists(destination);
 				if (_canceled)
 					return;
 
-				file.CopyTo(fileName, true);
+				File.Copy(filename, destination, true);
 			}
 		}
 
@@ -164,13 +165,13 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 				int i = 0;
 				int fileCount = _files.Count;
 
-				foreach (FileInfo file in _files)
+				foreach (string filename in _files)
 				{
 					string message = String.Format(SR.MessageFormatExportingFiles, i + 1, fileCount);
 					BackgroundTaskProgress progress = new BackgroundTaskProgress(i, fileCount, message);
 					context.ReportProgress(progress);
 
-					SaveFile(file);
+					SaveFile(filename);
 					
 					if (_canceled || context.CancelRequested)
 					{
