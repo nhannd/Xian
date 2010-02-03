@@ -74,6 +74,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 		private void _folderSystems_ItemDropped(object sender, ListBoxItemDroppedEventArgs e)
 		{
+			// There is no ItemDragged event, and the dragged object does not fire selection change event either
+			// So we must change the selected folder system first, before attempting to move folder system
+			_component.SelectedFolderSystemIndex = e.DraggedIndex;
 			_component.MoveSelectedFolderSystem(e.DraggedIndex, e.DroppedIndex);
 		}
 
