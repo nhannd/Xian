@@ -223,6 +223,8 @@
     <Compile Include="DirectoryRecordCollection.cs" />
     <Compile Include="DirectoryRecordSequenceItem.cs" />
     <Compile Include="IDicomAttributeProvider.cs" />
+    <Compile Include="Iod\ContextGroups\ContextGroupItemBase.cs" />
+    <Compile Include="Iod\ContextGroups\IsotopesInRadiopharmaceuticals.cs" />
     <Compile Include="Iod\DataLut.cs" />
     <Compile Include="Iod\ContextGroups\ContextGroupBase.cs" />
     <Compile Include="Iod\ContextGroups\KeyObjectSelectionDocumentTitle.cs" />

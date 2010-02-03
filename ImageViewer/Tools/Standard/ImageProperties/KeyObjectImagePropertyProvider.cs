@@ -85,7 +85,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 										CodeSequenceMacro conceptSequence = content.ConceptNameCodeSequence;
 										if (conceptSequence != null)
 										{
-											KeyObjectSelectionDocumentTitle documentTitle = KeyObjectSelectionDocumentTitleContextGroup.Lookup(conceptSequence.CodeValue);
+											KeyObjectSelectionDocumentTitle documentTitle = KeyObjectSelectionDocumentTitleContextGroup.LookupTitle(conceptSequence);
 											if (documentTitle != null)
 												codeValue = documentTitle.ToString();
 										}

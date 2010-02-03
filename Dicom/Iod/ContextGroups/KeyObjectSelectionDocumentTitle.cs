@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.Iod.Macros;
 
 namespace ClearCanvas.Dicom.Iod.ContextGroups
 {
@@ -65,68 +66,89 @@ namespace ClearCanvas.Dicom.Iod.ContextGroups
 
 		private static readonly KeyObjectSelectionDocumentTitleContextGroup _contextGroup = new KeyObjectSelectionDocumentTitleContextGroup();
 
-		public static KeyObjectSelectionDocumentTitleContextGroup GetInstance()
+		public static KeyObjectSelectionDocumentTitleContextGroup Instance
 		{
-			return _contextGroup;
+			get { return _contextGroup; }
 		}
 
 		#endregion
 
 		#region Static Enumeration of Values
 
-		private static readonly IList<KeyObjectSelectionDocumentTitle> _valueList;
-
-		static KeyObjectSelectionDocumentTitleContextGroup()
+		public static IEnumerable<KeyObjectSelectionDocumentTitle> Values
 		{
-			List<KeyObjectSelectionDocumentTitle> valueList = new List<KeyObjectSelectionDocumentTitle>();
-			valueList.Add(OfInterest);
-			valueList.Add(RejectedForQualityReasons);
-			valueList.Add(ForReferringProvider);
-			valueList.Add(ForSurgery);
-			valueList.Add(ForTeaching);
-			valueList.Add(ForConference);
-			valueList.Add(ForTherapy);
-			valueList.Add(ForPatient);
-			valueList.Add(ForPeerReview);
-			valueList.Add(ForResearch);
-			valueList.Add(QualityIssue);
-			valueList.Add(BestInSet);
-			valueList.Add(ForPrinting);
-			valueList.Add(ForReportAttachment);
-			valueList.Add(Manifest);
-			valueList.Add(SignedManifest);
-			valueList.Add(CompleteStudyContent);
-			valueList.Add(SignedCompleteStudyContent);
-			valueList.Add(CompleteAcquisitionContent);
-			valueList.Add(SignedCompleteAcquisitionContent);
-			valueList.Add(GroupOfFramesForDisplay);
-			_valueList = valueList.AsReadOnly();
+			get
+			{
+				yield return OfInterest;
+				yield return RejectedForQualityReasons;
+				yield return ForReferringProvider;
+				yield return ForSurgery;
+				yield return ForTeaching;
+				yield return ForConference;
+				yield return ForTherapy;
+				yield return ForPatient;
+				yield return ForPeerReview;
+				yield return ForResearch;
+				yield return QualityIssue;
+				yield return BestInSet;
+				yield return ForPrinting;
+				yield return ForReportAttachment;
+				yield return Manifest;
+				yield return SignedManifest;
+				yield return CompleteStudyContent;
+				yield return SignedCompleteStudyContent;
+				yield return CompleteAcquisitionContent;
+				yield return SignedCompleteAcquisitionContent;
+				yield return GroupOfFramesForDisplay;
+			}
 		}
 
-		public static IList<KeyObjectSelectionDocumentTitle> Values
-		{
-			get { return _valueList; }
-		}
-
+		/// <summary>
+		/// Gets an enumerator that iterates through the defined titles.
+		/// </summary>
+		/// <returns>A <see cref="IEnumerator{T}"/> object that can be used to iterate through the defined titles.</returns>
 		public override IEnumerator<KeyObjectSelectionDocumentTitle> GetEnumerator()
 		{
-			return _valueList.GetEnumerator();
+			return Values.GetEnumerator();
 		}
 
-		public static KeyObjectSelectionDocumentTitle Lookup(string code)
+		public static KeyObjectSelectionDocumentTitle LookupTitle(CodeSequenceMacro codeSequence)
 		{
-			return CollectionUtils.SelectFirst(_valueList,
-				delegate(KeyObjectSelectionDocumentTitle title) { return title.CodeValue == code; });
+			return Instance.Lookup(codeSequence);
 		}
 
 		#endregion
 	}
 
-	public sealed class KeyObjectSelectionDocumentTitle : KeyObjectSelectionDocumentTitleContextGroup.ContextGroupItemBase {
-		internal KeyObjectSelectionDocumentTitle(int value, string meaning) : base("DCM", value.ToString(), meaning) { }
+	/// <summary>
+	/// Represents a key object selection document title.
+	/// </summary>
+	public sealed class KeyObjectSelectionDocumentTitle : ContextGroupBase<KeyObjectSelectionDocumentTitle>.ContextGroupItemBase
+	{
+		/// <summary>
+		/// Constructor for titles defined in DICOM 2008, Part 16, Annex B, CID 7010.
+		/// </summary>
+		internal KeyObjectSelectionDocumentTitle(int value, string meaning) : base("DCM", value.ToString(), meaning) {}
 
-		public static KeyObjectSelectionDocumentTitleContextGroup ContextGroup {
-			get { return KeyObjectSelectionDocumentTitleContextGroup.GetInstance(); }
-		}
+		/// <summary>
+		/// Constructs a new key object selection document title.
+		/// </summary>
+		/// <param name="codingSchemeDesignator">The designator of the coding scheme in which this code is defined.</param>
+		/// <param name="codeValue">The value of this code.</param>
+		/// <param name="codeMeaning">The Human-readable meaning of this code.</param>
+		/// <exception cref="ArgumentException">Thrown if <paramref name="codingSchemeDesignator"/> or <paramref name="codeValue"/> are <code>null</code> or empty.</exception>
+		public KeyObjectSelectionDocumentTitle(string codingSchemeDesignator, string codeValue, string codeMeaning)
+			: base(codingSchemeDesignator, codeValue, codeMeaning) {}
+
+		/// <summary>
+		/// Constructs a new key object selection document title.
+		/// </summary>
+		/// <param name="codingSchemeDesignator">The designator of the coding scheme in which this code is defined.</param>
+		/// <param name="codingSchemeVersion">The version of the coding scheme in which this code is defined, if known. Should be <code>null</code> if not explicitly specified.</param>
+		/// <param name="codeValue">The value of this code.</param>
+		/// <param name="codeMeaning">The Human-readable meaning of this code.</param>
+		/// <exception cref="ArgumentException">Thrown if <paramref name="codingSchemeDesignator"/> or <paramref name="codeValue"/> are <code>null</code> or empty.</exception>
+		public KeyObjectSelectionDocumentTitle(string codingSchemeDesignator, string codingSchemeVersion, string codeValue, string codeMeaning)
+			: base(codingSchemeDesignator, codingSchemeVersion, codeValue, codeMeaning) {}
 	}
 }
