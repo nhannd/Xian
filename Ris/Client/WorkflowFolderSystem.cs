@@ -531,8 +531,7 @@ namespace ClearCanvas.Ris.Client
 
 				foreach (var folder in _workflowFolders)
 				{
-					if (folder is IDisposable)
-						((IDisposable)folder).Dispose();
+					folder.Dispose();
 				}
 
 				if (_itemTools != null)

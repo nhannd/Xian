@@ -396,6 +396,27 @@ namespace ClearCanvas.Ris.Client
     	protected abstract int QueryCount();
 
 		#endregion
-	}
 
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (_queryItemsTask != null)
+				{
+					_queryItemsTask.Terminated -= OnQueryItemsCompleted;
+					_queryItemsTask.Dispose();
+					_queryItemsTask = null;
+				}
+
+				if (_queryCountTask != null)
+				{
+					_queryCountTask.Terminated -= OnQueryCountCompleted;
+					_queryCountTask.Dispose();
+					_queryCountTask = null;
+				}
+			}
+
+			base.Dispose(disposing);
+		}
+	}
 }

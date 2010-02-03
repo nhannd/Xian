@@ -39,7 +39,7 @@ namespace ClearCanvas.Ris.Client
 	/// <summary>
 	/// Defines the interface to a folder.
 	/// </summary>
-	public interface IFolder
+	public interface IFolder: IDisposable
 	{
 		#region Properties
 

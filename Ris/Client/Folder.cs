@@ -609,5 +609,33 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		#endregion
+
+
+		/// <summary>
+		/// Disposes the <see cref="Folder"/>.
+		/// </summary>
+		protected virtual void Dispose(bool disposing)
+		{
+		}
+
+		#region IDisposable Members
+
+		/// <summary>
+		/// Implementation of the <see cref="IDisposable"/> pattern.
+		/// </summary>
+		public void Dispose()
+		{
+			try
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+			}
+		}
+
+		#endregion
 	}
 }

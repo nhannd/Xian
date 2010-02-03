@@ -200,7 +200,8 @@ namespace ClearCanvas.Ris.Client
 			_folderSystem.Folders.ItemRemoved -= FolderRemovedEventHandler;
 			_folderSystem.FoldersChanged -= FoldersChangedEventHandler;
 			_folderSystem.FoldersInvalidated -= FoldersInvalidatedEventHandler;
-    		_folderSystem.FolderPropertiesChanged -= FolderPropertiesChangedEventHandler;
+			_folderSystem.FolderPropertiesChanged -= FolderPropertiesChangedEventHandler;
+			_folderSystem.Dispose();
 
 			base.Stop();
 		}
