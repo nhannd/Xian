@@ -15,10 +15,8 @@ if(window.external)
 			{
 				this._asyncStarted = true;
 
-				var loader = document.createElement("div");
-				loader.id = "loader";
-				loader.className = "loader";
-				document.body.appendChild(loader);
+				if(document.getElementById("loadingAnimation"))
+					document.getElementById("loadingAnimation").style.display = 'block';
 			}
 
 			this._asyncCount++;
@@ -30,9 +28,9 @@ if(window.external)
 			{
 				this._asyncCount--;
 
-				if(this._asyncCount === 0 && document.getElementById("loader"))
+				if(this._asyncCount === 0 && document.getElementById("loadingAnimation"))
 				{
-					document.getElementById("loader").style.display = 'none';
+					document.getElementById("loadingAnimation").style.display = 'none';
 				}
 			}
 		},
