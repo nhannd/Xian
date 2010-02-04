@@ -99,5 +99,28 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
                 this["InvertedZoomToolOperation"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<ToolSettingsProfile>
+  <Setting Modality=""US"">
+    <AutoCineMultiframes>True</AutoCineMultiframes>
+  </Setting>
+  <Setting Modality=""CT"">
+    <AutoCineMultiframes>True</AutoCineMultiframes>
+  </Setting>
+  <Setting Modality=""NM"">
+    <AutoCineMultiframes>True</AutoCineMultiframes>
+  </Setting>
+</ToolSettingsProfile>")]
+        public global::ClearCanvas.ImageViewer.Tools.Standard.ToolSettingsProfile ToolSettingsProfile {
+            get {
+                return ((global::ClearCanvas.ImageViewer.Tools.Standard.ToolSettingsProfile)(this["ToolSettingsProfile"]));
+            }
+            set {
+                this["ToolSettingsProfile"] = value;
+            }
+        }
     }
 }

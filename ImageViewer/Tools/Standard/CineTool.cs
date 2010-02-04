@@ -42,43 +42,36 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[Tooltip("activate", "TooltipCine")]
 	[IconSet("activate", IconScheme.Colour, "Icons.CineToolSmall.png", "Icons.CineToolMedium.png", "Icons.CineToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Stacking.Cine")]
-
-	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	public class CineTool : ImageViewerTool
 	{
 		private static readonly Dictionary<IDesktopWindow, IShelf> _shelves = new Dictionary<IDesktopWindow, IShelf>();
-		private IDesktopWindow _desktopWindow;
 
-		public CineTool()
-		{
-			_desktopWindow = null;
-		}
+		public CineTool() {}
 
 		public void Activate()
 		{
+			IDesktopWindow desktopWindow = this.Context.DesktopWindow;
+
 			// check if a layout component is already displayed
-			if (_shelves.ContainsKey(this.Context.DesktopWindow))
+			if (_shelves.ContainsKey(desktopWindow))
 			{
-				_shelves[this.Context.DesktopWindow].Activate();
+				_shelves[desktopWindow].Activate();
 			}
 			else
 			{
-				_desktopWindow = this.Context.DesktopWindow;
-
-				CineApplicationComponent component = new CineApplicationComponent(_desktopWindow);
-				IShelf shelf = ApplicationComponent.LaunchAsShelf(
-					_desktopWindow,
-					component, 
-					SR.TitleCine,
-					"Cine",
-					ShelfDisplayHint.DockFloat);
-
-				_shelves[_desktopWindow] = shelf;
-				_shelves[_desktopWindow].Closed += OnShelfClosed;
+				LaunchShelf(desktopWindow, new CineApplicationComponent(desktopWindow), ShelfDisplayHint.DockFloat);
 			}
 		}
 
-		private void OnShelfClosed(object sender, ClosedEventArgs e)
+		private static void LaunchShelf(IDesktopWindow desktopWindow, IApplicationComponent component, ShelfDisplayHint shelfDisplayHint)
+		{
+			IShelf shelf = ApplicationComponent.LaunchAsShelf(desktopWindow, component, SR.TitleCine, "Cine", shelfDisplayHint);
+			_shelves[desktopWindow] = shelf;
+			_shelves[desktopWindow].Closed += OnShelfClosed;
+		}
+
+		private static void OnShelfClosed(object sender, ClosedEventArgs e)
 		{
 			// We need to cache the owner DesktopWindow (_desktopWindow) because this tool is an 
 			// ImageViewer tool, disposed when the viewer component is disposed.  Shelves, however,
@@ -88,9 +81,36 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			// already been disposed (e.g. viewer workspace closed), which is why we store the 
 			// _desktopWindow variable.
 
-			_shelves[_desktopWindow].Closed -= OnShelfClosed;
-			_shelves.Remove(_desktopWindow);
-			_desktopWindow = null;
+			IShelf shelf = (IShelf) sender;
+			shelf.Closed -= OnShelfClosed;
+			_shelves.Remove(shelf.DesktopWindow);
+		}
+
+		public override void Initialize()
+		{
+			base.Initialize();
+			base.ImageViewer.EventBroker.ImageBoxSelected += EventBroker_ImageBoxSelected;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			base.ImageViewer.EventBroker.ImageBoxSelected -= EventBroker_ImageBoxSelected;
+			base.Dispose(disposing);
+		}
+
+		private void EventBroker_ImageBoxSelected(object sender, ImageBoxSelectedEventArgs e)
+		{
+			IDesktopWindow desktopWindow = this.Context.DesktopWindow;
+			if (!_shelves.ContainsKey(desktopWindow))
+			{
+				if (e.SelectedImageBox != null && CineApplicationComponent.CanAutoPlay(e.SelectedImageBox.TopLeftPresentationImage))
+				{
+					CineApplicationComponent component = new CineApplicationComponent(desktopWindow);
+					component.AutoPlayEnabled = true;
+					component.Reverse = false;
+					LaunchShelf(desktopWindow, component, ShelfDisplayHint.ShowNearMouse);
+				}
+			}
 		}
 	}
 }

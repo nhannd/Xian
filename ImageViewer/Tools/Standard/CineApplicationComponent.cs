@@ -33,8 +33,7 @@ using System;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -49,6 +48,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		#region Private Fields
 
 		private bool _enabled;
+		private bool _autoPlayEnabled;
 
 		private readonly int _minimumScale;
 		private readonly int _maximumScale;
@@ -98,6 +98,19 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 				_enabled = value;
 				NotifyPropertyChanged("Enabled");
+			}
+		}
+
+		public bool AutoPlayEnabled
+		{
+			get { return _autoPlayEnabled; }
+			set
+			{
+				if (_autoPlayEnabled != value)
+				{
+					_autoPlayEnabled = value;
+					NotifyPropertyChanged("AutoPlayEnabled");
+				}
 			}
 		}
 
@@ -159,6 +172,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			if (!Running)
 				return;
+
+			this.AutoPlayEnabled = false;
 
 			_stopThread = true;
 			lock (_threadLock)
@@ -228,6 +243,24 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private void OnTileSelected(object sender, TileSelectedEventArgs e)
 		{
 			bool canStart = CanStart();
+
+			if (this.AutoPlayEnabled)
+			{
+				Enabled = canStart;
+				if (canStart && CanAutoPlay(e.SelectedTile.PresentationImage))
+				{
+					if (!Running)
+					{
+						StartCine();
+					}
+				}
+				else
+				{
+					this.Exit(ApplicationComponentExitCode.Accepted);
+				}
+				return;
+			}
+
 			if (!Running)
 			{
 				Enabled = canStart;
@@ -373,5 +406,20 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 
 		#endregion
+
+		public static bool CanAutoPlay(IPresentationImage image)
+		{
+			IImageSopProvider imageSopProvider = image as IImageSopProvider;
+			if (imageSopProvider != null)
+			{
+				ImageSop imageSop = imageSopProvider.ImageSop;
+				if (imageSop.NumberOfFrames > 1
+					&& ToolSettings.Default.ToolSettingsProfile[imageSop.Modality].AutoCineMultiframes.GetValueOrDefault(false))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 }
