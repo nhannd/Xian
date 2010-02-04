@@ -148,39 +148,34 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         protected override void OnLeave(EventArgs e)
         {
-            try
-            {
-                // do a case-insensitive search
-                var itemIndex = this.FindStringExact(this.Text);
-                if (itemIndex > -1)
-                {
-                    // update the selected index
-                    this.SelectedIndex = itemIndex;
-
-                    // also update the visible text, because the upper/lower-casing may not match
-                    var item = this.Items[itemIndex];
-                    this.Text = GetItemText(item);
-                }
-                else
-                {
-                    // doesn't match any suggestions, clear the text
-					this.Text = null;
-                }
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                // if the combo box is dropped down, and the control loses focus (calling OnLeave),
-                // it seems WinForms throws an exception from this.Text
-                // not sure why this happens, but there is really nothing that can be done in terms of recovery
-            }
-
-            // there are 2 ways that the value can change
-            // either the selection change is comitted, or the control loses focus
-            OnValueChanged(EventArgs.Empty);
-
+			UpdateSelectionFromText();
             base.OnLeave(e);
         }
 
+		// Defect #5876: SuggestComboxBox mishandles 'Esc' once input is resolved
+		// Override this method to clear the text when the ESC key is pressed.
+		// Otherwise the component hosting the combobox will eat the ESC key, 
+		// and close the component if the CancelButton is defined.
+		protected override bool ProcessCmdKey(ref Message msg, Keys k)
+		{
+			if (k == Keys.Escape)
+			{
+				this.Text = null;
+				UpdateSelectionFromText();
+				this.DroppedDown = false;
+				return true;
+			}
+
+			return base.ProcessCmdKey(ref msg, k);
+		}
+
+		protected override void OnDropDownClosed(EventArgs e)
+		{
+			// Similar to OnLeave, when the drop down is closed, the text is usually updated to some items in the drop down list
+			// We must update the selection based on whatever text is in the combobox.
+			UpdateSelectionFromText();
+			base.OnDropDownClosed(e);
+		}
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
@@ -275,5 +270,37 @@ namespace ClearCanvas.Desktop.View.WinForms
 			Cursor.Show();
 		}
 
+		private void UpdateSelectionFromText()
+		{
+			try
+			{
+				// do a case-insensitive search
+				var itemIndex = this.FindStringExact(this.Text);
+				if (itemIndex > -1)
+				{
+					// update the selected index
+					this.SelectedIndex = itemIndex;
+
+					// also update the visible text, because the upper/lower-casing may not match
+					var item = this.Items[itemIndex];
+					this.Text = GetItemText(item);
+				}
+				else
+				{
+					// doesn't match any suggestions, clear the text
+					this.Text = null;
+				}
+			}
+			catch (ArgumentOutOfRangeException)
+			{
+				// if the combo box is dropped down, and the control loses focus (calling OnLeave),
+				// it seems WinForms throws an exception from this.Text
+				// not sure why this happens, but there is really nothing that can be done in terms of recovery
+			}
+
+			// there are 2 ways that the value can change
+			// either the selection change is comitted, or the control loses focus
+			OnValueChanged(EventArgs.Empty);
+		}
     }
 }
