@@ -704,7 +704,7 @@ namespace ClearCanvas.Ris.Client
 
 		public string OrderingFacility
 		{
-			get { return _orderingFacility.Name; }
+			get { return _orderingFacility != null ? _orderingFacility.Name : ""; }
 		}
 
 		public string FormatFacility(object facility)
@@ -805,10 +805,6 @@ namespace ClearCanvas.Ris.Client
 
 					_recipientContactPointToAdd = null;
 					UpdateConsultantContactPointChoices();
-					NotifyPropertyChanged("RecipientContactPointChoices");
-
-					// must do this after contact point choices have been updated
-					UpdateRecipientsActionModel();
 				}
 			}
 		}
@@ -1078,41 +1074,8 @@ namespace ClearCanvas.Ris.Client
 			// initialize contact point choices for ordering practitioner
 			UpdateOrderingPractitionerContactPointChoices();
 
-			// what follows is some logic to try hide the ordering practitioner recipient from showing up in the
-			// recipients table, since he already appears on the main part of the screen
-
-			// select the recipient representing the ordering practitioner at the default contact point
-			var orderingRecipient = CollectionUtils.SelectFirst(
-				existingOrder.ResultRecipients,
-				recipient => recipient.Practitioner.PractitionerRef == existingOrder.OrderingPractitioner.PractitionerRef 
-					&& recipient.ContactPoint.IsDefaultContactPoint);
-
-			// if not found, then select the first recipient representing the ordering practitioner
-			if (orderingRecipient == null)
-			{
-				orderingRecipient = CollectionUtils.SelectFirst(
-					existingOrder.ResultRecipients,
-					recipient => recipient.Practitioner.PractitionerRef == existingOrder.OrderingPractitioner.PractitionerRef);
-			}
-
-			// if the recipient object exists for the ordering practitioner (and this *should* always be the case)
-			if (orderingRecipient != null)
-			{
-				// initialize the ordering practitioner contact point
-				_selectedOrderingPractitionerContactPoint = CollectionUtils.SelectFirst(
-					_orderingPractitionerContactPointChoices,
-					contactPoint => contactPoint.ContactPointRef == orderingRecipient.ContactPoint.ContactPointRef);
-
-				// populate the recipients table, excuding the orderingRecipient 
-				_recipientsTable.Items.Clear();
-				_recipientsTable.Items.AddRange(CollectionUtils.Reject(existingOrder.ResultRecipients, r => r == orderingRecipient));
-			}
-			else
-			{
-				// just add all recipients to the table
-				_recipientsTable.Items.Clear();
-				_recipientsTable.Items.AddRange(existingOrder.ResultRecipients);
-			}
+			_recipientsTable.Items.Clear();
+			_recipientsTable.Items.AddRange(existingOrder.ResultRecipients);
 		}
 
 		private bool SubmitOrder()
@@ -1233,6 +1196,38 @@ namespace ClearCanvas.Ris.Client
 		{
 			_orderingPractitionerContactPointChoices = response.ContactPoints;
 			NotifyPropertyChanged("OrderingPractitionerContactPointChoices");
+
+			RemovedSelectedOrderingPractitionerFromRecipientsList();
+		}
+
+		// what follows is some logic to try hide the ordering practitioner recipient from showing up in the
+		// recipients table, since he already appears on the main part of the screen
+		private void RemovedSelectedOrderingPractitionerFromRecipientsList()
+		{
+			// select the recipient representing the ordering practitioner at the default contact point
+			var orderingRecipient = CollectionUtils.SelectFirst(
+				_recipientsTable.Items,
+				recipient => recipient.Practitioner.PractitionerRef == _selectedOrderingPractitioner.PractitionerRef
+							 && recipient.ContactPoint.IsDefaultContactPoint);
+
+			// if not found, then select the first recipient representing the ordering practitioner
+			if (orderingRecipient == null)
+			{
+				orderingRecipient = CollectionUtils.SelectFirst(
+					_recipientsTable.Items,
+					recipient => recipient.Practitioner.PractitionerRef == _selectedOrderingPractitioner.PractitionerRef);
+			}
+
+			// if the recipient object exists for the ordering practitioner (and this *should* always be the case)
+			if (orderingRecipient != null)
+			{
+				// initialize the ordering practitioner contact point
+				_selectedOrderingPractitionerContactPoint = CollectionUtils.SelectFirst(
+					_orderingPractitionerContactPointChoices,
+					contactPoint => contactPoint.ContactPointRef == orderingRecipient.ContactPoint.ContactPointRef);
+
+				_recipientsTable.Items.Remove(orderingRecipient);
+			}
 		}
 
 		private void UpdateConsultantContactPointChoices()
@@ -1244,6 +1239,9 @@ namespace ClearCanvas.Ris.Client
 		{
 			_recipientContactPointChoices = response.ContactPoints;
 			NotifyPropertyChanged("RecipientContactPointChoices");
+
+			// must do this after contact point choices have been updated
+			UpdateRecipientsActionModel();
 		}
 
 		private void GetPractitionerContactPoints(ExternalPractitionerSummary practitioner, Action<GetExternalPractitionerContactPointsResponse> callback)
