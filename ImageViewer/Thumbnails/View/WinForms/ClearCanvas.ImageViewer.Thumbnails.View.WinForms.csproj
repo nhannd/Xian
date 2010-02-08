@@ -63,6 +63,13 @@
       <DependentUpon>ThumbnailComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ThumbnailComponentView.cs" />
+    <Compile Include="ThumbnailsConfigurationComponentView.cs" />
+    <Compile Include="ThumbnailsConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ThumbnailsConfigurationComponentControl.Designer.cs">
+      <DependentUpon>ThumbnailsConfigurationComponentControl.cs</DependentUpon>
+    </Compile>
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +80,10 @@
     <ProjectReference Include="..\..\..\..\Desktop\ClearCanvas.Desktop.csproj">
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
       <Name>ClearCanvas.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Desktop\Configuration\ClearCanvas.Desktop.Configuration.csproj">
+      <Project>{223DFDC9-B1F5-441D-B659-33F9E55E74A5}</Project>
+      <Name>ClearCanvas.Desktop.Configuration</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Desktop\View\WinForms\ClearCanvas.Desktop.View.WinForms.csproj">
       <Project>{BB434EC3-A580-4744-A635-A2B4029C66DE}</Project>
@@ -91,6 +102,9 @@
     <EmbeddedResource Include="ThumbnailComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ThumbnailComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ThumbnailsConfigurationComponentControl.resx">
+      <DependentUpon>ThumbnailsConfigurationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright (c) 2009, ClearCanvas Inc.
+// Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,76 +29,33 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.BaseTools;
-using System;
+using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.ImageViewer.Thumbnails.Configuration;
 
-namespace ClearCanvas.ImageViewer.Thumbnails
+namespace ClearCanvas.ImageViewer.Thumbnails.View.WinForms
 {
-	[MenuAction("show", "global-menus/MenuView/MenuShowThumbnails", "Show")]
-	[ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarShowThumbnails", "Show")]
-	[Tooltip("show", "TooltipShowThumbnails")]
-	[IconSet("show", IconScheme.Colour, "Icons.ShowThumbnailsToolSmall.png", "Icons.ShowThumbnailsToolMedium.png", "Icons.ShowThumbnailsToolLarge.png")]
-	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
-
-	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class ShowThumbnailsTool : ImageViewerTool
+	[ExtensionOf(typeof (ThumbnailsConfigurationComponentViewExtensionPoint))]
+	public class ThumbnailsConfigurationComponentView : WinFormsView, IApplicationComponentView
 	{
-		private static readonly Dictionary<IDesktopWindow, IShelf> _shelves = new Dictionary<IDesktopWindow, IShelf>();
+		private ThumbnailsConfigurationComponent _component;
+		private ThumbnailsConfigurationComponentControl _control;
 
-		public ShowThumbnailsTool()
+		public void SetComponent(IApplicationComponent component)
 		{
+			_component = (ThumbnailsConfigurationComponent) component;
 		}
 
-		private IShelf ComponentShelf
+		public override object GuiElement
 		{
 			get
 			{
-				if (_shelves.ContainsKey(this.Context.DesktopWindow))
-					return _shelves[this.Context.DesktopWindow];
-
-				return null;
-			}	
-		}
-
-		public void Show()
-		{
-			if (ComponentShelf == null)
-			{
-				try
+				if (_control == null)
 				{
-					IDesktopWindow desktopWindow = this.Context.DesktopWindow;
-
-					IShelf shelf = ThumbnailComponent.Launch(desktopWindow);
-					shelf.Closed += delegate
-					                	{
-					                		_shelves.Remove(desktopWindow);
-					                	};
-
-					_shelves[this.Context.DesktopWindow] = shelf;
+					_control = new ThumbnailsConfigurationComponentControl(_component);
 				}
-				catch(Exception e)
-				{
-					ExceptionHandler.Report(e, this.Context.DesktopWindow);
-				}
-			}
-			else
-			{
-				ComponentShelf.Show();
-			}
-		}
-
-		public override void Initialize()
-		{
-			base.Initialize();
-
-			if (ThumbnailsSettings.Default.AutoOpenThumbnails)
-			{
-				this.Show();
+				return _control;
 			}
 		}
 	}
