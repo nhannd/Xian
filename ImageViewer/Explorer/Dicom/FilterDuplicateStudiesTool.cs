@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	[CheckedStateObserver("activate", "Checked", "CheckedChanged")]
 	[TooltipValueObserver("activate", "Tooltip", "CheckedChanged")]
 	[LabelValueObserver("activate", "Label", "CheckedChanged")]
-	[IconSet("activate", IconScheme.Colour, "Icons.ShowAllStudiesToolSmall.png", "Icons.ShowAllStudiesToolSmall.png", "Icons.ShowAllStudiesToolSmall.png")]
+	[IconSet("activate", IconScheme.Colour, "Icons.FilterDuplicateStudiesToolSmall.png", "Icons.FilterDuplicateStudiesToolMedium.png", "Icons.FilterDuplicateStudiesToolLarge.png")]
 	internal class FilterDuplicateStudiesTool : StudyBrowserTool
 	{
 		private readonly StudyBrowserComponent _parent;

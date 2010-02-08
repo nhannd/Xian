@@ -134,7 +134,9 @@
     <EmbeddedResource Include="Icons\OpenToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\ShowAllStudiesToolSmall.png" />
+    <EmbeddedResource Include="Icons\FilterDuplicateStudiesToolLarge.png" />
+    <EmbeddedResource Include="Icons\FilterDuplicateStudiesToolMedium.png" />
+    <EmbeddedResource Include="Icons\FilterDuplicateStudiesToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
