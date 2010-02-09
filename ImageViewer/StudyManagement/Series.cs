@@ -243,8 +243,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		internal void SetSop(Sop sop)
 		{
-			_sop = sop;
-			this.ParentStudy.SetSop(sop);
+			if (sop == null)
+				_sop = null;
+			else if (_sop == null)
+				_sop = sop;
+
+			ParentStudy.SetSop(sop);
 		}
 
 		/// <summary>
@@ -253,8 +257,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <returns></returns>
 		public override string ToString()
 		{
-			string str = String.Format("{0} | {1} | {2}", this.SeriesNumber, this.SeriesDescription, this.SeriesInstanceUid);
-			return str;
+			return String.Format("{0} | {1} | {2}", this.SeriesNumber, this.SeriesDescription, this.SeriesInstanceUid);
 		}
 	}
 }

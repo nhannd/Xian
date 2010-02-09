@@ -115,13 +115,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <returns></returns>
 		public override string ToString()
 		{
-			string str = String.Format("{0} | {1}", this.PatientsName, this.PatientId);
-			return str;
+			return String.Format("{0} | {1}", this.PatientsName, this.PatientId);
 		}
 
 		internal void SetSop(Sop sop)
 		{
-			_sop = sop;
+			if (sop == null)
+				_sop = null;
+			else if (_sop == null)
+				_sop = sop;
 		}
 	}
 }

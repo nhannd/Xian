@@ -277,7 +277,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The study is nearline.  If your PACS is a ClearCanvas ImageServer, please close the current study, wait a few minutes, then try loading the study again.  Otherwise, the study must be brought back online by a PACS administrator..
+        ///   Looks up a localized string similar to The study is nearline.  If your PACS is a ClearCanvas ImageServer, please try opening the study manually, then wait a few minutes before trying again.
+        ///Alternately, the study can be brought back online by a PACS administrator..
         /// </summary>
         public static string MessageActionStudyNearline {
             get {

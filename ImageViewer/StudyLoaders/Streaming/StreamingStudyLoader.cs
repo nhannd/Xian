@@ -138,6 +138,15 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			{
 				throw new NotFoundLoadStudyException(studyLoaderArgs.StudyInstanceUid, e);
 			}
+			catch(FaultException e)
+			{
+				//TODO: remove this hack.  Not sure why the ImageServer throws a generic fault when there's a more specialized one.
+				string message = e.Message.ToLower();
+				if (message.Contains("nearline"))
+					throw new NearlineLoadStudyException(studyLoaderArgs.StudyInstanceUid, e);
+				
+				throw new LoadStudyException(studyLoaderArgs.StudyInstanceUid, e);
+			}
 			catch (Exception e)
 			{
 				client.Abort();

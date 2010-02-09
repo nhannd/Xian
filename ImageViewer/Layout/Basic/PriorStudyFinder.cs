@@ -37,6 +37,7 @@ using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.Desktop;
+using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
@@ -109,16 +110,16 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			_cancel = false;
 			StudyItemList results = new StudyItemList();
 
-			DefaultPatientReconciliationStrategy reconciliationStrategy = new DefaultPatientReconciliationStrategy();
+			IPatientReconciliationStrategy reconciliationStrategy = new DefaultPatientReconciliationStrategy();
+			reconciliationStrategy.SetStudyTree(Viewer.StudyTree);
+
 			List<string> patientIds = new List<string>();
 			foreach (Patient patient in Viewer.StudyTree.Patients)
 			{
 				if (_cancel)
 					break;
 
-				PatientInformation info = new PatientInformation();
-				info.PatientId = patient.PatientId;
-				PatientInformation reconciled = reconciliationStrategy.ReconcileSearchCriteria(info);
+				IPatientData reconciled = reconciliationStrategy.ReconcileSearchCriteria(patient);
 				if (!patientIds.Contains(reconciled.PatientId))
 					patientIds.Add(reconciled.PatientId);
 			}
@@ -137,7 +138,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 							break;
 
 						StudyItem studyItem = ConvertToStudyItem(study);
-						if (studyItem != Null)
+						if (studyItem != null)
 							results.Add(studyItem);
 					}
 				}
@@ -182,6 +183,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			}
 
 			StudyItem item = new StudyItem(study, applicationEntity, studyLoaderName);
+			item.InstanceAvailability = study.InstanceAvailability;
 			if (String.IsNullOrEmpty(item.InstanceAvailability))
 				item.InstanceAvailability = "ONLINE";
 

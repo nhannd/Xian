@@ -32,9 +32,8 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.PresentationStates;
-using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Configuration;
@@ -59,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				PresentationState defaultPresentationState = new BasicDicomPresentationState 
 																{ ShowGrayscaleInverted = creationSetting.ShowGrayscaleInverted };
 
-				PresentationImageFactory imageFactory = (PresentationImageFactory)PresentationImageFactory;
+				var imageFactory = (PresentationImageFactory)PresentationImageFactory;
 				imageFactory.DefaultPresentationState = defaultPresentationState;
 
 				_basicFactory = new BasicDisplaySetFactory(imageFactory) 
@@ -93,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			public override List<IDisplaySet> CreateDisplaySets(Series series)
 			{
-				List<IDisplaySet> displaySets = new List<IDisplaySet>();
+				var displaySets = new List<IDisplaySet>();
 
 				bool showOriginal = true;
 
@@ -125,7 +124,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			}
 		}
 
-		private readonly DefaultPatientReconciliationStrategy _reconciliationStrategy = new DefaultPatientReconciliationStrategy();
+		private readonly IPatientReconciliationStrategy _reconciliationStrategy = new DefaultPatientReconciliationStrategy();
 		private readonly Dictionary<string, IDisplaySetFactory> _modalityDisplaySetFactories = new Dictionary<string, IDisplaySetFactory>();
 		private const string _defaultModality = "";
 
@@ -134,7 +133,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			foreach (StoredDisplaySetCreationSetting setting in DisplaySetCreationSettings.Default.GetStoredSettings())
 				_modalityDisplaySetFactories[setting.Modality] = new DisplaySetFactory(setting);
 
-			base.AllowEmptyViewer = ViewerLaunchSettings.AllowEmptyViewer;
+			AllowEmptyViewer = ViewerLaunchSettings.AllowEmptyViewer;
 		}
 
 		public override void SetImageViewer(IImageViewer imageViewer)
@@ -144,6 +143,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			StudyTree studyTree = null;
 			if (imageViewer != null)
 				studyTree = imageViewer.StudyTree;
+
+			_reconciliationStrategy.SetStudyTree(studyTree);
 
 			foreach (IDisplaySetFactory displaySetFactory in _modalityDisplaySetFactories.Values)
 				displaySetFactory.SetStudyTree(studyTree);
@@ -164,16 +165,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		#region Logical Workspace building 
 
-		protected override DicomImageSetDescriptor CreateImageSetDescriptor(IStudyRootStudyIdentifier studyRootData)
+		protected override IPatientData ReconcilePatient(Study study)
 		{
-			PatientInformation info = new PatientInformation();
-			info.PatientId = studyRootData.PatientId;
-			PatientInformation reconciled = _reconciliationStrategy.ReconcilePatientInformation(info);
+			var reconciled = _reconciliationStrategy.ReconcilePatientInformation(study.ParentPatient);
+			if (reconciled != null)
+				return new StudyRootStudyIdentifier(reconciled, study.GetIdentifier());
 
-			StudyRootStudyIdentifier identifier = new StudyRootStudyIdentifier(studyRootData);
-			identifier.PatientId = reconciled.PatientId;
-
-			return base.CreateImageSetDescriptor(identifier);
+			return base.ReconcilePatient(study);
 		}
 
 		protected override void UpdateImageSet(IImageSet imageSet, Series series)

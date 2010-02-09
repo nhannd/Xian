@@ -33,53 +33,36 @@ using System;
 using System.Xml;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-	//TODO: at some point in the future, expand to a full blown auto reconciler that just wraps the Ris' reconciliation service.
-
 	[Cloneable(true)]
-	public class PatientInformation
+	public class PatientInformation : IPatientData
 	{
-		private string _patientId;
-		//private string _patientsName;
-		//private string _patientsBirthDate;
-		//private string _patientsBirthTime;
-		//private string _patientsSex;
-
 		internal PatientInformation()
 		{
 		}
 
-		public string PatientId
+		internal PatientInformation(IPatientData patientData)
 		{
-			get { return _patientId; }
-			set { _patientId = value; }
+			PatientId = patientData.PatientId;
+			PatientsName = patientData.PatientsName;
+			PatientsBirthDate = patientData.PatientsBirthDate;
+			PatientsBirthTime = patientData.PatientsBirthTime;
+			PatientsSex = patientData.PatientsSex;
 		}
 
-		//public string PatientsName
-		//{
-		//    get { return _patientsName; }
-		//    set { _patientsName = value; }
-		//}
+		#region IPatientData Members
 
-		//public string PatientsBirthDate
-		//{
-		//    get { return _patientsBirthDate; }
-		//    set { _patientsBirthDate = value; }
-		//}
+		public string PatientId { get; set; }
+		public string PatientsName { get; private set; }
+		public string PatientsBirthDate { get; private set; }
+		public string PatientsBirthTime { get; private set; }
+		public string PatientsSex { get; private set; }
 
-		//public string PatientsBirthTime
-		//{
-		//    get { return _patientsBirthTime; }
-		//    set { _patientsBirthTime = value; }
-		//}
-
-		//public string PatientsSex
-		//{
-		//    get { return _patientsSex; }
-		//    set { _patientsSex = value; }
-		//}
+		#endregion
 
 		public PatientInformation Clone()
 		{
@@ -87,26 +70,23 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		}
 	}
 
-	internal interface IReconciliationAction : IXmlAction
+	//TODO: at some point in the future, expand to a full blown auto reconciler that just wraps the Ris' reconciliation service.
+
+	internal interface IPatientReconciliationStrategy
 	{
-		void Apply(XmlElement context, PatientInformation item);
+		//NOTE: I dislike doing this everywhere - need centralized study management.
+		void SetStudyTree(StudyTree studyTree);
+
+		IPatientData ReconcileSearchCriteria(IPatientData patient);
+		IPatientData ReconcilePatientInformation(IPatientData patient);
 	}
 
-	internal abstract class ReconciliationAction<TActionContext> : XmlAction<PatientInformation, TActionContext>, IReconciliationAction where TActionContext : class, new()
+	internal class DefaultPatientReconciliationStrategy : IPatientReconciliationStrategy
 	{
-		protected ReconciliationAction()
-		{
-		}
-
-		#region IReconciliationAction Members
-
-		public abstract void Apply(XmlElement actionElement, PatientInformation item);
+		#region PatientInformation class
 
 		#endregion
-	}
 
-	internal class DefaultPatientReconciliationStrategy
-	{
 		private readonly XmlActionsApplicator _applicator;
 
 		public DefaultPatientReconciliationStrategy()
@@ -114,14 +94,36 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			_applicator = new XmlActionsApplicator(DefaultActions.GetStandardActions());
 		}
 
-		public PatientInformation ReconcileSearchCriteria(PatientInformation patient)
+		private StudyTree StudyTree { get; set; }
+
+		void IPatientReconciliationStrategy.SetStudyTree(StudyTree studyTree)
 		{
-			return Reconcile(patient, DefaultPatientReconciliationSettings.Default.SearchReconciliationRulesXml, "search-reconciliation-rules");
+			StudyTree = studyTree;		
 		}
 
-		public PatientInformation ReconcilePatientInformation(PatientInformation patient)
+		public IPatientData ReconcileSearchCriteria(IPatientData patientInfo)
 		{
-			return Reconcile(patient, DefaultPatientReconciliationSettings.Default.PatientReconciliationRulesXml, "patient-reconciliation-rules");
+			var patientInformation = new PatientInformation{ PatientId = patientInfo.PatientId };
+			return Reconcile(patientInformation, DefaultPatientReconciliationSettings.Default.SearchReconciliationRulesXml, "search-reconciliation-rules");
+		}
+
+		public IPatientData ReconcilePatientInformation(IPatientData patientInfo)
+		{
+			Platform.CheckMemberIsSet(StudyTree, "StudyTree");
+
+			var testPatientInformation = new PatientInformation{ PatientId = patientInfo.PatientId };
+			testPatientInformation = Reconcile(testPatientInformation, DefaultPatientReconciliationSettings.Default.PatientReconciliationRulesXml, "patient-reconciliation-rules");
+
+			foreach (var patient in StudyTree.Patients)
+			{
+				var reconciledPatientInfo = new PatientInformation { PatientId = patient.PatientId };
+				reconciledPatientInfo = Reconcile(reconciledPatientInfo, DefaultPatientReconciliationSettings.Default.PatientReconciliationRulesXml, "patient-reconciliation-rules");
+
+				if (reconciledPatientInfo.PatientId == testPatientInformation.PatientId)
+					return new PatientInformation(patient) { PatientId = reconciledPatientInfo.PatientId };
+			}
+
+			return null;
 		}
 
 		private PatientInformation Reconcile(PatientInformation patient, XmlDocument rulesDocument, string rulesElementName)

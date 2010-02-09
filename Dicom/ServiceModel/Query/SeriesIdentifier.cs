@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Dicom.Iod;
 
@@ -186,5 +187,10 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		}
 
 		#endregion
+
+		public override string ToString()
+		{
+			return String.Format("{0} | {1} | {2}", this.SeriesNumber, this.SeriesDescription, this.SeriesInstanceUid);
+		}
 	}
 }

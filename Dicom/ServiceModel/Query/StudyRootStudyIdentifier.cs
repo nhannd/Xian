@@ -29,12 +29,13 @@
 
 #endregion
 
+using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.Dicom.ServiceModel.Query
 {
-	public interface IStudyRootStudyIdentifier : IStudyRootData, IIdentifier
+	public interface IStudyRootStudyIdentifier : IStudyRootData, IStudyIdentifier
 	{ }
 
 	/// <summary>
@@ -78,6 +79,18 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			: base(other)
 		{
 			CopyFrom(other);
+		}
+
+		public StudyRootStudyIdentifier(IPatientData patientData, IStudyIdentifier identifier)
+			: base(identifier)
+		{
+			CopyFrom(patientData);
+		}
+
+		public StudyRootStudyIdentifier(IPatientData patientData, IStudyData studyData, IIdentifier identifier)
+			: base(studyData, identifier)
+		{
+			CopyFrom(patientData);
 		}
 
 		/// <summary>
@@ -157,5 +170,10 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		}
 
 		#endregion
+
+		public override string ToString()
+		{
+			return String.Format("{0} | {1} | {2}", this.PatientsName, this.PatientId, base.ToString());
+		}
 	}
 }

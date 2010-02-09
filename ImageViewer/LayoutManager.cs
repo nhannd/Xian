@@ -37,13 +37,14 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Comparers;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
 	/// Defines an extension point for image layout management.
 	/// </summary>
-	[ExtensionPoint()]
+	[ExtensionPoint]
 	public sealed class LayoutManagerExtensionPoint : ExtensionPoint<ILayoutManager>
 	{
 	}
@@ -74,13 +75,13 @@ namespace ClearCanvas.ImageViewer
 	{
 		private IImageViewer _imageViewer;
 		private bool _layoutCompleted;
-		private bool _allowEmptyViewer;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		public LayoutManager()
 		{
+			ReconcilePatientInfo = true;
 		}
 
 		#region Protected Properties
@@ -98,13 +99,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		protected StudyTree StudyTree
 		{
-			get 
-			{
-				if (_imageViewer != null)
-					return _imageViewer.StudyTree;
-				else
-					return null;
-			}	
+			get { return _imageViewer != null ? _imageViewer.StudyTree : null; }
 		}
 
 		/// <summary>
@@ -112,13 +107,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		protected IPhysicalWorkspace PhysicalWorkspace
 		{
-			get
-			{
-				if (_imageViewer != null)
-					return _imageViewer.PhysicalWorkspace;
-				else
-					return null;
-			}	
+			get { return _imageViewer != null ? _imageViewer.PhysicalWorkspace : null; }
 		}
 
 		/// <summary>
@@ -126,23 +115,15 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		protected ILogicalWorkspace LogicalWorkspace
 		{
-			get
-			{
-				if (_imageViewer != null)
-					return _imageViewer.LogicalWorkspace;
-				else
-					return null;
-			}
+			get { return _imageViewer != null ? _imageViewer.LogicalWorkspace : null; }
 		}
 
 		/// <summary>
 		/// Gets or sets whether or not to allow an empty <see cref="IImageViewer"/> (e.g. no studies loaded).
 		/// </summary>
-		protected bool AllowEmptyViewer
-		{
-			get { return _allowEmptyViewer; }
-			set { _allowEmptyViewer = value; }
-		}
+		public bool AllowEmptyViewer { get; set; }
+
+		public bool ReconcilePatientInfo { get; set; }
 
 		#endregion
 
@@ -240,7 +221,7 @@ namespace ClearCanvas.ImageViewer
 				}
 			}
 
-			if (!_allowEmptyViewer)
+			if (!AllowEmptyViewer)
 				throw new NoVisibleDisplaySetsException("The Layout operation has resulted in no images to be displayed.");
 		}
 
@@ -315,6 +296,12 @@ namespace ClearCanvas.ImageViewer
 				imageBox.DisplaySet = logicalWorkspace.ImageSets[imageSetIndex].DisplaySets[displaySetIndex].CreateFreshCopy();
 				displaySetIndex++;
 			}
+		}
+
+		protected virtual IPatientData ReconcilePatient(Study study)
+		{
+			//The study tree naturally does the grouping that we need.
+			return new StudyRootStudyIdentifier(study.ParentPatient, study.GetIdentifier());
 		}
 
 		/// <summary>
@@ -401,6 +388,14 @@ namespace ClearCanvas.ImageViewer
 
 		#region Logical Workspace Building Methods
 
+		private IStudyRootStudyIdentifier GetStudyIdentifier(Study study)
+		{
+			if (ReconcilePatientInfo)
+				return new StudyRootStudyIdentifier(ReconcilePatient(study), study.GetIdentifier());
+
+			return study.GetIdentifier();
+		}
+
 		private void BuildFromStudy(Study study)
 		{
 			IImageSet imageSet = GetImageSet(study.StudyInstanceUid);
@@ -408,7 +403,8 @@ namespace ClearCanvas.ImageViewer
 			if (imageSet != null)
 				return;
 
-			imageSet = CreateImageSet(study.GetIdentifier());
+
+			imageSet = CreateImageSet(GetStudyIdentifier(study));
 			if (imageSet.Uid != study.StudyInstanceUid)
 				throw new InvalidOperationException("ImageSet Uid must be the same as Study Instance Uid.");
 
@@ -432,7 +428,7 @@ namespace ClearCanvas.ImageViewer
 			if (_layoutCompleted)
 			{
 				//A bit cheap, but once the initial layout is done, we need to keep everything sorted.
-				ObservableList<IImageSet> sortedImageSets = new ObservableList<IImageSet>();
+				var sortedImageSets = new ObservableList<IImageSet>();
 				foreach(IImageSet set in LogicalWorkspace.ImageSets)
 					sortedImageSets.Add(set);
 
@@ -476,7 +472,7 @@ namespace ClearCanvas.ImageViewer
 
 		private StudyCollection GetAllStudiesSorted()
 		{
-			StudyCollection studies = new StudyCollection();
+			var studies = new StudyCollection();
 
 			foreach (Patient patient in StudyTree.Patients)
 			{

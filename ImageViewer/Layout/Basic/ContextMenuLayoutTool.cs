@@ -32,7 +32,6 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Common;
@@ -59,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		private readonly Dictionary<string, IImageSet> _unavailableImageSets;
 		private readonly IComparer<IImageSet> _comparer = new StudyDateComparer();
 
-		private readonly DefaultPatientReconciliationStrategy _patientReconciliationStrategy = new DefaultPatientReconciliationStrategy();
+		private readonly IPatientReconciliationStrategy _patientReconciliationStrategy = new DefaultPatientReconciliationStrategy();
 
 		public ContextMenuLayoutTool()
 		{
@@ -99,6 +98,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         {
             base.Initialize();
 
+			_patientReconciliationStrategy.SetStudyTree(base.ImageViewer.StudyTree);
 			_imageSetGroups = new ImageSetGroups(base.Context.Viewer.LogicalWorkspace.ImageSets);
 
 			base.ImageViewer.EventBroker.StudyLoaded += OnStudyLoaded;
@@ -135,14 +135,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			if (!notFoundError && (e.Error is LoadSopsException || e.Error is StudyLoaderNotFoundException))
 			{
 				if (null == CollectionUtils.SelectFirst(base.ImageViewer.LogicalWorkspace.ImageSets,
-					delegate(IImageSet imageSet) { return imageSet.Uid == e.Study.StudyInstanceUid; }))
+				                                        imageSet => imageSet.Uid == e.Study.StudyInstanceUid))
 				{
-					PatientInformation info = new PatientInformation();
-					info.PatientId = e.Study.PatientId;
-					PatientInformation reconciled = _patientReconciliationStrategy.ReconcilePatientInformation(info);
-
-					StudyItem studyItem = new StudyItem(e.Study);
-					studyItem.PatientId = reconciled.PatientId;
+					var reconciled = _patientReconciliationStrategy.ReconcilePatientInformation(e.Study);
+					var studyItem = new StudyItem(reconciled, e.Study, e.Study.Server, e.Study.StudyLoaderName);
 
 					if (!_unavailableImageSets.ContainsKey(studyItem.StudyInstanceUid))
 					{
@@ -180,6 +176,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				};
 
 				bool showImageSetNames = base.ImageViewer.LogicalWorkspace.ImageSets.Count > 1 || _unavailableImageSets.Count > 0;
+				int loadingPriorsNumber = 0;
 
 				foreach (FilteredGroup<IImageSet> group in TraverseImageSetGroups(rootGroup))
 				{
@@ -207,13 +204,17 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 					}
 
 					if (group.Items.Count > 0 && base.ImageViewer.PriorStudyLoader.IsActive)
-						actions.Add(CreateLoadingPriorsAction(basePath));
+						actions.Add(CreateLoadingPriorsAction(basePath, ++loadingPriorsNumber));
 				}
 			}
 
 			//do this so they all get grouped together.
     		foreach (IAction action in actions)
-				action.GroupHint = new GroupHint("DisplaySets");
+    		{
+    			action.GroupHint = new GroupHint("DisplaySets");
+				if (action is Action)
+				((Action)action).Persistent = false;
+    		}
 
 			return new ActionSet(actions);
 		}
@@ -267,13 +268,15 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     		return null;
 		}
 
-		private IClickAction CreateLoadingPriorsAction(string basePath)
+		private IClickAction CreateLoadingPriorsAction(string basePath, int number)
 		{
 			string pathString = String.Format("{0}/loadingPriors", basePath);
 			ActionPath path = new ActionPath(pathString, null);
-			MenuAction action = new MenuAction(string.Format("{0}:loadingPriors", this.GetType().FullName), path, ClickActionFlags.None, null);
-			action.GroupHint = new GroupHint("DisplaySets");
-			action.Label = SR.LabelLoadingPriors;
+			MenuAction action = new MenuAction(string.Format("{0}:loadingPriors{1}", GetType().FullName, number), path, ClickActionFlags.None, null)
+			                    	{
+			                    		Label = SR.LabelLoadingPriors,
+			                    		Persistent = false
+			                    	};
 			action.SetClickHandler(delegate { });
 			return action;
 		}
