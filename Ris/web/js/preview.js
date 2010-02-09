@@ -1387,13 +1387,6 @@ Preview.SectionContainer = function () {
 				imageSrc += collapsedByDefault ? "Expand.png" : "Collapse.png";
 				title = "<a href='javascript:void(0)' class='collapsibleSectionHeading' onclick='Collapse.toggleCollapsedSection(this)' style='{text-decoration: none; color: white;}'>" +
 				 		"<img src='" + imageSrc + "' border='0' style='{margin-right: 5px; margin-left: -8px; background: #1b4066;}'/>" + text + "</a>";
-
-				var expandSrc = imagePath + "/" + "Expand.png";
-				var collapseSrc = imagePath + "/" + "Collapse.png";
-				title += "<img src='" + expandSrc + "' border='0' style='visibility:hidden'/>";
-				title += "<img src='" + collapseSrc + "' border='0' style='visibility:hidden'/>";
-						
-						
 				cell.innerHTML = title;
 			}
 			else {
