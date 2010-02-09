@@ -257,8 +257,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				else
 				{
 					this.Exit(ApplicationComponentExitCode.Accepted);
+					return;
 				}
-				return;
 			}
 
 			if (!Running)
