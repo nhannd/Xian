@@ -131,13 +131,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         {
             if (!IsPostBack)
             {
-                string script =
-                    "if(event.which || event.keyCode){if ((event.which == 13) || (event.keyCode == 13)) {document.getElementById('" +
-                    ChangePageButton.ClientID + "').click();return false;}} else {return true}; ";
-                
-                CurrentPage.Attributes.Add("onkeydown", script);
-                CurrentPage.Attributes.Add("onclick", "javascript: document.getElementById('" + CurrentPage.ClientID + "').select();");
-
                 if(!Target.IsDataBound)
                 {
                     Target.DataBind();    
@@ -226,6 +219,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             return page;
         }
 
+        private void EnableCurrentPage(bool enable)
+        {
+            if(enable)
+            {
+                string script =
+                    "if(event.which || event.keyCode){if ((event.which == 13) || (event.keyCode == 13)) {document.getElementById('" +
+                    ChangePageButton.ClientID + "').click();return false;}} else {return true}; ";
+
+                CurrentPage.Attributes.Add("onkeydown", script);
+                CurrentPage.Attributes.Add("onclick", "javascript: document.getElementById('" + CurrentPage.ClientID + "').select();");
+                CurrentPage.Enabled = true;
+            } else
+            {
+                CurrentPage.Attributes.Add("onkeydown", "return false;");
+                CurrentPage.Attributes.Add("onclick", "return false;");
+                CurrentPage.Enabled = false;
+            }
+        }
+
         #endregion Protected methods
 
         #region Public methods
@@ -238,12 +250,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             if (_target != null && _target.DataSource != null)
             {                
                 CurrentPage.Text = AdjustCurrentPageForDisplay(_target.PageIndex).ToString();
+                EnableCurrentPage(_target.PageCount > 1);
 
                 PageCountLabel.Text =
                     string.Format(" of {0}", AdjustCurrentPageForDisplay(_target.PageCount));
 
                     ItemCountLabel.Text = string.Format("{0} {1}", ItemCount, ItemCount == 1 ? ItemName : PluralItemName);
 
+                
 
                 if (_target.PageIndex > 0)
                 {
@@ -286,6 +300,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             {
                 ItemCountLabel.Text = string.Format("0 {0}", PluralItemName);
                 CurrentPage.Text = "0";
+                EnableCurrentPage(false);
                 PageCountLabel.Text = string.Format(" of 0");
                 PrevPageButton.Enabled = false;
                 PrevPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerPreviousDisabled;
