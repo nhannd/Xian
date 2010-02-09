@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 			                                         			while ((sop = localStudyLoader.LoadNextSop()) != null)
 			                                         			{
 			                                         				component.Items.Add(new SopDataSourceStudyItem(sop));
-																	c.ReportProgress(new BackgroundTaskProgress(Math.Max(sopCount, ++progress) - 1, sopCount, SR.MessageLoading));
+																	c.ReportProgress(new BackgroundTaskProgress(Math.Min(sopCount, ++progress) - 1, sopCount, SR.MessageLoading));
 			                                         				if (c.CancelRequested)
 			                                         					c.Cancel();
 			                                         				sop.Dispose();
