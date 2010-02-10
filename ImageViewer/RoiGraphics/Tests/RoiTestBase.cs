@@ -335,7 +335,19 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 			Real03,
 			Real04,
 			Real05,
-			Real06
+			Real06,
+			Aspect01,
+			Aspect02,
+			Aspect03,
+			Aspect04,
+			Aspect05,
+			Aspect06,
+			Aspect07,
+			Aspect08,
+			Aspect09,
+			Aspect10,
+			Aspect11,
+			Aspect12,
 		}
 	}
 }

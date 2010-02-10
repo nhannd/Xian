@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			}
 			else
 			{
-				aspectRatio = (float)(roiInfo.PixelAspectRatio.Row/roiInfo.PixelAspectRatio.Column);
+				aspectRatio = (float)roiInfo.PixelAspectRatio.Row / (float)roiInfo.PixelAspectRatio.Column;
 			}
 
 			List<PointF> normalized = new List<PointF>();

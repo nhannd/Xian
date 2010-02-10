@@ -126,7 +126,20 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		private void ApplyCalibration(double lengthInMm)
 		{
-			RoiGraphic roiGraphic = this.Context.Graphic as RoiGraphic;
+			ApplyCalibration(lengthInMm, this.Context.Graphic as IControlGraphic, this.Context.DesktopWindow);
+		}
+
+		#if	UNIT_TESTS
+
+		internal static void TestCalibration(double lengthInMm, IControlGraphic graphic)
+		{
+			ApplyCalibration(lengthInMm, graphic, null);
+		}
+
+		#endif
+
+		private static void ApplyCalibration(double lengthInMm, IControlGraphic roiGraphic, IDesktopWindow desktopWindow)
+		{
 			IImageSopProvider image = roiGraphic.ParentPresentationImage as IImageSopProvider;
 
 			double aspectRatio;
@@ -144,7 +157,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			}
 			else
 			{
-				aspectRatio = image.Frame.PixelAspectRatio.Row / image.Frame.PixelAspectRatio.Column;
+				aspectRatio = (float) image.Frame.PixelAspectRatio.Row/image.Frame.PixelAspectRatio.Column;
 			}
 
 			IPointsGraphic line = roiGraphic.Subject as IPointsGraphic;
@@ -156,7 +169,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			if (widthInPixels == 0 && heightInPixels == 0)
 			{
-				this.Context.DesktopWindow.ShowMessageBox(SR.ErrorCannotCalibrateZeroLengthRuler, MessageBoxActions.Ok);
+				desktopWindow.ShowMessageBox(SR.ErrorCannotCalibrateZeroLengthRuler, MessageBoxActions.Ok);
 				return;
 			}
 

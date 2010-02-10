@@ -33,9 +33,13 @@
 
 #pragma warning disable 1591,0419,1574,1587
 
-using System.Drawing;
-using NUnit.Framework;
 using System;
+using System.Diagnostics;
+using System.Drawing;
+using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.InteractiveGraphics;
+using ClearCanvas.ImageViewer.StudyManagement;
+using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement.Tests
 {
@@ -46,18 +50,66 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement.Tests
 		{
 		}
 
-		[TestFixtureSetUp]
-		public void Init()
+		[Test]
+		public void TestCalibrationIsotropicPixels()
 		{
-		}
-		
-		[TestFixtureTearDown]
-		public void Cleanup()
-		{
+			// shouldn't actually matter whether or not the image was already calibrated
+			foreach (bool uncalibrated in new[] {true, false})
+			{
+				// calibrates a horizontal 25 pixel line to be 10 mm
+				TestCalibration("ISO", uncalibrated, new PointF(50, 253), new PointF(75, 253), 10, 0.4, 0.4);
+
+				// calibrates a vertical 25 pixel line to be 10 mm
+				TestCalibration("ISO", uncalibrated, new PointF(253, 50), new PointF(253, 75), 10, 0.4, 0.4);
+
+				// calibrates a diagonal sqrt(25*25*2) pixel line to be sqrt(2)*10 mm
+				TestCalibration("ISO", uncalibrated, new PointF(50, 50), new PointF(75, 75), 14.142, 0.4, 0.4);
+			}
 		}
 
 		[Test]
-		public void AnisotropicPixel()
+		public void TestCalibrationAnisotropic43Pixels()
+		{
+			// shouldn't actually matter whether or not the image was already calibrated
+			foreach (bool uncalibrated in new[] {true, false})
+			{
+				// calibrates a horizontal line
+				TestCalibration("4:3", uncalibrated, new PointF(33, 253), new PointF(66, 253), 10, 0.4, 0.3);
+
+				// calibrates a vertical line
+				TestCalibration("4:3", uncalibrated, new PointF(337, 50), new PointF(337, 75), 10, 0.4, 0.3);
+
+				// calibrates a diagonal line
+				TestCalibration("4:3", uncalibrated, new PointF(33, 225), new PointF(166, 52), 80, 0.4, 0.3);
+			}
+		}
+
+		private static void TestCalibration(string pixelShape, bool uncalibrated, PointF pt1, PointF pt2, double calibrationValue, double expectedRowSpacing, double expectedColSpacing)
+		{
+			using (IPresentationImage image = ProtractorRoiTests.GetCalibrationTestImage(pixelShape, uncalibrated))
+			{
+				Trace.WriteLine(string.Format("TEST {0} image with {1} pixels", uncalibrated ? "uncalibrated" : "calibrated", pixelShape));
+				Trace.WriteLine(string.Format("calibrating {0} {1} to {2} mm", pt1, pt2, calibrationValue));
+
+				VerticesControlGraphic controlGraphic;
+				PolylineGraphic lineGraphic;
+				IOverlayGraphicsProvider overlayGraphicsProvider = (IOverlayGraphicsProvider) image;
+				overlayGraphicsProvider.OverlayGraphics.Add(controlGraphic = new VerticesControlGraphic(lineGraphic = new PolylineGraphic()));
+				lineGraphic.CoordinateSystem = CoordinateSystem.Source;
+				lineGraphic.Points.Add(pt1);
+				lineGraphic.Points.Add(pt2);
+				lineGraphic.ResetCoordinateSystem();
+
+				CalibrationTool.TestCalibration(calibrationValue, controlGraphic);
+
+				IImageSopProvider imageSopProvider = (IImageSopProvider) image;
+				Assert.AreEqual(expectedColSpacing, imageSopProvider.Frame.NormalizedPixelSpacing.Column, 0.05, "Column Spacing appears to be wrong");
+				Assert.AreEqual(expectedRowSpacing, imageSopProvider.Frame.NormalizedPixelSpacing.Row, 0.05, "Row Spacing appears to be wrong");
+			}
+		}
+
+		[Test]
+		public void TestComputationAnisotropicPixel()
 		{
 			double widthInPixels = 4;
 			double heightInPixels = 3;
@@ -83,7 +135,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement.Tests
 		}
 
 		[Test]
-		public void IsotropicPixel()
+		public void TestComputationIsotropicPixel()
 		{
 			double widthInPixels = 4;
 			double heightInPixels = 3;
