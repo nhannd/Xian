@@ -641,6 +641,9 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="args"></param>
 		private void SelectedItemsChangedEventHandler(object sender, EventArgs args)
 		{
+			if (_operationEnablementTask == null)
+				return;
+
 			// cancel any previous operation enablement queries
 			_operationEnablementTask.Cancel();
 
