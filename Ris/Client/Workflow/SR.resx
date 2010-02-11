@@ -708,7 +708,7 @@ Choose "No" to verify this report without further action.</value>
     <value>Transcribed reports awaiting my review.</value>
   </data>
   <data name="ReportingToBeReviewedFolderDescription" xml:space="preserve">
-    <value>Reports assigned to me for review.</value>
+    <value>Lists procoedures with reports that need to be reviewed.</value>
   </data>
   <data name="ReportingVerifiedFolderDescription" xml:space="preserve">
     <value>My verified reports.</value>
@@ -724,5 +724,104 @@ Choose "No" to verify this report without further action.</value>
   </data>
   <data name="TranscriptionToBeReviewedFolderDescription" xml:space="preserve">
     <value>Transcriptions assigned to me for review.</value>
+  </data>
+  <data name="BookingCompletedProtocolFolderDescription" xml:space="preserve">
+    <value>Lists procedures that have been protocoled but not scheduled.</value>
+  </data>
+  <data name="BookingPendingProtocolFolderDescription" xml:space="preserve">
+    <value>Lists procedures that need to be protocoled.</value>
+  </data>
+  <data name="BookingRejectedProtocolFolderDescription" xml:space="preserve">
+    <value>Lists procedures that have been rejected by the protocoling radiologist.</value>
+  </data>
+  <data name="BookingToBeScheduledFolderDescription" xml:space="preserve">
+    <value>Lists procedures that need to be scheduled.</value>
+  </data>
+  <data name="EmergencyCancelledFolderDescription" xml:space="preserve">
+    <value>Lists procedures that have been cancelled.</value>
+  </data>
+  <data name="EmergencyInProgressFolderDescription" xml:space="preserve">
+    <value>Lists procedures that are in progress.</value>
+  </data>
+  <data name="EmergencyPerformedFolderDescription" xml:space="preserve">
+    <value>Lists procedures that have been peformed.</value>
+  </data>
+  <data name="EmergencyScheduledFolderDescription" xml:space="preserve">
+    <value>Lists scheduled and checked-in procedures.</value>
+  </data>
+  <data name="PerformingCancelledFolderDescription" xml:space="preserve">
+    <value>Lists modality procedure steps that have been cancelled or discontinued.</value>
+  </data>
+  <data name="PerformingCheckedInFolderDescription" xml:space="preserve">
+    <value>List procedures that have been checked in.</value>
+  </data>
+  <data name="PerformingInProgressFolderDescription" xml:space="preserve">
+    <value>List modality procedure steps that is being performed.</value>
+  </data>
+  <data name="PerformingPerformedFolderDescription" xml:space="preserve">
+    <value>List modality procedure steps that have been performed.</value>
+  </data>
+  <data name="PerformingScheduledFolderDescription" xml:space="preserve">
+    <value>Lists scheduled modality procedure steps.</value>
+  </data>
+  <data name="PerformingUndocumentedFolderDescription" xml:space="preserve">
+    <value>Lists procedures where the performing documentation is incomplete.</value>
+  </data>
+  <data name="ProtocollingAdminAssignedFolderDescription" xml:space="preserve">
+    <value>Lists procedures that are currently assigned for protocolling by a radiologist.</value>
+  </data>
+  <data name="RegistrationCancelledFolderDescription" xml:space="preserve">
+    <value>Lists procedures that have been cancelled.</value>
+  </data>
+  <data name="RegistrationCheckedInFolderDescription" xml:space="preserve">
+    <value>Lists checked-in procedures.</value>
+  </data>
+  <data name="RegistrationInProgressFolderDescription" xml:space="preserve">
+    <value>Lists procedures that are in progress.</value>
+  </data>
+  <data name="RegistrationPerformedFolderDescription" xml:space="preserve">
+    <value>Lists procedures that have been peformed.</value>
+  </data>
+  <data name="RegistrationScheduledFolderDescription" xml:space="preserve">
+    <value>Lists scheduled procedures that have not been checked in.</value>
+  </data>
+  <data name="ReportingAdminAssignedFolderDescription" xml:space="preserve">
+    <value>Lists active procedures that are currently in reporting by a radiologist.</value>
+  </data>
+  <data name="ReportingAdminToBeTranscribedWorklistDescription" xml:space="preserve">
+    <value>Lists reports that need to be transcribed.</value>
+  </data>
+  <data name="ReportingAdminUnreportedFolderDescription" xml:space="preserve">
+    <value>Lists procedures that have been performed but not yet reported.</value>
+  </data>
+  <data name="ReportingAssignedForReviewFolderDescription" xml:space="preserve">
+    <value>Reports assigned to me for review.</value>
+  </data>
+  <data name="ReportingToBeProtocolledFolderDescription" xml:space="preserve">
+    <value>Lists procedures that need to be protocoled.</value>
+  </data>
+  <data name="ReportingToBeReportedFolderDescription" xml:space="preserve">
+    <value>Lists procedures that need to be reported.</value>
+  </data>
+  <data name="ReportingToBeReviewedProtocolFolderDescription" xml:space="preserve">
+    <value>Lists procedures with protocols that need to be reviewed.</value>
+  </data>
+  <data name="ReportingTrackingActiveFolderDescription" xml:space="preserve">
+    <value>Lists active procedures that are currently in reporting by a radiologist.</value>
+  </data>
+  <data name="ReportingTrackingCorrectedFolderDescription" xml:space="preserve">
+    <value>Lists procoedures with reports that are corrected.</value>
+  </data>
+  <data name="ReportingTrackingDraftFoldReportingTrackingDraftFolderDescription" xml:space="preserve">
+    <value>Lists procoedures with reports that are in draft.</value>
+  </data>
+  <data name="ReportingTrackingFinalFolderDescription" xml:space="preserve">
+    <value>Lists procoedures with reports that are finalized.</value>
+  </data>
+  <data name="ReportingTrackingPreliminaryFolderDescription" xml:space="preserve">
+    <value>Lists procoedures with reports that are in preliminary status.</value>
+  </data>
+  <data name="TranscriptionToBeTranscribedFolderDescription" xml:space="preserve">
+    <value>Lists reports that need to be transcribed.</value>
   </data>
 </root>

@@ -41,6 +41,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(TranscriptionWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.TranscriptionToBeTranscribedWorklist)]
 		[FolderPath("To Be Transcribed", true)]
+		[FolderDescription("TranscriptionToBeTranscribedFolderDescription")]
 		public class ToBeTranscribedFolder : TranscriptionWorkflowFolder
 		{
 		}

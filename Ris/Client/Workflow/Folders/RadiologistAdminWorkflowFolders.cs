@@ -41,6 +41,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(RadiologistAdminWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.ReportingAdminUnreportedWorklist)]
 		[FolderPath("Unreported Items", true)]
+		[FolderDescription("ReportingAdminUnreportedFolderDescription")]
 		public class ReportingAdminUnreportedFolder : ReportingWorkflowFolder
 		{
 		}
@@ -48,6 +49,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(RadiologistAdminWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.ReportingAdminAssignedWorklist)]
 		[FolderPath("Active Reporting Items", true)]
+		[FolderDescription("ReportingAdminAssignedFolderDescription")]
 		public class ReportingAdminAssignedFolder : ReportingWorkflowFolder
 		{
 		}
@@ -55,6 +57,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(RadiologistAdminWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.ProtocollingAdminAssignedWorklist)]
 		[FolderPath("Active Protocolling Items", true)]
+		[FolderDescription("ProtocollingAdminAssignedFolderDescription")]
 		public class ProtocollingAdminAssignedFolder : ReportingWorkflowFolder
 		{
 		}
@@ -62,6 +65,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(RadiologistAdminWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.ReportingAdminToBeTranscribedWorklist)]
 		[FolderPath("To Be Transcribed Items", true)]
+		[FolderDescription("ReportingAdminToBeTranscribedWorklistDescription")]
 		public class ReportingAdminToBeTranscribedWorklist : ReportingWorkflowFolder
 		{
 		}

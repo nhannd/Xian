@@ -1843,6 +1843,33 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to List unacknowledged notes that were sent to group I belonged to..
+        /// </summary>
+        internal static string OrderNotesGroupInboxFolderDescription {
+            get {
+                return ResourceManager.GetString("OrderNotesGroupInboxFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List unacknowledged notes that were sent to me..
+        /// </summary>
+        internal static string OrderNotesPersonalInboxFolderDescription {
+            get {
+                return ResourceManager.GetString("OrderNotesPersonalInboxFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List notes sent by me that are still unacknowledged..
+        /// </summary>
+        internal static string OrderNotesSentItemsFolderDescription {
+            get {
+                return ResourceManager.GetString("OrderNotesSentItemsFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Home.
         /// </summary>
         internal static string PhoneNumberHome {

@@ -40,6 +40,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(PerformingWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.PerformingScheduledWorklist)]
 		[FolderPath("Scheduled")]
+		[FolderDescription("PerformingScheduledFolderDescription")]
 		public class ScheduledFolder : PerformingWorkflowFolder
 		{
 		}
@@ -47,6 +48,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(PerformingWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.PerformingCheckedInWorklist)]
 		[FolderPath("Checked In", true)]
+		[FolderDescription("PerformingCheckedInFolderDescription")]
 		public class CheckedInFolder : PerformingWorkflowFolder
 		{
 		}
@@ -54,6 +56,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(PerformingWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.PerformingInProgressWorklist)]
 		[FolderPath("In Progress")]
+		[FolderDescription("PerformingInProgressFolderDescription")]
 		public class InProgressFolder : PerformingWorkflowFolder
 		{
 		}
@@ -61,6 +64,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(PerformingWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.PerformingPerformedWorklist)]
 		[FolderPath("Performed")]
+		[FolderDescription("PerformingPerformedFolderDescription")]
 		public class PerformedFolder : PerformingWorkflowFolder
 		{
 		}
@@ -68,6 +72,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(PerformingWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.PerformingUndocumentedWorklist)]
 		[FolderPath("Incomplete Documentation")]
+		[FolderDescription("PerformingUndocumentedFolderDescription")]
 		public class UndocumentedFolder : PerformingWorkflowFolder
 		{
 		}
@@ -75,6 +80,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(PerformingWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.PerformingCancelledWorklist)]
 		[FolderPath("Cancelled")]
+		[FolderDescription("PerformingCancelledFolderDescription")]
 		public class CancelledFolder : PerformingWorkflowFolder
 		{
 		}

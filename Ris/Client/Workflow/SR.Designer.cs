@@ -61,6 +61,42 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lists procedures that have been protocoled but not scheduled..
+        /// </summary>
+        internal static string BookingCompletedProtocolFolderDescription {
+            get {
+                return ResourceManager.GetString("BookingCompletedProtocolFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procedures that need to be protocoled..
+        /// </summary>
+        internal static string BookingPendingProtocolFolderDescription {
+            get {
+                return ResourceManager.GetString("BookingPendingProtocolFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procedures that have been rejected by the protocoling radiologist..
+        /// </summary>
+        internal static string BookingRejectedProtocolFolderDescription {
+            get {
+                return ResourceManager.GetString("BookingRejectedProtocolFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procedures that need to be scheduled..
+        /// </summary>
+        internal static string BookingToBeScheduledFolderDescription {
+            get {
+                return ResourceManager.GetString("BookingToBeScheduledFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Rec..
         /// </summary>
         internal static string ColumnAbbreviationReconciliation {
@@ -547,6 +583,42 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lists procedures that have been cancelled..
+        /// </summary>
+        internal static string EmergencyCancelledFolderDescription {
+            get {
+                return ResourceManager.GetString("EmergencyCancelledFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procedures that are in progress..
+        /// </summary>
+        internal static string EmergencyInProgressFolderDescription {
+            get {
+                return ResourceManager.GetString("EmergencyInProgressFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procedures that have been peformed..
+        /// </summary>
+        internal static string EmergencyPerformedFolderDescription {
+            get {
+                return ResourceManager.GetString("EmergencyPerformedFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists scheduled and checked-in procedures..
+        /// </summary>
+        internal static string EmergencyScheduledFolderDescription {
+            get {
+                return ResourceManager.GetString("EmergencyScheduledFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to add/update visit.
         /// </summary>
         internal static string ExceptionCannotAddUpdateVisit {
@@ -993,11 +1065,155 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lists modality procedure steps that have been cancelled or discontinued..
+        /// </summary>
+        internal static string PerformingCancelledFolderDescription {
+            get {
+                return ResourceManager.GetString("PerformingCancelledFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List procedures that have been checked in..
+        /// </summary>
+        internal static string PerformingCheckedInFolderDescription {
+            get {
+                return ResourceManager.GetString("PerformingCheckedInFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List modality procedure steps that is being performed..
+        /// </summary>
+        internal static string PerformingInProgressFolderDescription {
+            get {
+                return ResourceManager.GetString("PerformingInProgressFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List modality procedure steps that have been performed..
+        /// </summary>
+        internal static string PerformingPerformedFolderDescription {
+            get {
+                return ResourceManager.GetString("PerformingPerformedFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists scheduled modality procedure steps..
+        /// </summary>
+        internal static string PerformingScheduledFolderDescription {
+            get {
+                return ResourceManager.GetString("PerformingScheduledFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procedures where the performing documentation is incomplete..
+        /// </summary>
+        internal static string PerformingUndocumentedFolderDescription {
+            get {
+                return ResourceManager.GetString("PerformingUndocumentedFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procedures that are currently assigned for protocolling by a radiologist..
+        /// </summary>
+        internal static string ProtocollingAdminAssignedFolderDescription {
+            get {
+                return ResourceManager.GetString("ProtocollingAdminAssignedFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procedures that have been cancelled..
+        /// </summary>
+        internal static string RegistrationCancelledFolderDescription {
+            get {
+                return ResourceManager.GetString("RegistrationCancelledFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists checked-in procedures..
+        /// </summary>
+        internal static string RegistrationCheckedInFolderDescription {
+            get {
+                return ResourceManager.GetString("RegistrationCheckedInFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procedures that are in progress..
+        /// </summary>
+        internal static string RegistrationInProgressFolderDescription {
+            get {
+                return ResourceManager.GetString("RegistrationInProgressFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procedures that have been peformed..
+        /// </summary>
+        internal static string RegistrationPerformedFolderDescription {
+            get {
+                return ResourceManager.GetString("RegistrationPerformedFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists scheduled procedures that have not been checked in..
+        /// </summary>
+        internal static string RegistrationScheduledFolderDescription {
+            get {
+                return ResourceManager.GetString("RegistrationScheduledFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists active procedures that are currently in reporting by a radiologist..
+        /// </summary>
+        internal static string ReportingAdminAssignedFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingAdminAssignedFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists reports that need to be transcribed..
+        /// </summary>
+        internal static string ReportingAdminToBeTranscribedWorklistDescription {
+            get {
+                return ResourceManager.GetString("ReportingAdminToBeTranscribedWorklistDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procedures that have been performed but not yet reported..
+        /// </summary>
+        internal static string ReportingAdminUnreportedFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingAdminUnreportedFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Procedures assigned to me to be reported..
         /// </summary>
         internal static string ReportingAssignedFolderDescription {
             get {
                 return ResourceManager.GetString("ReportingAssignedFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reports assigned to me for review..
+        /// </summary>
+        internal static string ReportingAssignedForReviewFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingAssignedForReviewFolderDescription", resourceCulture);
             }
         }
         
@@ -1092,11 +1308,83 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reports assigned to me for review..
+        ///   Looks up a localized string similar to Lists procedures that need to be protocoled..
+        /// </summary>
+        internal static string ReportingToBeProtocolledFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingToBeProtocolledFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procedures that need to be reported..
+        /// </summary>
+        internal static string ReportingToBeReportedFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingToBeReportedFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procoedures with reports that need to be reviewed..
         /// </summary>
         internal static string ReportingToBeReviewedFolderDescription {
             get {
                 return ResourceManager.GetString("ReportingToBeReviewedFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procedures with protocols that need to be reviewed..
+        /// </summary>
+        internal static string ReportingToBeReviewedProtocolFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingToBeReviewedProtocolFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists active procedures that are currently in reporting by a radiologist..
+        /// </summary>
+        internal static string ReportingTrackingActiveFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingTrackingActiveFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procoedures with reports that are corrected..
+        /// </summary>
+        internal static string ReportingTrackingCorrectedFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingTrackingCorrectedFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procoedures with reports that are in draft..
+        /// </summary>
+        internal static string ReportingTrackingDraftFoldReportingTrackingDraftFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingTrackingDraftFoldReportingTrackingDraftFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procoedures with reports that are finalized..
+        /// </summary>
+        internal static string ReportingTrackingFinalFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingTrackingFinalFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procoedures with reports that are in preliminary status..
+        /// </summary>
+        internal static string ReportingTrackingPreliminaryFolderDescription {
+            get {
+                return ResourceManager.GetString("ReportingTrackingPreliminaryFolderDescription", resourceCulture);
             }
         }
         
@@ -1871,6 +2159,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         internal static string TranscriptionToBeReviewedFolderDescription {
             get {
                 return ResourceManager.GetString("TranscriptionToBeReviewedFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists reports that need to be transcribed..
+        /// </summary>
+        internal static string TranscriptionToBeTranscribedFolderDescription {
+            get {
+                return ResourceManager.GetString("TranscriptionToBeTranscribedFolderDescription", resourceCulture);
             }
         }
     }

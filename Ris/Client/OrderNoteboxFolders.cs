@@ -39,6 +39,7 @@ namespace ClearCanvas.Ris.Client
 {
 	[ExtensionOf(typeof(OrderNoteboxFolderExtensionPoint))]
 	[FolderPath("Posted to me")]
+	[FolderDescription("OrderNotesPersonalInboxFolderDescription")]
 	internal class PersonalInboxFolder : OrderNoteboxFolder
 	{
 		public PersonalInboxFolder(OrderNoteboxFolderSystem folderSystem)
@@ -49,6 +50,7 @@ namespace ClearCanvas.Ris.Client
 
 	[ExtensionOf(typeof(OrderNoteboxFolderExtensionPoint))]
 	[FolderPath("Posted to my groups")]
+	[FolderDescription("OrderNotesGroupInboxFolderDescription")]
 	internal class GroupInboxFolder : OrderNoteboxFolder
 	{
 		private readonly EntityRef _groupRef;
@@ -59,7 +61,7 @@ namespace ClearCanvas.Ris.Client
 			_groupRef = staffGroup.StaffGroupRef;
 			this.FolderPath = this.FolderPath.Append(new PathSegment(staffGroup.Name, this.ResourceResolver));
 			this.Tooltip = staffGroup.Name;
-            this.IsStatic = false;
+			this.IsStatic = false;
 		}
 
 		public override string Id
@@ -77,6 +79,7 @@ namespace ClearCanvas.Ris.Client
 
 	[ExtensionOf(typeof(OrderNoteboxFolderExtensionPoint))]
 	[FolderPath("Posted by me")]
+	[FolderDescription("OrderNotesSentItemsFolderDescription")]
 	internal class SentItemsFolder : OrderNoteboxFolder
 	{
 		public SentItemsFolder(OrderNoteboxFolderSystem folderSystem)

@@ -40,6 +40,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(RegistrationWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.RegistrationScheduledWorklist)]
 		[FolderPath("Scheduled", true)]
+		[FolderDescription("RegistrationScheduledFolderDescription")]
 		public class ScheduledFolder : RegistrationWorkflowFolder
 		{
 		}
@@ -47,6 +48,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(RegistrationWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.RegistrationCheckedInWorklist)]
 		[FolderPath("Checked In")]
+		[FolderDescription("RegistrationCheckedInFolderDescription")]
 		public class CheckedInFolder : RegistrationWorkflowFolder
 		{
 		}
@@ -54,6 +56,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(RegistrationWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.RegistrationInProgressWorklist)]
 		[FolderPath("In Progress")]
+		[FolderDescription("RegistrationInProgressFolderDescription")]
 		public class InProgressFolder : RegistrationWorkflowFolder
 		{
 		}
@@ -61,6 +64,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(RegistrationWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.RegistrationPerformedWorklist)]
 		[FolderPath("Performed")]
+		[FolderDescription("RegistrationPerformedFolderDescription")]
 		public class PerformedFolder : RegistrationWorkflowFolder
 		{
 		}
@@ -68,6 +72,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(RegistrationWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.RegistrationCancelledWorklist)]
 		[FolderPath("Cancelled")]
+		[FolderDescription("RegistrationCancelledFolderDescription")]
 		public class CancelledFolder : RegistrationWorkflowFolder
 		{
 		}
@@ -75,6 +80,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.RegistrationToBeScheduledWorklist)]
 		[FolderPath("To Be Scheduled")]
+		[FolderDescription("BookingToBeScheduledFolderDescription")]
 		public class ToBeScheduledFolder : RegistrationWorkflowFolder
 		{
 		}
@@ -82,6 +88,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.RegistrationPendingProtocolWorklist)]
 		[FolderPath("Pending Protocol")]
+		[FolderDescription("BookingPendingProtocolFolderDescription")]
 		public class PendingProtocolFolder : RegistrationWorkflowFolder
 		{
 		}
@@ -89,6 +96,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.RegistrationCompletedProtocolWorklist)]
 		[FolderPath("Completed Protocol", true)]
+		[FolderDescription("BookingCompletedProtocolFolderDescription")]
 		public class CompletedProtocolFolder : RegistrationWorkflowFolder
 		{
 		}
@@ -96,6 +104,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.RegistrationRejectedProtocolWorklist)]
 		[FolderPath("Rejected Protocol")]
+		[FolderDescription("BookingRejectedProtocolFolderDescription")]
 		public class RejectedProtocolFolder : RegistrationWorkflowFolder
 		{
 		}

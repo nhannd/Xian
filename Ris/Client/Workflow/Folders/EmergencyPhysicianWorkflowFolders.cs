@@ -39,6 +39,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(EmergencyWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.EmergencyScheduledWorklist)]
 		[FolderPath("Scheduled", true)]
+		[FolderDescription("EmergencyScheduledFolderDescription")]
 		public class ScheduledFolder : EmergencyWorkflowFolder
 		{
 		}
@@ -46,6 +47,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(EmergencyWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.EmergencyInProgressWorklist)]
 		[FolderPath("In Progress", true)]
+		[FolderDescription("EmergencyInProgressFolderDescription")]
 		public class InProgressFolder : EmergencyWorkflowFolder
 		{
 		}
@@ -53,6 +55,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(EmergencyWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.EmergencyPerformedWorklist)]
 		[FolderPath("Performed", true)]
+		[FolderDescription("EmergencyPerformedFolderDescription")]
 		public class PerformedFolder : EmergencyWorkflowFolder
 		{
 		}
@@ -60,6 +63,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[ExtensionOf(typeof(EmergencyWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.EmergencyCancelledWorklist)]
 		[FolderPath("Cancelled", true)]
+		[FolderDescription("EmergencyCancelledFolderDescription")]
 		public class CancelledFolder : EmergencyWorkflowFolder
 		{
 		}
