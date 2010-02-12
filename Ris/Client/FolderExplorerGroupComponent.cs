@@ -476,51 +476,56 @@ namespace ClearCanvas.Ris.Client
 			// create a folder explorer component and a tab page for each folder system
 			foreach (var folderSystem in folderSystems)
 			{
-				var page = CreatePageForFolderSystem(folderSystem);
+				var explorer = new FolderExplorerComponent(folderSystem, this);
+				explorer.Initialized += FolderSystemInitializedEventHandler;
+				explorer.SelectedFolderChanged += OnSelectedFolderChanged;
 
-				_folderExplorerComponents.Add(folderSystem, (FolderExplorerComponent)page.Component);
-				_stackTabComponent.Pages.Add(page);
-
+				folderSystem.SetContext(new FolderSystemContext(this, explorer, _contentComponent));
 				folderSystem.TitleChanged += FolderSystemTitleChangedEventHandler;
 				folderSystem.TitleIconChanged += FolderSystemIconChangedEventHandler;
+
+				var page = CreatePageForFolderExplorer(explorer);
+				_folderExplorerComponents.Add(folderSystem, (FolderExplorerComponent)page.Component);
+				_stackTabComponent.Pages.Add(page);
 			}
 		}
 
 		private void DestroyFolderExplorers()
 		{
 			// disconnect UI from folder-system events
-			foreach (var folderSystem in _folderSystems)
+			foreach (var kvp in _folderExplorerComponents)
 			{
+				var folderSystem = kvp.Key;
+				folderSystem.SetContext(null);  // clear context
 				folderSystem.TitleChanged -= FolderSystemTitleChangedEventHandler;
 				folderSystem.TitleIconChanged -= FolderSystemIconChangedEventHandler;
+
+				var explorer = kvp.Value;
+				explorer.Initialized -= FolderSystemInitializedEventHandler;
+				explorer.SelectedFolderChanged -= OnSelectedFolderChanged;
 			}
+
+			// clear the map
+			_folderExplorerComponents.Clear();
 
 			// remove all the folder explorer component pages from the UI
 			// (this will call Stop on each component)
 			_stackTabComponent.Pages.Clear();
-
-			// clear the map
-			_folderExplorerComponents.Clear();
 		}
 
-		private StackTabPage CreatePageForFolderSystem(IFolderSystem folderSystem)
+		private static StackTabPage CreatePageForFolderExplorer(FolderExplorerComponent explorer)
 		{
-			var explorer = new FolderExplorerComponent(folderSystem, this);
-			folderSystem.SetContext(new FolderSystemContext(this, explorer, _contentComponent));
-			explorer.Initialized += FolderSystemInitializedEventHandler;
-			explorer.SelectedFolderChanged += OnSelectedFolderChanged;
-
-			var thisPage = new StackTabPage(
-				folderSystem.Title,
+			return new StackTabPage(
+				explorer.FolderSystem.Title,
 				explorer,
-				folderSystem.Title,
-				folderSystem.TitleIcon,
-				folderSystem.ResourceResolver);
-
-			// set folder explorers to start immediately, so that they can update the title bar if needed
-			thisPage.LazyStart = false;
-
-			return thisPage;
+				explorer.FolderSystem.Title,
+				explorer.FolderSystem.TitleIcon,
+				explorer.FolderSystem.ResourceResolver)
+					{
+						// set folder explorers to start immediately, 
+						// so that they can update the title bar if needed
+						LazyStart = false
+					};
 		}
 
 		private StackTabPage FindPage(IFolderSystem folderSystem)

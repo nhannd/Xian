@@ -188,6 +188,24 @@ namespace ClearCanvas.Ris.Client
             _itemsTable = itemsTable;
 		}
 
+		public override void StopUpdate()
+		{
+			// Stop all querying tasks.
+			if (_queryItemsTask != null)
+			{
+				_queryItemsTask.Terminated -= OnQueryItemsCompleted;
+				_queryItemsTask.Dispose();
+				_queryItemsTask = null;
+			}
+
+			if (_queryCountTask != null)
+			{
+				_queryCountTask.Terminated -= OnQueryCountCompleted;
+				_queryCountTask.Dispose();
+				_queryCountTask = null;
+			}
+		}
+
 		#region Folder overrides
 
 		/// <summary>

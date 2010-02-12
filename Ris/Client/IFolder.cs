@@ -200,6 +200,11 @@ namespace ClearCanvas.Ris.Client
 		void Update();
 
 		/// <summary>
+		/// Force teh folder to stop updating the contents and/or count of the folder.
+		/// </summary>
+		void StopUpdate();
+
+		/// <summary>
 		/// Opens the folder (i.e. instructs the folder to show its "open" state icon).
 		/// </summary>
 		void OpenFolder();

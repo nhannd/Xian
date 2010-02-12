@@ -260,9 +260,21 @@ namespace ClearCanvas.Ris.Client
 
 		public void SetContext(IFolderSystemContext context)
 		{
-			_context = context;
-			_context.SelectedItemsChanged += SelectedItemsChangedEventHandler;
-			_context.SelectedItemDoubleClicked += SelectedItemDoubleClickedEventHandler;
+			if (_context != null)
+			{
+				// Unsubscribed events assigned to the the previous context 
+				_context.SelectedItemsChanged -= SelectedItemsChangedEventHandler;
+				_context.SelectedItemDoubleClicked -= SelectedItemDoubleClickedEventHandler;
+				_context = null;
+			}
+
+			if (context != null)
+			{
+				// Assign new context
+				_context = context;
+				_context.SelectedItemsChanged += SelectedItemsChangedEventHandler;
+				_context.SelectedItemDoubleClicked += SelectedItemDoubleClickedEventHandler;
+			}
 		}
 
 		public virtual void Initialize()
@@ -641,9 +653,6 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="args"></param>
 		private void SelectedItemsChangedEventHandler(object sender, EventArgs args)
 		{
-			if (_operationEnablementTask == null)
-				return;
-
 			// cancel any previous operation enablement queries
 			_operationEnablementTask.Cancel();
 

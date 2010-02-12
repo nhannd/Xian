@@ -137,7 +137,7 @@ namespace ClearCanvas.Ris.Client
 		#region Methods
 
 		/// <summary>
-		/// Initializes the folder system with a context.
+		/// Initializes the folder system with a context.  Set <see cref="context"/> to null to clear context.
 		/// </summary>
 		/// <param name="context"></param>
 		void SetContext(IFolderSystemContext context);

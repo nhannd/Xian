@@ -201,7 +201,12 @@ namespace ClearCanvas.Ris.Client
 			_folderSystem.FoldersChanged -= FoldersChangedEventHandler;
 			_folderSystem.FoldersInvalidated -= FoldersInvalidatedEventHandler;
 			_folderSystem.FolderPropertiesChanged -= FolderPropertiesChangedEventHandler;
-			_folderSystem.Dispose();
+
+			// Force all the folders within the folder system to stop updating.
+			foreach (var folder in _folderSystem.Folders)
+			{
+				folder.StopUpdate();
+			}
 
 			base.Stop();
 		}

@@ -238,6 +238,11 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		public virtual void StopUpdate()
+		{
+			EndUpdate();
+		}
+
 		public bool IsUpdating
 		{
 			get { return _isUpdating; }
