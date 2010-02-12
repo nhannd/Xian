@@ -82,6 +82,19 @@ namespace ClearCanvas.Ris.Client
 
         public override void Start()
         {
+			// add validation rule to ensure the DateOfBirth is a valid DateTime
+			this.Validation.Add(new ValidationRule("DateOfBirth",
+				delegate
+				{
+					if (string.IsNullOrEmpty(this.DateOfBirth))
+						return new ValidationResult(true, "");
+
+					DateTime dt;
+					return DateTime.TryParseExact(_dateOfBirth, this.DateOfBirthFormat, null, DateTimeStyles.None, out dt)
+						? new ValidationResult(true, "")
+						: new ValidationResult(false, SR.MessageInvalidDateFormat);
+				}));
+
             base.Start();
         }
 
@@ -177,9 +190,8 @@ namespace ClearCanvas.Ris.Client
                 else
                 {
                     DateTime dt;
-                    if (!DateTime.TryParseExact(_dateOfBirth, this.DateOfBirthFormat, null, DateTimeStyles.None, out dt))
-                        throw new Exception(SR.MessageInvalidDateFormat);
-                    _profile.DateOfBirth = dt;
+                    if (DateTime.TryParseExact(_dateOfBirth, this.DateOfBirthFormat, null, DateTimeStyles.None, out dt))
+						_profile.DateOfBirth = dt;
                 }
             }
         }
