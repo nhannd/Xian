@@ -301,7 +301,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 				{
 					string message = String.Format(
 						@"The required test image {0} is missing. " + 
-						@"Please copy the contents of <TrunkPath>\RoiGraphics\Tests\Images " + 
+						@"Please copy the contents of <TrunkPath>\ImageViewer\RoiGraphics\Tests\Images " + 
 						@"to {1} in order to execute these tests.", filename, directoryName);
 
 					Trace.WriteLine(message);

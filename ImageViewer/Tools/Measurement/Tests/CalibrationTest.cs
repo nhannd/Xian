@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement.Tests
 		}
 
 		[Test]
-		public void TestCalibrationAnisotropic43Pixels()
+		public void TestCalibrationAnisotropicPixels4To3()
 		{
 			// shouldn't actually matter whether or not the image was already calibrated
 			foreach (bool uncalibrated in new[] {true, false})
@@ -79,8 +79,25 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement.Tests
 				// calibrates a vertical line
 				TestCalibration("4:3", uncalibrated, new PointF(337, 50), new PointF(337, 75), 10, 0.4, 0.3);
 
-				// calibrates a diagonal line
+				// calibrates a diagonal line [sqrt(133^2+173^2) pixels] to be 80mm (the edge of the triangle).
 				TestCalibration("4:3", uncalibrated, new PointF(33, 225), new PointF(166, 52), 80, 0.4, 0.3);
+			}
+		}
+
+		[Test]
+		public void TestCalibrationAnisotropicPixels3To4()
+		{
+			// shouldn't actually matter whether or not the image was already calibrated
+			foreach (bool uncalibrated in new[] { true, false })
+			{
+				// calibrates a horizontal line
+				TestCalibration("3:4", uncalibrated, new PointF(50, 336), new PointF(75, 336), 10, 0.3, 0.4);
+
+				// calibrates a vertical line
+				TestCalibration("3:4", uncalibrated, new PointF(253, 67), new PointF(253, 100), 10, 0.3, 0.4);
+
+				// calibrates a diagonal line [sqrt(100^2+231^2) pixels] to be 80mm (the edge of the triangle).
+				TestCalibration("3:4", uncalibrated, new PointF(124, 68), new PointF(224, 299), 80, 0.3, 0.4);
 			}
 		}
 
@@ -89,22 +106,34 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement.Tests
 			using (IPresentationImage image = ProtractorRoiTests.GetCalibrationTestImage(pixelShape, uncalibrated))
 			{
 				Trace.WriteLine(string.Format("TEST {0} image with {1} pixels", uncalibrated ? "uncalibrated" : "calibrated", pixelShape));
-				Trace.WriteLine(string.Format("calibrating {0} {1} to {2} mm", pt1, pt2, calibrationValue));
+				Trace.WriteLine(string.Format("calibrating [{0}, {1}] to {2} mm", pt1, pt2, calibrationValue));
 
-				VerticesControlGraphic controlGraphic;
 				PolylineGraphic lineGraphic;
 				IOverlayGraphicsProvider overlayGraphicsProvider = (IOverlayGraphicsProvider) image;
-				overlayGraphicsProvider.OverlayGraphics.Add(controlGraphic = new VerticesControlGraphic(lineGraphic = new PolylineGraphic()));
+				overlayGraphicsProvider.OverlayGraphics.Add(new VerticesControlGraphic(lineGraphic = new PolylineGraphic()));
 				lineGraphic.CoordinateSystem = CoordinateSystem.Source;
 				lineGraphic.Points.Add(pt1);
 				lineGraphic.Points.Add(pt2);
 				lineGraphic.ResetCoordinateSystem();
 
-				CalibrationTool.TestCalibration(calibrationValue, controlGraphic);
+				CalibrationTool.TestCalibration(calibrationValue, lineGraphic);
 
 				IImageSopProvider imageSopProvider = (IImageSopProvider) image;
-				Assert.AreEqual(expectedColSpacing, imageSopProvider.Frame.NormalizedPixelSpacing.Column, 0.05, "Column Spacing appears to be wrong");
-				Assert.AreEqual(expectedRowSpacing, imageSopProvider.Frame.NormalizedPixelSpacing.Row, 0.05, "Row Spacing appears to be wrong");
+
+				Trace.WriteLine(string.Format("Pixel Spacing (Actual)/(Expected): ({0:F4}:{1:F4})/({2:F4}:{3:F4})",
+					imageSopProvider.Frame.NormalizedPixelSpacing.Row, imageSopProvider.Frame.NormalizedPixelSpacing.Column,
+					expectedRowSpacing, expectedColSpacing));
+
+				float percentErrorRow = Math.Abs((float)((imageSopProvider.Frame.NormalizedPixelSpacing.Row - expectedRowSpacing) / expectedRowSpacing * 100F));
+				float percentErrorCol = Math.Abs((float)((imageSopProvider.Frame.NormalizedPixelSpacing.Column - expectedColSpacing) / expectedColSpacing * 100F));
+				
+				Trace.WriteLine(String.Format("Percent Error (Row/Column): {0:F3}%/{1:F3}%", percentErrorRow, percentErrorCol));
+
+				Assert.AreEqual(expectedColSpacing, imageSopProvider.Frame.NormalizedPixelSpacing.Column, 0.005, "Column Spacing appears to be wrong");
+				Assert.AreEqual(expectedRowSpacing, imageSopProvider.Frame.NormalizedPixelSpacing.Row, 0.005, "Row Spacing appears to be wrong");
+
+				Assert.IsTrue(percentErrorCol < 1.5, "Column Spacing appears to be wrong");
+				Assert.IsTrue(percentErrorRow < 1.5, "Row Spacing appears to be wrong");
 			}
 		}
 

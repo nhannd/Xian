@@ -31,10 +31,7 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.RoiGraphics;
@@ -56,62 +53,84 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 		}
 
+		private RoiGraphic RoiGraphic
+		{
+			get { return Context.Graphic as RoiGraphic; }	
+		}
+
+		private IPointsGraphic LineGraphic
+		{
+			get
+			{
+				RoiGraphic graphic = RoiGraphic;
+				if (graphic != null)
+				{
+					IPointsGraphic lineGraphic = graphic.Subject as IPointsGraphic;
+					if (lineGraphic != null && lineGraphic.Points.Count == 2)
+						return lineGraphic;
+				}
+
+				return null;
+			}	
+		}
+
+		private Frame Frame
+		{
+			get
+			{
+				RoiGraphic graphic = RoiGraphic;
+				if (graphic != null)
+				{
+					if (graphic.ParentPresentationImage is IImageSopProvider)
+						return ((IImageSopProvider)graphic.ParentPresentationImage).Frame;
+				}
+
+				return null;
+			}	
+		}
+
+		private bool IsValidGraphic()
+		{
+			return LineGraphic != null && Frame != null;
+		}
+
 		public override void Initialize()
 		{
-			RoiGraphic roiGraphic = this.Context.Graphic as RoiGraphic;
-
-			this.Visible = false;
-
-			// Only allow calibration on linear measurements
-			if (roiGraphic != null)
-			{
-				if (roiGraphic.Roi is IRoiLengthProvider)
-					this.Visible = true;
-			}
-
 			base.Initialize();
+
+			this.Visible = IsValidGraphic();
 		}
 		
 		public void Calibrate()
 		{
-			CalibrationComponent component;
-			
+			if (!Visible)
+				return;
+
 			double length = GetCurrentLength();
 
 			// Show the current length in cm, if it exists
-			if (length > 0)
-				component = new CalibrationComponent(length);
-			else
-				component = new CalibrationComponent();
+			CalibrationComponent component = length > 0 ? new CalibrationComponent(length) : new CalibrationComponent();
 
-			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-				this.Context.DesktopWindow,
-				component, 
-				SR.CalibrationDialogTitle);
-
-			if (exitCode == ApplicationComponentExitCode.None)
+			if (ApplicationComponentExitCode.Accepted != ApplicationComponent.LaunchAsDialog(
+				Context.DesktopWindow, component, SR.CalibrationDialogTitle))
+			{
 				return;
+			}
 
 			double lengthInMm = component.LengthInCm * 10;
-
 			ApplyCalibration(lengthInMm);
 		}
 
 		private double GetCurrentLength()
 		{
-			RoiGraphic roiGraphic = this.Context.Graphic as RoiGraphic;
-			IImageSopProvider image = roiGraphic.ParentPresentationImage as IImageSopProvider;
-
 			Units units = Units.Centimeters;
 
-			IPointsGraphic line = roiGraphic.Subject as IPointsGraphic;
+			IPointsGraphic line = LineGraphic;
 			line.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
-				double length = RoiLengthAnalyzer.CalculateLength(
-					line.Points[0], line.Points[1],
-					image.Frame.NormalizedPixelSpacing,
-					ref units);
+				double length = RoiLengthAnalyzer.CalculateLength(line.Points[0], line.Points[1],
+									Frame.NormalizedPixelSpacing, ref units);
 
 				if (units == Units.Centimeters)
 					return length;
@@ -126,41 +145,38 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		private void ApplyCalibration(double lengthInMm)
 		{
-			ApplyCalibration(lengthInMm, this.Context.Graphic as IControlGraphic, this.Context.DesktopWindow);
+			ApplyCalibration(lengthInMm, LineGraphic, Frame, Context.DesktopWindow);
 		}
 
 		#if	UNIT_TESTS
 
-		internal static void TestCalibration(double lengthInMm, IControlGraphic graphic)
+		internal static void TestCalibration(double lengthInMm, IPointsGraphic graphic)
 		{
-			ApplyCalibration(lengthInMm, graphic, null);
+			Frame frame = ((IImageSopProvider)graphic.ParentPresentationImage).Frame;
+			ApplyCalibration(lengthInMm, graphic, frame, null);
 		}
 
 		#endif
 
-		private static void ApplyCalibration(double lengthInMm, IControlGraphic roiGraphic, IDesktopWindow desktopWindow)
+		private static void ApplyCalibration(double lengthInMm, IPointsGraphic line, Frame frame, IDesktopWindow desktopWindow)
 		{
-			IImageSopProvider image = roiGraphic.ParentPresentationImage as IImageSopProvider;
-
 			double aspectRatio;
 			
-			if (image.Frame.PixelAspectRatio.IsNull)
+			if (frame.PixelAspectRatio.IsNull)
 			{
 				// When there is no aspect ratio tag, the image is displayed with the aspect ratio
 				// of the pixel spacing, so just keep the aspect ratio the same as
 				// what's displayed.  Otherwise, after calibration, a 2cm line drawn horizontally
 				// would be visibly different from a 2cm line drawn vertically.
-				if (!image.Frame.NormalizedPixelSpacing.IsNull)
-					aspectRatio = image.Frame.NormalizedPixelSpacing.Row / image.Frame.NormalizedPixelSpacing.Column;
-				else 
+				if (!frame.NormalizedPixelSpacing.IsNull)
+					aspectRatio = frame.NormalizedPixelSpacing.AspectRatio;
+				else
 					aspectRatio = 1;
 			}
 			else
 			{
-				aspectRatio = (float) image.Frame.PixelAspectRatio.Row/image.Frame.PixelAspectRatio.Column;
+				aspectRatio = frame.PixelAspectRatio.Value;
 			}
-
-			IPointsGraphic line = roiGraphic.Subject as IPointsGraphic;
 
 			line.CoordinateSystem = CoordinateSystem.Source;
 			double widthInPixels = line.Points[1].X - line.Points[0].X;
@@ -183,8 +199,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				out pixelSpacingWidth,
 				out pixelSpacingHeight);
 
-			image.Frame.NormalizedPixelSpacing.Calibrate(pixelSpacingHeight, pixelSpacingWidth);
-			roiGraphic.ParentPresentationImage.Draw();
+			frame.NormalizedPixelSpacing.Calibrate(pixelSpacingHeight, pixelSpacingWidth);
+			line.ParentPresentationImage.Draw();
 		}
 
 		public static void CalculatePixelSpacing(

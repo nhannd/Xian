@@ -47,6 +47,7 @@ using ClearCanvas.ImageViewer.RoiGraphics.Analyzers;
 using ClearCanvas.ImageViewer.RoiGraphics.Tests;
 using ClearCanvas.ImageViewer.StudyManagement;
 using NUnit.Framework;
+using System.Drawing.Imaging;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement.Tests
 {
@@ -89,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement.Tests
 						 new Angle(new PointF(200, 225), new PointF(125, 175), new PointF(50, 225)));
 		}
 
-		[Test(Description = "Control test for measuring angles on images with anisotropic pixels")]
+		[Test(Description = "Control test for measuring angles on images with isotropic pixels")]
 		public void TestAnglesIsotropicPixels()
 		{
 			PointF[] corners = new PointF[] {new PointF(125, 52), new PointF(25, 225), new PointF(225, 225)};
@@ -148,6 +149,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement.Tests
 						Roi roi = CreateRoiFromGraphic((IOverlayGraphicsProvider) image, shapeData);
 						string actualResult = analyzer.Analyze(roi, RoiAnalysisMode.Normal);
 						float actualAngle = float.Parse(RegexAngleMeasurement.Match(actualResult).Groups[1].Value, CultureInfo.InvariantCulture);
+						Trace.WriteLine(String.Format("Actual: {0} degrees, Expected: {1} degrees", actualAngle, expectedAngle));
 						Assert.AreEqual(expectedAngle, actualAngle, 0.5f, "Testing Angle {0}", shapeData); // allow half degree tolerance
 					}
 				}
@@ -157,7 +159,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement.Tests
 					{
 						using (Bitmap bmp = image.DrawToBitmap(256, 256))
 						{
-							bmp.Save(string.Format("{1}-{0}.bmp", key, dumpFilename));
+							bmp.Save(string.Format("{1}-{0}.bmp", key, dumpFilename), ImageFormat.Bmp);
 						}
 					}
 				}

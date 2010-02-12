@@ -72,6 +72,8 @@ namespace ClearCanvas.Dicom.Iod
 			get { return _row == 0 || _column == 0; }
 		}
 
+		//TODO: change this to Vertical/Horizontal, as specified in DICOM PS3.3 C.7.6.3.1.7?
+
 		/// <summary>
 		/// Gets the row (vertical) component of the ratio.
 		/// </summary>
@@ -88,6 +90,24 @@ namespace ClearCanvas.Dicom.Iod
         {
             get { return _column; }
 			protected set { _column = value; }
+		}
+
+		/// <summary>
+		/// Gets the pixel aspect ratio as a floating point value, or zero if <see cref="IsNull"/> is true.
+		/// </summary>
+		/// <remarks>
+		/// The aspect ratio of a pixel is defined as the ratio of it's vertical and horizontal
+		/// size(s), or <see cref="Row"/> divided by <see cref="Column"/>.
+		/// </remarks>
+		public float Value
+		{
+			get
+			{
+				if (IsNull)
+					return 0;
+
+				return Row / (float)Column;
+			}
 		}
 
 		#endregion

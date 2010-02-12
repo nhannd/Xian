@@ -90,6 +90,24 @@ namespace ClearCanvas.Dicom.Iod
 			protected set { _column = value; }
 		}
 
+		/// <summary>
+		/// Gets the pixel aspect ratio as a floating point value, or zero if <see cref="IsNull"/> is true.
+		/// </summary>
+		/// <remarks>
+		/// The aspect ratio of a pixel is defined as the ratio of it's vertical and horizontal
+		/// size(s), or <see cref="Row"/> divided by <see cref="Column"/>.
+		/// </remarks>
+		public double AspectRatio
+		{
+			get
+			{
+				if (IsNull)
+					return 0;
+				
+				return Row / Column;
+			}
+		}
+
 		#endregion
 
 		#region Public Methods
