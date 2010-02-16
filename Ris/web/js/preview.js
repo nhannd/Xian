@@ -1381,20 +1381,34 @@ Preview.SectionContainer = function () {
 		{
 			var cell = row.insertCell();
 			cell.className = className;
-			
-			if (collapsible) {
-				var imageSrc = imagePath + "/";
-				imageSrc += collapsedByDefault ? "Expand.png" : "Collapse.png";
-				title = "<a href='javascript:void(0)' class='collapsibleSectionHeading' onclick='Collapse.toggleCollapsedSection(this)' style='{text-decoration: none; color: white;}'>" +
-				 		"<img src='" + imageSrc + "' border='0' style='{margin-right: 5px; margin-left: -8px; background: #1b4066;}'/>" + text + "</a>";
-				cell.innerHTML = title;
+
+			if (collapsible) 
+			{
+				var expandImageSrc = imagePath + "/" + "Expand.png";
+				var collapseImageSrc = imagePath + "/" + "Collapse.png";
+
+				// Preload the images so the browser will have the necessary images in the browser's cache before the script starts to run
+				if (document.images)
+				{
+					var expandPic = new Image(11,11); 
+					expandPic.src = expandImageSrc;
+
+					var collapsePic = new Image(11,11); 
+					collapsePic.src = collapseImageSrc;
+				}
+
+				cell.innerHTML = 
+					"<a href='javascript:void(0)' class='collapsibleSectionHeading' onclick='Collapse.toggleCollapsedSection(this)' style='{text-decoration: none; color: white;}'>" +
+					"<img src='" + (collapsedByDefault ? expandImageSrc : collapseImageSrc) + 
+					"' border='0' style='{margin-right: 5px; margin-left: -8px; background: #1b4066;}'/>" + text + "</a>";
 			}
-			else {
+			else
+			{
 				cell.innerText = text || "";
 			}
-			
+
 			return cell;
-		};		
+		};
 
 		var content = _createContentContainer(element);
 
