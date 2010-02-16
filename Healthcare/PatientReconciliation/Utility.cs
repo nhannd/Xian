@@ -70,6 +70,26 @@ namespace ClearCanvas.Healthcare.PatientReconciliation
 		}
 
 		/// <summary>
+		/// The specified visit and its associated orders get moved from otherPatient to thisPatient
+		/// </summary>
+		/// <param name="thisPatient"></param>
+		/// <param name="otherPatient"></param>
+		/// <param name="visit"></param>
+		/// <param name="context"></param>
+		static public void MoveVisit(Patient thisPatient, Patient otherPatient, Visit visit, IPersistenceContext context)
+		{
+			var orderCriteria = new OrderSearchCriteria();
+			orderCriteria.Visit.EqualTo(visit);
+			var visitOrders = context.GetBroker<IOrderBroker>().Find(orderCriteria);
+			foreach (var order in visitOrders)
+			{
+				order.Patient = thisPatient;
+			}
+
+			visit.Patient = thisPatient;
+		}
+
+		/// <summary>
 		/// All pertinent data other than the Profiles gets copied from otherPatient to thisPatient
 		/// </summary>
 		/// <param name="thisPatient"></param>

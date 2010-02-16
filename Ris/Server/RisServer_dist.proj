@@ -44,6 +44,9 @@
     <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.1\Castle.DynamicProxy2.dll" />
     <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.1\NHibernate.dll" />
     <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.1\NHibernate.Caches.SysCache.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.1\Antlr3.Runtime.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.1\NHibernate.ByteCode.Castle.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHProf\HibernatingRhinos.Profiler.Appender.dll" />
 
     <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Configuration\bin\$(Configuration)\ClearCanvas.Enterprise.Configuration.dll" />
     <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Configuration\Hibernate\bin\$(Configuration)\ClearCanvas.Enterprise.Configuration.Hibernate.dll" />
