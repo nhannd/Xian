@@ -44,6 +44,17 @@ var Preview = function () {
 	};
 	
 	return {
+		createAlerts: function(containingElement, alertItems, patientName)
+		{
+			if (alertItems)
+			{
+				var alertHtml = "";
+				alertItems.each(function(item) { alertHtml += Preview.getAlertHtml(item, patientName); });
+
+				containingElement.innerHTML = alertHtml;
+			}
+		},
+	
 		getAlertHtml: function(alertItem, patientName)
 		{
 			return "<img class='alert' src='" + imagePath + "/" + _getAlertIcon(alertItem) + "' alt='" + _getAlertTooltip(alertItem, patientName) + "'/>";
@@ -1630,16 +1641,11 @@ Preview.BannerSection = function() {
 		{
 			element.innerHTML = _html;
 
+			//TODO: this seems pretty hokey, having "line1", "line2", "alerts" as identifiers - collisions are likely
 			Field.setValue($("line1"), line1);
 			Field.setValue($("line2"), line2);
-
-			var alertHtml = "";
-			if(alerts)
-			{
-				alerts.each(function(item) { alertHtml += Preview.getAlertHtml(item, patientName); });
-			}
-			$("alerts").innerHTML = alertHtml;
 			
+			Preview.createAlerts($("alerts"), alerts, patientName);
 			Preview.PatientBannner.create(element.parentNode);
 		}
 	};
