@@ -48,7 +48,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private Dictionary<string, Series> _series;
 		private Dictionary<string, Sop> _sops;
 
-		internal StudyTree()
+		/// <summary>
+		/// Creates an instance of <see cref="StudyTree"/>.
+		/// </summary>
+		public StudyTree()
 		{
 			_patients = new PatientCollection();
 			_studies = new Dictionary<string, Study>();
