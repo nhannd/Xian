@@ -34,6 +34,8 @@ using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Mathematics
 {
+	//TODO (cr Feb 2010): class not used.  Delete.
+
 	/// <summary>
 	/// A float based rectangle.
 	/// </summary>

@@ -161,6 +161,8 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <returns>True if the point is defined as within the region of interest; False otherwise.</returns>
 		public override bool Contains(PointF point)
 		{
+			//TODO (cr Feb 2010): use a graphics path, or orthogonal distance to line?  This seems inaccurate.
+
 			PointF topLeft = new PointF((float) Math.Floor(point.X), (float) Math.Floor(point.Y));
 			for (int n = 1; n < _points.Count; n++)
 			{

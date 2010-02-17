@@ -474,6 +474,8 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// <returns>A rectangle of given dimensions centered around the centroid.</returns>
 		public static Rectangle ConvertToRectangle(Point centroid, Size dimensions)
 		{
+			//TODO (cr Feb 2010): would result in incorrect result if width and height are not divisible by 2.  Delete method.
+			//Currently not used by anything other than EditBox control.
 			return Rectangle.Round(ConvertToRectangle((PointF) centroid, dimensions));
 		}
 

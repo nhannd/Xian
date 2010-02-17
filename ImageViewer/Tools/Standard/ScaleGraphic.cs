@@ -38,6 +38,10 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
+	//TODO (cr Feb 2010): This class is difficult to follow the logic and we're certain that it only works
+	//in the horizontal and vertical scale cases, even though it tries to cover the general case of a diagonal line.
+	//There is a more robust and completely general vector-based solution that can be used to replace this code.
+
 	/// <summary>
 	/// Generic scale graphic class.
 	/// </summary>

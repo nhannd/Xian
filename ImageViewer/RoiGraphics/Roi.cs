@@ -167,6 +167,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		{
 			get
 			{
+				//TODO (cr Feb 2010): convert to positive rectangle as a safety precaution.
 				if (_boundingBox.IsEmpty)
 					_boundingBox = ComputeBounds();
 				return _boundingBox;
@@ -253,6 +254,8 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <returns>An enumeration of points.</returns>
 		public IEnumerable<PointF> GetPixelCoordinates()
 		{
+			//TODO (cr Feb 2010): should actually be RoundInflate intersected with Image Bounds.
+
 			Rectangle bounds = Rectangle.Round(this.BoundingBox);
 			for (int x = bounds.Left; x < bounds.Right; x++)
 			{
@@ -274,6 +277,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			if (this.PixelData == null)
 				yield break;
 
+			//TODO (cr Feb 2010): should actually be RoundInflate intersected with Image Bounds.
 			Rectangle bounds = Rectangle.Round(this.BoundingBox);
 			for (int x = bounds.Left; x < bounds.Right; x++)
 			{
@@ -302,6 +306,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			if (lut == null)
 				lut = new IdentityLut();
 
+			//TODO (cr Feb 2010): should actually be RoundInflate intersected with Image Bounds.
 			Rectangle bounds = Rectangle.Round(this.BoundingBox);
 			for (int x = bounds.Left; x < bounds.Right; x++)
 			{

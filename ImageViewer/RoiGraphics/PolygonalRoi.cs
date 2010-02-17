@@ -45,6 +45,8 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		private readonly PolygonF _polygon;
 		private Units _units;
 
+		//TODO (cr Feb 2010): public constructor and we don't do same checks as in other one.
+
 		/// <summary>
 		/// Constructs a new polygonal region of interest.
 		/// </summary>
@@ -63,6 +65,8 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		public PolygonalRoi(IPointsGraphic polygon)
 			: base(polygon.ParentPresentationImage)
 		{
+			//TODO (cr Feb 2010): Just check Count > 3?
+
 			if (!FloatComparer.AreEqual(polygon.Points[0], polygon.Points[polygon.Points.Count-1]))
 				throw new ArgumentException("Supplied graphic must be a closed polygon.", "polygon");
 

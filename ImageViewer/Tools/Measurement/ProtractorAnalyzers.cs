@@ -48,6 +48,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			set { }
 		}
 
+		//TODO (cr Feb 2010): All the analysis should really be done in the ProtractorRoiInfo.
 		public string Analyze(ProtractorRoiInfo roiInfo, RoiAnalysisMode mode)
 		{
 			// Don't show the callout until the second ray is drawn

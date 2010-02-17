@@ -146,6 +146,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		{
 			get
 			{
+				//TODO (cr Feb 2010): property is not used, but should we be caching this here?
 				if (_roi == null)
 					_roi = base.Subject.GetRoi();
 

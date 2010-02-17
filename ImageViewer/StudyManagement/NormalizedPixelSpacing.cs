@@ -35,6 +35,9 @@ using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	//TODO (cr Feb 2010): There are no unit tests for this, but our confidence level is high
+	//based on the proven accuracy of the sync tools and MPR, which are all based on this.
+
 	/// <summary>
 	/// The pixel spacing appropriate to the modality.
 	/// </summary>

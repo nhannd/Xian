@@ -126,7 +126,6 @@
     <Compile Include="MeasurementTool.cs" />
     <Compile Include="PolygonalRoiTool.cs" />
     <Compile Include="EllipticalRoiTool.cs" />
-    <Compile Include="Formula.cs" />
     <Compile Include="PolygonalRoiCalloutLocationStrategy.cs" />
     <Compile Include="ProtractorAnalyzers.cs" />
     <Compile Include="ProtractorGraphic.cs" />

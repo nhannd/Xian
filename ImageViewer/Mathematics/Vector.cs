@@ -116,6 +116,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return new PointF(x, y);
 		}
 
+		//TODO (cr Feb 2010): Delete this, as it's inaccurate - if you want this, then do the rounding.
 		/// <summary>
 		/// Finds the midpoint between two points.
 		/// </summary>
@@ -150,6 +151,10 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			double magnitude = Math.Sqrt(deltaX*deltaX + deltaY*deltaY);
 			return new PointF((float)(deltaX / magnitude), (float)(deltaY / magnitude));
 		}
+
+		//TODO (cr Feb 2010): Although we are pretty confident in this code, since
+		//it's been in use for a long time without change, there are no unit tests.
+		//The code is used in the Polygon, Linear and Protractor calculations, as well as the scale graphic.
 
 		/// <summary>
 		/// Calculates the shortest distance from a point to a line segment.
