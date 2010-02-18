@@ -1179,6 +1179,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There is not enough of the selected image visible to match the scale..
+        /// </summary>
+        internal static string MessageNotEnoughImageVisible {
+            get {
+                return ResourceManager.GetString("MessageNotEnoughImageVisible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please Select an item to delete..
         /// </summary>
         internal static string MessagePleaseSelectAnItemToDelete {

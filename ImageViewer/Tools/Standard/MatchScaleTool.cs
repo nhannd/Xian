@@ -62,11 +62,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		#region Private Properties
 
-		private IImageBox ReferenceImageBox
-		{
-			get { return base.ImageViewer.SelectedImageBox; }
-		}
-
 		private IPresentationImage ReferenceImage
 		{
 			get { return base.ImageViewer.SelectedPresentationImage; }
@@ -82,8 +77,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				return;
 
 			CalculateReferenceDisplayValues();
+			if (Math.Abs(_referenceDisplayRectangle.Width) < 50)
+			{
+				Context.DesktopWindow.ShowMessageBox(SR.MessageNotEnoughImageVisible, MessageBoxActions.Ok);
+				return;
+			}
 
-			DrawableUndoableOperationCommand<IPresentationImage> historyCommand = new DrawableUndoableOperationCommand<IPresentationImage>(this, GetAllImages());
+			var historyCommand = new DrawableUndoableOperationCommand<IPresentationImage>(this, GetAllImages());
 			historyCommand.Execute();
 			if (historyCommand.Count > 0)
 			{
@@ -120,29 +120,22 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public void Apply(IPresentationImage image)
 		{
+			if (image == ReferenceImage)
+				return;
+
+			//Turn off scale to fit and start with scale=1, then adjust it.
+			//We do this because images that have been "scaled to fit", but have not been shown yet,
+			//have no client rectangle and their scale is often very small.  This is safer
+			//and could produce a more accurate result.
 			ImageSpatialTransform matchTransform = GetImageTransform(image);
+			matchTransform.ScaleToFit = false;
+			matchTransform.Scale = 1;
 
-			if (image.ParentDisplaySet.ImageBox == ReferenceImageBox)
-			{
-				// this is the reference image box, so we just want to turn off 'scale to fit'
-				// and set the scale to be the same as the reference image.
-				ImageSpatialTransform referenceTransform = GetImageTransform(ReferenceImage);
-				matchTransform.ScaleToFit = false;
-				matchTransform.Scale = referenceTransform.Scale;
-			}
-			else
-			{
-				//get the displayed width (in mm) for the same size display rectangle in the image to be matched.
-				float matchDisplayedWidth = GetDisplayedWidth(image, _referenceDisplayRectangle);
+			//get the displayed width (in mm) for the same size display rectangle in the image to be matched.
+			float matchDisplayedWidth = GetDisplayedWidth(image, _referenceDisplayRectangle);
+			float rescaleAmount = matchDisplayedWidth / _referenceDisplayedWidth;
 
-				float rescaleAmount = matchDisplayedWidth/_referenceDisplayedWidth;
-				matchTransform.ScaleToFit = false;
-
-				if (FloatComparer.AreEqual(rescaleAmount, 1.0F))
-					return;
-
-				matchTransform.Scale *= rescaleAmount;
-			}
+			matchTransform.Scale *= rescaleAmount;
 		}
 
 		#endregion
@@ -171,13 +164,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			ImageSpatialTransform transform = GetImageTransform(presentationImage);
 			Frame frame = GetFrame(presentationImage);
 
-			float effectivePixelSizeX = (float)frame.NormalizedPixelSpacing.Column / transform.Scale;
-			float effectivePixelSizeY = (float)frame.NormalizedPixelSpacing.Row / transform.Scale;
+			//Convert the displayed width to source dimensions
+			SizeF sourceSize = transform.ConvertToSource(new SizeF(referenceDisplayedRectangle.Width, 0));
+			float x = Math.Abs(sourceSize.Width);
+			float y = Math.Abs(sourceSize.Height);
 
-			if (transform.RotationXY == 90 || transform.RotationXY == 270)
-				return Math.Abs(referenceDisplayedRectangle.Width * effectivePixelSizeY / 10);
-			else
-				return Math.Abs(referenceDisplayedRectangle.Width * effectivePixelSizeX / 10);
+			//The displayed width is the magnitude of the line in source coordinates,
+			//but one of xLength or yLength will always be zero, so we can optimize.
+			if (x > y)
+				return x * (float)frame.NormalizedPixelSpacing.Column;
+			
+			return y * (float)frame.NormalizedPixelSpacing.Row;
 		}
 
 		private static ImageSpatialTransform GetImageTransform(IPresentationImage image)

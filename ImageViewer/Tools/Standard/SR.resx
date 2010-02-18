@@ -759,4 +759,7 @@ Please check the log for more details.</value>
   <data name="TooltipDeleteAllAnnotations" xml:space="preserve">
     <value>Delete All Annotations</value>
   </data>
+  <data name="MessageNotEnoughImageVisible" xml:space="preserve">
+    <value>There is not enough of the selected image visible to match the scale.</value>
+  </data>
 </root>
