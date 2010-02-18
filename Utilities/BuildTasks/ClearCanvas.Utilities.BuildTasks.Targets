@@ -9,4 +9,5 @@
   <UsingTask AssemblyFile="$(ClearCanvasTasksDll)" TaskName="ClearCanvas.Utilities.BuildTasks.NUnitLogParser"/>
   <UsingTask AssemblyFile="$(ClearCanvasTasksDll)" TaskName="ClearCanvas.Utilities.BuildTasks.FileReplaceText"/>
   <UsingTask AssemblyFile="$(ClearCanvasTasksDll)" TaskName="ClearCanvas.Utilities.BuildTasks.CombineAppConfigs"/>
+  <UsingTask AssemblyFile="$(ClearCanvasTasksDll)" TaskName="ClearCanvas.Utilities.BuildTasks.XmlFileRemoveNodes"/>
 </Project>
