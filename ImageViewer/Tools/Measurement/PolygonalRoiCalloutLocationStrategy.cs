@@ -39,7 +39,7 @@ using ClearCanvas.ImageViewer.Mathematics;
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
 	[Cloneable(true)]
-	internal class PolygonalRoiCalloutLocationStrategy : AnnotationCalloutLocationStrategy
+	public class PolygonalRoiCalloutLocationStrategy : AnnotationCalloutLocationStrategy
 	{
 		private bool _initialLocationSet;
 

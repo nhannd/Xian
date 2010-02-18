@@ -75,21 +75,29 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			RectangleF destinationRectangle = transform.ConvertToDestination(sourceRectangle);
 			destinationRectangle = RectangleUtilities.Intersect(destinationRectangle, presentationImage.ClientRectangle);
 
-			float effectivePixelSizeX = (float)frame.NormalizedPixelSpacing.Column / transform.Scale;
-			float effectivePixelSizeY = (float)frame.NormalizedPixelSpacing.Row / transform.Scale;
+			//Convert the displayed width and height to source dimensions
+			SizeF widthInSource = transform.ConvertToSource(new SizeF(destinationRectangle.Width, 0));
+			SizeF heightInSource = transform.ConvertToSource(new SizeF(0, destinationRectangle.Height));
 
-			double displayedFieldOfViewX;
-			double displayedFieldOfViewY;
+			//The displayed FOV is given by the magnitude of each line in source coordinates, but
+			//for each of the 2 lines, one of x or y will be zero, so we can optimize.
 
-			if (transform.RotationXY == 90 || transform.RotationXY == 270)
+			float x1 = Math.Abs(widthInSource.Width);
+			float y1 = Math.Abs(widthInSource.Height);
+			float x2 = Math.Abs(heightInSource.Width);
+			float y2 = Math.Abs(heightInSource.Height);
+
+			double displayedFieldOfViewX, displayedFieldOfViewY;
+
+			if (x1 > y1) //the image is not rotated
 			{
-				displayedFieldOfViewX = Math.Abs(destinationRectangle.Height * effectivePixelSizeX / 10);
-				displayedFieldOfViewY = Math.Abs(destinationRectangle.Width * effectivePixelSizeY / 10);
+				displayedFieldOfViewX = x1 * normalizedPixelSpacing.Column / 10;
+				displayedFieldOfViewY = y2 * normalizedPixelSpacing.Row / 10;
 			}
-			else
+			else //the image is rotated by 90 or 270 degrees
 			{
-				displayedFieldOfViewX = Math.Abs(destinationRectangle.Width * effectivePixelSizeX / 10);
-				displayedFieldOfViewY = Math.Abs(destinationRectangle.Height * effectivePixelSizeY / 10);
+				displayedFieldOfViewX = x2 * normalizedPixelSpacing.Column / 10;
+				displayedFieldOfViewY = y1 * normalizedPixelSpacing.Row / 10;
 			}
 
 			return String.Format("{0:F1} x {1:F1} cm", displayedFieldOfViewX, displayedFieldOfViewY);

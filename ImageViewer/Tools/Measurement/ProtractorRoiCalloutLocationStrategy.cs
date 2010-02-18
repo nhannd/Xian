@@ -39,7 +39,7 @@ using Matrix=System.Drawing.Drawing2D.Matrix;
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
 	[Cloneable(true)]
-	internal class ProtractorRoiCalloutLocationStrategy : AnnotationCalloutLocationStrategy
+	public class ProtractorRoiCalloutLocationStrategy : AnnotationCalloutLocationStrategy
 	{
 		private bool _firstCalculation;
 		private PointF _lastVertexLocationSource;
