@@ -1168,6 +1168,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Indication: {0}.
+        /// </summary>
+        internal static string FormatIndication {
+            get {
+                return ResourceManager.GetString("FormatIndication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} Ordered by {1}, Facility: {2}.
         /// </summary>
         internal static string FormatMoreInfo {

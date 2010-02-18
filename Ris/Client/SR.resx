@@ -963,4 +963,10 @@
   <data name="MessageValidUntilMustBeLaterOrEqualValidFrom" xml:space="preserve">
     <value>Valid until must be later than or equal to valid from.</value>
   </data>
+  <data name="ColumnMoreInfo" xml:space="preserve">
+    <value>More Info</value>
+  </data>
+  <data name="FormatIndication" xml:space="preserve">
+    <value>Indication: {0}</value>
+  </data>
 </root>

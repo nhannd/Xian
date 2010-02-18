@@ -40,8 +40,8 @@ namespace ClearCanvas.Ris.Client
 		public OrderListTable()
 			: base(3)
 		{
-			this.Columns.Add(new DateTimeTableColumn<OrderListItem>(SR.ColumnCreatedOn, order => order.EnteredTime, 0.5f));
-			this.Columns.Add(new DateTimeTableColumn<OrderListItem>(SR.ColumnScheduledFor, order => order.OrderScheduledStartTime, 0.5f));
+			this.Columns.Add(new DateTableColumn<OrderListItem>(SR.ColumnCreatedOn, order => order.EnteredTime, 0.5f));
+			this.Columns.Add(new DateTimeTableColumn<OrderListItem>(SR.ColumnScheduledFor, order => order.OrderScheduledStartTime, 0.75f));
 			this.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnImagingService, order => order.DiagnosticService.Name, 1.5f));
 
 			this.Columns.Add(new TableColumn<OrderListItem, string>(
@@ -59,17 +59,7 @@ namespace ClearCanvas.Ris.Client
 					order.OrderingFacility.Code),
 				1));
 
-			this.Columns.Add(new TableColumn<OrderListItem, string>("Indication", order => string.Format("Indication: {0}", order.ReasonForStudy), 2));
-
-			//this.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnAccessionNumber,
-			//    delegate(OrderListItem order) { return AccessionFormat.Format(order.AccessionNumber); }));
-			//this.Columns.Add(new TableColumn<OrderListItem, string>("Ordering Facility",
-			//    delegate(OrderListItem order) { return order.OrderingFacility.Name; }));
-			//this.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnPriority,
-			//    delegate(OrderListItem order) { return order.OrderPriority.Value; }));
-
-			//this.Columns.Add(new DateTimeTableColumn<OrderListItem>(SR.ColumnCreatedOn,
-			//    delegate(OrderListItem order) { return order.EnteredTime; }));
+			this.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnIndication, order => string.Format(SR.FormatIndication, order.ReasonForStudy), 2));
 		}
 	}
 }
