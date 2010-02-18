@@ -82,8 +82,7 @@
 					Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail);
 					Preview.ProceduresTable.create($("proceduresSection"), orderDetail.Procedures);
 
-					// select CT and MRI procedures
-					var filteredProcedures = Preview.filterProcedureByModality(orderDetail.Procedures, ["10003", "10004"]);
+						var filteredProcedures = orderDetail.Procedures; // do not filter based on CT or MRI in public release
 					var notes = orderDetail.Notes.select(function(note) { return note.Category == "Protocol"; });
 					Preview.ProtocolProceduresTable.create($("protocolProceduresSection"), filteredProcedures, notes);
 

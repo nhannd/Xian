@@ -212,10 +212,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 			Platform.GetService<IPatientReconciliationService>(service =>
 			{
 				// get the full list of all the profiles that will be reconciled if this operation is carried out
-				var indirectlyReconciledProfiles = service.ListProfilesForPatients(
-					new ListProfilesForPatientsRequest(checkedPatients)).Profiles;
+					var indirectlyReconciledProfiles = service.ListProfilesForPatients(new ListProfilesForPatientsRequest(checkedPatients)).Profiles;
 
-				// confirmation
+					// confirmation
 				var confirmComponent = new ReconciliationConfirmComponent(_targetProfiles, indirectlyReconciledProfiles);
 				var confirmExitCode = ApplicationComponent.LaunchAsDialog(
 					this.Host.DesktopWindow, confirmComponent, SR.TitleConfirmReconciliation);

@@ -5,7 +5,7 @@ html {
 body {
 	font-family: Arial;
 	background: #ffffff;
-	margin: 10px 0px 10px 5px;
+	margin: 10px 5px 10px 5px;
 }
 
 div#readOnlyHeader {
@@ -37,9 +37,8 @@ table td {
 }
 
 div.addDeleteButtons {
-	margin-left:1em;
-	margin-top:1em;
-	margin-bottom:-0.25em;
+	margin-top:0.5em;
+	margin-bottom:0.25em;
 }
 
 .tableheading {
@@ -93,10 +92,10 @@ div.addDeleteButtons {
 	padding-left: 0.15em;
 
 	/* the combination of padding-top and border-bottom works
-			* to create spacing uniformly when sections are stacked
-			* on top of one another. Having a top border will not work
-			* since the padding occurs betwen the text and the border
-			*/
+	 * to create spacing uniformly when sections are stacked
+	 * on top of one another. Having a top border will not work
+	 * since the padding occurs betwen the text and the border
+	 */
 	margin-top: 1em;
 	border-bottom: thin solid #A8D8F4;
 	/* border-top: thin solid #A8D8F4; */
@@ -111,8 +110,14 @@ a.sectionheading  {
 }
 
 .subsectionheading {
-	padding-left:1em;
+	font-size: 95%;
 	border-bottom: 2px solid #A8D8F4;
+	border-bottom: 1px;
+}
+
+.subsectionheading, .subsection {
+	margin-left:2em;
+	margin-right:2em;
 }
 
 .pageheading {
@@ -157,7 +162,7 @@ a.sectionheading  {
 .PatientDemographicsTable
 {
 	margin: 7px 0px 0px 0px;
-	border: solid 1px #BBBBBB;		
+	border: solid 1px #BBBBBB;
 	background: #eef5f8 url(../images/PatientDemographicsBackground.png) repeat-x top;
 }
 
@@ -459,9 +464,9 @@ div.reportPreview {
 
 .ContentContainer
 {
-	border-left: solid 3px #bbbbbb; 
-	border-bottom: solid 3px #bbbbbb; 
-	border-right: solid 3px #bbbbbb; 	
+	border-left: solid 3px #bbbbbb;
+	border-bottom: solid 3px #bbbbbb;
+	border-right: solid 3px #bbbbbb;
 	background: white; 
 	padding: 1px 0px 0px 0px;
 }
@@ -638,8 +643,8 @@ a:active {
 
 .ConversationNoteMessage
 {
-	border: solid 1px #58acdb; 
-	padding: 5px 10px 5px 10px; 
+	border: solid 1px #58acdb;
+	padding: 5px 10px 5px 10px;
 	background: #ffffff url(../images/ConversationNoteBackground.png) repeat-x top;
 }
 
@@ -654,22 +659,22 @@ a:active {
 
 .orderNoteHeading td
 {
-	padding-bottom: 3px; 
+	padding-bottom: 3px;
 	padding-top: 3px;
 }
 
 .orderNoteLabel
 {
-	 font-weight: bold; 
+	 font-weight: bold;
 	 color: #336699;
 }
 
 .orderNote
 {
-	text-align:justify; 
-	padding-bottom: 5px; 
-	padding-top: 5px; 	
-	border-top: dashed 1px #AACCEE; 
+	text-align:justify;
+	padding-bottom: 5px;
+	padding-top: 5px;
+	border-top: dashed 1px #AACCEE;
 }
 
 .urgentTextMark

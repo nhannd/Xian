@@ -133,8 +133,6 @@ namespace ClearCanvas.Ris.Client
 							? formData.HealthcardAssigningAuthorityChoices[0]
 							: null;
 						_profile.Sex = formData.SexChoices[0];
-						_profile.Religion = formData.ReligionChoices[0];
-						_profile.PrimaryLanguage = formData.PrimaryLanguageChoices[0];
 						_profile.DateOfBirth = Platform.Time.Date;
 					}
 					else

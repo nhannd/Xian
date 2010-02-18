@@ -3,23 +3,17 @@
 	<head>
 		<title>Prior Report Preview</title>
 		<link href="../css/default.css" rel="stylesheet" type="text/css" />
-		<link href="../css/tabs.css" rel="stylesheet" type="text/css" />
-		<link href="../css/structuredreport.css" rel="stylesheet" type="text/css" />
 		<script type="text/javascript" src="../js/jsx.js"></script>
 		<script type="text/javascript" src="../js/jsml.js"></script>
 		<script type="text/javascript" src="../js/ui.js"></script>
 		<script type="text/javascript" src="../js/ris.js"></script>
 		<script type="text/javascript" src="../js/preview.js"></script>
-		<script type="text/javascript" src="../js/layout.js"></script>
-		<script type="text/javascript" src="../js/structuredreportsummary.js"></script>
 		<script type="text/javascript" >
 			var errorProvider = new ErrorProvider();
 			var imagePath = "../images";
 
 			function onBodyLoad()
 			{
-				scaleWidth();
-
 				if(!Ris)
 					return;
 
@@ -50,7 +44,11 @@
 					Preview.ReportPreview.create($("reportSection"), report);
 
 					var orderDetail = data.GetOrderDetailResponse.Order;
-					Preview.OrderNotesTable.create($("notesSection"), orderDetail.Notes, Preview.OrderNotesTable.defaultSubsections);
+					var notes = orderDetail.Notes.select(function(note) { return note.Category == "PrelimDiagnosis"; });
+					Preview.OrderNotesTable.create($("prelimDiagnosisNotesSection"), notes, "Preliminary Diagnosis", false);
+
+					notes = orderDetail.Notes.select(function(note) { return note.Category == "General"; });
+					Preview.OrderNotesTable.create($("generalNotesSection"), notes, "Order Notes", true);
 				}
 				catch(e)
 				{
@@ -62,7 +60,8 @@
 	</head>
 	<body onload="javascript: onBodyLoad()">
 		<form id="myForm">
-			<div id="notesSection"></div>
+			<div id="prelimDiagnosisNotesSection"></div>
+			<div id="generalNotesSection"></div>
 			<div id="reportSection"></div>
 		</form>
 	</body>

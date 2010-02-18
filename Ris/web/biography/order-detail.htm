@@ -64,8 +64,17 @@
 					Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail, { ShowEnterCancelByStaff: true, Alerts: orderAlerts, ShowOrderingPhysicianContactPointDetails: true });
 					Preview.OrderedProceduresTable.create($("orderedProceduresSection"), orderDetail.Procedures);
 
+<<<<<<< .working
 					var notes = orderDetail.Notes.select(function(note) { return note.Category == "PrelimDiagnosis"; });
 					Preview.OrderNotesTable.create($("prelimDiagnosisNotesSection"), notes, "Preliminary Diagnosis", false);
+=======
+						var filteredProcedures = orderDetail.Procedures; // do not filter based on CT or MRI in public release
+						var notes = orderDetail.Notes.select(function(note) { return note.Category == "Protocol"; });
+						Preview.ProtocolProceduresTable.create($("protocolProceduresSection"), filteredProcedures, notes);
+
+						var notes = orderDetail.Notes.select(function(note) { return note.Category == "PrelimDiagnosis"; });
+						Preview.OrderNotesTable.create($("prelimDiagnosisNotesSection"), notes, "Preliminary Diagnosis", false);
+>>>>>>> .merge-right.r12054
 
 					notes = orderDetail.Notes.select(function(note) { return note.Category == "General"; });
 					Preview.OrderNotesTable.create($("generalNotesSection"), notes, "Order Notes", false);
@@ -85,6 +94,7 @@
 			<div id="orderDetailsSection">
 				<div id="imagingServiceSection"></div>
 				<div id="orderedProceduresSection"></div>
+				<div id="protocolProceduresSection"></div>
 				<div id="prelimDiagnosisNotesSection"></div>
 				<div id="generalNotesSection"></div>
 				<div id="protocolNotesSection"></div>

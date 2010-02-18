@@ -48,6 +48,7 @@
 				};
 			}
 
+<<<<<<< .working
 			function OnPatientDataLoaded(data)
 			{
 				if (data == null || data.length == 0)
@@ -55,6 +56,11 @@
 					Field.setValue($("myForm"), "");
 					return;
 				}
+=======
+						var filteredProcedures = orderDetail.Procedures; // do not filter based on CT or MRI in public release
+						var notes = orderDetail.Notes.select(function(note) { return note.Category == "Protocol"; });
+						Preview.ProtocolProceduresTable.create($("protocolProceduresSection"), filteredProcedures, notes);
+>>>>>>> .merge-right.r12054
 
 				var orderDetail = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.Order : null;
 				if (orderDetail)

@@ -104,6 +104,31 @@ namespace ClearCanvas.Ris.Client
 		#region Public API
 
 		/// <summary>
+		/// Create a temporary file associated with the specified key.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="fileExtension"></param>
+		/// <param name="timeToLive"></param>
+		/// <returns>The path of the file.</returns>
+		public string CreateFile(EntityRef key, string fileExtension, TimeSpan timeToLive)
+		{
+			// create a temp file on disk to store the data
+			// the OS always returns a file with the .tmp extension, so we rename it to the specified extension
+			string tmpFile = System.IO.Path.GetTempFileName();
+			string file = tmpFile.Replace(".tmp", "." + fileExtension);
+			File.Move(tmpFile, file);
+
+			// lock while we update the map
+			lock (_syncObj)
+			{
+				// add entry for this file
+				_entryMap.Add(key, new Entry(file, timeToLive));
+				Platform.Log(LogLevel.Debug, "TempFileManager: created file {0}", file);
+				return file;
+			}
+		}
+
+		/// <summary>
 		/// Creates a temporary file associated with the specified key, and containing the specified data.
 		/// </summary>
 		/// <param name="key"></param>

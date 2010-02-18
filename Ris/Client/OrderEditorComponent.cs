@@ -184,6 +184,7 @@ namespace ClearCanvas.Ris.Client
 		#region Private fields
 
 		private readonly Mode _mode;
+		private bool _isComplete;
 		private EntityRef _patientRef;
 		private readonly EntityRef _profileRef;
 		private EntityRef _orderRef;
@@ -437,6 +438,7 @@ namespace ClearCanvas.Ris.Client
 
 						// update form
 						UpdateFromRequisition(response.Requisition);
+						_isComplete = response.IsCompleted;
 					});
 
 				// bug #3506: in replace mode, overwrite the procedures with clean one(s) based on diagnostic service
@@ -477,6 +479,11 @@ namespace ClearCanvas.Ris.Client
 		#endregion
 
 		#region Presentation Model
+
+		public bool OrderIsNotCompleted
+		{
+			get { return _mode != Mode.ModifyOrder || _isComplete == false; }
+		}
 
 		public int BannerHeight
 		{

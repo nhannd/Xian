@@ -918,8 +918,8 @@
   <data name="MessageCheckInUnscheduledProcedure" xml:space="preserve">
     <value>The procedure has not been scheduled.</value>
   </data>
-  <data name="ColumnMoreInfo" xml:space="preserve">
-    <value>More Info</value>
+  <data name="ColumnIndication" xml:space="preserve">
+    <value>Indication</value>
   </data>
   <data name="ColumnScheduledFor" xml:space="preserve">
     <value>Scheduled For</value>
@@ -944,5 +944,23 @@
   </data>
   <data name="OrderNotesSentItemsFolderDescription" xml:space="preserve">
     <value>List notes sent by me that are still unacknowledged.</value>
+  </data>
+  <data name="ColumnValidFrom" xml:space="preserve">
+    <value>Valid From</value>
+  </data>
+  <data name="ColumnValidUntil" xml:space="preserve">
+    <value>Valid Until</value>
+  </data>
+  <data name="MessageInvalidExpiryDate" xml:space="preserve">
+    <value>Expiry date cannot be in the past.</value>
+  </data>
+  <data name="MessageDateOfDeathMustBeLaterThanOrEqualToDateOfBirth" xml:space="preserve">
+    <value>Date of death must be later than or equal to date of birth.</value>
+  </data>
+  <data name="MessageDischargeTimeMustBeLaterThanOrEqualToAdmitTime" xml:space="preserve">
+    <value>Discharge time must be later than or equal to admit time.</value>
+  </data>
+  <data name="MessageValidUntilMustBeLaterOrEqualValidFrom" xml:space="preserve">
+    <value>Valid until must be later than or equal to valid from.</value>
   </data>
 </root>

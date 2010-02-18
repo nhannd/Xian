@@ -30,21 +30,18 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text;
+using System.Globalization;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Client;
-using System.Collections;
 using ClearCanvas.Desktop.Validation;
-using System.Globalization;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-    [ExtensionPoint()]
+	[ExtensionPoint]
     public class PatientEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
@@ -53,11 +50,11 @@ namespace ClearCanvas.Ris.Client
     public class PatientProfileDetailsEditorComponent : ApplicationComponent
     {
         private PatientProfileDetail _profile;
-        private List<EnumValueInfo> _sexChoices;
+		private readonly List<EnumValueInfo> _sexChoices;
 
         private string _dateOfBirth;
-        private List<EnumValueInfo> _mrnAuthorityChoices;
-        private List<EnumValueInfo> _healthcardAuthorityChoices;
+		private readonly List<EnumValueInfo> _mrnAuthorityChoices;
+		private readonly List<EnumValueInfo> _healthcardAuthorityChoices;
 
         public PatientProfileDetailsEditorComponent(List<EnumValueInfo> sexChoices, List<EnumValueInfo> mrnAuthorityChoices, List<EnumValueInfo> healthcardAuthorityChoices)
         {
@@ -82,6 +79,17 @@ namespace ClearCanvas.Ris.Client
 
         public override void Start()
         {
+			this.Validation.Add(new ValidationRule("TimeOfDeath",
+				delegate
+				{
+					// only need to validate the if Date of Birth and Time of Death are specified
+					if (!_profile.DateOfBirth.HasValue || !_profile.TimeOfDeath.HasValue)
+						return new ValidationResult(true, "");
+
+					var ok = DateTime.Compare(_profile.TimeOfDeath.Value, _profile.DateOfBirth.Value) >= 0;
+					return new ValidationResult(ok, SR.MessageDateOfDeathMustBeLaterThanOrEqualToDateOfBirth);
+				}));
+
 			// add validation rule to ensure the DateOfBirth is a valid DateTime
 			this.Validation.Add(new ValidationRule("DateOfBirth",
 				delegate

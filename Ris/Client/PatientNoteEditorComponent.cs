@@ -30,142 +30,148 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Desktop.Validation;
-using System.Collections;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-    [ExtensionPoint]
-    public class PatientNoteEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	[ExtensionPoint]
+	public class PatientNoteEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    [AssociateView(typeof(PatientNoteEditorComponentViewExtensionPoint))]
-    public class PatientNoteEditorComponent : ApplicationComponent
-    {
-        private readonly PatientNoteDetail _note;
-        private readonly List<PatientNoteCategorySummary> _noteCategoryChoices;
+	[AssociateView(typeof(PatientNoteEditorComponentViewExtensionPoint))]
+	public class PatientNoteEditorComponent : ApplicationComponent
+	{
+		private readonly bool _isReadOnly;
+		private readonly PatientNoteDetail _note;
+		private readonly List<PatientNoteCategorySummary> _noteCategoryChoices;
 
-        public PatientNoteEditorComponent(PatientNoteDetail noteDetail, List<PatientNoteCategorySummary> noteCategoryChoices)
-        {
-            _note = noteDetail;
-            _noteCategoryChoices = noteCategoryChoices;
+		public PatientNoteEditorComponent(PatientNoteDetail noteDetail, List<PatientNoteCategorySummary> noteCategoryChoices)
+			: this(noteDetail, noteCategoryChoices, false)
+		{
+		}
 
-            this.Validation.Add(new ValidationRule("ExpiryDate",
-                delegate
-                {
-                    bool valid = _note.ValidRangeUntil == null || _note.ValidRangeUntil >= Platform.Time.Date;
-                    return new ValidationResult(valid, "Expiry date cannot be in the past.");
-                }));
-        }
+		public PatientNoteEditorComponent(PatientNoteDetail noteDetail, List<PatientNoteCategorySummary> noteCategoryChoices, bool readOnly)
+		{
+			_isReadOnly = readOnly;
+			_note = noteDetail;
+			_noteCategoryChoices = noteCategoryChoices;
 
-        public override void Start()
-        {
-            base.Start();
-        }
+			this.Validation.Add(new ValidationRule("ExpiryDate",
+				delegate
+				{
+					var valid = _note.ValidRangeUntil == null || _note.ValidRangeUntil >= Platform.Time.Date;
+					return new ValidationResult(valid, SR.MessageInvalidExpiryDate);
+				}));
+		}
 
-        #region Presentation Model
+		#region Presentation Model
 
-        public string Comment
-        {
-            get { return _note.Comment; }
-            set 
-            { 
-                _note.Comment = value;
-                this.Modified = true;
-            }
-        }
+		public string Comment
+		{
+			get { return _note.Comment; }
+			set 
+			{ 
+				_note.Comment = value;
+				this.Modified = true;
+			}
+		}
 
-        public DateTime? ExpiryDate
-        {
-            get { return _note.ValidRangeUntil == null ? null : (DateTime?)_note.ValidRangeUntil.Value.Date; }
-            set
-            {
-                _note.ValidRangeUntil = (value == null) ? null : (DateTime?)value.Value.Date;
-                this.Modified = true;
-            }
-        }
+		public DateTime? ExpiryDate
+		{
+			get { return _note.ValidRangeUntil == null ? null : (DateTime?)_note.ValidRangeUntil.Value.Date; }
+			set
+			{
+				_note.ValidRangeUntil = (value == null) ? null : (DateTime?)value.Value.Date;
+				this.Modified = true;
+			}
+		}
 
-        [ValidateNotNull]
-        public PatientNoteCategorySummary Category
-        {
-            get 
-            {
-                return _note.Category;
-            }
-            set
-            {
-                if (_note.Category != value)
-                {
-                    _note.Category = value;
+		[ValidateNotNull]
+		public PatientNoteCategorySummary Category
+		{
+			get 
+			{
+				return _note.Category;
+			}
+			set
+			{
+				if (_note.Category == value)
+					return;
 
-                    NotifyPropertyChanged("Category");
-                    NotifyPropertyChanged("CategoryDescription");
-                    this.Modified = true;
-                }
-            }
-        }
+				_note.Category = value;
 
-        public string FormatNoteCategory(object item)
-        {
-            PatientNoteCategorySummary noteCategory = (PatientNoteCategorySummary) item;
-            return String.Format(SR.FormatNoteCategory, noteCategory.Name, noteCategory.Severity.Value);
-        }
+				NotifyPropertyChanged("Category");
+				NotifyPropertyChanged("CategoryDescription");
+				this.Modified = true;
+			}
+		}
 
-        public string CategoryDescription
-        {
-            get { return _note.Category == null ? "" : _note.Category.Description; }
-        }
+		public string FormatNoteCategory(object item)
+		{
+			var noteCategory = (PatientNoteCategorySummary) item;
+			return String.Format(SR.FormatNoteCategory, noteCategory.Name, noteCategory.Severity.Value);
+		}
 
-        public IList CategoryChoices
-        {
-            get 
-            {
-                return _noteCategoryChoices;
-            }
-        }
+		public string CategoryDescription
+		{
+			get { return _note.Category == null ? "" : _note.Category.Description; }
+		}
 
-        public bool IsNewItem
-        {
-            get { return _note.CreationTime == null; }
-        }
+		public IList CategoryChoices
+		{
+			get 
+			{
+				return _noteCategoryChoices;
+			}
+		}
 
-        public void Accept()
-        {
-            if (this.HasValidationErrors)
-            {
-                this.ShowValidation(true);
-            }
-            else
-            {
-                this.ExitCode = ApplicationComponentExitCode.Accepted;
-                Host.Exit();
-            }
-        }
+		public bool IsNewItem
+		{
+			get { return _note.CreationTime == null; }
+		}
 
-        public void Cancel()
-        {
-            this.ExitCode = ApplicationComponentExitCode.None;
-            Host.Exit();
-        }
+		public bool IsReadOnly
+		{
+			get { return _isReadOnly; }
+		}
 
-        public bool AcceptEnabled
-        {
-            get { return this.Modified; }
-        }
+		public void Accept()
+		{
+			if (this.HasValidationErrors)
+			{
+				this.ShowValidation(true);
+			}
+			else
+			{
+				this.ExitCode = ApplicationComponentExitCode.Accepted;
+				Host.Exit();
+			}
+		}
 
-        public event EventHandler AcceptEnabledChanged
-        {
-            add { this.ModifiedChanged += value; }
-            remove { this.ModifiedChanged -= value; }
-        }
+		public void Cancel()
+		{
+			this.ExitCode = ApplicationComponentExitCode.None;
+			Host.Exit();
+		}
 
-        #endregion
+		public bool AcceptEnabled
+		{
+			get { return this.Modified; }
+		}
 
-    }
+		public event EventHandler AcceptEnabledChanged
+		{
+			add { this.ModifiedChanged += value; }
+			remove { this.ModifiedChanged -= value; }
+		}
+
+		#endregion
+
+	}
 }

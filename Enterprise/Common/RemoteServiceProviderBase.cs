@@ -172,42 +172,6 @@ namespace ClearCanvas.Enterprise.Common
 	/// </summary>
 	public abstract class RemoteServiceProviderBase : IServiceProvider
 	{
-		#region RemoteServiceProxyMixin class
-
-		/// <summary>
-		/// Remote service proxy mix-in class.
-		/// </summary>
-		internal class RemoteServiceProxyMixin : IRemoteServiceProxy
-		{
-			private readonly Type _serviceContract;
-			private readonly object _channel;
-
-			internal RemoteServiceProxyMixin(Type serviceContract, object channel)
-			{
-				_serviceContract = serviceContract;
-				_channel = channel;
-			}
-
-			/// <summary>
-			/// Gets the channel object.
-			/// </summary>
-			/// <returns></returns>
-			object IRemoteServiceProxy.Channel
-			{
-				get { return _channel; }
-			}
-
-			/// <summary>
-			/// Gets the service contract implemented by this channel.
-			/// </summary>
-			Type IRemoteServiceProxy.ServiceContract
-			{
-				get { return _serviceContract; }
-			}
-		}
-
-		#endregion
-
 		#region DisposableInterceptor
 
 		/// <summary>
@@ -217,23 +181,33 @@ namespace ClearCanvas.Enterprise.Common
 		{
 			public void Intercept(IInvocation invocation)
 			{
-				if (InvocationMethodIsDispose(invocation))
-				{
-					//TODO before calling dispose, we should check if the target implements
-					// IClientChannel, and if so, call Close()
-					//if(invocation.InvocationTarget is IClientChannel)
-					//{
-					//    IClientChannel channel = (IClientChannel)invocation.InvocationTarget;
-					//    channel.Close();
-					//}
-
-					// Dispose and then do not proceed along the interceptor chain
-					GetDisposableInvocationTarget(invocation).Dispose();
-				}
-				else
+				// if not invoking IDisposable.Dispose(), we can just Proceed and return
+				if (!InvocationMethodIsDispose(invocation))
 				{
 					// proceed normally
 					invocation.Proceed();
+					return;
+				}
+
+				var channel = GetInvocationTarget(invocation) as IClientChannel;
+				try
+				{
+					// to propertly clean up the channel, we should call Close() first,
+					// and then Dispose(), which may be redundant, but might as well be strict
+					// do not proceed along the interceptor chain
+					if(channel != null)
+					{
+						channel.Close();
+						channel.Dispose();
+					}
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error, e,
+						"Exception generated when attempting to close channel with URI {0}",
+						channel.RemoteAddress.Uri);
+
+					channel.Abort();
 				}
 			}
 
@@ -243,31 +217,27 @@ namespace ClearCanvas.Enterprise.Common
 					&& invocation.Method.Name == "Dispose";
 			}
 
-			private static IDisposable GetDisposableInvocationTarget(IInvocation invocation)
+			private static object GetInvocationTarget(IInvocation invocation)
 			{
-				return (IDisposable)ResolveProxiedInvocationTarget(invocation);
-			}
+				var target = invocation.InvocationTarget;
 
-			private static object ResolveProxiedInvocationTarget(IInvocation invocation)
-			{
-				var invocationTarget = invocation.InvocationTarget;
-
-				if ((invocationTarget is IProxyTargetAccessor))
+				// this is odd - it is not clear whether InvocationTarget is the proxy or the target
+				// DP seems to do different things under different circumstances, probably due to bugs
+				// we do the safe thing and check if we need to access the inner object
+				if ((target is IProxyTargetAccessor))
 				{
-					// this is odd - it is not clear whether InvocationTarget is the proxy or the target
-					// DP seems to do different things under different circumstances, probably due to bugs
-					// we do the safe thing and check if we need to access the inner object
-					return ((IProxyTargetAccessor)invocationTarget).DynProxyGetTarget();
+					return ((IProxyTargetAccessor)target).DynProxyGetTarget();
 				}
-				// invoke the method directly on the target
-				return invocationTarget;
+
+				// just return the target
+				return target;
 			}
 		}
 
 		#endregion
 
 		private readonly ProxyGenerator _proxyGenerator;
-		private readonly IChannelFactoryProvider _channelFactoryProvider;
+		private readonly IChannelProvider _channelProvider;
 		private readonly IUserCredentialsProvider _userCredentialsProvider;
 		private List<IInterceptor> _interceptors;
 
@@ -276,18 +246,18 @@ namespace ClearCanvas.Enterprise.Common
 		/// </summary>
 		/// <param name="args"></param>
 		protected RemoteServiceProviderBase(RemoteServiceProviderArgs args)
-			: this(new StaticChannelFactoryProvider(args), args.UserCredentialsProvider)
+			: this(new StaticChannelProvider(args), args.UserCredentialsProvider)
 		{
 		}
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="channelFactoryProvider"></param>
+		/// <param name="channelProvider"></param>
 		/// <param name="userCredentialsProvider"></param>
-		protected RemoteServiceProviderBase(IChannelFactoryProvider channelFactoryProvider, IUserCredentialsProvider userCredentialsProvider)
+		protected RemoteServiceProviderBase(IChannelProvider channelProvider, IUserCredentialsProvider userCredentialsProvider)
 		{
-			_channelFactoryProvider = channelFactoryProvider;
+			_channelProvider = channelProvider;
 			_userCredentialsProvider = userCredentialsProvider;
 			_proxyGenerator = new ProxyGenerator();
 		}
@@ -301,10 +271,11 @@ namespace ClearCanvas.Enterprise.Common
 				return null;
 
 			// create the channel
-			// TODO: defer channel creation until an interceptor
-			// actually Proceed()s to it (DP2 supports this)
-			var factory = _channelFactoryProvider.GetPrimary(serviceContract);
-			var channel = CreateChannel(serviceContract, factory);
+			var authenticationRequired = AuthenticationAttribute.IsAuthenticationRequired(serviceContract);
+			var credentials = authenticationRequired
+			                  	? new ChannelCredentials {UserName = this.UserName, Password = this.Password}
+			                  	: null;
+			var channel = _channelProvider.GetPrimary(serviceContract, credentials);
 
 			// create an AOP proxy around the channel, and return that
 			return CreateChannelProxy(serviceContract, channel);
@@ -365,67 +336,45 @@ namespace ClearCanvas.Enterprise.Common
 		}
 
 		/// <summary>
-		/// Attempts to get a failover channel for the specified service contract.
+		/// Attempts to get a failover channel for the specified failed channel.
+		/// Note that a raw channel is returned, not a decorated proxy.
 		/// </summary>
-		/// <param name="serviceContract"></param>
-		/// <param name="failedEndpoint"></param>
+		/// <param name="failedChannel"></param>
 		/// <returns></returns>
-		protected internal object GetFailoverChannel(Type serviceContract, EndpointAddress failedEndpoint)
+		protected internal IClientChannel GetFailoverChannel(IClientChannel failedChannel)
 		{
-			var alternate = _channelFactoryProvider.GetFailover(serviceContract, failedEndpoint);
-			return alternate != null ? CreateChannel(serviceContract, alternate) : null;
+			return _channelProvider.GetFailover(failedChannel);
 		}
 
 		#endregion
 
 		#region Helpers
 
-		/// <summary>
-		/// Creates a channel for the specified contract, using the specified factory.
-		/// Note that this method modifies the factory, therefore it cannot be re-used!
-		/// </summary>
-		/// <param name="serviceContract"></param>
-		/// <param name="factory"></param>
-		/// <returns></returns>
-		private object CreateChannel(Type serviceContract, ChannelFactory factory)
+		private object CreateChannelProxy(Type serviceContract, IClientChannel channel)
 		{
-			var authenticationRequired = AuthenticationAttribute.IsAuthenticationRequired(serviceContract);
-			if (authenticationRequired)
+			// ensure we only access the proxy generator in a thread-safe manner
+			lock(_proxyGenerator)
 			{
-				factory.Credentials.UserName.UserName = this.UserName;
-				factory.Credentials.UserName.Password = this.Password;
+				// get list of interceptors if not yet created
+				if (_interceptors == null)
+				{
+					_interceptors = new List<IInterceptor>();
+					ApplyInterceptors(_interceptors);
+				}
+
+				var options = new ProxyGenerationOptions();
+
+				// create and return proxy
+				// note: _proxyGenerator does internal caching based on service contract
+				// so subsequent calls based on the same contract will be fast
+				// note: important to proxy IDisposable too, otherwise channels can't get disposed!!!
+				return _proxyGenerator.CreateInterfaceProxyWithTarget(
+					serviceContract,
+					new[] { serviceContract, typeof(IDisposable) },
+					channel,
+					options,
+					_interceptors.ToArray());
 			}
-
-			// invoke the CreateChannel method on the factory
-			var createChannelMethod = factory.GetType().GetMethod("CreateChannel", Type.EmptyTypes);
-			var channel = createChannelMethod.Invoke(factory, null);
-			Platform.Log(LogLevel.Debug, "Created service channel instance for service {0}, authenticationRequired={1}.",
-						 serviceContract.FullName, authenticationRequired);
-			return channel;
-		}
-
-		private object CreateChannelProxy(Type serviceContract, object channel)
-		{
-			// get list of interceptors if not yet created
-			if (_interceptors == null)
-			{
-				_interceptors = new List<IInterceptor>();
-				ApplyInterceptors(_interceptors);
-			}
-
-			var options = new ProxyGenerationOptions();
-			options.AddMixinInstance(new RemoteServiceProxyMixin(serviceContract, channel));
-
-			// create and return proxy
-			// note: _proxyGenerator does internal caching based on service contract
-			// so subsequent calls based on the same contract will be fast
-			// note: important to proxy IDisposable too, otherwise channels can't get disposed!!!
-			return _proxyGenerator.CreateInterfaceProxyWithTarget(
-				serviceContract,
-				new[] { serviceContract, typeof(IDisposable) },
-				channel,
-				options,
-				_interceptors.ToArray());
 		}
 
 		#endregion

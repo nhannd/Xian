@@ -403,6 +403,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Indication.
+        /// </summary>
+        internal static string ColumnIndication {
+            get {
+                return ResourceManager.GetString("ColumnIndication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Laterality.
         /// </summary>
         internal static string ColumnLaterality {
@@ -813,6 +822,24 @@ namespace ClearCanvas.Ris.Client {
         internal static string ColumnUrgent {
             get {
                 return ResourceManager.GetString("ColumnUrgent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Valid From.
+        /// </summary>
+        internal static string ColumnValidFrom {
+            get {
+                return ResourceManager.GetString("ColumnValidFrom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Valid Until.
+        /// </summary>
+        internal static string ColumnValidUntil {
+            get {
+                return ResourceManager.GetString("ColumnValidUntil", resourceCulture);
             }
         }
         
@@ -1456,6 +1483,24 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Date of death must be later than or equal to date of birth..
+        /// </summary>
+        internal static string MessageDateOfDeathMustBeLaterThanOrEqualToDateOfBirth {
+            get {
+                return ResourceManager.GetString("MessageDateOfDeathMustBeLaterThanOrEqualToDateOfBirth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Discharge time must be later than or equal to admit time..
+        /// </summary>
+        internal static string MessageDischargeTimeMustBeLaterThanOrEqualToAdmitTime {
+            get {
+                return ResourceManager.GetString("MessageDischargeTimeMustBeLaterThanOrEqualToAdmitTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A dowtime accession number is required..
         /// </summary>
         internal static string MessageDowntimeAccessionNumberRequired {
@@ -1515,6 +1560,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string MessageInvalidDateFormat {
             get {
                 return ResourceManager.GetString("MessageInvalidDateFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expiry date cannot be in the past..
+        /// </summary>
+        internal static string MessageInvalidExpiryDate {
+            get {
+                return ResourceManager.GetString("MessageInvalidExpiryDate", resourceCulture);
             }
         }
         
@@ -1677,6 +1731,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string MessageUnscheduled {
             get {
                 return ResourceManager.GetString("MessageUnscheduled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Valid until must be later than or equal to valid from..
+        /// </summary>
+        internal static string MessageValidUntilMustBeLaterOrEqualValidFrom {
+            get {
+                return ResourceManager.GetString("MessageValidUntilMustBeLaterOrEqualValidFrom", resourceCulture);
             }
         }
         

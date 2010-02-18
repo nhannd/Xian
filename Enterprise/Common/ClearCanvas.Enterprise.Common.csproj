@@ -130,8 +130,7 @@
     <Compile Include="Configuration\ImportSettingsGroupResponse.cs" />
     <Compile Include="DefaultPrincipal.cs" />
     <Compile Include="FailoverClientAdvice.cs" />
-    <Compile Include="IChannelFactoryProvider.cs" />
-    <Compile Include="IRemoteServiceProxy.cs" />
+    <Compile Include="IChannelProvider.cs" />
     <Compile Include="ListRequestBase.cs" />
     <Compile Include="PagedDataContractBase.cs" />
     <Compile Include="ResponseCachingClientAdvice.cs" />
@@ -165,7 +164,7 @@
     <Compile Include="ResponseCachingDirective.cs" />
     <Compile Include="Setup\SetupApplication.cs" />
     <Compile Include="Setup\SetupCommandLine.cs" />
-    <Compile Include="StaticChannelFactoryProvider.cs" />
+    <Compile Include="StaticChannelProvider.cs" />
     <Compile Include="Test\JsmlSerializerTest.cs" />
     <Compile Include="UserAccessDeniedException.cs" />
     <Compile Include="InvalidUserSessionException.cs" />

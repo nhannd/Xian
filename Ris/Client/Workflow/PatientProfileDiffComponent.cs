@@ -32,6 +32,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
+using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.PatientReconciliation;
 
@@ -137,7 +138,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				get { return _isDiscrepant; }
 			}
-
 		}
 
 		[DataContract]
@@ -180,7 +180,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private readonly List<Field> _fields;
 		private EntityRef[] _profileRefs;
-
 		private List<string> _profileAuthorities;
 
 		/// <summary>

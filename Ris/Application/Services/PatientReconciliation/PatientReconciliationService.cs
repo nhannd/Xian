@@ -29,115 +29,106 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Ris.Application.Common.PatientReconciliation;
+using System.Security.Permissions;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.PatientReconciliation;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Common;
-using System.Security.Permissions;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Healthcare.Workflow;
 using ClearCanvas.Healthcare.Workflow.Registration;
-using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.PatientReconciliation;
+using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
 {
-    [ServiceImplementsContract(typeof(IPatientReconciliationService))]
-    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    public class PatientReconciliationService : ApplicationServiceBase, IPatientReconciliationService
-    {
-        #region IPatientReconciliationService Members
+	[ServiceImplementsContract(typeof(IPatientReconciliationService))]
+	[ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+	public class PatientReconciliationService : ApplicationServiceBase, IPatientReconciliationService
+	{
+		#region IPatientReconciliationService Members
 
-        [ReadOperation]
-        public ListPatientReconciliationMatchesResponse ListPatientReconciliationMatches(ListPatientReconciliationMatchesRequest request)
-        {
-            IPatientProfileBroker broker = PersistenceContext.GetBroker<IPatientProfileBroker>();
-            PatientProfile targetProfile = broker.Load(request.PatientProfileRef);
+		[ReadOperation]
+		public ListPatientReconciliationMatchesResponse ListPatientReconciliationMatches(ListPatientReconciliationMatchesRequest request)
+		{
+			var targetProfile = this.PersistenceContext.GetBroker<IPatientProfileBroker>().Load(request.PatientProfileRef);
 
-            IPatientReconciliationStrategy strategy = (IPatientReconciliationStrategy)(new PatientReconciliationStrategyExtensionPoint()).CreateExtension();
-            IList<PatientProfileMatch> matches = strategy.FindReconciliationMatches(targetProfile, PersistenceContext);
+			var strategy = (IPatientReconciliationStrategy)(new PatientReconciliationStrategyExtensionPoint()).CreateExtension();
+			var matches = strategy.FindReconciliationMatches(targetProfile, this.PersistenceContext);
 
-            PatientProfileAssembler profileAssembler = new PatientProfileAssembler();
-            ListPatientReconciliationMatchesResponse response = new ListPatientReconciliationMatchesResponse();
-            response.ReconciledProfiles = CollectionUtils.Map<PatientProfile, PatientProfileSummary, List<PatientProfileSummary>>(
-                targetProfile.Patient.Profiles,
-                delegate(PatientProfile profile)
-                {
-                    return profileAssembler.CreatePatientProfileSummary(profile, PersistenceContext);
-                });
+			var profileAssembler = new PatientProfileAssembler();
+			var rcAssembler = new ReconciliationCandidateAssembler();
+			var response = new ListPatientReconciliationMatchesResponse
+				{
+					ReconciledProfiles =
+						CollectionUtils.Map<PatientProfile, PatientProfileSummary, List<PatientProfileSummary>>(
+						targetProfile.Patient.Profiles,
+						profile => profileAssembler.CreatePatientProfileSummary(profile, this.PersistenceContext)),
+					MatchCandidates =
+						CollectionUtils.Map<PatientProfileMatch, ReconciliationCandidate, List<ReconciliationCandidate>>(
+						matches,
+						match => rcAssembler.CreateReconciliationCandidate(match, this.PersistenceContext))
+				};
 
-            ReconciliationCandidateAssembler rcAssembler = new ReconciliationCandidateAssembler();
-            response.MatchCandidates = CollectionUtils.Map<PatientProfileMatch, ReconciliationCandidate, List<ReconciliationCandidate>>(
-                matches,
-                delegate(PatientProfileMatch match)
-                {
-                    return rcAssembler.CreateReconciliationCandidate(match, PersistenceContext);
-                });
+			return response;
+		}
 
-            return response;
-        }
+		[ReadOperation]
+		public LoadPatientProfileDiffResponse LoadPatientProfileDiff(LoadPatientProfileDiffRequest request)
+		{
+			var broker = this.PersistenceContext.GetBroker<IPatientProfileBroker>();
 
-        [ReadOperation]
-        public LoadPatientProfileDiffResponse LoadPatientProfileDiff(LoadPatientProfileDiffRequest request)
-        {
-            IPatientProfileBroker broker = PersistenceContext.GetBroker<IPatientProfileBroker>();
+			// load profiles to compare
+			var leftProfile = broker.Load(request.LeftProfileRef);
+			var rightProfile = broker.Load(request.RightProfileRef);
 
-            // load profiles to compare
-            PatientProfile leftProfile = broker.Load(request.LeftProfileRef);
-            PatientProfile rightProfile = broker.Load(request.RightProfileRef);
+			// ask model to compute discrepancies
+			var results = PatientProfileDiscrepancyTest.GetDiscrepancies(leftProfile, rightProfile, PatientProfileDiscrepancy.All);
 
-            // ask model to compute discrepancies
-            IList<DiscrepancyTestResult> results = PatientProfileDiscrepancyTest.GetDiscrepancies(leftProfile, rightProfile, PatientProfileDiscrepancy.All);
+			// build response
+			var assembler = new PatientProfileDiffAssembler();
+			var diff = assembler.CreatePatientProfileDiff(leftProfile, rightProfile, results);
 
-            // build response
-            PatientProfileDiffAssembler assembler = new PatientProfileDiffAssembler();
-            PatientProfileDiff diff = assembler.CreatePatientProfileDiff(leftProfile, rightProfile, results);
-            return new LoadPatientProfileDiffResponse(diff);
-        }
+			return new LoadPatientProfileDiffResponse(diff);
+		}
 
-        [ReadOperation]
-        public ListProfilesForPatientsResponse ListProfilesForPatients(ListProfilesForPatientsRequest request)
-        {
-            PatientProfileAssembler assembler = new PatientProfileAssembler();
-            List<PatientProfileSummary> summaries = new List<PatientProfileSummary>();
-            foreach(EntityRef patientRef in request.PatientRefs)
-            {
-                Patient patient = PersistenceContext.Load <Patient>(patientRef);
-                foreach (PatientProfile profile in patient.Profiles)
-                {
-                    summaries.Add(assembler.CreatePatientProfileSummary(profile, PersistenceContext));
-                }
-            }
+		[ReadOperation]
+		public ListProfilesForPatientsResponse ListProfilesForPatients(ListProfilesForPatientsRequest request)
+		{
+			var assembler = new PatientProfileAssembler();
+			var summaries = new List<PatientProfileSummary>();
+			foreach (var patientRef in request.PatientRefs)
+			{
+				var patient = this.PersistenceContext.Load<Patient>(patientRef);
+				foreach (var profile in patient.Profiles)
+				{
+					summaries.Add(assembler.CreatePatientProfileSummary(profile, this.PersistenceContext));
+				}
+			}
 
-            return new ListProfilesForPatientsResponse(summaries);
-        }
+			return new ListProfilesForPatientsResponse(summaries);
+		}
 
-        [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Patient.Reconcile)]
-        public ReconcilePatientsResponse ReconcilePatients(ReconcilePatientsRequest request)
-        {
-            List<Patient> patients = CollectionUtils.Map<EntityRef, Patient, List<Patient>>(
-                request.PatientRefs,
-                delegate(EntityRef patientRef)
-                {
-                    return PersistenceContext.Load<Patient>(patientRef, EntityLoadFlags.CheckVersion);
-                });
+		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Patient.Reconcile)]
+		public ReconcilePatientsResponse ReconcilePatients(ReconcilePatientsRequest request)
+		{
+			var patients = CollectionUtils.Map<EntityRef, Patient, List<Patient>>(
+				request.PatientRefs,
+				patientRef => this.PersistenceContext.Load<Patient>(patientRef, EntityLoadFlags.CheckVersion));
 
-            if (patients.Count < 2)
-                throw new RequestValidationException(SR.ExceptionReconciliationRequiresAtLeast2Patients);
+			if (patients.Count < 2)
+				throw new RequestValidationException(SR.ExceptionReconciliationRequiresAtLeast2Patients);
 
-            Operations.ReconcilePatient op = new Operations.ReconcilePatient();
-            op.Execute(patients, new PersistentWorkflow(PersistenceContext));
+			var op = new Operations.ReconcilePatient();
+			op.Execute(patients, new PersistentWorkflow(this.PersistenceContext));
 
-            return new ReconcilePatientsResponse();
-        }
+			return new ReconcilePatientsResponse();
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

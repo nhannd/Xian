@@ -32,21 +32,25 @@
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Common
 {
     /// <summary>
-    /// Implementation of <see cref="IChannelFactoryProvider"/> that provides
+    /// Implementation of <see cref="IChannelProvider"/> that provides
     /// channel factories based on a single statically defined primary endpoint
     /// and a single statically defined failover endpoint.
     /// </summary>
-    internal class StaticChannelFactoryProvider : IChannelFactoryProvider
+    /// <remarks>
+    /// This class is safe for use by multiple threads.
+    /// </remarks>
+    internal class StaticChannelProvider : IChannelProvider
     {
         #region Node class
 
 		/// <summary>
-		/// Represents a remote service instance.
+		/// Represents a remote endpoint URI.
 		/// </summary>
         class Node
         {
@@ -85,6 +89,43 @@ namespace ClearCanvas.Enterprise.Common
 
         #endregion
 
+		#region ChannelInfo class
+
+		/// <summary>
+		/// Captures additional identifying information about a channel.
+		/// </summary>
+		class ChannelInfo : IExtension<IContextChannel>
+		{
+			public ChannelInfo(Type serviceContract, ChannelCredentials credentials)
+			{
+				this.ServiceContract = serviceContract;
+				this.Credentials = credentials;
+			}
+
+			/// <summary>
+			/// Gets the service contract on which the channel is based.
+			/// </summary>
+			public Type ServiceContract { get; private set; }
+
+			/// <summary>
+			/// Gets the credentials that were used to authenticate the channel, or null if no authentication was required.
+			/// </summary>
+			public ChannelCredentials Credentials { get; private set; }
+
+
+			void IExtension<IContextChannel>.Attach(IContextChannel owner)
+			{
+				// do nothing
+			}
+
+			void IExtension<IContextChannel>.Detach(IContextChannel owner)
+			{
+				// do nothing
+			}
+		}
+
+		#endregion
+
         private readonly TimeSpan _blackoutPeriod = TimeSpan.FromSeconds(30);
         private readonly RemoteServiceProviderArgs _args;
         private readonly List<Node> _nodes = new List<Node>();
@@ -93,7 +134,7 @@ namespace ClearCanvas.Enterprise.Common
 		/// Constructor
 		/// </summary>
 		/// <param name="args"></param>
-        public StaticChannelFactoryProvider(RemoteServiceProviderArgs args)
+        public StaticChannelProvider(RemoteServiceProviderArgs args)
         {
             _args = args;
 
@@ -105,58 +146,65 @@ namespace ClearCanvas.Enterprise.Common
             }
 		}
 
-		#region IChannelFactoryProvider
+		#region IChannelProvider
 
 		/// <summary>
     	/// Gets the primary channel factory for the specified service contract.
     	/// </summary>
-    	public ChannelFactory GetPrimary(Type serviceContract)
+		public IClientChannel GetPrimary(Type serviceContract, ChannelCredentials credentials)
         {
-            ChannelFactory factory = GetFirstLiveChannel(serviceContract);
-            if (factory != null)
-                return factory;
+			// if there were no live nodes in the list, 
+			// best thing we can do is return the primary Uri
+			var factory = GetFirstLiveChannelFactory(serviceContract) ?? CreateChannelFactory(serviceContract, new Uri(_args.BaseUrl));
 
-            // if there were no live nodes in the list, 
-            // best thing we can do is return the primary Uri
-            return GetChannelFactory(serviceContract, new Uri(_args.BaseUrl));
-        }
+			return CreateChannel(serviceContract, factory, credentials);
+		}
 
     	/// <summary>
     	/// Attempts to obtain an alternate channel factory for the specified service
     	/// contract, in the event that the primary channel endpoint is unreachable.
     	/// </summary>
-    	public ChannelFactory GetFailover(Type serviceContract, EndpointAddress failedEndpoint)
+		public IClientChannel GetFailover(IClientChannel failedChannel)
         {
-            // find the failed node and marked it as blacked out
-            Node failedNode = CollectionUtils.SelectFirst(_nodes,
-                delegate(Node n) { return Equals(failedEndpoint.Uri, GetFullUri(serviceContract, n.Url)); });
-            failedNode.Blackout(_blackoutPeriod);
+			var failedEndpoint = failedChannel.RemoteAddress;
+    		var channelInfo = failedChannel.Extensions.Find<ChannelInfo>();
+    		var serviceContract = channelInfo.ServiceContract;
+
+    		// don't allow more than one thread to update the _nodes list at once
+			lock (_nodes)
+    		{
+				// find the failed node and marked it as blacked out
+				var failedNode = CollectionUtils.SelectFirst(_nodes, n => Equals(failedEndpoint.Uri, GetFullUri(serviceContract, n.Url)));
+				failedNode.Blackout(_blackoutPeriod);
+			}
 
             // get the first live node
-            ChannelFactory factory = GetFirstLiveChannel(serviceContract);
-            if (factory != null)
-                return factory;
+            var factory = GetFirstLiveChannelFactory(serviceContract);
 
-            return null;
+			// if no live nodes, can't create a channel
+            if (factory == null)
+                return null;
+
+			// create channel
+			return CreateChannel(serviceContract, factory, channelInfo.Credentials);
 		}
 
 		#endregion
 
 		#region Helpers
 
-		private ChannelFactory GetFirstLiveChannel(Type serviceContract)
+		private ChannelFactory GetFirstLiveChannelFactory(Type serviceContract)
         {
-            // find the first non-blacked out node in the list
-            Node node = CollectionUtils.SelectFirst(_nodes,
-                delegate(Node n) { return !n.IsBlackedOut; });
+			// find the first non-blacked out node in the list
+			var node = CollectionUtils.SelectFirst(_nodes, n => !n.IsBlackedOut);
 
-            return node == null ? null : GetChannelFactory(serviceContract, node.Url);
+            return node == null ? null : CreateChannelFactory(serviceContract, node.Url);
         }
 
-        private ChannelFactory GetChannelFactory(Type serviceContract, Uri baseUri)
+        private ChannelFactory CreateChannelFactory(Type serviceContract, Uri baseUri)
         {
-            Uri uri = GetFullUri(serviceContract, baseUri);
-            Type channelFactoryClass = typeof(ChannelFactory<>).MakeGenericType(new Type[] { serviceContract });
+            var uri = GetFullUri(serviceContract, baseUri);
+            var channelFactoryClass = typeof(ChannelFactory<>).MakeGenericType(new [] { serviceContract });
             return _args.Configuration.ConfigureChannelFactory(
                 new ServiceChannelConfigurationArgs(channelFactoryClass,
                                                     uri,
@@ -169,6 +217,35 @@ namespace ClearCanvas.Enterprise.Common
         private static Uri GetFullUri(Type serviceContract, Uri baseUri)
         {
             return new Uri(baseUri, serviceContract.FullName);
+		}
+
+		/// <summary>
+		/// Creates a channel for the specified contract, using the specified factory.
+		/// Note that this method modifies the factory, therefore it cannot be re-used!
+		/// </summary>
+		/// <param name="serviceContract"></param>
+		/// <param name="factory"></param>
+		/// <param name="credentials"></param>
+		/// <returns></returns>
+		private static IClientChannel CreateChannel(Type serviceContract, ChannelFactory factory, ChannelCredentials credentials)
+		{
+			var authenticationRequired = AuthenticationAttribute.IsAuthenticationRequired(serviceContract);
+			if (authenticationRequired)
+			{
+				factory.Credentials.UserName.UserName = credentials.UserName;
+				factory.Credentials.UserName.Password = credentials.Password;
+			}
+
+			// invoke the CreateChannel method on the factory
+			var createChannelMethod = factory.GetType().GetMethod("CreateChannel", Type.EmptyTypes);
+			var channel = (IClientChannel)createChannelMethod.Invoke(factory, null);
+			Platform.Log(LogLevel.Debug, "Created service channel instance for service {0}, authenticationRequired={1}, endpoint={2}",
+						 serviceContract.Name, authenticationRequired, factory.Endpoint.Address.Uri);
+
+			// add some identifying information to the channel, in case we are asked to obtain a failover channel
+			channel.Extensions.Add(new ChannelInfo(serviceContract, credentials));
+
+			return channel;
 		}
 
 		#endregion

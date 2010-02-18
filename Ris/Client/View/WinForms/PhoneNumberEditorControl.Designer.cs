@@ -199,7 +199,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Controls.Add(this._areaCode);
 			this.Controls.Add(this._validUntil);
 			this.Name = "PhoneNumberEditorControl";
-			this.Size = new System.Drawing.Size(301, 264);
+			this.Size = new System.Drawing.Size(315, 264);
 			this.Load += new System.EventHandler(this.PhoneNumberEditorControl_Load);
 			this.ResumeLayout(false);
 

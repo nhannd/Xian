@@ -292,23 +292,31 @@ namespace Clifton.Windows.Forms
         /// </summary>
         protected override void OnEnter(EventArgs e)
         {
-            // If the null value, then set the Text to the empty string.
-            if (val == nullValue)
-            {
-                // Setting the Text to String.Empty doesn't set the textbox to displaying
-                // the mask!  But if we set the Text to the mask, then it works.  (Actually,
-                // setting the Text property to String.Empty used to work, so this is some 
-                // sort of wierd indeterminate behavior.)
-                Text = editMask;
-            }
-            else
-            {
-                // Otherwise, set it to our Value.
-                Text = val.ToString();
-            }
+			// If the null value, then set the Text to the empty string.
+			if (val == nullValue)
+			{
+				// Setting the Text to String.Empty doesn't set the textbox to displaying
+				// the mask!  But if we set the Text to the mask, then it works.  (Actually,
+				// setting the Text property to String.Empty used to work, so this is some 
+				// sort of wierd indeterminate behavior.)
+				var originalText = Text;
+				Text = editMask;
 
-            // Mask property must be set last.
-            Mask = editMask;
+				// Mask property must be set last.
+				Mask = editMask;
+
+				// Restore the original text
+				Text = originalText;
+			}
+			else
+			{
+				// Otherwise, set it to our Value.
+				Text = val.ToString();
+
+				// Mask property must be set last.
+				Mask = editMask;
+			}
+
             base.OnEnter(e);
         }
 

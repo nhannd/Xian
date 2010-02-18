@@ -73,10 +73,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if (items.Count != 1)
 				return null;
 
-			ReportingWorklistItem step = CollectionUtils.FirstElement(items);
+			var reportingWorklistItem = CollectionUtils.FirstElement(items);
 
 			//TODO: having the client specify the step name name may not be a terribly good idea
-			switch (step.ProcedureStepName)
+			switch (reportingWorklistItem.ProcedureStepName)
 			{
 				case "Interpretation":
 				case "Transcription":
@@ -84,7 +84,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 				case "Verification":
 				case "Publication":
 					return WebResourcesSettings.Default.ReportingFolderSystemUrl;
-				case "Protocol":
+				case "Protocol Assignment":
+				case "Protocol Resolution":
 					return WebResourcesSettings.Default.ProtocollingFolderSystemUrl;
 				default:
 					return null;
@@ -102,8 +103,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 
 		protected override SearchResultsFolder CreateSearchResultsFolder()
-        {
+		{
 			return new Folders.RadiologistAdmin.RadiologistAdminSearchFolder();
-        }
-    }
+		}
+	}
 }

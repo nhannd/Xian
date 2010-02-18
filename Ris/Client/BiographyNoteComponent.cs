@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -60,7 +61,7 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public BiographyNoteComponent()
 		{
-			_noteTable = new BiographyNoteTable();
+			_noteTable = new BiographyNoteTable(this);
 		}
 
 		public List<PatientNoteDetail> Notes
@@ -86,6 +87,21 @@ namespace ClearCanvas.Ris.Client
 			{
 				_selectedNote = (PatientNoteDetail)value.Item;
 				NoteSelectionChanged();
+			}
+		}
+
+		public void ShowNoteDetail(PatientNoteDetail notedetail)
+		{
+			try
+			{
+				var caegotryChoices = new List<PatientNoteCategorySummary> {notedetail.Category};
+				var editor = new PatientNoteEditorComponent(notedetail, caegotryChoices, true);
+				LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleNoteText);
+			}
+			catch (Exception e)
+			{
+				// failed to launch editor
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
 			}
 		}
 

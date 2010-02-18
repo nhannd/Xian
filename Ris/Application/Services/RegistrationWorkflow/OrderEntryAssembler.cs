@@ -40,129 +40,117 @@ using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
-    public class OrderEntryAssembler
-    {
-        public OrderRequisition CreateOrderRequisition(Order order, IPersistenceContext context)
-        {
-            VisitAssembler visitAssembler = new VisitAssembler();
-            ExternalPractitionerAssembler pracAssembler = new ExternalPractitionerAssembler();
-            FacilityAssembler facilityAssembler = new FacilityAssembler();
-            DiagnosticServiceAssembler dsAssembler = new DiagnosticServiceAssembler();
-            OrderAttachmentAssembler attachmentAssembler = new OrderAttachmentAssembler();
-            OrderNoteAssembler noteAssembler = new OrderNoteAssembler();
-            ResultRecipientAssembler resultRecipientAssembler = new ResultRecipientAssembler();
+	public class OrderEntryAssembler
+	{
+		public OrderRequisition CreateOrderRequisition(Order order, IPersistenceContext context)
+		{
+			var visitAssembler = new VisitAssembler();
+			var pracAssembler = new ExternalPractitionerAssembler();
+			var facilityAssembler = new FacilityAssembler();
+			var dsAssembler = new DiagnosticServiceAssembler();
+			var attachmentAssembler = new OrderAttachmentAssembler();
+			var noteAssembler = new OrderNoteAssembler();
+			var resultRecipientAssembler = new ResultRecipientAssembler();
 
-            OrderRequisition requisition = new OrderRequisition();
-            requisition.Patient = order.Patient.GetRef();
-            requisition.Visit = visitAssembler.CreateVisitSummary(order.Visit, context);
-            requisition.DiagnosticService = dsAssembler.CreateSummary(order.DiagnosticService);
-            requisition.SchedulingRequestTime = order.SchedulingRequestTime;
-            requisition.OrderingPractitioner = pracAssembler.CreateExternalPractitionerSummary(order.OrderingPractitioner, context);
-            requisition.OrderingFacility = facilityAssembler.CreateFacilitySummary(order.OrderingFacility);
-            requisition.ReasonForStudy = order.ReasonForStudy;
-            requisition.Priority = EnumUtils.GetEnumValueInfo(order.Priority, context);
-            requisition.ResultRecipients = CollectionUtils.Map<ResultRecipient, ResultRecipientDetail>(
-                order.ResultRecipients,
-                delegate(ResultRecipient r)
-                {
-                    return resultRecipientAssembler.CreateResultRecipientDetail(r, context);
-                });
+			var requisition = new OrderRequisition
+				{
+					Patient = order.Patient.GetRef(),
+					Visit = visitAssembler.CreateVisitSummary(order.Visit, context),
+					DiagnosticService = dsAssembler.CreateSummary(order.DiagnosticService),
+					SchedulingRequestTime = order.SchedulingRequestTime,
+					OrderingPractitioner = pracAssembler.CreateExternalPractitionerSummary(order.OrderingPractitioner, context),
+					OrderingFacility = facilityAssembler.CreateFacilitySummary(order.OrderingFacility),
+					ReasonForStudy = order.ReasonForStudy,
+					Priority = EnumUtils.GetEnumValueInfo(order.Priority, context),
+					ResultRecipients = CollectionUtils.Map<ResultRecipient, ResultRecipientDetail>(
+						order.ResultRecipients,
+						r => resultRecipientAssembler.CreateResultRecipientDetail(r, context)),
+					Procedures = CollectionUtils.Map<Procedure, ProcedureRequisition>(
+						order.Procedures,
+						procedure => CreateProcedureRequisition(procedure, context)),
+					Attachments = CollectionUtils.Map<OrderAttachment, OrderAttachmentSummary>(
+						order.Attachments,
+						attachment => attachmentAssembler.CreateOrderAttachmentSummary(attachment, context)),
+					Notes = CollectionUtils.Map<OrderNote, OrderNoteDetail>(
+						OrderNote.GetNotesForOrder(order),
+						note => noteAssembler.CreateOrderNoteDetail(note, context)),
+					ExtendedProperties = new Dictionary<string, string>(order.ExtendedProperties)
+				};
 
-            requisition.Procedures = CollectionUtils.Map<Procedure, ProcedureRequisition>(
-                order.Procedures,
-                delegate(Procedure procedure)
-                {
-                    return CreateProcedureRequisition(procedure, context);
-                });
+			return requisition;
+		}
 
-            requisition.Attachments = CollectionUtils.Map<OrderAttachment, OrderAttachmentSummary>(
-                order.Attachments,
-                delegate(OrderAttachment attachment)
-                {
-                    return attachmentAssembler.CreateOrderAttachmentSummary(attachment, context);
-                });
+		public void UpdateOrderFromRequisition(Order order, OrderRequisition requisition, Staff currentStaff, IPersistenceContext context)
+		{
+			// only certain properties of an order may be updated from a requisition
+			// Patient cannot not be updated
+			// DiagnosticService cannot be updated
+			// OrderingFacility cannot be updated
 
-            requisition.Notes = CollectionUtils.Map<OrderNote, OrderNoteDetail>(
-                OrderNote.GetNotesForOrder(order),
-                delegate(OrderNote note)
-                {
-                    return noteAssembler.CreateOrderNoteDetail(note, context);
-                });
+			// do not update the individual procedures, as this is done separately - see UpdateProcedureFromRequisition
 
-            requisition.ExtendedProperties = new Dictionary<string, string>(order.ExtendedProperties);
+			// Some properties cannot be updated if the procedure is terminated
+			if (!order.IsTerminated)
+			{
+				order.Visit = context.Load<Visit>(requisition.Visit.VisitRef, EntityLoadFlags.Proxy);
 
-            return requisition;
-        }
+				order.SchedulingRequestTime = requisition.SchedulingRequestTime;
+				order.OrderingPractitioner = context.Load<ExternalPractitioner>(
+					requisition.OrderingPractitioner.PractitionerRef, EntityLoadFlags.Proxy);
+				order.ReasonForStudy = requisition.ReasonForStudy;
+				order.Priority = EnumUtils.GetEnumValue<OrderPriority>(requisition.Priority);
 
-        public void UpdateOrderFromRequisition(Order order, OrderRequisition requisition, Staff currentStaff, IPersistenceContext context)
-        {
-            // only certain properties of an order may be updated from a requisition
-            // Patient cannot not be updated
-            // DiagnosticService cannot be updated
-            // OrderingFacility cannot be updated
+				// wipe out and reset the result recipients
+				order.ResultRecipients.Clear();
 
-            // do not update the individual procedures, as this is done separately - see UpdateProcedureFromRequisition
+				CollectionUtils.Map<ResultRecipientDetail, ResultRecipient>(
+					requisition.ResultRecipients,
+					s => new ResultRecipient(
+							context.Load<ExternalPractitionerContactPoint>(s.ContactPoint.ContactPointRef, EntityLoadFlags.Proxy),
+							EnumUtils.GetEnumValue<ResultCommunicationMode>(s.PreferredCommunicationMode))).ForEach(r => order.ResultRecipients.Add(r));
+			}
 
+			// synchronize Order.Attachments from order requisition
+			var attachmentAssembler = new OrderAttachmentAssembler();
+			attachmentAssembler.Synchronize(order.Attachments, requisition.Attachments, currentStaff, context);
 
-            order.Visit = context.Load<Visit>(requisition.Visit.VisitRef, EntityLoadFlags.Proxy);
-            order.SchedulingRequestTime = requisition.SchedulingRequestTime;
-            order.OrderingPractitioner = context.Load<ExternalPractitioner>(requisition.OrderingPractitioner.PractitionerRef, EntityLoadFlags.Proxy);
-            order.ReasonForStudy = requisition.ReasonForStudy;
-            order.Priority = EnumUtils.GetEnumValue<OrderPriority>(requisition.Priority);
+			// synchronize Order.Notes from order requisition
+			var noteAssembler = new OrderNoteAssembler();
+			noteAssembler.SynchronizeOrderNotes(order, requisition.Notes, currentStaff, context);
 
-            // wipe out and reset the result recipients
-            order.ResultRecipients.Clear();
+			if (requisition.ExtendedProperties != null)
+			{
+				// copy properties individually so as not to overwrite any that were not sent by the client
+				foreach (var pair in requisition.ExtendedProperties)
+				{
+					order.ExtendedProperties[pair.Key] = pair.Value;
+				}
+			}
+		}
 
-            CollectionUtils.Map<ResultRecipientDetail, ResultRecipient>(
-                requisition.ResultRecipients,
-                delegate(ResultRecipientDetail s)
-                {
-                    return new ResultRecipient(
-                        context.Load<ExternalPractitionerContactPoint>(s.ContactPoint.ContactPointRef, EntityLoadFlags.Proxy),
-                        EnumUtils.GetEnumValue<ResultCommunicationMode>(s.PreferredCommunicationMode));
-                }).ForEach(delegate(ResultRecipient r) { order.ResultRecipients.Add(r); });
+		public ProcedureRequisition CreateProcedureRequisition(Procedure procedure, IPersistenceContext context)
+		{
+			var procedureTypeAssembler = new ProcedureTypeAssembler();
+			var facilityAssembler = new FacilityAssembler();
 
-            // synchronize Order.Attachments from order requisition
-            OrderAttachmentAssembler attachmentAssembler = new OrderAttachmentAssembler();
-            attachmentAssembler.Synchronize(order.Attachments, requisition.Attachments, currentStaff, context);
-
-            // synchronize Order.Notes from order requisition
-            OrderNoteAssembler noteAssembler = new OrderNoteAssembler();
-            noteAssembler.SynchronizeOrderNotes(order, requisition.Notes, currentStaff, context);
-
-            if (requisition.ExtendedProperties != null)
-            {
-                // copy properties individually so as not to overwrite any that were not sent by the client
-                foreach (KeyValuePair<string, string> pair in requisition.ExtendedProperties)
-                {
-                    order.ExtendedProperties[pair.Key] = pair.Value;
-                }
-            }
-        }
-
-        public ProcedureRequisition CreateProcedureRequisition(Procedure procedure, IPersistenceContext context)
-        {
-            ProcedureTypeAssembler procedureTypeAssembler = new ProcedureTypeAssembler();
-            FacilityAssembler facilityAssembler = new FacilityAssembler();
-
-            // create requisition
-            return new ProcedureRequisition(
-                procedureTypeAssembler.CreateSummary(procedure.Type),
-                procedure.Index,
-                procedure.ScheduledStartTime,
-                procedure.PerformingFacility == null ? null : facilityAssembler.CreateFacilitySummary(procedure.PerformingFacility),
-                EnumUtils.GetEnumValueInfo(procedure.Laterality, context),
-                procedure.Portable,
-                procedure.ProcedureCheckIn.IsPreCheckIn == false,
-                EnumUtils.GetEnumValueInfo(procedure.Status, context),
-                IsProcedureModifiable(procedure),
+			// create requisition
+			return new ProcedureRequisition(
+				procedureTypeAssembler.CreateSummary(procedure.Type),
+				procedure.Index,
+				procedure.ScheduledStartTime,
+				procedure.PerformingFacility == null ? null : facilityAssembler.CreateFacilitySummary(procedure.PerformingFacility),
+				EnumUtils.GetEnumValueInfo(procedure.Laterality, context),
+				procedure.Portable,
+				procedure.ProcedureCheckIn.IsPreCheckIn == false,
+				EnumUtils.GetEnumValueInfo(procedure.Status, context),
+				IsProcedureModifiable(procedure),
 				procedure.Status == ProcedureStatus.CA || procedure.Status == ProcedureStatus.DC);
-        }
+		}
 
-        public void UpdateProcedureFromRequisition(Procedure procedure, ProcedureRequisition requisition, IPersistenceContext context)
-        {
+		public void UpdateProcedureFromRequisition(Procedure procedure, ProcedureRequisition requisition, IPersistenceContext context)
+		{
 			// check if the procedure was cancelled
-			if(requisition.Cancelled)
+			if (requisition.Cancelled)
 			{
 				if (procedure.Status == ProcedureStatus.SC)
 				{
@@ -179,41 +167,40 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				return;
 			}
 
-            // modify scheduling time/portability of procedure steps that are still scheduled
-            // bug #1356 fix: don't modify scheduling time of reporting procedure steps
-            // only pre-procedure steps and modality procedure steps are re-scheduled
-            List<ProcedureStep> modifiableSteps = CollectionUtils.Select(procedure.ProcedureSteps,
-                delegate(ProcedureStep ps) { return ps.IsPreStep || ps.Is<ModalityProcedureStep>(); });
+			// modify scheduling time/portability of procedure steps that are still scheduled
+			// bug #1356 fix: don't modify scheduling time of reporting procedure steps
+			// only pre-procedure steps and modality procedure steps are re-scheduled
+			var modifiableSteps = CollectionUtils.Select(procedure.ProcedureSteps, ps => ps.IsPreStep || ps.Is<ModalityProcedureStep>());
 
-            foreach (ProcedureStep step in modifiableSteps)
-            {
-                if (step.State == ActivityStatus.SC)
-                {
-                    step.Schedule(requisition.ScheduledTime);
-                }
-            }
+			foreach (var step in modifiableSteps)
+			{
+				if (step.State == ActivityStatus.SC)
+				{
+					step.Schedule(requisition.ScheduledTime);
+				}
+			}
 
-            procedure.PerformingFacility = context.Load<Facility>(requisition.PerformingFacility.FacilityRef, EntityLoadFlags.Proxy);
-            procedure.Laterality = EnumUtils.GetEnumValue<Laterality>(requisition.Laterality);
-            procedure.Portable = requisition.PortableModality;
+			procedure.PerformingFacility = context.Load<Facility>(requisition.PerformingFacility.FacilityRef, EntityLoadFlags.Proxy);
+			procedure.Laterality = EnumUtils.GetEnumValue<Laterality>(requisition.Laterality);
+			procedure.Portable = requisition.PortableModality;
 
-            if(requisition.CheckedIn && procedure.ProcedureCheckIn.IsPreCheckIn)
-            {
-                procedure.ProcedureCheckIn.CheckIn(null);
-            }
-            else if(!requisition.CheckedIn && procedure.ProcedureCheckIn.IsCheckedIn)
-            {
-                procedure.ProcedureCheckIn.RevertCheckIn();
-            }
-        }
+			if (requisition.CheckedIn && procedure.ProcedureCheckIn.IsPreCheckIn)
+			{
+				procedure.ProcedureCheckIn.CheckIn(null);
+			}
+			else if (!requisition.CheckedIn && procedure.ProcedureCheckIn.IsCheckedIn)
+			{
+				procedure.ProcedureCheckIn.RevertCheckIn();
+			}
+		}
 
-        // arguably this is a business logic decision that shouldn't go here, but there is really no
-        // better place to put it right now
-        // note that the notion of "modifiable" here is specific to the idea of a "requisition"
-        // The "requisition" is modifiable only as long as the procedure is in the SC status
-        private bool IsProcedureModifiable(Procedure procedure)
-        {
-            return procedure.Status == ProcedureStatus.SC;
-        }
-    }
+		// arguably this is a business logic decision that shouldn't go here, but there is really no
+		// better place to put it right now
+		// note that the notion of "modifiable" here is specific to the idea of a "requisition"
+		// The "requisition" is modifiable only as long as the procedure is in the SC status
+		private bool IsProcedureModifiable(Procedure procedure)
+		{
+			return procedure.Status == ProcedureStatus.SC;
+		}
+	}
 }

@@ -79,6 +79,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 			remove { }
 		}
 
+		public override bool Enabled
+		{
+			get
+			{
+				return DowntimeRecovery.InDowntimeRecoveryMode // bug #5616: don't check base enablement unless we are actually in downtime mode
+					&& base.Enabled;
+			}
+		}
+		
     	protected override bool Execute(ModalityWorklistItem item)
     	{
 			if (item.ProcedureRef == null)

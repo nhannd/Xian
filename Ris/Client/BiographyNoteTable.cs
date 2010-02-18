@@ -30,42 +30,68 @@
 #endregion
 
 using System;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
-    public class BiographyNoteTable : Table<PatientNoteDetail>
-    {
-        private static readonly int NumRows = 2;
-        private static readonly int NoteCommentRow = 1;
+	public class BiographyNoteTable : Table<PatientNoteDetail>
+	{
+		private const int NumRows = 2;
+		private const int NoteCommentRow = 1;
 
-        public BiographyNoteTable()
-            : this(NumRows)
-        {
-        }
+		public BiographyNoteComponent _component;
 
-        private BiographyNoteTable(int cellRowCount)
-            : base(cellRowCount)
-        {
-            this.Columns.Add(new TableColumn<PatientNoteDetail, string>("Severity",
-                delegate(PatientNoteDetail n) { return (n.Category == null ? "" : n.Category.Severity.Code); }, 0.05f));
-            this.Columns.Add(new TableColumn<PatientNoteDetail, string>("Category",
-                delegate(PatientNoteDetail n) { return (n.Category == null ? "" : n.Category.Name); }, 0.2f));
-            this.Columns.Add(new TableColumn<PatientNoteDetail, string>("Description",
-                delegate(PatientNoteDetail n) { return (n.Category == null ? "" : n.Category.Description); }, 0.4f));
-            this.Columns.Add(new TableColumn<PatientNoteDetail, string>("Created By",
-                delegate(PatientNoteDetail n) { return PersonNameFormat.Format(n.Author.Name); }, 0.2f));
-            this.Columns.Add(new DateTableColumn<PatientNoteDetail>(SR.ColumnCreatedOn,
-                delegate(PatientNoteDetail n) { return n.CreationTime; }, 0.1f));
-			this.Columns.Add(new DateTableColumn<PatientNoteDetail>("Valid From",
-				delegate(PatientNoteDetail n) { return n.ValidRangeFrom; }, 0.1f));
-			this.Columns.Add(new DateTableColumn<PatientNoteDetail>("Valid Until",
-				delegate(PatientNoteDetail n) { return n.ValidRangeUntil; }, 0.1f));
-            this.Columns.Add(new TableColumn<PatientNoteDetail, string>("Comment",
-                delegate(PatientNoteDetail n) { return (n.Comment != null && n.Comment.Length > 0 ? String.Format("Comment: {0}", n.Comment) : ""); }, 0.1f, NoteCommentRow));
-        }
-    }
+		public BiographyNoteTable(BiographyNoteComponent component)
+			: this(component, NumRows)
+		{
+		}
+
+		private BiographyNoteTable(BiographyNoteComponent component, int cellRowCount)
+			: base(cellRowCount)
+		{
+			_component = component;
+
+			this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnSeverity,
+				n => (n.Category == null ? "" : n.Category.Severity.Value), 0.06f));
+			this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnCategory,
+				n => (n.Category == null ? "" : n.Category.Name), 0.2f));
+			this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnDescription,
+				n => (n.Category == null ? "" : n.Category.Description), 0.4f));
+			this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnAuthor,
+				n => PersonNameFormat.Format(n.Author.Name), 0.2f));
+
+			ITableColumn _createdOnColumn;
+			this.Columns.Add(_createdOnColumn = new DateTimeTableColumn<PatientNoteDetail>(SR.ColumnCreatedOn,
+				n => n.CreationTime, 0.1f));
+			this.Columns.Add(new DateTableColumn<PatientNoteDetail>(SR.ColumnValidFrom,
+				n => n.ValidRangeFrom, 0.1f));
+			this.Columns.Add(new DateTableColumn<PatientNoteDetail>(SR.ColumnValidUntil,
+				n => n.ValidRangeUntil, 0.1f));
+
+			this.Columns.Add(new TableColumn<PatientNoteDetail, string>(" ",
+				n => SR.ColumnMore, 0.05f)
+					{
+						ClickLinkDelegate = component.ShowNoteDetail
+					});
+
+			this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnComments,
+				n => (string.IsNullOrEmpty(n.Comment) ? "" : String.Format("Comment: {0}", RemoveLineBreak(n.Comment))), 0.1f, NoteCommentRow));
+
+			// there aren't any items to sort right now, but calling this sets the default sort parameters to "Created" column desc
+			this.Sort(new TableSortParams(_createdOnColumn, false));
+		}
+
+		private static string RemoveLineBreak(string input)
+		{
+			if (string.IsNullOrEmpty(input))
+				return input;
+
+			var newString = input.Replace("\r\n", " ");
+			newString = newString.Replace("\r", " ");
+			newString = newString.Replace("\n", " ");
+			return newString;
+		}
+	}
 }

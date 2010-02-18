@@ -55,7 +55,10 @@ namespace ClearCanvas.Ris.Client
 		{
 			base.Initialize();
 
-			this.Context.SelectedFolderChanged += delegate { this.Enabled = this.Context.SelectedFolder != null; };
+			this.Context.SelectedFolderChanged += delegate
+				{
+					this.Enabled = this.Context.SelectedFolder != null && this.Context.SelectedFolder is IWorklistFolder;
+				};
 		}
 
 		public bool Enabled
@@ -102,8 +105,7 @@ namespace ClearCanvas.Ris.Client
 					else
 					{
 						WorklistAdminDetail worklistDetail = null;
-						Platform.GetService(
-							delegate(IWorklistAdminService service)
+						Platform.GetService<IWorklistAdminService>(service =>
 							{
 								var response = service.LoadWorklistForEdit(new LoadWorklistForEditRequest(folder.WorklistRef));
 								worklistDetail = response.Detail;

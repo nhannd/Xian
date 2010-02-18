@@ -227,7 +227,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Controls.Add(this._province);
 			this.Controls.Add(this._unit);
 			this.Name = "AddressEditorControl";
-			this.Size = new System.Drawing.Size(484, 258);
+			this.Size = new System.Drawing.Size(499, 258);
 			this.ResumeLayout(false);
 
         }

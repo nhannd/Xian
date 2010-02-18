@@ -74,42 +74,58 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_diagnosticService.DataBindings.Add("Enabled", _component, "IsDiagnosticServiceEditable");
 
 			_indication.DataBindings.Add("Value", _component, "Indication", true, DataSourceUpdateMode.OnPropertyChanged);
+			_indication.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
 
 			_proceduresTableView.Table = _component.Procedures;
+			_proceduresTableView.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
 			_proceduresTableView.MenuModel = _component.ProceduresActionModel;
 			_proceduresTableView.ToolbarModel = _component.ProceduresActionModel;
 			_proceduresTableView.DataBindings.Add("Selection", _component, "SelectedProcedure", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_recipientsTableView.Table = _component.Recipients;
+			_recipientsTableView.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
 			_recipientsTableView.MenuModel = _component.RecipientsActionModel;
 			_recipientsTableView.ToolbarModel = _component.RecipientsActionModel;
 			_recipientsTableView.DataBindings.Add("Selection", _component, "SelectedRecipient", true, DataSourceUpdateMode.OnPropertyChanged);
+
 			_addConsultantButton.DataBindings.Add("Enabled", _component.RecipientsActionModel.Add, "Enabled");
 
 			_consultantLookup.LookupHandler = _component.RecipientsLookupHandler;
+			_consultantLookup.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
 			_consultantLookup.DataBindings.Add("Value", _component, "RecipientToAdd", true, DataSourceUpdateMode.OnPropertyChanged);
+
 			_consultantContactPoint.DataBindings.Add("DataSource", _component, "RecipientContactPointChoices", true, DataSourceUpdateMode.Never);
 			_consultantContactPoint.DataBindings.Add("Value", _component, "RecipientContactPointToAdd", true, DataSourceUpdateMode.OnPropertyChanged);
+			_consultantContactPoint.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
 			_consultantContactPoint.Format += delegate(object source, ListControlConvertEventArgs e) { e.Value = _component.FormatContactPoint(e.ListItem); };
 
 			_visit.DataSource = _component.ActiveVisits;
 			_visit.DataBindings.Add("Value", _component, "SelectedVisit", true, DataSourceUpdateMode.OnPropertyChanged);
+			_visit.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
 			_visit.Format += delegate(object source, ListControlConvertEventArgs e) { e.Value = _component.FormatVisit(e.ListItem); };
+			_visitSummaryButton.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
 
 			_priority.DataSource = _component.PriorityChoices;
 			_priority.DataBindings.Add("Value", _component, "SelectedPriority", true, DataSourceUpdateMode.OnPropertyChanged);
+			_priority.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
 
 			_orderingFacility.DataBindings.Add("Value", _component, "OrderingFacility", true, DataSourceUpdateMode.OnPropertyChanged);
+			// Ordering Facility's Enabled is not bound since it is always readonly (via designer)
 
 			_orderingPractitioner.LookupHandler = _component.OrderingPractitionerLookupHandler;
 			_orderingPractitioner.DataBindings.Add("Value", _component, "SelectedOrderingPractitioner", true, DataSourceUpdateMode.OnPropertyChanged);
+			_orderingPractitioner.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
+
 			_orderingPractitionerContactPoint.DataBindings.Add("DataSource", _component, "OrderingPractitionerContactPointChoices", true, DataSourceUpdateMode.Never);
 			_orderingPractitionerContactPoint.DataBindings.Add("Value", _component, "SelectedOrderingPractitionerContactPoint", true, DataSourceUpdateMode.OnPropertyChanged);
+			_orderingPractitionerContactPoint.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
 			_orderingPractitionerContactPoint.Format += delegate(object source, ListControlConvertEventArgs e) { e.Value = _component.FormatContactPoint(e.ListItem); };
 
 			// bind date and time to same property
 			_schedulingRequestDate.DataBindings.Add("Value", _component, "SchedulingRequestTime", true, DataSourceUpdateMode.OnPropertyChanged);
+			_schedulingRequestDate.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
 			_schedulingRequestTime.DataBindings.Add("Value", _component, "SchedulingRequestTime", true, DataSourceUpdateMode.OnPropertyChanged);
+			_schedulingRequestTime.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
 
 			_reorderReason.DataSource = _component.CancelReasonChoices;
 			_reorderReason.DataBindings.Add("Value", _component, "SelectedCancelReason", true, DataSourceUpdateMode.OnPropertyChanged);

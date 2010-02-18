@@ -29,27 +29,28 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 {
-    [DataContract]
-    public class GetOrderRequisitionForEditResponse : DataContractBase
-    {
-        public GetOrderRequisitionForEditResponse(EntityRef orderRef, OrderRequisition requisition)
-        {
-            this.OrderRef = orderRef;
-            this.Requisition = requisition;
-        }
+	[DataContract]
+	public class GetOrderRequisitionForEditResponse : DataContractBase
+	{
+		public GetOrderRequisitionForEditResponse(EntityRef orderRef, OrderRequisition requisition, bool IsCompleted)
+		{
+			this.OrderRef = orderRef;
+			this.Requisition = requisition;
+			this.IsCompleted = IsCompleted;
+		}
 
-        [DataMember]
-        public OrderRequisition Requisition;
+		[DataMember]
+		public OrderRequisition Requisition;
 
-        [DataMember]
-        public EntityRef OrderRef;
-    }
+		[DataMember]
+		public EntityRef OrderRef;
+
+		[DataMember]
+		public bool IsCompleted;
+	}
 }

@@ -183,7 +183,7 @@
 					Field.show(rowField, false);
 					return false;
 				}
-				
+
 				var formattedTimes = [];
 				if (startTime)
 				{
@@ -200,7 +200,7 @@
 				
 				if (endTime)
 				{
-					var prefix = startTime.Resolution == 1440 ? " to end of " : " to ";
+					var prefix = endTime.Resolution == 1440 ? " to end of " : " to ";
 					if (endTime.FixedTime)
 						formattedTimes.add(prefix + Ris.formatDate(endTime.FixedTime));
 					else if (endTime.RelativeTime)

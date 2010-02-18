@@ -29,172 +29,164 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-    public class VisitAssembler
-    {
-        public VisitSummary CreateVisitSummary(Visit visit, IPersistenceContext context)
-        {
-            VisitSummary summary = new VisitSummary();
+	public class VisitAssembler
+	{
+		public VisitSummary CreateVisitSummary(Visit visit, IPersistenceContext context)
+		{
+			var summary = new VisitSummary
+				{
+					VisitRef = visit.GetRef(),
+					PatientRef = visit.Patient.GetRef(),
+					VisitNumber = CreateVisitNumberDetail(visit.VisitNumber),
+					AdmissionType = EnumUtils.GetEnumValueInfo(visit.AdmissionType),
+					PatientClass = EnumUtils.GetEnumValueInfo(visit.PatientClass),
+					PatientType = EnumUtils.GetEnumValueInfo(visit.PatientType),
+					Status = EnumUtils.GetEnumValueInfo(visit.Status, context),
+					AdmitTime = visit.AdmitTime,
+					DischargeTime = visit.DischargeTime
+				};
 
-            summary.VisitRef = visit.GetRef();
-            summary.PatientRef = visit.Patient.GetRef();
+			var facilityAssembler = new FacilityAssembler();
+			summary.Facility = visit.Facility == null ? null : facilityAssembler.CreateFacilitySummary(visit.Facility);
 
-            summary.VisitNumber = CreateVisitNumberDetail(visit.VisitNumber);
-
-            summary.AdmissionType = EnumUtils.GetEnumValueInfo(visit.AdmissionType);
-            summary.PatientClass = EnumUtils.GetEnumValueInfo(visit.PatientClass);
-            summary.PatientType = EnumUtils.GetEnumValueInfo(visit.PatientType);
-            summary.Status = EnumUtils.GetEnumValueInfo(visit.Status, context);
-
-            summary.AdmitTime = visit.AdmitTime;
-            summary.DischargeTime = visit.DischargeTime;
-
-			FacilityAssembler facilityAssembler = new FacilityAssembler();
-        	summary.Facility = visit.Facility == null ? null : facilityAssembler.CreateFacilitySummary(visit.Facility);
-
-			LocationAssembler locationAssembler = new LocationAssembler();
+			var locationAssembler = new LocationAssembler();
 			summary.CurrentLocation = visit.CurrentLocation == null ? null : locationAssembler.CreateLocationSummary(visit.CurrentLocation);
 
-            return summary;
-        }
+			return summary;
+		}
 
-        public VisitDetail CreateVisitDetail(Visit visit, IPersistenceContext context)
-        {
-            VisitDetail detail = new VisitDetail();
-            detail.VisitRef = visit.GetRef();
-            detail.PatientRef = visit.Patient.GetRef();
-            detail.VisitNumber = CreateVisitNumberDetail(visit.VisitNumber);
-            detail.AdmissionType = EnumUtils.GetEnumValueInfo(visit.AdmissionType);
-            detail.PatientClass = EnumUtils.GetEnumValueInfo(visit.PatientClass);
-            detail.PatientType = EnumUtils.GetEnumValueInfo(visit.PatientType);
-            detail.Status = EnumUtils.GetEnumValueInfo(visit.Status, context);
+		public VisitDetail CreateVisitDetail(Visit visit, IPersistenceContext context)
+		{
+			var detail = new VisitDetail
+				{
+					VisitRef = visit.GetRef(),
+					PatientRef = visit.Patient.GetRef(),
+					VisitNumber = CreateVisitNumberDetail(visit.VisitNumber),
+					AdmissionType = EnumUtils.GetEnumValueInfo(visit.AdmissionType),
+					PatientClass = EnumUtils.GetEnumValueInfo(visit.PatientClass),
+					PatientType = EnumUtils.GetEnumValueInfo(visit.PatientType),
+					Status = EnumUtils.GetEnumValueInfo(visit.Status, context),
+					AdmitTime = visit.AdmitTime,
+					DischargeTime = visit.DischargeTime,
+					DischargeDisposition = visit.DischargeDisposition,
+					Facility = new FacilityAssembler().CreateFacilitySummary(visit.Facility),
+					CurrentLocation = visit.CurrentLocation == null ? null : new LocationAssembler().CreateLocationSummary(visit.CurrentLocation),
+					Locations = new List<VisitLocationDetail>(),
+					PreadmitNumber = visit.PreadmitNumber,
+					VipIndicator = visit.VipIndicator,
+					ExtendedProperties = new Dictionary<string, string>(visit.ExtendedProperties)
+				};
 
+			foreach (var vl in visit.Locations)
+			{
+				detail.Locations.Add(CreateVisitLocationDetail(vl, context));
+			}
 
-            detail.AdmitTime = visit.AdmitTime;
-            detail.DischargeTime = visit.DischargeTime;
+			detail.Practitioners = new List<VisitPractitionerDetail>();
+			foreach (var vp in visit.Practitioners)
+			{
+				detail.Practitioners.Add(CreateVisitPractitionerDetail(vp, context));
+			}
 
-            detail.DischargeDisposition = visit.DischargeDisposition;
-
-            detail.Facility = new FacilityAssembler().CreateFacilitySummary(visit.Facility);
-			detail.CurrentLocation = visit.CurrentLocation == null ? null : new LocationAssembler().CreateLocationSummary(visit.CurrentLocation);
-            
-            detail.Locations = new List<VisitLocationDetail>();
-            foreach (VisitLocation vl in visit.Locations)
-            {
-                detail.Locations.Add(CreateVisitLocationDetail(vl, context));
-            }
-
-            detail.Practitioners = new List<VisitPractitionerDetail>();
-            foreach (VisitPractitioner vp in visit.Practitioners)
-            {
-                detail.Practitioners.Add(CreateVisitPractitionerDetail(vp, context));
-            }
-
-            detail.AmbulatoryStatuses = new List<EnumValueInfo>();
-            foreach (AmbulatoryStatusEnum ambulatoryStatus in visit.AmbulatoryStatuses)
-	        {
-                detail.AmbulatoryStatuses.Add(EnumUtils.GetEnumValueInfo(ambulatoryStatus));
-	        }   
-         
-            detail.PreadmitNumber = visit.PreadmitNumber;
-            detail.VipIndicator = visit.VipIndicator;
-
-        	detail.ExtendedProperties = new Dictionary<string, string>(visit.ExtendedProperties);
+			detail.AmbulatoryStatuses = new List<EnumValueInfo>();
+			foreach (var ambulatoryStatus in visit.AmbulatoryStatuses)
+			{
+				detail.AmbulatoryStatuses.Add(EnumUtils.GetEnumValueInfo(ambulatoryStatus));
+			}
 
 			return detail;
-        }
+		}
 
-        public CompositeIdentifierDetail CreateVisitNumberDetail(VisitNumber vn)
-        {
-            return new CompositeIdentifierDetail(vn.Id, EnumUtils.GetEnumValueInfo(vn.AssigningAuthority));
-        }
+		public CompositeIdentifierDetail CreateVisitNumberDetail(VisitNumber vn)
+		{
+			return new CompositeIdentifierDetail(vn.Id, EnumUtils.GetEnumValueInfo(vn.AssigningAuthority));
+		}
 
-        public void UpdateVisit(Visit visit, VisitDetail detail, IPersistenceContext context)
-        {
-            visit.Patient = context.Load<Patient>(detail.PatientRef, EntityLoadFlags.Proxy);
-            visit.VisitNumber.Id = detail.VisitNumber.Id;
-            visit.VisitNumber.AssigningAuthority = EnumUtils.GetEnumValue<InformationAuthorityEnum>(detail.VisitNumber.AssigningAuthority, context);
+		public void UpdateVisit(Visit visit, VisitDetail detail, IPersistenceContext context)
+		{
+			visit.Patient = context.Load<Patient>(detail.PatientRef, EntityLoadFlags.Proxy);
+			visit.VisitNumber.Id = detail.VisitNumber.Id;
+			visit.VisitNumber.AssigningAuthority = EnumUtils.GetEnumValue<InformationAuthorityEnum>(detail.VisitNumber.AssigningAuthority, context);
 
-            visit.AdmissionType = EnumUtils.GetEnumValue<AdmissionTypeEnum>(detail.AdmissionType, context);
-            visit.PatientClass = EnumUtils.GetEnumValue<PatientClassEnum>(detail.PatientClass, context);
-            visit.PatientType = EnumUtils.GetEnumValue<PatientTypeEnum>(detail.PatientType, context);
-            visit.Status = EnumUtils.GetEnumValue<VisitStatus>(detail.Status);
+			visit.AdmissionType = EnumUtils.GetEnumValue<AdmissionTypeEnum>(detail.AdmissionType, context);
+			visit.PatientClass = EnumUtils.GetEnumValue<PatientClassEnum>(detail.PatientClass, context);
+			visit.PatientType = EnumUtils.GetEnumValue<PatientTypeEnum>(detail.PatientType, context);
+			visit.Status = EnumUtils.GetEnumValue<VisitStatus>(detail.Status);
 
-            visit.AdmitTime = detail.AdmitTime;
-            visit.DischargeTime = detail.DischargeTime;
-            visit.DischargeDisposition = detail.DischargeDisposition;
+			visit.AdmitTime = detail.AdmitTime;
+			visit.DischargeTime = detail.DischargeTime;
+			visit.DischargeDisposition = detail.DischargeDisposition;
+			visit.VipIndicator = detail.VipIndicator;
 
 			visit.Facility = detail.Facility == null ? null :
 				context.Load<Facility>(detail.Facility.FacilityRef, EntityLoadFlags.Proxy);
 			visit.CurrentLocation = detail.CurrentLocation == null ? null :
 				context.Load<Location>(detail.CurrentLocation.LocationRef, EntityLoadFlags.Proxy);
 
-            visit.Locations.Clear();
-            foreach (VisitLocationDetail vlDetail in detail.Locations)
-            {
-                visit.Locations.Add(new VisitLocation(
-                    context.Load<Location>(vlDetail.Location.LocationRef, EntityLoadFlags.Proxy),
-                    EnumUtils.GetEnumValue<VisitLocationRole>(vlDetail.Role),
-                    vlDetail.StartTime,
-                    vlDetail.EndTime));
-            }
+			visit.Locations.Clear();
+			foreach (var vlDetail in detail.Locations)
+			{
+				visit.Locations.Add(new VisitLocation(
+					context.Load<Location>(vlDetail.Location.LocationRef, EntityLoadFlags.Proxy),
+					EnumUtils.GetEnumValue<VisitLocationRole>(vlDetail.Role),
+					vlDetail.StartTime,
+					vlDetail.EndTime));
+			}
 
-            visit.Practitioners.Clear();
-            foreach (VisitPractitionerDetail vpDetail in detail.Practitioners)
-            {
-                visit.Practitioners.Add(new VisitPractitioner(
-                    context.Load<ExternalPractitioner>(vpDetail.Practitioner.PractitionerRef, EntityLoadFlags.Proxy),
-                    EnumUtils.GetEnumValue<VisitPractitionerRole>(vpDetail.Role),
-                    vpDetail.StartTime,
-                    vpDetail.EndTime));
-            }
+			visit.Practitioners.Clear();
+			foreach (var vpDetail in detail.Practitioners)
+			{
+				visit.Practitioners.Add(new VisitPractitioner(
+					context.Load<ExternalPractitioner>(vpDetail.Practitioner.PractitionerRef, EntityLoadFlags.Proxy),
+					EnumUtils.GetEnumValue<VisitPractitionerRole>(vpDetail.Role),
+					vpDetail.StartTime,
+					vpDetail.EndTime));
+			}
 
-            visit.AmbulatoryStatuses.Clear();
-            foreach (EnumValueInfo ambulatoryStatus in detail.AmbulatoryStatuses)
-            {
-                visit.AmbulatoryStatuses.Add(EnumUtils.GetEnumValue<AmbulatoryStatusEnum>(ambulatoryStatus, context));   
-            }
+			visit.AmbulatoryStatuses.Clear();
+			foreach (var ambulatoryStatus in detail.AmbulatoryStatuses)
+			{
+				visit.AmbulatoryStatuses.Add(EnumUtils.GetEnumValue<AmbulatoryStatusEnum>(ambulatoryStatus, context));   
+			}
 
 			// explicitly copy each pair, so that we don't remove any properties that the client may have removed
-			foreach (KeyValuePair<string, string> pair in detail.ExtendedProperties)
+			foreach (var pair in detail.ExtendedProperties)
 			{
 				visit.ExtendedProperties[pair.Key] = pair.Value;
 			}
 		}
 
-        private VisitLocationDetail CreateVisitLocationDetail(VisitLocation vl, IPersistenceContext context)
-        {
-            VisitLocationDetail detail = new VisitLocationDetail();
+		private static VisitLocationDetail CreateVisitLocationDetail(VisitLocation vl, IPersistenceContext context)
+		{
+			var detail = new VisitLocationDetail
+				{
+					Location = new LocationAssembler().CreateLocationSummary(vl.Location),
+					Role = EnumUtils.GetEnumValueInfo(vl.Role, context),
+					StartTime = vl.StartTime,
+					EndTime = vl.EndTime
+				};
 
-            detail.Location = new LocationAssembler().CreateLocationSummary(vl.Location);
-            detail.Role = EnumUtils.GetEnumValueInfo(vl.Role, context);
+			return detail;
+		}
 
-            detail.StartTime = vl.StartTime;
-            detail.EndTime = vl.EndTime;
+		private static VisitPractitionerDetail CreateVisitPractitionerDetail(VisitPractitioner vp, IPersistenceContext context)
+		{
+			var detail = new VisitPractitionerDetail
+				{
+					Practitioner = new ExternalPractitionerAssembler().CreateExternalPractitionerSummary(vp.Practitioner, context),
+					Role = EnumUtils.GetEnumValueInfo(vp.Role, context),
+					StartTime = vp.StartTime,
+					EndTime = vp.EndTime
+				};
 
-            return detail;
-        }
-
-        private VisitPractitionerDetail CreateVisitPractitionerDetail(VisitPractitioner vp, IPersistenceContext context)
-        {
-            VisitPractitionerDetail detail = new VisitPractitionerDetail();
-            
-            detail.Practitioner = new ExternalPractitionerAssembler().CreateExternalPractitionerSummary(vp.Practitioner, context);
-
-            detail.Role = EnumUtils.GetEnumValueInfo(vp.Role, context);
-
-            detail.StartTime = vp.StartTime;
-            detail.EndTime = vp.EndTime;
-
-            return detail;
-        }
-    }
+			return detail;
+		}
+	}
 }

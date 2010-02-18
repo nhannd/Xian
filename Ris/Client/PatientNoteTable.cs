@@ -36,38 +36,43 @@ using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
-    public class PatientNoteTable : Table<PatientNoteDetail>
-    {
-        public PatientNoteTable()
-            :base(2)
-        {
-            this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnSeverity,
-                delegate(PatientNoteDetail n) { return (n.Category == null ? "" : n.Category.Severity.Value); },
-                0.1f));
-            this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnCategory,
-                delegate(PatientNoteDetail n) { return (n.Category == null ? "" : n.Category.Name); },
-                0.2f));
-            this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnAuthor,
-                delegate(PatientNoteDetail n) { return n.Author == null ? SR.LabelMe : PersonNameFormat.Format(n.Author.Name); },
-                0.2f));
+	public class PatientNoteTable : Table<PatientNoteDetail>
+	{
+		private const int NumRows = 2;
+		private const int NoteCommentRow = 1;
 
-            ITableColumn _createdOnColumn;
-            this.Columns.Add(_createdOnColumn = new TableColumn<PatientNoteDetail, string>(SR.ColumnCreatedOn,
-                delegate(PatientNoteDetail n) { return n.CreationTime == null ? SR.LabelNew : Format.DateTime(n.CreationTime); },
-                0.2f));
-            this.Columns.Add(new DateTimeTableColumn<PatientNoteDetail>(SR.ColumnExpiryDate,
-                delegate(PatientNoteDetail n) { return n.ValidRangeUntil; },
-                0.2f));
+		public PatientNoteTable()
+			: base(NumRows)
+		{
+			this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnSeverity,
+				n => (n.Category == null ? "" : n.Category.Severity.Value), 0.1f));
+			this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnCategory,
+				n => (n.Category == null ? "" : n.Category.Name), 0.2f));
+			this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnAuthor,
+				n => n.Author == null ? SR.LabelMe : PersonNameFormat.Format(n.Author.Name), 0.2f));
 
-            this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnComments,
-                delegate(PatientNoteDetail n) { return n.Comment; }, 1));
-            
+			ITableColumn _createdOnColumn;
+			this.Columns.Add(_createdOnColumn = new TableColumn<PatientNoteDetail, string>(SR.ColumnCreatedOn,
+				n => n.CreationTime == null ? SR.LabelNew : Format.DateTime(n.CreationTime), 0.2f));
+			this.Columns.Add(new DateTableColumn<PatientNoteDetail>(SR.ColumnExpiryDate,
+				n => n.ValidRangeUntil, 0.2f));
 
-            // there aren't any items to sort right now, but calling this sets the default sort parameters to "Created" column desc
-            this.Sort(new TableSortParams(_createdOnColumn, false));
-        }
+			this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnComments,
+				n => RemoveLineBreak(n.Comment), 1.0f, NoteCommentRow));
 
+			// there aren't any items to sort right now, but calling this sets the default sort parameters to "Created" column desc
+			this.Sort(new TableSortParams(_createdOnColumn, false));
+		}
 
+		private static string RemoveLineBreak(string input)
+		{
+			if (string.IsNullOrEmpty(input))
+				return input;
 
-    }
+			var newString = input.Replace("\r\n", " ");
+			newString = newString.Replace("\r", " ");
+			newString = newString.Replace("\n", " ");
+			return newString;
+		}
+	}
 }

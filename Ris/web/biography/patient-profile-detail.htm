@@ -178,11 +178,11 @@
 						},
 						{	label: "Home #",
 							cellType: "text",
-							getValue: function(item) { return item.HomePhoneNumber; }
+							getValue: function(item) { return Ris.formatStringTelephone(item.HomePhoneNumber); }
 						},
 						{	label: "Work #",
 							cellType: "text",
-							getValue: function(item) { return item.BusinessPhoneNumber; }
+							getValue: function(item) { return Ris.formatStringTelephone(item.BusinessPhoneNumber); }
 						},
 						{	label: "Address",
 							cellType: "text",

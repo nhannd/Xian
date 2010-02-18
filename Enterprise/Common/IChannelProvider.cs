@@ -30,50 +30,68 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.ServiceModel;
 
 namespace ClearCanvas.Enterprise.Common
 {
+	/// <summary>
+	/// Supplies credentials to an <see cref="IChannelProvider"/>.
+	/// </summary>
+	public class ChannelCredentials
+	{
+		/// <summary>
+		/// Gets or sets the user name.
+		/// </summary>
+		public string UserName { get; set; }
+
+		/// <summary>
+		/// Gets or sets the password.
+		/// </summary>
+		public string Password { get; set; }
+	}
+
+
     /// <summary>
     /// Defines an interface to an object that provides channel factories for
     /// remote services.
     /// </summary>
     /// <remarks>
     /// This interface is consumed by <see cref="RemoteServiceProviderBase"/>, 
-    /// which must obtain channel factories for the services it provides.  
+    /// which must obtain channel factories for the services it provides.
+    /// Implementations must be thread-safe.
     /// </remarks>
-    public interface IChannelFactoryProvider
+    public interface IChannelProvider
     {
         /// <summary>
-        /// Gets the primary channel factory for the specified service contract.
+        /// Gets a primary channel instance for the specified service contract.
         /// </summary>
         /// <remarks>
         /// The service provider will call <see cref="GetPrimary"/> every time an instance
         /// of a given service is requested.  The implementation is free to return a 
         /// different channel as the "primary" channel for any given call, in order to 
-        /// achieve a load-balancing scheme if desired.
+        /// achieve a load-balancing scheme if desired.  Implementations must be thread-safe,
+        /// and should never return the same channel for use by more than one thread.
         /// </remarks>
         /// <param name="serviceContract"></param>
-        /// <returns></returns>
-        ChannelFactory GetPrimary(Type serviceContract);
+        /// <param name="credentials">May be null if authentication is not required.</param>
+        /// <returns>A channel instance.</returns>
+        IClientChannel GetPrimary(Type serviceContract, ChannelCredentials credentials);
 
         /// <summary>
-        /// Attempts to obtain an alternate channel factory for the specified service
-        /// contract, in the event that the primary channel endpoint is unreachable.
+        /// Attempts to obtain an alternate channel instance for the specified failed channel,
+        /// in the event that its endpoint is unreachable.
         /// </summary>
         /// <remarks>
         /// This method should only be called if the primary channel is unreachable.
         /// It may be called multiple times, in the event that a returned failover
         /// channel is also unreachable.  With each successive call, the caller must
-        /// provide the endpoint address of the failed channel, so that the implementation
+        /// provide the failed channel, so that the implementation
         /// can track which channels have failed and avoid returning the same channel
-        /// repeatedly.
+		/// repeatedly.  Implementations must be thread-safe,
+		/// and should never return the same channel for use by more than one thread.
         /// </remarks>
-        /// <param name="serviceContract"></param>
-        /// <param name="failedEndpoint"></param>
-        /// <returns>An alternate channel factory, or null if no alternate is available.</returns>
-        ChannelFactory GetFailover(Type serviceContract, EndpointAddress failedEndpoint);
+		/// <param name="failedChannel"></param>
+        /// <returns>An alternate channel, or null if no alternate is available.</returns>
+		IClientChannel GetFailover(IClientChannel failedChannel);
     }
 }

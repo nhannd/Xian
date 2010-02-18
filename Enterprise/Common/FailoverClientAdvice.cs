@@ -87,7 +87,7 @@ namespace ClearCanvas.Enterprise.Common
             LogFailure(invocation, e, remoteEndpoint);
 
             // loop until we find a channel that succeeds or run out of failover channels
-            while ((channel = GetFailoverChannel(invocation, remoteEndpoint))
+            while ((channel = GetFailoverChannel(invocation))
                 != null)
             {
                 remoteEndpoint = ((IClientChannel) channel).RemoteAddress;
@@ -96,7 +96,11 @@ namespace ClearCanvas.Enterprise.Common
                     // try again using this channel, being sure to dispose of it
                     using (channel as IDisposable)
                     {
-                        invocation.Method.Invoke(channel, invocation.Arguments);
+						var retVal = invocation.Method.Invoke(channel, invocation.Arguments);
+
+						// success!
+						invocation.ReturnValue = retVal;
+						return;
                     }
                 }
                 catch (Exception ex)
@@ -110,12 +114,10 @@ namespace ClearCanvas.Enterprise.Common
             throw e;
         }
 
-        private object GetFailoverChannel(IInvocation invocation, EndpointAddress failedEndpoint)
+        private object GetFailoverChannel(IInvocation invocation)
         {
-        	var proxy = (IRemoteServiceProxy)invocation.Proxy;
-            return _serviceProvider.GetFailoverChannel(
-			  proxy.ServiceContract, failedEndpoint);
-        }
+        	return _serviceProvider.GetFailoverChannel((IClientChannel)invocation.InvocationTarget);
+		}
 
         private static void LogFailure(IInvocation invocation, Exception e, EndpointAddress failedEndpoint)
         {

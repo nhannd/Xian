@@ -410,7 +410,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				: CollectionUtils.Map<string, string>(filters.Split(','), s => s.Trim()).ToArray();
 			_supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, staffTypes);
 
-			_rememberSupervisor = ReportingSettings.Default.ShouldApplyDefaultSupervisor;
+			_rememberSupervisor = this.SupervisorVisible && ReportingSettings.Default.ShouldApplyDefaultSupervisor;
 
 			try
 			{
@@ -683,11 +683,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool RememberSupervisorVisible
 		{
-			get
-			{
-				return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview)
-					&& !Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.OmitSupervisor);
-			}
+			get { return this.SupervisorVisible; }
 		}
 
 		#endregion
@@ -1022,13 +1018,17 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			CloseImages();
 
-			if (!_userCancelled && _worklistItemManager.ShouldUnclaim)
+			if (!_userCancelled)
 			{
-				Platform.GetService<IReportingWorkflowService>(service =>
-					service.CancelReportingStep(new CancelReportingStepRequest(this.WorklistItem.ProcedureStepRef, _assignedStaff)));
-			}
+				if (_worklistItemManager.ShouldUnclaim)
+				{
+					Platform.GetService<IReportingWorkflowService>(
+						service =>
+						service.CancelReportingStep(new CancelReportingStepRequest(this.WorklistItem.ProcedureStepRef, _assignedStaff)));
+				}
 
-			SaveInitialReportingTabPage();
+				SaveInitialReportingTabPage();
+			}
 		}
 
 		private void OnWorklistItemChangedEvent(object sender, EventArgs args)
@@ -1096,15 +1096,17 @@ namespace ClearCanvas.Ris.Client.Workflow
 					// active part already has a supervisor assigned
 					_supervisor = activePart.Supervisor;
 				}
-				else if (
-					Thread.CurrentPrincipal.IsInRole(
-						ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview))
+				else if (this.RememberSupervisorVisible)
 				{
 					// active part does not have a supervisor assigned
 					// if this user has a default supervisor, retrieve it, otherwise leave supervisor as null
 					if (_rememberSupervisor && !String.IsNullOrEmpty(ReportingSettings.Default.SupervisorID))
 					{
 						_supervisor = GetStaffByID(ReportingSettings.Default.SupervisorID);
+					}
+					else
+					{
+						_supervisor = null;
 					}
 				}
 			});

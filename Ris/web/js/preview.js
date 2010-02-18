@@ -24,7 +24,7 @@ var Preview = function () {
 	
 	var _getAlertTooltip = function(alertItem, patientName)
 	{
-		var reasons = String.combine(alertItem.Reasons, ", ");
+		var reasons = String.combine(alertItem.Reasons, "; ");
 
 		switch (alertItem.AlertClassName)
 		{
@@ -46,7 +46,8 @@ var Preview = function () {
 	return {
 		getAlertHtml: function(alertItem, patientName)
 		{
-			return "<img class='alert' src='" + imagePath + "/" + _getAlertIcon(alertItem) + "' alt='" + _getAlertTooltip(alertItem, patientName) + "'/>";
+			var toolTip = '"' + _getAlertTooltip(alertItem, patientName) + '"';
+			return "<img class='alert' src='" + imagePath + "/" + _getAlertIcon(alertItem) + "' alt=" + toolTip + "/>";
 		},
 
 		getPatientAge: function(dateOfBirth, deathIndicator, timeOfDeath)
@@ -2043,15 +2044,15 @@ Preview.PhysiciansSection = function () {
 		'	<table cellspacing="5">'+
 		'		<tr>'+
 		'			<td width="120" class="propertyname">Attending Physician</td>'+
-		'			<td><div id="AttendingPhysician"/></td>'+
+		'			<td width="200"><div id="AttendingPhysician"/></td>'+
 		'			<td width="120" class="propertyname">Referring Physician</td>'+
-		'			<td><div id="ReferringPhysician"/></td>'+
+		'			<td width="200"><div id="ReferringPhysician"/></td>'+
 		'		</tr>'+
 		'		<tr>'+
 		'			<td width="120" class="propertyname">Consulting Physician</td>'+
-		'			<td><div id="ConsultingPhysician"/></td>'+
+		'			<td width="200"><div id="ConsultingPhysician"/></td>'+
 		'			<td width="120" class="propertyname">Admitting Physician</td>'+
-		'			<td><div id="AdmittingPhysician"/></td>'+
+		'			<td width="200"><div id="AdmittingPhysician"/></td>'+
 		'		</tr>'+
 		'	</table>'+
 		'</div>';
