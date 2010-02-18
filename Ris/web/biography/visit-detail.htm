@@ -24,32 +24,7 @@
 						return;
 					}
 
-<<<<<<< .working
 					Ris.getPatientDataService().getDataAsync(CreateRequest(context), OnPatientDataLoaded);
-=======
-					// construct request object
-					var request = {
-						GetVisitDetailRequest:
-							 { 
-								VisitRef: context.VisitRef
-							}
-					};
-
-					var service = Ris.getPatientDataService();
-					var data = service.getData(request);
-
-					if (data == null || data.length == 0)
-					{
-						Field.setValue($("myForm"), "");
-						return;
-					}
-
-					var visitDetail = data.GetVisitDetailResponse.Visit;
-					if(visitDetail)
-					{
-						Preview.VisitDetailsSection.create($("visitDetailsSection"), visitDetail);
-					}
->>>>>>> .merge-right.r12063
 				}
 				catch(e)
 				{

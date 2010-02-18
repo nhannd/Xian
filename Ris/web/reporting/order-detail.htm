@@ -69,27 +69,10 @@
 					Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail);
 					Preview.ReportingProceduresTable.create($("reportingProceduresSection"), orderDetail.Procedures);
 
-<<<<<<< .working
 					// select CT and MRI procedures
-					var filteredProcedures = Preview.filterProcedureByModality(orderDetail.Procedures, ["10003", "10004"]);
+					var filteredProcedures = orderDetail.Procedures; // do not filter based on CT or MRI in public release
 					var notes = orderDetail.Notes.select(function(note) { return note.Category == "Protocol"; });
 					Preview.ProtocolProceduresTable.create($("protocolProceduresSection"), filteredProcedures, notes);
-=======
-						var filteredProcedures = orderDetail.Procedures; // do not filter based on CT or MRI in public release
-						var notes = orderDetail.Notes.select(function(note) { return note.Category == "Protocol"; });
-						Preview.ProtocolProceduresTable.create($("protocolProceduresSection"), filteredProcedures, notes);
-						
-						notes = orderDetail.Notes.select(function(note) { return note.Category == "PrelimDiagnosis"; });
-						Preview.OrderNotesTable.create($("prelimDiagnosisNotesSection"), notes, "Preliminary Diagnosis", false);
-						
-						notes = orderDetail.Notes.select(function(note) { return note.Category == "General"; });
-						Preview.OrderNotesTable.create($("generalNotesSection"), notes, "Order Notes", true);
-					}
-					else
-					{
-						Field.show($("orderDetailsSection"), false);
-					}
->>>>>>> .merge-right.r12054
 
 					notes = orderDetail.Notes.select(function(note) { return note.Category == "PrelimDiagnosis"; });
 					Preview.OrderNotesTable.create($("prelimDiagnosisNotesSection"), notes, "Preliminary Diagnosis", false);
