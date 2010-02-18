@@ -11,8 +11,8 @@
     <property name="User" column="User_" type="String"/>
     <property name="Operation" column="Operation_" type="String" length="1000"/>
     <property name="ExceptionClass" column="ExceptionClass_" type="String" length="1000"/>
-    <property name="Message" column="Message_" type="String" length="4000"/>
-    <property name="Details" column="Details_" type="StringClob" length="65000"/>
+    <property name="Message" column="Message_" type="StringClob" length="1000000"/>
+    <property name="Details" column="Details_" type="StringClob" length="1000000"/>
     <property name="AssemblyName" column="AssemblyName_" type="String" length="500"/>
     <property name="AssemblyLocation" column="AssemblyLocation_" type="String" length="500"/>
   </class>

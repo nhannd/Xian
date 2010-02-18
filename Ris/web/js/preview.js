@@ -24,7 +24,15 @@ var Preview = function () {
 	
 	var _getAlertTooltip = function(alertItem, patientName)
 	{
-		var reasons = String.combine(alertItem.Reasons, "; ");
+		var escapedReasons = [];
+		alertItem.Reasons.each(function(reason) 
+			{ 
+				// escape single and double quote
+				var escapedReason = reason.replace(/"/gi, '&quot;').replace(/'/gi, '\''); 
+				escapedReasons.add(escapedReason);
+			});
+	
+		var reasons = String.combine(escapedReasons, "; ");
 
 		switch (alertItem.AlertClassName)
 		{
@@ -44,6 +52,17 @@ var Preview = function () {
 	};
 	
 	return {
+		createAlerts: function(containingElement, alertItems, patientName)
+		{
+			if (alertItems)
+			{
+				var alertHtml = "";
+				alertItems.each(function(item) { alertHtml += Preview.getAlertHtml(item, patientName); });
+
+				containingElement.innerHTML = alertHtml;
+			}
+		},
+
 		getAlertHtml: function(alertItem, patientName)
 		{
 			var toolTip = '"' + _getAlertTooltip(alertItem, patientName) + '"';
@@ -1305,7 +1324,7 @@ Preview.ImagingServiceSection = function () {
 			Field.setValue($("EnteredBy"), orderDetail.EnteredBy ? (Ris.formatPersonName(orderDetail.EnteredBy.Name) + ' (' + orderDetail.EnteredBy.StaffType.Value + ')') : "");
 			if (orderDetail.CancelReason)
 			{
-				Field.setValue($("CancelledBy"), Ris.formatPersonName(orderDetail.CancelledBy.Name) + ' (' + orderDetail.CancelledBy.StaffType.Value + ')');
+				Field.setValue($("CancelledBy"), Ris.formatStaffNameAndRole(orderDetail.CancelledBy));
 				Field.setValue($("CancelReason"), orderDetail.CancelReason.Value);
 			}
 			else
@@ -1631,16 +1650,11 @@ Preview.BannerSection = function() {
 		{
 			element.innerHTML = _html;
 
+			//TODO: this seems pretty hokey, having "line1", "line2", "alerts" as identifiers - collisions are likely
 			Field.setValue($("line1"), line1);
 			Field.setValue($("line2"), line2);
-
-			var alertHtml = "";
-			if(alerts)
-			{
-				alerts.each(function(item) { alertHtml += Preview.getAlertHtml(item, patientName); });
-			}
-			$("alerts").innerHTML = alertHtml;
 			
+			Preview.createAlerts($("alerts"), alerts, patientName);
 			Preview.PatientBannner.create(element.parentNode);
 		}
 	};

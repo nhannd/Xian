@@ -78,6 +78,7 @@
 						" / " + patientProfile.Sex.Value); 
 				}
 
+<<<<<<< .working
 				var orderDetail = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.Order : null;
 				if (orderDetail)
 				{
@@ -93,6 +94,13 @@
 						);
 
 					setProceduresField($("Procedure"), orderedProcedures);
+=======
+					// update alerts
+					var alertNotifications = data.GetPatientProfileDetailResponse.PatientAlerts;
+					if (data.GetOrderDetailResponse && data.GetOrderDetailResponse.OrderAlerts)
+						alertNotifications = alertNotifications.concat(data.GetOrderDetailResponse.OrderAlerts);
+					Preview.createAlerts($("alerts"), alertNotifications, patientName);
+>>>>>>> .merge-right.r12088
 				}
 				else
 				{

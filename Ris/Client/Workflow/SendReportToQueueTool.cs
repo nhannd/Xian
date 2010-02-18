@@ -38,8 +38,8 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	[MenuAction("apply", "folderexplorer-items-contextmenu/Print//Fax Report", "Apply")]
-	[ButtonAction("apply", "folderexplorer-items-toolbar/Print//Fax Report", "Apply")]
+	[MenuAction("apply", "folderexplorer-items-contextmenu/Print'/Fax Report", "Apply")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/Print'/Fax Report", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "Icons.PrintSmall.png", "Icons.PrintMedium.png", "Icons.PrintLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]

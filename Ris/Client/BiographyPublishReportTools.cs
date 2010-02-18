@@ -38,7 +38,7 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client
 {
-	[ButtonAction("apply", "biography-reports-toolbar/Print//Fax Report", "Apply")]
+	[ButtonAction("apply", "biography-reports-toolbar/Print'/Fax Report", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "Icons.PrintSmall.png", "Icons.PrintMedium.png", "Icons.PrintLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ExtensionOf(typeof(BiographyOrderReportsToolExtensionPoint))]
@@ -58,11 +58,11 @@ namespace ClearCanvas.Ris.Client
 		{
 			try
 			{
-				PublishReportComponent component = new PublishReportComponent(
-						this.Context.PatientProfileRef,
-						this.Context.OrderRef,
-						this.Context.ProcedureRef,
-						this.Context.ReportRef);
+				var component = new PublishReportComponent(
+					this.Context.PatientProfileRef,
+					this.Context.OrderRef,
+					this.Context.ProcedureRef,
+					this.Context.ReportRef);
 
 				ApplicationComponent.LaunchAsDialog(
 					this.Context.DesktopWindow,

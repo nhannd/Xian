@@ -49,13 +49,20 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
         {
         }
 
-        public ListStaffRequest(string staffID, string familyName, string givenName, string[] staffTypesFilter, SearchResultPage page)
+		public ListStaffRequest(string staffID, string familyName, string givenName, string[] staffTypesFilter, SearchResultPage page)
+			: this(staffID, familyName, givenName, staffTypesFilter, page, false)
+		{
+			
+		}
+
+        public ListStaffRequest(string staffID, string familyName, string givenName, string[] staffTypesFilter, SearchResultPage page, bool exactMatch)
         {
             this.StaffID = staffID;
             this.FamilyName = familyName;
             this.GivenName = givenName;
             this.StaffTypesFilter = staffTypesFilter;
             this.Page = page;
+			this.ExactMatch = exactMatch;
         }
 
 		/// <summary>
@@ -87,5 +94,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
 		/// </summary>
         [DataMember]
         public string[] StaffTypesFilter;
-    }
+
+		/// <summary>
+		/// Perform exact match using the filters, except for UserName, which is always used exactly.
+		/// </summary>
+		[DataMember]
+		public bool ExactMatch;
+	}
 }

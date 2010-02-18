@@ -63,13 +63,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 			criteria.Name.FamilyName.SortAsc(0);
 
             if (!string.IsNullOrEmpty(request.StaffID))
-                criteria.Id.StartsWith(request.StaffID);
+				ApplyCondition(criteria.Id, request.StaffID, request.ExactMatch);
 
             if (!string.IsNullOrEmpty(request.GivenName))
-				criteria.Name.GivenName.StartsWith(request.GivenName);
+				ApplyCondition(criteria.Name.GivenName, request.GivenName, request.ExactMatch); 
 
 			if (!string.IsNullOrEmpty(request.FamilyName))
-				criteria.Name.FamilyName.StartsWith(request.FamilyName);
+				ApplyCondition(criteria.Name.FamilyName, request.FamilyName, request.ExactMatch);
 
 			if (!string.IsNullOrEmpty(request.UserName))
 				criteria.UserName.EqualTo(request.UserName);
@@ -83,6 +83,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 				CollectionUtils.Map<Staff, StaffSummary, List<StaffSummary>>(
 					PersistenceContext.GetBroker<IStaffBroker>().Find(criteria, request.Page),
 					s => assembler.CreateStaffSummary(s, PersistenceContext)));
+		}
+
+		private static void ApplyCondition(ISearchCondition<string> condition, string value, bool exactMatch)
+		{
+			if(exactMatch)
+				condition.EqualTo(value);
+			else
+				condition.StartsWith(value);
 		}
 
 		[ReadOperation]

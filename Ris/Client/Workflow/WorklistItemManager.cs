@@ -198,7 +198,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			_worklistItem = worklistItem;
 			_componentMode = mode;
-			_reportNextItem = WorklistItemManagerSettings.Default.ShouldProceedToNextItem;
+			_reportNextItem = WorklistItemManagerSettings.Default.ShouldProceedToNextItem
+				&& this.ReportNextItemEnabled;
 
 			_isInitialized = true;
 		}
@@ -287,7 +288,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool StatusTextVisible
 		{
-			get { return _componentMode.ShowStatusText; }
+			get { return _componentMode.ShowStatusText && this.HasValidWorklistContext; }
 		}
 
 		public bool ReportNextItem
@@ -303,7 +304,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool ReportNextItemEnabled
 		{
-			get { return _componentMode.CanContinue; }
+			get { return _componentMode.CanContinue && this.HasValidWorklistContext; }
 		}
 
 		public bool CanSkipItem
@@ -314,6 +315,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		#endregion
 
 		#region Private methods
+
+		private bool HasValidWorklistContext
+		{
+			get { return _worklistRef != null || _worklistClassName != null; }
+		}
 
 		private void RefreshWorklistItemCache()
 		{

@@ -122,7 +122,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				delegate(IStaffAdminService service)
 				{
 					ListStaffResponse response = service.ListStaff(
-						new ListStaffRequest(id, null, null, null));
+						new ListStaffRequest(id, null, null, null, null, true));
 					staff = CollectionUtils.FirstElement(response.Staffs);
 				});
 			return staff;

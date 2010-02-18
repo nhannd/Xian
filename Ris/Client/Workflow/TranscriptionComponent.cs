@@ -39,6 +39,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Application.Common.TranscriptionWorkflow;
 
@@ -869,14 +870,23 @@ namespace ClearCanvas.Ris.Client.Workflow
 					// if this user has a default supervisor, retreive it, otherwise leave supervisor as null
 					if (!String.IsNullOrEmpty(TranscriptionSettings.Default.SupervisorID))
 					{
-						object supervisor;
-						if (_supervisorLookupHandler.Resolve(TranscriptionSettings.Default.SupervisorID, false, out supervisor))
-						{
-							_supervisor = (StaffSummary) supervisor;
-						}
+						_supervisor = GetStaffByID(TranscriptionSettings.Default.SupervisorID);
 					}
 				}
 			});
+		}
+
+		private StaffSummary GetStaffByID(string id)
+		{
+				StaffSummary staff = null;
+				Platform.GetService<IStaffAdminService>(
+						delegate(IStaffAdminService service)
+						{
+								ListStaffResponse response = service.ListStaff(
+										new ListStaffRequest(id, null, null, null, null, true));
+								staff = CollectionUtils.FirstElement(response.Staffs);
+						});
+				return staff;
 		}
 
 		private void ClaimWorklistItem(ReportingWorklistItem item)

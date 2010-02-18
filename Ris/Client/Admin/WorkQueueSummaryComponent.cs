@@ -46,33 +46,15 @@ namespace ClearCanvas.Ris.Client.Admin
 	{
 		public WorkQueueSummaryTable()
 		{
-			this.Columns.Add(new DateTimeTableColumn<WorkQueueItemSummary>(SR.ColumnCreationTime,
-				delegate(WorkQueueItemSummary item) { return item.CreationTime; }));
-
-			this.Columns.Add(new DateTimeTableColumn<WorkQueueItemSummary>(SR.ColumnScheduledTime,
-				delegate(WorkQueueItemSummary item) { return item.ScheduledTime; }));
-
-			this.Columns.Add(new DateTimeTableColumn<WorkQueueItemSummary>(SR.ColumnExpirationTime,
-				delegate(WorkQueueItemSummary item) { return item.ExpirationTime; }));
-
-			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnUser,
-				delegate(WorkQueueItemSummary item) { return item.User; }));
-
-			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnType,
-				delegate(WorkQueueItemSummary item) { return item.Type; }));
-
-			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnStatus,
-				delegate(WorkQueueItemSummary item) { return item.Status.Value; }));
-
-			this.Columns.Add(new DateTimeTableColumn<WorkQueueItemSummary>(SR.ColumnProcessedTime,
-				delegate(WorkQueueItemSummary item) { return item.ProcessedTime; }));
-
-			this.Columns.Add(new TableColumn<WorkQueueItemSummary, int>(SR.ColumnFailureCount,
-				delegate(WorkQueueItemSummary item) { return item.FailureCount; }));
-
-			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnFailureDescription,
-				delegate(WorkQueueItemSummary item) { return item.FailureDescription; }));
-
+			this.Columns.Add(new DateTimeTableColumn<WorkQueueItemSummary>(SR.ColumnCreationTime, item => item.CreationTime));
+			this.Columns.Add(new DateTimeTableColumn<WorkQueueItemSummary>(SR.ColumnScheduledTime, item => item.ScheduledTime));
+			this.Columns.Add(new DateTimeTableColumn<WorkQueueItemSummary>(SR.ColumnExpirationTime, item => item.ExpirationTime));
+			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnUser, item => item.User));
+			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnType, item => item.Type));
+			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnStatus, item => item.Status.Value));
+			this.Columns.Add(new DateTimeTableColumn<WorkQueueItemSummary>(SR.ColumnProcessedTime, item => item.ProcessedTime));
+			this.Columns.Add(new TableColumn<WorkQueueItemSummary, int>(SR.ColumnFailureCount, item => item.FailureCount));
+			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnFailureDescription, item => item.FailureDescription));
 		}
 	}
 
@@ -108,16 +90,16 @@ namespace ClearCanvas.Ris.Client.Admin
 		public override void Start()
 		{
 			Platform.GetService<IWorkQueueAdminService>(
-					delegate(IWorkQueueAdminService service)
-					{
-						GetWorkQueueFormDataResponse response = service.GetWorkQueueFormData(new GetWorkQueueFormDataRequest());
-						_typeChoices.AddRange(response.Types);
-						_typeChoices.Insert(0, _any.Value);
-						_type = CollectionUtils.FirstElement(_typeChoices);
-						_statusChoices.AddRange(response.Statuses);
-						_statusChoices.Insert(0, _any);
-						_status = CollectionUtils.FirstElement(_statusChoices);
-					});
+				service =>
+				{
+					var response = service.GetWorkQueueFormData(new GetWorkQueueFormDataRequest());
+					_typeChoices.AddRange(response.Types);
+					_typeChoices.Insert(0, _any.Value);
+					_type = CollectionUtils.FirstElement(_typeChoices);
+					_statusChoices.AddRange(response.Statuses);
+					_statusChoices.Insert(0, _any);
+					_status = CollectionUtils.FirstElement(_statusChoices);
+				});
 
 			base.Start();
 		}
@@ -180,10 +162,10 @@ namespace ClearCanvas.Ris.Client.Admin
 		{
 			ListWorkQueueItemsResponse listResponse = null;
 			Platform.GetService<IWorkQueueAdminService>(
-				delegate(IWorkQueueAdminService service)
+				service =>
 				{
-					request.StartTime = _startTime;
-					request.EndTime = _endTime;
+					request.StartTime = _startTime.HasValue ? (DateTime?)_startTime.Value.Date : null;
+					request.EndTime = _endTime.HasValue ? (DateTime?)_endTime.Value.Date.AddDays(1).AddTicks(-1) : null;
 					request.User = _user;
 					request.Type = Equals(_type, _any.Value) ? null : _type;
 					request.Status = _status.Code == _any.Code ? null : _status;

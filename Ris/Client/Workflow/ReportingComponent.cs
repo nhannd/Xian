@@ -1117,7 +1117,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			StaffSummary staff = null;
 			Platform.GetService<IStaffAdminService>(service =>
 			{
-				var response = service.ListStaff(new ListStaffRequest(id, null, null, null));
+				var response = service.ListStaff(new ListStaffRequest(id, null, null, null, null, true));
 				staff = CollectionUtils.FirstElement(response.Staffs);
 			});
 			return staff;
