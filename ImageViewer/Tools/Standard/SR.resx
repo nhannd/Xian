@@ -744,24 +744,6 @@ Please check the log for more details.</value>
   <data name="TooltipMatchScale" xml:space="preserve">
     <value>Match Scale</value>
   </data>
-  <data name="MessageNotEnoughImageVisible" xml:space="preserve">
-    <value>There is not enough of the selected image visible to match the scale.</value>
-  </data>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   <data name="MenuView" xml:space="preserve">
     <value>View</value>
   </data>
