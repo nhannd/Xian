@@ -49,7 +49,4 @@ on key tables that play a central role in the workflow queries.
   <index table="Staff_" columns="GivenName_"/>
   <index table="Staff_" columns="UserName_"/>
   
-  <!-- AttachedDocument -->
-  <index table="AttachedDocument_" columns="CreationTime_"/>
-  <index table="AttachedDocument_" columns="ReceivedTime_"/>
 </indexes>

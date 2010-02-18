@@ -103,8 +103,13 @@
 				var alertNotifications = data.GetPatientProfileDetailResponse.PatientAlerts;
 				if (data.GetOrderDetailResponse && data.GetOrderDetailResponse.OrderAlerts)
 					alertNotifications = alertNotifications.concat(data.GetOrderDetailResponse.OrderAlerts);
-					Preview.createAlerts($("alerts"), alertNotifications, patientName);
+				if (alertNotifications)
+				{
+					var alertHtml = "";
+					alertNotifications.each(function(item) { alertHtml += Preview.getAlertHtml(item, patientName); });
+					Field.setPreFormattedValue($("alerts"), alertHtml);
 				}
+			}
 
 			function setProceduresField(element, procedures)
 			{
