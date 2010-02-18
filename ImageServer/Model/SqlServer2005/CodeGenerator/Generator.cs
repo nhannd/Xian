@@ -194,7 +194,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 		{
 			writer.WriteLine("#region License");
 			writer.WriteLine("");
-			writer.WriteLine("// Copyright (c) 2009, ClearCanvas Inc.");
+			writer.WriteLine("// Copyright (c) 2010, ClearCanvas Inc.");
 			writer.WriteLine("// All rights reserved.");
 			writer.WriteLine("//");
 			writer.WriteLine("// Redistribution and use in source and binary forms, with or without modification, ");
