@@ -202,6 +202,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			// ensure the new order is assigned an OID before using it in the return value
 			this.PersistenceContext.SynchState();
 
+			CreateLogicalHL7Event(order, LogicalHL7EventType.OrderCreated);
+
 			var orderAssembler = new OrderAssembler();
 			return new PlaceOrderResponse(orderAssembler.CreateOrderSummary(order, this.PersistenceContext));
 		}
@@ -224,6 +226,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			ValidatePatientProfilesExist(order);
 
 			this.PersistenceContext.SynchState();
+
+			CreateLogicalHL7Event(order, LogicalHL7EventType.OrderModified);
 
 			var orderAssembler = new OrderAssembler();
 			return new ModifyOrderResponse(orderAssembler.CreateOrderSummary(order, this.PersistenceContext));
@@ -254,6 +258,9 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 			this.PersistenceContext.SynchState();
 
+			CreateLogicalHL7Event(newOrder, LogicalHL7EventType.OrderCreated);
+			CreateLogicalHL7Event(orderToReplace, LogicalHL7EventType.OrderCancelled);
+
 			var orderAssembler = new OrderAssembler();
 			return new ReplaceOrderResponse(orderAssembler.CreateOrderSummary(newOrder, this.PersistenceContext));
 		}
@@ -267,6 +274,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			var reason = EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.CancelReason, this.PersistenceContext);
 
 			CancelOrderHelper(order, new OrderCancelInfo(reason, this.CurrentUserStaff));
+
+			CreateLogicalHL7Event(order, LogicalHL7EventType.OrderCancelled);
 
 			return new CancelOrderResponse();
 		}
@@ -308,6 +317,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			order.Visit.TimeShift(request.NumberOfMinutes);
 
 			this.PersistenceContext.SynchState();
+
+			CreateLogicalHL7Event(order, LogicalHL7EventType.OrderModified);
 
 			var orderAssembler = new OrderAssembler();
 			return new TimeShiftOrderResponse(orderAssembler.CreateOrderSummary(order, this.PersistenceContext));
@@ -528,7 +539,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		private void UpdateProceduresHelper(Order order, IEnumerable<ProcedureRequisition> procedureReqs)
 		{
 			// do not update the procedures if the order is completed
-			if(order.IsTerminated)
+			if (order.IsTerminated)
 				return;
 
 			var assembler = new OrderEntryAssembler();

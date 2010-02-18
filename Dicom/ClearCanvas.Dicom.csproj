@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -478,7 +478,8 @@
   <ItemGroup>
     <None Include="app.config" />
     <EmbeddedResource Include="Audit\DicomAuditMessageSchema.xsd">
-      <SubType>Designer</SubType>
+      <SubType>
+      </SubType>
     </EmbeddedResource>
     <None Include="Audit\DicomAuditMessageSchema.xsx">
       <DependentUpon>DicomAuditMessageSchema.xsd</DependentUpon>

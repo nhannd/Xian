@@ -104,6 +104,8 @@
     <Compile Include="Imex\CannedTextImex.cs" />
     <Compile Include="Imex\LocationImex.cs" />
     <Compile Include="Imex\PatientNoteCategoryImex.cs" />
+    <Compile Include="LogicalHL7EventType.cs" />
+    <Compile Include="LogicalHL7EventWorkQueueItem.cs" />
     <Compile Include="ModalityPerformedProcedureStepSearchCriteria.cs" />
     <Compile Include="NoteboxFactory.cs" />
     <Compile Include="Imex\ExternalPractitionerImex.cs" />
