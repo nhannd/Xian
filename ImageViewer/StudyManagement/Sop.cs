@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </para>
 	/// </remarks>
 	
-	public partial class Sop : IDisposable, ISopInstanceData
+	public partial class Sop : IDisposable, ISopInstanceData, ISeriesData, IStudyData, IPatientData
 	{
 		private volatile Series _parentSeries;
 		private volatile ISopDataCacheItemReference _dataSourceReference;
@@ -141,9 +141,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		public IImageIdentifier GetIdentifier()
 		{
-			StudyItem studyIdentifier = new StudyItem(StudyInstanceUid, DataSource.Server, DataSource.StudyLoaderName);
-			studyIdentifier.InstanceAvailability = "ONLINE";
+			var studyIdentifier = new StudyItem(StudyInstanceUid, DataSource.Server, DataSource.StudyLoaderName)
+			                      	{InstanceAvailability = "ONLINE"};
 			return new ImageIdentifier(this, studyIdentifier);
+		}
+
+		internal IStudyRootStudyIdentifier GetStudyIdentifier()
+		{
+			return new StudyItem(this, this, DataSource.Server, DataSource.StudyLoaderName)
+			                 	{InstanceAvailability = "ONLINE"};
+		}
+
+		internal ISeriesIdentifier GetSeriesIdentifier()
+		{
+			var studyIdentifier = new StudyItem(StudyInstanceUid, DataSource.Server, DataSource.StudyLoaderName)
+			                      	{InstanceAvailability = "ONLINE"};
+			return new SeriesIdentifier(this, studyIdentifier);
 		}
 
 		internal IList<VoiDataLut> GetVoiDataLuts()
@@ -283,6 +296,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion	
 
+		string IPatientData.PatientsName
+		{
+			get { return this.PatientsName.ToString(); }
+		}
+
 		#region General Study Module
 
 		/// <summary>
@@ -385,6 +403,44 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		#endregion
+
+		string[] IStudyData.ModalitiesInStudy
+		{
+			get
+			{
+				if (_parentSeries != null && _parentSeries.ParentStudy != null)
+					return _parentSeries.ParentStudy.ModalitiesInStudy;
+
+				return null;
+			}
+		}
+
+		string IStudyData.ReferringPhysiciansName
+		{
+			get { return this.ReferringPhysiciansName.ToString(); }
+		}
+
+		int? IStudyData.NumberOfStudyRelatedSeries
+		{
+			get
+			{
+				if (_parentSeries != null && _parentSeries.ParentStudy != null)
+					return _parentSeries.ParentStudy.NumberOfStudyRelatedSeries;
+
+				return null;
+			}
+		}
+
+		int? IStudyData.NumberOfStudyRelatedInstances
+		{
+			get
+			{
+				if (_parentSeries != null && _parentSeries.ParentStudy != null)
+					return _parentSeries.ParentStudy.NumberOfStudyRelatedInstances;
+
+				return null;
+			}
+		}
 
 		#region Patient Study Module
 
@@ -652,6 +708,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		#endregion
+
+		int? ISeriesData.NumberOfSeriesRelatedInstances
+		{
+			get
+			{
+				if (_parentSeries != null)
+					return _parentSeries.NumberOfSeriesRelatedInstances;
+				return null;
+			}
+		}
 
 		#region Dicom Tag Retrieval Methods
 

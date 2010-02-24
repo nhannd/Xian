@@ -31,9 +31,7 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
-using System.Collections.ObjectModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
@@ -232,9 +230,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		public IStudyRootStudyIdentifier GetIdentifier()
 		{
-			StudyItem identifier = new StudyItem(_parentPatient, this, _sop.DataSource.Server, _sop.DataSource.StudyLoaderName);
-			identifier.InstanceAvailability = "ONLINE";
-			return identifier;
+			return _sop.GetStudyIdentifier();
 		}
 
 		/// <summary>

@@ -236,9 +236,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		public ISeriesIdentifier GetIdentifier()
 		{
-			StudyItem studyIdentifier = new StudyItem(StudyInstanceUid, _sop.DataSource.Server, _sop.DataSource.StudyLoaderName);
-			studyIdentifier.InstanceAvailability = "ONLINE";
-			return new SeriesIdentifier(this, studyIdentifier);
+			return _sop.GetSeriesIdentifier();
 		}
 
 		internal void SetSop(Sop sop)
