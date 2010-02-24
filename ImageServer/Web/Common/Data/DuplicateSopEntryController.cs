@@ -35,9 +35,12 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
@@ -62,10 +65,24 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             using(IUpdateContext context = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 ProcessDuplicateQueueEntryQueueData data = new ProcessDuplicateQueueEntryQueueData
-                                                           	{
-                                                           		Action = action,
-                                                           		DuplicateSopFolder = entry.GetFolderPath()
-                                                           	};
+                {
+                    Action = action,
+                    DuplicateSopFolder = entry.GetFolderPath(context),
+                    UserName = ServerHelper.CurrentUserName,                                                              		
+                }; 
+                
+                LockStudyParameters lockParms = new LockStudyParameters
+                {
+                    QueueStudyStateEnum = QueueStudyStateEnum.ReconcileScheduled,
+                    StudyStorageKey = entry.StudyStorageKey
+                };
+
+                ILockStudy lockBbroker = context.GetBroker<ILockStudy>();
+                lockBbroker.Execute(lockParms);
+                if (!lockParms.Successful)
+                {
+                    throw new ApplicationException(lockParms.FailureReason);
+                }
 
             	IWorkQueueProcessDuplicateSopBroker broker = context.GetBroker<IWorkQueueProcessDuplicateSopBroker>();
                 WorkQueueProcessDuplicateSopUpdateColumns columns = new WorkQueueProcessDuplicateSopUpdateColumns

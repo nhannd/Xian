@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
@@ -51,10 +52,11 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 		private readonly StudyStorageLocation _studyLocation;
 	    private readonly string _relativePath;
         private readonly List<DicomAttributeComparisonResult> _reasons;
+	    private readonly string _duplicateStoragePath;
 
 	    public InsertOrUpdateEntryCommand(String groupId,
 		                                        StudyStorageLocation studyLocation, 
-                                                DicomFile file, String relativePath,
+                                                DicomFile file, String duplicateStoragePath, String relativePath,
                                                  List<DicomAttributeComparisonResult> reasons) 
 			: base("Insert Duplicate Queue Entry Command", true)
 		{
@@ -65,6 +67,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 			_file = file;
 			_studyLocation = studyLocation;
             _groupId = groupId;
+	        _duplicateStoragePath = duplicateStoragePath;
 		    _relativePath = relativePath;
 	        _reasons = reasons;
 		}
@@ -84,7 +87,12 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
                       	};
 			ReconcileStudyQueueDescription queueDesc = CreateQueueEntryDescription(_file);
 		    parms.Description = queueDesc != null ? queueDesc.ToString() : String.Empty;
-            DuplicateSIQQueueData queueData = new DuplicateSIQQueueData {Details = new ImageSetDetails(_file.DataSet)};
+            DuplicateSIQQueueData queueData = new DuplicateSIQQueueData
+                                                  {
+                                                      StoragePath = _duplicateStoragePath,
+                                                      Details = new ImageSetDetails(_file.DataSet),
+                                                      TimeStamp = Platform.Time
+                                                  };
 			if (_reasons != null && _reasons.Count>0)
             {
                 queueData.ComparisonResults = _reasons;

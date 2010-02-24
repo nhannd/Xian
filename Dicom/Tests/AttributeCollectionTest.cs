@@ -41,7 +41,44 @@ namespace ClearCanvas.Dicom.Tests
 	[TestFixture]
 	public class AttributeCollectionTest : AbstractTest
 	{
-		[Test]
+        [Test]
+        public void TestFile()
+        {
+            string filename = "OutOfRange.dcm";
+
+            DicomFile file = new DicomFile(filename, new DicomAttributeCollection(), new DicomAttributeCollection());
+            SetupMR(file.DataSet);
+            SetupMetaInfo(file);
+
+            DicomTag tag = new DicomTag(0x00030010, "Test", "TestBad", DicomVr.LOvr, false, 1, 1, false);
+
+            file.DataSet[tag].SetStringValue("Test");
+
+            file.Save(filename);
+
+            file = new DicomFile(filename);
+
+            file.DataSet.IgnoreOutOfRangeTags = true;
+
+            file.Load();
+
+            Assert.IsNotNull(file.DataSet.GetAttribute(tag));
+
+            file = new DicomFile(filename);
+
+            file.DataSet.IgnoreOutOfRangeTags = false;
+
+            try
+            {
+                file.Load();
+                Assert.Fail("file.Load failed");
+            }
+            catch (DicomException)
+            {
+            }
+        }
+
+	    [Test]
 		public void TestIgnoreOutOfRangeTags()
 		{
 			DicomFile file = new DicomFile();

@@ -176,6 +176,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 			criteria.StudyStorageKey.EqualTo(Study.TheStudyStorage.Key);
         	int siqCount = siqController.GetReconcileQueueItemsCount(criteria);
 
+            string reason;
+            bool seriesDelete = Study.CanScheduleSeriesDelete(out reason);
+
             foreach(GridViewRow row in GridView1.Rows)
             {
                 if (row.RowType == DataControlRowType.DataRow)
@@ -190,7 +193,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     StudyController controller = new StudyController();
                     if (controller.CanManipulateSeries(Study.TheStudy))
                     {
-						if (siqCount==0)
+                        
+						if (siqCount==0 && seriesDelete)
 							row.Attributes.Add("candelete", "true");
 
                         row.Attributes.Add("canmove", "true");

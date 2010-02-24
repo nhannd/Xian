@@ -182,6 +182,34 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			return true;
 		}
 
+        public bool CanScheduleSeriesDelete(out string reason)
+        {
+            if (IsLocked)
+            {
+                reason = "Study is being locked";
+                return false;
+            }
+            if (IsReconcileRequired)
+            {
+                reason = "There are images to be reconciled for this study";
+                return false;
+            }
+            if (IsNearline)
+            {
+                reason = "Study is nearline. It must be restored before it can be deleted.";
+                return false;
+            }
+
+            if (StudyStatusEnum.Equals(StudyStatusEnum.OnlineLossy)
+            && IsArchivedLossless)
+            {
+                reason = "Study was archived as lossless. It must be restored before a series can be deleted.";
+                return false;
+            }
+            reason = String.Empty;
+            return true;
+        }
+
 		public bool CanScheduleEdit(out string reason)
 		{
 			if (IsLocked)

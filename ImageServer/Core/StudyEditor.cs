@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Model;
 
@@ -141,8 +142,18 @@ namespace ClearCanvas.ImageServer.Core
 
 			ServerPartition = thePartition;
 			StorageLocation = location;
-			Patient = thePatient;
-			Study = theStudy;
+			
+            Patient = thePatient;
+            Study = theStudy;
+            
+            // Scrub for invalid characters that may cause a failure when the Xml is generated for the history
+		    Patient.PatientId = XmlUtils.XmlCharacterScrub(Patient.PatientId);
+            Patient.PatientsName = XmlUtils.XmlCharacterScrub(Patient.PatientsName);
+            
+            Study.StudyDescription = XmlUtils.XmlCharacterScrub(Study.StudyDescription);
+            Study.ReferringPhysiciansName = XmlUtils.XmlCharacterScrub(Study.ReferringPhysiciansName);
+            Study.PatientId = XmlUtils.XmlCharacterScrub(Study.PatientId);
+            Study.PatientsName = XmlUtils.XmlCharacterScrub(Study.PatientsName);            
 		}
 		#endregion
 

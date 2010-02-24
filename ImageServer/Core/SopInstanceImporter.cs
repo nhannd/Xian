@@ -38,6 +38,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Exceptions;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -161,7 +162,13 @@ namespace ClearCanvas.ImageServer.Core
             String seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
             String sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, string.Empty);
             String accessionNumber = message.DataSet[DicomTags.AccessionNumber].GetString(0, string.Empty);
+            String patientsName = message.DataSet[DicomTags.PatientsName].GetString(0, string.Empty);
         	DicomFile file = null;
+
+            // Scrub the name for invalid characters.
+            string newName = XmlUtils.XmlCharacterScrub(patientsName);
+            if (!newName.Equals(patientsName))
+                message.DataSet[DicomTags.PatientsName].SetStringValue(newName);
 
 			DicomProcessingResult result = new DicomProcessingResult
 			                               	{

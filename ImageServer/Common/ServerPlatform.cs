@@ -405,6 +405,64 @@ namespace ClearCanvas.ImageServer.Common
             return true;
         }
 
-        
+        /// <summary>
+        /// Helper method to return the path to the duplicate image (in the Reconcile folder)
+        /// </summary>
+        /// <param name="studyStorage"></param>
+        /// <param name="sop"></param>
+        /// <returns></returns>
+        public static String GetDuplicateUidPath(StudyStorageLocation studyStorage, WorkQueueUid sop)
+        {
+            string dupPath = GetDuplicateGroupPath(studyStorage, sop);
+            dupPath = string.IsNullOrEmpty(sop.RelativePath)
+                        ? Path.Combine(dupPath,
+                                       Path.Combine(studyStorage.StudyInstanceUid, sop.SopInstanceUid + "." + sop.Extension))
+                        : Path.Combine(dupPath, sop.RelativePath);
+
+            #region BACKWARD_COMPATIBILTY_CODE
+
+            if (string.IsNullOrEmpty(sop.RelativePath) && !File.Exists(dupPath))
+            {
+                string basePath = Path.Combine(studyStorage.GetStudyPath(), sop.SeriesInstanceUid);
+                basePath = Path.Combine(basePath, sop.SopInstanceUid);
+                if (sop.Extension != null)
+                    dupPath = basePath + "." + sop.Extension;
+                else
+                    dupPath = basePath + ".dcm";
+            }
+
+            #endregion
+
+            return dupPath;
+        }
+
+        /// <summary>
+        /// Helper method to return the path to the folder containing the duplicate images (in the Reconcile folder)
+        /// </summary>
+        /// <param name="studyStorage"></param>
+        /// <param name="sop"></param>
+        /// <returns></returns>
+        public static String GetDuplicateGroupPath(StudyStorageLocation studyStorage, WorkQueueUid sop)
+        {
+            String groupFolderPath = Path.Combine(studyStorage.FilesystemPath, studyStorage.PartitionFolder);
+            groupFolderPath = Path.Combine(groupFolderPath, ServerPlatform.ReconcileStorageFolder);
+            groupFolderPath = Path.Combine(groupFolderPath, sop.GroupID);
+
+            return groupFolderPath;
+        }
+
+        /// <summary>
+        /// Helper method to return the path to the folder containing the duplicate images (in the Reconcile folder)
+        /// </summary>
+        /// <param name="storageLocation"></param>
+        /// <param name="queueItem"></param>
+        /// <returns></returns>
+        public static string GetDuplicateGroupPath(StudyStorageLocation storageLocation, WorkQueue queueItem)
+	    {
+            string path = Path.Combine(storageLocation.FilesystemPath, storageLocation.PartitionFolder);
+            path = Path.Combine(path, ServerPlatform.ReconcileStorageFolder);
+            path = Path.Combine(path, queueItem.GroupID);
+            return path;
+	    }
     }
 }

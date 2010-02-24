@@ -38,10 +38,8 @@ using AjaxControlToolkit;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
-using ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
@@ -125,6 +123,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                             MessageBox.MessageTypeEnum.ERROR;
                         MessageBox.Show();
                 }
+
+                OnAllAlertsDeleted();
         }
 
         #endregion
@@ -141,13 +141,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                 return true;
             else
                 return false;
-        }
-
-        protected override void OnPreRender(EventArgs e)
-        {
-            base.OnPreRender(e);
-
-            UpdateUI();
         }
 
         protected override void OnInit(EventArgs e)
@@ -210,9 +203,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                                 {
                                     _theController.DeleteAlertItem(keys[i] as ServerEntityKey);
                                 }
+
+                                OnAlertDeleted();
                             };
 
             DeleteAllConfirmationBox.Confirmed += DeleteAllConfirmDialog_Confirmed;
+
+            // TODO: We should do this in GridPager.InitializeGridPager()
+            AlertsGridPanel.TheGrid.DataBound += delegate { GridPagerTop.Refresh(); };
         }
 
         protected void Clear()
@@ -223,6 +221,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
             LevelFilter.Text = string.Empty;
         }
 
+
+        private void OnAllAlertsDeleted()
+        {
+            DataBind();
+        }
+
+        private void OnAlertDeleted()
+        {
+            DataBind();
+        }
+
+        
         protected void DeleteAlertButton_Click(object sender, ImageClickEventArgs e)
         {
             AlertsGridPanel.RefreshCurrentPage();
@@ -285,6 +295,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         #endregion Protected Methods
 
         #region Public Methods
+
+        public override void DataBind()
+        {
+            base.DataBind();
+
+            // Whenever data is bound, we have to force the panel to refresh.
+            // Otherwise, databind that occurs during postback event will not be sent back to the client.
+            SearchUpdatePanel.Update();
+        }
+
 
         public void UpdateUI()
         {

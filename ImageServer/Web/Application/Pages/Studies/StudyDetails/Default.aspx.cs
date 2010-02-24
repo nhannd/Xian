@@ -290,7 +290,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
         public void DeleteSeries()
         {
             string reason;
-            if (!_study.CanScheduleDelete(out reason))
+            if (!_study.CanScheduleSeriesDelete(out reason))
             {
                 MessageDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
                 MessageDialog.Message = reason;

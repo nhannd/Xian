@@ -59,5 +59,7 @@ namespace ClearCanvas.ImageServer.Model
         public string DuplicateSopFolder { get; set; }
 
         public ProcessDuplicateQueueState State { get; set; }
+
+        public string UserName { get; set; }
     }
 }

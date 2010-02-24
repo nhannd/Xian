@@ -323,13 +323,45 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             Target = grid;
             GetRecordCountMethod = recordCount;
             ItemCount = 0;
+
+            // TODO: add this code so that the pager is updated automatically whenever the grid is updated
+            //      Target.DataBound += delegate { GridPagerTop.Refresh(); };
+            //
+            // Becareful though, because the pager is calling Databind() in Page_Load(),
+            // some pages may be end up in an infinite loop with this change. 
         }
+
+        
 
         public void Reset()
         {
             ViewState[ImageServerConstants.PagerItemCount] = null;
         }
 
+        /// <summary>
+        /// Refresh the pager based on the latest data of the associated gridview control.
+        /// This should be called whenever the gridview is databound.
+        /// Note: this method will move the page
+        /// </summary>
+        /// 
+        public void Refresh()
+        {
+            ItemCount = GetRecordCountMethod();
+            if (Target.Rows.Count == 0 && ItemCount > 0)
+            {
+                // This happens when the last item on the current page is removed
+                Target.Refresh();
+                // Note: if this method is called on DataBound event, it will be called again when the target is updated
+                // However, we shoud have not have infinite loop because the the if condition
+            }
+            else
+            {
+                UpdateUI();
+            }
+            
+        }
+
         #endregion Public methods
+
     }
 }

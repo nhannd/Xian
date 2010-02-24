@@ -64,6 +64,8 @@ namespace ClearCanvas.ImageServer.Core.Data
     	[XmlArrayItem("Command", Type = typeof (AbstractProperty<BaseImageLevelUpdateCommand>))]
     	public List<BaseImageLevelUpdateCommand> StudyUpdateCommands { get; set; }
 
+        public string UserName { get; set; }
+
     	#endregion
     }
 }

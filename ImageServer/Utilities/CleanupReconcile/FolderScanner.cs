@@ -58,7 +58,8 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
         public bool StudyWasResent { get; set; }
         public bool Undetermined { get; set; }
         public DateTime DirectoryLastWriteTime { get; set; }
-
+        public bool ScanFailed { get; set; }
+        public string FailReason { get; set; }
         public bool StudyNoLongerExists { get; set; }
 
         public bool IsInWorkQueue { get; set; }
@@ -77,7 +78,8 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
         public int StudyWasResentCount { get { return Results.FindAll(item => item.StudyWasResent).Count; } }
         public int UnidentifiedCount { get { return Results.FindAll(item => item.Undetermined).Count; } }
         public int StudyDoesNotExistCount { get { return Results.FindAll(item => item.StudyNoLongerExists).Count; } }
-        public int StudyIsInWorkQueue { get { return Results.FindAll(item => item.IsInWorkQueue).Count; } }
+        public int InWorkQueueCount { get { return Results.FindAll(item => item.IsInWorkQueue).Count; } }
+        public int ScanFailedCount { get { return Results.FindAll(item => item.ScanFailed).Count; } }
 
         public List<ScanResultEntry> Results { get; set; }
 
@@ -190,7 +192,7 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
 
             if (groupDir.LastWriteTimeUtc >= Platform.Time.ToUniversalTime() - TimeSpan.FromMinutes(30))
             {
-               // return new ScanResultEntry { Path = groupDir.FullName, Skipped = true };
+                return new ScanResultEntry { Path = groupDir.FullName, Skipped = true };
             }
 
             if (CheckInSIQ(groupDir, result))
@@ -204,8 +206,18 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
             if (ContainsOnlyBackupFiles(groupDir, result))
                 return result;
 
-        	result.StudyInstanceUid = FindStudyUid(groupDir);
-        	result.ServerPartitionKey = partitionKey;
+            try
+            {
+                result.StudyInstanceUid = FindStudyUid(groupDir);
+                result.ServerPartitionKey = partitionKey;
+            }
+            catch(Exception ex)
+            {
+                Platform.Log(LogLevel.Error, ex);
+                result.ScanFailed = true;
+                result.FailReason = ex.Message;
+                return result;
+            }
 
             if (CheckIfStudyNoLongerExists(result))
             {
@@ -224,6 +236,7 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
             if (CheckIfStudyWasInsertedAfter(groupDir, result))
                 return result;
 
+            result.Undetermined = true;
             return result;
         }
 
@@ -354,7 +367,8 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
             FileInfo[] files = dir.GetFiles();
             foreach (FileInfo file in files)
             {
-                if (!file.Name.Contains("bak") && !file.Name.Contains("tmp"))
+                string ext = file.Name.ToUpper();
+                if (!ext.Contains("BAK") && !ext.Contains("TMP") && !ext.Contains("TEMP"))
                 {
                     scanResult.BackupFilesOnly = false;
                     return false;
@@ -379,8 +393,9 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
         private bool CheckIfStudyWasDeletedAfterward(FileSystemInfo dir, ScanResultEntry scanResult)
         {
             scanResult.StudyWasOnceDeleted = (null != CollectionUtils.SelectFirst(_deletedStudies,
-                                                                                  record => record.StudyInstanceUid == scanResult.StudyInstanceUid && record.Timestamp.ToUniversalTime() > dir.LastWriteTimeUtc
-                                                          ));
+                    record => record.StudyInstanceUid == scanResult.StudyInstanceUid 
+                    && record.Timestamp.ToUniversalTime() > dir.LastWriteTimeUtc
+                ));
             return scanResult.StudyWasOnceDeleted;
         }
 

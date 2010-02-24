@@ -43,10 +43,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         {
             SetPageTitle(App_GlobalResources.Titles.AlertsPageTitle);
         }
-
-        public void UpdateUI()
-        {
-            AlertsPanel.UpdateUI();
-        }
     }
 }

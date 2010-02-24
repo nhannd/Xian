@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 	
         private void ProcessDuplicate(DicomFile dupFile, WorkQueueUid uid)
         {
-            string duplicateSopPath = GetDuplicateUidPath(uid);
+            string duplicateSopPath = ServerPlatform.GetDuplicateUidPath(StorageLocation, uid);
             string basePath = StorageLocation.GetSopInstancePath(uid.SeriesInstanceUid, uid.SopInstanceUid);
 			if (!File.Exists(basePath))
 			{
@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 						                                        		Details = failure
 						                                        	};
 						list.Add(result);
-						CreateDuplicateSIQEntry(uid, dupFile, list);
+                        CreateDuplicateSIQEntry(uid, dupFile, list);
 						return;
 					}
 				}
@@ -151,11 +151,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Create Duplicate SIQ Entry"))
             {
-            	InsertOrUpdateEntryCommand insertCommand = new InsertOrUpdateEntryCommand(uid.GroupID, StorageLocation,
-                                                                  file,
-                                                                  string.IsNullOrEmpty(uid.RelativePath)
-                                                                  	? Path.Combine(StorageLocation.StudyInstanceUid, uid.SopInstanceUid + "." + uid.Extension) 
-																	: uid.RelativePath, 
+            	InsertOrUpdateEntryCommand insertCommand = new InsertOrUpdateEntryCommand(
+                                                                    uid.GroupID, StorageLocation, file,
+                                                                    ServerPlatform.GetDuplicateGroupPath(StorageLocation, uid),
+                                                                    string.IsNullOrEmpty(uid.RelativePath)
+                                                                  	    ? Path.Combine(StorageLocation.StudyInstanceUid, uid.SopInstanceUid + "." + uid.Extension) 
+																	    : uid.RelativePath, 
 																	differences);
                 processor.AddCommand(insertCommand);
 
@@ -239,45 +240,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             return successfulProcessCount;
         }
 
-		private String GetDuplicateUidPath(WorkQueueUid sop)
-		{
-			string dupPath = Path.Combine(StorageLocation.FilesystemPath, StorageLocation.PartitionFolder);
-			dupPath = Path.Combine(dupPath, ServerPlatform.ReconcileStorageFolder);
-			dupPath = Path.Combine(dupPath, sop.GroupID);
-			dupPath = string.IsNullOrEmpty(sop.RelativePath)
-			          	? Path.Combine(dupPath,
-			          	               Path.Combine(StorageLocation.StudyInstanceUid, sop.SopInstanceUid + "." + sop.Extension))
-			          	: Path.Combine(dupPath, sop.RelativePath);
-
-			#region BACKWARD_COMPATIBILTY_CODE
-
-			if (string.IsNullOrEmpty(sop.RelativePath) && !File.Exists(dupPath))
-			{
-				string basePath = Path.Combine(StorageLocation.GetStudyPath(), sop.SeriesInstanceUid);
-				basePath = Path.Combine(basePath, sop.SopInstanceUid);
-				if (sop.Extension != null)
-					dupPath = basePath + "." + sop.Extension;
-				else
-					dupPath = basePath + ".dcm";
-			}
-
-			#endregion
-
-			return dupPath;
-		}
-
-    	private String GetDuplicateGroupPath(WorkQueueUid sop)
-        {
-            String groupFolderPath = null;
-            if (!String.IsNullOrEmpty(sop.RelativePath))
-            {
-                groupFolderPath = Path.Combine(StorageLocation.FilesystemPath, StorageLocation.PartitionFolder);
-				groupFolderPath = Path.Combine(groupFolderPath, ServerPlatform.ReconcileStorageFolder);
-                groupFolderPath = Path.Combine(groupFolderPath, sop.GroupID);
-            }
-
-            return groupFolderPath;
-        }
 
         /// <summary>
         /// Process a specified <see cref="WorkQueueUid"/>
@@ -300,7 +262,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             {
                 if (sop.Duplicate && sop.Extension != null)
                 {
-                    path = GetDuplicateUidPath(sop);
+                    path = ServerPlatform.GetDuplicateUidPath(StorageLocation, sop);
                     DicomFile file = new DicomFile(path);
                     file.Load();
 
@@ -468,13 +430,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             if (uid.Duplicate)
             {
-                String dupPath = GetDuplicateUidPath(uid);
+                String dupPath = ServerPlatform.GetDuplicateUidPath(StorageLocation, uid);
                 // Delete the container if it's empty
                 FileInfo f = new FileInfo(dupPath);
 
                 if (f.Directory!=null && DirectoryUtility.DeleteIfEmpty(f.Directory.FullName))
                 {
-                    DirectoryUtility.DeleteIfEmpty(GetDuplicateGroupPath(uid));
+                    DirectoryUtility.DeleteIfEmpty(ServerPlatform.GetDuplicateGroupPath(StorageLocation, uid));
                 }
             }
         }

@@ -75,16 +75,13 @@ namespace ClearCanvas.ImageServer.Model
             return new DuplicateSopReceivedQueue(StudyIntegrityQueue.Load(context, key));
         }
 
-        public string GetFolderPath()
+        public string GetFolderPath(IPersistenceContext context)
         {
             if (_location ==null)
             {
                 if (_studyStorage==null)
                 {
-                    using(IReadContext context = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-                    {
-                         _studyStorage = StudyStorage.Load(context, this.StudyStorageKey);
-                    }
+                    _studyStorage = StudyStorage.Load(context, StudyStorageKey);                    
                 }
 
                 _location = StudyStorageLocation.FindStorageLocations(_studyStorage)[0];

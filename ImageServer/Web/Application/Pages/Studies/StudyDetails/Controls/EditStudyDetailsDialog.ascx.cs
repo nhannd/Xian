@@ -46,7 +46,7 @@ using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Security;
-using ClearCanvas.ImageServer.Web.Common.Utilities;
+using ClearCanvas.ImageServer.Web.Common.WebControls.Validators;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             }
 
             String dicomBirthDate = !(string.IsNullOrEmpty(PatientBirthDate.Text))
-                                        ? DateTime.ParseExact(PatientBirthDate.Text, UISettings.Default.InputDateFormat, null).ToString(DicomConstants.DicomDate)
+                                        ? DateTime.ParseExact(PatientBirthDate.Text, InputDateParser.DateFormat, null).ToString(DicomConstants.DicomDate)
                                         : "";
             if (AreDifferent(Study.PatientsBirthDate, dicomBirthDate))
             {
@@ -184,9 +184,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 changes.Add(item);
             }
 
-            var newDicomStudyDate = !(string.IsNullOrEmpty(StudyDate.Text))
-                                        ? DateTime.Parse(StudyDate.Text).ToString(DicomConstants.DicomDate)
-                                        : "";
+            string newDicomStudyDate=string.Empty;
+            if (!string.IsNullOrEmpty(StudyDate.Text))
+            {
+                DateTime newStudyDate;
+                newDicomStudyDate = InputDateParser.TryParse(StudyDate.Text, out newStudyDate)
+                                        ? newStudyDate.ToString(DicomConstants.DicomDate)
+                                        : string.Empty;
+            }
 
             if (AreDifferent(Study.StudyDate, newDicomStudyDate))
             {
@@ -194,7 +199,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 changes.Add(item);
             }
 
-            int hh = int.Parse(StudyTimeHours.Text);
+            int hh = String.IsNullOrEmpty(StudyTimeHours.Text)? 0:int.Parse(StudyTimeHours.Text);
             int mm = int.Parse(StudyTimeMinutes.Text);
             int ss = int.Parse(StudyTimeSeconds.Text);
             String dicomStudyTime = String.Format("{0:00}{1:00}{2:00}", hh, mm, ss);
@@ -206,6 +211,55 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             }
 
             return changes;
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            // Ensure the birthdate entered if invalid will not be erased by the calendar extender
+            // Note: this code is actually needed for Firefox because the server validation is used.
+            // For IE, because of client-side validation, all input is already valid on postback.
+            if (!String.IsNullOrEmpty(PatientBirthDate.Text))
+            {
+                DateTime result;
+                if (InputDateParser.TryParse(PatientBirthDate.Text, out result))
+                {
+                    // entered value is actually valid... update the calendar
+                    PatientBirthDateCalendarExtender.SelectedDate = result;
+                }
+                else
+                {
+                    PatientBirthDateCalendarExtender.SelectedDate = null;
+                }
+            }
+            else
+            {
+                // Prevents the calendar from copying its value into the textbox
+                PatientBirthDateCalendarExtender.SelectedDate = null;
+            }
+
+            // Ensure the study date entered if invalid will not be erased by the calendar extender
+            // Note: this code is actually needed for Firefox because the server validation is used.
+            // For IE, because of client-side validation, all input is already valid on postback.
+            if (!String.IsNullOrEmpty(StudyDate.Text))
+            {
+                DateTime result;
+                if (InputDateParser.TryParse(StudyDate.Text, out result))
+                {
+                    // entered value is actually valid... update the calendar
+                    StudyDateCalendarExtender.SelectedDate = result;
+                }
+                else
+                {
+                    StudyDateCalendarExtender.SelectedDate = null;
+                }
+            }
+            else
+            {
+                // Prevents the calendar from copying its value into the textbox
+                StudyDateCalendarExtender.SelectedDate = null;
+            }
         }
 
         private void UpdateFields()
@@ -246,6 +300,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             if (birthDate == null)
                 PatientBirthDate.Text = String.Empty; // calendar fills in the default date if it's null, we don't want that to happen.
 
+            PatientBirthDateCalendarExtender.SelectedDate = birthDate;
+
             if (!String.IsNullOrEmpty(Study.PatientsAge))
             {
                 PatientAge.Text = Study.PatientsAge.Substring(0, 3).TrimStart('0');
@@ -279,12 +335,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             if (!string.IsNullOrEmpty(Study.StudyDate))
             {
                 DateTime? studyDate = DateParser.Parse(Study.StudyDate);
-                StudyDate.Text = studyDate!=null ? studyDate.Value.ToString(DateTimeFormatter.DefaultDateFormat) : String.Empty;
+                StudyDateCalendarExtender.SelectedDate = studyDate;
             }
             else
             {
-                StudyDate.Text = String.Empty;
+                StudyDateCalendarExtender.SelectedDate = null;
             }
+            
 
             if (!string.IsNullOrEmpty(Study.StudyTime))
             {
@@ -307,7 +364,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             }
             else
             {
-                StudyTimeHours.Text = "12";
+                StudyTimeHours.Text = "00";
                 StudyTimeMinutes.Text = "00";
                 StudyTimeSeconds.Text = "00";
             }
@@ -409,21 +466,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 ReasonSavePanel.Visible = false;
             }
 
-            //The mask doesn't work well if the Date separator isn't "/", so disable it.
-            //DateValidator will handle invalid date values if the mask is disabled.
-            if(!UISettings.Default.InputDateFormat.Contains("/"))
-            {
-                PatientBirthDateMaskExtender.Enabled = false;
-            } else
-            {
-                //Set the mask to be the format of the ShortDatePattern, but with 9's.
-                PatientBirthDateMaskExtender.Mask = UISettings.Default.InputDateFormat.Replace("d", "9").Replace("M", "9").Replace(
-                        "y", "9");
-                PatientBirthDateMaskExtender.MaskType = AjaxControlToolkit.MaskedEditType.Date;
-            }
-            
-            PatientBirthDateCalendarExtender.Format = UISettings.Default.InputDateFormat;
-            StudyDateValidator.DateFormat = UISettings.Default.DateFormat;
+            string pattern = InputDateParser.DateFormat;
+            // Use "9" as placeholder for numbers and "/" as placeholder for the date separator 
+            // (the MaskedEditExtender will use the date separator set in the current UICulture)
+            PatientBirthDateMaskExtender.Mask =
+                pattern.Replace("d", "9").Replace("M", "9").Replace("y", "9").Replace(
+                    CultureInfo.CurrentUICulture.DateTimeFormat.DateSeparator, "/");
+            PatientBirthDateCalendarExtender.Format = pattern;
+            StudyDateCalendarExtender.Format = pattern;
         }
 
         /// <summary>
@@ -435,9 +485,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             if (Page.IsValid)
             {
+                string reason = ReasonListBox.SelectedItem.Text;
+
                 if (!String.IsNullOrEmpty(SaveReasonAsName.Text))
                 {
                     SaveCustomReason();
+                    reason = SaveReasonAsName.Text;
                 }
                 
                 if (StudyEdited != null)
@@ -446,7 +499,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     if (modifiedFields!=null && modifiedFields.Count > 0)
                     {
                         var studyController = new StudyController();
-                        studyController.EditStudy(Study, modifiedFields, ReasonListBox.SelectedItem.Text + "::" + Reason.Text);
+                        studyController.EditStudy(Study, modifiedFields, reason + "::" + Reason.Text);
                         AuditLog(Study, modifiedFields);
                         StudyEdited();
                     }

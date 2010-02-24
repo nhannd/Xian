@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
     {
         private GridPager _gridPager;
         private GridView _theGrid;
-        private bool _dataBindOnPreRender = true;
+        private bool _dataBindOnPreRender = false;
         
         public GridPager Pager
         {

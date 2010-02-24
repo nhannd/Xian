@@ -140,7 +140,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         {
 			PostProcessing(WorkQueueItem, 
 				WorkQueueProcessorStatus.Pending, 
-				WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+				WorkQueueProcessorDatabaseUpdate.None);
             Platform.Log(LogLevel.Info, "StudyReconcile processed.");
         }
 

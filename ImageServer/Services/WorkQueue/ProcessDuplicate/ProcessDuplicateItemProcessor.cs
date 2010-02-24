@@ -72,10 +72,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
         {
             get
             {
-                string path = Path.Combine(StorageLocation.FilesystemPath, StorageLocation.PartitionFolder);
-                path = Path.Combine(path, ServerPlatform.ReconcileStorageFolder);
-                path = Path.Combine(path, WorkQueueItem.GroupID);
-                return path;
+                return ServerPlatform.GetDuplicateGroupPath(StorageLocation, WorkQueueItem);
             }
         }
 
@@ -89,10 +86,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
         {
             // If the study is not in processing state, attempt to push it into this state
             // If it fails, postpone the processing instead of failing
-            if (StorageLocation.QueueStudyStateEnum != QueueStudyStateEnum.ProcessingScheduled)
+            if (StorageLocation.QueueStudyStateEnum != QueueStudyStateEnum.ReconcileScheduled)
             {
             	string failureReason;
-                if (!ServerHelper.LockStudy(WorkQueueItem.StudyStorageKey, QueueStudyStateEnum.ProcessingScheduled, out failureReason))
+                if (!ServerHelper.LockStudy(WorkQueueItem.StudyStorageKey, QueueStudyStateEnum.ReconcileScheduled, out failureReason))
                 {
                     Platform.Log(LogLevel.Debug,
                                  "ProcessDuplicate cannot start at this point. Study is being locked by another processor. WriteLock Failure reason={0}",
@@ -283,11 +280,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                                                                {
                                                                    Action = _processDuplicateEntry.QueueData.Action,
                                                                    DuplicateSopFolder = _processDuplicateEntry.QueueData.DuplicateSopFolder,
+                                                                   UserName = _processDuplicateEntry.QueueData.UserName,
                                                                    State = new ProcessDuplicateQueueState
                                                                                {
                                                                                    HistoryLogged = HistoryLogged,
                                                                                    ExistingStudyUpdated = _processDuplicateEntry.QueueData.State.ExistingStudyUpdated
-                                                                               }
+                                                                               }                                                                               
                                                                };
                 
                 // update the queue data in db
@@ -374,7 +372,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                                                   		Action = _processDuplicateEntry.QueueData.Action,
                                                         DuplicateDetails = details,
                                                   		StudySnapShot = _currentStudyInfo,
-                                                  		StudyUpdateCommands = _studyUpdateCommands
+                                                  		StudyUpdateCommands = _studyUpdateCommands,
+                                                        UserName = _processDuplicateEntry.QueueData.UserName
                                                   	};
         	XmlDocument doc = XmlUtils.SerializeAsXmlDoc(changeLog);
             columns.ChangeDescription = doc;

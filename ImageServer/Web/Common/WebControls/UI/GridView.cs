@@ -453,10 +453,19 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             _selectedRows[rowIndex] = true;
         }
 
+        /// <summary>
+        /// Refresh the data in the gridview.
+        /// 
+        /// NOTE: If the GridView is used in an UpdatePanel, it should also be updated too.
+        /// Databound event will be fired.
+        /// </summary>
         public void Refresh()
         {
             ClearSelections();
             DataBind();
+
+            // NOTE: If the GridView is used in an UpdatePanel, it should also be updated too 
+            // the UI on the client is actually refreshed
         }
 
         protected override void OnInit(EventArgs e)

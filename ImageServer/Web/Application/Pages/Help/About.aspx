@@ -1011,7 +1011,8 @@ variant is the sole purpose of your product, please let us know.
 
 <p><b>ClearCanvas Inc.</b><br />
 620-438 Richmond St. W.<br />
-Toronto, ON M5V 3S6
+Toronto, ON M5V 3S6<br />
+Canada
 </p>
 <p>
   <span style="color: #999999; font-size: 12px; font-weight: bold;"><%= ProductInformation.Copyright %></span><br />  

@@ -35,6 +35,27 @@ using System.Globalization;
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 {
     /// <summary>
+    /// Helper class to parse a date input from the GUI
+    /// </summary>
+    public static class InputDateParser
+    {
+        private const string InputFormat = "dd?MM?yyyy";
+
+        public static string DateFormat
+        {
+            get
+            {
+                return InputFormat.Replace("?", CultureInfo.CurrentUICulture.DateTimeFormat.DateSeparator);
+            }
+        }
+
+        public static bool TryParse(string value, out DateTime result)
+        {
+            return DateTime.TryParseExact(value, DateFormat, null, DateTimeStyles.AssumeLocal, out result);
+        }
+    }
+
+    /// <summary>
     /// Validate a given date against the current date ensuring the given date is not in the future.
     /// </summary>
     /// <example>
@@ -57,18 +78,29 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
     /// </example>
     public class DateValidator : BaseValidator
     {
-        private string _dateFormat;
-
-        public string DateFormat
-        {
-            get { return _dateFormat; }
-            set { _dateFormat = value;}
-        }
-
         #region Protected Methods
 
         protected override bool OnServerSideEvaluate()
         {
+            string value = GetControlValidationValue(ControlToValidate);
+            if (String.IsNullOrEmpty(value))
+            {
+                if (IgnoreEmptyValue)
+                    return true;
+                else
+                {
+                    Text = "This field is required";
+                    return false;
+                }
+            }
+
+            DateTime result;
+            if (!InputDateParser.TryParse(value, out result))
+            {
+                Text = string.Format("{0} is not a valid date for '{1}' format.", value, InputDateParser.DateFormat);
+                return false;
+            }
+
             return true;
         }
 
@@ -83,7 +115,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                              ConditionalCheckBox != null ? ConditionalCheckBox.ClientID : "null");
             template.Replace("@@VALIDATE_WHEN_UNCHECKED@@", ValidateWhenUnchecked ? "true" : "false");
             template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue ? "true" : "false");
-            template.Replace("@@DATE_FORMAT@@", string.IsNullOrEmpty(_dateFormat) ? UISettings.Default.InputDateFormat : _dateFormat);
+            template.Replace("@@DATE_FORMAT@@", InputDateParser.DateFormat);
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);
         }
     }

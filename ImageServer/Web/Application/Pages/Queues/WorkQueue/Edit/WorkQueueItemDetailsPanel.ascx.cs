@@ -76,12 +76,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         #endregion Private members
 
+        #region Private Properties
+        protected Study ItemStudy { get; set; }
+        #endregion
+
         #region Public Properties
 
-        public Study ItemStudy
-        {
-            get { return _workQueue.Study; }
-        }
 
         [ExtenderControlProperty]
         [ClientPropertyName("ViewStudiesButtonClientID")]
@@ -101,7 +101,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         [ClientPropertyName("StudyInstanceUid")]
         public string StudyInstanceUid
         {
-            get { return ItemStudy.StudyInstanceUid; }
+            get
+            {
+                return ItemStudy != null ? ItemStudy.StudyInstanceUid : String.Empty;
+            }
         }
 
         [ExtenderControlProperty]
@@ -110,7 +113,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         {
             get
             {
-                ServerPartition partition = ServerPartition.Load(ItemStudy.ServerPartitionKey);
+                ServerPartition partition = ServerPartition.Load(_workQueue.ServerPartitionKey);
                 return partition.AeTitle;
             }
         }
@@ -226,6 +229,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             ResetButton.Enabled = WorkQueue != null && WorkQueueController.CanReset(WorkQueue);
             DeleteButton.Enabled = WorkQueue != null && WorkQueueController.CanDelete(WorkQueue);
             ReprocessButton.Enabled = WorkQueue != null && WorkQueueController.CanReprocess(WorkQueue);
+            StudyDetailsButton.Enabled = ItemStudy != null;
         }
 
         protected void Reschedule_Click(object sender, EventArgs arg)
@@ -261,6 +265,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         {
             if (_detailsView == null && WorkQueue != null)
             {
+
+                ItemStudy = WorkQueue.Study;
+
                 if (WorkQueue.WorkQueueTypeEnum == WorkQueueTypeEnum.AutoRoute)
                 {
                     _detailsView = LoadControl("AutoRouteWorkQueueDetailsView.ascx") as WorkQueueDetailsViewBase;
@@ -308,6 +315,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             }
             if (_detailsView != null)
                 _detailsView.WorkQueue = WorkQueue;
+
             base.DataBind();
         }
 

@@ -177,9 +177,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                                                                 source.PatientId = PatientId.Text;
                                                                 source.ProcessingServer = ProcessingServer.Text;
 
-                                                                if(ScheduleCalendarExtender.SelectedDate != null)
+                                                                if(!string.IsNullOrEmpty(ScheduleDate.Text))
                                                                 {
-                                                                    source.ScheduledDate = ScheduleCalendarExtender.SelectedDate.Value.ToString(ScheduleCalendarExtender.Format);                                                                    
+                                                                    source.ScheduledDate = ScheduleDate.Text;                                                                    
                                                                 } else
                                                                 {
                                                                     source.ScheduledDate = string.Empty;

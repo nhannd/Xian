@@ -103,7 +103,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		public IList<TServerEntity> GetRange(IPersistenceContext context, TCriteria criteria, int startIndex, int maxRows)
 		{
 			TIEntity select = context.GetBroker<TIEntity>();
-			return select.Find(criteria, startIndex, maxRows);
+
+            // SQL row index starts from 1
+		    int fromRowIndex = startIndex + 1;
+            return select.Find(criteria, fromRowIndex, maxRows);
 		}
 
     	public int GetCount(TCriteria criteria)

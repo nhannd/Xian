@@ -87,18 +87,8 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
             dataGridView1.DataSource = _scanner.ScanResultSet.Results;
             dataGridView1.Update();
 
-            TotalScanned.Text = String.Format("{0}", _scanner.ScanResultSet.TotalScanned);
-            Skipped.Text = String.Format("{0}", _scanner.ScanResultSet.SkippedCount);
-            InSIQ.Text = String.Format("{0}", _scanner.ScanResultSet.InSIQCount);
-            Orphanned.Text = String.Format("{0}", _scanner.ScanResultSet.TotalScanned - _scanner.ScanResultSet.SkippedCount - _scanner.ScanResultSet.InSIQCount);
-            EmptyCount.Text = String.Format("{0}", _scanner.ScanResultSet.EmptyCount);
-            StudyDeletedCount.Text = String.Format("{0}", _scanner.ScanResultSet.DeletedStudyCount);
-            BackupOrTempOnlyCount.Text = String.Format("{0}", _scanner.ScanResultSet.BackupOrTempOnlyCount);
-            StudyWasResentCount.Text = String.Format("{0}", _scanner.ScanResultSet.StudyWasResentCount);
-            UnidentifiedCount.Text = String.Format("{0}", 
-                                                   _scanner.ScanResultSet.StudyIsInWorkQueue + _scanner.ScanResultSet.UnidentifiedCount);
-            StudyDoesNotExistCount.Text = String.Format("{0}", _scanner.ScanResultSet.StudyDoesNotExistCount);
-
+            UpdateScanSummary();
+            
             progressBar1.Value = 0;
             EnableViewResultButtons(true);
         }
@@ -116,14 +106,15 @@ namespace ClearCanvas.ImageServer.Utilities.CleanupReconcile
         private void UpdateScanSummary()
         {
             TotalScanned.Text = String.Format("{0}", _scanner.ScanResultSet.TotalScanned);
+            ScanFailed.Text = String.Format("{0}", _scanner.ScanResultSet.ScanFailedCount);
             Skipped.Text = String.Format("{0}", _scanner.ScanResultSet.SkippedCount);
             InSIQ.Text = String.Format("{0}", _scanner.ScanResultSet.InSIQCount);
-            Orphanned.Text = String.Format("{0}", _scanner.ScanResultSet.TotalScanned - _scanner.ScanResultSet.SkippedCount - _scanner.ScanResultSet.InSIQCount);
+            Orphanned.Text = String.Format("{0}", _scanner.ScanResultSet.TotalScanned - _scanner.ScanResultSet.SkippedCount - _scanner.ScanResultSet.InSIQCount - _scanner.ScanResultSet.ScanFailedCount);
             EmptyCount.Text = String.Format("{0}", _scanner.ScanResultSet.EmptyCount);
             StudyDeletedCount.Text = String.Format("{0}", _scanner.ScanResultSet.DeletedStudyCount);
             BackupOrTempOnlyCount.Text = String.Format("{0}", _scanner.ScanResultSet.BackupOrTempOnlyCount);
             StudyWasResentCount.Text = String.Format("{0}", _scanner.ScanResultSet.StudyWasResentCount);
-            UnidentifiedCount.Text = String.Format("{0}", _scanner.ScanResultSet.UnidentifiedCount);
+            UnidentifiedCount.Text = String.Format("{0}", _scanner.ScanResultSet.UnidentifiedCount + _scanner.ScanResultSet.InWorkQueueCount);
             StudyDoesNotExistCount.Text = String.Format("{0}", _scanner.ScanResultSet.StudyDoesNotExistCount);
         }
 

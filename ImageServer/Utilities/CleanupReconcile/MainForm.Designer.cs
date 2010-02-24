@@ -41,9 +41,11 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.TotalScanned = new System.Windows.Forms.Label();
+            this.ScanFailed = new System.Windows.Forms.Label();
             this.ShowBackupFilesOnlyCases = new System.Windows.Forms.Button();
             this.Skipped = new System.Windows.Forms.Label();
             this.ShowStudyWasDeletedCases = new System.Windows.Forms.Button();
@@ -96,7 +98,7 @@
             this.ScanButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ScanButton.Location = new System.Drawing.Point(517, 21);
             this.ScanButton.Name = "ScanButton";
-            this.ScanButton.Size = new System.Drawing.Size(130, 41);
+            this.ScanButton.Size = new System.Drawing.Size(147, 41);
             this.ScanButton.TabIndex = 1;
             this.ScanButton.Text = "Scan";
             this.ScanButton.UseVisualStyleBackColor = true;
@@ -113,7 +115,7 @@
             // StopButton
             // 
             this.StopButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.StopButton.Location = new System.Drawing.Point(670, 21);
+            this.StopButton.Location = new System.Drawing.Point(683, 21);
             this.StopButton.Name = "StopButton";
             this.StopButton.Size = new System.Drawing.Size(93, 41);
             this.StopButton.TabIndex = 1;
@@ -141,9 +143,11 @@
             this.SummaryTab.Controls.Add(this.label2);
             this.SummaryTab.Controls.Add(this.label1);
             this.SummaryTab.Controls.Add(this.label15);
+            this.SummaryTab.Controls.Add(this.label19);
             this.SummaryTab.Controls.Add(this.label4);
             this.SummaryTab.Controls.Add(this.label12);
             this.SummaryTab.Controls.Add(this.TotalScanned);
+            this.SummaryTab.Controls.Add(this.ScanFailed);
             this.SummaryTab.Controls.Add(this.ShowBackupFilesOnlyCases);
             this.SummaryTab.Controls.Add(this.Skipped);
             this.SummaryTab.Controls.Add(this.ShowStudyWasDeletedCases);
@@ -216,7 +220,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(445, 47);
+            this.label2.Location = new System.Drawing.Point(587, 47);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(105, 20);
             this.label2.TabIndex = 6;
@@ -242,15 +246,25 @@
             this.label15.Text = "Possible Cause:  folder was not cleaned up properly by the server. in previous re" +
                 "leases";
             // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label19.Location = new System.Drawing.Point(419, 47);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(93, 20);
+            this.label19.TabIndex = 6;
+            this.label19.Text = "Scan Failed";
+            // 
             // label4
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.Location = new System.Drawing.Point(248, 47);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(110, 20);
+            this.label4.Size = new System.Drawing.Size(67, 20);
             this.label4.TabIndex = 6;
-            this.label4.Text = "Skipped (new)";
+            this.label4.Text = "Skipped";
             // 
             // label12
             // 
@@ -271,6 +285,16 @@
             this.TotalScanned.TabIndex = 7;
             this.TotalScanned.Text = "...";
             // 
+            // ScanFailed
+            // 
+            this.ScanFailed.AutoSize = true;
+            this.ScanFailed.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ScanFailed.Location = new System.Drawing.Point(515, 47);
+            this.ScanFailed.Name = "ScanFailed";
+            this.ScanFailed.Size = new System.Drawing.Size(21, 20);
+            this.ScanFailed.TabIndex = 7;
+            this.ScanFailed.Text = "...";
+            // 
             // ShowBackupFilesOnlyCases
             // 
             this.ShowBackupFilesOnlyCases.Enabled = false;
@@ -286,7 +310,7 @@
             // 
             this.Skipped.AutoSize = true;
             this.Skipped.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Skipped.Location = new System.Drawing.Point(364, 47);
+            this.Skipped.Location = new System.Drawing.Point(340, 47);
             this.Skipped.Name = "Skipped";
             this.Skipped.Size = new System.Drawing.Size(21, 20);
             this.Skipped.TabIndex = 7;
@@ -307,7 +331,7 @@
             // 
             this.InSIQ.AutoSize = true;
             this.InSIQ.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.InSIQ.Location = new System.Drawing.Point(574, 47);
+            this.InSIQ.Location = new System.Drawing.Point(716, 47);
             this.InSIQ.Name = "InSIQ";
             this.InSIQ.Size = new System.Drawing.Size(21, 20);
             this.InSIQ.TabIndex = 7;
@@ -483,9 +507,9 @@
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label8.Location = new System.Drawing.Point(85, 436);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(98, 20);
+            this.label8.Size = new System.Drawing.Size(110, 20);
             this.label8.TabIndex = 6;
-            this.label8.Text = "Undetermed";
+            this.label8.Text = "Undetermined";
             // 
             // label3
             // 
@@ -659,5 +683,7 @@
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label ScanFailed;
     }
 }

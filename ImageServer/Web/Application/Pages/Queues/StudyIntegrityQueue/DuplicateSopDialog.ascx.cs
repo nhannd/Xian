@@ -36,6 +36,8 @@ using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
@@ -52,21 +54,30 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
         protected void OKButton_Click(object sender, ImageClickEventArgs e)
         {
-            var itemKey = ViewState["QueueItem"] as ServerEntityKey;
-            var controller = new DuplicateSopEntryController();
-            ProcessDuplicateAction action = ProcessDuplicateAction.OverwriteAsIs;
-            if (UseExistingSopRadioButton.Checked)
-                action = ProcessDuplicateAction.OverwriteUseExisting;
-            else if (UseDuplicateRadioButton.Checked)
-                action = ProcessDuplicateAction.OverwriteUseDuplicates;
-            else if (DeleteDuplicateRadioButton.Checked)
-                action = ProcessDuplicateAction.Delete;
-            else if (ReplaceAsIsRadioButton.Checked)
-                action = ProcessDuplicateAction.OverwriteAsIs;
+            try
+            {            
+                var itemKey = ViewState["QueueItem"] as ServerEntityKey;
+                var controller = new DuplicateSopEntryController();
+                ProcessDuplicateAction action = ProcessDuplicateAction.OverwriteAsIs;
+                if (UseExistingSopRadioButton.Checked)
+                    action = ProcessDuplicateAction.OverwriteUseExisting;
+                else if (UseDuplicateRadioButton.Checked)
+                    action = ProcessDuplicateAction.OverwriteUseDuplicates;
+                else if (DeleteDuplicateRadioButton.Checked)
+                    action = ProcessDuplicateAction.Delete;
+                else if (ReplaceAsIsRadioButton.Checked)
+                    action = ProcessDuplicateAction.OverwriteAsIs;
 
-            controller.Process(itemKey, action);
+                controller.Process(itemKey, action);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Message = String.Format(ErrorMessages.ActionNotAllowedAtThisTime, ex.Message);
+                MessageBox.MessageType = MessageBox.MessageTypeEnum.ERROR;
+                MessageBox.Show();
+            }
 
-            ((Default) Page).UpdateUI();
+            ((Default)Page).UpdateUI();
             Close();
         }
 
@@ -158,7 +169,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
             var entry = new DuplicateSopReceivedQueue(StudyIntegrityQueueItem);
 
-            DuplicateSopLocation.Text = entry.GetFolderPath();
+            DuplicateSopLocation.Text = entry.GetFolderPath(HttpContextData.Current.ReadContext);
 
             ComparisonResultGridView.DataSource = DuplicateEntryDetails.QueueData.ComparisonResults;
             base.DataBind();
