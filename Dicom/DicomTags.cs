@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
@@ -315,6 +315,11 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint SpecificCharacterSet = 524293;
         /// <summary>
+        /// <para>(0008,0006) Language Code Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint LanguageCodeSequence = 524294;
+        /// <summary>
         /// <para>(0008,0008) Image Type</para>
         /// <para> VR: CS VM:2-n</para>
         /// </summary>
@@ -452,6 +457,11 @@ namespace ClearCanvas.Dicom
         /// <para> VR: SH VM:1</para>
         /// </summary>
         public const uint AccessionNumber = 524368;
+        /// <summary>
+        /// <para>(0008,0051) Issuer of Accession Number Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint IssuerOfAccessionNumberSequence = 524369;
         /// <summary>
         /// <para>(0008,0052) Query/Retrieve Level</para>
         /// <para> VR: CS VM:1</para>
@@ -618,6 +628,11 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint CodingSchemeResponsibleOrganization = 524566;
         /// <summary>
+        /// <para>(0008,0117) Context UID</para>
+        /// <para> VR: UI VM:1</para>
+        /// </summary>
+        public const uint ContextUid = 524567;
+        /// <summary>
         /// <para>(0008,0201) Timezone Offset From UTC</para>
         /// <para> VR: SH VM:1</para>
         /// </summary>
@@ -649,6 +664,11 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint SeriesDescription = 528446;
         /// <summary>
+        /// <para>(0008,103F) Series Description Code Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint SeriesDescriptionCodeSequence = 528447;
+        /// <summary>
         /// <para>(0008,1040) Institutional Department Name</para>
         /// <para> VR: LO VM:1</para>
         /// </summary>
@@ -674,7 +694,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint PerformingPhysicianIdentificationSequence = 528466;
         /// <summary>
-        /// <para>(0008,1060) Name of  Physician(s) Reading Study</para>
+        /// <para>(0008,1060) Name of Physician(s) Reading Study</para>
         /// <para> VR: PN VM:1-n</para>
         /// </summary>
         public const uint NameOfPhysiciansReadingStudy = 528480;
@@ -746,6 +766,11 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint ReferencedOverlaySequenceRetired = 528688;
         /// <summary>
+        /// <para>(0008,1134) Referenced Stereometric Instance Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint ReferencedStereometricInstanceSequence = 528692;
+        /// <summary>
         /// <para>(0008,113A) Referenced Waveform Sequence</para>
         /// <para> VR: SQ VM:1</para>
         /// </summary>
@@ -791,6 +816,31 @@ namespace ClearCanvas.Dicom
         /// <para> VR: IS VM:1-n</para>
         /// </summary>
         public const uint ReferencedFrameNumber = 528736;
+        /// <summary>
+        /// <para>(0008,1161) Simple Frame List</para>
+        /// <para> VR: UL VM:1-n</para>
+        /// </summary>
+        public const uint SimpleFrameList = 528737;
+        /// <summary>
+        /// <para>(0008,1162) Calculated Frame List</para>
+        /// <para> VR: UL VM:3-3n</para>
+        /// </summary>
+        public const uint CalculatedFrameList = 528738;
+        /// <summary>
+        /// <para>(0008,1163) Time Range</para>
+        /// <para> VR: FD VM:2</para>
+        /// </summary>
+        public const uint TimeRange = 528739;
+        /// <summary>
+        /// <para>(0008,1164) Frame Extraction Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint FrameExtractionSequence = 528740;
+        /// <summary>
+        /// <para>(0008,1167) Multi-Frame Source SOP Instance UID </para>
+        /// <para> VR: UI VM:1</para>
+        /// </summary>
+        public const uint MultiFrameSourceSopInstanceUid = 528743;
         /// <summary>
         /// <para>(0008,1195) Transaction UID</para>
         /// <para> VR: UI VM:1</para>
@@ -882,6 +932,21 @@ namespace ClearCanvas.Dicom
         /// <para> VR: LO VM:1-n</para>
         /// </summary>
         public const uint EventTimerNames = 532786;
+        /// <summary>
+        /// <para>(0008,2133) Event Timer Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint EventTimerSequence = 532787;
+        /// <summary>
+        /// <para>(0008,2134) Event Time Offset</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint EventTimeOffset = 532788;
+        /// <summary>
+        /// <para>(0008,2135) Event Code Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint EventCodeSequence = 532789;
         /// <summary>
         /// <para>(0008,2142) Start Trim</para>
         /// <para> VR: IS VM:1</para>
@@ -1095,10 +1160,10 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint DerivationCodeSequence = 561685;
         /// <summary>
-        /// <para>(0008,9237) Referenced Grayscale Presentation State Sequence</para>
+        /// <para>(0008,9237) Referenced Presentation State Sequence</para>
         /// <para> VR: SQ VM:1</para>
         /// </summary>
-        public const uint ReferencedGrayscalePresentationStateSequence = 561719;
+        public const uint ReferencedPresentationStateSequence = 561719;
         /// <summary>
         /// <para>(0008,9410) Referenced Other Plane Sequence</para>
         /// <para> VR: SQ VM:1</para>
@@ -1140,6 +1205,11 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint TypeOfPatientId = 1048610;
         /// <summary>
+        /// <para>(0010,0024) Issuer of Patient ID Qualifiers Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint IssuerOfPatientIdQualifiersSequence = 1048612;
+        /// <summary>
         /// <para>(0010,0030) Patient&apos;s Birth Date</para>
         /// <para> VR: DA VM:1</para>
         /// </summary>
@@ -1165,10 +1235,10 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint PatientsPrimaryLanguageCodeSequence = 1048833;
         /// <summary>
-        /// <para>(0010,0102) Patient&apos;s Primary Language Code Modifier Sequence</para>
+        /// <para>(0010,0102) Patient&apos;s Primary Language Modifier Code Sequence</para>
         /// <para> VR: SQ VM:1</para>
         /// </summary>
-        public const uint PatientsPrimaryLanguageCodeModifierSequence = 1048834;
+        public const uint PatientsPrimaryLanguageModifierCodeSequence = 1048834;
         /// <summary>
         /// <para>(0010,1000) Other Patient IDs</para>
         /// <para> VR: LO VM:1-n</para>
@@ -1311,6 +1381,11 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint PatientsSexNeutered = 1057283;
         /// <summary>
+        /// <para>(0010,2210) Anatomical Orientation Type</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint AnatomicalOrientationType = 1057296;
+        /// <summary>
         /// <para>(0010,2292) Patient Breed Description</para>
         /// <para> VR: LO VM:1</para>
         /// </summary>
@@ -1436,6 +1511,31 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint ClinicalTrialSeriesDescription = 1179762;
         /// <summary>
+        /// <para>(0012,0081) Clinical Trial Protocol Ethics Committee Name</para>
+        /// <para> VR: LO VM:1</para>
+        /// </summary>
+        public const uint ClinicalTrialProtocolEthicsCommitteeName = 1179777;
+        /// <summary>
+        /// <para>(0012,0082) Clinical Trial Protocol Ethics Committee Approval Number</para>
+        /// <para> VR: LO VM:1</para>
+        /// </summary>
+        public const uint ClinicalTrialProtocolEthicsCommitteeApprovalNumber = 1179778;
+        /// <summary>
+        /// <para>(0012,0083) Consent for Clinical Trial Use Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint ConsentForClinicalTrialUseSequence = 1179779;
+        /// <summary>
+        /// <para>(0012,0084) Distribution Type</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint DistributionType = 1179780;
+        /// <summary>
+        /// <para>(0012,0085) Consent for Distribution Flag</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint ConsentForDistributionFlag = 1179781;
+        /// <summary>
         /// <para>(0018,0010) Contrast/Bolus Agent</para>
         /// <para> VR: LO VM:1</para>
         /// </summary>
@@ -1501,10 +1601,10 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint InterventionDrugDose = 1572904;
         /// <summary>
-        /// <para>(0018,0029) Intervention Drug Sequence</para>
+        /// <para>(0018,0029) Intervention Drug Code Sequence</para>
         /// <para> VR: SQ VM:1</para>
         /// </summary>
-        public const uint InterventionDrugSequence = 1572905;
+        public const uint InterventionDrugCodeSequence = 1572905;
         /// <summary>
         /// <para>(0018,002A) Additional Drug Sequence</para>
         /// <para> VR: SQ VM:1</para>
@@ -1575,6 +1675,11 @@ namespace ClearCanvas.Dicom
         /// <para> VR: IS VM:1</para>
         /// </summary>
         public const uint CineRate = 1572928;
+        /// <summary>
+        /// <para>(0018,0042) Initial Cine Run State</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint InitialCineRunState = 1572930;
         /// <summary>
         /// <para>(0018,0050) Slice Thickness</para>
         /// <para> VR: DS VM:1</para>
@@ -1752,10 +1857,10 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint TimeOfSecondaryCapture = 1576980;
         /// <summary>
-        /// <para>(0018,1016) Secondary Capture Device Manufacturers</para>
+        /// <para>(0018,1016) Secondary Capture Device Manufacturer</para>
         /// <para> VR: LO VM:1</para>
         /// </summary>
-        public const uint SecondaryCaptureDeviceManufacturers = 1576982;
+        public const uint SecondaryCaptureDeviceManufacturer = 1576982;
         /// <summary>
         /// <para>(0018,1017) Hardcopy Device Manufacturer</para>
         /// <para> VR: LO VM:1</para>
@@ -1768,7 +1873,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint SecondaryCaptureDeviceManufacturersModelName = 1576984;
         /// <summary>
-        /// <para>(0018,1019) Secondary Capture Device Software Version(s)</para>
+        /// <para>(0018,1019) Secondary Capture Device Software Versions</para>
         /// <para> VR: LO VM:1-n</para>
         /// </summary>
         public const uint SecondaryCaptureDeviceSoftwareVersions = 1576985;
@@ -2157,10 +2262,10 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint Exposure = 1577298;
         /// <summary>
-        /// <para>(0018,1153) Exposure in uAs</para>
+        /// <para>(0018,1153) Exposure in μAs</para>
         /// <para> VR: IS VM:1</para>
         /// </summary>
-        public const uint ExposureInUas = 1577299;
+        public const uint ExposureInΜas = 1577299;
         /// <summary>
         /// <para>(0018,1154) Average Pulse Width</para>
         /// <para> VR: DS VM:1</para>
@@ -2670,7 +2775,7 @@ namespace ClearCanvas.Dicom
         public const uint OutputPower = 1593344;
         /// <summary>
         /// <para>(0018,5010) Transducer Data</para>
-        /// <para> VR: LO VM:3</para>
+        /// <para> VR: LO VM:1-n</para>
         /// </summary>
         public const uint TransducerData = 1593360;
         /// <summary>
@@ -2896,11 +3001,11 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint DopplerSampleVolumeYPosition = 1597499;
         /// <summary>
-        /// <para>(0018,603C) TM-Line Position X0 (Retired)</para>
+        /// <para>(0018,603C) TMLine Position X0 (Retired)</para>
         /// <para> VR: UL VM:1</para>
         /// <para>This tag has been retired.</para>
         /// </summary>
-        public const uint TmLinePositionX0Retired = 1597500;
+        public const uint TmlinePositionX0Retired = 1597500;
         /// <summary>
         /// <para>(0018,603D) TM-Line Position X0</para>
         /// <para> VR: SL VM:1</para>
@@ -3179,6 +3284,16 @@ namespace ClearCanvas.Dicom
         /// <para> VR: DS VM:1-n</para>
         /// </summary>
         public const uint FilterThicknessMaximum = 1601620;
+        /// <summary>
+        /// <para>(0018,7056) Filter Beam Path Length Minimum</para>
+        /// <para> VR: FL VM:1-n</para>
+        /// </summary>
+        public const uint FilterBeamPathLengthMinimum = 1601622;
+        /// <summary>
+        /// <para>(0018,7058) Filter Beam Path Length Maximum</para>
+        /// <para> VR: FL VM:1-n</para>
+        /// </summary>
+        public const uint FilterBeamPathLengthMaximum = 1601624;
         /// <summary>
         /// <para>(0018,7060) Exposure Control Mode</para>
         /// <para> VR: CS VM:1</para>
@@ -3807,17 +3922,17 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint RespiratorySignalSourceId = 1610118;
         /// <summary>
-        /// <para>(0018,9195) Chemical Shifts Minimum Integration Limit in Hz</para>
+        /// <para>(0018,9195) Chemical Shift Minimum Integration Limit in Hz</para>
         /// <para> VR: FD VM:1</para>
         /// <para>This tag has been retired.</para>
         /// </summary>
-        public const uint ChemicalShiftsMinimumIntegrationLimitInHzRetired = 1610133;
+        public const uint ChemicalShiftMinimumIntegrationLimitInHzRetired = 1610133;
         /// <summary>
-        /// <para>(0018,9196) Chemical Shifts Maximum Integration Limit in Hz</para>
+        /// <para>(0018,9196) Chemical Shift Maximum Integration Limit in Hz</para>
         /// <para> VR: FD VM:1</para>
         /// <para>This tag has been retired.</para>
         /// </summary>
-        public const uint ChemicalShiftsMaximumIntegrationLimitInHzRetired = 1610134;
+        public const uint ChemicalShiftMaximumIntegrationLimitInHzRetired = 1610134;
         /// <summary>
         /// <para>(0018,9197) MR Velocity Encoding Sequence</para>
         /// <para> VR: SQ VM:1</para>
@@ -3909,15 +4024,15 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint GradientEchoTrainLength = 1610305;
         /// <summary>
-        /// <para>(0018,9295) Chemical Shifts Minimum Integration Limit in ppm</para>
+        /// <para>(0018,9295) Chemical Shift Minimum Integration Limit in ppm</para>
         /// <para> VR: FD VM:1</para>
         /// </summary>
-        public const uint ChemicalShiftsMinimumIntegrationLimitInPpm = 1610389;
+        public const uint ChemicalShiftMinimumIntegrationLimitInPpm = 1610389;
         /// <summary>
-        /// <para>(0018,9296) Chemical Shifts Maximum Integration Limit in ppm</para>
+        /// <para>(0018,9296) Chemical Shift Maximum Integration Limit in ppm</para>
         /// <para> VR: FD VM:1</para>
         /// </summary>
-        public const uint ChemicalShiftsMaximumIntegrationLimitInPpm = 1610390;
+        public const uint ChemicalShiftMaximumIntegrationLimitInPpm = 1610390;
         /// <summary>
         /// <para>(0018,9301) CT Acquisition Type Sequence</para>
         /// <para> VR: SQ VM:1</para>
@@ -4143,6 +4258,11 @@ namespace ClearCanvas.Dicom
         /// <para> VR: FL VM:3</para>
         /// </summary>
         public const uint CalciumScoringMassFactorDevice = 1610578;
+        /// <summary>
+        /// <para>(0018,9353) Energy Weighting Factor</para>
+        /// <para> VR: FL VM:1</para>
+        /// </summary>
+        public const uint EnergyWeightingFactor = 1610579;
         /// <summary>
         /// <para>(0018,9360) CT Additional X-Ray Source Sequence</para>
         /// <para> VR: SQ VM:1</para>
@@ -4539,6 +4659,286 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint DiffusionBValueZz = 1611271;
         /// <summary>
+        /// <para>(0018,9701) Decay Correction DateTime</para>
+        /// <para> VR: DT VM:1</para>
+        /// </summary>
+        public const uint DecayCorrectionDatetime = 1611521;
+        /// <summary>
+        /// <para>(0018,9715) Start Density Threshold</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint StartDensityThreshold = 1611541;
+        /// <summary>
+        /// <para>(0018,9716) Start Relative Density Difference Threshold</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint StartRelativeDensityDifferenceThreshold = 1611542;
+        /// <summary>
+        /// <para>(0018,9717) Start Cardiac Trigger Count Threshold</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint StartCardiacTriggerCountThreshold = 1611543;
+        /// <summary>
+        /// <para>(0018,9718) Start Respiratory Trigger Count Threshold</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint StartRespiratoryTriggerCountThreshold = 1611544;
+        /// <summary>
+        /// <para>(0018,9719) Termination Counts Threshold</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint TerminationCountsThreshold = 1611545;
+        /// <summary>
+        /// <para>(0018,9720) Termination Density Threshold</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint TerminationDensityThreshold = 1611552;
+        /// <summary>
+        /// <para>(0018,9721) Termination Relative Density Threshold</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint TerminationRelativeDensityThreshold = 1611553;
+        /// <summary>
+        /// <para>(0018,9722) Termination Time Threshold</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint TerminationTimeThreshold = 1611554;
+        /// <summary>
+        /// <para>(0018,9723) Termination Cardiac Trigger Count Threshold</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint TerminationCardiacTriggerCountThreshold = 1611555;
+        /// <summary>
+        /// <para>(0018,9724) Termination Respiratory Trigger Count Threshold</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint TerminationRespiratoryTriggerCountThreshold = 1611556;
+        /// <summary>
+        /// <para>(0018,9725) Detector Geometry</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint DetectorGeometry = 1611557;
+        /// <summary>
+        /// <para>(0018,9726) Transverse Detector Separation</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint TransverseDetectorSeparation = 1611558;
+        /// <summary>
+        /// <para>(0018,9727) Axial Detector Dimension</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint AxialDetectorDimension = 1611559;
+        /// <summary>
+        /// <para>(0018,9729) Radiopharmaceutical Agent Number</para>
+        /// <para> VR: US VM:1</para>
+        /// </summary>
+        public const uint RadiopharmaceuticalAgentNumber = 1611561;
+        /// <summary>
+        /// <para>(0018,9732) PET Frame Acquisition Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint PetFrameAcquisitionSequence = 1611570;
+        /// <summary>
+        /// <para>(0018,9733) PET Detector Motion Details Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint PetDetectorMotionDetailsSequence = 1611571;
+        /// <summary>
+        /// <para>(0018,9734) PET Table Dynamics Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint PetTableDynamicsSequence = 1611572;
+        /// <summary>
+        /// <para>(0018,9735) PET Position Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint PetPositionSequence = 1611573;
+        /// <summary>
+        /// <para>(0018,9736) PET Frame Correction Factors Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint PetFrameCorrectionFactorsSequence = 1611574;
+        /// <summary>
+        /// <para>(0018,9737) Radiopharmaceutical Usage Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint RadiopharmaceuticalUsageSequence = 1611575;
+        /// <summary>
+        /// <para>(0018,9738) Attenuation Correction Source</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint AttenuationCorrectionSource = 1611576;
+        /// <summary>
+        /// <para>(0018,9739) Number of Iterations</para>
+        /// <para> VR: US VM:1</para>
+        /// </summary>
+        public const uint NumberOfIterations = 1611577;
+        /// <summary>
+        /// <para>(0018,9740) Number of Subsets</para>
+        /// <para> VR: US VM:1</para>
+        /// </summary>
+        public const uint NumberOfSubsets = 1611584;
+        /// <summary>
+        /// <para>(0018,9749) PET Reconstruction Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint PetReconstructionSequence = 1611593;
+        /// <summary>
+        /// <para>(0018,9751) PET Frame Type Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint PetFrameTypeSequence = 1611601;
+        /// <summary>
+        /// <para>(0018,9755) Time of Flight Information Used</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint TimeOfFlightInformationUsed = 1611605;
+        /// <summary>
+        /// <para>(0018,9756) Reconstruction Type</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint ReconstructionType = 1611606;
+        /// <summary>
+        /// <para>(0018,9758) Decay Corrected </para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint DecayCorrected = 1611608;
+        /// <summary>
+        /// <para>(0018,9759) Attenuation Corrected </para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint AttenuationCorrected = 1611609;
+        /// <summary>
+        /// <para>(0018,9760) Scatter Corrected </para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint ScatterCorrected = 1611616;
+        /// <summary>
+        /// <para>(0018,9761) Dead Time Corrected </para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint DeadTimeCorrected = 1611617;
+        /// <summary>
+        /// <para>(0018,9762) Gantry Motion Corrected </para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint GantryMotionCorrected = 1611618;
+        /// <summary>
+        /// <para>(0018,9763) Patient Motion Corrected </para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint PatientMotionCorrected = 1611619;
+        /// <summary>
+        /// <para>(0018,9764) Count Loss Normalization Corrected</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint CountLossNormalizationCorrected = 1611620;
+        /// <summary>
+        /// <para>(0018,9765) Randoms Corrected</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint RandomsCorrected = 1611621;
+        /// <summary>
+        /// <para>(0018,9766) Non-uniform Radial Sampling Corrected</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint NonUniformRadialSamplingCorrected = 1611622;
+        /// <summary>
+        /// <para>(0018,9767) Sensitivity Calibrated</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint SensitivityCalibrated = 1611623;
+        /// <summary>
+        /// <para>(0018,9768) Detector Normalization Correction</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint DetectorNormalizationCorrection = 1611624;
+        /// <summary>
+        /// <para>(0018,9769) Iterative Reconstruction Method </para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint IterativeReconstructionMethod = 1611625;
+        /// <summary>
+        /// <para>(0018,9770) Attenuation Correction Temporal Relationship</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint AttenuationCorrectionTemporalRelationship = 1611632;
+        /// <summary>
+        /// <para>(0018,9771) Patient Physiological State Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint PatientPhysiologicalStateSequence = 1611633;
+        /// <summary>
+        /// <para>(0018,9772) Patient Physiological State Code Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint PatientPhysiologicalStateCodeSequence = 1611634;
+        /// <summary>
+        /// <para>(0018,9801) Depth(s) of Focus</para>
+        /// <para> VR: FD VM:1-n</para>
+        /// </summary>
+        public const uint DepthsOfFocus = 1611777;
+        /// <summary>
+        /// <para>(0018,9803) Excluded Intervals Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint ExcludedIntervalsSequence = 1611779;
+        /// <summary>
+        /// <para>(0018,9804) Exclusion Start Datetime</para>
+        /// <para> VR: DT VM:1</para>
+        /// </summary>
+        public const uint ExclusionStartDatetime = 1611780;
+        /// <summary>
+        /// <para>(0018,9805) Exclusion Duration</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint ExclusionDuration = 1611781;
+        /// <summary>
+        /// <para>(0018,9806) US Image Description Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint UsImageDescriptionSequence = 1611782;
+        /// <summary>
+        /// <para>(0018,9807) Image Data Type Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint ImageDataTypeSequence = 1611783;
+        /// <summary>
+        /// <para>(0018,9808) Data Type</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint DataType = 1611784;
+        /// <summary>
+        /// <para>(0018,9809) Transducer Scan Pattern Code Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint TransducerScanPatternCodeSequence = 1611785;
+        /// <summary>
+        /// <para>(0018,980B) Aliased Data Type</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint AliasedDataType = 1611787;
+        /// <summary>
+        /// <para>(0018,980C) Position Measuring Device Used</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint PositionMeasuringDeviceUsed = 1611788;
+        /// <summary>
+        /// <para>(0018,980D) Transducer Geometry Code Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint TransducerGeometryCodeSequence = 1611789;
+        /// <summary>
+        /// <para>(0018,980E) Transducer Beam Steering Code Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint TransducerBeamSteeringCodeSequence = 1611790;
+        /// <summary>
+        /// <para>(0018,980F) Transducer Application Code Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint TransducerApplicationCodeSequence = 1611791;
+        /// <summary>
         /// <para>(0018,A001) Contributing Equipment Sequence</para>
         /// <para> VR: SQ VM:1</para>
         /// </summary>
@@ -4636,11 +5036,11 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint CurveNumberRetired = 2097188;
         /// <summary>
-        /// <para>(0020,0026) Lookup Table Number</para>
+        /// <para>(0020,0026) LUT Number</para>
         /// <para> VR: IS VM:1</para>
         /// <para>This tag has been retired.</para>
         /// </summary>
-        public const uint LookupTableNumberRetired = 2097190;
+        public const uint LutNumberRetired = 2097190;
         /// <summary>
         /// <para>(0020,0030) Image Position</para>
         /// <para> VR: DS VM:3</para>
@@ -4716,6 +5116,11 @@ namespace ClearCanvas.Dicom
         /// <para> VR: UI VM:1</para>
         /// </summary>
         public const uint SynchronizationFrameOfReferenceUid = 2097664;
+        /// <summary>
+        /// <para>(0020,0242) SOP Instance UID of Concatenation Source</para>
+        /// <para> VR: UI VM:1</para>
+        /// </summary>
+        public const uint SopInstanceUidOfConcatenationSource = 2097730;
         /// <summary>
         /// <para>(0020,1000) Series in Study</para>
         /// <para> VR: IS VM:1</para>
@@ -5013,7 +5418,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint RespiratoryTriggerType = 2134608;
         /// <summary>
-        /// <para>(0020,9251) R  R Interval Time Nominal</para>
+        /// <para>(0020,9251) R – R Interval Time Nominal</para>
         /// <para> VR: FD VM:1</para>
         /// </summary>
         public const uint RRIntervalTimeNominal = 2134609;
@@ -5047,6 +5452,76 @@ namespace ClearCanvas.Dicom
         /// <para> VR: FD VM:1</para>
         /// </summary>
         public const uint ActualRespiratoryTriggerDelayTime = 2134615;
+        /// <summary>
+        /// <para>(0020,9301) Image Position (Volume)</para>
+        /// <para> VR: FD VM:3</para>
+        /// </summary>
+        public const uint ImagePositionVolume = 2134785;
+        /// <summary>
+        /// <para>(0020,9302) Image Orientation (Volume)</para>
+        /// <para> VR: FD VM:6</para>
+        /// </summary>
+        public const uint ImageOrientationVolume = 2134786;
+        /// <summary>
+        /// <para>(0020,9307) Ultrasound Acquisition Geometry</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint UltrasoundAcquisitionGeometry = 2134791;
+        /// <summary>
+        /// <para>(0020,9308) Apex Position</para>
+        /// <para> VR: FD VM:3</para>
+        /// </summary>
+        public const uint ApexPosition = 2134792;
+        /// <summary>
+        /// <para>(0020,9309) Volume to Transducer Mapping Matrix</para>
+        /// <para> VR: FD VM:16</para>
+        /// </summary>
+        public const uint VolumeToTransducerMappingMatrix = 2134793;
+        /// <summary>
+        /// <para>(0020,930A) Volume to Table Mapping Matrix</para>
+        /// <para> VR: FD VM:16</para>
+        /// </summary>
+        public const uint VolumeToTableMappingMatrix = 2134794;
+        /// <summary>
+        /// <para>(0020,930C) Patient Frame of Reference Source</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint PatientFrameOfReferenceSource = 2134796;
+        /// <summary>
+        /// <para>(0020,930D) Temporal Position Time Offset</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint TemporalPositionTimeOffset = 2134797;
+        /// <summary>
+        /// <para>(0020,930E) Plane Position (Volume) Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint PlanePositionVolumeSequence = 2134798;
+        /// <summary>
+        /// <para>(0020,930F) Plane Orientation (Volume) Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint PlaneOrientationVolumeSequence = 2134799;
+        /// <summary>
+        /// <para>(0020,9310) Temporal Position Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint TemporalPositionSequence = 2134800;
+        /// <summary>
+        /// <para>(0020,9311) Dimension Organization Type</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint DimensionOrganizationType = 2134801;
+        /// <summary>
+        /// <para>(0020,9312) Volume Frame of Reference UID</para>
+        /// <para> VR: UI VM:1</para>
+        /// </summary>
+        public const uint VolumeFrameOfReferenceUid = 2134802;
+        /// <summary>
+        /// <para>(0020,9313) Table Frame of Reference UID</para>
+        /// <para> VR: UI VM:1</para>
+        /// </summary>
+        public const uint TableFrameOfReferenceUid = 2134803;
         /// <summary>
         /// <para>(0020,9421) Dimension Description Label</para>
         /// <para> VR: LO VM:1</para>
@@ -5244,7 +5719,7 @@ namespace ClearCanvas.Dicom
         public const uint OphthalmicFrameLocationSequence = 2228273;
         /// <summary>
         /// <para>(0022,0032) Reference Coordinates</para>
-        /// <para> VR: FL VM:2-2N</para>
+        /// <para> VR: FL VM:2-2n</para>
         /// </summary>
         public const uint ReferenceCoordinates = 2228274;
         /// <summary>
@@ -5792,6 +6267,11 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint BluePaletteColorLookupTableDescriptor = 2625795;
         /// <summary>
+        /// <para>(0028,1104) Alpha Palette Color Lookup Table Descriptor</para>
+        /// <para> VR: US VM:3</para>
+        /// </summary>
+        public const uint AlphaPaletteColorLookupTableDescriptor = 2625796;
+        /// <summary>
         /// <para>(0028,1111) Large Red Palette Color Lookup Table Descriptor </para>
         /// <para> VR: US or SS VM:4</para>
         /// <para>This tag has been retired.</para>
@@ -5836,6 +6316,11 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint BluePaletteColorLookupTableData = 2626051;
         /// <summary>
+        /// <para>(0028,1204) Alpha Palette Color Lookup Table Data</para>
+        /// <para> VR: OW VM:1</para>
+        /// </summary>
+        public const uint AlphaPaletteColorLookupTableData = 2626052;
+        /// <summary>
         /// <para>(0028,1211) Large Red Palette Color Lookup Table Data</para>
         /// <para> VR: OW VM:1</para>
         /// <para>This tag has been retired.</para>
@@ -5875,10 +6360,10 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint SegmentedBluePaletteColorLookupTableData = 2626083;
         /// <summary>
-        /// <para>(0028,1300) Implant Present</para>
+        /// <para>(0028,1300) Breast Implant Present</para>
         /// <para> VR: CS VM:1</para>
         /// </summary>
-        public const uint ImplantPresent = 2626304;
+        public const uint BreastImplantPresent = 2626304;
         /// <summary>
         /// <para>(0028,1350) Partial View</para>
         /// <para> VR: CS VM:1</para>
@@ -5899,6 +6384,76 @@ namespace ClearCanvas.Dicom
         /// <para> VR: CS VM:1</para>
         /// </summary>
         public const uint SpatialLocationsPreserved = 2626394;
+        /// <summary>
+        /// <para>(0028,1401) Data Frame Assignment Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint DataFrameAssignmentSequence = 2626561;
+        /// <summary>
+        /// <para>(0028,1402) Data Path Assignment</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint DataPathAssignment = 2626562;
+        /// <summary>
+        /// <para>(0028,1403) Bits Mapped to Color Lookup Table</para>
+        /// <para> VR: US VM:1</para>
+        /// </summary>
+        public const uint BitsMappedToColorLookupTable = 2626563;
+        /// <summary>
+        /// <para>(0028,1404) Blending LUT 1 Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint BlendingLut1Sequence = 2626564;
+        /// <summary>
+        /// <para>(0028,1405) Blending LUT 1 Transfer Function</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint BlendingLut1TransferFunction = 2626565;
+        /// <summary>
+        /// <para>(0028,1406) Blending Weight Constant</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint BlendingWeightConstant = 2626566;
+        /// <summary>
+        /// <para>(0028,1407) Blending Lookup Table Descriptor</para>
+        /// <para> VR: US VM:3</para>
+        /// </summary>
+        public const uint BlendingLookupTableDescriptor = 2626567;
+        /// <summary>
+        /// <para>(0028,1408) Blending Lookup Table Data</para>
+        /// <para> VR: OW VM:1</para>
+        /// </summary>
+        public const uint BlendingLookupTableData = 2626568;
+        /// <summary>
+        /// <para>(0028,140B) Enhanced Palette Color Lookup Table Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint EnhancedPaletteColorLookupTableSequence = 2626571;
+        /// <summary>
+        /// <para>(0028,140C) Blending LUT 2 Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint BlendingLut2Sequence = 2626572;
+        /// <summary>
+        /// <para>(0028,140D) Blending LUT 2 Transfer Function</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint BlendingLut2TransferFunction = 2626573;
+        /// <summary>
+        /// <para>(0028,140E) Data Path ID</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint DataPathId = 2626574;
+        /// <summary>
+        /// <para>(0028,140F) RGB LUT Transfer Function</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint RgbLutTransferFunction = 2626575;
+        /// <summary>
+        /// <para>(0028,1410) Alpha LUT Transfer Function</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint AlphaLutTransferFunction = 2626576;
         /// <summary>
         /// <para>(0028,2000) ICC Profile</para>
         /// <para> VR: OB VM:1</para>
@@ -5977,10 +6532,10 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint FrameNumbersOfInterestFoi = 2646048;
         /// <summary>
-        /// <para>(0028,6022) Frame(s) of Interest Description</para>
+        /// <para>(0028,6022) Frame of Interest Description</para>
         /// <para> VR: LO VM:1-n</para>
         /// </summary>
-        public const uint FramesOfInterestDescription = 2646050;
+        public const uint FrameOfInterestDescription = 2646050;
         /// <summary>
         /// <para>(0028,6023) Frame of Interest Type</para>
         /// <para> VR: CS VM:1-n</para>
@@ -6139,6 +6694,41 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint LutFunction = 2659444;
         /// <summary>
+        /// <para>(0028,9478) Mask Visibility Percentage</para>
+        /// <para> VR: FL VM:1</para>
+        /// </summary>
+        public const uint MaskVisibilityPercentage = 2659448;
+        /// <summary>
+        /// <para>(0028,9501) Pixel Shift Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint PixelShiftSequence = 2659585;
+        /// <summary>
+        /// <para>(0028,9502) Region Pixel Shift Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint RegionPixelShiftSequence = 2659586;
+        /// <summary>
+        /// <para>(0028,9503) Vertices of the Region</para>
+        /// <para> VR: SS VM:2-2n</para>
+        /// </summary>
+        public const uint VerticesOfTheRegion = 2659587;
+        /// <summary>
+        /// <para>(0028,9505) Multi-frame Presentation Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint MultiFramePresentationSequence = 2659589;
+        /// <summary>
+        /// <para>(0028,9506) Pixel Shift Frame Range</para>
+        /// <para> VR: US VM:2-2n</para>
+        /// </summary>
+        public const uint PixelShiftFrameRange = 2659590;
+        /// <summary>
+        /// <para>(0028,9507) LUT Frame Range</para>
+        /// <para> VR: US VM:2-2n</para>
+        /// </summary>
+        public const uint LutFrameRange = 2659591;
+        /// <summary>
         /// <para>(0028,9520) Image to Equipment Mapping Matrix</para>
         /// <para> VR: DS VM:16</para>
         /// </summary>
@@ -6248,6 +6838,11 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint RequestingService = 3280947;
         /// <summary>
+        /// <para>(0032,1034) Requesting Service Code Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint RequestingServiceCodeSequence = 3280948;
+        /// <summary>
         /// <para>(0032,1040) Study Arrival Date</para>
         /// <para> VR: DA VM:1</para>
         /// <para>This tag has been retired.</para>
@@ -6316,8 +6911,14 @@ namespace ClearCanvas.Dicom
         /// <summary>
         /// <para>(0038,0011) Issuer of Admission ID</para>
         /// <para> VR: LO VM:1</para>
+        /// <para>This tag has been retired.</para>
         /// </summary>
-        public const uint IssuerOfAdmissionId = 3670033;
+        public const uint IssuerOfAdmissionIdRetired = 3670033;
+        /// <summary>
+        /// <para>(0038,0014) Issuer of Admission ID Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint IssuerOfAdmissionIdSequence = 3670036;
         /// <summary>
         /// <para>(0038,0016) Route of Admissions</para>
         /// <para> VR: LO VM:1</para>
@@ -6400,13 +7001,19 @@ namespace ClearCanvas.Dicom
         /// <summary>
         /// <para>(0038,0061) Issuer of Service Episode ID</para>
         /// <para> VR: LO VM:1</para>
+        /// <para>This tag has been retired.</para>
         /// </summary>
-        public const uint IssuerOfServiceEpisodeId = 3670113;
+        public const uint IssuerOfServiceEpisodeIdRetired = 3670113;
         /// <summary>
         /// <para>(0038,0062) Service Episode Description</para>
         /// <para> VR: LO VM:1</para>
         /// </summary>
         public const uint ServiceEpisodeDescription = 3670114;
+        /// <summary>
+        /// <para>(0038,0064) Issuer of Service Episode ID Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint IssuerOfServiceEpisodeIdSequence = 3670116;
         /// <summary>
         /// <para>(0038,0100) Pertinent Documents Sequence</para>
         /// <para> VR: SQ VM:1</para>
@@ -6703,6 +7310,51 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint ScheduledProcedureStepStatus = 4194336;
         /// <summary>
+        /// <para>(0040,0026) Order Placer Identifier Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint OrderPlacerIdentifierSequence = 4194342;
+        /// <summary>
+        /// <para>(0040,0027) Order Filler Identifier Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint OrderFillerIdentifierSequence = 4194343;
+        /// <summary>
+        /// <para>(0040,0031) Local Namespace Entity ID</para>
+        /// <para> VR: UT VM:1</para>
+        /// </summary>
+        public const uint LocalNamespaceEntityId = 4194353;
+        /// <summary>
+        /// <para>(0040,0032) Universal Entity ID</para>
+        /// <para> VR: UT VM:1</para>
+        /// </summary>
+        public const uint UniversalEntityId = 4194354;
+        /// <summary>
+        /// <para>(0040,0033) Universal Entity ID Type</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint UniversalEntityIdType = 4194355;
+        /// <summary>
+        /// <para>(0040,0035) Identifier Type Code</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint IdentifierTypeCode = 4194357;
+        /// <summary>
+        /// <para>(0040,0036) Assigning Facility Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint AssigningFacilitySequence = 4194358;
+        /// <summary>
+        /// <para>(0040,0039) Assigning Jurisdiction Code Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint AssigningJurisdictionCodeSequence = 4194361;
+        /// <summary>
+        /// <para>(0040,003A) Assigning Agency or Department Code Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint AssigningAgencyOrDepartmentCodeSequence = 4194362;
+        /// <summary>
         /// <para>(0040,0100) Scheduled Procedure Step Sequence</para>
         /// <para> VR: SQ VM:1</para>
         /// </summary>
@@ -6772,6 +7424,11 @@ namespace ClearCanvas.Dicom
         /// <para> VR: SQ VM:1</para>
         /// </summary>
         public const uint PerformedProtocolCodeSequence = 4194912;
+        /// <summary>
+        /// <para>(0040,0261) Performed Protocol Type</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint PerformedProtocolType = 4194913;
         /// <summary>
         /// <para>(0040,0270) Scheduled Step Attributes Sequence</para>
         /// <para> VR: SQ VM:1</para>
@@ -6915,32 +7572,74 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint ContentItemModifierSequence = 4195393;
         /// <summary>
+        /// <para>(0040,0500) Scheduled Specimen Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint ScheduledSpecimenSequence = 4195584;
+        /// <summary>
         /// <para>(0040,050A) Specimen Accession Number</para>
         /// <para> VR: LO VM:1</para>
+        /// <para>This tag has been retired.</para>
         /// </summary>
-        public const uint SpecimenAccessionNumber = 4195594;
+        public const uint SpecimenAccessionNumberRetired = 4195594;
+        /// <summary>
+        /// <para>(0040,0512) Container Identifier</para>
+        /// <para> VR: LO VM:1</para>
+        /// </summary>
+        public const uint ContainerIdentifier = 4195602;
+        /// <summary>
+        /// <para>(0040,0513) Issuer of the Container Identifier Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint IssuerOfTheContainerIdentifierSequence = 4195603;
+        /// <summary>
+        /// <para>(0040,0515) Alternate Container Identifier Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint AlternateContainerIdentifierSequence = 4195605;
+        /// <summary>
+        /// <para>(0040,0518) Container Type Code Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint ContainerTypeCodeSequence = 4195608;
+        /// <summary>
+        /// <para>(0040,051A) Container Description</para>
+        /// <para> VR: LO VM:1</para>
+        /// </summary>
+        public const uint ContainerDescription = 4195610;
+        /// <summary>
+        /// <para>(0040,0520) Container Component Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint ContainerComponentSequence = 4195616;
         /// <summary>
         /// <para>(0040,0550) Specimen Sequence</para>
         /// <para> VR: SQ VM:1</para>
+        /// <para>This tag has been retired.</para>
         /// </summary>
-        public const uint SpecimenSequence = 4195664;
+        public const uint SpecimenSequenceRetired = 4195664;
         /// <summary>
         /// <para>(0040,0551) Specimen Identifier</para>
         /// <para> VR: LO VM:1</para>
         /// </summary>
         public const uint SpecimenIdentifier = 4195665;
         /// <summary>
-        /// <para>(0040,0552) Specimen Description Sequence Trial</para>
+        /// <para>(0040,0552) Specimen Description Sequence – Trial</para>
         /// <para> VR: SQ VM:1</para>
         /// <para>This tag has been retired.</para>
         /// </summary>
         public const uint SpecimenDescriptionSequenceTrialRetired = 4195666;
         /// <summary>
-        /// <para>(0040,0553) Specimen Description Trial</para>
+        /// <para>(0040,0553) Specimen Description – Trial</para>
         /// <para> VR: ST VM:1</para>
         /// <para>This tag has been retired.</para>
         /// </summary>
         public const uint SpecimenDescriptionTrialRetired = 4195667;
+        /// <summary>
+        /// <para>(0040,0554) Specimen UID</para>
+        /// <para> VR: UI VM:1</para>
+        /// </summary>
+        public const uint SpecimenUid = 4195668;
         /// <summary>
         /// <para>(0040,0555) Acquisition Context Sequence</para>
         /// <para> VR: SQ VM:1</para>
@@ -6952,15 +7651,51 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint AcquisitionContextDescription = 4195670;
         /// <summary>
+        /// <para>(0040,0560) Specimen Description Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint SpecimenDescriptionSequence = 4195680;
+        /// <summary>
+        /// <para>(0040,0562) Issuer of the Specimen Identifier Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint IssuerOfTheSpecimenIdentifierSequence = 4195682;
+        /// <summary>
         /// <para>(0040,059A) Specimen Type Code Sequence</para>
         /// <para> VR: SQ VM:1</para>
         /// </summary>
         public const uint SpecimenTypeCodeSequence = 4195738;
         /// <summary>
-        /// <para>(0040,06FA) Slide Identifier</para>
+        /// <para>(0040,0600) Specimen Short Description </para>
         /// <para> VR: LO VM:1</para>
         /// </summary>
-        public const uint SlideIdentifier = 4196090;
+        public const uint SpecimenShortDescription = 4195840;
+        /// <summary>
+        /// <para>(0040,0602) Specimen Detailed Description </para>
+        /// <para> VR: UT VM:1</para>
+        /// </summary>
+        public const uint SpecimenDetailedDescription = 4195842;
+        /// <summary>
+        /// <para>(0040,0610) Specimen Preparation Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint SpecimenPreparationSequence = 4195856;
+        /// <summary>
+        /// <para>(0040,0612) Specimen Preparation Step Content Item Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint SpecimenPreparationStepContentItemSequence = 4195858;
+        /// <summary>
+        /// <para>(0040,0620) Specimen Localization Content Item Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint SpecimenLocalizationContentItemSequence = 4195872;
+        /// <summary>
+        /// <para>(0040,06FA) Slide Identifier</para>
+        /// <para> VR: LO VM:1</para>
+        /// <para>This tag has been retired.</para>
+        /// </summary>
+        public const uint SlideIdentifierRetired = 4196090;
         /// <summary>
         /// <para>(0040,071A) Image Center Point Coordinates Sequence</para>
         /// <para> VR: SQ VM:1</para>
@@ -7065,6 +7800,11 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint IntendedRecipientsOfResultsIdentificationSequence = 4198417;
         /// <summary>
+        /// <para>(0040,1012) Reason For Performed Procedure Code Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint ReasonForPerformedProcedureCodeSequence = 4198418;
+        /// <summary>
         /// <para>(0040,1101) Person Identification Code Sequence</para>
         /// <para> VR: SQ VM:1</para>
         /// </summary>
@@ -7168,10 +7908,10 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint ScheduledProcessingApplicationsCodeSequence = 4210692;
         /// <summary>
-        /// <para>(0040,4005) Scheduled Procedure Step Start Date and Time</para>
+        /// <para>(0040,4005) Scheduled Procedure Step Start DateTime</para>
         /// <para> VR: DT VM:1</para>
         /// </summary>
-        public const uint ScheduledProcedureStepStartDateAndTime = 4210693;
+        public const uint ScheduledProcedureStepStartDatetime = 4210693;
         /// <summary>
         /// <para>(0040,4006) Multiple Copies Flag</para>
         /// <para> VR: CS VM:1</para>
@@ -7188,15 +7928,15 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint HumanPerformerCodeSequence = 4210697;
         /// <summary>
-        /// <para>(0040,4010) Scheduled Procedure Step Modification Date and Time</para>
+        /// <para>(0040,4010) Scheduled Procedure Step Modification Date Time</para>
         /// <para> VR: DT VM:1</para>
         /// </summary>
-        public const uint ScheduledProcedureStepModificationDateAndTime = 4210704;
+        public const uint ScheduledProcedureStepModificationDateTime = 4210704;
         /// <summary>
-        /// <para>(0040,4011) Expected Completion Date and Time</para>
+        /// <para>(0040,4011) Expected Completion Date Time</para>
         /// <para> VR: DT VM:1</para>
         /// </summary>
-        public const uint ExpectedCompletionDateAndTime = 4210705;
+        public const uint ExpectedCompletionDateTime = 4210705;
         /// <summary>
         /// <para>(0040,4015) Resulting General Purpose Performed Procedure Steps Sequence</para>
         /// <para> VR: SQ VM:1</para>
@@ -7302,6 +8042,11 @@ namespace ClearCanvas.Dicom
         /// <para> VR: PN VM:1</para>
         /// </summary>
         public const uint HumanPerformersName = 4210743;
+        /// <summary>
+        /// <para>(0040,4040) Raw Data Handling</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint RawDataHandling = 4210752;
         /// <summary>
         /// <para>(0040,8302) Entrance Dose in mGy</para>
         /// <para> VR: DS VM:1</para>
@@ -7596,6 +8341,11 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint ArchiveRequested = 4236436;
         /// <summary>
+        /// <para>(0040,A496) Preliminary Flag</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint PreliminaryFlag = 4236438;
+        /// <summary>
         /// <para>(0040,A504) Content Template Sequence</para>
         /// <para> VR: SQ VM:1</para>
         /// </summary>
@@ -7611,10 +8361,10 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint ContentSequence = 4237104;
         /// <summary>
-        /// <para>(0040,B020) Annotation Sequence</para>
+        /// <para>(0040,B020) Waveform Annotation Sequence</para>
         /// <para> VR: SQ VM:1</para>
         /// </summary>
-        public const uint AnnotationSequence = 4239392;
+        public const uint WaveformAnnotationSequence = 4239392;
         /// <summary>
         /// <para>(0040,DB00) Template Identifier</para>
         /// <para> VR: CS VM:1</para>
@@ -7675,6 +8425,11 @@ namespace ClearCanvas.Dicom
         /// <para> VR: UT VM:1</para>
         /// </summary>
         public const uint RetrieveUri = 4251664;
+        /// <summary>
+        /// <para>(0040,E011) Retrieve Location UID</para>
+        /// <para> VR: UI VM:1</para>
+        /// </summary>
+        public const uint RetrieveLocationUid = 4251665;
         /// <summary>
         /// <para>(0042,0010) Document Title</para>
         /// <para> VR: ST VM:1</para>
@@ -7771,6 +8526,251 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint SubstanceAdministrationParameterSequence = 4456473;
         /// <summary>
+        /// <para>(0046,0012) Lens Description</para>
+        /// <para> VR: LO VM:1</para>
+        /// </summary>
+        public const uint LensDescription = 4587538;
+        /// <summary>
+        /// <para>(0046,0014) Right Lens Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint RightLensSequence = 4587540;
+        /// <summary>
+        /// <para>(0046,0015) Left Lens Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint LeftLensSequence = 4587541;
+        /// <summary>
+        /// <para>(0046,0016) Unspecified Laterality Lens Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint UnspecifiedLateralityLensSequence = 4587542;
+        /// <summary>
+        /// <para>(0046,0018) Cylinder Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint CylinderSequence = 4587544;
+        /// <summary>
+        /// <para>(0046,0028) Prism Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint PrismSequence = 4587560;
+        /// <summary>
+        /// <para>(0046,0030) Horizontal Prism Power</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint HorizontalPrismPower = 4587568;
+        /// <summary>
+        /// <para>(0046,0032) Horizontal Prism Base</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint HorizontalPrismBase = 4587570;
+        /// <summary>
+        /// <para>(0046,0034) Vertical Prism Power</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint VerticalPrismPower = 4587572;
+        /// <summary>
+        /// <para>(0046,0036) Vertical Prism Base</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint VerticalPrismBase = 4587574;
+        /// <summary>
+        /// <para>(0046,0038) Lens Segment Type</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint LensSegmentType = 4587576;
+        /// <summary>
+        /// <para>(0046,0040) Optical Transmittance</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint OpticalTransmittance = 4587584;
+        /// <summary>
+        /// <para>(0046,0042) Channel Width</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint ChannelWidth = 4587586;
+        /// <summary>
+        /// <para>(0046,0044) Pupil Size</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint PupilSize = 4587588;
+        /// <summary>
+        /// <para>(0046,0046) Corneal Size</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint CornealSize = 4587590;
+        /// <summary>
+        /// <para>(0046,0050) Autorefraction Right Eye Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint AutorefractionRightEyeSequence = 4587600;
+        /// <summary>
+        /// <para>(0046,0052) Autorefraction Left Eye Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint AutorefractionLeftEyeSequence = 4587602;
+        /// <summary>
+        /// <para>(0046,0060) Distance Pupillary Distance</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint DistancePupillaryDistance = 4587616;
+        /// <summary>
+        /// <para>(0046,0062) Near Pupillary Distance</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint NearPupillaryDistance = 4587618;
+        /// <summary>
+        /// <para>(0046,0063) Intermediate Pupillary Distance</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint IntermediatePupillaryDistance = 4587619;
+        /// <summary>
+        /// <para>(0046,0064) Other Pupillary Distance</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint OtherPupillaryDistance = 4587620;
+        /// <summary>
+        /// <para>(0046,0070) Keratometry Right Eye Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint KeratometryRightEyeSequence = 4587632;
+        /// <summary>
+        /// <para>(0046,0071) Keratometry Left Eye Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint KeratometryLeftEyeSequence = 4587633;
+        /// <summary>
+        /// <para>(0046,0074) Steep Keratometric Axis Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint SteepKeratometricAxisSequence = 4587636;
+        /// <summary>
+        /// <para>(0046,0075) Radius of Curvature</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint RadiusOfCurvature = 4587637;
+        /// <summary>
+        /// <para>(0046,0076) Keratometric Power</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint KeratometricPower = 4587638;
+        /// <summary>
+        /// <para>(0046,0077) Keratometric Axis</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint KeratometricAxis = 4587639;
+        /// <summary>
+        /// <para>(0046,0080) Flat Keratometric Axis Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint FlatKeratometricAxisSequence = 4587648;
+        /// <summary>
+        /// <para>(0046,0092) Background Color</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint BackgroundColor = 4587666;
+        /// <summary>
+        /// <para>(0046,0094) Optotype</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint Optotype = 4587668;
+        /// <summary>
+        /// <para>(0046,0095) Optotype Presentation</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint OptotypePresentation = 4587669;
+        /// <summary>
+        /// <para>(0046,0097) Subjective Refraction Right Eye Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint SubjectiveRefractionRightEyeSequence = 4587671;
+        /// <summary>
+        /// <para>(0046,0098) Subjective Refraction Left Eye Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint SubjectiveRefractionLeftEyeSequence = 4587672;
+        /// <summary>
+        /// <para>(0046,0100) Add Near Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint AddNearSequence = 4587776;
+        /// <summary>
+        /// <para>(0046,0101) Add Intermediate Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint AddIntermediateSequence = 4587777;
+        /// <summary>
+        /// <para>(0046,0102) Add Other Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint AddOtherSequence = 4587778;
+        /// <summary>
+        /// <para>(0046,0104) Add Power</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint AddPower = 4587780;
+        /// <summary>
+        /// <para>(0046,0106) Viewing Distance</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint ViewingDistance = 4587782;
+        /// <summary>
+        /// <para>(0046,0121) Visual Acuity Type Code Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint VisualAcuityTypeCodeSequence = 4587809;
+        /// <summary>
+        /// <para>(0046,0122) Visual Acuity Right Eye Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint VisualAcuityRightEyeSequence = 4587810;
+        /// <summary>
+        /// <para>(0046,0123) Visual Acuity Left Eye Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint VisualAcuityLeftEyeSequence = 4587811;
+        /// <summary>
+        /// <para>(0046,0124) Visual Acuity Both Eyes Open Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint VisualAcuityBothEyesOpenSequence = 4587812;
+        /// <summary>
+        /// <para>(0046,0125) Viewing Distance Type</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint ViewingDistanceType = 4587813;
+        /// <summary>
+        /// <para>(0046,0135) Visual Acuity Modifiers</para>
+        /// <para> VR: SS VM:2</para>
+        /// </summary>
+        public const uint VisualAcuityModifiers = 4587829;
+        /// <summary>
+        /// <para>(0046,0137) Decimal Visual Acuity</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint DecimalVisualAcuity = 4587831;
+        /// <summary>
+        /// <para>(0046,0139) Optotype Detailed Definition</para>
+        /// <para> VR: LO VM:1</para>
+        /// </summary>
+        public const uint OptotypeDetailedDefinition = 4587833;
+        /// <summary>
+        /// <para>(0046,0145) Referenced Refractive Measurements Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint ReferencedRefractiveMeasurementsSequence = 4587845;
+        /// <summary>
+        /// <para>(0046,0146) Sphere Power</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint SpherePower = 4587846;
+        /// <summary>
+        /// <para>(0046,0147) Cylinder Power</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint CylinderPower = 4587847;
+        /// <summary>
         /// <para>(0050,0004) Calibration Image</para>
         /// <para> VR: CS VM:1</para>
         /// </summary>
@@ -7781,10 +8781,25 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint DeviceSequence = 5242896;
         /// <summary>
+        /// <para>(0050,0012) Container Component Type Code Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint ContainerComponentTypeCodeSequence = 5242898;
+        /// <summary>
+        /// <para>(0050,0013) Container Component Thickness</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint ContainerComponentThickness = 5242899;
+        /// <summary>
         /// <para>(0050,0014) Device Length</para>
         /// <para> VR: DS VM:1</para>
         /// </summary>
         public const uint DeviceLength = 5242900;
+        /// <summary>
+        /// <para>(0050,0015) Container Component Width</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint ContainerComponentWidth = 5242901;
         /// <summary>
         /// <para>(0050,0016) Device Diameter</para>
         /// <para> VR: DS VM:1</para>
@@ -7801,10 +8816,35 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint DeviceVolume = 5242904;
         /// <summary>
-        /// <para>(0050,0019) Intermarker Distance</para>
+        /// <para>(0050,0019) Inter-Marker Distance</para>
         /// <para> VR: DS VM:1</para>
         /// </summary>
-        public const uint IntermarkerDistance = 5242905;
+        public const uint InterMarkerDistance = 5242905;
+        /// <summary>
+        /// <para>(0050,001A) Container Component Material</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint ContainerComponentMaterial = 5242906;
+        /// <summary>
+        /// <para>(0050,001B) Container Component ID</para>
+        /// <para> VR: LO VM:1</para>
+        /// </summary>
+        public const uint ContainerComponentId = 5242907;
+        /// <summary>
+        /// <para>(0050,001C) Container Component Length</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint ContainerComponentLength = 5242908;
+        /// <summary>
+        /// <para>(0050,001D) Container Component Diameter</para>
+        /// <para> VR: FD VM:1</para>
+        /// </summary>
+        public const uint ContainerComponentDiameter = 5242909;
+        /// <summary>
+        /// <para>(0050,001E) Container Component Description</para>
+        /// <para> VR: LO VM:1</para>
+        /// </summary>
+        public const uint ContainerComponentDescription = 5242910;
         /// <summary>
         /// <para>(0050,0020) Device Description</para>
         /// <para> VR: LO VM:1</para>
@@ -8358,6 +9398,231 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint PostDeformationMatrixRegistrationSequence = 6553616;
         /// <summary>
+        /// <para>(0066,0001) Number of Surfaces</para>
+        /// <para> VR: UL VM:1</para>
+        /// </summary>
+        public const uint NumberOfSurfaces = 6684673;
+        /// <summary>
+        /// <para>(0066,0002) Surface Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint SurfaceSequence = 6684674;
+        /// <summary>
+        /// <para>(0066,0003) Surface Number</para>
+        /// <para> VR: UL VM:1</para>
+        /// </summary>
+        public const uint SurfaceNumber = 6684675;
+        /// <summary>
+        /// <para>(0066,0004) Surface Comments</para>
+        /// <para> VR: LT VM:1</para>
+        /// </summary>
+        public const uint SurfaceComments = 6684676;
+        /// <summary>
+        /// <para>(0066,0009) Surface Processing</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint SurfaceProcessing = 6684681;
+        /// <summary>
+        /// <para>(0066,000A) Surface Processing Ratio</para>
+        /// <para> VR: FL VM:1</para>
+        /// </summary>
+        public const uint SurfaceProcessingRatio = 6684682;
+        /// <summary>
+        /// <para>(0066,000B) Surface Processing Description</para>
+        /// <para> VR: LO VM:1</para>
+        /// </summary>
+        public const uint SurfaceProcessingDescription = 6684683;
+        /// <summary>
+        /// <para>(0066,000C) Recommended Presentation Opacity</para>
+        /// <para> VR: FL VM:1</para>
+        /// </summary>
+        public const uint RecommendedPresentationOpacity = 6684684;
+        /// <summary>
+        /// <para>(0066,000D) Recommended Presentation Type</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint RecommendedPresentationType = 6684685;
+        /// <summary>
+        /// <para>(0066,000E) Finite Volume</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint FiniteVolume = 6684686;
+        /// <summary>
+        /// <para>(0066,0010) Manifold</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint Manifold = 6684688;
+        /// <summary>
+        /// <para>(0066,0011) Surface Points Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint SurfacePointsSequence = 6684689;
+        /// <summary>
+        /// <para>(0066,0012) Surface Points Normals Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint SurfacePointsNormalsSequence = 6684690;
+        /// <summary>
+        /// <para>(0066,0013) Surface Mesh Primitives Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint SurfaceMeshPrimitivesSequence = 6684691;
+        /// <summary>
+        /// <para>(0066,0015) Number of Surface Points</para>
+        /// <para> VR: UL VM:1</para>
+        /// </summary>
+        public const uint NumberOfSurfacePoints = 6684693;
+        /// <summary>
+        /// <para>(0066,0016) Point Coordinates Data</para>
+        /// <para> VR: OF VM:1</para>
+        /// </summary>
+        public const uint PointCoordinatesData = 6684694;
+        /// <summary>
+        /// <para>(0066,0017) Point Position Accuracy</para>
+        /// <para> VR: FL VM:3</para>
+        /// </summary>
+        public const uint PointPositionAccuracy = 6684695;
+        /// <summary>
+        /// <para>(0066,0018) Mean Point Distance</para>
+        /// <para> VR: FL VM:1</para>
+        /// </summary>
+        public const uint MeanPointDistance = 6684696;
+        /// <summary>
+        /// <para>(0066,0019) Maximum Point Distance</para>
+        /// <para> VR: FL VM:1</para>
+        /// </summary>
+        public const uint MaximumPointDistance = 6684697;
+        /// <summary>
+        /// <para>(0066,001A) Points Bounding Box Coordinates</para>
+        /// <para> VR: FL VM:6</para>
+        /// </summary>
+        public const uint PointsBoundingBoxCoordinates = 6684698;
+        /// <summary>
+        /// <para>(0066,001B) Axis of Rotation</para>
+        /// <para> VR: FL VM:3</para>
+        /// </summary>
+        public const uint AxisOfRotation = 6684699;
+        /// <summary>
+        /// <para>(0066,001C) Center of Rotation</para>
+        /// <para> VR: FL VM:3</para>
+        /// </summary>
+        public const uint CenterOfRotation = 6684700;
+        /// <summary>
+        /// <para>(0066,001E) Number of Vectors</para>
+        /// <para> VR: UL VM:1</para>
+        /// </summary>
+        public const uint NumberOfVectors = 6684702;
+        /// <summary>
+        /// <para>(0066,001F) Vector Dimensionality</para>
+        /// <para> VR: US VM:1</para>
+        /// </summary>
+        public const uint VectorDimensionality = 6684703;
+        /// <summary>
+        /// <para>(0066,0020) Vector Accuracy</para>
+        /// <para> VR: FL VM:1-n</para>
+        /// </summary>
+        public const uint VectorAccuracy = 6684704;
+        /// <summary>
+        /// <para>(0066,0021) Vector Coordinate Data</para>
+        /// <para> VR: OF VM:1</para>
+        /// </summary>
+        public const uint VectorCoordinateData = 6684705;
+        /// <summary>
+        /// <para>(0066,0023) Triangle Point Index List</para>
+        /// <para> VR: OW VM:1</para>
+        /// </summary>
+        public const uint TrianglePointIndexList = 6684707;
+        /// <summary>
+        /// <para>(0066,0024) Edge Point Index List</para>
+        /// <para> VR: OW VM:1</para>
+        /// </summary>
+        public const uint EdgePointIndexList = 6684708;
+        /// <summary>
+        /// <para>(0066,0025) Vertex Point Index List</para>
+        /// <para> VR: OW VM:1</para>
+        /// </summary>
+        public const uint VertexPointIndexList = 6684709;
+        /// <summary>
+        /// <para>(0066,0026) Triangle Strip Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint TriangleStripSequence = 6684710;
+        /// <summary>
+        /// <para>(0066,0027) Triangle Fan Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint TriangleFanSequence = 6684711;
+        /// <summary>
+        /// <para>(0066,0028) Line Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint LineSequence = 6684712;
+        /// <summary>
+        /// <para>(0066,0029) Primitive Point Index List</para>
+        /// <para> VR: OW VM:1</para>
+        /// </summary>
+        public const uint PrimitivePointIndexList = 6684713;
+        /// <summary>
+        /// <para>(0066,002A) Surface Count</para>
+        /// <para> VR: UL VM:1</para>
+        /// </summary>
+        public const uint SurfaceCount = 6684714;
+        /// <summary>
+        /// <para>(0066,002B) Referenced Surface Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint ReferencedSurfaceSequence = 6684715;
+        /// <summary>
+        /// <para>(0066,002C) Referenced Surface Number</para>
+        /// <para> VR: UL VM:1</para>
+        /// </summary>
+        public const uint ReferencedSurfaceNumber = 6684716;
+        /// <summary>
+        /// <para>(0066,002D) Segment Surface Generation Algorithm Identification Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint SegmentSurfaceGenerationAlgorithmIdentificationSequence = 6684717;
+        /// <summary>
+        /// <para>(0066,002E) Segment Surface Source Instance Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint SegmentSurfaceSourceInstanceSequence = 6684718;
+        /// <summary>
+        /// <para>(0066,002F) Algorithm Family Code Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint AlgorithmFamilyCodeSequence = 6684719;
+        /// <summary>
+        /// <para>(0066,0030) Algorithm Name Code Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint AlgorithmNameCodeSequence = 6684720;
+        /// <summary>
+        /// <para>(0066,0031) Algorithm Version</para>
+        /// <para> VR: LO VM:1</para>
+        /// </summary>
+        public const uint AlgorithmVersion = 6684721;
+        /// <summary>
+        /// <para>(0066,0032) Algorithm Parameters</para>
+        /// <para> VR: LT VM:1</para>
+        /// </summary>
+        public const uint AlgorithmParameters = 6684722;
+        /// <summary>
+        /// <para>(0066,0034) Facet Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint FacetSequence = 6684724;
+        /// <summary>
+        /// <para>(0066,0035) Surface Processing Algorithm Identification Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint SurfaceProcessingAlgorithmIdentificationSequence = 6684725;
+        /// <summary>
+        /// <para>(0066,0036) Algorithm Name</para>
+        /// <para> VR: LO VM:1</para>
+        /// </summary>
+        public const uint AlgorithmName = 6684726;
+        /// <summary>
         /// <para>(0070,0001) Graphic Annotation Sequence</para>
         /// <para> VR: SQ VM:1</para>
         /// </summary>
@@ -8448,7 +9713,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint GraphicFilled = 7340068;
         /// <summary>
-        /// <para>(0070,0040) Image Rotation </para>
+        /// <para>(0070,0040) Image Rotation (Retired)</para>
         /// <para> VR: IS VM:1</para>
         /// <para>This tag has been retired.</para>
         /// </summary>
@@ -8546,6 +9811,11 @@ namespace ClearCanvas.Dicom
         /// <para> VR: SQ VM:1</para>
         /// </summary>
         public const uint ContentCreatorsIdentificationCodeSequence = 7340166;
+        /// <summary>
+        /// <para>(0070,0087) Alternate Content Description Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint AlternateContentDescriptionSequence = 7340167;
         /// <summary>
         /// <para>(0070,0100) Presentation Size Mode</para>
         /// <para> VR: CS VM:1</para>
@@ -9062,6 +10332,46 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint FilterByOperator = 7472134;
         /// <summary>
+        /// <para>(0072,0420) Structured Display Background CIELab Value</para>
+        /// <para> VR: US VM:3</para>
+        /// </summary>
+        public const uint StructuredDisplayBackgroundCielabValue = 7472160;
+        /// <summary>
+        /// <para>(0072,0421) Empty Image Box CIELab Value</para>
+        /// <para> VR: US VM:3</para>
+        /// </summary>
+        public const uint EmptyImageBoxCielabValue = 7472161;
+        /// <summary>
+        /// <para>(0072,0422) Structured Display Image Box Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint StructuredDisplayImageBoxSequence = 7472162;
+        /// <summary>
+        /// <para>(0072,0424) Structured Display Text Box Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint StructuredDisplayTextBoxSequence = 7472164;
+        /// <summary>
+        /// <para>(0072,0427) Referenced First Frame Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint ReferencedFirstFrameSequence = 7472167;
+        /// <summary>
+        /// <para>(0072,0430) Image Box Synchronization Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint ImageBoxSynchronizationSequence = 7472176;
+        /// <summary>
+        /// <para>(0072,0432) Synchronized Image Box List</para>
+        /// <para> VR: US VM:2-n</para>
+        /// </summary>
+        public const uint SynchronizedImageBoxList = 7472178;
+        /// <summary>
+        /// <para>(0072,0434) Type of Synchronization</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint TypeOfSynchronization = 7472180;
+        /// <summary>
         /// <para>(0072,0500) Blending Operation Type</para>
         /// <para> VR: CS VM:1</para>
         /// </summary>
@@ -9090,7 +10400,7 @@ namespace ClearCanvas.Dicom
         /// <para>(0072,0520) 3D Rendering Type</para>
         /// <para> VR: CS VM:1-n</para>
         /// </summary>
-        public const uint Tag3dRenderingType = 7472416;
+        public const uint ThreeDRenderingType = 7472416;
         /// <summary>
         /// <para>(0072,0600) Sorting Operations Sequence</para>
         /// <para> VR: SQ VM:1</para>
@@ -9117,7 +10427,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint VoiType = 7472898;
         /// <summary>
-        /// <para>(0072,0704) Pseudo-color Type</para>
+        /// <para>(0072,0704) Pseudo-Color Type</para>
         /// <para> VR: CS VM:1</para>
         /// </summary>
         public const uint PseudoColorType = 7472900;
@@ -9162,10 +10472,10 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint UnifiedProcedureStepState = 7606272;
         /// <summary>
-        /// <para>(0074,1002) UPS Progress Information Sequence</para>
+        /// <para>(0074,1002) Unified Procedure Step Progress Information Sequence</para>
         /// <para> VR: SQ VM:1</para>
         /// </summary>
-        public const uint UpsProgressInformationSequence = 7606274;
+        public const uint UnifiedProcedureStepProgressInformationSequence = 7606274;
         /// <summary>
         /// <para>(0074,1004) Unified Procedure Step Progress</para>
         /// <para> VR: DS VM:1</para>
@@ -9263,12 +10573,12 @@ namespace ClearCanvas.Dicom
         public const uint IonMachineVerificationSequence = 7606342;
         /// <summary>
         /// <para>(0074,1048) Failed Attributes Sequence</para>
-        /// <para> VR: SQ VM:1-n</para>
+        /// <para> VR: SQ VM:1</para>
         /// </summary>
         public const uint FailedAttributesSequence = 7606344;
         /// <summary>
         /// <para>(0074,104A) Overridden Attributes Sequence</para>
-        /// <para> VR: SQ VM:1-n</para>
+        /// <para> VR: SQ VM:1</para>
         /// </summary>
         public const uint OverriddenAttributesSequence = 7606346;
         /// <summary>
@@ -9283,7 +10593,7 @@ namespace ClearCanvas.Dicom
         public const uint IonControlPointVerificationSequence = 7606350;
         /// <summary>
         /// <para>(0074,1050) Attribute Occurrence Sequence</para>
-        /// <para> VR: SQ VM:1-n</para>
+        /// <para> VR: SQ VM:1</para>
         /// </summary>
         public const uint AttributeOccurrenceSequence = 7606352;
         /// <summary>
@@ -9327,10 +10637,10 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint PerformedProcessingParametersSequence = 7606802;
         /// <summary>
-        /// <para>(0074,1216) UPS Performed Procedure Sequence</para>
+        /// <para>(0074,1216) Unified Procedure Step Performed Procedure Sequence</para>
         /// <para> VR: SQ VM:1</para>
         /// </summary>
-        public const uint UpsPerformedProcedureSequence = 7606806;
+        public const uint UnifiedProcedureStepPerformedProcedureSequence = 7606806;
         /// <summary>
         /// <para>(0074,1220) Related Procedure Step Sequence</para>
         /// <para> VR: SQ VM:1</para>
@@ -9372,10 +10682,10 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint SubscriptionListStatus = 7606852;
         /// <summary>
-        /// <para>(0074,1246) UPS List Status</para>
+        /// <para>(0074,1246) Unified Procedure Step List Status</para>
         /// <para> VR: CS VM:1</para>
         /// </summary>
-        public const uint UpsListStatus = 7606854;
+        public const uint UnifiedProcedureStepListStatus = 7606854;
         /// <summary>
         /// <para>(0088,0130) Storage Media File-set ID</para>
         /// <para> VR: SH VM:1</para>
@@ -9421,10 +10731,10 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint SopInstanceStatus = 16778256;
         /// <summary>
-        /// <para>(0100,0420) SOP Authorization Date and Time</para>
+        /// <para>(0100,0420) SOP Authorization DateTime</para>
         /// <para> VR: DT VM:1</para>
         /// </summary>
-        public const uint SopAuthorizationDateAndTime = 16778272;
+        public const uint SopAuthorizationDatetime = 16778272;
         /// <summary>
         /// <para>(0100,0424) SOP Authorization Comment</para>
         /// <para> VR: LT VM:1</para>
@@ -10288,6 +11598,21 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint FluenceDataScale = 805437506;
         /// <summary>
+        /// <para>(3002,0050) Primary Fluence Mode Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint PrimaryFluenceModeSequence = 805437520;
+        /// <summary>
+        /// <para>(3002,0051) Fluence Mode</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint FluenceMode = 805437521;
+        /// <summary>
+        /// <para>(3002,0052) Fluence Mode ID</para>
+        /// <para> VR: SH VM:1</para>
+        /// </summary>
+        public const uint FluenceModeId = 805437522;
+        /// <summary>
         /// <para>(3004,0001) DVH Type</para>
         /// <para> VR: CS VM:1</para>
         /// </summary>
@@ -10647,6 +11972,461 @@ namespace ClearCanvas.Dicom
         /// <para> VR: LO VM:1</para>
         /// </summary>
         public const uint FrameOfReferenceTransformationComment = 805699784;
+        /// <summary>
+        /// <para>(3008,0010) Measured Dose Reference Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint MeasuredDoseReferenceSequence = 805830672;
+        /// <summary>
+        /// <para>(3008,0012) Measured Dose Description</para>
+        /// <para> VR: ST VM:1</para>
+        /// </summary>
+        public const uint MeasuredDoseDescription = 805830674;
+        /// <summary>
+        /// <para>(3008,0014) Measured Dose Type</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint MeasuredDoseType = 805830676;
+        /// <summary>
+        /// <para>(3008,0016) Measured Dose Value</para>
+        /// <para> VR: DS VM:1</para>
+        /// </summary>
+        public const uint MeasuredDoseValue = 805830678;
+        /// <summary>
+        /// <para>(3008,0020) Treatment Session Beam Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint TreatmentSessionBeamSequence = 805830688;
+        /// <summary>
+        /// <para>(3008,0021) Treatment Session Ion Beam Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint TreatmentSessionIonBeamSequence = 805830689;
+        /// <summary>
+        /// <para>(3008,0022) Current Fraction Number</para>
+        /// <para> VR: IS VM:1</para>
+        /// </summary>
+        public const uint CurrentFractionNumber = 805830690;
+        /// <summary>
+        /// <para>(3008,0024) Treatment Control Point Date</para>
+        /// <para> VR: DA VM:1</para>
+        /// </summary>
+        public const uint TreatmentControlPointDate = 805830692;
+        /// <summary>
+        /// <para>(3008,0025) Treatment Control Point Time</para>
+        /// <para> VR: TM VM:1</para>
+        /// </summary>
+        public const uint TreatmentControlPointTime = 805830693;
+        /// <summary>
+        /// <para>(3008,002A) Treatment Termination Status</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint TreatmentTerminationStatus = 805830698;
+        /// <summary>
+        /// <para>(3008,002B) Treatment Termination Code</para>
+        /// <para> VR: SH VM:1</para>
+        /// </summary>
+        public const uint TreatmentTerminationCode = 805830699;
+        /// <summary>
+        /// <para>(3008,002C) Treatment Verification Status</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint TreatmentVerificationStatus = 805830700;
+        /// <summary>
+        /// <para>(3008,0030) Referenced Treatment Record Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint ReferencedTreatmentRecordSequence = 805830704;
+        /// <summary>
+        /// <para>(3008,0032) Specified Primary Meterset </para>
+        /// <para> VR: DS VM:1</para>
+        /// </summary>
+        public const uint SpecifiedPrimaryMeterset = 805830706;
+        /// <summary>
+        /// <para>(3008,0033) Specified Secondary Meterset </para>
+        /// <para> VR: DS VM:1</para>
+        /// </summary>
+        public const uint SpecifiedSecondaryMeterset = 805830707;
+        /// <summary>
+        /// <para>(3008,0036) Delivered Primary Meterset </para>
+        /// <para> VR: DS VM:1</para>
+        /// </summary>
+        public const uint DeliveredPrimaryMeterset = 805830710;
+        /// <summary>
+        /// <para>(3008,0037) Delivered Secondary Meterset </para>
+        /// <para> VR: DS VM:1</para>
+        /// </summary>
+        public const uint DeliveredSecondaryMeterset = 805830711;
+        /// <summary>
+        /// <para>(3008,003A) Specified Treatment Time</para>
+        /// <para> VR: DS VM:1</para>
+        /// </summary>
+        public const uint SpecifiedTreatmentTime = 805830714;
+        /// <summary>
+        /// <para>(3008,003B) Delivered Treatment Time</para>
+        /// <para> VR: DS VM:1</para>
+        /// </summary>
+        public const uint DeliveredTreatmentTime = 805830715;
+        /// <summary>
+        /// <para>(3008,0040) Control Point Delivery Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint ControlPointDeliverySequence = 805830720;
+        /// <summary>
+        /// <para>(3008,0041) Ion Control Point Delivery Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint IonControlPointDeliverySequence = 805830721;
+        /// <summary>
+        /// <para>(3008,0042) Specified Meterset</para>
+        /// <para> VR: DS VM:1</para>
+        /// </summary>
+        public const uint SpecifiedMeterset = 805830722;
+        /// <summary>
+        /// <para>(3008,0044) Delivered Meterset</para>
+        /// <para> VR: DS VM:1</para>
+        /// </summary>
+        public const uint DeliveredMeterset = 805830724;
+        /// <summary>
+        /// <para>(3008,0045) Meterset Rate Set</para>
+        /// <para> VR: FL VM:1</para>
+        /// </summary>
+        public const uint MetersetRateSet = 805830725;
+        /// <summary>
+        /// <para>(3008,0046) Meterset Rate Delivered</para>
+        /// <para> VR: FL VM:1</para>
+        /// </summary>
+        public const uint MetersetRateDelivered = 805830726;
+        /// <summary>
+        /// <para>(3008,0047) Scan Spot Metersets Delivered</para>
+        /// <para> VR: FL VM:1-n</para>
+        /// </summary>
+        public const uint ScanSpotMetersetsDelivered = 805830727;
+        /// <summary>
+        /// <para>(3008,0048) Dose Rate Delivered</para>
+        /// <para> VR: DS VM:1</para>
+        /// </summary>
+        public const uint DoseRateDelivered = 805830728;
+        /// <summary>
+        /// <para>(3008,0050) Treatment Summary Calculated Dose Reference Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint TreatmentSummaryCalculatedDoseReferenceSequence = 805830736;
+        /// <summary>
+        /// <para>(3008,0052) Cumulative Dose to Dose Reference</para>
+        /// <para> VR: DS VM:1</para>
+        /// </summary>
+        public const uint CumulativeDoseToDoseReference = 805830738;
+        /// <summary>
+        /// <para>(3008,0054) First Treatment Date</para>
+        /// <para> VR: DA VM:1</para>
+        /// </summary>
+        public const uint FirstTreatmentDate = 805830740;
+        /// <summary>
+        /// <para>(3008,0056) Most Recent Treatment Date</para>
+        /// <para> VR: DA VM:1</para>
+        /// </summary>
+        public const uint MostRecentTreatmentDate = 805830742;
+        /// <summary>
+        /// <para>(3008,005A) Number of Fractions Delivered</para>
+        /// <para> VR: IS VM:1</para>
+        /// </summary>
+        public const uint NumberOfFractionsDelivered = 805830746;
+        /// <summary>
+        /// <para>(3008,0060) Override Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint OverrideSequence = 805830752;
+        /// <summary>
+        /// <para>(3008,0061) Parameter Sequence Pointer</para>
+        /// <para> VR: AT VM:1</para>
+        /// </summary>
+        public const uint ParameterSequencePointer = 805830753;
+        /// <summary>
+        /// <para>(3008,0062) Override Parameter Pointer</para>
+        /// <para> VR: AT VM:1</para>
+        /// </summary>
+        public const uint OverrideParameterPointer = 805830754;
+        /// <summary>
+        /// <para>(3008,0063) Parameter Item Index</para>
+        /// <para> VR: IS VM:1</para>
+        /// </summary>
+        public const uint ParameterItemIndex = 805830755;
+        /// <summary>
+        /// <para>(3008,0064) Measured Dose Reference Number</para>
+        /// <para> VR: IS VM:1</para>
+        /// </summary>
+        public const uint MeasuredDoseReferenceNumber = 805830756;
+        /// <summary>
+        /// <para>(3008,0065) Parameter Pointer</para>
+        /// <para> VR: AT VM:1</para>
+        /// </summary>
+        public const uint ParameterPointer = 805830757;
+        /// <summary>
+        /// <para>(3008,0066) Override Reason</para>
+        /// <para> VR: ST VM:1</para>
+        /// </summary>
+        public const uint OverrideReason = 805830758;
+        /// <summary>
+        /// <para>(3008,0068) Corrected Parameter Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint CorrectedParameterSequence = 805830760;
+        /// <summary>
+        /// <para>(3008,006A) Correction Value</para>
+        /// <para> VR: FL VM:1</para>
+        /// </summary>
+        public const uint CorrectionValue = 805830762;
+        /// <summary>
+        /// <para>(3008,0070) Calculated Dose Reference Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint CalculatedDoseReferenceSequence = 805830768;
+        /// <summary>
+        /// <para>(3008,0072) Calculated Dose Reference Number</para>
+        /// <para> VR: IS VM:1</para>
+        /// </summary>
+        public const uint CalculatedDoseReferenceNumber = 805830770;
+        /// <summary>
+        /// <para>(3008,0074) Calculated Dose Reference Description</para>
+        /// <para> VR: ST VM:1</para>
+        /// </summary>
+        public const uint CalculatedDoseReferenceDescription = 805830772;
+        /// <summary>
+        /// <para>(3008,0076) Calculated Dose Reference Dose Value</para>
+        /// <para> VR: DS VM:1</para>
+        /// </summary>
+        public const uint CalculatedDoseReferenceDoseValue = 805830774;
+        /// <summary>
+        /// <para>(3008,0078) Start Meterset</para>
+        /// <para> VR: DS VM:1</para>
+        /// </summary>
+        public const uint StartMeterset = 805830776;
+        /// <summary>
+        /// <para>(3008,007A) End Meterset</para>
+        /// <para> VR: DS VM:1</para>
+        /// </summary>
+        public const uint EndMeterset = 805830778;
+        /// <summary>
+        /// <para>(3008,0080) Referenced Measured Dose Reference Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint ReferencedMeasuredDoseReferenceSequence = 805830784;
+        /// <summary>
+        /// <para>(3008,0082) Referenced Measured Dose Reference Number</para>
+        /// <para> VR: IS VM:1</para>
+        /// </summary>
+        public const uint ReferencedMeasuredDoseReferenceNumber = 805830786;
+        /// <summary>
+        /// <para>(3008,0090) Referenced Calculated Dose Reference Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint ReferencedCalculatedDoseReferenceSequence = 805830800;
+        /// <summary>
+        /// <para>(3008,0092) Referenced Calculated Dose Reference Number</para>
+        /// <para> VR: IS VM:1</para>
+        /// </summary>
+        public const uint ReferencedCalculatedDoseReferenceNumber = 805830802;
+        /// <summary>
+        /// <para>(3008,00A0) Beam Limiting Device Leaf Pairs Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint BeamLimitingDeviceLeafPairsSequence = 805830816;
+        /// <summary>
+        /// <para>(3008,00B0) Recorded Wedge Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint RecordedWedgeSequence = 805830832;
+        /// <summary>
+        /// <para>(3008,00C0) Recorded Compensator Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint RecordedCompensatorSequence = 805830848;
+        /// <summary>
+        /// <para>(3008,00D0) Recorded Block Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint RecordedBlockSequence = 805830864;
+        /// <summary>
+        /// <para>(3008,00E0) Treatment Summary Measured Dose Reference Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint TreatmentSummaryMeasuredDoseReferenceSequence = 805830880;
+        /// <summary>
+        /// <para>(3008,00F0) Recorded Snout Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint RecordedSnoutSequence = 805830896;
+        /// <summary>
+        /// <para>(3008,00F2) Recorded Range Shifter Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint RecordedRangeShifterSequence = 805830898;
+        /// <summary>
+        /// <para>(3008,00F4) Recorded Lateral Spreading Device Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint RecordedLateralSpreadingDeviceSequence = 805830900;
+        /// <summary>
+        /// <para>(3008,00F6) Recorded Range Modulator Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint RecordedRangeModulatorSequence = 805830902;
+        /// <summary>
+        /// <para>(3008,0100) Recorded Source Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint RecordedSourceSequence = 805830912;
+        /// <summary>
+        /// <para>(3008,0105) Source Serial Number</para>
+        /// <para> VR: LO VM:1</para>
+        /// </summary>
+        public const uint SourceSerialNumber = 805830917;
+        /// <summary>
+        /// <para>(3008,0110) Treatment Session Application Setup Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint TreatmentSessionApplicationSetupSequence = 805830928;
+        /// <summary>
+        /// <para>(3008,0116) Application Setup Check</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint ApplicationSetupCheck = 805830934;
+        /// <summary>
+        /// <para>(3008,0120) Recorded Brachy Accessory Device Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint RecordedBrachyAccessoryDeviceSequence = 805830944;
+        /// <summary>
+        /// <para>(3008,0122) Referenced Brachy Accessory Device Number</para>
+        /// <para> VR: IS VM:1</para>
+        /// </summary>
+        public const uint ReferencedBrachyAccessoryDeviceNumber = 805830946;
+        /// <summary>
+        /// <para>(3008,0130) Recorded Channel Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint RecordedChannelSequence = 805830960;
+        /// <summary>
+        /// <para>(3008,0132) Specified Channel Total Time</para>
+        /// <para> VR: DS VM:1</para>
+        /// </summary>
+        public const uint SpecifiedChannelTotalTime = 805830962;
+        /// <summary>
+        /// <para>(3008,0134) Delivered Channel Total Time</para>
+        /// <para> VR: DS VM:1</para>
+        /// </summary>
+        public const uint DeliveredChannelTotalTime = 805830964;
+        /// <summary>
+        /// <para>(3008,0136) Specified Number of Pulses</para>
+        /// <para> VR: IS VM:1</para>
+        /// </summary>
+        public const uint SpecifiedNumberOfPulses = 805830966;
+        /// <summary>
+        /// <para>(3008,0138) Delivered Number of Pulses</para>
+        /// <para> VR: IS VM:1</para>
+        /// </summary>
+        public const uint DeliveredNumberOfPulses = 805830968;
+        /// <summary>
+        /// <para>(3008,013A) Specified Pulse Repetition Interval</para>
+        /// <para> VR: DS VM:1</para>
+        /// </summary>
+        public const uint SpecifiedPulseRepetitionInterval = 805830970;
+        /// <summary>
+        /// <para>(3008,013C) Delivered Pulse Repetition Interval</para>
+        /// <para> VR: DS VM:1</para>
+        /// </summary>
+        public const uint DeliveredPulseRepetitionInterval = 805830972;
+        /// <summary>
+        /// <para>(3008,0140) Recorded Source Applicator Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint RecordedSourceApplicatorSequence = 805830976;
+        /// <summary>
+        /// <para>(3008,0142) Referenced Source Applicator Number</para>
+        /// <para> VR: IS VM:1</para>
+        /// </summary>
+        public const uint ReferencedSourceApplicatorNumber = 805830978;
+        /// <summary>
+        /// <para>(3008,0150) Recorded Channel Shield Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint RecordedChannelShieldSequence = 805830992;
+        /// <summary>
+        /// <para>(3008,0152) Referenced Channel Shield Number</para>
+        /// <para> VR: IS VM:1</para>
+        /// </summary>
+        public const uint ReferencedChannelShieldNumber = 805830994;
+        /// <summary>
+        /// <para>(3008,0160) Brachy Control Point Delivered Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint BrachyControlPointDeliveredSequence = 805831008;
+        /// <summary>
+        /// <para>(3008,0162) Safe Position Exit Date</para>
+        /// <para> VR: DA VM:1</para>
+        /// </summary>
+        public const uint SafePositionExitDate = 805831010;
+        /// <summary>
+        /// <para>(3008,0164) Safe Position Exit Time</para>
+        /// <para> VR: TM VM:1</para>
+        /// </summary>
+        public const uint SafePositionExitTime = 805831012;
+        /// <summary>
+        /// <para>(3008,0166) Safe Position Return Date</para>
+        /// <para> VR: DA VM:1</para>
+        /// </summary>
+        public const uint SafePositionReturnDate = 805831014;
+        /// <summary>
+        /// <para>(3008,0168) Safe Position Return Time</para>
+        /// <para> VR: TM VM:1</para>
+        /// </summary>
+        public const uint SafePositionReturnTime = 805831016;
+        /// <summary>
+        /// <para>(3008,0200) Current Treatment Status</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint CurrentTreatmentStatus = 805831168;
+        /// <summary>
+        /// <para>(3008,0202) Treatment Status Comment</para>
+        /// <para> VR: ST VM:1</para>
+        /// </summary>
+        public const uint TreatmentStatusComment = 805831170;
+        /// <summary>
+        /// <para>(3008,0220) Fraction Group Summary Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint FractionGroupSummarySequence = 805831200;
+        /// <summary>
+        /// <para>(3008,0223) Referenced Fraction Number</para>
+        /// <para> VR: IS VM:1</para>
+        /// </summary>
+        public const uint ReferencedFractionNumber = 805831203;
+        /// <summary>
+        /// <para>(3008,0224) Fraction Group Type</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint FractionGroupType = 805831204;
+        /// <summary>
+        /// <para>(3008,0230) Beam Stopper Position</para>
+        /// <para> VR: CS VM:1</para>
+        /// </summary>
+        public const uint BeamStopperPosition = 805831216;
+        /// <summary>
+        /// <para>(3008,0240) Fraction Status Summary Sequence</para>
+        /// <para> VR: SQ VM:1</para>
+        /// </summary>
+        public const uint FractionStatusSummarySequence = 805831232;
+        /// <summary>
+        /// <para>(3008,0250) Treatment Date</para>
+        /// <para> VR: DA VM:1</para>
+        /// </summary>
+        public const uint TreatmentDate = 805831248;
+        /// <summary>
+        /// <para>(3008,0251) Treatment Time</para>
+        /// <para> VR: TM VM:1</para>
+        /// </summary>
+        public const uint TreatmentTime = 805831249;
         /// <summary>
         /// <para>(300A,0002) RT Plan Label</para>
         /// <para> VR: SH VM:1</para>
@@ -12319,7 +14099,7 @@ namespace ClearCanvas.Dicom
         public const uint GeneralAccessorySequence = 805962784;
         /// <summary>
         /// <para>(300A,0421) General Accessory ID</para>
-        /// <para> VR: CS VM:1</para>
+        /// <para> VR: SH VM:1</para>
         /// </summary>
         public const uint GeneralAccessoryId = 805962785;
         /// <summary>
@@ -12329,7 +14109,7 @@ namespace ClearCanvas.Dicom
         public const uint GeneralAccessoryDescription = 805962786;
         /// <summary>
         /// <para>(300A,0423) General Accessory Type</para>
-        /// <para> VR: SH VM:1</para>
+        /// <para> VR: CS VM:1</para>
         /// </summary>
         public const uint GeneralAccessoryType = 805962787;
         /// <summary>
@@ -13072,7 +14852,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint OverlayDescriptorBlueRetired = 1610617091;
         /// <summary>
-        /// <para>(6000,1200) Overlays- Gray</para>
+        /// <para>(6000,1200) Overlays – Gray</para>
         /// <para> VR: US VM:1-n</para>
         /// <para>This tag has been retired.</para>
         /// </summary>
@@ -13090,7 +14870,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint OverlaysGreenRetired = 1610617346;
         /// <summary>
-        /// <para>(6000,1203) Overlays- Blue</para>
+        /// <para>(6000,1203) Overlays – Blue</para>
         /// <para> VR: US VM:1-n</para>
         /// <para>This tag has been retired.</para>
         /// </summary>

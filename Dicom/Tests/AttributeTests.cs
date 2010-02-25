@@ -1304,7 +1304,7 @@ namespace ClearCanvas.Dicom.Tests
             public DicomAttributeDT CreateAttribute()
             {
                 DicomAttributeDT attrib = null;
-                attrib = new DicomAttributeDT(DicomTagDictionary.GetDicomTag(DicomTags.ScheduledProcedureStepStartDateAndTime));
+                attrib = new DicomAttributeDT(DicomTagDictionary.GetDicomTag(DicomTags.ScheduledProcedureStepStartDatetime));
                 Assert.AreEqual(0, attrib.Count);
                 Assert.AreEqual(0, attrib.StreamLength);
                 return attrib;

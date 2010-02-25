@@ -262,19 +262,19 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		}
 
 		/// <summary>
-		/// Gets or sets the value of IssuerOfAdmissionId in the underlying collection. Type 3.
+		/// Gets or sets the value of IssuerOfAdmissionId (Retired) in the underlying collection. Type 3.
 		/// </summary>
 		public string IssuerOfAdmissionId
 		{
-			get { return base.DicomAttributeProvider[DicomTags.IssuerOfAdmissionId].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.IssuerOfAdmissionIdRetired].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 				{
-					base.DicomAttributeProvider[DicomTags.IssuerOfAdmissionId] = null;
+					base.DicomAttributeProvider[DicomTags.IssuerOfAdmissionIdRetired] = null;
 					return;
 				}
-				base.DicomAttributeProvider[DicomTags.IssuerOfAdmissionId].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.IssuerOfAdmissionIdRetired].SetString(0, value);
 			}
 		}
 
@@ -300,15 +300,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string IssuerOfServiceEpisodeId
 		{
-			get { return base.DicomAttributeProvider[DicomTags.IssuerOfServiceEpisodeId].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.IssuerOfServiceEpisodeIdRetired].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 				{
-					base.DicomAttributeProvider[DicomTags.IssuerOfServiceEpisodeId] = null;
+                    base.DicomAttributeProvider[DicomTags.IssuerOfServiceEpisodeIdRetired] = null;
 					return;
 				}
-				base.DicomAttributeProvider[DicomTags.IssuerOfServiceEpisodeId].SetString(0, value);
+                base.DicomAttributeProvider[DicomTags.IssuerOfServiceEpisodeIdRetired].SetString(0, value);
 			}
 		}
 
@@ -365,8 +365,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				yield return DicomTags.AdmissionId;
 				yield return DicomTags.AdmittingDiagnosesCodeSequence;
 				yield return DicomTags.AdmittingDiagnosesDescription;
-				yield return DicomTags.IssuerOfAdmissionId;
-				yield return DicomTags.IssuerOfServiceEpisodeId;
+				yield return DicomTags.IssuerOfAdmissionIdRetired;
+				yield return DicomTags.IssuerOfServiceEpisodeIdRetired;
 				yield return DicomTags.Occupation;
 				yield return DicomTags.PatientsAge;
 				yield return DicomTags.PatientsSexNeutered;

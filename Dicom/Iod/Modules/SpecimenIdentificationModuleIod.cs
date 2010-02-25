@@ -75,12 +75,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string SpecimenAccessionNumber
 		{
-			get { return base.DicomAttributeProvider[DicomTags.SpecimenAccessionNumber].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.SpecimenAccessionNumberRetired].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 					throw new ArgumentNullException("value", "SpecimenAccessionNumber is Type 1 Required.");
-				base.DicomAttributeProvider[DicomTags.SpecimenAccessionNumber].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.SpecimenAccessionNumberRetired].SetString(0, value);
 			}
 		}
 
@@ -91,7 +91,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			get
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.SpecimenSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.SpecimenSequenceRetired];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
@@ -108,7 +108,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			{
 				if (value == null || value.Length == 0)
 				{
-					base.DicomAttributeProvider[DicomTags.SpecimenSequence].SetNullValue();
+					base.DicomAttributeProvider[DicomTags.SpecimenSequenceRetired].SetNullValue();
 					return;
 				}
 
@@ -116,7 +116,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				for (int n = 0; n < value.Length; n++)
 					result[n] = value[n].DicomSequenceItem;
 
-				base.DicomAttributeProvider[DicomTags.SpecimenSequence].Values = result;
+				base.DicomAttributeProvider[DicomTags.SpecimenSequenceRetired].Values = result;
 			}
 		}
 	}

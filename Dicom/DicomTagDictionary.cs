@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
@@ -817,6 +817,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("SpecificCharacterSet",
                       _tags[DicomTags.SpecificCharacterSet]);
+            _tags.Add(DicomTags.LanguageCodeSequence,
+                      new DicomTag(
+                          DicomTags.LanguageCodeSequence,
+                          "Language Code Sequence",
+                          "LanguageCodeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("LanguageCodeSequence",
+                      _tags[DicomTags.LanguageCodeSequence]);
             _tags.Add(DicomTags.ImageType,
                       new DicomTag(
                           DicomTags.ImageType,
@@ -1155,6 +1168,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("AccessionNumber",
                       _tags[DicomTags.AccessionNumber]);
+            _tags.Add(DicomTags.IssuerOfAccessionNumberSequence,
+                      new DicomTag(
+                          DicomTags.IssuerOfAccessionNumberSequence,
+                          "Issuer of Accession Number Sequence",
+                          "IssuerOfAccessionNumberSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("IssuerOfAccessionNumberSequence",
+                      _tags[DicomTags.IssuerOfAccessionNumberSequence]);
             _tags.Add(DicomTags.QueryRetrieveLevel,
                       new DicomTag(
                           DicomTags.QueryRetrieveLevel,
@@ -1584,6 +1610,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("CodingSchemeResponsibleOrganization",
                       _tags[DicomTags.CodingSchemeResponsibleOrganization]);
+            _tags.Add(DicomTags.ContextUid,
+                      new DicomTag(
+                          DicomTags.ContextUid,
+                          "Context UID",
+                          "ContextUid",
+                          DicomVr.UIvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ContextUid",
+                      _tags[DicomTags.ContextUid]);
             _tags.Add(DicomTags.TimezoneOffsetFromUtc,
                       new DicomTag(
                           DicomTags.TimezoneOffsetFromUtc,
@@ -1662,6 +1701,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("SeriesDescription",
                       _tags[DicomTags.SeriesDescription]);
+            _tags.Add(DicomTags.SeriesDescriptionCodeSequence,
+                      new DicomTag(
+                          DicomTags.SeriesDescriptionCodeSequence,
+                          "Series Description Code Sequence",
+                          "SeriesDescriptionCodeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SeriesDescriptionCodeSequence",
+                      _tags[DicomTags.SeriesDescriptionCodeSequence]);
             _tags.Add(DicomTags.InstitutionalDepartmentName,
                       new DicomTag(
                           DicomTags.InstitutionalDepartmentName,
@@ -1730,7 +1782,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.NameOfPhysiciansReadingStudy,
                       new DicomTag(
                           DicomTags.NameOfPhysiciansReadingStudy,
-                          "Name of  Physician(s) Reading Study",
+                          "Name of Physician(s) Reading Study",
                           "NameOfPhysiciansReadingStudy",
                           DicomVr.PNvr,
                           false, //isMultiVrTag
@@ -1909,6 +1961,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("ReferencedOverlaySequenceRetired",
                       _tags[DicomTags.ReferencedOverlaySequenceRetired]);
+            _tags.Add(DicomTags.ReferencedStereometricInstanceSequence,
+                      new DicomTag(
+                          DicomTags.ReferencedStereometricInstanceSequence,
+                          "Referenced Stereometric Instance Sequence",
+                          "ReferencedStereometricInstanceSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ReferencedStereometricInstanceSequence",
+                      _tags[DicomTags.ReferencedStereometricInstanceSequence]);
             _tags.Add(DicomTags.ReferencedWaveformSequence,
                       new DicomTag(
                           DicomTags.ReferencedWaveformSequence,
@@ -2026,6 +2091,71 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("ReferencedFrameNumber",
                       _tags[DicomTags.ReferencedFrameNumber]);
+            _tags.Add(DicomTags.SimpleFrameList,
+                      new DicomTag(
+                          DicomTags.SimpleFrameList,
+                          "Simple Frame List",
+                          "SimpleFrameList",
+                          DicomVr.ULvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          4294967295, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SimpleFrameList",
+                      _tags[DicomTags.SimpleFrameList]);
+            _tags.Add(DicomTags.CalculatedFrameList,
+                      new DicomTag(
+                          DicomTags.CalculatedFrameList,
+                          "Calculated Frame List",
+                          "CalculatedFrameList",
+                          DicomVr.ULvr,
+                          false, //isMultiVrTag
+                          3, // vmLow
+                          4294967295, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("CalculatedFrameList",
+                      _tags[DicomTags.CalculatedFrameList]);
+            _tags.Add(DicomTags.TimeRange,
+                      new DicomTag(
+                          DicomTags.TimeRange,
+                          "Time Range",
+                          "TimeRange",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          2, // vmLow
+                          2, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TimeRange",
+                      _tags[DicomTags.TimeRange]);
+            _tags.Add(DicomTags.FrameExtractionSequence,
+                      new DicomTag(
+                          DicomTags.FrameExtractionSequence,
+                          "Frame Extraction Sequence",
+                          "FrameExtractionSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("FrameExtractionSequence",
+                      _tags[DicomTags.FrameExtractionSequence]);
+            _tags.Add(DicomTags.MultiFrameSourceSopInstanceUid,
+                      new DicomTag(
+                          DicomTags.MultiFrameSourceSopInstanceUid,
+                          "Multi-Frame Source SOP Instance UID ",
+                          "MultiFrameSourceSopInstanceUid",
+                          DicomVr.UIvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("MultiFrameSourceSopInstanceUid",
+                      _tags[DicomTags.MultiFrameSourceSopInstanceUid]);
             _tags.Add(DicomTags.TransactionUid,
                       new DicomTag(
                           DicomTags.TransactionUid,
@@ -2260,6 +2390,45 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("EventTimerNames",
                       _tags[DicomTags.EventTimerNames]);
+            _tags.Add(DicomTags.EventTimerSequence,
+                      new DicomTag(
+                          DicomTags.EventTimerSequence,
+                          "Event Timer Sequence",
+                          "EventTimerSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("EventTimerSequence",
+                      _tags[DicomTags.EventTimerSequence]);
+            _tags.Add(DicomTags.EventTimeOffset,
+                      new DicomTag(
+                          DicomTags.EventTimeOffset,
+                          "Event Time Offset",
+                          "EventTimeOffset",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("EventTimeOffset",
+                      _tags[DicomTags.EventTimeOffset]);
+            _tags.Add(DicomTags.EventCodeSequence,
+                      new DicomTag(
+                          DicomTags.EventCodeSequence,
+                          "Event Code Sequence",
+                          "EventCodeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("EventCodeSequence",
+                      _tags[DicomTags.EventCodeSequence]);
             _tags.Add(DicomTags.StartTrim,
                       new DicomTag(
                           DicomTags.StartTrim,
@@ -2767,19 +2936,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("DerivationCodeSequence",
                       _tags[DicomTags.DerivationCodeSequence]);
-            _tags.Add(DicomTags.ReferencedGrayscalePresentationStateSequence,
+            _tags.Add(DicomTags.ReferencedPresentationStateSequence,
                       new DicomTag(
-                          DicomTags.ReferencedGrayscalePresentationStateSequence,
-                          "Referenced Grayscale Presentation State Sequence",
-                          "ReferencedGrayscalePresentationStateSequence",
+                          DicomTags.ReferencedPresentationStateSequence,
+                          "Referenced Presentation State Sequence",
+                          "ReferencedPresentationStateSequence",
                           DicomVr.SQvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tagNames.Add("ReferencedGrayscalePresentationStateSequence",
-                      _tags[DicomTags.ReferencedGrayscalePresentationStateSequence]);
+            _tagNames.Add("ReferencedPresentationStateSequence",
+                      _tags[DicomTags.ReferencedPresentationStateSequence]);
             _tags.Add(DicomTags.ReferencedOtherPlaneSequence,
                       new DicomTag(
                           DicomTags.ReferencedOtherPlaneSequence,
@@ -2884,6 +3053,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("TypeOfPatientId",
                       _tags[DicomTags.TypeOfPatientId]);
+            _tags.Add(DicomTags.IssuerOfPatientIdQualifiersSequence,
+                      new DicomTag(
+                          DicomTags.IssuerOfPatientIdQualifiersSequence,
+                          "Issuer of Patient ID Qualifiers Sequence",
+                          "IssuerOfPatientIdQualifiersSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("IssuerOfPatientIdQualifiersSequence",
+                      _tags[DicomTags.IssuerOfPatientIdQualifiersSequence]);
             _tags.Add(DicomTags.PatientsBirthDate,
                       new DicomTag(
                           DicomTags.PatientsBirthDate,
@@ -2949,19 +3131,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("PatientsPrimaryLanguageCodeSequence",
                       _tags[DicomTags.PatientsPrimaryLanguageCodeSequence]);
-            _tags.Add(DicomTags.PatientsPrimaryLanguageCodeModifierSequence,
+            _tags.Add(DicomTags.PatientsPrimaryLanguageModifierCodeSequence,
                       new DicomTag(
-                          DicomTags.PatientsPrimaryLanguageCodeModifierSequence,
-                          "Patient's Primary Language Code Modifier Sequence",
-                          "PatientsPrimaryLanguageCodeModifierSequence",
+                          DicomTags.PatientsPrimaryLanguageModifierCodeSequence,
+                          "Patient's Primary Language Modifier Code Sequence",
+                          "PatientsPrimaryLanguageModifierCodeSequence",
                           DicomVr.SQvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tagNames.Add("PatientsPrimaryLanguageCodeModifierSequence",
-                      _tags[DicomTags.PatientsPrimaryLanguageCodeModifierSequence]);
+            _tagNames.Add("PatientsPrimaryLanguageModifierCodeSequence",
+                      _tags[DicomTags.PatientsPrimaryLanguageModifierCodeSequence]);
             _tags.Add(DicomTags.OtherPatientIds,
                       new DicomTag(
                           DicomTags.OtherPatientIds,
@@ -3326,6 +3508,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("PatientsSexNeutered",
                       _tags[DicomTags.PatientsSexNeutered]);
+            _tags.Add(DicomTags.AnatomicalOrientationType,
+                      new DicomTag(
+                          DicomTags.AnatomicalOrientationType,
+                          "Anatomical Orientation Type",
+                          "AnatomicalOrientationType",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AnatomicalOrientationType",
+                      _tags[DicomTags.AnatomicalOrientationType]);
             _tags.Add(DicomTags.PatientBreedDescription,
                       new DicomTag(
                           DicomTags.PatientBreedDescription,
@@ -3651,6 +3846,71 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("ClinicalTrialSeriesDescription",
                       _tags[DicomTags.ClinicalTrialSeriesDescription]);
+            _tags.Add(DicomTags.ClinicalTrialProtocolEthicsCommitteeName,
+                      new DicomTag(
+                          DicomTags.ClinicalTrialProtocolEthicsCommitteeName,
+                          "Clinical Trial Protocol Ethics Committee Name",
+                          "ClinicalTrialProtocolEthicsCommitteeName",
+                          DicomVr.LOvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ClinicalTrialProtocolEthicsCommitteeName",
+                      _tags[DicomTags.ClinicalTrialProtocolEthicsCommitteeName]);
+            _tags.Add(DicomTags.ClinicalTrialProtocolEthicsCommitteeApprovalNumber,
+                      new DicomTag(
+                          DicomTags.ClinicalTrialProtocolEthicsCommitteeApprovalNumber,
+                          "Clinical Trial Protocol Ethics Committee Approval Number",
+                          "ClinicalTrialProtocolEthicsCommitteeApprovalNumber",
+                          DicomVr.LOvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ClinicalTrialProtocolEthicsCommitteeApprovalNumber",
+                      _tags[DicomTags.ClinicalTrialProtocolEthicsCommitteeApprovalNumber]);
+            _tags.Add(DicomTags.ConsentForClinicalTrialUseSequence,
+                      new DicomTag(
+                          DicomTags.ConsentForClinicalTrialUseSequence,
+                          "Consent for Clinical Trial Use Sequence",
+                          "ConsentForClinicalTrialUseSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ConsentForClinicalTrialUseSequence",
+                      _tags[DicomTags.ConsentForClinicalTrialUseSequence]);
+            _tags.Add(DicomTags.DistributionType,
+                      new DicomTag(
+                          DicomTags.DistributionType,
+                          "Distribution Type",
+                          "DistributionType",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("DistributionType",
+                      _tags[DicomTags.DistributionType]);
+            _tags.Add(DicomTags.ConsentForDistributionFlag,
+                      new DicomTag(
+                          DicomTags.ConsentForDistributionFlag,
+                          "Consent for Distribution Flag",
+                          "ConsentForDistributionFlag",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ConsentForDistributionFlag",
+                      _tags[DicomTags.ConsentForDistributionFlag]);
             _tags.Add(DicomTags.ContrastBolusAgent,
                       new DicomTag(
                           DicomTags.ContrastBolusAgent,
@@ -3820,19 +4080,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("InterventionDrugDose",
                       _tags[DicomTags.InterventionDrugDose]);
-            _tags.Add(DicomTags.InterventionDrugSequence,
+            _tags.Add(DicomTags.InterventionDrugCodeSequence,
                       new DicomTag(
-                          DicomTags.InterventionDrugSequence,
-                          "Intervention Drug Sequence",
-                          "InterventionDrugSequence",
+                          DicomTags.InterventionDrugCodeSequence,
+                          "Intervention Drug Code Sequence",
+                          "InterventionDrugCodeSequence",
                           DicomVr.SQvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tagNames.Add("InterventionDrugSequence",
-                      _tags[DicomTags.InterventionDrugSequence]);
+            _tagNames.Add("InterventionDrugCodeSequence",
+                      _tags[DicomTags.InterventionDrugCodeSequence]);
             _tags.Add(DicomTags.AdditionalDrugSequence,
                       new DicomTag(
                           DicomTags.AdditionalDrugSequence,
@@ -4002,6 +4262,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("CineRate",
                       _tags[DicomTags.CineRate]);
+            _tags.Add(DicomTags.InitialCineRunState,
+                      new DicomTag(
+                          DicomTags.InitialCineRunState,
+                          "Initial Cine Run State",
+                          "InitialCineRunState",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("InitialCineRunState",
+                      _tags[DicomTags.InitialCineRunState]);
             _tags.Add(DicomTags.SliceThickness,
                       new DicomTag(
                           DicomTags.SliceThickness,
@@ -4457,19 +4730,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("TimeOfSecondaryCapture",
                       _tags[DicomTags.TimeOfSecondaryCapture]);
-            _tags.Add(DicomTags.SecondaryCaptureDeviceManufacturers,
+            _tags.Add(DicomTags.SecondaryCaptureDeviceManufacturer,
                       new DicomTag(
-                          DicomTags.SecondaryCaptureDeviceManufacturers,
-                          "Secondary Capture Device Manufacturers",
-                          "SecondaryCaptureDeviceManufacturers",
+                          DicomTags.SecondaryCaptureDeviceManufacturer,
+                          "Secondary Capture Device Manufacturer",
+                          "SecondaryCaptureDeviceManufacturer",
                           DicomVr.LOvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tagNames.Add("SecondaryCaptureDeviceManufacturers",
-                      _tags[DicomTags.SecondaryCaptureDeviceManufacturers]);
+            _tagNames.Add("SecondaryCaptureDeviceManufacturer",
+                      _tags[DicomTags.SecondaryCaptureDeviceManufacturer]);
             _tags.Add(DicomTags.HardcopyDeviceManufacturerRetired,
                       new DicomTag(
                           DicomTags.HardcopyDeviceManufacturerRetired,
@@ -4499,7 +4772,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.SecondaryCaptureDeviceSoftwareVersions,
                       new DicomTag(
                           DicomTags.SecondaryCaptureDeviceSoftwareVersions,
-                          "Secondary Capture Device Software Version(s)",
+                          "Secondary Capture Device Software Versions",
                           "SecondaryCaptureDeviceSoftwareVersions",
                           DicomVr.LOvr,
                           false, //isMultiVrTag
@@ -5497,19 +5770,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("Exposure",
                       _tags[DicomTags.Exposure]);
-            _tags.Add(DicomTags.ExposureInUas,
+            _tags.Add(DicomTags.ExposureInΜas,
                       new DicomTag(
-                          DicomTags.ExposureInUas,
-                          "Exposure in uAs",
-                          "ExposureInUas",
+                          DicomTags.ExposureInΜas,
+                          "Exposure in μAs",
+                          "ExposureInΜas",
                           DicomVr.ISvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tagNames.Add("ExposureInUas",
-                      _tags[DicomTags.ExposureInUas]);
+            _tagNames.Add("ExposureInΜas",
+                      _tags[DicomTags.ExposureInΜas]);
             _tags.Add(DicomTags.AveragePulseWidth,
                       new DicomTag(
                           DicomTags.AveragePulseWidth,
@@ -6830,8 +7103,8 @@ namespace ClearCanvas.Dicom
                           "TransducerData",
                           DicomVr.LOvr,
                           false, //isMultiVrTag
-                          3, // vmLow
-                          3, // vmHigh
+                          1, // vmLow
+                          4294967295, // vmHigh
                           false // isRetired
                           ));
             _tagNames.Add("TransducerData",
@@ -7395,19 +7668,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("DopplerSampleVolumeYPosition",
                       _tags[DicomTags.DopplerSampleVolumeYPosition]);
-            _tags.Add(DicomTags.TmLinePositionX0Retired,
+            _tags.Add(DicomTags.TmlinePositionX0Retired,
                       new DicomTag(
-                          DicomTags.TmLinePositionX0Retired,
-                          "TM-Line Position X0 (Retired)",
-                          "TmLinePositionX0Retired",
+                          DicomTags.TmlinePositionX0Retired,
+                          "TMLine Position X0 (Retired)",
+                          "TmlinePositionX0Retired",
                           DicomVr.ULvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           true // isRetired
                           ));
-            _tagNames.Add("TmLinePositionX0Retired",
-                      _tags[DicomTags.TmLinePositionX0Retired]);
+            _tagNames.Add("TmlinePositionX0Retired",
+                      _tags[DicomTags.TmlinePositionX0Retired]);
             _tags.Add(DicomTags.TmLinePositionX0,
                       new DicomTag(
                           DicomTags.TmLinePositionX0,
@@ -8123,6 +8396,32 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("FilterThicknessMaximum",
                       _tags[DicomTags.FilterThicknessMaximum]);
+            _tags.Add(DicomTags.FilterBeamPathLengthMinimum,
+                      new DicomTag(
+                          DicomTags.FilterBeamPathLengthMinimum,
+                          "Filter Beam Path Length Minimum",
+                          "FilterBeamPathLengthMinimum",
+                          DicomVr.FLvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          4294967295, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("FilterBeamPathLengthMinimum",
+                      _tags[DicomTags.FilterBeamPathLengthMinimum]);
+            _tags.Add(DicomTags.FilterBeamPathLengthMaximum,
+                      new DicomTag(
+                          DicomTags.FilterBeamPathLengthMaximum,
+                          "Filter Beam Path Length Maximum",
+                          "FilterBeamPathLengthMaximum",
+                          DicomVr.FLvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          4294967295, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("FilterBeamPathLengthMaximum",
+                      _tags[DicomTags.FilterBeamPathLengthMaximum]);
             _tags.Add(DicomTags.ExposureControlMode,
                       new DicomTag(
                           DicomTags.ExposureControlMode,
@@ -9748,32 +10047,32 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("RespiratorySignalSourceId",
                       _tags[DicomTags.RespiratorySignalSourceId]);
-            _tags.Add(DicomTags.ChemicalShiftsMinimumIntegrationLimitInHzRetired,
+            _tags.Add(DicomTags.ChemicalShiftMinimumIntegrationLimitInHzRetired,
                       new DicomTag(
-                          DicomTags.ChemicalShiftsMinimumIntegrationLimitInHzRetired,
-                          "Chemical Shifts Minimum Integration Limit in Hz",
-                          "ChemicalShiftsMinimumIntegrationLimitInHzRetired",
+                          DicomTags.ChemicalShiftMinimumIntegrationLimitInHzRetired,
+                          "Chemical Shift Minimum Integration Limit in Hz",
+                          "ChemicalShiftMinimumIntegrationLimitInHzRetired",
                           DicomVr.FDvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           true // isRetired
                           ));
-            _tagNames.Add("ChemicalShiftsMinimumIntegrationLimitInHzRetired",
-                      _tags[DicomTags.ChemicalShiftsMinimumIntegrationLimitInHzRetired]);
-            _tags.Add(DicomTags.ChemicalShiftsMaximumIntegrationLimitInHzRetired,
+            _tagNames.Add("ChemicalShiftMinimumIntegrationLimitInHzRetired",
+                      _tags[DicomTags.ChemicalShiftMinimumIntegrationLimitInHzRetired]);
+            _tags.Add(DicomTags.ChemicalShiftMaximumIntegrationLimitInHzRetired,
                       new DicomTag(
-                          DicomTags.ChemicalShiftsMaximumIntegrationLimitInHzRetired,
-                          "Chemical Shifts Maximum Integration Limit in Hz",
-                          "ChemicalShiftsMaximumIntegrationLimitInHzRetired",
+                          DicomTags.ChemicalShiftMaximumIntegrationLimitInHzRetired,
+                          "Chemical Shift Maximum Integration Limit in Hz",
+                          "ChemicalShiftMaximumIntegrationLimitInHzRetired",
                           DicomVr.FDvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           true // isRetired
                           ));
-            _tagNames.Add("ChemicalShiftsMaximumIntegrationLimitInHzRetired",
-                      _tags[DicomTags.ChemicalShiftsMaximumIntegrationLimitInHzRetired]);
+            _tagNames.Add("ChemicalShiftMaximumIntegrationLimitInHzRetired",
+                      _tags[DicomTags.ChemicalShiftMaximumIntegrationLimitInHzRetired]);
             _tags.Add(DicomTags.MrVelocityEncodingSequence,
                       new DicomTag(
                           DicomTags.MrVelocityEncodingSequence,
@@ -10008,32 +10307,32 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("GradientEchoTrainLength",
                       _tags[DicomTags.GradientEchoTrainLength]);
-            _tags.Add(DicomTags.ChemicalShiftsMinimumIntegrationLimitInPpm,
+            _tags.Add(DicomTags.ChemicalShiftMinimumIntegrationLimitInPpm,
                       new DicomTag(
-                          DicomTags.ChemicalShiftsMinimumIntegrationLimitInPpm,
-                          "Chemical Shifts Minimum Integration Limit in ppm",
-                          "ChemicalShiftsMinimumIntegrationLimitInPpm",
+                          DicomTags.ChemicalShiftMinimumIntegrationLimitInPpm,
+                          "Chemical Shift Minimum Integration Limit in ppm",
+                          "ChemicalShiftMinimumIntegrationLimitInPpm",
                           DicomVr.FDvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tagNames.Add("ChemicalShiftsMinimumIntegrationLimitInPpm",
-                      _tags[DicomTags.ChemicalShiftsMinimumIntegrationLimitInPpm]);
-            _tags.Add(DicomTags.ChemicalShiftsMaximumIntegrationLimitInPpm,
+            _tagNames.Add("ChemicalShiftMinimumIntegrationLimitInPpm",
+                      _tags[DicomTags.ChemicalShiftMinimumIntegrationLimitInPpm]);
+            _tags.Add(DicomTags.ChemicalShiftMaximumIntegrationLimitInPpm,
                       new DicomTag(
-                          DicomTags.ChemicalShiftsMaximumIntegrationLimitInPpm,
-                          "Chemical Shifts Maximum Integration Limit in ppm",
-                          "ChemicalShiftsMaximumIntegrationLimitInPpm",
+                          DicomTags.ChemicalShiftMaximumIntegrationLimitInPpm,
+                          "Chemical Shift Maximum Integration Limit in ppm",
+                          "ChemicalShiftMaximumIntegrationLimitInPpm",
                           DicomVr.FDvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tagNames.Add("ChemicalShiftsMaximumIntegrationLimitInPpm",
-                      _tags[DicomTags.ChemicalShiftsMaximumIntegrationLimitInPpm]);
+            _tagNames.Add("ChemicalShiftMaximumIntegrationLimitInPpm",
+                      _tags[DicomTags.ChemicalShiftMaximumIntegrationLimitInPpm]);
             _tags.Add(DicomTags.CtAcquisitionTypeSequence,
                       new DicomTag(
                           DicomTags.CtAcquisitionTypeSequence,
@@ -10619,6 +10918,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("CalciumScoringMassFactorDevice",
                       _tags[DicomTags.CalciumScoringMassFactorDevice]);
+            _tags.Add(DicomTags.EnergyWeightingFactor,
+                      new DicomTag(
+                          DicomTags.EnergyWeightingFactor,
+                          "Energy Weighting Factor",
+                          "EnergyWeightingFactor",
+                          DicomVr.FLvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("EnergyWeightingFactor",
+                      _tags[DicomTags.EnergyWeightingFactor]);
             _tags.Add(DicomTags.CtAdditionalXRaySourceSequence,
                       new DicomTag(
                           DicomTags.CtAdditionalXRaySourceSequence,
@@ -11646,6 +11958,734 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("DiffusionBValueZz",
                       _tags[DicomTags.DiffusionBValueZz]);
+            _tags.Add(DicomTags.DecayCorrectionDatetime,
+                      new DicomTag(
+                          DicomTags.DecayCorrectionDatetime,
+                          "Decay Correction DateTime",
+                          "DecayCorrectionDatetime",
+                          DicomVr.DTvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("DecayCorrectionDatetime",
+                      _tags[DicomTags.DecayCorrectionDatetime]);
+            _tags.Add(DicomTags.StartDensityThreshold,
+                      new DicomTag(
+                          DicomTags.StartDensityThreshold,
+                          "Start Density Threshold",
+                          "StartDensityThreshold",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("StartDensityThreshold",
+                      _tags[DicomTags.StartDensityThreshold]);
+            _tags.Add(DicomTags.StartRelativeDensityDifferenceThreshold,
+                      new DicomTag(
+                          DicomTags.StartRelativeDensityDifferenceThreshold,
+                          "Start Relative Density Difference Threshold",
+                          "StartRelativeDensityDifferenceThreshold",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("StartRelativeDensityDifferenceThreshold",
+                      _tags[DicomTags.StartRelativeDensityDifferenceThreshold]);
+            _tags.Add(DicomTags.StartCardiacTriggerCountThreshold,
+                      new DicomTag(
+                          DicomTags.StartCardiacTriggerCountThreshold,
+                          "Start Cardiac Trigger Count Threshold",
+                          "StartCardiacTriggerCountThreshold",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("StartCardiacTriggerCountThreshold",
+                      _tags[DicomTags.StartCardiacTriggerCountThreshold]);
+            _tags.Add(DicomTags.StartRespiratoryTriggerCountThreshold,
+                      new DicomTag(
+                          DicomTags.StartRespiratoryTriggerCountThreshold,
+                          "Start Respiratory Trigger Count Threshold",
+                          "StartRespiratoryTriggerCountThreshold",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("StartRespiratoryTriggerCountThreshold",
+                      _tags[DicomTags.StartRespiratoryTriggerCountThreshold]);
+            _tags.Add(DicomTags.TerminationCountsThreshold,
+                      new DicomTag(
+                          DicomTags.TerminationCountsThreshold,
+                          "Termination Counts Threshold",
+                          "TerminationCountsThreshold",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TerminationCountsThreshold",
+                      _tags[DicomTags.TerminationCountsThreshold]);
+            _tags.Add(DicomTags.TerminationDensityThreshold,
+                      new DicomTag(
+                          DicomTags.TerminationDensityThreshold,
+                          "Termination Density Threshold",
+                          "TerminationDensityThreshold",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TerminationDensityThreshold",
+                      _tags[DicomTags.TerminationDensityThreshold]);
+            _tags.Add(DicomTags.TerminationRelativeDensityThreshold,
+                      new DicomTag(
+                          DicomTags.TerminationRelativeDensityThreshold,
+                          "Termination Relative Density Threshold",
+                          "TerminationRelativeDensityThreshold",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TerminationRelativeDensityThreshold",
+                      _tags[DicomTags.TerminationRelativeDensityThreshold]);
+            _tags.Add(DicomTags.TerminationTimeThreshold,
+                      new DicomTag(
+                          DicomTags.TerminationTimeThreshold,
+                          "Termination Time Threshold",
+                          "TerminationTimeThreshold",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TerminationTimeThreshold",
+                      _tags[DicomTags.TerminationTimeThreshold]);
+            _tags.Add(DicomTags.TerminationCardiacTriggerCountThreshold,
+                      new DicomTag(
+                          DicomTags.TerminationCardiacTriggerCountThreshold,
+                          "Termination Cardiac Trigger Count Threshold",
+                          "TerminationCardiacTriggerCountThreshold",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TerminationCardiacTriggerCountThreshold",
+                      _tags[DicomTags.TerminationCardiacTriggerCountThreshold]);
+            _tags.Add(DicomTags.TerminationRespiratoryTriggerCountThreshold,
+                      new DicomTag(
+                          DicomTags.TerminationRespiratoryTriggerCountThreshold,
+                          "Termination Respiratory Trigger Count Threshold",
+                          "TerminationRespiratoryTriggerCountThreshold",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TerminationRespiratoryTriggerCountThreshold",
+                      _tags[DicomTags.TerminationRespiratoryTriggerCountThreshold]);
+            _tags.Add(DicomTags.DetectorGeometry,
+                      new DicomTag(
+                          DicomTags.DetectorGeometry,
+                          "Detector Geometry",
+                          "DetectorGeometry",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("DetectorGeometry",
+                      _tags[DicomTags.DetectorGeometry]);
+            _tags.Add(DicomTags.TransverseDetectorSeparation,
+                      new DicomTag(
+                          DicomTags.TransverseDetectorSeparation,
+                          "Transverse Detector Separation",
+                          "TransverseDetectorSeparation",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TransverseDetectorSeparation",
+                      _tags[DicomTags.TransverseDetectorSeparation]);
+            _tags.Add(DicomTags.AxialDetectorDimension,
+                      new DicomTag(
+                          DicomTags.AxialDetectorDimension,
+                          "Axial Detector Dimension",
+                          "AxialDetectorDimension",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AxialDetectorDimension",
+                      _tags[DicomTags.AxialDetectorDimension]);
+            _tags.Add(DicomTags.RadiopharmaceuticalAgentNumber,
+                      new DicomTag(
+                          DicomTags.RadiopharmaceuticalAgentNumber,
+                          "Radiopharmaceutical Agent Number",
+                          "RadiopharmaceuticalAgentNumber",
+                          DicomVr.USvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RadiopharmaceuticalAgentNumber",
+                      _tags[DicomTags.RadiopharmaceuticalAgentNumber]);
+            _tags.Add(DicomTags.PetFrameAcquisitionSequence,
+                      new DicomTag(
+                          DicomTags.PetFrameAcquisitionSequence,
+                          "PET Frame Acquisition Sequence",
+                          "PetFrameAcquisitionSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PetFrameAcquisitionSequence",
+                      _tags[DicomTags.PetFrameAcquisitionSequence]);
+            _tags.Add(DicomTags.PetDetectorMotionDetailsSequence,
+                      new DicomTag(
+                          DicomTags.PetDetectorMotionDetailsSequence,
+                          "PET Detector Motion Details Sequence",
+                          "PetDetectorMotionDetailsSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PetDetectorMotionDetailsSequence",
+                      _tags[DicomTags.PetDetectorMotionDetailsSequence]);
+            _tags.Add(DicomTags.PetTableDynamicsSequence,
+                      new DicomTag(
+                          DicomTags.PetTableDynamicsSequence,
+                          "PET Table Dynamics Sequence",
+                          "PetTableDynamicsSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PetTableDynamicsSequence",
+                      _tags[DicomTags.PetTableDynamicsSequence]);
+            _tags.Add(DicomTags.PetPositionSequence,
+                      new DicomTag(
+                          DicomTags.PetPositionSequence,
+                          "PET Position Sequence",
+                          "PetPositionSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PetPositionSequence",
+                      _tags[DicomTags.PetPositionSequence]);
+            _tags.Add(DicomTags.PetFrameCorrectionFactorsSequence,
+                      new DicomTag(
+                          DicomTags.PetFrameCorrectionFactorsSequence,
+                          "PET Frame Correction Factors Sequence",
+                          "PetFrameCorrectionFactorsSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PetFrameCorrectionFactorsSequence",
+                      _tags[DicomTags.PetFrameCorrectionFactorsSequence]);
+            _tags.Add(DicomTags.RadiopharmaceuticalUsageSequence,
+                      new DicomTag(
+                          DicomTags.RadiopharmaceuticalUsageSequence,
+                          "Radiopharmaceutical Usage Sequence",
+                          "RadiopharmaceuticalUsageSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RadiopharmaceuticalUsageSequence",
+                      _tags[DicomTags.RadiopharmaceuticalUsageSequence]);
+            _tags.Add(DicomTags.AttenuationCorrectionSource,
+                      new DicomTag(
+                          DicomTags.AttenuationCorrectionSource,
+                          "Attenuation Correction Source",
+                          "AttenuationCorrectionSource",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AttenuationCorrectionSource",
+                      _tags[DicomTags.AttenuationCorrectionSource]);
+            _tags.Add(DicomTags.NumberOfIterations,
+                      new DicomTag(
+                          DicomTags.NumberOfIterations,
+                          "Number of Iterations",
+                          "NumberOfIterations",
+                          DicomVr.USvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("NumberOfIterations",
+                      _tags[DicomTags.NumberOfIterations]);
+            _tags.Add(DicomTags.NumberOfSubsets,
+                      new DicomTag(
+                          DicomTags.NumberOfSubsets,
+                          "Number of Subsets",
+                          "NumberOfSubsets",
+                          DicomVr.USvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("NumberOfSubsets",
+                      _tags[DicomTags.NumberOfSubsets]);
+            _tags.Add(DicomTags.PetReconstructionSequence,
+                      new DicomTag(
+                          DicomTags.PetReconstructionSequence,
+                          "PET Reconstruction Sequence",
+                          "PetReconstructionSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PetReconstructionSequence",
+                      _tags[DicomTags.PetReconstructionSequence]);
+            _tags.Add(DicomTags.PetFrameTypeSequence,
+                      new DicomTag(
+                          DicomTags.PetFrameTypeSequence,
+                          "PET Frame Type Sequence",
+                          "PetFrameTypeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PetFrameTypeSequence",
+                      _tags[DicomTags.PetFrameTypeSequence]);
+            _tags.Add(DicomTags.TimeOfFlightInformationUsed,
+                      new DicomTag(
+                          DicomTags.TimeOfFlightInformationUsed,
+                          "Time of Flight Information Used",
+                          "TimeOfFlightInformationUsed",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TimeOfFlightInformationUsed",
+                      _tags[DicomTags.TimeOfFlightInformationUsed]);
+            _tags.Add(DicomTags.ReconstructionType,
+                      new DicomTag(
+                          DicomTags.ReconstructionType,
+                          "Reconstruction Type",
+                          "ReconstructionType",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ReconstructionType",
+                      _tags[DicomTags.ReconstructionType]);
+            _tags.Add(DicomTags.DecayCorrected,
+                      new DicomTag(
+                          DicomTags.DecayCorrected,
+                          "Decay Corrected ",
+                          "DecayCorrected",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("DecayCorrected",
+                      _tags[DicomTags.DecayCorrected]);
+            _tags.Add(DicomTags.AttenuationCorrected,
+                      new DicomTag(
+                          DicomTags.AttenuationCorrected,
+                          "Attenuation Corrected ",
+                          "AttenuationCorrected",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AttenuationCorrected",
+                      _tags[DicomTags.AttenuationCorrected]);
+            _tags.Add(DicomTags.ScatterCorrected,
+                      new DicomTag(
+                          DicomTags.ScatterCorrected,
+                          "Scatter Corrected ",
+                          "ScatterCorrected",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ScatterCorrected",
+                      _tags[DicomTags.ScatterCorrected]);
+            _tags.Add(DicomTags.DeadTimeCorrected,
+                      new DicomTag(
+                          DicomTags.DeadTimeCorrected,
+                          "Dead Time Corrected ",
+                          "DeadTimeCorrected",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("DeadTimeCorrected",
+                      _tags[DicomTags.DeadTimeCorrected]);
+            _tags.Add(DicomTags.GantryMotionCorrected,
+                      new DicomTag(
+                          DicomTags.GantryMotionCorrected,
+                          "Gantry Motion Corrected ",
+                          "GantryMotionCorrected",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("GantryMotionCorrected",
+                      _tags[DicomTags.GantryMotionCorrected]);
+            _tags.Add(DicomTags.PatientMotionCorrected,
+                      new DicomTag(
+                          DicomTags.PatientMotionCorrected,
+                          "Patient Motion Corrected ",
+                          "PatientMotionCorrected",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PatientMotionCorrected",
+                      _tags[DicomTags.PatientMotionCorrected]);
+            _tags.Add(DicomTags.CountLossNormalizationCorrected,
+                      new DicomTag(
+                          DicomTags.CountLossNormalizationCorrected,
+                          "Count Loss Normalization Corrected",
+                          "CountLossNormalizationCorrected",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("CountLossNormalizationCorrected",
+                      _tags[DicomTags.CountLossNormalizationCorrected]);
+            _tags.Add(DicomTags.RandomsCorrected,
+                      new DicomTag(
+                          DicomTags.RandomsCorrected,
+                          "Randoms Corrected",
+                          "RandomsCorrected",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RandomsCorrected",
+                      _tags[DicomTags.RandomsCorrected]);
+            _tags.Add(DicomTags.NonUniformRadialSamplingCorrected,
+                      new DicomTag(
+                          DicomTags.NonUniformRadialSamplingCorrected,
+                          "Non-uniform Radial Sampling Corrected",
+                          "NonUniformRadialSamplingCorrected",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("NonUniformRadialSamplingCorrected",
+                      _tags[DicomTags.NonUniformRadialSamplingCorrected]);
+            _tags.Add(DicomTags.SensitivityCalibrated,
+                      new DicomTag(
+                          DicomTags.SensitivityCalibrated,
+                          "Sensitivity Calibrated",
+                          "SensitivityCalibrated",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SensitivityCalibrated",
+                      _tags[DicomTags.SensitivityCalibrated]);
+            _tags.Add(DicomTags.DetectorNormalizationCorrection,
+                      new DicomTag(
+                          DicomTags.DetectorNormalizationCorrection,
+                          "Detector Normalization Correction",
+                          "DetectorNormalizationCorrection",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("DetectorNormalizationCorrection",
+                      _tags[DicomTags.DetectorNormalizationCorrection]);
+            _tags.Add(DicomTags.IterativeReconstructionMethod,
+                      new DicomTag(
+                          DicomTags.IterativeReconstructionMethod,
+                          "Iterative Reconstruction Method ",
+                          "IterativeReconstructionMethod",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("IterativeReconstructionMethod",
+                      _tags[DicomTags.IterativeReconstructionMethod]);
+            _tags.Add(DicomTags.AttenuationCorrectionTemporalRelationship,
+                      new DicomTag(
+                          DicomTags.AttenuationCorrectionTemporalRelationship,
+                          "Attenuation Correction Temporal Relationship",
+                          "AttenuationCorrectionTemporalRelationship",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AttenuationCorrectionTemporalRelationship",
+                      _tags[DicomTags.AttenuationCorrectionTemporalRelationship]);
+            _tags.Add(DicomTags.PatientPhysiologicalStateSequence,
+                      new DicomTag(
+                          DicomTags.PatientPhysiologicalStateSequence,
+                          "Patient Physiological State Sequence",
+                          "PatientPhysiologicalStateSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PatientPhysiologicalStateSequence",
+                      _tags[DicomTags.PatientPhysiologicalStateSequence]);
+            _tags.Add(DicomTags.PatientPhysiologicalStateCodeSequence,
+                      new DicomTag(
+                          DicomTags.PatientPhysiologicalStateCodeSequence,
+                          "Patient Physiological State Code Sequence",
+                          "PatientPhysiologicalStateCodeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PatientPhysiologicalStateCodeSequence",
+                      _tags[DicomTags.PatientPhysiologicalStateCodeSequence]);
+            _tags.Add(DicomTags.DepthsOfFocus,
+                      new DicomTag(
+                          DicomTags.DepthsOfFocus,
+                          "Depth(s) of Focus",
+                          "DepthsOfFocus",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          4294967295, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("DepthsOfFocus",
+                      _tags[DicomTags.DepthsOfFocus]);
+            _tags.Add(DicomTags.ExcludedIntervalsSequence,
+                      new DicomTag(
+                          DicomTags.ExcludedIntervalsSequence,
+                          "Excluded Intervals Sequence",
+                          "ExcludedIntervalsSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ExcludedIntervalsSequence",
+                      _tags[DicomTags.ExcludedIntervalsSequence]);
+            _tags.Add(DicomTags.ExclusionStartDatetime,
+                      new DicomTag(
+                          DicomTags.ExclusionStartDatetime,
+                          "Exclusion Start Datetime",
+                          "ExclusionStartDatetime",
+                          DicomVr.DTvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ExclusionStartDatetime",
+                      _tags[DicomTags.ExclusionStartDatetime]);
+            _tags.Add(DicomTags.ExclusionDuration,
+                      new DicomTag(
+                          DicomTags.ExclusionDuration,
+                          "Exclusion Duration",
+                          "ExclusionDuration",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ExclusionDuration",
+                      _tags[DicomTags.ExclusionDuration]);
+            _tags.Add(DicomTags.UsImageDescriptionSequence,
+                      new DicomTag(
+                          DicomTags.UsImageDescriptionSequence,
+                          "US Image Description Sequence",
+                          "UsImageDescriptionSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("UsImageDescriptionSequence",
+                      _tags[DicomTags.UsImageDescriptionSequence]);
+            _tags.Add(DicomTags.ImageDataTypeSequence,
+                      new DicomTag(
+                          DicomTags.ImageDataTypeSequence,
+                          "Image Data Type Sequence",
+                          "ImageDataTypeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ImageDataTypeSequence",
+                      _tags[DicomTags.ImageDataTypeSequence]);
+            _tags.Add(DicomTags.DataType,
+                      new DicomTag(
+                          DicomTags.DataType,
+                          "Data Type",
+                          "DataType",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("DataType",
+                      _tags[DicomTags.DataType]);
+            _tags.Add(DicomTags.TransducerScanPatternCodeSequence,
+                      new DicomTag(
+                          DicomTags.TransducerScanPatternCodeSequence,
+                          "Transducer Scan Pattern Code Sequence",
+                          "TransducerScanPatternCodeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TransducerScanPatternCodeSequence",
+                      _tags[DicomTags.TransducerScanPatternCodeSequence]);
+            _tags.Add(DicomTags.AliasedDataType,
+                      new DicomTag(
+                          DicomTags.AliasedDataType,
+                          "Aliased Data Type",
+                          "AliasedDataType",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AliasedDataType",
+                      _tags[DicomTags.AliasedDataType]);
+            _tags.Add(DicomTags.PositionMeasuringDeviceUsed,
+                      new DicomTag(
+                          DicomTags.PositionMeasuringDeviceUsed,
+                          "Position Measuring Device Used",
+                          "PositionMeasuringDeviceUsed",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PositionMeasuringDeviceUsed",
+                      _tags[DicomTags.PositionMeasuringDeviceUsed]);
+            _tags.Add(DicomTags.TransducerGeometryCodeSequence,
+                      new DicomTag(
+                          DicomTags.TransducerGeometryCodeSequence,
+                          "Transducer Geometry Code Sequence",
+                          "TransducerGeometryCodeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TransducerGeometryCodeSequence",
+                      _tags[DicomTags.TransducerGeometryCodeSequence]);
+            _tags.Add(DicomTags.TransducerBeamSteeringCodeSequence,
+                      new DicomTag(
+                          DicomTags.TransducerBeamSteeringCodeSequence,
+                          "Transducer Beam Steering Code Sequence",
+                          "TransducerBeamSteeringCodeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TransducerBeamSteeringCodeSequence",
+                      _tags[DicomTags.TransducerBeamSteeringCodeSequence]);
+            _tags.Add(DicomTags.TransducerApplicationCodeSequence,
+                      new DicomTag(
+                          DicomTags.TransducerApplicationCodeSequence,
+                          "Transducer Application Code Sequence",
+                          "TransducerApplicationCodeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TransducerApplicationCodeSequence",
+                      _tags[DicomTags.TransducerApplicationCodeSequence]);
             _tags.Add(DicomTags.ContributingEquipmentSequence,
                       new DicomTag(
                           DicomTags.ContributingEquipmentSequence,
@@ -11880,19 +12920,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("CurveNumberRetired",
                       _tags[DicomTags.CurveNumberRetired]);
-            _tags.Add(DicomTags.LookupTableNumberRetired,
+            _tags.Add(DicomTags.LutNumberRetired,
                       new DicomTag(
-                          DicomTags.LookupTableNumberRetired,
-                          "Lookup Table Number",
-                          "LookupTableNumberRetired",
+                          DicomTags.LutNumberRetired,
+                          "LUT Number",
+                          "LutNumberRetired",
                           DicomVr.ISvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           true // isRetired
                           ));
-            _tagNames.Add("LookupTableNumberRetired",
-                      _tags[DicomTags.LookupTableNumberRetired]);
+            _tagNames.Add("LutNumberRetired",
+                      _tags[DicomTags.LutNumberRetired]);
             _tags.Add(DicomTags.ImagePositionRetired,
                       new DicomTag(
                           DicomTags.ImagePositionRetired,
@@ -12075,6 +13115,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("SynchronizationFrameOfReferenceUid",
                       _tags[DicomTags.SynchronizationFrameOfReferenceUid]);
+            _tags.Add(DicomTags.SopInstanceUidOfConcatenationSource,
+                      new DicomTag(
+                          DicomTags.SopInstanceUidOfConcatenationSource,
+                          "SOP Instance UID of Concatenation Source",
+                          "SopInstanceUidOfConcatenationSource",
+                          DicomVr.UIvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SopInstanceUidOfConcatenationSource",
+                      _tags[DicomTags.SopInstanceUidOfConcatenationSource]);
             _tags.Add(DicomTags.SeriesInStudyRetired,
                       new DicomTag(
                           DicomTags.SeriesInStudyRetired,
@@ -12806,7 +13859,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.RRIntervalTimeNominal,
                       new DicomTag(
                           DicomTags.RRIntervalTimeNominal,
-                          "R  R Interval Time Nominal",
+                          "R – R Interval Time Nominal",
                           "RRIntervalTimeNominal",
                           DicomVr.FDvr,
                           false, //isMultiVrTag
@@ -12894,6 +13947,188 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("ActualRespiratoryTriggerDelayTime",
                       _tags[DicomTags.ActualRespiratoryTriggerDelayTime]);
+            _tags.Add(DicomTags.ImagePositionVolume,
+                      new DicomTag(
+                          DicomTags.ImagePositionVolume,
+                          "Image Position (Volume)",
+                          "ImagePositionVolume",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          3, // vmLow
+                          3, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ImagePositionVolume",
+                      _tags[DicomTags.ImagePositionVolume]);
+            _tags.Add(DicomTags.ImageOrientationVolume,
+                      new DicomTag(
+                          DicomTags.ImageOrientationVolume,
+                          "Image Orientation (Volume)",
+                          "ImageOrientationVolume",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          6, // vmLow
+                          6, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ImageOrientationVolume",
+                      _tags[DicomTags.ImageOrientationVolume]);
+            _tags.Add(DicomTags.UltrasoundAcquisitionGeometry,
+                      new DicomTag(
+                          DicomTags.UltrasoundAcquisitionGeometry,
+                          "Ultrasound Acquisition Geometry",
+                          "UltrasoundAcquisitionGeometry",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("UltrasoundAcquisitionGeometry",
+                      _tags[DicomTags.UltrasoundAcquisitionGeometry]);
+            _tags.Add(DicomTags.ApexPosition,
+                      new DicomTag(
+                          DicomTags.ApexPosition,
+                          "Apex Position",
+                          "ApexPosition",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          3, // vmLow
+                          3, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ApexPosition",
+                      _tags[DicomTags.ApexPosition]);
+            _tags.Add(DicomTags.VolumeToTransducerMappingMatrix,
+                      new DicomTag(
+                          DicomTags.VolumeToTransducerMappingMatrix,
+                          "Volume to Transducer Mapping Matrix",
+                          "VolumeToTransducerMappingMatrix",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          16, // vmLow
+                          16, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("VolumeToTransducerMappingMatrix",
+                      _tags[DicomTags.VolumeToTransducerMappingMatrix]);
+            _tags.Add(DicomTags.VolumeToTableMappingMatrix,
+                      new DicomTag(
+                          DicomTags.VolumeToTableMappingMatrix,
+                          "Volume to Table Mapping Matrix",
+                          "VolumeToTableMappingMatrix",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          16, // vmLow
+                          16, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("VolumeToTableMappingMatrix",
+                      _tags[DicomTags.VolumeToTableMappingMatrix]);
+            _tags.Add(DicomTags.PatientFrameOfReferenceSource,
+                      new DicomTag(
+                          DicomTags.PatientFrameOfReferenceSource,
+                          "Patient Frame of Reference Source",
+                          "PatientFrameOfReferenceSource",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PatientFrameOfReferenceSource",
+                      _tags[DicomTags.PatientFrameOfReferenceSource]);
+            _tags.Add(DicomTags.TemporalPositionTimeOffset,
+                      new DicomTag(
+                          DicomTags.TemporalPositionTimeOffset,
+                          "Temporal Position Time Offset",
+                          "TemporalPositionTimeOffset",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TemporalPositionTimeOffset",
+                      _tags[DicomTags.TemporalPositionTimeOffset]);
+            _tags.Add(DicomTags.PlanePositionVolumeSequence,
+                      new DicomTag(
+                          DicomTags.PlanePositionVolumeSequence,
+                          "Plane Position (Volume) Sequence",
+                          "PlanePositionVolumeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PlanePositionVolumeSequence",
+                      _tags[DicomTags.PlanePositionVolumeSequence]);
+            _tags.Add(DicomTags.PlaneOrientationVolumeSequence,
+                      new DicomTag(
+                          DicomTags.PlaneOrientationVolumeSequence,
+                          "Plane Orientation (Volume) Sequence",
+                          "PlaneOrientationVolumeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PlaneOrientationVolumeSequence",
+                      _tags[DicomTags.PlaneOrientationVolumeSequence]);
+            _tags.Add(DicomTags.TemporalPositionSequence,
+                      new DicomTag(
+                          DicomTags.TemporalPositionSequence,
+                          "Temporal Position Sequence",
+                          "TemporalPositionSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TemporalPositionSequence",
+                      _tags[DicomTags.TemporalPositionSequence]);
+            _tags.Add(DicomTags.DimensionOrganizationType,
+                      new DicomTag(
+                          DicomTags.DimensionOrganizationType,
+                          "Dimension Organization Type",
+                          "DimensionOrganizationType",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("DimensionOrganizationType",
+                      _tags[DicomTags.DimensionOrganizationType]);
+            _tags.Add(DicomTags.VolumeFrameOfReferenceUid,
+                      new DicomTag(
+                          DicomTags.VolumeFrameOfReferenceUid,
+                          "Volume Frame of Reference UID",
+                          "VolumeFrameOfReferenceUid",
+                          DicomVr.UIvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("VolumeFrameOfReferenceUid",
+                      _tags[DicomTags.VolumeFrameOfReferenceUid]);
+            _tags.Add(DicomTags.TableFrameOfReferenceUid,
+                      new DicomTag(
+                          DicomTags.TableFrameOfReferenceUid,
+                          "Table Frame of Reference UID",
+                          "TableFrameOfReferenceUid",
+                          DicomVr.UIvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TableFrameOfReferenceUid",
+                      _tags[DicomTags.TableFrameOfReferenceUid]);
             _tags.Add(DicomTags.DimensionDescriptionLabel,
                       new DicomTag(
                           DicomTags.DimensionDescriptionLabel,
@@ -14714,6 +15949,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("BluePaletteColorLookupTableDescriptor",
                       _tags[DicomTags.BluePaletteColorLookupTableDescriptor]);
+            _tags.Add(DicomTags.AlphaPaletteColorLookupTableDescriptor,
+                      new DicomTag(
+                          DicomTags.AlphaPaletteColorLookupTableDescriptor,
+                          "Alpha Palette Color Lookup Table Descriptor",
+                          "AlphaPaletteColorLookupTableDescriptor",
+                          DicomVr.USvr,
+                          false, //isMultiVrTag
+                          3, // vmLow
+                          3, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AlphaPaletteColorLookupTableDescriptor",
+                      _tags[DicomTags.AlphaPaletteColorLookupTableDescriptor]);
             _tags.Add(DicomTags.LargeRedPaletteColorLookupTableDescriptorRetired,
                       new DicomTag(
                           DicomTags.LargeRedPaletteColorLookupTableDescriptorRetired,
@@ -14818,6 +16066,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("BluePaletteColorLookupTableData",
                       _tags[DicomTags.BluePaletteColorLookupTableData]);
+            _tags.Add(DicomTags.AlphaPaletteColorLookupTableData,
+                      new DicomTag(
+                          DicomTags.AlphaPaletteColorLookupTableData,
+                          "Alpha Palette Color Lookup Table Data",
+                          "AlphaPaletteColorLookupTableData",
+                          DicomVr.OWvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AlphaPaletteColorLookupTableData",
+                      _tags[DicomTags.AlphaPaletteColorLookupTableData]);
             _tags.Add(DicomTags.LargeRedPaletteColorLookupTableDataRetired,
                       new DicomTag(
                           DicomTags.LargeRedPaletteColorLookupTableDataRetired,
@@ -14909,19 +16170,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("SegmentedBluePaletteColorLookupTableData",
                       _tags[DicomTags.SegmentedBluePaletteColorLookupTableData]);
-            _tags.Add(DicomTags.ImplantPresent,
+            _tags.Add(DicomTags.BreastImplantPresent,
                       new DicomTag(
-                          DicomTags.ImplantPresent,
-                          "Implant Present",
-                          "ImplantPresent",
+                          DicomTags.BreastImplantPresent,
+                          "Breast Implant Present",
+                          "BreastImplantPresent",
                           DicomVr.CSvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tagNames.Add("ImplantPresent",
-                      _tags[DicomTags.ImplantPresent]);
+            _tagNames.Add("BreastImplantPresent",
+                      _tags[DicomTags.BreastImplantPresent]);
             _tags.Add(DicomTags.PartialView,
                       new DicomTag(
                           DicomTags.PartialView,
@@ -14974,6 +16235,188 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("SpatialLocationsPreserved",
                       _tags[DicomTags.SpatialLocationsPreserved]);
+            _tags.Add(DicomTags.DataFrameAssignmentSequence,
+                      new DicomTag(
+                          DicomTags.DataFrameAssignmentSequence,
+                          "Data Frame Assignment Sequence",
+                          "DataFrameAssignmentSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("DataFrameAssignmentSequence",
+                      _tags[DicomTags.DataFrameAssignmentSequence]);
+            _tags.Add(DicomTags.DataPathAssignment,
+                      new DicomTag(
+                          DicomTags.DataPathAssignment,
+                          "Data Path Assignment",
+                          "DataPathAssignment",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("DataPathAssignment",
+                      _tags[DicomTags.DataPathAssignment]);
+            _tags.Add(DicomTags.BitsMappedToColorLookupTable,
+                      new DicomTag(
+                          DicomTags.BitsMappedToColorLookupTable,
+                          "Bits Mapped to Color Lookup Table",
+                          "BitsMappedToColorLookupTable",
+                          DicomVr.USvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("BitsMappedToColorLookupTable",
+                      _tags[DicomTags.BitsMappedToColorLookupTable]);
+            _tags.Add(DicomTags.BlendingLut1Sequence,
+                      new DicomTag(
+                          DicomTags.BlendingLut1Sequence,
+                          "Blending LUT 1 Sequence",
+                          "BlendingLut1Sequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("BlendingLut1Sequence",
+                      _tags[DicomTags.BlendingLut1Sequence]);
+            _tags.Add(DicomTags.BlendingLut1TransferFunction,
+                      new DicomTag(
+                          DicomTags.BlendingLut1TransferFunction,
+                          "Blending LUT 1 Transfer Function",
+                          "BlendingLut1TransferFunction",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("BlendingLut1TransferFunction",
+                      _tags[DicomTags.BlendingLut1TransferFunction]);
+            _tags.Add(DicomTags.BlendingWeightConstant,
+                      new DicomTag(
+                          DicomTags.BlendingWeightConstant,
+                          "Blending Weight Constant",
+                          "BlendingWeightConstant",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("BlendingWeightConstant",
+                      _tags[DicomTags.BlendingWeightConstant]);
+            _tags.Add(DicomTags.BlendingLookupTableDescriptor,
+                      new DicomTag(
+                          DicomTags.BlendingLookupTableDescriptor,
+                          "Blending Lookup Table Descriptor",
+                          "BlendingLookupTableDescriptor",
+                          DicomVr.USvr,
+                          false, //isMultiVrTag
+                          3, // vmLow
+                          3, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("BlendingLookupTableDescriptor",
+                      _tags[DicomTags.BlendingLookupTableDescriptor]);
+            _tags.Add(DicomTags.BlendingLookupTableData,
+                      new DicomTag(
+                          DicomTags.BlendingLookupTableData,
+                          "Blending Lookup Table Data",
+                          "BlendingLookupTableData",
+                          DicomVr.OWvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("BlendingLookupTableData",
+                      _tags[DicomTags.BlendingLookupTableData]);
+            _tags.Add(DicomTags.EnhancedPaletteColorLookupTableSequence,
+                      new DicomTag(
+                          DicomTags.EnhancedPaletteColorLookupTableSequence,
+                          "Enhanced Palette Color Lookup Table Sequence",
+                          "EnhancedPaletteColorLookupTableSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("EnhancedPaletteColorLookupTableSequence",
+                      _tags[DicomTags.EnhancedPaletteColorLookupTableSequence]);
+            _tags.Add(DicomTags.BlendingLut2Sequence,
+                      new DicomTag(
+                          DicomTags.BlendingLut2Sequence,
+                          "Blending LUT 2 Sequence",
+                          "BlendingLut2Sequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("BlendingLut2Sequence",
+                      _tags[DicomTags.BlendingLut2Sequence]);
+            _tags.Add(DicomTags.BlendingLut2TransferFunction,
+                      new DicomTag(
+                          DicomTags.BlendingLut2TransferFunction,
+                          "Blending LUT 2 Transfer Function",
+                          "BlendingLut2TransferFunction",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("BlendingLut2TransferFunction",
+                      _tags[DicomTags.BlendingLut2TransferFunction]);
+            _tags.Add(DicomTags.DataPathId,
+                      new DicomTag(
+                          DicomTags.DataPathId,
+                          "Data Path ID",
+                          "DataPathId",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("DataPathId",
+                      _tags[DicomTags.DataPathId]);
+            _tags.Add(DicomTags.RgbLutTransferFunction,
+                      new DicomTag(
+                          DicomTags.RgbLutTransferFunction,
+                          "RGB LUT Transfer Function",
+                          "RgbLutTransferFunction",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RgbLutTransferFunction",
+                      _tags[DicomTags.RgbLutTransferFunction]);
+            _tags.Add(DicomTags.AlphaLutTransferFunction,
+                      new DicomTag(
+                          DicomTags.AlphaLutTransferFunction,
+                          "Alpha LUT Transfer Function",
+                          "AlphaLutTransferFunction",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AlphaLutTransferFunction",
+                      _tags[DicomTags.AlphaLutTransferFunction]);
             _tags.Add(DicomTags.IccProfile,
                       new DicomTag(
                           DicomTags.IccProfile,
@@ -15169,19 +16612,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("FrameNumbersOfInterestFoi",
                       _tags[DicomTags.FrameNumbersOfInterestFoi]);
-            _tags.Add(DicomTags.FramesOfInterestDescription,
+            _tags.Add(DicomTags.FrameOfInterestDescription,
                       new DicomTag(
-                          DicomTags.FramesOfInterestDescription,
-                          "Frame(s) of Interest Description",
-                          "FramesOfInterestDescription",
+                          DicomTags.FrameOfInterestDescription,
+                          "Frame of Interest Description",
+                          "FrameOfInterestDescription",
                           DicomVr.LOvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           4294967295, // vmHigh
                           false // isRetired
                           ));
-            _tagNames.Add("FramesOfInterestDescription",
-                      _tags[DicomTags.FramesOfInterestDescription]);
+            _tagNames.Add("FrameOfInterestDescription",
+                      _tags[DicomTags.FrameOfInterestDescription]);
             _tags.Add(DicomTags.FrameOfInterestType,
                       new DicomTag(
                           DicomTags.FrameOfInterestType,
@@ -15585,6 +17028,97 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("LutFunction",
                       _tags[DicomTags.LutFunction]);
+            _tags.Add(DicomTags.MaskVisibilityPercentage,
+                      new DicomTag(
+                          DicomTags.MaskVisibilityPercentage,
+                          "Mask Visibility Percentage",
+                          "MaskVisibilityPercentage",
+                          DicomVr.FLvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("MaskVisibilityPercentage",
+                      _tags[DicomTags.MaskVisibilityPercentage]);
+            _tags.Add(DicomTags.PixelShiftSequence,
+                      new DicomTag(
+                          DicomTags.PixelShiftSequence,
+                          "Pixel Shift Sequence",
+                          "PixelShiftSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PixelShiftSequence",
+                      _tags[DicomTags.PixelShiftSequence]);
+            _tags.Add(DicomTags.RegionPixelShiftSequence,
+                      new DicomTag(
+                          DicomTags.RegionPixelShiftSequence,
+                          "Region Pixel Shift Sequence",
+                          "RegionPixelShiftSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RegionPixelShiftSequence",
+                      _tags[DicomTags.RegionPixelShiftSequence]);
+            _tags.Add(DicomTags.VerticesOfTheRegion,
+                      new DicomTag(
+                          DicomTags.VerticesOfTheRegion,
+                          "Vertices of the Region",
+                          "VerticesOfTheRegion",
+                          DicomVr.SSvr,
+                          false, //isMultiVrTag
+                          2, // vmLow
+                          4294967295, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("VerticesOfTheRegion",
+                      _tags[DicomTags.VerticesOfTheRegion]);
+            _tags.Add(DicomTags.MultiFramePresentationSequence,
+                      new DicomTag(
+                          DicomTags.MultiFramePresentationSequence,
+                          "Multi-frame Presentation Sequence",
+                          "MultiFramePresentationSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("MultiFramePresentationSequence",
+                      _tags[DicomTags.MultiFramePresentationSequence]);
+            _tags.Add(DicomTags.PixelShiftFrameRange,
+                      new DicomTag(
+                          DicomTags.PixelShiftFrameRange,
+                          "Pixel Shift Frame Range",
+                          "PixelShiftFrameRange",
+                          DicomVr.USvr,
+                          false, //isMultiVrTag
+                          2, // vmLow
+                          4294967295, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PixelShiftFrameRange",
+                      _tags[DicomTags.PixelShiftFrameRange]);
+            _tags.Add(DicomTags.LutFrameRange,
+                      new DicomTag(
+                          DicomTags.LutFrameRange,
+                          "LUT Frame Range",
+                          "LutFrameRange",
+                          DicomVr.USvr,
+                          false, //isMultiVrTag
+                          2, // vmLow
+                          4294967295, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("LutFrameRange",
+                      _tags[DicomTags.LutFrameRange]);
             _tags.Add(DicomTags.ImageToEquipmentMappingMatrix,
                       new DicomTag(
                           DicomTags.ImageToEquipmentMappingMatrix,
@@ -15832,6 +17366,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("RequestingService",
                       _tags[DicomTags.RequestingService]);
+            _tags.Add(DicomTags.RequestingServiceCodeSequence,
+                      new DicomTag(
+                          DicomTags.RequestingServiceCodeSequence,
+                          "Requesting Service Code Sequence",
+                          "RequestingServiceCodeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RequestingServiceCodeSequence",
+                      _tags[DicomTags.RequestingServiceCodeSequence]);
             _tags.Add(DicomTags.StudyArrivalDateRetired,
                       new DicomTag(
                           DicomTags.StudyArrivalDateRetired,
@@ -15988,19 +17535,32 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("AdmissionId",
                       _tags[DicomTags.AdmissionId]);
-            _tags.Add(DicomTags.IssuerOfAdmissionId,
+            _tags.Add(DicomTags.IssuerOfAdmissionIdRetired,
                       new DicomTag(
-                          DicomTags.IssuerOfAdmissionId,
+                          DicomTags.IssuerOfAdmissionIdRetired,
                           "Issuer of Admission ID",
-                          "IssuerOfAdmissionId",
+                          "IssuerOfAdmissionIdRetired",
                           DicomVr.LOvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          true // isRetired
+                          ));
+            _tagNames.Add("IssuerOfAdmissionIdRetired",
+                      _tags[DicomTags.IssuerOfAdmissionIdRetired]);
+            _tags.Add(DicomTags.IssuerOfAdmissionIdSequence,
+                      new DicomTag(
+                          DicomTags.IssuerOfAdmissionIdSequence,
+                          "Issuer of Admission ID Sequence",
+                          "IssuerOfAdmissionIdSequence",
+                          DicomVr.SQvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tagNames.Add("IssuerOfAdmissionId",
-                      _tags[DicomTags.IssuerOfAdmissionId]);
+            _tagNames.Add("IssuerOfAdmissionIdSequence",
+                      _tags[DicomTags.IssuerOfAdmissionIdSequence]);
             _tags.Add(DicomTags.RouteOfAdmissions,
                       new DicomTag(
                           DicomTags.RouteOfAdmissions,
@@ -16183,19 +17743,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("ServiceEpisodeId",
                       _tags[DicomTags.ServiceEpisodeId]);
-            _tags.Add(DicomTags.IssuerOfServiceEpisodeId,
+            _tags.Add(DicomTags.IssuerOfServiceEpisodeIdRetired,
                       new DicomTag(
-                          DicomTags.IssuerOfServiceEpisodeId,
+                          DicomTags.IssuerOfServiceEpisodeIdRetired,
                           "Issuer of Service Episode ID",
-                          "IssuerOfServiceEpisodeId",
+                          "IssuerOfServiceEpisodeIdRetired",
                           DicomVr.LOvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
-                          false // isRetired
+                          true // isRetired
                           ));
-            _tagNames.Add("IssuerOfServiceEpisodeId",
-                      _tags[DicomTags.IssuerOfServiceEpisodeId]);
+            _tagNames.Add("IssuerOfServiceEpisodeIdRetired",
+                      _tags[DicomTags.IssuerOfServiceEpisodeIdRetired]);
             _tags.Add(DicomTags.ServiceEpisodeDescription,
                       new DicomTag(
                           DicomTags.ServiceEpisodeDescription,
@@ -16209,6 +17769,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("ServiceEpisodeDescription",
                       _tags[DicomTags.ServiceEpisodeDescription]);
+            _tags.Add(DicomTags.IssuerOfServiceEpisodeIdSequence,
+                      new DicomTag(
+                          DicomTags.IssuerOfServiceEpisodeIdSequence,
+                          "Issuer of Service Episode ID Sequence",
+                          "IssuerOfServiceEpisodeIdSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("IssuerOfServiceEpisodeIdSequence",
+                      _tags[DicomTags.IssuerOfServiceEpisodeIdSequence]);
             _tags.Add(DicomTags.PertinentDocumentsSequence,
                       new DicomTag(
                           DicomTags.PertinentDocumentsSequence,
@@ -16976,6 +18549,123 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("ScheduledProcedureStepStatus",
                       _tags[DicomTags.ScheduledProcedureStepStatus]);
+            _tags.Add(DicomTags.OrderPlacerIdentifierSequence,
+                      new DicomTag(
+                          DicomTags.OrderPlacerIdentifierSequence,
+                          "Order Placer Identifier Sequence",
+                          "OrderPlacerIdentifierSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("OrderPlacerIdentifierSequence",
+                      _tags[DicomTags.OrderPlacerIdentifierSequence]);
+            _tags.Add(DicomTags.OrderFillerIdentifierSequence,
+                      new DicomTag(
+                          DicomTags.OrderFillerIdentifierSequence,
+                          "Order Filler Identifier Sequence",
+                          "OrderFillerIdentifierSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("OrderFillerIdentifierSequence",
+                      _tags[DicomTags.OrderFillerIdentifierSequence]);
+            _tags.Add(DicomTags.LocalNamespaceEntityId,
+                      new DicomTag(
+                          DicomTags.LocalNamespaceEntityId,
+                          "Local Namespace Entity ID",
+                          "LocalNamespaceEntityId",
+                          DicomVr.UTvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("LocalNamespaceEntityId",
+                      _tags[DicomTags.LocalNamespaceEntityId]);
+            _tags.Add(DicomTags.UniversalEntityId,
+                      new DicomTag(
+                          DicomTags.UniversalEntityId,
+                          "Universal Entity ID",
+                          "UniversalEntityId",
+                          DicomVr.UTvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("UniversalEntityId",
+                      _tags[DicomTags.UniversalEntityId]);
+            _tags.Add(DicomTags.UniversalEntityIdType,
+                      new DicomTag(
+                          DicomTags.UniversalEntityIdType,
+                          "Universal Entity ID Type",
+                          "UniversalEntityIdType",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("UniversalEntityIdType",
+                      _tags[DicomTags.UniversalEntityIdType]);
+            _tags.Add(DicomTags.IdentifierTypeCode,
+                      new DicomTag(
+                          DicomTags.IdentifierTypeCode,
+                          "Identifier Type Code",
+                          "IdentifierTypeCode",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("IdentifierTypeCode",
+                      _tags[DicomTags.IdentifierTypeCode]);
+            _tags.Add(DicomTags.AssigningFacilitySequence,
+                      new DicomTag(
+                          DicomTags.AssigningFacilitySequence,
+                          "Assigning Facility Sequence",
+                          "AssigningFacilitySequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AssigningFacilitySequence",
+                      _tags[DicomTags.AssigningFacilitySequence]);
+            _tags.Add(DicomTags.AssigningJurisdictionCodeSequence,
+                      new DicomTag(
+                          DicomTags.AssigningJurisdictionCodeSequence,
+                          "Assigning Jurisdiction Code Sequence",
+                          "AssigningJurisdictionCodeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AssigningJurisdictionCodeSequence",
+                      _tags[DicomTags.AssigningJurisdictionCodeSequence]);
+            _tags.Add(DicomTags.AssigningAgencyOrDepartmentCodeSequence,
+                      new DicomTag(
+                          DicomTags.AssigningAgencyOrDepartmentCodeSequence,
+                          "Assigning Agency or Department Code Sequence",
+                          "AssigningAgencyOrDepartmentCodeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AssigningAgencyOrDepartmentCodeSequence",
+                      _tags[DicomTags.AssigningAgencyOrDepartmentCodeSequence]);
             _tags.Add(DicomTags.ScheduledProcedureStepSequence,
                       new DicomTag(
                           DicomTags.ScheduledProcedureStepSequence,
@@ -17158,6 +18848,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("PerformedProtocolCodeSequence",
                       _tags[DicomTags.PerformedProtocolCodeSequence]);
+            _tags.Add(DicomTags.PerformedProtocolType,
+                      new DicomTag(
+                          DicomTags.PerformedProtocolType,
+                          "Performed Protocol Type",
+                          "PerformedProtocolType",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PerformedProtocolType",
+                      _tags[DicomTags.PerformedProtocolType]);
             _tags.Add(DicomTags.ScheduledStepAttributesSequence,
                       new DicomTag(
                           DicomTags.ScheduledStepAttributesSequence,
@@ -17522,32 +19225,123 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("ContentItemModifierSequence",
                       _tags[DicomTags.ContentItemModifierSequence]);
-            _tags.Add(DicomTags.SpecimenAccessionNumber,
+            _tags.Add(DicomTags.ScheduledSpecimenSequence,
                       new DicomTag(
-                          DicomTags.SpecimenAccessionNumber,
-                          "Specimen Accession Number",
-                          "SpecimenAccessionNumber",
-                          DicomVr.LOvr,
-                          false, //isMultiVrTag
-                          1, // vmLow
-                          1, // vmHigh
-                          false // isRetired
-                          ));
-            _tagNames.Add("SpecimenAccessionNumber",
-                      _tags[DicomTags.SpecimenAccessionNumber]);
-            _tags.Add(DicomTags.SpecimenSequence,
-                      new DicomTag(
-                          DicomTags.SpecimenSequence,
-                          "Specimen Sequence",
-                          "SpecimenSequence",
+                          DicomTags.ScheduledSpecimenSequence,
+                          "Scheduled Specimen Sequence",
+                          "ScheduledSpecimenSequence",
                           DicomVr.SQvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tagNames.Add("SpecimenSequence",
-                      _tags[DicomTags.SpecimenSequence]);
+            _tagNames.Add("ScheduledSpecimenSequence",
+                      _tags[DicomTags.ScheduledSpecimenSequence]);
+            _tags.Add(DicomTags.SpecimenAccessionNumberRetired,
+                      new DicomTag(
+                          DicomTags.SpecimenAccessionNumberRetired,
+                          "Specimen Accession Number",
+                          "SpecimenAccessionNumberRetired",
+                          DicomVr.LOvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          true // isRetired
+                          ));
+            _tagNames.Add("SpecimenAccessionNumberRetired",
+                      _tags[DicomTags.SpecimenAccessionNumberRetired]);
+            _tags.Add(DicomTags.ContainerIdentifier,
+                      new DicomTag(
+                          DicomTags.ContainerIdentifier,
+                          "Container Identifier",
+                          "ContainerIdentifier",
+                          DicomVr.LOvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ContainerIdentifier",
+                      _tags[DicomTags.ContainerIdentifier]);
+            _tags.Add(DicomTags.IssuerOfTheContainerIdentifierSequence,
+                      new DicomTag(
+                          DicomTags.IssuerOfTheContainerIdentifierSequence,
+                          "Issuer of the Container Identifier Sequence",
+                          "IssuerOfTheContainerIdentifierSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("IssuerOfTheContainerIdentifierSequence",
+                      _tags[DicomTags.IssuerOfTheContainerIdentifierSequence]);
+            _tags.Add(DicomTags.AlternateContainerIdentifierSequence,
+                      new DicomTag(
+                          DicomTags.AlternateContainerIdentifierSequence,
+                          "Alternate Container Identifier Sequence",
+                          "AlternateContainerIdentifierSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AlternateContainerIdentifierSequence",
+                      _tags[DicomTags.AlternateContainerIdentifierSequence]);
+            _tags.Add(DicomTags.ContainerTypeCodeSequence,
+                      new DicomTag(
+                          DicomTags.ContainerTypeCodeSequence,
+                          "Container Type Code Sequence",
+                          "ContainerTypeCodeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ContainerTypeCodeSequence",
+                      _tags[DicomTags.ContainerTypeCodeSequence]);
+            _tags.Add(DicomTags.ContainerDescription,
+                      new DicomTag(
+                          DicomTags.ContainerDescription,
+                          "Container Description",
+                          "ContainerDescription",
+                          DicomVr.LOvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ContainerDescription",
+                      _tags[DicomTags.ContainerDescription]);
+            _tags.Add(DicomTags.ContainerComponentSequence,
+                      new DicomTag(
+                          DicomTags.ContainerComponentSequence,
+                          "Container Component Sequence",
+                          "ContainerComponentSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ContainerComponentSequence",
+                      _tags[DicomTags.ContainerComponentSequence]);
+            _tags.Add(DicomTags.SpecimenSequenceRetired,
+                      new DicomTag(
+                          DicomTags.SpecimenSequenceRetired,
+                          "Specimen Sequence",
+                          "SpecimenSequenceRetired",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          true // isRetired
+                          ));
+            _tagNames.Add("SpecimenSequenceRetired",
+                      _tags[DicomTags.SpecimenSequenceRetired]);
             _tags.Add(DicomTags.SpecimenIdentifier,
                       new DicomTag(
                           DicomTags.SpecimenIdentifier,
@@ -17564,7 +19358,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.SpecimenDescriptionSequenceTrialRetired,
                       new DicomTag(
                           DicomTags.SpecimenDescriptionSequenceTrialRetired,
-                          "Specimen Description Sequence Trial",
+                          "Specimen Description Sequence – Trial",
                           "SpecimenDescriptionSequenceTrialRetired",
                           DicomVr.SQvr,
                           false, //isMultiVrTag
@@ -17577,7 +19371,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.SpecimenDescriptionTrialRetired,
                       new DicomTag(
                           DicomTags.SpecimenDescriptionTrialRetired,
-                          "Specimen Description Trial",
+                          "Specimen Description – Trial",
                           "SpecimenDescriptionTrialRetired",
                           DicomVr.STvr,
                           false, //isMultiVrTag
@@ -17587,6 +19381,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("SpecimenDescriptionTrialRetired",
                       _tags[DicomTags.SpecimenDescriptionTrialRetired]);
+            _tags.Add(DicomTags.SpecimenUid,
+                      new DicomTag(
+                          DicomTags.SpecimenUid,
+                          "Specimen UID",
+                          "SpecimenUid",
+                          DicomVr.UIvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SpecimenUid",
+                      _tags[DicomTags.SpecimenUid]);
             _tags.Add(DicomTags.AcquisitionContextSequence,
                       new DicomTag(
                           DicomTags.AcquisitionContextSequence,
@@ -17613,6 +19420,32 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("AcquisitionContextDescription",
                       _tags[DicomTags.AcquisitionContextDescription]);
+            _tags.Add(DicomTags.SpecimenDescriptionSequence,
+                      new DicomTag(
+                          DicomTags.SpecimenDescriptionSequence,
+                          "Specimen Description Sequence",
+                          "SpecimenDescriptionSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SpecimenDescriptionSequence",
+                      _tags[DicomTags.SpecimenDescriptionSequence]);
+            _tags.Add(DicomTags.IssuerOfTheSpecimenIdentifierSequence,
+                      new DicomTag(
+                          DicomTags.IssuerOfTheSpecimenIdentifierSequence,
+                          "Issuer of the Specimen Identifier Sequence",
+                          "IssuerOfTheSpecimenIdentifierSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("IssuerOfTheSpecimenIdentifierSequence",
+                      _tags[DicomTags.IssuerOfTheSpecimenIdentifierSequence]);
             _tags.Add(DicomTags.SpecimenTypeCodeSequence,
                       new DicomTag(
                           DicomTags.SpecimenTypeCodeSequence,
@@ -17626,19 +19459,84 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("SpecimenTypeCodeSequence",
                       _tags[DicomTags.SpecimenTypeCodeSequence]);
-            _tags.Add(DicomTags.SlideIdentifier,
+            _tags.Add(DicomTags.SpecimenShortDescription,
                       new DicomTag(
-                          DicomTags.SlideIdentifier,
-                          "Slide Identifier",
-                          "SlideIdentifier",
+                          DicomTags.SpecimenShortDescription,
+                          "Specimen Short Description ",
+                          "SpecimenShortDescription",
                           DicomVr.LOvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tagNames.Add("SlideIdentifier",
-                      _tags[DicomTags.SlideIdentifier]);
+            _tagNames.Add("SpecimenShortDescription",
+                      _tags[DicomTags.SpecimenShortDescription]);
+            _tags.Add(DicomTags.SpecimenDetailedDescription,
+                      new DicomTag(
+                          DicomTags.SpecimenDetailedDescription,
+                          "Specimen Detailed Description ",
+                          "SpecimenDetailedDescription",
+                          DicomVr.UTvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SpecimenDetailedDescription",
+                      _tags[DicomTags.SpecimenDetailedDescription]);
+            _tags.Add(DicomTags.SpecimenPreparationSequence,
+                      new DicomTag(
+                          DicomTags.SpecimenPreparationSequence,
+                          "Specimen Preparation Sequence",
+                          "SpecimenPreparationSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SpecimenPreparationSequence",
+                      _tags[DicomTags.SpecimenPreparationSequence]);
+            _tags.Add(DicomTags.SpecimenPreparationStepContentItemSequence,
+                      new DicomTag(
+                          DicomTags.SpecimenPreparationStepContentItemSequence,
+                          "Specimen Preparation Step Content Item Sequence",
+                          "SpecimenPreparationStepContentItemSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SpecimenPreparationStepContentItemSequence",
+                      _tags[DicomTags.SpecimenPreparationStepContentItemSequence]);
+            _tags.Add(DicomTags.SpecimenLocalizationContentItemSequence,
+                      new DicomTag(
+                          DicomTags.SpecimenLocalizationContentItemSequence,
+                          "Specimen Localization Content Item Sequence",
+                          "SpecimenLocalizationContentItemSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SpecimenLocalizationContentItemSequence",
+                      _tags[DicomTags.SpecimenLocalizationContentItemSequence]);
+            _tags.Add(DicomTags.SlideIdentifierRetired,
+                      new DicomTag(
+                          DicomTags.SlideIdentifierRetired,
+                          "Slide Identifier",
+                          "SlideIdentifierRetired",
+                          DicomVr.LOvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          true // isRetired
+                          ));
+            _tagNames.Add("SlideIdentifierRetired",
+                      _tags[DicomTags.SlideIdentifierRetired]);
             _tags.Add(DicomTags.ImageCenterPointCoordinatesSequence,
                       new DicomTag(
                           DicomTags.ImageCenterPointCoordinatesSequence,
@@ -17899,6 +19797,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("IntendedRecipientsOfResultsIdentificationSequence",
                       _tags[DicomTags.IntendedRecipientsOfResultsIdentificationSequence]);
+            _tags.Add(DicomTags.ReasonForPerformedProcedureCodeSequence,
+                      new DicomTag(
+                          DicomTags.ReasonForPerformedProcedureCodeSequence,
+                          "Reason For Performed Procedure Code Sequence",
+                          "ReasonForPerformedProcedureCodeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ReasonForPerformedProcedureCodeSequence",
+                      _tags[DicomTags.ReasonForPerformedProcedureCodeSequence]);
             _tags.Add(DicomTags.PersonIdentificationCodeSequence,
                       new DicomTag(
                           DicomTags.PersonIdentificationCodeSequence,
@@ -18159,19 +20070,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("ScheduledProcessingApplicationsCodeSequence",
                       _tags[DicomTags.ScheduledProcessingApplicationsCodeSequence]);
-            _tags.Add(DicomTags.ScheduledProcedureStepStartDateAndTime,
+            _tags.Add(DicomTags.ScheduledProcedureStepStartDatetime,
                       new DicomTag(
-                          DicomTags.ScheduledProcedureStepStartDateAndTime,
-                          "Scheduled Procedure Step Start Date and Time",
-                          "ScheduledProcedureStepStartDateAndTime",
+                          DicomTags.ScheduledProcedureStepStartDatetime,
+                          "Scheduled Procedure Step Start DateTime",
+                          "ScheduledProcedureStepStartDatetime",
                           DicomVr.DTvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tagNames.Add("ScheduledProcedureStepStartDateAndTime",
-                      _tags[DicomTags.ScheduledProcedureStepStartDateAndTime]);
+            _tagNames.Add("ScheduledProcedureStepStartDatetime",
+                      _tags[DicomTags.ScheduledProcedureStepStartDatetime]);
             _tags.Add(DicomTags.MultipleCopiesFlag,
                       new DicomTag(
                           DicomTags.MultipleCopiesFlag,
@@ -18211,32 +20122,32 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("HumanPerformerCodeSequence",
                       _tags[DicomTags.HumanPerformerCodeSequence]);
-            _tags.Add(DicomTags.ScheduledProcedureStepModificationDateAndTime,
+            _tags.Add(DicomTags.ScheduledProcedureStepModificationDateTime,
                       new DicomTag(
-                          DicomTags.ScheduledProcedureStepModificationDateAndTime,
-                          "Scheduled Procedure Step Modification Date and Time",
-                          "ScheduledProcedureStepModificationDateAndTime",
+                          DicomTags.ScheduledProcedureStepModificationDateTime,
+                          "Scheduled Procedure Step Modification Date Time",
+                          "ScheduledProcedureStepModificationDateTime",
                           DicomVr.DTvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tagNames.Add("ScheduledProcedureStepModificationDateAndTime",
-                      _tags[DicomTags.ScheduledProcedureStepModificationDateAndTime]);
-            _tags.Add(DicomTags.ExpectedCompletionDateAndTime,
+            _tagNames.Add("ScheduledProcedureStepModificationDateTime",
+                      _tags[DicomTags.ScheduledProcedureStepModificationDateTime]);
+            _tags.Add(DicomTags.ExpectedCompletionDateTime,
                       new DicomTag(
-                          DicomTags.ExpectedCompletionDateAndTime,
-                          "Expected Completion Date and Time",
-                          "ExpectedCompletionDateAndTime",
+                          DicomTags.ExpectedCompletionDateTime,
+                          "Expected Completion Date Time",
+                          "ExpectedCompletionDateTime",
                           DicomVr.DTvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tagNames.Add("ExpectedCompletionDateAndTime",
-                      _tags[DicomTags.ExpectedCompletionDateAndTime]);
+            _tagNames.Add("ExpectedCompletionDateTime",
+                      _tags[DicomTags.ExpectedCompletionDateTime]);
             _tags.Add(DicomTags.ResultingGeneralPurposePerformedProcedureStepsSequence,
                       new DicomTag(
                           DicomTags.ResultingGeneralPurposePerformedProcedureStepsSequence,
@@ -18510,6 +20421,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("HumanPerformersName",
                       _tags[DicomTags.HumanPerformersName]);
+            _tags.Add(DicomTags.RawDataHandling,
+                      new DicomTag(
+                          DicomTags.RawDataHandling,
+                          "Raw Data Handling",
+                          "RawDataHandling",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RawDataHandling",
+                      _tags[DicomTags.RawDataHandling]);
             _tags.Add(DicomTags.EntranceDoseInMgy,
                       new DicomTag(
                           DicomTags.EntranceDoseInMgy,
@@ -19264,6 +21188,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("ArchiveRequested",
                       _tags[DicomTags.ArchiveRequested]);
+            _tags.Add(DicomTags.PreliminaryFlag,
+                      new DicomTag(
+                          DicomTags.PreliminaryFlag,
+                          "Preliminary Flag",
+                          "PreliminaryFlag",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PreliminaryFlag",
+                      _tags[DicomTags.PreliminaryFlag]);
             _tags.Add(DicomTags.ContentTemplateSequence,
                       new DicomTag(
                           DicomTags.ContentTemplateSequence,
@@ -19303,19 +21240,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("ContentSequence",
                       _tags[DicomTags.ContentSequence]);
-            _tags.Add(DicomTags.AnnotationSequence,
+            _tags.Add(DicomTags.WaveformAnnotationSequence,
                       new DicomTag(
-                          DicomTags.AnnotationSequence,
-                          "Annotation Sequence",
-                          "AnnotationSequence",
+                          DicomTags.WaveformAnnotationSequence,
+                          "Waveform Annotation Sequence",
+                          "WaveformAnnotationSequence",
                           DicomVr.SQvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tagNames.Add("AnnotationSequence",
-                      _tags[DicomTags.AnnotationSequence]);
+            _tagNames.Add("WaveformAnnotationSequence",
+                      _tags[DicomTags.WaveformAnnotationSequence]);
             _tags.Add(DicomTags.TemplateIdentifier,
                       new DicomTag(
                           DicomTags.TemplateIdentifier,
@@ -19459,6 +21396,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("RetrieveUri",
                       _tags[DicomTags.RetrieveUri]);
+            _tags.Add(DicomTags.RetrieveLocationUid,
+                      new DicomTag(
+                          DicomTags.RetrieveLocationUid,
+                          "Retrieve Location UID",
+                          "RetrieveLocationUid",
+                          DicomVr.UIvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RetrieveLocationUid",
+                      _tags[DicomTags.RetrieveLocationUid]);
             _tags.Add(DicomTags.DocumentTitle,
                       new DicomTag(
                           DicomTags.DocumentTitle,
@@ -19706,6 +21656,643 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("SubstanceAdministrationParameterSequence",
                       _tags[DicomTags.SubstanceAdministrationParameterSequence]);
+            _tags.Add(DicomTags.LensDescription,
+                      new DicomTag(
+                          DicomTags.LensDescription,
+                          "Lens Description",
+                          "LensDescription",
+                          DicomVr.LOvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("LensDescription",
+                      _tags[DicomTags.LensDescription]);
+            _tags.Add(DicomTags.RightLensSequence,
+                      new DicomTag(
+                          DicomTags.RightLensSequence,
+                          "Right Lens Sequence",
+                          "RightLensSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RightLensSequence",
+                      _tags[DicomTags.RightLensSequence]);
+            _tags.Add(DicomTags.LeftLensSequence,
+                      new DicomTag(
+                          DicomTags.LeftLensSequence,
+                          "Left Lens Sequence",
+                          "LeftLensSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("LeftLensSequence",
+                      _tags[DicomTags.LeftLensSequence]);
+            _tags.Add(DicomTags.UnspecifiedLateralityLensSequence,
+                      new DicomTag(
+                          DicomTags.UnspecifiedLateralityLensSequence,
+                          "Unspecified Laterality Lens Sequence",
+                          "UnspecifiedLateralityLensSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("UnspecifiedLateralityLensSequence",
+                      _tags[DicomTags.UnspecifiedLateralityLensSequence]);
+            _tags.Add(DicomTags.CylinderSequence,
+                      new DicomTag(
+                          DicomTags.CylinderSequence,
+                          "Cylinder Sequence",
+                          "CylinderSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("CylinderSequence",
+                      _tags[DicomTags.CylinderSequence]);
+            _tags.Add(DicomTags.PrismSequence,
+                      new DicomTag(
+                          DicomTags.PrismSequence,
+                          "Prism Sequence",
+                          "PrismSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PrismSequence",
+                      _tags[DicomTags.PrismSequence]);
+            _tags.Add(DicomTags.HorizontalPrismPower,
+                      new DicomTag(
+                          DicomTags.HorizontalPrismPower,
+                          "Horizontal Prism Power",
+                          "HorizontalPrismPower",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("HorizontalPrismPower",
+                      _tags[DicomTags.HorizontalPrismPower]);
+            _tags.Add(DicomTags.HorizontalPrismBase,
+                      new DicomTag(
+                          DicomTags.HorizontalPrismBase,
+                          "Horizontal Prism Base",
+                          "HorizontalPrismBase",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("HorizontalPrismBase",
+                      _tags[DicomTags.HorizontalPrismBase]);
+            _tags.Add(DicomTags.VerticalPrismPower,
+                      new DicomTag(
+                          DicomTags.VerticalPrismPower,
+                          "Vertical Prism Power",
+                          "VerticalPrismPower",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("VerticalPrismPower",
+                      _tags[DicomTags.VerticalPrismPower]);
+            _tags.Add(DicomTags.VerticalPrismBase,
+                      new DicomTag(
+                          DicomTags.VerticalPrismBase,
+                          "Vertical Prism Base",
+                          "VerticalPrismBase",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("VerticalPrismBase",
+                      _tags[DicomTags.VerticalPrismBase]);
+            _tags.Add(DicomTags.LensSegmentType,
+                      new DicomTag(
+                          DicomTags.LensSegmentType,
+                          "Lens Segment Type",
+                          "LensSegmentType",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("LensSegmentType",
+                      _tags[DicomTags.LensSegmentType]);
+            _tags.Add(DicomTags.OpticalTransmittance,
+                      new DicomTag(
+                          DicomTags.OpticalTransmittance,
+                          "Optical Transmittance",
+                          "OpticalTransmittance",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("OpticalTransmittance",
+                      _tags[DicomTags.OpticalTransmittance]);
+            _tags.Add(DicomTags.ChannelWidth,
+                      new DicomTag(
+                          DicomTags.ChannelWidth,
+                          "Channel Width",
+                          "ChannelWidth",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ChannelWidth",
+                      _tags[DicomTags.ChannelWidth]);
+            _tags.Add(DicomTags.PupilSize,
+                      new DicomTag(
+                          DicomTags.PupilSize,
+                          "Pupil Size",
+                          "PupilSize",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PupilSize",
+                      _tags[DicomTags.PupilSize]);
+            _tags.Add(DicomTags.CornealSize,
+                      new DicomTag(
+                          DicomTags.CornealSize,
+                          "Corneal Size",
+                          "CornealSize",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("CornealSize",
+                      _tags[DicomTags.CornealSize]);
+            _tags.Add(DicomTags.AutorefractionRightEyeSequence,
+                      new DicomTag(
+                          DicomTags.AutorefractionRightEyeSequence,
+                          "Autorefraction Right Eye Sequence",
+                          "AutorefractionRightEyeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AutorefractionRightEyeSequence",
+                      _tags[DicomTags.AutorefractionRightEyeSequence]);
+            _tags.Add(DicomTags.AutorefractionLeftEyeSequence,
+                      new DicomTag(
+                          DicomTags.AutorefractionLeftEyeSequence,
+                          "Autorefraction Left Eye Sequence",
+                          "AutorefractionLeftEyeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AutorefractionLeftEyeSequence",
+                      _tags[DicomTags.AutorefractionLeftEyeSequence]);
+            _tags.Add(DicomTags.DistancePupillaryDistance,
+                      new DicomTag(
+                          DicomTags.DistancePupillaryDistance,
+                          "Distance Pupillary Distance",
+                          "DistancePupillaryDistance",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("DistancePupillaryDistance",
+                      _tags[DicomTags.DistancePupillaryDistance]);
+            _tags.Add(DicomTags.NearPupillaryDistance,
+                      new DicomTag(
+                          DicomTags.NearPupillaryDistance,
+                          "Near Pupillary Distance",
+                          "NearPupillaryDistance",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("NearPupillaryDistance",
+                      _tags[DicomTags.NearPupillaryDistance]);
+            _tags.Add(DicomTags.IntermediatePupillaryDistance,
+                      new DicomTag(
+                          DicomTags.IntermediatePupillaryDistance,
+                          "Intermediate Pupillary Distance",
+                          "IntermediatePupillaryDistance",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("IntermediatePupillaryDistance",
+                      _tags[DicomTags.IntermediatePupillaryDistance]);
+            _tags.Add(DicomTags.OtherPupillaryDistance,
+                      new DicomTag(
+                          DicomTags.OtherPupillaryDistance,
+                          "Other Pupillary Distance",
+                          "OtherPupillaryDistance",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("OtherPupillaryDistance",
+                      _tags[DicomTags.OtherPupillaryDistance]);
+            _tags.Add(DicomTags.KeratometryRightEyeSequence,
+                      new DicomTag(
+                          DicomTags.KeratometryRightEyeSequence,
+                          "Keratometry Right Eye Sequence",
+                          "KeratometryRightEyeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("KeratometryRightEyeSequence",
+                      _tags[DicomTags.KeratometryRightEyeSequence]);
+            _tags.Add(DicomTags.KeratometryLeftEyeSequence,
+                      new DicomTag(
+                          DicomTags.KeratometryLeftEyeSequence,
+                          "Keratometry Left Eye Sequence",
+                          "KeratometryLeftEyeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("KeratometryLeftEyeSequence",
+                      _tags[DicomTags.KeratometryLeftEyeSequence]);
+            _tags.Add(DicomTags.SteepKeratometricAxisSequence,
+                      new DicomTag(
+                          DicomTags.SteepKeratometricAxisSequence,
+                          "Steep Keratometric Axis Sequence",
+                          "SteepKeratometricAxisSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SteepKeratometricAxisSequence",
+                      _tags[DicomTags.SteepKeratometricAxisSequence]);
+            _tags.Add(DicomTags.RadiusOfCurvature,
+                      new DicomTag(
+                          DicomTags.RadiusOfCurvature,
+                          "Radius of Curvature",
+                          "RadiusOfCurvature",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RadiusOfCurvature",
+                      _tags[DicomTags.RadiusOfCurvature]);
+            _tags.Add(DicomTags.KeratometricPower,
+                      new DicomTag(
+                          DicomTags.KeratometricPower,
+                          "Keratometric Power",
+                          "KeratometricPower",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("KeratometricPower",
+                      _tags[DicomTags.KeratometricPower]);
+            _tags.Add(DicomTags.KeratometricAxis,
+                      new DicomTag(
+                          DicomTags.KeratometricAxis,
+                          "Keratometric Axis",
+                          "KeratometricAxis",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("KeratometricAxis",
+                      _tags[DicomTags.KeratometricAxis]);
+            _tags.Add(DicomTags.FlatKeratometricAxisSequence,
+                      new DicomTag(
+                          DicomTags.FlatKeratometricAxisSequence,
+                          "Flat Keratometric Axis Sequence",
+                          "FlatKeratometricAxisSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("FlatKeratometricAxisSequence",
+                      _tags[DicomTags.FlatKeratometricAxisSequence]);
+            _tags.Add(DicomTags.BackgroundColor,
+                      new DicomTag(
+                          DicomTags.BackgroundColor,
+                          "Background Color",
+                          "BackgroundColor",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("BackgroundColor",
+                      _tags[DicomTags.BackgroundColor]);
+            _tags.Add(DicomTags.Optotype,
+                      new DicomTag(
+                          DicomTags.Optotype,
+                          "Optotype",
+                          "Optotype",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("Optotype",
+                      _tags[DicomTags.Optotype]);
+            _tags.Add(DicomTags.OptotypePresentation,
+                      new DicomTag(
+                          DicomTags.OptotypePresentation,
+                          "Optotype Presentation",
+                          "OptotypePresentation",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("OptotypePresentation",
+                      _tags[DicomTags.OptotypePresentation]);
+            _tags.Add(DicomTags.SubjectiveRefractionRightEyeSequence,
+                      new DicomTag(
+                          DicomTags.SubjectiveRefractionRightEyeSequence,
+                          "Subjective Refraction Right Eye Sequence",
+                          "SubjectiveRefractionRightEyeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SubjectiveRefractionRightEyeSequence",
+                      _tags[DicomTags.SubjectiveRefractionRightEyeSequence]);
+            _tags.Add(DicomTags.SubjectiveRefractionLeftEyeSequence,
+                      new DicomTag(
+                          DicomTags.SubjectiveRefractionLeftEyeSequence,
+                          "Subjective Refraction Left Eye Sequence",
+                          "SubjectiveRefractionLeftEyeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SubjectiveRefractionLeftEyeSequence",
+                      _tags[DicomTags.SubjectiveRefractionLeftEyeSequence]);
+            _tags.Add(DicomTags.AddNearSequence,
+                      new DicomTag(
+                          DicomTags.AddNearSequence,
+                          "Add Near Sequence",
+                          "AddNearSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AddNearSequence",
+                      _tags[DicomTags.AddNearSequence]);
+            _tags.Add(DicomTags.AddIntermediateSequence,
+                      new DicomTag(
+                          DicomTags.AddIntermediateSequence,
+                          "Add Intermediate Sequence",
+                          "AddIntermediateSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AddIntermediateSequence",
+                      _tags[DicomTags.AddIntermediateSequence]);
+            _tags.Add(DicomTags.AddOtherSequence,
+                      new DicomTag(
+                          DicomTags.AddOtherSequence,
+                          "Add Other Sequence",
+                          "AddOtherSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AddOtherSequence",
+                      _tags[DicomTags.AddOtherSequence]);
+            _tags.Add(DicomTags.AddPower,
+                      new DicomTag(
+                          DicomTags.AddPower,
+                          "Add Power",
+                          "AddPower",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AddPower",
+                      _tags[DicomTags.AddPower]);
+            _tags.Add(DicomTags.ViewingDistance,
+                      new DicomTag(
+                          DicomTags.ViewingDistance,
+                          "Viewing Distance",
+                          "ViewingDistance",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ViewingDistance",
+                      _tags[DicomTags.ViewingDistance]);
+            _tags.Add(DicomTags.VisualAcuityTypeCodeSequence,
+                      new DicomTag(
+                          DicomTags.VisualAcuityTypeCodeSequence,
+                          "Visual Acuity Type Code Sequence",
+                          "VisualAcuityTypeCodeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("VisualAcuityTypeCodeSequence",
+                      _tags[DicomTags.VisualAcuityTypeCodeSequence]);
+            _tags.Add(DicomTags.VisualAcuityRightEyeSequence,
+                      new DicomTag(
+                          DicomTags.VisualAcuityRightEyeSequence,
+                          "Visual Acuity Right Eye Sequence",
+                          "VisualAcuityRightEyeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("VisualAcuityRightEyeSequence",
+                      _tags[DicomTags.VisualAcuityRightEyeSequence]);
+            _tags.Add(DicomTags.VisualAcuityLeftEyeSequence,
+                      new DicomTag(
+                          DicomTags.VisualAcuityLeftEyeSequence,
+                          "Visual Acuity Left Eye Sequence",
+                          "VisualAcuityLeftEyeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("VisualAcuityLeftEyeSequence",
+                      _tags[DicomTags.VisualAcuityLeftEyeSequence]);
+            _tags.Add(DicomTags.VisualAcuityBothEyesOpenSequence,
+                      new DicomTag(
+                          DicomTags.VisualAcuityBothEyesOpenSequence,
+                          "Visual Acuity Both Eyes Open Sequence",
+                          "VisualAcuityBothEyesOpenSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("VisualAcuityBothEyesOpenSequence",
+                      _tags[DicomTags.VisualAcuityBothEyesOpenSequence]);
+            _tags.Add(DicomTags.ViewingDistanceType,
+                      new DicomTag(
+                          DicomTags.ViewingDistanceType,
+                          "Viewing Distance Type",
+                          "ViewingDistanceType",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ViewingDistanceType",
+                      _tags[DicomTags.ViewingDistanceType]);
+            _tags.Add(DicomTags.VisualAcuityModifiers,
+                      new DicomTag(
+                          DicomTags.VisualAcuityModifiers,
+                          "Visual Acuity Modifiers",
+                          "VisualAcuityModifiers",
+                          DicomVr.SSvr,
+                          false, //isMultiVrTag
+                          2, // vmLow
+                          2, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("VisualAcuityModifiers",
+                      _tags[DicomTags.VisualAcuityModifiers]);
+            _tags.Add(DicomTags.DecimalVisualAcuity,
+                      new DicomTag(
+                          DicomTags.DecimalVisualAcuity,
+                          "Decimal Visual Acuity",
+                          "DecimalVisualAcuity",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("DecimalVisualAcuity",
+                      _tags[DicomTags.DecimalVisualAcuity]);
+            _tags.Add(DicomTags.OptotypeDetailedDefinition,
+                      new DicomTag(
+                          DicomTags.OptotypeDetailedDefinition,
+                          "Optotype Detailed Definition",
+                          "OptotypeDetailedDefinition",
+                          DicomVr.LOvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("OptotypeDetailedDefinition",
+                      _tags[DicomTags.OptotypeDetailedDefinition]);
+            _tags.Add(DicomTags.ReferencedRefractiveMeasurementsSequence,
+                      new DicomTag(
+                          DicomTags.ReferencedRefractiveMeasurementsSequence,
+                          "Referenced Refractive Measurements Sequence",
+                          "ReferencedRefractiveMeasurementsSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ReferencedRefractiveMeasurementsSequence",
+                      _tags[DicomTags.ReferencedRefractiveMeasurementsSequence]);
+            _tags.Add(DicomTags.SpherePower,
+                      new DicomTag(
+                          DicomTags.SpherePower,
+                          "Sphere Power",
+                          "SpherePower",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SpherePower",
+                      _tags[DicomTags.SpherePower]);
+            _tags.Add(DicomTags.CylinderPower,
+                      new DicomTag(
+                          DicomTags.CylinderPower,
+                          "Cylinder Power",
+                          "CylinderPower",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("CylinderPower",
+                      _tags[DicomTags.CylinderPower]);
             _tags.Add(DicomTags.CalibrationImage,
                       new DicomTag(
                           DicomTags.CalibrationImage,
@@ -19732,6 +22319,32 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("DeviceSequence",
                       _tags[DicomTags.DeviceSequence]);
+            _tags.Add(DicomTags.ContainerComponentTypeCodeSequence,
+                      new DicomTag(
+                          DicomTags.ContainerComponentTypeCodeSequence,
+                          "Container Component Type Code Sequence",
+                          "ContainerComponentTypeCodeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ContainerComponentTypeCodeSequence",
+                      _tags[DicomTags.ContainerComponentTypeCodeSequence]);
+            _tags.Add(DicomTags.ContainerComponentThickness,
+                      new DicomTag(
+                          DicomTags.ContainerComponentThickness,
+                          "Container Component Thickness",
+                          "ContainerComponentThickness",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ContainerComponentThickness",
+                      _tags[DicomTags.ContainerComponentThickness]);
             _tags.Add(DicomTags.DeviceLength,
                       new DicomTag(
                           DicomTags.DeviceLength,
@@ -19745,6 +22358,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("DeviceLength",
                       _tags[DicomTags.DeviceLength]);
+            _tags.Add(DicomTags.ContainerComponentWidth,
+                      new DicomTag(
+                          DicomTags.ContainerComponentWidth,
+                          "Container Component Width",
+                          "ContainerComponentWidth",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ContainerComponentWidth",
+                      _tags[DicomTags.ContainerComponentWidth]);
             _tags.Add(DicomTags.DeviceDiameter,
                       new DicomTag(
                           DicomTags.DeviceDiameter,
@@ -19784,19 +22410,84 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("DeviceVolume",
                       _tags[DicomTags.DeviceVolume]);
-            _tags.Add(DicomTags.IntermarkerDistance,
+            _tags.Add(DicomTags.InterMarkerDistance,
                       new DicomTag(
-                          DicomTags.IntermarkerDistance,
-                          "Intermarker Distance",
-                          "IntermarkerDistance",
+                          DicomTags.InterMarkerDistance,
+                          "Inter-Marker Distance",
+                          "InterMarkerDistance",
                           DicomVr.DSvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tagNames.Add("IntermarkerDistance",
-                      _tags[DicomTags.IntermarkerDistance]);
+            _tagNames.Add("InterMarkerDistance",
+                      _tags[DicomTags.InterMarkerDistance]);
+            _tags.Add(DicomTags.ContainerComponentMaterial,
+                      new DicomTag(
+                          DicomTags.ContainerComponentMaterial,
+                          "Container Component Material",
+                          "ContainerComponentMaterial",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ContainerComponentMaterial",
+                      _tags[DicomTags.ContainerComponentMaterial]);
+            _tags.Add(DicomTags.ContainerComponentId,
+                      new DicomTag(
+                          DicomTags.ContainerComponentId,
+                          "Container Component ID",
+                          "ContainerComponentId",
+                          DicomVr.LOvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ContainerComponentId",
+                      _tags[DicomTags.ContainerComponentId]);
+            _tags.Add(DicomTags.ContainerComponentLength,
+                      new DicomTag(
+                          DicomTags.ContainerComponentLength,
+                          "Container Component Length",
+                          "ContainerComponentLength",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ContainerComponentLength",
+                      _tags[DicomTags.ContainerComponentLength]);
+            _tags.Add(DicomTags.ContainerComponentDiameter,
+                      new DicomTag(
+                          DicomTags.ContainerComponentDiameter,
+                          "Container Component Diameter",
+                          "ContainerComponentDiameter",
+                          DicomVr.FDvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ContainerComponentDiameter",
+                      _tags[DicomTags.ContainerComponentDiameter]);
+            _tags.Add(DicomTags.ContainerComponentDescription,
+                      new DicomTag(
+                          DicomTags.ContainerComponentDescription,
+                          "Container Component Description",
+                          "ContainerComponentDescription",
+                          DicomVr.LOvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ContainerComponentDescription",
+                      _tags[DicomTags.ContainerComponentDescription]);
             _tags.Add(DicomTags.DeviceDescription,
                       new DicomTag(
                           DicomTags.DeviceDescription,
@@ -21227,6 +23918,591 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("PostDeformationMatrixRegistrationSequence",
                       _tags[DicomTags.PostDeformationMatrixRegistrationSequence]);
+            _tags.Add(DicomTags.NumberOfSurfaces,
+                      new DicomTag(
+                          DicomTags.NumberOfSurfaces,
+                          "Number of Surfaces",
+                          "NumberOfSurfaces",
+                          DicomVr.ULvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("NumberOfSurfaces",
+                      _tags[DicomTags.NumberOfSurfaces]);
+            _tags.Add(DicomTags.SurfaceSequence,
+                      new DicomTag(
+                          DicomTags.SurfaceSequence,
+                          "Surface Sequence",
+                          "SurfaceSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SurfaceSequence",
+                      _tags[DicomTags.SurfaceSequence]);
+            _tags.Add(DicomTags.SurfaceNumber,
+                      new DicomTag(
+                          DicomTags.SurfaceNumber,
+                          "Surface Number",
+                          "SurfaceNumber",
+                          DicomVr.ULvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SurfaceNumber",
+                      _tags[DicomTags.SurfaceNumber]);
+            _tags.Add(DicomTags.SurfaceComments,
+                      new DicomTag(
+                          DicomTags.SurfaceComments,
+                          "Surface Comments",
+                          "SurfaceComments",
+                          DicomVr.LTvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SurfaceComments",
+                      _tags[DicomTags.SurfaceComments]);
+            _tags.Add(DicomTags.SurfaceProcessing,
+                      new DicomTag(
+                          DicomTags.SurfaceProcessing,
+                          "Surface Processing",
+                          "SurfaceProcessing",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SurfaceProcessing",
+                      _tags[DicomTags.SurfaceProcessing]);
+            _tags.Add(DicomTags.SurfaceProcessingRatio,
+                      new DicomTag(
+                          DicomTags.SurfaceProcessingRatio,
+                          "Surface Processing Ratio",
+                          "SurfaceProcessingRatio",
+                          DicomVr.FLvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SurfaceProcessingRatio",
+                      _tags[DicomTags.SurfaceProcessingRatio]);
+            _tags.Add(DicomTags.SurfaceProcessingDescription,
+                      new DicomTag(
+                          DicomTags.SurfaceProcessingDescription,
+                          "Surface Processing Description",
+                          "SurfaceProcessingDescription",
+                          DicomVr.LOvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SurfaceProcessingDescription",
+                      _tags[DicomTags.SurfaceProcessingDescription]);
+            _tags.Add(DicomTags.RecommendedPresentationOpacity,
+                      new DicomTag(
+                          DicomTags.RecommendedPresentationOpacity,
+                          "Recommended Presentation Opacity",
+                          "RecommendedPresentationOpacity",
+                          DicomVr.FLvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RecommendedPresentationOpacity",
+                      _tags[DicomTags.RecommendedPresentationOpacity]);
+            _tags.Add(DicomTags.RecommendedPresentationType,
+                      new DicomTag(
+                          DicomTags.RecommendedPresentationType,
+                          "Recommended Presentation Type",
+                          "RecommendedPresentationType",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RecommendedPresentationType",
+                      _tags[DicomTags.RecommendedPresentationType]);
+            _tags.Add(DicomTags.FiniteVolume,
+                      new DicomTag(
+                          DicomTags.FiniteVolume,
+                          "Finite Volume",
+                          "FiniteVolume",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("FiniteVolume",
+                      _tags[DicomTags.FiniteVolume]);
+            _tags.Add(DicomTags.Manifold,
+                      new DicomTag(
+                          DicomTags.Manifold,
+                          "Manifold",
+                          "Manifold",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("Manifold",
+                      _tags[DicomTags.Manifold]);
+            _tags.Add(DicomTags.SurfacePointsSequence,
+                      new DicomTag(
+                          DicomTags.SurfacePointsSequence,
+                          "Surface Points Sequence",
+                          "SurfacePointsSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SurfacePointsSequence",
+                      _tags[DicomTags.SurfacePointsSequence]);
+            _tags.Add(DicomTags.SurfacePointsNormalsSequence,
+                      new DicomTag(
+                          DicomTags.SurfacePointsNormalsSequence,
+                          "Surface Points Normals Sequence",
+                          "SurfacePointsNormalsSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SurfacePointsNormalsSequence",
+                      _tags[DicomTags.SurfacePointsNormalsSequence]);
+            _tags.Add(DicomTags.SurfaceMeshPrimitivesSequence,
+                      new DicomTag(
+                          DicomTags.SurfaceMeshPrimitivesSequence,
+                          "Surface Mesh Primitives Sequence",
+                          "SurfaceMeshPrimitivesSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SurfaceMeshPrimitivesSequence",
+                      _tags[DicomTags.SurfaceMeshPrimitivesSequence]);
+            _tags.Add(DicomTags.NumberOfSurfacePoints,
+                      new DicomTag(
+                          DicomTags.NumberOfSurfacePoints,
+                          "Number of Surface Points",
+                          "NumberOfSurfacePoints",
+                          DicomVr.ULvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("NumberOfSurfacePoints",
+                      _tags[DicomTags.NumberOfSurfacePoints]);
+            _tags.Add(DicomTags.PointCoordinatesData,
+                      new DicomTag(
+                          DicomTags.PointCoordinatesData,
+                          "Point Coordinates Data",
+                          "PointCoordinatesData",
+                          DicomVr.OFvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PointCoordinatesData",
+                      _tags[DicomTags.PointCoordinatesData]);
+            _tags.Add(DicomTags.PointPositionAccuracy,
+                      new DicomTag(
+                          DicomTags.PointPositionAccuracy,
+                          "Point Position Accuracy",
+                          "PointPositionAccuracy",
+                          DicomVr.FLvr,
+                          false, //isMultiVrTag
+                          3, // vmLow
+                          3, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PointPositionAccuracy",
+                      _tags[DicomTags.PointPositionAccuracy]);
+            _tags.Add(DicomTags.MeanPointDistance,
+                      new DicomTag(
+                          DicomTags.MeanPointDistance,
+                          "Mean Point Distance",
+                          "MeanPointDistance",
+                          DicomVr.FLvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("MeanPointDistance",
+                      _tags[DicomTags.MeanPointDistance]);
+            _tags.Add(DicomTags.MaximumPointDistance,
+                      new DicomTag(
+                          DicomTags.MaximumPointDistance,
+                          "Maximum Point Distance",
+                          "MaximumPointDistance",
+                          DicomVr.FLvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("MaximumPointDistance",
+                      _tags[DicomTags.MaximumPointDistance]);
+            _tags.Add(DicomTags.PointsBoundingBoxCoordinates,
+                      new DicomTag(
+                          DicomTags.PointsBoundingBoxCoordinates,
+                          "Points Bounding Box Coordinates",
+                          "PointsBoundingBoxCoordinates",
+                          DicomVr.FLvr,
+                          false, //isMultiVrTag
+                          6, // vmLow
+                          6, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PointsBoundingBoxCoordinates",
+                      _tags[DicomTags.PointsBoundingBoxCoordinates]);
+            _tags.Add(DicomTags.AxisOfRotation,
+                      new DicomTag(
+                          DicomTags.AxisOfRotation,
+                          "Axis of Rotation",
+                          "AxisOfRotation",
+                          DicomVr.FLvr,
+                          false, //isMultiVrTag
+                          3, // vmLow
+                          3, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AxisOfRotation",
+                      _tags[DicomTags.AxisOfRotation]);
+            _tags.Add(DicomTags.CenterOfRotation,
+                      new DicomTag(
+                          DicomTags.CenterOfRotation,
+                          "Center of Rotation",
+                          "CenterOfRotation",
+                          DicomVr.FLvr,
+                          false, //isMultiVrTag
+                          3, // vmLow
+                          3, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("CenterOfRotation",
+                      _tags[DicomTags.CenterOfRotation]);
+            _tags.Add(DicomTags.NumberOfVectors,
+                      new DicomTag(
+                          DicomTags.NumberOfVectors,
+                          "Number of Vectors",
+                          "NumberOfVectors",
+                          DicomVr.ULvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("NumberOfVectors",
+                      _tags[DicomTags.NumberOfVectors]);
+            _tags.Add(DicomTags.VectorDimensionality,
+                      new DicomTag(
+                          DicomTags.VectorDimensionality,
+                          "Vector Dimensionality",
+                          "VectorDimensionality",
+                          DicomVr.USvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("VectorDimensionality",
+                      _tags[DicomTags.VectorDimensionality]);
+            _tags.Add(DicomTags.VectorAccuracy,
+                      new DicomTag(
+                          DicomTags.VectorAccuracy,
+                          "Vector Accuracy",
+                          "VectorAccuracy",
+                          DicomVr.FLvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          4294967295, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("VectorAccuracy",
+                      _tags[DicomTags.VectorAccuracy]);
+            _tags.Add(DicomTags.VectorCoordinateData,
+                      new DicomTag(
+                          DicomTags.VectorCoordinateData,
+                          "Vector Coordinate Data",
+                          "VectorCoordinateData",
+                          DicomVr.OFvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("VectorCoordinateData",
+                      _tags[DicomTags.VectorCoordinateData]);
+            _tags.Add(DicomTags.TrianglePointIndexList,
+                      new DicomTag(
+                          DicomTags.TrianglePointIndexList,
+                          "Triangle Point Index List",
+                          "TrianglePointIndexList",
+                          DicomVr.OWvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TrianglePointIndexList",
+                      _tags[DicomTags.TrianglePointIndexList]);
+            _tags.Add(DicomTags.EdgePointIndexList,
+                      new DicomTag(
+                          DicomTags.EdgePointIndexList,
+                          "Edge Point Index List",
+                          "EdgePointIndexList",
+                          DicomVr.OWvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("EdgePointIndexList",
+                      _tags[DicomTags.EdgePointIndexList]);
+            _tags.Add(DicomTags.VertexPointIndexList,
+                      new DicomTag(
+                          DicomTags.VertexPointIndexList,
+                          "Vertex Point Index List",
+                          "VertexPointIndexList",
+                          DicomVr.OWvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("VertexPointIndexList",
+                      _tags[DicomTags.VertexPointIndexList]);
+            _tags.Add(DicomTags.TriangleStripSequence,
+                      new DicomTag(
+                          DicomTags.TriangleStripSequence,
+                          "Triangle Strip Sequence",
+                          "TriangleStripSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TriangleStripSequence",
+                      _tags[DicomTags.TriangleStripSequence]);
+            _tags.Add(DicomTags.TriangleFanSequence,
+                      new DicomTag(
+                          DicomTags.TriangleFanSequence,
+                          "Triangle Fan Sequence",
+                          "TriangleFanSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TriangleFanSequence",
+                      _tags[DicomTags.TriangleFanSequence]);
+            _tags.Add(DicomTags.LineSequence,
+                      new DicomTag(
+                          DicomTags.LineSequence,
+                          "Line Sequence",
+                          "LineSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("LineSequence",
+                      _tags[DicomTags.LineSequence]);
+            _tags.Add(DicomTags.PrimitivePointIndexList,
+                      new DicomTag(
+                          DicomTags.PrimitivePointIndexList,
+                          "Primitive Point Index List",
+                          "PrimitivePointIndexList",
+                          DicomVr.OWvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PrimitivePointIndexList",
+                      _tags[DicomTags.PrimitivePointIndexList]);
+            _tags.Add(DicomTags.SurfaceCount,
+                      new DicomTag(
+                          DicomTags.SurfaceCount,
+                          "Surface Count",
+                          "SurfaceCount",
+                          DicomVr.ULvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SurfaceCount",
+                      _tags[DicomTags.SurfaceCount]);
+            _tags.Add(DicomTags.ReferencedSurfaceSequence,
+                      new DicomTag(
+                          DicomTags.ReferencedSurfaceSequence,
+                          "Referenced Surface Sequence",
+                          "ReferencedSurfaceSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ReferencedSurfaceSequence",
+                      _tags[DicomTags.ReferencedSurfaceSequence]);
+            _tags.Add(DicomTags.ReferencedSurfaceNumber,
+                      new DicomTag(
+                          DicomTags.ReferencedSurfaceNumber,
+                          "Referenced Surface Number",
+                          "ReferencedSurfaceNumber",
+                          DicomVr.ULvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ReferencedSurfaceNumber",
+                      _tags[DicomTags.ReferencedSurfaceNumber]);
+            _tags.Add(DicomTags.SegmentSurfaceGenerationAlgorithmIdentificationSequence,
+                      new DicomTag(
+                          DicomTags.SegmentSurfaceGenerationAlgorithmIdentificationSequence,
+                          "Segment Surface Generation Algorithm Identification Sequence",
+                          "SegmentSurfaceGenerationAlgorithmIdentificationSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SegmentSurfaceGenerationAlgorithmIdentificationSequence",
+                      _tags[DicomTags.SegmentSurfaceGenerationAlgorithmIdentificationSequence]);
+            _tags.Add(DicomTags.SegmentSurfaceSourceInstanceSequence,
+                      new DicomTag(
+                          DicomTags.SegmentSurfaceSourceInstanceSequence,
+                          "Segment Surface Source Instance Sequence",
+                          "SegmentSurfaceSourceInstanceSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SegmentSurfaceSourceInstanceSequence",
+                      _tags[DicomTags.SegmentSurfaceSourceInstanceSequence]);
+            _tags.Add(DicomTags.AlgorithmFamilyCodeSequence,
+                      new DicomTag(
+                          DicomTags.AlgorithmFamilyCodeSequence,
+                          "Algorithm Family Code Sequence",
+                          "AlgorithmFamilyCodeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AlgorithmFamilyCodeSequence",
+                      _tags[DicomTags.AlgorithmFamilyCodeSequence]);
+            _tags.Add(DicomTags.AlgorithmNameCodeSequence,
+                      new DicomTag(
+                          DicomTags.AlgorithmNameCodeSequence,
+                          "Algorithm Name Code Sequence",
+                          "AlgorithmNameCodeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AlgorithmNameCodeSequence",
+                      _tags[DicomTags.AlgorithmNameCodeSequence]);
+            _tags.Add(DicomTags.AlgorithmVersion,
+                      new DicomTag(
+                          DicomTags.AlgorithmVersion,
+                          "Algorithm Version",
+                          "AlgorithmVersion",
+                          DicomVr.LOvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AlgorithmVersion",
+                      _tags[DicomTags.AlgorithmVersion]);
+            _tags.Add(DicomTags.AlgorithmParameters,
+                      new DicomTag(
+                          DicomTags.AlgorithmParameters,
+                          "Algorithm Parameters",
+                          "AlgorithmParameters",
+                          DicomVr.LTvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AlgorithmParameters",
+                      _tags[DicomTags.AlgorithmParameters]);
+            _tags.Add(DicomTags.FacetSequence,
+                      new DicomTag(
+                          DicomTags.FacetSequence,
+                          "Facet Sequence",
+                          "FacetSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("FacetSequence",
+                      _tags[DicomTags.FacetSequence]);
+            _tags.Add(DicomTags.SurfaceProcessingAlgorithmIdentificationSequence,
+                      new DicomTag(
+                          DicomTags.SurfaceProcessingAlgorithmIdentificationSequence,
+                          "Surface Processing Algorithm Identification Sequence",
+                          "SurfaceProcessingAlgorithmIdentificationSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SurfaceProcessingAlgorithmIdentificationSequence",
+                      _tags[DicomTags.SurfaceProcessingAlgorithmIdentificationSequence]);
+            _tags.Add(DicomTags.AlgorithmName,
+                      new DicomTag(
+                          DicomTags.AlgorithmName,
+                          "Algorithm Name",
+                          "AlgorithmName",
+                          DicomVr.LOvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AlgorithmName",
+                      _tags[DicomTags.AlgorithmName]);
             _tags.Add(DicomTags.GraphicAnnotationSequence,
                       new DicomTag(
                           DicomTags.GraphicAnnotationSequence,
@@ -21464,7 +24740,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.ImageRotationRetired,
                       new DicomTag(
                           DicomTags.ImageRotationRetired,
-                          "Image Rotation ",
+                          "Image Rotation (Retired)",
                           "ImageRotationRetired",
                           DicomVr.ISvr,
                           false, //isMultiVrTag
@@ -21708,6 +24984,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("ContentCreatorsIdentificationCodeSequence",
                       _tags[DicomTags.ContentCreatorsIdentificationCodeSequence]);
+            _tags.Add(DicomTags.AlternateContentDescriptionSequence,
+                      new DicomTag(
+                          DicomTags.AlternateContentDescriptionSequence,
+                          "Alternate Content Description Sequence",
+                          "AlternateContentDescriptionSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("AlternateContentDescriptionSequence",
+                      _tags[DicomTags.AlternateContentDescriptionSequence]);
             _tags.Add(DicomTags.PresentationSizeMode,
                       new DicomTag(
                           DicomTags.PresentationSizeMode,
@@ -23047,6 +26336,110 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("FilterByOperator",
                       _tags[DicomTags.FilterByOperator]);
+            _tags.Add(DicomTags.StructuredDisplayBackgroundCielabValue,
+                      new DicomTag(
+                          DicomTags.StructuredDisplayBackgroundCielabValue,
+                          "Structured Display Background CIELab Value",
+                          "StructuredDisplayBackgroundCielabValue",
+                          DicomVr.USvr,
+                          false, //isMultiVrTag
+                          3, // vmLow
+                          3, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("StructuredDisplayBackgroundCielabValue",
+                      _tags[DicomTags.StructuredDisplayBackgroundCielabValue]);
+            _tags.Add(DicomTags.EmptyImageBoxCielabValue,
+                      new DicomTag(
+                          DicomTags.EmptyImageBoxCielabValue,
+                          "Empty Image Box CIELab Value",
+                          "EmptyImageBoxCielabValue",
+                          DicomVr.USvr,
+                          false, //isMultiVrTag
+                          3, // vmLow
+                          3, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("EmptyImageBoxCielabValue",
+                      _tags[DicomTags.EmptyImageBoxCielabValue]);
+            _tags.Add(DicomTags.StructuredDisplayImageBoxSequence,
+                      new DicomTag(
+                          DicomTags.StructuredDisplayImageBoxSequence,
+                          "Structured Display Image Box Sequence",
+                          "StructuredDisplayImageBoxSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("StructuredDisplayImageBoxSequence",
+                      _tags[DicomTags.StructuredDisplayImageBoxSequence]);
+            _tags.Add(DicomTags.StructuredDisplayTextBoxSequence,
+                      new DicomTag(
+                          DicomTags.StructuredDisplayTextBoxSequence,
+                          "Structured Display Text Box Sequence",
+                          "StructuredDisplayTextBoxSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("StructuredDisplayTextBoxSequence",
+                      _tags[DicomTags.StructuredDisplayTextBoxSequence]);
+            _tags.Add(DicomTags.ReferencedFirstFrameSequence,
+                      new DicomTag(
+                          DicomTags.ReferencedFirstFrameSequence,
+                          "Referenced First Frame Sequence",
+                          "ReferencedFirstFrameSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ReferencedFirstFrameSequence",
+                      _tags[DicomTags.ReferencedFirstFrameSequence]);
+            _tags.Add(DicomTags.ImageBoxSynchronizationSequence,
+                      new DicomTag(
+                          DicomTags.ImageBoxSynchronizationSequence,
+                          "Image Box Synchronization Sequence",
+                          "ImageBoxSynchronizationSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ImageBoxSynchronizationSequence",
+                      _tags[DicomTags.ImageBoxSynchronizationSequence]);
+            _tags.Add(DicomTags.SynchronizedImageBoxList,
+                      new DicomTag(
+                          DicomTags.SynchronizedImageBoxList,
+                          "Synchronized Image Box List",
+                          "SynchronizedImageBoxList",
+                          DicomVr.USvr,
+                          false, //isMultiVrTag
+                          2, // vmLow
+                          4294967295, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SynchronizedImageBoxList",
+                      _tags[DicomTags.SynchronizedImageBoxList]);
+            _tags.Add(DicomTags.TypeOfSynchronization,
+                      new DicomTag(
+                          DicomTags.TypeOfSynchronization,
+                          "Type of Synchronization",
+                          "TypeOfSynchronization",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TypeOfSynchronization",
+                      _tags[DicomTags.TypeOfSynchronization]);
             _tags.Add(DicomTags.BlendingOperationType,
                       new DicomTag(
                           DicomTags.BlendingOperationType,
@@ -23112,19 +26505,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("ReformattingOperationInitialViewDirection",
                       _tags[DicomTags.ReformattingOperationInitialViewDirection]);
-            _tags.Add(DicomTags.Tag3dRenderingType,
+            _tags.Add(DicomTags.ThreeDRenderingType,
                       new DicomTag(
-                          DicomTags.Tag3dRenderingType,
+                          DicomTags.ThreeDRenderingType,
                           "3D Rendering Type",
-                          "Tag3dRenderingType",
+                          "ThreeDRenderingType",
                           DicomVr.CSvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           4294967295, // vmHigh
                           false // isRetired
                           ));
-            _tagNames.Add("Tag3dRenderingType",
-                      _tags[DicomTags.Tag3dRenderingType]);
+            _tagNames.Add("ThreeDRenderingType",
+                      _tags[DicomTags.ThreeDRenderingType]);
             _tags.Add(DicomTags.SortingOperationsSequence,
                       new DicomTag(
                           DicomTags.SortingOperationsSequence,
@@ -23193,7 +26586,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.PseudoColorType,
                       new DicomTag(
                           DicomTags.PseudoColorType,
-                          "Pseudo-color Type",
+                          "Pseudo-Color Type",
                           "PseudoColorType",
                           DicomVr.CSvr,
                           false, //isMultiVrTag
@@ -23307,19 +26700,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("UnifiedProcedureStepState",
                       _tags[DicomTags.UnifiedProcedureStepState]);
-            _tags.Add(DicomTags.UpsProgressInformationSequence,
+            _tags.Add(DicomTags.UnifiedProcedureStepProgressInformationSequence,
                       new DicomTag(
-                          DicomTags.UpsProgressInformationSequence,
-                          "UPS Progress Information Sequence",
-                          "UpsProgressInformationSequence",
+                          DicomTags.UnifiedProcedureStepProgressInformationSequence,
+                          "Unified Procedure Step Progress Information Sequence",
+                          "UnifiedProcedureStepProgressInformationSequence",
                           DicomVr.SQvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tagNames.Add("UpsProgressInformationSequence",
-                      _tags[DicomTags.UpsProgressInformationSequence]);
+            _tagNames.Add("UnifiedProcedureStepProgressInformationSequence",
+                      _tags[DicomTags.UnifiedProcedureStepProgressInformationSequence]);
             _tags.Add(DicomTags.UnifiedProcedureStepProgress,
                       new DicomTag(
                           DicomTags.UnifiedProcedureStepProgress,
@@ -23575,7 +26968,7 @@ namespace ClearCanvas.Dicom
                           DicomVr.SQvr,
                           false, //isMultiVrTag
                           1, // vmLow
-                          4294967295, // vmHigh
+                          1, // vmHigh
                           false // isRetired
                           ));
             _tagNames.Add("FailedAttributesSequence",
@@ -23588,7 +26981,7 @@ namespace ClearCanvas.Dicom
                           DicomVr.SQvr,
                           false, //isMultiVrTag
                           1, // vmLow
-                          4294967295, // vmHigh
+                          1, // vmHigh
                           false // isRetired
                           ));
             _tagNames.Add("OverriddenAttributesSequence",
@@ -23627,7 +27020,7 @@ namespace ClearCanvas.Dicom
                           DicomVr.SQvr,
                           false, //isMultiVrTag
                           1, // vmLow
-                          4294967295, // vmHigh
+                          1, // vmHigh
                           false // isRetired
                           ));
             _tagNames.Add("AttributeOccurrenceSequence",
@@ -23736,19 +27129,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("PerformedProcessingParametersSequence",
                       _tags[DicomTags.PerformedProcessingParametersSequence]);
-            _tags.Add(DicomTags.UpsPerformedProcedureSequence,
+            _tags.Add(DicomTags.UnifiedProcedureStepPerformedProcedureSequence,
                       new DicomTag(
-                          DicomTags.UpsPerformedProcedureSequence,
-                          "UPS Performed Procedure Sequence",
-                          "UpsPerformedProcedureSequence",
+                          DicomTags.UnifiedProcedureStepPerformedProcedureSequence,
+                          "Unified Procedure Step Performed Procedure Sequence",
+                          "UnifiedProcedureStepPerformedProcedureSequence",
                           DicomVr.SQvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tagNames.Add("UpsPerformedProcedureSequence",
-                      _tags[DicomTags.UpsPerformedProcedureSequence]);
+            _tagNames.Add("UnifiedProcedureStepPerformedProcedureSequence",
+                      _tags[DicomTags.UnifiedProcedureStepPerformedProcedureSequence]);
             _tags.Add(DicomTags.RelatedProcedureStepSequence,
                       new DicomTag(
                           DicomTags.RelatedProcedureStepSequence,
@@ -23853,19 +27246,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("SubscriptionListStatus",
                       _tags[DicomTags.SubscriptionListStatus]);
-            _tags.Add(DicomTags.UpsListStatus,
+            _tags.Add(DicomTags.UnifiedProcedureStepListStatus,
                       new DicomTag(
-                          DicomTags.UpsListStatus,
-                          "UPS List Status",
-                          "UpsListStatus",
+                          DicomTags.UnifiedProcedureStepListStatus,
+                          "Unified Procedure Step List Status",
+                          "UnifiedProcedureStepListStatus",
                           DicomVr.CSvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tagNames.Add("UpsListStatus",
-                      _tags[DicomTags.UpsListStatus]);
+            _tagNames.Add("UnifiedProcedureStepListStatus",
+                      _tags[DicomTags.UnifiedProcedureStepListStatus]);
             _tags.Add(DicomTags.StorageMediaFileSetId,
                       new DicomTag(
                           DicomTags.StorageMediaFileSetId,
@@ -23970,19 +27363,19 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("SopInstanceStatus",
                       _tags[DicomTags.SopInstanceStatus]);
-            _tags.Add(DicomTags.SopAuthorizationDateAndTime,
+            _tags.Add(DicomTags.SopAuthorizationDatetime,
                       new DicomTag(
-                          DicomTags.SopAuthorizationDateAndTime,
-                          "SOP Authorization Date and Time",
-                          "SopAuthorizationDateAndTime",
+                          DicomTags.SopAuthorizationDatetime,
+                          "SOP Authorization DateTime",
+                          "SopAuthorizationDatetime",
                           DicomVr.DTvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tagNames.Add("SopAuthorizationDateAndTime",
-                      _tags[DicomTags.SopAuthorizationDateAndTime]);
+            _tagNames.Add("SopAuthorizationDatetime",
+                      _tags[DicomTags.SopAuthorizationDatetime]);
             _tags.Add(DicomTags.SopAuthorizationComment,
                       new DicomTag(
                           DicomTags.SopAuthorizationComment,
@@ -26128,6 +29521,45 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("FluenceDataScale",
                       _tags[DicomTags.FluenceDataScale]);
+            _tags.Add(DicomTags.PrimaryFluenceModeSequence,
+                      new DicomTag(
+                          DicomTags.PrimaryFluenceModeSequence,
+                          "Primary Fluence Mode Sequence",
+                          "PrimaryFluenceModeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("PrimaryFluenceModeSequence",
+                      _tags[DicomTags.PrimaryFluenceModeSequence]);
+            _tags.Add(DicomTags.FluenceMode,
+                      new DicomTag(
+                          DicomTags.FluenceMode,
+                          "Fluence Mode",
+                          "FluenceMode",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("FluenceMode",
+                      _tags[DicomTags.FluenceMode]);
+            _tags.Add(DicomTags.FluenceModeId,
+                      new DicomTag(
+                          DicomTags.FluenceModeId,
+                          "Fluence Mode ID",
+                          "FluenceModeId",
+                          DicomVr.SHvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("FluenceModeId",
+                      _tags[DicomTags.FluenceModeId]);
             _tags.Add(DicomTags.DvhType,
                       new DicomTag(
                           DicomTags.DvhType,
@@ -27064,6 +30496,1189 @@ namespace ClearCanvas.Dicom
                           ));
             _tagNames.Add("FrameOfReferenceTransformationComment",
                       _tags[DicomTags.FrameOfReferenceTransformationComment]);
+            _tags.Add(DicomTags.MeasuredDoseReferenceSequence,
+                      new DicomTag(
+                          DicomTags.MeasuredDoseReferenceSequence,
+                          "Measured Dose Reference Sequence",
+                          "MeasuredDoseReferenceSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("MeasuredDoseReferenceSequence",
+                      _tags[DicomTags.MeasuredDoseReferenceSequence]);
+            _tags.Add(DicomTags.MeasuredDoseDescription,
+                      new DicomTag(
+                          DicomTags.MeasuredDoseDescription,
+                          "Measured Dose Description",
+                          "MeasuredDoseDescription",
+                          DicomVr.STvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("MeasuredDoseDescription",
+                      _tags[DicomTags.MeasuredDoseDescription]);
+            _tags.Add(DicomTags.MeasuredDoseType,
+                      new DicomTag(
+                          DicomTags.MeasuredDoseType,
+                          "Measured Dose Type",
+                          "MeasuredDoseType",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("MeasuredDoseType",
+                      _tags[DicomTags.MeasuredDoseType]);
+            _tags.Add(DicomTags.MeasuredDoseValue,
+                      new DicomTag(
+                          DicomTags.MeasuredDoseValue,
+                          "Measured Dose Value",
+                          "MeasuredDoseValue",
+                          DicomVr.DSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("MeasuredDoseValue",
+                      _tags[DicomTags.MeasuredDoseValue]);
+            _tags.Add(DicomTags.TreatmentSessionBeamSequence,
+                      new DicomTag(
+                          DicomTags.TreatmentSessionBeamSequence,
+                          "Treatment Session Beam Sequence",
+                          "TreatmentSessionBeamSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TreatmentSessionBeamSequence",
+                      _tags[DicomTags.TreatmentSessionBeamSequence]);
+            _tags.Add(DicomTags.TreatmentSessionIonBeamSequence,
+                      new DicomTag(
+                          DicomTags.TreatmentSessionIonBeamSequence,
+                          "Treatment Session Ion Beam Sequence",
+                          "TreatmentSessionIonBeamSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TreatmentSessionIonBeamSequence",
+                      _tags[DicomTags.TreatmentSessionIonBeamSequence]);
+            _tags.Add(DicomTags.CurrentFractionNumber,
+                      new DicomTag(
+                          DicomTags.CurrentFractionNumber,
+                          "Current Fraction Number",
+                          "CurrentFractionNumber",
+                          DicomVr.ISvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("CurrentFractionNumber",
+                      _tags[DicomTags.CurrentFractionNumber]);
+            _tags.Add(DicomTags.TreatmentControlPointDate,
+                      new DicomTag(
+                          DicomTags.TreatmentControlPointDate,
+                          "Treatment Control Point Date",
+                          "TreatmentControlPointDate",
+                          DicomVr.DAvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TreatmentControlPointDate",
+                      _tags[DicomTags.TreatmentControlPointDate]);
+            _tags.Add(DicomTags.TreatmentControlPointTime,
+                      new DicomTag(
+                          DicomTags.TreatmentControlPointTime,
+                          "Treatment Control Point Time",
+                          "TreatmentControlPointTime",
+                          DicomVr.TMvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TreatmentControlPointTime",
+                      _tags[DicomTags.TreatmentControlPointTime]);
+            _tags.Add(DicomTags.TreatmentTerminationStatus,
+                      new DicomTag(
+                          DicomTags.TreatmentTerminationStatus,
+                          "Treatment Termination Status",
+                          "TreatmentTerminationStatus",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TreatmentTerminationStatus",
+                      _tags[DicomTags.TreatmentTerminationStatus]);
+            _tags.Add(DicomTags.TreatmentTerminationCode,
+                      new DicomTag(
+                          DicomTags.TreatmentTerminationCode,
+                          "Treatment Termination Code",
+                          "TreatmentTerminationCode",
+                          DicomVr.SHvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TreatmentTerminationCode",
+                      _tags[DicomTags.TreatmentTerminationCode]);
+            _tags.Add(DicomTags.TreatmentVerificationStatus,
+                      new DicomTag(
+                          DicomTags.TreatmentVerificationStatus,
+                          "Treatment Verification Status",
+                          "TreatmentVerificationStatus",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TreatmentVerificationStatus",
+                      _tags[DicomTags.TreatmentVerificationStatus]);
+            _tags.Add(DicomTags.ReferencedTreatmentRecordSequence,
+                      new DicomTag(
+                          DicomTags.ReferencedTreatmentRecordSequence,
+                          "Referenced Treatment Record Sequence",
+                          "ReferencedTreatmentRecordSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ReferencedTreatmentRecordSequence",
+                      _tags[DicomTags.ReferencedTreatmentRecordSequence]);
+            _tags.Add(DicomTags.SpecifiedPrimaryMeterset,
+                      new DicomTag(
+                          DicomTags.SpecifiedPrimaryMeterset,
+                          "Specified Primary Meterset ",
+                          "SpecifiedPrimaryMeterset",
+                          DicomVr.DSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SpecifiedPrimaryMeterset",
+                      _tags[DicomTags.SpecifiedPrimaryMeterset]);
+            _tags.Add(DicomTags.SpecifiedSecondaryMeterset,
+                      new DicomTag(
+                          DicomTags.SpecifiedSecondaryMeterset,
+                          "Specified Secondary Meterset ",
+                          "SpecifiedSecondaryMeterset",
+                          DicomVr.DSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SpecifiedSecondaryMeterset",
+                      _tags[DicomTags.SpecifiedSecondaryMeterset]);
+            _tags.Add(DicomTags.DeliveredPrimaryMeterset,
+                      new DicomTag(
+                          DicomTags.DeliveredPrimaryMeterset,
+                          "Delivered Primary Meterset ",
+                          "DeliveredPrimaryMeterset",
+                          DicomVr.DSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("DeliveredPrimaryMeterset",
+                      _tags[DicomTags.DeliveredPrimaryMeterset]);
+            _tags.Add(DicomTags.DeliveredSecondaryMeterset,
+                      new DicomTag(
+                          DicomTags.DeliveredSecondaryMeterset,
+                          "Delivered Secondary Meterset ",
+                          "DeliveredSecondaryMeterset",
+                          DicomVr.DSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("DeliveredSecondaryMeterset",
+                      _tags[DicomTags.DeliveredSecondaryMeterset]);
+            _tags.Add(DicomTags.SpecifiedTreatmentTime,
+                      new DicomTag(
+                          DicomTags.SpecifiedTreatmentTime,
+                          "Specified Treatment Time",
+                          "SpecifiedTreatmentTime",
+                          DicomVr.DSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SpecifiedTreatmentTime",
+                      _tags[DicomTags.SpecifiedTreatmentTime]);
+            _tags.Add(DicomTags.DeliveredTreatmentTime,
+                      new DicomTag(
+                          DicomTags.DeliveredTreatmentTime,
+                          "Delivered Treatment Time",
+                          "DeliveredTreatmentTime",
+                          DicomVr.DSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("DeliveredTreatmentTime",
+                      _tags[DicomTags.DeliveredTreatmentTime]);
+            _tags.Add(DicomTags.ControlPointDeliverySequence,
+                      new DicomTag(
+                          DicomTags.ControlPointDeliverySequence,
+                          "Control Point Delivery Sequence",
+                          "ControlPointDeliverySequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ControlPointDeliverySequence",
+                      _tags[DicomTags.ControlPointDeliverySequence]);
+            _tags.Add(DicomTags.IonControlPointDeliverySequence,
+                      new DicomTag(
+                          DicomTags.IonControlPointDeliverySequence,
+                          "Ion Control Point Delivery Sequence",
+                          "IonControlPointDeliverySequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("IonControlPointDeliverySequence",
+                      _tags[DicomTags.IonControlPointDeliverySequence]);
+            _tags.Add(DicomTags.SpecifiedMeterset,
+                      new DicomTag(
+                          DicomTags.SpecifiedMeterset,
+                          "Specified Meterset",
+                          "SpecifiedMeterset",
+                          DicomVr.DSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SpecifiedMeterset",
+                      _tags[DicomTags.SpecifiedMeterset]);
+            _tags.Add(DicomTags.DeliveredMeterset,
+                      new DicomTag(
+                          DicomTags.DeliveredMeterset,
+                          "Delivered Meterset",
+                          "DeliveredMeterset",
+                          DicomVr.DSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("DeliveredMeterset",
+                      _tags[DicomTags.DeliveredMeterset]);
+            _tags.Add(DicomTags.MetersetRateSet,
+                      new DicomTag(
+                          DicomTags.MetersetRateSet,
+                          "Meterset Rate Set",
+                          "MetersetRateSet",
+                          DicomVr.FLvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("MetersetRateSet",
+                      _tags[DicomTags.MetersetRateSet]);
+            _tags.Add(DicomTags.MetersetRateDelivered,
+                      new DicomTag(
+                          DicomTags.MetersetRateDelivered,
+                          "Meterset Rate Delivered",
+                          "MetersetRateDelivered",
+                          DicomVr.FLvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("MetersetRateDelivered",
+                      _tags[DicomTags.MetersetRateDelivered]);
+            _tags.Add(DicomTags.ScanSpotMetersetsDelivered,
+                      new DicomTag(
+                          DicomTags.ScanSpotMetersetsDelivered,
+                          "Scan Spot Metersets Delivered",
+                          "ScanSpotMetersetsDelivered",
+                          DicomVr.FLvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          4294967295, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ScanSpotMetersetsDelivered",
+                      _tags[DicomTags.ScanSpotMetersetsDelivered]);
+            _tags.Add(DicomTags.DoseRateDelivered,
+                      new DicomTag(
+                          DicomTags.DoseRateDelivered,
+                          "Dose Rate Delivered",
+                          "DoseRateDelivered",
+                          DicomVr.DSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("DoseRateDelivered",
+                      _tags[DicomTags.DoseRateDelivered]);
+            _tags.Add(DicomTags.TreatmentSummaryCalculatedDoseReferenceSequence,
+                      new DicomTag(
+                          DicomTags.TreatmentSummaryCalculatedDoseReferenceSequence,
+                          "Treatment Summary Calculated Dose Reference Sequence",
+                          "TreatmentSummaryCalculatedDoseReferenceSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TreatmentSummaryCalculatedDoseReferenceSequence",
+                      _tags[DicomTags.TreatmentSummaryCalculatedDoseReferenceSequence]);
+            _tags.Add(DicomTags.CumulativeDoseToDoseReference,
+                      new DicomTag(
+                          DicomTags.CumulativeDoseToDoseReference,
+                          "Cumulative Dose to Dose Reference",
+                          "CumulativeDoseToDoseReference",
+                          DicomVr.DSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("CumulativeDoseToDoseReference",
+                      _tags[DicomTags.CumulativeDoseToDoseReference]);
+            _tags.Add(DicomTags.FirstTreatmentDate,
+                      new DicomTag(
+                          DicomTags.FirstTreatmentDate,
+                          "First Treatment Date",
+                          "FirstTreatmentDate",
+                          DicomVr.DAvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("FirstTreatmentDate",
+                      _tags[DicomTags.FirstTreatmentDate]);
+            _tags.Add(DicomTags.MostRecentTreatmentDate,
+                      new DicomTag(
+                          DicomTags.MostRecentTreatmentDate,
+                          "Most Recent Treatment Date",
+                          "MostRecentTreatmentDate",
+                          DicomVr.DAvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("MostRecentTreatmentDate",
+                      _tags[DicomTags.MostRecentTreatmentDate]);
+            _tags.Add(DicomTags.NumberOfFractionsDelivered,
+                      new DicomTag(
+                          DicomTags.NumberOfFractionsDelivered,
+                          "Number of Fractions Delivered",
+                          "NumberOfFractionsDelivered",
+                          DicomVr.ISvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("NumberOfFractionsDelivered",
+                      _tags[DicomTags.NumberOfFractionsDelivered]);
+            _tags.Add(DicomTags.OverrideSequence,
+                      new DicomTag(
+                          DicomTags.OverrideSequence,
+                          "Override Sequence",
+                          "OverrideSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("OverrideSequence",
+                      _tags[DicomTags.OverrideSequence]);
+            _tags.Add(DicomTags.ParameterSequencePointer,
+                      new DicomTag(
+                          DicomTags.ParameterSequencePointer,
+                          "Parameter Sequence Pointer",
+                          "ParameterSequencePointer",
+                          DicomVr.ATvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ParameterSequencePointer",
+                      _tags[DicomTags.ParameterSequencePointer]);
+            _tags.Add(DicomTags.OverrideParameterPointer,
+                      new DicomTag(
+                          DicomTags.OverrideParameterPointer,
+                          "Override Parameter Pointer",
+                          "OverrideParameterPointer",
+                          DicomVr.ATvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("OverrideParameterPointer",
+                      _tags[DicomTags.OverrideParameterPointer]);
+            _tags.Add(DicomTags.ParameterItemIndex,
+                      new DicomTag(
+                          DicomTags.ParameterItemIndex,
+                          "Parameter Item Index",
+                          "ParameterItemIndex",
+                          DicomVr.ISvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ParameterItemIndex",
+                      _tags[DicomTags.ParameterItemIndex]);
+            _tags.Add(DicomTags.MeasuredDoseReferenceNumber,
+                      new DicomTag(
+                          DicomTags.MeasuredDoseReferenceNumber,
+                          "Measured Dose Reference Number",
+                          "MeasuredDoseReferenceNumber",
+                          DicomVr.ISvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("MeasuredDoseReferenceNumber",
+                      _tags[DicomTags.MeasuredDoseReferenceNumber]);
+            _tags.Add(DicomTags.ParameterPointer,
+                      new DicomTag(
+                          DicomTags.ParameterPointer,
+                          "Parameter Pointer",
+                          "ParameterPointer",
+                          DicomVr.ATvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ParameterPointer",
+                      _tags[DicomTags.ParameterPointer]);
+            _tags.Add(DicomTags.OverrideReason,
+                      new DicomTag(
+                          DicomTags.OverrideReason,
+                          "Override Reason",
+                          "OverrideReason",
+                          DicomVr.STvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("OverrideReason",
+                      _tags[DicomTags.OverrideReason]);
+            _tags.Add(DicomTags.CorrectedParameterSequence,
+                      new DicomTag(
+                          DicomTags.CorrectedParameterSequence,
+                          "Corrected Parameter Sequence",
+                          "CorrectedParameterSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("CorrectedParameterSequence",
+                      _tags[DicomTags.CorrectedParameterSequence]);
+            _tags.Add(DicomTags.CorrectionValue,
+                      new DicomTag(
+                          DicomTags.CorrectionValue,
+                          "Correction Value",
+                          "CorrectionValue",
+                          DicomVr.FLvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("CorrectionValue",
+                      _tags[DicomTags.CorrectionValue]);
+            _tags.Add(DicomTags.CalculatedDoseReferenceSequence,
+                      new DicomTag(
+                          DicomTags.CalculatedDoseReferenceSequence,
+                          "Calculated Dose Reference Sequence",
+                          "CalculatedDoseReferenceSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("CalculatedDoseReferenceSequence",
+                      _tags[DicomTags.CalculatedDoseReferenceSequence]);
+            _tags.Add(DicomTags.CalculatedDoseReferenceNumber,
+                      new DicomTag(
+                          DicomTags.CalculatedDoseReferenceNumber,
+                          "Calculated Dose Reference Number",
+                          "CalculatedDoseReferenceNumber",
+                          DicomVr.ISvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("CalculatedDoseReferenceNumber",
+                      _tags[DicomTags.CalculatedDoseReferenceNumber]);
+            _tags.Add(DicomTags.CalculatedDoseReferenceDescription,
+                      new DicomTag(
+                          DicomTags.CalculatedDoseReferenceDescription,
+                          "Calculated Dose Reference Description",
+                          "CalculatedDoseReferenceDescription",
+                          DicomVr.STvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("CalculatedDoseReferenceDescription",
+                      _tags[DicomTags.CalculatedDoseReferenceDescription]);
+            _tags.Add(DicomTags.CalculatedDoseReferenceDoseValue,
+                      new DicomTag(
+                          DicomTags.CalculatedDoseReferenceDoseValue,
+                          "Calculated Dose Reference Dose Value",
+                          "CalculatedDoseReferenceDoseValue",
+                          DicomVr.DSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("CalculatedDoseReferenceDoseValue",
+                      _tags[DicomTags.CalculatedDoseReferenceDoseValue]);
+            _tags.Add(DicomTags.StartMeterset,
+                      new DicomTag(
+                          DicomTags.StartMeterset,
+                          "Start Meterset",
+                          "StartMeterset",
+                          DicomVr.DSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("StartMeterset",
+                      _tags[DicomTags.StartMeterset]);
+            _tags.Add(DicomTags.EndMeterset,
+                      new DicomTag(
+                          DicomTags.EndMeterset,
+                          "End Meterset",
+                          "EndMeterset",
+                          DicomVr.DSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("EndMeterset",
+                      _tags[DicomTags.EndMeterset]);
+            _tags.Add(DicomTags.ReferencedMeasuredDoseReferenceSequence,
+                      new DicomTag(
+                          DicomTags.ReferencedMeasuredDoseReferenceSequence,
+                          "Referenced Measured Dose Reference Sequence",
+                          "ReferencedMeasuredDoseReferenceSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ReferencedMeasuredDoseReferenceSequence",
+                      _tags[DicomTags.ReferencedMeasuredDoseReferenceSequence]);
+            _tags.Add(DicomTags.ReferencedMeasuredDoseReferenceNumber,
+                      new DicomTag(
+                          DicomTags.ReferencedMeasuredDoseReferenceNumber,
+                          "Referenced Measured Dose Reference Number",
+                          "ReferencedMeasuredDoseReferenceNumber",
+                          DicomVr.ISvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ReferencedMeasuredDoseReferenceNumber",
+                      _tags[DicomTags.ReferencedMeasuredDoseReferenceNumber]);
+            _tags.Add(DicomTags.ReferencedCalculatedDoseReferenceSequence,
+                      new DicomTag(
+                          DicomTags.ReferencedCalculatedDoseReferenceSequence,
+                          "Referenced Calculated Dose Reference Sequence",
+                          "ReferencedCalculatedDoseReferenceSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ReferencedCalculatedDoseReferenceSequence",
+                      _tags[DicomTags.ReferencedCalculatedDoseReferenceSequence]);
+            _tags.Add(DicomTags.ReferencedCalculatedDoseReferenceNumber,
+                      new DicomTag(
+                          DicomTags.ReferencedCalculatedDoseReferenceNumber,
+                          "Referenced Calculated Dose Reference Number",
+                          "ReferencedCalculatedDoseReferenceNumber",
+                          DicomVr.ISvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ReferencedCalculatedDoseReferenceNumber",
+                      _tags[DicomTags.ReferencedCalculatedDoseReferenceNumber]);
+            _tags.Add(DicomTags.BeamLimitingDeviceLeafPairsSequence,
+                      new DicomTag(
+                          DicomTags.BeamLimitingDeviceLeafPairsSequence,
+                          "Beam Limiting Device Leaf Pairs Sequence",
+                          "BeamLimitingDeviceLeafPairsSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("BeamLimitingDeviceLeafPairsSequence",
+                      _tags[DicomTags.BeamLimitingDeviceLeafPairsSequence]);
+            _tags.Add(DicomTags.RecordedWedgeSequence,
+                      new DicomTag(
+                          DicomTags.RecordedWedgeSequence,
+                          "Recorded Wedge Sequence",
+                          "RecordedWedgeSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RecordedWedgeSequence",
+                      _tags[DicomTags.RecordedWedgeSequence]);
+            _tags.Add(DicomTags.RecordedCompensatorSequence,
+                      new DicomTag(
+                          DicomTags.RecordedCompensatorSequence,
+                          "Recorded Compensator Sequence",
+                          "RecordedCompensatorSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RecordedCompensatorSequence",
+                      _tags[DicomTags.RecordedCompensatorSequence]);
+            _tags.Add(DicomTags.RecordedBlockSequence,
+                      new DicomTag(
+                          DicomTags.RecordedBlockSequence,
+                          "Recorded Block Sequence",
+                          "RecordedBlockSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RecordedBlockSequence",
+                      _tags[DicomTags.RecordedBlockSequence]);
+            _tags.Add(DicomTags.TreatmentSummaryMeasuredDoseReferenceSequence,
+                      new DicomTag(
+                          DicomTags.TreatmentSummaryMeasuredDoseReferenceSequence,
+                          "Treatment Summary Measured Dose Reference Sequence",
+                          "TreatmentSummaryMeasuredDoseReferenceSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TreatmentSummaryMeasuredDoseReferenceSequence",
+                      _tags[DicomTags.TreatmentSummaryMeasuredDoseReferenceSequence]);
+            _tags.Add(DicomTags.RecordedSnoutSequence,
+                      new DicomTag(
+                          DicomTags.RecordedSnoutSequence,
+                          "Recorded Snout Sequence",
+                          "RecordedSnoutSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RecordedSnoutSequence",
+                      _tags[DicomTags.RecordedSnoutSequence]);
+            _tags.Add(DicomTags.RecordedRangeShifterSequence,
+                      new DicomTag(
+                          DicomTags.RecordedRangeShifterSequence,
+                          "Recorded Range Shifter Sequence",
+                          "RecordedRangeShifterSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RecordedRangeShifterSequence",
+                      _tags[DicomTags.RecordedRangeShifterSequence]);
+            _tags.Add(DicomTags.RecordedLateralSpreadingDeviceSequence,
+                      new DicomTag(
+                          DicomTags.RecordedLateralSpreadingDeviceSequence,
+                          "Recorded Lateral Spreading Device Sequence",
+                          "RecordedLateralSpreadingDeviceSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RecordedLateralSpreadingDeviceSequence",
+                      _tags[DicomTags.RecordedLateralSpreadingDeviceSequence]);
+            _tags.Add(DicomTags.RecordedRangeModulatorSequence,
+                      new DicomTag(
+                          DicomTags.RecordedRangeModulatorSequence,
+                          "Recorded Range Modulator Sequence",
+                          "RecordedRangeModulatorSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RecordedRangeModulatorSequence",
+                      _tags[DicomTags.RecordedRangeModulatorSequence]);
+            _tags.Add(DicomTags.RecordedSourceSequence,
+                      new DicomTag(
+                          DicomTags.RecordedSourceSequence,
+                          "Recorded Source Sequence",
+                          "RecordedSourceSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RecordedSourceSequence",
+                      _tags[DicomTags.RecordedSourceSequence]);
+            _tags.Add(DicomTags.SourceSerialNumber,
+                      new DicomTag(
+                          DicomTags.SourceSerialNumber,
+                          "Source Serial Number",
+                          "SourceSerialNumber",
+                          DicomVr.LOvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SourceSerialNumber",
+                      _tags[DicomTags.SourceSerialNumber]);
+            _tags.Add(DicomTags.TreatmentSessionApplicationSetupSequence,
+                      new DicomTag(
+                          DicomTags.TreatmentSessionApplicationSetupSequence,
+                          "Treatment Session Application Setup Sequence",
+                          "TreatmentSessionApplicationSetupSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TreatmentSessionApplicationSetupSequence",
+                      _tags[DicomTags.TreatmentSessionApplicationSetupSequence]);
+            _tags.Add(DicomTags.ApplicationSetupCheck,
+                      new DicomTag(
+                          DicomTags.ApplicationSetupCheck,
+                          "Application Setup Check",
+                          "ApplicationSetupCheck",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ApplicationSetupCheck",
+                      _tags[DicomTags.ApplicationSetupCheck]);
+            _tags.Add(DicomTags.RecordedBrachyAccessoryDeviceSequence,
+                      new DicomTag(
+                          DicomTags.RecordedBrachyAccessoryDeviceSequence,
+                          "Recorded Brachy Accessory Device Sequence",
+                          "RecordedBrachyAccessoryDeviceSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RecordedBrachyAccessoryDeviceSequence",
+                      _tags[DicomTags.RecordedBrachyAccessoryDeviceSequence]);
+            _tags.Add(DicomTags.ReferencedBrachyAccessoryDeviceNumber,
+                      new DicomTag(
+                          DicomTags.ReferencedBrachyAccessoryDeviceNumber,
+                          "Referenced Brachy Accessory Device Number",
+                          "ReferencedBrachyAccessoryDeviceNumber",
+                          DicomVr.ISvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ReferencedBrachyAccessoryDeviceNumber",
+                      _tags[DicomTags.ReferencedBrachyAccessoryDeviceNumber]);
+            _tags.Add(DicomTags.RecordedChannelSequence,
+                      new DicomTag(
+                          DicomTags.RecordedChannelSequence,
+                          "Recorded Channel Sequence",
+                          "RecordedChannelSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RecordedChannelSequence",
+                      _tags[DicomTags.RecordedChannelSequence]);
+            _tags.Add(DicomTags.SpecifiedChannelTotalTime,
+                      new DicomTag(
+                          DicomTags.SpecifiedChannelTotalTime,
+                          "Specified Channel Total Time",
+                          "SpecifiedChannelTotalTime",
+                          DicomVr.DSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SpecifiedChannelTotalTime",
+                      _tags[DicomTags.SpecifiedChannelTotalTime]);
+            _tags.Add(DicomTags.DeliveredChannelTotalTime,
+                      new DicomTag(
+                          DicomTags.DeliveredChannelTotalTime,
+                          "Delivered Channel Total Time",
+                          "DeliveredChannelTotalTime",
+                          DicomVr.DSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("DeliveredChannelTotalTime",
+                      _tags[DicomTags.DeliveredChannelTotalTime]);
+            _tags.Add(DicomTags.SpecifiedNumberOfPulses,
+                      new DicomTag(
+                          DicomTags.SpecifiedNumberOfPulses,
+                          "Specified Number of Pulses",
+                          "SpecifiedNumberOfPulses",
+                          DicomVr.ISvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SpecifiedNumberOfPulses",
+                      _tags[DicomTags.SpecifiedNumberOfPulses]);
+            _tags.Add(DicomTags.DeliveredNumberOfPulses,
+                      new DicomTag(
+                          DicomTags.DeliveredNumberOfPulses,
+                          "Delivered Number of Pulses",
+                          "DeliveredNumberOfPulses",
+                          DicomVr.ISvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("DeliveredNumberOfPulses",
+                      _tags[DicomTags.DeliveredNumberOfPulses]);
+            _tags.Add(DicomTags.SpecifiedPulseRepetitionInterval,
+                      new DicomTag(
+                          DicomTags.SpecifiedPulseRepetitionInterval,
+                          "Specified Pulse Repetition Interval",
+                          "SpecifiedPulseRepetitionInterval",
+                          DicomVr.DSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SpecifiedPulseRepetitionInterval",
+                      _tags[DicomTags.SpecifiedPulseRepetitionInterval]);
+            _tags.Add(DicomTags.DeliveredPulseRepetitionInterval,
+                      new DicomTag(
+                          DicomTags.DeliveredPulseRepetitionInterval,
+                          "Delivered Pulse Repetition Interval",
+                          "DeliveredPulseRepetitionInterval",
+                          DicomVr.DSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("DeliveredPulseRepetitionInterval",
+                      _tags[DicomTags.DeliveredPulseRepetitionInterval]);
+            _tags.Add(DicomTags.RecordedSourceApplicatorSequence,
+                      new DicomTag(
+                          DicomTags.RecordedSourceApplicatorSequence,
+                          "Recorded Source Applicator Sequence",
+                          "RecordedSourceApplicatorSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RecordedSourceApplicatorSequence",
+                      _tags[DicomTags.RecordedSourceApplicatorSequence]);
+            _tags.Add(DicomTags.ReferencedSourceApplicatorNumber,
+                      new DicomTag(
+                          DicomTags.ReferencedSourceApplicatorNumber,
+                          "Referenced Source Applicator Number",
+                          "ReferencedSourceApplicatorNumber",
+                          DicomVr.ISvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ReferencedSourceApplicatorNumber",
+                      _tags[DicomTags.ReferencedSourceApplicatorNumber]);
+            _tags.Add(DicomTags.RecordedChannelShieldSequence,
+                      new DicomTag(
+                          DicomTags.RecordedChannelShieldSequence,
+                          "Recorded Channel Shield Sequence",
+                          "RecordedChannelShieldSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("RecordedChannelShieldSequence",
+                      _tags[DicomTags.RecordedChannelShieldSequence]);
+            _tags.Add(DicomTags.ReferencedChannelShieldNumber,
+                      new DicomTag(
+                          DicomTags.ReferencedChannelShieldNumber,
+                          "Referenced Channel Shield Number",
+                          "ReferencedChannelShieldNumber",
+                          DicomVr.ISvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ReferencedChannelShieldNumber",
+                      _tags[DicomTags.ReferencedChannelShieldNumber]);
+            _tags.Add(DicomTags.BrachyControlPointDeliveredSequence,
+                      new DicomTag(
+                          DicomTags.BrachyControlPointDeliveredSequence,
+                          "Brachy Control Point Delivered Sequence",
+                          "BrachyControlPointDeliveredSequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("BrachyControlPointDeliveredSequence",
+                      _tags[DicomTags.BrachyControlPointDeliveredSequence]);
+            _tags.Add(DicomTags.SafePositionExitDate,
+                      new DicomTag(
+                          DicomTags.SafePositionExitDate,
+                          "Safe Position Exit Date",
+                          "SafePositionExitDate",
+                          DicomVr.DAvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SafePositionExitDate",
+                      _tags[DicomTags.SafePositionExitDate]);
+            _tags.Add(DicomTags.SafePositionExitTime,
+                      new DicomTag(
+                          DicomTags.SafePositionExitTime,
+                          "Safe Position Exit Time",
+                          "SafePositionExitTime",
+                          DicomVr.TMvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SafePositionExitTime",
+                      _tags[DicomTags.SafePositionExitTime]);
+            _tags.Add(DicomTags.SafePositionReturnDate,
+                      new DicomTag(
+                          DicomTags.SafePositionReturnDate,
+                          "Safe Position Return Date",
+                          "SafePositionReturnDate",
+                          DicomVr.DAvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SafePositionReturnDate",
+                      _tags[DicomTags.SafePositionReturnDate]);
+            _tags.Add(DicomTags.SafePositionReturnTime,
+                      new DicomTag(
+                          DicomTags.SafePositionReturnTime,
+                          "Safe Position Return Time",
+                          "SafePositionReturnTime",
+                          DicomVr.TMvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("SafePositionReturnTime",
+                      _tags[DicomTags.SafePositionReturnTime]);
+            _tags.Add(DicomTags.CurrentTreatmentStatus,
+                      new DicomTag(
+                          DicomTags.CurrentTreatmentStatus,
+                          "Current Treatment Status",
+                          "CurrentTreatmentStatus",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("CurrentTreatmentStatus",
+                      _tags[DicomTags.CurrentTreatmentStatus]);
+            _tags.Add(DicomTags.TreatmentStatusComment,
+                      new DicomTag(
+                          DicomTags.TreatmentStatusComment,
+                          "Treatment Status Comment",
+                          "TreatmentStatusComment",
+                          DicomVr.STvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TreatmentStatusComment",
+                      _tags[DicomTags.TreatmentStatusComment]);
+            _tags.Add(DicomTags.FractionGroupSummarySequence,
+                      new DicomTag(
+                          DicomTags.FractionGroupSummarySequence,
+                          "Fraction Group Summary Sequence",
+                          "FractionGroupSummarySequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("FractionGroupSummarySequence",
+                      _tags[DicomTags.FractionGroupSummarySequence]);
+            _tags.Add(DicomTags.ReferencedFractionNumber,
+                      new DicomTag(
+                          DicomTags.ReferencedFractionNumber,
+                          "Referenced Fraction Number",
+                          "ReferencedFractionNumber",
+                          DicomVr.ISvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("ReferencedFractionNumber",
+                      _tags[DicomTags.ReferencedFractionNumber]);
+            _tags.Add(DicomTags.FractionGroupType,
+                      new DicomTag(
+                          DicomTags.FractionGroupType,
+                          "Fraction Group Type",
+                          "FractionGroupType",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("FractionGroupType",
+                      _tags[DicomTags.FractionGroupType]);
+            _tags.Add(DicomTags.BeamStopperPosition,
+                      new DicomTag(
+                          DicomTags.BeamStopperPosition,
+                          "Beam Stopper Position",
+                          "BeamStopperPosition",
+                          DicomVr.CSvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("BeamStopperPosition",
+                      _tags[DicomTags.BeamStopperPosition]);
+            _tags.Add(DicomTags.FractionStatusSummarySequence,
+                      new DicomTag(
+                          DicomTags.FractionStatusSummarySequence,
+                          "Fraction Status Summary Sequence",
+                          "FractionStatusSummarySequence",
+                          DicomVr.SQvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("FractionStatusSummarySequence",
+                      _tags[DicomTags.FractionStatusSummarySequence]);
+            _tags.Add(DicomTags.TreatmentDate,
+                      new DicomTag(
+                          DicomTags.TreatmentDate,
+                          "Treatment Date",
+                          "TreatmentDate",
+                          DicomVr.DAvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TreatmentDate",
+                      _tags[DicomTags.TreatmentDate]);
+            _tags.Add(DicomTags.TreatmentTime,
+                      new DicomTag(
+                          DicomTags.TreatmentTime,
+                          "Treatment Time",
+                          "TreatmentTime",
+                          DicomVr.TMvr,
+                          false, //isMultiVrTag
+                          1, // vmLow
+                          1, // vmHigh
+                          false // isRetired
+                          ));
+            _tagNames.Add("TreatmentTime",
+                      _tags[DicomTags.TreatmentTime]);
             _tags.Add(DicomTags.RtPlanLabel,
                       new DicomTag(
                           DicomTags.RtPlanLabel,
@@ -31411,7 +36026,7 @@ namespace ClearCanvas.Dicom
                           DicomTags.GeneralAccessoryId,
                           "General Accessory ID",
                           "GeneralAccessoryId",
-                          DicomVr.CSvr,
+                          DicomVr.SHvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
@@ -31437,7 +36052,7 @@ namespace ClearCanvas.Dicom
                           DicomTags.GeneralAccessoryType,
                           "General Accessory Type",
                           "GeneralAccessoryType",
-                          DicomVr.SHvr,
+                          DicomVr.CSvr,
                           false, //isMultiVrTag
                           1, // vmLow
                           1, // vmHigh
@@ -33177,7 +37792,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.OverlaysGrayRetired,
                       new DicomTag(
                           DicomTags.OverlaysGrayRetired,
-                          "Overlays- Gray",
+                          "Overlays – Gray",
                           "OverlaysGrayRetired",
                           DicomVr.USvr,
                           false, //isMultiVrTag
@@ -33216,7 +37831,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.OverlaysBlueRetired,
                       new DicomTag(
                           DicomTags.OverlaysBlueRetired,
-                          "Overlays- Blue",
+                          "Overlays – Blue",
                           "OverlaysBlueRetired",
                           DicomVr.USvr,
                           false, //isMultiVrTag

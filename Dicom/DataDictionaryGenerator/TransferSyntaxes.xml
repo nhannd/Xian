@@ -298,6 +298,15 @@
 				  lossless="false"
 				  lossy="true"/>
 
+  <TransferSyntax uid="1.2.840.10008.1.2.4.101"
+				  description="MPEG2 Main Profile @ High Level"
+				  littleEndian="true"
+				  explicitVR="true"
+				  encapsulated="true"
+				  deflated="false"
+				  lossless="false"
+				  lossy="true"/>
+
   <TransferSyntax uid="1.2.840.10008.1.2.6.1"
 				  description="RFC 2557 MIME encapsulation"
 				  littleEndian="true"

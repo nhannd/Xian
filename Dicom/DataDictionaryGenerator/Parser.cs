@@ -51,6 +51,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
         public String vm;
         public String retired;
         public String varName;
+        public String dicomVarName;
     }
 
     public struct SopClass
@@ -123,7 +124,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
 
             // Handling leading digits in names
             if (thisTag.varName.Length > 0 && char.IsDigit(thisTag.varName[0]))
-                thisTag.varName = "Tag" + thisTag.varName;
+                thisTag.varName = thisTag.dicomVarName;
 
             if (thisTag.retired != null 
              && thisTag.retired.Equals("RET") 
@@ -202,11 +203,12 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                                             {
                                                 thisTag.tag = columnArray[0];
                                                 thisTag.name = columnArray[1];
-                                                if (columnArray[2] != null)
-                                                    thisTag.vr = columnArray[2].Trim();
+                                                thisTag.dicomVarName = columnArray[2];
                                                 if (columnArray[3] != null)
-                                                    thisTag.vm = columnArray[3].Trim();
-                                                thisTag.retired = columnArray[4];
+                                                    thisTag.vr = columnArray[3].Trim();
+                                                if (columnArray[4] != null)
+                                                    thisTag.vm = columnArray[4].Trim();
+                                                thisTag.retired = columnArray[5];
 
                                                 // Handle repeating groups
                                                 if (thisTag.tag[3] == 'x')

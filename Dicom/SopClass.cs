@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
@@ -72,6 +72,21 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
+        /// <para>Arterial Pulse Waveform Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.9.5.1</para>
+        /// </summary>
+        public static readonly String ArterialPulseWaveformStorageUid = "1.2.840.10008.5.1.4.1.1.9.5.1";
+
+        /// <summary>SopClass for
+        /// <para>Arterial Pulse Waveform Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.9.5.1</para>
+        /// </summary>
+        public static readonly SopClass ArterialPulseWaveformStorage =
+                             new SopClass("Arterial Pulse Waveform Storage", 
+                                          ArterialPulseWaveformStorageUid, 
+                                          false);
+
+        /// <summary>
         /// <para>Audio SR Storage – Trial (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.2</para>
         /// </summary>
@@ -84,6 +99,21 @@ namespace ClearCanvas.Dicom
         public static readonly SopClass AudioSrStorageTrialRetired =
                              new SopClass("Audio SR Storage – Trial (Retired)", 
                                           AudioSrStorageTrialRetiredUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Autorefraction Measurements Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.78.2</para>
+        /// </summary>
+        public static readonly String AutorefractionMeasurementsStorageUid = "1.2.840.10008.5.1.4.1.1.78.2";
+
+        /// <summary>SopClass for
+        /// <para>Autorefraction Measurements Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.78.2</para>
+        /// </summary>
+        public static readonly SopClass AutorefractionMeasurementsStorage =
+                             new SopClass("Autorefraction Measurements Storage", 
+                                          AutorefractionMeasurementsStorageUid, 
                                           false);
 
         /// <summary>
@@ -177,6 +207,21 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
+        /// <para>Basic Structured Display Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.131</para>
+        /// </summary>
+        public static readonly String BasicStructuredDisplayStorageUid = "1.2.840.10008.5.1.4.1.1.131";
+
+        /// <summary>SopClass for
+        /// <para>Basic Structured Display Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.131</para>
+        /// </summary>
+        public static readonly SopClass BasicStructuredDisplayStorage =
+                             new SopClass("Basic Structured Display Storage", 
+                                          BasicStructuredDisplayStorageUid, 
+                                          false);
+
+        /// <summary>
         /// <para>Basic Study Content Notification SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.9</para>
         /// </summary>
@@ -252,6 +297,21 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
+        /// <para>Breast Tomosynthesis Image Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.13.1.3</para>
+        /// </summary>
+        public static readonly String BreastTomosynthesisImageStorageUid = "1.2.840.10008.5.1.4.1.1.13.1.3";
+
+        /// <summary>SopClass for
+        /// <para>Breast Tomosynthesis Image Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.13.1.3</para>
+        /// </summary>
+        public static readonly SopClass BreastTomosynthesisImageStorage =
+                             new SopClass("Breast Tomosynthesis Image Storage", 
+                                          BreastTomosynthesisImageStorageUid, 
+                                          false);
+
+        /// <summary>
         /// <para>Cardiac Electrophysiology Waveform Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.9.3.1</para>
         /// </summary>
@@ -297,6 +357,21 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
+        /// <para>Colon CAD SR Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.69</para>
+        /// </summary>
+        public static readonly String ColonCadSrStorageUid = "1.2.840.10008.5.1.4.1.1.88.69";
+
+        /// <summary>SopClass for
+        /// <para>Colon CAD SR Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.69</para>
+        /// </summary>
+        public static readonly SopClass ColonCadSrStorage =
+                             new SopClass("Colon CAD SR Storage", 
+                                          ColonCadSrStorageUid, 
+                                          false);
+
+        /// <summary>
         /// <para>Color Softcopy Presentation State Storage SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.11.2</para>
         /// </summary>
@@ -309,6 +384,51 @@ namespace ClearCanvas.Dicom
         public static readonly SopClass ColorSoftcopyPresentationStateStorageSopClass =
                              new SopClass("Color Softcopy Presentation State Storage SOP Class", 
                                           ColorSoftcopyPresentationStateStorageSopClassUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Composite Instance Retrieve Without Bulk Data - GET</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.2.5.3</para>
+        /// </summary>
+        public static readonly String CompositeInstanceRetrieveWithoutBulkDataGetUid = "1.2.840.10008.5.1.4.1.2.5.3";
+
+        /// <summary>SopClass for
+        /// <para>Composite Instance Retrieve Without Bulk Data - GET</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.2.5.3</para>
+        /// </summary>
+        public static readonly SopClass CompositeInstanceRetrieveWithoutBulkDataGet =
+                             new SopClass("Composite Instance Retrieve Without Bulk Data - GET", 
+                                          CompositeInstanceRetrieveWithoutBulkDataGetUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Composite Instance Root Retrieve - GET</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.2.4.3</para>
+        /// </summary>
+        public static readonly String CompositeInstanceRootRetrieveGetUid = "1.2.840.10008.5.1.4.1.2.4.3";
+
+        /// <summary>SopClass for
+        /// <para>Composite Instance Root Retrieve - GET</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.2.4.3</para>
+        /// </summary>
+        public static readonly SopClass CompositeInstanceRootRetrieveGet =
+                             new SopClass("Composite Instance Root Retrieve - GET", 
+                                          CompositeInstanceRootRetrieveGetUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Composite Instance Root Retrieve - MOVE</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.2.4.2</para>
+        /// </summary>
+        public static readonly String CompositeInstanceRootRetrieveMoveUid = "1.2.840.10008.5.1.4.1.2.4.2";
+
+        /// <summary>SopClass for
+        /// <para>Composite Instance Root Retrieve - MOVE</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.2.4.2</para>
+        /// </summary>
+        public static readonly SopClass CompositeInstanceRootRetrieveMove =
+                             new SopClass("Composite Instance Root Retrieve - MOVE", 
+                                          CompositeInstanceRootRetrieveMoveUid, 
                                           false);
 
         /// <summary>
@@ -612,6 +732,21 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
+        /// <para>Enhanced MR Color Image Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.4.3</para>
+        /// </summary>
+        public static readonly String EnhancedMrColorImageStorageUid = "1.2.840.10008.5.1.4.1.1.4.3";
+
+        /// <summary>SopClass for
+        /// <para>Enhanced MR Color Image Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.4.3</para>
+        /// </summary>
+        public static readonly SopClass EnhancedMrColorImageStorage =
+                             new SopClass("Enhanced MR Color Image Storage", 
+                                          EnhancedMrColorImageStorageUid, 
+                                          false);
+
+        /// <summary>
         /// <para>Enhanced MR Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.4.1</para>
         /// </summary>
@@ -627,6 +762,21 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
+        /// <para>Enhanced PET Image Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.130</para>
+        /// </summary>
+        public static readonly String EnhancedPetImageStorageUid = "1.2.840.10008.5.1.4.1.1.130";
+
+        /// <summary>SopClass for
+        /// <para>Enhanced PET Image Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.130</para>
+        /// </summary>
+        public static readonly SopClass EnhancedPetImageStorage =
+                             new SopClass("Enhanced PET Image Storage", 
+                                          EnhancedPetImageStorageUid, 
+                                          false);
+
+        /// <summary>
         /// <para>Enhanced SR Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.22</para>
         /// </summary>
@@ -639,6 +789,21 @@ namespace ClearCanvas.Dicom
         public static readonly SopClass EnhancedSrStorage =
                              new SopClass("Enhanced SR Storage", 
                                           EnhancedSrStorageUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Enhanced US Volume Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.6.2</para>
+        /// </summary>
+        public static readonly String EnhancedUsVolumeStorageUid = "1.2.840.10008.5.1.4.1.1.6.2";
+
+        /// <summary>SopClass for
+        /// <para>Enhanced US Volume Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.6.2</para>
+        /// </summary>
+        public static readonly SopClass EnhancedUsVolumeStorage =
+                             new SopClass("Enhanced US Volume Storage", 
+                                          EnhancedUsVolumeStorageUid, 
                                           false);
 
         /// <summary>
@@ -669,6 +834,21 @@ namespace ClearCanvas.Dicom
         public static readonly SopClass EnhancedXrfImageStorage =
                              new SopClass("Enhanced XRF Image Storage", 
                                           EnhancedXrfImageStorageUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>General Audio Waveform Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.9.4.2</para>
+        /// </summary>
+        public static readonly String GeneralAudioWaveformStorageUid = "1.2.840.10008.5.1.4.1.1.9.4.2";
+
+        /// <summary>SopClass for
+        /// <para>General Audio Waveform Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.9.4.2</para>
+        /// </summary>
+        public static readonly SopClass GeneralAudioWaveformStorage =
+                             new SopClass("General Audio Waveform Storage", 
+                                          GeneralAudioWaveformStorageUid, 
                                           false);
 
         /// <summary>
@@ -777,6 +957,21 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
+        /// <para>Hanging Protocol Information Model - GET</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.38.4</para>
+        /// </summary>
+        public static readonly String HangingProtocolInformationModelGetUid = "1.2.840.10008.5.1.4.38.4";
+
+        /// <summary>SopClass for
+        /// <para>Hanging Protocol Information Model - GET</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.38.4</para>
+        /// </summary>
+        public static readonly SopClass HangingProtocolInformationModelGet =
+                             new SopClass("Hanging Protocol Information Model - GET", 
+                                          HangingProtocolInformationModelGetUid, 
+                                          false);
+
+        /// <summary>
         /// <para>Hanging Protocol Information Model – MOVE</para>
         /// <para>UID: 1.2.840.10008.5.1.4.38.3</para>
         /// </summary>
@@ -882,6 +1077,21 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
+        /// <para>Keratometry Measurements Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.78.3</para>
+        /// </summary>
+        public static readonly String KeratometryMeasurementsStorageUid = "1.2.840.10008.5.1.4.1.1.78.3";
+
+        /// <summary>SopClass for
+        /// <para>Keratometry Measurements Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.78.3</para>
+        /// </summary>
+        public static readonly SopClass KeratometryMeasurementsStorage =
+                             new SopClass("Keratometry Measurements Storage", 
+                                          KeratometryMeasurementsStorageUid, 
+                                          false);
+
+        /// <summary>
         /// <para>Key Object Selection Document Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.59</para>
         /// </summary>
@@ -894,6 +1104,36 @@ namespace ClearCanvas.Dicom
         public static readonly SopClass KeyObjectSelectionDocumentStorage =
                              new SopClass("Key Object Selection Document Storage", 
                                           KeyObjectSelectionDocumentStorageUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Lensometry Measurements Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.78.1</para>
+        /// </summary>
+        public static readonly String LensometryMeasurementsStorageUid = "1.2.840.10008.5.1.4.1.1.78.1";
+
+        /// <summary>SopClass for
+        /// <para>Lensometry Measurements Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.78.1</para>
+        /// </summary>
+        public static readonly SopClass LensometryMeasurementsStorage =
+                             new SopClass("Lensometry Measurements Storage", 
+                                          LensometryMeasurementsStorageUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Macular Grid Thickness and Volume Report Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.79.1</para>
+        /// </summary>
+        public static readonly String MacularGridThicknessAndVolumeReportStorageUid = "1.2.840.10008.5.1.4.1.1.79.1";
+
+        /// <summary>SopClass for
+        /// <para>Macular Grid Thickness and Volume Report Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.79.1</para>
+        /// </summary>
+        public static readonly SopClass MacularGridThicknessAndVolumeReportStorage =
+                             new SopClass("Macular Grid Thickness and Volume Report Storage", 
+                                          MacularGridThicknessAndVolumeReportStorageUid, 
                                           false);
 
         /// <summary>
@@ -1467,6 +1707,21 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
+        /// <para>Respiratory Waveform Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.9.6.1</para>
+        /// </summary>
+        public static readonly String RespiratoryWaveformStorageUid = "1.2.840.10008.5.1.4.1.1.9.6.1";
+
+        /// <summary>SopClass for
+        /// <para>Respiratory Waveform Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.9.6.1</para>
+        /// </summary>
+        public static readonly SopClass RespiratoryWaveformStorage =
+                             new SopClass("Respiratory Waveform Storage", 
+                                          RespiratoryWaveformStorageUid, 
+                                          false);
+
+        /// <summary>
         /// <para>RT Beams Delivery Instruction Storage (Supplement 74 Frozen Draft)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.34.1</para>
         /// </summary>
@@ -1707,6 +1962,21 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
+        /// <para>Spectacle Prescription Reports Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.78.6</para>
+        /// </summary>
+        public static readonly String SpectaclePrescriptionReportsStorageUid = "1.2.840.10008.5.1.4.1.1.78.6";
+
+        /// <summary>SopClass for
+        /// <para>Spectacle Prescription Reports Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.78.6</para>
+        /// </summary>
+        public static readonly SopClass SpectaclePrescriptionReportsStorage =
+                             new SopClass("Spectacle Prescription Reports Storage", 
+                                          SpectaclePrescriptionReportsStorageUid, 
+                                          false);
+
+        /// <summary>
         /// <para>Standalone Curve Storage (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.9</para>
         /// </summary>
@@ -1902,6 +2172,21 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
+        /// <para>Subjective Refraction Measurements Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.78.4</para>
+        /// </summary>
+        public static readonly String SubjectiveRefractionMeasurementsStorageUid = "1.2.840.10008.5.1.4.1.1.78.4";
+
+        /// <summary>SopClass for
+        /// <para>Subjective Refraction Measurements Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.78.4</para>
+        /// </summary>
+        public static readonly SopClass SubjectiveRefractionMeasurementsStorage =
+                             new SopClass("Subjective Refraction Measurements Storage", 
+                                          SubjectiveRefractionMeasurementsStorageUid, 
+                                          false);
+
+        /// <summary>
         /// <para>Substance Administration Logging SOP Class</para>
         /// <para>UID: 1.2.840.10008.1.42</para>
         /// </summary>
@@ -1929,6 +2214,21 @@ namespace ClearCanvas.Dicom
         public static readonly SopClass SubstanceApprovalQuerySopClass =
                              new SopClass("Substance Approval Query SOP Class", 
                                           SubstanceApprovalQuerySopClassUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Surface Segmentation Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.66.5</para>
+        /// </summary>
+        public static readonly String SurfaceSegmentationStorageUid = "1.2.840.10008.5.1.4.1.1.66.5";
+
+        /// <summary>SopClass for
+        /// <para>Surface Segmentation Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.66.5</para>
+        /// </summary>
+        public static readonly SopClass SurfaceSegmentationStorage =
+                             new SopClass("Surface Segmentation Storage", 
+                                          SurfaceSegmentationStorageUid, 
                                           false);
 
         /// <summary>
@@ -2127,6 +2427,21 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
+        /// <para>Visual Acuity Measurements </para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.78.5</para>
+        /// </summary>
+        public static readonly String VisualAcuityMeasurementsUid = "1.2.840.10008.5.1.4.1.1.78.5";
+
+        /// <summary>SopClass for
+        /// <para>Visual Acuity Measurements </para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.78.5</para>
+        /// </summary>
+        public static readonly SopClass VisualAcuityMeasurements =
+                             new SopClass("Visual Acuity Measurements ", 
+                                          VisualAcuityMeasurementsUid, 
+                                          false);
+
+        /// <summary>
         /// <para>VL Endoscopic Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.77.1.1</para>
         /// </summary>
@@ -2214,6 +2529,21 @@ namespace ClearCanvas.Dicom
         public static readonly SopClass WaveformStorageTrialRetired =
                              new SopClass("Waveform Storage - Trial (Retired)", 
                                           WaveformStorageTrialRetiredUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>XA/XRF Grayscale Softcopy Presentation State Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.11.5</para>
+        /// </summary>
+        public static readonly String XaXrfGrayscaleSoftcopyPresentationStateStorageUid = "1.2.840.10008.5.1.4.1.1.11.5";
+
+        /// <summary>SopClass for
+        /// <para>XA/XRF Grayscale Softcopy Presentation State Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.11.5</para>
+        /// </summary>
+        public static readonly SopClass XaXrfGrayscaleSoftcopyPresentationStateStorage =
+                             new SopClass("XA/XRF Grayscale Softcopy Presentation State Storage", 
+                                          XaXrfGrayscaleSoftcopyPresentationStateStorageUid, 
                                           false);
 
         /// <summary>
@@ -2433,8 +2763,8 @@ namespace ClearCanvas.Dicom
                                           ReferencedGrayscalePrintManagementMetaSopClassRetiredUid, 
                                           true);
 
-        private readonly String  _sopName;
-        private readonly String  _sopUid;
+        private readonly String _sopName;
+        private readonly String _sopUid;
         private readonly bool _bIsMeta;
 
         /// <summary> Property that represents the Name of the SOP Class. </summary>
@@ -2492,8 +2822,14 @@ namespace ClearCanvas.Dicom
             _sopList.Add(AmbulatoryEcgWaveformStorageUid, 
                          AmbulatoryEcgWaveformStorage);
 
+            _sopList.Add(ArterialPulseWaveformStorageUid, 
+                         ArterialPulseWaveformStorage);
+
             _sopList.Add(AudioSrStorageTrialRetiredUid, 
                          AudioSrStorageTrialRetired);
+
+            _sopList.Add(AutorefractionMeasurementsStorageUid, 
+                         AutorefractionMeasurementsStorage);
 
             _sopList.Add(BasicAnnotationBoxSopClassUid, 
                          BasicAnnotationBoxSopClass);
@@ -2513,6 +2849,9 @@ namespace ClearCanvas.Dicom
             _sopList.Add(BasicPrintImageOverlayBoxSopClassRetiredUid, 
                          BasicPrintImageOverlayBoxSopClassRetired);
 
+            _sopList.Add(BasicStructuredDisplayStorageUid, 
+                         BasicStructuredDisplayStorage);
+
             _sopList.Add(BasicStudyContentNotificationSopClassRetiredUid, 
                          BasicStudyContentNotificationSopClassRetired);
 
@@ -2528,6 +2867,9 @@ namespace ClearCanvas.Dicom
             _sopList.Add(BreastImagingRelevantPatientInformationQueryUid, 
                          BreastImagingRelevantPatientInformationQuery);
 
+            _sopList.Add(BreastTomosynthesisImageStorageUid, 
+                         BreastTomosynthesisImageStorage);
+
             _sopList.Add(CardiacElectrophysiologyWaveformStorageUid, 
                          CardiacElectrophysiologyWaveformStorage);
 
@@ -2537,8 +2879,20 @@ namespace ClearCanvas.Dicom
             _sopList.Add(ChestCadSrStorageUid, 
                          ChestCadSrStorage);
 
+            _sopList.Add(ColonCadSrStorageUid, 
+                         ColonCadSrStorage);
+
             _sopList.Add(ColorSoftcopyPresentationStateStorageSopClassUid, 
                          ColorSoftcopyPresentationStateStorageSopClass);
+
+            _sopList.Add(CompositeInstanceRetrieveWithoutBulkDataGetUid, 
+                         CompositeInstanceRetrieveWithoutBulkDataGet);
+
+            _sopList.Add(CompositeInstanceRootRetrieveGetUid, 
+                         CompositeInstanceRootRetrieveGet);
+
+            _sopList.Add(CompositeInstanceRootRetrieveMoveUid, 
+                         CompositeInstanceRootRetrieveMove);
 
             _sopList.Add(ComprehensiveSrStorageUid, 
                          ComprehensiveSrStorage);
@@ -2600,17 +2954,29 @@ namespace ClearCanvas.Dicom
             _sopList.Add(EnhancedCtImageStorageUid, 
                          EnhancedCtImageStorage);
 
+            _sopList.Add(EnhancedMrColorImageStorageUid, 
+                         EnhancedMrColorImageStorage);
+
             _sopList.Add(EnhancedMrImageStorageUid, 
                          EnhancedMrImageStorage);
 
+            _sopList.Add(EnhancedPetImageStorageUid, 
+                         EnhancedPetImageStorage);
+
             _sopList.Add(EnhancedSrStorageUid, 
                          EnhancedSrStorage);
+
+            _sopList.Add(EnhancedUsVolumeStorageUid, 
+                         EnhancedUsVolumeStorage);
 
             _sopList.Add(EnhancedXaImageStorageUid, 
                          EnhancedXaImageStorage);
 
             _sopList.Add(EnhancedXrfImageStorageUid, 
                          EnhancedXrfImageStorage);
+
+            _sopList.Add(GeneralAudioWaveformStorageUid, 
+                         GeneralAudioWaveformStorage);
 
             _sopList.Add(GeneralEcgWaveformStorageUid, 
                          GeneralEcgWaveformStorage);
@@ -2633,6 +2999,9 @@ namespace ClearCanvas.Dicom
             _sopList.Add(HangingProtocolInformationModelFindUid, 
                          HangingProtocolInformationModelFind);
 
+            _sopList.Add(HangingProtocolInformationModelGetUid, 
+                         HangingProtocolInformationModelGet);
+
             _sopList.Add(HangingProtocolInformationModelMoveUid, 
                          HangingProtocolInformationModelMove);
 
@@ -2654,8 +3023,17 @@ namespace ClearCanvas.Dicom
             _sopList.Add(InstanceAvailabilityNotificationSopClassUid, 
                          InstanceAvailabilityNotificationSopClass);
 
+            _sopList.Add(KeratometryMeasurementsStorageUid, 
+                         KeratometryMeasurementsStorage);
+
             _sopList.Add(KeyObjectSelectionDocumentStorageUid, 
                          KeyObjectSelectionDocumentStorage);
+
+            _sopList.Add(LensometryMeasurementsStorageUid, 
+                         LensometryMeasurementsStorage);
+
+            _sopList.Add(MacularGridThicknessAndVolumeReportStorageUid, 
+                         MacularGridThicknessAndVolumeReportStorage);
 
             _sopList.Add(MammographyCadSrStorageUid, 
                          MammographyCadSrStorage);
@@ -2771,6 +3149,9 @@ namespace ClearCanvas.Dicom
             _sopList.Add(ReferencedImageBoxSopClassRetiredUid, 
                          ReferencedImageBoxSopClassRetired);
 
+            _sopList.Add(RespiratoryWaveformStorageUid, 
+                         RespiratoryWaveformStorage);
+
             _sopList.Add(RtBeamsDeliveryInstructionStorageSupplement74FrozenDraftUid, 
                          RtBeamsDeliveryInstructionStorageSupplement74FrozenDraft);
 
@@ -2819,6 +3200,9 @@ namespace ClearCanvas.Dicom
             _sopList.Add(SpatialRegistrationStorageUid, 
                          SpatialRegistrationStorage);
 
+            _sopList.Add(SpectaclePrescriptionReportsStorageUid, 
+                         SpectaclePrescriptionReportsStorage);
+
             _sopList.Add(StandaloneCurveStorageRetiredUid, 
                          StandaloneCurveStorageRetired);
 
@@ -2858,11 +3242,17 @@ namespace ClearCanvas.Dicom
             _sopList.Add(StudyRootQueryRetrieveInformationModelMoveUid, 
                          StudyRootQueryRetrieveInformationModelMove);
 
+            _sopList.Add(SubjectiveRefractionMeasurementsStorageUid, 
+                         SubjectiveRefractionMeasurementsStorage);
+
             _sopList.Add(SubstanceAdministrationLoggingSopClassUid, 
                          SubstanceAdministrationLoggingSopClass);
 
             _sopList.Add(SubstanceApprovalQuerySopClassUid, 
                          SubstanceApprovalQuerySopClass);
+
+            _sopList.Add(SurfaceSegmentationStorageUid, 
+                         SurfaceSegmentationStorage);
 
             _sopList.Add(TextSrStorageTrialRetiredUid, 
                          TextSrStorageTrialRetired);
@@ -2903,6 +3293,9 @@ namespace ClearCanvas.Dicom
             _sopList.Add(VideoPhotographicImageStorageUid, 
                          VideoPhotographicImageStorage);
 
+            _sopList.Add(VisualAcuityMeasurementsUid, 
+                         VisualAcuityMeasurements);
+
             _sopList.Add(VlEndoscopicImageStorageUid, 
                          VlEndoscopicImageStorage);
 
@@ -2920,6 +3313,9 @@ namespace ClearCanvas.Dicom
 
             _sopList.Add(WaveformStorageTrialRetiredUid, 
                          WaveformStorageTrialRetired);
+
+            _sopList.Add(XaXrfGrayscaleSoftcopyPresentationStateStorageUid, 
+                         XaXrfGrayscaleSoftcopyPresentationStateStorage);
 
             _sopList.Add(XRay3dAngiographicImageStorageUid, 
                          XRay3dAngiographicImageStorage);

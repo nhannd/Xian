@@ -96,15 +96,15 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public string SlideIdentifier
 		{
-			get { return base.DicomAttributeProvider[DicomTags.SlideIdentifier].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.SlideIdentifierRetired].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 				{
-					base.DicomAttributeProvider[DicomTags.SlideIdentifier] = null;
+					base.DicomAttributeProvider[DicomTags.SlideIdentifierRetired] = null;
 					return;
 				}
-				base.DicomAttributeProvider[DicomTags.SlideIdentifier].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.SlideIdentifierRetired].SetString(0, value);
 			}
 		}
 	}

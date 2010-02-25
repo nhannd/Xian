@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
@@ -681,6 +681,27 @@ namespace ClearCanvas.Dicom
                                  );
 
         /// <summary>String representing
+        /// <para>MPEG2 Main Profile @ High Level</para>
+        /// <para>UID: 1.2.840.10008.1.2.4.101</para>
+        /// </summary>
+        public static readonly String Mpeg2MainProfileHighLevelUid = "1.2.840.10008.1.2.4.101";
+
+        /// <summary>TransferSyntax object representing
+        /// <para>MPEG2 Main Profile @ High Level</para>
+        /// <para>UID: 1.2.840.10008.1.2.4.101</para>
+        /// </summary>
+        public static readonly TransferSyntax Mpeg2MainProfileHighLevel =
+                    new TransferSyntax("MPEG2 Main Profile @ High Level",
+                                 Mpeg2MainProfileHighLevelUid,
+                                 true, // Little Endian?
+                                 true, // Encapsulated?
+                                 true, // Explicit VR?
+                                 false, // Deflated?
+                                 true, // lossy?
+                                 false // lossless?
+                                 );
+
+        /// <summary>String representing
         /// <para>MPEG2 Main Profile @ Main Level</para>
         /// <para>UID: 1.2.840.10008.1.2.4.100</para>
         /// </summary>
@@ -968,6 +989,9 @@ namespace ClearCanvas.Dicom
 
             _transferSyntaxes.Add(JpipReferencedDeflateUid,
                                   JpipReferencedDeflate);
+
+            _transferSyntaxes.Add(Mpeg2MainProfileHighLevelUid,
+                                  Mpeg2MainProfileHighLevel);
 
             _transferSyntaxes.Add(Mpeg2MainProfileMainLevelUid,
                                   Mpeg2MainProfileMainLevel);
