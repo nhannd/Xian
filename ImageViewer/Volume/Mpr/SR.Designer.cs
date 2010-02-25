@@ -295,6 +295,24 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The selected images have an anisotropic pixel aspect ratio. MPR currently only supports 1:1 isotropic aspect ratios..
+        /// </summary>
+        public static string MessageSourceDataSetImagesMayNotHaveAnisotropicPixels {
+            get {
+                return ResourceManager.GetString("MessageSourceDataSetImagesMayNotHaveAnisotropicPixels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The selected images must be calibrated..
+        /// </summary>
+        public static string MessageSourceDataSetImagesMustBeCalibrated {
+            get {
+                return ResourceManager.GetString("MessageSourceDataSetImagesMustBeCalibrated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Inconsistent spacing betweeen images. MPR currently requires evenly spaced images..
         /// </summary>
         public static string MessageSourceDataSetImagesMustBeEvenlySpacedForMpr {

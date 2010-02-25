@@ -41,10 +41,14 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 {
 	partial class PolygonalRoiTests
 	{
-		private class PolygonShape : IEnumerable<PointF>
+		public class PolygonShape : IEnumerable<PointF>
 		{
 			#region Shape "Sierra" (for Complex07, 08 and 09)
 
+			/// <summary>
+			/// &quot;S&quot; shape for
+			/// <see cref="ImageKey.Complex07"/>, <see cref="ImageKey.Complex08"/> and <see cref="ImageKey.Complex09"/>.
+			/// </summary>
 			public static readonly PolygonShape Sierra = new PolygonShape("SIERRA",
 			                                                              new PointF(200, 50),
 			                                                              new PointF(50, 50),
@@ -60,7 +64,8 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 			                                                              new PointF(200, 75));
 
 			/// <summary>
-			/// Technically same as <see cref="Sierra"/> except with a knot in the shape definition to make the polygon complex
+			/// &quot;S&quot; shape as a complex polygon definition for
+			/// <see cref="ImageKey.Complex07"/>, <see cref="ImageKey.Complex08"/> and <see cref="ImageKey.Complex09"/>.
 			/// </summary>
 			public static readonly PolygonShape SierraPrime = new PolygonShape("SIERRA_PRIME",
 			                                                                   new PointF(200, 50),
@@ -84,6 +89,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 
 			#region Shape "Golf" (for Complex01, 02 and 03)
 
+			/// <summary>
+			/// &quot;G&quot; shape for
+			/// <see cref="ImageKey.Complex01"/>, <see cref="ImageKey.Complex02"/> and <see cref="ImageKey.Complex03"/>.
+			/// </summary>
 			public static readonly PolygonShape Golf = new PolygonShape("GOLF",
 			                                                            new PointF(200, 100),
 			                                                            new PointF(200, 50),
@@ -101,7 +110,8 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 			                                                            new PointF(175, 100));
 
 			/// <summary>
-			/// Technically same as <see cref="Golf"/> except with a knot in the shape definition to make the polygon complex
+			/// &quot;G&quot; shape as a complex polygon definition for
+			/// <see cref="ImageKey.Complex01"/>, <see cref="ImageKey.Complex02"/> and <see cref="ImageKey.Complex03"/>.
 			/// </summary>
 			public static readonly PolygonShape GolfPrime = new PolygonShape("GOLF_PRIME",
 			                                                                 new PointF(200, 100),
@@ -127,6 +137,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 
 			#region Shape "Charlie" (for Complex04, 05 and 06)
 
+			/// <summary>
+			/// &quot;C&quot; shape for
+			/// <see cref="ImageKey.Complex04"/>, <see cref="ImageKey.Complex05"/> and <see cref="ImageKey.Complex06"/>.
+			/// </summary>
 			public static readonly PolygonShape Charlie = new PolygonShape("CHARLIE", // the Unicorn
 			                                                               new PointF(225, 100),
 			                                                               new PointF(225, 50),
@@ -142,7 +156,8 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 			                                                               new PointF(200, 100));
 
 			/// <summary>
-			/// Technically same as <see cref="Charlie"/> except with a twist in the shape definition to make the polygon complex
+			/// &quot;C&quot; shape as a complex polygon definition for
+			/// <see cref="ImageKey.Complex04"/>, <see cref="ImageKey.Complex05"/> and <see cref="ImageKey.Complex06"/>.
 			/// </summary>
 			public static readonly PolygonShape CharliePrime = new PolygonShape("CHARLIE_PRIME",
 			                                                                    new PointF(225, 100),
@@ -166,6 +181,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 
 			#region Shape "Arrowhead" (for Complex10, 11 and 12)
 
+			/// <summary>
+			/// Arrowhead shape for
+			/// <see cref="ImageKey.Complex10"/>, <see cref="ImageKey.Complex11"/> and <see cref="ImageKey.Complex12"/>.
+			/// </summary>
 			public static readonly PolygonShape Arrowhead = new PolygonShape("ARROWHEAD", // the "Star Trek" shape
 			                                                                 new PointF(125, 50),
 			                                                                 new PointF(50, 225),
@@ -173,7 +192,8 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 			                                                                 new PointF(200, 225));
 
 			/// <summary>
-			/// Technically same as <see cref="Arrowhead"/> except with a twist in the shape definition to make the polygon complex
+			/// Arrowhead shape as a complex polygon definition for
+			/// <see cref="ImageKey.Complex10"/>, <see cref="ImageKey.Complex11"/> and <see cref="ImageKey.Complex12"/>.
 			/// </summary>
 			public static readonly PolygonShape ArrowheadPrime = new PolygonShape("ARROWHEAD_PRIME", // the "Star Trek" shape
 			                                                                      new PointF(125, 50),
@@ -186,8 +206,42 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 
 			#endregion
 
+			#region Shape "Triangle"
+
+			/// <summary>
+			/// Equilateral triangle (Side 200, Altitude 173) for
+			/// <see cref="ImageKey.Aspect01"/>, <see cref="ImageKey.Aspect02"/>, <see cref="ImageKey.Aspect03"/> and <see cref="ImageKey.Aspect04"/>.
+			/// </summary>
+			public static readonly PolygonShape Triangle = new PolygonShape("TRIANGLE", // an equilateral triangle (side=200 altitude=173)
+			                                                                new PointF(125, 52),
+			                                                                new PointF(25, 225),
+																			new PointF(225, 225));
+
+			/// <summary>
+			/// Isoceles triangle (Base 267, Altitude 173) for
+			/// <see cref="ImageKey.Aspect05"/>, <see cref="ImageKey.Aspect06"/>, <see cref="ImageKey.Aspect07"/> and <see cref="ImageKey.Aspect08"/>.
+			/// </summary>
+			public static readonly PolygonShape TriangleWide = new PolygonShape("TRIANGLE_WIDE", // an isoceles triangle (base=267 altitude=173)
+			                                                                    new PointF(166.5f, 52),
+			                                                                    new PointF(33, 225),
+			                                                                    new PointF(300, 225));
+
+			/// <summary>
+			/// Isoceles triangle (Base 200, Altitude 231) for
+			/// <see cref="ImageKey.Aspect09"/>, <see cref="ImageKey.Aspect10"/>, <see cref="ImageKey.Aspect11"/> and <see cref="ImageKey.Aspect12"/>.
+			/// </summary>
+			public static readonly PolygonShape TriangleNarrow = new PolygonShape("TRIANGLE_NARROW", // an isoceles triangle (base=200 altitude=231)
+			                                                                      new PointF(125, 69),
+			                                                                      new PointF(25, 300),
+			                                                                      new PointF(225, 300));
+
+			#endregion
+
 			#region Shape Real01
 
+			/// <summary>
+			/// Anatomy outline shape for <see cref="ImageKey.Real01"/>.
+			/// </summary>
 			public static readonly PolygonShape ShapeOnReal01 = new PolygonShape("REAL01", true,
 			                                                                     new PointF(110.864601f, 91.345749f),
 			                                                                     new PointF(110.735779f, 93.020645f),
@@ -257,6 +311,9 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 
 			#region Shape Real02
 
+			/// <summary>
+			/// Anatomy outline shape for <see cref="ImageKey.Real02"/>.
+			/// </summary>
 			public static readonly PolygonShape ShapeOnReal02 = new PolygonShape("REAL02", true,
 			                                                                     new PointF(149.773514f, 158.856567f),
 			                                                                     new PointF(146.810257f, 146.74585f),
@@ -298,6 +355,9 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 
 			#region Shape Real03
 
+			/// <summary>
+			/// Anatomy outline shape for <see cref="ImageKey.Real03"/>.
+			/// </summary>
 			public static readonly PolygonShape ShapeOnReal03 = new PolygonShape("REAL03", true,
 			                                                                     new PointF(230, 133),
 			                                                                     new PointF(228, 135),
@@ -358,6 +418,9 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 
 			#region Shape Real04
 
+			/// <summary>
+			/// Anatomy outline shape for <see cref="ImageKey.Real04"/>.
+			/// </summary>
 			public static readonly PolygonShape ShapeOnReal04 = new PolygonShape("REAL04", true,
 			                                                                     new PointF(162.928177f, 442.904297f),
 			                                                                     new PointF(173.52829f, 429.835663f),
@@ -411,6 +474,9 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 
 			#region Shape Real05
 
+			/// <summary>
+			/// Anatomy outline shape for <see cref="ImageKey.Real05"/>.
+			/// </summary>
 			public static readonly PolygonShape ShapeOnReal05 = new PolygonShape("REAL05", true,
 			                                                                     new PointF(229.073303f, 50.312508f),
 			                                                                     new PointF(225.507919f, 56.795002f),
@@ -452,6 +518,9 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 
 			#region Shape Real06
 
+			/// <summary>
+			/// Anatomy outline shape for <see cref="ImageKey.Real06"/>.
+			/// </summary>
 			public static readonly PolygonShape ShapeOnReal06 = new PolygonShape("REAL06", true,
 			                                                                     new PointF(138.136063f, 52.520763f),
 			                                                                     new PointF(137.575851f, 59.865772f),
@@ -516,6 +585,22 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 					for (int n = 0; n < _data.Length; n++)
 						_data[n] = Point.Round(_data[n]);
 				}
+			}
+
+			public PointF this[int index]
+			{
+				get { return _data[index]; }
+			}
+
+			/// <summary>
+			/// Gets a polygon shape definition consisting of the points of the current shape but in the reverse ordering.
+			/// </summary>
+			public PolygonShape CreateAntiShape()
+			{
+				PointF[] antiData = new PointF[_data.Length];
+				for (int n = 0; n < _data.Length; n++)
+					antiData[_data.Length - n - 1] = _data[n];
+				return new PolygonShape(string.Format("ANTI_{0}", _name), antiData);
 			}
 
 			public IEnumerator<PointF> GetEnumerator()

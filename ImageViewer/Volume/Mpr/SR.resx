@@ -270,4 +270,10 @@
   <data name="CommandMprReslice" xml:space="preserve">
     <value>Reslice MPR</value>
   </data>
+  <data name="MessageSourceDataSetImagesMayNotHaveAnisotropicPixels" xml:space="preserve">
+    <value>The selected images have an anisotropic pixel aspect ratio. MPR currently only supports 1:1 isotropic aspect ratios.</value>
+  </data>
+  <data name="MessageSourceDataSetImagesMustBeCalibrated" xml:space="preserve">
+    <value>The selected images must be calibrated.</value>
+  </data>
 </root>

@@ -403,6 +403,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 						throw new NullImageOrientationException();
 					if (!frame.Frame.ImageOrientationPatient.EqualsWithinTolerance(orient, _orientationTolerance))
 						throw new MultipleImageOrientationsException();
+					if (frame.Frame.PixelSpacing.IsNull)
+						throw new UncalibratedFramesException();
+					if (Math.Abs(frame.Frame.PixelSpacing.AspectRatio - 1) > _minimumSliceSpacing)
+						throw new AnisotropicPixelAspectRatioException();
 				}
 
 				// ensure all frames are sorted by slice location

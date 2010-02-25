@@ -37,6 +37,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Mathematics;
 using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
@@ -76,6 +77,42 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 		}
 
 		[Test]
+		public void TestStatsCalculationIsometricPixelAspectRatio()
+		{
+			// inscribed square within an equilateral triangle figure
+			// these expected values were independently computed by hand
+			RectangleF rectangle = new RectangleF(78.619f, 132.239f, 92.761f, 92.761f);
+			base.TestRoiStatsCalculations(ImageKey.Aspect01, rectangle, 371.046, 8604.68, 255, 0);
+			base.TestRoiStatsCalculations(ImageKey.Aspect02, rectangle, 371.046, 8604.68, 255, 0);
+			base.TestRoiStatsCalculations(ImageKey.Aspect03, rectangle, 14.842, 13.767, 255, 0, Units.Centimeters);
+			base.TestRoiStatsCalculations(ImageKey.Aspect04, rectangle, 14.842, 13.767, 255, 0, Units.Centimeters);
+		}
+
+		[Test]
+		public void TestStatsCalculationAnisometricPixelAspectRatio4To3()
+		{
+			// inscribed square within an "equilateral" triangle figure (equilateral when adjusted for pixel aspect ratio)
+			// these expected values were independently computed by hand
+			RectangleF rectangle = new RectangleF(104.826f, 132.239f, 123.682f, 92.761f);
+			base.TestRoiStatsCalculations(ImageKey.Aspect05, rectangle, 432.89, 11472.87, 255, 1.25);
+			base.TestRoiStatsCalculations(ImageKey.Aspect06, rectangle, 432.89, 11472.87, 255, 1.25);
+			base.TestRoiStatsCalculations(ImageKey.Aspect07, rectangle, 14.842, 13.767, 255, 0, Units.Centimeters);
+			base.TestRoiStatsCalculations(ImageKey.Aspect08, rectangle, 14.842, 13.767, 255, 0, Units.Centimeters);
+		}
+
+		[Test]
+		public void TestStatsCalculationAnisometricPixelAspectRatio3To4()
+		{
+			// inscribed ellipse within an "equilateral" triangle figure (equilateral when adjusted for pixel aspect ratio)
+			// these expected values were independently computed by hand
+			RectangleF rectangle = new RectangleF(78.619f, 176.318f, 92.761f, 123.682f);
+			base.TestRoiStatsCalculations(ImageKey.Aspect09, rectangle, 432.89, 11472.87, 255, 7.00);
+			base.TestRoiStatsCalculations(ImageKey.Aspect10, rectangle, 432.89, 11472.87, 255, 7.00);
+			base.TestRoiStatsCalculations(ImageKey.Aspect11, rectangle, 14.842, 13.767, 255, 7.00, Units.Centimeters);
+			base.TestRoiStatsCalculations(ImageKey.Aspect12, rectangle, 14.842, 13.767, 255, 7.00, Units.Centimeters);
+		}
+
+		[Test]
 		public void TestStatsCalculationsConsistency()
 		{
 			base.TestRoiStatsCalculationConsistency();
@@ -90,11 +127,11 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 		protected override Roi CreateRoiFromGraphic(IOverlayGraphicsProvider overlayGraphics, RectangleF shapeData)
 		{
 			RectanglePrimitive graphic = new RectanglePrimitive();
+			overlayGraphics.OverlayGraphics.Add(graphic);
 			graphic.CoordinateSystem = CoordinateSystem.Source;
 			graphic.TopLeft = shapeData.Location;
 			graphic.BottomRight = shapeData.Location + shapeData.Size;
 			graphic.ResetCoordinateSystem();
-			overlayGraphics.OverlayGraphics.Add(graphic);
 			return graphic.GetRoi();
 		}
 
@@ -105,7 +142,8 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 
 		protected override void AddShapeToGraphicsPath(GraphicsPath graphicsPath, RectangleF shapeData)
 		{
-			graphicsPath.AddRectangle(shapeData);
+			// we must do the positive rectangle conversion because the GDI GraphicsPath tests will fail on negative rectangles
+			graphicsPath.AddRectangle(RectangleUtilities.ConvertToPositiveRectangle(shapeData));
 		}
 
 		protected override string ShapeName

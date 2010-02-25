@@ -168,6 +168,7 @@
     <Compile Include="KeyObjects\KeyObjectPlaceholderImage.cs" />
     <Compile Include="RoiGraphics\Tests\ContainsPointTest.cs" />
     <Compile Include="RoiGraphics\Tests\EllipticalRoiTests.cs" />
+    <Compile Include="RoiGraphics\Tests\LinearRoiTests.cs" />
     <Compile Include="RoiGraphics\Tests\PolygonalRoiTests.cs" />
     <Compile Include="RoiGraphics\Tests\PolygonalRoiTestShapes.cs" />
     <Compile Include="RoiGraphics\Tests\RectangularRoiTests.cs" />

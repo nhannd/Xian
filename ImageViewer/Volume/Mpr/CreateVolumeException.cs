@@ -72,6 +72,16 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public UnevenlySpacedFramesException() : base("Source frames must be evenly spaced.") {}
 	}
 
+	public class UncalibratedFramesException : CreateVolumeException
+	{
+		public UncalibratedFramesException() : base("Source frames must be calibrated.") {}
+	}
+
+	public class AnisotropicPixelAspectRatioException : CreateVolumeException
+	{
+		public AnisotropicPixelAspectRatioException() : base("Source frames must have isotropic pixel aspect ratio.") {}
+	}
+
 	public class UnsupportedGantryTiltAxisException : CreateVolumeException
 	{
 		public UnsupportedGantryTiltAxisException() : base("Source frames have a gantry tilt about an unsupported axis.") {}
@@ -96,6 +106,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				message = SR.MessageSourceDataSetMustDefineImageOrientationPatient;
 			else if (ex is UnevenlySpacedFramesException)
 				message = SR.MessageSourceDataSetImagesMustBeEvenlySpacedForMpr;
+			else if (ex is UncalibratedFramesException)
+				message = SR.MessageSourceDataSetImagesMustBeCalibrated;
+			else if (ex is AnisotropicPixelAspectRatioException)
+				message = SR.MessageSourceDataSetImagesMayNotHaveAnisotropicPixels;
 			else if (ex is UnsupportedGantryTiltAxisException)
 				message = SR.MessageSourceDataSetImagesMayBotBeGantrySlewed;
 			exceptionHandlingContext.ShowMessageBox(message);

@@ -115,6 +115,37 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 		}
 
 		[Test]
+		[ExpectedException(typeof (UncalibratedFramesException))]
+		public void TestUncalibratedImageSource()
+		{
+			// it doesn't really matter what function we use
+			TestVolume(VolumeFunction.Void, sopDataSource => sopDataSource[DicomTags.PixelSpacing].SetEmptyValue(), null);
+		}
+
+		[Test]
+		public void TestIsotropicPixelAspectRatioImageSource()
+		{
+			// it doesn't really matter what function we use
+			TestVolume(VolumeFunction.Void, sopDataSource => sopDataSource[DicomTags.PixelSpacing].SetStringValue(@"0.9999999\1.000000"), null);
+		}
+
+		[Test]
+		[ExpectedException(typeof (AnisotropicPixelAspectRatioException))]
+		public void TestAnisotropicPixelAspectRatio4To3ImageSource()
+		{
+			// it doesn't really matter what function we use
+			TestVolume(VolumeFunction.Void, sopDataSource => sopDataSource[DicomTags.PixelSpacing].SetStringValue(@"0.13333333\0.0999999"), null);
+		}
+
+		[Test]
+		[ExpectedException(typeof (AnisotropicPixelAspectRatioException))]
+		public void TestAnisotropicPixelAspectRatio3To4ImageSource()
+		{
+			// it doesn't really matter what function we use
+			TestVolume(VolumeFunction.Void, sopDataSource => sopDataSource[DicomTags.PixelSpacing].SetStringValue(@"0.10000000\0.13333333"), null);
+		}
+
+		[Test]
 		[ExpectedException(typeof (UnevenlySpacedFramesException))]
 		public void TestUnevenlySpacedFramesSource()
 		{

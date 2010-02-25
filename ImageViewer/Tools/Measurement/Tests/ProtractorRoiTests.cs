@@ -174,12 +174,12 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement.Tests
 		protected override Roi CreateRoiFromGraphic(IOverlayGraphicsProvider overlayGraphics, Angle shapeData)
 		{
 			ProtractorGraphic graphic = new ProtractorGraphic();
+			overlayGraphics.OverlayGraphics.Add(graphic);
 			graphic.CoordinateSystem = CoordinateSystem.Source;
 			graphic.Points.Add(shapeData.Value1);
 			graphic.Points.Add(shapeData.Value2);
 			graphic.Points.Add(shapeData.Value3);
 			graphic.ResetCoordinateSystem();
-			overlayGraphics.OverlayGraphics.Add(graphic);
 			return graphic.GetRoi();
 		}
 

@@ -182,6 +182,9 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 			base.TestRoiContains(ImageKey.Complex07, PolygonShape.SierraPrime, "sierra_prime");
 			base.TestRoiContains(ImageKey.Complex10, PolygonShape.Arrowhead, "arrowhead");
 			base.TestRoiContains(ImageKey.Complex10, PolygonShape.ArrowheadPrime, "arrowhead_prime");
+			base.TestRoiContains(ImageKey.Aspect02, PolygonShape.Triangle, "triangle");
+			base.TestRoiContains(ImageKey.Aspect06, PolygonShape.TriangleWide, "triangle_wide");
+			base.TestRoiContains(ImageKey.Aspect10, PolygonShape.TriangleNarrow, "triangle_narrow");
 		}
 
 		[Test]
@@ -202,6 +205,22 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 			_useComplexCoreSampleShape = false;
 			base.TestRoiContains(ImageKey.Complex01, CreateCoreSampleShape(new PointF(127, 127), 256, 256), "pentagon");
 			base.TestRoiContains(ImageKey.Complex01, CreateCoreSampleShape(new PointF(127, 127), 256, 256), "5pointstar");
+		}
+
+		[Test]
+		public void TestContainsAntiShapes()
+		{
+			base.TestRoiContains(ImageKey.Complex01, PolygonShape.Golf.CreateAntiShape(), "anti_golf");
+			base.TestRoiContains(ImageKey.Complex01, PolygonShape.GolfPrime.CreateAntiShape(), "anti_golf_prime");
+			base.TestRoiContains(ImageKey.Complex04, PolygonShape.Charlie.CreateAntiShape(), "anti_charlie");
+			base.TestRoiContains(ImageKey.Complex04, PolygonShape.CharliePrime.CreateAntiShape(), "anti_charlie_prime");
+			base.TestRoiContains(ImageKey.Complex07, PolygonShape.Sierra.CreateAntiShape(), "anti_sierra");
+			base.TestRoiContains(ImageKey.Complex07, PolygonShape.SierraPrime.CreateAntiShape(), "anti_sierra_prime");
+			base.TestRoiContains(ImageKey.Complex10, PolygonShape.Arrowhead.CreateAntiShape(), "anti_arrowhead");
+			base.TestRoiContains(ImageKey.Complex10, PolygonShape.ArrowheadPrime.CreateAntiShape(), "anti_arrowhead_prime");
+			base.TestRoiContains(ImageKey.Aspect02, PolygonShape.Triangle.CreateAntiShape(), "anti_triangle");
+			base.TestRoiContains(ImageKey.Aspect06, PolygonShape.TriangleWide.CreateAntiShape(), "anti_triangle_wide");
+			base.TestRoiContains(ImageKey.Aspect10, PolygonShape.TriangleNarrow.CreateAntiShape(), "anti_triangle_narrow");
 		}
 
 		[Test]
@@ -254,6 +273,48 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 			base.TestRoiStatsCalculations(ImageKey.Complex11, PolygonShape.ArrowheadPrime, 561.07, 9375, 178.839, 51.206);
 			base.TestRoiStatsCalculations(ImageKey.Complex12, PolygonShape.Arrowhead, 561.07, 9375, 223.276, 18.161);
 			base.TestRoiStatsCalculations(ImageKey.Complex12, PolygonShape.ArrowheadPrime, 561.07, 9375, 223.276, 18.161);
+		}
+
+		[Test]
+		public void TestStatsCalculationIsometricPixelAspectRatio()
+		{
+			// this is the equilateral triangle figure
+			// these expected values were independently computed by ImageJ using the exact same polygon points
+			// all should have the same mean and sigma because they have identical pixel data (the only differences are in other attributes)
+			const double expectedMean = 254.783;
+			const double expectedSigma = 2.836;
+			base.TestRoiStatsCalculations(ImageKey.Aspect01, PolygonShape.Triangle, 600, 17300, expectedMean, expectedSigma);
+			base.TestRoiStatsCalculations(ImageKey.Aspect02, PolygonShape.Triangle, 600, 17300, expectedMean, expectedSigma);
+			base.TestRoiStatsCalculations(ImageKey.Aspect03, PolygonShape.Triangle, 24, 27.68, expectedMean, expectedSigma, Units.Centimeters);
+			base.TestRoiStatsCalculations(ImageKey.Aspect04, PolygonShape.Triangle, 24, 27.68, expectedMean, expectedSigma, Units.Centimeters);
+		}
+
+		[Test]
+		public void TestStatsCalculationAnisometricPixelAspectRatio4To3()
+		{
+			// this is the "equilateral" triangle figure (equilateral when adjusted for pixel aspect ratio)
+			// these expected values were independently computed by ImageJ using the exact same polygon points
+			// all should have the same mean and sigma because they have identical pixel data (the only differences are in other attributes)
+			const double expectedMean = 254.214;
+			const double expectedSigma = 7.143;
+			base.TestRoiStatsCalculations(ImageKey.Aspect05, PolygonShape.TriangleWide, 704.04, 23095.5, expectedMean, expectedSigma);
+			base.TestRoiStatsCalculations(ImageKey.Aspect06, PolygonShape.TriangleWide, 704.04, 23095.5, expectedMean, expectedSigma);
+			base.TestRoiStatsCalculations(ImageKey.Aspect07, PolygonShape.TriangleWide, 24, 27.68, expectedMean, expectedSigma, Units.Centimeters);
+			base.TestRoiStatsCalculations(ImageKey.Aspect08, PolygonShape.TriangleWide, 24, 27.68, expectedMean, expectedSigma, Units.Centimeters);
+		}
+
+		[Test]
+		public void TestStatsCalculationAnisometricPixelAspectRatio3To4()
+		{
+			// this is the "equilateral" triangle figure (equilateral when adjusted for pixel aspect ratio)
+			// these expected values were independently computed by ImageJ using the exact same polygon points
+			// all should have the same mean and sigma because they have identical pixel data (the only differences are in other attributes)
+			const double expectedMean = 254.127;
+			const double expectedSigma = 7.706;
+			base.TestRoiStatsCalculations(ImageKey.Aspect09, PolygonShape.TriangleNarrow, 703.432, 23100, expectedMean, expectedSigma);
+			base.TestRoiStatsCalculations(ImageKey.Aspect10, PolygonShape.TriangleNarrow, 703.432, 23100, expectedMean, expectedSigma);
+			base.TestRoiStatsCalculations(ImageKey.Aspect11, PolygonShape.TriangleNarrow, 24, 27.68, expectedMean, expectedSigma, Units.Centimeters);
+			base.TestRoiStatsCalculations(ImageKey.Aspect12, PolygonShape.TriangleNarrow, 24, 27.68, expectedMean, expectedSigma, Units.Centimeters);
 		}
 
 		[Test]
@@ -322,12 +383,12 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 		protected override Roi CreateRoiFromGraphic(IOverlayGraphicsProvider overlayGraphics, IEnumerable<PointF> shapeData)
 		{
 			PolylineGraphic graphic = new PolylineGraphic();
+			overlayGraphics.OverlayGraphics.Add(graphic);
 			graphic.CoordinateSystem = CoordinateSystem.Source;
 			foreach (PointF data in shapeData)
 				graphic.Points.Add(data);
 			graphic.Points.Add(graphic.Points[0]);
 			graphic.ResetCoordinateSystem();
-			overlayGraphics.OverlayGraphics.Add(graphic);
 			return graphic.GetRoi();
 		}
 

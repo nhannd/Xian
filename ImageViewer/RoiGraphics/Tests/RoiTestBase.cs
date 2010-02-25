@@ -120,24 +120,83 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 		}
 
 		/// <summary>
-		/// Tests the area, mean and standard deviation calculations for a specific shape on a specific image.
+		/// Tests the length measurement for a specific shape on a specific image.
 		/// </summary>
-		protected void TestRoiStatsCalculations(ImageKey key, T shapeData, double expectedPerimeter, double expectedArea, double expectedMean, double expectedSigma)
+		protected void TestRoiLengthMeasurement(ImageKey key, T shapeData, double expectedLength)
+		{
+			TestRoiLengthMeasurement(key, shapeData, expectedLength, 0.25, Units.Pixels);
+		}
+
+		/// <summary>
+		/// Tests the length measurement for a specific shape on a specific image.
+		/// </summary>
+		protected void TestRoiLengthMeasurement(ImageKey key, T shapeData, double expectedLength, double toleranceLength, Units lengthUnits)
 		{
 			string description = string.Format("{0} on {1}", shapeData, key);
 			using (IPresentationImage image = GetImage(key))
 			{
 				// simulates ROIs that an end-user would create using graphics constructed by the tools
 				Roi userRoi = CreateRoiFromGraphic((IOverlayGraphicsProvider) image, shapeData);
-				PerformRoiStatsCalculations(userRoi, expectedPerimeter, expectedArea, expectedMean, expectedSigma, "user", description);
+				PerformRoiLengthMeasurements(userRoi, expectedLength, toleranceLength, "user", description, lengthUnits);
 
 				// simulates ROIs that a programmer might create using the SDK directly, rather than via graphics
 				Roi sdkRoi = CreateRoiFromImage(image, shapeData);
-				PerformRoiStatsCalculations(sdkRoi, expectedPerimeter, expectedArea, expectedMean, expectedSigma, "SDK", description);
+				PerformRoiLengthMeasurements(sdkRoi, expectedLength, toleranceLength, "SDK", description, lengthUnits);
 			}
 		}
 
-		private void PerformRoiStatsCalculations(Roi roi, double expectedPerimeter, double expectedArea, double expectedMean, double expectedSigma, string mode, string shapeData)
+		private void PerformRoiLengthMeasurements(Roi roi, double expectedLength, double toleranceLength, string mode, string shapeData, Units lengthUnits)
+		{
+			WriteLine("Testing {1}-MODE {2} ROI using {0}", shapeData, mode.ToUpperInvariant(), this.ShapeName);
+
+			double measuredLength = 0;
+
+			if (roi is IRoiLengthProvider)
+			{
+				((IRoiLengthProvider) roi).Units = lengthUnits;
+				measuredLength = ((IRoiLengthProvider) roi).Length;
+			}
+
+			if (this.VerboseOutput)
+			{
+				WriteLine("Expecting  \u2113={0:f0}", expectedLength);
+				WriteLine("Actual     \u2113={0:f0}", measuredLength);
+			}
+
+			double errorLength = Math.Abs(expectedLength - measuredLength);
+
+			WriteLine("Errors    \u0394\u2113={0:f2}", errorLength);
+
+			Assert.AreEqual(expectedLength, measuredLength, toleranceLength, string.Format("\u0394length exceeds absolute tolerance of {0:f0}", toleranceLength));
+		}
+
+		/// <summary>
+		/// Tests the area, mean and standard deviation calculations for a specific shape on a specific image.
+		/// </summary>
+		protected void TestRoiStatsCalculations(ImageKey key, T shapeData, double expectedPerimeter, double expectedArea, double expectedMean, double expectedSigma)
+		{
+			this.TestRoiStatsCalculations(key, shapeData, expectedPerimeter, expectedArea, expectedMean, expectedSigma, Units.Pixels);
+		}
+
+		/// <summary>
+		/// Tests the area, mean and standard deviation calculations for a specific shape on a specific image.
+		/// </summary>
+		protected void TestRoiStatsCalculations(ImageKey key, T shapeData, double expectedPerimeter, double expectedArea, double expectedMean, double expectedSigma, Units areaPerimeterUnits)
+		{
+			string description = string.Format("{0} on {1}", shapeData, key);
+			using (IPresentationImage image = GetImage(key))
+			{
+				// simulates ROIs that an end-user would create using graphics constructed by the tools
+				Roi userRoi = CreateRoiFromGraphic((IOverlayGraphicsProvider) image, shapeData);
+				PerformRoiStatsCalculations(userRoi, expectedPerimeter, expectedArea, expectedMean, expectedSigma, "user", description, areaPerimeterUnits);
+
+				// simulates ROIs that a programmer might create using the SDK directly, rather than via graphics
+				Roi sdkRoi = CreateRoiFromImage(image, shapeData);
+				PerformRoiStatsCalculations(sdkRoi, expectedPerimeter, expectedArea, expectedMean, expectedSigma, "SDK", description, areaPerimeterUnits);
+			}
+		}
+
+		private void PerformRoiStatsCalculations(Roi roi, double expectedPerimeter, double expectedArea, double expectedMean, double expectedSigma, string mode, string shapeData, Units areaPerimeterUnits)
 		{
 			WriteLine("Testing {1}-MODE {2} ROI using {0}", shapeData, mode.ToUpperInvariant(), this.ShapeName);
 
@@ -147,7 +206,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 			double measuredSigma = roiStats.StandardDeviation;
 
 			if (roi is IRoiAreaProvider)
+			{
+				((IRoiAreaProvider) roi).Units = areaPerimeterUnits;
 				measuredArea = ((IRoiAreaProvider) roi).Area;
+			}
 
 			if (this.VerboseOutput)
 			{
