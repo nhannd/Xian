@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{5FC642CB-064E-449D-B31E-1C638C27C1DF}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -44,6 +44,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChangePixelAspectRatioComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ChangePixelAspectRatioComponentControl.Designer.cs">
+      <DependentUpon>ChangePixelAspectRatioComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ChangePixelAspectRatioComponentView.cs" />
     <Compile Include="MemoryAnalysisComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -95,6 +102,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ChangePixelAspectRatioComponentControl.resx">
+      <DependentUpon>ChangePixelAspectRatioComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MemoryAnalysisComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>MemoryAnalysisComponentControl.cs</DependentUpon>
