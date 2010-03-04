@@ -35,6 +35,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.StudyManagement;
 using Matrix2D=System.Drawing.Drawing2D.Matrix;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
@@ -202,17 +203,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 					// draw the callouts around the actual intersection
 
-					double angle;
-					this.CoordinateSystem = CoordinateSystem.Source;
-					try
-					{
-						angle = Math.Abs(Vector.SubtendedAngle(_endPoints[1], _endPoints[0], _endPoints[3] + new SizeF(_endPoints[0]) - new SizeF(_endPoints[2])));
-					}
-					finally
-					{
-						this.ResetCoordinateSystem();
-					}
-
+					double angle = MeasureAngle();
 					string textAngle = string.Format(SR.ToolsMeasurementFormatDegrees, angle);
 					string textComplementaryAngle = string.Format(SR.ToolsMeasurementFormatDegrees, 180 - angle);
 
@@ -230,6 +221,36 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 						DrawAngleCallout(_angleCalloutGraphic2, textComplementaryAngle, intersection, BisectAngle(q2, intersection, p1, angle < 150 ? calloutOffset : largerCalloutOffset));
 					else if (p2MeetsThreshold && q1MeetsThreshold)
 						DrawAngleCallout(_angleCalloutGraphic2, textComplementaryAngle, intersection, BisectAngle(q1, intersection, p2, angle < 150 ? calloutOffset : largerCalloutOffset));
+				}
+				finally
+				{
+					this.ResetCoordinateSystem();
+				}
+			}
+
+			private double MeasureAngle()
+			{
+				float aspectRatio = 1f;
+
+				IImageSopProvider imageSopProvider = this.ParentPresentationImage as IImageSopProvider;
+				if (imageSopProvider != null)
+				{
+					if (!imageSopProvider.Frame.PixelAspectRatio.IsNull)
+						aspectRatio = imageSopProvider.Frame.PixelAspectRatio.Value;
+					else if (!imageSopProvider.Frame.NormalizedPixelSpacing.IsNull)
+						aspectRatio = (float) imageSopProvider.Frame.NormalizedPixelSpacing.AspectRatio;
+				}
+
+				this.CoordinateSystem = CoordinateSystem.Source;
+				try
+				{
+					PointF p1 = _endPoints[1];
+					PointF p2 = _endPoints[0];
+					PointF p3 = _endPoints[3] + new SizeF(_endPoints[0]) - new SizeF(_endPoints[2]);
+					p1.Y *= aspectRatio;
+					p2.Y *= aspectRatio;
+					p3.Y *= aspectRatio;
+					return Math.Abs(Vector.SubtendedAngle(p1, p2, p3));
 				}
 				finally
 				{
