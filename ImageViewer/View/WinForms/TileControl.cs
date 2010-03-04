@@ -622,7 +622,10 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				return;
 			}
 
-			if (_tileController.ContextMenuEnabled)
+			PreviewContextMenuRequestMessage message = new PreviewContextMenuRequestMessage();
+			_tileController.ProcessMessage(message);
+
+			if (!message.Cancel)
 			{
 				ActionModelNode menuModel = _tileController.ContextMenuProvider.GetContextMenuModel(_tileController);
 				if (menuModel != null && menuModel.ChildNodes.Count > 0)

@@ -513,6 +513,7 @@
     <Compile Include="InputManagement\IMouseInformation.cs" />
     <Compile Include="InputManagement\MouseWheelShortcut.cs" />
     <Compile Include="InputManagement\TrackMousePositionMessage.cs" />
+    <Compile Include="InputManagement\PreviewContextMenuRequestMessage.cs" />
     <Compile Include="InformationBox.cs" />
     <Compile Include="InformationBoxChangedEventArgs.cs" />
     <Compile Include="Graphics\IGraphic.cs" />
