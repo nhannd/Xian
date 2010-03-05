@@ -226,10 +226,10 @@
     <value>Memory Usage</value>
   </data>
   <data name="TooltipFlipHorizontal" xml:space="preserve">
-    <value>Flip horizontal</value>
+    <value>Flip Horizontal</value>
   </data>
   <data name="TooltipFlipVertical" xml:space="preserve">
-    <value>Flip vertical</value>
+    <value>Flip Vertical</value>
   </data>
   <data name="TooltipPan" xml:space="preserve">
     <value>Pan</value>
@@ -241,10 +241,10 @@
     <value>Reset</value>
   </data>
   <data name="TooltipRotateLeft" xml:space="preserve">
-    <value>Rotate counterclockwise 90 degrees</value>
+    <value>Rotate Counterclockwise 90 Degrees</value>
   </data>
   <data name="TooltipRotateRight" xml:space="preserve">
-    <value>Rotate clockwise 90 degrees</value>
+    <value>Rotate Clockwise 90 Degrees</value>
   </data>
   <data name="TooltipStack" xml:space="preserve">
     <value>Stack</value>
@@ -259,10 +259,10 @@
     <value>Standard</value>
   </data>
   <data name="ToolbarFlipHorizontal" xml:space="preserve">
-    <value>Flip horizontal</value>
+    <value>Flip Horizontal</value>
   </data>
   <data name="ToolbarFlipVertical" xml:space="preserve">
-    <value>Flip vertical</value>
+    <value>Flip Vertical</value>
   </data>
   <data name="ToolbarPan" xml:space="preserve">
     <value>Pan</value>
@@ -274,10 +274,10 @@
     <value>Reset</value>
   </data>
   <data name="ToolbarRotateLeft" xml:space="preserve">
-    <value>Rotate counterclockwise 90 degrees</value>
+    <value>Rotate Counterclockwise 90 Degrees</value>
   </data>
   <data name="ToolbarRotateRight" xml:space="preserve">
-    <value>Rotate clockwise 90 degrees</value>
+    <value>Rotate Clockwise 90 Degrees</value>
   </data>
   <data name="ToolbarStack" xml:space="preserve">
     <value>Stack</value>

@@ -1477,7 +1477,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Flip horizontal.
+        ///   Looks up a localized string similar to Flip Horizontal.
         /// </summary>
         internal static string ToolbarFlipHorizontal {
             get {
@@ -1486,7 +1486,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Flip vertical.
+        ///   Looks up a localized string similar to Flip Vertical.
         /// </summary>
         internal static string ToolbarFlipVertical {
             get {
@@ -1567,7 +1567,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rotate counterclockwise 90 degrees.
+        ///   Looks up a localized string similar to Rotate Counterclockwise 90 Degrees.
         /// </summary>
         internal static string ToolbarRotateLeft {
             get {
@@ -1576,7 +1576,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rotate clockwise 90 degrees.
+        ///   Looks up a localized string similar to Rotate Clockwise 90 Degrees.
         /// </summary>
         internal static string ToolbarRotateRight {
             get {
@@ -1729,7 +1729,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Flip horizontal.
+        ///   Looks up a localized string similar to Flip Horizontal.
         /// </summary>
         internal static string TooltipFlipHorizontal {
             get {
@@ -1738,7 +1738,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Flip vertical.
+        ///   Looks up a localized string similar to Flip Vertical.
         /// </summary>
         internal static string TooltipFlipVertical {
             get {
@@ -1828,7 +1828,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rotate counterclockwise 90 degrees.
+        ///   Looks up a localized string similar to Rotate Counterclockwise 90 Degrees.
         /// </summary>
         internal static string TooltipRotateLeft {
             get {
@@ -1837,7 +1837,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rotate clockwise 90 degrees.
+        ///   Looks up a localized string similar to Rotate Clockwise 90 Degrees.
         /// </summary>
         internal static string TooltipRotateRight {
             get {
