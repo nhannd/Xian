@@ -183,6 +183,8 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		
 		#region Private Fields
 
+		private readonly int _contextMenuDelay = 300;
+
 		private readonly Tile _tile;
 		private bool _selectedOnThisClick;
 		private DateTime _startTime;
@@ -219,6 +221,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			_tile = tile;
 			_selectedOnThisClick = false;
 			_shortcutManager = shortcutManager;
+			_contextMenuDelay = InputManagementSettings.Default.ContextMenuDelay;
 		}
 
 		#region Private Properties
@@ -531,7 +534,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 			if (this.CaptureHandler != null)
 			{
-				if (!HasMoved(this.Location) && DateTime.Now.Subtract(_startTime).TotalMilliseconds > 300)
+				if (!HasMoved(this.Location) && DateTime.Now.Subtract(_startTime).TotalMilliseconds > _contextMenuDelay)
 				{
 					CancelHandler(this.CaptureHandler);
 				}
@@ -604,7 +607,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 		private bool ProcessPreviewContextMenuRequestMessage(PreviewContextMenuRequestMessage requestMessage)
 		{
-			if (!HasMoved(this.Location) && DateTime.Now.Subtract(_startTime).TotalMilliseconds > 300)
+			if (!HasMoved(this.Location) && DateTime.Now.Subtract(_startTime).TotalMilliseconds > _contextMenuDelay)
 				_contextMenuEnabled = (this.ActiveButton == XMouseButtons.Right);
 
 			requestMessage.Cancel = !_contextMenuEnabled;

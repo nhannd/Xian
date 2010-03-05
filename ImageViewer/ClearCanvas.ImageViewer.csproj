@@ -514,6 +514,12 @@
     <Compile Include="InputManagement\MouseWheelShortcut.cs" />
     <Compile Include="InputManagement\TrackMousePositionMessage.cs" />
     <Compile Include="InputManagement\PreviewContextMenuRequestMessage.cs" />
+    <Compile Include="InputManagement\InputManagementSettings.cs" />
+    <Compile Include="InputManagement\InputManagementSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>InputManagementSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="InformationBox.cs" />
     <Compile Include="InformationBoxChangedEventArgs.cs" />
     <Compile Include="Graphics\IGraphic.cs" />
@@ -723,6 +729,10 @@
     <None Include="DicomPresentationImageSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DicomPresentationImageSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="InputManagement\InputManagementSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>InputManagementSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="RoiGraphics\RoiSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
