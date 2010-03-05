@@ -59,35 +59,43 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StudyBrowserControl));
 			this._resultsTitleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
 			this._studyTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.SuspendLayout();
 			// 
 			// _resultsTitleBar
 			// 
-			resources.ApplyResources(this._resultsTitleBar, "_resultsTitleBar");
+			this._resultsTitleBar.Dock = System.Windows.Forms.DockStyle.Top;
+			this._resultsTitleBar.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._resultsTitleBar.GradientColoring = Crownwood.DotNetMagic.Controls.GradientColoring.LightBackToDarkBack;
+			this._resultsTitleBar.Location = new System.Drawing.Point(0, 0);
 			this._resultsTitleBar.MouseOverColor = System.Drawing.Color.Empty;
 			this._resultsTitleBar.Name = "_resultsTitleBar";
+			this._resultsTitleBar.Size = new System.Drawing.Size(731, 30);
 			this._resultsTitleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
+			this._resultsTitleBar.TabIndex = 3;
+			this._resultsTitleBar.Text = "10 results found on server";
 			// 
 			// _studyTableView
 			// 
-			this._studyTableView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.None;
-			resources.ApplyResources(this._studyTableView, "_studyTableView");
+			this._studyTableView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._studyTableView.Location = new System.Drawing.Point(0, 30);
 			this._studyTableView.Name = "_studyTableView";
 			this._studyTableView.ReadOnly = false;
+			this._studyTableView.Size = new System.Drawing.Size(731, 325);
 			this._studyTableView.SmartColumnSizing = true;
+			this._studyTableView.TabIndex = 0;
 			// 
 			// StudyBrowserControl
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.Controls.Add(this._studyTableView);
 			this.Controls.Add(this._resultsTitleBar);
+			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "StudyBrowserControl";
+			this.Size = new System.Drawing.Size(731, 355);
 			this.ResumeLayout(false);
 
 		}

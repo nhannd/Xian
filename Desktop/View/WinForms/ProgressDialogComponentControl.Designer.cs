@@ -59,7 +59,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProgressDialogComponentControl));
 			this._message = new System.Windows.Forms.TextBox();
 			this._progressBar = new System.Windows.Forms.ProgressBar();
 			this._cancelButton = new System.Windows.Forms.Button();
@@ -67,32 +66,46 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			// _message
 			// 
-			resources.ApplyResources(this._message, "_message");
+			this._message.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this._message.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this._message.Location = new System.Drawing.Point(14, 14);
+			this._message.Multiline = true;
 			this._message.Name = "_message";
 			this._message.ReadOnly = true;
+			this._message.Size = new System.Drawing.Size(315, 47);
+			this._message.TabIndex = 0;
 			this._message.Enter += new System.EventHandler(this._message_Enter);
 			// 
 			// _progressBar
 			// 
-			resources.ApplyResources(this._progressBar, "_progressBar");
+			this._progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._progressBar.Location = new System.Drawing.Point(14, 67);
 			this._progressBar.Name = "_progressBar";
+			this._progressBar.Size = new System.Drawing.Size(233, 23);
+			this._progressBar.TabIndex = 1;
 			// 
 			// _cancelButton
 			// 
-			resources.ApplyResources(this._cancelButton, "_cancelButton");
+			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this._cancelButton.Location = new System.Drawing.Point(254, 67);
 			this._cancelButton.Name = "_cancelButton";
+			this._cancelButton.Size = new System.Drawing.Size(75, 23);
+			this._cancelButton.TabIndex = 2;
+			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
 			// 
 			// ProgressDialogComponentControl
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._progressBar);
 			this.Controls.Add(this._message);
 			this.Name = "ProgressDialogComponentControl";
+			this.Size = new System.Drawing.Size(340, 110);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

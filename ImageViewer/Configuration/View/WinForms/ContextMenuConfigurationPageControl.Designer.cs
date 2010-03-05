@@ -59,22 +59,26 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ContextMenuConfigurationPageControl));
 			this._suppressContextMenuTools = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			// 
 			// _suppressContextMenuTools
 			// 
-			resources.ApplyResources(this._suppressContextMenuTools, "_suppressContextMenuTools");
+			this._suppressContextMenuTools.AutoSize = true;
+			this._suppressContextMenuTools.Location = new System.Drawing.Point(12, 12);
 			this._suppressContextMenuTools.Name = "_suppressContextMenuTools";
+			this._suppressContextMenuTools.Size = new System.Drawing.Size(191, 17);
+			this._suppressContextMenuTools.TabIndex = 0;
+			this._suppressContextMenuTools.Text = "Suppress tools in the context menu";
 			this._suppressContextMenuTools.UseVisualStyleBackColor = true;
 			// 
 			// ContextMenuConfigurationPageControl
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._suppressContextMenuTools);
 			this.Name = "ContextMenuConfigurationPageControl";
+			this.Size = new System.Drawing.Size(255, 62);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

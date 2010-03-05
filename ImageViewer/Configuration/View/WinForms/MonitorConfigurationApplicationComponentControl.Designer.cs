@@ -28,7 +28,6 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MonitorConfigurationApplicationComponentControl));
 			this._singleWindowRadio = new System.Windows.Forms.RadioButton();
 			this._separateWindowRadio = new System.Windows.Forms.RadioButton();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -37,32 +36,44 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			// 
 			// _singleWindowRadio
 			// 
-			resources.ApplyResources(this._singleWindowRadio, "_singleWindowRadio");
+			this._singleWindowRadio.AutoSize = true;
+			this._singleWindowRadio.Location = new System.Drawing.Point(20, 29);
 			this._singleWindowRadio.Name = "_singleWindowRadio";
+			this._singleWindowRadio.Size = new System.Drawing.Size(201, 17);
+			this._singleWindowRadio.TabIndex = 0;
 			this._singleWindowRadio.TabStop = true;
+			this._singleWindowRadio.Text = "Always open images in single window";
 			this._singleWindowRadio.UseVisualStyleBackColor = true;
 			// 
 			// _separateWindowRadio
 			// 
-			resources.ApplyResources(this._separateWindowRadio, "_separateWindowRadio");
+			this._separateWindowRadio.AutoSize = true;
+			this._separateWindowRadio.Location = new System.Drawing.Point(20, 52);
 			this._separateWindowRadio.Name = "_separateWindowRadio";
+			this._separateWindowRadio.Size = new System.Drawing.Size(215, 17);
+			this._separateWindowRadio.TabIndex = 1;
 			this._separateWindowRadio.TabStop = true;
+			this._separateWindowRadio.Text = "Always open images in separate window";
 			this._separateWindowRadio.UseVisualStyleBackColor = true;
 			// 
 			// groupBox1
 			// 
 			this.groupBox1.Controls.Add(this._singleWindowRadio);
 			this.groupBox1.Controls.Add(this._separateWindowRadio);
-			resources.ApplyResources(this.groupBox1, "groupBox1");
+			this.groupBox1.Location = new System.Drawing.Point(3, 12);
 			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(262, 89);
+			this.groupBox1.TabIndex = 2;
 			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "Desktop Window Behaviour";
 			// 
 			// MonitorConfigurationApplicationComponentControl
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.groupBox1);
 			this.Name = "MonitorConfigurationApplicationComponentControl";
+			this.Size = new System.Drawing.Size(292, 132);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
 			this.ResumeLayout(false);

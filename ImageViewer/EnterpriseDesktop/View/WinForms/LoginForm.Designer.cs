@@ -73,57 +73,79 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms
 			// _cancelButton
 			// 
 			this._cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			resources.ApplyResources(this._cancelButton, "_cancelButton");
+			this._cancelButton.Location = new System.Drawing.Point(577, 329);
+			this._cancelButton.Margin = new System.Windows.Forms.Padding(2);
 			this._cancelButton.Name = "_cancelButton";
+			this._cancelButton.Size = new System.Drawing.Size(75, 23);
+			this._cancelButton.TabIndex = 7;
+			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
 			// 
 			// _loginButton
 			// 
-			resources.ApplyResources(this._loginButton, "_loginButton");
+			this._loginButton.Enabled = false;
+			this._loginButton.Location = new System.Drawing.Point(577, 303);
+			this._loginButton.Margin = new System.Windows.Forms.Padding(2);
 			this._loginButton.Name = "_loginButton";
+			this._loginButton.Size = new System.Drawing.Size(75, 23);
+			this._loginButton.TabIndex = 6;
+			this._loginButton.Text = "Login";
 			this._loginButton.UseVisualStyleBackColor = true;
 			this._loginButton.Click += new System.EventHandler(this._loginButton_Click);
 			// 
 			// _userName
 			// 
-			resources.ApplyResources(this._userName, "_userName");
+			this._userName.Location = new System.Drawing.Point(446, 304);
 			this._userName.Name = "_userName";
+			this._userName.Size = new System.Drawing.Size(115, 20);
+			this._userName.TabIndex = 1;
 			this._userName.TextChanged += new System.EventHandler(this._userName_TextChanged);
 			// 
 			// _password
 			// 
-			resources.ApplyResources(this._password, "_password");
+			this._password.Location = new System.Drawing.Point(446, 330);
 			this._password.Name = "_password";
+			this._password.PasswordChar = '*';
+			this._password.Size = new System.Drawing.Size(115, 20);
+			this._password.TabIndex = 3;
 			this._password.TextChanged += new System.EventHandler(this._password_TextChanged);
 			// 
 			// pictureBox1
 			// 
 			this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
 			this.pictureBox1.BackgroundImage = global::ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms.SR.UserText;
-			resources.ApplyResources(this.pictureBox1, "pictureBox1");
+			this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			this.pictureBox1.Location = new System.Drawing.Point(406, 303);
 			this.pictureBox1.Name = "pictureBox1";
+			this.pictureBox1.Size = new System.Drawing.Size(37, 21);
+			this.pictureBox1.TabIndex = 8;
 			this.pictureBox1.TabStop = false;
-			this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LoginForm_MouseMove);
 			this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LoginForm_MouseDown);
+			this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LoginForm_MouseMove);
 			// 
 			// pictureBox2
 			// 
 			this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
 			this.pictureBox2.BackgroundImage = global::ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms.SR.PasswordText;
-			resources.ApplyResources(this.pictureBox2, "pictureBox2");
+			this.pictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			this.pictureBox2.Location = new System.Drawing.Point(370, 331);
 			this.pictureBox2.Name = "pictureBox2";
+			this.pictureBox2.Size = new System.Drawing.Size(73, 18);
+			this.pictureBox2.TabIndex = 9;
 			this.pictureBox2.TabStop = false;
-			this.pictureBox2.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LoginForm_MouseMove);
 			this.pictureBox2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LoginForm_MouseDown);
+			this.pictureBox2.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LoginForm_MouseMove);
 			// 
 			// LoginForm
 			// 
 			this.AcceptButton = this._loginButton;
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackgroundImage = global::ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms.SR.Splash;
+			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.CancelButton = this._cancelButton;
+			this.ClientSize = new System.Drawing.Size(673, 385);
 			this.Controls.Add(this.pictureBox2);
 			this.Controls.Add(this.pictureBox1);
 			this.Controls.Add(this._password);
@@ -132,10 +154,14 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms
 			this.Controls.Add(this._cancelButton);
 			this.DoubleBuffered = true;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "LoginForm";
-			this.Load += new System.EventHandler(this.LoginForm_Load);
-			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LoginForm_MouseDown);
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+			this.Text = "ClearCanvas Login";
 			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LoginForm_MouseMove);
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LoginForm_MouseDown);
+			this.Load += new System.EventHandler(this.LoginForm_Load);
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
 			this.ResumeLayout(false);

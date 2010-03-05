@@ -59,59 +59,76 @@ namespace ClearCanvas.Desktop.ExtensionBrowser.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExtensionBrowserControl));
-			this._pluginTreeView = new System.Windows.Forms.TreeView();
-			this._tabView = new System.Windows.Forms.TabControl();
-			this._extPointViewTabPage = new System.Windows.Forms.TabPage();
-			this._extPointTreeView = new System.Windows.Forms.TreeView();
-			this._pluginViewTabPage = new System.Windows.Forms.TabPage();
-			this._tabView.SuspendLayout();
-			this._extPointViewTabPage.SuspendLayout();
-			this._pluginViewTabPage.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// _pluginTreeView
-			// 
-			resources.ApplyResources(this._pluginTreeView, "_pluginTreeView");
-			this._pluginTreeView.Name = "_pluginTreeView";
-			// 
-			// _tabView
-			// 
-			this._tabView.Controls.Add(this._extPointViewTabPage);
-			this._tabView.Controls.Add(this._pluginViewTabPage);
-			resources.ApplyResources(this._tabView, "_tabView");
-			this._tabView.Name = "_tabView";
-			this._tabView.SelectedIndex = 0;
-			// 
-			// _extPointViewTabPage
-			// 
-			this._extPointViewTabPage.Controls.Add(this._extPointTreeView);
-			resources.ApplyResources(this._extPointViewTabPage, "_extPointViewTabPage");
-			this._extPointViewTabPage.Name = "_extPointViewTabPage";
-			this._extPointViewTabPage.UseVisualStyleBackColor = true;
-			// 
-			// _extPointTreeView
-			// 
-			resources.ApplyResources(this._extPointTreeView, "_extPointTreeView");
-			this._extPointTreeView.Name = "_extPointTreeView";
-			// 
-			// _pluginViewTabPage
-			// 
-			this._pluginViewTabPage.Controls.Add(this._pluginTreeView);
-			resources.ApplyResources(this._pluginViewTabPage, "_pluginViewTabPage");
-			this._pluginViewTabPage.Name = "_pluginViewTabPage";
-			this._pluginViewTabPage.UseVisualStyleBackColor = true;
-			// 
-			// ExtensionBrowserControl
-			// 
-			resources.ApplyResources(this, "$this");
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._tabView);
-			this.Name = "ExtensionBrowserControl";
-			this._tabView.ResumeLayout(false);
-			this._extPointViewTabPage.ResumeLayout(false);
-			this._pluginViewTabPage.ResumeLayout(false);
-			this.ResumeLayout(false);
+            this._pluginTreeView = new System.Windows.Forms.TreeView();
+            this._tabView = new System.Windows.Forms.TabControl();
+            this._pluginViewTabPage = new System.Windows.Forms.TabPage();
+            this._extPointViewTabPage = new System.Windows.Forms.TabPage();
+            this._extPointTreeView = new System.Windows.Forms.TreeView();
+            this._tabView.SuspendLayout();
+            this._pluginViewTabPage.SuspendLayout();
+            this._extPointViewTabPage.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // _pluginTree
+            // 
+            this._pluginTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._pluginTreeView.Location = new System.Drawing.Point(3, 3);
+            this._pluginTreeView.Name = "_pluginTree";
+            this._pluginTreeView.Size = new System.Drawing.Size(424, 277);
+            this._pluginTreeView.TabIndex = 0;
+            // 
+            // _tabView
+            // 
+            this._tabView.Controls.Add(this._extPointViewTabPage);
+            this._tabView.Controls.Add(this._pluginViewTabPage);
+            this._tabView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._tabView.Location = new System.Drawing.Point(0, 0);
+            this._tabView.Name = "_tabView";
+            this._tabView.SelectedIndex = 0;
+            this._tabView.Size = new System.Drawing.Size(438, 309);
+            this._tabView.TabIndex = 1;
+            // 
+            // _pluginViewTabPage
+            // 
+            this._pluginViewTabPage.Controls.Add(this._pluginTreeView);
+            this._pluginViewTabPage.Location = new System.Drawing.Point(4, 22);
+            this._pluginViewTabPage.Name = "_pluginViewTabPage";
+            this._pluginViewTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this._pluginViewTabPage.Size = new System.Drawing.Size(430, 283);
+            this._pluginViewTabPage.TabIndex = 0;
+            this._pluginViewTabPage.Text = "Plugins";
+            this._pluginViewTabPage.UseVisualStyleBackColor = true;
+            // 
+            // _extPointViewTabPage
+            // 
+            this._extPointViewTabPage.Controls.Add(this._extPointTreeView);
+            this._extPointViewTabPage.Location = new System.Drawing.Point(4, 22);
+            this._extPointViewTabPage.Name = "_extPointViewTabPage";
+            this._extPointViewTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this._extPointViewTabPage.Size = new System.Drawing.Size(430, 283);
+            this._extPointViewTabPage.TabIndex = 1;
+            this._extPointViewTabPage.Text = "Extension Points";
+            this._extPointViewTabPage.UseVisualStyleBackColor = true;
+            // 
+            // _extPointTree
+            // 
+            this._extPointTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._extPointTreeView.Location = new System.Drawing.Point(3, 3);
+            this._extPointTreeView.Name = "_extPointTree";
+            this._extPointTreeView.Size = new System.Drawing.Size(424, 277);
+            this._extPointTreeView.TabIndex = 0;
+            // 
+            // BrowserControl
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._tabView);
+            this.Name = "BrowserControl";
+            this.Size = new System.Drawing.Size(438, 309);
+            this._tabView.ResumeLayout(false);
+            this._pluginViewTabPage.ResumeLayout(false);
+            this._extPointViewTabPage.ResumeLayout(false);
+            this.ResumeLayout(false);
 
         }
 

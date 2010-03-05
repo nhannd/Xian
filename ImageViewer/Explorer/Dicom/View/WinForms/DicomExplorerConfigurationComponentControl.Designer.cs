@@ -59,7 +59,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DicomExplorerConfigurationComponentControl));
 			this._showPhoneticIdeographicNames = new System.Windows.Forms.CheckBox();
 			this._showNumberOfImages = new System.Windows.Forms.CheckBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -71,44 +70,63 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// _showPhoneticIdeographicNames
 			// 
-			resources.ApplyResources(this._showPhoneticIdeographicNames, "_showPhoneticIdeographicNames");
+			this._showPhoneticIdeographicNames.AutoSize = true;
+			this._showPhoneticIdeographicNames.Location = new System.Drawing.Point(15, 49);
 			this._showPhoneticIdeographicNames.Name = "_showPhoneticIdeographicNames";
+			this._showPhoneticIdeographicNames.Size = new System.Drawing.Size(210, 17);
+			this._showPhoneticIdeographicNames.TabIndex = 1;
+			this._showPhoneticIdeographicNames.Text = "Show phonetic and ideographic names";
 			this._showPhoneticIdeographicNames.UseVisualStyleBackColor = true;
 			// 
 			// _showNumberOfImages
 			// 
-			resources.ApplyResources(this._showNumberOfImages, "_showNumberOfImages");
+			this._showNumberOfImages.AutoSize = true;
+			this._showNumberOfImages.Location = new System.Drawing.Point(15, 26);
 			this._showNumberOfImages.Name = "_showNumberOfImages";
+			this._showNumberOfImages.Size = new System.Drawing.Size(178, 17);
+			this._showNumberOfImages.TabIndex = 0;
+			this._showNumberOfImages.Text = "Show number of images in study";
 			this._showNumberOfImages.UseVisualStyleBackColor = true;
 			// 
 			// groupBox1
 			// 
 			this.groupBox1.Controls.Add(this._showNumberOfImages);
 			this.groupBox1.Controls.Add(this._showPhoneticIdeographicNames);
-			resources.ApplyResources(this.groupBox1, "groupBox1");
+			this.groupBox1.Location = new System.Drawing.Point(14, 85);
 			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(240, 80);
+			this.groupBox1.TabIndex = 2;
 			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "Study Browser Columns";
 			// 
 			// groupBox2
 			// 
 			this.groupBox2.Controls.Add(this._selectDefaultServerOnStartup);
-			resources.ApplyResources(this.groupBox2, "groupBox2");
+			this.groupBox2.Location = new System.Drawing.Point(14, 16);
 			this.groupBox2.Name = "groupBox2";
+			this.groupBox2.Size = new System.Drawing.Size(240, 54);
+			this.groupBox2.TabIndex = 3;
 			this.groupBox2.TabStop = false;
+			this.groupBox2.Text = "Startup";
 			// 
-			// _selectDefaultServerOnStartup
+			// _selectDefaultServersOnStartup
 			// 
-			resources.ApplyResources(this._selectDefaultServerOnStartup, "_selectDefaultServerOnStartup");
-			this._selectDefaultServerOnStartup.Name = "_selectDefaultServerOnStartup";
+			this._selectDefaultServerOnStartup.AutoSize = true;
+			this._selectDefaultServerOnStartup.Location = new System.Drawing.Point(15, 24);
+			this._selectDefaultServerOnStartup.Name = "_selectDefaultServersOnStartup";
+			this._selectDefaultServerOnStartup.Size = new System.Drawing.Size(188, 17);
+			this._selectDefaultServerOnStartup.TabIndex = 1;
+			this._selectDefaultServerOnStartup.Text = "Select Default Server(s) on startup";
 			this._selectDefaultServerOnStartup.UseVisualStyleBackColor = true;
 			// 
 			// DicomExplorerConfigurationComponentControl
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox1);
 			this.Name = "DicomExplorerConfigurationComponentControl";
+			this.Size = new System.Drawing.Size(272, 186);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
 			this.groupBox2.ResumeLayout(false);
