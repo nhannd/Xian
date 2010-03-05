@@ -97,12 +97,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			// 
 			this._folderView.AutoWaitCursor = false;
 			this._folderView.ContextMenuStrip = this._folderViewContextMenu;
-			this._folderView.Dock = System.Windows.Forms.DockStyle.Fill;
+			resources.ApplyResources(this._folderView, "_folderView");
 			this._folderView.FolderCoordinator = this._folderCoordinator;
-			this._folderView.Location = new System.Drawing.Point(322, 52);
 			this._folderView.Name = "_folderView";
-			this._folderView.Size = new System.Drawing.Size(637, 545);
-			this._folderView.TabIndex = 200;
 			this._folderView.EndBrowse += new System.EventHandler(this._folderControl_EndBrowse);
 			this._folderView.BeginBrowse += new System.EventHandler(this._folderControl_BeginBrowse);
 			this._folderView.ItemDoubleClick += new ClearCanvas.Controls.WinForms.FolderViewItemEventHandler(this._folderView_ItemDoubleClick);
@@ -113,7 +110,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			// 
 			this._folderViewContextMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this._folderViewContextMenu.Name = "_folderViewContextMenu";
-			this._folderViewContextMenu.Size = new System.Drawing.Size(61, 4);
+			resources.ApplyResources(this._folderViewContextMenu, "_folderViewContextMenu");
 			this._folderViewContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this._folderViewContextMenu_Opening);
 			// 
 			// _folderCoordinator
@@ -122,22 +119,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			// 
 			// _splitter
 			// 
-			this._splitter.Location = new System.Drawing.Point(319, 52);
+			resources.ApplyResources(this._splitter, "_splitter");
 			this._splitter.Name = "_splitter";
-			this._splitter.Size = new System.Drawing.Size(3, 545);
-			this._splitter.TabIndex = 251;
 			this._splitter.TabStop = false;
 			// 
 			// _folderTree
 			// 
 			this._folderTree.AutoWaitCursor = false;
 			this._folderTree.ContextMenuStrip = this._folderTreeContextMenu;
-			this._folderTree.Dock = System.Windows.Forms.DockStyle.Left;
+			resources.ApplyResources(this._folderTree, "_folderTree");
 			this._folderTree.FolderCoordinator = this._folderCoordinator;
-			this._folderTree.Location = new System.Drawing.Point(0, 52);
 			this._folderTree.Name = "_folderTree";
-			this._folderTree.Size = new System.Drawing.Size(319, 545);
-			this._folderTree.TabIndex = 100;
 			this._folderTree.EndBrowse += new System.EventHandler(this._folderControl_EndBrowse);
 			this._folderTree.BeginBrowse += new System.EventHandler(this._folderControl_BeginBrowse);
 			this._folderTree.KeyDown += new System.Windows.Forms.KeyEventHandler(this._folderControl_KeyDown);
@@ -146,7 +138,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			// 
 			this._folderTreeContextMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this._folderTreeContextMenu.Name = "_folderTreeContextMenu";
-			this._folderTreeContextMenu.Size = new System.Drawing.Size(61, 4);
+			resources.ApplyResources(this._folderTreeContextMenu, "_folderTreeContextMenu");
 			this._folderTreeContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this._folderTreeContextMenu_Opening);
 			// 
 			// _toolStrip
@@ -162,89 +154,62 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
             this._separatorSabre,
             this._btnShowFolders,
             this._btnViews});
-			this._toolStrip.Location = new System.Drawing.Point(0, 0);
+			resources.ApplyResources(this._toolStrip, "_toolStrip");
 			this._toolStrip.Name = "_toolStrip";
-			this._toolStrip.Size = new System.Drawing.Size(959, 25);
 			this._toolStrip.Stretch = true;
-			this._toolStrip.TabIndex = 0;
-			this._toolStrip.Text = "Standard Buttons";
 			// 
 			// _btnBack
 			// 
 			this._btnBack.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this._btnBack.Image = ((System.Drawing.Image)(resources.GetObject("_btnBack.Image")));
-			this._btnBack.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-			this._btnBack.ImageTransparentColor = System.Drawing.Color.Magenta;
+			resources.ApplyResources(this._btnBack, "_btnBack");
 			this._btnBack.Name = "_btnBack";
-			this._btnBack.Size = new System.Drawing.Size(32, 22);
-			this._btnBack.Text = "Back";
 			this._btnBack.ButtonClick += new System.EventHandler(this._btnBack_Click);
 			// 
 			// _btnForward
 			// 
 			this._btnForward.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this._btnForward.Image = ((System.Drawing.Image)(resources.GetObject("_btnForward.Image")));
-			this._btnForward.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-			this._btnForward.ImageTransparentColor = System.Drawing.Color.Magenta;
+			resources.ApplyResources(this._btnForward, "_btnForward");
 			this._btnForward.Name = "_btnForward";
-			this._btnForward.Size = new System.Drawing.Size(32, 22);
-			this._btnForward.Text = "Forward";
 			this._btnForward.ButtonClick += new System.EventHandler(this._btnForward_Click);
 			// 
 			// _btnUp
 			// 
 			this._btnUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this._btnUp.Image = ((System.Drawing.Image)(resources.GetObject("_btnUp.Image")));
-			this._btnUp.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-			this._btnUp.ImageTransparentColor = System.Drawing.Color.Magenta;
+			resources.ApplyResources(this._btnUp, "_btnUp");
 			this._btnUp.Name = "_btnUp";
-			this._btnUp.Size = new System.Drawing.Size(23, 22);
-			this._btnUp.Text = "Up";
 			this._btnUp.Click += new System.EventHandler(this._btnUp_Click);
 			// 
 			// _separatorScimitar
 			// 
 			this._separatorScimitar.Name = "_separatorScimitar";
-			this._separatorScimitar.Size = new System.Drawing.Size(6, 25);
+			resources.ApplyResources(this._separatorScimitar, "_separatorScimitar");
 			// 
 			// _btnHome
 			// 
 			this._btnHome.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this._btnHome.Image = ((System.Drawing.Image)(resources.GetObject("_btnHome.Image")));
-			this._btnHome.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-			this._btnHome.ImageTransparentColor = System.Drawing.Color.Magenta;
+			resources.ApplyResources(this._btnHome, "_btnHome");
 			this._btnHome.Name = "_btnHome";
-			this._btnHome.Size = new System.Drawing.Size(23, 22);
-			this._btnHome.Text = "Home";
 			this._btnHome.Click += new System.EventHandler(this._btnHome_Click);
 			// 
 			// _btnRefresh
 			// 
 			this._btnRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this._btnRefresh.Image = ((System.Drawing.Image)(resources.GetObject("_btnRefresh.Image")));
-			this._btnRefresh.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-			this._btnRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
+			resources.ApplyResources(this._btnRefresh, "_btnRefresh");
 			this._btnRefresh.Name = "_btnRefresh";
-			this._btnRefresh.Size = new System.Drawing.Size(23, 22);
-			this._btnRefresh.Text = "Refresh";
 			this._btnRefresh.Click += new System.EventHandler(this._btnRefresh_Click);
 			// 
 			// _separatorSabre
 			// 
 			this._separatorSabre.Name = "_separatorSabre";
-			this._separatorSabre.Size = new System.Drawing.Size(6, 25);
+			resources.ApplyResources(this._separatorSabre, "_separatorSabre");
 			// 
 			// _btnShowFolders
 			// 
 			this._btnShowFolders.Checked = true;
 			this._btnShowFolders.CheckState = System.Windows.Forms.CheckState.Checked;
 			this._btnShowFolders.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this._btnShowFolders.Image = ((System.Drawing.Image)(resources.GetObject("_btnShowFolders.Image")));
-			this._btnShowFolders.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-			this._btnShowFolders.ImageTransparentColor = System.Drawing.Color.Magenta;
+			resources.ApplyResources(this._btnShowFolders, "_btnShowFolders");
 			this._btnShowFolders.Name = "_btnShowFolders";
-			this._btnShowFolders.Size = new System.Drawing.Size(23, 22);
-			this._btnShowFolders.Text = "Folders";
 			this._btnShowFolders.Click += new System.EventHandler(this._btnShowFolders_Click);
 			// 
 			// _btnViews
@@ -255,18 +220,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
             this._mnuIconsView,
             this._mnuListView,
             this._mnuDetailsView});
-			this._btnViews.Image = ((System.Drawing.Image)(resources.GetObject("_btnViews.Image")));
-			this._btnViews.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-			this._btnViews.ImageTransparentColor = System.Drawing.Color.Magenta;
+			resources.ApplyResources(this._btnViews, "_btnViews");
 			this._btnViews.Name = "_btnViews";
-			this._btnViews.Size = new System.Drawing.Size(29, 22);
-			this._btnViews.Text = "Views";
 			// 
 			// _mnuTilesView
 			// 
 			this._mnuTilesView.Name = "_mnuTilesView";
-			this._mnuTilesView.Size = new System.Drawing.Size(106, 22);
-			this._mnuTilesView.Text = "Tile&s";
+			resources.ApplyResources(this._mnuTilesView, "_mnuTilesView");
 			this._mnuTilesView.Click += new System.EventHandler(this._mnuTilesView_Click);
 			// 
 			// _mnuIconsView
@@ -274,22 +234,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			this._mnuIconsView.Checked = true;
 			this._mnuIconsView.CheckState = System.Windows.Forms.CheckState.Checked;
 			this._mnuIconsView.Name = "_mnuIconsView";
-			this._mnuIconsView.Size = new System.Drawing.Size(106, 22);
-			this._mnuIconsView.Text = "Ico&ns";
+			resources.ApplyResources(this._mnuIconsView, "_mnuIconsView");
 			this._mnuIconsView.Click += new System.EventHandler(this._mnuIconsView_Click);
 			// 
 			// _mnuListView
 			// 
 			this._mnuListView.Name = "_mnuListView";
-			this._mnuListView.Size = new System.Drawing.Size(106, 22);
-			this._mnuListView.Text = "&List";
+			resources.ApplyResources(this._mnuListView, "_mnuListView");
 			this._mnuListView.Click += new System.EventHandler(this._mnuListView_Click);
 			// 
 			// _mnuDetailsView
 			// 
 			this._mnuDetailsView.Name = "_mnuDetailsView";
-			this._mnuDetailsView.Size = new System.Drawing.Size(106, 22);
-			this._mnuDetailsView.Text = "&Details";
+			resources.ApplyResources(this._mnuDetailsView, "_mnuDetailsView");
 			this._mnuDetailsView.Click += new System.EventHandler(this._mnuDetailsView_Click);
 			// 
 			// _addressStrip
@@ -300,67 +257,57 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
             this._lblAddress,
             this._txtAddress,
             this._btnGo});
-			this._addressStrip.Location = new System.Drawing.Point(0, 25);
+			resources.ApplyResources(this._addressStrip, "_addressStrip");
 			this._addressStrip.Name = "_addressStrip";
-			this._addressStrip.Size = new System.Drawing.Size(959, 27);
 			this._addressStrip.Stretch = true;
-			this._addressStrip.TabIndex = 300;
 			this._addressStrip.TabStop = true;
-			this._addressStrip.Text = "Address Bar";
 			// 
 			// _lblAddress
 			// 
 			this._lblAddress.Name = "_lblAddress";
-			this._lblAddress.Size = new System.Drawing.Size(46, 24);
-			this._lblAddress.Text = "Address";
+			resources.ApplyResources(this._lblAddress, "_lblAddress");
 			// 
 			// _txtAddress
 			// 
 			this._txtAddress.Name = "_txtAddress";
-			this._txtAddress.Size = new System.Drawing.Size(858, 24);
+			resources.ApplyResources(this._txtAddress, "_txtAddress");
 			this._txtAddress.KeyEnterPressed += new System.EventHandler(this._txtAddress_KeyEnterPressed);
 			// 
 			// _btnGo
 			// 
 			this._btnGo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this._btnGo.Image = ((System.Drawing.Image)(resources.GetObject("_btnGo.Image")));
-			this._btnGo.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-			this._btnGo.ImageTransparentColor = System.Drawing.Color.Magenta;
+			resources.ApplyResources(this._btnGo, "_btnGo");
 			this._btnGo.Name = "_btnGo";
-			this._btnGo.Size = new System.Drawing.Size(23, 24);
-			this._btnGo.Text = "Go";
 			this._btnGo.Click += new System.EventHandler(this._btnGo_Click);
 			// 
 			// _largeIconImageList
 			// 
 			this._largeIconImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-			this._largeIconImageList.ImageSize = new System.Drawing.Size(64, 64);
+			resources.ApplyResources(this._largeIconImageList, "_largeIconImageList");
 			this._largeIconImageList.TransparentColor = System.Drawing.Color.Transparent;
 			// 
 			// _mediumIconImageList
 			// 
 			this._mediumIconImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-			this._mediumIconImageList.ImageSize = new System.Drawing.Size(48, 48);
+			resources.ApplyResources(this._mediumIconImageList, "_mediumIconImageList");
 			this._mediumIconImageList.TransparentColor = System.Drawing.Color.Transparent;
 			// 
 			// _smallIconImageList
 			// 
 			this._smallIconImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-			this._smallIconImageList.ImageSize = new System.Drawing.Size(24, 24);
+			resources.ApplyResources(this._smallIconImageList, "_smallIconImageList");
 			this._smallIconImageList.TransparentColor = System.Drawing.Color.Transparent;
 			// 
 			// LocalImageExplorerControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._folderView);
 			this.Controls.Add(this._splitter);
 			this.Controls.Add(this._folderTree);
 			this.Controls.Add(this._addressStrip);
 			this.Controls.Add(this._toolStrip);
-			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "LocalImageExplorerControl";
-			this.Size = new System.Drawing.Size(959, 597);
 			this._toolStrip.ResumeLayout(false);
 			this._toolStrip.PerformLayout();
 			this._addressStrip.ResumeLayout(false);

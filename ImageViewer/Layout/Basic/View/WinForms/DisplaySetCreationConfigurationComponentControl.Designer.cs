@@ -59,6 +59,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DisplaySetCreationConfigurationComponentControl));
 			this._createSingleImageDisplaySets = new System.Windows.Forms.CheckBox();
 			this._splitEchos = new System.Windows.Forms.CheckBox();
 			this._showOriginalMultiEchoSeries = new System.Windows.Forms.CheckBox();
@@ -75,72 +76,45 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			// 
 			// _createSingleImageDisplaySets
 			// 
-			this._createSingleImageDisplaySets.AutoSize = true;
-			this._createSingleImageDisplaySets.Location = new System.Drawing.Point(15, 24);
+			resources.ApplyResources(this._createSingleImageDisplaySets, "_createSingleImageDisplaySets");
 			this._createSingleImageDisplaySets.Name = "_createSingleImageDisplaySets";
-			this._createSingleImageDisplaySets.Size = new System.Drawing.Size(175, 17);
-			this._createSingleImageDisplaySets.TabIndex = 2;
-			this._createSingleImageDisplaySets.Text = "Create single image display sets";
 			this._createSingleImageDisplaySets.UseVisualStyleBackColor = true;
 			// 
 			// _splitEchos
 			// 
-			this._splitEchos.AutoSize = true;
-			this._splitEchos.Location = new System.Drawing.Point(15, 47);
+			resources.ApplyResources(this._splitEchos, "_splitEchos");
 			this._splitEchos.Name = "_splitEchos";
-			this._splitEchos.Size = new System.Drawing.Size(127, 17);
-			this._splitEchos.TabIndex = 3;
-			this._splitEchos.Text = "Split multi-echo series";
 			this._splitEchos.UseVisualStyleBackColor = true;
 			// 
 			// _showOriginalMultiEchoSeries
 			// 
-			this._showOriginalMultiEchoSeries.AutoSize = true;
-			this._showOriginalMultiEchoSeries.Location = new System.Drawing.Point(34, 70);
+			resources.ApplyResources(this._showOriginalMultiEchoSeries, "_showOriginalMultiEchoSeries");
 			this._showOriginalMultiEchoSeries.Name = "_showOriginalMultiEchoSeries";
-			this._showOriginalMultiEchoSeries.Size = new System.Drawing.Size(119, 17);
-			this._showOriginalMultiEchoSeries.TabIndex = 4;
-			this._showOriginalMultiEchoSeries.Text = "Show original series";
 			this._showOriginalMultiEchoSeries.UseVisualStyleBackColor = true;
 			// 
 			// _splitMixedMultiframeSeries
 			// 
-			this._splitMixedMultiframeSeries.AutoSize = true;
-			this._splitMixedMultiframeSeries.Location = new System.Drawing.Point(15, 93);
+			resources.ApplyResources(this._splitMixedMultiframeSeries, "_splitMixedMultiframeSeries");
 			this._splitMixedMultiframeSeries.Name = "_splitMixedMultiframeSeries";
-			this._splitMixedMultiframeSeries.Size = new System.Drawing.Size(159, 17);
-			this._splitMixedMultiframeSeries.TabIndex = 5;
-			this._splitMixedMultiframeSeries.Text = "Split mixed multi-frame series";
 			this._splitMixedMultiframeSeries.UseVisualStyleBackColor = true;
 			// 
 			// _showOriginalMixedMultiframeSeries
 			// 
-			this._showOriginalMixedMultiframeSeries.AutoSize = true;
-			this._showOriginalMixedMultiframeSeries.Location = new System.Drawing.Point(34, 116);
+			resources.ApplyResources(this._showOriginalMixedMultiframeSeries, "_showOriginalMixedMultiframeSeries");
 			this._showOriginalMixedMultiframeSeries.Name = "_showOriginalMixedMultiframeSeries";
-			this._showOriginalMixedMultiframeSeries.Size = new System.Drawing.Size(119, 17);
-			this._showOriginalMixedMultiframeSeries.TabIndex = 6;
-			this._showOriginalMixedMultiframeSeries.Text = "Show original series";
 			this._showOriginalMixedMultiframeSeries.UseVisualStyleBackColor = true;
 			// 
 			// _modality
 			// 
 			this._modality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._modality.FormattingEnabled = true;
-			this._modality.Location = new System.Drawing.Point(15, 25);
-			this._modality.MaxDropDownItems = 25;
+			resources.ApplyResources(this._modality, "_modality");
 			this._modality.Name = "_modality";
-			this._modality.Size = new System.Drawing.Size(86, 21);
-			this._modality.TabIndex = 0;
 			// 
 			// label1
 			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(12, 9);
+			resources.ApplyResources(this.label1, "label1");
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(46, 13);
-			this.label1.TabIndex = 8;
-			this.label1.Text = "Modality";
 			// 
 			// _creationGroup
 			// 
@@ -149,43 +123,32 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			this._creationGroup.Controls.Add(this._splitEchos);
 			this._creationGroup.Controls.Add(this._showOriginalMixedMultiframeSeries);
 			this._creationGroup.Controls.Add(this._splitMixedMultiframeSeries);
-			this._creationGroup.Location = new System.Drawing.Point(15, 52);
+			resources.ApplyResources(this._creationGroup, "_creationGroup");
 			this._creationGroup.Name = "_creationGroup";
-			this._creationGroup.Size = new System.Drawing.Size(203, 149);
-			this._creationGroup.TabIndex = 1;
 			this._creationGroup.TabStop = false;
-			this._creationGroup.Text = "Creation";
 			// 
 			// _presentationGroupBox
 			// 
 			this._presentationGroupBox.Controls.Add(this._invertImages);
-			this._presentationGroupBox.Location = new System.Drawing.Point(15, 207);
+			resources.ApplyResources(this._presentationGroupBox, "_presentationGroupBox");
 			this._presentationGroupBox.Name = "_presentationGroupBox";
-			this._presentationGroupBox.Size = new System.Drawing.Size(203, 45);
-			this._presentationGroupBox.TabIndex = 7;
 			this._presentationGroupBox.TabStop = false;
-			this._presentationGroupBox.Text = "Presentation";
 			// 
 			// _invertImages
 			// 
-			this._invertImages.AutoSize = true;
-			this._invertImages.Location = new System.Drawing.Point(15, 19);
+			resources.ApplyResources(this._invertImages, "_invertImages");
 			this._invertImages.Name = "_invertImages";
-			this._invertImages.Size = new System.Drawing.Size(137, 17);
-			this._invertImages.TabIndex = 8;
-			this._invertImages.Text = "Invert grayscale images";
 			this._invertImages.UseVisualStyleBackColor = true;
 			// 
 			// DisplaySetCreationConfigurationComponentControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._presentationGroupBox);
 			this.Controls.Add(this._creationGroup);
 			this.Controls.Add(this._modality);
 			this.Controls.Add(this.label1);
 			this.Name = "DisplaySetCreationConfigurationComponentControl";
-			this.Size = new System.Drawing.Size(235, 271);
 			this._creationGroup.ResumeLayout(false);
 			this._creationGroup.PerformLayout();
 			this._presentationGroupBox.ResumeLayout(false);
