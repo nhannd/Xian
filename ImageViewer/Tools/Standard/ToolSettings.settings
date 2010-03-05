@@ -2,25 +2,25 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.ImageViewer.Tools.Standard" GeneratedClassName="ToolSettings">
   <Profiles />
   <Settings>
-    <Setting Name="ShowNonCTModPixelValue" Type="System.Boolean" Scope="User">
+    <Setting Name="ShowNonCTModPixelValue" Description="Enables display of post-modality LUT value on non CT images." Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="ShowCTRawPixelValue" Type="System.Boolean" Scope="User">
+    <Setting Name="ShowCTRawPixelValue" Description="Enables display of pre-modality LUT value on CT images." Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="ShowVOIPixelValue" Type="System.Boolean" Scope="User">
+    <Setting Name="ShowVOIPixelValue" Description="Enables display of post-VOI LUT value." Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="TextCalloutMode" Type="System.String" Scope="User">
+    <Setting Name="TextCalloutMode" Description="Last used text tool mode." Type="System.String" Scope="User">
       <Value Profile="(Default)">TextCallout</Value>
     </Setting>
-    <Setting Name="MagnificationFactor" Type="System.Single" Scope="User">
+    <Setting Name="MagnificationFactor" Description="Magnification factor for magnifier tool." Type="System.Single" Scope="User">
       <Value Profile="(Default)">2</Value>
     </Setting>
     <Setting Name="InvertedZoomToolOperation" Description="Inverts the operation of the Zoom tool such that moving the mouse up zooms out, and moving down zooms in." Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="ToolSettingsProfile" Type="ClearCanvas.ImageViewer.Tools.Standard.ToolSettingsProfile" Scope="User">
+    <Setting Name="ToolSettingsProfile" Description="Per modality setting profiles for certain tools." Type="ClearCanvas.ImageViewer.Tools.Standard.ToolSettingsProfile" Scope="User">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;ToolSettingsProfile&gt;
   &lt;Setting Modality="US"&gt;
@@ -33,6 +33,9 @@
     &lt;AutoCineMultiframes&gt;True&lt;/AutoCineMultiframes&gt;
   &lt;/Setting&gt;
 &lt;/ToolSettingsProfile&gt;</Value>
+    </Setting>
+    <Setting Name="MatchScaleForNonParallelImages" Description="Enables match scale tool for non-parallel images." Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

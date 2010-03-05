@@ -23,7 +23,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
             }
         }
         
+        /// <summary>
+        /// Enables display of post-modality LUT value on non CT images.
+        /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Enables display of post-modality LUT value on non CT images.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool ShowNonCTModPixelValue {
@@ -35,7 +39,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
             }
         }
         
+        /// <summary>
+        /// Enables display of pre-modality LUT value on CT images.
+        /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Enables display of pre-modality LUT value on CT images.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool ShowCTRawPixelValue {
@@ -47,7 +55,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
             }
         }
         
+        /// <summary>
+        /// Enables display of post-VOI LUT value.
+        /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Enables display of post-VOI LUT value.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool ShowVOIPixelValue {
@@ -59,7 +71,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
             }
         }
         
+        /// <summary>
+        /// Last used text tool mode.
+        /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Last used text tool mode.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("TextCallout")]
         public string TextCalloutMode {
@@ -71,7 +87,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
             }
         }
         
+        /// <summary>
+        /// Magnification factor for magnifier tool.
+        /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Magnification factor for magnifier tool.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("2")]
         public float MagnificationFactor {
@@ -100,7 +120,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
             }
         }
         
+        /// <summary>
+        /// Per modality setting profiles for certain tools.
+        /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Per modality setting profiles for certain tools.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
 <ToolSettingsProfile>
@@ -120,6 +144,22 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
             }
             set {
                 this["ToolSettingsProfile"] = value;
+            }
+        }
+        
+        /// <summary>
+        /// Enables match scale tool for non-parallel images.
+        /// </summary>
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Enables match scale tool for non-parallel images.")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MatchScaleForNonParallelImages {
+            get {
+                return ((bool)(this["MatchScaleForNonParallelImages"]));
+            }
+            set {
+                this["MatchScaleForNonParallelImages"] = value;
             }
         }
     }

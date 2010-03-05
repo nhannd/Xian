@@ -51,6 +51,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	{
 		#region Private Fields
 
+		private const float _oneDegreeInRadians = (float)(Math.PI / 180);
+
+		private bool _matchScaleNonParallelImages = true;
 		private float _referenceDisplayedWidth;
 		private RectangleF _referenceDisplayRectangle;
 
@@ -58,6 +61,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public MatchScaleTool()
 		{
+			_matchScaleNonParallelImages = ToolSettings.Default.MatchScaleForNonParallelImages;
 		}
 
 		#region Private Properties
@@ -114,6 +118,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			Frame frame = GetFrame(image);
 			if (frame == null || frame.NormalizedPixelSpacing.IsNull)
 				return false;
+			
+			if (!_matchScaleNonParallelImages && image != this.ReferenceImage)
+			{
+				Frame referenceFrame = GetFrame(this.ReferenceImage);
+				if (!IsInSameFrameOfReference(referenceFrame, frame))
+					return false;
+
+				Vector3D referenceNormal = referenceFrame.ImagePlaneHelper.GetNormalVector();
+				Vector3D normal = frame.ImagePlaneHelper.GetNormalVector();
+				if (!referenceNormal.IsParallelTo(normal, _oneDegreeInRadians))
+					return false;
+			}
 
 			return true;
 		}
@@ -158,6 +174,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 
 		#region Private Helper Methods
+
+		private static bool IsInSameFrameOfReference(Frame thisFrame, Frame otherFrame)
+		{
+			if (thisFrame.ParentImageSop.StudyInstanceUid != otherFrame.ParentImageSop.StudyInstanceUid)
+				return false;
+
+			return thisFrame.FrameOfReferenceUid == otherFrame.FrameOfReferenceUid;
+		}
 
 		private static float GetDisplayedWidth(IPresentationImage presentationImage, RectangleF referenceDisplayedRectangle)
 		{
