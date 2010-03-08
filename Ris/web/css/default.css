@@ -299,7 +299,7 @@ a.collapsibleHeading {
 }
 
 .divCell textarea {
-	width: 95%;
+	width: 100%;
 }
 
 .divCell input[type="text"] {

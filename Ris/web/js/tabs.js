@@ -79,12 +79,6 @@ function initTabs()
 	tabsInitialized = true;
 }
 
-function resetTabs()
-{
-	tabsInitialized = false;
-	initTabs();
-}
-
 var classAttribute = "class";
 var forAttribute = "for";
 
