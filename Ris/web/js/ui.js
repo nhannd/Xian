@@ -686,6 +686,11 @@ var Table = {
 				if(column.rows) input.rows = column.rows;
 				if(column.readOnly) input.readOnly = column.readOnly;
 
+				// textarea cells flicker when typed in if the cell width is not explicitely set, so the width can either be set
+				// using the cellWidth property, or via a css rule applied to all "#tablename .divCell".  The cellWith property
+				// offers finer control since it does not apply to all divCells in the table
+				if(column.cellWidth) td.style.width = column.cellWidth;
+
 				// respond to every keystroke
 				input.onkeyup = input.onchange = function() { column.setValue(obj, this.value); table._onCellUpdate(row, col); }
 
