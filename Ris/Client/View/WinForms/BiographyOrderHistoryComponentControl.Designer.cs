@@ -71,12 +71,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _orderList
 			// 
 			this._orderList.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._orderList.FilterTextBoxVisible = true;
 			this._orderList.Location = new System.Drawing.Point(0, 0);
 			this._orderList.MultiSelect = false;
 			this._orderList.Name = "_orderList";
 			this._orderList.Padding = new System.Windows.Forms.Padding(4, 2, 0, 7);
 			this._orderList.ReadOnly = false;
-			this._orderList.ShowToolbar = false;
 			this._orderList.Size = new System.Drawing.Size(465, 592);
 			this._orderList.TabIndex = 0;
 			// 
