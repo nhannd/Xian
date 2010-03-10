@@ -453,6 +453,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 		[UpdateOperation]
 		[OperationEnablement("CanSendReportToQueue")]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.SendToFaxQueue)]
 		public SendReportToQueueResponse SendReportToQueue(SendReportToQueueRequest request)
 		{
 			var procedure = this.PersistenceContext.Load<Procedure>(request.ProcedureRef);

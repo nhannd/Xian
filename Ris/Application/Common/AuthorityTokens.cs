@@ -157,6 +157,9 @@ namespace ClearCanvas.Ris.Application.Common
 
 				[AuthorityToken(Description = "Allow cancellation of a radiology report that is owned by another radiologist.")]
 				public const string Cancel = "RIS/Workflow/Report/Cancel";
+
+				[AuthorityToken(Description = "Allow radiology reports to be sent to a fax queue.")]
+				public const string SendToFaxQueue = "RIS/Workflow/Report/Send to fax queue";
 			}
 
 			public static class Protocol
@@ -332,6 +335,9 @@ namespace ClearCanvas.Ris.Application.Common
 
 			[AuthorityToken(Description = "Allow access to the Transcription folder system.")]
 			public const string Transcription = "RIS/Folder Systems/Transcription";
+
+			[AuthorityToken(Description = "Allow access to the External Practitioner folder system.")]
+			public const string ExternalPractitioner = "RIS/Folder Systems/External Practitioner";
 		}
 	}
 }

@@ -365,6 +365,11 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		public bool PublishVisible
+		{
+			get { return Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.Report.SendToFaxQueue); }
+		}
+
 		public bool AcceptEnabled
 		{
 			get
