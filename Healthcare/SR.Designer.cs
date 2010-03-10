@@ -142,6 +142,33 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to a default contact point is missing.
+        /// </summary>
+        internal static string AlertContactPointsMissing {
+            get {
+                return ResourceManager.GetString("AlertContactPointsMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to billing number is missing.
+        /// </summary>
+        internal static string AlertExternalPractitionerBillingNumberMissing {
+            get {
+                return ResourceManager.GetString("AlertExternalPractitionerBillingNumberMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to license number is missing.
+        /// </summary>
+        internal static string AlertExternalPractitionerLicenseNumberMissing {
+            get {
+                return ResourceManager.GetString("AlertExternalPractitionerLicenseNumberMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to family name is missing.
         /// </summary>
         internal static string AlertFamilyNameMissing {
@@ -201,6 +228,33 @@ namespace ClearCanvas.Healthcare {
         internal static string AlertResidentialTelephoneNumberMissing {
             get {
                 return ResourceManager.GetString("AlertResidentialTelephoneNumberMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to a work address is missing.
+        /// </summary>
+        internal static string AlertWorkAddressMissing {
+            get {
+                return ResourceManager.GetString("AlertWorkAddressMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to a work fax number is missing.
+        /// </summary>
+        internal static string AlertWorkFaxNumberMissing {
+            get {
+                return ResourceManager.GetString("AlertWorkFaxNumberMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to a work telephone number is missing.
+        /// </summary>
+        internal static string AlertWorkTelephoneNumberMissing {
+            get {
+                return ResourceManager.GetString("AlertWorkTelephoneNumberMissing", resourceCulture);
             }
         }
         

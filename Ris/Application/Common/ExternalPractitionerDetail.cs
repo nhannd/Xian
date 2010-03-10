@@ -32,6 +32,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
+using System;
 
 namespace ClearCanvas.Ris.Application.Common
 {
@@ -43,6 +44,8 @@ namespace ClearCanvas.Ris.Application.Common
 			PersonNameDetail personNameDetail,
 			string licenseNumber,
 			string billingNumber,
+			bool isVerified,
+			DateTime? lastVerifiedTime,
 			List<ExternalPractitionerContactPointDetail> contactPoints,
 			Dictionary<string, string> extendedProperties,
 			bool deactivated)
@@ -51,6 +54,8 @@ namespace ClearCanvas.Ris.Application.Common
 			this.Name = personNameDetail;
 			this.LicenseNumber = licenseNumber;
 			this.BillingNumber = billingNumber;
+			this.IsVerified = isVerified;
+			this.LastVerifiedTime = lastVerifiedTime;
 			this.ContactPoints = contactPoints;
 			this.ExtendedProperties = extendedProperties;
 			this.Deactivated = deactivated;
@@ -74,6 +79,12 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public string BillingNumber;
+
+		[DataMember]
+		public bool IsVerified;
+
+		[DataMember]
+		public DateTime? LastVerifiedTime;
 
 		[DataMember]
 		public List<ExternalPractitionerContactPointDetail> ContactPoints;

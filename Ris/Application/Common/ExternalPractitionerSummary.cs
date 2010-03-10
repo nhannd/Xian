@@ -38,13 +38,21 @@ namespace ClearCanvas.Ris.Application.Common
 	[DataContract]
 	public class ExternalPractitionerSummary : DataContractBase, ICloneable, IEquatable<ExternalPractitionerSummary>
 	{
-		public ExternalPractitionerSummary(EntityRef pracRef, PersonNameDetail personNameDetail, string licenseNumber, string billingNumber,
+		public ExternalPractitionerSummary(
+			EntityRef pracRef,
+			PersonNameDetail personNameDetail,
+			string licenseNumber,
+			string billingNumber,
+			bool isVerified,
+			DateTime? lastVerifiedTime,
 			bool deactivated)
 		{
 			this.PractitionerRef = pracRef;
 			this.Name = personNameDetail;
 			this.LicenseNumber = licenseNumber;
 			this.BillingNumber = billingNumber;
+			this.IsVerified = isVerified;
+			this.LastVerifiedTime = lastVerifiedTime;
 			this.Deactivated = deactivated;
 		}
 
@@ -63,6 +71,12 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public string BillingNumber;
+
+		[DataMember]
+		public bool IsVerified;
+
+		[DataMember]
+		public DateTime? LastVerifiedTime;
 
 		[DataMember]
 		public bool Deactivated;
@@ -91,6 +105,8 @@ namespace ClearCanvas.Ris.Application.Common
 				(PersonNameDetail)this.Name.Clone(),
 				this.LicenseNumber,
 				this.BillingNumber,
+				this.IsVerified,
+				this.LastVerifiedTime,
 				this.Deactivated);
 		}
 

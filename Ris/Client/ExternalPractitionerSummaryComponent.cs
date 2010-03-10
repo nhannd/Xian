@@ -80,24 +80,6 @@ namespace ClearCanvas.Ris.Client
         }
     }
 
-	public class ExternalPractitionerTable : Table<ExternalPractitionerSummary>
-	{
-		public ExternalPractitionerTable()
-		{
-			this.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnFamilyName,
-			   delegate(ExternalPractitionerSummary item) { return item.Name.FamilyName; },
-			   1.0f));
-
-			this.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnGivenName,
-				delegate(ExternalPractitionerSummary item) { return item.Name.GivenName; },
-				1.0f));
-
-			this.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnLicenseNumber,
-				delegate(ExternalPractitionerSummary item) { return item.LicenseNumber; },
-				0.5f));
-		}
-	}
-
     /// <summary>
     /// Extension point for views onto <see cref="ExternalPractitionerSummaryComponent"/>
     /// </summary>
@@ -110,7 +92,7 @@ namespace ClearCanvas.Ris.Client
     /// ExternalPractitionerSummaryComponent class
     /// </summary>
     [AssociateView(typeof(ExternalPractitionerSummaryComponentViewExtensionPoint))]
-	public class ExternalPractitionerSummaryComponent : SummaryComponentBase<ExternalPractitionerSummary, ExternalPractitionerTable, ListExternalPractitionersRequest>
+	public class ExternalPractitionerSummaryComponent : SummaryComponentBase<ExternalPractitionerSummary, ExternalPractitionerAdminTable, ListExternalPractitionersRequest>
     {
         private string _firstName;
         private string _lastName;
@@ -219,6 +201,7 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<IExternalPractitionerAdminService>(
 				delegate(IExternalPractitionerAdminService service)
 				{
+					request.QueryItems = true;
 					request.FirstName = _firstName;
 					request.LastName = _lastName;
 					listResponse = service.ListExternalPractitioners(request);

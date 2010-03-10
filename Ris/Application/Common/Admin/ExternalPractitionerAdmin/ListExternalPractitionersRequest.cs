@@ -30,36 +30,78 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 {
-    [DataContract]
+	[Serializable]
+	public enum VerifiedState
+	{
+		All,
+		Verified,
+		NotVerified
+	}
+
+	[DataContract]
 	public class ListExternalPractitionersRequest : ListRequestBase
-    {
-        public ListExternalPractitionersRequest()
-        {
-        }
+	{
+		public ListExternalPractitionersRequest()
+		{
+		}
 
-        public ListExternalPractitionersRequest(string surname, string givenname)
-            : this(surname, givenname, null)
-        {
-        }
+		public ListExternalPractitionersRequest(string surname, string givenname)
+			: this(surname, givenname, null)
+		{
+		}
 
-        public ListExternalPractitionersRequest(string surname, string givenname, SearchResultPage page)
-        {
-            this.LastName = surname;
-            this.FirstName = givenname;
-            this.Page = page;
-        }
+		public ListExternalPractitionersRequest(string surname, string givenname, SearchResultPage page)
+			: this(surname, givenname, VerifiedState.All, null, null, true, false, page)
+		{
+			this.LastName = surname;
+			this.FirstName = givenname;
+			this.Page = page;
+		}
 
-        [DataMember]
-        public string FirstName;
+		public ListExternalPractitionersRequest(
+			string surname,
+			string givenname,
+			VerifiedState verifiedState,
+			DateTime? lastVerifiedRangeFrom,
+			DateTime? lastVerifiedRangeUntil,
+			bool queryItems,
+			bool queryCount,
+			SearchResultPage page)
+		{
+			this.LastName = surname;
+			this.FirstName = givenname;
+			this.VerifiedState = verifiedState;
+			this.LastVerifiedRangeFrom = lastVerifiedRangeFrom;
+			this.LastVerifiedRangeUntil = lastVerifiedRangeUntil;
+			this.QueryItems = queryItems;
+			this.QueryCount = queryCount;
+			this.Page = page;
+		}
 
-        [DataMember]
-        public string LastName;
-    }
+		[DataMember]
+		public string FirstName;
+
+		[DataMember]
+		public string LastName;
+
+		[DataMember]
+		public VerifiedState VerifiedState;
+
+		[DataMember]
+		public bool QueryCount;
+
+		[DataMember]
+		public bool QueryItems;
+
+		[DataMember]
+		public DateTime? LastVerifiedRangeFrom;
+
+		[DataMember]
+		public DateTime? LastVerifiedRangeUntil;
+	}
 }

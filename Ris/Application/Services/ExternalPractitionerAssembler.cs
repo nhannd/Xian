@@ -47,6 +47,8 @@ namespace ClearCanvas.Ris.Application.Services
 				new PersonNameAssembler().CreatePersonNameDetail(prac.Name),
 				prac.LicenseNumber,
 				prac.BillingNumber,
+				prac.IsVerified,
+				prac.LastVerifiedTime,
 				prac.Deactivated);
 
 			return summary;
@@ -73,6 +75,8 @@ namespace ClearCanvas.Ris.Application.Services
 				assembler.CreatePersonNameDetail(prac.Name),
 				prac.LicenseNumber,
 				prac.BillingNumber,
+				prac.IsVerified,
+				prac.LastVerifiedTime,
 				contactPointDetails,
 				new Dictionary<string, string>(prac.ExtendedProperties),
 				prac.Deactivated);

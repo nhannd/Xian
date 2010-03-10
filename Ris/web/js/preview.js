@@ -8,21 +8,33 @@ var Preview = function () {
 		switch (alertItem.AlertClassName)
 		{
 			case "NoteAlert":
+			case "IncompleteContactPointAlert":
 				return "AlertNote.png";
 			case "LanguageAlert":
 				return "AlertLanguage.png";
 			case "ReconciliationAlert":
+			case "PossibleDuplicateAlert":
 				return "AlertReconcile.png";
 			case "IncompleteDemographicDataAlert":
+			case "IncompleteDataAlert":
 				return "AlertIncompleteData.png";
 			case "InvalidVisitAlert":
 				return "AlertVisit.png";
+
+			// External Practitioner Related Alerts
+			case "IncompleteDataAlert":
+				return "AlertIncompleteData.png";
+			case "IncompleteContactPointDataAlert":
+				return "AlertNote.png";
+			case "PossibleDuplicateAlert":
+				return "AlertReconcile.png";
+
 			default:
 				return "AlertGeneral.png";
 		}
 	};
 	
-	var _getAlertTooltip = function(alertItem, patientName)
+	var _getAlertTooltip = function(alertItem, name)
 	{
 		var escapedReasons = [];
 		alertItem.Reasons.each(function(reason) 
@@ -37,35 +49,44 @@ var Preview = function () {
 		switch (alertItem.AlertClassName)
 		{
 			case "NoteAlert":
-				return patientName + " has high severity notes: " + reasons;
+				return name + " has high severity notes: " + reasons;
 			case "LanguageAlert":
-				return patientName + " speaks: " + reasons;
+				return name + " speaks: " + reasons;
 			case "ReconciliationAlert":
-				return patientName + " has unreconciled records";
+				return name + " has unreconciled records";
 			case "IncompleteDemographicDataAlert":
-				return patientName + " has incomplete demographic data: " + reasons;
+				return name + " has incomplete demographic data: " + reasons;
 			case "InvalidVisitAlert":
 				return "This order has invalid visit: " + reasons;
+
+			// External Practitioner Related Alerts
+			case "IncompleteDataAlert":
+				return name + " has incomplete data: " + reasons;
+			case "IncompleteContactPointDataAlert":
+				return "Some contact points have incomplete data: " + reasons;
+			case "PossibleDuplicateAlert":
+				return name + " may have duplicate records";
+
 			default:
 				return reasons;
 		}
 	};
 	
 	return {
-		createAlerts: function(containingElement, alertItems, patientName)
+		createAlerts: function(containingElement, alertItems, name)
 		{
 			if (alertItems)
 			{
 				var alertHtml = "";
-				alertItems.each(function(item) { alertHtml += Preview.getAlertHtml(item, patientName); });
+				alertItems.each(function(item) { alertHtml += Preview.getAlertHtml(item, name); });
 
 				containingElement.innerHTML = alertHtml;
 			}
 		},
 
-		getAlertHtml: function(alertItem, patientName)
+		getAlertHtml: function(alertItem, name)
 		{
-			var toolTip = '"' + _getAlertTooltip(alertItem, patientName) + '"';
+			var toolTip = '"' + _getAlertTooltip(alertItem, name) + '"';
 			return "<img class='alert' src='" + imagePath + "/" + _getAlertIcon(alertItem) + "' alt=" + toolTip + "/>";
 		},
 
@@ -317,91 +338,6 @@ Preview.ProceduresTableHelper = function () {
  */
 Preview.ImagingServiceTable = function () {
 
-	var _isProcedureStatusActive = function(procedureStatus)
-	{
-		return procedureStatus.Code == "SC" || 
-				procedureStatus.Code == "IP";
-	};
-
-	var _orderRequestScheduledDateComparison = function(data1, data2)
-	{
-		return Date.compareMoreRecent(data1.SchedulingRequestTime, data2.SchedulingRequestTime);
-	};
-
-	var _procedureScheduledDateComparison = function(data1, data2)
-	{
-		return Date.compareMoreRecent(data1.ProcedureScheduledStartTime, data2.ProcedureScheduledStartTime);
-	};
-
-	var _getActiveProcedures = function(patientOrderData)
-	{
-		var today = Date.today();
-
-		var presentScheduledProcedures = patientOrderData.select(
-			function(item) 
-			{ 
-				return item.ProcedureScheduledStartTime &&
-						Date.compare(item.ProcedureScheduledStartTime, today) >= 0 &&
-						_isProcedureStatusActive(item.ProcedureStatus);
-			}).sort(_procedureScheduledDateComparison);
-
-		var presentNotScheduledProceduress = patientOrderData.select(
-			function(item) 
-			{ 
-				return item.ProcedureScheduledStartTime == null &&
-						item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) >= 0 &&
-						_isProcedureStatusActive(item.ProcedureStatus);
-			}).sort(_orderRequestScheduledDateComparison);
-			
-		return presentScheduledProcedures.concat(presentNotScheduledProceduress);
-	};
-
-	var _getNonActiveProcedures = function(patientOrderData)
-	{
-
-		var today = Date.today();
-
-		// List only the non-Active present procedures
-		var presentScheduledProcedures = patientOrderData.select(
-			function(item) 
-			{ 
-				return item.ProcedureScheduledStartTime && Date.compare(item.ProcedureScheduledStartTime, today) >= 0 &&
-						_isProcedureStatusActive(item.ProcedureStatus) == false;
-			}).sort(_procedureScheduledDateComparison);
-
-		// List only the non-Active present not-scheduled procedures
-		var presentNotScheduledProceduress = patientOrderData.select(
-			function(item) 
-			{ 
-				return item.ProcedureScheduledStartTime == null &&
-						item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) >= 0 &&
-						_isProcedureStatusActive(item.ProcedureStatus) == false;
-			}).sort(_orderRequestScheduledDateComparison);
-
-		var pastScheduledProcedures = patientOrderData.select(
-			function(item) 
-			{ 
-				return item.ProcedureScheduledStartTime && Date.compare(item.ProcedureScheduledStartTime, today) < 0;
-			}).sort(_procedureScheduledDateComparison);
-
-		var pastNotScheduledProceduress = patientOrderData.select(
-			function(item) 
-			{ 
-				return item.ProcedureScheduledStartTime == null
-				&& item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) < 0;
-			}).sort(_orderRequestScheduledDateComparison);
-
-		return presentScheduledProcedures.concat(
-				presentNotScheduledProceduress.concat(
-				pastScheduledProcedures.concat(pastNotScheduledProceduress)));
-	};
-
-	var _formatPerformingFacility = function(item, memberName)
-	{
-		return item.ProcedurePerformingFacility ? item.ProcedurePerformingFacility[memberName] : "";
-	};
-	
-	var _createHelper = function(parentElement, ordersList, sectionHeading)
 	{
 		if(ordersList.length == 0)
 		{
@@ -414,7 +350,6 @@ Preview.ImagingServiceTable = function () {
 		}
 
 		var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
-
 		htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
 			 [
 				{   label: "Procedure",
@@ -446,21 +381,95 @@ Preview.ImagingServiceTable = function () {
 		htmlTable.bindItems(ordersList);
 	};
 
-	return {
-		createActive: function(parentElement, ordersList)
 		{
-			var activeProcedures = _getActiveProcedures(ordersList);
 					
-			_createHelper(parentElement, activeProcedures, "Active Imaging Services");
-			Preview.SectionContainer.create(parentElement, "Active Imaging Services", { collapsible: true, initiallyCollapsed: true });						
 		},
 		
-		createPast: function(parentElement, ordersList, options)
 		{
-			var pastProcedures = _getNonActiveProcedures(ordersList);
 				
-			_createHelper(parentElement, pastProcedures, "Past Imaging Services");
-			Preview.SectionContainer.create(parentElement, "Past Imaging Services", { collapsible: true, initiallyCollapsed: true });						
+		}
+	};
+
+		return helper;
+	};
+
+	var _doQuery = function(parentElement, sectionName, requestHelper, excludeOrderAccessionNumber)
+	{
+		var htmlTable;
+		var linkDiv;
+
+		var initialQueryCompleteCallback = function(data)
+		{
+			var patientOrderData = data.ListOrdersResponse.Orders;
+			if (!patientOrderData)
+				return;
+
+			// exclude the current order from the imaging service tables
+			var filteredData = patientOrderData.select(function(d) { return d.AccessionNumber != excludeOrderAccessionNumber; });
+
+			// Create table for imaging services
+			htmlTable = _createTableHelper(parentElement, filteredData, sectionName);
+			Preview.SectionContainer.create(parentElement, sectionName, { collapsible: true, initiallyCollapsed: false });
+
+			// Setup a link to show more imaging services if the paging is set.and the full number of 
+			var maxRows = requestHelper.getPreviousRequest().ListOrdersRequest.Page.MaxRows;
+			if (maxRows > 0 && filteredData.length == maxRows)
+			{
+				linkDiv = document.createElement("div");
+				Field.setLink(linkDiv, "Show more orders...", 
+						function() {
+							Ris.getPatientDataService().getDataAsync(requestHelper.getNextRequest(), subsequentQueryCompleteCallback);
+						});
+				linkDiv.style.padding = "0.5em";
+				parentElement.appendChild(linkDiv);
+			}
+		};
+		
+		var subsequentQueryCompleteCallback = function(data)
+		{
+			var patientOrderData = data.ListOrdersResponse.Orders;
+			if (!patientOrderData)
+				return;
+
+			var filteredData = patientOrderData.select(function(d) { return d.AccessionNumber != excludeOrderAccessionNumber; });
+			if (filteredData.length == 0)
+			{
+				// remove link if there are no more orders
+				if (linkDiv)
+					parentElement.removeChild(linkDiv);
+					
+				return;
+			}
+
+			// add new items to table
+			for(var i=0; i < filteredData.length; i++)
+			{
+				htmlTable.items.add(filteredData[i]);
+			}
+
+			// Scroll down so the new rows are visible
+			var estimateHeightPerRow = 50;
+			window.scrollBy(0, estimateHeightPerRow * filteredData.length);
+		};
+
+		Ris.getPatientDataService().getDataAsync(requestHelper.getNextRequest(), initialQueryCompleteCallback);
+	};
+
+	return {
+		createActive: function(parentElement, patientRef, excludeOrderAccessionNumber)
+		{
+			var ordersPerPage = -1;  // set to -1 to show all orders initially
+			var procedureQueryOptions = { All: 0, Active: 1, NonActive: 2 };
+			var requestHelper = _createRequestHelper(patientRef, procedureQueryOptions.Active, ordersPerPage);
+			_doQuery(parentElement, "Active Imaging Services", requestHelper, excludeOrderAccessionNumber);
+		},
+
+		createPast: function(parentElement, patientRef, excludeOrderAccessionNumber)
+		{
+			var ordersPerPage = 3;
+			var procedureQueryOptions = { All: 0, Active: 1, NonActive: 2 };
+			var requestHelper = _createRequestHelper(patientRef, procedureQueryOptions.NonActive, ordersPerPage);
+			_doQuery(parentElement, "Past Imaging Services", requestHelper, excludeOrderAccessionNumber);
 		}
 	};
 }();
@@ -2096,21 +2105,26 @@ Preview.ExternalPractitionerSummary = function() {
 		'	<tr>'+
 		'		<td width="150" class="DemographicsLabel">License Number</td>'+
 		'		<td><div id="LicenseNumber"/></td>'+
+		'		<td width="150" class="DemographicsLabel">Verified</td>'+
+		'		<td><div id="IsVerified"/></td>'+
 		'	</tr>'+
 		'	<tr>'+
 		'		<td width="150" class="DemographicsLabel">Billing Number</td>'+
 		'		<td><div id="BillingNumber"/></td>'+
+		'		<td width="150" class="DemographicsLabel">Last Verified</td>'+
+		'		<td><div id="LastVerified"/></td>'+
 		'	</tr>'+
 		'	</table>';
 
-	var _createBanner = function(element, externalPractitionerSummary)
+	var _createBanner = function(element, externalPractitionerSummary, alerts)
 		{
 			var bannerContainer = document.createElement("div");
 			element.appendChild(bannerContainer);
 
 			var bannerName = document.createElement("div");
 			bannerContainer.appendChild(bannerName);
-			Preview.BannerSection.create(bannerName, Ris.formatPersonName(externalPractitionerSummary.Name), "");
+			var formattedName = Ris.formatPersonName(externalPractitionerSummary.Name);
+			Preview.BannerSection.create(bannerName, formattedName, "", formattedName, alerts);
 
 			var bannerDetails = document.createElement("div");
 			bannerDetails.innerHTML = _detailsHtml;
@@ -2118,11 +2132,55 @@ Preview.ExternalPractitionerSummary = function() {
 
 			Field.setValue($("LicenseNumber"), externalPractitionerSummary.LicenseNumber);
 			Field.setValue($("BillingNumber"), externalPractitionerSummary.BillingNumber);
+			Field.setValue($("IsVerified"), externalPractitionerSummary.IsVerified);
+			Field.setValue($("LastVerified"), Ris.formatDateTime(externalPractitionerSummary.LastVerified));
 		};
+
+	var _createExtendedPropertiesTable = function (element, externalPractitionerSummary)
+		{
+			var extendedProperties = externalPractitionerSummary.ExtendedProperties;
+			if(!extendedProperties)
+				return;
+
+			var propertyArray = [];
+			for (var propertyName in extendedProperties)
+			{
+				if (extendedProperties.hasOwnProperty(propertyName))
+				{
+					var propertyValue = propertyName == "AccessionNumber"
+						? Ris.formatAccessionNumber(extendedProperties[propertyName])
+						: extendedProperties[propertyName];
+					
+					var p = { PropertyName: propertyName, PropertyValue: propertyValue };
+					propertyArray.push(p);
+				}
+			}
+
+			if(propertyArray.length == 0)
+				return;
+
+			var htmlTable = Preview.ProceduresTableHelper.addTable(element, "ExtendedPropertiesTable");
+			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
+				 [
+					{   label: "Name",
+						cellType: "text",
+						getValue: function(item) { return item.PropertyName; }
+					},
+					{   label: "Value",
+						cellType: "html",
+						getValue: function(item) { return item.PropertyValue; }
+					}
+				 ]);
+
+			htmlTable.rowCycleClassNames = ["row0", "row1"];
+			htmlTable.bindItems(propertyArray);
+			
+			Preview.SectionContainer.create(htmlTable, "Additional Info");
+		}
 
 	var _createContactPointTable = function(element, externalPractitionerSummary)
 		{
-			if(!externalPractitionerSummary.ContactPoints)
+			if(!externalPractitionerSummary.ContactPoints || externalPractitionerSummary.ContactPoints.length == 0)
 				return;
 
 			var activeContactPoints = externalPractitionerSummary.ContactPoints.select(function(item) { return item.Deactivated == false; });
@@ -2187,12 +2245,13 @@ Preview.ExternalPractitionerSummary = function() {
 		};
 
 	return {
-		create: function(element, externalPractitionerSummary) {
+		create: function(element, externalPractitionerSummary, alerts) {
 
 			if(externalPractitionerSummary == null)
 				return;
 
-			_createBanner(element, externalPractitionerSummary);
+			_createBanner(element, externalPractitionerSummary, alerts);
+			_createExtendedPropertiesTable(element, externalPractitionerSummary);
 			_createContactPointTable(element, externalPractitionerSummary);
 		}
 	};

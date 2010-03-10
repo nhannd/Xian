@@ -29,23 +29,19 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 {
-    [DataContract]
-    public class LoadExternalPractitionerForEditResponse : DataContractBase
-    {
-        public LoadExternalPractitionerForEditResponse(ExternalPractitionerDetail pracDetail)
-        {
-            this.PractitionerDetail = pracDetail;
-        }
+	[DataContract]
+	public class LoadExternalPractitionerForEditResponse : DataContractBase
+	{
+		[DataMember]
+		public ExternalPractitionerDetail PractitionerDetail;
 
-        [DataMember]
-        public ExternalPractitionerDetail PractitionerDetail;
-    }
+		[DataMember]
+		public List<AlertNotificationDetail> Alerts;
+	}
 }

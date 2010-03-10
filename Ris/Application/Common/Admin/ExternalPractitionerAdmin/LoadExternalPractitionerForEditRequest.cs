@@ -42,11 +42,20 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 		}
 
 		public LoadExternalPractitionerForEditRequest(EntityRef pracRef)
+			: this(pracRef, false)
+		{
+		}
+
+		public LoadExternalPractitionerForEditRequest(EntityRef pracRef, bool includeAlerts)
 		{
 			this.PractitionerRef = pracRef;
+			this.IncludeAlerts = includeAlerts;
 		}
 
 		[DataMember]
 		public EntityRef PractitionerRef;
+
+		[DataMember]
+		public bool IncludeAlerts;
 	}
 }

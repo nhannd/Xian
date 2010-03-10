@@ -37,6 +37,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Core.Modelling;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Alerts;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
@@ -64,13 +65,38 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 				criteria.Name.GivenName.StartsWith(request.FirstName);
 			if (!string.IsNullOrEmpty(request.LastName))
 				criteria.Name.FamilyName.StartsWith(request.LastName);
+
+			switch (request.VerifiedState)
+			{
+				case VerifiedState.Verified:
+					criteria.IsVerified.EqualTo(true);
+					break;
+				case VerifiedState.NotVerified:
+					criteria.IsVerified.EqualTo(false);
+					break;
+			}
+
+			if (request.LastVerifiedRangeFrom != null && request.LastVerifiedRangeUntil != null)
+				criteria.LastVerifiedTime.Between(request.LastVerifiedRangeFrom, request.LastVerifiedRangeUntil);
+			else if (request.LastVerifiedRangeFrom != null)
+				criteria.LastVerifiedTime.MoreThanOrEqualTo(request.LastVerifiedRangeFrom);
+			else if (request.LastVerifiedRangeUntil != null)
+				criteria.LastVerifiedTime.LessThanOrEqualTo(request.LastVerifiedRangeUntil);
+			
 			if (!request.IncludeDeactivated)
 				criteria.Deactivated.EqualTo(false);
 
-			return new ListExternalPractitionersResponse(
-				CollectionUtils.Map<ExternalPractitioner, ExternalPractitionerSummary, List<ExternalPractitionerSummary>>(
+			var results = new List<ExternalPractitionerSummary>();
+			if (request.QueryItems)
+				results = CollectionUtils.Map<ExternalPractitioner, ExternalPractitionerSummary, List<ExternalPractitionerSummary>>(
 					PersistenceContext.GetBroker<IExternalPractitionerBroker>().Find(criteria, request.Page),
-					s => assembler.CreateExternalPractitionerSummary(s, PersistenceContext)));
+					s => assembler.CreateExternalPractitionerSummary(s, PersistenceContext));
+
+			var itemCount = -1;
+			if (request.QueryCount)
+				itemCount = (int)PersistenceContext.GetBroker<IExternalPractitionerBroker>().Count(criteria);
+
+			return new ListExternalPractitionersResponse(results, itemCount);
 		}
 
 		[ReadOperation]
@@ -78,10 +104,22 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 		public LoadExternalPractitionerForEditResponse LoadExternalPractitionerForEdit(LoadExternalPractitionerForEditRequest request)
 		{
 			// note that the version of the ExternalPractitionerRef is intentionally ignored here (default behaviour of ReadOperation)
-			var s = PersistenceContext.Load<ExternalPractitioner>(request.PractitionerRef);
+			var practitioner = PersistenceContext.Load<ExternalPractitioner>(request.PractitionerRef);
 			var assembler = new ExternalPractitionerAssembler();
 
-			return new LoadExternalPractitionerForEditResponse(assembler.CreateExternalPractitionerDetail(s, this.PersistenceContext));
+			var response = new LoadExternalPractitionerForEditResponse
+				{ PractitionerDetail = assembler.CreateExternalPractitionerDetail(practitioner, this.PersistenceContext) };
+
+			if (request.IncludeAlerts)
+			{
+				var alerts = new List<AlertNotification>();
+				alerts.AddRange(AlertHelper.Instance.Test(practitioner, this.PersistenceContext));
+
+				var alertAssembler = new AlertAssembler();
+				response.Alerts = CollectionUtils.Map<AlertNotification, AlertNotificationDetail>(alerts, alertAssembler.CreateAlertNotification);
+			}
+
+			return response;
 		}
 
 		[ReadOperation]

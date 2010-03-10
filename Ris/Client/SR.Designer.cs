@@ -142,6 +142,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Billing #.
+        /// </summary>
+        internal static string ColumnBillingNumber {
+            get {
+                return ResourceManager.GetString("ColumnBillingNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _.
         /// </summary>
         internal static string ColumnCanAcknowledge {
@@ -790,6 +799,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Time.
+        /// </summary>
+        internal static string ColumnTime {
+            get {
+                return ResourceManager.GetString("ColumnTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to To.
         /// </summary>
         internal static string ColumnTo {
@@ -840,6 +858,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string ColumnValidUntil {
             get {
                 return ResourceManager.GetString("ColumnValidUntil", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Verified.
+        /// </summary>
+        internal static string ColumnVerified {
+            get {
+                return ResourceManager.GetString("ColumnVerified", resourceCulture);
             }
         }
         
@@ -1128,6 +1155,24 @@ namespace ClearCanvas.Ris.Client {
         internal static string ExceptionWeakSearchCriteria {
             get {
                 return ResourceManager.GetString("ExceptionWeakSearchCriteria", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List external practitioners that were unverified..
+        /// </summary>
+        internal static string ExternalPractitionerUnverifiedFolderDescription {
+            get {
+                return ResourceManager.GetString("ExternalPractitionerUnverifiedFolderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List external practitioners that were verified today..
+        /// </summary>
+        internal static string ExternalPractitionerVerifiedTodayFolderDescription {
+            get {
+                return ResourceManager.GetString("ExternalPractitionerVerifiedTodayFolderDescription", resourceCulture);
             }
         }
         
@@ -1686,6 +1731,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string MessageSearchMessageDefault {
             get {
                 return ResourceManager.GetString("MessageSearchMessageDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter search criteria (Name, License #, or Billing #).
+        /// </summary>
+        internal static string MessageSearchMessageExternalPractitioner {
+            get {
+                return ResourceManager.GetString("MessageSearchMessageExternalPractitioner", resourceCulture);
             }
         }
         
@@ -2262,6 +2316,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleExternalPractitioner {
             get {
                 return ResourceManager.GetString("TitleExternalPractitioner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to External Practitioners.
+        /// </summary>
+        internal static string TitleExternalPractitionerFolderSystem {
+            get {
+                return ResourceManager.GetString("TitleExternalPractitionerFolderSystem", resourceCulture);
             }
         }
         

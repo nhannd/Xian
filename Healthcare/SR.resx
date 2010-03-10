@@ -540,4 +540,22 @@
   <data name="WorklistUniqueKey" xml:space="preserve">
     <value>Worklist Name, Class and Owner</value>
   </data>
+  <data name="AlertContactPointsMissing" xml:space="preserve">
+    <value>a default contact point is missing</value>
+  </data>
+  <data name="AlertExternalPractitionerBillingNumberMissing" xml:space="preserve">
+    <value>billing number is missing</value>
+  </data>
+  <data name="AlertExternalPractitionerLicenseNumberMissing" xml:space="preserve">
+    <value>license number is missing</value>
+  </data>
+  <data name="AlertWorkAddressMissing" xml:space="preserve">
+    <value>a work address is missing</value>
+  </data>
+  <data name="AlertWorkFaxNumberMissing" xml:space="preserve">
+    <value>a work fax number is missing</value>
+  </data>
+  <data name="AlertWorkTelephoneNumberMissing" xml:space="preserve">
+    <value>a work telephone number is missing</value>
+  </data>
 </root>

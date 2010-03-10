@@ -44,6 +44,8 @@ namespace ClearCanvas.Healthcare.Tests
                 new PersonName("Who", "Doctor", null, null, null, null),
                 "1234",
                 "5678",
+				false,
+				null,
                 new HashedSet<ExternalPractitionerContactPoint>(),
                 new Dictionary<string, string>());
         }

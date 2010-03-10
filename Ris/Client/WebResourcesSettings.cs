@@ -233,6 +233,16 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
+		[global::System.Configuration.DefaultSettingValueAttribute("preview/external-practitioner.htm")]
+		public string ExternalPractitionerFolderSystemUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ExternalPractitionerFolderSystemUrl"]));
+			}
+		}
+
 		#endregion
 
 		#region Patient Biography settings
