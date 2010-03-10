@@ -338,6 +338,91 @@ Preview.ProceduresTableHelper = function () {
  */
 Preview.ImagingServiceTable = function () {
 
+	var _isProcedureStatusActive = function(procedureStatus)
+	{
+		return procedureStatus.Code == "SC" || 
+				procedureStatus.Code == "IP";
+	};
+
+	var _orderRequestScheduledDateComparison = function(data1, data2)
+	{
+		return Date.compareMoreRecent(data1.SchedulingRequestTime, data2.SchedulingRequestTime);
+	};
+
+	var _procedureScheduledDateComparison = function(data1, data2)
+	{
+		return Date.compareMoreRecent(data1.ProcedureScheduledStartTime, data2.ProcedureScheduledStartTime);
+	};
+
+	var _getActiveProcedures = function(patientOrderData)
+	{
+		var today = Date.today();
+
+		var presentScheduledProcedures = patientOrderData.select(
+			function(item) 
+			{ 
+				return item.ProcedureScheduledStartTime &&
+						Date.compare(item.ProcedureScheduledStartTime, today) >= 0 &&
+						_isProcedureStatusActive(item.ProcedureStatus);
+			}).sort(_procedureScheduledDateComparison);
+
+		var presentNotScheduledProceduress = patientOrderData.select(
+			function(item) 
+			{ 
+				return item.ProcedureScheduledStartTime == null &&
+						item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) >= 0 &&
+						_isProcedureStatusActive(item.ProcedureStatus);
+			}).sort(_orderRequestScheduledDateComparison);
+			
+		return presentScheduledProcedures.concat(presentNotScheduledProceduress);
+	};
+
+	var _getNonActiveProcedures = function(patientOrderData)
+	{
+
+		var today = Date.today();
+
+		// List only the non-Active present procedures
+		var presentScheduledProcedures = patientOrderData.select(
+			function(item) 
+			{ 
+				return item.ProcedureScheduledStartTime && Date.compare(item.ProcedureScheduledStartTime, today) >= 0 &&
+						_isProcedureStatusActive(item.ProcedureStatus) == false;
+			}).sort(_procedureScheduledDateComparison);
+
+		// List only the non-Active present not-scheduled procedures
+		var presentNotScheduledProceduress = patientOrderData.select(
+			function(item) 
+			{ 
+				return item.ProcedureScheduledStartTime == null &&
+						item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) >= 0 &&
+						_isProcedureStatusActive(item.ProcedureStatus) == false;
+			}).sort(_orderRequestScheduledDateComparison);
+
+		var pastScheduledProcedures = patientOrderData.select(
+			function(item) 
+			{ 
+				return item.ProcedureScheduledStartTime && Date.compare(item.ProcedureScheduledStartTime, today) < 0;
+			}).sort(_procedureScheduledDateComparison);
+
+		var pastNotScheduledProceduress = patientOrderData.select(
+			function(item) 
+			{ 
+				return item.ProcedureScheduledStartTime == null
+				&& item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) < 0;
+			}).sort(_orderRequestScheduledDateComparison);
+
+		return presentScheduledProcedures.concat(
+				presentNotScheduledProceduress.concat(
+				pastScheduledProcedures.concat(pastNotScheduledProceduress)));
+	};
+
+	var _formatPerformingFacility = function(item, memberName)
+	{
+		return item.ProcedurePerformingFacility ? item.ProcedurePerformingFacility[memberName] : "";
+	};
+	
+	var _createHelper = function(parentElement, ordersList, sectionHeading)
 	{
 		if(ordersList.length == 0)
 		{
@@ -381,95 +466,21 @@ Preview.ImagingServiceTable = function () {
 		htmlTable.bindItems(ordersList);
 	};
 
-		{
-					
-		},
-		
-		{
-				
-		}
-	};
-
-		return helper;
-	};
-
-	var _doQuery = function(parentElement, sectionName, requestHelper, excludeOrderAccessionNumber)
-	{
-		var htmlTable;
-		var linkDiv;
-
-		var initialQueryCompleteCallback = function(data)
-		{
-			var patientOrderData = data.ListOrdersResponse.Orders;
-			if (!patientOrderData)
-				return;
-
-			// exclude the current order from the imaging service tables
-			var filteredData = patientOrderData.select(function(d) { return d.AccessionNumber != excludeOrderAccessionNumber; });
-
-			// Create table for imaging services
-			htmlTable = _createTableHelper(parentElement, filteredData, sectionName);
-			Preview.SectionContainer.create(parentElement, sectionName, { collapsible: true, initiallyCollapsed: false });
-
-			// Setup a link to show more imaging services if the paging is set.and the full number of 
-			var maxRows = requestHelper.getPreviousRequest().ListOrdersRequest.Page.MaxRows;
-			if (maxRows > 0 && filteredData.length == maxRows)
-			{
-				linkDiv = document.createElement("div");
-				Field.setLink(linkDiv, "Show more orders...", 
-						function() {
-							Ris.getPatientDataService().getDataAsync(requestHelper.getNextRequest(), subsequentQueryCompleteCallback);
-						});
-				linkDiv.style.padding = "0.5em";
-				parentElement.appendChild(linkDiv);
-			}
-		};
-		
-		var subsequentQueryCompleteCallback = function(data)
-		{
-			var patientOrderData = data.ListOrdersResponse.Orders;
-			if (!patientOrderData)
-				return;
-
-			var filteredData = patientOrderData.select(function(d) { return d.AccessionNumber != excludeOrderAccessionNumber; });
-			if (filteredData.length == 0)
-			{
-				// remove link if there are no more orders
-				if (linkDiv)
-					parentElement.removeChild(linkDiv);
-					
-				return;
-			}
-
-			// add new items to table
-			for(var i=0; i < filteredData.length; i++)
-			{
-				htmlTable.items.add(filteredData[i]);
-			}
-
-			// Scroll down so the new rows are visible
-			var estimateHeightPerRow = 50;
-			window.scrollBy(0, estimateHeightPerRow * filteredData.length);
-		};
-
-		Ris.getPatientDataService().getDataAsync(requestHelper.getNextRequest(), initialQueryCompleteCallback);
-	};
-
 	return {
-		createActive: function(parentElement, patientRef, excludeOrderAccessionNumber)
+		createActive: function(parentElement, ordersList)
 		{
-			var ordersPerPage = -1;  // set to -1 to show all orders initially
-			var procedureQueryOptions = { All: 0, Active: 1, NonActive: 2 };
-			var requestHelper = _createRequestHelper(patientRef, procedureQueryOptions.Active, ordersPerPage);
-			_doQuery(parentElement, "Active Imaging Services", requestHelper, excludeOrderAccessionNumber);
+			var activeProcedures = _getActiveProcedures(ordersList);
+					
+			_createHelper(parentElement, activeProcedures, "Active Imaging Services");
+			Preview.SectionContainer.create(parentElement, "Active Imaging Services", { collapsible: true, initiallyCollapsed: true });						
 		},
-
-		createPast: function(parentElement, patientRef, excludeOrderAccessionNumber)
+		
+		createPast: function(parentElement, ordersList, options)
 		{
-			var ordersPerPage = 3;
-			var procedureQueryOptions = { All: 0, Active: 1, NonActive: 2 };
-			var requestHelper = _createRequestHelper(patientRef, procedureQueryOptions.NonActive, ordersPerPage);
-			_doQuery(parentElement, "Past Imaging Services", requestHelper, excludeOrderAccessionNumber);
+			var pastProcedures = _getNonActiveProcedures(ordersList);
+				
+			_createHelper(parentElement, pastProcedures, "Past Imaging Services");
+			Preview.SectionContainer.create(parentElement, "Past Imaging Services", { collapsible: true, initiallyCollapsed: true });						
 		}
 	};
 }();
