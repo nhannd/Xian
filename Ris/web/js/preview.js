@@ -2143,8 +2143,8 @@ Preview.ExternalPractitionerSummary = function() {
 
 			Field.setValue($("LicenseNumber"), externalPractitionerSummary.LicenseNumber);
 			Field.setValue($("BillingNumber"), externalPractitionerSummary.BillingNumber);
-			Field.setValue($("IsVerified"), externalPractitionerSummary.IsVerified);
-			Field.setValue($("LastVerified"), Ris.formatDateTime(externalPractitionerSummary.LastVerified));
+			Field.setValue($("IsVerified"), externalPractitionerSummary.IsVerified ? "Yes" : "No");
+			Field.setValue($("LastVerified"), Ris.formatDateTime(externalPractitionerSummary.LastVerifiedTime));
 		};
 
 	var _createExtendedPropertiesTable = function (element, externalPractitionerSummary)

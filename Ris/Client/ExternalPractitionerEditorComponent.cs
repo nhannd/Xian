@@ -37,6 +37,7 @@ using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
+using System.Threading;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -207,6 +208,8 @@ namespace ClearCanvas.Ris.Client
 
 			try
 			{
+				UpdateVerifyState();
+
 				_practitionerDetail.ContactPoints.Clear();
 				foreach (ExternalPractitionerContactPointDetail detail in _contactPointSummaryComponent.Subject)
 				{
@@ -249,6 +252,18 @@ namespace ClearCanvas.Ris.Client
 		public override void Cancel()
 		{
 			base.Cancel();
+		}
+
+		private void UpdateVerifyState()
+		{
+			// If user can verify, leave the IsVerify property alone
+			var canVerify = Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Admin.Data.ExternalPractitionerValidation);
+			if (canVerify)
+				return;
+
+			// Otherwise, changes to any property will automatically set IsVerified to false
+			if (this.Modified)
+				_practitionerDetail.IsVerified = false;
 		}
 	}
 }

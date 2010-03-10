@@ -30,17 +30,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
+using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop;
-using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Ris.Application.Common;
-using System.Collections;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -173,6 +167,34 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        #endregion
-    }
+		public bool IsVerified
+		{
+			get { return _practitionerDetail.IsVerified; }
+			set
+			{
+				_practitionerDetail.IsVerified = value;
+				
+				if (_practitionerDetail.IsVerified)
+					_practitionerDetail.LastVerifiedTime = DateTime.Now;
+
+				this.Modified = true;
+			}
+		}
+
+		public string LastVerified
+		{
+			get
+			{
+				var lastVerified = _practitionerDetail.LastVerifiedTime == null ? SR.MessageNever : Format.DateTime(_practitionerDetail.LastVerifiedTime);
+				return string.Format(SR.FormatLastVerified, lastVerified);
+			}
+		}
+
+		public bool CanVerify
+		{
+			get { return Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Admin.Data.ExternalPractitionerValidation); }
+		}
+
+		#endregion
+	}
 }

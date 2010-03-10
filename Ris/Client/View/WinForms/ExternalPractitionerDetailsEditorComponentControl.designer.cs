@@ -64,6 +64,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._givenName = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._familyName = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._billingNumber = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._isVerified = new System.Windows.Forms.CheckBox();
+			this._lastVerified = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// _licenseNumber
@@ -131,18 +133,40 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._billingNumber.ToolTip = null;
 			this._billingNumber.Value = null;
 			// 
+			// _isVerified
+			// 
+			this._isVerified.AutoSize = true;
+			this._isVerified.Location = new System.Drawing.Point(17, 201);
+			this._isVerified.Name = "_isVerified";
+			this._isVerified.Size = new System.Drawing.Size(61, 17);
+			this._isVerified.TabIndex = 6;
+			this._isVerified.Text = "Verified";
+			this._isVerified.UseVisualStyleBackColor = true;
+			// 
+			// _lastVerified
+			// 
+			this._lastVerified.AutoSize = true;
+			this._lastVerified.Location = new System.Drawing.Point(85, 203);
+			this._lastVerified.Name = "_lastVerified";
+			this._lastVerified.Size = new System.Drawing.Size(64, 13);
+			this._lastVerified.TabIndex = 7;
+			this._lastVerified.Text = "Last verified";
+			// 
 			// ExternalPractitionerDetailsEditorComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._lastVerified);
+			this.Controls.Add(this._isVerified);
 			this.Controls.Add(this._billingNumber);
 			this.Controls.Add(this._middleName);
 			this.Controls.Add(this._givenName);
 			this.Controls.Add(this._familyName);
 			this.Controls.Add(this._licenseNumber);
 			this.Name = "ExternalPractitionerDetailsEditorComponentControl";
-			this.Size = new System.Drawing.Size(360, 200);
+			this.Size = new System.Drawing.Size(360, 237);
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
         }
 
@@ -152,7 +176,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.TextField _middleName;
         private ClearCanvas.Desktop.View.WinForms.TextField _givenName;
         private ClearCanvas.Desktop.View.WinForms.TextField _familyName;
-        private ClearCanvas.Desktop.View.WinForms.TextField _billingNumber;
+		private ClearCanvas.Desktop.View.WinForms.TextField _billingNumber;
+		private System.Windows.Forms.CheckBox _isVerified;
+		private System.Windows.Forms.Label _lastVerified;
 
     }
 }

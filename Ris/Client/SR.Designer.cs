@@ -1222,6 +1222,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Last verified: {0}.
+        /// </summary>
+        internal static string FormatLastVerified {
+            get {
+                return ResourceManager.GetString("FormatLastVerified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} Ordered by {1}, Facility: {2}.
         /// </summary>
         internal static string FormatMoreInfo {
@@ -1677,6 +1686,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string MessageMustSelectTemplate {
             get {
                 return ResourceManager.GetString("MessageMustSelectTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to never.
+        /// </summary>
+        internal static string MessageNever {
+            get {
+                return ResourceManager.GetString("MessageNever", resourceCulture);
             }
         }
         

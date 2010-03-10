@@ -990,4 +990,10 @@
   <data name="ColumnTime" xml:space="preserve">
     <value>Time</value>
   </data>
+  <data name="FormatLastVerified" xml:space="preserve">
+    <value>Last verified: {0}</value>
+  </data>
+  <data name="MessageNever" xml:space="preserve">
+    <value>never</value>
+  </data>
 </root>

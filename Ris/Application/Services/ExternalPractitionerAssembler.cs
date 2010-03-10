@@ -96,6 +96,8 @@ namespace ClearCanvas.Ris.Application.Services
 
 			prac.LicenseNumber = detail.LicenseNumber;
 			prac.BillingNumber = detail.BillingNumber;
+			prac.IsVerified = detail.IsVerified;
+			prac.LastVerifiedTime = detail.LastVerifiedTime;
 			prac.Deactivated = detail.Deactivated;
 
 			// update contact points collection
