@@ -70,7 +70,7 @@ namespace ClearCanvas.Workflow {
 		/// <param name="description"></param>
 		public virtual void Fail(string description)
 		{
-			_failureDescription = description;
+			_failureDescription = description.Length >= 1024 ? description.Substring(0, 1024) : description;
 			_failureCount++;
 			_status = WorkQueueStatus.F;
 			_processedTime = Platform.Time;
