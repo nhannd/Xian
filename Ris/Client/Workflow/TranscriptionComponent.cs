@@ -281,6 +281,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 				set { this.Owner._reportPartExtendedProperties = value; }
 			}
 
+			public string GetReportPartExtendedProperty(string key)
+			{
+				return Owner.GetReportPartExtendedProperty(key);
+			}
+
+			public void SetReportPartExtendedProperty(string key, string value)
+			{
+				this.Owner.SetReportPartExtendedProperty(key, value);
+			}
+
 			//public StaffSummary Supervisor
 			//{
 			//    get { return Owner._supervisor; }
@@ -489,29 +499,33 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public string ReportContent
 		{
-			get
-			{
-				if (_reportPartExtendedProperties == null || !_reportPartExtendedProperties.ContainsKey(ReportPartDetail.ReportContentKey))
-					return null;
+			get { return GetReportPartExtendedProperty(ReportPartDetail.ReportContentKey); }
+			set { SetReportPartExtendedProperty(ReportPartDetail.ReportContentKey, value); }
+		}
 
-				return _reportPartExtendedProperties[ReportPartDetail.ReportContentKey];
+		private string GetReportPartExtendedProperty(string key)
+		{
+			if (_reportPartExtendedProperties == null || !_reportPartExtendedProperties.ContainsKey(key))
+				return null;
+
+			return _reportPartExtendedProperties[key];
+		}
+
+		private void SetReportPartExtendedProperty(string key, string value)
+		{
+			if (string.IsNullOrEmpty(value))
+			{
+				if (_reportPartExtendedProperties != null && _reportPartExtendedProperties.ContainsKey(key))
+				{
+					_reportPartExtendedProperties.Remove(key);
+				}
 			}
-			set
+			else
 			{
-				if (string.IsNullOrEmpty(value))
-				{
-					if (_reportPartExtendedProperties != null && _reportPartExtendedProperties.ContainsKey(ReportPartDetail.ReportContentKey))
-					{
-						_reportPartExtendedProperties.Remove(ReportPartDetail.ReportContentKey);
-					}
-				}
-				else
-				{
-					if (_reportPartExtendedProperties == null)
-						_reportPartExtendedProperties = new Dictionary<string, string>();
+				if (_reportPartExtendedProperties == null)
+					_reportPartExtendedProperties = new Dictionary<string, string>();
 
-					_reportPartExtendedProperties[ReportPartDetail.ReportContentKey] = value;
-				}
+				_reportPartExtendedProperties[key] = value;
 			}
 		}
 
@@ -879,13 +893,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private StaffSummary GetStaffByID(string id)
 		{
 				StaffSummary staff = null;
-				Platform.GetService<IStaffAdminService>(
-						delegate(IStaffAdminService service)
-						{
-								ListStaffResponse response = service.ListStaff(
-										new ListStaffRequest(id, null, null, null, null, true));
-								staff = CollectionUtils.FirstElement(response.Staffs);
-						});
+				Platform.GetService<IStaffAdminService>(service =>
+				{
+					var response = service.ListStaff(new ListStaffRequest(id, null, null, null, null, true));
+					staff = CollectionUtils.FirstElement(response.Staffs);
+				});
 				return staff;
 		}
 

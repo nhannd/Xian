@@ -112,6 +112,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 		Dictionary<string, string> ExtendedProperties { get; set; }
 
 		/// <summary>
+		/// Gets the specified extended property for the active report part.
+		/// </summary>
+		string GetReportPartExtendedProperty(string key);
+
+		/// <summary>
+		/// Sets the specified extended property for the active report part.
+		/// </summary>
+		void SetReportPartExtendedProperty(string key, string value);
+
+		/// <summary>
 		/// Allows the report editor to request that the reporting component close.
 		/// For example, the report editor may wish to have a microphone button initiate the 'Verify' action.
 		/// </summary>
@@ -329,6 +339,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				get { return Owner._reportPartExtendedProperties; }
 				set { Owner._reportPartExtendedProperties = value; }
+			}
+
+			public string GetReportPartExtendedProperty(string key)
+			{
+				return Owner.GetReportPartExtendedProperty(key);
+			}
+
+			public void SetReportPartExtendedProperty(string key, string value)
+			{
+				this.Owner.SetReportPartExtendedProperty(key, value);
 			}
 
 			public StaffSummary Supervisor
@@ -615,29 +635,33 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public string ReportContent
 		{
-			get
-			{
-				if (_reportPartExtendedProperties == null || !_reportPartExtendedProperties.ContainsKey(ReportPartDetail.ReportContentKey))
-					return null;
+			get { return GetReportPartExtendedProperty(ReportPartDetail.ReportContentKey); }
+			set { SetReportPartExtendedProperty(ReportPartDetail.ReportContentKey, value); }
+		}
 
-				return _reportPartExtendedProperties[ReportPartDetail.ReportContentKey];
+		private string GetReportPartExtendedProperty(string key)
+		{
+			if (_reportPartExtendedProperties == null || !_reportPartExtendedProperties.ContainsKey(key))
+				return null;
+
+			return _reportPartExtendedProperties[key];
+		}
+
+		private void SetReportPartExtendedProperty(string key, string value)
+		{
+			if (string.IsNullOrEmpty(value))
+			{
+				if (_reportPartExtendedProperties != null && _reportPartExtendedProperties.ContainsKey(key))
+				{
+					_reportPartExtendedProperties.Remove(key);
+				}
 			}
-			set
+			else
 			{
-				if (string.IsNullOrEmpty(value))
-				{
-					if (_reportPartExtendedProperties != null && _reportPartExtendedProperties.ContainsKey(ReportPartDetail.ReportContentKey))
-					{
-						_reportPartExtendedProperties.Remove(ReportPartDetail.ReportContentKey);
-					}
-				}
-				else
-				{
-					if (_reportPartExtendedProperties == null)
-						_reportPartExtendedProperties = new Dictionary<string, string>();
+				if (_reportPartExtendedProperties == null)
+					_reportPartExtendedProperties = new Dictionary<string, string>();
 
-					_reportPartExtendedProperties[ReportPartDetail.ReportContentKey] = value;
-				}
+				_reportPartExtendedProperties[key] = value;
 			}
 		}
 
