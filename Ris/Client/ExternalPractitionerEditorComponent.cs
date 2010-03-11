@@ -257,7 +257,7 @@ namespace ClearCanvas.Ris.Client
 		private void UpdateVerifyState()
 		{
 			// If user can verify, leave the IsVerify property alone
-			var canVerify = Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Admin.Data.ExternalPractitionerValidation);
+			var canVerify = Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Admin.Data.ExternalPractitionerVerification);
 			if (canVerify)
 				return;
 
