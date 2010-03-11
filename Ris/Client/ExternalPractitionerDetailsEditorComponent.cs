@@ -175,7 +175,7 @@ namespace ClearCanvas.Ris.Client
 				_practitionerDetail.IsVerified = value;
 				
 				if (_practitionerDetail.IsVerified)
-					_practitionerDetail.LastVerifiedTime = DateTime.Now;
+					_practitionerDetail.LastVerifiedTime = Platform.Time;
 
 				this.Modified = true;
 			}
@@ -192,7 +192,7 @@ namespace ClearCanvas.Ris.Client
 
 		public bool CanVerify
 		{
-			get { return Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Admin.Data.ExternalPractitionerValidation); }
+			get { return Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Admin.Data.ExternalPractitionerVerification); }
 		}
 
 		#endregion

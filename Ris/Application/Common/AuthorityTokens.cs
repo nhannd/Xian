@@ -81,8 +81,8 @@ namespace ClearCanvas.Ris.Application.Common
 				[AuthorityToken(Description = "Allow administration of External Practitioners.")]
 				public const string ExternalPractitioner = "RIS/Admin/Data/External Practitioner";
 
-				[AuthorityToken(Description = "Allow validation of External Practitioners.")]
-				public const string ExternalPractitionerValidation = "RIS/Admin/Data/External Practitioner Validation";
+				[AuthorityToken(Description = "Allow verification of External Practitioners.")]
+				public const string ExternalPractitionerVerification = "RIS/Admin/Data/External Practitioner Verification";
 
 				[AuthorityToken(Description = "Allow administration of Patient Note Categories.")]
 				public const string PatientNoteCategory = "RIS/Admin/Data/Patient Note Category";

@@ -44,7 +44,12 @@ namespace ClearCanvas.Healthcare.Alerts
     [ExtensionOf(typeof(PatientAlertExtensionPoint))]
     public class NoteAlert : PatientAlertBase
     {
-        public override AlertNotification Test(Patient patient, IPersistenceContext context)
+		public override string Id
+		{
+			get { return "NoteAlert"; }
+		}
+		
+		public override AlertNotification Test(Patient patient, IPersistenceContext context)
         {
             List<string> reasons = new List<string>();
             foreach (PatientNote note in patient.Notes)
@@ -58,7 +63,7 @@ namespace ClearCanvas.Healthcare.Alerts
                 }
             }
 
-            return reasons.Count > 0 ? new AlertNotification(this.GetType(), reasons) : null; 
+            return reasons.Count > 0 ? new AlertNotification(this.Id, reasons) : null; 
         }
     }
 }

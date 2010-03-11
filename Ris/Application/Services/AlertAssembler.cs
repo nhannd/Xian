@@ -50,8 +50,7 @@ namespace ClearCanvas.Ris.Application.Services
         public AlertNotificationDetail CreateAlertNotification(AlertNotification alertNotification)
         {
             return new AlertNotificationDetail(
-                alertNotification.AlertClass.Name,
-                alertNotification.AlertClass.Name,  //TODO: this is supposed to be a display name - put an attribute on Alert classes to have a display name
+                alertNotification.AlertId,
                 new List<string>(alertNotification.Reasons));
         }
     }

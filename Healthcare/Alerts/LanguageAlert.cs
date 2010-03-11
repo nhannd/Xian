@@ -39,7 +39,12 @@ namespace ClearCanvas.Healthcare.Alerts
     [ExtensionOf(typeof(PatientProfileAlertExtensionPoint))]
     class LanguageAlert : PatientProfileAlertBase
     {
-        public override AlertNotification Test(PatientProfile profile, IPersistenceContext context)
+		public override string Id
+		{
+			get { return "LanguageAlert"; }
+		}
+		
+		public override AlertNotification Test(PatientProfile profile, IPersistenceContext context)
         {
 			AlertsSettings settings = new AlertsSettings();
             List<string> defaultLanguages = string.IsNullOrEmpty(settings.CommonSpokenLanguages)
@@ -48,7 +53,7 @@ namespace ClearCanvas.Healthcare.Alerts
 
             if (profile.PrimaryLanguage != null && !defaultLanguages.Contains(profile.PrimaryLanguage.Code))
             {
-                return new AlertNotification(this.GetType(), new string[] { profile.PrimaryLanguage.Value });
+                return new AlertNotification(this.Id, new string[] { profile.PrimaryLanguage.Value });
             }
 
             return null;

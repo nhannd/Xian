@@ -39,6 +39,11 @@ namespace ClearCanvas.Healthcare.Alerts
     [ExtensionOf(typeof(OrderAlertExtensionPoint))]
     public class InvalidVisitAlert : OrderAlertBase
     {
+		public override string Id
+		{
+			get { return "InvalidVisitAlert"; }
+		}
+
         public override AlertNotification Test(Order order, IPersistenceContext context)
         {
             List<string> reasons = new List<string>();
@@ -69,7 +74,7 @@ namespace ClearCanvas.Healthcare.Alerts
             }
 
             if (reasons.Count > 0)
-                return new AlertNotification(this.GetType(), reasons);
+                return new AlertNotification(this.Id, reasons);
 
             return null;
         }

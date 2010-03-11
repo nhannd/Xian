@@ -40,7 +40,12 @@ namespace ClearCanvas.Healthcare.Alerts
     [ExtensionOf(typeof(PatientProfileAlertExtensionPoint))]
     class IncompleteDemographicDataAlert : PatientProfileAlertBase
     {
-        public override AlertNotification Test(PatientProfile profile, IPersistenceContext context)
+		public override string Id
+		{
+			get { return "IncompleteDemographicDataAlert"; }
+		}
+
+		public override AlertNotification Test(PatientProfile profile, IPersistenceContext context)
         {
 			List<string> reasons = new List<string>();
 
@@ -50,7 +55,7 @@ namespace ClearCanvas.Healthcare.Alerts
 			TestTelephoneNumbers(profile.TelephoneNumbers, ref reasons);
 
             if (reasons.Count > 0)
-                return new AlertNotification(this.GetType(), reasons);
+                return new AlertNotification(this.Id, reasons);
 
             return null;
         }

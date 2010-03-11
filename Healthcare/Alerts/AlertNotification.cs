@@ -29,31 +29,29 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ClearCanvas.Healthcare.Alerts
 {
-    public class AlertNotification
-    {
-        private readonly Type _alertClass;
-        private readonly List<string> _reasons;
+	public class AlertNotification
+	{
+		private readonly string _alertId;
+		private readonly List<string> _reasons;
 
-        public AlertNotification(Type alertClass, IEnumerable<string> reasons)
-        {
-            _alertClass = alertClass;
-            _reasons = new List<string>(reasons);
-        }
+		public AlertNotification(string alertId, IEnumerable<string> reasons)
+		{
+			_alertId = alertId;
+			_reasons = new List<string>(reasons);
+		}
 
-        public Type AlertClass
-        {
-            get { return _alertClass; }
-        }
+		public string AlertId
+		{
+			get { return _alertId; }
+		}
 
-        public IEnumerable<string> Reasons
-        {
-            get { return _reasons; }
-        }
-    }
+		public IEnumerable<string> Reasons
+		{
+			get { return _reasons; }
+		}
+	}
 }

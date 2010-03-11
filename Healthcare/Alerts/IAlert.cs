@@ -35,6 +35,11 @@ namespace ClearCanvas.Healthcare.Alerts
 {
     public interface IAlert<TEntity>
     {
+		/// <summary>
+		/// Identifies this type of alert.
+		/// </summary>
+		string Id { get; }
+
         /// <summary>
         /// Test the entity for any alert conditions.  This method must be thread-safe
         /// </summary>

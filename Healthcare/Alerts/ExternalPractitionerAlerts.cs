@@ -11,6 +11,11 @@ namespace ClearCanvas.Healthcare.Alerts
 		[ExtensionOf(typeof(ExternalPractitionerAlertExtensionPoint))]
 		public class IncompleteDataAlert : ExternalPractitionerAlertBase
 		{
+			public override string Id
+			{
+				get { return "IncompleteDataAlert"; }
+			}
+
 			public override AlertNotification Test(ExternalPractitioner entity, IPersistenceContext context)
 			{
 				var reasons = new List<string>();
@@ -23,7 +28,7 @@ namespace ClearCanvas.Healthcare.Alerts
 				if (string.IsNullOrEmpty(entity.BillingNumber))
 					reasons.Add(SR.AlertExternalPractitionerBillingNumberMissing);
 
-				return reasons.Count > 0 ? new AlertNotification(this.GetType(), reasons) : null;
+				return reasons.Count > 0 ? new AlertNotification(this.Id, reasons) : null;
 			}
 
 			private static void TestName(PersonName name, ref List<string> reasons)
@@ -45,6 +50,11 @@ namespace ClearCanvas.Healthcare.Alerts
 		[ExtensionOf(typeof(ExternalPractitionerAlertExtensionPoint))]
 		public class IncompleteContactPointDataAlert : ExternalPractitionerAlertBase
 		{
+			public override string Id
+			{
+				get { return "IncompleteContactPointDataAlert"; }
+			}
+
 			public override AlertNotification Test(ExternalPractitioner entity, IPersistenceContext context)
 			{
 				var reasons = new List<string>();
@@ -58,7 +68,7 @@ namespace ClearCanvas.Healthcare.Alerts
 					TestContactPoints(entity.ContactPoints, ref reasons);
 				}
 
-				return reasons.Count > 0 ? new AlertNotification(this.GetType(), reasons) : null;
+				return reasons.Count > 0 ? new AlertNotification(this.Id, reasons) : null;
 			}
 
 			private static void TestContactPoints(IEnumerable<ExternalPractitionerContactPoint> contactPoints, ref List<string> reasons)
@@ -121,6 +131,11 @@ namespace ClearCanvas.Healthcare.Alerts
 		[ExtensionOf(typeof(ExternalPractitionerAlertExtensionPoint))]
 		public class PossibleDuplicateAlert : ExternalPractitionerAlertBase
 		{
+			public override string Id
+			{
+				get { return "PossibleDuplicateAlert"; }
+			}
+
 			public override AlertNotification Test(ExternalPractitioner entity, IPersistenceContext context)
 			{
 				var broker = context.GetBroker<IExternalPractitionerBroker>();
@@ -150,7 +165,7 @@ namespace ClearCanvas.Healthcare.Alerts
 				}
 
 				var matchesCount = broker.Count(criteria.ToArray());
-				return matchesCount > 0 ? new AlertNotification(this.GetType(), new string[] { }) : null;
+				return matchesCount > 0 ? new AlertNotification(this.Id, new string[] { }) : null;
 			}
 		}
 	}

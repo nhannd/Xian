@@ -40,6 +40,8 @@ namespace ClearCanvas.Healthcare.Alerts
     {
         #region IAlert<TEntity> Members
 
+		public abstract string Id { get; }
+
         public abstract AlertNotification Test(TEntity entity, IPersistenceContext context);
 
         #endregion

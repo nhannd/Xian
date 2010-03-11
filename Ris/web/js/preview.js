@@ -3,35 +3,24 @@
  */
 var Preview = function () {
 
-	var _getAlertIcon = function(alertItem)
-	{
-		switch (alertItem.AlertClassName)
+	var _alerts = 
 		{
-			case "NoteAlert":
-			case "IncompleteContactPointAlert":
-				return "AlertNote.png";
-			case "LanguageAlert":
-				return "AlertLanguage.png";
-			case "ReconciliationAlert":
-			case "PossibleDuplicateAlert":
-				return "AlertReconcile.png";
-			case "IncompleteDemographicDataAlert":
-			case "IncompleteDataAlert":
-				return "AlertIncompleteData.png";
-			case "InvalidVisitAlert":
-				return "AlertVisit.png";
+			NoteAlert: { icon: "AlertNote.png", getTooltip: function(name, reasons) { return name + " has high severity notes: " + reasons; } },
+			LanguageAlert: { icon: "AlertNote.png", getTooltip: function(name, reasons) { return name + " speaks: " + reasons; } },
+			ReconciliationAlert: { icon: "AlertReconcile.png", getTooltip: function(name, reasons) { return name + " has unreconciled records"; } },
+			IncompleteDemographicDataAlert: { icon: "AlertIncompleteData.png", getTooltip: function(name, reasons) { return name + " has incomplete demographic data: " + reasons; } },
+			InvalidVisitAlert: { icon: "AlertVisit.png", getTooltip: function(name, reasons) { return "This order has invalid visit: " + reasons; } },
 
 			// External Practitioner Related Alerts
-			case "IncompleteDataAlert":
-				return "AlertIncompleteData.png";
-			case "IncompleteContactPointDataAlert":
-				return "AlertNote.png";
-			case "PossibleDuplicateAlert":
-				return "AlertReconcile.png";
+			IncompleteDataAlert: { icon: "AlertIncompleteData.png", getTooltip: function(name, reasons) { return name + " has incomplete data: " + reasons; } },
+			IncompleteContactPointDataAlert: { icon: "AlertNote.png", getTooltip: function(name, reasons) { return "Some contact points have incomplete data: " + reasons; } },
+			PossibleDuplicateAlert: { icon: "AlertReconcile.png", getTooltip: function(name, reasons) { return name + " may have duplicate records"; } }
+		};
 
-			default:
-				return "AlertGeneral.png";
-		}
+	var _getAlertIcon = function(alertItem)
+	{
+		var alert = _alerts[alertItem.AlertId];
+		return alert ? alert.icon : "AlertGeneral.png";
 	};
 	
 	var _getAlertTooltip = function(alertItem, name)
@@ -46,30 +35,8 @@ var Preview = function () {
 	
 		var reasons = String.combine(escapedReasons, "; ");
 
-		switch (alertItem.AlertClassName)
-		{
-			case "NoteAlert":
-				return name + " has high severity notes: " + reasons;
-			case "LanguageAlert":
-				return name + " speaks: " + reasons;
-			case "ReconciliationAlert":
-				return name + " has unreconciled records";
-			case "IncompleteDemographicDataAlert":
-				return name + " has incomplete demographic data: " + reasons;
-			case "InvalidVisitAlert":
-				return "This order has invalid visit: " + reasons;
-
-			// External Practitioner Related Alerts
-			case "IncompleteDataAlert":
-				return name + " has incomplete data: " + reasons;
-			case "IncompleteContactPointDataAlert":
-				return "Some contact points have incomplete data: " + reasons;
-			case "PossibleDuplicateAlert":
-				return name + " may have duplicate records";
-
-			default:
-				return reasons;
-		}
+		var alert = _alerts[alertItem.AlertId];
+		return alert ? alert.getTooltip(name, reasons) : reasons;
 	};
 	
 	return {
