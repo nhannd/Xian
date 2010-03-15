@@ -62,6 +62,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._name = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._billingNumber = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._licenseNumber = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+			this._properties = new ClearCanvas.Ris.Client.View.WinForms.ExtendedPropertyChoicesTable();
 			this.SuspendLayout();
 			// 
 			// _name
@@ -74,7 +75,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._name.Margin = new System.Windows.Forms.Padding(2);
 			this._name.Name = "_name";
 			this._name.Size = new System.Drawing.Size(182, 41);
-			this._name.TabIndex = 1;
+			this._name.TabIndex = 0;
 			this._name.Value = null;
 			// 
 			// _billingNumber
@@ -83,7 +84,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._billingNumber.DisplayMember = "";
 			this._billingNumber.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._billingNumber.LabelText = "Billing #";
-			this._billingNumber.Location = new System.Drawing.Point(2, 92);
+			this._billingNumber.Location = new System.Drawing.Point(374, 2);
 			this._billingNumber.Margin = new System.Windows.Forms.Padding(2);
 			this._billingNumber.Name = "_billingNumber";
 			this._billingNumber.Size = new System.Drawing.Size(182, 41);
@@ -96,22 +97,40 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._licenseNumber.DisplayMember = "";
 			this._licenseNumber.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._licenseNumber.LabelText = "License #";
-			this._licenseNumber.Location = new System.Drawing.Point(2, 47);
+			this._licenseNumber.Location = new System.Drawing.Point(188, 2);
 			this._licenseNumber.Margin = new System.Windows.Forms.Padding(2);
 			this._licenseNumber.Name = "_licenseNumber";
 			this._licenseNumber.Size = new System.Drawing.Size(182, 41);
-			this._licenseNumber.TabIndex = 3;
+			this._licenseNumber.TabIndex = 1;
 			this._licenseNumber.Value = null;
+			// 
+			// _properties
+			// 
+			this._properties.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._properties.AutoScroll = true;
+			this._properties.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Inset;
+			this._properties.ColumnCount = 2;
+			this._properties.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
+			this._properties.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._properties.Location = new System.Drawing.Point(3, 48);
+			this._properties.Name = "_properties";
+			this._properties.RowCount = 1;
+			this._properties.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 228F));
+			this._properties.Size = new System.Drawing.Size(555, 273);
+			this._properties.TabIndex = 3;
 			// 
 			// ExternalPractitionerMergePropertiesComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._properties);
 			this.Controls.Add(this._licenseNumber);
 			this.Controls.Add(this._billingNumber);
 			this.Controls.Add(this._name);
 			this.Name = "ExternalPractitionerMergePropertiesComponentControl";
-			this.Size = new System.Drawing.Size(274, 324);
+			this.Size = new System.Drawing.Size(561, 324);
 			this.ResumeLayout(false);
 
         }
@@ -121,5 +140,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _name;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _billingNumber;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _licenseNumber;
+		private ExtendedPropertyChoicesTable _properties;
     }
 }

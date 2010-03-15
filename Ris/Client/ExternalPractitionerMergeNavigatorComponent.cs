@@ -16,14 +16,16 @@ namespace ClearCanvas.Ris.Client
 		private ExternalPractitionerMergeSelectDefaultContactPointComponent _selectDefaultContactPointComponent;
 		private ExternalPractitionerMergeAffectedOrdersComponent _affectedOrdersComponent;
 
-		private EntityRef _practitionerRef;
-		private ExternalPractitionerDetail _practitionerDetail;
+		private EntityRef _originalPractitionerRef;
+		private ExternalPractitionerDetail _originalPractitioner;
+		private readonly ExternalPractitionerDetail _mergedPractitioner;
 
 		private List<ExternalPractitionerSummary> _duplicates;
 
 		public ExternalPractitionerMergeNavigatorComponent(EntityRef practitionerRef)
 		{
-			_practitionerRef = practitionerRef;
+			_originalPractitionerRef = practitionerRef;
+			_mergedPractitioner = new ExternalPractitionerDetail();
 		}
 
 		public override void Start()
@@ -64,11 +66,11 @@ namespace ClearCanvas.Ris.Client
 				Platform.GetService(
 					delegate(IExternalPractitionerAdminService service)
 					{
-						var request = new LoadMergeExternalPractitionerFormDataRequest(_practitionerRef) { IncludeDetail = true, IncludeDuplicates = true };
+						var request = new LoadMergeExternalPractitionerFormDataRequest(_originalPractitionerRef) { IncludeDetail = true, IncludeDuplicates = true };
 						var response = service.LoadMergeExternalPractitionerFormData(request);
 
-						_practitionerRef = response.PractitionerDetail.PractitionerRef;
-						_practitionerDetail = response.PractitionerDetail;
+						_originalPractitionerRef = response.PractitionerDetail.PractitionerRef;
+						_originalPractitioner = response.PractitionerDetail;
 						_duplicates = response.Duplicates;
 					});
 
@@ -83,18 +85,19 @@ namespace ClearCanvas.Ris.Client
 			else if (currentComponent == _mergePropertiesComponent)
 			{
 				// Load detail of the selected practitioner.
-				ExternalPractitionerDetail selectedExternalPractitioner = null;
+				ExternalPractitionerDetail selectedDuplicatePractitioner = null;
 				Platform.GetService(
 					delegate(IExternalPractitionerAdminService service)
 					{
 						var request = new LoadMergeExternalPractitionerFormDataRequest(_mergeSelectedDuplicateComponent.SelectedPractitioner.PractitionerRef) { IncludeDetail = true };
 						var response = service.LoadMergeExternalPractitionerFormData(request);
 
-						selectedExternalPractitioner = response.PractitionerDetail;
+						selectedDuplicatePractitioner = response.PractitionerDetail;
 					});
 
-				_mergePropertiesComponent.Practitioner1 = _practitionerDetail;
-				_mergePropertiesComponent.Practitioner2 = selectedExternalPractitioner;
+				_mergedPractitioner.PractitionerRef = _originalPractitionerRef;
+				_mergePropertiesComponent.OriginalPractitioner = _originalPractitioner;
+				_mergePropertiesComponent.DuplicatePractitioner = selectedDuplicatePractitioner;
 
 				// Update forward/backward enablement
 				this.BackEnabled = true;
@@ -102,7 +105,7 @@ namespace ClearCanvas.Ris.Client
 			}
 			else if (currentComponent == _selectContactPointsComponent)
 			{
-				
+				_mergePropertiesComponent.Save(_mergedPractitioner);
 			}
 			else if (currentComponent == _selectDefaultContactPointComponent)
 			{

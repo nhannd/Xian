@@ -30,11 +30,11 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
-using System.Collections.Generic;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
@@ -45,6 +45,24 @@ namespace ClearCanvas.Ris.Client
 	[ExtensionPoint]
 	public sealed class ExternalPractitionerMergePropertiesComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
+	}
+
+	public class ExtendedPropertyRowData
+	{
+		public ExtendedPropertyRowData()
+		{
+			this.ValueChoices = new List<object>();
+		}
+
+		public ExtendedPropertyRowData(string propertyName, List<object> valueChoices)
+		{
+			this.PropertyName = propertyName;
+			this.ValueChoices = valueChoices;
+		}
+
+		public string PropertyName;
+
+		public List<object> ValueChoices;
 	}
 
 	/// <summary>
@@ -77,54 +95,74 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		private ExternalPractitionerDetail _practitioner1;
-		private ExternalPractitionerDetail _practitioner2;
-		private readonly ExternalPractitionerDetail _merged;
+		private ExternalPractitionerDetail _originalPractitioner;
+		private ExternalPractitionerDetail _duplicatePractitioner;
+		private ExternalPractitionerDetail _mergedPractitioner;
+
+		private List<ExtendedPropertyRowData> _extendedPropertyChoices;
+		private event EventHandler _saveRequested;
 
 		public ExternalPractitionerMergePropertiesComponent()
 		{
-			_merged = new ExternalPractitionerDetail();
+			_extendedPropertyChoices = new List<ExtendedPropertyRowData>();
 		}
 
-		public ExternalPractitionerDetail MergedPractitioner
+		public ExternalPractitionerDetail OriginalPractitioner
 		{
-			get { return _merged; }
-		}
-
-		public ExternalPractitionerDetail Practitioner1
-		{
-			get { return _practitioner1; }
+			get { return _originalPractitioner; }
 			set
 			{
-				_practitioner1 = value; 
+				_originalPractitioner = value;
+				_mergedPractitioner = new ExternalPractitionerDetail();
+				UpdateExtendedPropertyChoices();
 				NotifyAllPropertiesChanged();
 			}
 		}
 
-		public ExternalPractitionerDetail Practitioner2
+		public ExternalPractitionerDetail DuplicatePractitioner
 		{
-			get { return _practitioner2; }
+			get { return _duplicatePractitioner; }
 			set
 			{
-				_practitioner2 = value;
+				_duplicatePractitioner = value;
+				_mergedPractitioner = new ExternalPractitionerDetail();
+				UpdateExtendedPropertyChoices();
 				NotifyAllPropertiesChanged();
 			}
 		}
+
+		public void Save(ExternalPractitionerDetail practitioner)
+		{
+			// Ask all responsible party to update the merged property
+			EventsHelper.Fire(_saveRequested, this, EventArgs.Empty);
+
+			// Clone all properties
+			practitioner.Name = (PersonNameDetail)_mergedPractitioner.Name.Clone();
+			practitioner.LicenseNumber = _mergedPractitioner.LicenseNumber;
+			practitioner.BillingNumber = _mergedPractitioner.BillingNumber;
+			practitioner.ExtendedProperties.Clear();
+			foreach (var kvp in _mergedPractitioner.ExtendedProperties)
+			{
+				practitioner.ExtendedProperties.Add(kvp.Key, kvp.Value);
+			}
+		}
+
+		#region Presentation Models
 
 		public PersonNameDetail Name
 		{
-			get { return _merged.Name; }
-			set { _merged.Name = value; }
+			get { return _mergedPractitioner.Name; }
+			set { _mergedPractitioner.Name = value; }
 		}
 
 		public List<PersonNameDetail> NameChoices
 		{
 			get
 			{
-				if (this.Practitioner1 == null || this.Practitioner2 == null)
+				if (_originalPractitioner == null || _duplicatePractitioner == null)
 					return new List<PersonNameDetail>();
 
-				var choices = new List<PersonNameDetail> {this.Practitioner1.Name, this.Practitioner2.Name};
+				var choices = new List<PersonNameDetail> {this.OriginalPractitioner.Name, this.DuplicatePractitioner.Name};
 				return CollectionUtils.Unique(choices, new PersonNameComparer());
 			}
 		}
@@ -137,39 +175,83 @@ namespace ClearCanvas.Ris.Client
 
 		public string LicenseNumber
 		{
-			get { return _merged.LicenseNumber; }
-			set { _merged.LicenseNumber = value; }
+			get { return _mergedPractitioner.LicenseNumber; }
+			set { _mergedPractitioner.LicenseNumber = value; }
 		}
 
 		public List<string> LicenseNumberChoices
 		{
 			get
 			{
-				if (this.Practitioner1 == null || this.Practitioner2 == null)
+				if (_originalPractitioner == null || _duplicatePractitioner == null)
 					return new List<string>();
 
-				var choices = new List<string> { this.Practitioner1.LicenseNumber, this.Practitioner2.LicenseNumber };
+				var choices = new List<string> { this.OriginalPractitioner.LicenseNumber, this.DuplicatePractitioner.LicenseNumber };
 				return CollectionUtils.Unique(choices);
 			}
 		}
 
 		public string BillingNumber
 		{
-			get { return _merged.BillingNumber; }
-			set { _merged.BillingNumber = value; }
+			get { return _mergedPractitioner.BillingNumber; }
+			set { _mergedPractitioner.BillingNumber = value; }
 		}
 
 		public List<string> BillingNumberChoices
 		{
 			get
 			{
-				if (this.Practitioner1 == null || this.Practitioner2 == null)
+				if (_originalPractitioner == null || _duplicatePractitioner == null)
 					return new List<string>();
 
-				var choices = new List<string> { this.Practitioner1.BillingNumber, this.Practitioner2.BillingNumber };
+				var choices = new List<string> { this.OriginalPractitioner.BillingNumber, this.DuplicatePractitioner.BillingNumber };
 				return CollectionUtils.Unique(choices);
 			}
 		}
 
+		public Dictionary<string, string> ExtendedProperties
+		{
+			get { return _mergedPractitioner.ExtendedProperties; }
+			set { _mergedPractitioner.ExtendedProperties = value;}
+		}
+
+		public List<ExtendedPropertyRowData> ExtendedPropertyChoices
+		{
+			get { return _extendedPropertyChoices; }
+		}
+
+		public event EventHandler SaveRequested
+		{
+			add { _saveRequested += value; }
+			remove { _saveRequested -= value; }
+		}
+
+		#endregion
+
+		private void UpdateExtendedPropertyChoices()
+		{
+			_extendedPropertyChoices = new List<ExtendedPropertyRowData>();
+
+			if (_originalPractitioner == null || _duplicatePractitioner == null)
+				return;
+
+			var combinedKeys = CollectionUtils.Concat<string>(_originalPractitioner.ExtendedProperties.Keys, _duplicatePractitioner.ExtendedProperties.Keys);
+			var uniqueKeys = CollectionUtils.Unique(combinedKeys);
+
+			CollectionUtils.ForEach(uniqueKeys,
+				delegate(string key)
+				{
+					var choices = new List<object>();
+
+					if (_originalPractitioner.ExtendedProperties.ContainsKey(key))
+						choices.Add(_originalPractitioner.ExtendedProperties[key]);
+
+					if (_duplicatePractitioner.ExtendedProperties.ContainsKey(key))
+						choices.Add(_duplicatePractitioner.ExtendedProperties[key]);
+
+					var data = new ExtendedPropertyRowData(key, CollectionUtils.Unique(choices));
+					_extendedPropertyChoices.Add(data);
+				});
+		}
 	}
 }

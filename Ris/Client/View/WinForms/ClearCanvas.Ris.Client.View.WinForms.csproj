@@ -171,6 +171,9 @@
       <DependentUpon>ExternalPractitionerContactPointSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ExternalPractitionerContactPointSummaryComponentView.cs" />
+    <Compile Include="ExtendedPropertyChoicesTable.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ExternalPractitionerMergeAffectedOrdersComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
