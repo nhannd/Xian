@@ -88,6 +88,14 @@ namespace ClearCanvas.Desktop
 		#region Presentation Model
 
 		/// <summary>
+		/// Gets whether the components will show the tree pane.
+		/// </summary>
+    	public virtual bool ShowTree
+    	{
+    		get { return true; }
+    	}
+
+		/// <summary>
 		/// Gets a value indicating whether the components starts with the entire tree expanded.
 		/// </summary>
 		/// <remarks>

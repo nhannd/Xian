@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,16 +29,38 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
 
-namespace ClearCanvas.Healthcare.Brokers
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-	public partial interface IExternalPractitionerBroker
-	{
-		IList<ExternalPractitioner> GetDuplicates(ExternalPractitioner practitioner);
-		int GetDuplicatesCount(ExternalPractitioner practitioner);
+    /// <summary>
+    /// Provides a Windows Forms user-interface for <see cref="ExternalPractitionerMergeSelectedContactPointsComponent"/>.
+    /// </summary>
+    public partial class ExternalPractitionerMergeSelectedContactPointsComponentControl : ApplicationComponentUserControl
+    {
+        private ExternalPractitionerMergeSelectedContactPointsComponent _component;
 
-		IList<Order> GetRelatedOrders(ExternalPractitioner practitioner);
-		IList<Visit> GetRelatedVisits(ExternalPractitioner practitioner);
-	}
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public ExternalPractitionerMergeSelectedContactPointsComponentControl(ExternalPractitionerMergeSelectedContactPointsComponent component)
+            :base(component)
+        {
+			_component = component;
+            InitializeComponent();
+
+            BindingSource bindingSource = new BindingSource();
+			bindingSource.DataSource = _component;
+
+            // TODO add .NET databindings to bindingSource
+        }
+    }
 }

@@ -143,6 +143,7 @@ namespace ClearCanvas.Desktop.View.WinForms
     		base.AcceptButton = this._okButton;
 			base.CancelButton = this._cancelButton;
 
+        	splitContainer1.Panel1Collapsed = _component.ShowTree == false;
             _nextButton.DataBindings.Add("Enabled", _component, "ForwardEnabled");
             _backButton.DataBindings.Add("Enabled", _component, "BackEnabled");
             _okButton.DataBindings.Add("Enabled", _component, "AcceptEnabled");

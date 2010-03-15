@@ -117,5 +117,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 		/// </summary>
 		[OperationContract]
 		LoadMergeDuplicateContactPointFormDataResponse LoadMergeDuplicateContactPointFormData(LoadMergeDuplicateContactPointFormDataRequest request);
+
+		/// <summary>
+		/// Load all form data needed to merge two external practitioners.
+		/// </summary>
+		[OperationContract]
+		LoadMergeExternalPractitionerFormDataResponse LoadMergeExternalPractitionerFormData(LoadMergeExternalPractitionerFormDataRequest request);
 	}
 }

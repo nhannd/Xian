@@ -74,6 +74,15 @@ namespace ClearCanvas.Ris.Client
 	{
 		public void Apply()
 		{
+			var item = CollectionUtils.FirstElement(this.Context.SelectedItems);
+
+			var editor = new ExternalPractitionerMergeNavigatorComponent(item.PractitionerRef);
+			var exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Context.DesktopWindow, editor, SR.TitleMergePractitioner + " - " + Formatting.PersonNameFormat.Format(item.Name));
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				DocumentManager.InvalidateFolder(typeof(VerifiedTodayFolder));
+			}
 		}
 	}
 }

@@ -139,33 +139,8 @@ namespace ClearCanvas.Healthcare.Alerts
 			public override AlertNotification Test(ExternalPractitioner entity, IPersistenceContext context)
 			{
 				var broker = context.GetBroker<IExternalPractitionerBroker>();
-
-				var criteria = new List<ExternalPractitionerSearchCriteria>();
-
-				var nameCriteria = new ExternalPractitionerSearchCriteria();
-				nameCriteria.NotEqualTo(entity);
-				nameCriteria.Name.FamilyName.EqualTo(entity.Name.FamilyName);
-				nameCriteria.Name.GivenName.EqualTo(entity.Name.GivenName);
-				criteria.Add(nameCriteria);
-
-				if (!string.IsNullOrEmpty(entity.LicenseNumber))
-				{
-					var licenseNumberCriteria = new ExternalPractitionerSearchCriteria();
-					licenseNumberCriteria.NotEqualTo(entity);
-					licenseNumberCriteria.LicenseNumber.EqualTo(entity.LicenseNumber);
-					criteria.Add(licenseNumberCriteria);
-				}
-
-				if (!string.IsNullOrEmpty(entity.BillingNumber))
-				{
-					var billingNumberCriteria = new ExternalPractitionerSearchCriteria();
-					billingNumberCriteria.NotEqualTo(entity);
-					billingNumberCriteria.BillingNumber.EqualTo(entity.BillingNumber);
-					criteria.Add(billingNumberCriteria );
-				}
-
-				var matchesCount = broker.Count(criteria.ToArray());
-				return matchesCount > 0 ? new AlertNotification(this.Id, new string[] { }) : null;
+				var count = broker.GetDuplicatesCount(entity);
+				return count > 0 ? new AlertNotification(this.Id, new string[] { }) : null;
 			}
 		}
 	}

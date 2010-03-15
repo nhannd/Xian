@@ -68,6 +68,8 @@
     <Compile Include="Admin\ExternalPractitionerAdmin\LoadMergeDuplicateContactPointFormDataResponse.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\LoadMergeDuplicatePractitionerFormDataRequest.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\LoadMergeDuplicatePractitionerFormDataResponse.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\LoadMergeExternalPractitionerFormDataRequest.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\LoadMergeExternalPractitionerFormDataResponse.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\MergeDuplicateContactPointRequest.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\MergeDuplicateContactPointResponse.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\MergeDuplicatePractitionerRequest.cs" />

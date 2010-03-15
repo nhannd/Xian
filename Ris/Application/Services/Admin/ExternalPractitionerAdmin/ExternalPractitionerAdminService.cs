@@ -328,6 +328,28 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			return new LoadMergeDuplicateContactPointFormDataResponse(affectedOrders);
 		}
 
+		[ReadOperation]
+		public LoadMergeExternalPractitionerFormDataResponse LoadMergeExternalPractitionerFormData(LoadMergeExternalPractitionerFormDataRequest request)
+		{
+			// note that the version of the ExternalPractitionerRef is intentionally ignored here (default behaviour of ReadOperation)
+			var practitioner = PersistenceContext.Load<ExternalPractitioner>(request.PractitionerRef);
+			var broker = PersistenceContext.GetBroker<IExternalPractitionerBroker>();
+			var assembler = new ExternalPractitionerAssembler();
+			var response = new LoadMergeExternalPractitionerFormDataResponse();
+
+			if (request.IncludeDetail)
+				response.PractitionerDetail = assembler.CreateExternalPractitionerDetail(practitioner, this.PersistenceContext);
+			
+			if (request.IncludeDuplicates)
+			{
+				var duplicates = broker.GetDuplicates(practitioner);
+				response.Duplicates = CollectionUtils.Map<ExternalPractitioner, ExternalPractitionerSummary>(duplicates,
+					item => assembler.CreateExternalPractitionerSummary(item, this.PersistenceContext));
+			}
+
+			return response;
+		}
+
 		#endregion
 
 	}

@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,16 +29,29 @@
 
 #endregion
 
-using System.Collections.Generic;
+using System.Windows.Forms;
+using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Healthcare.Brokers
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-	public partial interface IExternalPractitionerBroker
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="ExternalPractitionerMergeSelectedDuplicateComponent"/>.
+	/// </summary>
+	public partial class ExternalPractitionerMergeSelectedDuplicateComponentControl : ApplicationComponentUserControl
 	{
-		IList<ExternalPractitioner> GetDuplicates(ExternalPractitioner practitioner);
-		int GetDuplicatesCount(ExternalPractitioner practitioner);
+		private readonly ExternalPractitionerMergeSelectedDuplicateComponent _component;
 
-		IList<Order> GetRelatedOrders(ExternalPractitioner practitioner);
-		IList<Visit> GetRelatedVisits(ExternalPractitioner practitioner);
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public ExternalPractitionerMergeSelectedDuplicateComponentControl(ExternalPractitionerMergeSelectedDuplicateComponent component)
+			:base(component)
+		{
+			_component = component;
+			InitializeComponent();
+
+			_table.Table = _component.PractitionerTable;
+			_table.DataBindings.Add("Selection", _component, "SummarySelection", true, DataSourceUpdateMode.OnPropertyChanged);
+		}
 	}
 }

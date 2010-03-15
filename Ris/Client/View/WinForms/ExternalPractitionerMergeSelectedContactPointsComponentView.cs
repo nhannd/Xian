@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,16 +29,50 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Text;
 
-namespace ClearCanvas.Healthcare.Brokers
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-	public partial interface IExternalPractitionerBroker
-	{
-		IList<ExternalPractitioner> GetDuplicates(ExternalPractitioner practitioner);
-		int GetDuplicatesCount(ExternalPractitioner practitioner);
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="ExternalPractitionerMergeSelectedContactPointsComponent"/>.
+    /// </summary>
+    [ExtensionOf(typeof(ExternalPractitionerMergeSelectedContactPointsComponentViewExtensionPoint))]
+    public class ExternalPractitionerMergeSelectedContactPointsComponentView : WinFormsView, IApplicationComponentView
+    {
+        private ExternalPractitionerMergeSelectedContactPointsComponent _component;
+        private ExternalPractitionerMergeSelectedContactPointsComponentControl _control;
 
-		IList<Order> GetRelatedOrders(ExternalPractitioner practitioner);
-		IList<Visit> GetRelatedVisits(ExternalPractitioner practitioner);
-	}
+        #region IApplicationComponentView Members
+
+        /// <summary>
+        /// Called by the host to assign this view to a component.
+        /// </summary>
+        public void SetComponent(IApplicationComponent component)
+        {
+            _component = (ExternalPractitionerMergeSelectedContactPointsComponent)component;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new ExternalPractitionerMergeSelectedContactPointsComponentControl(_component);
+                }
+                return _control;
+            }
+        }
+    }
 }

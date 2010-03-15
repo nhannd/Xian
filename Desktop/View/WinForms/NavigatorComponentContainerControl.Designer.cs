@@ -67,10 +67,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._okButton = new System.Windows.Forms.Button();
+			this._applyButton = new System.Windows.Forms.Button();
 			this._nextButton = new System.Windows.Forms.Button();
 			this._backButton = new System.Windows.Forms.Button();
 			this._titleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
-			this._applyButton = new System.Windows.Forms.Button();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
@@ -173,6 +173,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
 			// 
+			// _applyButton
+			// 
+			this._applyButton.Location = new System.Drawing.Point(195, 2);
+			this._applyButton.Margin = new System.Windows.Forms.Padding(2);
+			this._applyButton.Name = "_applyButton";
+			this._applyButton.Size = new System.Drawing.Size(75, 23);
+			this._applyButton.TabIndex = 4;
+			this._applyButton.Text = "Apply";
+			this._applyButton.UseVisualStyleBackColor = true;
+			// 
 			// _nextButton
 			// 
 			this._nextButton.Location = new System.Drawing.Point(116, 2);
@@ -207,16 +217,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
 			this._titleBar.TabIndex = 3;
 			this._titleBar.Text = "titleBar1";
-			// 
-			// _applyButton
-			// 
-			this._applyButton.Location = new System.Drawing.Point(195, 2);
-			this._applyButton.Margin = new System.Windows.Forms.Padding(2);
-			this._applyButton.Name = "_applyButton";
-			this._applyButton.Size = new System.Drawing.Size(75, 23);
-			this._applyButton.TabIndex = 4;
-			this._applyButton.Text = "Apply";
-			this._applyButton.UseVisualStyleBackColor = true;
 			// 
 			// NavigatorComponentContainerControl
 			// 

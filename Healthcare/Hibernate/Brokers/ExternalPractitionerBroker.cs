@@ -38,6 +38,18 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 	{
 		#region IExternalPractitionerBroker Members
 
+		public IList<ExternalPractitioner> GetDuplicates(ExternalPractitioner practitioner)
+		{
+			var criteria = GetDuplicatesCriteria(practitioner);
+			return Find(criteria);
+		}
+
+		public int GetDuplicatesCount(ExternalPractitioner practitioner)
+		{
+			var criteria = GetDuplicatesCriteria(practitioner);
+			return (int) Count(criteria);
+		}
+
 		public IList<Order> GetRelatedOrders(ExternalPractitioner practitioner)
 		{
 			HqlFrom hqlFrom = new HqlFrom(typeof(Order).Name, "o");
@@ -64,5 +76,34 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		}
 
 		#endregion
+
+		private static ExternalPractitionerSearchCriteria[] GetDuplicatesCriteria(ExternalPractitioner practitioner)
+		{
+			var criteria = new List<ExternalPractitionerSearchCriteria>();
+
+			var nameCriteria = new ExternalPractitionerSearchCriteria();
+			nameCriteria.NotEqualTo(practitioner);
+			nameCriteria.Name.FamilyName.EqualTo(practitioner.Name.FamilyName);
+			nameCriteria.Name.GivenName.EqualTo(practitioner.Name.GivenName);
+			criteria.Add(nameCriteria);
+
+			if (!string.IsNullOrEmpty(practitioner.LicenseNumber))
+			{
+				var licenseNumberCriteria = new ExternalPractitionerSearchCriteria();
+				licenseNumberCriteria.NotEqualTo(practitioner);
+				licenseNumberCriteria.LicenseNumber.EqualTo(practitioner.LicenseNumber);
+				criteria.Add(licenseNumberCriteria);
+			}
+
+			if (!string.IsNullOrEmpty(practitioner.BillingNumber))
+			{
+				var billingNumberCriteria = new ExternalPractitionerSearchCriteria();
+				billingNumberCriteria.NotEqualTo(practitioner);
+				billingNumberCriteria.BillingNumber.EqualTo(practitioner.BillingNumber);
+				criteria.Add(billingNumberCriteria);
+			}
+
+			return criteria.ToArray();
+		}
 	}
 }
