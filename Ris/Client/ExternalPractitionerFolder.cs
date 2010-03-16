@@ -32,7 +32,7 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService(
 				delegate(IExternalPractitionerAdminService service)
 				{
-					var request = new ListExternalPractitionersRequest { QueryCount = true };
+					var request = new ListExternalPractitionersRequest { QueryItems = false, QueryCount = true };
 					PrepareQueryRequest(request);
 					var response = service.ListExternalPractitioners(request);
 					count = response.ItemCount;

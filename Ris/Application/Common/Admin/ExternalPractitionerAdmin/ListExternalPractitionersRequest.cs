@@ -47,6 +47,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 	public class ListExternalPractitionersRequest : ListRequestBase
 	{
 		public ListExternalPractitionersRequest()
+			: this(null, null, null)
 		{
 		}
 
