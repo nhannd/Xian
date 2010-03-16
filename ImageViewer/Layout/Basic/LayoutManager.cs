@@ -32,7 +32,9 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.ImageViewer.Comparers;
 using ClearCanvas.ImageViewer.PresentationStates;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.ServiceModel.Query;
@@ -165,6 +167,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		#region Logical Workspace building 
 
+		protected override IComparer<Series> GetSeriesComparer()
+		{
+			return new CompositeComparer<Series>(new DXSeriesPresentationIntentComparer(), base.GetSeriesComparer());
+		}
+
 		protected override IPatientData ReconcilePatient(Study study)
 		{
 			var reconciled = _reconciliationStrategy.ReconcilePatientInformation(study.ParentPatient);
@@ -214,5 +221,55 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			for (int i = 0; i < PhysicalWorkspace.ImageBoxes.Count; ++i)
 				PhysicalWorkspace.ImageBoxes[i].SetTileGrid(layout.TileRows, layout.TileColumns);
 		}
+
+		#region Comparers
+
+		private class DXSeriesPresentationIntentComparer : DicomSeriesComparer
+		{
+			public override int Compare(Sop x, Sop y)
+			{
+				// this sorts FOR PROCESSING series to the end.
+				// FOR PRESENTATION and unspecified series are considered equal for the purposes of sorting by intent.
+				const string forProcessing = "FOR PROCESSING";
+				int presentationIntentX = GetPresentationIntent(x) == forProcessing ? 1 : 0;
+				int presentationIntentY = GetPresentationIntent(y) == forProcessing ? 1 : 0;
+				int result = presentationIntentX - presentationIntentY;
+				if (this.Reverse)
+					return -result;
+				return result;
+			}
+
+			private static string GetPresentationIntent(Sop sop)
+			{
+				DicomAttribute attribute;
+				if (sop.DataSource.TryGetAttribute(DicomTags.PresentationIntentType, out attribute))
+					return (attribute.ToString() ?? string.Empty).ToUpperInvariant();
+				return string.Empty;
+			}
+		}
+
+		private class CompositeComparer<T> : IComparer<T>
+		{
+			private readonly IList<IComparer<T>> _comparers;
+
+			public CompositeComparer(params IComparer<T>[] comparers)
+			{
+				Platform.CheckForNullReference(comparers, "comparers");
+				_comparers = new List<IComparer<T>>(comparers);
+			}
+
+			public int Compare(T x, T y)
+			{
+				foreach (IComparer<T> comparer in _comparers)
+				{
+					int result = comparer.Compare(x, y);
+					if (result != 0)
+						return result;
+				}
+				return 0;
+			}
+		}
+
+		#endregion
 	}
 }
