@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 
@@ -36,22 +37,63 @@ namespace ClearCanvas.Ris.Client
 {
 	public class ExternalPractitionerOverviewComponent : DHtmlComponent
 	{
-		private readonly ExternalPractitionerSummary _externalPractitionerSummary;
-
-		public ExternalPractitionerOverviewComponent(ExternalPractitionerSummary practitionerSummary)
+		// Internal data contract used for jscript deserialization
+		[DataContract]
+		public class ExternalPractitionerContext : DataContractBase
 		{
-			_externalPractitionerSummary = practitionerSummary;
+			[DataMember]
+			public ExternalPractitionerSummary PractitionerSummary;
+
+			[DataMember]
+			public ExternalPractitionerDetail PractitionerDetail;
+		}
+
+		private readonly ExternalPractitionerContext _context;
+
+		public ExternalPractitionerOverviewComponent()
+		{
+			_context = new ExternalPractitionerContext();
 		}
 
 		public override void Start()
 		{
-			SetUrl(WebResourcesSettings.Default.ExternalPractitionerOverviewPageUrl);
+			Refresh();
 			base.Start();
+		}
+
+		public string PreviewUrl
+		{
+			get { return WebResourcesSettings.Default.ExternalPractitionerOverviewPageUrl; }
+		}
+
+		public void Refresh()
+		{
+			this.SetUrl(this.PreviewUrl);
+		}
+
+		public ExternalPractitionerSummary PractitionerSummary
+		{
+			set
+			{
+				_context.PractitionerSummary = value;
+				_context.PractitionerDetail = null;
+				Refresh();
+			}
+		}
+
+		public ExternalPractitionerDetail PractitionerDetail
+		{
+			set
+			{
+				_context.PractitionerSummary = null;
+				_context.PractitionerDetail = value;
+				Refresh();
+			}
 		}
 
 		protected override DataContractBase GetHealthcareContext()
 		{
-			return _externalPractitionerSummary;
+			return _context;
 		}
 	}
 }

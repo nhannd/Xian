@@ -29,14 +29,12 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
@@ -55,9 +53,9 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(ExternalPractitionerMergeSelectedContactPointsComponentViewExtensionPoint))]
 	public class ExternalPractitionerMergeSelectedContactPointsComponent : ApplicationComponent
 	{
-		public class CheckableExternalPractitionerContactPointTable : Table<Checkable<ExternalPractitionerContactPointDetail>>
+		private class ExternalPractitionerContactPointsCheckableTable : Table<Checkable<ExternalPractitionerContactPointDetail>>
 		{
-			public CheckableExternalPractitionerContactPointTable()
+			public ExternalPractitionerContactPointsCheckableTable()
 			{
 				this.Columns.Add(new TableColumn<Checkable<ExternalPractitionerContactPointDetail>, bool>("Check",
 					checkableItem => checkableItem.IsChecked,
@@ -100,32 +98,90 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		private List<ExternalPractitionerContactPointDetail> _contactPoints;
-		private readonly CheckableExternalPractitionerContactPointTable _checkableContactPointTable;
+		private readonly ExternalPractitionerContactPointsCheckableTable _table;
+		private ExternalPractitionerDetail _originalPractitioner;
+		private ExternalPractitionerDetail _duplicatePractitioner;
 
 		public ExternalPractitionerMergeSelectedContactPointsComponent()
 		{
-			_checkableContactPointTable = new CheckableExternalPractitionerContactPointTable();
+			_table = new ExternalPractitionerContactPointsCheckableTable();
 		}
 
-		public ITable ContactPointTable
+		public override void Start()
 		{
-			get { return _checkableContactPointTable; }
+			this.Validation.Add(new ValidationRule("ContactPointTable",
+				component => new ValidationResult(this.SelectedContactPoints.Count > 0, "Must have at least one contact point")));
+
+			base.Start();
 		}
 
-		public List<ExternalPractitionerContactPointDetail> ContactPoints
+		public ExternalPractitionerDetail OriginalPractitioner
 		{
-			get { return _contactPoints; }
+			get { return _originalPractitioner; }
 			set
 			{
-				_contactPoints = value;
-				_checkableContactPointTable.SetItems(_contactPoints);
+				if (Equals(_originalPractitioner, value))
+					return;
+
+				if (value != null && _originalPractitioner != null && _originalPractitioner.PractitionerRef.Equals(value.PractitionerRef, true))
+					return;
+
+				_originalPractitioner = value;
+				UpdateContactPointsTable();
 			}
 		}
 
-		public List<ExternalPractitionerContactPointDetail> CheckedItem
+		public ExternalPractitionerDetail DuplicatePractitioner
 		{
-			get { return _checkableContactPointTable.CheckedItems; }
+			get { return _duplicatePractitioner; }
+			set
+			{
+				if (Equals(_duplicatePractitioner, value))
+					return;
+
+				if (value != null && _duplicatePractitioner != null && _duplicatePractitioner.PractitionerRef.Equals(value.PractitionerRef, true))
+					return;
+
+				_duplicatePractitioner = value;
+				UpdateContactPointsTable();
+			}
+		}
+
+		public List<ExternalPractitionerContactPointDetail> SelectedContactPoints
+		{
+			get { return _table.CheckedItems; }
+		}
+
+		public void Save(ExternalPractitionerDetail practitioner)
+		{
+			// Clone the contact points
+			practitioner.ContactPoints.Clear();
+			foreach (var cp in _table.CheckedItems)
+			{
+				var contactPoint = (ExternalPractitionerContactPointDetail)cp.Clone();
+				practitioner.ContactPoints.Add(contactPoint);
+			}
+		}
+
+		#region Presentation Models
+
+		public ITable ContactPointTable
+		{
+			get { return _table; }
+		}
+
+		#endregion
+
+		private void UpdateContactPointsTable()
+		{
+			if (_originalPractitioner == null || _duplicatePractitioner == null)
+				return;
+
+			var combinedContactPoints = new List<ExternalPractitionerContactPointDetail>();
+			combinedContactPoints.AddRange(_originalPractitioner.ContactPoints);
+			combinedContactPoints.AddRange(_duplicatePractitioner.ContactPoints);
+
+			_table.SetItems(combinedContactPoints);
 		}
 	}
 }

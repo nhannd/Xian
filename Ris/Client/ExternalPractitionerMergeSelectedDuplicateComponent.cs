@@ -29,13 +29,14 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -53,7 +54,7 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(ExternalPractitionerMergeSelectedDuplicateComponentViewExtensionPoint))]
 	public class ExternalPractitionerMergeSelectedDuplicateComponent : ApplicationComponent
 	{
-		public class ExternalPractitionerTable : Table<ExternalPractitionerSummary>
+		private class ExternalPractitionerTable : Table<ExternalPractitionerSummary>
 		{
 			public ExternalPractitionerTable()
 			{
@@ -71,33 +72,51 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		private readonly ExternalPractitionerTable _practitionerTable;
+		private readonly ExternalPractitionerTable _table;
 		private ExternalPractitionerSummary _selectedItem;
-		private event EventHandler _summarySelectionChanged;
+		private EntityRef _originalPractitionerRef;
 
 		public ExternalPractitionerMergeSelectedDuplicateComponent()
 		{
-			_practitionerTable = new ExternalPractitionerTable();
+			_table = new ExternalPractitionerTable();
 		}
 
-		public ITable PractitionerTable
+		public override void Start()
 		{
-			get { return _practitionerTable; }
+			this.Validation.Add(new ValidationRule("SummarySelection",
+				component => new ValidationResult(_selectedItem != null, "Must select at least one practitioner")));
+
+			base.Start();
 		}
 
-		public IList<ExternalPractitionerSummary> ExternalPractitioners
+		public EntityRef PractitionerRef
 		{
-			get { return _practitionerTable.Items; }
+			get { return _originalPractitionerRef; }
 			set
 			{
-				_practitionerTable.Items.Clear();
-				_practitionerTable.Items.AddRange(value);
+				if (value != null && _originalPractitionerRef != null && _originalPractitionerRef.Equals(value, true))
+					return;
+
+				if (Equals(_originalPractitionerRef, value))
+					return;
+
+				_originalPractitionerRef = value;
+
+				var duplicates = LoadDuplicates(_originalPractitionerRef);
+				_table.Items.Clear();
+				_table.Items.AddRange(duplicates);
 			}
 		}
-
 		public ExternalPractitionerSummary SelectedPractitioner
 		{
 			get { return _selectedItem; }
+		}
+
+		#region Presentation Models
+
+		public ITable PractitionerTable
+		{
+			get { return _table; }
 		}
 
 		public ISelection SummarySelection
@@ -114,14 +133,28 @@ namespace ClearCanvas.Ris.Client
 
 				_selectedItem = (ExternalPractitionerSummary) value.Item;
 				NotifyPropertyChanged("SummarySelection");
-				EventsHelper.Fire(_summarySelectionChanged, this, EventArgs.Empty);
 			}
 		}
 
-		public event EventHandler SummarySelectionChanged
+		#endregion
+
+		private static List<ExternalPractitionerSummary> LoadDuplicates(EntityRef practitionerRef)
 		{
-			add { _summarySelectionChanged += value; }
-			remove { _summarySelectionChanged -= value; }
+			var duplicates = new List<ExternalPractitionerSummary>();
+
+			if (practitionerRef != null)
+			{
+				Platform.GetService(
+					delegate(IExternalPractitionerAdminService service)
+					{
+						var request = new LoadMergeExternalPractitionerFormDataRequest(practitionerRef) { IncludeDuplicates = true };
+						var response = service.LoadMergeExternalPractitionerFormData(request);
+
+						duplicates = response.Duplicates;
+					});
+			}
+
+			return duplicates;
 		}
 	}
 }

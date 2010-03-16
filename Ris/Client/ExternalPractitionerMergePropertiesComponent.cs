@@ -112,6 +112,12 @@ namespace ClearCanvas.Ris.Client
 			get { return _originalPractitioner; }
 			set
 			{
+				if (Equals(_originalPractitioner, value))
+					return;
+
+				if (value != null && _originalPractitioner != null && _originalPractitioner.PractitionerRef.Equals(value.PractitionerRef, true))
+					return;
+
 				_originalPractitioner = value;
 				_mergedPractitioner = new ExternalPractitionerDetail();
 				UpdateExtendedPropertyChoices();
@@ -124,6 +130,12 @@ namespace ClearCanvas.Ris.Client
 			get { return _duplicatePractitioner; }
 			set
 			{
+				if (Equals(_duplicatePractitioner, value))
+					return;
+
+				if (value != null && _duplicatePractitioner != null && _duplicatePractitioner.PractitionerRef.Equals(value.PractitionerRef, true))
+					return;
+
 				_duplicatePractitioner = value;
 				_mergedPractitioner = new ExternalPractitionerDetail();
 				UpdateExtendedPropertyChoices();
@@ -143,7 +155,9 @@ namespace ClearCanvas.Ris.Client
 			practitioner.ExtendedProperties.Clear();
 			foreach (var kvp in _mergedPractitioner.ExtendedProperties)
 			{
-				practitioner.ExtendedProperties.Add(kvp.Key, kvp.Value);
+				// Only keep properties that have value
+				if (!string.IsNullOrEmpty(kvp.Value))
+					practitioner.ExtendedProperties.Add(kvp.Key, kvp.Value);
 			}
 		}
 
@@ -230,6 +244,7 @@ namespace ClearCanvas.Ris.Client
 
 		private void UpdateExtendedPropertyChoices()
 		{
+			// Clear existing data.
 			_extendedPropertyChoices = new List<ExtendedPropertyRowData>();
 
 			if (_originalPractitioner == null || _duplicatePractitioner == null)

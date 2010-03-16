@@ -19,19 +19,28 @@
 					return;
 
 				var context = Ris.getHealthcareContext();
+				if (!context)
+					return;
 
-				var service = Ris.getService("ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin.IExternalPractitionerAdminService, ClearCanvas.Ris.Application.Common");
-				var request = 
+				if (context.PractitionerDetail)
 				{
-					PractitionerRef: context.PractitionerRef
-				};
+					Preview.ExternalPractitionerSummary.create($("externalPractitionerSummary"), context.PractitionerDetail);
+				}
+				else if (context.PractitionerSummary)
+				{
+					var service = Ris.getService("ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin.IExternalPractitionerAdminService, ClearCanvas.Ris.Application.Common");
+					var request = 
+					{
+						PractitionerRef: context.PractitionerSummary.PractitionerRef
+					};
 
-				service.loadExternalPractitionerForEditAsync(
-					request,
-					function(response) {
-						// populate the preview
-						Preview.ExternalPractitionerSummary.create($("externalPractitionerSummary"), response.PractitionerDetail);
-					});
+					service.loadExternalPractitionerForEditAsync(
+						request,
+						function(response) {
+							// populate the preview
+							Preview.ExternalPractitionerSummary.create($("externalPractitionerSummary"), response.PractitionerDetail);
+						});
+				}
 			}
 			catch(e)
 			{

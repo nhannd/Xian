@@ -29,12 +29,13 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -52,30 +53,123 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(ExternalPractitionerMergeSelectDefaultContactPointComponentViewExtensionPoint))]
 	public class ExternalPractitionerMergeSelectDefaultContactPointComponent : ApplicationComponent
 	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public ExternalPractitionerMergeSelectDefaultContactPointComponent()
+		private class ExternalPractitionerContactPointsSingleCheckTable : Table<Checkable<ExternalPractitionerContactPointDetail>>
 		{
+			public ExternalPractitionerContactPointsSingleCheckTable()
+			{
+				this.Columns.Add(new TableColumn<Checkable<ExternalPractitionerContactPointDetail>, bool>("Default",
+					checkableItem => checkableItem.IsChecked,
+					OnItemChecked,
+					0.15f));
+
+				this.Columns.Add(new TableColumn<Checkable<ExternalPractitionerContactPointDetail>, string>("Name",
+					checkableItem => checkableItem.Item.Name,
+					0.5f));
+
+				this.Columns.Add(new TableColumn<Checkable<ExternalPractitionerContactPointDetail>, string>("Description",
+					checkableItem => checkableItem.Item.Description,
+					0.5f));
+			}
+
+			public ExternalPractitionerContactPointDetail CheckedItem
+			{
+				get
+				{
+					var checkedItem = CollectionUtils.SelectFirst(this.Items,
+						checkableItem => checkableItem.IsChecked);
+
+					return checkedItem == null ? null : checkedItem.Item;
+				}
+			}
+
+			public void SetItems(List<ExternalPractitionerContactPointDetail> contactPoints)
+			{
+				this.Items.Clear();
+
+				var checkableItems = CollectionUtils.Map<ExternalPractitionerContactPointDetail, Checkable<ExternalPractitionerContactPointDetail>>(contactPoints,
+					item => new Checkable<ExternalPractitionerContactPointDetail>(item));
+
+				this.Items.AddRange(checkableItems);
+			}
+
+			private void OnItemChecked(Checkable<ExternalPractitionerContactPointDetail> item, bool value)
+			{
+				// Uncheck every item
+				foreach (var checkableItem in this.Items)
+				{
+					checkableItem.IsChecked = checkableItem == item ? value : false;
+					this.Items.NotifyItemUpdated(checkableItem);
+				}
+			}
 		}
 
-		/// <summary>
-		/// Called by the host to initialize the application component.
-		/// </summary>
+		private readonly ExternalPractitionerContactPointsSingleCheckTable _table;
+
+		public ExternalPractitionerMergeSelectDefaultContactPointComponent()
+		{
+			_table = new ExternalPractitionerContactPointsSingleCheckTable();
+		}
+
 		public override void Start()
 		{
-			// TODO prepare the component for its live phase
+			this.Validation.Add(new ValidationRule("ContactPointTable",
+				component => new ValidationResult(_table.CheckedItem != null, "Must have at least one default contact point")));
+
 			base.Start();
 		}
 
-		/// <summary>
-		/// Called by the host when the application component is being terminated.
-		/// </summary>
-		public override void Stop()
+		public ExternalPractitionerContactPointDetail SelectedContactPoint
 		{
-			// TODO prepare the component to exit the live phase
-			// This is a good place to do any clean up
-			base.Stop();
+			get { return _table.CheckedItem; }
+		}
+
+		public List<ExternalPractitionerContactPointDetail> ContactPoints
+		{
+			get
+			{
+				return CollectionUtils.Map(_table.Items,
+					(Checkable<ExternalPractitionerContactPointDetail> item) => item.Item);
+			}
+			set
+			{
+				UpdateContactPointsTable(value);
+			}
+		}
+
+		public void Save(ExternalPractitionerDetail practitioner)
+		{
+			var checkedContact = _table.CheckedItem;
+
+			// Update IsDefaultContactPoint property of all contact points.
+			foreach (var cp in practitioner.ContactPoints)
+			{
+				cp.IsDefaultContactPoint = cp.ContactPointRef.Equals(checkedContact.ContactPointRef, false);
+			}
+		}
+
+		#region Presentation Models
+
+		public ITable ContactPointTable
+		{
+			get { return _table; }
+		}
+
+		#endregion
+
+		private void UpdateContactPointsTable(List<ExternalPractitionerContactPointDetail> contactPoints)
+		{
+			var previouslyChecked = _table.CheckedItem;
+
+			_table.SetItems(contactPoints);
+
+			if (previouslyChecked != null)
+			{
+				var itemToCheck = CollectionUtils.SelectFirst(_table.Items,
+					item => Equals(previouslyChecked.ContactPointRef, item.Item.ContactPointRef));
+
+				if (itemToCheck != null)
+					itemToCheck.IsChecked = true;
+			}
 		}
 	}
 }

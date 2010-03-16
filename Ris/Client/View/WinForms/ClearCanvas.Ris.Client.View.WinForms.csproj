@@ -742,6 +742,12 @@
     <EmbeddedResource Include="ExternalPractitionerMergePropertiesComponentControl.resx">
       <DependentUpon>ExternalPractitionerMergePropertiesComponentControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ExternalPractitionerMergeSelectDefaultContactPointComponentControl.resx">
+      <DependentUpon>ExternalPractitionerMergeSelectDefaultContactPointComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExternalPractitionerMergeSelectedContactPointsComponentControl.resx">
+      <DependentUpon>ExternalPractitionerMergeSelectedContactPointsComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ExternalPractitionerMergeSelectedDuplicateComponentControl.resx">
       <DependentUpon>ExternalPractitionerMergeSelectedDuplicateComponentControl.cs</DependentUpon>
     </EmbeddedResource>

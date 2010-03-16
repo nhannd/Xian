@@ -29,7 +29,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			}
 		}
 
-		private const int ColumnField = 0;
+		private const int ColumnProperty = 0;
 		private const int ColumnValue = 1;
 		private const float DefaultHeight = 25F;
 
@@ -104,9 +104,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		{
 			const int row = 0;
 
-			var fieldControlName = GetControlName("Field", "Header");
-			var fieldControl = ControlFactory.CreateLabelControl(fieldControlName, "Field");
-			this.Controls.Add(fieldControl, ColumnField, row);
+			var fieldControlName = GetControlName("Property", "Header");
+			var fieldControl = ControlFactory.CreateLabelControl(fieldControlName, "Property");
+			this.Controls.Add(fieldControl, ColumnProperty, row);
 
 			var valueControlName = GetControlName("Value", "Header");
 			var valueControl = ControlFactory.CreateLabelControl(valueControlName, "Value");
@@ -125,7 +125,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// Add a Label control for field Name column
 			var fieldControlName = GetControlName("Field", property.PropertyName);
 			var fieldControl = ControlFactory.CreateLabelControl(fieldControlName, property.PropertyName);
-			this.Controls.Add(fieldControl, ColumnField, row);
+			this.Controls.Add(fieldControl, ColumnProperty, row);
 
 			var valueControlName = GetControlName("Value", property.PropertyName);
 			var valueControl = ControlFactory.CreateComboBoxControl(valueControlName, property.ValueChoices[0], property.ValueChoices);

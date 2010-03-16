@@ -29,38 +29,27 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
-using System.Windows.Forms;
-
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="ExternalPractitionerMergeSelectDefaultContactPointComponent"/>.
-    /// </summary>
-    public partial class ExternalPractitionerMergeSelectDefaultContactPointComponentControl : ApplicationComponentUserControl
-    {
-        private ExternalPractitionerMergeSelectDefaultContactPointComponent _component;
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="ExternalPractitionerMergeSelectDefaultContactPointComponent"/>.
+	/// </summary>
+	public partial class ExternalPractitionerMergeSelectDefaultContactPointComponentControl : ApplicationComponentUserControl
+	{
+		private readonly ExternalPractitionerMergeSelectDefaultContactPointComponent _component;
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        public ExternalPractitionerMergeSelectDefaultContactPointComponentControl(ExternalPractitionerMergeSelectDefaultContactPointComponent component)
-            :base(component)
-        {
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public ExternalPractitionerMergeSelectDefaultContactPointComponentControl(ExternalPractitionerMergeSelectDefaultContactPointComponent component)
+			:base(component)
+		{
 			_component = component;
-            InitializeComponent();
+			InitializeComponent();
 
-            BindingSource bindingSource = new BindingSource();
-			bindingSource.DataSource = _component;
-
-            // TODO add .NET databindings to bindingSource
-        }
-    }
+			_table.Table = _component.ContactPointTable;
+		}
+	}
 }

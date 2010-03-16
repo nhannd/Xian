@@ -418,7 +418,7 @@ namespace ClearCanvas.Ris.Client
 
 				LaunchAsDialog(
 					_component.Host.DesktopWindow,
-					new ExternalPractitionerOverviewComponent(practitionerSummary),
+					new ExternalPractitionerOverviewComponent() { PractitionerSummary = practitionerSummary },
 					SR.TitleExternalPractitioner + " - " + PersonNameFormat.Format(practitionerSummary.Name));
 			}
 
