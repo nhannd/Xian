@@ -35,6 +35,8 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -52,30 +54,32 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(ExternalPractitionerMergeAffectedOrdersComponentViewExtensionPoint))]
 	public class ExternalPractitionerMergeAffectedOrdersComponent : ApplicationComponent
 	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		private class AffectedOrdersTable : Table<OrderDetail>
+		{
+			public AffectedOrdersTable()
+			{
+				this.Columns.Add(new TableColumn<OrderDetail, string>("Order", order => order.AccessionNumber, 0.15f));
+
+				//this.Columns.Add(new TableColumn<OrderDetail, string>("Name",
+				//    checkableItem => checkableItem.Item.Name,
+				//    0.5f));
+
+				//this.Columns.Add(new TableColumn<OrderDetail, string>("Description",
+				//    checkableItem => checkableItem.Item.Description,
+				//    0.5f));
+			}
+		}
+
+		private readonly AffectedOrdersTable _table;
+
 		public ExternalPractitionerMergeAffectedOrdersComponent()
 		{
+			_table = new AffectedOrdersTable();
 		}
 
-		/// <summary>
-		/// Called by the host to initialize the application component.
-		/// </summary>
-		public override void Start()
+		public ITable AffectedOrderTable
 		{
-			// TODO prepare the component for its live phase
-			base.Start();
-		}
-
-		/// <summary>
-		/// Called by the host when the application component is being terminated.
-		/// </summary>
-		public override void Stop()
-		{
-			// TODO prepare the component to exit the live phase
-			// This is a good place to do any clean up
-			base.Stop();
+			get { return _table; }
 		}
 	}
 }

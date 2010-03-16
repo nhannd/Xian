@@ -32,11 +32,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			this.Pages.Add(new NavigatorPage("Select Duplicate", _selectedDuplicateComponent = new ExternalPractitionerMergeSelectedDuplicateComponent()));
 			this.Pages.Add(new NavigatorPage("Resolve Property Conflicts", _mergePropertiesComponent = new ExternalPractitionerMergePropertiesComponent()));
-			this.Pages.Add(new NavigatorPage("Choose Contact Points", _selectContactPointsComponent = new ExternalPractitionerMergeSelectedContactPointsComponent()));
-			this.Pages.Add(new NavigatorPage("Choose Default Contact Point", _selectDefaultContactPointComponent = new ExternalPractitionerMergeSelectDefaultContactPointComponent()));
+			this.Pages.Add(new NavigatorPage("Select Active Contact Points", _selectContactPointsComponent = new ExternalPractitionerMergeSelectedContactPointsComponent()));
+			this.Pages.Add(new NavigatorPage("Select Default Contact Point", _selectDefaultContactPointComponent = new ExternalPractitionerMergeSelectDefaultContactPointComponent()));
 			this.Pages.Add(new NavigatorPage("Resolve Order Conflicts", _affectedOrdersComponent = new ExternalPractitionerMergeAffectedOrdersComponent()));
 			this.Pages.Add(new NavigatorPage("Confirmation", _confirmationComponent = new ExternalPractitionerOverviewComponent()));
 			this.ValidationStrategy = new AllComponentsValidationStrategy();
+
 			base.Start();
 		}
 
@@ -98,7 +99,7 @@ namespace ClearCanvas.Ris.Client
 			else if (currentComponent == _selectDefaultContactPointComponent)
 			{
 				// Update default contact point comopnent with the latest contact point selections
-				_selectDefaultContactPointComponent.ContactPoints = _selectContactPointsComponent.SelectedContactPoints;
+				_selectDefaultContactPointComponent.ActiveContactPoints = _selectContactPointsComponent.ActiveContactPoints;
 			}
 			else if (currentComponent == _affectedOrdersComponent)
 			{
@@ -111,12 +112,16 @@ namespace ClearCanvas.Ris.Client
 				_selectContactPointsComponent.Save(_mergedPractitioner);
 				_selectDefaultContactPointComponent.Save(_mergedPractitioner);
 				_confirmationComponent.PractitionerDetail = _mergedPractitioner;
+
+				// The accept is enabled only on the very last page.
+				this.AcceptEnabled = true;
 			}
 		}
 
-		private static void OnMovedBackward()
+		private void OnMovedBackward()
 		{
-			// Nothing to do when moving backward.  But fill-in this method if there is.
+			// The accept is enabled only on the very last page.  Nothing else to do when moving backward.
+			this.AcceptEnabled = false;
 		}
 
 		private static ExternalPractitionerDetail LoadPractitioner(EntityRef practitionerRef)

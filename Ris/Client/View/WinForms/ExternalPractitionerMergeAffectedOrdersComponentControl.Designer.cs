@@ -59,10 +59,32 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this._table = new ClearCanvas.Desktop.View.WinForms.TableView();
+			this.SuspendLayout();
+			// 
+			// _table
+			// 
+			this._table.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._table.Location = new System.Drawing.Point(0, 0);
+			this._table.Margin = new System.Windows.Forms.Padding(4);
+			this._table.Name = "_table";
+			this._table.ReadOnly = false;
+			this._table.ShowToolbar = false;
+			this._table.Size = new System.Drawing.Size(150, 150);
+			this._table.TabIndex = 5;
+			// 
+			// ExternalPractitionerMergeAffectedOrdersComponentControl
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._table);
+			this.Name = "ExternalPractitionerMergeAffectedOrdersComponentControl";
+			this.ResumeLayout(false);
+
         }
 
         #endregion
+
+		private ClearCanvas.Desktop.View.WinForms.TableView _table;
     }
 }

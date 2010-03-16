@@ -53,97 +53,73 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(ExternalPractitionerMergeSelectDefaultContactPointComponentViewExtensionPoint))]
 	public class ExternalPractitionerMergeSelectDefaultContactPointComponent : ApplicationComponent
 	{
-		private class ExternalPractitionerContactPointsSingleCheckTable : Table<Checkable<ExternalPractitionerContactPointDetail>>
+		private class ExternalPractitionerContactPointsTable : Table<ExternalPractitionerContactPointDetail>
 		{
-			public ExternalPractitionerContactPointsSingleCheckTable()
+			public ExternalPractitionerContactPointsTable()
 			{
-				this.Columns.Add(new TableColumn<Checkable<ExternalPractitionerContactPointDetail>, bool>("Default",
-					checkableItem => checkableItem.IsChecked,
+				this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, bool>("Default",
+					cp => cp.IsDefaultContactPoint,
 					OnItemChecked,
 					0.15f));
 
-				this.Columns.Add(new TableColumn<Checkable<ExternalPractitionerContactPointDetail>, string>("Name",
-					checkableItem => checkableItem.Item.Name,
-					0.5f));
+				this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>("Name",
+					cp => cp.Name, 0.5f));
 
-				this.Columns.Add(new TableColumn<Checkable<ExternalPractitionerContactPointDetail>, string>("Description",
-					checkableItem => checkableItem.Item.Description,
-					0.5f));
+				this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>("Description",
+					cp => cp.Description, 0.5f));
 			}
 
-			public ExternalPractitionerContactPointDetail CheckedItem
+			private void OnItemChecked(ExternalPractitionerContactPointDetail item, bool value)
 			{
-				get
+				// Uncheck every other item, except the checked item
+				foreach (var cp in this.Items)
 				{
-					var checkedItem = CollectionUtils.SelectFirst(this.Items,
-						checkableItem => checkableItem.IsChecked);
-
-					return checkedItem == null ? null : checkedItem.Item;
-				}
-			}
-
-			public void SetItems(List<ExternalPractitionerContactPointDetail> contactPoints)
-			{
-				this.Items.Clear();
-
-				var checkableItems = CollectionUtils.Map<ExternalPractitionerContactPointDetail, Checkable<ExternalPractitionerContactPointDetail>>(contactPoints,
-					item => new Checkable<ExternalPractitionerContactPointDetail>(item));
-
-				this.Items.AddRange(checkableItems);
-			}
-
-			private void OnItemChecked(Checkable<ExternalPractitionerContactPointDetail> item, bool value)
-			{
-				// Uncheck every item
-				foreach (var checkableItem in this.Items)
-				{
-					checkableItem.IsChecked = checkableItem == item ? value : false;
-					this.Items.NotifyItemUpdated(checkableItem);
+					cp.IsDefaultContactPoint = cp.ContactPointRef.Equals(item.ContactPointRef, false) ? value : false;
+					this.Items.NotifyItemUpdated(cp);
 				}
 			}
 		}
 
-		private readonly ExternalPractitionerContactPointsSingleCheckTable _table;
+		private readonly ExternalPractitionerContactPointsTable _table;
 
 		public ExternalPractitionerMergeSelectDefaultContactPointComponent()
 		{
-			_table = new ExternalPractitionerContactPointsSingleCheckTable();
+			_table = new ExternalPractitionerContactPointsTable();
 		}
 
 		public override void Start()
 		{
 			this.Validation.Add(new ValidationRule("ContactPointTable",
-				component => new ValidationResult(_table.CheckedItem != null, "Must have at least one default contact point")));
+				component => new ValidationResult(this.DefaultContactPoint != null, "Must have at least one default contact point")));
 
 			base.Start();
 		}
 
-		public ExternalPractitionerContactPointDetail SelectedContactPoint
+		public IList<ExternalPractitionerContactPointDetail> ActiveContactPoints
 		{
-			get { return _table.CheckedItem; }
+			get { return _table.Items; }
+			set { UpdateContactPointsTable(value); }
 		}
 
-		public List<ExternalPractitionerContactPointDetail> ContactPoints
+		public ExternalPractitionerContactPointDetail DefaultContactPoint
 		{
-			get
-			{
-				return CollectionUtils.Map(_table.Items,
-					(Checkable<ExternalPractitionerContactPointDetail> item) => item.Item);
-			}
-			set
-			{
-				UpdateContactPointsTable(value);
-			}
+			get { return CollectionUtils.SelectFirst(_table.Items, cp => cp.IsDefaultContactPoint); }
 		}
 
 		public void Save(ExternalPractitionerDetail practitioner)
 		{
-			var checkedContact = _table.CheckedItem;
+			var defaultContactPoint = this.DefaultContactPoint;
 
 			// Update IsDefaultContactPoint property of all contact points.
-			foreach (var cp in practitioner.ContactPoints)
+			if (defaultContactPoint == null)
 			{
-				cp.IsDefaultContactPoint = cp.ContactPointRef.Equals(checkedContact.ContactPointRef, false);
+				foreach (var cp in practitioner.ContactPoints)
+					cp.IsDefaultContactPoint = false;
+			}
+			else
+			{
+				foreach (var cp in practitioner.ContactPoints)
+					cp.IsDefaultContactPoint = cp.ContactPointRef.Equals(defaultContactPoint.ContactPointRef, false);
 			}
 		}
 
@@ -156,19 +132,23 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
-		private void UpdateContactPointsTable(List<ExternalPractitionerContactPointDetail> contactPoints)
+		private void UpdateContactPointsTable(IEnumerable<ExternalPractitionerContactPointDetail> contactPoints)
 		{
-			var previouslyChecked = _table.CheckedItem;
+			var previousDefault = this.DefaultContactPoint;
 
-			_table.SetItems(contactPoints);
+			_table.Items.Clear();
+			_table.Items.AddRange(contactPoints);
 
-			if (previouslyChecked != null)
+			var currentDefault = previousDefault ?? this.DefaultContactPoint;
+			if (currentDefault == null)
+				return;
+
+			// There may be two default contact points from both practitioner
+			// Make sure the previously selected default contact point is maintained
+			// Make sure there can only be one default
+			foreach (var cp in _table.Items)
 			{
-				var itemToCheck = CollectionUtils.SelectFirst(_table.Items,
-					item => Equals(previouslyChecked.ContactPointRef, item.Item.ContactPointRef));
-
-				if (itemToCheck != null)
-					itemToCheck.IsChecked = true;
+				cp.IsDefaultContactPoint = cp.ContactPointRef.Equals(currentDefault.ContactPointRef, false);
 			}
 		}
 	}

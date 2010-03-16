@@ -53,64 +53,32 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(ExternalPractitionerMergeSelectedContactPointsComponentViewExtensionPoint))]
 	public class ExternalPractitionerMergeSelectedContactPointsComponent : ApplicationComponent
 	{
-		private class ExternalPractitionerContactPointsCheckableTable : Table<Checkable<ExternalPractitionerContactPointDetail>>
+		private class ExternalPractitionerContactPointTable : Table<ExternalPractitionerContactPointDetail>
 		{
-			public ExternalPractitionerContactPointsCheckableTable()
+			public ExternalPractitionerContactPointTable()
 			{
-				this.Columns.Add(new TableColumn<Checkable<ExternalPractitionerContactPointDetail>, bool>("Check",
-					checkableItem => checkableItem.IsChecked,
-					(checkableItem, value) => checkableItem.IsChecked = value,
-					0.15f));
+				this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, bool>("Active",
+					cp => !cp.Deactivated, (cp, value) => cp.Deactivated = !value, 0.15f));
 
-				this.Columns.Add(new TableColumn<Checkable<ExternalPractitionerContactPointDetail>, string>("Name",
-					checkableItem => checkableItem.Item.Name,
-					0.5f));
+				this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>("Name", cp => cp.Name, 0.5f));
 
-				this.Columns.Add(new TableColumn<Checkable<ExternalPractitionerContactPointDetail>, string>("Description",
-					checkableItem => checkableItem.Item.Description,
-					0.5f));
-			}
-
-			public List<ExternalPractitionerContactPointDetail> CheckedItems
-			{
-				get
-				{
-					var checkedItems = new List<ExternalPractitionerContactPointDetail>();
-					CollectionUtils.ForEach(this.Items, 
-						delegate(Checkable<ExternalPractitionerContactPointDetail> checkableItem)
-							{
-								if (checkableItem.IsChecked)
-									checkedItems.Add(checkableItem.Item);
-							});
-
-					return checkedItems;
-				}
-			}
-
-			public void SetItems(List<ExternalPractitionerContactPointDetail> contactPoints)
-			{
-				this.Items.Clear();
-
-				var checkableItems = CollectionUtils.Map<ExternalPractitionerContactPointDetail, Checkable<ExternalPractitionerContactPointDetail>>(contactPoints,
-					item => new Checkable<ExternalPractitionerContactPointDetail>(item));
-
-				this.Items.AddRange(checkableItems);
+				this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>("Description", cp => cp.Description, 0.5f));
 			}
 		}
 
-		private readonly ExternalPractitionerContactPointsCheckableTable _table;
+		private readonly ExternalPractitionerContactPointTable _table;
 		private ExternalPractitionerDetail _originalPractitioner;
 		private ExternalPractitionerDetail _duplicatePractitioner;
 
 		public ExternalPractitionerMergeSelectedContactPointsComponent()
 		{
-			_table = new ExternalPractitionerContactPointsCheckableTable();
+			_table = new ExternalPractitionerContactPointTable();
 		}
 
 		public override void Start()
 		{
 			this.Validation.Add(new ValidationRule("ContactPointTable",
-				component => new ValidationResult(this.SelectedContactPoints.Count > 0, "Must have at least one contact point")));
+				component => new ValidationResult(this.ActiveContactPoints.Count > 0, "Must have at least one contact point")));
 
 			base.Start();
 		}
@@ -147,16 +115,17 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		public List<ExternalPractitionerContactPointDetail> SelectedContactPoints
+		public List<ExternalPractitionerContactPointDetail> ActiveContactPoints
 		{
-			get { return _table.CheckedItems; }
+			get { return CollectionUtils.Select(_table.Items, cp => cp.Deactivated == false); }
 		}
 
 		public void Save(ExternalPractitionerDetail practitioner)
 		{
-			// Clone the contact points
 			practitioner.ContactPoints.Clear();
-			foreach (var cp in _table.CheckedItems)
+
+			// Clone the contact points
+			foreach (var cp in _table.Items)
 			{
 				var contactPoint = (ExternalPractitionerContactPointDetail)cp.Clone();
 				practitioner.ContactPoints.Add(contactPoint);
@@ -181,7 +150,8 @@ namespace ClearCanvas.Ris.Client
 			combinedContactPoints.AddRange(_originalPractitioner.ContactPoints);
 			combinedContactPoints.AddRange(_duplicatePractitioner.ContactPoints);
 
-			_table.SetItems(combinedContactPoints);
+			_table.Items.Clear();
+			_table.Items.AddRange(combinedContactPoints);
 		}
 	}
 }
