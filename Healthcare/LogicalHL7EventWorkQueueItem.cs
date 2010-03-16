@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Workflow;
@@ -50,14 +51,14 @@ namespace ClearCanvas.Healthcare
 			get { return Item.ExtendedProperties["EventType"]; }
 		}
 
-		public string OrderOID
+		public Guid OrderOID
 		{
-			get { return Item.ExtendedProperties["OrderOID"]; }
+			get { return GetGuidProperty("OrderOID"); }
 		}
 
-		public string ProcedureOID
+		public Guid ProcedureOID
 		{
-			get { return Item.ExtendedProperties["ProcedureOID"]; }
+			get { return GetGuidProperty("ProcedureOID"); }
 		}
 
 		public static LogicalHL7EventWorkQueueItem CreateOrderLogicalEvent(string logicalHL7EventType, Order order)
@@ -108,5 +109,11 @@ namespace ClearCanvas.Healthcare
 			return queueItem;
 		}
 
+		private Guid GetGuidProperty(string property)
+		{
+			return !String.IsNullOrEmpty(Item.ExtendedProperties[property])
+				? new Guid(Item.ExtendedProperties[property])
+				: Guid.Empty;
+		}
 	}
 }
