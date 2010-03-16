@@ -190,6 +190,7 @@ namespace ClearCanvas.Ris.Client
                                 ListExternalPractitionersRequest request = new ListExternalPractitionersRequest();
                                 request.Page.FirstRow = 0;
                                 request.Page.MaxRows = 500;
+                            	request.QueryItems = true;
                                 _practitioners = service.ListExternalPractitioners(request).Practitioners;
                             });
 
