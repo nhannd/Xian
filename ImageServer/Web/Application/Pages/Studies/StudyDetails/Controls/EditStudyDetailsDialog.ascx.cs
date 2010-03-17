@@ -369,7 +369,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 StudyTimeSeconds.Text = "00";
             }
 
-            Reason.Text = string.Empty;
+            Comment.Text = string.Empty;
             ReasonListBox.SelectedIndex = 0;
 
             DataBind();
@@ -431,7 +431,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 IList<CannedText> reasons = adaptor.Get(criteria);
                 foreach (CannedText reason in reasons)
                 {
-                    var rowColumns = new CannedTextUpdateColumns {Text = Reason.Text};
+                    var rowColumns = new CannedTextUpdateColumns {Text = Comment.Text};
                     adaptor.Update(reason.Key, rowColumns);
                 }
 
@@ -444,7 +444,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                                      {
                                          Category = REASON_CANNEDTEXT_CATEGORY,
                                          Label = SaveReasonAsName.Text,
-                                         Text = Reason.Text
+                                         Text = Comment.Text
                                      };
                 adaptor.Add(rowColumns);
             }
@@ -499,7 +499,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     if (modifiedFields!=null && modifiedFields.Count > 0)
                     {
                         var studyController = new StudyController();
-                        studyController.EditStudy(Study, modifiedFields, reason + "::" + Reason.Text);
+                        studyController.EditStudy(Study, modifiedFields, reason + ImageServerConstants.ReasonCommentSeparator[0] + Comment.Text);
                         AuditLog(Study, modifiedFields);
                         StudyEdited();
                     }

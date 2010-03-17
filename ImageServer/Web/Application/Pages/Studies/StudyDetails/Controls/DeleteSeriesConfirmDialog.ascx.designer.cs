@@ -68,6 +68,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         protected global::System.Web.UI.WebControls.DropDownList ReasonListBox;
         
         /// <summary>
+        /// InvalidReasonIndicator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator InvalidReasonIndicator;
+        
+        /// <summary>
         /// Label3 control.
         /// </summary>
         /// <remarks>
@@ -77,22 +86,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         protected global::System.Web.UI.WebControls.Label Label3;
         
         /// <summary>
-        /// Reason control.
+        /// Comment control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox Reason;
+        protected global::System.Web.UI.WebControls.TextBox Comment;
         
         /// <summary>
-        /// InvalidReasonIndicator control.
+        /// InvalidCommentIndicator control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator InvalidReasonIndicator;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator InvalidCommentIndicator;
         
         /// <summary>
         /// ReasonSavePanel control.
@@ -147,6 +156,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton CancelButton;
+        
+        /// <summary>
+        /// CommentValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ConditionalRequiredFieldValidator CommentValidator;
         
         /// <summary>
         /// ReasonValidator control.

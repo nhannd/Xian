@@ -224,7 +224,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         private void ClearInputs()
         {
-            Reason.Text = "";
+            Comment.Text = "";
             SaveReasonAsName.Text = "";
             ReasonListBox.Items.Clear();
         }
@@ -249,12 +249,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 criteria.Category.EqualTo(REASON_CANNEDTEXT_CATEGORY);
                 IList<CannedText> list = broker.Find(criteria);
 
-                ReasonListBox.Items.Add(new ListItem("-- Select one --", ""));
+                ReasonListBox.Items.Add(new ListItem("-- Select One --", ""));
                 foreach (CannedText text in list)
                 {
                     ReasonListBox.Items.Add(new ListItem(text.Label, text.Text));
-                }
-                
+                }                
             }
         }
 
@@ -279,7 +278,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                         {
                             Study study = DeletingSeries[0].Study;
 
-                            controller.DeleteStudy(DeletingSeries[0].StudyKey, ReasonListBox.SelectedItem.Text + "::" + Reason.Text);
+                            controller.DeleteStudy(DeletingSeries[0].StudyKey, ReasonListBox.SelectedItem.Text + ImageServerConstants.ReasonCommentSeparator[0] + Comment.Text);
 
                             // Audit log
                             DicomStudyDeletedAuditHelper helper =
@@ -314,7 +313,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                             {
                                 series.Add((seriesInfo.Series));
                             }
-                            controller.DeleteSeries(DeletingSeries[0].Study, series, Reason.Text);
+                            controller.DeleteSeries(DeletingSeries[0].Study, series, ReasonListBox.SelectedItem.Text + ImageServerConstants.ReasonCommentSeparator[0] + Comment.Text);
                         }
                         catch (Exception ex)
                         {
@@ -349,7 +348,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 foreach(CannedText reason in reasons)
                 {
                     CannedTextUpdateColumns rowColumns = new CannedTextUpdateColumns();
-                    rowColumns.Text = Reason.Text;
+                    rowColumns.Text = Comment.Text;
                     adaptor.Update(reason.Key, rowColumns);
                 }
                 
@@ -361,7 +360,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 CannedTextUpdateColumns rowColumns = new CannedTextUpdateColumns();
                 rowColumns.Category = REASON_CANNEDTEXT_CATEGORY;
                 rowColumns.Label = SaveReasonAsName.Text;
-                rowColumns.Text = Reason.Text;
+                rowColumns.Text = Comment.Text;
                 adaptor.Add(rowColumns);
             }
             
@@ -376,7 +375,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             DeleteSeriesConfirmDialogSeriesDeletedEventArgs args = new DeleteSeriesConfirmDialogSeriesDeletedEventArgs();
             args.DeletedSeries = DeletingSeries;
-            args.ReasonForDeletion = Reason.Text;
+            args.ReasonForDeletion = Comment.Text;
             EventsHelper.Fire(_seriesDeletedHandler, this, args);
         }
 
@@ -384,7 +383,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             DeleteSeriesConfirmDialogSeriesDeletingEventArgs args = new DeleteSeriesConfirmDialogSeriesDeletingEventArgs();
             args.DeletingSeries = DeletingSeries;
-            args.ReasonForDeletion = Reason.Text;
+            args.ReasonForDeletion = Comment.Text;
             EventsHelper.Fire(_seriesDeletingHandler, this, args);
         }
 

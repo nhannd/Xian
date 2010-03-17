@@ -25,7 +25,7 @@
             function studyReasonSelectionChanged()
             {
                 var listbox = $get('<%= ReasonListBox.ClientID %>');
-                var textbox = $get('<%= Reason.ClientID %>');
+                var textbox = $get('<%= Comment.ClientID %>');
                 
                 textbox.value = listbox.options[listbox.selectedIndex].value;
                 
@@ -107,23 +107,30 @@
                             <asp:Label ID="Label5" runat="server" CssClass="DialogTextBoxLabel" Text="Reason:"></asp:Label>                            
                         </td>
                         <td>
-                            <asp:DropDownList runat="server" ID="ReasonListBox" style="font-family: Arial, Sans-Serif; font-size: 14px;"/>                                        
+                            <table cellpadding="0" cellspacing="0">
+                                <tr valign="top">
+                                    <td>
+                                        <asp:DropDownList runat="server" ID="ReasonListBox" style="font-family: Arial, Sans-Serif; font-size: 14px;" Width="175"/>                                        
+                                    </td><td style="padding-left: 2px;">
+                                        <ccAsp:InvalidInputIndicator ID="InvalidReasonIndicator" runat="server" SkinID="InvalidInputIndicator" />
+                                    </td>
+                                </tr>
+                            </table>
                         </td>
                    </tr>
                    <tr>
                         <td valign="top">
                             <asp:Label ID="Label6" runat="server" CssClass="DialogTextBoxLabel" 
                                             Text='Comment:'></asp:Label> 
-                             
                         </td>
                         <td>
                             <table cellpadding="0" cellspacing="0">
                                 <tr valign="top">
                                     <td>
-                                        <asp:TextBox  Width="400px" Rows="3" ID="Reason" runat="server" TextMode="MultiLine" style="font-family: Arial, Sans-Serif; font-size: 14px;" />                                            
+                                        <asp:TextBox  Width="400px" Rows="3" ID="Comment" runat="server" TextMode="MultiLine" style="font-family: Arial, Sans-Serif; font-size: 14px;" />                                            
                                     </td>
                                     <td>
-                                        <ccAsp:InvalidInputIndicator ID="InvalidReasonIndicator" runat="server" SkinID="InvalidInputIndicator" />
+                                        <ccAsp:InvalidInputIndicator ID="InvalidCommentIndicator" runat="server" SkinID="InvalidInputIndicator" />
                                     </td>
                                 </tr>
                             </table>
@@ -157,9 +164,13 @@
         </table>
         </div>
        <ccValidator:ConditionalRequiredFieldValidator ID="ReasonValidator" runat="server"
-                                                ControlToValidate="Reason" InvalidInputIndicatorID="InvalidReasonIndicator" 
+                                                ControlToValidate="ReasonListBox" InvalidInputIndicatorID="InvalidReasonIndicator" 
                                                 ValidationGroup='StudyGroup'
                                                 Text="You must specify the reason for deleting the studies for future auditing purposes." Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>
+       <ccValidator:ConditionalRequiredFieldValidator ID="CommentValidator" runat="server"
+                                                ControlToValidate="Comment" InvalidInputIndicatorID="InvalidCommentIndicator" 
+                                                ValidationGroup='StudyGroup'
+                                                Text="You must specify a comment for the reason for deleting the studies for future auditing purposes." Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>                                                
            
     </ContentTemplate>
 </ccAsp:ModalDialog>

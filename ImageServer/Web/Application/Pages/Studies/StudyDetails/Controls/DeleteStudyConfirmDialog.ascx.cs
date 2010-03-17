@@ -191,7 +191,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         private void ClearInputs()
         {
-            Reason.Text = "";
+            Comment.Text = "";
             SaveReasonAsName.Text = "";
             ReasonListBox.Items.Clear();
         }
@@ -245,7 +245,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     {
                         try
                         {
-                            controller.DeleteStudy(study.StudyKey, reason + "::" + Reason.Text);
+                            controller.DeleteStudy(study.StudyKey, reason + "::" + Comment.Text);
 
 							// Audit log
                         	DicomStudyDeletedAuditHelper helper = new DicomStudyDeletedAuditHelper(
@@ -293,7 +293,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 foreach(CannedText reason in reasons)
                 {
                     CannedTextUpdateColumns rowColumns = new CannedTextUpdateColumns();
-                    rowColumns.Text = Reason.Text;
+                    rowColumns.Text = Comment.Text;
                     adaptor.Update(reason.Key, rowColumns);
                 }
                 
@@ -305,7 +305,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 CannedTextUpdateColumns rowColumns = new CannedTextUpdateColumns();
                 rowColumns.Category = REASON_CANNEDTEXT_CATEGORY;
                 rowColumns.Label = SaveReasonAsName.Text;
-                rowColumns.Text = Reason.Text;
+                rowColumns.Text = Comment.Text;
                 adaptor.Add(rowColumns);
             }
             
@@ -320,7 +320,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             DeleteStudyConfirmDialogStudyDeletedEventArgs args = new DeleteStudyConfirmDialogStudyDeletedEventArgs();
             args.DeletedStudies = DeletingStudies;
-            args.ReasonForDeletion = Reason.Text;
+            args.ReasonForDeletion = Comment.Text;
             EventsHelper.Fire(_studyDeletedHandler, this, args);
         }
 
@@ -328,7 +328,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             DeleteStudyConfirmDialogStudyDeletingEventArgs args = new DeleteStudyConfirmDialogStudyDeletingEventArgs();
             args.DeletingStudies = DeletingStudies;
-            args.ReasonForDeletion = Reason.Text;
+            args.ReasonForDeletion = Comment.Text;
             EventsHelper.Fire(_studyDeletingHandler, this, args);
         }
 
