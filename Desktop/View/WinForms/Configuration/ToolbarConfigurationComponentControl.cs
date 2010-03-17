@@ -29,40 +29,29 @@
 
 #endregion
 
-using ClearCanvas.Common;
-using ClearCanvas.Desktop.View.WinForms;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
+using ClearCanvas.Desktop.Configuration.Standard;
 
-namespace ClearCanvas.Desktop.Configuration.View.WinForms
+namespace ClearCanvas.Desktop.View.WinForms.Configuration
 {
-    /// <summary>
-    /// Provides a Windows Forms view onto <see cref="SettingEditorComponent"/>
-    /// </summary>
-    [ExtensionOf(typeof(SettingEditorComponentViewExtensionPoint))]
-    public class SettingEditorComponentView : WinFormsView, IApplicationComponentView
-    {
-        private SettingEditorComponent _component;
-        private SettingEditorComponentControl _control;
+	public partial class ToolbarConfigurationComponentControl : UserControl
+	{
+		private readonly ToolbarConfigurationComponent _component;
 
+		public ToolbarConfigurationComponentControl(ToolbarConfigurationComponent component)
+		{
+			InitializeComponent();
 
-        #region IApplicationComponentView Members
+			_component = component;
 
-        public void SetComponent(IApplicationComponent component)
-        {
-            _component = (SettingEditorComponent)component;
-        }
-
-        #endregion
-
-        public override object GuiElement
-        {
-            get
-            {
-                if (_control == null)
-                {
-                    _control = new SettingEditorComponentControl(_component);
-                }
-                return _control;
-            }
-        }
-    }
+			_wrapToolbars.DataBindings.Add("Checked", _component, "Wrap", false, DataSourceUpdateMode.OnPropertyChanged);
+			_toolbarSize.DataBindings.Add("Text", _component, "IconSize", true, DataSourceUpdateMode.OnPropertyChanged);
+		}
+	}
 }

@@ -29,40 +29,45 @@
 
 #endregion
 
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using System;
+using System.Windows.Forms;
+using ClearCanvas.Desktop.Configuration;
 
-[assembly: ClearCanvas.Common.Plugin]
+namespace ClearCanvas.Desktop.View.WinForms.Configuration
+{
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="SettingEditorComponent"/>
+	/// </summary>
+	public partial class SettingEditorComponentControl : ApplicationComponentUserControl
+	{
+		private SettingEditorComponent _component;
 
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-[assembly: AssemblyTitle("Configuration")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Configuration")]
-[assembly: AssemblyCopyright("Copyright (c) 2010")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public SettingEditorComponentControl(SettingEditorComponent component)
+			:base(component)
+		{
+			InitializeComponent();
 
-// Setting ComVisible to false makes the types in this assembly not visible 
-// to COM components.  If you need to access a type in this assembly from 
-// COM, set the ComVisible attribute to true on that type.
-[assembly: ComVisible(false)]
+			_component = component;
 
-// The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("1e4f99b8-5c82-4865-b7fe-069d8eb01bce")]
+			base.AcceptButton = _okButton;
+			base.CancelButton = _cancelButton;
 
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+			_defaultValue.DataBindings.Add("Text", _component, "DefaultValue", true, DataSourceUpdateMode.Never);
+			_currentValue.DataBindings.Add("Text", _component, "CurrentValue", true, DataSourceUpdateMode.OnPropertyChanged);
+			_okButton.DataBindings.Add("Enabled", _component, "Modified", true, DataSourceUpdateMode.Never);
+		}
+
+		private void _okButton_Click(object sender, EventArgs e)
+		{
+			_component.Accept();
+		}
+
+		private void _cancelButton_Click(object sender, EventArgs e)
+		{
+			_component.Cancel();
+		}
+	}
+}

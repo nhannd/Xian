@@ -29,40 +29,43 @@
 
 #endregion
 
-using ClearCanvas.Common;
-using ClearCanvas.Desktop.View.WinForms;
+using System;
+using System.Windows.Forms;
+using ClearCanvas.Desktop.Configuration;
 
-namespace ClearCanvas.Desktop.Configuration.View.WinForms
+namespace ClearCanvas.Desktop.View.WinForms.Configuration
 {
-    /// <summary>
-    /// Provides a Windows Forms view onto <see cref="SettingsManagementComponent"/>
-    /// </summary>
-    [ExtensionOf(typeof(SettingsManagementComponentViewExtensionPoint))]
-    public class SettingsManagementComponentView : WinFormsView, IApplicationComponentView
-    {
-        private SettingsManagementComponent _component;
-        private SettingsManagementComponentControl _control;
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="SettingsManagementComponent"/>
+	/// </summary>
+	public partial class SettingsManagementComponentControl : ApplicationComponentUserControl
+	{
+		private SettingsManagementComponent _component;
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public SettingsManagementComponentControl(SettingsManagementComponent component)
+			:base(component)
+		{
+			InitializeComponent();
 
-        #region IApplicationComponentView Members
+			_component = component;
 
-        public void SetComponent(IApplicationComponent component)
-        {
-            _component = (SettingsManagementComponent)component;
-        }
+			_settingsGroupTableView.Table = _component.SettingsGroupTable;
+			_settingsGroupTableView.DataBindings.Add("Selection", _component, "SelectedSettingsGroup", true, DataSourceUpdateMode.OnPropertyChanged);
+			_settingsGroupTableView.ToolbarModel = _component.SettingsGroupsActionModel;
 
-        #endregion
+			_valueTableView.Table = _component.SettingsPropertiesTable;
+			_valueTableView.DataBindings.Add("Selection", _component, "SelectedSettingsProperty", true, DataSourceUpdateMode.OnPropertyChanged);
+			_valueTableView.ToolbarModel = _component.SettingsPropertiesActionModel;
 
-        public override object GuiElement
-        {
-            get
-            {
-                if (_control == null)
-                {
-                    _control = new SettingsManagementComponentControl(_component);
-                }
-                return _control;
-            }
-        }
-    }
+			_valueTableView.ItemDoubleClicked += new EventHandler(ValueTableItemDoubleClicked);
+		}
+
+		private void ValueTableItemDoubleClicked(object sender, EventArgs e)
+		{
+			_component.SettingsPropertyDoubleClicked();
+		}
+	}
 }

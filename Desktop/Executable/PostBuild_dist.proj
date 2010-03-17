@@ -92,8 +92,6 @@
   <!-- Shared plugin files, to be placed in plugin directory -->
   <ItemGroup>
     <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\bin\$(Configuration)\ClearCanvas.Desktop.dll" />
-    <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\Configuration\bin\$(Configuration)\ClearCanvas.Desktop.Configuration.dll" />
-    <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\Configuration\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Configuration.View.WinForms.dll" />
     <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.View.WinForms.dll" />
     <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\Help\bin\$(Configuration)\ClearCanvas.Desktop.Help.dll" />
     <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\ExtensionBrowser\bin\$(Configuration)\ClearCanvas.Desktop.ExtensionBrowser.dll" />

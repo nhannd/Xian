@@ -162,6 +162,9 @@
   <data name="ExceptionDesktopViewNotCreated" xml:space="preserve">
     <value>The main desktop view has not been created.</value>
   </data>
+  <data name="ExceptionFailedToSave" xml:space="preserve">
+    <value>An error occured while attempting to save changes to this item</value>
+  </data>
   <data name="ExceptionInvalidActionPath" xml:space="preserve">
     <value>Invalid action path.  Path must have 2 or more segments.</value>
   </data>
@@ -171,11 +174,23 @@
   <data name="ExceptionObjectWithNameAlreadyExists" xml:space="preserve">
     <value>An object with the name {0} already exists</value>
   </data>
+  <data name="ExceptionOnlyDefaultProfileSupported" xml:space="preserve">
+    <value>Only the default profile is currently supported.  User profiles must be modified via standard means (e.g. Tools/Options).</value>
+  </data>
   <data name="ExceptionReferencePropertyMustBeOfSameType" xml:space="preserve">
     <value>Reference property must be of same type as validating property.</value>
   </data>
   <data name="ExceptionReferenceValueMustBeOfSameType" xml:space="preserve">
     <value>Reference value must be of same type as validating property.</value>
+  </data>
+  <data name="ExceptionRemoveUserSettingNotSupported" xml:space="preserve">
+    <value>Removal of User Settings is not supported.</value>
+  </data>
+  <data name="ExceptionSectionIsNotAClientSection" xml:space="preserve">
+    <value>The specified ConfigurationSection must be of Type ClientSettingsSection (Type is {0}).</value>
+  </data>
+  <data name="ExceptionSettingsPropertyDoesNotExist" xml:space="preserve">
+    <value>The specified settings property does not exist ({0}).</value>
   </data>
   <data name="ExceptionStackComponentCannotExit" xml:space="preserve">
     <value>Component cannot exit because it is not at the top of the component stack.</value>
@@ -188,6 +203,9 @@
   </data>
   <data name="ExceptionTableItemNotFoundInCollection" xml:space="preserve">
     <value>Table item not found in collection.</value>
+  </data>
+  <data name="ExceptionUpgradeNotSupported" xml:space="preserve">
+    <value>Application configuration upgrades are performed by the LocalFileSettingsProvider included in the .NET framework.</value>
   </data>
   <data name="FormatAttributeCannotBeAppliedToPropertyType" xml:space="preserve">
     <value>{0} attribute cannot be applied to property of type {1}.</value>
@@ -216,6 +234,21 @@
   <data name="InvalidCustomDateFormat" xml:space="preserve">
     <value>The custom date format must be from the available list.</value>
   </data>
+  <data name="LabelEdit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="LabelImport" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="LabelReset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="LabelResetAll" xml:space="preserve">
+    <value>Reset All</value>
+  </data>
+  <data name="LabelSaveAll" xml:space="preserve">
+    <value>Save All</value>
+  </data>
   <data name="MenuAbout" xml:space="preserve">
     <value>About</value>
   </data>
@@ -224,6 +257,9 @@
   </data>
   <data name="MenuCloseWorkspace" xml:space="preserve">
     <value>Close Workspace</value>
+  </data>
+  <data name="MenuConfigureSettings" xml:space="preserve">
+    <value>Configure Settings</value>
   </data>
   <data name="MenuContents" xml:space="preserve">
     <value>Contents</value>
@@ -258,6 +294,18 @@
   <data name="MessageNoConfigurationPagesExist" xml:space="preserve">
     <value>No configuration pages exist.</value>
   </data>
+  <data name="MessageReset" xml:space="preserve">
+    <value>Reset this setting back to its default value?</value>
+  </data>
+  <data name="MessageResetAll" xml:space="preserve">
+    <value>Reset all settings back to default values?</value>
+  </data>
+  <data name="MessageSaveModified" xml:space="preserve">
+    <value>Settings have been modified.  Save changes?</value>
+  </data>
+  <data name="MessageSaveSettingFailed" xml:space="preserve">
+    <value>Failed to save the selected settings values.  Please ensure the values entered are properly formatted for the data type.</value>
+  </data>
   <data name="MessageUnrecognizedFormat" xml:space="preserve">
     <value>Unrecognized format</value>
   </data>
@@ -279,11 +327,23 @@
   <data name="TitleDateFormat" xml:space="preserve">
     <value>Date Format</value>
   </data>
+  <data name="TitleDefaultValue" xml:space="preserve">
+    <value>Default Value</value>
+  </data>
   <data name="TitleDelete" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="TitleDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
   <data name="TitleEdit" xml:space="preserve">
     <value>Edit</value>
+  </data>
+  <data name="TitleEditValue" xml:space="preserve">
+    <value>Edit Value</value>
+  </data>
+  <data name="TitleGroup" xml:space="preserve">
+    <value>Group</value>
   </data>
   <data name="TitleMenuOptions" xml:space="preserve">
     <value>Options</value>
@@ -293,5 +353,26 @@
   </data>
   <data name="TitlePrevious" xml:space="preserve">
     <value>Previous Page</value>
+  </data>
+  <data name="TitleProperty" xml:space="preserve">
+    <value>Property</value>
+  </data>
+  <data name="TitleScope" xml:space="preserve">
+    <value>Scope</value>
+  </data>
+  <data name="TitleSettingsManagement" xml:space="preserve">
+    <value>Settings Management</value>
+  </data>
+  <data name="TitleToolbar" xml:space="preserve">
+    <value>Toolbar</value>
+  </data>
+  <data name="TitleType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="TitleValue" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="TitleVersion" xml:space="preserve">
+    <value>Version</value>
   </data>
 </root>

@@ -29,39 +29,30 @@
 
 #endregion
 
-using System.Reflection;
-using System.Runtime.InteropServices;
+using ClearCanvas.Common;
+using ClearCanvas.Desktop.Configuration.Standard;
 
-[assembly: ClearCanvas.Common.Plugin]
+namespace ClearCanvas.Desktop.View.WinForms.Configuration
+{
+	[ExtensionOf(typeof (ToolbarConfigurationComponentViewExtensionPoint))]
+	public sealed class ToolbarConfigurationComponentView : WinFormsView, IApplicationComponentView
+	{
+		private ToolbarConfigurationComponent _component;
+		private ToolbarConfigurationComponentControl _control;
 
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-[assembly: AssemblyTitle("WinForms")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("WinForms")]
-[assembly: AssemblyCopyright("Copyright (c) 2010")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+		public void SetComponent(IApplicationComponent component)
+		{
+			_component = (ToolbarConfigurationComponent)component;
+		}
 
-// Setting ComVisible to false makes the types in this assembly not visible 
-// to COM components.  If you need to access a type in this assembly from 
-// COM, set the ComVisible attribute to true on that type.
-[assembly: ComVisible(false)]
-
-// The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("37de376c-0b8f-4c23-8616-7798d3718431")]
-
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+		public override object GuiElement
+		{
+			get
+			{
+				if (_control == null)
+					_control = new ToolbarConfigurationComponentControl(_component);
+				return _control;
+			}
+		}
+	}
+}

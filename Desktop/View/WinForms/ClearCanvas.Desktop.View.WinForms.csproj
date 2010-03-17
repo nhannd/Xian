@@ -337,6 +337,34 @@
       <DependentUpon>DesktopForm.cs</DependentUpon>
     </Compile>
     <Compile Include="DesktopWindowView.cs" />
+    <Compile Include="Configuration\DateFormatApplicationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Configuration\DateFormatApplicationComponentControl.designer.cs">
+      <DependentUpon>DateFormatApplicationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\DateFormatApplicationComponentView.cs" />
+    <Compile Include="Configuration\SettingEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Configuration\SettingEditorComponentControl.Designer.cs">
+      <DependentUpon>SettingEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\SettingEditorComponentView.cs" />
+    <Compile Include="Configuration\SettingsManagementComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Configuration\SettingsManagementComponentControl.Designer.cs">
+      <DependentUpon>SettingsManagementComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\SettingsManagementComponentView.cs" />
+    <Compile Include="Configuration\ToolbarConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Configuration\ToolbarConfigurationComponentControl.Designer.cs">
+      <DependentUpon>ToolbarConfigurationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\ToolbarConfigurationComponentView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
@@ -426,6 +454,22 @@
     <EmbeddedResource Include="TestComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TestComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\DateFormatApplicationComponentControl.resx">
+      <DependentUpon>DateFormatApplicationComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\SettingEditorComponentControl.resx">
+      <DependentUpon>SettingEditorComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\SettingsManagementComponentControl.resx">
+      <DependentUpon>SettingsManagementComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\ToolbarConfigurationComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ToolbarConfigurationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

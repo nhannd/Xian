@@ -196,6 +196,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error occured while attempting to save changes to this item.
+        /// </summary>
+        public static string ExceptionFailedToSave {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid action path.  Path must have 2 or more segments..
         /// </summary>
         public static string ExceptionInvalidActionPath {
@@ -223,6 +232,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Only the default profile is currently supported.  User profiles must be modified via standard means (e.g. Tools/Options)..
+        /// </summary>
+        public static string ExceptionOnlyDefaultProfileSupported {
+            get {
+                return ResourceManager.GetString("ExceptionOnlyDefaultProfileSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reference property must be of same type as validating property..
         /// </summary>
         public static string ExceptionReferencePropertyMustBeOfSameType {
@@ -237,6 +255,33 @@ namespace ClearCanvas.Desktop {
         public static string ExceptionReferenceValueMustBeOfSameType {
             get {
                 return ResourceManager.GetString("ExceptionReferenceValueMustBeOfSameType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Removal of User Settings is not supported..
+        /// </summary>
+        public static string ExceptionRemoveUserSettingNotSupported {
+            get {
+                return ResourceManager.GetString("ExceptionRemoveUserSettingNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified ConfigurationSection must be of Type ClientSettingsSection (Type is {0})..
+        /// </summary>
+        public static string ExceptionSectionIsNotAClientSection {
+            get {
+                return ResourceManager.GetString("ExceptionSectionIsNotAClientSection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified settings property does not exist ({0})..
+        /// </summary>
+        public static string ExceptionSettingsPropertyDoesNotExist {
+            get {
+                return ResourceManager.GetString("ExceptionSettingsPropertyDoesNotExist", resourceCulture);
             }
         }
         
@@ -273,6 +318,15 @@ namespace ClearCanvas.Desktop {
         public static string ExceptionTableItemNotFoundInCollection {
             get {
                 return ResourceManager.GetString("ExceptionTableItemNotFoundInCollection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application configuration upgrades are performed by the LocalFileSettingsProvider included in the .NET framework..
+        /// </summary>
+        public static string ExceptionUpgradeNotSupported {
+            get {
+                return ResourceManager.GetString("ExceptionUpgradeNotSupported", resourceCulture);
             }
         }
         
@@ -358,6 +412,51 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        public static string LabelEdit {
+            get {
+                return ResourceManager.GetString("LabelEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import.
+        /// </summary>
+        public static string LabelImport {
+            get {
+                return ResourceManager.GetString("LabelImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset.
+        /// </summary>
+        public static string LabelReset {
+            get {
+                return ResourceManager.GetString("LabelReset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset All.
+        /// </summary>
+        public static string LabelResetAll {
+            get {
+                return ResourceManager.GetString("LabelResetAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save All.
+        /// </summary>
+        public static string LabelSaveAll {
+            get {
+                return ResourceManager.GetString("LabelSaveAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to About.
         /// </summary>
         public static string MenuAbout {
@@ -381,6 +480,15 @@ namespace ClearCanvas.Desktop {
         public static string MenuCloseWorkspace {
             get {
                 return ResourceManager.GetString("MenuCloseWorkspace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configure Settings.
+        /// </summary>
+        public static string MenuConfigureSettings {
+            get {
+                return ResourceManager.GetString("MenuConfigureSettings", resourceCulture);
             }
         }
         
@@ -484,6 +592,42 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reset this setting back to its default value?.
+        /// </summary>
+        public static string MessageReset {
+            get {
+                return ResourceManager.GetString("MessageReset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset all settings back to default values?.
+        /// </summary>
+        public static string MessageResetAll {
+            get {
+                return ResourceManager.GetString("MessageResetAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings have been modified.  Save changes?.
+        /// </summary>
+        public static string MessageSaveModified {
+            get {
+                return ResourceManager.GetString("MessageSaveModified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to save the selected settings values.  Please ensure the values entered are properly formatted for the data type..
+        /// </summary>
+        public static string MessageSaveSettingFailed {
+            get {
+                return ResourceManager.GetString("MessageSaveSettingFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unrecognized format.
         /// </summary>
         public static string MessageUnrecognizedFormat {
@@ -547,6 +691,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Default Value.
+        /// </summary>
+        public static string TitleDefaultValue {
+            get {
+                return ResourceManager.GetString("TitleDefaultValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
         public static string TitleDelete {
@@ -556,11 +709,38 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        public static string TitleDescription {
+            get {
+                return ResourceManager.GetString("TitleDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit.
         /// </summary>
         public static string TitleEdit {
             get {
                 return ResourceManager.GetString("TitleEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Value.
+        /// </summary>
+        public static string TitleEditValue {
+            get {
+                return ResourceManager.GetString("TitleEditValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Group.
+        /// </summary>
+        public static string TitleGroup {
+            get {
+                return ResourceManager.GetString("TitleGroup", resourceCulture);
             }
         }
         
@@ -588,6 +768,69 @@ namespace ClearCanvas.Desktop {
         public static string TitlePrevious {
             get {
                 return ResourceManager.GetString("TitlePrevious", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property.
+        /// </summary>
+        public static string TitleProperty {
+            get {
+                return ResourceManager.GetString("TitleProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scope.
+        /// </summary>
+        public static string TitleScope {
+            get {
+                return ResourceManager.GetString("TitleScope", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings Management.
+        /// </summary>
+        public static string TitleSettingsManagement {
+            get {
+                return ResourceManager.GetString("TitleSettingsManagement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toolbar.
+        /// </summary>
+        public static string TitleToolbar {
+            get {
+                return ResourceManager.GetString("TitleToolbar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type.
+        /// </summary>
+        public static string TitleType {
+            get {
+                return ResourceManager.GetString("TitleType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Value.
+        /// </summary>
+        public static string TitleValue {
+            get {
+                return ResourceManager.GetString("TitleValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version.
+        /// </summary>
+        public static string TitleVersion {
+            get {
+                return ResourceManager.GetString("TitleVersion", resourceCulture);
             }
         }
     }

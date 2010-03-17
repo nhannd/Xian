@@ -102,6 +102,34 @@
     <Compile Include="Actions\LabelValueObserverAttribute.cs" />
     <Compile Include="Actions\ObservablePropertyCoupler.cs" />
     <Compile Include="ApplicationSettingsRegistry.cs" />
+    <Compile Include="Configuration\AuthorityTokens.cs" />
+    <Compile Include="Configuration\ConfigurationApplicationComponent.cs" />
+    <Compile Include="Configuration\ConfigurationDialog.cs" />
+    <Compile Include="Configuration\ConfigurationDialogComponent.cs" />
+    <Compile Include="Configuration\ConfigurationPage.cs" />
+    <Compile Include="Configuration\ConfigurationPageManager.cs" />
+    <Compile Include="Configuration\IConfigurationApplicationComponent.cs" />
+    <Compile Include="Configuration\IConfigurationPage.cs" />
+    <Compile Include="Configuration\IConfigurationPageProvider.cs" />
+    <Compile Include="Configuration\LocalSettingsStore.cs" />
+    <Compile Include="Configuration\SettingEditorComponent.cs" />
+    <Compile Include="Configuration\ConfigurationDialogSettings.cs" />
+    <Compile Include="Configuration\ConfigurationDialogSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ConfigurationDialogSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\SettingsManagementComponent.cs" />
+    <Compile Include="Configuration\Standard\CustomDateFormatSettings.cs" />
+    <Compile Include="Configuration\Standard\CustomDateFormatSettings.designer.cs">
+      <DependentUpon>CustomDateFormatSettings.settings</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Configuration\Standard\DateFormatApplicationComponent.cs" />
+    <Compile Include="Configuration\Standard\ToolbarConfigurationComponent.cs" />
+    <Compile Include="Configuration\Tools\OptionsTool.cs" />
+    <Compile Include="Configuration\Tools\StandardOptionsConfigurationPageProvider.cs" />
     <Compile Include="Checkable.cs" />
     <Compile Include="ChildComponentHost.cs" />
     <Compile Include="ClosedEventArgs.cs" />
@@ -361,6 +389,14 @@
     <None Include="ClassDiagrams\Tool.cd" />
     <None Include="ClassDiagrams\UndoRedo.cd" />
     <None Include="ClassDiagrams\Desktop.cd" />
+    <None Include="Configuration\ConfigurationDialogSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ConfigurationDialogSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Configuration\Standard\CustomDateFormatSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>CustomDateFormatSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="ExceptionHandlerSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ExceptionHandlerSettings.Designer.cs</LastGenOutput>
@@ -393,6 +429,15 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\PreviousPageToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\OptionsToolLarge.png" />
+    <EmbeddedResource Include="Icons\OptionsToolMedium.png" />
+    <EmbeddedResource Include="Icons\OptionsToolSmall.png" />
+    <EmbeddedResource Include="Icons\SaveToolSmall.png" />
+    <EmbeddedResource Include="Icons\ResetAllToolSmall.png" />
+    <EmbeddedResource Include="Icons\ResetToolSmall.png" />
+    <EmbeddedResource Include="Icons\ImportToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

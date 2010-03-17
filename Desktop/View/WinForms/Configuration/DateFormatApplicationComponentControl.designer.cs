@@ -32,36 +32,36 @@
 using System;
 using System.Windows.Forms;
 
-namespace ClearCanvas.Desktop.Configuration.View.WinForms
+namespace ClearCanvas.Desktop.View.WinForms.Configuration
 {
-    partial class DateFormatApplicationComponentControl
-    {
-        /// <summary> 
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
+	partial class DateFormatApplicationComponentControl
+	{
+		/// <summary> 
+		/// Required designer variable.
+		/// </summary>
+		private System.ComponentModel.IContainer components = null;
 
-        /// <summary> 
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+		/// <summary> 
+		/// Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && (components != null))
+			{
+				components.Dispose();
+			}
+			base.Dispose(disposing);
+		}
 
-        #region Component Designer generated code
+		#region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
-        /// the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
+		/// <summary> 
+		/// Required method for Designer support - do not modify 
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
 			this._dateSample = new System.Windows.Forms.TextBox();
 			this._radioCustom = new System.Windows.Forms.RadioButton();
 			this._comboCustomDateFormat = new System.Windows.Forms.ComboBox();
@@ -140,14 +140,14 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
-        }
+		}
 
-        #endregion
+		#endregion
 
 		private System.Windows.Forms.TextBox _dateSample;
 		private System.Windows.Forms.RadioButton _radioCustom;
 		private ComboBox _comboCustomDateFormat;
 		private RadioButton _radioSystemShortDate;
 		private RadioButton _radioSystemLongDate;
-    }
+	}
 }

@@ -30,28 +30,37 @@
 #endregion
 
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Configuration.Standard;
-using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Desktop.Configuration;
 
-namespace ClearCanvas.Desktop.Configuration.View.WinForms
+namespace ClearCanvas.Desktop.View.WinForms.Configuration
 {
-	[ExtensionOf(typeof (ToolbarConfigurationComponentViewExtensionPoint))]
-	public sealed class ToolbarConfigurationComponentView : WinFormsView, IApplicationComponentView
+	/// <summary>
+	/// Provides a Windows Forms view onto <see cref="SettingsManagementComponent"/>
+	/// </summary>
+	[ExtensionOf(typeof(SettingsManagementComponentViewExtensionPoint))]
+	public class SettingsManagementComponentView : WinFormsView, IApplicationComponentView
 	{
-		private ToolbarConfigurationComponent _component;
-		private ToolbarConfigurationComponentControl _control;
+		private SettingsManagementComponent _component;
+		private SettingsManagementComponentControl _control;
+
+
+		#region IApplicationComponentView Members
 
 		public void SetComponent(IApplicationComponent component)
 		{
-			_component = (ToolbarConfigurationComponent)component;
+			_component = (SettingsManagementComponent)component;
 		}
+
+		#endregion
 
 		public override object GuiElement
 		{
 			get
 			{
 				if (_control == null)
-					_control = new ToolbarConfigurationComponentControl(_component);
+				{
+					_control = new SettingsManagementComponentControl(_component);
+				}
 				return _control;
 			}
 		}

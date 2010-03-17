@@ -1,4 +1,5 @@
-namespace ClearCanvas.Desktop.Configuration.View.WinForms {
+namespace ClearCanvas.Desktop.View.WinForms.Configuration
+{
 	partial class ToolbarConfigurationComponentControl {
 		/// <summary> 
 		/// Required designer variable.
@@ -59,9 +60,9 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms {
 			this._toolbarSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._toolbarSize.FormattingEnabled = true;
 			this._toolbarSize.Items.AddRange(new object[] {
-            "Small",
-            "Medium",
-            "Large"});
+			                                              	"Small",
+			                                              	"Medium",
+			                                              	"Large"});
 			this._toolbarSize.Location = new System.Drawing.Point(4, 17);
 			this._toolbarSize.Name = "_toolbarSize";
 			this._toolbarSize.Size = new System.Drawing.Size(121, 21);

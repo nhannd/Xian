@@ -32,21 +32,21 @@
 using System.Windows.Forms;
 using ClearCanvas.Desktop.Configuration.Standard;
 
-namespace ClearCanvas.Desktop.Configuration.View.WinForms
+namespace ClearCanvas.Desktop.View.WinForms.Configuration
 {
-    /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="DicomConfigurationApplicationComponent"/>
-    /// </summary>
-    public partial class DateFormatApplicationComponentControl : UserControl
-    {
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="DicomConfigurationApplicationComponent"/>
+	/// </summary>
+	public partial class DateFormatApplicationComponentControl : UserControl
+	{
 		private DateFormatApplicationComponent _component;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public DateFormatApplicationComponentControl(DateFormatApplicationComponent component)
-        {
-            InitializeComponent();
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public DateFormatApplicationComponentControl(DateFormatApplicationComponent component)
+		{
+			InitializeComponent();
 			
 			BindingSource source = new BindingSource();
 			source.DataSource = _component = component;
@@ -76,28 +76,28 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms
 			//to use databindings on a group of radio buttons, this is essentially what you have to do.  You might also be
 			//able to use a groupbox, but this is easy enough to do.
 			customBinding.Format += delegate(object sender, ConvertEventArgs e)
-			{
-				if (e.DesiredType != typeof(bool))
-					return;
+			                        	{
+			                        		if (e.DesiredType != typeof(bool))
+			                        			return;
 
-				e.Value = ((DateFormatApplicationComponent.DateFormatOptions)e.Value) == DateFormatApplicationComponent.DateFormatOptions.Custom;
-			};
+			                        		e.Value = ((DateFormatApplicationComponent.DateFormatOptions)e.Value) == DateFormatApplicationComponent.DateFormatOptions.Custom;
+			                        	};
 
 			systemLongBinding.Format += delegate(object sender, ConvertEventArgs e)
-			{
-				if (e.DesiredType != typeof(bool))
-					return;
+			                            	{
+			                            		if (e.DesiredType != typeof(bool))
+			                            			return;
 
-				e.Value = ((DateFormatApplicationComponent.DateFormatOptions)e.Value) == DateFormatApplicationComponent.DateFormatOptions.SystemLong;
-			};
+			                            		e.Value = ((DateFormatApplicationComponent.DateFormatOptions)e.Value) == DateFormatApplicationComponent.DateFormatOptions.SystemLong;
+			                            	};
 
 			systemShortBinding.Format += delegate(object sender, ConvertEventArgs e)
-			{
-				if (e.DesiredType != typeof(bool))
-					return;
+			                             	{
+			                             		if (e.DesiredType != typeof(bool))
+			                             			return;
 
-				e.Value = ((DateFormatApplicationComponent.DateFormatOptions)e.Value) == DateFormatApplicationComponent.DateFormatOptions.SystemShort;
-			};
+			                             		e.Value = ((DateFormatApplicationComponent.DateFormatOptions)e.Value) == DateFormatApplicationComponent.DateFormatOptions.SystemShort;
+			                             	};
 		}
 
 		void OnRadioBindingParse(object sender, ConvertEventArgs e)
@@ -112,5 +112,5 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms
 			else
 				e.Value = DateFormatApplicationComponent.DateFormatOptions.SystemShort;
 		}
-    }
+	}
 }
