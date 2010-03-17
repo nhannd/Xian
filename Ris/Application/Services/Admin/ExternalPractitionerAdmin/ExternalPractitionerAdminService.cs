@@ -331,20 +331,29 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 		[ReadOperation]
 		public LoadMergeExternalPractitionerFormDataResponse LoadMergeExternalPractitionerFormData(LoadMergeExternalPractitionerFormDataRequest request)
 		{
-			// note that the version of the ExternalPractitionerRef is intentionally ignored here (default behaviour of ReadOperation)
-			var practitioner = PersistenceContext.Load<ExternalPractitioner>(request.PractitionerRef);
-			var broker = PersistenceContext.GetBroker<IExternalPractitionerBroker>();
-			var assembler = new ExternalPractitionerAssembler();
 			var response = new LoadMergeExternalPractitionerFormDataResponse();
 
-			if (request.IncludeDetail)
-				response.PractitionerDetail = assembler.CreateExternalPractitionerDetail(practitioner, this.PersistenceContext);
-			
-			if (request.IncludeDuplicates)
+			if (request.PractitionerRef != null)
 			{
+				// note that the version of the ExternalPractitionerRef is intentionally ignored here (default behaviour of ReadOperation)
+				var broker = PersistenceContext.GetBroker<IExternalPractitionerBroker>();
+				var practitioner = PersistenceContext.Load<ExternalPractitioner>(request.PractitionerRef);
 				var duplicates = broker.GetDuplicates(practitioner);
+
+				var assembler = new ExternalPractitionerAssembler();
 				response.Duplicates = CollectionUtils.Map<ExternalPractitioner, ExternalPractitionerSummary>(duplicates,
 					item => assembler.CreateExternalPractitionerSummary(item, this.PersistenceContext));
+			}
+
+			if (request.DeactivatedContactPointRefs != null && request.DeactivatedContactPointRefs.Count > 0)
+			{
+				var broker = PersistenceContext.GetBroker<IExternalPractitionerContactPointBroker>();
+				var contactPoints = CollectionUtils.Map<EntityRef, ExternalPractitionerContactPoint>(request.DeactivatedContactPointRefs, broker.Load);
+				var orders = broker.GetRelatedOrders(contactPoints);
+
+				var assembler = new OrderAssembler();
+				var createOrderDetailOptions = new OrderAssembler.CreateOrderDetailOptions(false, false, false, null, false, true, false);
+				response.AffectedOrders = CollectionUtils.Map<Order, OrderDetail>(orders, o => assembler.CreateOrderDetail(o, createOrderDetailOptions, this.PersistenceContext));
 			}
 
 			return response;

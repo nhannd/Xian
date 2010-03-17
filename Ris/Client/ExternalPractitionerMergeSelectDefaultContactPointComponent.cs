@@ -29,11 +29,11 @@
 
 #endregion
 
+using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Ris.Application.Common;
 
@@ -53,57 +53,33 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(ExternalPractitionerMergeSelectDefaultContactPointComponentViewExtensionPoint))]
 	public class ExternalPractitionerMergeSelectDefaultContactPointComponent : ApplicationComponent
 	{
-		private class ExternalPractitionerContactPointsTable : Table<ExternalPractitionerContactPointDetail>
-		{
-			public ExternalPractitionerContactPointsTable()
-			{
-				this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, bool>("Default",
-					cp => cp.IsDefaultContactPoint,
-					OnItemChecked,
-					0.15f));
-
-				this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>("Name",
-					cp => cp.Name, 0.5f));
-
-				this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>("Description",
-					cp => cp.Description, 0.5f));
-			}
-
-			private void OnItemChecked(ExternalPractitionerContactPointDetail item, bool value)
-			{
-				// Uncheck every other item, except the checked item
-				foreach (var cp in this.Items)
-				{
-					cp.IsDefaultContactPoint = cp.ContactPointRef.Equals(item.ContactPointRef, false) ? value : false;
-					this.Items.NotifyItemUpdated(cp);
-				}
-			}
-		}
-
-		private readonly ExternalPractitionerContactPointsTable _table;
-
-		public ExternalPractitionerMergeSelectDefaultContactPointComponent()
-		{
-			_table = new ExternalPractitionerContactPointsTable();
-		}
+		private ExternalPractitionerContactPointDetail _defaultContactPoint;
+		private List<ExternalPractitionerContactPointDetail> _activeContactPoints;
 
 		public override void Start()
 		{
-			this.Validation.Add(new ValidationRule("ContactPointTable",
+			this.Validation.Add(new ValidationRule("DefaultContactPoint",
 				component => new ValidationResult(this.DefaultContactPoint != null, "Must have at least one default contact point")));
 
 			base.Start();
 		}
 
-		public IList<ExternalPractitionerContactPointDetail> ActiveContactPoints
+		public List<ExternalPractitionerContactPointDetail> ActiveContactPoints
 		{
-			get { return _table.Items; }
-			set { UpdateContactPointsTable(value); }
+			get { return _activeContactPoints; }
+			set { UpdateContactPoints(value); }
 		}
 
 		public ExternalPractitionerContactPointDetail DefaultContactPoint
 		{
-			get { return CollectionUtils.SelectFirst(_table.Items, cp => cp.IsDefaultContactPoint); }
+			get { return _defaultContactPoint; }
+			set { UpdateDefaultContactPoint(value); }
+		}
+
+		public string FormatContactPoint(object item)
+		{
+			var cp = (ExternalPractitionerContactPointDetail) item;
+			return cp.Name;
 		}
 
 		public void Save(ExternalPractitionerDetail practitioner)
@@ -123,33 +99,42 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		#region Presentation Models
-
-		public ITable ContactPointTable
+		private void UpdateDefaultContactPoint(ExternalPractitionerContactPointDetail contactPoint)
 		{
-			get { return _table; }
+			_defaultContactPoint = contactPoint;
+
+			if (_defaultContactPoint != null)
+			{
+				// Make sure the previously selected default contact point is maintained and there can only be one default
+				foreach (var cp in _activeContactPoints)
+				{
+					cp.IsDefaultContactPoint = cp.ContactPointRef.Equals(_defaultContactPoint.ContactPointRef, false);
+				}
+			}
+
+			NotifyPropertyChanged("DefaultContactPoint");
 		}
 
-		#endregion
-
-		private void UpdateContactPointsTable(IEnumerable<ExternalPractitionerContactPointDetail> contactPoints)
+		private void UpdateContactPoints(List<ExternalPractitionerContactPointDetail> contactPoints)
 		{
-			var previousDefault = this.DefaultContactPoint;
+			var previousDefault = _defaultContactPoint;
+			_activeContactPoints = contactPoints;
+			NotifyAllPropertiesChanged();
 
-			_table.Items.Clear();
-			_table.Items.AddRange(contactPoints);
-
-			var currentDefault = previousDefault ?? this.DefaultContactPoint;
-			if (currentDefault == null)
-				return;
-
-			// There may be two default contact points from both practitioner
-			// Make sure the previously selected default contact point is maintained
-			// Make sure there can only be one default
-			foreach (var cp in _table.Items)
+			var previousDefaultExist = previousDefault != null && CollectionUtils.Contains(_activeContactPoints, cp => cp.ContactPointRef.Equals(previousDefault.ContactPointRef, false));
+			if (previousDefaultExist)
 			{
-				cp.IsDefaultContactPoint = cp.ContactPointRef.Equals(currentDefault.ContactPointRef, false);
+				UpdateDefaultContactPoint(previousDefault);
+			}
+			else
+			{
+				// There may be two default contact points from both practitioner, find the first default, or set to the first element if there is no default
+				var newDefault = CollectionUtils.SelectFirst(_activeContactPoints, cp => cp.IsDefaultContactPoint) ??
+								CollectionUtils.FirstElement(_activeContactPoints);
+
+				UpdateDefaultContactPoint(newDefault);
 			}
 		}
+
 	}
 }

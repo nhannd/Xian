@@ -157,6 +157,13 @@
       <DependentUpon>DiagnosticServiceSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DiagnosticServiceSummaryComponentView.cs" />
+    <Compile Include="ComboBoxCellEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ComboBoxCellEditorControl.Designer.cs">
+      <DependentUpon>ComboBoxCellEditorControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ComboBoxCellEditorView.cs" />
     <Compile Include="ExternalPractitionerContactPointDetailsEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -738,6 +745,9 @@
     <EmbeddedResource Include="DiagnosticServiceSummaryComponentControl.resx">
       <DependentUpon>DiagnosticServiceSummaryComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ComboBoxCellEditorControl.resx">
+      <DependentUpon>ComboBoxCellEditorControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ExternalPractitionerMergeAffectedOrdersComponentControl.resx">
       <DependentUpon>ExternalPractitionerMergeAffectedOrdersComponentControl.cs</DependentUpon>

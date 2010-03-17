@@ -30,6 +30,7 @@
 #endregion
 
 using ClearCanvas.Desktop.View.WinForms;
+using System.Windows.Forms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
@@ -49,7 +50,21 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_component = component;
 			InitializeComponent();
 
-			_table.Table = _component.ContactPointTable;
+			_defaultContactPoint.DataSource = _component.ActiveContactPoints;
+			_defaultContactPoint.DataBindings.Add("Value", _component, "DefaultContactPoint", true, DataSourceUpdateMode.OnPropertyChanged);
+			_defaultContactPoint.Format += _defaultContactPoint_Format;
+
+			_component.AllPropertiesChanged += _component_AllPropertiesChanged;
+		}
+
+		private void _component_AllPropertiesChanged(object sender, System.EventArgs e)
+		{
+			_defaultContactPoint.DataSource = _component.ActiveContactPoints;
+		}
+
+		private void _defaultContactPoint_Format(object sender, ListControlConvertEventArgs e)
+		{
+			e.Value = _component.FormatContactPoint(e.ListItem);
 		}
 	}
 }

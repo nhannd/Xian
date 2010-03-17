@@ -120,6 +120,11 @@ namespace ClearCanvas.Ris.Client
 			get { return CollectionUtils.Select(_table.Items, cp => cp.Deactivated == false); }
 		}
 
+		public List<ExternalPractitionerContactPointDetail> DeactivatedContactPoints
+		{
+			get { return CollectionUtils.Select(_table.Items, cp => cp.Deactivated == true); }
+		}
+
 		public void Save(ExternalPractitionerDetail practitioner)
 		{
 			practitioner.ContactPoints.Clear();

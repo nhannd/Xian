@@ -147,7 +147,7 @@ namespace ClearCanvas.Ris.Client
 				Platform.GetService(
 					delegate(IExternalPractitionerAdminService service)
 					{
-						var request = new LoadMergeExternalPractitionerFormDataRequest(practitionerRef) { IncludeDuplicates = true };
+						var request = new LoadMergeExternalPractitionerFormDataRequest() { PractitionerRef = practitionerRef };
 						var response = service.LoadMergeExternalPractitionerFormData(request);
 
 						duplicates = response.Duplicates;

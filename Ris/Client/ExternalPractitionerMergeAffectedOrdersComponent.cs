@@ -29,14 +29,16 @@
 
 #endregion
 
-using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -54,32 +56,142 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(ExternalPractitionerMergeAffectedOrdersComponentViewExtensionPoint))]
 	public class ExternalPractitionerMergeAffectedOrdersComponent : ApplicationComponent
 	{
-		private class AffectedOrdersTable : Table<OrderDetail>
+		private class AffectedOrderTableItem
 		{
-			public AffectedOrdersTable()
+			public OrderDetail Order;
+
+			public ResultRecipientDetail Recipient;
+
+			public string Role
 			{
-				this.Columns.Add(new TableColumn<OrderDetail, string>("Order", order => order.AccessionNumber, 0.15f));
+				get { return this.Recipient.Practitioner.PractitionerRef.Equals(this.Order.OrderingPractitioner.PractitionerRef, false)  ? "Ordering" : "Copies To"; }
+			}
 
-				//this.Columns.Add(new TableColumn<OrderDetail, string>("Name",
-				//    checkableItem => checkableItem.Item.Name,
-				//    0.5f));
+			public ExternalPractitionerContactPointDetail SelectedContactPoint;
+		}
 
-				//this.Columns.Add(new TableColumn<OrderDetail, string>("Description",
-				//    checkableItem => checkableItem.Item.Description,
-				//    0.5f));
+		private class AffectedOrdersTable : Table<AffectedOrderTableItem>
+		{
+			private readonly ExternalPractitionerMergeAffectedOrdersComponent _owner;
+
+			public AffectedOrdersTable(ExternalPractitionerMergeAffectedOrdersComponent owner)
+			{
+				_owner = owner;
+
+				this.Columns.Add(new TableColumn<AffectedOrderTableItem, string>("Acc #", item => item.Order.AccessionNumber, 0.5f));
+				this.Columns.Add(new TableColumn<AffectedOrderTableItem, string>("Practitioner", item => PersonNameFormat.Format(item.Recipient.Practitioner.Name), 1.0f));
+				this.Columns.Add(new TableColumn<AffectedOrderTableItem, string>("Role", item => item.Role, 1.0f));
+				this.Columns.Add(new TableColumn<AffectedOrderTableItem, string>("Deactivated Contact Point", item => FormatItem(item.Recipient.ContactPoint), 1.0f));
+
+				var contactPointChoiceColumn = new TableColumn<AffectedOrderTableItem, ExternalPractitionerContactPointDetail>(
+					"Active Contact Points",
+					item => item.SelectedContactPoint,
+					(x, value) => x.SelectedContactPoint = value,
+					2.0f)
+				{
+					ValueFormatter = FormatItem,
+					CellEditor = new ComboBoxCellEditor(GetChoices, FormatItem)
+				};
+
+				this.Columns.Add(contactPointChoiceColumn);
+			}
+
+			private IList GetChoices()
+			{
+				return _owner.ActiveContactPoints;
+			}
+
+			private static string FormatItem(object item)
+			{
+				if (item == null)
+					return null;
+
+				var cp = (ExternalPractitionerContactPointDetail)item;
+				return cp.Name;
 			}
 		}
 
 		private readonly AffectedOrdersTable _table;
+		private ExternalPractitionerContactPointDetail _defaultContactPoint;
+		private List<ExternalPractitionerContactPointDetail> _activeContactPoints;
+		private List<ExternalPractitionerContactPointDetail> _deactivatedContactPoints;
 
 		public ExternalPractitionerMergeAffectedOrdersComponent()
 		{
-			_table = new AffectedOrdersTable();
+			_table = new AffectedOrdersTable(this);
 		}
+
+		public ExternalPractitionerContactPointDetail DefaultContactPoint
+		{
+			get { return _defaultContactPoint; }
+			set { _defaultContactPoint = value; }
+		}
+
+		public List<ExternalPractitionerContactPointDetail> ActiveContactPoints
+		{
+			get { return _activeContactPoints; }
+			set { _activeContactPoints = value; }
+		}
+
+		public List<ExternalPractitionerContactPointDetail> DeactivatedContactPoints
+		{
+			get { return _deactivatedContactPoints; }
+			set
+			{
+				_deactivatedContactPoints = value;
+				UpdateTable();
+			}
+		}
+
+		#region Presentation Models
 
 		public ITable AffectedOrderTable
 		{
 			get { return _table; }
+		}
+
+		#endregion
+
+		private void UpdateTable()
+		{
+			var deactivatedContactPointRefs = CollectionUtils.Map<ExternalPractitionerContactPointDetail, EntityRef>(_deactivatedContactPoints, cp => cp.ContactPointRef);
+			var affectedOrders = LoadAffectedOrders(deactivatedContactPointRefs);
+
+			_table.Items.Clear();
+			foreach (var order in affectedOrders)
+			{
+				foreach (var r in order.ResultRecipients)
+				{
+					var recipient = r;
+					var recipientFound = CollectionUtils.Contains(deactivatedContactPointRefs, cpRef => cpRef.Equals(recipient.ContactPoint.ContactPointRef, false));
+
+					if (!recipientFound)
+						continue;
+
+					var tableItem = new AffectedOrderTableItem { Order = order, Recipient = recipient };
+					_table.Items.Add(tableItem);
+				}
+			}
+		}
+
+
+		private static List<OrderDetail> LoadAffectedOrders(List<EntityRef> deactivatedContactPointRefs)
+		{
+			var affectedOrders = new List<OrderDetail>();
+
+			if (deactivatedContactPointRefs != null && deactivatedContactPointRefs.Count > 0)
+			{
+				Platform.GetService(
+					delegate(IExternalPractitionerAdminService service)
+					{
+						var request = new LoadMergeExternalPractitionerFormDataRequest() { DeactivatedContactPointRefs = deactivatedContactPointRefs };
+						var response = service.LoadMergeExternalPractitionerFormData(request);
+
+						affectedOrders = response.AffectedOrders;
+					});
+			}
+
+			return affectedOrders;
 		}
 	}
 }

@@ -75,7 +75,7 @@ namespace ClearCanvas.Ris.Client
 			var currentComponent = this.CurrentPage.Component;
 			if (currentComponent == _selectedDuplicateComponent)
 			{
-				_originalPractitioner = LoadPractitioner(_originalPractitionerRef);
+				_originalPractitioner = LoadPractitionerDetail(_originalPractitionerRef);
 				_selectedDuplicateComponent.PractitionerRef = _originalPractitioner.PractitionerRef;
 				_mergePropertiesComponent.OriginalPractitioner = _originalPractitioner;
 				_selectContactPointsComponent.OriginalPractitioner = _originalPractitioner;
@@ -86,9 +86,9 @@ namespace ClearCanvas.Ris.Client
 				if (_selectedDuplicateComponent.SelectedPractitioner == null)
 					_selectedDuplicate = null;
 				else if (_selectedDuplicate == null)
-					_selectedDuplicate = LoadPractitioner(_selectedDuplicateComponent.SelectedPractitioner.PractitionerRef);
+					_selectedDuplicate = LoadPractitionerDetail(_selectedDuplicateComponent.SelectedPractitioner.PractitionerRef);
 				else if (!_selectedDuplicate.PractitionerRef.Equals(_selectedDuplicateComponent.SelectedPractitioner.PractitionerRef, true))
-					_selectedDuplicate = LoadPractitioner(_selectedDuplicateComponent.SelectedPractitioner.PractitionerRef);
+					_selectedDuplicate = LoadPractitionerDetail(_selectedDuplicateComponent.SelectedPractitioner.PractitionerRef);
 
 				_mergePropertiesComponent.DuplicatePractitioner = _selectedDuplicate;
 			}
@@ -103,7 +103,9 @@ namespace ClearCanvas.Ris.Client
 			}
 			else if (currentComponent == _affectedOrdersComponent)
 			{
-				
+				_affectedOrdersComponent.DefaultContactPoint = _selectDefaultContactPointComponent.DefaultContactPoint;
+				_affectedOrdersComponent.ActiveContactPoints = _selectContactPointsComponent.ActiveContactPoints;
+				_affectedOrdersComponent.DeactivatedContactPoints = _selectContactPointsComponent.DeactivatedContactPoints;
 			}
 			else if (currentComponent == _confirmationComponent)
 			{
@@ -124,7 +126,7 @@ namespace ClearCanvas.Ris.Client
 			this.AcceptEnabled = false;
 		}
 
-		private static ExternalPractitionerDetail LoadPractitioner(EntityRef practitionerRef)
+		private static ExternalPractitionerDetail LoadPractitionerDetail(EntityRef practitionerRef)
 		{
 			ExternalPractitionerDetail detail = null;
 
@@ -133,8 +135,8 @@ namespace ClearCanvas.Ris.Client
 				Platform.GetService(
 					delegate(IExternalPractitionerAdminService service)
 					{
-						var request = new LoadMergeExternalPractitionerFormDataRequest(practitionerRef) { IncludeDetail = true };
-						var response = service.LoadMergeExternalPractitionerFormData(request);
+						var request = new LoadExternalPractitionerForEditRequest(practitionerRef);
+						var response = service.LoadExternalPractitionerForEdit(request);
 						detail = response.PractitionerDetail;
 					});
 			}

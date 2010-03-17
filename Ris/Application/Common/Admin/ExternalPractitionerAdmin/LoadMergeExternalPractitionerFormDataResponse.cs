@@ -8,9 +8,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 	public class LoadMergeExternalPractitionerFormDataResponse : DataContractBase
 	{
 		[DataMember]
-		public ExternalPractitionerDetail PractitionerDetail;
+		public List<ExternalPractitionerSummary> Duplicates;
 
 		[DataMember]
-		public List<ExternalPractitionerSummary> Duplicates;
+		public List<OrderDetail> AffectedOrders;
 	}
 }

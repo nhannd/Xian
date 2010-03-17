@@ -59,32 +59,41 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			this._table = new ClearCanvas.Desktop.View.WinForms.TableView();
+			this._defaultContactPoint = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this.SuspendLayout();
 			// 
-			// _table
+			// _defaultContactPoint
 			// 
-			this._table.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._table.Location = new System.Drawing.Point(0, 0);
-			this._table.Margin = new System.Windows.Forms.Padding(4);
-			this._table.Name = "_table";
-			this._table.ReadOnly = false;
-			this._table.ShowToolbar = false;
-			this._table.Size = new System.Drawing.Size(150, 150);
-			this._table.TabIndex = 4;
+			this._defaultContactPoint.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._defaultContactPoint.AutoSize = true;
+			this._defaultContactPoint.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._defaultContactPoint.DataSource = null;
+			this._defaultContactPoint.DisplayMember = "";
+			this._defaultContactPoint.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._defaultContactPoint.LabelText = "Default Contact Point";
+			this._defaultContactPoint.Location = new System.Drawing.Point(2, 2);
+			this._defaultContactPoint.Margin = new System.Windows.Forms.Padding(2);
+			this._defaultContactPoint.Name = "_defaultContactPoint";
+			this._defaultContactPoint.Size = new System.Drawing.Size(148, 41);
+			this._defaultContactPoint.TabIndex = 1;
+			this._defaultContactPoint.Value = null;
 			// 
 			// ExternalPractitionerMergeSelectDefaultContactPointComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._table);
+			this.Controls.Add(this._defaultContactPoint);
 			this.Name = "ExternalPractitionerMergeSelectDefaultContactPointComponentControl";
+			this.Size = new System.Drawing.Size(226, 144);
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
         }
 
         #endregion
 
-		private ClearCanvas.Desktop.View.WinForms.TableView _table;
-    }
+		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _defaultContactPoint;
+
+	}
 }
