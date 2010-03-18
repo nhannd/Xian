@@ -74,6 +74,8 @@
     <Compile Include="Admin\ExternalPractitionerAdmin\MergeDuplicateContactPointResponse.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\MergeDuplicatePractitionerRequest.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\MergeDuplicatePractitionerResponse.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\MergeExternalPractitionerRequest.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\MergeExternalPractitionerResponse.cs" />
     <Compile Include="Admin\FacilityAdmin\DeleteFacilityRequest.cs" />
     <Compile Include="Admin\FacilityAdmin\DeleteFacilityResponse.cs" />
     <Compile Include="Admin\LocationAdmin\DeleteLocationRequest.cs" />

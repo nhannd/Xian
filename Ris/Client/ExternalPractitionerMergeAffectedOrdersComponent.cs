@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
@@ -96,6 +97,11 @@ namespace ClearCanvas.Ris.Client
 				this.Columns.Add(contactPointChoiceColumn);
 			}
 
+			public bool HasUnspecifiedContactPoints
+			{
+				get { return CollectionUtils.Contains(this.Items, item => item.SelectedContactPoint == null); }
+			}
+
 			private IList GetChoices()
 			{
 				return _owner.ActiveContactPoints;
@@ -115,10 +121,20 @@ namespace ClearCanvas.Ris.Client
 		private ExternalPractitionerContactPointDetail _defaultContactPoint;
 		private List<ExternalPractitionerContactPointDetail> _activeContactPoints;
 		private List<ExternalPractitionerContactPointDetail> _deactivatedContactPoints;
+		private Dictionary<EntityRef, EntityRef> _contactPointReplacementMap;
 
 		public ExternalPractitionerMergeAffectedOrdersComponent()
 		{
 			_table = new AffectedOrdersTable(this);
+			_contactPointReplacementMap = new Dictionary<EntityRef, EntityRef>();
+		}
+
+		public override void Start()
+		{
+			this.Validation.Add(new ValidationRule("AffectedOrderTable",
+				component => new ValidationResult(!_table.HasUnspecifiedContactPoints, "Must specify all replacement contact points")));
+
+			base.Start();
 		}
 
 		public ExternalPractitionerContactPointDetail DefaultContactPoint
@@ -143,6 +159,15 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		public Dictionary<EntityRef, EntityRef> ContactPointReplacementMap
+		{
+			get
+			{
+				UpdateContactReplacementMap();
+				return _contactPointReplacementMap;
+			}
+		}
+
 		#region Presentation Models
 
 		public ITable AffectedOrderTable
@@ -157,6 +182,8 @@ namespace ClearCanvas.Ris.Client
 			var deactivatedContactPointRefs = CollectionUtils.Map<ExternalPractitionerContactPointDetail, EntityRef>(_deactivatedContactPoints, cp => cp.ContactPointRef);
 			var affectedOrders = LoadAffectedOrders(deactivatedContactPointRefs);
 
+			UpdateContactReplacementMap();
+
 			_table.Items.Clear();
 			foreach (var order in affectedOrders)
 			{
@@ -168,12 +195,42 @@ namespace ClearCanvas.Ris.Client
 					if (!recipientFound)
 						continue;
 
-					var tableItem = new AffectedOrderTableItem { Order = order, Recipient = recipient };
+					var tableItem = new AffectedOrderTableItem
+						{
+							Order = order,
+							Recipient = recipient,
+							SelectedContactPoint = GetSelectedContactPoint(recipient.ContactPoint)
+						};
+
 					_table.Items.Add(tableItem);
 				}
 			}
 		}
 
+		private void UpdateContactReplacementMap()
+		{
+			_contactPointReplacementMap.Clear();
+			foreach (var item in _table.Items)
+			{
+				if (item.SelectedContactPoint != null)
+					_contactPointReplacementMap.Add(item.Recipient.ContactPoint.ContactPointRef, item.SelectedContactPoint.ContactPointRef);
+			}
+		}
+
+		private ExternalPractitionerContactPointDetail GetSelectedContactPoint(ExternalPractitionerContactPointDetail original)
+		{
+			if (_contactPointReplacementMap.ContainsKey(original.ContactPointRef))
+			{
+				var previousContactPointSelectionRef = _contactPointReplacementMap[original.ContactPointRef];
+
+				var previousSelection = CollectionUtils.SelectFirst(_activeContactPoints, cp => cp.ContactPointRef.Equals(previousContactPointSelectionRef));
+				if (previousSelection != null)
+					return previousSelection;
+			}
+
+			// Default to the first element if there is only one to choose from.
+			return _activeContactPoints.Count == 1 ? CollectionUtils.FirstElement(_activeContactPoints) : null;
+		}
 
 		private static List<OrderDetail> LoadAffectedOrders(List<EntityRef> deactivatedContactPointRefs)
 		{
@@ -184,7 +241,7 @@ namespace ClearCanvas.Ris.Client
 				Platform.GetService(
 					delegate(IExternalPractitionerAdminService service)
 					{
-						var request = new LoadMergeExternalPractitionerFormDataRequest() { DeactivatedContactPointRefs = deactivatedContactPointRefs };
+						var request = new LoadMergeExternalPractitionerFormDataRequest { DeactivatedContactPointRefs = deactivatedContactPointRefs };
 						var response = service.LoadMergeExternalPractitionerFormData(request);
 
 						affectedOrders = response.AffectedOrders;

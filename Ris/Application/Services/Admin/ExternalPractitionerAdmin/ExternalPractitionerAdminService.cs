@@ -328,6 +328,62 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			return new LoadMergeDuplicateContactPointFormDataResponse(affectedOrders);
 		}
 
+		[UpdateOperation]
+		public MergeExternalPractitionerResponse MergeExternalPractitioner(MergeExternalPractitionerRequest request)
+		{
+			var broker = PersistenceContext.GetBroker<IExternalPractitionerBroker>();
+			var duplicate = PersistenceContext.Load<ExternalPractitioner>(request.DuplicatePractitionerRef, EntityLoadFlags.Proxy);
+			var original = PersistenceContext.Load<ExternalPractitioner>(request.MergedPractitioner.PractitionerRef, EntityLoadFlags.Proxy);
+
+			// Change reference of ordering practitioner to the new practitioner
+			CollectionUtils.ForEach(broker.GetRelatedOrders(duplicate),
+				delegate(Order o) { o.OrderingPractitioner = original; });
+
+			// Change reference of contact points to the new practitioner
+			CollectionUtils.ForEach(duplicate.ContactPoints,
+				delegate(ExternalPractitionerContactPoint cp)
+				{
+					cp.IsDefaultContactPoint = false;
+					cp.Practitioner = original;
+				});
+			original.ContactPoints.AddAll(duplicate.ContactPoints);
+
+			// Change reference of visit practitioner to the new practitioner
+			CollectionUtils.ForEach(broker.GetRelatedVisits(duplicate),
+				v => CollectionUtils.ForEach(v.Practitioners,
+					delegate(VisitPractitioner vp)
+					{
+						if (vp.Practitioner == duplicate)
+							vp.Practitioner = original;
+					}));
+
+			// Change reference of result recipient to the new contact point
+			var contactPointBroker = PersistenceContext.GetBroker<IExternalPractitionerContactPointBroker>();
+			CollectionUtils.ForEach(request.ContactPointReplacements,
+				delegate(KeyValuePair<EntityRef, EntityRef> kvp)
+					{
+						var oldCP = PersistenceContext.Load<ExternalPractitionerContactPoint>(kvp.Key);
+						var newCP = PersistenceContext.Load<ExternalPractitionerContactPoint>(kvp.Value);
+
+						CollectionUtils.ForEach(contactPointBroker.GetRelatedOrders(oldCP),
+							o => CollectionUtils.ForEach(o.ResultRecipients,
+								delegate(ResultRecipient rr)
+								{
+									if (rr.PractitionerContactPoint == oldCP)
+										rr.PractitionerContactPoint = newCP;
+								}));
+					});
+
+			// Update the original
+			var assembler = new ExternalPractitionerAssembler();
+			assembler.UpdateExternalPractitioner(request.MergedPractitioner, original, this.PersistenceContext);
+
+			// Deactivate the duplicate
+			duplicate.Deactivated = true;
+
+			return new MergeExternalPractitionerResponse(assembler.CreateExternalPractitionerSummary(original, this.PersistenceContext));
+		}
+
 		[ReadOperation]
 		public LoadMergeExternalPractitionerFormDataResponse LoadMergeExternalPractitionerFormData(LoadMergeExternalPractitionerFormDataRequest request)
 		{

@@ -52,10 +52,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
 		public IList<Order> GetRelatedOrders(ExternalPractitioner practitioner)
 		{
-			HqlFrom hqlFrom = new HqlFrom(typeof(Order).Name, "o");
-			HqlProjectionQuery query = new HqlProjectionQuery(hqlFrom);
+			var hqlFrom = new HqlFrom(typeof(Order).Name, "o");
+			var query = new HqlProjectionQuery(hqlFrom);
 
-			OrderSearchCriteria criteria = new OrderSearchCriteria();
+			var criteria = new OrderSearchCriteria();
 			criteria.OrderingPractitioner.EqualTo(practitioner);
 			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("o", criteria));
 
@@ -64,11 +64,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
 		public IList<Visit> GetRelatedVisits(ExternalPractitioner practitioner)
 		{
-			HqlFrom hqlFrom = new HqlFrom(typeof(Visit).Name, "v");
+			var hqlFrom = new HqlFrom(typeof(Visit).Name, "v");
 			hqlFrom.Joins.Add(new HqlJoin("v.Practitioners", "vp"));
-			HqlProjectionQuery query = new HqlProjectionQuery(hqlFrom);
+			var query = new HqlProjectionQuery(hqlFrom);
 
-			VisitPractitionerSearchCriteria criteria = new VisitPractitionerSearchCriteria();
+			var criteria = new VisitPractitionerSearchCriteria();
 			criteria.Practitioner.EqualTo(practitioner);
 			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("vp", criteria));
 
@@ -81,24 +81,25 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		{
 			var criteria = new List<ExternalPractitionerSearchCriteria>();
 
-			var nameCriteria = new ExternalPractitionerSearchCriteria();
-			nameCriteria.NotEqualTo(practitioner);
+			var baseCriteria = new ExternalPractitionerSearchCriteria();
+			baseCriteria.NotEqualTo(practitioner);
+			baseCriteria.Deactivated.EqualTo(false);
+
+			var nameCriteria = (ExternalPractitionerSearchCriteria)baseCriteria.Clone();
 			nameCriteria.Name.FamilyName.EqualTo(practitioner.Name.FamilyName);
 			nameCriteria.Name.GivenName.EqualTo(practitioner.Name.GivenName);
 			criteria.Add(nameCriteria);
 
 			if (!string.IsNullOrEmpty(practitioner.LicenseNumber))
 			{
-				var licenseNumberCriteria = new ExternalPractitionerSearchCriteria();
-				licenseNumberCriteria.NotEqualTo(practitioner);
+				var licenseNumberCriteria = (ExternalPractitionerSearchCriteria)baseCriteria.Clone();
 				licenseNumberCriteria.LicenseNumber.EqualTo(practitioner.LicenseNumber);
 				criteria.Add(licenseNumberCriteria);
 			}
 
 			if (!string.IsNullOrEmpty(practitioner.BillingNumber))
 			{
-				var billingNumberCriteria = new ExternalPractitionerSearchCriteria();
-				billingNumberCriteria.NotEqualTo(practitioner);
+				var billingNumberCriteria = (ExternalPractitionerSearchCriteria)baseCriteria.Clone();
 				billingNumberCriteria.BillingNumber.EqualTo(practitioner.BillingNumber);
 				criteria.Add(billingNumberCriteria);
 			}

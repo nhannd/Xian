@@ -31,14 +31,14 @@ namespace ClearCanvas.Ris.Client
 	}
 
 	[FolderPath("Search Results")]
-	public class ExternalPractitionerSearchFolder : SearchResultsFolder<ExternalPractitionerSummary, SearchParams>
+	public class ExternalPractitionerSearchFolder : SearchResultsFolder<ExternalPractitionerSummary, ExternalPractitionerSearchParams>
 	{
 		public ExternalPractitionerSearchFolder()
 			: base(new ExternalPractitionerWorkflowTable())
 		{
 		}
 
-		protected override TextQueryResponse<ExternalPractitionerSummary> DoQuery(SearchParams query, int specificityThreshold)
+		protected override TextQueryResponse<ExternalPractitionerSummary> DoQuery(ExternalPractitionerSearchParams query, int specificityThreshold)
 		{
 			TextQueryResponse<ExternalPractitionerSummary> response = null;
 

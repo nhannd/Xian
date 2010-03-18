@@ -37,6 +37,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -87,7 +88,7 @@ namespace ClearCanvas.Ris.Client
 
         public override string FormatItem(ExternalPractitionerSummary item)
         {
-            return string.Format("{0}, {1}", item.Name.FamilyName, item.Name.GivenName);
+            return PersonNameFormat.Format(item.Name);
         }
     }
 }

@@ -55,9 +55,21 @@ namespace ClearCanvas.Ris.Client
 				return;
 			}
 
+			Platform.GetService(
+				delegate(IExternalPractitionerAdminService service)
+				{
+					var request = new MergeExternalPractitionerRequest
+					{
+						MergedPractitioner = _mergedPractitioner,
+						DuplicatePractitionerRef = _selectedDuplicate.PractitionerRef,
+						ContactPointReplacements = _affectedOrdersComponent.ContactPointReplacementMap
+					};
+
+					service.MergeExternalPractitioner(request);
+				});
+
 			base.Accept();
 		}
-
 
 		protected override void MoveTo(int index)
 		{
