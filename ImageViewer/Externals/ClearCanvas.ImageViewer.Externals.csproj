@@ -105,11 +105,6 @@
       <Name>ClearCanvas.Desktop</Name>
       <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\Desktop\Configuration\ClearCanvas.Desktop.Configuration.csproj">
-      <Project>{223DFDC9-B1F5-441D-B659-33F9E55E74A5}</Project>
-      <Name>ClearCanvas.Desktop.Configuration</Name>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\..\Dicom\ClearCanvas.Dicom.csproj">
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
