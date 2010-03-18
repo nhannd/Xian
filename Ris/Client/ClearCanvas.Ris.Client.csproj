@@ -396,10 +396,6 @@
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
       <Name>ClearCanvas.Desktop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Desktop\Configuration\ClearCanvas.Desktop.Configuration.csproj">
-      <Project>{223DFDC9-B1F5-441D-B659-33F9E55E74A5}</Project>
-      <Name>ClearCanvas.Desktop.Configuration</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj">
       <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>
       <Name>ClearCanvas.Enterprise.Common</Name>
