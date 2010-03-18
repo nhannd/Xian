@@ -36,6 +36,10 @@ using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare
 {
+	/// <summary>
+	/// Encapsulates a WorkQueueItem for HL7 event processing that has extended properties specifying an HL7 event type,
+	/// an order and optionally a procedure.
+	/// </summary>
 	public class LogicalHL7EventWorkQueueItem
 	{
 		#region Private fields
