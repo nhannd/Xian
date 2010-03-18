@@ -79,6 +79,17 @@ namespace ClearCanvas.Common.Shreds
 		}
 
 		/// <summary>
+		/// A name for the queue processor.
+		/// </summary>
+		/// <remarks>
+		/// The thread in the <see cref="QueueProcessorShred"/> corresponding to this QueueProcessor is given its Name.
+		/// </remarks>
+		public virtual string Name
+		{
+			get { return null; }
+		}
+
+		/// <summary>
 		/// Implements the main logic of the processor.
 		/// </summary>
 		/// <remarks>
