@@ -53,6 +53,11 @@ namespace ClearCanvas.Desktop.Actions
         /// </summary>
         event EventHandler VisibleChanged;
 
+		/// <summary>
+		/// Occurs when the <see cref="Available"/> property of this action changes.
+		/// </summary>
+    	event EventHandler AvailableChanged;
+
         /// <summary>
         /// Occurs when the <see cref="Label"/> property of this action changes.
         /// </summary>
@@ -111,6 +116,15 @@ namespace ClearCanvas.Desktop.Actions
         /// Gets the visibility state that the action presents in the UI.
 		/// </summary>
 		bool Visible { get; }
+
+		/// <summary>
+		/// Gets or sets whether or not the action is available as controlled by the user.
+		/// </summary>
+		/// <remarks>
+		/// The value of <see cref="Available"/> should override both <see cref="Visible"/> and <see cref="Enabled"/>
+		/// as it represents the user's desire to see the action at all, rather than tool logic.
+		/// </remarks>
+		bool Available { get; set; }
 
 		/// <summary>
 		/// Gets a value indicating whether or not the action is 'persistent'.

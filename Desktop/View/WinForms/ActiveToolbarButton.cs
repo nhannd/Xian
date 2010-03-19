@@ -44,6 +44,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private EventHandler _actionEnabledChangedHandler;
         private EventHandler _actionCheckedChangedHandler;
 		private EventHandler _actionVisibleChangedHandler;
+		private EventHandler _actionAvailableChangedHandler;
 		private EventHandler _actionLabelChangedHandler;
 		private EventHandler _actionTooltipChangedHandler;
 		private EventHandler _actionIconSetChangedHandler;
@@ -62,6 +63,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             _actionEnabledChangedHandler = new EventHandler(OnActionEnabledChanged);
             _actionCheckedChangedHandler = new EventHandler(OnActionCheckedChanged);
 			_actionVisibleChangedHandler = new EventHandler(OnActionVisibleChanged);
+			_actionAvailableChangedHandler = new EventHandler(OnActionAvailableChanged);
 			_actionLabelChangedHandler = new EventHandler(OnActionLabelChanged);
 			_actionTooltipChangedHandler = new EventHandler(OnActionTooltipChanged);
 			_actionIconSetChangedHandler = new EventHandler(OnActionIconSetChanged);
@@ -69,6 +71,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             _action.EnabledChanged += _actionEnabledChangedHandler;
             _action.CheckedChanged += _actionCheckedChangedHandler;
 			_action.VisibleChanged += _actionVisibleChangedHandler;
+			_action.AvailableChanged += _actionAvailableChangedHandler;
 			_action.LabelChanged += _actionLabelChangedHandler;
 			_action.TooltipChanged += _actionTooltipChangedHandler;
 			_action.IconSetChanged += _actionIconSetChangedHandler;
@@ -118,6 +121,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 			UpdateVisibility();
 		}
 
+    	private void OnActionAvailableChanged(object sender, EventArgs e)
+    	{
+    		UpdateEnablement();
+    		UpdateVisibility();
+    	}
+
 		private void OnActionLabelChanged(object sender, EventArgs e)
 		{
 			this.Text = _action.Label;
@@ -146,6 +155,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                 _action.EnabledChanged -= _actionEnabledChangedHandler;
                 _action.CheckedChanged -= _actionCheckedChangedHandler;
 				_action.VisibleChanged -= _actionVisibleChangedHandler;
+				_action.AvailableChanged -= _actionAvailableChangedHandler;
 				_action.LabelChanged -= _actionLabelChangedHandler;
 				_action.TooltipChanged -= _actionTooltipChangedHandler;
 				_action.IconSetChanged -= _actionIconSetChangedHandler;
@@ -157,12 +167,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void UpdateVisibility()
         {
-            this.Visible = _action.Visible && (_action.Permissible || DesktopViewSettings.Default.ShowNonPermissibleActions);
+            this.Visible = _action.Available && _action.Visible && (_action.Permissible || DesktopViewSettings.Default.ShowNonPermissibleActions);
         }
 
         private void UpdateEnablement()
         {
-            this.Enabled = _action.Enabled && (_action.Permissible || DesktopViewSettings.Default.EnableNonPermissibleActions);
+			this.Enabled = _action.Available && _action.Enabled && (_action.Permissible || DesktopViewSettings.Default.EnableNonPermissibleActions);
         }
 	
 		private void UpdateIcon()

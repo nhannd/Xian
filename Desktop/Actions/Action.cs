@@ -66,6 +66,9 @@ namespace ClearCanvas.Desktop.Actions
         private string _label;
         private event EventHandler _labelChanged;
 
+    	private bool _available;
+    	private event EventHandler _availableChanged;
+
 		private bool _persistent;
 
         private ISpecification _permissionSpec;
@@ -85,6 +88,7 @@ namespace ClearCanvas.Desktop.Actions
             // smart defaults
             _enabled = true;
             _visible = true;
+			_available = true;
 
 			_persistent = false;
         }
@@ -265,6 +269,26 @@ namespace ClearCanvas.Desktop.Actions
             }
         }
 
+		/// <summary>
+		/// Gets or sets whether or not the action is available as controlled by the user.
+		/// </summary>
+		/// <remarks>
+		/// The value of <see cref="Available"/> should override both <see cref="Visible"/> and <see cref="Enabled"/>
+		/// as it represents the user's desire to see the action at all, rather than tool logic.
+		/// </remarks>
+    	public bool Available
+    	{
+    		get { return _available; }
+    		set
+    		{
+    			if (_available != value)
+    			{
+    				_available = value;
+    				EventsHelper.Fire(_availableChanged, this, EventArgs.Empty);
+    			}
+    		}
+    	}
+
         /// <summary>
         /// Gets a value indicating whether or not the action is 'persistent'.
         /// </summary>
@@ -296,6 +320,15 @@ namespace ClearCanvas.Desktop.Actions
             add { _visibleChanged += value; }
             remove { _visibleChanged -= value; }
         }
+
+		/// <summary>
+		/// Occurs when the <see cref="IAction.Available"/> property of this action changes.
+		/// </summary>
+		public event EventHandler AvailableChanged
+		{
+			add { _availableChanged += value; }
+			remove { _availableChanged -= value; }
+		}
 
         /// <summary>
         /// Occurs when the <see cref="IAction.Label"/> property of this action changes.

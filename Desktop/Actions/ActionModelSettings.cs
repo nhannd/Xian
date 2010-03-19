@@ -213,6 +213,9 @@ namespace ClearCanvas.Desktop.Actions
 			xmlAction.SetAttribute("path", action.Path.ToString());
 			xmlAction.SetAttribute("group-hint", action.GroupHint.Hint);
 
+			if (!action.Available)
+				xmlAction.SetAttribute("available", action.Available.ToString());
+
 			if (action is IClickAction)
 			{
 				IClickAction clickAction = (IClickAction) action;
@@ -356,6 +359,14 @@ namespace ClearCanvas.Desktop.Actions
 
 						action.Path = new ActionPath(path, action.ResourceResolver);
 						action.GroupHint = new GroupHint(grouphint);
+
+						string availableValue = xmlAction.GetAttribute("available");
+						if (!string.IsNullOrEmpty(availableValue))
+						{
+							bool available;
+							if (bool.TryParse(availableValue, out available))
+								action.Available = available;
+						}
 						
 						if (action is IClickAction)
 						{
