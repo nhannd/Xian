@@ -1,4 +1,5 @@
-﻿using ClearCanvas.Common;
+﻿using System;
+using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
@@ -12,7 +13,6 @@ namespace ClearCanvas.Ris.Client
 		private ExternalPractitionerMergeSelectedDuplicateComponent _selectedDuplicateComponent;
 		private ExternalPractitionerMergePropertiesComponent _mergePropertiesComponent;
 		private ExternalPractitionerMergeSelectedContactPointsComponent _selectContactPointsComponent;
-		private ExternalPractitionerMergeSelectDefaultContactPointComponent _selectDefaultContactPointComponent;
 		private ExternalPractitionerMergeAffectedOrdersComponent _affectedOrdersComponent;
 		private ExternalPractitionerOverviewComponent _confirmationComponent;
 
@@ -20,7 +20,6 @@ namespace ClearCanvas.Ris.Client
 		private readonly ExternalPractitionerDetail _mergedPractitioner;
 		private ExternalPractitionerDetail _originalPractitioner;
 		private ExternalPractitionerDetail _selectedDuplicate;
-
 
 		public ExternalPractitionerMergeNavigatorComponent(EntityRef practitionerRef)
 		{
@@ -33,17 +32,20 @@ namespace ClearCanvas.Ris.Client
 			this.Pages.Add(new NavigatorPage("Select Duplicate", _selectedDuplicateComponent = new ExternalPractitionerMergeSelectedDuplicateComponent()));
 			this.Pages.Add(new NavigatorPage("Resolve Property Conflicts", _mergePropertiesComponent = new ExternalPractitionerMergePropertiesComponent()));
 			this.Pages.Add(new NavigatorPage("Select Active Contact Points", _selectContactPointsComponent = new ExternalPractitionerMergeSelectedContactPointsComponent()));
-			this.Pages.Add(new NavigatorPage("Select Default Contact Point", _selectDefaultContactPointComponent = new ExternalPractitionerMergeSelectDefaultContactPointComponent()));
 			this.Pages.Add(new NavigatorPage("Resolve Order Conflicts", _affectedOrdersComponent = new ExternalPractitionerMergeAffectedOrdersComponent()));
 			this.Pages.Add(new NavigatorPage("Confirmation", _confirmationComponent = new ExternalPractitionerOverviewComponent()));
 			this.ValidationStrategy = new AllComponentsValidationStrategy();
 
 			base.Start();
+
+			// Immediately activate validation after component start
+			this.ShowValidation(true);
 		}
 
 		public override bool ShowTree
 		{
 			// Disable tree pane, so user can only navigate with the Forward and Backward buttons.
+			// It is very important that each page navigates forward in a sequential order.
 			get { return false; }
 		}
 
@@ -55,20 +57,28 @@ namespace ClearCanvas.Ris.Client
 				return;
 			}
 
-			Platform.GetService(
-				delegate(IExternalPractitionerAdminService service)
-				{
-					var request = new MergeExternalPractitionerRequest
+			try
+			{
+				Platform.GetService(
+					delegate(IExternalPractitionerAdminService service)
 					{
-						MergedPractitioner = _mergedPractitioner,
-						DuplicatePractitionerRef = _selectedDuplicate.PractitionerRef,
-						ContactPointReplacements = _affectedOrdersComponent.ContactPointReplacementMap
-					};
+						var request = new MergeExternalPractitionerRequest
+						{
+							MergedPractitioner = _mergedPractitioner,
+							DuplicatePractitionerRef = _selectedDuplicate.PractitionerRef,
+							ContactPointReplacements = _affectedOrdersComponent.ContactPointReplacementMap
+						};
 
-					service.MergeExternalPractitioner(request);
-				});
+						service.MergeExternalPractitioner(request);
+					});
 
-			base.Accept();
+				this.ExitCode = ApplicationComponentExitCode.Accepted;
+				this.Host.Exit();
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
 		}
 
 		protected override void MoveTo(int index)
@@ -88,7 +98,7 @@ namespace ClearCanvas.Ris.Client
 			if (currentComponent == _selectedDuplicateComponent)
 			{
 				_originalPractitioner = LoadPractitionerDetail(_originalPractitionerRef);
-				_selectedDuplicateComponent.PractitionerRef = _originalPractitioner.PractitionerRef;
+				_selectedDuplicateComponent.OriginalPractitioner = _originalPractitioner;
 				_mergePropertiesComponent.OriginalPractitioner = _originalPractitioner;
 				_selectContactPointsComponent.OriginalPractitioner = _originalPractitioner;
 			}
@@ -108,14 +118,8 @@ namespace ClearCanvas.Ris.Client
 			{
 				_selectContactPointsComponent.DuplicatePractitioner = _selectedDuplicate;
 			}
-			else if (currentComponent == _selectDefaultContactPointComponent)
-			{
-				// Update default contact point comopnent with the latest contact point selections
-				_selectDefaultContactPointComponent.ActiveContactPoints = _selectContactPointsComponent.ActiveContactPoints;
-			}
 			else if (currentComponent == _affectedOrdersComponent)
 			{
-				_affectedOrdersComponent.DefaultContactPoint = _selectDefaultContactPointComponent.DefaultContactPoint;
 				_affectedOrdersComponent.ActiveContactPoints = _selectContactPointsComponent.ActiveContactPoints;
 				_affectedOrdersComponent.DeactivatedContactPoints = _selectContactPointsComponent.DeactivatedContactPoints;
 			}
@@ -124,7 +128,6 @@ namespace ClearCanvas.Ris.Client
 				_mergedPractitioner.PractitionerRef = _originalPractitionerRef;
 				_mergePropertiesComponent.Save(_mergedPractitioner);
 				_selectContactPointsComponent.Save(_mergedPractitioner);
-				_selectDefaultContactPointComponent.Save(_mergedPractitioner);
 				_confirmationComponent.PractitionerDetail = _mergedPractitioner;
 
 				// The accept is enabled only on the very last page.

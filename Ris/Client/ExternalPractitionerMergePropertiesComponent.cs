@@ -47,14 +47,14 @@ namespace ClearCanvas.Ris.Client
 	{
 	}
 
-	public class ExtendedPropertyRowData
+	public class ExtendedPropertyChoicesTableData
 	{
-		public ExtendedPropertyRowData()
+		public ExtendedPropertyChoicesTableData()
 		{
 			this.ValueChoices = new List<object>();
 		}
 
-		public ExtendedPropertyRowData(string propertyName, List<object> valueChoices)
+		public ExtendedPropertyChoicesTableData(string propertyName, List<object> valueChoices)
 		{
 			this.PropertyName = propertyName;
 			this.ValueChoices = valueChoices;
@@ -99,12 +99,12 @@ namespace ClearCanvas.Ris.Client
 		private ExternalPractitionerDetail _duplicatePractitioner;
 		private ExternalPractitionerDetail _mergedPractitioner;
 
-		private List<ExtendedPropertyRowData> _extendedPropertyChoices;
+		private List<ExtendedPropertyChoicesTableData> _extendedPropertyChoices;
 		private event EventHandler _saveRequested;
 
 		public ExternalPractitionerMergePropertiesComponent()
 		{
-			_extendedPropertyChoices = new List<ExtendedPropertyRowData>();
+			_extendedPropertyChoices = new List<ExtendedPropertyChoicesTableData>();
 		}
 
 		public ExternalPractitionerDetail OriginalPractitioner
@@ -112,10 +112,7 @@ namespace ClearCanvas.Ris.Client
 			get { return _originalPractitioner; }
 			set
 			{
-				if (Equals(_originalPractitioner, value))
-					return;
-
-				if (value != null && _originalPractitioner != null && _originalPractitioner.PractitionerRef.Equals(value.PractitionerRef, true))
+				if (_originalPractitioner != null && _originalPractitioner.Equals(value))
 					return;
 
 				_originalPractitioner = value;
@@ -130,10 +127,7 @@ namespace ClearCanvas.Ris.Client
 			get { return _duplicatePractitioner; }
 			set
 			{
-				if (Equals(_duplicatePractitioner, value))
-					return;
-
-				if (value != null && _duplicatePractitioner != null && _duplicatePractitioner.PractitionerRef.Equals(value.PractitionerRef, true))
+				if (_originalPractitioner != null && _originalPractitioner.Equals(value))
 					return;
 
 				_duplicatePractitioner = value;
@@ -163,10 +157,28 @@ namespace ClearCanvas.Ris.Client
 
 		#region Presentation Models
 
+		public string Instruction
+		{
+			get
+			{
+				var hasConflicts = this.NameChoices.Count > 1
+					|| this.LicenseNumberChoices.Count > 1
+					|| this.BillingNumberChoices.Count > 1
+					|| CollectionUtils.Contains(_extendedPropertyChoices, data => data.ValueChoices.Count > 1);
+
+				return hasConflicts ? SR.MessageInstructionMergeProperties : SR.MessageInstructionNoPropertyConflict;
+			}
+		}
+
 		public PersonNameDetail Name
 		{
 			get { return _mergedPractitioner.Name; }
 			set { _mergedPractitioner.Name = value; }
+		}
+
+		public bool NameEnabled
+		{
+			get { return this.NameChoices.Count > 1; }
 		}
 
 		public List<PersonNameDetail> NameChoices
@@ -193,6 +205,11 @@ namespace ClearCanvas.Ris.Client
 			set { _mergedPractitioner.LicenseNumber = value; }
 		}
 
+		public bool LicenseNumberEnabled
+		{
+			get { return this.LicenseNumberChoices.Count > 1; }
+		}
+
 		public List<string> LicenseNumberChoices
 		{
 			get
@@ -209,6 +226,11 @@ namespace ClearCanvas.Ris.Client
 		{
 			get { return _mergedPractitioner.BillingNumber; }
 			set { _mergedPractitioner.BillingNumber = value; }
+		}
+
+		public bool BillingNumberEnabled
+		{
+			get { return this.BillingNumberChoices.Count > 1; }
 		}
 
 		public List<string> BillingNumberChoices
@@ -229,7 +251,7 @@ namespace ClearCanvas.Ris.Client
 			set { _mergedPractitioner.ExtendedProperties = value;}
 		}
 
-		public List<ExtendedPropertyRowData> ExtendedPropertyChoices
+		public List<ExtendedPropertyChoicesTableData> ExtendedPropertyChoices
 		{
 			get { return _extendedPropertyChoices; }
 		}
@@ -245,14 +267,16 @@ namespace ClearCanvas.Ris.Client
 		private void UpdateExtendedPropertyChoices()
 		{
 			// Clear existing data.
-			_extendedPropertyChoices = new List<ExtendedPropertyRowData>();
+			_extendedPropertyChoices = new List<ExtendedPropertyChoicesTableData>();
 
 			if (_originalPractitioner == null || _duplicatePractitioner == null)
 				return;
 
+			// Find the unique keys of the combined extended properties
 			var combinedKeys = CollectionUtils.Concat<string>(_originalPractitioner.ExtendedProperties.Keys, _duplicatePractitioner.ExtendedProperties.Keys);
 			var uniqueKeys = CollectionUtils.Unique(combinedKeys);
 
+			// Construct a ExtendedPropertyChoicesTableData for each unique property
 			CollectionUtils.ForEach(uniqueKeys,
 				delegate(string key)
 				{
@@ -264,7 +288,7 @@ namespace ClearCanvas.Ris.Client
 					if (_duplicatePractitioner.ExtendedProperties.ContainsKey(key))
 						choices.Add(_duplicatePractitioner.ExtendedProperties[key]);
 
-					var data = new ExtendedPropertyRowData(key, CollectionUtils.Unique(choices));
+					var data = new ExtendedPropertyChoicesTableData(key, CollectionUtils.Unique(choices));
 					_extendedPropertyChoices.Add(data);
 				});
 		}

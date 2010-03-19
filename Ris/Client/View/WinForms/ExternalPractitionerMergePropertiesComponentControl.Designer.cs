@@ -62,19 +62,23 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._name = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._billingNumber = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._licenseNumber = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
-			this._properties = new ClearCanvas.Ris.Client.View.WinForms.ExtendedPropertyChoicesTable();
+			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+			this._extendedProperties = new ClearCanvas.Ris.Client.View.WinForms.ExtendedPropertyChoicesTable();
+			this._instruction = new System.Windows.Forms.Label();
+			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _name
 			// 
 			this._name.DataSource = null;
 			this._name.DisplayMember = "";
+			this._name.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._name.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._name.LabelText = "Name";
-			this._name.Location = new System.Drawing.Point(2, 2);
+			this._name.Location = new System.Drawing.Point(2, 32);
 			this._name.Margin = new System.Windows.Forms.Padding(2);
 			this._name.Name = "_name";
-			this._name.Size = new System.Drawing.Size(182, 41);
+			this._name.Size = new System.Drawing.Size(221, 46);
 			this._name.TabIndex = 0;
 			this._name.Value = null;
 			// 
@@ -82,12 +86,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this._billingNumber.DataSource = null;
 			this._billingNumber.DisplayMember = "";
+			this._billingNumber.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._billingNumber.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._billingNumber.LabelText = "Billing #";
-			this._billingNumber.Location = new System.Drawing.Point(374, 2);
+			this._billingNumber.Location = new System.Drawing.Point(339, 32);
 			this._billingNumber.Margin = new System.Windows.Forms.Padding(2);
 			this._billingNumber.Name = "_billingNumber";
-			this._billingNumber.Size = new System.Drawing.Size(182, 41);
+			this._billingNumber.Size = new System.Drawing.Size(109, 46);
 			this._billingNumber.TabIndex = 2;
 			this._billingNumber.Value = null;
 			// 
@@ -95,42 +100,74 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this._licenseNumber.DataSource = null;
 			this._licenseNumber.DisplayMember = "";
+			this._licenseNumber.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._licenseNumber.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._licenseNumber.LabelText = "License #";
-			this._licenseNumber.Location = new System.Drawing.Point(188, 2);
+			this._licenseNumber.Location = new System.Drawing.Point(227, 32);
 			this._licenseNumber.Margin = new System.Windows.Forms.Padding(2);
 			this._licenseNumber.Name = "_licenseNumber";
-			this._licenseNumber.Size = new System.Drawing.Size(182, 41);
+			this._licenseNumber.Size = new System.Drawing.Size(108, 46);
 			this._licenseNumber.TabIndex = 1;
 			this._licenseNumber.Value = null;
 			// 
-			// _properties
+			// tableLayoutPanel1
 			// 
-			this._properties.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this._properties.AutoScroll = true;
-			this._properties.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Inset;
-			this._properties.ColumnCount = 2;
-			this._properties.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
-			this._properties.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this._properties.Location = new System.Drawing.Point(3, 48);
-			this._properties.Name = "_properties";
-			this._properties.RowCount = 1;
-			this._properties.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 228F));
-			this._properties.Size = new System.Drawing.Size(555, 273);
-			this._properties.TabIndex = 3;
+			this.tableLayoutPanel1.ColumnCount = 3;
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+			this.tableLayoutPanel1.Controls.Add(this._extendedProperties, 0, 2);
+			this.tableLayoutPanel1.Controls.Add(this._licenseNumber, 1, 1);
+			this.tableLayoutPanel1.Controls.Add(this._instruction, 0, 0);
+			this.tableLayoutPanel1.Controls.Add(this._billingNumber, 2, 1);
+			this.tableLayoutPanel1.Controls.Add(this._name, 0, 1);
+			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+			this.tableLayoutPanel1.RowCount = 3;
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(450, 300);
+			this.tableLayoutPanel1.TabIndex = 4;
+			// 
+			// _extendedProperties
+			// 
+			this._extendedProperties.AutoScroll = true;
+			this._extendedProperties.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Inset;
+			this._extendedProperties.ColumnCount = 2;
+			this.tableLayoutPanel1.SetColumnSpan(this._extendedProperties, 3);
+			this._extendedProperties.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
+			this._extendedProperties.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._extendedProperties.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._extendedProperties.Location = new System.Drawing.Point(3, 83);
+			this._extendedProperties.Name = "_extendedProperties";
+			this._extendedProperties.RowCount = 1;
+			this._extendedProperties.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 277F));
+			this._extendedProperties.Size = new System.Drawing.Size(444, 214);
+			this._extendedProperties.TabIndex = 3;
+			// 
+			// _instruction
+			// 
+			this._instruction.AutoSize = true;
+			this.tableLayoutPanel1.SetColumnSpan(this._instruction, 3);
+			this._instruction.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._instruction.Location = new System.Drawing.Point(3, 0);
+			this._instruction.Name = "_instruction";
+			this._instruction.Size = new System.Drawing.Size(444, 30);
+			this._instruction.TabIndex = 4;
+			this._instruction.Text = "Click on the dropdown to resolve conflicted properties.";
+			this._instruction.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// ExternalPractitionerMergePropertiesComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._properties);
-			this.Controls.Add(this._licenseNumber);
-			this.Controls.Add(this._billingNumber);
-			this.Controls.Add(this._name);
+			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "ExternalPractitionerMergePropertiesComponentControl";
-			this.Size = new System.Drawing.Size(561, 324);
+			this.Size = new System.Drawing.Size(450, 300);
+			this.tableLayoutPanel1.ResumeLayout(false);
+			this.tableLayoutPanel1.PerformLayout();
 			this.ResumeLayout(false);
 
         }
@@ -140,6 +177,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _name;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _billingNumber;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _licenseNumber;
-		private ExtendedPropertyChoicesTable _properties;
+		private ExtendedPropertyChoicesTable _extendedProperties;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+		private System.Windows.Forms.Label _instruction;
     }
 }

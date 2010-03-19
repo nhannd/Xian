@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
@@ -49,7 +50,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_component = component;
 			InitializeComponent();
 
+			_instruction.DataBindings.Add("Text", _component, "Instruction", true, DataSourceUpdateMode.OnPropertyChanged);
+
 			_table.Table = _component.ContactPointTable;
+			_table.DataBindings.Add("Selection", _component, "SummarySelection", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 	}
 }

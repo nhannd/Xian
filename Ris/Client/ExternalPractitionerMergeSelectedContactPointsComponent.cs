@@ -36,6 +36,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Ris.Application.Common;
+using System;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -55,30 +56,76 @@ namespace ClearCanvas.Ris.Client
 	{
 		private class ExternalPractitionerContactPointTable : Table<ExternalPractitionerContactPointDetail>
 		{
+			private event EventHandler _tableModified;
+
 			public ExternalPractitionerContactPointTable()
 			{
-				this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, bool>("Active",
-					cp => !cp.Deactivated, (cp, value) => cp.Deactivated = !value, 0.15f));
+				this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, bool>(SR.ColumnActive,
+					cp => !cp.Deactivated, SetDeactivatedStatus, 0.15f));
 
-				this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>("Name", cp => cp.Name, 0.5f));
+				this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, bool>(SR.ColumnDefault,
+					cp => cp.IsDefaultContactPoint, MakeDefaultContactPoint, 0.15f));
 
-				this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>("Description", cp => cp.Description, 0.5f));
+				this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>(SR.ColumnName, 
+					cp => cp.Name, 0.5f));
+
+				this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>(SR.ColumnDescription, 
+					cp => cp.Description, 0.5f));
+			}
+
+			public event EventHandler TableModified
+			{
+				add { _tableModified += value; }
+				remove { _tableModified -= value; }
+			}
+
+			public void MakeDefaultContactPoint(ExternalPractitionerContactPointDetail cp, bool value)
+			{
+				if (cp == null)
+					return;
+
+				// Make sure only one contact point is checked as the default.
+				foreach (var item in this.Items)
+				{
+					item.IsDefaultContactPoint = item == cp ? value : false;
+					this.Items.NotifyItemUpdated(item);
+				}
+
+				EventsHelper.Fire(_tableModified, this, EventArgs.Empty);
+			}
+
+			private void SetDeactivatedStatus(ExternalPractitionerContactPointDetail cp, bool value)
+			{
+				cp.Deactivated = !value;
+				EventsHelper.Fire(_tableModified, this, EventArgs.Empty);
 			}
 		}
 
 		private readonly ExternalPractitionerContactPointTable _table;
+		private readonly List<ExternalPractitionerContactPointDetail> _deactivatedContactPointNotShown;
+		private ExternalPractitionerContactPointDetail _selectedItem;
+
 		private ExternalPractitionerDetail _originalPractitioner;
 		private ExternalPractitionerDetail _duplicatePractitioner;
 
 		public ExternalPractitionerMergeSelectedContactPointsComponent()
 		{
 			_table = new ExternalPractitionerContactPointTable();
+			_deactivatedContactPointNotShown = new List<ExternalPractitionerContactPointDetail>();
 		}
 
 		public override void Start()
 		{
-			this.Validation.Add(new ValidationRule("ContactPointTable",
-				component => new ValidationResult(this.ActiveContactPoints.Count > 0, "Must have at least one contact point")));
+			this.Validation.Add(new ValidationRule("SummarySelection",
+				component => new ValidationResult(this.ActiveContactPoints.Count > 0, SR.MessageValidationAtLeastOneActiveContactPoint)));
+
+			this.Validation.Add(new ValidationRule("SummarySelection",
+				component => new ValidationResult(this.DefaultContactPoint != null, SR.MessageValidationMustHaveOneDefaultContactPoint)));
+
+			this.Validation.Add(new ValidationRule("SummarySelection",
+				component => new ValidationResult(this.DefaultContactPoint == null ? true : this.DefaultContactPoint.Deactivated == false, SR.MessageValidationDefaultContactPointMustBeActive)));
+
+			_table.TableModified += ((sender, e) => this.ShowValidation(true));
 
 			base.Start();
 		}
@@ -88,10 +135,7 @@ namespace ClearCanvas.Ris.Client
 			get { return _originalPractitioner; }
 			set
 			{
-				if (Equals(_originalPractitioner, value))
-					return;
-
-				if (value != null && _originalPractitioner != null && _originalPractitioner.PractitionerRef.Equals(value.PractitionerRef, true))
+				if (_originalPractitioner != null && _originalPractitioner.Equals(value))
 					return;
 
 				_originalPractitioner = value;
@@ -104,15 +148,17 @@ namespace ClearCanvas.Ris.Client
 			get { return _duplicatePractitioner; }
 			set
 			{
-				if (Equals(_duplicatePractitioner, value))
-					return;
-
-				if (value != null && _duplicatePractitioner != null && _duplicatePractitioner.PractitionerRef.Equals(value.PractitionerRef, true))
+				if (_originalPractitioner != null && _originalPractitioner.Equals(value))
 					return;
 
 				_duplicatePractitioner = value;
 				UpdateContactPointsTable();
 			}
+		}
+
+		public ExternalPractitionerContactPointDetail DefaultContactPoint
+		{
+			get { return CollectionUtils.SelectFirst(_table.Items, cp => cp.IsDefaultContactPoint); }
 		}
 
 		public List<ExternalPractitionerContactPointDetail> ActiveContactPoints
@@ -122,26 +168,36 @@ namespace ClearCanvas.Ris.Client
 
 		public List<ExternalPractitionerContactPointDetail> DeactivatedContactPoints
 		{
-			get { return CollectionUtils.Select(_table.Items, cp => cp.Deactivated == true); }
+			get { return CollectionUtils.Select(_table.Items, cp => cp.Deactivated); }
 		}
 
 		public void Save(ExternalPractitionerDetail practitioner)
 		{
 			practitioner.ContactPoints.Clear();
 
-			// Clone the contact points
-			foreach (var cp in _table.Items)
-			{
-				var contactPoint = (ExternalPractitionerContactPointDetail)cp.Clone();
-				practitioner.ContactPoints.Add(contactPoint);
-			}
+			// Add the originally deactivated contact points
+			practitioner.ContactPoints.AddRange(_deactivatedContactPointNotShown);
+
+			// Add the items in the table.
+			practitioner.ContactPoints.AddRange(_table.Items);
 		}
 
 		#region Presentation Models
 
+		public string Instruction
+		{
+			get { return SR.MessageInstructionSelectContactPoints; }
+		}
+
 		public ITable ContactPointTable
 		{
 			get { return _table; }
+		}
+
+		public ISelection SummarySelection
+		{
+			get { return new Selection(_selectedItem); }
+			set { _selectedItem = (ExternalPractitionerContactPointDetail)value.Item; }
 		}
 
 		#endregion
@@ -152,11 +208,28 @@ namespace ClearCanvas.Ris.Client
 				return;
 
 			var combinedContactPoints = new List<ExternalPractitionerContactPointDetail>();
-			combinedContactPoints.AddRange(_originalPractitioner.ContactPoints);
-			combinedContactPoints.AddRange(_duplicatePractitioner.ContactPoints);
 
+			// Clone each contact points.  Do not alter the original copy.
+			foreach (var cp in _originalPractitioner.ContactPoints)
+				combinedContactPoints.Add((ExternalPractitionerContactPointDetail)cp.Clone());
+
+			var originalDefaultContactPoint = CollectionUtils.SelectFirst(combinedContactPoints, cp => cp.IsDefaultContactPoint);
+
+			// Same for the duplicate practitioner
+			foreach (var cp in _duplicatePractitioner.ContactPoints)
+				combinedContactPoints.Add((ExternalPractitionerContactPointDetail)cp.Clone());
+
+			// Store the deactivated contact point
+			_deactivatedContactPointNotShown.Clear();
+			_deactivatedContactPointNotShown.AddRange(CollectionUtils.Select(combinedContactPoints, cp => cp.Deactivated));
+
+			// and only show the originally active contact points to user
 			_table.Items.Clear();
-			_table.Items.AddRange(combinedContactPoints);
+			_table.Items.AddRange(CollectionUtils.Select(combinedContactPoints, cp => !cp.Deactivated));
+
+			// There may be two default contact point, one from origial, one from duplicate
+			// Make sure only one is checked as default
+			_table.MakeDefaultContactPoint(originalDefaultContactPoint, true);
 		}
 	}
 }

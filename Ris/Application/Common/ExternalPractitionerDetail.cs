@@ -37,7 +37,7 @@ using System;
 namespace ClearCanvas.Ris.Application.Common
 {
 	[DataContract]
-	public class ExternalPractitionerDetail : DataContractBase
+	public class ExternalPractitionerDetail : DataContractBase, IEquatable<ExternalPractitionerDetail>
 	{
 		public ExternalPractitionerDetail(
 			EntityRef practitionerRef,
@@ -94,5 +94,26 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public bool Deactivated;
+
+		public bool Equals(ExternalPractitionerDetail detail)
+		{
+			if (detail == null)
+				return false;
+
+			return Equals(this.PractitionerRef, detail.PractitionerRef);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(this, obj)) 
+				return true;
+
+			return Equals(obj as ExternalPractitionerDetail);
+		}
+
+		public override int GetHashCode()
+		{
+			return this.PractitionerRef != null ? this.PractitionerRef.GetHashCode() : 0;
+		}
 	}
 }

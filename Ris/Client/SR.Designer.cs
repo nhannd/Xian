@@ -79,6 +79,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Active.
+        /// </summary>
+        internal static string ColumnActive {
+            get {
+                return ResourceManager.GetString("ColumnActive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Address.
         /// </summary>
         internal static string ColumnAddress {
@@ -246,6 +255,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string ColumnDateOfBirth {
             get {
                 return ResourceManager.GetString("ColumnDateOfBirth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default.
+        /// </summary>
+        internal static string ColumnDefault {
+            get {
+                return ResourceManager.GetString("ColumnDefault", resourceCulture);
             }
         }
         
@@ -1618,6 +1636,51 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The following orders have recipients that reference deactivated contact points.  Please choose an active contact point..
+        /// </summary>
+        internal static string MessageInstructionAffectedOrders {
+            get {
+                return ResourceManager.GetString("MessageInstructionAffectedOrders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click on the dropdown to resolve conflicted properties..
+        /// </summary>
+        internal static string MessageInstructionMergeProperties {
+            get {
+                return ResourceManager.GetString("MessageInstructionMergeProperties", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is no conflict..
+        /// </summary>
+        internal static string MessageInstructionNoPropertyConflict {
+            get {
+                return ResourceManager.GetString("MessageInstructionNoPropertyConflict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose active contact points and a default contact point..
+        /// </summary>
+        internal static string MessageInstructionSelectContactPoints {
+            get {
+                return ResourceManager.GetString("MessageInstructionSelectContactPoints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select a duplicate practitioner from the list below:.
+        /// </summary>
+        internal static string MessageInstructionSelectDuplicate {
+            get {
+                return ResourceManager.GetString("MessageInstructionSelectDuplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The value entered is not a valid date.
         /// </summary>
         internal static string MessageInvalidDateFormat {
@@ -1812,6 +1875,51 @@ namespace ClearCanvas.Ris.Client {
         internal static string MessageUnscheduled {
             get {
                 return ResourceManager.GetString("MessageUnscheduled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Must have at least one active contact point.
+        /// </summary>
+        internal static string MessageValidationAtLeastOneActiveContactPoint {
+            get {
+                return ResourceManager.GetString("MessageValidationAtLeastOneActiveContactPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The default contact point must be active.
+        /// </summary>
+        internal static string MessageValidationDefaultContactPointMustBeActive {
+            get {
+                return ResourceManager.GetString("MessageValidationDefaultContactPointMustBeActive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Must have exactly one default contact point.
+        /// </summary>
+        internal static string MessageValidationMustHaveOneDefaultContactPoint {
+            get {
+                return ResourceManager.GetString("MessageValidationMustHaveOneDefaultContactPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Must specify all replacement contact points.
+        /// </summary>
+        internal static string MessageValidationMustSpecifyActiveContactPoint {
+            get {
+                return ResourceManager.GetString("MessageValidationMustSpecifyActiveContactPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Must select at least one practitioner.
+        /// </summary>
+        internal static string MessageValidationSelectDuplicate {
+            get {
+                return ResourceManager.GetString("MessageValidationSelectDuplicate", resourceCulture);
             }
         }
         

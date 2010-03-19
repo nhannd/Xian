@@ -47,17 +47,22 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_component = component;
 			InitializeComponent();
 
+			_instruction.DataBindings.Add("Text", _component, "Instruction", true, DataSourceUpdateMode.OnPropertyChanged);
+
 			_name.DataSource = _component.NameChoices;
 			_name.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
+			_name.DataBindings.Add("Enabled", _component, "NameEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 			_name.Format += delegate(object sender, ListControlConvertEventArgs e) { e.Value = _component.FormatName(e.ListItem); };
 
 			_licenseNumber.DataSource = _component.LicenseNumberChoices;
 			_licenseNumber.DataBindings.Add("Value", _component, "LicenseNumber", true, DataSourceUpdateMode.OnPropertyChanged);
+			_licenseNumber.DataBindings.Add("Enabled", _component, "LicenseNumberEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_billingNumber.DataSource = _component.BillingNumberChoices;
 			_billingNumber.DataBindings.Add("Value", _component, "BillingNumber", true, DataSourceUpdateMode.OnPropertyChanged);
+			_billingNumber.DataBindings.Add("Enabled", _component, "BillingNumberEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_properties.Reload(_component.ExtendedPropertyChoices);
+			_extendedProperties.Reload(_component.ExtendedPropertyChoices);
 
 			_component.AllPropertiesChanged += OnAllPropertiesChanged;
 			_component.SaveRequested += OnSaveRequested;
@@ -65,7 +70,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 		private void OnSaveRequested(object sender, System.EventArgs e)
 		{
-			_component.ExtendedProperties = _properties.CurrentValues;
+			_component.ExtendedProperties = _extendedProperties.CurrentValues;
 		}
 
 		private void OnAllPropertiesChanged(object sender, System.EventArgs e)
@@ -73,7 +78,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_name.DataSource = _component.NameChoices;
 			_licenseNumber.DataSource = _component.LicenseNumberChoices;
 			_billingNumber.DataSource = _component.BillingNumberChoices;
-			_properties.Reload(_component.ExtendedPropertyChoices);
+			_extendedProperties.Reload(_component.ExtendedPropertyChoices);
 		}
 	}
 }

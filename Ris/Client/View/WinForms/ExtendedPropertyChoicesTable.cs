@@ -4,6 +4,9 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
+	/// <summary>
+	/// Defines a custom table that allows user to choose a list of value for each property.
+	/// </summary>
 	public class ExtendedPropertyChoicesTable : TableLayoutPanel
 	{
 		private static class ControlFactory
@@ -25,6 +28,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 				var control = new ComboBox {Name = controlName, Dock = DockStyle.Fill, DropDownStyle = ComboBoxStyle.DropDownList };
 				control.Items.AddRange(valueChoices.ToArray());
 				control.SelectedItem = defaultValue;
+				control.Enabled = valueChoices.Count > 1 && defaultValue != null;
 				return control;
 			}
 		}
@@ -33,11 +37,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private const int ColumnValue = 1;
 		private const float DefaultHeight = 25F;
 
-		private readonly Dictionary<ExtendedPropertyRowData, Control> _propertiesMap;
+		private readonly Dictionary<ExtendedPropertyChoicesTableData, Control> _propertiesMap;
 
 		public ExtendedPropertyChoicesTable()
 		{
-			_propertiesMap = new Dictionary<ExtendedPropertyRowData, Control>();
+			_propertiesMap = new Dictionary<ExtendedPropertyChoicesTableData, Control>();
 		}
 
 		#region Public Methods & Properties
@@ -59,7 +63,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		/// Refresh the properties table.
 		/// </summary>
 		/// <param name="properties"></param>
-		public void Reload(List<ExtendedPropertyRowData> properties)
+		public void Reload(List<ExtendedPropertyChoicesTableData> properties)
 		{
 			// Redrawing controls one at a time will take time.  Set it to invisible first
 			this.Visible = false;
@@ -70,8 +74,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_propertiesMap.Clear();
 
 			// Add header and all the rows for each property
-			AddHeaderRow();
 			CollectionUtils.ForEach(properties, AddRow);
+
+			this.RowStyles[0].Height = DefaultHeight;
 
 			// Make this table visible again.
 			this.Visible = true;
@@ -86,7 +91,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			{
 				var currentValues = new Dictionary<string, string>();
 				CollectionUtils.ForEach(_propertiesMap,
-					delegate(KeyValuePair<ExtendedPropertyRowData, Control> kvp)
+					delegate(KeyValuePair<ExtendedPropertyChoicesTableData, Control> kvp)
 						{
 							var selectedItemText = kvp.Value.Text;
 							currentValues.Add(kvp.Key.PropertyName, selectedItemText);
@@ -100,25 +105,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 		#region Private Helpers
 
-		private void AddHeaderRow()
-		{
-			const int row = 0;
-
-			var fieldControlName = GetControlName("Property", "Header");
-			var fieldControl = ControlFactory.CreateLabelControl(fieldControlName, "Property");
-			this.Controls.Add(fieldControl, ColumnProperty, row);
-
-			var valueControlName = GetControlName("Value", "Header");
-			var valueControl = ControlFactory.CreateLabelControl(valueControlName, "Value");
-			this.Controls.Add(valueControl, ColumnValue, row);
-
-			this.RowStyles[row].Height = DefaultHeight;
-
-			if (this.RowCount == 1)
-				this.RowCount++;
-		}
-
-		private void AddRow(ExtendedPropertyRowData property)
+		private void AddRow(ExtendedPropertyChoicesTableData property)
 		{
 			var row = this.RowCount - 1;
 

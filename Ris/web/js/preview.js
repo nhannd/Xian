@@ -2153,7 +2153,7 @@ Preview.ExternalPractitionerSummary = function() {
 			htmlTable.rowCycleClassNames = ["row0", "row1"];
 			htmlTable.bindItems(propertyArray);
 			
-			Preview.SectionContainer.create(htmlTable, "Additional Info");
+			Preview.SectionContainer.create(htmlTable, "Additional Properties");
 		}
 
 	var _createContactPointTable = function(element, externalPractitionerSummary)

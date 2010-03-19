@@ -96,7 +96,6 @@
     <Compile Include="ExternalPractitionerMergeAffectedOrdersComponent.cs" />
     <Compile Include="ExternalPractitionerMergeNavigatorComponent.cs" />
     <Compile Include="ExternalPractitionerMergePropertiesComponent.cs" />
-    <Compile Include="ExternalPractitionerMergeSelectDefaultContactPointComponent.cs" />
     <Compile Include="ExternalPractitionerMergeSelectedContactPointsComponent.cs" />
     <Compile Include="ExternalPractitionerMergeSelectedDuplicateComponent.cs" />
     <Compile Include="ExternalPractitionerOverviewComponent.cs" />

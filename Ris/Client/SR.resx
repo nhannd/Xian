@@ -996,4 +996,40 @@
   <data name="MessageNever" xml:space="preserve">
     <value>never</value>
   </data>
+  <data name="ColumnActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="ColumnDefault" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="MessageInstructionAffectedOrders" xml:space="preserve">
+    <value>The following orders have recipients that reference deactivated contact points.  Please choose an active contact point.</value>
+  </data>
+  <data name="MessageInstructionMergeProperties" xml:space="preserve">
+    <value>Click on the dropdown to resolve conflicted properties.</value>
+  </data>
+  <data name="MessageInstructionNoPropertyConflict" xml:space="preserve">
+    <value>There is no conflict.</value>
+  </data>
+  <data name="MessageInstructionSelectContactPoints" xml:space="preserve">
+    <value>Choose active contact points and a default contact point.</value>
+  </data>
+  <data name="MessageInstructionSelectDuplicate" xml:space="preserve">
+    <value>Select a duplicate practitioner from the list below:</value>
+  </data>
+  <data name="MessageValidationAtLeastOneActiveContactPoint" xml:space="preserve">
+    <value>Must have at least one active contact point</value>
+  </data>
+  <data name="MessageValidationDefaultContactPointMustBeActive" xml:space="preserve">
+    <value>The default contact point must be active</value>
+  </data>
+  <data name="MessageValidationMustHaveOneDefaultContactPoint" xml:space="preserve">
+    <value>Must have exactly one default contact point</value>
+  </data>
+  <data name="MessageValidationMustSpecifyActiveContactPoint" xml:space="preserve">
+    <value>Must specify all replacement contact points</value>
+  </data>
+  <data name="MessageValidationSelectDuplicate" xml:space="preserve">
+    <value>Must select at least one practitioner</value>
+  </data>
 </root>

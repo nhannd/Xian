@@ -37,6 +37,7 @@ using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -58,23 +59,23 @@ namespace ClearCanvas.Ris.Client
 		{
 			public ExternalPractitionerTable()
 			{
-				this.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>("Name",
-					prac => prac.Name.ToString(),
+				this.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnName,
+					prac => PersonNameFormat.Format(prac.Name),
 					0.5f));
 
-				this.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>("License #",
+				this.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnLicenseNumber,
 					prac => prac.LicenseNumber,
-					0.5f));
+					0.25f));
 
-				this.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>("Billing #",
+				this.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnBillingNumber,
 					prac => prac.BillingNumber,
-					0.5f));
+					0.25f));
 			}
 		}
 
 		private readonly ExternalPractitionerTable _table;
+		private ExternalPractitionerDetail _originalPractitioner;
 		private ExternalPractitionerSummary _selectedItem;
-		private EntityRef _originalPractitionerRef;
 
 		public ExternalPractitionerMergeSelectedDuplicateComponent()
 		{
@@ -83,27 +84,28 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
+			// Must select at least one practitioner
 			this.Validation.Add(new ValidationRule("SummarySelection",
-				component => new ValidationResult(_selectedItem != null, "Must select at least one practitioner")));
+				component => new ValidationResult(_selectedItem != null, SR.MessageValidationSelectDuplicate)));
 
 			base.Start();
 		}
 
-		public EntityRef PractitionerRef
+		public ExternalPractitionerDetail OriginalPractitioner
 		{
-			get { return _originalPractitionerRef; }
+			get { return _originalPractitioner; }
 			set
 			{
-				if (value != null && _originalPractitionerRef != null && _originalPractitionerRef.Equals(value, true))
+				if (_originalPractitioner != null && _originalPractitioner.Equals(value))
 					return;
 
-				if (Equals(_originalPractitionerRef, value))
-					return;
+				_originalPractitioner = value;
 
-				_originalPractitionerRef = value;
-
-				var duplicates = LoadDuplicates(_originalPractitionerRef);
 				_table.Items.Clear();
+				if (_originalPractitioner == null)
+					return;
+
+				var duplicates = LoadDuplicates(_originalPractitioner.PractitionerRef);
 				_table.Items.AddRange(duplicates);
 			}
 		}
@@ -114,6 +116,26 @@ namespace ClearCanvas.Ris.Client
 
 		#region Presentation Models
 
+		public string Name
+		{
+			get { return _originalPractitioner == null ? null : PersonNameFormat.Format(_originalPractitioner.Name); }
+		}
+
+		public string LicenseNumber
+		{
+			get { return _originalPractitioner == null ? null : _originalPractitioner.LicenseNumber; }
+		}
+
+		public string BillingNumber
+		{
+			get { return _originalPractitioner == null ? null : _originalPractitioner.BillingNumber; }
+		}
+
+		public string Instruction
+		{
+			get { return SR.MessageInstructionSelectDuplicate; }
+		}
+
 		public ITable PractitionerTable
 		{
 			get { return _table; }
@@ -121,10 +143,7 @@ namespace ClearCanvas.Ris.Client
 
 		public ISelection SummarySelection
 		{
-			get
-			{
-				return new Selection(_selectedItem);
-			}
+			get { return new Selection(_selectedItem); }
 			set
 			{
 				var previousSelection = new Selection(_selectedItem);
@@ -147,7 +166,7 @@ namespace ClearCanvas.Ris.Client
 				Platform.GetService(
 					delegate(IExternalPractitionerAdminService service)
 					{
-						var request = new LoadMergeExternalPractitionerFormDataRequest() { PractitionerRef = practitionerRef };
+						var request = new LoadMergeExternalPractitionerFormDataRequest { PractitionerRef = practitionerRef };
 						var response = service.LoadMergeExternalPractitionerFormData(request);
 
 						duplicates = response.Duplicates;

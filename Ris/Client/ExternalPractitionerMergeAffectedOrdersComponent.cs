@@ -113,15 +113,16 @@ namespace ClearCanvas.Ris.Client
 					return null;
 
 				var cp = (ExternalPractitionerContactPointDetail)item;
-				return cp.Name;
+				return cp.IsDefaultContactPoint ? string.Format("{0} (Default)", cp.Name) : cp.Name;
 			}
 		}
 
 		private readonly AffectedOrdersTable _table;
-		private ExternalPractitionerContactPointDetail _defaultContactPoint;
+		private readonly Dictionary<EntityRef, EntityRef> _contactPointReplacementMap;
+
+		private AffectedOrderTableItem _selectedItem;
 		private List<ExternalPractitionerContactPointDetail> _activeContactPoints;
 		private List<ExternalPractitionerContactPointDetail> _deactivatedContactPoints;
-		private Dictionary<EntityRef, EntityRef> _contactPointReplacementMap;
 
 		public ExternalPractitionerMergeAffectedOrdersComponent()
 		{
@@ -131,16 +132,10 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
-			this.Validation.Add(new ValidationRule("AffectedOrderTable",
-				component => new ValidationResult(!_table.HasUnspecifiedContactPoints, "Must specify all replacement contact points")));
+			this.Validation.Add(new ValidationRule("SummarySelection",
+				component => new ValidationResult(!_table.HasUnspecifiedContactPoints, SR.MessageValidationMustSpecifyActiveContactPoint)));
 
 			base.Start();
-		}
-
-		public ExternalPractitionerContactPointDetail DefaultContactPoint
-		{
-			get { return _defaultContactPoint; }
-			set { _defaultContactPoint = value; }
 		}
 
 		public List<ExternalPractitionerContactPointDetail> ActiveContactPoints
@@ -170,9 +165,20 @@ namespace ClearCanvas.Ris.Client
 
 		#region Presentation Models
 
+		public string Instruction
+		{
+			get { return SR.MessageInstructionAffectedOrders; }
+		}
+
 		public ITable AffectedOrderTable
 		{
 			get { return _table; }
+		}
+
+		public ISelection SummarySelection
+		{
+			get { return new Selection(_selectedItem); }
+			set { _selectedItem = (AffectedOrderTableItem)value.Item; }
 		}
 
 		#endregion
@@ -199,7 +205,7 @@ namespace ClearCanvas.Ris.Client
 						{
 							Order = order,
 							Recipient = recipient,
-							SelectedContactPoint = GetSelectedContactPoint(recipient.ContactPoint)
+							SelectedContactPoint = GetDefaultSelection(recipient.ContactPoint)
 						};
 
 					_table.Items.Add(tableItem);
@@ -217,7 +223,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		private ExternalPractitionerContactPointDetail GetSelectedContactPoint(ExternalPractitionerContactPointDetail original)
+		private ExternalPractitionerContactPointDetail GetDefaultSelection(ExternalPractitionerContactPointDetail original)
 		{
 			if (_contactPointReplacementMap.ContainsKey(original.ContactPointRef))
 			{
@@ -228,8 +234,12 @@ namespace ClearCanvas.Ris.Client
 					return previousSelection;
 			}
 
+			// Nothing was selected before.
 			// Default to the first element if there is only one to choose from.
-			return _activeContactPoints.Count == 1 ? CollectionUtils.FirstElement(_activeContactPoints) : null;
+			// Otherwise use the default contact point.
+			return _activeContactPoints.Count == 1 
+				? CollectionUtils.FirstElement(_activeContactPoints) 
+				: CollectionUtils.SelectFirst(_activeContactPoints, cp => cp.IsDefaultContactPoint);
 		}
 
 		private static List<OrderDetail> LoadAffectedOrders(List<EntityRef> deactivatedContactPointRefs)

@@ -195,13 +195,6 @@
       <DependentUpon>ExternalPractitionerMergePropertiesComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ExternalPractitionerMergePropertiesComponentView.cs" />
-    <Compile Include="ExternalPractitionerMergeSelectDefaultContactPointComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ExternalPractitionerMergeSelectDefaultContactPointComponentControl.Designer.cs">
-      <DependentUpon>ExternalPractitionerMergeSelectDefaultContactPointComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ExternalPractitionerMergeSelectDefaultContactPointComponentView.cs" />
     <Compile Include="ExternalPractitionerMergeSelectedContactPointsComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -750,9 +743,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ExternalPractitionerMergePropertiesComponentControl.resx">
       <DependentUpon>ExternalPractitionerMergePropertiesComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ExternalPractitionerMergeSelectDefaultContactPointComponentControl.resx">
-      <DependentUpon>ExternalPractitionerMergeSelectDefaultContactPointComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ExternalPractitionerMergeSelectedContactPointsComponentControl.resx">
       <DependentUpon>ExternalPractitionerMergeSelectedContactPointsComponentControl.cs</DependentUpon>
