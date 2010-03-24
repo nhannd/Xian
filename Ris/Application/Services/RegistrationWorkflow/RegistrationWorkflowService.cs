@@ -31,95 +31,83 @@
 
 using System.Collections.Generic;
 using System.Security.Permissions;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Healthcare.Workflow;
 using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
-using System.Threading;
+using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
-    [ServiceImplementsContract(typeof(IRegistrationWorkflowService))]
-    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    public class RegistrationWorkflowService : WorkflowServiceBase, IRegistrationWorkflowService
-    {
-        #region IRegistrationWorkflowService Members
+	[ServiceImplementsContract(typeof(IRegistrationWorkflowService))]
+	[ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+	public class RegistrationWorkflowService : WorkflowServiceBase, IRegistrationWorkflowService
+	{
+		#region IRegistrationWorkflowService Members
 
-        [ReadOperation]
-        public TextQueryResponse<RegistrationWorklistItem> SearchWorklists(WorklistItemTextQueryRequest request)
-        {
-            RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
-            IRegistrationWorklistItemBroker broker = PersistenceContext.GetBroker<IRegistrationWorklistItemBroker>();
+		[ReadOperation]
+		public TextQueryResponse<RegistrationWorklistItem> SearchWorklists(WorklistItemTextQueryRequest request)
+		{
+			var assembler = new RegistrationWorkflowAssembler();
+			var broker = this.PersistenceContext.GetBroker<IRegistrationWorklistItemBroker>();
 
-			return SearchHelper<WorklistItem, RegistrationWorklistItem>(request, broker,
-						 delegate(WorklistItem item)
-						 {
-							 return assembler.CreateWorklistItemSummary(item, PersistenceContext);
-						 });
+			return SearchHelper(request, broker, item => assembler.CreateWorklistItemSummary(item, PersistenceContext));
 		}
 
-        [ReadOperation]
-        public TextQueryResponse<PatientProfileSummary> PatientProfileTextQuery(TextQueryRequest request)
-        {
-            ProfileTextQueryHelper helper = new ProfileTextQueryHelper(this.PersistenceContext);
-            return helper.Query(request);
-        }
+		[ReadOperation]
+		public TextQueryResponse<PatientProfileSummary> PatientProfileTextQuery(TextQueryRequest request)
+		{
+			var helper = new ProfileTextQueryHelper(this.PersistenceContext);
+			return helper.Query(request);
+		}
 
-        [ReadOperation]
-        public QueryWorklistResponse<RegistrationWorklistItem> QueryWorklist(QueryWorklistRequest request)
-        {
-            RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
+		[ReadOperation]
+		public QueryWorklistResponse<RegistrationWorklistItem> QueryWorklist(QueryWorklistRequest request)
+		{
+			var assembler = new RegistrationWorkflowAssembler();
 
-            return QueryWorklistHelper<WorklistItem, RegistrationWorklistItem>(request,
-                delegate(WorklistItem item)
-                {
-                    return assembler.CreateWorklistItemSummary(item, this.PersistenceContext);
-                });
-        }
+			return QueryWorklistHelper<WorklistItem, RegistrationWorklistItem>(
+				request,
+				item => assembler.CreateWorklistItemSummary(item, this.PersistenceContext));
+		}
 
-        [ReadOperation]
-        public ListProceduresForCheckInResponse ListProceduresForCheckIn(ListProceduresForCheckInRequest request)
-        {
-        	List<Procedure> proceduresNotCheckedIn = GetProceduresEligibleForCheckIn(request.OrderRef);
+		[ReadOperation]
+		public ListProceduresForCheckInResponse ListProceduresForCheckIn(ListProceduresForCheckInRequest request)
+		{
+			var proceduresNotCheckedIn = GetProceduresEligibleForCheckIn(request.OrderRef);
 
-            ProcedureAssembler assembler = new ProcedureAssembler();
-            return new ListProceduresForCheckInResponse(
-                CollectionUtils.Map<Procedure, ProcedureSummary, List<ProcedureSummary>>(
-                    proceduresNotCheckedIn,
-                    delegate(Procedure rp)
-                    {
-                        return assembler.CreateProcedureSummary(rp, this.PersistenceContext);
-                    }));
-        }
+			var assembler = new ProcedureAssembler();
+			return new ListProceduresForCheckInResponse(
+				CollectionUtils.Map<Procedure, ProcedureSummary, List<ProcedureSummary>>(
+					proceduresNotCheckedIn,
+					procedure => assembler.CreateProcedureSummary(procedure, this.PersistenceContext)));
+		}
 
-        [UpdateOperation]
-        [OperationEnablement("CanCheckInProcedure")]
+		[UpdateOperation]
+		[OperationEnablement("CanCheckInProcedure")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Procedure.CheckIn)]
 		public CheckInProcedureResponse CheckInProcedure(CheckInProcedureRequest request)
-        {
-            IProcedureBroker broker = PersistenceContext.GetBroker<IProcedureBroker>();
-            Operations.CheckIn op = new Operations.CheckIn();
-            foreach (EntityRef rpRef in request.Procedures)
-            {
-                Procedure rp = broker.Load(rpRef, EntityLoadFlags.CheckVersion);
-                op.Execute(rp, this.CurrentUserStaff, request.CheckInTime, new PersistentWorkflow(this.PersistenceContext));
+		{
+			var broker = PersistenceContext.GetBroker<IProcedureBroker>();
+			var op = new Operations.CheckIn();
+			foreach (var procedureRef in request.Procedures)
+			{
+				var procedure = broker.Load(procedureRef, EntityLoadFlags.CheckVersion);
+				op.Execute(procedure, this.CurrentUserStaff, request.CheckInTime, new PersistentWorkflow(this.PersistenceContext));
 
-				CreateLogicalHL7Event(rp.Order, LogicalHL7EventType.OrderModified);
-            }
+				CreateLogicalHL7Event(procedure.Order, LogicalHL7EventType.OrderModified);
+			}
 
+			return new CheckInProcedureResponse();
+		}
 
-
-            return new CheckInProcedureResponse();
-        }
-
-        #endregion
+		#endregion
 
 		protected override object GetWorkItemKey(object item)
 		{
@@ -127,28 +115,26 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			return summary == null ? null : new WorklistItemKey(summary.OrderRef, summary.PatientProfileRef);
 		}
 
-        public bool CanCheckInProcedure(WorklistItemKey itemKey)
-        {
+		public bool CanCheckInProcedure(WorklistItemKey itemKey)
+		{
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Procedure.CheckIn))
 				return false;
 
 			// the worklist item may represent a patient without an order,
-            // in which case there are no procedures to check-in
-            if(itemKey.OrderRef == null)
-                return false;
+			// in which case there are no procedures to check-in
+			if (itemKey.OrderRef == null)
+				return false;
 
-        	return GetProceduresEligibleForCheckIn(itemKey.OrderRef).Count > 0;
-        }
+			return GetProceduresEligibleForCheckIn(itemKey.OrderRef).Count > 0;
+		}
 
 		private List<Procedure> GetProceduresEligibleForCheckIn(EntityRef orderRef)
 		{
-			Order order = PersistenceContext.Load<Order>(orderRef, EntityLoadFlags.Proxy);
-			return CollectionUtils.Select(order.Procedures,
-						delegate(Procedure p)
-						{
-							return p.ProcedureCheckIn.IsPreCheckIn 
-                                && !p.IsTerminated; // bug 3415: procedure must not be cancelled or completed
-						});
+			var order = this.PersistenceContext.Load<Order>(orderRef, EntityLoadFlags.Proxy);
+
+			return CollectionUtils.Select(
+				order.Procedures, 
+				p => p.ProcedureCheckIn.IsPreCheckIn && !p.IsTerminated);
 		}
-    }
+	}
 }
