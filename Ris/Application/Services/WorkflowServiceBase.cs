@@ -216,11 +216,18 @@ namespace ClearCanvas.Ris.Application.Services
 			if (new LogicalHL7EventSettings().LogicalHL7EventsEnabled)
 			{
 				var logicalEvent = LogicalHL7EventWorkQueueItem.CreateOrderLogicalEvent(type, order);
-				PersistenceContext.Lock(logicalEvent.Item, DirtyState.New);
+				this.PersistenceContext.Lock(logicalEvent.Item, DirtyState.New);
 			}
 		}
 
-
+		protected void CreateLogicalHL7Event(Procedure procedure, string type)
+		{
+			if (new LogicalHL7EventSettings().LogicalHL7EventsEnabled)
+			{
+				var logicalEvent = LogicalHL7EventWorkQueueItem.CreateProcedureLogicalEvent(type, procedure);
+				this.PersistenceContext.Lock(logicalEvent.Item, DirtyState.New);
+			}
+		}
 
 		#endregion
 

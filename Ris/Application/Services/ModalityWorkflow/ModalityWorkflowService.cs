@@ -176,6 +176,11 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 			{
 				var op = new DiscontinueModalityProcedureStepOperation();
 				op.Execute(step, request.DiscontinuedTime, new PersistentWorkflow(this.PersistenceContext));
+
+				// If discontinuing the procedure step caused the parent procedure to be discontinued,
+				// create an HL7 event.
+				if (step.Procedure.IsTerminated)
+					CreateLogicalHL7Event(step.Procedure, LogicalHL7EventType.OrderCancelled);
 			}
 
 			this.PersistenceContext.SynchState();
@@ -239,6 +244,15 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 
 			this.PersistenceContext.SynchState();
 
+			// If discontinuing the MPPS caused any associated procedures to be discontinued,
+			// create an HL7 event.
+			foreach (var activity in mpps.Activities)
+			{
+				var procedure = activity.As<ProcedureStep>().Procedure;
+				if(procedure.IsTerminated)
+					CreateLogicalHL7Event(procedure, LogicalHL7EventType.OrderCancelled);
+			}
+	
 			// Drill back to order so we can refresh procedure plan
 			var order = CollectionUtils.FirstElement(mpps.Activities).As<ProcedureStep>().Procedure.Order;
 

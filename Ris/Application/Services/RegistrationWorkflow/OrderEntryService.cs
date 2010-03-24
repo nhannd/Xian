@@ -227,8 +227,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 			this.PersistenceContext.SynchState();
 
-			CreateLogicalHL7Event(order, LogicalHL7EventType.OrderModified);
-
 			var orderAssembler = new OrderAssembler();
 			return new ModifyOrderResponse(orderAssembler.CreateOrderSummary(order, this.PersistenceContext));
 		}
@@ -569,32 +567,38 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				var requestedType = this.PersistenceContext.Load<ProcedureType>(req.ProcedureType.ProcedureTypeRef);
 
 				// create a new procedure for this requisition
-				var rp = new Procedure(requestedType) { DowntimeRecoveryMode = isDowntime };
-				order.AddProcedure(rp);
+				var procedure = new Procedure(requestedType) { DowntimeRecoveryMode = isDowntime };
+				order.AddProcedure(procedure);
 
 				// note: need to lock the new procedure now, prior to creating the procedure steps
 				// otherwise may get exceptions saying the Procedure is a transient object
-				this.PersistenceContext.Lock(rp, DirtyState.New);
+				this.PersistenceContext.Lock(procedure, DirtyState.New);
 
 				// create the procedure steps
-				rp.CreateProcedureSteps();
+				procedure.CreateProcedureSteps();
 
 				// apply the requisition information to the actual procedure
-				assembler.UpdateProcedureFromRequisition(rp, req, this.PersistenceContext);
+				assembler.UpdateProcedureFromRequisition(procedure, req, this.PersistenceContext);
+
+				CreateLogicalHL7Event(procedure, LogicalHL7EventType.OrderCreated);
 			}
 
 			// process updates
 			foreach (var req in existingReqs)
 			{
 				var requestedType = this.PersistenceContext.Load<ProcedureType>(req.ProcedureType.ProcedureTypeRef);
-				var rp = CollectionUtils.SelectFirst(order.Procedures, x => req.ProcedureIndex == x.Index);
+				var procedure = CollectionUtils.SelectFirst(order.Procedures, x => req.ProcedureIndex == x.Index);
 
 				// validate that the type has not changed
-				if (!rp.Type.Equals(requestedType))
+				if (!procedure.Type.Equals(requestedType))
 					throw new RequestValidationException("Order modification must not modify the type of a requested procedure.");
 
 				// apply the requisition information to the actual procedure
-				assembler.UpdateProcedureFromRequisition(rp, req, this.PersistenceContext);
+				assembler.UpdateProcedureFromRequisition(procedure, req, this.PersistenceContext);
+
+				CreateLogicalHL7Event(
+					procedure,
+					req.Cancelled ? LogicalHL7EventType.OrderCancelled : LogicalHL7EventType.OrderModified);
 			}
 		}
 	}
