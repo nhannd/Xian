@@ -169,7 +169,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 
 		public override DragDropKind CanAcceptDrop(object dropData, DragDropKind dragDropKind)
 		{
-			if (dropData is AbstractActionModelTreeNode)
+			if (dropData is AbstractActionModelTreeNode && !(dropData is AbstractActionModelTreeBranch))
 			{
 				AbstractActionModelTreeNode droppedNode = (AbstractActionModelTreeNode) dropData;
 				if (dragDropKind == DragDropKind.Move)
@@ -186,7 +186,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 
 		public override DragDropKind AcceptDrop(object dropData, DragDropKind dragDropKind)
 		{
-			if (dropData is AbstractActionModelTreeNode)
+			if (dropData is AbstractActionModelTreeNode && !(dropData is AbstractActionModelTreeBranch))
 			{
 				AbstractActionModelTreeNode droppedNode = (AbstractActionModelTreeNode) dropData;
 				if (dragDropKind == DragDropKind.Move)
