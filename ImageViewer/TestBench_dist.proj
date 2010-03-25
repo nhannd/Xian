@@ -25,6 +25,7 @@
     <ImageViewerPluginFiles Include="$(TrunkDirectory)\Oto\Ide\View\WinForms\bin\$(Configuration)\ClearCanvas.Oto.Ide.View.WinForms.dll" />
     <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Oto\bin\$(Configuration)\ClearCanvas.ImageViewer.Oto.dll" />
     <ImageViewerPluginFiles Include="$(TrunkDirectory)\Dicom\DataStore\SetupApplication\bin\$(Configuration)\ClearCanvas.Dicom.DataStore.SetupApplication.dll" />
+    <ImageViewerPluginFiles Include="$(TrunkDirectory)\Utilities\bin\$(Configuration)\ClearCanvas.Utilities.dll" />
   </ItemGroup>
 
   <ItemGroup Condition="$(DesktopBuild)">
