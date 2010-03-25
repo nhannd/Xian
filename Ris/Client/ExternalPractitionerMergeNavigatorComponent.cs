@@ -128,6 +128,7 @@ namespace ClearCanvas.Ris.Client
 				_mergedPractitioner.PractitionerRef = _originalPractitionerRef;
 				_mergePropertiesComponent.Save(_mergedPractitioner);
 				_selectContactPointsComponent.Save(_mergedPractitioner);
+				_affectedOrdersComponent.Save();
 				_confirmationComponent.PractitionerDetail = _mergedPractitioner;
 
 				// The accept is enabled only on the very last page.

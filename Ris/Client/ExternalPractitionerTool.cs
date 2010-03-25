@@ -4,7 +4,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -77,8 +76,11 @@ namespace ClearCanvas.Ris.Client
 			var item = CollectionUtils.FirstElement(this.Context.SelectedItems);
 
 			var editor = new ExternalPractitionerMergeNavigatorComponent(item.PractitionerRef);
-			var exitCode = ApplicationComponent.LaunchAsDialog(
-				this.Context.DesktopWindow, editor, SR.TitleMergePractitioner + " - " + Formatting.PersonNameFormat.Format(item.Name));
+
+			var title = SR.TitleMergePractitioner + " - " + Formatting.PersonNameFormat.Format(item.Name);
+			var creationArg = new DialogBoxCreationArgs(editor, title, null, DialogSizeHint.Large);
+
+			var exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, creationArg);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				DocumentManager.InvalidateFolder(typeof(VerifiedTodayFolder));

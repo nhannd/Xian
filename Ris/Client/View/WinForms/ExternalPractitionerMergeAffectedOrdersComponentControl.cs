@@ -52,8 +52,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 			_instruction.DataBindings.Add("Text", _component, "Instruction", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_table.Table = _component.AffectedOrderTable;
-			_table.DataBindings.Add("Selection", _component, "SummarySelection", true, DataSourceUpdateMode.OnPropertyChanged);
+			_table.Items.AddRange(_component.AffectedOrderTableItems);
+			_component.AllPropertiesChanged += OnAllPropertiesChanged;
+		}
+
+		private void OnAllPropertiesChanged(object sender, System.EventArgs e)
+		{
+			_table.Items.Clear();
+			_table.Items.AddRange(_component.AffectedOrderTableItems);
 		}
 	}
 }

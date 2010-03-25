@@ -29,17 +29,15 @@
 
 #endregion
 
-using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Desktop.Validation;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
+using AffectedOrderRecipientSummary = ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin.MergeExternalPractitionerRequest.AffectedOrderRecipientSummary;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -57,85 +55,29 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(ExternalPractitionerMergeAffectedOrdersComponentViewExtensionPoint))]
 	public class ExternalPractitionerMergeAffectedOrdersComponent : ApplicationComponent
 	{
-		private class AffectedOrderTableItem
-		{
-			public OrderDetail Order;
+		private readonly List<ExternalPractitionerMergeAffectedOrderTableItem> _affectedOrderTableItems;
+		private readonly Dictionary<AffectedOrderRecipientSummary, EntityRef> _contactPointReplacementMap;
 
-			public ResultRecipientDetail Recipient;
-
-			public string Role
-			{
-				get { return this.Recipient.Practitioner.PractitionerRef.Equals(this.Order.OrderingPractitioner.PractitionerRef, false)  ? "Ordering" : "Copies To"; }
-			}
-
-			public ExternalPractitionerContactPointDetail SelectedContactPoint;
-		}
-
-		private class AffectedOrdersTable : Table<AffectedOrderTableItem>
-		{
-			private readonly ExternalPractitionerMergeAffectedOrdersComponent _owner;
-
-			public AffectedOrdersTable(ExternalPractitionerMergeAffectedOrdersComponent owner)
-			{
-				_owner = owner;
-
-				this.Columns.Add(new TableColumn<AffectedOrderTableItem, string>("Acc #", item => item.Order.AccessionNumber, 0.5f));
-				this.Columns.Add(new TableColumn<AffectedOrderTableItem, string>("Practitioner", item => PersonNameFormat.Format(item.Recipient.Practitioner.Name), 1.0f));
-				this.Columns.Add(new TableColumn<AffectedOrderTableItem, string>("Role", item => item.Role, 1.0f));
-				this.Columns.Add(new TableColumn<AffectedOrderTableItem, string>("Deactivated Contact Point", item => FormatItem(item.Recipient.ContactPoint), 1.0f));
-
-				var contactPointChoiceColumn = new TableColumn<AffectedOrderTableItem, ExternalPractitionerContactPointDetail>(
-					"Active Contact Points",
-					item => item.SelectedContactPoint,
-					(x, value) => x.SelectedContactPoint = value,
-					2.0f)
-				{
-					ValueFormatter = FormatItem,
-					CellEditor = new ComboBoxCellEditor(GetChoices, FormatItem)
-				};
-
-				this.Columns.Add(contactPointChoiceColumn);
-			}
-
-			public bool HasUnspecifiedContactPoints
-			{
-				get { return CollectionUtils.Contains(this.Items, item => item.SelectedContactPoint == null); }
-			}
-
-			private IList GetChoices()
-			{
-				return _owner.ActiveContactPoints;
-			}
-
-			private static string FormatItem(object item)
-			{
-				if (item == null)
-					return null;
-
-				var cp = (ExternalPractitionerContactPointDetail)item;
-				return cp.IsDefaultContactPoint ? string.Format("{0} (Default)", cp.Name) : cp.Name;
-			}
-		}
-
-		private readonly AffectedOrdersTable _table;
-		private readonly Dictionary<EntityRef, EntityRef> _contactPointReplacementMap;
-
-		private AffectedOrderTableItem _selectedItem;
 		private List<ExternalPractitionerContactPointDetail> _activeContactPoints;
 		private List<ExternalPractitionerContactPointDetail> _deactivatedContactPoints;
 
 		public ExternalPractitionerMergeAffectedOrdersComponent()
 		{
-			_table = new AffectedOrdersTable(this);
-			_contactPointReplacementMap = new Dictionary<EntityRef, EntityRef>();
+			_affectedOrderTableItems = new List<ExternalPractitionerMergeAffectedOrderTableItem>();
+			_contactPointReplacementMap = new Dictionary<AffectedOrderRecipientSummary, EntityRef>();
 		}
 
 		public override void Start()
 		{
 			this.Validation.Add(new ValidationRule("SummarySelection",
-				component => new ValidationResult(!_table.HasUnspecifiedContactPoints, SR.MessageValidationMustSpecifyActiveContactPoint)));
+				component => new ValidationResult(!this.HasUnspecifiedContactPoints, SR.MessageValidationMustSpecifyActiveContactPoint)));
 
 			base.Start();
+		}
+
+		public void Save()
+		{
+			UpdateRecipientReplacementMap();
 		}
 
 		public List<ExternalPractitionerContactPointDetail> ActiveContactPoints
@@ -150,17 +92,22 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_deactivatedContactPoints = value;
-				UpdateTable();
+				UpdateAffectedOrderTableItems();
 			}
 		}
 
-		public Dictionary<EntityRef, EntityRef> ContactPointReplacementMap
+		public Dictionary<AffectedOrderRecipientSummary, EntityRef> ContactPointReplacementMap
 		{
 			get
 			{
-				UpdateContactReplacementMap();
+				UpdateRecipientReplacementMap();
 				return _contactPointReplacementMap;
 			}
+		}
+
+		public bool HasUnspecifiedContactPoints
+		{
+			get { return CollectionUtils.Contains(_affectedOrderTableItems, item => item.SelectedContactPoint == null); }
 		}
 
 		#region Presentation Models
@@ -170,73 +117,77 @@ namespace ClearCanvas.Ris.Client
 			get { return SR.MessageInstructionAffectedOrders; }
 		}
 
-		public ITable AffectedOrderTable
+		public List<ExternalPractitionerMergeAffectedOrderTableItem> AffectedOrderTableItems
 		{
-			get { return _table; }
-		}
-
-		public ISelection SummarySelection
-		{
-			get { return new Selection(_selectedItem); }
-			set { _selectedItem = (AffectedOrderTableItem)value.Item; }
+			get { return _affectedOrderTableItems; }
 		}
 
 		#endregion
 
-		private void UpdateTable()
+		private void UpdateAffectedOrderTableItems()
 		{
 			var deactivatedContactPointRefs = CollectionUtils.Map<ExternalPractitionerContactPointDetail, EntityRef>(_deactivatedContactPoints, cp => cp.ContactPointRef);
 			var affectedOrders = LoadAffectedOrders(deactivatedContactPointRefs);
 
-			UpdateContactReplacementMap();
+			UpdateRecipientReplacementMap();
 
-			_table.Items.Clear();
-			foreach (var order in affectedOrders)
-			{
-				foreach (var r in order.ResultRecipients)
-				{
-					var recipient = r;
-					var recipientFound = CollectionUtils.Contains(deactivatedContactPointRefs, cpRef => cpRef.Equals(recipient.ContactPoint.ContactPointRef, false));
+			// From each affected recipient in each affected order, build AffectedOrderTableItem
+			_affectedOrderTableItems.Clear();
+			CollectionUtils.ForEach(affectedOrders, order => 
+				CollectionUtils.ForEach(order.ResultRecipients,
+					delegate(ResultRecipientDetail recipient)
+					{
+						var recipientFound = CollectionUtils.Contains(deactivatedContactPointRefs,
+							cpRef => cpRef.Equals(recipient.ContactPoint.ContactPointRef, false));
 
-					if (!recipientFound)
-						continue;
+						if (!recipientFound)
+							return;
 
-					var tableItem = new AffectedOrderTableItem
-						{
-							Order = order,
-							Recipient = recipient,
-							SelectedContactPoint = GetDefaultSelection(recipient.ContactPoint)
-						};
+						var tableItem = new ExternalPractitionerMergeAffectedOrderTableItem(order, recipient, ShowOrderPreview, ShowPractitionerPreview)
+							{
+								SelectedContactPoint = GetDefaultOrPreviousSelection(order, recipient),
+								ContactPointChoices = this.ActiveContactPoints
+							};
 
-					_table.Items.Add(tableItem);
-				}
-			}
+						_affectedOrderTableItems.Add(tableItem);
+					}));
+
+			NotifyAllPropertiesChanged();
 		}
 
-		private void UpdateContactReplacementMap()
+		private void UpdateRecipientReplacementMap()
 		{
 			_contactPointReplacementMap.Clear();
-			foreach (var item in _table.Items)
+			foreach (var item in _affectedOrderTableItems)
 			{
-				if (item.SelectedContactPoint != null)
-					_contactPointReplacementMap.Add(item.Recipient.ContactPoint.ContactPointRef, item.SelectedContactPoint.ContactPointRef);
+				if (item.SelectedContactPoint == null)
+					continue;
+
+				var affectedOrderRecipientSummary = new AffectedOrderRecipientSummary(item.Order.OrderRef, item.Recipient.ContactPoint.ContactPointRef);
+				_contactPointReplacementMap[affectedOrderRecipientSummary] = item.SelectedContactPoint.ContactPointRef;
 			}
 		}
 
-		private ExternalPractitionerContactPointDetail GetDefaultSelection(ExternalPractitionerContactPointDetail original)
+		private ExternalPractitionerContactPointDetail GetDefaultOrPreviousSelection(OrderDetail order, ResultRecipientDetail recipient)
 		{
-			if (_contactPointReplacementMap.ContainsKey(original.ContactPointRef))
-			{
-				var previousContactPointSelectionRef = _contactPointReplacementMap[original.ContactPointRef];
+			// Find out which contact point was picked previously
+			EntityRef previousContactPointSelectionRef = null;
+			CollectionUtils.ForEach(_contactPointReplacementMap.Keys, key =>
+					{
+						if (key.Equals(order.OrderRef, recipient.ContactPoint.ContactPointRef, true))
+							previousContactPointSelectionRef = _contactPointReplacementMap[key];
+					});
 
-				var previousSelection = CollectionUtils.SelectFirst(_activeContactPoints, cp => cp.ContactPointRef.Equals(previousContactPointSelectionRef));
+			// Find out if the previous picked contact point exist in the list of contact point showing.
+			if (previousContactPointSelectionRef != null)
+			{
+				var previousSelection = CollectionUtils.SelectFirst(_activeContactPoints, cp => cp.ContactPointRef.Equals(previousContactPointSelectionRef, true));
 				if (previousSelection != null)
 					return previousSelection;
 			}
 
-			// Nothing was selected before.
-			// Default to the first element if there is only one to choose from.
-			// Otherwise use the default contact point.
+			// If not, either nothing was selected before or the previous contact point is no longer available.
+			// Default to the first element if there is only one to choose from.  Otherwise use the default contact point.
 			return _activeContactPoints.Count == 1 
 				? CollectionUtils.FirstElement(_activeContactPoints) 
 				: CollectionUtils.SelectFirst(_activeContactPoints, cp => cp.IsDefaultContactPoint);
@@ -259,6 +210,18 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			return affectedOrders;
+		}
+
+		private void ShowOrderPreview(OrderDetail order)
+		{
+			var component = new BiographyOrderDetailViewComponent(order.OrderRef);
+			LaunchAsDialog(this.Host.DesktopWindow, component, "Order");
+		}
+
+		private void ShowPractitionerPreview(ExternalPractitionerSummary practitioner)
+		{
+			var component = new ExternalPractitionerOverviewComponent {PractitionerSummary = practitioner};
+			LaunchAsDialog(this.Host.DesktopWindow, component, "Practitioner");
 		}
 	}
 }

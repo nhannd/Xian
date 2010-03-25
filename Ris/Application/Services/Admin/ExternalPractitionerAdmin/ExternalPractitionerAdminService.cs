@@ -42,6 +42,7 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using AffectedOrderRecipientSummary = ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin.MergeExternalPractitionerRequest.AffectedOrderRecipientSummary;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 {
@@ -360,18 +361,16 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			// Change reference of result recipient to the new contact point
 			var contactPointBroker = PersistenceContext.GetBroker<IExternalPractitionerContactPointBroker>();
 			CollectionUtils.ForEach(request.ContactPointReplacements,
-				delegate(KeyValuePair<EntityRef, EntityRef> kvp)
+				delegate(KeyValuePair<AffectedOrderRecipientSummary, EntityRef> kvp)
 					{
-						var oldCP = PersistenceContext.Load<ExternalPractitionerContactPoint>(kvp.Key);
+						var affectedOrder = PersistenceContext.Load<Order>(kvp.Key.OrderRef);
 						var newCP = PersistenceContext.Load<ExternalPractitionerContactPoint>(kvp.Value);
 
-						CollectionUtils.ForEach(contactPointBroker.GetRelatedOrders(oldCP),
-							o => CollectionUtils.ForEach(o.ResultRecipients,
-								delegate(ResultRecipient rr)
+						CollectionUtils.ForEach(affectedOrder.ResultRecipients, rr =>
 								{
-									if (rr.PractitionerContactPoint == oldCP)
+									if (rr.PractitionerContactPoint.GetRef().Equals(kvp.Key.ContactPointRef, true))
 										rr.PractitionerContactPoint = newCP;
-								}));
+								});
 					});
 
 			// Update the original

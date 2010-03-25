@@ -164,6 +164,16 @@
       <DependentUpon>ComboBoxCellEditorControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ComboBoxCellEditorView.cs" />
+    <Compile Include="DynamicCustomControlTable.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="DynamicTableCommonControlFactory.cs" />
+    <Compile Include="ExternalPractitionerMergeAffectedOrderCustomControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ExternalPractitionerMergeAffectedOrderCustomControl.Designer.cs">
+      <DependentUpon>ExternalPractitionerMergeAffectedOrderCustomControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="ExternalPractitionerContactPointDetailsEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -737,6 +747,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ComboBoxCellEditorControl.resx">
       <DependentUpon>ComboBoxCellEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExternalPractitionerMergeAffectedOrderCustomControl.resx">
+      <DependentUpon>ExternalPractitionerMergeAffectedOrderCustomControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ExternalPractitionerMergeAffectedOrdersComponentControl.resx">
       <DependentUpon>ExternalPractitionerMergeAffectedOrdersComponentControl.cs</DependentUpon>

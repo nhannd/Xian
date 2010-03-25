@@ -59,29 +59,18 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			this._table = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._instruction = new System.Windows.Forms.Label();
+			this._table = new ClearCanvas.Ris.Client.View.WinForms.ExternalPractitionerMergeAffectedOrderDynamicTable();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// _table
-			// 
-			this._table.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._table.Location = new System.Drawing.Point(4, 34);
-			this._table.Margin = new System.Windows.Forms.Padding(4);
-			this._table.Name = "_table";
-			this._table.ReadOnly = false;
-			this._table.ShowToolbar = false;
-			this._table.Size = new System.Drawing.Size(427, 262);
-			this._table.TabIndex = 5;
 			// 
 			// tableLayoutPanel1
 			// 
 			this.tableLayoutPanel1.ColumnCount = 1;
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Controls.Add(this._table, 0, 1);
 			this.tableLayoutPanel1.Controls.Add(this._instruction, 0, 0);
+			this.tableLayoutPanel1.Controls.Add(this._table, 0, 1);
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -104,6 +93,20 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 				"lease choose an active contact point.";
 			this._instruction.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
+			// _table
+			// 
+			this._table.AutoScroll = true;
+			this._table.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Inset;
+			this._table.ColumnCount = 1;
+			this._table.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._table.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._table.Location = new System.Drawing.Point(3, 33);
+			this._table.Name = "_table";
+			this._table.RowCount = 1;
+			this._table.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._table.Size = new System.Drawing.Size(429, 264);
+			this._table.TabIndex = 7;
+			// 
 			// ExternalPractitionerMergeAffectedOrdersComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -119,8 +122,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         #endregion
 
-		private ClearCanvas.Desktop.View.WinForms.TableView _table;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 		private System.Windows.Forms.Label _instruction;
+		private ExternalPractitionerMergeAffectedOrderDynamicTable _table;
     }
 }

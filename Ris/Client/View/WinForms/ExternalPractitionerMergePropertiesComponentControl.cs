@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_billingNumber.DataBindings.Add("Value", _component, "BillingNumber", true, DataSourceUpdateMode.OnPropertyChanged);
 			_billingNumber.DataBindings.Add("Enabled", _component, "BillingNumberEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_extendedProperties.Reload(_component.ExtendedPropertyChoices);
+			_extendedProperties.Items.AddRange(_component.ExtendedPropertyChoices);
 
 			_component.AllPropertiesChanged += OnAllPropertiesChanged;
 			_component.SaveRequested += OnSaveRequested;
@@ -78,7 +78,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_name.DataSource = _component.NameChoices;
 			_licenseNumber.DataSource = _component.LicenseNumberChoices;
 			_billingNumber.DataSource = _component.BillingNumberChoices;
-			_extendedProperties.Reload(_component.ExtendedPropertyChoices);
+
+			_extendedProperties.Items.Clear();
+			_extendedProperties.Items.AddRange(_component.ExtendedPropertyChoices);
 		}
 	}
 }

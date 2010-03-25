@@ -94,6 +94,7 @@
     <Compile Include="ExternalPractitionerFolders.cs" />
     <Compile Include="ExternalPractitionerFolderSystem.cs" />
     <Compile Include="ExternalPractitionerMergeAffectedOrdersComponent.cs" />
+    <Compile Include="ExternalPractitionerMergeAffectedOrderTableItem.cs" />
     <Compile Include="ExternalPractitionerMergeNavigatorComponent.cs" />
     <Compile Include="ExternalPractitionerMergePropertiesComponent.cs" />
     <Compile Include="ExternalPractitionerMergeSelectedContactPointsComponent.cs" />

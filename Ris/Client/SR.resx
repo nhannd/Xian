@@ -1009,13 +1009,13 @@
     <value>Click on the dropdown to resolve conflicted properties.</value>
   </data>
   <data name="MessageInstructionNoPropertyConflict" xml:space="preserve">
-    <value>There is no conflict.</value>
+    <value>There is no conflicting property.</value>
   </data>
   <data name="MessageInstructionSelectContactPoints" xml:space="preserve">
-    <value>Choose active contact points and a default contact point.</value>
+    <value>Select active contact points and a default contact point:</value>
   </data>
   <data name="MessageInstructionSelectDuplicate" xml:space="preserve">
-    <value>Select a duplicate practitioner from the list below:</value>
+    <value>Select a practitioner to merge with:</value>
   </data>
   <data name="MessageValidationAtLeastOneActiveContactPoint" xml:space="preserve">
     <value>Must have at least one active contact point</value>
@@ -1031,5 +1031,32 @@
   </data>
   <data name="MessageValidationSelectDuplicate" xml:space="preserve">
     <value>Must select at least one practitioner</value>
+  </data>
+  <data name="ColumnEmail" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="ColumnFax" xml:space="preserve">
+    <value>Fax</value>
+  </data>
+  <data name="ColumnPhone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="FormatAddress" xml:space="preserve">
+    <value>Address: {0}</value>
+  </data>
+  <data name="FormatEmail" xml:space="preserve">
+    <value>Email: {0}</value>
+  </data>
+  <data name="FormatFax" xml:space="preserve">
+    <value>Fax: {0}</value>
+  </data>
+  <data name="FormatPhone" xml:space="preserve">
+    <value>Phone: {0}</value>
+  </data>
+  <data name="LabelCopiesTo" xml:space="preserve">
+    <value>Copies to</value>
+  </data>
+  <data name="LabelOrderedBy" xml:space="preserve">
+    <value>Ordered by</value>
   </data>
 </root>

@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -36,7 +37,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Ris.Application.Common;
-using System;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -56,21 +57,53 @@ namespace ClearCanvas.Ris.Client
 	{
 		private class ExternalPractitionerContactPointTable : Table<ExternalPractitionerContactPointDetail>
 		{
+			private const int NumRows = 5;
+			private const int PhoneRow = 1;
+			private const int FaxRow = 2;
+			private const int AddressRow = 3;
+			private const int EmailRow = 4;
+
 			private event EventHandler _tableModified;
 
 			public ExternalPractitionerContactPointTable()
+				: base(NumRows)
 			{
-				this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, bool>(SR.ColumnActive,
-					cp => !cp.Deactivated, SetDeactivatedStatus, 0.15f));
+				var activeColumn = new TableColumn<ExternalPractitionerContactPointDetail, bool>(SR.ColumnActive,
+					cp => !cp.Deactivated, SetDeactivatedStatus, 0.1f);
 
-				this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, bool>(SR.ColumnDefault,
-					cp => cp.IsDefaultContactPoint, MakeDefaultContactPoint, 0.15f));
+				var defaultColumn = new TableColumn<ExternalPractitionerContactPointDetail, bool>(SR.ColumnDefault,
+					cp => cp.IsDefaultContactPoint, MakeDefaultContactPoint, 0.1f);
 
-				this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>(SR.ColumnName, 
-					cp => cp.Name, 0.5f));
+				var nameColumn = new TableColumn<ExternalPractitionerContactPointDetail, string>(SR.ColumnName,
+					cp => cp.Name, 0.4f);
 
-				this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>(SR.ColumnDescription, 
-					cp => cp.Description, 0.5f));
+				var descriptionColumn = new TableColumn<ExternalPractitionerContactPointDetail, string>(SR.ColumnDescription,
+					cp => cp.Description, 0.4f);
+
+				var phoneColumn = new TableColumn<ExternalPractitionerContactPointDetail, string>(SR.ColumnPhone,
+					cp => string.Format(SR.FormatPhone, cp.CurrentPhoneNumber == null ? "" : TelephoneFormat.Format(cp.CurrentPhoneNumber)),
+					1.0f, PhoneRow);
+
+				var faxColumn = new TableColumn<ExternalPractitionerContactPointDetail, string>(SR.ColumnFax,
+					cp => string.Format(SR.FormatFax, cp.CurrentFaxNumber == null ? "" : TelephoneFormat.Format(cp.CurrentFaxNumber)),
+					1.0f, FaxRow);
+
+				var addressColumn = new TableColumn<ExternalPractitionerContactPointDetail, string>(SR.ColumnAddress,
+					cp => string.Format(SR.FormatAddress, cp.CurrentAddress == null ? "" : AddressFormat.Format(cp.CurrentAddress)),
+					1.0f, AddressRow);
+
+				var emailColumn = new TableColumn<ExternalPractitionerContactPointDetail, string>(SR.ColumnEmail,
+					cp => string.Format(SR.FormatEmail, cp.CurrentEmailAddress == null ? "" : cp.CurrentEmailAddress.Address),
+					1.0f, EmailRow);
+
+				this.Columns.Add(activeColumn);
+				this.Columns.Add(defaultColumn);
+				this.Columns.Add(nameColumn);
+				this.Columns.Add(descriptionColumn);
+				this.Columns.Add(phoneColumn);
+				this.Columns.Add(faxColumn);
+				this.Columns.Add(addressColumn);
+				this.Columns.Add(emailColumn);
 			}
 
 			public event EventHandler TableModified

@@ -57,19 +57,25 @@ namespace ClearCanvas.Ris.Client
 	{
 		private class ExternalPractitionerTable : Table<ExternalPractitionerSummary>
 		{
-			public ExternalPractitionerTable()
+			private readonly ExternalPractitionerMergeSelectedDuplicateComponent _owner;
+
+			public ExternalPractitionerTable(ExternalPractitionerMergeSelectedDuplicateComponent owner)
 			{
-				this.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnName,
-					prac => PersonNameFormat.Format(prac.Name),
-					0.5f));
+				_owner = owner;
 
-				this.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnLicenseNumber,
-					prac => prac.LicenseNumber,
-					0.25f));
+				var nameColumn = new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnName,
+					prac => PersonNameFormat.Format(prac.Name), 0.5f)
+					{ ClickLinkDelegate = _owner.LaunchSelectedPractitionerPreview };
 
-				this.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnBillingNumber,
-					prac => prac.BillingNumber,
-					0.25f));
+				var licenseColumn = new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnLicenseNumber,
+					prac => prac.LicenseNumber, 0.25f);
+
+				var billingColumn = new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnBillingNumber,
+					prac => prac.BillingNumber, 0.25f);
+
+				this.Columns.Add(nameColumn);
+				this.Columns.Add(licenseColumn);
+				this.Columns.Add(billingColumn);
 			}
 		}
 
@@ -79,7 +85,7 @@ namespace ClearCanvas.Ris.Client
 
 		public ExternalPractitionerMergeSelectedDuplicateComponent()
 		{
-			_table = new ExternalPractitionerTable();
+			_table = new ExternalPractitionerTable(this);
 		}
 
 		public override void Start()
@@ -174,6 +180,12 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			return duplicates;
+		}
+
+		private void LaunchSelectedPractitionerPreview(object practitioner)
+		{
+			var component = new ExternalPractitionerOverviewComponent { PractitionerSummary = (ExternalPractitionerSummary) practitioner };
+			LaunchAsDialog(this.Host.DesktopWindow, component, SR.TitlePractitioner);
 		}
 	}
 }

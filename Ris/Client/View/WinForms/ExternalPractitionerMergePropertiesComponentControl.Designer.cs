@@ -143,7 +143,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._extendedProperties.Location = new System.Drawing.Point(3, 83);
 			this._extendedProperties.Name = "_extendedProperties";
 			this._extendedProperties.RowCount = 1;
-			this._extendedProperties.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 277F));
+			this._extendedProperties.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._extendedProperties.Size = new System.Drawing.Size(444, 214);
 			this._extendedProperties.TabIndex = 3;
 			// 
