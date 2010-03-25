@@ -99,6 +99,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Toolbar.
+        /// </summary>
+        internal static string LabelToolbar {
+            get {
+                return ResourceManager.GetString("LabelToolbar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add server.
         /// </summary>
         internal static string MenuAddServer {
@@ -113,6 +122,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         internal static string MenuAddServerGroup {
             get {
                 return ResourceManager.GetString("MenuAddServerGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Customize.
+        /// </summary>
+        internal static string MenuCustomize {
+            get {
+                return ResourceManager.GetString("MenuCustomize", resourceCulture);
             }
         }
         
@@ -284,6 +302,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         internal static string TitleAddServerGroup {
             get {
                 return ResourceManager.GetString("TitleAddServerGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Customize Action Models.
+        /// </summary>
+        internal static string TitleCustomizeActionModels {
+            get {
+                return ResourceManager.GetString("TitleCustomizeActionModels", resourceCulture);
             }
         }
         

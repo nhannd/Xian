@@ -131,11 +131,17 @@ Each server must have a unique Name and cannot have the same AE Title, Host and 
     <value>The Server Group '{0}' conflicts with '{1}'.
 Please choose another Server Group Name.</value>
   </data>
+  <data name="LabelToolbar" xml:space="preserve">
+    <value>Toolbar</value>
+  </data>
   <data name="MenuAddServer" xml:space="preserve">
     <value>Add server</value>
   </data>
   <data name="MenuAddServerGroup" xml:space="preserve">
     <value>Add server group</value>
+  </data>
+  <data name="MenuCustomize" xml:space="preserve">
+    <value>Customize</value>
   </data>
   <data name="MenuDelete" xml:space="preserve">
     <value>Delete</value>
@@ -193,6 +199,9 @@ Please choose another Server Group Name.</value>
   </data>
   <data name="TitleAddServerGroup" xml:space="preserve">
     <value>Add New Server Group</value>
+  </data>
+  <data name="TitleCustomizeActionModels" xml:space="preserve">
+    <value>Customize Action Models</value>
   </data>
   <data name="TitleEditServer" xml:space="preserve">
     <value>Edit Server</value>
