@@ -205,6 +205,17 @@ namespace ClearCanvas.Desktop.Actions
         }
 
 		/// <summary>
+		/// Performs an in-order traversal of this model and returns the leaf nodes as an array.
+		/// </summary>
+		/// <returns>An array of leaf <see cref="ActionModelNode"/>s.</returns>
+		internal ActionModelNode[] GetLeafNodesInOrder()
+		{
+			List<ActionModelNode> leafNodes = new List<ActionModelNode>();
+			GetLeafNodesInOrder(leafNodes);
+			return leafNodes.ToArray();
+		}
+
+		/// <summary>
 		/// Traverses the specified path, inserting <see cref="BranchNode"/>s as necessary, until the end of the path
 		/// is reached, at which point the <paramref name="leafNodeProvider"/> is called to provide a leaf node to insert.
 		/// </summary>
@@ -268,5 +279,19 @@ namespace ClearCanvas.Desktop.Actions
             }
         }
 
+		private void GetLeafNodesInOrder(List<ActionModelNode> leafNodes)
+		{
+			if (this is ActionNode || this is SeparatorNode)
+			{
+				leafNodes.Add(this);
+			}
+			else
+			{
+				foreach (ActionModelNode child in _childNodes)
+				{
+					child.GetLeafNodesInOrder(leafNodes);
+				}
+			}
+		}
     }
 }

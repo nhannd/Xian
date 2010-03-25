@@ -63,6 +63,13 @@
       <DependentUpon>CloseHelperComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CloseHelperComponentView.cs" />
+    <Compile Include="Configuration\ActionModelConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Configuration\ActionModelConfigurationComponentControl.Designer.cs">
+      <DependentUpon>ActionModelConfigurationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\ActionModelConfigurationComponentView.cs" />
     <Compile Include="CustomTableCellEditControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -492,6 +499,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ClearFilterMini.png" />
+    <EmbeddedResource Include="Configuration\ActionModelConfigurationComponentControl.resx">
+      <DependentUpon>ActionModelConfigurationComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GalleryComponentControl.resx">
       <DependentUpon>GalleryComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>

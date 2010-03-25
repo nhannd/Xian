@@ -92,12 +92,12 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Defines the global menu action site.
         /// </summary>
-        protected const string GlobalMenus = "global-menus";
+        protected internal const string GlobalMenus = "global-menus";
 
         /// <summary>
         /// Defines the global toolbar action site.
         /// </summary>
-        protected const string GlobalToolbars = "global-toolbars";
+        protected internal const string GlobalToolbars = "global-toolbars";
 
         private Application _application;
         private WorkspaceCollection _workspaces;
@@ -413,7 +413,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Gets the tool set associated with this desktop window.
         /// </summary>
-        protected IToolSet DesktopTools
+        protected internal IToolSet DesktopTools
         {
             get { return _desktopTools; }
         }
@@ -421,7 +421,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Gets the current menu model.
         /// </summary>
-        protected ActionModelNode MenuModel
+        protected internal ActionModelNode MenuModel
         {
             get { return _menuModel; }
         }
@@ -429,7 +429,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Gets the current toolbar model.
         /// </summary>
-        protected ActionModelNode ToolbarModel
+        protected internal ActionModelNode ToolbarModel
         {
             get { return _toolbarModel; }
         }
@@ -437,7 +437,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Updates the view's title, menu and toolbars.
         /// </summary>
-        private void UpdateView()
+        internal void UpdateView()
         {
             if (this.DesktopWindowView != null)
             {

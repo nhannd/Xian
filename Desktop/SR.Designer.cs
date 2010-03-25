@@ -412,6 +412,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All Actions.
+        /// </summary>
+        public static string LabelAllActions {
+            get {
+                return ResourceManager.GetString("LabelAllActions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit.
         /// </summary>
         public static string LabelEdit {

@@ -234,6 +234,9 @@
   <data name="InvalidCustomDateFormat" xml:space="preserve">
     <value>The custom date format must be from the available list.</value>
   </data>
+  <data name="LabelAllActions" xml:space="preserve">
+    <value>All Actions</value>
+  </data>
   <data name="LabelEdit" xml:space="preserve">
     <value>Edit</value>
   </data>

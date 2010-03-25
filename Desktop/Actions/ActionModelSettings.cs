@@ -88,6 +88,123 @@ namespace ClearCanvas.Desktop.Actions
 			return modelRoot;
 		}
 
+		/// <summary>
+		/// Builds an in-memory abstract action model from the specified XML model and the specified set of known actions.
+		/// </summary>
+		/// <remarks>
+		/// This method functions similarly to <see cref="BuildAndSynchronize"/> except that the resulting action model
+		/// consists solely of <see cref="AbstractAction"/>s which cannot actually perform any actions on tools nor components.
+		/// Additionally, the action model is constructed for all the actions for which the XML model specifies, thus presenting
+		/// a complete action model suitable for action model configuration interfaces.
+		/// </remarks>
+		/// <param name="namespace">A namespace to qualify the site.</param>
+		/// <param name="site">The site.</param>
+		/// <param name="actions">The set of actions to include.</param>
+		/// <returns>An <see cref="ActionModelNode"/> representing the root of the action model.</returns>
+		public ActionModelRoot BuildAbstractActionModel(string @namespace, string site, IActionSet actions)
+		{
+			// do one time initialization
+			if (_actionModelXmlDoc == null)
+				Initialize();
+
+			string actionModelId = string.Format("{0}:{1}", @namespace, site);
+
+			IDictionary<string, IAction> actionMap = BuildActionMap(actions);
+
+			XmlElement xmlActionModel = FindXmlActionModel(actionModelId);
+			if (xmlActionModel != null)
+			{
+				List<XmlElement> childNodes = GetActionNodeList(xmlActionModel);
+				List<IAction> abstractActions = new List<IAction>(childNodes.Count);
+				foreach (XmlElement childElement in childNodes)
+				{
+					if (childElement.Name == "action")
+					{
+						string actionId = childElement.GetAttribute("id");
+						if (string.IsNullOrEmpty(actionId))
+						{
+							Platform.Log(LogLevel.Debug, "Invalid action model entry with null ID in /action-models/action-model[@id='{0}']", actionModelId);
+							continue;
+						}
+
+						try
+						{
+							if (actionMap.ContainsKey(actionId))
+							{
+								abstractActions.Add(AbstractAction.Create(actionMap[actionId]));
+							}
+							else
+							{
+								string actionPath = childElement.GetAttribute("path");
+								if (!string.IsNullOrEmpty(actionPath))
+									abstractActions.Add(AbstractAction.Create(actionId, actionPath, !string.IsNullOrEmpty(childElement.GetAttribute("keystroke"))));
+							}
+						}
+						catch (Exception ex)
+						{
+							Platform.Log(LogLevel.Debug, ex, "Invalid action model entry at /action-models/action-model[@id='{0}']/action[@id='{1}']", actionModelId, actionId);
+						}
+					}
+				}
+				actions = new ActionSet(abstractActions);
+				actionMap = BuildActionMap(actions);
+			}
+
+			return Build(site, xmlActionModel, actionMap);
+		}
+
+		/// <summary>
+		/// Persists an in-memory abstract action model to the XML model.
+		/// </summary>
+		/// <remarks>
+		/// This method functions as a counterpart to <see cref="BuildAbstractActionModel"/>. The specified abstract action model
+		/// (created by <see cref="BuildAbstractActionModel"/>, or potentially modified further) is flattened and its nodes
+		/// written out to the XML mode, replacing any existing model at the same qualified site. This allows action model
+		/// configuration interfaces to make changes to the action model.
+		/// </remarks>
+		/// <param name="namespace">A namespace to qualify the site.</param>
+		/// <param name="site">The site.</param>
+		/// <param name="abstractActionModel">The abstract action model to be persisted.</param>
+		/// <returns>An <see cref="ActionModelNode"/> representing the root of the action model.</returns>
+		public void PersistAbstractActionModel(string @namespace, string site, ActionModelRoot abstractActionModel)
+		{
+			// do one time initialization
+			if (_actionModelXmlDoc == null)
+				Initialize();
+
+			XmlElement separatorTemplate = _actionModelXmlDoc.CreateElement("separator");
+
+			string actionModelId = string.Format("{0}:{1}", @namespace, site);
+
+			XmlElement xmlActionModel = FindXmlActionModel(actionModelId);
+			if (xmlActionModel != null)
+			{
+				// clear the action model
+				List<XmlNode> childrenToClear = CollectionUtils.Cast<XmlNode>(xmlActionModel.ChildNodes);
+				foreach (XmlNode childNode in childrenToClear)
+					xmlActionModel.RemoveChild(childNode);
+			}
+			else
+			{
+				// add a new action model
+				this.GetActionModelsNode().AppendChild(xmlActionModel = CreateXmlActionModel(actionModelId));
+			}
+
+			ActionModelNode[] leafNodes = abstractActionModel.GetLeafNodesInOrder();
+			for (int n = 0; n < leafNodes.Length; n++)
+			{
+				ActionModelNode leafNode = leafNodes[n];
+				if (leafNode is ActionNode)
+				{
+					xmlActionModel.AppendChild(CreateXmlAction(_actionModelXmlDoc, ((ActionNode) leafNode).Action));
+				}
+				else if (leafNode is SeparatorNode)
+				{
+					xmlActionModel.AppendChild(separatorTemplate.Clone());
+				}
+			}
+		}
+
 		public void Export(XmlWriter writer)
 		{
 			// do one time initialization
@@ -175,7 +292,7 @@ namespace ClearCanvas.Desktop.Actions
 		/// </summary>
 		/// <param name="actions">the set of actions from which to build a map</param>
 		/// <returns>a map of action IDs to actions</returns>
-		private IDictionary<string, IAction> BuildActionMap(IActionSet actions)
+		private static IDictionary<string, IAction> BuildActionMap(IActionSet actions)
 		{
 			Dictionary<string, IAction> actionMap = new Dictionary<string, IAction>();
 
@@ -205,9 +322,9 @@ namespace ClearCanvas.Desktop.Actions
 		/// </summary>
 		/// <param name="action">the action whose relevant properties are to be used to create the node</param>
 		/// <returns>an "action" element</returns>
-		private XmlElement CreateXmlAction(IAction action)
+		private static XmlElement CreateXmlAction(XmlDocument document, IAction action)
 		{
-			XmlElement xmlAction = _actionModelXmlDoc.CreateElement("action");
+			XmlElement xmlAction = document.CreateElement("action");
 
 			xmlAction.SetAttribute("id", action.ActionID);
 			xmlAction.SetAttribute("path", action.Path.ToString());
@@ -219,17 +336,18 @@ namespace ClearCanvas.Desktop.Actions
 			if (action is IClickAction)
 			{
 				IClickAction clickAction = (IClickAction) action;
-				xmlAction.SetAttribute("keystroke", clickAction.KeyStroke.ToString());
+				if (clickAction.KeyStroke != XKeys.None)
+					xmlAction.SetAttribute("keystroke", clickAction.KeyStroke.ToString());
 			}
 			
 			return xmlAction;
 		}
 
-		///// <summary>
-		///// Finds a stored model in the XML doc with the specified model ID.
-		///// </summary>
-		///// <param name="id">The model ID</param>
-		///// <returns>An "action-model" element, or null if not found</returns>
+		/// <summary>
+		/// Finds a stored model in the XML doc with the specified model ID.
+		/// </summary>
+		/// <param name="id">The model ID</param>
+		/// <returns>An "action-model" element, or null if not found</returns>
 		private XmlElement FindXmlActionModel(string id)
 		{
 			return (XmlElement)this.GetActionModelsNode().SelectSingleNode(String.Format("/action-models/action-model[@id='{0}']", id));
@@ -241,7 +359,7 @@ namespace ClearCanvas.Desktop.Actions
 		/// <param name="id">the id of the action to find</param>
 		/// <param name="xmlActionModel">the "action-model" node to search in</param>
 		/// <returns>the XmlElement of the action if found, otherwise null</returns>
-		private XmlElement FindXmlAction(string id, XmlElement xmlActionModel)
+		private static XmlElement FindXmlAction(string id, XmlElement xmlActionModel)
 		{
 			return (XmlElement)xmlActionModel.SelectSingleNode(String.Format("action[@id='{0}']", id));
 		}
@@ -275,7 +393,7 @@ namespace ClearCanvas.Desktop.Actions
 			{
 				if (action.Persistent)
 				{
-					if (AppendActionToXmlModel(xmlActionModel, action))
+					if (AppendActionToXmlModel(_actionModelXmlDoc, xmlActionModel, action))
 						changed = true;
 				}
 			}
@@ -291,7 +409,7 @@ namespace ClearCanvas.Desktop.Actions
 			foreach (IAction action in actionMap.Values)
 			{
 				if (!action.Persistent)
-					AppendActionToXmlModel(xmlActionModelClone, action);
+					AppendActionToXmlModel(_actionModelXmlDoc, xmlActionModelClone, action);
 			}
 
 			return xmlActionModelClone;
@@ -305,7 +423,7 @@ namespace ClearCanvas.Desktop.Actions
 		/// <param name="xmlActionModel">the "action-model" to validate</param>
 		/// <param name="actionMap">the set of actions against which to validate the "action-model"</param>
 		/// <returns>a boolean indicating whether anything was modified</returns>
-		private bool ValidateXmlActionModel(XmlElement xmlActionModel, IDictionary<string, IAction> actionMap)
+		private static bool ValidateXmlActionModel(XmlElement xmlActionModel, IDictionary<string, IAction> actionMap)
 		{
 			bool changed = false;
 
@@ -329,6 +447,21 @@ namespace ClearCanvas.Desktop.Actions
 			return changed;
 		}
 
+		/// <summary>
+		/// Gets an ordered list of <see cref="XmlElement"/> children of <paramref name="xmlActionModel"/>.
+		/// </summary>
+		private static List<XmlElement> GetActionNodeList(XmlElement xmlActionModel)
+		{
+			List<XmlElement> actionNodes = new List<XmlElement>();
+			for (int n = 0; n < xmlActionModel.ChildNodes.Count; n++)
+			{
+				XmlElement xmlElement = xmlActionModel.ChildNodes[n] as XmlElement;
+				if (xmlElement != null)
+					actionNodes.Add(xmlElement);
+			}
+			return actionNodes;
+		}
+
         /// <summary>
         /// Builds an in-memory action model from the specified XML model and the specified set of actions.
         /// The actions will be ordered according to the XML model.
@@ -337,10 +470,10 @@ namespace ClearCanvas.Desktop.Actions
         /// <param name="xmlActionModel">an XML "action-model" node</param>
         /// <param name="actions">the set of actions that the model should contain</param>
         /// <returns>an <see cref="ActionModelNode"/> representing the root of the action model</returns>
-		private ActionModelRoot Build(string site, XmlElement xmlActionModel, IDictionary<string, IAction> actions)
+		private static ActionModelRoot Build(string site, XmlElement xmlActionModel, IDictionary<string, IAction> actions)
         {
 			ActionModelRoot model = new ActionModelRoot(site);
-        	List<XmlElement> actionNodes = CollectionUtils.Cast<XmlElement>(xmlActionModel.ChildNodes);
+        	List<XmlElement> actionNodes = GetActionNodeList(xmlActionModel);
 
 			// process xml model, inserting actions in order
 			for (int i = 0; i < actionNodes.Count; i++)
@@ -354,33 +487,7 @@ namespace ClearCanvas.Desktop.Actions
 						IAction action = actions[actionID];
 
 						// update the action path from the xml
-						string path = xmlAction.GetAttribute("path");
-						string grouphint = xmlAction.GetAttribute("group-hint");
-
-						action.Path = new ActionPath(path, action.ResourceResolver);
-						action.GroupHint = new GroupHint(grouphint);
-
-						string availableValue = xmlAction.GetAttribute("available");
-						if (!string.IsNullOrEmpty(availableValue))
-						{
-							bool available;
-							if (bool.TryParse(availableValue, out available))
-								action.Available = available;
-						}
-						
-						if (action is IClickAction)
-						{
-							IClickAction clickAction = (IClickAction) action;
-							string keystrokeValue = xmlAction.GetAttribute("keystroke");
-							if (!string.IsNullOrEmpty(keystrokeValue))
-							{
-								try
-								{
-									clickAction.KeyStroke = (XKeys) Enum.Parse(typeof (XKeys), keystrokeValue);
-								}
-								catch (ArgumentException) {}
-							}
-						}
+						ProcessXmlAction(xmlAction, action);
 
 						// insert the action into the model
 						model.InsertAction(action);
@@ -388,25 +495,66 @@ namespace ClearCanvas.Desktop.Actions
 				}
 				else if (xmlAction.Name == "separator")
 				{
-                    ProcessSeparator(model, actionNodes, i, actions);
+                    Path separatorPath = ProcessSeparator(actionNodes, i, actions);
+
+					// insert separator into model
+					if (separatorPath != null)
+						model.InsertSeparator(separatorPath);
 				}
 			}
 
 			return model;
 		}
 
-        /// <summary>
+		/// <summary>
+		/// Processes an <paramref name="xmlAction"/> element in the XML model, deserializing the persisted values into the provided <paramref name="action"/>.
+		/// </summary>
+		private static void ProcessXmlAction(XmlElement xmlAction, IAction action)
+		{
+			string path = xmlAction.GetAttribute("path");
+			string grouphint = xmlAction.GetAttribute("group-hint");
+
+			action.Path = new ActionPath(path, action.ResourceResolver);
+			action.GroupHint = new GroupHint(grouphint);
+
+			bool available = true;
+			string availableValue = xmlAction.GetAttribute("available");
+			if (!string.IsNullOrEmpty(availableValue))
+			{
+				if (!bool.TryParse(availableValue, out available))
+					available = true;
+			}
+			action.Available = available;
+
+			if (action is IClickAction)
+			{
+				IClickAction clickAction = (IClickAction) action;
+
+				XKeys keyStroke = XKeys.None;
+				string keystrokeValue = xmlAction.GetAttribute("keystroke");
+				if (!string.IsNullOrEmpty(keystrokeValue))
+				{
+					try
+					{
+						keyStroke = (XKeys)Enum.Parse(typeof(XKeys), keystrokeValue);
+					}
+					catch (ArgumentException) {}
+				}
+				clickAction.KeyStroke = keyStroke;
+			}
+		}
+
+		/// <summary>
         /// Processes a separator node in the XML action model.
         /// </summary>
-        /// <param name="model"></param>
         /// <param name="actionNodes"></param>
         /// <param name="i"></param>
         /// <param name="actions"></param>
-        private void ProcessSeparator(ActionModelRoot model, IList<XmlElement> actionNodes, int i, IDictionary<string, IAction> actions)
+        private static Path ProcessSeparator(IList<XmlElement> actionNodes, int i, IDictionary<string, IAction> actions)
         {
             // a separator at the beginning or end of the list is not valid - ignore it
             if (i == 0 || i == actionNodes.Count - 1)
-                return;
+                return null;
 
             // get the actions appearing immediately before and after the separator
             XmlElement preXmlAction = actionNodes[i - 1];
@@ -426,7 +574,7 @@ namespace ClearCanvas.Desktop.Actions
             // if either could not be found, the separator can be ignored,
             // because it would be located at the edge of the menu/toolbar
             if (preXmlAction == null || postXmlAction == null)
-                return;
+                return null;
 
             // get the corresponding IActions, which are guaranteed to exist,
             // so that we can use their Resource resolvers to localize paths
@@ -437,19 +585,17 @@ namespace ClearCanvas.Desktop.Actions
             // then the separator can be ignored because it would be located at an edge
             if (!(new Path(preXmlAction.GetAttribute("path"), preAction.ResourceResolver)).
                 StartsWith(new Path(commonPath, preAction.ResourceResolver)))
-                return;
+                return null;
             if (!(new Path(postXmlAction.GetAttribute("path"), postAction.ResourceResolver)).
                 StartsWith(new Path(commonPath, postAction.ResourceResolver)))
-                return;
+                return null;
 
             // given that we now have both the common path and an appropriate resource resolver,
             // we can construct the separator path (using either the pre or post resource resolver),
             // appending a segment to represent the separator itself
-            Random random = new Random();
-            Path separatorPath = (new Path(commonPath, preAction.ResourceResolver)).Append(new Path(string.Format("_s{0}", random.Next())));
+            Path separatorPath = (new Path(commonPath, preAction.ResourceResolver)).Append(new Path(string.Format("_s{0}", i)));
 
-            // insert separator into model
-            model.InsertSeparator(separatorPath);
+			return separatorPath;
         }
 
         /// <summary>
@@ -458,7 +604,7 @@ namespace ClearCanvas.Desktop.Actions
         /// <param name="path1"></param>
         /// <param name="path2"></param>
         /// <returns></returns>
-        private string GetLongestCommonPath(string path1, string path2)
+        private static string GetLongestCommonPath(string path1, string path2)
         {
             return (new Path(StringUtilities.EmptyIfNull(path1))).GetCommonPath(new Path(StringUtilities.EmptyIfNull(path2))).ToString();
         }
@@ -471,7 +617,7 @@ namespace ClearCanvas.Desktop.Actions
         /// <param name="increment"></param>
         /// <param name="actions"></param>
         /// <returns></returns>
-        private XmlElement GetFirstExistingAdjacentAction(IList<XmlElement> actionNodes, int start, int increment,
+        private static XmlElement GetFirstExistingAdjacentAction(IList<XmlElement> actionNodes, int start, int increment,
             IDictionary<string, IAction> actions)
         {
             for (int i = start + increment; i >= 0 && i < actionNodes.Count; i += increment)
@@ -494,7 +640,7 @@ namespace ClearCanvas.Desktop.Actions
         /// <param name="xmlActionModel">the "action-model" node to insert an action into</param>
         /// <param name="action">the action to be inserted</param>
 		/// <returns>a boolean indicating whether anything was added/removed/modified</returns>
-        private bool AppendActionToXmlModel(XmlElement xmlActionModel, IAction action)
+        private static bool AppendActionToXmlModel(XmlDocument document, XmlElement xmlActionModel, IAction action)
         {
 			if (null != FindXmlAction(action.ActionID, xmlActionModel))
 				return false;
@@ -515,7 +661,7 @@ namespace ClearCanvas.Desktop.Actions
 				}
 			}
 						
-			XmlElement newXmlAction = CreateXmlAction(action);
+			XmlElement newXmlAction = CreateXmlAction(document, action);
 			
 			if (insertionPoint != null)
 				xmlActionModel.InsertAfter(newXmlAction, insertionPoint);
