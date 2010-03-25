@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -135,6 +136,11 @@ namespace ClearCanvas.ImageViewer.BaseTools
 				set { _assignedButton = value; }
 			}
 
+			private bool ShowMouseButtonIconOverlay
+			{
+				get { return MouseToolSettings.Default.ShowMouseButtonIconOverlay; }
+			}
+
 			/// <summary>
 			/// Gets an appropriate icon overlay to indicate the mouse button assigned to the associated tool.
 			/// </summary>
@@ -180,10 +186,12 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			/// <param name="iconSize">The size of the desired icon.</param>
 			/// <param name="resourceResolver">The resource resolver with which to resolve the requested icon resource.</param>
 			/// <returns>An <see cref="Image"/> constructed from the requested resource.</returns>
+			/// <exception cref="ArgumentNullException">Thrown if <paramref name="resourceResolver"/> is null.</exception>
+			/// <exception cref="ArgumentException">Thrown if <paramref name="resourceResolver"/> was unable to resolve the requested icon resource.</exception>
 			public override Image CreateIcon(IconSize iconSize, IResourceResolver resourceResolver)
 			{
 				Image iconBase = base.CreateIcon(iconSize, resourceResolver);
-				if (MouseToolSettings.Default.ShowMouseButtonIconOverlay)
+				if (this.ShowMouseButtonIconOverlay)
 				{
 					Image iconOverlay = GetButtonOverlay(iconSize);
 					if (iconOverlay != null)
@@ -196,6 +204,22 @@ namespace ClearCanvas.ImageViewer.BaseTools
 					}
 				}
 				return iconBase;
+			}
+
+			/// <summary>
+			/// Gets a string identifier that uniquely identifies the resolved icon, suitable for dictionary keying purposes.
+			/// </summary>
+			/// <param name="iconSize">The size of the desired icon.</param>
+			/// <param name="resourceResolver">The resource resolver with which to resolve the requested icon resource.</param>
+			/// <returns>A string identifier that uniquely identifies the resolved icon.</returns>
+			/// <exception cref="ArgumentNullException">Thrown if <paramref name="resourceResolver"/> is null.</exception>
+			/// <exception cref="ArgumentException">Thrown if <paramref name="resourceResolver"/> was unable to resolve the requested icon resource.</exception>
+			public override string GetIconKey(IconSize iconSize, IResourceResolver resourceResolver)
+			{
+				string baseIconKey = base.GetIconKey(iconSize, resourceResolver);
+				if (this.ShowMouseButtonIconOverlay)
+					return string.Format("{0}:{1}", baseIconKey, _assignedButton);
+				return baseIconKey;
 			}
 		}
 	}

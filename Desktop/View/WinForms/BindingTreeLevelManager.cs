@@ -45,19 +45,21 @@ namespace ClearCanvas.Desktop.View.WinForms
         private readonly ITree _tree;
         private readonly TreeNodeCollection _nodeCollection;
 		private readonly TreeView _treeView;
+		private readonly BindingTreeView _bindingTreeView;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="tree"></param>
         /// <param name="nodeCollection"></param>
-        /// <param name="treeView"></param>
-        public BindingTreeLevelManager(ITree tree, TreeNodeCollection nodeCollection, TreeView treeView)
+		/// <param name="bindingTreeView"></param>
+        public BindingTreeLevelManager(ITree tree, TreeNodeCollection nodeCollection, BindingTreeView bindingTreeView)
         {
             _tree = tree;
             _tree.Items.ItemsChanged += TreeItemsChangedEventHandler;
             _nodeCollection = nodeCollection;
-        	_treeView = treeView;
+        	_bindingTreeView = bindingTreeView;
+        	_treeView = _bindingTreeView.TreeView;
 
             BuildLevel();
         }
@@ -108,7 +110,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <param name="item"></param>
         private void AddNode(object item)
         {
-            _nodeCollection.Add(new BindingTreeNode(_tree, item, _treeView));
+			_nodeCollection.Add(new BindingTreeNode(_tree, item, _bindingTreeView));
         }
 
         /// <summary>
@@ -125,7 +127,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void InsertNode(int index, object item)
 		{
-			BindingTreeNode node = new BindingTreeNode(_tree, item, _treeView);
+			BindingTreeNode node = new BindingTreeNode(_tree, item, _bindingTreeView);
 			_nodeCollection.Insert(index, node);
 		}
 
@@ -157,7 +159,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// create new node for each item
             foreach (object item in _tree.Items)
             {
-                BindingTreeNode node = new BindingTreeNode(_tree, item, _treeView);
+				BindingTreeNode node = new BindingTreeNode(_tree, item, _bindingTreeView);
                 _nodeCollection.Add(node);
                 node.UpdateDisplay();
             }

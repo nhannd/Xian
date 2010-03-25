@@ -29,7 +29,10 @@
 
 #endregion
 
+using System;
 using System.Drawing;
+using System.Resources;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
@@ -107,15 +110,54 @@ namespace ClearCanvas.Desktop
         /// </summary>
         public string LargeIcon { get { return _large; } }
 
-		/// <summary>
-		/// Creates an icon using the specified icon resource and resource resolver.
-		/// </summary>
-		/// <param name="iconSize">The size of the desired icon.</param>
-		/// <param name="resourceResolver">The resource resolver with which to resolve the requested icon resource.</param>
-		/// <returns>An <see cref="Image"/> constructed from the requested resource.</returns>
-		public virtual Image CreateIcon(IconSize iconSize, IResourceResolver resourceResolver)
-		{
-			return new Bitmap(resourceResolver.OpenResource(this[iconSize]));
-		}
+    	/// <summary>
+    	/// Creates an icon using the specified icon resource and resource resolver.
+    	/// </summary>
+    	/// <remarks>
+    	/// The base implementation resolves the specified image resource using the provided
+    	/// <paramref name="resourceResolver"/> and deserializes the resource stream into a <see cref="Bitmap"/>.
+    	/// </remarks>
+    	/// <param name="iconSize">The size of the desired icon.</param>
+    	/// <param name="resourceResolver">The resource resolver with which to resolve the requested icon resource.</param>
+    	/// <returns>An <see cref="Image"/> constructed from the requested resource.</returns>
+    	/// <exception cref="ArgumentNullException">Thrown if <paramref name="resourceResolver"/> is null.</exception>
+    	/// <exception cref="ArgumentException">Thrown if <paramref name="resourceResolver"/> was unable to resolve the requested icon resource.</exception>
+    	public virtual Image CreateIcon(IconSize iconSize, IResourceResolver resourceResolver)
+    	{
+    		Platform.CheckForNullReference(resourceResolver, "resourceResolver");
+    		try
+    		{
+    			return new Bitmap(resourceResolver.OpenResource(this[iconSize]));
+    		}
+    		catch (MissingManifestResourceException ex)
+    		{
+    			throw new ArgumentException("The provided resource resolver was unable to resolve the requested icon resource.", ex);
+    		}
+    	}
+
+    	/// <summary>
+    	/// Gets a string identifier that uniquely identifies the resolved icon, suitable for dictionary keying purposes.
+    	/// </summary>
+    	/// <remarks>
+    	/// The base implementation resolves the specified image resource using the provided
+    	/// <paramref name="resourceResolver"/> and returns the resource's fully qualified resource name.
+    	/// </remarks>
+    	/// <param name="iconSize">The size of the desired icon.</param>
+    	/// <param name="resourceResolver">The resource resolver with which to resolve the requested icon resource.</param>
+    	/// <returns>A string identifier that uniquely identifies the resolved icon.</returns>
+    	/// <exception cref="ArgumentNullException">Thrown if <paramref name="resourceResolver"/> is null.</exception>
+    	/// <exception cref="ArgumentException">Thrown if <paramref name="resourceResolver"/> was unable to resolve the requested icon resource.</exception>
+    	public virtual string GetIconKey(IconSize iconSize, IResourceResolver resourceResolver)
+    	{
+    		Platform.CheckForNullReference(resourceResolver, "resourceResolver");
+    		try
+    		{
+    			return resourceResolver.ResolveResource(this[iconSize]);
+    		}
+    		catch (MissingManifestResourceException ex)
+    		{
+    			throw new ArgumentException("The provided resource resolver was unable to resolve the requested icon resource.", ex);
+    		}
+    	}
     }
 }

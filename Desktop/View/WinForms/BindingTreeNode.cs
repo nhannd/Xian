@@ -42,21 +42,23 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// </summary>
     internal class BindingTreeNode : TreeNode, IDisposable
     {
-		/// <summary>
-		/// need to cache our own reference to the treeView, because during construction the base-class TreeView property is null
-		/// </summary>
+    	/// <summary>
+    	/// need to cache our own reference to the treeView, because during construction the base-class TreeView property is null
+    	/// </summary>
 		private readonly TreeView _treeView;
+    	private readonly BindingTreeView _bindingTreeView;
 		private readonly ITree _parentTree;
 		private BindingTreeLevelManager _subtreeManager;
         private object _item;
         private bool _isSubTreeBuilt;
 
-		public BindingTreeNode(ITree parentTree, object item, TreeView treeView)
+		public BindingTreeNode(ITree parentTree, object item, BindingTreeView bindingTreeView)
             : base(parentTree.Binding.GetNodeText(item))
         {
             _item = item;
             _parentTree = parentTree;
-			_treeView = treeView;
+			_bindingTreeView = bindingTreeView;
+			_treeView = _bindingTreeView.TreeView;
 
 			UpdateDisplay(_treeView.ImageList);
         }
@@ -158,27 +160,31 @@ namespace ClearCanvas.Desktop.View.WinForms
 				var imageCollection = treeViewImageList.Images;
 				if (iconSet == null)
 				{
-					this.ImageIndex = -1;
-				}
-				else if (imageCollection.ContainsKey(iconSet.MediumIcon))
-				{
-					this.ImageIndex = imageCollection.IndexOfKey(iconSet.MediumIcon);
+					this.ImageKey = string.Empty;
 				}
 				else
 				{
-					try
+					var iconKey = iconSet.GetIconKey(_bindingTreeView.IconResourceSize, resolver);
+					if (imageCollection.ContainsKey(iconKey))
 					{
-						imageCollection.Add(iconSet.MediumIcon, iconSet.CreateIcon(IconSize.Medium, resolver));
-						this.ImageIndex = imageCollection.IndexOfKey(iconSet.MediumIcon);
+						this.ImageKey = iconKey;
 					}
-					catch (Exception e)
+					else
 					{
-						Platform.Log(LogLevel.Error, e);
-						this.ImageIndex = -1;
+						try
+						{
+							imageCollection.Add(iconKey, iconSet.CreateIcon(_bindingTreeView.IconResourceSize, resolver));
+							this.ImageKey = iconKey;
+						}
+						catch (Exception e)
+						{
+							Platform.Log(LogLevel.Error, e);
+							this.ImageKey = string.Empty;
+						}
 					}
 				}
 
-				this.SelectedImageIndex = this.ImageIndex;
+				this.SelectedImageKey = this.ImageKey;
 			}
 
 			// if the subtree was already built, we may need to rebuild it if it has changed
@@ -225,7 +231,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             var subTree = _parentTree.Binding.GetSubTree(_item);
             if (subTree != null)
             {
-				_subtreeManager = new BindingTreeLevelManager(subTree, this.Nodes, _treeView);
+				_subtreeManager = new BindingTreeLevelManager(subTree, this.Nodes, _bindingTreeView);
             }
         }
 

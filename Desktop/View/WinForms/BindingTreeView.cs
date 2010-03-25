@@ -82,6 +82,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private ActionModelNode _toolbarModel;
         private ActionModelNode _menuModel;
+
+    	private IconSize _iconResourceSize = ClearCanvas.Desktop.IconSize.Medium;
         private bool _selectionDisabled = false;
 
         private bool _isLoaded = false;
@@ -92,6 +94,12 @@ namespace ClearCanvas.Desktop.View.WinForms
         public BindingTreeView()
         {
             InitializeComponent();
+
+			// if some but not all nodes have icons, then the treeview control pulls the first icon from the list
+			// to fix this problem, we'll explicitly add a dummy transparent icon for use by nodes without icons
+			Bitmap blankIcon = new Bitmap(1, 1);
+			blankIcon.SetPixel(0, 0, Color.Transparent);
+			_treeCtrl.ImageList.Images.Add(string.Empty, blankIcon);
         }
 
         #region Public members
@@ -118,7 +126,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 					if (_root != null)
 					{
-						_rootLevelManager = new BindingTreeLevelManager(_root, _treeCtrl.Nodes, _treeCtrl);
+						_rootLevelManager = new BindingTreeLevelManager(_root, _treeCtrl.Nodes, this);
 					}
 				}
             }
@@ -261,6 +269,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #endregion
 
+		#region Protected Members
+
+		internal TreeView TreeView
+		{
+			get { return _treeCtrl; }
+		}
+
+		#endregion
+
         #region Design time properties
 
         [DefaultValue(true)]
@@ -367,6 +384,12 @@ namespace ClearCanvas.Desktop.View.WinForms
             get { return _imageList.ImageSize; }
             set { _imageList.ImageSize = value; }
         }
+
+    	public IconSize IconResourceSize
+    	{
+			get { return _iconResourceSize; }
+			set { _iconResourceSize = value; }
+    	}
 
         public ColorDepth IconColorDepth
         {
