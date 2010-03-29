@@ -1636,6 +1636,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Proceed with the merge operation?  The operation cannot be undone..
+        /// </summary>
+        internal static string MessageConfirmMergePractitioners {
+            get {
+                return ResourceManager.GetString("MessageConfirmMergePractitioners", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copy to clipboard.
         /// </summary>
         internal static string MessageCopyToClipboard {
@@ -1717,7 +1726,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following orders have recipients that reference deactivated contact points.  Please choose an active contact point..
+        ///   Looks up a localized string similar to The following orders reference contact points that will become inactive.  Correct each order by choosing an active contact point..
         /// </summary>
         internal static string MessageInstructionAffectedOrders {
             get {
@@ -1726,7 +1735,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Click on the dropdown to resolve conflicted properties..
+        ///   Looks up a localized string similar to Use the dropdowns to resolve conflicting properties..
         /// </summary>
         internal static string MessageInstructionMergeProperties {
             get {
@@ -1744,7 +1753,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select active contact points and a default contact point:.
+        ///   Looks up a localized string similar to Select the contact points that should remain active for the merged practitioner, and select a default contact point..
         /// </summary>
         internal static string MessageInstructionSelectContactPoints {
             get {
@@ -1753,7 +1762,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select a practitioner to merge with:.
+        ///   Looks up a localized string similar to Select a practitioner to merge with the above:.
         /// </summary>
         internal static string MessageInstructionSelectDuplicate {
             get {
@@ -2446,6 +2455,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Correct Affected Orders.
+        /// </summary>
+        internal static string TitleCorrectAffectedOrders {
+            get {
+                return ResourceManager.GetString("TitleCorrectAffectedOrders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
         internal static string TitleDelete {
@@ -2689,6 +2707,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Preview of Merged Practitioner.
+        /// </summary>
+        internal static string TitlePreviewMergedPractitioner {
+            get {
+                return ResourceManager.GetString("TitlePreviewMergedPractitioner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Print/Fax Report.
         /// </summary>
         internal static string TitlePrintFaxReport {
@@ -2716,6 +2743,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Resolve Property Conflicts.
+        /// </summary>
+        internal static string TitleResolvePropertyConflicts {
+            get {
+                return ResourceManager.GetString("TitleResolvePropertyConflicts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Search.
         /// </summary>
         internal static string TitleSearch {
@@ -2730,6 +2766,24 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleSearchPatients {
             get {
                 return ResourceManager.GetString("TitleSearchPatients", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Active Contact Points.
+        /// </summary>
+        internal static string TitleSelectActiveContactPoints {
+            get {
+                return ResourceManager.GetString("TitleSelectActiveContactPoints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Duplicate.
+        /// </summary>
+        internal static string TitleSelectDuplicate {
+            get {
+                return ResourceManager.GetString("TitleSelectDuplicate", resourceCulture);
             }
         }
         

@@ -29,8 +29,10 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Validation;
@@ -80,11 +82,19 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		private readonly ExternalPractitionerTable _table;
+		private readonly EntityRef _specifiedDuplicatePractitionerRef;
 		private ExternalPractitionerDetail _originalPractitioner;
 		private ExternalPractitionerSummary _selectedItem;
+		private event EventHandler _selectedItemChanged;
 
 		public ExternalPractitionerMergeSelectedDuplicateComponent()
+			: this(null)
 		{
+		}
+
+		public ExternalPractitionerMergeSelectedDuplicateComponent(EntityRef specifiedDuplicatePractitionerRef)
+		{
+			_specifiedDuplicatePractitionerRef = specifiedDuplicatePractitionerRef;
 			_table = new ExternalPractitionerTable(this);
 		}
 
@@ -111,13 +121,29 @@ namespace ClearCanvas.Ris.Client
 				if (_originalPractitioner == null)
 					return;
 
-				var duplicates = LoadDuplicates(_originalPractitioner.PractitionerRef);
-				_table.Items.AddRange(duplicates);
+				if (_specifiedDuplicatePractitionerRef == null)
+				{
+					var duplicates = LoadDuplicates(_originalPractitioner.PractitionerRef);
+					_table.Items.AddRange(duplicates);
+				}
+				else
+				{
+					var duplicatePractitioner = LoadPractitionerDetail(_specifiedDuplicatePractitionerRef);
+					_table.Items.AddRange(new List<ExternalPractitionerSummary> { duplicatePractitioner.CreateSummary() });
+					
+				}
 			}
 		}
+
 		public ExternalPractitionerSummary SelectedPractitioner
 		{
 			get { return _selectedItem; }
+		}
+
+		public event EventHandler SelectedPractitionerChanged
+		{
+			add { _selectedItemChanged += value; }
+			remove { _selectedItemChanged -= value; }
 		}
 
 		#region Presentation Models
@@ -157,7 +183,9 @@ namespace ClearCanvas.Ris.Client
 					return;
 
 				_selectedItem = (ExternalPractitionerSummary) value.Item;
+
 				NotifyPropertyChanged("SummarySelection");
+				EventsHelper.Fire(_selectedItemChanged, this, EventArgs.Empty);
 			}
 		}
 
@@ -180,6 +208,24 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			return duplicates;
+		}
+
+		private static ExternalPractitionerDetail LoadPractitionerDetail(EntityRef practitionerRef)
+		{
+			ExternalPractitionerDetail detail = null;
+
+			if (practitionerRef != null)
+			{
+				Platform.GetService(
+					delegate(IExternalPractitionerAdminService service)
+					{
+						var request = new LoadExternalPractitionerForEditRequest(practitionerRef);
+						var response = service.LoadExternalPractitionerForEdit(request);
+						detail = response.PractitionerDetail;
+					});
+			}
+
+			return detail;
 		}
 
 		private void LaunchSelectedPractitionerPreview(object practitioner)

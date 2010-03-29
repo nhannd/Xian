@@ -2083,13 +2083,13 @@ Preview.ExternalPractitionerSummary = function() {
 		'	<tr>'+
 		'		<td width="150" class="DemographicsLabel">License Number</td>'+
 		'		<td><div id="LicenseNumber"/></td>'+
-		'		<td width="150" class="DemographicsLabel">Verified</td>'+
+		'		<td width="150" class="DemographicsLabel">Verified Status</td>'+
 		'		<td><div id="IsVerified"/></td>'+
 		'	</tr>'+
 		'	<tr>'+
 		'		<td width="150" class="DemographicsLabel">Billing Number</td>'+
 		'		<td><div id="BillingNumber"/></td>'+
-		'		<td width="150" class="DemographicsLabel">Last Verified</td>'+
+		'		<td width="150" class="DemographicsLabel">Last Verified at</td>'+
 		'		<td><div id="LastVerified"/></td>'+
 		'	</tr>'+
 		'	</table>';

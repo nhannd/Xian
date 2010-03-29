@@ -17,26 +17,46 @@ namespace ClearCanvas.Ris.Client
 		private ExternalPractitionerOverviewComponent _confirmationComponent;
 
 		private readonly EntityRef _originalPractitionerRef;
+		private readonly EntityRef _specifiedDuplicatePractitionerRef;
 		private readonly ExternalPractitionerDetail _mergedPractitioner;
 		private ExternalPractitionerDetail _originalPractitioner;
 		private ExternalPractitionerDetail _selectedDuplicate;
 
+		/// <summary>
+		/// Constructor for selecting a single practitioner to merge.
+		/// </summary>
 		public ExternalPractitionerMergeNavigatorComponent(EntityRef practitionerRef)
+			: this(practitionerRef, null)
+		{
+		}
+
+		/// <summary>
+		/// Constructor for selecting two practitioners to merge.
+		/// </summary>
+		public ExternalPractitionerMergeNavigatorComponent(EntityRef practitionerRef, EntityRef duplicatePractitionerRef)
 		{
 			_originalPractitionerRef = practitionerRef;
+			_specifiedDuplicatePractitionerRef = duplicatePractitionerRef;
 			_mergedPractitioner = new ExternalPractitionerDetail();
 		}
 
 		public override void Start()
 		{
-			this.Pages.Add(new NavigatorPage("Select Duplicate", _selectedDuplicateComponent = new ExternalPractitionerMergeSelectedDuplicateComponent()));
-			this.Pages.Add(new NavigatorPage("Resolve Property Conflicts", _mergePropertiesComponent = new ExternalPractitionerMergePropertiesComponent()));
-			this.Pages.Add(new NavigatorPage("Select Active Contact Points", _selectContactPointsComponent = new ExternalPractitionerMergeSelectedContactPointsComponent()));
-			this.Pages.Add(new NavigatorPage("Resolve Order Conflicts", _affectedOrdersComponent = new ExternalPractitionerMergeAffectedOrdersComponent()));
-			this.Pages.Add(new NavigatorPage("Confirmation", _confirmationComponent = new ExternalPractitionerOverviewComponent()));
+			this.Pages.Add(new NavigatorPage(SR.TitleSelectDuplicate, _selectedDuplicateComponent = new ExternalPractitionerMergeSelectedDuplicateComponent(_specifiedDuplicatePractitionerRef)));
+			this.Pages.Add(new NavigatorPage(SR.TitleResolvePropertyConflicts, _mergePropertiesComponent = new ExternalPractitionerMergePropertiesComponent()));
+			this.Pages.Add(new NavigatorPage(SR.TitleSelectActiveContactPoints, _selectContactPointsComponent = new ExternalPractitionerMergeSelectedContactPointsComponent()));
+			this.Pages.Add(new NavigatorPage(SR.TitleCorrectAffectedOrders, _affectedOrdersComponent = new ExternalPractitionerMergeAffectedOrdersComponent()));
+			this.Pages.Add(new NavigatorPage(SR.TitlePreviewMergedPractitioner, _confirmationComponent = new ExternalPractitionerOverviewComponent()));
 			this.ValidationStrategy = new AllComponentsValidationStrategy();
 
+			_selectedDuplicateComponent.SelectedPractitionerChanged += delegate { this.ForwardEnabled = _selectedDuplicateComponent.HasValidationErrors == false; };
+			_selectContactPointsComponent.ContactPointSelectionChanged += delegate { this.ForwardEnabled = _selectContactPointsComponent.HasValidationErrors == false; };
+
 			base.Start();
+
+			// Start the component with forward button disabled.
+			// The button will be enabled if there is a practitioner selected.
+			this.ForwardEnabled = false;
 
 			// Immediately activate validation after component start
 			this.ShowValidation(true);
@@ -56,6 +76,9 @@ namespace ClearCanvas.Ris.Client
 				this.ShowValidation(true);
 				return;
 			}
+
+			if (DialogBoxAction.Cancel == this.Host.ShowMessageBox(SR.MessageConfirmMergePractitioners, MessageBoxActions.OkCancel))
+				return;
 
 			try
 			{

@@ -103,7 +103,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			var control = new ComboBox
 				{
 					Name = controlName,
-					Dock = DockStyle.Fill
+					Dock = DockStyle.Fill,
+					DropDownStyle = ComboBoxStyle.DropDownList
 				};
 			control.Items.AddRange(valueChoices.ToArray());
 			control.SelectedItem = defaultValue;

@@ -75,10 +75,10 @@ namespace ClearCanvas.Ris.Client
 					cp => cp.IsDefaultContactPoint, MakeDefaultContactPoint, 0.1f);
 
 				var nameColumn = new TableColumn<ExternalPractitionerContactPointDetail, string>(SR.ColumnName,
-					cp => cp.Name, 0.4f);
+					cp => cp.Name, 0.3f);
 
 				var descriptionColumn = new TableColumn<ExternalPractitionerContactPointDetail, string>(SR.ColumnDescription,
-					cp => cp.Description, 0.4f);
+					cp => cp.Description, 0.5f);
 
 				var phoneColumn = new TableColumn<ExternalPractitionerContactPointDetail, string>(SR.ColumnPhone,
 					cp => string.Format(SR.FormatPhone, cp.CurrentPhoneNumber == null ? "" : TelephoneFormat.Format(cp.CurrentPhoneNumber)),
@@ -163,6 +163,12 @@ namespace ClearCanvas.Ris.Client
 			base.Start();
 		}
 
+		public event EventHandler ContactPointSelectionChanged
+		{
+			add { _table.TableModified += value; }
+			remove { _table.TableModified -= value; }
+		}
+
 		public ExternalPractitionerDetail OriginalPractitioner
 		{
 			get { return _originalPractitioner; }
@@ -181,7 +187,7 @@ namespace ClearCanvas.Ris.Client
 			get { return _duplicatePractitioner; }
 			set
 			{
-				if (_originalPractitioner != null && _originalPractitioner.Equals(value))
+				if (_duplicatePractitioner != null && _duplicatePractitioner.Equals(value))
 					return;
 
 				_duplicatePractitioner = value;

@@ -127,7 +127,7 @@ namespace ClearCanvas.Ris.Client
 			get { return _duplicatePractitioner; }
 			set
 			{
-				if (_originalPractitioner != null && _originalPractitioner.Equals(value))
+				if (_duplicatePractitioner != null && _duplicatePractitioner.Equals(value))
 					return;
 
 				_duplicatePractitioner = value;

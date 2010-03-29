@@ -95,6 +95,18 @@ namespace ClearCanvas.Ris.Application.Common
 		[DataMember]
 		public bool Deactivated;
 
+		public ExternalPractitionerSummary CreateSummary()
+		{
+			return new ExternalPractitionerSummary(
+				this.PractitionerRef,
+				this.Name,
+				this.LicenseNumber,
+				this.BillingNumber,
+				this.IsVerified,
+				this.LastVerifiedTime,
+				this.Deactivated);
+		}
+
 		public bool Equals(ExternalPractitionerDetail detail)
 		{
 			if (detail == null)

@@ -1003,19 +1003,19 @@
     <value>Default</value>
   </data>
   <data name="MessageInstructionAffectedOrders" xml:space="preserve">
-    <value>The following orders have recipients that reference deactivated contact points.  Please choose an active contact point.</value>
+    <value>The following orders reference contact points that will become inactive.  Correct each order by choosing an active contact point.</value>
   </data>
   <data name="MessageInstructionMergeProperties" xml:space="preserve">
-    <value>Click on the dropdown to resolve conflicted properties.</value>
+    <value>Use the dropdowns to resolve conflicting properties.</value>
   </data>
   <data name="MessageInstructionNoPropertyConflict" xml:space="preserve">
     <value>There is no conflicting property.</value>
   </data>
   <data name="MessageInstructionSelectContactPoints" xml:space="preserve">
-    <value>Select active contact points and a default contact point:</value>
+    <value>Select the contact points that should remain active for the merged practitioner, and select a default contact point.</value>
   </data>
   <data name="MessageInstructionSelectDuplicate" xml:space="preserve">
-    <value>Select a practitioner to merge with:</value>
+    <value>Select a practitioner to merge with the above:</value>
   </data>
   <data name="MessageValidationAtLeastOneActiveContactPoint" xml:space="preserve">
     <value>Must have at least one active contact point</value>
@@ -1058,5 +1058,23 @@
   </data>
   <data name="LabelOrderedBy" xml:space="preserve">
     <value>Ordered by</value>
+  </data>
+  <data name="TitleCorrectAffectedOrders" xml:space="preserve">
+    <value>Correct Affected Orders</value>
+  </data>
+  <data name="TitlePreviewMergedPractitioner" xml:space="preserve">
+    <value>Preview of Merged Practitioner</value>
+  </data>
+  <data name="TitleResolvePropertyConflicts" xml:space="preserve">
+    <value>Resolve Property Conflicts</value>
+  </data>
+  <data name="TitleSelectActiveContactPoints" xml:space="preserve">
+    <value>Select Active Contact Points</value>
+  </data>
+  <data name="TitleSelectDuplicate" xml:space="preserve">
+    <value>Select Duplicate</value>
+  </data>
+  <data name="MessageConfirmMergePractitioners" xml:space="preserve">
+    <value>Proceed with the merge operation?  The operation cannot be undone.</value>
   </data>
 </root>

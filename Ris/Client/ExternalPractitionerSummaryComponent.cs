@@ -38,7 +38,6 @@ using ClearCanvas.Common.Specifications;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Desktop;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
@@ -334,8 +333,8 @@ namespace ClearCanvas.Ris.Client
                 (this.SelectedItems.Count == 1 ||
 			    this.SelectedItems.Count == 2);
 
-            _mergeContactPointAction.Enabled = this.SelectedItems.Count == 1;
-        }
+			_mergeContactPointAction.Enabled = this.SelectedItems.Count == 1;
+		}
 
 		private static ISpecification OrPermissions(string token1, string token2)
 		{
@@ -347,16 +346,14 @@ namespace ClearCanvas.Ris.Client
 
 		private void MergePractitioner()
 		{
-			ExternalPractitionerSummary firstSelectedItem = this.SelectedItems.Count > 0 ? this.SelectedItems[0] : null;
-			ExternalPractitionerSummary secondSelectedItem = this.SelectedItems.Count > 1 ? this.SelectedItems[1] : null;
+			var firstItem = CollectionUtils.FirstElement(this.SelectedItems);
+			var secondItem = this.SelectedItems.Count > 1 ? CollectionUtils.LastElement(this.SelectedItems) : null;
+			var editor = new ExternalPractitionerMergeNavigatorComponent(firstItem.PractitionerRef, secondItem == null ? null : secondItem.PractitionerRef);
 
-			ExternalPractitionerMergeComponent mergeComponent = new ExternalPractitionerMergeComponent(firstSelectedItem, secondSelectedItem);
-			ApplicationComponentExitCode exitCode = LaunchAsDialog(
-				this.Host.DesktopWindow, mergeComponent, SR.TitleMergePractitioner);
-			if (exitCode == ApplicationComponentExitCode.Accepted)
-			{
-				this.Table.Items.Remove(mergeComponent.SelectedDuplicate);
-			}
+			var title = SR.TitleMergePractitioner + " - " + Formatting.PersonNameFormat.Format(firstItem.Name);
+			var creationArg = new DialogBoxCreationArgs(editor, title, null, DialogSizeHint.Large);
+
+			LaunchAsDialog(this.Host.DesktopWindow, creationArg);
 		}
 
         private void MergeContactPoint()
