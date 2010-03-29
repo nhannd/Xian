@@ -31,674 +31,359 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Enterprise.Hibernate;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Workflow;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
-    /// <summary>
-    /// Abstract base class for brokers that evaluate worklists.
-    /// </summary>
-    /// <typeparam name="TItem">Class of worklist item returned by this broker.</typeparam>
-    /// <remarks>
-    /// <para>
-    /// This class provides the basis functionality for worklist brokers.  Subclasses will typically need
-    /// to override some virtual methods in order to customize the queries that are generated.  The most
-    /// common methods that need to be overridden are <see cref="CreateBaseCountQuery"/> and 
-    /// <see cref="CreateBaseItemQuery"/>.  Other methods may be overridden but this should not typically be necessary.
-    /// </para>
-    /// <para>
-    /// The ability for subclasses to customize the queries relies on using an established set of HQL alias-variables
-    /// to represent entities that are typically used in the query.  These are listed here:
-    /// <list type="">
-    /// <item>ps - ProcedureStep</item>
-    /// <item>rp - Procedure</item>
-    /// <item>o - Order</item>
-    /// <item>p - Patient</item>
-    /// <item>v - Visit</item>
-    /// <item>pp - PatientProfile</item>
-    /// <item>ds - DiagnosticService</item>
-    /// <item>rpt - ProcedureType</item>
-    /// <item>pr - Protocol</item>
-	/// <item>sst - Scheduled Performer Staff</item>
-	/// <item>pst - Performer Staff</item>
-	/// </list>
-    /// Subclasses may define additional variables but must not attempt to override those defined by this class.
-    /// </para>
-    /// </remarks>
-    public abstract class WorklistItemBrokerBase<TItem> : Broker, IWorklistItemBroker<TItem>
-		where TItem : WorklistItemBase
-    {
-        #region IWorklistItemSearchContext implementation
+	/// <summary>
+	/// Abstract base class for brokers that evaluate worklists.
+	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// This class provides the basis functionality for worklist brokers.
+	/// </para>
+	/// </remarks>
+	public abstract class WorklistItemBrokerBase : Broker, IWorklistItemBroker
+	{
+		#region IWorklistItemSearchContext implementation
 
-        class SearchContext : IWorklistItemSearchContext<TItem>
-        {
-            private readonly WorklistItemBrokerBase<TItem> _owner;
-        	private readonly WorklistItemSearchArgs _args;
+		class SearchContext : IWorklistItemSearchContext
+		{
+			private readonly WorklistItemBrokerBase _owner;
+			private readonly WorklistItemSearchArgs _args;
+			private readonly Type _worklistItemClass;
 
-        	public SearchContext(WorklistItemBrokerBase<TItem> owner, WorklistItemSearchArgs args)
-            {
-                _owner = owner;
-        		_args = args;
-            }
+			public SearchContext(WorklistItemBrokerBase owner, WorklistItemSearchArgs args, Type worklistItemClass)
+			{
+				_owner = owner;
+				_args = args;
+				_worklistItemClass = worklistItemClass;
+			}
 
-        	public bool IncludeDegenerateProcedureItems
-        	{
-        		get { return _args.IncludeDegenerateProcedureItems; }
-        	}
+			public bool IncludeDegenerateProcedureItems
+			{
+				get { return _args.IncludeDegenerateProcedureItems; }
+			}
 
-        	public bool IncludeDegeneratePatientItems
-        	{
-        		get { return _args.IncludeDegeneratePatientItems; }
-        	}
+			public bool IncludeDegeneratePatientItems
+			{
+				get { return _args.IncludeDegeneratePatientItems; }
+			}
 
-        	public WorklistItemSearchCriteria[] SearchCriteria
-            {
-                get { return _args.SearchCriteria; }
-            }
+			public WorklistItemSearchCriteria[] SearchCriteria
+			{
+				get { return _args.SearchCriteria; }
+			}
 
-            public int Threshold
-            {
-                get { return _args.Threshold; }
-            }
+			public int Threshold
+			{
+				get { return _args.Threshold; }
+			}
 
-            public HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where, bool countQuery)
-            {
-                return _owner.BuildWorklistItemSearchQuery(where, countQuery);
-            }
+			public IList<WorklistItem> FindWorklistItems(WorklistItemSearchCriteria[] where)
+			{
+				var qbArgs = new SearchQueryArgs(_args.ProcedureStepClasses, where, _args.Projection);
+				var query = _owner.BuildWorklistSearchQuery(qbArgs);
 
-            public HqlProjectionQuery BuildProcedureSearchQuery(WorklistItemSearchCriteria[] where, bool countQuery)
-            {
-                return _owner.BuildProcedureSearchQuery(where, countQuery);
-            }
+				// query may be null to signal that it should not be performed
+				return query == null ? new List<WorklistItem>() :
+					_owner.DoQuery(query, _worklistItemClass, _owner.WorklistItemQueryBuilder, qbArgs);
+			}
 
-            public HqlProjectionQuery BuildPatientSearchQuery(WorklistItemSearchCriteria[] where, bool countQuery)
-            {
-                return _owner.BuildPatientSearchQuery(where, countQuery);
-            }
+			public int CountWorklistItems(WorklistItemSearchCriteria[] where)
+			{
+				var query = _owner.BuildWorklistSearchQuery(new SearchQueryArgs(_args.ProcedureStepClasses, where, null));
+				return _owner.DoQueryCount(query);
+			}
 
-            public List<TItem> DoQuery(HqlQuery query)
-            {
-                return _owner.DoQuery(query);
-            }
+			public IList<WorklistItem> FindProcedures(WorklistItemSearchCriteria[] where)
+			{
+				var p = FilterProjection(_args.Projection, WorklistItemFieldLevel.Procedure);
+				var qbArgs = new SearchQueryArgs((Type[])null, where, p);
+				var query = _owner.BuildProcedureSearchQuery(qbArgs);
+				return _owner.DoQuery(query, _worklistItemClass, _owner._procedureQueryBuilder, qbArgs);
+			}
 
-            public int DoQueryCount(HqlQuery query)
-            {
-                return _owner.DoQueryCount(query);
-            }
-        }
+			public int CountProcedures(WorklistItemSearchCriteria[] where)
+			{
+				var query = _owner.BuildProcedureSearchQuery(new SearchQueryArgs((Type[])null, where, null));
+				return _owner.DoQueryCount(query);
+			}
 
-        #endregion
+			public IList<WorklistItem> FindPatients(WorklistItemSearchCriteria[] where)
+			{
+				var p = FilterProjection(_args.Projection, WorklistItemFieldLevel.Patient);
+				var w = GetPatientCriteria(where);
+				var qbArgs = new SearchQueryArgs((Type[]) null, w, p);
+				var query = _owner.BuildPatientSearchQuery(qbArgs);
+				return _owner.DoQuery(query, _worklistItemClass, _owner._patientQueryBuilder, qbArgs);
+			}
 
-
-        #region Hql Constants
-
-        protected static readonly HqlSelect SelectProcedureStep = new HqlSelect("ps");
-        protected static readonly HqlSelect SelectProcedure = new HqlSelect("rp");
-        protected static readonly HqlSelect SelectOrder = new HqlSelect("o");
-        protected static readonly HqlSelect SelectPatient = new HqlSelect("p");
-        protected static readonly HqlSelect SelectPatientProfile = new HqlSelect("pp");
-        protected static readonly HqlSelect SelectMrn = new HqlSelect("pp.Mrn");
-        protected static readonly HqlSelect SelectPatientName = new HqlSelect("pp.Name");
-        protected static readonly HqlSelect SelectAccessionNumber = new HqlSelect("o.AccessionNumber");
-        protected static readonly HqlSelect SelectPriority = new HqlSelect("o.Priority");
-        protected static readonly HqlSelect SelectPatientClass = new HqlSelect("v.PatientClass");
-        protected static readonly HqlSelect SelectDiagnosticServiceName = new HqlSelect("ds.Name");
-        protected static readonly HqlSelect SelectProcedureTypeName = new HqlSelect("rpt.Name");
-        protected static readonly HqlSelect SelectProcedureStepState = new HqlSelect("ps.State");
-        protected static readonly HqlSelect SelectHealthcard = new HqlSelect("pp.Healthcard");
-        protected static readonly HqlSelect SelectDateOfBirth = new HqlSelect("pp.DateOfBirth");
-        protected static readonly HqlSelect SelectSex = new HqlSelect("pp.Sex");
-
-        protected static readonly HqlSelect SelectOrderScheduledStartTime = new HqlSelect("o.ScheduledStartTime");
-        protected static readonly HqlSelect SelectOrderSchedulingRequestTime = new HqlSelect("o.SchedulingRequestTime");
-		protected static readonly HqlSelect SelectProcedurePortable = new HqlSelect("rp.Portable");
-		protected static readonly HqlSelect SelectProcedureLaterality = new HqlSelect("rp.Laterality");
-        protected static readonly HqlSelect SelectProcedureScheduledStartTime = new HqlSelect("rp.ScheduledStartTime");
-        protected static readonly HqlSelect SelectProcedureCheckInTime = new HqlSelect("rp.ProcedureCheckIn.CheckInTime");
-        protected static readonly HqlSelect SelectProcedureCheckOutTime = new HqlSelect("rp.ProcedureCheckIn.CheckOutTime");
-        protected static readonly HqlSelect SelectProcedureStartTime = new HqlSelect("rp.StartTime");
-        protected static readonly HqlSelect SelectProcedureEndTime = new HqlSelect("rp.EndTime");
-        protected static readonly HqlSelect SelectProcedureStepCreationTime = new HqlSelect("ps.CreationTime");
-        protected static readonly HqlSelect SelectProcedureStepScheduledStartTime = new HqlSelect("ps.Scheduling.StartTime");
-        protected static readonly HqlSelect SelectProcedureStepStartTime = new HqlSelect("ps.StartTime");
-        protected static readonly HqlSelect SelectProcedureStepEndTime = new HqlSelect("ps.EndTime");
-		protected static readonly HqlSelect SelectReportPartPreliminaryTime = new HqlSelect("rpp.PreliminaryTime");
-		protected static readonly HqlSelect SelectReportPartCompletedTime = new HqlSelect("rpp.CompletedTime");
-
-        protected static readonly HqlJoin JoinProcedure = new HqlJoin("ps.Procedure", "rp");
-        protected static readonly HqlJoin JoinProcedureType = new HqlJoin("rp.Type", "rpt");
-        protected static readonly HqlJoin JoinOrder = new HqlJoin("rp.Order", "o");
-        protected static readonly HqlJoin JoinProtocol = new HqlJoin("ps.Protocol", "pr");
-        protected static readonly HqlJoin JoinDiagnosticService = new HqlJoin("o.DiagnosticService", "ds");
-        protected static readonly HqlJoin JoinVisit = new HqlJoin("o.Visit", "v");
-        protected static readonly HqlJoin JoinPatient = new HqlJoin("o.Patient", "p");
-        protected static readonly HqlJoin JoinPatientProfile = new HqlJoin("p.Profiles", "pp");
-
-		protected static readonly HqlFrom hqlFromWorklist = new HqlFrom("Worklist", "w");
-
-		protected static readonly HqlCondition ConditionActiveProcedureStep = new HqlCondition("(ps.State in (?, ?))", ActivityStatus.SC, ActivityStatus.IP);
-
-        protected static readonly HqlSelect[] DefaultCountProjection
-            = {
-                  new HqlSelect("count(*)"),
-              };
-
-        private static readonly HqlJoin[] WorklistJoins
-            = {
-                JoinProcedure,
-                JoinProcedureType,
-                JoinOrder,
-                JoinDiagnosticService,
-                JoinVisit,
-                JoinPatient,
-                JoinPatientProfile
-              };
-
-		protected static readonly HqlSelect[] PatientSearchProjection
-			= {
-                  SelectPatient,
-                  SelectPatientProfile,
-                  SelectMrn,
-                  SelectPatientName,
-              };
-
-
-		protected static readonly HqlFrom PatientSearchFrom = new HqlFrom("Patient", "p",
-			new HqlJoin[]
-                {
-                    JoinPatientProfile
-                });
-
-		private static readonly HqlSelect[] ProcedureSearchProjection
-			= {
-                SelectProcedure,
-                SelectOrder,
-                SelectPatient,
-                SelectPatientProfile,
-                SelectMrn,
-                SelectPatientName,
-                SelectAccessionNumber,
-                SelectPriority,
-                SelectPatientClass,
-                SelectDiagnosticServiceName,
-                SelectProcedureTypeName,
-				SelectProcedurePortable,
-				SelectProcedureLaterality,
-                SelectProcedureScheduledStartTime
-             };
-
-
-		private static readonly HqlFrom ProcedureSearchFrom = new HqlFrom("Procedure", "rp",
-			new HqlJoin[]
-                {
-                    JoinProcedureType,
-                    JoinOrder,
-                    JoinDiagnosticService,
-                    JoinVisit,
-                    JoinPatient,
-                    JoinPatientProfile
-                });
+			public int CountPatients(WorklistItemSearchCriteria[] where)
+			{
+				var w = GetPatientCriteria(where);
+				var query = _owner.BuildPatientSearchQuery(new SearchQueryArgs((Type[])null, w, null));
+				return _owner.DoQueryCount(query);
+			}
+		}
 
 		#endregion
 
-        #region Static Members
-
-        /// <summary>
-        /// Provides mappings from criteria "keys" to HQL expressions.
-        /// </summary>
-        private static readonly Dictionary<string, string> _mapCriteriaKeyToHql = new Dictionary<string, string>();
-
-        /// <summary>
-        /// Provides mappings from <see cref="WorklistTimeField"/> values to HQL expressions.
-        /// </summary>
-        private static readonly Dictionary<WorklistTimeField, HqlSelect> _mapTimeFieldToHqlSelect = new Dictionary<WorklistTimeField, HqlSelect>();
-
-    	/// <summary>
-        /// Class initializer.
-        /// </summary>
-        static WorklistItemBrokerBase()
-        {
-            // add a default set of mappings useful to all broker subclasses
-            _mapCriteriaKeyToHql.Add("Order", "o");
-            _mapCriteriaKeyToHql.Add("PatientProfile", "pp");
-            _mapCriteriaKeyToHql.Add("Procedure", "rp");
-            _mapCriteriaKeyToHql.Add("ProcedureStep", "ps");
-            _mapCriteriaKeyToHql.Add("ProcedureCheckIn", "rp.ProcedureCheckIn");
-            _mapCriteriaKeyToHql.Add("Protocol", "pr");
-            _mapCriteriaKeyToHql.Add("ReportPart", "rpp");
-
-            _mapTimeFieldToHqlSelect.Add(WorklistTimeField.OrderSchedulingRequestTime, SelectOrderSchedulingRequestTime);
-            _mapTimeFieldToHqlSelect.Add(WorklistTimeField.ProcedureScheduledStartTime, SelectProcedureScheduledStartTime);
-            _mapTimeFieldToHqlSelect.Add(WorklistTimeField.ProcedureCheckInTime, SelectProcedureCheckInTime);
-            _mapTimeFieldToHqlSelect.Add(WorklistTimeField.ProcedureCheckOutTime, SelectProcedureCheckOutTime);
-            _mapTimeFieldToHqlSelect.Add(WorklistTimeField.ProcedureStartTime, SelectProcedureStartTime);
-            _mapTimeFieldToHqlSelect.Add(WorklistTimeField.ProcedureEndTime, SelectProcedureEndTime);
-            _mapTimeFieldToHqlSelect.Add(WorklistTimeField.ProcedureStepCreationTime, SelectProcedureStepCreationTime);
-            _mapTimeFieldToHqlSelect.Add(WorklistTimeField.ProcedureStepScheduledStartTime, SelectProcedureStepScheduledStartTime);
-            _mapTimeFieldToHqlSelect.Add(WorklistTimeField.ProcedureStepStartTime, SelectProcedureStepStartTime);
-            _mapTimeFieldToHqlSelect.Add(WorklistTimeField.ProcedureStepEndTime, SelectProcedureStepEndTime);
-			_mapTimeFieldToHqlSelect.Add(WorklistTimeField.ReportPartPreliminaryTime, SelectReportPartPreliminaryTime);
-			_mapTimeFieldToHqlSelect.Add(WorklistTimeField.ReportPartCompletedTime, SelectReportPartCompletedTime);
-       }
-
-        #endregion
-
-        #region Public Members
-
-        /// <summary>
-        /// Gets the set of worklist items in the specified worklist.
-        /// </summary>
-        /// <param name="worklist"></param>
-        /// <param name="wqc"></param>
-        /// <returns></returns>
-        /// <remarks>
-        /// Subclasses may override this method but in most cases this should not be necessary.
-        /// </remarks>
-        public virtual IList<TItem> GetWorklistItems(Worklist worklist, IWorklistQueryContext wqc)
-        {
-            HqlProjectionQuery query = BuildWorklistQuery(worklist, wqc, false);
-            return DoQuery(query);
-        }
-
-        /// <summary>
-        /// Gets a count of the number of worklist items in the specified worklist.
-        /// </summary>
-        /// <param name="worklist"></param>
-        /// <param name="wqc"></param>
-        /// <returns></returns>
-        /// <remarks>
-        /// Subclasses may override this method but in most cases this should not be necessary.
-        /// </remarks>
-        public virtual int CountWorklistItems(Worklist worklist, IWorklistQueryContext wqc)
-        {
-            HqlProjectionQuery query = BuildWorklistQuery(worklist, wqc, true);
-            return DoQueryCount(query);
-        }
-
-    	/// <summary>
-    	/// Performs a search using the specified criteria.
-    	/// </summary>
-		public IList<TItem> GetSearchResults(WorklistItemSearchArgs args)
-    	{
-			SearchContext wisc = new SearchContext(this, args);
-    		IWorklistItemSearchExecutionStrategy<TItem> strategy = new OptimizedWorklistItemSearchExecutionStrategy<TItem>();
-			return strategy.GetSearchResults(wisc);
-		}
-
-    	/// <summary>
-    	/// Gets an approximate count of the results that a search using the specified criteria would return.
-    	/// </summary>
-		public bool EstimateSearchResultsCount(WorklistItemSearchArgs args, out int count)
-    	{
-            SearchContext wisc = new SearchContext(this, args);
-			IWorklistItemSearchExecutionStrategy<TItem> strategy = new OptimizedWorklistItemSearchExecutionStrategy<TItem>();
-			return strategy.EstimateSearchResultsCount(wisc, out count);
-    	}
-
-    	#endregion
-
-        #region Protected overridables
-
-        /// <summary>
-        /// Creates the base <see cref="HqlProjectionQuery"/> for worklist items queries, but does not apply
-        /// conditions or sorting.
-        /// </summary>
-        /// <param name="criteria"></param>
-        /// <returns></returns>
-        /// <remarks>
-        /// Subclasses may override this method to customize the query or return an entirely different query.
-        /// </remarks>
-        protected virtual HqlProjectionQuery CreateBaseItemQuery(WorklistItemSearchCriteria[] criteria)
-        {
-            Type procStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
-            WorklistTimeField timeField = CollectionUtils.FirstElement(criteria).TimeField;
-            return new HqlProjectionQuery(new HqlFrom(procStepClass.Name, "ps", WorklistJoins), GetWorklistItemProjection(timeField));
-        }
-
-        /// <summary>
-        /// Creates the base <see cref="HqlProjectionQuery"/> for worklist item count queries, but does not apply
-        /// conditions.
-        /// </summary>
-        /// <param name="criteria"></param>
-        /// <returns></returns>
-        /// <remarks>
-        /// Subclasses may override this method to customize the query or return an entirely different query.
-        /// </remarks>
-        protected virtual HqlProjectionQuery CreateBaseCountQuery(WorklistItemSearchCriteria[] criteria)
-        {
-            Type procStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
-            return new HqlProjectionQuery(new HqlFrom(procStepClass.Name, "ps", WorklistJoins), DefaultCountProjection);
-        }
-
-        /// <summary>
-        /// Maps the specified criteria "key" to an HQL alias or expression.
-        /// </summary>
-        /// <param name="criteriaKey"></param>
-        /// <param name="alias"></param>
-        /// <returns></returns>
-        /// <remarks>
-		/// This method is used by the <see cref="AddConditions"/> method to translate a set of
-        /// <see cref="WorklistItemSearchCriteria"/> objects to a set of <see cref="HqlCondition"/> objects.
-        /// Subclasses may override this method to provide additional mappings, and may delegate back to the
-        /// base class to handle well-known mappings.
-        /// </remarks>
-        protected virtual bool MapCriteriaKeyToHql(string criteriaKey, out string alias)
-        {
-            return _mapCriteriaKeyToHql.TryGetValue(criteriaKey, out alias);
-        }
-
-        /// <summary>
-        /// Maps the <see cref="WorklistTimeField"/> value to an <see cref="HqlSelect"/> object.
-        /// </summary>
-        /// <param name="timeField"></param>
-        /// <param name="hql"></param>
-        /// <returns></returns>
-        /// <remarks>
-        /// </remarks>
-        protected virtual bool MapTimeFieldToHqlSelect(WorklistTimeField timeField, out HqlSelect hql)
-        {
-            return _mapTimeFieldToHqlSelect.TryGetValue(timeField, out hql);
-        }
-
-        /// <summary>
-        /// Adds conditions to the specified query according to the filters defined by the specified worklist instance.
-        /// </summary>
-        /// <param name="query"></param>
-        /// <param name="worklist"></param>
-		/// <param name="wqc"></param>
-		/// <remarks>
-        /// Subclasses may override this method to process any additional filters defined by the worklist subclass,
-        /// but should be sure to also call the base class in order to process all filters defined by the <see cref="Worklist"/>
-        /// class itself.
-        /// </remarks>
-        protected virtual void AddFilters(HqlProjectionQuery query, Worklist worklist, IWorklistQueryContext wqc)
-        {
-            // note that for all multi-valued filters, we avoid loading the collection of filter values
-            // instead, the HqlCondition is structured using the "elements" function, which essentially generates a subquery
-            // it is assumed that this should offer drastically better performance than if the filter value collection 
-            // was loaded into memory, because it keeps the number of SQL round-trips to 1
-            // however, no testing has actually been done to verify this assertion
-
-            if (worklist.ProcedureTypeGroupFilter.IsEnabled)
-            {
-                query.Conditions.Add(new HqlCondition("rp.Type in ( select elements(ptg.ProcedureTypes) from ProcedureTypeGroup ptg where ptg in elements(w.ProcedureTypeGroupFilter.Values) )"));
-            }
-            if (worklist.FacilityFilter.IsEnabled)
-            {
-                HqlOr or = new HqlOr();
-                or.Conditions.Add(new HqlCondition("rp.PerformingFacility in elements(w.FacilityFilter.Values)"));
-                if (worklist.FacilityFilter.IncludeWorkingFacility && wqc.WorkingFacility != null)
-                {
-                    or.Conditions.Add(new HqlCondition("rp.PerformingFacility = ?", wqc.WorkingFacility));
-                }
-                query.Conditions.Add(or);
-            }
-            if (worklist.OrderPriorityFilter.IsEnabled)
-            {
-                query.Conditions.Add(new HqlCondition("o.Priority in elements(w.OrderPriorityFilter.Values)"));
-            }
-            if (worklist.PatientClassFilter.IsEnabled)
-            {
-                query.Conditions.Add(new HqlCondition("v.PatientClass in elements(w.PatientClassFilter.Values)"));
-            }
-			if (worklist.PatientLocationFilter.IsEnabled)
-			{
-				query.Conditions.Add(new HqlCondition("v.CurrentLocation in elements(w.PatientLocationFilter.Values)"));
-			}
-			if (worklist.OrderingPractitionerFilter.IsEnabled)
-			{
-				query.Conditions.Add(new HqlCondition("o.OrderingPractitioner in elements(w.OrderingPractitionerFilter.Values)"));
-			}
-
-            // if any of the above filters were applied, add a condition to specify w
-            if (worklist.ProcedureTypeGroupFilter.IsEnabled || worklist.FacilityFilter.IsEnabled || worklist.OrderPriorityFilter.IsEnabled
-				|| worklist.PatientClassFilter.IsEnabled || worklist.PatientLocationFilter.IsEnabled
-				|| worklist.OrderingPractitionerFilter.IsEnabled)
-            {
-                AddWorklistCondition(worklist, query);
-            }
-
-            if(worklist.PortableFilter.IsEnabled)
-            {
-                query.Conditions.Add(new HqlCondition("rp.Portable = ?", worklist.PortableFilter.Value));
-            }
-
-            // note: worklist.TimeFilter is processed by the worklist class itself, and built into the criteria
-        }
-
-    	protected static void AddWorklistCondition(Worklist worklist, HqlProjectionQuery query)
-    	{
-			if (!query.Froms.Contains(hqlFromWorklist))
-			{
-				query.Froms.Add(hqlFromWorklist);
-				query.Conditions.Add(new HqlCondition("w = ?", worklist));
-			}
-    	}
-
-    	/// <summary>
-        /// Adds conditions to the specified query according to the specified set of <see cref="WorklistItemSearchCriteria"/>
-        /// objects.
-        /// </summary>
-        /// <param name="query"></param>
-        /// <param name="where"></param>
-        /// <param name="constrainPatientProfile"></param>
-		/// <param name="addOrderingClause"></param>
-        /// <remarks>
-        /// Subclasses may override this method to customize processing, but this should typically not be necessary.
-        /// Callers should typically set <paramref name="constrainPatientProfile"/> to true, unless there is a specific
-        /// reason not to constrain the patient profile.
-        /// </remarks>
-        protected virtual void AddConditions(HqlProjectionQuery query, IEnumerable<WorklistItemSearchCriteria> where, bool constrainPatientProfile, bool addOrderingClause)
-        {
-        	bool hasOrderingClause = false;
-
-            HqlOr or = new HqlOr();
-            foreach (WorklistItemSearchCriteria c in where)
-            {
-                HqlAnd and = new HqlAnd();
-                foreach (KeyValuePair<string, SearchCriteria> kvp in c.SubCriteria)
-                {
-                    string alias;
-                    if (MapCriteriaKeyToHql(kvp.Key, out alias))
-                        and.Conditions.AddRange(HqlCondition.FromSearchCriteria(alias, kvp.Value));
-                }
-                if (and.Conditions.Count > 0)
-                    or.Conditions.Add(and);
-
-				if (addOrderingClause && !hasOrderingClause)
-                {
-                    foreach (KeyValuePair<string, SearchCriteria> kvp in c.SubCriteria)
-                    {
-                        string alias;
-                        if (MapCriteriaKeyToHql(kvp.Key, out alias))
-                        {
-							query.Sorts.AddRange(HqlSort.FromSearchCriteria(alias, kvp.Value));
-						}
-                    }
-					// use the sorting information from the first WorklistItemSearchCriteria object only
-					// (the assumption is that they are all identical)
-					hasOrderingClause = true;
-				}
-            }
-
-            if (or.Conditions.Count > 0)
-                query.Conditions.Add(or);
-
-            if (constrainPatientProfile)
-            {
-                // constrain patient profile to performing facility
-                query.Conditions.Add(
-                    new HqlCondition("pp.Mrn.AssigningAuthority = rp.PerformingFacility.InformationAuthority"));
-            }
-
-			// modify the query to workaround some NHibernate bugs
-			NHibernateBugWorkaround(query.Froms[0], query.Conditions);
-        }
+		private readonly IQueryBuilder _patientQueryBuilder;
+		private readonly IQueryBuilder _procedureQueryBuilder;
 
 		/// <summary>
-		/// NHibernate has a bug where criteria that de-reference properties not joined into the From clause are not
-		/// always handled properly.  For example, in order to evaluate a criteria such as "ps.Scheduling.Performer.Staff.Name like ?",
-		/// NHiberate will inject a theta-join on Staff into the SQL.  This works ok by itself.  However, when evaluating a criteria
-		/// such as "ps.Scheduling.Performer.Staff.Name.FamilyName like ? or ps.Performer.Staff.Name.FamilyName like ?", NHibernate
-		/// injects two Staff theta-joins into the SQL, which incorrectly results in a cross-join situation.
-		/// This method modifies any query that has criteria on ps.Scheduling.Performer.Staff or ps.Performer.Staff,
-		/// by adding in explicit joins to Staff for these objects, and then substituting the original conditions
-		/// with conditions based on these joins.
+		/// Constructor that uses defaults for procedure/patient search query builders.
 		/// </summary>
-		/// <param name="from"></param>
-		/// <param name="conditions"></param>
-		private void NHibernateBugWorkaround(HqlFrom from, List<HqlCondition> conditions)
+		/// <param name="worklistItemQueryBuilder"></param>
+		protected WorklistItemBrokerBase(IWorklistItemQueryBuilder worklistItemQueryBuilder)
+			: this(worklistItemQueryBuilder, new ProcedureQueryBuilder(), new PatientQueryBuilder())
 		{
-			for (int i = 0; i < conditions.Count; i++)
-			{
-				HqlCondition condition = conditions[i];
-				if (condition is HqlJunction)
-				{
-					NHibernateBugWorkaround(from, ((HqlJunction)condition).Conditions);
-				}
-				else if (condition.Hql.StartsWith("ps.Scheduling.Performer.Staff"))
-				{
-					// add join for sst (scheduled staff) if not added
-					if(!CollectionUtils.Contains(from.Joins,
-						delegate(HqlJoin j) { return j.Alias == "sst"; }))
-					{
-						from.Joins.Add(new HqlJoin("ps.Scheduling.Performer.Staff", "sst", HqlJoinMode.Left));
-					}
-					
-					// replace the condition with a new condition, using the joined Staff
-					string newHql = condition.Hql.Replace("ps.Scheduling.Performer.Staff", "sst");
-					conditions[i] = new HqlCondition(newHql, condition.Parameters);
-				}
-				else if (condition.Hql.StartsWith("ps.Performer.Staff"))
-				{
-					// add join for pst (performer staff) if not added
-					if (!CollectionUtils.Contains(from.Joins,
-						delegate(HqlJoin j) { return j.Alias == "pst"; }))
-					{
-						from.Joins.Add(new HqlJoin("ps.Performer.Staff", "pst", HqlJoinMode.Left));
-					}
-					// replace the condition with a new condition, using the joined Staff
-					string newHql = condition.Hql.Replace("ps.Performer.Staff", "pst");
-					conditions[i] = new HqlCondition(newHql, condition.Parameters);
-				}
-			}
 		}
 
 		/// <summary>
-		/// Called by the public <see cref="GetSearchResults"/> methods to create a query for the set of active 
-		/// worklist items matching the specified search criteria.
+		/// Constructor.
+		/// </summary>
+		/// <param name="worklistItemQueryBuilder"></param>
+		/// <param name="procedureSearchQueryBuilder"></param>
+		/// <param name="patientSearchQueryBuilder"></param>
+		protected WorklistItemBrokerBase(IWorklistItemQueryBuilder worklistItemQueryBuilder,
+			IQueryBuilder procedureSearchQueryBuilder, IQueryBuilder patientSearchQueryBuilder)
+		{
+			this.WorklistItemQueryBuilder = worklistItemQueryBuilder;
+
+			_patientQueryBuilder = patientSearchQueryBuilder;
+			_procedureQueryBuilder = procedureSearchQueryBuilder;
+		}
+
+
+		#region Public API
+
+		/// <summary>
+		/// Gets the set of worklist items in the specified worklist.
 		/// </summary>
 		/// <remarks>
-		/// The implementor must return a query that will find active worklist items - that is, worklist items
-		/// that are in a non-terminal state - or null to indicate that no worklist item query needs to be executed.
+		/// Subclasses may override this method but in most cases this should not be necessary.
 		/// </remarks>
-		protected abstract HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where, bool countQuery);
+		public virtual IList<TItem> GetWorklistItems<TItem>(Worklist worklist, IWorklistQueryContext wqc)
+			where TItem : WorklistItem
+		{
+			var args = new WorklistQueryArgs(worklist, wqc, false);
+			var query = BuildWorklistQuery(args);
+			return DoQuery<TItem>(query, this.WorklistItemQueryBuilder, args);
+		}
+
+		public virtual string GetWorklistItemsHql(Worklist worklist, IWorklistQueryContext wqc)
+		{
+			var args = new WorklistQueryArgs(worklist, wqc, false);
+			var query = BuildWorklistQuery(args);
+			return query.Hql;
+		}
+
+		/// <summary>
+		/// Gets the set of items matching the specified criteria, returned as tuples shaped by the specified projection.
+		/// </summary>
+		public IList<object[]> GetWorklistItems(Type[] procedureStepClasses, WorklistItemSearchCriteria[] criteria, WorklistItemProjection projection, SearchResultPage page)
+		{
+			var args = new QueryBuilderArgs(procedureStepClasses, criteria, projection, page);
+			var query = BuildWorklistQuery(args);
+			return CollectionUtils.Map(ExecuteHql<object[]>(query), (object[] tuple) => this.WorklistItemQueryBuilder.PreProcessTuple(tuple, args));
+		}
+
+		/// <summary>
+		/// Allow access to the HQL for debugging purposes only.  Obviously it does not make sense to pass HQL through the abstraction layer!
+		/// </summary>
+		/// <param name="procedureStepClasses"></param>
+		/// <param name="criteria"></param>
+		/// <param name="projection"></param>
+		/// <param name="page"></param>
+		/// <returns></returns>
+		public string GetWorklistItemsHql(Type[] procedureStepClasses, WorklistItemSearchCriteria[] criteria, WorklistItemProjection projection, SearchResultPage page)
+		{
+			var args = new QueryBuilderArgs(procedureStepClasses, criteria, projection, page);
+			var query = BuildWorklistQuery(args);
+			return query.Hql;
+		}
+
+		/// <summary>
+		/// Gets a count of the number of worklist items in the specified worklist.
+		/// </summary>
+		/// <param name="worklist"></param>
+		/// <param name="wqc"></param>
+		/// <returns></returns>
+		/// <remarks>
+		/// Subclasses may override this method but in most cases this should not be necessary.
+		/// </remarks>
+		public virtual int CountWorklistItems(Worklist worklist, IWorklistQueryContext wqc)
+		{
+			var query = BuildWorklistQuery(new WorklistQueryArgs(worklist, wqc, true));
+			return DoQueryCount(query);
+		}
+
+		/// <summary>
+		/// Performs a search using the specified criteria.
+		/// </summary>
+		public IList<TItem> GetSearchResults<TItem>(WorklistItemSearchArgs args)
+			where TItem : WorklistItem
+		{
+			var wisc = new SearchContext(this, args, typeof(TItem));
+			IWorklistItemSearchExecutionStrategy strategy = new OptimizedWorklistItemSearchExecutionStrategy();
+			var results = strategy.GetSearchResults(wisc);
+			return CollectionUtils.Map(results, (WorklistItem r) => (TItem)r);
+		}
+
+		/// <summary>
+		/// Gets an approximate count of the results that a search using the specified criteria would return.
+		/// </summary>
+		public bool EstimateSearchResultsCount(WorklistItemSearchArgs args, out int count)
+		{
+			var wisc = new SearchContext(this, args, null);
+			IWorklistItemSearchExecutionStrategy strategy = new OptimizedWorklistItemSearchExecutionStrategy();
+			return strategy.EstimateSearchResultsCount(wisc, out count);
+		}
 
 		#endregion
 
-        #region Helpers
+		#region Protected API
 
-        private HqlSelect[] GetWorklistItemProjection(WorklistTimeField timeField)
+		protected IWorklistItemQueryBuilder WorklistItemQueryBuilder { get; private set; }
+
+		protected IQueryBuilder PatientQueryBuilder { get { return _patientQueryBuilder; } }
+
+		protected IQueryBuilder ProcedureQueryBuilder { get { return _procedureQueryBuilder; } }
+
+		protected List<TItem> DoQuery<TItem>(HqlQuery query, IQueryBuilder queryBuilder, QueryBuilderArgs args)
+			where TItem : WorklistItem
 		{
-			HqlSelect selectTime;
-			MapTimeFieldToHqlSelect(timeField, out selectTime);
-			return new HqlSelect[]
-                {
-                    SelectProcedureStep,
-                    SelectProcedure,
-                    SelectOrder,
-                    SelectPatient,
-                    SelectPatientProfile,
-                    SelectMrn,
-                    SelectPatientName,
-                    SelectAccessionNumber,
-                    SelectPriority,
-                    SelectPatientClass,
-                    SelectDiagnosticServiceName,
-                    SelectProcedureTypeName,
-					SelectProcedurePortable,
-					SelectProcedureLaterality,
-                    selectTime
-                };
+			var results = DoQuery(query, typeof(TItem), queryBuilder, args);
+			return CollectionUtils.Map(results, (WorklistItem r) => (TItem)r);
 		}
 
-		private HqlProjectionQuery BuildWorklistQuery(Worklist worklist, IWorklistQueryContext wqc, bool countQuery)
-        {
-            WorklistItemSearchCriteria[] criteria = worklist.GetInvariantCriteria(wqc);
-            HqlProjectionQuery query = countQuery ?
-                CreateBaseCountQuery(criteria) : CreateBaseItemQuery(criteria);
-            AddConditions(query, criteria, true, !countQuery);
-            AddFilters(query, worklist, wqc);
-
-            // add paging if not a count query
-            if (!countQuery)
-            {
-                query.Page = wqc.Page;
-            }
-
-            return query;
-        }
-
-		private HqlProjectionQuery BuildPatientSearchQuery(IEnumerable<WorklistItemSearchCriteria> where, bool countQuery)
+		protected IList<WorklistItem> DoQuery(HqlQuery query, Type worklistItemClass, IQueryBuilder queryBuilder, QueryBuilderArgs args)
 		{
-			HqlProjectionQuery patientQuery = new HqlProjectionQuery(PatientSearchFrom, 
-				countQuery ? DefaultCountProjection : PatientSearchProjection);
+			var list = ExecuteHql<object[]>(query);
+			var results = new List<WorklistItem>();
+			foreach (var tuple in list)
+			{
+				var item = CreateWorklistItem(worklistItemClass, queryBuilder.PreProcessTuple(tuple, args), args.Projection);
+				results.Add(item);
+			}
 
-			// create a copy of the criteria that contains only the patient profile criteria, as none of the others are relevant
-            WorklistItemSearchCriteria[] patientCriteria = CollectionUtils.Map<WorklistItemSearchCriteria, WorklistItemSearchCriteria>(where,
-                delegate(WorklistItemSearchCriteria criteria)
-                {
-                	return (WorklistItemSearchCriteria) criteria.Clone(
-                	                                    	delegate(SearchCriteria subCriteria)
-                	                                    	{
-                	                                    		return subCriteria.GetKey() == "PatientProfile";
-                	                                    	}, false);
-                })
-                .FindAll(delegate(WorklistItemSearchCriteria sc) { return !sc.IsEmpty; }) // remove any empties!
-                .ToArray();
-
-
-            // add the criteria, but do not attempt to constrain the patient profile
-			AddConditions(patientQuery, patientCriteria, false, false);
-
-			return patientQuery;
+			return results;
 		}
 
-		private HqlProjectionQuery BuildProcedureSearchQuery(IEnumerable<WorklistItemSearchCriteria> where, bool countQuery)
+		protected int DoQueryCount(HqlQuery query)
 		{
-			HqlProjectionQuery procedureQuery = new HqlProjectionQuery(ProcedureSearchFrom,
-				countQuery ? DefaultCountProjection : ProcedureSearchProjection);
-			AddConditions(procedureQuery, where, true, false);
-			return procedureQuery;
+			return (int)ExecuteHqlUnique<long>(query);
 		}
 
+		protected HqlProjectionQuery BuildWorklistQuery(QueryBuilderArgs args)
+		{
+			var query = new HqlProjectionQuery();
+			this.WorklistItemQueryBuilder.AddRootQuery(query, args);
+			this.WorklistItemQueryBuilder.AddCriteria(query, args);
 
-		protected List<TItem> DoQuery(HqlQuery query)
-        {
-            IList<object[]> list = ExecuteHql<object[]>(query);
-            List<TItem> results = new List<TItem>();
-            foreach (object[] tuple in list)
-            {
-                TItem item = (TItem)Activator.CreateInstance(typeof(TItem), tuple);
-                results.Add(item);
-            }
+			if(args is WorklistQueryArgs)
+			{
+				this.WorklistItemQueryBuilder.AddFilters(query, (WorklistQueryArgs)args);
+			}
 
-            return results;
-        }
+			if (args.CountQuery)
+			{
+				this.WorklistItemQueryBuilder.AddCountProjection(query, args);
+			}
+			else
+			{
+				this.WorklistItemQueryBuilder.AddOrdering(query, args);
+				this.WorklistItemQueryBuilder.AddItemProjection(query, args);
+				this.WorklistItemQueryBuilder.AddPagingRestriction(query, args);
+			}
 
-        protected int DoQueryCount(HqlQuery query)
-        {
-            return (int)ExecuteHqlUnique<long>(query);
-        }
+			return query;
+		}
 
+		protected HqlProjectionQuery BuildWorklistSearchQuery(QueryBuilderArgs args)
+		{
+			var query = new HqlProjectionQuery();
+			this.WorklistItemQueryBuilder.AddRootQuery(query, args);
+			this.WorklistItemQueryBuilder.AddCriteria(query, args);
+			this.WorklistItemQueryBuilder.AddActiveProcedureStepConstraint(query, args);
 
-        #endregion
-    }
+			if (args.CountQuery)
+			{
+				this.WorklistItemQueryBuilder.AddCountProjection(query, args);
+			}
+			else
+			{
+				this.WorklistItemQueryBuilder.AddItemProjection(query, args);
+			}
+
+			return query;
+		}
+
+		protected HqlProjectionQuery BuildPatientSearchQuery(SearchQueryArgs args)
+		{
+			var query = new HqlProjectionQuery();
+			_patientQueryBuilder.AddRootQuery(query, null);
+			_patientQueryBuilder.AddCriteria(query, args);
+
+			if (args.CountQuery)
+			{
+				_patientQueryBuilder.AddCountProjection(query, args);
+			}
+			else
+			{
+				_patientQueryBuilder.AddItemProjection(query, args);
+			}
+			return query;
+		}
+
+		protected HqlProjectionQuery BuildProcedureSearchQuery(SearchQueryArgs args)
+		{
+			var query = new HqlProjectionQuery();
+			_procedureQueryBuilder.AddRootQuery(query, null);
+			_procedureQueryBuilder.AddCriteria(query, args);
+
+			if (args.CountQuery)
+			{
+				_procedureQueryBuilder.AddCountProjection(query, args);
+			}
+			else
+			{
+				_procedureQueryBuilder.AddItemProjection(query, args);
+			}
+			return query;
+		}
+
+		#endregion
+
+		private static WorklistItem CreateWorklistItem(Type worklistItemClass, object[] tuple, WorklistItemProjection projection)
+		{
+			var item = (WorklistItem)Activator.CreateInstance(worklistItemClass);
+			item.InitializeFromTuple(projection, tuple);
+			return item;
+		}
+
+		private static WorklistItemProjection FilterProjection(WorklistItemProjection projection, WorklistItemFieldLevel level)
+		{
+			return projection.Filter(f => level.Includes(f.Level));
+		}
+
+		private static WorklistItemSearchCriteria[] GetPatientCriteria(WorklistItemSearchCriteria[] where)
+		{
+			// create a copy of the criteria that contains only the patient profile criteria
+			var filteredCopy = CollectionUtils.Map(where,
+				(WorklistItemSearchCriteria criteria) =>
+				(WorklistItemSearchCriteria)criteria.ClonePatientCriteriaOnly());
+
+			return filteredCopy.FindAll(sc => !sc.IsEmpty) // remove any empties!
+				.ToArray();
+		}
+
+	}
 }

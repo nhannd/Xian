@@ -129,26 +129,34 @@ namespace ClearCanvas.Enterprise.Hibernate
         public TEntity Load<TEntity>(EntityRef entityRef, EntityLoadFlags flags)
             where TEntity : Entity
         {
-            try
-            {
-                // use a proxy if EntityLoadFlags.Proxy is specified and EntityLoadFlags.CheckVersion is not specified (CheckVersion overrides Proxy)
-                bool useProxy = (flags & EntityLoadFlags.CheckVersion) == 0 && (flags & EntityLoadFlags.Proxy) == EntityLoadFlags.Proxy;
-                Entity entity = (Entity)Load(EntityRefUtils.GetClass(entityRef), EntityRefUtils.GetOID(entityRef), useProxy);
-
-                // check version if necessary
-                if ((flags & EntityLoadFlags.CheckVersion) == EntityLoadFlags.CheckVersion && !EntityRefUtils.GetVersion(entityRef).Equals(entity.Version))
-                    throw new EntityVersionException(EntityRefUtils.GetOID(entityRef), null);
-
-                return (TEntity)entity;
-
-            }
-            catch (ObjectNotFoundException hibernateException)
-            {
-                // note that we will only get here if useProxy == false in the above block
-                // if the entity is proxied, verification of its existence is deferred until the proxy is realized
-                throw new EntityNotFoundException(hibernateException);
-            }
+        	return (TEntity) Load(entityRef, flags);
         }
+
+    	/// <summary>
+    	/// Loads the specified entity into this context.
+    	/// </summary>
+    	public Entity Load(EntityRef entityRef, EntityLoadFlags flags)
+        {
+			try
+			{
+				// use a proxy if EntityLoadFlags.Proxy is specified and EntityLoadFlags.CheckVersion is not specified (CheckVersion overrides Proxy)
+				bool useProxy = (flags & EntityLoadFlags.CheckVersion) == 0 && (flags & EntityLoadFlags.Proxy) == EntityLoadFlags.Proxy;
+				Entity entity = (Entity)Load(EntityRefUtils.GetClass(entityRef), EntityRefUtils.GetOID(entityRef), useProxy);
+
+				// check version if necessary
+				if ((flags & EntityLoadFlags.CheckVersion) == EntityLoadFlags.CheckVersion && !EntityRefUtils.GetVersion(entityRef).Equals(entity.Version))
+					throw new EntityVersionException(EntityRefUtils.GetOID(entityRef), null);
+
+				return entity;
+
+			}
+			catch (ObjectNotFoundException hibernateException)
+			{
+				// note that we will only get here if useProxy == false in the above block
+				// if the entity is proxied, verification of its existence is deferred until the proxy is realized
+				throw new EntityNotFoundException(hibernateException);
+			}
+		}
 
         /// <summary>
         /// Synchronizes the state of the context with the persistent store, ensuring that any new entities

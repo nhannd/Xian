@@ -33,7 +33,7 @@ using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	public abstract class PerformingWorkflowFolder : WorklistFolder<ModalityWorklistItem, IModalityWorkflowService>
+	public abstract class PerformingWorkflowFolder : WorklistFolder<ModalityWorklistItemSummary, IModalityWorkflowService>
     {
 		public PerformingWorkflowFolder()
             : base(new PerformingWorklistTable())

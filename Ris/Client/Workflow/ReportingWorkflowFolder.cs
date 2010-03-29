@@ -33,7 +33,7 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	public abstract class ReportingWorkflowFolder : WorklistFolder<ReportingWorklistItem, IReportingWorkflowService>
+	public abstract class ReportingWorkflowFolder : WorklistFolder<ReportingWorklistItemSummary, IReportingWorkflowService>
 	{
 		public ReportingWorkflowFolder()
 			: base(new ReportingWorklistTable())

@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <summary>
 		/// Gets the reporting worklist item.
 		/// </summary>
-		ReportingWorklistItem WorklistItem { get; }
+		ReportingWorklistItemSummary WorklistItem { get; }
 
 		/// <summary>
 		/// Occurs to indicate that the <see cref="WorklistItem"/> property has changed,
@@ -206,7 +206,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_owner = owner;
 			}
 
-			public ReportingWorklistItem WorklistItem
+			public ReportingWorklistItemSummary WorklistItem
 			{
 				get { return _owner.WorklistItem; }
 			}
@@ -336,7 +336,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public TranscriptionComponent(ReportingWorklistItem worklistItem, string folderName, EntityRef worklistRef, string worklistClassName)
+		public TranscriptionComponent(ReportingWorklistItemSummary worklistItem, string folderName, EntityRef worklistRef, string worklistClassName)
 		{
 			_worklistItemManager = new TranscriptionComponentWorklistItemManager(folderName, worklistRef, worklistClassName);
 			_worklistItemManager.Initialize(worklistItem);
@@ -449,7 +449,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#endregion
 
-		private ReportingWorklistItem WorklistItem
+		private ReportingWorklistItemSummary WorklistItem
 		{
 			get { return _worklistItemManager.WorklistItem; }
 		}
@@ -901,7 +901,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				return staff;
 		}
 
-		private void ClaimWorklistItem(ReportingWorklistItem item)
+		private void ClaimWorklistItem(ReportingWorklistItemSummary item)
 		{
 			if (item.ActivityStatus.Code != StepState.Scheduled) 
 				return;

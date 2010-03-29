@@ -35,16 +35,5 @@ namespace ClearCanvas.Healthcare
 {
     public class ModalityWorklistItemSearchCriteria : WorklistItemSearchCriteria
     {
-        public ProcedureCheckInSearchCriteria ProcedureCheckIn
-        {
-            get
-            {
-                if (!this.SubCriteria.ContainsKey("ProcedureCheckIn"))
-                {
-                    this.SubCriteria["ProcedureCheckIn"] = new ProcedureCheckInSearchCriteria("ProcedureCheckIn");
-                }
-                return (ProcedureCheckInSearchCriteria)this.SubCriteria["ProcedureCheckIn"];
-            }
-        }
     }
 }

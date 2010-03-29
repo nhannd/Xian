@@ -87,7 +87,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
             try
             {
-                RegistrationWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
+                RegistrationWorklistItemSummary item = CollectionUtils.FirstElement(context.SelectedItems);
                 if (item == null)
                 {
                     PatientProfileSummary profile = GetRandomPatient();

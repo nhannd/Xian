@@ -75,7 +75,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		}
 
 		[FolderPath("Search Results")]
-		public class TranscriptionSearchFolder : WorklistSearchResultsFolder<ReportingWorklistItem, ITranscriptionWorkflowService>
+		public class TranscriptionSearchFolder : WorklistSearchResultsFolder<ReportingWorklistItemSummary, ITranscriptionWorkflowService>
 		{
 			public TranscriptionSearchFolder()
 				: base(new ReportingWorklistTable())

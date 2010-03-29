@@ -94,7 +94,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	}
 
 	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
-	public class RegistrationModifyOrderTool : ModifyOrderToolBase<RegistrationWorklistItem, IRegistrationWorkflowItemToolContext>
+	public class RegistrationModifyOrderTool : ModifyOrderToolBase<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>
 	{
 		public override void Initialize()
 		{
@@ -106,7 +106,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("apply"); }));
 		}
 
-		protected override bool Execute(RegistrationWorklistItem item)
+		protected override bool Execute(RegistrationWorklistItemSummary item)
 		{
 			return ExecuteCore(item);
 		}
@@ -119,7 +119,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	}
 
 	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
-	public class BookingModifyOrderTool : ModifyOrderToolBase<RegistrationWorklistItem, IRegistrationWorkflowItemToolContext>
+	public class BookingModifyOrderTool : ModifyOrderToolBase<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>
 	{
 		public override void Initialize()
 		{
@@ -131,7 +131,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("apply"); }));
 		}
 
-		protected override bool Execute(RegistrationWorklistItem item)
+		protected override bool Execute(RegistrationWorklistItemSummary item)
 		{
 			return ExecuteCore(item);
 		}
@@ -143,9 +143,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 	}
 
 	[ExtensionOf(typeof(PerformingWorkflowItemToolExtensionPoint))]
-	public class PerformingModifyOrderTool : ModifyOrderToolBase<ModalityWorklistItem, IPerformingWorkflowItemToolContext>
+	public class PerformingModifyOrderTool : ModifyOrderToolBase<ModalityWorklistItemSummary, IPerformingWorkflowItemToolContext>
 	{
-		protected override bool Execute(ModalityWorklistItem item)
+		protected override bool Execute(ModalityWorklistItemSummary item)
 		{
 			return ExecuteCore(item);
 		}

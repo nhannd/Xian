@@ -39,12 +39,12 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 	[DataContract]
 	public class GetLinkableProtocolsResponse : DataContractBase
 	{
-		public GetLinkableProtocolsResponse(List<ReportingWorklistItem> protocolItems)
+		public GetLinkableProtocolsResponse(List<ReportingWorklistItemSummary> protocolItems)
 		{
 			this.ProtocolItems = protocolItems;
 		}
 
 		[DataMember]
-		public List<ReportingWorklistItem> ProtocolItems;
+		public List<ReportingWorklistItemSummary> ProtocolItems;
 	}
 }

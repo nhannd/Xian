@@ -103,7 +103,7 @@ namespace ClearCanvas.Ris.Client.Workflow
     }
 
 	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
-    public class RegistrationCancelOrderTool : CancelOrderToolBase<RegistrationWorklistItem, IRegistrationWorkflowItemToolContext>
+    public class RegistrationCancelOrderTool : CancelOrderToolBase<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>
 	{
 		public override void Initialize()
 		{
@@ -112,7 +112,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			this.Context.RegisterDropHandler(typeof(Folders.Registration.CancelledFolder), this);
 		}
 
-		protected override bool Execute(RegistrationWorklistItem item)
+		protected override bool Execute(RegistrationWorklistItemSummary item)
 		{
             return ExecuteCore(item);
 		}
@@ -125,9 +125,9 @@ namespace ClearCanvas.Ris.Client.Workflow
     }
 
     [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
-    public class BookingCancelOrderTool : CancelOrderToolBase<RegistrationWorklistItem, IRegistrationWorkflowItemToolContext>
+    public class BookingCancelOrderTool : CancelOrderToolBase<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>
     {
-        protected override bool Execute(RegistrationWorklistItem item)
+        protected override bool Execute(RegistrationWorklistItemSummary item)
         {
             return ExecuteCore(item);
         }
@@ -140,9 +140,9 @@ namespace ClearCanvas.Ris.Client.Workflow
     }
 
     [ExtensionOf(typeof(PerformingWorkflowItemToolExtensionPoint))]
-    public class PerformingCancelOrderTool : CancelOrderToolBase<ModalityWorklistItem, IPerformingWorkflowItemToolContext>
+    public class PerformingCancelOrderTool : CancelOrderToolBase<ModalityWorklistItemSummary, IPerformingWorkflowItemToolContext>
     {
-        protected override bool Execute(ModalityWorklistItem item)
+        protected override bool Execute(ModalityWorklistItemSummary item)
         {
             return ExecuteCore(item);
         }

@@ -77,22 +77,36 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		}
 
 		[ReadOperation]
-		public TextQueryResponse<ReportingWorklistItem> SearchWorklists(WorklistItemTextQueryRequest request)
+		public TextQueryResponse<ReportingWorklistItemSummary> SearchWorklists(WorklistItemTextQueryRequest request)
 		{
-			var assembler = new ReportingWorkflowAssembler();
+			var procedureStepClass = request.ProcedureStepClassName == null ? null
+				: ProcedureStep.GetSubClass(request.ProcedureStepClassName, PersistenceContext);
 
-			return SearchHelper(
+			// decide which broker/projection to use for searching
+			var isReporting = typeof (ReportingProcedureStep).IsAssignableFrom(procedureStepClass);
+			var broker = isReporting ?
+				(IWorklistItemBroker)PersistenceContext.GetBroker<IReportingWorklistItemBroker>()
+				: PersistenceContext.GetBroker<IProtocolWorklistItemBroker>();
+
+			var projection = isReporting ? 
+				WorklistItemProjection.ReportingWorklistSearch :
+				WorklistItemProjection.ProtocolWorklistSearch;
+			
+
+			var assembler = new ReportingWorkflowAssembler();
+			return SearchHelper<ReportingWorklistItem, ReportingWorklistItemSummary>(
 				request,
-				this.PersistenceContext.GetBroker<IReportingWorklistItemBroker>(),
-				item => assembler.CreateWorklistItemSummary(item, this.PersistenceContext));
+				broker,
+				projection,
+				item => assembler.CreateWorklistItemSummary(item, PersistenceContext));
 		}
 
 		[ReadOperation]
-		public QueryWorklistResponse<ReportingWorklistItem> QueryWorklist(QueryWorklistRequest request)
+		public QueryWorklistResponse<ReportingWorklistItemSummary> QueryWorklist(QueryWorklistRequest request)
 		{
 			var assembler = new ReportingWorkflowAssembler();
 
-			return QueryWorklistHelper<WorklistItem, ReportingWorklistItem>(
+			return QueryWorklistHelper<ReportingWorklistItem, ReportingWorklistItemSummary>(
 				request,
 				item => assembler.CreateWorklistItemSummary(item, this.PersistenceContext));
 		}
@@ -432,7 +446,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			var candidateSteps = broker.GetLinkedInterpretationCandidates(step, this.CurrentUserStaff);
 
 			// if any candidate steps were found, need to convert them to worklist items
-			IList<WorklistItem> worklistItems;
+			IList<ReportingWorklistItem> worklistItems;
 			if (candidateSteps.Count > 0)
 			{
 				// because CLR does not support List co-variance, need to map to a list of the more general type (this seems silly!)
@@ -441,12 +455,12 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			}
 			else
 			{
-				worklistItems = new List<WorklistItem>();
+				worklistItems = new List<ReportingWorklistItem>();
 			}
 
 			var assembler = new ReportingWorkflowAssembler();
 			return new GetLinkableInterpretationsResponse(
-				CollectionUtils.Map<WorklistItem, ReportingWorklistItem>(
+				CollectionUtils.Map<ReportingWorklistItem, ReportingWorklistItemSummary>(
 					worklistItems,
 					item => assembler.CreateWorklistItemSummary(item, this.PersistenceContext)));
 		}
@@ -542,28 +556,28 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 		#region OperationEnablement Helpers
 
-		public bool CanStartInterpretation(WorklistItemKey itemKey)
+		public bool CanStartInterpretation(ReportingWorklistItemKey itemKey)
 		{
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Create))
 				return false;
 			return CanExecuteOperation(new Operations.StartInterpretation(), itemKey);
 		}
 
-		public bool CanStartTranscriptionReview(WorklistItemKey itemKey)
+		public bool CanStartTranscriptionReview(ReportingWorklistItemKey itemKey)
 		{
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Create))
 				return false;
 			return CanExecuteOperation(new Operations.StartTranscriptionReview(), itemKey);
 		}
 
-		public bool CanCompleteInterpretationForTranscription(WorklistItemKey itemKey)
+		public bool CanCompleteInterpretationForTranscription(ReportingWorklistItemKey itemKey)
 		{
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Create))
 				return false;
 			return CanExecuteOperation(new Operations.CompleteInterpretationForTranscription(), itemKey);
 		}
 
-		public bool CanCompleteInterpretationForVerification(WorklistItemKey itemKey)
+		public bool CanCompleteInterpretationForVerification(ReportingWorklistItemKey itemKey)
 		{
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Create))
 				return false;
@@ -571,7 +585,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			return CanExecuteOperation(new Operations.CompleteInterpretationForVerification(), itemKey);
 		}
 
-		public bool CanCompleteInterpretationAndVerify(WorklistItemKey itemKey)
+		public bool CanCompleteInterpretationAndVerify(ReportingWorklistItemKey itemKey)
 		{
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Verify))
 				return false;
@@ -579,7 +593,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			return CanExecuteOperation(new Operations.CompleteInterpretationAndVerify(), itemKey);
 		}
 
-		public bool CanCancelReportingStep(WorklistItemKey itemKey)
+		public bool CanCancelReportingStep(ReportingWorklistItemKey itemKey)
 		{
 			// if there is no proc step ref, operation is not available
 			if (itemKey.ProcedureStepRef == null)
@@ -605,7 +619,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			return CanExecuteOperation(new Operations.CancelReportingStep(), itemKey, true);
 		}
 
-		public bool CanReviseResidentReport(WorklistItemKey itemKey)
+		public bool CanReviseResidentReport(ReportingWorklistItemKey itemKey)
 		{
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.SubmitForReview))
 				return false;
@@ -613,7 +627,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			return CanExecuteOperation(new Operations.ReviseResidentReport(), itemKey);
 		}
 
-		public bool CanStartVerification(WorklistItemKey itemKey)
+		public bool CanStartVerification(ReportingWorklistItemKey itemKey)
 		{
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Verify))
 				return false;
@@ -624,7 +638,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			return CanExecuteOperation(new Operations.StartVerification(), itemKey, true);
 		}
 
-		public bool CanCompleteVerification(WorklistItemKey itemKey)
+		public bool CanCompleteVerification(ReportingWorklistItemKey itemKey)
 		{
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Verify))
 				return false;
@@ -635,7 +649,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			return CanExecuteOperation(new Operations.CompleteVerification(), itemKey, true);
 		}
 
-		public bool CanCreateAddendum(WorklistItemKey itemKey)
+		public bool CanCreateAddendum(ReportingWorklistItemKey itemKey)
 		{
 			// special case: procedure step not known, but procedure is
 			if (itemKey.ProcedureRef != null)
@@ -646,24 +660,24 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			return false;
 		}
 
-		public bool CanReviseUnpublishedReport(WorklistItemKey itemKey)
+		public bool CanReviseUnpublishedReport(ReportingWorklistItemKey itemKey)
 		{
 			return CanExecuteOperation(new Operations.ReviseUnpublishedReport(), itemKey);
 		}
 
-		public bool CanPublishReport(WorklistItemKey itemKey)
+		public bool CanPublishReport(ReportingWorklistItemKey itemKey)
 		{
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.TestPublishReport))
 				return false;
 			return CanExecuteOperation(new Operations.PublishReport(), itemKey);
 		}
 
-		public bool CanSaveReport(WorklistItemKey itemKey)
+		public bool CanSaveReport(ReportingWorklistItemKey itemKey)
 		{
 			return CanExecuteOperation(new Operations.SaveReport(), itemKey);
 		}
 
-		public bool CanReassignProcedureStep(WorklistItemKey itemKey)
+		public bool CanReassignProcedureStep(ReportingWorklistItemKey itemKey)
 		{
 			if (itemKey.ProcedureStepRef == null)
 				return false;
@@ -680,7 +694,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			return false;
 		}
 
-		public bool CanSendReportToQueue(WorklistItemKey itemKey)
+		public bool CanSendReportToQueue(ReportingWorklistItemKey itemKey)
 		{
 			// does the item have a procedure ref, or is it just a patient?
 			if (itemKey.ProcedureRef == null)
@@ -694,7 +708,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			return true;
 		}
 
-		public bool CanCompleteDowntimeProcedure(WorklistItemKey itemKey)
+		public bool CanCompleteDowntimeProcedure(ReportingWorklistItemKey itemKey)
 		{
 			// does the item have a procedure ref, or is it just a patient?
 			if (itemKey.ProcedureRef == null)
@@ -706,12 +720,12 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			return procedure.DowntimeRecoveryMode && procedure.IsPerformed && procedure.IsDocumented;
 		}
 
-		private bool CanExecuteOperation(Operations.ReportingOperation op, WorklistItemKey itemKey)
+		private bool CanExecuteOperation(Operations.ReportingOperation op, ReportingWorklistItemKey itemKey)
 		{
 			return CanExecuteOperation(op, itemKey, false);
 		}
 
-		private bool CanExecuteOperation(Operations.ReportingOperation op, WorklistItemKey itemKey, bool disableIfSubmitForReview)
+		private bool CanExecuteOperation(Operations.ReportingOperation op, ReportingWorklistItemKey itemKey, bool disableIfSubmitForReview)
 		{
 			// if there is no proc step ref, operation is not available
 			if (itemKey.ProcedureStepRef == null)
@@ -741,7 +755,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		protected override object GetWorkItemKey(object item)
 		{
 			var summary = item as WorklistItemSummaryBase; // bug #4866: changed this to base class, so that it can be used by other folder systems
-			return summary == null ? null : new WorklistItemKey(summary.ProcedureStepRef, summary.ProcedureRef);
+			return summary == null ? null : new ReportingWorklistItemKey(summary.ProcedureStepRef, summary.ProcedureRef);
 		}
 
 		/// <summary>
@@ -794,7 +808,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			}
 		}
 
-		private ReportingWorklistItem GetWorklistItemSummary(ReportingProcedureStep reportingProcedureStep)
+		private ReportingWorklistItemSummary GetWorklistItemSummary(ReportingProcedureStep reportingProcedureStep)
 		{
 			var procedureSteps = new List<ReportingProcedureStep> { reportingProcedureStep };
 

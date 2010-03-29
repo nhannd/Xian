@@ -99,7 +99,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				ReportingWorklistItem item = GetSelectedItem();
+				ReportingWorklistItemSummary item = GetSelectedItem();
 
 				if (this.Context.SelectedItems.Count != 1)
 					return false;
@@ -115,14 +115,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
-		public override bool CanAcceptDrop(ICollection<ReportingWorklistItem> items)
+		public override bool CanAcceptDrop(ICollection<ReportingWorklistItemSummary> items)
 		{
 			// this tool is only registered as a drop handler for the Drafts folder
 			// and the only operation that would make sense in this context is StartInterpretation
 			return this.Context.GetOperationEnablement("StartInterpretation");
 		}
 
-		protected override bool Execute(ReportingWorklistItem item)
+		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			// check if the document is already open
 			if (ActivateIfAlreadyOpen(item))
@@ -258,7 +258,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		/// Execute need not be implemented since no actions delegate to the Apply method on the <see cref="WorkflowItemTool{TItem,TContext}"/> 
 		/// base class.
-		protected override bool Execute(ReportingWorklistItem item)
+		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
@@ -267,7 +267,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				ReportingWorklistItem item = GetSelectedItem();
+				ReportingWorklistItemSummary item = GetSelectedItem();
 
 				if (this.Context.SelectedItems.Count != 1)
 					return false;

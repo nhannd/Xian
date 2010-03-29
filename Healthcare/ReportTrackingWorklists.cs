@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.Workflow;
 
@@ -50,21 +51,32 @@ namespace ClearCanvas.Healthcare
 	{
 		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
 		{
-			ReportingWorklistItemSearchCriteria performerCriteria = BuildCommonCriteria(wqc);
+			var performerCriteria = BuildCommonCriteria(wqc);
 			performerCriteria.ProcedureStep.Performer.Staff.IsNotNull();
 
-			ReportingWorklistItemSearchCriteria scheduledPerformerCriteria = BuildCommonCriteria(wqc);
+			var scheduledPerformerCriteria = BuildCommonCriteria(wqc);
 			scheduledPerformerCriteria.ProcedureStep.Scheduling.Performer.Staff.IsNotNull();
 
-			return new ReportingWorklistItemSearchCriteria[] { performerCriteria, scheduledPerformerCriteria };
+			return new[] { performerCriteria, scheduledPerformerCriteria };
 		}
 
-		private ReportingWorklistItemSearchCriteria BuildCommonCriteria(IWorklistQueryContext wqc)
+		public override Type[] GetProcedureStepSubclasses()
 		{
-			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
-			criteria.ProcedureStepClass = typeof(ReportingProcedureStep);
-			criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP, ActivityStatus.SU });
-			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
+			return new[] { typeof(ReportingProcedureStep) };
+		}
+
+		protected override TimeDirective GetTimeDirective()
+		{
+			return new TimeDirective(
+				WorklistItemField.ProcedureStepCreationTime,
+				null,
+				WorklistOrdering.PrioritizeOldestItems);
+		}
+
+		private static ReportingWorklistItemSearchCriteria BuildCommonCriteria(IWorklistQueryContext wqc)
+		{
+			var criteria = new ReportingWorklistItemSearchCriteria();
+			criteria.ProcedureStep.State.In(new[] { ActivityStatus.SC, ActivityStatus.IP, ActivityStatus.SU });
 			return criteria;
 		}
 	}
@@ -79,12 +91,23 @@ namespace ClearCanvas.Healthcare
 	{
 		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
 		{
-			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
-			criteria.ProcedureStepClass = typeof(ReportingProcedureStep);
-			criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
-			criteria.ReportPart.Report.Status.EqualTo(ReportStatus.D);
-			ApplyTimeCriteria(criteria, WorklistTimeField.ReportPartPreliminaryTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
-			return new ReportingWorklistItemSearchCriteria[] { criteria };
+			var criteria = new ReportingWorklistItemSearchCriteria();
+			criteria.ProcedureStep.State.In(new[] { ActivityStatus.SC, ActivityStatus.IP });
+			criteria.Report.Status.EqualTo(ReportStatus.D);
+			return new[] { criteria };
+		}
+
+		public override Type[] GetProcedureStepSubclasses()
+		{
+			return new[] { typeof(ReportingProcedureStep) };
+		}
+
+		protected override TimeDirective GetTimeDirective()
+		{
+			return new TimeDirective(
+				WorklistItemField.ReportPartPreliminaryTime,
+				null,
+				WorklistOrdering.PrioritizeOldestItems);
 		}
 	}
 
@@ -98,12 +121,23 @@ namespace ClearCanvas.Healthcare
 	{
 		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
 		{
-			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
-			criteria.ProcedureStepClass = typeof(ReportingProcedureStep);
-			criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
-			criteria.ReportPart.Report.Status.EqualTo(ReportStatus.P);
-			ApplyTimeCriteria(criteria, WorklistTimeField.ReportPartPreliminaryTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
-			return new ReportingWorklistItemSearchCriteria[] { criteria };
+			var criteria = new ReportingWorklistItemSearchCriteria();
+			criteria.ProcedureStep.State.In(new[] { ActivityStatus.SC, ActivityStatus.IP });
+			criteria.Report.Status.EqualTo(ReportStatus.P);
+			return new[] { criteria };
+		}
+
+		public override Type[] GetProcedureStepSubclasses()
+		{
+			return new [] { typeof(ReportingProcedureStep) };
+		}
+
+		protected override TimeDirective GetTimeDirective()
+		{
+			return new TimeDirective(
+				WorklistItemField.ReportPartPreliminaryTime,
+				null,
+				WorklistOrdering.PrioritizeOldestItems);
 		}
 	}
 
@@ -117,11 +151,22 @@ namespace ClearCanvas.Healthcare
 	{
 		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
 		{
-			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
-			criteria.ProcedureStepClass = typeof(PublicationStep);
-			criteria.ReportPart.Report.Status.EqualTo(ReportStatus.F);
-			ApplyTimeCriteria(criteria, WorklistTimeField.ReportPartCompletedTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
-			return new ReportingWorklistItemSearchCriteria[] { criteria };
+			var criteria = new ReportingWorklistItemSearchCriteria();
+			criteria.Report.Status.EqualTo(ReportStatus.F);
+			return new[] { criteria };
+		}
+
+		public override Type[] GetProcedureStepSubclasses()
+		{
+			return new[] { typeof(PublicationStep) };
+		}
+
+		protected override TimeDirective GetTimeDirective()
+		{
+			return new TimeDirective(
+				WorklistItemField.ReportPartCompletedTime,
+				null,
+				WorklistOrdering.PrioritizeOldestItems);
 		}
 	}
 
@@ -135,12 +180,22 @@ namespace ClearCanvas.Healthcare
 	{
 		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
 		{
-			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
-			criteria.ProcedureStepClass = typeof(PublicationStep);
-			criteria.ReportPart.Report.Status.EqualTo(ReportStatus.C);
-			ApplyTimeCriteria(criteria, WorklistTimeField.ReportPartCompletedTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
-			return new ReportingWorklistItemSearchCriteria[] { criteria };
+			var criteria = new ReportingWorklistItemSearchCriteria();
+			criteria.Report.Status.EqualTo(ReportStatus.C);
+			return new[] { criteria };
+		}
 
+		public override Type[] GetProcedureStepSubclasses()
+		{
+			return new[] { typeof(PublicationStep) };
+		}
+
+		protected override TimeDirective GetTimeDirective()
+		{
+			return new TimeDirective(
+				WorklistItemField.ReportPartCompletedTime,
+				null,
+				WorklistOrdering.PrioritizeOldestItems);
 		}
 	}
 }

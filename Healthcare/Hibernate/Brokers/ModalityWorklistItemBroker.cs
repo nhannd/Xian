@@ -29,46 +29,37 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Hibernate;
-using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Healthcare.Workflow.Modality;
-using ClearCanvas.Workflow;
+using ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
-    /// <summary>
-    /// Implementation of <see cref="IModalityWorklistItemBroker"/>.
-    /// </summary>
-    [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class ModalityWorklistItemBroker : WorklistItemBrokerBase<WorklistItem>, IModalityWorklistItemBroker
-    {
-        #region Private Helpers
-
-		protected override HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where, bool countQuery)
+	/// <summary>
+	/// Implementation of <see cref="IModalityWorklistItemBroker"/>.
+	/// </summary>
+	[ExtensionOf(typeof(BrokerExtensionPoint))]
+	public class ModalityWorklistItemBroker : WorklistItemBrokerBase, IModalityWorklistItemBroker
+	{
+		/// <summary>
+		/// No-args constructor for extension construction.
+		/// </summary>
+		public ModalityWorklistItemBroker()
+			: base(new WorklistItemQueryBuilder())
 		{
-			// need to set the correct time field
-			// ProcedureScheduledStartTime seems like a reasonable choice for tech homepage search,
-			// as it gives a general sense of when the procedure occurs in time, regardless of the procedure step
-			CollectionUtils.ForEach(where,
-				delegate(WorklistItemSearchCriteria sc)
-				{
-					sc.TimeField = WorklistTimeField.ProcedureScheduledStartTime;
-				});
-
-			HqlProjectionQuery query = countQuery ? CreateBaseCountQuery(where) : CreateBaseItemQuery(where);
-			query.Conditions.Add(ConditionActiveProcedureStep);
-
-			AddConditions(query, where, true, !countQuery);
-
-			return query;
 		}
 
-		#endregion
-    }
+		/// <summary>
+		/// Protected constructor.
+		/// </summary>
+		/// <param name="worklistItemQueryBuilder"></param>
+		/// <param name="procedureSearchQueryBuilder"></param>
+		/// <param name="patientSearchQueryBuilder"></param>
+		protected ModalityWorklistItemBroker(IWorklistItemQueryBuilder worklistItemQueryBuilder,
+			IQueryBuilder procedureSearchQueryBuilder, IQueryBuilder patientSearchQueryBuilder)
+			:base(worklistItemQueryBuilder, procedureSearchQueryBuilder, patientSearchQueryBuilder)
+		{
+		}
+	}
 }

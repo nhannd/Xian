@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -33,18 +33,17 @@ using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
+namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
     [DataContract]
-    public class ReportingWorklistItem : WorklistItemSummaryBase
+    public class ModalityWorklistItemSummary : WorklistItemSummaryBase
     {
-        public ReportingWorklistItem(
+        public ModalityWorklistItemSummary(
             EntityRef procedureStepRef,
             EntityRef procedureRef,
             EntityRef orderRef,
             EntityRef patientRef,
             EntityRef profileRef,
-            EntityRef reportRef,
             CompositeIdentifierDetail mrn,
             PersonNameDetail name,
             string accessionNumber,
@@ -52,14 +51,11 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
             EnumValueInfo patientClass,
             string diagnosticServiceName,
             string procedureName,
-            bool procedurePortable,
-            bool hasErrors,
-            EnumValueInfo procedureLaterality,
+			bool procedurePortable,
+			EnumValueInfo procedureLaterality,
             string procedureStepName,
-            DateTime? time,
-            EnumValueInfo activityStatus,
-            int reportPartIndex)
-            : base(
+            DateTime? time)
+            :base(
                 procedureStepRef,
                 procedureRef,
                 orderRef,
@@ -72,36 +68,12 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
                 patientClass,
                 diagnosticServiceName,
                 procedureName,
-                procedurePortable,
-                procedureLaterality,
+				procedurePortable,
+				procedureLaterality,
                 procedureStepName,
                 time
             )
         {
-            this.ReportRef = reportRef;
-            this.ActivityStatus = activityStatus;
-            this.ReportPartIndex = reportPartIndex;
-            this.HasErrors = hasErrors;
-        }
-
-        [DataMember]
-        public EntityRef ReportRef;
-
-        [DataMember]
-        public EnumValueInfo ActivityStatus;
-
-        [DataMember]
-        public int ReportPartIndex;
-
-        [DataMember]
-        public bool HasErrors;
-
-        /// <summary>
-        /// Gets a value indicating if this worklist item refers to an addendum.
-        /// </summary>
-        public bool IsAddendumStep
-        {
-            get { return this.ReportPartIndex > 0; }
         }
     }
 }

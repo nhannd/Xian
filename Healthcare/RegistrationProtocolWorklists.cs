@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,15 +29,44 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.Workflow;
+using System.Collections;
+using ClearCanvas.Healthcare.Brokers;
 
 namespace ClearCanvas.Healthcare
 {
 	[WorklistProcedureTypeGroupClass(typeof(PerformingGroup))]
 	[WorklistCategory("WorklistCategoryBooking")]
-	public abstract class RegistrationProtocolWorklist : RegistrationWorklist
+	public abstract class RegistrationProtocolWorklist : Worklist
 	{
+		public override IList GetWorklistItems(IWorklistQueryContext wqc)
+		{
+			// TODO: ProtocollingWorklistQueryBuilder may not be exactly correct because it contains an additional constraint
+			return (IList)wqc.GetBroker<IProtocolWorklistItemBroker>().GetWorklistItems<WorklistItem>(this, wqc);
+		}
+
+		public override string GetWorklistItemsHql(IWorklistQueryContext wqc)
+		{
+			return wqc.GetBroker<IProtocolWorklistItemBroker>().GetWorklistItemsHql(this, wqc);
+		}
+
+		public override int GetWorklistItemCount(IWorklistQueryContext wqc)
+		{
+			// TODO: ProtocollingWorklistQueryBuilder may not be exactly correct because it contains an additional constraint
+			return wqc.GetBroker<IProtocolWorklistItemBroker>().CountWorklistItems(this, wqc);
+		}
+
+		protected override WorklistItemProjection GetProjectionCore(WorklistItemField timeField)
+		{
+			return WorklistItemProjection.GetProcedureStepProjection(timeField);
+		}
+
+		public override Type[] GetProcedureStepSubclasses()
+		{
+			return new[] { typeof(ProtocolAssignmentStep) };
+		}
 	}
 
 	/// <summary>
@@ -52,10 +81,16 @@ namespace ClearCanvas.Healthcare
 		{
 			var criteria = new RegistrationWorklistItemSearchCriteria();
 			criteria.ProcedureStep.State.In(new[] { ActivityStatus.SC, ActivityStatus.IP });
-			criteria.ProcedureStepClass = typeof(ProtocolAssignmentStep);
 			criteria.Procedure.Status.EqualTo(ProcedureStatus.SC);	//bug #3498: exclude procedures that are no longer in SC status 
-			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
 			return new WorklistItemSearchCriteria[] { criteria };
+		}
+
+		protected override TimeDirective GetTimeDirective()
+		{
+			return new TimeDirective(
+				WorklistItemField.ProcedureStepCreationTime,
+				null,
+				WorklistOrdering.PrioritizeOldestItems);
 		}
 	}
 
@@ -71,12 +106,18 @@ namespace ClearCanvas.Healthcare
 		{
 			var criteria = new RegistrationWorklistItemSearchCriteria();
 			criteria.ProcedureStep.State.In(new[] { ActivityStatus.SC, ActivityStatus.IP });
-			criteria.ProcedureStepClass = typeof(ProtocolAssignmentStep);
 			criteria.Procedure.Status.EqualTo(ProcedureStatus.SC);	//bug #3498: exclude procedures that are no longer in SC status 
 
 			// any procedures with pending protocol assignment, where the procedure scheduled start time is filtered
-			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureScheduledStartTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeOldestItems, wqc);
 			return new WorklistItemSearchCriteria[] { criteria };
+		}
+
+		protected override TimeDirective GetTimeDirective()
+		{
+			return new TimeDirective(
+				WorklistItemField.ProcedureScheduledStartTime,
+				WorklistTimeRange.Today,
+				WorklistOrdering.PrioritizeOldestItems);
 		}
 	}
 
@@ -91,10 +132,21 @@ namespace ClearCanvas.Healthcare
 		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
 		{
 			var criteria = new RegistrationWorklistItemSearchCriteria();
-			criteria.ProcedureStepClass = typeof(ProtocolResolutionStep);
 			criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);
-			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
 			return new WorklistItemSearchCriteria[] { criteria };
+		}
+
+		protected override TimeDirective GetTimeDirective()
+		{
+			return new TimeDirective(
+				WorklistItemField.ProcedureStepCreationTime,
+				null,
+				WorklistOrdering.PrioritizeOldestItems);
+		}
+
+		public override Type[] GetProcedureStepSubclasses()
+		{
+			return new [] { typeof(ProtocolResolutionStep) };
 		}
 	}
 
@@ -109,11 +161,9 @@ namespace ClearCanvas.Healthcare
 		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
 		{
 			var criteria = new RegistrationWorklistItemSearchCriteria();
-			criteria.ProcedureStepClass = typeof(ProtocolAssignmentStep);
 			criteria.ProcedureStep.State.EqualTo(ActivityStatus.CM);
 
 			// only unscheduled procedures should be in this list
-			// unscheduled procedures are in the scheduled status but have no scheduled start time
 			criteria.Procedure.ScheduledStartTime.IsNull();
 			criteria.Procedure.Status.EqualTo(ProcedureStatus.SC);
 
@@ -121,8 +171,15 @@ namespace ClearCanvas.Healthcare
 			// but they should be excluded since there is no reason to schedule a patient who is already here
 			criteria.Procedure.ProcedureCheckIn.CheckInTime.IsNull();
 
-			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepEndTime, null, WorklistOrdering.PrioritizeNewestItems, wqc);
 			return new WorklistItemSearchCriteria[] { criteria };
+		}
+
+		protected override TimeDirective GetTimeDirective()
+		{
+			return new TimeDirective(
+				WorklistItemField.ProcedureStepEndTime,
+				null,
+				WorklistOrdering.PrioritizeNewestItems);
 		}
 	}
 }

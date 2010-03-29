@@ -1,0 +1,90 @@
+﻿using System;
+using System.Collections.Generic;
+using ClearCanvas.Enterprise.Hibernate.Hql;
+using ClearCanvas.Common.Utilities;
+
+namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
+{
+	public static class QueryBuilderHelpers
+	{
+		public static void AddCriteriaToQuery(string qualifier, WorklistItemSearchCriteria[] criteria, HqlProjectionQuery query,
+			Converter<string, string> remapHqlExprFunction)
+		{
+			var or = new HqlOr();
+			foreach (var c in criteria)
+			{
+				if(c.IsEmpty)
+					continue;
+
+				var conditions = HqlCondition.FromSearchCriteria(qualifier, c, remapHqlExprFunction);
+				var and = new HqlAnd(conditions);
+				if (and.Conditions.Count > 0)
+					or.Conditions.Add(and);
+			}
+
+			if (or.Conditions.Count > 0)
+				query.Conditions.Add(or);
+		}
+
+		public static void AddOrderingToQuery(string qualifier, HqlProjectionQuery query, WorklistItemSearchCriteria[] criteria,
+			Converter<string, string> remapHqlExprFunction)
+		{
+			// use the sorting information from the first WorklistItemSearchCriteria object only
+			// (the assumption is that they are all identical)
+			var c = CollectionUtils.FirstElement(criteria);
+			if (c == null)
+				return;
+
+			var sorts = HqlSort.FromSearchCriteria(qualifier, c, remapHqlExprFunction);
+			query.Sorts.AddRange(sorts);
+		}
+
+		/// <summary>
+		/// NHibernate has a bug where criteria that de-reference properties not joined into the From clause are not
+		/// always handled properly.  For example, in order to evaluate a criteria such as "ps.Scheduling.Performer.Staff.Name like ?",
+		/// NHiberate will inject a theta-join on Staff into the SQL.  This works ok by itself.  However, when evaluating a criteria
+		/// such as "ps.Scheduling.Performer.Staff.Name.FamilyName like ? or ps.Performer.Staff.Name.FamilyName like ?", NHibernate
+		/// injects two Staff theta-joins into the SQL, which incorrectly results in a cross-join situation.
+		/// This method modifies any query that has criteria on ps.Scheduling.Performer.Staff or ps.Performer.Staff,
+		/// by adding in explicit joins to Staff for these objects, and then substituting the original conditions
+		/// with conditions based on these joins.
+		/// </summary>
+		public static void NHibernateBugWorkaround(HqlFrom from, IList<HqlCondition> conditions, Converter<string, string> remapHqlExprFunction)
+		{
+			var scheduledStaff = remapHqlExprFunction("ps.Scheduling.Performer.Staff");
+			var performerStaff = remapHqlExprFunction("ps.Performer.Staff");
+
+			for (var i = 0; i < conditions.Count; i++)
+			{
+				var condition = conditions[i];
+				if (condition is HqlJunction)
+				{
+					NHibernateBugWorkaround(from, ((HqlJunction)condition).Conditions, remapHqlExprFunction);
+				}
+				else if (condition.Hql.StartsWith(scheduledStaff))
+				{
+					// add join for sst (scheduled staff) if not added
+					if (!CollectionUtils.Contains(from.Joins, j => j.Alias == "sst"))
+					{
+						from.Joins.Add(new HqlJoin(scheduledStaff, "sst", HqlJoinMode.Left));
+					}
+
+					// replace the condition with a new condition, using the joined Staff
+					var newHql = condition.Hql.Replace(scheduledStaff, "sst");
+					conditions[i] = new HqlCondition(newHql, condition.Parameters);
+				}
+				else if (condition.Hql.StartsWith(performerStaff))
+				{
+					// add join for pst (performer staff) if not added
+					if (!CollectionUtils.Contains(from.Joins, j => j.Alias == "pst"))
+					{
+						from.Joins.Add(new HqlJoin(performerStaff, "pst", HqlJoinMode.Left));
+					}
+					// replace the condition with a new condition, using the joined Staff
+					var newHql = condition.Hql.Replace(performerStaff, "pst");
+					conditions[i] = new HqlCondition(newHql, condition.Parameters);
+				}
+			}
+		}
+	}
+}

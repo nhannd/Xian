@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			base.Initialize();
 		}
 
-		protected override bool Execute(ReportingWorklistItem item)
+		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			try
 			{
@@ -107,7 +107,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			base.Initialize();
 		}
 
-		protected override bool Execute(ReportingWorklistItem item)
+		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			ProtocolReasonComponent component = new ProtocolReasonComponent();
 			if (this.Context.DesktopWindow.ShowDialogBox(component, "Reason") == DialogBoxAction.Ok)
@@ -183,7 +183,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			base.Initialize();
 		}
 
-		protected override bool Execute(ReportingWorklistItem item)
+		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			try
 			{
@@ -230,7 +230,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			base.Initialize();
 		}
 
-		protected override bool Execute(ReportingWorklistItem item)
+		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			if (this.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmDiscardSelectedProtocol, MessageBoxActions.OkCancel)
 				== DialogBoxAction.Cancel)

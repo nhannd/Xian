@@ -146,19 +146,21 @@ namespace ClearCanvas.Ris.Application.Services
 		/// <typeparam name="TSummary"></typeparam>
 		/// <param name="request"></param>
 		/// <param name="broker"></param>
+		/// <param name="projection"></param>
 		/// <param name="mapCallback"></param>
 		/// <returns></returns>
 		protected TextQueryResponse<TSummary> SearchHelper<TItem, TSummary>(
 			WorklistItemTextQueryRequest request,
-			IWorklistItemBroker<TItem> broker,
+			IWorklistItemBroker broker,
+			WorklistItemProjection projection,
 			Converter<TItem, TSummary> mapCallback)
 			where TSummary : DataContractBase
-			where TItem : WorklistItemBase
+			where TItem : WorklistItem
 		{
 			var procedureStepClass = request.ProcedureStepClassName == null ? null
 				: ProcedureStep.GetSubClass(request.ProcedureStepClassName, PersistenceContext);
 
-			var helper = new WorklistItemTextQueryHelper<TItem, TSummary>(broker, mapCallback, procedureStepClass, request.Options, PersistenceContext);
+			var helper = new WorklistItemTextQueryHelper<TItem, TSummary>(broker, mapCallback, procedureStepClass, projection, request.Options, PersistenceContext);
 
 			return helper.Query(request);
 		}

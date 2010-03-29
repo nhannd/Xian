@@ -40,7 +40,7 @@ namespace ClearCanvas.Healthcare.Brokers
     /// <summary>
     /// Defines an interface to a worklist item broker for modality worklist items.
     /// </summary>
-    public interface IModalityWorklistItemBroker : IWorklistItemBroker<WorklistItem>
+    public interface IModalityWorklistItemBroker : IWorklistItemBroker
     {
     }
 }

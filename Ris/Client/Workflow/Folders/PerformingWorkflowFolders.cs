@@ -86,7 +86,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		}
 
 		[FolderPath("Search Results")]
-		public class SearchFolder : WorklistSearchResultsFolder<ModalityWorklistItem, IModalityWorkflowService>
+		public class SearchFolder : WorklistSearchResultsFolder<ModalityWorklistItemSummary, IModalityWorkflowService>
 		{
 			public SearchFolder()
 				: base(new PerformingWorklistTable())

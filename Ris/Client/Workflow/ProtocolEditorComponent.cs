@@ -94,7 +94,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#region Private Fields
 
-		private ReportingWorklistItem _worklistItem;
+		private ReportingWorklistItemSummary _worklistItem;
 
 		private List<EnumValueInfo> _protocolUrgencyChoices;
 
@@ -119,7 +119,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public ProtocolEditorComponent(ReportingWorklistItem worklistItem)
+		public ProtocolEditorComponent(ReportingWorklistItemSummary worklistItem)
 		{
 			_worklistItem = worklistItem;
 
@@ -155,7 +155,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#endregion
 
-		public ReportingWorklistItem WorklistItem
+		public ReportingWorklistItemSummary WorklistItem
 		{
 			get { return _worklistItem; }
 			set

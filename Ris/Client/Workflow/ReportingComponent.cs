@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <summary>
 		/// Gets the reporting worklist item.
 		/// </summary>
-		ReportingWorklistItem WorklistItem { get; }
+		ReportingWorklistItemSummary WorklistItem { get; }
 
 		/// <summary>
 		/// Occurs to indicate that the <see cref="WorklistItem"/> property has changed,
@@ -261,7 +261,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_owner = owner;
 			}
 
-			public ReportingWorklistItem WorklistItem
+			public ReportingWorklistItemSummary WorklistItem
 			{
 				get { return _owner.WorklistItem; }
 			}
@@ -404,7 +404,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public ReportingComponent(ReportingWorklistItem worklistItem, string folderName, EntityRef worklistRef, string worklistClassName, bool shouldOpenImages)
+		public ReportingComponent(ReportingWorklistItemSummary worklistItem, string folderName, EntityRef worklistRef, string worklistClassName, bool shouldOpenImages)
 		{
 			_worklistItemManager = new ReportingComponentWorklistItemManager(folderName, worklistRef, worklistClassName);
 			_worklistItemManager.Initialize(worklistItem);
@@ -550,7 +550,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#endregion
 
-		private ReportingWorklistItem WorklistItem
+		private ReportingWorklistItemSummary WorklistItem
 		{
 			get { return _worklistItemManager.WorklistItem; }
 		}
@@ -1196,7 +1196,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		#endregion
 
 
-		private bool ClaimAndLinkWorklistItem(ReportingWorklistItem item)
+		private bool ClaimAndLinkWorklistItem(ReportingWorklistItemSummary item)
 		{
 			// no need to claim if the item is not scheduled
 			if (item.ActivityStatus.Code != StepState.Scheduled)
@@ -1208,8 +1208,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 					throw new UserSkippedItemWithIncompleteDocumentationException();
 
 				// if creating a new report, check for linked interpretations
-				List<ReportingWorklistItem> linkedInterpretations;
-				List<ReportingWorklistItem> candidateInterpretations;
+				List<ReportingWorklistItemSummary> linkedInterpretations;
+				List<ReportingWorklistItemSummary> candidateInterpretations;
 				PromptForLinkedInterpretations(item, out linkedInterpretations, out candidateInterpretations);
 
 				try
@@ -1247,7 +1247,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return true;
 		}
 
-		private bool ShouldSkipItemWithIncompleteDocumentation(ReportingWorklistItem item)
+		private bool ShouldSkipItemWithIncompleteDocumentation(ReportingWorklistItemSummary item)
 		{
 			string message;
 			if (ItemHasIncompleteDocumentation(item, out message))
@@ -1261,7 +1261,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return false;
 		}
 
-		private static bool ItemHasIncompleteDocumentation(ReportingWorklistItem item, out string message)
+		private static bool ItemHasIncompleteDocumentation(ReportingWorklistItemSummary item, out string message)
 		{
 			var isIncomplete = true;
 			var localMessage = "";  // Cannot use 'out' parameter in anonymous method
@@ -1277,13 +1277,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return isIncomplete;
 		}
 
-		private void PromptForLinkedInterpretations(ReportingWorklistItem item, out List<ReportingWorklistItem> linkedItems, out List<ReportingWorklistItem> candidateItems)
+		private void PromptForLinkedInterpretations(ReportingWorklistItemSummary item, out List<ReportingWorklistItemSummary> linkedItems, out List<ReportingWorklistItemSummary> candidateItems)
 		{
-			linkedItems = new List<ReportingWorklistItem>();
-			candidateItems = new List<ReportingWorklistItem>();
+			linkedItems = new List<ReportingWorklistItemSummary>();
+			candidateItems = new List<ReportingWorklistItemSummary>();
 
 			// query server for link candidates
-			var anonCandidates = new List<ReportingWorklistItem>();  // cannot use out param in anonymous delegate.
+			var anonCandidates = new List<ReportingWorklistItemSummary>();  // cannot use out param in anonymous delegate.
 			Platform.GetService<IReportingWorkflowService>(service =>
 			{
 				var response = service.GetLinkableInterpretations(new GetLinkableInterpretationsRequest(item.ProcedureStepRef));
@@ -1353,7 +1353,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 
 		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify)]
-		private static EntityRef StartVerification(ReportingWorklistItem item)
+		private static EntityRef StartVerification(ReportingWorklistItemSummary item)
 		{
 			EntityRef result = null;
 			Platform.GetService<IReportingWorkflowService>(service =>
@@ -1366,7 +1366,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 
 		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
-		private static EntityRef StartInterpretation(ReportingWorklistItem item, List<ReportingWorklistItem> linkedInterpretations, out EntityRef assignedStaffRef)
+		private static EntityRef StartInterpretation(ReportingWorklistItemSummary item, List<ReportingWorklistItemSummary> linkedInterpretations, out EntityRef assignedStaffRef)
 		{
 			var linkedInterpretationRefs = linkedInterpretations.ConvertAll(x => x.ProcedureStepRef);
 
@@ -1383,7 +1383,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 
 		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
-		private static EntityRef StartTranscriptionReview(ReportingWorklistItem item)
+		private static EntityRef StartTranscriptionReview(ReportingWorklistItemSummary item)
 		{
 			EntityRef result = null;
 			Platform.GetService<IReportingWorkflowService>(service =>

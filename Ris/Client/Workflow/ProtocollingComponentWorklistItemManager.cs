@@ -35,16 +35,16 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	public class ProtocollingComponentWorklistItemManager : WorklistItemManager<ReportingWorklistItem, IReportingWorkflowService>
+	public class ProtocollingComponentWorklistItemManager : WorklistItemManager<ReportingWorklistItemSummary, IReportingWorkflowService>
 	{
 		public ProtocollingComponentWorklistItemManager(string folderName, EntityRef worklistRef, string worklistClassName)
 			: base(folderName, worklistRef, worklistClassName)
 		{
 		}
 
-		protected override IContinuousWorkflowComponentMode GetMode<TWorklistITem>(ReportingWorklistItem worklistItem)
+		protected override IContinuousWorkflowComponentMode GetMode<TWorklistITem>(ReportingWorklistItemSummary worklistItem)
 		{
-			throw new NotSupportedException("Protocolling component mode should be initialized externally.  ReportingWorklistItem does not have enough context.");
+			throw new NotSupportedException("Protocolling component mode should be initialized externally.  ReportingWorklistItemSummary does not have enough context.");
 		}
 
 		protected override string TaskName

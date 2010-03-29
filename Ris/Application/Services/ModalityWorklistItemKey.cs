@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -30,65 +30,22 @@
 #endregion
 
 using System;
-using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
+namespace ClearCanvas.Ris.Application.Services
 {
-	[DataContract]
-	public class RegistrationWorklistItem : WorklistItemSummaryBase
-	{
-		public RegistrationWorklistItem(
-			EntityRef procedureRef,
-			EntityRef orderRef,
-			EntityRef patientRef,
-			EntityRef profileRef,
-			CompositeIdentifierDetail mrn,
-			PersonNameDetail name,
-			string accessionNumber,
-			EnumValueInfo orderPriority,
-			EnumValueInfo patientClass,
-			string diagnosticServiceName,
-			string procedureName,
-			bool procedurePortable,
-			EnumValueInfo procedureLaterality,
-			DateTime? time,
-			HealthcardDetail healthcard,
-			DateTime? dateOfBirth,
-			EnumValueInfo sex)
-			:base(
-				null,
-				procedureRef,
-				orderRef,
-				patientRef,
-				profileRef,
-				mrn,
-				name,
-				accessionNumber,
-				orderPriority,
-				patientClass,
-				diagnosticServiceName,
-				procedureName,
-				procedurePortable,
-				procedureLaterality,
-				null,
-				time
-			)
-		{
-			this.Healthcard = healthcard;
-			this.DateOfBirth = dateOfBirth;
-			this.Sex = sex;
-		}
+    public class ModalityWorklistItemKey
+    {
+        private readonly EntityRef _procedureStepRef;
 
+        public ModalityWorklistItemKey(EntityRef procedureStepRef)
+        {
+            _procedureStepRef = procedureStepRef;
+        }
 
-		[DataMember]
-		public HealthcardDetail Healthcard;
-
-		[DataMember]
-		public DateTime? DateOfBirth;
-
-		[DataMember]
-		public EnumValueInfo Sex;
-
-	}
+        public EntityRef ProcedureStepRef
+        {
+            get { return _procedureStepRef; }
+        }
+    }
 }

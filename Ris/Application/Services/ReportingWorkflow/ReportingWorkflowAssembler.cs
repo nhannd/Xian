@@ -37,10 +37,10 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
     public class ReportingWorkflowAssembler
     {
-        public ReportingWorklistItem CreateWorklistItemSummary(WorklistItem domainItem, IPersistenceContext context)
+        public ReportingWorklistItemSummary CreateWorklistItemSummary(ReportingWorklistItem domainItem, IPersistenceContext context)
         {
             PersonNameAssembler assembler = new PersonNameAssembler();
-            return new ReportingWorklistItem(
+            return new ReportingWorklistItemSummary(
                 domainItem.ProcedureStepRef,
                 domainItem.ProcedureRef,
                 domainItem.OrderRef,
@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                 EnumUtils.GetEnumValueInfo(domainItem.ProcedureLaterality, context),
                 domainItem.ProcedureStepName,
                 domainItem.Time,
-                EnumUtils.GetEnumValueInfo(domainItem.ActivityStatus, context),
+				domainItem.ActivityStatus.HasValue ? EnumUtils.GetEnumValueInfo(domainItem.ActivityStatus.Value, context) : null,
                 domainItem.ReportPartIndex
                 );
         }

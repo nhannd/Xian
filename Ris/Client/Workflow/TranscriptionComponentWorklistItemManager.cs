@@ -35,14 +35,14 @@ using ClearCanvas.Ris.Application.Common.TranscriptionWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	public class TranscriptionComponentWorklistItemManager : WorklistItemManager<ReportingWorklistItem, ITranscriptionWorkflowService>
+	public class TranscriptionComponentWorklistItemManager : WorklistItemManager<ReportingWorklistItemSummary, ITranscriptionWorkflowService>
 	{
 		public TranscriptionComponentWorklistItemManager(string folderName, EntityRef worklistRef, string worklistClassName)
 			: base(folderName, worklistRef, worklistClassName)
 		{
 		}
 
-		protected override IContinuousWorkflowComponentMode GetMode<TWorklistITem>(ReportingWorklistItem worklistItem)
+		protected override IContinuousWorkflowComponentMode GetMode<TWorklistITem>(ReportingWorklistItemSummary worklistItem)
 		{
 			if (worklistItem == null)
 				return TranscriptionComponentModes.Review;

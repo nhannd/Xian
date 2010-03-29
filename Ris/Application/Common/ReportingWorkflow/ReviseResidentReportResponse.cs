@@ -37,12 +37,12 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 	[DataContract]
 	public class ReviseResidentReportResponse : DataContractBase
 	{
-		public ReviseResidentReportResponse(ReportingWorklistItem replacementInterpretationStep)
+		public ReviseResidentReportResponse(ReportingWorklistItemSummary replacementInterpretationStep)
 		{
 			this.ReplacementInterpretationStep = replacementInterpretationStep;
 		}
 
 		[DataMember]
-		public ReportingWorklistItem ReplacementInterpretationStep;
+		public ReportingWorklistItemSummary ReplacementInterpretationStep;
 	}
 }

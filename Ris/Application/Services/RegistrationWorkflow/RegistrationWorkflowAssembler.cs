@@ -32,17 +32,18 @@
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Healthcare;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
 	public class RegistrationWorkflowAssembler
 	{
-		public RegistrationWorklistItem CreateWorklistItemSummary(WorklistItem domainItem, IPersistenceContext context)
+		public RegistrationWorklistItemSummary CreateWorklistItemSummary(WorklistItem domainItem, IPersistenceContext context)
 		{
 			var nameAssembler = new PersonNameAssembler();
 			var healthcardAssembler = new HealthcardAssembler();
 
-			return new RegistrationWorklistItem(
+			return new RegistrationWorklistItemSummary(
 				domainItem.ProcedureRef,
 				domainItem.OrderRef,
 				domainItem.PatientRef,
@@ -56,11 +57,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				domainItem.ProcedureName,
 				domainItem.ProcedurePortable,
 				EnumUtils.GetEnumValueInfo(domainItem.ProcedureLaterality, context),
-				domainItem.Time,
-				healthcardAssembler.CreateHealthcardDetail(domainItem.HealthcardNumber),
-				domainItem.DateOfBirth,
-				EnumUtils.GetEnumValueInfo(domainItem.Sex, context)
-				);
+				domainItem.Time);
 		}
 	}
 }

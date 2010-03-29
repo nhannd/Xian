@@ -38,6 +38,6 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 	public class CreateAddendumResponse : DataContractBase
 	{
 		[DataMember]
-		public ReportingWorklistItem ReportingWorklistItem;
+		public ReportingWorklistItemSummary ReportingWorklistItem;
 	}
 }

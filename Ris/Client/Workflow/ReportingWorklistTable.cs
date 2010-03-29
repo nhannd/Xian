@@ -38,7 +38,7 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-    public class ReportingWorklistTable : Table<ReportingWorklistItem>
+    public class ReportingWorklistTable : Table<ReportingWorklistItemSummary>
     {
         private static readonly int NumRows = 2;
         private static readonly int DescriptionRow = 1;
@@ -52,33 +52,33 @@ namespace ClearCanvas.Ris.Client.Workflow
             : base(cellRowCount)
         {
             // Visible Columns
-            TableColumn<ReportingWorklistItem, IconSet> priorityColumn = new TableColumn<ReportingWorklistItem, IconSet>(
+            TableColumn<ReportingWorklistItemSummary, IconSet> priorityColumn = new TableColumn<ReportingWorklistItemSummary, IconSet>(
                 SR.ColumnPriority,
-                delegate(ReportingWorklistItem item) { return GetOrderPriorityIcon(item.OrderPriority.Code); },
+                delegate(ReportingWorklistItemSummary item) { return GetOrderPriorityIcon(item.OrderPriority.Code); },
                 0.2f);
-            priorityColumn.Comparison = delegate(ReportingWorklistItem item1, ReportingWorklistItem item2)
+            priorityColumn.Comparison = delegate(ReportingWorklistItemSummary item1, ReportingWorklistItemSummary item2)
                 { return GetOrderPriorityIndex(item1.OrderPriority.Code) - GetOrderPriorityIndex(item2.OrderPriority.Code); };
             priorityColumn.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
 
-            TableColumn<ReportingWorklistItem, string> mrnColumn = new TableColumn<ReportingWorklistItem, string>(
+            TableColumn<ReportingWorklistItemSummary, string> mrnColumn = new TableColumn<ReportingWorklistItemSummary, string>(
                 SR.ColumnMRN,
-                delegate(ReportingWorklistItem item) { return MrnFormat.Format(item.Mrn); },
+                delegate(ReportingWorklistItemSummary item) { return MrnFormat.Format(item.Mrn); },
                 0.9f);
 
-            TableColumn<ReportingWorklistItem, string> nameColumn = new TableColumn<ReportingWorklistItem, string>(
+            TableColumn<ReportingWorklistItemSummary, string> nameColumn = new TableColumn<ReportingWorklistItemSummary, string>(
                 SR.ColumnName,
-                delegate(ReportingWorklistItem item) { return PersonNameFormat.Format(item.PatientName); },
+                delegate(ReportingWorklistItemSummary item) { return PersonNameFormat.Format(item.PatientName); },
                 1.5f);
 
             // Currently the creation time of the interpretation step
-            DateTimeTableColumn<ReportingWorklistItem> procedureEndTimeColumn = new DateTimeTableColumn<ReportingWorklistItem>(
+            DateTimeTableColumn<ReportingWorklistItemSummary> procedureEndTimeColumn = new DateTimeTableColumn<ReportingWorklistItemSummary>(
                 SR.ColumnTime,
-                delegate(ReportingWorklistItem item) { return item.Time; },
+                delegate(ReportingWorklistItemSummary item) { return item.Time; },
                 1.1f);
 
-            TableColumn<ReportingWorklistItem, string> descriptionRow = new TableColumn<ReportingWorklistItem, string>(
+            TableColumn<ReportingWorklistItemSummary, string> descriptionRow = new TableColumn<ReportingWorklistItemSummary, string>(
                 SR.ColumnDescription,
-                delegate(ReportingWorklistItem item)
+                delegate(ReportingWorklistItemSummary item)
                 {
 					// if there is no accession number, this item represents a patient only, not an order
 					if (item.AccessionNumber == null)
@@ -90,21 +90,21 @@ namespace ClearCanvas.Ris.Client.Workflow
                 DescriptionRow);
 
             // Invisible but sortable columns
-            TableColumn<ReportingWorklistItem, string> patientClassColumn = new TableColumn<ReportingWorklistItem, string>(
+            TableColumn<ReportingWorklistItemSummary, string> patientClassColumn = new TableColumn<ReportingWorklistItemSummary, string>(
                 SR.ColumnPatientClass,
-                delegate(ReportingWorklistItem item) { return item.PatientClass == null ? null : item.PatientClass.Value; },
+                delegate(ReportingWorklistItemSummary item) { return item.PatientClass == null ? null : item.PatientClass.Value; },
                 1.0f);
             patientClassColumn.Visible = false;
 
-            TableColumn<ReportingWorklistItem, string> accessionNumberColumn = new TableColumn<ReportingWorklistItem, string>(
+            TableColumn<ReportingWorklistItemSummary, string> accessionNumberColumn = new TableColumn<ReportingWorklistItemSummary, string>(
                 SR.ColumnAccessionNumber,
-                delegate(ReportingWorklistItem item) { return AccessionFormat.Format(item.AccessionNumber); },
+                delegate(ReportingWorklistItemSummary item) { return AccessionFormat.Format(item.AccessionNumber); },
                 1.0f);
             accessionNumberColumn.Visible = false;
 
-            TableColumn<ReportingWorklistItem, string> procedureNameColumn = new TableColumn<ReportingWorklistItem, string>(
+            TableColumn<ReportingWorklistItemSummary, string> procedureNameColumn = new TableColumn<ReportingWorklistItemSummary, string>(
                 SR.ColumnProcedure,
-                delegate(ReportingWorklistItem item) { return ProcedureFormat.Format(item); },
+                delegate(ReportingWorklistItemSummary item) { return ProcedureFormat.Format(item); },
                 1.0f);
             procedureNameColumn.Visible = false;
 
@@ -119,7 +119,7 @@ namespace ClearCanvas.Ris.Client.Workflow
             this.Columns.Add(descriptionRow);
 
             // Sort by Scheduled Time initially
-            int sortColumnIndex = this.Columns.FindIndex(delegate(TableColumnBase<ReportingWorklistItem> column)
+            int sortColumnIndex = this.Columns.FindIndex(delegate(TableColumnBase<ReportingWorklistItemSummary> column)
                 { return column.Name.Equals(SR.ColumnTime); });
 
             this.Sort(new TableSortParams(this.Columns[sortColumnIndex], true));

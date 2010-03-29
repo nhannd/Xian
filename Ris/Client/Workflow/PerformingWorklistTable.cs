@@ -38,7 +38,7 @@ using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-    public class PerformingWorklistTable : Table<ModalityWorklistItem>
+    public class PerformingWorklistTable : Table<ModalityWorklistItemSummary>
     {
         private static readonly int NumRows = 2;
         private static readonly int DescriptionRow = 1;
@@ -52,32 +52,32 @@ namespace ClearCanvas.Ris.Client.Workflow
             : base(cellRowCount)
         {
             // Visible Columns
-            TableColumn<ModalityWorklistItem, IconSet> priorityColumn = new TableColumn<ModalityWorklistItem, IconSet>(
+            TableColumn<ModalityWorklistItemSummary, IconSet> priorityColumn = new TableColumn<ModalityWorklistItemSummary, IconSet>(
                 SR.ColumnPriority,
-                delegate(ModalityWorklistItem item) { return GetOrderPriorityIcon(item.OrderPriority.Code); },
+                delegate(ModalityWorklistItemSummary item) { return GetOrderPriorityIcon(item.OrderPriority.Code); },
                 0.2f);
-            priorityColumn.Comparison = delegate(ModalityWorklistItem item1, ModalityWorklistItem item2)
+            priorityColumn.Comparison = delegate(ModalityWorklistItemSummary item1, ModalityWorklistItemSummary item2)
                 { return GetOrderPriorityIndex(item1.OrderPriority.Code) - GetOrderPriorityIndex(item2.OrderPriority.Code); };
             priorityColumn.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
 
-            TableColumn<ModalityWorklistItem, string> mrnColumn = new TableColumn<ModalityWorklistItem, string>(
+            TableColumn<ModalityWorklistItemSummary, string> mrnColumn = new TableColumn<ModalityWorklistItemSummary, string>(
                 SR.ColumnMRN,
-                delegate(ModalityWorklistItem item) { return MrnFormat.Format(item.Mrn); },
+                delegate(ModalityWorklistItemSummary item) { return MrnFormat.Format(item.Mrn); },
                 0.9f);
 
-            TableColumn<ModalityWorklistItem, string> nameColumn = new TableColumn<ModalityWorklistItem, string>(
+            TableColumn<ModalityWorklistItemSummary, string> nameColumn = new TableColumn<ModalityWorklistItemSummary, string>(
                 SR.ColumnName,
-                delegate(ModalityWorklistItem item) { return PersonNameFormat.Format(item.PatientName); },
+                delegate(ModalityWorklistItemSummary item) { return PersonNameFormat.Format(item.PatientName); },
                 1.5f);
 
-			DateTimeTableColumn<ModalityWorklistItem> scheduledForColumn = new DateTimeTableColumn<ModalityWorklistItem>(
+			DateTimeTableColumn<ModalityWorklistItemSummary> scheduledForColumn = new DateTimeTableColumn<ModalityWorklistItemSummary>(
                 SR.ColumnTime,
-                delegate(ModalityWorklistItem item) { return item.Time; },
+                delegate(ModalityWorklistItemSummary item) { return item.Time; },
                 1.1f);
 
-            TableColumn<ModalityWorklistItem, string> descriptionRow = new TableColumn<ModalityWorklistItem, string>(
+            TableColumn<ModalityWorklistItemSummary, string> descriptionRow = new TableColumn<ModalityWorklistItemSummary, string>(
                 SR.ColumnDescription,
-                delegate(ModalityWorklistItem item)
+                delegate(ModalityWorklistItemSummary item)
                 {
 					// if there is no accession number, this item represents a patient only, not an order
 					if (item.AccessionNumber == null)
@@ -89,21 +89,21 @@ namespace ClearCanvas.Ris.Client.Workflow
                 DescriptionRow);
 
             // Invisible but sortable columns
-            TableColumn<ModalityWorklistItem, string> patientClassColumn = new TableColumn<ModalityWorklistItem, string>(
+            TableColumn<ModalityWorklistItemSummary, string> patientClassColumn = new TableColumn<ModalityWorklistItemSummary, string>(
                 SR.ColumnPatientClass,
-                delegate(ModalityWorklistItem item) { return item.PatientClass == null ? null : item.PatientClass.Value; },
+                delegate(ModalityWorklistItemSummary item) { return item.PatientClass == null ? null : item.PatientClass.Value; },
                 0.5f);
             patientClassColumn.Visible = false;
 
-            TableColumn<ModalityWorklistItem, string> accessionNumberColumn = new TableColumn<ModalityWorklistItem, string>(
+            TableColumn<ModalityWorklistItemSummary, string> accessionNumberColumn = new TableColumn<ModalityWorklistItemSummary, string>(
                 SR.ColumnAccessionNumber,
-                delegate(ModalityWorklistItem item) { return AccessionFormat.Format(item.AccessionNumber); },
+                delegate(ModalityWorklistItemSummary item) { return AccessionFormat.Format(item.AccessionNumber); },
                 0.75f);
             accessionNumberColumn.Visible = false;
 
-            TableColumn<ModalityWorklistItem, string> procedureNameColumn = new TableColumn<ModalityWorklistItem, string>(
+            TableColumn<ModalityWorklistItemSummary, string> procedureNameColumn = new TableColumn<ModalityWorklistItemSummary, string>(
                 SR.ColumnProcedure,
-				delegate(ModalityWorklistItem item) { return ProcedureFormat.Format(item); },
+				delegate(ModalityWorklistItemSummary item) { return ProcedureFormat.Format(item); },
                 1.0f);
             procedureNameColumn.Visible = false;
 
@@ -118,7 +118,7 @@ namespace ClearCanvas.Ris.Client.Workflow
             this.Columns.Add(descriptionRow);
 
             // Sort by Scheduled Time initially
-            int sortColumnIndex = this.Columns.FindIndex(delegate(TableColumnBase<ModalityWorklistItem> column)
+            int sortColumnIndex = this.Columns.FindIndex(delegate(TableColumnBase<ModalityWorklistItemSummary> column)
                 { return column.Name.Equals(SR.ColumnTime); });
 
             this.Sort(new TableSortParams(this.Columns[sortColumnIndex], true));
@@ -127,7 +127,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
             //this.OutlineColorSelector = delegate(object o)
             //{
-            //    ModalityWorklistItem item = o as ModalityWorklistItem;
+            //    ModalityWorklistItemSummary item = o as ModalityWorklistItemSummary;
             //    if (item != null)
             //    {
             //        switch (item.Priority.Code)
@@ -149,7 +149,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
             //this.BackgroundColorSelector = delegate(object o)
             //{
-            //    ModalityWorklistItem item = o as ModalityWorklistItem;
+            //    ModalityWorklistItemSummary item = o as ModalityWorklistItemSummary;
             //    if (item != null)
             //    {
             //        switch (item.Priority.Code)

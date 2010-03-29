@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 		}
 
-		protected override bool Execute(ReportingWorklistItem item)
+		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			try
 			{

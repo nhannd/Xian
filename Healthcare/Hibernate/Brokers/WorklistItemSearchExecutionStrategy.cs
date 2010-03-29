@@ -31,8 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 
@@ -41,15 +39,13 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 	/// <summary>
 	/// Defines an interface to an object that encapsulates information about a search to be executed.
 	/// </summary>
-	/// <typeparam name="TItem"></typeparam>
-    interface IWorklistItemSearchContext<TItem>
-        where TItem : WorklistItemBase
-    {
+	interface IWorklistItemSearchContext
+	{
 		/// <summary>
 		/// Gets a value indicating whether degenerate procedure worklist items should be included
 		/// in the search results.
 		/// </summary>
-        bool IncludeDegenerateProcedureItems { get; }
+		bool IncludeDegenerateProcedureItems { get; }
 
 		/// <summary>
 		/// Gets a value indicating whether degenerate patient worklist items should be included
@@ -65,60 +61,63 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		/// <summary>
 		/// Gets the maximum number of allowed hits.  A search that would return more hits should not execute.
 		/// </summary>
-        int Threshold { get; }
+		int Threshold { get; }
 
 		/// <summary>
-		/// Obtains the HQL query to search for full (non-degenerate) worklist items.
+		/// Find matching worklist items.
 		/// </summary>
 		/// <param name="where"></param>
-		/// <param name="countQuery"></param>
 		/// <returns></returns>
-        HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where, bool countQuery);
+		IList<WorklistItem> FindWorklistItems(WorklistItemSearchCriteria[] where);
 
 		/// <summary>
-		/// Obtains the HQL query to search for degenerate procedure worklist items.
+		/// Count matching worklist items.
 		/// </summary>
 		/// <param name="where"></param>
-		/// <param name="countQuery"></param>
 		/// <returns></returns>
-        HqlProjectionQuery BuildProcedureSearchQuery(WorklistItemSearchCriteria[] where, bool countQuery);
+		int CountWorklistItems(WorklistItemSearchCriteria[] where);
 
 		/// <summary>
-		/// Obtains the HQL query to search for degenerate patient worklist items.
+		/// Find matching procedures.
 		/// </summary>
 		/// <param name="where"></param>
-		/// <param name="countQuery"></param>
 		/// <returns></returns>
-        HqlProjectionQuery BuildPatientSearchQuery(WorklistItemSearchCriteria[] where, bool countQuery);
+		IList<WorklistItem> FindProcedures(WorklistItemSearchCriteria[] where);
 
 		/// <summary>
-		/// Executes the specified query.
+		/// Count matching procedures.
 		/// </summary>
-		/// <param name="query"></param>
+		/// <param name="where"></param>
 		/// <returns></returns>
-        List<TItem> DoQuery(HqlQuery query);
+		int CountProcedures(WorklistItemSearchCriteria[] where);
 
 		/// <summary>
-		/// Executes the specified count query.
+		/// Find matching patients.
 		/// </summary>
-		/// <param name="query"></param>
+		/// <param name="where"></param>
 		/// <returns></returns>
-        int DoQueryCount(HqlQuery query);
-    }
+		IList<WorklistItem> FindPatients(WorklistItemSearchCriteria[] where);
+
+		/// <summary>
+		/// Count matching patients.
+		/// </summary>
+		/// <param name="where"></param>
+		/// <returns></returns>
+		int CountPatients(WorklistItemSearchCriteria[] where);
+
+	}
 
 	/// <summary>
 	/// Defines an interface to a class that encapsulates a strategy for executing a worklist search.
 	/// </summary>
-	/// <typeparam name="TItem"></typeparam>
-    interface IWorklistItemSearchExecutionStrategy<TItem>
-        where TItem : WorklistItemBase
-    {
+	interface IWorklistItemSearchExecutionStrategy
+	{
 		/// <summary>
 		/// Executes a search, returning a list of hits.
 		/// </summary>
 		/// <param name="wisc"></param>
 		/// <returns></returns>
-        IList<TItem> GetSearchResults(IWorklistItemSearchContext<TItem> wisc);
+		IList<WorklistItem> GetSearchResults(IWorklistItemSearchContext wisc);
 
 		/// <summary>
 		/// Estimates the hit count for the specified search, unless the count exceeds a specified
@@ -127,24 +126,22 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		/// <param name="wisc"></param>
 		/// <param name="count"></param>
 		/// <returns></returns>
-        bool EstimateSearchResultsCount(IWorklistItemSearchContext<TItem> wisc, out int count);
-    }
+		bool EstimateSearchResultsCount(IWorklistItemSearchContext wisc, out int count);
+	}
 
 	/// <summary>
-	/// Abstract base implementation of <see cref="IWorklistItemSearchExecutionStrategy{TItem}"/>.
+	/// Abstract base implementation of <see cref="IWorklistItemSearchExecutionStrategy"/>.
 	/// </summary>
-	/// <typeparam name="TItem"></typeparam>
-    abstract class WorklistItemSearchExecutionStrategy<TItem> : IWorklistItemSearchExecutionStrategy<TItem>
-        where TItem : WorklistItemBase
-    {
-        #region IWorklistItemSearchExecutionStrategy<TItem> Members
+	abstract class WorklistItemSearchExecutionStrategy : IWorklistItemSearchExecutionStrategy
+	{
+		#region IWorklistItemSearchExecutionStrategy Members
 
 		/// <summary>
 		/// Executes a search, returning a list of hits.
 		/// </summary>
 		/// <param name="wisc"></param>
 		/// <returns></returns>
-		public abstract IList<TItem> GetSearchResults(IWorklistItemSearchContext<TItem> wisc);
+		public abstract IList<WorklistItem> GetSearchResults(IWorklistItemSearchContext wisc);
 
 		/// <summary>
 		/// Estimates the hit count for the specified search, unless the count exceeds a specified
@@ -153,36 +150,36 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		/// <param name="wisc"></param>
 		/// <param name="count"></param>
 		/// <returns></returns>
-		public abstract bool EstimateSearchResultsCount(IWorklistItemSearchContext<TItem> wisc, out int count);
+		public abstract bool EstimateSearchResultsCount(IWorklistItemSearchContext wisc, out int count);
 
-        #endregion
+		#endregion
 
-        /// <summary>
-        /// Performs a union of the primary and secondary sets.
-        /// </summary>
-        /// <remarks>
-        /// The specified identity-provider is used to determine identity of two items, hence whether the same logical
-        /// item appears in both sets.  If the same logical item appears in both sets, the actual item from the primary set will
-        /// always be chosen.  The union is returned as a new list (the arguments are not modified).
-        /// </remarks>
-        /// <param name="primary"></param>
-        /// <param name="secondary"></param>
-        /// <param name="identityProvider"></param>
-        /// <returns></returns>
-        protected static List<TItem> UnionMerge(List<TItem> primary, List<TItem> secondary,
-            Converter<TItem, EntityRef> identityProvider)
-        {
-            // note that we do not modify the arguments
-            List<TItem> merged = new List<TItem>(primary);
-            foreach (TItem s in secondary)
-            {
-                if (!CollectionUtils.Contains(primary,
-                     delegate(TItem p) { return identityProvider(s).Equals(identityProvider(p), true); }))
-                {
-                    merged.Add(s);
-                }
-            }
-            return merged;
-        }
-    }
+		/// <summary>
+		/// Performs a union of the primary and secondary sets.
+		/// </summary>
+		/// <remarks>
+		/// The specified identity-provider is used to determine identity of two items, hence whether the same logical
+		/// item appears in both sets.  If the same logical item appears in both sets, the actual item from the primary set will
+		/// always be chosen.  The union is returned as a new list (the arguments are not modified).
+		/// </remarks>
+		/// <param name="primary"></param>
+		/// <param name="secondary"></param>
+		/// <param name="identityProvider"></param>
+		/// <returns></returns>
+		protected static List<WorklistItem> UnionMerge(IList<WorklistItem> primary, IList<WorklistItem> secondary,
+			Converter<WorklistItem, EntityRef> identityProvider)
+		{
+			// note that we do not modify the arguments
+			var merged = new List<WorklistItem>(primary);
+			foreach (var s in secondary)
+			{
+				if (!CollectionUtils.Contains(primary,
+						p => identityProvider(s).Equals(identityProvider(p), true)))
+				{
+					merged.Add(s);
+				}
+			}
+			return merged;
+		}
+	}
 }

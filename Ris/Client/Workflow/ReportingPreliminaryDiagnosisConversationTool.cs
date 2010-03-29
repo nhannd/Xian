@@ -35,7 +35,7 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 namespace ClearCanvas.Ris.Client.Workflow
 {
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
-	public class ReportingPreliminaryDiagnosisTool : PreliminaryDiagnosisConversationTool<ReportingWorklistItem, IReportingWorkflowItemToolContext>
+	public class ReportingPreliminaryDiagnosisTool : PreliminaryDiagnosisConversationTool<ReportingWorklistItemSummary, IReportingWorkflowItemToolContext>
 	{
 		protected override string TemplatesXml
 		{

@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Client.Workflow
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[VisibleStateObserver("apply", "Visible", "VisibleChanged")]
 	[ExtensionOf(typeof(PerformingWorkflowItemToolExtensionPoint))]
-	public class DowntimeReportEntryTool : WorkflowItemTool<ModalityWorklistItem, IPerformingWorkflowItemToolContext>
+	public class DowntimeReportEntryTool : WorkflowItemTool<ModalityWorklistItemSummary, IPerformingWorkflowItemToolContext>
     {
     	public DowntimeReportEntryTool()
 			: base("CompleteDowntimeProcedure")
@@ -88,7 +88,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 		
-    	protected override bool Execute(ModalityWorklistItem item)
+    	protected override bool Execute(ModalityWorklistItemSummary item)
     	{
 			if (item.ProcedureRef == null)
 				return false;

@@ -41,8 +41,8 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     /// </summary>
     [RisApplicationService]
     [ServiceContract]
-	[ServiceKnownType(typeof(RegistrationWorklistItem))]
-	public interface IRegistrationWorkflowService : IWorklistService<RegistrationWorklistItem>, IWorkflowService
+	[ServiceKnownType(typeof(RegistrationWorklistItemSummary))]
+	public interface IRegistrationWorkflowService : IWorklistService<RegistrationWorklistItemSummary>, IWorkflowService
     {
 
         /// <summary>

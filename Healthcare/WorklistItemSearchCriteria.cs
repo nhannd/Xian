@@ -29,100 +29,175 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Enterprise.Core;
 using System;
 
 namespace ClearCanvas.Healthcare
 {
-    public class WorklistItemSearchCriteria : SearchCriteria
-    {
-        private Type _procedureStepClass;
-        private WorklistTimeField _timeField;
+	public class WorklistItemSearchCriteria : SearchCriteria
+	{
+		private static readonly Dictionary<WorklistItemField, Converter<WorklistItemSearchCriteria, ISearchCriteria>> _fieldMappings
+			= new Dictionary<WorklistItemField, Converter<WorklistItemSearchCriteria, ISearchCriteria>>();
 
+		static WorklistItemSearchCriteria()
+		{
+			_fieldMappings.Add(WorklistItemField.OrderSchedulingRequestTime,
+				criteria => criteria.Order.SchedulingRequestTime);
+
+			_fieldMappings.Add(WorklistItemField.ProcedureScheduledStartTime,
+				criteria => criteria.Procedure.ScheduledStartTime);
+
+			_fieldMappings.Add(WorklistItemField.ProcedureCheckInTime,
+				criteria => criteria.ProcedureCheckIn.CheckInTime);
+
+			_fieldMappings.Add(WorklistItemField.ProcedureCheckOutTime,
+				criteria => criteria.ProcedureCheckIn.CheckOutTime);
+
+			_fieldMappings.Add(WorklistItemField.ProcedureStartTime,
+				criteria => criteria.Procedure.StartTime);
+
+			_fieldMappings.Add(WorklistItemField.ProcedureEndTime,
+				criteria => criteria.Procedure.EndTime);
+
+			_fieldMappings.Add(WorklistItemField.ProcedureStepCreationTime,
+				criteria => criteria.ProcedureStep.CreationTime);
+
+			_fieldMappings.Add(WorklistItemField.ProcedureStepScheduledStartTime,
+				criteria => criteria.ProcedureStep.Scheduling.StartTime);
+
+			_fieldMappings.Add(WorklistItemField.ProcedureStepStartTime,
+				criteria => criteria.ProcedureStep.StartTime);
+
+			_fieldMappings.Add(WorklistItemField.ProcedureStepEndTime,
+				criteria => criteria.ProcedureStep.EndTime);
+
+			_fieldMappings.Add(WorklistItemField.ReportPartPreliminaryTime,
+				criteria => ((ReportingWorklistItemSearchCriteria)criteria).ReportPart.PreliminaryTime);
+
+			_fieldMappings.Add(WorklistItemField.ReportPartCompletedTime,
+				criteria => ((ReportingWorklistItemSearchCriteria)criteria).ReportPart.CompletedTime);
+		}
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public WorklistItemSearchCriteria()
 		{
 		}
 
-    	public WorklistItemSearchCriteria(Type procedureStepClass)
-    	{
-    		_procedureStepClass = procedureStepClass;
-    	}
+		/// <summary>
+		/// Copy constructor.
+		/// </summary>
+		/// <param name="other"></param>
+		protected WorklistItemSearchCriteria(WorklistItemSearchCriteria other)
+			: base(other)
+		{
+		}
 
-        /// <summary>
-        /// Copy constructor.
-        /// </summary>
-        /// <param name="other"></param>
-        protected WorklistItemSearchCriteria(WorklistItemSearchCriteria other)
-            : base(other)
-        {
-        	_procedureStepClass = other._procedureStepClass;
-        	_timeField = other._timeField;
-        }
+		///<summary>
+		///Creates a new object that is a copy of the current instance.
+		///</summary>
+		///
+		///<returns>
+		///A new object that is a copy of this instance.
+		///</returns>
+		///<filterpriority>2</filterpriority>
+		public override object Clone()
+		{
+			return new WorklistItemSearchCriteria(this);
+		}
 
-        public override object Clone()
-        {
-            return new WorklistItemSearchCriteria(this);
-        }
+		/// <summary>
+		/// Clones this instance, but retains only criteria related to the Patient or Patient Profile,
+		/// discarding criteria related to the procedure, order, report, etc.
+		/// </summary>
+		/// <returns></returns>
+		public object ClonePatientCriteriaOnly()
+		{
+			return this.Clone(subCriteria => subCriteria.GetKey() == "PatientProfile", false);
+		}
 
+		/// <summary>
+		/// Gets the sub-criteria object associated with the specified time field.
+		/// </summary>
+		/// <param name="timeField"></param>
+		/// <returns></returns>
+		public ISearchCriteria GetTimeFieldSubCriteria(WorklistItemField timeField)
+		{
+			return _fieldMappings[timeField](this);
+		}
 
-    	public PatientProfileSearchCriteria PatientProfile
-        {
-            get
-            {
-                if (!this.SubCriteria.ContainsKey("PatientProfile"))
-                {
-                    this.SubCriteria["PatientProfile"] = new PatientProfileSearchCriteria("PatientProfile");
-                }
-                return (PatientProfileSearchCriteria)this.SubCriteria["PatientProfile"];
-            }
-        }
+		public PatientProfileSearchCriteria PatientProfile
+		{
+			get
+			{
+				if (!this.SubCriteria.ContainsKey("PatientProfile"))
+				{
+					this.SubCriteria["PatientProfile"] = new PatientProfileSearchCriteria("PatientProfile");
+				}
+				return (PatientProfileSearchCriteria)this.SubCriteria["PatientProfile"];
+			}
+		}
 
-        public OrderSearchCriteria Order
-        {
-            get
-            {
-                if (!this.SubCriteria.ContainsKey("Order"))
-                {
-                    this.SubCriteria["Order"] = new OrderSearchCriteria("Order");
-                }
-                return (OrderSearchCriteria)this.SubCriteria["Order"];
-            }
-        }
+		public VisitSearchCriteria Visit
+		{
+			get
+			{
+				if (!this.SubCriteria.ContainsKey("Visit"))
+				{
+					this.SubCriteria["Visit"] = new VisitSearchCriteria("Visit");
+				}
+				return (VisitSearchCriteria)this.SubCriteria["Visit"];
+			}
+		}
 
-        public ProcedureSearchCriteria Procedure
-        {
-            get
-            {
-                if (!this.SubCriteria.ContainsKey("Procedure"))
-                {
-                    this.SubCriteria["Procedure"] = new ProcedureSearchCriteria("Procedure");
-                }
-                return (ProcedureSearchCriteria)this.SubCriteria["Procedure"];
-            }
-        }
+		public OrderSearchCriteria Order
+		{
+			get
+			{
+				if (!this.SubCriteria.ContainsKey("Order"))
+				{
+					this.SubCriteria["Order"] = new OrderSearchCriteria("Order");
+				}
+				return (OrderSearchCriteria)this.SubCriteria["Order"];
+			}
+		}
 
-        public ProcedureStepSearchCriteria ProcedureStep
-        {
-            get
-            {
-                if (!this.SubCriteria.ContainsKey("ProcedureStep"))
-                {
-                    this.SubCriteria["ProcedureStep"] = new ProcedureStepSearchCriteria("ProcedureStep");
-                }
-                return (ProcedureStepSearchCriteria)this.SubCriteria["ProcedureStep"];
-            }
-        }
+		public ProcedureSearchCriteria Procedure
+		{
+			get
+			{
+				if (!this.SubCriteria.ContainsKey("Procedure"))
+				{
+					this.SubCriteria["Procedure"] = new ProcedureSearchCriteria("Procedure");
+				}
+				return (ProcedureSearchCriteria)this.SubCriteria["Procedure"];
+			}
+		}
 
-        public Type ProcedureStepClass
-        {
-            get { return _procedureStepClass; }
-            set { _procedureStepClass = value; }
-        }
+		public ProcedureCheckInSearchCriteria ProcedureCheckIn
+		{
+			get
+			{
+				if (!this.SubCriteria.ContainsKey("ProcedureCheckIn"))
+				{
+					this.SubCriteria["ProcedureCheckIn"] = new ProcedureCheckInSearchCriteria("ProcedureCheckIn");
+				}
+				return (ProcedureCheckInSearchCriteria)this.SubCriteria["ProcedureCheckIn"];
+			}
+		}
 
-        public WorklistTimeField TimeField
-        {
-            get { return _timeField; }
-            set { _timeField = value; }
-        }
-    }
+		public ProcedureStepSearchCriteria ProcedureStep
+		{
+			get
+			{
+				if (!this.SubCriteria.ContainsKey("ProcedureStep"))
+				{
+					this.SubCriteria["ProcedureStep"] = new ProcedureStepSearchCriteria("ProcedureStep");
+				}
+				return (ProcedureStepSearchCriteria)this.SubCriteria["ProcedureStep"];
+			}
+		}
+	}
 }

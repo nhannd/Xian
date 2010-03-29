@@ -52,12 +52,16 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		#region IRegistrationWorkflowService Members
 
 		[ReadOperation]
-		public TextQueryResponse<RegistrationWorklistItem> SearchWorklists(WorklistItemTextQueryRequest request)
+		public TextQueryResponse<RegistrationWorklistItemSummary> SearchWorklists(WorklistItemTextQueryRequest request)
 		{
 			var assembler = new RegistrationWorkflowAssembler();
 			var broker = this.PersistenceContext.GetBroker<IRegistrationWorklistItemBroker>();
 
-			return SearchHelper(request, broker, item => assembler.CreateWorklistItemSummary(item, PersistenceContext));
+			return SearchHelper<WorklistItem, RegistrationWorklistItemSummary>(
+				request,
+				broker,
+				WorklistItemProjection.RegistrationWorklistSearch,
+				item => assembler.CreateWorklistItemSummary(item, PersistenceContext));
 		}
 
 		[ReadOperation]
@@ -68,11 +72,11 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		}
 
 		[ReadOperation]
-		public QueryWorklistResponse<RegistrationWorklistItem> QueryWorklist(QueryWorklistRequest request)
+		public QueryWorklistResponse<RegistrationWorklistItemSummary> QueryWorklist(QueryWorklistRequest request)
 		{
 			var assembler = new RegistrationWorkflowAssembler();
 
-			return QueryWorklistHelper<WorklistItem, RegistrationWorklistItem>(
+			return QueryWorklistHelper<WorklistItem, RegistrationWorklistItemSummary>(
 				request,
 				item => assembler.CreateWorklistItemSummary(item, this.PersistenceContext));
 		}
@@ -111,12 +115,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 		protected override object GetWorkItemKey(object item)
 		{
-			var summary = item as RegistrationWorklistItem;
-			return summary == null ? null : new WorklistItemKey(summary.OrderRef, summary.PatientProfileRef);
+			var summary = item as RegistrationWorklistItemSummary;
+			return summary == null ? null : new RegistrationWorklistItemKey(summary.OrderRef, summary.PatientProfileRef);
 		}
 
-		public bool CanCheckInProcedure(WorklistItemKey itemKey)
-		{
+        public bool CanCheckInProcedure(RegistrationWorklistItemKey itemKey)
+        {
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Procedure.CheckIn))
 				return false;
 

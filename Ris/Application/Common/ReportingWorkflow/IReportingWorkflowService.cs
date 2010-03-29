@@ -37,9 +37,9 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
     [RisApplicationService]
     [ServiceContract]
-    [ServiceKnownType(typeof(ReportingWorklistItem))]
-	[ServiceKnownType(typeof(ModalityWorklistItem))] // bug  #4866: need to call this service from Performing FS
-	public interface IReportingWorkflowService : IWorklistService<ReportingWorklistItem>, IWorkflowService
+    [ServiceKnownType(typeof(ReportingWorklistItemSummary))]
+	[ServiceKnownType(typeof(ModalityWorklistItemSummary))] // bug  #4866: need to call this service from Performing FS
+	public interface IReportingWorkflowService : IWorklistService<ReportingWorklistItemSummary>, IWorkflowService
     {
         /// <summary>
         /// Indicates if all documentation for the order containing the specified procedure is complete

@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ClearCanvas.Healthcare
 {
@@ -40,74 +38,77 @@ namespace ClearCanvas.Healthcare
 	/// </summary>
 	public class WorklistItemSearchArgs
 	{
-		private readonly bool _includeDegeneratePatientItems;
-		private readonly bool _includeDegenerateProcedureItems;
-		private readonly int _threshold;
-		private readonly WorklistItemSearchCriteria[] _searchCriteria;
-
 		/// <summary>
 		/// Constructor.
 		/// </summary>
+		/// <param name="procedureStepClasses"></param>
 		/// <param name="searchCriteria"></param>
+		/// <param name="projection"></param>
 		/// <param name="includeDegeneratePatientItems"></param>
 		/// <param name="includeDegenerateProcedureItems"></param>
 		/// <param name="threshold"></param>
 		public WorklistItemSearchArgs(
+			Type[] procedureStepClasses,
 			WorklistItemSearchCriteria[] searchCriteria,
+			WorklistItemProjection projection,
 			bool includeDegeneratePatientItems,
 			bool includeDegenerateProcedureItems,
 			int threshold)
 		{
-			_includeDegeneratePatientItems = includeDegeneratePatientItems;
-			_includeDegenerateProcedureItems = includeDegenerateProcedureItems;
-			_threshold = threshold;
-			_searchCriteria = searchCriteria;
+			ProcedureStepClasses = procedureStepClasses;
+			IncludeDegeneratePatientItems = includeDegeneratePatientItems;
+			IncludeDegenerateProcedureItems = includeDegenerateProcedureItems;
+			Threshold = threshold;
+			SearchCriteria = searchCriteria;
+			Projection = projection;
 		}
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
+		/// <param name="procedureStepClasses"></param>
 		/// <param name="searchCriteria"></param>
+		/// <param name="projection"></param>
 		/// <param name="includeDegeneratePatientItems"></param>
 		/// <param name="includeDegenerateProcedureItems"></param>
 		public WorklistItemSearchArgs(
+			Type[] procedureStepClasses,
 			WorklistItemSearchCriteria[] searchCriteria,
+			WorklistItemProjection projection,
 			bool includeDegeneratePatientItems,
 			bool includeDegenerateProcedureItems)
-			:this(searchCriteria, includeDegeneratePatientItems, includeDegenerateProcedureItems, 0)
+			: this(procedureStepClasses, searchCriteria, projection, includeDegeneratePatientItems, includeDegenerateProcedureItems, 0)
 		{
 		}
 
 		/// <summary>
 		/// Gets a value indicating whether to include results for patients that meet the criteria but do not have any procedures.
 		/// </summary>
-		public bool IncludeDegeneratePatientItems
-		{
-			get { return _includeDegeneratePatientItems; }
-		}
+		public bool IncludeDegeneratePatientItems { get; private set; }
 
 		/// <summary>
 		/// Gets a value indicating whether to include results for procedures that meet the criteria but do not have an active procedure step.
 		/// </summary>
-		public bool IncludeDegenerateProcedureItems
-		{
-			get { return _includeDegenerateProcedureItems; }
-		}
+		public bool IncludeDegenerateProcedureItems { get; private set; }
 
 		/// <summary>
 		/// Gets the maximum number of items that the search may return.
 		/// </summary>
-		public int Threshold
-		{
-			get { return _threshold; }
-		}
+		public int Threshold { get; private set; }
+
+		/// <summary>
+		/// Gets the procedure step classes that are considered in the search.
+		/// </summary>
+		public Type[] ProcedureStepClasses { get; private set; }
 
 		/// <summary>
 		/// Gets the search criteria.
 		/// </summary>
-		public WorklistItemSearchCriteria[]  SearchCriteria
-		{
-			get { return _searchCriteria; }
-		}
+		public WorklistItemSearchCriteria[] SearchCriteria { get; private set; }
+
+		/// <summary>
+		/// Gets the projection.
+		/// </summary>
+		public WorklistItemProjection Projection { get; private set; }
 	}
 }

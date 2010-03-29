@@ -30,6 +30,9 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using Iesi.Collections.Generic;
 
@@ -111,7 +114,7 @@ namespace ClearCanvas.Healthcare
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public WorklistMultiValuedFilter()
+		protected WorklistMultiValuedFilter()
 		{
 			_values = new HashedSet<T>();
 		}
@@ -159,6 +162,25 @@ namespace ClearCanvas.Healthcare
 	/// </summary>
 	public class WorklistProcedureTypeGroupFilter : WorklistMultiValuedFilter<ProcedureTypeGroup>
 	{
+		/// <summary>
+		/// Applies this filter to the specified criteria object.
+		/// </summary>
+		/// <param name="criteria"></param>
+		/// <param name="wqc"></param>
+		public void Apply(ProcedureTypeSearchCriteria criteria, IWorklistQueryContext wqc)
+		{
+			if (!this.IsEnabled)
+				return;
+
+			// TODO: this is pretty brute force and probably needs to be optimized with a custom broker
+			var procedureTypes = new List<ProcedureType>();
+			foreach (var procedureTypeGroup in this.Values)
+			{
+				procedureTypes.AddRange(procedureTypeGroup.ProcedureTypes);
+			}
+
+			criteria.In(CollectionUtils.Unique(procedureTypes));
+		}
 	}
 
 	/// <summary>
@@ -178,6 +200,24 @@ namespace ClearCanvas.Healthcare
 			get { return _includeWorkingFacility; }
 			set { _includeWorkingFacility = value; }
 		}
+
+		/// <summary>
+		/// Applies this filter to the specified criteria object.
+		/// </summary>
+		/// <param name="criteria"></param>
+		/// <param name="wqc"></param>
+		public void Apply(FacilitySearchCriteria criteria, IWorklistQueryContext wqc)
+		{
+			if (!this.IsEnabled)
+				return;
+
+			var values = new List<Facility>(this.Values);
+			if (this.IncludeWorkingFacility)
+			{
+				values.Add(wqc.WorkingFacility);
+			}
+			criteria.In(values);
+		}
 	}
 
 	/// <summary>
@@ -186,6 +226,18 @@ namespace ClearCanvas.Healthcare
 	/// </summary>
 	public class WorklistPatientClassFilter : WorklistMultiValuedFilter<PatientClassEnum>
 	{
+		/// <summary>
+		/// Applies this filter to the specified criteria object.
+		/// </summary>
+		/// <param name="criteria"></param>
+		/// <param name="wqc"></param>
+		public void Apply(VisitSearchCriteria criteria, IWorklistQueryContext wqc)
+		{
+			if (!this.IsEnabled)
+				return;
+
+			criteria.PatientClass.In(this.Values);
+		}
 	}
 
 	/// <summary>
@@ -194,6 +246,18 @@ namespace ClearCanvas.Healthcare
 	/// </summary>
 	public class WorklistPatientLocationFilter : WorklistMultiValuedFilter<Location>
 	{
+		/// <summary>
+		/// Applies this filter to the specified criteria object.
+		/// </summary>
+		/// <param name="criteria"></param>
+		/// <param name="wqc"></param>
+		public void Apply(VisitSearchCriteria criteria, IWorklistQueryContext wqc)
+		{
+			if (!this.IsEnabled)
+				return;
+
+			criteria.CurrentLocation.In(this.Values);
+		}
 	}
 
 	/// <summary>
@@ -202,6 +266,20 @@ namespace ClearCanvas.Healthcare
 	/// </summary>
 	public class WorklistOrderPriorityFilter : WorklistMultiValuedFilter<OrderPriorityEnum>
 	{
+		/// <summary>
+		/// Applies this filter to the specified criteria object.
+		/// </summary>
+		/// <param name="criteria"></param>
+		/// <param name="wqc"></param>
+		public void Apply(OrderSearchCriteria criteria, IWorklistQueryContext wqc)
+		{
+			if (!this.IsEnabled)
+				return;
+
+			criteria.Priority.In(
+				CollectionUtils.Map(this.Values,
+				(OrderPriorityEnum v) => (OrderPriority)Enum.Parse(typeof(OrderPriority), v.Code)));
+		}
 	}
 
 	/// <summary>
@@ -210,6 +288,18 @@ namespace ClearCanvas.Healthcare
 	/// </summary>
 	public class WorklistPractitionerFilter : WorklistMultiValuedFilter<ExternalPractitioner>
 	{
+		/// <summary>
+		/// Applies this filter to the specified criteria object.
+		/// </summary>
+		/// <param name="criteria"></param>
+		/// <param name="wqc"></param>
+		public void Apply(ExternalPractitionerSearchCriteria criteria, IWorklistQueryContext wqc)
+		{
+			if (!this.IsEnabled)
+				return;
+
+			criteria.In(this.Values);
+		}
 	}
 
 	/// <summary>
@@ -218,6 +308,18 @@ namespace ClearCanvas.Healthcare
 	/// </summary>
 	public class WorklistPortableFilter : WorklistSingleValuedFilter<bool>
 	{
+		/// <summary>
+		/// Applies this filter to the specified criteria object.
+		/// </summary>
+		/// <param name="criteria"></param>
+		/// <param name="wqc"></param>
+		public void Apply(ProcedureSearchCriteria criteria, IWorklistQueryContext wqc)
+		{
+			if (!this.IsEnabled)
+				return;
+
+			criteria.Portable.EqualTo(this.Value);
+		}
 	}
 
 	/// <summary>
@@ -226,6 +328,35 @@ namespace ClearCanvas.Healthcare
 	/// </summary>
 	public class WorklistTimeFilter : WorklistSingleValuedFilter<WorklistTimeRange>
 	{
+		/// <summary>
+		/// Applies this filter to the specified criteria object.
+		/// </summary>
+		/// <param name="criteria"></param>
+		/// <param name="worklistClass"></param>
+		/// <param name="timeDirective"></param>
+		/// <param name="wqc"></param>
+		public void Apply(WorklistItemSearchCriteria criteria, Type worklistClass, Worklist.TimeDirective timeDirective, IWorklistQueryContext wqc)
+		{
+			var subCriteria = criteria.GetTimeFieldSubCriteria(timeDirective.TimeField);
+			if (!(subCriteria is ISearchCondition))
+				throw new ArgumentException("Specified worklist field does not seem to be a time field.");
+
+			var condition = subCriteria as ISearchCondition;
+
+			// apply ordering
+			if (timeDirective.Ordering == Worklist.WorklistOrdering.PrioritizeOldestItems)
+				condition.SortAsc(0);
+			else
+				condition.SortDesc(0);
+
+			// apply range filtering, if supported by the worklist class, and not downtime recovery mode
+			if (Worklist.GetSupportsTimeFilter(worklistClass) && !wqc.DowntimeRecoveryMode)
+			{
+				var range = this.IsEnabled ? this.Value : timeDirective.DefaultRange;
+				if (range != null)
+					range.Apply(condition, Platform.Time);
+			}
+		}
 	}
 
 	/// <summary>
@@ -244,6 +375,24 @@ namespace ClearCanvas.Healthcare
 		{
 			get { return _includeCurrentStaff; }
 			set { _includeCurrentStaff = value; }
+		}
+
+		/// <summary>
+		/// Applies this filter to the specified criteria object.
+		/// </summary>
+		/// <param name="criteria"></param>
+		/// <param name="wqc"></param>
+		public void Apply(StaffSearchCriteria criteria, IWorklistQueryContext wqc)
+		{
+			if(!this.IsEnabled)
+				return;
+
+			var values = new List<Staff>(this.Values);
+			if (this.IncludeCurrentStaff)
+			{
+				values.Add(wqc.Staff);
+			}
+			criteria.In(values);
 		}
 	}
 }

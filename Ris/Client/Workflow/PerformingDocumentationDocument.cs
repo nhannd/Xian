@@ -38,10 +38,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 {
 	public class PerformingDocumentationDocument : Document
 	{
-		private readonly ModalityWorklistItem _item;
+		private readonly ModalityWorklistItemSummary _item;
 		private PerformingDocumentationComponent _component;
 
-		public PerformingDocumentationDocument(ModalityWorklistItem item, IDesktopWindow desktopWindow)
+		public PerformingDocumentationDocument(ModalityWorklistItemSummary item, IDesktopWindow desktopWindow)
 			: base(item.OrderRef, desktopWindow)
 		{
 			if(item == null)

@@ -31,17 +31,50 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ClearCanvas.Enterprise.Core
 {
-    /// <summary>
-    /// Abstract base class for all search criteria classes.
-    /// </summary>
-    public abstract class SearchCriteria : ICloneable
-    {
-        private readonly string _key;
-        private readonly Dictionary<string, SearchCriteria> _subCriteria;
+	/// <summary>
+	/// Base interface for objects that behave as search criteria.
+	/// </summary>
+	public interface ISearchCriteria : ICloneable
+	{
+		/// <summary>
+		/// Gets the key, or null if this is a top-level criteria.
+		/// </summary>
+		/// <returns></returns>
+		string GetKey();
+
+		/// <summary>
+		/// Gets a value indicating if this criteria instance is empty.
+		/// </summary>
+		bool IsEmpty { get; }
+
+		/// <summary>
+		/// Creates a new object that is a copy of the current instance, including only the sub-criteria
+		/// that are included by the specified filter.  The filter is optionally applied recursively to sub-criteria.
+		/// </summary>
+		/// <param name="subCriteriaFilter"></param>
+		/// <param name="recursive"></param>
+		/// <returns></returns>
+		ISearchCriteria Clone(Predicate<ISearchCriteria> subCriteriaFilter, bool recursive);
+
+		/// <summary>
+		/// Gets a predicate representing this criteria that can be used to test an object to see if it satisfies the criteria.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		Predicate<T> AsPredicate<T>();
+	}
+
+
+	/// <summary>
+	/// Abstract base class for all search criteria classes.
+	/// </summary>
+	public abstract class SearchCriteria : ISearchCriteria
+	{
+		private readonly string _key;
+		private readonly Dictionary<string, SearchCriteria> _subCriteria;
 
 		#region Constructors
 
@@ -72,7 +105,7 @@ namespace ClearCanvas.Enterprise.Core
 			_key = other._key;
 			_subCriteria = new Dictionary<string, SearchCriteria>();
 
-			foreach (KeyValuePair<string, SearchCriteria> kvp in other._subCriteria)
+			foreach (var kvp in other._subCriteria)
 			{
 				_subCriteria.Add(kvp.Key, (SearchCriteria)kvp.Value.Clone());
 			}
@@ -91,6 +124,39 @@ namespace ClearCanvas.Enterprise.Core
 		}
 
 		/// <summary>
+		/// Gets a predicate representing this criteria that can be used to test an object to see if it satisfies the criteria.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		public Predicate<T> AsPredicate<T>()
+		{
+			return value => IsSatisfiedBy(value);
+		}
+
+		/// <summary>
+		/// Tests whether the specified value satisfies this criteria.
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		protected virtual bool IsSatisfiedBy(object obj)
+		{
+			foreach (var kvp in SubCriteria)
+			{
+				var prop = obj.GetType().GetProperty(kvp.Key);
+
+				// TODO: if the property doesn't exist, what do we do??  
+				// for now, return false, but we might want to have a flag indicating how to handle missing properties
+				if(prop == null)
+					return false;
+
+				var x = prop.GetValue(obj, null);
+				if (!kvp.Value.IsSatisfiedBy(x))
+					return false;
+			}
+			return true;
+		}
+
+		/// <summary>
 		/// Gets a value indicating if this criteria instance is empty, that is,
 		/// it does not specify any conditions.
 		/// </summary>
@@ -98,7 +164,7 @@ namespace ClearCanvas.Enterprise.Core
 		{
 			get
 			{
-				foreach (SearchCriteria criteria in _subCriteria.Values)
+				foreach (var criteria in _subCriteria.Values)
 				{
 					if (!criteria.IsEmpty)
 						return false;
@@ -123,17 +189,17 @@ namespace ClearCanvas.Enterprise.Core
 		}
 
 		/// <summary>
-        /// Gets the key, or null if this is a top-level criteria.
-        /// </summary>
+		/// Gets the key, or null if this is a top-level criteria.
+		/// </summary>
 		/// <remarks>
 		/// This is intentionally implemented as a method, rather than a property, so that there is no chance that a sub-class
 		/// property will conflict.
-        /// </remarks>
-        /// <returns></returns>
-        public string GetKey()
-        {
-            return _key;
-        }
+		/// </remarks>
+		/// <returns></returns>
+		public string GetKey()
+		{
+			return _key;
+		}
 
 		/// <summary>
 		/// Creates a new object that is a copy of the current instance, including only the sub-criteria
@@ -142,28 +208,28 @@ namespace ClearCanvas.Enterprise.Core
 		/// <param name="subCriteriaFilter"></param>
 		/// <param name="recursive"></param>
 		/// <returns></returns>
-		public SearchCriteria Clone(Predicate<SearchCriteria> subCriteriaFilter, bool recursive)
+		public ISearchCriteria Clone(Predicate<ISearchCriteria> subCriteriaFilter, bool recursive)
 		{
 			// this implementation is not particularly efficient, but it was the simplest 
 			// way to do it given the default Clone() overload
 			// we clone the entire criteria object, then remove any sub-criteria
 			// that don't satisfy the filter
-			SearchCriteria copy = (SearchCriteria) this.Clone();
+			var copy = (SearchCriteria)this.Clone();
 			copy.FilterSubCriteria(subCriteriaFilter, recursive);
 			return copy;
 		}
 
 		///<summary>
-    	///Creates a new object that is a copy of the current instance.
-    	///</summary>
-    	///
-    	///<returns>
-    	///A new object that is a copy of this instance.
-    	///</returns>
-    	///<filterpriority>2</filterpriority>
-    	public abstract object Clone();
+		///Creates a new object that is a copy of the current instance.
+		///</summary>
+		///
+		///<returns>
+		///A new object that is a copy of this instance.
+		///</returns>
+		///<filterpriority>2</filterpriority>
+		public abstract object Clone();
 
-        #endregion
+		#endregion
 
 		#region Protected API
 
@@ -175,12 +241,12 @@ namespace ClearCanvas.Enterprise.Core
 		/// <returns></returns>
 		protected virtual string[] Dump(string prefix)
 		{
-			List<string> lines = new List<string>();
-			foreach (KeyValuePair<string, SearchCriteria> pair in _subCriteria)
+			var lines = new List<string>();
+			foreach (var pair in _subCriteria)
 			{
 				if (!pair.Value.IsEmpty)
 				{
-					string p = prefix == null ? "" : prefix + ".";
+					var p = prefix == null ? "" : prefix + ".";
 					lines.AddRange(pair.Value.Dump(p + pair.Key));
 				}
 			}
@@ -196,12 +262,12 @@ namespace ClearCanvas.Enterprise.Core
 		/// </summary>
 		/// <param name="subCriteriaFilter"></param>
 		/// <param name="recursive"></param>
-		private void FilterSubCriteria(Predicate<SearchCriteria> subCriteriaFilter, bool recursive)
+		private void FilterSubCriteria(Predicate<ISearchCriteria> subCriteriaFilter, bool recursive)
 		{
-			List<string> keys = new List<string>(_subCriteria.Keys);
-			foreach (string key in keys)
+			var keys = new List<string>(_subCriteria.Keys);
+			foreach (var key in keys)
 			{
-				SearchCriteria subCriteria = _subCriteria[key];
+				var subCriteria = _subCriteria[key];
 				if (!subCriteriaFilter(subCriteria))
 				{
 					// remove sub-criteria
@@ -210,7 +276,7 @@ namespace ClearCanvas.Enterprise.Core
 				else
 				{
 					// retain immediate sub-criteria, but optionally apply filter recursively
-					if(recursive)
+					if (recursive)
 						subCriteria.FilterSubCriteria(subCriteriaFilter, recursive);
 				}
 			}

@@ -75,14 +75,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
-		public override bool CanAcceptDrop(ICollection<ReportingWorklistItem> items)
+		public override bool CanAcceptDrop(ICollection<ReportingWorklistItemSummary> items)
 		{
 			// this tool is only registered as a drop handler for the Drafts folder
 			// and the only operation that would make sense in this context is StartInterpretation
 			return this.Context.GetOperationEnablement("StartOrderProtocol");
 		}
 
-		protected override bool Execute(ReportingWorklistItem item)
+		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			// check if the document is already open
 			if (ActivateIfAlreadyOpen(item))
@@ -93,7 +93,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return true;
 		}
 
-		private void OpenProtocolEditor(ReportingWorklistItem item)
+		private void OpenProtocolEditor(ReportingWorklistItemSummary item)
 		{
 			if (ActivateIfAlreadyOpen(item))
 				return;
@@ -127,7 +127,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			protocolDocument.Closed += delegate { DocumentManager.InvalidateFolder(selectedFolderType); };
 		}
 
-		private static bool ActivateIfAlreadyOpen(ReportingWorklistItem item)
+		private static bool ActivateIfAlreadyOpen(ReportingWorklistItemSummary item)
 		{
 			var document = DocumentManager.Get<ProtocolDocument>(item.OrderRef);
 			if (document != null)
@@ -138,7 +138,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return false;
 		}
 
-		private IContinuousWorkflowComponentMode GetMode(ReportingWorklistItem item)
+		private IContinuousWorkflowComponentMode GetMode(ReportingWorklistItemSummary item)
 		{
 			if (item == null)
 				return ProtocollingComponentModes.Review;
@@ -151,12 +151,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 				: ProtocollingComponentModes.Review;
 		}
 
-		private bool CanCreateProtocol(ReportingWorklistItem item)
+		private bool CanCreateProtocol(ReportingWorklistItemSummary item)
 		{
 			return this.Context.GetOperationEnablement("StartProtocol");
 		}
 
-		private bool CanEditProtocol(ReportingWorklistItem item)
+		private bool CanEditProtocol(ReportingWorklistItemSummary item)
 		{
 			// there is no specific workflow operation for editing a previously created draft,
 			// so we enable the tool if it looks like a draft and SaveReport is enabled

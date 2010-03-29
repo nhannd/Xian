@@ -35,7 +35,7 @@ using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	public interface IPerformingWorkflowItemToolContext : IWorkflowItemToolContext<ModalityWorklistItem>
+	public interface IPerformingWorkflowItemToolContext : IWorkflowItemToolContext<ModalityWorklistItemSummary>
     {
     }
 
@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Client.Workflow
     }
 
 	public abstract class PerformingWorkflowFolderSystemBase<TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint>
-		: WorklistFolderSystem<ModalityWorklistItem, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint, IModalityWorkflowService>
+		: WorklistFolderSystem<ModalityWorklistItemSummary, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint, IModalityWorkflowService>
 		where TFolderExtensionPoint : ExtensionPoint<IWorklistFolder>, new()
 		where TFolderToolExtensionPoint : ExtensionPoint<ITool>, new()
 		where TItemToolExtensionPoint : ExtensionPoint<ITool>, new()

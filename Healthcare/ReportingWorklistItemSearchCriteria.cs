@@ -47,17 +47,17 @@ namespace ClearCanvas.Healthcare
             }
         }
 
-        public ProtocolSearchCriteria Protocol
-        {
-            get
-            {
-                if (!this.SubCriteria.ContainsKey("Protocol"))
-                {
-                    this.SubCriteria["Protocol"] = new ProtocolSearchCriteria("Protocol");
-                }
-                return (ProtocolSearchCriteria)this.SubCriteria["Protocol"];
-            }
-        }
+		public ReportSearchCriteria Report
+		{
+			get
+			{
+				if (!this.SubCriteria.ContainsKey("Report"))
+				{
+					this.SubCriteria["Report"] = new ReportSearchCriteria("Report");
+				}
+				return (ReportSearchCriteria)this.SubCriteria["Report"];
+			}
+		}
 
         public ISearchCondition<bool> HasErrors
         {

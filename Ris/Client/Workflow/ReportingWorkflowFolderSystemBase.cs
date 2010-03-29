@@ -37,7 +37,7 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	public interface IReportingWorkflowItemToolContext : IWorkflowItemToolContext<ReportingWorklistItem>
+	public interface IReportingWorkflowItemToolContext : IWorkflowItemToolContext<ReportingWorklistItemSummary>
 	{
 	}
 
@@ -46,7 +46,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	}
 
 	public abstract class ReportingWorkflowFolderSystemBase<TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint>
-		: WorklistFolderSystem<ReportingWorklistItem, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint, IReportingWorkflowService>
+		: WorklistFolderSystem<ReportingWorklistItemSummary, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint, IReportingWorkflowService>
 		where TFolderExtensionPoint : ExtensionPoint<IWorklistFolder>, new()
 		where TFolderToolExtensionPoint : ExtensionPoint<ITool>, new()
 		where TItemToolExtensionPoint : ExtensionPoint<ITool>, new()

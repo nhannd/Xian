@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
@@ -39,459 +40,487 @@ using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Healthcare
 {
-    /// <summary>
-    /// Worklist entity.  Represents a worklist.
-    /// </summary>
-    [UniqueKey("WorklistUniqueKey", new string[] { "Name", "FullClassName", "Owner.Staff", "Owner.Group" })]
-    public abstract class Worklist : Entity, IWorklist
-    {
-        /// <summary>
-        /// Defines values for how a worklist is ordered in terms of which items are given priority
-        /// when the full worklist cannot be displayed.
-        /// </summary>
-        protected enum WorklistOrdering
-        {
-            /// <summary>
-            /// Ensure the oldest items are given priority.
-            /// </summary>
-            PrioritizeOldestItems,
+	/// <summary>
+	/// Worklist entity.  Represents a worklist.
+	/// </summary>
+	[UniqueKey("WorklistUniqueKey", new [] { "Name", "FullClassName", "Owner.Staff", "Owner.Group" })]
+	public abstract class Worklist : Entity, IWorklist
+	{
+		/// <summary>
+		/// Defines values for how a worklist is ordered in terms of which items are given priority
+		/// when the full worklist cannot be displayed.
+		/// </summary>
+		public enum WorklistOrdering
+		{
+			/// <summary>
+			/// Ensure the oldest items are given priority.
+			/// </summary>
+			PrioritizeOldestItems,
 
-            /// <summary>
-            /// Ensure the newest items are given priority.
-            /// </summary>
-            PrioritizeNewestItems
-        }
+			/// <summary>
+			/// Ensure the newest items are given priority.
+			/// </summary>
+			PrioritizeNewestItems
+		}
 
-        #region Static members
+		public class TimeDirective
+		{
+			public TimeDirective(WorklistItemField timeField, WorklistTimeRange defaultRange, WorklistOrdering ordering)
+			{
+				this.TimeField = timeField;
+				this.Ordering = ordering;
+				this.DefaultRange = defaultRange;
+			}
 
-        /// <summary>
-        /// Gets the logical class name for the specified worklist class, which may or may not be identical
-        /// to its .NET class name.
-        /// </summary>
-        /// <param name="worklistClass"></param>
-        /// <returns></returns>
-        public static string GetClassName(Type worklistClass)
-        {
-            // could use a logical class name here to decouple from the actual .NET class name,
-            // but is it worth the added complexity?
-            return worklistClass.Name;
-        }
+			public WorklistItemField TimeField { get; private set; }
 
-        /// <summary>
-        /// Gets the procedure-type group class for the specified worklist class, as specified by
-        /// the <see cref="WorklistProcedureTypeGroupClassAttribute"/>.
-        /// </summary>
-        /// <param name="worklistClass"></param>
-        /// <returns></returns>
-        public static Type GetProcedureTypeGroupClass(Type worklistClass)
-        {
-            WorklistProcedureTypeGroupClassAttribute a =
-                AttributeUtils.GetAttribute<WorklistProcedureTypeGroupClassAttribute>(worklistClass, true);
-            return a == null ? null : a.ProcedureTypeGroupClass;
-        }
+			public WorklistTimeRange DefaultRange { get; private set; }
 
-        /// <summary>
-        /// Gets the category for the specified worklist class, as specified by
-        /// the <see cref="WorklistCategoryAttribute"/>, or null if not specified.
-        /// </summary>
-        /// <param name="worklistClass"></param>
-        /// <returns></returns>
-        public static string GetCategory(Type worklistClass)
-        {
-            WorklistCategoryAttribute a =
-                AttributeUtils.GetAttribute<WorklistCategoryAttribute>(worklistClass, true);
-            if(a == null)
-                return null;
+			public WorklistOrdering Ordering { get; private set; }
+		}
 
-            ResourceResolver resolver = new ResourceResolver(worklistClass, true);
-            return resolver.LocalizeString(a.Category);
-        }
+		#region Static members
 
-        /// <summary>
-        /// Gets the display name for the specified worklist class, obtained either from
-        /// the <see cref="WorklistClassDisplayNameAttribute"/>, otherwise via the
-        /// <see cref="TerminologyTranslator"/> class.
-        /// </summary>
-        /// <param name="worklistClass"></param>
-        /// <returns></returns>
-        public static string GetDisplayName(Type worklistClass)
-        {
-            WorklistClassDisplayNameAttribute a =
-               AttributeUtils.GetAttribute<WorklistClassDisplayNameAttribute>(worklistClass, true);
+		/// <summary>
+		/// Gets the logical class name for the specified worklist class, which may or may not be identical
+		/// to its .NET class name.
+		/// </summary>
+		/// <param name="worklistClass"></param>
+		/// <returns></returns>
+		public static string GetClassName(Type worklistClass)
+		{
+			// could use a logical class name here to decouple from the actual .NET class name,
+			// but is it worth the added complexity?
+			return worklistClass.Name;
+		}
 
-            if (a != null)
-            {
-                ResourceResolver resolver = new ResourceResolver(worklistClass, true);
-                return resolver.LocalizeString(a.DisplayName);
-            }
-            else
-                return TerminologyTranslator.Translate(worklistClass);
-        }
+		/// <summary>
+		/// Gets the procedure-type group class for the specified worklist class, as specified by
+		/// the <see cref="WorklistProcedureTypeGroupClassAttribute"/>.
+		/// </summary>
+		/// <param name="worklistClass"></param>
+		/// <returns></returns>
+		public static Type GetProcedureTypeGroupClass(Type worklistClass)
+		{
+			var a = AttributeUtils.GetAttribute<WorklistProcedureTypeGroupClassAttribute>(worklistClass, true);
+			return a == null ? null : a.ProcedureTypeGroupClass;
+		}
 
-        /// <summary>
-        /// Gets the description for the specified worklist class, as specified by
-        /// the <see cref="WorklistCategoryAttribute"/>, or null if not specified.
-        /// </summary>
-        /// <param name="worklistClass"></param>
-        /// <returns></returns>
-        public static string GetDescription(Type worklistClass)
-        {
-            WorklistClassDescriptionAttribute a =
-                AttributeUtils.GetAttribute<WorklistClassDescriptionAttribute>(worklistClass, true);
-            if (a == null)
-                return null;
+		/// <summary>
+		/// Gets the category for the specified worklist class, as specified by
+		/// the <see cref="WorklistCategoryAttribute"/>, or null if not specified.
+		/// </summary>
+		/// <param name="worklistClass"></param>
+		/// <returns></returns>
+		public static string GetCategory(Type worklistClass)
+		{
+			var a = AttributeUtils.GetAttribute<WorklistCategoryAttribute>(worklistClass, true);
+			if (a == null)
+				return null;
 
-            ResourceResolver resolver = new ResourceResolver(worklistClass, true);
-            return resolver.LocalizeString(a.Description);
-        }
+			var resolver = new ResourceResolver(worklistClass, true);
+			return resolver.LocalizeString(a.Category);
+		}
 
-        /// <summary>
-        /// Gets a value indicating whether the specified worklist class supports time-filters, as specified by
-        /// the <see cref="WorklistSupportsTimeFilterAttribute"/>.
-        /// </summary>
-        /// <param name="worklistClass"></param>
-        /// <returns></returns>
-        public static bool GetSupportsTimeFilter(Type worklistClass)
-        {
-            WorklistSupportsTimeFilterAttribute a =
-                AttributeUtils.GetAttribute<WorklistSupportsTimeFilterAttribute>(worklistClass, true);
-            return a == null ? false : a.SupportsTimeFilter;
-        }
+		/// <summary>
+		/// Gets the display name for the specified worklist class, obtained either from
+		/// the <see cref="WorklistClassDisplayNameAttribute"/>, otherwise via the
+		/// <see cref="TerminologyTranslator"/> class.
+		/// </summary>
+		/// <param name="worklistClass"></param>
+		/// <returns></returns>
+		public static string GetDisplayName(Type worklistClass)
+		{
+			var a = AttributeUtils.GetAttribute<WorklistClassDisplayNameAttribute>(worklistClass, true);
 
-        /// <summary>
-        /// Gets a value indicating whether the specified worklist class supports time-filters, as specified by
-        /// the <see cref="WorklistSupportsTimeFilterAttribute"/>.
-        /// </summary>
-        /// <param name="worklistClass"></param>
-        /// <returns></returns>
-        public static bool GetSupportsReportingStaffRoleFilter(Type worklistClass)
-        {
-            WorklistSupportsReportingStaffRoleFilterAttribute a =
-                AttributeUtils.GetAttribute<WorklistSupportsReportingStaffRoleFilterAttribute>(worklistClass, true);
-            return a == null ? false : a.SupportsReportingStaffRoleFilter;
-        }
+			if (a == null)
+				return TerminologyTranslator.Translate(worklistClass);
 
-        /// <summary>
-        /// Gets a value indicating whether the specified worklist class behaves as a singleton, as specified by
-        /// the <see cref="StaticWorklistAttribute"/>.
-        /// </summary>
-        /// <param name="worklistClass"></param>
-        /// <returns></returns>
-        public static bool GetIsStatic(Type worklistClass)
-        {
-            StaticWorklistAttribute a =
-                AttributeUtils.GetAttribute<StaticWorklistAttribute>(worklistClass, true);
-            return a == null ? false : a.IsSingleton;
-        }
+			var resolver = new ResourceResolver(worklistClass, true);
+			return resolver.LocalizeString(a.DisplayName);
+		}
 
-        #endregion
+		/// <summary>
+		/// Gets the description for the specified worklist class, as specified by
+		/// the <see cref="WorklistCategoryAttribute"/>, or null if not specified.
+		/// </summary>
+		/// <param name="worklistClass"></param>
+		/// <returns></returns>
+		public static string GetDescription(Type worklistClass)
+		{
+			var a = AttributeUtils.GetAttribute<WorklistClassDescriptionAttribute>(worklistClass, true);
+			if (a == null)
+				return null;
 
-        private string _name;
-        private string _description;
-        private WorklistProcedureTypeGroupFilter _procedureTypeGroupFilter;
-        private WorklistFacilityFilter _facilityFilter;
-        private WorklistPatientClassFilter _patientClassFilter;
-        private WorklistPatientLocationFilter _patientLocationFilter;
-        private WorklistOrderPriorityFilter _orderPriorityFilter;
-        private WorklistPractitionerFilter _orderingPractitionerFilter;
-        private WorklistPortableFilter _portableFilter;
-        private WorklistTimeFilter _timeFilter;
+			var resolver = new ResourceResolver(worklistClass, true);
+			return resolver.LocalizeString(a.Description);
+		}
 
-        private ISet<Staff> _staffSubscribers;
-        private ISet<StaffGroup> _groupSubscribers;
+		/// <summary>
+		/// Gets a value indicating whether the specified worklist class supports time-filters, as specified by
+		/// the <see cref="WorklistSupportsTimeFilterAttribute"/>.
+		/// </summary>
+		/// <param name="worklistClass"></param>
+		/// <returns></returns>
+		public static bool GetSupportsTimeFilter(Type worklistClass)
+		{
+			var a = AttributeUtils.GetAttribute<WorklistSupportsTimeFilterAttribute>(worklistClass, true);
+			return a == null ? false : a.SupportsTimeFilter;
+		}
 
-        private WorklistOwner _owner;
+		/// <summary>
+		/// Gets a value indicating whether the specified worklist class supports time-filters, as specified by
+		/// the <see cref="WorklistSupportsTimeFilterAttribute"/>.
+		/// </summary>
+		/// <param name="worklistClass"></param>
+		/// <returns></returns>
+		public static bool GetSupportsReportingStaffRoleFilter(Type worklistClass)
+		{
+			var a = AttributeUtils.GetAttribute<WorklistSupportsReportingStaffRoleFilterAttribute>(worklistClass, true);
+			return a == null ? false : a.SupportsReportingStaffRoleFilter;
+		}
 
-        /// <summary>
-        /// No-args constructor required by NHibernate.
-        /// </summary>
-        public Worklist()
-        {   
-            _owner = WorklistOwner.Admin;   // admin owned by default
-            _staffSubscribers = new HashedSet<Staff>();
-            _groupSubscribers = new HashedSet<StaffGroup>();
+		/// <summary>
+		/// Gets a value indicating whether the specified worklist class behaves as a singleton, as specified by
+		/// the <see cref="StaticWorklistAttribute"/>.
+		/// </summary>
+		/// <param name="worklistClass"></param>
+		/// <returns></returns>
+		public static bool GetIsStatic(Type worklistClass)
+		{
+			var a = AttributeUtils.GetAttribute<StaticWorklistAttribute>(worklistClass, true);
+			return a == null ? false : a.IsSingleton;
+		}
 
-            _procedureTypeGroupFilter = new WorklistProcedureTypeGroupFilter();
-            _facilityFilter = new WorklistFacilityFilter();
-            _patientClassFilter = new WorklistPatientClassFilter();
-            _patientLocationFilter = new WorklistPatientLocationFilter();
-            _orderPriorityFilter = new WorklistOrderPriorityFilter();
-            _orderingPractitionerFilter = new WorklistPractitionerFilter();
-            _portableFilter = new WorklistPortableFilter();
-            _timeFilter = new WorklistTimeFilter();
-        }
+		#endregion
 
-        /// <summary>
-        /// Gets the logical name of this class, which may or may not be the same as its .NET class name.
-        /// </summary>
-        public virtual string ClassName
-        {
-            get { return GetClassName(this.GetClass()); }
-        }
+		private string _name;
+		private string _description;
+		private WorklistProcedureTypeGroupFilter _procedureTypeGroupFilter;
+		private WorklistFacilityFilter _facilityFilter;
+		private WorklistPatientClassFilter _patientClassFilter;
+		private WorklistPatientLocationFilter _patientLocationFilter;
+		private WorklistOrderPriorityFilter _orderPriorityFilter;
+		private WorklistPractitionerFilter _orderingPractitionerFilter;
+		private WorklistPortableFilter _portableFilter;
+		private WorklistTimeFilter _timeFilter;
 
-        #region Persistent Properties
+		private ISet<Staff> _staffSubscribers;
+		private ISet<StaffGroup> _groupSubscribers;
+
+		private WorklistOwner _owner;
+
+		/// <summary>
+		/// No-args constructor required by NHibernate.
+		/// </summary>
+		protected Worklist()
+		{
+			_owner = WorklistOwner.Admin;   // admin owned by default
+			_staffSubscribers = new HashedSet<Staff>();
+			_groupSubscribers = new HashedSet<StaffGroup>();
+
+			_procedureTypeGroupFilter = new WorklistProcedureTypeGroupFilter();
+			_facilityFilter = new WorklistFacilityFilter();
+			_patientClassFilter = new WorklistPatientClassFilter();
+			_patientLocationFilter = new WorklistPatientLocationFilter();
+			_orderPriorityFilter = new WorklistOrderPriorityFilter();
+			_orderingPractitionerFilter = new WorklistPractitionerFilter();
+			_portableFilter = new WorklistPortableFilter();
+			_timeFilter = new WorklistTimeFilter();
+		}
+
+		#region Public Properties
+
+		/// <summary>
+		/// Gets the logical name of this class, which may or may not be the same as its .NET class name.
+		/// </summary>
+		public virtual string ClassName
+		{
+			get { return GetClassName(this.GetClass()); }
+		}
+
+		/// <summary>
+		/// Gets the fully-qualified .NET class name of this worklist instance.
+		/// </summary>
+		//NOTE: this property is persistent only for the purpose of enforcing the unique-key across Name and ClassName
+		//there is no need to persist the class name otherwise
+		[PersistentProperty]
+		[Required]
+		public virtual string FullClassName
+		{
+			get { return this.GetClass().FullName; }
+			protected set
+			{
+				// do nothing - setter required for NH
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the name of the worklist instance.
+		/// </summary>
+		[PersistentProperty]
+		[Required]
+		public virtual string Name
+		{
+			get { return _name; }
+			set { _name = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the description of the worklist instance.
+		/// </summary>
+		[PersistentProperty]
+		public virtual string Description
+		{
+			get { return _description; }
+			set { _description = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the owner of the worklist.
+		/// </summary>
+		[PersistentProperty]
+		public virtual WorklistOwner Owner
+		{
+			get { return _owner ?? WorklistOwner.Admin; }
+			set
+			{
+				if (!Equals(_owner, value))
+				{
+					_owner = value;
+
+					// if the owner is other than Admin, then the subscribers collections
+					// should contain only 1 value between them (the owner)
+					if (_owner != null && !_owner.IsAdminOwner)
+					{
+						_staffSubscribers.Clear();
+						_groupSubscribers.Clear();
+
+						if (_owner.IsStaffOwner)
+							_staffSubscribers.Add(_owner.Staff);
+						else if (_owner.IsGroupOwner)
+							_groupSubscribers.Add(_owner.Group);
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets the set of <see cref="Staff"/> that subscribe to this worklist.
+		/// </summary>
+		[PersistentProperty]
+		public virtual ISet<Staff> StaffSubscribers
+		{
+			get { return _staffSubscribers; }
+			protected set { _staffSubscribers = value; }
+		}
+
+		/// <summary>
+		/// Gets the set of <see cref="StaffGroup"/>s that subscribe to this worklist.
+		/// </summary>
+		[PersistentProperty]
+		public virtual ISet<StaffGroup> GroupSubscribers
+		{
+			get { return _groupSubscribers; }
+			protected set { _groupSubscribers = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="WorklistProcedureTypeGroupFilter"/>.
+		/// </summary>
+		[PersistentProperty]
+		[EmbeddedValue]
+		public virtual WorklistProcedureTypeGroupFilter ProcedureTypeGroupFilter
+		{
+			get { return _procedureTypeGroupFilter; }
+			protected set { _procedureTypeGroupFilter = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="WorklistFacilityFilter"/>.
+		/// </summary>
+		[PersistentProperty]
+		[EmbeddedValue]
+		public virtual WorklistFacilityFilter FacilityFilter
+		{
+			get { return _facilityFilter; }
+			protected set { _facilityFilter = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="WorklistPatientClassFilter"/>.
+		/// </summary>
+		[PersistentProperty]
+		[EmbeddedValue]
+		public virtual WorklistPatientClassFilter PatientClassFilter
+		{
+			get { return _patientClassFilter; }
+			protected set { _patientClassFilter = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="WorklistPatientLocationFilter"/>.
+		/// </summary>
+		[PersistentProperty]
+		[EmbeddedValue]
+		public virtual WorklistPatientLocationFilter PatientLocationFilter
+		{
+			get { return _patientLocationFilter; }
+			protected set { _patientLocationFilter = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="WorklistOrderPriorityFilter"/>.
+		/// </summary>
+		[PersistentProperty]
+		[EmbeddedValue]
+		public virtual WorklistOrderPriorityFilter OrderPriorityFilter
+		{
+			get { return _orderPriorityFilter; }
+			protected set { _orderPriorityFilter = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="WorklistPractitionerFilter"/> for the ordering practitioner.
+		/// </summary>
+		[PersistentProperty]
+		[EmbeddedValue]
+		public virtual WorklistPractitionerFilter OrderingPractitionerFilter
+		{
+			get { return _orderingPractitionerFilter; }
+			protected set { _orderingPractitionerFilter = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="WorklistPortableFilter"/>.
+		/// </summary>
+		[PersistentProperty]
+		[EmbeddedValue]
+		public virtual WorklistPortableFilter PortableFilter
+		{
+			get { return _portableFilter; }
+			protected set { _portableFilter = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="WorklistTimeFilter"/>.
+		/// </summary>
+		[PersistentProperty]
+		[EmbeddedValue]
+		public virtual WorklistTimeFilter TimeFilter
+		{
+			get { return _timeFilter; }
+			protected set { _timeFilter = value; }
+		}
+
+		#endregion
 
 
-        /// <summary>
-        /// Gets the fully-qualified .NET class name of this worklist instance.
-        /// </summary>
-        //NOTE: this property is persistent only for the purpose of enforcing the unique-key across Name and ClassName
-        //there is no need to persist the class name otherwise
-        [PersistentProperty]
-        [Required]
-        public virtual string FullClassName
-        {
-            get { return this.GetClass().FullName; }
-            protected set
-            {
-                // do nothing
-            }
-        }
+		#region Abstract and overridable members
 
-        /// <summary>
-        /// Gets or sets the name of the worklist instance.
-        /// </summary>
-        [PersistentProperty]
-        [Required]
-        public virtual string Name
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
+		/// <summary>
+		/// Gets the list of worklist items in this worklist.
+		/// </summary>
+		/// <param name="wqc"></param>
+		/// <returns></returns>
+		public abstract IList GetWorklistItems(IWorklistQueryContext wqc);
 
-        /// <summary>
-        /// Gets or sets the description of the worklist instance.
-        /// </summary>
-        [PersistentProperty]
-        public virtual string Description
-        {
-            get { return _description; }
-            set { _description = value; }
-        }
+		public abstract string GetWorklistItemsHql(IWorklistQueryContext wqc);
 
-        /// <summary>
-        /// Gets or sets the owner of the worklist.
-        /// </summary>
-        [PersistentProperty]
-        public virtual WorklistOwner Owner
-        {
-            get { return _owner == null ? WorklistOwner.Admin : _owner; }
-            set
-            {
-                if (!Equals(_owner, value))
-                {
-                    _owner = value;
+		/// <summary>
+		/// Gets the number of worklist items in this worklist.
+		/// </summary>
+		/// <param name="wqc"></param>
+		/// <returns></returns>
+		public abstract int GetWorklistItemCount(IWorklistQueryContext wqc);
 
-                    // if the owner is other than Admin, then the subscribers collections
-                    // should contain only 1 value between them (the owner)
-                    if (_owner != null && !_owner.IsAdminOwner)
-                    {
-                        _staffSubscribers.Clear();
-                        _groupSubscribers.Clear();
+		/// <summary>
+		/// Gets the criteria that define the invariant aspects of this worklist.
+		/// </summary>
+		/// <param name="wqc"></param>
+		/// <remarks>
+		/// This method is called by the worklist brokers and is not intended for use by application code.
+		/// </remarks>
+		/// <returns></returns>
+		public WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
+		{
+			var criteria = GetInvariantCriteriaCore(wqc);
+			foreach (var criterion in criteria)
+			{
+				// augment criteria with time directive
+				_timeFilter.Apply(criterion, this.GetClass(), GetTimeDirective(), wqc);
 
-                        if (_owner.IsStaffOwner)
-                            _staffSubscribers.Add(_owner.Staff);
-                        else if (_owner.IsGroupOwner)
-                            _groupSubscribers.Add(_owner.Group);
-                    }
-                }
-            }
-        }
+				// augment the criteria with the downtime flag
+				criterion.Procedure.DowntimeRecoveryMode.EqualTo(wqc.DowntimeRecoveryMode);
+			}
+			return criteria;
+		}
 
-        /// <summary>
-        /// Gets the set of <see cref="Staff"/> that subscribe to this worklist.
-        /// </summary>
-        [PersistentProperty]
-        public virtual ISet<Staff> StaffSubscribers
-        {
-            get { return _staffSubscribers; }
-            protected set { _staffSubscribers = value; }
-        }
+		public WorklistItemSearchCriteria[] GetFilterCriteria(IWorklistQueryContext wqc)
+		{
+			return GetFilterCriteriaCore(wqc);
+		}
 
-        /// <summary>
-        /// Gets the set of <see cref="StaffGroup"/>s that subscribe to this worklist.
-        /// </summary>
-        [PersistentProperty]
-        public virtual ISet<StaffGroup> GroupSubscribers
-        {
-            get { return _groupSubscribers; }
-            protected set { _groupSubscribers = value; }
-        }
+		/// <summary>
+		/// Gets the projection for this worklist.
+		/// </summary>
+		/// <returns></returns>
+		public WorklistItemProjection GetProjection()
+		{
+			return GetProjectionCore(GetTimeDirective().TimeField);
+		}
 
-        /// <summary>
-        /// Gets or sets the <see cref="WorklistProcedureTypeGroupFilter"/>.
-        /// </summary>
-        [PersistentProperty]
-        [EmbeddedValue]
-        public virtual WorklistProcedureTypeGroupFilter ProcedureTypeGroupFilter
-        {
-            get { return _procedureTypeGroupFilter; }
-            protected set { _procedureTypeGroupFilter = value; }
-        }
+		/// <summary>
+		/// Gets the Procedure Step subclass(es) that this worklist is based on.
+		/// </summary>
+		public abstract Type[] GetProcedureStepSubclasses();
 
-        /// <summary>
-        /// Gets or sets the <see cref="WorklistFacilityFilter"/>.
-        /// </summary>
-        [PersistentProperty]
-        [EmbeddedValue]
-        public virtual WorklistFacilityFilter FacilityFilter
-        {
-            get { return _facilityFilter; }
-            protected set { _facilityFilter = value; }
-        }
+		/// <summary>
+		/// Gets the worklist item projection required to populate worklist items for this worklist.
+		/// </summary>
+		/// <param name="timeField"></param>
+		/// <returns></returns>
+		protected abstract WorklistItemProjection GetProjectionCore(WorklistItemField timeField);
 
-        /// <summary>
-        /// Gets or sets the <see cref="WorklistPatientClassFilter"/>.
-        /// </summary>
-        [PersistentProperty]
-        [EmbeddedValue]
-        public virtual WorklistPatientClassFilter PatientClassFilter
-        {
-            get { return _patientClassFilter; }
-            protected set { _patientClassFilter = value; }
-        }
+		/// <summary>
+		/// Gets the criteria that define the invariant aspects of this worklist.
+		/// </summary>
+		/// <param name="wqc"></param>
+		/// <returns></returns>
+		protected abstract WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc);
 
-        /// <summary>
-        /// Gets or sets the <see cref="WorklistPatientLocationFilter"/>.
-        /// </summary>
-        [PersistentProperty]
-        [EmbeddedValue]
-        public virtual WorklistPatientLocationFilter PatientLocationFilter
-        {
-            get { return _patientLocationFilter; }
-            protected set { _patientLocationFilter = value; }
-        }
+		protected virtual WorklistItemSearchCriteria[] GetFilterCriteriaCore(IWorklistQueryContext wqc)
+		{
+			var criteria = new WorklistItemSearchCriteria();
 
-        /// <summary>
-        /// Gets or sets the <see cref="WorklistOrderPriorityFilter"/>.
-        /// </summary>
-        [PersistentProperty]
-        [EmbeddedValue]
-        public virtual WorklistOrderPriorityFilter OrderPriorityFilter
-        {
-            get { return _orderPriorityFilter; }
-            protected set { _orderPriorityFilter = value; }
-        }
+			ApplyFilterCriteria(criteria, wqc);
 
-        /// <summary>
-        /// Gets or sets the <see cref="WorklistPractitionerFilter"/> for the ordering practitioner.
-        /// </summary>
-        [PersistentProperty]
-        [EmbeddedValue]
-        public virtual WorklistPractitionerFilter OrderingPractitionerFilter
-        {
-            get { return _orderingPractitionerFilter; }
-            protected set { _orderingPractitionerFilter = value; }
-        }
+			return new[] { criteria };
+		}
 
-        /// <summary>
-        /// Gets or sets the <see cref="WorklistPortableFilter"/>.
-        /// </summary>
-        [PersistentProperty]
-        [EmbeddedValue]
-        public virtual WorklistPortableFilter PortableFilter
-        {
-            get { return _portableFilter; }
-            protected set { _portableFilter = value; }
-        }
+		/// <summary>
+		/// Gets the directive that specified how items in this worklist are handled wrt time.
+		/// </summary>
+		/// <returns></returns>
+		protected abstract TimeDirective GetTimeDirective();
 
-        /// <summary>
-        /// Gets or sets the <see cref="WorklistTimeFilter"/>.
-        /// </summary>
-        [PersistentProperty]
-        [EmbeddedValue]
-        public virtual WorklistTimeFilter TimeFilter
-        {
-            get { return _timeFilter; }
-            protected set { _timeFilter = value; }
-        }
+		#endregion
 
-        #endregion
+		#region Helpers
 
-        #region Abstract and overridable members
+		protected void ApplyFilterCriteria(WorklistItemSearchCriteria criteria, IWorklistQueryContext wqc)
+		{
+			this.ProcedureTypeGroupFilter.Apply(criteria.Procedure.Type, wqc);
+			this.FacilityFilter.Apply(criteria.Procedure.PerformingFacility, wqc);
+			this.OrderPriorityFilter.Apply(criteria.Order, wqc);
+			this.PatientClassFilter.Apply(criteria.Visit, wqc);
+			this.PatientLocationFilter.Apply(criteria.Visit, wqc);
+			this.OrderingPractitionerFilter.Apply(criteria.Order.OrderingPractitioner, wqc);
+			this.PortableFilter.Apply(criteria.Procedure, wqc);
 
-        /// <summary>
-        /// Gets the list of worklist items in this worklist.
-        /// </summary>
-        /// <param name="wqc"></param>
-        /// <returns></returns>
-        public abstract IList GetWorklistItems(IWorklistQueryContext wqc);
+			// note: the TimeFilter is treated as part of the invariant criteria, so it is not processed here
+		}
 
-        /// <summary>
-        /// Gets the number of worklist items in this worklist.
-        /// </summary>
-        /// <param name="wqc"></param>
-        /// <returns></returns>
-        public abstract int GetWorklistItemCount(IWorklistQueryContext wqc);
-
-        /// <summary>
-        /// Gets the criteria that define the invariant aspects of this worklist.
-        /// </summary>
-        /// <param name="wqc"></param>
-        /// <returns></returns>
-        protected abstract WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc);
-
-        #endregion
-
-        #region Helpers
-
-        /// <summary>
-        /// Gets the criteria that define the invariant aspects of this worklist.
-        /// </summary>
-        /// <param name="wqc"></param>
-        /// <remarks>
-        /// This method is called by the worklist brokers and is not intended for use by application code.
-        /// </remarks>
-        /// <returns></returns>
-        public WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
-        {
-            WorklistItemSearchCriteria[] criteria = GetInvariantCriteriaCore(wqc);
-
-            // augment the criteria with the downtime flag
-            foreach (WorklistItemSearchCriteria criterion in criteria)
-            {
-                criterion.Procedure.DowntimeRecoveryMode.EqualTo(wqc.DowntimeRecoveryMode);
-            }
-            return criteria;
-        }
-
-        protected void ApplyTimeCriteria(WorklistItemSearchCriteria criteria, WorklistTimeField timeField, WorklistTimeRange defaultValue, WorklistOrdering ordering, IWorklistQueryContext wqc)
-        {
-            criteria.TimeField = timeField;
-            ISearchCondition searchCondition = timeField.GetSearchCondition(criteria);
-            ApplyTimeRange(searchCondition, defaultValue, ordering, wqc);
-        }
-
-        /// <summary>
-        /// Applies the time-range for this worklist to the specified search-condition.
-        /// </summary>
-        /// <remarks>
-        /// If the <see cref="TimeFilter"/> is enabled, the range specified by the filter is applied.
-        /// If the filter is not enabled, then the specified <paramref name="defaultValue"/> is applied.
-        /// The <paramref name="defaultValue"/> may be null, in which case no time range is applied by default.
-        /// </remarks>
-        /// <param name="condition"></param>
-        /// <param name="defaultValue"></param>
-        /// <param name="ordering"></param>
-        /// <param name="wqc"></param>
-        private void ApplyTimeRange(ISearchCondition condition, WorklistTimeRange defaultValue, WorklistOrdering ordering, IWorklistQueryContext wqc)
-        {
-            // apply ordering
-            if (ordering == WorklistOrdering.PrioritizeOldestItems)
-                condition.SortAsc(0);
-            else
-                condition.SortDesc(0);
-
-            // apply range filtering, if supported by this class
-            // note: time filter is not applied in downtime recovery mode
-            if (GetSupportsTimeFilter(this.GetClass()) && !wqc.DowntimeRecoveryMode)
-            {
-                WorklistTimeRange range = _timeFilter.IsEnabled ? _timeFilter.Value : defaultValue;
-                if (range != null)
-                    range.Apply(condition, Platform.Time);
-            }
-        }
-
-        #endregion
-    }
+		#endregion
+	}
 }

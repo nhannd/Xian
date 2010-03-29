@@ -31,9 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Hibernate.Hql;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -58,51 +55,36 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 	/// 
 	/// </para>
 	/// </remarks>
-	/// <typeparam name="TItem"></typeparam>
-    class DefaultWorklistItemSearchExecutionStrategy<TItem> : WorklistItemSearchExecutionStrategy<TItem>
-        where TItem : WorklistItemBase
-    {
+	class DefaultWorklistItemSearchExecutionStrategy : WorklistItemSearchExecutionStrategy
+	{
 		/// <summary>
 		/// Executes a search, returning a list of hits.
 		/// </summary>
 		/// <param name="wisc"></param>
 		/// <returns></returns>
-		public override IList<TItem> GetSearchResults(IWorklistItemSearchContext<TItem> wisc)
-        {
-            List<TItem> results = new List<TItem>();
+		public override IList<WorklistItem> GetSearchResults(IWorklistItemSearchContext wisc)
+		{
+			var where = wisc.SearchCriteria;
+			var results = new List<WorklistItem>();
 
-            WorklistItemSearchCriteria[] where = wisc.SearchCriteria;
-
-            // search for worklist items, delegating the task of designing the query to the subclass
-            HqlProjectionQuery worklistItemQuery = wisc.BuildWorklistItemSearchQuery(where, false);
-            if (worklistItemQuery != null)
-            {
-                results = UnionMerge(results, wisc.DoQuery(worklistItemQuery),
-                    delegate(TItem item) { return item.ProcedureRef; });
-            }
+			results = UnionMerge(results, wisc.FindWorklistItems(where), item => item.ProcedureRef);
 
 			// include degenerate procedure items if requested
-            if (wisc.IncludeDegenerateProcedureItems)
-            {
-            	// search for procedures
-            	HqlProjectionQuery procedureQuery = wisc.BuildProcedureSearchQuery(where, false);
-            	results = UnionMerge(results, wisc.DoQuery(procedureQuery),
-            	                       delegate(TItem item) { return item.ProcedureRef; });
-            }
+			if (wisc.IncludeDegenerateProcedureItems)
+			{
+				// search for procedures
+				results = UnionMerge(results, wisc.FindProcedures(where), item => item.ProcedureRef);
+			}
 
 			// include degenerate patient items if requested
-			if(wisc.IncludeDegeneratePatientItems)
+			if (wisc.IncludeDegeneratePatientItems)
 			{
-        		// search for patients
-                HqlProjectionQuery patientQuery = wisc.BuildPatientSearchQuery(where, false);
+				// add any patients for which there is no result
+				results = UnionMerge(results, wisc.FindPatients(where), item => item.PatientRef);
+			}
 
-                // add any patients for which there is no result
-                results = UnionMerge(results, wisc.DoQuery(patientQuery),
-					delegate(TItem item) { return item.PatientRef; });
-            }
-
-            return results;
-        }
+			return results;
+		}
 
 		/// <summary>
 		/// Estimates the hit count for the specified search, unless the count exceeds a specified
@@ -111,17 +93,16 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		/// <param name="wisc"></param>
 		/// <param name="count"></param>
 		/// <returns></returns>
-		public override bool EstimateSearchResultsCount(IWorklistItemSearchContext<TItem> wisc, out int count)
-        {
+		public override bool EstimateSearchResultsCount(IWorklistItemSearchContext wisc, out int count)
+		{
 			count = 0;
 
 			// if no degenerate items are included, we need to do exactly one query for worklist items,
 			// no estimation is possible
-			if(!wisc.IncludeDegeneratePatientItems && !wisc.IncludeDegenerateProcedureItems)
+			if (!wisc.IncludeDegeneratePatientItems && !wisc.IncludeDegenerateProcedureItems)
 			{
 				// search for worklist items, delegating the task of designing the query to the subclass
-				HqlProjectionQuery worklistItemCountQuery = wisc.BuildWorklistItemSearchQuery(wisc.SearchCriteria, true);
-				count = wisc.DoQueryCount(worklistItemCountQuery);
+				count = wisc.CountWorklistItems(wisc.SearchCriteria);
 
 				// return whether the count exceeded the threshold
 				return count <= wisc.Threshold;
@@ -143,24 +124,22 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			// b) less than or equal to the sum of both counts.  Therefore, choose the midpoint of this number as a
 			// 'good enough' estimate.
 
-        	int numPatients = 0;
-			if(wisc.IncludeDegeneratePatientItems)
+			var numPatients = 0;
+			if (wisc.IncludeDegeneratePatientItems)
 			{
 				// count number of patient matches
-				HqlProjectionQuery patientCountQuery = wisc.BuildPatientSearchQuery(wisc.SearchCriteria, true);
-				numPatients = wisc.DoQueryCount(patientCountQuery);
+				numPatients = wisc.CountPatients(wisc.SearchCriteria);
 
 				// if this number exceeds threshold, bail
 				if (numPatients > wisc.Threshold)
 					return false;
 			}
 
-			int numProcedures = 0;
+			var numProcedures = 0;
 			if (wisc.IncludeDegenerateProcedureItems)
 			{
 				// count number of procedure matches
-				HqlProjectionQuery procedureCountQuery = wisc.BuildProcedureSearchQuery(wisc.SearchCriteria, true);
-				numProcedures = wisc.DoQueryCount(procedureCountQuery);
+				numProcedures = wisc.CountProcedures(wisc.SearchCriteria);
 
 				// if this number exceeds threshold, bail
 				if (numProcedures > wisc.Threshold)
@@ -173,5 +152,5 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			// return whether the count exceeded the threshold
 			return count <= wisc.Threshold;
 		}
-    }
+	}
 }

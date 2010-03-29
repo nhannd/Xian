@@ -75,7 +75,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			remove { }
 		}
 
-		protected override bool Execute(ReportingWorklistItem item)
+		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			try
 			{
@@ -122,7 +122,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			base.Initialize();
 		}
 
-		protected override bool Execute(ReportingWorklistItem item)
+		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			try
 			{
@@ -173,7 +173,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				ReportingWorklistItem item = GetSelectedItem();
+				ReportingWorklistItemSummary item = GetSelectedItem();
 				return (item != null && item.IsAddendumStep) ? "Discard Addendum" : "Discard Report";
 			}
 		}
@@ -182,7 +182,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				ReportingWorklistItem item = GetSelectedItem();
+				ReportingWorklistItemSummary item = GetSelectedItem();
 				return (item != null && item.IsAddendumStep) ? _cancelAddendum : _cancelReport;
 			}
 		}
@@ -193,7 +193,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			remove { this.Context.SelectionChanged -= value; }
 		}
 
-		protected override bool Execute(ReportingWorklistItem item)
+		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			string msg = item.IsAddendumStep ? SR.MessageConfirmDiscardSelectedAddendum : SR.MessageConfirmDiscardSelectedReport;
 
@@ -245,13 +245,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
-		public override bool CanAcceptDrop(ICollection<ReportingWorklistItem> items)
+		public override bool CanAcceptDrop(ICollection<ReportingWorklistItemSummary> items)
 		{
 			return this.Context.GetOperationEnablement("CompleteInterpretationAndVerify") ||
 				this.Context.GetOperationEnablement("CompleteVerification");
 		}
 
-		protected override bool Execute(ReportingWorklistItem item)
+		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			// show PD dialog if required
 			if (!PreliminaryDiagnosis.ShowDialogOnVerifyIfRequired(item, this.Context.DesktopWindow))
@@ -311,12 +311,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 		}
 
-		protected override bool Execute(ReportingWorklistItem item)
+		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			if (ActivateIfAlreadyOpen(item))
 				return true;
 
-			ReportingWorklistItem interpretationWorklistItem = null;
+			ReportingWorklistItemSummary interpretationWorklistItem = null;
 
 			Platform.GetService<IReportingWorkflowService>(
 				delegate(IReportingWorkflowService service)
@@ -347,7 +347,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 		}
 
-		protected override bool Execute(ReportingWorklistItem item)
+		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			Platform.GetService<IReportingWorkflowService>(
 				delegate(IReportingWorkflowService service)

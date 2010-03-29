@@ -37,12 +37,12 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 	[DataContract]
 	public class ReviseUnpublishedReportResponse : DataContractBase
 	{
-		public ReviseUnpublishedReportResponse(ReportingWorklistItem replacementVerificationStep)
+		public ReviseUnpublishedReportResponse(ReportingWorklistItemSummary replacementVerificationStep)
 		{
 			this.ReplacementVerificationStep = replacementVerificationStep;
 		}
 
 		[DataMember]
-		public ReportingWorklistItem ReplacementVerificationStep;
+		public ReportingWorklistItemSummary ReplacementVerificationStep;
 	}
 }

@@ -39,14 +39,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 {
 	public class ReportDocument : Document
 	{
-		private readonly ReportingWorklistItem _worklistItem;
+		private readonly ReportingWorklistItemSummary _worklistItem;
 		private readonly bool _shouldOpenImages;
 		private readonly string _folderName;
 		private readonly EntityRef _worklistRef;
 		private readonly string _worklistClassName;
 		private ReportingComponent _component;
 
-		public ReportDocument(ReportingWorklistItem worklistItem, bool shouldOpenImages, IReportingWorkflowItemToolContext context)
+		public ReportDocument(ReportingWorklistItemSummary worklistItem, bool shouldOpenImages, IReportingWorkflowItemToolContext context)
 			: base(worklistItem.ProcedureStepRef, context.DesktopWindow)
 		{
 			_worklistItem = worklistItem;
@@ -97,7 +97,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
-		public static string GetTitle(ReportingWorklistItem item)
+		public static string GetTitle(ReportingWorklistItemSummary item)
 		{
 			return string.Format("Report - {0} - {1}", PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn));
 		}

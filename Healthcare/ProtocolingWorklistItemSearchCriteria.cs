@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,51 +29,22 @@
 
 #endregion
 
-using System;
-using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
+namespace ClearCanvas.Healthcare
 {
-    [DataContract]
-    public class ModalityWorklistItem : WorklistItemSummaryBase
+    public class ProtocolingWorklistItemSearchCriteria : WorklistItemSearchCriteria
     {
-        public ModalityWorklistItem(
-            EntityRef procedureStepRef,
-            EntityRef procedureRef,
-            EntityRef orderRef,
-            EntityRef patientRef,
-            EntityRef profileRef,
-            CompositeIdentifierDetail mrn,
-            PersonNameDetail name,
-            string accessionNumber,
-            EnumValueInfo orderPriority,
-            EnumValueInfo patientClass,
-            string diagnosticServiceName,
-            string procedureName,
-			bool procedurePortable,
-			EnumValueInfo procedureLaterality,
-            string procedureStepName,
-            DateTime? time)
-            :base(
-                procedureStepRef,
-                procedureRef,
-                orderRef,
-                patientRef,
-                profileRef,
-                mrn,
-                name,
-                accessionNumber,
-                orderPriority,
-                patientClass,
-                diagnosticServiceName,
-                procedureName,
-				procedurePortable,
-				procedureLaterality,
-                procedureStepName,
-                time
-            )
+        public ProtocolSearchCriteria Protocol
         {
+            get
+            {
+                if (!this.SubCriteria.ContainsKey("Protocol"))
+                {
+                    this.SubCriteria["Protocol"] = new ProtocolSearchCriteria("Protocol");
+                }
+                return (ProtocolSearchCriteria)this.SubCriteria["Protocol"];
+            }
         }
     }
 }

@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Enterprise.Common;
 using NHibernate;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Core.Modelling;
@@ -92,11 +93,22 @@ namespace ClearCanvas.Enterprise.Hibernate
 				// recorded by the interceptor
 				SynchStateCore();
 
+				// publish pre-commit to listeners
+				var changeSetPublisher = new EntityChangeSetPublisher();
+				var changeSet = new EntityChangeSet(_interceptor.EntityChangeSet);
+				changeSetPublisher.PreCommit(new EntityChangeSetPreCommitArgs(changeSet, this));
+
+				// sync state again, in case pre-commit listeners made modifications to entities in this context
+				SynchStateCore();
+
 				// do audit
 				AuditTransaction();
 
 				// do final commit
 				CommitTransaction();
+
+				// publish post-commit to listeners
+				changeSetPublisher.PostCommit(new EntityChangeSetPostCommitArgs(changeSet));
 			}
 			catch (Exception e)
 			{

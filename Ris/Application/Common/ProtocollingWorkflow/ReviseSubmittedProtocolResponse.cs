@@ -38,12 +38,12 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 	[DataContract]
 	public class ReviseSubmittedProtocolResponse : DataContractBase
 	{
-		public ReviseSubmittedProtocolResponse(ReportingWorklistItem replacementStep)
+		public ReviseSubmittedProtocolResponse(ReportingWorklistItemSummary replacementStep)
 		{
 			this.ReplacementStep = replacementStep;
 		}
 
 		[DataMember]
-		public ReportingWorklistItem ReplacementStep;
+		public ReportingWorklistItemSummary ReplacementStep;
 	}
 }

@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			base.Initialize();
 		}
 
-		protected override bool Execute(ReportingWorklistItem item)
+		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			Platform.GetService<ITranscriptionWorkflowService>(
 				delegate(ITranscriptionWorkflowService service)
@@ -88,7 +88,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 		}
 
-		protected override bool Execute(ReportingWorklistItem item)
+		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			TranscriptionRejectReasonComponent component = new TranscriptionRejectReasonComponent();
 			if (this.Context.DesktopWindow.ShowDialogBox(component, "Reason") == DialogBoxAction.Ok)
@@ -136,7 +136,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			base.Initialize();
 		}
 
-		protected override bool Execute(ReportingWorklistItem item)
+		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			Platform.GetService<ITranscriptionWorkflowService>(
 				delegate(ITranscriptionWorkflowService service)
@@ -177,7 +177,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				ReportingWorklistItem item = GetSelectedItem();
+				ReportingWorklistItemSummary item = GetSelectedItem();
 
 				if (this.Context.SelectedItems.Count != 1)
 					return false;
@@ -191,14 +191,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
-		public override bool CanAcceptDrop(ICollection<ReportingWorklistItem> items)
+		public override bool CanAcceptDrop(ICollection<ReportingWorklistItemSummary> items)
 		{
 			// this tool is only registered as a drop handler for the Drafts folder
 			// and the only operation that would make sense in this context is StartInterpretation
 			return this.Context.GetOperationEnablement("StartTranscription");
 		}
 
-		protected override bool Execute(ReportingWorklistItem item)
+		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			// check if the document is already open
 			if (ActivateIfAlreadyOpen(item))

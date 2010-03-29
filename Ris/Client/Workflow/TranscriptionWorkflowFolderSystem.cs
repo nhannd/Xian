@@ -75,7 +75,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			this.Folders.Add(new Folders.Transcription.CompletedFolder());
 		}
 
-		protected override string GetPreviewUrl(WorkflowFolder folder, ICollection<ReportingWorklistItem> items)
+		protected override string GetPreviewUrl(WorkflowFolder folder, ICollection<ReportingWorklistItemSummary> items)
 		{
 			return WebResourcesSettings.Default.TranscriptionFolderSystemUrl;
 		}

@@ -56,14 +56,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[AssociateView(typeof(CheckInOrderComponentViewExtensionPoint))]
 	public class CheckInOrderComponent : ApplicationComponent
 	{
-		private readonly RegistrationWorklistItem _worklistItem;
+		private readonly RegistrationWorklistItemSummary _worklistItem;
 		private CheckInOrderTable _checkInOrderTable;
 		private DateTime _checkInTime;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public CheckInOrderComponent(RegistrationWorklistItem item)
+		public CheckInOrderComponent(RegistrationWorklistItemSummary item)
 		{
 			_worklistItem = item;
 		}

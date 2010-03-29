@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Application.Services
 
 	public class WorklistItemTextQueryHelper<TDomainItem, TSummary>
 		: TextQueryHelper<TDomainItem, WorklistItemSearchCriteria, TSummary>
-		where TDomainItem : WorklistItemBase
+		where TDomainItem : WorklistItem
 		where TSummary : DataContractBase
 	{
 		/// <summary>
@@ -75,8 +75,9 @@ namespace ClearCanvas.Ris.Application.Services
 		}
 
 
-		private readonly Type _procedureStepClass;
-		private readonly IWorklistItemBroker<TDomainItem> _broker;
+		private readonly Type[] _procedureStepClasses;
+		private readonly IWorklistItemBroker _broker;
+		private readonly WorklistItemProjection _projection;
 		private readonly WorklistItemTextQueryOptions _options;
 		private readonly IPersistenceContext _context;
 
@@ -84,15 +85,31 @@ namespace ClearCanvas.Ris.Application.Services
 		/// Constructor.
 		/// </summary>
 		public WorklistItemTextQueryHelper(
-			IWorklistItemBroker<TDomainItem> broker,
+			IWorklistItemBroker broker,
 			Converter<TDomainItem, TSummary> summaryAssembler,
 			Type procedureStepClass,
+			WorklistItemProjection projection,
+			WorklistItemTextQueryOptions options,
+			IPersistenceContext context)
+			: this(broker, summaryAssembler, new []{procedureStepClass}, projection, options, context)
+		{
+		}
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public WorklistItemTextQueryHelper(
+			IWorklistItemBroker broker,
+			Converter<TDomainItem, TSummary> summaryAssembler,
+			Type[] procedureStepClasses,
+			WorklistItemProjection projection,
 			WorklistItemTextQueryOptions options,
 			IPersistenceContext context)
 			: base(null, summaryAssembler, null, null)
 		{
 			_broker = broker;
-			_procedureStepClass = procedureStepClass;
+			_procedureStepClasses = procedureStepClasses;
+			_projection = projection;
 			_options = options;
 			_context = context;
 		}
@@ -102,7 +119,7 @@ namespace ClearCanvas.Ris.Application.Services
 		protected override bool ValidateRequest(TextQueryRequest request)
 		{
 			// if the UseAdvancedSearch flag is set, check if the Search fields are empty
-			WorklistItemTextQueryRequest req = (WorklistItemTextQueryRequest)request;
+			var req = (WorklistItemTextQueryRequest)request;
 			if (req.UseAdvancedSearch)
 			{
 				return req.SearchFields != null && !req.SearchFields.IsEmpty();
@@ -114,8 +131,8 @@ namespace ClearCanvas.Ris.Application.Services
 
 		protected override WorklistItemSearchCriteria[] BuildCriteria(TextQueryRequest request)
 		{
-			WorklistItemTextQueryRequest req = (WorklistItemTextQueryRequest)request;
-			List<WorklistItemSearchCriteria> criteria = new List<WorklistItemSearchCriteria>();
+			var req = (WorklistItemTextQueryRequest)request;
+			var criteria = new List<WorklistItemSearchCriteria>();
 
 			if ((_options & WorklistItemTextQueryOptions.PatientOrder) == WorklistItemTextQueryOptions.PatientOrder)
 			{
@@ -128,29 +145,26 @@ namespace ClearCanvas.Ris.Application.Services
 			}
 
 			// add constraint for downtime vs live procedures
-			bool downtimeRecoveryMode = (_options & WorklistItemTextQueryOptions.DowntimeRecovery) ==
+			var downtimeRecoveryMode = (_options & WorklistItemTextQueryOptions.DowntimeRecovery) ==
 										WorklistItemTextQueryOptions.DowntimeRecovery;
-			criteria.ForEach(delegate(WorklistItemSearchCriteria c) { c.Procedure.DowntimeRecoveryMode.EqualTo(downtimeRecoveryMode); });
+			criteria.ForEach(c => c.Procedure.DowntimeRecoveryMode.EqualTo(downtimeRecoveryMode));
 
 			// this is a silly hack to append additional information (degenerate flags) into the criteria so that we can
 			// pass them on to the TestSpecificity and DoQuery methods (didn't want to refactor the superclass)
-			List<WorklistItemSearchCriteria> augmented = CollectionUtils.Map<WorklistItemSearchCriteria, WorklistItemSearchCriteria>(
+			var augmented = CollectionUtils.Map<WorklistItemSearchCriteria, WorklistItemSearchCriteria>(
 				criteria,
-				delegate(WorklistItemSearchCriteria c)
-				{
-					return new TextQueryCriteria(c,
-						ShouldIncludeDegeneratePatientItems(req),
-						ShouldIncludeDegenerateProcedureItems(req));
-				});
+				c => new TextQueryCriteria(c, ShouldIncludeDegeneratePatientItems(req), ShouldIncludeDegenerateProcedureItems(req)));
 
 			return augmented.ToArray();
 		}
 
 		protected override bool TestSpecificity(WorklistItemSearchCriteria[] where, int threshold)
 		{
-			TextQueryCriteria c = (TextQueryCriteria)CollectionUtils.FirstElement(where);
-			WorklistItemSearchArgs searchArgs = new WorklistItemSearchArgs(
+			var c = (TextQueryCriteria)CollectionUtils.FirstElement(where);
+			var searchArgs = new WorklistItemSearchArgs(
+				_procedureStepClasses,
 				where,
+				_projection,
 				c.IncludeDegeneratePatientItems,
 				c.IncludeDegenerateProcedureItems,
 				threshold);
@@ -161,13 +175,15 @@ namespace ClearCanvas.Ris.Application.Services
 
 		protected override IList<TDomainItem> DoQuery(WorklistItemSearchCriteria[] where, SearchResultPage page)
 		{
-			TextQueryCriteria c = (TextQueryCriteria)CollectionUtils.FirstElement(where);
-			WorklistItemSearchArgs searchArgs = new WorklistItemSearchArgs(
+			var c = (TextQueryCriteria)CollectionUtils.FirstElement(where);
+			var searchArgs = new WorklistItemSearchArgs(
+				_procedureStepClasses,
 				where,
+				_projection,
 				c.IncludeDegeneratePatientItems,
 				c.IncludeDegenerateProcedureItems);
 
-			return _broker.GetSearchResults(searchArgs);
+			return _broker.GetSearchResults<TDomainItem>(searchArgs);
 		}
 
 		#endregion
@@ -176,28 +192,21 @@ namespace ClearCanvas.Ris.Application.Services
 
 		private List<WorklistItemSearchCriteria> BuildProcedureSearchCriteria(WorklistItemTextQueryRequest request)
 		{
-			if (request.UseAdvancedSearch)
-			{
-				return BuildAdvancedProcedureSearchCriteria(request);
-			}
-			else
-			{
-				return BuildTextQueryProcedureSearchCriteria(request);
-			}
-
+			return request.UseAdvancedSearch ? 
+				BuildAdvancedProcedureSearchCriteria(request) : BuildTextQueryProcedureSearchCriteria(request);
 		}
 
 		private List<WorklistItemSearchCriteria> BuildAdvancedProcedureSearchCriteria(WorklistItemTextQueryRequest request)
 		{
 			Platform.CheckMemberIsSet(request.SearchFields, "SearchFields");
 
-			WorklistItemTextQueryRequest.AdvancedSearchFields searchParams = request.SearchFields;
+			var searchParams = request.SearchFields;
 
 
-			List<WorklistItemSearchCriteria> wheres = new List<WorklistItemSearchCriteria>();
+			var wheres = new List<WorklistItemSearchCriteria>();
 
 			// construct a base criteria object from the request values
-			WorklistItemSearchCriteria criteria = new WorklistItemSearchCriteria(_procedureStepClass);
+			var criteria = new WorklistItemSearchCriteria();
 
 			ApplyStringValue(criteria.PatientProfile.Mrn.Id, searchParams.Mrn);
 			ApplyStringValue(criteria.PatientProfile.Name.FamilyName, searchParams.FamilyName);
@@ -207,19 +216,19 @@ namespace ClearCanvas.Ris.Application.Services
 
 			if (searchParams.OrderingPractitionerRef != null)
 			{
-				ExternalPractitioner orderedBy = _context.Load<ExternalPractitioner>(searchParams.OrderingPractitionerRef, EntityLoadFlags.Proxy);
+				var orderedBy = _context.Load<ExternalPractitioner>(searchParams.OrderingPractitionerRef, EntityLoadFlags.Proxy);
 				criteria.Order.OrderingPractitioner.EqualTo(orderedBy);
 			}
 
 			if (searchParams.DiagnosticServiceRef != null)
 			{
-				DiagnosticService ds = _context.Load<DiagnosticService>(searchParams.DiagnosticServiceRef, EntityLoadFlags.Proxy);
+				var ds = _context.Load<DiagnosticService>(searchParams.DiagnosticServiceRef, EntityLoadFlags.Proxy);
 				criteria.Order.DiagnosticService.EqualTo(ds);
 			}
 
 			if (searchParams.ProcedureTypeRef != null)
 			{
-				ProcedureType pt = _context.Load<ProcedureType>(searchParams.ProcedureTypeRef, EntityLoadFlags.Proxy);
+				var pt = _context.Load<ProcedureType>(searchParams.ProcedureTypeRef, EntityLoadFlags.Proxy);
 				criteria.Procedure.Type.EqualTo(pt);
 			}
 
@@ -230,23 +239,23 @@ namespace ClearCanvas.Ris.Application.Services
 				// therefore, the date-range is applied to muliple dates, and these are OR'd
 
 				// use "day" resolution on the start and end times, because we don't care about time
-				WorklistTimePoint start = searchParams.FromDate == null ? null
+				var start = searchParams.FromDate == null ? null
 					: new WorklistTimePoint(searchParams.FromDate.Value, WorklistTimePoint.Resolutions.Day);
-				WorklistTimePoint end = searchParams.UntilDate == null ? null
+				var end = searchParams.UntilDate == null ? null
 					: new WorklistTimePoint(searchParams.UntilDate.Value, WorklistTimePoint.Resolutions.Day);
 
-				WorklistTimeRange dateRange = new WorklistTimeRange(start, end);
-				DateTime now = Platform.Time;
+				var dateRange = new WorklistTimeRange(start, end);
+				var now = Platform.Time;
 
-				WorklistItemSearchCriteria procSchedDateCriteria = (WorklistItemSearchCriteria)criteria.Clone();
+				var procSchedDateCriteria = (WorklistItemSearchCriteria)criteria.Clone();
 				dateRange.Apply((ISearchCondition)procSchedDateCriteria.Procedure.ScheduledStartTime, now);
 				wheres.Add(procSchedDateCriteria);
 
-				WorklistItemSearchCriteria procStartDateCriteria = (WorklistItemSearchCriteria)criteria.Clone();
+				var procStartDateCriteria = (WorklistItemSearchCriteria)criteria.Clone();
 				dateRange.Apply((ISearchCondition)procStartDateCriteria.Procedure.StartTime, now);
 				wheres.Add(procStartDateCriteria);
 
-				WorklistItemSearchCriteria procEndDateCriteria = (WorklistItemSearchCriteria)criteria.Clone();
+				var procEndDateCriteria = (WorklistItemSearchCriteria)criteria.Clone();
 				dateRange.Apply((ISearchCondition)procEndDateCriteria.Procedure.EndTime, now);
 				wheres.Add(procEndDateCriteria);
 
@@ -260,19 +269,19 @@ namespace ClearCanvas.Ris.Application.Services
 			return wheres;
 		}
 
-		private List<WorklistItemSearchCriteria> BuildTextQueryProcedureSearchCriteria(WorklistItemTextQueryRequest request)
+		private static List<WorklistItemSearchCriteria> BuildTextQueryProcedureSearchCriteria(WorklistItemTextQueryRequest request)
 		{
-			string query = request.TextQuery;
+			var query = request.TextQuery;
 
 			// this will hold all criteria
-			List<WorklistItemSearchCriteria> criteria = new List<WorklistItemSearchCriteria>();
+			var criteria = new List<WorklistItemSearchCriteria>();
 
 			// build criteria against names
-			PersonName[] names = ParsePersonNames(query);
-			criteria.AddRange(CollectionUtils.Map<PersonName, WorklistItemSearchCriteria>(names,
+			var names = ParsePersonNames(query);
+			criteria.AddRange(CollectionUtils.Map(names,
 				delegate(PersonName n)
 				{
-					WorklistItemSearchCriteria sc = new WorklistItemSearchCriteria(_procedureStepClass);
+					var sc = new WorklistItemSearchCriteria();
 					sc.PatientProfile.Name.FamilyName.StartsWith(n.FamilyName);
 					if (n.GivenName != null)
 						sc.PatientProfile.Name.GivenName.StartsWith(n.GivenName);
@@ -280,29 +289,29 @@ namespace ClearCanvas.Ris.Application.Services
 				}));
 
 			// build criteria against Mrn identifiers
-			string[] ids = ParseIdentifiers(query);
-			criteria.AddRange(CollectionUtils.Map<string, WorklistItemSearchCriteria>(ids,
+			var ids = ParseIdentifiers(query);
+			criteria.AddRange(CollectionUtils.Map(ids,
 				delegate(string word)
 				{
-					WorklistItemSearchCriteria c = new WorklistItemSearchCriteria(_procedureStepClass);
+					var c = new WorklistItemSearchCriteria();
 					c.PatientProfile.Mrn.Id.StartsWith(word);
 					return c;
 				}));
 
 			// build criteria against Healthcard identifiers
-			criteria.AddRange(CollectionUtils.Map<string, WorklistItemSearchCriteria>(ids,
+			criteria.AddRange(CollectionUtils.Map(ids,
 				delegate(string word)
 				{
-					WorklistItemSearchCriteria c = new WorklistItemSearchCriteria(_procedureStepClass);
+					var c = new WorklistItemSearchCriteria();
 					c.PatientProfile.Healthcard.Id.StartsWith(word);
 					return c;
 				}));
 
 			// build criteria against Accession Number
-			criteria.AddRange(CollectionUtils.Map<string, WorklistItemSearchCriteria>(ids,
+			criteria.AddRange(CollectionUtils.Map(ids,
 				delegate(string word)
 				{
-					WorklistItemSearchCriteria c = new WorklistItemSearchCriteria(_procedureStepClass);
+					var c = new WorklistItemSearchCriteria();
 					c.Order.AccessionNumber.StartsWith(word);
 					return c;
 				}));
@@ -314,36 +323,34 @@ namespace ClearCanvas.Ris.Application.Services
 
 		#region Staff Criteria builders
 
-		private IEnumerable<WorklistItemSearchCriteria> BuildStaffSearchCriteria(WorklistItemTextQueryRequest request)
+		private static IEnumerable<WorklistItemSearchCriteria> BuildStaffSearchCriteria(WorklistItemTextQueryRequest request)
 		{
 			if (request.UseAdvancedSearch)
 			{
 				// advanced search not supported here
 				throw new NotSupportedException();
 			}
-			else
-			{
-				return BuildTextQueryStaffSearchCriteria(request);
-			}
+
+			return BuildTextQueryStaffSearchCriteria(request);
 		}
 
-		private List<WorklistItemSearchCriteria> BuildTextQueryStaffSearchCriteria(WorklistItemTextQueryRequest request)
+		private static List<WorklistItemSearchCriteria> BuildTextQueryStaffSearchCriteria(WorklistItemTextQueryRequest request)
 		{
-			string query = request.TextQuery;
+			var query = request.TextQuery;
 
 			// this will hold all criteria
-			List<WorklistItemSearchCriteria> criteria = new List<WorklistItemSearchCriteria>();
+			var criteria = new List<WorklistItemSearchCriteria>();
 
 			// build criteria against names
-			PersonName[] names = ParsePersonNames(query);
+			var names = ParsePersonNames(query);
 
 			// scheduled performer
-			criteria.AddRange(CollectionUtils.Map<PersonName, WorklistItemSearchCriteria>(names,
+			criteria.AddRange(CollectionUtils.Map(names,
 				delegate(PersonName n)
 				{
-					WorklistItemSearchCriteria sc = new WorklistItemSearchCriteria(_procedureStepClass);
+					var sc = new WorklistItemSearchCriteria();
 
-					PersonNameSearchCriteria scheduledPerformerNameCriteria = sc.ProcedureStep.Scheduling.Performer.Staff.Name;
+					var scheduledPerformerNameCriteria = sc.ProcedureStep.Scheduling.Performer.Staff.Name;
 					scheduledPerformerNameCriteria.FamilyName.StartsWith(n.FamilyName);
 					if (n.GivenName != null)
 						scheduledPerformerNameCriteria.GivenName.StartsWith(n.GivenName);
@@ -351,12 +358,12 @@ namespace ClearCanvas.Ris.Application.Services
 				}));
 
 			// actual performer
-			criteria.AddRange(CollectionUtils.Map<PersonName, WorklistItemSearchCriteria>(names,
+			criteria.AddRange(CollectionUtils.Map(names,
 				delegate(PersonName n)
 				{
-					WorklistItemSearchCriteria sc = new WorklistItemSearchCriteria(_procedureStepClass);
+					var sc = new WorklistItemSearchCriteria();
 
-					PersonNameSearchCriteria performerNameCriteria = sc.ProcedureStep.Performer.Staff.Name;
+					var performerNameCriteria = sc.ProcedureStep.Performer.Staff.Name;
 					performerNameCriteria.FamilyName.StartsWith(n.FamilyName);
 					if (n.GivenName != null)
 						performerNameCriteria.GivenName.StartsWith(n.GivenName);
@@ -365,22 +372,22 @@ namespace ClearCanvas.Ris.Application.Services
 
 			// build criteria against Staff ID identifiers
 			// bug #3952: use ParseTerms instead of ParseIdentifiers, because a Staff ID might only contain letters
-			string[] ids = ParseTerms(query);
+			var ids = ParseTerms(query);
 
 			// scheduled performer
-			criteria.AddRange(CollectionUtils.Map<string, WorklistItemSearchCriteria>(ids,
+			criteria.AddRange(CollectionUtils.Map(ids,
 				delegate(string id)
 				{
-					WorklistItemSearchCriteria sc = new WorklistItemSearchCriteria(_procedureStepClass);
+					var sc = new WorklistItemSearchCriteria();
 					sc.ProcedureStep.Scheduling.Performer.Staff.Id.StartsWith(id);
 					return sc;
 				}));
 
 			// actual performer
-			criteria.AddRange(CollectionUtils.Map<string, WorklistItemSearchCriteria>(ids,
+			criteria.AddRange(CollectionUtils.Map(ids,
 				delegate(string id)
 				{
-					WorklistItemSearchCriteria sc = new WorklistItemSearchCriteria(_procedureStepClass);
+					var sc = new WorklistItemSearchCriteria();
 					sc.ProcedureStep.Performer.Staff.Id.StartsWith(id);
 					return sc;
 				}));

@@ -2,6 +2,7 @@
 <!-- @codegen: ignore -->
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
   <class name="Worklist" proxy="Worklist" table="Worklist_">
+    <cache usage="nonstrict-read-write"/>
     <id name="OID" column="OID_" type="Guid">
       <generator class="guid.comb"/>
     </id>
@@ -31,6 +32,7 @@
     <component name="ProcedureTypeGroupFilter" class="WorklistProcedureTypeGroupFilter">
       <property name="IsEnabled" type="Boolean" column="ProcedureTypeGroupFilterIsEnabled_"/>
       <set name="Values" table="WorklistProcedureTypeGroup_" lazy="true">
+        <cache usage="nonstrict-read-write"/>
         <key column="WorklistOID_"/>
         <many-to-many column="ProcedureTypeGroupOID_" class="ProcedureTypeGroup" fetch="join"/>
       </set>
@@ -40,6 +42,7 @@
       <property name="IsEnabled" type="Boolean" column="FacilityFilterIsEnabled_"/>
       <property name="IncludeWorkingFacility" type="Boolean" column="FacilityFilterIncludeWorkingFacility_"/>
       <set name="Values" table="WorklistFacility_" lazy="true">
+        <cache usage="nonstrict-read-write"/>
         <key column="WorklistOID_"/>
         <many-to-many column="FacilityOID_" class="Facility" fetch="join"/>
       </set>
@@ -48,6 +51,7 @@
     <component name="PatientClassFilter" class="WorklistPatientClassFilter">
       <property name="IsEnabled" type="Boolean" column="PatientClassFilterIsEnabled_"/>
       <set name="Values" table="WorklistPatientClass_" lazy="true">
+        <cache usage="nonstrict-read-write"/>
         <key column="WorklistOID_"/>
         <many-to-many column="PatientClassOID_" class="PatientClassEnum" fetch="join"/>
       </set>
@@ -56,6 +60,7 @@
     <component name="PatientLocationFilter" class="WorklistPatientLocationFilter">
       <property name="IsEnabled" type="Boolean" column="PatientLocationFilterIsEnabled_"/>
       <set name="Values" table="WorklistPatientLocation_" lazy="true">
+        <cache usage="nonstrict-read-write"/>
         <key column="WorklistOID_"/>
         <many-to-many column="PatientLocationOID_" class="Location" fetch="join"/>
       </set>
@@ -64,6 +69,7 @@
     <component name="OrderPriorityFilter" class="WorklistOrderPriorityFilter">
       <property name="IsEnabled" type="Boolean" column="OrderPriorityFilterIsEnabled_"/>
       <set name="Values" table="WorklistOrderPriority_" lazy="true">
+        <cache usage="nonstrict-read-write"/>
         <key column="WorklistOID_"/>
         <many-to-many column="OrderPriorityOID_" class="OrderPriorityEnum" fetch="join"/>
       </set>
@@ -72,6 +78,7 @@
     <component name="OrderingPractitionerFilter" class="WorklistPractitionerFilter">
       <property name="IsEnabled" type="Boolean" column="OrderingPractitionerFilterIsEnabled_"/>
       <set name="Values" table="WorklistOrderingPractitioner_" lazy="true">
+        <cache usage="nonstrict-read-write"/>
         <key column="WorklistOID_"/>
         <many-to-many column="OrderingPractitionerOID_" class="ExternalPractitioner" fetch="join"/>
       </set>

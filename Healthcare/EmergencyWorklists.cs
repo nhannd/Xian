@@ -49,8 +49,15 @@ namespace ClearCanvas.Healthcare
 			RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
 			criteria.Procedure.Status.EqualTo(ProcedureStatus.SC);
 			//criteria.Order.Status.EqualTo(OrderStatus.SC);
-			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureScheduledStartTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeOldestItems, wqc);
 			return new WorklistItemSearchCriteria[] { criteria };
+		}
+
+		protected override TimeDirective GetTimeDirective()
+		{
+			return new TimeDirective(
+				WorklistItemField.ProcedureScheduledStartTime,
+				WorklistTimeRange.Today,
+				WorklistOrdering.PrioritizeOldestItems);
 		}
 	}
 

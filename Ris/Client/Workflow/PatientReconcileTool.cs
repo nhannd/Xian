@@ -101,7 +101,7 @@ namespace ClearCanvas.Ris.Client.Workflow
             if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
-                RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
+                RegistrationWorklistItemSummary item = CollectionUtils.FirstElement<RegistrationWorklistItemSummary>(context.SelectedItems);
                 if (ShowReconciliationDialog(item.PatientProfileRef, context.DesktopWindow))
                 {
                     context.InvalidateSelectedFolder();

@@ -66,7 +66,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 		}
 
-		protected override string GetPreviewUrl(WorkflowFolder folder, ICollection<RegistrationWorklistItem> items)
+		protected override string GetPreviewUrl(WorkflowFolder folder, ICollection<RegistrationWorklistItemSummary> items)
 		{
 			return WebResourcesSettings.Default.RegistrationFolderSystemUrl;
 		}

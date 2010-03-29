@@ -53,20 +53,24 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 		#region IWorklistService Members
 
 		[ReadOperation]
-		public TextQueryResponse<ReportingWorklistItem> SearchWorklists(WorklistItemTextQueryRequest request)
+		public TextQueryResponse<ReportingWorklistItemSummary> SearchWorklists(WorklistItemTextQueryRequest request)
 		{
 			var assembler = new ReportingWorkflowAssembler();
 			var broker = this.PersistenceContext.GetBroker<IReportingWorklistItemBroker>();
 
-			return SearchHelper(request, broker, item => assembler.CreateWorklistItemSummary(item, this.PersistenceContext));
+			return SearchHelper<ReportingWorklistItem, ReportingWorklistItemSummary>(
+				request,
+				broker,
+				WorklistItemProjection.ReportingWorklistSearch,
+				item => assembler.CreateWorklistItemSummary(item, this.PersistenceContext));
 		}
 
 		[ReadOperation]
-		public QueryWorklistResponse<ReportingWorklistItem> QueryWorklist(QueryWorklistRequest request)
+		public QueryWorklistResponse<ReportingWorklistItemSummary> QueryWorklist(QueryWorklistRequest request)
 		{
 			var assembler = new ReportingWorkflowAssembler();
 
-			return QueryWorklistHelper<WorklistItem, ReportingWorklistItem>(
+			return QueryWorklistHelper<ReportingWorklistItem, ReportingWorklistItemSummary>(
 				request,
 				item => assembler.CreateWorklistItemSummary(item, this.PersistenceContext));
 		}
@@ -202,37 +206,37 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 
 		#region OperationEnablement methods
 
-		public bool CanStartTranscription(WorklistItemKey itemKey)
+		public bool CanStartTranscription(ReportingWorklistItemKey itemKey)
 		{
 			return CanExecuteOperation(new TranscriptionOperations.StartTranscription(), itemKey);
 		}
 
-		public bool CanDiscardTranscription(WorklistItemKey itemKey)
+		public bool CanDiscardTranscription(ReportingWorklistItemKey itemKey)
 		{
 			return CanExecuteOperation(new TranscriptionOperations.DiscardTranscription(), itemKey);
 		}
 
-		public bool CanSaveTranscription(WorklistItemKey itemKey)
+		public bool CanSaveTranscription(ReportingWorklistItemKey itemKey)
 		{
 			return CanExecuteOperation(new TranscriptionOperations.SaveTranscription(), itemKey);
 		}
 
-		public bool CanSubmitTranscriptionForReview(WorklistItemKey itemKey)
+		public bool CanSubmitTranscriptionForReview(ReportingWorklistItemKey itemKey)
 		{
 			return CanExecuteOperation(new TranscriptionOperations.SubmitTranscriptionForReview(), itemKey);
 		}
 
-		public bool CanCompleteTranscription(WorklistItemKey itemKey)
+		public bool CanCompleteTranscription(ReportingWorklistItemKey itemKey)
 		{
 			return CanExecuteOperation(new TranscriptionOperations.CompleteTranscription(), itemKey);
 		}
 
-		public bool CanRejectTranscription(WorklistItemKey itemKey)
+		public bool CanRejectTranscription(ReportingWorklistItemKey itemKey)
 		{
 			return CanExecuteOperation(new TranscriptionOperations.RejectTranscription(), itemKey);
 		}
 
-		private bool CanExecuteOperation(TranscriptionOperations.TranscriptionOperation op, WorklistItemKey itemKey)
+		private bool CanExecuteOperation(TranscriptionOperations.TranscriptionOperation op, ReportingWorklistItemKey itemKey)
 		{
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Transcription.Create))
 				return false;
@@ -256,8 +260,8 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 
 		protected override object GetWorkItemKey(object item)
 		{
-			var summary = item as ReportingWorklistItem;
-			return summary == null ? null : new WorklistItemKey(summary.ProcedureStepRef, summary.ProcedureRef);
+			var summary = item as ReportingWorklistItemSummary;
+			return summary == null ? null : new ReportingWorklistItemKey(summary.ProcedureStepRef, summary.ProcedureRef);
 		}
 
 		private void SaveReportHelper(TranscriptionStep step, Dictionary<string, string> reportPartExtendedProperties)

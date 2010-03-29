@@ -35,28 +35,5 @@ namespace ClearCanvas.Healthcare
 {
     public class RegistrationWorklistItemSearchCriteria : WorklistItemSearchCriteria
     {
-        public ProcedureCheckInSearchCriteria ProcedureCheckIn
-        {
-            get
-            {
-                if (!this.SubCriteria.ContainsKey("ProcedureCheckIn"))
-                {
-                    this.SubCriteria["ProcedureCheckIn"] = new ProcedureCheckInSearchCriteria("ProcedureCheckIn");
-                }
-                return (ProcedureCheckInSearchCriteria)this.SubCriteria["ProcedureCheckIn"];
-            }
-        }
-
-        public ProtocolSearchCriteria Protocol
-        {
-            get
-            {
-                if (!this.SubCriteria.ContainsKey("Protocol"))
-                {
-                    this.SubCriteria["Protocol"] = new ProtocolSearchCriteria("Protocol");
-                }
-                return (ProtocolSearchCriteria)this.SubCriteria["Protocol"];
-            }
-        }
     }
 }

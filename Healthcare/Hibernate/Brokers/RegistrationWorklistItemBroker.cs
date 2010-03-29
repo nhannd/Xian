@@ -29,13 +29,10 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Hibernate;
-using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Healthcare.Workflow.Registration;
+using ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -43,127 +40,23 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 	/// Implementation of <see cref="IRegistrationWorklistItemBroker"/>.
 	/// </summary>
 	[ExtensionOf(typeof(BrokerExtensionPoint))]
-	public class RegistrationWorklistItemBroker : WorklistItemBrokerBase<WorklistItem>, IRegistrationWorklistItemBroker
+	public class RegistrationWorklistItemBroker : WorklistItemBrokerBase, IRegistrationWorklistItemBroker
 	{
-		#region HQL Constants
-
-		private static readonly HqlJoin[] WorklistItemJoins
-			= {
-				JoinOrder,
-				JoinProcedureType,
-				JoinDiagnosticService,
-				JoinVisit,
-				JoinPatient,
-				JoinPatientProfile
-			};
-
-		private static readonly HqlFrom WorklistItemFrom = new HqlFrom("Procedure", "rp", WorklistItemJoins);
-
-		#endregion
-
-		#region Overrides
-
-		/// <summary>
-		/// Creates an <see cref="HqlProjectionQuery"/> that queries for worklist items based on the specified
-		/// procedure-step class.
-		/// </summary>
-		/// <param name="criteria"></param>
-		/// <returns></returns>
-		/// <remarks>
-		/// Subclasses may override this method to customize the query or return an entirely different query.
-		/// </remarks>
-		protected override HqlProjectionQuery CreateBaseItemQuery(WorklistItemSearchCriteria[] criteria)
+		public RegistrationWorklistItemBroker()
+			: base(new WorklistItemQueryBuilder())
 		{
-			var procedureStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
-			var timeField = CollectionUtils.FirstElement(criteria).TimeField;
-			return new HqlProjectionQuery(GetFromClause(procedureStepClass), GetWorklistItemProjection(timeField));
 		}
 
 		/// <summary>
-		/// Creates an <see cref="HqlProjectionQuery"/> that queries for the count of worklist items based on the specified
-		/// procedure-step class.
+		/// Protected constructor.
 		/// </summary>
-		/// <param name="criteria"></param>
-		/// <returns></returns>
-		/// <remarks>
-		/// Subclasses may override this method to customize the query or return an entirely different query.
-		/// </remarks>
-		protected override HqlProjectionQuery CreateBaseCountQuery(WorklistItemSearchCriteria[] criteria)
+		/// <param name="worklistItemQueryBuilder"></param>
+		/// <param name="procedureSearchQueryBuilder"></param>
+		/// <param name="patientSearchQueryBuilder"></param>
+		protected RegistrationWorklistItemBroker(IWorklistItemQueryBuilder worklistItemQueryBuilder,
+			IQueryBuilder procedureSearchQueryBuilder, IQueryBuilder patientSearchQueryBuilder)
+			:base(worklistItemQueryBuilder, procedureSearchQueryBuilder, patientSearchQueryBuilder)
 		{
-			var procedureStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
-			return new HqlProjectionQuery(GetFromClause(procedureStepClass), DefaultCountProjection);
 		}
-
-		protected override HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where, bool countQuery)
-		{
-			var procedureStepClass = CollectionUtils.FirstElement(where).ProcedureStepClass;
-
-			// if the search is coming from the Registration folder system, the ps class will be null,
-			// in which case there is no point doing a search for worklist items, because the patient/order search performed
-			// by the base class will cover it
-			if(procedureStepClass == null)
-				return null;
-
-			// need to display the correct time field
-			// ProcedureScheduledStartTime seems like a reasonable choice for registration homepage search,
-			// as it gives a general sense of when the procedure occurs in time
-			CollectionUtils.ForEach(where,
-				delegate(WorklistItemSearchCriteria sc)
-				{
-					sc.TimeField = WorklistTimeField.ProcedureScheduledStartTime;
-				});
-
-			var query = countQuery ? CreateBaseCountQuery(where) : CreateBaseItemQuery(where);
-			query.Conditions.Add(ConditionActiveProcedureStep);
-			AddConditions(query, where, true, !countQuery);
-
-			return query;
-		}
-
-		#endregion
-
-		#region Private Helpers
-
-		private static HqlFrom GetFromClause(Type stepClass)
-		{
-			if (stepClass == null)
-				return WorklistItemFrom;
-
-			var from = new HqlFrom(stepClass.Name, "ps");
-			from.Joins.Add(JoinProtocol);
-			from.Joins.Add(JoinProcedure);
-			from.Joins.AddRange(WorklistItemJoins);
-			return from;
-		}
-
-		private HqlSelect[] GetWorklistItemProjection(WorklistTimeField timeField)
-		{
-			HqlSelect selectTime;
-			MapTimeFieldToHqlSelect(timeField, out selectTime);
-
-			return new[]
-				{
-					SelectProcedure,
-					SelectOrder,
-					SelectPatient,
-					SelectPatientProfile,
-					SelectMrn,
-					SelectPatientName,
-					SelectAccessionNumber,
-					SelectPriority,
-					SelectPatientClass,
-					SelectDiagnosticServiceName,
-					SelectProcedureTypeName,
-					SelectProcedurePortable,
-					SelectProcedureLaterality,
-					selectTime,
-					SelectHealthcard,
-					SelectDateOfBirth,
-					SelectSex
-				};
-		}
-
-		#endregion
-
 	}
 }

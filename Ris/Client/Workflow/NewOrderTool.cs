@@ -108,7 +108,7 @@ namespace ClearCanvas.Ris.Client.Workflow
             if (this.Context is IRegistrationWorkflowItemToolContext)
             {
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
-                RegistrationWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
+                RegistrationWorklistItemSummary item = CollectionUtils.FirstElement(context.SelectedItems);
                 string title = string.Format(SR.TitleNewOrder, PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn));
                 NewOrder(item.PatientRef, item.PatientProfileRef, title, context.DesktopWindow);
             }

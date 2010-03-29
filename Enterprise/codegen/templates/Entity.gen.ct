@@ -18,7 +18,7 @@ namespace <%= namespace %>
     /// </summary>
 	<% attributes.each do |attr| %>
 	[<%= attr %>]<% end %>
-	public partial class <%= className %> : <%= @superClassName %>
+	public <%= isAbstract ? "abstract" : "" %> partial class <%= className %> : <%= @superClassName %>
 	{
        	#region Private fields
        	

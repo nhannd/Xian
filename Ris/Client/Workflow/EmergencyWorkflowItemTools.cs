@@ -37,7 +37,7 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 namespace ClearCanvas.Ris.Client.Workflow
 {
 	[ExtensionOf(typeof(EmergencyWorkflowItemToolExtensionPoint))]
-	public class EmergencyOrdersConversationTool : PreliminaryDiagnosisConversationTool<RegistrationWorklistItem, IRegistrationWorkflowItemToolContext>
+	public class EmergencyOrdersConversationTool : PreliminaryDiagnosisConversationTool<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>
 	{
 		public override void Initialize()
 		{

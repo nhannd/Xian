@@ -41,7 +41,7 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-    public interface IRegistrationWorkflowItemToolContext : IWorkflowItemToolContext<RegistrationWorklistItem>
+    public interface IRegistrationWorkflowItemToolContext : IWorkflowItemToolContext<RegistrationWorklistItemSummary>
     {
     }
 
@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Client.Workflow
     }
 
 	public abstract class RegistrationWorkflowFolderSystemBase<TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint>
-		: WorklistFolderSystem<RegistrationWorklistItem, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint, IRegistrationWorkflowService>
+		: WorklistFolderSystem<RegistrationWorklistItemSummary, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint, IRegistrationWorkflowService>
 		where TFolderExtensionPoint : ExtensionPoint<IWorklistFolder>, new()
 		where TFolderToolExtensionPoint : ExtensionPoint<ITool>, new()
 		where TItemToolExtensionPoint : ExtensionPoint<ITool>, new()

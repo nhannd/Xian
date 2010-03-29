@@ -86,8 +86,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
         private void ProcessIndex(XmlElement indexElement, Dictionary<string, Table> tables)
         {
             string tableName = indexElement.GetAttribute("table");
-            List<string> columnNames = CollectionUtils.Map<string, string>(indexElement.GetAttribute("columns").Split(),
-                                                                           delegate(string s) { return s.Trim(); });
+            List<string> columnNames = CollectionUtils.Map(indexElement.GetAttribute("columns").Split(','), (string s) => s.Trim());
 
             if(!string.IsNullOrEmpty(tableName) && columnNames.Count > 0)
             {

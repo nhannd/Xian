@@ -110,7 +110,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		}
 
 		[FolderPath("Search Results")]
-		public class RegistrationSearchFolder : WorklistSearchResultsFolder<RegistrationWorklistItem, IRegistrationWorkflowService>
+		public class RegistrationSearchFolder : WorklistSearchResultsFolder<RegistrationWorklistItemSummary, IRegistrationWorkflowService>
 		{
 			public RegistrationSearchFolder()
 				: base(new RegistrationWorklistTable())
@@ -119,12 +119,12 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 
 			protected override string ProcedureStepClassName
 			{
-				get { return null; }
+				get { return "RegistrationProcedureStep"; }
 			}
 		}
 
 		[FolderPath("Search Results")]
-		public class BookingSearchFolder : WorklistSearchResultsFolder<RegistrationWorklistItem, IRegistrationWorkflowService>
+		public class BookingSearchFolder : WorklistSearchResultsFolder<RegistrationWorklistItemSummary, IRegistrationWorkflowService>
 		{
 			public BookingSearchFolder()
 				: base(new RegistrationWorklistTable())

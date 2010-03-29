@@ -213,7 +213,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		#endregion
 
 		[FolderPath("Search Results")]
-		public class ReportingSearchFolder : WorklistSearchResultsFolder<ReportingWorklistItem, IReportingWorkflowService>
+		public class ReportingSearchFolder : WorklistSearchResultsFolder<ReportingWorklistItemSummary, IReportingWorkflowService>
 		{
 			public ReportingSearchFolder()
 				: base(new ReportingWorklistTable())
@@ -230,7 +230,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		}
 
 		[FolderPath("Search Results")]
-		public class ProtocollingSearchFolder : WorklistSearchResultsFolder<ReportingWorklistItem, IReportingWorkflowService>
+		public class ProtocollingSearchFolder : WorklistSearchResultsFolder<ReportingWorklistItemSummary, IReportingWorkflowService>
 		{
 			public ProtocollingSearchFolder()
 				: base(new ReportingWorklistTable())

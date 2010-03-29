@@ -59,11 +59,15 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 		/// <param name="request"></param>
 		/// <returns></returns>
 		[ReadOperation]
-		public TextQueryResponse<ModalityWorklistItem> SearchWorklists(WorklistItemTextQueryRequest request)
+		public TextQueryResponse<ModalityWorklistItemSummary> SearchWorklists(WorklistItemTextQueryRequest request)
 		{
 			var assembler = new ModalityWorkflowAssembler();
 			var broker = this.PersistenceContext.GetBroker<IModalityWorklistItemBroker>();
-			return SearchHelper(request, broker, item => assembler.CreateWorklistItemSummary(item, this.PersistenceContext));
+			return SearchHelper<WorklistItem, ModalityWorklistItemSummary>(
+				request,
+				broker,
+				WorklistItemProjection.ModalityWorklistSearch,
+				item => assembler.CreateWorklistItemSummary(item, this.PersistenceContext));
 		}
 
 		/// <summary>
@@ -72,10 +76,10 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 		/// <param name="request"></param>
 		/// <returns></returns>
 		[ReadOperation]
-		public QueryWorklistResponse<ModalityWorklistItem> QueryWorklist(QueryWorklistRequest request)
+		public QueryWorklistResponse<ModalityWorklistItemSummary> QueryWorklist(QueryWorklistRequest request)
 		{
 			var assembler = new ModalityWorkflowAssembler();
-			return QueryWorklistHelper<WorklistItem, ModalityWorklistItem>(
+			return QueryWorklistHelper<WorklistItem, ModalityWorklistItemSummary>(
 				request,
 				item => assembler.CreateWorklistItemSummary(item, this.PersistenceContext));
 		}
@@ -395,8 +399,8 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 
 		protected override object GetWorkItemKey(object item)
 		{
-			var summary = item as ModalityWorklistItem;
-			return summary == null ? null : new WorklistItemKey(summary.ProcedureStepRef);
+			var summary = item as ModalityWorklistItemSummary;
+			return summary == null ? null : new ModalityWorklistItemKey(summary.ProcedureStepRef);
 		}
 
 		#endregion

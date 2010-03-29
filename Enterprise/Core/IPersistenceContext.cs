@@ -42,22 +42,8 @@ namespace ClearCanvas.Enterprise.Core
     /// </summary>
     /// <seealso cref="IReadContext"/>
     /// <seealso cref="IUpdateContext"/>
-    public interface IPersistenceContext : IDisposable
+    public interface IPersistenceContext : IPersistenceBrokerFactory, IDisposable
     {
-        /// <summary>
-        /// Returns a broker that implements the specified interface to retrieve data into this persistence context.
-        /// </summary>
-        /// <typeparam name="TBrokerInterface">The interface of the broker to obtain</typeparam>
-        /// <returns></returns>
-        TBrokerInterface GetBroker<TBrokerInterface>() where TBrokerInterface : IPersistenceBroker;
-
-        /// <summary>
-        /// Returns a broker that implements the specified interface to retrieve data into this persistence context.
-        /// </summary>
-        /// <param name="brokerInterface"></param>
-        /// <returns></returns>
-        object GetBroker(Type brokerInterface);
-
         /// <summary>
         /// Locks the specified entity into the context.  If this is an update context, the entity will be
         /// treated as "clean".  Use the other overload to specify that the entity is dirty.
@@ -84,13 +70,18 @@ namespace ClearCanvas.Enterprise.Core
             where TEntity : Entity;
 
         /// <summary>
-        /// Loads the specified entity into this context
+        /// Loads the specified entity into this context.
         /// </summary>
         /// <param name="entityRef"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
         TEntity Load<TEntity>(EntityRef entityRef, EntityLoadFlags flags)
             where TEntity : Entity;
+
+		/// <summary>
+		/// Loads the specified entity into this context.
+		/// </summary>
+		Entity Load(EntityRef entityRef, EntityLoadFlags flags);
 
         void SynchState();
 

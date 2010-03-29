@@ -42,7 +42,15 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         private List<HqlFrom> _froms;
         private bool _selectDistinct;
 
-        /// <summary>
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public HqlProjectionQuery()
+			: this(new HqlFrom[] { }, new HqlSelect[] { }, new HqlCondition[] { }, new HqlSort[] { }, null)
+		{
+		}
+
+		/// <summary>
         /// Constructor
         /// </summary>
         /// <param name="from"></param>

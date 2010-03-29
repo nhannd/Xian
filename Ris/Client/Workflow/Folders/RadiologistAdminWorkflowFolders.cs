@@ -71,7 +71,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		}
 
 		[FolderPath("Search Results")]
-		public class RadiologistAdminSearchFolder : WorklistSearchResultsFolder<ReportingWorklistItem, IReportingWorkflowService>
+		public class RadiologistAdminSearchFolder : WorklistSearchResultsFolder<ReportingWorklistItemSummary, IReportingWorkflowService>
 		{
 			public RadiologistAdminSearchFolder()
 				: base(new ReportingWorklistTable())
@@ -86,9 +86,9 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 				get { return "ReportingProcedureStep and ProtocolAssignmentStep"; }
 			}
 
-			protected override TextQueryResponse<ReportingWorklistItem> DoQuery(WorklistSearchParams query, int specificityThreshold)
+			protected override TextQueryResponse<ReportingWorklistItemSummary> DoQuery(WorklistSearchParams query, int specificityThreshold)
 			{
-				TextQueryResponse<ReportingWorklistItem> response;
+				TextQueryResponse<ReportingWorklistItemSummary> response;
 
 				WorklistItemTextQueryOptions options = WorklistItemTextQueryOptions.ProcedureStepStaff
 					| (DowntimeRecovery.InDowntimeRecoveryMode ? WorklistItemTextQueryOptions.DowntimeRecovery : 0);
@@ -97,7 +97,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 				if (response.TooManyMatches)
 					return response;
 
-				List<ReportingWorklistItem> storeMatches = new List<ReportingWorklistItem>(response.Matches);
+				List<ReportingWorklistItemSummary> storeMatches = new List<ReportingWorklistItemSummary>(response.Matches);
 				response = DoQueryCore(query, specificityThreshold, options, "ProtocolAssignmentStep");
 
 				if (!response.TooManyMatches)

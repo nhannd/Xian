@@ -40,7 +40,7 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	public abstract class RegistrationWorkflowTool : WorkflowItemTool<RegistrationWorklistItem, IRegistrationWorkflowItemToolContext>
+	public abstract class RegistrationWorkflowTool : WorkflowItemTool<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>
 	{
 		protected RegistrationWorkflowTool(string operationName)
 			: base(operationName)
@@ -76,7 +76,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			this.Context.RegisterDropHandler(typeof(Folders.Registration.CheckedInFolder), this);
 		}
 
-		protected override bool Execute(RegistrationWorklistItem item)
+		protected override bool Execute(RegistrationWorklistItemSummary item)
 		{
 			CheckInOrderComponent checkInComponent = new CheckInOrderComponent(item);
 			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(

@@ -79,7 +79,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
-		private ReportingWorklistItem _worklistItem;
+		private ReportingWorklistItemSummary _worklistItem;
 
 		private readonly PriorSummaryTable _reportList;
 		private PriorProcedureSummary _selectedPrior;
@@ -94,7 +94,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <summary>
 		/// Constructor for showing priors based on a reporting step.
 		/// </summary>
-		public PriorReportComponent(ReportingWorklistItem worklistItem)
+		public PriorReportComponent(ReportingWorklistItemSummary worklistItem)
 		{
 			_worklistItem = worklistItem;
 			_relevantPriorsOnly = PriorReportComponentSettings.Default.ShowRelevantPriorsOnly;
@@ -228,7 +228,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return response.Reports;
 		}
 
-		public ReportingWorklistItem WorklistItem
+		public ReportingWorklistItemSummary WorklistItem
 		{
 			get { return _worklistItem; }
 			set

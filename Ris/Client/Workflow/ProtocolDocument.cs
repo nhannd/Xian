@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	{
 		#region Private Members
 
-		private readonly ReportingWorklistItem _item;
+		private readonly ReportingWorklistItemSummary _item;
 		private readonly IContinuousWorkflowComponentMode _mode;
 		private readonly string _folderName;
 		private readonly EntityRef _worklistRef;
@@ -54,7 +54,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#region Constructor
 
-		public ProtocolDocument(ReportingWorklistItem item, IContinuousWorkflowComponentMode mode, IReportingWorkflowItemToolContext context)
+		public ProtocolDocument(ReportingWorklistItemSummary item, IContinuousWorkflowComponentMode mode, IReportingWorkflowItemToolContext context)
 			: base(item.OrderRef, context.DesktopWindow)
 		{
 			_item = item;
@@ -96,7 +96,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#endregion
 
-		public static string GetTitle(ReportingWorklistItem item)
+		public static string GetTitle(ReportingWorklistItemSummary item)
 		{
 			return string.Format("Protocol - {0} - {1}", PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn));
 		}

@@ -53,11 +53,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[AssociateView(typeof(ReassignComponentViewExtensionPoint))]
 	public class ReassignComponent : ApplicationComponent
 	{
-		private readonly ReportingWorklistItem _worklistItem;
+		private readonly ReportingWorklistItemSummary _worklistItem;
 		private StaffSummary _radiologist;
 		private ILookupHandler _radiologistLookupHandler;
 
-		public ReassignComponent(ReportingWorklistItem item)
+		public ReassignComponent(ReportingWorklistItemSummary item)
 		{
 			_worklistItem = item;
 		}

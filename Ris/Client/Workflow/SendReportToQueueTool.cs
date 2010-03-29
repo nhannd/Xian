@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (this.Context.SelectedItems.Count != 1 || !this.Context.GetOperationEnablement("SendReportToQueue"))
 					return false;
 
-				ReportingWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
+				ReportingWorklistItemSummary item = CollectionUtils.FirstElement(this.Context.SelectedItems);
 				if (item.ReportRef == null && item.ProcedureRef == null)
 					return false;
 
@@ -65,7 +65,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
-		protected override bool Execute(ReportingWorklistItem item)
+		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			try
 			{

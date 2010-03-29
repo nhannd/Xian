@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare.Tests
 {
@@ -40,39 +41,31 @@ namespace ClearCanvas.Healthcare.Tests
 	{
 		private readonly bool _downtimeMode;
 		private readonly Staff _staff;
+		private readonly IPersistenceContext _ctx;
 
-		public WorklistQueryContext(Staff staff, bool downtimeMode)
+		public WorklistQueryContext(IPersistenceContext ctx, Staff staff, Facility workingFacility, SearchResultPage page, bool downtimeMode)
 		{
-			_downtimeMode = downtimeMode;
-			_staff = staff;
+			_ctx = ctx;
+			this.Staff = staff;
+			this.WorkingFacility = workingFacility;
+			this.Page = page;
+			this.DowntimeRecoveryMode = downtimeMode;
 		}
 
 		#region IWorklistQueryContext Members
 
-		public Staff Staff
-		{
-			get { return _staff; }
-		}
+		public Staff Staff { get; private set; }
 
-		public Facility WorkingFacility
-		{
-			get { throw new Exception("The method or operation is not implemented."); }
-		}
+		public Facility WorkingFacility { get; private set; }
 
-		public bool DowntimeRecoveryMode
-		{
-			get { return _downtimeMode; }
-		}
+		public bool DowntimeRecoveryMode { get; private set; }
 
-		public SearchResultPage Page
-		{
-			get { throw new Exception("The method or operation is not implemented."); }
-		}
+		public SearchResultPage Page { get; private set; }
 
 		public TBrokerInterface GetBroker<TBrokerInterface>()
-			where TBrokerInterface : ClearCanvas.Enterprise.Core.IPersistenceBroker
+			where TBrokerInterface : IPersistenceBroker
 		{
-			throw new Exception("The method or operation is not implemented.");
+			return _ctx.GetBroker<TBrokerInterface>();
 		}
 
 		#endregion

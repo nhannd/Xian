@@ -40,12 +40,12 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class GetLinkableInterpretationsResponse : DataContractBase
     {
-        public GetLinkableInterpretationsResponse(List<ReportingWorklistItem> interpretationItems)
+        public GetLinkableInterpretationsResponse(List<ReportingWorklistItemSummary> interpretationItems)
         {
             this.IntepretationItems = interpretationItems;
         }
 
         [DataMember]
-        public List<ReportingWorklistItem> IntepretationItems;
+        public List<ReportingWorklistItemSummary> IntepretationItems;
     }
 }

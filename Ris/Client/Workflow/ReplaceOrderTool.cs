@@ -110,9 +110,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 	}
 
 	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
-	public class RegistrationReplaceOrderTool : ReplaceOrderToolBase<RegistrationWorklistItem, IRegistrationWorkflowItemToolContext>
+	public class RegistrationReplaceOrderTool : ReplaceOrderToolBase<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>
 	{
-		protected override bool Execute(RegistrationWorklistItem item)
+		protected override bool Execute(RegistrationWorklistItemSummary item)
 		{
 			return ExecuteCore(item);
 		}
@@ -125,9 +125,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 	}
 
 	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
-	public class BookingReplaceOrderTool : ReplaceOrderToolBase<RegistrationWorklistItem, IRegistrationWorkflowItemToolContext>
+	public class BookingReplaceOrderTool : ReplaceOrderToolBase<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>
 	{
-		protected override bool Execute(RegistrationWorklistItem item)
+		protected override bool Execute(RegistrationWorklistItemSummary item)
 		{
 			return ExecuteCore(item);
 		}
@@ -140,9 +140,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 	}
 
 	[ExtensionOf(typeof(PerformingWorkflowItemToolExtensionPoint))]
-	public class PerformingReplaceOrderTool : ReplaceOrderToolBase<ModalityWorklistItem, IPerformingWorkflowItemToolContext>
+	public class PerformingReplaceOrderTool : ReplaceOrderToolBase<ModalityWorklistItemSummary, IPerformingWorkflowItemToolContext>
 	{
-		protected override bool Execute(ModalityWorklistItem item)
+		protected override bool Execute(ModalityWorklistItemSummary item)
 		{
 			return ExecuteCore(item);
 		}

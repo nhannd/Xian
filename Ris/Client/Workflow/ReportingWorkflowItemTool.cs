@@ -54,7 +54,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public const string Completed = "CM";
 	}
 
-	public abstract class ReportingWorkflowItemTool : WorkflowItemTool<ReportingWorklistItem, IReportingWorkflowItemToolContext>
+	public abstract class ReportingWorkflowItemTool : WorkflowItemTool<ReportingWorklistItemSummary, IReportingWorkflowItemToolContext>
 	{
 		protected ReportingWorkflowItemTool(string operationName)
 			: base(operationName)
@@ -68,7 +68,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			this.Context.RegisterWorkflowService(typeof(IReportingWorkflowService));
 		}
 
-		protected bool ActivateIfAlreadyOpen(ReportingWorklistItem item)
+		protected bool ActivateIfAlreadyOpen(ReportingWorklistItemSummary item)
 		{
 			var document = DocumentManager.Get<ReportDocument>(item.ProcedureStepRef);
 			if (document != null)
@@ -79,12 +79,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return false;
 		}
 
-		protected void OpenReportEditor(ReportingWorklistItem item)
+		protected void OpenReportEditor(ReportingWorklistItemSummary item)
 		{
 			OpenReportEditor(item, true);
 		}
 
-		protected void OpenReportEditor(ReportingWorklistItem item, bool shouldOpenImages)
+		protected void OpenReportEditor(ReportingWorklistItemSummary item, bool shouldOpenImages)
 		{
 			if (ActivateIfAlreadyOpen(item))
 				return;
@@ -117,7 +117,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				doc.Close();
 		}
 
-		private bool UserElectsToLeaveExistingDocumentOpen(ReportingWorklistItem item, IEnumerable<ReportDocument> documents)
+		private bool UserElectsToLeaveExistingDocumentOpen(ReportingWorklistItemSummary item, IEnumerable<ReportDocument> documents)
 		{
 			var firstDocument = CollectionUtils.FirstElement(documents);
 			firstDocument.Open();
@@ -128,7 +128,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return DialogBoxAction.No == this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo);
 		}
 
-		protected ReportingWorklistItem GetSelectedItem()
+		protected ReportingWorklistItemSummary GetSelectedItem()
 		{
 			return this.Context.SelectedItems.Count != 1
 				? null

@@ -66,7 +66,7 @@ class ClassDef < ElementDef
   
   # returns the set of inherited fields as an array of FieldDef
   def inheritedFields
-    superClass ? (superClass.fields + superClass.inheritedFields) : []
+    superClass ? (superClass.inheritedFields + superClass.fields) : []
   end
   
   # returns the set of inherited fields that are mandatory (non-nullable) as an array of FieldDef

@@ -38,8 +38,8 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 {
 	// protocol uses both Registration and Reporting worklist items - that is why it is defined on WorklistItemSummaryBase
 	// and we use ServiceKnownType to make it aware of the possible subclasses.
-	[ServiceKnownType(typeof(RegistrationWorklistItem))]
-	[ServiceKnownType(typeof(ReportingWorklistItem))]
+	[ServiceKnownType(typeof(RegistrationWorklistItemSummary))]
+	[ServiceKnownType(typeof(ReportingWorklistItemSummary))]
 
 	[RisApplicationService]
 	[ServiceContract]

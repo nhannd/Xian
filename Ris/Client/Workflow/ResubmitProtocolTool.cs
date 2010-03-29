@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Resubmit)]
 	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
-	public class ResubmitProtocolTool : WorkflowItemTool<RegistrationWorklistItem, IWorkflowItemToolContext<RegistrationWorklistItem>>
+	public class ResubmitProtocolTool : WorkflowItemTool<RegistrationWorklistItemSummary, IWorkflowItemToolContext<RegistrationWorklistItemSummary>>
 	{
 		public ResubmitProtocolTool()
 			: base("ResubmitProtocol")
@@ -58,7 +58,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			this.Context.RegisterWorkflowService(typeof(IProtocollingWorkflowService));
 		}
 
-		protected override bool Execute(RegistrationWorklistItem item)
+		protected override bool Execute(RegistrationWorklistItemSummary item)
 		{
 			Platform.GetService<IProtocollingWorkflowService>(
 				delegate(IProtocollingWorkflowService service)

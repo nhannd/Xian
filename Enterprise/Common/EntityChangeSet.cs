@@ -29,23 +29,22 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Serialization;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Common
 {
-    [DataContract]
-    public class EntityChangeSet
-    {
-        [DataMember]
-        private EntityChange[] _changes;
+	public class EntityChangeSet
+	{
+		private readonly List<EntityChange> _changes;
 
-        public EntityChangeSet(EntityChange[] changes)
-        {
-            _changes = changes;
-        }
-    }
+		public EntityChangeSet(IEnumerable<EntityChange> changes)
+		{
+			_changes = new List<EntityChange>(changes);
+		}
+
+		public IList<EntityChange> Changes
+		{
+			get { return _changes.AsReadOnly(); }
+		}
+	}
 }

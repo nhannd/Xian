@@ -34,7 +34,7 @@ using System.Collections;
 
 namespace ClearCanvas.Enterprise.Core
 {
-    public interface ISearchCondition
+	public interface ISearchCondition : ISearchCriteria
     {
         /// <summary>
         /// Specifies that the condition variable be equal to the specified value.
@@ -145,7 +145,7 @@ namespace ClearCanvas.Enterprise.Core
     /// will throw an exception if a null argument is passed.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface ISearchCondition<T>
+    public interface ISearchCondition<T> : ISearchCriteria
     {
         /// <summary>
         /// Specifies that the condition variable be equal to the specified value.

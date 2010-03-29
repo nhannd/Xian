@@ -42,7 +42,7 @@ using ClearCanvas.Ris.Client.Workflow.Folders;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	public abstract class RegistrationWorkflowFolder : WorklistFolder<RegistrationWorklistItem, IRegistrationWorkflowService>
+	public abstract class RegistrationWorkflowFolder : WorklistFolder<RegistrationWorklistItemSummary, IRegistrationWorkflowService>
     {
         public RegistrationWorkflowFolder()
             : base(new RegistrationWorklistTable())

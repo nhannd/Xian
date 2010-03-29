@@ -32,15 +32,16 @@
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using ClearCanvas.Healthcare;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 {
     public class ModalityWorkflowAssembler
     {
-        public ModalityWorklistItem CreateWorklistItemSummary(WorklistItem domainItem, IPersistenceContext context)
+        public ModalityWorklistItemSummary CreateWorklistItemSummary(WorklistItem domainItem, IPersistenceContext context)
         {
             PersonNameAssembler assembler = new PersonNameAssembler();
-            return new ModalityWorklistItem(
+            return new ModalityWorklistItemSummary(
                 domainItem.ProcedureStepRef,
                 domainItem.ProcedureRef,
                 domainItem.OrderRef,

@@ -34,14 +34,14 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	public class ReportingComponentWorklistItemManager : WorklistItemManager<ReportingWorklistItem, IReportingWorkflowService>
+	public class ReportingComponentWorklistItemManager : WorklistItemManager<ReportingWorklistItemSummary, IReportingWorkflowService>
 	{
 		public ReportingComponentWorklistItemManager(string folderName, EntityRef worklistRef, string worklistClassName)
 			: base(folderName, worklistRef, worklistClassName)
 		{
 		}
 
-		protected override IContinuousWorkflowComponentMode GetMode<TWorklistITem>(ReportingWorklistItem worklistItem)
+		protected override IContinuousWorkflowComponentMode GetMode<TWorklistITem>(ReportingWorklistItemSummary worklistItem)
 		{
 			if (worklistItem == null)
 				return ReportingComponentModes.Review;

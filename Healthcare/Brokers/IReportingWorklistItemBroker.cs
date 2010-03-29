@@ -37,21 +37,14 @@ namespace ClearCanvas.Healthcare.Brokers
     /// <summary>
     /// Defines an interface to a worklist item broker for registration worklist items.
     /// </summary>
-    public interface IReportingWorklistItemBroker : IWorklistItemBroker<WorklistItem>
+    public interface IReportingWorklistItemBroker : IWorklistItemBroker
     {
         /// <summary>
         /// Maps the specified set of reporting steps to a corresponding set of reporting worklist items.
         /// </summary>
         /// <param name="reportingSteps"></param>
         /// <returns></returns>
-        IList<WorklistItem> GetWorklistItems(IEnumerable<ReportingProcedureStep> reportingSteps);
-
-        /// <summary>
-        /// Maps the specified set of protocolling steps to a corresponding set of reporting worklist items.
-        /// </summary>
-        /// <param name="protocollingSteps"></param>
-        /// <returns></returns>
-        IList<WorklistItem> GetWorklistItems(IEnumerable<ProtocolProcedureStep> protocollingSteps);
+        IList<ReportingWorklistItem> GetWorklistItems(IEnumerable<ReportingProcedureStep> reportingSteps);
 
         /// <summary>
         /// Obtains a set of interpretation steps that are candidates for linked reporting to the specified interpretation step.
@@ -60,13 +53,5 @@ namespace ClearCanvas.Healthcare.Brokers
         /// <param name="interpreter"></param>
         /// <returns></returns>
         IList<InterpretationStep> GetLinkedInterpretationCandidates(InterpretationStep step, Staff interpreter);
-
-        /// <summary>
-        /// Obtains a set of protocol steps that are candidates for linked protocolling to the specified assignment step.
-        /// </summary>
-        /// <param name="step"></param>
-        /// <param name="author"></param>
-        /// <returns></returns>
-        IList<ProtocolAssignmentStep> GetLinkedProtocolCandidates(ProtocolAssignmentStep step, Staff author);
     }
 }

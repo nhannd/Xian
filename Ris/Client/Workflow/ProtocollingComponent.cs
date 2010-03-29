@@ -90,7 +90,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public ProtocollingComponent(ReportingWorklistItem worklistItem, IContinuousWorkflowComponentMode mode, string folderName, EntityRef worklistRef, string worklistClassName)
+		public ProtocollingComponent(ReportingWorklistItemSummary worklistItem, IContinuousWorkflowComponentMode mode, string folderName, EntityRef worklistRef, string worklistClassName)
 		{
 			_worklistItemManager = new ProtocollingComponentWorklistItemManager(folderName, worklistRef, worklistClassName);
 			_worklistItemManager.Initialize(worklistItem, mode);
@@ -210,7 +210,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return BannerSettings.Default.BannerHeight; }
 		}
 
-		private ReportingWorklistItem WorklistItem
+		private ReportingWorklistItemSummary WorklistItem
 		{
 			get { return _worklistItemManager.WorklistItem; }
 		}
@@ -520,8 +520,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			Platform.GetService<IProtocollingWorkflowService>(service =>
 			{
-				List<ReportingWorklistItem> linkedProtocols;
-				List<ReportingWorklistItem> candidateProtocols;
+				List<ReportingWorklistItemSummary> linkedProtocols;
+				List<ReportingWorklistItemSummary> candidateProtocols;
 				PromptForLinkedInterpretations(this.WorklistItem, out linkedProtocols, out candidateProtocols);
 
 				var linkedProtocolRefs = linkedProtocols.ConvertAll(x => x.ProcedureStepRef);
@@ -558,13 +558,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 			});
 		}
 
-		private void PromptForLinkedInterpretations(ReportingWorklistItem item, out List<ReportingWorklistItem> linkedItems, out List<ReportingWorklistItem> candidateItems)
+		private void PromptForLinkedInterpretations(ReportingWorklistItemSummary item, out List<ReportingWorklistItemSummary> linkedItems, out List<ReportingWorklistItemSummary> candidateItems)
 		{
-			linkedItems = new List<ReportingWorklistItem>();
-			candidateItems = new List<ReportingWorklistItem>();
+			linkedItems = new List<ReportingWorklistItemSummary>();
+			candidateItems = new List<ReportingWorklistItemSummary>();
 
 			// query server for link candidates
-			var anonCandidates = new List<ReportingWorklistItem>();  // cannot use out param in anonymous delegate.
+			var anonCandidates = new List<ReportingWorklistItemSummary>();  // cannot use out param in anonymous delegate.
 			Platform.GetService<IProtocollingWorkflowService>(service =>
 				{
 					var linkableProtocolsResponse = service.GetLinkableProtocols(new GetLinkableProtocolsRequest(item.ProcedureStepRef));

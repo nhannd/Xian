@@ -156,7 +156,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#region Private Members
 
-		private readonly ModalityWorklistItem _worklistItem;
+		private readonly ModalityWorklistItemSummary _worklistItem;
 		private Dictionary<string, string> _orderExtendedProperties;
 		private List<OrderNoteDetail> _orderNotes;
 
@@ -186,7 +186,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#endregion
 
-		public PerformingDocumentationComponent(ModalityWorklistItem item)
+		public PerformingDocumentationComponent(ModalityWorklistItemSummary item)
 		{
 			_worklistItem = item;
 			_saveEnabled = true;

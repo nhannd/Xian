@@ -76,6 +76,7 @@
     </Compile>
     <Compile Include="Alerts\ReconciliationAlert.cs" />
     <Compile Include="AttachedDocument.cs" />
+    <Compile Include="Brokers\IProtocolWorklistItemBroker.cs" />
     <Compile Include="Brokers\IExternalPractitionerBroker.cs" />
     <Compile Include="Brokers\IExternalPractitionerContactPointBroker.cs" />
     <Compile Include="Brokers\IOrderBroker.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="Alerts\NoteAlert.cs" />
     <Compile Include="Brokers\IWorklistItemBroker.cs" />
     <Compile Include="CannedText.cs" />
+    <Compile Include="ProtocolingWorklistItemSearchCriteria.cs" />
     <Compile Include="DicomSeries.cs" />
     <Compile Include="EmergencyWorklists.cs" />
     <Compile Include="EntityValidationRulesSettings.cs" />
@@ -139,6 +141,7 @@
     <Compile Include="PatientReconciliation\Utility.cs" />
     <Compile Include="PublicationStepSearchCriteria.cs" />
     <Compile Include="RadiologistAdminWorklists.cs" />
+    <Compile Include="RegistrationProcedureStep.cs" />
     <Compile Include="ReportingProtocolWorklists.cs" />
     <Compile Include="ExternalPractitionerContactPoint.cs" />
     <Compile Include="IWorklistQueryContext.cs" />
@@ -191,12 +194,14 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ReportingWorkflowSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Workflow\Reporting\ReportingWorklistItem.cs" />
     <Compile Include="Workflow\Tests\CancelOrderOperationTests.cs" />
     <Compile Include="Workflow\Tests\DiscontinueOrderOperationTests.cs" />
     <Compile Include="Workflow\Transcription\TranscriptionOperations.cs" />
     <Compile Include="WorklistFactory.cs" />
     <Compile Include="WorklistFilters.cs" />
-    <Compile Include="WorklistItemBase.cs" />
+    <Compile Include="WorklistItem.cs" />
+    <Compile Include="WorklistItemProjection.cs" />
     <Compile Include="WorklistItemSearchArgs.cs" />
     <Compile Include="WorklistItemSearchCriteria.cs" />
     <Compile Include="ReportingWorklistItemSearchCriteria.cs" />
@@ -253,7 +258,6 @@
     <Compile Include="Tests\TestStaffFactory.cs" />
     <Compile Include="VisitNumber.cs" />
     <Compile Include="Workflow\CancelOrderOperation.cs" />
-    <Compile Include="Workflow\Modality\WorklistItem.cs" />
     <Compile Include="Brokers\*.gen.cs" />
     <Compile Include="Address.cs" />
     <Compile Include="AddressType.cs" />
@@ -312,16 +316,14 @@
     <Compile Include="VisitStatus.cs" />
     <Compile Include="Workflow\Protocolling\ProtocollingOperations.cs" />
     <Compile Include="Workflow\Registration\Operation.cs" />
-    <Compile Include="Workflow\Registration\WorklistItem.cs" />
     <Compile Include="IWorklist.cs" />
     <Compile Include="Workflow\Modality\Operations.cs" />
     <Compile Include="Workflow\Reporting\Operations.cs" />
-    <Compile Include="Workflow\Reporting\WorklistItem.cs" />
     <Compile Include="Worklist.cs" />
     <Compile Include="WorklistAttributes.cs" />
     <Compile Include="WorklistOwner.cs" />
     <Compile Include="WorklistSearchCriteria.cs" />
-    <Compile Include="WorklistTimeField.cs" />
+    <Compile Include="WorklistItemField.cs" />
     <Compile Include="WorklistTimePoint.cs" />
     <Compile Include="WorklistTimeRange.cs" />
   </ItemGroup>
@@ -356,6 +358,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>EntityValidationRulesSettings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="ProcedureStepHierarchy.cd" />
     <None Include="Workflow\Reporting\ReportingWorkflowSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ReportingWorkflowSettings.Designer.cs</LastGenOutput>

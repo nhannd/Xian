@@ -40,8 +40,8 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     /// </summary>
     [RisApplicationService]
     [ServiceContract]
-    [ServiceKnownType(typeof(RegistrationWorklistItem))]
-    [ServiceKnownType(typeof(ModalityWorklistItem))]
+    [ServiceKnownType(typeof(RegistrationWorklistItemSummary))]
+    [ServiceKnownType(typeof(ModalityWorklistItemSummary))]
     public interface IOrderEntryService : IWorkflowService
     {
         /// <summary>

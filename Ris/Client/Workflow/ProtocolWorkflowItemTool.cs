@@ -38,7 +38,7 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	public abstract class ProtocolWorkflowItemTool : WorkflowItemTool<ReportingWorklistItem, IReportingWorkflowItemToolContext>
+	public abstract class ProtocolWorkflowItemTool : WorkflowItemTool<ReportingWorklistItemSummary, IReportingWorkflowItemToolContext>
 	{
 		protected ProtocolWorkflowItemTool(string operationName)
 			: base(operationName)
@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			this.Context.RegisterWorkflowService(typeof(IProtocollingWorkflowService));
 		}
 
-		protected ReportingWorklistItem GetSelectedItem()
+		protected ReportingWorklistItemSummary GetSelectedItem()
 		{
 			if (this.Context.SelectedItems.Count != 1)
 				return null;

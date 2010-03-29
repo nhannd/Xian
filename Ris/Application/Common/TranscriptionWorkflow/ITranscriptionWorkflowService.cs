@@ -37,8 +37,8 @@ namespace ClearCanvas.Ris.Application.Common.TranscriptionWorkflow
 {
 	[RisApplicationService]
 	[ServiceContract]
-	[ServiceKnownType(typeof(ReportingWorklistItem))]
-	public interface ITranscriptionWorkflowService : IWorklistService<ReportingWorklistItem>, IWorkflowService
+	[ServiceKnownType(typeof(ReportingWorklistItemSummary))]
+	public interface ITranscriptionWorkflowService : IWorklistService<ReportingWorklistItemSummary>, IWorkflowService
 	{
 		/// <summary>
 		/// 

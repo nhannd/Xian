@@ -68,7 +68,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 		}
 
-		protected override string GetPreviewUrl(WorkflowFolder folder, ICollection<ReportingWorklistItem> items)
+		protected override string GetPreviewUrl(WorkflowFolder folder, ICollection<ReportingWorklistItemSummary> items)
 		{
 			if (items.Count != 1)
 				return null;

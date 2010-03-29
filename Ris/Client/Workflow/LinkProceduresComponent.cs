@@ -53,10 +53,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[AssociateView(typeof(LinkProceduresComponentViewExtensionPoint))]
 	public class LinkProceduresComponent : ApplicationComponent
 	{
-		private Table<Checkable<ReportingWorklistItem>> _candidateTable;
-		private readonly List<ReportingWorklistItem> _candidates;
+		private Table<Checkable<ReportingWorklistItemSummary>> _candidateTable;
+		private readonly List<ReportingWorklistItemSummary> _candidates;
 
-		private readonly ReportingWorklistItem _sourceItem;
+		private readonly ReportingWorklistItemSummary _sourceItem;
 		private ReportingWorklistTable _sourceTable;
 
 		private readonly string _instructions;
@@ -65,7 +65,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public LinkProceduresComponent(ReportingWorklistItem sourceItem, List<ReportingWorklistItem> candidateItems, string instructions, string heading)
+		public LinkProceduresComponent(ReportingWorklistItemSummary sourceItem, List<ReportingWorklistItemSummary> candidateItems, string instructions, string heading)
 		{
 			_candidates = candidateItems;
 			_sourceItem = sourceItem;
@@ -73,25 +73,25 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_heading = heading;
 		}
 
-		public LinkProceduresComponent(ReportingWorklistItem sourceItem, List<ReportingWorklistItem> candidateItems)
+		public LinkProceduresComponent(ReportingWorklistItemSummary sourceItem, List<ReportingWorklistItemSummary> candidateItems)
 			: this(sourceItem, candidateItems, SR.TextLinkReportInstructions, SR.TextLinkReportlHeading)
 		{
 		}
 
 		public override void Start()
 		{
-			_candidateTable = new Table<Checkable<ReportingWorklistItem>>();
-			_candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, bool>(".",
-				delegate(Checkable<ReportingWorklistItem> item) { return item.IsChecked; },
-				delegate(Checkable<ReportingWorklistItem> item, bool value) { item.IsChecked = value; }, 0.20f));
-			_candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, string>(SR.ColumnProcedure,
-				delegate(Checkable<ReportingWorklistItem> item) { return item.Item.ProcedureName; }, 2.75f));
-			_candidateTable.Columns.Add(new DateTimeTableColumn<Checkable<ReportingWorklistItem>>(SR.ColumnTime,
-				delegate(Checkable<ReportingWorklistItem> item) { return item.Item.Time; }, 0.5f));
+			_candidateTable = new Table<Checkable<ReportingWorklistItemSummary>>();
+			_candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItemSummary>, bool>(".",
+				delegate(Checkable<ReportingWorklistItemSummary> item) { return item.IsChecked; },
+				delegate(Checkable<ReportingWorklistItemSummary> item, bool value) { item.IsChecked = value; }, 0.20f));
+			_candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItemSummary>, string>(SR.ColumnProcedure,
+				delegate(Checkable<ReportingWorklistItemSummary> item) { return item.Item.ProcedureName; }, 2.75f));
+			_candidateTable.Columns.Add(new DateTimeTableColumn<Checkable<ReportingWorklistItemSummary>>(SR.ColumnTime,
+				delegate(Checkable<ReportingWorklistItemSummary> item) { return item.Item.Time; }, 0.5f));
 
-			foreach (ReportingWorklistItem item in _candidates)
+			foreach (ReportingWorklistItemSummary item in _candidates)
 			{
-				_candidateTable.Items.Add(new Checkable<ReportingWorklistItem>(item, true));
+				_candidateTable.Items.Add(new Checkable<ReportingWorklistItemSummary>(item, true));
 			}
 
 			_sourceTable = new ReportingWorklistTable();
@@ -100,14 +100,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 			base.Start();
 		}
 
-		public List<ReportingWorklistItem> SelectedItems
+		public List<ReportingWorklistItemSummary> SelectedItems
 		{
 			get
 			{
-				return CollectionUtils.Map<Checkable<ReportingWorklistItem>, ReportingWorklistItem>(
+				return CollectionUtils.Map<Checkable<ReportingWorklistItemSummary>, ReportingWorklistItemSummary>(
 					CollectionUtils.Select(_candidateTable.Items,
-						delegate(Checkable<ReportingWorklistItem> item) { return item.IsChecked; }),
-							delegate(Checkable<ReportingWorklistItem> checkableItem) { return checkableItem.Item; });
+						delegate(Checkable<ReportingWorklistItemSummary> item) { return item.IsChecked; }),
+							delegate(Checkable<ReportingWorklistItemSummary> checkableItem) { return checkableItem.Item; });
 			}
 		}
 

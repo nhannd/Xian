@@ -48,7 +48,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <param name="worklistItem"></param>
 		/// <param name="desktopWindow"></param>
 		/// <returns>True if the dialog was shown and accepted, or if it was not required.  False if the user cancelled out of the dialog.</returns>
-		public static bool ShowDialogOnVerifyIfRequired(ReportingWorklistItem worklistItem, IDesktopWindow desktopWindow)
+		public static bool ShowDialogOnVerifyIfRequired(ReportingWorklistItemSummary worklistItem, IDesktopWindow desktopWindow)
 		{
 
 			var existingConv = ConversationExists(worklistItem.OrderRef);

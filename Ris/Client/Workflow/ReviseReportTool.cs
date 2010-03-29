@@ -58,27 +58,27 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
-		public override bool CanAcceptDrop(ICollection<ReportingWorklistItem> items)
+		public override bool CanAcceptDrop(ICollection<ReportingWorklistItemSummary> items)
 		{
 			return this.Context.GetOperationEnablement("ReviseResidentReport");
 		}
 
-		protected override bool Execute(ReportingWorklistItem item)
+		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			// check if the document is already open
 			if (ActivateIfAlreadyOpen(item))
 				return true;
 
-			ReportingWorklistItem replacementItem = ReviseResidentReport(item);
+			ReportingWorklistItemSummary replacementItem = ReviseResidentReport(item);
 
 			OpenReportEditor(replacementItem);
 
 			return true;
 		}
 
-		private ReportingWorklistItem ReviseResidentReport(ReportingWorklistItem item)
+		private ReportingWorklistItemSummary ReviseResidentReport(ReportingWorklistItemSummary item)
 		{
-			ReportingWorklistItem result = null;
+			ReportingWorklistItemSummary result = null;
 			Platform.GetService<IReportingWorkflowService>(
 				delegate(IReportingWorkflowService service)
 				{

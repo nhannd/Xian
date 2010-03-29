@@ -6,6 +6,7 @@ require 'component_field_def'
 require 'entity_field_def'
 require 'user_type_field_def'
 require 'type_name_utils'
+require 'extended_properties_field_def'
 
 # Factory class to create FieldDef subclasses of the correct type, based upon the specified fieldNode
 class FieldDefFactory
@@ -14,7 +15,9 @@ class FieldDefFactory
   def FieldDefFactory.CreateFieldDef(model, fieldNode, defaultNamespace)
     # what kind of field is this?
     if(NHIBERNATE_COLLECTION_TYPES.include?(fieldNode.name))
-      return CollectionFieldDef.new(model, fieldNode, defaultNamespace)
+      return fieldNode.attributes['name'] == "ExtendedProperties" ?
+		ExtendedPropertiesFieldDef.new(model, fieldNode, defaultNamespace) :
+			CollectionFieldDef.new(model, fieldNode, defaultNamespace)
     elsif(['many-to-one', 'one-to-one'].include?(fieldNode.name))
       return EntityFieldDef.new(model, fieldNode, defaultNamespace)
     elsif(fieldNode.name == 'component')

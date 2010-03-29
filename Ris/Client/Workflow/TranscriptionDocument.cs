@@ -38,13 +38,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 {
 	public class TranscriptionDocument : Document
 	{
-		private readonly ReportingWorklistItem _worklistItem;
+		private readonly ReportingWorklistItemSummary _worklistItem;
 		private readonly string _folderName;
 		private readonly EntityRef _worklistRef;
 		private readonly string _worklistClassName;
 		private TranscriptionComponent _component;
 
-		public TranscriptionDocument(ReportingWorklistItem worklistItem, IReportingWorkflowItemToolContext context)
+		public TranscriptionDocument(ReportingWorklistItemSummary worklistItem, IReportingWorkflowItemToolContext context)
 			: base(worklistItem.ProcedureStepRef, context.DesktopWindow)
 		{
 			_worklistItem = worklistItem;
@@ -79,7 +79,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return _component;
 		}
 
-		public static string GetTitle(ReportingWorklistItem item)
+		public static string GetTitle(ReportingWorklistItemSummary item)
 		{
 			return string.Format("Transcription - {0} - {1}", PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn));
 		}

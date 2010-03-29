@@ -100,11 +100,11 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		{
 			var step = this.PersistenceContext.Load<ProtocolAssignmentStep>(request.ProtocolAssignmentStepRef, EntityLoadFlags.Proxy);
 
-			var broker = this.PersistenceContext.GetBroker<IReportingWorklistItemBroker>();
+			var broker = this.PersistenceContext.GetBroker<IProtocolWorklistItemBroker>();
 			var candidateSteps = broker.GetLinkedProtocolCandidates(step, this.CurrentUserStaff);
 
 			// if any candidate steps were found, need to convert them to worklist items
-			IList<WorklistItem> worklistItems;
+			IList<ReportingWorklistItem> worklistItems;
 			if (candidateSteps.Count > 0)
 			{
 				// because CLR does not support List co-variance, need to map to a list of the more general type (this seems silly!)
@@ -115,12 +115,12 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 			}
 			else
 			{
-				worklistItems = new List<WorklistItem>();
+				worklistItems = new List<ReportingWorklistItem>();
 			}
 
 			var assembler = new ReportingWorkflowAssembler();
 			return new GetLinkableProtocolsResponse(
-				CollectionUtils.Map<WorklistItem, ReportingWorklistItem>(
+				CollectionUtils.Map<ReportingWorklistItem, ReportingWorklistItemSummary>(
 					worklistItems, 
 					item => assembler.CreateWorklistItemSummary(item, this.PersistenceContext)));
 		}
@@ -549,10 +549,10 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 			noteAssembler.SynchronizeOrderNotes(order, notes, this.CurrentUserStaff, this.PersistenceContext);
 		}
 
-		private ReportingWorklistItem GetWorklistItemSummary(ProtocolProcedureStep reportingProcedureStep)
+		private ReportingWorklistItemSummary GetWorklistItemSummary(ProtocolProcedureStep reportingProcedureStep)
 		{
 			var procedureSteps = new List<ProtocolProcedureStep> { reportingProcedureStep };
-			var items = this.PersistenceContext.GetBroker<IReportingWorklistItemBroker>().GetWorklistItems(procedureSteps);
+			var items = this.PersistenceContext.GetBroker<IProtocolWorklistItemBroker>().GetWorklistItems(procedureSteps);
 			return new ReportingWorkflowAssembler().CreateWorklistItemSummary(CollectionUtils.FirstElement(items), this.PersistenceContext);
 		}
 

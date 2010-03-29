@@ -36,7 +36,7 @@ using ClearCanvas.Ris.Application.Common.TranscriptionWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	public abstract class TranscriptionWorkflowItemTool : WorkflowItemTool<ReportingWorklistItem, IReportingWorkflowItemToolContext>
+	public abstract class TranscriptionWorkflowItemTool : WorkflowItemTool<ReportingWorklistItemSummary, IReportingWorkflowItemToolContext>
 	{
 		protected TranscriptionWorkflowItemTool(string operationName)
 			: base(operationName)
@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			this.Context.RegisterWorkflowService(typeof(ITranscriptionWorkflowService));
 		}
 
-		protected bool ActivateIfAlreadyOpen(ReportingWorklistItem item)
+		protected bool ActivateIfAlreadyOpen(ReportingWorklistItemSummary item)
 		{
 			var document = DocumentManager.Get<TranscriptionDocument>(item.ProcedureStepRef);
 			if (document != null)
@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return false;
 		}
 
-		protected void OpenTranscriptionEditor(ReportingWorklistItem item)
+		protected void OpenTranscriptionEditor(ReportingWorklistItemSummary item)
 		{
 			if (ActivateIfAlreadyOpen(item))
 				return;
@@ -97,7 +97,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			doc.Closed += delegate { DocumentManager.InvalidateFolder(selectedFolderType); };
 		}
 
-		protected ReportingWorklistItem GetSelectedItem()
+		protected ReportingWorklistItemSummary GetSelectedItem()
 		{
 			return this.Context.SelectedItems.Count != 1 
 				? null 

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{431E9444-9915-4D49-B92D-9B7EC086622A}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -73,6 +73,10 @@
     <Compile Include="AuditLogEntry.cs" />
     <Compile Include="Audit\AuditLogEntryAssembler.cs" />
     <Compile Include="Audit\AuditService.cs" />
+    <Compile Include="ExtendedPropertiesSearchCriteria.cs" />
+    <Compile Include="EntityChangeSetPublisher.cs" />
+    <Compile Include="IEntityChangeSetListener.cs" />
+    <Compile Include="IPersistenceBrokerFactory.cs" />
     <Compile Include="Modelling\DomainObjectValidator.cs" />
     <Compile Include="Modelling\EntityValidationSettings.cs" />
     <Compile Include="Modelling\EntityValidationSettings.Designer.cs">
