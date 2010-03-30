@@ -43,7 +43,9 @@ on key tables that play a central role in the workflow queries.
   <!-- ExternalPractitioner -->
   <index table="ExternalPractitioner_" columns="FamilyName_"/>
   <index table="ExternalPractitioner_" columns="GivenName_"/>
-  
+  <index table="ExternalPractitioner_" columns="BillingNumber_"/>
+  <index table="ExternalPractitioner_" columns="LicenseNumber_"/>
+
   <!-- Staff -->
   <index table="Staff_" columns="FamilyName_"/>
   <index table="Staff_" columns="GivenName_"/>
