@@ -73,9 +73,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 		{
 			foreach (var kvp in HqlConstants.MapCriteriaKeyToHql)
 			{
-				var target = string.Format("{0}.{1}", HqlConstants.WorklistItemQualifier, kvp.Key);
+				var target = string.Format("{0}.{1}.", HqlConstants.WorklistItemQualifier, kvp.Key);
+				var hqlReplacement = string.Format("{0}.", kvp.Value);
 				if (hqlExpression.StartsWith(target))
-					return hqlExpression.Replace(target, kvp.Value);
+					return hqlExpression.Replace(target, hqlReplacement);
 			}
 			return hqlExpression;
 		}
