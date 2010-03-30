@@ -47,7 +47,7 @@ namespace ClearCanvas.Healthcare.Brokers
 		/// </summary>
 		/// <param name="protocollingSteps"></param>
 		/// <returns></returns>
-		IList<ReportingWorklistItem> GetWorklistItems(IEnumerable<ProtocolProcedureStep> protocollingSteps);
+		IList<ReportingWorklistItem> GetWorklistItems(IEnumerable<ProtocolProcedureStep> protocollingSteps, WorklistItemField timeField);
 
 		/// <summary>
 		/// Obtains a set of protocol steps that are candidates for linked protocolling to the specified assignment step.

@@ -69,7 +69,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		/// </summary>
 		/// <param name="reportingSteps"></param>
 		/// <returns></returns>
-		public IList<ReportingWorklistItem> GetWorklistItems(IEnumerable<ReportingProcedureStep> reportingSteps)
+		public IList<ReportingWorklistItem> GetWorklistItems(IEnumerable<ReportingProcedureStep> reportingSteps, WorklistItemField timeField)
 		{
 			var worklistItemCriteria =
 				CollectionUtils.Map(reportingSteps,
@@ -80,7 +80,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 					return criteria;
 				}).ToArray();
 
-			var projection = WorklistItemProjection.GetReportingProjection(WorklistItemField.ProcedureStepScheduledStartTime);
+			var projection = WorklistItemProjection.GetReportingProjection(timeField);
 			var args = new SearchQueryArgs(typeof(ReportingProcedureStep), worklistItemCriteria, projection);
 			var query = this.BuildWorklistSearchQuery(args);
 

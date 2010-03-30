@@ -109,5 +109,16 @@ namespace ClearCanvas.Healthcare {
 
 			return null;
 		}
+
+		/// <summary>
+		/// Gets the profile corresponding to the specified facility, or null if no such profile exists.
+		/// </summary>
+		/// <param name="facility"></param>
+		/// <returns></returns>
+		public virtual PatientProfile GetProfile(Facility facility)
+		{
+			return CollectionUtils.SelectFirst(_profiles,
+				profile => Equals(profile.Mrn.AssigningAuthority, facility.InformationAuthority));
+		}
 	}
 }

@@ -451,7 +451,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			{
 				// because CLR does not support List co-variance, need to map to a list of the more general type (this seems silly!)
 				var reportingSteps = CollectionUtils.Map<InterpretationStep, ReportingProcedureStep>(candidateSteps, s => s);
-				worklistItems = broker.GetWorklistItems(reportingSteps);
+				worklistItems = broker.GetWorklistItems(reportingSteps, WorklistItemField.ProcedureStepScheduledStartTime);
 			}
 			else
 			{
@@ -810,10 +810,9 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 		private ReportingWorklistItemSummary GetWorklistItemSummary(ReportingProcedureStep reportingProcedureStep)
 		{
-			var procedureSteps = new List<ReportingProcedureStep> { reportingProcedureStep };
-
-			var items = this.PersistenceContext.GetBroker<IReportingWorklistItemBroker>().GetWorklistItems(procedureSteps);
-			return new ReportingWorkflowAssembler().CreateWorklistItemSummary(CollectionUtils.FirstElement(items), this.PersistenceContext);
+			var worklistItem = new ReportingWorklistItem();
+			worklistItem.InitializeFromProcedureStep(reportingProcedureStep, WorklistItemField.ProcedureStepCreationTime);
+			return new ReportingWorkflowAssembler().CreateWorklistItemSummary(worklistItem, this.PersistenceContext);
 		}
 	}
 }

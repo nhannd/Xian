@@ -111,7 +111,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 				var protocolSteps = CollectionUtils.Map<ProtocolAssignmentStep, ProtocolProcedureStep>(
 					candidateSteps, s => s);
 
-				worklistItems = broker.GetWorklistItems(protocolSteps);
+				worklistItems = broker.GetWorklistItems(protocolSteps, WorklistItemField.ProcedureStepCreationTime);
 			}
 			else
 			{
@@ -551,9 +551,9 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
 		private ReportingWorklistItemSummary GetWorklistItemSummary(ProtocolProcedureStep reportingProcedureStep)
 		{
-			var procedureSteps = new List<ProtocolProcedureStep> { reportingProcedureStep };
-			var items = this.PersistenceContext.GetBroker<IProtocolWorklistItemBroker>().GetWorklistItems(procedureSteps);
-			return new ReportingWorkflowAssembler().CreateWorklistItemSummary(CollectionUtils.FirstElement(items), this.PersistenceContext);
+			var worklistItem = new ReportingWorklistItem();
+			worklistItem.InitializeFromProcedureStep(reportingProcedureStep, WorklistItemField.ProcedureStepCreationTime);
+			return new ReportingWorkflowAssembler().CreateWorklistItemSummary(worklistItem, this.PersistenceContext);
 		}
 
 	}

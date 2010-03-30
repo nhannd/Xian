@@ -44,7 +44,7 @@ namespace ClearCanvas.Healthcare.Brokers
         /// </summary>
         /// <param name="reportingSteps"></param>
         /// <returns></returns>
-        IList<ReportingWorklistItem> GetWorklistItems(IEnumerable<ReportingProcedureStep> reportingSteps);
+		IList<ReportingWorklistItem> GetWorklistItems(IEnumerable<ReportingProcedureStep> reportingSteps, WorklistItemField timeField);
 
         /// <summary>
         /// Obtains a set of interpretation steps that are candidates for linked reporting to the specified interpretation step.

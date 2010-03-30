@@ -150,6 +150,39 @@ namespace ClearCanvas.Healthcare
 		}
 
 		/// <summary>
+		/// Initialize this worklist item from the specified procedure step and related entities.
+		/// This method is not suitable for mapping a large set of procedure steps, because it is not efficient.
+		/// </summary>
+		/// <param name="step"></param>
+		/// <param name="timeField"></param>
+		public virtual void InitializeFromProcedureStep(ProcedureStep step, WorklistItemField timeField)
+		{
+			var rp = step.Procedure;
+			var o = step.Procedure.Order;
+			var v = step.Procedure.Order.Visit;
+			var p = step.Procedure.Order.Patient;
+			var pp = step.Procedure.Order.Patient.GetProfile(rp.PerformingFacility);
+
+			this.ProcedureStepRef = step.GetRef();
+			this.ProcedureRef = rp.GetRef();
+			this.OrderRef = o.GetRef();
+			this.PatientRef = p.GetRef();
+			this.PatientProfileRef = pp.GetRef();
+			this.Mrn = pp.Mrn;
+			this.PatientName = pp.Name;
+			this.AccessionNumber = o.AccessionNumber;
+			this.OrderPriority = o.Priority;
+			this.PatientClass = v.PatientClass;
+			this.DiagnosticServiceName = o.DiagnosticService.Name;
+			this.ProcedureName = rp.Type.Name;
+			this.ProcedurePortable = rp.Portable;
+			this.ProcedureLaterality = rp.Laterality;
+			this.ProcedureStepName = step.Name;
+			this.ActivityStatus = step.State;
+			this.Time = GetTimeValue(step, timeField);
+		}
+
+		/// <summary>
 		/// Default constructor required for dynamic instantiation.
 		/// </summary>
 		public WorklistItem()
@@ -195,6 +228,41 @@ namespace ClearCanvas.Healthcare
 		protected virtual UpdateWorklistItemDelegate GetFieldUpdater(WorklistItemField field)
 		{
 			return _fieldUpdaters[field];
+		}
+
+		protected virtual DateTime? GetTimeValue(ProcedureStep step, WorklistItemField timeField)
+		{
+			if (timeField == WorklistItemField.OrderSchedulingRequestTime)
+				return step.Procedure.Order.SchedulingRequestTime;
+
+			if (timeField == WorklistItemField.ProcedureScheduledStartTime)
+				return step.Procedure.ScheduledStartTime;
+
+			if (timeField == WorklistItemField.ProcedureCheckInTime)
+				return step.Procedure.ProcedureCheckIn.CheckInTime;
+
+			if (timeField == WorklistItemField.ProcedureCheckOutTime)
+				return step.Procedure.ProcedureCheckIn.CheckOutTime;
+
+			if (timeField == WorklistItemField.ProcedureStartTime)
+				return step.Procedure.StartTime;
+
+			if (timeField == WorklistItemField.ProcedureEndTime)
+				return step.Procedure.EndTime;
+
+			if (timeField == WorklistItemField.ProcedureStepCreationTime)
+				return step.CreationTime;
+
+			if (timeField == WorklistItemField.ProcedureStepScheduledStartTime)
+				return step.Scheduling == null ? step.Scheduling.StartTime : null;
+
+			if (timeField == WorklistItemField.ProcedureStepStartTime)
+				return step.StartTime;
+
+			if (timeField == WorklistItemField.ProcedureStepEndTime)
+				return step.EndTime;
+
+			throw new WorkflowException("Invalid time field");
 		}
 	}
 }

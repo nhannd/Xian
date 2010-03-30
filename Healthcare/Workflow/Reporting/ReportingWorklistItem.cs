@@ -71,6 +71,20 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 			ReportPartIndex = -1;
 		}
 
+		public override void InitializeFromProcedureStep(ProcedureStep step, WorklistItemField timeField)
+		{
+			var reportingStep = step.As<ReportingProcedureStep>();
+			if (reportingStep != null && reportingStep.ReportPart != null)
+			{
+				this.ReportRef = reportingStep.ReportPart.Report.GetRef();
+				this.ReportPartIndex = reportingStep.ReportPart.Index;
+				this.HasErrors = reportingStep.Is<TranscriptionReviewStep>()
+					? reportingStep.As<TranscriptionReviewStep>().HasErrors : false;
+			}
+
+			base.InitializeFromProcedureStep(step, timeField);
+		}
+
 		/// <summary>
 		/// Gets the report ref.
 		/// </summary>
@@ -90,6 +104,21 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 		{
 			UpdateWorklistItemDelegate updater;
 			return _fieldUpdaters.TryGetValue(field, out updater) ? updater : base.GetFieldUpdater(field);
+		}
+
+		protected override DateTime? GetTimeValue(ProcedureStep step, WorklistItemField timeField)
+		{
+			var reportingStep = step.As<ReportingProcedureStep>();
+			if(reportingStep != null)
+			{
+				if(timeField == WorklistItemField.ReportPartPreliminaryTime)
+					return reportingStep.ReportPart.PreliminaryTime;
+
+				if(timeField == WorklistItemField.ReportPartCompletedTime)
+					return reportingStep.ReportPart.CompletedTime;
+			}
+
+			return base.GetTimeValue(step, timeField);
 		}
 	}
 }
