@@ -135,6 +135,9 @@
   <data name="MenuSynchronizeStacking" xml:space="preserve">
     <value>Synchronize Stacking</value>
   </data>
+  <data name="MenuSynchronizeStackingLinkStudies" xml:space="preserve">
+    <value>Link/Unlink Studies</value>
+  </data>
   <data name="PrefixSpatialLocatorTool" xml:space="preserve">
     <value>Spatial Locator</value>
   </data>
@@ -155,6 +158,9 @@
   </data>
   <data name="ToolbarSynchronizeStacking" xml:space="preserve">
     <value>Synchronize Stacking</value>
+  </data>
+  <data name="ToolbarSynchronizeStackingLinkStudies" xml:space="preserve">
+    <value>Link/Unlink Studies</value>
   </data>
   <data name="TooltipReferenceLines" xml:space="preserve">
     <value>Reference Lines</value>

@@ -762,4 +762,13 @@ Please check the log for more details.</value>
   <data name="MessageNotEnoughImageVisible" xml:space="preserve">
     <value>There is not enough of the selected image visible to match the scale.</value>
   </data>
+  <data name="ToolbarClearCustomShutters" xml:space="preserve">
+    <value>Clear Custom Shutters</value>
+  </data>
+  <data name="ToolbarDeleteAllAnnotations" xml:space="preserve">
+    <value>Delete All Annotations</value>
+  </data>
+  <data name="ToolbarDrawShutter" xml:space="preserve">
+    <value>Draw Shutter</value>
+  </data>
 </root>

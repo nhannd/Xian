@@ -1468,11 +1468,38 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clear Custom Shutters.
+        /// </summary>
+        internal static string ToolbarClearCustomShutters {
+            get {
+                return ResourceManager.GetString("ToolbarClearCustomShutters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete All Annotations.
+        /// </summary>
+        internal static string ToolbarDeleteAllAnnotations {
+            get {
+                return ResourceManager.GetString("ToolbarDeleteAllAnnotations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DICOM Overlay(s).
         /// </summary>
         internal static string ToolbarDicomOverlay {
             get {
                 return ResourceManager.GetString("ToolbarDicomOverlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Draw Shutter.
+        /// </summary>
+        internal static string ToolbarDrawShutter {
+            get {
+                return ResourceManager.GetString("ToolbarDrawShutter", resourceCulture);
             }
         }
         

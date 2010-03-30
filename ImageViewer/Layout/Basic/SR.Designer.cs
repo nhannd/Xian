@@ -359,6 +359,15 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Survey/Explode.
+        /// </summary>
+        public static string ToolbarExplodeImageBox {
+            get {
+                return ResourceManager.GetString("ToolbarExplodeImageBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Image Box Layout.
         /// </summary>
         public static string ToolbarLayoutBoxesChooser {

@@ -217,6 +217,9 @@ Alternately, the study can be brought back online by a PACS administrator.</valu
   <data name="TitleLayoutManager" xml:space="preserve">
     <value>Layout Manager</value>
   </data>
+  <data name="ToolbarExplodeImageBox" xml:space="preserve">
+    <value>Survey/Explode</value>
+  </data>
   <data name="ToolbarLayoutBoxesChooser" xml:space="preserve">
     <value>Image Box Layout</value>
   </data>
