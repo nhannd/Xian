@@ -98,7 +98,12 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             throw new Exception("The method or operation is not implemented.");
         }
 
-        public TEntity Load<TEntity>(EntityRef entityRef) where TEntity : Entity
+		public Entity Load(EntityRef entityRef, EntityLoadFlags flags)
+		{
+			throw new Exception("The method or operation is not implemented.");
+		}
+
+		public TEntity Load<TEntity>(EntityRef entityRef) where TEntity : Entity
         {
             throw new Exception("The method or operation is not implemented.");
         }
