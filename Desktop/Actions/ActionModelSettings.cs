@@ -203,6 +203,12 @@ namespace ClearCanvas.Desktop.Actions
 					xmlActionModel.AppendChild(separatorTemplate.Clone());
 				}
 			}
+
+			if (!_temporary)
+			{
+				this.ActionModelsXml = _actionModelXmlDoc;
+				this.Save();
+			}
 		}
 
 		public void Export(XmlWriter writer)
