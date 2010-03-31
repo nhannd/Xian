@@ -70,7 +70,7 @@ namespace ClearCanvas.Desktop.Actions
 		/// </remarks>
         /// <param name="namespace">A namespace to qualify the site.</param>
         /// <param name="site">The site.</param>
-        /// <param name="actions">The set of actions to include.</param>
+        /// <param name="actions">The set of actions to include. This set should be prefiltered on <paramref name="site"/>.</param>
         /// <returns>An <see cref="ActionModelNode"/> representing the root of the action model.</returns>
         public ActionModelRoot BuildAndSynchronize(string @namespace, string site, IActionSet actions)
         {
@@ -99,7 +99,7 @@ namespace ClearCanvas.Desktop.Actions
 		/// </remarks>
 		/// <param name="namespace">A namespace to qualify the site.</param>
 		/// <param name="site">The site.</param>
-		/// <param name="actions">The set of actions to include.</param>
+		/// <param name="actions">The set of actions to include. This set should be prefiltered on <paramref name="site"/>.</param>
 		/// <returns>An <see cref="ActionModelNode"/> representing the root of the action model.</returns>
 		public ActionModelRoot BuildAbstractActionModel(string @namespace, string site, IActionSet actions)
 		{
@@ -112,7 +112,11 @@ namespace ClearCanvas.Desktop.Actions
 			IDictionary<string, IAction> actionMap = BuildActionMap(actions);
 
 			XmlElement xmlActionModel = FindXmlActionModel(actionModelId);
-			if (xmlActionModel != null)
+			if (xmlActionModel == null)
+			{
+				xmlActionModel = Synchronize(actionModelId, actionMap);
+			}
+			else
 			{
 				List<XmlElement> childNodes = GetActionNodeList(xmlActionModel);
 				List<IAction> abstractActions = new List<IAction>(childNodes.Count);

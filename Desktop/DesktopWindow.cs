@@ -480,13 +480,19 @@ namespace ClearCanvas.Desktop
         /// </summary>
         private ActionModelNode BuildActionModel(string site)
         {
+        	string @namespace = typeof (DesktopWindow).FullName;
+
             IActionSet actions = this.DesktopTools.Actions;
             if (this.ActiveWorkspace != null)
             {
                 actions = actions.Union(this.Workspaces.ActiveWorkspace.Actions);
+				if (this.ActiveWorkspace.Component is IApplicationComponent)
+				{
+					@namespace = ((IApplicationComponent) this.ActiveWorkspace.Component).ActionModelNamespace ?? @namespace;
+				}
             }
 
-            return ActionModelRoot.CreateModel(typeof(DesktopWindow).FullName, site, actions);
+			return ActionModelRoot.CreateModel(@namespace, site, actions);
         }
 
 
