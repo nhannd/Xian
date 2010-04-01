@@ -300,7 +300,7 @@ namespace ClearCanvas.Desktop
         public virtual void Insert(int index, TItem item)
         {
             _list.Insert(index, item);
-            NotifyItemsChanged(ItemChangeType.ItemInserted, index, default(TItem));
+            NotifyItemsChanged(ItemChangeType.ItemInserted, index, item);
         }
 
 		/// <summary>

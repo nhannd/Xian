@@ -149,6 +149,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._treeCtrl.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this._treeCtrl_BeforeSelect);
 			this._treeCtrl.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this._treeCtrl_AfterExpand);
 			this._treeCtrl.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this._treeCtrl_ItemDrag);
+			this._treeCtrl.ForeColorChanged += new System.EventHandler(this._treeCtrl_ForeColorChanged);
 			// 
 			// _contextMenu
 			// 

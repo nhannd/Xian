@@ -112,10 +112,11 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         /// <param name="dropData"></param>
         /// <param name="kind"></param>
+        /// <param name="position"></param>
         /// <returns></returns>
-        public DragDropKind CanAcceptDrop(object dropData, DragDropKind kind)
+        public DragDropKind CanAcceptDrop(object dropData, DragDropKind kind, DragDropPosition position)
         {
-            return _parentTree.Binding.CanAcceptDrop(_item, dropData, kind);
+            return _parentTree.Binding.CanAcceptDrop(_item, dropData, kind, position);
         }
 
 		/// <summary>
@@ -131,10 +132,11 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// Asks the item to accept the specified drop
         /// </summary>
         /// <param name="dropData"></param>
-        /// <param name="kind"></param>
-        public DragDropKind AcceptDrop(object dropData, DragDropKind kind)
+		/// <param name="kind"></param>
+		/// <param name="position"></param>
+		public DragDropKind AcceptDrop(object dropData, DragDropKind kind, DragDropPosition position)
         {
-            return _parentTree.Binding.AcceptDrop(_item, dropData, kind);
+			return _parentTree.Binding.AcceptDrop(_item, dropData, kind, position);
         }
 
 		private void UpdateDisplay(ImageList treeViewImageList)

@@ -51,4 +51,25 @@ namespace ClearCanvas.Desktop
 		/// </summary>
 		Copy
     }
+
+	/// <summary>
+	/// Enumeration of values indicating whether an object was drag-dropped before or after the target.
+	/// </summary>
+	public enum DragDropPosition
+	{
+		/// <summary>
+		/// Indicates that the object was dragged to the drop target (neither before nor after).
+		/// </summary>
+		Default,
+
+		/// <summary>
+		/// Indicates that the object was dragged to a point immediately before the drop target.
+		/// </summary>
+		Before,
+
+		/// <summary>
+		/// Indicates that the object was dragged to a point immediately after the drop target.
+		/// </summary>
+		After
+	}
 }

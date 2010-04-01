@@ -32,6 +32,7 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -79,12 +80,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private BindingTreeNode _dropTargetNode;
         private DragDropEffects _dropEffect;
+    	private DragDropPosition _dropPosition;
 
         private ActionModelNode _toolbarModel;
         private ActionModelNode _menuModel;
 
     	private IconSize _iconResourceSize = ClearCanvas.Desktop.IconSize.Medium;
         private bool _selectionDisabled = false;
+    	private bool _allowDropToIndex = false;
 
         private bool _isLoaded = false;
 
@@ -271,7 +274,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		#region Protected Members
 
-		internal TreeView TreeView
+		protected internal TreeView TreeView
 		{
 			get { return _treeCtrl; }
 		}
@@ -279,6 +282,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 		#endregion
 
         #region Design time properties
+
+    	[DefaultValue(false)]
+    	public bool AllowDropToIndex
+    	{
+			get { return this.AllowDrop && _allowDropToIndex; }
+			set { _allowDropToIndex = value; }
+    	}
 
         [DefaultValue(true)]
         public bool ShowToolbar
@@ -556,6 +566,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 			EventsHelper.Fire(_nodeMouseClicked, this, e);
 		}
 
+    	private void _treeCtrl_ForeColorChanged(object sender, EventArgs e)
+    	{
+    		Color color = _treeCtrl.ForeColor;
+    		SendMessage(_treeCtrl.Handle, (int) WindowsMessages.TVM_SETINSERTMARKCOLOR, IntPtr.Zero, new IntPtr(((((color.B << 8) + color.G) << 8) + color.R)));
+    	}
+
 		#endregion
 
         #region Drag Drop support
@@ -569,6 +585,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             // clear any record of a previous drop target node
             _dropTargetNode = null;
             _dropEffect = DragDropEffects.None;
+			_dropPosition = DragDropPosition.Default;
 
             base.OnDragEnter(e);
         }
@@ -580,27 +597,40 @@ namespace ClearCanvas.Desktop.View.WinForms
         protected override void OnDragOver(DragEventArgs e)
         {
             // determine the node under the cursor
-            BindingTreeNode node = (BindingTreeNode)_treeCtrl.GetNodeAt(_treeCtrl.PointToClient(new Point(e.X, e.Y)));
+			Point cursor = _treeCtrl.PointToClient(new Point(e.X, e.Y));
+            BindingTreeNode node = (BindingTreeNode)_treeCtrl.GetNodeAt(cursor);
  
             // determine what effect the user is trying to accomplish
             DragDropEffects desiredEffect = GetDragDropDesiredEffect(e);
 
-            // optimization: only care if different than the last known drop-target node, or different desired effect
-            if (node != _dropTargetNode || desiredEffect != _dropEffect)
+			// determine if the user is trying to drag to the top, middle or bottom areas of the node
+        	DragDropPosition position = DragDropPosition.Default;
+        	if (this.AllowDropToIndex && node != null)
+        	{
+        		float result = 1f*(cursor.Y - node.Bounds.Y)/node.Bounds.Height;
+        		if (result <= 0.2f)
+        			position = DragDropPosition.Before;
+        		else if (result >= 0.8f)
+        			position = DragDropPosition.After;
+        	}
+
+            // optimization: only care if different than the last known drop-target node, or different desired effect, or different drop position
+        	if (node != _dropTargetNode || desiredEffect != _dropEffect || position != _dropPosition)
             {
                 _treeCtrl.BeginUpdate();    // suspend drawing
 
                 // un-highlight the last known drop-target node
-                HighlightNode(_dropTargetNode, false);
+				HighlightNode(_dropTargetNode, false);
+				SetInsertMark(_dropTargetNode, DragDropPosition.Default);
 
                 // set the drop target node to this node
                 _dropTargetNode = node;
                 _dropEffect = desiredEffect;
-
+				_dropPosition = position;
 
                 // check if drop target node exists and what kind of operation it will accept
                 DragDropKind acceptableKind = (_dropTargetNode == null) ?
-                    DragDropKind.None : _dropTargetNode.CanAcceptDrop(GetDragDropData(e), GetDragDropKind(desiredEffect));
+                    DragDropKind.None : _dropTargetNode.CanAcceptDrop(GetDragDropData(e), GetDragDropKind(desiredEffect), _dropPosition);
 
                 // display the appropriate effect cue based on the result
                 e.Effect = GetDragDropEffect(acceptableKind);
@@ -608,7 +638,8 @@ namespace ClearCanvas.Desktop.View.WinForms
                 // if the drop target is valid and willing to accept data, highlight it
                 if (acceptableKind != DragDropKind.None)
                 {
-                    HighlightNode(_dropTargetNode, true);
+					HighlightNode(_dropTargetNode, _dropPosition == DragDropPosition.Default);
+					SetInsertMark(_dropTargetNode, _dropPosition);
                 }
 
                 _treeCtrl.EndUpdate(); // resume drawing
@@ -631,7 +662,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 					object dragDropData = GetDragDropData(e);
 					
 					// ask the node to accept the drop
-					DragDropKind result = _dropTargetNode.AcceptDrop(dragDropData, GetDragDropKind(e.Effect));
+					DragDropKind result = _dropTargetNode.AcceptDrop(dragDropData, GetDragDropKind(e.Effect), _dropPosition);
 
                     // be sure to set the resulting effect in the event args, so that it gets communicated
                     // back to the initiator of the drag drop operation
@@ -651,11 +682,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 
                 // remove highlighting from drop target node
                 HighlightNode(_dropTargetNode, false);
+            	SetInsertMark(_dropTargetNode, DragDropPosition.Default);
             }
 
             // clear the drop target node
             _dropTargetNode = null;
             _dropEffect = DragDropEffects.None;
+        	_dropPosition = DragDropPosition.Default;
 
             base.OnDragDrop(e);
         }
@@ -666,15 +699,35 @@ namespace ClearCanvas.Desktop.View.WinForms
             if (_dropTargetNode != null)
             {
                 // remove highlighting from drop target node
-                HighlightNode(_dropTargetNode, false);
+				HighlightNode(_dropTargetNode, false);
+				SetInsertMark(_dropTargetNode, DragDropPosition.Default);
             }
 
             // clear the drop target node
             _dropTargetNode = null;
             _dropEffect = DragDropEffects.None;
+        	_dropPosition = DragDropPosition.Default;
 
             base.OnDragLeave(e);
         }
+
+    	[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
+    	private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
+		/// <summary>
+		/// Sets or unsets an insertion mark before or after the specified node. <see cref="DragDropPosition.Default"/> clears the insertion mark.
+		/// </summary>
+		/// <param name="node"></param>
+		/// <param name="position"></param>
+		private void SetInsertMark(TreeNode node, DragDropPosition position)
+		{
+			IntPtr drawAfter = new IntPtr(position == DragDropPosition.After ? 1 : 0);
+			IntPtr nodeHandle = IntPtr.Zero;
+			if (node != null && position != DragDropPosition.Default)
+				nodeHandle = node.Handle;
+
+			SendMessage(_treeCtrl.Handle, (int) WindowsMessages.TVM_SETINSERTMARK, drawAfter, nodeHandle);
+		}
 
         /// <summary>
         /// Highlights or un-highlights the specified node, without altering the current selection
