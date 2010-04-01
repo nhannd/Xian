@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using NHibernate;
 using NHibernate.Engine;
 using NHibernate.UserTypes;
@@ -46,7 +44,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 	{
 		#region ICompositeUserType Members
 
-		public object Assemble(object cached, NHibernate.Engine.ISessionImplementor session, object owner)
+		public object Assemble(object cached, ISessionImplementor session, object owner)
 		{
 			return DeepCopy(cached);
 		}
@@ -56,7 +54,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 			return DeepCopy(original);
 		}
 
-		public object Disassemble(object value, NHibernate.Engine.ISessionImplementor session)
+		public object Disassemble(object value, ISessionImplementor session)
 		{
 			return DeepCopy(value);
 		}
@@ -67,7 +65,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 				return null;
 
 			var original = (ExtendedPropertyValue)value;  // throws InvalidCast... if wrong type of object
-			return (ExtendedPropertyValue)original.Clone();
+			return original.Clone();
 		}
 
 		public new bool Equals(object x, object y)
@@ -84,7 +82,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 		{
 			get
 			{
-				return new string[] { "Value", "SmallValue" };
+				return new[] { "Value", "SmallValue" };
 			}
 		}
 
@@ -132,7 +130,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 			get { return false; }
 		}
 
-		public object NullSafeGet(System.Data.IDataReader dr, string[] names, NHibernate.Engine.ISessionImplementor session, object owner)
+		public object NullSafeGet(System.Data.IDataReader dr, string[] names, ISessionImplementor session, object owner)
 		{
 			var value = (string)NHibernateUtil.StringClob.NullSafeGet(dr, names[0], session, owner);
 			//var smallValue = (string)NHibernateUtil.String.NullSafeGet(dr, names[1], session, owner);
@@ -140,12 +138,12 @@ namespace ClearCanvas.Enterprise.Hibernate
 			return new ExtendedPropertyValue(value);
 		}
 
-		public void NullSafeSet(System.Data.IDbCommand cmd, object value, int index, NHibernate.Engine.ISessionImplementor session)
+		public void NullSafeSet(System.Data.IDbCommand cmd, object value, int index, ISessionImplementor session)
 		{
 			var xpv = (ExtendedPropertyValue)value;
 
-			NHibernateUtil.DateTime.NullSafeSet(cmd, xpv == null ? null : xpv.Value, index, session);
-			NHibernateUtil.DateTime.NullSafeSet(cmd, xpv == null ? null : xpv.SmallValue, index + 1, session);
+			NHibernateUtil.StringClob.NullSafeSet(cmd, xpv == null ? null : xpv.Value, index, session);
+			NHibernateUtil.String.NullSafeSet(cmd, xpv == null ? null : xpv.SmallValue, index + 1, session);
 		}
 
 

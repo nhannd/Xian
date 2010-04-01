@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Text;
 using System.Xml;
 using ClearCanvas.Common.Utilities;
 
@@ -13,15 +11,12 @@ namespace ClearCanvas.Enterprise.Core
 	/// ExtendedPropertyValue component
 	/// </summary>
 	[Serializable]
-	public partial class ExtendedPropertyValue : IEquatable<ExtendedPropertyValue>, ICloneable
+	public class ExtendedPropertyValue : IEquatable<ExtendedPropertyValue>, ICloneable
 	{
 		private const int MaxSmallValueLength = 255;
 
-		private string _value;
-		private string _smallValue;
-
-		public string Value { get { return _value; } }
-		public string SmallValue { get { return _smallValue; } }
+		public string Value { get; private set; }
+		public string SmallValue { get; private set; }
 
 
 		public ExtendedPropertyValue(string value)
@@ -52,28 +47,28 @@ namespace ClearCanvas.Enterprise.Core
 
 		public string GetString()
 		{
-			return _value;
+			return Value;
 		}
 
 		public bool GetBoolean()
 		{
-			return bool.Parse(_value);
+			return bool.Parse(Value);
 		}
 
 		public int GetInteger()
 		{
-			return int.Parse(_value);
+			return int.Parse(Value);
 		}
 
 		public DateTime? GetDateTime()
 		{
-			return string.IsNullOrEmpty(_value) ? null : DateTimeUtils.ParseISO(_value);
+			return string.IsNullOrEmpty(Value) ? null : DateTimeUtils.ParseISO(Value);
 		}
 
 		public XmlDocument GetXml()
 		{
 			var xml = new XmlDocument();
-			xml.LoadXml(_value);
+			xml.LoadXml(Value);
 			return xml;
 		}
 
@@ -81,7 +76,7 @@ namespace ClearCanvas.Enterprise.Core
 
 		public bool Equals(ExtendedPropertyValue that)
 		{
-			return that != null && this._value == that._value;
+			return that != null && this.Value == that.Value;
 		}
 
 		#endregion
@@ -90,7 +85,7 @@ namespace ClearCanvas.Enterprise.Core
 
 		public override string ToString()
 		{
-			return _value;
+			return Value;
 		}
 
 		public override bool Equals(object that)
@@ -100,7 +95,7 @@ namespace ClearCanvas.Enterprise.Core
 
 		public override int GetHashCode()
 		{
-			return _value == null ? 0 : _value.GetHashCode();
+			return Value == null ? 0 : Value.GetHashCode();
 		}
 
 		#endregion
@@ -109,15 +104,15 @@ namespace ClearCanvas.Enterprise.Core
 
 		public object Clone()
 		{
-			return new ExtendedPropertyValue(_value);
+			return new ExtendedPropertyValue(Value);
 		}
 
 		#endregion
 
 		private void SetInternal(string value)
 		{
-			_value = value;
-			_smallValue = value.Length <= MaxSmallValueLength ? value : value.Substring(0, MaxSmallValueLength);
+			Value = value;
+			SmallValue = value == null ? null : (value.Length <= MaxSmallValueLength ? value : value.Substring(0, MaxSmallValueLength));
 		}
 	}
 }

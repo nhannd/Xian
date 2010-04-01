@@ -274,6 +274,8 @@ namespace ClearCanvas.Enterprise.Core
             // for all other values, including components (ValueObject subclasses)
 			// just call ToString() and truncate to MaxStringLength chars
         	string s = value.ToString();
+			if (s == null)
+				return NullValue;
 			return (s.Length > MaxStringLength) ? s.Substring(0, MaxStringLength) : s;
         }
 
