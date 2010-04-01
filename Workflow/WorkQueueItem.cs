@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Workflow {
 
@@ -40,7 +41,7 @@ namespace ClearCanvas.Workflow {
     /// <summary>
     /// WorkQueueItem entity
     /// </summary>
-	public partial class WorkQueueItem : ClearCanvas.Enterprise.Core.Entity
+	public partial class WorkQueueItem
 	{
 		public WorkQueueItem(string type) : this (
 			Platform.Time,
@@ -52,7 +53,7 @@ namespace ClearCanvas.Workflow {
 			null,
 			0,
 			null,
-			new Dictionary<string, string>())
+			new Dictionary<string, ExtendedPropertyValue>())
 		{
 		}
 
@@ -112,7 +113,7 @@ namespace ClearCanvas.Workflow {
 			EntityRef practitionerRef,
 			EntityRef contactPointRef)
 		{
-			WorkQueueItem workQueueItem = new WorkQueueItem("Mail/Fax Report");
+			var workQueueItem = new WorkQueueItem("Mail/Fax Report");
 			workQueueItem.ExtendedProperties.Add("AccessionNumber", accessionNumber);
 			workQueueItem.ExtendedProperties.Add("ReportOID", reportRef.ToString(false, false));
 			workQueueItem.ExtendedProperties.Add("ExternalPractitionerOID", practitionerRef.ToString(false, false));

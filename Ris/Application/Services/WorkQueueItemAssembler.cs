@@ -29,7 +29,6 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Workflow;
@@ -70,7 +69,7 @@ namespace ClearCanvas.Ris.Application.Services
 			detail.ProcessedTime = workQueueItem.ProcessedTime;
 			detail.FailureCount = workQueueItem.FailureCount;
 			detail.FailureDescription = workQueueItem.FailureDescription;
-			detail.ExtendedProperties = new Dictionary<string, string>(workQueueItem.ExtendedProperties);
+			detail.ExtendedProperties = ExtendedPropertyUtils.GetStrings(workQueueItem.ExtendedProperties);
 
 			return detail;
 		}

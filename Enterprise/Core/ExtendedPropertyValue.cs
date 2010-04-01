@@ -71,6 +71,26 @@ namespace ClearCanvas.Enterprise.Core
 			xml.LoadXml(Value);
 			return xml;
 		}
+		
+		/// <summary>
+		/// User-defined conversion from string to ExtendedPropertyValue.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public static implicit operator ExtendedPropertyValue(string value)
+		{
+			return new ExtendedPropertyValue(value);
+		}
+
+		/// <summary>
+		/// User-defined conversion from ExtendedPropertyValue to string.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public static implicit operator string(ExtendedPropertyValue value)
+		{
+			return value.ToString();
+		}
 
 		#region IEquatable methods
 

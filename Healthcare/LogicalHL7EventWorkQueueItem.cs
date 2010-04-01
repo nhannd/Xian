@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Workflow;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare
 {
@@ -66,7 +67,7 @@ namespace ClearCanvas.Healthcare
 			get { return _item; }
 		}
 
-		public IDictionary<string, string> ExtendedProperties
+		public IDictionary<string, ExtendedPropertyValue> ExtendedProperties
 		{
 			get { return _item.ExtendedProperties; }
 		}
