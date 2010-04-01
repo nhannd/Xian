@@ -784,6 +784,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		private void SaveReportHelper(Dictionary<string, string> reportPartExtendedProperties, ReportingProcedureStep step, Staff supervisor, bool supervisorValidationRequired)
 		{
 			if (supervisorValidationRequired
+				&& Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.SubmitForReview)
 				&& Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.OmitSupervisor) == false
 				&& supervisor == null)
 			{

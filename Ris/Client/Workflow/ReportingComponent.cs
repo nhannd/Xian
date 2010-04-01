@@ -419,7 +419,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			this.Validation.Add(new ValidationRule("Supervisor",
 				delegate
 				{
-					var ok = _supervisor != null || Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.OmitSupervisor);
+					var ok = !this.SupervisorVisible || _supervisor != null || Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.Report.OmitSupervisor);
 					return new ValidationResult(ok, SR.MessageChooseRadiologist);
 				}));
 
