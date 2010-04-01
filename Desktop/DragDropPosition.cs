@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
@@ -31,24 +31,24 @@
 
 namespace ClearCanvas.Desktop
 {
-    /// <summary>
-    /// Enumeration of types of drag-drop operations.
-    /// </summary>
-	public enum DragDropKind
-    {
+	/// <summary>
+	/// Enumeration of values indicating whether an object was drag-dropped before or after the target.
+	/// </summary>
+	public enum DragDropPosition
+	{
 		/// <summary>
-		/// No-op.
+		/// Indicates that the object was dragged to the drop target (neither before nor after).
 		/// </summary>
-        None,
+		Default,
 
 		/// <summary>
-		/// The drag-drop operation is a move operation.
+		/// Indicates that the object was dragged to a point immediately before the drop target.
 		/// </summary>
-        Move,
-		
+		Before,
+
 		/// <summary>
-		/// The drag-drop operation is a copy operation.
+		/// Indicates that the object was dragged to a point immediately after the drop target.
 		/// </summary>
-		Copy
-    }
+		After
+	}
 }

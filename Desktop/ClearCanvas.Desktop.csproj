@@ -156,6 +156,7 @@
     <Compile Include="DialogBoxCreationArgs.cs" />
     <Compile Include="Actions\DropDownAction.cs" />
     <Compile Include="DragDropOption.cs" />
+    <Compile Include="DragDropPosition.cs" />
     <Compile Include="Factories.cs" />
     <Compile Include="FileDialogCreationArgs.cs" />
     <Compile Include="FormatSettings.Designer.cs">
