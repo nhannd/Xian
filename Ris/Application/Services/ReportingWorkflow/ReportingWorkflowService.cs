@@ -171,9 +171,9 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 					};
 		}
 
-		// TODO: change this to submit for review
 		[UpdateOperation]
 		[OperationEnablement("CanCompleteInterpretationForVerification")]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.SubmitForReview)]
 		public CompleteInterpretationForVerificationResponse CompleteInterpretationForVerification(CompleteInterpretationForVerificationRequest request)
 		{
 			var interpretation = this.PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
@@ -579,7 +579,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 		public bool CanCompleteInterpretationForVerification(ReportingWorklistItemKey itemKey)
 		{
-			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Create))
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.SubmitForReview))
 				return false;
 
 			return CanExecuteOperation(new Operations.CompleteInterpretationForVerification(), itemKey);

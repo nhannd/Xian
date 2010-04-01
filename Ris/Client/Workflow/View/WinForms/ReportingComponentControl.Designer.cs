@@ -67,7 +67,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._reportEditorPanel = new System.Windows.Forms.Panel();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this._verifyButton = new System.Windows.Forms.Button();
-			this._sendToVerifyButton = new System.Windows.Forms.Button();
+			this._submitForReviewButton = new System.Windows.Forms.Button();
 			this._sendToTranscriptionButton = new System.Windows.Forms.Button();
 			this._saveButton = new System.Windows.Forms.Button();
 			this._btnSkip = new System.Windows.Forms.Button();
@@ -196,7 +196,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.flowLayoutPanel1.AutoSize = true;
 			this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.flowLayoutPanel1.Controls.Add(this._verifyButton);
-			this.flowLayoutPanel1.Controls.Add(this._sendToVerifyButton);
+			this.flowLayoutPanel1.Controls.Add(this._submitForReviewButton);
 			this.flowLayoutPanel1.Controls.Add(this._sendToTranscriptionButton);
 			this.flowLayoutPanel1.Controls.Add(this._saveButton);
 			this.flowLayoutPanel1.Controls.Add(this._btnSkip);
@@ -220,13 +220,13 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			// _sendToVerifyButton
 			// 
-			this._sendToVerifyButton.Location = new System.Drawing.Point(84, 3);
-			this._sendToVerifyButton.Name = "_sendToVerifyButton";
-			this._sendToVerifyButton.Size = new System.Drawing.Size(83, 23);
-			this._sendToVerifyButton.TabIndex = 1;
-			this._sendToVerifyButton.Text = "For Review";
-			this._sendToVerifyButton.UseVisualStyleBackColor = true;
-			this._sendToVerifyButton.Click += new System.EventHandler(this._sendToVerifyButton_Click);
+			this._submitForReviewButton.Location = new System.Drawing.Point(84, 3);
+			this._submitForReviewButton.Name = "_sendToVerifyButton";
+			this._submitForReviewButton.Size = new System.Drawing.Size(83, 23);
+			this._submitForReviewButton.TabIndex = 1;
+			this._submitForReviewButton.Text = "For Review";
+			this._submitForReviewButton.UseVisualStyleBackColor = true;
+			this._submitForReviewButton.Click += new System.EventHandler(this._submitForReviewButton_Click);
 			// 
 			// _sendToTranscriptionButton
 			// 
@@ -406,7 +406,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         private System.Windows.Forms.Panel _bannerPanel;
         private System.Windows.Forms.Panel _reportEditorPanel;
         private System.Windows.Forms.Button _verifyButton;
-        private System.Windows.Forms.Button _sendToVerifyButton;
+        private System.Windows.Forms.Button _submitForReviewButton;
         private System.Windows.Forms.Button _sendToTranscriptionButton;
         private System.Windows.Forms.Button _saveButton;
         private System.Windows.Forms.Button _cancelButton;

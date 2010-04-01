@@ -174,9 +174,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 		bool CanVerify { get; }
 
 		/// <summary>
-		/// Gets a value indicating whether the Send To Verify operation is enabled.
+		/// Gets a value indicating whether the Submit For Review operation is enabled.
 		/// </summary>
-		bool CanSendToBeVerified { get; }
+		bool CanSubmitForReview { get; }
 
 		/// <summary>
 		/// Gets a value indicating whether the Send To Transcription operation is enabled.
@@ -210,9 +210,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 		SendToTranscription,
 
 		/// <summary>
-		/// Report is saved to be verified later.
+		/// Report is saved and submitted for another radiologist to review.
 		/// </summary>
-		SendToBeVerified,
+		SubmitForReview,
 
 		/// <summary>
 		/// Report is saved and verified immediately.
@@ -309,9 +309,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 				get { return Owner.CanVerify; }
 			}
 
-			public bool CanSendToBeVerified
+			public bool CanSubmitForReview
 			{
-				get { return Owner.CanSendToBeVerified; }
+				get { return Owner.CanSubmitForReview; }
 			}
 
 			public bool CanSendToTranscription
@@ -379,7 +379,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private bool _canCompleteInterpretationAndVerify;
 		private bool _canCompleteVerification;
-		private bool _canCompleteInterpretationForVerification;
+		private bool _canSubmitForReview;
 		private bool _canCompleteInterpretationForTranscription;
 		private bool _canSaveReport;
 
@@ -777,9 +777,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#endregion
 
-		#region Send To Be Verified
+		#region Submit For Review
 
-		public void SendToBeVerified()
+		public void SubmitForReview()
 		{
 			try
 			{
@@ -791,7 +791,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				CloseImages();
 
-				if (!_reportEditor.Save(ReportEditorCloseReason.SendToBeVerified))
+				if (!_reportEditor.Save(ReportEditorCloseReason.SubmitForReview))
 					return;
 
 				Platform.GetService<IReportingWorkflowService>(service =>
@@ -815,12 +815,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
-		public bool SendToVerifyEnabled
+		public bool SubmitForReviewEnabled
 		{
-			get { return CanSendToBeVerified; }
+			get { return CanSubmitForReview; }
 		}
 
-		public bool SendToVerifyVisible
+		public bool SubmitForReviewVisible
 		{
 			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview); }
 		}
@@ -982,11 +982,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
-		private bool CanSendToBeVerified
+		private bool CanSubmitForReview
 		{
 			get
 			{
-				return _canCompleteInterpretationForVerification;
+				return _canSubmitForReview;
 			}
 		}
 
@@ -1026,8 +1026,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 				case ReportEditorCloseReason.SendToTranscription:
 					SendToTranscription();
 					break;
-				case ReportEditorCloseReason.SendToBeVerified:
-					SendToBeVerified();
+				case ReportEditorCloseReason.SubmitForReview:
+					SubmitForReview();
 					break;
 				case ReportEditorCloseReason.Verify:
 					Verify();
@@ -1095,7 +1095,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_canCompleteInterpretationAndVerify =
 					enablementResponse.OperationEnablementDictionary["CompleteInterpretationAndVerify"];
 				_canCompleteVerification = enablementResponse.OperationEnablementDictionary["CompleteVerification"];
-				_canCompleteInterpretationForVerification =
+				_canSubmitForReview =
 					enablementResponse.OperationEnablementDictionary["CompleteInterpretationForVerification"];
 				_canCompleteInterpretationForTranscription =
 					enablementResponse.OperationEnablementDictionary["CompleteInterpretationForTranscription"];
@@ -1317,7 +1317,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			_canCompleteInterpretationAndVerify = false;
 			_canCompleteVerification = false;
-			_canCompleteInterpretationForVerification = false;
+			_canSubmitForReview = false;
 			_canCompleteInterpretationForTranscription = false;
 			_canSaveReport = false;
 

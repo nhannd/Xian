@@ -81,7 +81,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_reportNextItem.DataBindings.Add("Enabled", _component, "ReportNextItemEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_verifyButton.DataBindings.Add("Enabled", _component, "VerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
-			_sendToVerifyButton.DataBindings.Add("Enabled", _component, "SendToVerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
+			_submitForReviewButton.DataBindings.Add("Enabled", _component, "SubmitForReviewEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
 			_sendToTranscriptionButton.DataBindings.Add("Enabled", _component, "SendToTranscriptionEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
 
 			_supervisor.LookupHandler = _component.SupervisorLookupHandler;
@@ -92,7 +92,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_rememberSupervisorCheckbox.Visible = _component.RememberSupervisorVisible;
 
 			_verifyButton.Visible = _component.VerifyReportVisible;
-			_sendToVerifyButton.Visible = _component.SendToVerifyVisible;
+			_submitForReviewButton.Visible = _component.SubmitForReviewVisible;
 			_sendToTranscriptionButton.Visible = _component.SendToTranscriptionVisible;
 
 			_btnSkip.DataBindings.Add("Enabled", _component, "SkipEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -120,11 +120,11 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			}
 		}
 
-		private void _sendToVerifyButton_Click(object sender, System.EventArgs e)
+		private void _submitForReviewButton_Click(object sender, System.EventArgs e)
 		{
 			using (new CursorManager(Cursors.WaitCursor))
 			{
-				_component.SendToBeVerified();
+				_component.SubmitForReview();
 			}
 		}
 

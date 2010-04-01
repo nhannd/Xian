@@ -38,7 +38,6 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -103,10 +102,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 	}
 
-	[MenuAction("apply", "folderexplorer-items-contextmenu/Send for Review", "Apply")]
+	[MenuAction("apply", "folderexplorer-items-contextmenu/Submit for Review", "Apply")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[IconSet("apply", IconScheme.Colour, "Icons.SubmitForReviewSmall.png", "Icons.SubmitForReviewMedium.png", "Icons.SubmitForReviewLarge.png")]
-	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
+	[ActionPermission("apply", Application.Common.AuthorityTokens.Workflow.Report.Create, Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview)]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
 	public class CompleteInterpretationForVerificationTool : ReportingWorkflowItemTool
 	{
