@@ -78,7 +78,7 @@ namespace ClearCanvas.Ris.Application.Services
 				prac.IsVerified,
 				prac.LastVerifiedTime,
 				contactPointDetails,
-				new Dictionary<string, string>(prac.ExtendedProperties),
+				ExtendedPropertyUtils.GetStrings(prac.ExtendedProperties),
 				prac.Deactivated);
 
 			return detail;
@@ -119,12 +119,7 @@ namespace ClearCanvas.Ris.Application.Services
 
 			syncHelper.Synchronize(prac.ContactPoints, detail.ContactPoints);
 
-
-			// explicitly copy each pair, so that we don't remove any properties that the client may have removed
-			foreach (var pair in detail.ExtendedProperties)
-			{
-				prac.ExtendedProperties[pair.Key] = pair.Value;
-			}
+			ExtendedPropertyUtils.Update(prac.ExtendedProperties, detail.ExtendedProperties);
 		}
 
 		public ExternalPractitionerContactPointSummary CreateExternalPractitionerContactPointSummary(ExternalPractitionerContactPoint contactPoint)

@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Application.Services
 				CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
 					staff.Groups,
 					delegate(StaffGroup group) { return groupAssembler.CreateSummary(group); }),
-				new Dictionary<string, string>(staff.ExtendedProperties),
+				ExtendedPropertyUtils.GetStrings(staff.ExtendedProperties),
 				staff.Deactivated,
 				staff.UserName);
 		}
@@ -129,11 +129,7 @@ namespace ClearCanvas.Ris.Application.Services
 				}
 			}
 
-			// explicitly copy each pair, so that we don't remove any properties that the client may have removed
-			foreach (KeyValuePair<string, string> pair in detail.ExtendedProperties)
-			{
-				staff.ExtendedProperties[pair.Key] = pair.Value;
-			}
+			ExtendedPropertyUtils.Update(staff.ExtendedProperties, detail.ExtendedProperties);
 
 			if (updateElectiveGroups)
 			{

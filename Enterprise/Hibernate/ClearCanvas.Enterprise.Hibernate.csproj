@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{4CED35C2-4659-492D-8F85-F560E469BE11}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -64,6 +64,7 @@
     <Compile Include="Broker.cs" />
     <Compile Include="ChangeRecord.cs" />
     <Compile Include="ChangeTracker.cs" />
+    <Compile Include="ExtendedPropertyValueHbm.cs" />
     <Compile Include="Ddl\AdditionalIndexProcessor.cs" />
     <Compile Include="Ddl\DdlScriptGenerator.cs" />
     <Compile Include="Ddl\EnumForeignKeyProcessor.cs" />

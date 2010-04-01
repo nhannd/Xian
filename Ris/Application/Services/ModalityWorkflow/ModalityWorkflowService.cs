@@ -204,11 +204,8 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 		{
 			var mpps = this.PersistenceContext.Load<ModalityPerformedProcedureStep>(request.Mpps.ModalityPerformendProcedureStepRef);
 
-			// copy extended properties (should this be in an assembler?)
-			foreach (var pair in request.Mpps.ExtendedProperties)
-			{
-				mpps.ExtendedProperties[pair.Key] = pair.Value;
-			}
+			// update extended properties (should this be in an assembler?)
+			ExtendedPropertyUtils.Update(mpps.ExtendedProperties, request.Mpps.ExtendedProperties);
 
 			var dicomSeriesAssembler = new DicomSeriesAssembler();
 			dicomSeriesAssembler.SynchronizeDicomSeries(mpps, request.Mpps.DicomSeries, this.PersistenceContext);
@@ -238,7 +235,8 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 		{
 			var mpps = this.PersistenceContext.Load<ModalityPerformedProcedureStep>(request.Mpps.ModalityPerformendProcedureStepRef);
 
-			CopyProperties(mpps.ExtendedProperties, request.Mpps.ExtendedProperties);
+			// update extended properties (should this be in an assembler?)
+			ExtendedPropertyUtils.Update(mpps.ExtendedProperties, request.Mpps.ExtendedProperties);
 
 			var dicomSeriesAssembler = new DicomSeriesAssembler();
 			dicomSeriesAssembler.SynchronizeDicomSeries(mpps, request.Mpps.DicomSeries, this.PersistenceContext);
@@ -280,7 +278,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 			return new LoadOrderDocumentationDataResponse
 			{
 				OrderRef = order.GetRef(),
-				OrderExtendedProperties = new Dictionary<string, string>(order.ExtendedProperties),
+				OrderExtendedProperties = ExtendedPropertyUtils.GetStrings(order.ExtendedProperties),
 				OrderNotes = CollectionUtils.Map<OrderNote, OrderNoteDetail>(
 					OrderNote.GetNotesForOrder(order),
 					note => noteAssembler.CreateOrderNoteDetail(note, PersistenceContext)),
@@ -294,13 +292,13 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 		{
 			var order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
-			CopyProperties(order.ExtendedProperties, request.OrderExtendedProperties);
+			ExtendedPropertyUtils.Update(order.ExtendedProperties, request.OrderExtendedProperties);
 
 			var dicomSeriesAssembler = new DicomSeriesAssembler();
 			foreach (var detail in request.ModalityPerformedProcedureSteps)
 			{
 				var mpps = this.PersistenceContext.Load<ModalityPerformedProcedureStep>(detail.ModalityPerformendProcedureStepRef);
-				CopyProperties(mpps.ExtendedProperties, detail.ExtendedProperties);
+				ExtendedPropertyUtils.Update(mpps.ExtendedProperties, detail.ExtendedProperties);
 				dicomSeriesAssembler.SynchronizeDicomSeries(mpps, detail.DicomSeries, this.PersistenceContext);
 			}
 
@@ -406,14 +404,6 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 		#endregion
 
 		#region Private Members
-
-		private static void CopyProperties(IDictionary<string, string> dest, IDictionary<string, string> source)
-		{
-			foreach (var kvp in source)
-			{
-				dest[kvp.Key] = kvp.Value;
-			}
-		}
 
 		private InterpretationStep GetPendingInterpretationStep(Procedure procedure)
 		{

@@ -67,7 +67,10 @@
 		<map name="ExtendedProperties" lazy="true" table="VisitExtendedProperty_">
 			<key column="VisitOID_"/>
 			<index column="Name_" type="String"/>
-			<element column="Value_" type="StringClob" length="65000"/>
-		</map>
+      <element type="ClearCanvas.Enterprise.Hibernate.ExtendedPropertyValueHbm, ClearCanvas.Enterprise.Hibernate">
+        <column name="Value_" length="65000"/>
+        <column name="SmallValue_" length="128"/>
+      </element>
+    </map>
 	</class>
 </hibernate-mapping>

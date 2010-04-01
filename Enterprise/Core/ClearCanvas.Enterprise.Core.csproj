@@ -75,6 +75,8 @@
     <Compile Include="Audit\AuditService.cs" />
     <Compile Include="ExtendedPropertiesSearchCriteria.cs" />
     <Compile Include="EntityChangeSetPublisher.cs" />
+    <Compile Include="ExtendedPropertyUtils.cs" />
+    <Compile Include="ExtendedPropertyValue.cs" />
     <Compile Include="IEntityChangeSetListener.cs" />
     <Compile Include="IPersistenceBrokerFactory.cs" />
     <Compile Include="Modelling\DomainObjectValidator.cs" />

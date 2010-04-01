@@ -170,7 +170,7 @@ namespace ClearCanvas.Ris.Application.Services
 
 			if (options.IncludeExtendedProperties)
 			{
-				orderDetail.ExtendedProperties = new Dictionary<string, string>(order.ExtendedProperties);
+				orderDetail.ExtendedProperties = ExtendedPropertyUtils.GetStrings(order.ExtendedProperties);
 			}
 
 			return orderDetail;

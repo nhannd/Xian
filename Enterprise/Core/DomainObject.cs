@@ -45,25 +45,63 @@ namespace ClearCanvas.Enterprise.Core
     public abstract class DomainObject
     {
         /// <summary>
-        /// In the case where this object is a proxy, returns the raw instance underlying the proxy.  This
-        /// method must be virtual for correct behaviour, however, it is not intended to be overridden by
-        /// subclasses and is not intended for use by application code.
+        /// In the case where the called instance is a proxy, returns the proxy target object.
+		/// If the called instance is not a proxy, returns this instance.
         /// </summary>
+		/// <remarks>
+		/// This method must be virtual for correct behaviour, however, it is not intended to be overridden by
+		/// subclasses and is not intended for use by application code.
+		/// </remarks>
         /// <returns></returns>
         protected virtual DomainObject GetRawInstance()
         {
+			// when called through a class proxy, the proxy method will call through to this method
+			// which ensures that "this" refers to the proxy target object, and not the proxy itself
             return this;
         }
 
         /// <summary>
-        /// Gets the domain class of this object.  Note that the domain class is not necessarily the same as the
-        /// type of this object, because this object may be a proxy.  Therefore, use this method rather
-        /// than <see cref="object.GetType"/>.
+        /// Gets the domain class of this object.
         /// </summary>
+		/// <remarks>
+		/// Note that the domain class is not necessarily the same as the type of this object,
+		/// because this object may be a proxy.  Therefore, use this method rather than
+		/// <see cref="object.GetType"/>.
+		/// </remarks>
         /// <returns></returns>
         public virtual Type GetClass()
         {
             return GetRawInstance().GetType();
         }
+
+		/// <summary>
+		/// Overridden to provide reference equality even when one of the instances is a proxy.
+		/// </summary>
+		/// <remarks>
+		/// Given an object X and a proxy X' that targets X, the comparison X == X' will return false.
+		/// Object.Equals(X, X') would also return false, because the default implementation of 
+		/// <see cref="Object.Equals"/> does a reference comparison.  In order to overcome this,
+		/// DomainObject overrides Equals to ensure that Object.Equals(X, X') returns true.
+		/// </remarks>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public override bool Equals(object obj)
+		{
+			var that = obj as DomainObject;
+			if (that == null)
+				return false;
+
+			// compare raw instances, just in case "that" is a proxy
+			return ReferenceEquals(GetRawInstance(), that.GetRawInstance());
+		}
+
+		/// <summary>
+		/// Overridden to ensure that a proxy and its target return the same hash code.
+		/// </summary>
+		/// <returns></returns>
+		public override int GetHashCode()
+		{
+			return GetRawInstance().GetHashCode();
+		}
     }
 }

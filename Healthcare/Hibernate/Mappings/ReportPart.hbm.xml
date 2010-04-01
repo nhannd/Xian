@@ -28,7 +28,10 @@
     <map name="ExtendedProperties" lazy="true" table="ReportPartExtendedProperty_">
       <key column="ReportPartOID_"/>
       <index column="Name_" type="String"/>
-      <element column="Value_" type="StringClob" length="65000"/>
+      <element type="ClearCanvas.Enterprise.Hibernate.ExtendedPropertyValueHbm, ClearCanvas.Enterprise.Hibernate">
+        <column name="Value_" length="65000"/>
+        <column name="SmallValue_" length="128"/>
+      </element>
     </map>
   </class>
 </hibernate-mapping>

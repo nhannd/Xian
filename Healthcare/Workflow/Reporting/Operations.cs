@@ -34,6 +34,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Workflow;
 using Iesi.Collections.Generic;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare.Workflow.Reporting
 {
@@ -60,10 +61,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 			public void Execute(ReportingProcedureStep step, Dictionary<string, string> reportPartExtendedProperties, Staff supervisor)
 			{
 				step.ReportPart.Supervisor = supervisor;
-				foreach (var pair in reportPartExtendedProperties)
-				{
-					step.ReportPart.ExtendedProperties[pair.Key] = pair.Value;
-				}
+				ExtendedPropertyUtils.Update(step.ReportPart.ExtendedProperties, reportPartExtendedProperties);
 			}
 
 			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)

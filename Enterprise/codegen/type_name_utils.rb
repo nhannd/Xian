@@ -35,8 +35,21 @@ class TypeNameUtils
 
     # remove the final ".Hibernate" element from the namespace
     namespace = TypeNameUtils.getNamespace(qualifiedHbmName).sub(/.Hibernate$/, "")
+	
+	# another hack - map ClearCanvas.Enterprise to ClearCanvas.Enterprise.Core
+	namespace = (namespace + ".Core") if namespace =~ /.Enterprise$/
 
     # return the qualified underlying type
     TypeNameUtils.getQualifiedName(shortName, namespace)
+  end
+  
+  # tests if the specified type name, which may be qualified, is an "EnumHbm" type
+  def TypeNameUtils.isEnumHbm(typeName)
+	TypeNameUtils.removeAssemblyQualifier(typeName) =~ /EnumHbm$/
+  end
+
+  # tests if the specified type name, which may be qualified, is an "Hbm" type
+  def TypeNameUtils.isHbm(typeName)
+	TypeNameUtils.removeAssemblyQualifier(typeName) =~ /Hbm$/
   end
 end

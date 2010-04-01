@@ -31,6 +31,7 @@
 
 using System.Collections.Generic;
 using Iesi.Collections.Generic;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare.Tests
 {
@@ -50,7 +51,7 @@ namespace ClearCanvas.Healthcare.Tests
 				new List<EmailAddress>(),
 				new List<Address>(),
 				new List<TelephoneNumber>(),
-				new Dictionary<string, string>(),
+				new Dictionary<string, ExtendedPropertyValue>(),
 				new HashedSet<StaffGroup>());
 		}
 	}

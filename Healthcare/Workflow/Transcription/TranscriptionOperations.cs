@@ -32,6 +32,7 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Workflow;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare.Workflow.Transcription
 {
@@ -90,10 +91,7 @@ namespace ClearCanvas.Healthcare.Workflow.Transcription
 		{
 			public void Execute(TranscriptionStep step, Dictionary<string, string> reportPartExtendedProperties)
 			{
-				foreach (KeyValuePair<string, string> pair in reportPartExtendedProperties)
-				{
-					step.ReportPart.ExtendedProperties[pair.Key] = pair.Value;
-				}
+				ExtendedPropertyUtils.Update(step.ReportPart.ExtendedProperties, reportPartExtendedProperties);
 			}
 
 			public void Execute(TranscriptionStep step, Dictionary<string, string> reportPartExtendedProperties, Staff supervisor)

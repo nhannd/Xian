@@ -35,6 +35,7 @@ using System.Text;
 using ClearCanvas.Workflow;
 using ClearCanvas.Common;
 using System.Collections.Generic;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare
 {
@@ -43,7 +44,7 @@ namespace ClearCanvas.Healthcare
     /// </summary>
     public abstract class PerformedProcedureStep : PerformedStep
     {
-        private IDictionary<string, string> _extendedProperties = new Dictionary<string, string>();
+		private IDictionary<string, ExtendedPropertyValue> _extendedProperties = new Dictionary<string, ExtendedPropertyValue>();
 
 
         public PerformedProcedureStep(Staff performingStaff)
@@ -60,7 +61,7 @@ namespace ClearCanvas.Healthcare
         {
         }
 
-        public virtual IDictionary<string, string> ExtendedProperties
+		public virtual IDictionary<string, ExtendedPropertyValue> ExtendedProperties
         {
             get { return _extendedProperties; }
             protected set { _extendedProperties = value; }

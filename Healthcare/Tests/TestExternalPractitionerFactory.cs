@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Iesi.Collections.Generic;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare.Tests
 {
@@ -47,7 +48,7 @@ namespace ClearCanvas.Healthcare.Tests
 				false,
 				null,
                 new HashedSet<ExternalPractitionerContactPoint>(),
-                new Dictionary<string, string>());
+                new Dictionary<string, ExtendedPropertyValue>());
         }
     }
 }

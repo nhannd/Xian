@@ -32,6 +32,7 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Workflow;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare
 {
@@ -49,7 +50,7 @@ namespace ClearCanvas.Healthcare
 		{
 			_report = owner;
 			_index = index;
-			_extendedProperties = new Dictionary<string, string>();
+			_extendedProperties = new Dictionary<string, ExtendedPropertyValue>();
 			_creationTime = Platform.Time;
 		}
 

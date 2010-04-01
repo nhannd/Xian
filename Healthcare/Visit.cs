@@ -90,10 +90,7 @@ namespace ClearCanvas.Healthcare {
 				this.Locations.Add(location);
 			}
 
-			foreach (System.Collections.Generic.KeyValuePair<string,string> pair in v.ExtendedProperties)
-			{
-				this.ExtendedProperties.Add(pair);
-			}
+			ExtendedPropertyUtils.Update(this.ExtendedProperties, v.ExtendedProperties);
 		}
 
         public virtual void Cancel()

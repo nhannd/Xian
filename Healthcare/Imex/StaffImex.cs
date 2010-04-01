@@ -124,7 +124,7 @@ namespace ClearCanvas.Healthcare.Imex
 			data.EmailAddresses = CollectionUtils.Map<EmailAddress, EmailAddressData>(entity.EmailAddresses,
 				delegate(EmailAddress a) { return new EmailAddressData(a); });
 
-			data.ExtendedProperties = new Dictionary<string, string>(entity.ExtendedProperties);
+			data.ExtendedProperties = ExtendedPropertyUtils.GetStrings(entity.ExtendedProperties);
 
 			return data;
 		}
@@ -174,13 +174,7 @@ namespace ClearCanvas.Healthcare.Imex
 				}
 			}
 
-			if (data.ExtendedProperties != null)
-			{
-				foreach (KeyValuePair<string, string> kvp in data.ExtendedProperties)
-				{
-					staff.ExtendedProperties[kvp.Key] = kvp.Value;
-				}
-			}
+			ExtendedPropertyUtils.Update(staff.ExtendedProperties, data.ExtendedProperties);
 		}
 
 		#endregion

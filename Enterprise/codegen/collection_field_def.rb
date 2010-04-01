@@ -15,7 +15,9 @@ class CollectionFieldDef < FieldDef
     @elementType = 
 	case 
 	    when @elementNode.attributes['class'] : TypeNameUtils.getQualifiedName(@elementNode.attributes['class'], defaultNamespace)
-	    when @elementNode.attributes['type'] : TypeNameUtils.getShortName(DATATYPE_MAPPINGS[@elementNode.attributes['type']] || @elementNode.attributes['type'])
+	    when @elementNode.attributes['type']
+			t = @elementNode.attributes['type']
+			TypeNameUtils.isHbm(t) ? TypeNameUtils.getTypeNameFromHbm(t) : TypeNameUtils.getShortName(DATATYPE_MAPPINGS[t] || t)
 	end
     
     # check for an index node (may or may not exist depending on collection type)

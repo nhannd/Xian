@@ -1093,5 +1093,26 @@ namespace ClearCanvas.Common.Utilities
 			}
 			return results;
 		}
+
+		public static Dictionary<K, V> MakeDictionary<T, K, V>(IEnumerable<T> target, Converter<T, K> keyFunc, Converter<T, V> valueFunc)
+		{
+			var result = new Dictionary<K, V>();
+			foreach (var item in target)
+			{
+				result.Add(keyFunc(item), valueFunc(item));
+			}
+			return result;
+		}
+
+		public static Dictionary<K2, V2> Map<K, V, K2, V2>(IDictionary<K, V> target, Converter<KeyValuePair<K, V>, KeyValuePair<K2, V2>> mapFunc)
+		{
+			var result = new Dictionary<K2, V2>();
+			foreach (var kvp in target)
+			{
+				var kvp2 = mapFunc(kvp);
+				result.Add(kvp2.Key, kvp2.Value);
+			}
+			return result;
+		}
 	}
 }

@@ -80,7 +80,10 @@
     <map name="ExtendedProperties" lazy="true" table="StaffExtendedProperty_">
       <key column="StaffOID_"/>
       <index column="Name_" type="String"/>
-      <element column="Value_" type="StringClob" length="65000"/>
+      <element type="ClearCanvas.Enterprise.Hibernate.ExtendedPropertyValueHbm, ClearCanvas.Enterprise.Hibernate">
+        <column name="Value_" length="65000"/>
+        <column name="SmallValue_" length="128"/>
+      </element>
     </map>
     <set name="Groups" table="StaffGroupStaff_" lazy="true" inverse="true">
       <key column="StaffOID_"/>

@@ -138,7 +138,7 @@ namespace ClearCanvas.Healthcare.Imex
                         return cpData;
                     });
 
-            data.ExtendedProperties = new Dictionary<string, string>(entity.ExtendedProperties);
+			data.ExtendedProperties = ExtendedPropertyUtils.GetStrings(entity.ExtendedProperties);
 
             return data;
         }
@@ -165,13 +165,7 @@ namespace ClearCanvas.Healthcare.Imex
                 }
             }
 
-            if (data.ExtendedProperties != null)
-            {
-                foreach (KeyValuePair<string, string> kvp in data.ExtendedProperties)
-                {
-                    prac.ExtendedProperties[kvp.Key] = kvp.Value;
-                }
-            }
+			ExtendedPropertyUtils.Update(prac.ExtendedProperties, data.ExtendedProperties);
         }
 
         #endregion

@@ -22,9 +22,9 @@ class FieldDefFactory
       return EntityFieldDef.new(model, fieldNode, defaultNamespace)
     elsif(fieldNode.name == 'component')
       return ComponentFieldDef.new(model, fieldNode, defaultNamespace)
-    elsif(TypeNameUtils.removeAssemblyQualifier(fieldNode.attributes['type']) =~ /EnumHbm$/)
+    elsif(TypeNameUtils.isEnumHbm(fieldNode.attributes['type']))
       return EnumFieldDef.new(model, fieldNode)
-    elsif(TypeNameUtils.removeAssemblyQualifier(fieldNode.attributes['type']) =~ /Hbm$/)
+    elsif(TypeNameUtils.isHbm(fieldNode.attributes['type']))
       return UserTypeFieldDef.new(model, fieldNode)
     else
       return PrimitiveFieldDef.new(model, fieldNode)

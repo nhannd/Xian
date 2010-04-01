@@ -81,7 +81,7 @@ namespace ClearCanvas.Ris.Application.Services
 					Locations = new List<VisitLocationDetail>(),
 					PreadmitNumber = visit.PreadmitNumber,
 					VipIndicator = visit.VipIndicator,
-					ExtendedProperties = new Dictionary<string, string>(visit.ExtendedProperties)
+					ExtendedProperties = ExtendedPropertyUtils.GetStrings(visit.ExtendedProperties)
 				};
 
 			foreach (var vl in visit.Locations)
@@ -156,11 +156,7 @@ namespace ClearCanvas.Ris.Application.Services
 				visit.AmbulatoryStatuses.Add(EnumUtils.GetEnumValue<AmbulatoryStatusEnum>(ambulatoryStatus, context));   
 			}
 
-			// explicitly copy each pair, so that we don't remove any properties that the client may have removed
-			foreach (var pair in detail.ExtendedProperties)
-			{
-				visit.ExtendedProperties[pair.Key] = pair.Value;
-			}
+			ExtendedPropertyUtils.Update(visit.ExtendedProperties, detail.ExtendedProperties);
 		}
 
 		private static VisitLocationDetail CreateVisitLocationDetail(VisitLocation vl, IPersistenceContext context)

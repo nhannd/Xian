@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 					Notes = CollectionUtils.Map<OrderNote, OrderNoteDetail>(
 						OrderNote.GetNotesForOrder(order),
 						note => noteAssembler.CreateOrderNoteDetail(note, context)),
-					ExtendedProperties = new Dictionary<string, string>(order.ExtendedProperties)
+					ExtendedProperties = ExtendedPropertyUtils.GetStrings(order.ExtendedProperties)
 				};
 
 			return requisition;
@@ -120,11 +120,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 			if (requisition.ExtendedProperties != null)
 			{
-				// copy properties individually so as not to overwrite any that were not sent by the client
-				foreach (var pair in requisition.ExtendedProperties)
-				{
-					order.ExtendedProperties[pair.Key] = pair.Value;
-				}
+				ExtendedPropertyUtils.Update(order.ExtendedProperties, requisition.ExtendedProperties);
 			}
 		}
 
