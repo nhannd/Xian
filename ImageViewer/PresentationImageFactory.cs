@@ -196,7 +196,8 @@ namespace ClearCanvas.ImageViewer
 				int frameNumber = item.FrameNumber.GetValueOrDefault(-1);
 				if (item.FrameNumber.HasValue)
 				{
-					if (frameNumber >= 0 && frameNumber < imageSop.Frames.Count)
+					// FramesCollection is a 1-based index!!!
+					if (frameNumber > 0 && frameNumber <= imageSop.Frames.Count)
 					{
 						images.Add(Create(imageSop.Frames[frameNumber]));
 					}

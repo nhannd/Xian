@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		{
 			//TODO (cr Feb 2010): Just check Count > 3?
 
-			if (!FloatComparer.AreEqual(polygon.Points[0], polygon.Points[polygon.Points.Count-1]))
+			if (!polygon.Points.IsClosed)
 				throw new ArgumentException("Supplied graphic must be a closed polygon.", "polygon");
 
 			polygon.CoordinateSystem = CoordinateSystem.Source;

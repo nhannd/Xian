@@ -153,9 +153,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties {
         /// <summary>
         ///   Looks up a localized string similar to Relevant patient history.
         /// </summary>
-        internal static string DescriptionAdditionalPatientsHistory {
+        internal static string DescriptionAdditionalPatientHistory {
             get {
-                return ResourceManager.GetString("DescriptionAdditionalPatientsHistory", resourceCulture);
+                return ResourceManager.GetString("DescriptionAdditionalPatientHistory", resourceCulture);
             }
         }
         
@@ -441,9 +441,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties {
         /// <summary>
         ///   Looks up a localized string similar to A DICOM unique identifier for the series.
         /// </summary>
-        internal static string DescriptionSeriesInstanceUID {
+        internal static string DescriptionSeriesInstanceUid {
             get {
-                return ResourceManager.GetString("DescriptionSeriesInstanceUID", resourceCulture);
+                return ResourceManager.GetString("DescriptionSeriesInstanceUid", resourceCulture);
             }
         }
         
@@ -471,6 +471,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties {
         internal static string DescriptionSoftwareVersions {
             get {
                 return ResourceManager.GetString("DescriptionSoftwareVersions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The DICOM unique identifier of the image.
+        /// </summary>
+        internal static string DescriptionSopInstanceUid {
+            get {
+                return ResourceManager.GetString("DescriptionSopInstanceUid", resourceCulture);
             }
         }
         
@@ -558,9 +567,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties {
         /// <summary>
         ///   Looks up a localized string similar to Addtional Patient History.
         /// </summary>
-        internal static string NameAdditionalPatientsHistory {
+        internal static string NameAdditionalPatientHistory {
             get {
-                return ResourceManager.GetString("NameAdditionalPatientsHistory", resourceCulture);
+                return ResourceManager.GetString("NameAdditionalPatientHistory", resourceCulture);
             }
         }
         
@@ -846,9 +855,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties {
         /// <summary>
         ///   Looks up a localized string similar to Series Instance UID.
         /// </summary>
-        internal static string NameSeriesInstanceUID {
+        internal static string NameSeriesInstanceUid {
             get {
-                return ResourceManager.GetString("NameSeriesInstanceUID", resourceCulture);
+                return ResourceManager.GetString("NameSeriesInstanceUid", resourceCulture);
             }
         }
         
@@ -876,6 +885,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties {
         internal static string NameSoftwareVersions {
             get {
                 return ResourceManager.GetString("NameSoftwareVersions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sop Instance UID.
+        /// </summary>
+        internal static string NameSopInstanceUid {
+            get {
+                return ResourceManager.GetString("NameSopInstanceUid", resourceCulture);
             }
         }
         

@@ -144,7 +144,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices
 			}
 			catch (Exception e)
 			{
-				Platform.Log(LogLevel.Warn, e, "Unable to start desktop service; another instance may be running.");
+				Platform.Log(LogLevel.Debug, e, "Unable to start desktop service; another instance may be running.");
 			}
 		}
 
@@ -162,7 +162,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices
 			}
 			catch (Exception e)
 			{
-				Platform.Log(LogLevel.Warn, e, "Failed to stop desktop service.");
+				Platform.Log(LogLevel.Debug, e, "Failed to stop desktop service.");
 			}
 		}
 	}

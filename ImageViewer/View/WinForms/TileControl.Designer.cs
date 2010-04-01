@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Drawing;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.Common.Utilities;
 
@@ -66,7 +67,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 					_tile.SelectionChanged -= new EventHandler<ItemEventArgs<ITile>>(OnTileSelectionChanged);
 
 					_tileController.CursorTokenChanged -= new EventHandler(OnCursorTokenChanged);
+					_tileController.ContextMenuRequested -= new EventHandler<ItemEventArgs<Point>>(OnContextMenuRequested);
 					_tileController.CaptureChanging -= new EventHandler<ItemEventArgs<IMouseButtonHandler>>(OnCaptureChanging);
+					_tileController.Dispose();
 
 					_tile = null;
 				}

@@ -95,9 +95,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					{
 						if (_frames == null)
 						{
-							_frames = new FrameCollection();
+							var frames = new FrameCollection();
 							for (int i = 1; i <= this.NumberOfFrames; i++)
-								this.Frames.Add(CreateFrame(i));
+								frames.Add(CreateFrame(i));
+							
+							_frames = frames;
 						}
 					}
 				}

@@ -210,12 +210,15 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 		public List<ActionFilter> GetActionFilters()
 		{
+			List<ActionFilter> actionFilters = new List<ActionFilter>();
 			XmlDocument document = Default.ActionFilterRulesXml;
+			if (document == null)
+				return actionFilters;
+
 			XmlElement actionFiltersNode = document.SelectSingleNode("//action-filters") as XmlElement;
 			if (actionFiltersNode == null)
-				return new List<ActionFilter>();
+				return actionFilters;
 
-			List<ActionFilter> actionFilters = new List<ActionFilter>();
 			foreach (XmlNode actionFilterNode in actionFiltersNode.ChildNodes)
 			{
 				if (actionFilterNode.NodeType != XmlNodeType.Element)

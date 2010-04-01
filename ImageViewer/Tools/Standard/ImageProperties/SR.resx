@@ -144,7 +144,7 @@
   <data name="DescriptionAcquisitionTime" xml:space="preserve">
     <value>The time at which the image was acquired</value>
   </data>
-  <data name="DescriptionAdditionalPatientsHistory" xml:space="preserve">
+  <data name="DescriptionAdditionalPatientHistory" xml:space="preserve">
     <value>Relevant patient history</value>
   </data>
   <data name="DescriptionAdmittingDiagnosesDescription" xml:space="preserve">
@@ -237,7 +237,7 @@
   <data name="DescriptionSeriesDescription" xml:space="preserve">
     <value>A description of the series</value>
   </data>
-  <data name="DescriptionSeriesInstanceUID" xml:space="preserve">
+  <data name="DescriptionSeriesInstanceUid" xml:space="preserve">
     <value>A DICOM unique identifier for the series</value>
   </data>
   <data name="DescriptionSeriesNumber" xml:space="preserve">
@@ -273,7 +273,7 @@
   <data name="NameAcquisitionTime" xml:space="preserve">
     <value>Acquisition Time</value>
   </data>
-  <data name="NameAdditionalPatientsHistory" xml:space="preserve">
+  <data name="NameAdditionalPatientHistory" xml:space="preserve">
     <value>Addtional Patient History</value>
   </data>
   <data name="NameAdmittingDiagnosesDescription" xml:space="preserve">
@@ -372,7 +372,7 @@
   <data name="NameSeriesDescription" xml:space="preserve">
     <value>Series Description</value>
   </data>
-  <data name="NameSeriesInstanceUID" xml:space="preserve">
+  <data name="NameSeriesInstanceUid" xml:space="preserve">
     <value>Series Instance UID</value>
   </data>
   <data name="NameSeriesNumber" xml:space="preserve">
@@ -410,5 +410,11 @@
   </data>
   <data name="NameSoftwareVersions" xml:space="preserve">
     <value>Software Version(s)</value>
+  </data>
+  <data name="DescriptionSopInstanceUid" xml:space="preserve">
+    <value>The DICOM unique identifier of the image</value>
+  </data>
+  <data name="NameSopInstanceUid" xml:space="preserve">
+    <value>Sop Instance UID</value>
   </data>
 </root>

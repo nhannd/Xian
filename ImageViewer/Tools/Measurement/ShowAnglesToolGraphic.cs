@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	partial class ShowAnglesTool
 	{
 		[Cloneable]
-		private class ShowAnglesToolGraphic : CompositeGraphic, IVectorGraphic
+		private partial class ShowAnglesToolGraphic : CompositeGraphic, IVectorGraphic
 		{
 			private const int _minLength = 36;
 
@@ -136,7 +136,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				}
 			}
 
-			public void Set(PointF p1, PointF p2, PointF q1, PointF q2)
+			public void SetEndpoints(PointF p1, PointF p2, PointF q1, PointF q2)
 			{
 				_endPoints[0] = p1;
 				_endPoints[1] = p2;

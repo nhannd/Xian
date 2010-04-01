@@ -25,6 +25,19 @@ namespace ClearCanvas.ImageViewer.Configuration {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<action-filters>
+  <!--<action-filter name=""context-menu"">
+              <applicability-tests>
+                <action-test>
+                  <regex test=""$.Site"" pattern=""imageviewer-contextmenu"" />
+                </action-test>
+              </applicability-tests>
+              <test>
+                  <regex test=""$.GroupHint"" pattern=""DisplaySets"" />
+              </test>
+            </action-filter>-->
+</action-filters>")]
         public global::System.Xml.XmlDocument ActionFilterRulesXml {
             get {
                 return ((global::System.Xml.XmlDocument)(this["ActionFilterRulesXml"]));

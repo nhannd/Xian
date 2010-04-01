@@ -32,12 +32,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer.PresentationStates
@@ -65,7 +61,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		private ColorImageGraphic _imageGraphic;
 
 		[CloneIgnore]
-		private byte[] _buffer;
+		private GeometricShutterCache.ICacheItem _cacheItem;
 
 		private Color _fillColor = Color.Black;
 
@@ -158,7 +154,13 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		{
 			base.OnDrawing();
 
-			RenderImageGraphic();
+			if (_imageGraphic != null || !HasShutters)
+				return;
+
+			_cacheItem = GeometricShutterCache.GetCacheItem(GetAllShutters(), _imageRectangle, _fillColor);
+			//IMPORTANT: don't just pass the value of Raw, otherwise, memory management won't work (hard reference).
+			_imageGraphic = new ColorImageGraphic(_cacheItem.PixelData.Rows, _cacheItem.PixelData.Columns, () => _cacheItem.PixelData.Raw);
+			base.Graphics.Add(_imageGraphic);
 		}
 
 		/// <summary>
@@ -167,70 +169,15 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
-			if (disposing)
-				ReleaseBuffer();
+			if (disposing && _cacheItem != null)
+				_cacheItem = null;
 		}
 
-		private void RenderImageGraphic()
+		private List<GeometricShutter> GetAllShutters()
 		{
-			if (_imageGraphic != null || !HasShutters)
-				return;
-
-			CodeClock clock = new CodeClock();
-			clock.Start();
-
-			int stride = _imageRectangle.Width*4;
-			int size = _imageRectangle.Height*stride;
-			_buffer = MemoryManager.Allocate<byte>(size);
-			Diagnostics.OnLargeObjectAllocated(_buffer.Length);
-
-			GCHandle bufferHandle = GCHandle.Alloc(_buffer, GCHandleType.Pinned);
-
-			try
-			{
-				using (Bitmap bitmap = new Bitmap(_imageRectangle.Width, _imageRectangle.Height, stride, PixelFormat.Format32bppPArgb, bufferHandle.AddrOfPinnedObject()))
-				{
-					using (System.Drawing.Graphics graphics = System.Drawing.Graphics.FromImage(bitmap))
-					{
-						graphics.Clear(Color.FromArgb(0, Color.Black));
-						using (Brush brush = new SolidBrush(_fillColor))
-						{
-							foreach (GeometricShutter shutter in GetAllShutters())
-							{
-								using (GraphicsPath path = new GraphicsPath())
-								{
-									path.FillMode = FillMode.Alternate;
-									path.AddRectangle(_imageRectangle);
-									shutter.AddToGraphicsPath(path);
-									path.CloseFigure();
-									graphics.FillPath(brush, path);
-								}
-							}
-						}
-					}
-
-					//NOTE: we are not doing this properly according to Dicom.  We should be rendering
-					//to a 16-bit image so we can set the 16-bit p-value.
-					_imageGraphic = new ColorImageGraphic(_imageRectangle.Height, _imageRectangle.Width, _buffer);
-					base.Graphics.Add(_imageGraphic);
-				}
-			}
-			finally
-			{
-				bufferHandle.Free();
-			}
-
-			clock.Stop();
-			PerformanceReportBroker.PublishReport("Shutters", "Render", clock.Seconds);
-		}
-
-		private IEnumerable<GeometricShutter> GetAllShutters()
-		{
-			foreach (GeometricShutter shutter in _dicomShutters)
-				yield return shutter;
-
-			foreach (GeometricShutter shutter in _customShutters)
-				yield return shutter;
+			var shutters = new List<GeometricShutter>(_dicomShutters);
+			shutters.AddRange(_customShutters);
+			return shutters;
 		}
 
 		private void Invalidate()
@@ -243,16 +190,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 				//don't de-allocate and reallocate unnecessarily.
 				if (!HasShutters)
-					ReleaseBuffer();
+					_cacheItem = null;
 			}
-		}
-
-		private void ReleaseBuffer()
-		{
-			if (_buffer != null)
-				Diagnostics.OnLargeObjectReleased(_buffer.Length);
-
-			_buffer = null;
 		}
 
 		private void OnCustomShuttersChanged(object sender, ListEventArgs<GeometricShutter> e)

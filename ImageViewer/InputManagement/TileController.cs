@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 	/// <seealso cref="ClearCanvas.Desktop.Tools.ITool"/>
 	/// <seealso cref="ClearCanvas.ImageViewer.BaseTools.ImageViewerTool"/>
 	/// <seealso cref="ClearCanvas.ImageViewer.BaseTools.MouseImageViewerTool"/>
-	public sealed class TileController : IMouseInformation
+	public sealed class TileController : IMouseInformation, IDisposable
 	{
 		private delegate bool CallHandlerMethodDelegate(IMouseButtonHandler handler);
 
@@ -183,11 +183,9 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		
 		#region Private Fields
 
-		private readonly int _contextMenuDelay = 300;
-
 		private readonly Tile _tile;
 		private bool _selectedOnThisClick;
-		private DateTime _startTime;
+		private bool _capturedOnThisClick;
 		private Point _startMousePoint;
 		private Point _currentMousePoint;
 		private Rectangle _tileClientRectangle;
@@ -201,12 +199,14 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		private IContextMenuProvider _contextMenuProvider;
 
 		private event EventHandler _cursorTokenChanged;
+		private event EventHandler<ItemEventArgs<Point>> _contextMenuRequested;
 		private event EventHandler<ItemEventArgs<IMouseButtonHandler>> _captureChangingEvent;
 
 		private XMouseButtons _activeButton;
 		private uint _clickCount;
 
 		private readonly IViewerShortcutManager _shortcutManager;
+		private readonly DelayedEventPublisher _delayedContextMenuRequestPublisher;
 
 		#endregion
 
@@ -220,8 +220,14 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 			_tile = tile;
 			_selectedOnThisClick = false;
+			_capturedOnThisClick = false;
 			_shortcutManager = shortcutManager;
-			_contextMenuDelay = InputManagementSettings.Default.ContextMenuDelay;
+			_delayedContextMenuRequestPublisher = new DelayedEventPublisher(this.ProcessDelayedContextMenuRequest, InputManagementSettings.Default.ContextMenuDelay);
+		}
+
+		public void Dispose()
+		{
+			_delayedContextMenuRequestPublisher.Dispose();
 		}
 
 		#region Private Properties
@@ -430,7 +436,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			_contextMenuEnabled = (buttonMessage.Shortcut.MouseButton == XMouseButtons.Right);
 
 			_startMousePoint = buttonMessage.Location;
-			_startTime = DateTime.Now;
 
 			if (_tile.PresentationImage == null || !_tile.Enabled)
 				return true;
@@ -534,13 +539,13 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 			if (this.CaptureHandler != null)
 			{
-				if (!HasMoved(this.Location) && DateTime.Now.Subtract(_startTime).TotalMilliseconds > _contextMenuDelay)
-				{
-					CancelHandler(this.CaptureHandler);
-				}
-				else 
 				if (StopHandler(this.CaptureHandler))
+				{
+					if (_capturedOnThisClick && !HasMoved(buttonMessage.Location) && buttonMessage.Shortcut.MouseButton == XMouseButtons.Right)
+						_delayedContextMenuRequestPublisher.Publish(this, new ItemEventArgs<Point>(buttonMessage.Location));
+
 					return true;
+				}
 
 				Trace.WriteLine(String.Format("Release capture {0}", this.CaptureHandler.GetType()));
 
@@ -559,7 +564,9 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			if (buttonMessage.ButtonAction == MouseButtonMessage.ButtonActions.Down)
 			{
 				_selectedOnThisClick = !_tile.Selected;
+				_capturedOnThisClick = this.CaptureHandler == null;
 				returnValue = ProcessMouseButtonDownMessage(buttonMessage);
+				_capturedOnThisClick = _capturedOnThisClick && (this.CaptureHandler != null);
 				_selectedOnThisClick = false;
 			}
 			else
@@ -605,15 +612,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			return (handler != null);
 		}
 
-		private bool ProcessPreviewContextMenuRequestMessage(PreviewContextMenuRequestMessage requestMessage)
-		{
-			if (!HasMoved(this.Location) && DateTime.Now.Subtract(_startTime).TotalMilliseconds > _contextMenuDelay)
-				_contextMenuEnabled = (this.ActiveButton == XMouseButtons.Right);
-
-			requestMessage.Cancel = !_contextMenuEnabled;
-			return false;
-		}
-
 		private bool StartHandler(IMouseButtonHandler handler)
 		{
 			if (_selectedOnThisClick && SuppressOnTileActivate(handler))
@@ -647,11 +645,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				_startCount = 0;
 
 			return handled;
-		}
-
-		private void CancelHandler(IMouseButtonHandler handler)
-		{
-			handler.Cancel();
 		}
 
 		private IMouseButtonHandler FindHandlingGraphic(CallHandlerMethodDelegate handlerDelegate)
@@ -688,9 +681,34 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			}
 		}
 
+		/// <summary>
+		/// Checks if <paramref name="point"/> has moved out of the tolerance zone from where the mouse button was pressed.
+		/// </summary>
 		private bool HasMoved(Point point)
 		{
-			return Math.Abs(_startMousePoint.X - point.X) > 2 || Math.Abs(_startMousePoint.Y - point.Y) > 2;
+			return HasMoved(point, _startMousePoint);
+		}
+
+		private static bool HasMoved(Point testPoint, Point refPoint)
+		{
+			return Math.Abs(refPoint.X - testPoint.X) > 2 || Math.Abs(refPoint.Y - testPoint.Y) > 2;
+		}
+
+		private void ProcessDelayedContextMenuRequest(object sender, EventArgs e)
+		{
+			ItemEventArgs<Point> eventArgs = e as ItemEventArgs<Point>;
+			if (eventArgs == null)
+				return;
+
+			if (!HasMoved(eventArgs.Item, _currentMousePoint))
+			{
+				if (this.CaptureHandler != null)
+					this.ReleaseCapture(true);
+
+				_contextMenuEnabled = true;
+
+				EventsHelper.Fire(_contextMenuRequested, this, eventArgs);
+			}
 		}
 
 		#endregion
@@ -710,7 +728,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		/// <summary>
 		/// Used by the view layer to decide whether or not to show the context menu.
 		/// </summary>
-		[Obsolete("View layer implementations should send a PreviewContextMenuRequestMessage to determine whether or not the subsequent context menu event should be cancelled.")]
 		public bool ContextMenuEnabled
 		{
 			get { return _contextMenuEnabled; }
@@ -762,6 +779,13 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		/// </summary>
 		public bool ProcessMessage(object message)
 		{
+			// if the user does anything other than mouse tracking, cancel any pending delayed context menu events
+			if (!(message is TrackMousePositionMessage))
+			{
+				// we allow mouse tracking because of the small movement tolerance
+				_delayedContextMenuRequestPublisher.Cancel();
+			}
+
 			if (message is LostFocusMessage)
 			{
 				this.CaptureMouseWheelHandler = null;
@@ -773,12 +797,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				KeyboardButtonDownPreview preview = message as KeyboardButtonDownPreview;
 				if (preview.Shortcut.KeyData != XKeys.None)
 					this.CaptureMouseWheelHandler = null;
-
 				return false;
-			}
-			else if (message is PreviewContextMenuRequestMessage)
-			{
-				return ProcessPreviewContextMenuRequestMessage(message as PreviewContextMenuRequestMessage);
 			}
 			else if (message is MouseButtonMessage)
 			{
@@ -810,7 +829,9 @@ namespace ClearCanvas.ImageViewer.InputManagement
 					return true;
 				}
 				else if (message is MouseLeaveMessage)
+				{
 					_tile.PresentationImage.FocussedGraphic = null;
+				}
 			}
 
 			return false;
@@ -827,6 +848,15 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		{
 			add { _cursorTokenChanged += value; }
 			remove { _cursorTokenChanged -= value; }
+		}
+
+		/// <summary>
+		/// Fired to request that the view layer show a context menu at the specified location.
+		/// </summary>
+		public event EventHandler<ItemEventArgs<Point>> ContextMenuRequested
+		{
+			add { _contextMenuRequested += value; }
+			remove { _contextMenuRequested -= value; }
 		}
 
 		/// <summary>

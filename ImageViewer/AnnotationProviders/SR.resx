@@ -678,4 +678,7 @@
   <data name="ValueNotApplicable" xml:space="preserve">
     <value>N/A</value>
   </data>
+  <data name="Format2Dimensions" xml:space="preserve">
+    <value>{0} x {1}</value>
+  </data>
 </root>

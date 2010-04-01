@@ -3,7 +3,19 @@
   <Profiles />
   <Settings>
     <Setting Name="ActionFilterRulesXml" Type="System.Xml.XmlDocument" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;action-filters&gt;
+  &lt;!--&lt;action-filter name="context-menu"&gt;
+              &lt;applicability-tests&gt;
+                &lt;action-test&gt;
+                  &lt;regex test="$.Site" pattern="imageviewer-contextmenu" /&gt;
+                &lt;/action-test&gt;
+              &lt;/applicability-tests&gt;
+              &lt;test&gt;
+                  &lt;regex test="$.GroupHint" pattern="DisplaySets" /&gt;
+              &lt;/test&gt;
+            &lt;/action-filter&gt;--&gt;
+&lt;/action-filters&gt;</Value>
     </Setting>
     <Setting Name="ApplyActionFilterRules" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

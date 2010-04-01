@@ -97,17 +97,24 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						resolver,
 						delegate(Frame frame)
 						{
+							string phaseDirection = frame.ParentImageSop[DicomTags.InPlanePhaseEncodingDirection].ToString().ToUpperInvariant();
+
 							DicomAttribute acqAttrib = frame.ParentImageSop[DicomTags.AcquisitionMatrix];
 							if (!acqAttrib.IsEmpty && acqAttrib.Count > 3)
 							{
-								ushort frequencyRows, frequencyColumns, phaseRows, phaseColumns;
+								ushort frequencyRows = acqAttrib.GetUInt16(0, 0);
+								ushort frequencyColumns = acqAttrib.GetUInt16(1, 0);
+								ushort phaseRows = acqAttrib.GetUInt16(2, 0);
+								ushort phaseColumns = acqAttrib.GetUInt16(3, 0);
 
-								frequencyRows = acqAttrib.GetUInt16(0, 0);
-								frequencyColumns = acqAttrib.GetUInt16(1, 0);
-								phaseRows = acqAttrib.GetUInt16(2, 0);
-								phaseColumns = acqAttrib.GetUInt16(3, 0);
-
-								return String.Format("{0} x {1}", frequencyColumns, phaseRows);
+								switch (phaseDirection)
+								{
+									case "COL":
+										return String.Format(SR.Format2Dimensions, phaseColumns, frequencyRows);
+									case "ROW":
+									default:
+										return String.Format(SR.Format2Dimensions, frequencyColumns, phaseRows);
+								}
 							}
 
 							return "";

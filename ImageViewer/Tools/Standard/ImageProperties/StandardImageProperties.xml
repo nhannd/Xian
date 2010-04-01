@@ -18,7 +18,7 @@
     <image-property tag-variable-name="StudyDate" />
     <image-property tag-variable-name="StudyTime" />
     <image-property tag-variable-name="ReferringPhysiciansName" />
-    <image-property tag-variable-name="AdditionalPatientsHistory" />
+    <image-property tag-variable-name="AdditionalPatientHistory" />
     <image-property tag-variable-name="AdmittingDiagnosesDescription" />
   </image-property-group>
   <image-property-group name="Equipment">
@@ -34,7 +34,7 @@
   <image-property-group name="Series">
     <image-property tag-variable-name="Modality" />
     <image-property tag-variable-name="Laterality" />
-    <image-property tag-variable-name="SeriesInstanceUID" />
+    <image-property tag-variable-name="SeriesInstanceUid" />
     <image-property tag-variable-name="SeriesNumber" />
     <image-property tag-variable-name="SeriesDescription" />
     <image-property tag-variable-name="ProtocolName" />
@@ -46,6 +46,7 @@
   </image-property-group>
   <image-property-group name="Image">
     <image-property tag-variable-name="InstanceNumber" />
+    <image-property tag-variable-name="SopInstanceUid" />
     <image-property tag-variable-name="ImageLaterality" />
     <image-property tag-variable-name="ImageComments" />
     <!--<image-property tag-variable-name="ContentDate" />

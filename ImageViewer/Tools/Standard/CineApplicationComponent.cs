@@ -48,7 +48,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		#region Private Fields
 
 		private bool _enabled;
-		private bool _autoPlayEnabled;
 
 		private readonly int _minimumScale;
 		private readonly int _maximumScale;
@@ -101,15 +100,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			}
 		}
 
-		public bool AutoPlayEnabled
+		public bool AutoCineEnabled
 		{
-			get { return _autoPlayEnabled; }
+			get { return CineTool.GetAutoCineEnabled(base.ImageViewer); }
 			set
 			{
-				if (_autoPlayEnabled != value)
+				if (CineTool.GetAutoCineEnabled(base.ImageViewer) != value)
 				{
-					_autoPlayEnabled = value;
-					NotifyPropertyChanged("AutoPlayEnabled");
+					CineTool.SetAutoCineEnabled(base.ImageViewer, value);
+					NotifyPropertyChanged("AutoCineEnabled");
 				}
 			}
 		}
@@ -173,8 +172,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (!Running)
 				return;
 
-			this.AutoPlayEnabled = false;
-
 			_stopThread = true;
 			lock (_threadLock)
 			{
@@ -189,6 +186,22 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			NotifyPropertyChanged("Running");
 
 			this.ImageViewer.PhysicalWorkspace.Enabled = true;
+		}
+
+		public bool TryStartAutoCine()
+		{
+			if (this.AutoCineEnabled)
+			{
+				if (CanAutoPlay(this.ImageViewer.SelectedPresentationImage))
+				{
+					if (!Running)
+					{
+						this.StartCine();
+						return Running;
+					}
+				}
+			}
+			return false;
 		}
 
 		#endregion
@@ -211,6 +224,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			StopCine();
 
 			base.Stop();
+
+			// ImageViewer may not have been unassigned, so manually execute the important part of OnActiveImageViewerChanged
+			if (this.ImageViewer != null)
+			{
+				this.ImageViewer.EventBroker.TileSelected -= OnTileSelected;
+				this.ImageViewer.CommandHistory.CurrentCommandChanging -= OnCommandChanging;
+			}
 		}
 
 		protected override void OnActiveImageViewerChanging(ActiveImageViewerChangedEventArgs e)
@@ -244,26 +264,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			bool canStart = CanStart();
 
-			if (this.AutoPlayEnabled)
-			{
-				Enabled = canStart;
-				if (canStart && CanAutoPlay(e.SelectedTile.PresentationImage))
-				{
-					if (!Running)
-					{
-						StartCine();
-					}
-				}
-				else
-				{
-					this.Exit(ApplicationComponentExitCode.Accepted);
-					return;
-				}
-			}
-
 			if (!Running)
 			{
 				Enabled = canStart;
+
+				TryStartAutoCine();
+
 				return;
 			}
 

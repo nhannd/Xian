@@ -160,6 +160,7 @@
     <Compile Include="Common\MemoryManager.cs" />
     <Compile Include="Common\PermissionsHelper.cs" />
     <Compile Include="Graphics\GraphicFocusChangedEventArgs.cs" />
+    <Compile Include="PresentationStates\GeometricShutterCache.cs" />
     <Compile Include="ViewerActionFilter.cs" />
     <Compile Include="ImageBoxDrawingEventArgs.cs" />
     <Compile Include="Imaging\ComposedLut.cs" />
@@ -513,7 +514,6 @@
     <Compile Include="InputManagement\IMouseInformation.cs" />
     <Compile Include="InputManagement\MouseWheelShortcut.cs" />
     <Compile Include="InputManagement\TrackMousePositionMessage.cs" />
-    <Compile Include="InputManagement\PreviewContextMenuRequestMessage.cs" />
     <Compile Include="InputManagement\InputManagementSettings.cs" />
     <Compile Include="InputManagement\InputManagementSettings.Designer.cs">
       <AutoGen>True</AutoGen>

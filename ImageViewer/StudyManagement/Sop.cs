@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				Initialize(dataSource);
 			}
-			catch (Exception)
+			catch
 			{
 				dataSource.Dispose();
 				throw;

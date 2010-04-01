@@ -109,6 +109,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_contextMenuStrip.Opening += new CancelEventHandler(OnContextMenuStripOpening);
 
 			_tileController.CursorTokenChanged += new EventHandler(OnCursorTokenChanged);
+			_tileController.ContextMenuRequested += new EventHandler<ItemEventArgs<Point>>(OnContextMenuRequested);
 			_tileController.CaptureChanging += new EventHandler<ItemEventArgs<IMouseButtonHandler>>(OnCaptureChanging);
 
 			_editBoxControl = new EditBoxControl();
@@ -570,6 +571,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		#endregion
 
+		private void OnContextMenuRequested(object sender, ItemEventArgs<Point> e)
+		{
+			_contextMenuStrip.Show(this, e.Item);
+		}
+		
 		private void OnCaptureChanging(object sender, ItemEventArgs<IMouseButtonHandler> e)
 		{
 			if (_currentMouseButtonHandler == e.Item)
@@ -622,10 +628,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				return;
 			}
 
-			PreviewContextMenuRequestMessage message = new PreviewContextMenuRequestMessage();
-			_tileController.ProcessMessage(message);
-
-			if (!message.Cancel)
+			if (_tileController.ContextMenuEnabled)
 			{
 				ActionModelNode menuModel = _tileController.ContextMenuProvider.GetContextMenuModel(_tileController);
 				if (menuModel != null && menuModel.ChildNodes.Count > 0)

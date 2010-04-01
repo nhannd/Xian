@@ -86,9 +86,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				{
 					if(_frameData == null)
 					{
-						_frameData = new ISopFrameData[this.NumberOfFrames];
-						for (int n = 0; n < _frameData.Length; n++)
-							_frameData[n] = this.CreateFrameData(n + 1);
+						var frameData = new ISopFrameData[this.NumberOfFrames];
+						for (int n = 0; n < frameData.Length; n++)
+							frameData[n] = this.CreateFrameData(n + 1);
+						
+						_frameData = frameData;
 					}
 				}
 			}

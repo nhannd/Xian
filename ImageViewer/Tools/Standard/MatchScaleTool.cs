@@ -127,6 +127,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 				Vector3D referenceNormal = referenceFrame.ImagePlaneHelper.GetNormalVector();
 				Vector3D normal = frame.ImagePlaneHelper.GetNormalVector();
+
+				//If the reference image has no spatial info, then match scale with other such images
+				if (referenceNormal == null && normal == null)
+					return true;
+
+				//if only one is null, don't do it
+				if (referenceNormal == null || normal == null)
+					return false;
+
+				//if they're not parallel, don't do it
 				if (!referenceNormal.IsParallelTo(normal, _oneDegreeInRadians))
 					return false;
 			}
