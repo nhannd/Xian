@@ -51,7 +51,7 @@ namespace ClearCanvas.Healthcare.Tests
 				new List<EmailAddress>(),
 				new List<Address>(),
 				new List<TelephoneNumber>(),
-				new Dictionary<string, ExtendedPropertyValue>(),
+				new Dictionary<string, string>(),
 				new HashedSet<StaffGroup>());
 		}
 	}

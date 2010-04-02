@@ -800,10 +800,10 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 		private void ValidateReportTextExists(ReportingProcedureStep step)
 		{
-			ExtendedPropertyValue content;
+			string content;
 			if (step.ReportPart == null || step.ReportPart.ExtendedProperties == null
 				|| !step.ReportPart.ExtendedProperties.TryGetValue(ReportPartDetail.ReportContentKey, out content)
-				|| string.IsNullOrEmpty(content.GetString()))
+				|| string.IsNullOrEmpty(content))
 			{
 				throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
 			}

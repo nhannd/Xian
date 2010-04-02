@@ -64,7 +64,6 @@
     <Compile Include="Broker.cs" />
     <Compile Include="ChangeRecord.cs" />
     <Compile Include="ChangeTracker.cs" />
-    <Compile Include="ExtendedPropertyValueHbm.cs" />
     <Compile Include="Ddl\AdditionalIndexProcessor.cs" />
     <Compile Include="Ddl\DdlScriptGenerator.cs" />
     <Compile Include="Ddl\EnumForeignKeyProcessor.cs" />

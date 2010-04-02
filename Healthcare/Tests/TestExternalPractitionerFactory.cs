@@ -48,7 +48,7 @@ namespace ClearCanvas.Healthcare.Tests
 				false,
 				null,
                 new HashedSet<ExternalPractitionerContactPoint>(),
-                new Dictionary<string, ExtendedPropertyValue>());
+				new Dictionary<string, string>());
         }
     }
 }

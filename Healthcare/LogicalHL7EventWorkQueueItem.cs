@@ -67,7 +67,7 @@ namespace ClearCanvas.Healthcare
 			get { return _item; }
 		}
 
-		public IDictionary<string, ExtendedPropertyValue> ExtendedProperties
+		public IDictionary<string, string> ExtendedProperties
 		{
 			get { return _item.ExtendedProperties; }
 		}

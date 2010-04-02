@@ -50,7 +50,7 @@ namespace ClearCanvas.Healthcare
 		{
 			_report = owner;
 			_index = index;
-			_extendedProperties = new Dictionary<string, ExtendedPropertyValue>();
+			_extendedProperties = new Dictionary<string, string>();
 			_creationTime = Platform.Time;
 		}
 

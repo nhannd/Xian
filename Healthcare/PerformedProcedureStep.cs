@@ -44,7 +44,7 @@ namespace ClearCanvas.Healthcare
     /// </summary>
     public abstract class PerformedProcedureStep : PerformedStep
     {
-		private IDictionary<string, ExtendedPropertyValue> _extendedProperties = new Dictionary<string, ExtendedPropertyValue>();
+		private IDictionary<string, string> _extendedProperties = new Dictionary<string, string>();
 
 
         public PerformedProcedureStep(Staff performingStaff)
@@ -61,7 +61,7 @@ namespace ClearCanvas.Healthcare
         {
         }
 
-		public virtual IDictionary<string, ExtendedPropertyValue> ExtendedProperties
+		public virtual IDictionary<string, string> ExtendedProperties
         {
             get { return _extendedProperties; }
             protected set { _extendedProperties = value; }

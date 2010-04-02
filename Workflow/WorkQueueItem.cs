@@ -53,7 +53,7 @@ namespace ClearCanvas.Workflow {
 			null,
 			0,
 			null,
-			new Dictionary<string, ExtendedPropertyValue>())
+			new Dictionary<string, string>())
 		{
 		}
 
