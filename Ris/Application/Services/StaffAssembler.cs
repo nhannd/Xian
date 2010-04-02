@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Application.Services
 				CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
 					staff.Groups,
 					delegate(StaffGroup group) { return groupAssembler.CreateSummary(group); }),
-				ExtendedPropertyUtils.GetStrings(staff.ExtendedProperties),
+				ExtendedPropertyUtils.Copy(staff.ExtendedProperties),
 				staff.Deactivated,
 				staff.UserName);
 		}

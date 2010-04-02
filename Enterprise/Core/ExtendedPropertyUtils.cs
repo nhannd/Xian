@@ -18,9 +18,10 @@ namespace ClearCanvas.Enterprise.Core
 			}
 		}
 
-		public static Dictionary<string, string> GetStrings(IDictionary<string, string> source)
+		public static Dictionary<string, string> Copy(IDictionary<string, string> source)
 		{
-			return new Dictionary<string, string>(source);
+			return source == null ? new Dictionary<string, string>() :
+				new Dictionary<string, string>(source);
 		}
 	}
 }

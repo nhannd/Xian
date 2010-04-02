@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Application.Services
 			detail.ProcessedTime = workQueueItem.ProcessedTime;
 			detail.FailureCount = workQueueItem.FailureCount;
 			detail.FailureDescription = workQueueItem.FailureDescription;
-			detail.ExtendedProperties = ExtendedPropertyUtils.GetStrings(workQueueItem.ExtendedProperties);
+			detail.ExtendedProperties = ExtendedPropertyUtils.Copy(workQueueItem.ExtendedProperties);
 
 			return detail;
 		}

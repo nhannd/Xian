@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 					Notes = CollectionUtils.Map<OrderNote, OrderNoteDetail>(
 						OrderNote.GetNotesForOrder(order),
 						note => noteAssembler.CreateOrderNoteDetail(note, context)),
-					ExtendedProperties = ExtendedPropertyUtils.GetStrings(order.ExtendedProperties)
+					ExtendedProperties = ExtendedPropertyUtils.Copy(order.ExtendedProperties)
 				};
 
 			return requisition;

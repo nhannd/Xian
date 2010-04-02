@@ -124,7 +124,7 @@ namespace ClearCanvas.Healthcare.Imex
 			data.EmailAddresses = CollectionUtils.Map<EmailAddress, EmailAddressData>(entity.EmailAddresses,
 				delegate(EmailAddress a) { return new EmailAddressData(a); });
 
-			data.ExtendedProperties = ExtendedPropertyUtils.GetStrings(entity.ExtendedProperties);
+			data.ExtendedProperties = ExtendedPropertyUtils.Copy(entity.ExtendedProperties);
 
 			return data;
 		}

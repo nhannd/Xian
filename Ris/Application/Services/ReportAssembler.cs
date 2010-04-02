@@ -117,7 +117,7 @@ namespace ClearCanvas.Ris.Application.Services
                 reportPart.TranscriptionSupervisor == null ? null : staffAssembler.CreateStaffSummary(reportPart.TranscriptionSupervisor, context),
                 reportPart.Verifier == null ? null : staffAssembler.CreateStaffSummary(reportPart.Verifier, context),
                 EnumUtils.GetEnumValueInfo(reportPart.TranscriptionRejectReason),
-				ExtendedPropertyUtils.GetStrings(reportPart.ExtendedProperties));
+				ExtendedPropertyUtils.Copy(reportPart.ExtendedProperties));
 
             return summary;
         }

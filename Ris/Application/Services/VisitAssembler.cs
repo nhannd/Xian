@@ -81,7 +81,7 @@ namespace ClearCanvas.Ris.Application.Services
 					Locations = new List<VisitLocationDetail>(),
 					PreadmitNumber = visit.PreadmitNumber,
 					VipIndicator = visit.VipIndicator,
-					ExtendedProperties = ExtendedPropertyUtils.GetStrings(visit.ExtendedProperties)
+					ExtendedProperties = ExtendedPropertyUtils.Copy(visit.ExtendedProperties)
 				};
 
 			foreach (var vl in visit.Locations)

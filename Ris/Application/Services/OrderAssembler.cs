@@ -170,7 +170,7 @@ namespace ClearCanvas.Ris.Application.Services
 
 			if (options.IncludeExtendedProperties)
 			{
-				orderDetail.ExtendedProperties = ExtendedPropertyUtils.GetStrings(order.ExtendedProperties);
+				orderDetail.ExtendedProperties = ExtendedPropertyUtils.Copy(order.ExtendedProperties);
 			}
 
 			return orderDetail;

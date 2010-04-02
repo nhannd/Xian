@@ -278,7 +278,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 			return new LoadOrderDocumentationDataResponse
 			{
 				OrderRef = order.GetRef(),
-				OrderExtendedProperties = ExtendedPropertyUtils.GetStrings(order.ExtendedProperties),
+				OrderExtendedProperties = ExtendedPropertyUtils.Copy(order.ExtendedProperties),
 				OrderNotes = CollectionUtils.Map<OrderNote, OrderNoteDetail>(
 					OrderNote.GetNotesForOrder(order),
 					note => noteAssembler.CreateOrderNoteDetail(note, PersistenceContext)),

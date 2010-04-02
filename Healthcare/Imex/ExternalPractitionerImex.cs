@@ -138,7 +138,7 @@ namespace ClearCanvas.Healthcare.Imex
                         return cpData;
                     });
 
-			data.ExtendedProperties = ExtendedPropertyUtils.GetStrings(entity.ExtendedProperties);
+			data.ExtendedProperties = ExtendedPropertyUtils.Copy(entity.ExtendedProperties);
 
             return data;
         }

@@ -78,7 +78,7 @@ namespace ClearCanvas.Ris.Application.Services
 				prac.IsVerified,
 				prac.LastVerifiedTime,
 				contactPointDetails,
-				ExtendedPropertyUtils.GetStrings(prac.ExtendedProperties),
+				ExtendedPropertyUtils.Copy(prac.ExtendedProperties),
 				prac.Deactivated);
 
 			return detail;

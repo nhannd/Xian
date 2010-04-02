@@ -67,7 +67,7 @@ namespace ClearCanvas.Ris.Application.Services
 				mppsPerformer,
 				mpsDetails,
 				dicomSeries,
-				ExtendedPropertyUtils.GetStrings(mpps.ExtendedProperties));
+				ExtendedPropertyUtils.Copy(mpps.ExtendedProperties));
 		}
 	}
 }
