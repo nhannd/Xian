@@ -30,30 +30,38 @@
 #endregion
 
 using System;
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.BaseTools;
+using System.Windows.Forms;
 
-namespace ClearCanvas.ImageViewer.Configuration
+namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 {
-	[MenuAction("customize", "global-menus/MenuTools/MenuCustomizeActionModels", "Customize")]
-	[GroupHint("customize", "Application.Options.Customize")]
-	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
-	public class CustomizeViewerActionModelTool : ImageViewerTool
+	public partial class CustomizeViewerActionModelsComponentControl : UserControl
 	{
-		public void Customize()
-		{
-			try
-			{
-				CustomizeViewerActionModelsComponent component = new CustomizeViewerActionModelsComponent(this.ImageViewer);
+		private readonly CustomizeViewerActionModelsComponent _component;
 
-				ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, component, SR.TitleCustomizeActionModels);
-			}
-			catch (Exception ex)
-			{
-				ExceptionHandler.Report(ex, this.Context.DesktopWindow);
-			}
+		public CustomizeViewerActionModelsComponentControl(CustomizeViewerActionModelsComponent component)
+		{
+			InitializeComponent();
+
+			_component = component;
+
+			Control control = (Control) _component.TabComponentHost.ComponentView.GuiElement;
+			control.Dock = DockStyle.Fill;
+			_pnlMain.Controls.Add(control);
+		}
+
+		private void _btnOk_Click(object sender, EventArgs e)
+		{
+			_component.Accept();
+		}
+
+		private void _btnCancel_Click(object sender, EventArgs e)
+		{
+			_component.Cancel();
+		}
+
+		private void _btnApply_Click(object sender, EventArgs e)
+		{
+			_component.Save();
 		}
 	}
 }

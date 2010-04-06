@@ -53,8 +53,10 @@
       <HintPath>..\..\..\..\ReferencedAssemblies\DotNetMagic2005.DLL</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContextMenuConfigurationPageControl.cs">
@@ -64,6 +66,13 @@
       <DependentUpon>ContextMenuConfigurationPageControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ContextMenuConfigurationPageView.cs" />
+    <Compile Include="CustomizeViewerActionModelsComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomizeViewerActionModelsComponentControl.Designer.cs">
+      <DependentUpon>CustomizeViewerActionModelsComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomizeViewerActionModelsComponentView.cs" />
     <Compile Include="DicomServerEditComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -127,6 +136,9 @@
   <ItemGroup>
     <EmbeddedResource Include="ContextMenuConfigurationPageControl.resx">
       <DependentUpon>ContextMenuConfigurationPageControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomizeViewerActionModelsComponentControl.resx">
+      <DependentUpon>CustomizeViewerActionModelsComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DicomServerEditComponentControl.resx">
       <DependentUpon>DicomServerEditComponentControl.cs</DependentUpon>

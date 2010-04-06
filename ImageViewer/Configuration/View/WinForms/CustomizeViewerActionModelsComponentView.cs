@@ -29,30 +29,32 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.ImageViewer.Configuration
+namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 {
-	[MenuAction("customize", "global-menus/MenuTools/MenuCustomizeActionModels", "Customize")]
-	[GroupHint("customize", "Application.Options.Customize")]
-	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
-	public class CustomizeViewerActionModelTool : ImageViewerTool
+	[ExtensionOf(typeof (CustomizeViewerActionModelsComponentViewExtensionPoint))]
+	public class CustomizeViewerActionModelsComponentView : WinFormsView, IApplicationComponentView
 	{
-		public void Customize()
-		{
-			try
-			{
-				CustomizeViewerActionModelsComponent component = new CustomizeViewerActionModelsComponent(this.ImageViewer);
+		private CustomizeViewerActionModelsComponent _component;
+		private CustomizeViewerActionModelsComponentControl _control;
 
-				ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, component, SR.TitleCustomizeActionModels);
-			}
-			catch (Exception ex)
+		public void SetComponent(IApplicationComponent component)
+		{
+			_component = (CustomizeViewerActionModelsComponent) component;
+		}
+
+		public override object GuiElement
+		{
+			get
 			{
-				ExceptionHandler.Report(ex, this.Context.DesktopWindow);
+				if (_control == null)
+				{
+					_control = new CustomizeViewerActionModelsComponentControl(_component);
+				}
+				return _control;
 			}
 		}
 	}

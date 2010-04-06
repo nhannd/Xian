@@ -42,6 +42,7 @@
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="ConfigurationPageProvider.cs" />
     <Compile Include="ContextMenuConfigurationPage.cs" />
+    <Compile Include="CustomizeViewerActionModelsComponent.cs" />
     <Compile Include="CustomizeViewerActionModelTool.cs" />
     <Compile Include="DefaultServersConfigurationPageProvider.cs" />
     <Compile Include="DefaultServers.cs" />

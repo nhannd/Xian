@@ -99,6 +99,24 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Context Menu.
+        /// </summary>
+        internal static string LabelContextMenu {
+            get {
+                return ResourceManager.GetString("LabelContextMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Main Menu.
+        /// </summary>
+        internal static string LabelMainMenu {
+            get {
+                return ResourceManager.GetString("LabelMainMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Toolbar.
         /// </summary>
         internal static string LabelToolbar {
@@ -126,11 +144,11 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Customize.
+        ///   Looks up a localized string similar to Customize Menus and Toolbars.
         /// </summary>
-        internal static string MenuCustomize {
+        internal static string MenuCustomizeActionModels {
             get {
-                return ResourceManager.GetString("MenuCustomize", resourceCulture);
+                return ResourceManager.GetString("MenuCustomizeActionModels", resourceCulture);
             }
         }
         
@@ -306,7 +324,7 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Customize Action Models.
+        ///   Looks up a localized string similar to Customize Menus and Toolbars.
         /// </summary>
         internal static string TitleCustomizeActionModels {
             get {
