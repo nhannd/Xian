@@ -55,13 +55,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				return this.Context.GetOperationEnablement("ReviseResidentReport");
+				return this.Context.GetOperationEnablement("ReviseResidentReport")
+					|| this.Context.GetOperationEnablement("ReviseUnpublishedReport");
 			}
 		}
 
 		public override bool CanAcceptDrop(ICollection<ReportingWorklistItemSummary> items)
 		{
-			return this.Context.GetOperationEnablement("ReviseResidentReport");
+			return this.Context.GetOperationEnablement("ReviseResidentReport")
+				|| this.Context.GetOperationEnablement("ReviseUnpublishedReport");
 		}
 
 		protected override bool Execute(ReportingWorklistItemSummary item)
@@ -70,24 +72,30 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if (ActivateIfAlreadyOpen(item))
 				return true;
 
-			ReportingWorklistItemSummary replacementItem = ReviseResidentReport(item);
+			ReportingWorklistItemSummary replacementItem = null;
+
+			if (this.Context.GetOperationEnablement("ReviseResidentReport"))
+			{
+				Platform.GetService(
+					delegate(IReportingWorkflowService service)
+					{
+						var response = service.ReviseResidentReport(new ReviseResidentReportRequest(item.ProcedureStepRef));
+						replacementItem = response.ReplacementInterpretationStep;
+					});
+			}
+			else if (this.Context.GetOperationEnablement("ReviseUnpublishedReport"))
+			{
+				Platform.GetService(
+					delegate(IReportingWorkflowService service)
+					{
+						var response = service.ReviseUnpublishedReport(new ReviseUnpublishedReportRequest(item.ProcedureStepRef));
+						replacementItem = response.ReplacementVerificationStep;
+					});
+			}
 
 			OpenReportEditor(replacementItem);
 
 			return true;
-		}
-
-		private ReportingWorklistItemSummary ReviseResidentReport(ReportingWorklistItemSummary item)
-		{
-			ReportingWorklistItemSummary result = null;
-			Platform.GetService<IReportingWorkflowService>(
-				delegate(IReportingWorkflowService service)
-				{
-					ReviseResidentReportResponse response = service.ReviseResidentReport(new ReviseResidentReportRequest(item.ProcedureStepRef));
-					result = response.ReplacementInterpretationStep;
-				});
-
-			return result;
 		}
 	}
 

@@ -329,6 +329,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 		[UpdateOperation]
 		[OperationEnablement("CanReviseUnpublishedReport")]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Verify)]
 		public ReviseUnpublishedReportResponse ReviseUnpublishedReport(ReviseUnpublishedReportRequest request)
 		{
 			var publication = this.PersistenceContext.Load<PublicationStep>(request.PublicationStepRef, EntityLoadFlags.CheckVersion);
@@ -685,6 +686,9 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 		public bool CanReviseUnpublishedReport(ReportingWorklistItemKey itemKey)
 		{
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Verify))
+				return false;
+
 			return CanExecuteOperation(new Operations.ReviseUnpublishedReport(), itemKey);
 		}
 
@@ -692,6 +696,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		{
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.TestPublishReport))
 				return false;
+
 			return CanExecuteOperation(new Operations.PublishReport(), itemKey);
 		}
 
