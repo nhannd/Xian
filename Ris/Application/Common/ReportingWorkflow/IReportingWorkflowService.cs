@@ -123,6 +123,17 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         [FaultContract(typeof(ConcurrentModificationException))]
         ReviseResidentReportResponse ReviseResidentReport(ReviseResidentReportRequest request);
 
+		/// <summary>
+		/// Cancel a verification step and create a new interpretation step with the same report part.
+		/// This is used by the radiologist to send back a reviewed report back to the resident.
+		/// </summary>
+		/// <param name="request"><see cref="SendbackResidentReportRequest"/></param>
+		/// <returns><see cref="SendbackResidentReportResponse"/></returns>
+		[OperationContract]
+		[FaultContract(typeof(RequestValidationException))]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		SendbackResidentReportResponse SendbackResidentReport(SendbackResidentReportRequest request);
+
         /// <summary>
         /// Start an verification step
         /// </summary>

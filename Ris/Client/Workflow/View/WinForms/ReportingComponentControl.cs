@@ -82,6 +82,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 
 			_verifyButton.DataBindings.Add("Enabled", _component, "VerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
 			_submitForReviewButton.DataBindings.Add("Enabled", _component, "SubmitForReviewEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
+			_sendBackToResidentButton.DataBindings.Add("Enabled", _component, "SendToResidentEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
 			_sendToTranscriptionButton.DataBindings.Add("Enabled", _component, "SendToTranscriptionEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
 
 			_supervisor.LookupHandler = _component.SupervisorLookupHandler;
@@ -93,9 +94,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 
 			_verifyButton.Visible = _component.VerifyReportVisible;
 			_submitForReviewButton.Visible = _component.SubmitForReviewVisible;
+			_sendBackToResidentButton.Visible = _component.SendToResidentVisible;
 			_sendToTranscriptionButton.Visible = _component.SendToTranscriptionVisible;
 
-			_btnSkip.DataBindings.Add("Enabled", _component, "SkipEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_skipButton.DataBindings.Add("Enabled", _component, "SkipEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 			_saveButton.DataBindings.Add("Enabled", _component, "SaveReportEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_component.PropertyChanged += _component_PropertyChanged;
@@ -128,6 +130,14 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			}
 		}
 
+		private void _sendToInterpreterButton_Click(object sender, System.EventArgs e)
+		{
+			using (new CursorManager(this, Cursors.WaitCursor))
+			{
+				_component.SendToResident();
+			}
+		}
+
 		private void _sendToTranscriptionButton_Click(object sender, System.EventArgs e)
 		{
 			using (new CursorManager(Cursors.WaitCursor))
@@ -152,7 +162,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			}
 		}
 
-		private void _btnSkip_Click(object sender, System.EventArgs e)
+		private void _skipButton_Click(object sender, System.EventArgs e)
 		{
 			using (new CursorManager(this, Cursors.WaitCursor))
 			{

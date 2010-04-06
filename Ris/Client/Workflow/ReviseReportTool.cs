@@ -38,6 +38,7 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 namespace ClearCanvas.Ris.Client.Workflow
 {
 	[MenuAction("apply", "folderexplorer-items-contextmenu/Revise Report", "Apply")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/Revise Report", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "Icons.EditReportToolSmall.png", "Icons.EditReportToolMedium.png", "Icons.EditReportToolLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
@@ -87,6 +88,29 @@ namespace ClearCanvas.Ris.Client.Workflow
 				});
 
 			return result;
+		}
+	}
+
+	[MenuAction("apply", "folderexplorer-items-contextmenu/Send to Resident", "Apply")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/Send to Resident", "Apply")]
+	[IconSet("apply", IconScheme.Colour, "Icons.AssignSmall.png", "Icons.AssignMedium.png", "Icons.AssignLarge.png")]
+	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify)]
+	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
+	public class SendbackResidentReportTool : ReportingWorkflowItemTool
+	{
+
+		public SendbackResidentReportTool()
+			: base("SendbackResidentReport")
+		{
+		}
+
+		protected override bool Execute(ReportingWorklistItemSummary item)
+		{
+			Platform.GetService((IReportingWorkflowService service) =>
+				service.SendbackResidentReport(new SendbackResidentReportRequest(item.ProcedureStepRef)));
+
+			return true;
 		}
 	}
 }

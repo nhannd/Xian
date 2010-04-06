@@ -210,6 +210,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		SendToTranscription,
 
 		/// <summary>
+		/// Report is saved and send back to the resident.
+		/// </summary>
+		SendToResident,
+
+		/// <summary>
 		/// Report is saved and submitted for another radiologist to review.
 		/// </summary>
 		SubmitForReview,
@@ -380,6 +385,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private bool _canCompleteInterpretationAndVerify;
 		private bool _canCompleteVerification;
 		private bool _canSubmitForReview;
+		private bool _canSendbackResidentReport;
 		private bool _canCompleteInterpretationForTranscription;
 		private bool _canSaveReport;
 
@@ -825,6 +831,48 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview); }
 		}
 
+		#endregion
+
+		#region Send To Resident
+
+		public void SendToResident()
+		{
+			try
+			{
+				if (this.HasValidationErrors)
+				{
+					this.ShowValidation(true);
+					return;
+				}
+
+				CloseImages();
+
+				if (!_reportEditor.Save(ReportEditorCloseReason.SendToResident))
+					return;
+
+				Platform.GetService<IReportingWorkflowService>(service =>
+					service.SendbackResidentReport(new SendbackResidentReportRequest(_worklistItemManager.WorklistItem.ProcedureStepRef)));
+
+				// Source Folders, no destination folder
+				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeReviewedFolder));
+
+				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Completed);
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow, () => this.Exit(ApplicationComponentExitCode.Error));
+			}
+		}
+
+		public bool SendToResidentEnabled
+		{
+			get { return _canSendbackResidentReport; }
+		}
+
+		public bool SendToResidentVisible
+		{
+			get { return _canSendbackResidentReport && Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify); }
+		}
 
 		#endregion
 
@@ -1026,6 +1074,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 				case ReportEditorCloseReason.SendToTranscription:
 					SendToTranscription();
 					break;
+				case ReportEditorCloseReason.SendToResident:
+					SendToResident();
+					break;
 				case ReportEditorCloseReason.SubmitForReview:
 					SubmitForReview();
 					break;
@@ -1092,13 +1143,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 			Platform.GetService<IReportingWorkflowService>(service =>
 			{
 				var enablementResponse = service.GetOperationEnablement(new GetOperationEnablementRequest(this.WorklistItem));
-				_canCompleteInterpretationAndVerify =
-					enablementResponse.OperationEnablementDictionary["CompleteInterpretationAndVerify"];
+				_canCompleteInterpretationAndVerify = enablementResponse.OperationEnablementDictionary["CompleteInterpretationAndVerify"];
 				_canCompleteVerification = enablementResponse.OperationEnablementDictionary["CompleteVerification"];
-				_canSubmitForReview =
-					enablementResponse.OperationEnablementDictionary["CompleteInterpretationForVerification"];
-				_canCompleteInterpretationForTranscription =
-					enablementResponse.OperationEnablementDictionary["CompleteInterpretationForTranscription"];
+				_canSubmitForReview = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForVerification"];
+				_canSendbackResidentReport = enablementResponse.OperationEnablementDictionary["SendbackResidentReport"];
+				_canCompleteInterpretationForTranscription = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForTranscription"];
 				_canSaveReport = enablementResponse.OperationEnablementDictionary["SaveReport"];
 
 				var response = service.LoadReportForEdit(new LoadReportForEditRequest(this.WorklistItem.ProcedureStepRef));

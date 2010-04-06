@@ -352,6 +352,46 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 			}
 		}
 
+		/// <summary>
+		/// Residents are not allowed to edit a report that has been scheduled for verification.
+		/// This operation allows radiologist to cancels the in progress verification and creates a new interpretation step for the resident to edit.
+		/// </summary>
+		public class SendbackResidentdReport : ReportingOperation
+		{
+			public InterpretationStep Execute(VerificationStep step, Staff executingStaff, IWorkflow workflow)
+			{
+				// Cancel the current step
+				step.Discontinue();
+
+				// Create a new interpreatation step that uses the same report part
+				var interpretationStep = new InterpretationStep(step);
+
+				// Assign the new step to the interpreter
+				var interpreter = interpretationStep.ReportPart.Interpreter;
+				interpretationStep.Assign(interpreter);
+				interpretationStep.Start(interpreter);
+
+				workflow.AddEntity(interpretationStep);
+				return interpretationStep;
+			}
+
+			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)
+			{
+				if (!step.Is<VerificationStep>())
+					return false;
+
+				// must be scheduled or in progress
+				if (step.State != ActivityStatus.SC && step.State != ActivityStatus.IP)
+					return false;
+
+				// cannot send back a report that was interpreted by the current staff
+				if (Equals(step.ReportPart.Interpreter, executingStaff))
+					return false;
+
+				return true;
+			}
+		}
+
 		public class StartVerification : ReportingOperation
 		{
 			public void Execute(VerificationStep step, Staff executingStaff, IWorkflow workflow)

@@ -68,9 +68,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this._verifyButton = new System.Windows.Forms.Button();
 			this._submitForReviewButton = new System.Windows.Forms.Button();
+			this._sendBackToResidentButton = new System.Windows.Forms.Button();
 			this._sendToTranscriptionButton = new System.Windows.Forms.Button();
 			this._saveButton = new System.Windows.Forms.Button();
-			this._btnSkip = new System.Windows.Forms.Button();
+			this._skipButton = new System.Windows.Forms.Button();
 			this._reportNextItem = new System.Windows.Forms.CheckBox();
 			this._reportedProcedures = new System.Windows.Forms.Label();
 			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
@@ -148,7 +149,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._hasErrors.Name = "_hasErrors";
 			this._hasErrors.Padding = new System.Windows.Forms.Padding(3, 3, 3, 1);
 			this._hasErrors.Size = new System.Drawing.Size(472, 22);
-			this._hasErrors.TabIndex = 5;
+			this._hasErrors.TabIndex = 1;
 			this._hasErrors.Text = "Transcription has flagged the report.";
 			this._hasErrors.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
@@ -166,16 +167,16 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._imagesUnavailable.Name = "_imagesUnavailable";
 			this._imagesUnavailable.Padding = new System.Windows.Forms.Padding(3, 3, 3, 1);
 			this._imagesUnavailable.Size = new System.Drawing.Size(472, 22);
-			this._imagesUnavailable.TabIndex = 3;
+			this._imagesUnavailable.TabIndex = 0;
 			this._imagesUnavailable.Text = "Images cannot be opened.";
 			this._imagesUnavailable.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Location = new System.Drawing.Point(400, 736);
+			this._cancelButton.Location = new System.Drawing.Point(400, 713);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 3;
+			this._cancelButton.TabIndex = 6;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
@@ -188,8 +189,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._reportEditorPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._reportEditorPanel.Location = new System.Drawing.Point(3, 80);
 			this._reportEditorPanel.Name = "_reportEditorPanel";
-			this._reportEditorPanel.Size = new System.Drawing.Size(472, 603);
-			this._reportEditorPanel.TabIndex = 0;
+			this._reportEditorPanel.Size = new System.Drawing.Size(472, 580);
+			this._reportEditorPanel.TabIndex = 3;
 			// 
 			// flowLayoutPanel1
 			// 
@@ -197,16 +198,17 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.flowLayoutPanel1.Controls.Add(this._verifyButton);
 			this.flowLayoutPanel1.Controls.Add(this._submitForReviewButton);
+			this.flowLayoutPanel1.Controls.Add(this._sendBackToResidentButton);
 			this.flowLayoutPanel1.Controls.Add(this._sendToTranscriptionButton);
 			this.flowLayoutPanel1.Controls.Add(this._saveButton);
-			this.flowLayoutPanel1.Controls.Add(this._btnSkip);
+			this.flowLayoutPanel1.Controls.Add(this._skipButton);
 			this.flowLayoutPanel1.Controls.Add(this._reportNextItem);
 			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 733);
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 710);
 			this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(397, 58);
-			this.flowLayoutPanel1.TabIndex = 2;
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(397, 81);
+			this.flowLayoutPanel1.TabIndex = 5;
 			// 
 			// _verifyButton
 			// 
@@ -218,54 +220,64 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._verifyButton.UseVisualStyleBackColor = true;
 			this._verifyButton.Click += new System.EventHandler(this._verifyButton_Click);
 			// 
-			// _sendToVerifyButton
+			// _submitForReviewButton
 			// 
 			this._submitForReviewButton.Location = new System.Drawing.Point(84, 3);
-			this._submitForReviewButton.Name = "_sendToVerifyButton";
+			this._submitForReviewButton.Name = "_submitForReviewButton";
 			this._submitForReviewButton.Size = new System.Drawing.Size(83, 23);
 			this._submitForReviewButton.TabIndex = 1;
 			this._submitForReviewButton.Text = "For Review";
 			this._submitForReviewButton.UseVisualStyleBackColor = true;
 			this._submitForReviewButton.Click += new System.EventHandler(this._submitForReviewButton_Click);
 			// 
+			// _sendBackToResidentButton
+			// 
+			this._sendBackToResidentButton.Location = new System.Drawing.Point(173, 3);
+			this._sendBackToResidentButton.Name = "_sendBackToResidentButton";
+			this._sendBackToResidentButton.Size = new System.Drawing.Size(110, 23);
+			this._sendBackToResidentButton.TabIndex = 2;
+			this._sendBackToResidentButton.Text = "Send to Resident";
+			this._sendBackToResidentButton.UseVisualStyleBackColor = true;
+			this._sendBackToResidentButton.Click += new System.EventHandler(this._sendToInterpreterButton_Click);
+			// 
 			// _sendToTranscriptionButton
 			// 
-			this._sendToTranscriptionButton.Location = new System.Drawing.Point(173, 3);
+			this._sendToTranscriptionButton.Location = new System.Drawing.Point(3, 32);
 			this._sendToTranscriptionButton.Name = "_sendToTranscriptionButton";
 			this._sendToTranscriptionButton.Size = new System.Drawing.Size(145, 23);
-			this._sendToTranscriptionButton.TabIndex = 2;
+			this._sendToTranscriptionButton.TabIndex = 3;
 			this._sendToTranscriptionButton.Text = "Send to Transcription";
 			this._sendToTranscriptionButton.UseVisualStyleBackColor = true;
 			this._sendToTranscriptionButton.Click += new System.EventHandler(this._sendToTranscriptionButton_Click);
 			// 
 			// _saveButton
 			// 
-			this._saveButton.Location = new System.Drawing.Point(3, 32);
+			this._saveButton.Location = new System.Drawing.Point(154, 32);
 			this._saveButton.Name = "_saveButton";
 			this._saveButton.Size = new System.Drawing.Size(75, 23);
-			this._saveButton.TabIndex = 3;
+			this._saveButton.TabIndex = 4;
 			this._saveButton.Text = "Save";
 			this._saveButton.UseVisualStyleBackColor = true;
 			this._saveButton.Click += new System.EventHandler(this._saveButton_Click);
 			// 
-			// _btnSkip
+			// _skipButton
 			// 
-			this._btnSkip.Location = new System.Drawing.Point(84, 32);
-			this._btnSkip.Name = "_btnSkip";
-			this._btnSkip.Size = new System.Drawing.Size(75, 23);
-			this._btnSkip.TabIndex = 7;
-			this._btnSkip.Text = "Skip";
-			this._btnSkip.UseVisualStyleBackColor = true;
-			this._btnSkip.Click += new System.EventHandler(this._btnSkip_Click);
+			this._skipButton.Location = new System.Drawing.Point(235, 32);
+			this._skipButton.Name = "_skipButton";
+			this._skipButton.Size = new System.Drawing.Size(75, 23);
+			this._skipButton.TabIndex = 5;
+			this._skipButton.Text = "Skip";
+			this._skipButton.UseVisualStyleBackColor = true;
+			this._skipButton.Click += new System.EventHandler(this._skipButton_Click);
 			// 
 			// _reportNextItem
 			// 
 			this._reportNextItem.AutoSize = true;
 			this._reportNextItem.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._reportNextItem.Location = new System.Drawing.Point(165, 32);
+			this._reportNextItem.Location = new System.Drawing.Point(3, 61);
 			this._reportNextItem.Name = "_reportNextItem";
-			this._reportNextItem.Size = new System.Drawing.Size(104, 23);
-			this._reportNextItem.TabIndex = 8;
+			this._reportNextItem.Size = new System.Drawing.Size(104, 17);
+			this._reportNextItem.TabIndex = 6;
 			this._reportNextItem.Text = "Go To Next Item";
 			this._reportNextItem.UseVisualStyleBackColor = true;
 			// 
@@ -281,7 +293,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._reportedProcedures.Name = "_reportedProcedures";
 			this._reportedProcedures.Padding = new System.Windows.Forms.Padding(0, 2, 0, 0);
 			this._reportedProcedures.Size = new System.Drawing.Size(472, 21);
-			this._reportedProcedures.TabIndex = 4;
+			this._reportedProcedures.TabIndex = 2;
 			this._reportedProcedures.Text = "Reported Procedure(s): ";
 			// 
 			// tableLayoutPanel3
@@ -295,13 +307,13 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel3.Controls.Add(this._rememberSupervisorCheckbox, 1, 0);
 			this.tableLayoutPanel3.Controls.Add(this._supervisor, 0, 0);
 			this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 686);
+			this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 663);
 			this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
 			this.tableLayoutPanel3.Name = "tableLayoutPanel3";
 			this.tableLayoutPanel3.RowCount = 1;
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel3.Size = new System.Drawing.Size(478, 47);
-			this.tableLayoutPanel3.TabIndex = 6;
+			this.tableLayoutPanel3.TabIndex = 4;
 			// 
 			// _rememberSupervisorCheckbox
 			// 
@@ -310,7 +322,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._rememberSupervisorCheckbox.Name = "_rememberSupervisorCheckbox";
 			this._rememberSupervisorCheckbox.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
 			this._rememberSupervisorCheckbox.Size = new System.Drawing.Size(87, 41);
-			this._rememberSupervisorCheckbox.TabIndex = 2;
+			this._rememberSupervisorCheckbox.TabIndex = 1;
 			this._rememberSupervisorCheckbox.Text = "Remember Supervisor?";
 			this._rememberSupervisorCheckbox.UseVisualStyleBackColor = true;
 			// 
@@ -324,7 +336,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._supervisor.Margin = new System.Windows.Forms.Padding(2, 2, 25, 2);
 			this._supervisor.Name = "_supervisor";
 			this._supervisor.Size = new System.Drawing.Size(358, 43);
-			this._supervisor.TabIndex = 1;
+			this._supervisor.TabIndex = 0;
 			this._supervisor.Value = null;
 			// 
 			// _rightHandPanel
@@ -365,7 +377,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._statusText.Name = "_statusText";
 			this._statusText.Padding = new System.Windows.Forms.Padding(3, 3, 3, 1);
 			this._statusText.Size = new System.Drawing.Size(977, 19);
-			this._statusText.TabIndex = 2;
+			this._statusText.TabIndex = 1;
 			this._statusText.Text = "Reporting from X worklist - Y items available - Z items completed";
 			// 
 			// _bannerPanel
@@ -413,7 +425,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 		private ClearCanvas.Ris.Client.View.WinForms.LookupField _supervisor;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
 		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-		private System.Windows.Forms.Button _btnSkip;
+		private System.Windows.Forms.Button _skipButton;
 		private System.Windows.Forms.CheckBox _reportNextItem;
 		private System.Windows.Forms.Panel _rightHandPanel;
 		private System.Windows.Forms.Label _reportedProcedures;
@@ -422,5 +434,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 		private System.Windows.Forms.Label _hasErrors;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
 		private System.Windows.Forms.CheckBox _rememberSupervisorCheckbox;
+		private System.Windows.Forms.Button _sendBackToResidentButton;
     }
 }

@@ -42,9 +42,9 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Workflow;
 using Iesi.Collections.Generic;
 using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
-using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
@@ -246,6 +246,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 		[UpdateOperation]
 		[OperationEnablement("CanReviseResidentReport")]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.SubmitForReview)]
 		public ReviseResidentReportResponse ReviseResidentReport(ReviseResidentReportRequest request)
 		{
 			var step = this.PersistenceContext.Load<VerificationStep>(request.VerificationStepRef, EntityLoadFlags.CheckVersion);
@@ -255,6 +256,20 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 			this.PersistenceContext.SynchState();
 			return new ReviseResidentReportResponse(GetWorklistItemSummary(interpretation));
+		}
+
+		[UpdateOperation]
+		[OperationEnablement("CanSendbackResidentReport")]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Verify)]
+		public SendbackResidentReportResponse SendbackResidentReport(SendbackResidentReportRequest request)
+		{
+			var step = this.PersistenceContext.Load<VerificationStep>(request.VerificationStepRef, EntityLoadFlags.CheckVersion);
+
+			var op = new Operations.SendbackResidentdReport();
+			var newStep = op.Execute(step, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+
+			this.PersistenceContext.SynchState();
+			return new SendbackResidentReportResponse(GetWorklistItemSummary(newStep));
 		}
 
 		[UpdateOperation]
@@ -625,6 +640,14 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 				return false;
 
 			return CanExecuteOperation(new Operations.ReviseResidentReport(), itemKey);
+		}
+
+		public bool CanSendbackResidentReport(ReportingWorklistItemKey itemKey)
+		{
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Verify))
+				return false;
+
+			return CanExecuteOperation(new Operations.SendbackResidentdReport(), itemKey);
 		}
 
 		public bool CanStartVerification(ReportingWorklistItemKey itemKey)
