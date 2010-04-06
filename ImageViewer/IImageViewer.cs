@@ -109,6 +109,30 @@ namespace ClearCanvas.ImageViewer
 		IActionSet ExportedActions { get; }
 
 		/// <summary>
+		/// Gets the namespace that qualifies the global action models owned by this <see cref="IImageViewer"/>. This value may not be null.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// This namespace only applies to the global action models (i.e. global menu and toolbar sites) when the
+		/// <see cref="IImageViewer"/> is launched as a <see cref="IWorkspace"/>. In contrast, the namespace returned
+		/// by <see cref="ActionsNamespace"/> applies to local action models such as the viewer context menu.
+		/// </para>
+		/// </remarks>
+		string GlobalActionsNamespace { get; }
+
+		/// <summary>
+		/// Gets the namespace that qualifies the global action models owned by this <see cref="IImageViewer"/>. This value may not be null.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// This namespace only applies to local action models such as the viewer context menu. In contrast,
+		/// the namespace returned by <see cref="GlobalActionsNamespace"/> applies to the global action models
+		/// (i.e. global menu and toolbar sites) when the <see cref="IImageViewer"/> is launched as a <see cref="IWorkspace"/>.
+		/// </para>
+		/// </remarks>
+		string ActionsNamespace { get; }
+
+		/// <summary>
 		/// Gets the associated <see cref="IPriorStudyLoader"/>.
 		/// </summary>
 		IPriorStudyLoader PriorStudyLoader { get; }

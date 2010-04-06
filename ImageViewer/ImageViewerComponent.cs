@@ -303,6 +303,42 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
+		/// Gets the namespace that qualifies the global action models owned by this <see cref="IImageViewer"/>. This value may not be null.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// This namespace only applies to the global action models (i.e. global menu and toolbar sites) when the
+		/// <see cref="IImageViewer"/> is launched as a <see cref="IWorkspace"/>. In contrast, the namespace returned
+		/// by <see cref="ActionsNamespace"/> applies to local action models such as the viewer context menu.
+		/// </para>
+		/// <para>
+		/// The default implementation defers to <see cref="ActionsNamespace"/>.
+		/// </para>
+		/// </remarks>
+		public override string GlobalActionsNamespace
+		{
+			get { return this.ActionsNamespace; }
+		}
+
+		/// <summary>
+		/// Gets the namespace that qualifies the global action models owned by this <see cref="IImageViewer"/>. This value may not be null.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// This namespace only applies to local action models such as the viewer context menu. In contrast,
+		/// the namespace returned by <see cref="GlobalActionsNamespace"/> applies to the global action models
+		/// (i.e. global menu and toolbar sites) when the <see cref="IImageViewer"/> is launched as a <see cref="IWorkspace"/>.
+		/// </para>
+		/// <para>
+		/// The default implementation uses the default viewer namespace.
+		/// </para>
+		/// </remarks>
+		public virtual string ActionsNamespace
+		{
+			get { return typeof (ImageViewerComponent).FullName; }
+		}
+
+		/// <summary>
 		/// Gets the command history.
 		/// </summary>
 		/// <remarks>
