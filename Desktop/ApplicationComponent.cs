@@ -582,26 +582,20 @@ namespace ClearCanvas.Desktop
         }
 
     	/// <summary>
-    	/// Allows the component to specify the namespace that qualifies its action models. This value may be null.
+    	/// Allows the component to specify the namespace that qualifies its global action models. This value should not be null.
     	/// </summary>
     	/// <remarks>
     	/// <para>
-    	/// Occasionally, there is a need for a particular inheirited component to have a separate action model
-    	/// distinct from that of its base component. The value returned here should be honoured where possible
-    	/// to allow for maximum extensibility. If the value is null, then a default namespace may be used.
+    	/// This value is used by the default implementation of <see cref="IDesktopWindow"/> to qualify the action model
+    	/// to be used for the global toolbar and menu sites.
     	/// </para>
     	/// <para>
-    	/// This value is also used by the default implementation of <see cref="IDesktopWindow"/> to qualify
-    	/// the action model to be used for the global toolbar and menu sites.
-    	/// </para>
-    	/// <para>
-    	/// The default implementation returns null, leaving it up to the builder of the action model to determine
-    	/// a suitable default namespace.
+    	/// The default implementation returns the default global action model namespace.
     	/// </para>
     	/// </remarks>
-    	public virtual string ActionModelNamespace
+    	public virtual string GlobalActionsNamespace
     	{
-    		get { return null; }
+    		get { return typeof (DesktopWindow).FullName; }
     	}
 
         /// <summary>

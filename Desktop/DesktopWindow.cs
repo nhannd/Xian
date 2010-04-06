@@ -488,7 +488,7 @@ namespace ClearCanvas.Desktop
                 actions = actions.Union(this.Workspaces.ActiveWorkspace.Actions);
 				if (this.ActiveWorkspace.Component is IApplicationComponent)
 				{
-					@namespace = ((IApplicationComponent) this.ActiveWorkspace.Component).ActionModelNamespace ?? @namespace;
+					@namespace = ((IApplicationComponent) this.ActiveWorkspace.Component).GlobalActionsNamespace;
 				}
             }
 

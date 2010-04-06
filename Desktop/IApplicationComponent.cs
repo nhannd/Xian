@@ -78,20 +78,15 @@ namespace ClearCanvas.Desktop
         IActionSet ExportedActions { get; }
 
 		/// <summary>
-		/// Allows the component to specify the namespace that qualifies its action models. This value may be null.
+		/// Allows the component to specify the namespace that qualifies its global action models. This value may not be null.
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// Occasionally, there is a need for a particular inheirited component to have a separate action model
-		/// distinct from that of its base component. The value returned here should be honoured where possible
-		/// to allow for maximum extensibility. If the value is null, then a default namespace may be used.
-		/// </para>
-		/// <para>
-		/// This value is also used by the default implementation of <see cref="IDesktopWindow"/> to qualify
-		/// the action model to be used for the global toolbar and menu sites.
+		/// This value is used by the default implementation of <see cref="IDesktopWindow"/> to qualify the action model
+		/// to be used for the global toolbar and menu sites.
 		/// </para>
 		/// </remarks>
-		string ActionModelNamespace { get; }
+		string GlobalActionsNamespace { get; }
 
         /// <summary>
         /// Called by the framework to initialize the component.
