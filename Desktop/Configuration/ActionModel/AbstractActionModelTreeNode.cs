@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Text.RegularExpressions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
@@ -37,14 +38,18 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 {
 	public abstract class AbstractActionModelTreeNode
 	{
+		private static readonly Regex _mnemonic = new Regex(@"^(.*?)(?:[&](\w)(.*))?$", RegexOptions.Compiled);
+
 		private event EventHandler _parentChanged;
 
 		private AbstractActionModelTreeBranch _parent = null;
-		private bool _isEditable = false;
-		private bool _hidden = false;
 		private string _resourceKey = string.Empty;
 		private string _label = string.Empty;
+		private string _canonicalLabel = null;
 		private string _tooltip = string.Empty;
+		private bool _isChecked = false;
+		private bool _isExpanded = false;
+		private bool _isHighlighted = false;
 
 		protected AbstractActionModelTreeNode(string resourceKey, string label)
 		{
@@ -59,18 +64,6 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			_label = pathSegment.LocalizedText;
 		}
 
-		public bool IsEditable
-		{
-			get { return _isEditable; }
-			set { _isEditable = value; }
-		}
-
-		public virtual bool Hidden
-		{
-			get { return _hidden; }
-			protected set { _hidden = value; }
-		}
-
 		public string ResourceKey
 		{
 			get { return _resourceKey; }
@@ -80,16 +73,26 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		public string Label
 		{
 			get { return _label; }
-			set { _label = value; }
+			set
+			{
+				_label = value;
+				_canonicalLabel = null;
+			}
 		}
 
 		public string CanonicalLabel
 		{
 			get
 			{
-				if (string.IsNullOrEmpty(_label))
-					return string.Empty;
-				return string.Join("", _label.Split(new char[] {'&'}, 2));
+				if (_canonicalLabel == null)
+				{
+					Match m = _mnemonic.Match(_label);
+					if (m.Success)
+						_canonicalLabel = m.Groups[1].Value + m.Groups[2].Value + m.Groups[3].Value;
+					else
+						_canonicalLabel = string.Empty;
+				}
+				return _canonicalLabel;
 			}
 		}
 
@@ -97,6 +100,45 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		{
 			get { return _tooltip; }
 			set { _tooltip = value; }
+		}
+
+		public bool IsChecked
+		{
+			get { return _isChecked; }
+			set
+			{
+				if (_isChecked != value)
+				{
+					_isChecked = value;
+					this.OnIsCheckedChanged();
+				}
+			}
+		}
+
+		public bool IsExpanded
+		{
+			get { return _isExpanded; }
+			set
+			{
+				if (_isExpanded != value)
+				{
+					_isExpanded = value;
+					this.OnIsExpandedChanged();
+				}
+			}
+		}
+
+		public bool IsHighlighted
+		{
+			get { return _isHighlighted; }
+			set
+			{
+				if (_isHighlighted != value)
+				{
+					_isHighlighted = value;
+					this.OnIsHighlightedChanged();
+				}
+			}
 		}
 
 		public AbstractActionModelTreeBranch Parent
@@ -123,6 +165,30 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			EventsHelper.Fire(_parentChanged, this, EventArgs.Empty);
 		}
 
+		protected virtual void OnIsCheckedChanged()
+		{
+			if (!ReferenceEquals(_parent, null))
+			{
+				_parent.NotifyChildChanged(this);
+			}
+		}
+
+		protected virtual void OnIsExpandedChanged()
+		{
+			if (!ReferenceEquals(_parent, null))
+			{
+				_parent.NotifyChildChanged(this);
+			}
+		}
+
+		protected virtual void OnIsHighlightedChanged()
+		{
+			if (!ReferenceEquals(_parent, null))
+			{
+				_parent.NotifyChildChanged(this);
+			}
+		}
+
 		public bool IsDescendantOf(AbstractActionModelTreeBranch node)
 		{
 			if (ReferenceEquals(node, null) || ReferenceEquals(_parent, null))
@@ -132,13 +198,66 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			return _parent.IsDescendantOf(node);
 		}
 
-		public virtual DragDropKind CanAcceptDrop(object dropData, DragDropKind dragDropKind)
+		public virtual DragDropKind CanAcceptDrop(object dropData, DragDropKind dragDropKind, DragDropPosition dragDropPosition)
 		{
+			// drop target must have a parent, otherwise there is no concept of "sibling"
+			if (dragDropPosition != DragDropPosition.Default && !ReferenceEquals(this.Parent, null))
+			{
+				if (dropData is AbstractActionModelTreeNode)
+				{
+					AbstractActionModelTreeNode droppedNode = (AbstractActionModelTreeNode) dropData;
+					if (dragDropKind == DragDropKind.Move)
+					{
+						AbstractActionModelTreeNode sibling = null;
+						if (droppedNode.Parent != null)
+						{
+							int index = droppedNode.Parent.Children.IndexOf(droppedNode) + (dragDropPosition == DragDropPosition.After ? -1 : 1);
+							if (index >= 0 && index < droppedNode.Parent.Children.Count)
+								sibling = droppedNode.Parent.Children[index];
+						}
+
+						// to drag-move, we can't be dragging immediately before/after ourself, or onto one of our descendants
+						if (!ReferenceEquals(this, droppedNode)
+						    && !ReferenceEquals(this, sibling)
+						    && !this.IsDescendantOf(droppedNode as AbstractActionModelTreeBranch))
+							return dragDropKind;
+					}
+				}
+			}
 			return DragDropKind.None;
 		}
 
-		public virtual DragDropKind AcceptDrop(object dropData, DragDropKind dragDropKind)
+		public virtual DragDropKind AcceptDrop(object dropData, DragDropKind dragDropKind, DragDropPosition dragDropPosition)
 		{
+			// drop target must have a parent, otherwise there is no concept of "sibling"
+			if (dragDropPosition != DragDropPosition.Default && !ReferenceEquals(this.Parent, null))
+			{
+				if (dropData is AbstractActionModelTreeNode)
+				{
+					AbstractActionModelTreeNode droppedNode = (AbstractActionModelTreeNode) dropData;
+					if (dragDropKind == DragDropKind.Move)
+					{
+						AbstractActionModelTreeNode sibling = null;
+						if (droppedNode.Parent != null)
+						{
+							int index = droppedNode.Parent.Children.IndexOf(droppedNode) + (dragDropPosition == DragDropPosition.After ? -1 : 1);
+							if (index >= 0 && index < droppedNode.Parent.Children.Count)
+								sibling = droppedNode.Parent.Children[index];
+						}
+
+						// to drag-move, we can't be dragging immediately before/after ourself, or onto one of our descendants
+						if (!ReferenceEquals(this, droppedNode)
+						    && !ReferenceEquals(this, sibling)
+						    && !this.IsDescendantOf(droppedNode as AbstractActionModelTreeBranch))
+						{
+							if (droppedNode.Parent != null)
+								droppedNode.Parent.Children.Remove(droppedNode);
+							this.Parent.Children.Insert(this.Parent.Children.IndexOf(this) + (dragDropPosition == DragDropPosition.After ? 1 : 0), droppedNode);
+							return dragDropKind;
+						}
+					}
+				}
+			}
 			return DragDropKind.None;
 		}
 	}

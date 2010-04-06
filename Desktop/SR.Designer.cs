@@ -439,6 +439,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to New Group.
+        /// </summary>
+        public static string LabelNewGroup {
+            get {
+                return ResourceManager.GetString("LabelNewGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reset.
         /// </summary>
         public static string LabelReset {
@@ -597,6 +606,15 @@ namespace ClearCanvas.Desktop {
         public static string MessageNoConfigurationPagesExist {
             get {
                 return ResourceManager.GetString("MessageNoConfigurationPagesExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This group contains one or more items. Items may not be deleted, but can be hidden..
+        /// </summary>
+        public static string MessageNodeNotEmpty {
+            get {
+                return ResourceManager.GetString("MessageNodeNotEmpty", resourceCulture);
             }
         }
         

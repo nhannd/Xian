@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
@@ -29,68 +29,75 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Desktop.Configuration.ActionModel
 {
-	public abstract class AbstractActionModelTreeLeaf : AbstractActionModelTreeNode
-	{
-		protected AbstractActionModelTreeLeaf(string resourceKey, string label)
-			: base(resourceKey, label) {}
+	[ExtensionPoint]
+	public sealed class ActionModelConfigurationComponentToolExtensionPoint : ExtensionPoint<ITool> {}
 
-		protected AbstractActionModelTreeLeaf(PathSegment pathSegment)
-			: base(pathSegment) {}
+	public interface IActionModelConfigurationComponentToolContext : IToolContext
+	{
+		ActionModelConfigurationComponent Component { get; }
+		IDesktopWindow DesktopWindow { get; }
 	}
 
-	public sealed class AbstractActionModelTreeLeafSeparator : AbstractActionModelTreeLeaf
+	public abstract class ActionModelConfigurationComponentTool : Tool<IActionModelConfigurationComponentToolContext>
 	{
-		public AbstractActionModelTreeLeafSeparator() : base(string.Empty, "(Separator)") {}
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			this.Component.SelectedNodeChanged += OnComponentSelectedNodeChanged;
+		}
+
+		private void OnComponentSelectedNodeChanged(object sender, EventArgs e)
+		{
+			this.OnSelectedNodeChanged();
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			this.Component.SelectedNodeChanged -= OnComponentSelectedNodeChanged;
+
+			base.Dispose(disposing);
+		}
+
+		protected AbstractActionModelTreeNode SelectedNode
+		{
+			get { return this.Component.SelectedNode; }
+		}
+
+		protected ActionModelConfigurationComponent Component
+		{
+			get { return base.Context.Component; }
+		}
+
+		protected virtual void OnSelectedNodeChanged() {}
 	}
 
-	public class AbstractActionModelTreeLeafAction : AbstractActionModelTreeLeaf
+	partial class ActionModelConfigurationComponent
 	{
-		private readonly AbstractAction _action;
-
-		public AbstractActionModelTreeLeafAction(IAction action)
-			: base(action.Path.LastSegment)
+		protected class ActionModelConfigurationComponentToolContext : IActionModelConfigurationComponentToolContext
 		{
-			Platform.CheckForNullReference(action, "action");
-			Platform.CheckTrue(action.Persistent, "Action must be persistent.");
+			private readonly ActionModelConfigurationComponent _component;
 
-			// this allows us to keep a "clone" that is independent of the live action objects
-			// that might (probably are) in use or cached in some tool or component somewhere.
-			_action = AbstractAction.Create(action);
+			public ActionModelConfigurationComponentToolContext(ActionModelConfigurationComponent component)
+			{
+				_component = component;
+			}
 
-			base.IsChecked = _action.Available;
-		}
+			public ActionModelConfigurationComponent Component
+			{
+				get { return _component; }
+			}
 
-		internal IAction Action
-		{
-			get { return _action; }
-		}
-
-		public string ActionId
-		{
-			get { return _action.ActionId; }
-		}
-
-		public IconSet IconSet
-		{
-			get { return _action.IconSet; }
-		}
-
-		public IResourceResolver ResourceResolver
-		{
-			get { return _action.ResourceResolver; }
-		}
-
-		protected override void OnIsCheckedChanged()
-		{
-			base.OnIsCheckedChanged();
-
-			_action.Available = this.IsChecked;
+			public IDesktopWindow DesktopWindow
+			{
+				get { return _component.Host.DesktopWindow; }
+			}
 		}
 	}
 }

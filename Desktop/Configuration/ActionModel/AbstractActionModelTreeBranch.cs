@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Trees;
 
@@ -71,13 +72,27 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _subtree.Items; }
 		}
 
-		internal void AppendChild(AbstractActionModelTreeNode child, bool hidden)
+		public bool IsEmpty
+		{
+			get
+			{
+				foreach (AbstractActionModelTreeNode actionModelTreeNode in this.Children)
+				{
+					if (actionModelTreeNode is AbstractActionModelTreeLeafAction)
+						return false;
+					else if (actionModelTreeNode is AbstractActionModelTreeBranch && !((AbstractActionModelTreeBranch)actionModelTreeNode).IsEmpty)
+						return false;
+				}
+				return true;
+			}
+		}
+
+		internal void AppendChild(AbstractActionModelTreeNode child)
 		{
 			_suspendSynchronizeParent = true;
 			try
 			{
-				if (!hidden)
-					_subtree.Items.Add(child);
+				_subtree.Items.Add(child);
 				_children.Add(child);
 				child.Parent = this;
 			}
@@ -87,6 +102,11 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			}
 		}
 
+		internal void NotifyChildChanged(AbstractActionModelTreeNode child)
+		{
+			_subtree.Items.NotifyItemUpdated(child);
+		}
+
 		protected ITree Subtree
 		{
 			get { return _subtree; }
@@ -94,7 +114,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 
 		protected void CreateActionModelRoot(Path path, ActionModelRoot actionModelRoot)
 		{
-			foreach (AbstractActionModelTreeNode child in _children)
+			foreach (AbstractActionModelTreeNode child in this.Subtree.Items)
 			{
 				if (child is AbstractActionModelTreeBranch)
 				{
@@ -103,7 +123,8 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 				else if (child is AbstractActionModelTreeLeafAction)
 				{
 					IAction action = AbstractAction.Create(((AbstractActionModelTreeLeafAction) child).Action);
-					action.Path = new ActionPath(path.Append(action.Path.LastSegment).ToString(), action.ResourceResolver);
+					string actionPath = GetUnresolvedPathString(path.Append(action.Path.LastSegment), action.ResourceResolver);
+					action.Path = new ActionPath(actionPath, action.ResourceResolver);
 					actionModelRoot.InsertAction(action);
 				}
 				else if (child is AbstractActionModelTreeLeafSeparator)
@@ -111,6 +132,22 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 					actionModelRoot.InsertSeparator(path.Append(new PathSegment(Guid.NewGuid().ToString())));
 				}
 			}
+		}
+
+		private static string GetUnresolvedPathString(Path path, IResourceResolver resourceResolver)
+		{
+			IList<PathSegment> pathSegments = path.Segments;
+			Path unresolvedPath = new Path(pathSegments[0]); // site is not processed through a resource resolver
+			for (int n = 1; n < pathSegments.Count; n++)
+			{
+				PathSegment pathSegment = pathSegments[n];
+				string localizedString = resourceResolver.LocalizeString(pathSegment.ResourceKey);
+				if (localizedString == pathSegment.LocalizedText)
+					unresolvedPath = unresolvedPath.Append(pathSegment);
+				else
+					unresolvedPath = unresolvedPath.Append(new PathSegment(pathSegment.LocalizedText, pathSegment.LocalizedText));
+			}
+			return unresolvedPath.ToString();
 		}
 
 		private void OnSubtreeItemsChanged(object sender, ItemChangedEventArgs e)
@@ -167,52 +204,74 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			}
 		}
 
-		public override DragDropKind CanAcceptDrop(object dropData, DragDropKind dragDropKind)
+		public override DragDropKind CanAcceptDrop(object dropData, DragDropKind dragDropKind, DragDropPosition dragDropPosition)
 		{
-			if (dropData is AbstractActionModelTreeNode && !(dropData is AbstractActionModelTreeBranch))
+			if (dragDropPosition == DragDropPosition.Default)
 			{
-				AbstractActionModelTreeNode droppedNode = (AbstractActionModelTreeNode) dropData;
-				if (dragDropKind == DragDropKind.Move)
+				if (dropData is AbstractActionModelTreeNode)
 				{
-					// to drag-move, we can't be dragging onto ourself, onto our parent, or onto one of our descendants
-					if (!ReferenceEquals(this, droppedNode)
-					    && !ReferenceEquals(this, droppedNode.Parent)
-					    && !this.IsDescendantOf(droppedNode as AbstractActionModelTreeBranch))
-						return dragDropKind;
-				}
-			}
-			return base.CanAcceptDrop(dropData, dragDropKind);
-		}
-
-		public override DragDropKind AcceptDrop(object dropData, DragDropKind dragDropKind)
-		{
-			if (dropData is AbstractActionModelTreeNode && !(dropData is AbstractActionModelTreeBranch))
-			{
-				AbstractActionModelTreeNode droppedNode = (AbstractActionModelTreeNode) dropData;
-				if (dragDropKind == DragDropKind.Move)
-				{
-					// to drag-move, we can't be dragging onto ourself, onto our parent, or onto one of our descendants
-					if (!ReferenceEquals(this, droppedNode)
-					    && !ReferenceEquals(this, droppedNode.Parent)
-					    && !this.IsDescendantOf(droppedNode as AbstractActionModelTreeBranch))
+					AbstractActionModelTreeNode droppedNode = (AbstractActionModelTreeNode) dropData;
+					if (dragDropKind == DragDropKind.Move)
 					{
-						if (droppedNode.Parent != null)
-							droppedNode.Parent.Children.Remove(droppedNode);
-						this.Children.Add(droppedNode);
-						return dragDropKind;
+						// to drag-move, we can't be dragging onto ourself, onto our parent, or onto one of our descendants
+						if (!ReferenceEquals(this, droppedNode)
+						    && !ReferenceEquals(this, droppedNode.Parent)
+						    && !this.IsDescendantOf(droppedNode as AbstractActionModelTreeBranch))
+							return dragDropKind;
 					}
 				}
 			}
-			return base.AcceptDrop(dropData, dragDropKind);
+			else if (dragDropPosition == DragDropPosition.After)
+			{
+				// prevent dropping something after an expanded branch node with children,
+				// because the user is physically dropping between the branch and its children
+				// but the child logically appears as a sibling of the branch *after* both the branch and its children.
+				if (this.Children.Count > 0 && this.IsExpanded)
+					return DragDropKind.None;
+			}
+			return base.CanAcceptDrop(dropData, dragDropKind, dragDropPosition);
+		}
+
+		public override DragDropKind AcceptDrop(object dropData, DragDropKind dragDropKind, DragDropPosition dragDropPosition)
+		{
+			if (dragDropPosition == DragDropPosition.Default)
+			{
+				if (dropData is AbstractActionModelTreeNode)
+				{
+					AbstractActionModelTreeNode droppedNode = (AbstractActionModelTreeNode) dropData;
+					if (dragDropKind == DragDropKind.Move)
+					{
+						// to drag-move, we can't be dragging onto ourself, onto our parent, or onto one of our descendants
+						if (!ReferenceEquals(this, droppedNode)
+						    && !ReferenceEquals(this, droppedNode.Parent)
+						    && !this.IsDescendantOf(droppedNode as AbstractActionModelTreeBranch))
+						{
+							if (droppedNode.Parent != null)
+								droppedNode.Parent.Children.Remove(droppedNode);
+							this.Children.Add(droppedNode);
+							return dragDropKind;
+						}
+					}
+				}
+			}
+			else if (dragDropPosition == DragDropPosition.After)
+			{
+				// prevent dropping something after an expanded branch node with children,
+				// because the user is physically dropping between the branch and its children
+				// but the child logically appears as a sibling of the branch *after* both the branch and its children.
+				if (this.Children.Count > 0 && this.IsExpanded)
+					return DragDropKind.None;
+			}
+			return base.AcceptDrop(dropData, dragDropKind, dragDropPosition);
 		}
 
 		private class Binding : TreeItemBinding<AbstractActionModelTreeNode>
 		{
 			public Binding()
 			{
-				this.NodeTextProvider = (node => node.Label);
+				this.NodeTextProvider = (node => node.CanonicalLabel);
 
-				this.CanSetNodeTextHandler = (node => node.IsEditable);
+				this.CanSetNodeTextHandler = (node => false);
 				this.NodeTextSetter = ((node, s) => node.Label = s);
 
 				this.CanHaveSubTreeHandler = (node => node is AbstractActionModelTreeBranch);
@@ -221,13 +280,31 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 				this.IconSetProvider = (node => node is AbstractActionModelTreeLeafAction ? ((AbstractActionModelTreeLeafAction) node).IconSet : null);
 				this.ResourceResolverProvider = (node => node is AbstractActionModelTreeLeafAction ? ((AbstractActionModelTreeLeafAction) node).ResourceResolver : null);
 
-				this.CanAcceptDropHandler = ((node, dropData, dragDropKind) => node.CanAcceptDrop(dropData, dragDropKind));
-				this.AcceptDropHandler = ((node, dropData, dragDropKind) => node.AcceptDrop(dropData, dragDropKind));
-
-				this.IsExpandedGetter = (node => true);
-				this.IsExpandedSetter = ((node, v) => { });
-
 				this.TooltipTextProvider = (node => node.Tooltip);
+
+				this.IsExpandedGetter = (node => node.IsExpanded);
+				this.IsExpandedSetter = ((node, v) => node.IsExpanded = v);
+
+				this.IsCheckedGetter = (node => node.IsChecked);
+				this.IsCheckedSetter = ((node, v) => node.IsChecked = v);
+
+				this.IsHighlightedProvider = (node => node.IsHighlighted);
+			}
+
+			public override DragDropKind CanAcceptDrop(object item, object dropData, DragDropKind kind, DragDropPosition position)
+			{
+				AbstractActionModelTreeNode node = item as AbstractActionModelTreeNode;
+				if (node == null)
+					return DragDropKind.None;
+				return node.CanAcceptDrop(dropData, kind, position);
+			}
+
+			public override DragDropKind AcceptDrop(object item, object dropData, DragDropKind kind, DragDropPosition position)
+			{
+				AbstractActionModelTreeNode node = item as AbstractActionModelTreeNode;
+				if (node == null)
+					return DragDropKind.None;
+				return node.AcceptDrop(dropData, kind, position);
 			}
 		}
 	}

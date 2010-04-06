@@ -70,6 +70,9 @@
       <DependentUpon>ActionModelConfigurationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Configuration\ActionModelConfigurationComponentView.cs" />
+    <Compile Include="Configuration\ActionModelConfigurationTreeControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="CustomTableCellEditControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

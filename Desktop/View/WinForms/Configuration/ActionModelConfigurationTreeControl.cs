@@ -30,44 +30,17 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using ClearCanvas.Desktop.Configuration.ActionModel;
 
 namespace ClearCanvas.Desktop.View.WinForms.Configuration
 {
-	public partial class ActionModelConfigurationComponentControl : UserControl
+	public class ActionModelConfigurationTreeControl : BindingTreeView
 	{
-		private readonly ActionModelConfigurationComponent _component;
-
-		public ActionModelConfigurationComponentControl(ActionModelConfigurationComponent component)
+		public ActionModelConfigurationTreeControl() : base()
 		{
-			InitializeComponent();
-
-			_component = component;
-
-			_actionModelTree.Tree = component.ActionModelTreeRoot;
-			_actionModelTree.ToolbarModel = component.ToolbarActionModel;
-		}
-
-		private void OnActionModelTreeSelectionChanged(object sender, EventArgs e)
-		{
-			AbstractActionModelTreeNode selectedNode = null;
-			if (_actionModelTree.Selection != null)
-				selectedNode = (_actionModelTree.Selection.Item as AbstractActionModelTreeNode);
-			_component.SelectedNode = selectedNode;
-		}
-
-		private void OnBindingTreeViewItemDrag(object sender, ItemDragEventArgs e)
-		{
-			BindingTreeView bindingTreeView = sender as BindingTreeView;
-			if (bindingTreeView == null)
-				return;
-
-			ISelection selection = e.Item as ISelection;
-			if (selection != null && selection.Item != null)
-			{
-				bindingTreeView.DoDragDrop(selection.Item, DragDropEffects.All);
-			}
 		}
 	}
 }

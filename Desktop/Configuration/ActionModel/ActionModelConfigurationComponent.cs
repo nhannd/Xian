@@ -29,47 +29,51 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.Configuration;
+using System;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Trees;
 
 namespace ClearCanvas.Desktop.Configuration.ActionModel
 {
 	[ExtensionPoint]
-	public class ActionModelConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> {}
+	public sealed class ActionModelConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> {}
 
 	[AssociateView(typeof (ActionModelConfigurationComponentViewExtensionPoint))]
-	public class ActionModelConfigurationComponent : ApplicationComponent
+	public partial class ActionModelConfigurationComponent : ApplicationComponent, IConfigurationApplicationComponent
 	{
+		private event EventHandler _selectedNodeChanged;
+
 		private readonly IDesktopWindow _desktopWindow;
 		private readonly string _namespace;
 		private readonly string _site;
 
-		private readonly AbstractActionModelTreeRoot _unavailableActionsTreeRoot;
-		private readonly AbstractActionModelTreeRoot _actionModelTreeRoot;
+		private ActionModelRoot _actionModel;
+		private AbstractActionModelTreeRoot _actionModelTreeRoot;
+
+		private ToolSet _toolSet;
+		private ActionModelRoot _toolbarActionModel;
+
+		private AbstractActionModelTreeNode _selectedNode;
 
 		public ActionModelConfigurationComponent(string @namespace, string site, IActionSet actionSet, IDesktopWindow desktopWindow)
 		{
-			if (desktopWindow is DesktopWindow)
-			{
-				DesktopWindow concreteDesktopWindow = (DesktopWindow) desktopWindow;
-				if (site == DesktopWindow.GlobalMenus || site == DesktopWindow.GlobalToolbars)
-					actionSet = actionSet.Union(concreteDesktopWindow.DesktopTools.Actions);
-			}
-
 			_namespace = @namespace;
 			_site = site;
 			_desktopWindow = desktopWindow;
 
-			ActionModelRoot abstractActionModel = ActionModelSettings.Default.BuildAbstractActionModel(@namespace, site, actionSet);
+			if (_desktopWindow is DesktopWindow)
+			{
+				DesktopWindow concreteDesktopWindow = (DesktopWindow) _desktopWindow;
+				if (_site == DesktopWindow.GlobalMenus || _site == DesktopWindow.GlobalToolbars)
+					actionSet = actionSet.Union(concreteDesktopWindow.DesktopTools.Actions);
+			}
 
-			_unavailableActionsTreeRoot = new AbstractActionModelTreeRoot(_site);
-			BuildUnavailableActionsTree(abstractActionModel, _unavailableActionsTreeRoot);
-
+			_actionModel = ActionModelSettings.Default.BuildAbstractActionModel(_namespace, _site, actionSet.Select(a => a.Path.Site == site));
 			_actionModelTreeRoot = new AbstractActionModelTreeRoot(_site);
-			BuildActionModelTree(abstractActionModel, _actionModelTreeRoot);
+			BuildActionModelTree(_actionModel, _actionModelTreeRoot);
 		}
 
 		public string ActionModelId
@@ -82,23 +86,59 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _actionModelTreeRoot.Tree; }
 		}
 
-		public ITree UnavailableActionsTreeRoot
+		public AbstractActionModelTreeRoot AbstractActionModelTreeRoot
 		{
-			get { return _unavailableActionsTreeRoot.Tree; }
+			get { return _actionModelTreeRoot; }
+		}
+
+		public AbstractActionModelTreeNode SelectedNode
+		{
+			get { return _selectedNode; }
+			set
+			{
+				if (_selectedNode != value)
+				{
+					_selectedNode = value;
+					this.OnSelectedNodeChanged();
+				}
+			}
+		}
+
+		public ActionModelRoot ToolbarActionModel
+		{
+			get { return _toolbarActionModel; }
+		}
+
+		protected virtual void OnSelectedNodeChanged()
+		{
+			EventsHelper.Fire(_selectedNodeChanged, this, EventArgs.Empty);
+		}
+
+		public event EventHandler SelectedNodeChanged
+		{
+			add { _selectedNodeChanged += value; }
+			remove { _selectedNodeChanged -= value; }
+		}
+
+		public override void Start()
+		{
+			base.Start();
+
+			_toolSet = new ToolSet(new ActionModelConfigurationComponentToolExtensionPoint(), new ActionModelConfigurationComponentToolContext(this));
+			_toolbarActionModel = ActionModelRoot.CreateModel(this.GetType().FullName, "actionmodelconfig-toolbar", _toolSet.Actions);
+		}
+
+		public override void Stop()
+		{
+			_toolbarActionModel = null;
+			_toolSet.Dispose();
+
+			base.Stop();
 		}
 
 		public void Save()
 		{
 			ActionModelRoot actionModelRoot = _actionModelTreeRoot.GetAbstractActionModel();
-			foreach (IAction action in actionModelRoot.GetActionsInOrder())
-				action.Available = true;
-
-			ActionModelRoot unavailableActionsModelRoot = _unavailableActionsTreeRoot.GetAbstractActionModel();
-			foreach (IAction action in unavailableActionsModelRoot.GetActionsInOrder())
-				action.Available = false;
-
-			actionModelRoot.Merge(unavailableActionsModelRoot);
-
 			ActionModelSettings.Default.PersistAbstractActionModel(_namespace, _site, actionModelRoot);
 
 			if (_desktopWindow is DesktopWindow)
@@ -117,53 +157,18 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 				{
 					ActionNode actionNode = (ActionNode) childNode;
 					if (actionNode.Action.Persistent)
-					{
-						if (actionNode.Action.Permissible)
-						{
-							if (actionNode.Action.Available)
-								abstractActionModelTreeBranch.AppendChild(new AbstractActionModelTreeLeafAction(actionNode.Action), false);
-						}
-						else
-						{
-							abstractActionModelTreeBranch.AppendChild(new AbstractActionModelTreeLeafAction(actionNode.Action), true);
-						}
-					}
+						abstractActionModelTreeBranch.AppendChild(new AbstractActionModelTreeLeafAction(actionNode.Action));
 				}
 				else if (childNode is SeparatorNode)
 				{
-					abstractActionModelTreeBranch.AppendChild(new AbstractActionModelTreeLeafSeparator(), false);
+					abstractActionModelTreeBranch.AppendChild(new AbstractActionModelTreeLeafSeparator());
 				}
 				else if (childNode is BranchNode)
 				{
 					AbstractActionModelTreeBranch treeBranch = new AbstractActionModelTreeBranch(childNode.PathSegment);
 					BuildActionModelTree(childNode, treeBranch);
-					abstractActionModelTreeBranch.AppendChild(treeBranch, treeBranch.Children.Count == 0);
+					abstractActionModelTreeBranch.AppendChild(treeBranch);
 				}
-			}
-		}
-
-		private static void BuildUnavailableActionsTree(ActionModelNode actionModel, AbstractActionModelTreeBranch abstractActionModelTreeBranch)
-		{
-			AbstractActionModelTreeBranch allActionsTreeBranch = new AbstractActionModelTreeBranch(SR.LabelAllActions);
-			abstractActionModelTreeBranch.Children.Add(allActionsTreeBranch);
-
-			List<AbstractActionModelTreeNode> list = new List<AbstractActionModelTreeNode>();
-			foreach (IAction action in actionModel.GetActionsInOrder())
-			{
-				if (action.Persistent)
-				{
-					if (action.Permissible)
-					{
-						if (!action.Available)
-							list.Add(new AbstractActionModelTreeLeafAction(action));
-					}
-				}
-			}
-
-			list.Sort((x, y) => x.CanonicalLabel.CompareTo(y.CanonicalLabel));
-			foreach (AbstractActionModelTreeNode node in list)
-			{
-				allActionsTreeBranch.AppendChild(node, false);
 			}
 		}
 	}

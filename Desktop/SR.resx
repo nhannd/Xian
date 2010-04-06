@@ -243,6 +243,9 @@
   <data name="LabelImport" xml:space="preserve">
     <value>Import</value>
   </data>
+  <data name="LabelNewGroup" xml:space="preserve">
+    <value>New Group</value>
+  </data>
   <data name="LabelReset" xml:space="preserve">
     <value>Reset</value>
   </data>
@@ -296,6 +299,9 @@
   </data>
   <data name="MessageNoConfigurationPagesExist" xml:space="preserve">
     <value>No configuration pages exist.</value>
+  </data>
+  <data name="MessageNodeNotEmpty" xml:space="preserve">
+    <value>This group contains one or more items. Items may not be deleted, but can be hidden.</value>
   </data>
   <data name="MessageReset" xml:space="preserve">
     <value>Reset this setting back to its default value?</value>
