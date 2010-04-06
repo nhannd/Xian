@@ -214,10 +214,16 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
+				var choices = new List<string>();
 				if (_originalPractitioner == null || _duplicatePractitioner == null)
-					return new List<string>();
+					return choices;
 
-				var choices = new List<string> { this.OriginalPractitioner.LicenseNumber, this.DuplicatePractitioner.LicenseNumber };
+				if (!string.IsNullOrEmpty(this.OriginalPractitioner.LicenseNumber))
+					choices.Add(this.OriginalPractitioner.LicenseNumber);
+
+				if (!string.IsNullOrEmpty(this.DuplicatePractitioner.LicenseNumber))
+					choices.Add(this.DuplicatePractitioner.LicenseNumber);
+
 				return CollectionUtils.Unique(choices);
 			}
 		}
@@ -237,10 +243,16 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
+				var choices = new List<string>();
 				if (_originalPractitioner == null || _duplicatePractitioner == null)
-					return new List<string>();
+					return choices;
 
-				var choices = new List<string> { this.OriginalPractitioner.BillingNumber, this.DuplicatePractitioner.BillingNumber };
+				if (!string.IsNullOrEmpty(this.OriginalPractitioner.BillingNumber))
+					choices.Add(this.OriginalPractitioner.BillingNumber);
+
+				if (!string.IsNullOrEmpty(this.DuplicatePractitioner.BillingNumber))
+					choices.Add(this.DuplicatePractitioner.BillingNumber);
+
 				return CollectionUtils.Unique(choices);
 			}
 		}
@@ -282,10 +294,10 @@ namespace ClearCanvas.Ris.Client
 				{
 					var choices = new List<object>();
 
-					if (_originalPractitioner.ExtendedProperties.ContainsKey(key))
+					if (_originalPractitioner.ExtendedProperties.ContainsKey(key) && !string.IsNullOrEmpty(_originalPractitioner.ExtendedProperties[key]))
 						choices.Add(_originalPractitioner.ExtendedProperties[key]);
 
-					if (_duplicatePractitioner.ExtendedProperties.ContainsKey(key))
+					if (_duplicatePractitioner.ExtendedProperties.ContainsKey(key) && !string.IsNullOrEmpty(_duplicatePractitioner.ExtendedProperties[key]))
 						choices.Add(_duplicatePractitioner.ExtendedProperties[key]);
 
 					var data = new ExtendedPropertyChoicesTableData(key, CollectionUtils.Unique(choices));
