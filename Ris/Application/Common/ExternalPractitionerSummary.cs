@@ -32,6 +32,7 @@
 using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Application.Common
 {
@@ -45,6 +46,7 @@ namespace ClearCanvas.Ris.Application.Common
 			string billingNumber,
 			bool isVerified,
 			DateTime? lastVerifiedTime,
+			DateTime? lastEditedTime,
 			bool deactivated)
 		{
 			this.PractitionerRef = pracRef;
@@ -53,6 +55,7 @@ namespace ClearCanvas.Ris.Application.Common
 			this.BillingNumber = billingNumber;
 			this.IsVerified = isVerified;
 			this.LastVerifiedTime = lastVerifiedTime;
+			this.LastEditedTime = lastEditedTime;
 			this.Deactivated = deactivated;
 		}
 
@@ -77,6 +80,9 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public DateTime? LastVerifiedTime;
+
+		[DataMember]
+		public DateTime? LastEditedTime;
 
 		[DataMember]
 		public bool Deactivated;
@@ -107,6 +113,7 @@ namespace ClearCanvas.Ris.Application.Common
 				this.BillingNumber,
 				this.IsVerified,
 				this.LastVerifiedTime,
+				this.LastEditedTime,
 				this.Deactivated);
 		}
 

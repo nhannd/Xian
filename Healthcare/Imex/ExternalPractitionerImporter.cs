@@ -140,7 +140,7 @@ namespace ClearCanvas.Healthcare.Imex
                     ep = new ExternalPractitioner();
                     ep.LicenseNumber = epLicense;
                     ep.BillingNumber = epBillingNumber;
-
+                	ep.LastEditedTime = Platform.Time;
                     ep.Name = new PersonName(epFamilyName, epGivenName, epMiddlename, epPrefix, epSuffix, epDegree);
 
                     // create a single default contact point

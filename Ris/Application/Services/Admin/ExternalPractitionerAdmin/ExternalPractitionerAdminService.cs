@@ -60,7 +60,25 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			var assembler = new ExternalPractitionerAssembler();
 
 			var criteria = new ExternalPractitionerSearchCriteria();
-			criteria.Name.FamilyName.SortAsc(0);
+
+			if (request.SortByLastVerifiedTime)
+			{
+				if (request.SortAscending)
+					criteria.LastVerifiedTime.SortAsc(0);
+				else
+					criteria.LastVerifiedTime.SortDesc(0);
+			}
+			else if (request.SortByLastEditedTime)
+			{
+				if (request.SortAscending)
+					criteria.LastEditedTime.SortAsc(0);
+				else
+					criteria.LastEditedTime.SortDesc(0);
+			}
+			else
+			{
+				criteria.Name.FamilyName.SortAsc(0);
+			}
 
 			if (!string.IsNullOrEmpty(request.FirstName))
 				criteria.Name.GivenName.StartsWith(request.FirstName);
@@ -142,6 +160,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			var assembler = new ExternalPractitionerAssembler();
 			assembler.UpdateExternalPractitioner(request.PractitionerDetail, prac, PersistenceContext);
 
+			prac.LastEditedTime = Platform.Time;
 			PersistenceContext.Lock(prac, DirtyState.New);
 
 			// ensure the new prac is assigned an OID before using it in the return value
@@ -160,6 +179,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			var assembler = new ExternalPractitionerAssembler();
 			assembler.UpdateExternalPractitioner(request.PractitionerDetail, prac, PersistenceContext);
 
+			prac.LastEditedTime = Platform.Time;
 			return new UpdateExternalPractitionerResponse(assembler.CreateExternalPractitionerSummary(prac, PersistenceContext));
 		}
 
@@ -256,6 +276,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 								vp.Practitioner = original;
 						}));
 
+			original.LastEditedTime = Platform.Time;
+			duplicate.LastEditedTime = Platform.Time;
+
 			var assembler = new ExternalPractitionerAssembler();
 			return new MergeDuplicatePractitionerResponse(assembler.CreateExternalPractitionerSummary(original, this.PersistenceContext));
 		}
@@ -291,6 +314,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			// remove the duplicate contact point
 			var practitioner = original.Practitioner;
 			practitioner.ContactPoints.Remove(duplicate);
+
+			practitioner.LastEditedTime = Platform.Time;
 
 			var assembler = new ExternalPractitionerAssembler();
 			return new MergeDuplicateContactPointResponse(assembler.CreateExternalPractitionerContactPointSummary(original));
@@ -359,7 +384,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 					}));
 
 			// Change reference of result recipient to the new contact point
-			var contactPointBroker = PersistenceContext.GetBroker<IExternalPractitionerContactPointBroker>();
 			CollectionUtils.ForEach(request.ContactPointReplacements,
 				delegate(KeyValuePair<AffectedOrderRecipientSummary, EntityRef> kvp)
 					{
@@ -379,6 +403,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 
 			// Deactivate the duplicate
 			duplicate.Deactivated = true;
+
+			original.LastEditedTime = Platform.Time;
+			duplicate.LastEditedTime = Platform.Time;
 
 			return new MergeExternalPractitionerResponse(assembler.CreateExternalPractitionerSummary(original, this.PersistenceContext));
 		}

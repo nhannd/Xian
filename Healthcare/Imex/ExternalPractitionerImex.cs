@@ -230,6 +230,7 @@ namespace ClearCanvas.Healthcare.Imex
                 prac.Name = name;
                 prac.LicenseNumber = license;
                 prac.BillingNumber = billingNumber;
+                prac.LastEditedTime = Platform.Time;
                 context.Lock(prac, DirtyState.New);
             }
 

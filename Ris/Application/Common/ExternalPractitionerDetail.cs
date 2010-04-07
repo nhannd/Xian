@@ -29,10 +29,10 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
-using System;
 
 namespace ClearCanvas.Ris.Application.Common
 {
@@ -46,6 +46,7 @@ namespace ClearCanvas.Ris.Application.Common
 			string billingNumber,
 			bool isVerified,
 			DateTime? lastVerifiedTime,
+			DateTime? lastEditedTime,
 			List<ExternalPractitionerContactPointDetail> contactPoints,
 			Dictionary<string, string> extendedProperties,
 			bool deactivated)
@@ -56,6 +57,7 @@ namespace ClearCanvas.Ris.Application.Common
 			this.BillingNumber = billingNumber;
 			this.IsVerified = isVerified;
 			this.LastVerifiedTime = lastVerifiedTime;
+			this.LastEditedTime = lastEditedTime;
 			this.ContactPoints = contactPoints;
 			this.ExtendedProperties = extendedProperties;
 			this.Deactivated = deactivated;
@@ -87,6 +89,9 @@ namespace ClearCanvas.Ris.Application.Common
 		public DateTime? LastVerifiedTime;
 
 		[DataMember]
+		public DateTime? LastEditedTime;
+
+		[DataMember]
 		public List<ExternalPractitionerContactPointDetail> ContactPoints;
 
 		[DataMember]
@@ -104,6 +109,7 @@ namespace ClearCanvas.Ris.Application.Common
 				this.BillingNumber,
 				this.IsVerified,
 				this.LastVerifiedTime,
+				this.LastEditedTime,
 				this.Deactivated);
 		}
 

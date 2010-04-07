@@ -1,5 +1,4 @@
-﻿using System;
-using ClearCanvas.Common;
+﻿using ClearCanvas.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 using ClearCanvas.Ris.Application.Common;
 
@@ -10,9 +9,16 @@ namespace ClearCanvas.Ris.Client
 	[FolderDescription("ExternalPractitionerUnverifiedFolderDescription")]
 	internal class UnverifiedFolder : ExternalPractitionerFolder
 	{
+		public UnverifiedFolder()
+			: base(new ExternalPractitionerWorkflowTable { PropertyNameForTimeColumn = "LastEditedTime" })
+		{
+		}
+
 		protected override void PrepareQueryRequest(ListExternalPractitionersRequest request)
 		{
 			request.VerifiedState = VerifiedState.NotVerified;
+			request.SortByLastEditedTime = true;
+			request.SortAscending = true;
 		}
 	}
 
@@ -21,12 +27,19 @@ namespace ClearCanvas.Ris.Client
 	[FolderDescription("ExternalPractitionerVerifiedTodayFolderDescription")]
 	internal class VerifiedTodayFolder : ExternalPractitionerFolder
 	{
+		public VerifiedTodayFolder()
+			: base(new ExternalPractitionerWorkflowTable { PropertyNameForTimeColumn = "LastVerifiedTime" })
+		{
+		}
+
 		protected override void PrepareQueryRequest(ListExternalPractitionersRequest request)
 		{
-			var today = DateTime.Now;
+			var today = Platform.Time;
 			request.VerifiedState = VerifiedState.Verified;
 			request.LastVerifiedRangeFrom = today.Date;
 			request.LastVerifiedRangeUntil = today.Date.AddDays(1);
+			request.SortByLastVerifiedTime = true;
+			request.SortAscending = false;
 		}
 	}
 

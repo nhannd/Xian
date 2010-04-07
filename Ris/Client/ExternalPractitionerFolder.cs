@@ -1,4 +1,5 @@
 ﻿using ClearCanvas.Common;
+using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 
@@ -6,8 +7,8 @@ namespace ClearCanvas.Ris.Client
 {
 	public abstract class ExternalPractitionerFolder : WorkflowFolder<ExternalPractitionerSummary>
 	{
-		protected ExternalPractitionerFolder()
-			: base(new ExternalPractitionerWorkflowTable())
+		protected ExternalPractitionerFolder(Table<ExternalPractitionerSummary> table)
+			: base(table)
 		{
 		}
 
