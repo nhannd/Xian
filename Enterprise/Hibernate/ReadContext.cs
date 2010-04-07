@@ -100,12 +100,12 @@ namespace ClearCanvas.Enterprise.Hibernate
             get { return EntityLoadFlags.None; }
         }
 
-        protected override void LockCore(Entity entity, DirtyState dirtyState)
+        protected override void LockCore(DomainObject obj, DirtyState dirtyState)
         {
             if (dirtyState != DirtyState.Clean)
                 throw new InvalidOperationException();
 
-            this.Session.Lock(entity, LockMode.None);
+            this.Session.Lock(obj, LockMode.None);
         }
 
         #endregion

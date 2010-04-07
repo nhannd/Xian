@@ -125,19 +125,19 @@ namespace ClearCanvas.Enterprise.Hibernate
 			return this.PersistentStore.SessionFactory.OpenSession(_interceptor = new UpdateContextInterceptor(_validator));
 		}
 
-		protected override void LockCore(Entity entity, DirtyState dirtyState)
+		protected override void LockCore(DomainObject obj, DirtyState dirtyState)
 		{
 			switch (dirtyState)
 			{
 				case DirtyState.Dirty:
-					this.Session.Update(entity);
+					this.Session.Update(obj);
 					break;
 				case DirtyState.New:
-					PreValidate(entity);
-					this.Session.Save(entity);
+					PreValidate(obj);
+					this.Session.Save(obj);
 					break;
 				case DirtyState.Clean:
-					this.Session.Lock(entity, LockMode.None);
+					this.Session.Lock(obj, LockMode.None);
 					break;
 			}
 		}

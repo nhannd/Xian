@@ -65,6 +65,16 @@ namespace ClearCanvas.Enterprise.Core
 		/// <param name="state"></param>
 		void Lock(Entity entity, DirtyState state);
 
+
+		/// <summary>
+		/// Locks the specified enum value into the context. 
+		/// </summary>
+		/// <remarks>
+		/// Call this method to re-associate an enum value instance with this context,
+		/// in order for an entity to be able to reference the instance.
+		/// </remarks>
+		void Lock(EnumValue enumValue);
+
 		/// <summary>
 		/// Loads the specified entity into this context.
 		/// </summary>

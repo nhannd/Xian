@@ -108,6 +108,18 @@ namespace ClearCanvas.Enterprise.Hibernate
             LockCore(entity, dirtyState);
         }
 
+    	/// <summary>
+    	/// Locks the specified enum value into the context. 
+    	/// </summary>
+    	/// <remarks>
+    	/// Call this method to re-associate an enum value instance with this context,
+    	/// in order for an entity to be able to reference the instance.
+    	/// </remarks>
+    	public void Lock(EnumValue enumValue)
+		{
+			LockCore(enumValue, DirtyState.Clean);
+		}
+
         /// <summary>
         /// Loads the specified entity into this context using the default load flags for the context.
         /// </summary>
@@ -251,7 +263,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="dirtyState"></param>
-        protected abstract void LockCore(Entity entity, DirtyState dirtyState);
+        protected abstract void LockCore(DomainObject entity, DirtyState dirtyState);
 
         /// <summary>
         /// True if this context is read-only.
