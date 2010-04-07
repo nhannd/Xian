@@ -477,4 +477,24 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 
 		#endregion
 	}
+
+	#region PersistentActionAttribute Class
+
+	public sealed class PersistentAttribute : ActionDecoratorAttribute
+	{
+		private readonly bool _persistent;
+
+		public PersistentAttribute(string actionId, bool persistent)
+			: base(actionId)
+		{
+			_persistent = persistent;
+		}
+
+		public override void Apply(IActionBuildingContext builder)
+		{
+			builder.Action.Persistent = _persistent;
+		}
+	}
+
+	#endregion
 }

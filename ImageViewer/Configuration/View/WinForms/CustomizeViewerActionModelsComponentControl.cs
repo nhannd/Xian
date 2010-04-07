@@ -58,10 +58,5 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 		{
 			_component.Cancel();
 		}
-
-		private void _btnApply_Click(object sender, EventArgs e)
-		{
-			_component.Save();
-		}
 	}
 }

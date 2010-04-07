@@ -24,7 +24,7 @@
 		/// </summary>
 		private void InitializeComponent() {
 			this._toolStrip = new System.Windows.Forms.ToolStrip();
-			this._actionModelTree = new ClearCanvas.Desktop.View.WinForms.Configuration.ActionModelConfigurationTreeControl();
+			this._actionModelTree = new ClearCanvas.Desktop.View.WinForms.BindingTreeView();
 			this.SuspendLayout();
 			// 
 			// _toolStrip
@@ -72,7 +72,7 @@
 
 		#endregion
 
-		private ClearCanvas.Desktop.View.WinForms.Configuration.ActionModelConfigurationTreeControl _actionModelTree;
+		private ClearCanvas.Desktop.View.WinForms.BindingTreeView _actionModelTree;
 		private System.Windows.Forms.ToolStrip _toolStrip;
 	}
 }

@@ -29,12 +29,14 @@
 
 #endregion
 
+using System;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Windows.Forms;
 
 namespace ClearCanvas.Desktop.View.WinForms.Configuration
 {
+	[Obsolete("See JY", true)]
 	public class ActionModelConfigurationTreeControl : BindingTreeView
 	{
 		public ActionModelConfigurationTreeControl() : base()

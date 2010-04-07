@@ -24,7 +24,6 @@
 		/// </summary>
 		private void InitializeComponent() {
 			this._pnlButtons = new System.Windows.Forms.FlowLayoutPanel();
-			this._btnApply = new System.Windows.Forms.Button();
 			this._btnCancel = new System.Windows.Forms.Button();
 			this._btnOk = new System.Windows.Forms.Button();
 			this._pnlMain = new System.Windows.Forms.Panel();
@@ -33,7 +32,6 @@
 			// 
 			// _pnlButtons
 			// 
-			this._pnlButtons.Controls.Add(this._btnApply);
 			this._pnlButtons.Controls.Add(this._btnCancel);
 			this._pnlButtons.Controls.Add(this._btnOk);
 			this._pnlButtons.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -44,20 +42,10 @@
 			this._pnlButtons.Size = new System.Drawing.Size(371, 36);
 			this._pnlButtons.TabIndex = 1;
 			// 
-			// _btnApply
-			// 
-			this._btnApply.Location = new System.Drawing.Point(287, 6);
-			this._btnApply.Name = "_btnApply";
-			this._btnApply.Size = new System.Drawing.Size(75, 23);
-			this._btnApply.TabIndex = 2;
-			this._btnApply.Text = "&Apply";
-			this._btnApply.UseVisualStyleBackColor = true;
-			this._btnApply.Click += new System.EventHandler(this._btnApply_Click);
-			// 
 			// _btnCancel
 			// 
 			this._btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this._btnCancel.Location = new System.Drawing.Point(206, 6);
+			this._btnCancel.Location = new System.Drawing.Point(287, 6);
 			this._btnCancel.Name = "_btnCancel";
 			this._btnCancel.Size = new System.Drawing.Size(75, 23);
 			this._btnCancel.TabIndex = 1;
@@ -68,7 +56,7 @@
 			// _btnOk
 			// 
 			this._btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this._btnOk.Location = new System.Drawing.Point(125, 6);
+			this._btnOk.Location = new System.Drawing.Point(206, 6);
 			this._btnOk.Name = "_btnOk";
 			this._btnOk.Size = new System.Drawing.Size(75, 23);
 			this._btnOk.TabIndex = 0;
@@ -101,7 +89,6 @@
 
 		private System.Windows.Forms.FlowLayoutPanel _pnlButtons;
 		private System.Windows.Forms.Panel _pnlMain;
-		private System.Windows.Forms.Button _btnApply;
 		private System.Windows.Forms.Button _btnCancel;
 		private System.Windows.Forms.Button _btnOk;
 	}

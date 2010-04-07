@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -100,31 +101,25 @@ namespace ClearCanvas.ImageViewer.Configuration
 				this.ShowValidation(true);
 				return;
 			}
-			this.SaveActionModels();
+
+			try
+			{
+				foreach (ActionModelConfigurationComponent component in _tabComponent.ContainedComponents)
+				{
+					component.Save();
+				}
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, this.Host.DesktopWindow);
+			}
+
 			base.Exit(ApplicationComponentExitCode.Accepted);
 		}
 
 		public void Cancel()
 		{
 			base.Exit(ApplicationComponentExitCode.None);
-		}
-
-		public void Save()
-		{
-			if (this.HasValidationErrors)
-			{
-				this.ShowValidation(true);
-				return;
-			}
-			this.SaveActionModels();
-		}
-
-		private void SaveActionModels()
-		{
-			foreach (ActionModelConfigurationComponent component in _tabComponent.ContainedComponents)
-			{
-				component.Save();
-			}
 		}
 
 		/// <summary>

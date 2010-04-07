@@ -41,14 +41,14 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 	[ButtonAction("addSeparator", "actionmodelconfig-toolbar/ToolbarAddSeparator", "AddSeparator")]
 	[IconSet("addSeparator", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolSmall.png", "Icons.AddToolSmall.png")]
 	[ButtonAction("removeNode", "actionmodelconfig-toolbar/ToolbarRemoveNode", "RemoveNode")]
-	[EnabledStateObserver("removeNode", "CanDelete", "CanDeleteChanged")]
+	[EnabledStateObserver("removeNode", "CanRemove", "CanRemoveChanged")]
 	[IconSet("removeNode", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
 	[ExtensionOf(typeof (ActionModelConfigurationComponentToolExtensionPoint))]
 	public class BasicActionModelConfigurationComponentTools : ActionModelConfigurationComponentTool
 	{
-		public event EventHandler CanDeleteChanged;
+		public event EventHandler CanRemoveChanged;
 
-		public bool CanDelete
+		public bool CanRemove
 		{
 			get
 			{
@@ -64,7 +64,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		{
 			base.OnSelectedNodeChanged();
 
-			EventsHelper.Fire(this.CanDeleteChanged, this, EventArgs.Empty);
+			EventsHelper.Fire(this.CanRemoveChanged, this, EventArgs.Empty);
 		}
 
 		private void InsertNode(AbstractActionModelTreeNode node)
@@ -103,7 +103,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		public void RemoveNode()
 		{
 			AbstractActionModelTreeNode selectedNode = base.SelectedNode;
-			if (this.CanDelete && selectedNode.Parent != null)
+			if (this.CanRemove && selectedNode.Parent != null)
 			{
 				AbstractActionModelTreeBranch branch = selectedNode as AbstractActionModelTreeBranch;
 				if (branch != null && !branch.IsEmpty)

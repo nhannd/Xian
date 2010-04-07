@@ -386,7 +386,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to LayoutManager.
+        ///   Looks up a localized string similar to Layout Manager.
         /// </summary>
         public static string ToolbarLayoutManager {
             get {

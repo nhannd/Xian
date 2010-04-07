@@ -41,6 +41,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 {
@@ -54,6 +55,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 		[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 		[LabelValueObserver("activate", "Label", "SliceSetChanged")]
 		[GroupHint("activate", "Tools.Volume.MPR.Reslicing")]
+		[Persistent("activate", false)]
 		[MouseToolButton(XMouseButtons.Left, false)]
 		private class ResliceTool : MprViewerTool, IMemorable
 		{

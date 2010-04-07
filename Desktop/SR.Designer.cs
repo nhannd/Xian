@@ -869,5 +869,32 @@ namespace ClearCanvas.Desktop {
                 return ResourceManager.GetString("TitleVersion", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Group.
+        /// </summary>
+        public static string ToolbarAddGroup {
+            get {
+                return ResourceManager.GetString("ToolbarAddGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Separator.
+        /// </summary>
+        public static string ToolbarAddSeparator {
+            get {
+                return ResourceManager.GetString("ToolbarAddSeparator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Node.
+        /// </summary>
+        public static string ToolbarRemoveNode {
+            get {
+                return ResourceManager.GetString("ToolbarRemoveNode", resourceCulture);
+            }
+        }
     }
 }

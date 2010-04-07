@@ -387,4 +387,13 @@
   <data name="TitleVersion" xml:space="preserve">
     <value>Version</value>
   </data>
+  <data name="ToolbarAddGroup" xml:space="preserve">
+    <value>Add Group</value>
+  </data>
+  <data name="ToolbarAddSeparator" xml:space="preserve">
+    <value>Add Separator</value>
+  </data>
+  <data name="ToolbarRemoveNode" xml:space="preserve">
+    <value>Remove Node</value>
+  </data>
 </root>

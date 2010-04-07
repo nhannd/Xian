@@ -51,15 +51,18 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			// assigned to a placeholder.
 
 			ActionPath path = new ActionPath(_path, builder.ResourceResolver);
-			builder.Action = new ActionPlaceholder(builder.ActionID, path, builder.ResourceResolver);
+			//builder.Action = new ActionPlaceholder(builder.ActionID, path, builder.ResourceResolver);
+			builder.Action = new ClickAction(builder.ActionID, path, ClickActionFlags.None, builder.ResourceResolver);
 			builder.Action.Persistent = true;
 			builder.Action.Visible = false;
 			builder.Action.Label = path.LastSegment.LocalizedText;
 		}
-
-		private class ActionPlaceholder : Action
-		{
-			public ActionPlaceholder(string actionId, ActionPath path, IResourceResolver resourceResolver) : base(actionId, path, resourceResolver) {}
-		}
 	}
+
+	//internal class ActionPlaceholder : Action
+	//{
+	//    public ActionPlaceholder(string actionId, ActionPath path, IResourceResolver resourceResolver) : base(actionId, path, resourceResolver) {}
+
+	//    private class BeholdenAction : IAction {}
+	//}
 }
