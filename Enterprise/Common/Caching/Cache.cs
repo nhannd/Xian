@@ -115,14 +115,14 @@ namespace ClearCanvas.Enterprise.Common.Caching
 			if (!_providers.TryGetValue(providerClass, out provider))
 			{
 				// if not, create one
-				provider = (ICacheProvider)point.CreateExtension(
-					new ClassNameExtensionFilter(providerClass.FullName));
-
 				lock (_providers)
 				{
 					// ensure that another thread hasn't beat us to it
-					if (!_providers.ContainsKey(providerClass))
+					if (!_providers.TryGetValue(providerClass, out provider))
 					{
+						provider = (ICacheProvider)point.CreateExtension(
+							new ClassNameExtensionFilter(providerClass.FullName));
+
 						// initialize this provider and store it
 						provider.Initialize(new CacheProviderInitializationArgs());
 						_providers.Add(providerClass, provider);
