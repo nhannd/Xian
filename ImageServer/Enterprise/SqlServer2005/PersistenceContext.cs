@@ -97,6 +97,11 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         {
             throw new Exception("The method or operation is not implemented.");
         }
+		
+        public void Lock(EnumValue enumValue)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
 
 		public Entity Load(EntityRef entityRef, EntityLoadFlags flags)
 		{
