@@ -45,10 +45,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     /// This tool runs an instance of <see cref="LayoutComponent"/> in a shelf, and coordinates
     /// it so that it reflects the state of the active workspace.
 	/// </summary>
+	[ActionPlaceholder("display0", "imageviewer-contextmenu/DisplaySets")]
+	[GroupHint("display0", "DisplaySets")]
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public partial class ContextMenuLayoutTool : ImageViewerTool
 	{
-    	private const string _rootPath = "imageviewer-contextmenu";
+    	private const string _contextMenuSite = "imageviewer-contextmenu";
 		private static readonly List<IActionFactory> _actionFactories = CreateActionFactories();
 		private static readonly DefaultContextMenuActionFactory _defaultActionFactory = new DefaultContextMenuActionFactory();
 
@@ -88,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		public override IActionSet Actions
 		{
-			get { return GetDisplaySetActions(); }
+			get { return base.Actions.Union(GetDisplaySetActions()); }
 		}
 		
 		/// <summary>
@@ -162,6 +164,19 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 #if TRACEGROUPS
 			TraceGroups();
 #endif
+    		bool available = true;
+    		string groupHint = string.Empty;
+    		string rootPath = _contextMenuSite;
+			IAction placeholder = GetPlaceholderAction();
+    		if (placeholder != null)
+    		{
+    			available = placeholder.Available;
+    			if (placeholder.GroupHint != null)
+    				groupHint = placeholder.GroupHint.Hint;
+    			if (placeholder.Path != null)
+    				rootPath = placeholder.Path.SubPath(0, placeholder.Path.Segments.Count - 1).ToString();
+    		}
+
 			_currentPathElements = new List<string>();
 			List<IAction> actions = new List<IAction>();
 
@@ -178,7 +193,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				bool showImageSetNames = base.ImageViewer.LogicalWorkspace.ImageSets.Count > 1 || _unavailableImageSets.Count > 0;
 				int loadingPriorsNumber = 0;
 
-				foreach (FilteredGroup<IImageSet> group in TraverseImageSetGroups(rootGroup))
+				foreach (FilteredGroup<IImageSet> group in TraverseImageSetGroups(rootGroup, rootPath))
 				{
 					string basePath = StringUtilities.Combine(_currentPathElements, "/");
 
@@ -208,10 +223,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				}
 			}
 
-			//do this so they all get grouped together.
+			// synchronize display set actions with the placeholder item
     		foreach (IAction action in actions)
     		{
-    			action.GroupHint = new GroupHint("DisplaySets");
+    			action.Available = available;
+				action.GroupHint = new GroupHint(groupHint);
+				// don't have to synchronize action path, as the factory already created the paths to spec
+
 				if (action is Action)
 				((Action)action).Persistent = false;
     		}
@@ -219,13 +237,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			return new ActionSet(actions);
 		}
 
-		private IEnumerable<FilteredGroup<IImageSet>> TraverseImageSetGroups(FilteredGroup<IImageSet> group)
+		private IEnumerable<FilteredGroup<IImageSet>> TraverseImageSetGroups(FilteredGroup<IImageSet> group, string rootPath)
 		{
 			List<IImageSet> allItems = group.GetAllItems();
 			if (allItems.Count != 0)
 			{
 				if (_currentPathElements.Count == 0)
-					_currentPathElements.Add(_rootPath);
+					_currentPathElements.Add(rootPath);
 				else
 					_currentPathElements.Add(group.Label.Replace("/", "-"));
 
@@ -234,7 +252,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			foreach (FilteredGroup<IImageSet> child in group.ChildGroups)
 			{
-				foreach (FilteredGroup<IImageSet> nonEmptyChild in TraverseImageSetGroups(child))
+				foreach (FilteredGroup<IImageSet> nonEmptyChild in TraverseImageSetGroups(child, rootPath))
 					yield return nonEmptyChild;
 			}
 
@@ -279,6 +297,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			                    	};
 			action.SetClickHandler(delegate { });
 			return action;
+		}
+
+		private IAction GetPlaceholderAction()
+		{
+			string @namespace = base.ImageViewer.ActionsNamespace;
+			return CollectionUtils.SelectFirst(ActionModelRoot.CreateModel(@namespace, _contextMenuSite, base.Actions).GetActionsInOrder(), x => x.ActionID.EndsWith(":display0"));
 		}
 
 #if TRACEGROUPS

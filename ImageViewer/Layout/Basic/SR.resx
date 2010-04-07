@@ -129,6 +129,9 @@
   <data name="CommandSurveyExplode" xml:space="preserve">
     <value>Survey/Explode</value>
   </data>
+  <data name="DisplaySets" xml:space="preserve">
+    <value>(List of Display Sets)</value>
+  </data>
   <data name="ExceptionImageNotLoaded" xml:space="preserve">
     <value>The specified image is not currently loaded (SopInstanceUID={0}).</value>
   </data>

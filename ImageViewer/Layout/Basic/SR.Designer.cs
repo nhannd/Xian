@@ -97,6 +97,15 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (List of Display Sets).
+        /// </summary>
+        public static string DisplaySets {
+            get {
+                return ResourceManager.GetString("DisplaySets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The specified image is not currently loaded (SopInstanceUID={0})..
         /// </summary>
         public static string ExceptionImageNotLoaded {
