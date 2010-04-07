@@ -169,7 +169,7 @@ namespace ClearCanvas.Healthcare
 
 			// checked in procedures are also in the scheduled status and may or may not have no scheduled start time
 			// but they should be excluded since there is no reason to schedule a patient who is already here
-			criteria.Procedure.ProcedureCheckIn.CheckInTime.IsNull();
+			criteria.ProcedureCheckIn.CheckInTime.IsNull();
 
 			return new WorklistItemSearchCriteria[] { criteria };
 		}
