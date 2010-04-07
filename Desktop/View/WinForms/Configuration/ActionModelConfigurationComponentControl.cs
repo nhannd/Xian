@@ -46,7 +46,8 @@ namespace ClearCanvas.Desktop.View.WinForms.Configuration
 			_component = component;
 
 			_actionModelTree.Tree = component.ActionModelTreeRoot;
-			_actionModelTree.ToolbarModel = component.ToolbarActionModel;
+			
+			ToolStripBuilder.BuildToolStrip(ToolStripBuilder.ToolStripKind.Toolbar, _toolStrip.Items, component.ToolbarActionModel.ChildNodes);
 		}
 
 		private void OnActionModelTreeSelectionChanged(object sender, EventArgs e)

@@ -42,6 +42,7 @@ namespace ClearCanvas.Desktop.Actions
 	{
 		private readonly string _path;
 		private readonly string _menuModelPropertyName;
+		private bool _initiallyAvailable = true;
 
 		/// <summary>
 		/// Constructor.
@@ -62,6 +63,15 @@ namespace ClearCanvas.Desktop.Actions
 		}
 
 		/// <summary>
+		/// Gets or sets a value indicating whether or not the action should be available by default when not overriden by the action model.
+		/// </summary>
+		public bool InitiallyAvailable
+		{
+			get { return _initiallyAvailable; }
+			set { _initiallyAvailable = value; }
+		}
+
+		/// <summary>
 		/// Constructs/initializes a <see cref="DropDownAction"/> via the given <see cref="IActionBuildingContext"/>.
 		/// </summary>
 		/// <remarks>For internal framework use only.</remarks>
@@ -69,6 +79,7 @@ namespace ClearCanvas.Desktop.Actions
 		{
 			ActionPath path = new ActionPath(_path, builder.ResourceResolver);
 			builder.Action = new DropDownAction(builder.ActionID, path, builder.ResourceResolver);
+			builder.Action.Available = this.InitiallyAvailable;
 			builder.Action.Persistent = true;
 			builder.Action.Label = path.LastSegment.LocalizedText;
 

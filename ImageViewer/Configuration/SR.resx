@@ -147,7 +147,7 @@ Please choose another Server Group Name.</value>
     <value>Add server group</value>
   </data>
   <data name="MenuCustomizeActionModels" xml:space="preserve">
-    <value>Customize Menus and Toolbars</value>
+    <value>&amp;Customize...</value>
   </data>
   <data name="MenuDelete" xml:space="preserve">
     <value>Delete</value>

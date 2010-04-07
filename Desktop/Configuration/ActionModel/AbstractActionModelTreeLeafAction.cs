@@ -46,7 +46,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 
 	public sealed class AbstractActionModelTreeLeafSeparator : AbstractActionModelTreeLeaf
 	{
-		public AbstractActionModelTreeLeafSeparator() : base(string.Empty, "(Separator)") {}
+		public AbstractActionModelTreeLeafSeparator() : base(string.Empty, SR.LabelSeparator) {}
 	}
 
 	public class AbstractActionModelTreeLeafAction : AbstractActionModelTreeLeaf

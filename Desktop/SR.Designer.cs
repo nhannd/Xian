@@ -475,6 +475,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (Separator).
+        /// </summary>
+        public static string LabelSeparator {
+            get {
+                return ResourceManager.GetString("LabelSeparator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to About.
         /// </summary>
         public static string MenuAbout {

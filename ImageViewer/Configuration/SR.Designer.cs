@@ -144,7 +144,7 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Customize Menus and Toolbars.
+        ///   Looks up a localized string similar to &amp;Customize....
         /// </summary>
         internal static string MenuCustomizeActionModels {
             get {

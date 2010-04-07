@@ -269,9 +269,9 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		{
 			public Binding()
 			{
-				this.NodeTextProvider = (node => node.CanonicalLabel);
+				this.NodeTextProvider = (node => node.Label);
 
-				this.CanSetNodeTextHandler = (node => false);
+				this.CanSetNodeTextHandler = (node => !(node is AbstractActionModelTreeLeaf));
 				this.NodeTextSetter = ((node, s) => node.Label = s);
 
 				this.CanHaveSubTreeHandler = (node => node is AbstractActionModelTreeBranch);

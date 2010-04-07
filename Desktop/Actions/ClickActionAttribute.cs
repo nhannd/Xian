@@ -40,8 +40,9 @@ namespace ClearCanvas.Desktop.Actions
     /// </summary>
     public abstract class ClickActionAttribute : ActionInitiatorAttribute
     {
-        private string _path;
-        private string _clickHandler;
+        private readonly string _path;
+        private readonly string _clickHandler;
+    	private bool _initiallyAvailable = true;
         private ClickActionFlags _flags;
 		private XKeys _keyStroke;
 
@@ -68,6 +69,15 @@ namespace ClearCanvas.Desktop.Actions
             : this(actionID, path, null)
         {
         }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether or not the action should be available by default when not overriden by the action model.
+		/// </summary>
+    	public bool InitiallyAvailable
+    	{
+			get { return _initiallyAvailable; }
+			set { _initiallyAvailable = value; }
+    	}
 
         /// <summary>
         /// Gets or sets the flags that customize the behaviour of the action.
@@ -105,6 +115,7 @@ namespace ClearCanvas.Desktop.Actions
             // assert _action == null
             ActionPath path = new ActionPath(this.Path, builder.ResourceResolver);
             builder.Action = CreateAction(builder.ActionID, path, this.Flags, builder.ResourceResolver);
+			builder.Action.Available = this.InitiallyAvailable;
             builder.Action.Persistent = true;
             ((ClickAction)builder.Action).KeyStroke = this.KeyStroke;
             builder.Action.Label = path.LastSegment.LocalizedText;

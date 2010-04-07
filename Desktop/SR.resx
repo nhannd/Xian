@@ -255,6 +255,9 @@
   <data name="LabelSaveAll" xml:space="preserve">
     <value>Save All</value>
   </data>
+  <data name="LabelSeparator" xml:space="preserve">
+    <value>(Separator)</value>
+  </data>
   <data name="MenuAbout" xml:space="preserve">
     <value>About</value>
   </data>
