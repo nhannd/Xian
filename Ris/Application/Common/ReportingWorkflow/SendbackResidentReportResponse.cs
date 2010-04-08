@@ -4,14 +4,11 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
 	[DataContract]
-	public class SendbackResidentReportResponse : DataContractBase
+	public class SendbackResidentReportResponse : SaveReportResponse
 	{
-		public SendbackResidentReportResponse(ReportingWorklistItemSummary replacementInterpretationStep)
+		public SendbackResidentReportResponse(EntityRef reportingStepRef)
+			: base(reportingStepRef)
 		{
-			this.ReplacementInterpretationStep = replacementInterpretationStep;
 		}
-
-		[DataMember]
-		public ReportingWorklistItemSummary ReplacementInterpretationStep;
 	}
 }

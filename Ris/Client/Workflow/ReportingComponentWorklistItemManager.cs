@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				case StepState.Scheduled:
 					return worklistItem.IsAddendumStep 
 						? ReportingComponentModes.CreateAddendum
-						: ReportingComponentModes.Create;
+						: worklistItem.ReportRef == null ? ReportingComponentModes.Create : ReportingComponentModes.Edit;
 				case StepState.InProgress:
 					return ReportingComponentModes.Edit;
 				default:

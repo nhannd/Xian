@@ -353,12 +353,12 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 		}
 
 		/// <summary>
-		/// Residents are not allowed to edit a report that has been scheduled for verification.
-		/// This operation allows radiologist to cancels the in progress verification and creates a new interpretation step for the resident to edit.
+		/// Residents are not allowed to edit a report that has been scheduled for verification or pending publication.
+		/// This operation allows radiologist to cancels the in progress verification or scheduled publication and creates a new interpretation step for the resident to edit.
 		/// </summary>
 		public class SendbackResidentdReport : ReportingOperation
 		{
-			public InterpretationStep Execute(VerificationStep step, Staff executingStaff, IWorkflow workflow)
+			public InterpretationStep Execute(ReportingProcedureStep step, IWorkflow workflow)
 			{
 				// Cancel the current step
 				step.Discontinue();
@@ -366,10 +366,13 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				// Create a new interpreatation step that uses the same report part
 				var interpretationStep = new InterpretationStep(step);
 
+				// Reset the verifier
+				interpretationStep.ReportPart.Verifier = null;
+
 				// Assign the new step to the interpreter
 				var interpreter = interpretationStep.ReportPart.Interpreter;
 				interpretationStep.Assign(interpreter);
-				interpretationStep.Start(interpreter);
+				interpretationStep.Schedule(Platform.Time);
 
 				workflow.AddEntity(interpretationStep);
 				return interpretationStep;
@@ -377,9 +380,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)
 			{
-				if (!step.Is<VerificationStep>())
-					return false;
-
 				// must be scheduled or in progress
 				if (step.State != ActivityStatus.SC && step.State != ActivityStatus.IP)
 					return false;
@@ -507,23 +507,23 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 		public class ReviseUnpublishedReport : ReportingOperation
 		{
-			public VerificationStep Execute(PublicationStep step, Staff executingStaff, IWorkflow workflow)
+			public InterpretationStep Execute(PublicationStep step, Staff executingStaff, IWorkflow workflow)
 			{
 				// Discontinue the publication step
 				step.Discontinue();
 
-				// Create a new verification step that uses the same report part
-				var verificationStep = new VerificationStep(step);
+				// Create a new interpreatation step that uses the same report part
+				var interpretationStep = new InterpretationStep(step);
 
 				// Reset the verifier
-				verificationStep.ReportPart.Verifier = null;
+				interpretationStep.ReportPart.Verifier = null;
 
 				// Assign the new step back to me
-				verificationStep.Assign(executingStaff);
-				verificationStep.Start(executingStaff);
+				interpretationStep.Assign(executingStaff);
+				interpretationStep.Schedule(Platform.Time);
 
-				workflow.AddEntity(verificationStep);
-				return verificationStep;
+				workflow.AddEntity(interpretationStep);
+				return interpretationStep;
 			}
 
 			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)

@@ -70,7 +70,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get
 			{
 				var item = GetSelectedItem();
-				if (item != null && item.ProcedureStepName == StepType.Interpretation && item.ActivityStatus.Code == StepState.Scheduled)
+				if (item == null)
+					return _editReportTitle;
+
+				if (item.ProcedureStepName == StepType.Interpretation && item.ActivityStatus.Code == StepState.Scheduled && item.ReportRef == null)
 					return _createReportTitle;
 
 				return _editReportTitle;

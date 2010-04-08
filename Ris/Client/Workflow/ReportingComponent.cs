@@ -851,7 +851,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 					return;
 
 				Platform.GetService<IReportingWorkflowService>(service =>
-					service.SendbackResidentReport(new SendbackResidentReportRequest(_worklistItemManager.WorklistItem.ProcedureStepRef)));
+					service.SendbackResidentReport(new SendbackResidentReportRequest(
+							this.WorklistItem.ProcedureStepRef,
+							_reportPartExtendedProperties,
+							_supervisor == null ? null : _supervisor.StaffRef)));
 
 				// Source Folders, no destination folder
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeReviewedFolder));

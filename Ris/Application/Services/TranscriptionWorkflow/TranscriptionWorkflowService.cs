@@ -275,9 +275,6 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 
 		private void SaveReportHelper(TranscriptionStep step, Dictionary<string, string> reportPartExtendedProperties, Staff supervisor)
 		{
-			if (reportPartExtendedProperties == null)
-				return;
-
 			var op = new TranscriptionOperations.SaveTranscription();
 			op.Execute(step, reportPartExtendedProperties, supervisor);
 		}

@@ -263,13 +263,18 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Verify)]
 		public SendbackResidentReportResponse SendbackResidentReport(SendbackResidentReportRequest request)
 		{
-			var step = this.PersistenceContext.Load<VerificationStep>(request.VerificationStepRef, EntityLoadFlags.CheckVersion);
+			var step = this.PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
+			var supervisor = ResolveSupervisor(step, request.SupervisorRef);
+
+			SaveReportHelper(request.ReportPartExtendedProperties, step, supervisor, true);
+
+			ValidateReportTextExists(step);
 
 			var op = new Operations.SendbackResidentdReport();
-			var newStep = op.Execute(step, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+			var newStep = op.Execute(step, new PersistentWorkflow(this.PersistenceContext));
 
 			this.PersistenceContext.SynchState();
-			return new SendbackResidentReportResponse(GetWorklistItemSummary(newStep));
+			return new SendbackResidentReportResponse(newStep.GetRef());
 		}
 
 		[UpdateOperation]
@@ -818,9 +823,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			{
 				throw new SupervisorValidationException();
 			}
-
-			if (reportPartExtendedProperties == null)
-				return;
 
 			var saveReportOp = new Operations.SaveReport();
 			saveReportOp.Execute(step, reportPartExtendedProperties, supervisor);
