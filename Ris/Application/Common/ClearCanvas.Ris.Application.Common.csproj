@@ -161,8 +161,8 @@
     <Compile Include="RegistrationWorkflow\OrderEntry\QueryCancelOrderWarningsResponse.cs" />
     <Compile Include="ReportingWorkflow\GetDocumentationStatusResponse.cs" />
     <Compile Include="ReportingWorkflow\GetDocumentationStatusRequest.cs" />
-    <Compile Include="ReportingWorkflow\SendbackResidentReportRequest.cs" />
-    <Compile Include="ReportingWorkflow\SendBackResidentReportResponse.cs" />
+    <Compile Include="ReportingWorkflow\ReturnToInterpreterRequest.cs" />
+    <Compile Include="ReportingWorkflow\ReturnToInterpreterResponse.cs" />
     <Compile Include="ReportingWorkflow\StartTranscriptionReviewRequest.cs" />
     <Compile Include="ReportingWorkflow\StartTranscriptionReviewResponse.cs" />
     <Compile Include="SupervisorValidationException.cs" />

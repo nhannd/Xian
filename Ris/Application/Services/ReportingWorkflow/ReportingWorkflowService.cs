@@ -259,9 +259,9 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		}
 
 		[UpdateOperation]
-		[OperationEnablement("CanSendbackResidentReport")]
+		[OperationEnablement("CanReturnToInterpreter")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Verify)]
-		public SendbackResidentReportResponse SendbackResidentReport(SendbackResidentReportRequest request)
+		public ReturnToInterpreterResponse ReturnToInterpreter(ReturnToInterpreterRequest request)
 		{
 			var step = this.PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
 			var supervisor = ResolveSupervisor(step, request.SupervisorRef);
@@ -270,11 +270,11 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 			ValidateReportTextExists(step);
 
-			var op = new Operations.SendbackResidentdReport();
+			var op = new Operations.ReturnToInterpreter();
 			var newStep = op.Execute(step, new PersistentWorkflow(this.PersistenceContext));
 
 			this.PersistenceContext.SynchState();
-			return new SendbackResidentReportResponse(newStep.GetRef());
+			return new ReturnToInterpreterResponse(newStep.GetRef());
 		}
 
 		[UpdateOperation]
@@ -648,12 +648,12 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			return CanExecuteOperation(new Operations.ReviseResidentReport(), itemKey);
 		}
 
-		public bool CanSendbackResidentReport(ReportingWorklistItemKey itemKey)
+		public bool CanReturnToInterpreter(ReportingWorklistItemKey itemKey)
 		{
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Verify))
 				return false;
 
-			return CanExecuteOperation(new Operations.SendbackResidentdReport(), itemKey);
+			return CanExecuteOperation(new Operations.ReturnToInterpreter(), itemKey);
 		}
 
 		public bool CanStartVerification(ReportingWorklistItemKey itemKey)

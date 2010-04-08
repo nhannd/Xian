@@ -354,9 +354,10 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 		/// <summary>
 		/// Residents are not allowed to edit a report that has been scheduled for verification or pending publication.
-		/// This operation allows radiologist to cancels the in progress verification or scheduled publication and creates a new interpretation step for the resident to edit.
+		/// This operation allows radiologist to cancel a step (interpretation step, in progress verification or scheduled publication) 
+		/// and creates a new interpretation step for the original interpreter to edit.
 		/// </summary>
-		public class SendbackResidentdReport : ReportingOperation
+		public class ReturnToInterpreter : ReportingOperation
 		{
 			public InterpretationStep Execute(ReportingProcedureStep step, IWorkflow workflow)
 			{

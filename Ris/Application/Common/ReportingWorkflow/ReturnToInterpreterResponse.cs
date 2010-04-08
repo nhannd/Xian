@@ -4,9 +4,9 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
 	[DataContract]
-	public class SendbackResidentReportResponse : SaveReportResponse
+	public class ReturnToInterpreterResponse : SaveReportResponse
 	{
-		public SendbackResidentReportResponse(EntityRef reportingStepRef)
+		public ReturnToInterpreterResponse(EntityRef reportingStepRef)
 			: base(reportingStepRef)
 		{
 		}

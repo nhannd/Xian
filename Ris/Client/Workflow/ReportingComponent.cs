@@ -210,9 +210,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 		SendToTranscription,
 
 		/// <summary>
-		/// Report is saved and send back to the resident.
+		/// Report is saved and send back to the interpreter.
 		/// </summary>
-		SendToResident,
+		ReturnToInterpreter,
 
 		/// <summary>
 		/// Report is saved and submitted for another radiologist to review.
@@ -385,7 +385,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private bool _canCompleteInterpretationAndVerify;
 		private bool _canCompleteVerification;
 		private bool _canSubmitForReview;
-		private bool _canSendbackResidentReport;
+		private bool _canReturnToInterpreter;
 		private bool _canCompleteInterpretationForTranscription;
 		private bool _canSaveReport;
 
@@ -835,7 +835,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#region Send To Resident
 
-		public void SendToResident()
+		public void ReturnToInterpreter()
 		{
 			try
 			{
@@ -847,11 +847,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				CloseImages();
 
-				if (!_reportEditor.Save(ReportEditorCloseReason.SendToResident))
+				if (!_reportEditor.Save(ReportEditorCloseReason.ReturnToInterpreter))
 					return;
 
 				Platform.GetService<IReportingWorkflowService>(service =>
-					service.SendbackResidentReport(new SendbackResidentReportRequest(
+					service.ReturnToInterpreter(new ReturnToInterpreterRequest(
 							this.WorklistItem.ProcedureStepRef,
 							_reportPartExtendedProperties,
 							_supervisor == null ? null : _supervisor.StaffRef)));
@@ -867,14 +867,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
-		public bool SendToResidentEnabled
+		public bool ReturnToInterpreterEnabled
 		{
-			get { return _canSendbackResidentReport; }
+			get { return _canReturnToInterpreter; }
 		}
 
-		public bool SendToResidentVisible
+		public bool ReturnToInterpreterVisible
 		{
-			get { return _canSendbackResidentReport && Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify); }
+			get { return _canReturnToInterpreter && Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify); }
 		}
 
 		#endregion
@@ -1077,8 +1077,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 				case ReportEditorCloseReason.SendToTranscription:
 					SendToTranscription();
 					break;
-				case ReportEditorCloseReason.SendToResident:
-					SendToResident();
+				case ReportEditorCloseReason.ReturnToInterpreter:
+					ReturnToInterpreter();
 					break;
 				case ReportEditorCloseReason.SubmitForReview:
 					SubmitForReview();
@@ -1149,7 +1149,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_canCompleteInterpretationAndVerify = enablementResponse.OperationEnablementDictionary["CompleteInterpretationAndVerify"];
 				_canCompleteVerification = enablementResponse.OperationEnablementDictionary["CompleteVerification"];
 				_canSubmitForReview = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForVerification"];
-				_canSendbackResidentReport = enablementResponse.OperationEnablementDictionary["SendbackResidentReport"];
+				_canReturnToInterpreter = enablementResponse.OperationEnablementDictionary["ReturnToInterpreter"];
 				_canCompleteInterpretationForTranscription = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForTranscription"];
 				_canSaveReport = enablementResponse.OperationEnablementDictionary["SaveReport"];
 

@@ -124,15 +124,15 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         ReviseResidentReportResponse ReviseResidentReport(ReviseResidentReportRequest request);
 
 		/// <summary>
-		/// Cancel a verification step and create a new interpretation step with the same report part.
-		/// This is used by the radiologist to send back a reviewed report back to the resident.
+		/// Cancel a step and create a new interpretation step with the same report part.
+		/// This is used by the radiologist to send back a reviewed report back to the interpreter.
 		/// </summary>
-		/// <param name="request"><see cref="SendbackResidentReportRequest"/></param>
-		/// <returns><see cref="SendbackResidentReportResponse"/></returns>
+		/// <param name="request"><see cref="ReturnToInterpreterRequest"/></param>
+		/// <returns><see cref="ReturnToInterpreterResponse"/></returns>
 		[OperationContract]
 		[FaultContract(typeof(RequestValidationException))]
 		[FaultContract(typeof(ConcurrentModificationException))]
-		SendbackResidentReportResponse SendbackResidentReport(SendbackResidentReportRequest request);
+		ReturnToInterpreterResponse ReturnToInterpreter(ReturnToInterpreterRequest request);
 
         /// <summary>
         /// Start an verification step

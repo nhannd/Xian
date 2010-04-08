@@ -99,24 +99,24 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 	}
 
-	[MenuAction("apply", "folderexplorer-items-contextmenu/Send to Resident", "Apply")]
-	[ButtonAction("apply", "folderexplorer-items-toolbar/Send to Resident", "Apply")]
+	[MenuAction("apply", "folderexplorer-items-contextmenu/Return to Interpreter", "Apply")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/Return to Interpreter", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "Icons.AssignSmall.png", "Icons.AssignMedium.png", "Icons.AssignLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify)]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
-	public class SendbackResidentReportTool : ReportingWorkflowItemTool
+	public class ReturnToInterpreterTool : ReportingWorkflowItemTool
 	{
 
-		public SendbackResidentReportTool()
-			: base("SendbackResidentReport")
+		public ReturnToInterpreterTool()
+			: base("ReturnToInterpreter")
 		{
 		}
 
 		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			Platform.GetService((IReportingWorkflowService service) =>
-				service.SendbackResidentReport(new SendbackResidentReportRequest(item.ProcedureStepRef)));
+				service.ReturnToInterpreter(new ReturnToInterpreterRequest(item.ProcedureStepRef)));
 
 			return true;
 		}
