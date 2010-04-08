@@ -38,7 +38,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 {
 	public abstract class AbstractActionModelTreeNode
 	{
-		private static readonly Regex _mnemonic = new Regex(@"^(.*?)(?:[&](\w)(.*))?$", RegexOptions.Compiled);
+		private static readonly Regex _escapeRegex = new Regex(@"&(.)", RegexOptions.Compiled);
 
 		private event EventHandler _parentChanged;
 
@@ -75,8 +75,12 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _label; }
 			set
 			{
-				_label = value;
-				_canonicalLabel = null;
+				if (_label != value)
+				{
+					_label = value;
+					_canonicalLabel = null;
+					this.OnLabelChanged();
+				}
 			}
 		}
 
@@ -86,11 +90,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			{
 				if (_canonicalLabel == null)
 				{
-					Match m = _mnemonic.Match(_label);
-					if (m.Success)
-						_canonicalLabel = m.Groups[1].Value + m.Groups[2].Value + m.Groups[3].Value;
-					else
-						_canonicalLabel = string.Empty;
+					_canonicalLabel = _escapeRegex.Replace(_label, "$1");
 				}
 				return _canonicalLabel;
 			}
@@ -99,7 +99,14 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		public string Tooltip
 		{
 			get { return _tooltip; }
-			set { _tooltip = value; }
+			set
+			{
+				if (_tooltip != value)
+				{
+					_tooltip = value;
+					this.OnTooltipChanged();
+				}
+			}
 		}
 
 		public bool IsChecked
@@ -157,7 +164,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		public event EventHandler ParentChanged
 		{
 			add { _parentChanged += value; }
-			remove {_parentChanged -= value; } 
+			remove { _parentChanged -= value; }
 		}
 
 		protected virtual void OnParentChanged()
@@ -165,28 +172,37 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			EventsHelper.Fire(_parentChanged, this, EventArgs.Empty);
 		}
 
-		protected virtual void OnIsCheckedChanged()
+		protected virtual void NotifyItemChanged()
 		{
 			if (!ReferenceEquals(_parent, null))
 			{
 				_parent.NotifyChildChanged(this);
 			}
+		}
+
+		protected virtual void OnIsCheckedChanged()
+		{
+			this.NotifyItemChanged();
 		}
 
 		protected virtual void OnIsExpandedChanged()
 		{
-			if (!ReferenceEquals(_parent, null))
-			{
-				_parent.NotifyChildChanged(this);
-			}
+			this.NotifyItemChanged();
 		}
 
 		protected virtual void OnIsHighlightedChanged()
 		{
-			if (!ReferenceEquals(_parent, null))
-			{
-				_parent.NotifyChildChanged(this);
-			}
+			this.NotifyItemChanged();
+		}
+
+		protected virtual void OnLabelChanged()
+		{
+			this.NotifyItemChanged();
+		}
+
+		protected virtual void OnTooltipChanged()
+		{
+			this.NotifyItemChanged();
 		}
 
 		public bool IsDescendantOf(AbstractActionModelTreeBranch node)

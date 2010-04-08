@@ -479,6 +479,9 @@
     <EmbeddedResource Include="Validation\ValidationRules.xml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Icons\RenameToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="Tools\Tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

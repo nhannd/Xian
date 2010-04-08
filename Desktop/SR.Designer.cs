@@ -817,6 +817,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rename.
+        /// </summary>
+        public static string TitleRename {
+            get {
+                return ResourceManager.GetString("TitleRename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Scope.
         /// </summary>
         public static string TitleScope {
@@ -889,11 +898,20 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove Node.
+        ///   Looks up a localized string similar to Remove.
         /// </summary>
-        public static string ToolbarRemoveNode {
+        public static string ToolbarRemove {
             get {
-                return ResourceManager.GetString("ToolbarRemoveNode", resourceCulture);
+                return ResourceManager.GetString("ToolbarRemove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename.
+        /// </summary>
+        public static string ToolbarRename {
+            get {
+                return ResourceManager.GetString("ToolbarRename", resourceCulture);
             }
         }
     }

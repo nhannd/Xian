@@ -33,6 +33,7 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Desktop.Configuration.ActionModel
 {
@@ -40,15 +41,30 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 	[IconSet("addGroup", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolSmall.png", "Icons.AddToolSmall.png")]
 	[ButtonAction("addSeparator", "actionmodelconfig-toolbar/ToolbarAddSeparator", "AddSeparator")]
 	[IconSet("addSeparator", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolSmall.png", "Icons.AddToolSmall.png")]
-	[ButtonAction("removeNode", "actionmodelconfig-toolbar/ToolbarRemoveNode", "RemoveNode")]
-	[EnabledStateObserver("removeNode", "CanRemove", "CanRemoveChanged")]
+	[ButtonAction("removeNode", "actionmodelconfig-toolbar/ToolbarRemove", "RemoveNode", KeyStroke = XKeys.Delete)]
+	[EnabledStateObserver("removeNode", "CanRemove", "SelectedNodeChanged")]
 	[IconSet("removeNode", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
+	[ButtonAction("renameNode", "actionmodelconfig-toolbar/ToolbarRename", "RenameNode", KeyStroke = XKeys.F2)]
+	[EnabledStateObserver("renameNode", "CanRename", "SelectedNodeChanged")]
+	[IconSet("renameNode", IconScheme.Colour, "Icons.RenameToolSmall.png", "Icons.RenameToolSmall.png", "Icons.RenameToolSmall.png")]
 	[ExtensionOf(typeof (ActionModelConfigurationComponentToolExtensionPoint))]
 	public class BasicActionModelConfigurationComponentTools : ActionModelConfigurationComponentTool
 	{
-		public event EventHandler CanRemoveChanged;
+		public event EventHandler SelectedNodeChanged;
 
 		public bool CanRemove
+		{
+			get
+			{
+				if (base.SelectedNode == null)
+					return false;
+				if (base.SelectedNode is AbstractActionModelTreeLeafAction)
+					return false;
+				return true;
+			}
+		}
+
+		public bool CanRename
 		{
 			get
 			{
@@ -64,7 +80,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		{
 			base.OnSelectedNodeChanged();
 
-			EventsHelper.Fire(this.CanRemoveChanged, this, EventArgs.Empty);
+			EventsHelper.Fire(this.SelectedNodeChanged, this, EventArgs.Empty);
 		}
 
 		private void InsertNode(AbstractActionModelTreeNode node)
@@ -92,27 +108,98 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 
 		public void AddGroup()
 		{
-			this.InsertNode(new AbstractActionModelTreeBranch(SR.LabelNewGroup));
+			try
+			{
+				this.InsertNode(new AbstractActionModelTreeBranch(SR.LabelNewGroup));
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, this.Context.DesktopWindow);
+			}
 		}
 
 		public void AddSeparator()
 		{
-			this.InsertNode(new AbstractActionModelTreeLeafSeparator());
+			try
+			{
+				this.InsertNode(new AbstractActionModelTreeLeafSeparator());
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, this.Context.DesktopWindow);
+			}
 		}
 
 		public void RemoveNode()
 		{
-			AbstractActionModelTreeNode selectedNode = base.SelectedNode;
-			if (this.CanRemove && selectedNode.Parent != null)
+			try
 			{
-				AbstractActionModelTreeBranch branch = selectedNode as AbstractActionModelTreeBranch;
-				if (branch != null && !branch.IsEmpty)
+				AbstractActionModelTreeNode selectedNode = base.SelectedNode;
+				if (this.CanRemove && selectedNode.Parent != null)
 				{
-					base.Context.DesktopWindow.ShowMessageBox(SR.MessageNodeNotEmpty, MessageBoxActions.Ok);
-					return;
-				}
+					AbstractActionModelTreeBranch branch = selectedNode as AbstractActionModelTreeBranch;
+					if (branch != null && !branch.IsEmpty)
+					{
+						base.Context.DesktopWindow.ShowMessageBox(SR.MessageNodeNotEmpty, MessageBoxActions.Ok);
+						return;
+					}
 
-				selectedNode.Parent.Children.Remove(selectedNode);
+					selectedNode.Parent.Children.Remove(selectedNode);
+				}
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, this.Context.DesktopWindow);
+			}
+		}
+
+		public void RenameNode()
+		{
+			try
+			{
+				if (this.CanRename)
+				{
+					AbstractActionModelTreeNode selectedNode = base.SelectedNode;
+					RenameNodeComponent component = new RenameNodeComponent();
+					component.Name = selectedNode.Label;
+
+					ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(
+						this.Context.DesktopWindow,
+						new SimpleComponentContainer(component),
+						SR.TitleRename);
+
+					if (result == ApplicationComponentExitCode.Accepted)
+					{
+						selectedNode.Label = component.Name;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, this.Context.DesktopWindow);
+			}
+		}
+	}
+
+	[ExtensionPoint]
+	public sealed class RenameNodeComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> {}
+
+	[AssociateView(typeof (RenameNodeComponentViewExtensionPoint))]
+	public class RenameNodeComponent : ApplicationComponent
+	{
+		private string _name;
+
+		[ValidateNotNull]
+		public string Name
+		{
+			get { return _name; }
+			set
+			{
+				if (_name != value)
+				{
+					_name = value;
+					this.NotifyPropertyChanged("Name");
+				}
 			}
 		}
 	}

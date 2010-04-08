@@ -369,6 +369,9 @@
   <data name="TitleProperty" xml:space="preserve">
     <value>Property</value>
   </data>
+  <data name="TitleRename" xml:space="preserve">
+    <value>Rename</value>
+  </data>
   <data name="TitleScope" xml:space="preserve">
     <value>Scope</value>
   </data>
@@ -393,7 +396,10 @@
   <data name="ToolbarAddSeparator" xml:space="preserve">
     <value>Add Separator</value>
   </data>
-  <data name="ToolbarRemoveNode" xml:space="preserve">
-    <value>Remove Node</value>
+  <data name="ToolbarRemove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="ToolbarRename" xml:space="preserve">
+    <value>Rename</value>
   </data>
 </root>

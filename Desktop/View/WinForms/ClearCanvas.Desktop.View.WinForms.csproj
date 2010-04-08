@@ -73,6 +73,13 @@
     <Compile Include="Configuration\ActionModelConfigurationTreeControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Configuration\RenameNodeComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Configuration\RenameNodeComponentControl.Designer.cs">
+      <DependentUpon>RenameNodeComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\RenameNodeComponentView.cs" />
     <Compile Include="CustomTableCellEditControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -504,6 +511,9 @@
     <None Include="Resources\ClearFilterMini.png" />
     <EmbeddedResource Include="Configuration\ActionModelConfigurationComponentControl.resx">
       <DependentUpon>ActionModelConfigurationComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\RenameNodeComponentControl.resx">
+      <DependentUpon>RenameNodeComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GalleryComponentControl.resx">
       <DependentUpon>GalleryComponentControl.cs</DependentUpon>

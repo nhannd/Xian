@@ -87,6 +87,9 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			}
 		}
 
+		/// <summary>
+		/// Use only for performing initial population of the node.
+		/// </summary>
 		internal void AppendChild(AbstractActionModelTreeNode child)
 		{
 			_suspendSynchronizeParent = true;
@@ -169,6 +172,9 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 
 					// sync the secondary list
 					_children.Add(node);
+
+					// force the node to expand
+					this.IsExpanded = true;
 					break;
 				case ItemChangeType.ItemRemoved:
 					// nullify the parent on the node if and only if it is us (just in case something silly happens and the parent is already updated)
