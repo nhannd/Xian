@@ -385,6 +385,10 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				if (step.State != ActivityStatus.SC && step.State != ActivityStatus.IP)
 					return false;
 
+				// Cannot send back a report if it does not exist!
+				if (step.ReportPart == null)
+					return false;
+
 				// cannot send back a report that was interpreted by the current staff
 				if (Equals(step.ReportPart.Interpreter, executingStaff))
 					return false;
