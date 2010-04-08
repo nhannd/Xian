@@ -18,7 +18,8 @@ DATATYPE_MAPPINGS =
 	'bag' => 'IList',
 	'list' => 'IList',
 	'StringClob' => 'string',
-	'BinaryBlob' => 'byte[]'
+	'BinaryBlob' => 'byte[]',
+	'Timestamp' => 'DateTime'
 }
 
 # C# primitive datatypes
