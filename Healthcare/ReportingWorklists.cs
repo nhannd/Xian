@@ -397,7 +397,7 @@ namespace ClearCanvas.Healthcare
 
 		public override Type[] GetProcedureStepSubclasses()
 		{
-			return new[] { typeof(VerificationStep) };
+			return new[] { typeof(InterpretationStep), typeof(VerificationStep) };
 		}
 
 		protected override TimeDirective GetTimeDirective()
