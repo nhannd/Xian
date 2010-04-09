@@ -644,6 +644,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 
                 _treeCtrl.EndUpdate(); // resume drawing
             }
+
+			// perform drag scrolling
+			if (_treeCtrl.ClientRectangle.Contains(cursor))
+			{
+				if (cursor.Y > _treeCtrl.Height - _treeCtrl.ItemHeight/2)
+					SendMessage(_treeCtrl.Handle, (int) WindowsMessages.WM_VSCROLL, new IntPtr(1), IntPtr.Zero);
+				else if (cursor.Y < _treeCtrl.ItemHeight/2)
+					SendMessage(_treeCtrl.Handle, (int) WindowsMessages.WM_VSCROLL, IntPtr.Zero, IntPtr.Zero);
+			}
             
             base.OnDragOver(e);
         }
