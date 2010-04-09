@@ -31,222 +31,221 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Core.Imex;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core.Modelling;
 
 namespace ClearCanvas.Healthcare.Imex
 {
-    [ExtensionOf(typeof(CsvDataImporterExtensionPoint), Name = "External Practitioner Importer")]
-    [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
-    public class ExternalPractitionerImporter : CsvDataImporterBase
-    {
-        private const int _numFields = 25;
+	[ExtensionOf(typeof(CsvDataImporterExtensionPoint), Name = "External Practitioner Importer")]
+	[ExtensionOf(typeof(ApplicationRootExtensionPoint))]
+	public class ExternalPractitionerImporter : CsvDataImporterBase
+	{
+		private const int _numFields = 25;
 
-        IPersistenceContext _context;
+		IPersistenceContext _context;
 
-        #region CsvDataImporterBase overrides
+		#region CsvDataImporterBase overrides
 
-        /// <summary>
-        /// Import external practitioner from CSV format.
-        /// </summary>
-        /// <param name="rows">
-        /// Each string in the list must contain 25 CSV fields, as follows:
-        ///     0 - FamilyName
-        ///     1 - GivenName
-        ///     2 - MiddleName
-        ///     3 - Prefix
-        ///     4 - Suffix
-        ///     5 - Degree
-        ///     6 - LicenseNumber
-        ///     7 - BillingNumber
-        ///     8 - Street
-        ///     9 - Unit
-        ///     10 - City
-        ///     11 - Province
-        ///     12 - PostalCode
-        ///     13 - Country
-        ///     14 - ValidFrom
-        ///     15 - ValidUntil
-        ///     16 - Phone CountryCode
-        ///     17 - Phone AreaCode
-        ///     18 - Phone Number
-        ///     19 - Phone Extension
-        ///     20 - ValidFrom
-        ///     21 - ValidUntil
-        ///     22 - Fax CountryCode
-        ///     23 - Fax AreaCode
-        ///     24 - Fax Number
-        ///     25 - Fax Extension
-        ///     26 - ValidFrom
-        ///     27 - ValidUntil
-        /// </param>
-        /// <param name="context"></param>
-        public override void Import(List<string> rows, IUpdateContext context)
-        {
-            _context = context;
+		/// <summary>
+		/// Import external practitioner from CSV format.
+		/// </summary>
+		/// <param name="rows">
+		/// Each string in the list must contain 25 CSV fields, as follows:
+		///     0 - FamilyName
+		///     1 - GivenName
+		///     2 - MiddleName
+		///     3 - Prefix
+		///     4 - Suffix
+		///     5 - Degree
+		///     6 - LicenseNumber
+		///     7 - BillingNumber
+		///     8 - Street
+		///     9 - Unit
+		///     10 - City
+		///     11 - Province
+		///     12 - PostalCode
+		///     13 - Country
+		///     14 - ValidFrom
+		///     15 - ValidUntil
+		///     16 - Phone CountryCode
+		///     17 - Phone AreaCode
+		///     18 - Phone Number
+		///     19 - Phone Extension
+		///     20 - ValidFrom
+		///     21 - ValidUntil
+		///     22 - Fax CountryCode
+		///     23 - Fax AreaCode
+		///     24 - Fax Number
+		///     25 - Fax Extension
+		///     26 - ValidFrom
+		///     27 - ValidUntil
+		/// </param>
+		/// <param name="context"></param>
+		public override void Import(List<string> rows, IUpdateContext context)
+		{
+			_context = context;
 
-            List<ExternalPractitioner> importedEPs = new List<ExternalPractitioner>();
-        	var validator = new DomainObjectValidator();
+			var  importedEPs = new List<ExternalPractitioner>();
+			var validator = new DomainObjectValidator();
 
-            foreach (string row in rows)
-            {
-                string[] fields = ParseCsv(row, _numFields);
+			foreach (var row in rows)
+			{
+				var fields = ParseCsv(row, _numFields);
 
-                string epFamilyName = fields[0];
-                string epGivenName = fields[1];
-                string epMiddlename = fields[2];
-                string epPrefix = fields[3];
-                string epSuffix = fields[4];
-                string epDegree = fields[5];
+				var epFamilyName = fields[0];
+				var epGivenName = fields[1];
+				var epMiddlename = fields[2];
+				var epPrefix = fields[3];
+				var epSuffix = fields[4];
+				var epDegree = fields[5];
 
-                string epLicense = fields[6];
-                string epBillingNumber = fields[7];
+				var epLicense = fields[6];
+				var epBillingNumber = fields[7];
 
-                string addressStreet = fields[8];
-                string addressUnit = fields[9];
-                string addressCity = fields[10];
-                string addressProvince = fields[11];
-                string addressPostalCode = fields[12];
-                string addressCountry = fields[13];
+				var addressStreet = fields[8];
+				var addressUnit = fields[9];
+				var addressCity = fields[10];
+				var addressProvince = fields[11];
+				var addressPostalCode = fields[12];
+				var addressCountry = fields[13];
 
-                DateTime? addressValidFrom = ParseDateTime(fields[14]);
-                DateTime? addressValidUntil = ParseDateTime(fields[15]);
+				var addressValidFrom = ParseDateTime(fields[14]);
+				var addressValidUntil = ParseDateTime(fields[15]);
 
-                string phoneCountryCode = fields[16];
-                string phoneAreaCode = fields[17];
-                string phoneNumber = fields[18];
-                string phoneExtension = fields[19];
-                DateTime? phoneValidFrom = ParseDateTime(fields[20]);
-                DateTime? phoneValidUntil = ParseDateTime(fields[21]);
+				var phoneCountryCode = fields[16];
+				var phoneAreaCode = fields[17];
+				var phoneNumber = fields[18];
+				var phoneExtension = fields[19];
+				var phoneValidFrom = ParseDateTime(fields[20]);
+				var phoneValidUntil = ParseDateTime(fields[21]);
 
-                string faxCountryCode = fields[22];
-                string faxAreaCode = fields[23];
-                string faxNumber = fields[24];
-                string faxExtension = fields[25];
-                DateTime? faxValidFrom = ParseDateTime(fields[26]);
-                DateTime? faxValidUntil = ParseDateTime(fields[27]);
-
-
-                ExternalPractitioner ep = GetExternalPracitioner(epLicense, importedEPs);
-
-                if (ep == null)
-                {
-                    ep = new ExternalPractitioner();
-                    ep.LicenseNumber = epLicense;
-                    ep.BillingNumber = epBillingNumber;
-                	ep.LastEditedTime = Platform.Time;
-                    ep.Name = new PersonName(epFamilyName, epGivenName, epMiddlename, epPrefix, epSuffix, epDegree);
-
-                    // create a single default contact point
-                    ExternalPractitionerContactPoint contactPoint = new ExternalPractitionerContactPoint(ep);
-                    contactPoint.Name = "Default";
-                    contactPoint.IsDefaultContactPoint = true;
-
-                    try
-                    {
-                        Address epAddress = new Address(
-                            addressStreet,
-                            addressUnit,
-                            addressCity,
-                            addressProvince,
-                            addressPostalCode,
-                            addressCountry,
-                            AddressType.B,
-                            new DateTimeRange(addressValidFrom, addressValidUntil));
-						validator.Validate(epAddress);
-                        contactPoint.Addresses.Add(epAddress);
-                    }
-                    catch(EntityValidationException) { /* invalid address - ignore */ }
+				var faxCountryCode = fields[22];
+				var faxAreaCode = fields[23];
+				var faxNumber = fields[24];
+				var faxExtension = fields[25];
+				var faxValidFrom = ParseDateTime(fields[26]);
+				var faxValidUntil = ParseDateTime(fields[27]);
 
 
-                    try
-                    {
-                        TelephoneNumber epTelephone = new TelephoneNumber(
-                            phoneCountryCode,
-                            phoneAreaCode,
-                            phoneNumber,
-                            phoneExtension,
-                            TelephoneUse.WPN,
-                            TelephoneEquipment.PH,
-                            new DateTimeRange(phoneValidFrom, phoneValidUntil));
+				ExternalPractitioner ep = GetExternalPracitioner(epLicense, importedEPs);
 
-						validator.Validate(epTelephone);
-                        contactPoint.TelephoneNumbers.Add(epTelephone);
-                    }
-                    catch (EntityValidationException) { /* invalid phone - ignore */ }
+				if (ep != null)
+					continue;
 
-                    try
-                    {
-                        TelephoneNumber epFax = new TelephoneNumber(
-                            faxCountryCode,
-                            faxAreaCode,
-                            faxNumber,
-                            faxExtension,
-                            TelephoneUse.WPN,
-                            TelephoneEquipment.FX,
-                            new DateTimeRange(faxValidFrom, faxValidUntil));
+				ep = new ExternalPractitioner {LicenseNumber = epLicense, BillingNumber = epBillingNumber};
+				ep.LastEditedTime = Platform.Time;
+				ep.Name = new PersonName(epFamilyName, epGivenName, epMiddlename, epPrefix, epSuffix, epDegree);
 
-						validator.Validate(epFax);
-                        contactPoint.TelephoneNumbers.Add(epFax);
-                    }
-                    catch (EntityValidationException) { /* invalid fax - ignore */ }
+				// create a single default contact point
+				var contactPoint = new ExternalPractitionerContactPoint(ep) {Name = "Default", IsDefaultContactPoint = true};
 
-                    _context.Lock(ep, DirtyState.New);
+				try
+				{
+					var epAddress = new Address(
+						addressStreet,
+						addressUnit,
+						addressCity,
+						addressProvince,
+						addressPostalCode,
+						addressCountry,
+						AddressType.B,
+						new DateTimeRange(addressValidFrom, addressValidUntil));
+					validator.Validate(epAddress);
+					contactPoint.Addresses.Add(epAddress);
+				}
+				catch(EntityValidationException)
+				{
+					/* invalid address - ignore */
+				}
 
-                    importedEPs.Add(ep);
-                }
-            }
-        }
+				try
+				{
+					var epTelephone = new TelephoneNumber(
+						phoneCountryCode,
+						phoneAreaCode,
+						phoneNumber,
+						phoneExtension,
+						TelephoneUse.WPN,
+						TelephoneEquipment.PH,
+						new DateTimeRange(phoneValidFrom, phoneValidUntil));
 
-        #endregion
+					validator.Validate(epTelephone);
+					contactPoint.TelephoneNumbers.Add(epTelephone);
+				}
+				catch (EntityValidationException)
+				{
+					/* invalid phone - ignore */
+				}
 
-        #region Private Methods
+				try
+				{
+					var epFax = new TelephoneNumber(
+						faxCountryCode,
+						faxAreaCode,
+						faxNumber,
+						faxExtension,
+						TelephoneUse.WPN,
+						TelephoneEquipment.FX,
+						new DateTimeRange(faxValidFrom, faxValidUntil));
 
-        private ExternalPractitioner GetExternalPracitioner(string license, List<ExternalPractitioner> importedEPs)
-        {
-            // if licenseId is not supplied, then assume the record does not exist
-            if (string.IsNullOrEmpty(license))
-                return null;
+					validator.Validate(epFax);
+					contactPoint.TelephoneNumbers.Add(epFax);
+				}
+				catch (EntityValidationException)
+				{
+					/* invalid fax - ignore */
+				}
 
-            ExternalPractitioner externalPractitioner;
+				_context.Lock(ep, DirtyState.New);
 
-            externalPractitioner = CollectionUtils.SelectFirst(importedEPs,
-                delegate(ExternalPractitioner ep) { return Equals(ep.LicenseNumber, license); });
+				importedEPs.Add(ep);
+			}
+		}
 
-            if (externalPractitioner == null)
-            {
-                ExternalPractitionerSearchCriteria criteria = new ExternalPractitionerSearchCriteria();
-                criteria.LicenseNumber.EqualTo(license);
+		#endregion
 
-                IExternalPractitionerBroker broker = _context.GetBroker<IExternalPractitionerBroker>();
-                externalPractitioner = CollectionUtils.FirstElement(broker.Find(criteria));
-            }
+		#region Private Methods
 
-            return externalPractitioner;
-        }
+		private ExternalPractitioner GetExternalPracitioner(string license, IEnumerable<ExternalPractitioner> importedEPs)
+		{
+			// if licenseId is not supplied, then assume the record does not exist
+			if (string.IsNullOrEmpty(license))
+				return null;
 
-        private DateTime? ParseDateTime(string p)
-        {
-            DateTime? dt;
+			var externalPractitioner = CollectionUtils.SelectFirst(importedEPs, ep => Equals(ep.LicenseNumber, license));
 
-            try
-            {
-                dt = DateTime.Parse(p);
-            }
-            catch (Exception)
-            {
-                dt = null;
-            }
+			if (externalPractitioner == null)
+			{
+				var criteria = new ExternalPractitionerSearchCriteria();
+				criteria.LicenseNumber.EqualTo(license);
 
-            return dt;
-        }
+				var broker = _context.GetBroker<IExternalPractitionerBroker>();
+				externalPractitioner = CollectionUtils.FirstElement(broker.Find(criteria));
+			}
 
-        #endregion
-    }
+			return externalPractitioner;
+		}
+
+		private static DateTime? ParseDateTime(string p)
+		{
+			DateTime? dt;
+
+			try
+			{
+				dt = DateTime.Parse(p);
+			}
+			catch (Exception)
+			{
+				dt = null;
+			}
+
+			return dt;
+		}
+
+		#endregion
+	}
 }

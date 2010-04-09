@@ -31,210 +31,195 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Runtime.Serialization;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core.Imex;
-using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Imex
 {
-    [ExtensionOf(typeof(XmlDataImexExtensionPoint))]
-    [ImexDataClass("ExternalPractitioner")]
-    public class ExternalPractitionerImex : XmlEntityImex<ExternalPractitioner, ExternalPractitionerImex.ExternalPractitionerData>
-    {
-        [DataContract]
+	[ExtensionOf(typeof(XmlDataImexExtensionPoint))]
+	[ImexDataClass("ExternalPractitioner")]
+	public class ExternalPractitionerImex : XmlEntityImex<ExternalPractitioner, ExternalPractitionerImex.ExternalPractitionerData>
+	{
+		[DataContract]
 		public class ExternalPractitionerData : ReferenceEntityDataBase
-        {
-            [DataMember]
-            public string FamilyName;
+		{
+			[DataMember]
+			public string FamilyName;
 
-            [DataMember]
-            public string GivenName;
+			[DataMember]
+			public string GivenName;
 
-            [DataMember]
-            public string MiddleName;
+			[DataMember]
+			public string MiddleName;
 
-            [DataMember]
-            public string LicenseNumber;
+			[DataMember]
+			public string LicenseNumber;
 
-            [DataMember]
-            public string BillingNumber;
+			[DataMember]
+			public string BillingNumber;
 
-            [DataMember]
-            public List<ExternalPractitionerContactPointData> ContactPoints;
+			[DataMember]
+			public List<ExternalPractitionerContactPointData> ContactPoints;
 
-            [DataMember]
-            public Dictionary<string, string> ExtendedProperties;
-        }
+			[DataMember]
+			public Dictionary<string, string> ExtendedProperties;
+		}
 
-        [DataContract]
-        public class ExternalPractitionerContactPointData
-        {
-            [DataMember]
-            public string Name;
+		[DataContract]
+		public class ExternalPractitionerContactPointData
+		{
+			[DataMember]
+			public string Name;
 
-            [DataMember]
-            public string Description;
+			[DataMember]
+			public string Description;
 
-            [DataMember]
-            public string PreferredResultCommunicationMode;
+			[DataMember]
+			public string PreferredResultCommunicationMode;
 
-            [DataMember]
-            public bool IsDefaultContactPoint;
+			[DataMember]
+			public bool IsDefaultContactPoint;
 
-            [DataMember]
-            public List<TelephoneNumberData> TelephoneNumbers;
+			[DataMember]
+			public List<TelephoneNumberData> TelephoneNumbers;
 
-            [DataMember]
-            public List<AddressData> Addresses;
+			[DataMember]
+			public List<AddressData> Addresses;
 
-            [DataMember]
-            public List<EmailAddressData> EmailAddresses;
-        }
+			[DataMember]
+			public List<EmailAddressData> EmailAddresses;
+		}
 
-        #region Overrides
+		#region Overrides
 
-        protected override IList<ExternalPractitioner> GetItemsForExport(IReadContext context, int firstRow, int maxRows)
-        {
-            ExternalPractitionerSearchCriteria where = new ExternalPractitionerSearchCriteria();
-            where.Name.FamilyName.SortAsc(0);
-            where.Name.GivenName.SortAsc(1);
-            where.Name.MiddleName.SortAsc(2);
-            where.LicenseNumber.SortAsc(3);
-            where.BillingNumber.SortAsc(4);
+		protected override IList<ExternalPractitioner> GetItemsForExport(IReadContext context, int firstRow, int maxRows)
+		{
+			var where = new ExternalPractitionerSearchCriteria();
+			where.Name.FamilyName.SortAsc(0);
+			where.Name.GivenName.SortAsc(1);
+			where.Name.MiddleName.SortAsc(2);
+			where.LicenseNumber.SortAsc(3);
+			where.BillingNumber.SortAsc(4);
 
-            return context.GetBroker<IExternalPractitionerBroker>().Find(where, new SearchResultPage(firstRow, maxRows));
-        }
+			return context.GetBroker<IExternalPractitionerBroker>().Find(where, new SearchResultPage(firstRow, maxRows));
+		}
 
-        protected override ExternalPractitionerData Export(ExternalPractitioner entity, IReadContext context)
-        {
-            ExternalPractitionerData data = new ExternalPractitionerData();
-			data.Deactivated = entity.Deactivated;
-			data.FamilyName = entity.Name.FamilyName;
-            data.GivenName = entity.Name.GivenName;
-            data.MiddleName = entity.Name.MiddleName;
-            data.LicenseNumber = entity.LicenseNumber;
-            data.BillingNumber = entity.BillingNumber;
-            data.ContactPoints =
-                CollectionUtils.Map<ExternalPractitionerContactPoint, ExternalPractitionerContactPointData>(
-                    entity.ContactPoints,
-                    delegate(ExternalPractitionerContactPoint cp)
-                    {
-                        ExternalPractitionerContactPointData cpData = new ExternalPractitionerContactPointData();
-                        cpData.Name = cp.Name;
-                        cpData.IsDefaultContactPoint = cp.IsDefaultContactPoint;
-                        cpData.PreferredResultCommunicationMode = cp.PreferredResultCommunicationMode.ToString();
-                        cpData.Description = cp.Description;
-                        cpData.Addresses = CollectionUtils.Map<Address, AddressData>(cp.Addresses,
-                            delegate(Address a) { return new AddressData(a); });
-                        cpData.TelephoneNumbers = CollectionUtils.Map<TelephoneNumber, TelephoneNumberData>(cp.TelephoneNumbers,
-                            delegate(TelephoneNumber tn) { return new TelephoneNumberData(tn); });
-                        cpData.EmailAddresses = CollectionUtils.Map<EmailAddress, EmailAddressData>(cp.EmailAddresses,
-                            delegate(EmailAddress a) { return new EmailAddressData(a); });
-                        return cpData;
-                    });
+		protected override ExternalPractitionerData Export(ExternalPractitioner entity, IReadContext context)
+		{
+			var data = new ExternalPractitionerData
+				{
+					Deactivated = entity.Deactivated,
+					FamilyName = entity.Name.FamilyName,
+					GivenName = entity.Name.GivenName,
+					MiddleName = entity.Name.MiddleName,
+					LicenseNumber = entity.LicenseNumber,
+					BillingNumber = entity.BillingNumber,
+					ContactPoints = CollectionUtils.Map(entity.ContactPoints,
+						(ExternalPractitionerContactPoint cp) => new ExternalPractitionerContactPointData
+							{
+								Name = cp.Name,
+								IsDefaultContactPoint = cp.IsDefaultContactPoint,
+								PreferredResultCommunicationMode = cp.PreferredResultCommunicationMode.ToString(),
+								Description = cp.Description,
+								Addresses = CollectionUtils.Map(cp.Addresses, (Address a) => new AddressData(a)),
+								TelephoneNumbers = CollectionUtils.Map(cp.TelephoneNumbers, (TelephoneNumber tn) => new TelephoneNumberData(tn)),
+								EmailAddresses = CollectionUtils.Map(cp.EmailAddresses, (EmailAddress a) => new EmailAddressData(a))
+							}),
+					ExtendedProperties = ExtendedPropertyUtils.Copy(entity.ExtendedProperties)
+				};
 
-			data.ExtendedProperties = ExtendedPropertyUtils.Copy(entity.ExtendedProperties);
+			return data;
+		}
 
-            return data;
-        }
-
-        protected override void Import(ExternalPractitionerData data, IUpdateContext context)
-        {
-            ExternalPractitioner prac = LoadOrCreateExternalPractitioner(
-                data.LicenseNumber,
-                data.BillingNumber,
-                new PersonName(data.FamilyName, data.GivenName, data.MiddleName, null, null, null),
-                context);
+		protected override void Import(ExternalPractitionerData data, IUpdateContext context)
+		{
+			var prac = LoadOrCreateExternalPractitioner(
+				data.LicenseNumber,
+				data.BillingNumber,
+				new PersonName(data.FamilyName, data.GivenName, data.MiddleName, null, null, null),
+				context);
 
 			prac.Deactivated = data.Deactivated;
 			if (data.ContactPoints != null)
-            {
-                foreach (ExternalPractitionerContactPointData cpData in data.ContactPoints)
-                {
-                    ExternalPractitionerContactPoint cp = CollectionUtils.SelectFirst(prac.ContactPoints,
-                        delegate (ExternalPractitionerContactPoint p) { return p.Name == cpData.Name; });
-                    if(cp == null)
-                        cp = new ExternalPractitionerContactPoint(prac);
-
-                    UpdateExternalPractitionerContactPoint(cpData, cp);
-                }
-            }
+			{
+				foreach (var cpData in data.ContactPoints)
+				{
+					var cp = CollectionUtils.SelectFirst(prac.ContactPoints, p => p.Name == cpData.Name) ?? new ExternalPractitionerContactPoint(prac);
+					UpdateExternalPractitionerContactPoint(cpData, cp);
+				}
+			}
 
 			ExtendedPropertyUtils.Update(prac.ExtendedProperties, data.ExtendedProperties);
-        }
+		}
 
-        #endregion
+		#endregion
 
-        private void UpdateExternalPractitionerContactPoint(ExternalPractitionerContactPointData data, ExternalPractitionerContactPoint cp)
-        {
-            cp.Name = data.Name;
-            cp.Description = data.Description;
-            cp.IsDefaultContactPoint = data.IsDefaultContactPoint;
-            cp.PreferredResultCommunicationMode = (ResultCommunicationMode) 
-               Enum.Parse(typeof(ResultCommunicationMode), data.PreferredResultCommunicationMode);
+		private static void UpdateExternalPractitionerContactPoint(ExternalPractitionerContactPointData data, ExternalPractitionerContactPoint cp)
+		{
+			cp.Name = data.Name;
+			cp.Description = data.Description;
+			cp.IsDefaultContactPoint = data.IsDefaultContactPoint;
+			cp.PreferredResultCommunicationMode = (ResultCommunicationMode) Enum.Parse(typeof(ResultCommunicationMode), data.PreferredResultCommunicationMode);
 
-            if (data.TelephoneNumbers != null)
-            {
-               cp.TelephoneNumbers.Clear();
-               foreach (TelephoneNumberData phoneDetail in data.TelephoneNumbers)
-               {
-                   cp.TelephoneNumbers.Add(phoneDetail.CreateTelephoneNumber());
-               }
-            }
+			if (data.TelephoneNumbers != null)
+			{
+				cp.TelephoneNumbers.Clear();
+				foreach (var phoneDetail in data.TelephoneNumbers)
+				{
+					cp.TelephoneNumbers.Add(phoneDetail.CreateTelephoneNumber());
+				}
+			}
 
-            if (data.Addresses != null)
-            {
-               cp.Addresses.Clear();
-               foreach (AddressData addressDetail in data.Addresses)
-               {
-                   cp.Addresses.Add(addressDetail.CreateAddress());
-               }
-            }
+			if (data.Addresses != null)
+			{
+				cp.Addresses.Clear();
+				foreach (var addressDetail in data.Addresses)
+				{
+					cp.Addresses.Add(addressDetail.CreateAddress());
+				}
+			}
 
-            if (data.EmailAddresses != null)
-            {
-               cp.EmailAddresses.Clear();
-               foreach (EmailAddressData addressDetail in data.EmailAddresses)
-               {
-                   cp.EmailAddresses.Add(addressDetail.CreateEmailAddress());
-               }
-            }
-        }
+			if (data.EmailAddresses != null)
+			{
+				cp.EmailAddresses.Clear();
+				foreach (var addressDetail in data.EmailAddresses)
+				{
+					cp.EmailAddresses.Add(addressDetail.CreateEmailAddress());
+				}
+			}
+		}
 
-        private ExternalPractitioner LoadOrCreateExternalPractitioner(string license, string billingNumber, PersonName name, IPersistenceContext context)
-        {
-            ExternalPractitioner prac = null;
+		private static ExternalPractitioner LoadOrCreateExternalPractitioner(string license, string billingNumber, PersonName name, IPersistenceContext context)
+		{
+			ExternalPractitioner prac = null;
 
-            // if either license or billing number are supplied, check for an existing practitioner
-            if (!string.IsNullOrEmpty(license) || !string.IsNullOrEmpty(billingNumber))
-            {
-                ExternalPractitionerSearchCriteria criteria = new ExternalPractitionerSearchCriteria();
-                if(!string.IsNullOrEmpty(license))
-                    criteria.LicenseNumber.EqualTo(license);
-                if (!string.IsNullOrEmpty(billingNumber))
-                    criteria.BillingNumber.EqualTo(billingNumber);
+			// if either license or billing number are supplied, check for an existing practitioner
+			if (!string.IsNullOrEmpty(license) || !string.IsNullOrEmpty(billingNumber))
+			{
+				var criteria = new ExternalPractitionerSearchCriteria();
+				if(!string.IsNullOrEmpty(license))
+					criteria.LicenseNumber.EqualTo(license);
+				if (!string.IsNullOrEmpty(billingNumber))
+					criteria.BillingNumber.EqualTo(billingNumber);
 
-                IExternalPractitionerBroker broker = context.GetBroker<IExternalPractitionerBroker>();
-                prac = CollectionUtils.FirstElement(broker.Find(criteria));
-            }
+				var broker = context.GetBroker<IExternalPractitionerBroker>();
+				prac = CollectionUtils.FirstElement(broker.Find(criteria));
+			}
 
-            if(prac == null)
-            {
-                // create it
-                prac = new ExternalPractitioner();
-                prac.Name = name;
-                prac.LicenseNumber = license;
-                prac.BillingNumber = billingNumber;
-                prac.LastEditedTime = Platform.Time;
-                context.Lock(prac, DirtyState.New);
-            }
+			if(prac == null)
+			{
+				// create it
+				prac = new ExternalPractitioner {Name = name, LicenseNumber = license, BillingNumber = billingNumber};
+				prac.LastEditedTime = Platform.Time;
+				context.Lock(prac, DirtyState.New);
+			}
 
-            return prac;
-        }
-    }
+			return prac;
+		}
+	}
 }
