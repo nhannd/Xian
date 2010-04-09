@@ -30,7 +30,6 @@ namespace ClearCanvas.Ris.Client
 	[IconSet("apply", IconScheme.Colour, "Icons.CheckInToolSmall.png", "Icons.CheckInToolSmall.png", "Icons.CheckInToolLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner)]
-	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.ExternalPractitioner.Update)]
 	[ExtensionOf(typeof(ExternalPractitionerItemToolExtensionPoint))]
 	public class ExternalPractitionerVerifyTool : ExternalPractitionerTool
 	{
@@ -55,11 +54,7 @@ namespace ClearCanvas.Ris.Client
 							var editRequest = new LoadExternalPractitionerForEditRequest(item.PractitionerRef);
 							var editResponse = service.LoadExternalPractitionerForEdit(editRequest);
 
-							var practitioner = editResponse.PractitionerDetail;
-							practitioner.IsVerified = true;
-							practitioner.LastVerifiedTime = Platform.Time;
-
-							var updateRequest = new UpdateExternalPractitionerRequest(practitioner);
+							var updateRequest = new UpdateExternalPractitionerRequest(editResponse.PractitionerDetail, true);
 							service.UpdateExternalPractitioner(updateRequest);
 						});
 

@@ -29,11 +29,7 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Text;
-
-using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare
@@ -63,6 +59,24 @@ namespace ClearCanvas.Healthcare
 		/// </summary>
 		private void CustomInitialize()
 		{
+		}
+
+		/// <summary>
+		/// Mark the entity as being edited.  The edit time is recorded and the entity is now unverified.
+		/// </summary>
+		public virtual void MarkEdited()
+		{
+			_lastEditedTime = Platform.Time;
+			_isVerified = false;
+		}
+
+		/// <summary>
+		/// Mark the entity as being verified.  The verify time is recorded.
+		/// </summary>
+		public virtual void MarkVerified()
+		{
+			_lastVerifiedTime = Platform.Time;
+			_isVerified = true;
 		}
 	}
 }

@@ -16,9 +16,9 @@
     </component>
     <property name="LicenseNumber" column="LicenseNumber_" type="String" length="100"/>
     <property name="BillingNumber" column="BillingNumber_" type="String" length="100"/>
-    <property name="IsVerified" column="IsVerified_" type="Boolean" not-null="true"/>
-    <property name="LastVerifiedTime" column="LastVerifiedTime_" type="DateTime"/>
-    <property name="LastEditedTime" column="LastEditedTime_" type="DateTime"/>
+    <property name="IsVerified" column="IsVerified_" type="Boolean" not-null="true" access="nosetter.camelcase-underscore"/>
+    <property name="LastVerifiedTime" column="LastVerifiedTime_" type="DateTime" access="nosetter.camelcase-underscore"/>
+    <property name="LastEditedTime" column="LastEditedTime_" type="DateTime" access="nosetter.camelcase-underscore"/>
 
     <set name="ContactPoints" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
       <key column="PractitionerOID_"/>

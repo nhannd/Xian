@@ -83,13 +83,13 @@ namespace ClearCanvas.Ris.Application.Common
 		public string BillingNumber;
 
 		[DataMember]
-		public bool IsVerified;
+		public bool IsVerified { get; private set; }
 
 		[DataMember]
-		public DateTime? LastVerifiedTime;
+		public DateTime? LastVerifiedTime { get; private set; }
 
 		[DataMember]
-		public DateTime? LastEditedTime;
+		public DateTime? LastEditedTime { get; private set; }
 
 		[DataMember]
 		public List<ExternalPractitionerContactPointDetail> ContactPoints;

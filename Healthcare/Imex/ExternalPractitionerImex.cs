@@ -63,6 +63,26 @@ namespace ClearCanvas.Healthcare.Imex
 			[DataMember]
 			public string BillingNumber;
 
+			/// <summary>
+			/// The IsVerified property is purposely commented out because it's a transient property.
+			/// Any imported practitioner is automatically mark unverified.
+			/// </summary>
+			//[DataMember]
+			//public bool IsVerified;
+
+			/// <summary>
+			/// The LastVerifiedTime is exported and is used when importing a new practitioner.
+			/// The LastVerifiedTime is not imported for existing practitioner
+			/// </summary>
+			[DataMember]
+			public DateTime? LastVerifiedTime;
+
+			/// <summary>
+			/// The LastEditedTime is exported, but not imported.  Platform.Time is used when importing new and existing practitioner
+			/// </summary>
+			[DataMember]
+			public DateTime? LastEditedTime;
+
 			[DataMember]
 			public List<ExternalPractitionerContactPointData> ContactPoints;
 
@@ -111,6 +131,7 @@ namespace ClearCanvas.Healthcare.Imex
 
 		protected override ExternalPractitionerData Export(ExternalPractitioner entity, IReadContext context)
 		{
+			// The IsVerified property is purposely ignored since it's a transient property.
 			var data = new ExternalPractitionerData
 				{
 					Deactivated = entity.Deactivated,
@@ -119,6 +140,8 @@ namespace ClearCanvas.Healthcare.Imex
 					MiddleName = entity.Name.MiddleName,
 					LicenseNumber = entity.LicenseNumber,
 					BillingNumber = entity.BillingNumber,
+					LastVerifiedTime = entity.LastVerifiedTime,
+					LastEditedTime = entity.LastEditedTime,
 					ContactPoints = CollectionUtils.Map(entity.ContactPoints,
 						(ExternalPractitionerContactPoint cp) => new ExternalPractitionerContactPointData
 							{
@@ -138,13 +161,29 @@ namespace ClearCanvas.Healthcare.Imex
 
 		protected override void Import(ExternalPractitionerData data, IUpdateContext context)
 		{
-			var prac = LoadOrCreateExternalPractitioner(
+			var name = new PersonName(data.FamilyName, data.GivenName, data.MiddleName, null, null, null);
+			var prac = CreateExternalPractitioner(
 				data.LicenseNumber,
 				data.BillingNumber,
-				new PersonName(data.FamilyName, data.GivenName, data.MiddleName, null, null, null),
+				name,
 				context);
 
+			if (prac == null)
+			{
+				// Creating a new practitioenr:
+				// always use Platform.Time for LastEditedTime
+				// always unverified
+				prac = new ExternalPractitioner(name, data.LicenseNumber, data.BillingNumber, false, data.LastVerifiedTime, Platform.Time, null, null);
+				context.Lock(prac, DirtyState.New);
+			}
+			else
+			{
+				// Mark edited, automatically becomes unverified.
+				prac.MarkEdited();
+			}
+
 			prac.Deactivated = data.Deactivated;
+
 			if (data.ContactPoints != null)
 			{
 				foreach (var cpData in data.ContactPoints)
@@ -194,29 +233,21 @@ namespace ClearCanvas.Healthcare.Imex
 			}
 		}
 
-		private static ExternalPractitioner LoadOrCreateExternalPractitioner(string license, string billingNumber, PersonName name, IPersistenceContext context)
+		private static ExternalPractitioner CreateExternalPractitioner(string licenseNumber, string billingNumber, PersonName name, IPersistenceContext context)
 		{
 			ExternalPractitioner prac = null;
 
 			// if either license or billing number are supplied, check for an existing practitioner
-			if (!string.IsNullOrEmpty(license) || !string.IsNullOrEmpty(billingNumber))
+			if (!string.IsNullOrEmpty(licenseNumber) || !string.IsNullOrEmpty(billingNumber))
 			{
 				var criteria = new ExternalPractitionerSearchCriteria();
-				if(!string.IsNullOrEmpty(license))
-					criteria.LicenseNumber.EqualTo(license);
+				if(!string.IsNullOrEmpty(licenseNumber))
+					criteria.LicenseNumber.EqualTo(licenseNumber);
 				if (!string.IsNullOrEmpty(billingNumber))
 					criteria.BillingNumber.EqualTo(billingNumber);
 
 				var broker = context.GetBroker<IExternalPractitionerBroker>();
 				prac = CollectionUtils.FirstElement(broker.Find(criteria));
-			}
-
-			if(prac == null)
-			{
-				// create it
-				prac = new ExternalPractitioner {Name = name, LicenseNumber = license, BillingNumber = billingNumber};
-				prac.LastEditedTime = Platform.Time;
-				context.Lock(prac, DirtyState.New);
 			}
 
 			return prac;

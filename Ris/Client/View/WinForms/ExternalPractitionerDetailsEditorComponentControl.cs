@@ -65,7 +65,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _licenseNumber.DataBindings.Add("Value", _component, "LicenseNumber", true, DataSourceUpdateMode.OnPropertyChanged);
             _billingNumber.DataBindings.Add("Value", _component, "BillingNumber", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_isVerified.DataBindings.Add("Checked", _component, "IsVerified", true, DataSourceUpdateMode.OnPropertyChanged);
+			_isVerified.DataBindings.Add("Checked", _component, "MarkVerified", true, DataSourceUpdateMode.OnPropertyChanged);
 			_lastVerified.Text = _component.LastVerified;
 			_isVerified.Visible= _component.CanVerify;
 			_lastVerified.Visible = _component.CanVerify;

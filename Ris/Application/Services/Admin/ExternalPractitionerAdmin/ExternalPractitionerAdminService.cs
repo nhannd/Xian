@@ -31,6 +31,7 @@
 
 using System.Collections.Generic;
 using System.Security.Permissions;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
@@ -160,7 +161,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			var assembler = new ExternalPractitionerAssembler();
 			assembler.UpdateExternalPractitioner(request.PractitionerDetail, prac, PersistenceContext);
 
-			prac.LastEditedTime = Platform.Time;
+			prac.MarkEdited();
+			var userCanVerify = Thread.CurrentPrincipal.IsInRole(Common.AuthorityTokens.Admin.Data.ExternalPractitionerVerification);
+			if (request.MarkVerified && userCanVerify)
+				prac.MarkVerified();
+
 			PersistenceContext.Lock(prac, DirtyState.New);
 
 			// ensure the new prac is assigned an OID before using it in the return value
@@ -179,7 +184,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			var assembler = new ExternalPractitionerAssembler();
 			assembler.UpdateExternalPractitioner(request.PractitionerDetail, prac, PersistenceContext);
 
-			prac.LastEditedTime = Platform.Time;
+			prac.MarkEdited();
+			var userCanVerify = Thread.CurrentPrincipal.IsInRole(Common.AuthorityTokens.Admin.Data.ExternalPractitionerVerification);
+			if (request.MarkVerified && userCanVerify)
+				prac.MarkVerified();
+
 			return new UpdateExternalPractitionerResponse(assembler.CreateExternalPractitionerSummary(prac, PersistenceContext));
 		}
 
@@ -276,8 +285,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 								vp.Practitioner = original;
 						}));
 
-			original.LastEditedTime = Platform.Time;
-			duplicate.LastEditedTime = Platform.Time;
+			original.MarkEdited();
+			duplicate.MarkEdited();
+			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.ExternalPractitionerVerification))
+				original.MarkVerified();
 
 			var assembler = new ExternalPractitionerAssembler();
 			return new MergeDuplicatePractitionerResponse(assembler.CreateExternalPractitionerSummary(original, this.PersistenceContext));
@@ -315,7 +326,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			var practitioner = original.Practitioner;
 			practitioner.ContactPoints.Remove(duplicate);
 
-			practitioner.LastEditedTime = Platform.Time;
+			practitioner.MarkEdited();
 
 			var assembler = new ExternalPractitionerAssembler();
 			return new MergeDuplicateContactPointResponse(assembler.CreateExternalPractitionerContactPointSummary(original));
@@ -404,8 +415,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			// Deactivate the duplicate
 			duplicate.Deactivated = true;
 
-			original.LastEditedTime = Platform.Time;
-			duplicate.LastEditedTime = Platform.Time;
+			original.MarkEdited();
+			duplicate.MarkEdited();
+			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.ExternalPractitionerVerification))
+				original.MarkVerified();
 
 			return new MergeExternalPractitionerResponse(assembler.CreateExternalPractitionerSummary(original, this.PersistenceContext));
 		}

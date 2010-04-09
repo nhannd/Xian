@@ -301,7 +301,7 @@ namespace ClearCanvas.Ris.Client
 							new LoadExternalPractitionerForEditRequest(item.PractitionerRef)).PractitionerDetail;
 						detail.Deactivated = !detail.Deactivated;
 						ExternalPractitionerSummary summary = service.UpdateExternalPractitioner(
-							new UpdateExternalPractitionerRequest(detail)).Practitioner;
+							new UpdateExternalPractitionerRequest(detail, false)).Practitioner;
 
 						results.Add(summary);
 					});

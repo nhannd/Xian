@@ -54,6 +54,7 @@ namespace ClearCanvas.Ris.Client
     {
         private ExternalPractitionerDetail _practitionerDetail;
         private bool _isNew;
+    	private bool _markVerified;
 
         /// <summary>
         /// Constructor
@@ -64,22 +65,13 @@ namespace ClearCanvas.Ris.Client
             _isNew = isNew;
         }
 
-        public override void Start()
-        {
-            base.Start();
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
-        }
-
         public ExternalPractitionerDetail ExternalPractitionerDetail
         {
             get { return _practitionerDetail; }
             set 
             { 
                 _practitionerDetail = value;
+            	_markVerified = _practitionerDetail.IsVerified;
             }
         }
 
@@ -167,16 +159,12 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-		public bool IsVerified
+		public bool MarkVerified
 		{
-			get { return _practitionerDetail.IsVerified; }
+			get { return _markVerified; }
 			set
 			{
-				_practitionerDetail.IsVerified = value;
-				
-				if (_practitionerDetail.IsVerified)
-					_practitionerDetail.LastVerifiedTime = Platform.Time;
-
+				_markVerified = value;
 				this.Modified = true;
 			}
 		}

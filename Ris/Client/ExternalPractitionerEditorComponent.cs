@@ -163,9 +163,9 @@ namespace ClearCanvas.Ris.Client
 
 			_contactPointSummaryComponent = new ExternalPractitionerContactPointSummaryComponent(_practitionerRef,
 				formDataResponse.AddressTypeChoices, 
-                formDataResponse.PhoneTypeChoices, 
-                formDataResponse.ResultCommunicationModeChoices, 
-                Formatting.PersonNameFormat.Format(_practitionerDetail.Name),
+				formDataResponse.PhoneTypeChoices, 
+				formDataResponse.ResultCommunicationModeChoices, 
+				Formatting.PersonNameFormat.Format(_practitionerDetail.Name),
                 false);
 			_contactPointSummaryComponent.SetModifiedOnListChange = true;
 
@@ -208,8 +208,6 @@ namespace ClearCanvas.Ris.Client
 
 			try
 			{
-				UpdateVerifyState();
-
 				_practitionerDetail.ContactPoints.Clear();
 				foreach (ExternalPractitionerContactPointDetail detail in _contactPointSummaryComponent.Subject)
 				{
@@ -224,13 +222,13 @@ namespace ClearCanvas.Ris.Client
 					{
 						if (_isNew)
 						{
-							AddExternalPractitionerResponse response = service.AddExternalPractitioner(new AddExternalPractitionerRequest(_practitionerDetail));
+							AddExternalPractitionerResponse response = service.AddExternalPractitioner(new AddExternalPractitionerRequest(_practitionerDetail, _detailsEditor.MarkVerified));
 							_practitionerRef = response.Practitioner.PractitionerRef;
 							_practitionerSummary = response.Practitioner;
 						}
 						else
 						{
-							UpdateExternalPractitionerResponse response = service.UpdateExternalPractitioner(new UpdateExternalPractitionerRequest(_practitionerDetail));
+							UpdateExternalPractitionerResponse response = service.UpdateExternalPractitioner(new UpdateExternalPractitionerRequest(_practitionerDetail, _detailsEditor.MarkVerified));
 							_practitionerRef = response.Practitioner.PractitionerRef;
 							_practitionerSummary = response.Practitioner;
 						}
@@ -247,23 +245,6 @@ namespace ClearCanvas.Ris.Client
 						this.Host.Exit();
 					});
 			}
-		}
-
-		public override void Cancel()
-		{
-			base.Cancel();
-		}
-
-		private void UpdateVerifyState()
-		{
-			// If user can verify, leave the IsVerify property alone
-			var canVerify = Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Admin.Data.ExternalPractitionerVerification);
-			if (canVerify)
-				return;
-
-			// Otherwise, changes to any property will automatically set IsVerified to false
-			if (this.Modified)
-				_practitionerDetail.IsVerified = false;
 		}
 	}
 }
