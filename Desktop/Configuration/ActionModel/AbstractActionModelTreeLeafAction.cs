@@ -29,24 +29,42 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.Configuration.ActionModel
 {
 	public abstract class AbstractActionModelTreeLeaf : AbstractActionModelTreeNode
 	{
-		protected AbstractActionModelTreeLeaf(string resourceKey, string label)
-			: base(resourceKey, label) {}
-
 		protected AbstractActionModelTreeLeaf(PathSegment pathSegment)
 			: base(pathSegment) {}
 	}
 
 	public sealed class AbstractActionModelTreeLeafSeparator : AbstractActionModelTreeLeaf
 	{
-		public AbstractActionModelTreeLeafSeparator() : base(string.Empty, SR.LabelSeparator) {}
+		public AbstractActionModelTreeLeafSeparator() : base(new PathSegment("Separator", SR.LabelSeparator)) {}
+
+		internal Path GetSeparatorPath()
+		{
+			Stack<PathSegment> stack = new Stack<PathSegment>();
+			stack.Push(new PathSegment(Guid.NewGuid().ToString()));
+
+			AbstractActionModelTreeNode current = this.Parent;
+			while (current != null)
+			{
+				stack.Push(current.PathSegment);
+				current = current.Parent;
+			}
+
+			Path path = new Path(stack.Pop());
+			while (stack.Count > 0)
+			{
+				path = path.Append(stack.Pop());
+			}
+			return path;
+		}
 	}
 
 	public class AbstractActionModelTreeLeafAction : AbstractActionModelTreeLeaf
@@ -64,11 +82,8 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			_action = AbstractAction.Create(action);
 
 			base.IsChecked = _action.Available;
-		}
-
-		internal IAction Action
-		{
-			get { return _action; }
+			base.IconSet = _action.IconSet;
+			base.ResourceResolver = _action.ResourceResolver;
 		}
 
 		public string ActionId
@@ -76,21 +91,39 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _action.ActionId; }
 		}
 
-		public IconSet IconSet
-		{
-			get { return _action.IconSet; }
-		}
-
-		public IResourceResolver ResourceResolver
-		{
-			get { return _action.ResourceResolver; }
-		}
-
 		protected override void OnIsCheckedChanged()
 		{
 			base.OnIsCheckedChanged();
 
 			_action.Available = this.IsChecked;
+		}
+
+		internal IAction GetAction()
+		{
+			IAction action = AbstractAction.Create(_action);
+
+			Stack<PathSegment> stack = new Stack<PathSegment>();
+			AbstractActionModelTreeNode current = this;
+			do
+			{
+				stack.Push(current.PathSegment);
+				current = current.Parent;
+			} while (current != null);
+
+			Path path = new Path(stack.Pop()); // the first path segment is the site, which is never processed through the resource resolver
+			while (stack.Count > 0)
+			{
+				// for each subsequent segment, ensure the action's resolver will resolve the string in the expected way
+				PathSegment pathSegment = stack.Pop();
+				string localizedString = action.ResourceResolver.LocalizeString(pathSegment.ResourceKey);
+				if (localizedString == pathSegment.LocalizedText)
+					path = path.Append(pathSegment);
+				else
+					path = path.Append(new PathSegment(pathSegment.LocalizedText, pathSegment.LocalizedText));
+			}
+
+			action.Path = new ActionPath(path.ToString(), action.ResourceResolver);
+			return action;
 		}
 	}
 }

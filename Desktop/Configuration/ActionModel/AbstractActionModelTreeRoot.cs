@@ -38,7 +38,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 	{
 		private readonly string _site;
 
-		public AbstractActionModelTreeRoot(string site) : base(site, string.Empty)
+		public AbstractActionModelTreeRoot(string site) : base(site)
 		{
 			_site = site;
 		}
@@ -56,7 +56,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		public ActionModelRoot GetAbstractActionModel()
 		{
 			ActionModelRoot actionModelRoot = new ActionModelRoot(_site);
-			this.CreateActionModelRoot(new Path(_site, null), actionModelRoot);
+			this.CreateActionModelRoot(actionModelRoot);
 			return actionModelRoot;
 		}
 	}

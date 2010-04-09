@@ -118,6 +118,19 @@ namespace ClearCanvas.Desktop.Actions
 			}
 			else
 			{
+				// clone the model because we don't want to be modifying the actual action model yet
+				xmlActionModel = (XmlElement) xmlActionModel.CloneNode(true);
+
+				// if there are new persistent actions that aren't already in the xml, insert them now
+				foreach (IAction action in actionMap.Values)
+				{
+					if (action.Persistent)
+					{
+						if (AppendActionToXmlModel(_actionModelXmlDoc, xmlActionModel, action))
+							Console.WriteLine("Inserted {0}", action.ActionID);
+					}
+				}
+
 				List<XmlElement> childNodes = GetActionNodeList(xmlActionModel);
 				List<IAction> abstractActions = new List<IAction>(childNodes.Count);
 				foreach (XmlElement childElement in childNodes)

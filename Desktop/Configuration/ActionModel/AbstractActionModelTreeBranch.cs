@@ -29,9 +29,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Trees;
 
@@ -45,13 +43,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		private bool _suspendSynchronizeParent = false;
 
 		public AbstractActionModelTreeBranch(string groupName)
-			: base(groupName, groupName)
-		{
-			Initialize();
-		}
-
-		public AbstractActionModelTreeBranch(string resourceKey, string groupName)
-			: base(resourceKey, groupName)
+			: base(new PathSegment(groupName, groupName))
 		{
 			Initialize();
 		}
@@ -80,7 +72,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 				{
 					if (actionModelTreeNode is AbstractActionModelTreeLeafAction)
 						return false;
-					else if (actionModelTreeNode is AbstractActionModelTreeBranch && !((AbstractActionModelTreeBranch)actionModelTreeNode).IsEmpty)
+					else if (actionModelTreeNode is AbstractActionModelTreeBranch && !((AbstractActionModelTreeBranch) actionModelTreeNode).IsEmpty)
 						return false;
 				}
 				return true;
@@ -115,42 +107,23 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _subtree; }
 		}
 
-		protected void CreateActionModelRoot(Path path, ActionModelRoot actionModelRoot)
+		protected void CreateActionModelRoot(ActionModelRoot actionModelRoot)
 		{
 			foreach (AbstractActionModelTreeNode child in this.Subtree.Items)
 			{
 				if (child is AbstractActionModelTreeBranch)
 				{
-					((AbstractActionModelTreeBranch) child).CreateActionModelRoot(path.Append(new PathSegment(child.ResourceKey, child.Label)), actionModelRoot);
+					((AbstractActionModelTreeBranch) child).CreateActionModelRoot(actionModelRoot);
 				}
 				else if (child is AbstractActionModelTreeLeafAction)
 				{
-					IAction action = AbstractAction.Create(((AbstractActionModelTreeLeafAction) child).Action);
-					string actionPath = GetUnresolvedPathString(path.Append(action.Path.LastSegment), action.ResourceResolver);
-					action.Path = new ActionPath(actionPath, action.ResourceResolver);
-					actionModelRoot.InsertAction(action);
+					actionModelRoot.InsertAction(((AbstractActionModelTreeLeafAction) child).GetAction());
 				}
 				else if (child is AbstractActionModelTreeLeafSeparator)
 				{
-					actionModelRoot.InsertSeparator(path.Append(new PathSegment(Guid.NewGuid().ToString())));
+					actionModelRoot.InsertSeparator(((AbstractActionModelTreeLeafSeparator) child).GetSeparatorPath());
 				}
 			}
-		}
-
-		private static string GetUnresolvedPathString(Path path, IResourceResolver resourceResolver)
-		{
-			IList<PathSegment> pathSegments = path.Segments;
-			Path unresolvedPath = new Path(pathSegments[0]); // site is not processed through a resource resolver
-			for (int n = 1; n < pathSegments.Count; n++)
-			{
-				PathSegment pathSegment = pathSegments[n];
-				string localizedString = resourceResolver.LocalizeString(pathSegment.ResourceKey);
-				if (localizedString == pathSegment.LocalizedText)
-					unresolvedPath = unresolvedPath.Append(pathSegment);
-				else
-					unresolvedPath = unresolvedPath.Append(new PathSegment(pathSegment.LocalizedText, pathSegment.LocalizedText));
-			}
-			return unresolvedPath.ToString();
 		}
 
 		private void OnSubtreeItemsChanged(object sender, ItemChangedEventArgs e)
@@ -281,8 +254,8 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 				this.CanHaveSubTreeHandler = (node => node is AbstractActionModelTreeBranch);
 				this.SubTreeProvider = (node => ((AbstractActionModelTreeBranch) node)._subtree);
 
-				this.IconSetProvider = (node => node is AbstractActionModelTreeLeafAction ? ((AbstractActionModelTreeLeafAction) node).IconSet : null);
-				this.ResourceResolverProvider = (node => node is AbstractActionModelTreeLeafAction ? ((AbstractActionModelTreeLeafAction) node).ResourceResolver : null);
+				this.IconSetProvider = (node => node.IconSet);
+				this.ResourceResolverProvider = (node => node.ResourceResolver);
 
 				this.TooltipTextProvider = (node => node.Tooltip);
 

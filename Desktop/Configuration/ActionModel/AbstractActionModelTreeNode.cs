@@ -43,41 +43,34 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		private event EventHandler _parentChanged;
 
 		private AbstractActionModelTreeBranch _parent = null;
-		private string _resourceKey = string.Empty;
-		private string _label = string.Empty;
+		private IconSet _iconSet = null;
+		private IResourceResolver _resourceResolver = null;
+		private PathSegment _pathSegment = null;
 		private string _canonicalLabel = null;
 		private string _tooltip = string.Empty;
 		private bool _isChecked = false;
 		private bool _isExpanded = false;
 		private bool _isHighlighted = false;
 
-		protected AbstractActionModelTreeNode(string resourceKey, string label)
-		{
-			_resourceKey = resourceKey;
-			_label = label;
-		}
-
 		protected AbstractActionModelTreeNode(PathSegment pathSegment)
 		{
 			Platform.CheckForNullReference(pathSegment, "pathSegment");
-			_resourceKey = pathSegment.ResourceKey;
-			_label = pathSegment.LocalizedText;
+			_pathSegment = pathSegment;
 		}
 
-		public string ResourceKey
+		internal PathSegment PathSegment
 		{
-			get { return _resourceKey; }
-			set { _resourceKey = value; }
+			get { return _pathSegment; }
 		}
 
 		public string Label
 		{
-			get { return _label; }
+			get { return _pathSegment.LocalizedText; }
 			set
 			{
-				if (_label != value)
+				if (_pathSegment.LocalizedText != value)
 				{
-					_label = value;
+					_pathSegment = new PathSegment(value, value);
 					_canonicalLabel = null;
 					this.OnLabelChanged();
 				}
@@ -90,7 +83,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			{
 				if (_canonicalLabel == null)
 				{
-					_canonicalLabel = _escapeRegex.Replace(_label, "$1");
+					_canonicalLabel = _escapeRegex.Replace(this.Label, "$1");
 				}
 				return _canonicalLabel;
 			}
@@ -144,6 +137,32 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 				{
 					_isHighlighted = value;
 					this.OnIsHighlightedChanged();
+				}
+			}
+		}
+
+		public IconSet IconSet
+		{
+			get { return _iconSet; }
+			protected set
+			{
+				if (_iconSet != value)
+				{
+					_iconSet = value;
+					this.NotifyItemChanged();
+				}
+			}
+		}
+
+		public IResourceResolver ResourceResolver
+		{
+			get { return _resourceResolver; }
+			protected set
+			{
+				if (_resourceResolver != value)
+				{
+					_resourceResolver = value;
+					this.NotifyItemChanged();
 				}
 			}
 		}
