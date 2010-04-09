@@ -43,7 +43,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[ActionPlaceholder("auto", "windowlevel-dropdown/MenuWindowLevelPresetList", "Tools.Image.Manipulation.Lut.Presets")]
 	[ActionPlaceholder("auto", "imageviewer-contextmenu/MenuWindowLevelPresets/MenuWindowLevelPresetList", "Tools.Image.Manipulation.Lut.Presets")]
-	[ActionPlaceholder("auto", "global-menus/MenuView/MenuWindowLevelPresets/MenuWindowLevelPresetList", "Tools.Image.Manipulation.Lut.Presets", InitiallyAvailable = false)]
 	public partial class WindowLevelTool
 	{
 		private class PresetVoiLutActionContainer
@@ -109,7 +108,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			get
 			{
 				IActionSet baseActions = base.Actions;
-				return baseActions.Union(new ActionSet(CreateActions("imageviewer-contextmenu")).Union(new ActionSet(CreateActions("global-menus"))));
+				return baseActions.Union(new ActionSet(CreateActions("imageviewer-contextmenu")));
 			}
 		}
 
