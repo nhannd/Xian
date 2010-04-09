@@ -1089,6 +1089,24 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (List of Window/Level Presets).
+        /// </summary>
+        internal static string MenuWindowLevelPresetList {
+            get {
+                return ResourceManager.GetString("MenuWindowLevelPresetList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Window/Level Presets.
+        /// </summary>
+        internal static string MenuWindowLevelPresets {
+            get {
+                return ResourceManager.GetString("MenuWindowLevelPresets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &amp;Zoom.
         /// </summary>
         internal static string MenuZoom {
@@ -1275,15 +1293,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string PrefixDefaultVoiDataLutExplanation {
             get {
                 return ResourceManager.GetString("PrefixDefaultVoiDataLutExplanation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Window/Level Presets.
-        /// </summary>
-        internal static string PresetVoiLuts {
-            get {
-                return ResourceManager.GetString("PresetVoiLuts", resourceCulture);
             }
         }
         

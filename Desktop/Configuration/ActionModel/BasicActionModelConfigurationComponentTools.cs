@@ -189,7 +189,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 	{
 		private string _name;
 
-		[ValidateNotNull]
+		[ValidateLength(1)]
 		public string Name
 		{
 			get { return _name; }

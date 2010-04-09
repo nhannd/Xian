@@ -53,12 +53,6 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 			_tabComponent = new TabComponentContainer();
 
-			_tabComponent.Pages.Add(new TabPage(SR.LabelMainMenu, new ActionModelConfigurationComponent(
-			                                                      	_imageViewer.GlobalActionsNamespace,
-			                                                      	"global-menus",
-			                                                      	_imageViewer.ExportedActions,
-			                                                      	_imageViewer.DesktopWindow)));
-
 			_tabComponent.Pages.Add(new TabPage(SR.LabelToolbar, new ActionModelConfigurationComponent(
 			                                                     	_imageViewer.GlobalActionsNamespace,
 			                                                     	"global-toolbars",
@@ -70,6 +64,12 @@ namespace ClearCanvas.ImageViewer.Configuration
 			                                                         	"imageviewer-contextmenu",
 			                                                         	_imageViewer.ExportedActions,
 			                                                         	_imageViewer.DesktopWindow)));
+
+			_tabComponent.Pages.Add(new TabPage(SR.LabelMainMenu, new ActionModelConfigurationComponent(
+			                                                      	_imageViewer.GlobalActionsNamespace,
+			                                                      	"global-menus",
+			                                                      	_imageViewer.ExportedActions,
+			                                                      	_imageViewer.DesktopWindow)));
 
 			_tabComponentHost = new ContainedComponentHost(this, _tabComponent);
 		}

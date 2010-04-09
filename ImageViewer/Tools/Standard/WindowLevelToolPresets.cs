@@ -41,6 +41,9 @@ using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
+	[ActionPlaceholder("auto", "windowlevel-dropdown/MenuWindowLevelPresetList", "Tools.Image.Manipulation.Lut.Presets")]
+	[ActionPlaceholder("auto", "imageviewer-contextmenu/MenuWindowLevelPresets/MenuWindowLevelPresetList", "Tools.Image.Manipulation.Lut.Presets")]
+	[ActionPlaceholder("auto", "global-menus/MenuView/MenuWindowLevelPresets/MenuWindowLevelPresetList", "Tools.Image.Manipulation.Lut.Presets", InitiallyAvailable = false)]
 	public partial class WindowLevelTool
 	{
 		private class PresetVoiLutActionContainer
@@ -49,16 +52,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			private readonly PresetVoiLut _preset;
 			private readonly MenuAction _action;
 
-			public PresetVoiLutActionContainer(WindowLevelTool ownerTool, string actionPathPrefix, PresetVoiLut preset, int index)
+			public PresetVoiLutActionContainer(WindowLevelTool ownerTool, string actionSite, PresetVoiLut preset, int index)
 			{
 				_ownerTool = ownerTool;
 				_preset = preset;
 
 				string actionId = String.Format("apply{0}", _preset.Operation.Name);
-				ActionPath actionPath = new ActionPath(String.Format("{0}/presetLut{1}", actionPathPrefix, index), ownerTool._resolver);
-				_action = new MenuAction(actionId, actionPath, ClickActionFlags.None, ownerTool._resolver);
-				_action.Persistent = false;
-				_action.GroupHint = new GroupHint("Tools.Image.Manipulation.Lut.VoiLuts");
+
+				ActionPlaceholder actionPlaceholder = ownerTool.FindActionPlaceholder(actionSite);
+				_action = actionPlaceholder.CreateMenuAction(actionId, string.Format("presetLut{0}", index), ClickActionFlags.None, ownerTool._resolver);
 				_action.Label = _preset.Operation.Name;
 				_action.KeyStroke = _preset.KeyStroke;
 				_action.SetClickHandler(this.Apply);
@@ -107,11 +109,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			get
 			{
 				IActionSet baseActions = base.Actions;
-				return baseActions.Union(new ActionSet(CreateActions("imageviewer-contextmenu/PresetVoiLuts")));
+				return baseActions.Union(new ActionSet(CreateActions("imageviewer-contextmenu")).Union(new ActionSet(CreateActions("global-menus"))));
 			}
 		}
 
-		private List<IAction> CreateActions(string actionPathPrefix)
+		private ActionPlaceholder FindActionPlaceholder(string actionSite)
+		{
+			// note that we use base.Actions here because this method is called by CreateActions and we don't want a stack overflow
+			return ActionPlaceholder.GetPlaceholderAction(actionSite, base.Actions, "auto");
+		}
+
+		private List<IAction> CreateActions(string actionSite)
 		{
 			List<IAction> actions = new List<IAction>();
 
@@ -145,7 +153,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				presets.Sort(new PresetVoiLutComparer());
 
 				foreach (PresetVoiLut preset in presets)
-					actions.Add(new PresetVoiLutActionContainer(this, actionPathPrefix, preset, ++i).Action);
+					actions.Add(new PresetVoiLutActionContainer(this, actionSite, preset, ++i).Action);
 			}
 
 			return actions;

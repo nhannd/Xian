@@ -108,6 +108,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Compile Include="ActionPlaceholder.cs" />
     <Compile Include="Annotations\AnnotationBoxList.cs" />
     <Compile Include="Annotations\AnnotationItem.cs" />
     <Compile Include="Annotations\AnnotationItemProvider.cs" />

@@ -155,7 +155,7 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// Gets or sets the menu or toolbar path for this action.
         /// </summary>
-        public ActionPath Path
+        public virtual ActionPath Path
         {
             get { return _path; }
             set { _path = value; }
@@ -168,7 +168,7 @@ namespace ClearCanvas.Desktop.Actions
         /// The GroupHint for an action must not be null.  If an action has no groupHint,
         /// the GroupHint should be "" (default).
         /// </remarks>
-        public GroupHint GroupHint
+        public virtual GroupHint GroupHint
 		{
 			get
 			{
@@ -276,7 +276,7 @@ namespace ClearCanvas.Desktop.Actions
 		/// The value of <see cref="Available"/> should override both <see cref="Visible"/> and <see cref="Enabled"/>
 		/// as it represents the user's desire to see the action at all, rather than tool logic.
 		/// </remarks>
-    	public bool Available
+    	public virtual bool Available
     	{
     		get { return _available; }
     		set
@@ -297,7 +297,7 @@ namespace ClearCanvas.Desktop.Actions
         /// committed to the <see cref="ActionModelSettings"/>,
         /// otherwise they are considered generated and they are not committed.
         /// </remarks>
-        public bool Persistent
+        public virtual bool Persistent
 		{
 			get { return _persistent; }
 			set { _persistent = value; }

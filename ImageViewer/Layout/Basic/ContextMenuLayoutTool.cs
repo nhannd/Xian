@@ -45,8 +45,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     /// This tool runs an instance of <see cref="LayoutComponent"/> in a shelf, and coordinates
     /// it so that it reflects the state of the active workspace.
 	/// </summary>
-	[ActionPlaceholder("display0", "imageviewer-contextmenu/DisplaySets")]
-	[GroupHint("display0", "DisplaySets")]
+	[ActionPlaceholder("display0", "imageviewer-contextmenu/DisplaySets", "DisplaySets")]
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public partial class ContextMenuLayoutTool : ImageViewerTool
 	{
@@ -164,18 +163,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 #if TRACEGROUPS
 			TraceGroups();
 #endif
-    		bool available = true;
-    		string groupHint = string.Empty;
     		string rootPath = _contextMenuSite;
-			IAction placeholder = GetPlaceholderAction();
-    		if (placeholder != null)
-    		{
-    			available = placeholder.Available;
-    			if (placeholder.GroupHint != null)
-    				groupHint = placeholder.GroupHint.Hint;
-    			if (placeholder.Path != null)
-    				rootPath = placeholder.Path.SubPath(0, placeholder.Path.Segments.Count - 1).ToString();
-    		}
 
 			_currentPathElements = new List<string>();
 			List<IAction> actions = new List<IAction>();
@@ -187,7 +175,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				{
 					DesktopWindow = Context.DesktopWindow,
 					ImageViewer = Context.Viewer,
-					Namespace = GetType().FullName
+					Namespace = GetType().FullName,
+					ActionPlaceholder = ActionPlaceholder.GetPlaceholderAction(_contextMenuSite, base.Actions, "display0")
 				};
 
 				bool showImageSetNames = base.ImageViewer.LogicalWorkspace.ImageSets.Count > 1 || _unavailableImageSets.Count > 0;
@@ -222,17 +211,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 						actions.Add(CreateLoadingPriorsAction(basePath, ++loadingPriorsNumber));
 				}
 			}
-
-			// synchronize display set actions with the placeholder item
-    		foreach (IAction action in actions)
-    		{
-    			action.Available = available;
-				action.GroupHint = new GroupHint(groupHint);
-				// don't have to synchronize action path, as the factory already created the paths to spec
-
-				if (action is Action)
-				((Action)action).Persistent = false;
-    		}
 
 			return new ActionSet(actions);
 		}
@@ -297,12 +275,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			                    	};
 			action.SetClickHandler(delegate { });
 			return action;
-		}
-
-		private IAction GetPlaceholderAction()
-		{
-			string @namespace = base.ImageViewer.ActionsNamespace;
-			return CollectionUtils.SelectFirst(ActionModelRoot.CreateModel(@namespace, _contextMenuSite, base.Actions).GetActionsInOrder(), x => x.ActionID.EndsWith(":display0"));
 		}
 
 #if TRACEGROUPS

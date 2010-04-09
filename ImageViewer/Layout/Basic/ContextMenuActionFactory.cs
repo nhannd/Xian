@@ -49,6 +49,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 			IDesktopWindow DesktopWindow { get; }
 			IImageViewer ImageViewer { get; }
+			ActionPlaceholder ActionPlaceholder { get; }
 			string Namespace { get; }
 			string BasePath { get; }
 			IImageSet ImageSet { get; }
@@ -79,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			public IDesktopWindow DesktopWindow { get; internal set; }
 			public IImageViewer ImageViewer { get; internal set; }
-
+			public ActionPlaceholder ActionPlaceholder { get; internal set; }
 			public string Namespace { get; internal set; }
 			public string BasePath { get; internal set; }
 
@@ -141,9 +142,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				string actionId = context.GetNextActionId();
 				string fullyQualifiedActionId = context.GetFullyQualifiedActionId(actionId);
 
-				string pathString = String.Format("{0}/{1}", context.BasePath, actionId);
-				ActionPath path = new ActionPath(pathString, null);
-				return new MenuAction(fullyQualifiedActionId, path, ClickActionFlags.CheckParents, null);
+				// build the path suffix by ripping off the site and appending the action id
+				Path path = new Path(context.BasePath);
+				path = path.SubPath(1, path.Segments.Count - 1);
+				path = path.Append(new PathSegment(actionId));
+				return context.ActionPlaceholder.CreateMenuAction(fullyQualifiedActionId, path.ToString(), ClickActionFlags.CheckParents, null);
 			}
 
 			#region IContextMenuActionFactory Members
