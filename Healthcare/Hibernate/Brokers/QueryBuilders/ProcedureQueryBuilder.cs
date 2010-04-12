@@ -1,9 +1,10 @@
-﻿using System;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Hibernate.Hql;
+﻿using ClearCanvas.Enterprise.Hibernate.Hql;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 {
+	/// <summary>
+	/// Implementation of <see cref="IQueryBuilder"/> for creating procedure search queries.
+	/// </summary>
 	public class ProcedureQueryBuilder : QueryBuilderBase
 	{
 		private static readonly HqlFrom DefaultFrom = new HqlFrom(typeof(Procedure).Name, "rp", new[]
@@ -16,8 +17,13 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
                     HqlConstants.JoinPatientProfile
                 });
 
-		#region Overrides of QueryBuilderBase<SearchQueryArgs>
+		#region Overrides of QueryBuilderBase
 
+		/// <summary>
+		/// Establishes the root query (the 'from' clause and any 'join' clauses).
+		/// </summary>
+		/// <param name="query"></param>
+		/// <param name="args"></param>
 		public override void AddRootQuery(HqlProjectionQuery query, QueryBuilderArgs args)
 		{
 			query.Froms.Add(DefaultFrom);
@@ -27,7 +33,5 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 		}
 
 		#endregion
-
-
 	}
 }

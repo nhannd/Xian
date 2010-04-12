@@ -38,26 +38,26 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 	public class ReportingWorklistItem : WorklistItem
 	{
 
-		private static readonly Dictionary<WorklistItemField, UpdateWorklistItemDelegate> _fieldUpdaters
-			= new Dictionary<WorklistItemField, UpdateWorklistItemDelegate>();
+		private static readonly Dictionary<WorklistItemField, WorklistItemFieldSetterDelegate> _fieldSetters
+			= new Dictionary<WorklistItemField, WorklistItemFieldSetterDelegate>();
 
 		static ReportingWorklistItem()
 		{
 			// need to careful about checking for null values here, because a ReportingWorklistItem may not 
 			// have any report information (if it represents a scheduled interpretation step)
-			_fieldUpdaters.Add(WorklistItemField.Report,
+			_fieldSetters.Add(WorklistItemField.Report,
 				(item, value) => ((ReportingWorklistItem)item).ReportRef = (EntityRef)value);
 
-			_fieldUpdaters.Add(WorklistItemField.ReportPartIndex,
+			_fieldSetters.Add(WorklistItemField.ReportPartIndex,
 				(item, value) => ((ReportingWorklistItem)item).ReportPartIndex = value == null ? -1 : (int)value);
 
-			_fieldUpdaters.Add(WorklistItemField.ReportPartHasErrors,
+			_fieldSetters.Add(WorklistItemField.ReportPartHasErrors,
 				(item, value) => ((ReportingWorklistItem)item).HasErrors = value == null ? false : (bool)value);
 
-			_fieldUpdaters.Add(WorklistItemField.ReportPartPreliminaryTime,
+			_fieldSetters.Add(WorklistItemField.ReportPartPreliminaryTime,
 				(item, value) => item.Time = (DateTime?)value);
 
-			_fieldUpdaters.Add(WorklistItemField.ReportPartCompletedTime,
+			_fieldSetters.Add(WorklistItemField.ReportPartCompletedTime,
 				(item, value) => item.Time = (DateTime?)value);
 		}
 
@@ -71,6 +71,16 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 			ReportPartIndex = -1;
 		}
 
+		/// <summary>
+		/// Initialize this worklist item from the specified procedure step and related entities.
+		/// </summary>
+		/// <param name="step"></param>
+		/// <param name="timeField"></param>
+		/// <remarks>
+		/// This method is not efficient for generating a large number of worklist items from a large set of procedure steps,
+		/// because it causes a large number of secondary references and collections to be initiliazed.
+		/// Use <see cref="WorklistItem.InitializeFromTuple"/> instead.
+		/// </remarks>
 		public override void InitializeFromProcedureStep(ProcedureStep step, WorklistItemField timeField)
 		{
 			var reportingStep = step.As<ReportingProcedureStep>();
@@ -84,6 +94,8 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 			base.InitializeFromProcedureStep(step, timeField);
 		}
+
+		#region Public Properties
 
 		/// <summary>
 		/// Gets the report ref.
@@ -100,12 +112,28 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 		/// </summary>
 		public bool HasErrors { get; internal set; }
 
-		protected override UpdateWorklistItemDelegate GetFieldUpdater(WorklistItemField field)
+		#endregion
+
+
+		#region Protected API
+
+		/// <summary>
+		/// Gets the setter for the specified field.
+		/// </summary>
+		/// <param name="field"></param>
+		/// <returns></returns>
+		protected override WorklistItemFieldSetterDelegate GetFieldSetter(WorklistItemField field)
 		{
-			UpdateWorklistItemDelegate updater;
-			return _fieldUpdaters.TryGetValue(field, out updater) ? updater : base.GetFieldUpdater(field);
+			WorklistItemFieldSetterDelegate updater;
+			return _fieldSetters.TryGetValue(field, out updater) ? updater : base.GetFieldSetter(field);
 		}
 
+		/// <summary>
+		/// Gets the value for the specified time field from the specified procedure step or its associated entities.
+		/// </summary>
+		/// <param name="step"></param>
+		/// <param name="timeField"></param>
+		/// <returns></returns>
 		protected override DateTime? GetTimeValue(ProcedureStep step, WorklistItemField timeField)
 		{
 			var reportingStep = step.As<ReportingProcedureStep>();
@@ -120,5 +148,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 			return base.GetTimeValue(step, timeField);
 		}
+
+		#endregion
 	}
 }

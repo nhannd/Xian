@@ -68,6 +68,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		/// Maps the specified set of reporting steps to a corresponding set of reporting worklist items.
 		/// </summary>
 		/// <param name="reportingSteps"></param>
+		/// <param name="timeField"></param>
 		/// <returns></returns>
 		public IList<ReportingWorklistItem> GetWorklistItems(IEnumerable<ReportingProcedureStep> reportingSteps, WorklistItemField timeField)
 		{

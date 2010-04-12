@@ -3,6 +3,9 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 {
+	/// <summary>
+	/// Implementation of <see cref="IWorklistItemQueryBuilder"/> for creating worklist queries.
+	/// </summary>
 	public class WorklistItemQueryBuilder : QueryBuilderBase, IWorklistItemQueryBuilder
 	{
 		private static readonly HqlJoin[] WorklistJoins = {
@@ -18,6 +21,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 
 		#region Overrides of QueryBuilderBase
 
+		/// <summary>
+		/// Establishes the root query (the 'from' clause and any 'join' clauses).
+		/// </summary>
+		/// <param name="query"></param>
+		/// <param name="args"></param>
 		public override void AddRootQuery(HqlProjectionQuery query, QueryBuilderArgs args)
 		{
 			var procedureStepClasses = args.ProcedureStepClasses;
@@ -43,11 +51,21 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 
 		#region Implementation of IWorklistQueryBuilder
 
+		/// <summary>
+		/// Adds worklist filters to the query (affects the 'from' clause).
+		/// </summary>
+		/// <param name="query"></param>
+		/// <param name="args"></param>
 		public virtual void AddFilters(HqlProjectionQuery query, WorklistQueryArgs args)
 		{
 			QueryBuilderHelpers.AddCriteriaToQuery(HqlConstants.WorklistItemQualifier, args.FilterCriteria, query, RemapHqlExpression);
 		}
 
+		/// <summary>
+		/// Adds the "active procedure step" constraint (affects the 'from' clause).
+		/// </summary>
+		/// <param name="query"></param>
+		/// <param name="args"></param>
 		public void AddActiveProcedureStepConstraint(HqlProjectionQuery query, QueryBuilderArgs args)
 		{
 			query.Conditions.Add(HqlConstants.ConditionActiveProcedureStep);

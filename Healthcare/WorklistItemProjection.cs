@@ -5,7 +5,8 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Healthcare
 {
 	/// <summary>
-	/// 
+	/// Defines a worklist item projection, which is a set of <see cref="WorklistItemField"/>s
+	/// that shape the result set of a worklist item query.
 	/// </summary>
 	/// <remarks>
 	/// Instances of this class are immutable.
@@ -17,8 +18,12 @@ namespace ClearCanvas.Healthcare
 		private static readonly WorklistItemProjection _procedureStepBase;
 		private static readonly WorklistItemProjection _reportingBase;
 
+		/// <summary>
+		/// Class constructor.
+		/// </summary>
 		static WorklistItemProjection()
 		{
+			// define the base procedure step projection (without the time field)
 			_procedureStepBase = new WorklistItemProjection(
 				new [] {
 					WorklistItemField.ProcedureStep,
@@ -39,6 +44,7 @@ namespace ClearCanvas.Healthcare
 					WorklistItemField.ProcedureLaterality,
 				});
 
+			// define the base reporting procedure step projection
 			_reportingBase = _procedureStepBase.AddFields(
 				new [] {
 					WorklistItemField.Report,
@@ -47,34 +53,60 @@ namespace ClearCanvas.Healthcare
 
 			// initialize the "search" projections for each type of worklist
 
-			ModalityWorklistSearch = GetProcedureStepProjection(WorklistItemField.ProcedureScheduledStartTime);
+			ModalityWorklistSearch = GetDefaultProjection(WorklistItemField.ProcedureScheduledStartTime);
 
 			// need to display the correct time field
 			// ProcedureScheduledStartTime seems like a reasonable choice for registration homepage search,
 			// as it gives a general sense of when the procedure occurs in time
-			RegistrationWorklistSearch = GetProcedureStepProjection(WorklistItemField.ProcedureScheduledStartTime);
+			RegistrationWorklistSearch = GetDefaultProjection(WorklistItemField.ProcedureScheduledStartTime);
 
 			ReportingWorklistSearch = GetReportingProjection(WorklistItemField.ProcedureStartTime);
 
 			// TODO: this timefield is the value from when this broker was part of ReportingWorklistBroker,
 			// but what should it really be?  
-			ProtocolWorklistSearch = GetProcedureStepProjection(WorklistItemField.ProcedureStartTime);
+			ProtocolWorklistSearch = GetDefaultProjection(WorklistItemField.ProcedureStartTime);
 
 		}
 
 		#endregion
 
+		/// <summary>
+		/// Defines the projection for a modality worklist item search.
+		/// </summary>
 		public static readonly WorklistItemProjection ModalityWorklistSearch;
+
+		/// <summary>
+		/// Defines the projection for a registration worklist item search.
+		/// </summary>
 		public static readonly WorklistItemProjection RegistrationWorklistSearch;
+
+
+		/// <summary>
+		/// Defines the projection for a reporting worklist item search.
+		/// </summary>
 		public static readonly WorklistItemProjection ReportingWorklistSearch;
+
+		/// <summary>
+		/// Defines the projection for a protocol worklist item search.
+		/// </summary>
 		public static readonly WorklistItemProjection ProtocolWorklistSearch;
 
 
-		public static WorklistItemProjection GetProcedureStepProjection(WorklistItemField timeField)
+		/// <summary>
+		/// Gets the default worklist item projection using the specified time field.
+		/// </summary>
+		/// <param name="timeField"></param>
+		/// <returns></returns>
+		public static WorklistItemProjection GetDefaultProjection(WorklistItemField timeField)
 		{
 			return _procedureStepBase.AddFields(new[] { timeField });
 		}
 
+		/// <summary>
+		/// Gets the reporting worklist item projection using the specified time field.
+		/// </summary>
+		/// <param name="timeField"></param>
+		/// <returns></returns>
 		public static WorklistItemProjection GetReportingProjection(WorklistItemField timeField)
 		{
 			return _reportingBase.AddFields(new[] { timeField });
@@ -86,7 +118,7 @@ namespace ClearCanvas.Healthcare
 		/// Constructor.
 		/// </summary>
 		/// <param name="fields"></param>
-		public WorklistItemProjection(IList<WorklistItemField> fields)
+		public WorklistItemProjection(IEnumerable<WorklistItemField> fields)
 		{
 			_fields = new List<WorklistItemField>(fields);
 		}
@@ -100,7 +132,7 @@ namespace ClearCanvas.Healthcare
 		}
 
 		/// <summary>
-		/// Returns a new projection which contains both the fields of this projection and the specified fields.
+		/// Returns a new projection which contains the specified fields appended to the fields of this projection.
 		/// </summary>
 		/// <param name="fields"></param>
 		/// <returns></returns>

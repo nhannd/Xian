@@ -178,13 +178,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			return DoQuery<TItem>(query, this.WorklistItemQueryBuilder, args);
 		}
 
-		public virtual string GetWorklistItemsHql(Worklist worklist, IWorklistQueryContext wqc)
-		{
-			var args = new WorklistQueryArgs(worklist, wqc, false);
-			var query = BuildWorklistQuery(args);
-			return query.Hql;
-		}
-
 		/// <summary>
 		/// Gets the set of items matching the specified criteria, returned as tuples shaped by the specified projection.
 		/// </summary>
@@ -192,37 +185,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		{
 			var args = new QueryBuilderArgs(procedureStepClasses, criteria, projection, page);
 			var query = BuildWorklistQuery(args);
-			return CollectionUtils.Map(ExecuteHql<object[]>(query), (object[] tuple) => this.WorklistItemQueryBuilder.PreProcessTuple(tuple, args));
-		}
-
-		/// <summary>
-		/// Allow access to the HQL for debugging purposes only.  Obviously it does not make sense to pass HQL through the abstraction layer!
-		/// </summary>
-		/// <param name="procedureStepClasses"></param>
-		/// <param name="criteria"></param>
-		/// <param name="projection"></param>
-		/// <param name="page"></param>
-		/// <returns></returns>
-		public string GetWorklistItemsHql(Type[] procedureStepClasses, WorklistItemSearchCriteria[] criteria, WorklistItemProjection projection, SearchResultPage page)
-		{
-			var args = new QueryBuilderArgs(procedureStepClasses, criteria, projection, page);
-			var query = BuildWorklistQuery(args);
-			return query.Hql;
-		}
-
-		/// <summary>
-		/// Gets a count of the number of worklist items in the specified worklist.
-		/// </summary>
-		/// <param name="worklist"></param>
-		/// <param name="wqc"></param>
-		/// <returns></returns>
-		/// <remarks>
-		/// Subclasses may override this method but in most cases this should not be necessary.
-		/// </remarks>
-		public virtual int CountWorklistItems(Worklist worklist, IWorklistQueryContext wqc)
-		{
-			var query = BuildWorklistQuery(new WorklistQueryArgs(worklist, wqc, true));
-			return DoQueryCount(query);
+			return CollectionUtils.Map(ExecuteHql<object[]>(query), (object[] tuple) => this.WorklistItemQueryBuilder.PreProcessResult(tuple, args));
 		}
 
 		/// <summary>
@@ -247,16 +210,77 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			return strategy.EstimateSearchResultsCount(wisc, out count);
 		}
 
+		/// <summary>
+		/// Gets the HQL for debugging purposes only.
+		/// </summary>
+		/// <param name="procedureStepClasses"></param>
+		/// <param name="criteria"></param>
+		/// <param name="projection"></param>
+		/// <param name="page"></param>
+		/// <returns></returns>
+		public string GetWorklistItemsHql(Type[] procedureStepClasses, WorklistItemSearchCriteria[] criteria, WorklistItemProjection projection, SearchResultPage page)
+		{
+			var args = new QueryBuilderArgs(procedureStepClasses, criteria, projection, page);
+			var query = BuildWorklistQuery(args);
+			return query.Hql;
+		}
+
+		/// <summary>
+		/// Gets the HQL for debugging purposes only.
+		/// </summary>
+		/// <param name="worklist"></param>
+		/// <param name="wqc"></param>
+		/// <returns></returns>
+		public virtual string GetWorklistItemsHql(Worklist worklist, IWorklistQueryContext wqc)
+		{
+			var args = new WorklistQueryArgs(worklist, wqc, false);
+			var query = BuildWorklistQuery(args);
+			return query.Hql;
+		}
+
+
+		/// <summary>
+		/// Gets a count of the number of worklist items in the specified worklist.
+		/// </summary>
+		/// <param name="worklist"></param>
+		/// <param name="wqc"></param>
+		/// <returns></returns>
+		/// <remarks>
+		/// Subclasses may override this method but in most cases this should not be necessary.
+		/// </remarks>
+		public virtual int CountWorklistItems(Worklist worklist, IWorklistQueryContext wqc)
+		{
+			var query = BuildWorklistQuery(new WorklistQueryArgs(worklist, wqc, true));
+			return DoQueryCount(query);
+		}
+
 		#endregion
 
 		#region Protected API
 
+		/// <summary>
+		/// Gets the query builder for worklist items.
+		/// </summary>
 		protected IWorklistItemQueryBuilder WorklistItemQueryBuilder { get; private set; }
 
+		/// <summary>
+		/// Gets the query builder for patient searches.
+		/// </summary>
 		protected IQueryBuilder PatientQueryBuilder { get { return _patientQueryBuilder; } }
 
+		/// <summary>
+		/// Gets the query builder for procedure searches.
+		/// </summary>
 		protected IQueryBuilder ProcedureQueryBuilder { get { return _procedureQueryBuilder; } }
 
+		/// <summary>
+		/// Executes the specified query, using the specified query-builder to pre-process the results.
+		/// </summary>
+		/// <typeparam name="TItem">Class of worklist item that will hold the results.</typeparam>
+		/// <param name="query"></param>
+		/// <param name="queryBuilder"></param>
+		/// <param name="args"></param>
+		/// <returns></returns>
 		protected List<TItem> DoQuery<TItem>(HqlQuery query, IQueryBuilder queryBuilder, QueryBuilderArgs args)
 			where TItem : WorklistItem
 		{
@@ -264,25 +288,112 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			return CollectionUtils.Map(results, (WorklistItem r) => (TItem)r);
 		}
 
+		/// <summary>
+		/// Executes the specified query, using the specified query-builder to pre-process the results.
+		/// </summary>
+		/// <param name="query"></param>
+		/// <param name="worklistItemClass"></param>
+		/// <param name="queryBuilder"></param>
+		/// <param name="args"></param>
+		/// <returns></returns>
 		protected IList<WorklistItem> DoQuery(HqlQuery query, Type worklistItemClass, IQueryBuilder queryBuilder, QueryBuilderArgs args)
 		{
 			var list = ExecuteHql<object[]>(query);
 			var results = new List<WorklistItem>();
 			foreach (var tuple in list)
 			{
-				var item = CreateWorklistItem(worklistItemClass, queryBuilder.PreProcessTuple(tuple, args), args.Projection);
+				var item = CreateWorklistItem(worklistItemClass, queryBuilder.PreProcessResult(tuple, args), args.Projection);
 				results.Add(item);
 			}
 
 			return results;
 		}
 
+		/// <summary>
+		/// Executes the specified count query.
+		/// </summary>
+		/// <param name="query"></param>
+		/// <returns></returns>
 		protected int DoQueryCount(HqlQuery query)
 		{
 			return (int)ExecuteHqlUnique<long>(query);
 		}
 
-		protected HqlProjectionQuery BuildWorklistQuery(QueryBuilderArgs args)
+		/// <summary>
+		/// Builds a query that searches for worklist items.
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
+		protected HqlProjectionQuery BuildWorklistSearchQuery(QueryBuilderArgs args)
+		{
+			var query = new HqlProjectionQuery();
+			this.WorklistItemQueryBuilder.AddRootQuery(query, args);
+			this.WorklistItemQueryBuilder.AddCriteria(query, args);
+			this.WorklistItemQueryBuilder.AddActiveProcedureStepConstraint(query, args);
+
+			if (args.CountQuery)
+			{
+				this.WorklistItemQueryBuilder.AddCountProjection(query, args);
+			}
+			else
+			{
+				this.WorklistItemQueryBuilder.AddItemProjection(query, args);
+			}
+
+			return query;
+		}
+
+
+		/// <summary>
+		/// Builds a query that searches for patient items.
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
+		private HqlProjectionQuery BuildPatientSearchQuery(QueryBuilderArgs args)
+		{
+			var query = new HqlProjectionQuery();
+			_patientQueryBuilder.AddRootQuery(query, null);
+			_patientQueryBuilder.AddCriteria(query, args);
+
+			if (args.CountQuery)
+			{
+				_patientQueryBuilder.AddCountProjection(query, args);
+			}
+			else
+			{
+				_patientQueryBuilder.AddItemProjection(query, args);
+			}
+			return query;
+		}
+
+		/// <summary>
+		/// Builds a query that searches for procedure items.
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
+		private HqlProjectionQuery BuildProcedureSearchQuery(QueryBuilderArgs args)
+		{
+			var query = new HqlProjectionQuery();
+			_procedureQueryBuilder.AddRootQuery(query, null);
+			_procedureQueryBuilder.AddCriteria(query, args);
+
+			if (args.CountQuery)
+			{
+				_procedureQueryBuilder.AddCountProjection(query, args);
+			}
+			else
+			{
+				_procedureQueryBuilder.AddItemProjection(query, args);
+			}
+			return query;
+		}
+
+		/// <summary>
+		/// Builds a worklist item query, including the ordering and paging directives.
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
+		private HqlProjectionQuery BuildWorklistQuery(QueryBuilderArgs args)
 		{
 			var query = new HqlProjectionQuery();
 			this.WorklistItemQueryBuilder.AddRootQuery(query, args);
@@ -307,61 +418,15 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			return query;
 		}
 
-		protected HqlProjectionQuery BuildWorklistSearchQuery(QueryBuilderArgs args)
-		{
-			var query = new HqlProjectionQuery();
-			this.WorklistItemQueryBuilder.AddRootQuery(query, args);
-			this.WorklistItemQueryBuilder.AddCriteria(query, args);
-			this.WorklistItemQueryBuilder.AddActiveProcedureStepConstraint(query, args);
-
-			if (args.CountQuery)
-			{
-				this.WorklistItemQueryBuilder.AddCountProjection(query, args);
-			}
-			else
-			{
-				this.WorklistItemQueryBuilder.AddItemProjection(query, args);
-			}
-
-			return query;
-		}
-
-		protected HqlProjectionQuery BuildPatientSearchQuery(SearchQueryArgs args)
-		{
-			var query = new HqlProjectionQuery();
-			_patientQueryBuilder.AddRootQuery(query, null);
-			_patientQueryBuilder.AddCriteria(query, args);
-
-			if (args.CountQuery)
-			{
-				_patientQueryBuilder.AddCountProjection(query, args);
-			}
-			else
-			{
-				_patientQueryBuilder.AddItemProjection(query, args);
-			}
-			return query;
-		}
-
-		protected HqlProjectionQuery BuildProcedureSearchQuery(SearchQueryArgs args)
-		{
-			var query = new HqlProjectionQuery();
-			_procedureQueryBuilder.AddRootQuery(query, null);
-			_procedureQueryBuilder.AddCriteria(query, args);
-
-			if (args.CountQuery)
-			{
-				_procedureQueryBuilder.AddCountProjection(query, args);
-			}
-			else
-			{
-				_procedureQueryBuilder.AddItemProjection(query, args);
-			}
-			return query;
-		}
-
 		#endregion
 
+		/// <summary>
+		/// Creates a worklist item from the specified tuple and projection.
+		/// </summary>
+		/// <param name="worklistItemClass"></param>
+		/// <param name="tuple"></param>
+		/// <param name="projection"></param>
+		/// <returns></returns>
 		private static WorklistItem CreateWorklistItem(Type worklistItemClass, object[] tuple, WorklistItemProjection projection)
 		{
 			var item = (WorklistItem)Activator.CreateInstance(worklistItemClass);
@@ -369,11 +434,22 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			return item;
 		}
 
+		/// <summary>
+		/// Gets a new projection that represents the specified projection filtered to the specified level.
+		/// </summary>
+		/// <param name="projection"></param>
+		/// <param name="level"></param>
+		/// <returns></returns>
 		private static WorklistItemProjection FilterProjection(WorklistItemProjection projection, WorklistItemFieldLevel level)
 		{
 			return projection.Filter(f => level.Includes(f.Level));
 		}
 
+		/// <summary>
+		/// Gets a copy of the specified criteria, filtering out all but patient-related criteria.
+		/// </summary>
+		/// <param name="where"></param>
+		/// <returns></returns>
 		private static WorklistItemSearchCriteria[] GetPatientCriteria(WorklistItemSearchCriteria[] where)
 		{
 			// create a copy of the criteria that contains only the patient profile criteria

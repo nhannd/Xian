@@ -60,7 +60,7 @@ namespace ClearCanvas.Healthcare
 
 		protected override WorklistItemProjection GetProjectionCore(WorklistItemField timeField)
 		{
-			return WorklistItemProjection.GetProcedureStepProjection(timeField);
+			return WorklistItemProjection.GetDefaultProjection(timeField);
 		}
 
 		public override Type[] GetProcedureStepSubclasses()

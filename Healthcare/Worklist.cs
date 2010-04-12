@@ -63,8 +63,17 @@ namespace ClearCanvas.Healthcare
 			PrioritizeNewestItems
 		}
 
+		/// <summary>
+		/// Describes how a worklist will behave wrt time.
+		/// </summary>
 		public class TimeDirective
 		{
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/// <param name="timeField"></param>
+			/// <param name="defaultRange"></param>
+			/// <param name="ordering"></param>
 			public TimeDirective(WorklistItemField timeField, WorklistTimeRange defaultRange, WorklistOrdering ordering)
 			{
 				this.TimeField = timeField;
@@ -72,10 +81,19 @@ namespace ClearCanvas.Healthcare
 				this.DefaultRange = defaultRange;
 			}
 
+			/// <summary>
+			/// Gets the time field used by the worklist for filtering, ordering and population of the "time" column in the worklist item.
+			/// </summary>
 			public WorklistItemField TimeField { get; private set; }
 
+			/// <summary>
+			/// Gets the default time window to be used when the time filter is not enabled.
+			/// </summary>
 			public WorklistTimeRange DefaultRange { get; private set; }
 
+			/// <summary>
+			/// Gets a value indicating whether oldest or newest items are prioritized in result sets.
+			/// </summary>
 			public WorklistOrdering Ordering { get; private set; }
 		}
 
@@ -415,7 +433,6 @@ namespace ClearCanvas.Healthcare
 
 		#endregion
 
-
 		#region Abstract and overridable members
 
 		/// <summary>
@@ -424,8 +441,6 @@ namespace ClearCanvas.Healthcare
 		/// <param name="wqc"></param>
 		/// <returns></returns>
 		public abstract IList GetWorklistItems(IWorklistQueryContext wqc);
-
-		public abstract string GetWorklistItemsHql(IWorklistQueryContext wqc);
 
 		/// <summary>
 		/// Gets the number of worklist items in this worklist.
@@ -456,6 +471,11 @@ namespace ClearCanvas.Healthcare
 			return criteria;
 		}
 
+		/// <summary>
+		/// Gets the criteria established by the worklist filters.
+		/// </summary>
+		/// <param name="wqc"></param>
+		/// <returns></returns>
 		public WorklistItemSearchCriteria[] GetFilterCriteria(IWorklistQueryContext wqc)
 		{
 			return GetFilterCriteriaCore(wqc);
@@ -476,6 +496,16 @@ namespace ClearCanvas.Healthcare
 		public abstract Type[] GetProcedureStepSubclasses();
 
 		/// <summary>
+		/// Gets the worklist items HQL query, for debugging purposes only. 
+		/// </summary>
+		/// <remarks>
+		/// HQL should not leak through the abstraction layer, but it is useful for debugging to sometimes be able to see the query.
+		/// </remarks>
+		/// <param name="wqc"></param>
+		/// <returns></returns>
+		public abstract string GetWorklistItemsHql(IWorklistQueryContext wqc);
+
+		/// <summary>
 		/// Gets the worklist item projection required to populate worklist items for this worklist.
 		/// </summary>
 		/// <param name="timeField"></param>
@@ -489,6 +519,11 @@ namespace ClearCanvas.Healthcare
 		/// <returns></returns>
 		protected abstract WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc);
 
+		/// <summary>
+		/// Gets the criteria established by the worklist filters.
+		/// </summary>
+		/// <param name="wqc"></param>
+		/// <returns></returns>
 		protected virtual WorklistItemSearchCriteria[] GetFilterCriteriaCore(IWorklistQueryContext wqc)
 		{
 			var criteria = new WorklistItemSearchCriteria();
@@ -499,7 +534,7 @@ namespace ClearCanvas.Healthcare
 		}
 
 		/// <summary>
-		/// Gets the directive that specified how items in this worklist are handled wrt time.
+		/// Gets the directive that specifies how items in this worklist are handled wrt time.
 		/// </summary>
 		/// <returns></returns>
 		protected abstract TimeDirective GetTimeDirective();
@@ -508,6 +543,11 @@ namespace ClearCanvas.Healthcare
 
 		#region Helpers
 
+		/// <summary>
+		/// Modifies the specified criteria to represent the filters that are set for this worklist.
+		/// </summary>
+		/// <param name="criteria"></param>
+		/// <param name="wqc"></param>
 		protected void ApplyFilterCriteria(WorklistItemSearchCriteria criteria, IWorklistQueryContext wqc)
 		{
 			this.ProcedureTypeGroupFilter.Apply(criteria.Procedure.Type, wqc);

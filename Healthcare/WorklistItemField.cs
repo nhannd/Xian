@@ -31,20 +31,52 @@
 
 namespace ClearCanvas.Healthcare
 {
+	/// <summary>
+	/// Defines a set of constants that group <see cref="WorklistItemField"/> instances into "levels",
+	/// according to the healthcare entity with which they are most closely associated.
+	/// </summary>
 	public class WorklistItemFieldLevel
 	{
+		/// <summary>
+		/// Patient level - includes patient and patient profile data.
+		/// </summary>
 		public static readonly WorklistItemFieldLevel Patient = new WorklistItemFieldLevel(0);
+
+		/// <summary>
+		/// Procedure level - includes procedure, order and visit data.
+		/// </summary>
 		public static readonly WorklistItemFieldLevel Procedure = new WorklistItemFieldLevel(1);
+
+		/// <summary>
+		/// Procedure step level - includes procedure step data.
+		/// </summary>
 		public static readonly WorklistItemFieldLevel ProcedureStep = new WorklistItemFieldLevel(2);
+
+		/// <summary>
+		/// Report level - includes report data.
+		/// </summary>
 		public static readonly WorklistItemFieldLevel Report = new WorklistItemFieldLevel(3);
 
 		private readonly int _index;
 
-		public WorklistItemFieldLevel(int index)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="index"></param>
+		private WorklistItemFieldLevel(int index)
 		{
 			_index = index;
 		}
 
+		/// <summary>
+		/// Tests whether this level includes the specified level.
+		/// </summary>
+		/// <remarks>
+		/// Levels can be thought of as nested sets, where each level includes all the levels below it.
+		/// This method determines whether the specified level at the same level, or below, as this instance.
+		/// </remarks>
+		/// <param name="level"></param>
+		/// <returns></returns>
 		public bool Includes(WorklistItemFieldLevel level)
 		{
 			return _index >= level._index;
@@ -52,13 +84,16 @@ namespace ClearCanvas.Healthcare
 	}
 
 	/// <summary>
-	/// Defines a set of constants that describe fields used by worklists.
+	/// Defines a set of constants that represent fields that can appear in worklist items.
 	/// </summary>
 	public class WorklistItemField
 	{
-		public class EntityRefField : WorklistItemField
+		/// <summary>
+		/// Subclass of <see cref="WorklistItemField"/> used to distinguish entity-ref fields from data fields.
+		/// </summary>
+		private class EntityRefField : WorklistItemField
 		{
-			public EntityRefField(WorklistItemFieldLevel level)
+			internal EntityRefField(WorklistItemFieldLevel level)
 				:base(level)
 			{
 			}
@@ -86,7 +121,6 @@ namespace ClearCanvas.Healthcare
 		public static readonly WorklistItemField PatientProfile = new EntityRefField(WorklistItemFieldLevel.Patient);
 
 		#endregion
-
 
 
 		#region Common value field constants
@@ -168,11 +202,17 @@ namespace ClearCanvas.Healthcare
 			_level = level;
 		}
 
+		/// <summary>
+		/// Gets the level that this field is associated with.
+		/// </summary>
 		public WorklistItemFieldLevel Level
 		{
 			get { return _level; }
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether this field is an entity-ref field.
+		/// </summary>
 		public virtual bool IsEntityRefField { get { return false; } }
 	}
 }

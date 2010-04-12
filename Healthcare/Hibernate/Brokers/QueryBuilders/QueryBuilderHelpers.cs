@@ -5,8 +5,22 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 {
+	/// <summary>
+	/// Static utility class that defines some helper methods for building HQL queries.
+	/// </summary>
 	public static class QueryBuilderHelpers
 	{
+		/// <summary>
+		/// Adds the specified criteria to the specified query, pre-pending the specified qualifier.
+		/// </summary>
+		/// <param name="qualifier"></param>
+		/// <param name="criteria"></param>
+		/// <param name="query"></param>
+		/// <param name="remapHqlExprFunction"></param>
+		/// <remarks>
+		/// All HQL dot expressions are passed through the <paramref name="remapHqlExprFunction"/>, allowing the expression
+		/// to be modified prior to be added to the query.
+		/// </remarks>
 		public static void AddCriteriaToQuery(string qualifier, WorklistItemSearchCriteria[] criteria, HqlProjectionQuery query,
 			Converter<string, string> remapHqlExprFunction)
 		{
@@ -26,6 +40,17 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 				query.Conditions.Add(or);
 		}
 
+		/// <summary>
+		/// Adds the specified ordering to the specified query, pre-pending the specified qualifier.
+		/// </summary>
+		/// <param name="qualifier"></param>
+		/// <param name="query"></param>
+		/// <param name="criteria"></param>
+		/// <param name="remapHqlExprFunction"></param>
+		/// <remarks>
+		/// All HQL dot expressions are passed through the <paramref name="remapHqlExprFunction"/>, allowing the expression
+		/// to be modified prior to be added to the query.
+		/// </remarks>
 		public static void AddOrderingToQuery(string qualifier, HqlProjectionQuery query, WorklistItemSearchCriteria[] criteria,
 			Converter<string, string> remapHqlExprFunction)
 		{

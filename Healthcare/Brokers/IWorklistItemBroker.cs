@@ -47,22 +47,10 @@ namespace ClearCanvas.Healthcare.Brokers
 		IList<TItem> GetWorklistItems<TItem>(Worklist worklist, IWorklistQueryContext wqc)
 			where TItem : WorklistItem;
 
-		string GetWorklistItemsHql(Worklist worklist, IWorklistQueryContext wqc);
-
 		/// <summary>
 		/// Gets the set of items matching the specified criteria, returned as tuples shaped by the specified projection.
 		/// </summary>
 		IList<object[]> GetWorklistItems(Type[] procedureStepClasses, WorklistItemSearchCriteria[] criteria, WorklistItemProjection projection, SearchResultPage page);
-
-		/// <summary>
-		/// Allow access to the HQL for debugging purposes only.  Obviously it does not make sense to pass HQL through the abstraction layer!
-		/// </summary>
-		/// <param name="procedureStepClasses"></param>
-		/// <param name="criteria"></param>
-		/// <param name="projection"></param>
-		/// <param name="page"></param>
-		/// <returns></returns>
-		string GetWorklistItemsHql(Type[] procedureStepClasses, WorklistItemSearchCriteria[] criteria, WorklistItemProjection projection, SearchResultPage page);
 
 		/// <summary>
 		/// Gets a count of the items in the worklist.
@@ -89,5 +77,23 @@ namespace ClearCanvas.Healthcare.Brokers
 		/// and the count parameter will be ignored. 
 		/// </remarks>
 		bool EstimateSearchResultsCount(WorklistItemSearchArgs args, out int count);
+
+		/// <summary>
+		/// Gets the HQL for debugging purposes only.
+		/// </summary>
+		/// <param name="procedureStepClasses"></param>
+		/// <param name="criteria"></param>
+		/// <param name="projection"></param>
+		/// <param name="page"></param>
+		/// <returns></returns>
+		string GetWorklistItemsHql(Type[] procedureStepClasses, WorklistItemSearchCriteria[] criteria, WorklistItemProjection projection, SearchResultPage page);
+		
+		/// <summary>
+		/// Gets the HQL for debugging purposes only.
+		/// </summary>
+		/// <param name="worklist"></param>
+		/// <param name="wqc"></param>
+		/// <returns></returns>
+		string GetWorklistItemsHql(Worklist worklist, IWorklistQueryContext wqc);
 	}
 }

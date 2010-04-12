@@ -4,6 +4,9 @@ using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 {
+	/// <summary>
+	/// Specialization of <see cref="WorklistItemQueryBuilder"/> for reporting worklists.
+	/// </summary>
 	public class ReportingWorklistItemQueryBuilder : WorklistItemQueryBuilder
 	{
 		private static readonly HqlCondition ConditionMostRecentPublicationStep = new HqlCondition(

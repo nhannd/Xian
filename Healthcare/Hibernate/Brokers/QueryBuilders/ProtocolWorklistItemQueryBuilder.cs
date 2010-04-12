@@ -1,9 +1,11 @@
-﻿using System;
-using ClearCanvas.Common.Utilities;
+﻿using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Hibernate.Hql;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 {
+	/// <summary>
+	/// Specialization of <see cref="WorklistItemQueryBuilder"/> for protocol worklists.
+	/// </summary>
 	public class ProtocolWorklistItemQueryBuilder : WorklistItemQueryBuilder
 	{
 		private static readonly HqlCondition ConditionMostRecentProtocolAssignmentStepIfRejected = new HqlCondition(

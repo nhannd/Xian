@@ -68,6 +68,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		/// Maps the specified set of protocolling steps to a corresponding set of reporting worklist items.
 		/// </summary>
 		/// <param name="protocollingSteps"></param>
+		/// <param name="timeField"></param>
 		/// <returns></returns>
 		public IList<ReportingWorklistItem> GetWorklistItems(IEnumerable<ProtocolProcedureStep> protocollingSteps, WorklistItemField timeField)
 		{
@@ -80,7 +81,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 					return criteria;
 				}).ToArray();
 
-			var projection = WorklistItemProjection.GetProcedureStepProjection(timeField);
+			var projection = WorklistItemProjection.GetDefaultProjection(timeField);
 			var args = new SearchQueryArgs(typeof (ProtocolProcedureStep), worklistItemCriteria, projection);
 			var query = this.BuildWorklistSearchQuery(args);
 			return DoQuery<ReportingWorklistItem>(query, this.WorklistItemQueryBuilder, args);

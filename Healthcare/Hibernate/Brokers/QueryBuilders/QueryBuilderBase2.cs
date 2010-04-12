@@ -132,7 +132,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 				MapWorklistItemFieldToHqlSelect.Add(WorklistItemField.ProcedureLaterality, SelectProcedureLaterality);
 
 				// we can't select ps.Name because it is not a persistent property,
-				// therefore we map this field to SelectProcedureStep and fix it in the PreProcessTuple method
+				// therefore we map this field to SelectProcedureStep and fix it in the PreProcessResult method
 				MapWorklistItemFieldToHqlSelect.Add(WorklistItemField.ProcedureStepName, SelectProcedureStep);
 				MapWorklistItemFieldToHqlSelect.Add(WorklistItemField.ProcedureStepState, SelectProcedureStepState);
 

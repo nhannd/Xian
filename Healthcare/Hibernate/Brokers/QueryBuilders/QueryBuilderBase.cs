@@ -5,14 +5,25 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 {
+	/// <summary>
+	/// Provides base implementation of <see cref="IQueryBuilder"/>.
+	/// </summary>
 	public abstract partial class QueryBuilderBase : IQueryBuilder
 	{
-
-
 		#region Implementation of IQueryBuilder
 
+		/// <summary>
+		/// Establishes the root query (the 'from' clause and any 'join' clauses).
+		/// </summary>
+		/// <param name="query"></param>
+		/// <param name="args"></param>
 		public abstract void AddRootQuery(HqlProjectionQuery query, QueryBuilderArgs args);
 
+		/// <summary>
+		/// Adds criteria to the query (the 'where' clause).
+		/// </summary>
+		/// <param name="query"></param>
+		/// <param name="args"></param>
 		public virtual void AddCriteria(HqlProjectionQuery query, QueryBuilderArgs args)
 		{
 			QueryBuilderHelpers.AddCriteriaToQuery(HqlConstants.WorklistItemQualifier, args.Criteria, query, RemapHqlExpression);
@@ -21,41 +32,76 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 			QueryBuilderHelpers.NHibernateBugWorkaround(query.Froms[0], query.Conditions, a => a);
 		}
 
+		/// <summary>
+		/// Adds ordering to the query (the 'rder by' clause).
+		/// </summary>
+		/// <param name="query"></param>
+		/// <param name="args"></param>
 		public virtual void AddOrdering(HqlProjectionQuery query, QueryBuilderArgs args)
 		{
 			QueryBuilderHelpers.AddOrderingToQuery(HqlConstants.WorklistItemQualifier, query, args.Criteria, RemapHqlExpression);
 		}
 
+		/// <summary>
+		/// Adds a count projection to the query (e.g. 'select count(*)').
+		/// </summary>
+		/// <param name="query"></param>
+		/// <param name="args"></param>
 		public virtual void AddCountProjection(HqlProjectionQuery query, QueryBuilderArgs args)
 		{
 			query.Selects.AddRange(HqlConstants.DefaultCountProjection);
 		}
 
+		/// <summary>
+		/// Adds an item projection to the query (the 'select' clause).
+		/// </summary>
+		/// <param name="query"></param>
+		/// <param name="args"></param>
 		public virtual void AddItemProjection(HqlProjectionQuery query, QueryBuilderArgs args)
 		{
 			query.Selects.AddRange(GetWorklistItemSelects(args.Projection));
 		}
 
+		/// <summary>
+		/// Adds a paging restriction to the query (the 'top' or 'limit' clause).
+		/// </summary>
+		/// <param name="query"></param>
+		/// <param name="args"></param>
 		public virtual void AddPagingRestriction(HqlProjectionQuery query, QueryBuilderArgs args)
 		{
 			query.Page = args.Page;
 		}
 
-		public object[] PreProcessTuple(object[] tuple, QueryBuilderArgs args)
+		/// <summary>
+		/// Query result tuples are passed through this method in order to perform
+		/// any pre-processing.
+		/// </summary>
+		/// <param name="tuple"></param>
+		/// <param name="args"></param>
+		/// <returns></returns>
+		public object[] PreProcessResult(object[] tuple, QueryBuilderArgs args)
 		{
 			// assume we will return a tuple of the same dimension as the input
-			// therefore, we just map field for field, calling to PreProcessTupleField on each field
+			// therefore, we just map field for field, calling to PreProcessResultField on each field
 			var projection = args.Projection;
 			for (var i = 0; i < projection.Fields.Count; i++)
 			{
-				tuple[i] = PreProcessTupleField(tuple[i], projection.Fields[i]);
+				tuple[i] = PreProcessResultField(tuple[i], projection.Fields[i]);
 			}
 			return tuple;
 		}
 
 		#endregion
 
-		protected virtual object PreProcessTupleField(object value, WorklistItemField field)
+		#region Protected API
+
+		/// <summary>
+		/// Overridden to provide custom processing of the specified field.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <param name="field"></param>
+		/// <returns></returns>
+		protected virtual object PreProcessResultField(object value, WorklistItemField field)
 		{
 			// special handling of this field, because Name is not a persistent property
 			if (field == WorklistItemField.ProcedureStepName)
@@ -69,6 +115,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 			return value;
 		}
 
+		/// <summary>
+		/// Overridden to provide custom handling of the HQL dot expressions.
+		/// </summary>
+		/// <param name="hqlExpression"></param>
+		/// <returns></returns>
 		protected static string RemapHqlExpression(string hqlExpression)
 		{
 			foreach (var kvp in HqlConstants.MapCriteriaKeyToHql)
@@ -81,6 +132,15 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 			return hqlExpression;
 		}
 
+		#endregion
+
+		#region Helpers
+
+		/// <summary>
+		/// Gets the HQL select list for the specified projection.
+		/// </summary>
+		/// <param name="projection"></param>
+		/// <returns></returns>
 		private static HqlSelect[] GetWorklistItemSelects(WorklistItemProjection projection)
 		{
 			return CollectionUtils.Map<WorklistItemField, HqlSelect>(projection.Fields, MapWorklistItemFieldToHqlSelect).ToArray();
@@ -94,9 +154,16 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 			return HqlConstants.MapWorklistItemFieldToHqlSelect[itemField];
 		}
 
+		/// <summary>
+		/// Gets the entity-ref of the specified entity, or null if the argument is null.
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <returns></returns>
 		protected static EntityRef GetEntityRef(object entity)
 		{
 			return entity == null ? null : ((Entity) entity).GetRef();
 		}
+
+		#endregion
 	}
 }

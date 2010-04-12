@@ -35,47 +35,53 @@ using System;
 
 namespace ClearCanvas.Healthcare
 {
+	/// <summary>
+	/// Criteria for finding worklist items.
+	/// </summary>
 	public class WorklistItemSearchCriteria : SearchCriteria
 	{
-		private static readonly Dictionary<WorklistItemField, Converter<WorklistItemSearchCriteria, ISearchCriteria>> _fieldMappings
+		private static readonly Dictionary<WorklistItemField, Converter<WorklistItemSearchCriteria, ISearchCriteria>> _timeFieldSubCriteriaMappings
 			= new Dictionary<WorklistItemField, Converter<WorklistItemSearchCriteria, ISearchCriteria>>();
 
+		/// <summary>
+		/// Class constructor.
+		/// </summary>
 		static WorklistItemSearchCriteria()
 		{
-			_fieldMappings.Add(WorklistItemField.OrderSchedulingRequestTime,
+			_timeFieldSubCriteriaMappings.Add(WorklistItemField.OrderSchedulingRequestTime,
 				criteria => criteria.Order.SchedulingRequestTime);
 
-			_fieldMappings.Add(WorklistItemField.ProcedureScheduledStartTime,
+			_timeFieldSubCriteriaMappings.Add(WorklistItemField.ProcedureScheduledStartTime,
 				criteria => criteria.Procedure.ScheduledStartTime);
 
-			_fieldMappings.Add(WorklistItemField.ProcedureCheckInTime,
+			_timeFieldSubCriteriaMappings.Add(WorklistItemField.ProcedureCheckInTime,
 				criteria => criteria.ProcedureCheckIn.CheckInTime);
 
-			_fieldMappings.Add(WorklistItemField.ProcedureCheckOutTime,
+			_timeFieldSubCriteriaMappings.Add(WorklistItemField.ProcedureCheckOutTime,
 				criteria => criteria.ProcedureCheckIn.CheckOutTime);
 
-			_fieldMappings.Add(WorklistItemField.ProcedureStartTime,
+			_timeFieldSubCriteriaMappings.Add(WorklistItemField.ProcedureStartTime,
 				criteria => criteria.Procedure.StartTime);
 
-			_fieldMappings.Add(WorklistItemField.ProcedureEndTime,
+			_timeFieldSubCriteriaMappings.Add(WorklistItemField.ProcedureEndTime,
 				criteria => criteria.Procedure.EndTime);
 
-			_fieldMappings.Add(WorklistItemField.ProcedureStepCreationTime,
+			_timeFieldSubCriteriaMappings.Add(WorklistItemField.ProcedureStepCreationTime,
 				criteria => criteria.ProcedureStep.CreationTime);
 
-			_fieldMappings.Add(WorklistItemField.ProcedureStepScheduledStartTime,
+			_timeFieldSubCriteriaMappings.Add(WorklistItemField.ProcedureStepScheduledStartTime,
 				criteria => criteria.ProcedureStep.Scheduling.StartTime);
 
-			_fieldMappings.Add(WorklistItemField.ProcedureStepStartTime,
+			_timeFieldSubCriteriaMappings.Add(WorklistItemField.ProcedureStepStartTime,
 				criteria => criteria.ProcedureStep.StartTime);
 
-			_fieldMappings.Add(WorklistItemField.ProcedureStepEndTime,
+			_timeFieldSubCriteriaMappings.Add(WorklistItemField.ProcedureStepEndTime,
 				criteria => criteria.ProcedureStep.EndTime);
 
-			_fieldMappings.Add(WorklistItemField.ReportPartPreliminaryTime,
+			_timeFieldSubCriteriaMappings.Add(WorklistItemField.ReportPartPreliminaryTime,
 				criteria => ((ReportingWorklistItemSearchCriteria)criteria).ReportPart.PreliminaryTime);
 
-			_fieldMappings.Add(WorklistItemField.ReportPartCompletedTime,
+			_timeFieldSubCriteriaMappings.Add(WorklistItemField.ReportPartCompletedTime,
 				criteria => ((ReportingWorklistItemSearchCriteria)criteria).ReportPart.CompletedTime);
 		}
 
@@ -125,7 +131,7 @@ namespace ClearCanvas.Healthcare
 		/// <returns></returns>
 		public ISearchCriteria GetTimeFieldSubCriteria(WorklistItemField timeField)
 		{
-			return _fieldMappings[timeField](this);
+			return _timeFieldSubCriteriaMappings[timeField](this);
 		}
 
 		public PatientProfileSearchCriteria PatientProfile
