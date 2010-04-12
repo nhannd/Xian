@@ -120,7 +120,6 @@
     <Compile Include="EnumValueAdminInfoTable.cs" />
     <Compile Include="ExternalPractitionerContactPointLookupHandler.cs" />
     <Compile Include="ExternalPractitionerContactPointMergeComponent.cs" />
-    <Compile Include="ExternalPractitionerMergeComponent.cs" />
     <Compile Include="FolderExplorerConfigurationComponent.cs" />
     <Compile Include="FolderExplorerConfigurationTool.cs" />
     <Compile Include="FolderExplorerConfigurationTreeNode.cs" />

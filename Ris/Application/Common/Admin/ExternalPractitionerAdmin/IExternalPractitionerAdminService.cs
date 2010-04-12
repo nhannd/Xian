@@ -71,7 +71,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 		UpdateExternalPractitionerResponse UpdateExternalPractitioner(UpdateExternalPractitionerRequest request);
 
 		/// <summary>
-		/// Delete duplicate external practitioners.
+		/// Delete an existing external practitioners.
 		/// </summary>
 		[OperationContract]
 		[FaultContract(typeof(ConcurrentModificationException))]
@@ -89,14 +89,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 		/// </summary>
 		[OperationContract]
 		LoadExternalPractitionerEditorFormDataResponse LoadExternalPractitionerEditorFormData(LoadExternalPractitionerEditorFormDataRequest request);
-
-		/// <summary>
-		/// Merge duplicate external practitioners.
-		/// </summary>
-		[OperationContract]
-		[FaultContract(typeof(ConcurrentModificationException))]
-		[FaultContract(typeof(RequestValidationException))]
-		MergeDuplicatePractitionerResponse MergeDuplicatePractitioner(MergeDuplicatePractitionerRequest request);
 
 		/// <summary>
 		/// Merge duplicate external practitioners contact points.

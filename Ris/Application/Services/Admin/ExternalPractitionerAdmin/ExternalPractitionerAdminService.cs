@@ -256,45 +256,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 		}
 
 		[UpdateOperation]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.ExternalPractitioner.Merge)]
-		public MergeDuplicatePractitionerResponse MergeDuplicatePractitioner(MergeDuplicatePractitionerRequest request)
-		{
-			var broker = PersistenceContext.GetBroker<IExternalPractitionerBroker>();
-			var duplicate = broker.Load(request.Duplicate.PractitionerRef, EntityLoadFlags.Proxy);
-			var original = broker.Load(request.Original.PractitionerRef, EntityLoadFlags.Proxy);
-
-			// Change reference of ordering practitioner to the new practitioner
-			CollectionUtils.ForEach(broker.GetRelatedOrders(duplicate), 
-				delegate(Order o) { o.OrderingPractitioner = original; });
-
-			// Change reference of contact points to the new practitioner
-			CollectionUtils.ForEach(duplicate.ContactPoints,
-				delegate(ExternalPractitionerContactPoint cp)
-					{
-						cp.IsDefaultContactPoint = false;
-						cp.Practitioner = original;
-					});
-			original.ContactPoints.AddAll(duplicate.ContactPoints);
-
-			// Change reference of visit practitioner to the new practitioner
-			CollectionUtils.ForEach(broker.GetRelatedVisits(duplicate),
-				v => CollectionUtils.ForEach(v.Practitioners,
-					 delegate(VisitPractitioner vp)
-						{
-							if (vp.Practitioner == duplicate)
-								vp.Practitioner = original;
-						}));
-
-			original.MarkEdited();
-			duplicate.MarkEdited();
-			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.ExternalPractitionerVerification))
-				original.MarkVerified();
-
-			var assembler = new ExternalPractitionerAssembler();
-			return new MergeDuplicatePractitionerResponse(assembler.CreateExternalPractitionerSummary(original, this.PersistenceContext));
-		}
-
-		[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.ExternalPractitioner)]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.ExternalPractitioner.Merge)]
 		public MergeDuplicateContactPointResponse MergeDuplicateContactPoint(MergeDuplicateContactPointRequest request)
