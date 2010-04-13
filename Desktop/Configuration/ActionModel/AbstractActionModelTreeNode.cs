@@ -33,6 +33,7 @@ using System;
 using System.Text.RegularExpressions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Trees;
 
 namespace ClearCanvas.Desktop.Configuration.ActionModel
 {
@@ -48,7 +49,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		private PathSegment _pathSegment = null;
 		private string _canonicalLabel = null;
 		private string _tooltip = string.Empty;
-		private bool _isChecked = false;
+		private CheckState _checkState = CheckState.Unchecked;
 		private bool _isExpanded = false;
 		private bool _isHighlighted = false;
 
@@ -102,15 +103,15 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			}
 		}
 
-		public bool IsChecked
+		public CheckState CheckState
 		{
-			get { return _isChecked; }
+			get { return _checkState; }
 			set
 			{
-				if (_isChecked != value)
+				if (_checkState != value)
 				{
-					_isChecked = value;
-					this.OnIsCheckedChanged();
+					_checkState = value;
+					this.OnCheckStateChanged();
 				}
 			}
 		}
@@ -199,7 +200,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			}
 		}
 
-		protected virtual void OnIsCheckedChanged()
+		protected virtual void OnCheckStateChanged()
 		{
 			this.NotifyItemChanged();
 		}

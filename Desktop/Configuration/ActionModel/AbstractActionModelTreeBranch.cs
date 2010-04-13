@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Trees;
@@ -38,23 +39,13 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 	public class AbstractActionModelTreeBranch : AbstractActionModelTreeNode
 	{
 		private readonly Tree<AbstractActionModelTreeNode> _subtree = new Tree<AbstractActionModelTreeNode>(new Binding());
-		private readonly List<AbstractActionModelTreeNode> _children = new List<AbstractActionModelTreeNode>();
-
-		private bool _suspendSynchronizeParent = false;
+		private readonly List<AbstractActionModelTreeNode> _syncList = new List<AbstractActionModelTreeNode>();
 
 		public AbstractActionModelTreeBranch(string groupName)
-			: base(new PathSegment(groupName, groupName))
-		{
-			Initialize();
-		}
+			: this(new PathSegment(groupName, groupName)) {}
 
 		public AbstractActionModelTreeBranch(PathSegment pathSegment)
 			: base(pathSegment)
-		{
-			Initialize();
-		}
-
-		private void Initialize()
 		{
 			_subtree.Items.ItemsChanged += OnSubtreeItemsChanged;
 		}
@@ -64,7 +55,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _subtree.Items; }
 		}
 
-		public bool IsEmpty
+		public bool HasNoActions
 		{
 			get
 			{
@@ -72,7 +63,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 				{
 					if (actionModelTreeNode is AbstractActionModelTreeLeafAction)
 						return false;
-					else if (actionModelTreeNode is AbstractActionModelTreeBranch && !((AbstractActionModelTreeBranch) actionModelTreeNode).IsEmpty)
+					else if (actionModelTreeNode is AbstractActionModelTreeBranch && !((AbstractActionModelTreeBranch) actionModelTreeNode).HasNoActions)
 						return false;
 				}
 				return true;
@@ -84,17 +75,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		/// </summary>
 		internal void AppendChild(AbstractActionModelTreeNode child)
 		{
-			_suspendSynchronizeParent = true;
-			try
-			{
-				_subtree.Items.Add(child);
-				_children.Add(child);
-				child.Parent = this;
-			}
-			finally
-			{
-				_suspendSynchronizeParent = false;
-			}
+			_subtree.Items.Add(child);
 		}
 
 		internal void NotifyChildChanged(AbstractActionModelTreeNode child)
@@ -129,13 +110,12 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		private void OnSubtreeItemsChanged(object sender, ItemChangedEventArgs e)
 		{
 			SynchronizeParent((AbstractActionModelTreeNode) e.Item, e.ChangeType);
+
+			this.CheckState = ComputeCheckState();
 		}
 
 		private void SynchronizeParent(AbstractActionModelTreeNode node, ItemChangeType changeType)
 		{
-			if (_suspendSynchronizeParent)
-				return;
-
 			switch (changeType)
 			{
 				case ItemChangeType.ItemAdded:
@@ -144,7 +124,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 					node.Parent = this;
 
 					// sync the secondary list
-					_children.Add(node);
+					_syncList.Add(node);
 
 					// force the node to expand
 					this.IsExpanded = true;
@@ -155,14 +135,14 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 						node.Parent = null;
 
 					// sync the secondary list
-					_children.Remove(node);
+					_syncList.Remove(node);
 					break;
 				case ItemChangeType.ItemChanged:
 					// replacing an item in the list can cause ItemChanged, thus we need to resync the entire list to update the replaced item
 				case ItemChangeType.Reset:
 				default:
 					// resync the parent nodes using the secondary list as a reference for what was in the tree before the change
-					foreach (AbstractActionModelTreeNode child in _children)
+					foreach (AbstractActionModelTreeNode child in _syncList)
 					{
 						if (!_subtree.Items.Contains(child))
 						{
@@ -172,15 +152,40 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 					}
 					foreach (AbstractActionModelTreeNode child in _subtree.Items)
 					{
-						if (!_children.Contains(child))
+						if (!_syncList.Contains(child))
 							child.Parent = this;
 					}
 
 					// update the secondary list
-					_children.Clear();
-					_children.AddRange(_subtree.Items);
+					_syncList.Clear();
+					_syncList.AddRange(_subtree.Items);
 					break;
 			}
+		}
+
+		private CheckState ComputeCheckState()
+		{
+			if (this.Children.Count <= 0)
+				return CheckState.Unchecked;
+
+			CheckState checkState = this.Children[0].CheckState;
+			if (checkState == CheckState.Partial)
+				return checkState;
+			foreach (AbstractActionModelTreeNode child in this.Children)
+				if (child.CheckState != checkState)
+					return CheckState.Partial;
+			return checkState;
+		}
+
+		protected override void OnCheckStateChanged()
+		{
+			base.OnCheckStateChanged();
+
+			CheckState checkState = this.CheckState;
+			if (checkState == CheckState.Partial)
+				return;
+			foreach (AbstractActionModelTreeNode child in this.Children)
+				child.CheckState = checkState;
 		}
 
 		public override DragDropKind CanAcceptDrop(object dropData, DragDropKind dragDropKind, DragDropPosition dragDropPosition)
@@ -262,10 +267,36 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 				this.IsExpandedGetter = (node => node.IsExpanded);
 				this.IsExpandedSetter = ((node, v) => node.IsExpanded = v);
 
-				this.IsCheckedGetter = (node => node.IsChecked);
-				this.IsCheckedSetter = ((node, v) => node.IsChecked = v);
-
 				this.IsHighlightedProvider = (node => node.IsHighlighted);
+			}
+
+			public override CheckState GetCheckState(object item)
+			{
+				AbstractActionModelTreeNode node = item as AbstractActionModelTreeNode;
+				if (node == null)
+					return CheckState.Unchecked;
+				return node.CheckState;
+			}
+
+			public override CheckState ToggleCheckState(object item)
+			{
+				AbstractActionModelTreeNode node = item as AbstractActionModelTreeNode;
+				if (node == null)
+					return CheckState.Unchecked;
+				if (node is AbstractActionModelTreeLeafSeparator)
+					return Trees.CheckState.Checked;
+				switch (node.CheckState)
+				{
+					case CheckState.Checked:
+						node.CheckState = CheckState.Unchecked;
+						break;
+					case CheckState.Partial:
+					case CheckState.Unchecked:
+					default:
+						node.CheckState = CheckState.Checked;
+						break;
+				}
+				return node.CheckState;
 			}
 
 			public override DragDropKind CanAcceptDrop(object item, object dropData, DragDropKind kind, DragDropPosition position)

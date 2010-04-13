@@ -996,7 +996,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 				_stateImageList.Images.Clear();
 
     			Size stateImageSize = _stateImageList.ImageSize;
-				//stateImageSize = new Size(16, 16);
     			foreach (CheckState checkState in Enum.GetValues(typeof (CheckState)))
     			{
     				Bitmap bitmap = new Bitmap(stateImageSize.Width, stateImageSize.Height);

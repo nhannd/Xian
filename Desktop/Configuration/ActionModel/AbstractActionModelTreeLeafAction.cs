@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Trees;
 
 namespace ClearCanvas.Desktop.Configuration.ActionModel
 {
@@ -44,7 +45,10 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 
 	public sealed class AbstractActionModelTreeLeafSeparator : AbstractActionModelTreeLeaf
 	{
-		public AbstractActionModelTreeLeafSeparator() : base(new PathSegment("Separator", SR.LabelSeparator)) {}
+		public AbstractActionModelTreeLeafSeparator() : base(new PathSegment("Separator", SR.LabelSeparator)) 
+		{
+			base.CheckState = CheckState.Checked;
+		}
 
 		internal Path GetSeparatorPath()
 		{
@@ -81,7 +85,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			// that might (probably are) in use or cached in some tool or component somewhere.
 			_action = AbstractAction.Create(action);
 
-			base.IsChecked = _action.Available;
+			base.CheckState = _action.Available ? CheckState.Checked : CheckState.Unchecked;
 			base.IconSet = _action.IconSet;
 			base.ResourceResolver = _action.ResourceResolver;
 		}
@@ -91,11 +95,11 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _action.ActionId; }
 		}
 
-		protected override void OnIsCheckedChanged()
+		protected override void OnCheckStateChanged()
 		{
-			base.OnIsCheckedChanged();
+			base.OnCheckStateChanged();
 
-			_action.Available = this.IsChecked;
+			_action.Available = this.CheckState == CheckState.Checked;
 		}
 
 		internal IAction GetAction()

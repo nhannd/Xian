@@ -138,7 +138,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 				if (this.CanRemove && selectedNode.Parent != null)
 				{
 					AbstractActionModelTreeBranch branch = selectedNode as AbstractActionModelTreeBranch;
-					if (branch != null && !branch.IsEmpty)
+					if (branch != null && !branch.HasNoActions)
 					{
 						base.Context.DesktopWindow.ShowMessageBox(SR.MessageNodeNotEmpty, MessageBoxActions.Ok);
 						return;
