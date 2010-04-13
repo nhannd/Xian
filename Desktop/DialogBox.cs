@@ -104,6 +104,7 @@ namespace ClearCanvas.Desktop
         private Host _host;
         private readonly DialogSizeHint _dialogSize;
         private readonly Size _size;
+    	private readonly bool _allowUserResize;
 
         /// <summary>
         /// Constructor.
@@ -116,6 +117,7 @@ namespace ClearCanvas.Desktop
             _component = args.Component;
             _dialogSize = args.SizeHint;
             _size = args.Size;
+        	_allowUserResize = args.AllowUserResize;
             _desktopWindow = desktopWindow;
 
             _host = new Host(this, _component);
@@ -144,6 +146,14 @@ namespace ClearCanvas.Desktop
         {
             get { return _size; }
         }
+
+		/// <summary>
+		/// Gets a value indicating whether or not the user should be allowed to resize the dialog.
+		/// </summary>
+    	public bool AllowUserResize
+    	{
+			get { return _allowUserResize; }
+    	}
 
         /// <summary>
         /// Starts the hosted component.

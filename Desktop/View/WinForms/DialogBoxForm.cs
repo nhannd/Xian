@@ -89,6 +89,11 @@ namespace ClearCanvas.Desktop.View.WinForms
                 }
             }
 
+			if (dialogBox.AllowUserResize)
+			{
+				base.FormBorderStyle = FormBorderStyle.Sizable;
+				base.MinimumSize = base.SizeFromClientSize(_content.Size);
+			}
 
             _contentPanel.Controls.Add(_content);
 
@@ -104,7 +109,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void OnContentSizeChanged(object sender, EventArgs e)
         {
-            this.ClientSize = _content.Size;
+			if (this.ClientSize != _content.Size)
+				this.ClientSize = _content.Size;
         }
 
         private void _delayedCloseTimer_Tick(object sender, EventArgs e)

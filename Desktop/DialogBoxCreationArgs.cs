@@ -40,6 +40,7 @@ namespace ClearCanvas.Desktop
         private IApplicationComponent _component;
         private DialogSizeHint _sizeHint;
         private Size _size = Size.Empty;
+    	private bool _allowUserResize = false;
 
         /// <summary>
         /// Constructor.
@@ -75,6 +76,19 @@ namespace ClearCanvas.Desktop
             _component = component;
             _size = size;
         }
+
+    	/// <summary>
+    	/// Constructor.
+    	/// </summary>
+    	/// <param name="component">The component to be hosted in the dialog.</param>
+    	/// <param name="title">The title to assign to the dialog.</param>
+    	/// <param name="name">The name/identifier of the dialog.</param>
+    	/// <param name="allowUserResize">A value indicating whether or not the user should be allowed to resize the dialog.</param>
+    	public DialogBoxCreationArgs(IApplicationComponent component, string title, string name, bool allowUserResize)
+    		: this(component, title, name, DialogSizeHint.Auto)
+    	{
+    		_allowUserResize = allowUserResize;
+    	}
 
         /// <summary>
         /// Constructor.
@@ -115,5 +129,14 @@ namespace ClearCanvas.Desktop
             get { return _size; }
             set { _size = value; }
         }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether or not the user should be allowed to resize the dialog.
+		/// </summary>
+    	public bool AllowUserResize
+    	{
+			get { return _allowUserResize; }
+			set { _allowUserResize = value; }
+    	}
     }
 }
