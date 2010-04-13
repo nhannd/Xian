@@ -1,0 +1,137 @@
+<!DOCTYPE html "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Worklist Print Preview</title>
+		<link href="../css/default.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="js/jsx.js"></script>
+		<script type="text/javascript" src="js/jsml.js"></script>
+		<script type="text/javascript" src="js/ui.js"></script>
+		<script type="text/javascript" src="js/ris.js"></script>
+		<script type="text/javascript" src="js/preview.js"></script>
+		<script type="text/javascript" src="js/layout.js"></script>
+		<script type="text/javascript" >
+			function onBodyLoad()
+			{
+				if(!Ris)
+					return;
+
+				try
+				{
+					var context = Ris.getHealthcareContext();
+					if (context == null)
+					{
+						Field.setValue($("myForm"), "");
+						return;
+					}
+
+					Field.setValue($("PrintedBy"), Ris.formatPersonName(context.PrintedBy) + " on " + Ris.formatDateTime(context.PrintedTime));
+					Field.setValue($("FolderSystem"), context.FolderSystemName);
+					Field.setValue($("FolderName"), context.FolderName);
+					Field.setValue($("Description"), context.FolderDescription);
+					Field.setValue($("ShowingCount"), context.Items.length == context.TotalItemCount 
+						? "All " + context.TotalItemCount + " items"
+						: context.Items.length + " of " + context.TotalItemCount + " items");
+					Preview.WorklistItemsPreview.create($("worklistItemsSection"), context.Items);
+				}
+				catch(e)
+				{
+					var message = "Failed to load editor page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+					Field.setValue($("myForm"), message);
+				}
+			}
+
+			Preview.WorklistItemsPreview = function () {
+				var _formatProcedure = function(procedureName, portable, lateralityEnum)
+				{
+					var laterality = lateralityEnum && lateralityEnum.Code != 'N' ? lateralityEnum.Value : null;
+
+					if (portable && laterality)
+						return procedureName + " (Portable/" + laterality + ")";
+					else if (portable)
+						return procedureName + " (Portable)";
+					else if (laterality)
+						return procedureName + " (" + laterality + ")";
+
+					return procedureName;
+				}
+
+				return {
+					create: function(parentElement, items)
+					{
+						if(items.length == 0)
+						{
+							Field.show(element, false);
+							return;
+						}
+
+						var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
+						htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
+							 [
+								{   label: "Mrn",
+									cellType: "text",
+									getValue: function(item) { return Ris.formatMrn(item.Mrn); }
+								},
+								{   label: "Name",
+									cellType: "text",
+									getValue: function(item) { return Ris.formatPersonName(item.PatientName); }
+								},
+								{   label: "Accession #",
+									cellType: "text",
+									getValue: function(item) { return Ris.formatAccessionNumber(item.AccessionNumber); }
+								},
+								{   label: "Order Priority",
+									cellType: "text",
+									getValue: function(item) { return item.OrderPriority.Value; }
+								},
+								{   label: "Patient Class",
+									cellType: "text",
+									getValue: function(item) { return item.PatientClass.Value; }
+								},
+								{   label: "Procedure",
+									cellType: "text",
+									getValue: function(item) { return _formatProcedure(item.ProcedureName, item.ProcedurePortable, item.ProcedureLaterality); }
+								},
+								{   label: "Time",
+									cellType: "text",
+									getValue: function(item) { return Ris.formatDateTime(item.Time); }
+								}
+							 ]);
+
+						htmlTable.rowCycleClassNames = ["row0", "row1"];
+						htmlTable.bindItems(items);
+					}
+				};
+			}();
+		</script>
+	</head>
+	<body onload="javascript: onBodyLoad()">
+		<form id="myForm">
+			<p class="sectionheading">Worklist</p>
+			<table border="0">
+				<tr>
+					<td width="125" class="propertyname">Printed By</td>
+					<td><div id="PrintedBy"/></td>
+				</tr>
+				<tr>
+					<td width="125" class="propertyname">Folder System</td>
+					<td><div id="FolderSystem"/></td>
+				</tr>
+				<tr>
+					<td class="propertyname">Folder Name</td>
+					<td><div id="FolderName"/></td>
+				</tr>
+				<tr>
+					<td class="propertyname">Description</td>
+					<td><div id="Description"/></td>
+				</tr>
+				<tr>
+					<td class="propertyname">Showing</td>
+					<td><div id="ShowingCount"/></td>
+				</tr>
+			</table>
+			</div>
+			<br>
+			<div id="worklistItemsSection"/>
+		</form>
+	</body>
+</html>

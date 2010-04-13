@@ -132,6 +132,16 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute]
+		[global::System.Configuration.DefaultSettingValueAttribute("worklist-print-preview.htm")]
+		public string WorklistPrintPreviewPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["WorklistPrintPreviewPageUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("attached-document-preview.htm")]
 		public string AttachedDocumentPreviewUrl
 		{
