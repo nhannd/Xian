@@ -30,14 +30,17 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Trees;
+using CheckState=ClearCanvas.Desktop.Trees.CheckState;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -86,6 +89,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private ActionModelNode _menuModel;
 
     	private IconSize _iconResourceSize = ClearCanvas.Desktop.IconSize.Medium;
+    	private CheckBoxStyle _checkBoxStyle = CheckBoxStyle.None;
         private bool _selectionDisabled = false;
     	private bool _allowDropToIndex = false;
 
@@ -102,7 +106,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// to fix this problem, we'll explicitly add a dummy transparent icon for use by nodes without icons
 			Bitmap blankIcon = new Bitmap(1, 1);
 			blankIcon.SetPixel(0, 0, Color.Transparent);
-			_treeCtrl.ImageList.Images.Add(string.Empty, blankIcon);
+			_imageList.Images.Add(string.Empty, blankIcon);
+
+			this.RebuildStateImageList();
         }
 
         #region Public members
@@ -283,6 +289,20 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region Design time properties
 
+		[DefaultValue(false)]
+		public CheckBoxStyle CheckBoxStyle
+		{
+			get { return _checkBoxStyle; }
+			set
+			{
+				if (_checkBoxStyle != value)
+				{
+					_checkBoxStyle = value;
+					this.OnCheckBoxStyleChanged();
+				}
+			}
+		}
+
     	[DefaultValue(false)]
     	public bool AllowDropToIndex
     	{
@@ -326,10 +346,11 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
         [DefaultValue(false)]
+		[Obsolete("CheckBoxes is the same as toggling CheckBoxStyle to Standard. Consider using CheckBoxStyle instead.")]
         public bool CheckBoxes
         {
-            get { return _treeCtrl.CheckBoxes; }
-            set { _treeCtrl.CheckBoxes = value; }
+            get { return this.CheckBoxStyle == CheckBoxStyle.Standard; }
+            set { this.CheckBoxStyle = value ? CheckBoxStyle.Standard : CheckBoxStyle.None; }
         }
 
         [DefaultValue(false)]
@@ -389,11 +410,19 @@ namespace ClearCanvas.Desktop.View.WinForms
 			set {  }
         }
 
-        public Size IconSize
-        {
-            get { return _imageList.ImageSize; }
-            set { _imageList.ImageSize = value; }
-        }
+    	public Size IconSize
+    	{
+    		get { return _imageList.ImageSize; }
+    		set
+    		{
+    			if (_imageList.ImageSize != value)
+    			{
+    				_imageList.ImageSize = value;
+    				_stateImageList.ImageSize = value; // use same size, because otherwise the line spacing is off
+    				this.OnIconSizeChanged();
+    			}
+    		}
+    	}
 
     	public IconSize IconResourceSize
     	{
@@ -462,6 +491,18 @@ namespace ClearCanvas.Desktop.View.WinForms
             return null;
         }
 
+		protected virtual void OnCheckBoxStyleChanged()
+		{
+			_treeCtrl.BeginUpdate();
+			_treeCtrl.CheckBoxes = this.CheckBoxStyle == CheckBoxStyle.Standard;
+			_treeCtrl.StateImageList = this.CheckBoxStyle == CheckBoxStyle.TriState ? _stateImageList : null;
+			_treeCtrl.EndUpdate();
+		}
+
+		protected virtual void OnIconSizeChanged()
+		{
+			this.RebuildStateImageList();
+		}
 
         /// <summary>
         /// When the user is about to expand a node, need to build the level beneath it
@@ -541,11 +582,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void _treeCtrl_AfterCheck(object sender, TreeViewEventArgs e)
         {
-            BindingTreeNode node = e.Node as BindingTreeNode;
-            if (node != null)
-            {
-                node.OnChecked();
-            }
+        	if (this.CheckBoxStyle == CheckBoxStyle.Standard)
+        	{
+        		BindingTreeNode node = e.Node as BindingTreeNode;
+        		if (node != null)
+        		{
+        			node.OnChecked();
+        		}
+        	}
         }
 
         private void _treeCtrl_BeforeSelect(object sender, TreeViewCancelEventArgs e)
@@ -563,6 +607,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void _treeCtrl_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
 		{
+			if (this.CheckBoxStyle == CheckBoxStyle.TriState && _treeCtrl.HitTest(e.Location).Location == TreeViewHitTestLocations.StateImage)
+			{
+				BindingTreeNode node = e.Node as BindingTreeNode;
+				if (node != null)
+				{
+					node.OnChecked();
+				}
+			}
+
 			EventsHelper.Fire(_nodeMouseClicked, this, e);
 		}
 
@@ -912,5 +965,127 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			EventsHelper.Fire(_searchTextChanged, this, EventArgs.Empty);
 		}
+
+    	private static CheckBoxState ConvertCheckState(CheckState checkState)
+    	{
+    		switch (checkState)
+    		{
+    			case CheckState.Checked:
+    				return CheckBoxState.CheckedNormal;
+    			case CheckState.Partial:
+    				return CheckBoxState.MixedNormal;
+    			default:
+    			case CheckState.Unchecked:
+    				return CheckBoxState.UncheckedNormal;
+    		}
+    	}
+
+		private static void DisposeAll(IEnumerable enumerable)
+		{
+			foreach (object o in enumerable)
+				if (o is IDisposable)
+					((IDisposable)o).Dispose();
+		}
+
+    	private void RebuildStateImageList()
+    	{
+    		_treeCtrl.BeginUpdate();
+    		try
+    		{
+				DisposeAll(_stateImageList.Images);
+				_stateImageList.Images.Clear();
+
+    			Size stateImageSize = _stateImageList.ImageSize;
+				//stateImageSize = new Size(16, 16);
+    			foreach (CheckState checkState in Enum.GetValues(typeof (CheckState)))
+    			{
+    				Bitmap bitmap = new Bitmap(stateImageSize.Width, stateImageSize.Height);
+    				using (Graphics g = Graphics.FromImage(bitmap))
+    				{
+    					g.FillRectangle(Brushes.Transparent, 0, 0, stateImageSize.Width, stateImageSize.Height);
+    					CheckBoxState checkBoxState = ConvertCheckState(checkState);
+    					Size glyphSize = CheckBoxRenderer.GetGlyphSize(g, checkBoxState);
+    					CheckBoxRenderer.DrawCheckBox(g,
+    					                              new Point((stateImageSize.Width - glyphSize.Width)/2, (stateImageSize.Height - glyphSize.Height)/2),
+    					                              checkBoxState);
+    				}
+    				_stateImageList.Images.Add(checkState.ToString(), bitmap);
+    			}
+    		}
+    		finally
+    		{
+    			_treeCtrl.EndUpdate();
+    		}
+    	}
+
+		#region Fixed TreeView Control
+
+		/// <summary>
+		/// <see cref="TreeView"/> control that fixes the 16x16 state image size restriction.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// Basically, the WinForms wrapper of a TreeView uses a copy of the state image list we provide.
+		/// This copy is modified by duplicating the first image as a dummy "no-state" image - but the
+		/// code was unfortunately written in a way that ensured a constant 16x16 image size.
+		/// </para>
+		/// </remarks>
+		/// <seealso cref="http://www.codeproject.com/KB/tree/customstatetreeview.aspx?msg=1519062"/>
+		private class XTreeView : TreeView
+		{
+			private ImageList _fixedInternalStateImageList = null;
+
+			protected override void Dispose(bool disposing)
+			{
+				if (disposing)
+				{
+					if (_fixedInternalStateImageList != null)
+					{
+						DisposeAll(_fixedInternalStateImageList.Images);
+						_fixedInternalStateImageList.Dispose();
+						_fixedInternalStateImageList = null;
+					}
+				}
+				base.Dispose(disposing);
+			}
+
+			protected override void WndProc(ref Message m)
+			{
+				// intercept the message that sets the state image list, and pass on a fixed image list
+				// instead of the modified 16x16 version. the control will take care of the internal
+				// modified image list it created - we just need to handle disposal for our own image list
+				const int TVSIL_STATE = 2;
+				if (m.Msg == (int) WindowsMessages.TVM_SETIMAGELIST)
+				{
+					if (_fixedInternalStateImageList != null)
+					{
+						DisposeAll(_fixedInternalStateImageList.Images);
+						_fixedInternalStateImageList.Dispose();
+						_fixedInternalStateImageList = null;
+					}
+
+					if (m.WParam.ToInt32() == TVSIL_STATE && m.LParam != IntPtr.Zero && this.StateImageList != null)
+					{
+						// setup a new image list as a rough clone of the real one
+						_fixedInternalStateImageList = new ImageList();
+						_fixedInternalStateImageList.ColorDepth = this.StateImageList.ColorDepth;
+						_fixedInternalStateImageList.ImageSize = this.StateImageList.ImageSize;
+						_fixedInternalStateImageList.TransparentColor = this.StateImageList.TransparentColor;
+
+						// add the dummy image (we still need to do this because otherwise the image indexes are shifted by 1)
+						_fixedInternalStateImageList.Images.Add(string.Empty, new Bitmap(1, 1));
+
+						// copy over the original images
+						for (int n = 0; n < this.StateImageList.Images.Count; n++)
+							_fixedInternalStateImageList.Images.Add((Image) this.StateImageList.Images[n].Clone());
+
+						m.LParam = _fixedInternalStateImageList.Handle;
+					}
+				}
+				base.WndProc(ref m);
+			}
+		}
+
+		#endregion
 	}
 }

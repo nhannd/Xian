@@ -33,6 +33,7 @@ using System;
 using System.Windows.Forms;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Trees;
+using CheckState=ClearCanvas.Desktop.Trees.CheckState;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -51,6 +52,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private BindingTreeLevelManager _subtreeManager;
         private object _item;
         private bool _isSubTreeBuilt;
+    	private bool _isUpdating = false;
 
 		public BindingTreeNode(ITree parentTree, object item, BindingTreeView bindingTreeView)
             : base(parentTree.Binding.GetNodeText(item))
@@ -141,6 +143,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void UpdateDisplay(ImageList treeViewImageList)
 		{
+			_isUpdating = true;
+
 			if (this.TreeView != null)
 				this.TreeView.BeginUpdate();
 
@@ -148,7 +152,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.Text = _parentTree.Binding.GetNodeText(_item);
 			this.ToolTipText = _parentTree.Binding.GetTooltipText(_item);
 
-			this.Checked = _parentTree.Binding.GetIsChecked(_item);
+			CheckState checkState = _parentTree.Binding.GetCheckState(_item);
+			if (_bindingTreeView.CheckBoxStyle == CheckBoxStyle.TriState)
+				this.StateImageKey = checkState.ToString();
+			else
+				this.Checked = checkState == CheckState.Checked;
 
 			if (_parentTree.Binding.GetIsHighlighted(_item))
 				this.BackColor = System.Drawing.Color.FromArgb(124, 177, 221);
@@ -213,6 +221,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 				this.Expand();
 			else
 				this.Collapse();
+
+			_isUpdating = false;
 		}
 
 		/// <summary>
@@ -242,10 +252,19 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_parentTree.Binding.SetNodeText(_item, text);
 		}
 
-        public void OnChecked()
-        {
-            _parentTree.Binding.SetIsChecked(_item, this.Checked);
-        }
+    	public void OnChecked()
+    	{
+    		if (!_isUpdating)
+    		{
+    			_isUpdating = true;
+    			CheckState checkState = _parentTree.Binding.ToggleCheckState(_item);
+    			if (_bindingTreeView.CheckBoxStyle == CheckBoxStyle.TriState)
+    				this.StateImageKey = checkState.ToString();
+    			else
+    				this.Checked = checkState == CheckState.Checked;
+    			_isUpdating = false;
+    		}
+    	}
 
 		public void OnExpandCollapse()
 		{

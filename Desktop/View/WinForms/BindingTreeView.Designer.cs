@@ -64,10 +64,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._toolStrip = new System.Windows.Forms.ToolStrip();
 			this._searchTextBox = new System.Windows.Forms.ToolStripTextBox();
 			this._clearSearchButton = new System.Windows.Forms.ToolStripButton();
-			this._treeCtrl = new System.Windows.Forms.TreeView();
+			this._treeCtrl = new ClearCanvas.Desktop.View.WinForms.BindingTreeView.XTreeView();
 			this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this._imageList = new System.Windows.Forms.ImageList(this.components);
 			this._toolTip = new System.Windows.Forms.ToolTip(this.components);
+			this._stateImageList = new System.Windows.Forms.ImageList(this.components);
 			this.tableLayoutPanel1.SuspendLayout();
 			this._toolStrip.SuspendLayout();
 			this.SuspendLayout();
@@ -171,6 +172,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			this._toolTip.ShowAlways = true;
 			// 
+			// _stateImageList
+			// 
+			this._stateImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+			this._stateImageList.ImageSize = new System.Drawing.Size(16, 16);
+			this._stateImageList.TransparentColor = System.Drawing.Color.Transparent;
+			// 
 			// BindingTreeView
 			// 
 			this.AllowDrop = true;
@@ -193,11 +200,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.ToolStrip _toolStrip;
-        private System.Windows.Forms.TreeView _treeCtrl;
+		private ClearCanvas.Desktop.View.WinForms.BindingTreeView.XTreeView _treeCtrl;
         private System.Windows.Forms.ContextMenuStrip _contextMenu;
         private System.Windows.Forms.ImageList _imageList;
 		private System.Windows.Forms.ToolTip _toolTip;
 		private System.Windows.Forms.ToolStripButton _clearSearchButton;
 		private System.Windows.Forms.ToolStripTextBox _searchTextBox;
+		private System.Windows.Forms.ImageList _stateImageList;
     }
 }

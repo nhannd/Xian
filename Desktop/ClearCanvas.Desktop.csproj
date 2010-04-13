@@ -208,6 +208,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ToolStripSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Trees\CheckState.cs" />
     <Compile Include="UndoableCommand.cs" />
     <Compile Include="UserInteraction.cs" />
     <Compile Include="PrincipalPermissionSpecification.cs" />

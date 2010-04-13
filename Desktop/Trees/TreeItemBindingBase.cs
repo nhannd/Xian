@@ -88,6 +88,24 @@ namespace ClearCanvas.Desktop.Trees
         }
 
     	/// <summary>
+    	/// Gets a value indicating the <see cref="CheckState"/> of the <paramref name="item"/>.
+    	/// </summary>
+    	public virtual CheckState GetCheckState(object item)
+    	{
+    		return this.GetIsChecked(item) ? CheckState.Checked : CheckState.Unchecked;
+    	}
+
+    	/// <summary>
+    	/// Toggles the <see cref="CheckState"/> of the <paramref name="item"/>.
+    	/// </summary>
+    	public virtual CheckState ToggleCheckState(object item)
+    	{
+    		bool value = !this.GetIsChecked(item);
+    		this.SetIsChecked(item, value);
+    		return value ? CheckState.Checked : CheckState.Unchecked;
+    	}
+
+    	/// <summary>
     	/// Gets the tooltip to display for the specified item.
     	/// </summary>
     	public virtual string GetTooltipText(object item)

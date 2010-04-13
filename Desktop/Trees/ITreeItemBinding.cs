@@ -55,14 +55,14 @@ namespace ClearCanvas.Desktop.Trees
     	bool CanSetNodeText(object item);
 
         /// <summary>
-        /// Gets whether or not <paramref name="item"/> is checked.
+        /// Gets a value indicating the <see cref="CheckState"/> of the <paramref name="item"/>.
         /// </summary>
-        bool GetIsChecked(object item);
+        CheckState GetCheckState(object item);
 
 		/// <summary>
-		/// Sets whether or not <paramref name="item"/> is checked.
+		/// Toggles the <see cref="CheckState"/> of the <paramref name="item"/>.
 		/// </summary>
-        void SetIsChecked(object item, bool value);
+		CheckState ToggleCheckState(object item);
 
         /// <summary>
         /// Gets the tooltip to display for the specified item.
