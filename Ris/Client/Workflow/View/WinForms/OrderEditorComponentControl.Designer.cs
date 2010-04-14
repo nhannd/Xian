@@ -76,9 +76,9 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._orderNotesTab = new System.Windows.Forms.TabPage();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			this._recipientsTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._consultantContactPoint = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._consultantLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
+			this._recipientsTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._addConsultantButton = new System.Windows.Forms.Button();
 			this._schedulingRequestTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
 			this._diagnosticService = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
@@ -185,9 +185,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel3.AutoScrollMinSize = new System.Drawing.Size(-1, 450);
 			this.tableLayoutPanel3.AutoSize = true;
 			this.tableLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.tableLayoutPanel3.ColumnCount = 2;
+			this.tableLayoutPanel3.ColumnCount = 3;
 			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 15F));
 			this.tableLayoutPanel3.Controls.Add(this._orderingPractitionerContactPoint, 0, 3);
 			this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel4, 0, 5);
 			this.tableLayoutPanel3.Controls.Add(this.tabControl1, 0, 7);
@@ -203,7 +204,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
 			this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-			this.tableLayoutPanel3.Padding = new System.Windows.Forms.Padding(0, 0, 15, 0);
 			this.tableLayoutPanel3.RowCount = 8;
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -227,7 +227,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._orderingPractitionerContactPoint.Location = new System.Drawing.Point(2, 141);
 			this._orderingPractitionerContactPoint.Margin = new System.Windows.Forms.Padding(2);
 			this._orderingPractitionerContactPoint.Name = "_orderingPractitionerContactPoint";
-			this._orderingPractitionerContactPoint.Size = new System.Drawing.Size(491, 46);
+			this._orderingPractitionerContactPoint.Size = new System.Drawing.Size(490, 46);
 			this._orderingPractitionerContactPoint.TabIndex = 5;
 			this._orderingPractitionerContactPoint.Value = null;
 			// 
@@ -247,7 +247,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel4.Name = "tableLayoutPanel4";
 			this.tableLayoutPanel4.RowCount = 1;
 			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel4.Size = new System.Drawing.Size(495, 45);
+			this.tableLayoutPanel4.Size = new System.Drawing.Size(494, 45);
 			this.tableLayoutPanel4.TabIndex = 7;
 			// 
 			// _visit
@@ -260,7 +260,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._visit.Location = new System.Drawing.Point(2, 2);
 			this._visit.Margin = new System.Windows.Forms.Padding(2);
 			this._visit.Name = "_visit";
-			this._visit.Size = new System.Drawing.Size(461, 41);
+			this._visit.Size = new System.Drawing.Size(460, 41);
 			this._visit.TabIndex = 0;
 			this._visit.Value = null;
 			// 
@@ -268,7 +268,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			this._visitSummaryButton.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this._visitSummaryButton.Image = ((System.Drawing.Image)(resources.GetObject("_visitSummaryButton.Image")));
-			this._visitSummaryButton.Location = new System.Drawing.Point(468, 18);
+			this._visitSummaryButton.Location = new System.Drawing.Point(467, 18);
 			this._visitSummaryButton.Name = "_visitSummaryButton";
 			this._visitSummaryButton.Size = new System.Drawing.Size(24, 24);
 			this._visitSummaryButton.TabIndex = 1;
@@ -286,7 +286,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tabControl1.Margin = new System.Windows.Forms.Padding(4, 2, 2, 2);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(489, 309);
+			this.tabControl1.Size = new System.Drawing.Size(488, 309);
 			this.tabControl1.TabIndex = 10;
 			// 
 			// tabPage1
@@ -296,7 +296,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tabPage1.Margin = new System.Windows.Forms.Padding(2);
 			this.tabPage1.Name = "tabPage1";
 			this.tabPage1.Padding = new System.Windows.Forms.Padding(6, 6, 21, 6);
-			this.tabPage1.Size = new System.Drawing.Size(481, 285);
+			this.tabPage1.Size = new System.Drawing.Size(480, 283);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "Procedures";
 			this.tabPage1.UseVisualStyleBackColor = true;
@@ -313,7 +313,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._proceduresTableView.Name = "_proceduresTableView";
 			this._proceduresTableView.ReadOnly = false;
 			this._proceduresTableView.ShowToolbar = false;
-			this._proceduresTableView.Size = new System.Drawing.Size(454, 273);
+			this._proceduresTableView.Size = new System.Drawing.Size(453, 271);
 			this._proceduresTableView.TabIndex = 0;
 			this._proceduresTableView.ItemDoubleClicked += new System.EventHandler(this._proceduresTableView_ItemDoubleClicked);
 			// 
@@ -323,7 +323,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._orderNotesTab.Margin = new System.Windows.Forms.Padding(2);
 			this._orderNotesTab.Name = "_orderNotesTab";
 			this._orderNotesTab.Padding = new System.Windows.Forms.Padding(6, 6, 21, 6);
-			this._orderNotesTab.Size = new System.Drawing.Size(481, 285);
+			this._orderNotesTab.Size = new System.Drawing.Size(481, 283);
 			this._orderNotesTab.TabIndex = 2;
 			this._orderNotesTab.Text = "Notes";
 			this._orderNotesTab.UseVisualStyleBackColor = true;
@@ -361,22 +361,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel1.Size = new System.Drawing.Size(454, 271);
 			this.tableLayoutPanel1.TabIndex = 0;
 			// 
-			// _recipientsTableView
-			// 
-			this._recipientsTableView.AutoSize = true;
-			this._recipientsTableView.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.tableLayoutPanel1.SetColumnSpan(this._recipientsTableView, 2);
-			this._recipientsTableView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._recipientsTableView.FilterTextBoxWidth = 132;
-			this._recipientsTableView.Location = new System.Drawing.Point(0, 92);
-			this._recipientsTableView.Margin = new System.Windows.Forms.Padding(0);
-			this._recipientsTableView.MultiSelect = false;
-			this._recipientsTableView.Name = "_recipientsTableView";
-			this._recipientsTableView.ReadOnly = false;
-			this._recipientsTableView.ShowToolbar = false;
-			this._recipientsTableView.Size = new System.Drawing.Size(454, 179);
-			this._recipientsTableView.TabIndex = 2;
-			// 
 			// _consultantContactPoint
 			// 
 			this._consultantContactPoint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
@@ -406,6 +390,22 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._consultantLookup.TabIndex = 4;
 			this._consultantLookup.Value = null;
 			// 
+			// _recipientsTableView
+			// 
+			this._recipientsTableView.AutoSize = true;
+			this._recipientsTableView.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.tableLayoutPanel1.SetColumnSpan(this._recipientsTableView, 2);
+			this._recipientsTableView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._recipientsTableView.FilterTextBoxWidth = 132;
+			this._recipientsTableView.Location = new System.Drawing.Point(0, 92);
+			this._recipientsTableView.Margin = new System.Windows.Forms.Padding(0);
+			this._recipientsTableView.MultiSelect = false;
+			this._recipientsTableView.Name = "_recipientsTableView";
+			this._recipientsTableView.ReadOnly = false;
+			this._recipientsTableView.ShowToolbar = false;
+			this._recipientsTableView.Size = new System.Drawing.Size(454, 179);
+			this._recipientsTableView.TabIndex = 2;
+			// 
 			// _addConsultantButton
 			// 
 			this._addConsultantButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -432,7 +432,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._schedulingRequestTime.Nullable = true;
 			this._schedulingRequestTime.ShowDate = false;
 			this._schedulingRequestTime.ShowTime = true;
-			this._schedulingRequestTime.Size = new System.Drawing.Size(244, 40);
+			this._schedulingRequestTime.Size = new System.Drawing.Size(243, 40);
 			this._schedulingRequestTime.TabIndex = 9;
 			this._schedulingRequestTime.Value = null;
 			// 
@@ -446,7 +446,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._diagnosticService.Location = new System.Drawing.Point(2, 47);
 			this._diagnosticService.Margin = new System.Windows.Forms.Padding(2);
 			this._diagnosticService.Name = "_diagnosticService";
-			this._diagnosticService.Size = new System.Drawing.Size(491, 43);
+			this._diagnosticService.Size = new System.Drawing.Size(490, 43);
 			this._diagnosticService.TabIndex = 2;
 			this._diagnosticService.Value = null;
 			// 
@@ -491,7 +491,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._orderingPractitioner.Location = new System.Drawing.Point(249, 94);
 			this._orderingPractitioner.Margin = new System.Windows.Forms.Padding(2);
 			this._orderingPractitioner.Name = "_orderingPractitioner";
-			this._orderingPractitioner.Size = new System.Drawing.Size(244, 43);
+			this._orderingPractitioner.Size = new System.Drawing.Size(243, 43);
 			this._orderingPractitioner.TabIndex = 4;
 			this._orderingPractitioner.Value = null;
 			// 
@@ -507,7 +507,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._indication.Mask = "";
 			this._indication.Name = "_indication";
 			this._indication.PasswordChar = '\0';
-			this._indication.Size = new System.Drawing.Size(491, 40);
+			this._indication.Size = new System.Drawing.Size(490, 40);
 			this._indication.TabIndex = 6;
 			this._indication.ToolTip = null;
 			this._indication.Value = null;
@@ -531,12 +531,14 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			// panel1
 			// 
+			this.tableLayoutPanel3.SetColumnSpan(this.panel1, 2);
 			this.panel1.Controls.Add(this._downtimeAccession);
 			this.panel1.Controls.Add(this._reorderReason);
 			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.panel1.Location = new System.Drawing.Point(250, 3);
 			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(242, 39);
+			this.panel1.Padding = new System.Windows.Forms.Padding(0, 0, 15, 0);
+			this.panel1.Size = new System.Drawing.Size(257, 39);
 			this.panel1.TabIndex = 1;
 			// 
 			// _downtimeAccession
