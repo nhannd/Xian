@@ -969,6 +969,9 @@
   <data name="FormatIndication" xml:space="preserve">
     <value>Indication: {0}</value>
   </data>
+  <data name="ColumnDefault" xml:space="preserve">
+    <value>Default</value>
+  </data>
   <data name="TitleExternalPractitionerFolderSystem" xml:space="preserve">
     <value>External Practitioners</value>
   </data>
@@ -998,9 +1001,6 @@
   </data>
   <data name="ColumnActive" xml:space="preserve">
     <value>Active</value>
-  </data>
-  <data name="ColumnDefault" xml:space="preserve">
-    <value>Default</value>
   </data>
   <data name="MessageInstructionAffectedOrders" xml:space="preserve">
     <value>The following orders reference contact points that will become inactive.  Correct each order by choosing an active contact point.</value>

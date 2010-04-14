@@ -48,21 +48,10 @@ namespace ClearCanvas.Ris.Client
 
 		public ExternalPractitionerContactPointTable()
 		{
-			this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>("Name",
-				delegate(ExternalPractitionerContactPointDetail cp) { return cp.Name; },
-				0.5f));
-
-			this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>("Description",
-				delegate(ExternalPractitionerContactPointDetail cp) { return cp.Description; },
-				0.5f));
-
-			this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, bool>("Default",
-				delegate(ExternalPractitionerContactPointDetail cp) { return cp.IsDefaultContactPoint; },
-				delegate(ExternalPractitionerContactPointDetail cp, bool value)
-				{
-					MakeDefaultContactPoint(cp);
-				},
-				0.15f));
+			this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>(SR.ColumnName, cp => cp.Name, 0.5f));
+			this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>(SR.ColumnDescription, cp => cp.Description, 0.5f));
+			this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, bool>(SR.ColumnDefault,
+				cp => cp.IsDefaultContactPoint, (cp, value) => MakeDefaultContactPoint(cp), 0.15f));
 		}
 
 		public event EventHandler DefaultContactPointChanged
@@ -73,7 +62,7 @@ namespace ClearCanvas.Ris.Client
 
 		public void MakeDefaultContactPoint(ExternalPractitionerContactPointDetail cp)
 		{
-			foreach (ExternalPractitionerContactPointDetail item in this.Items)
+			foreach (var item in this.Items)
 			{
 				item.IsDefaultContactPoint = (item == cp);
 				this.Items.NotifyItemUpdated(item);
@@ -83,64 +72,64 @@ namespace ClearCanvas.Ris.Client
 		}
 	}
 
-    /// <summary>
-    /// Extension point for views onto <see cref="ExternalPractitionerContactPointSummaryComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class ExternalPractitionerContactPointSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	/// <summary>
+	/// Extension point for views onto <see cref="ExternalPractitionerContactPointSummaryComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class ExternalPractitionerContactPointSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    /// <summary>
-    /// ExternalPractitionerContactPointSummaryComponent class
-    /// </summary>
-    [AssociateView(typeof(ExternalPractitionerContactPointSummaryComponentViewExtensionPoint))]
+	/// <summary>
+	/// ExternalPractitionerContactPointSummaryComponent class
+	/// </summary>
+	[AssociateView(typeof(ExternalPractitionerContactPointSummaryComponentViewExtensionPoint))]
 	public class ExternalPractitionerContactPointSummaryComponent : SummaryComponentBase<ExternalPractitionerContactPointDetail, ExternalPractitionerContactPointTable>
-    {
-    	private readonly EntityRef _practitionerRef;
+	{
+		private readonly EntityRef _practitionerRef;
 		private Action _mergeContactPointAction;
 
-        private readonly List<EnumValueInfo> _addressTypeChoices;
-        private readonly List<EnumValueInfo> _phoneTypeChoices;
-        private readonly List<EnumValueInfo> _resultCommunicationModeChoices;
+		private readonly List<EnumValueInfo> _addressTypeChoices;
+		private readonly List<EnumValueInfo> _phoneTypeChoices;
+		private readonly List<EnumValueInfo> _resultCommunicationModeChoices;
 		private readonly string _practitionerName;
-        private readonly bool _supportsMergingOnly;
+		private readonly bool _supportsMergingOnly;
 
-        /// <summary>
-        /// Constructor for editing. Set the <see cref="Subject"/> property before starting.
-        /// </summary>
-        public ExternalPractitionerContactPointSummaryComponent(
+		/// <summary>
+		/// Constructor for editing. Set the <see cref="Subject"/> property before starting.
+		/// </summary>
+		public ExternalPractitionerContactPointSummaryComponent(
 			EntityRef practitionerRef,
 			List<EnumValueInfo> addressTypeChoices, 
 			List<EnumValueInfo> phoneTypeChoices, 
 			List<EnumValueInfo> resultCommunicationModeChoices,
 			string practitionerName,
-            bool supportsMergingOnly)
-            : base(false)
-        {
+			bool supportsMergingOnly)
+			: base(false)
+		{
 			_practitionerRef = practitionerRef;
-            _addressTypeChoices = addressTypeChoices;
-            _phoneTypeChoices = phoneTypeChoices;
-            _resultCommunicationModeChoices = resultCommunicationModeChoices;
+			_addressTypeChoices = addressTypeChoices;
+			_phoneTypeChoices = phoneTypeChoices;
+			_resultCommunicationModeChoices = resultCommunicationModeChoices;
 			_practitionerName = practitionerName;
-            _supportsMergingOnly = supportsMergingOnly;
-        }
+			_supportsMergingOnly = supportsMergingOnly;
+		}
 
-        /// <summary>
-        /// Constructor for read-only selection. Set the <see cref="Subject"/> property before starting.
-        /// </summary>
+		/// <summary>
+		/// Constructor for read-only selection. Set the <see cref="Subject"/> property before starting.
+		/// </summary>
 		public ExternalPractitionerContactPointSummaryComponent(EntityRef practitionerRef)
-            :base(true)
-        {
+			:base(true)
+		{
 			_practitionerRef = practitionerRef;
-            _addressTypeChoices = new List<EnumValueInfo>();
-            _phoneTypeChoices = new List<EnumValueInfo>();
-            _resultCommunicationModeChoices = new List<EnumValueInfo>();
-        }
+			_addressTypeChoices = new List<EnumValueInfo>();
+			_phoneTypeChoices = new List<EnumValueInfo>();
+			_resultCommunicationModeChoices = new List<EnumValueInfo>();
+		}
 
 		public override void Start()
 		{
-			ExternalPractitionerContactPointTable thisTable = (ExternalPractitionerContactPointTable) this.SummaryTable;
+			var thisTable = (ExternalPractitionerContactPointTable) this.SummaryTable;
 			thisTable.DefaultContactPointChanged += delegate
 				{
 					if (this.SetModifiedOnListChange)
@@ -149,10 +138,10 @@ namespace ClearCanvas.Ris.Client
 
 			base.Start();
 		}
-        public IItemCollection<ExternalPractitionerContactPointDetail> Subject
-        {
-            get { return this.Table.Items; }
-        }
+		public IItemCollection<ExternalPractitionerContactPointDetail> Subject
+		{
+			get { return this.Table.Items; }
+		}
 
 		/// <summary>
 		/// Override this method to perform custom initialization of the action model,
@@ -163,12 +152,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			base.InitializeActionModel(model);
 
-            if (_supportsMergingOnly)
-            {
-                _mergeContactPointAction = model.AddAction("mergeContactPoint", SR.TitleMergeContactPoints, "Icons.MergeToolSmall.png",
-                    SR.TitleMergeContactPoints, MergeSelectedContactPoint);
-                _mergeContactPointAction.Enabled = false;
-            }
+			if (_supportsMergingOnly)
+			{
+				_mergeContactPointAction = model.AddAction("mergeContactPoint", SR.TitleMergeContactPoints, "Icons.MergeToolSmall.png",
+					SR.TitleMergeContactPoints, MergeSelectedContactPoint);
+				_mergeContactPointAction.Enabled = false;
+			}
 		}
 
 		protected override bool SupportsPaging
@@ -176,25 +165,25 @@ namespace ClearCanvas.Ris.Client
 			get { return false; }
 		}
 
-        protected override bool SupportsAdd
-        {
-            get { return _supportsMergingOnly == false; }
-        }
+		protected override bool SupportsAdd
+		{
+			get { return _supportsMergingOnly == false; }
+		}
 
-        protected override bool SupportsEdit
-        {
-            get { return _supportsMergingOnly == false; }
-        }
+		protected override bool SupportsEdit
+		{
+			get { return _supportsMergingOnly == false; }
+		}
 
 		protected override bool SupportsDelete
 		{
-            get { return _supportsMergingOnly == false; }
-        }
+			get { return _supportsMergingOnly == false; }
+		}
 
-        protected override bool SupportsDeactivation
-        {
-            get { return _supportsMergingOnly == false; }
-        }
+		protected override bool SupportsDeactivation
+		{
+			get { return _supportsMergingOnly == false; }
+		}
 
 		/// <summary>
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
@@ -217,14 +206,16 @@ namespace ClearCanvas.Ris.Client
 		{
 			addedItems = new List<ExternalPractitionerContactPointDetail>();
 
-			ExternalPractitionerContactPointDetail contactPoint = new ExternalPractitionerContactPointDetail();
-			contactPoint.PreferredResultCommunicationMode = _resultCommunicationModeChoices.Count > 0 ? _resultCommunicationModeChoices[0] : null;
+			var contactPoint = new ExternalPractitionerContactPointDetail
+				{
+					PreferredResultCommunicationMode = _resultCommunicationModeChoices.Count > 0 ? _resultCommunicationModeChoices[0] : null
+				};
 
 			// Keep looping until user enters an unique contact point name, or cancel the add operation
 			ApplicationComponentExitCode exitCode;
 			while (true)
 			{
-				ExternalPractitionerContactPointEditorComponent editor = new ExternalPractitionerContactPointEditorComponent(
+				var editor = new ExternalPractitionerContactPointEditorComponent(
 					contactPoint,
 					_addressTypeChoices,
 					_phoneTypeChoices,
@@ -233,7 +224,8 @@ namespace ClearCanvas.Ris.Client
 				exitCode = LaunchAsDialog(
 					this.Host.DesktopWindow, editor, SR.TitleAddContactPoint + " - " + _practitionerName);
 
-				if (exitCode == ApplicationComponentExitCode.Accepted && IsContactPointNameUnique(contactPoint))
+				var isUnique = IsContactPointNameUnique(null, contactPoint);
+				if (exitCode == ApplicationComponentExitCode.Accepted && !isUnique)
 					this.Host.DesktopWindow.ShowMessageBox(string.Format(SR.MessageExternalPractitionerContactPointNotUnique, contactPoint.Name), MessageBoxActions.Ok);
 				else
 					break;
@@ -261,15 +253,15 @@ namespace ClearCanvas.Ris.Client
 		protected override bool EditItems(IList<ExternalPractitionerContactPointDetail> items, out IList<ExternalPractitionerContactPointDetail> editedItems)
 		{
 			editedItems = new List<ExternalPractitionerContactPointDetail>();
-			ExternalPractitionerContactPointDetail item = CollectionUtils.FirstElement(items);
+			var item = CollectionUtils.FirstElement(items);
 
-			ExternalPractitionerContactPointDetail contactPoint = (ExternalPractitionerContactPointDetail)item.Clone();
+			var contactPoint = (ExternalPractitionerContactPointDetail)item.Clone();
 
 			// Keep looping until user enters an unique contact point name, or cancel the edit operation
 			ApplicationComponentExitCode exitCode;
 			while (true)
 			{
-				ExternalPractitionerContactPointEditorComponent editor = new ExternalPractitionerContactPointEditorComponent(
+				var editor = new ExternalPractitionerContactPointEditorComponent(
 					contactPoint,
 					_addressTypeChoices,
 					_phoneTypeChoices,
@@ -280,7 +272,8 @@ namespace ClearCanvas.Ris.Client
 					editor,
 					string.Format(SR.TitleUpdateContactPoint + " - " + _practitionerName, contactPoint.Name));
 
-				if (exitCode == ApplicationComponentExitCode.Accepted && IsContactPointNameUnique(contactPoint))
+				var isUnique = IsContactPointNameUnique(item, contactPoint);
+				if (exitCode == ApplicationComponentExitCode.Accepted && !isUnique)
 					this.Host.DesktopWindow.ShowMessageBox(string.Format(SR.MessageExternalPractitionerContactPointNotUnique, contactPoint.Name), MessageBoxActions.Ok);
 				else
 					break;
@@ -289,6 +282,15 @@ namespace ClearCanvas.Ris.Client
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				editedItems.Add(contactPoint);
+
+				// For new contact point, the updated contactPoint is a cloned of the original item.  So they are not referenced equal.
+				// There is also no entityRef.  The only identifier is their name.
+				// If name is changed, the IsSameItem won't identify the updated "contactPoint" and the original "item" as the same item
+				// Therefore we must manually remove existing item and add updated contact point.
+				var index = this.Table.Items.IndexOf(item);
+				this.Table.Items.Remove(item);
+				this.Table.Items.Insert(index, contactPoint);
+
 				// if item was made default, then make sure no other items are also set as default
 				if (contactPoint.IsDefaultContactPoint)
 					this.Table.MakeDefaultContactPoint(contactPoint);
@@ -310,7 +312,7 @@ namespace ClearCanvas.Ris.Client
 			failureMessage = null;
 			deletedItems = new List<ExternalPractitionerContactPointDetail>();
 
-			foreach (ExternalPractitionerContactPointDetail item in items)
+			foreach (var item in items)
 			{
 				deletedItems.Add(item);
 			}
@@ -327,7 +329,7 @@ namespace ClearCanvas.Ris.Client
 		protected override bool UpdateItemsActivation(IList<ExternalPractitionerContactPointDetail> items, out IList<ExternalPractitionerContactPointDetail> editedItems)
 		{
 			editedItems = new List<ExternalPractitionerContactPointDetail>();
-			foreach (ExternalPractitionerContactPointDetail item in items)
+			foreach (var item in items)
 			{
 				item.Deactivated = !item.Deactivated;
 				editedItems.Add(item);
@@ -343,10 +345,10 @@ namespace ClearCanvas.Ris.Client
 		/// <returns></returns>
 		protected override bool IsSameItem(ExternalPractitionerContactPointDetail x, ExternalPractitionerContactPointDetail y)
 		{
-            if (ReferenceEquals(x, y))
-                return true;
-            
-			// if only one is null, false
+			if (ReferenceEquals(x, y))
+				return true;
+
+			// if only one is null, they are not the same
 			if(x.ContactPointRef == null || y.ContactPointRef == null)
 				return false;
 
@@ -360,36 +362,35 @@ namespace ClearCanvas.Ris.Client
 		{
 			base.OnSelectedItemsChanged();
 
-            if (_supportsMergingOnly)
-            {
-                _mergeContactPointAction.Enabled =
-                    (this.SelectedItems.Count == 1 ||
-                     this.SelectedItems.Count == 2);
-            }
+			if (_supportsMergingOnly)
+			{
+				_mergeContactPointAction.Enabled =
+					(this.SelectedItems.Count == 1 ||
+					 this.SelectedItems.Count == 2);
+			}
 		}
 
 		public void MergeSelectedContactPoint()
 		{
 			try
 			{
-				ExternalPractitionerContactPointDetail newItem = CollectionUtils.SelectFirst(this.SelectedItems,
-					delegate(ExternalPractitionerContactPointDetail item) { return item.ContactPointRef == null; });
+				var newItem = CollectionUtils.SelectFirst(this.SelectedItems, item => item.ContactPointRef == null);
 				if (newItem != null)
 				{
 					this.Host.DesktopWindow.ShowMessageBox(string.Format(SR.MessageCannotMergeNewContactPoints, newItem.Name), MessageBoxActions.Ok);
 					return;
 				}
 
-				ExternalPractitionerContactPointDetail firstSelectedItem = this.SelectedItems.Count > 0 ? this.SelectedItems[0] : null;
-				ExternalPractitionerContactPointDetail secondSelectedItem = this.SelectedItems.Count > 1 ? this.SelectedItems[1] : null;
+				var firstSelectedItem = this.SelectedItems.Count > 0 ? this.SelectedItems[0] : null;
+				var secondSelectedItem = this.SelectedItems.Count > 1 ? this.SelectedItems[1] : null;
 
-				ExternalPractitionerContactPointMergeComponent mergeComponent = new ExternalPractitionerContactPointMergeComponent(
+				var mergeComponent = new ExternalPractitionerContactPointMergeComponent(
 					_practitionerRef,
 					this.Table.Items,
 					firstSelectedItem,
 					secondSelectedItem);
 
-				ApplicationComponentExitCode exitCode = LaunchAsDialog(
+				var exitCode = LaunchAsDialog(
 					this.Host.DesktopWindow, 
 					mergeComponent,
 					SR.TitleMergeContactPoints);
@@ -408,17 +409,26 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		private bool IsContactPointNameUnique(ExternalPractitionerContactPointDetail detail)
+		/// <summary>
+		/// Check if the contact point name is unique within the exist table items.
+		/// </summary>
+		/// <param name="original">The original item for comparison.</param>
+		/// <param name="edited">The cloned of the original that is edited by user.</param>
+		/// <returns></returns>
+		private bool IsContactPointNameUnique(ExternalPractitionerContactPointDetail original, ExternalPractitionerContactPointDetail edited)
 		{
-			return CollectionUtils.Contains(this.Table.Items,
+			var hasItemOfTheSameName = CollectionUtils.Contains(this.Table.Items,
 				delegate(ExternalPractitionerContactPointDetail item)
 					{
 						// Don't compare name with itself
-						if (IsSameItem(item, detail))
+						if (original != null && IsSameItem(item, original))
 							return false;
 
-						return Equals(item.Name, detail.Name);
+						// Find an existing item with the same name.
+						return Equals(item.Name, edited.Name);
 					});
+
+			return !hasItemOfTheSameName;
 		}
 	}
 }
