@@ -260,7 +260,7 @@ namespace ClearCanvas.Enterprise.Desktop
 			{
 				_actionModel.ToggleActivation.SetClickHandler(ToggleSelectedItemsActivation);
 				_actionModel.ToggleActivation.Enabled = false;
-				_actionModel.ToggleActivation.Visible = !this.ReadOnly;
+				_actionModel.ToggleActivation.Visible = !this.ReadOnly && IncludeDeactivatedItems;
 			}
 
 			InitializeActionModel(_actionModel);
