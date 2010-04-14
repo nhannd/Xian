@@ -64,46 +64,48 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._nameBox = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._acceptButton = new System.Windows.Forms.Button();
 			this._cancelButton = new System.Windows.Forms.Button();
+			this._procedureTypeGroupBox = new System.Windows.Forms.GroupBox();
+			this._procedureTypeGroupBox.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _itemSelector
 			// 
 			this._itemSelector.AvailableItemsTable = null;
-			this._itemSelector.Location = new System.Drawing.Point(0, 93);
+			this._itemSelector.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._itemSelector.Location = new System.Drawing.Point(3, 16);
 			this._itemSelector.Name = "_itemSelector";
+			this._itemSelector.ReadOnly = false;
 			this._itemSelector.SelectedItemsTable = null;
-			this._itemSelector.Size = new System.Drawing.Size(555, 420);
+			this._itemSelector.Size = new System.Drawing.Size(544, 406);
 			this._itemSelector.TabIndex = 0;
 			// 
 			// _idBox
 			// 
 			this._idBox.LabelText = "ID";
-			this._idBox.Location = new System.Drawing.Point(0, 2);
-			this._idBox.Margin = new System.Windows.Forms.Padding(2);
+			this._idBox.Location = new System.Drawing.Point(3, 3);
 			this._idBox.Mask = "";
 			this._idBox.Name = "_idBox";
 			this._idBox.PasswordChar = '\0';
 			this._idBox.Size = new System.Drawing.Size(523, 41);
-			this._idBox.TabIndex = 1;
+			this._idBox.TabIndex = 0;
 			this._idBox.ToolTip = null;
 			this._idBox.Value = null;
 			// 
 			// _nameBox
 			// 
 			this._nameBox.LabelText = "Name";
-			this._nameBox.Location = new System.Drawing.Point(0, 47);
-			this._nameBox.Margin = new System.Windows.Forms.Padding(2);
+			this._nameBox.Location = new System.Drawing.Point(3, 50);
 			this._nameBox.Mask = "";
 			this._nameBox.Name = "_nameBox";
 			this._nameBox.PasswordChar = '\0';
 			this._nameBox.Size = new System.Drawing.Size(523, 41);
-			this._nameBox.TabIndex = 2;
+			this._nameBox.TabIndex = 1;
 			this._nameBox.ToolTip = null;
 			this._nameBox.Value = null;
 			// 
 			// _acceptButton
 			// 
-			this._acceptButton.Location = new System.Drawing.Point(397, 535);
+			this._acceptButton.Location = new System.Drawing.Point(390, 527);
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
 			this._acceptButton.TabIndex = 3;
@@ -113,7 +115,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Location = new System.Drawing.Point(478, 535);
+			this._cancelButton.Location = new System.Drawing.Point(471, 527);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 4;
@@ -121,19 +123,30 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
 			// 
+			// _procedureTypeGroupBox
+			// 
+			this._procedureTypeGroupBox.Controls.Add(this._itemSelector);
+			this._procedureTypeGroupBox.Location = new System.Drawing.Point(3, 97);
+			this._procedureTypeGroupBox.Name = "_procedureTypeGroupBox";
+			this._procedureTypeGroupBox.Size = new System.Drawing.Size(550, 425);
+			this._procedureTypeGroupBox.TabIndex = 2;
+			this._procedureTypeGroupBox.TabStop = false;
+			this._procedureTypeGroupBox.Text = "Procedure Types";
+			// 
 			// DiagnosticServiceEditorComponentControl
 			// 
 			this.AcceptButton = this._acceptButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this._cancelButton;
+			this.Controls.Add(this._procedureTypeGroupBox);
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._acceptButton);
 			this.Controls.Add(this._nameBox);
 			this.Controls.Add(this._idBox);
-			this.Controls.Add(this._itemSelector);
 			this.Name = "DiagnosticServiceEditorComponentControl";
 			this.Size = new System.Drawing.Size(556, 561);
+			this._procedureTypeGroupBox.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -145,5 +158,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private ClearCanvas.Desktop.View.WinForms.TextField _nameBox;
 		private System.Windows.Forms.Button _acceptButton;
 		private System.Windows.Forms.Button _cancelButton;
+		private System.Windows.Forms.GroupBox _procedureTypeGroupBox;
 	}
 }

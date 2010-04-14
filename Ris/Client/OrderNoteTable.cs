@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
@@ -39,40 +38,32 @@ namespace ClearCanvas.Ris.Client
 {
 	public class OrderNoteTable : Table<OrderNoteDetail>
 	{
-	    public OrderNoteSummaryComponent _component;
+		private readonly TableColumn<OrderNoteDetail, string> _linkColumn;
 
-        public OrderNoteTable(OrderNoteSummaryComponent component)
+		public OrderNoteTable()
 			: base(2)
 		{
-            _component = component;
-
-			this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnAuthor,
-				delegate(OrderNoteDetail n) { return n.Author == null ? SR.LabelMe : StaffNameAndRoleFormat.Format(n.Author); },
-				0.25f));
-			this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnPostTime,
-				delegate(OrderNoteDetail n) { return n.PostTime == null ? SR.LabelNew : Format.DateTime(n.PostTime); },
-				0.25f));
-
-            TableColumn<OrderNoteDetail, string> linkColumn = new TableColumn<OrderNoteDetail, string>(" ",
-                delegate(OrderNoteDetail n) { return SR.ColumnMore; },
-                0.05f);
-            linkColumn.ClickLinkDelegate = delegate(OrderNoteDetail n) { component.UpdateNoteDetail(n); };
-            this.Columns.Add(linkColumn);
-
-            this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnComments,
-                delegate(OrderNoteDetail n) { return RemoveLineBreak(n.NoteBody); },
-				0.5f, 1));
+			this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnAuthor, n => n.Author == null ? SR.LabelMe : StaffNameAndRoleFormat.Format(n.Author), 0.25f));
+			this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnPostTime, n => n.PostTime == null ? SR.LabelNew : Format.DateTime(n.PostTime), 0.25f));
+			this.Columns.Add(_linkColumn = new TableColumn<OrderNoteDetail, string>(" ", n => SR.ColumnMore, 0.05f));
+			this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnComments, n => RemoveLineBreak(n.NoteBody), 0.5f, 1));
 		}
 
-        private static string RemoveLineBreak(string input)
-        {
+		public TableColumn<OrderNoteDetail, string>.SetColumnClickLinkDelegate<OrderNoteDetail> UpdateNoteClickLinkDelegate
+		{
+			get { return _linkColumn.ClickLinkDelegate; }
+			set { _linkColumn.ClickLinkDelegate = value; }
+		}
+
+		private static string RemoveLineBreak(string input)
+		{
 			if (string.IsNullOrEmpty(input))
 				return input;
 
-            string newString = input.Replace("\r\n", " ");
-            newString = newString.Replace("\r", " ");
-            newString = newString.Replace("\n", " ");
-            return newString;
-        }
+			var newString = input.Replace("\r\n", " ");
+			newString = newString.Replace("\r", " ");
+			newString = newString.Replace("\n", " ");
+			return newString;
+		}
 	}
 }

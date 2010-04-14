@@ -71,7 +71,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _acceptButton
 			// 
 			this._acceptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._acceptButton.Location = new System.Drawing.Point(595, 405);
+			this._acceptButton.Location = new System.Drawing.Point(595, 397);
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
 			this._acceptButton.TabIndex = 8;
@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _cancelButton
 			// 
 			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._cancelButton.Location = new System.Drawing.Point(676, 405);
+			this._cancelButton.Location = new System.Drawing.Point(676, 397);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 9;
@@ -136,7 +136,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this._xmlEditorPanel.Location = new System.Drawing.Point(11, 121);
 			this._xmlEditorPanel.Name = "_xmlEditorPanel";
-			this._xmlEditorPanel.Size = new System.Drawing.Size(740, 278);
+			this._xmlEditorPanel.Size = new System.Drawing.Size(740, 265);
 			this._xmlEditorPanel.TabIndex = 13;
 			// 
 			// label1
@@ -160,7 +160,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._acceptButton);
 			this.Name = "ProcedureTypeEditorComponentControl";
-			this.Size = new System.Drawing.Size(777, 431);
+			this.Size = new System.Drawing.Size(777, 429);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

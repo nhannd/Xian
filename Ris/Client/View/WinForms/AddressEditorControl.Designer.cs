@@ -160,7 +160,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _validFrom
 			// 
 			this._validFrom.LabelText = "Valid From";
-			this._validFrom.Location = new System.Drawing.Point(173, 184);
+			this._validFrom.Location = new System.Drawing.Point(164, 184);
 			this._validFrom.Margin = new System.Windows.Forms.Padding(2);
 			this._validFrom.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
 			this._validFrom.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);

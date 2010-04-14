@@ -36,8 +36,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _splitContainer
 			// 
-			this._splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._splitContainer.Location = new System.Drawing.Point(4, 2);
+			this._splitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._splitContainer.Location = new System.Drawing.Point(3, 3);
 			this._splitContainer.Name = "_splitContainer";
 			this._splitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
 			// 
@@ -49,7 +51,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _splitContainer.Panel2
 			// 
 			this._splitContainer.Panel2.BackColor = System.Drawing.SystemColors.ControlDark;
-			this._splitContainer.Panel2.Padding = new System.Windows.Forms.Padding(1);
+			this._splitContainer.Panel2.Padding = new System.Windows.Forms.Padding(1, 0, 1, 0);
 			this._splitContainer.Size = new System.Drawing.Size(409, 431);
 			this._splitContainer.SplitterDistance = 100;
 			this._splitContainer.TabIndex = 1;

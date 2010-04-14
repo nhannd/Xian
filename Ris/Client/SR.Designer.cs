@@ -1600,42 +1600,6 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete this address?.
-        /// </summary>
-        internal static string MessageConfirmDeleteSelectedAddress {
-            get {
-                return ResourceManager.GetString("MessageConfirmDeleteSelectedAddress", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete this note?.
-        /// </summary>
-        internal static string MessageConfirmDeleteSelectedNote {
-            get {
-                return ResourceManager.GetString("MessageConfirmDeleteSelectedNote", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete this phone number?.
-        /// </summary>
-        internal static string MessageConfirmDeleteSelectedPhoneNumber {
-            get {
-                return ResourceManager.GetString("MessageConfirmDeleteSelectedPhoneNumber", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to permanently expire the selected note?.
-        /// </summary>
-        internal static string MessageConfirmExpireSelectedNote {
-            get {
-                return ResourceManager.GetString("MessageConfirmExpireSelectedNote", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Proceed with the merge operation?  The operation cannot be undone..
         /// </summary>
         internal static string MessageConfirmMergePractitioners {

@@ -29,200 +29,180 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
+using ClearCanvas.Enterprise.Desktop;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-    /// <summary>
-    /// Extension point for views onto <see cref="OrderNoteSummaryComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class OrderNoteSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	public class OrderNoteSummaryComponent : SummaryComponentBase<OrderNoteDetail, OrderNoteTable>
+	{
+		private readonly OrderNoteCategory _category;
+		private IList<OrderNoteDetail> _notes;
+		private readonly bool _canEdit;
 
-    /// <summary>
-    /// OrderNoteSummaryComponent class
-    /// </summary>
-    [AssociateView(typeof(OrderNoteSummaryComponentViewExtensionPoint))]
-    public class OrderNoteSummaryComponent : ApplicationComponent
-    {
-        private readonly OrderNoteCategory _category;
-        private readonly OrderNoteTable _noteTable;
-        private readonly CrudActionModel _noteActionHandler;
-        private OrderNoteDetail _currentNoteSelection;
-        private List<OrderNoteDetail> _notes;
+		/// <summary>
+		/// Constructor allowing edits.
+		/// </summary>
+		/// <param name="category"></param>
+		public OrderNoteSummaryComponent(OrderNoteCategory category)
+			: this(category, true)
+		{
+		}
 
-        /// <summary>
-        /// Constructor allowing edits.
-        /// </summary>
-        /// <param name="category"></param>
-        public OrderNoteSummaryComponent(OrderNoteCategory category)
-            : this(category, true)
-        {
-        }
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="category">Specifies the category of order notes to display, and the category under which new notes are placed.</param>
+		/// <param name="canEdit">Specifies if the component is editable.  If not, all action buttons are disabled.</param>
+		public OrderNoteSummaryComponent(OrderNoteCategory category, bool canEdit)
+			: base(false)
+		{
+			Platform.CheckForNullReference(category, "category");
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="category">Specifies the category of order notes to display, and the category under which new notes are placed.</param>
-        /// <param name="canEdit">Specifies if the component is editable.  If not, all action buttons are disabled.</param>
-        public OrderNoteSummaryComponent(OrderNoteCategory category, bool canEdit)
-        {
-            Platform.CheckForNullReference(category, "category");
+			_canEdit = canEdit;
+			_category = category;
+			_notes = new List<OrderNoteDetail>();
 
-            _category = category;
-            _notes = new List<OrderNoteDetail>();
-            _noteTable = new OrderNoteTable(this);
+			this.Table.UpdateNoteClickLinkDelegate = UpdateOrderNoteDetail;
+		}
 
-            _noteActionHandler = new CrudActionModel();
-            _noteActionHandler.Add.SetClickHandler(AddNote);
-            _noteActionHandler.Edit.SetClickHandler(UpdateSelectedNote);
-            _noteActionHandler.Delete.SetClickHandler(DeleteSelectedNote);
+		public IList<OrderNoteDetail> Notes
+		{
+			get { return _notes; }
+			set
+			{
+				_notes = value;
+				this.Table.Items.Clear();
+				this.Table.Items.AddRange(CollectionUtils.Select(_notes, d => d.Category == _category.Key));
+			}
+		}
 
-            // only need to initialize the add button, since the edit and delete buttons are only ever enabled
-            // for newly added notes.  See NoteSelectionChanged()
-            _noteActionHandler.Add.Enabled = canEdit;
-            _noteActionHandler.Edit.Enabled = false;
-            _noteActionHandler.Delete.Enabled = false;
-        }
+		#region Overrides
 
-        public List<OrderNoteDetail> Notes
-        {
-            get { return _notes; }
-            set
-            {
-                _notes = value;
-                _noteTable.Items.Clear();
-                _noteTable.Items.AddRange(
-                    CollectionUtils.Select(value,
-                        delegate(OrderNoteDetail d) { return d.Category == _category.Key; }));
-            }
-        }
+		protected override bool SupportsDelete
+		{
+			get { return true; }
+		}
 
-        #region Presentation Model
+		protected override bool SupportsPaging
+		{
+			get { return false; }
+		}
 
-        public ITable NoteTable
-        {
-            get { return _noteTable; }
-        }
+		protected override void InitializeActionModel(AdminActionModel model)
+		{
+			base.InitializeActionModel(model);
 
-        public ActionModelNode NoteActionModel
-        {
-            get { return _noteActionHandler; }
-        }
+			model.Add.Enabled = _canEdit;
+		}
 
-        public ISelection SelectedNote
-        {
-            get { return new Selection(_currentNoteSelection); }
-            set
-            {
-                _currentNoteSelection = (OrderNoteDetail)value.Item;
-                NoteSelectionChanged();
-            }
-        }
+		protected override void OnSelectedItemsChanged()
+		{
+			base.OnSelectedItemsChanged();
 
-        public void AddNote()
-        {
-            OrderNoteDetail note = new OrderNoteDetail(_category.Key, "", null, false, null, null);
+			var selectedNote = CollectionUtils.FirstElement(this.SelectedItems);
+			if (selectedNote == null)
+				return;
 
-            try
-            {
-                OrderNoteEditorComponent editor = new OrderNoteEditorComponent(note);
-                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleNoteText);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _noteTable.Items.Add(note);
-                    _notes.Add(note);
-                    this.Modified = true;
-                }
-            }
-            catch (Exception e)
-            {
-                // failed to launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
+			// only un-posted notes can be edited or deleted
+			this.ActionModel.Edit.Enabled &= selectedNote.PostTime == null;
+			this.ActionModel.Delete.Enabled &= selectedNote.PostTime == null;
+		}
 
-        public void UpdateSelectedNote()
-        {
-            // can occur if user double clicks while holding control
-            if (_currentNoteSelection == null) return;
+		protected override IList<OrderNoteDetail> ListItems(int firstRow, int maxRows)
+		{
+			// Only list the notes of the specified category.
+			return CollectionUtils.Select(_notes, d => d.Category == _category.Key);
+		}
 
-            OrderNoteDetail notedetail;
+		protected override bool AddItems(out IList<OrderNoteDetail> addedItems)
+		{
+			addedItems = new List<OrderNoteDetail>();
 
-            // manually clone order note
-            notedetail = new OrderNoteDetail(
-                _currentNoteSelection.OrderNoteRef,
-                _currentNoteSelection.Category,
-                _currentNoteSelection.CreationTime,
-                _currentNoteSelection.PostTime,
-                _currentNoteSelection.Author,
-                _currentNoteSelection.OnBehalfOfGroup,
-                _currentNoteSelection.Urgent,
-                _currentNoteSelection.StaffRecipients,
-                _currentNoteSelection.GroupRecipients,
-                _currentNoteSelection.NoteBody,
-                _currentNoteSelection.CanAcknowledge
-                );
+			var newNote = new OrderNoteDetail(_category.Key, "", null, false, null, null);
+			var editor = new OrderNoteEditorComponent(newNote);
+			if (ApplicationComponentExitCode.Accepted == LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleNoteText))
+			{
+				addedItems.Add(newNote);
+				_notes.Add(newNote);
+				return true;
+			}
 
-            UpdateNoteDetail(notedetail);
-        }
+			return false;
+		}
 
-        public void UpdateNoteDetail(OrderNoteDetail notedetail)
-        {
-            try
-            {
-                OrderNoteEditorComponent editor = new OrderNoteEditorComponent(notedetail);
-                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleNoteText);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    // delete and re-insert to ensure that TableView updates correctly
-                    OrderNoteDetail toBeRemoved = _currentNoteSelection;
-                    _noteTable.Items.Remove(toBeRemoved);
-                    _notes.Remove(toBeRemoved);
+		protected override bool EditItems(IList<OrderNoteDetail> items, out IList<OrderNoteDetail> editedItems)
+		{
+			editedItems = new List<OrderNoteDetail>();
 
-                    _noteTable.Items.Add(notedetail);
-                    _notes.Add(notedetail);
+			var originalNote = CollectionUtils.FirstElement(items);
+			// manually clone ordernote
+			var editedNote = new OrderNoteDetail(
+				originalNote.OrderNoteRef,
+				originalNote.Category,
+				originalNote.CreationTime,
+				originalNote.PostTime,
+				originalNote.Author,
+				originalNote.OnBehalfOfGroup,
+				originalNote.Urgent,
+				originalNote.StaffRecipients,
+				originalNote.GroupRecipients,
+				originalNote.NoteBody,
+				originalNote.CanAcknowledge
+				);
 
-                    this.Modified = true;
-                }
+			var editor = new OrderNoteEditorComponent(editedNote);
+			if (ApplicationComponentExitCode.Accepted == LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleNoteText))
+			{
+				editedItems.Add(editedNote);
 
-            }
-            catch (Exception e)
-            {
-                // failed to launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
+				// Preserve the order of the items
+				var index = _notes.IndexOf(originalNote);
+				_notes.Insert(index, editedNote);
+				_notes.Remove(originalNote);
 
-        public void DeleteSelectedNote()
-        {
-            if (this.Host.ShowMessageBox(SR.MessageConfirmDeleteSelectedNote, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
-            {
-                //  Must use temporary note otherwise as a side effect TableDate.Remove() will change the current selection 
-                //  resulting in the wrong note being removed from the Patient
-                OrderNoteDetail toBeRemoved = _currentNoteSelection;
-                _noteTable.Items.Remove(toBeRemoved);
-                _notes.Remove(toBeRemoved);
-                this.Modified = true;
-            }
-        }
+				return true;
+			}
 
-        #endregion
+			return false;
+		}
 
-        private void NoteSelectionChanged()
-        {
-            // only un-posted notes can be edited or deleted
-            _noteActionHandler.Edit.Enabled = _noteActionHandler.Delete.Enabled =
-                (_currentNoteSelection != null && _currentNoteSelection.PostTime == null);
-        }
-    }
+		protected override bool DeleteItems(IList<OrderNoteDetail> items, out IList<OrderNoteDetail> deletedItems, out string failureMessage)
+		{
+			failureMessage = null;
+			deletedItems = new List<OrderNoteDetail>();
+
+			foreach (var item in items)
+			{
+				deletedItems.Add(item);
+				_notes.Remove(item);
+			}
+
+			return deletedItems.Count > 0;
+		}
+
+		protected override bool IsSameItem(OrderNoteDetail x, OrderNoteDetail y)
+		{
+			if (ReferenceEquals(x, y))
+				return true;
+
+			// if only one is null, they are not the same
+			if (x.OrderNoteRef == null || y.OrderNoteRef == null)
+				return false;
+
+			return x.OrderNoteRef.Equals(y.OrderNoteRef, true);
+		}
+
+		#endregion
+
+		private void UpdateOrderNoteDetail(OrderNoteDetail note)
+		{
+			this.SummarySelection = new Selection(note);
+			this.EditSelectedItems();
+		}
+	}
 }

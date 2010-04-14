@@ -29,176 +29,127 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Enterprise.Desktop;
 using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-    /// <summary>
-    /// Extension point for views onto <see cref="PatientNoteSummaryComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class PatientNoteSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	public class PatientNoteSummaryComponent : SummaryComponentBase<PatientNoteDetail, PatientNoteTable>
+	{
+		private readonly List<PatientNoteCategorySummary> _noteCategoryChoices;
+		private IList<PatientNoteDetail> _notes;
 
-    /// <summary>
-    /// PatientNoteSummaryComponent class
-    /// </summary>
-    [AssociateView(typeof(PatientNoteSummaryComponentViewExtensionPoint))]
-    public class PatientNoteSummaryComponent : ApplicationComponent
-    {
-        private readonly List<PatientNoteCategorySummary> _noteCategoryChoices;
-        private readonly CrudActionModel _noteActionHandler;
-        private readonly PatientNoteTable _noteTable;
-        private List<PatientNoteDetail> _notes;
-        private PatientNoteDetail _currentNoteSelection;
+		public PatientNoteSummaryComponent(List<PatientNoteCategorySummary> categoryChoices)
+			: base(false)
+		{
+			_noteCategoryChoices = categoryChoices;
+		}
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public PatientNoteSummaryComponent(List<PatientNoteCategorySummary> categoryChoices)
-        {
-            _noteCategoryChoices = categoryChoices;
-            _noteTable = new PatientNoteTable();
+		public IList<PatientNoteDetail> Subject
+		{
+			get { return _notes; }
+			set { _notes = value; }
+		}
 
-            _noteActionHandler = new CrudActionModel();
-            _noteActionHandler.Add.SetClickHandler(AddNote);
-            _noteActionHandler.Edit.SetClickHandler(UpdateSelectedNote);
-            _noteActionHandler.Delete.SetClickHandler(DeleteSelectedNote);
+		#region Overrides
 
-            _noteActionHandler.Add.Enabled = true;
-            _noteActionHandler.Edit.Enabled = false;
-            _noteActionHandler.Delete.Enabled = false;
-        }
+		protected override bool SupportsDelete
+		{
+			get { return true; }
+		}
 
-        public List<PatientNoteDetail> Subject
-        {
-            get { return _notes; }
-            set
-            {
-                _notes = value;
-                _noteTable.Items.Clear();
-                _noteTable.Items.AddRange(_notes);
-                _noteTable.Sort();
-            }
-        }
+		protected override bool SupportsPaging
+		{
+			get { return false; }
+		}
 
-        #region Presentation Model
+		protected override void OnSelectedItemsChanged()
+		{
+			base.OnSelectedItemsChanged();
 
-        public ITable NoteTable
-        {
-            get { return _noteTable; }
-        }
+			var selectedNote = CollectionUtils.FirstElement(this.SelectedItems);
+			if (selectedNote == null)
+				return;
 
-        public ActionModelNode NoteActionModel
-        {
-            get { return _noteActionHandler; }
-        }
+			// only allow editing of non-expired notes
+			this.ActionModel.Edit.Enabled &= !selectedNote.IsExpired;
 
-        public ISelection SelectedNote
-        {
-            get { return new Selection(_currentNoteSelection); }
-            set
-            {
-                _currentNoteSelection = (PatientNoteDetail)value.Item;
-                UpdateNoteActionEnablement();
-            }
-        }
+			// only allow deletion of new notes
+			this.ActionModel.Delete.Enabled &= selectedNote.CreationTime == null;
+		}
 
-        public void AddNote()
-        {
-            PatientNoteDetail note = new PatientNoteDetail();
+		protected override IList<PatientNoteDetail> ListItems(int firstRow, int maxRows)
+		{
+			return _notes;
+		}
 
-            try
-            {
-                PatientNoteEditorComponent editor = new PatientNoteEditorComponent(note, _noteCategoryChoices);
-                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleNoteText);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _noteTable.Items.Add(note);
-                    _notes.Add(note);
-                    this.Modified = true;
-                }
+		protected override bool AddItems(out IList<PatientNoteDetail> addedItems)
+		{
+			addedItems = new List<PatientNoteDetail>();
 
-            }
-            catch (Exception e)
-            {
-                // failed to launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
+			var newNote = new PatientNoteDetail();
+			var editor = new PatientNoteEditorComponent(newNote, _noteCategoryChoices);
+			if (ApplicationComponentExitCode.Accepted == LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleNoteText))
+			{
+				addedItems.Add(newNote);
+				_notes.Add(newNote);
+				return true;
+			}
 
-        public void UpdateSelectedNote()
-        {
-            // can occur if user double clicks while holding control
-            if (_currentNoteSelection == null) return;
+			return false;
+		}
 
-            // don't allow editing of expired notes
-            if(_currentNoteSelection.IsExpired)
-                return;
+		protected override bool EditItems(IList<PatientNoteDetail> items, out IList<PatientNoteDetail> editedItems)
+		{
+			editedItems = new List<PatientNoteDetail>();
 
-            PatientNoteDetail note = (PatientNoteDetail)_currentNoteSelection.Clone();
+			var originalNote = CollectionUtils.FirstElement(items);
+			var editedNote = (PatientNoteDetail) originalNote.Clone();
+			var editor = new PatientNoteEditorComponent(editedNote, _noteCategoryChoices);
+			if (ApplicationComponentExitCode.Accepted == LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleNoteText))
+			{
+				editedItems.Add(editedNote);
 
-            try
-            {
-                PatientNoteEditorComponent editor = new PatientNoteEditorComponent(note, _noteCategoryChoices);
-                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleNoteText);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _notes.Remove(_currentNoteSelection);
-                    _notes.Add(note);
+				// Preserve the order of the items
+				var index = _notes.IndexOf(originalNote);
+				_notes.Insert(index, editedNote);
+				_notes.Remove(originalNote);
 
-                    // update table
-                    int i = _noteTable.Items.IndexOf(_currentNoteSelection);
-                    _noteTable.Items[i] = note;
+				return true;
+			}
 
-                    _currentNoteSelection = note;
-                    NotifyPropertyChanged("SelectedNote");
+			return false;
+		}
 
-                    this.Modified = true;
-                }
+		protected override bool DeleteItems(IList<PatientNoteDetail> items, out IList<PatientNoteDetail> deletedItems, out string failureMessage)
+		{
+			failureMessage = null;
+			deletedItems = new List<PatientNoteDetail>();
 
-            }
-            catch (Exception e)
-            {
-                // failed to launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
+			foreach(var item in items)
+			{
+				deletedItems.Add(item);
+				_notes.Remove(item);
+			}
 
-        public void DeleteSelectedNote()
-        {
-            if(_currentNoteSelection == null || !IsNewNote(_currentNoteSelection))
-                return;
+			return deletedItems.Count > 0;
+		}
 
-            if (this.Host.ShowMessageBox(SR.MessageConfirmDeleteSelectedNote, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
-            {
-                //  Must use temporary note otherwise as a side effect TableDate.Remove() will change the current selection 
-                //  resulting in the wrong note being removed from the Patient
-                PatientNoteDetail toBeRemoved = _currentNoteSelection;
-                _noteTable.Items.Remove(toBeRemoved);
-                _notes.Remove(toBeRemoved);
-            }
-        }
+		protected override bool IsSameItem(PatientNoteDetail x, PatientNoteDetail y)
+		{
+			if (ReferenceEquals(x, y))
+				return true;
 
-        #endregion
+			// if only one is null, they are not the same
+			if (x.PatientNoteRef == null || y.PatientNoteRef == null)
+				return false;
 
-        private void UpdateNoteActionEnablement()
-        {
-            // don't allow editing of expired notes
-            _noteActionHandler.Edit.Enabled = _currentNoteSelection != null && !_currentNoteSelection.IsExpired;
-            _noteActionHandler.Delete.Enabled = (_currentNoteSelection != null) && IsNewNote(_currentNoteSelection);
-        }
+			return x.PatientNoteRef.Equals(y.PatientNoteRef, true);
+		}
 
-        private bool IsNewNote(PatientNoteDetail note)
-        {
-            return note.CreationTime == null;
-        }
-    }
+		#endregion
+	}
 }

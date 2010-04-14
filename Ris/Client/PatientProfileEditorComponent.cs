@@ -204,6 +204,7 @@ namespace ClearCanvas.Ris.Client
 					{
 						this.Pages.Add(
 							new NavigatorPage("Patient/Notes", _notesSummary = new PatientNoteSummaryComponent(formData.NoteCategoryChoices)));
+						_notesSummary.SetModifiedOnListChange = true;
 						_notesSummary.Subject = _profile.Notes;
 
 						var patientDocumentsPage = new NavigatorPage(

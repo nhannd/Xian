@@ -87,7 +87,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Location = new System.Drawing.Point(219, 234);
+			this._cancelButton.Location = new System.Drawing.Point(244, 144);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 8;
@@ -97,7 +97,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _acceptButton
 			// 
-			this._acceptButton.Location = new System.Drawing.Point(140, 234);
+			this._acceptButton.Location = new System.Drawing.Point(165, 144);
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
 			this._acceptButton.TabIndex = 7;
@@ -108,12 +108,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _countryCode
 			// 
 			this._countryCode.LabelText = "Country Code";
-			this._countryCode.Location = new System.Drawing.Point(3, 50);
+			this._countryCode.Location = new System.Drawing.Point(113, 5);
 			this._countryCode.Margin = new System.Windows.Forms.Padding(2);
 			this._countryCode.Mask = "";
 			this._countryCode.Name = "_countryCode";
 			this._countryCode.PasswordChar = '\0';
-			this._countryCode.Size = new System.Drawing.Size(75, 43);
+			this._countryCode.Size = new System.Drawing.Size(95, 43);
 			this._countryCode.TabIndex = 1;
 			this._countryCode.ToolTip = null;
 			this._countryCode.Value = null;
@@ -121,7 +121,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _validFrom
 			// 
 			this._validFrom.LabelText = "Valid From";
-			this._validFrom.Location = new System.Drawing.Point(3, 189);
+			this._validFrom.Location = new System.Drawing.Point(3, 97);
 			this._validFrom.Margin = new System.Windows.Forms.Padding(2);
 			this._validFrom.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
 			this._validFrom.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
@@ -134,7 +134,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _number
 			// 
 			this._number.LabelText = "Number";
-			this._number.Location = new System.Drawing.Point(75, 95);
+			this._number.Location = new System.Drawing.Point(113, 48);
 			this._number.Margin = new System.Windows.Forms.Padding(2);
 			this._number.Mask = "";
 			this._number.Name = "_number";
@@ -147,25 +147,24 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _extension
 			// 
 			this._extension.LabelText = "Extension";
-			this._extension.Location = new System.Drawing.Point(3, 142);
+			this._extension.Location = new System.Drawing.Point(223, 48);
 			this._extension.Margin = new System.Windows.Forms.Padding(2);
 			this._extension.Mask = "";
 			this._extension.Name = "_extension";
 			this._extension.PasswordChar = '\0';
-			this._extension.Size = new System.Drawing.Size(77, 43);
+			this._extension.Size = new System.Drawing.Size(96, 43);
 			this._extension.TabIndex = 4;
-			this._extension.ToolTip = null;
 			this._extension.Value = null;
 			// 
 			// _areaCode
 			// 
 			this._areaCode.LabelText = "Area Code";
-			this._areaCode.Location = new System.Drawing.Point(3, 95);
+			this._areaCode.Location = new System.Drawing.Point(3, 48);
 			this._areaCode.Margin = new System.Windows.Forms.Padding(2);
 			this._areaCode.Mask = "";
 			this._areaCode.Name = "_areaCode";
 			this._areaCode.PasswordChar = '\0';
-			this._areaCode.Size = new System.Drawing.Size(56, 43);
+			this._areaCode.Size = new System.Drawing.Size(95, 43);
 			this._areaCode.TabIndex = 2;
 			this._areaCode.ToolTip = null;
 			this._areaCode.Value = null;
@@ -173,7 +172,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _validUntil
 			// 
 			this._validUntil.LabelText = "Valid Until";
-			this._validUntil.Location = new System.Drawing.Point(152, 189);
+			this._validUntil.Location = new System.Drawing.Point(174, 95);
 			this._validUntil.Margin = new System.Windows.Forms.Padding(2);
 			this._validUntil.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
 			this._validUntil.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
@@ -199,7 +198,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Controls.Add(this._areaCode);
 			this.Controls.Add(this._validUntil);
 			this.Name = "PhoneNumberEditorControl";
-			this.Size = new System.Drawing.Size(315, 264);
+			this.Size = new System.Drawing.Size(339, 178);
 			this.Load += new System.EventHandler(this.PhoneNumberEditorControl_Load);
 			this.ResumeLayout(false);
 
