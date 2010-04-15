@@ -29,12 +29,8 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Enterprise.Hibernate.Ddl.Migration;
 using NHibernate.Cfg;
-using NHibernate.Dialect;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
@@ -50,11 +46,11 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		public bool SuppressPrimaryKeys { get; set; }
 	}
 
-    /// <summary>
-    /// Generates scripts to create the tables, foreign key constraints, and indexes.
-    /// </summary>
-    class RelationalSchemaGenerator : DdlScriptGenerator
-    {
+	/// <summary>
+	/// Generates scripts to create the tables, foreign key constraints, and indexes.
+	/// </summary>
+	class RelationalSchemaGenerator : DdlScriptGenerator
+	{
 
 		private readonly RelationalSchemaOptions _options;
 
@@ -63,38 +59,37 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			_options = options;
 		}
 
-        #region IDdlScriptGenerator Members
+		#region IDdlScriptGenerator Members
 
-        public override string[] GenerateCreateScripts(Configuration config)
-        {
-			RelationalModelInfo currentModel = new RelationalModelInfo(config);
-			RelationalModelInfo baselineModel = new RelationalModelInfo();		// baseline model is empty
+		public override string[] GenerateCreateScripts(Configuration config)
+		{
+			var currentModel = new RelationalModelInfo(config);
+			var baselineModel = new RelationalModelInfo();		// baseline model is empty
 
-            return GetScripts(config, baselineModel, currentModel);
+			return GetScripts(config, baselineModel, currentModel);
 		}
 
-    	public override string[] GenerateUpgradeScripts(Configuration config, RelationalModelInfo baselineModel)
-    	{
-    		RelationalModelInfo currentModel = new RelationalModelInfo(config);
+		public override string[] GenerateUpgradeScripts(Configuration config, RelationalModelInfo baselineModel)
+		{
+			var currentModel = new RelationalModelInfo(config);
 
-    		return GetScripts(config, baselineModel, currentModel);
-    	}
+			return GetScripts(config, baselineModel, currentModel);
+		}
 
-    	public override string[] GenerateDropScripts(Configuration config)
-        {
-            return new string[]{};
-        }
+		public override string[] GenerateDropScripts(Configuration config)
+		{
+			return new string[] { };
+		}
 
-        #endregion
+		#endregion
 
 		private string[] GetScripts(Configuration config, RelationalModelInfo baselineModel, RelationalModelInfo currentModel)
 		{
-			RelationalModelComparator comparator = new RelationalModelComparator(_options.EnumOption);
-			RelationalModelTransform transform = comparator.CompareModels(baselineModel, currentModel);
+			var comparator = new RelationalModelComparator(_options.EnumOption);
+			var transform = comparator.CompareModels(baselineModel, currentModel);
 
-			IRenderer renderer = Renderer.GetRenderer(config);
-			return CollectionUtils.Map<Statement, string>(transform.Render(renderer, new RenderOptions(_options)),
-					delegate(Statement s) { return s.Sql; }).ToArray();
+			var renderer = Renderer.GetRenderer(config);
+			return CollectionUtils.Map(transform.Render(renderer, new RenderOptions(_options)), (Statement s) => s.Sql).ToArray();
 		}
 
 	}

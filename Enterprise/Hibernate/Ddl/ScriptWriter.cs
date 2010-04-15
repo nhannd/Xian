@@ -32,62 +32,61 @@
 using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
-using NHibernate.Dialect;
 using NHibernate.Cfg;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
-    /// <summary>
-    /// Defines an extension point for contributing DDL script generators to the database definition.
-    /// Note that extensions of this point must not have dependencies on the existence of other database objects,
-    /// as the order in which each extension is processed is not deterministic.
-    /// </summary>
-    [ExtensionPoint]
-    public class DdlScriptGeneratorExtensionPoint : ExtensionPoint<IDdlScriptGenerator>
-    {
-    }
+	/// <summary>
+	/// Defines an extension point for contributing DDL script generators to the database definition.
+	/// Note that extensions of this point must not have dependencies on the existence of other database objects,
+	/// as the order in which each extension is processed is not deterministic.
+	/// </summary>
+	[ExtensionPoint]
+	public class DdlScriptGeneratorExtensionPoint : ExtensionPoint<IDdlScriptGenerator>
+	{
+	}
 
-    /// <summary>
-    /// Utility class that generates a database creation, upgrade or drop script.
-    /// </summary>
-    public class ScriptWriter
-    {
-        private readonly Configuration _config;
+	/// <summary>
+	/// Utility class that generates a database creation, upgrade or drop script.
+	/// </summary>
+	public class ScriptWriter
+	{
+		private readonly Configuration _config;
 		private readonly string _qualifier;
-    	private bool _qualifyNames;
-    	private RelationalSchemaOptions _options;
-    	private RelationalModelInfo _baselineModel;
+		private bool _qualifyNames;
+		private RelationalSchemaOptions _options;
+		private RelationalModelInfo _baselineModel;
 
 		/// <summary>
 		/// Constructs a script writer based on the specified configuration.
 		/// </summary>
 		/// <param name="config"></param>
-    	public ScriptWriter(Configuration config)
-        {
-            _config = config;
+		public ScriptWriter(Configuration config)
+		{
+			_config = config;
 
 			_qualifier = config.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
 			if (!string.IsNullOrEmpty(_qualifier))
 				_qualifier += ".";
-        }
+		}
 
 		/// <summary>
 		/// Gets or sets a value indicating whether names will be qualified in the output script.
 		/// </summary>
-    	public bool QualifyNames
-    	{
+		public bool QualifyNames
+		{
 			get { return _qualifyNames; }
 			set { _qualifyNames = value; }
-    	}
+		}
 
 		/// <summary>
 		/// Gets or sets options that control what is included in script generation.
 		/// </summary>
 		public RelationalSchemaOptions Options
-    	{
+		{
 			get { return _options; }
 			set { _options = value; }
-    	}
+		}
 
 		/// <summary>
 		/// Gets or sets the baseline model to upgrade from.
@@ -96,27 +95,27 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// The default value is null, in which case scripts are generated to create the entire database from scratch.
 		/// If this property is set, scripts will be generated to upgrade from this model to the current model.
 		/// </remarks>
-    	public RelationalModelInfo BaselineModel
-    	{
+		public RelationalModelInfo BaselineModel
+		{
 			get { return _baselineModel; }
 			set { _baselineModel = value; }
-    	}
+		}
 
 
-    	/// <summary>
-        /// Writes a database creation script to the specified <see cref="TextWriter"/>
-        /// </summary>
-        /// <param name="sw"></param>
-        public void WriteCreateScript(TextWriter sw)
-        {
-			foreach (IDdlScriptGenerator gen in GetGenerators())
-            {
-                foreach (string script in gen.GenerateCreateScripts(_config))
-                {
+		/// <summary>
+		/// Writes a database creation script to the specified <see cref="TextWriter"/>
+		/// </summary>
+		/// <param name="sw"></param>
+		public void WriteCreateScript(TextWriter sw)
+		{
+			foreach (var gen in GetGenerators())
+			{
+				foreach (var script in gen.GenerateCreateScripts(_config))
+				{
 					sw.WriteLine(RewriteQualifiers(script));
-                }
-            }
-        }
+				}
+			}
+		}
 
 		/// <summary>
 		/// Writes a database upgrade script to the specified <see cref="TextWriter"/>
@@ -124,33 +123,33 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// <param name="sw"></param>
 		public void WriteUpgradeScript(TextWriter sw)
 		{
-			foreach (IDdlScriptGenerator gen in GetGenerators())
+			foreach (var gen in GetGenerators())
 			{
-				foreach (string script in gen.GenerateUpgradeScripts(_config, _baselineModel))
+				foreach (var script in gen.GenerateUpgradeScripts(_config, _baselineModel))
 				{
 					sw.WriteLine(RewriteQualifiers(script));
 				}
 			}
 		}
 
-        /// <summary>
-        /// Writes a database drop script to the specified <see cref="StreamWriter"/>
-        /// </summary>
-        /// <param name="sw"></param>
-        public void WriteDropScript(StreamWriter sw)
-        {
-			foreach (IDdlScriptGenerator gen in GetGenerators())
-            {
-                foreach (string script in gen.GenerateDropScripts(_config))
-                {
+		/// <summary>
+		/// Writes a database drop script to the specified <see cref="StreamWriter"/>
+		/// </summary>
+		/// <param name="sw"></param>
+		public void WriteDropScript(StreamWriter sw)
+		{
+			foreach (var gen in GetGenerators())
+			{
+				foreach (var script in gen.GenerateDropScripts(_config))
+				{
 					sw.WriteLine(RewriteQualifiers(script));
-                }
-            }
-        }
+				}
+			}
+		}
 
 		private List<IDdlScriptGenerator> GetGenerators()
 		{
-			List<IDdlScriptGenerator> generators = new List<IDdlScriptGenerator>();
+			var generators = new List<IDdlScriptGenerator>();
 
 			// the order of generator execution is important, so add the static generators first
 			generators.Add(new RelationalSchemaGenerator(_options));
@@ -167,5 +166,5 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		{
 			return _qualifyNames ? script : script.Replace(_qualifier, "");
 		}
-    }
+	}
 }

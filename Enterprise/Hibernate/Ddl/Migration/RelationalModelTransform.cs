@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
@@ -59,9 +58,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 	{
 		private static readonly Dictionary<Type, int> _changeOrder = new Dictionary<Type, int>();
 
-        /// <summary>
-        /// Class constructor
-        /// </summary>
+		/// <summary>
+		/// Class constructor
+		/// </summary>
 		static RelationalModelTransform()
 		{
 			// define the order that changes should occur to avoid dependency issues
@@ -107,8 +106,8 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			// allow the renderer to modify the change set, and then sort the changes appropriately
 			filteredChanges = OrderChanges(renderer.PreFilter(filteredChanges));
 
-			List<Statement> statements = new List<Statement>();
-			foreach (RelationalModelChange change in filteredChanges)
+			var statements = new List<Statement>();
+			foreach (var change in filteredChanges)
 			{
 				statements.AddRange(change.GetStatements(renderer));
 			}
@@ -123,9 +122,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 		/// <returns></returns>
 		private static bool FilterChange(RelationalModelChange change, RenderOptions options)
 		{
-			if(options.SuppressForeignKeys)
+			if (options.SuppressForeignKeys)
 			{
-				if(change is AddForeignKeyChange || change is DropForeignKeyChange)
+				if (change is AddForeignKeyChange || change is DropForeignKeyChange)
 					return false;
 			}
 			if (options.SuppressIndexes)
@@ -146,7 +145,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			return true;
 		}
 
-		private List<RelationalModelChange> OrderChanges(IEnumerable<RelationalModelChange> changes)
+		private static List<RelationalModelChange> OrderChanges(IEnumerable<RelationalModelChange> changes)
 		{
 			// the algorithm here tries to do 2 things:
 			// 1. Re-organize groups of changes so as to avoid any dependency problems.
@@ -155,22 +154,15 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			// same table clustered together where possible, and also keep AddEnumValueChanges in order
 
 			// group changes by type
-			IDictionary<Type, List<RelationalModelChange>> groupedByType =
-				CollectionUtils.GroupBy<RelationalModelChange, Type>(changes, delegate(RelationalModelChange c) { return c.GetType(); });
+			IDictionary<Type, List<RelationalModelChange>> groupedByType = CollectionUtils.GroupBy(changes, c => c.GetType());
 
 			// sort the types to avoid dependency issues
-			List<Type> sortedTypes = CollectionUtils.Sort(groupedByType.Keys,
-						delegate(Type x, Type y)
-						{
-							return _changeOrder[x].CompareTo(_changeOrder[y]);
-						});
+			var sortedTypes = CollectionUtils.Sort(groupedByType.Keys, (x, y) => _changeOrder[x].CompareTo(_changeOrder[y]));
 
 
 			// flatten changes back into a single list
 			return CollectionUtils.Concat<RelationalModelChange>(
-					CollectionUtils.Map<Type, List<RelationalModelChange>>(sortedTypes,
-						delegate(Type t) { return groupedByType[t]; }).ToArray()
-				   );
+					CollectionUtils.Map(sortedTypes, (Type t) => groupedByType[t]).ToArray());
 		}
 	}
 }

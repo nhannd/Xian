@@ -34,85 +34,50 @@ using ClearCanvas.Enterprise.Hibernate.Ddl;
 
 namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 {
-    class DdlWriterCommandLine : CommandLine
-    {
+	class DdlWriterCommandLine : CommandLine
+	{
 		public enum FormatOptions
 		{
 			sql,
 			xml
 		}
 
-		private bool _createIndexes = true;
-    	private bool _createUniqueKeys = true;
-		private bool _createForeignKeys = true;
-		private bool _autoIndexForeignKeys = true;
-        private EnumOptions _enumOption = EnumOptions.all;
-        private string _outputFile;
-    	private bool _qualifyNames = true;
-    	private FormatOptions _format = FormatOptions.sql;
-    	private string _baselineModelFile;
+		public DdlWriterCommandLine()
+		{
+			QualifyNames = true;
+			CreateUniqueKeys = true;
+			CreateForeignKeys = true;
+			CreateIndexes = true;
+			AutoIndexForeignKeys = true;
+			EnumOption = EnumOptions.all;
+			Format = FormatOptions.sql;
+		}
 
-    	[CommandLineParameter("fki", "Specifies whether to auto-index all foreign keys.  Ignored unless /ix is also specified.  Default is true.")]
-        public bool AutoIndexForeignKeys
-        {
-            get { return _autoIndexForeignKeys; }
-            set { _autoIndexForeignKeys = value; }
-        }
+		[CommandLineParameter("fki", "Specifies whether to auto-index all foreign keys.  Ignored unless /ix is also specified.  Default is true.")]
+		public bool AutoIndexForeignKeys { get; set; }
 
-        [CommandLineParameter("index", "ix", "Specifies whether to generate database indexes. Default is true.")]
-        public bool CreateIndexes
-        {
-            get { return _createIndexes; }
-            set { _createIndexes = value; }
-        }
+		[CommandLineParameter("index", "ix", "Specifies whether to generate database indexes. Default is true.")]
+		public bool CreateIndexes { get; set; }
 
 		[CommandLineParameter("fk", "Specifies whether to generate foreign keys. Default is true.")]
-		public bool CreateForeignKeys
-		{
-			get { return _createForeignKeys; }
-			set { _createForeignKeys = value; }
-		}
+		public bool CreateForeignKeys { get; set; }
 
 		[CommandLineParameter("uk", "Specifies whether to generate unique keys. Default is true.")]
-		public bool CreateUniqueKeys
-		{
-			get { return _createUniqueKeys; }
-			set { _createUniqueKeys = value; }
-		}
+		public bool CreateUniqueKeys { get; set; }
 
 		[CommandLineParameter("q", "Specifies whether to qualify names of database objects. Default is true.")]
-		public bool QualifyNames
-		{
-			get { return _qualifyNames; }
-			set { _qualifyNames = value; }
-		}
+		public bool QualifyNames { get; set; }
 
-        [CommandLineParameter("enums", "e", "Specifies whether to populate enumerations.  Possible values are 'all', 'hard' or 'none'.  If omitted, the default is 'all'")]
-        public EnumOptions EnumOption
-        {
-            get { return _enumOption; }
-            set { _enumOption = value; }
-        }
+		[CommandLineParameter("enums", "e", "Specifies whether to populate enumerations.  Possible values are 'all', 'hard' or 'none'.  If omitted, the default is 'all'")]
+		public EnumOptions EnumOption { get; set; }
 
-        [CommandLineParameter("out", "Specifies the name of the ouput file.  If omitted, output is written to stdout.")]
-        public string OutputFile
-        {
-            get { return _outputFile; }
-            set { _outputFile = value; }
-        }
+		[CommandLineParameter("out", "Specifies the name of the ouput file.  If omitted, output is written to stdout.")]
+		public string OutputFile { get; set; }
 
 		[CommandLineParameter("format", "f", "Specifies output format.  Possible values are 'sql' and 'xml'.  If omitted, the default is 'sql'")]
-		public FormatOptions Format
-    	{
-			get { return _format; }
-			set { _format = value; }
-    	}
+		public FormatOptions Format { get; set; }
 
 		[CommandLineParameter("baseline", "b", "Specifies the name of a file that contains the model to upgrade from, in xml format.")]
-		public string BaselineModelFile
-		{
-			get { return _baselineModelFile; }
-			set { _baselineModelFile = value; }
-		}
+		public string BaselineModelFile { get; set; }
 	}
 }

@@ -39,41 +39,41 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 {
-    [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
-    public class DdlWriterApplication : IApplicationRoot
-    {
-        public void RunApplication(string[] args)
-        {
-            var cmdLine = new DdlWriterCommandLine();
-            try
-            {
-                cmdLine.Parse(args);
+	[ExtensionOf(typeof(ApplicationRootExtensionPoint))]
+	public class DdlWriterApplication : IApplicationRoot
+	{
+		public void RunApplication(string[] args)
+		{
+			var cmdLine = new DdlWriterCommandLine();
+			try
+			{
+				cmdLine.Parse(args);
 
-                // if a file name was supplied, write to the file
-                if (!string.IsNullOrEmpty(cmdLine.OutputFile))
-                {
-                    using (var sw = File.CreateText(cmdLine.OutputFile))
-                    {
-                        WriteOutput(sw, cmdLine);
-                    }
-                }
-                else
-                {
-                    // by default write to stdout
-                    WriteOutput(Console.Out, cmdLine);
-                }
-            }
-            catch (CommandLineException e)
-            {
-                Console.WriteLine(e.Message);
-                cmdLine.PrintUsage(Console.Out);
-            }
-        }
+				// if a file name was supplied, write to the file
+				if (!string.IsNullOrEmpty(cmdLine.OutputFile))
+				{
+					using (var sw = File.CreateText(cmdLine.OutputFile))
+					{
+						WriteOutput(sw, cmdLine);
+					}
+				}
+				else
+				{
+					// by default write to stdout
+					WriteOutput(Console.Out, cmdLine);
+				}
+			}
+			catch (CommandLineException e)
+			{
+				Console.WriteLine(e.Message);
+				cmdLine.PrintUsage(Console.Out);
+			}
+		}
 
-        private static void WriteOutput(TextWriter writer, DdlWriterCommandLine cmdLine)
-        {
-            try
-            {
+		private static void WriteOutput(TextWriter writer, DdlWriterCommandLine cmdLine)
+		{
+			try
+			{
 				// load the persistent store defined by the current set of binaries
 				var store = (PersistentStore)PersistentStoreRegistry.GetDefaultStore();
 
@@ -86,32 +86,32 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 
 
 				// if this is an upgrade, load the baseline model file
-            	RelationalModelInfo baselineModel = null;
-				if(!string.IsNullOrEmpty(cmdLine.BaselineModelFile))
+				RelationalModelInfo baselineModel = null;
+				if (!string.IsNullOrEmpty(cmdLine.BaselineModelFile))
 				{
 					var serializer = new RelationalModelSerializer();
 					baselineModel = serializer.ReadModel(File.OpenText(cmdLine.BaselineModelFile));
 				}
 
-				switch(cmdLine.Format)
+				switch (cmdLine.Format)
 				{
 					case DdlWriterCommandLine.FormatOptions.sql:
 
 						// create script writer and set properties based on command line 
 						var scriptWriter = new ScriptWriter(config)
-						                   	{
+											{
 												Options = new RelationalSchemaOptions
-												          	{
-												          		EnumOption = cmdLine.EnumOption,
+															{
+																EnumOption = cmdLine.EnumOption,
 																SuppressForeignKeys = !cmdLine.CreateForeignKeys,
 																SuppressUniqueConstraints = !cmdLine.CreateUniqueKeys,
-												          	},
-						                   		QualifyNames = cmdLine.QualifyNames,
-						                   		BaselineModel = baselineModel
-						                   	};
+															},
+												QualifyNames = cmdLine.QualifyNames,
+												BaselineModel = baselineModel
+											};
 
 						// decide whether to write a creation or upgrade script, depending on if a baseline was supplied
-						if(baselineModel == null)
+						if (baselineModel == null)
 							scriptWriter.WriteCreateScript(writer);
 						else
 							scriptWriter.WriteUpgradeScript(writer);
@@ -121,7 +121,7 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 					case DdlWriterCommandLine.FormatOptions.xml:
 
 						// we don't currently support outputting upgrades in XML format
-						if(baselineModel != null)
+						if (baselineModel != null)
 							throw new NotSupportedException("Upgrade is not compatible with XML output format.");
 
 						var serializer = new RelationalModelSerializer();
@@ -131,17 +131,17 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 					default:
 						throw new NotSupportedException(string.Format("{0} is not a valid output format.", cmdLine.Format));
 				}
-            }
-            catch (Exception e)
-            {
-                Log(e.Message, LogLevel.Error);
-            }
-        }
+			}
+			catch (Exception e)
+			{
+				Log(e.Message, LogLevel.Error);
+			}
+		}
 
-        private static void Log(object obj, LogLevel level)
-        {
+		private static void Log(object obj, LogLevel level)
+		{
 			Platform.Log(level, obj);
-            Console.WriteLine(obj);
-        }
-    }
+			Console.WriteLine(obj);
+		}
+	}
 }
