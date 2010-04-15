@@ -1043,12 +1043,16 @@ var Table = {
 				// update the cell's visibility
 				if(column.getVisible)
 				{
+					var isPreviouslyVisible = cell.style.display == "block";
+					
 					visible = column.getVisible(item);
 					if(visible)
-						cell.style.display = "block";
-					else
 					{
-						// when a cell is hidden, set its value to null
+						cell.style.display = "block";
+					}
+					else if (isPreviouslyVisible)
+					{
+						// when a cell change from visible to hidden, set its value to null
 						// this is because we don't want any information to exist on the form
 						// and be hidden from the user
 						cell.style.display = "none";
