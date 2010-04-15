@@ -39,16 +39,28 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
+
+
+	public class RelationalSchemaOptions
+	{
+		public EnumOptions EnumOption { get; set; }
+		public bool SuppressForeignKeys { get; set; }
+		public bool SuppressUniqueConstraints { get; set; }
+		public bool SuppressIndexes { get; set; }
+		public bool SuppressPrimaryKeys { get; set; }
+	}
+
     /// <summary>
     /// Generates scripts to create the tables, foreign key constraints, and indexes.
     /// </summary>
     class RelationalSchemaGenerator : DdlScriptGenerator
     {
-    	private readonly EnumOptions _enumOption;
 
-		public RelationalSchemaGenerator(EnumOptions enumOption)
+		private readonly RelationalSchemaOptions _options;
+
+		public RelationalSchemaGenerator(RelationalSchemaOptions options)
 		{
-			_enumOption = enumOption;
+			_options = options;
 		}
 
         #region IDdlScriptGenerator Members
@@ -77,11 +89,11 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
 		private string[] GetScripts(Configuration config, RelationalModelInfo baselineModel, RelationalModelInfo currentModel)
 		{
-			RelationalModelComparator comparator = new RelationalModelComparator(_enumOption);
+			RelationalModelComparator comparator = new RelationalModelComparator(_options.EnumOption);
 			RelationalModelTransform transform = comparator.CompareModels(baselineModel, currentModel);
 
 			IRenderer renderer = Renderer.GetRenderer(config);
-			return CollectionUtils.Map<Statement, string>(transform.Render(renderer),
+			return CollectionUtils.Map<Statement, string>(transform.Render(renderer, new RenderOptions(_options)),
 					delegate(Statement s) { return s.Sql; }).ToArray();
 		}
 

@@ -42,27 +42,43 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 			xml
 		}
 
-        private bool _autoIndexForeignKeys;
-        private bool _createIndexes;
+		private bool _createIndexes = true;
+    	private bool _createUniqueKeys = true;
+		private bool _createForeignKeys = true;
+		private bool _autoIndexForeignKeys = true;
         private EnumOptions _enumOption = EnumOptions.all;
         private string _outputFile;
     	private bool _qualifyNames = true;
     	private FormatOptions _format = FormatOptions.sql;
     	private string _baselineModelFile;
 
-    	[CommandLineParameter("fki", "Specifies whether to auto-index all foreign keys.  Ignored unless /index is also specified.")]
+    	[CommandLineParameter("fki", "Specifies whether to auto-index all foreign keys.  Ignored unless /ix is also specified.  Default is true.")]
         public bool AutoIndexForeignKeys
         {
             get { return _autoIndexForeignKeys; }
             set { _autoIndexForeignKeys = value; }
         }
 
-        [CommandLineParameter("index", "ix", "Specifies whether to generate database indexes.")]
+        [CommandLineParameter("index", "ix", "Specifies whether to generate database indexes. Default is true.")]
         public bool CreateIndexes
         {
             get { return _createIndexes; }
             set { _createIndexes = value; }
         }
+
+		[CommandLineParameter("fk", "Specifies whether to generate foreign keys. Default is true.")]
+		public bool CreateForeignKeys
+		{
+			get { return _createForeignKeys; }
+			set { _createForeignKeys = value; }
+		}
+
+		[CommandLineParameter("uk", "Specifies whether to generate unique keys. Default is true.")]
+		public bool CreateUniqueKeys
+		{
+			get { return _createUniqueKeys; }
+			set { _createUniqueKeys = value; }
+		}
 
 		[CommandLineParameter("q", "Specifies whether to qualify names of database objects. Default is true.")]
 		public bool QualifyNames

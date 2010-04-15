@@ -100,7 +100,12 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 						// create script writer and set properties based on command line 
 						var scriptWriter = new ScriptWriter(config)
 						                   	{
-						                   		EnumOption = cmdLine.EnumOption,
+												Options = new RelationalSchemaOptions
+												          	{
+												          		EnumOption = cmdLine.EnumOption,
+																SuppressForeignKeys = !cmdLine.CreateForeignKeys,
+																SuppressUniqueConstraints = !cmdLine.CreateUniqueKeys,
+												          	},
 						                   		QualifyNames = cmdLine.QualifyNames,
 						                   		BaselineModel = baselineModel
 						                   	};

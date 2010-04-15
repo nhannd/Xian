@@ -55,7 +55,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
         private readonly Configuration _config;
 		private readonly string _qualifier;
     	private bool _qualifyNames;
-    	private EnumOptions _enumOption;
+    	private RelationalSchemaOptions _options;
     	private RelationalModelInfo _baselineModel;
 
 		/// <summary>
@@ -81,12 +81,12 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     	}
 
 		/// <summary>
-		/// Gets or sets a value indicating which enumerations should have scripts generated.
+		/// Gets or sets options that control what is included in script generation.
 		/// </summary>
-		public EnumOptions EnumOption
+		public RelationalSchemaOptions Options
     	{
-			get { return _enumOption; }
-			set { _enumOption = value; }
+			get { return _options; }
+			set { _options = value; }
     	}
 
 		/// <summary>
@@ -101,6 +101,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			get { return _baselineModel; }
 			set { _baselineModel = value; }
     	}
+
 
     	/// <summary>
         /// Writes a database creation script to the specified <see cref="TextWriter"/>
@@ -152,7 +153,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			List<IDdlScriptGenerator> generators = new List<IDdlScriptGenerator>();
 
 			// the order of generator execution is important, so add the static generators first
-			generators.Add(new RelationalSchemaGenerator(_enumOption));
+			generators.Add(new RelationalSchemaGenerator(_options));
 
 			// subsequently we can add extension generators, with uncontrolled ordering
 			foreach (IDdlScriptGenerator generator in (new DdlScriptGeneratorExtensionPoint().CreateExtensions()))

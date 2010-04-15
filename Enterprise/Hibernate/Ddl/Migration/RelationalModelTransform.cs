@@ -36,6 +36,22 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 {
+	internal class RenderOptions
+	{
+		public RenderOptions(RelationalSchemaOptions options)
+		{
+			this.SuppressForeignKeys = options.SuppressForeignKeys;
+			this.SuppressIndexes = options.SuppressIndexes;
+			this.SuppressPrimaryKeys = options.SuppressPrimaryKeys;
+			this.SuppressUniqueConstraints = options.SuppressUniqueConstraints;
+		}
+
+		public bool SuppressForeignKeys { get; set; }
+		public bool SuppressUniqueConstraints { get; set; }
+		public bool SuppressIndexes { get; set; }
+		public bool SuppressPrimaryKeys { get; set; }
+	}
+
 	/// <summary>
 	/// Describes a set of changes that transform a relational model.
 	/// </summary>
@@ -81,11 +97,15 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 		/// Uses the specified renderer to render this transform.
 		/// </summary>
 		/// <param name="renderer"></param>
+		/// <param name="options"></param>
 		/// <returns></returns>
-		public Statement[] Render(IRenderer renderer)
+		public Statement[] Render(IRenderer renderer, RenderOptions options)
 		{
+			// filter changes according to options
+			var filteredChanges = CollectionUtils.Select(_changes, change => FilterChange(change, options));
+
 			// allow the renderer to modify the change set, and then sort the changes appropriately
-			List<RelationalModelChange> filteredChanges = OrderChanges(renderer.PreFilter(_changes));
+			filteredChanges = OrderChanges(renderer.PreFilter(filteredChanges));
 
 			List<Statement> statements = new List<Statement>();
 			foreach (RelationalModelChange change in filteredChanges)
@@ -93,6 +113,37 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 				statements.AddRange(change.GetStatements(renderer));
 			}
 			return statements.ToArray();
+		}
+
+		/// <summary>
+		/// Determines whether specified change should be included in rendering based on specified options.
+		/// </summary>
+		/// <param name="change"></param>
+		/// <param name="options"></param>
+		/// <returns></returns>
+		private static bool FilterChange(RelationalModelChange change, RenderOptions options)
+		{
+			if(options.SuppressForeignKeys)
+			{
+				if(change is AddForeignKeyChange || change is DropForeignKeyChange)
+					return false;
+			}
+			if (options.SuppressIndexes)
+			{
+				if (change is AddIndexChange || change is DropIndexChange)
+					return false;
+			}
+			if (options.SuppressUniqueConstraints)
+			{
+				if (change is AddUniqueConstraintChange || change is DropUniqueConstraintChange)
+					return false;
+			}
+			if (options.SuppressPrimaryKeys)
+			{
+				if (change is AddPrimaryKeyChange || change is DropPrimaryKeyChange)
+					return false;
+			}
+			return true;
 		}
 
 		private List<RelationalModelChange> OrderChanges(IEnumerable<RelationalModelChange> changes)
