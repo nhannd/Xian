@@ -96,7 +96,6 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
 			this._authorityGroupName.AutoSize = true;
 			this._authorityGroupName.LabelText = "Name";
 			this._authorityGroupName.Location = new System.Drawing.Point(3, 2);
-			this._authorityGroupName.Margin = new System.Windows.Forms.Padding(2);
 			this._authorityGroupName.Mask = "";
 			this._authorityGroupName.Name = "_authorityGroupName";
 			this._authorityGroupName.PasswordChar = '\0';
@@ -115,19 +114,19 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
 			this._tokenTreeView.FocusNode = null;
 			this._tokenTreeView.HotBackColor = System.Drawing.Color.Empty;
 			this._tokenTreeView.HotForeColor = System.Drawing.Color.Empty;
-			this._tokenTreeView.Location = new System.Drawing.Point(3, 71);
+			this._tokenTreeView.Location = new System.Drawing.Point(6, 66);
 			this._tokenTreeView.Name = "_tokenTreeView";
 			this._tokenTreeView.SelectedNode = null;
 			this._tokenTreeView.SelectedNoFocusBackColor = System.Drawing.SystemColors.Control;
-			this._tokenTreeView.Size = new System.Drawing.Size(549, 334);
+			this._tokenTreeView.Size = new System.Drawing.Size(544, 334);
 			this._tokenTreeView.TabIndex = 1;
 			this._tokenTreeView.Text = "Permissions";
 			this._tokenTreeView.AfterSelect += new Crownwood.DotNetMagic.Controls.NodeEventHandler(this._tokenTreeView_AfterSelect);
 			// 
 			// label1
 			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(3, 52);
+			this.label1.Location = new System.Drawing.Point(5, 47);
+			this.label1.Margin = new System.Windows.Forms.Padding(3);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(62, 13);
 			this.label1.TabIndex = 5;
@@ -135,9 +134,10 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
 			// 
 			// _description
 			// 
+			this._description.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this._description.LabelText = "Description of selected permission";
-			this._description.Location = new System.Drawing.Point(3, 410);
-			this._description.Margin = new System.Windows.Forms.Padding(2);
+			this._description.Location = new System.Drawing.Point(6, 406);
 			this._description.Mask = "";
 			this._description.Name = "_description";
 			this._description.PasswordChar = '\0';
