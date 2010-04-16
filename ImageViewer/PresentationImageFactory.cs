@@ -264,6 +264,7 @@ namespace ClearCanvas.ImageViewer
 
 		#region Private KO Helpers
 
+		//TODO (CR Mar 2010): return Sop and check IsImage.
 		private ImageSop FindReferencedImageSop(string sopInstanceUid, string studyInstanceUid)
 		{
 			if (string.IsNullOrEmpty(sopInstanceUid))

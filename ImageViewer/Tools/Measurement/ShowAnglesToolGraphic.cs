@@ -40,6 +40,7 @@ using Matrix2D=System.Drawing.Drawing2D.Matrix;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
+	//TODO (CR Mar 2010): general note: variable names should be more explanatory
 	partial class ShowAnglesTool
 	{
 		[Cloneable]
@@ -274,6 +275,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				float pF = 1 + (float) ((_minLength + 1)/Math.Sqrt((pW.X*pW.X + pW.Y*pW.Y)));
 				pW = new PointF(pV.X + pW.X*pF, pV.Y + pW.Y*pF);
 
+				//TODO (CR Mar 2010): this kind of calculation in a function (CrossProduct)
 				if ((pW.X - pV.X)*(p2.Y - p1.Y) - (pW.Y - pV.Y)*(p2.X - p1.X) < 0)
 				{
 					PointF temp = pW;
@@ -330,6 +332,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 				if (p1Inside && p2Inside)
 					return true;
+				//TODO (CR Mar 2010): supposed to push enpoints inside bounds, but doesn't in case where both endpoints
+				//are outside, but the line segment intersects a corner of the rectangle.
 
 				PointF[] sides = new PointF[] {new PointF(bounds.Left, bounds.Top), new PointF(bounds.Right, bounds.Top), new PointF(bounds.Right, bounds.Bottom), new PointF(bounds.Left, bounds.Bottom)};
 
@@ -359,13 +363,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				// [ a b ] [ s ]   [ x ]
 				// [ c d ] [ t ]   [ y ]
 
+				//TODO (CR Mar 2010): use more vector-y variable names - easier to read.
 				float a = p2.X - p1.X;
 				float b = q1.X - q2.X;
 				float c = p2.Y - p1.Y;
 				float d = q1.Y - q2.Y;
 				float x = q1.X - p1.X;
 				float y = q1.Y - p1.Y;
-				float s = (d*x - b*y)/(a*d - b*c);
+				float s = (d * x - b * y) / (a * d - b * c);
+
 				return new PointF(p1.X + s*(p2.X - p1.X), p1.Y + s*(p2.Y - p1.Y));
 			}
 

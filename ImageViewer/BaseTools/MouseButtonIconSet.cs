@@ -77,6 +77,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			/// </summary>
 			public override void Apply(IActionBuildingContext builder)
 			{
+				//TODO (CR Mar 2010): Observe MouseButton changing and set the iconset.
 				XMouseButtons assignedButton = XMouseButtons.None;
 				if (builder.ActionTarget is MouseImageViewerTool)
 					assignedButton = ((MouseImageViewerTool) builder.ActionTarget).MouseButton;

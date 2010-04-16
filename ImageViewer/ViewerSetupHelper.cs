@@ -36,6 +36,9 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.ImageViewer
 {
+	//TODO (CR Mar 2010): name, method names?
+	//It's a factory, so Create methods?
+	//IImageViewerSetupHelper?
 	public interface IViewerSetupHelper
 	{
 		void SetImageViewer(IImageViewer viewer);

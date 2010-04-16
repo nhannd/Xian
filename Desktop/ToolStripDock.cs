@@ -31,6 +31,7 @@
 
 namespace ClearCanvas.Desktop
 {
+	//TODO (cr March 2010): name?  Don't forget to rename setting property, too.
 	public enum ToolStripDock
 	{
 		None,

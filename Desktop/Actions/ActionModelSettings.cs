@@ -557,6 +557,7 @@ namespace ClearCanvas.Desktop.Actions
 				string keystrokeValue = xmlAction.GetAttribute("keystroke");
 				if (!string.IsNullOrEmpty(keystrokeValue))
 				{
+					//TODO (CR Mar 2010): log debug
 					try
 					{
 						keyStroke = (XKeys)Enum.Parse(typeof(XKeys), keystrokeValue);

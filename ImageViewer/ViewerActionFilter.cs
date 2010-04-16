@@ -39,6 +39,7 @@ namespace ClearCanvas.ImageViewer
 	public class ViewerContextMenuFilterExtensionPoint : ExtensionPoint<IViewerActionFilter>
 	{}
 
+	//TODO (CR Mar 2010): Predicate!
 	public interface IViewerActionFilter
 	{
 		void SetImageViewer(IImageViewer imageViewer);

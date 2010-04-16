@@ -97,6 +97,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						resolver,
 						delegate(Frame frame)
 						{
+							//TODO (CR Mar 2010): check for the 2 that aren't zero.
 							string phaseDirection = frame.ParentImageSop[DicomTags.InPlanePhaseEncodingDirection].ToString().ToUpperInvariant();
 
 							DicomAttribute acqAttrib = frame.ParentImageSop[DicomTags.AcquisitionMatrix];
