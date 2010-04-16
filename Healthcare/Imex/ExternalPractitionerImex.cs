@@ -38,6 +38,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core.Imex;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
+using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Healthcare.Imex
 {
@@ -168,7 +169,14 @@ namespace ClearCanvas.Healthcare.Imex
 			if (prac == null)
 			{
 				// Creating a new practitioenr:  Import
-				prac = new ExternalPractitioner(name, data.LicenseNumber, data.BillingNumber, data.IsVerified, data.LastVerifiedTime, data.LastEditedTime, null, null);
+				prac = new ExternalPractitioner(name, 
+					data.LicenseNumber, 
+					data.BillingNumber, 
+					data.IsVerified, 
+					data.LastVerifiedTime, 
+					data.LastEditedTime, 
+					new HashedSet<ExternalPractitionerContactPoint>(),
+					new Dictionary<string, string>());
 				context.Lock(prac, DirtyState.New);
 			}
 			else
