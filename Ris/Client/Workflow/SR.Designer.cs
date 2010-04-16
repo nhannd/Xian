@@ -1956,6 +1956,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Print Worklist.
+        /// </summary>
+        internal static string TitlePrintWorklist {
+            get {
+                return ResourceManager.GetString("TitlePrintWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Priors.
         /// </summary>
         internal static string TitlePriors {

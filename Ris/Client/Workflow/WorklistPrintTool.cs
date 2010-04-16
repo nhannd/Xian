@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
@@ -23,45 +22,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ExtensionOf(typeof(RadiologistAdminWorkflowItemToolExtensionPoint))]
 	public class WorklistPrintTool : Tool<IWorkflowItemToolContext>
 	{
-		private bool _enabled;
-		private event EventHandler _enabledChanged;
-
-		public override void Initialize()
-		{
-			base.Initialize();
-
-			this.Context.SelectionChanged += delegate
-			{
-				this.Enabled = DetermineEnablement();
-			};
-		}
-
-		private bool DetermineEnablement()
-		{
-			return this.Context.SelectedFolder != null && this.Context.SelectedFolder.ItemsTable.Items.Count > 0;
-		}
-
 		public bool Enabled
 		{
-			get
-			{
-				this.Enabled = DetermineEnablement();
-				return _enabled;
-			}
-			set
-			{
-				if (_enabled == value)
-					return;
-
-				_enabled = value;
-				EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
-			}
+			get { return this.Context.SelectedFolder != null && this.Context.SelectedFolder.ItemsTable.Items.Count > 0; }
 		}
 
 		public event EventHandler EnabledChanged
 		{
-			add { _enabledChanged += value; }
-			remove { _enabledChanged -= value; }
+			add { this.Context.SelectionChanged += value; }
+			remove { this.Context.SelectionChanged -= value; }
 		}
 
 		public void Print()
@@ -77,7 +46,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			ApplicationComponent.LaunchAsDialog(
 				this.Context.DesktopWindow,
 				new WorklistPrintComponent(fsName, folderName, folderDescription, totalItemCount, items),
-				"Print Worklist");
+				SR.TitlePrintWorklist);
 		}
 	}
 }

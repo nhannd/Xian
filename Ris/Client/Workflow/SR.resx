@@ -824,4 +824,7 @@ Choose "No" to verify this report without further action.</value>
   <data name="TranscriptionToBeTranscribedFolderDescription" xml:space="preserve">
     <value>Lists reports that need to be transcribed.</value>
   </data>
+  <data name="TitlePrintWorklist" xml:space="preserve">
+    <value>Print Worklist</value>
+  </data>
 </root>
