@@ -35,6 +35,7 @@ using System.Text;
 
 using Iesi.Collections;
 using ClearCanvas.Enterprise.Core;
+using Iesi.Collections.Generic;
 
 
 namespace ClearCanvas.Healthcare {
@@ -45,6 +46,12 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class Facility : Entity
 	{
+		public Facility(string code, string name, InformationAuthorityEnum informationAuthority)
+			:this(code, name, informationAuthority, new HashedSet<Department>())
+    	{
+    		
+    	}
+
         private void CustomInitialize()
         {
         }

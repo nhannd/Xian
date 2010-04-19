@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -32,19 +32,47 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Iesi.Collections.Generic;
 
-namespace ClearCanvas.Healthcare.Tests
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
-    internal static class TestFacilityFactory
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="DepartmentEditorComponent"/>.
+    /// </summary>
+    [ExtensionOf(typeof(DepartmentEditorComponentViewExtensionPoint))]
+    public class DepartmentEditorComponentView : WinFormsView, IApplicationComponentView
     {
-        internal static Facility CreateFacility()
+        private DepartmentEditorComponent _component;
+        private DepartmentEditorComponentControl _control;
+
+        #region IApplicationComponentView Members
+
+        /// <summary>
+        /// Called by the host to assign this view to a component.
+        /// </summary>
+        public void SetComponent(IApplicationComponent component)
         {
-            return new Facility(
-				"TCH",
-				"Toronto Community Hospital",
-				new InformationAuthorityEnum("UHN", "UHN", "University Health Network"),
-				new HashedSet<Department>());
+            _component = (DepartmentEditorComponent)component;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new DepartmentEditorComponentControl(_component);
+                }
+                return _control;
+            }
         }
     }
 }

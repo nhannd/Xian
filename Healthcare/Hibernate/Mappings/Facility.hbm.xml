@@ -9,6 +9,10 @@
     <property name="Code" column="Code_" type="String" length="30" not-null="true" unique="true"/>
     <property name="Name" column="Name_" type="String" length="200" not-null="true" unique="true"/>
     <many-to-one name="InformationAuthority" class="InformationAuthorityEnum" column="InformationAuthority_" not-null="true"/>
+    <set name="Departments" lazy="true" inverse="true" cascade="all-delete-orphan">
+      <key column="FacilityOID_"/>
+      <one-to-many class="Department"/>
+    </set>
     <property name="Deactivated" column="Deactivated_" type="Boolean" not-null="true"/>
   </class>
 </hibernate-mapping>

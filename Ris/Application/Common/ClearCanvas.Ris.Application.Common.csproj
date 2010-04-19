@@ -48,6 +48,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddressDetail.cs" />
+    <Compile Include="Admin\DepartmentAdmin\AddDepartmentRequest.cs" />
+    <Compile Include="Admin\DepartmentAdmin\AddDepartmentResponse.cs" />
+    <Compile Include="Admin\DepartmentAdmin\DeleteDepartmentRequest.cs" />
+    <Compile Include="Admin\DepartmentAdmin\DeleteDepartmentResponse.cs" />
+    <Compile Include="DepartmentDetail.cs" />
+    <Compile Include="DepartmentSummary.cs" />
+    <Compile Include="Admin\DepartmentAdmin\IDepartmentAdminService.cs" />
+    <Compile Include="Admin\DepartmentAdmin\ListDepartmentsRequest.cs" />
+    <Compile Include="Admin\DepartmentAdmin\ListDepartmentsResponse.cs" />
+    <Compile Include="Admin\DepartmentAdmin\LoadDepartmentEditorFormDataRequest.cs" />
+    <Compile Include="Admin\DepartmentAdmin\LoadDepartmentEditorFormDataResponse.cs" />
+    <Compile Include="Admin\DepartmentAdmin\LoadDepartmentForEditRequest.cs" />
+    <Compile Include="Admin\DepartmentAdmin\LoadDepartmentForEditResponse.cs" />
+    <Compile Include="Admin\DepartmentAdmin\UpdateDepartmentRequest.cs" />
+    <Compile Include="Admin\DepartmentAdmin\UpdateDepartmentResponse.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\AddDiagnosticServiceRequest.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\AddDiagnosticServiceResponse.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\DeleteDiagnosticServiceRequest.cs" />

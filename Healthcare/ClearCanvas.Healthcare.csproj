@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{748C08F1-FD6E-49F6-90BB-90C3A323C714}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -94,6 +94,8 @@
     <Compile Include="Alerts\NoteAlert.cs" />
     <Compile Include="Brokers\IWorklistItemBroker.cs" />
     <Compile Include="CannedText.cs" />
+    <Compile Include="Department.cs" />
+    <Compile Include="Imex\DepartmentImex.cs" />
     <Compile Include="ProtocolingWorklistItemSearchCriteria.cs" />
     <Compile Include="DicomSeries.cs" />
     <Compile Include="EmergencyWorklists.cs" />

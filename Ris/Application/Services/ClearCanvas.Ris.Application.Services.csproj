@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{11548867-F0DC-4142-82E8-59EBC36B8980}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -69,6 +69,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddressAssembler.cs" />
+    <Compile Include="Admin\DepartmentAdmin\DepartmentAdminService.cs" />
+    <Compile Include="Admin\DepartmentAdmin\DepartmentAssembler.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceAdminService.cs" />
     <Compile Include="Admin\ProcedureTypeAdmin\ProcedureTypeAdminService.cs" />
     <Compile Include="Admin\StaffGroupAdmin\StaffGroupAdminService.cs" />

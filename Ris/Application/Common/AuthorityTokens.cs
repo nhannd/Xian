@@ -48,6 +48,9 @@ namespace ClearCanvas.Ris.Application.Common
 				[AuthorityToken(Description = "Allow administration of Facilities.")]
 				public const string Facility = "RIS/Admin/Data/Facility";
 
+				[AuthorityToken(Description = "Allow administration of Departments.")]
+				public const string Department = "RIS/Admin/Data/Department";
+
 				[AuthorityToken(Description = "Allow administration of Patient Locations.")]
 				public const string Location = "RIS/Admin/Data/Location";
 

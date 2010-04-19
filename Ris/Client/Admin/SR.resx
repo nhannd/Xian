@@ -420,4 +420,10 @@
   <data name="TitleWorkQueue" xml:space="preserve">
     <value>Work Queue</value>
   </data>
+  <data name="TitleAddDepartment" xml:space="preserve">
+    <value>Add Department</value>
+  </data>
+  <data name="TitleUpdateDepartment" xml:space="preserve">
+    <value>Update Department</value>
+  </data>
 </root>
