@@ -32,6 +32,7 @@
 using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Threading;
+using Iesi.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
@@ -42,6 +43,7 @@ using ClearCanvas.Healthcare.Workflow;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
+using ClearCanvas.Workflow;
 using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
@@ -264,6 +266,89 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		}
 
 		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Merge)]
+		[OperationEnablement("CanMergeOrder")]
+		public MergeOrderResponse MergeOrder(MergeOrderRequest request)
+		{
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.SourceOrderRef, "SourceOrderRef");
+			Platform.CheckMemberIsSet(request.DestinationOrderRef, "DestinationOrderRef");
+
+			if (request.DryRun)
+				return MergeOrderDryRun(request);
+
+			var sourceOrder = this.PersistenceContext.Load<Order>(request.SourceOrderRef);
+			var destinationOrder = this.PersistenceContext.Load<Order>(request.DestinationOrderRef);
+
+			// Create a copy of the original procedures (with empty collections) before it is modified by the merge operation.
+			// Theese place holder procedures are required for HL7 messages.
+			var placeHolderClonedProcedures = CollectionUtils.Map<Procedure, Procedure>(sourceOrder.Procedures,
+				p => new Procedure(p.Order, p.Type, p.Index, new HashedSet<ProcedureStep>(),
+				p.ScheduledStartTime, p.StartTime, p.EndTime, p.Status, p.PerformingFacility,
+				p.Laterality, p.Portable, p.ProcedureCheckIn, p.ImageAvailability, p.DowntimeRecoveryMode,
+				new HashedSet<Report>(), new HashedSet<Protocol>(), p.OwlsPartition));
+
+			// Merge the source order into the destination order.
+			sourceOrder.Merge(new OrderMergeInfo(this.CurrentUserStaff, destinationOrder));
+
+			// Cancel and add each place holder procedures to the source order.
+			foreach (var newClonedProcedure in placeHolderClonedProcedures)
+			{
+				newClonedProcedure.Cancel();
+				sourceOrder.AddProcedure(newClonedProcedure);
+				this.PersistenceContext.Lock(newClonedProcedure, DirtyState.New);
+			}
+
+			// Add a orderNote to the source Order
+			var noteMessage = string.Format("Auto-generated note.  This order was merged into {0}", destinationOrder.AccessionNumber);
+			var newNote = new OrderNote("General", noteMessage, false, Platform.Time, this.CurrentUserStaff,
+				null, null, true, new HashedSet<NotePosting>(),
+				sourceOrder);
+			this.PersistenceContext.Lock(newNote, DirtyState.New);
+
+			CreateLogicalHL7Event(sourceOrder, LogicalHL7EventType.OrderCancelled);
+			CreateLogicalHL7Event(destinationOrder, LogicalHL7EventType.OrderModified);
+
+			return new MergeOrderResponse();
+		}
+
+		private MergeOrderResponse MergeOrderDryRun(MergeOrderRequest request)
+		{
+			var response = new MergeOrderResponse();
+
+			try
+			{
+				// create a new persistence scope, so that we do not use the scope inherited by the service
+				using (var scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.RequiresNew))
+				{
+					var srcOrder = this.PersistenceContext.Load<Order>(request.SourceOrderRef);
+					var destOrder = this.PersistenceContext.Load<Order>(request.DestinationOrderRef);
+
+					// Merge the source order into the destination order.
+					srcOrder.Merge(new OrderMergeInfo(this.CurrentUserStaff, destOrder));
+
+					// try to synch state to see if DB will accept changes
+					scope.Context.SynchState();
+
+					var orderAssembler = new OrderAssembler();
+					response.DryRunMergedOrder = orderAssembler.CreateOrderDetail(destOrder, 
+						new OrderAssembler.CreateOrderDetailOptions(true, true, true, null, true, true, true), scope.Context);
+
+					//note: do not call scope.Complete() under any circumstances - we want this transaction to rollback
+				}
+
+				return response;;
+			}
+			catch (WorkflowException e)
+			{
+				// changes not accepted, probably because two invalid orders are being merged.
+				response.DryRunFailureReason = e.Message;
+			}
+
+			return response;
+		}
+
+		[UpdateOperation]
 		[OperationEnablement("CanCancelOrder")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Cancel)]
 		public CancelOrderResponse CancelOrder(CancelOrderRequest request)
@@ -358,6 +443,18 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			var cancelOp = new CancelOrderOperation();
 			var discOp = new DiscontinueOrderOperation();
 			return discOp.CanExecute(order) || cancelOp.CanExecute(order);
+		}
+
+		public bool CanMergeOrder(WorklistItemKey itemKey)
+		{
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Order.Merge))
+				return false;
+
+			if (itemKey.OrderRef == null)
+				return false;
+
+			var order = this.PersistenceContext.Load<Order>(itemKey.OrderRef);
+			return order.Status == OrderStatus.SC;
 		}
 
 		public bool CanModifyOrder(WorklistItemKey itemKey)

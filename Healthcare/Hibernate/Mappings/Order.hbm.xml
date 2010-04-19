@@ -82,10 +82,17 @@
 			<many-to-one name="ReplacementOrder" class="Order" column="ReplacementOrderOID_"/>
 		</component>
 
+		<!-- Information about where the order was merged, populated if the order status is MG -->
+		<component name="MergeInfo" class="OrderMergeInfo" access="nosetter.camelcase-underscore">
+			<many-to-one name="MergedBy" class="Staff" column="MergedByOID_"/>
+			<!-- Link to the destination order, if the order was merged -->
+			<many-to-one name="MergeDestinationOrder" class="Order" column="MergeDestinationOrderOID_"/>
+		</component>
+
 		<map name="ExtendedProperties" lazy="true" table="OrderExtendedProperty_">
 			<key column="OrderOID_"/>
 			<index column="Name_" type="String"/>
-      <element type="String" column="Value_" length="65000"/>
-    </map>
+			<element type="String" column="Value_" length="65000"/>
+		</map>
 	</class>
 </hibernate-mapping>

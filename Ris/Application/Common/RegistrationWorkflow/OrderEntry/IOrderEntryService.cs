@@ -140,6 +140,15 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         [FaultContract(typeof(ConcurrentModificationException))]
         ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request);
 
+		/// <summary>
+		/// Merge an existing order into another order in a single transaction.
+		/// </summary>
+		/// <param name="request"><see cref="ReplaceOrderRequest"/></param>
+		/// <returns><see cref="ReplaceOrderResponse"/></returns>
+		[OperationContract]
+		[FaultContract(typeof(RequestValidationException))]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		MergeOrderResponse MergeOrder(MergeOrderRequest request);
 
         /// <summary>
         /// Cancel orders with a cancellation reason for a patient

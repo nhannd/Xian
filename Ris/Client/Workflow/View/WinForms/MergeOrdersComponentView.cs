@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -30,61 +30,49 @@
 #endregion
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Healthcare {
-
+namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
+{
     /// <summary>
-    /// OrderStatus enumeration as defined by HL7 (4.5.1.5).  This is only a subset of what HL7 defines.
-    /// More values can be added later if necessary.
+    /// Provides a Windows Forms view onto <see cref="MergeOrdersComponent"/>.
     /// </summary>
-    [EnumValueClass(typeof(OrderStatusEnum))]
-    public enum OrderStatus
-	{
-        /// <summary>
-        /// Scheduled
-        /// </summary>
-        [EnumValue("Scheduled", Description="In process, scheduled")]
-        SC,
- 
-        /// <summary>
-        /// Canceled
-        /// </summary>
-        [EnumValue("Canceled", Description="Order was canceled")]
-        CA,
+    [ExtensionOf(typeof(MergeOrdersComponentViewExtensionPoint))]
+    public class MergeOrdersComponentView : WinFormsView, IApplicationComponentView
+    {
+        private MergeOrdersComponent _component;
+        private MergeOrdersComponentControl _control;
+
+        #region IApplicationComponentView Members
 
         /// <summary>
-        /// Completed
+        /// Called by the host to assign this view to a component.
         /// </summary>
-        [EnumValue("Completed", Description="Order is completed")]
-        CM,
+        public void SetComponent(IApplicationComponent component)
+        {
+            _component = (MergeOrdersComponent)component;
+        }
+
+        #endregion
 
         /// <summary>
-        /// Discontinued
+        /// Gets the underlying GUI component for this view.
         /// </summary>
-        [EnumValue("Discontinued", Description="Order was discontinued")]
-        DC,
-
-        /// <summary>
-        /// In Progress
-        /// </summary>
-        [EnumValue("In Progress", Description="In process, unspecified")]
-        IP,
-
-        /// <summary>
-        /// Replaced
-        /// </summary>
-        [EnumValue("Replaced", Description="Order was replaced")]
-        RP,
-
-		/// <summary>
-		/// Merged
-		/// </summary>
-		[EnumValue("Merged", Description = "Order was merged")]
-		MG,
-	}
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new MergeOrdersComponentControl(_component);
+                }
+                return _control;
+            }
+        }
+    }
 }

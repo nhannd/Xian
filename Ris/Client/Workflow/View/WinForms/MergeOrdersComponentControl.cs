@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -30,61 +30,57 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Text;
+using System.Windows.Forms;
+using ClearCanvas.Desktop.View.WinForms;
 
-using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
-
-namespace ClearCanvas.Healthcare {
-
-    /// <summary>
-    /// OrderStatus enumeration as defined by HL7 (4.5.1.5).  This is only a subset of what HL7 defines.
-    /// More values can be added later if necessary.
-    /// </summary>
-    [EnumValueClass(typeof(OrderStatusEnum))]
-    public enum OrderStatus
+namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
+{
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="MergeOrdersComponent"/>.
+	/// </summary>
+	public partial class MergeOrdersComponentControl : ApplicationComponentUserControl
 	{
-        /// <summary>
-        /// Scheduled
-        /// </summary>
-        [EnumValue("Scheduled", Description="In process, scheduled")]
-        SC,
- 
-        /// <summary>
-        /// Canceled
-        /// </summary>
-        [EnumValue("Canceled", Description="Order was canceled")]
-        CA,
-
-        /// <summary>
-        /// Completed
-        /// </summary>
-        [EnumValue("Completed", Description="Order is completed")]
-        CM,
-
-        /// <summary>
-        /// Discontinued
-        /// </summary>
-        [EnumValue("Discontinued", Description="Order was discontinued")]
-        DC,
-
-        /// <summary>
-        /// In Progress
-        /// </summary>
-        [EnumValue("In Progress", Description="In process, unspecified")]
-        IP,
-
-        /// <summary>
-        /// Replaced
-        /// </summary>
-        [EnumValue("Replaced", Description="Order was replaced")]
-        RP,
+		private readonly MergeOrdersComponent _component;
 
 		/// <summary>
-		/// Merged
+		/// Constructor.
 		/// </summary>
-		[EnumValue("Merged", Description = "Order was merged")]
-		MG,
+		public MergeOrdersComponentControl(MergeOrdersComponent component)
+			:base(component)
+		{
+			_component = component;
+			InitializeComponent();
+
+			_order1Accession.Value = _component.Order1AccessionNumber;
+			_order1DiagnosticServiceName.Value = _component.Order1DiagnosticServiceName;
+			_order2Accession.Value = _component.Order2AccessionNumber;
+			_order2DiagnosticServiceName.Value = _component.Order2DiagnosticServiceName;
+			UpdateMergeDirection();
+
+			var previewControl = (Control)_component.MergedOrderPreviewComponentHost.ComponentView.GuiElement;
+			_mergedOrderPreviewPanel.Controls.Add(previewControl);
+			previewControl.Dock = DockStyle.Fill;
+		}
+
+		private void _acceptButton_Click(object sender, EventArgs e)
+		{
+			_component.Accept();
+		}
+
+		private void _cancelButton_Click(object sender, EventArgs e)
+		{
+			_component.Cancel();
+		}
+
+		private void _mergeDirectionButton_Click(object sender, EventArgs e)
+		{
+			_component.ToggleMergeDirection();
+			UpdateMergeDirection();
+		}
+
+		private void UpdateMergeDirection()
+		{
+			_mergeDirectionButton.Text = _component.MergingRight ? "--->" : "<---";
+		}
 	}
 }

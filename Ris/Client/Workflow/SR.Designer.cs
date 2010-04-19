@@ -1803,6 +1803,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Merge Orders.
+        /// </summary>
+        internal static string TitleMergeOrders {
+            get {
+                return ResourceManager.GetString("TitleMergeOrders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to New Order for {0} {1}.
         /// </summary>
         internal static string TitleNewOrder {

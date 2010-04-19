@@ -31,6 +31,7 @@
 
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -45,13 +46,21 @@ namespace ClearCanvas.Ris.Client
 				this.OrderRef = orderRef;
 			}
 
+			public OrderContext(OrderDetail orderDetail)
+			{
+				this.OrderDetail = orderDetail;
+			}
+
 			[DataMember]
 			public EntityRef OrderRef;
+
+			[DataMember]
+			public OrderDetail OrderDetail;
 		}
 
-        protected DataContractBase _context;
+		protected DataContractBase _context;
 
-		public OrderDetailViewComponent()
+		protected OrderDetailViewComponent()
 			: this(null)
 		{
 		}
@@ -74,7 +83,7 @@ namespace ClearCanvas.Ris.Client
 
 		protected abstract string PageUrl { get; }
 
-        public virtual DataContractBase Context
+		public virtual DataContractBase Context
 		{
 			get { return _context; }
 			set

@@ -135,7 +135,7 @@ namespace ClearCanvas.Healthcare
 		{
 			get
 			{
-				return _status == OrderStatus.CM || _status == OrderStatus.CA || _status == OrderStatus.DC || _status == OrderStatus.RP;
+				return _status == OrderStatus.CM || _status == OrderStatus.CA || _status == OrderStatus.DC || _status == OrderStatus.RP || _status == OrderStatus.MG;
 			}
 		}
 
@@ -206,6 +206,59 @@ namespace ClearCanvas.Healthcare
 			{
 				procedure.Schedule(startTime);
 			}
+		}
+
+		public virtual void Merge(OrderMergeInfo mergeInfo)
+		{
+			var destinationOrder = mergeInfo.MergeDestinationOrder;
+
+			if (this.Status != OrderStatus.SC || destinationOrder.Status != OrderStatus.SC)
+				throw new WorkflowException("Only scheduled orders can be merged");
+			if (this.Patient != destinationOrder.Patient)
+				throw new WorkflowException("Orders that belong to differnt patients cannot be merged.");
+			if (this.OrderingFacility.InformationAuthority != destinationOrder.OrderingFacility.InformationAuthority)
+				throw new WorkflowException("Orders that were ordered by different facilities cannot be merged.");
+
+			_mergeInfo = mergeInfo;
+
+			// Move all the result recipients
+			foreach (var rr in _resultRecipients)
+			{
+				destinationOrder.ResultRecipients.Add(rr);
+			}
+			_resultRecipients.Clear();
+
+			// Move all the attachments
+			foreach (var a in _attachments)
+			{
+				destinationOrder.Attachments.Add(a);
+			}
+			_attachments.Clear();
+
+			// Move all the order notes
+			var notes = OrderNote.GetNotesForOrder(this);
+			foreach (var n in notes)
+			{
+				n.Order = destinationOrder;
+			}
+
+			// generate an index for the procedure
+			var highestIndex = CollectionUtils.Max(
+				CollectionUtils.Map<Procedure, int>(destinationOrder.Procedures, p => int.Parse(p.Index)), 0);
+
+			// Move all the orders to the new order.
+			foreach (var p in _procedures)
+			{
+				p.Order = destinationOrder;
+				p.Index = (highestIndex + 1).ToString();
+				destinationOrder.Procedures.Add(p);
+				highestIndex = highestIndex + 1;
+			}
+
+			// update scheduling information
+			destinationOrder.UpdateScheduling();
+
+			SetStatus(OrderStatus.MG);
 		}
 
 		/// <summary>

@@ -827,4 +827,7 @@ Choose "No" to verify this report without further action.</value>
   <data name="TitlePrintWorklist" xml:space="preserve">
     <value>Print Worklist</value>
   </data>
+  <data name="TitleMergeOrders" xml:space="preserve">
+    <value>Merge Orders</value>
+  </data>
 </root>

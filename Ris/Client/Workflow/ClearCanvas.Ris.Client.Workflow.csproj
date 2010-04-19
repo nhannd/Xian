@@ -62,6 +62,8 @@
     <Compile Include="EditReportTool.cs" />
     <Compile Include="Folders\RadiologistAdminWorkflowFolders.cs" />
     <Compile Include="Folders\TranscriptionWorkflowFolders.cs" />
+    <Compile Include="MergeOrdersComponent.cs" />
+    <Compile Include="MergeOrdersTool.cs" />
     <Compile Include="PatientSearchTool.cs" />
     <Compile Include="PerformedProcedureDicomSeriesComponent.cs" />
     <Compile Include="PreliminaryDiagnosisSettings.cs" />
