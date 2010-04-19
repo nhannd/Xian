@@ -284,7 +284,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			// Theese place holder procedures are required for HL7 messages.
 			var placeHolderClonedProcedures = CollectionUtils.Map<Procedure, Procedure>(sourceOrder.Procedures,
 				p => new Procedure(p.Order, p.Type, p.Index, new HashedSet<ProcedureStep>(),
-				p.ScheduledStartTime, p.StartTime, p.EndTime, p.Status, p.PerformingFacility,
+				p.ScheduledStartTime, p.StartTime, p.EndTime, p.Status, p.PerformingFacility, p.PerformingDepartment,
 				p.Laterality, p.Portable, p.ProcedureCheckIn, p.ImageAvailability, p.DowntimeRecoveryMode,
 				new HashedSet<Report>(), new HashedSet<Protocol>(), p.OwlsPartition));
 
