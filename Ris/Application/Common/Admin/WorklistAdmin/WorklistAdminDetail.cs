@@ -38,156 +38,156 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 {
 
 
-    [DataContract]
-    public class WorklistAdminDetail : DataContractBase
-    {
-        [DataContract]
-        public class TimePoint
-        {
-            public TimePoint(DateTime? fixedTime, long resolution)
-            {
-                this.FixedTime = fixedTime;
-                this.Resolution = resolution;
-            }
+	[DataContract]
+	public class WorklistAdminDetail : DataContractBase
+	{
+		[DataContract]
+		public class TimePoint
+		{
+			public TimePoint(DateTime? fixedTime, long resolution)
+			{
+				this.FixedTime = fixedTime;
+				this.Resolution = resolution;
+			}
 
-            public TimePoint(TimeSpan? relativeTime, long resolution)
-            {
-                this.RelativeTime = relativeTime;
-                this.Resolution = resolution;
-            }
+			public TimePoint(TimeSpan? relativeTime, long resolution)
+			{
+				this.RelativeTime = relativeTime;
+				this.Resolution = resolution;
+			}
 
-            [DataMember]
-            public DateTime? FixedTime;
+			[DataMember]
+			public DateTime? FixedTime;
 
-            [DataMember]
-            public TimeSpan? RelativeTime;
+			[DataMember]
+			public TimeSpan? RelativeTime;
 
-            [DataMember]
-            public long Resolution;
-        }
+			[DataMember]
+			public long Resolution;
+		}
 
-        [DataContract]
-        public class StaffList
-        {
-            public StaffList()
-            {
-                this.Staff = new List<StaffSummary>();
-            }
+		[DataContract]
+		public class StaffList
+		{
+			public StaffList()
+			{
+				this.Staff = new List<StaffSummary>();
+			}
 
-            [DataMember]
-            public List<StaffSummary> Staff;
+			[DataMember]
+			public List<StaffSummary> Staff;
 
-            [DataMember]
-            public bool IncludeCurrentUser;
-        }
+			[DataMember]
+			public bool IncludeCurrentUser;
+		}
 
-        public WorklistAdminDetail()
-        {
-            this.ProcedureTypeGroups = new List<ProcedureTypeGroupSummary>();
-            this.Facilities = new List<FacilitySummary>();
-            this.PatientClasses = new List<EnumValueInfo>();
-            this.PatientLocations = new List<LocationSummary>();
-            this.OrderPriorities = new List<EnumValueInfo>();
-            this.Portabilities = new List<bool>();
+		public WorklistAdminDetail()
+		{
+			this.ProcedureTypeGroups = new List<ProcedureTypeGroupSummary>();
+			this.Facilities = new List<FacilitySummary>();
+			this.PatientClasses = new List<EnumValueInfo>();
+			this.PatientLocations = new List<LocationSummary>();
+			this.OrderPriorities = new List<EnumValueInfo>();
+			this.Portabilities = new List<bool>();
 
-            this.InterpretedByStaff = new StaffList();
-            this.TranscribedByStaff = new StaffList();
-            this.VerifiedByStaff = new StaffList();
-            this.SupervisedByStaff = new StaffList();
+			this.InterpretedByStaff = new StaffList();
+			this.TranscribedByStaff = new StaffList();
+			this.VerifiedByStaff = new StaffList();
+			this.SupervisedByStaff = new StaffList();
 
-            this.StaffSubscribers = new List<StaffSummary>();
-            this.GroupSubscribers = new List<StaffGroupSummary>();
-        }
+			this.StaffSubscribers = new List<StaffSummary>();
+			this.GroupSubscribers = new List<StaffGroupSummary>();
+		}
 
 
-        public WorklistAdminDetail(EntityRef entityRef, string name, string description, WorklistClassSummary worklistClass)
-            : this()
-        {
-            EntityRef = entityRef;
-            Name = name;
-            Description = description;
-            WorklistClass = worklistClass;
-        }
+		public WorklistAdminDetail(EntityRef entityRef, string name, string description, WorklistClassSummary worklistClass)
+			: this()
+		{
+			EntityRef = entityRef;
+			Name = name;
+			Description = description;
+			WorklistClass = worklistClass;
+		}
 
-        public bool IsUserWorklist
-        {
-            get { return IsStaffOwned || IsGroupOwned; }
-        }
+		public bool IsUserWorklist
+		{
+			get { return IsStaffOwned || IsGroupOwned; }
+		}
 
-        public bool IsStaffOwned
-        {
-            get { return OwnerStaff != null; }
-        }
+		public bool IsStaffOwned
+		{
+			get { return OwnerStaff != null; }
+		}
 
-        public bool IsGroupOwned
-        {
-            get { return OwnerGroup != null; }
-        }
+		public bool IsGroupOwned
+		{
+			get { return OwnerGroup != null; }
+		}
 
-        [DataMember]
-        public EntityRef EntityRef;
+		[DataMember]
+		public EntityRef EntityRef;
 
-        [DataMember]
-        public string Name;
+		[DataMember]
+		public string Name;
 
-        [DataMember]
-        public string Description;
+		[DataMember]
+		public string Description;
 
-        [DataMember]
-        public StaffSummary OwnerStaff;
+		[DataMember]
+		public StaffSummary OwnerStaff;
 
-        [DataMember]
-        public StaffGroupSummary OwnerGroup;
+		[DataMember]
+		public StaffGroupSummary OwnerGroup;
 
-        [DataMember]
-        public WorklistClassSummary WorklistClass;
+		[DataMember]
+		public WorklistClassSummary WorklistClass;
 
-        [DataMember]
-        public List<ProcedureTypeGroupSummary> ProcedureTypeGroups;
+		[DataMember]
+		public List<ProcedureTypeGroupSummary> ProcedureTypeGroups;
 
-        [DataMember]
-        public List<FacilitySummary> Facilities;
+		[DataMember]
+		public List<FacilitySummary> Facilities;
 
-        [DataMember]
-        public bool FilterByWorkingFacility;
+		[DataMember]
+		public bool FilterByWorkingFacility;
 
-        [DataMember]
-        public List<EnumValueInfo> OrderPriorities;
+		[DataMember]
+		public List<EnumValueInfo> OrderPriorities;
 
-        [DataMember]
-        public List<ExternalPractitionerSummary> OrderingPractitioners;
+		[DataMember]
+		public List<ExternalPractitionerSummary> OrderingPractitioners;
 
-        [DataMember]
-        public List<EnumValueInfo> PatientClasses;
+		[DataMember]
+		public List<EnumValueInfo> PatientClasses;
 
-        [DataMember]
-        public List<LocationSummary> PatientLocations;
+		[DataMember]
+		public List<LocationSummary> PatientLocations;
 
-        [DataMember]
-        public List<bool> Portabilities;
+		[DataMember]
+		public List<bool> Portabilities;
 
-        [DataMember]
-        public TimePoint StartTime;
+		[DataMember]
+		public TimePoint StartTime;
 
-        [DataMember]
-        public TimePoint EndTime;
+		[DataMember]
+		public TimePoint EndTime;
 
-        [DataMember]
-        public List<StaffSummary> StaffSubscribers;
+		[DataMember]
+		public List<StaffSummary> StaffSubscribers;
 
-        [DataMember]
-        public List<StaffGroupSummary> GroupSubscribers;
+		[DataMember]
+		public List<StaffGroupSummary> GroupSubscribers;
 
-        [DataMember]
-        public StaffList InterpretedByStaff;
+		[DataMember]
+		public StaffList InterpretedByStaff;
 
-        [DataMember]
-        public StaffList TranscribedByStaff;
+		[DataMember]
+		public StaffList TranscribedByStaff;
 
-        [DataMember]
-        public StaffList VerifiedByStaff;
+		[DataMember]
+		public StaffList VerifiedByStaff;
 
-        [DataMember]
-        public StaffList SupervisedByStaff;
-    }
+		[DataMember]
+		public StaffList SupervisedByStaff;
+	}
 }
