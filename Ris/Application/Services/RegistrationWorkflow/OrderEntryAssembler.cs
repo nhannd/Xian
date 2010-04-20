@@ -128,6 +128,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		{
 			var procedureTypeAssembler = new ProcedureTypeAssembler();
 			var facilityAssembler = new FacilityAssembler();
+			var departmentAssembler = new DepartmentAssembler();
 
 			// create requisition
 			return new ProcedureRequisition(
@@ -135,6 +136,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				procedure.Index,
 				procedure.ScheduledStartTime,
 				procedure.PerformingFacility == null ? null : facilityAssembler.CreateFacilitySummary(procedure.PerformingFacility),
+				procedure.PerformingDepartment == null ? null : departmentAssembler.CreateSummary(procedure.PerformingDepartment, context),
 				EnumUtils.GetEnumValueInfo(procedure.Laterality, context),
 				procedure.Portable,
 				procedure.ProcedureCheckIn.IsPreCheckIn == false,
@@ -177,6 +179,9 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			}
 
 			procedure.PerformingFacility = context.Load<Facility>(requisition.PerformingFacility.FacilityRef, EntityLoadFlags.Proxy);
+			procedure.PerformingDepartment = requisition.PerformingDepartment == null ? null
+				: context.Load<Department>(requisition.PerformingDepartment.DepartmentRef, EntityLoadFlags.Proxy);
+
 			procedure.Laterality = EnumUtils.GetEnumValue<Laterality>(requisition.Laterality);
 			procedure.Portable = requisition.PortableModality;
 

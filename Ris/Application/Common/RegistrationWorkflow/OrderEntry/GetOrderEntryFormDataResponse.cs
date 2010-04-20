@@ -32,35 +32,39 @@
 using System.Runtime.Serialization;
 using System.Collections.Generic;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
 
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 {
-    [DataContract]
-    public class GetOrderEntryFormDataResponse : DataContractBase
-    {
-        public GetOrderEntryFormDataResponse(
-            List<FacilitySummary> orderingFacilityChoices,
-            List<EnumValueInfo> orderPriorityChoices,
-            List<EnumValueInfo> cancelReasonChoices,
-            List<EnumValueInfo> lateralityChoices)
-        {
-            this.FacilityChoices = orderingFacilityChoices;
-            this.OrderPriorityChoices = orderPriorityChoices;
-            this.CancelReasonChoices = cancelReasonChoices;
-            this.LateralityChoices = lateralityChoices;
-        }
+	[DataContract]
+	public class GetOrderEntryFormDataResponse : DataContractBase
+	{
+		public GetOrderEntryFormDataResponse(
+			List<FacilitySummary> facilityChoices,
+			List<DepartmentSummary> departmentChoices,
+			List<EnumValueInfo> orderPriorityChoices,
+			List<EnumValueInfo> cancelReasonChoices,
+			List<EnumValueInfo> lateralityChoices)
+		{
+			this.FacilityChoices = facilityChoices;
+			this.DepartmentChoices = departmentChoices;
+			this.OrderPriorityChoices = orderPriorityChoices;
+			this.CancelReasonChoices = cancelReasonChoices;
+			this.LateralityChoices = lateralityChoices;
+		}
 
-        [DataMember]
-        public List<FacilitySummary> FacilityChoices;
+		[DataMember]
+		public List<FacilitySummary> FacilityChoices;
 
-        [DataMember]
-        public List<EnumValueInfo> OrderPriorityChoices;
+		[DataMember]
+		public List<DepartmentSummary> DepartmentChoices;
 
-        [DataMember]
-        public List<EnumValueInfo> CancelReasonChoices;
+		[DataMember]
+		public List<EnumValueInfo> OrderPriorityChoices;
 
-        [DataMember]
-        public List<EnumValueInfo> LateralityChoices;
-    }
+		[DataMember]
+		public List<EnumValueInfo> CancelReasonChoices;
+
+		[DataMember]
+		public List<EnumValueInfo> LateralityChoices;
+	}
 }

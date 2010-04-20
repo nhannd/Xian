@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 
@@ -68,6 +69,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
                                              e.Value = _component.FormatFacility(e.ListItem);
                                          };
 
+			_performingDepartment.DataSource = _component.DepartmentChoices;
+			_performingDepartment.DataBindings.Add("Value", _component, "SelectedDepartment", true, DataSourceUpdateMode.OnPropertyChanged);
+			_performingDepartment.DataBindings.Add("Enabled", _component, "IsPerformingDepartmentEditable");
+			_performingDepartment.Format += delegate(object sender, ListControlConvertEventArgs e)
+			{
+				e.Value = _component.FormatDepartment(e.ListItem);
+			};
+
             _laterality.DataSource = _component.LateralityChoices;
             _laterality.DataBindings.Add("Value", _component, "SelectedLaterality", true, DataSourceUpdateMode.OnPropertyChanged);
 
@@ -80,7 +89,17 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
             _checkedIn.DataBindings.Add("Checked", _component, "CheckedIn", true, DataSourceUpdateMode.OnPropertyChanged);
             _checkedIn.DataBindings.Add("Enabled", _component, "IsCheckedInEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_component.PropertyChanged += _component_PropertyChanged;
         }
+
+		private void _component_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == "DepartmentChoicesChanged")
+			{
+				_performingDepartment.DataSource = _component.DepartmentChoices;
+			}
+		}
 
         private void _okButton_Click(object sender, EventArgs e)
         {

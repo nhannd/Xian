@@ -37,11 +37,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._laterality = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._portable = new System.Windows.Forms.CheckBox();
 			this._checkedIn = new System.Windows.Forms.CheckBox();
+			this._performingDepartment = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this.SuspendLayout();
 			// 
 			// _okButton
 			// 
-			this._okButton.Location = new System.Drawing.Point(350, 299);
+			this._okButton.Location = new System.Drawing.Point(350, 364);
 			this._okButton.Margin = new System.Windows.Forms.Padding(2);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
@@ -52,7 +53,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Location = new System.Drawing.Point(425, 299);
+			this._cancelButton.Location = new System.Drawing.Point(425, 364);
 			this._cancelButton.Margin = new System.Windows.Forms.Padding(2);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
@@ -120,7 +121,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._laterality.DisplayMember = "";
 			this._laterality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._laterality.LabelText = "Laterality";
-			this._laterality.Location = new System.Drawing.Point(277, 195);
+			this._laterality.Location = new System.Drawing.Point(277, 260);
 			this._laterality.Margin = new System.Windows.Forms.Padding(2);
 			this._laterality.Name = "_laterality";
 			this._laterality.Size = new System.Drawing.Size(223, 41);
@@ -130,7 +131,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _portable
 			// 
 			this._portable.AutoSize = true;
-			this._portable.Location = new System.Drawing.Point(22, 214);
+			this._portable.Location = new System.Drawing.Point(22, 279);
 			this._portable.Margin = new System.Windows.Forms.Padding(2);
 			this._portable.Name = "_portable";
 			this._portable.Size = new System.Drawing.Size(65, 17);
@@ -141,7 +142,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _checkedIn
 			// 
 			this._checkedIn.AutoSize = true;
-			this._checkedIn.Location = new System.Drawing.Point(375, 265);
+			this._checkedIn.Location = new System.Drawing.Point(375, 330);
 			this._checkedIn.Margin = new System.Windows.Forms.Padding(2);
 			this._checkedIn.Name = "_checkedIn";
 			this._checkedIn.Size = new System.Drawing.Size(125, 17);
@@ -149,10 +150,24 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._checkedIn.Text = "Patient is checked-in";
 			this._checkedIn.UseVisualStyleBackColor = true;
 			// 
+			// _performingDepartment
+			// 
+			this._performingDepartment.DataSource = null;
+			this._performingDepartment.DisplayMember = "";
+			this._performingDepartment.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._performingDepartment.LabelText = "Performing Department";
+			this._performingDepartment.Location = new System.Drawing.Point(15, 198);
+			this._performingDepartment.Margin = new System.Windows.Forms.Padding(2);
+			this._performingDepartment.Name = "_performingDepartment";
+			this._performingDepartment.Size = new System.Drawing.Size(485, 41);
+			this._performingDepartment.TabIndex = 9;
+			this._performingDepartment.Value = null;
+			// 
 			// ProcedureEditorComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._performingDepartment);
 			this.Controls.Add(this._checkedIn);
 			this.Controls.Add(this._portable);
 			this.Controls.Add(this._laterality);
@@ -164,7 +179,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Controls.Add(this._okButton);
 			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "ProcedureEditorComponentControl";
-			this.Size = new System.Drawing.Size(517, 327);
+			this.Size = new System.Drawing.Size(517, 393);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -181,5 +196,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.ComboBoxField _laterality;
         private System.Windows.Forms.CheckBox _portable;
 		private System.Windows.Forms.CheckBox _checkedIn;
+		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _performingDepartment;
     }
 }

@@ -46,6 +46,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 			string procedureIndex,
 			DateTime? scheduledTime,
 			FacilitySummary performingFacility,
+			DepartmentSummary performingDepartment,
 			EnumValueInfo laterality,
 			bool portableModality,
 			bool checkedIn,
@@ -57,6 +58,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 			this.ProcedureIndex = procedureIndex;
 			this.ScheduledTime = scheduledTime;
 			this.PerformingFacility = performingFacility;
+			this.PerformingDepartment = performingDepartment;
 			this.Laterality = laterality;
 			this.PortableModality = portableModality;
 			this.CheckedIn = checkedIn;
@@ -107,6 +109,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 		/// </summary>
 		[DataMember]
 		public FacilitySummary PerformingFacility;
+
+		/// <summary>
+		/// Department at which this procedure will be performed. Optional.
+		/// </summary>
+		[DataMember]
+		public DepartmentSummary PerformingDepartment;
 
 		/// <summary>
 		/// Indicates whether this procedure is to be performed on a portable modality.

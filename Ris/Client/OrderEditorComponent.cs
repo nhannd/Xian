@@ -195,6 +195,7 @@ namespace ClearCanvas.Ris.Client
 		private DiagnosticServiceLookupHandler _diagnosticServiceLookupHandler;
 
 		private List<FacilitySummary> _facilityChoices;
+		private List<DepartmentSummary> _departmentChoices;
 		private List<EnumValueInfo> _priorityChoices;
 		private List<EnumValueInfo> _cancelReasonChoices;
 
@@ -394,6 +395,7 @@ namespace ClearCanvas.Ris.Client
 				});
 
 			_facilityChoices = new List<FacilitySummary>();
+			_departmentChoices = new List<DepartmentSummary>();
 			_priorityChoices = new List<EnumValueInfo>();
 			_cancelReasonChoices = new List<EnumValueInfo>();
 			_lateralityChoices = new List<EnumValueInfo>();
@@ -408,6 +410,7 @@ namespace ClearCanvas.Ris.Client
 					_selectedCancelReason = _cancelReasonChoices.Count > 0 ? _cancelReasonChoices[0] : null;
 
 					_facilityChoices = formChoicesResponse.FacilityChoices;
+					_departmentChoices = formChoicesResponse.DepartmentChoices;
 					_lateralityChoices = formChoicesResponse.LateralityChoices;
 
 					if (_mode == Mode.NewOrder)
@@ -869,7 +872,13 @@ namespace ClearCanvas.Ris.Client
 						var orderableProcedureTypes = response.OrderableProcedureTypes;
 
 						var procedureRequisition = new ProcedureRequisition(null, _orderingFacility);
-						var procedureEditor = new ProcedureEditorComponent(procedureRequisition, _facilityChoices, _lateralityChoices, orderableProcedureTypes);
+						var procedureEditor = new ProcedureEditorComponent(
+							procedureRequisition,
+							_facilityChoices,
+							_departmentChoices,
+							_lateralityChoices,
+							orderableProcedureTypes);
+
 						if (LaunchAsDialog(this.Host.DesktopWindow, procedureEditor, "Add Procedure")
 							== ApplicationComponentExitCode.Accepted)
 						{
@@ -892,7 +901,12 @@ namespace ClearCanvas.Ris.Client
 
 			try
 			{
-				var procedureEditor = new ProcedureEditorComponent(_selectedProcedure, _facilityChoices, _lateralityChoices);
+				var procedureEditor = new ProcedureEditorComponent(
+					_selectedProcedure,
+					_facilityChoices,
+					_departmentChoices,
+					_lateralityChoices);
+
 				if (LaunchAsDialog(this.Host.DesktopWindow, procedureEditor, "Modify Procedure")
 					== ApplicationComponentExitCode.Accepted)
 				{

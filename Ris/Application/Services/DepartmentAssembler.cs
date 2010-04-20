@@ -2,7 +2,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Ris.Application.Services.Admin.DepartmentAdmin
+namespace ClearCanvas.Ris.Application.Services
 {
 	class DepartmentAssembler
 	{

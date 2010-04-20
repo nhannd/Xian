@@ -37,6 +37,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -61,8 +62,13 @@ namespace ClearCanvas.Ris.Client
 
 		private readonly ProcedureRequisition _requisition;
 		private readonly List<FacilitySummary> _facilityChoices;
+		private readonly List<DepartmentSummary> _allDepartments;
+		private List<DepartmentSummary> _departmentChoices;
+		private readonly DepartmentSummary _departmentNone = new DepartmentSummary();
+
 		private readonly List<EnumValueInfo> _lateralityChoices;
 		private FacilitySummary _selectedFacility;
+		private DepartmentSummary _selectedDepartment;
 		private EnumValueInfo _selectedLaterality;
 		private bool _portableModality;
 		private bool _checkedIn;
@@ -71,7 +77,11 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Constructor for add mode.
 		/// </summary>
-		public ProcedureEditorComponent(ProcedureRequisition requisition, List<FacilitySummary> facilityChoices, List<EnumValueInfo> lateralityChoices, List<ProcedureTypeSummary> procedureTypeChoices)
+		public ProcedureEditorComponent(ProcedureRequisition requisition,
+			List<FacilitySummary> facilityChoices,
+			List<DepartmentSummary> departmentChoices, 
+			List<EnumValueInfo> lateralityChoices,
+			List<ProcedureTypeSummary> procedureTypeChoices)
 		{
 			Platform.CheckForNullReference(requisition, "requisition");
 			Platform.CheckForNullReference(procedureTypeChoices, "procedureTypeChoices");
@@ -79,6 +89,7 @@ namespace ClearCanvas.Ris.Client
 			_requisition = requisition;
 			_procedureTypeChoices = procedureTypeChoices;
 			_facilityChoices = facilityChoices;
+			_allDepartments = departmentChoices;
 			_lateralityChoices = lateralityChoices;
 
 			// if the requisition's procedure type is null, then it is a new procedure and checked in can be edited.
@@ -88,9 +99,12 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Constructor for edit mode.
 		/// </summary>
-		public ProcedureEditorComponent(ProcedureRequisition requisition,
-			List<FacilitySummary> facilityChoices, List<EnumValueInfo> lateralityChoices)
-			: this(requisition, facilityChoices, lateralityChoices, new List<ProcedureTypeSummary>())
+		public ProcedureEditorComponent(
+			ProcedureRequisition requisition,
+			List<FacilitySummary> facilityChoices,
+			List<DepartmentSummary> departmentChoices,
+			List<EnumValueInfo> lateralityChoices)
+			: this(requisition, facilityChoices, departmentChoices, lateralityChoices, new List<ProcedureTypeSummary>())
 		{
 		}
 
@@ -115,7 +129,15 @@ namespace ClearCanvas.Ris.Client
 
 			_selectedProcedureType = _requisition.ProcedureType;
 			_scheduledTime = _requisition.ScheduledTime;
+
 			_selectedFacility = _requisition.PerformingFacility;
+
+			// update department choices based on selected facility
+			UpdateDepartmentChoices();
+
+			_selectedDepartment = _requisition.PerformingDepartment;
+
+
 			_selectedLaterality = _requisition.Laterality;
 			_portableModality = _requisition.PortableModality;
 			_checkedIn = _requisition.CheckedIn;
@@ -131,6 +153,11 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		public bool IsPerformingFacilityEditable
+		{
+			get { return _requisition.Status == null || _requisition.Status.Code == "SC"; }
+		}
+
+		public bool IsPerformingDepartmentEditable
 		{
 			get { return _requisition.Status == null || _requisition.Status.Code == "SC"; }
 		}
@@ -186,6 +213,37 @@ namespace ClearCanvas.Ris.Client
 
 				_selectedFacility = value;
 				NotifyPropertyChanged("SelectedFacility");
+
+				UpdateDepartmentChoices();
+				NotifyPropertyChanged("DepartmentChoicesChanged");
+
+				// clear selection
+				this.SelectedDepartment = null;
+			}
+		}
+
+		public IList DepartmentChoices
+		{
+			get { return _departmentChoices; }
+		}
+
+		public string FormatDepartment(object department)
+		{
+			return (department == _departmentNone || department == null) ? "" : ((DepartmentSummary)department).Name;
+		}
+
+		public DepartmentSummary SelectedDepartment
+		{
+			get { return _selectedDepartment; }
+			set
+			{
+				if (Equals(value, _selectedDepartment))
+					return;
+
+				// note: important to convert _departemntNone to null here, in order for "not-null" custom validation rules
+				// to behave as expected
+				_selectedDepartment = value == _departmentNone ? null : value;
+				NotifyPropertyChanged("SelectedDepartment");
 			}
 		}
 
@@ -263,6 +321,7 @@ namespace ClearCanvas.Ris.Client
 			_requisition.ScheduledTime = _scheduledTime;
 			_requisition.Laterality = _selectedLaterality;
 			_requisition.PerformingFacility = _selectedFacility;
+			_requisition.PerformingDepartment = _selectedDepartment;
 			_requisition.PortableModality = _portableModality;
 			_requisition.CheckedIn = _checkedIn;
 
@@ -275,5 +334,16 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		#endregion
+
+		private void UpdateDepartmentChoices()
+		{
+			// limit department choices to those that are associated with the selected performing facility
+			_departmentChoices = _selectedFacility == null ? new List<DepartmentSummary>()
+				: CollectionUtils.Select(_allDepartments, d => d.Facility.FacilityRef.Equals(_selectedFacility.FacilityRef, true));
+
+			// add a "null" choice, to allow user to clear the value
+			_departmentChoices.Insert(0, _departmentNone);
+		}
+
 	}
 }

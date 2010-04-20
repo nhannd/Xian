@@ -110,10 +110,14 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			Platform.CheckForNullReference(request, "request");
 
 			var facilityAssembler = new FacilityAssembler();
+			var departmentAssembler = new DepartmentAssembler();
 			return new GetOrderEntryFormDataResponse(
-				CollectionUtils.Map<Facility, FacilitySummary, List<FacilitySummary>>(
+				CollectionUtils.Map(
 					this.PersistenceContext.GetBroker<IFacilityBroker>().FindAll(false),
-					facilityAssembler.CreateFacilitySummary),
+					(Facility f) => facilityAssembler.CreateFacilitySummary(f)),
+				CollectionUtils.Map(
+					this.PersistenceContext.GetBroker<IDepartmentBroker>().FindAll(false),
+					(Department d) => departmentAssembler.CreateSummary(d, PersistenceContext)),
 				EnumUtils.GetEnumValueList<OrderPriorityEnum>(this.PersistenceContext),
 				EnumUtils.GetEnumValueList<OrderCancelReasonEnum>(this.PersistenceContext),
 				EnumUtils.GetEnumValueList<LateralityEnum>(this.PersistenceContext)
@@ -337,7 +341,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 					//note: do not call scope.Complete() under any circumstances - we want this transaction to rollback
 				}
 
-				return response;;
+				return response;
 			}
 			catch (WorkflowException e)
 			{
