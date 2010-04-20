@@ -117,6 +117,22 @@ namespace ClearCanvas.Healthcare.Imex
 			}
 
 			[DataContract]
+			public class DepartmentData
+			{
+				public DepartmentData()
+				{
+				}
+
+				public DepartmentData(string id)
+				{
+					this.Id = id;
+				}
+
+				[DataMember]
+				public string Id;
+			}
+
+			[DataContract]
 			public class PractitionerData
 			{
 				public PractitionerData()
@@ -264,6 +280,7 @@ namespace ClearCanvas.Healthcare.Imex
 				{
 					this.ProcedureTypeGroups = new MultiValuedFilterData<ProcedureTypeGroupData>();
 					this.Facilities = new FacilitiesFilterData();
+					this.Departments = new MultiValuedFilterData<DepartmentData>();
 					this.OrderPriorities = new MultiValuedFilterData<EnumValueData>();
 					this.OrderingPractitioners = new MultiValuedFilterData<PractitionerData>();
 					this.PatientClasses = new MultiValuedFilterData<EnumValueData>();
@@ -281,6 +298,9 @@ namespace ClearCanvas.Healthcare.Imex
 
 				[DataMember]
 				public FacilitiesFilterData Facilities;
+
+				[DataMember]
+				public MultiValuedFilterData<DepartmentData> Departments;
 
 				[DataMember]
 				public MultiValuedFilterData<EnumValueData> OrderPriorities;
@@ -366,38 +386,52 @@ namespace ClearCanvas.Healthcare.Imex
 				worklist.GroupSubscribers,
 				(StaffGroup group) => new WorklistData.GroupSubscriberData {StaffGroupName = group.Name});
 
+			// proc type group filter
 			ExportFilter(
 				worklist.ProcedureTypeGroupFilter,
 				data.Filters.ProcedureTypeGroups,
 				group => new WorklistData.ProcedureTypeGroupData {Class = group.GetClass().FullName, Name = group.Name});
 
+			// facility filter
 			data.Filters.Facilities.IncludeWorkingFacility = worklist.FacilityFilter.IncludeWorkingFacility;
 			ExportFilter(
 				worklist.FacilityFilter,
 				data.Filters.Facilities,
 				item => new WorklistData.EnumValueData(item.Code));
 
+			// department filter
+			ExportFilter(
+				worklist.DepartmentFilter,
+				data.Filters.Departments,
+				item => new WorklistData.DepartmentData(item.Id));
 
-
+			// priority filter
 			ExportFilter(worklist.OrderPriorityFilter, data.Filters.OrderPriorities,
 				item => new WorklistData.EnumValueData(item.Code));
 
+			// ordering prac filter
 			ExportFilter(worklist.OrderingPractitionerFilter, data.Filters.OrderingPractitioners,
 				item => new WorklistData.PractitionerData(item.Name.FamilyName, item.Name.GivenName, item.LicenseNumber, item.BillingNumber));
 
+			// patient class filter
 			ExportFilter(worklist.PatientClassFilter, data.Filters.PatientClasses,
 				item => new WorklistData.EnumValueData(item.Code));
+
+			// patient location filter
 			ExportFilter(worklist.PatientLocationFilter, data.Filters.PatientLocations,
 				item => new WorklistData.LocationData(item.Id));
 
+			// portable filter
 			data.Filters.Portable.Enabled = worklist.PortableFilter.IsEnabled;
 			data.Filters.Portable.Value = worklist.PortableFilter.Value;
 
 			//Bug #2429: don't forget to include the time filter
+			// time filter
 			data.Filters.TimeWindow.Enabled = worklist.TimeFilter.IsEnabled;
 			data.Filters.TimeWindow.Value = worklist.TimeFilter.Value == null ? null :
 				new WorklistData.TimeRangeData(worklist.TimeFilter.Value);
 
+			// reporting worklist filters
 			if (Worklist.GetSupportsReportingStaffRoleFilter(worklist.GetClass()))
 				ExportReportingWorklistFilters(data, worklist.As<ReportingWorklist>());
 
@@ -450,6 +484,7 @@ namespace ClearCanvas.Healthcare.Imex
 				}
 			}
 
+			// proc type group filter
 			ImportFilter(
 				worklist.ProcedureTypeGroupFilter,
 				data.Filters.ProcedureTypeGroups,
@@ -463,8 +498,8 @@ namespace ClearCanvas.Healthcare.Imex
 				});
 
 			//Bug #2284: don't forget to set the IncludeWorkingFacility property
+			// facility filter
 			worklist.FacilityFilter.IncludeWorkingFacility = data.Filters.Facilities.IncludeWorkingFacility;
-
 			ImportFilter(
 				worklist.FacilityFilter,
 				data.Filters.Facilities,
@@ -477,6 +512,20 @@ namespace ClearCanvas.Healthcare.Imex
 					return CollectionUtils.FirstElement(broker.Find(criteria));
 				});
 
+			// department filter
+			ImportFilter(
+				worklist.DepartmentFilter,
+				data.Filters.Departments,
+				delegate(WorklistData.DepartmentData s)
+				{
+					var criteria = new DepartmentSearchCriteria();
+					criteria.Id.EqualTo(s.Id);
+
+					var broker = context.GetBroker<IDepartmentBroker>();
+					return CollectionUtils.FirstElement(broker.Find(criteria));
+				});
+
+			// priority filter
 			ImportFilter(
 				worklist.OrderPriorityFilter,
 				data.Filters.OrderPriorities,
@@ -486,6 +535,7 @@ namespace ClearCanvas.Healthcare.Imex
 					return broker.Find<OrderPriorityEnum>(s.Code);
 				});
 
+			// ordering prac filter
 			ImportFilter(
 				worklist.OrderingPractitionerFilter,
 				data.Filters.OrderingPractitioners,
@@ -506,6 +556,7 @@ namespace ClearCanvas.Healthcare.Imex
 					return CollectionUtils.FirstElement(broker.Find(criteria));
 				});
 
+			// patient class filter
 			ImportFilter(
 				worklist.PatientClassFilter,
 				data.Filters.PatientClasses,
@@ -515,6 +566,7 @@ namespace ClearCanvas.Healthcare.Imex
 					return broker.Find<PatientClassEnum>(s.Code);
 				});
 
+			// patient location filter
 			ImportFilter(
 				worklist.PatientLocationFilter,
 				data.Filters.PatientLocations,
@@ -527,15 +579,18 @@ namespace ClearCanvas.Healthcare.Imex
 					return CollectionUtils.FirstElement(broker.Find(criteria));
 				});
 
+			// portable filter
 			worklist.PortableFilter.IsEnabled = data.Filters.Portable.Enabled;
 			worklist.PortableFilter.Value = data.Filters.Portable.Value;
 
 			//Bug #2429: don't forget to include the time filter
+			// time filter
 			worklist.TimeFilter.IsEnabled = data.Filters.TimeWindow.Enabled;
 			worklist.TimeFilter.Value = data.Filters.TimeWindow == null || data.Filters.TimeWindow.Value == null
 											? null
 											: data.Filters.TimeWindow.Value.CreateTimeRange();
 
+			// reporting filters
 			if (Worklist.GetSupportsReportingStaffRoleFilter(worklist.GetClass()))
 				ImportReportingWorklistFilters(data, worklist.As<ReportingWorklist>(), context);
 		}

@@ -216,6 +216,7 @@ namespace ClearCanvas.Healthcare
 		private string _description;
 		private WorklistProcedureTypeGroupFilter _procedureTypeGroupFilter;
 		private WorklistFacilityFilter _facilityFilter;
+		private WorklistDepartmentFilter _departmentFilter;
 		private WorklistPatientClassFilter _patientClassFilter;
 		private WorklistPatientLocationFilter _patientLocationFilter;
 		private WorklistOrderPriorityFilter _orderPriorityFilter;
@@ -239,6 +240,7 @@ namespace ClearCanvas.Healthcare
 
 			_procedureTypeGroupFilter = new WorklistProcedureTypeGroupFilter();
 			_facilityFilter = new WorklistFacilityFilter();
+			_departmentFilter = new WorklistDepartmentFilter();
 			_patientClassFilter = new WorklistPatientClassFilter();
 			_patientLocationFilter = new WorklistPatientLocationFilter();
 			_orderPriorityFilter = new WorklistOrderPriorityFilter();
@@ -363,6 +365,17 @@ namespace ClearCanvas.Healthcare
 		{
 			get { return _facilityFilter; }
 			protected set { _facilityFilter = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="WorklistDepartmentFilter"/>.
+		/// </summary>
+		[PersistentProperty]
+		[EmbeddedValue]
+		public virtual WorklistDepartmentFilter DepartmentFilter
+		{
+			get { return _departmentFilter; }
+			protected set { _departmentFilter = value; }
 		}
 
 		/// <summary>
@@ -552,6 +565,7 @@ namespace ClearCanvas.Healthcare
 		{
 			this.ProcedureTypeGroupFilter.Apply(criteria.Procedure.Type, wqc);
 			this.FacilityFilter.Apply(criteria.Procedure.PerformingFacility, wqc);
+			this.DepartmentFilter.Apply(criteria.Procedure.PerformingDepartment, wqc);
 			this.OrderPriorityFilter.Apply(criteria.Order, wqc);
 			this.PatientClassFilter.Apply(criteria.Visit, wqc);
 			this.PatientLocationFilter.Apply(criteria.Visit, wqc);

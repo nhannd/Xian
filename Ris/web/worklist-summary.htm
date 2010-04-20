@@ -57,6 +57,7 @@
 					var showFilterSection = false;
 					showFilterSection |= updateTimeWindow(worklist.StartTime, worklist.EndTime);
 					showFilterSection |= updateFacilityFilter(worklist.Facilities, worklist.FilterByWorkingFacility);
+					showFilterSection |= updateFilter(worklist.Departments, $("RowDepartments"), $("Departments"), function(department) { return department.Name; });
 					showFilterSection |= updateFilter(worklist.PatientClasses, $("RowPatientClasses"), $("PatientClasses"), function(patientClass) { return patientClass.Value; });
 					showFilterSection |= updateFilter(worklist.OrderPriorities, $("RowOrderPriorities"), $("OrderPriorities"), function(orderPriority) { return orderPriority.Value; });
 					showFilterSection |= updatePortableFilter(worklist.Portabilities, $("RowPortable"), $("Portable"));
@@ -322,8 +323,12 @@
 					<td><div id="TimeWindow"/></td>
 				</tr>
 				<tr id="RowFacilities">
-					<td width="100" class="propertyname" valign="top">Performed at</td>
+					<td width="100" class="propertyname" valign="top">Performing Facility</td>
 					<td><div id="Facilities"/></td>
+				</tr>
+				<tr id="RowDepartments">
+					<td width="100" class="propertyname" valign="top">Performing Department</td>
+					<td><div id="Departments"/></td>
 				</tr>
 				<tr id="RowPatientClasses">
 					<td width="100" class="propertyname" valign="top">Patient Classes</td>

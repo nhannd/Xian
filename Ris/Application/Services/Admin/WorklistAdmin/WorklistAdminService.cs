@@ -105,7 +105,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 			return new ListWorklistsResponse(
 				CollectionUtils.Map<Worklist, WorklistAdminSummary, List<WorklistAdminSummary>>(
 				worklists,
-				worklist => adminAssembler.GetWorklistSummary(worklist, this.PersistenceContext)));
+				worklist => adminAssembler.CreateWorklistSummary(worklist, this.PersistenceContext)));
 		}
 
 		[ReadOperation]
@@ -152,7 +152,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 			var worklist = PersistenceContext.Load<Worklist>(request.EntityRef);
 
 			var adminAssembler = new WorklistAdminAssembler();
-			var adminDetail = adminAssembler.GetWorklistDetail(worklist, this.PersistenceContext);
+			var adminDetail = adminAssembler.CreateWorklistDetail(worklist, this.PersistenceContext);
 			return new LoadWorklistForEditResponse(worklist.GetRef(), adminDetail);
 		}
 
@@ -188,7 +188,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 			PersistenceContext.SynchState();
 
 			var adminAssembler = new WorklistAdminAssembler();
-			return new AddWorklistResponse(adminAssembler.GetWorklistSummary(worklist, this.PersistenceContext));
+			return new AddWorklistResponse(adminAssembler.CreateWorklistSummary(worklist, this.PersistenceContext));
 		}
 
 		[UpdateOperation]
@@ -206,7 +206,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 			UpdateWorklistHelper(request.Detail, worklist);
 
 			var adminAssembler = new WorklistAdminAssembler();
-			return new UpdateWorklistResponse(adminAssembler.GetWorklistSummary(worklist, this.PersistenceContext));
+			return new UpdateWorklistResponse(adminAssembler.CreateWorklistSummary(worklist, this.PersistenceContext));
 		}
 
 		[UpdateOperation]
@@ -258,6 +258,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 			response.FacilityChoices = CollectionUtils.Map<Facility, FacilitySummary>(
 				this.PersistenceContext.GetBroker<IFacilityBroker>().FindAll(false),
 				facilityAssembler.CreateFacilitySummary);
+
+			var departmentAssembler = new DepartmentAssembler();
+			response.DepartmentChoices = CollectionUtils.Map(
+				this.PersistenceContext.GetBroker<IDepartmentBroker>().FindAll(false),
+				(Department item) => departmentAssembler.CreateSummary(item, PersistenceContext));
 
 			var locationAssembler = new LocationAssembler();
 			response.PatientLocationChoices = CollectionUtils.Map<Location, LocationSummary>(

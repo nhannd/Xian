@@ -43,6 +43,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 {
 	internal class WorklistAdminAssembler
 	{
+		/// <summary>
+		/// Create worklist class summary.
+		/// </summary>
+		/// <param name="worklistClass"></param>
+		/// <returns></returns>
 		public WorklistClassSummary CreateClassSummary(Type worklistClass)
 		{
 			var ptgClass = Worklist.GetProcedureTypeGroupClass(worklistClass);
@@ -58,7 +63,34 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 				Worklist.GetSupportsReportingStaffRoleFilter(worklistClass));
 		}
 
-		public WorklistAdminDetail GetWorklistDetail(Worklist worklist, IPersistenceContext context)
+		/// <summary>
+		/// Create worklist summary.
+		/// </summary>
+		/// <param name="worklist"></param>
+		/// <param name="context"></param>
+		/// <returns></returns>
+		public WorklistAdminSummary CreateWorklistSummary(Worklist worklist, IPersistenceContext context)
+		{
+			var isStatic = Worklist.GetIsStatic(worklist.GetClass());
+
+			var staffAssembler = new StaffAssembler();
+			var groupAssembler = new StaffGroupAssembler();
+			return new WorklistAdminSummary(
+				isStatic ? null : worklist.GetRef(),
+				isStatic ? Worklist.GetDisplayName(worklist.GetClass()) : worklist.Name,
+				isStatic ? Worklist.GetDescription(worklist.GetClass()) : worklist.Description,
+				CreateClassSummary(worklist.GetClass()),
+				worklist.Owner.IsStaffOwner ? staffAssembler.CreateStaffSummary(worklist.Owner.Staff, context) : null,
+				worklist.Owner.IsGroupOwner ? groupAssembler.CreateSummary(worklist.Owner.Group) : null);
+		}
+
+		/// <summary>
+		/// Create worklist detail.
+		/// </summary>
+		/// <param name="worklist"></param>
+		/// <param name="context"></param>
+		/// <returns></returns>
+		public WorklistAdminDetail CreateWorklistDetail(Worklist worklist, IPersistenceContext context)
 		{
 			var detail = new WorklistAdminDetail(worklist.GetRef(), worklist.Name, worklist.Description,
 				CreateClassSummary(worklist.GetClass()));
@@ -70,57 +102,47 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 			detail.OwnerGroup = worklist.Owner.IsGroupOwner ?
 				staffGroupAssembler.CreateSummary(worklist.Owner.Group) : null;
 
-			if (worklist.ProcedureTypeGroupFilter.IsEnabled)
-			{
-				var assembler = new ProcedureTypeGroupAssembler();
-				detail.ProcedureTypeGroups = CollectionUtils.Map(
-					worklist.ProcedureTypeGroupFilter.Values,
-					(ProcedureTypeGroup rptGroup) => assembler.GetProcedureTypeGroupSummary(rptGroup, context));
-			}
+			// proc type groups
+			var ptgAssembler = new ProcedureTypeGroupAssembler();
+			detail.ProcedureTypeGroups = GetFilterSummary(worklist.ProcedureTypeGroupFilter,
+				item => ptgAssembler.GetProcedureTypeGroupSummary(item, context));
 
-			if (worklist.FacilityFilter.IsEnabled)
-			{
-				var facilityAssembler = new FacilityAssembler();
-				detail.Facilities = CollectionUtils.Map(
-					worklist.FacilityFilter.Values,
-					(Facility f) => facilityAssembler.CreateFacilitySummary(f));
-				detail.FilterByWorkingFacility = worklist.FacilityFilter.IncludeWorkingFacility;
-			}
-			if (worklist.PatientClassFilter.IsEnabled)
-			{
-				detail.PatientClasses = CollectionUtils.Map(
-					worklist.PatientClassFilter.Values,
-					(PatientClassEnum p) => EnumUtils.GetEnumValueInfo(p));
-			}
+			// facilities
+			var facilityAssembler = new FacilityAssembler();
+			detail.Facilities = GetFilterSummary(worklist.FacilityFilter,
+				item => facilityAssembler.CreateFacilitySummary(item));
+			detail.FilterByWorkingFacility = worklist.FacilityFilter.IsEnabled && worklist.FacilityFilter.IncludeWorkingFacility;
 
-			if (worklist.PatientLocationFilter.IsEnabled)
-			{
-				var locationAssembler = new LocationAssembler();
-				detail.PatientLocations = CollectionUtils.Map(
-					worklist.PatientLocationFilter.Values,
-					(Location l) => locationAssembler.CreateLocationSummary(l));
-			}
+			// departments
+			var departmentAssembler = new DepartmentAssembler();
+			detail.Departments = GetFilterSummary(worklist.DepartmentFilter,
+				item => departmentAssembler.CreateSummary(item, context));
 
-			if (worklist.OrderPriorityFilter.IsEnabled)
-			{
-				detail.OrderPriorities = CollectionUtils.Map(
-					worklist.OrderPriorityFilter.Values,
-					(OrderPriorityEnum p) => EnumUtils.GetEnumValueInfo(p));
-			}
+			// patient class
+			detail.PatientClasses = GetFilterSummary(worklist.PatientClassFilter,
+				item => EnumUtils.GetEnumValueInfo(item));
 
-			if (worklist.OrderingPractitionerFilter.IsEnabled)
-			{
-				var assembler = new ExternalPractitionerAssembler();
-				detail.OrderingPractitioners = CollectionUtils.Map(
-					worklist.OrderingPractitionerFilter.Values,
-					(ExternalPractitioner p) => assembler.CreateExternalPractitionerSummary(p, context));
-			}
+			// location
+			var locationAssembler = new LocationAssembler();
+			detail.PatientLocations = GetFilterSummary(worklist.PatientLocationFilter,
+				item => locationAssembler.CreateLocationSummary(item));
 
+			// order priority
+			detail.OrderPriorities = GetFilterSummary(worklist.OrderPriorityFilter,
+				item => EnumUtils.GetEnumValueInfo(item));
+
+			// ordering prac
+			var practitionerAssembler = new ExternalPractitionerAssembler();
+			detail.OrderingPractitioners = GetFilterSummary(worklist.OrderingPractitionerFilter,
+				item => practitionerAssembler.CreateExternalPractitionerSummary(item, context));
+
+			// portable
 			if (worklist.PortableFilter.IsEnabled)
 			{
-				detail.Portabilities = new List<bool> {worklist.PortableFilter.Value};
+				detail.Portabilities = new List<bool> { worklist.PortableFilter.Value };
 			}
 
+			// time window
 			if (worklist.TimeFilter.IsEnabled && worklist.TimeFilter.Value != null)
 			{
 				if (worklist.TimeFilter.Value.Start != null)
@@ -138,56 +160,24 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 			// Some ReportingWorklists can support staff role filters, if that is true for this worklist,
 			// add those filters to the WorklistAdminDetail
 			if (Worklist.GetSupportsReportingStaffRoleFilter(worklist.GetClass()))
-				AppendReportingWorklistDetails(detail, worklist.As<ReportingWorklist>(), context);
+			{
+				var reportingWorklist = worklist.As<ReportingWorklist>();
+				detail.InterpretedByStaff = GetFilterSummary(reportingWorklist.InterpretedByStaffFilter, context);
+				detail.TranscribedByStaff = GetFilterSummary(reportingWorklist.TranscribedByStaffFilter, context);
+				detail.VerifiedByStaff = GetFilterSummary(reportingWorklist.VerifiedByStaffFilter, context);
+				detail.SupervisedByStaff = GetFilterSummary(reportingWorklist.SupervisedByStaffFilter, context);
+			}
 
 			return detail;
 		}
 
-		public void AppendReportingWorklistDetails(WorklistAdminDetail detail, ReportingWorklist worklist, IPersistenceContext context)
-		{
-			if (worklist.InterpretedByStaffFilter.IsEnabled || worklist.InterpretedByStaffFilter.IncludeCurrentStaff)
-				SetStaffListFromFilter(detail.InterpretedByStaff, worklist.InterpretedByStaffFilter, context);
-
-			if (worklist.TranscribedByStaffFilter.IsEnabled || worklist.TranscribedByStaffFilter.IncludeCurrentStaff)
-				SetStaffListFromFilter(detail.TranscribedByStaff, worklist.TranscribedByStaffFilter, context);
-
-			if (worklist.VerifiedByStaffFilter.IsEnabled || worklist.VerifiedByStaffFilter.IncludeCurrentStaff)
-				SetStaffListFromFilter(detail.VerifiedByStaff, worklist.VerifiedByStaffFilter, context);
-
-			if (worklist.SupervisedByStaffFilter.IsEnabled || worklist.SupervisedByStaffFilter.IncludeCurrentStaff)
-				SetStaffListFromFilter(detail.SupervisedByStaff, worklist.SupervisedByStaffFilter, context);
-		}
-
-		private static void SetStaffListFromFilter(WorklistAdminDetail.StaffList stafflist, WorklistStaffFilter filter, IPersistenceContext context)
-		{
-			var assembler = new StaffAssembler();
-			stafflist.Staff = CollectionUtils.Map(
-				filter.Values,
-				(Staff staff) => assembler.CreateStaffSummary(staff, context));
-			stafflist.IncludeCurrentUser = filter.IncludeCurrentStaff;
-		}
-
-		public WorklistAdminDetail.TimePoint CreateTimePointContract(WorklistTimePoint tp)
-		{
-			return tp.IsFixed ? new WorklistAdminDetail.TimePoint(tp.FixedValue, tp.Resolution) :
-				new WorklistAdminDetail.TimePoint(tp.RelativeValue, tp.Resolution);
-		}
-
-		public WorklistAdminSummary GetWorklistSummary(Worklist worklist, IPersistenceContext context)
-		{
-			var isStatic = Worklist.GetIsStatic(worklist.GetClass());
-
-			var staffAssembler = new StaffAssembler();
-			var groupAssembler = new StaffGroupAssembler();
-			return new WorklistAdminSummary(
-				isStatic ? null : worklist.GetRef(),
-				isStatic ? Worklist.GetDisplayName(worklist.GetClass()) : worklist.Name,
-				isStatic ? Worklist.GetDescription(worklist.GetClass()) : worklist.Description,
-				CreateClassSummary(worklist.GetClass()),
-				worklist.Owner.IsStaffOwner ? staffAssembler.CreateStaffSummary(worklist.Owner.Staff, context) : null,
-				worklist.Owner.IsGroupOwner ? groupAssembler.CreateSummary(worklist.Owner.Group) : null);
-		}
-
+		/// <summary>
+		/// Update specified worklist from detail.
+		/// </summary>
+		/// <param name="worklist"></param>
+		/// <param name="detail"></param>
+		/// <param name="updateSubscribers"></param>
+		/// <param name="context"></param>
 		public void UpdateWorklist(Worklist worklist, WorklistAdminDetail detail,
 			bool updateSubscribers, IPersistenceContext context)
 		{
@@ -197,67 +187,34 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 			// do not update the worklist.Owner here!!! - once set, it should never be updated
 
 			// procedure groups
-			worklist.ProcedureTypeGroupFilter.Values.Clear();
-			if (detail.ProcedureTypeGroups != null)
-			{
-				worklist.ProcedureTypeGroupFilter.Values.AddAll(CollectionUtils.Map(
-					detail.ProcedureTypeGroups,
-					(ProcedureTypeGroupSummary g) => context.Load<ProcedureTypeGroup>(g.ProcedureTypeGroupRef, EntityLoadFlags.Proxy)));
-			}
-			worklist.ProcedureTypeGroupFilter.IsEnabled = worklist.ProcedureTypeGroupFilter.Values.Count > 0;
+			UpdateFilter(worklist.ProcedureTypeGroupFilter, detail.ProcedureTypeGroups,
+				summary => context.Load<ProcedureTypeGroup>(summary.ProcedureTypeGroupRef, EntityLoadFlags.Proxy));
 
 			// facilities
-			worklist.FacilityFilter.Values.Clear();
-			if (detail.Facilities != null)
-			{
-				worklist.FacilityFilter.Values.AddAll(CollectionUtils.Map(
-					detail.Facilities,
-					(FacilitySummary f) => context.Load<Facility>(f.FacilityRef, EntityLoadFlags.Proxy)));
-			}
+			UpdateFilter(worklist.FacilityFilter, detail.Facilities,
+				summary => context.Load<Facility>(summary.FacilityRef, EntityLoadFlags.Proxy));
 			worklist.FacilityFilter.IncludeWorkingFacility = detail.FilterByWorkingFacility;
-			worklist.FacilityFilter.IsEnabled = worklist.FacilityFilter.Values.Count > 0 ||
-												worklist.FacilityFilter.IncludeWorkingFacility;
+			worklist.FacilityFilter.IsEnabled = worklist.FacilityFilter.Values.Count > 0 || worklist.FacilityFilter.IncludeWorkingFacility;
+
+			// departments
+			UpdateFilter(worklist.DepartmentFilter, detail.Departments,
+				summary => context.Load<Department>(summary.DepartmentRef, EntityLoadFlags.Proxy));
 
 			// patient classes
-			worklist.PatientClassFilter.Values.Clear();
-			if (detail.PatientClasses != null)
-			{
-				worklist.PatientClassFilter.Values.AddAll(CollectionUtils.Map(
-					detail.PatientClasses,
-					(EnumValueInfo value) => EnumUtils.GetEnumValue<PatientClassEnum>(value, context)));
-			}
-			worklist.PatientClassFilter.IsEnabled = worklist.PatientClassFilter.Values.Count > 0;
+			UpdateFilter(worklist.PatientClassFilter, detail.PatientClasses,
+				summary => EnumUtils.GetEnumValue<PatientClassEnum>(summary, context));
 
 			// patient locations
-			worklist.PatientLocationFilter.Values.Clear();
-			if (detail.PatientLocations != null)
-			{
-				worklist.PatientLocationFilter.Values.AddAll(CollectionUtils.Map(
-					detail.PatientLocations,
-					(LocationSummary f) => context.Load<Location>(f.LocationRef, EntityLoadFlags.Proxy)));
-			}
-			worklist.PatientLocationFilter.IsEnabled = worklist.PatientLocationFilter.Values.Count > 0;
-
+			UpdateFilter(worklist.PatientLocationFilter, detail.PatientLocations,
+				summary => context.Load<Location>(summary.LocationRef, EntityLoadFlags.Proxy));
 
 			// order priorities
-			worklist.OrderPriorityFilter.Values.Clear();
-			if (detail.OrderPriorities != null)
-			{
-				worklist.OrderPriorityFilter.Values.AddAll(CollectionUtils.Map(
-					detail.OrderPriorities,
-					(EnumValueInfo value) => EnumUtils.GetEnumValue<OrderPriorityEnum>(value, context)));
-			}
-			worklist.OrderPriorityFilter.IsEnabled = worklist.OrderPriorityFilter.Values.Count > 0;
+			UpdateFilter(worklist.OrderPriorityFilter, detail.OrderPriorities,
+				summary => EnumUtils.GetEnumValue<OrderPriorityEnum>(summary, context));
 
 			// ordering practitioners
-			worklist.OrderingPractitionerFilter.Values.Clear();
-			if (detail.OrderingPractitioners != null)
-			{
-				worklist.OrderingPractitionerFilter.Values.AddAll(CollectionUtils.Map(
-					detail.OrderingPractitioners,
-					(ExternalPractitionerSummary p) => context.Load<ExternalPractitioner>(p.PractitionerRef, EntityLoadFlags.Proxy)));
-			}
-			worklist.OrderingPractitionerFilter.IsEnabled = worklist.OrderingPractitionerFilter.Values.Count > 0;
+			UpdateFilter(worklist.OrderingPractitionerFilter, detail.OrderingPractitioners,
+				summary => context.Load<ExternalPractitioner>(summary.PractitionerRef, EntityLoadFlags.Proxy));
 
 			// portable
 			if (detail.Portabilities != null)
@@ -300,18 +257,64 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
 			// If the worklist supports staff role filters, process the filters provided.
 			if (Worklist.GetSupportsReportingStaffRoleFilter(worklist.GetClass()))
-				UpdateReportingWorklist(worklist.As<ReportingWorklist>(), detail, context);
+			{
+				var reportingWorklist = worklist.As<ReportingWorklist>();
+				UpdateFilter(reportingWorklist.InterpretedByStaffFilter, detail.InterpretedByStaff, context);
+				UpdateFilter(reportingWorklist.TranscribedByStaffFilter, detail.TranscribedByStaff, context);
+				UpdateFilter(reportingWorklist.VerifiedByStaffFilter, detail.VerifiedByStaff, context);
+				UpdateFilter(reportingWorklist.SupervisedByStaffFilter, detail.SupervisedByStaff, context);
+			}
 		}
 
-		public void UpdateReportingWorklist(ReportingWorklist worklist, WorklistAdminDetail detail, IPersistenceContext context)
+		#region Helpers
+
+		private static WorklistAdminDetail.TimePoint CreateTimePointContract(WorklistTimePoint tp)
 		{
-			UpdateStaffFilter(worklist.InterpretedByStaffFilter, detail.InterpretedByStaff, context);
-			UpdateStaffFilter(worklist.TranscribedByStaffFilter, detail.TranscribedByStaff, context);
-			UpdateStaffFilter(worklist.VerifiedByStaffFilter, detail.VerifiedByStaff, context);
-			UpdateStaffFilter(worklist.SupervisedByStaffFilter, detail.SupervisedByStaff, context);
+			return tp.IsFixed ? new WorklistAdminDetail.TimePoint(tp.FixedValue, tp.Resolution) :
+				new WorklistAdminDetail.TimePoint(tp.RelativeValue, tp.Resolution);
 		}
 
-		private static void UpdateStaffFilter(WorklistStaffFilter staffFilter, WorklistAdminDetail.StaffList stafflist, IPersistenceContext context)
+		private static WorklistTimePoint CreateTimePoint(WorklistAdminDetail.TimePoint contract)
+		{
+			if (contract != null && (contract.FixedTime.HasValue || contract.RelativeTime.HasValue))
+			{
+				return contract.FixedTime.HasValue ?
+					new WorklistTimePoint(contract.FixedTime.Value, contract.Resolution) :
+					new WorklistTimePoint(contract.RelativeTime.Value, contract.Resolution);
+			}
+			return null;
+		}
+
+		private static List<TSummary> GetFilterSummary<TItem, TSummary>(WorklistMultiValuedFilter<TItem> filter, Converter<TItem, TSummary> converter)
+		{
+			return !filter.IsEnabled ? new List<TSummary>() : CollectionUtils.Map(filter.Values, converter);
+		}
+
+		private static WorklistAdminDetail.StaffList GetFilterSummary(WorklistStaffFilter filter, IPersistenceContext context)
+		{
+			if (!filter.IsEnabled)
+				return new WorklistAdminDetail.StaffList();
+
+			var assembler = new StaffAssembler();
+			return new WorklistAdminDetail.StaffList
+								{
+									Staff = CollectionUtils.Map(filter.Values,
+										(Staff staff) => assembler.CreateStaffSummary(staff, context)),
+									IncludeCurrentUser = filter.IncludeCurrentStaff
+								};
+		}
+
+		private static void UpdateFilter<TItem, TSummary>(WorklistMultiValuedFilter<TItem> filter, List<TSummary> summaries, Converter<TSummary, TItem> converter)
+		{
+			filter.Values.Clear();
+			if (summaries != null)
+			{
+				filter.Values.AddAll(CollectionUtils.Map(summaries, converter));
+			}
+			filter.IsEnabled = filter.Values.Count > 0;
+		}
+
+		private static void UpdateFilter(WorklistStaffFilter staffFilter, WorklistAdminDetail.StaffList stafflist, IPersistenceContext context)
 		{
 			staffFilter.Values.Clear();
 			if (stafflist != null)
@@ -325,15 +328,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 			staffFilter.IsEnabled = staffFilter.Values.Count > 0 || staffFilter.IncludeCurrentStaff;
 		}
 
-		public WorklistTimePoint CreateTimePoint(WorklistAdminDetail.TimePoint contract)
-		{
-			if (contract != null && (contract.FixedTime.HasValue || contract.RelativeTime.HasValue))
-			{
-				return contract.FixedTime.HasValue ?
-					new WorklistTimePoint(contract.FixedTime.Value, contract.Resolution) :
-					new WorklistTimePoint(contract.RelativeTime.Value, contract.Resolution);
-			}
-			return null;
-		}
+		#endregion
+
 	}
 }

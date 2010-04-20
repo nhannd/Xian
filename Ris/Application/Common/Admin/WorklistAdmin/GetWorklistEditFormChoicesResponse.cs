@@ -51,6 +51,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 		public List<FacilitySummary> FacilityChoices;
 
 		[DataMember]
+		public List<DepartmentSummary> DepartmentChoices;
+
+		[DataMember]
 		public List<LocationSummary> PatientLocationChoices;
 
 		[DataMember]

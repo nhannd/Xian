@@ -73,6 +73,15 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		class DepartmentTable : Table<DepartmentSummary>
+		{
+			public DepartmentTable()
+			{
+				this.Columns.Add(new TableColumn<DepartmentSummary, string>(SR.ColumnName, summary => summary.Name));
+				this.Columns.Add(new TableColumn<DepartmentSummary, string>(SR.ColumnFacility, summary => summary.Facility.Name));
+			}
+		}
+
 		class LocationTable : Table<LocationSummary>
 		{
 			public LocationTable()
@@ -106,6 +115,7 @@ namespace ClearCanvas.Ris.Client
 		private StaffSelectorEditorComponent _supervisedByFilterComponent;
 		private WorklistTimeWindowEditorComponent _timeWindowComponent;
 		private SelectorEditorComponent<ProcedureTypeGroupSummary, ProcedureTypeGroupTable> _procedureTypeGroupFilterComponent;
+		private SelectorEditorComponent<DepartmentSummary, DepartmentTable> _departmentFilterComponent;
 		private SelectorEditorComponent<LocationSummary, LocationTable> _locationFilterComponent;
 		private SelectorEditorComponent<StaffSummary, StaffSelectorTable> _staffSubscribersComponent;
 		private SelectorEditorComponent<StaffGroupSummary, StaffGroupTable> _groupSubscribersComponent;
@@ -243,6 +253,9 @@ namespace ClearCanvas.Ris.Client
 					_procedureTypeGroupFilterComponent = new SelectorEditorComponent<ProcedureTypeGroupSummary, ProcedureTypeGroupTable>(
 						procedureTypeGroups, _worklistDetail.ProcedureTypeGroups, s => s.ProcedureTypeGroupRef);
 
+					_departmentFilterComponent = new SelectorEditorComponent<DepartmentSummary, DepartmentTable>(
+						formDataResponse.DepartmentChoices, _worklistDetail.Departments, s => s.DepartmentRef);
+
 					_locationFilterComponent = new SelectorEditorComponent<LocationSummary, LocationTable>(
 						formDataResponse.PatientLocationChoices, _worklistDetail.PatientLocations, s => s.LocationRef);
 
@@ -278,6 +291,7 @@ namespace ClearCanvas.Ris.Client
 			this.Pages.Add(new NavigatorPage("NodeWorklist", _detailComponent));
 			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters", _filterComponent));
 			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/NodeProcedureTypeGroups", _procedureTypeGroupFilterComponent));
+			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/NodeDepartments", _departmentFilterComponent));
 			this.Pages.Add(_patientLocationComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodePatientLocations", _locationFilterComponent));
 
 			_interpretedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeInterpretedBy", _interpretedByFilterComponent);
@@ -520,6 +534,9 @@ namespace ClearCanvas.Ris.Client
 
 			if (_procedureTypeGroupFilterComponent.IsStarted)
 				_worklistDetail.ProcedureTypeGroups = new List<ProcedureTypeGroupSummary>(_procedureTypeGroupFilterComponent.SelectedItems);
+
+			if (_departmentFilterComponent.IsStarted)
+				_worklistDetail.Departments = new List<DepartmentSummary>(_departmentFilterComponent.SelectedItems);
 
 			if (_locationFilterComponent.IsStarted)
 				_worklistDetail.PatientLocations = new List<LocationSummary>(_locationFilterComponent.SelectedItems);

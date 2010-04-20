@@ -1065,4 +1065,7 @@
   <data name="MessageConfirmMergePractitioners" xml:space="preserve">
     <value>Proceed with the merge operation?  The operation cannot be undone.</value>
   </data>
+  <data name="NodeDepartments" xml:space="preserve">
+    <value>Departments</value>
+  </data>
 </root>

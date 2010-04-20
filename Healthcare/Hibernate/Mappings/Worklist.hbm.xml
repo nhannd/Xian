@@ -47,6 +47,15 @@
         <many-to-many column="FacilityOID_" class="Facility" fetch="join"/>
       </set>
     </component>
+    
+    <component name="DepartmentFilter" class="WorklistDepartmentFilter">
+      <property name="IsEnabled" type="Boolean" column="DepartmentFilterIsEnabled_"/>
+      <set name="Values" table="WorklistDepartment_" lazy="true">
+        <cache usage="nonstrict-read-write"/>
+        <key column="WorklistOID_"/>
+        <many-to-many column="DepartmentOID_" class="Department" fetch="join"/>
+      </set>
+    </component>
 
     <component name="PatientClassFilter" class="WorklistPatientClassFilter">
       <property name="IsEnabled" type="Boolean" column="PatientClassFilterIsEnabled_"/>

@@ -2005,6 +2005,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Departments.
+        /// </summary>
+        internal static string NodeDepartments {
+            get {
+                return ResourceManager.GetString("NodeDepartments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Filters.
         /// </summary>
         internal static string NodeFilters {

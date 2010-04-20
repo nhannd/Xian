@@ -221,6 +221,26 @@ namespace ClearCanvas.Healthcare
 	}
 
 	/// <summary>
+	/// Defines a filter that limits worklist items to procedures that are to performed
+	/// at specified <see cref="Department"/>s.
+	/// </summary>
+	public class WorklistDepartmentFilter : WorklistMultiValuedFilter<Department>
+	{
+		/// <summary>
+		/// Applies this filter to the specified criteria object.
+		/// </summary>
+		/// <param name="criteria"></param>
+		/// <param name="wqc"></param>
+		public void Apply(DepartmentSearchCriteria criteria, IWorklistQueryContext wqc)
+		{
+			if (!this.IsEnabled)
+				return;
+
+			criteria.In(this.Values);
+		}
+	}
+
+	/// <summary>
 	/// Defines a filter that limits worklist items to those visits that fall into a specified
 	/// set of <see cref="PatientClassEnum"/> values.
 	/// </summary>
