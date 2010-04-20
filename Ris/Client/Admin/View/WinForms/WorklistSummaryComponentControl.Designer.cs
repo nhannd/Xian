@@ -87,10 +87,10 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this.panel1.Size = new System.Drawing.Size(639, 54);
 			this.panel1.TabIndex = 0;
 			// 
-			// _includeUserAndGroupWorklists
+			// _includeUserDefinedWorklists
 			// 
 			this._includeUserDefinedWorklists.AutoSize = true;
-			this._includeUserDefinedWorklists.Location = new System.Drawing.Point(470, 26);
+			this._includeUserDefinedWorklists.Location = new System.Drawing.Point(460, 27);
 			this._includeUserDefinedWorklists.Name = "_includeUserDefinedWorklists";
 			this._includeUserDefinedWorklists.Size = new System.Drawing.Size(172, 17);
 			this._includeUserDefinedWorklists.TabIndex = 7;
@@ -104,7 +104,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._clearButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this._clearButton.FlatAppearance.BorderSize = 0;
 			this._clearButton.Image = global::ClearCanvas.Ris.Client.Admin.View.WinForms.SR.ClearFilterSmall;
-			this._clearButton.Location = new System.Drawing.Point(411, 18);
+			this._clearButton.Location = new System.Drawing.Point(420, 18);
 			this._clearButton.Margin = new System.Windows.Forms.Padding(0);
 			this._clearButton.Name = "_clearButton";
 			this._clearButton.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -122,7 +122,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._searchButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this._searchButton.FlatAppearance.BorderSize = 0;
 			this._searchButton.Image = global::ClearCanvas.Ris.Client.Admin.View.WinForms.SR.SearchToolSmall;
-			this._searchButton.Location = new System.Drawing.Point(380, 18);
+			this._searchButton.Location = new System.Drawing.Point(389, 18);
 			this._searchButton.Margin = new System.Windows.Forms.Padding(0);
 			this._searchButton.Name = "_searchButton";
 			this._searchButton.Size = new System.Drawing.Size(30, 30);
@@ -149,7 +149,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// _name
 			// 
 			this._name.LabelText = "Name";
-			this._name.Location = new System.Drawing.Point(228, 7);
+			this._name.Location = new System.Drawing.Point(234, 6);
 			this._name.Margin = new System.Windows.Forms.Padding(2);
 			this._name.Mask = "";
 			this._name.Name = "_name";
