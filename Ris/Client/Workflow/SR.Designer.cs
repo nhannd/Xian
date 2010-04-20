@@ -736,6 +736,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot merge orders..
+        /// </summary>
+        internal static string ExceptionMergeOrdersTool {
+            get {
+                return ResourceManager.GetString("ExceptionMergeOrdersTool", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot determine enablement for operation: {0}.
         /// </summary>
         internal static string ExceptionOperationEnablementUnknown {

@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
@@ -60,11 +61,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private OrderDetail _order1;
 		private OrderDetail _order2;
 		private bool _mergingRight =  true;  // Merging right meaning order1 --> order2
+		private OrderDetail _dryRunMergedOrder;
 
 		private TabComponentContainer _mergedOrderViewComponentContainer;
 		private ChildComponentHost _mergedOrderPreviewComponentHost;
 
-		private BiographyOrderDetailViewComponent _orderPreviewComponent;
+		private MergedOrderDetailViewComponent _orderPreviewComponent;
 		private OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
 		private AttachedDocumentPreviewComponent _attachmentSummaryComponent;
 
@@ -80,7 +82,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_mergedOrderPreviewComponentHost = new ChildComponentHost(this.Host, _mergedOrderViewComponentContainer);
 			_mergedOrderPreviewComponentHost.StartComponent();
 
-			_mergedOrderViewComponentContainer.Pages.Add(new TabPage(SR.TitleOrder, _orderPreviewComponent = new BiographyOrderDetailViewComponent()));
+			_mergedOrderViewComponentContainer.Pages.Add(new TabPage(SR.TitleOrder, _orderPreviewComponent = new MergedOrderDetailViewComponent()));
 			_mergedOrderViewComponentContainer.Pages.Add(new TabPage(SR.TitleAdditionalInfo, _orderAdditionalInfoComponent = new OrderAdditionalInfoComponent(true)));
 			_mergedOrderViewComponentContainer.Pages.Add(new TabPage(SR.TitleOrderAttachments, _attachmentSummaryComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Order)));
 
@@ -99,8 +101,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 					_order2 = response2.GetOrderDetailResponse.Order;
 				});
 
-			var dryRunMergedOrder = SubmitMergeRequest(true);
-			ShowMergedOrder(dryRunMergedOrder);
+			if (_dryRunMergedOrder == null)
+			{
+				string failureReason;
+				if (!ValidateMergeRequest(out failureReason))
+					this.Host.DesktopWindow.ShowMessageBox(failureReason, MessageBoxActions.Ok);
+			}
+
+			ShowMergedOrder(_dryRunMergedOrder);
 
 			base.Start();
 		}
@@ -118,24 +126,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#region Presentation Model
 
-		public string Order1AccessionNumber
+		public string Order1Description
 		{
-			get { return AccessionFormat.Format(_order1.AccessionNumber); }
+			get { return FormatOrderDescription(_order1); }
 		}
 
-		public string Order1DiagnosticServiceName
+		public string Order2Description
 		{
-			get { return _order1.DiagnosticService.Name; }
-		}
-
-		public string Order2AccessionNumber
-		{
-			get { return AccessionFormat.Format(_order2.AccessionNumber); }
-		}
-
-		public string Order2DiagnosticServiceName
-		{
-			get { return _order2.DiagnosticService.Name; }
+			get { return FormatOrderDescription(_order2); }
 		}
 
 		public bool MergingRight
@@ -152,20 +150,34 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			_mergingRight = !_mergingRight;
 
-			var dryRunMergedOrder = SubmitMergeRequest(true);
-			ShowMergedOrder(dryRunMergedOrder);
+			string failureReason;
+			if (ValidateMergeRequest(out failureReason))
+				ShowMergedOrder(_dryRunMergedOrder);
+			else
+				this.Host.ShowMessageBox(failureReason, MessageBoxActions.Ok);
 		}
 
 		public void Accept()
 		{
 			try
 			{
-				SubmitMergeRequest(false);
+				var sourceOrderRef = _mergingRight ? _order1Ref : _order2Ref;
+				var destinationOrderRef = _mergingRight ? _order2Ref : _order1Ref;
+
+				MergeOrderResponse response = null;
+				Platform.GetService(
+					delegate(IOrderEntryService service)
+					{
+						var request = new MergeOrderRequest(sourceOrderRef, destinationOrderRef) { DryRun = false };
+						response = service.MergeOrder(request);
+					}); 
+				
 				this.Exit(ApplicationComponentExitCode.Accepted);
 			}
 			catch (Exception e)
 			{
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+				ExceptionHandler.Report(e, SR.ExceptionMergeOrdersTool, this.Host.DesktopWindow,
+					() => this.Exit(ApplicationComponentExitCode.Error));
 			}
 		}
 
@@ -176,7 +188,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#endregion
 
-		private OrderDetail SubmitMergeRequest(bool dryRun)
+		public bool ValidateMergeRequest(out string failureReason)
 		{
 			var sourceOrderRef = _mergingRight ? _order1Ref : _order2Ref;
 			var destinationOrderRef = _mergingRight ? _order2Ref : _order1Ref;
@@ -185,15 +197,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 			Platform.GetService(
 				delegate(IOrderEntryService service)
 				{
-					var request = new MergeOrderRequest(sourceOrderRef, destinationOrderRef) { DryRun = dryRun };
+					var request = new MergeOrderRequest(sourceOrderRef, destinationOrderRef) { DryRun = true };
 					response = service.MergeOrder(request);
 				});
 
-			if (!string.IsNullOrEmpty(response.DryRunFailureReason))
-				this.Host.ShowMessageBox(response.DryRunFailureReason, MessageBoxActions.Ok);
+			failureReason = response.DryRunFailureReason;
 
-			return response.DryRunMergedOrder;
+			_dryRunMergedOrder = response.DryRunMergedOrder;
+			return _dryRunMergedOrder != null;
 		}
+
 
 		private void ShowMergedOrder(OrderDetail mergedOrder)
 		{
@@ -206,11 +219,19 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 			else
 			{
-				_orderPreviewComponent.Context = new OrderDetailViewComponent.OrderContext(mergedOrder);
+				_orderPreviewComponent.Context = mergedOrder;
 				_orderAdditionalInfoComponent.HealthcareContext = mergedOrder;
 				_orderAdditionalInfoComponent.OrderExtendedProperties = mergedOrder.ExtendedProperties;
 				_attachmentSummaryComponent.OrderAttachments = mergedOrder.Attachments;
 			}
+		}
+
+		private static string FormatOrderDescription(OrderDetail order)
+		{
+			var builder = new StringBuilder();
+			builder.AppendLine(AccessionFormat.Format(order.AccessionNumber));
+			builder.AppendFormat("Imaging Service: {0}", order.DiagnosticService.Name);
+			return builder.ToString();
 		}
 	}
 }

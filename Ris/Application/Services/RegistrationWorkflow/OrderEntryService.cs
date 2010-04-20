@@ -287,29 +287,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			var sourceOrder = this.PersistenceContext.Load<Order>(request.SourceOrderRef);
 			var destinationOrder = this.PersistenceContext.Load<Order>(request.DestinationOrderRef);
 
-			// Create a copy of the original procedures (with empty collections) before it is modified by the merge operation.
-			// Theese place holder procedures are required for HL7 messages.
-			var placeHolderClonedProcedures = CollectionUtils.Map<Procedure, Procedure>(sourceOrder.Procedures,
-				p => new Procedure(p.Order, p.Type, p.Index, new HashedSet<ProcedureStep>(),
-				p.ScheduledStartTime, p.StartTime, p.EndTime, p.Status, p.PerformingFacility, p.PerformingDepartment,
-				p.Laterality, p.Portable, p.ProcedureCheckIn, p.ImageAvailability, p.DowntimeRecoveryMode,
-				new HashedSet<Report>(), new HashedSet<Protocol>(), p.OwlsPartition));
-
 			// Merge the source order into the destination order.
 			sourceOrder.Merge(new OrderMergeInfo(this.CurrentUserStaff, destinationOrder));
-
-			// Cancel and add each place holder procedures to the source order.
-			foreach (var newClonedProcedure in placeHolderClonedProcedures)
-			{
-				newClonedProcedure.Cancel();
-				sourceOrder.AddProcedure(newClonedProcedure);
-				this.PersistenceContext.Lock(newClonedProcedure, DirtyState.New);
-			}
 
 			// Add a orderNote to the source Order
 			var noteMessage = string.Format("Auto-generated note.  This order was merged into {0}", destinationOrder.AccessionNumber);
 			var newNote = new OrderNote("General", noteMessage, false, Platform.Time, this.CurrentUserStaff,
-				null, null, true, new HashedSet<NotePosting>(),
+				null, Platform.Time, true, new HashedSet<NotePosting>(),
 				sourceOrder);
 			this.PersistenceContext.Lock(newNote, DirtyState.New);
 

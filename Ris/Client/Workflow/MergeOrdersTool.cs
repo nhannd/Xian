@@ -32,20 +32,38 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				return this.Context.SelectedItems.Count == 2;
+				if (this.Context.SelectedItems.Count != 2)
+					return false;
+
+				var list = new List<RegistrationWorklistItemSummary>(this.Context.SelectedItems);
+
+				// Obvious cases where merging should not be allowed.
+				// Cannot merge the same order.
+				if (list[0].AccessionNumber == list[1].AccessionNumber)
+					return false;
+
+				// Cannot merge orders from different patient
+				if (!list[0].PatientRef.Equals(list[1].PatientRef, true))
+					return false;
+
+				// Return true, let the server decide how to inform user of more complicated error.
+				return true;
 			}
 		}
 
 		protected override bool Execute(RegistrationWorklistItemSummary item)
 		{
 			var list = new List<RegistrationWorklistItemSummary>(this.Context.SelectedItems);
-			var order1Ref = list[0].OrderRef;
-			var order2Ref = list[1].OrderRef;
-			var result = ApplicationComponent.LaunchAsDialog(
-				this.Context.DesktopWindow,
-				new MergeOrdersComponent(order1Ref, order2Ref),
-				SR.TitleMergeOrders);
+			var component = new MergeOrdersComponent(list[0].OrderRef, list[1].OrderRef);
 
+			string failureReason;
+			if (!component.ValidateMergeRequest(out failureReason))
+			{
+				this.Context.DesktopWindow.ShowMessageBox(failureReason, MessageBoxActions.Ok);
+				return false;
+			}
+
+			var result = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, component, SR.TitleMergeOrders);
 			return result == ApplicationComponentExitCode.Accepted;
 		}
 	}

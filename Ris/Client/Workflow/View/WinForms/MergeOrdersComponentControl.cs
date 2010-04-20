@@ -51,10 +51,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_component = component;
 			InitializeComponent();
 
-			_order1Accession.Value = _component.Order1AccessionNumber;
-			_order1DiagnosticServiceName.Value = _component.Order1DiagnosticServiceName;
-			_order2Accession.Value = _component.Order2AccessionNumber;
-			_order2DiagnosticServiceName.Value = _component.Order2DiagnosticServiceName;
+			_order1Description.Text = _component.Order1Description;
+			_order2Description.Text = _component.Order2Description;
 			UpdateMergeDirection();
 
 			var previewControl = (Control)_component.MergedOrderPreviewComponentHost.ComponentView.GuiElement;
@@ -80,7 +78,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 
 		private void UpdateMergeDirection()
 		{
-			_mergeDirectionButton.Text = _component.MergingRight ? "--->" : "<---";
+			_mergeDirectionButton.Image = _component.MergingRight ? SR.NextPageToolSmall : SR.PreviousPageToolSmall;
 		}
 	}
 }

@@ -158,6 +158,9 @@ var Preview = function () {
 			
 			var isProcedureInModality = function (p)
 			{
+				if (!p.ProcedureSteps)
+					return false;
+					
 				var mps = p.ProcedureSteps.select(function(step) { return step.StepClassName == "ModalityProcedureStep"; });
 				return mps.find(isStepInModality) != null;
 			}
@@ -223,7 +226,7 @@ Preview.ProceduresTableHelper = function () {
 
 		formatProcedurePerformingStaff: function(procedure)
 		{
-			var firstMps = procedure.ProcedureSteps.select(function(step) { return step.StepClassName == "ModalityProcedureStep"; }).firstElement();
+			var firstMps = procedure.ProcedureSteps && procedure.ProcedureSteps.select(function(step) { return step.StepClassName == "ModalityProcedureStep"; }).firstElement();
 
 			if (!firstMps)
 				return "";
@@ -658,14 +661,14 @@ Preview.ReportingProceduresTable = function () {
 		var reportingStepNames = ["InterpretationStep", "TranscriptionStep", "TranscriptionReviewStep", "VerificationStep", "PublicationStep"];
 		var activeStatusCode = ["SC", "IP"];
 		var isActiveReportingStep = function(step) { return reportingStepNames.indexOf(step.StepClassName) >= 0 && activeStatusCode.indexOf(step.State.Code) >= 0; };
-		return procedure.ProcedureSteps.select(isActiveReportingStep).firstElement();
+		return procedure.ProcedureSteps ? procedure.ProcedureSteps.select(isActiveReportingStep).firstElement() : null;
 	}
 	
 	var _getLastCompletedPublicationStep = function(procedure)
 	{
 		var isCompletedPublicationStep = function(step) { return step.StepClassName == "PublicationStep" && step.State.Code == "CM"; };
 		var compreStepEndTime = function(step1, step2) { return Date.compare(step1.EndTime, step2.EndTime); };
-		return procedure.ProcedureSteps.select(isCompletedPublicationStep).sort(compreStepEndTime).reverse().firstElement();
+		return procedure.ProcedureSteps ? procedure.ProcedureSteps.select(isCompletedPublicationStep).sort(compreStepEndTime).reverse().firstElement() : null;
 	}
 		 
 	var _formatProcedureReportingStatus = function(procedure)
@@ -2233,4 +2236,84 @@ Preview.ExternalPractitionerSummary = function() {
 			_createContactPointTable(element, externalPractitionerSummary);
 		}
 	};
+}();
+
+Preview.ResultRecipientsSection = function() {
+
+	var _createResultRecipientsTable = function(parentElement, resultRecipients, title)
+	{
+		if (resultRecipients.length == 0)
+			return;
+			
+		if(title)
+		{
+			Preview.ProceduresTableHelper.addHeading(parentElement, title, 'subsectionheading');
+		}			
+
+		var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement, null, true);
+		htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
+		[
+			{   label: "Practitioner",
+				cellType: "link",
+				getValue: function(item) { return Ris.formatPersonName(item.Practitioner.Name); },
+				clickLink: function(item) { Ris.openPractitionerDetails(item.Practitioner); }
+			},
+			{	label: "Contact Point",
+				cellType: "html",
+				getValue: function(item) 
+				{
+					var contactPoint = item.ContactPoint;
+					var html = "";
+
+					html += "<table>";
+					html += "<tr>";
+					html += "	<td width='120' class='propertyname'>Name</td>";
+					html += "	<td>" + contactPoint.Name + "</td>";
+					html += "</tr>";
+					if(contactPoint.Description)
+					{
+						html += "<tr>";
+						html += "	<td width='120' class='propertyname'>Description</td>";
+						html += "	<td >" + contactPoint.Description + "</td>";
+						html += "</tr>";
+					}
+					html += "<tr>";
+					html += "	<td width='120' class='propertyname'>Phone Number</td>";
+					html += "	<td>" + (Ris.formatTelephone(contactPoint.CurrentPhoneNumber) || "Not entered") + "</td>";
+					html += "</tr>";
+					html += "<tr>";
+					html += "	<td width='120' class='propertyname'>Fax Number</td>";
+					html += "	<td>" + (Ris.formatTelephone(contactPoint.CurrentFaxNumber) || "Not entered") + "</td>";
+					html += "</tr>";
+					html += "<tr>";
+					html += "	<td width='120' class='propertyname'>Address</td>";
+					html += "	<td>" + (Ris.formatAddress(contactPoint.CurrentAddress) || "Not entered") + "</td>";
+					html += "</tr>";
+					html += "<tr>";
+					html += "	<td width='120' class='propertyname'>Email Address</td>";
+					html += "	<td>" + (contactPoint.CurrentEmailAddress && contactPoint.CurrentEmailAddress.Address ? contactPoint.CurrentEmailAddress.Address : "Not entered") + "</td>";
+					html += "</tr>";
+
+					html += "</table>";
+
+					return html;
+				}
+			}
+		]);
+
+		htmlTable.rowCycleClassNames = ["row1", "row0"];
+		htmlTable.bindItems(resultRecipients);
+	};
+
+	return {
+		create: function(parentElement, resultRecipients, heading, collapsedByDefault)
+		{
+			if(resultRecipients.length == 0)
+				return;
+
+			_createResultRecipientsTable(parentElement, resultRecipients);
+
+			Preview.SectionContainer.create(parentElement, heading, { collapsible: true, initiallyCollapsed: collapsedByDefault });
+		}
+	}
 }();

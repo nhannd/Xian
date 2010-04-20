@@ -161,6 +161,16 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
+		[global::System.Configuration.DefaultSettingValueAttribute("merged-order-detail.htm")]
+		public string MergedOrderDetailPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["MergedOrderDetailPageUrl"]));
+			}
+		}
+
 		#region Home Page Preview settings
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute]

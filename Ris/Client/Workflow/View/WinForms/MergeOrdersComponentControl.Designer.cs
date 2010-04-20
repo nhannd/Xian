@@ -63,16 +63,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._mergeDirectionButton = new System.Windows.Forms.Button();
 			this._mergedOrderPreviewPanel = new System.Windows.Forms.Panel();
-			this._order1Accession = new ClearCanvas.Desktop.View.WinForms.TextField();
-			this._order2Accession = new ClearCanvas.Desktop.View.WinForms.TextField();
-			this._order1DiagnosticServiceName = new ClearCanvas.Desktop.View.WinForms.TextField();
-			this._order2DiagnosticServiceName = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			this.panel2 = new System.Windows.Forms.Panel();
-			this.panel1 = new System.Windows.Forms.Panel();
+			this._order1Description = new System.Windows.Forms.Label();
+			this._order2Description = new System.Windows.Forms.Label();
 			this.tableLayoutPanel1.SuspendLayout();
-			this.panel2.SuspendLayout();
-			this.panel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _acceptButton
@@ -100,11 +94,11 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// _mergeDirectionButton
 			// 
 			this._mergeDirectionButton.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._mergeDirectionButton.Location = new System.Drawing.Point(272, 38);
+			this._mergeDirectionButton.Image = global::ClearCanvas.Ris.Client.Workflow.View.WinForms.SR.NextPageToolSmall;
+			this._mergeDirectionButton.Location = new System.Drawing.Point(282, 22);
 			this._mergeDirectionButton.Name = "_mergeDirectionButton";
-			this._mergeDirectionButton.Size = new System.Drawing.Size(54, 24);
+			this._mergeDirectionButton.Size = new System.Drawing.Size(35, 32);
 			this._mergeDirectionButton.TabIndex = 6;
-			this._mergeDirectionButton.Text = "--->";
 			this._mergeDirectionButton.UseVisualStyleBackColor = true;
 			this._mergeDirectionButton.Click += new System.EventHandler(this._mergeDirectionButton_Click);
 			// 
@@ -113,74 +107,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._mergedOrderPreviewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this._mergedOrderPreviewPanel.Location = new System.Drawing.Point(3, 109);
+			this._mergedOrderPreviewPanel.Location = new System.Drawing.Point(3, 83);
 			this._mergedOrderPreviewPanel.Name = "_mergedOrderPreviewPanel";
-			this._mergedOrderPreviewPanel.Size = new System.Drawing.Size(599, 552);
+			this._mergedOrderPreviewPanel.Size = new System.Drawing.Size(599, 578);
 			this._mergedOrderPreviewPanel.TabIndex = 7;
-			// 
-			// _order1Accession
-			// 
-			this._order1Accession.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this._order1Accession.LabelText = "Accession #";
-			this._order1Accession.Location = new System.Drawing.Point(2, 3);
-			this._order1Accession.Margin = new System.Windows.Forms.Padding(2);
-			this._order1Accession.Mask = "";
-			this._order1Accession.Name = "_order1Accession";
-			this._order1Accession.PasswordChar = '\0';
-			this._order1Accession.ReadOnly = true;
-			this._order1Accession.Size = new System.Drawing.Size(265, 39);
-			this._order1Accession.TabIndex = 2;
-			this._order1Accession.ToolTip = null;
-			this._order1Accession.Value = null;
-			// 
-			// _order2Accession
-			// 
-			this._order2Accession.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this._order2Accession.LabelText = "Accession #";
-			this._order2Accession.Location = new System.Drawing.Point(2, 3);
-			this._order2Accession.Margin = new System.Windows.Forms.Padding(2);
-			this._order2Accession.Mask = "";
-			this._order2Accession.Name = "_order2Accession";
-			this._order2Accession.PasswordChar = '\0';
-			this._order2Accession.ReadOnly = true;
-			this._order2Accession.Size = new System.Drawing.Size(265, 39);
-			this._order2Accession.TabIndex = 3;
-			this._order2Accession.ToolTip = null;
-			this._order2Accession.Value = null;
-			// 
-			// _order1DiagnosticServiceName
-			// 
-			this._order1DiagnosticServiceName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this._order1DiagnosticServiceName.LabelText = "Diagnostic Service";
-			this._order1DiagnosticServiceName.Location = new System.Drawing.Point(2, 46);
-			this._order1DiagnosticServiceName.Margin = new System.Windows.Forms.Padding(2);
-			this._order1DiagnosticServiceName.Mask = "";
-			this._order1DiagnosticServiceName.Name = "_order1DiagnosticServiceName";
-			this._order1DiagnosticServiceName.PasswordChar = '\0';
-			this._order1DiagnosticServiceName.ReadOnly = true;
-			this._order1DiagnosticServiceName.Size = new System.Drawing.Size(265, 39);
-			this._order1DiagnosticServiceName.TabIndex = 3;
-			this._order1DiagnosticServiceName.ToolTip = null;
-			this._order1DiagnosticServiceName.Value = null;
-			// 
-			// _order2DiagnosticServiceName
-			// 
-			this._order2DiagnosticServiceName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this._order2DiagnosticServiceName.LabelText = "Diagnostic Service";
-			this._order2DiagnosticServiceName.Location = new System.Drawing.Point(2, 50);
-			this._order2DiagnosticServiceName.Margin = new System.Windows.Forms.Padding(2);
-			this._order2DiagnosticServiceName.Mask = "";
-			this._order2DiagnosticServiceName.Name = "_order2DiagnosticServiceName";
-			this._order2DiagnosticServiceName.PasswordChar = '\0';
-			this._order2DiagnosticServiceName.ReadOnly = true;
-			this._order2DiagnosticServiceName.Size = new System.Drawing.Size(265, 39);
-			this._order2DiagnosticServiceName.TabIndex = 4;
-			this._order2DiagnosticServiceName.ToolTip = null;
-			this._order2DiagnosticServiceName.Value = null;
 			// 
 			// tableLayoutPanel1
 			// 
@@ -188,43 +118,47 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this.tableLayoutPanel1.ColumnCount = 3;
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 41F));
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel1.Controls.Add(this.panel2, 0, 0);
 			this.tableLayoutPanel1.Controls.Add(this._mergeDirectionButton, 1, 1);
-			this.tableLayoutPanel1.Controls.Add(this.panel1, 2, 0);
+			this.tableLayoutPanel1.Controls.Add(this._order1Description, 0, 0);
+			this.tableLayoutPanel1.Controls.Add(this._order2Description, 2, 0);
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
 			this.tableLayoutPanel1.RowCount = 3;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(599, 100);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(599, 77);
 			this.tableLayoutPanel1.TabIndex = 8;
 			// 
-			// panel2
+			// _order1Description
 			// 
-			this.panel2.Controls.Add(this._order1Accession);
-			this.panel2.Controls.Add(this._order1DiagnosticServiceName);
-			this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel2.Location = new System.Drawing.Point(0, 0);
-			this.panel2.Margin = new System.Windows.Forms.Padding(0);
-			this.panel2.Name = "panel2";
-			this.tableLayoutPanel1.SetRowSpan(this.panel2, 3);
-			this.panel2.Size = new System.Drawing.Size(269, 100);
-			this.panel2.TabIndex = 8;
+			this._order1Description.AutoSize = true;
+			this._order1Description.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this._order1Description.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._order1Description.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._order1Description.Location = new System.Drawing.Point(3, 3);
+			this._order1Description.Margin = new System.Windows.Forms.Padding(3);
+			this._order1Description.Name = "_order1Description";
+			this.tableLayoutPanel1.SetRowSpan(this._order1Description, 3);
+			this._order1Description.Size = new System.Drawing.Size(273, 71);
+			this._order1Description.TabIndex = 7;
+			this._order1Description.Text = "Order 1";
 			// 
-			// panel1
+			// _order2Description
 			// 
-			this.panel1.Controls.Add(this._order2DiagnosticServiceName);
-			this.panel1.Controls.Add(this._order2Accession);
-			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel1.Location = new System.Drawing.Point(329, 0);
-			this.panel1.Margin = new System.Windows.Forms.Padding(0);
-			this.panel1.Name = "panel1";
-			this.tableLayoutPanel1.SetRowSpan(this.panel1, 3);
-			this.panel1.Size = new System.Drawing.Size(270, 100);
-			this.panel1.TabIndex = 7;
+			this._order2Description.AutoSize = true;
+			this._order2Description.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this._order2Description.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._order2Description.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._order2Description.Location = new System.Drawing.Point(323, 3);
+			this._order2Description.Margin = new System.Windows.Forms.Padding(3);
+			this._order2Description.Name = "_order2Description";
+			this.tableLayoutPanel1.SetRowSpan(this._order2Description, 3);
+			this._order2Description.Size = new System.Drawing.Size(273, 71);
+			this._order2Description.TabIndex = 8;
+			this._order2Description.Text = "Order 2";
 			// 
 			// MergeOrdersComponentControl
 			// 
@@ -239,8 +173,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.Name = "MergeOrdersComponentControl";
 			this.Size = new System.Drawing.Size(605, 696);
 			this.tableLayoutPanel1.ResumeLayout(false);
-			this.panel2.ResumeLayout(false);
-			this.panel1.ResumeLayout(false);
+			this.tableLayoutPanel1.PerformLayout();
 			this.ResumeLayout(false);
 
         }
@@ -251,12 +184,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 		private System.Windows.Forms.Button _cancelButton;
 		private System.Windows.Forms.Button _mergeDirectionButton;
 		private System.Windows.Forms.Panel _mergedOrderPreviewPanel;
-		private ClearCanvas.Desktop.View.WinForms.TextField _order1Accession;
-		private ClearCanvas.Desktop.View.WinForms.TextField _order1DiagnosticServiceName;
-		private ClearCanvas.Desktop.View.WinForms.TextField _order2DiagnosticServiceName;
-		private ClearCanvas.Desktop.View.WinForms.TextField _order2Accession;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-		private System.Windows.Forms.Panel panel1;
-		private System.Windows.Forms.Panel panel2;
+		private System.Windows.Forms.Label _order1Description;
+		private System.Windows.Forms.Label _order2Description;
     }
 }

@@ -319,6 +319,21 @@ namespace ClearCanvas.Healthcare
             UpdateEndTime();
         }
 
+		/// <summary>
+		/// Create a copy of the current procedure without any collections.
+		/// </summary>
+		/// <param name="resultStatus"></param>
+		/// <returns></returns>
+		public virtual Procedure CreatePlaceHolder(ProcedureStatus resultStatus)
+		{
+			return new Procedure(this.Order, this.Type, this.Index, new HashedSet<ProcedureStep>(),
+								this.ScheduledStartTime, this.StartTime, this.EndTime, resultStatus,
+								this.PerformingFacility, this.PerformingDepartment,
+								this.Laterality, this.Portable, this.ProcedureCheckIn, this.ImageAvailability,
+								this.DowntimeRecoveryMode,
+								new HashedSet<Report>(), new HashedSet<Protocol>(), this.OwlsPartition);
+		}
+
         /// <summary>
         /// Gets the full history of this procedure, including procedure steps that 
         /// are associated indirectly via linked workflows.

@@ -830,4 +830,7 @@ Choose "No" to verify this report without further action.</value>
   <data name="TitleMergeOrders" xml:space="preserve">
     <value>Merge Orders</value>
   </data>
+  <data name="ExceptionMergeOrdersTool" xml:space="preserve">
+    <value>Cannot merge orders.</value>
+  </data>
 </root>

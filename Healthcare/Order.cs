@@ -33,6 +33,7 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Workflow;
+using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Healthcare
 {
@@ -208,45 +209,76 @@ namespace ClearCanvas.Healthcare
 			}
 		}
 
+
+		/// <summary>
+		/// Check to see if merge is possible.
+		/// </summary>
+		/// <param name="mergeInfo"></param>
+		/// <param name="failureReason"></param>
+		/// <returns>True if the merge operation is possible, false otherwise.</returns>
+		public virtual bool CanMerge(OrderMergeInfo mergeInfo, out string failureReason)
+		{
+			var destinationOrder = mergeInfo.MergeDestinationOrder;
+
+			failureReason = null;
+			if (this.AccessionNumber == destinationOrder.AccessionNumber)
+				failureReason = "Orders with the same accession number cannot be merged.";
+			else if (this.Status != OrderStatus.SC || destinationOrder.Status != OrderStatus.SC)
+				failureReason = "Only scheduled orders can be merged";
+			else if (this.Patient != destinationOrder.Patient)
+				failureReason = "Orders that belong to differnt patients cannot be merged.";
+			else if (this.OrderingFacility.InformationAuthority != destinationOrder.OrderingFacility.InformationAuthority)
+				failureReason = "Orders that were ordered by different facilities cannot be merged.";
+
+			return string.IsNullOrEmpty(failureReason);
+		}
+
+		/// <summary>
+		/// Merge the current order into the destination order specified in the mergeInfo.
+		/// </summary>
+		/// <param name="mergeInfo"></param>
 		public virtual void Merge(OrderMergeInfo mergeInfo)
 		{
 			var destinationOrder = mergeInfo.MergeDestinationOrder;
 
-			if (this.Status != OrderStatus.SC || destinationOrder.Status != OrderStatus.SC)
-				throw new WorkflowException("Only scheduled orders can be merged");
-			if (this.Patient != destinationOrder.Patient)
-				throw new WorkflowException("Orders that belong to differnt patients cannot be merged.");
-			if (this.OrderingFacility.InformationAuthority != destinationOrder.OrderingFacility.InformationAuthority)
-				throw new WorkflowException("Orders that were ordered by different facilities cannot be merged.");
+			string failureReason;
+			if (!CanMerge(mergeInfo, out failureReason))
+				throw new WorkflowException(failureReason);
 
 			_mergeInfo = mergeInfo;
 
-			// Move all the result recipients
+			// Move all the result recipients to destination
 			foreach (var rr in _resultRecipients)
 			{
-				destinationOrder.ResultRecipients.Add(rr);
+				var recipientAlreadyExist = CollectionUtils.Contains(destinationOrder.ResultRecipients, recipients => recipients.PractitionerContactPoint.Equals(rr.PractitionerContactPoint));
+				if (!recipientAlreadyExist)
+					destinationOrder.ResultRecipients.Add(rr);
 			}
 			_resultRecipients.Clear();
 
-			// Move all the attachments
+			// Move all the attachments to destination
 			foreach (var a in _attachments)
 			{
 				destinationOrder.Attachments.Add(a);
 			}
 			_attachments.Clear();
 
-			// Move all the order notes
+			// Move all the order notes to destination
 			var notes = OrderNote.GetNotesForOrder(this);
 			foreach (var n in notes)
 			{
 				n.Order = destinationOrder;
 			}
 
-			// generate an index for the procedure
+			// Create a copy of the original procedures (with empty collections) before it is added to the destination
+			// Theese place holder procedures are required for HL7 messages.
+			var placeHolderClonedProcedures = CollectionUtils.Map<Procedure, Procedure>(this.Procedures, p => p.CreatePlaceHolder(ProcedureStatus.CA));
+
+			// generate an index for the destination procedure
 			var highestIndex = CollectionUtils.Max(
 				CollectionUtils.Map<Procedure, int>(destinationOrder.Procedures, p => int.Parse(p.Index)), 0);
 
-			// Move all the orders to the new order.
+			// Move all the procedures to the destination order.
 			foreach (var p in _procedures)
 			{
 				p.Order = destinationOrder;
@@ -255,9 +287,14 @@ namespace ClearCanvas.Healthcare
 				highestIndex = highestIndex + 1;
 			}
 
-			// update scheduling information
+			// update destination scheduling information
 			destinationOrder.UpdateScheduling();
 
+			// Add each place holder procedures back to the source order.
+			foreach (var newClonedProcedure in placeHolderClonedProcedures)
+				this.Procedures.Add(newClonedProcedure);
+
+			// Set source order to merged status
 			SetStatus(OrderStatus.MG);
 		}
 
