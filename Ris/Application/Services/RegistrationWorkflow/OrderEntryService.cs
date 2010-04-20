@@ -204,6 +204,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			var order = PlaceOrderHelper(request.Requisition);
 
 			ValidatePatientProfilesExist(order);
+			ValidatePerformingDepartments(order);
 
 			// ensure the new order is assigned an OID before using it in the return value
 			this.PersistenceContext.SynchState();
@@ -230,6 +231,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 			UpdateProceduresHelper(order, request.Requisition.Procedures);
 			ValidatePatientProfilesExist(order);
+			ValidatePerformingDepartments(order);
 
 			this.PersistenceContext.SynchState();
 
@@ -256,6 +258,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			// place new order
 			var newOrder = PlaceOrderHelper(request.Requisition);
 			ValidatePatientProfilesExist(newOrder);
+			ValidatePerformingDepartments(newOrder);
 
 			// cancel existing order
 			CancelOrderHelper(orderToReplace, new OrderCancelInfo(reason, this.CurrentUserStaff, null, newOrder));
@@ -514,6 +517,18 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				if (!hasProfile)
 					throw new RequestValidationException(string.Format("{0} is not a valid performing facility for this patient because the patient does not have a demographics profile for this facility.",
 						procedure.PerformingFacility.Name));
+			}
+		}
+
+		// TODO: ideally this should be done in the model layer
+		private static void ValidatePerformingDepartments(Order order)
+		{
+			foreach (var procedure in order.Procedures)
+			{
+				var valid = procedure.PerformingDepartment == null || procedure.PerformingFacility.Departments.Contains(procedure.PerformingDepartment);
+				if (!valid)
+					throw new RequestValidationException(string.Format("{0} is not a valid performing department for this performing facility.",
+						procedure.PerformingDepartment.Name));
 			}
 		}
 
