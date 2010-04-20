@@ -35,110 +35,110 @@ using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 {
-    /// <summary>
-    /// Provides services for entering orders into the system, and modifying existing orders.
-    /// </summary>
-    [RisApplicationService]
-    [ServiceContract]
-    [ServiceKnownType(typeof(RegistrationWorklistItemSummary))]
-    [ServiceKnownType(typeof(ModalityWorklistItemSummary))]
-    public interface IOrderEntryService : IWorkflowService
-    {
-        /// <summary>
-        /// List visits for the specified patient.  Orders can be placed on any visits, including discharged visits.
-        /// </summary>
+	/// <summary>
+	/// Provides services for entering orders into the system, and modifying existing orders.
+	/// </summary>
+	[RisApplicationService]
+	[ServiceContract]
+	[ServiceKnownType(typeof(RegistrationWorklistItemSummary))]
+	[ServiceKnownType(typeof(ModalityWorklistItemSummary))]
+	public interface IOrderEntryService : IWorkflowService
+	{
+		/// <summary>
+		/// List visits for the specified patient.  Orders can be placed on any visits, including discharged visits.
+		/// </summary>
 		/// <param name="request"><see cref="ListVisitsForPatientRequest"/></param>
 		/// <returns><see cref="ListVisitsForPatientResponse"/></returns>
 		[OperationContract]
-        ListVisitsForPatientResponse ListVisitsForPatient(ListVisitsForPatientRequest request);
+		ListVisitsForPatientResponse ListVisitsForPatient(ListVisitsForPatientRequest request);
 
-        /// <summary>
-        /// List the active orders for the specified patient.  Active orders are either Scheduled or In-Progress.
-        /// </summary>
-        /// <param name="request"><see cref="ListOrdersForPatientRequest"/></param>
-        /// <returns><see cref="ListOrdersForPatientResponse"/></returns>
-        [OperationContract]
-        ListOrdersForPatientResponse ListActiveOrdersForPatient(ListOrdersForPatientRequest request);
+		/// <summary>
+		/// List the active orders for the specified patient.  Active orders are either Scheduled or In-Progress.
+		/// </summary>
+		/// <param name="request"><see cref="ListOrdersForPatientRequest"/></param>
+		/// <returns><see cref="ListOrdersForPatientResponse"/></returns>
+		[OperationContract]
+		ListOrdersForPatientResponse ListActiveOrdersForPatient(ListOrdersForPatientRequest request);
 
-        /// <summary>
-        /// Loads all order entry form data.
-        /// </summary>
+		/// <summary>
+		/// Loads all order entry form data.
+		/// </summary>
 		/// <param name="request"><see cref="GetOrderEntryFormDataRequest"/></param>
 		/// <returns><see cref="GetOrderEntryFormDataResponse"/></returns>
 		[OperationContract]
-        GetOrderEntryFormDataResponse GetOrderEntryFormData(GetOrderEntryFormDataRequest request);
+		GetOrderEntryFormDataResponse GetOrderEntryFormData(GetOrderEntryFormDataRequest request);
 
-        /// <summary>
-        /// Get order cancel form data.
-        /// </summary>
+		/// <summary>
+		/// Get order cancel form data.
+		/// </summary>
 		/// <param name="request"><see cref="GetCancelOrderFormDataRequest"/></param>
 		/// <returns><see cref="GetCancelOrderFormDataResponse"/></returns>
-        [OperationContract]
-        GetCancelOrderFormDataResponse GetCancelOrderFormData(GetCancelOrderFormDataRequest request);
+		[OperationContract]
+		GetCancelOrderFormDataResponse GetCancelOrderFormData(GetCancelOrderFormDataRequest request);
 
-        /// <summary>
-        /// Loads order requisition so that the order editing form can be populated. This method will
-        /// fail with a RequestValidationException if the order requisition cannot be edited.
-        /// </summary>
+		/// <summary>
+		/// Loads order requisition so that the order editing form can be populated. This method will
+		/// fail with a RequestValidationException if the order requisition cannot be edited.
+		/// </summary>
 		/// <param name="request"><see cref="GetOrderRequisitionForEditRequest"/></param>
 		/// <returns><see cref="GetOrderRequisitionForEditResponse"/></returns>
 		[OperationContract]
-        [FaultContract(typeof(RequestValidationException))]
-        GetOrderRequisitionForEditResponse GetOrderRequisitionForEdit(GetOrderRequisitionForEditRequest request);
+		[FaultContract(typeof(RequestValidationException))]
+		GetOrderRequisitionForEditResponse GetOrderRequisitionForEdit(GetOrderRequisitionForEditRequest request);
 
-        /// <summary>
-        /// Gets the details of a diagnostic service plan.
-        /// </summary>
+		/// <summary>
+		/// Gets the details of a diagnostic service plan.
+		/// </summary>
 		/// <param name="request"><see cref="LoadDiagnosticServiceBreakdownRequest"/></param>
 		/// <returns><see cref="LoadDiagnosticServiceBreakdownRequest"/></returns>
 		[OperationContract]
-        LoadDiagnosticServiceBreakdownResponse LoadDiagnosticServiceBreakdown(LoadDiagnosticServiceBreakdownRequest request);
+		LoadDiagnosticServiceBreakdownResponse LoadDiagnosticServiceBreakdown(LoadDiagnosticServiceBreakdownRequest request);
 
-        /// <summary>
-        /// List procedure types that can be ordered based on the procedure types that have already been added to
-        /// an order.
-        /// </summary>
+		/// <summary>
+		/// List procedure types that can be ordered based on the procedure types that have already been added to
+		/// an order.
+		/// </summary>
 		/// <param name="request"><see cref="ListOrderableProcedureTypesRequest"/></param>
 		/// <returns><see cref="ListOrderableProcedureTypesResponse"/></returns>
 		[OperationContract]
-        ListOrderableProcedureTypesResponse ListOrderableProcedureTypes(ListOrderableProcedureTypesRequest request);
+		ListOrderableProcedureTypesResponse ListOrderableProcedureTypes(ListOrderableProcedureTypesRequest request);
 
-        /// <summary>
-        /// Gets detailed information about all of the contact points associated with a specified external practitioner.
-        /// </summary>
+		/// <summary>
+		/// Gets detailed information about all of the contact points associated with a specified external practitioner.
+		/// </summary>
 		/// <param name="request"><see cref="GetExternalPractitionerContactPointsRequest"/></param>
 		/// <returns><see cref="GetExternalPractitionerContactPointsResponse"/></returns>
 		[OperationContract]
-        GetExternalPractitionerContactPointsResponse GetExternalPractitionerContactPoints(GetExternalPractitionerContactPointsRequest request);
+		GetExternalPractitionerContactPointsResponse GetExternalPractitionerContactPoints(GetExternalPractitionerContactPointsRequest request);
 
-        /// <summary>
-        /// Places a new order based on the specified information.
-        /// </summary>
+		/// <summary>
+		/// Places a new order based on the specified information.
+		/// </summary>
 		/// <param name="request"><see cref="PlaceOrderRequest"/></param>
 		/// <returns><see cref="PlaceOrderResponse"/></returns>
 		[OperationContract]
-        [FaultContract(typeof(RequestValidationException))]
-        PlaceOrderResponse PlaceOrder(PlaceOrderRequest request);
+		[FaultContract(typeof(RequestValidationException))]
+		PlaceOrderResponse PlaceOrder(PlaceOrderRequest request);
 
-        /// <summary>
-        /// Modifies an existing order based on the specified information.
-        /// </summary>
+		/// <summary>
+		/// Modifies an existing order based on the specified information.
+		/// </summary>
 		/// <param name="request"><see cref="ModifyOrderRequest"/></param>
 		/// <returns><see cref="ModifyOrderResponse"/></returns>
 		[OperationContract]
-        [FaultContract(typeof(RequestValidationException))]
-        [FaultContract(typeof(ConcurrentModificationException))]
-        ModifyOrderResponse ModifyOrder(ModifyOrderRequest request);
+		[FaultContract(typeof(RequestValidationException))]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		ModifyOrderResponse ModifyOrder(ModifyOrderRequest request);
 
-        /// <summary>
-        /// Cancels an existing order and places a new order as a single transaction.
-        /// </summary>
+		/// <summary>
+		/// Cancels an existing order and places a new order as a single transaction.
+		/// </summary>
 		/// <param name="request"><see cref="ReplaceOrderRequest"/></param>
 		/// <returns><see cref="ReplaceOrderResponse"/></returns>
 		[OperationContract]
-        [FaultContract(typeof(RequestValidationException))]
-        [FaultContract(typeof(ConcurrentModificationException))]
-        ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request);
+		[FaultContract(typeof(RequestValidationException))]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request);
 
 		/// <summary>
 		/// Merge an existing order into another order in a single transaction.
@@ -150,15 +150,15 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 		[FaultContract(typeof(ConcurrentModificationException))]
 		MergeOrderResponse MergeOrder(MergeOrderRequest request);
 
-        /// <summary>
-        /// Cancel orders with a cancellation reason for a patient
-        /// </summary>
-        /// <param name="request"><see cref="CancelOrderRequest"/></param>
-        /// <returns><see cref="CancelOrderResponse"/></returns>
-        [OperationContract]
-        [FaultContract(typeof(ConcurrentModificationException))]
-        [FaultContract(typeof(RequestValidationException))]
-        CancelOrderResponse CancelOrder(CancelOrderRequest request);
+		/// <summary>
+		/// Cancel orders with a cancellation reason for a patient
+		/// </summary>
+		/// <param name="request"><see cref="CancelOrderRequest"/></param>
+		/// <returns><see cref="CancelOrderResponse"/></returns>
+		[OperationContract]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		CancelOrderResponse CancelOrder(CancelOrderRequest request);
 
 		/// <summary>
 		/// Queries for warnings that user should heed before proceeding to cancel or replace the specified order.
@@ -168,26 +168,26 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 		[OperationContract]
 		QueryCancelOrderWarningsResponse QueryCancelOrderWarnings(QueryCancelOrderWarningsRequest request);
 
-        /// <summary>
-        /// This method is for testing/demo purposes and is not intended to be called in production.
-        /// It shifts the order and associated visit in time by the specified number of minutes, which may be negative or positive.
-        /// </summary>
-        /// <remarks>
-        /// This method does not really belong on this interface but there was no other
-        /// convenient place to put it.
-        /// </remarks>
+		/// <summary>
+		/// This method is for testing/demo purposes and is not intended to be called in production.
+		/// It shifts the order and associated visit in time by the specified number of minutes, which may be negative or positive.
+		/// </summary>
+		/// <remarks>
+		/// This method does not really belong on this interface but there was no other
+		/// convenient place to put it.
+		/// </remarks>
 		/// <param name="request"><see cref="TimeShiftOrderRequest"/></param>
 		/// <returns><see cref="TimeShiftOrderResponse"/></returns>
 		[OperationContract]
-        [FaultContract(typeof(ConcurrentModificationException))]
-        TimeShiftOrderResponse TimeShiftOrder(TimeShiftOrderRequest request);
+		[FaultContract(typeof(ConcurrentModificationException))]
+		TimeShiftOrderResponse TimeShiftOrder(TimeShiftOrderRequest request);
 
-        /// <summary>
-        /// Reserve an accession number.
-        /// </summary>
+		/// <summary>
+		/// Reserve an accession number.
+		/// </summary>
 		/// <param name="request"><see cref="ReserveAccessionNumberRequest"/></param>
 		/// <returns><see cref="ReserveAccessionNumberResponse"/></returns>
 		[OperationContract]
-        ReserveAccessionNumberResponse ReserveAccessionNumber(ReserveAccessionNumberRequest request);
-    }
+		ReserveAccessionNumberResponse ReserveAccessionNumber(ReserveAccessionNumberRequest request);
+	}
 }
