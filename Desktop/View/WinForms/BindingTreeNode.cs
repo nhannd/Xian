@@ -174,23 +174,19 @@ namespace ClearCanvas.Desktop.View.WinForms
 				}
 				else
 				{
-					var iconKey = iconSet.GetIconKey(_bindingTreeView.IconResourceSize, resolver);
-					if (imageCollection.ContainsKey(iconKey))
+					try
 					{
-						this.ImageKey = iconKey;
-					}
-					else
-					{
-						try
+						var iconKey = iconSet.GetIconKey(_bindingTreeView.IconResourceSize, resolver);
+						if (!imageCollection.ContainsKey(iconKey))
 						{
 							imageCollection.Add(iconKey, iconSet.CreateIcon(_bindingTreeView.IconResourceSize, resolver));
-							this.ImageKey = iconKey;
 						}
-						catch (Exception e)
-						{
-							Platform.Log(LogLevel.Error, e);
-							this.ImageKey = string.Empty;
-						}
+						this.ImageKey = iconKey;
+					}
+					catch (Exception e)
+					{
+						Platform.Log(LogLevel.Debug, e);
+						this.ImageKey = string.Empty;
 					}
 				}
 
