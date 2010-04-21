@@ -30,11 +30,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Desktop
 {
@@ -42,36 +39,36 @@ namespace ClearCanvas.Desktop
 	/// Action model that allows a user to control a <see cref="IPagingController{TItem}"/>.
 	/// </summary>
 	/// <typeparam name="TItem"></typeparam>
-    public class PagingActionModel<TItem> : SimpleActionModel
-    {
-        private readonly IDesktopWindow _desktopWindow;
-        private readonly IPagingController<TItem> _controller;
+	public class PagingActionModel<TItem> : SimpleActionModel
+	{
+		private readonly IDesktopWindow _desktopWindow;
+		private readonly IPagingController<TItem> _controller;
 
-        ///<summary>
-        /// Constructor.
-        ///</summary>
-        ///<param name="controller"></param>
-        ///<param name="desktopWindow"></param>
-        public PagingActionModel(IPagingController<TItem> controller, IDesktopWindow desktopWindow)
-            : base(new ResourceResolver(typeof(PagingActionModel<TItem>).Assembly))
-        {
-            _controller = controller;
-            _desktopWindow = desktopWindow;
+		///<summary>
+		/// Constructor.
+		///</summary>
+		///<param name="controller"></param>
+		///<param name="desktopWindow"></param>
+		public PagingActionModel(IPagingController<TItem> controller, IDesktopWindow desktopWindow)
+			: base(new ResourceResolver(typeof(PagingActionModel<TItem>).Assembly))
+		{
+			_controller = controller;
+			_desktopWindow = desktopWindow;
 
 			AddAction("Previous", SR.TitlePrevious, "Icons.PreviousPageToolSmall.png");
-            AddAction("Next", SR.TitleNext, "Icons.NextPageToolSmall.png");
+			AddAction("Next", SR.TitleNext, "Icons.NextPageToolSmall.png");
 
-            Next.SetClickHandler(OnNext);
-            Previous.SetClickHandler(OnPrevious);
+			Next.SetClickHandler(OnNext);
+			Previous.SetClickHandler(OnPrevious);
 
-            Next.Enabled = _controller.HasNext;
-            Previous.Enabled = _controller.HasPrevious;  // can't go back from first
+			Next.Enabled = _controller.HasNext;
+			Previous.Enabled = _controller.HasPrevious;  // can't go back from first
 
-            _controller.PageChanged += PageChangedEventHandler;
-        }
+			_controller.PageChanged += PageChangedEventHandler;
+		}
 
-        private void OnNext()
-        {
+		private void OnNext()
+		{
 			try
 			{
 				_controller.GetNext();
@@ -82,8 +79,8 @@ namespace ClearCanvas.Desktop
 			}
 		}
 
-        private void OnPrevious()
-        {
+		private void OnPrevious()
+		{
 			try
 			{
 				_controller.GetPrevious();
@@ -94,20 +91,20 @@ namespace ClearCanvas.Desktop
 			}
 		}
 
-        private void PageChangedEventHandler(object sender, PageChangedEventArgs<TItem> args)
-        {
+		private void PageChangedEventHandler(object sender, PageChangedEventArgs<TItem> args)
+		{
 			this.Next.Enabled = _controller.HasNext;
 			this.Previous.Enabled = _controller.HasPrevious;
-        }
+		}
 
-        private ClickAction Next
-        {
-            get { return this["Next"]; }
-        }
+		private ClickAction Next
+		{
+			get { return this["Next"]; }
+		}
 
-        private ClickAction Previous
-        {
-            get { return this["Previous"]; }
-        }
-    }
+		private ClickAction Previous
+		{
+			get { return this["Previous"]; }
+		}
+	}
 }
