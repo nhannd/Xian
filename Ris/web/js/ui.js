@@ -47,6 +47,7 @@ var _IE = document.all;
 					cellType: a string indicating the type of cell (e.g. "text", "choice", "checkbox", "lookup", "datetime", "bool", "link" and others...)
 						*note: this may also be populated with a custom value (e.g. "myCellType"), in which case you must handle
 						 the renderCell event and do custom rendering.
+					noWrap: a boolean indicating if the column header and the cell should not be wrapped.  Default is false.
 					choices: an array of strings - used only by the "choice" cell type. In addition to strings, the array
 						may contain objects with the properties 'group' and 'choices'.  In this case, the object represents
 						a group of choices (HTML optgroup) - 'group' is the name of the group, and 'choices' is an array
@@ -150,6 +151,9 @@ var Table = {
 			{
 				cell = tr.insertCell(i + checkboxCellOffset);
 				cell.innerHTML = columns[i].label;
+
+				if (columns[i].noWrap)
+					cell.noWrap = true;
 			}
 		}
 
@@ -567,6 +571,9 @@ var Table = {
 
 			var tooltip = this._getColumnTooltip(column, obj);
 			Field.setTooltip(field, tooltip);
+
+			if (column.noWrap)
+				td.noWrap = true;
 
 			// fire custom formatting event, which may itself set the innerHTML property to override default cell content
 			if(this.renderCell)

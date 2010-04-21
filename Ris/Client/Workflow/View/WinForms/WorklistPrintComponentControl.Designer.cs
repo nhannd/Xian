@@ -67,7 +67,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// _printButton
 			// 
 			this._printButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._printButton.Location = new System.Drawing.Point(542, 506);
+			this._printButton.Location = new System.Drawing.Point(534, 506);
 			this._printButton.Name = "_printButton";
 			this._printButton.Size = new System.Drawing.Size(75, 23);
 			this._printButton.TabIndex = 1;
@@ -78,7 +78,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// _closeButton
 			// 
 			this._closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._closeButton.Location = new System.Drawing.Point(623, 506);
+			this._closeButton.Location = new System.Drawing.Point(615, 506);
 			this._closeButton.Name = "_closeButton";
 			this._closeButton.Size = new System.Drawing.Size(75, 23);
 			this._closeButton.TabIndex = 2;
@@ -93,7 +93,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this._previewPanel.Location = new System.Drawing.Point(4, 4);
 			this._previewPanel.Name = "_previewPanel";
-			this._previewPanel.Size = new System.Drawing.Size(694, 496);
+			this._previewPanel.Size = new System.Drawing.Size(686, 496);
 			this._previewPanel.TabIndex = 0;
 			// 
 			// WorklistPrintComponentControl
@@ -106,7 +106,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.Controls.Add(this._closeButton);
 			this.Controls.Add(this._printButton);
 			this.Name = "WorklistPrintComponentControl";
-			this.Size = new System.Drawing.Size(701, 532);
+			this.Size = new System.Drawing.Size(693, 532);
 			this.ResumeLayout(false);
 
         }

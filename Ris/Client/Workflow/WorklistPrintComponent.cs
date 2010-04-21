@@ -77,6 +77,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			// print the rendered document
 			_worklistPrintPreviewComponent.PrintDocument();
+
+			this.Exit(ApplicationComponentExitCode.Accepted);
 		}
 
 		public void Close()
