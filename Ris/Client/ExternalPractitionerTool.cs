@@ -27,7 +27,7 @@ namespace ClearCanvas.Ris.Client
 	[MenuAction("apply", "folderexplorer-items-contextmenu/Verify", "Apply")]
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Verify", "Apply")]
 	[Tooltip("apply", "Verify External Practitioner Information")]
-	[IconSet("apply", IconScheme.Colour, "Icons.CheckInToolSmall.png", "Icons.CheckInToolSmall.png", "Icons.CheckInToolLarge.png")]
+	[IconSet("apply", IconScheme.Colour, "Icons.VerifyPractitionerToolSmall.png", "Icons.VerifyPractitionerToolMedium.png", "Icons.VerifyPractitionerToolLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner)]
 	[ExtensionOf(typeof(ExternalPractitionerItemToolExtensionPoint))]
