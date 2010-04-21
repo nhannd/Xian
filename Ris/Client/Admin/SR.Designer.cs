@@ -412,6 +412,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to save Department.
+        /// </summary>
+        internal static string ExceptionSaveDepartment {
+            get {
+                return ResourceManager.GetString("ExceptionSaveDepartment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to save Imaging Service.
         /// </summary>
         internal static string ExceptionSaveDiagnosticService {

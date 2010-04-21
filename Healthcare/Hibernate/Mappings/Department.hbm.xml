@@ -8,9 +8,13 @@
     <version name="Version" column="Version_"/>
 
     <property name="Id" column="Id_" type="String" length="30" not-null="true" unique="true"/>
-    <property name="Name" column="Name_" type="String" not-null="true" unique="true"/>
+    <property name="Name" type="String">
+      <column name="Name_" unique-key="DepartmentNameKey_" not-null="true"/>
+    </property>
+    <many-to-one name="Facility" class="Facility">
+      <column name="FacilityOID_" unique-key="DepartmentNameKey_" not-null="true"/>
+    </many-to-one>
     <property name="Description" column="Description_" type="String" length="2000"/>
-    <many-to-one name="Facility" class="Facility" column="FacilityOID_" not-null="true"/>
     <property name="Deactivated" column="Deactivated_" type="Boolean" not-null="true"/>
   </class>
 </hibernate-mapping>

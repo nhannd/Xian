@@ -109,7 +109,7 @@ namespace ClearCanvas.Healthcare.Imex
 			catch (EntityNotFoundException)
 			{
 				// create it
-				d = new Department(id, name, null, facility);
+				d = new Department(id, name, facility, null);
 				context.Lock(d, DirtyState.New);
 			}
 

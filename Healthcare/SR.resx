@@ -558,4 +558,7 @@
   <data name="AlertWorkTelephoneNumberMissing" xml:space="preserve">
     <value>a work telephone number is missing</value>
   </data>
+  <data name="DepartmentNameUniqueKey" xml:space="preserve">
+    <value>Department Name and Facility</value>
+  </data>
 </root>

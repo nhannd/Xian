@@ -322,6 +322,15 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Department Name and Facility.
+        /// </summary>
+        internal static string DepartmentNameUniqueKey {
+            get {
+                return ResourceManager.GetString("DepartmentNameUniqueKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Description.
         /// </summary>
         internal static string Description {

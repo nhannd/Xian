@@ -3,6 +3,7 @@ using System.Collections;
 using System.Text;
 
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Core.Modelling;
 
 namespace ClearCanvas.Healthcare {
 
@@ -10,6 +11,7 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// Department entity
     /// </summary>
+	[UniqueKey("DepartmentNameUniqueKey", new[] { "Name", "Facility" })]
 	public partial class Department : ClearCanvas.Enterprise.Core.Entity
 	{
 	

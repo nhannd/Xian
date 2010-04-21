@@ -183,7 +183,7 @@ namespace ClearCanvas.Ris.Client.Admin
 				}
 				catch (Exception e)
 				{
-					ExceptionHandler.Report(e, SR.ExceptionSaveLocation, this.Host.DesktopWindow,
+					ExceptionHandler.Report(e, SR.ExceptionSaveDepartment, this.Host.DesktopWindow,
 					                        () => Exit(ApplicationComponentExitCode.Error));
 				}
 			}
@@ -191,8 +191,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
 		public void Cancel()
 		{
-			this.ExitCode = ApplicationComponentExitCode.None;
-			Host.Exit();
+			Exit(ApplicationComponentExitCode.None);
 		}
 
 		public bool AcceptEnabled

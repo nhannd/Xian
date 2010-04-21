@@ -426,4 +426,7 @@
   <data name="TitleUpdateDepartment" xml:space="preserve">
     <value>Update Department</value>
   </data>
+  <data name="ExceptionSaveDepartment" xml:space="preserve">
+    <value>Unable to save Department</value>
+  </data>
 </root>
