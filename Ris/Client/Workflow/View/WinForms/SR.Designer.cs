@@ -60,9 +60,16 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms {
             }
         }
         
-        internal static System.Drawing.Bitmap NextPageToolSmall {
+        internal static System.Drawing.Bitmap MergeLeftSmall {
             get {
-                object obj = ResourceManager.GetObject("NextPageToolSmall", resourceCulture);
+                object obj = ResourceManager.GetObject("MergeLeftSmall", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap MergeRightSmall {
+            get {
+                object obj = ResourceManager.GetObject("MergeRightSmall", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -70,13 +77,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms {
         internal static System.Drawing.Bitmap NextSmall {
             get {
                 object obj = ResourceManager.GetObject("NextSmall", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap PreviousPageToolSmall {
-            get {
-                object obj = ResourceManager.GetObject("PreviousPageToolSmall", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

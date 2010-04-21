@@ -457,6 +457,9 @@
     <EmbeddedResource Include="Icons\CreateReportWithImagesLarge.png" />
     <EmbeddedResource Include="Icons\CreateReportWithImagesSmall.png" />
     <EmbeddedResource Include="Icons\CreateReportWithImagesMedium.png" />
+    <EmbeddedResource Include="Icons\MergeOrdersLarge.png" />
+    <EmbeddedResource Include="Icons\MergeOrdersSmall.png" />
+    <EmbeddedResource Include="Icons\MergeOrdersMedium.png" />
     <Content Include="Icons\ImportAuthorityTokensLarge.png" />
     <Content Include="Icons\ImportAuthorityTokensMedium.png" />
     <Content Include="Icons\ImportAuthorityTokensSmall.png" />

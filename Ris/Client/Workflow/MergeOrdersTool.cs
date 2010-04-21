@@ -10,7 +10,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Merge Orders", "Apply")]
 	[MenuAction("apply", "folderexplorer-items-contextmenu/Merge Orders", "Apply")]
 	[Tooltip("apply", "Merge Orders")]
-	[IconSet("apply", IconScheme.Colour, "ReplaceOrderSmall.png", "ReplaceOrderMedium.png", "ReplaceOrderLarge.png")]
+	[IconSet("apply", IconScheme.Colour, "MergeOrdersSmall.png", "MergeOrdersMedium.png", "MergeOrdersLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
 	[ActionPermission("apply", Application.Common.AuthorityTokens.Workflow.Order.Merge)]

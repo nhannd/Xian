@@ -78,7 +78,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 
 		private void UpdateMergeDirection()
 		{
-			_mergeDirectionButton.Image = _component.MergingRight ? SR.NextPageToolSmall : SR.PreviousPageToolSmall;
+			_mergeDirectionButton.Image = _component.MergingRight ? SR.MergeRightSmall : SR.MergeLeftSmall;
 		}
 	}
 }

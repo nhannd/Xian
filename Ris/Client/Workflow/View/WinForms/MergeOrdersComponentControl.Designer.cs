@@ -94,7 +94,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// _mergeDirectionButton
 			// 
 			this._mergeDirectionButton.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._mergeDirectionButton.Image = global::ClearCanvas.Ris.Client.Workflow.View.WinForms.SR.NextPageToolSmall;
+			this._mergeDirectionButton.Image = global::ClearCanvas.Ris.Client.Workflow.View.WinForms.SR.MergeRightSmall;
 			this._mergeDirectionButton.Location = new System.Drawing.Point(282, 22);
 			this._mergeDirectionButton.Name = "_mergeDirectionButton";
 			this._mergeDirectionButton.Size = new System.Drawing.Size(35, 32);

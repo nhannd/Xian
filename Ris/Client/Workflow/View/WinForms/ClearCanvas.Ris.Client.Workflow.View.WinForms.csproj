@@ -431,10 +431,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\PreviousPageToolSmall.png" />
+    <EmbeddedResource Include="Resources\MergeLeftSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\NextPageToolSmall.png" />
+    <EmbeddedResource Include="Resources\MergeRightSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
