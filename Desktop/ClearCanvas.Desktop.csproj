@@ -490,6 +490,9 @@
     <EmbeddedResource Include="Icons\ActionModelSeparatorSmall.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Icons\ActionModelGroupBlank.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="Tools\Tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

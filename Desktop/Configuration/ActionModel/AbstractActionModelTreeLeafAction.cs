@@ -31,6 +31,7 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Trees;
 
@@ -58,8 +59,17 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			_action = AbstractAction.Create(action);
 
 			base.CheckState = _action.Available ? CheckState.Checked : CheckState.Unchecked;
-			base.IconSet = _action.IconSet;
-			base.ResourceResolver = _action.ResourceResolver;
+
+			if (_action.IconSet == null || _action.ResourceResolver == null)
+			{
+				base.IconSet = new IconSet(IconScheme.Colour, "Icons.ActionModelGroupBlank.png", "Icons.ActionModelGroupBlank.png", "Icons.ActionModelGroupBlank.png");
+				base.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
+			}
+			else
+			{
+				base.IconSet = _action.IconSet;
+				base.ResourceResolver = _action.ResourceResolver;
+			}
 		}
 
 		public string ActionId
