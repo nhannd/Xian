@@ -1371,7 +1371,6 @@ Preview.ImagingServiceSection = function () {
 
 }();
 
-
 /*
  *	Create a contrainer for the element with the specified title.
  */
@@ -2324,4 +2323,117 @@ Preview.ResultRecipientsSection = function() {
 			Preview.SectionContainer.create(parentElement, heading, { collapsible: true, initiallyCollapsed: collapsedByDefault });
 		}
 	}
+}();
+
+Preview.WorklistItemsPreview = function () {
+
+	var _worklistPropertiesHtml = 
+		'<p class="sectionheading">Worklist</p>'+
+		'<table>'+
+		'	<tr>'+
+		'		<td class="propertyname" width="125">Printed By</td>'+
+		'		<td><div id="PrintedBy"/></td>'+
+		'	</tr>'+
+		'	<tr>'+
+		'		<td class="propertyname">Folder System</td>'+
+		'		<td><div id="FolderSystem"/></td>'+
+		'	</tr>'+
+		'	<tr>'+
+		'		<td class="propertyname">Folder Name</td>'+
+		'		<td><div id="FolderName"/></td>'+
+		'	</tr>'+
+		'	<tr>'+
+		'		<td class="propertyname">Description</td>'+
+		'		<td><div id="Description"/></td>'+
+		'	</tr>'+
+		'	<tr>'+
+		'		<td class="propertyname">Showing</td>'+
+		'		<td><div id="ShowingCount"/></td>'+
+		'	</tr>'+
+		'</table>'+
+		'<br>';
+
+	var _formatProcedure = function(procedureName, portable, lateralityEnum)
+	{
+		var laterality = lateralityEnum && lateralityEnum.Code != 'N' ? lateralityEnum.Value : null;
+
+		if (portable && laterality)
+			return procedureName + " (Portable/" + laterality + ")";
+		else if (portable)
+			return procedureName + " (Portable)";
+		else if (laterality)
+			return procedureName + " (" + laterality + ")";
+
+		return procedureName;
+	};
+
+	var _createPropertiesTable = function(element, worklist)
+	{
+		var worklistDetailsSection = document.createElement("div");
+		worklistDetailsSection.innerHTML = _worklistPropertiesHtml;
+		element.appendChild(worklistDetailsSection);
+
+		Field.setValue($("PrintedBy"), Ris.formatPersonName(worklist.PrintedBy) + " on " + Ris.formatDateTime(worklist.PrintedTime));
+		Field.setValue($("FolderSystem"), worklist.FolderSystemName);
+		Field.setValue($("FolderName"), worklist.FolderName);
+		Field.setValue($("Description"), worklist.FolderDescription);
+		Field.setValue($("ShowingCount"), worklist.Items.length == worklist.TotalItemCount 
+			? "All " + worklist.TotalItemCount + " items"
+			: worklist.Items.length + " of " + worklist.TotalItemCount + " items");
+	};
+
+	var _createItemsTable = function(element, items)
+	{
+		if(items.length == 0)
+			return;
+
+		var worklistItemsSection = document.createElement("div");
+		element.appendChild(worklistItemsSection);
+			
+		var htmlTable = Preview.ProceduresTableHelper.addTable(worklistItemsSection);
+		htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
+			 [
+				{   label: "Mrn",
+					cellType: "text",
+					getValue: function(item) { return Ris.formatMrn(item.Mrn); }
+				},
+				{   label: "Name",
+					cellType: "text",
+					getValue: function(item) { return Ris.formatPersonName(item.PatientName); }
+				},
+				{   label: "Accession #",
+					cellType: "text",
+					noWrap: true,
+					getValue: function(item) { return item.AccessionNumber; }
+				},
+				{   label: "Order Priority",
+					cellType: "text",
+					getValue: function(item) { return item.OrderPriority.Value; }
+				},
+				{   label: "Patient Class",
+					cellType: "text",
+					getValue: function(item) { return item.PatientClass.Value; }
+				},
+				{   label: "Procedure",
+					cellType: "text",
+					getValue: function(item) { return _formatProcedure(item.ProcedureName, item.ProcedurePortable, item.ProcedureLaterality); }
+				},
+				{   label: "Time",
+					cellType: "html",
+					noWrap: true,
+					getValue: function(item) { return Ris.formatDate(item.Time) + "<br>" + Ris.formatTime(item.Time); }
+				}
+			 ]);
+
+		htmlTable.rowCycleClassNames = ["row0", "row1"];
+		htmlTable.bindItems(items);
+	};
+
+	return {
+		create: function(element, printContext)
+		{
+			_createPropertiesTable(element, printContext);
+			_createItemsTable(element, printContext.Items);
+		}
+	};
 }();
