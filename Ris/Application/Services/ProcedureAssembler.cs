@@ -29,7 +29,6 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
@@ -65,37 +64,35 @@ namespace ClearCanvas.Ris.Application.Services
 			bool includeProtocol,
 			IPersistenceContext context)
 		{
-			ProcedureDetail detail = new ProcedureDetail();
+			var detail = new ProcedureDetail
+							{
+								ProcedureRef = rp.GetRef(),
+								Status = EnumUtils.GetEnumValueInfo(rp.Status, context),
+								Type = new ProcedureTypeAssembler().CreateSummary(rp.Type),
+								ScheduledStartTime = rp.ScheduledStartTime,
+								StartTime = rp.StartTime,
+								EndTime = rp.EndTime,
+								CheckInTime = rp.ProcedureCheckIn.CheckInTime,
+								CheckOutTime = rp.ProcedureCheckIn.CheckOutTime,
+								PerformingFacility = new FacilityAssembler().CreateFacilitySummary(rp.PerformingFacility),
+								Laterality = EnumUtils.GetEnumValueInfo(rp.Laterality, context),
+								ImageAvailability = EnumUtils.GetEnumValueInfo(rp.ImageAvailability, context),
+								Portable = rp.Portable
+							};
 
-			detail.ProcedureRef = rp.GetRef();
-			detail.Status = EnumUtils.GetEnumValueInfo(rp.Status, context);
-			detail.Type = new ProcedureTypeAssembler().CreateSummary(rp.Type);
-			detail.ScheduledStartTime = rp.ScheduledStartTime;
-			detail.StartTime = rp.StartTime;
-			detail.EndTime = rp.EndTime;
-			detail.CheckInTime = rp.ProcedureCheckIn.CheckInTime;
-			detail.CheckOutTime = rp.ProcedureCheckIn.CheckOutTime;
-			detail.PerformingFacility = new FacilityAssembler().CreateFacilitySummary(rp.PerformingFacility);
-			detail.Laterality = EnumUtils.GetEnumValueInfo(rp.Laterality, context);
-			detail.ImageAvailability = EnumUtils.GetEnumValueInfo(rp.ImageAvailability, context);
-			detail.Portable = rp.Portable;
-
-			List<ProcedureStep> includedSteps = CollectionUtils.Select(rp.GetWorkflowHistory(), procedureStepFilter);
+			var includedSteps = CollectionUtils.Select(rp.GetWorkflowHistory(), procedureStepFilter);
 			if (includedSteps.Count > 0)
 			{
-				ProcedureStepAssembler procedureStepAssembler = new ProcedureStepAssembler();
-				detail.ProcedureSteps = CollectionUtils.Map<ProcedureStep, ProcedureStepDetail>(
+				var procedureStepAssembler = new ProcedureStepAssembler();
+				detail.ProcedureSteps = CollectionUtils.Map(
 					includedSteps,
-					delegate(ProcedureStep ps)
-					{
-						return procedureStepAssembler.CreateProcedureStepDetail(ps, context);
-					});
+					(ProcedureStep ps) => procedureStepAssembler.CreateProcedureStepDetail(ps, context));
 			}
 
 			// the Protocol may be null, if this procedure has not been protocolled
 			if (includeProtocol && rp.ActiveProtocol != null)
 			{
-				ProtocolAssembler protocolAssembler = new ProtocolAssembler();
+				var protocolAssembler = new ProtocolAssembler();
 				detail.Protocol = protocolAssembler.CreateProtocolDetail(rp.ActiveProtocol, context);
 			}
 
@@ -104,17 +101,18 @@ namespace ClearCanvas.Ris.Application.Services
 
 		public ProcedureSummary CreateProcedureSummary(Procedure rp, IPersistenceContext context)
 		{
-			ProcedureTypeAssembler rptAssembler = new ProcedureTypeAssembler();
-			ProcedureSummary summary = new ProcedureSummary();
-
-			summary.OrderRef = rp.Order.GetRef();
-			summary.ProcedureRef = rp.GetRef();
-			summary.Index = rp.Index;
-			summary.ScheduledStartTime = rp.ScheduledStartTime;
-			summary.PerformingFacility = new FacilityAssembler().CreateFacilitySummary(rp.PerformingFacility);
-			summary.Type = rptAssembler.CreateSummary(rp.Type);
-			summary.Laterality = EnumUtils.GetEnumValueInfo(rp.Laterality, context);
-			summary.Portable = rp.Portable;
+			var rptAssembler = new ProcedureTypeAssembler();
+			var summary = new ProcedureSummary
+							{
+								OrderRef = rp.Order.GetRef(),
+								ProcedureRef = rp.GetRef(),
+								Index = rp.Index,
+								ScheduledStartTime = rp.ScheduledStartTime,
+								PerformingFacility = new FacilityAssembler().CreateFacilitySummary(rp.PerformingFacility),
+								Type = rptAssembler.CreateSummary(rp.Type),
+								Laterality = EnumUtils.GetEnumValueInfo(rp.Laterality, context),
+								Portable = rp.Portable
+							};
 
 			return summary;
 		}
