@@ -339,7 +339,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			// limit department choices to those that are associated with the selected performing facility
 			_departmentChoices = _selectedFacility == null ? new List<DepartmentSummary>()
-				: CollectionUtils.Select(_allDepartments, d => d.Facility.FacilityRef.Equals(_selectedFacility.FacilityRef, true));
+				: CollectionUtils.Select(_allDepartments, d => d.FacilityCode == _selectedFacility.Code);
 
 			// add a "null" choice, to allow user to clear the value
 			_departmentChoices.Insert(0, _departmentNone);

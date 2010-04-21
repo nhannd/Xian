@@ -72,6 +72,9 @@ namespace ClearCanvas.Ris.Application.Common
 		public FacilitySummary PerformingFacility;
 
 		[DataMember]
+		public DepartmentSummary PerformingDepartment;
+
+		[DataMember]
 		public EnumValueInfo Laterality;
 
 		[DataMember]

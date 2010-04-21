@@ -1244,7 +1244,7 @@ Preview.ImagingServiceSection = function () {
 		'				<div id="OrderingPhysicianEmail"></div>'+
 		'			</div>'+
 		'		</td>'+
-		'		<td width="120" class="propertyname">Performing Facility</td>'+
+		'		<td width="120" class="propertyname">Performing Facility/Dept.</td>'+
 		'		<td width="200"><div id="PerformingFacility"/></td>'+
 		'	</tr>'+
 		'	<tr>'+
@@ -1282,7 +1282,7 @@ Preview.ImagingServiceSection = function () {
 		'	</tr>'+
 		'</table></div>';
 
-	var GetPractitionerContactPoint = function(practitioner, recipients)
+	function getPractitionerContactPoint(practitioner, recipients)
 	{
 		var contactPoint = null;
 		recipients.each(function(recipient) 
@@ -1293,6 +1293,14 @@ Preview.ImagingServiceSection = function () {
 			}
 		});
 		return contactPoint;
+	}
+	
+	function formatPerformingFacility(procedureDetails)
+	{
+		var parts = procedureDetails
+			.map(function(p) { return p.PerformingFacility.Code + (p.PerformingDepartment ? " ("+p.PerformingDepartment.Name+")" : ""); })
+			.unique();
+		return String.combine(parts, "<br>");
 	}
 
 	return {
@@ -1307,7 +1315,7 @@ Preview.ImagingServiceSection = function () {
 			Field.setValue($("AccessionNumber"), Ris.formatAccessionNumber(orderDetail.AccessionNumber));
 			Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
 			Field.setLink($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name), function() { Ris.openPractitionerDetails(orderDetail.OrderingPractitioner); });
-			Field.setValue($("PerformingFacility"), Preview.formatPerformingFacilityList(orderDetail.Procedures));
+			Field.setValue($("PerformingFacility"), formatPerformingFacility(orderDetail.Procedures));
 			Field.setValue($("PatientClass"), orderDetail.Visit.PatientClass.Value);
 			Field.setValue($("LocationRoomBed"), Preview.formatVisitCurrentLocation(orderDetail.Visit));
 			Field.setValue($("ReasonForStudy"), orderDetail.ReasonForStudy);
@@ -1340,7 +1348,7 @@ Preview.ImagingServiceSection = function () {
 					Field.setPreFormattedValue($("Alerts"), alertHtml);
 				}
 
-				var contactPoint = GetPractitionerContactPoint(orderDetail.OrderingPractitioner, orderDetail.ResultRecipients);
+				var contactPoint = getPractitionerContactPoint(orderDetail.OrderingPractitioner, orderDetail.ResultRecipients);
 				if (options.ShowOrderingPhysicianContactPointDetails && contactPoint)
 				{
 					Field.show($("OrderingPhysicianContactPointDetails"), true);

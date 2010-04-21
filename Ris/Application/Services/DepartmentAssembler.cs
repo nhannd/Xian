@@ -8,11 +8,10 @@ namespace ClearCanvas.Ris.Application.Services
 	{
 		public DepartmentSummary CreateSummary(Department item, IPersistenceContext context)
 		{
-			var facilityAssembler = new FacilityAssembler();
 			return new DepartmentSummary(item.GetRef(),
 										 item.Id,
 										 item.Name,
-										 facilityAssembler.CreateFacilitySummary(item.Facility),
+										 item.Facility.Code,
 										 item.Deactivated);
 		}
 

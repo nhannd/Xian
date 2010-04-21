@@ -75,6 +75,7 @@ namespace ClearCanvas.Ris.Application.Services
 								CheckInTime = rp.ProcedureCheckIn.CheckInTime,
 								CheckOutTime = rp.ProcedureCheckIn.CheckOutTime,
 								PerformingFacility = new FacilityAssembler().CreateFacilitySummary(rp.PerformingFacility),
+								PerformingDepartment = rp.PerformingDepartment == null ? null : new DepartmentAssembler().CreateSummary(rp.PerformingDepartment, context),
 								Laterality = EnumUtils.GetEnumValueInfo(rp.Laterality, context),
 								ImageAvailability = EnumUtils.GetEnumValueInfo(rp.ImageAvailability, context),
 								Portable = rp.Portable

@@ -51,9 +51,9 @@ namespace ClearCanvas.Ris.Client.Admin
 	{
 		public DepartmentSummaryTable()
 		{
-			this.Columns.Add(new TableColumn<DepartmentSummary, string>(SR.ColumnID, loc => loc.Id, 0.2f));
-			this.Columns.Add(new TableColumn<DepartmentSummary, string>(SR.ColumnName, loc => loc.Name, 1.0f));
-			this.Columns.Add(new TableColumn<DepartmentSummary, string>(SR.ColumnFacility, loc => loc.Facility.Name, 1.0f));
+			this.Columns.Add(new TableColumn<DepartmentSummary, string>(SR.ColumnID, dept => dept.Id, 0.2f));
+			this.Columns.Add(new TableColumn<DepartmentSummary, string>(SR.ColumnName, dept => dept.Name, 1.0f));
+			this.Columns.Add(new TableColumn<DepartmentSummary, string>(SR.ColumnFacility, dept => dept.FacilityCode, 1.0f));
 		}
 	}
 
