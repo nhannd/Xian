@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using Keys = ClearCanvas.Desktop.XKeys;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -523,7 +524,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		protected virtual void OnValidateKeyStroke(ValidateKeyStrokeEventArgs e)
 		{
 			Keys key = GetKeyPressed(e.KeyStroke);
-			e.IsValid = !(key == Keys.ControlKey || key == Keys.Menu || key == Keys.ShiftKey || key == Keys.None);
+			e.IsValid = !(key == Keys.ControlKey || key == Keys.Menu || key == Keys.ShiftKey);
 
 			if (_validateKeyStrokeEventHandler != null)
 				_validateKeyStrokeEventHandler.Invoke(this, e);
@@ -746,7 +747,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				case Keys.Shift:
 					return "Shift";
 				default:
-					return _keysConverter.ConvertToString(key);
+					return _keysConverter.ConvertToString(Convert(key));
 			}
 		}
 
@@ -772,6 +773,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void HandleTextBoxKeyDown(object sender, KeyEventArgs e)
 		{
+			Keys keyData = Convert(e.KeyData);
 			e.Handled = true;
 			e.SuppressKeyPress = true;
 
@@ -781,16 +783,17 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			if (!_keyStrokeAccepted)
 			{
-				this.UpdateText(e.KeyData);
+				this.UpdateText(keyData);
 			}
 
-			Keys key = GetKeyPressed(e.KeyData);
+			Keys key = GetKeyPressed(keyData);
 			if (key != Keys.None && IsValidKeyStroke(key) && !_currentKeys.Contains(key))
 				_currentKeys.Add(key);
 		}
 
 		private void HandleTextBoxKeyUp(object sender, KeyEventArgs e)
 		{
+			Keys keyData = Convert(e.KeyData);
 			e.Handled = true;
 			e.SuppressKeyPress = true;
 
@@ -800,19 +803,19 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			if (!_keyStrokeAccepted)
 			{
-				if (this.IsValidKeyStroke(e.KeyData))
+				if (this.IsValidKeyStroke(keyData))
 				{
 					_keyStrokeAccepted = true;
-					this.KeyStroke = e.KeyData;
+					this.KeyStroke = keyData;
 				}
 				else
 				{
 					// technically, we should update anyway, but doing this avoids an extra call to format
-					this.UpdateText(e.KeyData);
+					this.UpdateText(keyData);
 				}
 			}
 
-			Keys key = GetKeyPressed(e.KeyData);
+			Keys key = GetKeyPressed(keyData);
 			if (key != Keys.None)
 				_currentKeys.Remove(key);
 
@@ -837,6 +840,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 		{
 			this.ClearKeyInputState();
 			this.UpdateText();
+		}
+
+		private static Keys Convert(System.Windows.Forms.Keys keys)
+		{
+			return (Keys) (int) keys;
+		}
+
+		private static System.Windows.Forms.Keys Convert(Keys keys)
+		{
+			return (System.Windows.Forms.Keys) (int) keys;
 		}
 	}
 
