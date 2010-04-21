@@ -1068,4 +1068,7 @@
   <data name="NodeDepartments" xml:space="preserve">
     <value>Departments</value>
   </data>
+  <data name="MessageSearchResults" xml:space="preserve">
+    <value>Search Results</value>
+  </data>
 </root>

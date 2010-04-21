@@ -1888,6 +1888,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search Results.
+        /// </summary>
+        internal static string MessageSearchResults {
+            get {
+                return ResourceManager.GetString("MessageSearchResults", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Showing all {0} item(s)..
         /// </summary>
         internal static string MessageShowAllItems {

@@ -106,7 +106,7 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_searchParams = value;
-				this.Tooltip = _searchParams.ToString();
+				this.Tooltip = SR.MessageSearchResults;
 
 				// invalidate the folder immediately
 				_isValid = false;
