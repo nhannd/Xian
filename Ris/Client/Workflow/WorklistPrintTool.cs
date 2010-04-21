@@ -20,6 +20,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ExtensionOf(typeof(EmergencyWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(TranscriptionWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(RadiologistAdminWorkflowItemToolExtensionPoint))]
+	[ActionPermission("apply", Application.Common.AuthorityTokens.Workflow.Worklist.Print)]
 	public class WorklistPrintTool : Tool<IWorkflowItemToolContext>
 	{
 		public bool Enabled
