@@ -40,7 +40,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 	{
 		public AbstractActionModelTreeLeafSeparator() : base(new PathSegment("Separator", SR.LabelSeparator)) 
 		{
-			base.IconSet = new IconSet(IconScheme.Colour, "Icons.Separator.png", "Icons.Separator.png", "Icons.Separator.png");
+			base.IconSet = new IconSet(IconScheme.Colour, "Icons.ActionModelSeparatorSmall.png", "Icons.ActionModelSeparatorSmall.png", "Icons.ActionModelSeparatorSmall.png");
 			base.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
 			base.CheckState = CheckState.Checked;
 		}

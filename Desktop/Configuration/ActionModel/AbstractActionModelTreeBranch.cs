@@ -50,7 +50,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		{
 			_subtree.Items.ItemsChanged += OnSubtreeItemsChanged;
 
-			base.IconSet = new IconSet(IconScheme.Colour, "Icons.MenuGroup.png", "Icons.MenuGroup.png", "Icons.MenuGroup.png");
+			base.IconSet = new IconSet(IconScheme.Colour, "Icons.ActionModelGroupSmall.png", "Icons.ActionModelGroupSmall.png", "Icons.ActionModelGroupSmall.png");
 			base.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
 		}
 
