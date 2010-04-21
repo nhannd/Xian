@@ -53,6 +53,9 @@ namespace ClearCanvas.Desktop.View.WinForms.Configuration
 			_actionModelTree.Tree = component.ActionModelTreeRoot;
 			_actionModelTree.ToolbarModel = component.ToolbarActionModel;
 			_actionModelTree.MenuModel = component.ContextMenuActionModel;
+			_actionModelTree.ShowLines = !component.IsFlatActionModel;
+			_actionModelTree.ShowRootLines = !component.IsFlatActionModel;
+			_actionModelTree.ShowPlusMinus = !component.IsFlatActionModel;
 
 			this.OnComponentSelectedNodeChanged(null, null);
 		}

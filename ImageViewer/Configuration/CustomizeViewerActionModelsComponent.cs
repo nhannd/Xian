@@ -57,7 +57,8 @@ namespace ClearCanvas.ImageViewer.Configuration
 			                                                     	_imageViewer.GlobalActionsNamespace,
 			                                                     	"global-toolbars",
 			                                                     	_imageViewer.ExportedActions,
-			                                                     	_imageViewer.DesktopWindow)));
+			                                                     	_imageViewer.DesktopWindow,
+																	true)));
 
 			_tabComponent.Pages.Add(new TabPage(SR.LabelContextMenu, new ActionModelConfigurationComponent(
 			                                                         	_imageViewer.ActionsNamespace,

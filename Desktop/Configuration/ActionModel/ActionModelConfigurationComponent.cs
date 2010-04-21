@@ -54,6 +54,8 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		private readonly string _namespace;
 		private readonly string _site;
 
+		private readonly bool _isFlatActionModel;
+
 		private ActionModelRoot _actionModel;
 		private AbstractActionModelTreeRoot _actionModelTreeRoot;
 
@@ -65,6 +67,9 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		private NodePropertiesComponentContainerHost _propertiesContainerHost;
 
 		public ActionModelConfigurationComponent(string @namespace, string site, IActionSet actionSet, IDesktopWindow desktopWindow)
+			: this(@namespace, site, actionSet, desktopWindow, false) { }
+
+		public ActionModelConfigurationComponent(string @namespace, string site, IActionSet actionSet, IDesktopWindow desktopWindow, bool flatActionModel)
 		{
 			_namespace = @namespace;
 			_site = site;
@@ -79,7 +84,17 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 
 			_actionModel = ActionModelSettings.Default.BuildAbstractActionModel(_namespace, _site, actionSet.Select(a => a.Path.Site == site));
 			_actionModelTreeRoot = new AbstractActionModelTreeRoot(_site);
-			BuildActionModelTree(_actionModel, _actionModelTreeRoot);
+
+			_isFlatActionModel = flatActionModel;
+			if (flatActionModel)
+				BuildFlatActionModelTree(_actionModel, _actionModelTreeRoot);
+			else
+				BuildActionModelTree(_actionModel, _actionModelTreeRoot);
+		}
+
+		public bool IsFlatActionModel
+		{
+			get { return _isFlatActionModel; }
 		}
 
 		public string ActionModelId
@@ -184,6 +199,23 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			{
 				_propertiesContainerHost.StopComponent();
 				_propertiesContainerHost = null;
+			}
+		}
+
+		private static void BuildFlatActionModelTree(ActionModelNode actionModel, AbstractActionModelTreeBranch abstractActionModelTreeBranch)
+		{
+			foreach (ActionModelNode childNode in actionModel.GetLeafNodesInOrder())
+			{
+				if (childNode is ActionNode)
+				{
+					ActionNode actionNode = (ActionNode) childNode;
+					if (actionNode.Action.Persistent)
+						abstractActionModelTreeBranch.AppendChild(new AbstractActionModelTreeLeafAction(actionNode.Action));
+				}
+				else if (childNode is SeparatorNode)
+				{
+					abstractActionModelTreeBranch.AppendChild(new AbstractActionModelTreeLeafSeparator());
+				}
 			}
 		}
 

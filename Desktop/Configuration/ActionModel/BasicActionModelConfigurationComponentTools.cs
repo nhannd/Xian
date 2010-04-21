@@ -39,6 +39,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 {
 	[ButtonAction("addGroup", "actionmodelconfig-toolbar/ToolbarAddGroup", "AddGroup")]
 	[IconSet("addGroup", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolSmall.png", "Icons.AddToolSmall.png")]
+	[EnabledStateObserver("addGroup", "CanInsertGroup", "SelectedNodeChanged")]
 	[ButtonAction("addSeparator", "actionmodelconfig-toolbar/ToolbarAddSeparator", "AddSeparator")]
 	[IconSet("addSeparator", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolSmall.png", "Icons.AddToolSmall.png")]
 	[ButtonAction("removeNode", "actionmodelconfig-toolbar/ToolbarRemove", "RemoveNode", KeyStroke = XKeys.Delete)]
@@ -50,10 +51,13 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 
 	[ButtonAction("insertGroupBefore", "actionmodelconfig-contextmenu/MenuInsertGroupBefore", "InsertGroupBefore")]
 	[IconSet("insertGroupBefore", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolSmall.png", "Icons.AddToolSmall.png")]
+	[EnabledStateObserver("insertGroupBefore", "CanInsertGroup", "SelectedNodeChanged")]
 	[ButtonAction("insertGroupAfter", "actionmodelconfig-contextmenu/MenuInsertGroupAfter", "InsertGroupAfter")]
 	[IconSet("insertGroupAfter", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolSmall.png", "Icons.AddToolSmall.png")]
+	[EnabledStateObserver("insertGroupAfter", "CanInsertGroup", "SelectedNodeChanged")]
 	[ButtonAction("insertGroupAsChild", "actionmodelconfig-contextmenu/MenuInsertGroupAsChild", "InsertGroupAsChild")]
 	[IconSet("insertGroupAsChild", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolSmall.png", "Icons.AddToolSmall.png")]
+	[EnabledStateObserver("insertGroupAsChild", "CanInsertGroup", "SelectedNodeChanged")]
 	[VisibleStateObserver("insertGroupAsChild", "CanInsertChild", "SelectedNodeChanged")]
 
 	[ButtonAction("insertSeparatorBefore", "actionmodelconfig-contextmenu/MenuInsertSeparatorBefore", "InsertSeparatorBefore")]
@@ -74,6 +78,11 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 	public class BasicActionModelConfigurationComponentTools : ActionModelConfigurationComponentTool
 	{
 		public event EventHandler SelectedNodeChanged;
+
+		public bool CanInsertGroup
+		{
+			get { return !base.Component.IsFlatActionModel; }
+		}
 
 		public bool CanRemove
 		{
