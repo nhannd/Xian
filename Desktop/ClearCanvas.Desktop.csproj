@@ -103,6 +103,8 @@
     <Compile Include="Actions\ObservablePropertyCoupler.cs" />
     <Compile Include="ApplicationSettingsRegistry.cs" />
     <Compile Include="Actions\AbstractAction.cs" />
+    <Compile Include="Async.cs" />
+    <Compile Include="AsyncTask.cs" />
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeBranch.cs" />
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeLeafAction.cs" />
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeLeafSeparator.cs" />

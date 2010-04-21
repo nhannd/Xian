@@ -33,7 +33,7 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Desktop
 {
 	/// <summary>
 	/// Provides a simple mechanism for executing code asynchronously.
@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Client
 	{
 		public delegate void Action();
 
-		private BackgroundTask _loaderTask;
+		private BackgroundTask _backgroundTask;
 		private Action _continuationCode;
 		private Action<Exception> _errorHandler;
 
@@ -84,7 +84,7 @@ namespace ClearCanvas.Ris.Client
 			_continuationCode = continuationCode;
 			_errorHandler = errorHandler;
 
-			_loaderTask = new BackgroundTask(
+			_backgroundTask = new BackgroundTask(
 				delegate(IBackgroundTaskContext context)
 				{
 					try
@@ -98,8 +98,8 @@ namespace ClearCanvas.Ris.Client
 					}
 				}, false);
 
-			_loaderTask.Terminated += TerminatedEventHandler;
-			_loaderTask.Run();
+			_backgroundTask.Terminated += TerminatedEventHandler;
+			_backgroundTask.Run();
 		}
 
 		/// <summary>
@@ -107,13 +107,13 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public void Cancel()
 		{
-			if (_loaderTask != null)
+			if (_backgroundTask != null)
 			{
 				_continuationCode = null;
 				_errorHandler = null;
-				_loaderTask.Terminated -= TerminatedEventHandler;
-				_loaderTask.Dispose();
-				_loaderTask = null;
+				_backgroundTask.Terminated -= TerminatedEventHandler;
+				_backgroundTask.Dispose();
+				_backgroundTask = null;
 			}
 		}
 

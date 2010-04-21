@@ -66,8 +66,6 @@
   <ItemGroup>
     <Compile Include="AddressEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
-    <Compile Include="Async.cs" />
-    <Compile Include="AsyncTask.cs" />
     <Compile Include="AttachmentSummaryTableBase.cs" />
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="BannerSettings.cs" />

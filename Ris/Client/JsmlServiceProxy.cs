@@ -32,6 +32,7 @@
 using System;
 using System.Runtime.InteropServices;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Jsml;
 using ClearCanvas.Common.Utilities;

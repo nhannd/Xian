@@ -717,8 +717,16 @@ namespace ClearCanvas.Enterprise.Desktop
 
 		private void ListItems(int firstRow, int maxRows, Action<IList<TSummary>> resultHandler)
 		{
-			var results = ListItems(firstRow, maxRows);
-			resultHandler(results);
+			IList<TSummary> results = null;
+			Async.Invoke(this,
+				delegate
+				{
+					results = ListItems(firstRow, maxRows);
+				},
+				delegate
+				{
+					resultHandler(results);
+				});
 		}
 	}
 

@@ -32,9 +32,8 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Desktop
 {
 	/// <summary>
 	/// Provides a simple mechanism for application components to execute code asynchronously.
