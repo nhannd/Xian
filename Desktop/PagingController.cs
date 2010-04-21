@@ -47,16 +47,19 @@ namespace ClearCanvas.Desktop
 		/// </summary>
 		/// <param name="firstRow"></param>
 		/// <param name="maxRows"></param>
+		/// <param name="resultHandler"></param>
 		/// <returns></returns>
-		public delegate IList<TItem> PageQueryDelegate(int firstRow, int maxRows);
+		public delegate void PageQueryDelegate(int firstRow, int maxRows, Action<IList<TItem>> resultHandler);
 		
 		private static readonly int _defaultPageSize = 50;
-        private int _pageSize;
+        private readonly int _pageSize;
         private int _currentPageNumber;
         private bool _hasNext;
         private readonly PageQueryDelegate _queryDelegate;
 
-		private event EventHandler _pageChanged;
+		private event EventHandler<PageChangedEventArgs<TItem>> _pageChanged;
+
+    	private bool _busy;
 
 		/// <summary>
 		/// Constructor.
@@ -86,8 +89,7 @@ namespace ClearCanvas.Desktop
     	/// </summary>
     	public int PageSize
         {
-            get {return _pageSize;}
-            set {_pageSize = value;}
+            get { return _pageSize; }
         }
 
     	/// <summary>
@@ -112,42 +114,39 @@ namespace ClearCanvas.Desktop
     	/// Gets the next page of items.
     	/// </summary>
     	/// <returns></returns>
-    	public IList<TItem> GetNext()
+    	public void GetNext()
         {
-            var results = DoQuery(NextPage());
-            _currentPageNumber++;
-			EventsHelper.Fire(_pageChanged, this, EventArgs.Empty);
-			return results;
+			if(_busy)
+				return;
+			DoQuery(NextPageNumber, delegate { _currentPageNumber++; });
         }
 
     	/// <summary>
     	/// Gets the previous page of items.
     	/// </summary>
     	/// <returns></returns>
-    	public IList<TItem> GetPrevious()
+    	public void GetPrevious()
         {
-            var results = DoQuery(PrevPage());
-            _currentPageNumber--;
-			EventsHelper.Fire(_pageChanged, this, EventArgs.Empty);
-			return results;
+			if (_busy)
+				return;
+			DoQuery(PrevPageNumber, delegate { _currentPageNumber--; });
         }
 
     	/// <summary>
     	/// Resets this instance to the first page of items.
     	/// </summary>
     	/// <returns></returns>
-    	public IList<TItem> GetFirst()
+    	public void GetFirst()
         {
-            _currentPageNumber = 0;
-            var results = DoQuery(FirstPage());
-        	EventsHelper.Fire(_pageChanged, this, EventArgs.Empty);
-            return results;
+			if (_busy)
+				return;
+			DoQuery(FirstPageNumber, delegate { _currentPageNumber = 0; });
         }
 
     	/// <summary>
     	/// Occurs when the current page changes (by calling any of <see cref="GetFirst"/>, <see cref="GetNext"/> or <see cref="GetPrevious"/>.
     	/// </summary>
-    	public event EventHandler PageChanged
+    	public event EventHandler<PageChangedEventArgs<TItem>> PageChanged
 		{
 			add { _pageChanged += value; }
 			remove { _pageChanged -= value; }
@@ -155,36 +154,68 @@ namespace ClearCanvas.Desktop
 
         #endregion
 
-        private IList<TItem> DoQuery(int firstRow)
+        private void DoQuery(int firstRow, Action<object> updateCurrentPageCallback)
         {
-        	var results = _queryDelegate(firstRow, _pageSize + 1) ?? new List<TItem>();
+			try
+			{
+				_busy = true;
 
-            if (results.Count == _pageSize + 1)
-            {
-                _hasNext = true;
-                results.RemoveAt(_pageSize);
-            }
-            else
-            {
-                _hasNext = false;
-            }
+				// request 1 more item than we actually need, so that we know
+				// if there is a next page or not
+				_queryDelegate(firstRow, _pageSize + 1,
+					delegate(IList<TItem> results)
+					{
+						// ensure that the _busy state is reset no matter what!!
+						try
+						{
+							OnQueryCompleted(results, updateCurrentPageCallback);
+						}
+						finally
+						{
+							_busy = false;
+						}
+					});
+			}
+			catch(Exception)
+			{
+				_busy = false;
+				throw;
+			}
+		}
 
-            return results;
-        }
-
-        private int NextPage()
-        {
-        	return HasNext ? (_currentPageNumber + 1)*_pageSize : 0;
-        }
-
-    	private int PrevPage()
+    	private void OnQueryCompleted(IList<TItem> results, Action<object> updateCurrentPageCallback)
     	{
-    		return HasPrevious ? (_currentPageNumber - 1)*_pageSize : 0;
+			// determine if we have a next page and set _hasNext appropriately
+			if (results.Count == _pageSize + 1)
+    		{
+    			_hasNext = true;
+    			results.RemoveAt(_pageSize);
+    		}
+    		else
+    		{
+    			_hasNext = false;
+    		}
+
+    		// update our current page prior to firing the public event
+    		updateCurrentPageCallback(null);
+
+    		// fire the public event
+    		EventsHelper.Fire(_pageChanged, this, new PageChangedEventArgs<TItem>(results));
     	}
 
-    	private static int FirstPage()
-        {
-            return 0;
-        }
+    	private int NextPageNumber
+    	{
+    		get { return HasNext ? (_currentPageNumber + 1)*_pageSize : 0; }
+    	}
+
+    	private int PrevPageNumber
+    	{
+    		get { return HasPrevious ? (_currentPageNumber - 1)*_pageSize : 0; }
+    	}
+
+    	private static int FirstPageNumber
+    	{
+    		get { return 0; }
+    	}
     }
 }

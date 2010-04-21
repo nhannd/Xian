@@ -34,6 +34,17 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.Desktop
 {
+	public class PageChangedEventArgs<TItem> : EventArgs
+	{
+		public PageChangedEventArgs(IList<TItem> items)
+		{
+			this.Items = items;
+		}
+
+		public IList<TItem> Items { get; private set; }
+	}
+
+
 	/// <summary>
 	/// Defines an interface to control pagination through a list of items.
 	/// </summary>
@@ -41,9 +52,9 @@ namespace ClearCanvas.Desktop
     public interface IPagingController<TItem>
     {
         /// <summary>
-        /// Gets or sets the number of items per page.
+        /// Gets the number of items per page.
         /// </summary>
-        int PageSize {get; set;}
+        int PageSize { get; }
 
         /// <summary>
         /// Gets a value indicating whether there is a next page.
@@ -61,23 +72,23 @@ namespace ClearCanvas.Desktop
         /// Gets the next page of items.
         /// </summary>
         /// <returns></returns>
-        IList<TItem> GetNext();
+        void GetNext();
 
         /// <summary>
         /// Gets the previous page of items.
         /// </summary>
         /// <returns></returns>
-        IList<TItem> GetPrevious();
+        void GetPrevious();
 
         /// <summary>
         /// Resets this instance to the first page of items.
         /// </summary>
         /// <returns></returns>
-        IList<TItem> GetFirst();
+        void GetFirst();
 
         /// <summary>
         /// Occurs when the current page changes (by calling any of <see cref="GetFirst"/>, <see cref="GetNext"/> or <see cref="GetPrevious"/>.
         /// </summary>
-        event EventHandler PageChanged;
+        event EventHandler<PageChangedEventArgs<TItem>> PageChanged;
     }
 }

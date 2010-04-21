@@ -269,12 +269,15 @@ namespace ClearCanvas.Enterprise.Desktop
 			if (SupportsPaging)
 			{
 				_pagingController = new PagingController<TSummary>(ListItems);
-				_actionModel.Merge(new PagingActionModel<TSummary>(_pagingController, _summaryTable, Host.DesktopWindow));
+				_pagingController.PageChanged += PagingControllerPageChangedEventHandler;
+				_actionModel.Merge(new PagingActionModel<TSummary>(_pagingController, Host.DesktopWindow));
 
-				_summaryTable.Items.AddRange(_pagingController.GetFirst());
+				// load first page of items
+				_pagingController.GetFirst();
 			}
 			else
 			{
+				// load the one and only page of items
 				_summaryTable.Items.AddRange(ListItems(0, -1));
 			}
 
@@ -282,6 +285,12 @@ namespace ClearCanvas.Enterprise.Desktop
 			_summaryTable.Sort(_summaryTable.SortParams);
 
 			base.Start();
+		}
+
+		private void PagingControllerPageChangedEventHandler(object sender, PageChangedEventArgs<TSummary> e)
+		{
+			this.Table.Items.Clear();
+			this.Table.Items.AddRange(e.Items);
 		}
 
 		#endregion
@@ -342,8 +351,7 @@ namespace ClearCanvas.Enterprise.Desktop
 		{
 			try
 			{
-				this.Table.Items.Clear();
-				this.Table.Items.AddRange(this.PagingController.GetFirst());
+				 _pagingController.GetFirst();
 			}
 			catch (Exception e)
 			{
@@ -707,6 +715,11 @@ namespace ClearCanvas.Enterprise.Desktop
 			return typeof(TSummary).GetField("Deactivated");
 		}
 
+		private void ListItems(int firstRow, int maxRows, Action<IList<TSummary>> resultHandler)
+		{
+			var results = ListItems(firstRow, maxRows);
+			resultHandler(results);
+		}
 	}
 
 	public abstract class SummaryComponentBase<TSummary, TTable, TListRequest> : SummaryComponentBase<TSummary, TTable>

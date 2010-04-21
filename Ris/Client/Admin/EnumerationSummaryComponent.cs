@@ -178,6 +178,11 @@ namespace ClearCanvas.Ris.Client.Admin
 			get { return true; }
 		}
 
+		protected override bool SupportsPaging
+		{
+			get { return false; }
+		}
+
 		/// <summary>
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
 		/// </summary>
@@ -339,7 +344,7 @@ namespace ClearCanvas.Ris.Client.Admin
 		private void LoadEnumerationValues()
 		{
 			this.Table.Items.Clear();
-			this.Table.Items.AddRange(this.PagingController.GetFirst());
+			this.Table.Items.AddRange(ListItems(0, -1));
 		}
 
 		private void UpdateOperationEnablement()

@@ -46,19 +46,16 @@ namespace ClearCanvas.Desktop
     {
         private readonly IDesktopWindow _desktopWindow;
         private readonly IPagingController<TItem> _controller;
-        private readonly Table<TItem> _table;
 
         ///<summary>
         /// Constructor.
         ///</summary>
         ///<param name="controller"></param>
-        ///<param name="table"></param>
         ///<param name="desktopWindow"></param>
-        public PagingActionModel(IPagingController<TItem> controller, Table<TItem> table, IDesktopWindow desktopWindow)
+        public PagingActionModel(IPagingController<TItem> controller, IDesktopWindow desktopWindow)
             : base(new ResourceResolver(typeof(PagingActionModel<TItem>).Assembly))
         {
             _controller = controller;
-            _table = table;
             _desktopWindow = desktopWindow;
 
 			AddAction("Previous", SR.TitlePrevious, "Icons.PreviousPageToolSmall.png");
@@ -75,31 +72,32 @@ namespace ClearCanvas.Desktop
 
         private void OnNext()
         {
-            ChangePage(_controller.GetNext());
-        }
+			try
+			{
+				_controller.GetNext();
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, _desktopWindow);
+			}
+		}
 
         private void OnPrevious()
         {
-            ChangePage(_controller.GetPrevious());
-        }
+			try
+			{
+				_controller.GetPrevious();
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, _desktopWindow);
+			}
+		}
 
-        private void ChangePage(IEnumerable<TItem> results)
+        private void PageChangedEventHandler(object sender, PageChangedEventArgs<TItem> args)
         {
-            try
-            {
-                _table.Items.Clear();
-                _table.Items.AddRange(results);
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, _desktopWindow);
-            }
-        }
-
-        private void PageChangedEventHandler(object sender, EventArgs args)
-        {
-            Next.Enabled = _controller.HasNext;
-            Previous.Enabled = _controller.HasPrevious;
+			this.Next.Enabled = _controller.HasNext;
+			this.Previous.Enabled = _controller.HasPrevious;
         }
 
         private ClickAction Next
