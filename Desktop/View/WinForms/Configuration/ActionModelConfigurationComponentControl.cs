@@ -30,24 +30,116 @@
 #endregion
 
 using System;
+using System.Collections;
+using System.Drawing;
 using System.Windows.Forms;
+using ClearCanvas.Common;
 using ClearCanvas.Desktop.Configuration.ActionModel;
 
 namespace ClearCanvas.Desktop.View.WinForms.Configuration
 {
 	public partial class ActionModelConfigurationComponentControl : UserControl
 	{
-		private readonly ActionModelConfigurationComponent _component;
+		private ActionModelConfigurationComponent _component;
 
 		public ActionModelConfigurationComponentControl(ActionModelConfigurationComponent component)
 		{
 			InitializeComponent();
 
 			_component = component;
+			_component.SelectedNodeChanged += OnComponentSelectedNodeChanged;
 
+			_actionModelTree.ShowToolbar = true;
 			_actionModelTree.Tree = component.ActionModelTreeRoot;
-			
-			ToolStripBuilder.BuildToolStrip(ToolStripBuilder.ToolStripKind.Toolbar, _toolStrip.Items, component.ToolbarActionModel.ChildNodes);
+			_actionModelTree.ToolbarModel = component.ToolbarActionModel;
+			_actionModelTree.MenuModel = component.ContextMenuActionModel;
+
+			this.OnComponentSelectedNodeChanged(null, null);
+		}
+
+		private void PerformDispose(bool disposing)
+		{
+			if (_component != null)
+			{
+				_component.SelectedNodeChanged -= OnComponentSelectedNodeChanged;
+				_component = null;
+			}
+		}
+
+		public bool ShowActionPropertiesPane
+		{
+			get { return !_pnlSplit.Panel2Collapsed; }
+			set { _pnlSplit.Panel2Collapsed = !value; }
+		}
+
+		private void OnComponentSelectedNodeChanged(object sender, EventArgs e)
+		{
+			AbstractActionModelTreeNode selectedNode = _component.SelectedNode;
+			_pnlNodeProperties.SuspendLayout();
+			try
+			{
+				_pnlNodeProperties.Visible = selectedNode != null;
+				if (selectedNode != null)
+				{
+					_lblLabel.Text = selectedNode.CanonicalLabel;
+					_lblTooltip.Text = selectedNode.Tooltip;
+
+					// destroy old icon
+					Image image = _pnlIcon.BackgroundImage;
+					_pnlIcon.BackgroundImage = null;
+					if (image != null)
+					{
+						image.Dispose();
+						image = null;
+					}
+
+					// set new icon
+					IconSet iconSet = selectedNode.IconSet;
+					if (iconSet != null)
+					{
+						try
+						{
+							image = iconSet.CreateIcon(IconSize.Medium, selectedNode.ResourceResolver);
+						}
+						catch (Exception ex)
+						{
+							Platform.Log(LogLevel.Debug, ex, "Icon resolution failed.");
+						}
+						_pnlIcon.BackgroundImage = image;
+					}
+					_pnlIcon.Visible = _pnlIcon.BackgroundImage != null;
+
+					// reload properties extensions
+					_lyoNodePropertiesExtensions.SuspendLayout();
+					try
+					{
+						ArrayList oldControls = new ArrayList(_lyoNodePropertiesExtensions.Controls);
+						_lyoNodePropertiesExtensions.Controls.Clear();
+						foreach (Control c in oldControls)
+							c.Dispose();
+						foreach (IApplicationComponentView componentView in _component.SelectedNodeProperties.ComponentViews)
+						{
+							try
+							{
+								_lyoNodePropertiesExtensions.Controls.Add((Control) componentView.GuiElement);
+							}
+							catch (Exception ex)
+							{
+								Platform.Log(LogLevel.Debug, ex, "Error encountered while loading a component extension");
+							}
+						}
+					}
+					finally
+					{
+						_lyoNodePropertiesExtensions.ResumeLayout();
+					}
+					this.OnLyoNodePropertiesExtensionsSizeChanged(null, null);
+				}
+			}
+			finally
+			{
+				_pnlNodeProperties.ResumeLayout(true);
+			}
 		}
 
 		private void OnActionModelTreeSelectionChanged(object sender, EventArgs e)
@@ -68,6 +160,20 @@ namespace ClearCanvas.Desktop.View.WinForms.Configuration
 			if (selection != null && selection.Item != null)
 			{
 				bindingTreeView.DoDragDrop(selection.Item, DragDropEffects.All);
+			}
+		}
+
+		private void OnLabelTooltipTextChanged(object sender, EventArgs e)
+		{
+			_lblTooltip.Visible = !string.IsNullOrEmpty(_lblTooltip.Text);
+		}
+
+		private void OnLyoNodePropertiesExtensionsSizeChanged(object sender, EventArgs e)
+		{
+			foreach (Control control in _lyoNodePropertiesExtensions.Controls)
+			{
+				// for some reason, the controls get cut off even using the client area width...
+				control.Width = _lyoNodePropertiesExtensions.ClientSize.Width - 8;
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
@@ -29,35 +29,59 @@
 
 #endregion
 
-using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.BaseTools;
 
-namespace ClearCanvas.ImageViewer.Configuration
+namespace ClearCanvas.Desktop.Configuration.ActionModel
 {
-	[MenuAction("customize", "global-menus/MenuTools/MenuCustomizeActionModels", "Customize")]
-	[GroupHint("customize", "Application.Options.Customize")]
-	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
-	public class CustomizeViewerActionModelTool : ImageViewerTool
+	[ExtensionOf(typeof (NodePropertiesComponentProviderExtensionPoint))]
+	public sealed class ClickActionKeystrokePropertyProvider : INodePropertiesComponentProvider
 	{
-		public void Customize()
+		public IEnumerable<NodePropertiesComponent> CreateComponents(AbstractActionModelTreeNode selectedNode)
 		{
-			try
-			{
-				CustomizeViewerActionModelsComponent component = new CustomizeViewerActionModelsComponent(this.ImageViewer);
+			AbstractActionModelTreeLeafAction actionNode = selectedNode as AbstractActionModelTreeLeafAction;
+			if (actionNode != null && actionNode.Action is IClickAction)
+				yield return new ClickActionKeystrokePropertyComponent(actionNode);
+		}
+	}
 
-				DialogBoxCreationArgs args = new DialogBoxCreationArgs(component, SR.TitleCustomizeActionModels, "CustomizeActionModels")
-				                             	{
-				                             		AllowUserResize = true
-				                             	};
-				ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, args);
-			}
-			catch (Exception ex)
+	[ExtensionPoint]
+	public sealed class ClickActionKeystrokePropertyComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> {}
+
+	[AssociateView(typeof (ClickActionKeystrokePropertyComponentViewExtensionPoint))]
+	public class ClickActionKeystrokePropertyComponent : NodePropertiesComponent
+	{
+		private XKeys _keyStroke = XKeys.None;
+
+		public ClickActionKeystrokePropertyComponent(AbstractActionModelTreeLeafAction selectedActionNode)
+			: base(selectedActionNode)
+		{
+			_keyStroke = ((IClickAction) selectedActionNode.Action).KeyStroke;
+		}
+
+		protected new AbstractActionModelTreeLeafAction SelectedNode
+		{
+			get { return (AbstractActionModelTreeLeafAction) base.SelectedNode; }
+		}
+
+		public XKeys KeyStroke
+		{
+			get { return _keyStroke; }
+			set
 			{
-				ExceptionHandler.Report(ex, this.Context.DesktopWindow);
+				if (_keyStroke != value)
+				{
+					_keyStroke = value;
+					this.NotifyPropertyChanged("KeyStroke");
+					this.OnKeyStrokeChanged();
+				}
 			}
+		}
+
+		protected virtual void OnKeyStrokeChanged()
+		{
+			((IClickAction) this.SelectedNode.Action).KeyStroke = this.KeyStroke;
 		}
 	}
 }

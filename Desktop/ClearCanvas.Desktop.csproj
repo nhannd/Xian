@@ -105,11 +105,14 @@
     <Compile Include="Actions\AbstractAction.cs" />
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeBranch.cs" />
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeLeafAction.cs" />
+    <Compile Include="Configuration\ActionModel\AbstractActionModelTreeLeafSeparator.cs" />
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeNode.cs" />
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeRoot.cs" />
     <Compile Include="Configuration\ActionModel\ActionModelConfigurationComponent.cs" />
     <Compile Include="Configuration\ActionModel\ActionModelConfigurationComponentTool.cs" />
+    <Compile Include="Configuration\ActionModel\NodePropertiesComponent.cs" />
     <Compile Include="Configuration\ActionModel\BasicActionModelConfigurationComponentTools.cs" />
+    <Compile Include="Configuration\ActionModel\ClickActionKeystrokePropertyComponent.cs" />
     <Compile Include="Configuration\AuthorityTokens.cs" />
     <Compile Include="Configuration\ConfigurationApplicationComponent.cs" />
     <Compile Include="Configuration\ConfigurationDialog.cs" />
@@ -481,6 +484,10 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\RenameToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ActionModelGroupSmall.png" />
+    <EmbeddedResource Include="Icons\ActionModelSeparatorSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tools\Tests\" />

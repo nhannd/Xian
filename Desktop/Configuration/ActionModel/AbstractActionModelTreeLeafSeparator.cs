@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
@@ -30,34 +30,39 @@
 #endregion
 
 using System;
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.BaseTools;
+using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Trees;
 
-namespace ClearCanvas.ImageViewer.Configuration
+namespace ClearCanvas.Desktop.Configuration.ActionModel
 {
-	[MenuAction("customize", "global-menus/MenuTools/MenuCustomizeActionModels", "Customize")]
-	[GroupHint("customize", "Application.Options.Customize")]
-	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
-	public class CustomizeViewerActionModelTool : ImageViewerTool
+	public sealed class AbstractActionModelTreeLeafSeparator : AbstractActionModelTreeLeaf
 	{
-		public void Customize()
+		public AbstractActionModelTreeLeafSeparator() : base(new PathSegment("Separator", SR.LabelSeparator)) 
 		{
-			try
-			{
-				CustomizeViewerActionModelsComponent component = new CustomizeViewerActionModelsComponent(this.ImageViewer);
+			base.IconSet = new IconSet(IconScheme.Colour, "Icons.Separator.png", "Icons.Separator.png", "Icons.Separator.png");
+			base.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
+			base.CheckState = CheckState.Checked;
+		}
 
-				DialogBoxCreationArgs args = new DialogBoxCreationArgs(component, SR.TitleCustomizeActionModels, "CustomizeActionModels")
-				                             	{
-				                             		AllowUserResize = true
-				                             	};
-				ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, args);
-			}
-			catch (Exception ex)
+		internal Path GetSeparatorPath()
+		{
+			Stack<PathSegment> stack = new Stack<PathSegment>();
+			stack.Push(new PathSegment(Guid.NewGuid().ToString()));
+
+			AbstractActionModelTreeNode current = this.Parent;
+			while (current != null)
 			{
-				ExceptionHandler.Report(ex, this.Context.DesktopWindow);
+				stack.Push(current.PathSegment);
+				current = current.Parent;
 			}
+
+			Path path = new Path(stack.Pop());
+			while (stack.Count > 0)
+			{
+				path = path.Append(stack.Pop());
+			}
+			return path;
 		}
 	}
 }

@@ -29,35 +29,18 @@
 
 #endregion
 
-using System;
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.BaseTools;
+using System.Windows.Forms;
+using ClearCanvas.Desktop.Configuration.ActionModel;
 
-namespace ClearCanvas.ImageViewer.Configuration
+namespace ClearCanvas.Desktop.View.WinForms.Configuration
 {
-	[MenuAction("customize", "global-menus/MenuTools/MenuCustomizeActionModels", "Customize")]
-	[GroupHint("customize", "Application.Options.Customize")]
-	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
-	public class CustomizeViewerActionModelTool : ImageViewerTool
+	public partial class ClickActionKeystrokePropertyComponentControl : UserControl
 	{
-		public void Customize()
+		public ClickActionKeystrokePropertyComponentControl(ClickActionKeystrokePropertyComponent component)
 		{
-			try
-			{
-				CustomizeViewerActionModelsComponent component = new CustomizeViewerActionModelsComponent(this.ImageViewer);
+			InitializeComponent();
 
-				DialogBoxCreationArgs args = new DialogBoxCreationArgs(component, SR.TitleCustomizeActionModels, "CustomizeActionModels")
-				                             	{
-				                             		AllowUserResize = true
-				                             	};
-				ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, args);
-			}
-			catch (Exception ex)
-			{
-				ExceptionHandler.Report(ex, this.Context.DesktopWindow);
-			}
+			_keyStrokeCaptureBox.DataBindings.Add("KeyStroke", component, "KeyStroke", false, DataSourceUpdateMode.OnPropertyChanged);
 		}
 	}
 }

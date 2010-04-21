@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
@@ -44,6 +45,9 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 	[AssociateView(typeof (ActionModelConfigurationComponentViewExtensionPoint))]
 	public partial class ActionModelConfigurationComponent : ApplicationComponent, IConfigurationApplicationComponent
 	{
+		private const string _tolbarActionSite = "actionmodelconfig-toolbar";
+		private const string _contextMenuActionSite = "actionmodelconfig-contextmenu";
+
 		private event EventHandler _selectedNodeChanged;
 
 		private readonly IDesktopWindow _desktopWindow;
@@ -55,8 +59,10 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 
 		private ToolSet _toolSet;
 		private ActionModelRoot _toolbarActionModel;
+		private ActionModelRoot _contextMenuActionModel;
 
 		private AbstractActionModelTreeNode _selectedNode;
+		private NodePropertiesComponentContainerHost _propertiesContainerHost;
 
 		public ActionModelConfigurationComponent(string @namespace, string site, IActionSet actionSet, IDesktopWindow desktopWindow)
 		{
@@ -109,8 +115,21 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _toolbarActionModel; }
 		}
 
+		public ActionModelRoot ContextMenuActionModel
+		{
+			get { return _contextMenuActionModel; }
+		}
+
+		public INodeProperties SelectedNodeProperties
+		{
+			get { return _propertiesContainerHost.Component; }
+		}
+
 		protected virtual void OnSelectedNodeChanged()
 		{
+			this.DisposeNodePropertiesComponent();
+			this.InitializeNodePropertiesComponent();
+
 			EventsHelper.Fire(_selectedNodeChanged, this, EventArgs.Empty);
 		}
 
@@ -123,16 +142,20 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		public override void Start()
 		{
 			base.Start();
+			this.InitializeNodePropertiesComponent();
 
 			_toolSet = new ToolSet(new ActionModelConfigurationComponentToolExtensionPoint(), new ActionModelConfigurationComponentToolContext(this));
-			_toolbarActionModel = ActionModelRoot.CreateModel(this.GetType().FullName, "actionmodelconfig-toolbar", _toolSet.Actions);
+			_toolbarActionModel = ActionModelRoot.CreateModel(this.GetType().FullName, _tolbarActionSite, _toolSet.Actions);
+			_contextMenuActionModel = ActionModelRoot.CreateModel(this.GetType().FullName, _contextMenuActionSite, _toolSet.Actions);
 		}
 
 		public override void Stop()
 		{
+			_contextMenuActionModel = null;
 			_toolbarActionModel = null;
 			_toolSet.Dispose();
 
+			this.DisposeNodePropertiesComponent();
 			base.Stop();
 		}
 
@@ -146,6 +169,21 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 				DesktopWindow concreteDesktopWindow = (DesktopWindow) _desktopWindow;
 				if (_site == DesktopWindow.GlobalMenus || _site == DesktopWindow.GlobalToolbars)
 					concreteDesktopWindow.UpdateView();
+			}
+		}
+
+		private void InitializeNodePropertiesComponent()
+		{
+			_propertiesContainerHost = new NodePropertiesComponentContainerHost(this);
+			_propertiesContainerHost.StartComponent();
+		}
+
+		private void DisposeNodePropertiesComponent()
+		{
+			if (_propertiesContainerHost != null)
+			{
+				_propertiesContainerHost.StopComponent();
+				_propertiesContainerHost = null;
 			}
 		}
 
@@ -171,5 +209,111 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 				}
 			}
 		}
+
+		#region INodeProperties Interface
+
+		public interface INodeProperties
+		{
+			IEnumerable<IApplicationComponent> Components { get; }
+			IEnumerable<IApplicationComponentView> ComponentViews { get; }
+		}
+
+		#endregion
+
+		#region NodePropertiesComponentContainerHost Class
+
+		private class NodePropertiesComponentContainerHost : ApplicationComponentHost
+		{
+			private readonly ActionModelConfigurationComponent _owner;
+
+			public NodePropertiesComponentContainerHost(ActionModelConfigurationComponent owner)
+				: base(new NodePropertiesComponentContainer(owner.SelectedNode))
+			{
+				_owner = owner;
+			}
+
+			public new NodePropertiesComponentContainer Component
+			{
+				get { return (NodePropertiesComponentContainer) base.Component; }
+			}
+
+			public override DesktopWindow DesktopWindow
+			{
+				get { return _owner.Host.DesktopWindow; }
+			}
+		}
+
+		#endregion
+
+		#region NodePropertiesComponentContainer Class
+
+		private class NodePropertiesComponentContainer : ApplicationComponentContainer, INodeProperties
+		{
+			private readonly List<ContainedComponentHost> _componentHosts = new List<ContainedComponentHost>();
+
+			internal NodePropertiesComponentContainer(AbstractActionModelTreeNode selectedNode)
+			{
+				if (selectedNode != null)
+				{
+					foreach (object extension in new NodePropertiesComponentProviderExtensionPoint().CreateExtensions())
+					{
+						INodePropertiesComponentProvider provider = extension as INodePropertiesComponentProvider;
+						if (provider != null)
+						{
+							foreach (NodePropertiesComponent component in provider.CreateComponents(selectedNode))
+								_componentHosts.Add(new ContainedComponentHost(this, component));
+						}
+					}
+				}
+			}
+
+			public IEnumerable<IApplicationComponent> Components
+			{
+				get
+				{
+					foreach (ContainedComponentHost host in _componentHosts)
+						yield return host.Component;
+				}
+			}
+
+			public IEnumerable<IApplicationComponentView> ComponentViews
+			{
+				get
+				{
+					foreach (ContainedComponentHost host in _componentHosts)
+						yield return host.ComponentView;
+				}
+			}
+
+			public override IEnumerable<IApplicationComponent> ContainedComponents
+			{
+				get { return this.Components; }
+			}
+
+			public override IEnumerable<IApplicationComponent> VisibleComponents
+			{
+				get { return this.Components; }
+			}
+
+			public override void Start()
+			{
+				base.Start();
+				foreach (ContainedComponentHost host in _componentHosts)
+					host.StartComponent();
+			}
+
+			public override void Stop()
+			{
+				foreach (ContainedComponentHost host in _componentHosts)
+					host.StopComponent();
+				base.Stop();
+			}
+
+			public override void EnsureVisible(IApplicationComponent component) {}
+
+			public override void EnsureStarted(IApplicationComponent component) {}
+		}
+
+		#endregion
 	}
 }

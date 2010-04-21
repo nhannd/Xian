@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Trees;
 
@@ -48,6 +49,9 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			: base(pathSegment)
 		{
 			_subtree.Items.ItemsChanged += OnSubtreeItemsChanged;
+
+			base.IconSet = new IconSet(IconScheme.Colour, "Icons.MenuGroup.png", "Icons.MenuGroup.png", "Icons.MenuGroup.png");
+			base.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
 		}
 
 		public IList<AbstractActionModelTreeNode> Children

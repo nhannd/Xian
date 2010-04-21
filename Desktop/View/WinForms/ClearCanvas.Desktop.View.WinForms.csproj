@@ -74,6 +74,13 @@
     <Compile Include="Configuration\ActionModelConfigurationTreeControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Configuration\ClickActionKeystrokePropertyComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Configuration\ClickActionKeystrokePropertyComponentControl.Designer.cs">
+      <DependentUpon>ClickActionKeystrokePropertyComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\ClickActionKeystrokePropertyComponentView.cs" />
     <Compile Include="Configuration\RenameNodeComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -126,6 +133,9 @@
     </Compile>
     <Compile Include="DropListPickerField.designer.cs">
       <DependentUpon>DropListPickerField.cs</DependentUpon>
+    </Compile>
+    <Compile Include="KeyStrokeCaptureBox.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="StandardIconSizes.cs" />
     <Compile Include="PopupForm.cs">
@@ -512,6 +522,9 @@
     <None Include="Resources\ClearFilterMini.png" />
     <EmbeddedResource Include="Configuration\ActionModelConfigurationComponentControl.resx">
       <DependentUpon>ActionModelConfigurationComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\ClickActionKeystrokePropertyComponentControl.resx">
+      <DependentUpon>ClickActionKeystrokePropertyComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Configuration\RenameNodeComponentControl.resx">
       <DependentUpon>RenameNodeComponentControl.cs</DependentUpon>

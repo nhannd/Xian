@@ -47,6 +47,29 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 	[ButtonAction("renameNode", "actionmodelconfig-toolbar/ToolbarRename", "RenameNode", KeyStroke = XKeys.F2)]
 	[EnabledStateObserver("renameNode", "CanRename", "SelectedNodeChanged")]
 	[IconSet("renameNode", IconScheme.Colour, "Icons.RenameToolSmall.png", "Icons.RenameToolSmall.png", "Icons.RenameToolSmall.png")]
+
+	[ButtonAction("insertGroupBefore", "actionmodelconfig-contextmenu/MenuInsertGroupBefore", "InsertGroupBefore")]
+	[IconSet("insertGroupBefore", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolSmall.png", "Icons.AddToolSmall.png")]
+	[ButtonAction("insertGroupAfter", "actionmodelconfig-contextmenu/MenuInsertGroupAfter", "InsertGroupAfter")]
+	[IconSet("insertGroupAfter", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolSmall.png", "Icons.AddToolSmall.png")]
+	[ButtonAction("insertGroupAsChild", "actionmodelconfig-contextmenu/MenuInsertGroupAsChild", "InsertGroupAsChild")]
+	[IconSet("insertGroupAsChild", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolSmall.png", "Icons.AddToolSmall.png")]
+	[VisibleStateObserver("insertGroupAsChild", "CanInsertChild", "SelectedNodeChanged")]
+
+	[ButtonAction("insertSeparatorBefore", "actionmodelconfig-contextmenu/MenuInsertSeparatorBefore", "InsertSeparatorBefore")]
+	[IconSet("insertSeparatorBefore", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolSmall.png", "Icons.AddToolSmall.png")]
+	[ButtonAction("insertSeparatorAfter", "actionmodelconfig-contextmenu/MenuInsertSeparatorAfter", "InsertSeparatorAfter")]
+	[IconSet("insertSeparatorAfter", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolSmall.png", "Icons.AddToolSmall.png")]
+	[ButtonAction("insertSeparatorAsChild", "actionmodelconfig-contextmenu/MenuInsertSeparatorAsChild", "InsertSeparatorAsChild")]
+	[IconSet("insertSeparatorAsChild", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolSmall.png", "Icons.AddToolSmall.png")]
+	[VisibleStateObserver("insertSeparatorAsChild", "CanInsertChild", "SelectedNodeChanged")]
+
+	[ButtonAction("removeNodeCxt", "actionmodelconfig-contextmenu/MenuRemove", "RemoveNode", KeyStroke = XKeys.Delete)]
+	[VisibleStateObserver("removeNodeCxt", "CanRemove", "SelectedNodeChanged")]
+	[IconSet("removeNodeCxt", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
+	[ButtonAction("renameNodeCxt", "actionmodelconfig-contextmenu/MenuRename", "RenameNode", KeyStroke = XKeys.F2)]
+	[VisibleStateObserver("renameNodeCxt", "CanRename", "SelectedNodeChanged")]
+	[IconSet("renameNodeCxt", IconScheme.Colour, "Icons.RenameToolSmall.png", "Icons.RenameToolSmall.png", "Icons.RenameToolSmall.png")]
 	[ExtensionOf(typeof (ActionModelConfigurationComponentToolExtensionPoint))]
 	public class BasicActionModelConfigurationComponentTools : ActionModelConfigurationComponentTool
 	{
@@ -76,6 +99,16 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			}
 		}
 
+		public bool CanInsertChild
+		{
+			get
+			{
+				if (base.SelectedNode == null)
+					return false;
+				return base.SelectedNode is AbstractActionModelTreeBranch;
+			}
+		}
+
 		protected override void OnSelectedNodeChanged()
 		{
 			base.OnSelectedNodeChanged();
@@ -88,16 +121,36 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			AbstractActionModelTreeNode selectedNode = base.SelectedNode;
 			if (selectedNode is AbstractActionModelTreeBranch && !selectedNode.IsExpanded && selectedNode.Parent != null)
 			{
-				selectedNode.Parent.Children.Insert(selectedNode.Parent.Children.IndexOf(selectedNode) + 1, node);
+				this.InsertNode(node, selectedNode, DragDropPosition.After);
 			}
 			else if (selectedNode is AbstractActionModelTreeBranch)
+			{
+				this.InsertNode(node, selectedNode, DragDropPosition.Default);
+			}
+			else if (selectedNode is AbstractActionModelTreeLeaf && selectedNode.Parent != null)
+			{
+				this.InsertNode(node, selectedNode, DragDropPosition.After);
+			}
+			else
+			{
+				this.InsertNode(node, base.Component.AbstractActionModelTreeRoot, DragDropPosition.After);
+			}
+		}
+
+		private void InsertNode(AbstractActionModelTreeNode node, AbstractActionModelTreeNode selectedNode, DragDropPosition position)
+		{
+			if (position == DragDropPosition.After && selectedNode.Parent != null)
+			{
+				selectedNode.Parent.Children.Insert(selectedNode.Parent.Children.IndexOf(selectedNode) + 1, node);
+			}
+			else if (position == DragDropPosition.Default && selectedNode is AbstractActionModelTreeBranch)
 			{
 				((AbstractActionModelTreeBranch) selectedNode).Children.Add(node);
 				selectedNode.IsExpanded = true;
 			}
-			else if (selectedNode is AbstractActionModelTreeLeaf && selectedNode.Parent != null)
+			else if (position == DragDropPosition.Before && selectedNode.Parent != null)
 			{
-				selectedNode.Parent.Children.Insert(selectedNode.Parent.Children.IndexOf(selectedNode) + 1, node);
+				selectedNode.Parent.Children.Insert(selectedNode.Parent.Children.IndexOf(selectedNode), node);
 			}
 			else
 			{
@@ -123,6 +176,78 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			try
 			{
 				this.InsertNode(new AbstractActionModelTreeLeafSeparator());
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, this.Context.DesktopWindow);
+			}
+		}
+
+		public void InsertGroupAfter()
+		{
+			try
+			{
+				this.InsertNode(new AbstractActionModelTreeBranch(SR.LabelNewGroup), this.SelectedNode, DragDropPosition.After);
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, this.Context.DesktopWindow);
+			}
+		}
+
+		public void InsertSeparatorAfter()
+		{
+			try
+			{
+				this.InsertNode(new AbstractActionModelTreeLeafSeparator(), this.SelectedNode, DragDropPosition.After);
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, this.Context.DesktopWindow);
+			}
+		}
+
+		public void InsertGroupBefore()
+		{
+			try
+			{
+				this.InsertNode(new AbstractActionModelTreeBranch(SR.LabelNewGroup), this.SelectedNode, DragDropPosition.Before);
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, this.Context.DesktopWindow);
+			}
+		}
+
+		public void InsertSeparatorBefore()
+		{
+			try
+			{
+				this.InsertNode(new AbstractActionModelTreeLeafSeparator(), this.SelectedNode, DragDropPosition.Before);
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, this.Context.DesktopWindow);
+			}
+		}
+
+		public void InsertGroupAsChild()
+		{
+			try
+			{
+				this.InsertNode(new AbstractActionModelTreeBranch(SR.LabelNewGroup), this.SelectedNode, DragDropPosition.Default);
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, this.Context.DesktopWindow);
+			}
+		}
+
+		public void InsertSeparatorAsChild()
+		{
+			try
+			{
+				this.InsertNode(new AbstractActionModelTreeLeafSeparator(), this.SelectedNode, DragDropPosition.Default);
 			}
 			catch (Exception ex)
 			{

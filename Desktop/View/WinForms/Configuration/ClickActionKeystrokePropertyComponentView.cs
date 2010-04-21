@@ -29,34 +29,31 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.Desktop.Configuration.ActionModel;
 
-namespace ClearCanvas.ImageViewer.Configuration
+namespace ClearCanvas.Desktop.View.WinForms.Configuration
 {
-	[MenuAction("customize", "global-menus/MenuTools/MenuCustomizeActionModels", "Customize")]
-	[GroupHint("customize", "Application.Options.Customize")]
-	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
-	public class CustomizeViewerActionModelTool : ImageViewerTool
+	[ExtensionOf(typeof (ClickActionKeystrokePropertyComponentViewExtensionPoint))]
+	public class ClickActionKeystrokePropertyComponentView : WinFormsView, IApplicationComponentView
 	{
-		public void Customize()
-		{
-			try
-			{
-				CustomizeViewerActionModelsComponent component = new CustomizeViewerActionModelsComponent(this.ImageViewer);
+		private ClickActionKeystrokePropertyComponent _component;
+		private ClickActionKeystrokePropertyComponentControl _control;
 
-				DialogBoxCreationArgs args = new DialogBoxCreationArgs(component, SR.TitleCustomizeActionModels, "CustomizeActionModels")
-				                             	{
-				                             		AllowUserResize = true
-				                             	};
-				ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, args);
-			}
-			catch (Exception ex)
+		public void SetComponent(IApplicationComponent component)
+		{
+			_component = (ClickActionKeystrokePropertyComponent) component;
+		}
+
+		public override object GuiElement
+		{
+			get
 			{
-				ExceptionHandler.Report(ex, this.Context.DesktopWindow);
+				if (_control == null)
+				{
+					_control = new ClickActionKeystrokePropertyComponentControl(_component);
+				}
+				return _control;
 			}
 		}
 	}

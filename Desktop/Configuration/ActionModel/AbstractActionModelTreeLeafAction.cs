@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
@@ -37,38 +36,11 @@ using ClearCanvas.Desktop.Trees;
 
 namespace ClearCanvas.Desktop.Configuration.ActionModel
 {
+	// TODO CR (Apr 10): If this class remains member-less, convert to an abstract IsLeaf flag on the base node class
 	public abstract class AbstractActionModelTreeLeaf : AbstractActionModelTreeNode
 	{
 		protected AbstractActionModelTreeLeaf(PathSegment pathSegment)
 			: base(pathSegment) {}
-	}
-
-	public sealed class AbstractActionModelTreeLeafSeparator : AbstractActionModelTreeLeaf
-	{
-		public AbstractActionModelTreeLeafSeparator() : base(new PathSegment("Separator", SR.LabelSeparator)) 
-		{
-			base.CheckState = CheckState.Checked;
-		}
-
-		internal Path GetSeparatorPath()
-		{
-			Stack<PathSegment> stack = new Stack<PathSegment>();
-			stack.Push(new PathSegment(Guid.NewGuid().ToString()));
-
-			AbstractActionModelTreeNode current = this.Parent;
-			while (current != null)
-			{
-				stack.Push(current.PathSegment);
-				current = current.Parent;
-			}
-
-			Path path = new Path(stack.Pop());
-			while (stack.Count > 0)
-			{
-				path = path.Append(stack.Pop());
-			}
-			return path;
-		}
 	}
 
 	public class AbstractActionModelTreeLeafAction : AbstractActionModelTreeLeaf
@@ -95,6 +67,11 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _action.ActionId; }
 		}
 
+		public IAction Action
+		{
+			get { return _action; }
+		}
+
 		protected override void OnCheckStateChanged()
 		{
 			base.OnCheckStateChanged();
@@ -102,6 +79,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			_action.Available = this.CheckState == CheckState.Checked;
 		}
 
+		// TODO: renmame this CreateAction
 		internal IAction GetAction()
 		{
 			IAction action = AbstractAction.Create(_action);

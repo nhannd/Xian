@@ -37,6 +37,7 @@ using ClearCanvas.Desktop.Trees;
 
 namespace ClearCanvas.Desktop.Configuration.ActionModel
 {
+	// TODO CR (Apr 10): Rename this to ActionModelConfigurationNode, and all subclasses to similar names
 	public abstract class AbstractActionModelTreeNode
 	{
 		private static readonly Regex _escapeRegex = new Regex(@"&(.)", RegexOptions.Compiled);

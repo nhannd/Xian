@@ -29,35 +29,32 @@
 
 #endregion
 
-using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.BaseTools;
 
-namespace ClearCanvas.ImageViewer.Configuration
+namespace ClearCanvas.Desktop.Configuration.ActionModel
 {
-	[MenuAction("customize", "global-menus/MenuTools/MenuCustomizeActionModels", "Customize")]
-	[GroupHint("customize", "Application.Options.Customize")]
-	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
-	public class CustomizeViewerActionModelTool : ImageViewerTool
-	{
-		public void Customize()
-		{
-			try
-			{
-				CustomizeViewerActionModelsComponent component = new CustomizeViewerActionModelsComponent(this.ImageViewer);
+	[ExtensionPoint]
+	public sealed class NodePropertiesComponentProviderExtensionPoint : ExtensionPoint<INodePropertiesComponentProvider> {}
 
-				DialogBoxCreationArgs args = new DialogBoxCreationArgs(component, SR.TitleCustomizeActionModels, "CustomizeActionModels")
-				                             	{
-				                             		AllowUserResize = true
-				                             	};
-				ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, args);
-			}
-			catch (Exception ex)
-			{
-				ExceptionHandler.Report(ex, this.Context.DesktopWindow);
-			}
+	public interface INodePropertiesComponentProvider
+	{
+		IEnumerable<NodePropertiesComponent> CreateComponents(AbstractActionModelTreeNode selectedNode);
+	}
+
+	public abstract class NodePropertiesComponent : ApplicationComponent
+	{
+		private readonly AbstractActionModelTreeNode _selectedNode;
+
+		protected NodePropertiesComponent(AbstractActionModelTreeNode selectedNode)
+		{
+			Platform.CheckForNullReference(selectedNode, "selectedNode");
+			_selectedNode = selectedNode;
+		}
+
+		protected AbstractActionModelTreeNode SelectedNode
+		{
+			get { return _selectedNode; }
 		}
 	}
 }
