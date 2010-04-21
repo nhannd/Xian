@@ -29,6 +29,8 @@
 
 #endregion
 
+using System;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Trees;
 
@@ -36,6 +38,8 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 {
 	public class AbstractActionModelTreeRoot : AbstractActionModelTreeBranch
 	{
+		internal event EventHandler<NodeValidationRequestedEventArgs> NodeValidationRequested;
+
 		private readonly string _site;
 
 		public AbstractActionModelTreeRoot(string site) : base(site)
@@ -58,6 +62,29 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			ActionModelRoot actionModelRoot = new ActionModelRoot(_site);
 			this.CreateActionModelRoot(actionModelRoot);
 			return actionModelRoot;
+		}
+
+		internal override bool RequestValidation(AbstractActionModelTreeNode node, string propertyName, object value)
+		{
+			NodeValidationRequestedEventArgs e = new NodeValidationRequestedEventArgs(node, propertyName, value);
+			EventsHelper.Fire(this.NodeValidationRequested, this, e);
+			return e.IsValid;
+		}
+	}
+
+	internal class NodeValidationRequestedEventArgs : EventArgs
+	{
+		public readonly AbstractActionModelTreeNode Node;
+		public readonly string PropertyName;
+		public readonly object Value;
+		public bool IsValid { get; set; }
+
+		public NodeValidationRequestedEventArgs(AbstractActionModelTreeNode node, string propertyName, object value)
+		{
+			this.Node = node;
+			this.PropertyName = propertyName;
+			this.Value = value;
+			this.IsValid = true;
 		}
 	}
 }

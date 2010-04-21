@@ -56,8 +56,8 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 
 		private readonly bool _isFlatActionModel;
 
-		private ActionModelRoot _actionModel;
-		private AbstractActionModelTreeRoot _actionModelTreeRoot;
+		private readonly ActionModelRoot _actionModel;
+		private readonly AbstractActionModelTreeRoot _actionModelTreeRoot;
 
 		private ToolSet _toolSet;
 		private ActionModelRoot _toolbarActionModel;
@@ -65,6 +65,8 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 
 		private AbstractActionModelTreeNode _selectedNode;
 		private NodePropertiesComponentContainerHost _propertiesContainerHost;
+
+		private NodePropertiesValidationPolicy _validationPolicy;
 
 		public ActionModelConfigurationComponent(string @namespace, string site, IActionSet actionSet, IDesktopWindow desktopWindow)
 			: this(@namespace, site, actionSet, desktopWindow, false) { }
@@ -84,6 +86,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 
 			_actionModel = ActionModelSettings.Default.BuildAbstractActionModel(_namespace, _site, actionSet.Select(a => a.Path.Site == site));
 			_actionModelTreeRoot = new AbstractActionModelTreeRoot(_site);
+			_actionModelTreeRoot.NodeValidationRequested += OnActionModelTreeRootNodeValidationRequested;
 
 			_isFlatActionModel = flatActionModel;
 			if (flatActionModel)
@@ -123,6 +126,12 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 					this.OnSelectedNodeChanged();
 				}
 			}
+		}
+
+		public NodePropertiesValidationPolicy ValidationPolicy
+		{
+			get { return _validationPolicy; }
+			set { _validationPolicy = value; }
 		}
 
 		public ActionModelRoot ToolbarActionModel
@@ -174,7 +183,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			base.Stop();
 		}
 
-		public void Save()
+		public virtual void Save()
 		{
 			ActionModelRoot actionModelRoot = _actionModelTreeRoot.GetAbstractActionModel();
 			ActionModelSettings.Default.PersistAbstractActionModel(_namespace, _site, actionModelRoot);
@@ -185,6 +194,18 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 				if (_site == DesktopWindow.GlobalMenus || _site == DesktopWindow.GlobalToolbars)
 					concreteDesktopWindow.UpdateView();
 			}
+		}
+
+		protected virtual bool OnRequestNodePropertiesValidation(AbstractActionModelTreeNode node, string propertyName, object value)
+		{
+			if (_validationPolicy == null)
+				return true;
+			return _validationPolicy.Validate(node, propertyName, value);
+		}
+
+		private void OnActionModelTreeRootNodeValidationRequested(object sender, NodeValidationRequestedEventArgs e)
+		{
+			e.IsValid = OnRequestNodePropertiesValidation(e.Node, e.PropertyName, e.Value);
 		}
 
 		private void InitializeNodePropertiesComponent()
@@ -210,7 +231,12 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 				{
 					ActionNode actionNode = (ActionNode) childNode;
 					if (actionNode.Action.Persistent)
-						abstractActionModelTreeBranch.AppendChild(new AbstractActionModelTreeLeafAction(actionNode.Action));
+					{
+						if (actionNode.Action is IClickAction)
+							abstractActionModelTreeBranch.AppendChild(new AbstractActionModelTreeLeafClickAction((IClickAction) actionNode.Action));
+						else
+							abstractActionModelTreeBranch.AppendChild(new AbstractActionModelTreeLeafAction(actionNode.Action));
+					}
 				}
 				else if (childNode is SeparatorNode)
 				{
@@ -227,7 +253,12 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 				{
 					ActionNode actionNode = (ActionNode) childNode;
 					if (actionNode.Action.Persistent)
-						abstractActionModelTreeBranch.AppendChild(new AbstractActionModelTreeLeafAction(actionNode.Action));
+					{
+						if (actionNode.Action is IClickAction)
+							abstractActionModelTreeBranch.AppendChild(new AbstractActionModelTreeLeafClickAction((IClickAction) actionNode.Action));
+						else
+							abstractActionModelTreeBranch.AppendChild(new AbstractActionModelTreeLeafAction(actionNode.Action));
+					}
 				}
 				else if (childNode is SeparatorNode)
 				{

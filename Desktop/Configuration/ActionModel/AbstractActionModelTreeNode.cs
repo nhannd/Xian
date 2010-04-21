@@ -70,7 +70,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _pathSegment.LocalizedText; }
 			set
 			{
-				if (_pathSegment.LocalizedText != value)
+				if (_pathSegment.LocalizedText != value && this.RequestValidation("Label", value))
 				{
 					_pathSegment = new PathSegment(value, value);
 					_canonicalLabel = null;
@@ -96,7 +96,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _tooltip; }
 			set
 			{
-				if (_tooltip != value)
+				if (_tooltip != value && this.RequestValidation("Tooltip", value))
 				{
 					_tooltip = value;
 					this.OnTooltipChanged();
@@ -109,7 +109,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _checkState; }
 			set
 			{
-				if (_checkState != value)
+				if (_checkState != value && this.RequestValidation("CheckState", value))
 				{
 					_checkState = value;
 					this.OnCheckStateChanged();
@@ -122,7 +122,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _isExpanded; }
 			set
 			{
-				if (_isExpanded != value)
+				if (_isExpanded != value && this.RequestValidation("IsExpanded", value))
 				{
 					_isExpanded = value;
 					this.OnIsExpandedChanged();
@@ -135,7 +135,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _isHighlighted; }
 			set
 			{
-				if (_isHighlighted != value)
+				if (_isHighlighted != value && this.RequestValidation("IsHighlighted", value))
 				{
 					_isHighlighted = value;
 					this.OnIsHighlightedChanged();
@@ -224,6 +224,15 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		protected virtual void OnTooltipChanged()
 		{
 			this.NotifyItemChanged();
+		}
+
+		protected bool RequestValidation(string propertyName, object value)
+		{
+			if (!ReferenceEquals(this.Parent, null))
+			{
+				return this.Parent.RequestValidation(this, propertyName, value);
+			}
+			return true;
 		}
 
 		public bool IsDescendantOf(AbstractActionModelTreeBranch node)

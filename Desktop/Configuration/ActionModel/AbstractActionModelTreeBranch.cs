@@ -102,13 +102,22 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 				}
 				else if (child is AbstractActionModelTreeLeafAction)
 				{
-					actionModelRoot.InsertAction(((AbstractActionModelTreeLeafAction) child).GetAction());
+					actionModelRoot.InsertAction(((AbstractActionModelTreeLeafAction) child).BuildAction());
 				}
 				else if (child is AbstractActionModelTreeLeafSeparator)
 				{
 					actionModelRoot.InsertSeparator(((AbstractActionModelTreeLeafSeparator) child).GetSeparatorPath());
 				}
 			}
+		}
+
+		internal virtual bool RequestValidation(AbstractActionModelTreeNode node, string propertyName, object value)
+		{
+			if (!ReferenceEquals(this.Parent, null))
+			{
+				return this.Parent.RequestValidation(node, propertyName, value);
+			}
+			return true;
 		}
 
 		private void OnSubtreeItemsChanged(object sender, ItemChangedEventArgs e)

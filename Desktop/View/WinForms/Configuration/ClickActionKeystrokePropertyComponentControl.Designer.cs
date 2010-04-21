@@ -48,6 +48,7 @@
 			// 
 			resources.ApplyResources(this._keyStrokeCaptureBox, "_keyStrokeCaptureBox");
 			this._keyStrokeCaptureBox.Name = "_keyStrokeCaptureBox";
+			this._keyStrokeCaptureBox.ValidateKeyStroke += new ClearCanvas.Desktop.View.WinForms.ValidateKeyStrokeEventHandler(this._keyStrokeCaptureBox_ValidateKeyStroke);
 			// 
 			// ClickActionKeystrokePropertyComponentControl
 			// 

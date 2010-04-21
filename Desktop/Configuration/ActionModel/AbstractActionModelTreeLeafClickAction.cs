@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
@@ -29,27 +29,47 @@
 
 #endregion
 
-using System.Windows.Forms;
-using ClearCanvas.Desktop.Configuration.ActionModel;
+using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.Desktop.View.WinForms.Configuration
+namespace ClearCanvas.Desktop.Configuration.ActionModel
 {
-	public partial class ClickActionKeystrokePropertyComponentControl : UserControl
+	public class AbstractActionModelTreeLeafClickAction : AbstractActionModelTreeLeafAction
 	{
-		private readonly ClickActionKeystrokePropertyComponent _component;
+		private XKeys _keyStroke = XKeys.None;
 
-		public ClickActionKeystrokePropertyComponentControl(ClickActionKeystrokePropertyComponent component)
+		public AbstractActionModelTreeLeafClickAction(IClickAction clickAction) : base(clickAction)
 		{
-			InitializeComponent();
-
-			_component = component;
-
-			_keyStrokeCaptureBox.DataBindings.Add("KeyStroke", component, "KeyStroke", false, DataSourceUpdateMode.OnPropertyChanged);
+			_keyStroke = clickAction.KeyStroke;
 		}
 
-		private void _keyStrokeCaptureBox_ValidateKeyStroke(object sender, ValidateKeyStrokeEventArgs e)
+		protected new IClickAction Action
 		{
-			e.IsValid = e.IsValid && _component.IsValidKeyStroke(e.KeyStroke);
+			get { return (IClickAction) base.Action; }
+		}
+
+		public XKeys KeyStroke
+		{
+			get { return _keyStroke; }
+			set
+			{
+				if (_keyStroke != value && this.RequestValidation("KeyStroke", value))
+				{
+					_keyStroke = value;
+					this.OnKeyStrokeChanged();
+				}
+			}
+		}
+
+		public bool IsValidKeyStroke(XKeys keyStroke)
+		{
+			return this.RequestValidation("KeyStroke", keyStroke);
+		}
+
+		protected virtual void OnKeyStrokeChanged()
+		{
+			this.NotifyItemChanged();
+
+			this.Action.KeyStroke = _keyStroke;
 		}
 	}
 }

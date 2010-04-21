@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration.ActionModel;
+using ClearCanvas.Desktop.Trees;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
@@ -51,6 +52,11 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
 			_imageViewer = imageViewer;
 
+			NodePropertiesValidationPolicy validationPolicy = new NodePropertiesValidationPolicy();
+			validationPolicy.AddRule<AbstractActionModelTreeLeafAction>("CheckState", (n, value) => n.ActionId != typeof (CustomizeViewerActionModelTool).FullName + ":customize" || Equals(value, CheckState.Checked));
+			validationPolicy.AddRule<AbstractActionModelTreeLeafAction>("CheckState", (n, value) => n.ActionId != "ClearCanvas.Desktop.Configuration.Tools.OptionsTool:show" || Equals(value, CheckState.Checked));
+			validationPolicy.AddRule<AbstractActionModelTreeLeafClickAction>("KeyStroke", this.ValidateClickActionKeyStroke);
+
 			_tabComponent = new TabComponentContainer();
 
 			_tabComponent.Pages.Add(new TabPage(SR.LabelToolbar, new ActionModelConfigurationComponent(
@@ -58,21 +64,32 @@ namespace ClearCanvas.ImageViewer.Configuration
 			                                                     	"global-toolbars",
 			                                                     	_imageViewer.ExportedActions,
 			                                                     	_imageViewer.DesktopWindow,
-																	true)));
+			                                                     	true) {ValidationPolicy = validationPolicy}
+			                        	));
 
 			_tabComponent.Pages.Add(new TabPage(SR.LabelContextMenu, new ActionModelConfigurationComponent(
 			                                                         	_imageViewer.ActionsNamespace,
 			                                                         	"imageviewer-contextmenu",
 			                                                         	_imageViewer.ExportedActions,
-			                                                         	_imageViewer.DesktopWindow)));
+			                                                         	_imageViewer.DesktopWindow) {ValidationPolicy = validationPolicy}
+			                        	));
 
 			_tabComponent.Pages.Add(new TabPage(SR.LabelMainMenu, new ActionModelConfigurationComponent(
 			                                                      	_imageViewer.GlobalActionsNamespace,
 			                                                      	"global-menus",
 			                                                      	_imageViewer.ExportedActions,
-			                                                      	_imageViewer.DesktopWindow)));
+			                                                      	_imageViewer.DesktopWindow) {ValidationPolicy = validationPolicy}
+			                        	));
 
 			_tabComponentHost = new ContainedComponentHost(this, _tabComponent);
+		}
+
+		private bool ValidateClickActionKeyStroke(AbstractActionModelTreeLeafClickAction node, object value)
+		{
+			if (_imageViewer.ExportedActions.Select(a => a.ActionID == node.ActionId).Count > 0)
+				return true;
+			XKeys keys = (XKeys) value;
+			return ((keys & XKeys.Modifiers) != 0);
 		}
 
 		/// <summary>

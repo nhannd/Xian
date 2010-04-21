@@ -31,7 +31,6 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.Configuration.ActionModel
 {
@@ -40,9 +39,8 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 	{
 		public IEnumerable<NodePropertiesComponent> CreateComponents(AbstractActionModelTreeNode selectedNode)
 		{
-			AbstractActionModelTreeLeafAction actionNode = selectedNode as AbstractActionModelTreeLeafAction;
-			if (actionNode != null && actionNode.Action is IClickAction)
-				yield return new ClickActionKeystrokePropertyComponent(actionNode);
+			if (selectedNode is AbstractActionModelTreeLeafClickAction)
+				yield return new ClickActionKeystrokePropertyComponent((AbstractActionModelTreeLeafClickAction) selectedNode);
 		}
 	}
 
@@ -54,15 +52,15 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 	{
 		private XKeys _keyStroke = XKeys.None;
 
-		public ClickActionKeystrokePropertyComponent(AbstractActionModelTreeLeafAction selectedActionNode)
-			: base(selectedActionNode)
+		public ClickActionKeystrokePropertyComponent(AbstractActionModelTreeLeafClickAction selectedClickActionNode)
+			: base(selectedClickActionNode)
 		{
-			_keyStroke = ((IClickAction) selectedActionNode.Action).KeyStroke;
+			_keyStroke = selectedClickActionNode.KeyStroke;
 		}
 
-		protected new AbstractActionModelTreeLeafAction SelectedNode
+		protected new AbstractActionModelTreeLeafClickAction SelectedNode
 		{
-			get { return (AbstractActionModelTreeLeafAction) base.SelectedNode; }
+			get { return (AbstractActionModelTreeLeafClickAction) base.SelectedNode; }
 		}
 
 		public XKeys KeyStroke
@@ -79,9 +77,14 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			}
 		}
 
+		public bool IsValidKeyStroke(XKeys keyStroke)
+		{
+			return this.SelectedNode.IsValidKeyStroke(keyStroke);
+		}
+
 		protected virtual void OnKeyStrokeChanged()
 		{
-			((IClickAction) this.SelectedNode.Action).KeyStroke = this.KeyStroke;
+			this.SelectedNode.KeyStroke = this.KeyStroke;
 		}
 	}
 }

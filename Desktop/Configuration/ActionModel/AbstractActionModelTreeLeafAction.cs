@@ -77,7 +77,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _action.ActionId; }
 		}
 
-		public IAction Action
+		protected IAction Action
 		{
 			get { return _action; }
 		}
@@ -89,8 +89,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			_action.Available = this.CheckState == CheckState.Checked;
 		}
 
-		// TODO: renmame this CreateAction
-		internal IAction GetAction()
+		internal IAction BuildAction()
 		{
 			IAction action = AbstractAction.Create(_action);
 
