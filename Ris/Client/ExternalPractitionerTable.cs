@@ -31,7 +31,7 @@ namespace ClearCanvas.Ris.Client
 	/// </summary>
 	public class ExternalPractitionerWorkflowTable : Table<ExternalPractitionerSummary>
 	{
-		private FieldInfo _timeFieldInfo;
+		private PropertyInfo _timeInfo;
 
 		public ExternalPractitionerWorkflowTable()
 		{
@@ -42,18 +42,18 @@ namespace ClearCanvas.Ris.Client
 			this.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnBillingNumber,
 				item => item.BillingNumber, 0.5f));
 			this.Columns.Add(new DateTimeTableColumn<ExternalPractitionerSummary>(SR.ColumnTime,
-				item => _timeFieldInfo == null ? item.LastVerifiedTime : (DateTime?)_timeFieldInfo.GetValue(item), 0.75f));
+				item => _timeInfo == null ? item.LastVerifiedTime : (DateTime?)_timeInfo.GetValue(item, null), 0.75f));
 		}
 
 		public string PropertyNameForTimeColumn
 		{
-			get { return _timeFieldInfo == null ? null : _timeFieldInfo.Name; }
+			get { return _timeInfo == null ? null : _timeInfo.Name; }
 			set
 			{
 				// Get the field info that matches the sortByTimeFieldName.  Make sure the field name is actually a date time type
-				var fieldInfo = string.IsNullOrEmpty(value) ? null : typeof(ExternalPractitionerSummary).GetField(value);
-				if (fieldInfo != null && fieldInfo.FieldType != typeof(DateTime?))
-					_timeFieldInfo = fieldInfo;
+				var info = string.IsNullOrEmpty(value) ? null : typeof(ExternalPractitionerSummary).GetProperty(value);
+				if (info != null && info.PropertyType.Equals(typeof (DateTime?)))
+					_timeInfo = info;
 			}
 		}
 	}
