@@ -2247,6 +2247,33 @@ Preview.ExternalPractitionerSummary = function() {
 
 Preview.ResultRecipientsSection = function() {
 
+	var _removeOrderingPractitionerFromRecipientsList = function(orderingPractitioner, resultRecipients)
+	{
+		if (!orderingPractitioner)
+			return;
+
+		// select the recipient representing the ordering practitioner at the default contact point
+		var orderingRecipient = resultRecipients.find(
+			function(recipient) 
+			{ 
+				return recipient.Practitioner.PractitionerRef == orderingPractitioner.PractitionerRef && recipient.ContactPoint.IsDefaultContactPoint;
+			});
+
+			// if not found, then select the first recipient representing the ordering practitioner
+		if (orderingRecipient == null)
+		{
+			orderingRecipient = resultRecipients.find(
+				function(recipient) 
+				{ 
+					return recipient.Practitioner.PractitionerRef == orderingPractitioner.PractitionerRef;
+				});
+		}
+
+		// if the recipient object exists for the ordering practitioner (and this *should* always be the case), remove it
+		if (orderingRecipient != null)
+			resultRecipients.remove(orderingRecipient);
+	};
+
 	var _createResultRecipientsTable = function(parentElement, resultRecipients, title)
 	{
 		if (resultRecipients.length == 0)
@@ -2255,7 +2282,7 @@ Preview.ResultRecipientsSection = function() {
 		if(title)
 		{
 			Preview.ProceduresTableHelper.addHeading(parentElement, title, 'subsectionheading');
-		}			
+		}
 
 		var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement, null, true);
 		htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
@@ -2313,14 +2340,15 @@ Preview.ResultRecipientsSection = function() {
 	};
 
 	return {
-		create: function(parentElement, resultRecipients, heading, collapsedByDefault)
+		create: function(parentElement, orderingPractitioner, resultRecipients, heading)
 		{
 			if(resultRecipients.length == 0)
 				return;
 
+			_removeOrderingPractitionerFromRecipientsList(orderingPractitioner, resultRecipients);
 			_createResultRecipientsTable(parentElement, resultRecipients);
 
-			Preview.SectionContainer.create(parentElement, heading, { collapsible: true, initiallyCollapsed: collapsedByDefault });
+			Preview.SectionContainer.create(parentElement, heading, { collapsible: true, initiallyCollapsed: false });
 		}
 	}
 }();

@@ -53,8 +53,8 @@
 
 					notes = orderDetail.Notes.select(function(note) { return note.Category == "Protocol"; });
 					Preview.OrderNotesTable.create($("protocolNotesSection"), notes, "Protocol Notes", true);
-					
-					Preview.ResultRecipientsSection.create($("resultRecipientsSection"), orderDetail.ResultRecipients, "Copies To");
+
+					Preview.ResultRecipientsSection.create($("resultRecipientsSection"), orderDetail.OrderingPractitioner, orderDetail.ResultRecipients, "Copies To");
 				}
 				else
 				{
