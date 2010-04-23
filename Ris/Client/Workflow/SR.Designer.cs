@@ -952,6 +952,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Merging these orders cannot be undone. Proceed?.
+        /// </summary>
+        internal static string MessageMergeOrders {
+            get {
+                return ResourceManager.GetString("MessageMergeOrders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There are no reconciliation candidates for this patient..
         /// </summary>
         internal static string MessageNoReconciliationCandidate {
@@ -993,6 +1002,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         internal static string MessagePrintDowntimeFormProgress {
             get {
                 return ResourceManager.GetString("MessagePrintDowntimeFormProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are about to print out information that contains confidential patient data.  Do you want to continue?.
+        /// </summary>
+        internal static string MessagePrintWorklist {
+            get {
+                return ResourceManager.GetString("MessagePrintWorklist", resourceCulture);
             }
         }
         

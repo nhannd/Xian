@@ -833,4 +833,10 @@ Choose "No" to verify this report without further action.</value>
   <data name="ExceptionMergeOrdersTool" xml:space="preserve">
     <value>Cannot merge orders.</value>
   </data>
+  <data name="MessageMergeOrders" xml:space="preserve">
+    <value>Merging these orders cannot be undone. Proceed?</value>
+  </data>
+  <data name="MessagePrintWorklist" xml:space="preserve">
+    <value>You are about to print out information that contains confidential patient data.  Do you want to continue?</value>
+  </data>
 </root>

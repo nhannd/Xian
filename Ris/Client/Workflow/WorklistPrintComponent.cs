@@ -75,6 +75,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public void Print()
 		{
+			if (DialogBoxAction.No == this.Host.DesktopWindow.ShowMessageBox(SR.MessagePrintWorklist, MessageBoxActions.YesNo))
+				return;
+
 			// print the rendered document
 			_worklistPrintPreviewComponent.PrintDocument();
 

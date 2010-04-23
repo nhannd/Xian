@@ -161,6 +161,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
+				if (DialogBoxAction.No == this.Host.DesktopWindow.ShowMessageBox(SR.MessageMergeOrders, MessageBoxActions.YesNo))
+					return;
+
 				var sourceOrderRef = _mergingRight ? _order1Ref : _order2Ref;
 				var destinationOrderRef = _mergingRight ? _order2Ref : _order1Ref;
 

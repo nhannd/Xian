@@ -2,6 +2,8 @@
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 
@@ -12,11 +14,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[Tooltip("apply", "Merge Orders")]
 	[IconSet("apply", IconScheme.Colour, "MergeOrdersSmall.png", "MergeOrdersMedium.png", "MergeOrdersLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
 	[ActionPermission("apply", Application.Common.AuthorityTokens.Workflow.Order.Merge)]
-	public class MergeOrdersTool : WorkflowItemTool<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>
+	public abstract class MergeOrdersToolBase<TItem, TContext> : WorkflowItemTool<TItem, TContext>
+		where TItem : WorklistItemSummaryBase
+		where TContext : IWorkflowItemToolContext<TItem>
 	{
-		public MergeOrdersTool()
+		protected MergeOrdersToolBase()
 			: base("MergeOrder")
 		{
 		}
@@ -28,6 +31,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 			this.Context.RegisterWorkflowService(typeof(IOrderEntryService));
 		}
 
+		protected abstract void InvalidateFolders();
+
 		public override bool Enabled
 		{
 			get
@@ -35,7 +40,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (this.Context.SelectedItems.Count != 2)
 					return false;
 
-				var list = new List<RegistrationWorklistItemSummary>(this.Context.SelectedItems);
+				var list = new List<TItem>(this.Context.SelectedItems);
 
 				// Obvious cases where merging should not be allowed.
 				// Cannot merge the same order.
@@ -51,9 +56,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
-		protected override bool Execute(RegistrationWorklistItemSummary item)
+		protected bool ExecuteCore(WorklistItemSummaryBase item)
 		{
-			var list = new List<RegistrationWorklistItemSummary>(this.Context.SelectedItems);
+			var list = new List<TItem>(this.Context.SelectedItems);
 			var component = new MergeOrdersComponent(list[0].OrderRef, list[1].OrderRef);
 
 			string failureReason;
@@ -63,8 +68,57 @@ namespace ClearCanvas.Ris.Client.Workflow
 				return false;
 			}
 
-			var result = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, component, SR.TitleMergeOrders);
-			return result == ApplicationComponentExitCode.Accepted;
+			if (ApplicationComponentExitCode.Accepted != ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, component, SR.TitleMergeOrders))
+				return false;
+
+			InvalidateFolders();
+
+			return true;
+		}
+	}
+
+	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+	public class RegistrationMergeOrdersTool : MergeOrdersToolBase<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>
+	{
+		protected override bool Execute(RegistrationWorklistItemSummary item)
+		{
+			return ExecuteCore(item);
+		}
+
+		protected override void InvalidateFolders()
+		{
+			DocumentManager.InvalidateFolder(typeof(Folders.Registration.ScheduledFolder));
+			DocumentManager.InvalidateFolder(typeof(Folders.Registration.CancelledFolder));
+		}
+	}
+
+	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
+	public class BookingMergeOrdersTool : MergeOrdersToolBase<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>
+	{
+		protected override bool Execute(RegistrationWorklistItemSummary item)
+		{
+			return ExecuteCore(item);
+		}
+
+		protected override void InvalidateFolders()
+		{
+			DocumentManager.InvalidateFolder(typeof(Folders.Registration.ToBeScheduledFolder));
+			DocumentManager.InvalidateFolder(typeof(Folders.Registration.PendingProtocolFolder));
+		}
+	}
+
+	[ExtensionOf(typeof(PerformingWorkflowItemToolExtensionPoint))]
+	public class PerformingMergeOrdersTool : MergeOrdersToolBase<ModalityWorklistItemSummary, IPerformingWorkflowItemToolContext>
+	{
+		protected override bool Execute(ModalityWorklistItemSummary item)
+		{
+			return ExecuteCore(item);
+		}
+
+		protected override void InvalidateFolders()
+		{
+			DocumentManager.InvalidateFolder(typeof(Folders.Performing.ScheduledFolder));
+			DocumentManager.InvalidateFolder(typeof(Folders.Performing.CancelledFolder));
 		}
 	}
 }

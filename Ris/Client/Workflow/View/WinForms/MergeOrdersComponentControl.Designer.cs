@@ -59,6 +59,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+			this.components = new System.ComponentModel.Container();
 			this._acceptButton = new System.Windows.Forms.Button();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._mergeDirectionButton = new System.Windows.Forms.Button();
@@ -66,6 +67,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._order1Description = new System.Windows.Forms.Label();
 			this._order2Description = new System.Windows.Forms.Label();
+			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			this.label1 = new System.Windows.Forms.Label();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -99,6 +102,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._mergeDirectionButton.Name = "_mergeDirectionButton";
 			this._mergeDirectionButton.Size = new System.Drawing.Size(35, 32);
 			this._mergeDirectionButton.TabIndex = 6;
+			this.toolTip1.SetToolTip(this._mergeDirectionButton, "Change Merge Direction");
 			this._mergeDirectionButton.UseVisualStyleBackColor = true;
 			this._mergeDirectionButton.Click += new System.EventHandler(this._mergeDirectionButton_Click);
 			// 
@@ -107,9 +111,9 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._mergedOrderPreviewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this._mergedOrderPreviewPanel.Location = new System.Drawing.Point(3, 83);
+			this._mergedOrderPreviewPanel.Location = new System.Drawing.Point(3, 107);
 			this._mergedOrderPreviewPanel.Name = "_mergedOrderPreviewPanel";
-			this._mergedOrderPreviewPanel.Size = new System.Drawing.Size(599, 578);
+			this._mergedOrderPreviewPanel.Size = new System.Drawing.Size(599, 554);
 			this._mergedOrderPreviewPanel.TabIndex = 7;
 			// 
 			// tableLayoutPanel1
@@ -160,12 +164,22 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._order2Description.TabIndex = 8;
 			this._order2Description.Text = "Order 2";
 			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(3, 91);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(125, 13);
+			this.label1.TabIndex = 9;
+			this.label1.Text = "Preview of Merged Order";
+			// 
 			// MergeOrdersComponentControl
 			// 
 			this.AcceptButton = this._acceptButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this._cancelButton;
+			this.Controls.Add(this.label1);
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Controls.Add(this._mergedOrderPreviewPanel);
 			this.Controls.Add(this._cancelButton);
@@ -175,6 +189,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
         }
 
@@ -187,5 +202,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 		private System.Windows.Forms.Label _order1Description;
 		private System.Windows.Forms.Label _order2Description;
+		private System.Windows.Forms.ToolTip toolTip1;
+		private System.Windows.Forms.Label label1;
     }
 }
