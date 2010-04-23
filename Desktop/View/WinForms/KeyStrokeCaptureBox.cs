@@ -34,7 +34,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using Keys = ClearCanvas.Desktop.XKeys;
+using System.Windows.Forms.VisualStyles;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -45,19 +45,19 @@ namespace ClearCanvas.Desktop.View.WinForms
 	[DefaultProperty("KeyStroke")]
 	public class KeyStrokeCaptureBox : Control
 	{
-		private static readonly KeysConverter _keysConverter = new KeysConverter();
-
 		private event EventHandler _borderStyleChanged;
 		private event EventHandler _keySeparatorChanged;
 		private event EventHandler _keyStrokeChanged;
 		private event EventHandler _readOnlyChanged;
+		private event EventHandler _showClearButtonChanged;
 		private event EventHandler _textAlignChanged;
 		private event ValidateKeyStrokeEventHandler _validateKeyStrokeEventHandler;
 
-		private readonly List<Keys> _currentKeys = new List<Keys>(5);
-		private readonly TextBox _textBox;
+		private readonly List<XKeys> _currentKeys = new List<XKeys>(5);
+		private readonly TextBox _textBox = new XTextBox();
+		private readonly ClearButton _clearButton = new ClearButton();
 
-		private Keys _keyStroke = Keys.None;
+		private XKeys _keyStroke = XKeys.None;
 		private string _keySeparator = "+";
 		private bool _keyStrokeAccepted = false;
 
@@ -67,7 +67,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 		public KeyStrokeCaptureBox()
 		{
 			this.SuspendLayout();
-			this.Controls.Add(_textBox = new TextBox());
 			try
 			{
 				_textBox.ContextMenu = base.ContextMenu;
@@ -81,6 +80,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 				_textBox.KeyPress += HandleTextBoxKeyPress;
 				_textBox.LostFocus += HandleTextBoxFocusChanged;
 				_textBox.GotFocus += HandleTextBoxFocusChanged;
+
+				_clearButton.Cursor = Cursors.Default;
+				_clearButton.Visible = false;
+				_clearButton.Click += HandleClearButtonClick;
+
+				this.Controls.Add(_clearButton);
+				this.Controls.Add(_textBox);
 			}
 			finally
 			{
@@ -259,12 +265,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// Gets or sets the key stroke value of the control.
 		/// </summary>
 		/// <remarks>
-		/// The default is <see cref="Keys.None"/>.
+		/// The default is <see cref="XKeys.None"/>.
 		/// </remarks>
 		[Category("Appearance")]
 		[Description("The key stroke value of the control.")]
-		[DefaultValue(Keys.None)]
-		public virtual Keys KeyStroke
+		[DefaultValue(XKeys.None)]
+		public virtual XKeys KeyStroke
 		{
 			get { return _keyStroke; }
 			set
@@ -282,7 +288,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		public virtual void ResetKeyStroke()
 		{
-			this.KeyStroke = Keys.None;
+			this.KeyStroke = XKeys.None;
 		}
 
 		/// <summary>
@@ -303,6 +309,28 @@ namespace ClearCanvas.Desktop.View.WinForms
 				{
 					_textBox.ReadOnly = value;
 					this.OnReadOnlyChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether or not a button should be shown to allow clearing the key stroke value.
+		/// </summary>
+		/// <remarks>
+		/// The default is False.
+		/// </remarks>
+		[Category("Behavior")]
+		[Description("Whether or not a button should be shown to allow clearing the key stroke value.")]
+		[DefaultValue(false)]
+		public virtual bool ShowClearButton
+		{
+			get { return _clearButton.Visible; }
+			set
+			{
+				if (_clearButton.Visible != value)
+				{
+					_clearButton.Visible = value;
+					this.OnShowClearButton(EventArgs.Empty);
 				}
 			}
 		}
@@ -394,6 +422,17 @@ namespace ClearCanvas.Desktop.View.WinForms
 		}
 
 		/// <summary>
+		/// Occurs when the <see cref="ShowClearButton"/> property value changes.
+		/// </summary>
+		[Category("Property Changed")]
+		[Description("Occurs when the ShowClearButton property value changes.")]
+		public event EventHandler ShowClearButtonChanged
+		{
+			add { _showClearButtonChanged += value; }
+			remove { _showClearButtonChanged -= value; }
+		}
+
+		/// <summary>
 		/// Occurs when the <see cref="TextAlign"/> property value changes.
 		/// </summary>
 		[Category("Property Changed")]
@@ -474,6 +513,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 		}
 
 		/// <summary>
+		/// Raises the <see cref="ShowClearButtonChanged"/> event.
+		/// </summary>
+		/// <param name="e">An <see cref="EventArgs"/> that contains the event data.</param>
+		protected virtual void OnShowClearButton(EventArgs e)
+		{
+			if (_showClearButtonChanged != null)
+				_showClearButtonChanged.Invoke(this, e);
+		}
+
+		/// <summary>
 		/// Raises the <see cref="KeySeparatorChanged"/> event.
 		/// </summary>
 		/// <param name="e">An <see cref="EventArgs"/> that contains the event data.</param>
@@ -492,6 +541,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		protected virtual void OnKeyStrokeChanged(EventArgs e)
 		{
 			this.UpdateText();
+			_clearButton.ShowGreyed = this.KeyStroke == XKeys.None;
 
 			if (_keyStrokeChanged != null)
 				_keyStrokeChanged.Invoke(this, e);
@@ -504,7 +554,17 @@ namespace ClearCanvas.Desktop.View.WinForms
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			_textBox.Size = this.Size;
+
+			this.UpdateClearButtonBounds();
+
 			base.OnSizeChanged(e);
+		}
+
+		protected override void OnRightToLeftChanged(EventArgs e)
+		{
+			this.UpdateClearButtonBounds();
+
+			base.OnRightToLeftChanged(e);
 		}
 
 		/// <summary>
@@ -523,8 +583,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <param name="e">A <see cref="ValidateKeyStrokeEventArgs"/> that contains the event data.</param>
 		protected virtual void OnValidateKeyStroke(ValidateKeyStrokeEventArgs e)
 		{
-			Keys key = GetKeyPressed(e.KeyStroke);
-			e.IsValid = !(key == Keys.ControlKey || key == Keys.Menu || key == Keys.ShiftKey);
+			XKeys key = GetKeyPressed(e.KeyStroke);
+			e.IsValid = !(key == XKeys.ControlKey || key == XKeys.Menu || key == XKeys.ShiftKey);
 
 			if (_validateKeyStrokeEventHandler != null)
 				_validateKeyStrokeEventHandler.Invoke(this, e);
@@ -536,76 +596,76 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		/// <summary>
 		/// Tests whether or not a given key stroke is modified by one or more of the modifier keys
-		/// (<see cref="Keys.Control"/>, <see cref="Keys.Alt"/> and <see cref="Keys.Shift"/>).
+		/// (<see cref="XKeys.Control"/>, <see cref="XKeys.Alt"/> and <see cref="XKeys.Shift"/>).
 		/// </summary>
 		/// <param name="keyStroke">The key stroke to be tested.</param>
 		/// <returns>True if the key stroke is modified; False otherwise.</returns>
-		protected static bool IsKeyPressModified(Keys keyStroke)
+		protected static bool IsKeyPressModified(XKeys keyStroke)
 		{
-			return (keyStroke & Keys.Modifiers) != 0;
+			return (keyStroke & XKeys.Modifiers) != 0;
 		}
 
 		/// <summary>
-		/// Tests whether or not a given key stroke is modified by the <see cref="Keys.Control"/> modifier key.
+		/// Tests whether or not a given key stroke is modified by the <see cref="XKeys.Control"/> modifier key.
 		/// </summary>
 		/// <param name="keyStroke">The key stroke to be tested.</param>
-		/// <returns>True if the key stroke is modified by <see cref="Keys.Control"/>; False otherwise.</returns>
-		protected static bool IsKeyPressModifiedByControl(Keys keyStroke)
+		/// <returns>True if the key stroke is modified by <see cref="XKeys.Control"/>; False otherwise.</returns>
+		protected static bool IsKeyPressModifiedByControl(XKeys keyStroke)
 		{
-			return (keyStroke & Keys.Control) == Keys.Control;
+			return (keyStroke & XKeys.Control) == XKeys.Control;
 		}
 
 		/// <summary>
-		/// Tests whether or not a given key stroke is modified by the <see cref="Keys.Alt"/> modifier key.
+		/// Tests whether or not a given key stroke is modified by the <see cref="XKeys.Alt"/> modifier key.
 		/// </summary>
 		/// <param name="keyStroke">The key stroke to be tested.</param>
-		/// <returns>True if the key stroke is modified by <see cref="Keys.Alt"/>; False otherwise.</returns>
-		protected static bool IsKeyPressModifiedByAlt(Keys keyStroke)
+		/// <returns>True if the key stroke is modified by <see cref="XKeys.Alt"/>; False otherwise.</returns>
+		protected static bool IsKeyPressModifiedByAlt(XKeys keyStroke)
 		{
-			return (keyStroke & Keys.Alt) == Keys.Alt;
+			return (keyStroke & XKeys.Alt) == XKeys.Alt;
 		}
 
 		/// <summary>
-		/// Tests whether or not a given key stroke is modified by the <see cref="Keys.Shift"/> modifier key.
+		/// Tests whether or not a given key stroke is modified by the <see cref="XKeys.Shift"/> modifier key.
 		/// </summary>
 		/// <param name="keyStroke">The key stroke to be tested.</param>
-		/// <returns>True if the key stroke is modified by <see cref="Keys.Shift"/>; False otherwise.</returns>
-		protected static bool IsKeyPressModifiedByShift(Keys keyStroke)
+		/// <returns>True if the key stroke is modified by <see cref="XKeys.Shift"/>; False otherwise.</returns>
+		protected static bool IsKeyPressModifiedByShift(XKeys keyStroke)
 		{
-			return (keyStroke & Keys.Shift) == Keys.Shift;
+			return (keyStroke & XKeys.Shift) == XKeys.Shift;
 		}
 
 		/// <summary>
 		/// Gets the combination of modifier flags in the given key stroke.
 		/// </summary>
 		/// <param name="keyStroke">The key stroke from which the modifiers are to be extracted.</param>
-		/// <returns>A bitwise combination of <see cref="Keys.Control"/>, <see cref="Keys.Alt"/> and <see cref="Keys.Shift"/>.</returns>
-		protected static Keys GetKeyPressModifiers(Keys keyStroke)
+		/// <returns>A bitwise combination of <see cref="XKeys.Control"/>, <see cref="XKeys.Alt"/> and <see cref="XKeys.Shift"/>.</returns>
+		protected static XKeys GetKeyPressModifiers(XKeys keyStroke)
 		{
-			return (keyStroke & Keys.Modifiers);
+			return (keyStroke & XKeys.Modifiers);
 		}
 
 		/// <summary>
 		/// Gets the individual key that was pressed in the given key stroke without any modifier flags.
 		/// </summary>
 		/// <param name="keyStroke">The key stroke from which the pressed key is to be extracted.</param>
-		/// <returns>A single value from the <see cref="Keys"/> enumeration excluding
-		/// <see cref="Keys.Control"/>, <see cref="Keys.Alt"/> and <see cref="Keys.Shift"/> (i.e. not a bitwise combination).</returns>
-		protected static Keys GetKeyPressed(Keys keyStroke)
+		/// <returns>A single value from the <see cref="XKeys"/> enumeration excluding
+		/// <see cref="XKeys.Control"/>, <see cref="XKeys.Alt"/> and <see cref="XKeys.Shift"/> (i.e. not a bitwise combination).</returns>
+		protected static XKeys GetKeyPressed(XKeys keyStroke)
 		{
-			return (keyStroke & ~Keys.Modifiers);
+			return (keyStroke & ~XKeys.Modifiers);
 		}
 
 		/// <summary>
 		/// Gets the individual key that was pressed in the given key stroke without any modifier flags.
 		/// </summary>
 		/// <param name="keyStroke">The key stroke from which the pressed key is to be extracted.</param>
-		/// <param name="control">True if the <see cref="Keys.Control"/> modifier was pressed; False otherwise.</param>
-		/// <param name="alt">True if the <see cref="Keys.Alt"/> modifier was pressed; False otherwise.</param>
-		/// <param name="shift">True if the <see cref="Keys.Shift"/> modifier was pressed; False otherwise.</param>
-		/// <returns>A single value from the <see cref="Keys"/> enumeration excluding
-		/// <see cref="Keys.Control"/>, <see cref="Keys.Alt"/> and <see cref="Keys.Shift"/> (i.e. not a bitwise combination).</returns>
-		protected static Keys GetKeyPressed(Keys keyStroke, out bool control, out bool alt, out bool shift)
+		/// <param name="control">True if the <see cref="XKeys.Control"/> modifier was pressed; False otherwise.</param>
+		/// <param name="alt">True if the <see cref="XKeys.Alt"/> modifier was pressed; False otherwise.</param>
+		/// <param name="shift">True if the <see cref="XKeys.Shift"/> modifier was pressed; False otherwise.</param>
+		/// <returns>A single value from the <see cref="XKeys"/> enumeration excluding
+		/// <see cref="XKeys.Control"/>, <see cref="XKeys.Alt"/> and <see cref="XKeys.Shift"/> (i.e. not a bitwise combination).</returns>
+		protected static XKeys GetKeyPressed(XKeys keyStroke, out bool control, out bool alt, out bool shift)
 		{
 			control = IsKeyPressModifiedByControl(keyStroke);
 			alt = IsKeyPressModifiedByAlt(keyStroke);
@@ -637,6 +697,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 		}
 
 		/// <summary>
+		/// Clears the key stroke value from this control.
+		/// </summary>
+		public void Clear()
+		{
+			this.KeyStroke = XKeys.None;
+		}
+
+		/// <summary>
 		/// Performs the work of setting the specified bounds of this control.
 		/// </summary>
 		/// <param name="x">The new <see cref="Control.Left"/> property value of the control.</param>
@@ -655,7 +723,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		/// <param name="keyStroke">The key combination to be tested.</param>
 		/// <returns>True if the key combination is a valid key stroke; False otherwise.</returns>
-		protected bool IsValidKeyStroke(Keys keyStroke)
+		protected bool IsValidKeyStroke(XKeys keyStroke)
 		{
 			ValidateKeyStrokeEventArgs e = new ValidateKeyStrokeEventArgs(keyStroke);
 			this.OnValidateKeyStroke(e);
@@ -671,26 +739,26 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// and combines them together using <see cref="KeySeparator"/>.
 		/// A trailing <see cref="KeySeparator"/> is shown if this particular key stroke
 		/// is not valid as determined by <see cref="IsValidKeyStroke"/>.
-		/// A key stroke of <see cref="Keys.None"/> is formatted as an empty string.
+		/// A key stroke of <see cref="XKeys.None"/> is formatted as an empty string.
 		/// </remarks>
 		/// <param name="keyStroke">The key stroke to be formatted.</param>
 		/// <returns>A human-readable string representing the key stroke.</returns>
-		protected virtual string FormatKeyStroke(Keys keyStroke)
+		protected virtual string FormatKeyStroke(XKeys keyStroke)
 		{
 			if (keyStroke == 0)
 				return string.Empty;
 
 			bool control, alt, shift;
 			bool valid = IsValidKeyStroke(keyStroke);
-			Keys key = GetKeyPressed(keyStroke, out control, out alt, out shift);
+			XKeys key = GetKeyPressed(keyStroke, out control, out alt, out shift);
 
 			List<string> keys = new List<string>(4);
 			if (control)
-				keys.Add(GetKeyName(Keys.Control));
+				keys.Add(GetKeyName(XKeys.Control));
 			if (alt)
-				keys.Add(GetKeyName(Keys.Alt));
+				keys.Add(GetKeyName(XKeys.Alt));
 			if (shift)
-				keys.Add(GetKeyName(Keys.Shift));
+				keys.Add(GetKeyName(XKeys.Shift));
 
 			// display a trailing '+' if the keystroke is invalid
 			keys.Add(valid ? GetKeyName(key) : string.Empty);
@@ -703,51 +771,25 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// The default implementation uses an instance of <see cref="KeysConverter"/>
-		/// to perform the mapping, the results of which are consistent with the
-		/// default rendering of the <see cref="ToolStripMenuItem.ShortcutKeys"/>
-		/// (i.e. without using <see cref="ToolStripMenuItem.ShortcutKeyDisplayString"/>).
-		/// </para>
-		/// <para>
-		/// It is strongly recommended that overriding implementations, at a minimum,
-		/// explicitly define mappings for the following keys due to various
-		/// misspellings and duplicate definitions in the <see cref="Keys"/> enumeration.
-		/// <list type="u">
-		/// <item><see cref="Keys.Enter"/>, <see cref="Keys.Return"/></item>
-		/// <item><see cref="Keys.CapsLock"/>, <see cref="Keys.Capital"/></item>
-		/// <item><see cref="Keys.HangulMode"/>, <see cref="Keys.HanguelMode"/>, <see cref="Keys.KanaMode"/></item>
-		/// <item><see cref="Keys.KanjiMode"/>, <see cref="Keys.HanjaMode"/></item>
-		/// <item><see cref="Keys.IMEAccept"/>, <see cref="Keys.IMEAceept"/></item>
-		/// <item><see cref="Keys.Prior"/>, <see cref="Keys.PageUp"/></item>
-		/// <item><see cref="Keys.PageDown"/>, <see cref="Keys.Next"/></item>
-		/// <item><see cref="Keys.Snapshot"/>, <see cref="Keys.PrintScreen"/></item>
-		/// <item><see cref="Keys.OemSemicolon"/>, <see cref="Keys.Oem1"/></item>
-		/// <item><see cref="Keys.Oem2"/>, <see cref="Keys.OemQuestion"/></item>
-		/// <item><see cref="Keys.Oem3"/>, <see cref="Keys.Oemtilde"/></item>
-		/// <item><see cref="Keys.Oem4"/>, <see cref="Keys.OemOpenBrackets"/></item>
-		/// <item><see cref="Keys.OemPipe"/>, <see cref="Keys.Oem5"/></item>
-		/// <item><see cref="Keys.OemCloseBrackets"/>, <see cref="Keys.Oem6"/></item>
-		/// <item><see cref="Keys.OemQuotes"/>, <see cref="Keys.Oem7"/></item>
-		/// <item><see cref="Keys.Oem102"/>, <see cref="Keys.OemBackslash"/></item>
-		/// </list>
+		/// The default implementation uses an <see cref="XKeysConverter"/>.
 		/// </para>
 		/// </remarks>
-		/// <param name="key">A single value from the <see cref="Keys"/> enumeration.</param>
+		/// <param name="key">A single value from the <see cref="XKeys"/> enumeration.</param>
 		/// <returns>The key name for the given key.</returns>
-		protected virtual string GetKeyName(Keys key)
+		protected virtual string GetKeyName(XKeys key)
 		{
 			// modifier keys are defined because KeysConverter insists on converting
 			// the key portion even for just a modifier, resulting in Ctrl+None
 			switch (key)
 			{
-				case Keys.Control:
+				case XKeys.Control:
 					return "Ctrl";
-				case Keys.Alt:
+				case XKeys.Alt:
 					return "Alt";
-				case Keys.Shift:
+				case XKeys.Shift:
 					return "Shift";
 				default:
-					return _keysConverter.ConvertToString(Convert(key));
+					return TypeDescriptor.GetConverter(typeof (XKeys)).ConvertToString(key);
 			}
 		}
 
@@ -759,7 +801,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.UpdateText(this.KeyStroke);
 		}
 
-		private void UpdateText(Keys keyStroke)
+		private void UpdateText(XKeys keyStroke)
 		{
 			base.Text = _textBox.Text = this.FormatKeyStroke(keyStroke);
 			_textBox.SelectionStart = _textBox.TextLength;
@@ -771,9 +813,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_keyStrokeAccepted = false;
 		}
 
+		private void UpdateClearButtonBounds()
+		{
+			int wi = _textBox.ClientSize.Height;
+			_clearButton.Size = new Size(wi, wi);
+			_clearButton.Location = this.PointToClient(_textBox.PointToScreen(new Point(this.RightToLeft == RightToLeft.Yes ? _textBox.ClientRectangle.Left : _textBox.ClientRectangle.Right - wi, _textBox.ClientRectangle.Top)));
+		}
+
 		private void HandleTextBoxKeyDown(object sender, KeyEventArgs e)
 		{
-			Keys keyData = Convert(e.KeyData);
+			XKeys keyData = Convert(e.KeyData);
 			e.Handled = true;
 			e.SuppressKeyPress = true;
 
@@ -786,14 +835,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 				this.UpdateText(keyData);
 			}
 
-			Keys key = GetKeyPressed(keyData);
-			if (key != Keys.None && IsValidKeyStroke(key) && !_currentKeys.Contains(key))
+			XKeys key = GetKeyPressed(keyData);
+			if (key != XKeys.None && IsValidKeyStroke(key) && !_currentKeys.Contains(key))
 				_currentKeys.Add(key);
 		}
 
 		private void HandleTextBoxKeyUp(object sender, KeyEventArgs e)
 		{
-			Keys keyData = Convert(e.KeyData);
+			XKeys keyData = Convert(e.KeyData);
 			e.Handled = true;
 			e.SuppressKeyPress = true;
 
@@ -815,8 +864,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 				}
 			}
 
-			Keys key = GetKeyPressed(keyData);
-			if (key != Keys.None)
+			XKeys key = GetKeyPressed(keyData);
+			if (key != XKeys.None)
 				_currentKeys.Remove(key);
 
 			if (_currentKeys.Count == 0)
@@ -842,14 +891,156 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.UpdateText();
 		}
 
-		private static Keys Convert(System.Windows.Forms.Keys keys)
+		private void HandleClearButtonClick(object sender, EventArgs e)
 		{
-			return (Keys) (int) keys;
+			this.Clear();
 		}
 
-		private static System.Windows.Forms.Keys Convert(Keys keys)
+		private static XKeys Convert(Keys keys)
 		{
-			return (System.Windows.Forms.Keys) (int) keys;
+			return (XKeys) (int) keys;
+		}
+
+		/// <summary>
+		/// This hack enables select all text on focus functionality.
+		/// </summary>
+		/// <seealso cref="http://stackoverflow.com/questions/97459/automatically-select-all-text-on-focus-in-winforms-textbox"/>
+		private class XTextBox : TextBox
+		{
+			private bool _alreadyFocused;
+
+			protected override void OnLeave(EventArgs e)
+			{
+				base.OnLeave(e);
+				_alreadyFocused = false;
+			}
+
+			protected override void OnGotFocus(EventArgs e)
+			{
+				base.OnGotFocus(e);
+				if (MouseButtons == MouseButtons.None)
+				{
+					_alreadyFocused = true;
+					base.SelectAll();
+				}
+			}
+
+			protected override void OnMouseUp(MouseEventArgs e)
+			{
+				base.OnMouseUp(e);
+				if (!_alreadyFocused && base.SelectionLength == 0)
+				{
+					_alreadyFocused = true;
+					base.SelectAll();
+				}
+			}
+		}
+
+		private class ClearButton : Control
+		{
+			private bool _showGreyed = true;
+
+			/// <summary>
+			/// Cannot use <see cref="Control.Enabled"/> because otherwise we lose cursor control.
+			/// </summary>
+			public bool ShowGreyed
+			{
+				get { return _showGreyed; }
+				set
+				{
+					if (_showGreyed != value)
+					{
+						_showGreyed = value;
+						this.Invalidate();
+					}
+				}
+			}
+
+			protected override void OnClick(EventArgs e)
+			{
+				if (!this.ShowGreyed)
+					base.OnClick(e);
+			}
+
+			protected override void OnMouseEnter(EventArgs e)
+			{
+				base.OnMouseEnter(e);
+				this.Invalidate();
+			}
+
+			protected override void OnMouseLeave(EventArgs e)
+			{
+				base.OnMouseLeave(e);
+				this.Invalidate();
+			}
+
+			protected override void OnMouseDown(MouseEventArgs e)
+			{
+				base.OnMouseDown(e);
+				this.Invalidate();
+			}
+
+			protected override void OnMouseUp(MouseEventArgs e)
+			{
+				base.OnMouseUp(e);
+				this.Invalidate();
+			}
+
+			private bool IsMouseOver(Rectangle bounds)
+			{
+				return bounds.Contains(this.PointToClient(Cursor.Position));
+			}
+
+			private static bool IsLeftMouseButtonPressed()
+			{
+				return (MouseButtons & MouseButtons.Left) == MouseButtons.Left;
+			}
+
+			protected override void OnPaint(PaintEventArgs e)
+			{
+				if (VisualStyleRenderer.IsSupported
+				    && VisualStyleRenderer.IsElementDefined(VisualStyleElement.ExplorerBar.HeaderClose.Normal)
+				    && VisualStyleRenderer.IsElementDefined(VisualStyleElement.ExplorerBar.HeaderClose.Hot)
+				    && VisualStyleRenderer.IsElementDefined(VisualStyleElement.ExplorerBar.HeaderClose.Pressed))
+				{
+					VisualStyleElement element;
+					if (!this.ShowGreyed && IsMouseOver(this.ClientRectangle))
+						element = IsLeftMouseButtonPressed() ? VisualStyleElement.ExplorerBar.HeaderClose.Pressed : VisualStyleElement.ExplorerBar.HeaderClose.Hot;
+					else
+						element = VisualStyleElement.ExplorerBar.HeaderClose.Normal;
+
+					VisualStyleRenderer renderer = new VisualStyleRenderer(element);
+					Size size = renderer.GetPartSize(e.Graphics, this.ClientRectangle, ThemeSizeType.True);
+					using (Bitmap bmp = new Bitmap(size.Width, size.Height))
+					{
+						using (Graphics g = Graphics.FromImage(bmp))
+						{
+							renderer.DrawBackground(g, this.ClientRectangle);
+						}
+						e.Graphics.DrawImage(bmp, this.ClientRectangle);
+					}
+				}
+				else
+				{
+					const int lineWidth = 2;
+
+					if (this.ShowGreyed)
+						ControlPaint.DrawButton(e.Graphics, this.ClientRectangle, ButtonState.Inactive);
+					else if (IsMouseOver(this.ClientRectangle) && IsLeftMouseButtonPressed())
+						ControlPaint.DrawButton(e.Graphics, this.ClientRectangle, ButtonState.Pushed);
+					else
+						ControlPaint.DrawButton(e.Graphics, this.ClientRectangle, ButtonState.Normal);
+
+					using (Pen p = new Pen(this.ShowGreyed ? SystemBrushes.GrayText : SystemBrushes.ControlText, lineWidth))
+					{
+						Rectangle crossBounds = this.ClientRectangle;
+						crossBounds.Location += new Size(2*lineWidth, 2*lineWidth);
+						crossBounds.Size -= new Size(4*lineWidth + 1, 4*lineWidth + 1);
+						e.Graphics.DrawLine(p, crossBounds.Left, crossBounds.Top, crossBounds.Right, crossBounds.Bottom);
+						e.Graphics.DrawLine(p, crossBounds.Left, crossBounds.Bottom, crossBounds.Right, crossBounds.Top);
+					}
+				}
+			}
 		}
 	}
 
@@ -868,7 +1059,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <summary>
 		/// Gets the key stroke which is to be validated.
 		/// </summary>
-		public readonly Keys KeyStroke;
+		public readonly XKeys KeyStroke;
 
 		/// <summary>
 		/// Gets or sets a value indicating whether or not the value of <see cref="KeyStroke"/> is valid.
@@ -884,7 +1075,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// Initializes a new instance of <see cref="ValidateKeyStrokeEventArgs"/>.
 		/// </summary>
 		/// <param name="keyStroke">The key stroke which is to be validated.</param>
-		public ValidateKeyStrokeEventArgs(Keys keyStroke)
+		public ValidateKeyStrokeEventArgs(XKeys keyStroke)
 		{
 			this.KeyStroke = keyStroke;
 			this.IsValid = true;
