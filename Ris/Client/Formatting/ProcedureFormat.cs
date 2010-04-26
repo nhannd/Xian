@@ -31,6 +31,7 @@
 
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.BrowsePatientData;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Formatting
@@ -57,6 +58,17 @@ namespace ClearCanvas.Ris.Client.Formatting
 		public static string Format(ProcedureDetail p)
 		{
 			return Format(p.Type.Name, p.Portable, p.Laterality, FormatSettings.Default.ProcedurePortableLateralityDefaultFormat);
+		}
+
+		/// <summary>
+		/// Formats the procedure name, portable and laterality similar to "Name (Portable/Laterality)".  
+		/// Name is formatted according to the default person name format as specified in <see cref="FormatSettings"/>
+		/// </summary>
+		/// <param name="p"></param>
+		/// <returns></returns>
+		public static string Format(ProcedureRequisition p)
+		{
+			return Format(p.ProcedureType.Name, p.PortableModality, p.Laterality, FormatSettings.Default.ProcedurePortableLateralityDefaultFormat);
 		}
 
 		/// <summary>
@@ -147,11 +159,11 @@ namespace ClearCanvas.Ris.Client.Formatting
 		/// <returns></returns>
 		public static string FormatModifier(bool portable, EnumValueInfo laterality, string format)
 		{
-			string result = format;
+			var result = format;
 			result = result.Replace("%P", portable == false ? "" : "Portable");
 			result = result.Replace("%L", laterality == null || laterality.Code == "N" ? "" : laterality.Value);
 
-			string nullResult = format;
+			var nullResult = format;
 			nullResult = nullResult.Replace("%P", "");
 			nullResult = nullResult.Replace("%L", "");
 

@@ -297,16 +297,8 @@ namespace ClearCanvas.Ris.Client
 			_orderRef = orderRef;
 
 			_proceduresTable = new Table<ProcedureRequisition>();
-			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Name", item => item.ProcedureType.Name));
-			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Facility", item =>
-				item.PerformingFacility == null
-				? ""
-				: item.PerformingFacility.Code));
-			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Lat.", item =>
-				(item.Laterality == null || item.Laterality.Code == "N")
-				? ""
-				: item.Laterality.Value));
-			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, bool>("Port.", item => item.PortableModality));
+			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Procedure", ProcedureFormat.Format));
+			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Facility", FormatPerformingFacility));
 			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Scheduled Time", item =>
 				{
 					// if new or scheduled
@@ -717,11 +709,6 @@ namespace ClearCanvas.Ris.Client
 			get { return _orderingFacility != null ? _orderingFacility.Name : ""; }
 		}
 
-		public string FormatFacility(object facility)
-		{
-			return ((FacilitySummary)facility).Name;
-		}
-
 		public ILookupHandler OrderingPractitionerLookupHandler
 		{
 			get { return _orderingPractitionerLookupHandler; }
@@ -1004,6 +991,20 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		#endregion
+
+		private string FormatPerformingFacility(ProcedureRequisition requisition)
+		{
+			var sb = new StringBuilder();
+			if(requisition.PerformingFacility != null)
+			{
+				sb.Append(requisition.PerformingFacility.Name);
+			}
+			if(requisition.PerformingDepartment != null)
+			{
+				sb.Append(" (" + requisition.PerformingDepartment.Name + ")");
+			}
+			return sb.ToString();
+		}
 
 		private void UpdateDiagnosticService(DiagnosticServiceSummary summary)
 		{
