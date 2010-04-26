@@ -36,8 +36,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common;
-using System.Threading;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -130,9 +128,6 @@ namespace ClearCanvas.Ris.Client
 
 		#region Protected API
 
-		/// <summary>
-		/// 
-		/// </summary>
 		protected abstract void BeginQueryItems();
 
 		protected abstract void BeginQueryCount();
@@ -140,74 +135,71 @@ namespace ClearCanvas.Ris.Client
 		#endregion
 	}
 
-    /// <summary>
-    /// Abstract base class for folders that display the contents of worklists.
-    /// </summary>
-    /// <typeparam name="TItem"></typeparam>
+	/// <summary>
+	/// Abstract base class for folders that display the contents of worklists.
+	/// </summary>
+	/// <typeparam name="TItem"></typeparam>
 	public abstract class WorkflowFolder<TItem> : WorkflowFolder
 		where TItem : DataContractBase
-    {
-        #region QueryItemsResult class
+	{
+		#region QueryItemsResult class
 
-        protected class QueryItemsResult
-        {
-            private readonly IList<TItem> _items;
-            private readonly int _totalItemCount;
+		protected class QueryItemsResult
+		{
+			private readonly IList<TItem> _items;
+			private readonly int _totalItemCount;
 
-            public QueryItemsResult(IList<TItem> items, int totalItemCount)
-            {
-                _items = items;
-                _totalItemCount = totalItemCount;
-            }
+			public QueryItemsResult(IList<TItem> items, int totalItemCount)
+			{
+				_items = items;
+				_totalItemCount = totalItemCount;
+			}
 
-            public IList<TItem> Items
-            {
-                get { return _items; }
-            }
+			public IList<TItem> Items
+			{
+				get { return _items; }
+			}
 
-            public int TotalItemCount
-            {
-                get { return _totalItemCount; }
-            }
-        }
+			public int TotalItemCount
+			{
+				get { return _totalItemCount; }
+			}
+		}
 
-        #endregion
+		#endregion
 
-        private readonly Table<TItem> _itemsTable;
-        private IDropHandler<TItem> _currentDropHandler;
+		private readonly Table<TItem> _itemsTable;
+		private IDropHandler<TItem> _currentDropHandler;
 
-        private BackgroundTask _queryItemsTask;
-        private BackgroundTask _queryCountTask;
+		private BackgroundTask _queryItemsTask;
+		private BackgroundTask _queryCountTask;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="itemsTable"></param>
-        public WorkflowFolder(Table<TItem> itemsTable)
-        {
-            _itemsTable = itemsTable;
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="itemsTable"></param>
+		protected WorkflowFolder(Table<TItem> itemsTable)
+		{
+			_itemsTable = itemsTable;
 		}
 
 		#region Folder overrides
 
 		/// <summary>
-    	/// Gets a table of the items that are contained in this folder
-    	/// </summary>
-    	public override ITable ItemsTable
-        {
-            get
-            {
-                return _itemsTable;
-            }
-        }
+		/// Gets a table of the items that are contained in this folder
+		/// </summary>
+		public override ITable ItemsTable
+		{
+			get { return _itemsTable; }
+		}
 
-
-    	/// <summary>
-    	/// Informs the folder that the specified items were dragged from it.  It is up to the implementation
-    	/// of the folder to determine the appropriate response (e.g. whether the items should be removed or not).
-    	/// </summary>
-    	/// <param name="items"></param>
-    	public override void DragComplete(object[] items, DragDropKind kind)
+		/// <summary>
+		/// Informs the folder that the specified items were dragged from it.  It is up to the implementation
+		/// of the folder to determine the appropriate response (e.g. whether the items should be removed or not).
+		/// </summary>
+		/// <param name="items"></param>
+		/// <param name="kind"></param>
+		public override void DragComplete(object[] items, DragDropKind kind)
 		{
 			if (kind == DragDropKind.Move)
 			{
@@ -215,34 +207,34 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-    	/// <summary>
-    	/// Asks the folder if it can accept a drop of the specified items
-    	/// </summary>
-    	/// <param name="items"></param>
-    	/// <param name="kind"></param>
-    	/// <returns></returns>
-    	public override DragDropKind CanAcceptDrop(object[] items, DragDropKind kind)
+		/// <summary>
+		/// Asks the folder if it can accept a drop of the specified items
+		/// </summary>
+		/// <param name="items"></param>
+		/// <param name="kind"></param>
+		/// <returns></returns>
+		public override DragDropKind CanAcceptDrop(object[] items, DragDropKind kind)
 		{
 			// this cast is not terribly safe, but in practice it should always succeed
-    		WorkflowFolderSystem fs = (WorkflowFolderSystem) this.FolderSystem;
+			var fs = (WorkflowFolderSystem) this.FolderSystem;
 			_currentDropHandler = (IDropHandler<TItem>)fs.GetDropHandler(this, items);
 
 			// if the items are acceptable, return Move (never Copy, which would make no sense for a workflow folder)
 			return _currentDropHandler != null ? DragDropKind.Move : DragDropKind.None;
 		}
 
-    	/// <summary>
-    	/// Instructs the folder to accept the specified items
-    	/// </summary>
-    	/// <param name="items"></param>
-    	/// <param name="kind"></param>
-    	public override DragDropKind AcceptDrop(object[] items, DragDropKind kind)
+		/// <summary>
+		/// Instructs the folder to accept the specified items
+		/// </summary>
+		/// <param name="items"></param>
+		/// <param name="kind"></param>
+		public override DragDropKind AcceptDrop(object[] items, DragDropKind kind)
 		{
 			if (_currentDropHandler == null)
 				return DragDropKind.None;
 
 			// cast items to type safe collection
-			ICollection<TItem> dropItems = CollectionUtils.Map<object, TItem>(items, delegate(object item) { return (TItem)item; });
+			var dropItems = CollectionUtils.Map(items, (object item) => (TItem) item);
 			return _currentDropHandler.ProcessDrop(dropItems) ? DragDropKind.Move : DragDropKind.None;
 		}
 
@@ -269,7 +261,7 @@ namespace ClearCanvas.Ris.Client
 				{
 					try
 					{
-						QueryItemsResult result = QueryItems();
+						var result = QueryItems();
 						taskContext.Complete(result);
 					}
 					catch (Exception e)
@@ -305,7 +297,7 @@ namespace ClearCanvas.Ris.Client
 				{
 					try
 					{
-						int count = QueryCount();
+						var count = QueryCount();
 						taskContext.Complete(count);
 					}
 					catch (Exception e)
@@ -322,58 +314,58 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		private void OnQueryItemsCompleted(object sender, BackgroundTaskTerminatedEventArgs args)
-        {
-            if(args.Reason == BackgroundTaskTerminatedReason.Completed)
-            {
-                NotifyItemsTableChanging();
+		{
+			if(args.Reason == BackgroundTaskTerminatedReason.Completed)
+			{
+				NotifyItemsTableChanging();
 
-                QueryItemsResult result = (QueryItemsResult)args.Result;
-            	this.TotalItemCount = result.TotalItemCount;
-                _itemsTable.Items.Clear();
-                _itemsTable.Items.AddRange(result.Items);
-                _itemsTable.Sort();
+				var result = (QueryItemsResult)args.Result;
+				this.TotalItemCount = result.TotalItemCount;
+				_itemsTable.Items.Clear();
+				_itemsTable.Items.AddRange(result.Items);
+				_itemsTable.Sort();
 				InErrorState = false;
 
-                NotifyItemsTableChanged();
-            }
-            else
-            {
-				// since this was running in the background, we can't report the exception to the user
-				// because they would have no context for it, and it would be annoying
-				// therefore, just log it
-				InErrorState = true;
-                Platform.Log(LogLevel.Error, args.Exception);
-            }
-
-            // dispose of the task
-            _queryItemsTask.Terminated -= OnQueryItemsCompleted;
-            _queryItemsTask.Dispose();
-            _queryItemsTask = null;
-
-			EndUpdate();
-			NotifyIconChanged();
-		}
-
-        private void OnQueryCountCompleted(object sender, BackgroundTaskTerminatedEventArgs args)
-        {
-            if (args.Reason == BackgroundTaskTerminatedReason.Completed)
-            {
-				InErrorState = false;
-                this.TotalItemCount = (int)args.Result;
-            }
-            else
-            {
+				NotifyItemsTableChanged();
+			}
+			else
+			{
 				// since this was running in the background, we can't report the exception to the user
 				// because they would have no context for it, and it would be annoying
 				// therefore, just log it
 				InErrorState = true;
 				Platform.Log(LogLevel.Error, args.Exception);
-            }
+			}
 
-            // dispose of the task
-            _queryCountTask.Terminated -= OnQueryCountCompleted;
-            _queryCountTask.Dispose();
-            _queryCountTask = null;
+			// dispose of the task
+			_queryItemsTask.Terminated -= OnQueryItemsCompleted;
+			_queryItemsTask.Dispose();
+			_queryItemsTask = null;
+
+			EndUpdate();
+			NotifyIconChanged();
+		}
+
+		private void OnQueryCountCompleted(object sender, BackgroundTaskTerminatedEventArgs args)
+		{
+			if (args.Reason == BackgroundTaskTerminatedReason.Completed)
+			{
+				InErrorState = false;
+				this.TotalItemCount = (int)args.Result;
+			}
+			else
+			{
+				// since this was running in the background, we can't report the exception to the user
+				// because they would have no context for it, and it would be annoying
+				// therefore, just log it
+				InErrorState = true;
+				Platform.Log(LogLevel.Error, args.Exception);
+			}
+
+			// dispose of the task
+			_queryCountTask.Terminated -= OnQueryCountCompleted;
+			_queryCountTask.Dispose();
+			_queryCountTask = null;
 
 			EndUpdate();
 			NotifyIconChanged();
@@ -393,7 +385,7 @@ namespace ClearCanvas.Ris.Client
 		/// Called to obtain a count of the logical total number of items in the folder (which may be more than the number in memory).
 		/// </summary>
 		/// <returns></returns>
-    	protected abstract int QueryCount();
+		protected abstract int QueryCount();
 
 		#endregion
 

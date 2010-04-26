@@ -39,109 +39,109 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-    /// <summary>
-    /// Extension point for views onto <see cref="FolderContentsComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class FolderContentsComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	/// <summary>
+	/// Extension point for views onto <see cref="FolderContentsComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class FolderContentsComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    /// <summary>
-    /// WorklistExplorerComponent class
-    /// </summary>
-    [AssociateView(typeof(FolderContentsComponentViewExtensionPoint))]
-    public class FolderContentsComponent : ApplicationComponent
-    {
-        private bool _multiSelect = true;
-        private ISelection _selectedItems = Selection.Empty;
+	/// <summary>
+	/// WorklistExplorerComponent class
+	/// </summary>
+	[AssociateView(typeof(FolderContentsComponentViewExtensionPoint))]
+	public class FolderContentsComponent : ApplicationComponent
+	{
+		private const bool _multiSelect = true;
+		private ISelection _selectedItems = Selection.Empty;
 
-        private event EventHandler _tableChanged;
-        private event EventHandler _folderSystemChanged;
-        private event EventHandler _selectedItemDoubleClicked;
-        private event EventHandler _selectedItemsChanged;
+		private event EventHandler _tableChanged;
+		private event EventHandler _folderSystemChanged;
+		private event EventHandler _selectedItemDoubleClicked;
+		private event EventHandler _selectedItemsChanged;
 
-        private IFolderSystem _folderSystem;
-        private IFolder _selectedFolder;
+		private IFolderSystem _folderSystem;
+		private IFolder _selectedFolder;
 
-    	private bool _suppressFolderContentSelectionChanges;
+		private bool _suppressFolderContentSelectionChanges;
 
-        public IFolderSystem FolderSystem
-        {
-            get { return _folderSystem; }
-            set
-            {
-				if (_folderSystem != value)
+		public IFolderSystem FolderSystem
+		{
+			get { return _folderSystem; }
+			set
+			{
+				if (_folderSystem == value)
+					return;
+
+				// Must set the items and folders to null before chaning folder system, 
+				// otherwise the tools that monitors folder and items selected will get out-of-sync with the folder system
+				this.SelectedItems = Selection.Empty;
+				this.SelectedFolder = null;
+
+				_folderSystem = value;
+
+				EventsHelper.Fire(_folderSystemChanged, this, EventArgs.Empty);
+			}
+		}
+
+		public IFolder SelectedFolder
+		{
+			get { return _selectedFolder; }
+			set
+			{
+				if (value == _selectedFolder)
+					return;
+
+				if (_selectedFolder != null)
 				{
-					// Must set the items and folders to null before chaning folder system, 
-					// otherwise the tools that monitors folder and items selected will get out-of-sync with the folder system
-					this.SelectedItems = Selection.Empty;
-					this.SelectedFolder = null;
-
-					_folderSystem = value;
-
-					EventsHelper.Fire(_folderSystemChanged, this, EventArgs.Empty);
+					_selectedFolder.TotalItemCountChanged -= TotalItemCountChangedEventHandler;
+					_selectedFolder.ItemsTableChanging -= ItemsTableChangingEventHandler;
+					_selectedFolder.ItemsTableChanged -= ItemsTableChangedEventHandler;
+					_selectedFolder.Updating -= UpdatingEventHandler;
+					_selectedFolder.Updated -= UpdatedEventHandler;
 				}
-            }
-        }
 
-        public IFolder SelectedFolder
-        {
-            get { return _selectedFolder; }
-            set
-            {
-                if (value != _selectedFolder)
-                {
-					if (_selectedFolder != null)
-					{
-						_selectedFolder.TotalItemCountChanged -= TotalItemCountChangedEventHandler;
-						_selectedFolder.ItemsTableChanging -= ItemsTableChangingEventHandler;
-						_selectedFolder.ItemsTableChanged -= ItemsTableChangedEventHandler;
-						_selectedFolder.Updating -= UpdatingEventHandler;
-						_selectedFolder.Updated -= UpdatedEventHandler;
-					}
+				_selectedFolder = value;
 
-                	_selectedFolder = value;
+				if (_selectedFolder != null)
+				{
+					_selectedFolder.TotalItemCountChanged += TotalItemCountChangedEventHandler;
+					_selectedFolder.ItemsTableChanging += ItemsTableChangingEventHandler;
+					_selectedFolder.ItemsTableChanged += ItemsTableChangedEventHandler;
+					_selectedFolder.Updating += UpdatingEventHandler;
+					_selectedFolder.Updated += UpdatedEventHandler;
+				}
 
-                    if (_selectedFolder != null)
-                    {
-						_selectedFolder.TotalItemCountChanged += TotalItemCountChangedEventHandler;
-						_selectedFolder.ItemsTableChanging += ItemsTableChangingEventHandler;
-						_selectedFolder.ItemsTableChanged += ItemsTableChangedEventHandler;
-						_selectedFolder.Updating += UpdatingEventHandler;
-						_selectedFolder.Updated += UpdatedEventHandler;
-					}
+				// ensure that selection changes are not suppressed
+				SuppressSelectionChanges(false);
 
-					// ensure that selection changes are not suppressed
-					SuppressSelectionChanges(false);
+				// notify view
+				EventsHelper.Fire(_tableChanged, this, EventArgs.Empty);
 
-                    // notify view
-                    EventsHelper.Fire(_tableChanged, this, EventArgs.Empty);
+				// notify that the selected items have changed (because the folder has changed)
+				NotifySelectedItemsChanged();
 
-					// notify that the selected items have changed (because the folder has changed)
-					NotifySelectedItemsChanged();
+				NotifyPropertyChanged("IsUpdating");
+				NotifyPropertyChanged("StatusMessage");
+			}
+		}
 
-					NotifyPropertyChanged("IsUpdating");
-					NotifyPropertyChanged("StatusMessage");
-                }
-            }
-        }
+		#region Application Component overrides
 
-        #region Application Component overrides
+		public override IActionSet ExportedActions
+		{
+			get 
+			{
+				return _folderSystem == null || _folderSystem.ItemTools == null
+					? new ActionSet() 
+					: _folderSystem.ItemTools.Actions; 
+			}
+		}
 
-        public override IActionSet ExportedActions
-        {
-            get 
-            {
-                return _folderSystem == null || _folderSystem.ItemTools == null
-                    ? new ActionSet() 
-                    : _folderSystem.ItemTools.Actions; 
-            }
-        }
+		#endregion
 
-        #endregion
-
-        #region Presentation Model
+		#region Presentation Model
 
 		public bool MultiSelect
 		{
@@ -149,20 +149,20 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		public ITable FolderContentsTable
-        {
-            get { return _selectedFolder == null ? null : _selectedFolder.ItemsTable; }
-        }
+		{
+			get { return _selectedFolder == null ? null : _selectedFolder.ItemsTable; }
+		}
 
 		// this is a bit of a hack to prevent the table view from sending selection changes during folder refreshes
 		public bool SuppressFolderContentSelectionChanges
-    	{
+		{
 			get { return _suppressFolderContentSelectionChanges; }
-    	}
+		}
 
-        public string StatusMessage
-        {
-            get
-            {
+		public string StatusMessage
+		{
+			get
+			{
 				if (_selectedFolder == null)
 					return "";
 
@@ -171,81 +171,79 @@ namespace ClearCanvas.Ris.Client
 
 				// if no folder selected, or selected folder has 0 items or -1 items (i.e. unknown),
 				// don't display a status message
-                if (_selectedFolder.TotalItemCount < 1)
-                    return "";
+				if (_selectedFolder.TotalItemCount < 1)
+					return "";
 
-                if (_selectedFolder.TotalItemCount == _selectedFolder.ItemsTable.Items.Count)
-                    return string.Format(SR.MessageShowAllItems, _selectedFolder.TotalItemCount);
-                else 
-                    return string.Format(SR.MessageShowPartialItems,
-                                     _selectedFolder.ItemsTable.Items.Count, _selectedFolder.TotalItemCount);
-            }
-        }
+				return _selectedFolder.TotalItemCount == _selectedFolder.ItemsTable.Items.Count
+					? string.Format(SR.MessageShowAllItems, _selectedFolder.TotalItemCount) 
+					: string.Format(SR.MessageShowPartialItems, _selectedFolder.ItemsTable.Items.Count, _selectedFolder.TotalItemCount);
+			}
+		}
 
-    	public bool IsUpdating
-    	{
+		public bool IsUpdating
+		{
 			get { return _selectedFolder == null ? false : _selectedFolder.IsUpdating; }
-    	}
+		}
 
-        public ISelection SelectedItems
-        {
-            get { return _selectedItems; }
-            set 
-            {
-                if (!_selectedItems.Equals(value))
-                {
-                    _selectedItems = value;
-                	NotifySelectedItemsChanged();
-				}
-            }
-        }
+		public ISelection SelectedItems
+		{
+			get { return _selectedItems; }
+			set 
+			{
+				if (_selectedItems.Equals(value))
+					return;
 
-        public event EventHandler TableChanged
-        {
-            add { _tableChanged += value; }
-            remove { _tableChanged -= value; }
-        }
+				_selectedItems = value;
+				NotifySelectedItemsChanged();
+			}
+		}
 
-        public event EventHandler FolderSystemChanged
-        {
-            add { _folderSystemChanged += value; }
-            remove { _folderSystemChanged -= value; }
-        }
+		public event EventHandler TableChanged
+		{
+			add { _tableChanged += value; }
+			remove { _tableChanged -= value; }
+		}
 
-        public event EventHandler SelectedItemDoubleClicked
-        {
-            add { _selectedItemDoubleClicked += value; }
-            remove { _selectedItemDoubleClicked -= value; }
-        }
+		public event EventHandler FolderSystemChanged
+		{
+			add { _folderSystemChanged += value; }
+			remove { _folderSystemChanged -= value; }
+		}
 
-        public event EventHandler SelectedItemsChanged
-        {
-            add { _selectedItemsChanged += value; }
-            remove { _selectedItemsChanged -= value; }
-        }
+		public event EventHandler SelectedItemDoubleClicked
+		{
+			add { _selectedItemDoubleClicked += value; }
+			remove { _selectedItemDoubleClicked -= value; }
+		}
 
-        public ActionModelRoot ItemsContextMenuModel
-        {
-            get
-            {
-                return _folderSystem == null || _folderSystem.ItemTools == null ? null
+		public event EventHandler SelectedItemsChanged
+		{
+			add { _selectedItemsChanged += value; }
+			remove { _selectedItemsChanged -= value; }
+		}
+
+		public ActionModelRoot ItemsContextMenuModel
+		{
+			get
+			{
+				return _folderSystem == null || _folderSystem.ItemTools == null ? null
 					: ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-items-contextmenu", _folderSystem.ItemTools.Actions);
-            }
-        }
+			}
+		}
 
 		public ActionModelRoot ItemsToolbarModel
-        {
-            get
-            {
-                return _folderSystem == null || _folderSystem.ItemTools == null ? null
+		{
+			get
+			{
+				return _folderSystem == null || _folderSystem.ItemTools == null ? null
 					: ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-items-toolbar", _folderSystem.ItemTools.Actions);
-            }
-        }
+			}
+		}
 
-        public void DoubleClickSelectedItem()
-        {
-            EventsHelper.Fire(_selectedItemDoubleClicked, this, EventArgs.Empty);
-        }
+		public void DoubleClickSelectedItem()
+		{
+			EventsHelper.Fire(_selectedItemDoubleClicked, this, EventArgs.Empty);
+		}
 
 		#endregion
 
@@ -260,9 +258,9 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		private void TotalItemCountChangedEventHandler(object sender, EventArgs e)
-        {
-            NotifyPropertyChanged("StatusMessage");
-        }
+		{
+			NotifyPropertyChanged("StatusMessage");
+		}
 
 		private void ItemsTableChangingEventHandler(object sender, EventArgs e)
 		{
@@ -279,17 +277,13 @@ namespace ClearCanvas.Ris.Client
 			// if the items support IVersionedEquatable, then we need to compare them using a version-insensitive comparison,
 			// but the new selection must consist of the instances that have the most current version
 			_selectedItems = new Selection(CollectionUtils.Select(_selectedFolder.ItemsTable.Items,
-					delegate(object item)
+				item => CollectionUtils.Contains(_selectedItems.Items,
+					delegate(object oldItem)
 					{
-						return CollectionUtils.Contains(_selectedItems.Items,
-							delegate(object oldItem)
-							{
-								return (item is IVersionedEquatable)
-									? (item as IVersionedEquatable).Equals(oldItem, true) // ignore version if IVersionedEquatable
-									: Equals(item, oldItem);
-							});
-							
-					}));
+						return (item is IVersionedEquatable)
+								? (item as IVersionedEquatable).Equals(oldItem, true) // ignore version if IVersionedEquatable
+								: Equals(item, oldItem);
+					})));
 
 			// notify view about the updated selection table to the prior selection
 			NotifySelectedItemsChanged();
