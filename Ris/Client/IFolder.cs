@@ -138,6 +138,11 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		bool Visible { get; set; }
 
+		/// <summary>
+		/// Gets the paging controller.  Return null if the folder does not support paging.
+		/// </summary>
+		IPagingController PagingController { get; }
+
 		#endregion
 
 		#region Events

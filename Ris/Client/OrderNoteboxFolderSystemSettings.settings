@@ -8,5 +8,8 @@
     <Setting Name="RefreshTime" Description="Folder auto-refresh interval (milliseconds)" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">120000</Value>
     </Setting>
+    <Setting Name="ItemsPerPage" Description="For Order Notebox queries, controls number of order-note items per page" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">100</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

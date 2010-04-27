@@ -117,7 +117,7 @@ namespace ClearCanvas.Ris.Application.Services
                 WorklistFactory.Instance.CreateWorklist(request.WorklistClass);
 
             IList results = null;
-            var page = new SearchResultPage(0, new WorklistSettings().ItemsPerPage);
+            var page = new SearchResultPage(request.Page.FirstRow, request.Page.MaxRows);
             if(request.QueryItems)
             {
                 // get the first page, up to the default max number of items per page
@@ -127,9 +127,9 @@ namespace ClearCanvas.Ris.Application.Services
             var count = -1;
             if(request.QueryCount)
             {
-                // if the items were already queried, and the number returned is less than the max per page,
+                // if the items were already queried, and the number returned is less than the max per page, and this is the first page
                 // then there is no need to do a separate count query
-                if (results != null && results.Count < page.MaxRows)
+                if (results != null && results.Count < page.MaxRows && page.FirstRow == 0)
                     count = results.Count;
                 else
                     count = worklist.GetWorklistItemCount(new WorklistQueryContext(this, null, request.DowntimeRecoveryMode));

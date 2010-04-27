@@ -155,7 +155,7 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
             Platform.CheckMemberIsSet(request.NoteboxClass, "request.NoteboxClass");
 
             Notebox notebox = NoteboxFactory.Instance.CreateNotebox(request.NoteboxClass);
-            SearchResultPage page = new SearchResultPage(0, new OrderNoteSettings().ItemsPerPage);
+            SearchResultPage page = new SearchResultPage(request.Page.FirstRow, request.Page.MaxRows);
     		NoteboxQueryContext nqc = new NoteboxQueryContext(this, page, request.StaffGroupRef == null ?
 				null : PersistenceContext.Load<StaffGroup>(request.StaffGroupRef));
 

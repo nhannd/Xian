@@ -482,6 +482,14 @@ namespace ClearCanvas.Ris.Client
 			set { _visible = value; }
 		}
 
+		/// <summary>
+		/// Gets the paging controller.  Return null if the folder does not support paging.
+		/// </summary>
+		public virtual IPagingController PagingController
+		{
+			get { return null; }
+		}
+
 		#endregion
 
 		#region Overridable members
@@ -489,6 +497,11 @@ namespace ClearCanvas.Ris.Client
 		protected abstract void InvalidateCore();
 
 		protected abstract bool UpdateCore();
+
+		protected virtual int DefaultPageSize
+		{
+			get { return Desktop.PagingController.DefaultPageSize; }
+		}
 
 		/// <summary>
 		/// Gets the closed-state <see cref="IconSet"/>.

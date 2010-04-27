@@ -1681,6 +1681,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Getting folder items....
+        /// </summary>
+        internal static string MessageGettingFolderItems {
+            get {
+                return ResourceManager.GetString("MessageGettingFolderItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Canned text Name, Category and Owner are identical to an existing canned text..
         /// </summary>
         internal static string MessageIdenticalCannedText {
@@ -1906,7 +1915,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Showing {0} of {1} item(s)..
+        ///   Looks up a localized string similar to Showing {0}-{1} of {2} (page {3}/{4})..
         /// </summary>
         internal static string MessageShowPartialItems {
             get {

@@ -249,7 +249,7 @@ namespace ClearCanvas.Ris.Client
 		/// Called to obtain the set of items in the folder.
 		/// </summary>
 		/// <returns></returns>
-		protected override QueryItemsResult QueryItems()
+		protected override QueryItemsResult QueryItems(int firstRow, int maxRows)
 		{
 			QueryItemsResult result = null;
 
@@ -257,10 +257,9 @@ namespace ClearCanvas.Ris.Client
 				service =>
 				{
 					var request = this.WorklistRef == null
-					                               	? new QueryWorklistRequest(this.WorklistClassName, true, true,
-					                               	                           DowntimeRecovery.InDowntimeRecoveryMode)
-					                               	: new QueryWorklistRequest(this.WorklistRef, true, true,
-					                               	                           DowntimeRecovery.InDowntimeRecoveryMode);
+						? new QueryWorklistRequest(this.WorklistClassName, true, true, DowntimeRecovery.InDowntimeRecoveryMode)
+						: new QueryWorklistRequest(this.WorklistRef, true, true, DowntimeRecovery.InDowntimeRecoveryMode);
+					request.Page = new SearchResultPage(firstRow, maxRows);
 
 					var response = service.QueryWorklist(request);
 					result = new QueryItemsResult(response.WorklistItems, response.ItemCount);

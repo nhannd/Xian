@@ -30,7 +30,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -95,6 +95,17 @@ namespace ClearCanvas.Ris.Client
 			_isItemsValid = false;
 		}
 
+		protected void ValidateItem()
+		{
+			_isItemsValid = true;
+			_isCountValid = true;
+		}
+
+		protected void ValidateCount()
+		{
+			_isCountValid = true;
+		}
+
 		protected override bool UpdateCore()
 		{
 			if(this.IsOpen)
@@ -104,8 +115,6 @@ namespace ClearCanvas.Ris.Client
 				{
 					// an items query validates the count as well as the items
 					BeginQueryItems();
-					_isItemsValid = true;
-					_isCountValid = true;
 					return true;
 				}
 			}
@@ -115,7 +124,6 @@ namespace ClearCanvas.Ris.Client
 				if (!_isCountValid)
 				{
 					BeginQueryCount();
-					_isCountValid = true;
 					return true;
 				}
 			}
@@ -146,16 +154,16 @@ namespace ClearCanvas.Ris.Client
 
 		protected class QueryItemsResult
 		{
-			private readonly IList<TItem> _items;
+			private readonly IList _items;
 			private readonly int _totalItemCount;
 
-			public QueryItemsResult(IList<TItem> items, int totalItemCount)
+			public QueryItemsResult(IList items, int totalItemCount)
 			{
 				_items = items;
 				_totalItemCount = totalItemCount;
 			}
 
-			public IList<TItem> Items
+			public IList Items
 			{
 				get { return _items; }
 			}
@@ -168,11 +176,13 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
+		private readonly PagingController _pagingController;
+
 		private readonly Table<TItem> _itemsTable;
 		private IDropHandler<TItem> _currentDropHandler;
 
-		private BackgroundTask _queryItemsTask;
-		private BackgroundTask _queryCountTask;
+		private AsyncTask _queryItemsTask;
+		private AsyncTask _queryCountTask;
 
 		/// <summary>
 		/// Constructor
@@ -181,9 +191,17 @@ namespace ClearCanvas.Ris.Client
 		protected WorkflowFolder(Table<TItem> itemsTable)
 		{
 			_itemsTable = itemsTable;
+
+			_pagingController = new PagingController(this.DefaultPageSize, QueryItems);
+			_pagingController.PageChanged += OnPagingControllerPageChanged;
 		}
 
 		#region Folder overrides
+
+		public override IPagingController PagingController
+		{
+			get { return _pagingController; }
+		}
 
 		/// <summary>
 		/// Gets a table of the items that are contained in this folder
@@ -243,38 +261,19 @@ namespace ClearCanvas.Ris.Client
 		#region Helpers
 
 		/// <summary>
+		/// Gets the number of items per page.
+		/// </summary>
+		protected override int DefaultPageSize
+		{
+			get { return WorklistSettings.Default.ItemsPerPage; }
+		}
+
+		/// <summary>
 		/// Asks the folder to refresh its contents.  The implementation may be asynchronous.
 		/// </summary>
 		protected override void BeginQueryItems()
 		{
-			if (_queryItemsTask != null)
-			{
-				// refresh already in progress
-				return;
-			}
-
-			// notify the framework that an update is beginning
-			BeginUpdate();
-
-			_queryItemsTask = new BackgroundTask(
-				delegate(IBackgroundTaskContext taskContext)
-				{
-					try
-					{
-						var result = QueryItems();
-						taskContext.Complete(result);
-					}
-					catch (Exception e)
-					{
-						taskContext.Error(e);
-					}
-				},
-				false);
-
-			_queryItemsTask.Terminated += OnQueryItemsCompleted;
-			_queryItemsTask.Run();
-
-			NotifyIconChanged();
+			_pagingController.GetFirst();
 		}
 
 		/// <summary>
@@ -292,83 +291,89 @@ namespace ClearCanvas.Ris.Client
 			// notify the framework that an update is beginning
 			BeginUpdate();
 
-			_queryCountTask = new BackgroundTask(
-				delegate(IBackgroundTaskContext taskContext)
+			var count = -1;
+			_queryCountTask = new AsyncTask();
+			_queryCountTask.Run(
+				delegate
+					{
+						count = QueryCount();
+					},
+				delegate
+					{
+						InErrorState = false;
+						this.TotalItemCount = count;
+						ValidateCount();
+
+						EndUpdate();
+						NotifyIconChanged();
+						_queryCountTask = null;
+					},
+				delegate(Exception e)
+					{
+						// since this was running in the background, we can't report the exception to the user
+						// because they would have no context for it, and it would be annoying
+						// therefore, just log it
+						InErrorState = true;
+						Platform.Log(LogLevel.Error, e);
+
+						EndUpdate();
+						NotifyIconChanged();
+						_queryCountTask = null;
+					});
+		}
+
+		private void QueryItems(int firstRow, int maxRows, Action<IList> resultHandler)
+		{
+			if (_queryItemsTask != null)
+			{
+				// refresh already in progress
+				return;
+			}
+
+			// notify the framework that an update is beginning
+			BeginUpdate();
+
+			QueryItemsResult result = null;
+			_queryItemsTask = new AsyncTask();
+			_queryItemsTask.Run(
+				delegate
 				{
-					try
-					{
-						var count = QueryCount();
-						taskContext.Complete(count);
-					}
-					catch (Exception e)
-					{
-						taskContext.Error(e);
-					}
+					result = QueryItems(firstRow, maxRows);
 				},
-				false);
+				delegate
+				{
+					resultHandler(result.Items);
+					this.TotalItemCount = result.TotalItemCount;
 
-			_queryCountTask.Terminated += OnQueryCountCompleted;
-			_queryCountTask.Run();
+					ValidateItem();
 
-			NotifyIconChanged();
+					EndUpdate();
+					NotifyIconChanged();
+					_queryItemsTask = null;
+				},
+				delegate(Exception e)
+				{
+					// since this was running in the background, we can't report the exception to the user
+					// because they would have no context for it, and it would be annoying
+					// therefore, just log it
+					InErrorState = true;
+					Platform.Log(LogLevel.Error, e);
+
+					EndUpdate();
+					NotifyIconChanged();
+					_queryItemsTask = null;
+				});
 		}
 
-		private void OnQueryItemsCompleted(object sender, BackgroundTaskTerminatedEventArgs args)
+		void OnPagingControllerPageChanged(object sender, PageChangedEventArgs e)
 		{
-			if(args.Reason == BackgroundTaskTerminatedReason.Completed)
-			{
-				NotifyItemsTableChanging();
+			var items = CollectionUtils.Map<object, TItem>(e.Items, item => (TItem) item);
+			_itemsTable.Items.Clear();
+			_itemsTable.Items.AddRange(items);
+			_itemsTable.Sort();
+			InErrorState = false;
 
-				var result = (QueryItemsResult)args.Result;
-				this.TotalItemCount = result.TotalItemCount;
-				_itemsTable.Items.Clear();
-				_itemsTable.Items.AddRange(result.Items);
-				_itemsTable.Sort();
-				InErrorState = false;
-
-				NotifyItemsTableChanged();
-			}
-			else
-			{
-				// since this was running in the background, we can't report the exception to the user
-				// because they would have no context for it, and it would be annoying
-				// therefore, just log it
-				InErrorState = true;
-				Platform.Log(LogLevel.Error, args.Exception);
-			}
-
-			// dispose of the task
-			_queryItemsTask.Terminated -= OnQueryItemsCompleted;
-			_queryItemsTask.Dispose();
-			_queryItemsTask = null;
-
-			EndUpdate();
-			NotifyIconChanged();
-		}
-
-		private void OnQueryCountCompleted(object sender, BackgroundTaskTerminatedEventArgs args)
-		{
-			if (args.Reason == BackgroundTaskTerminatedReason.Completed)
-			{
-				InErrorState = false;
-				this.TotalItemCount = (int)args.Result;
-			}
-			else
-			{
-				// since this was running in the background, we can't report the exception to the user
-				// because they would have no context for it, and it would be annoying
-				// therefore, just log it
-				InErrorState = true;
-				Platform.Log(LogLevel.Error, args.Exception);
-			}
-
-			// dispose of the task
-			_queryCountTask.Terminated -= OnQueryCountCompleted;
-			_queryCountTask.Dispose();
-			_queryCountTask = null;
-
-			EndUpdate();
-			NotifyIconChanged();
+			NotifyItemsTableChanged();
 		}
 
 		#endregion
@@ -379,7 +384,7 @@ namespace ClearCanvas.Ris.Client
 		/// Called to obtain the set of items in the folder.
 		/// </summary>
 		/// <returns></returns>
-		protected abstract QueryItemsResult QueryItems();
+		protected abstract QueryItemsResult QueryItems(int firstRow, int maxRows);
 
 		/// <summary>
 		/// Called to obtain a count of the logical total number of items in the folder (which may be more than the number in memory).
@@ -395,14 +400,12 @@ namespace ClearCanvas.Ris.Client
 			{
 				if (_queryItemsTask != null)
 				{
-					_queryItemsTask.Terminated -= OnQueryItemsCompleted;
 					_queryItemsTask.Dispose();
 					_queryItemsTask = null;
 				}
 
 				if (_queryCountTask != null)
 				{
-					_queryCountTask.Terminated -= OnQueryCountCompleted;
 					_queryCountTask.Dispose();
 					_queryCountTask = null;
 				}

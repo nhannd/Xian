@@ -35,7 +35,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
-    public class QueryWorklistRequest : DataContractBase
+	public class QueryWorklistRequest : PagedDataContractBase
     {
         public QueryWorklistRequest(string worklistType, bool queryItems, bool queryCount, bool downtimeRecoveryMode)
         {

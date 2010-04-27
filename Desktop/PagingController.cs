@@ -30,17 +30,16 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
 
 	///<summary>
-	/// Default implementation of <see cref="IPagingController{TItem}"/>.
+	/// Default implementation of <see cref="IPagingController"/>.
 	///</summary>
-	///<typeparam name="TItem"></typeparam>
-	public class PagingController<TItem> : IPagingController<TItem>
+	public class PagingController : IPagingController
 	{
 		/// <summary>
 		/// 
@@ -49,16 +48,19 @@ namespace ClearCanvas.Desktop
 		/// <param name="maxRows"></param>
 		/// <param name="resultHandler"></param>
 		/// <returns></returns>
-		public delegate void PageQueryDelegate(int firstRow, int maxRows, Action<IList<TItem>> resultHandler);
+		public delegate void PageQueryDelegate(int firstRow, int maxRows, Action<IList> resultHandler);
 
-		private const int DefaultPageSize = 50;
+		/// <summary>
+		/// Default page size if no page size is specified.
+		/// </summary>
+		public const int DefaultPageSize = 50;
 
 		private readonly int _pageSize;
 		private int _currentPageNumber;
 		private bool _hasNext;
 		private readonly PageQueryDelegate _queryDelegate;
 
-		private event EventHandler<PageChangedEventArgs<TItem>> _pageChanged;
+		private event EventHandler<PageChangedEventArgs> _pageChanged;
 
 		private bool _busy;
 
@@ -91,6 +93,15 @@ namespace ClearCanvas.Desktop
 		public int PageSize
 		{
 			get { return _pageSize; }
+		}
+
+		/// <summary>
+		/// Gets a value indicating the current page number.
+		/// </summary>
+		/// <returns></returns>
+		public int PageNumber
+		{
+			get { return _currentPageNumber; }
 		}
 
 		/// <summary>
@@ -141,7 +152,7 @@ namespace ClearCanvas.Desktop
 		/// <summary>
 		/// Occurs when the current page changes (by calling any of <see cref="GetFirst"/>, <see cref="GetNext"/> or <see cref="GetPrevious"/>.
 		/// </summary>
-		public event EventHandler<PageChangedEventArgs<TItem>> PageChanged
+		public event EventHandler<PageChangedEventArgs> PageChanged
 		{
 			add { _pageChanged += value; }
 			remove { _pageChanged -= value; }
@@ -161,7 +172,7 @@ namespace ClearCanvas.Desktop
 				// request 1 more item than we actually need, so that we know
 				// if there is a next page or not
 				_queryDelegate(firstRow, _pageSize + 1,
-					delegate(IList<TItem> results)
+					delegate(IList results)
 					{
 						// ensure that the _busy state is reset no matter what!!
 						try
@@ -181,7 +192,7 @@ namespace ClearCanvas.Desktop
 			}
 		}
 
-		private void OnQueryCompleted(IList<TItem> results, Action<object> updateCurrentPageCallback)
+		private void OnQueryCompleted(IList results, Action<object> updateCurrentPageCallback)
 		{
 			// determine if we have a next page and set _hasNext appropriately
 			if (results.Count == _pageSize + 1)
@@ -198,7 +209,7 @@ namespace ClearCanvas.Desktop
 			updateCurrentPageCallback(null);
 
 			// fire the public event
-			EventsHelper.Fire(_pageChanged, this, new PageChangedEventArgs<TItem>(results));
+			EventsHelper.Fire(_pageChanged, this, new PageChangedEventArgs(results));
 		}
 
 		private int NextPageNumber

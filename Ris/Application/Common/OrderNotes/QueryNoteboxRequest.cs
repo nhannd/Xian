@@ -38,7 +38,7 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.OrderNotes
 {
     [DataContract]
-    public class QueryNoteboxRequest : DataContractBase
+	public class QueryNoteboxRequest : PagedDataContractBase
     {
         /// <summary>
         /// Constructor

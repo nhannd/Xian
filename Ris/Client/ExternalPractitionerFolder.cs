@@ -1,5 +1,6 @@
 ﻿using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 
@@ -12,13 +13,13 @@ namespace ClearCanvas.Ris.Client
 		{
 		}
 
-		protected override QueryItemsResult QueryItems()
+		protected override QueryItemsResult QueryItems(int firstRow, int maxRows)
 		{
 			QueryItemsResult result = null;
 			Platform.GetService(
 				delegate(IExternalPractitionerAdminService service)
 				{
-					var request = new ListExternalPractitionersRequest { QueryItems = true, QueryCount = true };
+					var request = new ListExternalPractitionersRequest { QueryItems = true, QueryCount = true, Page = new SearchResultPage(firstRow, maxRows) };
 					PrepareQueryRequest(request);
 					var response = service.ListExternalPractitioners(request);
 					result = new QueryItemsResult(response.Practitioners, response.ItemCount);

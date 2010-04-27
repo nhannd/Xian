@@ -53,6 +53,68 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(FolderContentsComponentViewExtensionPoint))]
 	public class FolderContentsComponent : ApplicationComponent
 	{
+		public class FolderContentsPagingModel : SimpleActionModel
+		{
+			private readonly FolderContentsComponent _owner;
+
+			public FolderContentsPagingModel(FolderContentsComponent owner, IResourceResolver resolver)
+				: base(resolver)
+			{
+				_owner = owner;
+
+				AddAction("Previous", Desktop.SR.TitlePrevious, "Icons.PreviousPageToolSmall.png");
+				AddAction("Next", Desktop.SR.TitleNext, "Icons.NextPageToolSmall.png");
+
+				this.Previous.SetClickHandler(OnPrevious);
+				this.Next.SetClickHandler(OnNext);
+
+				_owner.SelectedItemsChanged += OnSelectedItemsChanged;
+			}
+
+			void OnSelectedItemsChanged(object sender, EventArgs e)
+			{
+				if (_owner.SelectedFolder == null || _owner.SelectedFolder.PagingController == null)
+				{
+					this.Previous.Visible = false;
+					this.Next.Visible = false;
+				}
+				else
+				{
+					this.Previous.Visible = true;
+					this.Next.Visible = true;
+
+					this.Previous.Enabled = _owner.SelectedFolder.PagingController.HasPrevious;
+					this.Next.Enabled = _owner.SelectedFolder.PagingController.HasNext;
+				}
+			}
+
+			private void OnPrevious()
+			{
+				_owner.SelectedFolder.PagingController.GetPrevious();
+			}
+
+			private void OnNext()
+			{
+				_owner.SelectedFolder.PagingController.GetNext();
+			}
+
+			/// <summary>
+			/// Gets the PreviousPage action.
+			/// </summary>
+			public ClickAction Previous
+			{
+				get { return this["Previous"]; }
+			}
+
+			/// <summary>
+			/// Gets the NextPage action.
+			/// </summary>
+			public ClickAction Next
+			{
+				get { return this["Next"]; }
+			}
+		}
+
 		private const bool _multiSelect = true;
 		private ISelection _selectedItems = Selection.Empty;
 
@@ -167,16 +229,25 @@ namespace ClearCanvas.Ris.Client
 					return "";
 
 				if (_selectedFolder.IsUpdating)
-					return "Getting folder items...";
+					return SR.MessageGettingFolderItems;
 
 				// if no folder selected, or selected folder has 0 items or -1 items (i.e. unknown),
 				// don't display a status message
 				if (_selectedFolder.TotalItemCount < 1)
 					return "";
 
-				return _selectedFolder.TotalItemCount == _selectedFolder.ItemsTable.Items.Count
-					? string.Format(SR.MessageShowAllItems, _selectedFolder.TotalItemCount) 
-					: string.Format(SR.MessageShowPartialItems, _selectedFolder.ItemsTable.Items.Count, _selectedFolder.TotalItemCount);
+				if (_selectedFolder.TotalItemCount == _selectedFolder.ItemsTable.Items.Count)
+					return string.Format(SR.MessageShowAllItems, _selectedFolder.TotalItemCount);
+
+				var firstItemNumber = _selectedFolder.PagingController.PageNumber * _selectedFolder.PagingController.PageSize + 1;
+				var lastItemNumber = firstItemNumber + _selectedFolder.ItemsTable.Items.Count - 1;
+				var totalPageCount = (int)Math.Ceiling((double)_selectedFolder.TotalItemCount / _selectedFolder.PagingController.PageSize);
+				return string.Format(SR.MessageShowPartialItems,
+					firstItemNumber,
+					lastItemNumber,
+					_selectedFolder.TotalItemCount,
+					_selectedFolder.PagingController.PageNumber + 1,
+					totalPageCount);
 			}
 		}
 
@@ -226,8 +297,15 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				return _folderSystem == null || _folderSystem.ItemTools == null ? null
-					: ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-items-contextmenu", _folderSystem.ItemTools.Actions);
+				if (_folderSystem == null || _folderSystem.ItemTools == null)
+					return null;
+
+				var actionModel = new FolderContentsPagingModel(this, new ResourceResolver(this.GetType(), true));
+				var toolsActionModel = ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-items-contextmenu", _folderSystem.ItemTools.Actions);
+
+				actionModel.InsertSeparator(new Path("folderexplorer-items-contextmenu/separator"));
+				actionModel.Merge(toolsActionModel);
+				return actionModel;
 			}
 		}
 

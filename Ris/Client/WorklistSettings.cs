@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,24 +29,19 @@
 
 #endregion
 
-using System;
 using System.Configuration;
-using ClearCanvas.Common.Configuration;
+using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Ris.Application.Services
+namespace ClearCanvas.Ris.Client
 {
 
-    [SettingsGroupDescription("Configures behaviour of order notes and note-boxes.")]
-    [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-    internal sealed partial class OrderNoteSettings
-    {
-        ///<summary>
-        /// Public constructor.  Server-side settings classes should be instantiated via constructor rather
-        /// than using the <see cref="OrderNoteSettings.Default"/> property to avoid creating a static instance.
-        ///</summary>
-        public OrderNoteSettings()
-        {
-            // Note: server-side settings classes do not register in the <see cref="ApplicationSettingsRegistry"/>
-        }
-    }
+	[SettingsGroupDescription("Configures the behaviour of worklists.")]
+	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+	internal sealed partial class WorklistSettings
+	{
+		private WorklistSettings()
+		{
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
+		}
+	}
 }
