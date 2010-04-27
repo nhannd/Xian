@@ -211,9 +211,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			if (action.KeyStroke == XKeys.None)
 				return actionTooltip;
 
-			bool ctrl = (action.KeyStroke & XKeys.Control) == XKeys.Control;
-			bool alt = (action.KeyStroke & XKeys.Alt) == XKeys.Alt;
-			bool shift = (action.KeyStroke & XKeys.Shift) == XKeys.Shift;
 			XKeys keyCode = action.KeyStroke & XKeys.KeyCode;
 			
 			StringBuilder builder = new StringBuilder();
@@ -224,29 +221,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				if (builder.Length > 0)
 					builder.AppendLine();
 				builder.AppendFormat("{0}: ", SR.LabelKeyboardShortcut);
-				if (ctrl)
-					builder.Append("Ctrl");
-
-				if (alt)
-				{
-					if (ctrl)
-						builder.Append("+");
-
-					builder.Append("Alt");
-				}
-
-				if (shift)
-				{
-					if (ctrl || alt)
-						builder.Append("+");
-					
-					builder.Append("Shift");
-				}
-
-				if (ctrl || alt || shift)
-					builder.Append("+");
-
-				builder.Append(keyCode);
+				builder.Append(XKeysConverter.Format(action.KeyStroke));
 			}
 
 			return builder.ToString();

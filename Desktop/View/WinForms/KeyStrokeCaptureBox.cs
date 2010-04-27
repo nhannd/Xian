@@ -584,7 +584,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		protected virtual void OnValidateKeyStroke(ValidateKeyStrokeEventArgs e)
 		{
 			XKeys key = GetKeyPressed(e.KeyStroke);
-			e.IsValid = !(key == XKeys.ControlKey || key == XKeys.Menu || key == XKeys.ShiftKey);
+			e.IsValid = !(key == XKeys.ControlKey || key == XKeys.AltKey || key == XKeys.ShiftKey);
 
 			if (_validateKeyStrokeEventHandler != null)
 				_validateKeyStrokeEventHandler.Invoke(this, e);
@@ -778,19 +778,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <returns>The key name for the given key.</returns>
 		protected virtual string GetKeyName(XKeys key)
 		{
-			// modifier keys are defined because KeysConverter insists on converting
-			// the key portion even for just a modifier, resulting in Ctrl+None
-			switch (key)
-			{
-				case XKeys.Control:
-					return "Ctrl";
-				case XKeys.Alt:
-					return "Alt";
-				case XKeys.Shift:
-					return "Shift";
-				default:
-					return TypeDescriptor.GetConverter(typeof (XKeys)).ConvertToString(key);
-			}
+			return TypeDescriptor.GetConverter(typeof (XKeys)).ConvertToString(key);
 		}
 
 		/// <summary>
@@ -898,7 +886,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private static XKeys Convert(Keys keys)
 		{
-			return (XKeys) (int) keys;
+			return (XKeys) keys;
 		}
 
 		/// <summary>

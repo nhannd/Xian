@@ -360,7 +360,7 @@ namespace ClearCanvas.Desktop.Actions
 			{
 				IClickAction clickAction = (IClickAction) action;
 				if (clickAction.KeyStroke != XKeys.None)
-					xmlAction.SetAttribute("keystroke", clickAction.KeyStroke.ToString());
+					xmlAction.SetAttribute("keystroke", XKeysConverter.FormatInvariant(clickAction.KeyStroke));
 			}
 			
 			return xmlAction;
@@ -557,12 +557,8 @@ namespace ClearCanvas.Desktop.Actions
 				string keystrokeValue = xmlAction.GetAttribute("keystroke");
 				if (!string.IsNullOrEmpty(keystrokeValue))
 				{
-					//TODO (CR Mar 2010): log debug
-					try
-					{
-						keyStroke = (XKeys)Enum.Parse(typeof(XKeys), keystrokeValue);
-					}
-					catch (ArgumentException) {}
+					if (!XKeysConverter.TryParseInvariant(keystrokeValue, out keyStroke))
+						Platform.Log(LogLevel.Debug, "Invalid value for attribute keystroke for action {0}", action.ActionID);
 				}
 				clickAction.KeyStroke = keyStroke;
 			}

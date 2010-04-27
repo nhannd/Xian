@@ -190,7 +190,7 @@
     <value>1</value>
   </data>
   <data name="groupBox1.Text" xml:space="preserve">
-    <value>Key Binding</value>
+    <value>Keyboard Shortcut</value>
   </data>
   <data name="&gt;&gt;groupBox1.Name" xml:space="preserve">
     <value>groupBox1</value>
