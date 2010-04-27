@@ -90,12 +90,6 @@
     <Compile Include="WorkQueueItemAssembler.cs" />
     <Compile Include="CannedTextService\CannedTextAssembler.cs" />
     <Compile Include="CannedTextService\CannedTextService.cs" />
-    <Compile Include="OrderNoteSettings.cs" />
-    <Compile Include="OrderNoteSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>OrderNoteSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="OrderNotes\OrderNoteboxItemAssembler.cs" />
     <Compile Include="OrderNotes\OrderNoteService.cs" />
     <Compile Include="ResultRecipientAssembler.cs" />
@@ -236,10 +230,6 @@
     <None Include="LogicalHL7EventSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>LogicalHL7EventSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="OrderNoteSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>OrderNoteSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="WorkingFacilitySettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
