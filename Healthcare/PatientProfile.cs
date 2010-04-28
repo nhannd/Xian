@@ -93,5 +93,11 @@ namespace ClearCanvas.Healthcare {
                     delegate(TelephoneNumber phone) { return phone.Use == TelephoneUse.WPN && phone.Equipment == TelephoneEquipment.PH && phone.IsCurrent; });
             }
         }
+
+        public virtual void SetDeceased(DateTime timeOfDeath)
+        {
+            this.DeathIndicator = true;
+            this.TimeOfDeath = timeOfDeath;
+        }
     }
 }
