@@ -580,7 +580,7 @@
     <value>Showing all {0} item(s).</value>
   </data>
   <data name="MessageShowPartialItems" xml:space="preserve">
-    <value>Showing {0}-{1} of {2} (page {3}/{4}).</value>
+    <value>Showing {0} of {1}.</value>
   </data>
   <data name="MessageTimeout" xml:space="preserve">
     <value>The request timed out. See log for details.</value>
@@ -1073,5 +1073,8 @@
   </data>
   <data name="MessageGettingFolderItems" xml:space="preserve">
     <value>Getting folder items...</value>
+  </data>
+  <data name="MessageShowPartialItemsWithPageInfo" xml:space="preserve">
+    <value>Showing {0}-{1} of {2} (page {3}/{4}).</value>
   </data>
 </root>

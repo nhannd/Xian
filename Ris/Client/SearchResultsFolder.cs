@@ -46,6 +46,11 @@ namespace ClearCanvas.Ris.Client
 
 		#region Folder overrides
 
+		public override bool SupportsPaging
+		{
+			get { return false; }
+		}
+
 		protected override void InvalidateCore()
 		{
 			// do nothing.  Search results only become invalid if SearchParams have changed, not if the folder system 

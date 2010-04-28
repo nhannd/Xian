@@ -1915,11 +1915,20 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Showing {0}-{1} of {2} (page {3}/{4})..
+        ///   Looks up a localized string similar to Showing {0} of {1}..
         /// </summary>
         internal static string MessageShowPartialItems {
             get {
                 return ResourceManager.GetString("MessageShowPartialItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Showing {0}-{1} of {2} (page {3}/{4})..
+        /// </summary>
+        internal static string MessageShowPartialItemsWithPageInfo {
+            get {
+                return ResourceManager.GetString("MessageShowPartialItemsWithPageInfo", resourceCulture);
             }
         }
         

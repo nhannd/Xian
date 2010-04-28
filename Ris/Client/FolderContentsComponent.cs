@@ -66,6 +66,12 @@ namespace ClearCanvas.Ris.Client
 				AddAction("Previous", Desktop.SR.TitlePrevious, "Icons.PreviousPageToolSmall.png");
 				AddAction("Next", Desktop.SR.TitleNext, "Icons.NextPageToolSmall.png");
 
+				// Set the initial visible and enable state to false
+				this.Previous.Visible = false;
+				this.Previous.Enabled = false;
+				this.Next.Visible = false;
+				this.Next.Enabled = false;
+
 				this.Previous.SetClickHandler(OnPrevious);
 				this.Next.SetClickHandler(OnNext);
 
@@ -240,11 +246,14 @@ namespace ClearCanvas.Ris.Client
 				if (_selectedFolder.TotalItemCount == _selectedFolder.ItemsTable.Items.Count)
 					return string.Format(SR.MessageShowAllItems, _selectedFolder.TotalItemCount);
 
+				if (!_selectedFolder.SupportsPaging)
+					return string.Format(SR.MessageShowPartialItems, _selectedFolder.ItemsTable.Items.Count, _selectedFolder.TotalItemCount);
+
 				// Determine status with paging info.
 				var firstItemNumber = _selectedFolder.PageNumber * _selectedFolder.PageSize + 1;
 				var lastItemNumber = firstItemNumber + _selectedFolder.ItemsTable.Items.Count - 1;
 				var totalPageCount = (int)Math.Ceiling((double)_selectedFolder.TotalItemCount / _selectedFolder.PageSize);
-				return string.Format(SR.MessageShowPartialItems,
+				return string.Format(SR.MessageShowPartialItemsWithPageInfo,
 					firstItemNumber,
 					lastItemNumber,
 					_selectedFolder.TotalItemCount,

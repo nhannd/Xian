@@ -169,9 +169,9 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
             int count = -1;
             if (request.QueryCount)
             {
-                // if the items were already queried, and the number returned is less than the max per page,
+				// if the items were already queried, and the number returned is less than the max per page, and this is the first page
                 // then there is no need to do a separate count query
-                if (results != null && results.Count < page.MaxRows)
+                if (results != null && results.Count < page.MaxRows && page.FirstRow == 0)
                     count = results.Count;
                 else
 					count = notebox.GetItemCount(nqc);
