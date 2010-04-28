@@ -90,7 +90,6 @@ namespace ClearCanvas.Ris.Client.Workflow
                 },
                 1.0f,
                 DescriptionRow);
-            descriptionRow.Comparison = null;
 
             // Invisible but sortable columns
             TableColumn<RegistrationWorklistItemSummary, string> patientClassColumn = new TableColumn<RegistrationWorklistItemSummary, string>(
