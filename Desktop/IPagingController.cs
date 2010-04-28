@@ -30,20 +30,21 @@
 #endregion
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Desktop
 {
 	/// <summary>
 	/// Event args for paged changed event.
 	/// </summary>
-	public class PageChangedEventArgs : EventArgs
+	/// <typeparam name="TItem"></typeparam>
+	public class PageChangedEventArgs<TItem> : EventArgs
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="items"></param>
-		public PageChangedEventArgs(IList items)
+		public PageChangedEventArgs(IList<TItem> items)
 		{
 			this.Items = items;
 		}
@@ -51,25 +52,20 @@ namespace ClearCanvas.Desktop
 		/// <summary>
 		/// Gets the new set of items for the current page.
 		/// </summary>
-		public IList Items { get; private set; }
+		public IList<TItem> Items { get; private set; }
 	}
 
 
 	/// <summary>
 	/// Defines an interface to control pagination through a list of items.
 	/// </summary>
-	public interface IPagingController
+	/// <typeparam name="TItem"></typeparam>
+	public interface IPagingController<TItem>
 	{
 		/// <summary>
 		/// Gets the number of items per page.
 		/// </summary>
 		int PageSize { get; }
-
-		/// <summary>
-		/// Gets a value indicating the current page number.
-		/// </summary>
-		/// <returns></returns>
-		int PageNumber { get; }
 
 		/// <summary>
 		/// Gets a value indicating whether there is a next page.
@@ -104,6 +100,6 @@ namespace ClearCanvas.Desktop
 		/// <summary>
 		/// Occurs when the current page changes (by calling any of <see cref="GetFirst"/>, <see cref="GetNext"/> or <see cref="GetPrevious"/>.
 		/// </summary>
-		event EventHandler<PageChangedEventArgs> PageChanged;
+		event EventHandler<PageChangedEventArgs<TItem>> PageChanged;
 	}
 }

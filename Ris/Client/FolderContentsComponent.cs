@@ -54,7 +54,7 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(FolderContentsComponentViewExtensionPoint))]
 	public class FolderContentsComponent : ApplicationComponent
 	{
-		public class FolderContentsPagingModel : SimpleActionModel
+		private class FolderContentsPagingModel : SimpleActionModel
 		{
 			private readonly FolderContentsComponent _owner;
 
@@ -77,6 +77,7 @@ namespace ClearCanvas.Ris.Client
 				if (e.PropertyName != "StatusMessage")
 					return;
 
+				// Update page tools whenever the status is updated.
 				if (_owner.SelectedFolder == null || !_owner.SelectedFolder.SupportsPaging)
 				{
 					this.Previous.Visible = false;
@@ -104,18 +105,12 @@ namespace ClearCanvas.Ris.Client
 				_owner.SelectedFolder.Update();
 			}
 
-			/// <summary>
-			/// Gets the PreviousPage action.
-			/// </summary>
-			public ClickAction Previous
+			private ClickAction Previous
 			{
 				get { return this["Previous"]; }
 			}
 
-			/// <summary>
-			/// Gets the NextPage action.
-			/// </summary>
-			public ClickAction Next
+			private ClickAction Next
 			{
 				get { return this["Next"]; }
 			}
@@ -245,6 +240,7 @@ namespace ClearCanvas.Ris.Client
 				if (_selectedFolder.TotalItemCount == _selectedFolder.ItemsTable.Items.Count)
 					return string.Format(SR.MessageShowAllItems, _selectedFolder.TotalItemCount);
 
+				// Determine status with paging info.
 				var firstItemNumber = _selectedFolder.PageNumber * _selectedFolder.PageSize + 1;
 				var lastItemNumber = firstItemNumber + _selectedFolder.ItemsTable.Items.Count - 1;
 				var totalPageCount = (int)Math.Ceiling((double)_selectedFolder.TotalItemCount / _selectedFolder.PageSize);

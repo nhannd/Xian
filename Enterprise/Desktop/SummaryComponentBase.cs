@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using ClearCanvas.Common;
@@ -161,7 +160,7 @@ namespace ClearCanvas.Enterprise.Desktop
 		private readonly TTable _summaryTable;
 
 		private AdminActionModel _actionModel;
-		private PagingController _pagingController;
+		private PagingController<TSummary> _pagingController;
 
 		private readonly bool _dialogMode;
 		private bool _hostedMode;
@@ -269,9 +268,9 @@ namespace ClearCanvas.Enterprise.Desktop
 			// setup paging
 			if (SupportsPaging)
 			{
-				_pagingController = new PagingController(ListItems);
+				_pagingController = new PagingController<TSummary>(ListItems);
 				_pagingController.PageChanged += PagingControllerPageChangedEventHandler;
-				_actionModel.Merge(new PagingActionModel(_pagingController, Host.DesktopWindow));
+				_actionModel.Merge(new PagingActionModel<TSummary>(_pagingController, Host.DesktopWindow));
 
 				// load first page of items
 				_pagingController.GetFirst();
@@ -288,11 +287,10 @@ namespace ClearCanvas.Enterprise.Desktop
 			base.Start();
 		}
 
-		private void PagingControllerPageChangedEventHandler(object sender, PageChangedEventArgs e)
+		private void PagingControllerPageChangedEventHandler(object sender, PageChangedEventArgs<TSummary> e)
 		{
-			var items = CollectionUtils.Map<object, TSummary>(e.Items, item => (TSummary) item);
 			this.Table.Items.Clear();
-			this.Table.Items.AddRange(items);
+			this.Table.Items.AddRange(e.Items);
 		}
 
 		#endregion
@@ -691,7 +689,7 @@ namespace ClearCanvas.Enterprise.Desktop
 		/// <summary>
 		/// Gets the paging controller.
 		/// </summary>
-		protected IPagingController PagingController
+		protected IPagingController<TSummary> PagingController
 		{
 			get { return _pagingController; }
 		}
@@ -717,7 +715,7 @@ namespace ClearCanvas.Enterprise.Desktop
 			return typeof(TSummary).GetField("Deactivated");
 		}
 
-		private void ListItems(int firstRow, int maxRows, Action<IList> resultHandler)
+		private void ListItems(int firstRow, int maxRows, Action<IList<TSummary>> resultHandler)
 		{
 			IList<TSummary> results = null;
 			Async.Invoke(this,
@@ -727,11 +725,7 @@ namespace ClearCanvas.Enterprise.Desktop
 				},
 				delegate
 				{
-					var resultItems = new List<TSummary>();
-					foreach (var item in results)
-						resultItems.Add(item);
-
-					resultHandler(resultItems);
+					resultHandler(results);
 				});
 		}
 	}

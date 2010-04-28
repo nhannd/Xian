@@ -495,31 +495,55 @@ namespace ClearCanvas.Ris.Client
 
 		#region Paging members
 
+		/// <summary>
+		/// Gets a value indicating whether the folder supports paging.
+		/// </summary>
 		public virtual bool SupportsPaging
 		{
 			get { return false; }
 		}
 
+		/// <summary>
+		/// Gets the number of items per page.
+		/// </summary>
 		public virtual int PageSize
 		{
-			get { return PagingController.DefaultPageSize; }
+			get { return 50; }
 		}
 
+		/// <summary>
+		/// Gets the current requested page number.
+		/// </summary>
+		/// <remarks>
+		/// It is possible for the page number to be out-of-sync with the actual page being displayed.
+		/// In which case, the folder would be marked invalidated.  The folder will not contain updated items 
+		/// until the next call to <see cref="Update"/>.
+		/// </remarks>
 		public int PageNumber
 		{
 			get { return this.SupportsPaging ? _currentPageNumber : 0; }
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether there is at least a page after the <see cref="PageNumber"/>.
+		/// </summary>
 		public bool HasNext
 		{
 			get { return this.SupportsPaging ? (_currentPageNumber + 1) * this.PageSize < _totalItemCount : false; }
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether there is at least a page before the <see cref="PageNumber"/>
+		/// </summary>
 		public bool HasPrevious
 		{
 			get { return this.SupportsPaging ? _currentPageNumber > 0 : false; }
 		}
 
+		/// <summary>
+		/// Make a request to move to the next page.  The folder is then makred as invalidated.
+		/// The folder will not contain items of the next page until the next call to <see cref="Update"/>.
+		/// </summary>
 		public void MoveNextPage()
 		{
 			if (!this.HasNext)
@@ -529,6 +553,10 @@ namespace ClearCanvas.Ris.Client
 			Invalidate();
 		}
 
+		/// <summary>
+		/// Make a request to move to the previous page.  The folder is then makred as invalidated.
+		/// The folder will not contain items of the previous page until the next call to <see cref="Update"/>.
+		/// </summary>
 		public void MovePreviousPage()
 		{
 			if (!this.HasPrevious)

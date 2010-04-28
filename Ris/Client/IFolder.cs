@@ -257,30 +257,31 @@ namespace ClearCanvas.Ris.Client
 		/// Gets the current requested page number.
 		/// </summary>
 		/// <remarks>
-		/// It is possible for the page number to be out-of-sync with the actual page number being displayed.
-		/// In which case, the folder would be marked invalidated.
+		/// It is possible for the page number to be out-of-sync with the actual page being displayed.
+		/// In which case, the folder would be marked invalidated.  The folder will not contain updated items 
+		/// until the next call to <see cref="Update"/>.
 		/// </remarks>
 		int PageNumber { get; }
 
 		/// <summary>
-		/// Gets a value indicating whether there is at least a page after the page number.
+		/// Gets a value indicating whether there is at least a page after the <see cref="PageNumber"/>.
 		/// </summary>
 		bool HasNext { get; }
 
 		/// <summary>
-		/// Gets a value indicating whether there is at least a page before the page number.
+		/// Gets a value indicating whether there is at least a page before the <see cref="PageNumber"/>.
 		/// </summary>
 		bool HasPrevious { get; }
 
 		/// <summary>
-		/// Make a request to move to the next page.  The folder is invalidated and does not contain
-		/// items of the next page until the next call to <see cref="Update"/>.
+		/// Make a request to move to the next page.  The folder is then makred as invalidated.
+		/// The folder will not contain items of the next page until the next call to <see cref="Update"/>.
 		/// </summary>
 		void MoveNextPage();
 
 		/// <summary>
-		/// Make a request to move to the previous page.  The folder is invalidated and does not contain
-		/// items of the previous page until the next call to <see cref="Update"/>.
+		/// Make a request to move to the previous page.  The folder is then makred as invalidated.
+		/// The folder will not contain items of the previous page until the next call to <see cref="Update"/>.
 		/// </summary>
 		void MovePreviousPage();
 

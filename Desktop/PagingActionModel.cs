@@ -36,20 +36,21 @@ using ClearCanvas.Desktop.Actions;
 namespace ClearCanvas.Desktop
 {
 	/// <summary>
-	/// Action model that allows a user to control a <see cref="IPagingController"/>.
+	/// Action model that allows a user to control a <see cref="IPagingController{TItem}"/>.
 	/// </summary>
-	public class PagingActionModel : SimpleActionModel
+	/// <typeparam name="TItem"></typeparam>
+	public class PagingActionModel<TItem> : SimpleActionModel
 	{
 		private readonly IDesktopWindow _desktopWindow;
-		private readonly IPagingController _controller;
+		private readonly IPagingController<TItem> _controller;
 
 		///<summary>
 		/// Constructor.
 		///</summary>
 		///<param name="controller"></param>
 		///<param name="desktopWindow"></param>
-		public PagingActionModel(IPagingController controller, IDesktopWindow desktopWindow)
-			: base(new ResourceResolver(typeof(PagingActionModel).Assembly))
+		public PagingActionModel(IPagingController<TItem> controller, IDesktopWindow desktopWindow)
+			: base(new ResourceResolver(typeof(PagingActionModel<TItem>).Assembly))
 		{
 			_controller = controller;
 			_desktopWindow = desktopWindow;
@@ -90,7 +91,7 @@ namespace ClearCanvas.Desktop
 			}
 		}
 
-		private void PageChangedEventHandler(object sender, PageChangedEventArgs args)
+		private void PageChangedEventHandler(object sender, PageChangedEventArgs<TItem> args)
 		{
 			this.Next.Enabled = _controller.HasNext;
 			this.Previous.Enabled = _controller.HasPrevious;
