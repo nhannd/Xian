@@ -426,6 +426,11 @@ namespace ClearCanvas.Ris.Client
 			InvalidateFolders(delegate { return true; });
 		}
 
+		public void InvalidateFolders(bool resetPage)
+		{
+			InvalidateFolders(delegate { return true; }, resetPage);
+		}
+
 		/// <summary>
 		/// Invalidates all folders of the specified class.
 		/// </summary>
@@ -767,12 +772,22 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="condition"></param>
 		private void InvalidateFolders(Predicate<IFolder> condition)
 		{
+			InvalidateFolders(condition, false);
+		}
+
+		/// <summary>
+		/// Invalidates any folders matching the specified condition.
+		/// </summary>
+		/// <param name="condition"></param>
+		/// <param name="resetPage"></param>
+		private void InvalidateFolders(Predicate<IFolder> condition, bool resetPage)
+		{
 			var count = 0;
 			foreach (var folder in _workflowFolders)
 			{
 				if (condition(folder))
 				{
-					folder.Invalidate();
+					folder.Invalidate(resetPage);
 					count++;
 				}
 			}

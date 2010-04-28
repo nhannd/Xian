@@ -48,7 +48,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			if(this.Context.SelectedFolderSystem != null)
 			{
-				this.Context.SelectedFolderSystem.InvalidateFolders();
+				this.Context.SelectedFolderSystem.InvalidateFolders(true);
 			}
 		}
 	}

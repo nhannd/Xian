@@ -133,6 +133,19 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
+		#region Paging overrides
+
+		public override bool SupportsPaging
+		{
+			get { return true; }
+		}
+
+		public override int PageSize
+		{
+			get { return WorklistSettings.Default.ItemsPerPage; }
+		}
+
+		#endregion
 
 		#region Protected API
 
@@ -176,13 +189,11 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
-		private readonly PagingController _pagingController;
-
 		private readonly Table<TItem> _itemsTable;
 		private IDropHandler<TItem> _currentDropHandler;
 
-		private AsyncTask _queryItemsTask;
-		private AsyncTask _queryCountTask;
+		private readonly AsyncTask _queryItemsTask;
+		private readonly AsyncTask _queryCountTask;
 
 		/// <summary>
 		/// Constructor
@@ -191,17 +202,11 @@ namespace ClearCanvas.Ris.Client
 		protected WorkflowFolder(Table<TItem> itemsTable)
 		{
 			_itemsTable = itemsTable;
-
-			_pagingController = new PagingController(this.DefaultPageSize, QueryItems);
-			_pagingController.PageChanged += OnPagingControllerPageChanged;
+			_queryItemsTask = new AsyncTask();
+			_queryCountTask = new AsyncTask();
 		}
 
 		#region Folder overrides
-
-		public override IPagingController PagingController
-		{
-			get { return _pagingController; }
-		}
 
 		/// <summary>
 		/// Gets a table of the items that are contained in this folder
@@ -209,6 +214,15 @@ namespace ClearCanvas.Ris.Client
 		public override ITable ItemsTable
 		{
 			get { return _itemsTable; }
+		}
+
+		protected override void InvalidateCore()
+		{
+			base.InvalidateCore();
+
+			// Stops item querying task when the folder becomes invalidated.
+			_queryItemsTask.Cancel();
+			_queryCountTask.Cancel();
 		}
 
 		/// <summary>
@@ -261,19 +275,49 @@ namespace ClearCanvas.Ris.Client
 		#region Helpers
 
 		/// <summary>
-		/// Gets the number of items per page.
-		/// </summary>
-		protected override int DefaultPageSize
-		{
-			get { return WorklistSettings.Default.ItemsPerPage; }
-		}
-
-		/// <summary>
-		/// Asks the folder to refresh its contents.  The implementation may be asynchronous.
+		/// Asks the folder to refresh its contents starting from the first page.  The implementation may be asynchronous.
 		/// </summary>
 		protected override void BeginQueryItems()
 		{
-			_pagingController.GetFirst();
+			// notify the framework that an update is beginning
+			BeginUpdate();
+
+			QueryItemsResult result = null;
+			_queryItemsTask.Run(
+				delegate
+				{
+					var currentPageRowNumber = this.PageNumber * this.PageSize;
+					result = QueryItems(currentPageRowNumber, this.PageSize);
+				},
+				delegate
+				{
+					NotifyItemsTableChanging();
+
+					var items = CollectionUtils.Map<object, TItem>(result.Items, item => (TItem)item);
+					_itemsTable.Items.Clear();
+					_itemsTable.Items.AddRange(items);
+					_itemsTable.Sort();
+					InErrorState = false;
+
+					NotifyItemsTableChanged();
+
+					this.TotalItemCount = result.TotalItemCount;
+					ValidateItem();
+
+					EndUpdate();
+					NotifyIconChanged();
+				},
+				delegate(Exception e)
+				{
+					// since this was running in the background, we can't report the exception to the user
+					// because they would have no context for it, and it would be annoying
+					// therefore, just log it
+					InErrorState = true;
+					Platform.Log(LogLevel.Error, e);
+
+					EndUpdate();
+					NotifyIconChanged();
+				});
 		}
 
 		/// <summary>
@@ -282,17 +326,10 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		protected override void BeginQueryCount()
 		{
-			if (_queryCountTask != null)
-			{
-				// refresh already in progress
-				return;
-			}
-
 			// notify the framework that an update is beginning
 			BeginUpdate();
 
 			var count = -1;
-			_queryCountTask = new AsyncTask();
 			_queryCountTask.Run(
 				delegate
 					{
@@ -306,7 +343,6 @@ namespace ClearCanvas.Ris.Client
 
 						EndUpdate();
 						NotifyIconChanged();
-						_queryCountTask = null;
 					},
 				delegate(Exception e)
 					{
@@ -318,62 +354,7 @@ namespace ClearCanvas.Ris.Client
 
 						EndUpdate();
 						NotifyIconChanged();
-						_queryCountTask = null;
 					});
-		}
-
-		private void QueryItems(int firstRow, int maxRows, Action<IList> resultHandler)
-		{
-			if (_queryItemsTask != null)
-			{
-				// refresh already in progress
-				return;
-			}
-
-			// notify the framework that an update is beginning
-			BeginUpdate();
-
-			QueryItemsResult result = null;
-			_queryItemsTask = new AsyncTask();
-			_queryItemsTask.Run(
-				delegate
-				{
-					result = QueryItems(firstRow, maxRows);
-				},
-				delegate
-				{
-					resultHandler(result.Items);
-					this.TotalItemCount = result.TotalItemCount;
-
-					ValidateItem();
-
-					EndUpdate();
-					NotifyIconChanged();
-					_queryItemsTask = null;
-				},
-				delegate(Exception e)
-				{
-					// since this was running in the background, we can't report the exception to the user
-					// because they would have no context for it, and it would be annoying
-					// therefore, just log it
-					InErrorState = true;
-					Platform.Log(LogLevel.Error, e);
-
-					EndUpdate();
-					NotifyIconChanged();
-					_queryItemsTask = null;
-				});
-		}
-
-		void OnPagingControllerPageChanged(object sender, PageChangedEventArgs e)
-		{
-			var items = CollectionUtils.Map<object, TItem>(e.Items, item => (TItem) item);
-			_itemsTable.Items.Clear();
-			_itemsTable.Items.AddRange(items);
-			_itemsTable.Sort();
-			InErrorState = false;
-
-			NotifyItemsTableChanged();
 		}
 
 		#endregion
@@ -399,16 +380,10 @@ namespace ClearCanvas.Ris.Client
 			if (disposing)
 			{
 				if (_queryItemsTask != null)
-				{
 					_queryItemsTask.Dispose();
-					_queryItemsTask = null;
-				}
 
 				if (_queryCountTask != null)
-				{
 					_queryCountTask.Dispose();
-					_queryCountTask = null;
-				}
 			}
 
 			base.Dispose(disposing);

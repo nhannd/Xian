@@ -119,6 +119,7 @@ namespace ClearCanvas.Ris.Client
 		private static readonly IconSet _openErrorIconSet = new IconSet(IconScheme.Colour, "FolderOpenErrorSmall.png", "FolderOpenErrorMedium.png", "FolderOpenErrorMedium.png");
 		private string _folderTooltip;
 		private int _totalItemCount = -1;
+		private int _currentPageNumber;
 
 		private TimeSpan _autoInvalidateInterval = TimeSpan.Zero;
 		private DateTime _lastUpdateTime = DateTime.MinValue;	// basically "never"
@@ -245,6 +246,14 @@ namespace ClearCanvas.Ris.Client
 
 		public void Invalidate()
 		{
+			InvalidateCore();
+		}
+
+		public void Invalidate(bool resetPage)
+		{
+			if (resetPage)
+				_currentPageNumber = 0;
+
 			InvalidateCore();
 		}
 
@@ -482,12 +491,51 @@ namespace ClearCanvas.Ris.Client
 			set { _visible = value; }
 		}
 
-		/// <summary>
-		/// Gets the paging controller.  Return null if the folder does not support paging.
-		/// </summary>
-		public virtual IPagingController PagingController
+		#endregion
+
+		#region Paging members
+
+		public virtual bool SupportsPaging
 		{
-			get { return null; }
+			get { return false; }
+		}
+
+		public virtual int PageSize
+		{
+			get { return PagingController.DefaultPageSize; }
+		}
+
+		public int PageNumber
+		{
+			get { return this.SupportsPaging ? _currentPageNumber : 0; }
+		}
+
+		public bool HasNext
+		{
+			get { return this.SupportsPaging ? (_currentPageNumber + 1) * this.PageSize < _totalItemCount : false; }
+		}
+
+		public bool HasPrevious
+		{
+			get { return this.SupportsPaging ? _currentPageNumber > 0 : false; }
+		}
+
+		public void MoveNextPage()
+		{
+			if (!this.HasNext)
+				return;
+
+			_currentPageNumber++;
+			Invalidate();
+		}
+
+		public void MovePreviousPage()
+		{
+			if (!this.HasPrevious)
+				return;
+
+			_currentPageNumber--;
+			Invalidate();
 		}
 
 		#endregion
@@ -497,11 +545,6 @@ namespace ClearCanvas.Ris.Client
 		protected abstract void InvalidateCore();
 
 		protected abstract bool UpdateCore();
-
-		protected virtual int DefaultPageSize
-		{
-			get { return Desktop.PagingController.DefaultPageSize; }
-		}
 
 		/// <summary>
 		/// Gets the closed-state <see cref="IconSet"/>.

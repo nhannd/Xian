@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -68,12 +69,15 @@ namespace ClearCanvas.Ris.Client
 				this.Previous.SetClickHandler(OnPrevious);
 				this.Next.SetClickHandler(OnNext);
 
-				_owner.SelectedItemsChanged += OnSelectedItemsChanged;
+				_owner.PropertyChanged += OnPropertyChanged;
 			}
 
-			void OnSelectedItemsChanged(object sender, EventArgs e)
+			private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
 			{
-				if (_owner.SelectedFolder == null || _owner.SelectedFolder.PagingController == null)
+				if (e.PropertyName != "StatusMessage")
+					return;
+
+				if (_owner.SelectedFolder == null || !_owner.SelectedFolder.SupportsPaging)
 				{
 					this.Previous.Visible = false;
 					this.Next.Visible = false;
@@ -83,19 +87,21 @@ namespace ClearCanvas.Ris.Client
 					this.Previous.Visible = true;
 					this.Next.Visible = true;
 
-					this.Previous.Enabled = _owner.SelectedFolder.PagingController.HasPrevious;
-					this.Next.Enabled = _owner.SelectedFolder.PagingController.HasNext;
+					this.Previous.Enabled = _owner.SelectedFolder.HasPrevious;
+					this.Next.Enabled = _owner.SelectedFolder.HasNext;
 				}
 			}
 
 			private void OnPrevious()
 			{
-				_owner.SelectedFolder.PagingController.GetPrevious();
+				_owner.SelectedFolder.MovePreviousPage();
+				_owner.SelectedFolder.Update();
 			}
 
 			private void OnNext()
 			{
-				_owner.SelectedFolder.PagingController.GetNext();
+				_owner.SelectedFolder.MoveNextPage();
+				_owner.SelectedFolder.Update();
 			}
 
 			/// <summary>
@@ -239,14 +245,14 @@ namespace ClearCanvas.Ris.Client
 				if (_selectedFolder.TotalItemCount == _selectedFolder.ItemsTable.Items.Count)
 					return string.Format(SR.MessageShowAllItems, _selectedFolder.TotalItemCount);
 
-				var firstItemNumber = _selectedFolder.PagingController.PageNumber * _selectedFolder.PagingController.PageSize + 1;
+				var firstItemNumber = _selectedFolder.PageNumber * _selectedFolder.PageSize + 1;
 				var lastItemNumber = firstItemNumber + _selectedFolder.ItemsTable.Items.Count - 1;
-				var totalPageCount = (int)Math.Ceiling((double)_selectedFolder.TotalItemCount / _selectedFolder.PagingController.PageSize);
+				var totalPageCount = (int)Math.Ceiling((double)_selectedFolder.TotalItemCount / _selectedFolder.PageSize);
 				return string.Format(SR.MessageShowPartialItems,
 					firstItemNumber,
 					lastItemNumber,
 					_selectedFolder.TotalItemCount,
-					_selectedFolder.PagingController.PageNumber + 1,
+					_selectedFolder.PageNumber + 1,
 					totalPageCount);
 			}
 		}
@@ -300,11 +306,9 @@ namespace ClearCanvas.Ris.Client
 				if (_folderSystem == null || _folderSystem.ItemTools == null)
 					return null;
 
-				var actionModel = new FolderContentsPagingModel(this, new ResourceResolver(this.GetType(), true));
-				var toolsActionModel = ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-items-contextmenu", _folderSystem.ItemTools.Actions);
-
+				var actionModel = ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-items-contextmenu", _folderSystem.ItemTools.Actions);
 				actionModel.InsertSeparator(new Path("folderexplorer-items-contextmenu/separator"));
-				actionModel.Merge(toolsActionModel);
+				actionModel.Merge(new FolderContentsPagingModel(this, new ResourceResolver(this.GetType(), true)));
 				return actionModel;
 			}
 		}

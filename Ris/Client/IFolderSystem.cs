@@ -157,6 +157,13 @@ namespace ClearCanvas.Ris.Client
 		void InvalidateFolders();
 
 		/// <summary>
+		/// Invalidates all folders. Use this method judiciously,
+		/// as invalidating all folders will increase load on the system.
+		/// </summary>
+		/// <param name="resetPage">Reset to the first page.</param>
+		void InvalidateFolders(bool resetPage);
+
+		/// <summary>
 		/// Invalidates all folders of the specified class in this folder system.
 		/// </summary>
 		void InvalidateFolders(Type folderClass);

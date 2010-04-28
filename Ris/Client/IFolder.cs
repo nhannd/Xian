@@ -138,11 +138,6 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		bool Visible { get; set; }
 
-		/// <summary>
-		/// Gets the paging controller.  Return null if the folder does not support paging.
-		/// </summary>
-		IPagingController PagingController { get; }
-
 		#endregion
 
 		#region Events
@@ -198,9 +193,16 @@ namespace ClearCanvas.Ris.Client
 		void Invalidate();
 
 		/// <summary>
+		/// Marks the contents and/or count of the folder as invalid, causing the folder to
+		/// update itself with the next call to <see cref="Update"/>.
+		/// </summary>
+		/// <param name="resetPage">Set to true if the folder should reset to the first page.</param>
+		void Invalidate(bool resetPage);
+
+		/// <summary>
 		/// Updates the contents and/or count of the folder, if the folder has been invalidated.
 		/// Calling this method has no effect if the folder is up-to-date with respect to the 
-		/// most recent call to <see cref="Invalidate"/>.
+		/// most recent call to <see cref="Invalidate()"/> or <see cref="Invalidate(bool)"/>.
 		/// </summary>
 		void Update();
 
@@ -236,6 +238,51 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="items"></param>
 		/// <param name="result">The result of the drag drop operation</param>
 		void DragComplete(object[] items, DragDropKind result);
+
+		#endregion
+
+		#region Paging Properties and Methods
+
+		/// <summary>
+		/// Gets a value indicating whether the folder supports paging.
+		/// </summary>
+		bool SupportsPaging { get; }
+
+		/// <summary>
+		/// Gets the number of items per page.
+		/// </summary>
+		int PageSize { get; }
+
+		/// <summary>
+		/// Gets the current requested page number.
+		/// </summary>
+		/// <remarks>
+		/// It is possible for the page number to be out-of-sync with the actual page number being displayed.
+		/// In which case, the folder would be marked invalidated.
+		/// </remarks>
+		int PageNumber { get; }
+
+		/// <summary>
+		/// Gets a value indicating whether there is at least a page after the page number.
+		/// </summary>
+		bool HasNext { get; }
+
+		/// <summary>
+		/// Gets a value indicating whether there is at least a page before the page number.
+		/// </summary>
+		bool HasPrevious { get; }
+
+		/// <summary>
+		/// Make a request to move to the next page.  The folder is invalidated and does not contain
+		/// items of the next page until the next call to <see cref="Update"/>.
+		/// </summary>
+		void MoveNextPage();
+
+		/// <summary>
+		/// Make a request to move to the previous page.  The folder is invalidated and does not contain
+		/// items of the previous page until the next call to <see cref="Update"/>.
+		/// </summary>
+		void MovePreviousPage();
 
 		#endregion
 	}

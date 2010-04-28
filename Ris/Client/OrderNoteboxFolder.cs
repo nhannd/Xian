@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Client
 			this.AutoInvalidateInterval = new TimeSpan(0, 0, 0, 0, OrderNoteboxFolderSystemSettings.Default.RefreshTime);
 		}
 
-		protected override int DefaultPageSize
+		public override int PageSize
 		{
 			get { return OrderNoteboxFolderSystemSettings.Default.ItemsPerPage; }
 		}
