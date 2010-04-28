@@ -66,6 +66,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 
     	private ISelection _selectionBeforeSort;
 
+    	private string _sortButtonTooltipBase;
+    	private string _columnHeaderTooltipBase;
+
 		public TableView()
         {
             InitializeComponent();
@@ -220,6 +223,20 @@ namespace ClearCanvas.Desktop.View.WinForms
             get { return _dataGridView.ColumnHeadersVisible; }
             set { _dataGridView.ColumnHeadersVisible = value; }
         }
+
+		[DefaultValue("Sort By")]
+		public string SortButtonTooltip
+		{
+			get { return _sortButtonTooltipBase; }
+			set { _sortButtonTooltipBase = value; }
+		}
+
+		[DefaultValue("Sort By")]
+		public string ColumnHeaderTooltip
+		{
+			get { return _columnHeaderTooltipBase; }
+			set { _columnHeaderTooltipBase = value; }
+		}
 
         public event EventHandler SelectionChanged
         {
@@ -1125,7 +1142,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 					if (item.Name.Equals(_table.SortParams.Column.Name))
 					{
 						item.Image = SR.CheckSmall;
-						_sortButton.ToolTipText = String.Format(SR.MessageSortBy, item.Name);
+						_sortButton.ToolTipText = string.IsNullOrEmpty(_sortButtonTooltipBase)
+							? string.Format(SR.MessageSortBy, item.Name)
+							: string.Format("{0}: {1}", _sortButtonTooltipBase, item.Name);
 					}
 					else
 					{
@@ -1256,15 +1275,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void _dataGridView_CellToolTipTextNeeded(object sender, DataGridViewCellToolTipTextNeededEventArgs e)
 		{
-            // Ignore header cells
-            if (e.RowIndex == -1)
-                return;
+			if (e.RowIndex == -1 && string.IsNullOrEmpty(_columnHeaderTooltipBase))
+				return;
 
 			var column = (ITableColumn)_dataGridView.Columns[e.ColumnIndex].Tag;
-			e.ToolTipText = column.GetTooltipText(_table.Items[e.RowIndex]);
+			e.ToolTipText = e.RowIndex == -1 ? 
+				string.Format("{0}: {1}", _columnHeaderTooltipBase, column.Name)
+				: column.GetTooltipText(_table.Items[e.RowIndex]);
 		}
 
-		private void _dataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+    	private void _dataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			var column = (ITableColumn)_dataGridView.Columns[e.ColumnIndex].Tag;
 

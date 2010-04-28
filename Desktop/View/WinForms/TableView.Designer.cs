@@ -131,21 +131,21 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// _sortAscendingButton
 			// 
 			this._sortAscendingButton.Name = "_sortAscendingButton";
-			this._sortAscendingButton.Size = new System.Drawing.Size(163, 22);
+			this._sortAscendingButton.Size = new System.Drawing.Size(152, 22);
 			this._sortAscendingButton.Text = "Sort Ascending";
 			this._sortAscendingButton.Click += new System.EventHandler(this.sortAscendingButton_Click);
 			// 
 			// _sortDescendingButton
 			// 
 			this._sortDescendingButton.Name = "_sortDescendingButton";
-			this._sortDescendingButton.Size = new System.Drawing.Size(163, 22);
+			this._sortDescendingButton.Size = new System.Drawing.Size(152, 22);
 			this._sortDescendingButton.Text = "Sort Descending";
 			this._sortDescendingButton.Click += new System.EventHandler(this.sortDescendingButton_Click);
 			// 
 			// _sortSeparator
 			// 
 			this._sortSeparator.Name = "_sortSeparator";
-			this._sortSeparator.Size = new System.Drawing.Size(160, 6);
+			this._sortSeparator.Size = new System.Drawing.Size(149, 6);
 			// 
 			// _filterTextBox
 			// 

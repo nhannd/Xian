@@ -72,12 +72,15 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _folderContentsTableView
 			// 
+			this._folderContentsTableView.ColumnHeaderTooltip = "Sort Page By";
 			this._folderContentsTableView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._folderContentsTableView.Location = new System.Drawing.Point(0, 0);
 			this._folderContentsTableView.Margin = new System.Windows.Forms.Padding(0);
+			this._folderContentsTableView.MultiSelect = false;
 			this._folderContentsTableView.Name = "_folderContentsTableView";
 			this._folderContentsTableView.ReadOnly = false;
 			this._folderContentsTableView.Size = new System.Drawing.Size(358, 478);
+			this._folderContentsTableView.SortButtonTooltip = "Sort Page By";
 			this._folderContentsTableView.SortButtonVisible = true;
 			this._folderContentsTableView.TabIndex = 0;
 			this._folderContentsTableView.ItemDrag += new System.EventHandler<System.Windows.Forms.ItemDragEventArgs>(this._folderContentsTableView_ItemDrag);
@@ -98,7 +101,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _statusText
 			// 
 			this._statusText.Name = "_statusText";
-			this._statusText.Size = new System.Drawing.Size(210, 17);
+			this._statusText.Size = new System.Drawing.Size(343, 17);
 			this._statusText.Spring = true;
 			this._statusText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
