@@ -97,7 +97,7 @@ namespace ClearCanvas.Healthcare.Imex
             catch (EntityNotFoundException)
             {
                 // create it
-                pt = new Modality(id, name);
+                pt = new Modality(id, name, null);
                 context.Lock(pt, DirtyState.New);
             }
 

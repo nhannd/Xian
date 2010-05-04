@@ -29,37 +29,38 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common
 {
-    [DataContract]
-    public class ModalitySummary : DataContractBase
-    {
-        public ModalitySummary(EntityRef modalityRef, string id, string name, bool deactivated)
-        {
-            this.ModalityRef = modalityRef;
-            this.Id = id;
-            this.Name = name;
-        	this.Deactivated = deactivated;
-        }
+	[DataContract]
+	public class ModalitySummary : DataContractBase
+	{
+		public ModalitySummary(EntityRef modalityRef, string id, string name, EnumValueInfo dicomModality, bool deactivated)
+		{
+			this.ModalityRef = modalityRef;
+			this.Id = id;
+			this.Name = name;
+			this.DicomModality = dicomModality;
+			this.Deactivated = deactivated;
+		}
 
 		public ModalitySummary()
 		{
 		}
 
-        [DataMember]
-        public EntityRef ModalityRef;
+		[DataMember]
+		public EntityRef ModalityRef;
 
-        [DataMember]
-        public string Id;
+		[DataMember]
+		public string Id;
 
-        [DataMember]
-        public string Name;
+		[DataMember]
+		public string Name;
+
+		[DataMember]
+		public EnumValueInfo DicomModality;
 
 		[DataMember]
 		public bool Deactivated;

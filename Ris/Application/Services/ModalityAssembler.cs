@@ -29,40 +29,40 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-    public class ModalityAssembler
-    {
-        public ModalitySummary CreateModalitySummary(Modality modality)
-        {
-            return new ModalitySummary(
-                modality.GetRef(),
-                modality.Id,
-                modality.Name,
-				modality.Deactivated);
-        }
-
-        public ModalityDetail CreateModalityDetail(Modality modality)
-        {
-            return new ModalityDetail(
+	public class ModalityAssembler
+	{
+		public ModalitySummary CreateModalitySummary(Modality modality)
+		{
+			return new ModalitySummary(
 				modality.GetRef(),
-                modality.Id,
-                modality.Name,
+				modality.Id,
+				modality.Name,
+				EnumUtils.GetEnumValueInfo(modality.DicomModality),
 				modality.Deactivated);
-        }
+		}
 
-        public void UpdateModality(ModalityDetail detail, Modality modality)
-        {
-            modality.Id = detail.Id;
-            modality.Name = detail.Name;
-        	modality.Deactivated = detail.Deactivated;
-        }
+		public ModalityDetail CreateModalityDetail(Modality modality)
+		{
+			return new ModalityDetail(
+				modality.GetRef(),
+				modality.Id,
+				modality.Name,
+				EnumUtils.GetEnumValueInfo(modality.DicomModality),
+				modality.Deactivated);
+		}
 
-    }
+		public void UpdateModality(ModalityDetail detail, Modality modality, IPersistenceContext context)
+		{
+			modality.Id = detail.Id;
+			modality.Name = detail.Name;
+			modality.DicomModality = EnumUtils.GetEnumValue<DicomModalityEnum>(detail.DicomModality, context);
+			modality.Deactivated = detail.Deactivated;
+		}
+	}
 }

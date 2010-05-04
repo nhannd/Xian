@@ -248,6 +248,7 @@
     <EmbeddedResource Include="Brokers\PatientBroker.hbm.xml" />
     <EmbeddedResource Include="Mappings\RegistrationProcedureStep.hbm.xml" />
     <EmbeddedResource Include="Mappings\Department.hbm.xml" />
+    <EmbeddedResource Include="Mappings\DicomModality.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\PatientNoteCategory.hbm.xml" />
     <EmbeddedResource Include="Mappings\NoteSeverityEnum.hbm.xml" />

@@ -96,7 +96,7 @@ namespace ClearCanvas.Healthcare.Tests
 
         private static void AddProcedureSteps(Procedure procedure, int numMps)
         {
-            Modality m = new Modality("01", "CT");
+            Modality m = new Modality("01", "CT", null);
 
             for (int s = 0; s < numMps; s++)
             {
