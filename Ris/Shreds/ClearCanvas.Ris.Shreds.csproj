@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{EE5C649B-3AF6-4000-A590-335288A0EBD6}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -55,6 +55,7 @@
     <Compile Include="ImageAvailability\ImageAvailabilityShred.cs" />
     <Compile Include="ImageAvailability\ImageAvailabilityWorkQueue.cs" />
     <Compile Include="ImageAvailability\ImageAvailabilityWorkQueueProcessor.cs" />
+    <Compile Include="Publication\CreateLogicalHL7EventAction.cs" />
     <Compile Include="Publication\PublicationProcessor.cs" />
     <Compile Include="Publication\PublicationShred.cs" />
     <Compile Include="Publication\PublicationShredSettings.cs" />

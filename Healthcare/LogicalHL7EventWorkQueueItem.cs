@@ -32,8 +32,8 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Workflow;
-using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare
 {
@@ -112,14 +112,40 @@ namespace ClearCanvas.Healthcare
 			return new LogicalHL7EventWorkQueueItem(queueItem);
 		}
 
+		public static IList<LogicalHL7EventWorkQueueItem> CreateReportLogicalEvents(string logicalHL7EventType, Report report)
+		{
+			if (!logicalHL7EventType.Contains("Report"))
+				throw new InvalidLogicalHL7EventTypeException();
+
+			var orders = CollectionUtils.Unique(
+				CollectionUtils.Map<Procedure, Order>(
+					report.Procedures,
+					procedure => procedure.Order));
+
+			return CollectionUtils.Map<Order, LogicalHL7EventWorkQueueItem>(orders,
+				order =>
+				{
+					var queueItem = CreateBaseWorkQueueItem(logicalHL7EventType, order);
+					queueItem.ExtendedProperties.Add("ReportOID", report.OID.ToString());
+					return new LogicalHL7EventWorkQueueItem(queueItem);
+				});
+		}
+
 		public bool IsOrder()
 		{
-			return _item.ExtendedProperties.ContainsKey("OrderOID") && !_item.ExtendedProperties.ContainsKey("ProcedureOID");
+			return _item.ExtendedProperties.ContainsKey("OrderOID") 
+				&& !_item.ExtendedProperties.ContainsKey("ProcedureOID")
+				&& !_item.ExtendedProperties.ContainsKey("ReportOID");
 		}
 
 		public bool IsProcedure()
 		{
 			return _item.ExtendedProperties.ContainsKey("ProcedureOID");
+		}
+
+		public bool IsReport()
+		{
+			return _item.ExtendedProperties.ContainsKey("ReportOID");
 		}
 
 		private static WorkQueueItem CreateBaseWorkQueueItem(string logicalHL7EventType, Order order)
