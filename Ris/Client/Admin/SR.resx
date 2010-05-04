@@ -429,4 +429,7 @@
   <data name="ExceptionSaveDepartment" xml:space="preserve">
     <value>Unable to save Department</value>
   </data>
+  <data name="ColumnDicomModality" xml:space="preserve">
+    <value>Dicom Modality</value>
+  </data>
 </root>

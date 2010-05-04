@@ -133,6 +133,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dicom Modality.
+        /// </summary>
+        internal static string ColumnDicomModality {
+            get {
+                return ResourceManager.GetString("ColumnDicomModality", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Direction.
         /// </summary>
         internal static string ColumnDirection {
