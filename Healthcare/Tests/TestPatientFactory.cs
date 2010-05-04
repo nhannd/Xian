@@ -42,7 +42,7 @@ namespace ClearCanvas.Healthcare.Tests
             Patient patient = new Patient();
             PatientProfile profile = new PatientProfile(
                 new PatientIdentifier("0000111", new InformationAuthorityEnum("UHN", "UHN", "")),
-				null,
+                null,
                 new HealthcardNumber("1111222333", new InsuranceAuthorityEnum("OHIP", "OHIP", ""), null, null),
                 new PersonName("Roberts", "Bob", null, null, null, null),
                 DateTime.Now - TimeSpan.FromDays(4000),
@@ -50,6 +50,7 @@ namespace ClearCanvas.Healthcare.Tests
                 new SpokenLanguageEnum("en", "English", null),
                 new ReligionEnum("X", "unknown", null),
                 false,
+                null,
                 null,
                 null,
                 null,
