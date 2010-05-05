@@ -29,79 +29,82 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Runtime.Serialization;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core.Imex;
-using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
 
 namespace ClearCanvas.Healthcare.Imex
 {
-    [ExtensionOf(typeof(XmlDataImexExtensionPoint))]
-    [ImexDataClass("Modality")]
-    public class ModalityImex : XmlEntityImex<Modality, ModalityImex.ModalityData>
-    {
-        [DataContract]
+	[ExtensionOf(typeof(XmlDataImexExtensionPoint))]
+	[ImexDataClass("Modality")]
+	public class ModalityImex : XmlEntityImex<Modality, ModalityImex.ModalityData>
+	{
+		[DataContract]
 		public class ModalityData : ReferenceEntityDataBase
-        {
-            [DataMember]
-            public string Id;
+		{
+			[DataMember]
+			public string Id;
 
-            [DataMember]
-            public string Name;
+			[DataMember]
+			public string Name;
+
+			[DataMember]
+			public string DicomModality;
 		}
 
-        #region Overrides
+		#region Overrides
 
-        protected override IList<Modality> GetItemsForExport(IReadContext context, int firstRow, int maxRows)
-        {
-            ModalitySearchCriteria where = new ModalitySearchCriteria();
-            where.Id.SortAsc(0);
+		protected override IList<Modality> GetItemsForExport(IReadContext context, int firstRow, int maxRows)
+		{
+			var where = new ModalitySearchCriteria();
+			where.Id.SortAsc(0);
 
-            return context.GetBroker<IModalityBroker>().Find(where, new SearchResultPage(firstRow, maxRows));
-        }
+			return context.GetBroker<IModalityBroker>().Find(where, new SearchResultPage(firstRow, maxRows));
+		}
 
-        protected override ModalityData Export(Modality entity, IReadContext context)
-        {
-            ModalityData data = new ModalityData();
-			data.Deactivated = entity.Deactivated;
-			data.Id = entity.Id;
-            data.Name = entity.Name;
+		protected override ModalityData Export(Modality entity, IReadContext context)
+		{
+			return new ModalityData
+				{
+					Deactivated = entity.Deactivated,
+					Id = entity.Id,
+					Name = entity.Name,
+					DicomModality = entity.DicomModality == null ? null : entity.DicomModality.Code
+				};
+		}
 
-            return data;
-        }
-
-        protected override void Import(ModalityData data, IUpdateContext context)
-        {
-            Modality m = LoadOrCreateModality(data.Id, data.Name, context);
-        	m.Deactivated = data.Deactivated;
+		protected override void Import(ModalityData data, IUpdateContext context)
+		{
+			var m = LoadOrCreateModality(data.Id, data.Name, context);
+			m.Deactivated = data.Deactivated;
 			m.Name = data.Name;
-        }
+			m.DicomModality = data.DicomModality == null ? null : context.GetBroker<IEnumBroker>().Find<DicomModalityEnum>(data.DicomModality);
+		}
 
-        #endregion
+		#endregion
 
-        private Modality LoadOrCreateModality(string id, string name, IPersistenceContext context)
-        {
-            Modality pt;
-            try
-            {
-                // see if already exists in db
-                ModalitySearchCriteria where = new ModalitySearchCriteria();
-                where.Id.EqualTo(id);
-                pt = context.GetBroker<IModalityBroker>().FindOne(where);
-            }
-            catch (EntityNotFoundException)
-            {
-                // create it
-                pt = new Modality(id, name, null);
-                context.Lock(pt, DirtyState.New);
-            }
+		private static Modality LoadOrCreateModality(string id, string name, IPersistenceContext context)
+		{
+			Modality pt;
+			try
+			{
+				// see if already exists in db
+				var where = new ModalitySearchCriteria();
+				where.Id.EqualTo(id);
+				pt = context.GetBroker<IModalityBroker>().FindOne(where);
+			}
+			catch (EntityNotFoundException)
+			{
+				// create it
+				pt = new Modality(id, name, null);
+				context.Lock(pt, DirtyState.New);
+			}
 
-            return pt;
-        }
-    }
+			return pt;
+		}
+	}
 }
