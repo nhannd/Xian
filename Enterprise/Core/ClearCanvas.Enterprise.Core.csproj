@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{431E9444-9915-4D49-B92D-9B7EC086622A}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -143,7 +143,6 @@
     <Compile Include="ISearchCondition.cs" />
     <Compile Include="IServiceFactory.cs" />
     <Compile Include="IRelatedEntityCondition.cs" />
-    <Compile Include="ITimeBroker.cs" />
     <Compile Include="ITransactionNotifier.cs" />
     <Compile Include="IUpdateContext.cs" />
     <Compile Include="LogEntry.cs" />

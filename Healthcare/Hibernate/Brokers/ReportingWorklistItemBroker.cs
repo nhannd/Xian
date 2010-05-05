@@ -96,7 +96,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		/// <returns></returns>
 		public IList<InterpretationStep> GetLinkedInterpretationCandidates(InterpretationStep step, Staff interpreter)
 		{
-			var q = this.Context.GetNamedHqlQuery("linkedInterpretationCandidates");
+			var q = this.GetNamedHqlQuery("linkedInterpretationCandidates");
 			q.SetParameter(0, step);
 			q.SetParameter(1, interpreter);
 			return q.List<InterpretationStep>();

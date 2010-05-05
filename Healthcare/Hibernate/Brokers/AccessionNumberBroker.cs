@@ -97,7 +97,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			// try to read the next accession number
 			try
 			{
-				IDbCommand select = this.Context.CreateSqlCommand(string.Format("SELECT * from {0}", TABLE_NAME));
+				IDbCommand select = this.CreateSqlCommand(string.Format("SELECT * from {0}", TABLE_NAME));
 				return select.ExecuteScalar().ToString();
 			}
 			catch (Exception e)
@@ -124,7 +124,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 // try to read the next accession number
                 try
                 {
-                    IDbCommand select = this.Context.CreateSqlCommand(string.Format("SELECT * from {0}", TABLE_NAME));
+                    IDbCommand select = this.CreateSqlCommand(string.Format("SELECT * from {0}", TABLE_NAME));
                     accNum = (long)select.ExecuteScalar();
                 }
                 catch (Exception e)
@@ -143,7 +143,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 try
                 {
                     string updateSql = string.Format("UPDATE {0} SET {1} = @next WHERE {2} = @prev", TABLE_NAME, COLUMN_NAME, COLUMN_NAME);
-                    IDbCommand update = this.Context.CreateSqlCommand(updateSql);
+                    IDbCommand update = this.CreateSqlCommand(updateSql);
                     AddParameter(update, "next", accNum + 1);
                     AddParameter(update, "prev", accNum);
 

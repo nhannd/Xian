@@ -58,7 +58,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			// by caching this query, we effectively build up a kind of in-memory index
 			// of relevant procedure types
 			// TODO: we could even set up a different cache-region with a much longer expiry time (eg hours) if we need to make this fast!!!
-			NHibernate.IQuery q = this.Context.GetNamedHqlQuery("relevantProcedureTypes");
+			NHibernate.IQuery q = this.GetNamedHqlQuery("relevantProcedureTypes");
 			q.SetCacheable(true);
 			q.SetParameter(0, procType);
 			return q.List<ProcedureType>();
@@ -100,7 +100,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     	/// <returns></returns>
     	public IList<Report> GetPriors(Patient patient)
         {
-            NHibernate.IQuery q = this.Context.GetNamedHqlQuery("allPriorsByPatient");
+            NHibernate.IQuery q = this.GetNamedHqlQuery("allPriorsByPatient");
             q.SetParameter(0, patient);
             return q.List<Report>();
         }

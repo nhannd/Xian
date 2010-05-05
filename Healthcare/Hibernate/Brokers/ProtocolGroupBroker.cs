@@ -51,7 +51,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 + " join r.ProcedureTypes t"
                 + " where t = :requesteProcedureType";
 
-            IQuery query = this.Context.CreateHibernateQuery(hql);
+            IQuery query = this.CreateHibernateQuery(hql);
             query.SetParameter("requesteProcedureType", procedureType);
             return query.List<ProtocolGroup>();
         }

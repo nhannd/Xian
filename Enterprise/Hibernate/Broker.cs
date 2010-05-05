@@ -31,8 +31,10 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Hibernate.Hql;
+using NHibernate;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
@@ -44,6 +46,16 @@ namespace ClearCanvas.Enterprise.Hibernate
 		private PersistenceContext _ctx;
 
 		/// <summary>
+		/// Used by the framework to establish the <see cref="IPersistenceContext"/> in which an instance of
+		/// this broker will act.
+		/// </summary>
+		/// <param name="context"></param>
+		public void SetContext(IPersistenceContext context)
+		{
+			_ctx = (PersistenceContext)context;
+		}
+
+		/// <summary>
 		/// Returns the persistence context associated with this broker instance.
 		/// </summary>
 		protected PersistenceContext Context
@@ -51,9 +63,40 @@ namespace ClearCanvas.Enterprise.Hibernate
 			get { return _ctx; }
 		}
 
-		public void SetContext(IPersistenceContext context)
+		/// <summary>
+		/// Allows a broker to create an ADO.NET command, rather than using NHibernate.  The command
+		/// will execute on the same connection and within the same transaction
+		/// as any other operation on this context.
+		/// </summary>
+		/// <param name="sql"></param>
+		/// <returns></returns>
+		protected IDbCommand CreateSqlCommand(string sql)
 		{
-			_ctx = (PersistenceContext)context;
+			var cmd = _ctx.Session.Connection.CreateCommand();
+			cmd.CommandText = sql;
+			_ctx.Session.Transaction.Enlist(cmd);
+
+			return cmd;
+		}
+
+		/// <summary>
+		/// Allows a broker to create an NHibernate query.
+		/// </summary>
+		/// <param name="hql"></param>
+		/// <returns></returns>
+		protected IQuery CreateHibernateQuery(string hql)
+		{
+			return _ctx.Session.CreateQuery(hql);
+		}
+
+		/// <summary>
+		/// Allows a broker to load a named HQL query stored in a *.hbm.xml file.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		protected IQuery GetNamedHqlQuery(string name)
+		{
+			return _ctx.Session.GetNamedQuery(name);
 		}
 
 		/// <summary>
@@ -62,7 +105,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 		/// </summary>
 		/// <param name="query">the query to execute</param>
 		/// <returns>the result set</returns>
-		public IList<T> ExecuteHql<T>(HqlQuery query)
+		protected IList<T> ExecuteHql<T>(HqlQuery query)
 		{
 			return ExecuteHql<T>(query.BuildHibernateQueryObject(_ctx));
 		}
@@ -73,17 +116,17 @@ namespace ClearCanvas.Enterprise.Hibernate
 		/// </summary>
 		/// <param name="query"></param>
 		/// <returns></returns>
-		public IList<T> ExecuteHql<T>(NHibernate.IQuery query)
+		protected IList<T> ExecuteHql<T>(IQuery query)
 		{
 			return query.List<T>();
 		}
 
-		public T ExecuteHqlUnique<T>(HqlQuery query)
+		protected T ExecuteHqlUnique<T>(HqlQuery query)
 		{
 			return ExecuteHqlUnique<T>(query.BuildHibernateQueryObject(_ctx));
 		}
 
-		public T ExecuteHqlUnique<T>(NHibernate.IQuery query)
+		protected T ExecuteHqlUnique<T>(IQuery query)
 		{
 			return query.UniqueResult<T>();
 		}

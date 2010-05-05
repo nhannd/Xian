@@ -43,7 +43,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
 		public Patient FindDocumentOwner(AttachedDocument document)
 		{
-			var q = this.Context.GetNamedHqlQuery("documentPatientOwner");
+			var q = this.GetNamedHqlQuery("documentPatientOwner");
 			q.SetParameter(0, document);
 			return (Patient) q.UniqueResult();
 		}

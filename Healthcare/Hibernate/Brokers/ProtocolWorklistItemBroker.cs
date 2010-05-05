@@ -95,7 +95,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		/// <returns></returns>
 		public IList<ProtocolAssignmentStep> GetLinkedProtocolCandidates(ProtocolAssignmentStep step, Staff author)
 		{
-			var q = this.Context.GetNamedHqlQuery("linkedProtocolCandidates");
+			var q = this.GetNamedHqlQuery("linkedProtocolCandidates");
 			q.SetParameter(0, step);
 			q.SetParameter(1, author);
 			return q.List<ProtocolAssignmentStep>();

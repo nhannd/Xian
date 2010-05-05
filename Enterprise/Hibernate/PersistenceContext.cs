@@ -190,45 +190,6 @@ namespace ClearCanvas.Enterprise.Hibernate
 
 		#endregion
 
-		#region Public members
-
-		/// <summary>
-		/// Allows a broker to create an ADO.NET command, rather than using NHibernate.  The command
-		/// will execute on the same connection and within the same transaction
-		/// as any other operation on this context.
-		/// </summary>
-		/// <param name="sql"></param>
-		/// <returns></returns>
-		public IDbCommand CreateSqlCommand(string sql)
-		{
-			var cmd = this.Session.Connection.CreateCommand();
-			cmd.CommandText = sql;
-			this.Session.Transaction.Enlist(cmd);
-
-			return cmd;
-		}
-
-		/// <summary>
-		/// Allows a broker to create an NHibernate query.
-		/// </summary>
-		/// <param name="hql"></param>
-		/// <returns></returns>
-		public IQuery CreateHibernateQuery(string hql)
-		{
-			return this.Session.CreateQuery(hql);
-		}
-
-		/// <summary>
-		/// Allows a broker to load a named HQL query stored in a *.hbm.xml file.
-		/// </summary>
-		/// <param name="name"></param>
-		/// <returns></returns>
-		public IQuery GetNamedHqlQuery(string name)
-		{
-			return this.Session.GetNamedQuery(name);
-		}
-
-		#endregion
 
 		#region Protected abstract members
 

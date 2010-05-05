@@ -47,7 +47,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		/// <returns></returns>
 		public IList<Order> GetOrderHistory(Patient patient)
 		{
-			var namedHqlQuery = this.Context.GetNamedHqlQuery("orderHistory");
+			var namedHqlQuery = this.GetNamedHqlQuery("orderHistory");
 			namedHqlQuery.SetParameter(0, patient);
 
 			// uniquefy the results in case fetch joins added additional lines
@@ -61,7 +61,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		/// <returns></returns>
 		public IList<Procedure> GetProcedureHistory(Patient patient)
 		{
-			var namedHqlQuery = this.Context.GetNamedHqlQuery("procedureHistory");
+			var namedHqlQuery = this.GetNamedHqlQuery("procedureHistory");
 			namedHqlQuery.SetParameter(0, patient);
 
 			var procedures = CollectionUtils.Map<object[], Procedure>(namedHqlQuery.List(), tuple => (Procedure)tuple[0]);
@@ -77,7 +77,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		/// <returns></returns>
 		public IList<Report> GetReportHistory(Patient patient)
 		{
-			var namedHqlQuery = this.Context.GetNamedHqlQuery("reportHistory");
+			var namedHqlQuery = this.GetNamedHqlQuery("reportHistory");
 			namedHqlQuery.SetParameter(0, patient);
 
 			// uniquefy the results in case fetch joins added additional lines
@@ -91,7 +91,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		/// <returns></returns>
 		public IList<Report> GetReportsForOrder(Order order)
 		{
-			var namedHqlQuery = this.Context.GetNamedHqlQuery("reportsForOrder");
+			var namedHqlQuery = this.GetNamedHqlQuery("reportsForOrder");
 			namedHqlQuery.SetParameter(0, order);
 
 			// uniquefy the results in case fetch joins added additional lines
