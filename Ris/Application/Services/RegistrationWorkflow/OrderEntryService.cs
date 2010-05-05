@@ -204,6 +204,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			var order = PlaceOrderHelper(request.Requisition);
 
 			ValidatePatientProfilesExist(order);
+			ValidateVisitsExist(order);
 			ValidatePerformingDepartments(order);
 
 			// ensure the new order is assigned an OID before using it in the return value
@@ -501,6 +502,27 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				if (!hasProfile)
 					throw new RequestValidationException(string.Format("{0} is not a valid performing facility for this patient because the patient does not have a demographics profile for this facility.",
 						procedure.PerformingFacility.Name));
+			}
+		}
+
+		private void ValidateVisitsExist(Order order)
+		{
+			foreach (var procedure in order.Procedures)
+			{
+				try
+				{
+					var visitSearchCriteria = new VisitSearchCriteria();
+					visitSearchCriteria.Patient.EqualTo(order.Patient);
+					visitSearchCriteria.VisitNumber.AssigningAuthority.EqualTo(procedure.PerformingFacility.InformationAuthority);
+					visitSearchCriteria.Status.In(new[] { VisitStatus.AA, VisitStatus.PD, VisitStatus.PA });
+
+					this.PersistenceContext.GetBroker<IVisitBroker>().FindOne(visitSearchCriteria);
+				}
+				catch (EntityNotFoundException)
+				{
+					throw new RequestValidationException(string.Format("{0} is not a valid performing facility for this patient because the patient does not have an active visit for this facility.",
+						procedure.PerformingFacility.Name));
+				}
 			}
 		}
 
