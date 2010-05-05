@@ -87,6 +87,11 @@ namespace ClearCanvas.Healthcare
 			get { return GetGuidProperty("ProcedureOID"); }
 		}
 
+		public Guid ReportOID
+		{
+			get { return GetGuidProperty("ReportOID"); }
+		}
+
 		#endregion
 
 		public static LogicalHL7EventWorkQueueItem CreateOrderLogicalEvent(string logicalHL7EventType, Order order)
