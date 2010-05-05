@@ -4,7 +4,7 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-	class DepartmentAssembler
+	public class DepartmentAssembler
 	{
 		public DepartmentSummary CreateSummary(Department item, IPersistenceContext context)
 		{
