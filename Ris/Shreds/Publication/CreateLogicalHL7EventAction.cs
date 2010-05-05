@@ -20,7 +20,7 @@ namespace ClearCanvas.Ris.Shreds.Publication
 			if (_enabled == false)
 				return;
 
-			foreach (var logicalEvent in LogicalHL7EventWorkQueueItem.CreateReportLogicalEvents(LogicalHL7EventType.ReportVerified, step.Report))
+			foreach (var logicalEvent in LogicalHL7EventWorkQueueItem.CreateReportLogicalEvents(LogicalHL7EventType.ReportPublished, step.Report))
 			{
 				context.Lock(logicalEvent.Item, DirtyState.New);
 			}

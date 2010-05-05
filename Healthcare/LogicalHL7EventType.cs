@@ -42,7 +42,7 @@ namespace ClearCanvas.Healthcare
 		public const string OrderCreated = "OrderCreated";
 		public const string OrderModified = "OrderModified";
 		public const string OrderCancelled = "OrderCancelled";
-		public const string ReportVerified = "ReportVerified";
+		public const string ReportPublished = "ReportPublished";
 	}
 
 	public class InvalidLogicalHL7EventTypeException : Exception
