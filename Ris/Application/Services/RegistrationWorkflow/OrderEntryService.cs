@@ -232,6 +232,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 			UpdateProceduresHelper(order, request.Requisition.Procedures);
 			ValidatePatientProfilesExist(order);
+			ValidateVisitsExist(order);
 			ValidatePerformingDepartments(order);
 
 			this.PersistenceContext.SynchState();
@@ -259,6 +260,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			// place new order
 			var newOrder = PlaceOrderHelper(request.Requisition);
 			ValidatePatientProfilesExist(newOrder);
+			ValidateVisitsExist(newOrder);
 			ValidatePerformingDepartments(newOrder);
 
 			// cancel existing order
