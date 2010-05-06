@@ -42,7 +42,15 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 				query.Froms.Add(new HqlFrom(typeof(ProcedureStep).Name, "ps", WorklistJoins));
 				query.Conditions.Add(HqlCondition.IsOfClass("ps", procedureStepClasses));
 			}
+		}
 
+		/// <summary>
+		/// Constrains the patient profile to match the performing facility.
+		/// </summary>
+		/// <param name="query"></param>
+		/// <param name="args"></param>
+		public override void AddConstrainPatientProfile(HqlProjectionQuery query, QueryBuilderArgs args)
+		{
 			// constrain patient profile to performing facility
 			query.Conditions.Add(HqlConstants.ConditionConstrainPatientProfile);
 		}

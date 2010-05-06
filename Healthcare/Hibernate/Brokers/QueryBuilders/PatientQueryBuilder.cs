@@ -1,4 +1,5 @@
-﻿using ClearCanvas.Enterprise.Hibernate.Hql;
+﻿using System;
+using ClearCanvas.Enterprise.Hibernate.Hql;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 {
@@ -22,6 +23,17 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 			query.Froms.Add(DefaultFrom);
 
 			// do not constrain patient profile
+		}
+
+		/// <summary>
+		/// Constrains the patient profile to match the performing facility.
+		/// </summary>
+		/// <param name="query"></param>
+		/// <param name="args"></param>
+		public override void AddConstrainPatientProfile(HqlProjectionQuery query, QueryBuilderArgs args)
+		{
+			// calling this method on this class would not make any sense
+			throw new NotSupportedException();
 		}
 
 		#endregion

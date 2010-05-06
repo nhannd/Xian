@@ -40,9 +40,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 
 			public static readonly HqlSelect SelectProcedureStep = new HqlSelect("ps");
 			public static readonly HqlSelect SelectProcedure = new HqlSelect("rp");
+			public static readonly HqlSelect SelectProcedureType = new HqlSelect("rpt");
 			public static readonly HqlSelect SelectProcedureCheckIn = new HqlSelect("pc");
 			public static readonly HqlSelect SelectProtocol = new HqlSelect("pr");
 			public static readonly HqlSelect SelectOrder = new HqlSelect("o");
+			public static readonly HqlSelect SelectDiagnosticService = new HqlSelect("ds");
 			public static readonly HqlSelect SelectVisit = new HqlSelect("v");
 			public static readonly HqlSelect SelectPatient = new HqlSelect("p");
 			public static readonly HqlSelect SelectPatientProfile = new HqlSelect("pp");
@@ -80,15 +82,15 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 			public static readonly HqlSelect SelectReportPartPreliminaryTime = new HqlSelect("rpp.PreliminaryTime");
 			public static readonly HqlSelect SelectReportPartCompletedTime = new HqlSelect("rpp.CompletedTime");
 
-			public static readonly HqlJoin JoinProcedure = new HqlJoin("ps.Procedure", "rp");
-			public static readonly HqlJoin JoinProcedureType = new HqlJoin("rp.Type", "rpt");
-			public static readonly HqlJoin JoinProcedureCheckIn = new HqlJoin("rp.ProcedureCheckIn", "pc");
-			public static readonly HqlJoin JoinOrder = new HqlJoin("rp.Order", "o");
-			public static readonly HqlJoin JoinProtocol = new HqlJoin("ps.Protocol", "pr");
-			public static readonly HqlJoin JoinDiagnosticService = new HqlJoin("o.DiagnosticService", "ds");
-			public static readonly HqlJoin JoinVisit = new HqlJoin("o.Visit", "v");
-			public static readonly HqlJoin JoinPatient = new HqlJoin("o.Patient", "p");
-			public static readonly HqlJoin JoinPatientProfile = new HqlJoin("p.Profiles", "pp");
+			public static readonly HqlJoin JoinProcedure = new HqlJoin("ps.Procedure", "rp", HqlJoinMode.Left);
+			public static readonly HqlJoin JoinProcedureType = new HqlJoin("rp.Type", "rpt", HqlJoinMode.Left);
+			public static readonly HqlJoin JoinProcedureCheckIn = new HqlJoin("rp.ProcedureCheckIn", "pc", HqlJoinMode.Left);
+			public static readonly HqlJoin JoinOrder = new HqlJoin("rp.Order", "o", HqlJoinMode.Left);
+			public static readonly HqlJoin JoinProtocol = new HqlJoin("ps.Protocol", "pr", HqlJoinMode.Left);
+			public static readonly HqlJoin JoinDiagnosticService = new HqlJoin("o.DiagnosticService", "ds", HqlJoinMode.Left);
+			public static readonly HqlJoin JoinVisit = new HqlJoin("o.Visit", "v", HqlJoinMode.Left);
+			public static readonly HqlJoin JoinPatient = new HqlJoin("o.Patient", "p", HqlJoinMode.Left);
+			public static readonly HqlJoin JoinPatientProfile = new HqlJoin("p.Profiles", "pp", HqlJoinMode.Left);
 			public static readonly HqlJoin JoinReportPart = new HqlJoin("ps.ReportPart", "rpp", HqlJoinMode.Left);
 			public static readonly HqlJoin JoinReport = new HqlJoin("rpp.Report", "r", HqlJoinMode.Left);
 
@@ -127,7 +129,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 				MapWorklistItemFieldToHqlSelect.Add(WorklistItemField.Priority, SelectPriority);
 				MapWorklistItemFieldToHqlSelect.Add(WorklistItemField.PatientClass, SelectPatientClass);
 				MapWorklistItemFieldToHqlSelect.Add(WorklistItemField.DiagnosticServiceName, SelectDiagnosticServiceName);
+				MapWorklistItemFieldToHqlSelect.Add(WorklistItemField.DiagnosticService, SelectDiagnosticService);
 				MapWorklistItemFieldToHqlSelect.Add(WorklistItemField.ProcedureTypeName, SelectProcedureTypeName);
+				MapWorklistItemFieldToHqlSelect.Add(WorklistItemField.ProcedureType, SelectProcedureType);
 				MapWorklistItemFieldToHqlSelect.Add(WorklistItemField.ProcedurePortable, SelectProcedurePortable);
 				MapWorklistItemFieldToHqlSelect.Add(WorklistItemField.ProcedureLaterality, SelectProcedureLaterality);
 

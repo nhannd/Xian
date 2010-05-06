@@ -328,6 +328,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		{
 			var query = new HqlProjectionQuery();
 			this.WorklistItemQueryBuilder.AddRootQuery(query, args);
+			this.WorklistItemQueryBuilder.AddConstrainPatientProfile(query, args);
 			this.WorklistItemQueryBuilder.AddCriteria(query, args);
 			this.WorklistItemQueryBuilder.AddActiveProcedureStepConstraint(query, args);
 
@@ -375,6 +376,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		{
 			var query = new HqlProjectionQuery();
 			_procedureQueryBuilder.AddRootQuery(query, null);
+			_procedureQueryBuilder.AddConstrainPatientProfile(query, args);
 			_procedureQueryBuilder.AddCriteria(query, args);
 
 			if (args.CountQuery)
@@ -397,6 +399,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		{
 			var query = new HqlProjectionQuery();
 			this.WorklistItemQueryBuilder.AddRootQuery(query, args);
+			this.WorklistItemQueryBuilder.AddConstrainPatientProfile(query, args);
 			this.WorklistItemQueryBuilder.AddCriteria(query, args);
 
 			if(args is WorklistQueryArgs)

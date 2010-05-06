@@ -108,11 +108,15 @@ namespace ClearCanvas.Healthcare
 
 		public static readonly WorklistItemField Procedure = new EntityRefField(WorklistItemFieldLevel.Procedure);
 
+		public static readonly WorklistItemField ProcedureType = new EntityRefField(WorklistItemFieldLevel.Procedure);
+
 		public static readonly WorklistItemField ProcedureCheckIn = new EntityRefField(WorklistItemFieldLevel.Procedure);
 
 		public static readonly WorklistItemField Protocol = new EntityRefField(WorklistItemFieldLevel.Procedure);
 
 		public static readonly WorklistItemField Order = new EntityRefField(WorklistItemFieldLevel.Procedure);
+
+		public static readonly WorklistItemField DiagnosticService = new EntityRefField(WorklistItemFieldLevel.Procedure);
 
 		public static readonly WorklistItemField Visit = new EntityRefField(WorklistItemFieldLevel.Procedure);
 

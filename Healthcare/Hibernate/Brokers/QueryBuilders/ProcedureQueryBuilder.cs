@@ -27,7 +27,15 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 		public override void AddRootQuery(HqlProjectionQuery query, QueryBuilderArgs args)
 		{
 			query.Froms.Add(DefaultFrom);
+		}
 
+		/// <summary>
+		/// Constrains the patient profile to match the performing facility.
+		/// </summary>
+		/// <param name="query"></param>
+		/// <param name="args"></param>
+		public override void AddConstrainPatientProfile(HqlProjectionQuery query, QueryBuilderArgs args)
+		{
 			// constrain patient profile to performing facility
 			query.Conditions.Add(HqlConstants.ConditionConstrainPatientProfile);
 		}
