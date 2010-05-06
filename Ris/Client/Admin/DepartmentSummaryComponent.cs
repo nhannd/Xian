@@ -12,7 +12,7 @@ using ClearCanvas.Ris.Application.Common.Admin.DepartmentAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-	[MenuAction("launch", "global-menus/Admin/Department", "Launch")]
+	[MenuAction("launch", "global-menus/Admin/Departments", "Launch")]
 	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Department)]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class DepartmentAdminTool : Tool<IDesktopToolContext>
@@ -30,7 +30,7 @@ namespace ClearCanvas.Ris.Client.Admin
 					_workspace = ApplicationComponent.LaunchAsWorkspace(
 						this.Context.DesktopWindow,
 						component,
-						"Department");
+						"Departments");
 					_workspace.Closed += delegate { _workspace = null; };
 
 				}
