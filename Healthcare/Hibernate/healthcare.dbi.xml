@@ -10,6 +10,7 @@ on key tables that play a central role in the workflow queries.
 -->
 <indexes>
   <!-- ProcedureStep -->
+  <index table="ProcedureStep_" columns="Discriminator_"/>
   <index table="ProcedureStep_" columns="CreationTime_"/>
   <index table="ProcedureStep_" columns="ScheduledStartTime_"/>
   <index table="ProcedureStep_" columns="ScheduledEndTime_"/>
