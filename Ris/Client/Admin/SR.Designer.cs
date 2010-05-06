@@ -133,7 +133,7 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dicom Modality.
+        ///   Looks up a localized string similar to DICOM Modality.
         /// </summary>
         internal static string ColumnDicomModality {
             get {

@@ -529,7 +529,13 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public bool HasNext
 		{
-			get { return this.SupportsPaging ? (_currentPageNumber + 1) * this.PageSize < _totalItemCount : false; }
+			get
+			{
+				if (this.PageSize <= 0)
+					return false;
+
+				return this.SupportsPaging ? (_currentPageNumber + 1) * this.PageSize < _totalItemCount : false;
+			}
 		}
 
 		/// <summary>
@@ -537,7 +543,13 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public bool HasPrevious
 		{
-			get { return this.SupportsPaging ? _currentPageNumber > 0 : false; }
+			get
+			{
+				if (this.PageSize <= 0)
+					return false;
+
+				return this.SupportsPaging ? _currentPageNumber > 0 : false;
+			}
 		}
 
 		/// <summary>

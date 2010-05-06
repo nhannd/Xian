@@ -1915,6 +1915,24 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Showing 0 items (page {0}/{1})..
+        /// </summary>
+        internal static string MessageShowEmptyPage {
+            get {
+                return ResourceManager.GetString("MessageShowEmptyPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid page size..
+        /// </summary>
+        internal static string MessageShowInvalidPage {
+            get {
+                return ResourceManager.GetString("MessageShowInvalidPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Showing {0} of {1}..
         /// </summary>
         internal static string MessageShowPartialItems {

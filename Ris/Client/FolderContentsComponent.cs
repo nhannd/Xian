@@ -250,14 +250,23 @@ namespace ClearCanvas.Ris.Client
 					return string.Format(SR.MessageShowPartialItems, _selectedFolder.ItemsTable.Items.Count, _selectedFolder.TotalItemCount);
 
 				// Determine status with paging info.
+				if (_selectedFolder.PageSize <= 0)
+					return SR.MessageShowInvalidPage;
+
+				var currentPage = _selectedFolder.PageNumber + 1;
+				var totalPageCount = (int)Math.Ceiling((double)_selectedFolder.TotalItemCount / _selectedFolder.PageSize);
+
+				// In situation where a tool has removed the last item on the page, there are no items to show.  show the maximum of the current page and page count.
+				if (_selectedFolder.ItemsTable.Items.Count == 0)
+					return string.Format(SR.MessageShowEmptyPage, currentPage, currentPage > totalPageCount ? currentPage : totalPageCount);
+
 				var firstItemNumber = _selectedFolder.PageNumber * _selectedFolder.PageSize + 1;
 				var lastItemNumber = firstItemNumber + _selectedFolder.ItemsTable.Items.Count - 1;
-				var totalPageCount = (int)Math.Ceiling((double)_selectedFolder.TotalItemCount / _selectedFolder.PageSize);
 				return string.Format(SR.MessageShowPartialItemsWithPageInfo,
 					firstItemNumber,
 					lastItemNumber,
 					_selectedFolder.TotalItemCount,
-					_selectedFolder.PageNumber + 1,
+					currentPage,
 					totalPageCount);
 			}
 		}

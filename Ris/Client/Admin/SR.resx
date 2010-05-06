@@ -430,6 +430,6 @@
     <value>Unable to save Department</value>
   </data>
   <data name="ColumnDicomModality" xml:space="preserve">
-    <value>Dicom Modality</value>
+    <value>DICOM Modality</value>
   </data>
 </root>

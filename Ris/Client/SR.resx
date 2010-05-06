@@ -1077,4 +1077,10 @@
   <data name="MessageShowPartialItemsWithPageInfo" xml:space="preserve">
     <value>Showing {0}-{1} of {2} (page {3}/{4}).</value>
   </data>
+  <data name="MessageShowEmptyPage" xml:space="preserve">
+    <value>Showing 0 items (page {0}/{1}).</value>
+  </data>
+  <data name="MessageShowInvalidPage" xml:space="preserve">
+    <value>Invalid page size.</value>
+  </data>
 </root>
