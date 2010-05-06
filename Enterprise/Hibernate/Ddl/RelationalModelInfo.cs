@@ -62,6 +62,15 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// Constructor that creates a model from all NHibernate mappings and embedded enumeration information
 		/// in the set of installed plugins.
 		/// </summary>
+		public RelationalModelInfo(PersistentStore store)
+			:this(store.Configuration)
+		{
+		}
+
+		/// <summary>
+		/// Constructor that creates a model from all NHibernate mappings and embedded enumeration information
+		/// in the set of installed plugins.
+		/// </summary>
 		/// <param name="config"></param>
 		public RelationalModelInfo(Configuration config)
 		{

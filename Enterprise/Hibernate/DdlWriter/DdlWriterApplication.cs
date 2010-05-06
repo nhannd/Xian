@@ -78,11 +78,10 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 				var store = (PersistentStore)PersistentStoreRegistry.GetDefaultStore();
 
 				// get config
-				var config = store.Configuration;
 
 				// run pre-processors
 				var preProcessor = new PreProcessor(cmdLine.CreateIndexes, cmdLine.AutoIndexForeignKeys);
-				preProcessor.Process(config);
+				preProcessor.Process(store);
 
 
 				// if this is an upgrade, load the baseline model file
@@ -98,7 +97,7 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 					case DdlWriterCommandLine.FormatOptions.sql:
 
 						// create script writer and set properties based on command line 
-						var scriptWriter = new ScriptWriter(config)
+						var scriptWriter = new ScriptWriter(store)
 											{
 												Options = new RelationalSchemaOptions
 															{
@@ -125,7 +124,7 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 							throw new NotSupportedException("Upgrade is not compatible with XML output format.");
 
 						var serializer = new RelationalModelSerializer();
-						serializer.WriteModel(new RelationalModelInfo(config), writer);
+						serializer.WriteModel(new RelationalModelInfo(store), writer);
 						break;
 
 					default:

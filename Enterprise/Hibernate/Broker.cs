@@ -35,6 +35,7 @@ using System.Data;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Hibernate.Hql;
 using NHibernate;
+using NHibernate.Cfg;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
@@ -55,12 +56,36 @@ namespace ClearCanvas.Enterprise.Hibernate
 			_ctx = (PersistenceContext)context;
 		}
 
+		#region Protected API
+
 		/// <summary>
-		/// Returns the persistence context associated with this broker instance.
+		/// Gets the persistence context associated with this broker instance.
 		/// </summary>
 		protected PersistenceContext Context
 		{
 			get { return _ctx; }
+		}
+
+		/// <summary>
+		/// Gets the NHibernate configuration object.
+		/// </summary>
+		/// <remarks>
+		/// This property is provided for use in exceptional circumstances and should be used with care.
+		/// </remarks>
+		protected Configuration Configuration
+		{
+			get { return _ctx.PersistentStore.Configuration; }
+		}
+
+		/// <summary>
+		/// Gets the connection string.
+		/// </summary>
+		/// <remarks>
+		/// This property is provided for use in exceptional circumstances and should be used with care.
+		/// </remarks>
+		protected string ConnectionString
+		{
+			get { return _ctx.PersistentStore.ConnectionString; }
 		}
 
 		/// <summary>
@@ -121,15 +146,40 @@ namespace ClearCanvas.Enterprise.Hibernate
 			return query.List<T>();
 		}
 
+		/// <summary>
+		/// Executes the specified query, which is expected to return a unique (1 row, 1 column) result.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="query"></param>
+		/// <returns></returns>
 		protected T ExecuteHqlUnique<T>(HqlQuery query)
 		{
 			return ExecuteHqlUnique<T>(query.BuildHibernateQueryObject(_ctx));
 		}
 
+		/// <summary>
+		/// Executes the specified query, which is expected to return a unique (1 row, 1 column) result.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="query"></param>
+		/// <returns></returns>
 		protected T ExecuteHqlUnique<T>(IQuery query)
 		{
 			return query.UniqueResult<T>();
 		}
+
+		/// <summary>
+		/// Clears the NHibernate session (i.e. first-level) cache.
+		/// </summary>
+		/// <remarks>
+		/// This method is provided for use in exceptional circumstances and should be used with care.
+		/// </remarks>
+		protected void ClearSessionCache()
+		{
+			_ctx.Session.Clear();
+		}
+
+		#endregion
 
 	}
 }

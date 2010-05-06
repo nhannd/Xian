@@ -68,9 +68,11 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// <summary>
 		/// Processes the specified configuration.
 		/// </summary>
-		/// <param name="config"></param>
-		public void Process(Configuration config)
+		/// <param name="store"></param>
+		public void Process(PersistentStore store)
         {
+			var config = store.Configuration;
+
             // order is important
 
             // run the enum FK processor first

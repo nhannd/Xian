@@ -36,6 +36,7 @@ using ClearCanvas.Enterprise.Core;
 using HibernatingRhinos.Profiler.Appender.NHibernate;
 using HibernatingRhinos.Profiler.Appender.StackTraces;
 using NHibernate;
+using NHibernate.Cfg;
 using NHibernate.Mapping;
 
 namespace ClearCanvas.Enterprise.Hibernate
@@ -46,11 +47,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 	public abstract class PersistentStore : IPersistentStore
 	{
 		private ISessionFactory _sessionFactory;
-		private NHibernate.Cfg.Configuration _cfg;
-
-		protected PersistentStore()
-		{
-		}
+		private Configuration _cfg;
 
 		#region IPersistentStore members
 
@@ -70,12 +67,12 @@ namespace ClearCanvas.Enterprise.Hibernate
 			Platform.Log(LogLevel.Info, "Initializing NHibernate subsystem...");
 
 			// create the hibernate configuration
-			_cfg = new NHibernate.Cfg.Configuration();
+			_cfg = new Configuration();
 
 			// this will automatically read from the app.config
 			_cfg.Configure();
 
-			Platform.Log(LogLevel.Debug, "NHibernate connection string: {0}", _cfg.Properties["connection.connection_string"]);
+			Platform.Log(LogLevel.Debug, "NHibernate connection string: {0}", this.ConnectionString);
 
 			// add each assembly to the hibernate configuration
 			// this tells NHibernate to look for .hbm.xml embedded resources in these assemblies
@@ -94,20 +91,6 @@ namespace ClearCanvas.Enterprise.Hibernate
 				InitializeProfiler();
 
 			Platform.Log(LogLevel.Info, "NHibernate initialization complete.");
-		}
-
-		private void InitializeProfiler()
-		{
-			Platform.Log(LogLevel.Info, "Initializing NHProf...");
-
-			NHibernateProfiler.Initialize(new NHibernateAppenderConfiguration()
-			{
-				// TODO: StackTraceFilters should not be set once issues with DynamicProxy2 and the stack trace are resolved
-				StackTraceFilters = new IStackTraceFilter[0],
-				DotNotFixDynamicProxyStackTrace = true
-			});
-
-			Platform.Log(LogLevel.Info, "NHProf initialization complete.");
 		}
 
 		public void SetTransactionNotifier(ITransactionNotifier notifier)
@@ -139,10 +122,19 @@ namespace ClearCanvas.Enterprise.Hibernate
 		/// <summary>
 		/// Gets the NHibernate Configuration object.
 		/// </summary>
-		public NHibernate.Cfg.Configuration Configuration
+		internal Configuration Configuration
 		{
 			get { return _cfg; }
 		}
+
+		/// <summary>
+		/// Gets the NHibernate connection string.
+		/// </summary>
+		internal string ConnectionString
+		{
+			get { return _cfg.GetProperty(NHibernate.Cfg.Environment.ConnectionString); }
+		}
+
 
 		/// <summary>
 		/// Gets the NHibernate session factory.
@@ -150,6 +142,20 @@ namespace ClearCanvas.Enterprise.Hibernate
 		internal ISessionFactory SessionFactory
 		{
 			get { return _sessionFactory; }
+		}
+
+		private static void InitializeProfiler()
+		{
+			Platform.Log(LogLevel.Info, "Initializing NHProf...");
+
+			NHibernateProfiler.Initialize(new NHibernateAppenderConfiguration
+			{
+				// TODO: StackTraceFilters should not be set once issues with DynamicProxy2 and the stack trace are resolved
+				StackTraceFilters = new IStackTraceFilter[0],
+				DotNotFixDynamicProxyStackTrace = true
+			});
+
+			Platform.Log(LogLevel.Info, "NHProf initialization complete.");
 		}
 
 		/// <summary>

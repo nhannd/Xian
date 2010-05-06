@@ -60,12 +60,11 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// <summary>
 		/// Constructs a script writer based on the specified configuration.
 		/// </summary>
-		/// <param name="config"></param>
-		public ScriptWriter(Configuration config)
+		public ScriptWriter(PersistentStore store)
 		{
-			_config = config;
+			_config = store.Configuration;
 
-			_qualifier = config.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
+			_qualifier = _config.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
 			if (!string.IsNullOrEmpty(_qualifier))
 				_qualifier += ".";
 		}
