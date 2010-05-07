@@ -234,6 +234,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The shortcut {0} has already been assigned to {1}. Do you wish to reassign the shortcut?.
+        /// </summary>
+        internal static string MessageKeyStrokeAlreadyAssigned {
+            get {
+                return ResourceManager.GetString("MessageKeyStrokeAlreadyAssigned", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No servers have been selected.  Please select at least one server and try again..
         /// </summary>
         internal static string MessageNoServersSelected {

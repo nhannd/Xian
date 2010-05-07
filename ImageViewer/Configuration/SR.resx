@@ -176,6 +176,9 @@ Please choose another Server Group Name.</value>
   <data name="MessageHostNameCannotBeEmpty" xml:space="preserve">
     <value>The Host Name cannot be empty.</value>
   </data>
+  <data name="MessageKeyStrokeAlreadyAssigned" xml:space="preserve">
+    <value>The shortcut {0} has already been assigned to {1}. Do you wish to reassign the shortcut?</value>
+  </data>
   <data name="MessageNoServersSelected" xml:space="preserve">
     <value>No servers have been selected.  Please select at least one server and try again.</value>
   </data>
