@@ -89,6 +89,12 @@ namespace ClearCanvas.ImageViewer.BaseTools
 	/// </remarks>
 	/// <seealso cref="MouseToolButtonAttribute"/>
 	/// <seealso cref="DefaultMouseToolButtonAttribute"/>
+    // TODO CR (May 10): there's something inconsistent here with the mouse button assignments
+	// we allow the client/inheritor to set the mouse button, yet they are always synchronized to the tool settings (user config)
+	// there should be a proper distinction between tools tied to settings (where the inheritor specifies the default mouse assignment)
+	// and tools not tied to settings (where the client code specifies mouse assignment through other unspecified means)
+	// this is where an IMouseImageViewerTool interface would come in handy - implement this interface for the latter scenario
+	// the latter scenario may be less common, but that doesn't justify making it impossible - plus, it's more architecturally sound
 	public abstract partial class MouseImageViewerTool :
 		ImageViewerTool,
 		IMouseButtonHandler,
@@ -146,6 +152,21 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			: this(SR.LabelUnknown)
 		{
 		}
+
+		/// <summary>
+		/// Registers the specified action as a tool activation action.
+		/// </summary>
+		/// <remarks>
+		/// It is unecessary to call register an action if it calls the <see cref="Select"/> method directly.
+		/// If the action invokes another method that calls <see cref="Select"/> in turn, use this method
+		/// to register that action's ID during or before the tool initialization phase.
+		/// </remarks>
+		/// <param name="actionId">The unqualified action ID of the action that selects and activates this tool.</param>
+    	protected void RegisterActivationActionId(string actionId)
+    	{
+    		Type type = this.GetType();
+    		MouseToolSettingsProfile.Current.RegisterActivationActionId(string.Format("{0}:{1}", type.FullName, actionId), type);
+    	}
 
 		/// <summary>
 		/// Gets or sets the tooltip prefix for this <see cref="MouseImageViewerTool"/>.
@@ -305,6 +326,30 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		public override void Initialize()
 		{
 			base.Initialize();
+			MouseToolAttributeProcessor.Process(this);
+			MouseToolSettingsProfile.CurrentProfileChanged += HandleCurrentMouseToolSettingsProfileChanged;
+		}
+
+    	protected override void Dispose(bool disposing)
+		{
+			MouseToolSettingsProfile.CurrentProfileChanged -= HandleCurrentMouseToolSettingsProfileChanged;
+			base.Dispose(disposing);
+		}
+
+		private void HandleCurrentMouseToolSettingsProfileChanged(object sender, EventArgs e)
+		{
+			this.OnMouseToolSettingsChanged(MouseToolSettingsProfile.Current[this.GetType()]);
+		}
+
+		/// <summary>
+		/// Called when the mouse tool settings entry for this tool has changed.
+		/// </summary>
+		/// <remarks>
+		/// The default implementation reloads all mouse button and shortcut assignments from the setting.
+		/// Override this method to provide custom behaviour for attempting to change assignments on a live tool.
+		/// </remarks>
+		protected virtual void OnMouseToolSettingsChanged(MouseToolSettingsProfile.Setting setting)
+		{
 			MouseToolAttributeProcessor.Process(this);
 		}
 

@@ -31,24 +31,44 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.BaseTools
 {
 	public class MouseToolSettingsProfile : IXmlSerializable
 	{
-		private readonly Dictionary<string, Setting> _entries = new Dictionary<string, Setting>();
+		private readonly Dictionary<string, Setting> _entries;
+		private readonly Dictionary<string, string> _toolActivationActionIdMap;
 
-		public MouseToolSettingsProfile() {}
+		public MouseToolSettingsProfile()
+		{
+			_toolActivationActionIdMap = new Dictionary<string, string>();
+			_entries = new Dictionary<string, Setting>();
+		}
+
+		private MouseToolSettingsProfile(MouseToolSettingsProfile original)
+		{
+			_toolActivationActionIdMap = new Dictionary<string, string>(original._toolActivationActionIdMap);
+			_entries = new Dictionary<string, Setting>(original._entries.Count);
+			foreach (KeyValuePair<string, Setting> entry in original._entries)
+				_entries.Add(entry.Key, new Setting(entry.Value));
+		}
 
 		public bool HasEntry(Type mouseImageViewerToolType)
 		{
 			Platform.CheckForNullReference(mouseImageViewerToolType, "mouseImageViewerToolType");
 			string key = mouseImageViewerToolType.FullName;
+			return this.HasEntryCore(key);
+		}
+
+		protected bool HasEntryCore(string key)
+		{
 			return _entries.ContainsKey(key);
 		}
 
@@ -57,15 +77,64 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			get
 			{
 				Platform.CheckForNullReference(mouseImageViewerToolType, "mouseImageViewerToolType");
+				Platform.CheckTrue(typeof (MouseImageViewerTool).IsAssignableFrom(mouseImageViewerToolType), "mouseImageViewerToolType should be a MouseImageViewerTool type.");
 				string key = mouseImageViewerToolType.FullName;
+				return GetSettingCore(key);
+			}
+		}
+
+		protected Setting GetSettingCore(string key)
+		{
+			{
 				if (!_entries.ContainsKey(key))
 					_entries.Add(key, new Setting());
 				return _entries[key];
 			}
 		}
 
+		public bool IsRegisteredMouseToolActivationAction(string actionId)
+		{
+			Platform.CheckForEmptyString(actionId, "toolActivationActionId");
+			return _toolActivationActionIdMap.ContainsKey(actionId);
+		}
+
+		public bool HasEntryByActivationActionId(string toolActivationActionId)
+		{
+			Platform.CheckForEmptyString(toolActivationActionId, "toolActivationActionId");
+			if (!IsRegisteredMouseToolActivationAction(toolActivationActionId))
+				return false;
+			string key = _toolActivationActionIdMap[toolActivationActionId];
+			return this.HasEntryCore(key);
+		}
+
+		public Setting GetEntryByActivationActionId(string toolActivationActionId)
+		{
+			Platform.CheckForEmptyString(toolActivationActionId, "toolActivationActionId");
+			Platform.CheckTrue(IsRegisteredMouseToolActivationAction(toolActivationActionId), "hat power is unknown");
+			string key = _toolActivationActionIdMap[toolActivationActionId];
+			return GetSettingCore(key);
+		}
+
+		internal void RegisterActivationActionId(string actionId, Type mouseImageViewerToolType)
+		{
+			Platform.CheckForEmptyString(actionId, "actionId");
+			Platform.CheckForNullReference(mouseImageViewerToolType, "mouseImageViewerToolType");
+			Platform.CheckTrue(typeof(MouseImageViewerTool).IsAssignableFrom(mouseImageViewerToolType), "mouseImageViewerToolType should be a MouseImageViewerTool type.");
+			string typeName = mouseImageViewerToolType.FullName;
+
+			Platform.CheckFalse(_toolActivationActionIdMap.ContainsKey(actionId) && _toolActivationActionIdMap[actionId] != typeName, "The given actionId has already been registered to a different tool type!");
+			if (!_toolActivationActionIdMap.ContainsKey(actionId))
+				_toolActivationActionIdMap.Add(actionId, typeName);
+		}
+
+		public MouseToolSettingsProfile Clone()
+		{
+			return new MouseToolSettingsProfile(this);
+		}
+
 		#region Static Profile Access
 
+		private static event EventHandler _currentProfileChanged;
 		private static MouseToolSettingsProfile _profile = null;
 
 		public static MouseToolSettingsProfile Current
@@ -74,28 +143,27 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			{
 				if (_profile == null)
 				{
-					XmlDocument xmlDocument = MouseToolSettings.Default.DefaultProfile;
-					if (xmlDocument != null)
-					{
-						try
-						{
-							XmlSerializer deserializer = new XmlSerializer(typeof (MouseToolSettingsProfile));
-							using (XmlNodeReader reader = new XmlNodeReader(xmlDocument))
-							{
-								_profile = (MouseToolSettingsProfile) deserializer.Deserialize(reader);
-							}
-						}
-						catch (Exception ex)
-						{
-							Platform.Log(LogLevel.Warn, ex, "An exception was encountered while reading the mouse tool settings profile.");
-						}
-					}
-
+					_profile = MouseToolSettings.Default.DefaultProfile;
 					if (_profile == null)
 						_profile = new MouseToolSettingsProfile();
 				}
 				return _profile;
 			}
+			set
+			{
+				Platform.CheckForNullReference(value, "value");
+				if (_profile != value)
+				{
+					_profile = value;
+					EventsHelper.Fire(_currentProfileChanged, null, EventArgs.Empty);
+				}
+			}
+		}
+
+		public static event EventHandler CurrentProfileChanged
+		{
+			add { _currentProfileChanged += value; }
+			remove { _currentProfileChanged -= value; }
 		}
 
 		public static void SaveCurrentAsDefault()
@@ -104,18 +172,9 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			{
 				try
 				{
-					// suppress warning because CreateNavigator() returns null if the document is bad xml - which won't happen cause it's actually blank
-					// ReSharper disable PossibleNullReferenceException
 					MouseToolSettings settings = MouseToolSettings.Default;
-					XmlDocument xmlDocument = new XmlDocument();
-					XmlSerializer serializer = new XmlSerializer(typeof (MouseToolSettingsProfile));
-					using (XmlWriter writer = xmlDocument.CreateNavigator().AppendChild())
-					{
-						serializer.Serialize(writer, _profile);
-					}
-					settings.DefaultProfile = xmlDocument;
+					settings.DefaultProfile = _profile;
 					settings.Save();
-					// ReSharper restore PossibleNullReferenceException
 				}
 				catch (Exception ex)
 				{
@@ -159,6 +218,8 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		{
 			foreach (KeyValuePair<string, Setting> settingEntry in _entries)
 			{
+				if (settingEntry.Value.IsEmpty)
+					continue;
 				writer.WriteStartElement(typeof (Setting).Name);
 				writer.WriteAttributeString("Type", settingEntry.Key);
 				((IXmlSerializable) settingEntry.Value).WriteXml(writer);
@@ -172,10 +233,20 @@ namespace ClearCanvas.ImageViewer.BaseTools
 
 		public class Setting : IXmlSerializable
 		{
+			private ModifierFlags? _defaultMouseButtonModifiers = null;
+			private XMouseButtons? _defaultMouseButton = null;
 			private XMouseButtons? _mouseButton = null;
 			private bool? _initiallyActive = null;
 
 			internal Setting() {}
+
+			internal Setting(Setting original)
+			{
+				_defaultMouseButtonModifiers = original._defaultMouseButtonModifiers;
+				_defaultMouseButton = original._defaultMouseButton;
+				_mouseButton = original._mouseButton;
+				_initiallyActive = original._initiallyActive;
+			}
 
 			public bool? InitiallyActive
 			{
@@ -187,6 +258,29 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			{
 				get { return _mouseButton; }
 				set { _mouseButton = value; }
+			}
+
+			public XMouseButtons? DefaultMouseButton
+			{
+				get { return _defaultMouseButton; }
+				set { _defaultMouseButton = value; }
+			}
+
+			public ModifierFlags? DefaultMouseButtonModifiers
+			{
+				get { return _defaultMouseButtonModifiers; }
+				set { _defaultMouseButtonModifiers = value; }
+			}
+
+			public bool IsEmpty
+			{
+				get
+				{
+					return !(_initiallyActive.HasValue
+					         || _mouseButton.HasValue
+					         || _defaultMouseButton.HasValue
+					         || _defaultMouseButtonModifiers.HasValue);
+				}
 			}
 
 			#region IXmlSerializable Members
@@ -212,10 +306,16 @@ namespace ClearCanvas.ImageViewer.BaseTools
 						switch (reader.Name)
 						{
 							case "InitiallyActive":
-								_initiallyActive = ParseBoolean(reader.ReadElementString());
+								_initiallyActive = Parse<bool>(reader.ReadElementString());
 								break;
 							case "MouseButton":
-								_mouseButton = ParseXMouseButtons(reader.ReadElementString());
+								_mouseButton = Parse<XMouseButtons>(reader.ReadElementString());
+								break;
+							case "DefaultMouseButton":
+								_defaultMouseButton = Parse<XMouseButtons>(reader.ReadElementString());
+								break;
+							case "DefaultMouseButtonModifiers":
+								_defaultMouseButtonModifiers = Parse<ModifierFlags>(reader.ReadElementString());
 								break;
 						}
 					}
@@ -227,28 +327,31 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			void IXmlSerializable.WriteXml(XmlWriter writer)
 			{
 				if (_initiallyActive.HasValue)
-					writer.WriteElementString("InitiallyActive", _initiallyActive.Value.ToString());
+					writer.WriteElementString("InitiallyActive", Format(_initiallyActive.Value));
 
 				if (_mouseButton.HasValue)
-					writer.WriteElementString("MouseButton", _mouseButton.Value.ToString());
+					writer.WriteElementString("MouseButton", Format(_mouseButton.Value));
+
+				if (_defaultMouseButton.HasValue)
+					writer.WriteElementString("DefaultMouseButton", Format(_defaultMouseButton.Value));
+
+				if (_defaultMouseButtonModifiers.HasValue)
+					writer.WriteElementString("DefaultMouseButtonModifiers", Format(_defaultMouseButtonModifiers.Value));
 			}
 
-			private static bool? ParseBoolean(string value)
+			private static string Format<T>(T value) where T : struct
 			{
-				bool result;
-				if (!string.IsNullOrEmpty(value) && bool.TryParse(value, out result))
-					return result;
-				return null;
+				return TypeDescriptor.GetConverter(typeof (T)).ConvertToInvariantString(value);
 			}
 
-			private static XMouseButtons? ParseXMouseButtons(string value)
+			private static T? Parse<T>(string value) where T : struct
 			{
 				if (string.IsNullOrEmpty(value))
 					return null;
 
 				try
 				{
-					return (XMouseButtons) Enum.Parse(typeof (XMouseButtons), value, true);
+					return (T) TypeDescriptor.GetConverter(typeof (T)).ConvertFromInvariantString(value);
 				}
 				catch (Exception)
 				{

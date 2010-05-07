@@ -25,9 +25,9 @@ namespace ClearCanvas.ImageViewer.BaseTools {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Xml.XmlDocument DefaultProfile {
+        public global::ClearCanvas.ImageViewer.BaseTools.MouseToolSettingsProfile DefaultProfile {
             get {
-                return ((global::System.Xml.XmlDocument)(this["DefaultProfile"]));
+                return ((global::ClearCanvas.ImageViewer.BaseTools.MouseToolSettingsProfile)(this["DefaultProfile"]));
             }
             set {
                 this["DefaultProfile"] = value;

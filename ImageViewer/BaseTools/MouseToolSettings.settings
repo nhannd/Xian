@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.ImageViewer.BaseTools" GeneratedClassName="MouseToolSettings">
   <Profiles />
   <Settings>
-    <Setting Name="DefaultProfile" Type="System.Xml.XmlDocument" Scope="User">
+    <Setting Name="DefaultProfile" Type="ClearCanvas.ImageViewer.BaseTools.MouseToolSettingsProfile" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="ShowMouseButtonIconOverlay" Type="System.Boolean" Scope="User">
