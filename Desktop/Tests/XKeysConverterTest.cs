@@ -169,6 +169,20 @@ namespace ClearCanvas.Desktop.Tests
 		}
 
 		[Test]
+		public void TestStringParseWhitespaceIndifference()
+		{
+			// whitespace between individual keys in the string should not matter
+			XKeys keyCode = (XKeys) _converter.ConvertFromString("Ctrl\t +Attn \t+Alt");
+			Assert.AreEqual(XKeys.Control | XKeys.Alt | XKeys.Attn, keyCode, "Whitespace between key string elements should not matter");
+
+			keyCode = (XKeys) _converter.ConvertFromString("Ctrl+ \tAlt+ Attn");
+			Assert.AreEqual(XKeys.Control | XKeys.Alt | XKeys.Attn, keyCode, "Whitespace between key string elements should not matter");
+
+			keyCode = (XKeys) _converter.ConvertFromString("Attn + \t Ctrl\t+  Alt");
+			Assert.AreEqual(XKeys.Control | XKeys.Alt | XKeys.Attn, keyCode, "Whitespace between key string elements should not matter");
+		}
+
+		[Test]
 		[ExpectedException(typeof (FormatException))]
 		public void TestInvalidStringParse()
 		{
@@ -297,6 +311,7 @@ namespace ClearCanvas.Desktop.Tests
 			const XKeys key = XKeys.OemPlus;
 			CultureInfo culture = _dummyCulture;
 			string actualKeyName = XKeysConverter.KeySeparator.ToString();
+			AssertEquivalency(string.Format("{0}", actualKeyName), (XKeys) key, culture, message);
 			AssertEquivalency(string.Format("Control+{0}", actualKeyName), XKeys.Control | (XKeys) key, culture, message);
 			AssertEquivalency(string.Format("Alt+{0}", actualKeyName), XKeys.Alt | (XKeys) key, culture, message);
 			AssertEquivalency(string.Format("Shift+{0}", actualKeyName), XKeys.Shift | (XKeys) key, culture, message);
@@ -304,6 +319,18 @@ namespace ClearCanvas.Desktop.Tests
 			AssertEquivalency(string.Format("Alt+Shift+{0}", actualKeyName), XKeys.Alt | XKeys.Shift | (XKeys) key, culture, message);
 			AssertEquivalency(string.Format("Control+Shift+{0}", actualKeyName), XKeys.Control | XKeys.Shift | (XKeys) key, culture, message);
 			AssertEquivalency(string.Format("Control+Alt+Shift+{0}", actualKeyName), XKeys.Control | XKeys.Alt | XKeys.Shift | (XKeys) key, culture, message);
+
+			AssertStringParse(string.Format("{0}   ", actualKeyName), (XKeys)key, culture, message);
+			AssertStringParse(string.Format("   {0}", actualKeyName), (XKeys)key, culture, message);
+			AssertStringParse(string.Format("   {0}   ", actualKeyName), (XKeys)key, culture, message);
+			AssertStringParse(string.Format("Control    +   {0}", actualKeyName), XKeys.Control | (XKeys)key, culture, message);
+			AssertStringParse(string.Format("Control+     {0}", actualKeyName), XKeys.Control | (XKeys)key, culture, message);
+			AssertStringParse(string.Format("{0}+Control", actualKeyName), XKeys.Control | (XKeys)key, culture, message);
+			AssertStringParse(string.Format("{0}    +Control", actualKeyName), XKeys.Control | (XKeys)key, culture, message);
+			AssertStringParse(string.Format("Alt+{0}+Control", actualKeyName), XKeys.Control | XKeys.Alt | (XKeys)key, culture, message);
+			AssertStringParse(string.Format("Alt+{0}   +Control", actualKeyName), XKeys.Control | XKeys.Alt | (XKeys)key, culture, message);
+			AssertStringParse(string.Format("Alt+    {0}+Control", actualKeyName), XKeys.Control | XKeys.Alt | (XKeys)key, culture, message);
+			AssertStringParse(string.Format("Alt+    {0}   +Control", actualKeyName), XKeys.Control | XKeys.Alt | (XKeys)key, culture, message);
 		}
 
 		[Test]
@@ -413,10 +440,19 @@ namespace ClearCanvas.Desktop.Tests
 
 		private void AssertEquivalency(string sKeys, XKeys eKeys, CultureInfo culture, string message)
 		{
+			AssertStringFormat(sKeys, eKeys, culture, message);
+			AssertStringParse(sKeys, eKeys, culture, message);
+		}
+
+		private void AssertStringFormat(string sKeys, XKeys eKeys, CultureInfo culture, string message)
+		{
 			string actualString = _converter.ConvertToString(null, culture, eKeys);
 			//System.Diagnostics.Trace.WriteLine(actualString);
 			Assert.AreEqual(sKeys, actualString, message + ": converting " + (int) eKeys + " which is " + eKeys.ToString());
+		}
 
+		private void AssertStringParse(string sKeys, XKeys eKeys, CultureInfo culture, string message)
+		{
 			XKeys actualEnum = (XKeys) _converter.ConvertFromString(null, culture, sKeys);
 			//System.Diagnostics.Trace.WriteLine(actualEnum);
 			Assert.AreEqual((int) eKeys, (int) actualEnum, message + ": converting " + sKeys + " which is " + actualEnum.ToString());

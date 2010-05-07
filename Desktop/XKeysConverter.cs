@@ -52,9 +52,9 @@ namespace ClearCanvas.Desktop
 		private static readonly IDictionary<string, XKeys> _invariantKeyValues;
 
 		/// <remarks>
-		/// <![CDATA[The pattern is effectively @"^(.+?)(?:\+(.+?)(?:\+(.+?)(?:\+(.+?))?)?)?$" for a KeySeparator of '+']]>
+		/// <![CDATA[The pattern is effectively @"^\s*(.+?)(?:\s*\+\s*(.+?)(?:\s*\+\s*(.+?)(?:\s*\+\s*(.+?))?)?)?\s*$" for a KeySeparator of '+']]>
 		/// </remarks>
-		private static readonly Regex _keyStringParser = new Regex(string.Format(@"^(.+?)(?:{0}(.+?)(?:{0}(.+?)(?:{0}(.+?))?)?)?$",
+		private static readonly Regex _keyStringParser = new Regex(string.Format(@"^\s*(.+?)(?:\s*{0}\s*(.+?)(?:\s*{0}\s*(.+?)(?:\s*{0}\s*(.+?))?)?)?\s*$",
 		                                                                         Regex.Escape(KeySeparator.ToString())), RegexOptions.Compiled);
 
 		private readonly IDictionary<XKeys, string> _localizedKeyNames;

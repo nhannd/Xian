@@ -578,7 +578,7 @@ namespace ClearCanvas.Desktop
 		N = 78,
 
 		/// <summary>
-		/// Represents no key (an empty value).
+		/// Represents no key (the empty value).
 		/// </summary>
 		None = 0,
 
