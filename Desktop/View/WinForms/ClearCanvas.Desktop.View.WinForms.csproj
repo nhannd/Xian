@@ -134,6 +134,9 @@
     <Compile Include="DropListPickerField.designer.cs">
       <DependentUpon>DropListPickerField.cs</DependentUpon>
     </Compile>
+    <Compile Include="KeyModifiersPicker.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="KeyStrokeCaptureBox.cs">
       <SubType>Component</SubType>
     </Compile>

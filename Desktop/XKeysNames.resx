@@ -358,7 +358,7 @@
     <value>LCtrl</value>
   </data>
   <data name="LeftMouseButton" xml:space="preserve">
-    <value>LMouse</value>
+    <value>Left Mouse Button</value>
   </data>
   <data name="LeftShiftKey" xml:space="preserve">
     <value>LShift</value>
@@ -382,7 +382,7 @@
     <value>Stop Media</value>
   </data>
   <data name="MiddleMouseButton" xml:space="preserve">
-    <value>Mouse 3</value>
+    <value>Middle Mouse Button</value>
   </data>
   <data name="Multiply" xml:space="preserve">
     <value>Multiply</value>
@@ -496,7 +496,7 @@
     <value>RCtrl</value>
   </data>
   <data name="RightMouseButton" xml:space="preserve">
-    <value>RMouse</value>
+    <value>Right Mouse Button</value>
   </data>
   <data name="RightShiftKey" xml:space="preserve">
     <value>RShift</value>
@@ -544,10 +544,10 @@
     <value>Volume Up</value>
   </data>
   <data name="XMouseButton1" xml:space="preserve">
-    <value>Mouse 4</value>
+    <value>Mouse Button 4</value>
   </data>
   <data name="XMouseButton2" xml:space="preserve">
-    <value>Mouse 5</value>
+    <value>Mouse Button 5</value>
   </data>
   <data name="Zoom" xml:space="preserve">
     <value>Zoom</value>

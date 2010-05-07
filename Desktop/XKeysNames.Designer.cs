@@ -781,7 +781,7 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to LMouse.
+        ///   Looks up a localized string similar to Left Mouse Button.
         /// </summary>
         internal static string LeftMouseButton {
             get {
@@ -853,7 +853,7 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mouse 3.
+        ///   Looks up a localized string similar to Middle Mouse Button.
         /// </summary>
         internal static string MiddleMouseButton {
             get {
@@ -1195,7 +1195,7 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to RMouse.
+        ///   Looks up a localized string similar to Right Mouse Button.
         /// </summary>
         internal static string RightMouseButton {
             get {
@@ -1339,7 +1339,7 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mouse 4.
+        ///   Looks up a localized string similar to Mouse Button 4.
         /// </summary>
         internal static string XMouseButton1 {
             get {
@@ -1348,7 +1348,7 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mouse 5.
+        ///   Looks up a localized string similar to Mouse Button 5.
         /// </summary>
         internal static string XMouseButton2 {
             get {

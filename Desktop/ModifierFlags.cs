@@ -30,61 +30,34 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 
 namespace ClearCanvas.Desktop
 {
 	/// <summary>
-	/// Enumeration of (potentially) available mouse buttons.
+	/// Enumeration of the modifier keys on a keyboard.
 	/// </summary>
 	[Flags]
-	public enum XMouseButtons
-	{
-		/// <summary>
-		/// Default value
-		/// </summary>
-		None		= 0x00000000,
-		/// <summary>
-		/// The left mouse button.
-		/// </summary>
-		Left		= 0x00100000,
-		/// <summary>
-		/// The right mouse button.
-		/// </summary>
-		Right		= 0x00200000,
-		/// <summary>
-		/// The middle mouse button.
-		/// </summary>
-		Middle		= 0x00400000,
-		/// <summary>
-		/// The 'x1' button.
-		/// </summary>
-		XButton1	= 0x00800000,
-		/// <summary>
-		/// The 'x2' button.
-		/// </summary>
-		XButton2	= 0x01000000
-	}
-
-	/// <summary>
-	/// Enumeration for keyboard modifiers.
-	/// </summary>
-	[Flags]
+	[TypeConverter(typeof (ModifierFlagsConverter))]
 	public enum ModifierFlags
 	{
 		/// <summary>
-		/// Default value.
+		/// Represents no modifiers (the empty value).
 		/// </summary>
 		None = 0,
+
 		/// <summary>
-		/// Any one of the 'control' keys.
+		/// The CTRL modifier.
 		/// </summary>
 		Control = 1,
+
 		/// <summary>
-		/// Any one of the 'alt' keys.
+		/// The ALT modifier.
 		/// </summary>
 		Alt = 2,
+
 		/// <summary>
-		/// Any one of the 'shift' keys.
+		/// The SHIFT modifier.
 		/// </summary>
 		Shift = 4
 	}
