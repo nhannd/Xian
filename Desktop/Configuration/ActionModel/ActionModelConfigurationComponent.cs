@@ -54,10 +54,11 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		private readonly string _namespace;
 		private readonly string _site;
 
-		private readonly bool _isFlatActionModel;
+		private readonly bool _enforceFlatActionModel;
 
 		private readonly ActionModelRoot _actionModel;
 		private readonly AbstractActionModelTreeRoot _actionModelTreeRoot;
+		private readonly ActionNodeMapDictionary _actionNodeMapDictionary;
 
 		private ToolSet _toolSet;
 		private ActionModelRoot _toolbarActionModel;
@@ -86,18 +87,26 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 
 			_actionModel = ActionModelSettings.Default.BuildAbstractActionModel(_namespace, _site, actionSet.Select(a => a.Path.Site == site));
 			_actionModelTreeRoot = new AbstractActionModelTreeRoot(_site);
-			_actionModelTreeRoot.NodeValidationRequested += OnActionModelTreeRootNodeValidationRequested;
 
-			_isFlatActionModel = flatActionModel;
+			_enforceFlatActionModel = flatActionModel;
 			if (flatActionModel)
 				BuildFlatActionModelTree(_actionModel, _actionModelTreeRoot);
 			else
 				BuildActionModelTree(_actionModel, _actionModelTreeRoot);
+
+			_actionNodeMapDictionary = new ActionNodeMapDictionary();
+			foreach (AbstractActionModelTreeNode node in _actionModelTreeRoot.EnumerateDescendants())
+			{
+				if (node is AbstractActionModelTreeLeafAction)
+				{
+					_actionNodeMapDictionary.AddToMap((AbstractActionModelTreeLeafAction)node);
+				}
+			}
 		}
 
-		public bool IsFlatActionModel
+		public bool EnforceFlatActionModel
 		{
-			get { return _isFlatActionModel; }
+			get { return _enforceFlatActionModel; }
 		}
 
 		public string ActionModelId
@@ -113,6 +122,11 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		public AbstractActionModelTreeRoot AbstractActionModelTreeRoot
 		{
 			get { return _actionModelTreeRoot; }
+		}
+
+		public IActionNodeMap ActionNodeMap
+		{
+			get { return _actionNodeMapDictionary; }
 		}
 
 		public AbstractActionModelTreeNode SelectedNode
@@ -171,10 +185,16 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			_toolSet = new ToolSet(new ActionModelConfigurationComponentToolExtensionPoint(), new ActionModelConfigurationComponentToolContext(this));
 			_toolbarActionModel = ActionModelRoot.CreateModel(this.GetType().FullName, _tolbarActionSite, _toolSet.Actions);
 			_contextMenuActionModel = ActionModelRoot.CreateModel(this.GetType().FullName, _contextMenuActionSite, _toolSet.Actions);
+
+			_actionModelTreeRoot.NodeValidationRequested += OnActionModelTreeRootNodeValidationRequested;
+			_actionModelTreeRoot.NodeValidated += OnActionModelTreeRootNodeValidated;
 		}
 
 		public override void Stop()
 		{
+			_actionModelTreeRoot.NodeValidationRequested -= OnActionModelTreeRootNodeValidationRequested;
+			_actionModelTreeRoot.NodeValidated -= OnActionModelTreeRootNodeValidated;
+
 			_contextMenuActionModel = null;
 			_toolbarActionModel = null;
 			_toolSet.Dispose();
@@ -196,6 +216,22 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			}
 		}
 
+		protected virtual IEnumerable<NodePropertiesComponent> CreateNodePropertiesComponents(AbstractActionModelTreeNode node)
+		{
+			if (node != null)
+			{
+				foreach (object extension in new NodePropertiesComponentProviderExtensionPoint().CreateExtensions())
+				{
+					INodePropertiesComponentProvider provider = extension as INodePropertiesComponentProvider;
+					if (provider != null)
+					{
+						foreach (NodePropertiesComponent component in provider.CreateComponents(node))
+							yield return component;
+					}
+				}
+			}
+		}
+
 		protected virtual bool OnRequestNodePropertiesValidation(AbstractActionModelTreeNode node, string propertyName, object value)
 		{
 			if (_validationPolicy == null)
@@ -203,9 +239,16 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			return _validationPolicy.Validate(node, propertyName, value);
 		}
 
+		protected virtual void OnNodePropertiesValidated(AbstractActionModelTreeNode node, string propertyName, object value) {}
+
 		private void OnActionModelTreeRootNodeValidationRequested(object sender, NodeValidationRequestedEventArgs e)
 		{
 			e.IsValid = OnRequestNodePropertiesValidation(e.Node, e.PropertyName, e.Value);
+		}
+
+		private void OnActionModelTreeRootNodeValidated(object sender, NodeValidatedEventArgs e)
+		{
+			OnNodePropertiesValidated(e.Node, e.PropertyName, e.Value);
 		}
 
 		private void InitializeNodePropertiesComponent()
@@ -273,6 +316,60 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			}
 		}
 
+		#region IActionNodeMap Interface
+
+		public interface IActionNodeMap
+		{
+			IEnumerable<AbstractActionModelTreeLeafAction> this[string actionId] { get; }
+			IEnumerable<AbstractActionModelTreeLeafAction> ActionNodes { get; }
+			IEnumerable<string> ActionIds { get; }
+		}
+
+		#endregion
+
+		#region ActionNodeMapDictionary Class
+
+		private class ActionNodeMapDictionary : IActionNodeMap
+		{
+			private readonly Dictionary<string, IList<AbstractActionModelTreeLeafAction>> _actionMap = new Dictionary<string, IList<AbstractActionModelTreeLeafAction>>();
+
+			public IEnumerable<AbstractActionModelTreeLeafAction> this[string actionId]
+			{
+				get
+				{
+					if (!_actionMap.ContainsKey(actionId))
+						throw new KeyNotFoundException();
+					return _actionMap[actionId];
+				}
+			}
+
+			public IEnumerable<AbstractActionModelTreeLeafAction> ActionNodes
+			{
+				get
+				{
+					foreach (IList<AbstractActionModelTreeLeafAction> list in _actionMap.Values)
+					{
+						foreach (AbstractActionModelTreeLeafAction action in list)
+							yield return action;
+					}
+				}
+			}
+
+			public IEnumerable<string> ActionIds
+			{
+				get { return _actionMap.Keys; }
+			}
+
+			public void AddToMap(AbstractActionModelTreeLeafAction actionNode)
+			{
+				if (!_actionMap.ContainsKey(actionNode.ActionId))
+					_actionMap.Add(actionNode.ActionId, new List<AbstractActionModelTreeLeafAction>());
+				_actionMap[actionNode.ActionId].Add(actionNode);
+			}
+		}
+
+		#endregion
+
 		#region INodeProperties Interface
 
 		public interface INodeProperties
@@ -290,7 +387,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			private readonly ActionModelConfigurationComponent _owner;
 
 			public NodePropertiesComponentContainerHost(ActionModelConfigurationComponent owner)
-				: base(new NodePropertiesComponentContainer(owner.SelectedNode))
+				: base(new NodePropertiesComponentContainer(owner.CreateNodePropertiesComponents(owner.SelectedNode)))
 			{
 				_owner = owner;
 			}
@@ -314,20 +411,11 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		{
 			private readonly List<ContainedComponentHost> _componentHosts = new List<ContainedComponentHost>();
 
-			internal NodePropertiesComponentContainer(AbstractActionModelTreeNode selectedNode)
+			internal NodePropertiesComponentContainer(IEnumerable<NodePropertiesComponent> propertiesComponents)
 			{
-				if (selectedNode != null)
-				{
-					foreach (object extension in new NodePropertiesComponentProviderExtensionPoint().CreateExtensions())
-					{
-						INodePropertiesComponentProvider provider = extension as INodePropertiesComponentProvider;
-						if (provider != null)
-						{
-							foreach (NodePropertiesComponent component in provider.CreateComponents(selectedNode))
-								_componentHosts.Add(new ContainedComponentHost(this, component));
-						}
-					}
-				}
+				Platform.CheckForNullReference(propertiesComponents, "propertiesComponents");
+				foreach (NodePropertiesComponent component in propertiesComponents)
+					_componentHosts.Add(new ContainedComponentHost(this, component));
 			}
 
 			public IEnumerable<IApplicationComponent> Components

@@ -50,13 +50,8 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 	[AssociateView(typeof (ClickActionKeystrokePropertyComponentViewExtensionPoint))]
 	public class ClickActionKeystrokePropertyComponent : NodePropertiesComponent
 	{
-		private XKeys _keyStroke = XKeys.None;
-
 		public ClickActionKeystrokePropertyComponent(AbstractActionModelTreeLeafClickAction selectedClickActionNode)
-			: base(selectedClickActionNode)
-		{
-			_keyStroke = selectedClickActionNode.KeyStroke;
-		}
+			: base(selectedClickActionNode) {}
 
 		protected new AbstractActionModelTreeLeafClickAction SelectedNode
 		{
@@ -65,14 +60,13 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 
 		public XKeys KeyStroke
 		{
-			get { return _keyStroke; }
+			get { return this.SelectedNode.KeyStroke; }
 			set
 			{
-				if (_keyStroke != value)
+				if (this.SelectedNode.KeyStroke != value)
 				{
-					_keyStroke = value;
+					this.SelectedNode.KeyStroke = value;
 					this.NotifyPropertyChanged("KeyStroke");
-					this.OnKeyStrokeChanged();
 				}
 			}
 		}
@@ -80,11 +74,6 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		public bool IsValidKeyStroke(XKeys keyStroke)
 		{
 			return this.SelectedNode.IsValidKeyStroke(keyStroke);
-		}
-
-		protected virtual void OnKeyStrokeChanged()
-		{
-			this.SelectedNode.KeyStroke = this.KeyStroke;
 		}
 	}
 }

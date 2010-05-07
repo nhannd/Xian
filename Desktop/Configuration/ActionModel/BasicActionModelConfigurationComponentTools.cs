@@ -81,7 +81,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 
 		public bool CanInsertGroup
 		{
-			get { return !base.Component.IsFlatActionModel; }
+			get { return !base.Component.EnforceFlatActionModel; }
 		}
 
 		public bool CanRemove

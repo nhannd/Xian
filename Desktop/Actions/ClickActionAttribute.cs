@@ -71,6 +71,14 @@ namespace ClearCanvas.Desktop.Actions
         }
 
 		/// <summary>
+		/// Gets the name of the method that will be invoked when the action is clicked.
+		/// </summary>
+    	public string ClickHandler
+    	{
+			get { return _clickHandler; }
+    	}
+
+		/// <summary>
 		/// Gets or sets a value indicating whether or not the action should be available by default when not overriden by the action model.
 		/// </summary>
     	public bool InitiallyAvailable

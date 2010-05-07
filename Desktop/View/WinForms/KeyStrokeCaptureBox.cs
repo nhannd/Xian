@@ -78,6 +78,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 				_textBox.KeyUp += HandleTextBoxKeyUp;
 				_textBox.KeyDown += HandleTextBoxKeyDown;
 				_textBox.KeyPress += HandleTextBoxKeyPress;
+				_textBox.Enter += HandleTextBoxFocusChanged;
+				_textBox.Leave += HandleTextBoxFocusChanged;
 				_textBox.LostFocus += HandleTextBoxFocusChanged;
 				_textBox.GotFocus += HandleTextBoxFocusChanged;
 
@@ -824,7 +826,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 
 			XKeys key = GetKeyPressed(keyData);
-			if (key != XKeys.None && IsValidKeyStroke(key) && !_currentKeys.Contains(key))
+			if (key != XKeys.None && !_currentKeys.Contains(key))
 				_currentKeys.Add(key);
 		}
 

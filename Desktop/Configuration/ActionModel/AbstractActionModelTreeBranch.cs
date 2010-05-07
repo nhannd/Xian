@@ -74,6 +74,18 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			}
 		}
 
+		protected IEnumerable<AbstractActionModelTreeNode> EnumerateDescendants()
+		{
+			List<AbstractActionModelTreeNode> list = new List<AbstractActionModelTreeNode>();
+			foreach (AbstractActionModelTreeNode actionModelTreeNode in this.Children)
+			{
+				list.Add(actionModelTreeNode);
+				if (actionModelTreeNode is AbstractActionModelTreeBranch)
+					list.AddRange(((AbstractActionModelTreeBranch) actionModelTreeNode).EnumerateDescendants());
+			}
+			return list;
+		}
+
 		/// <summary>
 		/// Use only for performing initial population of the node.
 		/// </summary>
@@ -118,6 +130,14 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 				return this.Parent.RequestValidation(node, propertyName, value);
 			}
 			return true;
+		}
+
+		internal virtual void NotifyValidated(AbstractActionModelTreeNode node, string propertyName, object value)
+		{
+			if (!ReferenceEquals(this.Parent, null))
+			{
+				this.Parent.NotifyValidated(node, propertyName, value);
+			}
 		}
 
 		private void OnSubtreeItemsChanged(object sender, ItemChangedEventArgs e)

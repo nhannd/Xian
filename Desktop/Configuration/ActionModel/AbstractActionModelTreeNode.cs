@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -70,10 +71,14 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _pathSegment.LocalizedText; }
 			set
 			{
-				if (_pathSegment.LocalizedText != value && this.RequestValidation("Label", value))
+				if (!this.RequestValidation("Label", value))
+					return;
+
+				if (_pathSegment.LocalizedText != value)
 				{
 					_pathSegment = new PathSegment(value, value);
 					_canonicalLabel = null;
+					this.NotifyValidated("Label", value);
 					this.OnLabelChanged();
 				}
 			}
@@ -96,9 +101,13 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _tooltip; }
 			set
 			{
-				if (_tooltip != value && this.RequestValidation("Tooltip", value))
+				if (!this.RequestValidation("Tooltip", value))
+					return;
+
+				if (_tooltip != value)
 				{
 					_tooltip = value;
+					this.NotifyValidated("Tooltip", value);
 					this.OnTooltipChanged();
 				}
 			}
@@ -109,9 +118,13 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _checkState; }
 			set
 			{
-				if (_checkState != value && this.RequestValidation("CheckState", value))
+				if (!this.RequestValidation("CheckState", value))
+					return;
+
+				if (_checkState != value)
 				{
 					_checkState = value;
+					this.NotifyValidated("CheckState", value);
 					this.OnCheckStateChanged();
 				}
 			}
@@ -122,9 +135,13 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _isExpanded; }
 			set
 			{
-				if (_isExpanded != value && this.RequestValidation("IsExpanded", value))
+				if (!this.RequestValidation("IsExpanded", value))
+					return;
+
+				if (_isExpanded != value)
 				{
 					_isExpanded = value;
+					this.NotifyValidated("IsExpanded", value);
 					this.OnIsExpandedChanged();
 				}
 			}
@@ -135,9 +152,13 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _isHighlighted; }
 			set
 			{
-				if (_isHighlighted != value && this.RequestValidation("IsHighlighted", value))
+				if (!this.RequestValidation("IsHighlighted", value))
+					return;
+
+				if (_isHighlighted != value)
 				{
 					_isHighlighted = value;
+					this.NotifyValidated("IsHighlighted", value);
 					this.OnIsHighlightedChanged();
 				}
 			}
@@ -233,6 +254,14 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 				return this.Parent.RequestValidation(this, propertyName, value);
 			}
 			return true;
+		}
+
+		protected void NotifyValidated(string propertyName, object value)
+		{
+			if (!ReferenceEquals(this.Parent, null))
+			{
+				this.Parent.NotifyValidated(this, propertyName, value);
+			}
 		}
 
 		public bool IsDescendantOf(AbstractActionModelTreeBranch node)

@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Trees;
@@ -39,6 +40,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 	public class AbstractActionModelTreeRoot : AbstractActionModelTreeBranch
 	{
 		internal event EventHandler<NodeValidationRequestedEventArgs> NodeValidationRequested;
+		internal event EventHandler<NodeValidatedEventArgs> NodeValidated;
 
 		private readonly string _site;
 
@@ -64,11 +66,22 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			return actionModelRoot;
 		}
 
+		public new IEnumerable<AbstractActionModelTreeNode> EnumerateDescendants()
+		{
+			return base.EnumerateDescendants();
+		}
+
 		internal override bool RequestValidation(AbstractActionModelTreeNode node, string propertyName, object value)
 		{
 			NodeValidationRequestedEventArgs e = new NodeValidationRequestedEventArgs(node, propertyName, value);
 			EventsHelper.Fire(this.NodeValidationRequested, this, e);
 			return e.IsValid;
+		}
+
+		internal override void NotifyValidated(AbstractActionModelTreeNode node, string propertyName, object value)
+		{
+			NodeValidatedEventArgs e = new NodeValidatedEventArgs(node, propertyName, value);
+			EventsHelper.Fire(this.NodeValidated, this, e);
 		}
 	}
 
@@ -85,6 +98,20 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			this.PropertyName = propertyName;
 			this.Value = value;
 			this.IsValid = true;
+		}
+	}
+
+	internal class NodeValidatedEventArgs : EventArgs
+	{
+		public readonly AbstractActionModelTreeNode Node;
+		public readonly string PropertyName;
+		public readonly object Value;
+
+		public NodeValidatedEventArgs(AbstractActionModelTreeNode node, string propertyName, object value)
+		{
+			this.Node = node;
+			this.PropertyName = propertyName;
+			this.Value = value;
 		}
 	}
 }

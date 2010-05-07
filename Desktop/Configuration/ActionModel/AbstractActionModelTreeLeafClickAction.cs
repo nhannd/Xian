@@ -52,9 +52,13 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _keyStroke; }
 			set
 			{
-				if (_keyStroke != value && this.RequestValidation("KeyStroke", value))
+				if (!this.RequestValidation("KeyStroke", value))
+					return;
+
+				if (_keyStroke != value)
 				{
 					_keyStroke = value;
+					this.NotifyValidated("KeyStroke", value);
 					this.OnKeyStrokeChanged();
 				}
 			}
@@ -62,7 +66,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 
 		public bool IsValidKeyStroke(XKeys keyStroke)
 		{
-			return this.RequestValidation("KeyStroke", keyStroke);
+			return this.RequestValidation("KeyStrokePreview", keyStroke);
 		}
 
 		protected virtual void OnKeyStrokeChanged()
