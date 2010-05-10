@@ -318,6 +318,8 @@ namespace ClearCanvas.Ris.Client
 					EndUpdate();
 					NotifyIconChanged();
 				});
+
+			NotifyIconChanged();
 		}
 
 		/// <summary>
@@ -355,6 +357,8 @@ namespace ClearCanvas.Ris.Client
 						EndUpdate();
 						NotifyIconChanged();
 					});
+
+			NotifyIconChanged();
 		}
 
 		#endregion
