@@ -298,15 +298,15 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		/// <returns></returns>
 		protected IList<WorklistItem> DoQuery(HqlQuery query, Type worklistItemClass, IQueryBuilder queryBuilder, QueryBuilderArgs args)
 		{
-			var list = ExecuteHql<object[]>(query);
-			var results = new List<WorklistItem>();
-			foreach (var tuple in list)
-			{
-				var item = CreateWorklistItem(worklistItemClass, queryBuilder.PreProcessResult(tuple, args), args.Projection);
-				results.Add(item);
-			}
+			// execute query
+			var tuples = ExecuteHql<object[]>(query);
 
-			return results;
+			// create a dummy worklist item, so we can get the tuple mapping exactly once, outside of the loop
+			var tupleMapping = ((WorklistItem) Activator.CreateInstance(worklistItemClass)).GetTupleMapping(args.Projection);
+
+			// use tuple mapping to create worklist items
+			return CollectionUtils.Map(tuples,
+				(object[] tuple) => CreateWorklistItem(worklistItemClass, queryBuilder.PreProcessResult(tuple, args), tupleMapping));
 		}
 
 		/// <summary>
@@ -428,12 +428,12 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		/// </summary>
 		/// <param name="worklistItemClass"></param>
 		/// <param name="tuple"></param>
-		/// <param name="projection"></param>
+		/// <param name="mapping"></param>
 		/// <returns></returns>
-		private static WorklistItem CreateWorklistItem(Type worklistItemClass, object[] tuple, WorklistItemProjection projection)
+		private static WorklistItem CreateWorklistItem(Type worklistItemClass, object[] tuple, WorklistItem.WorklistItemFieldSetterDelegate[] mapping)
 		{
 			var item = (WorklistItem)Activator.CreateInstance(worklistItemClass);
-			item.InitializeFromTuple(projection, tuple);
+			item.InitializeFromTuple(tuple, mapping);
 			return item;
 		}
 

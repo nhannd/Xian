@@ -139,22 +139,31 @@ namespace ClearCanvas.Healthcare
 				(item, value) => item.Time = (DateTime?)value);
 		}
 
-
-
 		/// <summary>
-		/// Initialize this worklist item from the specified projection and data tuple.
+		/// Gets the tuple mapping for the specified projection.
 		/// </summary>
 		/// <param name="projection"></param>
-		/// <param name="tuple"></param>
-		/// <remarks>
-		/// The elements of the tuple are assumed to align with the fields specified in the projection,
-		/// and must be of the correct type for that field.
-		/// </remarks>
-		public void InitializeFromTuple(WorklistItemProjection projection, object[] tuple)
+		/// <returns></returns>
+		public WorklistItemFieldSetterDelegate[] GetTupleMapping(WorklistItemProjection projection)
 		{
-			for(var i = 0; i < projection.Fields.Count; i++)
+			var result = new WorklistItemFieldSetterDelegate[projection.Fields.Count];
+			for (var i = 0; i < projection.Fields.Count; i++)
 			{
-				GetFieldSetter(projection.Fields[i])(this, tuple[i]);
+				result[i] = GetFieldSetter(projection.Fields[i]);
+			}
+			return result;
+		}
+
+		/// <summary>
+		/// Initializes this view item from the specified data tuple.
+		/// </summary>
+		/// <param name="tuple"></param>
+		/// <param name="mapping"></param>
+		public void InitializeFromTuple(object[] tuple, WorklistItemFieldSetterDelegate[] mapping)
+		{
+			for (var i = 0; i < mapping.Length; i++)
+			{
+				mapping[i](this, tuple[i]);
 			}
 		}
 
