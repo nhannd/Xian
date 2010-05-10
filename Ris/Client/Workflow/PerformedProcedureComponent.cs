@@ -473,11 +473,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			// if downtime recovery mode, need to get the time from the user
 			DateTime? endTime = _selectedMpps.StartTime;
-			if(DowntimeRecovery.InDowntimeRecoveryMode)
-			{
-				if(!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Completed Time", false, ref endTime))
-					return;
-			}
+			if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, SR.TitleCompletedTime, false, ref endTime,
+				delegate(DateTime? enteredTime, out string failedReason)
+					{
+						failedReason = string.Format(Desktop.SR.FormatMustBeGreaterThanOrEqualTo, _selectedMpps.StartTime);
+						return enteredTime == null || enteredTime.Value.CompareTo(_selectedMpps.StartTime) >= 0;
+					}))
+				return;
 
 			try
 			{
@@ -487,10 +489,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				Platform.GetService(
 					delegate(IModalityWorkflowService service)
 					{
-						var request = new CompleteModalityPerformedProcedureStepRequest(_selectedMpps)
-							{
-								CompletedTime = DowntimeRecovery.InDowntimeRecoveryMode ? endTime : null
-							};
+						var request = new CompleteModalityPerformedProcedureStepRequest(_selectedMpps) { CompletedTime = endTime };
 						response = service.CompleteModalityPerformedProcedureStep(request);
 					});
 
@@ -521,23 +520,23 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				if (selectedMpps != null)
 				{
-					if(this.Host.DesktopWindow.ShowMessageBox("Are you sure you want to discontinue the selected procedure(s)?", MessageBoxActions.YesNo) != DialogBoxAction.No)
+					if (this.Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmDiscontinueSelectedProcedures, MessageBoxActions.YesNo) != DialogBoxAction.No)
 					{
 						// if downtime recovery mode, need to get the time from the user
 						DateTime? endTime = _selectedMpps.StartTime;
-						if (DowntimeRecovery.InDowntimeRecoveryMode)
-						{
-							if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Completed Time", false, ref endTime))
-								return;
-						}
+						if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, SR.TitleCompletedTime, false, ref endTime,
+								delegate(DateTime? enteredTime, out string failedReason)
+								{
+									failedReason = string.Format(Desktop.SR.FormatMustBeGreaterThanOrEqualTo, _selectedMpps.StartTime);
+									return enteredTime == null || enteredTime.Value.CompareTo(_selectedMpps.StartTime) >= 0;
+								}))
+							return;
+
 						DiscontinueModalityPerformedProcedureStepResponse response = null;
 						Platform.GetService(
 							delegate(IModalityWorkflowService service)
 								{
-									var request = new DiscontinueModalityPerformedProcedureStepRequest(selectedMpps)
-										{
-											DiscontinuedTime = DowntimeRecovery.InDowntimeRecoveryMode ? endTime : null
-										};
+									var request = new DiscontinueModalityPerformedProcedureStepRequest(selectedMpps) { DiscontinuedTime = endTime };
 									response = service.DiscontinueModalityPerformedProcedureStep(request);
 								});
 

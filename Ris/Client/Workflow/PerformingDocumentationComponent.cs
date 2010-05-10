@@ -370,8 +370,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					checkedItems,
 					item => item.ModalityProcedureStep.Modality.Id != firstItem.ModalityProcedureStep.Modality.Id))
 				{
-					this.Host.ShowMessageBox("Cannot start procedure steps of different modalities at the same time.",
-											 MessageBoxActions.Ok);
+					this.Host.ShowMessageBox(SR.MessageWarnCannotStartMpsWithDifferentModalities, MessageBoxActions.Ok);
 					return;
 				}
 
@@ -382,18 +381,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (checkedMpsRefs.Count > 0)
 				{
 					DateTime? startTime = Platform.Time;
-					if (DowntimeRecovery.InDowntimeRecoveryMode)
-					{
-						if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Start Time", false, ref startTime))
-							return;
-					}
+					if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, SR.TitleStartTime, false, ref startTime, null))
+						return;
 
 					Platform.GetService<IModalityWorkflowService>(service =>
 					{
-						var request = new StartModalityProcedureStepsRequest(checkedMpsRefs)
-						{
-							StartTime = DowntimeRecovery.InDowntimeRecoveryMode ? startTime : null
-						};
+						var request = new StartModalityProcedureStepsRequest(checkedMpsRefs) { StartTime = startTime };
 						var response = service.StartModalityProcedureSteps(request);
 
 						RefreshProcedurePlanSummary(response.ProcedurePlan);
@@ -419,21 +412,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				if (checkedMpsRefs.Count > 0)
 				{
-					if (this.Host.DesktopWindow.ShowMessageBox("Are you sure you want to discontinue the selected procedure(s)?", MessageBoxActions.YesNo) != DialogBoxAction.No)
+					if (this.Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmDiscontinueSelectedProcedures, MessageBoxActions.YesNo) != DialogBoxAction.No)
 					{
 						DateTime? discontinueTime = Platform.Time;
-						if (DowntimeRecovery.InDowntimeRecoveryMode)
-						{
-							if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Cancel Time", false, ref discontinueTime))
-								return;
-						}
+						if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, SR.TitleCancelTime, false, ref discontinueTime, null))
+							return;
 
 						Platform.GetService<IModalityWorkflowService>(service =>
 						{
-							var request = new DiscontinueModalityProcedureStepsRequest(checkedMpsRefs)
-							{
-								DiscontinuedTime = DowntimeRecovery.InDowntimeRecoveryMode ? discontinueTime : null
-							};
+							var request = new DiscontinueModalityProcedureStepsRequest(checkedMpsRefs) { DiscontinuedTime = discontinueTime };
 							var response = service.DiscontinueModalityProcedureSteps(request);
 
 							RefreshProcedurePlanSummary(response.ProcedurePlan);

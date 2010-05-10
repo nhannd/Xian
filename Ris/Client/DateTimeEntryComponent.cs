@@ -30,11 +30,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -53,16 +51,22 @@ namespace ClearCanvas.Ris.Client
 	public class DateTimeEntryComponent : ApplicationComponent
 	{
 		/// <summary>
+		/// Delegate used to validate date time.
+		/// </summary>
+		public delegate bool DateTimeValidationDelegate(DateTime? dateTime, out string failedReason);
+
+		/// <summary>
 		/// Static helper method to prompt user for time in a single line of code.
 		/// </summary>
 		/// <param name="desktopWindow"></param>
 		/// <param name="title"></param>
 		/// <param name="time"></param>
 		/// <param name="allowNull"></param>
+		/// <param name="validationCallback"></param>
 		/// <returns></returns>
-		public static bool PromptForTime(IDesktopWindow desktopWindow, string title, bool allowNull, ref DateTime? time)
+		public static bool PromptForTime(IDesktopWindow desktopWindow, string title, bool allowNull, ref DateTime? time, DateTimeValidationDelegate validationCallback)
 		{
-			DateTimeEntryComponent component = new DateTimeEntryComponent(time, allowNull);
+			var component = new DateTimeEntryComponent(time, allowNull) {ValidationCallback = validationCallback};
 			if (LaunchAsDialog(desktopWindow, component, title)
 				== ApplicationComponentExitCode.Accepted)
 			{
@@ -87,7 +91,25 @@ namespace ClearCanvas.Ris.Client
 			_allowNull = allowNull;
 		}
 
+		public override void Start()
+		{
+			if (this.ValidationCallback != null)
+			{
+				this.Validation.Add(new ValidationRule("DateAndTime",
+					delegate
+						{
+							string failedReason;
+							var success = ValidationCallback(_dateAndTime, out failedReason);
+							return new ValidationResult(success, failedReason);
+						}));
+			}
+
+			base.Start();
+		}
+
 		#region Presentation Model
+
+		public DateTimeValidationDelegate ValidationCallback { get; set; }
 
 		public DateTime? DateAndTime
 		{
@@ -102,6 +124,12 @@ namespace ClearCanvas.Ris.Client
 
 		public void Accept()
 		{
+			if (this.HasValidationErrors)
+			{
+				this.ShowValidation(true);
+				return;
+			}
+
 			Exit(ApplicationComponentExitCode.Accepted);
 		}
 

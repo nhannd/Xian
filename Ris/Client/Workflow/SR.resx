@@ -839,4 +839,19 @@ Choose "No" to verify this report without further action.</value>
   <data name="MessagePrintWorklist" xml:space="preserve">
     <value>You are about to print out information that contains confidential patient data.  Do you want to continue?</value>
   </data>
+  <data name="MessageConfirmDiscontinueSelectedProcedures" xml:space="preserve">
+    <value>Are you sure you want to discontinue the selected procedure(s)?</value>
+  </data>
+  <data name="MessageWarnCannotStartMpsWithDifferentModalities" xml:space="preserve">
+    <value>Cannot start procedure steps of different modalities at the same time.</value>
+  </data>
+  <data name="TitleCancelTime" xml:space="preserve">
+    <value>Cancel Time</value>
+  </data>
+  <data name="TitleCompletedTime" xml:space="preserve">
+    <value>Completed Time</value>
+  </data>
+  <data name="TitleStartTime" xml:space="preserve">
+    <value>Start Time</value>
+  </data>
 </root>

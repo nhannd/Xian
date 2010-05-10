@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _date
 			// 
 			this._date.LabelText = "Date";
-			this._date.Location = new System.Drawing.Point(18, 26);
+			this._date.Location = new System.Drawing.Point(5, 26);
 			this._date.Margin = new System.Windows.Forms.Padding(2);
 			this._date.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
 			this._date.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
