@@ -95,13 +95,13 @@ namespace ClearCanvas.Ris.Client
 			_isItemsValid = false;
 		}
 
-		protected void ValidateItem()
+		protected void MarkItemsValid()
 		{
 			_isItemsValid = true;
 			_isCountValid = true;
 		}
 
-		protected void ValidateCount()
+		protected void MarkCountValid()
 		{
 			_isCountValid = true;
 		}
@@ -302,7 +302,7 @@ namespace ClearCanvas.Ris.Client
 					NotifyItemsTableChanged();
 
 					this.TotalItemCount = result.TotalItemCount;
-					ValidateItem();
+					MarkItemsValid();
 
 					EndUpdate();
 					NotifyIconChanged();
@@ -341,7 +341,7 @@ namespace ClearCanvas.Ris.Client
 					{
 						InErrorState = false;
 						this.TotalItemCount = count;
-						ValidateCount();
+						MarkCountValid();
 
 						EndUpdate();
 						NotifyIconChanged();

@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Client
 {
 	public abstract class SearchResultsFolder : WorkflowFolder
 	{
-		protected bool _isValid;
+		protected bool IsValid { get; set; }
 
 		#region Folder overrides
 
@@ -62,10 +62,10 @@ namespace ClearCanvas.Ris.Client
 		{
 			// only initiate a query if this folder is open (eg selected)
 			// this folder does not support updating the count independently of the items
-			if (this.IsOpen && !_isValid)
+			if (this.IsOpen && !IsValid)
 			{
 				BeginQueryItems();
-				_isValid = true;
+				IsValid = true;
 				return true;
 			}
 			return false;
@@ -102,8 +102,7 @@ namespace ClearCanvas.Ris.Client
 		private TSearchParams _searchParams;
 
 		/// <summary>
-		/// Gets or sets the search arguments.  Setting this property will automatically
-		/// call <see cref="Folder.Invalidate"/> on this folder.
+		/// Gets or sets the search arguments.  Setting this property will invalidate this folder.
 		/// </summary>
 		public TSearchParams SearchParams
 		{
@@ -114,7 +113,7 @@ namespace ClearCanvas.Ris.Client
 				this.Tooltip = SR.MessageSearchResults;
 
 				// invalidate the folder immediately
-				_isValid = false;
+				IsValid = false;
 			}
 		}
 	}
@@ -186,7 +185,7 @@ namespace ClearCanvas.Ris.Client
 					{
 						try
 						{
-							TextQueryResponse<TItem> response = DoQuery(this.SearchParams, SearchCriteriaSpecificityThreshold);
+							var response = DoQuery(this.SearchParams, SearchCriteriaSpecificityThreshold);
 							if (response.TooManyMatches)
 								throw new WeakSearchCriteriaException();
 							taskContext.Complete(response.Matches ?? new List<TItem>());
@@ -209,7 +208,7 @@ namespace ClearCanvas.Ris.Client
 			{
 				NotifyItemsTableChanging();
 
-				IList<TItem> items = (IList<TItem>)args.Result;
+				var items = (IList<TItem>)args.Result;
 				this.TotalItemCount = items.Count;
 				_itemsTable.Items.Clear();
 				_itemsTable.Items.AddRange(items);
@@ -247,7 +246,7 @@ namespace ClearCanvas.Ris.Client
 
 		protected override TextQueryResponse<TItem> DoQuery(WorklistSearchParams query, int specificityThreshold)
 		{
-			WorklistItemTextQueryOptions options = WorklistItemTextQueryOptions.PatientOrder;
+			var options = WorklistItemTextQueryOptions.PatientOrder;
 			if(DowntimeRecovery.InDowntimeRecoveryMode)
 				options = options | WorklistItemTextQueryOptions.DowntimeRecovery;
 			if (WorklistSettings.Default.EnablePartialMatchingOnIdentifierSearch)
@@ -260,7 +259,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			TextQueryResponse<TItem> response = null;
 
-			WorklistItemTextQueryRequest request = new WorklistItemTextQueryRequest(
+			var request = new WorklistItemTextQueryRequest(
 						query.TextSearch, specificityThreshold, procedureStepClassName, options);
 
 			if (query.UseAdvancedSearch)
@@ -270,10 +269,7 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			Platform.GetService<TWorklistService>(
-				delegate(TWorklistService service)
-				{
-					response = service.SearchWorklists(request);
-				});
+				service => response = service.SearchWorklists(request));
 
 			return response;
 		}
