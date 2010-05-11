@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ClearCanvas.Ris.Application.Common
 {
@@ -55,7 +53,8 @@ namespace ClearCanvas.Ris.Application.Common
 		ProcedureStepStaff = 0x002,
 
 		/// <summary>
-		/// 
+		/// Specifies that identifiers, such as MRN, A#, Healthcard#, found in the query, will use partial matching, instead
+		/// of exact matching.
 		/// </summary>
 		EnablePartialMatchingOnIdentifiers = 0x100,
 
