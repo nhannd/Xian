@@ -91,6 +91,13 @@ namespace ClearCanvas.Healthcare.Imex
 			}
 
 			[DataContract]
+			public class ProcedureTypeData
+			{
+				[DataMember]
+				public string Id;
+			}
+
+			[DataContract]
 			public class ProcedureTypeGroupData
 			{
 				[DataMember]
@@ -278,6 +285,7 @@ namespace ClearCanvas.Healthcare.Imex
 			{
 				public FiltersData()
 				{
+					this.ProcedureTypes = new MultiValuedFilterData<ProcedureTypeData>();
 					this.ProcedureTypeGroups = new MultiValuedFilterData<ProcedureTypeGroupData>();
 					this.Facilities = new FacilitiesFilterData();
 					this.Departments = new MultiValuedFilterData<DepartmentData>();
@@ -292,6 +300,9 @@ namespace ClearCanvas.Healthcare.Imex
 					this.VerifiedByStaff = new StaffFilterData();
 					this.SupervisedByStaff = new StaffFilterData();
 				}
+
+				[DataMember]
+				public MultiValuedFilterData<ProcedureTypeData> ProcedureTypes;
 
 				[DataMember]
 				public MultiValuedFilterData<ProcedureTypeGroupData> ProcedureTypeGroups;
@@ -385,6 +396,12 @@ namespace ClearCanvas.Healthcare.Imex
 			data.GroupSubscribers = CollectionUtils.Map(
 				worklist.GroupSubscribers,
 				(StaffGroup group) => new WorklistData.GroupSubscriberData {StaffGroupName = group.Name});
+
+			// proc type filter
+			ExportFilter(
+				worklist.ProcedureTypeFilter,
+				data.Filters.ProcedureTypes,
+				item => new WorklistData.ProcedureTypeData { Id = item.Id });
 
 			// proc type group filter
 			ExportFilter(
@@ -483,6 +500,19 @@ namespace ClearCanvas.Healthcare.Imex
 						worklist.GroupSubscribers.Add(CollectionUtils.FirstElement(groups));
 				}
 			}
+
+			// proc type filter
+			ImportFilter(
+				worklist.ProcedureTypeFilter,
+				data.Filters.ProcedureTypes,
+				delegate(WorklistData.ProcedureTypeData s)
+				{
+					var criteria = new ProcedureTypeSearchCriteria();
+					criteria.Id.EqualTo(s.Id);
+
+					var broker = context.GetBroker<IProcedureTypeBroker>();
+					return CollectionUtils.FirstElement(broker.Find(criteria));
+				});
 
 			// proc type group filter
 			ImportFilter(
