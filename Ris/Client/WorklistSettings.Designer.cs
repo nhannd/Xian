@@ -35,5 +35,19 @@ namespace ClearCanvas.Ris.Client {
                 return ((int)(this["ItemsPerPage"]));
             }
         }
+        
+        /// <summary>
+        /// Specifies whether partial matching should be performed on identifier-based searches.  Partial matching may incur a performance penalty.
+        /// </summary>
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Specifies whether partial matching should be performed on identifier-based search" +
+            "es.  Partial matching may incur a performance penalty.")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool EnablePartialMatchingOnIdentifierSearch {
+            get {
+                return ((bool)(this["EnablePartialMatchingOnIdentifierSearch"]));
+            }
+        }
     }
 }

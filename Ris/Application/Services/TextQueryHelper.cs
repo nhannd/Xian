@@ -211,20 +211,34 @@ namespace ClearCanvas.Ris.Application.Services
 
 
         /// <summary>
-        /// Applies specified string value to specified condition, if the value is non-empty.
+        /// Applies specified string value to specified condition, if the value is non-empty, using partial matching.
         /// </summary>
         /// <param name="condition"></param>
         /// <param name="value"></param>
-        protected static void ApplyStringValue(ISearchCondition<string> condition, string value)
+        protected static void ApplyStringCriteria(ISearchCondition<string> condition, string value)
         {
-            if (value != null)
-            {
-                string trimmed = value.Trim();
-                if (!string.IsNullOrEmpty(trimmed))
-                {
-                    condition.StartsWith(trimmed);
-                }
-            }
+			ApplyStringCriteria(condition, value, false);
         }
-    }
+
+		/// <summary>
+		/// Applies specified string value to specified condition, if the value is non-empty.
+		/// </summary>
+		/// <param name="condition"></param>
+		/// <param name="value"></param>
+		/// <param name="exactMatch"></param>
+		protected static void ApplyStringCriteria(ISearchCondition<string> condition, string value, bool exactMatch)
+		{
+			if (value == null)
+				return;
+
+			value = value.Trim();
+			if (string.IsNullOrEmpty(value))
+				return;
+
+			if(exactMatch)
+				condition.EqualTo(value);
+			else
+				condition.StartsWith(value);
+		}
+	}
 }

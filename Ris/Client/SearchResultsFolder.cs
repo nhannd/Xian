@@ -247,8 +247,11 @@ namespace ClearCanvas.Ris.Client
 
 		protected override TextQueryResponse<TItem> DoQuery(WorklistSearchParams query, int specificityThreshold)
 		{
-			WorklistItemTextQueryOptions options = WorklistItemTextQueryOptions.PatientOrder
-				| (DowntimeRecovery.InDowntimeRecoveryMode ? WorklistItemTextQueryOptions.DowntimeRecovery : 0);
+			WorklistItemTextQueryOptions options = WorklistItemTextQueryOptions.PatientOrder;
+			if(DowntimeRecovery.InDowntimeRecoveryMode)
+				options = options | WorklistItemTextQueryOptions.DowntimeRecovery;
+			if (WorklistSettings.Default.EnablePartialMatchingOnIdentifierSearch)
+				options = options | WorklistItemTextQueryOptions.EnablePartialMatchingOnIdentifiers;
 
 			return DoQueryCore(query, specificityThreshold, options, this.ProcedureStepClassName);
 		}

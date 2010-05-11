@@ -208,11 +208,11 @@ namespace ClearCanvas.Ris.Application.Services
 			// construct a base criteria object from the request values
 			var criteria = new WorklistItemSearchCriteria();
 
-			ApplyStringValue(criteria.PatientProfile.Mrn.Id, searchParams.Mrn);
-			ApplyStringValue(criteria.PatientProfile.Name.FamilyName, searchParams.FamilyName);
-			ApplyStringValue(criteria.PatientProfile.Name.GivenName, searchParams.GivenName);
-			ApplyStringValue(criteria.PatientProfile.Healthcard.Id, searchParams.HealthcardNumber);
-			ApplyStringValue(criteria.Order.AccessionNumber, searchParams.AccessionNumber);
+			ApplyStringCriteria(criteria.PatientProfile.Mrn.Id, searchParams.Mrn, ShouldUseExactMatchingOnIdentifiers(request));
+			ApplyStringCriteria(criteria.PatientProfile.Name.FamilyName, searchParams.FamilyName);
+			ApplyStringCriteria(criteria.PatientProfile.Name.GivenName, searchParams.GivenName);
+			ApplyStringCriteria(criteria.PatientProfile.Healthcard.Id, searchParams.HealthcardNumber, ShouldUseExactMatchingOnIdentifiers(request));
+			ApplyStringCriteria(criteria.Order.AccessionNumber, searchParams.AccessionNumber, ShouldUseExactMatchingOnIdentifiers(request));
 
 			if (searchParams.OrderingPractitionerRef != null)
 			{
@@ -269,7 +269,7 @@ namespace ClearCanvas.Ris.Application.Services
 			return wheres;
 		}
 
-		private static List<WorklistItemSearchCriteria> BuildTextQueryProcedureSearchCriteria(WorklistItemTextQueryRequest request)
+		private List<WorklistItemSearchCriteria> BuildTextQueryProcedureSearchCriteria(WorklistItemTextQueryRequest request)
 		{
 			var query = request.TextQuery;
 
@@ -282,9 +282,8 @@ namespace ClearCanvas.Ris.Application.Services
 				delegate(PersonName n)
 				{
 					var sc = new WorklistItemSearchCriteria();
-					sc.PatientProfile.Name.FamilyName.StartsWith(n.FamilyName);
-					if (n.GivenName != null)
-						sc.PatientProfile.Name.GivenName.StartsWith(n.GivenName);
+					ApplyStringCriteria(sc.PatientProfile.Name.FamilyName, n.FamilyName);
+					ApplyStringCriteria(sc.PatientProfile.Name.GivenName, n.GivenName);
 					return sc;
 				}));
 
@@ -294,7 +293,7 @@ namespace ClearCanvas.Ris.Application.Services
 				delegate(string word)
 				{
 					var c = new WorklistItemSearchCriteria();
-					c.PatientProfile.Mrn.Id.StartsWith(word);
+					ApplyStringCriteria(c.PatientProfile.Mrn.Id, word, ShouldUseExactMatchingOnIdentifiers(request));
 					return c;
 				}));
 
@@ -303,7 +302,7 @@ namespace ClearCanvas.Ris.Application.Services
 				delegate(string word)
 				{
 					var c = new WorklistItemSearchCriteria();
-					c.PatientProfile.Healthcard.Id.StartsWith(word);
+					ApplyStringCriteria(c.PatientProfile.Healthcard.Id, word, ShouldUseExactMatchingOnIdentifiers(request));
 					return c;
 				}));
 
@@ -312,7 +311,7 @@ namespace ClearCanvas.Ris.Application.Services
 				delegate(string word)
 				{
 					var c = new WorklistItemSearchCriteria();
-					c.Order.AccessionNumber.StartsWith(word);
+					ApplyStringCriteria(c.Order.AccessionNumber, word, ShouldUseExactMatchingOnIdentifiers(request));
 					return c;
 				}));
 
@@ -323,7 +322,7 @@ namespace ClearCanvas.Ris.Application.Services
 
 		#region Staff Criteria builders
 
-		private static IEnumerable<WorklistItemSearchCriteria> BuildStaffSearchCriteria(WorklistItemTextQueryRequest request)
+		private IEnumerable<WorklistItemSearchCriteria> BuildStaffSearchCriteria(WorklistItemTextQueryRequest request)
 		{
 			if (request.UseAdvancedSearch)
 			{
@@ -334,7 +333,7 @@ namespace ClearCanvas.Ris.Application.Services
 			return BuildTextQueryStaffSearchCriteria(request);
 		}
 
-		private static List<WorklistItemSearchCriteria> BuildTextQueryStaffSearchCriteria(WorklistItemTextQueryRequest request)
+		private List<WorklistItemSearchCriteria> BuildTextQueryStaffSearchCriteria(WorklistItemTextQueryRequest request)
 		{
 			var query = request.TextQuery;
 
@@ -351,9 +350,8 @@ namespace ClearCanvas.Ris.Application.Services
 					var sc = new WorklistItemSearchCriteria();
 
 					var scheduledPerformerNameCriteria = sc.ProcedureStep.Scheduling.Performer.Staff.Name;
-					scheduledPerformerNameCriteria.FamilyName.StartsWith(n.FamilyName);
-					if (n.GivenName != null)
-						scheduledPerformerNameCriteria.GivenName.StartsWith(n.GivenName);
+					ApplyStringCriteria(scheduledPerformerNameCriteria.FamilyName, n.FamilyName);
+					ApplyStringCriteria(scheduledPerformerNameCriteria.GivenName, n.GivenName);
 					return sc;
 				}));
 
@@ -364,9 +362,8 @@ namespace ClearCanvas.Ris.Application.Services
 					var sc = new WorklistItemSearchCriteria();
 
 					var performerNameCriteria = sc.ProcedureStep.Performer.Staff.Name;
-					performerNameCriteria.FamilyName.StartsWith(n.FamilyName);
-					if (n.GivenName != null)
-						performerNameCriteria.GivenName.StartsWith(n.GivenName);
+					ApplyStringCriteria(performerNameCriteria.FamilyName, n.FamilyName);
+					ApplyStringCriteria(performerNameCriteria.GivenName, n.GivenName);
 					return sc;
 				}));
 
@@ -379,7 +376,7 @@ namespace ClearCanvas.Ris.Application.Services
 				delegate(string id)
 				{
 					var sc = new WorklistItemSearchCriteria();
-					sc.ProcedureStep.Scheduling.Performer.Staff.Id.StartsWith(id);
+					ApplyStringCriteria(sc.ProcedureStep.Scheduling.Performer.Staff.Id, id, ShouldUseExactMatchingOnIdentifiers(request));
 					return sc;
 				}));
 
@@ -388,7 +385,7 @@ namespace ClearCanvas.Ris.Application.Services
 				delegate(string id)
 				{
 					var sc = new WorklistItemSearchCriteria();
-					sc.ProcedureStep.Performer.Staff.Id.StartsWith(id);
+					ApplyStringCriteria(sc.ProcedureStep.Performer.Staff.Id, id, ShouldUseExactMatchingOnIdentifiers(request));
 					return sc;
 				}));
 
@@ -413,6 +410,13 @@ namespace ClearCanvas.Ris.Application.Services
 			// 2) advanced search is not being used, or it is being used and all non-patient search criteria are empty
 			return ShouldIncludeDegenerateProcedureItems(request)
 				   && (!request.UseAdvancedSearch || request.SearchFields.IsNonPatientFieldsEmpty());
+		}
+
+		private bool ShouldUseExactMatchingOnIdentifiers(WorklistItemTextQueryRequest request)
+		{
+			// use exact matching if the option to enable partial matching is not specified
+			return !((_options & WorklistItemTextQueryOptions.EnablePartialMatchingOnIdentifiers)
+				== WorklistItemTextQueryOptions.EnablePartialMatchingOnIdentifiers);
 		}
 	}
 }

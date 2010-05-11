@@ -55,8 +55,13 @@ namespace ClearCanvas.Ris.Application.Common
 		ProcedureStepStaff = 0x002,
 
 		/// <summary>
+		/// 
+		/// </summary>
+		EnablePartialMatchingOnIdentifiers = 0x100,
+
+		/// <summary>
 		/// Find items associated with procedure in 'Downtime Recovery Mode', as opposed to live worklist items.
 		/// </summary>
-		DowntimeRecovery = 0x800
+		DowntimeRecovery = 0x800,
 	}
 }
