@@ -62,6 +62,7 @@
 					showFilterSection |= updateFilter(worklist.OrderPriorities, $("RowOrderPriorities"), $("OrderPriorities"), function(orderPriority) { return orderPriority.Value; });
 					showFilterSection |= updatePortableFilter(worklist.Portabilities, $("RowPortable"), $("Portable"));
 					showFilterSection |= updateFilter(worklist.OrderingPractitioners, $("RowOrderingPractitioners"), $("OrderingPractitioners"), function(practitioner) { return Ris.formatPersonName(practitioner.Name); });
+					showFilterSection |= updateFilter(worklist.ProcedureTypes, $("RowProcedureTypes"), $("ProcedureTypes"), function(type) { return type.Name; });
 					showFilterSection |= updateFilter(worklist.ProcedureTypeGroups, $("RowProcedureTypeGroups"), $("ProcedureTypeGroups"), function(group) { return group.Name; });
 					showFilterSection |= updateFilter(worklist.PatientLocations, $("RowPatientLocations"), $("PatientLocations"), function(location) { return location.Name; });
 					showFilterSection |= updateStaffFilter(worklist.InterpretedByStaff, $("RowInterpretedBy"), $("InterpretedBy"));
@@ -345,6 +346,10 @@
 				<tr id="RowOrderingPractitioners">
 					<td width="100" class="propertyname" valign="top">Ordered By</td>
 					<td><div id="OrderingPractitioners"/></td>
+				</tr>
+				<tr id="RowProcedureTypes">
+					<td width="100" class="propertyname" valign="top">Procedure Types</td>
+					<td><div id="ProcedureTypes"/></td>
 				</tr>
 				<tr id="RowProcedureTypeGroups">
 					<td width="100" class="propertyname" valign="top">Procedure Type Groups</td>

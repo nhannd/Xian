@@ -31,8 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -41,19 +39,21 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-    /// <summary>
+	/// <summary>
 	/// Extension point for views onto <see cref="SelectorEditorComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class SelectorEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	/// </summary>
+	[ExtensionPoint]
+	public class SelectorEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    public abstract class SelectorEditorComponent : ApplicationComponent
-    {
+	public abstract class SelectorEditorComponent : ApplicationComponent
+	{
 		private readonly bool _isReadOnly;
+		private event EventHandler _itemsAdded;
+		private event EventHandler _itemsRemoved;
 
-		public SelectorEditorComponent(bool isReadOnly)
+		protected SelectorEditorComponent(bool isReadOnly)
 		{
 			_isReadOnly = isReadOnly;
 		}
@@ -64,37 +64,56 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		public abstract ITable AvailableItemsTable { get; }
-        public abstract ITable SelectedItemsTable { get; }
+		public abstract ITable SelectedItemsTable { get; }
 
-        public void ItemsAddedOrRemoved()
-        {
-            this.Modified = true;
-        }
-    }
+		public event EventHandler ItemsAdded
+		{
+			add { _itemsAdded += value; }
+			remove { _itemsAdded -= value; }
+		}
 
-    /// <summary>
+		public event EventHandler ItemsRemoved
+		{
+			add { _itemsRemoved += value; }
+			remove { _itemsRemoved -= value; }
+		}
+		
+		public void NotifyItemsAdded()
+		{
+			this.Modified = true;
+			EventsHelper.Fire(_itemsAdded, this, EventArgs.Empty);
+		}
+
+		public void NotifyItemsRemoved()
+		{
+			this.Modified = true;
+			EventsHelper.Fire(_itemsRemoved, this, EventArgs.Empty);
+		}
+	}
+
+	/// <summary>
 	/// SelectorEditorComponent class
-    /// </summary>
-    [AssociateView(typeof(SelectorEditorComponentViewExtensionPoint))]
-    public class SelectorEditorComponent<TSummary, TTable> : SelectorEditorComponent
-        where TSummary : DataContractBase
-        where TTable : Table<TSummary>, new()
-    {
-        private readonly TTable _available;
-        private readonly TTable _selected;
+	/// </summary>
+	[AssociateView(typeof(SelectorEditorComponentViewExtensionPoint))]
+	public class SelectorEditorComponent<TSummary, TTable> : SelectorEditorComponent
+		where TSummary : DataContractBase
+		where TTable : Table<TSummary>, new()
+	{
+		private readonly TTable _available;
+		private readonly TTable _selected;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public SelectorEditorComponent(IEnumerable<TSummary> allItems, IEnumerable<TSummary> selectedItems, Converter<TSummary, EntityRef> identityProvider, bool isReadOnly)
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public SelectorEditorComponent(IEnumerable<TSummary> allItems, IEnumerable<TSummary> selectedItems, Converter<TSummary, EntityRef> identityProvider, bool isReadOnly)
 			:base(isReadOnly)
 		{
-            _available = new TTable();
-            _selected = new TTable();
+			_available = new TTable();
+			_selected = new TTable();
 
-            _selected.Items.AddRange(selectedItems);
-            _available.Items.AddRange(Subtract(selectedItems, allItems, identityProvider));
-        }
+			_selected.Items.AddRange(selectedItems);
+			_available.Items.AddRange(Subtract(selectedItems, allItems, identityProvider));
+		}
 
 		/// <summary>
 		/// Constructor.
@@ -102,10 +121,10 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="allItems"></param>
 		/// <param name="selectedItems"></param>
 		/// <param name="identityProvider"></param>
-        public SelectorEditorComponent(IEnumerable<TSummary> allItems, IEnumerable<TSummary> selectedItems, Converter<TSummary, EntityRef> identityProvider)
+		public SelectorEditorComponent(IEnumerable<TSummary> allItems, IEnumerable<TSummary> selectedItems, Converter<TSummary, EntityRef> identityProvider)
 			:this(allItems, selectedItems, identityProvider, false)
 		{
-        }
+		}
 
 		/// <summary>
 		/// Gets or sets the list of all possible items.
@@ -114,7 +133,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				List<TSummary> list = new List<TSummary>(_available.Items);
+				var list = new List<TSummary>(_available.Items);
 				list.AddRange(_selected.Items);
 				return list;
 			}
@@ -127,8 +146,8 @@ namespace ClearCanvas.Ris.Client
 
 				// remove any selected items that are no longer valid choices,
 				// and any available items that are already selected
-				List<TSummary> selectedItems = new List<TSummary>(_selected.Items);
-				foreach (TSummary item in selectedItems)
+				var selectedItems = new List<TSummary>(_selected.Items);
+				foreach (var item in selectedItems)
 				{
 					if (_available.Items.Contains(item))
 						_available.Items.Remove(item);
@@ -142,32 +161,28 @@ namespace ClearCanvas.Ris.Client
 		/// Gets the list of selected items.
 		/// </summary>
 		public virtual IList<TSummary> SelectedItems
-        {
-            get { return _selected.Items; }
-        }
+		{
+			get { return _selected.Items; }
+		}
 
-        #region Presentation Model
+		#region Presentation Model
 
-        public override ITable AvailableItemsTable
-        {
-            get { return _available; }
-        }
+		public override ITable AvailableItemsTable
+		{
+			get { return _available; }
+		}
 
-        public override ITable SelectedItemsTable
-        {
-            get { return _selected; }
-        }
+		public override ITable SelectedItemsTable
+		{
+			get { return _selected; }
+		}
 
-        #endregion
+		#endregion
 
-        private static List<T> Subtract<T>(IEnumerable<T> some, IEnumerable<T> all, Converter<T, EntityRef> identityProvider)
-        {
-            return CollectionUtils.Reject(all,
-                        delegate(T x)
-                        {
-                            return CollectionUtils.Contains(some,
-                                delegate(T y) { return identityProvider(x).Equals(identityProvider(y), true); });
-                        });
-        }
-    }
+		private static List<T> Subtract<T>(IEnumerable<T> some, IEnumerable<T> all, Converter<T, EntityRef> identityProvider)
+		{
+			return CollectionUtils.Reject(all,
+				x => CollectionUtils.Contains(some, y => identityProvider(x).Equals(identityProvider(y), true)));
+		}
+	}
 }

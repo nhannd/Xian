@@ -1083,4 +1083,16 @@
   <data name="MessageShowInvalidPage" xml:space="preserve">
     <value>Invalid page size.</value>
   </data>
+  <data name="NodeProcedureTypes" xml:space="preserve">
+    <value>Procedure Types</value>
+  </data>
+  <data name="ColumnID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="MessageConfirmClearProcedureTypeGroups" xml:space="preserve">
+    <value>Procedure type and procedure type group cannot both be used for filtering.  Do you want to clear all selected procedure type groups?</value>
+  </data>
+  <data name="MessageConfirmClearProcedureTypes" xml:space="preserve">
+    <value>Procedure type and procedure type group cannot both be used for filtering.  Do you want to clear all selected procedure types?</value>
+  </data>
 </root>

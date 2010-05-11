@@ -29,6 +29,15 @@
       </many-to-one>
     </component>
 
+    <component name="ProcedureTypeFilter" class="WorklistProcedureTypeFilter">
+      <property name="IsEnabled" type="Boolean" column="ProcedureTypeFilterIsEnabled_"/>
+      <set name="Values" table="WorklistProcedureType_" lazy="true">
+        <cache usage="nonstrict-read-write"/>
+        <key column="WorklistOID_"/>
+        <many-to-many column="ProcedureTypeOID_" class="ProcedureType" fetch="join"/>
+      </set>
+    </component>
+
     <component name="ProcedureTypeGroupFilter" class="WorklistProcedureTypeGroupFilter">
       <property name="IsEnabled" type="Boolean" column="ProcedureTypeGroupFilterIsEnabled_"/>
       <set name="Values" table="WorklistProcedureTypeGroup_" lazy="true">

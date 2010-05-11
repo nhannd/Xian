@@ -31,8 +31,6 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Core.Modelling;
@@ -214,6 +212,7 @@ namespace ClearCanvas.Healthcare
 
 		private string _name;
 		private string _description;
+		private WorklistProcedureTypeFilter _procedureTypeFilter;
 		private WorklistProcedureTypeGroupFilter _procedureTypeGroupFilter;
 		private WorklistFacilityFilter _facilityFilter;
 		private WorklistDepartmentFilter _departmentFilter;
@@ -238,6 +237,7 @@ namespace ClearCanvas.Healthcare
 			_staffSubscribers = new HashedSet<Staff>();
 			_groupSubscribers = new HashedSet<StaffGroup>();
 
+			_procedureTypeFilter = new WorklistProcedureTypeFilter();
 			_procedureTypeGroupFilter = new WorklistProcedureTypeGroupFilter();
 			_facilityFilter = new WorklistFacilityFilter();
 			_departmentFilter = new WorklistDepartmentFilter();
@@ -343,6 +343,17 @@ namespace ClearCanvas.Healthcare
 		{
 			get { return _groupSubscribers; }
 			protected set { _groupSubscribers = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="WorklistProcedureTypeFilter"/>.
+		/// </summary>
+		[PersistentProperty]
+		[EmbeddedValue]
+		public virtual WorklistProcedureTypeFilter ProcedureTypeFilter
+		{
+			get { return _procedureTypeFilter; }
+			protected set { _procedureTypeFilter = value; }
 		}
 
 		/// <summary>

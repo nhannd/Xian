@@ -280,6 +280,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 					staffGroupAssembler.CreateSummary);
 			}
 
+			var proceduerTypesAssembler = new ProcedureTypeAssembler();
+			response.ProcedureTypeChoices = CollectionUtils.Map<ProcedureType, ProcedureTypeSummary>(
+				this.PersistenceContext.GetBroker<IProcedureTypeBroker>().FindAll(false),
+				proceduerTypesAssembler.CreateSummary);
+
 			return response;
 		}
 

@@ -83,6 +83,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 
 		public WorklistAdminDetail()
 		{
+			this.ProcedureTypes = new List<ProcedureTypeSummary>();
 			this.ProcedureTypeGroups = new List<ProcedureTypeGroupSummary>();
 			this.Facilities = new List<FacilitySummary>();
 			this.Departments = new List<DepartmentSummary>();
@@ -142,6 +143,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 
 		[DataMember]
 		public WorklistClassSummary WorklistClass;
+
+		[DataMember]
+		public List<ProcedureTypeSummary> ProcedureTypes;
 
 		[DataMember]
 		public List<ProcedureTypeGroupSummary> ProcedureTypeGroups;

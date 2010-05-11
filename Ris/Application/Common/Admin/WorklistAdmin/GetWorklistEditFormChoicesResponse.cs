@@ -64,5 +64,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 
 		[DataMember]
 		public List<StaffGroupSummary> OwnerGroupChoices;
+
+		[DataMember]
+		public List<ProcedureTypeSummary> ProcedureTypeChoices;
 	}
 }

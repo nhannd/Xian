@@ -34,35 +34,39 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="SelectorEditorComponent"/>
-    /// </summary>
-    public partial class SelectorEditorComponentControl : ApplicationComponentUserControl
-    {
-        private SelectorEditorComponent _component;
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="SelectorEditorComponent"/>
+	/// </summary>
+	public partial class SelectorEditorComponentControl : ApplicationComponentUserControl
+	{
+		private readonly SelectorEditorComponent _component;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public SelectorEditorComponentControl(SelectorEditorComponent component)
-            :base(component)
-        {
-            InitializeComponent();
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public SelectorEditorComponentControl(SelectorEditorComponent component)
+			:base(component)
+		{
+			InitializeComponent();
 
-            _component = component;
+			_component = component;
 
-            _usersSelector.AvailableItemsTable = _component.AvailableItemsTable;
-            _usersSelector.SelectedItemsTable = _component.SelectedItemsTable;
-            _usersSelector.ItemAdded += OnItemsAddedOrRemoved;
-            _usersSelector.ItemRemoved += OnItemsAddedOrRemoved;
-        	_usersSelector.ReadOnly = _component.IsReadOnly;
+			_usersSelector.AvailableItemsTable = _component.AvailableItemsTable;
+			_usersSelector.SelectedItemsTable = _component.SelectedItemsTable;
+			_usersSelector.ItemAdded += OnItemsAdded;
+			_usersSelector.ItemRemoved += OnItemsRemoved;
+			_usersSelector.ReadOnly = _component.IsReadOnly;
 
-        }
+		}
 
-        private void OnItemsAddedOrRemoved(object sender, EventArgs args)
-        {
-            _component.ItemsAddedOrRemoved();
-        }
+		private void OnItemsAdded(object sender, EventArgs args)
+		{
+			_component.NotifyItemsAdded();
+		}
 
-    }
+		private void OnItemsRemoved(object sender, EventArgs args)
+		{
+			_component.NotifyItemsRemoved();
+		}
+	}
 }

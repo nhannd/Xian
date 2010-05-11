@@ -158,6 +158,28 @@ namespace ClearCanvas.Healthcare
 
 	/// <summary>
 	/// Defines a filter that limits worklist items to procedures that fall into a specified
+	/// set of <see cref="ProcedureType"/>s.
+	/// </summary>
+	public class WorklistProcedureTypeFilter : WorklistMultiValuedFilter<ProcedureType>
+	{
+		/// <summary>
+		/// Applies this filter to the specified criteria object.
+		/// </summary>
+		/// <param name="criteria"></param>
+		/// <param name="wqc"></param>
+		public void Apply(ProcedureTypeSearchCriteria criteria, IWorklistQueryContext wqc)
+		{
+			if (!this.IsEnabled)
+				return;
+
+			var procedureTypes = new List<ProcedureType>();
+			procedureTypes.AddRange(this.Values);
+			criteria.In(CollectionUtils.Unique(procedureTypes));
+		}
+	}
+
+	/// <summary>
+	/// Defines a filter that limits worklist items to procedures that fall into a specified
 	/// set of <see cref="ProcedureTypeGroup"/>s.
 	/// </summary>
 	public class WorklistProcedureTypeGroupFilter : WorklistMultiValuedFilter<ProcedureTypeGroup>

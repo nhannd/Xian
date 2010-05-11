@@ -102,6 +102,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 			detail.OwnerGroup = worklist.Owner.IsGroupOwner ?
 				staffGroupAssembler.CreateSummary(worklist.Owner.Group) : null;
 
+			// proc types
+			var ptAssembler = new ProcedureTypeAssembler();
+			detail.ProcedureTypes = GetFilterSummary(worklist.ProcedureTypeFilter,
+				item => ptAssembler.CreateSummary(item));
+
 			// proc type groups
 			var ptgAssembler = new ProcedureTypeGroupAssembler();
 			detail.ProcedureTypeGroups = GetFilterSummary(worklist.ProcedureTypeGroupFilter,
@@ -185,6 +190,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 			worklist.Description = detail.Description;
 
 			// do not update the worklist.Owner here!!! - once set, it should never be updated
+
+			// procedure types
+			UpdateFilter(worklist.ProcedureTypeFilter, detail.ProcedureTypes,
+				summary => context.Load<ProcedureType>(summary.ProcedureTypeRef, EntityLoadFlags.Proxy));
 
 			// procedure groups
 			UpdateFilter(worklist.ProcedureTypeGroupFilter, detail.ProcedureTypeGroups,

@@ -94,7 +94,6 @@ namespace ClearCanvas.Ris.Client
         /// Constructor
         /// </summary>
         public WorklistFilterEditorComponent(WorklistAdminDetail detail,
-            List<ProcedureTypeGroupSummary> procedureTypeGroupChoices,
             List<FacilitySummary> facilityChoices,
             List<EnumValueInfo> priorityChoices,
             List<EnumValueInfo> patientClassChoices)

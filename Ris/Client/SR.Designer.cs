@@ -439,6 +439,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ID.
+        /// </summary>
+        internal static string ColumnID {
+            get {
+                return ResourceManager.GetString("ColumnID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Imaging Service.
         /// </summary>
         internal static string ColumnImagingService {
@@ -1591,6 +1600,24 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Procedure type and procedure type group cannot both be used for filtering.  Do you want to clear all selected procedure type groups?.
+        /// </summary>
+        internal static string MessageConfirmClearProcedureTypeGroups {
+            get {
+                return ResourceManager.GetString("MessageConfirmClearProcedureTypeGroups", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Procedure type and procedure type group cannot both be used for filtering.  Do you want to clear all selected procedure types?.
+        /// </summary>
+        internal static string MessageConfirmClearProcedureTypes {
+            get {
+                return ResourceManager.GetString("MessageConfirmClearProcedureTypes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete associated user account {0}? If you choose No, you can manually delete the account later..
         /// </summary>
         internal static string MessageConfirmDeleteAssociatedUserAccount {
@@ -2100,6 +2127,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string NodeProcedureTypeGroups {
             get {
                 return ResourceManager.GetString("NodeProcedureTypeGroups", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Procedure Types.
+        /// </summary>
+        internal static string NodeProcedureTypes {
+            get {
+                return ResourceManager.GetString("NodeProcedureTypes", resourceCulture);
             }
         }
         

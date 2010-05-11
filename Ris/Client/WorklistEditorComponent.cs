@@ -55,8 +55,8 @@ namespace ClearCanvas.Ris.Client
 	{
 		public StaffSelectorTable()
 		{
-			this.Columns.Add(new TableColumn<StaffSummary, string>("Name", item => PersonNameFormat.Format(item.Name), 1.0f));
-			this.Columns.Add(new TableColumn<StaffSummary, string>("Role", item => item.StaffType.Value, 0.5f));
+			this.Columns.Add(new TableColumn<StaffSummary, string>(SR.ColumnName, item => PersonNameFormat.Format(item.Name), 1.0f));
+			this.Columns.Add(new TableColumn<StaffSummary, string>(SR.ColumnRole, item => item.StaffType.Value, 0.5f));
 		}
 	}
 
@@ -94,7 +94,22 @@ namespace ClearCanvas.Ris.Client
 		{
 			public StaffGroupTable()
 			{
-				this.Columns.Add(new TableColumn<StaffGroupSummary, string>("Name", item => item.Name, 1.0f));
+				this.Columns.Add(new TableColumn<StaffGroupSummary, string>(SR.ColumnName, item => item.Name, 1.0f));
+			}
+		}
+
+		class ProcedureTypeTable : Table<ProcedureTypeSummary>
+		{
+			public ProcedureTypeTable()
+			{
+				this.Columns.Add(new TableColumn<ProcedureTypeSummary, string>(SR.ColumnName, rpt => string.Format("{0} ({1})", rpt.Name, rpt.Id), 1.0f));
+
+				var invisibleIDColumn = new TableColumn<ProcedureTypeSummary, string>(SR.ColumnID, rpt => rpt.Id, 1.0f)
+					{
+						Visible = false
+					};
+				this.Columns.Add(invisibleIDColumn);
+				this.Sort(new TableSortParams(invisibleIDColumn, true));
 			}
 		}
 
@@ -114,6 +129,7 @@ namespace ClearCanvas.Ris.Client
 		private StaffSelectorEditorComponent _verifiedByFilterComponent;
 		private StaffSelectorEditorComponent _supervisedByFilterComponent;
 		private WorklistTimeWindowEditorComponent _timeWindowComponent;
+		private SelectorEditorComponent<ProcedureTypeSummary, ProcedureTypeTable> _procedureTypeFilterComponent;
 		private SelectorEditorComponent<ProcedureTypeGroupSummary, ProcedureTypeGroupTable> _procedureTypeGroupFilterComponent;
 		private SelectorEditorComponent<DepartmentSummary, DepartmentTable> _departmentFilterComponent;
 		private SelectorEditorComponent<LocationSummary, LocationTable> _locationFilterComponent;
@@ -247,8 +263,11 @@ namespace ClearCanvas.Ris.Client
 
 					// create all other pages
 					_filterComponent = new WorklistFilterEditorComponent(_worklistDetail,
-						procedureTypeGroups, formDataResponse.FacilityChoices, formDataResponse.OrderPriorityChoices,
+						formDataResponse.FacilityChoices, formDataResponse.OrderPriorityChoices,
 						formDataResponse.PatientClassChoices);
+
+					_procedureTypeFilterComponent = new SelectorEditorComponent<ProcedureTypeSummary, ProcedureTypeTable>(
+						formDataResponse.ProcedureTypeChoices, _worklistDetail.ProcedureTypes, s => s.ProcedureTypeRef);
 
 					_procedureTypeGroupFilterComponent = new SelectorEditorComponent<ProcedureTypeGroupSummary, ProcedureTypeGroupTable>(
 						procedureTypeGroups, _worklistDetail.ProcedureTypeGroups, s => s.ProcedureTypeGroupRef);
@@ -290,9 +309,13 @@ namespace ClearCanvas.Ris.Client
 			// add pages
 			this.Pages.Add(new NavigatorPage("NodeWorklist", _detailComponent));
 			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters", _filterComponent));
+			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/NodeProcedureTypes", _procedureTypeFilterComponent));
 			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/NodeProcedureTypeGroups", _procedureTypeGroupFilterComponent));
 			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/NodeDepartments", _departmentFilterComponent));
 			this.Pages.Add(_patientLocationComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodePatientLocations", _locationFilterComponent));
+
+			_procedureTypeFilterComponent.ItemsAdded += OnProcedureTypeAdded;
+			_procedureTypeGroupFilterComponent.ItemsAdded += OnProcedureTypeGroupAdded;
 
 			_interpretedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeInterpretedBy", _interpretedByFilterComponent);
 
@@ -325,6 +348,28 @@ namespace ClearCanvas.Ris.Client
 			{
 				_worklistDetail.EntityRef = null;
 				((WorklistDetailEditorComponent)_detailComponent).Name = _worklistDetail.Name + " copy";
+			}
+		}
+
+		private void OnProcedureTypeAdded(object sender, EventArgs e)
+		{
+			// Only either one of Procedure Type or Procedure Type Group can be used for filtering, but not both.
+			// If there are existing procedure type groups, ask user to clear them when a procedure type is added.
+			if (_procedureTypeGroupFilterComponent.SelectedItems.Count > 0 &&
+				DialogBoxAction.Yes == this.Host.ShowMessageBox(SR.MessageConfirmClearProcedureTypeGroups, MessageBoxActions.YesNo))
+			{
+				_procedureTypeGroupFilterComponent.SelectedItemsTable.Items.Clear();
+			}
+		}
+
+		private void OnProcedureTypeGroupAdded(object sender, EventArgs e)
+		{
+			// Only either one of Procedure Type or Procedure Type Group can be used for filtering, but not both.
+			// If there are existing procedure types, ask user to clear them when a procedure type group is added.
+			if (_procedureTypeFilterComponent.SelectedItems.Count > 0 &&
+				DialogBoxAction.Yes == this.Host.ShowMessageBox(SR.MessageConfirmClearProcedureTypes, MessageBoxActions.YesNo))
+			{
+				_procedureTypeFilterComponent.SelectedItemsTable.Items.Clear();
 			}
 		}
 
@@ -531,6 +576,9 @@ namespace ClearCanvas.Ris.Client
 
 			if (ShowTimeFilterPage && _timeWindowComponent.IsStarted)
 				_timeWindowComponent.SaveData();
+
+			if (_procedureTypeFilterComponent.IsStarted)
+				_worklistDetail.ProcedureTypes = new List<ProcedureTypeSummary>(_procedureTypeFilterComponent.SelectedItems);
 
 			if (_procedureTypeGroupFilterComponent.IsStarted)
 				_worklistDetail.ProcedureTypeGroups = new List<ProcedureTypeGroupSummary>(_procedureTypeGroupFilterComponent.SelectedItems);
