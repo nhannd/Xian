@@ -154,7 +154,7 @@
     <Compile Include="RegistrationWorkflowFolderSystem.cs" />
     <Compile Include="RegistrationWorkflowFolderSystemBase.cs" />
     <Compile Include="RegistrationWorkflowTool.cs" />
-    <Compile Include="RegistrationWorklistTable.cs" />
+    <Compile Include="WorklistItemTable.cs" />
     <Compile Include="ReplaceOrderTool.cs" />
     <Compile Include="ReportDocument.cs" />
     <Compile Include="ReportEditorComponent.cs" />
@@ -172,7 +172,6 @@
     <Compile Include="ReportingWorkflowFolderSystemBase.cs" />
     <Compile Include="ReportingWorkflowItemTool.cs" />
     <Compile Include="ReportingWorkflowTools.cs" />
-    <Compile Include="ReportingWorklistTable.cs" />
     <Compile Include="ResubmitProtocolTool.cs" />
     <Compile Include="ReviseReportTool.cs" />
     <Compile Include="SR.Designer.cs">
@@ -194,7 +193,6 @@
     <Compile Include="PerformingWorkflowFolder.cs" />
     <Compile Include="PerformingWorkflowFolderSystem.cs" />
     <Compile Include="PerformingWorkflowFolderSystemBase.cs" />
-    <Compile Include="PerformingWorklistTable.cs" />
     <Compile Include="WorkflowHistoryTool.cs" />
     <Compile Include="WorklistItemManager.cs" />
     <Compile Include="WorklistItemManagerSettings.cs" />

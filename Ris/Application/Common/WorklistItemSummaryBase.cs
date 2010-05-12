@@ -35,84 +35,84 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common
 {
-    [DataContract]
-    public class WorklistItemSummaryBase : DataContractBase, IVersionedEquatable<WorklistItemSummaryBase>
-    {
-        public WorklistItemSummaryBase(
-            EntityRef procedureStepRef,
-            EntityRef procedureRef,
-            EntityRef orderRef,
-            EntityRef patientRef,
-            EntityRef profileRef,
-            CompositeIdentifierDetail mrn,
-            PersonNameDetail name,
-            string accessionNumber,
-            EnumValueInfo orderPriority,
-            EnumValueInfo patientClass,
-            string diagnosticServiceName,
-            string procedureName,
+	[DataContract]
+	public class WorklistItemSummaryBase : DataContractBase, IVersionedEquatable<WorklistItemSummaryBase>
+	{
+		public WorklistItemSummaryBase(
+			EntityRef procedureStepRef,
+			EntityRef procedureRef,
+			EntityRef orderRef,
+			EntityRef patientRef,
+			EntityRef profileRef,
+			CompositeIdentifierDetail mrn,
+			PersonNameDetail name,
+			string accessionNumber,
+			EnumValueInfo orderPriority,
+			EnumValueInfo patientClass,
+			string diagnosticServiceName,
+			string procedureName,
 			bool procedurePortable,
 			EnumValueInfo procedureLaterality,
-            string procedureStepName,
-            DateTime? time)
-        {
-            this.ProcedureStepRef = procedureStepRef;
-            this.ProcedureRef = procedureRef;
-            this.OrderRef = orderRef;
-            this.PatientRef = patientRef;
-            this.PatientProfileRef = profileRef;
-            this.Mrn = mrn;
-            this.PatientName = name;
-            this.AccessionNumber = accessionNumber;
-            this.OrderPriority = orderPriority;
-            this.PatientClass = patientClass;
-            this.DiagnosticServiceName = diagnosticServiceName;
-            this.ProcedureName = procedureName;
-        	this.ProcedurePortable = procedurePortable;
-        	this.ProcedureLaterality = procedureLaterality;
-            this.ProcedureStepName = procedureStepName;
-            this.Time = time;
-        }
+			string procedureStepName,
+			DateTime? time)
+		{
+			this.ProcedureStepRef = procedureStepRef;
+			this.ProcedureRef = procedureRef;
+			this.OrderRef = orderRef;
+			this.PatientRef = patientRef;
+			this.PatientProfileRef = profileRef;
+			this.Mrn = mrn;
+			this.PatientName = name;
+			this.AccessionNumber = accessionNumber;
+			this.OrderPriority = orderPriority;
+			this.PatientClass = patientClass;
+			this.DiagnosticServiceName = diagnosticServiceName;
+			this.ProcedureName = procedureName;
+			this.ProcedurePortable = procedurePortable;
+			this.ProcedureLaterality = procedureLaterality;
+			this.ProcedureStepName = procedureStepName;
+			this.Time = time;
+		}
 
 		public WorklistItemSummaryBase()
 		{
 		}
 
-        [DataMember]
-        public EntityRef ProcedureStepRef;
+		[DataMember]
+		public EntityRef ProcedureStepRef;
 
-        [DataMember]
-        public EntityRef ProcedureRef;
+		[DataMember]
+		public EntityRef ProcedureRef;
 
-        [DataMember]
-        public EntityRef OrderRef;
+		[DataMember]
+		public EntityRef OrderRef;
 
-        [DataMember]
-        public EntityRef PatientRef;
+		[DataMember]
+		public EntityRef PatientRef;
 
-        [DataMember]
-        public EntityRef PatientProfileRef;
+		[DataMember]
+		public EntityRef PatientProfileRef;
 
-        [DataMember]
-        public CompositeIdentifierDetail Mrn;
+		[DataMember]
+		public CompositeIdentifierDetail Mrn;
 
-        [DataMember]
-        public PersonNameDetail PatientName;
+		[DataMember]
+		public PersonNameDetail PatientName;
 
-        [DataMember]
-        public string AccessionNumber;
+		[DataMember]
+		public string AccessionNumber;
 
-        [DataMember]
-        public EnumValueInfo OrderPriority;
+		[DataMember]
+		public EnumValueInfo OrderPriority;
 
-        [DataMember]
-        public EnumValueInfo PatientClass;
+		[DataMember]
+		public EnumValueInfo PatientClass;
 
-        [DataMember]
-        public string DiagnosticServiceName;
+		[DataMember]
+		public string DiagnosticServiceName;
 
-        [DataMember]
-        public string ProcedureName;
+		[DataMember]
+		public string ProcedureName;
 
 		[DataMember]
 		public bool ProcedurePortable;
@@ -121,45 +121,45 @@ namespace ClearCanvas.Ris.Application.Common
 		public EnumValueInfo ProcedureLaterality;
 
 		[DataMember]
-        public string ProcedureStepName;
+		public string ProcedureStepName;
 
-        [DataMember]
-        public DateTime? Time;
+		[DataMember]
+		public DateTime? Time;
 
 		/// <summary>
 		/// Implements equality based on all entity-refs, and is version-sensitive.
 		/// </summary>
 		/// <param name="worklistItemSummaryBase"></param>
 		/// <returns></returns>
-    	public bool Equals(WorklistItemSummaryBase worklistItemSummaryBase)
-    	{
+		public bool Equals(WorklistItemSummaryBase worklistItemSummaryBase)
+		{
 			return Equals(worklistItemSummaryBase, false);
-    	}
+		}
 
 		/// <summary>
 		/// Overridden to provide equality based on all entity-refs.
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-    	public override bool Equals(object obj)
-    	{
-    		if (ReferenceEquals(this, obj)) return true;
-    		return Equals(obj as WorklistItemSummaryBase);
-    	}
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(this, obj)) return true;
+			return Equals(obj as WorklistItemSummaryBase);
+		}
 
 		/// <summary>
 		/// Overridden to provide hash-code based on all entity refs.
 		/// </summary>
 		/// <returns></returns>
-    	public override int GetHashCode()
-    	{
-    		int result = ProcedureStepRef != null ? ProcedureStepRef.GetHashCode() : 0;
-    		result = 29*result + (ProcedureRef != null ? ProcedureRef.GetHashCode() : 0);
-    		result = 29*result + (OrderRef != null ? OrderRef.GetHashCode() : 0);
-    		result = 29*result + PatientRef.GetHashCode();
-    		result = 29*result + PatientProfileRef.GetHashCode();
-    		return result;
-    	}
+		public override int GetHashCode()
+		{
+			var result = ProcedureStepRef != null ? ProcedureStepRef.GetHashCode() : 0;
+			result = 29 * result + (ProcedureRef != null ? ProcedureRef.GetHashCode() : 0);
+			result = 29 * result + (OrderRef != null ? OrderRef.GetHashCode() : 0);
+			result = 29 * result + PatientRef.GetHashCode();
+			result = 29 * result + PatientProfileRef.GetHashCode();
+			return result;
+		}
 
 		#region IVersionedEquatable<WorklistItemSummaryBase> Members
 
