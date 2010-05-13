@@ -327,7 +327,7 @@ namespace ClearCanvas.Healthcare
 		public virtual Procedure CreatePlaceHolder(ProcedureStatus resultStatus)
 		{
 			return new Procedure(this.Order, this.Type, this.Index, new HashedSet<ProcedureStep>(),
-								this.ScheduledStartTime, this.StartTime, this.EndTime, resultStatus,
+								this.ScheduledStartTime, this.SchedulingCode, this.StartTime, this.EndTime, resultStatus,
 								this.PerformingFacility, this.PerformingDepartment,
 								this.Laterality, this.Portable, this.ProcedureCheckIn, this.ImageAvailability,
 								this.DowntimeRecoveryMode,

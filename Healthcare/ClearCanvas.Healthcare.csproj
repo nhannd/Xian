@@ -409,6 +409,9 @@
     <EmbeddedResource Include="DicomModalityEnum.enum.xml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="SchedulingCodeEnum.enum.xml" />
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="Workflow\Modality\Tests\" />
     <Folder Include="Workflow\Protocolling\Tests\" />
     <Folder Include="Workflow\Registration\Tests\" />
