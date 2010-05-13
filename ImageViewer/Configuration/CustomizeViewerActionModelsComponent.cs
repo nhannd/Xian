@@ -50,8 +50,8 @@ namespace ClearCanvas.ImageViewer.Configuration
 		private readonly TabComponentContainer _tabComponent;
 		private readonly IImageViewer _imageViewer;
 		private readonly NodePropertiesValidationPolicy _validationPolicy;
-		private readonly Dictionary<XKeys, string> _keyStrokeMap;
-		private readonly Dictionary<XMouseButtons, string> _initialMouseToolsMap;
+		private readonly AssignmentMap<XKeys> _keyStrokeMap;
+		private readonly AssignmentMap<XMouseButtons> _initialMouseToolsMap;
 		private readonly MultiValuedDictionary<XMouseButtons, string> _mouseButtonMap;
 		private readonly MultiValuedDictionary<string, AbstractActionModelTreeLeafAction> _actionMap;
 		private bool _updatingKeyStrokes = false;
@@ -60,8 +60,8 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
 			_imageViewer = imageViewer;
 
-			_keyStrokeMap = new Dictionary<XKeys, string>();
-			_initialMouseToolsMap = new Dictionary<XMouseButtons, string>(5);
+			_keyStrokeMap = new AssignmentMap<XKeys>();
+			_initialMouseToolsMap = new AssignmentMap<XMouseButtons>();
 			_mouseButtonMap = new MultiValuedDictionary<XMouseButtons, string>(5);
 			_actionMap = new MultiValuedDictionary<string, AbstractActionModelTreeLeafAction>();
 
@@ -121,7 +121,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 				return false;
 
 			// check for other assignments to the same key stroke and confirm the action if there are pre-existing assignments
-			if (_keyStrokeMap.ContainsKey(keys) && _keyStrokeMap[keys] != node.ActionId)
+			if (_keyStrokeMap.IsAssignedToOther(keys, node.ActionId))
 			{
 				IList<AbstractActionModelTreeLeafAction> actions = _actionMap[_keyStrokeMap[keys]];
 				if (actions.Count > 0)
@@ -145,7 +145,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			try
 			{
 				// unassign the key stroke from the old actions if it has previously been assigned to something else
-				if (keys != XKeys.None && _keyStrokeMap.ContainsKey(keys) && _keyStrokeMap[keys] != node.ActionId)
+				if (keys != XKeys.None && _keyStrokeMap.IsAssignedToOther(keys, node.ActionId))
 				{
 					foreach (AbstractActionModelTreeLeafAction action in  _actionMap[_keyStrokeMap[keys]])
 					{
@@ -185,7 +185,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 					return;
 
 				// if the tool was originally the initial tool for this button, remove it
-				if (GetValue(_initialMouseToolsMap, oldMouseButton, string.Empty) == node.ActionId)
+				if (_initialMouseToolsMap.IsAssignedToMe(oldMouseButton, node.ActionId))
 					_initialMouseToolsMap[oldMouseButton] = string.Empty;
 
 				// unassign the tool from the mouse button
@@ -211,7 +211,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			var mouseButton = _mouseButtonMap.FindKey(node.ActionId, XMouseButtons.Left);
 
 			// check for presence of another initial tool for this button
-			if (initiallyActive && GetValue(_initialMouseToolsMap, mouseButton, node.ActionId) != node.ActionId)
+			if (initiallyActive && _initialMouseToolsMap.IsAssignedToOther(mouseButton, node.ActionId))
 			{
 				IList<AbstractActionModelTreeLeafAction> actions = _actionMap[_initialMouseToolsMap[mouseButton]];
 				if (actions.Count > 0)
@@ -238,7 +238,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 				var mouseButton = _mouseButtonMap.FindKey(node.ActionId, XMouseButtons.Left);
 
 				// check if updating this value actually causes a change
-				var oldInitiallyActive = GetValue(_initialMouseToolsMap, mouseButton, string.Empty) == node.ActionId;
+				var oldInitiallyActive = _initialMouseToolsMap.IsAssignedToMe(mouseButton, node.ActionId);
 				if (oldInitiallyActive == initiallyActive)
 					return;
 
@@ -307,7 +307,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 					{
 						var setting = toolProfile.GetEntryByActivationActionId(actionId);
 						setting.MouseButton = pair.Key;
-						setting.InitiallyActive = GetValue(_initialMouseToolsMap, pair.Key, string.Empty) == actionId;
+						setting.InitiallyActive = _initialMouseToolsMap.IsAssignedToMe(pair.Key, actionId);
 					}
 				}
 			}
@@ -388,10 +388,10 @@ namespace ClearCanvas.ImageViewer.Configuration
 						AbstractActionModelTreeLeafClickAction clickActionNode = (AbstractActionModelTreeLeafClickAction) node;
 						if (clickActionNode.KeyStroke != XKeys.None)
 						{
-							if (_owner._keyStrokeMap.ContainsKey(clickActionNode.KeyStroke))
+							if (_owner._keyStrokeMap.IsAssignedToOther(clickActionNode.KeyStroke, clickActionNode.ActionId))
 								clickActionNode.KeyStroke = XKeys.None;
 							else
-								_owner._keyStrokeMap.Add(clickActionNode.KeyStroke, clickActionNode.ActionId);
+								_owner._keyStrokeMap[clickActionNode.KeyStroke]= clickActionNode.ActionId;
 						}
 					}
 
@@ -403,7 +403,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 						{
 							if (mouseToolSetting.InitiallyActive.GetValueOrDefault(false))
 							{
-								if (GetValue(_owner._initialMouseToolsMap, mouseButtonValue, node.ActionId) != node.ActionId)
+								if (_owner._initialMouseToolsMap.IsAssignedToOther(mouseButtonValue, node.ActionId))
 									mouseToolSetting.InitiallyActive = false;
 								else
 									_owner._initialMouseToolsMap[mouseButtonValue] = node.ActionId;
@@ -461,7 +461,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 						var activeMouseButtons = _owner._mouseButtonMap.FindKey(actionId, XMouseButtons.Left);
 						var globalMouseButtons = XMouseButtons.None;
 						var globalModifiers = ModifierFlags.None;
-						var initiallyActive = GetValue(_owner._initialMouseToolsMap, activeMouseButtons, string.Empty) == actionId;
+						var initiallyActive = _owner._initialMouseToolsMap.IsAssignedToMe(activeMouseButtons, actionId);
 						yield return new MouseImageViewerToolPropertyComponent(node,
 						                                                       activeMouseButtons,
 						                                                       globalMouseButtons,
@@ -469,6 +469,50 @@ namespace ClearCanvas.ImageViewer.Configuration
 						                                                       initiallyActive);
 					}
 				}
+			}
+		}
+
+		/// <summary>
+		/// Convenience class since mapping any of the assignments consist of the same operations
+		/// </summary>
+		/// <typeparam name="TKey"></typeparam>
+		private class AssignmentMap<TKey>
+		{
+			private readonly Dictionary<TKey, string> _dictionary = new Dictionary<TKey, string>();
+
+			public string this[TKey key]
+			{
+				get
+				{
+					string actionId;
+					if (_dictionary.TryGetValue(key, out actionId))
+						return actionId;
+					return string.Empty;
+				}
+				set
+				{
+					if (!string.IsNullOrEmpty(value))
+						_dictionary[key] = value;
+					else
+						_dictionary.Remove(key);
+				}
+			}
+
+			public bool IsAssignedToMe(TKey key, string actionId)
+			{
+				Platform.CheckForEmptyString(actionId, "actionId");
+				return _dictionary.ContainsKey(key) && _dictionary[key] == actionId;
+			}
+
+			public bool IsAssignedToOther(TKey key, string actionId)
+			{
+				Platform.CheckForEmptyString(actionId, "actionId");
+				return _dictionary.ContainsKey(key) && _dictionary[key] != actionId;
+			}
+
+			public bool IsAssigned(TKey key)
+			{
+				return _dictionary.ContainsKey(key);
 			}
 		}
 	}
