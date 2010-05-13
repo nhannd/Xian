@@ -243,6 +243,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The initial tool for {0} has already been assigned to {1}. Do you wish to reassign the mouse button?.
+        /// </summary>
+        internal static string MessageMouseButtonInitialToolAlreadyAssigned {
+            get {
+                return ResourceManager.GetString("MessageMouseButtonInitialToolAlreadyAssigned", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No servers have been selected.  Please select at least one server and try again..
         /// </summary>
         internal static string MessageNoServersSelected {

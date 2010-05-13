@@ -49,28 +49,32 @@ namespace ClearCanvas.ImageViewer.Configuration
 		private readonly ContainedComponentHost _tabComponentHost;
 		private readonly TabComponentContainer _tabComponent;
 		private readonly IImageViewer _imageViewer;
-		private readonly MouseToolSettingsProfile _toolProfile;
 		private readonly NodePropertiesValidationPolicy _validationPolicy;
 		private readonly Dictionary<XKeys, string> _keyStrokeMap;
-		private readonly Dictionary<string, List<AbstractActionModelTreeLeafAction>> _actionMap;
+		private readonly Dictionary<XMouseButtons, string> _initialMouseToolsMap;
+		private readonly MultiValuedDictionary<XMouseButtons, string> _mouseButtonMap;
+		private readonly MultiValuedDictionary<string, AbstractActionModelTreeLeafAction> _actionMap;
 		private bool _updatingKeyStrokes = false;
 
 		public CustomizeViewerActionModelsComponent(IImageViewer imageViewer)
 		{
 			_imageViewer = imageViewer;
-			_toolProfile = MouseToolSettingsProfile.Current.Clone();
 
 			_keyStrokeMap = new Dictionary<XKeys, string>();
-			_actionMap = new Dictionary<string, List<AbstractActionModelTreeLeafAction>>();
+			_initialMouseToolsMap = new Dictionary<XMouseButtons, string>(5);
+			_mouseButtonMap = new MultiValuedDictionary<XMouseButtons, string>(5);
+			_actionMap = new MultiValuedDictionary<string, AbstractActionModelTreeLeafAction>();
 
 			NodePropertiesValidationPolicy validationPolicy = new NodePropertiesValidationPolicy();
 			validationPolicy.AddRule<AbstractActionModelTreeLeafAction>("CheckState", (n, value) => n.ActionId != typeof (CustomizeViewerActionModelTool).FullName + ":customize" || Equals(value, CheckState.Checked));
 			validationPolicy.AddRule<AbstractActionModelTreeLeafAction>("CheckState", (n, value) => n.ActionId != "ClearCanvas.Desktop.Configuration.Tools.OptionsTool:show" || Equals(value, CheckState.Checked));
-			validationPolicy.AddRule<AbstractActionModelTreeLeafClickAction>("KeyStroke", this.ValidateClickActionKeyStroke);
+			validationPolicy.AddRule<AbstractActionModelTreeLeafAction>("ActiveMouseButtons", (n, value) => !Equals(value, XMouseButtons.None));
+			validationPolicy.AddRule<AbstractActionModelTreeLeafClickAction, XKeys>("KeyStroke", this.ValidateClickActionKeyStroke);
+			validationPolicy.AddRule<AbstractActionModelTreeLeafAction, bool>("InitiallyActive", this.ValidateMouseToolInitiallyActive);
 			_validationPolicy = validationPolicy;
 
 			_tabComponent = new TabComponentContainer();
-			_tabComponent.CurrentPageChanged += new EventHandler(OnTabComponentCurrentPageChanged);
+			_tabComponent.CurrentPageChanged += OnTabComponentCurrentPageChanged;
 
 			_tabComponent.Pages.Add(new TabPage(SR.LabelToolbar, new ImageViewerActionModelConfigurationComponent(
 			                                                     	_imageViewer.GlobalActionsNamespace,
@@ -90,13 +94,19 @@ namespace ClearCanvas.ImageViewer.Configuration
 			_tabComponentHost = new ContainedComponentHost(this, _tabComponent);
 		}
 
-		private bool ValidateClickActionKeyStroke(AbstractActionModelTreeLeafClickAction node, object value)
+		private static TValue GetValue<TKey, TValue>(IDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue)
+		{
+			TValue value;
+			if (dictionary.TryGetValue(key, out value))
+				return value;
+			return defaultValue;
+		}
+
+		private bool ValidateClickActionKeyStroke(AbstractActionModelTreeLeafClickAction node, XKeys keys)
 		{
 			// if we're just synchronizing key strokes due to another key stroke set action, short the validation request
 			if (_updatingKeyStrokes)
 				return true;
-
-			XKeys keys = (XKeys) value;
 
 			// if the key stroke is the empty value, it is always allowed
 			if (keys == XKeys.None)
@@ -113,7 +123,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			// check for other assignments to the same key stroke and confirm the action if there are pre-existing assignments
 			if (_keyStrokeMap.ContainsKey(keys) && _keyStrokeMap[keys] != node.ActionId)
 			{
-				List<AbstractActionModelTreeLeafAction> actions = _actionMap[_keyStrokeMap[keys]];
+				IList<AbstractActionModelTreeLeafAction> actions = _actionMap[_keyStrokeMap[keys]];
 				if (actions.Count > 0)
 				{
 					string message = string.Format(SR.MessageKeyStrokeAlreadyAssigned, XKeysConverter.Format(keys), actions[0].Label);
@@ -154,6 +164,86 @@ namespace ClearCanvas.ImageViewer.Configuration
 				// update the key stroke map
 				if (keys != XKeys.None)
 					_keyStrokeMap[keys] = node.ActionId;
+			}
+			finally
+			{
+				_updatingKeyStrokes = false;
+			}
+		}
+
+		private void UpdateMouseToolMouseButton(AbstractActionModelTreeLeafAction node, XMouseButtons mouseButton)
+		{
+			if (_updatingKeyStrokes)
+				return;
+
+			_updatingKeyStrokes = true;
+			try
+			{
+				// find the original mouse button to which the tool was assigned
+				var oldMouseButton = _mouseButtonMap.FindKey(node.ActionId, XMouseButtons.Left);
+				if (oldMouseButton == mouseButton)
+					return;
+
+				// if the tool was originally the initial tool for this button, remove it
+				if (GetValue(_initialMouseToolsMap, oldMouseButton, string.Empty) == node.ActionId)
+					_initialMouseToolsMap[oldMouseButton] = string.Empty;
+
+				// unassign the tool from the mouse button
+				_mouseButtonMap.Remove(oldMouseButton, node.ActionId);
+
+				// update the mouse button map
+				if (mouseButton != XMouseButtons.None && !_mouseButtonMap[mouseButton].Contains(node.ActionId))
+					_mouseButtonMap.Add(mouseButton, node.ActionId);
+			}
+			finally
+			{
+				_updatingKeyStrokes = false;
+			}
+		}
+
+		private bool ValidateMouseToolInitiallyActive(AbstractActionModelTreeLeafAction node, bool initiallyActive)
+		{
+			// if we're just synchronizing the value due to another update action, short the validation request
+			if (_updatingKeyStrokes)
+				return true;
+
+			// find the mouse button to which this tool is assigned
+			var mouseButton = _mouseButtonMap.FindKey(node.ActionId, XMouseButtons.Left);
+
+			// check for presence of another initial tool for this button
+			if (initiallyActive && GetValue(_initialMouseToolsMap, mouseButton, node.ActionId) != node.ActionId)
+			{
+				IList<AbstractActionModelTreeLeafAction> actions = _actionMap[_initialMouseToolsMap[mouseButton]];
+				if (actions.Count > 0)
+				{
+					string message = string.Format(SR.MessageMouseButtonInitialToolAlreadyAssigned, XMouseButtonsConverter.Format(mouseButton), actions[0].Label);
+					DialogBoxAction result = base.Host.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo);
+					if (result != DialogBoxAction.Yes)
+						return false;
+				}
+			}
+
+			return true;
+		}
+
+		private void UpdateMouseToolInitiallyActive(AbstractActionModelTreeLeafAction node, bool initiallyActive)
+		{
+			if (_updatingKeyStrokes)
+				return;
+
+			_updatingKeyStrokes = true;
+			try
+			{
+				// find the mouse button to which this tool is assigned
+				var mouseButton = _mouseButtonMap.FindKey(node.ActionId, XMouseButtons.Left);
+
+				// check if updating this value actually causes a change
+				var oldInitiallyActive = GetValue(_initialMouseToolsMap, mouseButton, string.Empty) == node.ActionId;
+				if (oldInitiallyActive == initiallyActive)
+					return;
+
+				// update the initial tool map
+				_initialMouseToolsMap[mouseButton] = initiallyActive ? node.ActionId : string.Empty;
 			}
 			finally
 			{
@@ -208,7 +298,20 @@ namespace ClearCanvas.ImageViewer.Configuration
 				ExceptionHandler.Report(ex, this.Host.DesktopWindow);
 			}
 
-			MouseToolSettingsProfile.Current = _toolProfile;
+			MouseToolSettingsProfile toolProfile = MouseToolSettingsProfile.Current.Clone();
+			foreach (KeyValuePair<XMouseButtons, IEnumerable<string>> pair in _mouseButtonMap)
+			{
+				foreach (string actionId in pair.Value)
+				{
+					if (toolProfile.HasEntryByActivationActionId(actionId))
+					{
+						var setting = toolProfile.GetEntryByActivationActionId(actionId);
+						setting.MouseButton = pair.Key;
+						setting.InitiallyActive = GetValue(_initialMouseToolsMap, pair.Key, string.Empty) == actionId;
+					}
+				}
+			}
+			MouseToolSettingsProfile.Current = toolProfile;
 			MouseToolSettingsProfile.SaveCurrentAsDefault();
 
 			base.Exit(ApplicationComponentExitCode.Accepted);
@@ -265,11 +368,15 @@ namespace ClearCanvas.ImageViewer.Configuration
 		private class ImageViewerActionModelConfigurationComponent : ActionModelConfigurationComponent
 		{
 			private readonly CustomizeViewerActionModelsComponent _owner;
+			private readonly MouseToolSettingsProfile _toolProfile;
 
 			public ImageViewerActionModelConfigurationComponent(string @namespace, string site, CustomizeViewerActionModelsComponent owner)
 				: base(@namespace, site, owner._imageViewer.ExportedActions, owner._imageViewer.DesktopWindow, site == "global-toolbars")
 			{
 				_owner = owner;
+
+				// just keep a single copy of it for a consistent startup state - we don't store the unsaved changes in here
+				_toolProfile = MouseToolSettingsProfile.Current.Clone();
 
 				this.ValidationPolicy = _owner._validationPolicy;
 
@@ -282,23 +389,33 @@ namespace ClearCanvas.ImageViewer.Configuration
 						if (clickActionNode.KeyStroke != XKeys.None)
 						{
 							if (_owner._keyStrokeMap.ContainsKey(clickActionNode.KeyStroke))
-							{
 								clickActionNode.KeyStroke = XKeys.None;
-							}
 							else
-							{
 								_owner._keyStrokeMap.Add(clickActionNode.KeyStroke, clickActionNode.ActionId);
+						}
+					}
+
+					if (_toolProfile.HasEntryByActivationActionId(node.ActionId))
+					{
+						var mouseToolSetting = _toolProfile.GetEntryByActivationActionId(node.ActionId);
+						var mouseButtonValue = mouseToolSetting.MouseButton.GetValueOrDefault(XMouseButtons.Left);
+						if (mouseButtonValue != XMouseButtons.None)
+						{
+							if (mouseToolSetting.InitiallyActive.GetValueOrDefault(false))
+							{
+								if (GetValue(_owner._initialMouseToolsMap, mouseButtonValue, node.ActionId) != node.ActionId)
+									mouseToolSetting.InitiallyActive = false;
+								else
+									_owner._initialMouseToolsMap[mouseButtonValue] = node.ActionId;
 							}
+							if (!_owner._mouseButtonMap[mouseButtonValue].Contains(node.ActionId))
+								_owner._mouseButtonMap.Add(mouseButtonValue, node.ActionId);
 						}
 					}
 				}
 
 				foreach (string actionId in base.ActionNodeMap.ActionIds)
-				{
-					if (!_owner._actionMap.ContainsKey(actionId))
-						_owner._actionMap.Add(actionId, new List<AbstractActionModelTreeLeafAction>());
-					_owner._actionMap[actionId].AddRange(base.ActionNodeMap[actionId]);
-				}
+					_owner._actionMap.AddRange(actionId, base.ActionNodeMap[actionId]);
 			}
 
 			public void ResetNodeProperties()
@@ -314,6 +431,19 @@ namespace ClearCanvas.ImageViewer.Configuration
 				{
 					_owner.UpdateClickActionKeyStroke((AbstractActionModelTreeLeafClickAction) node, (XKeys) value);
 				}
+
+				if (node is AbstractActionModelTreeLeafAction)
+				{
+					AbstractActionModelTreeLeafAction actionNode = (AbstractActionModelTreeLeafAction) node;
+					if (propertyName == "InitiallyActive")
+					{
+						_owner.UpdateMouseToolInitiallyActive(actionNode, (bool) value);
+					}
+					else if (propertyName == "ActiveMouseButtons")
+					{
+						_owner.UpdateMouseToolMouseButton(actionNode, (XMouseButtons) value);
+					}
+				}
 			}
 
 			protected override IEnumerable<NodePropertiesComponent> CreateNodePropertiesComponents(AbstractActionModelTreeNode node)
@@ -326,9 +456,17 @@ namespace ClearCanvas.ImageViewer.Configuration
 				if (node is AbstractActionModelTreeLeafClickAction)
 				{
 					string actionId = ((AbstractActionModelTreeLeafClickAction) node).ActionId;
-					if (_owner._toolProfile.IsRegisteredMouseToolActivationAction(actionId))
+					if (_toolProfile.IsRegisteredMouseToolActivationAction(actionId))
 					{
-						yield return new MouseImageViewerToolPropertyComponent((AbstractActionModelTreeLeafClickAction) node, _owner._toolProfile);
+						var activeMouseButtons = _owner._mouseButtonMap.FindKey(actionId, XMouseButtons.Left);
+						var globalMouseButtons = XMouseButtons.None;
+						var globalModifiers = ModifierFlags.None;
+						var initiallyActive = GetValue(_owner._initialMouseToolsMap, activeMouseButtons, string.Empty) == actionId;
+						yield return new MouseImageViewerToolPropertyComponent(node,
+						                                                       activeMouseButtons,
+						                                                       globalMouseButtons,
+						                                                       globalModifiers,
+						                                                       initiallyActive);
 					}
 				}
 			}

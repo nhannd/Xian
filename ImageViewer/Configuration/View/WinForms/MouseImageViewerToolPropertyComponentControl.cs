@@ -45,6 +45,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			_chkInitiallySelected.DataBindings.Add("Checked", component, "InitiallyActive", false, DataSourceUpdateMode.OnPropertyChanged);
 
 			_cboActiveMouseButtons.Format += OnCboActiveMouseButtonsFormat;
+			_cboActiveMouseButtons.SelectedIndexChanged += OnComboBoxSelectedItemChangedUpdate;
 			_cboActiveMouseButtons.Items.Add(XMouseButtons.Left);
 			_cboActiveMouseButtons.Items.Add(XMouseButtons.Right);
 			_cboActiveMouseButtons.Items.Add(XMouseButtons.Middle);
@@ -54,6 +55,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			_cboActiveMouseButtons.DataBindings.Add("SelectedItem", component, "ActiveMouseButtons", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_cboGlobalMouseButtons.Format += OnCboActiveMouseButtonsFormat;
+			_cboGlobalMouseButtons.SelectedIndexChanged += OnComboBoxSelectedItemChangedUpdate;
 			_cboGlobalMouseButtons.Items.Add(XMouseButtons.None);
 			_cboGlobalMouseButtons.Items.Add(XMouseButtons.Left);
 			_cboGlobalMouseButtons.Items.Add(XMouseButtons.Right);
@@ -69,6 +71,18 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			_chkGlobalModifiers.DataBindings.Add(keyModifierBinding);
 		}
 
+		private static void OnComboBoxSelectedItemChangedUpdate(object sender, EventArgs e)
+		{
+			var comboBox = sender as ComboBox;
+			if (comboBox != null)
+			{
+				// someone needs to explain why data binding SelectedItem on property change doesn't work out of the box
+				var binding = comboBox.DataBindings["SelectedItem"];
+				if (binding != null && binding.DataSourceUpdateMode == DataSourceUpdateMode.OnPropertyChanged)
+					binding.WriteValue();
+			}
+		}
+
 		private static void OnCboActiveMouseButtonsFormat(object sender, ListControlConvertEventArgs e)
 		{
 			if (e.DesiredType == typeof (string))
@@ -79,7 +93,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
 		private static void OnKeyModifierBindingConvert(object sender, ConvertEventArgs e)
 		{
-			if (e.DesiredType == typeof (ModifierFlags))
+			if (e.Value is XKeys && e.DesiredType == typeof (ModifierFlags))
 			{
 				ModifierFlags result = ModifierFlags.None;
 				XKeys value = (XKeys) e.Value;
@@ -91,7 +105,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 					result = result | ModifierFlags.Shift;
 				e.Value = result;
 			}
-			else if (e.DesiredType == typeof (XKeys))
+			else if (e.Value is ModifierFlags && e.DesiredType == typeof (XKeys))
 			{
 				XKeys result = XKeys.None;
 				ModifierFlags value = (ModifierFlags) e.Value;

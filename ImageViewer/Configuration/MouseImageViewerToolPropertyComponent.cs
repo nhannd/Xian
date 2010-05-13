@@ -32,7 +32,6 @@
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration.ActionModel;
-using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
@@ -42,32 +41,18 @@ namespace ClearCanvas.ImageViewer.Configuration
 	[AssociateView(typeof (MouseImageViewerToolPropertyComponentViewExtensionPoint))]
 	public class MouseImageViewerToolPropertyComponent : NodePropertiesComponent
 	{
-		private readonly MouseToolSettingsProfile _toolProfile;
-		private readonly string _actionId;
-
 		private XMouseButtons _activeMouseButtons = XMouseButtons.Left;
 		private XMouseButtons _globalMouseButtons = XMouseButtons.None;
 		private ModifierFlags _globalModifiers = ModifierFlags.None;
 		private bool _initiallyActive = false;
 
-		public MouseImageViewerToolPropertyComponent(AbstractActionModelTreeLeafAction selectedNode, MouseToolSettingsProfile toolProfile) : base(selectedNode)
+		public MouseImageViewerToolPropertyComponent(AbstractActionModelTreeNode selectedNode, XMouseButtons activeMouseButtons, XMouseButtons globalMouseButtons, ModifierFlags globalModifiers, bool initiallyActive)
+			: base(selectedNode)
 		{
-			Platform.CheckTrue(MouseToolSettingsProfile.Current.IsRegisteredMouseToolActivationAction(selectedNode.ActionId), "action must be registered as a mouse tool activator");
-			Platform.CheckForNullReference(toolProfile, "toolProfile");
-
-			_actionId = selectedNode.ActionId;
-			_toolProfile = toolProfile;
-
-			MouseToolSettingsProfile.Setting setting = _toolProfile.GetEntryByActivationActionId(_actionId);
-			_activeMouseButtons = setting.MouseButton.GetValueOrDefault(XMouseButtons.Left);
-			_globalMouseButtons = setting.DefaultMouseButton.GetValueOrDefault(XMouseButtons.None);
-			_globalModifiers = setting.DefaultMouseButtonModifiers.GetValueOrDefault(ModifierFlags.None);
-			_initiallyActive = setting.InitiallyActive.GetValueOrDefault(false);
-		}
-
-		public new AbstractActionModelTreeLeafClickAction SelectedNode
-		{
-			get { return (AbstractActionModelTreeLeafClickAction) base.SelectedNode; }
+			_activeMouseButtons = activeMouseButtons;
+			_globalMouseButtons = globalMouseButtons;
+			_globalModifiers = globalModifiers;
+			_initiallyActive = initiallyActive;
 		}
 
 		public bool InitiallyActive
@@ -75,11 +60,14 @@ namespace ClearCanvas.ImageViewer.Configuration
 			get { return _initiallyActive; }
 			set
 			{
+				if (!this.RequestPropertyValidation("InitiallyActive", value))
+					return;
+
 				if (_initiallyActive != value)
 				{
 					_initiallyActive = value;
+					this.NotifyPropertyValidated("InitiallyActive", value);
 					this.OnInitiallyActiveChanged();
-					this.NotifyPropertyChanged("InitiallyActive");
 				}
 			}
 		}
@@ -89,11 +77,14 @@ namespace ClearCanvas.ImageViewer.Configuration
 			get { return _activeMouseButtons; }
 			set
 			{
+				if (!this.RequestPropertyValidation("ActiveMouseButtons", value))
+					return;
+
 				if (_activeMouseButtons != value)
 				{
 					_activeMouseButtons = value;
+					this.NotifyPropertyValidated("ActiveMouseButtons", value);
 					this.OnActiveMouseButtonsChanged();
-					this.NotifyPropertyChanged("ActiveMouseButtons");
 				}
 			}
 		}
@@ -103,11 +94,14 @@ namespace ClearCanvas.ImageViewer.Configuration
 			get { return _globalMouseButtons; }
 			set
 			{
+				if (!this.RequestPropertyValidation("GlobalMouseButtons", value))
+					return;
+
 				if (_globalMouseButtons != value)
 				{
 					_globalMouseButtons = value;
+					this.NotifyPropertyValidated("GlobalMouseButtons", value);
 					this.OnGlobalMouseButtonsChanged();
-					this.NotifyPropertyChanged("GlobalMouseButtons");
 				}
 			}
 		}
@@ -117,33 +111,37 @@ namespace ClearCanvas.ImageViewer.Configuration
 			get { return _globalModifiers; }
 			set
 			{
+				if (!this.RequestPropertyValidation("GlobalModifiers", value))
+					return;
+
 				if (_globalModifiers != value)
 				{
 					_globalModifiers = value;
+					this.NotifyPropertyValidated("GlobalModifiers", value);
 					this.OnGlobalModifiersChanged();
-					this.NotifyPropertyChanged("GlobalModifiers");
 				}
 			}
 		}
 
 		protected virtual void OnInitiallyActiveChanged()
 		{
-			_toolProfile.GetEntryByActivationActionId(_actionId).InitiallyActive = _initiallyActive;
+			this.NotifyPropertyChanged("InitiallyActive");
 		}
 
 		protected virtual void OnActiveMouseButtonsChanged()
 		{
-			_toolProfile.GetEntryByActivationActionId(_actionId).MouseButton = _activeMouseButtons;
+			this.NotifyPropertyChanged("ActiveMouseButtons");
+			this.InitiallyActive = false;
 		}
 
 		protected virtual void OnGlobalMouseButtonsChanged()
 		{
-			_toolProfile.GetEntryByActivationActionId(_actionId).DefaultMouseButton = _globalMouseButtons;
+			this.NotifyPropertyChanged("GlobalMouseButtons");
 		}
 
 		protected virtual void OnGlobalModifiersChanged()
 		{
-			_toolProfile.GetEntryByActivationActionId(_actionId).DefaultMouseButtonModifiers = _globalModifiers;
+			this.NotifyPropertyChanged("GlobalModifiers");
 		}
 	}
 }
