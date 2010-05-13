@@ -350,7 +350,25 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// </remarks>
 		protected virtual void OnMouseToolSettingsChanged(MouseToolSettingsProfile.Setting setting)
 		{
-			MouseToolAttributeProcessor.Process(this);
+			if (setting != null && !setting.IsEmpty)
+			{
+				this.MouseButton = setting.MouseButton.GetValueOrDefault(this.MouseButton);
+
+				var oldDefaultMouseButtonShortcut = this.DefaultMouseButtonShortcut ?? new MouseButtonShortcut(XMouseButtons.None, ModifierFlags.None);
+				var defaultMouseButton = setting.DefaultMouseButton.GetValueOrDefault(oldDefaultMouseButtonShortcut.MouseButton);
+				if (defaultMouseButton == XMouseButtons.None && this.DefaultMouseButtonShortcut != null)
+				{
+					this.DefaultMouseButtonShortcut = null;
+				}
+				else if (defaultMouseButton != XMouseButtons.None)
+				{
+					var defaultMouseButtonModifiers = setting.DefaultMouseButtonModifiers.GetValueOrDefault(oldDefaultMouseButtonShortcut.Modifiers.ModifierFlags);
+					if (oldDefaultMouseButtonShortcut.MouseButton != defaultMouseButton || oldDefaultMouseButtonShortcut.Modifiers.ModifierFlags != defaultMouseButtonModifiers)
+						this.DefaultMouseButtonShortcut = new MouseButtonShortcut(defaultMouseButton, defaultMouseButtonModifiers);
+				}
+
+				// do not refresh the **initially** active property - we want to keep the current activation state of the tool!
+			}
 		}
 
         /// <summary>
