@@ -45,6 +45,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 			ProcedureTypeSummary procedureType,
 			string procedureIndex,
 			DateTime? scheduledTime,
+			EnumValueInfo schedulingCode,
 			FacilitySummary performingFacility,
 			DepartmentSummary performingDepartment,
 			EnumValueInfo laterality,
@@ -57,6 +58,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 			this.ProcedureType = procedureType;
 			this.ProcedureIndex = procedureIndex;
 			this.ScheduledTime = scheduledTime;
+			this.SchedulingCode = schedulingCode;
 			this.PerformingFacility = performingFacility;
 			this.PerformingDepartment = performingDepartment;
 			this.Laterality = laterality;
@@ -97,6 +99,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 		/// </summary>
 		[DataMember]
 		public DateTime? ScheduledTime;
+
+		/// <summary>
+		/// Indicates additional info about procedure scheduling via configurable codes.  Optional.
+		/// </summary>
+		[DataMember]
+		public EnumValueInfo SchedulingCode;
 
 		/// <summary>
 		/// Status of this procedure, set by the server.

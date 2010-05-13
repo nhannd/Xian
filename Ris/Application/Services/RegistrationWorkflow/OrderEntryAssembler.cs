@@ -29,7 +29,6 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
@@ -135,6 +134,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				procedureTypeAssembler.CreateSummary(procedure.Type),
 				procedure.Index,
 				procedure.ScheduledStartTime,
+				EnumUtils.GetEnumValueInfo(procedure.SchedulingCode),
 				procedure.PerformingFacility == null ? null : facilityAssembler.CreateFacilitySummary(procedure.PerformingFacility),
 				procedure.PerformingDepartment == null ? null : departmentAssembler.CreateSummary(procedure.PerformingDepartment, context),
 				EnumUtils.GetEnumValueInfo(procedure.Laterality, context),
@@ -177,6 +177,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 					step.Schedule(requisition.ScheduledTime);
 				}
 			}
+			procedure.SchedulingCode = EnumUtils.GetEnumValue<SchedulingCodeEnum>(requisition.SchedulingCode, context);
 
 			procedure.PerformingFacility = context.Load<Facility>(requisition.PerformingFacility.FacilityRef, EntityLoadFlags.Proxy);
 			procedure.PerformingDepartment = requisition.PerformingDepartment == null ? null

@@ -70,6 +70,7 @@ namespace ClearCanvas.Ris.Application.Services
 								Status = EnumUtils.GetEnumValueInfo(rp.Status, context),
 								Type = new ProcedureTypeAssembler().CreateSummary(rp.Type),
 								ScheduledStartTime = rp.ScheduledStartTime,
+								SchedulingCode = EnumUtils.GetEnumValueInfo(rp.SchedulingCode),
 								StartTime = rp.StartTime,
 								EndTime = rp.EndTime,
 								CheckInTime = rp.ProcedureCheckIn.CheckInTime,

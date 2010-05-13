@@ -36,25 +36,23 @@ using System;
 
 namespace ClearCanvas.Ris.Application.Common
 {
-    [DataContract]
-    public class ProcedureDetail : DataContractBase
-    {
-        public ProcedureDetail()
-        {
+	[DataContract]
+	public class ProcedureDetail : DataContractBase
+	{
+		[DataMember]
+		public EntityRef ProcedureRef;
 
-        }
+		[DataMember]
+		public EnumValueInfo Status;
 
-        [DataMember]
-        public EntityRef ProcedureRef;
-
-        [DataMember]
-        public EnumValueInfo Status;
-
-        [DataMember]
-        public ProcedureTypeSummary Type;
+		[DataMember]
+		public ProcedureTypeSummary Type;
 
 		[DataMember]
 		public DateTime? ScheduledStartTime;
+
+		[DataMember]
+		public EnumValueInfo SchedulingCode;
 
 		[DataMember]
 		public DateTime? StartTime;
@@ -83,10 +81,10 @@ namespace ClearCanvas.Ris.Application.Common
 		[DataMember]
 		public bool Portable;
 
-        [DataMember]
-        public List<ProcedureStepDetail> ProcedureSteps;
+		[DataMember]
+		public List<ProcedureStepDetail> ProcedureSteps;
 
-        [DataMember]
-        public ProtocolDetail Protocol;
+		[DataMember]
+		public ProtocolDetail Protocol;
 	}
 }
