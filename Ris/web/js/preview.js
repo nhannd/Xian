@@ -564,13 +564,33 @@ Preview.ProtocolProceduresTable = function () {
 			
 		return protocol.Urgency.Value;
 	}
-			
+
+	var _filterProcedureByProtocols = function(procedures)
+	{
+		var hasProtocols = function (p)
+		{
+			if (!p.ProcedureSteps)
+				return false;
+				
+			var mps = p.ProcedureSteps.select(function(step) { return step.StepClassName == "ProtocolAssignmentStep"; });
+			return mps.length > 0;
+		}
+
+		return procedures.select(hasProtocols);
+	}
+	
 	return {
 	
 		// TODO: WTIS -> urgency and override in UHN-specific script.
 		
 		create: function(parentElement, procedures, notes)
-		{			
+		{
+			procedures = procedures || [];
+			notes = notes || [];
+		
+			procedures = _filterProcedureByProtocols(procedures);
+			notes = notes.select(function(note) { return note.Category == "Protocol"; });						
+
 			if(procedures.length == 0)
 			{
 				parentElement.style.display = 'none';
