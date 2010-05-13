@@ -56,5 +56,15 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		{
 			get { return _selectedNode; }
 		}
+
+		protected bool RequestPropertyValidation(string propertyName, object value)
+		{
+			return this.SelectedNode.RequestValidation(propertyName, value);
+		}
+
+		protected void NotifyPropertyValidated(string propertyName, object value)
+		{
+			this.SelectedNode.NotifyValidated(propertyName, value);
+		}
 	}
 }

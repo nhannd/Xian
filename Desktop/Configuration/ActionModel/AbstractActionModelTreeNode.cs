@@ -247,7 +247,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			this.NotifyItemChanged();
 		}
 
-		protected bool RequestValidation(string propertyName, object value)
+		protected internal bool RequestValidation(string propertyName, object value)
 		{
 			if (!ReferenceEquals(this.Parent, null))
 			{
@@ -256,7 +256,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			return true;
 		}
 
-		protected void NotifyValidated(string propertyName, object value)
+		protected internal void NotifyValidated(string propertyName, object value)
 		{
 			if (!ReferenceEquals(this.Parent, null))
 			{
