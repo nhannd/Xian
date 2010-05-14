@@ -208,10 +208,12 @@
     <Compile Include="Tables\TableFilterParams.cs" />
     <Compile Include="Tests\FormatTests.cs" />
     <Compile Include="Tests\ModifierFlagsConverterTest.cs" />
+    <Compile Include="Tests\NUnitValidationTest.cs" />
     <Compile Include="Tests\PathSegmentTests.cs" />
     <Compile Include="Tests\PathTests.cs" />
     <Compile Include="Tests\TableTest.cs" />
     <Compile Include="Tests\XKeysConverterTest.cs" />
+    <Compile Include="Tests\XMouseButtonComboTest.cs" />
     <Compile Include="Tests\XMouseButtonsConverterTest.cs" />
     <Compile Include="ToolStripDock.cs" />
     <Compile Include="ToolStripSettings.cs" />
@@ -387,6 +389,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>XKeysNames.resx</DependentUpon>
     </Compile>
+    <Compile Include="XMouseButtonCombo.cs" />
     <Compile Include="XMouseButtons.cs" />
     <Compile Include="XMouseButtonsConverter.cs" />
   </ItemGroup>

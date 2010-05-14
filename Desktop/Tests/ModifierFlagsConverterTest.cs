@@ -147,66 +147,87 @@ namespace ClearCanvas.Desktop.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void TestInvalidStringParse()
 		{
-			// on the other hand, invalid modifier strings should throw exceptions during conversion
-			ModifierFlags modifierCode = (ModifierFlags) _converter.ConvertFromString("\n");
-			Assert.Fail("Expected an exception because the parsed string has an invalid character");
+			try
+			{
+				// on the other hand, invalid modifier strings should throw exceptions during conversion
+				ModifierFlags modifierCode = (ModifierFlags) _converter.ConvertFromString("\n");
+				Assert.Fail("Expected an exception because the parsed string has an invalid character");
+			}
+			catch (FormatException) {}
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void TestInvalidModifierStringParse()
 		{
-			// on the other hand, invalid modifier strings should throw exceptions during conversion
-			ModifierFlags modifierCode = (ModifierFlags) _converter.ConvertFromString("NonExistentModifier");
-			Assert.Fail("Expected an exception because the parsed string has an invalid modifier name");
+			try
+			{
+				// on the other hand, invalid modifier strings should throw exceptions during conversion
+				ModifierFlags modifierCode = (ModifierFlags) _converter.ConvertFromString("NonExistentModifier");
+				Assert.Fail("Expected an exception because the parsed string has an invalid modifier name");
+			}
+			catch (FormatException) {}
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void TestInvalidModifierWithNonModifierStringParse()
 		{
-			// on the other hand, invalid modifier strings should throw exceptions during conversion
-			ModifierFlags modifierCode = (ModifierFlags) _converter.ConvertFromString("Ctrl+NonExistentModifier");
-			Assert.Fail("Expected an exception because the parsed string has an invalid modifier name");
+			try
+			{
+				// on the other hand, invalid modifier strings should throw exceptions during conversion
+				ModifierFlags modifierCode = (ModifierFlags) _converter.ConvertFromString("Ctrl+NonExistentModifier");
+				Assert.Fail("Expected an exception because the parsed string has an invalid modifier name");
+			}
+			catch (FormatException) {}
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void TestInvalidNonModifierWithModifierStringParse()
 		{
-			// on the other hand, invalid modifier strings should throw exceptions during conversion
-			ModifierFlags modifierCode = (ModifierFlags) _converter.ConvertFromString("NonExistentModifier+Alt");
-			Assert.Fail("Expected an exception because the parsed string has an invalid modifier name");
+			try
+			{
+				// on the other hand, invalid modifier strings should throw exceptions during conversion
+				ModifierFlags modifierCode = (ModifierFlags) _converter.ConvertFromString("NonExistentModifier+Alt");
+				Assert.Fail("Expected an exception because the parsed string has an invalid modifier name");
+			}
+			catch (FormatException) {}
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void TestInvalidModifierWithModifiersStringParse()
 		{
-			// on the other hand, invalid modifier strings should throw exceptions during conversion
-			ModifierFlags modifierCode = (ModifierFlags) _converter.ConvertFromString("Ctrl+NonExistentModifier+Alt");
-			Assert.Fail("Expected an exception because the parsed string has an invalid modifier name");
+			try
+			{
+				// on the other hand, invalid modifier strings should throw exceptions during conversion
+				ModifierFlags modifierCode = (ModifierFlags) _converter.ConvertFromString("Ctrl+NonExistentModifier+Alt");
+				Assert.Fail("Expected an exception because the parsed string has an invalid modifier name");
+			}
+			catch (FormatException) {}
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void TestInvalidModifierTrailingSeparatorStringParse()
 		{
-			// on the other hand, invalid modifier strings should throw exceptions during conversion
-			ModifierFlags modifierCode = (ModifierFlags) _converter.ConvertFromString("Ctrl+");
-			Assert.Fail("Expected an exception because of a trailing separator in the parse string");
+			try
+			{
+				// on the other hand, invalid modifier strings should throw exceptions during conversion
+				ModifierFlags modifierCode = (ModifierFlags) _converter.ConvertFromString("Ctrl+");
+				Assert.Fail("Expected an exception because of a trailing separator in the parse string");
+			}
+			catch (FormatException) {}
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void TestInvalidModifierLeadingSeparatorStringParse()
 		{
-			// on the other hand, invalid modifier strings should throw exceptions during conversion
-			ModifierFlags modifierCode = (ModifierFlags) _converter.ConvertFromString("+Alt");
-			Assert.Fail("Expected an exception because of a leading separator in the parse string");
+			try
+			{
+				// on the other hand, invalid modifier strings should throw exceptions during conversion
+				ModifierFlags modifierCode = (ModifierFlags) _converter.ConvertFromString("+Alt");
+				Assert.Fail("Expected an exception because of a leading separator in the parse string");
+			}
+			catch (FormatException) {}
 		}
 
 		[Test]

@@ -149,66 +149,87 @@ namespace ClearCanvas.Desktop.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void TestInvalidStringParse()
 		{
-			// on the other hand, invalid button strings should throw exceptions during conversion
-			XMouseButtons buttonCode = (XMouseButtons) _converter.ConvertFromString("\n");
-			Assert.Fail("Expected an exception because the parsed string has an invalid character");
+			try
+			{
+				// on the other hand, invalid button strings should throw exceptions during conversion
+				XMouseButtons buttonCode = (XMouseButtons) _converter.ConvertFromString("\n");
+				Assert.Fail("Expected an exception because the parsed string has an invalid character");
+			}
+			catch (FormatException) {}
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void TestInvalidButtonStringParse()
 		{
-			// on the other hand, invalid button strings should throw exceptions during conversion
-			XMouseButtons buttonCode = (XMouseButtons) _converter.ConvertFromString("NonExistentButton");
-			Assert.Fail("Expected an exception because the parsed string has an invalid button name");
+			try
+			{
+				// on the other hand, invalid button strings should throw exceptions during conversion
+				XMouseButtons buttonCode = (XMouseButtons) _converter.ConvertFromString("NonExistentButton");
+				Assert.Fail("Expected an exception because the parsed string has an invalid button name");
+			}
+			catch (FormatException) {}
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void TestInvalidButtonWithNonButtonStringParse()
 		{
-			// on the other hand, invalid button strings should throw exceptions during conversion
-			XMouseButtons buttonCode = (XMouseButtons) _converter.ConvertFromString("LMouse+NonExistentButton");
-			Assert.Fail("Expected an exception because the parsed string has an invalid button name");
+			try
+			{
+				// on the other hand, invalid button strings should throw exceptions during conversion
+				XMouseButtons buttonCode = (XMouseButtons) _converter.ConvertFromString("LMouse+NonExistentButton");
+				Assert.Fail("Expected an exception because the parsed string has an invalid button name");
+			}
+			catch (FormatException) {}
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void TestInvalidNonButtonWithButtonStringParse()
 		{
-			// on the other hand, invalid button strings should throw exceptions during conversion
-			XMouseButtons buttonCode = (XMouseButtons) _converter.ConvertFromString("NonExistentButton+Right");
-			Assert.Fail("Expected an exception because the parsed string has an invalid button name");
+			try
+			{
+				// on the other hand, invalid button strings should throw exceptions during conversion
+				XMouseButtons buttonCode = (XMouseButtons) _converter.ConvertFromString("NonExistentButton+Right");
+				Assert.Fail("Expected an exception because the parsed string has an invalid button name");
+			}
+			catch (FormatException) {}
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void TestInvalidButtonWithButtonsStringParse()
 		{
-			// on the other hand, invalid button strings should throw exceptions during conversion
-			XMouseButtons buttonCode = (XMouseButtons) _converter.ConvertFromString("LMouse+NonExistentButton+Right");
-			Assert.Fail("Expected an exception because the parsed string has an invalid button name");
+			try
+			{
+				// on the other hand, invalid button strings should throw exceptions during conversion
+				XMouseButtons buttonCode = (XMouseButtons) _converter.ConvertFromString("LMouse+NonExistentButton+Right");
+				Assert.Fail("Expected an exception because the parsed string has an invalid button name");
+			}
+			catch (FormatException) {}
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void TestInvalidButtonTrailingSeparatorStringParse()
 		{
-			// on the other hand, invalid button strings should throw exceptions during conversion
-			XMouseButtons buttonCode = (XMouseButtons) _converter.ConvertFromString("LMouse+");
-			Assert.Fail("Expected an exception because of a trailing separator in the parse string");
+			try
+			{
+				// on the other hand, invalid button strings should throw exceptions during conversion
+				XMouseButtons buttonCode = (XMouseButtons) _converter.ConvertFromString("LMouse+");
+				Assert.Fail("Expected an exception because of a trailing separator in the parse string");
+			}
+			catch (FormatException) {}
 		}
 
 		[Test]
-		[ExpectedException(typeof (FormatException))]
 		public void TestInvalidButtonLeadingSeparatorStringParse()
 		{
-			// on the other hand, invalid button strings should throw exceptions during conversion
-			XMouseButtons buttonCode = (XMouseButtons) _converter.ConvertFromString("+Right");
-			Assert.Fail("Expected an exception because of a leading separator in the parse string");
+			try
+			{
+				// on the other hand, invalid button strings should throw exceptions during conversion
+				XMouseButtons buttonCode = (XMouseButtons) _converter.ConvertFromString("+Right");
+				Assert.Fail("Expected an exception because of a leading separator in the parse string");
+			}
+			catch (FormatException) {}
 		}
 
 		[Test]
