@@ -101,6 +101,7 @@ namespace ClearCanvas.Ris.Client
 
 		private readonly EntityRef _patientRef;
 		private readonly EntityRef _profileRef;
+		private readonly EntityRef _initialSelectedOrderRef;
 		private PatientProfileDetail _patientProfile;
 
 		private ToolSet _toolSet;
@@ -120,17 +121,18 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public BiographyOverviewComponent(EntityRef patientRef, EntityRef profileRef)
+		public BiographyOverviewComponent(EntityRef patientRef, EntityRef profileRef, EntityRef initialSelectedOrderRef)
 		{
 			_patientRef = patientRef;
 			_profileRef = profileRef;
+			_initialSelectedOrderRef = initialSelectedOrderRef;
 		}
 
 		public override void Start()
 		{
 			// Create component for each tab
 			_bannerComponent = new BannerComponent();
-			_orderHistoryComponent = new BiographyOrderHistoryComponent {PatientRef = _patientRef};
+			_orderHistoryComponent = new BiographyOrderHistoryComponent(_initialSelectedOrderRef) { PatientRef = _patientRef };
 			_visitHistoryComponent = new BiographyVisitHistoryComponent { PatientRef = _patientRef };
 			_demographicComponent = new BiographyDemographicComponent { DefaultProfileRef = _profileRef, PatientRef = _patientRef };
 			_documentComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Patient);
@@ -201,39 +203,6 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		#endregion
-
-		// Bug 4786: TableView has trouble selecting items other than the first item
-		// This method is a work around for the above defect for the BiographyOrderHistoryComponent, where TableView automatically select 
-		// the first item and delay posting this selection event after the Start method, leading to the first item always being selected.
-		// The OnControlLoad is called by the control during its Load event, which happens after the delayed selection changed event
-		// and before the control is visible.  This work around has to be done for each components that wants to override the initial
-		// selected item.
-		public void OnControlLoad()
-		{
-			_orderHistoryComponent.SelectedOrderRef = _selectedOrderRef;
-		}
-
-		public EntityRef SelectedOrderRef
-		{
-			get { return _selectedOrderRef; }
-			set
-			{
-				_selectedOrderRef = value;
-				if (_orderHistoryComponent != null)
-				{
-					SetOrderTabAsActiveTabPage();
-					_orderHistoryComponent.SelectedOrderRef = value;
-				}
-			}
-		}
-
-		private void SetOrderTabAsActiveTabPage()
-		{
-			var orderTabPage = CollectionUtils.SelectFirst(_pagesContainer.Pages, tabPage => tabPage.Component == _orderHistoryComponent);
-
-			if (orderTabPage != null)
-				_pagesContainer.CurrentPage = orderTabPage;
-		}
 
 		private void LoadPatientProfile()
 		{

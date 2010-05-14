@@ -59,13 +59,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             Control content = (Control)_component.ContentComponentHost.ComponentView.GuiElement;
             content.Dock = DockStyle.Fill;
             _contentPanel.Controls.Add(content);
-
-			this.Load += BiographyOverviewComponentControl_Load;
         }
-
-		private void BiographyOverviewComponentControl_Load(object sender, System.EventArgs e)
-		{
-			_component.OnControlLoad();
-		}
     }
 }

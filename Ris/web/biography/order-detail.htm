@@ -71,9 +71,6 @@
 
 					notes = orderDetail.Notes.select(function(note) { return note.Category == "General"; });
 					Preview.OrderNotesTable.create($("generalNotesSection"), notes, "Order Notes", false);
-
-					notes = orderDetail.Notes.select(function(note) { return note.Category == "Protocol"; });
-					Preview.OrderNotesTable.create($("protocolNotesSection"), notes, "Protocol Notes", true);
 				}
 				else
 				{
@@ -90,7 +87,6 @@
 				<div id="protocolProceduresSection"></div>
 				<div id="prelimDiagnosisNotesSection"></div>
 				<div id="generalNotesSection"></div>
-				<div id="protocolNotesSection"></div>
 			</div>
 		</form>
 	</body>

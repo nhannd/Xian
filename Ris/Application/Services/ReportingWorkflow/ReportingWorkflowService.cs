@@ -527,6 +527,10 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 			var newStep = procedureStep.Reassign(newStaff);
 
+			// Bug: #6342 - ensure that the reassigned step does not get lost because it is missing a scheduled start time.
+			if(!newStep.Scheduling.StartTime.HasValue)
+				newStep.Schedule(Platform.Time);
+
 			this.PersistenceContext.SynchState();
 
 			return new ReassignProcedureStepResponse(newStep.GetRef());

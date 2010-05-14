@@ -109,7 +109,13 @@ namespace ClearCanvas.Ris.Client
 					WorkspaceCreationArgs args = new WorkspaceCreationArgs(component, this.Title, null);
 					args.UserClosable = this.IsUserClosableWorkspace;
 					_workspace = ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow, args);
-					_workspace.Closed += delegate { _workspace = null; };
+					_workspace.Closed += delegate
+						{
+							_workspace = null;
+							FolderExplorerComponentSettings.Default.UserConfigurationSaved -= OnUserConfigurationSaved;
+						};
+
+					FolderExplorerComponentSettings.Default.UserConfigurationSaved += OnUserConfigurationSaved;
 				}
 			}
 			catch (Exception e)
@@ -117,6 +123,11 @@ namespace ClearCanvas.Ris.Client
 				// could not launch component
 				ExceptionHandler.Report(e, this.Context.DesktopWindow);
 			}
+		}
+
+		private void OnUserConfigurationSaved(object sender, EventArgs e)
+		{
+			this.Restart();
 		}
 	}
 

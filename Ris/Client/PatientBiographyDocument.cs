@@ -69,8 +69,7 @@ namespace ClearCanvas.Ris.Client
 
         public override IApplicationComponent GetComponent()
         {
-            BiographyOverviewComponent component = new BiographyOverviewComponent(_patientRef, _profileRef);
-        	component.SelectedOrderRef = _orderRef;
+			var component = new BiographyOverviewComponent(_patientRef, _profileRef, _orderRef);
         	return component;
         }
     }    

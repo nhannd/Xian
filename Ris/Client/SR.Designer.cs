@@ -1897,6 +1897,17 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The RIS is currently unavailable. Please restart this application once the RIS becomes available again. However, you may proceed with login in order to access image viewing capabilities.
+        ///
+        ///Do you wish to proceed?.
+        /// </summary>
+        internal static string MessageRisServerDowntime {
+            get {
+                return ResourceManager.GetString("MessageRisServerDowntime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter search criteria (MRN#, Name, Healthcard ID, or A#).
         /// </summary>
         internal static string MessageSearchMessageDefault {
@@ -2239,7 +2250,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to List unacknowledged notes that were sent to group I belonged to..
+        ///   Looks up a localized string similar to Notes sent to a group, awaiting acknowledgement from me or another member of the group.
         /// </summary>
         internal static string OrderNotesGroupInboxFolderDescription {
             get {
@@ -2248,7 +2259,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to List unacknowledged notes that were sent to me..
+        ///   Looks up a localized string similar to Notes sent to me, awaiting my acknowledgement.
         /// </summary>
         internal static string OrderNotesPersonalInboxFolderDescription {
             get {
@@ -2257,7 +2268,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to List notes sent by me that are still unacknowledged..
+        ///   Looks up a localized string similar to Notes sent by me, awaiting acknowledgement from the recipient.
         /// </summary>
         internal static string OrderNotesSentItemsFolderDescription {
             get {

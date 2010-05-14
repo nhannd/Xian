@@ -41,7 +41,6 @@ namespace ClearCanvas.Ris.Client
 {
 	[MenuAction("launch", "folderexplorer-folders-contextmenu/Properties", "Launch")]
 	[Tooltip("launch", "Folder Properties")]
-	[IconSet("launch", IconScheme.Colour, "Icons.OptionsToolSmall.png", "Icons.OptionsToolSmall.png", "Icons.OptionsToolSmall.png")]
 	[EnabledStateObserver("launch", "Enabled", "EnabledChanged")]
 	[ExtensionOf(typeof(FolderExplorerGroupToolExtensionPoint))]
 	public class WorklistPropertiesTool : Tool<IFolderExplorerGroupToolContext>

@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists procedures that have been protocoled but not scheduled..
+        ///   Looks up a localized string similar to Procedures that have been protocoled but not scheduled.
         /// </summary>
         internal static string BookingCompletedProtocolFolderDescription {
             get {
@@ -70,7 +70,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists procedures that need to be protocoled..
+        ///   Looks up a localized string similar to Procedures that are awaiting protocoling.
         /// </summary>
         internal static string BookingPendingProtocolFolderDescription {
             get {
@@ -79,7 +79,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists procedures that have been rejected by the protocoling radiologist..
+        ///   Looks up a localized string similar to Procedures that have been rejected by the protocoling radiologist.
         /// </summary>
         internal static string BookingRejectedProtocolFolderDescription {
             get {
@@ -88,7 +88,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists procedures that need to be scheduled..
+        ///   Looks up a localized string similar to Procedures that need to be scheduled.
         /// </summary>
         internal static string BookingToBeScheduledFolderDescription {
             get {
@@ -583,7 +583,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists procedures that have been cancelled..
+        ///   Looks up a localized string similar to Procedures that have been cancelled.
         /// </summary>
         internal static string EmergencyCancelledFolderDescription {
             get {
@@ -592,7 +592,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists procedures that are in progress..
+        ///   Looks up a localized string similar to Procedures that are in progress.
         /// </summary>
         internal static string EmergencyInProgressFolderDescription {
             get {
@@ -601,7 +601,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists procedures that have been peformed..
+        ///   Looks up a localized string similar to Procedures that have been performed.
         /// </summary>
         internal static string EmergencyPerformedFolderDescription {
             get {
@@ -610,7 +610,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists scheduled and checked-in procedures..
+        ///   Looks up a localized string similar to Procedures that are scheduled.
         /// </summary>
         internal static string EmergencyScheduledFolderDescription {
             get {
@@ -1119,7 +1119,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to List procedures that have been checked in..
+        ///   Looks up a localized string similar to Procedures that have been checked in but not started.
         /// </summary>
         internal static string PerformingCheckedInFolderDescription {
             get {
@@ -1128,7 +1128,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to List modality procedure steps that is being performed..
+        ///   Looks up a localized string similar to Procedures that are in progress.
         /// </summary>
         internal static string PerformingInProgressFolderDescription {
             get {
@@ -1137,7 +1137,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to List modality procedure steps that have been performed..
+        ///   Looks up a localized string similar to Procedures that have been performed.
         /// </summary>
         internal static string PerformingPerformedFolderDescription {
             get {
@@ -1146,7 +1146,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists scheduled modality procedure steps..
+        ///   Looks up a localized string similar to Procedures that are scheduled but not checked in.
         /// </summary>
         internal static string PerformingScheduledFolderDescription {
             get {
@@ -1155,7 +1155,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists procedures where the performing documentation is incomplete..
+        ///   Looks up a localized string similar to Procedures with incomplete documentation.
         /// </summary>
         internal static string PerformingUndocumentedFolderDescription {
             get {
@@ -1164,7 +1164,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists procedures that are currently assigned for protocolling by a radiologist..
+        ///   Looks up a localized string similar to Procedures that are currently in protocolling.
         /// </summary>
         internal static string ProtocollingAdminAssignedFolderDescription {
             get {
@@ -1173,7 +1173,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists procedures that have been cancelled..
+        ///   Looks up a localized string similar to Procedures that have been cancelled.
         /// </summary>
         internal static string RegistrationCancelledFolderDescription {
             get {
@@ -1182,7 +1182,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists checked-in procedures..
+        ///   Looks up a localized string similar to Procedures that have been checked in but not started.
         /// </summary>
         internal static string RegistrationCheckedInFolderDescription {
             get {
@@ -1191,7 +1191,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists procedures that are in progress..
+        ///   Looks up a localized string similar to Procedures that are in progress.
         /// </summary>
         internal static string RegistrationInProgressFolderDescription {
             get {
@@ -1200,7 +1200,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists procedures that have been peformed..
+        ///   Looks up a localized string similar to Procedures that have been performed.
         /// </summary>
         internal static string RegistrationPerformedFolderDescription {
             get {
@@ -1209,7 +1209,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists scheduled procedures that have not been checked in..
+        ///   Looks up a localized string similar to Procedures that are scheduled and have not been checked in.
         /// </summary>
         internal static string RegistrationScheduledFolderDescription {
             get {
@@ -1218,7 +1218,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists active procedures that are currently in reporting by a radiologist..
+        ///   Looks up a localized string similar to Procedures that are currently in reporting.
         /// </summary>
         internal static string ReportingAdminAssignedFolderDescription {
             get {
@@ -1227,7 +1227,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists reports that need to be transcribed..
+        ///   Looks up a localized string similar to Procedures that are awaiting transcription.
         /// </summary>
         internal static string ReportingAdminToBeTranscribedWorklistDescription {
             get {
@@ -1236,7 +1236,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists procedures that have been performed but not yet reported..
+        ///   Looks up a localized string similar to Procedures that have been performed but not yet reported.
         /// </summary>
         internal static string ReportingAdminUnreportedFolderDescription {
             get {
@@ -1353,7 +1353,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists procedures that need to be protocoled..
+        ///   Looks up a localized string similar to Procedures awaiting protocoling.
         /// </summary>
         internal static string ReportingToBeProtocolledFolderDescription {
             get {
@@ -1362,7 +1362,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists procedures that need to be reported..
+        ///   Looks up a localized string similar to Procedures awaiting reporting.
         /// </summary>
         internal static string ReportingToBeReportedFolderDescription {
             get {
@@ -1371,7 +1371,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists procoedures with reports that need to be reviewed..
+        ///   Looks up a localized string similar to Reports awaiting review by a supervisor/colleague.
         /// </summary>
         internal static string ReportingToBeReviewedFolderDescription {
             get {
@@ -1380,7 +1380,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists procedures with protocols that need to be reviewed..
+        ///   Looks up a localized string similar to Protocoled procedures awaiting review by a supervisor/colleague.
         /// </summary>
         internal static string ReportingToBeReviewedProtocolFolderDescription {
             get {
@@ -1389,7 +1389,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists active procedures that are currently in reporting by a radiologist..
+        ///   Looks up a localized string similar to Procedures that are currently in reporting by a radiologist.
         /// </summary>
         internal static string ReportingTrackingActiveFolderDescription {
             get {
@@ -1398,7 +1398,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists procoedures with reports that are corrected..
+        ///   Looks up a localized string similar to Reports that have been corrected (addended).
         /// </summary>
         internal static string ReportingTrackingCorrectedFolderDescription {
             get {
@@ -1407,16 +1407,16 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists procoedures with reports that are in draft..
+        ///   Looks up a localized string similar to Reports that are in draft.
         /// </summary>
-        internal static string ReportingTrackingDraftFoldReportingTrackingDraftFolderDescription {
+        internal static string ReportingTrackingDraftFolderDescription {
             get {
-                return ResourceManager.GetString("ReportingTrackingDraftFoldReportingTrackingDraftFolderDescription", resourceCulture);
+                return ResourceManager.GetString("ReportingTrackingDraftFolderDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists procoedures with reports that are finalized..
+        ///   Looks up a localized string similar to Reports that are verified and published.
         /// </summary>
         internal static string ReportingTrackingFinalFolderDescription {
             get {
@@ -1425,7 +1425,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists procoedures with reports that are in preliminary status..
+        ///   Looks up a localized string similar to Preliminary reports.
         /// </summary>
         internal static string ReportingTrackingPreliminaryFolderDescription {
             get {
@@ -2253,7 +2253,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists reports that need to be transcribed..
+        ///   Looks up a localized string similar to Reports awaiting transcription.
         /// </summary>
         internal static string TranscriptionToBeTranscribedFolderDescription {
             get {

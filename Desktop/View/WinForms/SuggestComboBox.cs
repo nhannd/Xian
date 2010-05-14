@@ -169,14 +169,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			return base.ProcessCmdKey(ref msg, k);
 		}
 
-		protected override void OnDropDownClosed(EventArgs e)
-		{
-			// Similar to OnLeave, when the drop down is closed, the text is usually updated to some items in the drop down list
-			// We must update the selection based on whatever text is in the combobox.
-			UpdateSelectionFromText();
-			base.OnDropDownClosed(e);
-		}
-
         protected override void OnKeyDown(KeyEventArgs e)
         {
             switch (e.KeyCode)

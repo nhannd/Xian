@@ -256,13 +256,6 @@ namespace ClearCanvas.Ris.Client
 
 		}
 
-		internal void Rebuild()
-		{
-			DestroyFolderExplorers();
-			BuildFolderExplorers();
-		}
-
-
 		#region Application Overrides
 
 		public override void Start()
@@ -283,8 +276,6 @@ namespace ClearCanvas.Ris.Client
 
 			// create tools
 			_toolSet = new ToolSet(new FolderExplorerGroupToolExtensionPoint(), new FolderExplorerGroupToolContext(this));
-
-			FolderExplorerComponentSettings.Default.UserConfigurationSaved += OnUserFolderSystemCustomizationsChanged;
 
 			base.Start();
 		}
@@ -309,8 +300,6 @@ namespace ClearCanvas.Ris.Client
 			{
 				DocumentManager.UnregisterFolderSystem(folderSystem);
 			}
-
-			FolderExplorerComponentSettings.Default.UserConfigurationSaved -= OnUserFolderSystemCustomizationsChanged;
 
 			base.Stop();
 		}
@@ -460,11 +449,6 @@ namespace ClearCanvas.Ris.Client
 			page.IconSet = folderSystem.TitleIcon;
 		}
 
-		private void OnUserFolderSystemCustomizationsChanged(object sender, EventArgs e)
-		{
-			Rebuild();
-		}
-
 		#endregion
 
 		#region Helpers
@@ -488,29 +472,6 @@ namespace ClearCanvas.Ris.Client
 				_folderExplorerComponents.Add(folderSystem, (FolderExplorerComponent)page.Component);
 				_stackTabComponent.Pages.Add(page);
 			}
-		}
-
-		private void DestroyFolderExplorers()
-		{
-			// disconnect UI from folder-system events
-			foreach (var kvp in _folderExplorerComponents)
-			{
-				var folderSystem = kvp.Key;
-				folderSystem.SetContext(null);  // clear context
-				folderSystem.TitleChanged -= FolderSystemTitleChangedEventHandler;
-				folderSystem.TitleIconChanged -= FolderSystemIconChangedEventHandler;
-
-				var explorer = kvp.Value;
-				explorer.Initialized -= FolderSystemInitializedEventHandler;
-				explorer.SelectedFolderChanged -= OnSelectedFolderChanged;
-			}
-
-			// clear the map
-			_folderExplorerComponents.Clear();
-
-			// remove all the folder explorer component pages from the UI
-			// (this will call Stop on each component)
-			_stackTabComponent.Pages.Clear();
 		}
 
 		private static StackTabPage CreatePageForFolderExplorer(FolderExplorerComponent explorer)

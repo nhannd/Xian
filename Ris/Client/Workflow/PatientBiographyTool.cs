@@ -150,7 +150,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
-				var document = DocumentManager.Get<PatientBiographyDocument>(profileRef);
+				var document = DocumentManager.Get<PatientBiographyDocument>(patientRef);
 				if (document == null)
 				{
 					document = new PatientBiographyDocument(patientRef, profileRef, orderRef, window);

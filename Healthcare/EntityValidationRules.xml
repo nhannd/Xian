@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <validation>
   <!--
+    WARNING: IF YOU ARE NOT SURE IF YOU SHOULD BE EDITING THIS DOCUMENT, YOU SHOULDN'T BE.
+  
+  
     USAGE NOTES:
     
     A ruleset must specify the entity class to which it applies, hence the class attribute is required.

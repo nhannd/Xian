@@ -925,13 +925,13 @@
     <value>Static folder</value>
   </data>
   <data name="OrderNotesGroupInboxFolderDescription" xml:space="preserve">
-    <value>List unacknowledged notes that were sent to group I belonged to.</value>
+    <value>Notes sent to a group, awaiting acknowledgement from me or another member of the group</value>
   </data>
   <data name="OrderNotesPersonalInboxFolderDescription" xml:space="preserve">
-    <value>List unacknowledged notes that were sent to me.</value>
+    <value>Notes sent to me, awaiting my acknowledgement</value>
   </data>
   <data name="OrderNotesSentItemsFolderDescription" xml:space="preserve">
-    <value>List notes sent by me that are still unacknowledged.</value>
+    <value>Notes sent by me, awaiting acknowledgement from the recipient</value>
   </data>
   <data name="ColumnValidFrom" xml:space="preserve">
     <value>Valid From</value>

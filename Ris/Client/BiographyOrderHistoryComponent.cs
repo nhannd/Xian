@@ -131,6 +131,9 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		private EntityRef _patientRef;
+		private readonly EntityRef _initialSelectedOrderRef;
+		private Timer _delaySelectionTimer;
+
 		private readonly OrderListTable _orderList;
 		private OrderListItem _selectedOrder;
 		private OrderDetail _orderDetail;
@@ -150,13 +153,16 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public BiographyOrderHistoryComponent()
+		public BiographyOrderHistoryComponent(EntityRef initialSelectedOrderRef)
 		{
+			_initialSelectedOrderRef = initialSelectedOrderRef;
 			_orderList = new OrderListTable();
 		}
 
 		public override void Start()
 		{
+			_delaySelectionTimer = new Timer(state => SetSelectedOrder(state as EntityRef), _initialSelectedOrderRef, 250);
+
 			_orderDetailComponent = new BiographyOrderDetailViewComponent();
 			_visitDetailComponent = new BiographyVisitDetailViewComponent();
 			_orderReportsComponent = new BiographyOrderReportsComponent();
@@ -200,6 +206,13 @@ namespace ClearCanvas.Ris.Client
 				_rightHandComponentContainerHost = null;
 			}
 
+			if (_delaySelectionTimer != null)
+			{
+				_delaySelectionTimer.Stop();
+				_delaySelectionTimer.Dispose();
+				_delaySelectionTimer = null;
+			}
+
 			base.Stop();
 		}
 
@@ -220,19 +233,6 @@ namespace ClearCanvas.Ris.Client
 		public ITable Orders
 		{
 			get { return _orderList; }
-		}
-
-		public EntityRef SelectedOrderRef
-		{
-			get { return _selectedOrder == null ? null : _selectedOrder.OrderRef; }
-			set
-			{
-				var initialItem = value == null 
-					? null 
-					: CollectionUtils.SelectFirst(_orderList.Items, item => item.OrderRef.Equals(value, true));
-
-				this.SelectedOrder = new Selection(initialItem);
-			}
 		}
 
 		public ISelection SelectedOrder
@@ -325,7 +325,24 @@ namespace ClearCanvas.Ris.Client
 				{
 					_orderList.Items.Clear();
 					_orderList.Items.AddRange(response.ListOrdersResponse.Orders);
+					SetSelectedOrder(_initialSelectedOrderRef);
+
+					// HACK:  There are chances that the TableView fire the initial selection after the list is retrieved, overwriting
+					// the preferred selection with the first item in the list.  This hack force a selection after a time delay, reducing
+					// the chance the first item is automatically selected by TableView.
+					_delaySelectionTimer.Start();
 				});
+		}
+
+		private void SetSelectedOrder(EntityRef orderRef)
+		{
+			var initialItem = orderRef == null
+				? null
+				: CollectionUtils.SelectFirst(_orderList.Items, item => item.OrderRef.Equals(orderRef, true));
+
+			this.SelectedOrder = new Selection(initialItem);
+
+			_delaySelectionTimer.Stop();
 		}
 
 		private void LoadOrderDetail(EntityRef orderRef)

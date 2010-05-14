@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			base.Initialize();
 
-    		DowntimeRecovery.InDowntimeRecoveryModeChanged += delegate { UpdateReportingWorkflowServiceRegistration(); };
+    		DowntimeRecovery.InDowntimeRecoveryModeChanged += OnInDowntimeRecoveryModeChanged;
 
 			// init 
     		UpdateReportingWorkflowServiceRegistration();
@@ -106,6 +106,13 @@ namespace ClearCanvas.Ris.Client.Workflow
     		return false;
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			DowntimeRecovery.InDowntimeRecoveryModeChanged -= OnInDowntimeRecoveryModeChanged;
+
+			base.Dispose(disposing);
+		}
+
 		private void UpdateReportingWorkflowServiceRegistration()
 		{
 			if (DowntimeRecovery.InDowntimeRecoveryMode)
@@ -118,6 +125,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 				// otherwise unregister reporting service, so we don't degrade performance for no reason
 				this.Context.UnregisterWorkflowService(typeof(IReportingWorkflowService));
 			}
+		}
+
+		private void OnInDowntimeRecoveryModeChanged(object sender, EventArgs e)
+		{
+			UpdateReportingWorkflowServiceRegistration();
 		}
 	}
 
