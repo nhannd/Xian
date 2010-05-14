@@ -208,7 +208,6 @@
     <Compile Include="Tables\TableFilterParams.cs" />
     <Compile Include="Tests\FormatTests.cs" />
     <Compile Include="Tests\ModifierFlagsConverterTest.cs" />
-    <Compile Include="Tests\NUnitValidationTest.cs" />
     <Compile Include="Tests\PathSegmentTests.cs" />
     <Compile Include="Tests\PathTests.cs" />
     <Compile Include="Tests\TableTest.cs" />
