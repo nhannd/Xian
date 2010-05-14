@@ -234,7 +234,7 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The shortcut {0} has already been assigned to {1}. Do you wish to reassign the shortcut?.
+        ///   Looks up a localized string similar to The shortcut {0} is already assigned to {1}. Do you wish to reassign the shortcut?.
         /// </summary>
         internal static string MessageKeyStrokeAlreadyAssigned {
             get {
@@ -243,7 +243,16 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The initial tool for {0} has already been assigned to {1}. Do you wish to reassign the mouse button?.
+        ///   Looks up a localized string similar to The global tool for {0} is already assigned to {1}. Do you wish to reassign the mouse button shortcut?.
+        /// </summary>
+        internal static string MessageMouseButtonGlobalToolAlreadyAssigned {
+            get {
+                return ResourceManager.GetString("MessageMouseButtonGlobalToolAlreadyAssigned", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The default tool for {0} is already assigned to {1}. Do you wish to reassign the mouse button?.
         /// </summary>
         internal static string MessageMouseButtonInitialToolAlreadyAssigned {
             get {

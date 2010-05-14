@@ -42,6 +42,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 	public class MouseImageViewerToolPropertyComponent : NodePropertiesComponent
 	{
 		private XMouseButtons _activeMouseButtons = XMouseButtons.Left;
+		private XMouseButtonCombo _globalMouseButtonCombo = XMouseButtonCombo.None;
 		private XMouseButtons _globalMouseButtons = XMouseButtons.None;
 		private ModifierFlags _globalModifiers = ModifierFlags.None;
 		private bool _initiallyActive = false;
@@ -50,6 +51,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			: base(selectedNode)
 		{
 			_activeMouseButtons = activeMouseButtons;
+			_globalMouseButtonCombo = new XMouseButtonCombo(globalMouseButtons, globalModifiers);
 			_globalMouseButtons = globalMouseButtons;
 			_globalModifiers = globalModifiers;
 			_initiallyActive = initiallyActive;
@@ -85,6 +87,23 @@ namespace ClearCanvas.ImageViewer.Configuration
 					_activeMouseButtons = value;
 					this.NotifyPropertyValidated("ActiveMouseButtons", value);
 					this.OnActiveMouseButtonsChanged();
+				}
+			}
+		}
+
+		public XMouseButtonCombo GlobalMouseButtonCombo
+		{
+			get { return _globalMouseButtonCombo; }
+			set
+			{
+				if (!this.RequestPropertyValidation("GlobalMouseButtonCombo", value))
+					return;
+
+				if (_globalMouseButtonCombo != value)
+				{
+					_globalMouseButtonCombo = value;
+					this.NotifyPropertyValidated("GlobalMouseButtonCombo", value);
+					this.OnGlobalMouseButtonComboShortcutChanged();
 				}
 			}
 		}
@@ -134,14 +153,23 @@ namespace ClearCanvas.ImageViewer.Configuration
 			this.InitiallyActive = false;
 		}
 
+		protected virtual void OnGlobalMouseButtonComboShortcutChanged()
+		{
+			this.NotifyPropertyChanged("GlobalMouseButtonCombo");
+			this.GlobalMouseButtons = _globalMouseButtonCombo.MouseButtons;
+			this.GlobalModifiers = _globalMouseButtonCombo.Modifiers;
+		}
+
 		protected virtual void OnGlobalMouseButtonsChanged()
 		{
 			this.NotifyPropertyChanged("GlobalMouseButtons");
+			this.GlobalMouseButtonCombo = new XMouseButtonCombo(_globalMouseButtons, _globalModifiers);
 		}
 
 		protected virtual void OnGlobalModifiersChanged()
 		{
 			this.NotifyPropertyChanged("GlobalModifiers");
+			this.GlobalMouseButtonCombo = new XMouseButtonCombo(_globalMouseButtons, _globalModifiers);
 		}
 	}
 }

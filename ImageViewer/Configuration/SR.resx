@@ -177,10 +177,13 @@ Please choose another Server Group Name.</value>
     <value>The Host Name cannot be empty.</value>
   </data>
   <data name="MessageKeyStrokeAlreadyAssigned" xml:space="preserve">
-    <value>The shortcut {0} has already been assigned to {1}. Do you wish to reassign the shortcut?</value>
+    <value>The shortcut {0} is already assigned to {1}. Do you wish to reassign the shortcut?</value>
+  </data>
+  <data name="MessageMouseButtonGlobalToolAlreadyAssigned" xml:space="preserve">
+    <value>The global tool for {0} is already assigned to {1}. Do you wish to reassign the mouse button shortcut?</value>
   </data>
   <data name="MessageMouseButtonInitialToolAlreadyAssigned" xml:space="preserve">
-    <value>The initial tool for {0} has already been assigned to {1}. Do you wish to reassign the mouse button?</value>
+    <value>The default tool for {0} is already assigned to {1}. Do you wish to reassign the mouse button?</value>
   </data>
   <data name="MessageNoServersSelected" xml:space="preserve">
     <value>No servers have been selected.  Please select at least one server and try again.</value>
