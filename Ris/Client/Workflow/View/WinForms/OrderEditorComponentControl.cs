@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_proceduresTableView.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
 			_proceduresTableView.MenuModel = _component.ProceduresActionModel;
 			_proceduresTableView.ToolbarModel = _component.ProceduresActionModel;
-			_proceduresTableView.DataBindings.Add("Selection", _component, "SelectedProcedure", true, DataSourceUpdateMode.OnPropertyChanged);
+			_proceduresTableView.DataBindings.Add("Selection", _component, "SelectedProcedures", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_recipientsTableView.Table = _component.Recipients;
 			_recipientsTableView.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
@@ -181,7 +181,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 
 		private void _proceduresTableView_ItemDoubleClicked(object sender, EventArgs e)
 		{
-			_component.EditSelectedProcedure();
+			_component.EditSelectedProcedures();
 		}
 
 		private void _visitSummaryButton_Click(object sender, EventArgs e)

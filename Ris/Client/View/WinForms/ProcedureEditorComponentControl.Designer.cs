@@ -38,6 +38,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._portable = new System.Windows.Forms.CheckBox();
 			this._checkedIn = new System.Windows.Forms.CheckBox();
 			this._performingDepartment = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+			this._schedulingCode = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this.SuspendLayout();
 			// 
 			// _okButton
@@ -121,7 +122,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._laterality.DisplayMember = "";
 			this._laterality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._laterality.LabelText = "Laterality";
-			this._laterality.Location = new System.Drawing.Point(277, 260);
+			this._laterality.Location = new System.Drawing.Point(277, 248);
 			this._laterality.Margin = new System.Windows.Forms.Padding(2);
 			this._laterality.Name = "_laterality";
 			this._laterality.Size = new System.Drawing.Size(223, 41);
@@ -131,7 +132,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _portable
 			// 
 			this._portable.AutoSize = true;
-			this._portable.Location = new System.Drawing.Point(22, 279);
+			this._portable.Location = new System.Drawing.Point(22, 260);
 			this._portable.Margin = new System.Windows.Forms.Padding(2);
 			this._portable.Name = "_portable";
 			this._portable.Size = new System.Drawing.Size(65, 17);
@@ -142,7 +143,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _checkedIn
 			// 
 			this._checkedIn.AutoSize = true;
-			this._checkedIn.Location = new System.Drawing.Point(375, 330);
+			this._checkedIn.Location = new System.Drawing.Point(22, 306);
 			this._checkedIn.Margin = new System.Windows.Forms.Padding(2);
 			this._checkedIn.Name = "_checkedIn";
 			this._checkedIn.Size = new System.Drawing.Size(125, 17);
@@ -163,10 +164,26 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._performingDepartment.TabIndex = 9;
 			this._performingDepartment.Value = null;
 			// 
+			// _schedulingCode
+			// 
+			this._schedulingCode.DataSource = null;
+			this._schedulingCode.DisplayMember = "";
+			this._schedulingCode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._schedulingCode.LabelText = "Scheduling Code";
+			this._schedulingCode.Location = new System.Drawing.Point(277, 294);
+			this._schedulingCode.Margin = new System.Windows.Forms.Padding(2);
+			this._schedulingCode.Name = "_schedulingCode";
+			this._schedulingCode.Size = new System.Drawing.Size(223, 41);
+			this._schedulingCode.TabIndex = 10;
+			this._schedulingCode.Value = null;
+			// 
 			// ProcedureEditorComponentControl
 			// 
+			this.AcceptButton = this._okButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this._cancelButton;
+			this.Controls.Add(this._schedulingCode);
 			this.Controls.Add(this._performingDepartment);
 			this.Controls.Add(this._checkedIn);
 			this.Controls.Add(this._portable);
@@ -197,5 +214,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private System.Windows.Forms.CheckBox _portable;
 		private System.Windows.Forms.CheckBox _checkedIn;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _performingDepartment;
+		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _schedulingCode;
     }
 }

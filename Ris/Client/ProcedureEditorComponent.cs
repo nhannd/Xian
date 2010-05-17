@@ -29,15 +29,12 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -53,47 +50,31 @@ namespace ClearCanvas.Ris.Client
 	/// ProcedureEditorComponent class
 	/// </summary>
 	[AssociateView(typeof(ProcedureEditorComponentViewExtensionPoint))]
-	public class ProcedureEditorComponent : ApplicationComponent
+	public class ProcedureEditorComponent : ProcedureEditorComponentBase
 	{
 		private readonly List<ProcedureTypeSummary> _procedureTypeChoices;
 		private DefaultSuggestionProvider<ProcedureTypeSummary> _procedureTypeSuggestionProvider;
 		private ProcedureTypeSummary _selectedProcedureType;
-		private DateTime? _scheduledTime;
 
 		private readonly ProcedureRequisition _requisition;
-		private readonly List<FacilitySummary> _facilityChoices;
-		private readonly List<DepartmentSummary> _allDepartments;
-		private List<DepartmentSummary> _departmentChoices;
-		private readonly DepartmentSummary _departmentNone = new DepartmentSummary();
-
-		private readonly List<EnumValueInfo> _lateralityChoices;
-		private FacilitySummary _selectedFacility;
-		private DepartmentSummary _selectedDepartment;
-		private EnumValueInfo _selectedLaterality;
-		private bool _portableModality;
-		private bool _checkedIn;
-		private readonly bool _isCheckedInEnabled;
 
 		/// <summary>
 		/// Constructor for add mode.
 		/// </summary>
-		public ProcedureEditorComponent(ProcedureRequisition requisition,
+		public ProcedureEditorComponent(
+			ProcedureRequisition requisition,
 			List<FacilitySummary> facilityChoices,
-			List<DepartmentSummary> departmentChoices, 
+			List<DepartmentSummary> departmentChoices,
 			List<EnumValueInfo> lateralityChoices,
+			List<EnumValueInfo> schedulingCodeChoices,
 			List<ProcedureTypeSummary> procedureTypeChoices)
+			: base(facilityChoices, departmentChoices, lateralityChoices, schedulingCodeChoices)
 		{
 			Platform.CheckForNullReference(requisition, "requisition");
 			Platform.CheckForNullReference(procedureTypeChoices, "procedureTypeChoices");
 
 			_requisition = requisition;
 			_procedureTypeChoices = procedureTypeChoices;
-			_facilityChoices = facilityChoices;
-			_allDepartments = departmentChoices;
-			_lateralityChoices = lateralityChoices;
-
-			// if the requisition's procedure type is null, then it is a new procedure and checked in can be edited.
-			_isCheckedInEnabled = _requisition.Status == null || _requisition.Status.Code == "SC";
 		}
 
 		/// <summary>
@@ -103,8 +84,9 @@ namespace ClearCanvas.Ris.Client
 			ProcedureRequisition requisition,
 			List<FacilitySummary> facilityChoices,
 			List<DepartmentSummary> departmentChoices,
-			List<EnumValueInfo> lateralityChoices)
-			: this(requisition, facilityChoices, departmentChoices, lateralityChoices, new List<ProcedureTypeSummary>())
+			List<EnumValueInfo> lateralityChoices,
+			List<EnumValueInfo> schedulingCodeChoices)
+			: this(requisition, facilityChoices, departmentChoices, lateralityChoices, schedulingCodeChoices, new List<ProcedureTypeSummary>())
 		{
 		}
 
@@ -114,12 +96,12 @@ namespace ClearCanvas.Ris.Client
 				delegate
 				{
 					// This validation does not apply if the procedure is not checked in
-					if (!_checkedIn)
+					if (!this.CheckedIn)
 						return new ValidationResult(true, "");
 
 					string alertMessage;
 					var checkInTime = Platform.Time;
-					var success = CheckInSettings.ValidateResult.Success == CheckInSettings.Validate(_scheduledTime, checkInTime, out alertMessage);
+					var success = CheckInSettings.ValidateResult.Success == CheckInSettings.Validate(this.ScheduledTime, checkInTime, out alertMessage);
 					return new ValidationResult(success, alertMessage);
 				}));
 
@@ -127,22 +109,32 @@ namespace ClearCanvas.Ris.Client
 
 			_procedureTypeSuggestionProvider = new DefaultSuggestionProvider<ProcedureTypeSummary>(_procedureTypeChoices, FormatProcedureType);
 
-			_selectedProcedureType = _requisition.ProcedureType;
-			_scheduledTime = _requisition.ScheduledTime;
-
-			_selectedFacility = _requisition.PerformingFacility;
-
-			// update department choices based on selected facility
-			UpdateDepartmentChoices();
-
-			_selectedDepartment = _requisition.PerformingDepartment;
-
-
-			_selectedLaterality = _requisition.Laterality;
-			_portableModality = _requisition.PortableModality;
-			_checkedIn = _requisition.CheckedIn;
-
 			base.Start();
+		}
+
+		protected override void LoadFromRequisition()
+		{
+			_selectedProcedureType = _requisition.ProcedureType;
+
+			this.ScheduledTime = _requisition.ScheduledTime;
+			this.SelectedFacility = _requisition.PerformingFacility;
+			this.SelectedDepartment = _requisition.PerformingDepartment;
+			this.SelectedLaterality = _requisition.Laterality;
+			this.SelectedSchedulingCode = _requisition.SchedulingCode;
+			this.PortableModality = _requisition.PortableModality;
+			this.CheckedIn = _requisition.CheckedIn;
+		}
+
+		protected override void UpdateRequisition()
+		{
+			_requisition.ProcedureType = _selectedProcedureType;
+			_requisition.ScheduledTime = this.ScheduledTime;
+			_requisition.Laterality = this.SelectedLaterality;
+			_requisition.SchedulingCode = this.SelectedSchedulingCode;
+			_requisition.PerformingFacility = this.SelectedFacility;
+			_requisition.PerformingDepartment = this.SelectedDepartment;
+			_requisition.PortableModality = this.PortableModality;
+			_requisition.CheckedIn = this.CheckedIn;
 		}
 
 		#region Presentation Model
@@ -152,17 +144,22 @@ namespace ClearCanvas.Ris.Client
 			get { return _procedureTypeChoices.Count > 0; }
 		}
 
-		public bool IsPerformingFacilityEditable
+		public override bool IsScheduledTimeEditable
 		{
 			get { return _requisition.Status == null || _requisition.Status.Code == "SC"; }
 		}
 
-		public bool IsPerformingDepartmentEditable
+		public override bool IsPerformingFacilityEditable
 		{
 			get { return _requisition.Status == null || _requisition.Status.Code == "SC"; }
 		}
 
-		public bool IsScheduledTimeEditable
+		public override bool IsPerformingDepartmentEditable
+		{
+			get { return _requisition.Status == null || _requisition.Status.Code == "SC"; }
+		}
+
+		public override bool IsCheckedInEditable
 		{
 			get { return _requisition.Status == null || _requisition.Status.Code == "SC"; }
 		}
@@ -192,158 +189,6 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		public IList FacilityChoices
-		{
-			get { return _facilityChoices; }
-		}
-
-		public string FormatFacility(object facility)
-		{
-			return ((FacilitySummary) facility).Name;
-		}
-
-		[ValidateNotNull]
-		public FacilitySummary SelectedFacility
-		{
-			get { return _selectedFacility; }
-			set
-			{
-				if (Equals(value, _selectedFacility))
-					return;
-
-				_selectedFacility = value;
-				NotifyPropertyChanged("SelectedFacility");
-
-				UpdateDepartmentChoices();
-				NotifyPropertyChanged("DepartmentChoicesChanged");
-
-				// clear selection
-				this.SelectedDepartment = null;
-			}
-		}
-
-		public IList DepartmentChoices
-		{
-			get { return _departmentChoices; }
-		}
-
-		public string FormatDepartment(object department)
-		{
-			return (department == _departmentNone || department == null) ? "" : ((DepartmentSummary)department).Name;
-		}
-
-		public DepartmentSummary SelectedDepartment
-		{
-			get { return _selectedDepartment; }
-			set
-			{
-				if (Equals(value, _selectedDepartment))
-					return;
-
-				// note: important to convert _departemntNone to null here, in order for "not-null" custom validation rules
-				// to behave as expected
-				_selectedDepartment = value == _departmentNone ? null : value;
-				NotifyPropertyChanged("SelectedDepartment");
-			}
-		}
-
-		public IList LateralityChoices
-		{
-			get { return _lateralityChoices; }
-		}
-
-		public EnumValueInfo SelectedLaterality
-		{
-			get { return _selectedLaterality; }
-			set
-			{
-				if (Equals(value, _selectedLaterality))
-					return;
-
-				_selectedLaterality = value;
-				NotifyPropertyChanged("SelectedLaterality");
-			}
-		}
-
-		public DateTime? ScheduledTime
-		{
-			get { return _scheduledTime; }
-			set
-			{
-				if (value == _scheduledTime)
-					return;
-
-				_scheduledTime = value;
-				NotifyPropertyChanged("ScheduledTime");
-			}
-		}
-
-		public bool PortableModality
-		{
-			get { return _portableModality; }
-			set
-			{
-				if (value == _portableModality)
-					return;
-
-				_portableModality = value;
-				NotifyPropertyChanged("PortableModality");
-			}
-		}
-
-		public bool CheckedIn
-		{
-			get { return _checkedIn; }
-			set
-			{
-				if (value == _checkedIn)
-					return;
-
-				_checkedIn = value;
-				NotifyPropertyChanged("CheckedIn");
-			}
-		}
-
-		public bool IsCheckedInEnabled
-		{
-			get { return _isCheckedInEnabled; }
-		}
-
-		public void Accept()
-		{
-			if (this.HasValidationErrors)
-			{
-				this.ShowValidation(true);
-				return;
-			}
-
-			_requisition.ProcedureType = _selectedProcedureType;
-			_requisition.ScheduledTime = _scheduledTime;
-			_requisition.Laterality = _selectedLaterality;
-			_requisition.PerformingFacility = _selectedFacility;
-			_requisition.PerformingDepartment = _selectedDepartment;
-			_requisition.PortableModality = _portableModality;
-			_requisition.CheckedIn = _checkedIn;
-
-			this.Exit(ApplicationComponentExitCode.Accepted);
-		}
-
-		public void Cancel()
-		{
-			this.Exit(ApplicationComponentExitCode.None);
-		}
-
 		#endregion
-
-		private void UpdateDepartmentChoices()
-		{
-			// limit department choices to those that are associated with the selected performing facility
-			_departmentChoices = _selectedFacility == null ? new List<DepartmentSummary>()
-				: CollectionUtils.Select(_allDepartments, d => d.FacilityCode == _selectedFacility.Code);
-
-			// add a "null" choice, to allow user to clear the value
-			_departmentChoices.Insert(0, _departmentNone);
-		}
-
 	}
 }

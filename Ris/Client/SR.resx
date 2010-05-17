@@ -1095,4 +1095,10 @@
   <data name="MessageConfirmClearProcedureTypes" xml:space="preserve">
     <value>Procedure type and procedure type group cannot both be used for filtering.  Do you want to clear all selected procedure types?</value>
   </data>
+  <data name="MessageAlertMultipleProceduresCheckInValidation" xml:space="preserve">
+    <value>The scheduled time and check-in state of some procedures did not pass validation.  Please edit each procedure individually.</value>
+  </data>
+  <data name="MessageRisServerDowntime" xml:space="preserve">
+    <value>The RIS is currently unavailable. Please restart this application once the RIS becomes available again. However, you may proceed with login in order to access image viewing capabilities.</value>
+  </data>
 </root>

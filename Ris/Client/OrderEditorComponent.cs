@@ -215,7 +215,7 @@ namespace ClearCanvas.Ris.Client
 
 		private readonly Table<ProcedureRequisition> _proceduresTable;
 		private readonly CrudActionModel _proceduresActionModel;
-		private ProcedureRequisition _selectedProcedure;
+		private List<ProcedureRequisition> _selectedProcedures = new List<ProcedureRequisition>();
 
 		private readonly Table<ResultRecipientDetail> _recipientsTable;
 		private readonly CrudActionModel _recipientsActionModel;
@@ -227,6 +227,7 @@ namespace ClearCanvas.Ris.Client
 
 		private string _indication;
 		private List<EnumValueInfo> _lateralityChoices;
+		private List<EnumValueInfo> _schedulingCodeChoices;
 
 		private event EventHandler _changeCommitted;
 
@@ -313,7 +314,7 @@ namespace ClearCanvas.Ris.Client
 
 			_proceduresActionModel = new CrudActionModel();
 			_proceduresActionModel.Add.SetClickHandler(AddProcedure);
-			_proceduresActionModel.Edit.SetClickHandler(EditSelectedProcedure);
+			_proceduresActionModel.Edit.SetClickHandler(EditSelectedProcedures);
 			_proceduresActionModel.Delete.SetClickHandler(CancelSelectedProcedure);
 
 			// in "modify" mode, the Delete action is actually a Cancel action
@@ -391,6 +392,7 @@ namespace ClearCanvas.Ris.Client
 			_priorityChoices = new List<EnumValueInfo>();
 			_cancelReasonChoices = new List<EnumValueInfo>();
 			_lateralityChoices = new List<EnumValueInfo>();
+			_schedulingCodeChoices = new List<EnumValueInfo>();
 
 			Async.Request(this,
 				(IOrderEntryService service) => service.GetOrderEntryFormData(new GetOrderEntryFormDataRequest()),
@@ -404,6 +406,7 @@ namespace ClearCanvas.Ris.Client
 					_facilityChoices = formChoicesResponse.FacilityChoices;
 					_departmentChoices = formChoicesResponse.DepartmentChoices;
 					_lateralityChoices = formChoicesResponse.LateralityChoices;
+					_schedulingCodeChoices = formChoicesResponse.SchedulingCodeChoices;
 
 					if (_mode == Mode.NewOrder)
 					{
@@ -660,16 +663,14 @@ namespace ClearCanvas.Ris.Client
 			get { return _proceduresActionModel; }
 		}
 
-		public ISelection SelectedProcedure
+		public ISelection SelectedProcedures
 		{
-			get { return new Selection(_selectedProcedure); }
+			get { return new Selection(_selectedProcedures); }
 			set
 			{
-				if (value.Item != _selectedProcedure)
-				{
-					_selectedProcedure = (ProcedureRequisition)value.Item;
-					UpdateProcedureActionModel();
-				}
+				_selectedProcedures = CollectionUtils.Map<object, ProcedureRequisition, List<ProcedureRequisition>>(
+					value.Items, item => (ProcedureRequisition) item);
+				UpdateProcedureActionModel();
 			}
 		}
 
@@ -864,6 +865,7 @@ namespace ClearCanvas.Ris.Client
 							_facilityChoices,
 							_departmentChoices,
 							_lateralityChoices,
+							_schedulingCodeChoices,
 							orderableProcedureTypes);
 
 						if (LaunchAsDialog(this.Host.DesktopWindow, procedureEditor, "Add Procedure")
@@ -881,23 +883,43 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		public void EditSelectedProcedure()
+		public void EditSelectedProcedures()
 		{
-			if (_selectedProcedure == null || !_selectedProcedure.CanModify)
+			var cannotModifySelectedProcedures = CollectionUtils.Contains(_selectedProcedures, p => !p.CanModify);
+			if (cannotModifySelectedProcedures)
 				return;
 
 			try
 			{
-				var procedureEditor = new ProcedureEditorComponent(
-					_selectedProcedure,
-					_facilityChoices,
-					_departmentChoices,
-					_lateralityChoices);
+				ProcedureEditorComponentBase editor;
+				string title;
 
-				if (LaunchAsDialog(this.Host.DesktopWindow, procedureEditor, "Modify Procedure")
-					== ApplicationComponentExitCode.Accepted)
+				if (_selectedProcedures.Count == 1)
 				{
-					_proceduresTable.Items.NotifyItemUpdated(_selectedProcedure);
+					title = "Modify Procedure";
+					editor = new ProcedureEditorComponent(
+						_selectedProcedures[0],
+						_facilityChoices,
+						_departmentChoices,
+						_lateralityChoices,
+						_schedulingCodeChoices);
+				}
+				else
+				{
+					title = "Modify Multiple Procedures";
+					editor = new MultipleProceduresEditorComponent(
+						_selectedProcedures,
+						_facilityChoices,
+						_departmentChoices,
+						_lateralityChoices,
+						_schedulingCodeChoices);
+				}
+
+				if (ApplicationComponentExitCode.Accepted == 
+					LaunchAsDialog(this.Host.DesktopWindow, editor, title))
+				{
+					foreach (var p in _selectedProcedures)
+						_proceduresTable.Items.NotifyItemUpdated(p);
 
 					this.Modified = true;
 				}
@@ -910,30 +932,37 @@ namespace ClearCanvas.Ris.Client
 
 		public void CancelSelectedProcedure()
 		{
-			if (_selectedProcedure == null || !_selectedProcedure.CanModify)
+			var cannotModifySelectedProcedures = CollectionUtils.Contains(_selectedProcedures, p => !p.CanModify);
+			if (cannotModifySelectedProcedures)
 				return;
 
-			if (_selectedProcedure.Status == null)
+			foreach (var p in _selectedProcedures)
 			{
-				// unsaved procedure
-				_proceduresTable.Items.Remove(_selectedProcedure);
-				_selectedProcedure = null;
-				NotifyPropertyChanged("SelectedProcedure");
-			}
-			else
-			{
-				_selectedProcedure.Cancelled = true;
-				_proceduresTable.Items.NotifyItemUpdated(_selectedProcedure);
+				if (p.Status == null)
+				{
+					// unsaved procedure
+					_proceduresTable.Items.Remove(p);
+					NotifyPropertyChanged("SelectedProcedure");
+				}
+				else
+				{
+					p.Cancelled = true;
+					_proceduresTable.Items.NotifyItemUpdated(p);
+				}
 			}
 
+			this.SelectedProcedures = Selection.Empty;
 			this.Modified = true;
 		}
 
 		public void UpdateProcedureActionModel()
 		{
+			var canModifySelectedProcedures = CollectionUtils.Contains(_selectedProcedures, p => p.CanModify);
+			var canDeleteSelectedProcedures = CollectionUtils.Contains(_selectedProcedures, p => p.CanModify && !p.Cancelled);
+
 			_proceduresActionModel.Add.Enabled = _selectedDiagnosticService != null;
-			_proceduresActionModel.Edit.Enabled = (_selectedProcedure != null && _selectedProcedure.CanModify);
-			_proceduresActionModel.Delete.Enabled = (_selectedProcedure != null && _selectedProcedure.CanModify && !_selectedProcedure.Cancelled);
+			_proceduresActionModel.Edit.Enabled = canModifySelectedProcedures;
+			_proceduresActionModel.Delete.Enabled = canDeleteSelectedProcedures;
 		}
 
 		public void AddRecipient()

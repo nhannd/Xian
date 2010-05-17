@@ -325,6 +325,13 @@
     <Compile Include="LookupField.Designer.cs">
       <DependentUpon>LookupField.cs</DependentUpon>
     </Compile>
+    <Compile Include="MultipleProceduresEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MultipleProceduresEditorComponentControl.Designer.cs">
+      <DependentUpon>MultipleProceduresEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MultipleProceduresEditorComponentView.cs" />
     <Compile Include="OrderNoteboxConfigurationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -755,6 +762,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="LookupHandlerCellEditorControl.resx">
       <DependentUpon>LookupHandlerCellEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MultipleProceduresEditorComponentControl.resx">
+      <DependentUpon>MultipleProceduresEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ProcedureEditorComponentControl.resx">
       <DependentUpon>ProcedureEditorComponentControl.cs</DependentUpon>

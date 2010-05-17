@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,47 +29,50 @@
 
 #endregion
 
-using System.Runtime.Serialization;
+using System;
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Common;
+using System.Text;
 
-namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-	[DataContract]
-	public class GetOrderEntryFormDataResponse : DataContractBase
-	{
-		public GetOrderEntryFormDataResponse(
-			List<FacilitySummary> facilityChoices,
-			List<DepartmentSummary> departmentChoices,
-			List<EnumValueInfo> orderPriorityChoices,
-			List<EnumValueInfo> cancelReasonChoices,
-			List<EnumValueInfo> lateralityChoices,
-			List<EnumValueInfo> schedulingCodeChoices)
-		{
-			this.FacilityChoices = facilityChoices;
-			this.DepartmentChoices = departmentChoices;
-			this.OrderPriorityChoices = orderPriorityChoices;
-			this.CancelReasonChoices = cancelReasonChoices;
-			this.LateralityChoices = lateralityChoices;
-			this.SchedulingCodeChoices = schedulingCodeChoices;
-		}
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="MultipleProceduresEditorComponent"/>.
+    /// </summary>
+    [ExtensionOf(typeof(MultipleProceduresEditorComponentViewExtensionPoint))]
+    public class MultipleProceduresEditorComponentView : WinFormsView, IApplicationComponentView
+    {
+        private MultipleProceduresEditorComponent _component;
+        private MultipleProceduresEditorComponentControl _control;
 
-		[DataMember]
-		public List<FacilitySummary> FacilityChoices;
+        #region IApplicationComponentView Members
 
-		[DataMember]
-		public List<DepartmentSummary> DepartmentChoices;
+        /// <summary>
+        /// Called by the host to assign this view to a component.
+        /// </summary>
+        public void SetComponent(IApplicationComponent component)
+        {
+            _component = (MultipleProceduresEditorComponent)component;
+        }
 
-		[DataMember]
-		public List<EnumValueInfo> OrderPriorityChoices;
+        #endregion
 
-		[DataMember]
-		public List<EnumValueInfo> CancelReasonChoices;
-
-		[DataMember]
-		public List<EnumValueInfo> LateralityChoices;
-
-		[DataMember]
-		public List<EnumValueInfo> SchedulingCodeChoices;
-	}
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new MultipleProceduresEditorComponentControl(_component);
+                }
+                return _control;
+            }
+        }
+    }
 }

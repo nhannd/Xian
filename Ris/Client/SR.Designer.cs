@@ -1492,6 +1492,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The scheduled time and check-in state of some procedures did not pass validation.  Please edit each procedure individually..
+        /// </summary>
+        internal static string MessageAlertMultipleProceduresCheckInValidation {
+            get {
+                return ResourceManager.GetString("MessageAlertMultipleProceduresCheckInValidation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} has unreconciled records.
         /// </summary>
         internal static string MessageAlertUnreconciledRecords {

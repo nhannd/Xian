@@ -120,7 +120,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 					(Department d) => departmentAssembler.CreateSummary(d, PersistenceContext)),
 				EnumUtils.GetEnumValueList<OrderPriorityEnum>(this.PersistenceContext),
 				EnumUtils.GetEnumValueList<OrderCancelReasonEnum>(this.PersistenceContext),
-				EnumUtils.GetEnumValueList<LateralityEnum>(this.PersistenceContext)
+				EnumUtils.GetEnumValueList<LateralityEnum>(this.PersistenceContext),
+				EnumUtils.GetEnumValueList<SchedulingCodeEnum>(this.PersistenceContext)
 				);
 		}
 

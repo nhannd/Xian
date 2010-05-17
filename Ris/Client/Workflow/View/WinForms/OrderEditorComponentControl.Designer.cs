@@ -188,7 +188,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel3.ColumnCount = 3;
 			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 15F));
+			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 16F));
 			this.tableLayoutPanel3.Controls.Add(this._orderingPractitionerContactPoint, 0, 3);
 			this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel4, 0, 5);
 			this.tableLayoutPanel3.Controls.Add(this.tabControl1, 0, 7);
@@ -305,15 +305,16 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			this._proceduresTableView.AutoSize = true;
 			this._proceduresTableView.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._proceduresTableView.ColumnHeaderTooltip = null;
 			this._proceduresTableView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._proceduresTableView.FilterTextBoxWidth = 132;
 			this._proceduresTableView.Location = new System.Drawing.Point(6, 6);
 			this._proceduresTableView.Margin = new System.Windows.Forms.Padding(0);
-			this._proceduresTableView.MultiSelect = false;
 			this._proceduresTableView.Name = "_proceduresTableView";
 			this._proceduresTableView.ReadOnly = false;
 			this._proceduresTableView.ShowToolbar = false;
 			this._proceduresTableView.Size = new System.Drawing.Size(453, 271);
+			this._proceduresTableView.SortButtonTooltip = null;
 			this._proceduresTableView.TabIndex = 0;
 			this._proceduresTableView.ItemDoubleClicked += new System.EventHandler(this._proceduresTableView_ItemDoubleClicked);
 			// 
@@ -323,7 +324,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._orderNotesTab.Margin = new System.Windows.Forms.Padding(2);
 			this._orderNotesTab.Name = "_orderNotesTab";
 			this._orderNotesTab.Padding = new System.Windows.Forms.Padding(6, 6, 21, 6);
-			this._orderNotesTab.Size = new System.Drawing.Size(481, 283);
+			this._orderNotesTab.Size = new System.Drawing.Size(480, 283);
 			this._orderNotesTab.TabIndex = 2;
 			this._orderNotesTab.Text = "Notes";
 			this._orderNotesTab.UseVisualStyleBackColor = true;
@@ -335,7 +336,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tabPage2.Margin = new System.Windows.Forms.Padding(2);
 			this.tabPage2.Name = "tabPage2";
 			this.tabPage2.Padding = new System.Windows.Forms.Padding(6, 6, 21, 6);
-			this.tabPage2.Size = new System.Drawing.Size(481, 283);
+			this.tabPage2.Size = new System.Drawing.Size(480, 283);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Copies To";
 			this.tabPage2.UseVisualStyleBackColor = true;
@@ -358,7 +359,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(454, 271);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(453, 271);
 			this.tableLayoutPanel1.TabIndex = 0;
 			// 
 			// _consultantContactPoint
@@ -373,7 +374,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._consultantContactPoint.Location = new System.Drawing.Point(2, 49);
 			this._consultantContactPoint.Margin = new System.Windows.Forms.Padding(2);
 			this._consultantContactPoint.Name = "_consultantContactPoint";
-			this._consultantContactPoint.Size = new System.Drawing.Size(371, 41);
+			this._consultantContactPoint.Size = new System.Drawing.Size(370, 41);
 			this._consultantContactPoint.TabIndex = 6;
 			this._consultantContactPoint.Value = null;
 			// 
@@ -386,7 +387,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._consultantLookup.Location = new System.Drawing.Point(2, 2);
 			this._consultantLookup.Margin = new System.Windows.Forms.Padding(2);
 			this._consultantLookup.Name = "_consultantLookup";
-			this._consultantLookup.Size = new System.Drawing.Size(371, 43);
+			this._consultantLookup.Size = new System.Drawing.Size(370, 43);
 			this._consultantLookup.TabIndex = 4;
 			this._consultantLookup.Value = null;
 			// 
@@ -394,6 +395,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			this._recipientsTableView.AutoSize = true;
 			this._recipientsTableView.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._recipientsTableView.ColumnHeaderTooltip = null;
 			this.tableLayoutPanel1.SetColumnSpan(this._recipientsTableView, 2);
 			this._recipientsTableView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._recipientsTableView.FilterTextBoxWidth = 132;
@@ -403,13 +405,14 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._recipientsTableView.Name = "_recipientsTableView";
 			this._recipientsTableView.ReadOnly = false;
 			this._recipientsTableView.ShowToolbar = false;
-			this._recipientsTableView.Size = new System.Drawing.Size(454, 179);
+			this._recipientsTableView.Size = new System.Drawing.Size(453, 179);
+			this._recipientsTableView.SortButtonTooltip = null;
 			this._recipientsTableView.TabIndex = 2;
 			// 
 			// _addConsultantButton
 			// 
 			this._addConsultantButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this._addConsultantButton.Location = new System.Drawing.Point(377, 65);
+			this._addConsultantButton.Location = new System.Drawing.Point(376, 65);
 			this._addConsultantButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 4);
 			this._addConsultantButton.Name = "_addConsultantButton";
 			this._addConsultantButton.Size = new System.Drawing.Size(75, 23);

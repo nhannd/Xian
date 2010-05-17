@@ -104,6 +104,7 @@
     <Compile Include="Formatting\TimeSpanFormat.cs" />
     <Compile Include="LookupHandlerAggregator.cs" />
     <Compile Include="LookupHandlerCellEditor.cs" />
+    <Compile Include="MultipleProceduresEditorComponent.cs" />
     <Compile Include="OrderNoteConversationComponentRecipientTable.cs" />
     <Compile Include="DateTimeEntryComponent.cs" />
     <Compile Include="DiagnosticServiceEditorComponent.cs" />
@@ -188,6 +189,7 @@
     </Compile>
     <Compile Include="PreliminaryDiagnosisConversationTool.cs" />
     <Compile Include="IEPrintBackgroundSettings.cs" />
+    <Compile Include="ProcedureEditorComponentBase.cs" />
     <Compile Include="ProcedureEditorComponent.cs" />
     <Compile Include="FolderRefreshTool.cs" />
     <Compile Include="ProcedureTypeEditorComponent.cs" />
