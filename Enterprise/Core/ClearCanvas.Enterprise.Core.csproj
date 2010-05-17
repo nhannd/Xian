@@ -89,8 +89,6 @@
     <Compile Include="Modelling\XmlValidationRuleSetSource.cs" />
     <Compile Include="ResponseCachingAdvice.cs" />
     <Compile Include="ResponseCachingAttribute.cs" />
-    <Compile Include="Caching\DefaultCacheClient.cs" />
-    <Compile Include="Caching\DefaultCacheProvider.cs" />
     <Compile Include="CoreServiceExtensionPoint.cs" />
     <Compile Include="DefaultExceptionRecorder.cs" />
     <Compile Include="EntityValidationException.cs" />
@@ -239,6 +237,9 @@
       <LastGenOutput>EntityValidationSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="persistence.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Caching\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

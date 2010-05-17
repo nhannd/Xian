@@ -32,7 +32,7 @@
 using System;
 using ClearCanvas.Enterprise.Common.Caching;
 
-namespace ClearCanvas.Enterprise.Core.Caching
+namespace ClearCanvas.Enterprise.Common.Caching
 {
 	/// <summary>
 	/// Implementation of <see cref="ICacheClient"/> for <see cref="DefaultCacheProvider"/>.

@@ -33,10 +33,9 @@ using System;
 using System.Collections;
 using System.Web;
 using System.Web.Caching;
-using ClearCanvas.Enterprise.Common.Caching;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Enterprise.Core.Caching
+namespace ClearCanvas.Enterprise.Common.Caching
 {
 	/// <summary>
 	/// Default implementation of <see cref="ICacheProvider"/>, provides a local in-process cache.
