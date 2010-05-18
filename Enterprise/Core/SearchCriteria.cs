@@ -140,6 +140,9 @@ namespace ClearCanvas.Enterprise.Core
 		/// <returns></returns>
 		protected virtual bool IsSatisfiedBy(object obj)
 		{
+			if(obj == null)
+				return false;
+
 			foreach (var kvp in SubCriteria)
 			{
 				var prop = obj.GetType().GetProperty(kvp.Key);
