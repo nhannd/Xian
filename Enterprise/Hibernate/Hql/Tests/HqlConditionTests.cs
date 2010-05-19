@@ -86,6 +86,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql.Tests
 			AreEqual(new HqlCondition("x is not null", new object[] { }), HqlCondition.GetCondition("x", SearchConditionTest.NotNull, new object[] { 1 }));
 		}
 
+		[Test]
 		public void TestInList()
 		{
 			List<int> numbers = new List<int>();

@@ -200,6 +200,8 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="RelatedEntityCondition.cs" />
+    <Compile Include="Tests\SearchConditionTests.cs" />
+    <Compile Include="Tests\SearchCriteriaTests.cs" />
     <Compile Include="TimeService.cs" />
     <Compile Include="TransactionMonitorAdvice.cs" />
     <Compile Include="TransactionNotifier.cs">

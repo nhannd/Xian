@@ -138,21 +138,18 @@ namespace ClearCanvas.Enterprise.Core
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		protected virtual bool IsSatisfiedBy(object obj)
+		protected internal virtual bool IsSatisfiedBy(object obj)
 		{
-			if(obj == null)
-				return false;
-
 			foreach (var kvp in SubCriteria)
 			{
-				var prop = obj.GetType().GetProperty(kvp.Key);
-
-				// TODO: if the property doesn't exist, what do we do??  
-				// for now, return false, but we might want to have a flag indicating how to handle missing properties
-				if(prop == null)
+				object x;
+				if (!GetPropertyValue(obj, kvp.Key, out x))
+				{
+					// TODO: if the property doesn't exist, what do we do??  
+					// for now, return false, but we might want to have a flag indicating how to handle missing properties
 					return false;
+				}
 
-				var x = prop.GetValue(obj, null);
 				if (!kvp.Value.IsSatisfiedBy(x))
 					return false;
 			}
@@ -283,6 +280,33 @@ namespace ClearCanvas.Enterprise.Core
 						subCriteria.FilterSubCriteria(subCriteriaFilter, recursive);
 				}
 			}
+		}
+
+		/// <summary>
+		/// Gets the value of the specified property, or returns false if the property does not exist.
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <param name="property"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		private static bool GetPropertyValue(object obj, string property, out object value)
+		{
+			value = null;
+
+			// if obj is null, leave value = null (null propagation)
+			if (ReferenceEquals(obj, null))
+				return true;
+
+			// get the property
+			var prop = obj.GetType().GetProperty(property);
+
+			// if the property doesn't exist, return false
+			if (prop == null)
+				return false;
+
+			// evaluate the property
+			value = prop.GetValue(obj, null);
+			return true;
 		}
 
 		#endregion

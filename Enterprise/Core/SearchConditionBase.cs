@@ -86,6 +86,7 @@ namespace ClearCanvas.Enterprise.Core
 			: base(key)
 		{
 			_test = SearchConditionTest.None;
+			_values = new object[0];
 			_sortPosition = -1;     // do not sort on this field
 			_sortDirection = true;    // default sort direction to ascending
 		}
@@ -97,7 +98,8 @@ namespace ClearCanvas.Enterprise.Core
 		protected SearchConditionBase(SearchConditionBase other)
 			: base(other)
 		{
-			_values = other._values;
+			// copy the values
+			_values = (new List<object>(other._values)).ToArray();
 			_test = other._test;
 			_sortPosition = other._sortPosition;
 			_sortDirection = other._sortDirection;
@@ -189,7 +191,7 @@ namespace ClearCanvas.Enterprise.Core
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		protected override bool IsSatisfiedBy(object value)
+		protected internal override bool IsSatisfiedBy(object value)
 		{
 			switch (_test)
 			{
@@ -275,11 +277,17 @@ namespace ClearCanvas.Enterprise.Core
 
 		internal static bool EqualTo(object variable, object value)
 		{
+			if (ReferenceEquals(variable, null))
+				return false;
+
 			return Equals(variable, value);
 		}
 
 		internal static bool NotEqualTo(object variable, object value)
 		{
+			if (ReferenceEquals(variable, null))
+				return false;
+
 			return !Equals(variable, value);
 		}
 
@@ -297,42 +305,54 @@ namespace ClearCanvas.Enterprise.Core
 
 		internal static bool Between(object variable, object lower, object upper)
 		{
-			var comparer = Comparer<object>.Default;
-			return comparer.Compare(lower, variable) > -1 && comparer.Compare(variable, upper) == -1;
+			// note: this is asymmetrical by design (because that is how SQL does it)
+			return MoreThanOrEqual(variable, lower) && LessThan(variable, upper);
 		}
 
 		internal static bool In(object variable, object[] values)
 		{
+			if (ReferenceEquals(variable, null))
+				return false;
 			return CollectionUtils.Contains(values, v => Equals(v, variable));
 		}
 
 		internal static bool NotIn(object variable, object[] values)
 		{
+			if (ReferenceEquals(variable, null))
+				return false;
 			return !CollectionUtils.Contains(values, v => Equals(v, variable));
 		}
 
 		internal static bool LessThan(object variable, object value)
 		{
+			if(ReferenceEquals(variable, null))
+				return false;
 			var comparer = Comparer<object>.Default;
-			return comparer.Compare(value, variable) == -1;
+			return comparer.Compare(variable, value) == -1;
 		}
 
 		internal static bool LessThanOrEqual(object variable, object value)
 		{
+			if (ReferenceEquals(variable, null))
+				return false;
 			var comparer = Comparer<object>.Default;
-			return comparer.Compare(value, variable) <= 0;
+			return comparer.Compare(variable, value) <= 0;
 		}
 
 		internal static bool MoreThan(object variable, object value)
 		{
+			if (ReferenceEquals(variable, null))
+				return false;
 			var comparer = Comparer<object>.Default;
-			return comparer.Compare(value, variable) == 1;
+			return comparer.Compare(variable, value) == 1;
 		}
 
 		internal static bool MoreThanOrEqual(object variable, object value)
 		{
+			if (ReferenceEquals(variable, null))
+				return false;
 			var comparer = Comparer<object>.Default;
-			return comparer.Compare(value, variable) >= 0;
+			return comparer.Compare(variable, value) >= 0;
 		}
 
 		internal static bool IsNull(object variable)

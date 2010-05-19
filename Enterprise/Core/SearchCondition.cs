@@ -54,7 +54,7 @@ namespace ClearCanvas.Enterprise.Core
         /// Copy constructor.
         /// </summary>
         /// <param name="other"></param>
-        protected SearchCondition(SearchCondition<T> other)
+        protected internal SearchCondition(SearchCondition<T> other)
             :base(other)
         {
         }
