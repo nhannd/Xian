@@ -39,6 +39,10 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.View.WinForms
 		{
 			InitializeComponent();
 
+			var layerBinding = new Binding("Checked", component, "ActiveLayer", true, DataSourceUpdateMode.OnPropertyChanged);
+			layerBinding.Format += ConvertControlRadioButtonChecked;
+			layerBinding.Parse += ConvertControlRadioButtonChecked;
+			radioButton1.DataBindings.Add(layerBinding);
 
 			var alphaBinding = new Binding("Value", component, "OverlayAlpha", true, DataSourceUpdateMode.OnPropertyChanged);
 			alphaBinding.Format += ConvertSliderValuePercent;
@@ -49,6 +53,20 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.View.WinForms
 			thresholdBinding.Format += ConvertSliderValuePercent;
 			thresholdBinding.Parse += ConvertSliderValuePercent;
 			_sliderThreshold.DataBindings.Add(thresholdBinding);
+		}
+
+		private static void ConvertControlRadioButtonChecked(object sender, ConvertEventArgs e)
+		{
+			if (e.Value is bool && e.DesiredType == typeof (FusionPresentationImageLayer))
+			{
+				bool fValue = (bool)e.Value;
+				e.Value = fValue ? FusionPresentationImageLayer.Base : FusionPresentationImageLayer.Overlay;
+			}
+			else if (e.Value is FusionPresentationImageLayer && e.DesiredType == typeof (bool))
+			{
+				FusionPresentationImageLayer eValue = (FusionPresentationImageLayer)e.Value;
+				e.Value = eValue == FusionPresentationImageLayer.Base;
+			}
 		}
 
 		private static void ConvertSliderValuePercent(object sender, ConvertEventArgs e)

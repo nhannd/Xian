@@ -41,6 +41,9 @@
     <Compile Include="FusionControlPanelComponent.cs" />
     <Compile Include="FusionOverlayImageColorMap.cs" />
     <Compile Include="FusionPresentationImage.cs" />
+    <Compile Include="FusionPresentationImageLayer.cs" />
+    <Compile Include="HotMetalColorMapFactory.cs" />
+    <Compile Include="InterpolatedColorMap.cs" />
     <Compile Include="PTFusionDisplaySetDescriptor.cs" />
     <Compile Include="PTFusionDisplaySetFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -29,83 +29,27 @@
 
 #endregion
 
-using System;
-using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
-	[Obsolete("See JY")]
-	public class FusionOverlayImageColorMap : ColorMap
+	[ExtensionOf(typeof(ColorMapFactoryExtensionPoint))]
+	public class HotMetalColorMapFactory : IColorMapFactory
 	{
-		private float _alpha = 1f;
-		private float _threshold = 0f;
-
-		public FusionOverlayImageColorMap() {}
-
-		public float Alpha
+		public string Name
 		{
-			get { return _alpha; }
-			set
-			{
-				Platform.CheckTrue(value >= 0 && value <= 1, String.Format("{3} = {0} is invalid. {3} must be >= {1} and <= {2}.", value, 0, 1, "value"));
-				if (_alpha != value)
-				{
-					_alpha = value;
-					base.OnLutChanged();
-				}
-			}
+			get { return "HotMetal"; }
 		}
 
-		public float Threshold
+		public string Description
 		{
-			get { return _threshold; }
-			set
-			{
-				Platform.CheckTrue(value >= 0 && value <= 1, String.Format("{3} = {0} is invalid. {3} must be >= {1} and <= {2}.", value, 0, 1, "value"));
-				if (_threshold != value)
-				{
-					_threshold = value;
-					base.OnLutChanged();
-				}
-			}
+			get { return "SR.HotMetal"; }
 		}
 
-		/// <summary>
-		/// Generates the Lut.
-		/// </summary>
-		protected override void Create()
+		public IDataLut Create()
 		{
-			int j = 0;
-			int maxGrayLevel = this.Length - 1;
-			int min = MinInputValue;
-			int max = MaxInputValue;
-
-			for (int i = min; i <= max; i++)
-			{
-				float scale = j/(float) maxGrayLevel;
-				j++;
-
-				if (scale > _threshold)
-				{
-					int value = (int) (Byte.MaxValue*scale);
-					int alpha = (int) (Byte.MaxValue*_alpha);
-					this[i] = Color.FromArgb(alpha, value, 0, 0).ToArgb();
-				}
-				else
-				{
-					this[i] = 0;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Returns an abbreviated description of the Lut.
-		/// </summary>
-		public override string GetDescription()
-		{
-			return "YARRRRRRRRRRGB";
+			return new InterpolatedColorMap(InterpolatedColorMap.StandardColorMaps.HotMetal);
 		}
 	}
 }

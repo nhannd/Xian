@@ -44,6 +44,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 	{
 		private float _overlayAlpha = 0.5f;
 		private float _overlayThreshold = 0.1f;
+		private FusionPresentationImageLayer _activeLayer;
 
 		public FusionControlPanelComponent(IDesktopWindow desktopWindow)
 			: base(desktopWindow) {}
@@ -80,16 +81,43 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 		}
 
+		public FusionPresentationImageLayer ActiveLayer
+		{
+			get { return _activeLayer; }
+			set
+			{
+				if (_activeLayer !=value)
+				{
+					_activeLayer = value;
+					base.NotifyPropertyChanged("ActiveLayer");
+					this.UpdateOverlay();
+				}
+			}
+		}
+
 		protected virtual void UpdateOverlay()
 		{
-			if (this.ImageViewer != null && this.ImageViewer.SelectedPresentationImage is FusionPresentationImage)
+			if (this.ImageViewer != null)
 			{
-				var image = (FusionPresentationImage) this.ImageViewer.SelectedPresentationImage;
+				foreach (IImageBox imageBox in this.ImageViewer.PhysicalWorkspace.ImageBoxes) 
+				{
+					if (imageBox.DisplaySet != null)
+					{
+						foreach (IPresentationImage pImage in imageBox.DisplaySet.PresentationImages)
+						{
+							if (pImage is FusionPresentationImage)
+							{
+								var image = (FusionPresentationImage)pImage;
 
-				image.OverlayAlpha = Restrict(_overlayAlpha, 0, 1);
-				image.OverlayThreshold = Restrict(_overlayThreshold, 0, 1);
+								image.ActiveLayer = _activeLayer;
+								image.OverlayAlpha = Restrict(_overlayAlpha, 0, 1);
+								//image.OverlayThreshold = Restrict(_overlayThreshold, 0, 1);
 
-				image.Draw();
+								//image.Draw();
+							}
+						}
+					}
+				}
 			}
 		}
 
