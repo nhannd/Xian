@@ -574,6 +574,7 @@ namespace ClearCanvas.Healthcare
 		/// <param name="wqc"></param>
 		protected void ApplyFilterCriteria(WorklistItemSearchCriteria criteria, IWorklistQueryContext wqc)
 		{
+			this.ProcedureTypeFilter.Apply(criteria.Procedure.Type, wqc);
 			this.ProcedureTypeGroupFilter.Apply(criteria.Procedure.Type, wqc);
 			this.FacilityFilter.Apply(criteria.Procedure.PerformingFacility, wqc);
 			this.DepartmentFilter.Apply(criteria.Procedure.PerformingDepartment, wqc);
