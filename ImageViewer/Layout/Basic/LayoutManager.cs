@@ -53,6 +53,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			private readonly MixedMultiFrameDisplaySetFactory _mixedMultiFrameFactory;
 			private readonly BasicDisplaySetFactory _basicFactory;
 
+			private readonly IList<IDisplaySetFactory> _externalFactories;
+
 			public DisplaySetFactory(StoredDisplaySetCreationSetting creationSetting)
 			{
 				_creationSetting = creationSetting;
@@ -71,6 +73,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 				if (_creationSetting.SplitMixedMultiframes)
 					_mixedMultiFrameFactory = new MixedMultiFrameDisplaySetFactory(imageFactory);
+
+				var externalFactories = new List<IDisplaySetFactory>();
+				foreach (IDisplaySetFactoryProvider provider in new DisplaySetFactoryProviderExtensionPoint().CreateExtensions())
+					externalFactories.AddRange(provider.CreateDisplaySetFactories(imageFactory));
+				_externalFactories = externalFactories.AsReadOnly();
 			}
 
 			private bool SplitMultiEchoSeries { get { return _creationSetting.SplitMultiEchoSeries; } }
@@ -90,6 +97,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 				if (_mixedMultiFrameFactory != null)
 					_mixedMultiFrameFactory.SetStudyTree(studyTree);
+
+				foreach (var factory in _externalFactories)
+					factory.SetStudyTree(studyTree);
 			}
 
 			public override List<IDisplaySet> CreateDisplaySets(Series series)
@@ -121,6 +131,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 					foreach (IDisplaySet displaySet in _basicFactory.CreateDisplaySets(series))
 						displaySets.Add(displaySet);
 				}
+
+				foreach (var factory in _externalFactories)
+					displaySets.AddRange(factory.CreateDisplaySets(series));
 
 				return displaySets;
 			}

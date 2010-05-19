@@ -272,6 +272,10 @@
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Configuration\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Configuration\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.View.WinForms.dll" />
 
+    <!-- Fusion -->
+    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\AdvancedImaging\Fusion\bin\$(Configuration)\ClearCanvas.ImageViewer.AdvancedImaging.Fusion.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\AdvancedImaging\Fusion\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.AdvancedImaging.Fusion.View.WinForms.dll" />
+
     <!-- Tools -->
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Measurement\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Measurement.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Measurement\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Measurement.View.WinForms.dll" />

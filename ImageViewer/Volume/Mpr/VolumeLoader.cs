@@ -74,6 +74,20 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 		}
 
+		public static Volume Create(IEnumerable<IFrameReference> frames)
+		{
+			return Create(frames, null);
+		}
+
+		public static Volume Create(IEnumerable<IFrameReference> frames, CreateVolumeProgressCallback callback)
+		{
+			Platform.CheckForNullReference(frames, "frames");
+			using (VolumeBuilder builder = new VolumeBuilder(frames, callback))
+			{
+				return builder.Build();
+			}
+		}
+
 		public static Volume Create(IEnumerable<string> filenames)
 		{
 			return Create(filenames, null);

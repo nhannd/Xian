@@ -88,6 +88,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 					_frames.Add(frame.CreateTransientReference());
 			}
 
+			public VolumeBuilder(IEnumerable<IFrameReference> frames, CreateVolumeProgressCallback callback)
+			{
+				_callback = callback ?? delegate { };
+				_frames = new List<IFrameReference>();
+				foreach (IFrameReference frame in frames)
+					_frames.Add(frame.Clone());
+			}
+
 			public void Dispose()
 			{
 				foreach (IFrameReference frame in _frames)

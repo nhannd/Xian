@@ -130,6 +130,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				// generate VOI LUT Module
 				volumeDataSet[DicomTags.WindowWidth] = source[DicomTags.WindowWidth].Copy();
 				volumeDataSet[DicomTags.WindowCenter] = source[DicomTags.WindowCenter].Copy();
+
+				// generate Modality LUT Module
 				volumeDataSet[DicomTags.RescaleSlope] = source[DicomTags.RescaleSlope].Copy();
 				volumeDataSet[DicomTags.RescaleIntercept] = source[DicomTags.RescaleIntercept].Copy();
 
