@@ -79,5 +79,8 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 
 		[CommandLineParameter("baseline", "b", "Specifies the name of a file that contains the model to upgrade from, in xml format.")]
 		public string BaselineModelFile { get; set; }
+
+		[CommandLineParameter("namespace", "ns", "Specifies the namespace of classes to include in the schema generation.  If omitted, all namespaces are included.  When using in combination with 'baseline' option, ensure that the same namespace option is used to generate both the baseline model and the current model.  Failing to do so will result in tables being dropped.")]
+		public string Namespace { get; set; }
 	}
 }

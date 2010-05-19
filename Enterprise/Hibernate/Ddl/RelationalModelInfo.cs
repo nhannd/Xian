@@ -62,8 +62,8 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// Constructor that creates a model from all NHibernate mappings and embedded enumeration information
 		/// in the set of installed plugins.
 		/// </summary>
-		public RelationalModelInfo(PersistentStore store)
-			:this(store.Configuration)
+		public RelationalModelInfo(PersistentStore store, RelationalSchemaOptions.NamespaceFilterOption namespaceFilter)
+			: this(store.Configuration, namespaceFilter)
 		{
 		}
 
@@ -72,11 +72,14 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// in the set of installed plugins.
 		/// </summary>
 		/// <param name="config"></param>
-		public RelationalModelInfo(Configuration config)
+		/// <param name="namespaceFilter"></param>
+		public RelationalModelInfo(Configuration config, RelationalSchemaOptions.NamespaceFilterOption namespaceFilter)
 		{
-			_tables = CollectionUtils.Map(GetTables(config), (Table table) => BuildTableInfo(table, config));
+			_tables = CollectionUtils.Map(GetTables(config, namespaceFilter), (Table table) => BuildTableInfo(table, config));
 
-			_enumerations = new EnumMetadataReader().GetEnums(config);
+			_enumerations = CollectionUtils.Select(
+				new EnumMetadataReader().GetEnums(config),
+				enumeration => namespaceFilter.Matches(enumeration.EnumerationClass));
 		}
 
 		/// <summary>
@@ -128,12 +131,16 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// Gets the set of NHibernate <see cref="Table"/> objects known to the specified configuration.
 		/// </summary>
 		/// <param name="cfg"></param>
+		/// <param name="namespaceFilter"></param>
 		/// <returns></returns>
-		private static List<Table> GetTables(Configuration cfg)
+		private static List<Table> GetTables(Configuration cfg, RelationalSchemaOptions.NamespaceFilterOption namespaceFilter)
 		{
 			// build set of all tables
 			var tables = new HybridSet();
-			foreach (var pc in cfg.ClassMappings)
+			var filteredClassMappings = CollectionUtils.Select(
+				cfg.ClassMappings, 
+				classMapping => namespaceFilter.Matches(classMapping.MappedClass.Namespace));
+			foreach (var pc in filteredClassMappings)
 			{
 				foreach (var table in pc.TableClosureIterator)
 				{
@@ -141,7 +148,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 				}
 			}
 
-			foreach (var collection in cfg.CollectionMappings)
+			var filteredCollectionMappings = CollectionUtils.Select(
+				cfg.CollectionMappings, 
+				collectionMapping => namespaceFilter.Matches(collectionMapping.Owner.MappedClass.Namespace));
+			foreach (var collection in filteredCollectionMappings)
 			{
 				tables.Add(collection.CollectionTable);
 			}

@@ -156,7 +156,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			// subsequently we can add extension generators, with uncontrolled ordering
 			foreach (IDdlScriptGenerator generator in (new DdlScriptGeneratorExtensionPoint().CreateExtensions()))
 			{
-				generators.Add(generator);
+				if (_options.NamespaceFilter.Matches(generator.GetType().Namespace))
+				{
+					generators.Add(generator);
+				}
 			}
 			return generators;
 		}

@@ -104,6 +104,7 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 																EnumOption = cmdLine.EnumOption,
 																SuppressForeignKeys = !cmdLine.CreateForeignKeys,
 																SuppressUniqueConstraints = !cmdLine.CreateUniqueKeys,
+																NamespaceFilter = new RelationalSchemaOptions.NamespaceFilterOption(cmdLine.Namespace)
 															},
 												QualifyNames = cmdLine.QualifyNames,
 												BaselineModel = baselineModel
@@ -124,7 +125,8 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 							throw new NotSupportedException("Upgrade is not compatible with XML output format.");
 
 						var serializer = new RelationalModelSerializer();
-						serializer.WriteModel(new RelationalModelInfo(store), writer);
+						var relationalModelInfo = new RelationalModelInfo(store, new RelationalSchemaOptions.NamespaceFilterOption(cmdLine.Namespace));
+						serializer.WriteModel(relationalModelInfo, writer);
 						break;
 
 					default:
