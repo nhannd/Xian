@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
@@ -50,8 +51,10 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		[CloneIgnore]
 		private GrayscaleImageGraphic _fusionOverlayImageGraphic;
 
+		private XVoiLutInstaller _xVoiLutInstaller;
+
 		private float _colorMapAlpha = 0.5f;
-		private float _colorMapThreshold = 0.1f;
+		private string _colorMapName = string.Empty;
 		private FusionPresentationImageLayer _activeLayer = FusionPresentationImageLayer.Base;
 
 		public FusionPresentationImage(Frame baseFrame, FusionOverlayData overlayData)
@@ -61,6 +64,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			: base(baseFrame)
 		{
 			_overlayDataReference = overlayData;
+			_xVoiLutInstaller = new XVoiLutInstaller();
 
 			Initialize();
 		}
@@ -123,6 +127,12 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					// do not dispose this - we don't own it directly!
 					_fusionOverlayLayer = null;
 				}
+
+				if (_xVoiLutInstaller != null)
+				{
+					_xVoiLutInstaller.Dispose();
+					_xVoiLutInstaller = null;
+				}
 			}
 
 			base.Dispose(disposing);
@@ -148,6 +158,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				if (_colorMapAlpha != value)
 				{
 					_colorMapAlpha = value;
+					if (_fusionOverlayImageGraphic != null && _fusionOverlayImageGraphic.ColorMap is AlphaColorMap)
+					{
+						((AlphaColorMap) _fusionOverlayImageGraphic.ColorMap).Alpha = (byte) (byte.MaxValue*_colorMapAlpha);
+						_fusionOverlayImageGraphic.Draw();
+					}
 				}
 			}
 		}
@@ -175,7 +190,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			var overlayImageGraphic = _overlayDataReference.FusionOverlayData.GetOverlay(this.Frame);
 			if (overlayImageGraphic != null)
 			{
-				overlayImageGraphic.ColorMapManager.InstallColorMap("HotMetal");
+				overlayImageGraphic.VoiLutManager.SetMemento(_xVoiLutInstaller.VoiLutManager.CreateMemento());
+				overlayImageGraphic.ColorMapManager.InstallColorMap("FusionDefaultColorMap(HotMetal)");
 				_fusionOverlayLayer.Graphics.Add(_fusionOverlayImageGraphic = overlayImageGraphic);
 			}
 		}
@@ -190,15 +206,54 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				{
 					if (_fusionOverlayImageGraphic != null)
 						return _fusionOverlayImageGraphic.VoiLutManager;
+					else
+						return _xVoiLutInstaller.VoiLutManager;
 				}
 				else
 				{
 					return base.VoiLutManager;
 				}
-				return base.VoiLutManager;
 			}
 		}
 
 		#endregion
+
+		[Cloneable]
+		private class XVoiLutInstaller : IVoiLutInstaller, IDisposable
+		{
+			public bool Invert { get; set; }
+			public IComposableLut VoiLut { get; private set; }
+			public IVoiLutManager VoiLutManager { get; private set; }
+
+			public XVoiLutInstaller()
+			{
+				this.Invert = false;
+				this.VoiLut = new IdentityVoiLinearLut();
+				this.VoiLutManager = new VoiLutManager(this, false);
+			}
+
+			/// <summary>
+			/// Cloning constructor.
+			/// </summary>
+			/// <param name="source">The source object from which to clone.</param>
+			/// <param name="context">The cloning context object.</param>
+			protected XVoiLutInstaller(XVoiLutInstaller source, ICloningContext context)
+			{
+				this.Invert = source.Invert;
+				this.VoiLut = source.VoiLut.Clone();
+				this.VoiLutManager = new VoiLutManager(this, false);
+			}
+
+			public void Dispose()
+			{
+				this.VoiLut = null;
+				this.VoiLutManager = null;
+			}
+
+			public void InstallVoiLut(IComposableLut voiLut)
+			{
+				this.VoiLut = voiLut;
+			}
+		}
 	}
 }

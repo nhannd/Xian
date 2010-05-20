@@ -39,17 +39,18 @@
   <ItemGroup>
     <Compile Include="DisplaySetFactoryProvider.cs" />
     <Compile Include="FusionControlPanelComponent.cs" />
-    <Compile Include="FusionOverlayImageColorMap.cs" />
+    <Compile Include="AlphaColorMap.cs" />
+    <Compile Include="FusionDefaultColorMapHotMetalColorMapFactory.cs" />
     <Compile Include="FusionPresentationImage.cs" />
     <Compile Include="FusionPresentationImageLayer.cs" />
     <Compile Include="HotMetalColorMapFactory.cs" />
     <Compile Include="InterpolatedColorMap.cs" />
-    <Compile Include="PTFusionDisplaySetDescriptor.cs" />
-    <Compile Include="PTFusionDisplaySetFactory.cs" />
+    <Compile Include="PETFusionDisplaySetDescriptor.cs" />
+    <Compile Include="PETFusionDisplaySetFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FusionOverlayDataReference.cs" />
     <Compile Include="FusionOverlayData.cs" />
-    <Compile Include="PTFusionType.cs" />
+    <Compile Include="PETFusionType.cs" />
     <Compile Include="FusionTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>

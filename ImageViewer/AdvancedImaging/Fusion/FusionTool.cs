@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 			if (this.ImageViewer != null && this.ImageViewer.LogicalWorkspace != null)
 				this.Enabled = AtLeastOne(this.ImageViewer.LogicalWorkspace.ImageSets,
-				                          imageSet => AtLeastOne(imageSet.DisplaySets, displaySet => displaySet.Descriptor is PTFusionDisplaySetDescriptor));
+				                          imageSet => AtLeastOne(imageSet.DisplaySets, displaySet => displaySet.Descriptor is PETFusionDisplaySetDescriptor));
 		}
 
 		private static bool AtLeastOne<T>(IEnumerable<T> collection, Predicate<T> predicate)

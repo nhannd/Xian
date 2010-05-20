@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		public IEnumerable<IDisplaySetFactory> CreateDisplaySetFactories(IPresentationImageFactory presentationImageFactory)
 		{
-			yield return new PTFusionDisplaySetFactory(PTFusionType.CT);
+			yield return new PETFusionDisplaySetFactory(PETFusionType.CT);
 		}
 
 		#endregion

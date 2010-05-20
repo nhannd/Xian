@@ -63,9 +63,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion {
         /// <summary>
         ///   Looks up a localized string similar to Fusion: {0}/{1} ({2}).
         /// </summary>
-        internal static string FormatPTFusionDisplaySet {
+        internal static string FormatPETFusionDisplaySet {
             get {
-                return ResourceManager.GetString("FormatPTFusionDisplaySet", resourceCulture);
+                return ResourceManager.GetString("FormatPETFusionDisplaySet", resourceCulture);
             }
         }
         

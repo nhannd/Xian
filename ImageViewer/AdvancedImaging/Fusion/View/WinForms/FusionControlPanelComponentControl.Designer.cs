@@ -49,10 +49,12 @@
 			// 
 			// _sliderAlpha
 			// 
+			this._sliderAlpha.LargeChange = 100;
 			this._sliderAlpha.Location = new System.Drawing.Point(26, 36);
 			this._sliderAlpha.Maximum = 1000;
 			this._sliderAlpha.Name = "_sliderAlpha";
 			this._sliderAlpha.Size = new System.Drawing.Size(161, 42);
+			this._sliderAlpha.SmallChange = 25;
 			this._sliderAlpha.TabIndex = 1;
 			this._sliderAlpha.TickFrequency = 100;
 			// 

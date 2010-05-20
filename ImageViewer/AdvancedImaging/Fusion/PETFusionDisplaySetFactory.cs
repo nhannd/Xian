@@ -43,7 +43,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
-	public class PTFusionDisplaySetFactory : DisplaySetFactory
+	public class PETFusionDisplaySetFactory : DisplaySetFactory
 	{
 		private const float _halfPi = (float) Math.PI/2;
 		private const float _gantryTiltTolerance = 0.1f; // allowed tolerance for gantry tilt (in radians)
@@ -51,16 +51,16 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		private const float _minimumSliceSpacing = 0.01f; // minimum spacing required between slices (in mm)
 		private const float _sliceSpacingTolerance = 0.001f; // allowed tolerance for slice spacing (in mm)
 		private const string _attenuationCorrectionCode = "ATTN";
-		private const string _ptModality = "PT";
+		private const string _petModality = "PT";
 
-		private readonly PTFusionType _fusionType;
+		private readonly PETFusionType _fusionType;
 
-		public PTFusionDisplaySetFactory(PTFusionType fusionType)
+		public PETFusionDisplaySetFactory(PETFusionType fusionType)
 		{
 			_fusionType = fusionType;
 		}
 
-		public PTFusionType FusionType
+		public PETFusionType FusionType
 		{
 			get { return _fusionType; }
 		}
@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					if (ptSeries.Sops.Count == 0)
 						continue;
 
-					var descriptor = new PTFusionDisplaySetDescriptor(series.GetIdentifier(), ptSeries.GetIdentifier(), IsAttenuationCorrected(ptSeries.Sops[0]));
+					var descriptor = new PETFusionDisplaySetDescriptor(series.GetIdentifier(), ptSeries.GetIdentifier(), IsAttenuationCorrected(ptSeries.Sops[0]));
 					var displaySet = new DisplaySet(descriptor);
 					using (var fusionOverlayData = new FusionOverlayData(GetFrames(ptSeries.Sops)))
 					{
@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			switch (_fusionType)
 			{
-				case PTFusionType.CT:
+				case PETFusionType.CT:
 					if (series.Modality != _fusionType.ToString())
 						return false;
 
@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		public bool IsValidPTFusionSeries(Series series)
 		{
-			if (series.Modality != _ptModality)
+			if (series.Modality != _petModality)
 				return false;
 
 			var frames = GetFrames(series.Sops);

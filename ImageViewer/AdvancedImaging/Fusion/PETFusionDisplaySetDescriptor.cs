@@ -36,18 +36,18 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
 	[Cloneable]
-	public class PTFusionDisplaySetDescriptor : DicomDisplaySetDescriptor
+	public class PETFusionDisplaySetDescriptor : DicomDisplaySetDescriptor
 	{
 		[CloneCopyReference]
-		private readonly ISeriesIdentifier _ptSeries;
+		private readonly ISeriesIdentifier _petSeries;
 
 		private readonly bool _attenuationCorrection;
 		private readonly string _fusionSeriesInstanceUid;
 
-		public PTFusionDisplaySetDescriptor(ISeriesIdentifier baseSeries, ISeriesIdentifier ptSeries, bool attenuationCorrection)
+		public PETFusionDisplaySetDescriptor(ISeriesIdentifier baseSeries, ISeriesIdentifier ptSeries, bool attenuationCorrection)
 			: base(baseSeries, null)
 		{
-			_ptSeries = ptSeries;
+			_petSeries = ptSeries;
 			_attenuationCorrection = attenuationCorrection;
 			_fusionSeriesInstanceUid = DicomUid.GenerateUid().UID;
 		}
@@ -57,14 +57,14 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		/// </summary>
 		/// <param name="source">The source object from which to clone.</param>
 		/// <param name="context">The cloning context object.</param>
-		protected PTFusionDisplaySetDescriptor(PTFusionDisplaySetDescriptor source, ICloningContext context) : base(source, context)
+		protected PETFusionDisplaySetDescriptor(PETFusionDisplaySetDescriptor source, ICloningContext context) : base(source, context)
 		{
 			context.CloneFields(source, this);
 		}
 
-		public ISeriesIdentifier PTSeries
+		public ISeriesIdentifier PETSeries
 		{
-			get { return _ptSeries; }
+			get { return _petSeries; }
 		}
 
 		public bool AttenuationCorrection
@@ -74,14 +74,14 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		protected override string GetName()
 		{
-			return string.Format(SR.FormatPTFusionDisplaySet, GetSeriesDisplaySetName(base.SourceSeries), GetSeriesDisplaySetName(this.PTSeries),
+			return string.Format(SR.FormatPETFusionDisplaySet, GetSeriesDisplaySetName(base.SourceSeries), GetSeriesDisplaySetName(this.PETSeries),
 			                     this.AttenuationCorrection ? SR.LabelAttenuationCorrection : SR.LabelNoAttentuationCorrection
 				);
 		}
 
 		protected override string GetDescription()
 		{
-			return string.Format(SR.FormatPTFusionDisplaySet, GetSeriesDisplaySetDescription(base.SourceSeries), GetSeriesDisplaySetDescription(this.PTSeries),
+			return string.Format(SR.FormatPETFusionDisplaySet, GetSeriesDisplaySetDescription(base.SourceSeries), GetSeriesDisplaySetDescription(this.PETSeries),
 			                     this.AttenuationCorrection ? SR.LabelAttenuationCorrection : SR.LabelNoAttentuationCorrection
 				);
 		}

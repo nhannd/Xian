@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 	/// <summary>
 	/// Specifies the type of PET series fusion operation.
 	/// </summary>
-	public enum PTFusionType
+	public enum PETFusionType
 	{
 		/// <summary>
 		/// Specifies PET-CT Fusion.
