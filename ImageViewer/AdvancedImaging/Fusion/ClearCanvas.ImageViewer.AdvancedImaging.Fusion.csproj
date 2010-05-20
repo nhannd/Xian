@@ -43,6 +43,7 @@
     <Compile Include="FusionDefaultColorMapHotMetalColorMapFactory.cs" />
     <Compile Include="FusionPresentationImage.cs" />
     <Compile Include="FusionPresentationImageLayer.cs" />
+    <Compile Include="FusionVoiLutManagerProxy.cs" />
     <Compile Include="HotMetalColorMapFactory.cs" />
     <Compile Include="InterpolatedColorMap.cs" />
     <Compile Include="PETFusionDisplaySetDescriptor.cs" />

@@ -51,11 +51,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		[CloneIgnore]
 		private GrayscaleImageGraphic _fusionOverlayImageGraphic;
 
-		private XVoiLutInstaller _xVoiLutInstaller;
+		private FusionVoiLutManagerProxy _voiLutManagerProxy;
 
 		private float _colorMapAlpha = 0.5f;
-		private string _colorMapName = string.Empty;
-		private FusionPresentationImageLayer _activeLayer = FusionPresentationImageLayer.Base;
 
 		public FusionPresentationImage(Frame baseFrame, FusionOverlayData overlayData)
 			: this(baseFrame.CreateTransientReference(), overlayData.CreateTransientReference()) {}
@@ -64,7 +62,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			: base(baseFrame)
 		{
 			_overlayDataReference = overlayData;
-			_xVoiLutInstaller = new XVoiLutInstaller();
 
 			Initialize();
 		}
@@ -104,6 +101,12 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				// insert the fusion graphics layer right after the base image graphic (both contain domain-level graphics)
 				base.CompositeImageGraphic.Graphics.Insert(base.CompositeImageGraphic.Graphics.IndexOf(this.ImageGraphic) + 1, _fusionOverlayLayer);
 			}
+
+			if (_voiLutManagerProxy == null)
+			{
+				_voiLutManagerProxy = new FusionVoiLutManagerProxy();
+			}
+			_voiLutManagerProxy.SetBaseVoiLutManager(this.ImageGraphic.VoiLutManager);
 		}
 
 		protected override void Dispose(bool disposing)
@@ -128,10 +131,10 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					_fusionOverlayLayer = null;
 				}
 
-				if (_xVoiLutInstaller != null)
+				if (_voiLutManagerProxy != null)
 				{
-					_xVoiLutInstaller.Dispose();
-					_xVoiLutInstaller = null;
+					_voiLutManagerProxy.Dispose();
+					_voiLutManagerProxy = null;
 				}
 			}
 
@@ -140,14 +143,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		public FusionPresentationImageLayer ActiveLayer
 		{
-			get { return _activeLayer; }
-			set
-			{
-				if (_activeLayer != value)
-				{
-					_activeLayer = value;
-				}
-			}
+			get { return _voiLutManagerProxy.ActiveLayer; }
+			set { _voiLutManagerProxy.ActiveLayer = value; }
 		}
 
 		public float OverlayAlpha
@@ -190,7 +187,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			var overlayImageGraphic = _overlayDataReference.FusionOverlayData.GetOverlay(this.Frame);
 			if (overlayImageGraphic != null)
 			{
-				overlayImageGraphic.VoiLutManager.SetMemento(_xVoiLutInstaller.VoiLutManager.CreateMemento());
+				_voiLutManagerProxy.SetOverlayVoiLutManager(overlayImageGraphic.VoiLutManager);
 				overlayImageGraphic.ColorMapManager.InstallColorMap("FusionDefaultColorMap(HotMetal)");
 				_fusionOverlayLayer.Graphics.Add(_fusionOverlayImageGraphic = overlayImageGraphic);
 			}
@@ -200,60 +197,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		IVoiLutManager IVoiLutProvider.VoiLutManager
 		{
-			get
-			{
-				if (_activeLayer == FusionPresentationImageLayer.Overlay)
-				{
-					if (_fusionOverlayImageGraphic != null)
-						return _fusionOverlayImageGraphic.VoiLutManager;
-					else
-						return _xVoiLutInstaller.VoiLutManager;
-				}
-				else
-				{
-					return base.VoiLutManager;
-				}
-			}
+			get { return _voiLutManagerProxy; }
 		}
 
 		#endregion
-
-		[Cloneable]
-		private class XVoiLutInstaller : IVoiLutInstaller, IDisposable
-		{
-			public bool Invert { get; set; }
-			public IComposableLut VoiLut { get; private set; }
-			public IVoiLutManager VoiLutManager { get; private set; }
-
-			public XVoiLutInstaller()
-			{
-				this.Invert = false;
-				this.VoiLut = new IdentityVoiLinearLut();
-				this.VoiLutManager = new VoiLutManager(this, false);
-			}
-
-			/// <summary>
-			/// Cloning constructor.
-			/// </summary>
-			/// <param name="source">The source object from which to clone.</param>
-			/// <param name="context">The cloning context object.</param>
-			protected XVoiLutInstaller(XVoiLutInstaller source, ICloningContext context)
-			{
-				this.Invert = source.Invert;
-				this.VoiLut = source.VoiLut.Clone();
-				this.VoiLutManager = new VoiLutManager(this, false);
-			}
-
-			public void Dispose()
-			{
-				this.VoiLut = null;
-				this.VoiLutManager = null;
-			}
-
-			public void InstallVoiLut(IComposableLut voiLut)
-			{
-				this.VoiLut = voiLut;
-			}
-		}
 	}
 }
