@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -248,11 +249,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		/// <returns></returns>
 		private static WorklistItemSearchCriteria[] SelectCriteriaWithPatientConditions(IEnumerable<WorklistItemSearchCriteria> where)
 		{
-			return CollectionUtils.Select(where,
-				delegate(WorklistItemSearchCriteria criteria)
-				{
-					return criteria.SubCriteria.ContainsKey(PatientProfileKey);
-				}).ToArray();
+			return CollectionUtils.Select(where, sc => !sc.PatientProfile.IsEmpty).ToArray();
 		}
 
 		/// <summary>
@@ -262,11 +259,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		/// <returns></returns>
 		private static WorklistItemSearchCriteria[] ExcludeCriteriaWithPatientConditions(IEnumerable<WorklistItemSearchCriteria> where)
 		{
-			return CollectionUtils.Select(where,
-				delegate(WorklistItemSearchCriteria criteria)
-				{
-					return !criteria.SubCriteria.ContainsKey(PatientProfileKey);
-				}).ToArray();
+			return CollectionUtils.Select(where, sc => sc.PatientProfile.IsEmpty).ToArray();
 		}
 	}
 }
