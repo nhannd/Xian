@@ -106,7 +106,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		void ProceedToNextWorklistItem(WorklistItemCompletedResult result, bool overrideDoNotPerformNextItem);
 
 		/// <summary>
-		/// Specify a list of <see cref="TWorklistItem"/> that should be excluded from <see cref="ProceedToNextWorklistItem"/>
+		/// Specify a list of <see cref="TWorklistItem"/> that should be excluded from <see mref="ProceedToNextWorklistItem"/>
 		/// </summary>
 		/// <param name="worklistItems"></param>
 		void IgnoreWorklistItems(List<TWorklistItem> worklistItems);
@@ -179,7 +179,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <param name="folderName">Folder system name, displayed in status text</param>
 		/// <param name="worklistRef">An <see cref="EntityRef"/> for the folder from which additional worklist items should be loaded.</param>
 		/// <param name="worklistClassName">A name for the folder class from which additional worklist items should be loaded.</param>
-		public WorklistItemManager(string folderName, EntityRef worklistRef, string worklistClassName)
+		protected WorklistItemManager(string folderName, EntityRef worklistRef, string worklistClassName)
 		{
 			_folderName = folderName;
 			_worklistRef = worklistRef;
@@ -325,22 +325,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			_worklistCache.Clear();
 
-			Platform.GetService<TWorkflowService>(
-				delegate(TWorkflowService service)
+			Platform.GetService<TWorkflowService>(service =>
 				{
-					QueryWorklistRequest request;
-					if (_worklistRef != null)
-					{
-						request = new QueryWorklistRequest(_worklistRef, true, true, DowntimeRecovery.InDowntimeRecoveryMode);
-					}
-					else
-					{
-						request = new QueryWorklistRequest(_worklistClassName, true, true, DowntimeRecovery.InDowntimeRecoveryMode);
-					}
+					var request = _worklistRef != null
+						? new QueryWorklistRequest(_worklistRef, true, true, DowntimeRecovery.InDowntimeRecoveryMode)
+						: new QueryWorklistRequest(_worklistClassName, true, true, DowntimeRecovery.InDowntimeRecoveryMode);
 
-					QueryWorklistResponse<TWorklistItem> response = service.QueryWorklist(request);
+					var response = service.QueryWorklist(request);
 
-					foreach (TWorklistItem item in response.WorklistItems)
+					foreach (var item in response.WorklistItems)
 					{
 						if (WorklistItemWasPreviouslyVisited(item) == false)
 						{
@@ -352,12 +345,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private bool WorklistItemWasPreviouslyVisited(TWorklistItem item)
 		{
-			return CollectionUtils.Contains(
-				_visitedItems,
-				delegate(TWorklistItem skippedItem)
-				{
-					return skippedItem.AccessionNumber == item.AccessionNumber;
-				});
+			return CollectionUtils.Contains(_visitedItems, skippedItem => skippedItem.AccessionNumber == item.AccessionNumber);
 		}
 
 		#endregion
