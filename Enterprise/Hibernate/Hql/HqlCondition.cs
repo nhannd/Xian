@@ -75,7 +75,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
 			else
 			{
 				// recur on subCriteria
-				foreach (var subCriteria in criteria.SubCriteria.Values)
+				foreach (var subCriteria in criteria.EnumerateSubCriteria())
 				{
 					// use a different syntax for "extended properties" than regular properties
 					var subQualifier = criteria is ExtendedPropertiesSearchCriteria ?

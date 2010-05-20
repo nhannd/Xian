@@ -73,7 +73,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
 			else
 			{
 				// recur on subCriteria
-				foreach (var subCriteria in criteria.SubCriteria.Values)
+				foreach (var subCriteria in criteria.EnumerateSubCriteria())
 				{
 					var subQualifier = string.Format("{0}.{1}", qualifier, subCriteria.GetKey());
 					hqlSorts.AddRange(FromSearchCriteria(subQualifier, subCriteria, remapHqlExprFunc));

@@ -93,6 +93,11 @@ namespace ClearCanvas.Enterprise.Core.Tests
 			{
 				return new ConstantSearchCondition(_result);
 			}
+
+			public override bool IsEmpty
+			{
+				get { return false; }
+			}
 		}
 
 		class EqualitySearchCondition : SearchConditionBase
@@ -112,6 +117,11 @@ namespace ClearCanvas.Enterprise.Core.Tests
 			public override object Clone()
 			{
 				return new EqualitySearchCondition(_value);
+			}
+
+			public override bool IsEmpty
+			{
+				get { return false; }
 			}
 		}
 
@@ -150,6 +160,25 @@ namespace ClearCanvas.Enterprise.Core.Tests
 			// check that the sub-criteria was actually cloned, not just copied
 			Assert.IsFalse(ReferenceEquals(sc.SubCriteria["baz"], copy.SubCriteria["baz"]));
 		}
+
+		[Test]
+		public void Test_IsEmpty()
+		{
+			var sc = new ConcreteSearchCriteria();
+			Assert.IsTrue(sc.IsEmpty);
+
+			var baz = new ConcreteSearchCriteria("baz");
+			sc.SubCriteria.Add("baz", baz);
+
+			// should still be empty, because baz is empty
+			Assert.IsTrue(sc.IsEmpty);
+
+			baz.SubCriteria.Add("moo", new ConstantSearchCondition(true));
+
+			// now it should be false, because baz has a non-empty sub condition
+			Assert.IsFalse(sc.IsEmpty);
+		}
+
 
 		[Test]
 		public void Test_IsSatisfiedBy_Empty()

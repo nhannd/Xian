@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Enterprise.Core
 {
@@ -115,12 +116,18 @@ namespace ClearCanvas.Enterprise.Core
 
 		#region Public API
 
-		/// <summary>
-		/// Gets the sub-criteria collection.
-		/// </summary>
-		public IDictionary<string, SearchCriteria> SubCriteria
+		public void SetSubCriteria(SearchCriteria subCriteria)
 		{
-			get { return _subCriteria; }
+			var key = subCriteria.GetKey();
+			if(string.IsNullOrEmpty(key))
+				throw new ArgumentException("Sub-criteria must have a key defined.");
+
+			this.SubCriteria[key] = subCriteria;
+		}
+
+		public IEnumerable<SearchCriteria> EnumerateSubCriteria()
+		{
+			return SubCriteria.Values;
 		}
 
 		/// <summary>
@@ -131,29 +138,6 @@ namespace ClearCanvas.Enterprise.Core
 		public Predicate<T> AsPredicate<T>()
 		{
 			return value => IsSatisfiedBy(value);
-		}
-
-		/// <summary>
-		/// Tests whether the specified value satisfies this criteria.
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
-		protected internal virtual bool IsSatisfiedBy(object obj)
-		{
-			foreach (var kvp in SubCriteria)
-			{
-				object x;
-				if (!GetPropertyValue(obj, kvp.Key, out x))
-				{
-					// TODO: if the property doesn't exist, what do we do??  
-					// for now, return false, but we might want to have a flag indicating how to handle missing properties
-					return false;
-				}
-
-				if (!kvp.Value.IsSatisfiedBy(x))
-					return false;
-			}
-			return true;
 		}
 
 		/// <summary>
@@ -232,6 +216,37 @@ namespace ClearCanvas.Enterprise.Core
 		#endregion
 
 		#region Protected API
+
+		/// <summary>
+		/// Tests whether the specified value satisfies this criteria.
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		protected internal virtual bool IsSatisfiedBy(object obj)
+		{
+			foreach (var kvp in SubCriteria)
+			{
+				object x;
+				if (!GetPropertyValue(obj, kvp.Key, out x))
+				{
+					// TODO: if the property doesn't exist, what do we do??  
+					// for now, return false, but we might want to have a flag indicating how to handle missing properties
+					return false;
+				}
+
+				if (!kvp.Value.IsSatisfiedBy(x))
+					return false;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Gets the sub-criteria dictionary.
+		/// </summary>
+		protected internal IDictionary<string, SearchCriteria> SubCriteria
+		{
+			get { return _subCriteria; }
+		}
 
 		/// <summary>
 		/// Gets an array of strings where each string is a text representation of a search condition
