@@ -172,9 +172,7 @@ namespace ClearCanvas.Healthcare
 			if (!this.IsEnabled)
 				return;
 
-			var procedureTypes = new List<ProcedureType>();
-			procedureTypes.AddRange(this.Values);
-			criteria.In(CollectionUtils.Unique(procedureTypes));
+			criteria.In(this.Values);
 		}
 	}
 
