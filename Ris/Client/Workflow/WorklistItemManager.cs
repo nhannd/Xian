@@ -159,7 +159,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private bool _isInitialItem = true;
 
 		private readonly List<TWorklistItem> _visitedItems;
-		private readonly Stack<TWorklistItem> _worklistCache;
+		private readonly Queue<TWorklistItem> _worklistCache;
 
 		private bool _reportNextItem;
 
@@ -186,7 +186,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_worklistClassName = worklistClassName;
 
 			_visitedItems = new List<TWorklistItem>();
-			_worklistCache = new Stack<TWorklistItem>();
+			_worklistCache = new Queue<TWorklistItem>();
 		}
 
 		public void Initialize(TWorklistItem worklistItem)
@@ -242,7 +242,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					RefreshWorklistItemCache();
 				}
 
-				_worklistItem = _worklistCache.Count > 0 ? _worklistCache.Pop() : null;
+				_worklistItem = _worklistCache.Count > 0 ? _worklistCache.Dequeue() : null;
 			}
 			else
 			{
@@ -344,7 +344,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					{
 						if (WorklistItemWasPreviouslyVisited(item) == false)
 						{
-							_worklistCache.Push(item);
+							_worklistCache.Enqueue(item);
 						}
 					}
 				});
