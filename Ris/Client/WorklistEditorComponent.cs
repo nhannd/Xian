@@ -358,6 +358,9 @@ namespace ClearCanvas.Ris.Client
 			if (_procedureTypeGroupFilterComponent.SelectedItems.Count > 0 &&
 				DialogBoxAction.Yes == this.Host.ShowMessageBox(SR.MessageConfirmClearProcedureTypeGroups, MessageBoxActions.YesNo))
 			{
+				foreach (var item in _procedureTypeGroupFilterComponent.SelectedItemsTable.Items)
+					_procedureTypeGroupFilterComponent.AvailableItemsTable.Items.Add(item);
+	
 				_procedureTypeGroupFilterComponent.SelectedItemsTable.Items.Clear();
 			}
 		}
@@ -369,6 +372,9 @@ namespace ClearCanvas.Ris.Client
 			if (_procedureTypeFilterComponent.SelectedItems.Count > 0 &&
 				DialogBoxAction.Yes == this.Host.ShowMessageBox(SR.MessageConfirmClearProcedureTypes, MessageBoxActions.YesNo))
 			{
+				foreach (var item in _procedureTypeFilterComponent.SelectedItemsTable.Items)
+					_procedureTypeFilterComponent.AvailableItemsTable.Items.Add(item);
+
 				_procedureTypeFilterComponent.SelectedItemsTable.Items.Clear();
 			}
 		}

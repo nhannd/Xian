@@ -84,9 +84,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_schedulingCode.DataBindings.Add("Value", _component, "SelectedSchedulingCode", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_scheduledDate.DataBindings.Add("Value", _component, "ScheduledTime", true, DataSourceUpdateMode.OnPropertyChanged);
-			_scheduledDate.DataBindings.Add("Enabled", _component, "IsScheduledTimeEditable");
+			_scheduledDate.DataBindings.Add("Enabled", _component, "IsScheduledDateTimeEditable");
 			_scheduledTime.DataBindings.Add("Value", _component, "ScheduledTime", true, DataSourceUpdateMode.OnPropertyChanged);
-			_scheduledTime.DataBindings.Add("Enabled", _component, "IsScheduledTimeEditable");
+			_scheduledTime.DataBindings.Add("Enabled", _component, "IsScheduledDateTimeEditable");
 
 			_portable.DataBindings.Add("Checked", _component, "PortableModality", true, DataSourceUpdateMode.OnPropertyChanged);
 

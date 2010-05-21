@@ -1096,7 +1096,7 @@
     <value>Procedure type and procedure type group cannot both be used for filtering.  Do you want to clear all selected procedure types?</value>
   </data>
   <data name="MessageAlertMultipleProceduresCheckInValidation" xml:space="preserve">
-    <value>The scheduled time and check-in state of some procedures did not pass validation.  Please edit each procedure individually.</value>
+    <value>The combination of scheduling dates and times and check-in statuses cannot be consistently applied throughout all selected procedures. Please edit the procedures individually.</value>
   </data>
   <data name="MessageRisServerDowntime" xml:space="preserve">
     <value>The RIS is currently unavailable. Please restart this application once the RIS becomes available again. However, you may proceed with login in order to access image viewing capabilities.</value>

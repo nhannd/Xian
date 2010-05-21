@@ -78,12 +78,14 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
+			// This validation shows the icon beside the scheduled time if it's being edited
 			this.Validation.Add(new ValidationRule("ScheduledTime",
 				delegate
 				{
-					return this.IsScheduledTimeEditable ? ValidateCheckInTime() : new ValidationResult(true, "");
+					return this.IsScheduledDateTimeEditable ? ValidateCheckInTime() : new ValidationResult(true, "");
 				}));
 
+			// This validation shows the icon beside the checkedIn if it's being edited
 			this.Validation.Add(new ValidationRule("CheckedIn",
 				delegate
 				{
@@ -133,7 +135,7 @@ namespace ClearCanvas.Ris.Client
 
 		#region Presentation Models
 
-		public override bool IsScheduledTimeEditable
+		public override bool IsScheduledDateTimeEditable
 		{
 			get { return _isScheduledTimeEditable; }
 			set { _isScheduledTimeEditable = value; }
@@ -177,6 +179,9 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
+		/// <summary>
+		/// Find a common property value for a list of requisitions.
+		/// </summary>
 		private static TValue GetCommonValue<TValue>(
 			List<ProcedureRequisition> requisitions,
 			Converter<ProcedureRequisition, TValue> propertyGetter)
@@ -188,24 +193,33 @@ namespace ClearCanvas.Ris.Client
 
 		private ValidationResult ValidateCheckInTime()
 		{
-			string alertMessage = null;
 			var checkInTime = Platform.Time;
 			foreach (var r in _requisitions)
 			{
+				// Use the edited property if the property is being edited
 				var checkedIn = this.IsCheckedInEditable ? this.CheckedIn : r.CheckedIn;
-				var scheduledTime = this.IsScheduledTimeEditable ? this.ScheduledTime : r.ScheduledTime;
+				var scheduledTime = this.IsScheduledDateTimeEditable ? this.ScheduledTime : r.ScheduledTime;
 
 				if (!checkedIn)
 					continue;
 
+				string alertMessage;
 				if (CheckInSettings.ValidateResult.Success ==
 					CheckInSettings.Validate(scheduledTime, checkInTime, out alertMessage))
 					continue;
 
+				// Validation failed.
+				if (this.IsCheckedInEditable && this.IsScheduledDateTimeEditable)
+				{
+					// If user is modifying both checkIn and scheduledDateTime, give them a more detail alert message.
+					return new ValidationResult(false, alertMessage);
+				}
+
+				// Otherwise, they must edit each procedure individually.
 				return new ValidationResult(false, SR.MessageAlertMultipleProceduresCheckInValidation);
 			}
 
-			return new ValidationResult(true, alertMessage);
+			return new ValidationResult(true, string.Empty);
 		}
 	}
 }

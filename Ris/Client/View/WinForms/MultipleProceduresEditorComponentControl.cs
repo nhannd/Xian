@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_component = component;
 			InitializeComponent();
 
-			_enableScheduledDateTime.DataBindings.Add("Checked", _component, "IsScheduledTimeEditable", true, DataSourceUpdateMode.OnPropertyChanged);
+			_enableScheduledDateTime.DataBindings.Add("Checked", _component, "IsScheduledDateTimeEditable", true, DataSourceUpdateMode.OnPropertyChanged);
 			_enablePerformingFacility.DataBindings.Add("Checked", _component, "IsPerformingFacilityEditable", true, DataSourceUpdateMode.OnPropertyChanged);
 			_enablePerformingDepartment.DataBindings.Add("Checked", _component, "IsPerformingDepartmentEditable", true, DataSourceUpdateMode.OnPropertyChanged);
 			_enableLaterality.DataBindings.Add("Checked", _component, "IsLateralityEditable", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -60,10 +60,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_enablePortable.DataBindings.Add("Checked", _component, "IsPortableEditable", true, DataSourceUpdateMode.OnPropertyChanged);
 			_enableCheckIn.DataBindings.Add("Checked", _component, "IsCheckedInEditable", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_scheduledDate.DataBindings.Add("Value", _component, "ScheduledTime", true, DataSourceUpdateMode.OnPropertyChanged);
-			_scheduledDate.DataBindings.Add("Enabled", _component, "IsScheduledTimeEditable");
+			_scheduledDate.DataBindings.Add("Value", _component, "ScheduledDate", true, DataSourceUpdateMode.OnPropertyChanged);
+			_scheduledDate.DataBindings.Add("Enabled", _component, "IsScheduledDateTimeEditable");
 			_scheduledTime.DataBindings.Add("Value", _component, "ScheduledTime", true, DataSourceUpdateMode.OnPropertyChanged);
-			_scheduledTime.DataBindings.Add("Enabled", _component, "IsScheduledTimeEditable");
+			_scheduledTime.DataBindings.Add("Enabled", _component, "IsScheduledDateTimeEditable");
 
 			_performingFacility.DataSource = _component.FacilityChoices;
 			_performingFacility.DataBindings.Add("Value", _component, "SelectedFacility", true, DataSourceUpdateMode.OnPropertyChanged);

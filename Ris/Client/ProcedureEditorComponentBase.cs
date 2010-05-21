@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Client
 		private readonly List<EnumValueInfo> _lateralityChoices;
 		private readonly List<EnumValueInfo> _schedulingCodeChoices;
 
-		private DateTime? _scheduledTime;
+		private DateTime? _scheduledDateTime;
 		private FacilitySummary _selectedFacility;
 		private DepartmentSummary _selectedDepartment;
 		private EnumValueInfo _selectedLaterality;
@@ -93,7 +93,7 @@ namespace ClearCanvas.Ris.Client
 
 		#region Presentation Model
 
-		public virtual bool IsScheduledTimeEditable
+		public virtual bool IsScheduledDateTimeEditable
 		{
 			get { return true; }
 			set { }
@@ -185,7 +185,7 @@ namespace ClearCanvas.Ris.Client
 
 				// It's important to convert _departemntNone to null here, in order for "not-null" custom validation rules
 				// to behave as expected
-				_selectedDepartment = value == _departmentNone ? null : value;
+				_selectedDepartment = Equals(value, _departmentNone) ? null : value;
 				NotifyPropertyChanged("SelectedDepartment");
 			}
 		}
@@ -226,17 +226,24 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		public DateTime? ScheduledTime
+		public DateTime? ScheduledDate
 		{
-			get { return _scheduledTime; }
+			get { return _scheduledDateTime; }
 			set
 			{
-				if (value == _scheduledTime)
+				if (value == _scheduledDateTime)
 					return;
 
-				_scheduledTime = value;
+				_scheduledDateTime = value;
+				NotifyPropertyChanged("ScheduledDate");
 				NotifyPropertyChanged("ScheduledTime");
 			}
+		}
+
+		public DateTime? ScheduledTime
+		{
+			get { return this.ScheduledDate; }
+			set { this.ScheduledDate = value; }
 		}
 
 		public bool PortableModality

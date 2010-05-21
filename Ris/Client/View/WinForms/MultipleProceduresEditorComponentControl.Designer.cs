@@ -60,8 +60,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private void InitializeComponent()
         {
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			this._scheduledDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
 			this._enablePerformingFacility = new System.Windows.Forms.CheckBox();
+			this._scheduledTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
 			this._enablePerformingDepartment = new System.Windows.Forms.CheckBox();
 			this._enableLaterality = new System.Windows.Forms.CheckBox();
 			this._enablePortable = new System.Windows.Forms.CheckBox();
@@ -71,10 +71,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._laterality = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._portable = new System.Windows.Forms.CheckBox();
 			this._enableScheduledDateTime = new System.Windows.Forms.CheckBox();
-			this._scheduledTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
 			this._schedulingCode = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._checkedIn = new System.Windows.Forms.CheckBox();
 			this._enableSchedulingCode = new System.Windows.Forms.CheckBox();
+			this._scheduledDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
 			this._acceptButton = new System.Windows.Forms.Button();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this.tableLayoutPanel1.SuspendLayout();
@@ -84,28 +84,29 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.tableLayoutPanel1.ColumnCount = 2;
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 28F));
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Controls.Add(this._enablePerformingFacility, 0, 2);
-			this.tableLayoutPanel1.Controls.Add(this._enablePerformingDepartment, 0, 3);
-			this.tableLayoutPanel1.Controls.Add(this._enableLaterality, 0, 4);
-			this.tableLayoutPanel1.Controls.Add(this._enablePortable, 0, 6);
-			this.tableLayoutPanel1.Controls.Add(this._enableCheckIn, 0, 7);
-			this.tableLayoutPanel1.Controls.Add(this._performingFacility, 1, 2);
-			this.tableLayoutPanel1.Controls.Add(this._performingDepartment, 1, 3);
-			this.tableLayoutPanel1.Controls.Add(this._laterality, 1, 4);
-			this.tableLayoutPanel1.Controls.Add(this._portable, 1, 6);
+			this.tableLayoutPanel1.ColumnCount = 3;
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableLayoutPanel1.Controls.Add(this._enablePerformingFacility, 0, 1);
+			this.tableLayoutPanel1.Controls.Add(this._scheduledTime, 2, 0);
+			this.tableLayoutPanel1.Controls.Add(this._enablePerformingDepartment, 0, 2);
+			this.tableLayoutPanel1.Controls.Add(this._enableLaterality, 0, 3);
+			this.tableLayoutPanel1.Controls.Add(this._enablePortable, 0, 5);
+			this.tableLayoutPanel1.Controls.Add(this._enableCheckIn, 0, 6);
+			this.tableLayoutPanel1.Controls.Add(this._performingFacility, 1, 1);
+			this.tableLayoutPanel1.Controls.Add(this._performingDepartment, 1, 2);
+			this.tableLayoutPanel1.Controls.Add(this._laterality, 1, 3);
+			this.tableLayoutPanel1.Controls.Add(this._portable, 1, 5);
 			this.tableLayoutPanel1.Controls.Add(this._enableScheduledDateTime, 0, 0);
-			this.tableLayoutPanel1.Controls.Add(this._schedulingCode, 1, 5);
-			this.tableLayoutPanel1.Controls.Add(this._checkedIn, 1, 7);
-			this.tableLayoutPanel1.Controls.Add(this._enableSchedulingCode, 0, 5);
-			this.tableLayoutPanel1.Controls.Add(this._scheduledTime, 1, 1);
+			this.tableLayoutPanel1.Controls.Add(this._schedulingCode, 1, 4);
+			this.tableLayoutPanel1.Controls.Add(this._checkedIn, 1, 6);
+			this.tableLayoutPanel1.Controls.Add(this._enableSchedulingCode, 0, 4);
 			this.tableLayoutPanel1.Controls.Add(this._scheduledDate, 1, 0);
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(4, 4);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
 			this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(0, 0, 15, 0);
-			this.tableLayoutPanel1.RowCount = 8;
+			this.tableLayoutPanel1.RowCount = 7;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -113,42 +114,42 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(276, 325);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(494, 281);
 			this.tableLayoutPanel1.TabIndex = 0;
-			// 
-			// _scheduledDate
-			// 
-			this._scheduledDate.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._scheduledDate.LabelText = "Scheduled Date";
-			this._scheduledDate.Location = new System.Drawing.Point(30, 2);
-			this._scheduledDate.Margin = new System.Windows.Forms.Padding(2);
-			this._scheduledDate.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
-			this._scheduledDate.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
-			this._scheduledDate.Name = "_scheduledDate";
-			this._scheduledDate.Nullable = true;
-			this._scheduledDate.Size = new System.Drawing.Size(229, 41);
-			this._scheduledDate.TabIndex = 1;
-			this._scheduledDate.Value = null;
 			// 
 			// _enablePerformingFacility
 			// 
 			this._enablePerformingFacility.AutoSize = true;
 			this._enablePerformingFacility.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._enablePerformingFacility.Location = new System.Drawing.Point(3, 93);
+			this._enablePerformingFacility.Location = new System.Drawing.Point(3, 48);
 			this._enablePerformingFacility.Name = "_enablePerformingFacility";
-			this._enablePerformingFacility.Size = new System.Drawing.Size(22, 39);
+			this._enablePerformingFacility.Size = new System.Drawing.Size(19, 39);
 			this._enablePerformingFacility.TabIndex = 3;
 			this._enablePerformingFacility.UseVisualStyleBackColor = true;
+			// 
+			// _scheduledTime
+			// 
+			this._scheduledTime.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._scheduledTime.LabelText = "Scheduled Time";
+			this._scheduledTime.Location = new System.Drawing.Point(254, 2);
+			this._scheduledTime.Margin = new System.Windows.Forms.Padding(2);
+			this._scheduledTime.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
+			this._scheduledTime.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
+			this._scheduledTime.Name = "_scheduledTime";
+			this._scheduledTime.Nullable = true;
+			this._scheduledTime.ShowDate = false;
+			this._scheduledTime.ShowTime = true;
+			this._scheduledTime.Size = new System.Drawing.Size(223, 41);
+			this._scheduledTime.TabIndex = 2;
+			this._scheduledTime.Value = null;
 			// 
 			// _enablePerformingDepartment
 			// 
 			this._enablePerformingDepartment.AutoSize = true;
 			this._enablePerformingDepartment.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._enablePerformingDepartment.Location = new System.Drawing.Point(3, 138);
+			this._enablePerformingDepartment.Location = new System.Drawing.Point(3, 93);
 			this._enablePerformingDepartment.Name = "_enablePerformingDepartment";
-			this._enablePerformingDepartment.Size = new System.Drawing.Size(22, 39);
+			this._enablePerformingDepartment.Size = new System.Drawing.Size(19, 39);
 			this._enablePerformingDepartment.TabIndex = 5;
 			this._enablePerformingDepartment.UseVisualStyleBackColor = true;
 			// 
@@ -156,9 +157,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this._enableLaterality.AutoSize = true;
 			this._enableLaterality.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._enableLaterality.Location = new System.Drawing.Point(3, 183);
+			this._enableLaterality.Location = new System.Drawing.Point(3, 138);
 			this._enableLaterality.Name = "_enableLaterality";
-			this._enableLaterality.Size = new System.Drawing.Size(22, 39);
+			this._enableLaterality.Size = new System.Drawing.Size(19, 39);
 			this._enableLaterality.TabIndex = 7;
 			this._enableLaterality.UseVisualStyleBackColor = true;
 			// 
@@ -166,9 +167,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this._enablePortable.AutoSize = true;
 			this._enablePortable.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._enablePortable.Location = new System.Drawing.Point(3, 273);
+			this._enablePortable.Location = new System.Drawing.Point(3, 228);
 			this._enablePortable.Name = "_enablePortable";
-			this._enablePortable.Size = new System.Drawing.Size(22, 17);
+			this._enablePortable.Size = new System.Drawing.Size(19, 17);
 			this._enablePortable.TabIndex = 11;
 			this._enablePortable.UseVisualStyleBackColor = true;
 			// 
@@ -176,62 +177,66 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this._enableCheckIn.AutoSize = true;
 			this._enableCheckIn.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._enableCheckIn.Location = new System.Drawing.Point(3, 296);
+			this._enableCheckIn.Location = new System.Drawing.Point(3, 251);
 			this._enableCheckIn.Name = "_enableCheckIn";
-			this._enableCheckIn.Size = new System.Drawing.Size(22, 26);
+			this._enableCheckIn.Size = new System.Drawing.Size(19, 27);
 			this._enableCheckIn.TabIndex = 13;
 			this._enableCheckIn.UseVisualStyleBackColor = true;
 			// 
 			// _performingFacility
 			// 
+			this.tableLayoutPanel1.SetColumnSpan(this._performingFacility, 2);
 			this._performingFacility.DataSource = null;
 			this._performingFacility.DisplayMember = "";
 			this._performingFacility.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._performingFacility.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._performingFacility.LabelText = "Performing Facility";
-			this._performingFacility.Location = new System.Drawing.Point(30, 92);
+			this._performingFacility.Location = new System.Drawing.Point(27, 47);
 			this._performingFacility.Margin = new System.Windows.Forms.Padding(2);
 			this._performingFacility.Name = "_performingFacility";
-			this._performingFacility.Size = new System.Drawing.Size(229, 41);
+			this._performingFacility.Size = new System.Drawing.Size(450, 41);
 			this._performingFacility.TabIndex = 4;
 			this._performingFacility.Value = null;
 			// 
 			// _performingDepartment
 			// 
+			this.tableLayoutPanel1.SetColumnSpan(this._performingDepartment, 2);
 			this._performingDepartment.DataSource = null;
 			this._performingDepartment.DisplayMember = "";
 			this._performingDepartment.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._performingDepartment.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._performingDepartment.LabelText = "Performing Department";
-			this._performingDepartment.Location = new System.Drawing.Point(30, 137);
+			this._performingDepartment.Location = new System.Drawing.Point(27, 92);
 			this._performingDepartment.Margin = new System.Windows.Forms.Padding(2);
 			this._performingDepartment.Name = "_performingDepartment";
-			this._performingDepartment.Size = new System.Drawing.Size(229, 41);
+			this._performingDepartment.Size = new System.Drawing.Size(450, 41);
 			this._performingDepartment.TabIndex = 6;
 			this._performingDepartment.Value = null;
 			// 
 			// _laterality
 			// 
+			this.tableLayoutPanel1.SetColumnSpan(this._laterality, 2);
 			this._laterality.DataSource = null;
 			this._laterality.DisplayMember = "";
 			this._laterality.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._laterality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._laterality.LabelText = "Laterality";
-			this._laterality.Location = new System.Drawing.Point(30, 182);
+			this._laterality.Location = new System.Drawing.Point(27, 137);
 			this._laterality.Margin = new System.Windows.Forms.Padding(2);
 			this._laterality.Name = "_laterality";
-			this._laterality.Size = new System.Drawing.Size(229, 41);
+			this._laterality.Size = new System.Drawing.Size(450, 41);
 			this._laterality.TabIndex = 8;
 			this._laterality.Value = null;
 			// 
 			// _portable
 			// 
 			this._portable.AutoSize = true;
+			this.tableLayoutPanel1.SetColumnSpan(this._portable, 2);
 			this._portable.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._portable.Location = new System.Drawing.Point(30, 273);
-			this._portable.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+			this._portable.Location = new System.Drawing.Point(31, 228);
+			this._portable.Margin = new System.Windows.Forms.Padding(6, 3, 3, 3);
 			this._portable.Name = "_portable";
-			this._portable.Size = new System.Drawing.Size(229, 17);
+			this._portable.Size = new System.Drawing.Size(445, 17);
 			this._portable.TabIndex = 12;
 			this._portable.Text = "Portable";
 			this._portable.UseVisualStyleBackColor = true;
@@ -242,49 +247,34 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._enableScheduledDateTime.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._enableScheduledDateTime.Location = new System.Drawing.Point(3, 3);
 			this._enableScheduledDateTime.Name = "_enableScheduledDateTime";
-			this.tableLayoutPanel1.SetRowSpan(this._enableScheduledDateTime, 2);
-			this._enableScheduledDateTime.Size = new System.Drawing.Size(22, 84);
+			this._enableScheduledDateTime.Size = new System.Drawing.Size(19, 39);
 			this._enableScheduledDateTime.TabIndex = 0;
 			this._enableScheduledDateTime.UseVisualStyleBackColor = true;
 			// 
-			// _scheduledTime
-			// 
-			this._scheduledTime.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._scheduledTime.LabelText = "Scheduled Time";
-			this._scheduledTime.Location = new System.Drawing.Point(30, 47);
-			this._scheduledTime.Margin = new System.Windows.Forms.Padding(2);
-			this._scheduledTime.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
-			this._scheduledTime.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
-			this._scheduledTime.Name = "_scheduledTime";
-			this._scheduledTime.Nullable = true;
-			this._scheduledTime.ShowDate = false;
-			this._scheduledTime.ShowTime = true;
-			this._scheduledTime.Size = new System.Drawing.Size(229, 41);
-			this._scheduledTime.TabIndex = 2;
-			this._scheduledTime.Value = null;
-			// 
 			// _schedulingCode
 			// 
+			this.tableLayoutPanel1.SetColumnSpan(this._schedulingCode, 2);
 			this._schedulingCode.DataSource = null;
 			this._schedulingCode.DisplayMember = "";
 			this._schedulingCode.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._schedulingCode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._schedulingCode.LabelText = "Scheduling Code";
-			this._schedulingCode.Location = new System.Drawing.Point(30, 227);
+			this._schedulingCode.Location = new System.Drawing.Point(27, 182);
 			this._schedulingCode.Margin = new System.Windows.Forms.Padding(2);
 			this._schedulingCode.Name = "_schedulingCode";
-			this._schedulingCode.Size = new System.Drawing.Size(229, 41);
+			this._schedulingCode.Size = new System.Drawing.Size(450, 41);
 			this._schedulingCode.TabIndex = 10;
 			this._schedulingCode.Value = null;
 			// 
 			// _checkedIn
 			// 
 			this._checkedIn.AutoSize = true;
+			this.tableLayoutPanel1.SetColumnSpan(this._checkedIn, 2);
 			this._checkedIn.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._checkedIn.Location = new System.Drawing.Point(30, 296);
-			this._checkedIn.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+			this._checkedIn.Location = new System.Drawing.Point(31, 251);
+			this._checkedIn.Margin = new System.Windows.Forms.Padding(6, 3, 3, 3);
 			this._checkedIn.Name = "_checkedIn";
-			this._checkedIn.Size = new System.Drawing.Size(229, 26);
+			this._checkedIn.Size = new System.Drawing.Size(445, 27);
 			this._checkedIn.TabIndex = 14;
 			this._checkedIn.Text = "Patient is checked-in";
 			this._checkedIn.UseVisualStyleBackColor = true;
@@ -293,16 +283,30 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this._enableSchedulingCode.AutoSize = true;
 			this._enableSchedulingCode.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._enableSchedulingCode.Location = new System.Drawing.Point(3, 228);
+			this._enableSchedulingCode.Location = new System.Drawing.Point(3, 183);
 			this._enableSchedulingCode.Name = "_enableSchedulingCode";
-			this._enableSchedulingCode.Size = new System.Drawing.Size(22, 39);
+			this._enableSchedulingCode.Size = new System.Drawing.Size(19, 39);
 			this._enableSchedulingCode.TabIndex = 9;
 			this._enableSchedulingCode.UseVisualStyleBackColor = true;
+			// 
+			// _scheduledDate
+			// 
+			this._scheduledDate.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._scheduledDate.LabelText = "Scheduled Date";
+			this._scheduledDate.Location = new System.Drawing.Point(27, 2);
+			this._scheduledDate.Margin = new System.Windows.Forms.Padding(2);
+			this._scheduledDate.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
+			this._scheduledDate.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
+			this._scheduledDate.Name = "_scheduledDate";
+			this._scheduledDate.Nullable = true;
+			this._scheduledDate.Size = new System.Drawing.Size(223, 41);
+			this._scheduledDate.TabIndex = 1;
+			this._scheduledDate.Value = null;
 			// 
 			// _acceptButton
 			// 
 			this._acceptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._acceptButton.Location = new System.Drawing.Point(107, 344);
+			this._acceptButton.Location = new System.Drawing.Point(325, 293);
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
 			this._acceptButton.TabIndex = 1;
@@ -313,7 +317,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _cancelButton
 			// 
 			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._cancelButton.Location = new System.Drawing.Point(188, 344);
+			this._cancelButton.Location = new System.Drawing.Point(406, 293);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 2;
@@ -331,7 +335,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Controls.Add(this._acceptButton);
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "MultipleProceduresEditorComponentControl";
-			this.Size = new System.Drawing.Size(283, 370);
+			this.Size = new System.Drawing.Size(501, 319);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
 			this.ResumeLayout(false);
@@ -350,7 +354,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private System.Windows.Forms.CheckBox _enableCheckIn;
 		private System.Windows.Forms.CheckBox _portable;
 		private System.Windows.Forms.CheckBox _checkedIn;
-		private ClearCanvas.Desktop.View.WinForms.DateTimeField _scheduledDate;
 		private System.Windows.Forms.CheckBox _enablePerformingFacility;
 		private ClearCanvas.Desktop.View.WinForms.DateTimeField _scheduledTime;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _performingFacility;
@@ -358,5 +361,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _laterality;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _schedulingCode;
 		private System.Windows.Forms.CheckBox _enableSchedulingCode;
+		private ClearCanvas.Desktop.View.WinForms.DateTimeField _scheduledDate;
     }
 }

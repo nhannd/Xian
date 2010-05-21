@@ -144,7 +144,7 @@ namespace ClearCanvas.Ris.Client
 			get { return _procedureTypeChoices.Count > 0; }
 		}
 
-		public override bool IsScheduledTimeEditable
+		public override bool IsScheduledDateTimeEditable
 		{
 			get { return _requisition.Status == null || _requisition.Status.Code == "SC"; }
 		}

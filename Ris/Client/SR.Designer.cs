@@ -1492,7 +1492,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The scheduled time and check-in state of some procedures did not pass validation.  Please edit each procedure individually..
+        ///   Looks up a localized string similar to The combination of scheduling dates and times and check-in statuses cannot be consistently applied throughout all selected procedures. Please edit the procedures individually..
         /// </summary>
         internal static string MessageAlertMultipleProceduresCheckInValidation {
             get {
@@ -1906,9 +1906,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The RIS is currently unavailable. Please restart this application once the RIS becomes available again. However, you may proceed with login in order to access image viewing capabilities.
-        ///
-        ///Do you wish to proceed?.
+        ///   Looks up a localized string similar to The RIS is currently unavailable. Please restart this application once the RIS becomes available again. However, you may proceed with login in order to access image viewing capabilities..
         /// </summary>
         internal static string MessageRisServerDowntime {
             get {
