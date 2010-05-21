@@ -518,11 +518,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 			protected override IEnumerable<NodePropertiesComponent> CreateNodePropertiesComponents(AbstractActionModelTreeNode node)
 			{
-				foreach (NodePropertiesComponent c in base.CreateNodePropertiesComponents(node))
-				{
-					yield return c;
-				}
-
+				List<NodePropertiesComponent> list = new List<NodePropertiesComponent>(base.CreateNodePropertiesComponents(node));
 				if (node is AbstractActionModelTreeLeafClickAction)
 				{
 					string actionId = ((AbstractActionModelTreeLeafClickAction) node).ActionId;
@@ -531,13 +527,15 @@ namespace ClearCanvas.ImageViewer.Configuration
 						var activeMouseButtons = _owner._mouseButtonMap.FindKey(actionId, XMouseButtons.Left);
 						var globalMouseButtons = _owner._defaultMouseToolsMap.FindAssignment(actionId, XMouseButtonCombo.None);
 						var initiallyActive = _owner._initialMouseToolsMap.IsAssignedToMe(activeMouseButtons, actionId);
-						yield return new MouseImageViewerToolPropertyComponent(node,
+						list.Add(new MouseImageViewerToolPropertyComponent(node,
 						                                                       activeMouseButtons,
 						                                                       globalMouseButtons.MouseButtons,
 						                                                       globalMouseButtons.Modifiers,
-						                                                       initiallyActive);
+						                                                       initiallyActive));
 					}
 				}
+				return list.AsReadOnly();
+
 			}
 		}
 
