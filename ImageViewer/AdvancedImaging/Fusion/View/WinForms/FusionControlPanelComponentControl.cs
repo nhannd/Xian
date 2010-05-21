@@ -44,15 +44,12 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.View.WinForms
 			layerBinding.Parse += ConvertControlRadioButtonChecked;
 			radioButton1.DataBindings.Add(layerBinding);
 
-			var alphaBinding = new Binding("Value", component, "OverlayAlpha", true, DataSourceUpdateMode.OnPropertyChanged);
+			var alphaBinding = new Binding("Value", component, "OverlayOpacity", true, DataSourceUpdateMode.OnPropertyChanged);
 			alphaBinding.Format += ConvertSliderValuePercent;
 			alphaBinding.Parse += ConvertSliderValuePercent;
 			_sliderAlpha.DataBindings.Add(alphaBinding);
 
-			var thresholdBinding = new Binding("Value", component, "OverlayThreshold", true, DataSourceUpdateMode.OnPropertyChanged);
-			thresholdBinding.Format += ConvertSliderValuePercent;
-			thresholdBinding.Parse += ConvertSliderValuePercent;
-			_sliderThreshold.DataBindings.Add(thresholdBinding);
+			checkBox1.DataBindings.Add("Checked", component, "HideOverlayBackground", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
 		private static void ConvertControlRadioButtonChecked(object sender, ConvertEventArgs e)

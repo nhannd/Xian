@@ -25,27 +25,25 @@
 		private void InitializeComponent() {
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this._sliderAlpha = new System.Windows.Forms.TrackBar();
-			this.groupBox2 = new System.Windows.Forms.GroupBox();
-			this._sliderThreshold = new System.Windows.Forms.TrackBar();
 			this.radioButton1 = new System.Windows.Forms.RadioButton();
 			this.radioButton2 = new System.Windows.Forms.RadioButton();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
+			this.checkBox1 = new System.Windows.Forms.CheckBox();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._sliderAlpha)).BeginInit();
-			this.groupBox2.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this._sliderThreshold)).BeginInit();
 			this.groupBox3.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Controls.Add(this.checkBox1);
 			this.groupBox1.Controls.Add(this._sliderAlpha);
 			this.groupBox1.Location = new System.Drawing.Point(19, 121);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(216, 121);
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Alpha";
+			this.groupBox1.Text = "Opacity";
 			// 
 			// _sliderAlpha
 			// 
@@ -57,26 +55,6 @@
 			this._sliderAlpha.SmallChange = 25;
 			this._sliderAlpha.TabIndex = 1;
 			this._sliderAlpha.TickFrequency = 100;
-			// 
-			// groupBox2
-			// 
-			this.groupBox2.Controls.Add(this._sliderThreshold);
-			this.groupBox2.Location = new System.Drawing.Point(19, 248);
-			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(216, 121);
-			this.groupBox2.TabIndex = 1;
-			this.groupBox2.TabStop = false;
-			this.groupBox2.Text = "Threshold";
-			this.groupBox2.Visible = false;
-			// 
-			// _sliderThreshold
-			// 
-			this._sliderThreshold.Location = new System.Drawing.Point(26, 36);
-			this._sliderThreshold.Maximum = 1000;
-			this._sliderThreshold.Name = "_sliderThreshold";
-			this._sliderThreshold.Size = new System.Drawing.Size(161, 42);
-			this._sliderThreshold.TabIndex = 1;
-			this._sliderThreshold.TickFrequency = 100;
 			// 
 			// radioButton1
 			// 
@@ -112,21 +90,27 @@
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Active Layer";
 			// 
+			// checkBox1
+			// 
+			this.checkBox1.AutoSize = true;
+			this.checkBox1.Location = new System.Drawing.Point(26, 84);
+			this.checkBox1.Name = "checkBox1";
+			this.checkBox1.Size = new System.Drawing.Size(114, 17);
+			this.checkBox1.TabIndex = 2;
+			this.checkBox1.Text = "Show Background";
+			this.checkBox1.UseVisualStyleBackColor = true;
+			// 
 			// FusionControlPanelComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.groupBox3);
-			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox1);
 			this.Name = "FusionControlPanelComponentControl";
 			this.Size = new System.Drawing.Size(259, 556);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this._sliderAlpha)).EndInit();
-			this.groupBox2.ResumeLayout(false);
-			this.groupBox2.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this._sliderThreshold)).EndInit();
 			this.groupBox3.ResumeLayout(false);
 			this.groupBox3.PerformLayout();
 			this.ResumeLayout(false);
@@ -137,10 +121,9 @@
 
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.TrackBar _sliderAlpha;
-		private System.Windows.Forms.GroupBox groupBox2;
-		private System.Windows.Forms.TrackBar _sliderThreshold;
 		private System.Windows.Forms.RadioButton radioButton1;
 		private System.Windows.Forms.RadioButton radioButton2;
 		private System.Windows.Forms.GroupBox groupBox3;
+		private System.Windows.Forms.CheckBox checkBox1;
 	}
 }

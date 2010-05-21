@@ -34,12 +34,12 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
-	[ExtensionOf(typeof(ColorMapFactoryExtensionPoint))]
+	[ExtensionOf(typeof (ColorMapFactoryExtensionPoint))]
 	public class HotMetalColorMapFactory : IColorMapFactory
 	{
 		public string Name
 		{
-			get { return "HotMetal"; }
+			get { return StandardColorMaps.HotMetal.ToString(); }
 		}
 
 		public string Description
@@ -49,7 +49,45 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		public IDataLut Create()
 		{
-			return new InterpolatedColorMap(InterpolatedColorMap.StandardColorMaps.HotMetal);
+			return new InterpolatedColorMap(StandardColorMaps.HotMetal);
+		}
+	}
+
+	[ExtensionOf(typeof (ColorMapFactoryExtensionPoint))]
+	public class FluidJetColorMapFactory : IColorMapFactory
+	{
+		public string Name
+		{
+			get { return StandardColorMaps.FluidJet.ToString(); }
+		}
+
+		public string Description
+		{
+			get { return "SR.FluidJet"; }
+		}
+
+		public IDataLut Create()
+		{
+			return new InterpolatedColorMap(StandardColorMaps.FluidJet);
+		}
+	}
+
+	[ExtensionOf(typeof (ColorMapFactoryExtensionPoint))]
+	public class SpectrumColorMapFactory : IColorMapFactory
+	{
+		public string Name
+		{
+			get { return StandardColorMaps.Spectrum.ToString(); }
+		}
+
+		public string Description
+		{
+			get { return "SR.Spectrum"; }
+		}
+
+		public IDataLut Create()
+		{
+			return new InterpolatedColorMap(StandardColorMaps.Spectrum);
 		}
 	}
 }

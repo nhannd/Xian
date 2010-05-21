@@ -42,40 +42,53 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 	[AssociateView(typeof (FusionControlPanelComponentViewExtensionPoint))]
 	public class FusionControlPanelComponent : ImageViewerToolComponent
 	{
-		private float _overlayAlpha = 0.5f;
-		private float _overlayThreshold = 0.1f;
+		private bool _hideOverlayBackground = false;
+		private float _overlayOpacity = 0.5f;
+		private StandardColorMaps _overlayColorMap = StandardColorMaps.HotMetal;
 		private FusionPresentationImageLayer _activeLayer;
 
 		public FusionControlPanelComponent(IDesktopWindow desktopWindow)
 			: base(desktopWindow) {}
 
-		[ValidateGreaterThan(0f, Inclusive = true, Message = "Alpha must be a value between 0 and 1.")]
-		[ValidateLessThan(1f, Inclusive = true, Message = "Alpha must be a value between 0 and 1.")]
-		public float OverlayAlpha
+		[ValidateGreaterThan(0f, Inclusive = true, Message = "Opacity must be a value between 0 and 1.")]
+		[ValidateLessThan(1f, Inclusive = true, Message = "Opacity must be a value between 0 and 1.")]
+		public float OverlayOpacity
 		{
-			get { return _overlayAlpha; }
+			get { return _overlayOpacity; }
 			set
 			{
-				if (_overlayAlpha != value)
+				if (_overlayOpacity != value)
 				{
-					_overlayAlpha = value;
-					base.NotifyPropertyChanged("OverlayAlpha");
+					_overlayOpacity = value;
+					base.NotifyPropertyChanged("OverlayOpacity");
 					this.UpdateOverlay();
 				}
 			}
 		}
 
-		[ValidateGreaterThan(0f, Inclusive = true, Message = "Threshold must be a value between 0 and 1.")]
-		[ValidateLessThan(1f, Inclusive = true, Message = "Threshold must be a value between 0 and 1.")]
-		public float OverlayThreshold
+		public bool HideOverlayBackground
 		{
-			get { return _overlayThreshold; }
+			get { return _hideOverlayBackground; }
 			set
 			{
-				if (_overlayThreshold != value)
+				if (_hideOverlayBackground!=value)
 				{
-					_overlayThreshold = value;
-					base.NotifyPropertyChanged("OverlayThreshold");
+					_hideOverlayBackground = value;
+					this.NotifyPropertyChanged("HideOverlayBackground");
+					this.UpdateOverlay();
+				}
+			}
+		}
+
+		public StandardColorMaps OverlayColorMap
+		{
+			get { return _overlayColorMap; }
+			set
+			{
+				if (_overlayColorMap != value)
+				{
+					_overlayColorMap = value;
+					base.NotifyPropertyChanged("OverlayColorMap");
 					this.UpdateOverlay();
 				}
 			}
@@ -86,7 +99,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			get { return _activeLayer; }
 			set
 			{
-				if (_activeLayer !=value)
+				if (_activeLayer != value)
 				{
 					_activeLayer = value;
 					base.NotifyPropertyChanged("ActiveLayer");
@@ -99,7 +112,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			if (this.ImageViewer != null)
 			{
-				foreach (IImageBox imageBox in this.ImageViewer.PhysicalWorkspace.ImageBoxes) 
+				foreach (IImageBox imageBox in this.ImageViewer.PhysicalWorkspace.ImageBoxes)
 				{
 					if (imageBox.DisplaySet != null)
 					{
@@ -107,13 +120,13 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 						{
 							if (pImage is FusionPresentationImage)
 							{
-								var image = (FusionPresentationImage)pImage;
+								var image = (FusionPresentationImage) pImage;
 
 								image.ActiveLayer = _activeLayer;
-								image.OverlayAlpha = Restrict(_overlayAlpha, 0, 1);
-								//image.OverlayThreshold = Restrict(_overlayThreshold, 0, 1);
-
-								//image.Draw();
+								image.OverlayOpacity = Restrict(_overlayOpacity, 0, 1);
+								image.OverlayColorMap = _overlayColorMap;
+								image.HideOverlayBackground = _hideOverlayBackground;
+								image.Draw();
 							}
 						}
 					}

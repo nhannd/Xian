@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
@@ -52,8 +51,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		private GrayscaleImageGraphic _fusionOverlayImageGraphic;
 
 		private FusionVoiLutManagerProxy _voiLutManagerProxy;
-
-		private float _colorMapAlpha = 0.5f;
+		private FusionOverlayColorMapSpec _overlayColorMapSpec;
 
 		public FusionPresentationImage(Frame baseFrame, FusionOverlayData overlayData)
 			: this(baseFrame.CreateTransientReference(), overlayData.CreateTransientReference()) {}
@@ -107,6 +105,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				_voiLutManagerProxy = new FusionVoiLutManagerProxy();
 			}
 			_voiLutManagerProxy.SetBaseVoiLutManager(this.ImageGraphic.VoiLutManager);
+
+			if (_overlayColorMapSpec == null)
+			{
+				_overlayColorMapSpec = new FusionOverlayColorMapSpec();
+			}
 		}
 
 		protected override void Dispose(bool disposing)
@@ -136,6 +139,12 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					_voiLutManagerProxy.Dispose();
 					_voiLutManagerProxy = null;
 				}
+
+				if (_overlayColorMapSpec != null)
+				{
+					_overlayColorMapSpec.Dispose();
+					_overlayColorMapSpec = null;
+				}
 			}
 
 			base.Dispose(disposing);
@@ -147,21 +156,22 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			set { _voiLutManagerProxy.ActiveLayer = value; }
 		}
 
-		public float OverlayAlpha
+		public StandardColorMaps OverlayColorMap
 		{
-			get { return _colorMapAlpha; }
-			set
-			{
-				if (_colorMapAlpha != value)
-				{
-					_colorMapAlpha = value;
-					if (_fusionOverlayImageGraphic != null && _fusionOverlayImageGraphic.ColorMap is AlphaColorMap)
-					{
-						((AlphaColorMap) _fusionOverlayImageGraphic.ColorMap).Alpha = (byte) (byte.MaxValue*_colorMapAlpha);
-						_fusionOverlayImageGraphic.Draw();
-					}
-				}
-			}
+			get { return _overlayColorMapSpec.ColorMap; }
+			set { _overlayColorMapSpec.ColorMap = value; }
+		}
+
+		public float OverlayOpacity
+		{
+			get { return _overlayColorMapSpec.Opacity; }
+			set { _overlayColorMapSpec.Opacity = value; }
+		}
+
+		public bool HideOverlayBackground
+		{
+			get { return _overlayColorMapSpec.HideBackground; }
+			set { _overlayColorMapSpec.HideBackground = value; }
 		}
 
 		public override IPresentationImage CreateFreshCopy()
@@ -188,7 +198,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			if (overlayImageGraphic != null)
 			{
 				_voiLutManagerProxy.SetOverlayVoiLutManager(overlayImageGraphic.VoiLutManager);
-				overlayImageGraphic.ColorMapManager.InstallColorMap("FusionDefaultColorMap(HotMetal)");
+				_overlayColorMapSpec.SetOverlayColorMapManager(overlayImageGraphic.ColorMapManager);
 				_fusionOverlayLayer.Graphics.Add(_fusionOverlayImageGraphic = overlayImageGraphic);
 			}
 		}

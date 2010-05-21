@@ -35,16 +35,18 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
 	public class AlphaColorMap : ColorMap
 	{
-		private readonly ColorMap _baseColorMap;
+		private readonly IDataLut _baseColorMap;
 		private byte _alpha = 255;
+		private bool _hideBackground;
 
-		public AlphaColorMap(ColorMap baseColorMap)
-			: this(baseColorMap, (byte) 0) {}
+		public AlphaColorMap(IDataLut baseColorMap)
+			: this(baseColorMap, 255, false) {}
 
-		public AlphaColorMap(ColorMap baseColorMap, byte alpha)
+		public AlphaColorMap(IDataLut baseColorMap, byte alpha, bool hideBackground)
 		{
 			_baseColorMap = baseColorMap;
 			_alpha = alpha;
+			_hideBackground = hideBackground;
 		}
 
 		public byte Alpha
@@ -55,6 +57,19 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				if (_alpha != value)
 				{
 					_alpha = value;
+					base.OnLutChanged();
+				}
+			}
+		}
+
+		public bool HideBackground
+		{
+			get { return _hideBackground; }
+			set
+			{
+				if (_hideBackground != value)
+				{
+					_hideBackground = value;
 					base.OnLutChanged();
 				}
 			}
@@ -81,11 +96,13 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			int max = MaxInputValue;
 			for (int i = min; i <= max; i++)
 				this[i] = (_baseColorMap[i] & 0x00FFFFFF) + (_alpha << 24);
+			if (_hideBackground)
+				this[min] = (_baseColorMap[min] & 0x00FFFFFF);
 		}
 
 		public override object CreateMemento()
 		{
-			return new Memento(base.CreateMemento(), _alpha);
+			return new Memento(base.CreateMemento(), _alpha, _hideBackground);
 		}
 
 		public override void SetMemento(object memento)
@@ -93,6 +110,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			Memento m = (Memento) memento;
 			base.SetMemento(m.Object);
 			this.Alpha = m.Alpha;
+			this.HideBackground = m.HideBackground;
 		}
 
 		public override string GetKey()
@@ -112,16 +130,18 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			public readonly object Object;
 			public readonly byte Alpha;
+			public readonly bool HideBackground;
 
-			public Memento(object @object, byte alpha)
+			public Memento(object @object, byte alpha, bool hideBackground)
 			{
 				this.Object = @object;
 				this.Alpha = alpha;
+				this.HideBackground = hideBackground;
 			}
 
 			public override int GetHashCode()
 			{
-				int code = 0x04634367 ^ this.Alpha.GetHashCode();
+				int code = 0x04634367 ^ this.Alpha.GetHashCode() ^ this.HideBackground.GetHashCode();
 				if (this.Object != null)
 					code ^= this.Object.GetHashCode();
 				return code;
@@ -130,7 +150,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			public override bool Equals(object obj)
 			{
 				if (obj is Memento)
-					return Equals(this.Alpha, ((Memento) obj).Alpha) && Equals(this.Object, ((Memento) obj).Object);
+					return Equals(this.Alpha, ((Memento) obj).Alpha) && Equals(this.HideBackground, ((Memento) obj).HideBackground) && Equals(this.Object, ((Memento) obj).Object);
 				return base.Equals(obj);
 			}
 		}

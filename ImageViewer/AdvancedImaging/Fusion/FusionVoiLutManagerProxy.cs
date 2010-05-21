@@ -85,8 +85,17 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		public FusionPresentationImageLayer ActiveLayer
 		{
 			get { return _activeLayer; }
-			set { _activeLayer = value; }
+			set
+			{
+				if (_activeLayer != value)
+				{
+					_activeLayer = value;
+					this.OnActiveLayerChanged(EventArgs.Empty);
+				}
+			}
 		}
+
+		protected virtual void OnActiveLayerChanged(EventArgs e) {}
 
 		public void SetBaseVoiLutManager(IVoiLutManager baseVoiLutManager)
 		{

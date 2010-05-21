@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
@@ -38,34 +37,10 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
-	public class InterpolatedColorMap : ColorMap
+	public partial class InterpolatedColorMap : ColorMap
 	{
-		public enum StandardColorMaps
-		{
-			HotMetal
-		}
-
 		private readonly IList<KeyValuePair<float, Color>> _fixedNodes;
 		private readonly string _name;
-
-		public InterpolatedColorMap(StandardColorMaps colorMaps)
-		{
-			List<KeyValuePair<float, Color>> list = new List<KeyValuePair<float, Color>>();
-			switch (colorMaps)
-			{
-				case StandardColorMaps.HotMetal:
-					list.Add(new KeyValuePair<float, Color>(0.0f, Color.FromArgb(31, 0, 0)));
-					list.Add(new KeyValuePair<float, Color>(0.1f, Color.FromArgb(255, 0, 0)));
-					list.Add(new KeyValuePair<float, Color>(0.5f, Color.FromArgb(255, 165, 0)));
-					list.Add(new KeyValuePair<float, Color>(0.9f, Color.FromArgb(255, 255, 0)));
-					list.Add(new KeyValuePair<float, Color>(1.0f, Color.FromArgb(255, 255, 191)));
-					break;
-				default:
-					throw new NotSupportedException();
-			}
-			_fixedNodes = list.AsReadOnly();
-			_name = colorMaps.ToString();
-		}
 
 		public InterpolatedColorMap(string name, Color lowColor, Color highColor)
 			: this(name, new KeyValuePair<float, Color>(0, lowColor), new KeyValuePair<float, Color>(1, highColor)) {}
