@@ -46,6 +46,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		[CloneIgnore]
 		private IColorMapManager _overlayColorMapManager;
 
+		[CloneIgnore]
+		private IColorMapManager _colorBarColorMapManager;
+
 		public FusionOverlayColorMapSpec() {}
 
 		/// <summary>
@@ -61,6 +64,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		public void Dispose()
 		{
 			_overlayColorMapManager = null;
+			_colorBarColorMapManager = null;
 		}
 
 		public StandardColorMaps ColorMap
@@ -120,16 +124,25 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		protected void InstallColorMap()
 		{
-			if (_overlayColorMapManager != null)
+			if (_overlayColorMapManager != null || _colorBarColorMapManager != null)
 			{
 				var overlayColorMapReference = AlphaColorMapFactory.GetColorMap(_colorMap.ToString(), (byte) (byte.MaxValue*_opacity), _hideBackground);
-				_overlayColorMapManager.InstallColorMap(overlayColorMapReference);
+				if (_overlayColorMapManager != null)
+					_overlayColorMapManager.InstallColorMap(overlayColorMapReference);
+				if (_colorBarColorMapManager != null)
+					_colorBarColorMapManager.InstallColorMap(overlayColorMapReference);
 			}
 		}
 
 		public void SetOverlayColorMapManager(IColorMapManager overlayColorMapManager)
 		{
 			_overlayColorMapManager = overlayColorMapManager;
+			this.InstallColorMap();
+		}
+
+		public void SetColorBarColorMapManager(IColorMapManager colorBarColorMapManager)
+		{
+			_colorBarColorMapManager = colorBarColorMapManager;
 			this.InstallColorMap();
 		}
 	}

@@ -48,6 +48,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		private CompositeGraphic _fusionOverlayLayer;
 
 		[CloneIgnore]
+		private ColorBarGraphic _colorBarGraphic;
+
+		[CloneIgnore]
 		private GrayscaleImageGraphic _fusionOverlayImageGraphic;
 
 		private FusionVoiLutManagerProxy _voiLutManagerProxy;
@@ -85,6 +88,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			if (_fusionOverlayLayer != null)
 			{
 				_fusionOverlayImageGraphic = (GrayscaleImageGraphic) CollectionUtils.SelectFirst(_fusionOverlayLayer.Graphics, g => g is GrayscaleImageGraphic);
+				_colorBarGraphic = (ColorBarGraphic) CollectionUtils.SelectFirst(_fusionOverlayLayer.Graphics, g => g is ColorBarGraphic);
 			}
 
 			Initialize();
@@ -100,6 +104,12 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				base.CompositeImageGraphic.Graphics.Insert(base.CompositeImageGraphic.Graphics.IndexOf(this.ImageGraphic) + 1, _fusionOverlayLayer);
 			}
 
+			if (_colorBarGraphic == null)
+			{
+				_colorBarGraphic = new ColorBarGraphic();
+				_fusionOverlayLayer.Graphics.Add(_colorBarGraphic);
+			}
+
 			if (_voiLutManagerProxy == null)
 			{
 				_voiLutManagerProxy = new FusionVoiLutManagerProxy();
@@ -110,28 +120,21 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			{
 				_overlayColorMapSpec = new FusionOverlayColorMapSpec();
 			}
+			_overlayColorMapSpec.SetColorBarColorMapManager(_colorBarGraphic.ColorMapManager);
 		}
 
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
+				_fusionOverlayImageGraphic = null;
+				_colorBarGraphic = null;
+				_fusionOverlayLayer = null;
+
 				if (_overlayDataReference != null)
 				{
 					_overlayDataReference.Dispose();
 					_overlayDataReference = null;
-				}
-
-				if (_fusionOverlayImageGraphic != null)
-				{
-					// do not dispose this - we don't own it directly!
-					_fusionOverlayImageGraphic = null;
-				}
-
-				if (_fusionOverlayLayer != null)
-				{
-					// do not dispose this - we don't own it directly!
-					_fusionOverlayLayer = null;
 				}
 
 				if (_voiLutManagerProxy != null)
