@@ -151,7 +151,7 @@ namespace ClearCanvas.Ris.Application.Services
 				var c = new SearchCondition<bool>(propertyName);
 				c.EqualTo(false);
 
-				CollectionUtils.ForEach(where, delegate(TSearchCriteria w) { w.SubCriteria[propertyName] = c; });
+				CollectionUtils.ForEach(where, delegate(TSearchCriteria w) { w.SetSubCriteria(c); });
 			}
 
 			// if a specificity threshold was specified, apply it now

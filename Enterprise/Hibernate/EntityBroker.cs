@@ -113,7 +113,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 				string propertyName = AttributeUtils.GetAttribute<DeactivationFlagAttribute>(typeof (TEntity)).PropertyName;
 				SearchCondition<bool> c = new SearchCondition<bool>(propertyName);
 				c.EqualTo(false);
-				where.SubCriteria[propertyName] = c;
+				where.SetSubCriteria(c);
 			}
 
 			return Find(where, null);
