@@ -135,13 +135,16 @@ namespace ClearCanvas.Ris.Client
 				{
 					if (this.SetModifiedOnListChange)
 						this.Modified = true;
+
+					// Force validation to refresh if it is already visible.
+					ShowValidation(this.ValidationVisible);
 				};
 
 			this.Validation.Add(new ValidationRule("SummarySelection", component =>
 			{
 				return CollectionUtils.Contains(this.Subject, contactPoint => contactPoint.IsDefaultContactPoint)
 					? new ValidationResult(true, "")
-					: new ValidationResult(false, "A default contact point is required.");
+					: new ValidationResult(false, SR.MessageDefaultContactPointRequired);
 			}));
 
 			base.Start();

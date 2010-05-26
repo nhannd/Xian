@@ -1663,6 +1663,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A default contact point is required..
+        /// </summary>
+        internal static string MessageDefaultContactPointRequired {
+            get {
+                return ResourceManager.GetString("MessageDefaultContactPointRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Discharge time must be later than or equal to admit time..
         /// </summary>
         internal static string MessageDischargeTimeMustBeLaterThanOrEqualToAdmitTime {

@@ -1101,4 +1101,7 @@
   <data name="MessageRisServerDowntime" xml:space="preserve">
     <value>The RIS is currently unavailable. Please restart this application once the RIS becomes available again. However, you may proceed with login in order to access image viewing capabilities.</value>
   </data>
+  <data name="MessageDefaultContactPointRequired" xml:space="preserve">
+    <value>A default contact point is required.</value>
+  </data>
 </root>
