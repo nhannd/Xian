@@ -69,11 +69,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._contactPointTableView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
+			this._contactPointTableView.ColumnHeaderTooltip = null;
 			this._contactPointTableView.Location = new System.Drawing.Point(0, 0);
 			this._contactPointTableView.Margin = new System.Windows.Forms.Padding(4);
 			this._contactPointTableView.Name = "_contactPointTableView";
 			this._contactPointTableView.ReadOnly = false;
-			this._contactPointTableView.Size = new System.Drawing.Size(392, 315);
+			this._contactPointTableView.Size = new System.Drawing.Size(377, 315);
+			this._contactPointTableView.SortButtonTooltip = null;
 			this._contactPointTableView.TabIndex = 0;
 			this._contactPointTableView.ItemDoubleClicked += new System.EventHandler(this._contactPointTableView_ItemDoubleClicked);
 			// 
@@ -105,6 +107,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Controls.Add(this._okButton);
 			this.Controls.Add(this._contactPointTableView);
 			this.Name = "ExternalPractitionerContactPointSummaryComponentControl";
+			this.Padding = new System.Windows.Forms.Padding(0, 0, 15, 0);
 			this.Size = new System.Drawing.Size(396, 348);
 			this.ResumeLayout(false);
 

@@ -36,6 +36,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Desktop;
 using ClearCanvas.Ris.Application.Common;
@@ -100,8 +101,8 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public ExternalPractitionerContactPointSummaryComponent(
 			EntityRef practitionerRef,
-			List<EnumValueInfo> addressTypeChoices, 
-			List<EnumValueInfo> phoneTypeChoices, 
+			List<EnumValueInfo> addressTypeChoices,
+			List<EnumValueInfo> phoneTypeChoices,
 			List<EnumValueInfo> resultCommunicationModeChoices,
 			string practitionerName,
 			bool supportsMergingOnly)
@@ -119,7 +120,7 @@ namespace ClearCanvas.Ris.Client
 		/// Constructor for read-only selection. Set the <see cref="Subject"/> property before starting.
 		/// </summary>
 		public ExternalPractitionerContactPointSummaryComponent(EntityRef practitionerRef)
-			:base(true)
+			: base(true)
 		{
 			_practitionerRef = practitionerRef;
 			_addressTypeChoices = new List<EnumValueInfo>();
@@ -129,12 +130,19 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
-			var thisTable = (ExternalPractitionerContactPointTable) this.SummaryTable;
+			var thisTable = (ExternalPractitionerContactPointTable)this.SummaryTable;
 			thisTable.DefaultContactPointChanged += delegate
 				{
 					if (this.SetModifiedOnListChange)
 						this.Modified = true;
 				};
+
+			this.Validation.Add(new ValidationRule("SummarySelection", component =>
+			{
+				return CollectionUtils.Contains(this.Subject, contactPoint => contactPoint.IsDefaultContactPoint)
+					? new ValidationResult(true, "")
+					: new ValidationResult(false, "A default contact point is required.");
+			}));
 
 			base.Start();
 		}
@@ -349,7 +357,7 @@ namespace ClearCanvas.Ris.Client
 				return true;
 
 			// if only one is null, they are not the same
-			if(x.ContactPointRef == null || y.ContactPointRef == null)
+			if (x.ContactPointRef == null || y.ContactPointRef == null)
 				return false;
 
 			return x.ContactPointRef.Equals(y.ContactPointRef, true);
@@ -391,7 +399,7 @@ namespace ClearCanvas.Ris.Client
 					secondSelectedItem);
 
 				var exitCode = LaunchAsDialog(
-					this.Host.DesktopWindow, 
+					this.Host.DesktopWindow,
 					mergeComponent,
 					SR.TitleMergeContactPoints);
 
@@ -410,23 +418,22 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
-		/// Check if the contact point name is unique within the exist table items.
+		/// Check if the contact point name is unique within the existing table items.
 		/// </summary>
 		/// <param name="original">The original item for comparison.</param>
 		/// <param name="edited">The cloned of the original that is edited by user.</param>
 		/// <returns></returns>
 		private bool IsContactPointNameUnique(ExternalPractitionerContactPointDetail original, ExternalPractitionerContactPointDetail edited)
 		{
-			var hasItemOfTheSameName = CollectionUtils.Contains(this.Table.Items,
-				delegate(ExternalPractitionerContactPointDetail item)
-					{
-						// Don't compare name with itself
-						if (original != null && IsSameItem(item, original))
-							return false;
+			var hasItemOfTheSameName = CollectionUtils.Contains(this.Table.Items, item =>
+			{
+				// Don't compare name with itself
+				if (original != null && IsSameItem(item, original))
+					return false;
 
-						// Find an existing item with the same name.
-						return Equals(item.Name, edited.Name);
-					});
+				// Find an existing item with the same name.
+				return Equals(item.Name, edited.Name);
+			});
 
 			return !hasItemOfTheSameName;
 		}
