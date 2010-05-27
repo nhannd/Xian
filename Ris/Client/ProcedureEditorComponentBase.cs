@@ -51,6 +51,7 @@ namespace ClearCanvas.Ris.Client
 		private readonly DepartmentSummary _departmentNone = new DepartmentSummary(null, SR.DummyItemNone, null, null, true);
 		private readonly List<EnumValueInfo> _lateralityChoices;
 		private readonly List<EnumValueInfo> _schedulingCodeChoices;
+		private readonly EnumValueInfo _schedulingCodeNone = new EnumValueInfo(null, SR.DummyItemNone);
 
 		private DateTime? _scheduledDateTime;
 		private FacilitySummary _selectedFacility;
@@ -74,7 +75,10 @@ namespace ClearCanvas.Ris.Client
 			_facilityChoices = facilityChoices;
 			_allDepartments = departmentChoices;
 			_lateralityChoices = lateralityChoices;
-			_schedulingCodeChoices = schedulingCodeChoices;
+
+			_schedulingCodeChoices = new List<EnumValueInfo> {_schedulingCodeNone};
+			_schedulingCodeChoices.AddRange(schedulingCodeChoices);
+
 		}
 
 		public override void Start()
@@ -172,7 +176,7 @@ namespace ClearCanvas.Ris.Client
 
 		public string FormatDepartment(object department)
 		{
-			return (department == _departmentNone || department == null) ? "" : ((DepartmentSummary)department).Name;
+			return department == null || Equals(department, _departmentNone) ? "" : ((DepartmentSummary)department).Name;
 		}
 
 		public DepartmentSummary SelectedDepartment
@@ -213,6 +217,11 @@ namespace ClearCanvas.Ris.Client
 			get { return _schedulingCodeChoices; }
 		}
 
+		public string FormatSchedulingCode(object schedulingCode)
+		{
+			return schedulingCode == null || Equals(schedulingCode, _schedulingCodeNone) ? "" : ((EnumValueInfo)schedulingCode).Value;
+		}
+
 		public EnumValueInfo SelectedSchedulingCode
 		{
 			get { return _selectedSchedulingCode; }
@@ -221,7 +230,7 @@ namespace ClearCanvas.Ris.Client
 				if (Equals(value, _selectedSchedulingCode))
 					return;
 
-				_selectedSchedulingCode = value;
+				_selectedSchedulingCode = Equals(value, _schedulingCodeNone) ? null : value;
 				NotifyPropertyChanged("SelectedSchedulingCode");
 			}
 		}

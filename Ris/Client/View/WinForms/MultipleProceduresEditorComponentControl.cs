@@ -88,6 +88,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_schedulingCode.DataSource = _component.SchedulingCodeChoices;
 			_schedulingCode.DataBindings.Add("Value", _component, "SelectedSchedulingCode", true, DataSourceUpdateMode.OnPropertyChanged);
 			_schedulingCode.DataBindings.Add("Enabled", _component, "IsSchedulingCodeEditable");
+			_schedulingCode.Format += delegate(object sender, ListControlConvertEventArgs e)
+			{
+				e.Value = _component.FormatSchedulingCode(e.ListItem);
+			};
 
 			_portable.DataBindings.Add("Checked", _component, "PortableModality", true, DataSourceUpdateMode.OnPropertyChanged);
 			_portable.DataBindings.Add("Enabled", _component, "IsPortableEditable", true, DataSourceUpdateMode.OnPropertyChanged);
