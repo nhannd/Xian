@@ -44,98 +44,96 @@ using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 
 namespace ClearCanvas.Ris.Client
 {
-    [MenuAction("launch", "global-menus/Admin/External Practitioners", "Launch")]
-    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner)]
-    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
-    public class ExternalPractitionerSummaryTool : Tool<IDesktopToolContext>
-    {
-        private IWorkspace _workspace;
+	[MenuAction("launch", "global-menus/Admin/External Practitioners", "Launch")]
+	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner)]
+	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	public class ExternalPractitionerSummaryTool : Tool<IDesktopToolContext>
+	{
+		private IWorkspace _workspace;
 
-        public void Launch()
-        {
-            if (_workspace == null)
-            {
-                try
-                {
-                    ExternalPractitionerSummaryComponent component = new ExternalPractitionerSummaryComponent();
+		public void Launch()
+		{
+			if (_workspace == null)
+			{
+				try
+				{
+					_workspace = ApplicationComponent.LaunchAsWorkspace(
+						this.Context.DesktopWindow,
+						new ExternalPractitionerSummaryComponent(),
+						SR.TitleExternalPractitioner);
+					_workspace.Closed += delegate { _workspace = null; };
 
-                    _workspace = ApplicationComponent.LaunchAsWorkspace(
-                        this.Context.DesktopWindow,
-                        component,
-                        SR.TitleExternalPractitioner);
-                    _workspace.Closed += delegate { _workspace = null; };
+				}
+				catch (Exception e)
+				{
+					// failed to launch component
+					ExceptionHandler.Report(e, this.Context.DesktopWindow);
+				}
+			}
+			else
+			{
+				_workspace.Activate();
+			}
+		}
+	}
 
-                }
-                catch (Exception e)
-                {
-                    // failed to launch component
-                    ExceptionHandler.Report(e, this.Context.DesktopWindow);
-                }
-            }
-            else
-            {
-                _workspace.Activate();
-            }
-        }
-    }
+	/// <summary>
+	/// Extension point for views onto <see cref="ExternalPractitionerSummaryComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class ExternalPractitionerSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    /// <summary>
-    /// Extension point for views onto <see cref="ExternalPractitionerSummaryComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class ExternalPractitionerSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
-
-    /// <summary>
-    /// ExternalPractitionerSummaryComponent class
-    /// </summary>
-    [AssociateView(typeof(ExternalPractitionerSummaryComponentViewExtensionPoint))]
+	/// <summary>
+	/// ExternalPractitionerSummaryComponent class
+	/// </summary>
+	[AssociateView(typeof(ExternalPractitionerSummaryComponentViewExtensionPoint))]
 	public class ExternalPractitionerSummaryComponent : SummaryComponentBase<ExternalPractitionerSummary, ExternalPractitionerAdminTable, ListExternalPractitionersRequest>
-    {
-        private string _firstName;
-        private string _lastName;
+	{
+		private string _firstName;
+		private string _lastName;
 
 		private Action _mergePractitionerAction;
-        private Action _mergeContactPointAction;
+		private Action _mergeContactPointAction;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public ExternalPractitionerSummaryComponent()
-        {
-        }
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public ExternalPractitionerSummaryComponent()
+		{
+		}
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="dialogMode">Indicates whether the component will be shown in a dialog box or not</param>
-        public ExternalPractitionerSummaryComponent(bool dialogMode)
-			:base(dialogMode)
-        {
-        }
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="dialogMode">Indicates whether the component will be shown in a dialog box or not</param>
+		public ExternalPractitionerSummaryComponent(bool dialogMode)
+			: base(dialogMode)
+		{
+		}
 
-        #region Presentation Model
+		#region Presentation Model
 
-        public string FirstName
-        {
-            get { return _firstName; }
-            set 
-			{ 
+		public string FirstName
+		{
+			get { return _firstName; }
+			set
+			{
 				_firstName = value;
 				NotifyPropertyChanged("FirstName");
 			}
-        }
+		}
 
-        public string LastName
-        {
-            get { return _lastName; }
-            set 
-			{ 
+		public string LastName
+		{
+			get { return _lastName; }
+			set
+			{
 				_lastName = value;
 				NotifyPropertyChanged("LastName");
 			}
-        }
+		}
 
 		public void Clear()
 		{
@@ -144,7 +142,7 @@ namespace ClearCanvas.Ris.Client
 			Search();
 		}
 
-        #endregion
+		#endregion
 
 		/// <summary>
 		/// Override this method to perform custom initialization of the action model,
@@ -157,33 +155,33 @@ namespace ClearCanvas.Ris.Client
 
 			model.Add.SetPermissibility(
 				OrPermissions(
-					ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner,
-					ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.ExternalPractitioner.Create));
+					Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner,
+					Application.Common.AuthorityTokens.Workflow.ExternalPractitioner.Create));
 			model.Edit.SetPermissibility(
 				OrPermissions(
-					ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner,
-					ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.ExternalPractitioner.Update));
+					Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner,
+					Application.Common.AuthorityTokens.Workflow.ExternalPractitioner.Update));
 
 			// these actions are only available to admins
-			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner);
-			model.ToggleActivation.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner);
+			model.Delete.SetPermissibility(Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner);
+			model.ToggleActivation.SetPermissibility(Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner);
 
 			_mergePractitionerAction = model.AddAction("mergePractitioner", SR.TitleMergePractitioner, "Icons.MergeToolSmall.png",
 				SR.TitleMergePractitioner, MergePractitioner);
 			_mergePractitionerAction.Enabled = false;
-            _mergePractitionerAction.SetPermissibility(
-                OrPermissions(
-                    ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner,
-                    ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.ExternalPractitioner.Merge));
+			_mergePractitionerAction.SetPermissibility(
+				OrPermissions(
+					Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner,
+					Application.Common.AuthorityTokens.Workflow.ExternalPractitioner.Merge));
 
-            _mergeContactPointAction = model.AddAction("mergeContactPoint", SR.TitleMergeContactPoints, "Icons.MergeToolSmall.png",
-                SR.TitleMergeContactPoints, MergeContactPoint);
-            _mergeContactPointAction.Enabled = false;
-            _mergeContactPointAction.SetPermissibility(
-                OrPermissions(
-                    ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner,
-                    ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.ExternalPractitioner.Merge));
-        }
+			_mergeContactPointAction = model.AddAction("mergeContactPoint", SR.TitleMergeContactPoints, "Icons.MergeToolSmall.png",
+				SR.TitleMergeContactPoints, MergeContactPoint);
+			_mergeContactPointAction.Enabled = false;
+			_mergeContactPointAction.SetPermissibility(
+				OrPermissions(
+					Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner,
+					Application.Common.AuthorityTokens.Workflow.ExternalPractitioner.Merge));
+		}
 
 		protected override bool SupportsDelete
 		{
@@ -197,8 +195,7 @@ namespace ClearCanvas.Ris.Client
 		protected override IList<ExternalPractitionerSummary> ListItems(ListExternalPractitionersRequest request)
 		{
 			ListExternalPractitionersResponse listResponse = null;
-			Platform.GetService<IExternalPractitionerAdminService>(
-				delegate(IExternalPractitionerAdminService service)
+			Platform.GetService<IExternalPractitionerAdminService>(service =>
 				{
 					request.QueryItems = true;
 					request.FirstName = _firstName;
@@ -217,12 +214,10 @@ namespace ClearCanvas.Ris.Client
 		protected override bool AddItems(out IList<ExternalPractitionerSummary> addedItems)
 		{
 			addedItems = new List<ExternalPractitionerSummary>();
-			ExternalPractitionerEditorComponent editor = new ExternalPractitionerEditorComponent();
-			ApplicationComponentExitCode exitCode = LaunchAsDialog(
-				this.Host.DesktopWindow, editor, SR.TitleAddExternalPractitioner);
+			var exitCode = LaunchAsDialog(this.Host.DesktopWindow, new ExternalPractitionerEditorComponent(), SR.TitleAddExternalPractitioner);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
-				addedItems.Add(editor.ExternalPractitionerSummary);
+				addedItems.Add(new ExternalPractitionerEditorComponent().ExternalPractitionerSummary);
 				return true;
 			}
 			return false;
@@ -237,14 +232,16 @@ namespace ClearCanvas.Ris.Client
 		protected override bool EditItems(IList<ExternalPractitionerSummary> items, out IList<ExternalPractitionerSummary> editedItems)
 		{
 			editedItems = new List<ExternalPractitionerSummary>();
-			ExternalPractitionerSummary item = CollectionUtils.FirstElement(items);
+			var item = CollectionUtils.FirstElement(items);
 
-			ExternalPractitionerEditorComponent editor = new ExternalPractitionerEditorComponent(item.PractitionerRef);
-			ApplicationComponentExitCode exitCode = LaunchAsDialog(
-				this.Host.DesktopWindow, editor, SR.TitleUpdateExternalPractitioner + " - " + Formatting.PersonNameFormat.Format(item.Name));
+			var exitCode = LaunchAsDialog(
+				this.Host.DesktopWindow,
+				new ExternalPractitionerEditorComponent(item.PractitionerRef),
+				SR.TitleUpdateExternalPractitioner + " - " + Formatting.PersonNameFormat.Format(item.Name));
+
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
-				editedItems.Add(editor.ExternalPractitionerSummary);
+				editedItems.Add(new ExternalPractitionerEditorComponent(item.PractitionerRef).ExternalPractitionerSummary);
 				return true;
 			}
 			return false;
@@ -262,15 +259,14 @@ namespace ClearCanvas.Ris.Client
 			failureMessage = null;
 			deletedItems = new List<ExternalPractitionerSummary>();
 
-			foreach (ExternalPractitionerSummary item in items)
+			foreach (var item in items)
 			{
 				try
 				{
-					Platform.GetService<IExternalPractitionerAdminService>(
-						delegate(IExternalPractitionerAdminService service)
-						{
-							service.DeleteExternalPractitioner(new DeleteExternalPractitionerRequest(item.PractitionerRef));
-						});
+					Platform.GetService<IExternalPractitionerAdminService>(service =>
+					{
+						service.DeleteExternalPractitioner(new DeleteExternalPractitionerRequest(item.PractitionerRef));
+					});
 
 					deletedItems.Add(item);
 				}
@@ -291,18 +287,17 @@ namespace ClearCanvas.Ris.Client
 		/// <returns>True if items were edited, false otherwise.</returns>
 		protected override bool UpdateItemsActivation(IList<ExternalPractitionerSummary> items, out IList<ExternalPractitionerSummary> editedItems)
 		{
-			List<ExternalPractitionerSummary> results = new List<ExternalPractitionerSummary>();
-			foreach (ExternalPractitionerSummary item in items)
+			var results = new List<ExternalPractitionerSummary>();
+			foreach (var item in items)
 			{
-				Platform.GetService<IExternalPractitionerAdminService>(
-					delegate(IExternalPractitionerAdminService service)
+				Platform.GetService<IExternalPractitionerAdminService>(service =>
 					{
-						ExternalPractitionerDetail detail = service.LoadExternalPractitionerForEdit(
-							new LoadExternalPractitionerForEditRequest(item.PractitionerRef)).PractitionerDetail;
+						var forEditResponse = service.LoadExternalPractitionerForEdit(new LoadExternalPractitionerForEditRequest(item.PractitionerRef));
+						var detail = forEditResponse.PractitionerDetail;
 						detail.Deactivated = !detail.Deactivated;
-						ExternalPractitionerSummary summary = service.UpdateExternalPractitioner(
-							new UpdateExternalPractitionerRequest(detail, false)).Practitioner;
 
+						var updateExternalPractitionerResponse = service.UpdateExternalPractitioner(new UpdateExternalPractitionerRequest(detail, false));
+						var summary = updateExternalPractitionerResponse.Practitioner;
 						results.Add(summary);
 					});
 			}
@@ -330,15 +325,15 @@ namespace ClearCanvas.Ris.Client
 			base.OnSelectedItemsChanged();
 
 			_mergePractitionerAction.Enabled =
-                (this.SelectedItems.Count == 1 ||
-			    this.SelectedItems.Count == 2);
+				(this.SelectedItems.Count == 1 ||
+				this.SelectedItems.Count == 2);
 
 			_mergeContactPointAction.Enabled = this.SelectedItems.Count == 1;
 		}
 
 		private static ISpecification OrPermissions(string token1, string token2)
 		{
-			OrSpecification or = new OrSpecification();
+			var or = new OrSpecification();
 			or.Add(new PrincipalPermissionSpecification(token1));
 			or.Add(new PrincipalPermissionSpecification(token2));
 			return or;
@@ -356,34 +351,32 @@ namespace ClearCanvas.Ris.Client
 			LaunchAsDialog(this.Host.DesktopWindow, creationArg);
 		}
 
-        private void MergeContactPoint()
-        {
-            LoadExternalPractitionerEditorFormDataResponse formDataResponse = null;
-            ExternalPractitionerDetail practitioner = null;
-            Platform.GetService<IExternalPractitionerAdminService>(
-                delegate(IExternalPractitionerAdminService service)
-                {
-                    formDataResponse = service.LoadExternalPractitionerEditorFormData(new LoadExternalPractitionerEditorFormDataRequest());
+		private void MergeContactPoint()
+		{
+			LoadExternalPractitionerEditorFormDataResponse formDataResponse = null;
+			ExternalPractitionerDetail practitioner = null;
 
-                    LoadExternalPractitionerForEditResponse response = service.LoadExternalPractitionerForEdit(new LoadExternalPractitionerForEditRequest(this.SelectedItems[0].PractitionerRef));
-                    practitioner = response.PractitionerDetail;
-                });
+			Platform.GetService<IExternalPractitionerAdminService>(service =>
+			{
+				formDataResponse = service.LoadExternalPractitionerEditorFormData(new LoadExternalPractitionerEditorFormDataRequest());
 
-            ExternalPractitionerContactPointSummaryComponent component = new ExternalPractitionerContactPointSummaryComponent(
-                practitioner.PractitionerRef,
-                formDataResponse.AddressTypeChoices,
-                formDataResponse.PhoneTypeChoices,
-                formDataResponse.ResultCommunicationModeChoices,
-                Formatting.PersonNameFormat.Format(practitioner.Name),
-                true);
-            component.SetModifiedOnListChange = true;
+				var response = service.LoadExternalPractitionerForEdit(
+					new LoadExternalPractitionerForEditRequest(this.SelectedItems[0].PractitionerRef));
+				practitioner = response.PractitionerDetail;
+			});
 
-            practitioner.ContactPoints.ForEach(delegate(ExternalPractitionerContactPointDetail p) { component.Subject.Add(p); });
+			var component = new ExternalPractitionerContactPointSummaryComponent(
+				practitioner.PractitionerRef,
+				formDataResponse.AddressTypeChoices,
+				formDataResponse.PhoneTypeChoices,
+				formDataResponse.ResultCommunicationModeChoices,
+				Formatting.PersonNameFormat.Format(practitioner.Name),
+				true);
+			component.SetModifiedOnListChange = true;
 
-            LaunchAsDialog(
-                this.Host.DesktopWindow,
-                component,
-                SR.TitleMergeContactPoints);
-        }
-    }
+			practitioner.ContactPoints.ForEach(p => component.Subject.Add(p));
+
+			LaunchAsDialog(this.Host.DesktopWindow, component, SR.TitleMergeContactPoints);
+		}
+	}
 }
