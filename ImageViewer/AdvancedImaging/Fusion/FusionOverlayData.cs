@@ -70,14 +70,14 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			var volume = this.Volume;
 
 			// compute the bounds of the target base image frame in patient coordinates
-			var imageTopLeft = baseFrame.ImagePlaneHelper.ConvertToPatient(new PointF(0, 0));
-			var imageTopRight = baseFrame.ImagePlaneHelper.ConvertToPatient(new PointF(baseFrame.Columns, 0));
-			var imageBottomLeft = baseFrame.ImagePlaneHelper.ConvertToPatient(new PointF(0, baseFrame.Rows));
-			var imageFrameCentre = (imageTopRight + imageBottomLeft)/2;
+			var baseTopLeft = baseFrame.ImagePlaneHelper.ConvertToPatient(new PointF(0, 0));
+			var baseTopRight = baseFrame.ImagePlaneHelper.ConvertToPatient(new PointF(baseFrame.Columns, 0));
+			var baseBottomLeft = baseFrame.ImagePlaneHelper.ConvertToPatient(new PointF(0, baseFrame.Rows));
+			var baseFrameCentre = (baseTopRight + baseBottomLeft)/2;
 
 			// compute the rotated volume slicing basis axes
-			var volumeXAxis = (volume.ConvertToVolume(imageTopRight) - volume.ConvertToVolume(imageTopLeft)).Normalize();
-			var volumeYAxis = (volume.ConvertToVolume(imageBottomLeft) - volume.ConvertToVolume(imageTopLeft)).Normalize();
+			var volumeXAxis = (volume.ConvertToVolume(baseTopRight) - volume.ConvertToVolume(baseTopLeft)).Normalize();
+			var volumeYAxis = (volume.ConvertToVolume(baseBottomLeft) - volume.ConvertToVolume(baseTopLeft)).Normalize();
 			var volumeZAxis = volumeXAxis.Cross(volumeYAxis);
 
 			// the volume slicing transformation matrix is thus just the rotation of the identity basis to the slicing basis
@@ -88,13 +88,13 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			volumeSlicerTransform.SetColumn(3, 0, 0, 0, 1);
 
 			var @params = new VolumeSlicerParams(volumeSlicerTransform);
-			using (var slice = new VolumeSliceSopDataSource(volume, @params, volume.ConvertToVolume(imageFrameCentre)))
+			using (var slice = new VolumeSliceSopDataSource(volume, @params, volume.ConvertToVolume(baseFrameCentre)))
 			{
 				using (var sliceSop = new ImageSop(slice))
 				{
 					using (var overlayFrame = sliceSop.Frames[1])
 					{
-						GrayscaleImageGraphic imageGraphic = new GrayscaleImageGraphic(
+						GrayscaleImageGraphic overlayGraphic = new GrayscaleImageGraphic(
 							overlayFrame.Rows, overlayFrame.Columns,
 							overlayFrame.BitsAllocated, overlayFrame.BitsStored,
 							overlayFrame.HighBit, overlayFrame.PixelRepresentation != 0 ? true : false,
@@ -108,27 +108,31 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 							var overlayTopLeft = overlayFrame.ImagePlaneHelper.ConvertToPatient(new PointF(0, 0));
 							var overlayTopRight = overlayFrame.ImagePlaneHelper.ConvertToPatient(new PointF(overlayFrame.Columns, 0));
 
+							// compute the overlay and base image resolution in pixels per unit patient space (mm).
+							var overlayResolution = overlayFrame.Columns/(overlayTopRight - overlayTopLeft).Magnitude;
+							var baseResolution = baseFrame.Columns/(baseTopRight - baseTopLeft).Magnitude;
+
 							// compute parameters to register the overlay on the base image
-							var scale = baseFrame.Columns*(overlayTopRight - overlayTopLeft).Magnitude/(overlayFrame.Columns*(imageTopRight - imageTopLeft).Magnitude);
-							var offset = baseFrame.ImagePlaneHelper.ConvertToImagePlane(overlayTopLeft)/scale;
+							var scale = baseResolution/overlayResolution;
+							var offset = (overlayTopLeft - baseTopLeft)*overlayResolution;
 
 							// validate computed transform parameters
 							var overlayBottomLeft = overlayFrame.ImagePlaneHelper.ConvertToPatient(new PointF(0, overlayFrame.Rows));
-							float scaleY = baseFrame.Rows*(overlayBottomLeft - overlayTopLeft).Magnitude/(overlayFrame.Rows*(imageBottomLeft - imageTopLeft).Magnitude);
+							float scaleY = baseFrame.Rows*(overlayBottomLeft - overlayTopLeft).Magnitude/(overlayFrame.Rows*(baseBottomLeft - baseTopLeft).Magnitude);
 							Platform.CheckTrue(FloatComparer.AreEqual(scale, scaleY), "Computed ScaleX != ScaleY");
-							Platform.CheckTrue(FloatComparer.AreEqual(offset.Z, 0), "Compute OffsetX != 0");
+							Platform.CheckTrue(offset.Z < 0.5f, "Compute OffsetZ != 0");
 
-							imageGraphic.SpatialTransform.Scale = scale;
-							imageGraphic.SpatialTransform.TranslationX = offset.X;
-							imageGraphic.SpatialTransform.TranslationY = offset.Y;
+							overlayGraphic.SpatialTransform.Scale = scale;
+							overlayGraphic.SpatialTransform.TranslationX = offset.X;
+							overlayGraphic.SpatialTransform.TranslationY = offset.Y;
 						}
 						catch (Exception)
 						{
-							imageGraphic.Dispose();
+							overlayGraphic.Dispose();
 							throw;
 						}
 
-						return imageGraphic;
+						return overlayGraphic;
 					}
 				}
 			}
