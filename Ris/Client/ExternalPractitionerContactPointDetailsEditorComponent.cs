@@ -95,6 +95,15 @@ namespace ClearCanvas.Ris.Client
             get { return _contactPointDetail.IsDefaultContactPoint; }
             set
             {
+                if(_contactPointDetail.IsDefaultContactPoint == value)
+                    return;
+
+                if (value && _contactPointDetail.Deactivated && UserLeavesContactPointDeactivated())
+                {
+                    NotifyPropertyChanged("IsDefaultContactPoint");
+                    return;
+                }
+
                 _contactPointDetail.IsDefaultContactPoint = value;
                 this.Modified = true;
             }
@@ -117,5 +126,21 @@ namespace ClearCanvas.Ris.Client
         }
 
         #endregion
+
+        private bool UserLeavesContactPointDeactivated()
+        {
+        	var activateResponse =
+                this.Host.ShowMessageBox(
+                    "This contact point is not currently active and must be active in order to set it as the default.  Would you like to make it active?",
+                    MessageBoxActions.YesNo);
+
+            if (activateResponse != DialogBoxAction.Yes)
+            {
+                return true;
+            }
+
+            _contactPointDetail.Deactivated = false;
+            return false;
+        }
     }
 }

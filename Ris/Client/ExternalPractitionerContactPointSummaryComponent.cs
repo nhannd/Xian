@@ -50,8 +50,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>(SR.ColumnName, cp => cp.Name, 0.5f));
 			this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>(SR.ColumnDescription, cp => cp.Description, 0.5f));
-			this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, bool>(SR.ColumnDefault,
-				cp => cp.IsDefaultContactPoint, (cp, value) => MakeDefaultContactPoint(cp), 0.15f));
+			this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, bool>(SR.ColumnDefault, cp => cp.IsDefaultContactPoint, 0.15f));
 		}
 
 		public event EventHandler DefaultContactPointChanged
@@ -137,7 +136,7 @@ namespace ClearCanvas.Ris.Client
 
 			this.Validation.Add(new ValidationRule("SummarySelection", component =>
 			{
-				return CollectionUtils.Contains(this.Subject, contactPoint => contactPoint.IsDefaultContactPoint)
+				return CollectionUtils.Contains(this.Subject, contactPoint => contactPoint.IsDefaultContactPoint && !contactPoint.Deactivated)
 					? new ValidationResult(true, "")
 					: new ValidationResult(false, SR.MessageDefaultContactPointRequired);
 			}));
@@ -306,8 +305,14 @@ namespace ClearCanvas.Ris.Client
 			foreach (var item in items)
 			{
 				item.Deactivated = !item.Deactivated;
+				if(item.Deactivated)
+					item.IsDefaultContactPoint = false;
 				editedItems.Add(item);
 			}
+
+			// Force validation to refresh if it is already visible.
+			ShowValidation(this.ValidationVisible);
+
 			return true;
 		}
 

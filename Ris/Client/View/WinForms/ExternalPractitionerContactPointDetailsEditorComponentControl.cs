@@ -57,12 +57,24 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             InitializeComponent();
 
             _component = component;
+            _component.PropertyChanged += _component_PropertyChanged;
 
             _name.DataBindings.Add("Value", _component, "ContactPointName", true, DataSourceUpdateMode.OnPropertyChanged);
             _description.DataBindings.Add("Value", _component, "ContactPointDescription", true, DataSourceUpdateMode.OnPropertyChanged);
             _isDefaultContactPoint.DataBindings.Add("Checked", _component, "IsDefaultContactPoint", true, DataSourceUpdateMode.OnPropertyChanged);
             _resultCommunicationMode.DataBindings.Add("Value", _component, "SelectedResultCommunicationMode", true, DataSourceUpdateMode.OnPropertyChanged);
             _resultCommunicationMode.DataSource = _component.ResultCommunicationModeChoices;
+        }
+
+        private void _component_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "IsDefaultContactPoint")
+            {
+                if (_isDefaultContactPoint.Checked != _component.IsDefaultContactPoint)
+                {
+                    _isDefaultContactPoint.Checked = _component.IsDefaultContactPoint;
+                }
+            }
         }
     }
 }
