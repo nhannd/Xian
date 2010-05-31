@@ -32,7 +32,6 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Enterprise.Core.Modelling;
-using NHibernate;
 using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
@@ -40,156 +39,219 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
-    /// <summary>
-    /// Abstract base class for NHibernate implemenations of <see cref="IEntityBroker{TEntity, TSearchCriteria}"/>.
-    /// </summary>
-    /// <typeparam name="TEntity">The entity class on which this broker operates</typeparam>
-    /// <typeparam name="TSearchCriteria">The corresponding <see cref="SearchCriteria"/> class.</typeparam>
-    public abstract class EntityBroker<TEntity, TSearchCriteria> : Broker, IEntityBroker<TEntity, TSearchCriteria>
-        where TEntity : Entity
-        where TSearchCriteria : SearchCriteria, new()
-    {
-        public IList<TEntity> Find(TSearchCriteria criteria)
-        {
-            return Find(criteria, null);
-        }
+	/// <summary>
+	/// Abstract base class for NHibernate implemenations of <see cref="IEntityBroker{TEntity, TSearchCriteria}"/>.
+	/// </summary>
+	/// <typeparam name="TEntity">The entity class on which this broker operates</typeparam>
+	/// <typeparam name="TSearchCriteria">The corresponding <see cref="SearchCriteria"/> class.</typeparam>
+	public abstract class EntityBroker<TEntity, TSearchCriteria> : Broker, IEntityBroker<TEntity, TSearchCriteria>
+		where TEntity : Entity
+		where TSearchCriteria : SearchCriteria, new()
+	{
+		#region Find overloads
 
-        public IList<TEntity> Find(TSearchCriteria[] criteria)
-        {
-            return Find(criteria, null);
-        }
+		public IList<TEntity> Find(TSearchCriteria criteria)
+		{
+			return Find(criteria, new EntityFindOptions());
+		}
 
-        public IList<TEntity> Find(TSearchCriteria criteria, SearchResultPage page)
-        {
-            return Find(new TSearchCriteria[] { criteria }, page);
-        }
+		public IList<TEntity> Find(TSearchCriteria criteria, EntityFindOptions options)
+		{
+			return Find(criteria, new SearchResultPage(), options);
+		}
 
-        public IList<TEntity> Find(TSearchCriteria[] criteria, SearchResultPage page)
-        {
-            return Find(criteria, page, false);
-        }
+		public IList<TEntity> Find(TSearchCriteria[] criteria)
+		{
+			return Find(criteria, new EntityFindOptions());
+		}
 
-        public IList<TEntity> Find(TSearchCriteria[] criteria, SearchResultPage page, bool cache)
-        {
-			HqlProjectionQuery query = new HqlProjectionQuery(new HqlFrom(typeof(TEntity).Name, "x"));
-			query.Page = page;
+		public IList<TEntity> Find(TSearchCriteria[] criteria, EntityFindOptions options)
+		{
+			return Find(criteria, new SearchResultPage(), options);
+		}
+
+		public IList<TEntity> Find(TSearchCriteria criteria, SearchResultPage page)
+		{
+			return Find(criteria, page, new EntityFindOptions());
+		}
+
+		public IList<TEntity> Find(TSearchCriteria criteria, SearchResultPage page, EntityFindOptions options)
+		{
+			return Find(new[] { criteria }, page, options);
+		}
+
+		public IList<TEntity> Find(TSearchCriteria[] criteria, SearchResultPage page)
+		{
+			return Find(criteria, page, new EntityFindOptions());
+		}
+
+		public IList<TEntity> Find(TSearchCriteria[] criteria, SearchResultPage page, EntityFindOptions options)
+		{
+			var query = new HqlProjectionQuery(new HqlFrom(typeof(TEntity).Name, "x")) {Page = page, Cacheable = options.Cache};
 
 			// add fetch joins
-			foreach (string fetchJoin in GetDefaultFetchJoins())
-        	{
-        		query.Froms[0].Joins.Add(new HqlJoin("x." + fetchJoin, null, HqlJoinMode.Inner, true));
-        	}
+			foreach (var fetchJoin in GetDefaultFetchJoins())
+			{
+				query.Froms[0].Joins.Add(new HqlJoin("x." + fetchJoin, null, HqlJoinMode.Inner, true));
+			}
 
-            HqlOr or = new HqlOr();
-            foreach (TSearchCriteria c in criteria)
-            {
-                HqlAnd and = new HqlAnd(HqlCondition.FromSearchCriteria("x", c));
-                if (and.Conditions.Count > 0)
-                    or.Conditions.Add(and);
+			var or = new HqlOr();
+			foreach (var c in criteria)
+			{
+				var and = new HqlAnd(HqlCondition.FromSearchCriteria("x", c));
+				if (and.Conditions.Count > 0)
+					or.Conditions.Add(and);
 
-                query.Sorts.AddRange(HqlSort.FromSearchCriteria("x", c));
-            }
+				query.Sorts.AddRange(HqlSort.FromSearchCriteria("x", c));
+			}
 
-            if (or.Conditions.Count > 0)
-                query.Conditions.Add(or);
+			if (or.Conditions.Count > 0)
+				query.Conditions.Add(or);
 
-            query.Cacheable = cache;
 
-            return ExecuteHql<TEntity>(query);
-        }
+			return ExecuteHql<TEntity>(query, options.Defer);
+		}
 
-        public IList<TEntity> FindAll()
-        {
-            return FindAll(true);
-        }
+		#endregion
 
-    	public IList<TEntity> FindAll(bool includeDeactivated)
-    	{
-    		TSearchCriteria where = new TSearchCriteria();
+		#region FindAll overloads
+
+		public IList<TEntity> FindAll()
+		{
+			return FindAll(true, new EntityFindOptions());
+		}
+
+		public IList<TEntity> FindAll(EntityFindOptions options)
+		{
+			return FindAll(true, options);
+		}
+
+		public IList<TEntity> FindAll(bool includeDeactivated)
+		{
+			return FindAll(includeDeactivated, new EntityFindOptions());
+		}
+
+		public IList<TEntity> FindAll(bool includeDeactivated, EntityFindOptions options)
+		{
+			var where = new TSearchCriteria();
 
 			// if the entity class supports deactivation, apply this condition
-			if(!includeDeactivated && AttributeUtils.HasAttribute<DeactivationFlagAttribute>(typeof(TEntity)))
+			if (!includeDeactivated && AttributeUtils.HasAttribute<DeactivationFlagAttribute>(typeof(TEntity)))
 			{
-				string propertyName = AttributeUtils.GetAttribute<DeactivationFlagAttribute>(typeof (TEntity)).PropertyName;
-				SearchCondition<bool> c = new SearchCondition<bool>(propertyName);
+				var propertyName = AttributeUtils.GetAttribute<DeactivationFlagAttribute>(typeof(TEntity)).PropertyName;
+				var c = new SearchCondition<bool>(propertyName);
 				c.EqualTo(false);
 				where.SetSubCriteria(c);
 			}
 
-			return Find(where, null);
+			return Find(where, options);
 		}
 
-    	public TEntity FindOne(TSearchCriteria criteria)
-        {
-            return FindOne(new TSearchCriteria[] { criteria });
-        }
+		#endregion
 
-        public TEntity FindOne(TSearchCriteria[] criteria)
-        {
-            IList<TEntity> results = Find(criteria, new SearchResultPage(0, 1));
+		#region FindOne overloads
+
+		public TEntity FindOne(TSearchCriteria criteria)
+		{
+			return FindOne(criteria, new EntityFindOptions());
+		}
+
+		public TEntity FindOne(TSearchCriteria criteria, EntityFindOptions options)
+		{
+			return FindOne(new[] { criteria }, options);
+		}
+
+		public TEntity FindOne(TSearchCriteria[] criteria)
+		{
+			return FindOne(criteria, new EntityFindOptions());
+		}
+
+		public TEntity FindOne(TSearchCriteria[] criteria, EntityFindOptions options)
+		{
+			// we could probably implement this using NH proxies, but too much trouble right now
+			if (options.Defer)
+				throw new NotSupportedException("FindOne queries do not support the 'defer' option.");
+
+			var results = Find(criteria, new SearchResultPage(0, 1), options);
 
 			if (results.Count == 0)
-			{
 				throw new EntityNotFoundException(null);
+
+			return results[0];
+		}
+
+		#endregion
+
+		#region Count overloads
+
+		public long Count(TSearchCriteria criteria)
+		{
+			return Count(criteria, new EntityFindOptions());
+		}
+
+		public long Count(TSearchCriteria criteria, EntityFindOptions options)
+		{
+			return Count(new[] { criteria }, options);
+		}
+
+		public long Count(TSearchCriteria[] criteria)
+		{
+			return Count(criteria, new EntityFindOptions());
+		}
+
+		public long Count(TSearchCriteria[] criteria, EntityFindOptions options)
+		{
+			// cannot defer count queries, because we have no way of proxying the result
+			// without changing the return type of this method
+			if (options.Defer)
+				throw new NotSupportedException("Count queries do not support the 'defer' option.");
+
+			var query = new HqlQuery(string.Format("select count(*) from {0} x", typeof(TEntity).Name)) { Cacheable = options.Cache };
+
+			// for a "count" query, sort conditions that may be present in the
+			// criteria object must be ignored- therefore, only the conditions are added to the query
+			var or = new HqlOr();
+			foreach (var c in criteria)
+			{
+				var and = new HqlAnd(HqlCondition.FromSearchCriteria("x", c));
+				if (and.Conditions.Count > 0)
+					or.Conditions.Add(and);
 			}
 
-            return results[0];
-        }
+			if (or.Conditions.Count > 0)
+				query.Conditions.Add(or);
 
-        public long Count(TSearchCriteria criteria)
-        {
-            return Count(new TSearchCriteria[] { criteria });
-        }
+			// expect exactly one integer result
+			return ExecuteHqlUnique<long>(query);
+		}
 
-        public long Count(TSearchCriteria[] criteria)
-        {
-            HqlQuery query = new HqlQuery(string.Format("select count(*) from {0} x", typeof(TEntity).Name));
+		#endregion
 
-            // for a "count" query, sort conditions that may be present in the
-            // criteria object must be ignored- therefore, only the conditions are added to the query
-            HqlOr or = new HqlOr();
-            foreach (TSearchCriteria c in criteria)
-            {
-                HqlAnd and = new HqlAnd(HqlCondition.FromSearchCriteria("x", c));
-                if (and.Conditions.Count > 0)
-                    or.Conditions.Add(and);
-            }
+		#region Load overloads
 
-            if (or.Conditions.Count > 0)
-                query.Conditions.Add(or);
+		public TEntity Load(EntityRef entityRef)
+		{
+			return this.Context.Load<TEntity>(entityRef);
+		}
 
-            // expect exactly one integer result
-            return ExecuteHqlUnique<long>(query);
-        }
+		public TEntity Load(EntityRef entityRef, EntityLoadFlags flags)
+		{
+			return this.Context.Load<TEntity>(entityRef, flags);
+		}
 
+		#endregion
 
+		#region Delete overloads
 
-        public TEntity Load(EntityRef entityRef)
-        {
-            return this.Context.Load<TEntity>(entityRef);
-        }
-
-        public TEntity Load(EntityRef entityRef, EntityLoadFlags flags)
-        {
-            return this.Context.Load<TEntity>(entityRef, flags);
-        }
-
-        public void Delete(TEntity entity)
-        {
+		public void Delete(TEntity entity)
+		{
 			if (this.Context.ReadOnly)
 				throw new InvalidOperationException("Cannot delete entity via read-only persistence context.");
 
-            this.Context.Session.Delete(entity);
-        }
+			this.Context.Session.Delete(entity);
+		}
 
-        protected void LoadAssociation(TEntity entity, object association)
-        {
-            if(!this.Context.Session.Contains(entity))
-                throw new PersistenceException(SR.ExceptionEntityNotInContext, null);
-
-            if (!NHibernateUtil.IsInitialized(association))
-                NHibernateUtil.Initialize(association);
-        }
+		#endregion
 
 		/// <summary>
 		/// Gets the set of fetch-joins that will be placed into the query by default.

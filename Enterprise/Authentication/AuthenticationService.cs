@@ -209,7 +209,7 @@ namespace ClearCanvas.Enterprise.Authentication
 
 			// use query caching here to make this fast (assuming the user table is not often updated)
 			IList<User> users = PersistenceContext.GetBroker<IUserBroker>().Find(
-				new UserSearchCriteria[] { criteria }, new SearchResultPage(0, 1), true);
+				criteria, new SearchResultPage(0, 1), new EntityFindOptions {Cache = true});
 
             // bug #3701: to ensure the username match is case-sensitive, we need to compare the stored name to the supplied name
             // returns null if no match
@@ -229,7 +229,7 @@ namespace ClearCanvas.Enterprise.Authentication
 
 			// use query caching here to hopefully speed this up a bit
 			IList<UserSession> sessions = PersistenceContext.GetBroker<IUserSessionBroker>().Find(
-				new UserSessionSearchCriteria[] { where }, new SearchResultPage(0, 1), true);
+				where, new SearchResultPage(0, 1), new EntityFindOptions {Cache = true});
 
             // ensure case-sensitive match, returns null if no match
             return CollectionUtils.SelectFirst(sessions,

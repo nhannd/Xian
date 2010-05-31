@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
@@ -52,11 +53,13 @@ namespace ClearCanvas.Enterprise.Hibernate
 	public abstract class PersistenceContext : IPersistenceContext
 	{
 		private readonly PersistentStore _persistentStore;
+		private readonly QueryExecutor _queryExecutor;
 		private ISession _session;
 
 		internal PersistenceContext(PersistentStore persistentStore)
 		{
 			_persistentStore = persistentStore;
+			_queryExecutor = new QueryExecutor(this);
 		}
 
 		#region IPersistenceContext members
@@ -332,7 +335,29 @@ namespace ClearCanvas.Enterprise.Hibernate
 
 		#endregion
 
-		#region Protected and Internal properties
+		#region Protected and Internal members
+
+		/// <summary>
+		/// Executes the specified <see cref="NHibernate.IQuery"/> against the database.
+		/// </summary>
+		/// <param name="query"></param>
+		/// <param name="defer"></param>
+		/// <returns></returns>
+		internal IList<T> ExecuteHql<T>(IQuery query, bool defer)
+		{
+			return _queryExecutor.ExecuteHql<T>(query, defer);
+		}
+
+		/// <summary>
+		/// Executes the specified query, which is expected to return a unique (1 row, 1 column) result.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="query"></param>
+		/// <returns></returns>
+		internal T ExecuteHqlUnique<T>(IQuery query)
+		{
+			return _queryExecutor.ExecuteHqlUnique<T>(query);
+		}
 
 		/// <summary>
 		/// Gets the NHibernate Session object, instantiating it if it does not already exist.

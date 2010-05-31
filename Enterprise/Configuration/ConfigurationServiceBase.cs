@@ -57,8 +57,7 @@ namespace ClearCanvas.Enterprise.Configuration
 
             IConfigurationDocumentBroker broker = PersistenceContext.GetBroker<IConfigurationDocumentBroker>();
             ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(documentKey);
-            IList<ConfigurationDocument> documents = broker.Find(
-                new ConfigurationDocumentSearchCriteria[] { criteria }, new SearchResultPage(0, 1), true);
+            IList<ConfigurationDocument> documents = broker.Find(criteria , new SearchResultPage(0, 1), new EntityFindOptions {Cache = true});
 
             ConfigurationDocument document = CollectionUtils.FirstElement(documents);
             return new GetConfigurationDocumentResponse(documentKey, document == null ? null : document.Body.DocumentText);

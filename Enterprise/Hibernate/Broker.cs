@@ -125,25 +125,45 @@ namespace ClearCanvas.Enterprise.Hibernate
 		}
 
 		/// <summary>
-		/// Executes the specified <see cref="HqlQuery"/> against the database, returning the results
-		/// as an untyped <see cref="IList"/>.
+		/// Executes the specified query against the database.
 		/// </summary>
 		/// <param name="query">the query to execute</param>
 		/// <returns>the result set</returns>
 		protected IList<T> ExecuteHql<T>(HqlQuery query)
 		{
-			return ExecuteHql<T>(query.BuildHibernateQueryObject(_ctx));
+			return ExecuteHql<T>(query, false);
 		}
 
 		/// <summary>
-		/// Executes the specified <see cref="NHibernate.IQuery"/> against the database, returning the results
-		/// as an untyped <see cref="IList"/>.
+		/// Executes the specified query against the database.
 		/// </summary>
-		/// <param name="query"></param>
-		/// <returns></returns>
+		/// <param name="query">the query to execute</param>
+		/// <param name="defer"></param>
+		/// <returns>the result set</returns>
+		protected IList<T> ExecuteHql<T>(HqlQuery query, bool defer)
+		{
+			return _ctx.ExecuteHql<T>(query.BuildHibernateQueryObject(_ctx), defer);
+		}
+
+		/// <summary>
+		/// Executes the specified query against the database.
+		/// </summary>
+		/// <param name="query">the query to execute</param>
+		/// <returns>the result set</returns>
 		protected IList<T> ExecuteHql<T>(IQuery query)
 		{
-			return query.List<T>();
+			return ExecuteHql<T>(query, false);
+		}
+
+		/// <summary>
+		/// Executes the specified query against the database.
+		/// </summary>
+		/// <param name="query"></param>
+		/// <param name="defer"></param>
+		/// <returns></returns>
+		protected IList<T> ExecuteHql<T>(IQuery query, bool defer)
+		{
+			return _ctx.ExecuteHql<T>(query, defer);
 		}
 
 		/// <summary>
@@ -154,7 +174,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 		/// <returns></returns>
 		protected T ExecuteHqlUnique<T>(HqlQuery query)
 		{
-			return ExecuteHqlUnique<T>(query.BuildHibernateQueryObject(_ctx));
+			return _ctx.ExecuteHqlUnique<T>(query.BuildHibernateQueryObject(_ctx));
 		}
 
 		/// <summary>
@@ -165,7 +185,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 		/// <returns></returns>
 		protected T ExecuteHqlUnique<T>(IQuery query)
 		{
-			return query.UniqueResult<T>();
+			return _ctx.ExecuteHqlUnique<T>(query);
 		}
 
 		/// <summary>
@@ -177,6 +197,16 @@ namespace ClearCanvas.Enterprise.Hibernate
 		protected void ClearSessionCache()
 		{
 			_ctx.Session.Clear();
+		}
+
+		/// <summary>
+		/// Creates a new session on a new connection, with the specified interceptor.
+		/// </summary>
+		/// <param name="interceptor"></param>
+		/// <returns></returns>
+		protected ISession CreateSession(IInterceptor interceptor)
+		{
+			return _ctx.Session.SessionFactory.OpenSession(interceptor);
 		}
 
 		#endregion
