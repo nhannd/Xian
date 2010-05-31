@@ -44,7 +44,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 	{
 		class AttributeEntityClassPair
 		{
-			public Type EntityClass { get; set; }
+			public Type DeclaringClass { get; set; }
 			public Attribute Attribute { get; set; }
 		}
 
@@ -78,12 +78,33 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
 			if (pair.Attribute is UniqueKeyAttribute)
 				ProcessUniqueKeyAttribute(entityClass, pair, rules);
+
+			if (pair.Attribute is ValidationRulesAttribute)
+				ProcessValidationRulesAttribute(entityClass, pair, rules);
+		}
+
+		private static void ProcessValidationRulesAttribute(Type entityClass, AttributeEntityClassPair pair, ICollection<ISpecification> rules)
+		{
+			// find method on class (use the class that declared the attribute, not the entityClass)
+			var a = (ValidationRulesAttribute)pair.Attribute;
+			var bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.DeclaredOnly;
+			var method = pair.DeclaringClass.GetMethod(a.MethodName, bindingFlags);
+
+			// validate method signature
+			if (method == null)
+				throw new InvalidOperationException(string.Format("Method {0} not found on class {1}", a.MethodName, pair.DeclaringClass.FullName));
+			if (method.GetParameters().Length != 0 || !typeof(IValidationRuleSet).IsAssignableFrom(method.ReturnType))
+				throw new InvalidOperationException(string.Format("Method {0} must have 0 parameters and return IValidationRuleSet", a.MethodName));
+
+			var ruleSet = (IValidationRuleSet)method.Invoke(null, null);
+
+			rules.Add(ruleSet);
 		}
 
 		private static void ProcessUniqueKeyAttribute(Type entityClass, AttributeEntityClassPair pair, ICollection<ISpecification> rules)
 		{
 			var uka = (UniqueKeyAttribute)pair.Attribute;
-			rules.Add(new UniqueKeySpecification(pair.EntityClass, uka.LogicalName, uka.MemberProperties));
+			rules.Add(new UniqueKeySpecification(pair.DeclaringClass, uka.LogicalName, uka.MemberProperties));
 		}
 
 		private void ProcessClassProperties(Type domainClass, ICollection<ISpecification> rules)
@@ -170,7 +191,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 		{
 			// get attributes on this class only, not on the base class
 			var pairs = CollectionUtils.Map(entityClass.GetCustomAttributes(false),
-								(Attribute a) => new AttributeEntityClassPair { EntityClass = entityClass, Attribute = a });
+								(Attribute a) => new AttributeEntityClassPair { DeclaringClass = entityClass, Attribute = a });
 
 			// recur on base class
 			var baseClass = entityClass.BaseType;

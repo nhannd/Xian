@@ -41,10 +41,15 @@ namespace ClearCanvas.Common.Specifications
         public TestResult(bool success)
             : this(success, new TestResultReason[] {})
         {
-        }
+        } 
+
+		public TestResult(bool success, string reason)
+			: this(success, new [] { new TestResultReason(reason)})
+		{
+		}
 
         public TestResult(bool success, TestResultReason reason)
-            :this(success, new TestResultReason[] { reason })
+            :this(success, new [] { reason })
         {
         }
 
