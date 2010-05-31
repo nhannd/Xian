@@ -265,29 +265,26 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			var original = broker.Load(request.Original.ContactPointRef, EntityLoadFlags.Proxy);
 
 			// Change reference of result recipient to the new contact point
-			CollectionUtils.ForEach(broker.GetRelatedOrders(duplicate),
-				o => CollectionUtils.ForEach(o.ResultRecipients,
-					 delegate(ResultRecipient rr)
-						{
-							if (rr.PractitionerContactPoint == duplicate)
-								rr.PractitionerContactPoint = original;
-						}));
-
-			// copy all telephones/addresses/emails to the new contact point
-			CollectionUtils.ForEach(duplicate.TelephoneNumbers, p => original.TelephoneNumbers.Add((TelephoneNumber)p.Clone()));
-			CollectionUtils.ForEach(duplicate.Addresses, a => original.Addresses.Add((Address)a.Clone()));
-			CollectionUtils.ForEach(duplicate.EmailAddresses, e => original.EmailAddresses.Add((EmailAddress) e.Clone()));
+			foreach (var order in GetActiveOrdersForContactPoint(duplicate))
+			{
+				foreach (var resultRecipient in order.ResultRecipients)
+				{
+					if (resultRecipient.PractitionerContactPoint == duplicate)
+						resultRecipient.PractitionerContactPoint = original;
+				}
+			}
 
 			if (duplicate.IsDefaultContactPoint)
+			{
+				duplicate.IsDefaultContactPoint = false;
 				original.IsDefaultContactPoint = true;
+			}
 
-			PersistenceContext.SynchState();
+			duplicate.Deactivated = true;
 
-			// remove the duplicate contact point
-			var practitioner = original.Practitioner;
-			practitioner.ContactPoints.Remove(duplicate);
+			this.PersistenceContext.SynchState();
 
-			practitioner.MarkEdited();
+			duplicate.Practitioner.MarkEdited();
 
 			var assembler = new ExternalPractitionerAssembler();
 			return new MergeDuplicateContactPointResponse(assembler.CreateExternalPractitionerContactPointSummary(original));
@@ -315,15 +312,21 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 		[ReadOperation]
 		public LoadMergeDuplicateContactPointFormDataResponse LoadMergeDuplicateContactPointFormData(LoadMergeDuplicateContactPointFormDataRequest request)
 		{
-			var broker = PersistenceContext.GetBroker<IExternalPractitionerContactPointBroker>();
+			var broker = this.PersistenceContext.GetBroker<IExternalPractitionerContactPointBroker>();
 			var contactPoint = broker.Load(request.ContactPoint.ContactPointRef, EntityLoadFlags.Proxy);
 
 			var orderAssembler = new OrderAssembler();
-			var affectedOrders = CollectionUtils.Map<Order, OrderSummary>(
-				broker.GetRelatedOrders(contactPoint),
-				o => orderAssembler.CreateOrderSummary(o, this.PersistenceContext));
+			var affectedOrderSummaries = CollectionUtils.Map<Order, OrderSummary>(
+				GetActiveOrdersForContactPoint(contactPoint),
+				order => orderAssembler.CreateOrderSummary(order, this.PersistenceContext));
 
-			return new LoadMergeDuplicateContactPointFormDataResponse(affectedOrders);
+			return new LoadMergeDuplicateContactPointFormDataResponse(affectedOrderSummaries);
+		}
+
+		private List<Order> GetActiveOrdersForContactPoint(ExternalPractitionerContactPoint contactPoint)
+		{
+			var relatedOrders = this.PersistenceContext.GetBroker<IExternalPractitionerContactPointBroker>().GetRelatedOrders(contactPoint);
+			return CollectionUtils.Select(relatedOrders, order => !order.IsTerminated);
 		}
 
 		[UpdateOperation]

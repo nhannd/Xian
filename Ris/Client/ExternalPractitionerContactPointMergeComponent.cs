@@ -33,7 +33,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
@@ -44,36 +43,17 @@ namespace ClearCanvas.Ris.Client
 {
 	public class ExternalPractitionerContactPointMergeComponent : MergeComponentBase<ExternalPractitionerContactPointDetail>
 	{
-		private readonly EntityRef _practitionerRef;
-		private readonly IList<ExternalPractitionerContactPointDetail> _contactPoints;
-
-		private ILookupHandler _duplicateLookupHandler;
-		private ILookupHandler _originalLookupHandler;
-
 		public ExternalPractitionerContactPointMergeComponent(
 			EntityRef practitionerRef,
 			IList<ExternalPractitionerContactPointDetail> contactPoints)
-			: this(practitionerRef, contactPoints, null, null)
+			: base(contactPoints)
 		{
 		}
 
-		public ExternalPractitionerContactPointMergeComponent(
-			EntityRef practitionerRef,
-			IList<ExternalPractitionerContactPointDetail> contactPoints,
-			ExternalPractitionerContactPointDetail duplicate,
-			ExternalPractitionerContactPointDetail original)
-			: base(duplicate, original)
+		public override object FormatItem(object p)
 		{
-			_practitionerRef = practitionerRef;
-			_contactPoints = contactPoints;
-		}
-
-		public override void Start()
-		{
-			_duplicateLookupHandler = new ExternalPractitionerContactPointLookupHandler(_practitionerRef, _contactPoints, this.Host.DesktopWindow);
-			_originalLookupHandler = new ExternalPractitionerContactPointLookupHandler(_practitionerRef, _contactPoints, this.Host.DesktopWindow);
-
-			base.Start();
+			var cp = (ExternalPractitionerContactPointDetail) p;
+			return ExternalPractitionerContactPointFormat.Format(cp);
 		}
 
 		protected override bool IsSameItem(ExternalPractitionerContactPointDetail x, ExternalPractitionerContactPointDetail y)
@@ -85,15 +65,14 @@ namespace ClearCanvas.Ris.Client
 		{
 			List<OrderSummary> affectedOrders = null;
 
-			Platform.GetService<IExternalPractitionerAdminService>(
-				delegate(IExternalPractitionerAdminService service)
-				{
-					LoadMergeDuplicateContactPointFormDataRequest request = new LoadMergeDuplicateContactPointFormDataRequest(duplicate.GetSummary());
-					LoadMergeDuplicateContactPointFormDataResponse response = service.LoadMergeDuplicateContactPointFormData(request);
-					affectedOrders = response.AffectedOrders;
-				});
+			Platform.GetService<IExternalPractitionerAdminService>(service =>
+			{
+				var response = service.LoadMergeDuplicateContactPointFormData(
+					new LoadMergeDuplicateContactPointFormDataRequest(duplicate.GetSummary()));
+				affectedOrders = response.AffectedOrders;
+			});
 
-			StringBuilder reportBuilder = new StringBuilder();
+			var reportBuilder = new StringBuilder();
 			reportBuilder.AppendFormat("Replace {0} ({1})", duplicate.Name, duplicate.Description);
 			reportBuilder.AppendLine();
 			reportBuilder.AppendFormat("with {0} ({1})", original.Name, original.Description);
@@ -107,20 +86,10 @@ namespace ClearCanvas.Ris.Client
 			else
 			{
 				reportBuilder.AppendLine("Affected Orders");
-				CollectionUtils.ForEach(affectedOrders, delegate(OrderSummary o) { reportBuilder.AppendLine(AccessionFormat.Format(o.AccessionNumber)); });
+				affectedOrders.ForEach(order => reportBuilder.AppendLine(AccessionFormat.Format(order.AccessionNumber)));
 			}
 
 			return reportBuilder.ToString();
-		}
-
-		public override ILookupHandler DuplicateLookupHandler
-		{
-			get { return _duplicateLookupHandler; }
-		}
-
-		public override ILookupHandler OriginalLookupHandler
-		{
-			get { return _originalLookupHandler; }
 		}
 
 		public override void Accept()
@@ -133,17 +102,9 @@ namespace ClearCanvas.Ris.Client
 
 			try
 			{
-				Platform.GetService<IExternalPractitionerAdminService>(
-					delegate(IExternalPractitionerAdminService service)
-					{
-						MergeDuplicateContactPointRequest request = new MergeDuplicateContactPointRequest(
-							this.SelectedDuplicateSummary.GetSummary(),
-							this.SelectedOriginalSummary.GetSummary());
-
-						service.MergeDuplicateContactPoint(request);
-					});
-
-				// TODO: if the Default is duplicate and deleted, make sure a new default is checked
+				Platform.GetService<IExternalPractitionerAdminService>(service => 
+					service.MergeDuplicateContactPoint(
+						new MergeDuplicateContactPointRequest(this.SelectedDuplicateSummary.GetSummary(), this.SelectedOriginalSummary.GetSummary())));
 
 				base.Accept();
 			}

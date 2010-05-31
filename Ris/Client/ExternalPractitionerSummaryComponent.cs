@@ -214,10 +214,11 @@ namespace ClearCanvas.Ris.Client
 		protected override bool AddItems(out IList<ExternalPractitionerSummary> addedItems)
 		{
 			addedItems = new List<ExternalPractitionerSummary>();
-			var exitCode = LaunchAsDialog(this.Host.DesktopWindow, new ExternalPractitionerEditorComponent(), SR.TitleAddExternalPractitioner);
+			var editor = new ExternalPractitionerEditorComponent();
+			var exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddExternalPractitioner);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
-				addedItems.Add(new ExternalPractitionerEditorComponent().ExternalPractitionerSummary);
+				addedItems.Add(editor.ExternalPractitionerSummary);
 				return true;
 			}
 			return false;
@@ -234,14 +235,15 @@ namespace ClearCanvas.Ris.Client
 			editedItems = new List<ExternalPractitionerSummary>();
 			var item = CollectionUtils.FirstElement(items);
 
+			var editor = new ExternalPractitionerEditorComponent(item.PractitionerRef);
 			var exitCode = LaunchAsDialog(
 				this.Host.DesktopWindow,
-				new ExternalPractitionerEditorComponent(item.PractitionerRef),
+				editor,
 				SR.TitleUpdateExternalPractitioner + " - " + Formatting.PersonNameFormat.Format(item.Name));
 
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
-				editedItems.Add(new ExternalPractitionerEditorComponent(item.PractitionerRef).ExternalPractitionerSummary);
+				editedItems.Add(editor.ExternalPractitionerSummary);
 				return true;
 			}
 			return false;
@@ -353,30 +355,35 @@ namespace ClearCanvas.Ris.Client
 
 		private void MergeContactPoint()
 		{
-			LoadExternalPractitionerEditorFormDataResponse formDataResponse = null;
-			ExternalPractitionerDetail practitioner = null;
+			try
+			{
+				if(this.SelectedItems.Count > 1)
+					return;
 
+				var detail = GetSelectedExternalPractitionerDetail();
+				var activeContactPoints = CollectionUtils.Select(detail.ContactPoints, contactPoint => !contactPoint.Deactivated);
+				var exitCode = LaunchAsDialog(
+					this.Host.DesktopWindow,
+					new ExternalPractitionerContactPointMergeComponent(detail.PractitionerRef, activeContactPoints),
+					SR.TitleMergeContactPoints);
+			}
+			catch (Exception e)
+			{
+				// failed to launch editor
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
+
+		private ExternalPractitionerDetail GetSelectedExternalPractitionerDetail()
+		{
+			ExternalPractitionerDetail detail = null;
+			var selectedPractitioner = CollectionUtils.FirstElement(this.SelectedItems);
 			Platform.GetService<IExternalPractitionerAdminService>(service =>
 			{
-				formDataResponse = service.LoadExternalPractitionerEditorFormData(new LoadExternalPractitionerEditorFormDataRequest());
-
-				var response = service.LoadExternalPractitionerForEdit(
-					new LoadExternalPractitionerForEditRequest(this.SelectedItems[0].PractitionerRef));
-				practitioner = response.PractitionerDetail;
+				var forEditResponse = service.LoadExternalPractitionerForEdit(new LoadExternalPractitionerForEditRequest(selectedPractitioner.PractitionerRef));
+				detail = forEditResponse.PractitionerDetail;
 			});
-
-			var component = new ExternalPractitionerContactPointSummaryComponent(
-				practitioner.PractitionerRef,
-				formDataResponse.AddressTypeChoices,
-				formDataResponse.PhoneTypeChoices,
-				formDataResponse.ResultCommunicationModeChoices,
-				Formatting.PersonNameFormat.Format(practitioner.Name),
-				true);
-			component.SetModifiedOnListChange = true;
-
-			practitioner.ContactPoints.ForEach(p => component.Subject.Add(p));
-
-			LaunchAsDialog(this.Host.DesktopWindow, component, SR.TitleMergeContactPoints);
+			return detail;
 		}
 	}
 }

@@ -30,11 +30,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         {
 			this._duplicateGroupBox = new System.Windows.Forms.GroupBox();
 			this._report = new ClearCanvas.Desktop.View.WinForms.TextAreaField();
-			this._switchButton = new System.Windows.Forms.Button();
-			this._originalLookupField = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
-			this._duplicateLookupField = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._acceptButton = new System.Windows.Forms.Button();
 			this._cancelButton = new System.Windows.Forms.Button();
+			this._sourceItem = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+			this._targetItem = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+			this._switchButton = new System.Windows.Forms.Button();
 			this._duplicateGroupBox.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -43,13 +43,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._duplicateGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
+			this._duplicateGroupBox.Controls.Add(this._targetItem);
+			this._duplicateGroupBox.Controls.Add(this._sourceItem);
 			this._duplicateGroupBox.Controls.Add(this._report);
 			this._duplicateGroupBox.Controls.Add(this._switchButton);
-			this._duplicateGroupBox.Controls.Add(this._originalLookupField);
-			this._duplicateGroupBox.Controls.Add(this._duplicateLookupField);
 			this._duplicateGroupBox.Location = new System.Drawing.Point(3, 3);
 			this._duplicateGroupBox.Name = "_duplicateGroupBox";
-			this._duplicateGroupBox.Size = new System.Drawing.Size(272, 360);
+			this._duplicateGroupBox.Size = new System.Drawing.Size(644, 360);
 			this._duplicateGroupBox.TabIndex = 0;
 			this._duplicateGroupBox.TabStop = false;
 			this._duplicateGroupBox.Text = "Select items to merge:";
@@ -60,52 +60,18 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this._report.LabelText = "Proposed Changes:";
-			this._report.Location = new System.Drawing.Point(7, 146);
+			this._report.Location = new System.Drawing.Point(7, 114);
 			this._report.Margin = new System.Windows.Forms.Padding(2);
 			this._report.Name = "_report";
 			this._report.ReadOnly = true;
-			this._report.Size = new System.Drawing.Size(248, 209);
+			this._report.Size = new System.Drawing.Size(620, 241);
 			this._report.TabIndex = 3;
 			this._report.Value = null;
-			// 
-			// _switchButton
-			// 
-			this._switchButton.Location = new System.Drawing.Point(89, 70);
-			this._switchButton.Name = "_switchButton";
-			this._switchButton.Size = new System.Drawing.Size(63, 23);
-			this._switchButton.TabIndex = 1;
-			this._switchButton.Text = "Switch";
-			this._switchButton.UseVisualStyleBackColor = true;
-			this._switchButton.Click += new System.EventHandler(this._switchButton_Click);
-			// 
-			// _originalLookupField
-			// 
-			this._originalLookupField.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this._originalLookupField.LabelText = "With this:";
-			this._originalLookupField.Location = new System.Drawing.Point(7, 90);
-			this._originalLookupField.Margin = new System.Windows.Forms.Padding(0);
-			this._originalLookupField.Name = "_originalLookupField";
-			this._originalLookupField.Size = new System.Drawing.Size(248, 41);
-			this._originalLookupField.TabIndex = 2;
-			this._originalLookupField.Value = null;
-			// 
-			// _duplicateLookupField
-			// 
-			this._duplicateLookupField.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this._duplicateLookupField.LabelText = "Replace this:";
-			this._duplicateLookupField.Location = new System.Drawing.Point(7, 20);
-			this._duplicateLookupField.Margin = new System.Windows.Forms.Padding(0);
-			this._duplicateLookupField.Name = "_duplicateLookupField";
-			this._duplicateLookupField.Size = new System.Drawing.Size(248, 41);
-			this._duplicateLookupField.TabIndex = 0;
-			this._duplicateLookupField.Value = null;
 			// 
 			// _acceptButton
 			// 
 			this._acceptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._acceptButton.Location = new System.Drawing.Point(119, 369);
+			this._acceptButton.Location = new System.Drawing.Point(491, 369);
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
 			this._acceptButton.TabIndex = 1;
@@ -116,13 +82,49 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _cancelButton
 			// 
 			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._cancelButton.Location = new System.Drawing.Point(200, 369);
+			this._cancelButton.Location = new System.Drawing.Point(572, 369);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 2;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
+			// 
+			// _sourceItem
+			// 
+			this._sourceItem.DataSource = null;
+			this._sourceItem.DisplayMember = "";
+			this._sourceItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._sourceItem.LabelText = "Replace this:";
+			this._sourceItem.Location = new System.Drawing.Point(7, 24);
+			this._sourceItem.Margin = new System.Windows.Forms.Padding(2);
+			this._sourceItem.Name = "_sourceItem";
+			this._sourceItem.Size = new System.Drawing.Size(565, 41);
+			this._sourceItem.TabIndex = 4;
+			this._sourceItem.Value = null;
+			// 
+			// _targetItem
+			// 
+			this._targetItem.DataSource = null;
+			this._targetItem.DisplayMember = "";
+			this._targetItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._targetItem.LabelText = "With this:";
+			this._targetItem.Location = new System.Drawing.Point(8, 69);
+			this._targetItem.Margin = new System.Windows.Forms.Padding(2);
+			this._targetItem.Name = "_targetItem";
+			this._targetItem.Size = new System.Drawing.Size(565, 41);
+			this._targetItem.TabIndex = 5;
+			this._targetItem.Value = null;
+			// 
+			// _switchButton
+			// 
+			this._switchButton.Image = global::ClearCanvas.Ris.Client.View.WinForms.SR.RefreshSmall;
+			this._switchButton.Location = new System.Drawing.Point(592, 55);
+			this._switchButton.Name = "_switchButton";
+			this._switchButton.Size = new System.Drawing.Size(35, 32);
+			this._switchButton.TabIndex = 1;
+			this._switchButton.UseVisualStyleBackColor = true;
+			this._switchButton.Click += new System.EventHandler(this._switchButton_Click);
 			// 
 			// MergeComponentBaseControl
 			// 
@@ -134,7 +136,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._acceptButton);
 			this.Name = "MergeComponentBaseControl";
-			this.Size = new System.Drawing.Size(281, 400);
+			this.Size = new System.Drawing.Size(653, 400);
 			this._duplicateGroupBox.ResumeLayout(false);
 			this.ResumeLayout(false);
 
@@ -145,9 +147,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private System.Windows.Forms.GroupBox _duplicateGroupBox;
 		private System.Windows.Forms.Button _acceptButton;
 		private System.Windows.Forms.Button _cancelButton;
-		private ClearCanvas.Ris.Client.View.WinForms.LookupField _originalLookupField;
-		private ClearCanvas.Ris.Client.View.WinForms.LookupField _duplicateLookupField;
 		private System.Windows.Forms.Button _switchButton;
 		private ClearCanvas.Desktop.View.WinForms.TextAreaField _report;
+		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _targetItem;
+		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _sourceItem;
     }
 }

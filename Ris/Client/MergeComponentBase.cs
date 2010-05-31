@@ -29,6 +29,8 @@
 
 #endregion
 
+using System.Collections;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
@@ -53,14 +55,14 @@ namespace ClearCanvas.Ris.Client
 		#region Presentation Model
 
 		/// <summary>
-		/// Gets the lookup Handler for duplciate item.
+		/// Gets a list of source items
 		/// </summary>
-		public abstract ILookupHandler DuplicateLookupHandler { get; }
+		public abstract IList SourceItems { get; }
 
 		/// <summary>
-		/// Gets the lookup Handler for original item.
+		/// Gets a list of target items
 		/// </summary>
-		public abstract ILookupHandler OriginalLookupHandler { get; }
+		public abstract IList TargetItems { get; }
 
 		/// <summary>
 		/// Gets and sets thecurrently selected duplicate item.
@@ -93,6 +95,13 @@ namespace ClearCanvas.Ris.Client
 		public abstract void Switch();
 
 		#endregion
+
+		/// <summary>
+		/// Formats an item in either the <see mref="SourceItems"/> collection or <see mref="TargetItems"/> collection
+		/// </summary>
+		/// <param name="p"></param>
+		/// <returns></returns>
+		public abstract object FormatItem(object p);
 	}
 
 	public abstract class MergeComponentBase<TSummary> : MergeComponentBase
@@ -101,16 +110,11 @@ namespace ClearCanvas.Ris.Client
 		private TSummary _selectedDuplicate;
 		private TSummary _selectedOriginal;
 		private string _mergeReport;
+		private readonly IList<TSummary> _items;
 
-		public MergeComponentBase()
-			: this(null, null)
+		protected MergeComponentBase(IList<TSummary> items)
 		{
-		}
-
-		public MergeComponentBase(TSummary duplicate, TSummary original)
-		{
-			_selectedDuplicate = duplicate;
-			_selectedOriginal = original;
+			_items = items;
 
 			this.Validation.Add(new ValidationRule("SelectedOriginal",
 				delegate
@@ -118,6 +122,16 @@ namespace ClearCanvas.Ris.Client
 					bool isIdentical = IsSameItem(_selectedDuplicate, _selectedOriginal);
 					return new ValidationResult(!isIdentical, SR.MessageMergeIdenticalItems);
 				}));
+		}
+
+		public override IList SourceItems
+		{
+			get { return new List<TSummary>(_items); }
+		}
+
+		public override IList TargetItems
+		{
+			get { return new List<TSummary>(_items); }
 		}
 
 		public override void Start()

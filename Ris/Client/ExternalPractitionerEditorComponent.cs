@@ -163,8 +163,7 @@ namespace ClearCanvas.Ris.Client
 				formDataResponse.AddressTypeChoices,
 				formDataResponse.PhoneTypeChoices,
 				formDataResponse.ResultCommunicationModeChoices,
-				Formatting.PersonNameFormat.Format(_practitionerDetail.Name),
-				false);
+				Formatting.PersonNameFormat.Format(_practitionerDetail.Name));
 			_contactPointSummaryComponent.SetModifiedOnListChange = true;
 
 			var rootPath = SR.TitleExternalPractitioner;

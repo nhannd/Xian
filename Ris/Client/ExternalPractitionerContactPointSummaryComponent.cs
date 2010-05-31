@@ -34,7 +34,6 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
@@ -88,13 +87,11 @@ namespace ClearCanvas.Ris.Client
 	public class ExternalPractitionerContactPointSummaryComponent : SummaryComponentBase<ExternalPractitionerContactPointDetail, ExternalPractitionerContactPointTable>
 	{
 		private readonly EntityRef _practitionerRef;
-		private Action _mergeContactPointAction;
 
 		private readonly List<EnumValueInfo> _addressTypeChoices;
 		private readonly List<EnumValueInfo> _phoneTypeChoices;
 		private readonly List<EnumValueInfo> _resultCommunicationModeChoices;
 		private readonly string _practitionerName;
-		private readonly bool _supportsMergingOnly;
 
 		/// <summary>
 		/// Constructor for editing. Set the <see cref="Subject"/> property before starting.
@@ -104,8 +101,7 @@ namespace ClearCanvas.Ris.Client
 			List<EnumValueInfo> addressTypeChoices,
 			List<EnumValueInfo> phoneTypeChoices,
 			List<EnumValueInfo> resultCommunicationModeChoices,
-			string practitionerName,
-			bool supportsMergingOnly)
+			string practitionerName)
 			: base(false)
 		{
 			_practitionerRef = practitionerRef;
@@ -113,7 +109,6 @@ namespace ClearCanvas.Ris.Client
 			_phoneTypeChoices = phoneTypeChoices;
 			_resultCommunicationModeChoices = resultCommunicationModeChoices;
 			_practitionerName = practitionerName;
-			_supportsMergingOnly = supportsMergingOnly;
 		}
 
 		/// <summary>
@@ -154,46 +149,14 @@ namespace ClearCanvas.Ris.Client
 			get { return this.Table.Items; }
 		}
 
-		/// <summary>
-		/// Override this method to perform custom initialization of the action model,
-		/// such as adding permissions or adding custom actions.
-		/// </summary>
-		/// <param name="model"></param>
-		protected override void InitializeActionModel(AdminActionModel model)
-		{
-			base.InitializeActionModel(model);
-
-			if (_supportsMergingOnly)
-			{
-				_mergeContactPointAction = model.AddAction("mergeContactPoint", SR.TitleMergeContactPoints, "Icons.MergeToolSmall.png",
-					SR.TitleMergeContactPoints, MergeSelectedContactPoint);
-				_mergeContactPointAction.Enabled = false;
-			}
-		}
-
 		protected override bool SupportsPaging
 		{
 			get { return false; }
 		}
 
-		protected override bool SupportsAdd
-		{
-			get { return _supportsMergingOnly == false; }
-		}
-
-		protected override bool SupportsEdit
-		{
-			get { return _supportsMergingOnly == false; }
-		}
-
 		protected override bool SupportsDelete
 		{
-			get { return _supportsMergingOnly == false; }
-		}
-
-		protected override bool SupportsDeactivation
-		{
-			get { return _supportsMergingOnly == false; }
+			get { return true; }
 		}
 
 		/// <summary>
@@ -364,60 +327,6 @@ namespace ClearCanvas.Ris.Client
 				return false;
 
 			return x.ContactPointRef.Equals(y.ContactPointRef, true);
-		}
-
-		/// <summary>
-		/// Called when the user changes the selected items in the table.
-		/// </summary>
-		protected override void OnSelectedItemsChanged()
-		{
-			base.OnSelectedItemsChanged();
-
-			if (_supportsMergingOnly)
-			{
-				_mergeContactPointAction.Enabled =
-					(this.SelectedItems.Count == 1 ||
-					 this.SelectedItems.Count == 2);
-			}
-		}
-
-		public void MergeSelectedContactPoint()
-		{
-			try
-			{
-				var newItem = CollectionUtils.SelectFirst(this.SelectedItems, item => item.ContactPointRef == null);
-				if (newItem != null)
-				{
-					this.Host.DesktopWindow.ShowMessageBox(string.Format(SR.MessageCannotMergeNewContactPoints, newItem.Name), MessageBoxActions.Ok);
-					return;
-				}
-
-				var firstSelectedItem = this.SelectedItems.Count > 0 ? this.SelectedItems[0] : null;
-				var secondSelectedItem = this.SelectedItems.Count > 1 ? this.SelectedItems[1] : null;
-
-				var mergeComponent = new ExternalPractitionerContactPointMergeComponent(
-					_practitionerRef,
-					this.Table.Items,
-					firstSelectedItem,
-					secondSelectedItem);
-
-				var exitCode = LaunchAsDialog(
-					this.Host.DesktopWindow,
-					mergeComponent,
-					SR.TitleMergeContactPoints);
-
-				if (exitCode == ApplicationComponentExitCode.Accepted)
-				{
-					this.Table.Items.Remove(mergeComponent.SelectedDuplicate);
-					if (this.SetModifiedOnListChange)
-						this.Modified = true;
-				}
-			}
-			catch (Exception e)
-			{
-				// failed to launch editor
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
-			}
 		}
 
 		/// <summary>

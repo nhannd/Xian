@@ -52,11 +52,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			InitializeComponent();
 			_component = component;
 
-			_duplicateLookupField.LookupHandler = _component.DuplicateLookupHandler;
-			_duplicateLookupField.DataBindings.Add("Value", _component, "SelectedDuplicate", true, DataSourceUpdateMode.OnPropertyChanged);
+			_sourceItem.DataSource = _component.SourceItems;
+			_sourceItem.DataBindings.Add("Value", _component, "SelectedDuplicate", true, DataSourceUpdateMode.OnPropertyChanged);
+			_sourceItem.Format += delegate(object sender, ListControlConvertEventArgs e) { e.Value = _component.FormatItem(e.ListItem); };
 
-			_originalLookupField.LookupHandler = _component.OriginalLookupHandler;
-			_originalLookupField.DataBindings.Add("Value", _component, "SelectedOriginal", true, DataSourceUpdateMode.OnPropertyChanged);
+			_targetItem.DataSource = _component.TargetItems;
+			_targetItem.DataBindings.Add("Value", _component, "SelectedOriginal", true, DataSourceUpdateMode.OnPropertyChanged);
+			_targetItem.Format += delegate(object sender, ListControlConvertEventArgs e) { e.Value = _component.FormatItem(e.ListItem); };
 
 			_report.DataBindings.Add("Value", _component, "MergeReport", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
