@@ -116,8 +116,7 @@ namespace ClearCanvas.Ris.Application.Services
                     StaffSearchCriteria where = new StaffSearchCriteria();
                     where.UserName.EqualTo(CurrentUser);
 					_currentUserStaff = CollectionUtils.FirstElement(
-						PersistenceContext.GetBroker<IStaffBroker>().Find(
-							new StaffSearchCriteria[] { where }, new SearchResultPage(0, 1), true));
+						PersistenceContext.GetBroker<IStaffBroker>().Find(where, new SearchResultPage(0, 1), new EntityFindOptions {Cache = true}));
 
 					if(_currentUserStaff == null)
                         throw new RequestValidationException(SR.ExceptionNoStaffForUser);
@@ -146,7 +145,7 @@ namespace ClearCanvas.Ris.Application.Services
                         // this will be null if the working facility code is invalid, but this should not happen
                         // (and if it does, there is nothing we can do about it)
 						_workingFacility = CollectionUtils.FirstElement(PersistenceContext.GetBroker<IFacilityBroker>().Find(
-							new FacilitySearchCriteria[] { where }, new SearchResultPage(0, 1), true));
+							where, new SearchResultPage(0, 1), new EntityFindOptions { Cache = true }));
                     }
                     _workingFacilityLoaded = true;
                 }

@@ -150,8 +150,7 @@ namespace ClearCanvas.Ris.Application.Services
 				var propertyName = AttributeUtils.GetAttribute<DeactivationFlagAttribute>(typeof(TDomainItem)).PropertyName;
 				var c = new SearchCondition<bool>(propertyName);
 				c.EqualTo(false);
-
-				CollectionUtils.ForEach(where, delegate(TSearchCriteria w) { w.SetSubCriteria(c); });
+				CollectionUtils.ForEach(where, w => w.SetSubCriteria(c));
 			}
 
 			// if a specificity threshold was specified, apply it now
