@@ -35,11 +35,12 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.Ris.Client
 {
 
-	[SettingsGroupDescription("Configures the behaviour of worklists.")]
+	// TODO add a description of the purpose of the settings group here
+	[SettingsGroupDescription("")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-	internal sealed partial class WorklistSettings
+	internal sealed partial class FolderSystemSettings
 	{
-		private WorklistSettings()
+		private FolderSystemSettings()
 		{
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}

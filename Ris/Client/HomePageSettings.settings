@@ -2,9 +2,6 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Ris.Client" GeneratedClassName="HomePageSettings">
   <Profiles />
   <Settings>
-    <Setting Name="SearchCriteriaSpecificityThreshold" Description="Searches that would return more than this number of results will be rejected.  Max value is 1000." Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">200</Value>
-    </Setting>
     <Setting Name="ShowHomepageOnStartUp" Description="Indicates whether homepage will appear automatically when desktop application is started." Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>

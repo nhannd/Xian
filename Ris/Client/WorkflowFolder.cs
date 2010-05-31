@@ -142,7 +142,7 @@ namespace ClearCanvas.Ris.Client
 
 		public override int PageSize
 		{
-			get { return WorklistSettings.Default.ItemsPerPage; }
+			get { return FolderSystemSettings.Default.ItemsPerPage; }
 		}
 
 		#endregion

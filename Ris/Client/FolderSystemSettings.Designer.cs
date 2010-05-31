@@ -13,26 +13,40 @@ namespace ClearCanvas.Ris.Client {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "9.0.0.0")]
-    internal sealed partial class WorklistSettings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class FolderSystemSettings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static WorklistSettings defaultInstance = ((WorklistSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new WorklistSettings())));
+        private static FolderSystemSettings defaultInstance = ((FolderSystemSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new FolderSystemSettings())));
         
-        public static WorklistSettings Default {
+        public static FolderSystemSettings Default {
             get {
                 return defaultInstance;
             }
         }
         
         /// <summary>
-        /// For worklist queries, controls number of worklist items per page
+        /// Controls number of folder items displayed per page.
         /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("For worklist queries, controls number of worklist items per page")]
+        [global::System.Configuration.SettingsDescriptionAttribute("Controls number of folder items displayed per page.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("100")]
         public int ItemsPerPage {
             get {
                 return ((int)(this["ItemsPerPage"]));
+            }
+        }
+        
+        /// <summary>
+        /// Searches that would return more than this number of results will be rejected.  Max value is 1000.
+        /// </summary>
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Searches that would return more than this number of results will be rejected.  Ma" +
+            "x value is 1000.")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("200")]
+        public int SearchCriteriaSpecificityThreshold {
+            get {
+                return ((int)(this["SearchCriteriaSpecificityThreshold"]));
             }
         }
         

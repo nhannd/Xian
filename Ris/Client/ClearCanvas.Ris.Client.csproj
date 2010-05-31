@@ -101,6 +101,12 @@
     <Compile Include="ExternalPractitionerTable.cs" />
     <Compile Include="ExternalPractitionerTool.cs" />
     <Compile Include="FolderExplorerConfiguration.cs" />
+    <Compile Include="FolderSystemSettings.cs" />
+    <Compile Include="FolderSystemSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>FolderSystemSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Formatting\TimeSpanFormat.cs" />
     <Compile Include="LookupHandlerAggregator.cs" />
     <Compile Include="LookupHandlerCellEditor.cs" />
@@ -375,12 +381,6 @@
     <Compile Include="WorklistFolderSystem.cs" />
     <Compile Include="WorklistMultiDetailEditorComponent.cs" />
     <Compile Include="WorklistPropertiesTool.cs" />
-    <Compile Include="WorklistSettings.cs" />
-    <Compile Include="WorklistSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>WorklistSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="WorklistSummaryComponent.cs" />
     <Compile Include="SelectorEditorComponent.cs" />
     <Compile Include="WorklistTimeWindowEditorComponent.cs" />
@@ -426,6 +426,10 @@
     <None Include="CannedTextSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>CannedTextSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="FolderSystemSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>FolderSystemSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="LocalFileSettings.config" />
     <None Include="DiagnosticServiceLookupSettings.settings">
@@ -483,10 +487,6 @@
     <None Include="WorklistEditorComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WorklistEditorComponentSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="WorklistSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>WorklistSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

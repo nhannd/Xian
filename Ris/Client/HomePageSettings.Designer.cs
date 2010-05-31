@@ -24,20 +24,6 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        /// Searches that would return more than this number of results will be rejected.  Max value is 1000.
-        /// </summary>
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Searches that would return more than this number of results will be rejected.  Ma" +
-            "x value is 1000.")]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("200")]
-        public int SearchCriteriaSpecificityThreshold {
-            get {
-                return ((int)(this["SearchCriteriaSpecificityThreshold"]));
-            }
-        }
-        
-        /// <summary>
         /// Indicates whether homepage will appear automatically when desktop application is started.
         /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]

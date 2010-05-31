@@ -89,9 +89,9 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
-		protected static int SearchCriteriaSpecificityThreshold
+		protected virtual int SearchCriteriaSpecificityThreshold
 		{
-			get { return HomePageSettings.Default.SearchCriteriaSpecificityThreshold; }
+			get { return FolderSystemSettings.Default.SearchCriteriaSpecificityThreshold; }
 		}
 
 	}
@@ -249,7 +249,7 @@ namespace ClearCanvas.Ris.Client
 			var options = WorklistItemTextQueryOptions.PatientOrder;
 			if(DowntimeRecovery.InDowntimeRecoveryMode)
 				options = options | WorklistItemTextQueryOptions.DowntimeRecovery;
-			if (WorklistSettings.Default.EnablePartialMatchingOnIdentifierSearch)
+			if (FolderSystemSettings.Default.EnablePartialMatchingOnIdentifierSearch)
 				options = options | WorklistItemTextQueryOptions.EnablePartialMatchingOnIdentifiers;
 
 			return DoQueryCore(query, specificityThreshold, options, this.ProcedureStepClassName);
