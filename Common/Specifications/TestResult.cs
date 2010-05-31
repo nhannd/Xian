@@ -33,45 +33,45 @@
 
 namespace ClearCanvas.Common.Specifications
 {
-    public class TestResult
-    {
-        private bool _success;
-        private TestResultReason[] _reasons;
+	public class TestResult
+	{
+		private readonly bool _success;
+		private readonly TestResultReason[] _reasons;
 
-        public TestResult(bool success)
-            : this(success, new TestResultReason[] {})
-        {
-        } 
-
-		public TestResult(bool success, string reason)
-			: this(success, new [] { new TestResultReason(reason)})
+		public TestResult(bool success)
+			: this(success, new TestResultReason[] { })
 		{
 		}
 
-        public TestResult(bool success, TestResultReason reason)
-            :this(success, new [] { reason })
-        {
-        }
+		public TestResult(bool success, string reason)
+			: this(success, new[] { new TestResultReason(reason) })
+		{
+		}
 
-        public TestResult(bool success, TestResultReason[] reasons)
-        {
-            _success = success;
-            _reasons = reasons;
-        }
+		public TestResult(bool success, TestResultReason reason)
+			: this(success, new[] { reason })
+		{
+		}
 
-        public bool Success
-        {
-            get { return _success; }
-        }
+		public TestResult(bool success, TestResultReason[] reasons)
+		{
+			_success = success;
+			_reasons = reasons;
+		}
 
-        public bool Fail
-        {
-            get { return !_success; }
-        }
+		public bool Success
+		{
+			get { return _success; }
+		}
 
-        public TestResultReason[] Reasons
-        {
-            get { return _reasons; }
-        }
-    }
+		public bool Fail
+		{
+			get { return !_success; }
+		}
+
+		public TestResultReason[] Reasons
+		{
+			get { return _reasons; }
+		}
+	}
 }
