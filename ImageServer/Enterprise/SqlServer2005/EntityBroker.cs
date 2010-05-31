@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             StringBuilder sb = new StringBuilder();
 
             // recurse on subCriteria
-            foreach (SearchCriteria subCriteria in criteria.SubCriteria.Values)
+            foreach (SearchCriteria subCriteria in criteria.EnumerateSubCriteria())
             {
                 string variable = string.Format("{0}.{1}", entity, subCriteria.GetKey());
                 SearchConditionBase sc = subCriteria as SearchConditionBase;
@@ -339,7 +339,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             else
             {
                 // recurse on subCriteria
-                foreach (SearchCriteria subCriteria in criteria.SubCriteria.Values)
+                foreach (SearchCriteria subCriteria in criteria.EnumerateSubCriteria())
                 {
                     // Note:  this is a bit ugly, but we don't do the <Table>.<Column>
                     // syntax for Subselect type criteria.  Subselects only need 

@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
         protected static void SetParameters(SqlCommand command, ProcedureParameters parms)
         {
-            foreach (SearchCriteria parm in parms.SubCriteria.Values)
+            foreach (SearchCriteria parm in parms.EnumerateSubCriteria())
             {
                 String sqlParmName = "@" + parm.GetKey();
                 
@@ -200,7 +200,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
 		protected static void GetOutputParameters(SqlCommand command, ProcedureParameters parms)
 		{
-			foreach (SearchCriteria parm in parms.SubCriteria.Values)
+			foreach (SearchCriteria parm in parms.EnumerateSubCriteria())
 			{
 				String sqlParmName = "@" + parm.GetKey();
 
