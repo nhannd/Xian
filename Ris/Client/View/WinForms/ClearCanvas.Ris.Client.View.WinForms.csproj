@@ -712,6 +712,9 @@
     <None Include="Resources\FacilityText.png" />
     <None Include="Resources\ClearFilterSmall.png" />
     <Content Include="Resources\LogoLarge.PNG" />
+    <None Include="Resources\SwapMedium.png" />
+    <None Include="Resources\SwapLarge.png" />
+    <None Include="Resources\SwapSmall.png" />
     <None Include="Resources\RefreshSmall.png" />
     <None Include="Resources\searchtoolsmall.png" />
     <None Include="Resources\UserText.png" />

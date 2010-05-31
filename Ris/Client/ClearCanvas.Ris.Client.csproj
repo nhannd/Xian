@@ -745,6 +745,17 @@
   <ItemGroup>
     <EmbeddedResource Include="Icons\VerifyPractitionerToolMedium.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\MergeContactPointToolLarge.png" />
+    <EmbeddedResource Include="Icons\MergeContactPointToolMedium.png" />
+    <EmbeddedResource Include="Icons\MergeContactPointToolSmall.png" />
+    <EmbeddedResource Include="Icons\MergePersonToolLarge.png" />
+    <EmbeddedResource Include="Icons\MergePersonToolMedium.png" />
+    <EmbeddedResource Include="Icons\MergePersonToolSmall.png" />
+    <EmbeddedResource Include="Icons\SwapLarge.png" />
+    <EmbeddedResource Include="Icons\SwapMedium.png" />
+    <EmbeddedResource Include="Icons\SwapSmall.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

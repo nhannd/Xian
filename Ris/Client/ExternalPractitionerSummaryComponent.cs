@@ -166,7 +166,7 @@ namespace ClearCanvas.Ris.Client
 			model.Delete.SetPermissibility(Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner);
 			model.ToggleActivation.SetPermissibility(Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner);
 
-			_mergePractitionerAction = model.AddAction("mergePractitioner", SR.TitleMergePractitioner, "Icons.MergeToolSmall.png",
+			_mergePractitionerAction = model.AddAction("mergePractitioner", SR.TitleMergePractitioner, "Icons.MergePersonToolMedium.png",
 				SR.TitleMergePractitioner, MergePractitioner);
 			_mergePractitionerAction.Enabled = false;
 			_mergePractitionerAction.SetPermissibility(
@@ -174,7 +174,7 @@ namespace ClearCanvas.Ris.Client
 					Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner,
 					Application.Common.AuthorityTokens.Workflow.ExternalPractitioner.Merge));
 
-			_mergeContactPointAction = model.AddAction("mergeContactPoint", SR.TitleMergeContactPoints, "Icons.MergeToolSmall.png",
+			_mergeContactPointAction = model.AddAction("mergeContactPoint", SR.TitleMergeContactPoints, "Icons.MergeContactPointToolMedium.png",
 				SR.TitleMergeContactPoints, MergeContactPoint);
 			_mergeContactPointAction.Enabled = false;
 			_mergeContactPointAction.SetPermissibility(

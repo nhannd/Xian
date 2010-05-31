@@ -96,7 +96,7 @@ namespace ClearCanvas.Ris.Client
 	[MenuAction("apply", "folderexplorer-items-contextmenu/Merge External Practitioners", "Apply")]
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Merge External Practitioners", "Apply")]
 	[Tooltip("apply", "Merge Duplicate External Practitioners")]
-	[IconSet("apply", IconScheme.Colour, "Icons.MergeToolSmall.png", "Icons.MergeToolSmall.png", "Icons.MergeToolMedium.png")]
+	[IconSet("apply", IconScheme.Colour, "Icons.MergePersonToolSmall.png", "Icons.MergePersonToolSmall.png", "Icons.MergePersonToolMedium.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner)]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.ExternalPractitioner.Merge)]

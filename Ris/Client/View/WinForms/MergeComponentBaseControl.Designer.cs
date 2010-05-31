@@ -29,12 +29,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private void InitializeComponent()
         {
 			this._duplicateGroupBox = new System.Windows.Forms.GroupBox();
+			this._targetItem = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+			this._sourceItem = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._report = new ClearCanvas.Desktop.View.WinForms.TextAreaField();
+			this._switchButton = new System.Windows.Forms.Button();
 			this._acceptButton = new System.Windows.Forms.Button();
 			this._cancelButton = new System.Windows.Forms.Button();
-			this._sourceItem = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
-			this._targetItem = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
-			this._switchButton = new System.Windows.Forms.Button();
 			this._duplicateGroupBox.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -54,6 +54,32 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._duplicateGroupBox.TabStop = false;
 			this._duplicateGroupBox.Text = "Select items to merge:";
 			// 
+			// _targetItem
+			// 
+			this._targetItem.DataSource = null;
+			this._targetItem.DisplayMember = "";
+			this._targetItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._targetItem.LabelText = "With this:";
+			this._targetItem.Location = new System.Drawing.Point(8, 69);
+			this._targetItem.Margin = new System.Windows.Forms.Padding(2);
+			this._targetItem.Name = "_targetItem";
+			this._targetItem.Size = new System.Drawing.Size(565, 41);
+			this._targetItem.TabIndex = 5;
+			this._targetItem.Value = null;
+			// 
+			// _sourceItem
+			// 
+			this._sourceItem.DataSource = null;
+			this._sourceItem.DisplayMember = "";
+			this._sourceItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._sourceItem.LabelText = "Replace this:";
+			this._sourceItem.Location = new System.Drawing.Point(7, 24);
+			this._sourceItem.Margin = new System.Windows.Forms.Padding(2);
+			this._sourceItem.Name = "_sourceItem";
+			this._sourceItem.Size = new System.Drawing.Size(565, 41);
+			this._sourceItem.TabIndex = 4;
+			this._sourceItem.Value = null;
+			// 
 			// _report
 			// 
 			this._report.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -67,6 +93,16 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._report.Size = new System.Drawing.Size(620, 241);
 			this._report.TabIndex = 3;
 			this._report.Value = null;
+			// 
+			// _switchButton
+			// 
+			this._switchButton.Image = global::ClearCanvas.Ris.Client.View.WinForms.SR.SwapSmall;
+			this._switchButton.Location = new System.Drawing.Point(592, 55);
+			this._switchButton.Name = "_switchButton";
+			this._switchButton.Size = new System.Drawing.Size(35, 32);
+			this._switchButton.TabIndex = 1;
+			this._switchButton.UseVisualStyleBackColor = true;
+			this._switchButton.Click += new System.EventHandler(this._switchButton_Click);
 			// 
 			// _acceptButton
 			// 
@@ -89,42 +125,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
-			// 
-			// _sourceItem
-			// 
-			this._sourceItem.DataSource = null;
-			this._sourceItem.DisplayMember = "";
-			this._sourceItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this._sourceItem.LabelText = "Replace this:";
-			this._sourceItem.Location = new System.Drawing.Point(7, 24);
-			this._sourceItem.Margin = new System.Windows.Forms.Padding(2);
-			this._sourceItem.Name = "_sourceItem";
-			this._sourceItem.Size = new System.Drawing.Size(565, 41);
-			this._sourceItem.TabIndex = 4;
-			this._sourceItem.Value = null;
-			// 
-			// _targetItem
-			// 
-			this._targetItem.DataSource = null;
-			this._targetItem.DisplayMember = "";
-			this._targetItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this._targetItem.LabelText = "With this:";
-			this._targetItem.Location = new System.Drawing.Point(8, 69);
-			this._targetItem.Margin = new System.Windows.Forms.Padding(2);
-			this._targetItem.Name = "_targetItem";
-			this._targetItem.Size = new System.Drawing.Size(565, 41);
-			this._targetItem.TabIndex = 5;
-			this._targetItem.Value = null;
-			// 
-			// _switchButton
-			// 
-			this._switchButton.Image = global::ClearCanvas.Ris.Client.View.WinForms.SR.RefreshSmall;
-			this._switchButton.Location = new System.Drawing.Point(592, 55);
-			this._switchButton.Name = "_switchButton";
-			this._switchButton.Size = new System.Drawing.Size(35, 32);
-			this._switchButton.TabIndex = 1;
-			this._switchButton.UseVisualStyleBackColor = true;
-			this._switchButton.Click += new System.EventHandler(this._switchButton_Click);
 			// 
 			// MergeComponentBaseControl
 			// 

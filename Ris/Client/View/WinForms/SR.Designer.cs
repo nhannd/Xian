@@ -109,6 +109,27 @@ namespace ClearCanvas.Ris.Client.View.WinForms {
             }
         }
         
+        internal static System.Drawing.Bitmap SwapLarge {
+            get {
+                object obj = ResourceManager.GetObject("SwapLarge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap SwapMedium {
+            get {
+                object obj = ResourceManager.GetObject("SwapMedium", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap SwapSmall {
+            get {
+                object obj = ResourceManager.GetObject("SwapSmall", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap UserText {
             get {
                 object obj = ResourceManager.GetObject("UserText", resourceCulture);
