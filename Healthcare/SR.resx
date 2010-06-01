@@ -570,4 +570,7 @@
   <data name="MessageValidateWorklistProcedureTypeAndGroupFilters" xml:space="preserve">
     <value>Procedure type and procedure type group cannot both be used as worklist filters.  Please make sure only one is used.</value>
   </data>
+  <data name="MessageValidateWorklistTimeFilter" xml:space="preserve">
+    <value>Time Window must be specified and must not span more than {0} days.</value>
+  </data>
 </root>

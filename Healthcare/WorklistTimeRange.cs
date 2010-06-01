@@ -47,12 +47,12 @@ namespace ClearCanvas.Healthcare
         private WorklistTimePoint _start;
         private WorklistTimePoint _end;
 
+
         /// <summary>
         /// Constructor.
         /// </summary>
         public WorklistTimeRange()
         {
-
         }
 
         /// <summary>
@@ -60,8 +60,8 @@ namespace ClearCanvas.Healthcare
         /// </summary>
         /// <param name="start"></param>
         /// <param name="end"></param>
-        public WorklistTimeRange(WorklistTimePoint start, WorklistTimePoint end)
-        {
+		public WorklistTimeRange(WorklistTimePoint start, WorklistTimePoint end)
+		{
             _start = start;
             _end = end;
         }
@@ -86,6 +86,70 @@ namespace ClearCanvas.Healthcare
             set { _end = value; }
         }
 
+		/// <summary>
+		/// Gets a value indicating whether this range has a start value.
+		/// </summary>
+    	public bool HasStart
+    	{
+			get { return _start != null; }
+    	}
+
+		/// <summary>
+		/// Gets a value indicating whether this range has an end value.
+		/// </summary>
+    	public bool HasEnd
+    	{
+    		get { return _end != null; }
+    	}
+
+		/// <summary>
+		/// Gets a value indicating whether this range is closed (has both a start and an end specified).
+		/// </summary>
+    	public bool IsClosed
+    	{
+			get { return HasStart && HasEnd; }
+    	}
+
+		/// <summary>
+		/// Gets a value indicating whether this range is unbounded at one or both ends.
+		/// </summary>
+    	public bool IsOpen
+    	{
+			get { return !IsClosed; }
+    	}
+
+		/// <summary>
+		/// Checks if this range is guaranteed to always be within the specified minimum and maximum time span.
+		/// </summary>
+		/// <param name="min"></param>
+		/// <param name="max"></param>
+		/// <returns></returns>
+		public bool IsConstrained(TimeSpan min, TimeSpan max)
+		{
+			if (min < TimeSpan.Zero)
+				throw new ArgumentOutOfRangeException("min", "must be greater than or equal to zero.");
+			if (max < TimeSpan.Zero)
+				throw new ArgumentOutOfRangeException("max", "must be greater than or equal to zero.");
+
+			// an open range is false by definition
+			if (IsOpen)
+				return false;
+
+			// a range consisting of one fixed and one relative point can't be guaranteed
+			// always satisfy the condition
+			if (Start.IsFixed ^ End.IsFixed)
+				return false;
+
+			// get the span by resolving the range at an arbitrary point in time (use DateTime.Now for example)
+			DateTime startTime, endTime;
+			Resolve(DateTime.Now, out startTime, out endTime);
+
+			var span = endTime - startTime;
+
+			// ensure span satisfies condition
+			return span >= min && span <= max;
+		}
+
         /// <summary>
         /// Applies this time range to the specified <see cref="ISearchCondition{T}"/>, using the specified current time.
         /// </summary>
@@ -102,6 +166,7 @@ namespace ClearCanvas.Healthcare
             ApplyRange(condition, _start != null, startTime, _end != null, endTime);
 
         }
+
 
         #endregion
 

@@ -327,6 +327,12 @@
     <Compile Include="WorklistOwner.cs" />
     <Compile Include="WorklistSearchCriteria.cs" />
     <Compile Include="WorklistItemField.cs" />
+    <Compile Include="WorklistSettings.cs" />
+    <Compile Include="WorklistSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>WorklistSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="WorklistTimePoint.cs" />
     <Compile Include="WorklistTimeRange.cs" />
   </ItemGroup>
@@ -365,6 +371,10 @@
     <None Include="Workflow\Reporting\ReportingWorkflowSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ReportingWorkflowSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="WorklistSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>WorklistSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

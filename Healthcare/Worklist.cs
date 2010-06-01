@@ -36,6 +36,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Core.Modelling;
 using Iesi.Collections.Generic;
+using ClearCanvas.Common.Specifications;
 
 namespace ClearCanvas.Healthcare
 {
@@ -589,10 +590,27 @@ namespace ClearCanvas.Healthcare
 			// note: the TimeFilter is treated as part of the invariant criteria, so it is not processed here
 		}
 
-		#endregion
+		/// <summary>
+		/// Checks if the time filter is enabled and spans less than the specified maximum time span.
+		/// </summary>
+		/// <param name="maxSpan"></param>
+		/// <returns></returns>
+		private bool CheckTimeFilterSpan(TimeSpan maxSpan)
+		{
+			if (maxSpan == TimeSpan.Zero || maxSpan == TimeSpan.MaxValue)
+				return true;
+
+			// ensure filter is enabled
+			if(!_timeFilter.IsEnabled)
+				return false;
+
+			// ensure filter is constrained to be up to maxSpan
+			return _timeFilter.Value.IsConstrained(TimeSpan.Zero, maxSpan);
+		}
 
 		private static IValidationRuleSet GetValidationRules()
 		{
+			// ensure that not both the procedure type and procedure type groups filters are being applied
 			var procedureTypeRule = new ValidationRule<Worklist>(
 				delegate(Worklist w)
 				{
@@ -602,7 +620,24 @@ namespace ClearCanvas.Healthcare
 					return new TestResult(!filterByBothProcedureTypeAndProcedureTypeGroup, SR.MessageValidateWorklistProcedureTypeAndGroupFilters);
 				});
 
-			return new ValidationRuleSet(new[] { procedureTypeRule });
+			// ensure time filter meets constraints specified in settings
+			var timeFilterRule = new ValidationRule<Worklist>(
+				delegate(Worklist w)
+				{
+					var settings = new WorklistSettings();
+					var maxDays = settings.TimeWindowMaxSpanDays;
+					//TODO: make all worklists support time filters
+					if (GetSupportsTimeFilter(w.GetClass()) && settings.TimeWindowRequired && maxDays > 0)
+					{
+						return new TestResult(w.CheckTimeFilterSpan(TimeSpan.FromDays(maxDays)),
+							string.Format(SR.MessageValidateWorklistTimeFilter, maxDays));
+					}
+					return new TestResult(true);
+				});
+
+			return new ValidationRuleSet(new[] { procedureTypeRule, timeFilterRule });
 		}
+
+		#endregion
 	}
 }

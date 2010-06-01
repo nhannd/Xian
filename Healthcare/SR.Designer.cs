@@ -556,6 +556,15 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Time Window must be specified and must not span more than {0} days..
+        /// </summary>
+        internal static string MessageValidateWorklistTimeFilter {
+            get {
+                return ResourceManager.GetString("MessageValidateWorklistTimeFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Middle Name.
         /// </summary>
         internal static string MiddleName {
