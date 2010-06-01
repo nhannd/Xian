@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections;
+using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Core.Modelling;
@@ -42,6 +43,7 @@ namespace ClearCanvas.Healthcare
 	/// Worklist entity.  Represents a worklist.
 	/// </summary>
 	[UniqueKey("WorklistUniqueKey", new [] { "Name", "FullClassName", "Owner.Staff", "Owner.Group" })]
+	[ValidationRules("GetValidationRules")]
 	public abstract class Worklist : Entity, IWorklist
 	{
 		/// <summary>
@@ -588,5 +590,19 @@ namespace ClearCanvas.Healthcare
 		}
 
 		#endregion
+
+		private static IValidationRuleSet GetValidationRules()
+		{
+			var procedureTypeRule = new ValidationRule<Worklist>(
+				delegate(Worklist w)
+				{
+					var filterByBothProcedureTypeAndProcedureTypeGroup = w.ProcedureTypeFilter.IsEnabled &&
+																		 w.ProcedureTypeGroupFilter.IsEnabled;
+
+					return new TestResult(!filterByBothProcedureTypeAndProcedureTypeGroup, SR.MessageValidateWorklistProcedureTypeAndGroupFilters);
+				});
+
+			return new ValidationRuleSet(new[] { procedureTypeRule });
+		}
 	}
 }

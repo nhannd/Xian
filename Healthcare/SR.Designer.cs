@@ -529,6 +529,33 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string MessageValidateOrderPerformingDepartments {
+            get {
+                return ResourceManager.GetString("MessageValidateOrderPerformingDepartments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string MessageValidateOrderPerformingFacilities {
+            get {
+                return ResourceManager.GetString("MessageValidateOrderPerformingFacilities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Procedure type and procedure type group cannot both be used as worklist filters.  Please make sure only one is used..
+        /// </summary>
+        internal static string MessageValidateWorklistProcedureTypeAndGroupFilters {
+            get {
+                return ResourceManager.GetString("MessageValidateWorklistProcedureTypeAndGroupFilters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Middle Name.
         /// </summary>
         internal static string MiddleName {

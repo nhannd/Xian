@@ -51,7 +51,7 @@ namespace ClearCanvas.Healthcare
 					{
 						var referenceFacility = CollectionUtils.FirstElement(o.Procedures).PerformingFacility;
 						var hasSameFacility = CollectionUtils.TrueForAll(o.Procedures, p => Equals(p.PerformingFacility, referenceFacility));
-						return new TestResult(hasSameFacility, "All procedures must have the same performing facility.");
+						return new TestResult(hasSameFacility, SR.MessageValidateOrderPerformingFacilities);
 					});
 
 			var samePerformingDepartmentRule = new ValidationRule<Order>(
@@ -59,7 +59,7 @@ namespace ClearCanvas.Healthcare
 				{
 					var referenceDepartment = CollectionUtils.FirstElement(o.Procedures).PerformingDepartment;
 					var hasSameDepartment = CollectionUtils.TrueForAll(o.Procedures, p => Equals(p.PerformingDepartment, referenceDepartment));
-					return new TestResult(hasSameDepartment, "All procedures must have the same performing department.");
+					return new TestResult(hasSameDepartment, SR.MessageValidateOrderPerformingDepartments);
 				});
 
 			return new ValidationRuleSet(new[] { samePerformingFacilityRule, samePerformingDepartmentRule });
