@@ -79,6 +79,16 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The following contact points cannot be deactivated because there are active orders for which the contact point is a result recipient: {0}.
+        ///Please merge the contact point(s) with an alternate active contact point to deactivate..
+        /// </summary>
+        internal static string ExceptionContactPointsHaveActiveOrders {
+            get {
+                return ResourceManager.GetString("ExceptionContactPointsHaveActiveOrders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A practitioner with the name {0}, {1} already exists.
         /// </summary>
         internal static string ExceptionExternalPractitionerAlreadyExist {

@@ -225,4 +225,8 @@
   <data name="ExceptionMaximumWorklistsReachedForStaffGroup" xml:space="preserve">
     <value>You have reached the maximum number of worklists that can be defined for a staff group.</value>
   </data>
+  <data name="ExceptionContactPointsHaveActiveOrders" xml:space="preserve">
+    <value>The following contact points cannot be deactivated because there are active orders for which the contact point is a result recipient: {0}.
+Please merge the contact point(s) with an alternate active contact point to deactivate.</value>
+  </data>
 </root>

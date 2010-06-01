@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Threading;
@@ -181,6 +182,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 		{
 			var prac = PersistenceContext.Load<ExternalPractitioner>(request.PractitionerDetail.PractitionerRef, EntityLoadFlags.CheckVersion);
 
+			EnsureNoDeactivatedContactPointsWithActiveOrders(request.PractitionerDetail.ContactPoints);
+
 			var assembler = new ExternalPractitionerAssembler();
 			assembler.UpdateExternalPractitioner(request.PractitionerDetail, prac, PersistenceContext);
 
@@ -323,12 +326,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			return new LoadMergeDuplicateContactPointFormDataResponse(affectedOrderSummaries);
 		}
 
-		private List<Order> GetActiveOrdersForContactPoint(ExternalPractitionerContactPoint contactPoint)
-		{
-			var relatedOrders = this.PersistenceContext.GetBroker<IExternalPractitionerContactPointBroker>().GetRelatedOrders(contactPoint);
-			return CollectionUtils.Select(relatedOrders, order => !order.IsTerminated);
-		}
-
 		[UpdateOperation]
 		public MergeExternalPractitionerResponse MergeExternalPractitioner(MergeExternalPractitionerRequest request)
 		{
@@ -420,5 +417,37 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 
 		#endregion
 
+		private List<Order> GetActiveOrdersForContactPoint(ExternalPractitionerContactPoint contactPoint)
+		{
+			var relatedOrders = this.PersistenceContext.GetBroker<IExternalPractitionerContactPointBroker>().GetRelatedOrders(contactPoint);
+			return CollectionUtils.Select(relatedOrders, order => !order.IsTerminated);
+		}
+
+		private void EnsureNoDeactivatedContactPointsWithActiveOrders(List<ExternalPractitionerContactPointDetail> details)
+		{
+			var broker = this.PersistenceContext.GetBroker<IExternalPractitionerContactPointBroker>();
+			var contactPointsWithOrders = CollectionUtils.Select(
+				details,
+				detail =>
+				{
+					if(detail.ContactPointRef == null)
+						return false;  // a new contact point will not have associated orders.q
+
+					var contactPoint = broker.Load(detail.ContactPointRef);
+					return contactPoint.Deactivated == false
+						&& detail.Deactivated == true 
+						&& GetActiveOrdersForContactPoint(contactPoint).Count > 0;
+				});
+
+			if (contactPointsWithOrders.Count == 0)
+				return;
+
+			var contactPointNames = CollectionUtils.Map<ExternalPractitionerContactPointDetail, string>(
+				contactPointsWithOrders, 
+				contactPoint => contactPoint.Name);
+			var contactPointNameList = string.Join(", ", contactPointNames.ToArray());
+
+			throw new RequestValidationException(string.Format(SR.ExceptionContactPointsHaveActiveOrders, contactPointNameList));
+		}
 	}
 }
