@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -42,8 +43,9 @@ using VolumeData = ClearCanvas.ImageViewer.Volume.Mpr.Volume;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
-	public partial class FusionOverlayData : IDisposable
+	public partial class FusionOverlayData : IDisposable, ILargeObjectContainer
 	{
+		private readonly object _syncVolumeDataLock = new object();
 		private IList<IFrameReference> _frames;
 		private VolumeData _volume;
 
@@ -59,9 +61,37 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			get
 			{
-				if (_volume == null)
+				// update the last access time
+				_largeObjectData.UpdateLastAccessTime();
+
+				// if the data is already available without blocking, return it immediately
+				VolumeData volume = _volume;
+				if (volume != null)
+					return volume;
+
+				// wait for synchronized access
+				lock (_syncVolumeDataLock)
+				{
+					// if the data is now available, return it immediately
+					// (i.e. we were blocked because we were already reading the data)
+					if (_volume != null)
+						return _volume;
+
+					// load the volume data
 					_volume = VolumeData.Create(_frames);
-				return _volume;
+
+					// update our stats
+					_largeObjectData.BytesHeldCount = 2*_volume.SizeInVoxels;
+					_largeObjectData.LargeObjectCount = 1;
+
+					// regenerating the volume data is easy when the source frames are already in memory!
+					_largeObjectData.RegenerationCost = RegenerationCost.Low;
+
+					// register with memory manager
+					MemoryManager.Add(this);
+
+					return _volume;
+				}
 			}
 		}
 
@@ -142,11 +172,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			if (disposing)
 			{
-				if (_volume != null)
-				{
-					_volume.Dispose();
-					_volume = null;
-				}
+				// this will unload _volume
+				this.Unload();
 
 				if (_frames != null)
 				{
@@ -156,5 +183,72 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				}
 			}
 		}
+
+		#region Memory Management Support
+
+		private readonly LargeObjectContainerData _largeObjectData = new LargeObjectContainerData(Guid.NewGuid());
+
+		Guid ILargeObjectContainer.Identifier
+		{
+			get { return _largeObjectData.Identifier; }
+		}
+
+		int ILargeObjectContainer.LargeObjectCount
+		{
+			get { return _largeObjectData.LargeObjectCount; }
+		}
+
+		long ILargeObjectContainer.BytesHeldCount
+		{
+			get { return _largeObjectData.BytesHeldCount; }
+		}
+
+		DateTime ILargeObjectContainer.LastAccessTime
+		{
+			get { return _largeObjectData.LastAccessTime; }
+		}
+
+		RegenerationCost ILargeObjectContainer.RegenerationCost
+		{
+			get { return _largeObjectData.RegenerationCost; }
+		}
+
+		bool ILargeObjectContainer.IsLocked
+		{
+			get { return _largeObjectData.IsLocked; }
+		}
+
+		void ILargeObjectContainer.Lock()
+		{
+			_largeObjectData.Lock();
+		}
+
+		void ILargeObjectContainer.Unlock()
+		{
+			_largeObjectData.Unlock();
+		}
+
+		public void Unload()
+		{
+			// wait for synchronized access
+			lock (_syncVolumeDataLock)
+			{
+				// dump our data
+				if (_volume != null)
+				{
+					_volume.Dispose();
+					_volume = null;
+				}
+
+				// update our stats
+				_largeObjectData.BytesHeldCount = 0;
+				_largeObjectData.LargeObjectCount = 0;
+
+				// unregister with memory manager
+				MemoryManager.Remove(this);
+			}
+		}
+
+		#endregion
 	}
 }
