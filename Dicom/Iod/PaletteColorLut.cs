@@ -98,6 +98,7 @@ namespace ClearCanvas.Dicom.Iod
 					{
 						// Get the low byte of the 16-bit entry
 						lut [i] = Color.FromArgb(255, redLut[offset], greenLut[offset], blueLut[offset]);
+                        offset += 2;
 					}
 				}
 				else
