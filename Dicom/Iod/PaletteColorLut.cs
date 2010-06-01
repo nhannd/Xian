@@ -35,17 +35,20 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.Iod
 {
-	public class PaletteColorLut
+	public partial class PaletteColorLut
 	{
+		private readonly string _sourceSopInstanceUid;
 		private readonly int _firstMappedPixelValue;
+		private readonly int _countEntries;
 		private readonly Color[] _data;
 
-		public PaletteColorLut(int size,
-			int firstMappedPixel,
-			int bitsPerLutEntry,
-			byte[] redLut,
-			byte[] greenLut,
-			byte[] blueLut)
+		public PaletteColorLut(string sourceSopInstanceUid,
+		                       int size,
+		                       int firstMappedPixel,
+		                       int bitsPerLutEntry,
+		                       byte[] redLut,
+		                       byte[] greenLut,
+		                       byte[] blueLut)
 
 		{
 			Platform.CheckForNullReference(redLut, "redLut");
@@ -55,13 +58,25 @@ namespace ClearCanvas.Dicom.Iod
 			Platform.CheckTrue(redLut.Length == blueLut.Length, "redLut.Length == blueLut.Length");
 			Platform.CheckTrue(redLut.Length == size || (redLut.Length == 2 * size && bitsPerLutEntry > 8), "Valid Lut Size");
 
+			_sourceSopInstanceUid = sourceSopInstanceUid;
+			_countEntries = size;
 			_firstMappedPixelValue = firstMappedPixel;
 			_data = Create(size, bitsPerLutEntry, redLut, greenLut, blueLut);
+		}
+
+		public string SourceSopInstanceUid
+		{
+			get { return _sourceSopInstanceUid; }
 		}
 
 		public int FirstMappedPixelValue
 		{
 			get { return _firstMappedPixelValue; }
+		}
+
+		public int CountEntries
+		{
+			get { return _countEntries; }
 		}
 		
 		public Color[] Data
@@ -98,7 +113,7 @@ namespace ClearCanvas.Dicom.Iod
 					{
 						// Get the low byte of the 16-bit entry
 						lut [i] = Color.FromArgb(255, redLut[offset], greenLut[offset], blueLut[offset]);
-                        offset += 2;
+						offset += 2;
 					}
 				}
 				else
@@ -131,6 +146,7 @@ namespace ClearCanvas.Dicom.Iod
 		public static PaletteColorLut Create(IDicomAttributeProvider dataSource)
 		{
 			int lutSize, firstMappedPixel, bitsPerLutEntry;
+			string sourceSopInstanceUid;
 
 			DicomAttribute attribDescriptor = dataSource[DicomTags.RedPaletteColorLookupTableDescriptor];
 
@@ -164,7 +180,12 @@ namespace ClearCanvas.Dicom.Iod
 			if (lutSize == 0)
 				lutSize = 65536;
 
-			return new PaletteColorLut(lutSize,
+			if (!dataSource[DicomTags.SopInstanceUid].TryGetString(0, out sourceSopInstanceUid))
+				sourceSopInstanceUid = DicomUid.GenerateUid().UID;
+
+			return new PaletteColorLut(
+				sourceSopInstanceUid,
+				lutSize,
 				firstMappedPixel,
 				bitsPerLutEntry,
 				redLut,

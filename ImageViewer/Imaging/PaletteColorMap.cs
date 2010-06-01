@@ -29,82 +29,31 @@
 
 #endregion
 
-using System;
-using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/// <summary>
+	/// N.B. To be used only for colorspace conversions of a palette color image - do not install as a regular color map!
+	/// </summary>
 	internal class PaletteColorMap : ColorMap
 	{
-		private int _size;
-		private int _bitsPerLutEntry;
-		private byte[] _redLut;
-		private byte[] _greenLut;
-		private byte[] _blueLut;
+		private readonly PaletteColorLut _lut;
 
-		public PaletteColorMap(
-			int size,
-			int firstMappedPixel,
-			int bitsPerLutEntry,
-			byte[] redLut,
-			byte[] greenLut,
-			byte[] blueLut)
+		public PaletteColorMap(PaletteColorLut lut)
 		{
-			_size = size;
-			this.MinInputValue = firstMappedPixel;
-			this.MaxInputValue = firstMappedPixel + size - 1;
-			_bitsPerLutEntry = bitsPerLutEntry;
-			_redLut = redLut;
-			_greenLut = greenLut;
-			_blueLut = blueLut;
+			this.MinInputValue = lut.FirstMappedPixelValue;
+			this.MaxInputValue = lut.FirstMappedPixelValue + lut.CountEntries - 1;
+			_lut = lut;
 		}
 
 		protected override void Create()
 		{
-			Color color;
-
-			if (_bitsPerLutEntry == 8)
+			for (int i = this.MinInputValue; i <= this.MaxInputValue; i++)
 			{
-				// Account for case where an 8-bit entry is encoded in a 16 bits allocated
-				// i.e., 8 bits of padding per entry
-				if (_redLut.Length == 2 * _size)
-				{
-					int offset = 0;
-					for (int i = this.MinInputValue; i <= this.MaxInputValue; i++)
-					{
-						// Get the low byte of the 16-bit entry
-						color = Color.FromArgb(255, _redLut[offset], _greenLut[offset], _blueLut[offset]);
-						this[i] = color.ToArgb();
-						offset += 2;
-					}
-				}
-				else
-				{
-					// The regular 8-bit case
-					int offset = 0;
-					for (int i = this.MinInputValue; i <= this.MaxInputValue; i++)
-					{
-						color = Color.FromArgb(255, _redLut[offset], _greenLut[offset], _blueLut[offset]);
-						this[i] = color.ToArgb();
-						++offset;
-					}
-				}
-			}
-			// 16 bit entries
-			else
-			{
-				int offset = 1;
-				for (int i = this.MinInputValue; i <= this.MaxInputValue; i++)
-				{
-					// Just get the high byte, since we'd have to right shift the
-					// 16-bit value by 8 bits to scale it to an 8 bit value anyway.
-					color = Color.FromArgb(255, _redLut[offset], _greenLut[offset], _blueLut[offset]);
-					this[i] = color.ToArgb();
-
-					offset += 2;
-				}
+				this[i] = _lut[i].ToArgb();
 			}
 		}
 
@@ -118,58 +67,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 			CodeClock clock = new CodeClock();
 			clock.Start();
 
-			bool tagExists;
-			int lutSize, firstMappedPixel, bitsPerLutEntry;
-
-			DicomAttribute attribDescriptor = dataSource[DicomTags.RedPaletteColorLookupTableDescriptor];
-
-			tagExists = attribDescriptor.TryGetInt32(0, out lutSize);
-
-			if (!tagExists)
-				throw new Exception("LUT Size missing.");
-
-			tagExists = attribDescriptor.TryGetInt32(1, out firstMappedPixel);
-
-			if (!tagExists)
-				throw new Exception("First Mapped Pixel missing.");
-
-			tagExists = attribDescriptor.TryGetInt32(2, out bitsPerLutEntry);
-
-			if (!tagExists)
-				throw new Exception("Bits Per Entry missing.");
-
-			byte[] redLut, greenLut, blueLut;
-
-			redLut = dataSource[DicomTags.RedPaletteColorLookupTableData].Values as byte[];
-
-			if (redLut == null)
-				throw new Exception("Red Palette Color LUT missing.");
-
-			greenLut = dataSource[DicomTags.GreenPaletteColorLookupTableData].Values as byte[];
-
-			if (greenLut == null)
-				throw new Exception("Green Palette Color LUT missing.");
-
-			blueLut = dataSource[DicomTags.BluePaletteColorLookupTableData].Values as byte[];
-
-			if (blueLut == null)
-				throw new Exception("Blue Palette Color LUT missing.");
-
-			// The DICOM standard says that if the LUT size is 0, it means that it's 65536 in size.
-			if (lutSize == 0)
-				lutSize = 65536;
+			PaletteColorLut paletteColorLut = PaletteColorLut.Create(dataSource);
 
 			clock.Stop();
-			PerformanceReportBroker.PublishReport("PaletteColorMap", "Create", clock.Seconds);
+			PerformanceReportBroker.PublishReport("PaletteColorMap", "Create(IDicomAttributeProvider)", clock.Seconds);
 
-			return new PaletteColorMap(
-				lutSize,
-				firstMappedPixel,
-				bitsPerLutEntry,
-				redLut,
-				greenLut,
-				blueLut);
-
+			return new PaletteColorMap(paletteColorLut);
 		}
 	}
 }
