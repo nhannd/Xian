@@ -135,7 +135,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </remarks>
 		public double WindowWidth
 		{
-			get { return _maxInputValue - _minInputValue + 1; }
+			get { return (double) _maxInputValue - _minInputValue + 1; }
 		}
 
 		/// <summary>

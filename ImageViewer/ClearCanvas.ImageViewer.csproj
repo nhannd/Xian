@@ -193,6 +193,7 @@
     <Compile Include="ImageSetFactory.cs" />
     <Compile Include="Imaging\IColorMapInstaller.cs" />
     <Compile Include="Imaging\IdentityVoiLinearLut.cs" />
+    <Compile Include="Imaging\Tests\IdentityVoiLinearLutTest.cs" />
     <Compile Include="PresentationStates\Dicom\Institution.cs" />
     <Compile Include="Imaging\IVoiLutInstaller.cs" />
     <Compile Include="Rendering\Tests\ImageRendererVoiLutTests.cs" />
@@ -268,6 +269,12 @@
     <Compile Include="InteractiveGraphics\InteractiveBoundableGraphicBuilder.cs" />
     <Compile Include="InteractiveGraphics\InteractivePolylineGraphicBuilder.cs" />
     <Compile Include="InteractiveGraphics\UserCalloutGraphic.cs" />
+    <Compile Include="InteractiveGraphics\BlocksProgressBarGraphic.cs" />
+    <Compile Include="InteractiveGraphics\ContinuousProgressBarGraphic.cs" />
+    <Compile Include="InteractiveGraphics\MarqueeProgressBarGraphic.cs" />
+    <Compile Include="InteractiveGraphics\ProgressBarGraphic.cs" />
+    <Compile Include="InteractiveGraphics\ProgressCompositeGraphic.cs" />
+    <Compile Include="InteractiveGraphics\ProgressGraphic.cs" />
     <Compile Include="IUndoableOperation.cs" />
     <Compile Include="LinkedImageEnumerator.cs" />
     <Compile Include="Mathematics\Tests\PolygonFTests.cs" />
@@ -803,6 +810,13 @@
     <EmbeddedResource Include="BaseTools\RightMouseButtonOverlayLarge.png" />
     <EmbeddedResource Include="BaseTools\RightMouseButtonOverlayMedium.png" />
     <EmbeddedResource Include="BaseTools\RightMouseButtonOverlaySmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InteractiveGraphics\Resources\ProgressBarGraphicBlocksUnit.png" />
+    <EmbeddedResource Include="InteractiveGraphics\Resources\ProgressBarGraphicBorder.png" />
+    <EmbeddedResource Include="InteractiveGraphics\Resources\ProgressBarGraphicContinuousBar.png" />
+    <EmbeddedResource Include="InteractiveGraphics\Resources\ProgressBarGraphicMarqueeMask.png" />
+    <EmbeddedResource Include="InteractiveGraphics\Resources\ProgressBarGraphicTray.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\Common\ClearCanvas.Strings.targets" />
