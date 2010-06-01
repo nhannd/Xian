@@ -227,6 +227,6 @@
   </data>
   <data name="ExceptionContactPointsHaveActiveOrders" xml:space="preserve">
     <value>The following contact points cannot be deactivated because there are active orders for which the contact point is a result recipient: {0}.
-Please merge the contact point(s) with an alternate active contact point to deactivate.</value>
+Please use the "Merge Contact Points" tool to merge the contact point(s) with an alternate active contact point instead.</value>
   </data>
 </root>

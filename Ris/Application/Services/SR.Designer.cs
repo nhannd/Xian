@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Application.Services {
         
         /// <summary>
         ///   Looks up a localized string similar to The following contact points cannot be deactivated because there are active orders for which the contact point is a result recipient: {0}.
-        ///Please merge the contact point(s) with an alternate active contact point to deactivate..
+        ///Please use the &quot;Merge Contact Points&quot; tool to merge the contact point(s) with an alternate active contact point instead..
         /// </summary>
         internal static string ExceptionContactPointsHaveActiveOrders {
             get {
