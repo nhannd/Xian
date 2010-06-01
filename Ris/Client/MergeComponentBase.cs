@@ -200,8 +200,7 @@ namespace ClearCanvas.Ris.Client
 					_selectedOriginal = (TSummary) value;
 					NotifyPropertyChanged("SelectedOriginal");
 
-					if (string.IsNullOrEmpty(this.MergeReport))
-						ShowReport();
+					ShowReport();
 				}
 			}
 		}

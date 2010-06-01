@@ -85,7 +85,7 @@ namespace ClearCanvas.Ris.Client
 			}
 			else
 			{
-				reportBuilder.AppendLine("Affected Orders");
+				reportBuilder.AppendLine("The following orders have result recipients that will be modified to use the replacement contact point.");
 				affectedOrders.ForEach(order => reportBuilder.AppendLine(AccessionFormat.Format(order.AccessionNumber)));
 			}
 
