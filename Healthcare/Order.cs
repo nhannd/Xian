@@ -31,17 +31,40 @@
 
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core.Modelling;
 using ClearCanvas.Workflow;
-using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Healthcare
 {
 	/// <summary>
 	/// Order entity
 	/// </summary>
+	[ValidationRules("GetValidationRules")]
 	public partial class Order
 	{
+		private static IValidationRuleSet GetValidationRules()
+		{
+			var samePerformingFacilityRule = new ValidationRule<Order>(
+				delegate(Order o)
+					{
+						var referenceFacility = CollectionUtils.FirstElement(o.Procedures).PerformingFacility;
+						var hasSameFacility = CollectionUtils.TrueForAll(o.Procedures, p => Equals(p.PerformingFacility, referenceFacility));
+						return new TestResult(hasSameFacility, "All procedures must have the same performing facility.");
+					});
+
+			var samePerformingDepartmentRule = new ValidationRule<Order>(
+				delegate(Order o)
+				{
+					var referenceDepartment = CollectionUtils.FirstElement(o.Procedures).PerformingDepartment;
+					var hasSameDepartment = CollectionUtils.TrueForAll(o.Procedures, p => Equals(p.PerformingDepartment, referenceDepartment));
+					return new TestResult(hasSameDepartment, "All procedures must have the same performing department.");
+				});
+
+			return new ValidationRuleSet(new[] { samePerformingFacilityRule, samePerformingDepartmentRule });
+		}
+
 		#region Static Factory methods
 
 		/// <summary>
