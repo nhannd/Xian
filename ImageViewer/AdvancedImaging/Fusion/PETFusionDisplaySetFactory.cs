@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			List<IDisplaySet> displaySets = new List<IDisplaySet>();
 			if (this.IsValidBaseSeries(series))
 			{
-				foreach (var ptSeries in FindFuseablePTSeries(series))
+				foreach (var ptSeries in FindFuseablePETSeries(series))
 				{
 					if (ptSeries.Sops.Count == 0)
 						continue;
@@ -122,7 +122,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			return false;
 		}
 
-		public bool IsValidPTFusionSeries(Series series)
+		public bool IsValidPETFusionSeries(Series series)
 		{
 			if (series.Modality != _petModality)
 				return false;
@@ -181,17 +181,22 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			return true;
 		}
 
-		public bool CanFuse(Series baseSeries, Series ptSeries)
+		public bool CanFuse(Series baseSeries, Series petSeries)
 		{
 			if (!IsValidBaseSeries(baseSeries))
 				return false;
-			if (!IsValidPTFusionSeries(ptSeries))
+			if (!IsValidPETFusionSeries(petSeries))
 				return false;
+
+			//var baseFrames = GetFrames(baseSeries.Sops);
+			//var petFrames = GetFrames(petSeries.Sops);
+			//if (baseFrames[0].FrameOfReferenceUid != petFrames[0].FrameOfReferenceUid)
+			//	return false;
 
 			return true;
 		}
 
-		private IEnumerable<Series> FindFuseablePTSeries(Series baseSeries)
+		private IEnumerable<Series> FindFuseablePETSeries(Series baseSeries)
 		{
 			var baseStudy = baseSeries.ParentStudy;
 			if (baseStudy == null)

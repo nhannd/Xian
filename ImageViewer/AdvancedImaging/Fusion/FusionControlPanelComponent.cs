@@ -124,7 +124,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 								image.ActiveLayer = _activeLayer;
 								image.OverlayOpacity = Restrict(_overlayOpacity, 0, 1);
-								image.OverlayColorMap = _overlayColorMap;
 								image.HideOverlayBackground = _hideOverlayBackground;
 								image.Draw();
 							}

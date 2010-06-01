@@ -32,6 +32,7 @@
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
@@ -159,12 +160,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			set { _voiLutManagerProxy.ActiveLayer = value; }
 		}
 
-		public StandardColorMaps OverlayColorMap
-		{
-			get { return _overlayColorMapSpec.ColorMap; }
-			set { _overlayColorMapSpec.ColorMap = value; }
-		}
-
 		public float OverlayOpacity
 		{
 			get { return _overlayColorMapSpec.Opacity; }
@@ -187,7 +182,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			if (_fusionOverlayImageGraphic == null)
 			{
 				//BackgroundTask bt = new BackgroundTask(this.GetOverlayImageGraphic, false);
-				//ProgressGraphic.Draw(null, this, false, ProgressBarStyle.Blocks);
+				//ProgressGraphic.Show(bt, _fusionOverlayLayer.Graphics, true, ProgressBarGraphicStyle.Marquee);
 
 				GetOverlayImageGraphic(null);
 			}

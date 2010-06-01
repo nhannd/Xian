@@ -92,10 +92,20 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 			public IDataLut CreateColorMap()
 			{
-				using (LutFactory lutFactory = LutFactory.Create())
+				IDataLut baseColorMap;
+				if (_colorMapName == "HOT_IRON")
 				{
-					return new AlphaColorMap(lutFactory.GetColorMap(_colorMapName), _alpha, _hideBackground);
+					baseColorMap = new HotIronColorMapFactory().Create();
 				}
+				else
+				{
+					using (LutFactory lutFactory = LutFactory.Create())
+					{
+						baseColorMap = lutFactory.GetColorMap(_colorMapName);
+					}
+				}
+
+				return new AlphaColorMap(baseColorMap, _alpha, _hideBackground);
 			}
 
 			public override int GetHashCode()

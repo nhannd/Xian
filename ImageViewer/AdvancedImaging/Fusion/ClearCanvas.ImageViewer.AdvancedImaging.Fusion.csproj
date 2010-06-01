@@ -46,10 +46,13 @@
     <Compile Include="FusionPresentationImage.cs" />
     <Compile Include="FusionPresentationImageLayer.cs" />
     <Compile Include="FusionVoiLutManagerProxy.cs" />
-    <Compile Include="HotMetalColorMapFactory.cs" />
+    <Compile Include="HotIronColorMapFactory.cs" />
     <Compile Include="InterpolatedColorMap.cs" />
     <Compile Include="PETFusionDisplaySetDescriptor.cs" />
     <Compile Include="PETFusionDisplaySetFactory.cs" />
+    <Compile Include="Possum\DemoTheCountTool.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FusionOverlayDataReference.cs" />
     <Compile Include="FusionOverlayData.cs" />

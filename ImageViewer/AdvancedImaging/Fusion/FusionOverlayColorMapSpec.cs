@@ -39,7 +39,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 	[Cloneable]
 	internal class FusionOverlayColorMapSpec : IDisposable
 	{
-		private StandardColorMaps _colorMap = StandardColorMaps.HotMetal;
 		private bool _hideBackground = false;
 		private float _opacity = 0.5f;
 
@@ -65,19 +64,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			_overlayColorMapManager = null;
 			_colorBarColorMapManager = null;
-		}
-
-		public StandardColorMaps ColorMap
-		{
-			get { return _colorMap; }
-			set
-			{
-				if (_colorMap != value)
-				{
-					_colorMap = value;
-					this.OnColorMapChanged(EventArgs.Empty);
-				}
-			}
 		}
 
 		public float Opacity
@@ -126,7 +112,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			if (_overlayColorMapManager != null || _colorBarColorMapManager != null)
 			{
-				var overlayColorMapReference = AlphaColorMapFactory.GetColorMap(_colorMap.ToString(), (byte) (byte.MaxValue*_opacity), _hideBackground);
+				var overlayColorMapReference = AlphaColorMapFactory.GetColorMap("HOT_IRON", (byte) (byte.MaxValue*_opacity), _hideBackground);
 				if (_overlayColorMapManager != null)
 					_overlayColorMapManager.InstallColorMap(overlayColorMapReference);
 				if (_colorBarColorMapManager != null)

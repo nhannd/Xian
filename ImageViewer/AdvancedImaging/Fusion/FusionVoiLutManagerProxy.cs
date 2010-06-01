@@ -319,7 +319,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			public XVoiLutInstaller()
 			{
 				this.Invert = false;
-				this.VoiLut = new IdentityVoiLinearLut();
+				this.VoiLut = new BasicVoiLutLinear(32768, 16384);
 			}
 
 			public void InstallVoiLut(IComposableLut voiLut)
