@@ -32,46 +32,46 @@
 using System;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Utilities
+namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
-	public interface ITransientReference<T> : IDisposable where T : class, IDisposable
+	public interface IFusionOverlayDataReference : IDisposable
 	{
-		T Object { get; }
+		FusionOverlayData FusionOverlayData { get; }
 
 		/// <summary>
-		/// Clones an existing <see cref="ITransientReference{T}"/>, creating a new transient reference.
+		/// Clones an existing <see cref="IFusionOverlayDataReference"/>, creating a new transient reference.
 		/// </summary>
-		ITransientReference<T> Clone();
+		IFusionOverlayDataReference Clone();
 	}
 
-	public class TransientWrapper<T> : IDisposable where T : class, IDisposable
+	partial class FusionOverlayData
 	{
-		private class TransientReference : ITransientReference<T>
+		private class FusionOverlayDataReference : IFusionOverlayDataReference
 		{
-			private TransientWrapper<T> _transientWrapper;
+			private FusionOverlayData _data;
 
-			public TransientReference(TransientWrapper<T> transientWrapper)
+			public FusionOverlayDataReference(FusionOverlayData data)
 			{
-				_transientWrapper = transientWrapper;
-				_transientWrapper.OnReferenceCreated();
+				_data = data;
+				_data.OnReferenceCreated();
 			}
 
-			public T Object
+			public FusionOverlayData FusionOverlayData
 			{
-				get { return _transientWrapper._object; }
+				get { return _data; }
 			}
 
-			public ITransientReference<T> Clone()
+			public IFusionOverlayDataReference Clone()
 			{
-				return _transientWrapper.CreateTransientReference();
+				return _data.CreateTransientReference();
 			}
 
 			public void Dispose()
 			{
-				if (_transientWrapper != null)
+				if (_data != null)
 				{
-					_transientWrapper.OnReferenceDisposed();
-					_transientWrapper = null;
+					_data.OnReferenceDisposed();
+					_data = null;
 				}
 			}
 		}
@@ -79,34 +79,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Utilities
 		private readonly object _syncLock = new object();
 		private int _transientReferenceCount = 0;
 		private bool _selfDisposed = false;
-		private T _object;
-
-		public TransientWrapper(T @object)
-		{
-			_object = @object;
-		}
-
-		~TransientWrapper()
-		{
-			this.Dispose(false);
-		}
-
-		public T Object
-		{
-			get { return _object; }
-		}
-
-		protected virtual void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				if (_object != null)
-				{
-					_object.Dispose();
-					_object = null;
-				}
-			}
-		}
 
 		private void OnReferenceDisposed()
 		{
@@ -125,7 +97,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Utilities
 			lock (_syncLock)
 			{
 				if (_transientReferenceCount == 0 && _selfDisposed)
-					throw new ObjectDisposedException(string.Empty);
+					throw new ObjectDisposedException("");
 
 				++_transientReferenceCount;
 			}
@@ -145,16 +117,16 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Utilities
 		}
 
 		/// <summary>
-		/// Creates a new 'transient reference' to this <see cref="TransientWrapper{T}"/>.
+		/// Creates a new 'transient reference' to this <see cref="FusionOverlayData"/>.
 		/// </summary>
-		/// <remarks>See <see cref="ITransientReference{T}"/> for a detailed explanation of 'transient references'.</remarks>
-		public ITransientReference<T> CreateTransientReference()
+		/// <remarks>See <see cref="IFusionOverlayDataReference"/> for a detailed explanation of 'transient references'.</remarks>
+		public IFusionOverlayDataReference CreateTransientReference()
 		{
-			return new TransientReference(this);
+			return new FusionOverlayDataReference(this);
 		}
 
 		/// <summary>
-		/// Implementation of the <see cref="System.IDisposable"/> pattern.
+		/// Implementation of the <see cref="IDisposable"/> pattern.
 		/// </summary>
 		public void Dispose()
 		{

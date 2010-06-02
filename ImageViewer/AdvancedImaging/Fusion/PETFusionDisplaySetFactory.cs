@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 					var descriptor = new PETFusionDisplaySetDescriptor(series.GetIdentifier(), ptSeries.GetIdentifier(), IsAttenuationCorrected(ptSeries.Sops[0]));
 					var displaySet = new DisplaySet(descriptor);
-					using (var fusionOverlayData = new TransientWrapper<FusionOverlayData>(new FusionOverlayData(GetFrames(ptSeries.Sops))))
+					using (var fusionOverlayData = new FusionOverlayData(GetFrames(ptSeries.Sops)))
 					{
 						foreach (var baseFrame in GetFrames(series.Sops))
 						{

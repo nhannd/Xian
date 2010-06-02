@@ -30,7 +30,6 @@
 #endregion
 
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
@@ -44,7 +43,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		private const string _fusionOverlayLayerName = "Fusion";
 
 		[CloneIgnore]
-		private ITransientReference<FusionOverlayData> _overlayDataReference;
+		private IFusionOverlayDataReference _overlayDataReference;
 
 		[CloneIgnore]
 		private CompositeGraphic _fusionOverlayLayer;
@@ -58,10 +57,10 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		private FusionVoiLutManagerProxy _voiLutManagerProxy;
 		private FusionOverlayColorMapSpec _overlayColorMapSpec;
 
-		public FusionPresentationImage(Frame baseFrame, TransientWrapper<FusionOverlayData> overlayData)
+		public FusionPresentationImage(Frame baseFrame, FusionOverlayData overlayData)
 			: this(baseFrame.CreateTransientReference(), overlayData.CreateTransientReference()) {}
 
-		public FusionPresentationImage(IFrameReference baseFrame, ITransientReference<FusionOverlayData> overlayData)
+		public FusionPresentationImage(IFrameReference baseFrame, IFusionOverlayDataReference overlayData)
 			: base(baseFrame)
 		{
 			_overlayDataReference = overlayData;
@@ -175,7 +174,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		public override IPresentationImage CreateFreshCopy()
 		{
-			return new FusionPresentationImage(this.Frame.CreateTransientReference(), _overlayDataReference.Clone()) {PresentationState = this.PresentationState};
+			return new FusionPresentationImage(this.Frame, _overlayDataReference.FusionOverlayData) {PresentationState = this.PresentationState};
 		}
 
 		protected override void OnDrawing()
@@ -193,7 +192,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		private void GetOverlayImageGraphic(IBackgroundTaskContext context)
 		{
-			var overlayImageGraphic = _overlayDataReference.Object.GetOverlay(this.Frame);
+			var overlayImageGraphic = _overlayDataReference.FusionOverlayData.GetOverlay(this.Frame);
 			if (overlayImageGraphic != null)
 			{
 				_voiLutManagerProxy.SetOverlayVoiLutManager(overlayImageGraphic.VoiLutManager);
