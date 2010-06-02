@@ -99,6 +99,9 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         [DataMember]
         public DateTime? ProcedureScheduledStartTime;
 
+		[DataMember]
+		public EnumValueInfo ProcedureSchedulingCode;
+
         [DataMember]
         public DateTime? ProcedureCheckInTime;
 

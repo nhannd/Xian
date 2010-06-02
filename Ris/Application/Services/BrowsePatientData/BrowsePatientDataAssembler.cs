@@ -127,6 +127,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             data.ProcedureRef = rp.GetRef();
 			data.ProcedureType = rptAssembler.CreateSummary(rp.Type);
             data.ProcedureScheduledStartTime = rp.ScheduledStartTime;
+        	data.ProcedureSchedulingCode = EnumUtils.GetEnumValueInfo(rp.SchedulingCode);
             data.ProcedureCheckInTime = rp.ProcedureCheckIn.CheckInTime;
             data.ProcedureCheckOutTime = rp.ProcedureCheckIn.CheckOutTime;
             data.ProcedureStatus = EnumUtils.GetEnumValueInfo(rp.Status, context);

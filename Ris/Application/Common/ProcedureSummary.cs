@@ -65,6 +65,9 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public DateTime? ScheduledStartTime;
 
+		[DataMember]
+		public EnumValueInfo SchedulingCode;
+
         [DataMember]
         public FacilitySummary PerformingFacility;
 

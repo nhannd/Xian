@@ -186,16 +186,28 @@ var Preview = function () {
  */
 Preview.ProceduresTableHelper = function () {
 	return {
-		formatProcedureSchedule: function(scheduledStartTime, schedulingRequestTime, showDescriptiveTime)
+		formatProcedureSchedule: function(scheduledStartTime, schedulingRequestTime, showDescriptiveTime, schedulingCode)
 		{
+			var formattedText;
 			if (scheduledStartTime)
-				return showDescriptiveTime ? Ris.formatDescriptiveDateTime(scheduledStartTime) : Ris.formatDateTime(scheduledStartTime); 
+				formattedText = showDescriptiveTime ? Ris.formatDescriptiveDateTime(scheduledStartTime) : Ris.formatDateTime(scheduledStartTime);
 			else if (schedulingRequestTime)
-				return "Requested for " + showDescriptiveTime ? Ris.formatDescriptiveDateTime(schedulingRequestTime) : Ris.formatDateTime(schedulingRequestTime);
+				formattedText = "Requested for " + showDescriptiveTime ? Ris.formatDescriptiveDateTime(schedulingRequestTime) : Ris.formatDateTime(schedulingRequestTime);
 			else
-				return "Not scheduled";
+				formattedText = "Not scheduled";
+
+			if (schedulingCode)
+				formattedText += " (" + schedulingCode.Code + ")";
+
+			return formattedText;
 		},
-		
+
+		formatProcedureSchedulingCode: function(schedulingCode, showValue)
+		{
+			return schedulingCode == null ? ""
+				: (showValue ? schedulingCode.Code : schedulingCode.Value);
+		},
+
 		formatProcedureStatus: function(status, scheduledStartTime, startTime, checkInTime, checkOutTime)
 		{
 			if (status.Code == 'CA')
@@ -413,8 +425,8 @@ Preview.ImagingServiceTable = function () {
 				},
 				{   label: "Schedule",
 					cellType: "text",
-					getValue: function(item) { return Preview.ProceduresTableHelper.formatProcedureSchedule(item.ProcedureScheduledStartTime, item.SchedulingRequestTime, true); },
-					getTooltip: function(item) { return Preview.ProceduresTableHelper.formatProcedureSchedule(item.ProcedureScheduledStartTime, item.SchedulingRequestTime, false); }
+					getValue: function(item) { return Preview.ProceduresTableHelper.formatProcedureSchedule(item.ProcedureScheduledStartTime, item.SchedulingRequestTime, true, item.ProcedureSchedulingCode); },
+					getTooltip: function(item) { return Preview.ProceduresTableHelper.formatProcedureSchedule(item.ProcedureScheduledStartTime, item.SchedulingRequestTime, false, item.ProcedureSchedulingCode); }
 				},
 				{   label: "Status",
 					cellType: "text",
@@ -497,8 +509,8 @@ Preview.ProceduresTable = function () {
 					},
 					{   label: "Schedule",
 						cellType: "text",
-						getValue: function(item) { return Preview.ProceduresTableHelper.formatProcedureSchedule(item.ScheduledStartTime, null, true); },
-						getTooltip: function(item) { return Preview.ProceduresTableHelper.formatProcedureSchedule(item.ScheduledStartTime, null, false); }
+						getValue: function(item) { return Preview.ProceduresTableHelper.formatProcedureSchedule(item.ScheduledStartTime, null, true, item.SchedulingCode); },
+						getTooltip: function(item) { return Preview.ProceduresTableHelper.formatProcedureSchedule(item.ScheduledStartTime, null, false, item.SchedulingCode); }
 					},
 					{   label: "Start/End Time",
 						cellType: "text",
@@ -806,8 +818,9 @@ Preview.ReportingProceduresTable = function () {
 						function(memo, item) 
 						{
 							return {
-								Procedure : memo.Procedure ? [memo.Procedure, Ris.formatProcedureName(item)].join(', ') : Ris.formatProcedureName(item),
+								ProcedureName : memo.ProcedureName ? [memo.ProcedureName, Ris.formatProcedureName(item)].join(', ') : Ris.formatProcedureName(item),
 								Status : memo.Status || _formatProcedureReportingStatus(item),
+								Schedule: memo.Schedule || Preview.ProceduresTableHelper.formatProcedureSchedule(item.ScheduledStartTime, null, true, item.SchedulingCode),
 								StartEndTime: memo.StartEndTime || Preview.ProceduresTableHelper.formatProcedureStartEndTime(item.StartTime, item.CheckOutTime),
 								PerformingStaff : memo.PerformingStaff || Preview.ProceduresTableHelper.formatProcedurePerformingStaff(item),
 								Owner: memo.Owner || _formatProcedureReportingOwner(item)
@@ -824,11 +837,15 @@ Preview.ReportingProceduresTable = function () {
 					// },
 					{   label: "Procedure",
 						cellType: "text",
-						getValue: function(item) { return item.Procedure; }
+						getValue: function(item) { return item.ProcedureName; }
 					},
 					{   label: "Status",
 						cellType: "text",
 						getValue: function(item) { return item.Status; }
+					},
+					{   label: "Schedule",
+						cellType: "text",
+						getValue: function(item) { return item.Schedule; }
 					},
 					{   label: "Start/End Time",
 						cellType: "text",
@@ -1936,6 +1953,10 @@ Preview.OrderedProceduresTable = function() {
 							html += "<tr>";
 							html += "	<td width='120' class='propertyname'>Scheduled Start Time</td>";
 							html += "	<td width='200'>" + Ris.formatDateTime(item.ScheduledStartTime) + "</td>";
+							html += "	<td width='120' class='propertyname'>Scheduling Code</td>";
+							html += "	<td width='200'>" + Preview.ProceduresTableHelper.formatProcedureSchedulingCode(item.SchedulingCode) + "</td>";
+							html += "</tr>";
+							html += "<tr>";
 							html += "	<td width='120' class='propertyname'>Check-In Time</td>";
 							html += "	<td width='200'>" + Ris.formatDateTime(item.CheckInTime) + "</td>";
 							html += "</tr>";
