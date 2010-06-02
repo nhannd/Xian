@@ -37,6 +37,8 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 
+#if DEBUG
+
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Possum
 {
 	[MenuAction("show", "global-menus/MenuDebug/Possum/Continuous", "TheCount")]
@@ -125,3 +127,5 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Possum
 		private static void ATisket(IBackgroundTaskContext context) {}
 	}
 }
+
+#endif
