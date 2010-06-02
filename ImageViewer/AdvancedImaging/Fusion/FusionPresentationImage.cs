@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		private const string _fusionOverlayLayerName = "Fusion";
 
 		[CloneIgnore]
-		private IFusionOverlayDataReference _overlayDataReference;
+		private IFusionOverlaySliceReference _overlaySliceReference;
 
 		[CloneIgnore]
 		private CompositeGraphic _fusionOverlayLayer;
@@ -57,13 +57,13 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		private FusionVoiLutManagerProxy _voiLutManagerProxy;
 		private FusionOverlayColorMapSpec _overlayColorMapSpec;
 
-		public FusionPresentationImage(Frame baseFrame, FusionOverlayData overlayData)
+		public FusionPresentationImage(Frame baseFrame, FusionOverlaySlice overlayData)
 			: this(baseFrame.CreateTransientReference(), overlayData.CreateTransientReference()) {}
 
-		public FusionPresentationImage(IFrameReference baseFrame, IFusionOverlayDataReference overlayData)
+		public FusionPresentationImage(IFrameReference baseFrame, IFusionOverlaySliceReference overlayData)
 			: base(baseFrame)
 		{
-			_overlayDataReference = overlayData;
+			_overlaySliceReference = overlayData;
 
 			Initialize();
 		}
@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			context.CloneFields(source, this);
 
-			_overlayDataReference = source._overlayDataReference.Clone();
+			_overlaySliceReference = source._overlaySliceReference.Clone();
 		}
 
 		[OnCloneComplete]
@@ -132,10 +132,10 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				_colorBarGraphic = null;
 				_fusionOverlayLayer = null;
 
-				if (_overlayDataReference != null)
+				if (_overlaySliceReference != null)
 				{
-					_overlayDataReference.Dispose();
-					_overlayDataReference = null;
+					_overlaySliceReference.Dispose();
+					_overlaySliceReference = null;
 				}
 
 				if (_voiLutManagerProxy != null)
@@ -174,7 +174,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		public override IPresentationImage CreateFreshCopy()
 		{
-			return new FusionPresentationImage(this.Frame, _overlayDataReference.FusionOverlayData) {PresentationState = this.PresentationState};
+			return new FusionPresentationImage(this.Frame, _overlaySliceReference.FusionOverlaySlice) {PresentationState = this.PresentationState};
 		}
 
 		protected override void OnDrawing()
@@ -192,7 +192,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		private void GetOverlayImageGraphic(IBackgroundTaskContext context)
 		{
-			var overlayImageGraphic = _overlayDataReference.FusionOverlayData.GetOverlay(this.Frame);
+			var overlayImageGraphic = _overlaySliceReference.FusionOverlaySlice.CreateImageGraphic();
 			if (overlayImageGraphic != null)
 			{
 				_voiLutManagerProxy.SetOverlayVoiLutManager(overlayImageGraphic.VoiLutManager);

@@ -87,8 +87,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					{
 						foreach (var baseFrame in GetFrames(series.Sops))
 						{
-							var fus = new FusionPresentationImage(baseFrame, fusionOverlayData);
-							displaySet.PresentationImages.Add(fus);
+							using (var fusionOverlaySlice = new FusionOverlaySlice(baseFrame, fusionOverlayData))
+							{
+								var fus = new FusionPresentationImage(baseFrame, fusionOverlaySlice);
+								displaySet.PresentationImages.Add(fus);
+							}
 						}
 					}
 					displaySets.Add(displaySet);

@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
@@ -39,30 +38,50 @@ using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Volume.Mpr;
-using VolumeData = ClearCanvas.ImageViewer.Volume.Mpr.Volume;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
-	public partial class FusionOverlayData : IDisposable, ILargeObjectContainer
+	public partial class FusionOverlaySlice : IDisposable, ILargeObjectContainer
 	{
-		private readonly object _syncVolumeDataLock = new object();
-		private IList<IFrameReference> _frames;
-		private VolumeData _volume;
+		private readonly object _syncPixelDataLock = new object();
+		private IFrameReference _baseFrameReference;
+		private IFusionOverlayDataReference _overlayDataReference;
 
-		public FusionOverlayData(IEnumerable<Frame> overlaySource)
+		private int _overlayRows, _overlayColumns;
+		private int _overlayBitsAllocated, _overlayBitsStored, _overlayHighBit;
+		private bool _overlayIsSigned, _overlayIsInverted;
+		private double _overlayRescaleSlope, _overlayRescaleIntercept;
+		private float _overlayCoregistrationScale, _overlayCoregistrationOffsetX, _overlayCoregistrationOffsetY;
+		private byte[] _overlayPixelData;
+
+		public FusionOverlaySlice(Frame baseFrame, FusionOverlayData overlayData)
+			: this(baseFrame.CreateTransientReference(), overlayData.CreateTransientReference()) {}
+
+		public FusionOverlaySlice(IFrameReference baseFrame, IFusionOverlayDataReference overlayData)
 		{
-			var frames = new List<IFrameReference>();
-			foreach (Frame frame in overlaySource)
-				frames.Add(frame.CreateTransientReference());
-			_frames = frames.AsReadOnly();
+			_baseFrameReference = baseFrame;
+			_overlayDataReference = overlayData;
 		}
 
-		public VolumeData GetVolume()
+		protected virtual void Dispose(bool disposing)
 		{
-			return this.Volume;
+			if (disposing)
+			{
+				if (_baseFrameReference != null)
+				{
+					_baseFrameReference.Dispose();
+					_baseFrameReference = null;
+				}
+
+				if (_overlayDataReference != null)
+				{
+					_overlayDataReference.Dispose();
+					_overlayDataReference = null;
+				}
+			}
 		}
 
-		protected VolumeData Volume
+		protected byte[] OverlayPixelData
 		{
 			get
 			{
@@ -70,29 +89,29 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				_largeObjectData.UpdateLastAccessTime();
 
 				// if the data is already available without blocking, return it immediately
-				VolumeData volume = _volume;
-				if (volume != null)
-					return volume;
+				byte[] pixelData = _overlayPixelData;
+				if (pixelData != null)
+					return pixelData;
 
-				return LoadVolume();
+				return this.LoadPixelData();
 			}
 		}
 
-		private VolumeData LoadVolume()
+		private byte[] LoadPixelData()
 		{
 			// wait for synchronized access
-			lock (_syncVolumeDataLock)
+			lock (_syncPixelDataLock)
 			{
 				// if the data is now available, return it immediately
 				// (i.e. we were blocked because we were already reading the data)
-				if (_volume != null)
-					return _volume;
+				if (_overlayPixelData != null)
+					return _overlayPixelData;
 
-				// load the volume data
-				_volume = VolumeData.Create(_frames);
+				// load the pixel data
+				_overlayPixelData = this.GenerateOverlaySlice();
 
 				// update our stats
-				_largeObjectData.BytesHeldCount = 2*_volume.SizeInVoxels;
+				_largeObjectData.BytesHeldCount = _overlayPixelData.Length;
 				_largeObjectData.LargeObjectCount = 1;
 				_largeObjectData.UpdateLastAccessTime();
 
@@ -102,21 +121,17 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				// register with memory manager
 				MemoryManager.Add(this);
 
-				return _volume;
+				return _overlayPixelData;
 			}
 		}
 
-		private void UnloadVolume()
+		private void UnloadPixelData()
 		{
 			// wait for synchronized access
-			lock (_syncVolumeDataLock)
+			lock (_syncPixelDataLock)
 			{
 				// dump our data
-				if (_volume != null)
-				{
-					_volume.Dispose();
-					_volume = null;
-				}
+				_overlayPixelData = null;
 
 				// update our stats
 				_largeObjectData.BytesHeldCount = 0;
@@ -127,10 +142,10 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 		}
 
-		[Obsolete]
-		public GrayscaleImageGraphic GetOverlay(Frame baseFrame)
+		private byte[] GenerateOverlaySlice()
 		{
-			var volume = this.Volume;
+			var volume = _overlayDataReference.FusionOverlayData.GetVolume();
+			var baseFrame = _baseFrameReference.Frame;
 
 			// compute the bounds of the target base image frame in patient coordinates
 			var baseTopLeft = baseFrame.ImagePlaneHelper.ConvertToPatient(new PointF(0, 0));
@@ -157,64 +172,57 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				{
 					using (var overlayFrame = sliceSop.Frames[1])
 					{
-						GrayscaleImageGraphic overlayGraphic = new GrayscaleImageGraphic(
-							overlayFrame.Rows, overlayFrame.Columns,
-							overlayFrame.BitsAllocated, overlayFrame.BitsStored,
-							overlayFrame.HighBit, overlayFrame.PixelRepresentation != 0 ? true : false,
-							overlayFrame.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ? true : false,
-							overlayFrame.RescaleSlope, overlayFrame.RescaleIntercept,
-							overlayFrame.GetNormalizedPixelData());
+						_overlayRows = overlayFrame.Rows;
+						_overlayColumns = overlayFrame.Columns;
+						_overlayBitsAllocated = overlayFrame.BitsAllocated;
+						_overlayBitsStored = overlayFrame.BitsStored;
+						_overlayHighBit = overlayFrame.HighBit;
+						_overlayIsSigned = overlayFrame.PixelRepresentation != 0;
+						_overlayIsInverted = overlayFrame.PhotometricInterpretation == PhotometricInterpretation.Monochrome1;
+						_overlayRescaleSlope = overlayFrame.RescaleSlope;
+						_overlayRescaleIntercept = overlayFrame.RescaleIntercept;
 
-						try
-						{
-							// compute the bounds of the target overlay image frame in patient coordinates
-							var overlayTopLeft = overlayFrame.ImagePlaneHelper.ConvertToPatient(new PointF(0, 0));
-							var overlayTopRight = overlayFrame.ImagePlaneHelper.ConvertToPatient(new PointF(overlayFrame.Columns, 0));
+						// compute the bounds of the target overlay image frame in patient coordinates
+						var overlayTopLeft = overlayFrame.ImagePlaneHelper.ConvertToPatient(new PointF(0, 0));
+						var overlayTopRight = overlayFrame.ImagePlaneHelper.ConvertToPatient(new PointF(overlayFrame.Columns, 0));
 
-							// compute the overlay and base image resolution in pixels per unit patient space (mm).
-							var overlayResolution = overlayFrame.Columns/(overlayTopRight - overlayTopLeft).Magnitude;
-							var baseResolution = baseFrame.Columns/(baseTopRight - baseTopLeft).Magnitude;
+						// compute the overlay and base image resolution in pixels per unit patient space (mm).
+						var overlayResolution = overlayFrame.Columns/(overlayTopRight - overlayTopLeft).Magnitude;
+						var baseResolution = baseFrame.Columns/(baseTopRight - baseTopLeft).Magnitude;
 
-							// compute parameters to register the overlay on the base image
-							var scale = baseResolution/overlayResolution;
-							var offset = (overlayTopLeft - baseTopLeft)*overlayResolution;
+						// compute parameters to register the overlay on the base image
+						var scale = baseResolution/overlayResolution;
+						var offset = (overlayTopLeft - baseTopLeft)*overlayResolution;
 
-							// validate computed transform parameters
-							var overlayBottomLeft = overlayFrame.ImagePlaneHelper.ConvertToPatient(new PointF(0, overlayFrame.Rows));
-							float scaleY = baseFrame.Rows*(overlayBottomLeft - overlayTopLeft).Magnitude/(overlayFrame.Rows*(baseBottomLeft - baseTopLeft).Magnitude);
-							Platform.CheckTrue(FloatComparer.AreEqual(scale, scaleY), "Computed ScaleX != ScaleY");
-							Platform.CheckTrue(offset.Z < 0.5f, "Compute OffsetZ != 0");
+						// validate computed transform parameters
+						var overlayBottomLeft = overlayFrame.ImagePlaneHelper.ConvertToPatient(new PointF(0, overlayFrame.Rows));
+						float scaleY = baseFrame.Rows*(overlayBottomLeft - overlayTopLeft).Magnitude/(overlayFrame.Rows*(baseBottomLeft - baseTopLeft).Magnitude);
+						Platform.CheckTrue(FloatComparer.AreEqual(scale, scaleY), "Computed ScaleX != ScaleY");
+						Platform.CheckTrue(offset.Z < 0.5f, "Compute OffsetZ != 0");
 
-							overlayGraphic.SpatialTransform.Scale = scale;
-							overlayGraphic.SpatialTransform.TranslationX = offset.X;
-							overlayGraphic.SpatialTransform.TranslationY = offset.Y;
-						}
-						catch (Exception)
-						{
-							overlayGraphic.Dispose();
-							throw;
-						}
+						_overlayCoregistrationScale = scale;
+						_overlayCoregistrationOffsetX = offset.X;
+						_overlayCoregistrationOffsetY = offset.Y;
 
-						return overlayGraphic;
+						return overlayFrame.GetNormalizedPixelData();
 					}
 				}
 			}
 		}
 
-		protected virtual void Dispose(bool disposing)
+		public GrayscaleImageGraphic CreateImageGraphic()
 		{
-			if (disposing)
-			{
-				// this will unload _volume
-				this.UnloadVolume();
-
-				if (_frames != null)
-				{
-					foreach (IFrameReference frame in _frames)
-						frame.Dispose();
-					_frames = null;
-				}
-			}
+			this.LoadPixelData();
+			var imageGraphic = new GrayscaleImageGraphic(
+				_overlayRows, _overlayColumns,
+				_overlayBitsAllocated, _overlayBitsStored, _overlayHighBit,
+				_overlayIsSigned, _overlayIsInverted,
+				_overlayRescaleSlope, _overlayRescaleIntercept,
+				() => this.OverlayPixelData);
+			imageGraphic.SpatialTransform.Scale = _overlayCoregistrationScale;
+			imageGraphic.SpatialTransform.TranslationX = _overlayCoregistrationOffsetX;
+			imageGraphic.SpatialTransform.TranslationY = _overlayCoregistrationOffsetY;
+			return imageGraphic;
 		}
 
 		#region Memory Management Support
@@ -263,7 +271,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		void ILargeObjectContainer.Unload()
 		{
-			this.UnloadVolume();
+			this.UnloadPixelData();
 		}
 
 		#endregion
