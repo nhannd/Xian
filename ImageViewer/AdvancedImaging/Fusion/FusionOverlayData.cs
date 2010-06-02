@@ -184,6 +184,19 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 		}
 
+		public void Dispose()
+		{
+			try
+			{
+				this.Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Warn, e);
+			}
+		}
+
 		#region Memory Management Support
 
 		private readonly LargeObjectContainerData _largeObjectData = new LargeObjectContainerData(Guid.NewGuid());
