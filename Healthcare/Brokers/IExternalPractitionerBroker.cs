@@ -37,8 +37,5 @@ namespace ClearCanvas.Healthcare.Brokers
 	{
 		IList<ExternalPractitioner> GetDuplicates(ExternalPractitioner practitioner);
 		int GetDuplicatesCount(ExternalPractitioner practitioner);
-
-		IList<Order> GetRelatedOrders(ExternalPractitioner practitioner);
-		IList<Visit> GetRelatedVisits(ExternalPractitioner practitioner);
 	}
 }

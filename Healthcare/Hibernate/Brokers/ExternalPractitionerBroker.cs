@@ -30,7 +30,6 @@
 #endregion
 
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Hibernate.Hql;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -48,31 +47,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		{
 			var criteria = GetDuplicatesCriteria(practitioner);
 			return (int) Count(criteria);
-		}
-
-		public IList<Order> GetRelatedOrders(ExternalPractitioner practitioner)
-		{
-			var hqlFrom = new HqlFrom(typeof(Order).Name, "o");
-			var query = new HqlProjectionQuery(hqlFrom);
-
-			var criteria = new OrderSearchCriteria();
-			criteria.OrderingPractitioner.EqualTo(practitioner);
-			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("o", criteria));
-
-			return ExecuteHql<Order>(query);
-		}
-
-		public IList<Visit> GetRelatedVisits(ExternalPractitioner practitioner)
-		{
-			var hqlFrom = new HqlFrom(typeof(Visit).Name, "v");
-			hqlFrom.Joins.Add(new HqlJoin("v.Practitioners", "vp"));
-			var query = new HqlProjectionQuery(hqlFrom);
-
-			var criteria = new VisitPractitionerSearchCriteria();
-			criteria.Practitioner.EqualTo(practitioner);
-			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("vp", criteria));
-
-			return ExecuteHql<Visit>(query);
 		}
 
 		#endregion

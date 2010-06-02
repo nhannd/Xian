@@ -29,6 +29,8 @@
 
 #endregion
 
+using System.Collections.Generic;
+using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common.Utilities;
 
@@ -46,6 +48,23 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			var q = this.GetNamedHqlQuery("documentOrderOwner");
 			q.SetParameter(0, document);
 			return (Order) q.UniqueResult(); 
+		}
+
+		public IList<Order> FindByOrderingPractitioner(ExternalPractitioner practitioner)
+		{
+			var q = this.GetNamedHqlQuery("ordersForOrderingPractitioner");
+			q.SetParameter(0, practitioner);
+			return CollectionUtils.Unique(q.List<Order>());
+		}
+
+		public IList<Order> FindByResultRecipient(ResultRecipientSearchCriteria recipientSearchCriteria)
+		{
+			var hqlFrom = new HqlFrom(typeof(Order).Name, "o");
+			hqlFrom.Joins.Add(new HqlJoin("o.ResultRecipients", "rr"));
+
+			var query = new HqlProjectionQuery(hqlFrom);
+			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("rr", recipientSearchCriteria));
+			return ExecuteHql<Order>(query);
 		}
 
 		#endregion

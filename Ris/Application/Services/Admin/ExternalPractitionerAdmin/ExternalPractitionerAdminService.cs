@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Threading;
@@ -296,17 +295,16 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 		[ReadOperation]
 		public LoadMergeDuplicatePractitionerFormDataResponse LoadMergeDuplicatePractitionerFormData(LoadMergeDuplicatePractitionerFormDataRequest request)
 		{
-			var broker = PersistenceContext.GetBroker<IExternalPractitionerBroker>();
-			var practitioner = broker.Load(request.Practitioner.PractitionerRef, EntityLoadFlags.Proxy);
+			var practitioner = this.PersistenceContext.Load<ExternalPractitioner>(request.Practitioner.PractitionerRef, EntityLoadFlags.Proxy);
 
 			var orderAssembler = new OrderAssembler();
 			var affectedOrders = CollectionUtils.Map<Order, OrderSummary>(
-				broker.GetRelatedOrders(practitioner),
+				this.PersistenceContext.GetBroker<IOrderBroker>().FindByOrderingPractitioner(practitioner),
 				o => orderAssembler.CreateOrderSummary(o, this.PersistenceContext));
 
 			var visitAssembler = new VisitAssembler();
 			var affectedVisits = CollectionUtils.Map<Visit, VisitSummary>(
-				broker.GetRelatedVisits(practitioner),
+				this.PersistenceContext.GetBroker<IVisitBroker>().FindByPractitioner(practitioner),
 				v => visitAssembler.CreateVisitSummary(v, this.PersistenceContext));
 
 			return new LoadMergeDuplicatePractitionerFormDataResponse(affectedOrders, affectedVisits);
@@ -329,12 +327,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 		[UpdateOperation]
 		public MergeExternalPractitionerResponse MergeExternalPractitioner(MergeExternalPractitionerRequest request)
 		{
-			var broker = PersistenceContext.GetBroker<IExternalPractitionerBroker>();
 			var duplicate = PersistenceContext.Load<ExternalPractitioner>(request.DuplicatePractitionerRef, EntityLoadFlags.Proxy);
 			var original = PersistenceContext.Load<ExternalPractitioner>(request.MergedPractitioner.PractitionerRef, EntityLoadFlags.Proxy);
 
 			// Change reference of ordering practitioner to the new practitioner
-			CollectionUtils.ForEach(broker.GetRelatedOrders(duplicate),
+			CollectionUtils.ForEach(this.PersistenceContext.GetBroker<IOrderBroker>().FindByOrderingPractitioner(duplicate),
 				delegate(Order o) { o.OrderingPractitioner = original; });
 
 			// Change reference of contact points to the new practitioner
@@ -347,7 +344,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			original.ContactPoints.AddAll(duplicate.ContactPoints);
 
 			// Change reference of visit practitioner to the new practitioner
-			CollectionUtils.ForEach(broker.GetRelatedVisits(duplicate),
+			CollectionUtils.ForEach(this.PersistenceContext.GetBroker<IVisitBroker>().FindByPractitioner(duplicate),
 				v => CollectionUtils.ForEach(v.Practitioners,
 					delegate(VisitPractitioner vp)
 					{
@@ -405,7 +402,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			{
 				var broker = PersistenceContext.GetBroker<IExternalPractitionerContactPointBroker>();
 				var contactPoints = CollectionUtils.Map<EntityRef, ExternalPractitionerContactPoint>(request.DeactivatedContactPointRefs, broker.Load);
-				var orders = broker.GetRelatedOrders(contactPoints);
+				var recipientCriteria = new ResultRecipientSearchCriteria();
+				recipientCriteria.PractitionerContactPoint.In(contactPoints);
+				var orders = this.PersistenceContext.GetBroker<IOrderBroker>().FindByResultRecipient(recipientCriteria);
 
 				var assembler = new OrderAssembler();
 				var createOrderDetailOptions = new OrderAssembler.CreateOrderDetailOptions(false, false, false, null, false, true, false);
@@ -419,7 +418,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 
 		private List<Order> GetActiveOrdersForContactPoint(ExternalPractitionerContactPoint contactPoint)
 		{
-			var relatedOrders = this.PersistenceContext.GetBroker<IExternalPractitionerContactPointBroker>().GetRelatedOrders(contactPoint);
+			var recipientCriteria = new ResultRecipientSearchCriteria();
+			recipientCriteria.PractitionerContactPoint.EqualTo(contactPoint);
+			var relatedOrders = this.PersistenceContext.GetBroker<IOrderBroker>().FindByResultRecipient(recipientCriteria);
 			return CollectionUtils.Select(relatedOrders, order => !order.IsTerminated);
 		}
 

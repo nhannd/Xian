@@ -12,4 +12,9 @@
     where oa.Document = ?
   </query>
 
+  <query name="ordersForOrderingPractitioner">
+    select o
+    from Order o
+    where o.OrderingPractitioner = ?
+  </query>
 </hibernate-mapping>

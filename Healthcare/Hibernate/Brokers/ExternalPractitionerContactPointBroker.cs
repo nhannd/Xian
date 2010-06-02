@@ -36,36 +36,5 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
 	public partial class ExternalPractitionerContactPointBroker
 	{
-		#region IExternalPractitionerContactPointBroker Members
-
-		public IList<Order> GetRelatedOrders(ExternalPractitionerContactPoint contactPoint)
-		{
-			var hqlFrom = new HqlFrom(typeof(Order).Name, "o");
-			hqlFrom.Joins.Add(new HqlJoin("o.ResultRecipients", "rr"));
-
-			var query = new HqlProjectionQuery(hqlFrom);
-
-			var criteria = new ResultRecipientSearchCriteria();
-			criteria.PractitionerContactPoint.EqualTo(contactPoint);
-			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("rr", criteria));
-
-			return ExecuteHql<Order>(query);
-		}
-
-		public IList<Order> GetRelatedOrders(IList<ExternalPractitionerContactPoint> contactPoints)
-		{
-			HqlFrom hqlFrom = new HqlFrom(typeof(Order).Name, "o");
-			hqlFrom.Joins.Add(new HqlJoin("o.ResultRecipients", "rr"));
-
-			var query = new HqlProjectionQuery(hqlFrom);
-
-			var criteria = new ResultRecipientSearchCriteria();
-			criteria.PractitionerContactPoint.In(contactPoints);
-			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("rr", criteria));
-
-			return ExecuteHql<Order>(query);
-		}
-
-		#endregion
 	}
 }
