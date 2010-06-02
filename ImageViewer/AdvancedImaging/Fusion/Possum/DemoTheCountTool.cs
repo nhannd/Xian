@@ -29,6 +29,8 @@
 
 #endregion
 
+#if DEBUG
+
 using System;
 using System.Threading;
 using ClearCanvas.Common;
@@ -36,8 +38,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
-
-#if DEBUG
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Possum
 {
