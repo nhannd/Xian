@@ -116,7 +116,7 @@ namespace ClearCanvas.Healthcare.Alerts
 				if (phoneNumbers == null || phoneNumbers.Count == 0)
 					return false;
 
-				return CollectionUtils.Contains(phoneNumbers, tn => tn.Equipment == TelephoneEquipment.PH && tn.Use == TelephoneUse.PRN);
+				return CollectionUtils.Contains(phoneNumbers, tn => tn.Equipment == TelephoneEquipment.PH && tn.Use == TelephoneUse.WPN);
 			}
 
 			private static bool TestWorkFax(ICollection<TelephoneNumber> phoneNumbers)
@@ -124,7 +124,7 @@ namespace ClearCanvas.Healthcare.Alerts
 				if (phoneNumbers == null || phoneNumbers.Count == 0)
 					return false;
 
-				return CollectionUtils.Contains(phoneNumbers, tn => tn.Equipment == TelephoneEquipment.FX && tn.Use == TelephoneUse.PRN);
+				return CollectionUtils.Contains(phoneNumbers, tn => tn.Equipment == TelephoneEquipment.FX && tn.Use == TelephoneUse.WPN);
 			}
 		}
 
