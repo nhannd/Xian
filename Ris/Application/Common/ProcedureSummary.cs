@@ -30,54 +30,53 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common
 {
-    [DataContract]
-    public class ProcedureSummary : DataContractBase
-    {
-        public ProcedureSummary(EntityRef rpRef, EntityRef orderRef, string index, ProcedureTypeSummary type, EnumValueInfo laterality, bool portable)
-        {
-            this.ProcedureRef = rpRef;
-            this.OrderRef = orderRef;
-            this.Index = index;
-            this.Type = type;
-            this.Laterality = laterality;
-            this.Portable = portable;
-        }
+	[DataContract]
+	public class ProcedureSummary : DataContractBase
+	{
+		public ProcedureSummary(EntityRef rpRef, EntityRef orderRef, string index, ProcedureTypeSummary type, EnumValueInfo laterality, bool portable)
+		{
+			this.ProcedureRef = rpRef;
+			this.OrderRef = orderRef;
+			this.Index = index;
+			this.Type = type;
+			this.Laterality = laterality;
+			this.Portable = portable;
+		}
 
-        public ProcedureSummary()
-        {
-        }
+		public ProcedureSummary()
+		{
+		}
 
-        [DataMember]
-        public EntityRef ProcedureRef;
+		[DataMember]
+		public EntityRef ProcedureRef;
 
-        [DataMember]
-        public EntityRef OrderRef;
+		[DataMember]
+		public EntityRef OrderRef;
 
-        [DataMember]
-        public string Index;
+		[DataMember]
+		public string Index;
 
-        [DataMember]
-        public DateTime? ScheduledStartTime;
+		[DataMember]
+		public DateTime? ScheduledStartTime;
 
 		[DataMember]
 		public EnumValueInfo SchedulingCode;
 
-        [DataMember]
-        public FacilitySummary PerformingFacility;
+		[DataMember]
+		public FacilitySummary PerformingFacility;
 
-        [DataMember]
-        public ProcedureTypeSummary Type;
+		[DataMember]
+		public ProcedureTypeSummary Type;
 
-        [DataMember]
-        public EnumValueInfo Laterality;
+		[DataMember]
+		public EnumValueInfo Laterality;
 
-        [DataMember]
-        public bool Portable;
-    }
+		[DataMember]
+		public bool Portable;
+	}
 }

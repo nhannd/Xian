@@ -30,96 +30,93 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
-    [DataContract]
-    public class OrderListItem : VisitListItem
-    {
+	[DataContract]
+	public class OrderListItem : VisitListItem
+	{
 		public OrderListItem()
 		{
 		}
 
-        #region Order
+		#region Order
 
-        [DataMember]
-        public EntityRef OrderRef;
+		[DataMember]
+		public EntityRef OrderRef;
 
-        [DataMember]
-        public string PlacerNumber;
+		[DataMember]
+		public string PlacerNumber;
 
-        [DataMember]
-        public string AccessionNumber;
+		[DataMember]
+		public string AccessionNumber;
 
-        [DataMember]
-        public DiagnosticServiceSummary DiagnosticService;
+		[DataMember]
+		public DiagnosticServiceSummary DiagnosticService;
 
-        [DataMember]
-        public DateTime? EnteredTime;
+		[DataMember]
+		public DateTime? EnteredTime;
 
-        [DataMember]
-        public DateTime? SchedulingRequestTime;
+		[DataMember]
+		public DateTime? SchedulingRequestTime;
 
-        [DataMember]
-        public DateTime? OrderScheduledStartTime;
+		[DataMember]
+		public DateTime? OrderScheduledStartTime;
 
-        [DataMember]
-        public ExternalPractitionerSummary OrderingPractitioner;
+		[DataMember]
+		public ExternalPractitionerSummary OrderingPractitioner;
 
-        [DataMember]
-        public FacilitySummary OrderingFacility;
+		[DataMember]
+		public FacilitySummary OrderingFacility;
 
-        [DataMember]
-        public string ReasonForStudy;
+		[DataMember]
+		public string ReasonForStudy;
 
-        [DataMember]
-        public EnumValueInfo OrderPriority;
+		[DataMember]
+		public EnumValueInfo OrderPriority;
 
-        [DataMember]
-        public EnumValueInfo OrderStatus;
+		[DataMember]
+		public EnumValueInfo OrderStatus;
 
-        [DataMember]
-        public EnumValueInfo CancelReason;
+		[DataMember]
+		public EnumValueInfo CancelReason;
 
-        #endregion
+		#endregion
 
-        #region Procedure
+		#region Procedure
 
-        [DataMember]
-        public EntityRef ProcedureRef;
+		[DataMember]
+		public EntityRef ProcedureRef;
 
-        [DataMember]
-        public ProcedureTypeSummary ProcedureType;
+		[DataMember]
+		public ProcedureTypeSummary ProcedureType;
 
-        [DataMember]
-        public DateTime? ProcedureScheduledStartTime;
+		[DataMember]
+		public DateTime? ProcedureScheduledStartTime;
 
 		[DataMember]
 		public EnumValueInfo ProcedureSchedulingCode;
 
-        [DataMember]
-        public DateTime? ProcedureCheckInTime;
+		[DataMember]
+		public DateTime? ProcedureCheckInTime;
 
-        [DataMember]
-        public DateTime? ProcedureCheckOutTime;
+		[DataMember]
+		public DateTime? ProcedureCheckOutTime;
 
-        [DataMember]
-        public EnumValueInfo ProcedureStatus;
+		[DataMember]
+		public EnumValueInfo ProcedureStatus;
 
-        [DataMember]
-        public FacilitySummary ProcedurePerformingFacility;
+		[DataMember]
+		public FacilitySummary ProcedurePerformingFacility;
 
-        [DataMember]
-        public bool ProcedurePortable;
+		[DataMember]
+		public bool ProcedurePortable;
 
-        [DataMember]
-        public EnumValueInfo ProcedureLaterality;
+		[DataMember]
+		public EnumValueInfo ProcedureLaterality;
 
-        #endregion
-    }
+		#endregion
+	}
 }
