@@ -90,9 +90,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public override void Start()
 		{
 			_orderNoteComponent = new OrderNoteSummaryComponent(OrderNoteCategory.General);
-			_orderNoteComponent.Notes = _context.OrderNotes;
 			_orderNotesComponentHost = new ChildComponentHost(this.Host, _orderNoteComponent);
 			_orderNotesComponentHost.StartComponent();
+			_orderNoteComponent.Notes = _context.OrderNotes;
 
 			_protocolSummaryComponentHost = new ChildComponentHost(this.Host, new ProtocolSummaryComponent(_context));
 			_protocolSummaryComponentHost.StartComponent();
