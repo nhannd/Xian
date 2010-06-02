@@ -600,14 +600,14 @@
   <data name="NodeGroupSubscribers" xml:space="preserve">
     <value>Groups</value>
   </data>
-  <data name="NodeInterpretedBy" xml:space="preserve">
+  <data name="FilterInterpretedBy" xml:space="preserve">
     <value>Interpreted By</value>
   </data>
-  <data name="NodePatientLocations" xml:space="preserve">
-    <value>Patient Locations</value>
+  <data name="FilterPatientLocation" xml:space="preserve">
+    <value>Patient Location</value>
   </data>
-  <data name="NodeProcedureTypeGroups" xml:space="preserve">
-    <value>Procedure Type Groups</value>
+  <data name="FilterProcedureTypeGroup" xml:space="preserve">
+    <value>Procedure Type Group</value>
   </data>
   <data name="NodeStaff" xml:space="preserve">
     <value>Staff</value>
@@ -618,16 +618,16 @@
   <data name="NodeSubscribers" xml:space="preserve">
     <value>Subscribers</value>
   </data>
-  <data name="NodeSupervisedBy" xml:space="preserve">
+  <data name="FilterSupervisedBy" xml:space="preserve">
     <value>Supervised By</value>
   </data>
-  <data name="NodeTimeWindow" xml:space="preserve">
+  <data name="FilterTimeWindow" xml:space="preserve">
     <value>Time Window</value>
   </data>
-  <data name="NodeTranscribedBy" xml:space="preserve">
+  <data name="FilterTranscribedBy" xml:space="preserve">
     <value>Transcribed By</value>
   </data>
-  <data name="NodeVerifiedBy" xml:space="preserve">
+  <data name="FilterVerifiedBy" xml:space="preserve">
     <value>Verified By</value>
   </data>
   <data name="NodeWorklist" xml:space="preserve">
@@ -1065,8 +1065,8 @@
   <data name="MessageConfirmMergePractitioners" xml:space="preserve">
     <value>Proceed with the merge operation?  The operation cannot be undone.</value>
   </data>
-  <data name="NodeDepartments" xml:space="preserve">
-    <value>Departments</value>
+  <data name="FilterDepartment" xml:space="preserve">
+    <value>Department</value>
   </data>
   <data name="MessageSearchResults" xml:space="preserve">
     <value>Search Results</value>
@@ -1083,8 +1083,8 @@
   <data name="MessageShowInvalidPage" xml:space="preserve">
     <value>Invalid page size.</value>
   </data>
-  <data name="NodeProcedureTypes" xml:space="preserve">
-    <value>Procedure Types</value>
+  <data name="FilterProcedureType" xml:space="preserve">
+    <value>Procedure Type</value>
   </data>
   <data name="ColumnID" xml:space="preserve">
     <value>ID</value>
@@ -1103,5 +1103,23 @@
   </data>
   <data name="MessageDefaultContactPointRequired" xml:space="preserve">
     <value>A default contact point is required.</value>
+  </data>
+  <data name="FilterOrderPriority" xml:space="preserve">
+    <value>Order Priority</value>
+  </data>
+  <data name="FilterPatientClass" xml:space="preserve">
+    <value>Patient Class</value>
+  </data>
+  <data name="FilterPerformingFacility" xml:space="preserve">
+    <value>Facility</value>
+  </data>
+  <data name="FilterPortable" xml:space="preserve">
+    <value>Portable</value>
+  </data>
+  <data name="MessageWarnAllFilterValuesShouldNotBeSelected" xml:space="preserve">
+    <value>You have selected all possible values for the {0} filter.  It is recommended that you leave the filter empty instead.  Clear this filter?</value>
+  </data>
+  <data name="NodeWorklistSummary" xml:space="preserve">
+    <value>Summary</value>
   </data>
 </root>

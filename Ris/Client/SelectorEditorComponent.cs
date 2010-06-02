@@ -77,7 +77,9 @@ namespace ClearCanvas.Ris.Client
 			add { _itemsRemoved += value; }
 			remove { _itemsRemoved -= value; }
 		}
-		
+
+		#region Presentation Model
+
 		public void NotifyItemsAdded()
 		{
 			this.Modified = true;
@@ -89,6 +91,8 @@ namespace ClearCanvas.Ris.Client
 			this.Modified = true;
 			EventsHelper.Fire(_itemsRemoved, this, EventArgs.Empty);
 		}
+
+		#endregion
 	}
 
 	/// <summary>

@@ -1231,6 +1231,123 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Department.
+        /// </summary>
+        internal static string FilterDepartment {
+            get {
+                return ResourceManager.GetString("FilterDepartment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Interpreted By.
+        /// </summary>
+        internal static string FilterInterpretedBy {
+            get {
+                return ResourceManager.GetString("FilterInterpretedBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Order Priority.
+        /// </summary>
+        internal static string FilterOrderPriority {
+            get {
+                return ResourceManager.GetString("FilterOrderPriority", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient Class.
+        /// </summary>
+        internal static string FilterPatientClass {
+            get {
+                return ResourceManager.GetString("FilterPatientClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient Location.
+        /// </summary>
+        internal static string FilterPatientLocation {
+            get {
+                return ResourceManager.GetString("FilterPatientLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Facility.
+        /// </summary>
+        internal static string FilterPerformingFacility {
+            get {
+                return ResourceManager.GetString("FilterPerformingFacility", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Portable.
+        /// </summary>
+        internal static string FilterPortable {
+            get {
+                return ResourceManager.GetString("FilterPortable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Procedure Type.
+        /// </summary>
+        internal static string FilterProcedureType {
+            get {
+                return ResourceManager.GetString("FilterProcedureType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Procedure Type Group.
+        /// </summary>
+        internal static string FilterProcedureTypeGroup {
+            get {
+                return ResourceManager.GetString("FilterProcedureTypeGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Supervised By.
+        /// </summary>
+        internal static string FilterSupervisedBy {
+            get {
+                return ResourceManager.GetString("FilterSupervisedBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time Window.
+        /// </summary>
+        internal static string FilterTimeWindow {
+            get {
+                return ResourceManager.GetString("FilterTimeWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Transcribed By.
+        /// </summary>
+        internal static string FilterTranscribedBy {
+            get {
+                return ResourceManager.GetString("FilterTranscribedBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Verified By.
+        /// </summary>
+        internal static string FilterVerifiedBy {
+            get {
+                return ResourceManager.GetString("FilterVerifiedBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Homepage/Folder Organization.
         /// </summary>
         internal static string FolderExplorerConfigurationPagePath {
@@ -2086,6 +2203,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You have selected all possible values for the {0} filter.  It is recommended that you leave the filter empty instead.  Clear this filter?.
+        /// </summary>
+        internal static string MessageWarnAllFilterValuesShouldNotBeSelected {
+            get {
+                return ResourceManager.GetString("MessageWarnAllFilterValuesShouldNotBeSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The following canned text(s) with the same name already exist.  Are you sure you want to proceed?.
         /// </summary>
         internal static string MessageWarningDuplicateCannedTextName {
@@ -2104,15 +2230,6 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Departments.
-        /// </summary>
-        internal static string NodeDepartments {
-            get {
-                return ResourceManager.GetString("NodeDepartments", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Filters.
         /// </summary>
         internal static string NodeFilters {
@@ -2127,42 +2244,6 @@ namespace ClearCanvas.Ris.Client {
         internal static string NodeGroupSubscribers {
             get {
                 return ResourceManager.GetString("NodeGroupSubscribers", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Interpreted By.
-        /// </summary>
-        internal static string NodeInterpretedBy {
-            get {
-                return ResourceManager.GetString("NodeInterpretedBy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Patient Locations.
-        /// </summary>
-        internal static string NodePatientLocations {
-            get {
-                return ResourceManager.GetString("NodePatientLocations", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Procedure Type Groups.
-        /// </summary>
-        internal static string NodeProcedureTypeGroups {
-            get {
-                return ResourceManager.GetString("NodeProcedureTypeGroups", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Procedure Types.
-        /// </summary>
-        internal static string NodeProcedureTypes {
-            get {
-                return ResourceManager.GetString("NodeProcedureTypes", resourceCulture);
             }
         }
         
@@ -2194,47 +2275,20 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Supervised By.
-        /// </summary>
-        internal static string NodeSupervisedBy {
-            get {
-                return ResourceManager.GetString("NodeSupervisedBy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Time Window.
-        /// </summary>
-        internal static string NodeTimeWindow {
-            get {
-                return ResourceManager.GetString("NodeTimeWindow", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Transcribed By.
-        /// </summary>
-        internal static string NodeTranscribedBy {
-            get {
-                return ResourceManager.GetString("NodeTranscribedBy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Verified By.
-        /// </summary>
-        internal static string NodeVerifiedBy {
-            get {
-                return ResourceManager.GetString("NodeVerifiedBy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Worklist.
         /// </summary>
         internal static string NodeWorklist {
             get {
                 return ResourceManager.GetString("NodeWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Summary.
+        /// </summary>
+        internal static string NodeWorklistSummary {
+            get {
+                return ResourceManager.GetString("NodeWorklistSummary", resourceCulture);
             }
         }
         

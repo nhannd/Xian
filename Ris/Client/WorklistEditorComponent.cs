@@ -144,6 +144,8 @@ namespace ClearCanvas.Ris.Client
 		private NavigatorPage _timeWindowComponentPage;
 		private NavigatorPage _summaryComponentPage;
 
+		private GetWorklistEditFormChoicesResponse _formDataResponse;
+
 		/// <summary>
 		/// Constructor to create new worklist(s).
 		/// </summary>
@@ -205,7 +207,7 @@ namespace ClearCanvas.Ris.Client
 									{
 										GetWorklistEditFormChoicesRequest = new GetWorklistEditFormChoicesRequest(!_adminMode)
 									};
-					var formDataResponse = service.GetWorklistEditFormData(request).GetWorklistEditFormChoicesResponse;
+					_formDataResponse = service.GetWorklistEditFormData(request).GetWorklistEditFormChoicesResponse;
 
 					// initialize _worklistDetail depending on add vs edit vs duplicate mode
 					var procedureTypeGroups = new List<ProcedureTypeGroupSummary>();
@@ -215,7 +217,7 @@ namespace ClearCanvas.Ris.Client
 							{
 								FilterByWorkingFacility = true,
 								// establish initial class name
-								WorklistClass = CollectionUtils.SelectFirst(formDataResponse.WorklistClasses, wc => wc.ClassName == _initialClassName)
+								WorklistClass = CollectionUtils.SelectFirst(_formDataResponse.WorklistClasses, wc => wc.ClassName == _initialClassName)
 							};
 
 					}
@@ -235,24 +237,25 @@ namespace ClearCanvas.Ris.Client
 					// limit class choices if filter specified
 					if (_worklistClassChoices != null)
 					{
-						formDataResponse.WorklistClasses =
-							CollectionUtils.Select(formDataResponse.WorklistClasses, wc => _worklistClassChoices.Contains(wc.ClassName));
+						_formDataResponse.WorklistClasses =
+							CollectionUtils.Select(_formDataResponse.WorklistClasses, wc => _worklistClassChoices.Contains(wc.ClassName));
 					}
 
 					// sort worklist classes so they appear alphabetically in editor
-					formDataResponse.WorklistClasses = CollectionUtils.Sort(formDataResponse.WorklistClasses, (x, y) => x.DisplayName.CompareTo(y.DisplayName));
+					_formDataResponse.WorklistClasses = CollectionUtils.Sort(_formDataResponse.WorklistClasses, (x, y) => x.DisplayName.CompareTo(y.DisplayName));
 
 					// determine which main page to show (multi or single)
 					if (_mode == WorklistEditorMode.Add && _adminMode)
 					{
-						_detailComponent = new WorklistMultiDetailEditorComponent(formDataResponse.WorklistClasses, formDataResponse.OwnerGroupChoices);
+						_detailComponent = new WorklistMultiDetailEditorComponent(_formDataResponse.WorklistClasses,
+							_formDataResponse.OwnerGroupChoices);
 					}
 					else
 					{
 						_detailComponent = new WorklistDetailEditorComponent(
 							_worklistDetail,
-							formDataResponse.WorklistClasses,
-							formDataResponse.OwnerGroupChoices,
+							_formDataResponse.WorklistClasses,
+							_formDataResponse.OwnerGroupChoices,
 							_mode,
 							_adminMode,
 							false);
@@ -263,43 +266,43 @@ namespace ClearCanvas.Ris.Client
 
 					// create all other pages
 					_filterComponent = new WorklistFilterEditorComponent(_worklistDetail,
-						formDataResponse.FacilityChoices, formDataResponse.OrderPriorityChoices,
-						formDataResponse.PatientClassChoices);
+						_formDataResponse.FacilityChoices, _formDataResponse.OrderPriorityChoices,
+						_formDataResponse.PatientClassChoices);
 
 					_procedureTypeFilterComponent = new SelectorEditorComponent<ProcedureTypeSummary, ProcedureTypeTable>(
-						formDataResponse.ProcedureTypeChoices, _worklistDetail.ProcedureTypes, s => s.ProcedureTypeRef);
+						_formDataResponse.ProcedureTypeChoices, _worklistDetail.ProcedureTypes, s => s.ProcedureTypeRef);
 
 					_procedureTypeGroupFilterComponent = new SelectorEditorComponent<ProcedureTypeGroupSummary, ProcedureTypeGroupTable>(
 						procedureTypeGroups, _worklistDetail.ProcedureTypeGroups, s => s.ProcedureTypeGroupRef);
 
 					_departmentFilterComponent = new SelectorEditorComponent<DepartmentSummary, DepartmentTable>(
-						formDataResponse.DepartmentChoices, _worklistDetail.Departments, s => s.DepartmentRef);
+						_formDataResponse.DepartmentChoices, _worklistDetail.Departments, s => s.DepartmentRef);
 
 					_locationFilterComponent = new SelectorEditorComponent<LocationSummary, LocationTable>(
-						formDataResponse.PatientLocationChoices, _worklistDetail.PatientLocations, s => s.LocationRef);
+						_formDataResponse.PatientLocationChoices, _worklistDetail.PatientLocations, s => s.LocationRef);
 
 					_timeWindowComponent = new WorklistTimeWindowEditorComponent(_worklistDetail);
 
 					_interpretedByFilterComponent = new StaffSelectorEditorComponent(
-						formDataResponse.StaffChoices, _worklistDetail.InterpretedByStaff.Staff, _worklistDetail.InterpretedByStaff.IncludeCurrentUser);
+						_formDataResponse.StaffChoices, _worklistDetail.InterpretedByStaff.Staff, _worklistDetail.InterpretedByStaff.IncludeCurrentUser);
 
 					_transcribedByFilterComponent = new StaffSelectorEditorComponent(
-						formDataResponse.StaffChoices, _worklistDetail.TranscribedByStaff.Staff, _worklistDetail.TranscribedByStaff.IncludeCurrentUser);
+						_formDataResponse.StaffChoices, _worklistDetail.TranscribedByStaff.Staff, _worklistDetail.TranscribedByStaff.IncludeCurrentUser);
 
 					_verifiedByFilterComponent = new StaffSelectorEditorComponent(
-						formDataResponse.StaffChoices, _worklistDetail.VerifiedByStaff.Staff, _worklistDetail.VerifiedByStaff.IncludeCurrentUser);
+						_formDataResponse.StaffChoices, _worklistDetail.VerifiedByStaff.Staff, _worklistDetail.VerifiedByStaff.IncludeCurrentUser);
 					_supervisedByFilterComponent = new StaffSelectorEditorComponent(
-						formDataResponse.StaffChoices, _worklistDetail.SupervisedByStaff.Staff, _worklistDetail.SupervisedByStaff.IncludeCurrentUser);
+						_formDataResponse.StaffChoices, _worklistDetail.SupervisedByStaff.Staff, _worklistDetail.SupervisedByStaff.IncludeCurrentUser);
 
 					if (ShowSubscriptionPages)
 					{
 						_staffSubscribersComponent = new SelectorEditorComponent<StaffSummary, StaffSelectorTable>(
-							formDataResponse.StaffChoices,
+							_formDataResponse.StaffChoices,
 							_worklistDetail.StaffSubscribers,
 							s => s.StaffRef,
 							SubscriptionPagesReadOnly);
 						_groupSubscribersComponent = new SelectorEditorComponent<StaffGroupSummary, StaffGroupTable>(
-							formDataResponse.GroupSubscriberChoices,
+							_formDataResponse.GroupSubscriberChoices,
 							_worklistDetail.GroupSubscribers,
 							s => s.StaffGroupRef,
 							SubscriptionPagesReadOnly);
@@ -309,23 +312,23 @@ namespace ClearCanvas.Ris.Client
 			// add pages
 			this.Pages.Add(new NavigatorPage("NodeWorklist", _detailComponent));
 			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters", _filterComponent));
-			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/NodeProcedureTypes", _procedureTypeFilterComponent));
-			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/NodeProcedureTypeGroups", _procedureTypeGroupFilterComponent));
-			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/NodeDepartments", _departmentFilterComponent));
-			this.Pages.Add(_patientLocationComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodePatientLocations", _locationFilterComponent));
+			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/FilterProcedureType", _procedureTypeFilterComponent));
+			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/FilterProcedureTypeGroup", _procedureTypeGroupFilterComponent));
+			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/FilterDepartment", _departmentFilterComponent));
+			this.Pages.Add(_patientLocationComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/FilterPatientLocation", _locationFilterComponent));
 
 			_procedureTypeFilterComponent.ItemsAdded += OnProcedureTypeAdded;
 			_procedureTypeGroupFilterComponent.ItemsAdded += OnProcedureTypeGroupAdded;
 
-			_interpretedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeInterpretedBy", _interpretedByFilterComponent);
+			_interpretedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/FilterInterpretedBy", _interpretedByFilterComponent);
 
 			if (WorklistEditorComponentSettings.Default.ShowTranscribedByPage)
-				_transcribedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeTranscribedBy", _transcribedByFilterComponent);
+				_transcribedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/FilterTranscribedBy", _transcribedByFilterComponent);
 
-			_verifiedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeVerifiedBy", _verifiedByFilterComponent);
-			_supervisedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeSupervisedBy", _supervisedByFilterComponent);
+			_verifiedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/FilterVerifiedBy", _verifiedByFilterComponent);
+			_supervisedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/FilterSupervisedBy", _supervisedByFilterComponent);
 
-			_timeWindowComponentPage = new NavigatorPage("NodeWorklist/NodeTimeWindow", _timeWindowComponent);
+			_timeWindowComponentPage = new NavigatorPage("NodeWorklist/FilterTimeWindow", _timeWindowComponent);
 
 			ShowWorklistCategoryDependantPages();
 
@@ -334,7 +337,7 @@ namespace ClearCanvas.Ris.Client
 				this.Pages.Add(new NavigatorPage("NodeWorklist/NodeSubscribers/NodeGroupSubscribers", _groupSubscribersComponent));
 				this.Pages.Add(new NavigatorPage("NodeWorklist/NodeSubscribers/NodeStaffSubscribers", _staffSubscribersComponent));
 			}
-			this.Pages.Add(_summaryComponentPage = new NavigatorPage("NodeWorklist/Summary", _summaryComponent = new WorklistSummaryComponent(_worklistDetail, _adminMode)));
+			this.Pages.Add(_summaryComponentPage = new NavigatorPage("NodeWorklist/NodeWorklistSummary", _summaryComponent = new WorklistSummaryComponent(_worklistDetail, _adminMode)));
 
 			this.CurrentPageChanged += WorklistEditorComponent_CurrentPageChanged;
 
@@ -507,6 +510,7 @@ namespace ClearCanvas.Ris.Client
 		public override void Accept()
 		{
 			UpdateWorklistDetail();
+			WarnAboutNonOptimalFilterChoices();
 
 			if (this.HasValidationErrors)
 			{
@@ -623,6 +627,37 @@ namespace ClearCanvas.Ris.Client
 			{
 				_worklistDetail.SupervisedByStaff.Staff = new List<StaffSummary>(_supervisedByFilterComponent.SelectedItems);
 				_worklistDetail.SupervisedByStaff.IncludeCurrentUser = _supervisedByFilterComponent.IncludeCurrentUser;
+			}
+		}
+
+		private void WarnAboutNonOptimalFilterChoices()
+		{
+			CheckFilterChoices(SR.FilterProcedureType, _worklistDetail.ProcedureTypes, _formDataResponse.ProcedureTypeChoices);
+			CheckFilterChoices(SR.FilterProcedureTypeGroup, _worklistDetail.ProcedureTypeGroups, _procedureTypeGroupFilterComponent.AllItems);
+			CheckFilterChoices(SR.FilterPerformingFacility, _worklistDetail.Facilities, _formDataResponse.FacilityChoices);
+			CheckFilterChoices(SR.FilterDepartment, _worklistDetail.Departments, _formDataResponse.DepartmentChoices);
+			CheckFilterChoices(SR.FilterPatientClass, _worklistDetail.PatientClasses, _formDataResponse.PatientClassChoices);
+			CheckFilterChoices(SR.FilterPatientLocation, _worklistDetail.PatientLocations, _formDataResponse.PatientLocationChoices);
+			CheckFilterChoices(SR.FilterOrderPriority, _worklistDetail.OrderPriorities, _formDataResponse.OrderPriorityChoices);
+			CheckFilterChoices(SR.FilterPortable, _worklistDetail.Portabilities, new[] { true, false });
+
+			CheckFilterChoices(SR.FilterInterpretedBy, _worklistDetail.InterpretedByStaff.Staff, _formDataResponse.StaffChoices);
+			CheckFilterChoices(SR.FilterTranscribedBy, _worklistDetail.TranscribedByStaff.Staff, _formDataResponse.StaffChoices);
+			CheckFilterChoices(SR.FilterVerifiedBy, _worklistDetail.VerifiedByStaff.Staff, _formDataResponse.StaffChoices);
+			CheckFilterChoices(SR.FilterSupervisedBy, _worklistDetail.SupervisedByStaff.Staff, _formDataResponse.StaffChoices);
+		}
+
+		private void CheckFilterChoices<TSummary>(string filterName, IList<TSummary> filterValues, IList<TSummary> allValues)
+		{
+			// if all possible values have been selected for the filter, inform the user that this isn't usually a good idea
+			if (allValues.Count > 0 && CollectionUtils.Equal(filterValues, allValues, false))
+			{
+				var msg = string.Format(SR.MessageWarnAllFilterValuesShouldNotBeSelected, filterName);
+				var action = this.Host.ShowMessageBox(msg, MessageBoxActions.YesNo);
+				if (action == DialogBoxAction.Yes)
+				{
+					filterValues.Clear();
+				}
 			}
 		}
 
