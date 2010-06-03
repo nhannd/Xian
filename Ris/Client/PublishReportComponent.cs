@@ -179,15 +179,15 @@ namespace ClearCanvas.Ris.Client
 			_recipientsTable = new Table<Checkable<ResultRecipientDetail>>();
 			_recipientsTable.Columns.Add(new TableColumn<Checkable<ResultRecipientDetail>, bool>(
 				"Select",
-				delegate(Checkable<ResultRecipientDetail> checkable) { return checkable.IsChecked; },
+				checkable => checkable.IsChecked,
 				delegate(Checkable<ResultRecipientDetail> checkable, bool isChecked) { checkable.IsChecked = isChecked; NotifyPropertyChanged("AcceptEnabled"); },
 				0.3f));
 			_recipientsTable.Columns.Add(new TableColumn<Checkable<ResultRecipientDetail>, string>(
 				"Practitioner",
-				delegate(Checkable<ResultRecipientDetail> checkable) { return PersonNameFormat.Format(checkable.Item.Practitioner.Name); }));
+				checkable => PersonNameFormat.Format(checkable.Item.Practitioner.Name)));
 			_recipientsTable.Columns.Add(new TableColumn<Checkable<ResultRecipientDetail>, string>(
 				"Contact Point",
-				delegate(Checkable<ResultRecipientDetail> checkable) { return checkable.Item.ContactPoint.Name; }));
+				checkable => checkable.Item.ContactPoint.Name));
 
 			_recipientsActionModel = new CrudActionModel(true, false, false);
 			_recipientsActionModel.Add.SetClickHandler(AddRecipient);
@@ -209,22 +209,18 @@ namespace ClearCanvas.Ris.Client
 
 			_recipientLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
 
-			Platform.GetService<IBrowsePatientDataService>(
+			Platform.GetService(
 				delegate(IBrowsePatientDataService service)
 				{
-					GetDataRequest request = new GetDataRequest();
-					request.GetOrderDetailRequest =
-						new GetOrderDetailRequest(_orderRef, true, true, false, false, false, true);
+					var request = new GetDataRequest
+						{ GetOrderDetailRequest = new GetOrderDetailRequest(_orderRef, true, true, false, false, false, true) };
 
-					GetDataResponse response = service.GetData(request);
+					var response = service.GetData(request);
 
 					_recipientsTable.Items.AddRange(
 						CollectionUtils.Map<ResultRecipientDetail, Checkable<ResultRecipientDetail>>(
 							response.GetOrderDetailResponse.Order.ResultRecipients,
-							delegate(ResultRecipientDetail summary)
-							{
-								return new Checkable<ResultRecipientDetail>(summary, false);
-							}));
+							summary => new Checkable<ResultRecipientDetail>(summary, false)));
 				});
 
 			_headerFooterSettings = new IEHeaderFooterSettings(
@@ -282,8 +278,7 @@ namespace ClearCanvas.Ris.Client
 
 		public string FormatContactPoint(object cp)
 		{
-			ExternalPractitionerContactPointDetail detail = (ExternalPractitionerContactPointDetail)cp;
-			return ExternalPractitionerContactPointFormat.Format(detail);
+			return ExternalPractitionerContactPointFormat.Format((ExternalPractitionerContactPointDetail)cp);
 		}
 
 		public ITable Recipients
@@ -306,18 +301,18 @@ namespace ClearCanvas.Ris.Client
 			get { return _recipientToAdd; }
 			set
 			{
-				if (!Equals(value, _recipientToAdd))
-				{
-					_recipientToAdd = value;
-					NotifyPropertyChanged("RecipientToAdd");
+				if (Equals(value, _recipientToAdd))
+					return;
 
-					_recipientContactPointToAdd = null;
-					UpdateConsultantContactPointChoices();
-					NotifyPropertyChanged("RecipientContactPointChoices");
+				_recipientToAdd = value;
+				NotifyPropertyChanged("RecipientToAdd");
 
-					// must do this after contact point choices have been updated
-					UpdateRecipientsActionModel();
-				}
+				_recipientContactPointToAdd = null;
+				UpdateConsultantContactPointChoices();
+				NotifyPropertyChanged("RecipientContactPointChoices");
+
+				// must do this after contact point choices have been updated
+				UpdateRecipientsActionModel();
 			}
 		}
 
@@ -331,11 +326,11 @@ namespace ClearCanvas.Ris.Client
 			get { return _recipientContactPointToAdd; }
 			set
 			{
-				if (_recipientContactPointToAdd != value)
-				{
-					_recipientContactPointToAdd = value;
-					NotifyPropertyChanged("RecipientContactPointToAdd");
-				}
+				if (_recipientContactPointToAdd == value)
+					return;
+
+				_recipientContactPointToAdd = value;
+				NotifyPropertyChanged("RecipientContactPointToAdd");
 			}
 		}
 
@@ -344,25 +339,25 @@ namespace ClearCanvas.Ris.Client
 			get { return new Selection(_selectedRecipient); }
 			set
 			{
-				if (!Equals(value, _selectedRecipient))
-				{
-					_selectedRecipient = (Checkable<ResultRecipientDetail>)value.Item;
-					UpdatePreview();
-					UpdateRecipientsActionModel();
-					NotifyPropertyChanged("SelectedRecipient");
-				}
+				if (Equals(value, _selectedRecipient))
+					return;
+
+				_selectedRecipient = (Checkable<ResultRecipientDetail>)value.Item;
+				UpdatePreview();
+				UpdateRecipientsActionModel();
+				NotifyPropertyChanged("SelectedRecipient");
 			}
 		}
 
 		public void AddRecipient()
 		{
-			if (_recipientToAdd != null && _recipientContactPointToAdd != null)
-			{
-				_recipientsTable.Items.Add(new Checkable<ResultRecipientDetail>(
-					new ResultRecipientDetail(_recipientToAdd, _recipientContactPointToAdd, new EnumValueInfo("ANY", null, null)),
-					true));
-				NotifyPropertyChanged("AcceptEnabled");
-			}
+			if (_recipientToAdd == null || _recipientContactPointToAdd == null)
+				return;
+
+			_recipientsTable.Items.Add(new Checkable<ResultRecipientDetail>(
+				new ResultRecipientDetail(_recipientToAdd, _recipientContactPointToAdd, new EnumValueInfo("ANY", null, null)),
+				true));
+			NotifyPropertyChanged("AcceptEnabled");
 		}
 
 		public bool PublishVisible
@@ -372,12 +367,7 @@ namespace ClearCanvas.Ris.Client
 
 		public bool AcceptEnabled
 		{
-			get
-			{
-				return CollectionUtils.Contains(
-					_recipientsTable.Items,
-					delegate(Checkable<ResultRecipientDetail> checkable) { return checkable.IsChecked; });
-			}
+			get { return CollectionUtils.Contains( _recipientsTable.Items, checkable => checkable.IsChecked); }
 		}
 
 		public void Cancel()
@@ -387,42 +377,40 @@ namespace ClearCanvas.Ris.Client
 
 		public void SendReportToQueue()
 		{
-			string invalidDescription = "";
+			string invalidDescription;
 			// Checks for invalid selections and prevents any from reaching the queue
-			if (HasInvalidSelections(out invalidDescription) == true)
+			if (HasInvalidSelections(out invalidDescription))
 			{
 				this.Host.ShowMessageBox("The following recipients could not be sent to the fax queue:\n" + invalidDescription, MessageBoxActions.Ok);
 				return;
 			}
-			else
-			{
-				try
-				{
-					Platform.GetService<IReportingWorkflowService>(
-						delegate(IReportingWorkflowService service)
-						{
-							SendReportToQueueRequest request = new SendReportToQueueRequest(this.ProcedureRef);
-							foreach (Checkable<ResultRecipientDetail> checkable in this.Recipients.Items)
-							{
-								if (checkable.IsChecked)
-								{
-									ResultRecipientDetail detail = checkable.Item;
-									request.Recipients.Add(new PublishRecipientDetail(detail.Practitioner.PractitionerRef, detail.ContactPoint.ContactPointRef));
-								}
-							}
-							if (request.Recipients.Count > 0)
-							{
-								service.SendReportToQueue(request);
-							}
-						});
 
-					this.Exit(ApplicationComponentExitCode.Accepted);
-				}
-				catch (Exception e)
-				{
-					ExceptionHandler.Report(e, this.Host.DesktopWindow);
-					this.Exit(ApplicationComponentExitCode.Error);
-				}
+			try
+			{
+				Platform.GetService(
+					delegate(IReportingWorkflowService service)
+					{
+						var request = new SendReportToQueueRequest(this.ProcedureRef);
+						foreach (Checkable<ResultRecipientDetail> checkable in this.Recipients.Items)
+						{
+							if (!checkable.IsChecked)
+								continue;
+
+							var detail = checkable.Item;
+							request.Recipients.Add(new PublishRecipientDetail(detail.Practitioner.PractitionerRef, detail.ContactPoint.ContactPointRef));
+						}
+						if (request.Recipients.Count > 0)
+						{
+							service.SendReportToQueue(request);
+						}
+					});
+
+				this.Exit(ApplicationComponentExitCode.Accepted);
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+				this.Exit(ApplicationComponentExitCode.Error);
 			}
 		}
 
@@ -433,14 +421,14 @@ namespace ClearCanvas.Ris.Client
 		/// <returns></returns>
 		private bool HasInvalidSelections(out string invalidFaxDescription)
 		{
-			string description = "";
+			var description = "";
 
-			CollectionUtils.ForEach<Checkable<ResultRecipientDetail>>(this.Recipients.Items,
+			CollectionUtils.ForEach(this.Recipients.Items,
 				delegate(Checkable<ResultRecipientDetail> checkable)
 				{
 					if (checkable.IsChecked && IsInvalidContactPoint(checkable.Item))
 					{
-						description += Formatting.PersonNameFormat.Format(checkable.Item.Practitioner.Name) + "\n";
+						description += PersonNameFormat.Format(checkable.Item.Practitioner.Name) + "\n";
 					}
 				});
 			invalidFaxDescription = description;
@@ -452,10 +440,11 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		/// <param name="resultRecipientDetail"></param>
 		/// <returns></returns>
-		private bool IsInvalidContactPoint(ResultRecipientDetail resultRecipientDetail)
+		private static bool IsInvalidContactPoint(ResultRecipientDetail resultRecipientDetail)
 		{
 			if (resultRecipientDetail == null)
 				return true;
+
 			// TO DO: Server DataContract should indicate whether not Preffered Comm Mode is valid
 			// Temporarily using comparison to resolve validity of contact point
 			switch (resultRecipientDetail.PreferredCommunicationMode.Code)
@@ -516,19 +505,20 @@ namespace ClearCanvas.Ris.Client
 			_recipientContactPointChoices = GetPractitionerContactPoints(_recipientToAdd);
 		}
 
-		private List<ExternalPractitionerContactPointDetail> GetPractitionerContactPoints(ExternalPractitionerSummary prac)
+		private static List<ExternalPractitionerContactPointDetail> GetPractitionerContactPoints(ExternalPractitionerSummary prac)
 		{
-			List<ExternalPractitionerContactPointDetail> choices = new List<ExternalPractitionerContactPointDetail>();
+			var choices = new List<ExternalPractitionerContactPointDetail>();
 			if (prac != null)
 			{
-				Platform.GetService<IOrderEntryService>(
+				Platform.GetService(
 					delegate(IOrderEntryService service)
 					{
-						GetExternalPractitionerContactPointsResponse response = service.GetExternalPractitionerContactPoints(
+						var response = service.GetExternalPractitionerContactPoints(
 							new GetExternalPractitionerContactPointsRequest(prac.PractitionerRef));
 						choices = response.ContactPoints;
 					});
 			}
+
 			return choices;
 		}
 
@@ -536,7 +526,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			if(_localPrintQueue.Count > 0)
 			{
-				ResultRecipientDetail recipient = _localPrintQueue.Dequeue();
+				var recipient = _localPrintQueue.Dequeue();
 
 				_publishReportPreviewComponent.Context = new PublishReportPreviewComponent.PublishReportPreviewContext(
 					this.PatientProfileRef,
