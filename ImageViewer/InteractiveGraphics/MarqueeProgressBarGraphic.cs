@@ -30,7 +30,6 @@
 #endregion
 
 using System.Drawing;
-using System.Threading;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
@@ -40,9 +39,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		[Cloneable(true)]
 		private class MarqueeProgressBarGraphic : ProgressBarGraphic
 		{
-			[CloneIgnore]
-			private SynchronizationContext _synchronizationContext;
-
 			[CloneIgnore]
 			private readonly Image _tray;
 
@@ -56,10 +52,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			private Bitmap _mask;
 
 			[CloneIgnore]
-			private volatile bool _isDisposed;
-
-			[CloneIgnore]
-			private volatile int _offset;
+			private int _offset;
 
 			[CloneIgnore]
 			private readonly int _maskWidth;
@@ -76,13 +69,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 				_maskWidth = _mask.Width;
 				_barWidth = _bar.Width;
-				_offset = -_maskWidth;
-				_isDisposed = false;
+				_offset = 0;
 			}
 
 			protected override void Dispose(bool disposing)
 			{
-				_isDisposed = true;
 				if (disposing)
 				{
 					if (_mask != null)
@@ -102,26 +93,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			public override void OnDrawing()
 			{
-				if (_synchronizationContext == null)
-					_synchronizationContext = SynchronizationContext.Current;
-
-				bool isMarqueeLive = false;
-				if (this.Progress > 0f && this.Progress < 1f)
-					isMarqueeLive = (_synchronizationContext != null);
+				if (Progress > 0f && Progress < 1f)
+				{
+					_offset = ((_offset + 3)%(_barWidth + _maskWidth));
+					Update();
+				}
 
 				base.OnDrawing();
-
-				if (isMarqueeLive)
-					_synchronizationContext.Post(Animate, null);
-			}
-
-			private void Animate(object state)
-			{
-				if (_isDisposed)
-					return;
-
-				_offset = ((_offset + _maskWidth + 3)%(_barWidth + _maskWidth)) - _maskWidth;
-				this.Update();
 			}
 
 			protected override void RenderProgressBar(float progress, System.Drawing.Graphics g)
@@ -149,13 +127,19 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 						for (int i = 0; i < size; i++)
 						{
 							int x = i%cols;
-							int offsetX = x - _offset;
+							int offsetX = x - _offset + _maskWidth;
 							int y = i/cols;
 							if (offsetX >= 0 && offsetX < _mask.Width)
-								bar.SetPixel(x, y, Color.FromArgb(_mask.GetPixel(offsetX, y).A, bar.GetPixel(x, y)));
+							{
+								var c = bar.GetPixel(x, y);
+								bar.SetPixel(x, y, Color.FromArgb(_mask.GetPixel(offsetX, y).A*c.A/255, c));
+							}
 							else
+							{
 								bar.SetPixel(x, y, Color.Transparent);
+							}
 						}
+
 						DrawImageCentered(g, bar);
 					}
 				}

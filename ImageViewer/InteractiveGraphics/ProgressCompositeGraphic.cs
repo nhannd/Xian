@@ -31,6 +31,7 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 
@@ -118,6 +119,22 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				}
 			}
 
+			public override void OnDrawing()
+			{
+				if (base.ParentPresentationImage != null)
+				{
+					SpatialTransform transform = base.SpatialTransform;
+					transform.TranslationX = (base.ParentPresentationImage.ClientRectangle.Width - this.Width)/2f;
+					transform.TranslationY = (base.ParentPresentationImage.ClientRectangle.Height - this.Height)/2f;
+				}
+				base.OnDrawing();
+			}
+
+			protected override SpatialTransform CreateSpatialTransform()
+			{
+				return new InvariantSpatialTransform(this);
+			}
+
 			public string Text
 			{
 				get { return _progressTextGraphic.Text; }
@@ -154,6 +171,38 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			{
 				return new Point((bounds.Width - size.Width)/2, (bounds.Height - size.Height)/2);
 			}
+
+			#region InvariantSpatialTransform Class
+
+			/// <summary>
+			/// Implements a <see cref="SpatialTransform"/> which is invariant in the destination coordinate system with respect to scale, flip and rotation.
+			/// </summary>
+			[Cloneable]
+			private sealed class InvariantSpatialTransform : SpatialTransform
+			{
+				public InvariantSpatialTransform(IGraphic ownerGraphic) : base(ownerGraphic) {}
+
+				/// <summary>
+				/// Cloning constructor.
+				/// </summary>
+				/// <param name="source">The source object from which to clone.</param>
+				/// <param name="context">The cloning context object.</param>
+				private InvariantSpatialTransform(InvariantSpatialTransform source, ICloningContext context)
+					: base(source, context)
+				{
+					context.CloneFields(source, this);
+				}
+
+				protected override void CalculatePostTransform(Matrix cumulativeTransform)
+				{
+					cumulativeTransform.Reset();
+					cumulativeTransform.Translate(this.TranslationX, this.TranslationY);
+				}
+
+				protected override void CalculatePreTransform(Matrix cumulativeTransform) {}
+			}
+
+			#endregion
 		}
 	}
 }
