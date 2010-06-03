@@ -573,4 +573,7 @@
   <data name="MessageValidateWorklistTimeFilter" xml:space="preserve">
     <value>Time Window must be specified and must not span more than {0} days.</value>
   </data>
+  <data name="MessageValidateExternalPractitionerRequiresExactlyOneDefaultContactPoint" xml:space="preserve">
+    <value>An external practitioner requires exactly one default contact point.</value>
+  </data>
 </root>

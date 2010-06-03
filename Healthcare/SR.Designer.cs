@@ -529,6 +529,15 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An external practitioner requires exactly one default contact point..
+        /// </summary>
+        internal static string MessageValidateExternalPractitionerRequiresExactlyOneDefaultContactPoint {
+            get {
+                return ResourceManager.GetString("MessageValidateExternalPractitionerRequiresExactlyOneDefaultContactPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
         internal static string MessageValidateOrderPerformingDepartments {

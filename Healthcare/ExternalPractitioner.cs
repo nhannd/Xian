@@ -30,7 +30,9 @@
 #endregion
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core.Modelling;
 
 namespace ClearCanvas.Healthcare
 {
@@ -39,6 +41,7 @@ namespace ClearCanvas.Healthcare
 	/// <summary>
 	/// ExternalPractitioner entity
 	/// </summary>
+	[ValidationRules("GetValidationRules")]
 	public partial class ExternalPractitioner : ClearCanvas.Enterprise.Core.Entity
 	{
 		/// <summary>
@@ -78,5 +81,23 @@ namespace ClearCanvas.Healthcare
 			_lastVerifiedTime = Platform.Time;
 			_isVerified = true;
 		}
+
+		private static IValidationRuleSet GetValidationRules()
+		{
+			// ensure that not both the procedure type and procedure type groups filters are being applied
+			var exactlyOneDefaultContactPointRule = new ValidationRule<ExternalPractitioner>(
+				delegate(ExternalPractitioner externalPractitioner)
+				{
+					var activeDefaultContactPoints = CollectionUtils.Select(
+						externalPractitioner.ContactPoints,
+						contactPoint => contactPoint.IsDefaultContactPoint && !contactPoint.Deactivated);
+					var success = activeDefaultContactPoints.Count == 1;
+
+					return new TestResult(success, SR.MessageValidateExternalPractitionerRequiresExactlyOneDefaultContactPoint);
+				});
+
+			return new ValidationRuleSet(new[] { exactlyOneDefaultContactPointRule });
+		}
+
 	}
 }
