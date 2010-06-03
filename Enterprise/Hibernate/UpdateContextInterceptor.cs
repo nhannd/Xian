@@ -110,11 +110,12 @@ namespace ClearCanvas.Enterprise.Hibernate
 			// Build a list of dirty properties for validation
 			var dirtyProperties = CollectionUtils.Select(propertyDiffs, diff => diff.IsChanged);
 
-			// validate the entity prior to flush, passing the list of dirty properties 
+			// run low-level validation prior to flush, passing the list of dirty properties 
 			// in order to optimize which rules are tested
 			// rather than testing every validation rule we can selectively test only those rules
 			// that may be affected by the modified state
-			Validate(entity, CollectionUtils.Map(dirtyProperties, (PropertyDiff pc) => pc.PropertyName));
+			var dirtyPropNames = CollectionUtils.Map(dirtyProperties, (PropertyDiff pc) => pc.PropertyName);
+			_validator.ValidateLowLevel((DomainObject)entity, rule => ShouldCheckRule(rule, dirtyPropNames));
 
 			RecordChange(entity, EntityChangeType.Update, propertyDiffs);
 			return false;
@@ -159,13 +160,13 @@ namespace ClearCanvas.Enterprise.Hibernate
 			// validate any transient entities that have not yet been validated
 			// note that there is a possibility that NHibernate may do its own validation of new entities
 			// prior to arriving here, in which case it will have already thrown an exception
-			// this is unfortunate, because the exceptions that we generate are *much* more informative
+			// this is unfortunate, because the exceptions that we generate are more informative
 			// and user-friendly, but there is no obvious solution to this as of NH1.0
 			// TODO: NH1.2 added new methods to the Interceptor API - see if any of these will get around this problem
 			while (_pendingValidations.Count > 0)
 			{
-				var obj = _pendingValidations.Dequeue();
-				Validate(obj);
+				var domainObject = _pendingValidations.Dequeue();
+				_validator.ValidateLowLevel(domainObject, rule => true);
 			}
 
 			base.PreFlush(entities);
@@ -187,16 +188,6 @@ namespace ClearCanvas.Enterprise.Hibernate
 
 			var entity = (Entity)domainObject;
 			_changeTracker.RecordChange(entity, changeType, propertyDiffs);
-		}
-
-		private void Validate(object domainObject, ICollection<string> dirtyProperties)
-		{
-			_validator.Validate((DomainObject)domainObject, rule => ShouldCheckRule(rule, dirtyProperties));
-		}
-
-		private void Validate(object domainObject)
-		{
-			_validator.Validate((DomainObject)domainObject);
 		}
 
 		private static bool ShouldCheckRule(ISpecification rule, ICollection<string> dirtyProperties)

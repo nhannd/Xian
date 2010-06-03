@@ -40,9 +40,9 @@ namespace ClearCanvas.Enterprise.Core.Modelling
     /// <summary>
     /// Specifies that a given property of an object is required to have a value (e.g. non-null).
     /// </summary>
-    public class RequiredSpecification : SimpleInvariantSpecification
+	internal class RequiredSpecification : SimpleInvariantSpecification
     {
-        public RequiredSpecification(PropertyInfo property)
+		internal RequiredSpecification(PropertyInfo property)
             :base(property)
         {
         }

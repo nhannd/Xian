@@ -163,12 +163,14 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 			if (_applicabilityRule.Test(obj).Fail)
 				return new TestResult(true);
 
-			// test every specification in the set of rules
+			// a null filter is a nop filter
+			filter = filter ?? (x => true);
+
+			// test every rule in the set of rules that is accepted by the filter
 			var failureReasons = new List<TestResultReason>();
 			foreach (var rule in _rules)
 			{
-				// if there is no filter, or the fitler accepts the rule, test it
-				if (filter == null || filter(rule))
+				if (filter(rule))
 				{
 					// if the rule is itself a ruleset, then apply the filter recursively
 					var result = (rule is IValidationRuleSet) ? (rule as IValidationRuleSet).Test(obj, filter) : rule.Test(obj);

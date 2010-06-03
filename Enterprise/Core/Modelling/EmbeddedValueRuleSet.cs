@@ -47,7 +47,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 		private readonly PropertyInfo _property;
 		private readonly bool _collection;
 
-		public EmbeddedValueRuleSet(PropertyInfo property, ValidationRuleSet innerRules, bool collection)
+		internal EmbeddedValueRuleSet(PropertyInfo property, ValidationRuleSet innerRules, bool collection)
 		{
 			_property = property;
 			_innerRules = innerRules;

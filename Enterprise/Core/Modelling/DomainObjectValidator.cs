@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Specifications;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Core.Modelling
 {
@@ -43,10 +44,21 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 	/// </remarks>
 	public class DomainObjectValidator
 	{
+		private static readonly Type[] _lowLevelRuleClasses = new[]
+		{
+			typeof(LengthSpecification),
+			typeof(RequiredSpecification),
+			typeof(UniqueKeySpecification),
+			typeof(UniqueSpecification),
+			typeof(EmbeddedValueRuleSet)
+		};
+
 		private readonly Dictionary<Type, ValidationRuleSet> _ruleSets = new Dictionary<Type, ValidationRuleSet>();
 
+		#region Public API
+
 		/// <summary>
-		/// Validates the specified domain object.
+		/// Validates the specified domain object, applying all known validation rules.
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <exception cref="EntityValidationException">Validation failed.</exception>
@@ -57,12 +69,55 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 		}
 
 		/// <summary>
+		/// Validates only that the specified object has required fields set.
+		/// </summary>
+		/// <param name="obj"></param>
+		public void ValidateRequiredFieldsPresent(DomainObject obj)
+		{
+			ValidateLowLevel(obj, rule => rule is RequiredSpecification);
+		}
+
+
+		/// <summary>
+		/// Validates the specified domain object, applying only "low-level" rules, subject to the specified filter.
+		/// </summary>
+		/// <remarks>
+		/// Low-level rules are:
+		/// 1. Required fields.
+		/// 2. String field lengths.
+		/// 3. Unique constraints.
+		/// </remarks>
+		/// <param name="obj"></param>
+		/// <param name="ruleFilter"></param>
+		public void ValidateLowLevel(DomainObject obj, Predicate<ISpecification> ruleFilter)
+		{
+			// construct a predicate which says:
+			// 1. if the rule is a low-level rule class, let the caller's ruleFilter decide
+			// 2. if the rule is a rule-set (but not an embedded-value ruleset which has already been covered in 1), then evaluate it
+			Validate(obj, rule => IsLowLevelRule(rule)? ruleFilter(rule) : rule is IValidationRuleSet);
+		}
+
+		/// <summary>
+		/// Validates the specified domain object, applying only high-level rules.
+		/// </summary>
+		/// <remarks>
+		/// High-level rules include any rules that are not low-level rules.
+		/// </remarks>
+		/// <param name="obj"></param>
+		public void ValidateHighLevel(DomainObject obj)
+		{
+			Validate(obj, r => !IsLowLevelRule(r));
+		}
+
+		#endregion
+
+		/// <summary>
 		/// Validates the specified domain object, ignoring any rules that do not satisfy the filter.
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <param name="ruleFilter"></param>
 		/// <exception cref="EntityValidationException">Validation failed.</exception>
-		public void Validate(DomainObject obj, Predicate<ISpecification> ruleFilter)
+		private void Validate(DomainObject obj, Predicate<ISpecification> ruleFilter)
 		{
 			var domainClass = obj.GetClass();
 
@@ -83,6 +138,16 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 				var message = string.Format(SR.ExceptionInvalidEntity, TerminologyTranslator.Translate(obj.GetClass()));
 				throw new EntityValidationException(message, result.Reasons);
 			}
+		}
+
+		/// <summary>
+		/// Checks if the specified rule is considered a low-level rule.
+		/// </summary>
+		/// <param name="rule"></param>
+		/// <returns></returns>
+		private static bool IsLowLevelRule(ISpecification rule)
+		{
+			return CollectionUtils.Contains(_lowLevelRuleClasses, t => t.Equals(rule.GetType()));
 		}
 	}
 }

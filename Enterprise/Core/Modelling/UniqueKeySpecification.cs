@@ -41,7 +41,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
     /// Internally, this class makes use of a <see cref="IUniqueConstraintValidationBroker"/> to validate
     /// that the key is unique within the space of entities of a given class.
     /// </remarks>
-    public class UniqueKeySpecification : ISpecification
+	internal class UniqueKeySpecification : ISpecification
     {
     	private readonly Type _entityClass;
         private readonly string[] _uniqueKeyMembers;
@@ -60,7 +60,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
         /// property expressions may be used, e.g. for a Person class with a Name property that itself has First
         /// and Last properties, the unique key members might be "Name.First" and "Name.Last".
         /// </param>
-        public UniqueKeySpecification(Type entityClass, string logicalKeyName, string[] uniqueKeyMembers)
+		internal UniqueKeySpecification(Type entityClass, string logicalKeyName, string[] uniqueKeyMembers)
         {
         	_entityClass = entityClass;
             _uniqueKeyMembers = uniqueKeyMembers;

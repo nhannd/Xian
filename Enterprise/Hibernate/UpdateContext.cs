@@ -146,8 +146,8 @@ namespace ClearCanvas.Enterprise.Hibernate
 		{
 			// This is really a HACK
 			// we need to test the required field rules before NHibernate gets a chance to complain about them
-			// in order to provide more descriptive error message (the NHibernate error messages suck)
-			_validator.Validate(entity, rule => rule is RequiredSpecification);
+			// in order to provide more descriptive error message (the NHibernate error messages aren't as nice as ours)
+			_validator.ValidateRequiredFieldsPresent(entity);
 		}
 
 		internal override bool ReadOnly

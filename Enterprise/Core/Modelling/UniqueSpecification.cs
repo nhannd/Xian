@@ -41,11 +41,11 @@ namespace ClearCanvas.Enterprise.Core.Modelling
     /// primitive-valued property.  However, this limitation allows this class to implement <see cref="IPropertyBoundRule"/>
     /// since the key value is a function of a single property.
     /// </remarks>
-    public class UniqueSpecification : UniqueKeySpecification, IPropertyBoundRule
+	internal class UniqueSpecification : UniqueKeySpecification, IPropertyBoundRule
     {
         private readonly PropertyInfo _property;
 
-        public UniqueSpecification(PropertyInfo property)
+		internal UniqueSpecification(PropertyInfo property)
             : base(property.DeclaringType, property.Name, new [] { property.Name })
         {
             _property = property;
