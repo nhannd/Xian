@@ -30,54 +30,52 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Reflection;
 using ClearCanvas.Common.Specifications;
 
 namespace ClearCanvas.Enterprise.Core.Modelling
 {
-    /// <summary>
-    /// Specifies minimum and maximum allowable length of the value of a given string-typed property of an object.
-    /// </summary>
+	/// <summary>
+	/// Specifies minimum and maximum allowable length of the value of a given string-typed property of an object.
+	/// </summary>
 	internal class LengthSpecification : SimpleInvariantSpecification
-    {
-        private int _min;
-        private int _max;
+	{
+		private readonly int _min;
+		private readonly int _max;
 
 		internal LengthSpecification(PropertyInfo property, int min, int max)
-            :base(property)
-        {
-            _min = min;
-            _max = max;
-        }
+			: base(property)
+		{
+			_min = min;
+			_max = max;
+		}
 
-        public override TestResult Test(object obj)
-        {
-            object value = GetPropertyValue(obj);
+		public override TestResult Test(object obj)
+		{
+			var value = GetPropertyValue(obj);
 
-            // ignore null values
-            if (value == null)
-                return new TestResult(true);
+			// ignore null values
+			if (value == null)
+				return new TestResult(true);
 
-            try
-            {
-                string text = (string)value;
+			try
+			{
+				var text = (string)value;
 
-                return text.Length >= _min && text.Length <= _max ? new TestResult(true) :
-                    new TestResult(false, new TestResultReason(GetMessage()));
+				return text.Length >= _min && text.Length <= _max ? new TestResult(true) :
+					new TestResult(false, new TestResultReason(GetMessage()));
 
-            }
-            catch (InvalidCastException e)
-            {
-                throw new SpecificationException(SR.ExceptionExpectedStringValue, e);
-            }
-        }
+			}
+			catch (InvalidCastException e)
+			{
+				throw new SpecificationException(SR.ExceptionExpectedStringValue, e);
+			}
+		}
 
-        private string GetMessage()
-        {
-            return string.Format(SR.RuleLength,
-                TerminologyTranslator.Translate(this.Property), _min, _max);
-        }
-    }
+		private string GetMessage()
+		{
+			return string.Format(SR.RuleLength,
+				TerminologyTranslator.Translate(this.Property), _min, _max);
+		}
+	}
 }

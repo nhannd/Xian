@@ -133,7 +133,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 					this.Session.Update(obj);
 					break;
 				case DirtyState.New:
-					PreValidate(obj);
+					CheckRequiredFields(obj);
 					this.Session.Save(obj);
 					break;
 				case DirtyState.Clean:
@@ -142,7 +142,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 			}
 		}
 
-		private void PreValidate(DomainObject entity)
+		private void CheckRequiredFields(DomainObject entity)
 		{
 			// This is really a HACK
 			// we need to test the required field rules before NHibernate gets a chance to complain about them

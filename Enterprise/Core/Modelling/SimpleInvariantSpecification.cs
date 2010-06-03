@@ -29,65 +29,61 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common.Specifications;
 using System.Reflection;
+using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Core.Modelling
 {
-    /// <summary>
-    /// Base class for rules that represent simple invariant constraints on a property of an object.
-    /// </summary>
-    public abstract class SimpleInvariantSpecification : ISpecification, IPropertyBoundRule
-    {
-        private PropertyInfo[] _properties;
+	/// <summary>
+	/// Base class for rules that represent simple invariant constraints on a property of an object.
+	/// </summary>
+	internal abstract class SimpleInvariantSpecification : ISpecification, IPropertyBoundRule
+	{
+		private readonly PropertyInfo[] _properties;
 
-        public SimpleInvariantSpecification(PropertyInfo[] properties)
-        {
-            _properties = properties;
-        }
+		protected SimpleInvariantSpecification(PropertyInfo[] properties)
+		{
+			_properties = properties;
+		}
 
-        public SimpleInvariantSpecification(PropertyInfo property)
-        {
-            _properties = new PropertyInfo[] { property };
-        }
-
-
-        #region ISpecification Members
-
-        public abstract TestResult Test(object obj);
-
-        #endregion
+		protected SimpleInvariantSpecification(PropertyInfo property)
+		{
+			_properties = new [] { property };
+		}
 
 
-        public PropertyInfo[] Properties
-        {
-            get { return _properties; }
-        }
+		#region ISpecification Members
 
-        public PropertyInfo Property
-        {
-            get { return _properties[0]; }
-        }
+		public abstract TestResult Test(object obj);
 
-        protected object GetPropertyValue(object obj)
-        {
-            
-            return GetPropertyValue(obj, _properties[0]);
-        }
+		#endregion
 
-        protected object[] GetPropertyValues(object obj)
-        {
-            return CollectionUtils.Map<PropertyInfo, object>(_properties,
-                delegate(PropertyInfo property) { return GetPropertyValue(obj, property); }).ToArray();
-        }
 
-        private object GetPropertyValue(object obj, PropertyInfo property)
-        {
-            return property.GetGetMethod().Invoke(obj, null);
-        }
-    }
+		public PropertyInfo[] Properties
+		{
+			get { return _properties; }
+		}
+
+		public PropertyInfo Property
+		{
+			get { return _properties[0]; }
+		}
+
+		protected object GetPropertyValue(object obj)
+		{
+
+			return GetPropertyValue(obj, _properties[0]);
+		}
+
+		protected object[] GetPropertyValues(object obj)
+		{
+			return CollectionUtils.Map(_properties, (PropertyInfo property) => GetPropertyValue(obj, property)).ToArray();
+		}
+
+		private static object GetPropertyValue(object obj, PropertyInfo property)
+		{
+			return property.GetGetMethod().Invoke(obj, null);
+		}
+	}
 }

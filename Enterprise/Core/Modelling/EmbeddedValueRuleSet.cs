@@ -41,22 +41,21 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 	/// that is applied to an embedded value or embedded value collection of a parent object.  The child rule-set is
 	/// evaluated only if the embedded value is non-null.
 	/// </summary>
-	internal class EmbeddedValueRuleSet : IValidationRuleSet, IPropertyBoundRule
+	internal class EmbeddedValueRuleSet : SimpleInvariantSpecification, IValidationRuleSet
 	{
 		private readonly ValidationRuleSet _innerRules;
-		private readonly PropertyInfo _property;
 		private readonly bool _collection;
 
 		internal EmbeddedValueRuleSet(PropertyInfo property, ValidationRuleSet innerRules, bool collection)
+			:base(property)
 		{
-			_property = property;
 			_innerRules = innerRules;
 			_collection = collection;
 		}
 
 		#region ISpecification Members
 
-		public TestResult Test(object obj)
+		public override TestResult Test(object obj)
 		{
 			return TestCore(obj, spec => true);
 		}
@@ -72,18 +71,9 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
 		#endregion
 
-		#region IPropertyBoundRule Members
-
-		public PropertyInfo[] Properties
-		{
-			get { return new [] { _property }; }
-		}
-
-		#endregion
-
 		protected TestResult TestCore(object obj, Predicate<ISpecification> filter)
 		{
-			var propertyValue = _property.GetGetMethod().Invoke(obj, null);
+			var propertyValue = GetPropertyValue(obj);
 
 			// if the propertyValue is null, return true
 			// this seems counter-intuitive, but what we are effectively saying is that the rules
@@ -91,31 +81,33 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 			if (propertyValue == null)
 				return new TestResult(true);
 
-			if (_collection)
+			return _collection ? TestCollection((IEnumerable)propertyValue, filter) : TestSingleValue(propertyValue, filter);
+		}
+
+		private TestResult TestSingleValue(object propertyValue, Predicate<ISpecification> filter)
+		{
+			var result = _innerRules.Test(propertyValue, filter);
+			if (result.Fail)
 			{
-				// apply to items rather than to the collection
-				foreach (var item in (propertyValue as IEnumerable))
-				{
-					var result = _innerRules.Test(item, filter);
-					// if any item fails, don't bother testing the rest of the items
-					if (result.Fail)
-					{
-						var message = string.Format(SR.RuleEmbeddeValueCollection, TerminologyTranslator.Translate(_property));
-						return new TestResult(false, new TestResultReason(message, result.Reasons));
-					}
-				}
-				return new TestResult(true);
+				var message = string.Format(SR.RuleEmbeddeValue, TerminologyTranslator.Translate(this.Property));
+				return new TestResult(false, new TestResultReason(message, result.Reasons));
 			}
-			else
+			return new TestResult(true);
+		}
+
+		private TestResult TestCollection(IEnumerable collection, Predicate<ISpecification> filter)
+		{
+			foreach (var item in collection)
 			{
-				var result = _innerRules.Test(propertyValue, filter);
+				var result = _innerRules.Test(item, filter);
+				// if any item fails, don't bother testing the rest of the items
 				if (result.Fail)
 				{
-					var message = string.Format(SR.RuleEmbeddeValue, TerminologyTranslator.Translate(_property));
+					var message = string.Format(SR.RuleEmbeddeValueCollection, TerminologyTranslator.Translate(this.Property));
 					return new TestResult(false, new TestResultReason(message, result.Reasons));
 				}
-				return new TestResult(true);
 			}
+			return new TestResult(true);
 		}
 	}
 }
