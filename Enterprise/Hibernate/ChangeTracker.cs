@@ -58,7 +58,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <param name="entity"></param>
         /// <param name="changeType"></param>
         /// <param name="propertyDiffs"></param>
-        public void RecordChange(Entity entity, EntityChangeType changeType, PropertyDiff[] propertyDiffs)
+		internal void RecordChange(Entity entity, EntityChangeType changeType, PropertyDiff[] propertyDiffs)
         {
             ChangeRecord thisChange = new ChangeRecord(entity, changeType, propertyDiffs);
 
@@ -84,7 +84,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <summary>
         /// Gets the set of <see cref="EntityChange"/> objects representing the cumulative changes made.
         /// </summary>
-        public EntityChange[] EntityChangeSet
+		internal EntityChange[] EntityChangeSet
         {
             get
             {
@@ -95,5 +95,14 @@ namespace ClearCanvas.Enterprise.Hibernate
                     }).ToArray();
             }
         }
+
+		/// <summary>
+		/// Get the set of changed entities matching the specified filter.
+		/// </summary>
+		internal IList<Entity> GetChangedEntities(Predicate<EntityChangeType> filter)
+    	{
+			var filtered = CollectionUtils.Select(_changeRecords, record => filter(record.ChangeType));
+			return CollectionUtils.Map(filtered, (ChangeRecord cr) => cr.Entity);
+    	}
     }
 }

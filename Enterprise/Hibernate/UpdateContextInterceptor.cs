@@ -55,7 +55,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 		private readonly Queue<DomainObject> _pendingValidations = new Queue<DomainObject>();
 		private readonly DomainObjectValidator _validator;
 
-		public UpdateContextInterceptor(DomainObjectValidator validator)
+		internal UpdateContextInterceptor(DomainObjectValidator validator)
 		{
 			_validator = validator;
 		}
@@ -63,9 +63,9 @@ namespace ClearCanvas.Enterprise.Hibernate
 		/// <summary>
 		/// Gets the set of <see cref="EntityChange"/> objects representing the changes made in this update context.
 		/// </summary>
-		public EntityChange[] EntityChangeSet
+		internal ChangeTracker ChangeTracker
 		{
-			get { return _changeTracker.EntityChangeSet; }
+			get { return _changeTracker; }
 		}
 
 		#region IInterceptor Members

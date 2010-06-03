@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;

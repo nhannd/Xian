@@ -89,17 +89,17 @@ namespace ClearCanvas.Enterprise.Hibernate
 		{
 			try
 			{
-				// sync state prior to commit, this ensures that all entities are validated and changes
+				// flush session prior to commit, this ensures that all entities are validated and changes
 				// recorded by the interceptor
-				SynchStateCore();
+				FlushAndValidate();
 
 				// publish pre-commit to listeners
 				var changeSetPublisher = new EntityChangeSetPublisher();
-				var changeSet = new EntityChangeSet(_interceptor.EntityChangeSet);
+				var changeSet = new EntityChangeSet(_interceptor.ChangeTracker.EntityChangeSet);
 				changeSetPublisher.PreCommit(new EntityChangeSetPreCommitArgs(changeSet, this));
 
-				// sync state again, in case pre-commit listeners made modifications to entities in this context
-				SynchStateCore();
+				// flush session again, in case pre-commit listeners made modifications to entities in this context
+				FlushAndValidate();
 
 				// do audit
 				AuditTransaction();
@@ -142,14 +142,6 @@ namespace ClearCanvas.Enterprise.Hibernate
 			}
 		}
 
-		private void CheckRequiredFields(DomainObject entity)
-		{
-			// This is really a HACK
-			// we need to test the required field rules before NHibernate gets a chance to complain about them
-			// in order to provide more descriptive error message (the NHibernate error messages aren't as nice as ours)
-			_validator.ValidateRequiredFieldsPresent(entity);
-		}
-
 		internal override bool ReadOnly
 		{
 			get { return false; }
@@ -157,7 +149,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 
 		protected override void SynchStateCore()
 		{
-			this.Session.Flush();
+			FlushAndValidate();
 		}
 
 		protected override void Dispose(bool disposing)
@@ -192,6 +184,29 @@ namespace ClearCanvas.Enterprise.Hibernate
 
 		#region Helpers
 
+		private void CheckRequiredFields(DomainObject entity)
+		{
+			// This is really a HACK
+			// we need to test the required field rules before NHibernate gets a chance to complain about them
+			// in order to provide more descriptive error message (the NHibernate error messages aren't as nice as ours)
+			_validator.ValidateRequiredFieldsPresent(entity);
+		}
+
+		private void FlushAndValidate()
+		{
+			// flush first, so that the interceptor's changeTracker has a current list of modified entities
+			// note: this will apply low-level validation inside the interceptor
+			this.Session.Flush();
+
+			// apply high-level validation to modified entities (excluding those that have been deleted)
+			var modifiedEntities =
+				_interceptor.ChangeTracker.GetChangedEntities(changeType => changeType != EntityChangeType.Delete);
+			foreach (var entity in modifiedEntities)
+			{
+				_validator.ValidateHighLevel(entity);
+			}
+		}
+
 		/// <summary>
 		/// Writes an audit log entry for the current change-set, assuming the
 		/// <see cref="ChangeSetRecorder"/> property is set.
@@ -202,7 +217,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 			{
 				// write to the "ChangeSet" audit log
 				var auditLog = new AuditLog(null, "ChangeSet");
-				_changeSetRecorder.WriteLogEntry(_interceptor.EntityChangeSet, auditLog);
+				_changeSetRecorder.WriteLogEntry(_interceptor.ChangeTracker.EntityChangeSet, auditLog);
 			}
 		}
 
