@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		private const string _fusionOverlayLayerName = "Fusion";
 
 		[CloneIgnore]
-		private IFusionOverlaySliceReference _overlaySliceReference;
+		private AsynchronousLoaderCompositeGraphic _loaderComposite;
 
 		[CloneIgnore]
 		private CompositeGraphic _fusionOverlayLayer;
@@ -51,19 +51,16 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		[CloneIgnore]
 		private ColorBarGraphic _colorBarGraphic;
 
-		[CloneIgnore]
-		private GrayscaleImageGraphic _fusionOverlayImageGraphic;
-
 		private FusionVoiLutManagerProxy _voiLutManagerProxy;
 		private FusionOverlayColorMapSpec _overlayColorMapSpec;
 
 		public FusionPresentationImage(Frame baseFrame, FusionOverlaySlice overlayData)
 			: this(baseFrame.CreateTransientReference(), overlayData.CreateTransientReference()) {}
 
-		public FusionPresentationImage(IFrameReference baseFrame, IFusionOverlaySliceReference overlayData)
+		public FusionPresentationImage(IFrameReference baseFrame, IFusionOverlaySliceReference overlaySlice)
 			: base(baseFrame)
 		{
-			_overlaySliceReference = overlayData;
+			_loaderComposite = new AsynchronousLoaderCompositeGraphic(overlaySlice.FusionOverlaySlice);
 
 			Initialize();
 		}
@@ -76,8 +73,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		protected FusionPresentationImage(FusionPresentationImage source, ICloningContext context) : base(source, context)
 		{
 			context.CloneFields(source, this);
-
-			_overlaySliceReference = source._overlaySliceReference.Clone();
 		}
 
 		[OnCloneComplete]
@@ -88,7 +83,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 			if (_fusionOverlayLayer != null)
 			{
-				_fusionOverlayImageGraphic = (GrayscaleImageGraphic) CollectionUtils.SelectFirst(_fusionOverlayLayer.Graphics, g => g is GrayscaleImageGraphic);
+				_loaderComposite = (AsynchronousLoaderCompositeGraphic)CollectionUtils.SelectFirst(_fusionOverlayLayer.Graphics, g => g is AsynchronousLoaderCompositeGraphic);
 				_colorBarGraphic = (ColorBarGraphic) CollectionUtils.SelectFirst(_fusionOverlayLayer.Graphics, g => g is ColorBarGraphic);
 			}
 
@@ -100,6 +95,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			if (_fusionOverlayLayer == null)
 			{
 				_fusionOverlayLayer = new CompositeGraphic {Name = _fusionOverlayLayerName};
+				_fusionOverlayLayer.Graphics.Add(_loaderComposite);
 
 				// insert the fusion graphics layer right after the base image graphic (both contain domain-level graphics)
 				base.CompositeImageGraphic.Graphics.Insert(base.CompositeImageGraphic.Graphics.IndexOf(this.ImageGraphic) + 1, _fusionOverlayLayer);
@@ -128,15 +124,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			if (disposing)
 			{
-				_fusionOverlayImageGraphic = null;
+				_loaderComposite = null;
 				_colorBarGraphic = null;
 				_fusionOverlayLayer = null;
-
-				if (_overlaySliceReference != null)
-				{
-					_overlaySliceReference.Dispose();
-					_overlaySliceReference = null;
-				}
 
 				if (_voiLutManagerProxy != null)
 				{
@@ -174,31 +164,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		public override IPresentationImage CreateFreshCopy()
 		{
-			return new FusionPresentationImage(this.Frame, _overlaySliceReference.FusionOverlaySlice) {PresentationState = this.PresentationState};
-		}
-
-		protected override void OnDrawing()
-		{
-			if (_fusionOverlayImageGraphic == null)
-			{
-				//BackgroundTask bt = new BackgroundTask(this.GetOverlayImageGraphic, false);
-				//ProgressGraphic.Show(bt, _fusionOverlayLayer.Graphics, true, ProgressBarGraphicStyle.Marquee);
-
-				GetOverlayImageGraphic(null);
-			}
-
-			base.OnDrawing();
-		}
-
-		private void GetOverlayImageGraphic(IBackgroundTaskContext context)
-		{
-			var overlayImageGraphic = _overlaySliceReference.FusionOverlaySlice.CreateImageGraphic();
-			if (overlayImageGraphic != null)
-			{
-				_voiLutManagerProxy.SetOverlayVoiLutManager(overlayImageGraphic.VoiLutManager);
-				_overlayColorMapSpec.SetOverlayColorMapManager(overlayImageGraphic.ColorMapManager);
-				_fusionOverlayLayer.Graphics.Add(_fusionOverlayImageGraphic = overlayImageGraphic);
-			}
+			return new FusionPresentationImage(this.Frame, _loaderComposite.OverlaySlice) {PresentationState = this.PresentationState};
 		}
 
 		#region IVoiLutProvider Members

@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
@@ -61,7 +62,22 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			_frames = frames.AsReadOnly();
 		}
 
-		internal VolumeData GetVolume(out float progress)
+		public bool CheckIsLoaded(out float progress, out string message)
+		{
+			bool isLoaded = _volume != null;
+			if (isLoaded)
+			{
+				progress = 1f;
+				message = string.Empty;
+			}
+			else
+			{
+				this.GetVolume(out progress, out message);
+			}
+			return isLoaded;
+		}
+
+		private VolumeData GetVolume(out float progress, out string message)
 		{
 			// update the last access time
 			_largeObjectData.UpdateLastAccessTime();
@@ -71,12 +87,14 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			if (volume != null)
 			{
 				progress = 1f;
+				message = string.Empty;
 				return volume;
 			}
 
 			lock (_syncLoaderLock)
 			{
 				progress = 0;
+				message = string.Empty;
 				if (_volumeLoaderTask == null)
 				{
 					// if the data is already available without blocking, return it immediately
@@ -94,7 +112,10 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				else
 				{
 					if (_volumeLoaderTask.LastBackgroundTaskProgress != null)
+					{
+						message = _volumeLoaderTask.LastBackgroundTaskProgress.Progress.Message;
 						progress = _volumeLoaderTask.LastBackgroundTaskProgress.Progress.Percent/100f;
+					}
 				}
 			}
 
@@ -141,7 +162,16 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				if (context == null)
 					_volume = VolumeData.Create(_frames);
 				else
-					_volume = VolumeData.Create(_frames, (n, count) => context.ReportProgress(new BackgroundTaskProgress(n, count, "Opposumating possums")));
+					_volume = VolumeData.Create(_frames, (n, count) =>
+					                                     	{
+																context.ReportProgress(new BackgroundTaskProgress(n, count, "Opposumating possums"));
+
+#if DEBUG
+																// artificially inject some more delay so we can see it as it happens
+																// TODO REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS
+																//Thread.Sleep(250); 
+#endif
+					                                     	});
 
 				// update our stats
 				_largeObjectData.BytesHeldCount = 2*_volume.SizeInVoxels;

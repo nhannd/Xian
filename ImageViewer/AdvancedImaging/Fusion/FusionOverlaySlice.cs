@@ -72,6 +72,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 		}
 
+		public bool CheckIsLoaded(out float progress, out string message)
+		{
+			return _overlayDataReference.FusionOverlayData.CheckIsLoaded(out progress, out message);
+		}
+
 		protected byte[] OverlayPixelData
 		{
 			get

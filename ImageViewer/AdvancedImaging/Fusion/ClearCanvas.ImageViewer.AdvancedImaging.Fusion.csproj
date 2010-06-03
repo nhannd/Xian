@@ -43,6 +43,7 @@
     <Compile Include="FusionOverlayColorMapSpec.cs" />
     <Compile Include="FusionControlPanelComponent.cs" />
     <Compile Include="AlphaColorMap.cs" />
+    <Compile Include="AsynchronousLoaderCompositeGraphic.cs" />
     <Compile Include="FusionOverlaySlice.cs" />
     <Compile Include="FusionOverlaySliceReference.cs" />
     <Compile Include="FusionPresentationImage.cs" />
