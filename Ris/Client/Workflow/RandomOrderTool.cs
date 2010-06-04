@@ -117,7 +117,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private static PatientProfileSummary GetRandomPatient()
 		{
-			var queryString = RandomUtils.GetRandomAlphaChar().ToString();
+			var queryString = string.Format("{0}, {1}", RandomUtils.GetRandomAlphaChar(), RandomUtils.GetRandomAlphaChar());
 
 			PatientProfileSummary randomProfile = null;
 
@@ -125,7 +125,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				delegate(IRegistrationWorkflowService service)
 				{
 					// Get only 10 patients
-					var request = new TextQueryRequest { TextQuery = queryString, SpecificityThreshold = 10};
+					var request = new TextQueryRequest { TextQuery = queryString, Page = new SearchResultPage(0, 10)};
 					var response = service.PatientProfileTextQuery(request);
 					randomProfile = RandomUtils.ChooseRandom(response.Matches);
 				});
