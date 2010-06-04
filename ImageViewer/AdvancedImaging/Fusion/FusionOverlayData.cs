@@ -39,6 +39,7 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Volume.Mpr;
@@ -46,7 +47,7 @@ using VolumeData = ClearCanvas.ImageViewer.Volume.Mpr.Volume;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
-	public partial class FusionOverlayData : IDisposable, ILargeObjectContainer
+	public partial class FusionOverlayData : IDisposable, ILargeObjectContainer, IProgressGraphicProgressProvider
 	{
 		private readonly object _syncVolumeDataLock = new object();
 		private readonly object _syncLoaderLock = new object();
@@ -62,47 +63,38 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			_frames = frames.AsReadOnly();
 		}
 
-		public bool CheckIsLoaded(out float progress, out string message)
+		bool IProgressGraphicProgressProvider.IsRunning(out float progress, out string message)
 		{
-			bool isLoaded = _volume != null;
-			if (isLoaded)
-			{
-				progress = 1f;
-				message = string.Empty;
-			}
-			else
-			{
-				this.GetVolume(out progress, out message);
-			}
-			return isLoaded;
+			return !BeginLoad(out progress, out message);
 		}
 
-		private VolumeData GetVolume(out float progress, out string message)
+		public bool BeginLoad(out float progress, out string message)
 		{
 			// update the last access time
 			_largeObjectData.UpdateLastAccessTime();
 
-			// if the data is already available without blocking, return it immediately
+			// if the data is already available without blocking, return success immediately
 			VolumeData volume = _volume;
 			if (volume != null)
 			{
 				progress = 1f;
-				message = string.Empty;
-				return volume;
+				message = "Reticulating splines";
+				return true;
 			}
 
 			lock (_syncLoaderLock)
 			{
 				progress = 0;
-				message = string.Empty;
+				message = "Watering plants";
 				if (_volumeLoaderTask == null)
 				{
-					// if the data is already available without blocking, return it immediately
+					// if the data is available now, return success
 					volume = _volume;
 					if (volume != null)
 					{
 						progress = 1f;
-						return volume;
+						message = "Exterminating mites";
+						return true;
 					}
 
 					_volumeLoaderTask = new BackgroundTask(c => this.LoadVolume(c), false, null);
@@ -118,8 +110,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					}
 				}
 			}
-
-			return _volume;
+			return false;
 		}
 
 		private void _volumeLoaderTask_Terminated(object sender, BackgroundTaskTerminatedEventArgs e)
@@ -164,12 +155,12 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				else
 					_volume = VolumeData.Create(_frames, (n, count) =>
 					                                     	{
-																context.ReportProgress(new BackgroundTaskProgress(n, count, "Opposumating possums"));
+					                                     		context.ReportProgress(new BackgroundTaskProgress(n, count, "Opposumating possums"));
 
 #if DEBUG
-																// artificially inject some more delay so we can see it as it happens
-																// TODO REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS
-																//Thread.Sleep(250); 
+					                                     		// artificially inject some more delay so we can see it as it happens
+					                                     		// TODO REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS
+					                                     		Thread.Sleep(250);
 #endif
 					                                     	});
 

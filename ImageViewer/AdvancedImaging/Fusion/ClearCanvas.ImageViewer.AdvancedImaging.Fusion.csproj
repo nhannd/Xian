@@ -43,7 +43,7 @@
     <Compile Include="FusionOverlayColorMapSpec.cs" />
     <Compile Include="FusionControlPanelComponent.cs" />
     <Compile Include="AlphaColorMap.cs" />
-    <Compile Include="AsynchronousLoaderCompositeGraphic.cs" />
+    <Compile Include="FusionOverlayLoaderCompositeGraphic.cs" />
     <Compile Include="FusionOverlaySlice.cs" />
     <Compile Include="FusionOverlaySliceReference.cs" />
     <Compile Include="FusionPresentationImage.cs" />
@@ -56,6 +56,7 @@
     <Compile Include="Possum\DemoTheCountTool.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Possum\FusionTestControlTool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FusionOverlayDataReference.cs" />
     <Compile Include="FusionOverlayData.cs" />

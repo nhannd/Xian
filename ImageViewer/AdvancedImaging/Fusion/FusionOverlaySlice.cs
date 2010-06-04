@@ -32,11 +32,12 @@
 using System;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
-	public partial class FusionOverlaySlice : IDisposable, ILargeObjectContainer
+	public partial class FusionOverlaySlice : IDisposable, ILargeObjectContainer, IProgressGraphicProgressProvider
 	{
 		private readonly object _syncPixelDataLock = new object();
 		private IFrameReference _baseFrameReference;
@@ -72,9 +73,19 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 		}
 
-		public bool CheckIsLoaded(out float progress, out string message)
+		public FusionOverlayData OverlayData
 		{
-			return _overlayDataReference.FusionOverlayData.CheckIsLoaded(out progress, out message);
+			get { return _overlayDataReference.FusionOverlayData; }
+		}
+
+		bool IProgressGraphicProgressProvider.IsRunning(out float progress, out string message)
+		{
+			return !BeginLoad(out progress, out message);
+		}
+
+		public bool BeginLoad(out float progress, out string message)
+		{
+			return _overlayDataReference.FusionOverlayData.BeginLoad(out progress, out message);
 		}
 
 		protected byte[] OverlayPixelData

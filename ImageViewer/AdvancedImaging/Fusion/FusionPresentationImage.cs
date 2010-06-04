@@ -29,10 +29,10 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
@@ -43,7 +43,10 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		private const string _fusionOverlayLayerName = "Fusion";
 
 		[CloneIgnore]
-		private AsynchronousLoaderCompositeGraphic _loaderComposite;
+		private IFusionOverlaySliceReference _overlaySliceReference;
+
+		[CloneIgnore]
+		private FusionOverlayLoaderCompositeGraphic _loaderComposite;
 
 		[CloneIgnore]
 		private CompositeGraphic _fusionOverlayLayer;
@@ -60,7 +63,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		public FusionPresentationImage(IFrameReference baseFrame, IFusionOverlaySliceReference overlaySlice)
 			: base(baseFrame)
 		{
-			_loaderComposite = new AsynchronousLoaderCompositeGraphic(overlaySlice.FusionOverlaySlice);
+			_overlaySliceReference = overlaySlice;
 
 			Initialize();
 		}
@@ -73,6 +76,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		protected FusionPresentationImage(FusionPresentationImage source, ICloningContext context) : base(source, context)
 		{
 			context.CloneFields(source, this);
+
+			_overlaySliceReference = source._overlaySliceReference.Clone();
 		}
 
 		[OnCloneComplete]
@@ -83,7 +88,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 			if (_fusionOverlayLayer != null)
 			{
-				_loaderComposite = (AsynchronousLoaderCompositeGraphic)CollectionUtils.SelectFirst(_fusionOverlayLayer.Graphics, g => g is AsynchronousLoaderCompositeGraphic);
+				_loaderComposite = (FusionOverlayLoaderCompositeGraphic) CollectionUtils.SelectFirst(_fusionOverlayLayer.Graphics, g => g is FusionOverlayLoaderCompositeGraphic);
 				_colorBarGraphic = (ColorBarGraphic) CollectionUtils.SelectFirst(_fusionOverlayLayer.Graphics, g => g is ColorBarGraphic);
 			}
 
@@ -95,11 +100,17 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			if (_fusionOverlayLayer == null)
 			{
 				_fusionOverlayLayer = new CompositeGraphic {Name = _fusionOverlayLayerName};
-				_fusionOverlayLayer.Graphics.Add(_loaderComposite);
 
 				// insert the fusion graphics layer right after the base image graphic (both contain domain-level graphics)
 				base.CompositeImageGraphic.Graphics.Insert(base.CompositeImageGraphic.Graphics.IndexOf(this.ImageGraphic) + 1, _fusionOverlayLayer);
 			}
+
+			if (_loaderComposite == null)
+			{
+				_loaderComposite = new FusionOverlayLoaderCompositeGraphic(_overlaySliceReference.FusionOverlaySlice);
+				_fusionOverlayLayer.Graphics.Add(_loaderComposite);
+			}
+			_loaderComposite.OverlayImageGraphicChanged += OnLoaderCompositeOverlayImageGraphicChanged;
 
 			if (_colorBarGraphic == null)
 			{
@@ -124,9 +135,20 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			if (disposing)
 			{
-				_loaderComposite = null;
 				_colorBarGraphic = null;
 				_fusionOverlayLayer = null;
+
+				if (_overlaySliceReference != null)
+				{
+					_overlaySliceReference.Dispose();
+					_overlaySliceReference = null;
+				}
+
+				if (_loaderComposite != null)
+				{
+					_loaderComposite.OverlayImageGraphicChanged -= OnLoaderCompositeOverlayImageGraphicChanged;
+					_loaderComposite = null;
+				}
 
 				if (_voiLutManagerProxy != null)
 				{
@@ -142,6 +164,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 
 			base.Dispose(disposing);
+		}
+
+		public FusionOverlaySlice OverlaySlice
+		{
+			get { return _overlaySliceReference.FusionOverlaySlice; }
 		}
 
 		public FusionPresentationImageLayer ActiveLayer
@@ -165,6 +192,21 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		public override IPresentationImage CreateFreshCopy()
 		{
 			return new FusionPresentationImage(this.Frame, _loaderComposite.OverlaySlice) {PresentationState = this.PresentationState};
+		}
+
+		private void OnLoaderCompositeOverlayImageGraphicChanged(object sender, EventArgs e)
+		{
+			var overlayImageGraphic = _loaderComposite.OverlayImageGraphic;
+			if (overlayImageGraphic != null)
+			{
+				_voiLutManagerProxy.SetOverlayVoiLutManager(overlayImageGraphic.VoiLutManager);
+				_overlayColorMapSpec.SetOverlayColorMapManager(overlayImageGraphic.ColorMapManager);
+			}
+			else
+			{
+				_voiLutManagerProxy.SetOverlayVoiLutManager(null);
+				_overlayColorMapSpec.SetOverlayColorMapManager(null);
+			}
 		}
 
 		#region IVoiLutProvider Members
