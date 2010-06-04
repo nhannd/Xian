@@ -772,6 +772,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select.
+        /// </summary>
+        internal static string ColumnSelect {
+            get {
+                return ResourceManager.GetString("ColumnSelect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Severity.
         /// </summary>
         internal static string ColumnSeverity {
@@ -2023,6 +2032,42 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} is missing a valid mailing address..
+        /// </summary>
+        internal static string MessageResultRecipientAddressMissing {
+            get {
+                return ResourceManager.GetString("MessageResultRecipientAddressMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is missing a valid email..
+        /// </summary>
+        internal static string MessageResultRecipientEmailMissing {
+            get {
+                return ResourceManager.GetString("MessageResultRecipientEmailMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is missing a valid fax number, mailing address or email..
+        /// </summary>
+        internal static string MessageResultRecipientFaxAddressEmailMissing {
+            get {
+                return ResourceManager.GetString("MessageResultRecipientFaxAddressEmailMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is missing a valid fax number..
+        /// </summary>
+        internal static string MessageResultRecipientFaxNumberMissing {
+            get {
+                return ResourceManager.GetString("MessageResultRecipientFaxNumberMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No results were found using the specified criteria..
         /// </summary>
         internal static string MessageResultsNotFound {
@@ -2217,6 +2262,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string MessageWarningDuplicateCannedTextName {
             get {
                 return ResourceManager.GetString("MessageWarningDuplicateCannedTextName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following recipients have missing information.  The report could not be sent to the queue..
+        /// </summary>
+        internal static string MessageWarningInvalidResultRecipient {
+            get {
+                return ResourceManager.GetString("MessageWarningInvalidResultRecipient", resourceCulture);
             }
         }
         

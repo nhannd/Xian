@@ -1122,4 +1122,22 @@
   <data name="NodeWorklistSummary" xml:space="preserve">
     <value>Summary</value>
   </data>
+  <data name="ColumnSelect" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="MessageResultRecipientAddressMissing" xml:space="preserve">
+    <value>{0} is missing a valid mailing address.</value>
+  </data>
+  <data name="MessageResultRecipientEmailMissing" xml:space="preserve">
+    <value>{0} is missing a valid email.</value>
+  </data>
+  <data name="MessageResultRecipientFaxAddressEmailMissing" xml:space="preserve">
+    <value>{0} is missing a valid fax number, mailing address or email.</value>
+  </data>
+  <data name="MessageResultRecipientFaxNumberMissing" xml:space="preserve">
+    <value>{0} is missing a valid fax number.</value>
+  </data>
+  <data name="MessageWarningInvalidResultRecipient" xml:space="preserve">
+    <value>The following recipients have missing information.  The report could not be sent to the queue.</value>
+  </data>
 </root>

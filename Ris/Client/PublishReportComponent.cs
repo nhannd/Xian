@@ -139,12 +139,35 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		class ResultRecipientTable : Table<Checkable<ResultRecipientDetail>>
+		{
+			private readonly PublishReportComponent _owner;
+
+			public ResultRecipientTable(PublishReportComponent owner)
+			{
+				_owner = owner;
+
+				this.Columns.Add(new TableColumn<Checkable<ResultRecipientDetail>, bool>(SR.ColumnSelect,
+					checkable => checkable.IsChecked, OnRecipientChecked, 0.3f));
+				this.Columns.Add(new TableColumn<Checkable<ResultRecipientDetail>, string>(SR.ColumnPractitioner,
+					checkable => PersonNameFormat.Format(checkable.Item.Practitioner.Name)));
+				this.Columns.Add(new TableColumn<Checkable<ResultRecipientDetail>, string>(SR.ColumnContactPoint,
+					checkable => checkable.Item.ContactPoint.Name));
+			}
+
+			private void OnRecipientChecked(Checkable<ResultRecipientDetail> checkable, bool isChecked)
+			{
+				checkable.IsChecked = isChecked;
+				_owner.NotifyPropertyChanged("AcceptEnabled");
+			}
+		}
+		
 		private readonly EntityRef _patientProfileRef;
 		private readonly EntityRef _orderRef;
 		private readonly EntityRef _procedureRef;
 		private readonly EntityRef _reportRef;
 
-		private readonly Table<Checkable<ResultRecipientDetail>> _recipientsTable;
+		private readonly ResultRecipientTable _recipientsTable;
 		private readonly CrudActionModel _recipientsActionModel;
 		private Checkable<ResultRecipientDetail> _selectedRecipient;
 		private ExternalPractitionerLookupHandler _recipientLookupHandler;
@@ -170,24 +193,12 @@ namespace ClearCanvas.Ris.Client
 			Platform.CheckForNullReference(patientProfileRef, "patientProfileRef");
 			Platform.CheckForNullReference(orderRef, "orderRef");
 
-
 			_patientProfileRef = patientProfileRef;
 			_orderRef = orderRef;
 			_procedureRef = procedureRef;
 			_reportRef = reportRef;
 
-			_recipientsTable = new Table<Checkable<ResultRecipientDetail>>();
-			_recipientsTable.Columns.Add(new TableColumn<Checkable<ResultRecipientDetail>, bool>(
-				"Select",
-				checkable => checkable.IsChecked,
-				delegate(Checkable<ResultRecipientDetail> checkable, bool isChecked) { checkable.IsChecked = isChecked; NotifyPropertyChanged("AcceptEnabled"); },
-				0.3f));
-			_recipientsTable.Columns.Add(new TableColumn<Checkable<ResultRecipientDetail>, string>(
-				"Practitioner",
-				checkable => PersonNameFormat.Format(checkable.Item.Practitioner.Name)));
-			_recipientsTable.Columns.Add(new TableColumn<Checkable<ResultRecipientDetail>, string>(
-				"Contact Point",
-				checkable => checkable.Item.ContactPoint.Name));
+			_recipientsTable = new ResultRecipientTable(this);
 
 			_recipientsActionModel = new CrudActionModel(true, false, false);
 			_recipientsActionModel.Add.SetClickHandler(AddRecipient);
@@ -354,9 +365,8 @@ namespace ClearCanvas.Ris.Client
 			if (_recipientToAdd == null || _recipientContactPointToAdd == null)
 				return;
 
-			_recipientsTable.Items.Add(new Checkable<ResultRecipientDetail>(
-				new ResultRecipientDetail(_recipientToAdd, _recipientContactPointToAdd, new EnumValueInfo("ANY", null, null)),
-				true));
+			var newRecipient = new ResultRecipientDetail(_recipientToAdd, _recipientContactPointToAdd, new EnumValueInfo("ANY", null, null));
+			_recipientsTable.Items.Add(new Checkable<ResultRecipientDetail>(newRecipient, true));
 			NotifyPropertyChanged("AcceptEnabled");
 		}
 
@@ -377,32 +387,30 @@ namespace ClearCanvas.Ris.Client
 
 		public void SendReportToQueue()
 		{
-			string invalidDescription;
+			var checkedRecipients = CollectionUtils.Map<Checkable<ResultRecipientDetail>, ResultRecipientDetail>(
+				CollectionUtils.Select<Checkable<ResultRecipientDetail>>(this.Recipients.Items, checkableItem => checkableItem.IsChecked),
+				checkableItem => checkableItem.Item);
+
 			// Checks for invalid selections and prevents any from reaching the queue
-			if (HasInvalidSelections(out invalidDescription))
+			List<string> failedReasons;
+			if (ValidateResultRecipients(checkedRecipients, out failedReasons) == false)
 			{
-				this.Host.ShowMessageBox("The following recipients could not be sent to the fax queue:\n" + invalidDescription, MessageBoxActions.Ok);
+				failedReasons.Insert(0, SR.MessageWarningInvalidResultRecipient);
+				var reason = StringUtilities.Combine(failedReasons, Environment.NewLine);
+				this.Host.ShowMessageBox(reason, MessageBoxActions.Ok);
 				return;
 			}
 
 			try
 			{
+				var publishedRecipients = CollectionUtils.Map<ResultRecipientDetail, PublishRecipientDetail>(checkedRecipients,
+					recipient => new PublishRecipientDetail(recipient.Practitioner.PractitionerRef, recipient.ContactPoint.ContactPointRef));
+
 				Platform.GetService(
 					delegate(IReportingWorkflowService service)
 					{
-						var request = new SendReportToQueueRequest(this.ProcedureRef);
-						foreach (Checkable<ResultRecipientDetail> checkable in this.Recipients.Items)
-						{
-							if (!checkable.IsChecked)
-								continue;
-
-							var detail = checkable.Item;
-							request.Recipients.Add(new PublishRecipientDetail(detail.Practitioner.PractitionerRef, detail.ContactPoint.ContactPointRef));
-						}
-						if (request.Recipients.Count > 0)
-						{
-							service.SendReportToQueue(request);
-						}
+						var request = new SendReportToQueueRequest(this.ProcedureRef) { Recipients = publishedRecipients };
+						service.SendReportToQueue(request);
 					});
 
 				this.Exit(ApplicationComponentExitCode.Accepted);
@@ -415,63 +423,45 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
-		/// Checks for invalid selections in recipients list based on abscence of mail, fax, or (soon) email
+		/// Validate a list of recipients based on abscence of mail, fax, or email
 		/// </summary>
-		/// <param name="invalidFaxDescription"></param>
+		/// <param name="recipients"></param>
+		/// <param name="failedReasons"></param>
 		/// <returns></returns>
-		private bool HasInvalidSelections(out string invalidFaxDescription)
+		private static bool ValidateResultRecipients(IEnumerable<ResultRecipientDetail> recipients, out List<string> failedReasons)
 		{
-			var description = "";
-
-			CollectionUtils.ForEach(this.Recipients.Items,
-				delegate(Checkable<ResultRecipientDetail> checkable)
-				{
-					if (checkable.IsChecked && IsInvalidContactPoint(checkable.Item))
-					{
-						description += PersonNameFormat.Format(checkable.Item.Practitioner.Name) + "\n";
-					}
-				});
-			invalidFaxDescription = description;
-			return !string.IsNullOrEmpty(invalidFaxDescription);
-		}
-
-		/// <summary>
-		/// Checks for abscence of current fax, mail, or email properties
-		/// </summary>
-		/// <param name="resultRecipientDetail"></param>
-		/// <returns></returns>
-		private static bool IsInvalidContactPoint(ResultRecipientDetail resultRecipientDetail)
-		{
-			if (resultRecipientDetail == null)
-				return true;
-
-			// TO DO: Server DataContract should indicate whether not Preffered Comm Mode is valid
-			// Temporarily using comparison to resolve validity of contact point
-			switch (resultRecipientDetail.PreferredCommunicationMode.Code)
+			failedReasons = new List<string>();
+			foreach (var recipient in recipients)
 			{
-				case "FAX":
-					return resultRecipientDetail.ContactPoint.CurrentFaxNumber == null;
-				case "MAIL":
-					return resultRecipientDetail.ContactPoint.CurrentAddress == null;
-				case "EMAIL":
-					return resultRecipientDetail.ContactPoint.CurrentEmailAddress == null;
-				default:
-					return resultRecipientDetail.ContactPoint.CurrentFaxNumber == null && 
-						resultRecipientDetail.ContactPoint.CurrentAddress == null &&
-						resultRecipientDetail.ContactPoint.CurrentEmailAddress == null;
+				var formattedResultRecipient = string.Format("{0} ({1})", PersonNameFormat.Format(recipient.Practitioner.Name), recipient.ContactPoint.Name);
+
+				if (recipient.PreferredCommunicationMode.Code == "FAX" && recipient.ContactPoint.CurrentFaxNumber == null)
+					failedReasons.Add(string.Format(SR.MessageResultRecipientFaxNumberMissing, formattedResultRecipient));
+				else if (recipient.PreferredCommunicationMode.Code == "MAIL" && recipient.ContactPoint.CurrentAddress == null)
+					failedReasons.Add(string.Format(SR.MessageResultRecipientAddressMissing, formattedResultRecipient));
+				else if (recipient.PreferredCommunicationMode.Code == "EMAIL" && recipient.ContactPoint.CurrentEmailAddress == null)
+					failedReasons.Add(string.Format(SR.MessageResultRecipientEmailMissing, formattedResultRecipient));
+				else if (recipient.ContactPoint.CurrentFaxNumber == null &&
+						recipient.ContactPoint.CurrentAddress == null &&
+						recipient.ContactPoint.CurrentEmailAddress == null)
+					failedReasons.Add(string.Format(SR.MessageResultRecipientFaxAddressEmailMissing, formattedResultRecipient));
 			}
+
+			return failedReasons.Count == 0;
 		}
 
 		public void PrintLocal()
 		{
 			// add all recipients to queue
 			_localPrintQueue.Clear();
-			foreach (Checkable<ResultRecipientDetail> checkable in this.Recipients.Items)
+
+			var checkedRecipients = CollectionUtils.Map<Checkable<ResultRecipientDetail>, ResultRecipientDetail>(
+				CollectionUtils.Select<Checkable<ResultRecipientDetail>>(this.Recipients.Items, checkableItem => checkableItem.IsChecked),
+				checkableItem => checkableItem.Item);
+
+			foreach (var recipient in checkedRecipients)
 			{
-				if (checkable.IsChecked)
-				{
-					_localPrintQueue.Enqueue(checkable.Item);
-				}
+				_localPrintQueue.Enqueue(recipient);
 			}
 
 			// hook up the script completed event so that we print document when rendered
