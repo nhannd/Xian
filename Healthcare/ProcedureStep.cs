@@ -84,11 +84,11 @@ namespace ClearCanvas.Healthcare
 		{
 		}
 
-		/// <summary>
-		/// Constructor that assigns this step to a parent procedure.
-		/// </summary>
-		/// <param name="procedure"></param>
-		public ProcedureStep(Procedure procedure)
+    	/// <summary>
+    	/// Constructor that assigns this step to a parent procedure.
+    	/// </summary>
+    	/// <param name="procedure"></param>
+    	public ProcedureStep(Procedure procedure)
 		{
 			this._procedure = procedure;
 			procedure.ProcedureSteps.Add(this);
@@ -205,7 +205,10 @@ namespace ClearCanvas.Healthcare
             {
                 this.Discontinue();
                 ProcedureStep newStep = CreateScheduledCopy();
-                newStep.Schedule(this.Scheduling.StartTime, this.Scheduling.EndTime);
+
+				if (this.Scheduling != null)
+					newStep.Schedule(this.Scheduling.StartTime, this.Scheduling.EndTime);
+
                 newStep.Assign(performer);
                 return newStep;
             }
