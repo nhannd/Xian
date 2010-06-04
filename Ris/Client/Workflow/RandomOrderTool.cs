@@ -48,7 +48,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", Application.Common.AuthorityTokens.Development.CreateTestOrder)]
-
 	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
 	public class RandomOrderTool : Tool<IToolContext>
@@ -118,27 +117,17 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private static PatientProfileSummary GetRandomPatient()
 		{
-			var randomChar = RandomUtils.GetRandomAlphaChar();
+			var queryString = RandomUtils.GetRandomAlphaChar().ToString();
 
 			PatientProfileSummary randomProfile = null;
 
 			Platform.GetService(
 				delegate(IRegistrationWorkflowService service)
 				{
-					var request = new TextQueryRequest {TextQuery = randomChar.ToString()};
+					// Get only 10 patients
+					var request = new TextQueryRequest { TextQuery = queryString, SpecificityThreshold = 10};
 					var response = service.PatientProfileTextQuery(request);
-					if (!response.TooManyMatches)
-						randomProfile = RandomUtils.ChooseRandom(response.Matches);
-
-					if (randomProfile == null)
-					{
-						// Search for all male patient, slow but works
-						request.TextQuery = "Male Female Unknown";
-						response = service.PatientProfileTextQuery(request);
-						randomProfile = RandomUtils.ChooseRandom(response.Matches);
-						if (!response.TooManyMatches)
-							randomProfile = RandomUtils.ChooseRandom(response.Matches);
-					}
+					randomProfile = RandomUtils.ChooseRandom(response.Matches);
 				});
 
 			return randomProfile;
