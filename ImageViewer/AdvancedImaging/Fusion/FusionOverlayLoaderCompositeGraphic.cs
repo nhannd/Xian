@@ -53,6 +53,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		public FusionOverlayLoaderCompositeGraphic(FusionOverlayFrameData overlayFrameData)
 		{
 			_overlayFrameDataReference = overlayFrameData.CreateTransientReference();
+			_overlayFrameDataReference.FusionOverlayFrameData.Unloaded += HandleOverlayFrameDataUnloaded;
 		}
 
 		/// <summary>
@@ -65,6 +66,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			context.CloneFields(source, this);
 
 			_overlayFrameDataReference = source._overlayFrameDataReference.Clone();
+			_overlayFrameDataReference.FusionOverlayFrameData.Unloaded += HandleOverlayFrameDataUnloaded;
 		}
 
 		protected override void Dispose(bool disposing)
@@ -75,6 +77,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 				if (_overlayFrameDataReference != null)
 				{
+					_overlayFrameDataReference.FusionOverlayFrameData.Unloaded -= HandleOverlayFrameDataUnloaded;
 					_overlayFrameDataReference.Dispose();
 					_overlayFrameDataReference = null;
 				}
@@ -142,6 +145,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				}
 			}
 			base.OnDrawing();
+		}
+
+		private void HandleOverlayFrameDataUnloaded(object sender, EventArgs e)
+		{
+			OverlayImageGraphic = null;
 		}
 	}
 }

@@ -49,10 +49,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 	public partial class FusionOverlayData : IDisposable, ILargeObjectContainer, IProgressGraphicProgressProvider
 	{
 		private readonly object _syncVolumeDataLock = new object();
-		private readonly object _syncLoaderLock = new object();
 		private IList<IFrameReference> _frames;
 		private VolumeData _volume;
-		private BackgroundTask _volumeLoaderTask;
 
 		public FusionOverlayData(IEnumerable<Frame> overlaySource)
 		{
@@ -62,63 +60,25 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			_frames = frames.AsReadOnly();
 		}
 
-		bool IProgressGraphicProgressProvider.IsRunning(out float progress, out string message)
+		protected virtual void Dispose(bool disposing)
 		{
-			return !BeginLoad(out progress, out message);
-		}
-
-		public bool BeginLoad(out float progress, out string message)
-		{
-			// update the last access time
-			_largeObjectData.UpdateLastAccessTime();
-
-			// if the data is already available without blocking, return success immediately
-			VolumeData volume = _volume;
-			if (volume != null)
+			if (disposing)
 			{
-				progress = 1f;
-				message = "Reticulating splines";
-				return true;
-			}
+				// this will unload _volume
+				this.UnloadVolume();
 
-			lock (_syncLoaderLock)
-			{
-				progress = 0;
-				message = "Watering plants";
-				if (_volumeLoaderTask == null)
+				if (_volumeLoaderTask != null)
 				{
-					// if the data is available now, return success
-					volume = _volume;
-					if (volume != null)
-					{
-						progress = 1f;
-						message = "Exterminating mites";
-						return true;
-					}
-
-					_volumeLoaderTask = new BackgroundTask(c => this.LoadVolume(c), false, null);
-					_volumeLoaderTask.Run();
-					_volumeLoaderTask.Terminated += _volumeLoaderTask_Terminated;
+					_volumeLoaderTask.RequestCancel();
+					_volumeLoaderTask = null;
 				}
-				else
+
+				if (_frames != null)
 				{
-					if (_volumeLoaderTask.LastBackgroundTaskProgress != null)
-					{
-						message = _volumeLoaderTask.LastBackgroundTaskProgress.Progress.Message;
-						progress = _volumeLoaderTask.LastBackgroundTaskProgress.Progress.Percent/100f;
-					}
+					foreach (IFrameReference frame in _frames)
+						frame.Dispose();
+					_frames = null;
 				}
-			}
-			return false;
-		}
-
-		private void _volumeLoaderTask_Terminated(object sender, BackgroundTaskTerminatedEventArgs e)
-		{
-			if (_volumeLoaderTask != null)
-			{
-				_volumeLoaderTask.Terminated -= _volumeLoaderTask_Terminated;
-				_volumeLoaderTask.Dispose();
-				_volumeLoaderTask = null;
 			}
 		}
 
@@ -152,16 +112,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				if (context == null)
 					_volume = VolumeData.Create(_frames);
 				else
-					_volume = VolumeData.Create(_frames, (n, count) =>
-					                                     	{
-					                                     		context.ReportProgress(new BackgroundTaskProgress(n, count, "Opposumating possums"));
-
-#if DEBUG
-					                                     		// artificially inject some more delay so we can see it as it happens
-					                                     		// TODO REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS
-					                                     		Thread.Sleep(100);
-#endif
-					                                     	});
+					_volume = VolumeData.Create(_frames, (n, count) => context.ReportProgress(new BackgroundTaskProgress(n, count, SR.MessageFusionInProgress)));
 
 				// update our stats
 				_largeObjectData.BytesHeldCount = 2*_volume.SizeInVoxels;
@@ -197,6 +148,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				// unregister with memory manager
 				MemoryManager.Remove(this);
 			}
+
+			this.OnUnloaded();
 		}
 
 		public GrayscaleImageGraphic CreateOverlayImageGraphic(Frame baseFrame)
@@ -281,22 +234,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 		}
 
-		protected virtual void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				// this will unload _volume
-				this.UnloadVolume();
-
-				if (_frames != null)
-				{
-					foreach (IFrameReference frame in _frames)
-						frame.Dispose();
-					_frames = null;
-				}
-			}
-		}
-
 		#region Memory Management Support
 
 		private readonly LargeObjectContainerData _largeObjectData = new LargeObjectContainerData(Guid.NewGuid());
@@ -344,6 +281,112 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		void ILargeObjectContainer.Unload()
 		{
 			this.UnloadVolume();
+		}
+
+		#endregion
+
+		#region Asynchronous Loading Support
+
+		private readonly object _syncLoaderLock = new object();
+		private event EventHandler _volumeUnloaded;
+		private BackgroundTask _volumeLoaderTask;
+
+		public event EventHandler Unloaded
+		{
+			add { _volumeUnloaded += value; }
+			remove { _volumeUnloaded -= value; }
+		}
+
+		protected virtual void OnUnloaded()
+		{
+			EventsHelper.Fire(_volumeUnloaded, this, EventArgs.Empty);
+		}
+
+		/// <summary>
+		/// Attempts to start loading the overlay data asynchronously, if not already loaded.
+		/// </summary>
+		/// <param name="progress">A value between 0 and 1 indicating the progress of the asynchronous loading operation.</param>
+		/// <param name="message">A string message detailing the progress of the asynchronous loading operation.</param>
+		/// <returns></returns>
+		public bool BeginLoad(out float progress, out string message)
+		{
+			// update the last access time
+			_largeObjectData.UpdateLastAccessTime();
+
+			// if the data is already available without blocking, return success immediately
+			VolumeData volume = _volume;
+			if (volume != null)
+			{
+				message = SR.MessageFusionComplete;
+				progress = 1f;
+				return true;
+			}
+
+			lock (_syncLoaderLock)
+			{
+				message = SR.MessageFusionInProgress;
+				progress = 0;
+				if (_volumeLoaderTask == null)
+				{
+					// if the data is available now, return success
+					volume = _volume;
+					if (volume != null)
+					{
+						message = SR.MessageFusionComplete;
+						progress = 1f;
+						return true;
+					}
+
+					_volumeLoaderTask = new BackgroundTask(c => this.LoadVolume(c), false, null);
+					_volumeLoaderTask.Run();
+					_volumeLoaderTask.Terminated += OnVolumeLoaderTaskTerminated;
+				}
+				else
+				{
+					if (_volumeLoaderTask.LastBackgroundTaskProgress != null)
+					{
+						message = _volumeLoaderTask.LastBackgroundTaskProgress.Progress.Message;
+						progress = _volumeLoaderTask.LastBackgroundTaskProgress.Progress.Percent/100f;
+					}
+				}
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Synchronously loads the overlay data.
+		/// </summary>
+		public void Load()
+		{
+			this.LoadVolume(null);
+		}
+
+		/// <summary>
+		/// Synchronously unloads the overlay data.
+		/// </summary>
+		public void Unload()
+		{
+			this.UnloadVolume();
+		}
+
+		private void OnVolumeLoaderTaskTerminated(object sender, BackgroundTaskTerminatedEventArgs e)
+		{
+			BackgroundTask volumeLoaderTask = sender as BackgroundTask;
+			if (volumeLoaderTask != null)
+			{
+				volumeLoaderTask.Terminated -= OnVolumeLoaderTaskTerminated;
+				volumeLoaderTask.Dispose();
+			}
+			_volumeLoaderTask = null;
+		}
+
+		#endregion
+
+		#region IProgressGraphicProgressProvider Members
+
+		bool IProgressGraphicProgressProvider.IsRunning(out float progress, out string message)
+		{
+			return !BeginLoad(out progress, out message);
 		}
 
 		#endregion

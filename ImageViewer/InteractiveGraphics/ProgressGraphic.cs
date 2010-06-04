@@ -44,6 +44,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private BackgroundTask _updateTask;
 
 		private readonly bool _autoClose;
+		private int _animationTick = 100;
 
 		public ProgressGraphic(IProgressGraphicProgressProvider progressProvider, bool autoClose, ProgressBarGraphicStyle progressBarStyle)
 		{
@@ -69,6 +70,17 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 
 			base.Dispose(disposing);
+		}
+
+		public int AnimationTick
+		{
+			get { return _animationTick; }
+			set { _animationTick = value; }
+		}
+
+		public bool AutoClose
+		{
+			get { return _autoClose; }
 		}
 
 		public void Close()
@@ -136,7 +148,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				                             	}, box);
 				if (context.CancelRequested || !box.Value)
 					break;
-				Thread.Sleep(75);
+				Thread.Sleep(_animationTick);
 			}
 		}
 

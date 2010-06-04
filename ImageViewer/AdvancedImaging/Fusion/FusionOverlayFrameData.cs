@@ -51,6 +51,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			_baseFrameReference = baseFrame;
 			_overlayDataReference = overlayData;
+			_overlayDataReference.FusionOverlayData.Unloaded += HandleOverlayDataUnloaded;
 		}
 
 		protected virtual void Dispose(bool disposing)
@@ -65,6 +66,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 				if (_overlayDataReference != null)
 				{
+					_overlayDataReference.FusionOverlayData.Unloaded -= HandleOverlayDataUnloaded;
 					_overlayDataReference.Dispose();
 					_overlayDataReference = null;
 				}
@@ -74,16 +76,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		public FusionOverlayData OverlayData
 		{
 			get { return _overlayDataReference.FusionOverlayData; }
-		}
-
-		bool IProgressGraphicProgressProvider.IsRunning(out float progress, out string message)
-		{
-			return !BeginLoad(out progress, out message);
-		}
-
-		public bool BeginLoad(out float progress, out string message)
-		{
-			return _overlayDataReference.FusionOverlayData.BeginLoad(out progress, out message);
 		}
 
 		protected byte[] OverlayPixelData
@@ -145,6 +137,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				// unregister with memory manager
 				MemoryManager.Remove(this);
 			}
+			this.OnUnloaded();
 		}
 
 		public GrayscaleImageGraphic CreateImageGraphic()
@@ -152,6 +145,54 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			this.LoadPixelData();
 			return new FusionOverlayImageGraphic(this);
 		}
+
+		private void HandleOverlayDataUnloaded(object sender, EventArgs e)
+		{
+			this.OnUnloaded();
+		}
+
+		#region IProgressGraphicProgressProvider Members
+
+		bool IProgressGraphicProgressProvider.IsRunning(out float progress, out string message)
+		{
+			return !BeginLoad(out progress, out message);
+		}
+
+		#endregion
+
+		#region Asynchronous Loading Support
+
+		private event EventHandler _volumeUnloaded;
+
+		public event EventHandler Unloaded
+		{
+			add { _volumeUnloaded += value; }
+			remove { _volumeUnloaded -= value; }
+		}
+
+		protected virtual void OnUnloaded()
+		{
+			EventsHelper.Fire(_volumeUnloaded, this, EventArgs.Empty);
+		}
+
+		public bool BeginLoad(out float progress, out string message)
+		{
+			// LoadPixelData doesn't take very long if the overlay data is already loaded, so we won't bother asynchronously loading that
+			return _overlayDataReference.FusionOverlayData.BeginLoad(out progress, out message);
+		}
+
+		public void Load()
+		{
+			_overlayDataReference.FusionOverlayData.Load();
+			this.LoadPixelData();
+		}
+
+		public void Unload()
+		{
+			this.UnloadPixelData();
+		}
+
+		#endregion
 
 		#region Memory Management Support
 

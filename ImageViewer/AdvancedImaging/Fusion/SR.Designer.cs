@@ -106,6 +106,24 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fusion Complete.
+        /// </summary>
+        internal static string MessageFusionComplete {
+            get {
+                return ResourceManager.GetString("MessageFusionComplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fusing Images....
+        /// </summary>
+        internal static string MessageFusionInProgress {
+            get {
+                return ResourceManager.GetString("MessageFusionInProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fusion.
         /// </summary>
         internal static string TitleFusion {

@@ -132,6 +132,12 @@
   <data name="MenuFusion" xml:space="preserve">
     <value>&amp;Fusion</value>
   </data>
+  <data name="MessageFusionComplete" xml:space="preserve">
+    <value>Fusion Complete</value>
+  </data>
+  <data name="MessageFusionInProgress" xml:space="preserve">
+    <value>Fusing Images...</value>
+  </data>
   <data name="TitleFusion" xml:space="preserve">
     <value>Fusion</value>
   </data>
