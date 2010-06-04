@@ -562,10 +562,10 @@
     <value>Department Name and Facility</value>
   </data>
   <data name="MessageValidateOrderPerformingDepartments" xml:space="preserve">
-    <value />
+    <value>All procedures must have the same performing departments.</value>
   </data>
   <data name="MessageValidateOrderPerformingFacilities" xml:space="preserve">
-    <value />
+    <value>All procedures must have the same performing facility.</value>
   </data>
   <data name="MessageValidateWorklistProcedureTypeAndGroupFilters" xml:space="preserve">
     <value>Procedure type and procedure type group cannot both be used as worklist filters.  Please make sure only one is used.</value>

@@ -31,7 +31,9 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core.Modelling;
 using ClearCanvas.Workflow;
 using Iesi.Collections.Generic;
 
@@ -40,6 +42,7 @@ namespace ClearCanvas.Healthcare
 	/// <summary>
 	/// Procedure entity
 	/// </summary>
+	[ValidationRules("GetValidationRules")]
 	public partial class Procedure
 	{
 		public Procedure(ProcedureType type)
@@ -510,5 +513,23 @@ namespace ClearCanvas.Healthcare
 
 		#endregion
 
+		private static IValidationRuleSet GetValidationRules()
+		{
+			var samePerformingFacilityRule = new ValidationRule<Procedure>(
+				delegate(Procedure procedure)
+				{
+					var hasSameFacility = CollectionUtils.TrueForAll(procedure.Order.Procedures, p => Equals(p.PerformingFacility, procedure.PerformingFacility));
+					return new TestResult(hasSameFacility, SR.MessageValidateOrderPerformingFacilities);
+				});
+
+			var samePerformingDepartmentRule = new ValidationRule<Procedure>(
+				delegate(Procedure procedure)
+				{
+					var hasSameDepartment = CollectionUtils.TrueForAll(procedure.Order.Procedures, p => Equals(p.PerformingDepartment, procedure.PerformingDepartment));
+					return new TestResult(hasSameDepartment, SR.MessageValidateOrderPerformingDepartments);
+				});
+
+			return new ValidationRuleSet(new[] { samePerformingFacilityRule, samePerformingDepartmentRule });
+		}
 	}
 }
