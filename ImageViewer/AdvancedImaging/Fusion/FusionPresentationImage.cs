@@ -31,16 +31,20 @@
 
 using System;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.Iod;
+using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
 	[Cloneable]
-	public class FusionPresentationImage : DicomGrayscalePresentationImage, IVoiLutProvider, IImageSopProvider
+	public class FusionPresentationImage : BasicPresentationImage, IImageSopProvider
 	{
 		private const string _fusionOverlayLayerName = "Fusion";
+
+		[CloneIgnore]
+		private IFrameReference _baseFrameReference;
 
 		[CloneIgnore]
 		private IFusionOverlayFrameDataReference _overlayFrameDataReference;
@@ -54,15 +58,19 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		[CloneIgnore]
 		private ColorBarGraphic _colorBarGraphic;
 
-		private FusionVoiLutManagerProxy _voiLutManagerProxy;
 		private FusionOverlayColorMapSpec _overlayColorMapSpec;
 
 		public FusionPresentationImage(Frame baseFrame, FusionOverlayFrameData overlayData)
 			: this(baseFrame.CreateTransientReference(), overlayData.CreateTransientReference()) {}
 
 		public FusionPresentationImage(IFrameReference baseFrame, IFusionOverlayFrameDataReference overlayFrameData)
-			: base(baseFrame)
+			: base(Create(baseFrame),
+			       baseFrame.Frame.NormalizedPixelSpacing.Column,
+			       baseFrame.Frame.NormalizedPixelSpacing.Row,
+			       baseFrame.Frame.PixelAspectRatio.Column,
+			       baseFrame.Frame.PixelAspectRatio.Row)
 		{
+			_baseFrameReference = baseFrame;
 			_overlayFrameDataReference = overlayFrameData;
 
 			Initialize();
@@ -77,6 +85,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			context.CloneFields(source, this);
 
+			_baseFrameReference = source._baseFrameReference.Clone();
 			_overlayFrameDataReference = source._overlayFrameDataReference.Clone();
 		}
 
@@ -118,12 +127,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				_fusionOverlayLayer.Graphics.Add(_colorBarGraphic);
 			}
 
-			if (_voiLutManagerProxy == null)
-			{
-				_voiLutManagerProxy = new FusionVoiLutManagerProxy();
-			}
-			_voiLutManagerProxy.SetBaseVoiLutManager(this.ImageGraphic.VoiLutManager);
-
 			if (_overlayColorMapSpec == null)
 			{
 				_overlayColorMapSpec = new FusionOverlayColorMapSpec();
@@ -138,6 +141,12 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				_colorBarGraphic = null;
 				_fusionOverlayLayer = null;
 
+				if (_baseFrameReference != null)
+				{
+					_baseFrameReference.Dispose();
+					_baseFrameReference = null;
+				}
+
 				if (_overlayFrameDataReference != null)
 				{
 					_overlayFrameDataReference.Dispose();
@@ -148,12 +157,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				{
 					_loaderComposite.OverlayImageGraphicChanged -= OnLoaderCompositeOverlayImageGraphicChanged;
 					_loaderComposite = null;
-				}
-
-				if (_voiLutManagerProxy != null)
-				{
-					_voiLutManagerProxy.Dispose();
-					_voiLutManagerProxy = null;
 				}
 
 				if (_overlayColorMapSpec != null)
@@ -171,10 +174,19 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			get { return _overlayFrameDataReference.FusionOverlayFrameData; }
 		}
 
+		/// <summary>
+		/// Gets the <see cref="GrayscaleImageGraphic"/> associated with this <see cref="GrayscalePresentationImage"/>.
+		/// </summary>
+		public new GrayscaleImageGraphic ImageGraphic
+		{
+			get { return (GrayscaleImageGraphic) base.ImageGraphic; }
+		}
+
+		[Obsolete("See JY")]
 		public FusionPresentationImageLayer ActiveLayer
 		{
-			get { return _voiLutManagerProxy.ActiveLayer; }
-			set { _voiLutManagerProxy.ActiveLayer = value; }
+			get { return FusionPresentationImageLayer.Base; }
+			set { }
 		}
 
 		public float OverlayOpacity
@@ -194,26 +206,85 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			return new FusionPresentationImage(this.Frame, _loaderComposite.OverlayFrameData) {PresentationState = this.PresentationState};
 		}
 
+		/// <summary>
+		/// Creates the <see cref="IAnnotationLayout"/> for this image.
+		/// </summary>
+		/// <returns></returns>
+		protected override IAnnotationLayout CreateAnnotationLayout()
+		{
+			return base.CreateAnnotationLayout();
+			//return DicomAnnotationLayoutFactory.CreateLayout(this);
+		}
+
+		/// <summary>
+		/// Returns the Instance Number as a string.
+		/// </summary>
+		/// <returns>The Instance Number as a string.</returns>
+		public override string ToString()
+		{
+			return Frame.ParentImageSop.InstanceNumber.ToString();
+		}
+
 		private void OnLoaderCompositeOverlayImageGraphicChanged(object sender, EventArgs e)
 		{
 			var overlayImageGraphic = _loaderComposite.OverlayImageGraphic;
 			if (overlayImageGraphic != null)
 			{
-				_voiLutManagerProxy.SetOverlayVoiLutManager(overlayImageGraphic.VoiLutManager);
 				_overlayColorMapSpec.SetOverlayColorMapManager(overlayImageGraphic.ColorMapManager);
 			}
 			else
 			{
-				_voiLutManagerProxy.SetOverlayVoiLutManager(null);
 				_overlayColorMapSpec.SetOverlayColorMapManager(null);
 			}
 		}
 
-		#region IVoiLutProvider Members
+		#region IImageSopProvider members
 
-		IVoiLutManager IVoiLutProvider.VoiLutManager
+		/// <summary>
+		/// Gets this presentation image's associated <see cref="ImageSop"/>.
+		/// </summary>
+		/// <remarks>
+		/// Use <see cref="ImageSop"/> to access DICOM tags.
+		/// </remarks>
+		public ImageSop ImageSop
 		{
-			get { return _voiLutManagerProxy; }
+			get { return Frame.ParentImageSop; }
+		}
+
+		/// <summary>
+		/// Gets this presentation image's associated <see cref="Frame"/>.
+		/// </summary>
+		public Frame Frame
+		{
+			get { return _baseFrameReference.Frame; }
+		}
+
+		#endregion
+
+		#region ISopProvider Members
+
+		Sop ISopProvider.Sop
+		{
+			get { return ImageSop; }
+		}
+
+		#endregion
+
+		#region Private Helpers
+
+		private static GrayscaleImageGraphic Create(IImageSopProvider frameReference)
+		{
+			return new GrayscaleImageGraphic(
+				frameReference.Frame.Rows,
+				frameReference.Frame.Columns,
+				frameReference.Frame.BitsAllocated,
+				frameReference.Frame.BitsStored,
+				frameReference.Frame.HighBit,
+				frameReference.Frame.PixelRepresentation != 0 ? true : false,
+				frameReference.Frame.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ? true : false,
+				frameReference.Frame.RescaleSlope,
+				frameReference.Frame.RescaleIntercept,
+				frameReference.Frame.GetNormalizedPixelData);
 		}
 
 		#endregion
