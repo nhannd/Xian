@@ -88,10 +88,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Shreds", ".
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom", "..\..\Dicom\ClearCanvas.Dicom.csproj", "{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Healthcare.Owls", "..\..\Healthcare\Owls\ClearCanvas.Healthcare.Owls.csproj", "{EEB7F9BB-813F-43D9-A48C-AA3211DC48FF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Healthcare.Owls.Hibernate", "..\..\Healthcare\Owls\Hibernate\ClearCanvas.Healthcare.Owls.Hibernate.csproj", "{D04B9037-5363-426E-9342-F1B7853740DA}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -182,14 +178,6 @@ Global
 		{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EEB7F9BB-813F-43D9-A48C-AA3211DC48FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EEB7F9BB-813F-43D9-A48C-AA3211DC48FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EEB7F9BB-813F-43D9-A48C-AA3211DC48FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EEB7F9BB-813F-43D9-A48C-AA3211DC48FF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D04B9037-5363-426E-9342-F1B7853740DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D04B9037-5363-426E-9342-F1B7853740DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D04B9037-5363-426E-9342-F1B7853740DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D04B9037-5363-426E-9342-F1B7853740DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
