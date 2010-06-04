@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
@@ -37,19 +38,16 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
-	public partial class FusionOverlaySlice : IDisposable, ILargeObjectContainer, IProgressGraphicProgressProvider
+	public partial class FusionOverlayFrameData : IDisposable, ILargeObjectContainer, IProgressGraphicProgressProvider
 	{
 		private readonly object _syncPixelDataLock = new object();
 		private IFrameReference _baseFrameReference;
 		private IFusionOverlayDataReference _overlayDataReference;
 
-		private FusionOverlayData.OverlaySlice _overlaySlice;
+		private FusionOverlayData.OverlayFrameParams _overlayFrameParams;
 		private byte[] _overlayPixelData;
 
-		public FusionOverlaySlice(Frame baseFrame, FusionOverlayData overlayData)
-			: this(baseFrame.CreateTransientReference(), overlayData.CreateTransientReference()) {}
-
-		public FusionOverlaySlice(IFrameReference baseFrame, IFusionOverlayDataReference overlayData)
+		internal FusionOverlayFrameData(IFrameReference baseFrame, IFusionOverlayDataReference overlayData)
 		{
 			_baseFrameReference = baseFrame;
 			_overlayDataReference = overlayData;
@@ -115,7 +113,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					return _overlayPixelData;
 
 				// load the pixel data
-				_overlayPixelData = _overlayDataReference.FusionOverlayData.GetOverlay(_baseFrameReference.Frame, out _overlaySlice);
+				_overlayPixelData = _overlayDataReference.FusionOverlayData.GetOverlay(_baseFrameReference.Frame, out _overlayFrameParams);
 
 				// update our stats
 				_largeObjectData.BytesHeldCount = _overlayPixelData.Length;
@@ -152,7 +150,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		public GrayscaleImageGraphic CreateImageGraphic()
 		{
 			this.LoadPixelData();
-			return _overlaySlice.CreateImageGraphic(() => this.OverlayPixelData);
+			return new FusionOverlayImageGraphic(this);
 		}
 
 		#region Memory Management Support
@@ -202,6 +200,79 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		void ILargeObjectContainer.Unload()
 		{
 			this.UnloadPixelData();
+		}
+
+		#endregion
+
+		#region FusionOverlayImageGraphic Class
+
+		private byte[] GetPixelData()
+		{
+			return this.OverlayPixelData;
+		}
+
+		[Cloneable]
+		private class FusionOverlayImageGraphic : GrayscaleImageGraphic
+		{
+			[CloneIgnore]
+			private IFusionOverlayFrameDataReference _overlayFrameData;
+
+			private bool _firstDraw;
+
+			public FusionOverlayImageGraphic(FusionOverlayFrameData fusionOverlayFrameData)
+				: base(fusionOverlayFrameData._overlayFrameParams.Rows, fusionOverlayFrameData._overlayFrameParams.Columns,
+				       fusionOverlayFrameData._overlayFrameParams.BitsAllocated, fusionOverlayFrameData._overlayFrameParams.BitsStored, fusionOverlayFrameData._overlayFrameParams.HighBit,
+				       fusionOverlayFrameData._overlayFrameParams.IsSigned, fusionOverlayFrameData._overlayFrameParams.IsInverted,
+				       fusionOverlayFrameData._overlayFrameParams.RescaleSlope, fusionOverlayFrameData._overlayFrameParams.RescaleIntercept,
+				       fusionOverlayFrameData.GetPixelData)
+			{
+				// this image graphic needs to keep a transient reference on the slice, otherwise it could get disposed before we do!
+				_overlayFrameData = fusionOverlayFrameData.CreateTransientReference();
+				_firstDraw = true;
+			}
+
+			/// <summary>
+			/// Cloning constructor.
+			/// </summary>
+			/// <param name="source">The source object from which to clone.</param>
+			/// <param name="context">The cloning context object.</param>
+			protected FusionOverlayImageGraphic(FusionOverlayImageGraphic source, ICloningContext context) : base(source, context)
+			{
+				context.CloneFields(source, this);
+
+				_overlayFrameData = source._overlayFrameData.Clone();
+			}
+
+			protected override void Dispose(bool disposing)
+			{
+				if (disposing)
+				{
+					if (_overlayFrameData != null)
+					{
+						_overlayFrameData.Dispose();
+						_overlayFrameData = null;
+					}
+				}
+
+				base.Dispose(disposing);
+			}
+
+			public override void OnDrawing()
+			{
+				if (_firstDraw)
+				{
+					var spatialTransform = this.SpatialTransform;
+					if (spatialTransform != null)
+					{
+						var overlayFrameParams = _overlayFrameData.FusionOverlayFrameData._overlayFrameParams;
+						spatialTransform.Scale = overlayFrameParams.CoregistrationScale;
+						spatialTransform.TranslationX = overlayFrameParams.CoregistrationOffsetX;
+						spatialTransform.TranslationY = overlayFrameParams.CoregistrationOffsetY;
+					}
+					_firstDraw = false;
+				}
+				base.OnDrawing();
+			}
 		}
 
 		#endregion

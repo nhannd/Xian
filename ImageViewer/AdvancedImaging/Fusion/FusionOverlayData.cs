@@ -38,7 +38,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -160,7 +159,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 #if DEBUG
 					                                     		// artificially inject some more delay so we can see it as it happens
 					                                     		// TODO REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS
-					                                     		Thread.Sleep(250);
+					                                     		Thread.Sleep(100);
 #endif
 					                                     	});
 
@@ -200,15 +199,28 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 		}
 
-		[Obsolete]
-		public GrayscaleImageGraphic GetOverlay(Frame baseFrame)
+		public GrayscaleImageGraphic CreateOverlayImageGraphic(Frame baseFrame)
 		{
-			OverlaySlice overlayFrame;
-			byte[] pixelData = GetOverlay(baseFrame, out overlayFrame);
-			return overlayFrame.CreateImageGraphic(() => pixelData);
+			OverlayFrameParams overlayFrameParams;
+			byte[] pixelData = GetOverlay(baseFrame, out overlayFrameParams);
+			var imageGraphic = new GrayscaleImageGraphic(
+				overlayFrameParams.Rows, overlayFrameParams.Columns,
+				overlayFrameParams.BitsAllocated, overlayFrameParams.BitsStored, overlayFrameParams.HighBit,
+				overlayFrameParams.IsSigned, overlayFrameParams.IsInverted,
+				overlayFrameParams.RescaleSlope, overlayFrameParams.RescaleIntercept,
+				pixelData);
+			imageGraphic.SpatialTransform.Scale = overlayFrameParams.CoregistrationScale;
+			imageGraphic.SpatialTransform.TranslationX = overlayFrameParams.CoregistrationOffsetX;
+			imageGraphic.SpatialTransform.TranslationY = overlayFrameParams.CoregistrationOffsetY;
+			return imageGraphic;
 		}
 
-		public byte[] GetOverlay(Frame baseFrame, out OverlaySlice overlaySlice)
+		public FusionOverlayFrameData CreateOverlaySlice(Frame baseFrame)
+		{
+			return new FusionOverlayFrameData(baseFrame.CreateTransientReference(), this.CreateTransientReference());
+		}
+
+		protected internal byte[] GetOverlay(Frame baseFrame, out OverlayFrameParams overlayFrameParams)
 		{
 			var volume = this.Volume;
 
@@ -255,7 +267,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 						Platform.CheckTrue(FloatComparer.AreEqual(scale, scaleY), "Computed ScaleX != ScaleY");
 						Platform.CheckTrue(offset.Z < 0.5f, "Compute OffsetZ != 0");
 
-						overlaySlice = new OverlaySlice(
+						overlayFrameParams = new OverlayFrameParams(
 							overlayFrame.Rows, overlayFrame.Columns,
 							overlayFrame.BitsAllocated, overlayFrame.BitsStored,
 							overlayFrame.HighBit, overlayFrame.PixelRepresentation != 0 ? true : false,
@@ -336,48 +348,34 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		#endregion
 
-		#region OverlaySlice Class
+		#region OverlayFrameParams Class
 
-		public class OverlaySlice
+		protected internal class OverlayFrameParams
 		{
-			private readonly int _rows, _columns;
-			private readonly int _bitsAllocated, _bitsStored, _highBit;
-			private readonly bool _isSigned, _isInverted;
-			private readonly double _rescaleSlope, _rescaleIntercept;
-			private readonly float _coregistrationScale, _coregistrationOffsetX, _coregistrationOffsetY;
+			public readonly int Rows, Columns;
+			public readonly int BitsAllocated, BitsStored, HighBit;
+			public readonly bool IsSigned, IsInverted;
+			public readonly double RescaleSlope, RescaleIntercept;
+			public readonly float CoregistrationScale, CoregistrationOffsetX, CoregistrationOffsetY;
 
-			internal OverlaySlice(int rows, int columns,
-			                      int bitsAllocated, int bitsStored, int highBit,
-			                      bool isSigned, bool isInverted,
-			                      double rescaleSlope, double rescaleIntercept,
-			                      float scale, float offsetX, float offsetY)
+			internal OverlayFrameParams(int rows, int columns,
+			                            int bitsAllocated, int bitsStored, int highBit,
+			                            bool isSigned, bool isInverted,
+			                            double rescaleSlope, double rescaleIntercept,
+			                            float scale, float offsetX, float offsetY)
 			{
-				_rows = rows;
-				_columns = columns;
-				_bitsAllocated = bitsAllocated;
-				_bitsStored = bitsStored;
-				_highBit = highBit;
-				_isSigned = isSigned;
-				_isInverted = isInverted;
-				_rescaleSlope = rescaleSlope;
-				_rescaleIntercept = rescaleIntercept;
-				_coregistrationScale = scale;
-				_coregistrationOffsetX = offsetX;
-				_coregistrationOffsetY = offsetY;
-			}
-
-			public GrayscaleImageGraphic CreateImageGraphic(PixelDataGetter pixelDataGetter)
-			{
-				var imageGraphic = new GrayscaleImageGraphic(
-					_rows, _columns,
-					_bitsAllocated, _bitsStored, _highBit,
-					_isSigned, _isInverted,
-					_rescaleSlope, _rescaleIntercept,
-					pixelDataGetter);
-				imageGraphic.SpatialTransform.Scale = _coregistrationScale;
-				imageGraphic.SpatialTransform.TranslationX = _coregistrationOffsetX;
-				imageGraphic.SpatialTransform.TranslationY = _coregistrationOffsetY;
-				return imageGraphic;
+				Rows = rows;
+				Columns = columns;
+				BitsAllocated = bitsAllocated;
+				BitsStored = bitsStored;
+				HighBit = highBit;
+				IsSigned = isSigned;
+				IsInverted = isInverted;
+				RescaleSlope = rescaleSlope;
+				RescaleIntercept = rescaleIntercept;
+				CoregistrationScale = scale;
+				CoregistrationOffsetX = offsetX;
+				CoregistrationOffsetY = offsetY;
 			}
 		}
 

@@ -34,44 +34,44 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
-	public interface IFusionOverlaySliceReference : IDisposable
+	public interface IFusionOverlayFrameDataReference : IDisposable
 	{
-		FusionOverlaySlice FusionOverlaySlice { get; }
+		FusionOverlayFrameData FusionOverlayFrameData { get; }
 
 		/// <summary>
-		/// Clones an existing <see cref="IFusionOverlaySliceReference"/>, creating a new transient reference.
+		/// Clones an existing <see cref="IFusionOverlayFrameDataReference"/>, creating a new transient reference.
 		/// </summary>
-		IFusionOverlaySliceReference Clone();
+		IFusionOverlayFrameDataReference Clone();
 	}
 
-	partial class FusionOverlaySlice
+	partial class FusionOverlayFrameData
 	{
-		private class FusionOverlaySliceReference : IFusionOverlaySliceReference
+		private class FusionOverlayFrameDataReference : IFusionOverlayFrameDataReference
 		{
-			private FusionOverlaySlice _slice;
+			private FusionOverlayFrameData _frameData;
 
-			public FusionOverlaySliceReference(FusionOverlaySlice data)
+			public FusionOverlayFrameDataReference(FusionOverlayFrameData data)
 			{
-				_slice = data;
-				_slice.OnReferenceCreated();
+				_frameData = data;
+				_frameData.OnReferenceCreated();
 			}
 
-			public FusionOverlaySlice FusionOverlaySlice
+			public FusionOverlayFrameData FusionOverlayFrameData
 			{
-				get { return _slice; }
+				get { return _frameData; }
 			}
 
-			public IFusionOverlaySliceReference Clone()
+			public IFusionOverlayFrameDataReference Clone()
 			{
-				return _slice.CreateTransientReference();
+				return _frameData.CreateTransientReference();
 			}
 
 			public void Dispose()
 			{
-				if (_slice != null)
+				if (_frameData != null)
 				{
-					_slice.OnReferenceDisposed();
-					_slice = null;
+					_frameData.OnReferenceDisposed();
+					_frameData = null;
 				}
 			}
 		}
@@ -117,12 +117,12 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		}
 
 		/// <summary>
-		/// Creates a new 'transient reference' to this <see cref="FusionOverlaySlice"/>.
+		/// Creates a new 'transient reference' to this <see cref="FusionOverlayFrameData"/>.
 		/// </summary>
-		/// <remarks>See <see cref="IFusionOverlaySliceReference"/> for a detailed explanation of 'transient references'.</remarks>
-		public IFusionOverlaySliceReference CreateTransientReference()
+		/// <remarks>See <see cref="IFusionOverlayFrameDataReference"/> for a detailed explanation of 'transient references'.</remarks>
+		public IFusionOverlayFrameDataReference CreateTransientReference()
 		{
-			return new FusionOverlaySliceReference(this);
+			return new FusionOverlayFrameDataReference(this);
 		}
 
 		/// <summary>

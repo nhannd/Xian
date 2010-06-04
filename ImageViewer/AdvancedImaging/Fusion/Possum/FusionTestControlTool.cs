@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Possum
 			var image = base.SelectedPresentationImage as FusionPresentationImage;
 			if (image != null)
 			{
-				Unload(image.OverlaySlice.OverlayData);
+				Unload(image.OverlayFrameData.OverlayData);
 			}
 		}
 
@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Possum
 			var image = base.SelectedPresentationImage as FusionPresentationImage;
 			if (image != null)
 			{
-				Unload(image.OverlaySlice);
+				Unload(image.OverlayFrameData);
 			}
 		}
 
@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Possum
 			{
 				foreach (FusionPresentationImage singleImage in base.SelectedPresentationImage.ParentDisplaySet.PresentationImages)
 				{
-					Unload(singleImage.OverlaySlice);
+					Unload(singleImage.OverlayFrameData);
 				}
 			}
 		}

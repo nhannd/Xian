@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					{
 						foreach (var baseFrame in GetFrames(series.Sops))
 						{
-							using (var fusionOverlaySlice = new FusionOverlaySlice(baseFrame, fusionOverlayData))
+							using (var fusionOverlaySlice = fusionOverlayData.CreateOverlaySlice(baseFrame))
 							{
 								var fus = new FusionPresentationImage(baseFrame, fusionOverlaySlice);
 								displaySet.PresentationImages.Add(fus);

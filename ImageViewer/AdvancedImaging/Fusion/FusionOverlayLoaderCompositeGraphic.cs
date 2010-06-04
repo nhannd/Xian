@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		private event EventHandler _overlayImageGraphicChanged;
 
 		[CloneIgnore]
-		private IFusionOverlaySliceReference _overlaySliceReference;
+		private IFusionOverlayFrameDataReference _overlayFrameDataReference;
 
 		[CloneIgnore]
 		private GrayscaleImageGraphic _overlayImageGraphic;
@@ -50,9 +50,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		[CloneIgnore]
 		private bool _isLoadingProgressShown;
 
-		public FusionOverlayLoaderCompositeGraphic(FusionOverlaySlice overlaySlice)
+		public FusionOverlayLoaderCompositeGraphic(FusionOverlayFrameData overlayFrameData)
 		{
-			_overlaySliceReference = overlaySlice.CreateTransientReference();
+			_overlayFrameDataReference = overlayFrameData.CreateTransientReference();
 		}
 
 		/// <summary>
@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			context.CloneFields(source, this);
 
-			_overlaySliceReference = source._overlaySliceReference.Clone();
+			_overlayFrameDataReference = source._overlayFrameDataReference.Clone();
 		}
 
 		protected override void Dispose(bool disposing)
@@ -73,19 +73,19 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			{
 				_overlayImageGraphic = null;
 
-				if (_overlaySliceReference != null)
+				if (_overlayFrameDataReference != null)
 				{
-					_overlaySliceReference.Dispose();
-					_overlaySliceReference = null;
+					_overlayFrameDataReference.Dispose();
+					_overlayFrameDataReference = null;
 				}
 			}
 
 			base.Dispose(disposing);
 		}
 
-		public FusionOverlaySlice OverlaySlice
+		public FusionOverlayFrameData OverlayFrameData
 		{
-			get { return _overlaySliceReference.FusionOverlaySlice; }
+			get { return _overlayFrameDataReference.FusionOverlayFrameData; }
 		}
 
 		public GrayscaleImageGraphic OverlayImageGraphic
@@ -130,15 +130,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			{
 				float progress;
 				string message;
-				if (_overlaySliceReference.FusionOverlaySlice.BeginLoad(out progress, out message))
+				if (_overlayFrameDataReference.FusionOverlayFrameData.BeginLoad(out progress, out message))
 				{
-					OverlayImageGraphic = _overlaySliceReference.FusionOverlaySlice.CreateImageGraphic();
+					OverlayImageGraphic = _overlayFrameDataReference.FusionOverlayFrameData.CreateImageGraphic();
 					_isLoadingProgressShown = false;
 				}
 				else if (!_isLoadingProgressShown)
 				{
 					_isLoadingProgressShown = true;
-					this.Graphics.Add(new ProgressGraphic(_overlaySliceReference.FusionOverlaySlice, true, ProgressBarGraphicStyle.Continuous));
+					this.Graphics.Add(new ProgressGraphic(_overlayFrameDataReference.FusionOverlayFrameData, true, ProgressBarGraphicStyle.Continuous));
 				}
 			}
 			base.OnDrawing();
