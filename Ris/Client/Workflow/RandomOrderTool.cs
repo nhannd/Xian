@@ -39,138 +39,128 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
-using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Random Order", "RandomOrder")]
-    [ButtonAction("apply", "folderexplorer-items-toolbar/Random Order", "RandomOrder")]
-    [Tooltip("apply", "Random Order")]
-    [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
-    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Development.CreateTestOrder)]
+	[MenuAction("apply", "folderexplorer-items-contextmenu/Random Order", "RandomOrder")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/Random Order", "RandomOrder")]
+	[Tooltip("apply", "Random Order")]
+	[IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
+	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	[ActionPermission("apply", Application.Common.AuthorityTokens.Development.CreateTestOrder)]
 
-    [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
-    public class RandomOrderTool : Tool<IToolContext>
-    {
-        private bool _enabled;
-        private event EventHandler _enabledChanged;
+	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
+	public class RandomOrderTool : Tool<IToolContext>
+	{
+		private bool _enabled;
+		private event EventHandler _enabledChanged;
 
-        public RandomOrderTool()
-        {
-            _enabled = true;
-        }
+		public RandomOrderTool()
+		{
+			_enabled = true;
+		}
 
-        public bool Enabled
-        {
-            get { return _enabled; }
-            protected set
-            {
-                if (_enabled != value)
-                {
-                    _enabled = value;
-                    EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
-                }
-            }
-        }
+		public bool Enabled
+		{
+			get { return _enabled; }
+			protected set
+			{
+				if (_enabled == value)
+					return;
 
-        public event EventHandler EnabledChanged
-        {
-            add { _enabledChanged += value; }
-            remove { _enabledChanged -= value; }
-        }
+				_enabled = value;
+				EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
+			}
+		}
 
-        public void RandomOrder()
-        {
-            IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
+		public event EventHandler EnabledChanged
+		{
+			add { _enabledChanged += value; }
+			remove { _enabledChanged -= value; }
+		}
 
-            try
-            {
-                RegistrationWorklistItemSummary item = CollectionUtils.FirstElement(context.SelectedItems);
-                if (item == null)
-                {
-                    PatientProfileSummary profile = GetRandomPatient();
-                    if (profile == null)
-                        profile = RandomUtils.CreatePatient();
+		public void RandomOrder()
+		{
+			var context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
 
-                    PlaceRandomOrderForPatient(profile.PatientRef, profile.PatientProfileRef, profile.Mrn.AssigningAuthority);
-                }
-                else
-                {
-                    PlaceRandomOrderForPatient(item.PatientRef, item.PatientProfileRef, item.Mrn.AssigningAuthority);
-                }
+			try
+			{
+				var item = CollectionUtils.FirstElement(context.SelectedItems);
+				if (item == null)
+				{
+					var profile = GetRandomPatient() ?? RandomUtils.CreatePatient();
+					PlaceRandomOrderForPatient(profile.PatientRef, profile.Mrn.AssigningAuthority);
+				}
+				else
+				{
+					PlaceRandomOrderForPatient(item.PatientRef, item.Mrn.AssigningAuthority);
+				}
 
 				// invalidate the scheduled worklist folders
-                context.InvalidateFolders(typeof(Folders.Registration.ScheduledFolder));
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, context.DesktopWindow);
-            }
-        }
+				context.InvalidateFolders(typeof(Folders.Registration.ScheduledFolder));
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, context.DesktopWindow);
+			}
+		}
 
-        private void PlaceRandomOrderForPatient(EntityRef patientRef, EntityRef profileRef, EnumValueInfo informationAuthority)
-        {
-            // find a random active visit, or create one
-            VisitSummary randomVisit = GetActiveVisitForPatient(patientRef, informationAuthority);
-            if(randomVisit == null)
-                randomVisit = RandomUtils.CreateVisit(patientRef, informationAuthority, 0);
+		private static void PlaceRandomOrderForPatient(EntityRef patientRef, EnumValueInfo informationAuthority)
+		{
+			// find a random active visit, or create one
+			var randomVisit = GetActiveVisitForPatient(patientRef, informationAuthority) ??
+				RandomUtils.CreateVisit(patientRef, informationAuthority, 0);
 
-            // create the order
-            RandomUtils.RandomOrder(randomVisit, informationAuthority, null, 0);
-        }
+			// create the order
+			RandomUtils.RandomOrder(randomVisit, informationAuthority, null, 0);
+		}
 
-        private static PatientProfileSummary GetRandomPatient()
-        {
-            char randomChar = RandomUtils.GetRandomAlphaChar();
+		private static PatientProfileSummary GetRandomPatient()
+		{
+			var randomChar = RandomUtils.GetRandomAlphaChar();
 
-            PatientProfileSummary randomProfile = null;
+			PatientProfileSummary randomProfile = null;
 
-            Platform.GetService<IRegistrationWorkflowService>(
-                delegate(IRegistrationWorkflowService service)
-                {
-                    TextQueryRequest request = new TextQueryRequest();
-                    request.TextQuery = randomChar.ToString();
-                    TextQueryResponse<PatientProfileSummary> response;
-                    response = service.PatientProfileTextQuery(request);
-                    if (!response.TooManyMatches)
-                        randomProfile = RandomUtils.ChooseRandom(response.Matches);
+			Platform.GetService(
+				delegate(IRegistrationWorkflowService service)
+				{
+					var request = new TextQueryRequest {TextQuery = randomChar.ToString()};
+					var response = service.PatientProfileTextQuery(request);
+					if (!response.TooManyMatches)
+						randomProfile = RandomUtils.ChooseRandom(response.Matches);
 
-                    if (randomProfile == null)
-                    {
-                        // Search for all male patient, slow but works
-                        request.TextQuery = "Male Female Unknown";
-                        response = service.PatientProfileTextQuery(request);
-                        randomProfile = RandomUtils.ChooseRandom(response.Matches);
-                        if (!response.TooManyMatches)
-                            randomProfile = RandomUtils.ChooseRandom(response.Matches);
-                    }
-                });
+					if (randomProfile == null)
+					{
+						// Search for all male patient, slow but works
+						request.TextQuery = "Male Female Unknown";
+						response = service.PatientProfileTextQuery(request);
+						randomProfile = RandomUtils.ChooseRandom(response.Matches);
+						if (!response.TooManyMatches)
+							randomProfile = RandomUtils.ChooseRandom(response.Matches);
+					}
+				});
 
-            return randomProfile;
-        }
+			return randomProfile;
+		}
 
-        private static VisitSummary GetActiveVisitForPatient(EntityRef patientRef, EnumValueInfo assigningAuthority)
-        {
-            VisitSummary visit = null;
+		private static VisitSummary GetActiveVisitForPatient(EntityRef patientRef, EnumValueInfo assigningAuthority)
+		{
+			VisitSummary visit = null;
 
-            // choose from existing visits
-            Platform.GetService<IOrderEntryService>(
-                delegate(IOrderEntryService service)
-                {
-                    ListVisitsForPatientRequest request = new ListVisitsForPatientRequest(patientRef);
+			// choose from existing visits
+			Platform.GetService(
+				delegate(IOrderEntryService service)
+				{
+					var request = new ListVisitsForPatientRequest(patientRef);
 
-                    ListVisitsForPatientResponse visitResponse = service.ListVisitsForPatient(request);
-                    visit = RandomUtils.ChooseRandom(CollectionUtils.Select(visitResponse.Visits,
-                        delegate(VisitSummary summary)
-                        {
-                            return Equals(summary.VisitNumber.AssigningAuthority, assigningAuthority);
-                        }));
-                });
+					var visitResponse = service.ListVisitsForPatient(request);
+					visit = RandomUtils.ChooseRandom(CollectionUtils.Select(visitResponse.Visits,
+						summary => Equals(summary.VisitNumber.AssigningAuthority, assigningAuthority)));
+				});
 
-            return visit;
-        }
+			return visit;
+		}
 
-    }
+	}
 }
