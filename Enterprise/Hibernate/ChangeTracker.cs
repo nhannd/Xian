@@ -81,6 +81,11 @@ namespace ClearCanvas.Enterprise.Hibernate
             }
         }
 
+		internal void Clear()
+		{
+			_changeRecords.Clear();
+		}
+
         /// <summary>
         /// Gets the set of <see cref="EntityChange"/> objects representing the cumulative changes made.
         /// </summary>

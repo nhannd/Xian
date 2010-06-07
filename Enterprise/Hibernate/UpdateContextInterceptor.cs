@@ -50,23 +50,36 @@ namespace ClearCanvas.Enterprise.Hibernate
 	/// </summary>
 	internal class UpdateContextInterceptor : EmptyInterceptor
 	{
-
-		private readonly ChangeTracker _changeTracker = new ChangeTracker();
+		private readonly ChangeTracker _fullChangeTracker = new ChangeTracker();
+		private readonly List<ChangeTracker> _changeTrackers = new List<ChangeTracker>();
 		private readonly Queue<DomainObject> _pendingValidations = new Queue<DomainObject>();
 		private readonly DomainObjectValidator _validator;
+
 
 		internal UpdateContextInterceptor(DomainObjectValidator validator)
 		{
 			_validator = validator;
+			_changeTrackers.Add(_fullChangeTracker);
 		}
 
 		/// <summary>
-		/// Gets the set of <see cref="EntityChange"/> objects representing the changes made in this update context.
+		/// Gets the set of all changes made in this update context.
 		/// </summary>
-		internal ChangeTracker ChangeTracker
+		internal EntityChange[] FullChangeSet
 		{
-			get { return _changeTracker; }
+			get { return _fullChangeTracker.EntityChangeSet; }
 		}
+
+		internal void AddChangeTracker(ChangeTracker tracker)
+		{
+			_changeTrackers.Add(tracker);
+		}
+
+		internal void RemoveChangeTracker(ChangeTracker tracker)
+		{
+			_changeTrackers.Remove(tracker);
+		}
+
 
 		#region IInterceptor Members
 
@@ -185,9 +198,13 @@ namespace ClearCanvas.Enterprise.Hibernate
 			// TODO: should probably record changes to enum values as well
 			if (domainObject is EnumValue)
 				return;
-
+			
+			// update all change trackers
 			var entity = (Entity)domainObject;
-			_changeTracker.RecordChange(entity, changeType, propertyDiffs);
+			foreach (var changeTracker in _changeTrackers)
+			{
+				changeTracker.RecordChange(entity, changeType, propertyDiffs);
+			}
 		}
 
 		private static bool ShouldCheckRule(ISpecification rule, ICollection<string> dirtyProperties)

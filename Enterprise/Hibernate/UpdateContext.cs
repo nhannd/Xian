@@ -46,6 +46,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 		private UpdateContextInterceptor _interceptor;
 		private IEntityChangeSetRecorder _changeSetRecorder;
 		private readonly DomainObjectValidator _validator;
+		private readonly ChangeTracker _validationChangeTracker; 
 
 		/// <summary>
 		/// Constructor
@@ -61,6 +62,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 			// create a default change-set logger
 			_changeSetRecorder = new DefaultEntityChangeSetRecorder();
 			_validator = new DomainObjectValidator();
+			_validationChangeTracker = new ChangeTracker();
 		}
 
 		#region IUpdateContext members
@@ -95,8 +97,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 
 				// publish pre-commit to listeners
 				var changeSetPublisher = new EntityChangeSetPublisher();
-				var changeSet = new EntityChangeSet(_interceptor.ChangeTracker.EntityChangeSet);
-				changeSetPublisher.PreCommit(new EntityChangeSetPreCommitArgs(changeSet, this));
+				changeSetPublisher.PreCommit(new EntityChangeSetPreCommitArgs(new EntityChangeSet(_interceptor.FullChangeSet), this));
 
 				// flush session again, in case pre-commit listeners made modifications to entities in this context
 				FlushAndValidate();
@@ -108,7 +109,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 				CommitTransaction();
 
 				// publish post-commit to listeners
-				changeSetPublisher.PostCommit(new EntityChangeSetPostCommitArgs(changeSet));
+				changeSetPublisher.PostCommit(new EntityChangeSetPostCommitArgs(new EntityChangeSet(_interceptor.FullChangeSet)));
 			}
 			catch (Exception e)
 			{
@@ -122,7 +123,9 @@ namespace ClearCanvas.Enterprise.Hibernate
 
 		protected override ISession CreateSession()
 		{
-			return this.PersistentStore.SessionFactory.OpenSession(_interceptor = new UpdateContextInterceptor(_validator));
+			_interceptor = new UpdateContextInterceptor(_validator);
+			_interceptor.AddChangeTracker(_validationChangeTracker);
+			return this.PersistentStore.SessionFactory.OpenSession(_interceptor);
 		}
 
 		protected override void LockCore(DomainObject obj, DirtyState dirtyState)
@@ -194,17 +197,25 @@ namespace ClearCanvas.Enterprise.Hibernate
 
 		private void FlushAndValidate()
 		{
-			// flush first, so that the interceptor's changeTracker has a current list of modified entities
-			// note: this will apply low-level validation inside the interceptor
+			// order of operations here is extremely important!
+
+			// flush first
+			// this will apply low-level validation from within the interceptor callbacks prior to writing to db
+			// and it will ensure that the _validationChangeTracker is up to date
 			this.Session.Flush();
 
+			// _validationChangeTracker is used to determine which entities need high-level validation
 			// apply high-level validation to modified entities (excluding those that have been deleted)
 			var modifiedEntities =
-				_interceptor.ChangeTracker.GetChangedEntities(changeType => changeType != EntityChangeType.Delete);
+				_validationChangeTracker.GetChangedEntities(changeType => changeType != EntityChangeType.Delete);
 			foreach (var entity in modifiedEntities)
 			{
 				_validator.ValidateHighLevel(entity);
 			}
+
+			// clear the validation change tracker, so that it will
+			// in future contain only entries for things that have changed after this point
+			_validationChangeTracker.Clear();
 		}
 
 		/// <summary>
@@ -217,7 +228,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 			{
 				// write to the "ChangeSet" audit log
 				var auditLog = new AuditLog(null, "ChangeSet");
-				_changeSetRecorder.WriteLogEntry(_interceptor.ChangeTracker.EntityChangeSet, auditLog);
+				_changeSetRecorder.WriteLogEntry(_interceptor.FullChangeSet, auditLog);
 			}
 		}
 
