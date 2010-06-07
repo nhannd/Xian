@@ -197,7 +197,7 @@ Preview.ProceduresTableHelper = function () {
 				formattedText = "Not scheduled";
 
 			if (schedulingCode)
-				formattedText += " (" + schedulingCode.Code + ")";
+				formattedText += " (" + schedulingCode.Value + ")";
 
 			return formattedText;
 		},
@@ -423,7 +423,7 @@ Preview.ImagingServiceTable = function () {
 					cellType: "text",
 					getValue: function(item) { return Ris.formatOrderListItemProcedureName(item); }
 				},
-				{   label: "Schedule",
+				{   label: "Scheduled For",
 					cellType: "text",
 					getValue: function(item) { return Preview.ProceduresTableHelper.formatProcedureSchedule(item.ProcedureScheduledStartTime, item.SchedulingRequestTime, true, item.ProcedureSchedulingCode); },
 					getTooltip: function(item) { return Preview.ProceduresTableHelper.formatProcedureSchedule(item.ProcedureScheduledStartTime, item.SchedulingRequestTime, false, item.ProcedureSchedulingCode); }
@@ -507,7 +507,7 @@ Preview.ProceduresTable = function () {
 						cellType: "text",
 						getValue: function(item) { return Preview.ProceduresTableHelper.formatProcedureStatus(item.Status, item.ScheduledStartTime, item.StartTime, item.CheckInTime, item.CheckOutTime); }
 					},
-					{   label: "Schedule",
+					{   label: "Scheduled For",
 						cellType: "text",
 						getValue: function(item) { return Preview.ProceduresTableHelper.formatProcedureSchedule(item.ScheduledStartTime, null, true, item.SchedulingCode); },
 						getTooltip: function(item) { return Preview.ProceduresTableHelper.formatProcedureSchedule(item.ScheduledStartTime, null, false, item.SchedulingCode); }
@@ -843,7 +843,7 @@ Preview.ReportingProceduresTable = function () {
 						cellType: "text",
 						getValue: function(item) { return item.Status; }
 					},
-					{   label: "Schedule",
+					{   label: "Scheduled For",
 						cellType: "text",
 						getValue: function(item) { return item.Schedule; }
 					},
