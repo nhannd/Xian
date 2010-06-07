@@ -29,86 +29,89 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Runtime.Serialization;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Enterprise.Core.Imex;
-using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Core.Imex;
 using ClearCanvas.Healthcare.Brokers;
 
 namespace ClearCanvas.Healthcare.Imex
 {
-    [ExtensionOf(typeof(XmlDataImexExtensionPoint))]
-    [ImexDataClass("Facility")]
-    public class FacilityImex : XmlEntityImex<Facility, FacilityImex.FacilityData>
-    {
-        [DataContract]
+	[ExtensionOf(typeof(XmlDataImexExtensionPoint))]
+	[ImexDataClass("Facility")]
+	public class FacilityImex : XmlEntityImex<Facility, FacilityImex.FacilityData>
+	{
+		[DataContract]
 		public class FacilityData : ReferenceEntityDataBase
-        {
-            [DataMember]
-            public string Code;
+		{
+			[DataMember]
+			public string Code;
 
-            [DataMember]
-            public string Name;
+			[DataMember]
+			public string Name;
 
-            [DataMember]
-            public string InformationAuthority;
-        }
+			[DataMember]
+			public string Description;
 
-        #region Overrides
+			[DataMember]
+			public string InformationAuthority;
+		}
 
-        protected override IList<Facility> GetItemsForExport(IReadContext context, int firstRow, int maxRows)
-        {
-            FacilitySearchCriteria where = new FacilitySearchCriteria();
-            where.Code.SortAsc(0);
-            return context.GetBroker<IFacilityBroker>().Find(where, new SearchResultPage(firstRow, maxRows));
-        }
+		#region Overrides
 
-        protected override FacilityData Export(Facility entity, IReadContext context)
-        {
-            FacilityData data = new FacilityData();
-			data.Deactivated = entity.Deactivated;
-			data.Code = entity.Code;
-            data.Name = entity.Name;
-            data.InformationAuthority = entity.InformationAuthority.Code;
+		protected override IList<Facility> GetItemsForExport(IReadContext context, int firstRow, int maxRows)
+		{
+			var where = new FacilitySearchCriteria();
+			where.Code.SortAsc(0);
+			return context.GetBroker<IFacilityBroker>().Find(where, new SearchResultPage(firstRow, maxRows));
+		}
 
-            return data;
-        }
+		protected override FacilityData Export(Facility entity, IReadContext context)
+		{
+			var data = new FacilityData
+				{
+					Deactivated = entity.Deactivated,
+					Code = entity.Code,
+					Name = entity.Name,
+					Description = entity.Description,
+					InformationAuthority = entity.InformationAuthority.Code
+				};
 
-        protected override void Import(FacilityData data, IUpdateContext context)
-        {
-            InformationAuthorityEnum ia =
-                context.GetBroker<IEnumBroker>().Find<InformationAuthorityEnum>(data.InformationAuthority);
+			return data;
+		}
 
-            Facility f = LoadOrCreateFacility(data.Code, data.Name, ia, context);
-        	f.Deactivated = data.Deactivated;
-            f.Name = data.Name;
-            f.InformationAuthority = ia;
-        }
+		protected override void Import(FacilityData data, IUpdateContext context)
+		{
+			var ia = context.GetBroker<IEnumBroker>().Find<InformationAuthorityEnum>(data.InformationAuthority);
 
-        #endregion
+			var f = LoadOrCreateFacility(data.Code, data.Name, data.Description, ia, context);
+			f.Deactivated = data.Deactivated;
+			f.Name = data.Name;
+			f.InformationAuthority = ia;
+		}
 
-        private Facility LoadOrCreateFacility(string code, string name, InformationAuthorityEnum ia, IPersistenceContext context)
-        {
-            Facility pt;
-            try
-            {
-                // see if already exists in db
-                FacilitySearchCriteria where = new FacilitySearchCriteria();
-                where.Code.EqualTo(code);
-                pt = context.GetBroker<IFacilityBroker>().FindOne(where);
-            }
-            catch (EntityNotFoundException)
-            {
-                // create it
-                pt = new Facility(code, name, ia);
-                context.Lock(pt, DirtyState.New);
-            }
+		#endregion
 
-            return pt;
-        }
-    }
+		private static Facility LoadOrCreateFacility(string code, string name, string description, InformationAuthorityEnum ia, IPersistenceContext context)
+		{
+			Facility pt;
+			try
+			{
+				// see if already exists in db
+				var where = new FacilitySearchCriteria();
+				where.Code.EqualTo(code);
+				pt = context.GetBroker<IFacilityBroker>().FindOne(where);
+			}
+			catch (EntityNotFoundException)
+			{
+				// create it
+				pt = new Facility(code, name, description, ia);
+				context.Lock(pt, DirtyState.New);
+			}
+
+			return pt;
+		}
+	}
 }

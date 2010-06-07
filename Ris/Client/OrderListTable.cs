@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Client
 				order => string.Format(SR.FormatMoreInfo,
 					AccessionFormat.Format(order.AccessionNumber),
 					PersonNameFormat.Format(order.OrderingPractitioner.Name),
-					order.OrderingFacility.Code),
+					order.OrderingFacility.Name),
 				1));
 
 			this.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnIndication, order => string.Format(SR.FormatIndication, order.ReasonForStudy), 2));

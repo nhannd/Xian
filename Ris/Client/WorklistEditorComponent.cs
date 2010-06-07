@@ -78,7 +78,7 @@ namespace ClearCanvas.Ris.Client
 			public DepartmentTable()
 			{
 				this.Columns.Add(new TableColumn<DepartmentSummary, string>(SR.ColumnName, summary => summary.Name));
-				this.Columns.Add(new TableColumn<DepartmentSummary, string>(SR.ColumnFacility, summary => summary.FacilityCode));
+				this.Columns.Add(new TableColumn<DepartmentSummary, string>(SR.ColumnFacility, summary => summary.FacilityName));
 			}
 		}
 

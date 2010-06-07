@@ -34,34 +34,37 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common
 {
-    [DataContract]
-    public class FacilityDetail : DataContractBase
-    {
-        public FacilityDetail(EntityRef facilityRef, string code, string name, EnumValueInfo informationAuthority,
-			bool deactivated)
-        {
-        	this.FacilityRef = facilityRef;
-            this.Code = code;
-            this.Name = name;
-            this.InformationAuthority = informationAuthority;
-        	this.Deactivated = deactivated;
-        }
+	[DataContract]
+	public class FacilityDetail : DataContractBase
+	{
+		public FacilityDetail(EntityRef facilityRef, string code, string name, string description, EnumValueInfo informationAuthority, bool deactivated)
+		{
+			this.FacilityRef = facilityRef;
+			this.Code = code;
+			this.Name = name;
+			this.Description = description;
+			this.InformationAuthority = informationAuthority;
+			this.Deactivated = deactivated;
+		}
 
-        public FacilityDetail()
-        {
-        }
+		public FacilityDetail()
+		{
+		}
 
 		[DataMember]
 		public EntityRef FacilityRef;
 
-        [DataMember]
-        public string Code;
+		[DataMember]
+		public string Code;
 
-        [DataMember]
-        public string Name;
+		[DataMember]
+		public string Name;
 
-        [DataMember]
-        public EnumValueInfo InformationAuthority;
+		[DataMember]
+		public string Description;
+
+		[DataMember]
+		public EnumValueInfo InformationAuthority;
 
 		[DataMember]
 		public bool Deactivated;

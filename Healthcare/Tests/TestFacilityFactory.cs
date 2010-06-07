@@ -43,6 +43,7 @@ namespace ClearCanvas.Healthcare.Tests
             return new Facility(
 				"TCH",
 				"Toronto Community Hospital",
+				null,
 				new InformationAuthorityEnum("UHN", "UHN", "University Health Network"),
 				new HashedSet<Department>());
         }

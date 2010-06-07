@@ -11,12 +11,13 @@ namespace ClearCanvas.Ris.Application.Common
 		{
 		}
 
-		public DepartmentSummary(EntityRef departmentRef, string id, string name, string facilityCode, bool deactivated)
+		public DepartmentSummary(EntityRef departmentRef, string id, string name, string facilityCode, string facilityName, bool deactivated)
 		{
 			this.DepartmentRef = departmentRef;
 			this.Id = id;
 			this.Name = name;
 			this.FacilityCode = facilityCode;
+			this.FacilityName = facilityName;
 			this.Deactivated = deactivated;
 		}
 
@@ -31,6 +32,9 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public string FacilityCode;
+
+		[DataMember]
+		public string FacilityName;
 
 		[DataMember]
 		public bool Deactivated;

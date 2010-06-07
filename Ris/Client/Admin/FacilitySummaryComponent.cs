@@ -43,67 +43,67 @@ using ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    [MenuAction("launch", "global-menus/Admin/Facilities", "Launch")]
-    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Facility)]
-    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
-    public class FacilitySummaryTool : Tool<IDesktopToolContext>
-    {
-        private IWorkspace _workspace;
+	[MenuAction("launch", "global-menus/Admin/Facilities", "Launch")]
+	[ActionPermission("launch", Application.Common.AuthorityTokens.Admin.Data.Facility)]
+	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	public class FacilitySummaryTool : Tool<IDesktopToolContext>
+	{
+		private IWorkspace _workspace;
 
-        public void Launch()
-        {
-            if (_workspace == null)
-            {
-                try
-                {
-                    FacilitySummaryComponent component = new FacilitySummaryComponent();
+		public void Launch()
+		{
+			if (_workspace == null)
+			{
+				try
+				{
+					var component = new FacilitySummaryComponent();
 
-                    _workspace = ApplicationComponent.LaunchAsWorkspace(
-                        this.Context.DesktopWindow,
-                        component,
-                        SR.TitleFacilities);
-                    _workspace.Closed += delegate { _workspace = null; };
+					_workspace = ApplicationComponent.LaunchAsWorkspace(
+						this.Context.DesktopWindow,
+						component,
+						SR.TitleFacilities);
+					_workspace.Closed += delegate { _workspace = null; };
 
-                }
-                catch (Exception e)
-                {
-                    // could not launch component
-                    ExceptionHandler.Report(e, this.Context.DesktopWindow);
-                }
-            }
-            else
-            {
-                _workspace.Activate();
-            }
-        }
-    }
-    
-    /// <summary>
-    /// Extension point for views onto <see cref="FacilitySummaryComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class FacilitySummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+				}
+				catch (Exception e)
+				{
+					// could not launch component
+					ExceptionHandler.Report(e, this.Context.DesktopWindow);
+				}
+			}
+			else
+			{
+				_workspace.Activate();
+			}
+		}
+	}
+	
+	/// <summary>
+	/// Extension point for views onto <see cref="FacilitySummaryComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class FacilitySummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    /// <summary>
-    /// FacilitySummaryComponent class
-    /// </summary>
-    public class FacilitySummaryComponent : SummaryComponentBase<FacilitySummary, FacilityTable, ListAllFacilitiesRequest>
-    {
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public FacilitySummaryComponent()
-        {
-        }
+	/// <summary>
+	/// FacilitySummaryComponent class
+	/// </summary>
+	public class FacilitySummaryComponent : SummaryComponentBase<FacilitySummary, FacilityTable, ListAllFacilitiesRequest>
+	{
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public FacilitySummaryComponent()
+		{
+		}
 
-    	/// <summary>
-    	/// Override this method to perform custom initialization of the action model,
-    	/// such as adding permissions or adding custom actions.
-    	/// </summary>
-    	/// <param name="model"></param>
-    	protected override void InitializeActionModel(AdminActionModel model)
+		/// <summary>
+		/// Override this method to perform custom initialization of the action model,
+		/// such as adding permissions or adding custom actions.
+		/// </summary>
+		/// <param name="model"></param>
+		protected override void InitializeActionModel(AdminActionModel model)
 		{
 			base.InitializeActionModel(model);
 
@@ -125,7 +125,7 @@ namespace ClearCanvas.Ris.Client.Admin
 		protected override IList<FacilitySummary> ListItems(ListAllFacilitiesRequest request)
 		{
 			ListAllFacilitiesResponse listResponse = null;
-			Platform.GetService<IFacilityAdminService>(
+			Platform.GetService(
 				delegate(IFacilityAdminService service)
 				{
 					listResponse = service.ListAllFacilities(request);
@@ -142,10 +142,8 @@ namespace ClearCanvas.Ris.Client.Admin
 		protected override bool AddItems(out IList<FacilitySummary> addedItems)
 		{
 			addedItems = new List<FacilitySummary>();
-			FacilityEditorComponent editor = new FacilityEditorComponent();
-			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-				this.Host.DesktopWindow, editor, SR.TitleAddFacility);
-			if (exitCode == ApplicationComponentExitCode.Accepted)
+			var editor = new FacilityEditorComponent();
+			if (ApplicationComponentExitCode.Accepted == LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddFacility))
 			{
 				addedItems.Add(editor.FacilitySummary);
 				return true;
@@ -162,12 +160,10 @@ namespace ClearCanvas.Ris.Client.Admin
 		protected override bool EditItems(IList<FacilitySummary> items, out IList<FacilitySummary> editedItems)
 		{
 			editedItems = new List<FacilitySummary>();
-			FacilitySummary item = CollectionUtils.FirstElement(items);
-
-			FacilityEditorComponent editor = new FacilityEditorComponent(item.FacilityRef);
-			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-				this.Host.DesktopWindow, editor, SR.TitleUpdateFacility + " - " + item.Name);
-			if (exitCode == ApplicationComponentExitCode.Accepted)
+			var item = CollectionUtils.FirstElement(items);
+			var editor = new FacilityEditorComponent(item.FacilityRef);
+			if (ApplicationComponentExitCode.Accepted == 
+				LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateFacility + " - " + item.Name))
 			{
 				editedItems.Add(editor.FacilitySummary);
 				return true;
@@ -187,15 +183,12 @@ namespace ClearCanvas.Ris.Client.Admin
 			failureMessage = null;
 			deletedItems = new List<FacilitySummary>();
 
-			foreach (FacilitySummary item in items)
+			foreach (var item in items)
 			{
 				try
 				{
 					Platform.GetService<IFacilityAdminService>(
-						delegate(IFacilityAdminService service)
-						{
-							service.DeleteFacility(new DeleteFacilityRequest(item.FacilityRef));
-						});
+						service => service.DeleteFacility(new DeleteFacilityRequest(item.FacilityRef)));
 
 					deletedItems.Add(item);
 				}
@@ -208,25 +201,23 @@ namespace ClearCanvas.Ris.Client.Admin
 			return deletedItems.Count > 0;
 		}
 
-    	/// <summary>
-    	/// Called to handle the "toggle activation" action, if supported
-    	/// </summary>
-    	/// <param name="items">A list of items to edit.</param>
-    	/// <param name="editedItems">The list of items that were edited.</param>
-    	/// <returns>True if items were edited, false otherwise.</returns>
-    	protected override bool UpdateItemsActivation(IList<FacilitySummary> items, out IList<FacilitySummary> editedItems)
+		/// <summary>
+		/// Called to handle the "toggle activation" action, if supported
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool UpdateItemsActivation(IList<FacilitySummary> items, out IList<FacilitySummary> editedItems)
 		{
-			List<FacilitySummary> results = new List<FacilitySummary>();
-			foreach (FacilitySummary item in items)
+			var results = new List<FacilitySummary>();
+			foreach (var item in items)
 			{
-				Platform.GetService<IFacilityAdminService>(
+				Platform.GetService(
 					delegate(IFacilityAdminService service)
 					{
-						FacilityDetail detail = service.LoadFacilityForEdit(
-							new LoadFacilityForEditRequest(item.FacilityRef)).FacilityDetail;
+						var detail = service.LoadFacilityForEdit(new LoadFacilityForEditRequest(item.FacilityRef)).FacilityDetail;
 						detail.Deactivated = !detail.Deactivated;
-						FacilitySummary summary = service.UpdateFacility(
-							new UpdateFacilityRequest(detail)).Facility;
+						var summary = service.UpdateFacility(new UpdateFacilityRequest(detail)).Facility;
 
 						results.Add(summary);
 					});
@@ -246,5 +237,5 @@ namespace ClearCanvas.Ris.Client.Admin
 		{
 			return x.FacilityRef.Equals(y.FacilityRef, true);
 		}
-    }
+	}
 }

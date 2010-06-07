@@ -434,8 +434,8 @@ Preview.ImagingServiceTable = function () {
 				},
 				{   label: "Performing Facility",
 					cellType: "text",
-					getValue: function(item) { return _formatPerformingFacility(item, 'Code'); },
-					getTooltip: function(item) { return _formatPerformingFacility(item, 'Name'); }
+					getValue: function(item) { return _formatPerformingFacility(item, 'Name'); },
+					getTooltip: function(item) { return _formatPerformingFacility(item, 'Description'); }
 				},
 				{   label: "Ordering Physician",
 					cellType: "link",
@@ -1335,7 +1335,7 @@ Preview.ImagingServiceSection = function () {
 	function formatPerformingFacility(procedureDetails)
 	{
 		var parts = procedureDetails
-			.map(function(p) { return p.PerformingFacility.Code + (p.PerformingDepartment ? " ("+p.PerformingDepartment.Name+")" : ""); })
+			.map(function(p) { return p.PerformingFacility.Name + (p.PerformingDepartment ? " ("+p.PerformingDepartment.Name+")" : ""); })
 			.unique();
 		return String.combine(parts, "<br>");
 	}

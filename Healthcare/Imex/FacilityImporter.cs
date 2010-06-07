@@ -78,8 +78,9 @@ namespace ClearCanvas.Healthcare.Imex
 
                 string facilityId = fields[0];
                 string facilityName = fields[1];
-                string informationAuthorityId = fields[2];
-                string informationAuthorityName = fields[3];
+				string facilityDescription = fields[2];
+				string informationAuthorityId = fields[3];
+                string informationAuthorityName = fields[4];
 
                 // first check if we have it in memory
                 Facility facility = CollectionUtils.SelectFirst(facilities,
@@ -98,7 +99,7 @@ namespace ClearCanvas.Healthcare.Imex
                     // if not, create a new instance
                     if (facility == null)
                     {
-                        facility = new Facility(facilityId, facilityName, GetAuthority(informationAuthorityId, informationAuthorityName));
+						facility = new Facility(facilityId, facilityName, facilityDescription, GetAuthority(informationAuthorityId, informationAuthorityName));
                         context.Lock(facility, DirtyState.New);
                     }
 

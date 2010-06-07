@@ -29,43 +29,43 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-    class FacilityAssembler
-    {
-        public FacilitySummary CreateFacilitySummary(Facility facility)
-        {
-            return new FacilitySummary(
-                facility.GetRef(),
-                facility.Code,
-                facility.Name,
-                EnumUtils.GetEnumValueInfo(facility.InformationAuthority),
-				facility.Deactivated);
-        }
-
-        public FacilityDetail CreateFacilityDetail(Facility facility)
-        {
-            return new FacilityDetail(
+	class FacilityAssembler
+	{
+		public FacilitySummary CreateFacilitySummary(Facility facility)
+		{
+			return new FacilitySummary(
 				facility.GetRef(),
-                facility.Code,
-                facility.Name,
-                EnumUtils.GetEnumValueInfo(facility.InformationAuthority),
+				facility.Code,
+				facility.Name,
+				facility.Description,
+				EnumUtils.GetEnumValueInfo(facility.InformationAuthority),
 				facility.Deactivated);
-        }
+		}
 
-        public void UpdateFacility(FacilityDetail detail, Facility facility, IPersistenceContext context)
-        {
-            facility.Code = detail.Code;
-            facility.Name = detail.Name;
-            facility.InformationAuthority = EnumUtils.GetEnumValue<InformationAuthorityEnum>(detail.InformationAuthority, context);
-        	facility.Deactivated = detail.Deactivated;
-        }
-    }
+		public FacilityDetail CreateFacilityDetail(Facility facility)
+		{
+			return new FacilityDetail(
+				facility.GetRef(),
+				facility.Code,
+				facility.Name,
+				facility.Description,
+				EnumUtils.GetEnumValueInfo(facility.InformationAuthority),
+				facility.Deactivated);
+		}
+
+		public void UpdateFacility(FacilityDetail detail, Facility facility, IPersistenceContext context)
+		{
+			facility.Code = detail.Code;
+			facility.Name = detail.Name;
+			facility.Description = detail.Description;
+			facility.InformationAuthority = EnumUtils.GetEnumValue<InformationAuthorityEnum>(detail.InformationAuthority, context);
+			facility.Deactivated = detail.Deactivated;
+		}
+	}
 }

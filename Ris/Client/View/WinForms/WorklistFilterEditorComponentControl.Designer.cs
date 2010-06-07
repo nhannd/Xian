@@ -68,8 +68,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _portable
 			// 
-			this._portable.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
 			this._portable.AutoSize = true;
 			this._portable.LabelText = "Portable";
 			this._portable.Location = new System.Drawing.Point(246, 130);
@@ -80,8 +78,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _priority
 			// 
-			this._priority.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
 			this._priority.AutoSize = true;
 			this._priority.LabelText = "Order Priority";
 			this._priority.Location = new System.Drawing.Point(14, 130);
@@ -92,8 +88,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _patientClass
 			// 
-			this._patientClass.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
 			this._patientClass.AutoSize = true;
 			this._patientClass.LabelText = "Patient Class";
 			this._patientClass.Location = new System.Drawing.Point(246, 42);
@@ -104,8 +98,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _facilities
 			// 
-			this._facilities.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
 			this._facilities.AutoSize = true;
 			this._facilities.LabelText = "Facility";
 			this._facilities.Location = new System.Drawing.Point(14, 42);
@@ -116,15 +108,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _orderingPractitioner
 			// 
-			this._orderingPractitioner.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
 			this._orderingPractitioner.AutoSize = true;
 			this._orderingPractitioner.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._orderingPractitioner.LabelText = "Ordering Practitioner";
 			this._orderingPractitioner.Location = new System.Drawing.Point(14, 211);
 			this._orderingPractitioner.Margin = new System.Windows.Forms.Padding(2);
 			this._orderingPractitioner.Name = "_orderingPractitioner";
-			this._orderingPractitioner.Size = new System.Drawing.Size(213, 41);
+			this._orderingPractitioner.Size = new System.Drawing.Size(213, 43);
 			this._orderingPractitioner.TabIndex = 11;
 			this._orderingPractitioner.Value = null;
 			// 

@@ -48,7 +48,7 @@ namespace ClearCanvas.Ris.Client
 		private readonly List<FacilitySummary> _facilityChoices;
 		private readonly List<DepartmentSummary> _allDepartments;
 		private List<DepartmentSummary> _departmentChoices;
-		private readonly DepartmentSummary _departmentNone = new DepartmentSummary(null, SR.DummyItemNone, null, null, true);
+		private readonly DepartmentSummary _departmentNone = new DepartmentSummary(null, SR.DummyItemNone, null, null, null, true);
 		private readonly List<EnumValueInfo> _lateralityChoices;
 		private readonly List<EnumValueInfo> _schedulingCodeChoices;
 		private readonly EnumValueInfo _schedulingCodeNone = new EnumValueInfo(null, SR.DummyItemNone);

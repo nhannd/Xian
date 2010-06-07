@@ -564,7 +564,7 @@ namespace ClearCanvas.Ris.Client
 			var visitIdentity = new StringBuilder();
 			if (visitSummary.Facility != null)
 			{
-				visitIdentity.Append(visitSummary.Facility.Code);
+				visitIdentity.Append(visitSummary.Facility.Name);
 				visitIdentity.Append(" ");
 			}
 			visitIdentity.Append(visitSummary.VisitNumber.Id);

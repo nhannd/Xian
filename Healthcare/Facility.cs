@@ -46,8 +46,8 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class Facility : Entity
 	{
-		public Facility(string code, string name, InformationAuthorityEnum informationAuthority)
-			:this(code, name, informationAuthority, new HashedSet<Department>())
+		public Facility(string code, string name, string description, InformationAuthorityEnum informationAuthority)
+			:this(code, name, description, informationAuthority, new HashedSet<Department>())
     	{
     		
     	}

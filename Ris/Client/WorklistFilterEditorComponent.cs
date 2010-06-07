@@ -155,7 +155,7 @@ namespace ClearCanvas.Ris.Client
             if (item is FacilitySummary)
             {
                 FacilitySummary facility = (FacilitySummary)item;
-                return facility.Code;
+                return facility.Name;
             }
             else
                 return item.ToString(); // place-holder items

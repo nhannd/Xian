@@ -163,7 +163,7 @@ namespace ClearCanvas.Ris.Client.Admin
 				var worklist = CollectionUtils.FirstElement(this.SelectedItems);
 				var editor = new WorklistEditorComponent(worklist.WorklistRef, true, null, null);
 				var exitCode = LaunchAsDialog(this.Host.DesktopWindow,
-					new DialogBoxCreationArgs(editor, SR.TitleAddWorklist, null, DialogSizeHint.Medium));
+					new DialogBoxCreationArgs(editor, SR.TitleAddWorklist, null, DialogSizeHint.Large));
 
 				if (exitCode == ApplicationComponentExitCode.Accepted)
 				{
@@ -213,7 +213,7 @@ namespace ClearCanvas.Ris.Client.Admin
 		{
 			var editor = new WorklistEditorComponent(true);
 			var exitCode = LaunchAsDialog(this.Host.DesktopWindow,
-				new DialogBoxCreationArgs(editor, SR.TitleAddWorklist, null, DialogSizeHint.Medium));
+				new DialogBoxCreationArgs(editor, SR.TitleAddWorklist, null, DialogSizeHint.Large));
 
 			switch (exitCode)
 			{
@@ -231,7 +231,7 @@ namespace ClearCanvas.Ris.Client.Admin
 			var worklist = CollectionUtils.FirstElement(items);
 			var editor = new WorklistEditorComponent(worklist.WorklistRef, true);
 			var exitCode = LaunchAsDialog(this.Host.DesktopWindow,
-				new DialogBoxCreationArgs(editor, SR.TitleUpdateWorklist + " - " + worklist.DisplayName, null, DialogSizeHint.Medium));
+				new DialogBoxCreationArgs(editor, SR.TitleUpdateWorklist + " - " + worklist.DisplayName, null, DialogSizeHint.Large));
 
 			switch (exitCode)
 			{

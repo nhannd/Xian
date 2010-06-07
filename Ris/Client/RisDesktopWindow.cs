@@ -91,7 +91,7 @@ namespace ClearCanvas.Ris.Client
 
             // show working facility if specified
             if (currentSession.WorkingFacility != null)
-                username = string.Format("{0} @ {1}", username, currentSession.WorkingFacility.Code);
+                username = string.Format("{0} @ {1}", username, currentSession.WorkingFacility.Name);
 
             // show the user name before the base title
             return string.Format("{0} - {1}", username, base.MakeTitle(baseTitle, activeWorkspace));

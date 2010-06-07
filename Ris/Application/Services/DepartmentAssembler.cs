@@ -12,6 +12,7 @@ namespace ClearCanvas.Ris.Application.Services
 										 item.Id,
 										 item.Name,
 										 item.Facility.Code,
+										 item.Facility.Name,
 										 item.Deactivated);
 		}
 
