@@ -34,6 +34,7 @@ using System.ServiceModel;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using Castle.Core.Interceptor;
+using System.Reflection;
 
 namespace ClearCanvas.Enterprise.Core
 {
@@ -52,16 +53,25 @@ namespace ClearCanvas.Enterprise.Core
 			}
 			catch (Exception e)
 			{
-				// translate exception if necessary
-				var translated = TranslateException(e);
+				var ex = e;
 
-				// try promoting the exception to a fault
-				// if successful, throw the fault exception, otherwise throw the normal exception
-				var fault = PromoteExceptionToFault(translated, invocation.InvocationTarget, invocation.Method.Name);
-				if (fault != null)
+				// perform any necessary exception translation
+				var isTranslated = TranslateException(ref ex);
+
+				// try promoting the exception to a fault - if successful, throw the fault exception
+				Exception fault;
+				if (PromoteExceptionToFault(ex, invocation.InvocationTarget, invocation.Method, out fault))
+				{
 					throw fault;
-				else
-					throw translated;
+				}
+
+				// could not promote to fault
+				// if a translation occured, throw the translated exception
+				if(isTranslated)
+					throw ex;
+
+				// rethrow the original exception
+				throw;
 			}
 		}
 
@@ -72,25 +82,26 @@ namespace ClearCanvas.Enterprise.Core
 		/// </summary>
 		/// <param name="e"></param>
 		/// <returns></returns>
-		private static Exception TranslateException(Exception e)
+		private static bool TranslateException(ref Exception e)
 		{
 			// special handling of EntityVersionException
 			// assume all such exceptions occured because of concurrent modifications
 			// wrap in ConcurrentModificationException will be used in the fault contract
 			if (e is EntityVersionException)
 			{
-				return new ConcurrentModificationException(e.Message);
+				e = new ConcurrentModificationException(e.Message);
+				return true;
 			}
 
 			// special handling of EntityValidationException
 			// convert to RequestValidationException
 			if (e is EntityValidationException)
 			{
-				return new RequestValidationException(e.Message);
+				e = new RequestValidationException(e.Message);
+				return true;
 			}
 
-			// no translation
-			return e;
+			return false;
 		}
 
 		/// <summary>
@@ -99,36 +110,31 @@ namespace ClearCanvas.Enterprise.Core
 		/// </summary>
 		/// <param name="e"></param>
 		/// <param name="serviceInstance"></param>
-		/// <param name="operationMethodName"></param>
+		/// <param name="method"></param>
+		/// <param name="fault"></param>
 		/// <returns></returns>
-		private static FaultException PromoteExceptionToFault(Exception e, object serviceInstance, string operationMethodName)
+		private static bool PromoteExceptionToFault(Exception e, object serviceInstance, MethodInfo method, out Exception fault)
 		{
+			fault = null;
+
 			// get the service contract
-			var serviceContractAttr = CollectionUtils.FirstElement<ServiceImplementsContractAttribute>(
-				serviceInstance.GetType().GetCustomAttributes(typeof(ServiceImplementsContractAttribute), false));
+			var serviceContractAttr = AttributeUtils.GetAttribute<ServiceImplementsContractAttribute>(serviceInstance.GetType(), false);
 
+			// this should never happen, but if it does, there's nothing we can do
 			if (serviceContractAttr == null)
-				return null;  // this should never happen, but if it does, there's nothing we can do
-
-			// get the operation contract method
-			var method = serviceContractAttr.ServiceContract.GetMethod(operationMethodName);
+				return false;
 
 			// find a fault contract for this exception type
-			var faultContracts = method.GetCustomAttributes(typeof(FaultContractAttribute), true);
-			var faultContract = CollectionUtils.SelectFirst(faultContracts, (FaultContractAttribute a) => a.DetailType.Equals(e.GetType()));
-
+			var faultContract = AttributeUtils.GetAttribute<FaultContractAttribute>(method, true, a => a.DetailType.Equals(e.GetType()));
 			if (faultContract != null)
 			{
 				// from Juval Lowey
-				var faultUnboundedType = typeof(FaultException<>);
-				var faultBoundedType = faultUnboundedType.MakeGenericType(e.GetType());
-				//Exception newException = (Exception)Activator.CreateInstance(error.GetType(), error.Message);
-				var faultException = (FaultException)Activator.CreateInstance(faultBoundedType, e, new FaultReason(e.Message));
-
-				return faultException;
+				var faultBoundedType = typeof(FaultException<>).MakeGenericType(e.GetType());
+				fault = (FaultException)Activator.CreateInstance(faultBoundedType, e, new FaultReason(e.Message));
+				return true;
 			}
 
-			return null;    // no fault contract for this exception
+			return false;    // no fault contract for this exception
 		}
 	}
 }
