@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 	[Cloneable]
 	internal class FusionOverlayColorMapSpec : IDisposable
 	{
-		private bool _hideBackground = false;
+		private bool _thresholding = false;
 		private float _opacity = 0.5f;
 
 		[CloneIgnore]
@@ -80,15 +80,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 		}
 
-		public bool HideBackground
+		public bool Thresholding
 		{
-			get { return _hideBackground; }
+			get { return _thresholding; }
 			set
 			{
-				if (_hideBackground != value)
+				if (_thresholding != value)
 				{
-					_hideBackground = value;
-					this.OnHideBackgroundChanged(EventArgs.Empty);
+					_thresholding = value;
+					this.OnThresholdingChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -103,7 +103,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			this.InstallColorMap();
 		}
 
-		protected virtual void OnHideBackgroundChanged(EventArgs e)
+		protected virtual void OnThresholdingChanged(EventArgs e)
 		{
 			this.InstallColorMap();
 		}
@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			if (_overlayColorMapManager != null || _colorBarColorMapManager != null)
 			{
-				var overlayColorMapReference = AlphaColorMapFactory.GetColorMap("HOT_IRON", (byte) (byte.MaxValue*_opacity), _hideBackground);
+				var overlayColorMapReference = AlphaColorMapFactory.GetColorMap("HOT_IRON", (byte) (byte.MaxValue*_opacity), _thresholding);
 				if (_overlayColorMapManager != null)
 					_overlayColorMapManager.InstallColorMap(overlayColorMapReference);
 				if (_colorBarColorMapManager != null)

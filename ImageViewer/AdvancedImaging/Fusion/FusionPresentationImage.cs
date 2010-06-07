@@ -39,7 +39,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
 	[Cloneable]
-	public class FusionPresentationImage : BasicPresentationImage, IImageSopProvider
+	public class FusionPresentationImage : BasicPresentationImage, IImageSopProvider, ILayerOpacityProvider
 	{
 		private const string _fusionOverlayLayerName = "Fusion";
 
@@ -57,6 +57,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		[CloneIgnore]
 		private ColorBarGraphic _colorBarGraphic;
+
+		[CloneIgnore]
+		private FusionLayerOpacityManager _fusionLayerOpacityManager;
 
 		private FusionOverlayColorMapSpec _overlayColorMapSpec;
 
@@ -132,6 +135,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				_overlayColorMapSpec = new FusionOverlayColorMapSpec();
 			}
 			_overlayColorMapSpec.SetColorBarColorMapManager(_colorBarGraphic.ColorMapManager);
+
+			if (_fusionLayerOpacityManager == null)
+			{
+				_fusionLayerOpacityManager = new FusionLayerOpacityManager(this);
+			}
 		}
 
 		protected override void Dispose(bool disposing)
@@ -182,23 +190,16 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			get { return (GrayscaleImageGraphic) base.ImageGraphic; }
 		}
 
-		[Obsolete("See JY")]
-		public FusionPresentationImageLayer ActiveLayer
-		{
-			get { return FusionPresentationImageLayer.Base; }
-			set { }
-		}
-
-		public float OverlayOpacity
+		private float OverlayOpacity
 		{
 			get { return _overlayColorMapSpec.Opacity; }
 			set { _overlayColorMapSpec.Opacity = value; }
 		}
 
-		public bool HideOverlayBackground
+		private bool Thresholding
 		{
-			get { return _overlayColorMapSpec.HideBackground; }
-			set { _overlayColorMapSpec.HideBackground = value; }
+			get { return _overlayColorMapSpec.Thresholding; }
+			set { _overlayColorMapSpec.Thresholding = value; }
 		}
 
 		public override IPresentationImage CreateFreshCopy()
@@ -216,10 +217,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			//return DicomAnnotationLayoutFactory.CreateLayout(this);
 		}
 
-		/// <summary>
-		/// Returns the Instance Number as a string.
-		/// </summary>
-		/// <returns>The Instance Number as a string.</returns>
 		public override string ToString()
 		{
 			return Frame.ParentImageSop.InstanceNumber.ToString();
@@ -270,6 +267,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		#endregion
 
+		#region ILayerOpacityProvider members
+
+		public ILayerOpacityManager LayerOpacityManager
+		{
+			get { return _fusionLayerOpacityManager; }
+		}
+
+		#endregion
+
 		#region Private Helpers
 
 		private static GrayscaleImageGraphic Create(IImageSopProvider frameReference)
@@ -285,6 +291,67 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				frameReference.Frame.RescaleSlope,
 				frameReference.Frame.RescaleIntercept,
 				frameReference.Frame.GetNormalizedPixelData);
+		}
+
+		#endregion
+
+		#region FusionLayerOpacityManager Class
+
+		// TODO: merge responsibilities of this class into FusionOVerlayColorMapSpec
+		private sealed class FusionLayerOpacityManager : ILayerOpacityManager
+		{
+			private readonly FusionPresentationImage _owner;
+
+			public FusionLayerOpacityManager(FusionPresentationImage owner)
+			{
+				_owner = owner;
+			}
+
+			public bool Enabled
+			{
+				get { return true; }
+				set { }
+			}
+
+			public float Opacity
+			{
+				get { return _owner.OverlayOpacity; }
+				set { _owner.OverlayOpacity = value; }
+			}
+
+			public bool Thresholding
+			{
+				get { return _owner.Thresholding; }
+				set { _owner.Thresholding = value; }
+			}
+
+			public object CreateMemento()
+			{
+				return new Memento(_owner.OverlayOpacity, _owner.Thresholding);
+			}
+
+			public void SetMemento(object memento)
+			{
+				Memento value = (Memento) memento;
+				_owner.OverlayOpacity = value.Opacity;
+				_owner.Thresholding = value.Thresholding;
+			}
+
+			#region Memento Struct
+
+			private struct Memento
+			{
+				public readonly float Opacity;
+				public readonly bool Thresholding;
+
+				public Memento(float opacity, bool thresholding)
+				{
+					Opacity = opacity;
+					Thresholding = thresholding;
+				}
+			}
+
+			#endregion
 		}
 
 		#endregion

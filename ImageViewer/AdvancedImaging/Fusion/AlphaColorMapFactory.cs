@@ -42,9 +42,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		private static readonly Dictionary<ICachedColorMapKey, CacheItem> _cache = new Dictionary<ICachedColorMapKey, CacheItem>();
 		private static readonly object _syncLock = new object();
 
-		public static IDataLut GetColorMap(string colorMapName, byte alpha, bool hideBackground)
+		public static IDataLut GetColorMap(string colorMapName, byte alpha, bool thresholding)
 		{
-			return new CachedColorMapProxy(new AlphaColorMapKey(colorMapName, alpha, hideBackground));
+			return new CachedColorMapProxy(new AlphaColorMapKey(colorMapName, alpha, thresholding));
 		}
 
 		private static CacheItem GetColorMapCacheItem(ICachedColorMapKey key)
@@ -75,19 +75,19 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			private readonly string _colorMapName;
 			private readonly byte _alpha;
-			private readonly bool _hideBackground;
+			private readonly bool _thresholding;
 
 			/// <summary>
 			/// Cloning constructor.
 			/// </summary>
 			private AlphaColorMapKey() {}
 
-			public AlphaColorMapKey(string colorMapName, byte alpha, bool hideBackground)
+			public AlphaColorMapKey(string colorMapName, byte alpha, bool thresholding)
 				: this()
 			{
 				_colorMapName = colorMapName;
 				_alpha = alpha;
-				_hideBackground = hideBackground;
+				_thresholding = thresholding;
 			}
 
 			public IDataLut CreateColorMap()
@@ -105,17 +105,17 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					}
 				}
 
-				return new AlphaColorMap(baseColorMap, _alpha, _hideBackground);
+				return new AlphaColorMap(baseColorMap, _alpha, _thresholding);
 			}
 
 			public override int GetHashCode()
 			{
-				return 0x15BDF4E1 ^ _colorMapName.GetHashCode() ^ _alpha.GetHashCode() ^ _hideBackground.GetHashCode();
+				return 0x15BDF4E1 ^ _colorMapName.GetHashCode() ^ _alpha.GetHashCode() ^ _thresholding.GetHashCode();
 			}
 
 			public bool Equals(AlphaColorMapKey other)
 			{
-				return _colorMapName.Equals(other._colorMapName) && _alpha.Equals(other._alpha) && _hideBackground.Equals(other._hideBackground);
+				return _colorMapName.Equals(other._colorMapName) && _alpha.Equals(other._alpha) && _thresholding.Equals(other._thresholding);
 			}
 
 			public override bool Equals(object obj)
@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 			public override string ToString()
 			{
-				return String.Format("{0}[alpha={1},hidebkg={2}]", _colorMapName, _alpha, _hideBackground ? 1 : 0);
+				return String.Format("{0}[alpha={1},thresholding={2}]", _colorMapName, _alpha, _thresholding ? 1 : 0);
 			}
 		}
 

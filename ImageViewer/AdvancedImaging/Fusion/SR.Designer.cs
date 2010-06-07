@@ -61,6 +61,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to AdjustOpacity.
+        /// </summary>
+        internal static string CommandAdjustOpacity {
+            get {
+                return ResourceManager.GetString("CommandAdjustOpacity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fusion: {0}/{1} ({2}).
         /// </summary>
         internal static string FormatPETFusionDisplaySet {
@@ -84,6 +93,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion {
         internal static string LabelNoAttentuationCorrection {
             get {
                 return ResourceManager.GetString("LabelNoAttentuationCorrection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjust &amp;Opacity.
+        /// </summary>
+        internal static string MenuAdjustOpacity {
+            get {
+                return ResourceManager.GetString("MenuAdjustOpacity", resourceCulture);
             }
         }
         
@@ -133,6 +151,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Adjust Opacity.
+        /// </summary>
+        internal static string ToolbarAdjustOpacity {
+            get {
+                return ResourceManager.GetString("ToolbarAdjustOpacity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Advanced.
         /// </summary>
         internal static string ToolbarAdvanced {
@@ -147,6 +174,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion {
         internal static string ToolbarFusion {
             get {
                 return ResourceManager.GetString("ToolbarFusion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjust Opacity.
+        /// </summary>
+        internal static string TooltipAdjustOpacity {
+            get {
+                return ResourceManager.GetString("TooltipAdjustOpacity", resourceCulture);
             }
         }
     }

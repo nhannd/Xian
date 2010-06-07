@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CommandAdjustOpacity" xml:space="preserve">
+    <value>AdjustOpacity</value>
+  </data>
   <data name="FormatPETFusionDisplaySet" xml:space="preserve">
     <value>Fusion: {0}/{1} ({2})</value>
   </data>
@@ -125,6 +128,9 @@
   </data>
   <data name="LabelNoAttentuationCorrection" xml:space="preserve">
     <value>No Attenuation Correction</value>
+  </data>
+  <data name="MenuAdjustOpacity" xml:space="preserve">
+    <value>Adjust &amp;Opacity</value>
   </data>
   <data name="MenuAdvanced" xml:space="preserve">
     <value>Ad&amp;vanced</value>
@@ -141,10 +147,16 @@
   <data name="TitleFusion" xml:space="preserve">
     <value>Fusion</value>
   </data>
+  <data name="ToolbarAdjustOpacity" xml:space="preserve">
+    <value>Adjust Opacity</value>
+  </data>
   <data name="ToolbarAdvanced" xml:space="preserve">
     <value>Advanced</value>
   </data>
   <data name="ToolbarFusion" xml:space="preserve">
     <value>Fusion</value>
+  </data>
+  <data name="TooltipAdjustOpacity" xml:space="preserve">
+    <value>Adjust Opacity</value>
   </data>
 </root>

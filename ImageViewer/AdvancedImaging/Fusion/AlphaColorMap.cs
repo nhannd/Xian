@@ -37,16 +37,16 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 	{
 		private readonly IDataLut _baseColorMap;
 		private byte _alpha = 255;
-		private bool _hideBackground;
+		private bool _thresholding;
 
 		public AlphaColorMap(IDataLut baseColorMap)
 			: this(baseColorMap, 255, false) {}
 
-		public AlphaColorMap(IDataLut baseColorMap, byte alpha, bool hideBackground)
+		public AlphaColorMap(IDataLut baseColorMap, byte alpha, bool thresholding)
 		{
 			_baseColorMap = baseColorMap;
 			_alpha = alpha;
-			_hideBackground = hideBackground;
+			_thresholding = thresholding;
 		}
 
 		public byte Alpha
@@ -62,14 +62,14 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 		}
 
-		public bool HideBackground
+		public bool Thresholding
 		{
-			get { return _hideBackground; }
+			get { return _thresholding; }
 			set
 			{
-				if (_hideBackground != value)
+				if (_thresholding != value)
 				{
-					_hideBackground = value;
+					_thresholding = value;
 					base.OnLutChanged();
 				}
 			}
@@ -96,13 +96,13 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			int max = MaxInputValue;
 			for (int i = min; i <= max; i++)
 				this[i] = (_baseColorMap[i] & 0x00FFFFFF) + (_alpha << 24);
-			if (_hideBackground)
+			if (_thresholding)
 				this[min] = (_baseColorMap[min] & 0x00FFFFFF);
 		}
 
 		public override object CreateMemento()
 		{
-			return new Memento(base.CreateMemento(), _alpha, _hideBackground);
+			return new Memento(base.CreateMemento(), _alpha, _thresholding);
 		}
 
 		public override void SetMemento(object memento)
@@ -110,7 +110,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			Memento m = (Memento) memento;
 			base.SetMemento(m.Object);
 			this.Alpha = m.Alpha;
-			this.HideBackground = m.HideBackground;
+			this.Thresholding = m.Thresholding;
 		}
 
 		public override string GetKey()
@@ -130,18 +130,18 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			public readonly object Object;
 			public readonly byte Alpha;
-			public readonly bool HideBackground;
+			public readonly bool Thresholding;
 
-			public Memento(object @object, byte alpha, bool hideBackground)
+			public Memento(object @object, byte alpha, bool thresholding)
 			{
 				this.Object = @object;
 				this.Alpha = alpha;
-				this.HideBackground = hideBackground;
+				this.Thresholding = thresholding;
 			}
 
 			public override int GetHashCode()
 			{
-				int code = 0x04634367 ^ this.Alpha.GetHashCode() ^ this.HideBackground.GetHashCode();
+				int code = 0x04634367 ^ this.Alpha.GetHashCode() ^ this.Thresholding.GetHashCode();
 				if (this.Object != null)
 					code ^= this.Object.GetHashCode();
 				return code;
@@ -150,7 +150,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			public override bool Equals(object obj)
 			{
 				if (obj is Memento)
-					return Equals(this.Alpha, ((Memento) obj).Alpha) && Equals(this.HideBackground, ((Memento) obj).HideBackground) && Equals(this.Object, ((Memento) obj).Object);
+					return Equals(this.Alpha, ((Memento) obj).Alpha) && Equals(this.Thresholding, ((Memento) obj).Thresholding) && Equals(this.Object, ((Memento) obj).Object);
 				return base.Equals(obj);
 			}
 		}

@@ -40,8 +40,9 @@
     <Compile Include="ColorBarGraphic.cs" />
     <Compile Include="DisplaySetFactoryProvider.cs" />
     <Compile Include="AlphaColorMapFactory.cs" />
+    <Compile Include="LayerOpacityOperation.cs" />
+    <Compile Include="AdjustOpacityTool.cs" />
     <Compile Include="FusionOverlayColorMapSpec.cs" />
-    <Compile Include="FusionControlPanelComponent.cs" />
     <Compile Include="AlphaColorMap.cs" />
     <Compile Include="FusionOverlayLoaderCompositeGraphic.cs" />
     <Compile Include="FusionOverlayFrameData.cs" />
@@ -49,6 +50,7 @@
     <Compile Include="FusionPresentationImage.cs" />
     <Compile Include="FusionPresentationImageLayer.cs" />
     <Compile Include="HotIronColorMapFactory.cs" />
+    <Compile Include="ILayerOpacityManager.cs" />
     <Compile Include="InterpolatedColorMap.cs" />
     <Compile Include="PETFusionDisplaySetDescriptor.cs" />
     <Compile Include="PETFusionDisplaySetFactory.cs" />
@@ -60,7 +62,6 @@
     <Compile Include="FusionOverlayDataReference.cs" />
     <Compile Include="FusionOverlayData.cs" />
     <Compile Include="PETFusionType.cs" />
-    <Compile Include="FusionTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -100,6 +101,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AdjustOpacityToolLarge.png" />
+    <EmbeddedResource Include="Icons\AdjustOpacityToolMedium.png" />
+    <EmbeddedResource Include="Icons\AdjustOpacityToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

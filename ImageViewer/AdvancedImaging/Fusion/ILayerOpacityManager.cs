@@ -29,33 +29,19 @@
 
 #endregion
 
-using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.View.WinForms
+namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
-	[ExtensionOf(typeof (FusionControlPanelComponentViewExtensionPoint))]
-	public class FusionControlPanelComponentView : WinFormsView, IApplicationComponentView
+	public interface ILayerOpacityManager : IMemorable
 	{
-		private FusionControlPanelComponent _component;
-		private FusionControlPanelComponentControl _control;
+		bool Enabled { get; set; }
+		float Opacity { get; set; }
+		bool Thresholding { get; set; }
+	}
 
-		public void SetComponent(IApplicationComponent component)
-		{
-			_component = (FusionControlPanelComponent) component;
-		}
-
-		public override object GuiElement
-		{
-			get
-			{
-				if (_control == null)
-				{
-					_control = new FusionControlPanelComponentControl(_component);
-				}
-				return _control;
-			}
-		}
+	public interface ILayerOpacityProvider : IDrawable
+	{
+		ILayerOpacityManager LayerOpacityManager { get; }
 	}
 }

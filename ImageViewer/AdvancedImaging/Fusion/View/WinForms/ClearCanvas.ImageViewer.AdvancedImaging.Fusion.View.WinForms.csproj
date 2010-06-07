@@ -38,13 +38,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FusionControlPanelComponentView.cs" />
-    <Compile Include="FusionControlPanelComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="FusionControlPanelComponentControl.Designer.cs">
-      <DependentUpon>FusionControlPanelComponentControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
@@ -69,11 +62,6 @@
       <Project>{BD56AC53-F4B2-46AA-9371-D0E6F569A9D2}</Project>
       <Name>ClearCanvas.ImageViewer.AdvancedImaging.Fusion</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="FusionControlPanelComponentControl.resx">
-      <DependentUpon>FusionControlPanelComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
