@@ -213,8 +213,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		/// <returns></returns>
 		protected override IAnnotationLayout CreateAnnotationLayout()
 		{
-			return base.CreateAnnotationLayout();
-			//return DicomAnnotationLayoutFactory.CreateLayout(this);
+			return AnnotationLayoutFactory.CreateLayout("Dicom.CT");
 		}
 
 		public override string ToString()

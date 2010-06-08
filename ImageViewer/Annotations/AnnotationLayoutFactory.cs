@@ -37,7 +37,7 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
-	internal static class AnnotationLayoutFactory 
+	public static class AnnotationLayoutFactory 
 	{
         [Cloneable(true)]
         private class StoredAnnotationLayoutProxy : IAnnotationLayout
