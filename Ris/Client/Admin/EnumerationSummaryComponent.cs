@@ -42,119 +42,114 @@ using ClearCanvas.Ris.Application.Common.Admin.EnumerationAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    [MenuAction("launch", "global-menus/Admin/Enumerations", "Launch")]
-	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Enumeration)]
-    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
-    public class EnumerationAdminTool : Tool<IDesktopToolContext>
-    {
-        private Workspace _workspace;
+	[MenuAction("launch", "global-menus/Admin/Enumerations", "Launch")]
+	[ActionPermission("launch", Application.Common.AuthorityTokens.Admin.Data.Enumeration)]
+	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	public class EnumerationAdminTool : Tool<IDesktopToolContext>
+	{
+		private Workspace _workspace;
 
-        public void Launch()
-        {
-            if (_workspace == null)
-            {
-                try
-                {
-                    EnumerationSummaryComponent component = new EnumerationSummaryComponent();
+		public void Launch()
+		{
+			if (_workspace == null)
+			{
+				try
+				{
+					var component = new EnumerationSummaryComponent();
 
-                    _workspace = ApplicationComponent.LaunchAsWorkspace(
-                        this.Context.DesktopWindow,
-                        component,
-                        SR.TitleEnumerationAdmin);
-                    _workspace.Closed += delegate { _workspace = null; };
+					_workspace = ApplicationComponent.LaunchAsWorkspace(
+						this.Context.DesktopWindow,
+						component,
+						SR.TitleEnumerationAdmin);
+					_workspace.Closed += delegate { _workspace = null; };
 
-                }
-                catch (Exception e)
-                {
-                    // could not launch component
-                    ExceptionHandler.Report(e, this.Context.DesktopWindow);
-                }
-            }
-            else
-            {
-                _workspace.Activate();
-            }
-        }
-    }
+				}
+				catch (Exception e)
+				{
+					// could not launch component
+					ExceptionHandler.Report(e, this.Context.DesktopWindow);
+				}
+			}
+			else
+			{
+				_workspace.Activate();
+			}
+		}
+	}
 
-    /// <summary>
-    /// Extension point for views onto <see cref="EnumerationSummaryComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class EnumerationSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	/// <summary>
+	/// Extension point for views onto <see cref="EnumerationSummaryComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class EnumerationSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    /// <summary>
-    /// EnumerationSummaryComponent class
-    /// </summary>
-    [AssociateView(typeof(EnumerationSummaryComponentViewExtensionPoint))]
+	/// <summary>
+	/// EnumerationSummaryComponent class
+	/// </summary>
+	[AssociateView(typeof(EnumerationSummaryComponentViewExtensionPoint))]
 	public class EnumerationSummaryComponent : SummaryComponentBase<EnumValueAdminInfo, EnumValueAdminInfoTable>
-    {
-        private List<EnumerationSummary> _enumerations;
-        private EnumerationSummary _selectedEnumeration;
+	{
+		private List<EnumerationSummary> _enumerations;
+		private EnumerationSummary _selectedEnumeration;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public EnumerationSummaryComponent()
-        {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public EnumerationSummaryComponent()
+		{
 			_enumerations = new List<EnumerationSummary>();
-        }
+		}
 
-        public override void Start()
-        {
-            Platform.GetService<IEnumerationAdminService>(
-                delegate(IEnumerationAdminService service)
-                {
-                    ListEnumerationsResponse response = service.ListEnumerations(new ListEnumerationsRequest());
-                    _enumerations = response.Enumerations;
-                    _enumerations.Sort(delegate(EnumerationSummary x, EnumerationSummary y) { return x.DisplayName.CompareTo(y.DisplayName); });
-                });
+		public override void Start()
+		{
+			Platform.GetService(
+				delegate(IEnumerationAdminService service)
+				{
+					var response = service.ListEnumerations(new ListEnumerationsRequest());
+					_enumerations = response.Enumerations;
+					_enumerations.Sort((x, y) => x.DisplayName.CompareTo(y.DisplayName));
+				});
 
-            _selectedEnumeration = CollectionUtils.FirstElement(_enumerations);
+			_selectedEnumeration = CollectionUtils.FirstElement(_enumerations);
 
-            base.Start();
-        }
+			base.Start();
+		}
 
-        #region Presentation Model
+		#region Presentation Model
 
-        public List<string> EnumerationChoices
-        {
-            get
-            {
-                return CollectionUtils.Map<EnumerationSummary, string, List<string>>(_enumerations,
-                    delegate(EnumerationSummary s) { return s.DisplayName; });
-            }
-        }
+		public List<string> EnumerationChoices
+		{
+			get { return CollectionUtils.Map<EnumerationSummary, string, List<string>>(_enumerations, s => s.DisplayName); }
+		}
 
-        public string SelectedEnumeration
-        {
-            get { return _selectedEnumeration.DisplayName; }
-            set
-            {
-                EnumerationSummary summary = CollectionUtils.SelectFirst(_enumerations,
-                    delegate(EnumerationSummary s) { return s.DisplayName == value; });
+		public string SelectedEnumeration
+		{
+			get { return _selectedEnumeration.DisplayName; }
+			set
+			{
+				var summary = CollectionUtils.SelectFirst(_enumerations, s => s.DisplayName == value);
 
-                if (_selectedEnumeration != summary)
-                {
-                    _selectedEnumeration = summary;
+				if (_selectedEnumeration == summary)
+					return;
 
-					LoadEnumerationValues();
+				_selectedEnumeration = summary;
 
-                	UpdateOperationEnablement();
-                    NotifyPropertyChanged("SelectedEnumeration");
-                    NotifyPropertyChanged("SelectedEnumerationClassName");
-                }
-            }
-        }
+				LoadEnumerationValues();
 
-        public string SelectedEnumerationClassName
-        {
-            get { return _selectedEnumeration == null ? null : _selectedEnumeration.AssemblyQualifiedClassName; }
-        }
+				UpdateOperationEnablement();
+				NotifyPropertyChanged("SelectedEnumeration");
+				NotifyPropertyChanged("SelectedEnumerationClassName");
+			}
+		}
 
-        #endregion
+		public string SelectedEnumerationClassName
+		{
+			get { return _selectedEnumeration == null ? null : _selectedEnumeration.AssemblyQualifiedClassName; }
+		}
+
+		#endregion
 
 		#region Overrides
 
@@ -191,13 +186,14 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <returns></returns>
 		protected override IList<EnumValueAdminInfo> ListItems(int firstItem, int maxItems)
 		{
-			ListEnumerationValuesResponse listResponse = new ListEnumerationValuesResponse();
+			var listResponse = new ListEnumerationValuesResponse();
 			if (_selectedEnumeration != null)
 			{
-				Platform.GetService<IEnumerationAdminService>(
+				Platform.GetService(
 					delegate(IEnumerationAdminService service)
 					{
-						listResponse = service.ListEnumerationValues(new ListEnumerationValuesRequest(_selectedEnumeration.AssemblyQualifiedClassName));
+						var request = new ListEnumerationValuesRequest(_selectedEnumeration.AssemblyQualifiedClassName) { IncludeDeactivated = true };
+						listResponse = service.ListEnumerationValues(request);
 					});
 			}
 
@@ -215,12 +211,8 @@ namespace ClearCanvas.Ris.Client.Admin
 			// because the entire table need to be refreshed after changes to any enumValueInfo item
 			addedItems = new List<EnumValueAdminInfo>();
 
-			EnumerationEditorComponent component = new EnumerationEditorComponent(
-				_selectedEnumeration.AssemblyQualifiedClassName,
-				this.Table.Items);
-
-			ApplicationComponentExitCode result = LaunchAsDialog(this.Host.DesktopWindow, component, SR.TitleEnumAddValue);
-			if (result == ApplicationComponentExitCode.Accepted)
+			var component = new EnumerationEditorComponent(_selectedEnumeration.AssemblyQualifiedClassName, this.Table.Items);
+			if (ApplicationComponentExitCode.Accepted == LaunchAsDialog(this.Host.DesktopWindow, component, SR.TitleEnumAddValue))
 			{
 				// refresh entire table
 				LoadEnumerationValues();
@@ -242,13 +234,13 @@ namespace ClearCanvas.Ris.Client.Admin
 			// because the entire table need to be refreshed after changes to any enumValueInfo item
 			editedItems = new List<EnumValueAdminInfo>();
 
-			EnumValueAdminInfo item = CollectionUtils.FirstElement(items);
-			EnumerationEditorComponent component = new EnumerationEditorComponent(
+			var item = CollectionUtils.FirstElement(items);
+			var title = string.Format("{0} - {1}", SR.TitleEnumEditValue, item.Code);
+			var component = new EnumerationEditorComponent(
 				_selectedEnumeration.AssemblyQualifiedClassName,
 				(EnumValueAdminInfo)item.Clone(),
 				this.Table.Items);
-			ApplicationComponentExitCode result = LaunchAsDialog(this.Host.DesktopWindow, component, SR.TitleEnumEditValue + " - " + item.Code);
-			if (result == ApplicationComponentExitCode.Accepted)
+			if (ApplicationComponentExitCode.Accepted == LaunchAsDialog(this.Host.DesktopWindow, component, title))
 			{
 				// refresh entire table
 				LoadEnumerationValues();
@@ -270,15 +262,13 @@ namespace ClearCanvas.Ris.Client.Admin
 			failureMessage = null;
 			deletedItems = new List<EnumValueAdminInfo>();
 
-			foreach (EnumValueAdminInfo item in items)
+			foreach (var item in items)
 			{
 				try
 				{
+					var enumValue = item;
 					Platform.GetService<IEnumerationAdminService>(
-						delegate(IEnumerationAdminService service)
-						{
-							service.RemoveValue(new RemoveValueRequest(_selectedEnumeration.AssemblyQualifiedClassName, item));
-						});
+						service => service.RemoveValue(new RemoveValueRequest(_selectedEnumeration.AssemblyQualifiedClassName, enumValue)));
 
 					deletedItems.Add(item);
 				}
@@ -299,21 +289,22 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <returns>True if items were edited, false otherwise.</returns>
 		protected override bool UpdateItemsActivation(IList<EnumValueAdminInfo> items, out IList<EnumValueAdminInfo> editedItems)
 		{
-			List<EnumValueAdminInfo> results = new List<EnumValueAdminInfo>();
-			foreach (EnumValueAdminInfo item in items)
+			var results = new List<EnumValueAdminInfo>();
+			foreach (var item in items)
 			{
-				Platform.GetService<IEnumerationAdminService>(
+				var enumValue = item;
+				Platform.GetService(
 					delegate(IEnumerationAdminService service)
 					{
-						item.Deactivated = !item.Deactivated;
+						enumValue.Deactivated = !enumValue.Deactivated;
 
 						// this is kind of annoying, but the way the service interface is designed, we need to know
 						// who to insert after in order to update the value
-						int index = this.Table.Items.IndexOf(item);
-						EnumValueAdminInfo insertAfter = index > 0 ? this.Table.Items[index - 1] : null;
-						service.EditValue(new EditValueRequest(_selectedEnumeration.AssemblyQualifiedClassName, item, insertAfter));
+						var index = this.Table.Items.IndexOf(enumValue);
+						var insertAfter = index > 0 ? this.Table.Items[index - 1] : null;
+						service.EditValue(new EditValueRequest(_selectedEnumeration.AssemblyQualifiedClassName, enumValue, insertAfter));
 
-						results.Add(item);
+						results.Add(enumValue);
 					});
 			}
 
@@ -365,5 +356,5 @@ namespace ClearCanvas.Ris.Client.Admin
 				this.ActionModel.ToggleActivation.Enabled = this.SelectedItems.Count > 0 && _selectedEnumeration.CanAddRemoveValues;
 			}
 		}
-    }
+	}
 }
