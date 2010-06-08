@@ -36,31 +36,40 @@ namespace ClearCanvas.Enterprise.Common
 	/// </summary>
 	public class PropertyChange
 	{
-		private readonly string _propertyName;
-		private readonly object _oldValue;
-		private readonly object _newValue;
-
-		public PropertyChange(string propertyName, object oldValue, object newValue)
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="propertyName"></param>
+		/// <param name="isCollection"></param>
+		/// <param name="oldValue"></param>
+		/// <param name="newValue"></param>
+		public PropertyChange(string propertyName, bool isCollection, object oldValue, object newValue)
 		{
-			_propertyName = propertyName;
-			_oldValue = oldValue;
-			_newValue = newValue;
+			PropertyName = propertyName;
+			OldValue = oldValue;
+			NewValue = newValue;
+			IsCollection = isCollection;
 		}
 
-		public string PropertyName
-		{
-			get { return _propertyName; }
-		}
+		/// <summary>
+		/// Gets the name of the property.
+		/// </summary>
+		public string PropertyName { get; private set; }
 
-		public object OldValue
-		{
-			get { return _oldValue; }
-		}
+		/// <summary>
+		/// Gets the old value of the property.
+		/// </summary>
+		public object OldValue { get; private set; }
 
-		public object NewValue
-		{
-			get { return _newValue; }
-		}
+		/// <summary>
+		/// Gets the new value of the property.
+		/// </summary>
+		public object NewValue { get; private set; }
+
+		/// <summary>
+		/// Gets a value indicating whether the property is a collection property.
+		/// </summary>
+		public bool IsCollection { get; private set; }
 
 		/// <summary>
 		/// Returns a new <see cref="PropertyChange"/> that is the result of adding this change
@@ -73,7 +82,7 @@ namespace ClearCanvas.Enterprise.Common
 		/// </remarks>
 		public PropertyChange AddTo(PropertyChange previousChange)
 		{
-			return new PropertyChange(_propertyName, previousChange._oldValue, _newValue);
+			return new PropertyChange(PropertyName, IsCollection, previousChange.OldValue, NewValue);
 		}
 	}
 }

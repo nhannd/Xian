@@ -95,7 +95,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 
 		public PropertyChange AsPropertyChange()
 		{
-			return new PropertyChange(_propertyName, _oldValue, _newValue);
+			return new PropertyChange(_propertyName, IsCollectionProperty, _oldValue, _newValue);
 		}
 
 		/// <summary>
