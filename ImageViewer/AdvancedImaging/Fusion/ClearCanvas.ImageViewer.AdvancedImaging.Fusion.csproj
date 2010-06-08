@@ -40,15 +40,15 @@
     <Compile Include="ColorBarGraphic.cs" />
     <Compile Include="DisplaySetFactoryProvider.cs" />
     <Compile Include="AlphaColorMapFactory.cs" />
+    <Compile Include="VoiLutManagerProxy.cs" />
     <Compile Include="LayerOpacityOperation.cs" />
     <Compile Include="AdjustOpacityTool.cs" />
     <Compile Include="FusionOverlayColorMapSpec.cs" />
     <Compile Include="AlphaColorMap.cs" />
-    <Compile Include="FusionOverlayLoaderCompositeGraphic.cs" />
+    <Compile Include="FusionOverlayCompositeGraphic.cs" />
     <Compile Include="FusionOverlayFrameData.cs" />
     <Compile Include="FusionOverlayFrameDataReference.cs" />
     <Compile Include="FusionPresentationImage.cs" />
-    <Compile Include="FusionPresentationImageLayer.cs" />
     <Compile Include="HotIronColorMapFactory.cs" />
     <Compile Include="ILayerOpacityManager.cs" />
     <Compile Include="InterpolatedColorMap.cs" />
@@ -69,6 +69,7 @@
     </Compile>
     <Compile Include="StandardColorMaps.cs" />
     <Compile Include="Utilities\DicomImagePlane.cs" />
+    <Compile Include="WindowLevelSynchronicityTool.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">

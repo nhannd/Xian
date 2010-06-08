@@ -45,7 +45,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	{
 		Blocks,
 		Continuous,
-		Marquee
+		Marquee,
+		Scanner
 	}
 
 	[Cloneable(true)]
@@ -59,6 +60,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					return new ContinuousProgressBarGraphic();
 				case ProgressBarGraphicStyle.Marquee:
 					return new MarqueeProgressBarGraphic();
+				case ProgressBarGraphicStyle.Scanner:
+					return new ScannerProgressBarGraphic();
 				case ProgressBarGraphicStyle.Blocks:
 				default:
 					return new BlocksProgressBarGraphic();

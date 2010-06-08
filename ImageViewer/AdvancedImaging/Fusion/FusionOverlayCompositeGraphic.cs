@@ -32,12 +32,13 @@
 using System;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
 	[Cloneable(false)]
-	internal class FusionOverlayLoaderCompositeGraphic : CompositeGraphic
+	internal class FusionOverlayCompositeGraphic : CompositeGraphic, IVoiLutProvider
 	{
 		private event EventHandler _overlayImageGraphicChanged;
 
@@ -48,12 +49,16 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		private GrayscaleImageGraphic _overlayImageGraphic;
 
 		[CloneIgnore]
+		private VoiLutManagerProxy _voiLutManagerProxy;
+
+		[CloneIgnore]
 		private bool _isLoadingProgressShown;
 
-		public FusionOverlayLoaderCompositeGraphic(FusionOverlayFrameData overlayFrameData)
+		public FusionOverlayCompositeGraphic(FusionOverlayFrameData overlayFrameData)
 		{
 			_overlayFrameDataReference = overlayFrameData.CreateTransientReference();
 			_overlayFrameDataReference.FusionOverlayFrameData.Unloaded += HandleOverlayFrameDataUnloaded;
+			_voiLutManagerProxy = new VoiLutManagerProxy();
 		}
 
 		/// <summary>
@@ -61,12 +66,13 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		/// </summary>
 		/// <param name="source">The source object from which to clone.</param>
 		/// <param name="context">The cloning context object.</param>
-		protected FusionOverlayLoaderCompositeGraphic(FusionOverlayLoaderCompositeGraphic source, ICloningContext context)
+		protected FusionOverlayCompositeGraphic(FusionOverlayCompositeGraphic source, ICloningContext context)
 		{
 			context.CloneFields(source, this);
 
 			_overlayFrameDataReference = source._overlayFrameDataReference.Clone();
 			_overlayFrameDataReference.FusionOverlayFrameData.Unloaded += HandleOverlayFrameDataUnloaded;
+			_voiLutManagerProxy = new VoiLutManagerProxy();
 		}
 
 		protected override void Dispose(bool disposing)
@@ -74,6 +80,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			if (disposing)
 			{
 				_overlayImageGraphic = null;
+				_voiLutManagerProxy = null;
 
 				if (_overlayFrameDataReference != null)
 				{
@@ -84,6 +91,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 
 			base.Dispose(disposing);
+		}
+
+		public IVoiLutManager VoiLutManager
+		{
+			get { return _voiLutManagerProxy; }
 		}
 
 		public FusionOverlayFrameData OverlayFrameData
@@ -102,12 +114,14 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					{
 						base.Graphics.Remove(_overlayImageGraphic);
 						_overlayImageGraphic.Dispose();
+						_voiLutManagerProxy.SetRealVoiLutManager(null);
 					}
 
 					_overlayImageGraphic = value;
 
 					if (_overlayImageGraphic != null)
 					{
+						_voiLutManagerProxy.SetRealVoiLutManager(_overlayImageGraphic.VoiLutManager);
 						base.Graphics.Add(_overlayImageGraphic);
 					}
 

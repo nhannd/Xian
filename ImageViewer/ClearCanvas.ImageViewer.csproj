@@ -272,6 +272,7 @@
     <Compile Include="InteractiveGraphics\BlocksProgressBarGraphic.cs" />
     <Compile Include="InteractiveGraphics\ContinuousProgressBarGraphic.cs" />
     <Compile Include="InteractiveGraphics\MarqueeProgressBarGraphic.cs" />
+    <Compile Include="InteractiveGraphics\ScannerProgressBarGraphic.cs" />
     <Compile Include="InteractiveGraphics\ProgressBarGraphic.cs" />
     <Compile Include="InteractiveGraphics\ProgressCompositeGraphic.cs" />
     <Compile Include="InteractiveGraphics\ProgressGraphic.cs" />
@@ -816,6 +817,7 @@
     <EmbeddedResource Include="InteractiveGraphics\Resources\ProgressBarGraphicBorder.png" />
     <EmbeddedResource Include="InteractiveGraphics\Resources\ProgressBarGraphicContinuousBar.png" />
     <EmbeddedResource Include="InteractiveGraphics\Resources\ProgressBarGraphicMarqueeMask.png" />
+    <EmbeddedResource Include="InteractiveGraphics\Resources\ProgressBarGraphicScannerMask.png" />
     <EmbeddedResource Include="InteractiveGraphics\Resources\ProgressBarGraphicTray.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

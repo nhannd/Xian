@@ -44,6 +44,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Possum
 	[MenuAction("show", "global-menus/MenuDebug/Possum/Continuous", "TheCount")]
 	[MenuAction("show2", "global-menus/MenuDebug/Possum/Marquee", "TheCount2")]
 	[MenuAction("show3", "global-menus/MenuDebug/Possum/Blocks", "TheCount3")]
+	[MenuAction("show4", "global-menus/MenuDebug/Possum/Scanner", "TheCount4")]
 	[MenuAction("unshow", "global-menus/MenuDebug/Possum/Reset", "UnTheCount")]
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	public class TheCountTool : ImageViewerTool
@@ -77,6 +78,16 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Possum
 				_task = new BackgroundTask(ATasket, true);
 				_task.Terminated += _task_Terminated;
 				ProgressGraphic.Show(_task, base.SelectedOverlayGraphicsProvider.OverlayGraphics, true, ProgressBarGraphicStyle.Blocks);
+			}
+		}
+
+		public void TheCount4()
+		{
+			if (base.SelectedOverlayGraphicsProvider != null && _task == null)
+			{
+				_task = new BackgroundTask(ATasket, true);
+				_task.Terminated += _task_Terminated;
+				ProgressGraphic.Show(_task, base.SelectedOverlayGraphicsProvider.OverlayGraphics, true, ProgressBarGraphicStyle.Scanner);
 			}
 		}
 
