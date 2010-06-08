@@ -143,6 +143,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void UpdateDisplay(ImageList treeViewImageList)
 		{
+			// Remember the previous update state, and return to it afterward.
+			var wasStillUpdating = _isUpdating;
 			_isUpdating = true;
 
 			if (this.TreeView != null)
@@ -218,7 +220,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			else
 				this.Collapse();
 
-			_isUpdating = false;
+			// Return the updating flag back to the previous update state, rather than setting it to null.
+			_isUpdating = wasStillUpdating;
 		}
 
 		/// <summary>
@@ -254,10 +257,10 @@ namespace ClearCanvas.Desktop.View.WinForms
     		{
     			_isUpdating = true;
     			CheckState checkState = _parentTree.Binding.ToggleCheckState(_item);
-    			if (_bindingTreeView.CheckBoxStyle == CheckBoxStyle.TriState)
-    				this.StateImageKey = checkState.ToString();
-    			else
-    				this.Checked = checkState == CheckState.Checked;
+				if (_bindingTreeView.CheckBoxStyle == CheckBoxStyle.TriState)
+					this.StateImageKey = checkState.ToString();
+				else
+					this.Checked = checkState == CheckState.Checked;
     			_isUpdating = false;
     		}
     	}
