@@ -127,6 +127,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			if (_colorBarGraphic == null)
 			{
 				_colorBarGraphic = new ColorBarGraphic();
+				_colorBarGraphic.Orientation = ColorBarOrientation.Vertical;
 				_fusionOverlayLayer.Graphics.Add(_colorBarGraphic);
 			}
 

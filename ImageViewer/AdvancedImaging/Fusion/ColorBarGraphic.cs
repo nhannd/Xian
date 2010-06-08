@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
@@ -128,18 +129,17 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 		}
 
+		protected override SpatialTransform CreateSpatialTransform()
+		{
+			return new InvariantSpatialTransform(this);
+		}
+
 		public override void OnDrawing()
 		{
 			// ensure the colorbar is created
 			var x = this.ColorBar;
 
 			base.OnDrawing();
-		}
-
-		public enum ColorBarOrientation
-		{
-			Horizontal,
-			Vertical
 		}
 
 		#region IColorMapProvider Members
@@ -179,5 +179,43 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		}
 
 		#endregion
+
+		#region InvariantSpatialTransform Class
+
+		/// <summary>
+		/// Implements a <see cref="SpatialTransform"/> which is invariant in the destination coordinate system with respect to scale, flip and rotation.
+		/// </summary>
+		[Cloneable]
+		private sealed class InvariantSpatialTransform : SpatialTransform
+		{
+			public InvariantSpatialTransform(IGraphic ownerGraphic) : base(ownerGraphic) {}
+
+			/// <summary>
+			/// Cloning constructor.
+			/// </summary>
+			/// <param name="source">The source object from which to clone.</param>
+			/// <param name="context">The cloning context object.</param>
+			private InvariantSpatialTransform(InvariantSpatialTransform source, ICloningContext context)
+				: base(source, context)
+			{
+				context.CloneFields(source, this);
+			}
+
+			protected override void CalculatePostTransform(Matrix cumulativeTransform)
+			{
+				cumulativeTransform.Reset();
+				cumulativeTransform.Translate(this.TranslationX, this.TranslationY);
+			}
+
+			protected override void CalculatePreTransform(Matrix cumulativeTransform) {}
+		}
+
+		#endregion
+	}
+
+	public enum ColorBarOrientation
+	{
+		Horizontal,
+		Vertical
 	}
 }

@@ -89,9 +89,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
 		{
-			this.Enabled = (e.SelectedPresentationImage is ILayerOpacityProvider);
-
 			base.OnPresentationImageSelected(sender, e);
+
+			this.Enabled = (e.SelectedPresentationImage is ILayerOpacityProvider);
 		}
 
 		private void CaptureBeginState()
