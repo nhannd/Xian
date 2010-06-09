@@ -235,17 +235,34 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 		}
 
-		internal void SetBaseVoiLutManagerMemento(object memento)
+		#region VOI LUT Synchronization Support
+
+		private object _lastBaseVoiLutManagerMemento;
+		private object _lastOverlayVoiLutManagerMemento;
+
+		internal bool SetBaseVoiLutManagerMemento(object memento)
 		{
-			this.ImageGraphic.VoiLutManager.SetMemento(memento);
+			if (!Equals(memento, _lastBaseVoiLutManagerMemento))
+			{
+				ImageGraphic.VoiLutManager.SetMemento(_lastBaseVoiLutManagerMemento = memento);
+				return true;
+			}
+			return false;
 		}
 
-		internal void SetOverlayVoiLutManagerMemento(object memento)
+		internal bool SetOverlayVoiLutManagerMemento(object memento)
 		{
-			_fusionOverlayComposite.VoiLutManager.SetMemento(memento);
+			if (!Equals(memento, _lastOverlayVoiLutManagerMemento))
+			{
+				_fusionOverlayComposite.VoiLutManager.SetMemento(_lastOverlayVoiLutManagerMemento = memento);
+				return true;
+			}
+			return false;
 		}
 
-		#region IImageSopProvider members
+		#endregion
+
+		#region IImageSopProvider Members
 
 		/// <summary>
 		/// Gets this presentation image's associated <see cref="ImageSop"/>.
@@ -277,7 +294,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		#endregion
 
-		#region ILayerOpacityProvider members
+		#region ILayerOpacityProvider Members
 
 		public ILayerOpacityManager LayerOpacityManager
 		{

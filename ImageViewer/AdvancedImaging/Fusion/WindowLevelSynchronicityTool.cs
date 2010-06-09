@@ -41,7 +41,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 	public class WindowLevelSynchronicityTool : ImageViewerTool
 	{
 		private readonly IList<IDisplaySet> _fusionDisplaySets = new List<IDisplaySet>();
-		private readonly IDictionary<string, object> _lastVoiLutManagerMemento = new Dictionary<string, object>();
 
 		public override void Initialize()
 		{
@@ -85,29 +84,24 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					object memento = ((IVoiLutProvider) e.PresentationImage).VoiLutManager.CreateMemento();
 					string series = ((IImageSopProvider) e.PresentationImage).ImageSop.ParentSeries.SeriesInstanceUid;
 
-					if (!_lastVoiLutManagerMemento.ContainsKey(series) || !_lastVoiLutManagerMemento[series].Equals(memento))
+					foreach (IDisplaySet displaySet in _fusionDisplaySets)
 					{
-						_lastVoiLutManagerMemento[series] = memento;
-						foreach (IDisplaySet displaySet in _fusionDisplaySets)
+						var anyChanged = false;
+
+						var descriptor = (PETFusionDisplaySetDescriptor) displaySet.Descriptor;
+						if (descriptor.SourceSeries.SeriesInstanceUid == series)
 						{
-							var descriptor = (PETFusionDisplaySetDescriptor) displaySet.Descriptor;
-							if (descriptor.SourceSeries.SeriesInstanceUid == series)
-							{
-								foreach (FusionPresentationImage image in displaySet.PresentationImages)
-								{
-									image.SetBaseVoiLutManagerMemento(memento);
-								}
-								displaySet.Draw();
-							}
-							else if (descriptor.PETSeries.SeriesInstanceUid == series)
-							{
-								foreach (FusionPresentationImage image in displaySet.PresentationImages)
-								{
-									image.SetOverlayVoiLutManagerMemento(memento);
-								}
-								displaySet.Draw();
-							}
+							foreach (FusionPresentationImage image in displaySet.PresentationImages)
+								anyChanged |= (image.Visible && image.SetBaseVoiLutManagerMemento(memento));
 						}
+						else if (descriptor.PETSeries.SeriesInstanceUid == series)
+						{
+							foreach (FusionPresentationImage image in displaySet.PresentationImages)
+								anyChanged |= (image.Visible && image.SetOverlayVoiLutManagerMemento(memento));
+						}
+
+						if (anyChanged)
+							displaySet.Draw();
 					}
 				}
 			}
