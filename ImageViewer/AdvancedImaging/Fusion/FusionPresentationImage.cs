@@ -56,9 +56,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		private CompositeGraphic _fusionOverlayLayer;
 
 		[CloneIgnore]
-		private ColorBarGraphic _colorBarGraphic;
-
-		[CloneIgnore]
 		private FusionLayerOpacityManager _fusionLayerOpacityManager;
 
 		private FusionOverlayColorMapSpec _overlayColorMapSpec;
@@ -101,7 +98,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			if (_fusionOverlayLayer != null)
 			{
 				_fusionOverlayComposite = (FusionOverlayCompositeGraphic) CollectionUtils.SelectFirst(_fusionOverlayLayer.Graphics, g => g is FusionOverlayCompositeGraphic);
-				_colorBarGraphic = (ColorBarGraphic) CollectionUtils.SelectFirst(_fusionOverlayLayer.Graphics, g => g is ColorBarGraphic);
 			}
 
 			Initialize();
@@ -124,18 +120,10 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 			_fusionOverlayComposite.OverlayImageGraphicChanged += OnLoaderCompositeOverlayImageGraphicChanged;
 
-			if (_colorBarGraphic == null)
-			{
-				_colorBarGraphic = new ColorBarGraphic();
-				_colorBarGraphic.Orientation = ColorBarOrientation.Vertical;
-				_fusionOverlayLayer.Graphics.Add(_colorBarGraphic);
-			}
-
 			if (_overlayColorMapSpec == null)
 			{
 				_overlayColorMapSpec = new FusionOverlayColorMapSpec();
 			}
-			_overlayColorMapSpec.SetColorBarColorMapManager(_colorBarGraphic.ColorMapManager);
 
 			if (_fusionLayerOpacityManager == null)
 			{
@@ -147,7 +135,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			if (disposing)
 			{
-				_colorBarGraphic = null;
 				_fusionOverlayLayer = null;
 
 				if (_baseFrameReference != null)
