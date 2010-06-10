@@ -259,7 +259,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		#endregion
 
 		private EntityRef _orderRef;
-		private WorklistItemSummaryBase _worklistItem;
+		private readonly WorklistItemSummaryBase _worklistItem;
 
 		private readonly PerformingDocumentationMppsSummaryTable _mppsTable = new PerformingDocumentationMppsSummaryTable();
 		private ModalityPerformedProcedureStepDetail _selectedMpps;
@@ -304,7 +304,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		internal void SaveData()
 		{
-			foreach (IPerformedStepEditorPage page in _editorPages)
+			foreach (var page in _editorPages)
 			{
 				page.Save();
 			}
@@ -319,7 +319,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public override void Start()
 		{
-			ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
+			var resolver = new ResourceResolver(this.GetType().Assembly);
 
 			_mppsActionHandler = new SimpleActionModel(resolver);
 
@@ -330,10 +330,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if (_orderRef != null)
 			{
 				Platform.GetService<IModalityWorkflowService>(
-					delegate(IModalityWorkflowService service)
+					service =>
 					{
-						ListPerformedProcedureStepsRequest mppsRequest = new ListPerformedProcedureStepsRequest(_orderRef);
-						ListPerformedProcedureStepsResponse mppsResponse = service.ListPerformedProcedureSteps(mppsRequest);
+						var mppsRequest = new ListPerformedProcedureStepsRequest(_orderRef);
+						var mppsResponse = service.ListPerformedProcedureSteps(mppsRequest);
 
 						_mppsTable.Items.AddRange(mppsResponse.PerformedProcedureSteps);
 						_mppsTable.Sort();
@@ -351,7 +351,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				_editorPages.Add(new MppsDetailsComponent(new EditorContext(this)));
 
-				if(PerformingDocumentationComponentSettings.Default.ShowDicomSeriesTab)
+				if (PerformingDocumentationComponentSettings.Default.ShowDicomSeriesTab)
 				{
 					_editorPages.Add(new PerformedProcedureDicomSeriesComponent(new EditorContext(this)));
 				}
@@ -361,9 +361,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 			// if there are multiple pages, need to create a tab container
 			if (_editorPages.Count > 1)
 			{
-				TabComponentContainer tabContainer = new TabComponentContainer();
+				var tabContainer = new TabComponentContainer();
 				_detailsPagesHost = new ChildComponentHost(this.Host, tabContainer);
-				foreach (IPerformedStepEditorPage page in _editorPages)
+				foreach (var page in _editorPages)
 				{
 					tabContainer.Pages.Add(new TabPage(page.Path, page.GetComponent()));
 				}
@@ -380,16 +380,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 			base.Start();
 		}
 
-        public override void Stop()
-        {
-            if (_detailsPagesHost != null)
-            {
-                _detailsPagesHost.StopComponent();
-                _detailsPagesHost = null;
-            }
+		public override void Stop()
+		{
+			if (_detailsPagesHost != null)
+			{
+				_detailsPagesHost.StopComponent();
+				_detailsPagesHost = null;
+			}
 
-            base.Stop();
-        }
+			base.Stop();
+		}
 
 		public override bool HasValidationErrors
 		{
@@ -429,7 +429,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return new Selection(_selectedMpps); }
 			set
 			{
-				ModalityPerformedProcedureStepDetail selectedMpps = (ModalityPerformedProcedureStepDetail)value.Item;
+				var selectedMpps = (ModalityPerformedProcedureStepDetail)value.Item;
 				if (selectedMpps != _selectedMpps)
 				{
 					OnSelectedMppsChanged(selectedMpps);
@@ -473,9 +473,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			// if downtime recovery mode, need to get the time from the user
 			DateTime? endTime = _selectedMpps.StartTime;
-			if(DowntimeRecovery.InDowntimeRecoveryMode)
+			if (DowntimeRecovery.InDowntimeRecoveryMode)
 			{
-				if(!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Completed Time", false, ref endTime))
+				if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Completed Time", false, ref endTime))
 					return;
 			}
 
@@ -485,20 +485,19 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				CompleteModalityPerformedProcedureStepResponse response = null;
 				Platform.GetService<IModalityWorkflowService>(
-					delegate(IModalityWorkflowService service)
+					service =>
 					{
-						CompleteModalityPerformedProcedureStepRequest request = new CompleteModalityPerformedProcedureStepRequest(_selectedMpps);
-						request.CompletedTime = DowntimeRecovery.InDowntimeRecoveryMode ? endTime : null;
+						var request = new CompleteModalityPerformedProcedureStepRequest(_selectedMpps)
+										{
+											CompletedTime = DowntimeRecovery.InDowntimeRecoveryMode ? endTime : null
+										};
 						response = service.CompleteModalityPerformedProcedureStep(request);
 					});
 
 				RefreshProcedurePlanTree(response.ProcedurePlan);
 
 				_mppsTable.Items.Replace(
-					delegate(ModalityPerformedProcedureStepDetail mppsSummary)
-					{
-						return mppsSummary.ModalityPerformendProcedureStepRef.Equals(_selectedMpps.ModalityPerformendProcedureStepRef, true);
-					},
+					mppsSummary => mppsSummary.ModalityPerformendProcedureStepRef.Equals(_selectedMpps.ModalityPerformendProcedureStepRef, true),
 					response.StoppedMpps);
 
 				// Refresh selection
@@ -517,40 +516,40 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
-				ModalityPerformedProcedureStepDetail selectedMpps = _selectedMpps;
+				var selectedMpps = _selectedMpps;
 
 				if (selectedMpps != null)
 				{
-                    if(this.Host.DesktopWindow.ShowMessageBox("Are you sure you want to discontinue the selected procedure(s)?", MessageBoxActions.YesNo) != DialogBoxAction.No)
-                    {
-                        // if downtime recovery mode, need to get the time from the user
-                        DateTime? endTime = _selectedMpps.StartTime;
-                        if (DowntimeRecovery.InDowntimeRecoveryMode)
-                        {
-                            if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Completed Time", false, ref endTime))
-                                return;
-                        }
-                        DiscontinueModalityPerformedProcedureStepResponse response = null;
-                        Platform.GetService<IModalityWorkflowService>(
-                            delegate(IModalityWorkflowService service)
-                                {
-                                    DiscontinueModalityPerformedProcedureStepRequest request = new DiscontinueModalityPerformedProcedureStepRequest(selectedMpps);
-                                    request.DiscontinuedTime = DowntimeRecovery.InDowntimeRecoveryMode ? endTime : null;
-                                    response = service.DiscontinueModalityPerformedProcedureStep(request);
-                                });
+					if (this.Host.DesktopWindow.ShowMessageBox("Are you sure you want to discontinue the selected procedure(s)?", MessageBoxActions.YesNo) != DialogBoxAction.No)
+					{
+						// if downtime recovery mode, need to get the time from the user
+						DateTime? endTime = _selectedMpps.StartTime;
+						if (DowntimeRecovery.InDowntimeRecoveryMode)
+						{
+							if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Completed Time", false, ref endTime))
+								return;
+						}
+						DiscontinueModalityPerformedProcedureStepResponse response = null;
+						Platform.GetService<IModalityWorkflowService>(
+							service =>
+							{
+								var request = new DiscontinueModalityPerformedProcedureStepRequest(selectedMpps)
+										{
+											DiscontinuedTime = DowntimeRecovery.InDowntimeRecoveryMode ? endTime : null
+										};
+								response = service.DiscontinueModalityPerformedProcedureStep(request);
+							});
 
-                        RefreshProcedurePlanTree(response.ProcedurePlan);
+						RefreshProcedurePlanTree(response.ProcedurePlan);
 
-                        _mppsTable.Items.Replace(
-                            delegate(ModalityPerformedProcedureStepDetail mpps)
-                                {
-                                    return mpps.ModalityPerformendProcedureStepRef.Equals(_selectedMpps.ModalityPerformendProcedureStepRef, true);
-                                }, response.DiscontinuedMpps);
+						_mppsTable.Items.Replace(
+							mpps => mpps.ModalityPerformendProcedureStepRef.Equals(_selectedMpps.ModalityPerformendProcedureStepRef, true),
+							response.DiscontinuedMpps);
 
-                        _selectedMpps = response.DiscontinuedMpps;
-                        UpdateActionEnablement();
-                        _mppsTable.Sort();
-                    }
+						_selectedMpps = response.DiscontinuedMpps;
+						UpdateActionEnablement();
+						_mppsTable.Sort();
+					}
 				}
 			}
 			catch (Exception e)
