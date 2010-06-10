@@ -10,13 +10,13 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 	/// of excluding an entity class from change-sets.
 	/// </remarks>
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-	public class ChangeSetPublishableAttribute : Attribute
+	public class PublishInChangeSetsAttribute : Attribute
 	{
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="isPublishable"></param>
-		public ChangeSetPublishableAttribute(bool isPublishable)
+		public PublishInChangeSetsAttribute(bool isPublishable)
 		{
 			IsPublishable = isPublishable;
 		}

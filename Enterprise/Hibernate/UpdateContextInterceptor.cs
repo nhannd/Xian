@@ -213,7 +213,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 				return false;
 
 			// check for an attribute - if no attribute, then default is publishable
-			var a = AttributeUtils.GetAttribute<ChangeSetPublishableAttribute>(domainObject.GetClass(), true);
+			var a = AttributeUtils.GetAttribute<PublishInChangeSetsAttribute>(domainObject.GetClass(), true);
 			return a == null || a.IsPublishable;
 		}
 
