@@ -86,21 +86,29 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 					foreach (IDisplaySet displaySet in _fusionDisplaySets)
 					{
-						var anyChanged = false;
+						var anyVisibleChange = false;
 
 						var descriptor = (PETFusionDisplaySetDescriptor) displaySet.Descriptor;
 						if (descriptor.SourceSeries.SeriesInstanceUid == series)
 						{
 							foreach (FusionPresentationImage image in displaySet.PresentationImages)
-								anyChanged |= (image.Visible && image.SetBaseVoiLutManagerMemento(memento));
+							{
+								// written this way because we want to set the memento regardless whether or not the image is visible
+								var changed = image.SetBaseVoiLutManagerMemento(memento);
+								anyVisibleChange |= (image.Visible && changed);
+							}
 						}
 						else if (descriptor.PETSeries.SeriesInstanceUid == series)
 						{
 							foreach (FusionPresentationImage image in displaySet.PresentationImages)
-								anyChanged |= (image.Visible && image.SetOverlayVoiLutManagerMemento(memento));
+							{
+								// written this way because we want to set the memento regardless whether or not the image is visible
+								var changed = image.SetOverlayVoiLutManagerMemento(memento);
+								anyVisibleChange |= (image.Visible && changed);
+							}
 						}
 
-						if (anyChanged)
+						if (anyVisibleChange)
 							displaySet.Draw();
 					}
 				}
