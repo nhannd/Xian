@@ -244,12 +244,32 @@ namespace ClearCanvas.Healthcare
 				this.CreateProcedureSteps();
 			}
 
-			// if we had more detailed scheduling information available in the procedure plan,
-			// then we could schedule each step in a more fine-grained manner
-			// but since we don't have this information, just schedule each procedure step for the same time
+			// Schedule each step appropriately based on the its SchedulingOffset.
 			foreach (var ps in _procedureSteps)
 			{
-				ps.Schedule(startTime);
+				// Only step in SC status can be scheduled or rescheduled.
+				if (ps.State != ActivityStatus.SC)
+					continue;
+
+				if (ps.SchedulingOffset == TimeSpan.MinValue)
+				{
+					// Make sure the step is scheduled at creation time.
+					if (ps.StartTime == null)
+						ps.Schedule(ps.CreationTime);
+				}
+				else if (ps.SchedulingOffset == TimeSpan.MaxValue)
+				{
+					// ignore.  The step schedule time is not dependent on procedure being scheduled.
+				}
+				else
+				{
+					// Schedule the step using its offset
+					var stepStartTime = startTime;
+					if (stepStartTime != null)
+						stepStartTime = stepStartTime.Value.Add(ps.SchedulingOffset);
+
+					ps.Schedule(stepStartTime);
+				}
 			}
 		}
 

@@ -75,10 +75,20 @@ namespace ClearCanvas.Healthcare.Tests
                 get { throw new Exception("The method or operation is not implemented."); }
             }
 
-            public override bool IsPreStep
-            {
-                get { return true; }
-            }
+			public override bool CreateInDowntimeMode
+			{
+				get { throw new Exception("The method or operation is not implemented."); }
+			}
+
+			public override bool IsPreStep
+			{
+				get { throw new Exception("The method or operation is not implemented."); }
+			}
+
+			public override TimeSpan SchedulingOffset
+			{
+				get { throw new Exception("The method or operation is not implemented."); }
+			}
 
             public override List<Procedure> GetLinkedProcedures()
             {
@@ -95,7 +105,7 @@ namespace ClearCanvas.Healthcare.Tests
                 return _relatedSteps.Contains(step);
             }
         }
-        class ConcreteReportingProcedureStep : ReportingProcedureStep
+		class ConcreteReportingProcedureStep : ReportingProcedureStep
         {
 
             public ConcreteReportingProcedureStep(Procedure procedure)
@@ -453,8 +463,8 @@ namespace ClearCanvas.Healthcare.Tests
         public void Test_Schedule()
         {
             Procedure procedure = new Procedure();
-            DocumentationProcedureStep ps = new DocumentationProcedureStep(procedure);
-            DateTime? now = DateTime.Now;
+            var ps = new RegistrationProcedureStep(procedure);
+			DateTime? now = DateTime.Now;
             DateTime? later = now + TimeSpan.FromDays(3);
 
             Assert.IsNull(ps.Scheduling.StartTime);
@@ -473,6 +483,35 @@ namespace ClearCanvas.Healthcare.Tests
             Assert.AreEqual(ProcedureStatus.SC, procedure.Status);
             Assert.AreEqual(ActivityStatus.SC, ps.State);
         }
+
+		[Test]
+		public void Test_Schedule_PreStep_And_SchedulingOffset()
+		{
+			var procedure = new Procedure(new ProcedureType());
+
+			var protocolStep = new ProtocolAssignmentStep(new Protocol(procedure));
+			procedure.AddProcedureStep(protocolStep);
+			var registrationStep = new RegistrationProcedureStep(procedure);
+			var modalityStep = new ModalityProcedureStep(procedure, "description", new Modality());
+			var documentationStep = new DocumentationProcedureStep(procedure);
+			var reportingStep = new ConcreteReportingProcedureStep(procedure);
+
+			Assert.IsNull(protocolStep.Scheduling.StartTime);
+			Assert.IsNull(registrationStep.Scheduling.StartTime);
+			Assert.IsNull(modalityStep.Scheduling.StartTime);
+			Assert.IsNull(documentationStep.Scheduling.StartTime);
+			Assert.IsNull(reportingStep.Scheduling.StartTime);
+
+			var now = DateTime.Now;
+			procedure.Schedule(now);
+
+			Assert.AreEqual(now, procedure.ScheduledStartTime);
+			Assert.AreEqual(protocolStep.CreationTime, protocolStep.Scheduling.StartTime);
+			Assert.AreEqual(procedure.ScheduledStartTime, registrationStep.Scheduling.StartTime);
+			Assert.AreEqual(procedure.ScheduledStartTime, modalityStep.Scheduling.StartTime);
+			Assert.IsNull(documentationStep.Scheduling.StartTime);
+			Assert.IsNull(reportingStep.Scheduling.StartTime);
+		}
 
         [Test]
         [ExpectedException((typeof(WorkflowException)))]

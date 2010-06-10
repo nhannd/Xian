@@ -83,11 +83,7 @@ namespace ClearCanvas.Healthcare.Tests
             {
                 foreach (Procedure proc in order.Procedures)
                 {
-                    foreach (ProcedureStep step in proc.ProcedureSteps)
-                    {
-                        if(!step.IsPreStep)
-                            step.Schedule(dt);
-                    }
+                	proc.Schedule(dt);
                 }
             }
 

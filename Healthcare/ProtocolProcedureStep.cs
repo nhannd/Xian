@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
@@ -62,14 +63,20 @@ namespace ClearCanvas.Healthcare
             set { _protocol = value; }
         }
 
-        public override bool IsPreStep
-        {
-            get
-            {
-                // occurs prior to the actual procedure
-                return true;
-            }
-        }
+		public override bool CreateInDowntimeMode
+		{
+			get { return false; }
+		}
+
+		public override bool IsPreStep
+		{
+			get { return true; }
+		}
+
+		public override TimeSpan SchedulingOffset
+		{
+			get { return TimeSpan.MinValue; }
+		}
 
 		public override List<Procedure> GetLinkedProcedures()
 		{

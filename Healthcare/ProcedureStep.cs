@@ -145,10 +145,26 @@ namespace ClearCanvas.Healthcare
 		}
 
 		/// <summary>
-		/// Indicates if the procedure is a "Pre" procedure step.  If true, the procedure step's 
-		/// procedure is not started with the procedure.
+		/// Indicates if this step is created if the order/procedure is created in downtime mode.
+		/// </summary>
+		public abstract bool CreateInDowntimeMode { get; }
+
+		/// <summary>
+		/// Indicates if this step is a "Pre" procedure step.  I.e. the step occurs prior to the actual procedure.
+		/// If true, the procedure is not started with the step.
 		/// </summary>
 		public abstract bool IsPreStep { get; }
+
+		/// <summary>
+		/// Specifies the step start time offset when the procedure is scheduled.
+		/// </summary>
+		/// <remarks>
+		/// TimeSpan.MinValue means the step is scheduled at the creation time.
+		/// TimeSpan.MaxValue means the procedure schedule time is ignored.  The step is not scheduled at the time when the procedure is scheduled. It may be scheduled independently at any time time after the procedure scheduled time.
+		/// TimeSpan.Zero means the step is scheduled at the same time as the procedure scheduled time.
+		/// TimeSpan of any other values means the step is scheduled at a offset of the procedure scheduled time as the procedure is being scheduled.
+		/// </remarks>
+		public abstract TimeSpan SchedulingOffset { get; }
 
 		/// <summary>
 		/// Gets the procedure step to which this step was linked, or null if this step is not linked.

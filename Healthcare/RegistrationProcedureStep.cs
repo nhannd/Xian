@@ -43,9 +43,19 @@ namespace ClearCanvas.Healthcare
 			get { return "Registration"; }
 		}
 
+		public override bool CreateInDowntimeMode
+		{
+			get { return true; }
+		}
+
 		public override bool IsPreStep
 		{
 			get { return true; }
+		}
+
+		public override TimeSpan SchedulingOffset
+		{
+			get { return TimeSpan.Zero; }
 		}
 
 		public override List<Procedure> GetLinkedProcedures()

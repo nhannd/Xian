@@ -78,10 +78,20 @@ namespace ClearCanvas.Healthcare.Tests
 				get { return "Concrete"; }
             }
 
+			public override bool CreateInDowntimeMode
+			{
+				get { return true; }
+			}
+
             public override bool IsPreStep
             {
                 get { return false; }
             }
+
+			public override TimeSpan SchedulingOffset
+			{
+				get { return TimeSpan.MaxValue; }
+			}
 
             protected override void LinkProcedure(Procedure procedure)
             {

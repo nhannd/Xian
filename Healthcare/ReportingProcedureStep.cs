@@ -56,10 +56,20 @@ namespace ClearCanvas.Healthcare
         {
         }
 
-        public override bool IsPreStep
-        {
-            get { return false; }
-        }
+		public override bool CreateInDowntimeMode
+		{
+			get { return true; }
+		}
+
+		public override bool IsPreStep
+		{
+			get { return false; }
+		}
+
+		public override TimeSpan SchedulingOffset
+		{
+			get { return TimeSpan.MaxValue; }
+		}
 
 		public override List<Procedure> GetLinkedProcedures()
 		{

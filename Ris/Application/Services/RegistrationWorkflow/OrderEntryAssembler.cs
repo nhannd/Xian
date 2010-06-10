@@ -165,18 +165,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				return;
 			}
 
-			// modify scheduling time/portability of procedure steps that are still scheduled
-			// bug #1356 fix: don't modify scheduling time of reporting procedure steps
-			// only pre-procedure steps and modality procedure steps are re-scheduled
-			var modifiableSteps = CollectionUtils.Select(procedure.ProcedureSteps, ps => ps.IsPreStep || ps.Is<ModalityProcedureStep>());
-
-			foreach (var step in modifiableSteps)
-			{
-				if (step.State == ActivityStatus.SC)
-				{
-					step.Schedule(requisition.ScheduledTime);
-				}
-			}
+			procedure.Schedule(requisition.ScheduledTime);
 			procedure.SchedulingCode = EnumUtils.GetEnumValue<SchedulingCodeEnum>(requisition.SchedulingCode, context);
 
 			procedure.PerformingFacility = context.Load<Facility>(requisition.PerformingFacility.FacilityRef, EntityLoadFlags.Proxy);
