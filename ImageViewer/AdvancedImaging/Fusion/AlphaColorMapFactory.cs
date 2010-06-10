@@ -47,6 +47,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			return new CachedColorMapProxy(new AlphaColorMapKey(colorMapName, alpha, thresholding));
 		}
 
+		public static IDataLut GetColorMap(IDataLut colorMap, byte alpha, bool thresholding)
+		{
+			return new CachedColorMapProxy(new CustomAlphaColorMapKey(colorMap, alpha, thresholding));
+		}
+
 		private static CacheItem GetColorMapCacheItem(ICachedColorMapKey key)
 		{
 			lock (_syncLock)
@@ -133,6 +138,58 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		#endregion
 
+		#region CustomAlphaColorMapKey Class
+
+		[Cloneable(true)]
+		private class CustomAlphaColorMapKey : ICachedColorMapKey, IEquatable<CustomAlphaColorMapKey>
+		{
+			private readonly IDataLut _colorMap;
+			private readonly byte _alpha;
+			private readonly bool _thresholding;
+
+			/// <summary>
+			/// Cloning constructor.
+			/// </summary>
+			private CustomAlphaColorMapKey() {}
+
+			public CustomAlphaColorMapKey(IDataLut colorMap, byte alpha, bool thresholding)
+				: this()
+			{
+				_colorMap = colorMap;
+				_alpha = alpha;
+				_thresholding = thresholding;
+			}
+
+			public IDataLut CreateColorMap()
+			{
+				return new AlphaColorMap(_colorMap, _alpha, _thresholding);
+			}
+
+			public override int GetHashCode()
+			{
+				return 0x15BDF4E1 ^ _colorMap.GetHashCode() ^ _alpha.GetHashCode() ^ _thresholding.GetHashCode();
+			}
+
+			public bool Equals(CustomAlphaColorMapKey other)
+			{
+				return _colorMap.Equals(other._colorMap) && _alpha.Equals(other._alpha) && _thresholding.Equals(other._thresholding);
+			}
+
+			public override bool Equals(object obj)
+			{
+				if (obj is CustomAlphaColorMapKey)
+					return Equals((CustomAlphaColorMapKey) obj);
+				return false;
+			}
+
+			public override string ToString()
+			{
+				return String.Format("Custom[real={0},alpha={1},thresholding={2}]", _colorMap, _alpha, _thresholding ? 1 : 0);
+			}
+		}
+
+		#endregion
+
 		#region CachedColorMapProxy Class
 
 		[Cloneable(true)]
@@ -210,6 +267,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			{
 				get { return RealColorMap[index]; }
 				protected set { throw new InvalidOperationException("The color map data cannot be altered."); }
+			}
+
+			public new CachedColorMapProxy Clone()
+			{
+				return (CachedColorMapProxy) base.Clone();
 			}
 
 			public override string GetKey()

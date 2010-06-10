@@ -38,7 +38,7 @@ using ClearCanvas.ImageViewer.InteractiveGraphics;
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
 	[Cloneable(false)]
-	internal partial class FusionOverlayCompositeGraphic : CompositeGraphic, IVoiLutProvider, ILayerOpacityProvider
+	internal partial class FusionOverlayCompositeGraphic : CompositeGraphic, IVoiLutProvider, IColorMapProvider, ILayerOpacityProvider
 	{
 		[CloneIgnore]
 		private IFusionOverlayFrameDataReference _overlayFrameDataReference;
@@ -95,6 +95,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		public IVoiLutManager VoiLutManager
 		{
 			get { return _voiLutManagerProxy; }
+		}
+
+		public IColorMapManager ColorMapManager
+		{
+			get { return _colorMapManagerProxy; }
 		}
 
 		public ILayerOpacityManager LayerOpacityManager

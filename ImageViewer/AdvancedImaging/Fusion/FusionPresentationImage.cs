@@ -33,12 +33,13 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
 	[Cloneable]
-	public class FusionPresentationImage : BasicPresentationImage, IImageSopProvider, ILayerOpacityProvider
+	public class FusionPresentationImage : BasicPresentationImage, IImageSopProvider, IColorMapProvider, ILayerOpacityProvider
 	{
 		private const string _fusionOverlayLayerName = "Fusion";
 
@@ -224,6 +225,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		Sop ISopProvider.Sop
 		{
 			get { return ImageSop; }
+		}
+
+		#endregion
+
+		#region IColorMapProvider Members
+
+		public IColorMapManager ColorMapManager
+		{
+			get { return _fusionOverlayComposite.ColorMapManager; }
 		}
 
 		#endregion

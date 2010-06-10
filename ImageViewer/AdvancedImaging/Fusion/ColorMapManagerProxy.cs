@@ -30,22 +30,30 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
 	[Cloneable]
-	internal class ColorMapManagerProxy : ILayerOpacityManager
+	internal class ColorMapManagerProxy : IColorMapManager, ILayerOpacityManager
 	{
+		[CloneIgnore]
+		private readonly XColorMapInstaller _placeholderColorMapInstaller;
+
+		[CloneIgnore]
+		private readonly IColorMapManager _placeholderColorMapManager;
+
 		[CloneIgnore]
 		private IColorMapManager _realColorMapManager;
 
-		private bool _thresholding = false;
-		private float _opacity = 0.5f;
-
-		public ColorMapManagerProxy() {}
+		public ColorMapManagerProxy()
+		{
+			_placeholderColorMapManager = new ColorMapManager(_placeholderColorMapInstaller = new XColorMapInstaller());
+		}
 
 		/// <summary>
 		/// Cloning constructor.
@@ -55,22 +63,20 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		protected ColorMapManagerProxy(ColorMapManagerProxy source, ICloningContext context)
 		{
 			context.CloneFields(source, this);
-		}
 
-		protected void InstallColorMap()
-		{
-			if (_realColorMapManager != null)
-			{
-				var colorMap = AlphaColorMapFactory.GetColorMap("HOT_IRON", (byte) (byte.MaxValue*_opacity), _thresholding);
-				if (_realColorMapManager != null)
-					_realColorMapManager.InstallColorMap(colorMap);
-			}
+			_placeholderColorMapManager = new ColorMapManager(_placeholderColorMapInstaller = source._placeholderColorMapInstaller.Clone());
 		}
 
 		public void SetRealColorMapManager(IColorMapManager realColorMapManager)
 		{
 			_realColorMapManager = realColorMapManager;
-			this.InstallColorMap();
+			InstallColorMap();
+		}
+
+		private void InstallColorMap()
+		{
+			if (_realColorMapManager != null)
+				_realColorMapManager.InstallColorMap(_placeholderColorMapManager.ColorMap);
 		}
 
 		#region ILayerOpacityManager Members
@@ -83,76 +89,185 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		public float Opacity
 		{
-			get { return _opacity; }
+			get { return _placeholderColorMapInstaller.Opacity; }
 			set
 			{
 				Platform.CheckTrue(value >= 0f && value <= 1f, "Opacity must be between 0 and 1.");
-				if (_opacity != value)
+				if (_placeholderColorMapInstaller.Opacity != value)
 				{
-					_opacity = value;
-					this.OnOpacityChanged(EventArgs.Empty);
+					_placeholderColorMapInstaller.Opacity = value;
+					InstallColorMap();
 				}
 			}
 		}
 
 		public bool Thresholding
 		{
-			get { return _thresholding; }
+			get { return _placeholderColorMapInstaller.Thresholding; }
 			set
 			{
-				if (_thresholding != value)
+				if (_placeholderColorMapInstaller.Thresholding != value)
 				{
-					_thresholding = value;
-					this.OnThresholdingChanged(EventArgs.Empty);
+					_placeholderColorMapInstaller.Thresholding = value;
+					InstallColorMap();
 				}
 			}
 		}
 
-		protected virtual void OnOpacityChanged(EventArgs e)
-		{
-			this.InstallColorMap();
-		}
+		#endregion
 
-		protected virtual void OnThresholdingChanged(EventArgs e)
+		#region IColorMapManager Members
+
+		[Obsolete("Use the ColorMap property instead.")]
+		IDataLut IColorMapManager.GetColorMap()
 		{
-			this.InstallColorMap();
+			return _placeholderColorMapManager.GetColorMap();
 		}
 
 		#endregion
 
-		protected virtual void OnColorMapChanged(EventArgs e)
+		#region IColorMapInstaller Members
+
+		IDataLut IColorMapInstaller.ColorMap
 		{
-			this.InstallColorMap();
+			get { return _placeholderColorMapManager.ColorMap; }
 		}
+
+		void IColorMapInstaller.InstallColorMap(string name)
+		{
+			_placeholderColorMapManager.InstallColorMap(name);
+			InstallColorMap();
+		}
+
+		void IColorMapInstaller.InstallColorMap(ColorMapDescriptor descriptor)
+		{
+			_placeholderColorMapManager.InstallColorMap(descriptor);
+			InstallColorMap();
+		}
+
+		void IColorMapInstaller.InstallColorMap(IDataLut colorMap)
+		{
+			_placeholderColorMapManager.InstallColorMap(colorMap);
+			InstallColorMap();
+		}
+
+		IEnumerable<ColorMapDescriptor> IColorMapInstaller.AvailableColorMaps
+		{
+			get { return _placeholderColorMapManager.AvailableColorMaps; }
+		}
+
+		#endregion
 
 		#region IMemorable Members
 
 		public object CreateMemento()
 		{
-			return new Memento(_opacity, _thresholding);
+			return _placeholderColorMapManager.CreateMemento();
 		}
 
 		public void SetMemento(object memento)
 		{
-			Memento value = (Memento) memento;
-			_opacity = value.Opacity;
-			_thresholding = value.Thresholding;
-			this.InstallColorMap();
+			_placeholderColorMapManager.SetMemento(memento);
+			InstallColorMap();
 		}
 
 		#endregion
 
-		#region Memento Struct
+		#region XColorMapInstaller Class
 
-		private struct Memento
+		private class XColorMapInstaller : IColorMapInstaller
 		{
-			public readonly float Opacity;
-			public readonly bool Thresholding;
+			private IDataLut _alphaColorMap;
+			private IDataLut _colorMap;
+			private string _colorMapName = "HOT_IRON";
+			private bool _thresholding = false;
+			private float _opacity = 0.5f;
 
-			public Memento(float opacity, bool thresholding)
+			public XColorMapInstaller() {}
+
+			public XColorMapInstaller Clone()
 			{
-				Opacity = opacity;
-				Thresholding = thresholding;
+				var clone = new XColorMapInstaller();
+				clone._alphaColorMap = _alphaColorMap;
+				clone._colorMap = _colorMap;
+				clone._colorMapName = _colorMapName;
+				clone._thresholding = _thresholding;
+				clone._opacity = _opacity;
+				return clone;
+			}
+
+			public bool Thresholding
+			{
+				get { return _thresholding; }
+				set
+				{
+					if (_thresholding!=value)
+					{
+						_thresholding = value;
+						_alphaColorMap = null;
+					}
+				}
+			}
+
+			public float Opacity {
+				get { return _opacity; }
+				set {
+					if (_opacity != value) {
+						_opacity = value;
+						_alphaColorMap = null;
+					}
+				}
+			}
+
+			public IDataLut ColorMap
+			{
+				get
+				{
+					if (_alphaColorMap == null)
+					{
+						if (!string.IsNullOrEmpty(_colorMapName))
+							_alphaColorMap = AlphaColorMapFactory.GetColorMap(_colorMapName, (byte) (byte.MaxValue*_opacity), _thresholding);
+						else if (_colorMap != null)
+							_alphaColorMap = AlphaColorMapFactory.GetColorMap(_colorMap, (byte) (byte.MaxValue*_opacity), _thresholding);
+					}
+					return _alphaColorMap;
+				}
+			}
+
+			public void InstallColorMap(string name)
+			{
+				if (_colorMapName != name)
+				{
+					_colorMapName = name;
+					_colorMap = null;
+					_alphaColorMap = null;
+				}
+			}
+
+			public void InstallColorMap(ColorMapDescriptor descriptor)
+			{
+				this.InstallColorMap(descriptor.Name);
+			}
+
+			public void InstallColorMap(IDataLut colorMap)
+			{
+				if (_colorMap != colorMap)
+				{
+					_colorMap = colorMap;
+					_colorMapName = null;
+					_alphaColorMap = null;
+				}
+			}
+
+			public IEnumerable<ColorMapDescriptor> AvailableColorMaps
+			{
+				get
+				{
+					using (var lutFactory = LutFactory.Create())
+					{
+						return lutFactory.AvailableColorMaps;
+					}
+				}
 			}
 		}
 

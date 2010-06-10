@@ -50,7 +50,6 @@
     <Compile Include="FusionPresentationImage.cs" />
     <Compile Include="HotIronColorMapFactory.cs" />
     <Compile Include="ILayerOpacityManager.cs" />
-    <Compile Include="InterpolatedColorMap.cs" />
     <Compile Include="PETFusionDisplaySetDescriptor.cs" />
     <Compile Include="PETFusionDisplaySetFactory.cs" />
     <Compile Include="Possum\DemoTheCountTool.cs">
@@ -66,7 +65,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="StandardColorMaps.cs" />
     <Compile Include="Utilities\DicomImagePlane.cs" />
     <Compile Include="WindowLevelSynchronicityTool.cs" />
   </ItemGroup>
