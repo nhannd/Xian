@@ -37,7 +37,7 @@ using ClearCanvas.ImageViewer.Imaging;
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
 	[Cloneable]
-	internal class FusionOverlayColorMapSpec : IDisposable
+	internal class FusionOverlayColorMapSpec : IDisposable, ILayerOpacityManager
 	{
 		private bool _thresholding = false;
 		private float _opacity = 0.5f;
@@ -60,6 +60,12 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		public void Dispose()
 		{
 			_overlayColorMapManager = null;
+		}
+
+		public bool Enabled
+		{
+			get { return true; }
+			set { }
 		}
 
 		public float Opacity
@@ -119,5 +125,34 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			_overlayColorMapManager = overlayColorMapManager;
 			this.InstallColorMap();
 		}
+
+		public object CreateMemento()
+		{
+			return new Memento(_opacity, _thresholding);
+		}
+
+		public void SetMemento(object memento)
+		{
+			Memento value = (Memento) memento;
+			_opacity = value.Opacity;
+			_thresholding = value.Thresholding;
+			this.InstallColorMap();
+		}
+
+		#region Memento Struct
+
+		private struct Memento
+		{
+			public readonly float Opacity;
+			public readonly bool Thresholding;
+
+			public Memento(float opacity, bool thresholding)
+			{
+				Opacity = opacity;
+				Thresholding = thresholding;
+			}
+		}
+
+		#endregion
 	}
 }

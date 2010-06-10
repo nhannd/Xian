@@ -55,9 +55,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		[CloneIgnore]
 		private CompositeGraphic _fusionOverlayLayer;
 
-		[CloneIgnore]
-		private FusionLayerOpacityManager _fusionLayerOpacityManager;
-
 		private FusionOverlayColorMapSpec _overlayColorMapSpec;
 
 		public FusionPresentationImage(Frame baseFrame, FusionOverlayFrameData overlayData)
@@ -124,11 +121,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			{
 				_overlayColorMapSpec = new FusionOverlayColorMapSpec();
 			}
-
-			if (_fusionLayerOpacityManager == null)
-			{
-				_fusionLayerOpacityManager = new FusionLayerOpacityManager(this);
-			}
 		}
 
 		protected override void Dispose(bool disposing)
@@ -176,18 +168,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		public new GrayscaleImageGraphic ImageGraphic
 		{
 			get { return (GrayscaleImageGraphic) base.ImageGraphic; }
-		}
-
-		private float OverlayOpacity
-		{
-			get { return _overlayColorMapSpec.Opacity; }
-			set { _overlayColorMapSpec.Opacity = value; }
-		}
-
-		private bool Thresholding
-		{
-			get { return _overlayColorMapSpec.Thresholding; }
-			set { _overlayColorMapSpec.Thresholding = value; }
 		}
 
 		public override IPresentationImage CreateFreshCopy()
@@ -285,7 +265,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		public ILayerOpacityManager LayerOpacityManager
 		{
-			get { return _fusionLayerOpacityManager; }
+			get { return _overlayColorMapSpec; }
 		}
 
 		#endregion
@@ -305,67 +285,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				frameReference.Frame.RescaleSlope,
 				frameReference.Frame.RescaleIntercept,
 				frameReference.Frame.GetNormalizedPixelData);
-		}
-
-		#endregion
-
-		#region FusionLayerOpacityManager Class
-
-		// TODO: merge responsibilities of this class into FusionOVerlayColorMapSpec
-		private sealed class FusionLayerOpacityManager : ILayerOpacityManager
-		{
-			private readonly FusionPresentationImage _owner;
-
-			public FusionLayerOpacityManager(FusionPresentationImage owner)
-			{
-				_owner = owner;
-			}
-
-			public bool Enabled
-			{
-				get { return true; }
-				set { }
-			}
-
-			public float Opacity
-			{
-				get { return _owner.OverlayOpacity; }
-				set { _owner.OverlayOpacity = value; }
-			}
-
-			public bool Thresholding
-			{
-				get { return _owner.Thresholding; }
-				set { _owner.Thresholding = value; }
-			}
-
-			public object CreateMemento()
-			{
-				return new Memento(_owner.OverlayOpacity, _owner.Thresholding);
-			}
-
-			public void SetMemento(object memento)
-			{
-				Memento value = (Memento) memento;
-				_owner.OverlayOpacity = value.Opacity;
-				_owner.Thresholding = value.Thresholding;
-			}
-
-			#region Memento Struct
-
-			private struct Memento
-			{
-				public readonly float Opacity;
-				public readonly bool Thresholding;
-
-				public Memento(float opacity, bool thresholding)
-				{
-					Opacity = opacity;
-					Thresholding = thresholding;
-				}
-			}
-
-			#endregion
 		}
 
 		#endregion
