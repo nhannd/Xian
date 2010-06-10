@@ -33,7 +33,6 @@ using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Threading;
-using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -43,6 +42,7 @@ using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -370,7 +370,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 					checkedItems,
 					item => item.ModalityProcedureStep.Modality.Id != firstItem.ModalityProcedureStep.Modality.Id))
 				{
-					this.Host.ShowMessageBox(SR.MessageWarnCannotStartMpsWithDifferentModalities, MessageBoxActions.Ok);
+					this.Host.ShowMessageBox("Cannot start procedure steps of different modalities at the same time.",
+											 MessageBoxActions.Ok);
 					return;
 				}
 
@@ -381,12 +382,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (checkedMpsRefs.Count > 0)
 				{
 					DateTime? startTime = Platform.Time;
-					if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, SR.TitleStartTime, false, ref startTime, null))
-						return;
+					if (DowntimeRecovery.InDowntimeRecoveryMode)
+					{
+						if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Start Time", false, ref startTime))
+							return;
+					}
 
 					Platform.GetService<IModalityWorkflowService>(service =>
 					{
-						var request = new StartModalityProcedureStepsRequest(checkedMpsRefs) { StartTime = startTime };
+						var request = new StartModalityProcedureStepsRequest(checkedMpsRefs)
+						{
+							StartTime = DowntimeRecovery.InDowntimeRecoveryMode ? startTime : null
+						};
 						var response = service.StartModalityProcedureSteps(request);
 
 						RefreshProcedurePlanSummary(response.ProcedurePlan);
@@ -412,15 +419,21 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				if (checkedMpsRefs.Count > 0)
 				{
-					if (this.Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmDiscontinueSelectedProcedures, MessageBoxActions.YesNo) != DialogBoxAction.No)
+					if (this.Host.DesktopWindow.ShowMessageBox("Are you sure you want to discontinue the selected procedure(s)?", MessageBoxActions.YesNo) != DialogBoxAction.No)
 					{
 						DateTime? discontinueTime = Platform.Time;
-						if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, SR.TitleCancelTime, false, ref discontinueTime, null))
-							return;
+						if (DowntimeRecovery.InDowntimeRecoveryMode)
+						{
+							if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Cancel Time", false, ref discontinueTime))
+								return;
+						}
 
 						Platform.GetService<IModalityWorkflowService>(service =>
 						{
-							var request = new DiscontinueModalityProcedureStepsRequest(checkedMpsRefs) { DiscontinuedTime = discontinueTime };
+							var request = new DiscontinueModalityProcedureStepsRequest(checkedMpsRefs)
+							{
+								DiscontinuedTime = DowntimeRecovery.InDowntimeRecoveryMode ? discontinueTime : null
+							};
 							var response = service.DiscontinueModalityProcedureSteps(request);
 
 							RefreshProcedurePlanSummary(response.ProcedurePlan);

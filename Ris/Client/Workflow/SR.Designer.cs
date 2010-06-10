@@ -943,15 +943,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to discontinue the selected procedure(s)?.
-        /// </summary>
-        internal static string MessageConfirmDiscontinueSelectedProcedures {
-            get {
-                return ResourceManager.GetString("MessageConfirmDiscontinueSelectedProcedures", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete this visit?.
         /// </summary>
         internal static string MessageDeleteSelectedVisit {
@@ -1097,15 +1088,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         internal static string MessageTranscriptionHasErrors {
             get {
                 return ResourceManager.GetString("MessageTranscriptionHasErrors", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot start procedure steps of different modalities at the same time..
-        /// </summary>
-        internal static string MessageWarnCannotStartMpsWithDifferentModalities {
-            get {
-                return ResourceManager.GetString("MessageWarnCannotStartMpsWithDifferentModalities", resourceCulture);
             }
         }
         
@@ -1623,29 +1605,11 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cancel Time.
-        /// </summary>
-        internal static string TitleCancelTime {
-            get {
-                return ResourceManager.GetString("TitleCancelTime", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Choose Radiologist.
         /// </summary>
         internal static string TitleChooseRadiologist {
             get {
                 return ResourceManager.GetString("TitleChooseRadiologist", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Completed Time.
-        /// </summary>
-        internal static string TitleCompletedTime {
-            get {
-                return ResourceManager.GetString("TitleCompletedTime", resourceCulture);
             }
         }
         
@@ -2159,15 +2123,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         internal static string TitleStartMps {
             get {
                 return ResourceManager.GetString("TitleStartMps", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Start Time.
-        /// </summary>
-        internal static string TitleStartTime {
-            get {
-                return ResourceManager.GetString("TitleStartTime", resourceCulture);
             }
         }
         

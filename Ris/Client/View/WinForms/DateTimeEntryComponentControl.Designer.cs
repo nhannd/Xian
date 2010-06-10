@@ -76,19 +76,19 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._time.ShowDate = false;
 			this._time.ShowTime = true;
 			this._time.Size = new System.Drawing.Size(150, 41);
-			this._time.TabIndex = 1;
+			this._time.TabIndex = 7;
 			this._time.Value = new System.DateTime(2008, 8, 5, 10, 14, 18, 62);
 			// 
 			// _date
 			// 
 			this._date.LabelText = "Date";
-			this._date.Location = new System.Drawing.Point(5, 26);
+			this._date.Location = new System.Drawing.Point(18, 26);
 			this._date.Margin = new System.Windows.Forms.Padding(2);
 			this._date.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
 			this._date.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
 			this._date.Name = "_date";
 			this._date.Size = new System.Drawing.Size(150, 41);
-			this._date.TabIndex = 0;
+			this._date.TabIndex = 6;
 			this._date.Value = new System.DateTime(2008, 8, 5, 10, 14, 18, 62);
 			// 
 			// _okButton
@@ -96,7 +96,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._okButton.Location = new System.Drawing.Point(172, 84);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
-			this._okButton.TabIndex = 2;
+			this._okButton.TabIndex = 8;
 			this._okButton.Text = "OK";
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
@@ -106,17 +106,15 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._cancelButton.Location = new System.Drawing.Point(248, 84);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 3;
+			this._cancelButton.TabIndex = 9;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
 			// 
 			// DateTimeEntryComponentControl
 			// 
-			this.AcceptButton = this._okButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.CancelButton = this._cancelButton;
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._okButton);
 			this.Controls.Add(this._time);
