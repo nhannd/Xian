@@ -55,8 +55,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		[CloneIgnore]
 		private CompositeGraphic _fusionOverlayLayer;
 
-		private FusionOverlayColorMapSpec _overlayColorMapSpec;
-
 		public FusionPresentationImage(Frame baseFrame, FusionOverlayFrameData overlayData)
 			: this(baseFrame.CreateTransientReference(), overlayData.CreateTransientReference()) {}
 
@@ -115,12 +113,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				_fusionOverlayComposite = new FusionOverlayCompositeGraphic(_overlayFrameDataReference.FusionOverlayFrameData);
 				_fusionOverlayLayer.Graphics.Add(_fusionOverlayComposite);
 			}
-			_fusionOverlayComposite.OverlayImageGraphicChanged += OnLoaderCompositeOverlayImageGraphicChanged;
-
-			if (_overlayColorMapSpec == null)
-			{
-				_overlayColorMapSpec = new FusionOverlayColorMapSpec();
-			}
 		}
 
 		protected override void Dispose(bool disposing)
@@ -143,14 +135,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 				if (_fusionOverlayComposite != null)
 				{
-					_fusionOverlayComposite.OverlayImageGraphicChanged -= OnLoaderCompositeOverlayImageGraphicChanged;
 					_fusionOverlayComposite = null;
-				}
-
-				if (_overlayColorMapSpec != null)
-				{
-					_overlayColorMapSpec.Dispose();
-					_overlayColorMapSpec = null;
 				}
 			}
 
@@ -187,19 +172,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		public override string ToString()
 		{
 			return Frame.ParentImageSop.InstanceNumber.ToString();
-		}
-
-		private void OnLoaderCompositeOverlayImageGraphicChanged(object sender, EventArgs e)
-		{
-			var overlayImageGraphic = _fusionOverlayComposite.OverlayImageGraphic;
-			if (overlayImageGraphic != null)
-			{
-				_overlayColorMapSpec.SetOverlayColorMapManager(overlayImageGraphic.ColorMapManager);
-			}
-			else
-			{
-				_overlayColorMapSpec.SetOverlayColorMapManager(null);
-			}
 		}
 
 		#region VOI LUT Synchronization Support
@@ -265,7 +237,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		public ILayerOpacityManager LayerOpacityManager
 		{
-			get { return _overlayColorMapSpec; }
+			get { return _fusionOverlayComposite; }
 		}
 
 		#endregion

@@ -36,31 +36,13 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
-	[Cloneable]
-	internal class FusionOverlayColorMapSpec : IDisposable, ILayerOpacityManager
+	partial class FusionOverlayCompositeGraphic : ILayerOpacityManager
 	{
 		private bool _thresholding = false;
 		private float _opacity = 0.5f;
 
 		[CloneIgnore]
 		private IColorMapManager _overlayColorMapManager;
-
-		public FusionOverlayColorMapSpec() {}
-
-		/// <summary>
-		/// Cloning constructor.
-		/// </summary>
-		/// <param name="source">The source object from which to clone.</param>
-		/// <param name="context">The cloning context object.</param>
-		protected FusionOverlayColorMapSpec(FusionOverlayColorMapSpec source, ICloningContext context)
-		{
-			context.CloneFields(source, this);
-		}
-
-		public void Dispose()
-		{
-			_overlayColorMapManager = null;
-		}
 
 		public bool Enabled
 		{
@@ -120,7 +102,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 		}
 
-		public void SetOverlayColorMapManager(IColorMapManager overlayColorMapManager)
+		private void SetOverlayColorMapManager(IColorMapManager overlayColorMapManager)
 		{
 			_overlayColorMapManager = overlayColorMapManager;
 			this.InstallColorMap();

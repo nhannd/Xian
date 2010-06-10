@@ -38,7 +38,7 @@ using ClearCanvas.ImageViewer.InteractiveGraphics;
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
 	[Cloneable(false)]
-	internal class FusionOverlayCompositeGraphic : CompositeGraphic, IVoiLutProvider
+	internal partial class FusionOverlayCompositeGraphic : CompositeGraphic, IVoiLutProvider
 	{
 		private event EventHandler _overlayImageGraphicChanged;
 
@@ -115,6 +115,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 						base.Graphics.Remove(_overlayImageGraphic);
 						_overlayImageGraphic.Dispose();
 						_voiLutManagerProxy.SetRealVoiLutManager(null);
+						this.SetOverlayColorMapManager(null);
 					}
 
 					_overlayImageGraphic = value;
@@ -123,6 +124,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					{
 						_voiLutManagerProxy.SetRealVoiLutManager(_overlayImageGraphic.VoiLutManager);
 						base.Graphics.Add(_overlayImageGraphic);
+						this.SetOverlayColorMapManager(_overlayImageGraphic.ColorMapManager);
 					}
 
 					OnOverlayImageGraphicChanged();
