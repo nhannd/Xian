@@ -60,16 +60,18 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         private void InitializeComponent()
         {
 			this.splitContainerDocumentationDetails = new System.Windows.Forms.SplitContainer();
-			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._mppsTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._procedurePlanSummary = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._mppsDetailsPanel = new System.Windows.Forms.Panel();
 			this.panel1 = new System.Windows.Forms.Panel();
+			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+			this.label1 = new System.Windows.Forms.Label();
+			this.label2 = new System.Windows.Forms.Label();
 			this.splitContainerDocumentationDetails.Panel1.SuspendLayout();
 			this.splitContainerDocumentationDetails.Panel2.SuspendLayout();
 			this.splitContainerDocumentationDetails.SuspendLayout();
-			this.tableLayoutPanel1.SuspendLayout();
 			this.panel1.SuspendLayout();
+			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// splitContainerDocumentationDetails
@@ -90,47 +92,30 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.splitContainerDocumentationDetails.SplitterDistance = 112;
 			this.splitContainerDocumentationDetails.TabIndex = 1;
 			// 
-			// tableLayoutPanel1
-			// 
-			this.tableLayoutPanel1.AutoSize = true;
-			this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.tableLayoutPanel1.ColumnCount = 2;
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel1.Controls.Add(this._mppsTableView, 1, 0);
-			this.tableLayoutPanel1.Controls.Add(this._procedurePlanSummary, 0, 0);
-			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-			this.tableLayoutPanel1.RowCount = 1;
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(750, 112);
-			this.tableLayoutPanel1.TabIndex = 0;
-			// 
 			// _mppsTableView
 			// 
-			this._mppsTableView.AutoSize = true;
-			this._mppsTableView.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._mppsTableView.ColumnHeaderTooltip = null;
 			this._mppsTableView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._mppsTableView.Location = new System.Drawing.Point(378, 3);
+			this._mppsTableView.Location = new System.Drawing.Point(378, 16);
 			this._mppsTableView.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
 			this._mppsTableView.MultiSelect = false;
 			this._mppsTableView.Name = "_mppsTableView";
 			this._mppsTableView.ReadOnly = false;
-			this._mppsTableView.Size = new System.Drawing.Size(372, 106);
+			this._mppsTableView.Size = new System.Drawing.Size(372, 93);
+			this._mppsTableView.SortButtonTooltip = null;
 			this._mppsTableView.TabIndex = 1;
 			// 
 			// _procedurePlanSummary
 			// 
-			this._procedurePlanSummary.AutoSize = true;
-			this._procedurePlanSummary.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._procedurePlanSummary.ColumnHeaderTooltip = null;
 			this._procedurePlanSummary.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._procedurePlanSummary.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this._procedurePlanSummary.Location = new System.Drawing.Point(0, 3);
+			this._procedurePlanSummary.Location = new System.Drawing.Point(0, 16);
 			this._procedurePlanSummary.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
 			this._procedurePlanSummary.Name = "_procedurePlanSummary";
 			this._procedurePlanSummary.ReadOnly = false;
-			this._procedurePlanSummary.Size = new System.Drawing.Size(372, 106);
+			this._procedurePlanSummary.Size = new System.Drawing.Size(372, 93);
+			this._procedurePlanSummary.SortButtonTooltip = null;
 			this._procedurePlanSummary.TabIndex = 0;
 			// 
 			// _mppsDetailsPanel
@@ -154,6 +139,44 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.panel1.Size = new System.Drawing.Size(758, 507);
 			this.panel1.TabIndex = 2;
 			// 
+			// tableLayoutPanel1
+			// 
+			this.tableLayoutPanel1.AutoSize = true;
+			this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.tableLayoutPanel1.ColumnCount = 2;
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableLayoutPanel1.Controls.Add(this._mppsTableView, 1, 1);
+			this.tableLayoutPanel1.Controls.Add(this._procedurePlanSummary, 0, 1);
+			this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
+			this.tableLayoutPanel1.Controls.Add(this.label2, 1, 0);
+			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+			this.tableLayoutPanel1.RowCount = 2;
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(750, 112);
+			this.tableLayoutPanel1.TabIndex = 0;
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(3, 0);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(128, 13);
+			this.label1.TabIndex = 0;
+			this.label1.Text = "Modality Procedure Steps";
+			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(378, 0);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(137, 13);
+			this.label2.TabIndex = 1;
+			this.label2.Text = "Performed Procedure Steps";
+			// 
 			// PerformedProcedureComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -168,9 +191,9 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.splitContainerDocumentationDetails.Panel1.PerformLayout();
 			this.splitContainerDocumentationDetails.Panel2.ResumeLayout(false);
 			this.splitContainerDocumentationDetails.ResumeLayout(false);
+			this.panel1.ResumeLayout(false);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
-			this.panel1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
         }
@@ -179,10 +202,12 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 
         private System.Windows.Forms.SplitContainer splitContainerDocumentationDetails;
         private ClearCanvas.Desktop.View.WinForms.TableView _mppsTableView;
-        private System.Windows.Forms.Panel _mppsDetailsPanel;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+		private System.Windows.Forms.Panel _mppsDetailsPanel;
         private ClearCanvas.Desktop.View.WinForms.TableView _procedurePlanSummary;
 		private System.Windows.Forms.Panel panel1;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Label label2;
 
     }
 }
