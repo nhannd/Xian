@@ -105,6 +105,7 @@
     </Compile>
     <Compile Include="CineApplicationComponent.cs" />
     <Compile Include="CineTool.cs" />
+    <Compile Include="ColorBarTool.cs" />
     <Compile Include="Configuration\ConfigurationPageProvider.cs" />
     <Compile Include="Configuration\ToolConfigurationComponent.cs" />
     <Compile Include="ImageProperties\ImagePropertyProvider.cs" />
@@ -436,6 +437,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\ImagePropertiesToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ColorBarToolLarge.png" />
+    <EmbeddedResource Include="Icons\ColorBarToolMedium.png" />
+    <EmbeddedResource Include="Icons\ColorBarToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

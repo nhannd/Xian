@@ -160,6 +160,7 @@
     <Compile Include="Common\MemoryManagementStrategy.cs" />
     <Compile Include="Common\MemoryManager.cs" />
     <Compile Include="Common\PermissionsHelper.cs" />
+    <Compile Include="Graphics\ColorBarGraphic.cs" />
     <Compile Include="Graphics\GraphicFocusChangedEventArgs.cs" />
     <Compile Include="PresentationStates\GeometricShutterCache.cs" />
     <Compile Include="ViewerActionFilter.cs" />

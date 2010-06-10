@@ -774,4 +774,19 @@ Please check the log for more details.</value>
   <data name="MenuWindowLevelPresetList" xml:space="preserve">
     <value>(List of Window/Level Presets)</value>
   </data>
+  <data name="MenuColorBar" xml:space="preserve">
+    <value>&amp;Colour Bar</value>
+  </data>
+  <data name="MenuShowHideColorBar" xml:space="preserve">
+    <value>Show/Hide &amp;Colour Bar</value>
+  </data>
+  <data name="ToolbarColorBar" xml:space="preserve">
+    <value>Colour Bar</value>
+  </data>
+  <data name="TooltipColorBar" xml:space="preserve">
+    <value>Colour Bar</value>
+  </data>
+  <data name="TooltipShowHideColorBar" xml:space="preserve">
+    <value>Show/Hide Colour Bar</value>
+  </data>
 </root>

@@ -37,7 +37,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ColorBarGraphic.cs" />
     <Compile Include="DisplaySetFactoryProvider.cs" />
     <Compile Include="AlphaColorMapFactory.cs" />
     <Compile Include="VoiLutManagerProxy.cs" />
