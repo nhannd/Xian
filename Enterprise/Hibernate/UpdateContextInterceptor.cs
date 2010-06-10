@@ -194,17 +194,27 @@ namespace ClearCanvas.Enterprise.Hibernate
 
 		private void RecordChange(object domainObject, EntityChangeType changeType, PropertyDiff[] propertyDiffs)
 		{
-			// ignore changes to enum values for now
-			// TODO: should probably record changes to enum values as well
-			if (domainObject is EnumValue)
-				return;
-			
-			// update all change trackers
-			var entity = (Entity)domainObject;
-			foreach (var changeTracker in _changeTrackers)
+			if(IsChangeSetPublishable((DomainObject)domainObject))
 			{
-				changeTracker.RecordChange(entity, changeType, propertyDiffs);
+				// update all change trackers
+				var entity = (Entity)domainObject;
+				foreach (var changeTracker in _changeTrackers)
+				{
+					changeTracker.RecordChange(entity, changeType, propertyDiffs);
+				}
 			}
+		}
+
+		private static bool IsChangeSetPublishable(DomainObject domainObject)
+		{
+			// ignore changes to enum values for now
+			// TODO: should probably record changes to enum values
+			if (domainObject is EnumValue)
+				return false;
+
+			// check for an attribute - if no attribute, then default is publishable
+			var a = AttributeUtils.GetAttribute<ChangeSetPublishableAttribute>(domainObject.GetClass(), true);
+			return a == null || a.IsPublishable;
 		}
 
 		private static bool ShouldCheckRule(ISpecification rule, ICollection<string> dirtyProperties)
