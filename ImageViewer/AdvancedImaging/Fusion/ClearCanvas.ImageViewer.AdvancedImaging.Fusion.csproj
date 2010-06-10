@@ -42,7 +42,7 @@
     <Compile Include="VoiLutManagerProxy.cs" />
     <Compile Include="LayerOpacityOperation.cs" />
     <Compile Include="AdjustOpacityTool.cs" />
-    <Compile Include="FusionOverlayColorMapSpec.cs" />
+    <Compile Include="ColorMapManagerProxy.cs" />
     <Compile Include="AlphaColorMap.cs" />
     <Compile Include="FusionOverlayCompositeGraphic.cs" />
     <Compile Include="FusionOverlayFrameData.cs" />

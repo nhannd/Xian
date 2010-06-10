@@ -36,13 +36,44 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
-	partial class FusionOverlayCompositeGraphic : ILayerOpacityManager
+	[Cloneable]
+	internal class ColorMapManagerProxy : ILayerOpacityManager
 	{
+		[CloneIgnore]
+		private IColorMapManager _realColorMapManager;
+
 		private bool _thresholding = false;
 		private float _opacity = 0.5f;
 
-		[CloneIgnore]
-		private IColorMapManager _overlayColorMapManager;
+		public ColorMapManagerProxy() {}
+
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		/// <param name="source">The source object from which to clone.</param>
+		/// <param name="context">The cloning context object.</param>
+		protected ColorMapManagerProxy(ColorMapManagerProxy source, ICloningContext context)
+		{
+			context.CloneFields(source, this);
+		}
+
+		protected void InstallColorMap()
+		{
+			if (_realColorMapManager != null)
+			{
+				var colorMap = AlphaColorMapFactory.GetColorMap("HOT_IRON", (byte) (byte.MaxValue*_opacity), _thresholding);
+				if (_realColorMapManager != null)
+					_realColorMapManager.InstallColorMap(colorMap);
+			}
+		}
+
+		public void SetRealColorMapManager(IColorMapManager realColorMapManager)
+		{
+			_realColorMapManager = realColorMapManager;
+			this.InstallColorMap();
+		}
+
+		#region ILayerOpacityManager Members
 
 		public bool Enabled
 		{
@@ -77,11 +108,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 		}
 
-		protected virtual void OnColorMapChanged(EventArgs e)
-		{
-			this.InstallColorMap();
-		}
-
 		protected virtual void OnOpacityChanged(EventArgs e)
 		{
 			this.InstallColorMap();
@@ -92,21 +118,14 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			this.InstallColorMap();
 		}
 
-		protected void InstallColorMap()
-		{
-			if (_overlayColorMapManager != null)
-			{
-				var overlayColorMapReference = AlphaColorMapFactory.GetColorMap("HOT_IRON", (byte) (byte.MaxValue*_opacity), _thresholding);
-				if (_overlayColorMapManager != null)
-					_overlayColorMapManager.InstallColorMap(overlayColorMapReference);
-			}
-		}
+		#endregion
 
-		private void SetOverlayColorMapManager(IColorMapManager overlayColorMapManager)
+		protected virtual void OnColorMapChanged(EventArgs e)
 		{
-			_overlayColorMapManager = overlayColorMapManager;
 			this.InstallColorMap();
 		}
+
+		#region IMemorable Members
 
 		public object CreateMemento()
 		{
@@ -120,6 +139,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			_thresholding = value.Thresholding;
 			this.InstallColorMap();
 		}
+
+		#endregion
 
 		#region Memento Struct
 

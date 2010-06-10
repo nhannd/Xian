@@ -38,10 +38,8 @@ using ClearCanvas.ImageViewer.InteractiveGraphics;
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
 	[Cloneable(false)]
-	internal partial class FusionOverlayCompositeGraphic : CompositeGraphic, IVoiLutProvider
+	internal partial class FusionOverlayCompositeGraphic : CompositeGraphic, IVoiLutProvider, ILayerOpacityProvider
 	{
-		private event EventHandler _overlayImageGraphicChanged;
-
 		[CloneIgnore]
 		private IFusionOverlayFrameDataReference _overlayFrameDataReference;
 
@@ -49,16 +47,17 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		private GrayscaleImageGraphic _overlayImageGraphic;
 
 		[CloneIgnore]
-		private VoiLutManagerProxy _voiLutManagerProxy;
-
-		[CloneIgnore]
 		private bool _isLoadingProgressShown;
+
+		private VoiLutManagerProxy _voiLutManagerProxy;
+		private ColorMapManagerProxy _colorMapManagerProxy;
 
 		public FusionOverlayCompositeGraphic(FusionOverlayFrameData overlayFrameData)
 		{
 			_overlayFrameDataReference = overlayFrameData.CreateTransientReference();
 			_overlayFrameDataReference.FusionOverlayFrameData.Unloaded += HandleOverlayFrameDataUnloaded;
 			_voiLutManagerProxy = new VoiLutManagerProxy();
+			_colorMapManagerProxy = new ColorMapManagerProxy();
 		}
 
 		/// <summary>
@@ -72,7 +71,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 			_overlayFrameDataReference = source._overlayFrameDataReference.Clone();
 			_overlayFrameDataReference.FusionOverlayFrameData.Unloaded += HandleOverlayFrameDataUnloaded;
-			_voiLutManagerProxy = new VoiLutManagerProxy();
 		}
 
 		protected override void Dispose(bool disposing)
@@ -81,6 +79,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			{
 				_overlayImageGraphic = null;
 				_voiLutManagerProxy = null;
+				_colorMapManagerProxy = null;
 
 				if (_overlayFrameDataReference != null)
 				{
@@ -96,6 +95,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		public IVoiLutManager VoiLutManager
 		{
 			get { return _voiLutManagerProxy; }
+		}
+
+		public ILayerOpacityManager LayerOpacityManager
+		{
+			get { return _colorMapManagerProxy; }
 		}
 
 		public FusionOverlayFrameData OverlayFrameData
@@ -115,7 +119,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 						base.Graphics.Remove(_overlayImageGraphic);
 						_overlayImageGraphic.Dispose();
 						_voiLutManagerProxy.SetRealVoiLutManager(null);
-						this.SetOverlayColorMapManager(null);
+						_colorMapManagerProxy.SetRealColorMapManager(null);
 					}
 
 					_overlayImageGraphic = value;
@@ -123,24 +127,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					if (_overlayImageGraphic != null)
 					{
 						_voiLutManagerProxy.SetRealVoiLutManager(_overlayImageGraphic.VoiLutManager);
+						_colorMapManagerProxy.SetRealColorMapManager(_overlayImageGraphic.ColorMapManager);
 						base.Graphics.Add(_overlayImageGraphic);
-						this.SetOverlayColorMapManager(_overlayImageGraphic.ColorMapManager);
 					}
-
-					OnOverlayImageGraphicChanged();
 				}
 			}
-		}
-
-		public event EventHandler OverlayImageGraphicChanged
-		{
-			add { _overlayImageGraphicChanged += value; }
-			remove { _overlayImageGraphicChanged -= value; }
-		}
-
-		protected virtual void OnOverlayImageGraphicChanged()
-		{
-			EventsHelper.Fire(_overlayImageGraphicChanged, this, EventArgs.Empty);
 		}
 
 		public override void OnDrawing()

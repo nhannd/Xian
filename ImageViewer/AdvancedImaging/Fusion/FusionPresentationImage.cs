@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Annotations;
@@ -120,6 +119,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			if (disposing)
 			{
 				_fusionOverlayLayer = null;
+				_fusionOverlayComposite = null;
 
 				if (_baseFrameReference != null)
 				{
@@ -131,11 +131,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				{
 					_overlayFrameDataReference.Dispose();
 					_overlayFrameDataReference = null;
-				}
-
-				if (_fusionOverlayComposite != null)
-				{
-					_fusionOverlayComposite = null;
 				}
 			}
 
@@ -237,7 +232,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		public ILayerOpacityManager LayerOpacityManager
 		{
-			get { return _fusionOverlayComposite; }
+			get { return _fusionOverlayComposite.LayerOpacityManager; }
 		}
 
 		#endregion

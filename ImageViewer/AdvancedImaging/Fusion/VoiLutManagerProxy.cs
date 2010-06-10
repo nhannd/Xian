@@ -37,17 +37,16 @@ using ClearCanvas.ImageViewer.Imaging;
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
 	[Cloneable]
-	internal class VoiLutManagerProxy : IVoiLutManager, IDisposable
+	internal class VoiLutManagerProxy : IVoiLutManager
 	{
+		[CloneIgnore]
+		private readonly IVoiLutManager _placeholderVoiLutManager;
+
 		[CloneIgnore]
 		private IVoiLutManager _realVoiLutManager;
 
-		[CloneIgnore]
-		private IVoiLutManager _placeholderVoiLutManager;
-
 		public VoiLutManagerProxy()
 		{
-			_realVoiLutManager = null;
 			_placeholderVoiLutManager = new VoiLutManager(new XVoiLutInstaller(), false);
 		}
 
@@ -58,18 +57,13 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		/// <param name="context">The cloning context object.</param>
 		protected VoiLutManagerProxy(VoiLutManagerProxy source, ICloningContext context)
 		{
-			_realVoiLutManager = null;
+			context.CloneFields(source, this);
+
 			_placeholderVoiLutManager = new VoiLutManager(new XVoiLutInstaller()
 			                                              	{
 			                                              		Invert = source._placeholderVoiLutManager.Invert,
 			                                              		VoiLut = source._placeholderVoiLutManager.VoiLut
 			                                              	}, false);
-		}
-
-		public void Dispose()
-		{
-			_realVoiLutManager = null;
-			_placeholderVoiLutManager = null;
 		}
 
 		public void SetRealVoiLutManager(IVoiLutManager realVoiLutManager)
