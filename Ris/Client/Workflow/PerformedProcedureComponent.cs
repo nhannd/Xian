@@ -459,10 +459,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void StopPerformedProcedureStep()
 		{
+			// bail if no selected step (this shouldn't ever happen)
 			if (_selectedMpps == null)
-			{
 				return;
-			}
 
 			// bail on validation errors
 			if (this.HasValidationErrors)
@@ -502,9 +501,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				// Refresh selection
 				_selectedMpps = response.StoppedMpps;
-
 				UpdateActionEnablement();
 				_mppsTable.Sort();
+
+				// notify pages that selection has been updated
+				EventsHelper.Fire(_selectedMppsChanged, this, EventArgs.Empty);
 			}
 			catch (Exception e)
 			{
@@ -514,43 +515,51 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void DiscontinuePerformedProcedureStep()
 		{
+			// bail if no selected step (this shouldn't ever happen)
+			if (_selectedMpps == null)
+				return;
+
+			// confirm with user that they really want to do this
+			if (this.Host.DesktopWindow.ShowMessageBox("Are you sure you want to discontinue the selected procedure(s)?",
+				MessageBoxActions.YesNo) == DialogBoxAction.No)
+				return;
+
+			// if downtime recovery mode, need to get the time from the user
+			DateTime? endTime = _selectedMpps.StartTime;
+			if (DowntimeRecovery.InDowntimeRecoveryMode)
+			{
+				if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Discontinued Time", false, ref endTime))
+					return;
+			}
+
 			try
 			{
-				var selectedMpps = _selectedMpps;
+				SaveData();
 
-				if (selectedMpps != null)
-				{
-					if (this.Host.DesktopWindow.ShowMessageBox("Are you sure you want to discontinue the selected procedure(s)?", MessageBoxActions.YesNo) != DialogBoxAction.No)
+				DiscontinueModalityPerformedProcedureStepResponse response = null;
+				Platform.GetService<IModalityWorkflowService>(
+					service =>
 					{
-						// if downtime recovery mode, need to get the time from the user
-						DateTime? endTime = _selectedMpps.StartTime;
-						if (DowntimeRecovery.InDowntimeRecoveryMode)
-						{
-							if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Completed Time", false, ref endTime))
-								return;
-						}
-						DiscontinueModalityPerformedProcedureStepResponse response = null;
-						Platform.GetService<IModalityWorkflowService>(
-							service =>
-							{
-								var request = new DiscontinueModalityPerformedProcedureStepRequest(selectedMpps)
-										{
-											DiscontinuedTime = DowntimeRecovery.InDowntimeRecoveryMode ? endTime : null
-										};
-								response = service.DiscontinueModalityPerformedProcedureStep(request);
-							});
+						var request = new DiscontinueModalityPerformedProcedureStepRequest(_selectedMpps)
+											{
+												DiscontinuedTime = DowntimeRecovery.InDowntimeRecoveryMode ? endTime : null
+											};
+						response = service.DiscontinueModalityPerformedProcedureStep(request);
+					});
 
-						RefreshProcedurePlanTree(response.ProcedurePlan);
+				RefreshProcedurePlanTree(response.ProcedurePlan);
 
-						_mppsTable.Items.Replace(
-							mpps => mpps.ModalityPerformendProcedureStepRef.Equals(_selectedMpps.ModalityPerformendProcedureStepRef, true),
-							response.DiscontinuedMpps);
+				_mppsTable.Items.Replace(
+					mpps => mpps.ModalityPerformendProcedureStepRef.Equals(_selectedMpps.ModalityPerformendProcedureStepRef, true),
+					response.DiscontinuedMpps);
 
-						_selectedMpps = response.DiscontinuedMpps;
-						UpdateActionEnablement();
-						_mppsTable.Sort();
-					}
-				}
+				// Refresh selection
+				_selectedMpps = response.DiscontinuedMpps;
+				UpdateActionEnablement();
+				_mppsTable.Sort();
+
+				// notify pages that selection has been updated
+				EventsHelper.Fire(_selectedMppsChanged, this, EventArgs.Empty);
 			}
 			catch (Exception e)
 			{
