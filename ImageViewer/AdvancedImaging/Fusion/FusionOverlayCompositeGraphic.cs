@@ -153,14 +153,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 #if DEBUG
 					if (this.OverlayFrameData.BaseFrame.FrameOfReferenceUid != this.OverlayFrameData.OverlayFrameOfReferenceUid)
 					{
-						if (!CollectionUtils.Contains(base.Graphics, g => g is ITextGraphic))
-						{
-							ITextGraphic warning = new InvariantTextPrimitive("Frame of Reference (0020,0052) MISMATCH");
-							warning.CoordinateSystem = CoordinateSystem.Destination;
-							warning.Location = new PointF(base.ParentPresentationImage.ClientRectangle.Width/2f, base.ParentPresentationImage.ClientRectangle.Height/2f);
-							warning.ResetCoordinateSystem();
-							this.Graphics.Add(warning);
-						}
+						if (!CollectionUtils.Contains(base.Graphics, g => g is CenteredTextGraphic))
+							this.Graphics.Add(new CenteredTextGraphic("Frame of Reference (0020,0052) MISMATCH"));
 					}
 #endif
 
@@ -179,5 +173,34 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			OverlayImageGraphic = null;
 		}
+
+		#region CenteredTextGraphic Class
+
+#if DEBUG
+		private class CenteredTextGraphic : InvariantTextPrimitive
+		{
+			public CenteredTextGraphic(string text) : base(text) {}
+
+			public override void OnDrawing()
+			{
+				if (ParentPresentationImage != null)
+				{
+					CoordinateSystem = CoordinateSystem.Destination;
+					try
+					{
+						var rectangle = ParentPresentationImage.ClientRectangle;
+						Location = new PointF(rectangle.Width/2f, rectangle.Height/2f);
+					}
+					finally
+					{
+						ResetCoordinateSystem();
+					}
+				}
+				base.OnDrawing();
+			}
+		}
+#endif
+
+		#endregion
 	}
 }

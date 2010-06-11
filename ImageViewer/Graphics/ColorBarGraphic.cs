@@ -132,6 +132,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		//public Point Location
+		//{
+		//    get {}
+		//}
+
 		public ColorBarOrientation Orientation
 		{
 			get { return _orientation; }
@@ -267,38 +272,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		IEnumerable<ColorMapDescriptor> IColorMapInstaller.AvailableColorMaps
 		{
 			get { return this.ColorMapManager.AvailableColorMaps; }
-		}
-
-		#endregion
-
-		#region InvariantSpatialTransform Class
-
-		/// <summary>
-		/// Implements a <see cref="SpatialTransform"/> which is invariant in the destination coordinate system with respect to scale, flip and rotation.
-		/// </summary>
-		[Cloneable]
-		private sealed class InvariantSpatialTransform : SpatialTransform
-		{
-			public InvariantSpatialTransform(IGraphic ownerGraphic) : base(ownerGraphic) {}
-
-			/// <summary>
-			/// Cloning constructor.
-			/// </summary>
-			/// <param name="source">The source object from which to clone.</param>
-			/// <param name="context">The cloning context object.</param>
-			private InvariantSpatialTransform(InvariantSpatialTransform source, ICloningContext context)
-				: base(source, context)
-			{
-				context.CloneFields(source, this);
-			}
-
-			protected override void CalculatePostTransform(Matrix cumulativeTransform)
-			{
-				cumulativeTransform.Reset();
-				cumulativeTransform.Translate(this.TranslationX, this.TranslationY);
-			}
-
-			protected override void CalculatePreTransform(Matrix cumulativeTransform) {}
 		}
 
 		#endregion

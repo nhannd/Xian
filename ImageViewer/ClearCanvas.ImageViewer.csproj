@@ -162,6 +162,7 @@
     <Compile Include="Common\PermissionsHelper.cs" />
     <Compile Include="Graphics\ColorBarGraphic.cs" />
     <Compile Include="Graphics\GraphicFocusChangedEventArgs.cs" />
+    <Compile Include="Graphics\InvariantSpatialTransform.cs" />
     <Compile Include="PresentationStates\GeometricShutterCache.cs" />
     <Compile Include="ViewerActionFilter.cs" />
     <Compile Include="ImageBoxDrawingEventArgs.cs" />
