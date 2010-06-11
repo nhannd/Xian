@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -154,6 +155,19 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				// ensure the color bar uses the same color map as the underlying image
 				if (base.ParentPresentationImage is IColorMapProvider)
 					_colorBarGraphic.ColorMapManager.SetMemento(((IColorMapProvider) base.ParentPresentationImage).ColorMapManager.CreateMemento());
+				if (base.ParentPresentationImage != null)
+				{
+					_colorBarGraphic.CoordinateSystem = CoordinateSystem.Destination;
+					try
+					{
+						_colorBarGraphic.Length = (int) (base.ParentPresentationImage.ClientRectangle.Height*0.3f);
+						_colorBarGraphic.Location = new PointF(25, (base.ParentPresentationImage.ClientRectangle.Height - _colorBarGraphic.Length)/2f);
+					}
+					finally
+					{
+						_colorBarGraphic.ResetCoordinateSystem();
+					}
+				}
 
 				base.OnDrawing();
 			}

@@ -32,7 +32,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Imaging;
@@ -43,12 +42,16 @@ namespace ClearCanvas.ImageViewer.Graphics
 	public class ColorBarGraphic : CompositeGraphic, IColorMapProvider, IColorMapInstaller
 	{
 		[CloneIgnore]
+		private readonly ColorMapManager _colorMapManagerProxy = new ColorMapManager(new ColorMapInstallerProxy());
+
+		[CloneIgnore]
 		private GrayscaleImageGraphic _colorBar;
 
 		[CloneIgnore]
 		private IGradientPixelData _gradientPixelData;
 
 		private ColorBarOrientation _orientation;
+		private PointF _location;
 		private Size _size;
 		private bool _reversed;
 
@@ -67,9 +70,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public ColorBarGraphic(Size size, ColorBarOrientation orientation)
 		{
 			_size = size;
+			_location = new PointF(0, 0);
 			_orientation = orientation;
 			_reversed = false;
 			_gradientPixelData = null;
+			_colorMapManagerProxy = new ColorMapManager(new ColorMapInstallerProxy());
 		}
 
 		/// <summary>
@@ -80,6 +85,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		protected ColorBarGraphic(ColorBarGraphic source, ICloningContext context)
 		{
 			context.CloneFields(source, this);
+
+			_colorMapManagerProxy.SetMemento(source._colorMapManagerProxy.CreateMemento());
 
 			if (source._gradientPixelData != null)
 				_gradientPixelData = source._gradientPixelData.Clone();
@@ -128,14 +135,32 @@ namespace ClearCanvas.ImageViewer.Graphics
 				{
 					_size = value;
 					this.OnSizeChanged(EventArgs.Empty);
+					this.OnVisualStateChanged("Size");
 				}
 			}
 		}
 
-		//public Point Location
-		//{
-		//    get {}
-		//}
+		public PointF Location
+		{
+			get
+			{
+				if (base.CoordinateSystem == CoordinateSystem.Source && base.ParentGraphic != null)
+					return base.ParentGraphic.SpatialTransform.ConvertToDestination(_location);
+				return _location;
+			}
+			set
+			{
+				if (base.CoordinateSystem == CoordinateSystem.Source && base.ParentGraphic != null)
+					value = base.ParentGraphic.SpatialTransform.ConvertToDestination(value);
+				if (_location != value)
+				{
+					_location = value;
+					this.SpatialTransform.TranslationX = _location.X;
+					this.SpatialTransform.TranslationY = _location.Y;
+					this.OnLocationChanged(EventArgs.Empty);
+				}
+			}
+		}
 
 		public ColorBarOrientation Orientation
 		{
@@ -146,6 +171,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				{
 					_orientation = value;
 					this.OnOrientationChanged(EventArgs.Empty);
+					this.OnVisualStateChanged("Orientation");
 				}
 			}
 		}
@@ -159,6 +185,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				{
 					_reversed = value;
 					this.OnReversedChanged(EventArgs.Empty);
+					this.OnVisualStateChanged("Reversed");
 				}
 			}
 		}
@@ -175,6 +202,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 				return _colorBar;
 			}
 		}
+
+		public override void Move(SizeF delta)
+		{
+			this.Location += delta;
+		}
+
+		protected virtual void OnLocationChanged(EventArgs e) {}
 
 		protected virtual void OnSizeChanged(EventArgs e)
 		{
@@ -205,6 +239,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			{
 				base.Graphics.Remove(_colorBar);
 				_colorBar.Dispose();
+				_colorBar = null;
 			}
 
 			if (_gradientPixelData != null)
@@ -232,8 +267,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		public override void OnDrawing()
 		{
-			// ensure the colorbar is created
-			var x = this.ColorBar;
+			// ensure the colorbar is created and the colormap is up to date
+			var colorBar = this.ColorBar;
+			colorBar.ColorMapManager.SetMemento(_colorMapManagerProxy.CreateMemento());
 
 			base.OnDrawing();
 		}
@@ -242,7 +278,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		public IColorMapManager ColorMapManager
 		{
-			get { return this.ColorBar.ColorMapManager; }
+			get { return _colorMapManagerProxy; }
 		}
 
 		#endregion
@@ -438,6 +474,65 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 
 			#endregion
+		}
+
+		#endregion
+
+		#region ColorMapInstallerProxy Class
+
+		private class ColorMapInstallerProxy : IColorMapInstaller
+		{
+			private IDataLut _colorMap;
+			private string _colorMapName = string.Empty;
+
+			public IDataLut ColorMap
+			{
+				get
+				{
+					if (_colorMap == null && !string.IsNullOrEmpty(_colorMapName))
+					{
+						using (var lutFactory = LutFactory.Create())
+						{
+							_colorMap = lutFactory.GetColorMap(_colorMapName);
+						}
+					}
+					return _colorMap;
+				}
+			}
+
+			public void InstallColorMap(string name)
+			{
+				if (_colorMapName != name)
+				{
+					_colorMapName = name;
+					_colorMap = null;
+				}
+			}
+
+			public void InstallColorMap(ColorMapDescriptor descriptor)
+			{
+				this.InstallColorMap(descriptor.Name);
+			}
+
+			public void InstallColorMap(IDataLut colorMap)
+			{
+				if (_colorMap != colorMap)
+				{
+					_colorMap = colorMap;
+					_colorMapName = null;
+				}
+			}
+
+			public IEnumerable<ColorMapDescriptor> AvailableColorMaps
+			{
+				get
+				{
+					using (var lutFactory = LutFactory.Create())
+					{
+						return lutFactory.AvailableColorMaps;
+					}
+				}
+			}
 		}
 
 		#endregion
