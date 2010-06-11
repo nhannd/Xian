@@ -73,9 +73,19 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 		}
 
+		public Frame BaseFrame
+		{
+			get { return _baseFrameReference.Frame; }
+		}
+
 		public FusionOverlayData OverlayData
 		{
 			get { return _overlayDataReference.FusionOverlayData; }
+		}
+
+		public string OverlayFrameOfReferenceUid
+		{
+			get { return this.OverlayData.FrameOfReferenceUid; }
 		}
 
 		protected byte[] OverlayPixelData

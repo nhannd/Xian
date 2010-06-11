@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
@@ -148,6 +149,21 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				if (_overlayFrameDataReference.FusionOverlayFrameData.BeginLoad(out progress, out message))
 				{
 					OverlayImageGraphic = _overlayFrameDataReference.FusionOverlayFrameData.CreateImageGraphic();
+
+#if DEBUG
+					if (this.OverlayFrameData.BaseFrame.FrameOfReferenceUid != this.OverlayFrameData.OverlayFrameOfReferenceUid)
+					{
+						if (!CollectionUtils.Contains(base.Graphics, g => g is ITextGraphic))
+						{
+							ITextGraphic warning = new InvariantTextPrimitive("Frame of Reference (0020,0052) MISMATCH");
+							warning.CoordinateSystem = CoordinateSystem.Destination;
+							warning.Location = new PointF(base.ParentPresentationImage.ClientRectangle.Width/2f, base.ParentPresentationImage.ClientRectangle.Height/2f);
+							warning.ResetCoordinateSystem();
+							this.Graphics.Add(warning);
+						}
+					}
+#endif
+
 					_isLoadingProgressShown = false;
 				}
 				else if (!_isLoadingProgressShown)

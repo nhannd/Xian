@@ -157,6 +157,20 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		}
 
 		/// <summary>
+		/// Gets the Frame of Reference UID (0020,0052) that identifies the volume's coordinate system.
+		/// </summary>
+		public string FrameOfReferenceUid
+		{
+			get
+			{
+				DicomAttribute attribute;
+				if (_modelDicom.TryGetAttribute(DicomTags.FrameOfReferenceUid, out attribute))
+					return attribute.ToString();
+				return string.Empty;
+			}
+		}
+
+		/// <summary>
 		/// The effective volume dimensions in Volume space.
 		/// </summary>
 		public Vector3D Dimensions
