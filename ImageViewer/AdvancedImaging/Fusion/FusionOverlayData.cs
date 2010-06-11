@@ -82,6 +82,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 		}
 
+		public string FrameOfReferenceUid
+		{
+			get { return this.Volume.FrameOfReferenceUid; }
+		}
+
 		protected VolumeData Volume
 		{
 			get
@@ -190,10 +195,10 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 			// the volume slicing transformation matrix is thus just the rotation of the identity basis to the slicing basis
 			var volumeSlicerTransform = new Matrix(4, 4);
-			volumeSlicerTransform.SetColumn(0, volumeXAxis.X, volumeXAxis.Y, volumeXAxis.Z, 0);
-			volumeSlicerTransform.SetColumn(1, volumeYAxis.X, volumeYAxis.Y, volumeYAxis.Z, 0);
-			volumeSlicerTransform.SetColumn(2, volumeZAxis.X, volumeZAxis.Y, volumeZAxis.Z, 0);
-			volumeSlicerTransform.SetColumn(3, 0, 0, 0, 1);
+			volumeSlicerTransform.SetRow(0, volumeXAxis.X, volumeXAxis.Y, volumeXAxis.Z, 0);
+			volumeSlicerTransform.SetRow(1, volumeYAxis.X, volumeYAxis.Y, volumeYAxis.Z, 0);
+			volumeSlicerTransform.SetRow(2, volumeZAxis.X, volumeZAxis.Y, volumeZAxis.Z, 0);
+			volumeSlicerTransform.SetRow(3, 0, 0, 0, 1);
 
 			var @params = new VolumeSlicerParams(volumeSlicerTransform);
 			using (var slice = new VolumeSliceSopDataSource(volume, @params, volume.ConvertToVolume(baseFrameCentre)))
