@@ -31,7 +31,6 @@
 
 using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 

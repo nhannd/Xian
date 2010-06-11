@@ -41,17 +41,43 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// Enumeration of defined progress bar graphic styles.
+	/// </summary>
 	public enum ProgressBarGraphicStyle
 	{
+		/// <summary>
+		/// Specifies a progress bar graphic where the current progress value is indicated by a number of discrete blocks.
+		/// </summary>
 		Blocks,
+
+		/// <summary>
+		/// Specifies a progress bar graphic where the current progress value is indicated by a contiguous bar.
+		/// </summary>
 		Continuous,
+
+		/// <summary>
+		/// Specifies a progress bar graphic where a graphical element moves repeatedly from left to right to indicate that work is in progress.
+		/// </summary>
 		Marquee,
+
+		/// <summary>
+		/// Specifies a progress bar graphic where a graphical element moves back and forth to indicate that work is in progress.
+		/// </summary>
 		Scanner
 	}
 
+	/// <summary>
+	/// A graphic depicting a progress bar for the indication of work in progress.
+	/// </summary>
 	[Cloneable(true)]
 	public abstract partial class ProgressBarGraphic : CompositeGraphic
 	{
+		/// <summary>
+		/// Creates a new <see cref="ProgressBarGraphic"/> in the specified style.
+		/// </summary>
+		/// <param name="style">The <see cref="ProgressBarGraphicStyle">style</see> of the <see cref="ProgressBarGraphic"/> to be created.</param>
+		/// <returns>A new <see cref="ProgressBarGraphic"/> in the specified style.</returns>
 		public static ProgressBarGraphic Create(ProgressBarGraphicStyle style)
 		{
 			switch (style)
@@ -70,6 +96,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		private float _progress;
 
+		/// <summary>
+		/// Gets or sets the current progress value as a fractional number between 0 and 1, inclusive.
+		/// </summary>
+		/// <exception cref="ArgumentException">Thrown if the value is not between 0 and 1, inclusive.</exception>
 		public float Progress
 		{
 			get { return _progress; }
@@ -84,6 +114,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the current progress value as an integer between 0 and 100, inclusive.
+		/// </summary>
+		/// <exception cref="ArgumentException">Thrown if the value is not between 0 and 100, inclusive.</exception>
 		public int ProgressInt
 		{
 			get { return (int) (100*this.Progress); }
@@ -94,13 +128,27 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		/// <summary>
+		/// Gets a value indicating the animation <see cref="ProgressBarGraphicStyle">style</see> of this progress bar.
+		/// </summary>
+		public abstract ProgressBarGraphicStyle Style { get; }
+
+		/// <summary>
+		/// Gets the size of this progress bar graphic.
+		/// </summary>
 		public abstract Size Size { get; }
 
+		/// <summary>
+		/// Called when the current progress value has changed.
+		/// </summary>
 		protected virtual void OnProgressChanged()
 		{
 			this.Update();
 		}
 
+		/// <summary>
+		/// Called by the framework just before the progress bar is rendered.
+		/// </summary>
 		public override void OnDrawing()
 		{
 			if (base.Graphics.Count == 0)
@@ -111,11 +159,19 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			base.OnDrawing();
 		}
 
+		/// <summary>
+		/// Forces an update of the progress bar bitmap.
+		/// </summary>
 		protected void Update()
 		{
 			DisposeAndClear(base.Graphics);
 		}
 
+		/// <summary>
+		/// Draws an image centred on the specified graphics context.
+		/// </summary>
+		/// <param name="g">The graphics context on which the image is to be centred and drawn.</param>
+		/// <param name="image">The image to be centred and drawn.</param>
 		protected void DrawImageCentered(System.Drawing.Graphics g, Image image)
 		{
 			Size bounds = this.Size;
@@ -124,6 +180,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			g.DrawImageUnscaledAndClipped(image, new Rectangle(offset, image.Size));
 		}
 
+		/// <summary>
+		/// Called to render a progress bar depicting the specified progress value.
+		/// </summary>
+		/// <param name="progress">The progress value for which a progress bar is to be rendered.</param>
+		/// <param name="g">The graphics context on which the progress bar is to be rendered.</param>
 		protected abstract void RenderProgressBar(float progress, System.Drawing.Graphics g);
 
 		#region Base Rendering Support
@@ -174,6 +235,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		private static readonly Dictionary<string, Image> _cachedImageResources = new Dictionary<string, Image>();
 
+		/// <summary>
+		/// Gets a statically cached image resource.
+		/// </summary>
 		internal static Image GetImageResource(string resourceName)
 		{
 			// simple static resource caching - the progress bar graphical elements only total about 6 kilobytes

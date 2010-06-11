@@ -35,7 +35,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
-	/// Implements a <see cref="SpatialTransform"/> which is invariant in the destination coordinate system with respect to scale, flip and rotation.
+	/// Implements an <see cref="ISpatialTransform"/> which is invariant in the destination coordinate system with respect to scale, flip and rotation.
 	/// </summary>
 	[Cloneable]
 	public sealed class InvariantSpatialTransform : SpatialTransform
@@ -57,12 +57,18 @@ namespace ClearCanvas.ImageViewer.Graphics
 			context.CloneFields(source, this);
 		}
 
+		/// <summary>
+		/// Called by the base <see cref="SpatialTransform"/> to post-multiply an operation to the overall transformation matrix.
+		/// </summary>
 		protected override void CalculatePostTransform(Matrix cumulativeTransform)
 		{
 			cumulativeTransform.Reset();
 			cumulativeTransform.Translate(this.TranslationX, this.TranslationY);
 		}
 
+		/// <summary>
+		/// Called by the base <see cref="SpatialTransform"/> to pre-multiply an operation to the overall transformation matrix.
+		/// </summary>
 		protected override void CalculatePreTransform(Matrix cumulativeTransform) {}
 	}
 }

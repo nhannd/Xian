@@ -86,6 +86,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				base.Dispose(disposing);
 			}
 
+			public override ProgressBarGraphicStyle Style
+			{
+				get { return ProgressBarGraphicStyle.Marquee; }
+			}
+
 			public override Size Size
 			{
 				get { return _tray.Size; }

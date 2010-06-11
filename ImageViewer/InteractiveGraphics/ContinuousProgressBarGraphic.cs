@@ -55,6 +55,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				_border = GetImageResource("InteractiveGraphics.Resources.ProgressBarGraphicBorder.png");
 			}
 
+			public override ProgressBarGraphicStyle Style
+			{
+				get { return ProgressBarGraphicStyle.Continuous; }
+			}
+
 			public override Size Size
 			{
 				get { return _tray.Size; }

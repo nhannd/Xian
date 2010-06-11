@@ -38,6 +38,9 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
+	/// <summary>
+	/// A colour bar graphic depicting the full spectrum of displayable colours for a given colour map.
+	/// </summary>
 	[Cloneable]
 	public class ColorBarGraphic : CompositeGraphic, IColorMapProvider, IColorMapInstaller
 	{
@@ -55,18 +58,40 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private Size _size;
 		private bool _reversed;
 
+		/// <summary>
+		/// Initializes a new vertical <see cref="ColorBarGraphic"/>.
+		/// </summary>
 		public ColorBarGraphic()
 			: this(ColorBarOrientation.Vertical) {}
 
+		/// <summary>
+		/// Initializes a new <see cref="ColorBarGraphic"/> in the specified orientation.
+		/// </summary>
+		/// <param name="orientation">A value specifying the desired orientation of the colour bar.</param>
 		public ColorBarGraphic(ColorBarOrientation orientation)
 			: this(125, 15, orientation) {}
 
+		/// <summary>
+		/// Initializes a new <see cref="ColorBarGraphic"/> with the specified logical dimensions and orientation.
+		/// </summary>
+		/// <param name="length">The desired logical length of the colour bar along which the spectrum of colours will be ordered.</param>
+		/// <param name="width">The desired logical width of the colour bar.</param>
+		/// <param name="orientation">A value specifying the desired orientation of the colour bar.</param>
 		public ColorBarGraphic(int length, int width, ColorBarOrientation orientation)
 			: this(orientation == ColorBarOrientation.Horizontal ? new Size(length, width) : new Size(width, length), orientation) {}
 
+		/// <summary>
+		/// Initializes a new <see cref="ColorBarGraphic"/> with the specified physical dimensions and inferred orientation.
+		/// </summary>
+		/// <param name="size">The desired physical size of the colour bar. The orientation of the colour bar is inferred from the longer dimension.</param>
 		public ColorBarGraphic(Size size)
 			: this(size, size.Width > size.Height ? ColorBarOrientation.Horizontal : ColorBarOrientation.Vertical) {}
 
+		/// <summary>
+		/// Initializes a new <see cref="ColorBarGraphic"/> with the specified physical dimensions and orientation.
+		/// </summary>
+		/// <param name="size">The desired physical size of the colour bar.</param>
+		/// <param name="orientation">A value specifying the desired orientation of the colour bar.</param>
 		public ColorBarGraphic(Size size, ColorBarOrientation orientation)
 		{
 			_size = size;
@@ -92,6 +117,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 				_gradientPixelData = source._gradientPixelData.Clone();
 		}
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="ColorBarGraphic"/>.
+		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
@@ -114,18 +142,33 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_colorBar = (GrayscaleImageGraphic) CollectionUtils.SelectFirst(base.Graphics, g => g is GrayscaleImageGraphic);
 		}
 
+		/// <summary>
+		/// Gets or sets the logical width of the colour bar.
+		/// </summary>
+		/// <remarks>
+		/// Depending on the value of <see cref="Orientation"/>, the logical width may or may not be coincident with the physical width.
+		/// </remarks>
 		public int Width
 		{
 			get { return _orientation == ColorBarOrientation.Horizontal ? _size.Height : _size.Width; }
 			set { this.Size = _orientation == ColorBarOrientation.Horizontal ? new Size(_size.Width, value) : new Size(value, _size.Height); }
 		}
 
+		/// <summary>
+		/// Gets or sets the logical length of the colour bar along which the spectrum of colours are ordered.
+		/// </summary>
+		/// <remarks>
+		/// Depending on the value of <see cref="Orientation"/>, the logical length may or may not be coincident with the physical height.
+		/// </remarks>
 		public int Length
 		{
 			get { return _orientation == ColorBarOrientation.Horizontal ? _size.Width : _size.Height; }
 			set { this.Size = _orientation == ColorBarOrientation.Horizontal ? new Size(value, _size.Height) : new Size(_size.Width, value); }
 		}
 
+		/// <summary>
+		/// Gets or sets the physical size of the colour bar.
+		/// </summary>
 		public Size Size
 		{
 			get { return _size; }
@@ -134,12 +177,19 @@ namespace ClearCanvas.ImageViewer.Graphics
 				if (_size != value)
 				{
 					_size = value;
-					this.OnSizeChanged(EventArgs.Empty);
+					this.OnSizeChanged();
 					this.OnVisualStateChanged("Size");
 				}
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the position of the top-left corner of the colour bar.
+		/// </summary>
+		/// <remarks>
+		/// This value may be in either the <see cref="CoordinateSystem.Source"/> or <see cref="CoordinateSystem.Destination"/>
+		/// coordinate system depending on the value of <see cref="IGraphic.CoordinateSystem"/>.
+		/// </remarks>
 		public PointF Location
 		{
 			get
@@ -157,11 +207,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 					_location = value;
 					this.SpatialTransform.TranslationX = _location.X;
 					this.SpatialTransform.TranslationY = _location.Y;
-					this.OnLocationChanged(EventArgs.Empty);
+					this.OnLocationChanged();
 				}
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the orientation of the colour bar.
+		/// </summary>
 		public ColorBarOrientation Orientation
 		{
 			get { return _orientation; }
@@ -170,12 +223,21 @@ namespace ClearCanvas.ImageViewer.Graphics
 				if (_orientation != value)
 				{
 					_orientation = value;
-					this.OnOrientationChanged(EventArgs.Empty);
+					this.OnOrientationChanged();
 					this.OnVisualStateChanged("Orientation");
 				}
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets a value indicating whether or not the spectrum should be reversed in order.
+		/// </summary>
+		/// <remarks>
+		/// Normally, the colours of the spectrum are arranged such that left-to-right or top-to-bottom
+		/// (depending on <see cref="Orientation"/>) coincides with increasing pixel intensity values.
+		/// This behaviour can be reversed using this property such that low intensity values are to the right
+		/// or bottom, and high intensity values are to the left or top.
+		/// </remarks>
 		public bool Reversed
 		{
 			get { return _reversed; }
@@ -184,12 +246,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 				if (_reversed != value)
 				{
 					_reversed = value;
-					this.OnReversedChanged(EventArgs.Empty);
+					this.OnReversedChanged();
 					this.OnVisualStateChanged("Reversed");
 				}
 			}
 		}
 
+		/// <summary>
+		/// Gets the <see cref="GrayscaleImageGraphic"/> of the uncolourised colour bar.
+		/// </summary>
 		protected GrayscaleImageGraphic ColorBar
 		{
 			get
@@ -203,28 +268,55 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Moves the <see cref="ColorBarGraphic"/> by a specified offset.
+		/// </summary>
+		/// <remarks>
+		/// <paramref name="delta"/> may be in either the <see cref="CoordinateSystem.Source"/> or <see cref="CoordinateSystem.Destination"/>
+		/// coordinate system depending on the value of <see cref="IGraphic.CoordinateSystem"/>.
+		/// </remarks>
+		/// <param name="delta">The offset by which to move the colour bar.</param>
 		public override void Move(SizeF delta)
 		{
 			this.Location += delta;
 		}
 
-		protected virtual void OnLocationChanged(EventArgs e) {}
+		/// <summary>
+		/// Called when the value of <see cref="Location"/> changes.
+		/// </summary>
+		protected virtual void OnLocationChanged() {}
 
-		protected virtual void OnSizeChanged(EventArgs e)
+		/// <summary>
+		/// Called when the value of <see cref="Size"/> changes.
+		/// </summary>
+		protected virtual void OnSizeChanged()
 		{
 			this.UnloadColorBar();
 		}
 
-		protected virtual void OnReversedChanged(EventArgs e)
+		/// <summary>
+		/// Called when the value of <see cref="Reversed"/> changes.
+		/// </summary>
+		protected virtual void OnReversedChanged()
 		{
 			this.UpdateColorBar();
 		}
 
-		protected virtual void OnOrientationChanged(EventArgs e)
+		/// <summary>
+		/// Called when the value of <see cref="Orientation"/> changes.
+		/// </summary>
+		protected virtual void OnOrientationChanged()
 		{
 			this.UpdateColorBar();
 		}
 
+		/// <summary>
+		/// Called to create a vertical black and white gradient graphic with black at the top and white at the bottom.
+		/// </summary>
+		/// <remarks>
+		/// This method is called to create a normalized gradient. User options such as <see cref="Reversed"/> and <see cref="Orientation"/> are applied automatically.
+		/// </remarks>
+		/// <returns>A new normalized gradient graphic.</returns>
 		protected virtual GrayscaleImageGraphic CreateVerticalGradient()
 		{
 			if (_gradientPixelData != null)
@@ -233,6 +325,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return new GrayscaleImageGraphic(_gradientPixelData.Length, _gradientPixelData.Width, 8, 8, 7, false, false, 1, 0, () => _gradientPixelData.Data);
 		}
 
+		/// <summary>
+		/// Called to unload the colour bar graphic and any associated resources.
+		/// </summary>
 		protected virtual void UnloadColorBar()
 		{
 			if (_colorBar != null)
@@ -260,11 +355,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Creates the <see cref="ISpatialTransform"/> for this <see cref="ColorBarGraphic"/>.
+		/// </summary>
 		protected override SpatialTransform CreateSpatialTransform()
 		{
 			return new InvariantSpatialTransform(this);
 		}
 
+		/// <summary>
+		/// Called by the framework just before the <see cref="ColorBarGraphic"/> is rendered.
+		/// </summary>
 		public override void OnDrawing()
 		{
 			// ensure the colorbar is created and the colormap is up to date
@@ -276,6 +377,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region IColorMapProvider Members
 
+		/// <summary>
+		/// Gets the <see cref="IColorMapManager"/> associated with this <see cref="ColorBarGraphic"/>.
+		/// </summary>
 		public IColorMapManager ColorMapManager
 		{
 			get { return _colorMapManagerProxy; }
@@ -285,21 +389,33 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region IColorMapInstaller Members
 
+		/// <summary>
+		/// Gets the currently installed colour map.
+		/// </summary>
 		public IDataLut ColorMap
 		{
 			get { return this.ColorMapManager.ColorMap; }
 		}
 
+		/// <summary>
+		/// Installs a colour map by name.
+		/// </summary>
 		public void InstallColorMap(string name)
 		{
 			this.ColorMapManager.InstallColorMap(name);
 		}
 
+		/// <summary>
+		/// Installs a colour map by <see cref="ColorMapDescriptor">descriptor</see>.
+		/// </summary>
 		public void InstallColorMap(ColorMapDescriptor descriptor)
 		{
 			this.ColorMapManager.InstallColorMap(descriptor);
 		}
 
+		/// <summary>
+		/// Installs a colour map.
+		/// </summary>
 		public void InstallColorMap(IDataLut colorMap)
 		{
 			this.ColorMapManager.InstallColorMap(colorMap);
@@ -450,9 +566,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 
 			/// <summary>
-			/// Creates a new 'transient reference' to this <see cref="FusionOverlayFrameData"/>.
+			/// Creates a new 'transient reference' to this <see cref="GradientPixelData"/>.
 			/// </summary>
-			/// <remarks>See <see cref="IFusionOverlayFrameDataReference"/> for a detailed explanation of 'transient references'.</remarks>
 			public IGradientPixelData CreateTransientReference()
 			{
 				return new GradientReference(this);
@@ -538,9 +653,19 @@ namespace ClearCanvas.ImageViewer.Graphics
 		#endregion
 	}
 
+	/// <summary>
+	/// Enumeration of values specifying the orientation of a <see cref="ColorBarGraphic"/>.
+	/// </summary>
 	public enum ColorBarOrientation
 	{
+		/// <summary>
+		/// Specifies that the color bar is oriented horizontally.
+		/// </summary>
 		Horizontal,
+
+		/// <summary>
+		/// Specifies that the color bar is oriented vertically.
+		/// </summary>
 		Vertical
 	}
 }

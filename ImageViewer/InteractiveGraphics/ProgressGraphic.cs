@@ -35,6 +35,9 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// A dialog-like graphic for displaying the current progress of some abstract operation in a scene graph.
+	/// </summary>
 	public partial class ProgressGraphic : CompositeGraphic
 	{
 		private readonly ProgressBarGraphicStyle _progressBarStyle;
@@ -46,6 +49,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private readonly bool _autoClose;
 		private int _animationTick = 100;
 
+		/// <summary>
+		/// Initializes a new <see cref="ProgressGraphic"/>.
+		/// </summary>
+		/// <param name="progressProvider">The provider of progress information for which the <see cref="ProgressGraphic"/> will display updates.</param>
+		/// <param name="autoClose">A value indicating whether or not the <see cref="ProgressGraphic"/> should automatically remove and dispose itself when the progress provider reports task completion or cancellation.</param>
+		/// <param name="progressBarStyle">The style of progress bar to be displayed.</param>
 		public ProgressGraphic(IProgressGraphicProgressProvider progressProvider, bool autoClose, ProgressBarGraphicStyle progressBarStyle)
 		{
 			_progressProvider = progressProvider;
@@ -55,6 +64,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			base.Graphics.Add(_graphics = new ProgressCompositeGraphic(_progressBarStyle));
 		}
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="ProgressGraphic"/>.
+		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
@@ -72,17 +84,29 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			base.Dispose(disposing);
 		}
 
+		/// <summary>
+		/// Gets or sets the delay in milliseconds between progress updates and hence calls to <see cref="Graphic.Draw"/>.
+		/// </summary>
 		public int AnimationTick
 		{
 			get { return _animationTick; }
 			set { _animationTick = value; }
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether or not the <see cref="ProgressGraphic"/> will remove and dispose itself when the progress provider reports task completion or cancellation.
+		/// </summary>
 		public bool AutoClose
 		{
 			get { return _autoClose; }
 		}
 
+		/// <summary>
+		/// Forces the <see cref="ProgressGraphic"/> to remove and dispose itself immediately.
+		/// </summary>
+		/// <remarks>
+		/// Calling this method will invoke <see cref="IDrawable.Draw"/> on the scene graph, so do not call this method from a drawing operation.
+		/// </remarks>
 		public void Close()
 		{
 			if (base.ParentGraphic != null)
@@ -94,6 +118,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Dispose();
 		}
 
+		/// <summary>
+		/// Called by the framework just before the <see cref="ProgressGraphic"/> is rendered.
+		/// </summary>
 		public override void OnDrawing()
 		{
 			if (_synchronizationContext == null)
@@ -171,12 +198,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		#region Static Helpers
 
 		/// <summary>
-		/// Creates and displays a progress graphic.
+		/// Creates and displays a <see cref="ProgressGraphic"/>.
 		/// </summary>
 		/// <remarks>
 		/// This method will invoke the graphic's <see cref="IDrawable.Draw"/> method, so do not call it from a draw routine in the same scene graph!
 		/// </remarks>
-		/// <param name="task">The <see cref="BackgroundTask"/> to execute.</param>
+		/// <param name="task">The <see cref="BackgroundTask"/> to execute. The task is automatically started if it is not already running.</param>
 		/// <param name="parentCollection">The graphics collection on which the progress graphic should be shown.</param>
 		public static void Show(BackgroundTask task, GraphicCollection parentCollection)
 		{
@@ -186,12 +213,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
-		/// Creates and displays a progress graphic.
+		/// Creates and displays a <see cref="ProgressGraphic"/>.
 		/// </summary>
 		/// <remarks>
 		/// This method will invoke the graphic's <see cref="IDrawable.Draw"/> method, so do not call it from a draw routine in the same scene graph!
 		/// </remarks>
-		/// <param name="task">The <see cref="BackgroundTask"/> to execute.</param>
+		/// <param name="task">The <see cref="BackgroundTask"/> to execute. The task is automatically started if it is not already running.</param>
 		/// <param name="parentCollection">The graphics collection on which the progress graphic should be shown.</param>
 		/// <param name="autoClose">A value indicating whether or not the progress graphic should be automatically removed when the task is terminated.</param>
 		public static void Show(BackgroundTask task, GraphicCollection parentCollection, bool autoClose)
@@ -202,12 +229,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
-		/// Creates and displays a progress graphic.
+		/// Creates and displays a <see cref="ProgressGraphic"/>.
 		/// </summary>
 		/// <remarks>
 		/// This method will invoke the graphic's <see cref="IDrawable.Draw"/> method, so do not call it from a draw routine in the same scene graph!
 		/// </remarks>
-		/// <param name="task">The <see cref="BackgroundTask"/> to execute.</param>
+		/// <param name="task">The <see cref="BackgroundTask"/> to execute. The task is automatically started if it is not already running.</param>
 		/// <param name="parentCollection">The graphics collection on which the progress graphic should be shown.</param>
 		/// <param name="autoClose">A value indicating whether or not the progress graphic should be automatically removed when the task is terminated.</param>
 		/// <param name="progressBarGraphicStyle">The style of the progress bar.</param>
@@ -219,7 +246,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
-		/// Creates and displays a progress graphic.
+		/// Creates and displays a <see cref="ProgressGraphic"/>.
 		/// </summary>
 		/// <remarks>
 		/// This method will invoke the graphic's <see cref="IDrawable.Draw"/> method, so do not call it from a draw routine in the same scene graph!
@@ -232,7 +259,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
-		/// Creates and displays a progress graphic.
+		/// Creates and displays a <see cref="ProgressGraphic"/>.
 		/// </summary>
 		/// <remarks>
 		/// This method will invoke the graphic's <see cref="IDrawable.Draw"/> method, so do not call it from a draw routine in the same scene graph!
@@ -246,7 +273,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
-		/// Creates and displays a progress graphic.
+		/// Creates and displays a <see cref="ProgressGraphic"/>.
 		/// </summary>
 		/// <remarks>
 		/// This method will invoke the graphic's <see cref="IDrawable.Draw"/> method, so do not call it from a draw routine in the same scene graph!
@@ -297,8 +324,17 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 	#region IProgressProvider Interface
 
+	/// <summary>
+	/// Interface for providers of progress information about some abstract operation.
+	/// </summary>
 	public interface IProgressGraphicProgressProvider
 	{
+		/// <summary>
+		/// Called to get progress information about the abstract operation.
+		/// </summary>
+		/// <param name="progress">A fractional number between 0 and 1 inclusive indicating the current progress of the abstract operation.</param>
+		/// <param name="message">An optional message describing the current progress of the abstract operation.</param>
+		/// <returns>A value indicating whether or not the abstract operation is currently running.</returns>
 		bool IsRunning(out float progress, out string message);
 	}
 
