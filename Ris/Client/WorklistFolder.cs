@@ -256,9 +256,7 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<TWorklistService>(
 				service =>
 				{
-					var request = this.WorklistRef == null
-						? new QueryWorklistRequest(this.WorklistClassName, true, true, DowntimeRecovery.InDowntimeRecoveryMode)
-						: new QueryWorklistRequest(this.WorklistRef, true, true, DowntimeRecovery.InDowntimeRecoveryMode);
+					var request = CreateQueryWorklistRequest(true, true);
 					request.Page = new SearchResultPage(firstRow, maxRows);
 
 					var response = service.QueryWorklist(request);
@@ -280,12 +278,7 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<TWorklistService>(
 				service =>
 				{
-					var request = this.WorklistRef == null
-					                               	? new QueryWorklistRequest(this.WorklistClassName, false, true,
-					                               	                           DowntimeRecovery.InDowntimeRecoveryMode)
-					                               	: new QueryWorklistRequest(this.WorklistRef, false, true,
-					                               	                           DowntimeRecovery.InDowntimeRecoveryMode);
-
+					var request = CreateQueryWorklistRequest(false, true);
 					var response = service.QueryWorklist(request);
 					count = response.ItemCount;
 				});
@@ -294,5 +287,13 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		#endregion
+
+		private QueryWorklistRequest CreateQueryWorklistRequest(bool queryItems, bool queryCount)
+		{
+			return this.WorklistRef == null
+					? new QueryWorklistRequest(this.WorklistClassName, queryItems, queryCount, DowntimeRecovery.InDowntimeRecoveryMode, LoginSession.Current.WorkingFacility.FacilityRef)
+					: new QueryWorklistRequest(this.WorklistRef, queryItems, queryCount, DowntimeRecovery.InDowntimeRecoveryMode, LoginSession.Current.WorkingFacility.FacilityRef);
+		}
+
 	}
 }

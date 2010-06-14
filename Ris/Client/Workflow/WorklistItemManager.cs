@@ -327,9 +327,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			Platform.GetService<TWorkflowService>(service =>
 				{
+					var workingFacilityRef = LoginSession.Current.WorkingFacility.FacilityRef;
 					var request = _worklistRef != null
-						? new QueryWorklistRequest(_worklistRef, true, true, DowntimeRecovery.InDowntimeRecoveryMode)
-						: new QueryWorklistRequest(_worklistClassName, true, true, DowntimeRecovery.InDowntimeRecoveryMode);
+						? new QueryWorklistRequest(_worklistRef, true, true, DowntimeRecovery.InDowntimeRecoveryMode, workingFacilityRef)
+						: new QueryWorklistRequest(_worklistClassName, true, true, DowntimeRecovery.InDowntimeRecoveryMode, workingFacilityRef);
 
 					var response = service.QueryWorklist(request);
 

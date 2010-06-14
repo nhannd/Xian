@@ -29,28 +29,32 @@
 
 #endregion
 
+using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Common.Caching;
 
 namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
-	public class QueryWorklistRequest : PagedDataContractBase
+	public class QueryWorklistRequest : PagedDataContractBase, IDefinesCacheKey
     {
-        public QueryWorklistRequest(string worklistType, bool queryItems, bool queryCount, bool downtimeRecoveryMode)
+        public QueryWorklistRequest(string worklistType, bool queryItems, bool queryCount, bool downtimeRecoveryMode, EntityRef workingFacilityRef)
         {
             this.WorklistClass = worklistType;
             this.QueryItems = queryItems;
             this.QueryCount = queryCount;
         	this.DowntimeRecoveryMode = downtimeRecoveryMode;
+        	this.WorkingFacilityRef = workingFacilityRef;
         }
 
-		public QueryWorklistRequest(EntityRef worklistRef, bool queryItems, bool queryCount, bool downtimeRecoveryMode)
+		public QueryWorklistRequest(EntityRef worklistRef, bool queryItems, bool queryCount, bool downtimeRecoveryMode, EntityRef workingFacilityRef)
         {
             this.WorklistRef = worklistRef;
             this.QueryItems = queryItems;
             this.QueryCount = queryCount;
 			this.DowntimeRecoveryMode = downtimeRecoveryMode;
+			this.WorkingFacilityRef = workingFacilityRef;
 		}
 
         /// <summary>
@@ -82,5 +86,19 @@ namespace ClearCanvas.Ris.Application.Common
 		/// </summary>
 		[DataMember]
 		public bool DowntimeRecoveryMode;
-	}
+
+		/// <summary>
+		/// Specifies the working facility.
+		/// </summary>
+		[DataMember]
+    	public EntityRef WorkingFacilityRef;
+
+		string IDefinesCacheKey.GetCacheKey()
+    	{
+			// important to include working facility in the cache key, because this affects the response
+			var r = this.WorklistRef == null ? this.WorklistClass : this.WorklistRef.ToString(true, false);
+			var f = this.WorkingFacilityRef == null ? "" : this.WorkingFacilityRef.ToString(false, false);
+			return string.Format("{0}:{1}:{2}:{3}:{4}", r, f, QueryCount, QueryItems, DowntimeRecoveryMode);
+    	}
+    }
 }

@@ -81,11 +81,6 @@ namespace ClearCanvas.Healthcare
 		StaffGroup StaffGroup { get; }
 
         /// <summary>
-        /// Gets the working <see cref="Facility"/> for which the notebox query is executing, or null if the working facility is not known.
-        /// </summary>
-        Facility WorkingFacility { get; }
-
-        /// <summary>
         /// Gets the <see cref="SearchResultPage"/> that specifies which page of the notebox is requested.
         /// </summary>
         SearchResultPage Page { get; }

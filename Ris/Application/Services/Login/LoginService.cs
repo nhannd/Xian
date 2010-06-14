@@ -87,9 +87,6 @@ namespace ClearCanvas.Ris.Application.Services.Login
                 string[] authorityTokens = null;
                 SessionToken token = InitiateSession(user, password, hostName, out authorityTokens);
 
-                // store the working facility in the user's profile
-                UpdateWorkingFacility(request.WorkingFacility);
-
                 // load staff for user
                 Staff staff = FindStaffForUser(user);
 
@@ -195,27 +192,6 @@ namespace ClearCanvas.Ris.Application.Services.Login
                 });
             authorityTokens = initSessionResponse.AuthorityTokens;
             return initSessionResponse.SessionToken;
-        }
-
-        /// <summary>
-        /// Updates the working facility stored in the user profile of the current user.
-        /// </summary>
-        /// <param name="facilityRef"></param>
-        private void UpdateWorkingFacility(EntityRef facilityRef)
-        {
-            // store the working facility in the user's profile
-            WorkingFacilitySettings settings = new WorkingFacilitySettings();
-            if (facilityRef != null)
-            {
-                Facility facility = PersistenceContext.Load<Facility>(facilityRef);
-                settings.WorkingFacilityCode = facility.Code;
-            }
-            else
-            {
-                // working facility not known
-                settings.WorkingFacilityCode = "";
-            }
-            settings.Save();
         }
 
         /// <summary>

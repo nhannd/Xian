@@ -42,6 +42,7 @@ using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using System;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -72,6 +73,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		}
 
 		[ReadOperation]
+		[ResponseCaching("GetQueryWorklistCacheDirective")]
 		public QueryWorklistResponse<RegistrationWorklistItemSummary> QueryWorklist(QueryWorklistRequest request)
 		{
 			var assembler = new RegistrationWorkflowAssembler();

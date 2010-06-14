@@ -127,33 +127,6 @@ namespace ClearCanvas.Ris.Application.Services
         }
 
         /// <summary>
-        /// Obtains the working facility associated with the current user, or null if 
-        /// there is no working facility associated with the current user.
-        /// </summary>
-        public Facility WorkingFacility
-        {
-            get
-            {
-                if(!_workingFacilityLoaded)
-                {
-                    WorkingFacilitySettings settings = new WorkingFacilitySettings();
-                    if (!string.IsNullOrEmpty(settings.WorkingFacilityCode))
-                    {
-                        FacilitySearchCriteria where = new FacilitySearchCriteria();
-                        where.Code.EqualTo(settings.WorkingFacilityCode);
-
-                        // this will be null if the working facility code is invalid, but this should not happen
-                        // (and if it does, there is nothing we can do about it)
-						_workingFacility = CollectionUtils.FirstElement(PersistenceContext.GetBroker<IFacilityBroker>().Find(
-							where, new SearchResultPage(0, 1), new EntityFindOptions { Cache = true }));
-                    }
-                    _workingFacilityLoaded = true;
-                }
-                return _workingFacility;
-            }
-        }
-
-        /// <summary>
         /// Gets the current <see cref="IPersistenceContext"/>.
         /// </summary>
         public IPersistenceContext PersistenceContext

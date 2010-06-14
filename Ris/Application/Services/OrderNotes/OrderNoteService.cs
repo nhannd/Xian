@@ -88,14 +88,6 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
 				get { return _staffGroup; }
         	}
 
-        	/// <summary>
-            /// Gets the working <see cref="Facility"/> associated with the current user, or null if no facility is associated.
-            /// </summary>
-            public Facility WorkingFacility
-            {
-                get { return _applicationService.WorkingFacility; }
-            }
-
             /// <summary>
             /// Gets the <see cref="SearchResultPage"/> that specifies which page of the worklist is requested.
             /// </summary>

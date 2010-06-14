@@ -66,6 +66,7 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 		}
 
 		[ReadOperation]
+		[ResponseCaching("GetQueryWorklistCacheDirective")]
 		public QueryWorklistResponse<ReportingWorklistItemSummary> QueryWorklist(QueryWorklistRequest request)
 		{
 			var assembler = new ReportingWorkflowAssembler();

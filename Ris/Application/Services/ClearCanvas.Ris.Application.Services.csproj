@@ -119,12 +119,6 @@
     <Compile Include="ProcedureStepAssembler.cs" />
     <Compile Include="MrnAssembler.cs" />
     <Compile Include="OrderAssembler.cs" />
-    <Compile Include="WorkingFacilitySettings.cs" />
-    <Compile Include="WorkingFacilitySettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>WorkingFacilitySettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="ProcedurePlanAssembler.cs" />
     <Compile Include="ProfileTextQueryHelper.cs" />
     <Compile Include="ProtocolGroupAssembler.cs" />
@@ -230,10 +224,6 @@
     <None Include="LogicalHL7EventSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>LogicalHL7EventSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="WorkingFacilitySettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>WorkingFacilitySettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="WorklistSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

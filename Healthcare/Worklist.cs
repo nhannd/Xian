@@ -33,10 +33,10 @@ using System;
 using System.Collections;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Core.Modelling;
 using Iesi.Collections.Generic;
-using ClearCanvas.Common.Specifications;
 
 namespace ClearCanvas.Healthcare
 {
@@ -97,6 +97,9 @@ namespace ClearCanvas.Healthcare
 			/// </summary>
 			public WorklistOrdering Ordering { get; private set; }
 		}
+
+
+
 
 		#region Static members
 
@@ -460,7 +463,7 @@ namespace ClearCanvas.Healthcare
 
 		#endregion
 
-		#region Abstract and overridable members
+		#region Public methods
 
 		/// <summary>
 		/// Gets the list of worklist items in this worklist.
@@ -532,6 +535,9 @@ namespace ClearCanvas.Healthcare
 		/// <returns></returns>
 		public abstract string GetWorklistItemsHql(IWorklistQueryContext wqc);
 
+		#endregion
+
+		#region Protected API
 		/// <summary>
 		/// Gets the worklist item projection required to populate worklist items for this worklist.
 		/// </summary>

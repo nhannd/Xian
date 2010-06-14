@@ -38,6 +38,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -60,6 +61,65 @@ namespace ClearCanvas.Ris.Application.Services
 
 	public abstract class WorkflowServiceBase : ApplicationServiceBase, IWorkflowService
     {
+		#region ProbingWorklistQueryContext
+
+		class ProbingWorklistQueryContext : IWorklistQueryContext
+		{
+			private readonly WorklistQueryContext _wqc;
+
+			/// <summary>
+			/// Gets a value indicating if the worklist depends on the executing staff.
+			/// </summary>
+			public bool DependsOnExecutingStaff { get; internal set; }
+
+			/// <summary>
+			/// Gets a value indicating if the worklist depends on the working facility.
+			/// </summary>
+			public bool DependsOnWorkingFacility { get; internal set; }
+
+			public ProbingWorklistQueryContext(ApplicationServiceBase service, Facility workingFacility, SearchResultPage page, bool downtimeRecoveryMode)
+			{
+				_wqc = new WorklistQueryContext(service, workingFacility, page, downtimeRecoveryMode);
+			}
+
+			public Staff Staff
+			{
+				get
+				{
+					DependsOnExecutingStaff = true;
+					return _wqc.Staff;
+				}
+			}
+
+			public Facility WorkingFacility
+			{
+				get
+				{
+					DependsOnWorkingFacility = true;
+					return _wqc.WorkingFacility;
+				}
+			}
+
+			public bool DowntimeRecoveryMode
+			{
+				get { return _wqc.DowntimeRecoveryMode; }
+			}
+
+			public SearchResultPage Page
+			{
+				get { return _wqc.Page; }
+			}
+
+			public TBrokerInterface GetBroker<TBrokerInterface>() where TBrokerInterface : IPersistenceBroker
+			{
+				return _wqc.GetBroker<TBrokerInterface>();
+			}
+		}
+
+		#endregion
+
+
+
 		#region IWorkflowService implementation
 
 		/// <summary>
@@ -112,16 +172,15 @@ namespace ClearCanvas.Ris.Application.Services
 		protected QueryWorklistResponse<TSummary> QueryWorklistHelper<TItem, TSummary>(QueryWorklistRequest request,
             Converter<TItem, TSummary> mapCallback)
         {
-            IWorklist worklist = request.WorklistRef != null ?
-                this.PersistenceContext.Load<Worklist>(request.WorklistRef) :
-                WorklistFactory.Instance.CreateWorklist(request.WorklistClass);
+            IWorklist worklist = GetWorklist(request);
 
             IList results = null;
             var page = new SearchResultPage(request.Page.FirstRow, request.Page.MaxRows);
+			var workingFacility = GetWorkingFacility(request);
             if(request.QueryItems)
             {
                 // get the first page, up to the default max number of items per page
-                results = worklist.GetWorklistItems(new WorklistQueryContext(this, page, request.DowntimeRecoveryMode));
+                results = worklist.GetWorklistItems(new WorklistQueryContext(this, workingFacility, page, request.DowntimeRecoveryMode));
             }
 
             var count = -1;
@@ -132,12 +191,38 @@ namespace ClearCanvas.Ris.Application.Services
                 if (results != null && results.Count < page.MaxRows && page.FirstRow == 0)
                     count = results.Count;
                 else
-                    count = worklist.GetWorklistItemCount(new WorklistQueryContext(this, null, request.DowntimeRecoveryMode));
+					count = worklist.GetWorklistItemCount(new WorklistQueryContext(this, workingFacility, null, request.DowntimeRecoveryMode));
             }
 
             return new QueryWorklistResponse<TSummary>(
                 request.QueryItems ? CollectionUtils.Map(results, mapCallback) : null, count);
         }
+
+		protected ResponseCachingDirective GetQueryWorklistCacheDirective(object request, object response)
+		{
+			var req = (QueryWorklistRequest)request;
+
+			// items queries are never cached
+			if(req.QueryItems)
+				return ResponseCachingDirective.DoNotCacheDirective;
+
+			// otherwise, check the settings to see if caching is enabled
+			var settings = new WorklistSettings();
+			if(!settings.WorklistItemCountCachingEnabled)
+				return ResponseCachingDirective.DoNotCacheDirective;
+
+			// check if the worklist is user-affine (dependent upon the current user),
+			// in which case the response cannot be cached
+			if (IsWorklistUserAffine(req))
+				return ResponseCachingDirective.DoNotCacheDirective;
+
+			// return cache directive according to settings
+			return new ResponseCachingDirective(
+				settings.WorklistItemCountCachingEnabled,
+				TimeSpan.FromSeconds(settings.WorklistItemCountCachingTimeToLiveSeconds),
+				ResponseCachingSite.Server);
+		}
+
 
 		/// <summary>
 		/// Helper method that implements the logic for performing searches on worklists.
@@ -168,6 +253,36 @@ namespace ClearCanvas.Ris.Application.Services
 		#endregion
 
 		#region Private
+
+		private Worklist GetWorklist(QueryWorklistRequest request)
+		{
+			return request.WorklistRef != null ?
+				this.PersistenceContext.Load<Worklist>(request.WorklistRef) :
+				WorklistFactory.Instance.CreateWorklist(request.WorklistClass);
+		}
+
+		private Facility GetWorkingFacility(QueryWorklistRequest request)
+		{
+			return request.WorkingFacilityRef == null ? null : 
+				PersistenceContext.Load<Facility>(request.WorkingFacilityRef, EntityLoadFlags.Proxy);
+		}
+
+
+		private bool IsWorklistUserAffine(QueryWorklistRequest req)
+		{
+			// check if the worklist has a dependency on the executing staff (eg current user)
+			var worklist = GetWorklist(req);
+			var workingFacility = GetWorkingFacility(req);
+			var probingWqc = new ProbingWorklistQueryContext(this, workingFacility, req.Page, req.DowntimeRecoveryMode);
+
+			// get the worklist to apply all of its criteria
+			// (TODO: would be better to encapsulate this in the model somehow)
+			worklist.GetInvariantCriteria(probingWqc);
+			worklist.GetFilterCriteria(probingWqc);
+
+			// return value indicating dependency on executing staff
+			return probingWqc.DependsOnExecutingStaff;
+		}
 
 		/// <summary>
 		/// Helper method to determine operation enablement for.

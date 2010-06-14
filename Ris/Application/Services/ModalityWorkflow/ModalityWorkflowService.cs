@@ -76,6 +76,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 		/// <param name="request"></param>
 		/// <returns></returns>
 		[ReadOperation]
+		[ResponseCaching("GetQueryWorklistCacheDirective")]
 		public QueryWorklistResponse<ModalityWorklistItemSummary> QueryWorklist(QueryWorklistRequest request)
 		{
 			var assembler = new ModalityWorkflowAssembler();

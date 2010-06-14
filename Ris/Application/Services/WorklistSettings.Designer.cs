@@ -48,5 +48,23 @@ namespace ClearCanvas.Ris.Application.Services {
                 return ((int)(this["MaxGroupOwnedWorklists"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool WorklistItemCountCachingEnabled {
+            get {
+                return ((bool)(this["WorklistItemCountCachingEnabled"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        public int WorklistItemCountCachingTimeToLiveSeconds {
+            get {
+                return ((int)(this["WorklistItemCountCachingTimeToLiveSeconds"]));
+            }
+        }
     }
 }

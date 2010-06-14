@@ -115,7 +115,6 @@ namespace ClearCanvas.Ris.Client
 									new LoginRequest(
 										userName,
 										password,
-										facility == null ? null : facility.FacilityRef,
 										Dns.GetHostName(),
 										GetIPAddress(),
 										GetMachineID()));
