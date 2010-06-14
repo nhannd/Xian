@@ -65,9 +65,6 @@ namespace ClearCanvas.Enterprise.Common
     [DataContract]
     public class ResponseCachingDirective : DataContractBase, IEquatable<ResponseCachingDirective>
     {
-        public const string HeaderName = "ResponseCachingDirective";
-        public const string HeaderNamespace = "urn:http://www.clearcanvas.ca";
-
         /// <summary>
         /// Defines a static Do Not Cache directive.
         /// </summary>

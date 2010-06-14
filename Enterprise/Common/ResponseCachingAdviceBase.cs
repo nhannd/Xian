@@ -1,6 +1,8 @@
 ﻿using System;
+using System.ServiceModel.Channels;
 using Castle.Core.Interceptor;
 using ClearCanvas.Enterprise.Common.Caching;
+using System.ServiceModel;
 
 namespace ClearCanvas.Enterprise.Common
 {
@@ -9,6 +11,9 @@ namespace ClearCanvas.Enterprise.Common
 	/// </summary>
 	public abstract class ResponseCachingAdviceBase
 	{
+		public const string HeaderName = "ResponseCachingDirective";
+		public const string HeaderNamespace = "urn:http://www.clearcanvas.ca";
+
 		#region Protected API
 
 		/// <summary>
@@ -82,6 +87,29 @@ namespace ClearCanvas.Enterprise.Common
 
 			// put response in cache
 			cacheClient.Put(cacheKey, invocation.ReturnValue, new CachePutOptions(region, directive.TimeToLive, false));
+		}
+
+		/// <summary>
+		/// Writes the cache directive to the operation context.
+		/// </summary>
+		/// <param name="directive"></param>
+		/// <param name="operationContext"></param>
+		protected internal static void WriteCachingDirectiveHeaders(ResponseCachingDirective directive, OperationContext operationContext)
+		{
+			// add caching directive to WCF message headers so that we send it to the client
+			var header = MessageHeader.CreateHeader(HeaderName, HeaderNamespace, directive);
+			operationContext.OutgoingMessageHeaders.Add(header);
+		}
+
+		/// <summary>
+		/// Attempts to read the cache directive header from the operation context, returning null if the header doesn't exist.
+		/// </summary>
+		/// <param name="operationContext"></param>
+		/// <returns></returns>
+		protected internal static ResponseCachingDirective ReadCachingDirectiveHeaders(OperationContext operationContext)
+		{
+			var h = operationContext.IncomingMessageHeaders.FindHeader(HeaderName, HeaderNamespace);
+			return h > -1 ? operationContext.IncomingMessageHeaders.GetHeader<ResponseCachingDirective>(h) : null;
 		}
 
 		#endregion

@@ -92,28 +92,18 @@ namespace ClearCanvas.Enterprise.Core
 			// if site is client (e.g. caller), send directive to client
 			if (directive.CacheSite == ResponseCachingSite.Client)
 			{
-				SendCacheDirectiveToCaller(directive);
+				// check if we have an op context (eg we are running as a WCF service)
+				// if not, then this is not applicable
+				if (OperationContext.Current == null)
+					return;
+
+				// send cache directive to client via headers
+				WriteCachingDirectiveHeaders(directive, OperationContext.Current);
 				return;
 			}
 		}
 
 		#endregion
-
-		private static void SendCacheDirectiveToCaller(ResponseCachingDirective directive)
-		{
-			// check if we have an op context (eg we are running as a WCF service)
-			// if not, then this is not applicable
-			if(OperationContext.Current == null)
-				return;
-
-			// add caching directive to WCF message headers so that we send it to the client
-			var header = MessageHeader.CreateHeader(
-				ResponseCachingDirective.HeaderName,
-				ResponseCachingDirective.HeaderNamespace,
-				directive);
-
-			OperationContext.Current.OutgoingMessageHeaders.Add(header);
-		}
 
 	}
 }

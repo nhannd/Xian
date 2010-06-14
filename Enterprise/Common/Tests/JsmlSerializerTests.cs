@@ -41,10 +41,10 @@ using NUnit.Framework;
 
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Enterprise.Common.Test
+namespace ClearCanvas.Enterprise.Common.Tests
 {
 	[TestFixture]
-	public class JsmlSerializerTest
+	public class JsmlSerializerTests
 	{
 		public enum TestEnum { Enum1, Enum2 }
 

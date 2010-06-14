@@ -169,7 +169,8 @@
     <Compile Include="Setup\SetupApplication.cs" />
     <Compile Include="Setup\SetupCommandLine.cs" />
     <Compile Include="StaticChannelProvider.cs" />
-    <Compile Include="Test\JsmlSerializerTest.cs" />
+    <Compile Include="Tests\JsmlSerializerTests.cs" />
+    <Compile Include="Tests\ResponseCachingAdviceBaseTests.cs" />
     <Compile Include="UserAccessDeniedException.cs" />
     <Compile Include="InvalidUserSessionException.cs" />
     <Compile Include="IServiceChannelConfiguration.cs" />

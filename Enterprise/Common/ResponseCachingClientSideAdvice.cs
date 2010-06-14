@@ -69,17 +69,8 @@ namespace ClearCanvas.Enterprise.Common
 		/// </summary>
 		protected override ResponseCachingDirective GetCachingDirective(IInvocation invocation)
 		{
-			// Attempts to read the cache directive header from the message, returning null if the header doesn't exist.
-			var h = OperationContext.Current.IncomingMessageHeaders.FindHeader(
-						ResponseCachingDirective.HeaderName,
-						ResponseCachingDirective.HeaderNamespace);
-			if (h > -1)
-			{
-				return OperationContext.Current.IncomingMessageHeaders
-					 .GetHeader<ResponseCachingDirective>(h);
-			}
-
-			return null;
+			// read cache directive from server
+			return ReadCachingDirectiveHeaders(OperationContext.Current);
 		}
 	}
 }
