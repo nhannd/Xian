@@ -68,7 +68,36 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			if (e.NewDisplaySet != null && e.NewDisplaySet.Descriptor is PETFusionDisplaySetDescriptor)
 			{
 				if (e.NewDisplaySet.ImageBox != null)
+				{
 					_fusionDisplaySets.Add(e.NewDisplaySet);
+
+					// find any available display set containing the same series as the individual layers and replicate its VoiLutManager memento
+					object baseMemento = null, overlayMemento = null;
+					var descriptor = (PETFusionDisplaySetDescriptor) e.NewDisplaySet.Descriptor;
+					foreach (IImageBox imageBox in this.ImageViewer.PhysicalWorkspace.ImageBoxes)
+					{
+						if (imageBox.DisplaySet == null || imageBox.DisplaySet.Descriptor is PETFusionDisplaySetDescriptor
+						    || !(imageBox.TopLeftPresentationImage is IVoiLutProvider))
+							continue;
+
+						var seriesUid = imageBox.DisplaySet != null ? imageBox.DisplaySet.Uid : string.Empty;
+						if (baseMemento == null && seriesUid == descriptor.SourceSeries.SeriesInstanceUid)
+							baseMemento = ((IVoiLutProvider) imageBox.TopLeftPresentationImage).VoiLutManager.CreateMemento();
+						else if (overlayMemento == null && seriesUid == descriptor.PETSeries.SeriesInstanceUid)
+							overlayMemento = ((IVoiLutProvider) imageBox.TopLeftPresentationImage).VoiLutManager.CreateMemento();
+
+						if (baseMemento != null && overlayMemento != null)
+							break;
+					}
+
+					foreach (FusionPresentationImage image in e.NewDisplaySet.PresentationImages)
+					{
+						if (baseMemento != null)
+							image.SetBaseVoiLutManagerMemento(baseMemento);
+						if (overlayMemento != null)
+							image.SetOverlayVoiLutManagerMemento(overlayMemento);
+					}
+				}
 			}
 		}
 
@@ -84,6 +113,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					object memento = ((IVoiLutProvider) e.PresentationImage).VoiLutManager.CreateMemento();
 					string series = ((IImageSopProvider) e.PresentationImage).ImageSop.ParentSeries.SeriesInstanceUid;
 
+					// find any available display set containing the same series as the individual layers and replicate its VoiLutManager memento
 					foreach (IDisplaySet displaySet in _fusionDisplaySets)
 					{
 						var anyVisibleChange = false;
