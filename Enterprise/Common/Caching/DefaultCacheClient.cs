@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using ClearCanvas.Enterprise.Common.Caching;
-
 namespace ClearCanvas.Enterprise.Common.Caching
 {
 	/// <summary>
@@ -39,18 +36,18 @@ namespace ClearCanvas.Enterprise.Common.Caching
 	/// </summary>
 	internal class DefaultCacheClient : ICacheClient
 	{
-        private readonly DefaultCacheProvider _provider;
-        private readonly string _cacheID;
+		private readonly DefaultCacheProvider _provider;
+		private readonly string _cacheId;
 
 		/// <summary>
 		/// Internal constructor.
 		/// </summary>
 		/// <param name="provider"></param>
-		/// <param name="cacheID"></param>
-		internal DefaultCacheClient(DefaultCacheProvider provider, string cacheID)
+		/// <param name="cacheId"></param>
+		internal DefaultCacheClient(DefaultCacheProvider provider, string cacheId)
 		{
 			_provider = provider;
-            _cacheID = cacheID;
+			_cacheId = cacheId;
 		}
 
 		#region ICacheClient Members
@@ -59,9 +56,9 @@ namespace ClearCanvas.Enterprise.Common.Caching
 		/// Gets the ID of the logical cache that this client is connected to.
 		/// </summary>
 		public string CacheID
-        {
-            get { return _cacheID; }
-        }
+		{
+			get { return _cacheId; }
+		}
 
 		/// <summary>
 		/// Gets the object at the specified key from the cache, or null if the key does not exist.
@@ -71,7 +68,7 @@ namespace ClearCanvas.Enterprise.Common.Caching
 		/// <returns></returns>
 		public object Get(string key, CacheGetOptions options)
 		{
-            return _provider.Get(_cacheID, key, options);
+			return _provider.Get(_cacheId, key, options);
 		}
 
 		/// <summary>
@@ -83,7 +80,7 @@ namespace ClearCanvas.Enterprise.Common.Caching
 		/// <param name="options"></param>
 		public void Put(string key, object value, CachePutOptions options)
 		{
-			_provider.Put(_cacheID, key, value, options);
+			_provider.Put(_cacheId, key, value, options);
 		}
 
 		/// <summary>
@@ -94,7 +91,7 @@ namespace ClearCanvas.Enterprise.Common.Caching
 		/// <param name="options"></param>
 		public void Remove(string key, CacheRemoveOptions options)
 		{
-            _provider.Remove(_cacheID, key, options);
+			_provider.Remove(_cacheId, key, options);
 		}
 
 		/// <summary>
@@ -103,35 +100,35 @@ namespace ClearCanvas.Enterprise.Common.Caching
 		/// <param name="region"></param>
 		/// <returns></returns>
 		public bool RegionExists(string region)
-        {
-            return _provider.RegionExists(_cacheID, region);
-        }
+		{
+			return _provider.RegionExists(_cacheId, region);
+		}
 
 		/// <summary>
 		/// Clears the entire cache region.
 		/// </summary>
 		public void ClearRegion(string region)
 		{
-            _provider.ClearRegion(_cacheID, region);
+			_provider.ClearRegion(_cacheId, region);
 		}
 
 		/// <summary>
 		/// Clears the entire logical cache (as identified by <see cref="ICacheClient.CacheID"/>.
 		/// </summary>
 		public void ClearCache()
-        {
-            _provider.ClearCache(_cacheID);
-        }
+		{
+			_provider.ClearCache(_cacheId);
+		}
 
 		#endregion
 
-        #region IDisposable Members
+		#region IDisposable Members
 
-        public void Dispose()
-        {
-            // nothing to do
-        }
+		public void Dispose()
+		{
+			// nothing to do
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

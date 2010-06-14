@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using Castle.Core.Interceptor;
 using ClearCanvas.Common.Utilities;
 using System.ServiceModel;
@@ -71,7 +72,8 @@ namespace ClearCanvas.Enterprise.Core
 				var serviceClass = operation.DeclaringType;
 				var method = serviceClass.GetMethod(attr.DirectiveMethod,
 					BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-				return (ResponseCachingDirective)method.Invoke(service, invocation.Arguments);
+
+				return (ResponseCachingDirective)method.Invoke(service, GetDirectiveMethodArgs(invocation, method));
 			}
 			return null;
 		}
@@ -104,5 +106,25 @@ namespace ClearCanvas.Enterprise.Core
 
 		#endregion
 
+		private static object[] GetDirectiveMethodArgs(IInvocation invocation, MethodInfo method)
+		{
+			// method is expected have one of the following signatures:
+			// ResponseCachingDirective A()
+			// ResponseCachingDirective B(object request)
+			// ResponseCachingDirective C(object request, object response)
+			
+			// the args list is prepared to match the signature
+			switch (method.GetParameters().Length)
+			{
+				case 0:
+					return null;
+				case 1:
+					return new[] { invocation.Arguments[0] };
+				case 2:
+					return new[] { invocation.Arguments[0], invocation.ReturnValue };
+				default:
+					throw new InvalidOperationException(string.Format("Method {0} does have a signature that is supported.", method.Name));
+			}
+		}
 	}
 }

@@ -253,9 +253,6 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 			// add exception promotion advice at the beginning of the interception chain (outside of the service transaction)
 			interceptors.Add(new ExceptionPromotionAdvice());
 
-			// response caching advice can occur anywhere in the chain?
-			interceptors.Add(new ResponseCachingServerSideAdvice());
-
 			// add performance logging advice conditionally
 			if (_enablePerformanceLogging)
 			{
@@ -267,6 +264,10 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 
 			// add persistence context advice, that controls the persistence context for the main transaction
 			interceptors.Add(new PersistenceContextAdvice());
+
+			// add response caching advice inside of persistence context, because
+			// the context may be used when determining the cache directive, etc.
+			interceptors.Add(new ResponseCachingServerSideAdvice());
 
 			// add audit advice inside of main persistence context advice,
 			// so that the audit record will be inserted as part of the main transaction (this applies only to update contexts)
