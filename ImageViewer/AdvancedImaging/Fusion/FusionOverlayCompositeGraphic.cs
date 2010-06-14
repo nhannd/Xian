@@ -47,9 +47,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		[CloneIgnore]
 		private GrayscaleImageGraphic _overlayImageGraphic;
 
-		[CloneIgnore]
-		private bool _isLoadingProgressShown;
-
 		private VoiLutManagerProxy _voiLutManagerProxy;
 		private ColorMapManagerProxy _colorMapManagerProxy;
 
@@ -136,7 +133,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					{
 						_voiLutManagerProxy.SetRealVoiLutManager(_overlayImageGraphic.VoiLutManager);
 						_colorMapManagerProxy.SetRealColorMapManager(_overlayImageGraphic.ColorMapManager);
-						base.Graphics.Add(_overlayImageGraphic);
+						base.Graphics.Insert(0, _overlayImageGraphic);
 					}
 				}
 			}
@@ -146,6 +143,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			if (_overlayImageGraphic == null)
 			{
+				var progressGraphic = (ProgressGraphic) CollectionUtils.SelectFirst(this.Graphics, g => g is ProgressGraphic);
+
 				float progress;
 				string message;
 				if (_overlayFrameDataReference.FusionOverlayFrameData.BeginLoad(out progress, out message))
@@ -160,11 +159,14 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					}
 #endif
 
-					_isLoadingProgressShown = false;
+					if (progressGraphic != null)
+					{
+						this.Graphics.Remove(progressGraphic);
+						progressGraphic.Dispose();
+					}
 				}
-				else if (!_isLoadingProgressShown)
+				else if (progressGraphic == null)
 				{
-					_isLoadingProgressShown = true;
 					this.Graphics.Add(new ProgressGraphic(_overlayFrameDataReference.FusionOverlayFrameData, true, ProgressBarGraphicStyle.Continuous));
 				}
 			}
