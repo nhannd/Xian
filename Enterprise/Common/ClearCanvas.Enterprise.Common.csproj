@@ -136,7 +136,8 @@
     <Compile Include="IChannelProvider.cs" />
     <Compile Include="ListRequestBase.cs" />
     <Compile Include="PagedDataContractBase.cs" />
-    <Compile Include="ResponseCachingClientAdvice.cs" />
+    <Compile Include="ResponseCachingAdviceBase.cs" />
+    <Compile Include="ResponseCachingClientSideAdvice.cs" />
     <Compile Include="ConcurrentModificationException.cs" />
     <Compile Include="Authentication\IAuthenticationService.cs" />
     <Compile Include="AuthorityTokens.cs" />

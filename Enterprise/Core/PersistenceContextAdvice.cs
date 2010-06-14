@@ -36,6 +36,7 @@ using System.Reflection;
 using System.Diagnostics;
 using Castle.DynamicProxy;
 using Castle.Core.Interceptor;
+using ClearCanvas.Common.Utilities;
 
 
 namespace ClearCanvas.Enterprise.Core
@@ -43,7 +44,7 @@ namespace ClearCanvas.Enterprise.Core
     /// <summary>
     /// Advice class responsible for honouring <see cref="ReadOperationAttribute"/> and <see cref="UpdateOperationAttribute"/>.
     /// </summary>
-    public class PersistenceContextAdvice : ServiceOperationAdvice, IInterceptor
+    public class PersistenceContextAdvice : IInterceptor
     {
 		public PersistenceContextAdvice()
         {
@@ -74,7 +75,12 @@ namespace ClearCanvas.Enterprise.Core
             }
         }
 
-        private void ConfigureAuditing(IPersistenceContext context, ServiceOperationAttribute attribute, IInvocation invocation)
+		protected ServiceOperationAttribute GetServiceOperationAttribute(IInvocation invocation)
+		{
+			return AttributeUtils.GetAttribute<ServiceOperationAttribute>(invocation.MethodInvocationTarget);
+		}
+
+		private void ConfigureAuditing(IPersistenceContext context, ServiceOperationAttribute attribute, IInvocation invocation)
         {
             // if this is a read-context, there is no change set to audit
             IUpdateContext uctx = context as IUpdateContext;

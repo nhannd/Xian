@@ -29,68 +29,42 @@
 
 #endregion
 
-using System;
 using Castle.Core.Interceptor;
 using ClearCanvas.Common.Utilities;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using ClearCanvas.Enterprise.Common;
 using System.Reflection;
+using ClearCanvas.Enterprise.Common.Caching;
 
 namespace ClearCanvas.Enterprise.Core
 {
 	/// <summary>
-	/// Advice class responsible for honouring the <see cref="ResponseCachingAttribute"/> that may
-	/// be applied to service operations.
+	/// Advice to implement transparent caching on the callee side, 
+	/// or create an appropriate <see cref="ResponseCachingDirective"/> to send back to the callee.
 	/// </summary>
-	public class ResponseCachingAdvice : ServiceOperationAdvice, IInterceptor
+	public class ResponseCachingServerSideAdvice : ResponseCachingAdviceBase, IInterceptor
 	{
 		#region IInterceptor Members
 
-		public void Intercept(IInvocation invocation)
+		void IInterceptor.Intercept(IInvocation invocation)
 		{
-			invocation.Proceed();
-
-			// if the invocation succceeded, process the caching directive
-			ProcessCacheDirective(invocation.InvocationTarget, invocation.MethodInvocationTarget, invocation.Arguments);
+			ProcessInvocation(invocation, "ServerSideResponseCache");
 		}
 
-		/// <summary>
-		/// Processes any caching directive specified by the attribute.
-		/// </summary>
-		/// <param name="service"></param>
-		/// <param name="operation"></param>
-		/// <param name="args"></param>
-		private static void ProcessCacheDirective(object service, MethodInfo operation, object[] args)
-		{
-			var directive = GetCachingDirective(service, operation, args);
-			if (directive == null || Equals(directive, ResponseCachingDirective.DoNotCacheDirective))
-				return;
+		#endregion
 
-			if (directive.CacheSite == ResponseCachingSite.Server)
-				throw new NotSupportedException("Server-side caching not yet supported.");  // TODO implement this in future
-
-			// if cache site is client, and we have an op context (eg running as a WCF service),
-			// add caching directive to WCF message headers so that we send it to the client
-			if (directive.CacheSite == ResponseCachingSite.Client && OperationContext.Current != null)
-			{
-				var header = MessageHeader.CreateHeader(
-					ResponseCachingDirective.HeaderName,
-					ResponseCachingDirective.HeaderNamespace,
-					directive);
-				OperationContext.Current.OutgoingMessageHeaders.Add(header);
-			}
-		}
+		#region Overrides
 
 		/// <summary>
-		/// Dynamically invokes the specified method to obtain the caching directive.
+		/// Gets the caching directive.
 		/// </summary>
-		/// <param name="service"></param>
-		/// <param name="operation"></param>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		private static ResponseCachingDirective GetCachingDirective(object service, MethodInfo operation, object[] args)
+		protected override ResponseCachingDirective GetCachingDirective(IInvocation invocation)
 		{
+			// Dynamically invokes the specified method to obtain the caching directive.
+			var service = invocation.InvocationTarget;
+			var operation = invocation.MethodInvocationTarget;
+
 			// determine if the response is cacheable, and if so, obtain caching directive
 			var attr = AttributeUtils.GetAttribute<ResponseCachingAttribute>(operation, false);
 			if (attr != null)
@@ -98,11 +72,48 @@ namespace ClearCanvas.Enterprise.Core
 				var serviceClass = operation.DeclaringType;
 				var method = serviceClass.GetMethod(attr.DirectiveMethod,
 					BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-				return (ResponseCachingDirective)method.Invoke(service, args);
+				return (ResponseCachingDirective)method.Invoke(service, invocation.Arguments);
 			}
 			return null;
 		}
 
+		/// <summary>
+		/// Implemented by the subclass to cache the response, based on the specified caching directive.
+		/// </summary>
+		protected override void CacheResponse(IInvocation invocation, ICacheClient cacheClient, string cacheKey, string region, ResponseCachingDirective directive)
+		{
+			// if site is server (e.g. callee), put it in our cache
+			if (directive.CacheSite == ResponseCachingSite.Server)
+			{
+				PutResponseInCache(invocation, cacheClient, cacheKey, region, directive);
+				return;
+			}
+
+			// if site is client (e.g. caller), send directive to client
+			if (directive.CacheSite == ResponseCachingSite.Client)
+			{
+				SendCacheDirectiveToCaller(directive);
+				return;
+			}
+		}
+
 		#endregion
+
+		private static void SendCacheDirectiveToCaller(ResponseCachingDirective directive)
+		{
+			// check if we have an op context (eg we are running as a WCF service)
+			// if not, then this is not applicable
+			if(OperationContext.Current == null)
+				return;
+
+			// add caching directive to WCF message headers so that we send it to the client
+			var header = MessageHeader.CreateHeader(
+				ResponseCachingDirective.HeaderName,
+				ResponseCachingDirective.HeaderNamespace,
+				directive);
+
+			OperationContext.Current.OutgoingMessageHeaders.Add(header);
+		}
+
 	}
 }

@@ -257,7 +257,7 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
             interceptors.Add(new ExceptionPromotionAdvice());
 
             // response caching advice can occur anywhere in the chain?
-            interceptors.Add(new ResponseCachingAdvice());
+            interceptors.Add(new ResponseCachingServerSideAdvice());
 
             // add performance logging advice conditionally
             if (_enablePerformanceLogging)

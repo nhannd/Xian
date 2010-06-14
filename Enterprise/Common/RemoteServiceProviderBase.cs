@@ -311,7 +311,7 @@ namespace ClearCanvas.Enterprise.Common
 			if (Caching.Cache.IsSupported())
 			{
 				// add response-caching client-side advice
-				interceptors.Add(new ResponseCachingClientAdvice());
+				interceptors.Add(new ResponseCachingClientSideAdvice());
 			}
 
 			// add fail-over advice at the end of the list, closest the target call

@@ -90,7 +90,7 @@
     <Compile Include="Modelling\ValidationRule.cs" />
     <Compile Include="Modelling\ValidationRulesAttribute.cs" />
     <Compile Include="Modelling\XmlValidationRuleSetSource.cs" />
-    <Compile Include="ResponseCachingAdvice.cs" />
+    <Compile Include="ResponseCachingServerSideAdvice.cs" />
     <Compile Include="ResponseCachingAttribute.cs" />
     <Compile Include="CoreServiceExtensionPoint.cs" />
     <Compile Include="DefaultExceptionRecorder.cs" />
@@ -190,9 +190,6 @@
     <Compile Include="ServiceModel\ServiceFactoryInjectionServiceBehavior.cs" />
     <Compile Include="ServiceModel\ServiceMount.cs" />
     <Compile Include="ServiceModel\ServiceMountException.cs" />
-    <Compile Include="ServiceOperationAdvice.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="ServiceOperationAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -206,7 +203,6 @@
     <Compile Include="Tests\SearchConditionTests.cs" />
     <Compile Include="Tests\SearchCriteriaTests.cs" />
     <Compile Include="TimeService.cs" />
-    <Compile Include="TransactionMonitorAdvice.cs" />
     <Compile Include="TransactionNotifier.cs">
       <SubType>Code</SubType>
     </Compile>
