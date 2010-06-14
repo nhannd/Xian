@@ -34,41 +34,32 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Ris.Application.Common;
-using System.ServiceModel;
 using ClearCanvas.Common.Utilities;
-using System;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-    /// <summary>
-    /// Base class for all RIS application services.
-    /// </summary>
-    /// <remarks>
-    /// This class makes several important assumptions:
-    /// 1. Instances are never shared across threads.
-    /// 2. Instances are used on a per-call basis.  That is, an instance services a single request and is then discarded.
-    /// </remarks>
-    public abstract class ApplicationServiceBase : IApplicationServiceLayer
-    {
-        /// <summary>
-        /// Cached current-user Staff object.  Caching is acceptable assuming this service instance is not used for more than 1 call.
-        /// </summary>
-        private Staff _currentUserStaff;
-        /// <summary>
-        /// Cached working-facility Facility object.  Caching is acceptable assuming this service instance is not used for more than 1 call.
-        /// </summary>
-        private Facility _workingFacility;
+	/// <summary>
+	/// Base class for all RIS application services.
+	/// </summary>
+	/// <remarks>
+	/// This class makes several important assumptions:
+	/// 1. Instances are never shared across threads.
+	/// 2. Instances are used on a per-call basis.  That is, an instance services a single request and is then discarded.
+	/// </remarks>
+	public abstract class ApplicationServiceBase : IApplicationServiceLayer
+	{
+		/// <summary>
+		/// Cached current-user Staff object.  Caching is acceptable assuming this service instance is not used for more than 1 call.
+		/// </summary>
+		private Staff _currentUserStaff;
 
-        private bool _workingFacilityLoaded = false;
-
-        /// <summary>
-        /// Gets the current user (on whose behalf this service call is executing).
-        /// </summary>
-        public string CurrentUser
-        {
-            get { return Thread.CurrentPrincipal.Identity.Name; }
-        }
+		/// <summary>
+		/// Gets the current user (on whose behalf this service call is executing).
+		/// </summary>
+		public string CurrentUser
+		{
+			get { return Thread.CurrentPrincipal.Identity.Name; }
+		}
 
 		/// <summary>
 		/// Checks that the current user has the specified authority token.
@@ -87,9 +78,8 @@ namespace ClearCanvas.Ris.Application.Services
 		/// <returns></returns>
 		public bool UserHasAllTokens(params string[] authorityTokens)
 		{
-			return authorityTokens.Length > 0 
-				&& CollectionUtils.TrueForAll(authorityTokens,
-					delegate(string t) { return UserHasToken(t); });
+			return authorityTokens.Length > 0
+				&& CollectionUtils.TrueForAll(authorityTokens, UserHasToken);
 		}
 
 		/// <summary>
@@ -99,39 +89,38 @@ namespace ClearCanvas.Ris.Application.Services
 		/// <returns></returns>
 		public bool UserHasAnyTokens(params string[] authorityTokens)
 		{
-			return CollectionUtils.Contains(authorityTokens,
-				delegate(string t) { return UserHasToken(t); });
+			return CollectionUtils.Contains(authorityTokens, UserHasToken);
 		}
 
-        /// <summary>
-        /// Obtains the staff associated with the current user.  If no <see cref="Staff"/> is associated with the current user,
-        /// a <see cref="RequestValidationException"/> is thrown.
-        /// </summary>
-        public Staff CurrentUserStaff
-        {
-            get
-            {
+		/// <summary>
+		/// Obtains the staff associated with the current user.  If no <see cref="Staff"/> is associated with the current user,
+		/// a <see cref="RequestValidationException"/> is thrown.
+		/// </summary>
+		public Staff CurrentUserStaff
+		{
+			get
+			{
 				if (_currentUserStaff == null)
 				{
-                    StaffSearchCriteria where = new StaffSearchCriteria();
-                    where.UserName.EqualTo(CurrentUser);
+					var where = new StaffSearchCriteria();
+					where.UserName.EqualTo(CurrentUser);
 					_currentUserStaff = CollectionUtils.FirstElement(
-						PersistenceContext.GetBroker<IStaffBroker>().Find(where, new SearchResultPage(0, 1), new EntityFindOptions {Cache = true}));
+						PersistenceContext.GetBroker<IStaffBroker>().Find(where, new SearchResultPage(0, 1), new EntityFindOptions { Cache = true }));
 
-					if(_currentUserStaff == null)
-                        throw new RequestValidationException(SR.ExceptionNoStaffForUser);
-                }
+					if (_currentUserStaff == null)
+						throw new RequestValidationException(SR.ExceptionNoStaffForUser);
+				}
 
-                return _currentUserStaff;
-            }
-        }
+				return _currentUserStaff;
+			}
+		}
 
-        /// <summary>
-        /// Gets the current <see cref="IPersistenceContext"/>.
-        /// </summary>
-        public IPersistenceContext PersistenceContext
-        {
-            get { return PersistenceScope.CurrentContext; }
-        }
-    }
+		/// <summary>
+		/// Gets the current <see cref="IPersistenceContext"/>.
+		/// </summary>
+		public IPersistenceContext PersistenceContext
+		{
+			get { return PersistenceScope.CurrentContext; }
+		}
+	}
 }

@@ -30,30 +30,29 @@
 #endregion
 
 using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Login
 {
-    [DataContract]
-    public class LoginRequest : LoginServiceRequestBase
-    {
-		public LoginRequest(string user, string password, string hostName, string clientIP, string clientMachineID)
-			: base(user, clientIP, clientMachineID)
-        {
-            this.Password = password;
+	[DataContract]
+	public class LoginRequest : LoginServiceRequestBase
+	{
+		public LoginRequest(string user, string password, string hostName, string clientIP, string clientMachineId)
+			: base(user, clientIP, clientMachineId)
+		{
+			this.Password = password;
 			this.HostName = hostName;
-        }
+		}
 
-        /// <summary>
-        /// Password. Required.
-        /// </summary>
-        [DataMember]
-        public string Password;
+		/// <summary>
+		/// Password. Required.
+		/// </summary>
+		[DataMember]
+		public string Password;
 
 		/// <summary>
 		/// Name of the host computer that is logging in.
 		/// </summary>
 		[DataMember]
 		public string HostName;
-    }
+	}
 }

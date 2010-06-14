@@ -107,7 +107,7 @@ namespace ClearCanvas.Healthcare
 		{
 			var criteria = new ProtocolingWorklistItemSearchCriteria();
 			criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);
-			criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.Staff);
+			criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.ExecutingStaff);
 			criteria.Protocol.Status.EqualTo(ProtocolStatus.PN);
 			return new WorklistItemSearchCriteria[] { criteria };
 		}
@@ -154,7 +154,7 @@ namespace ClearCanvas.Healthcare
 		{
 			var criteria = new ProtocolingWorklistItemSearchCriteria();
 			criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);
-			criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.Staff);
+			criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.ExecutingStaff);
 			criteria.Protocol.Status.EqualTo(ProtocolStatus.AA);
 			return new WorklistItemSearchCriteria[] { criteria };
 		}
@@ -178,7 +178,7 @@ namespace ClearCanvas.Healthcare
 		{
 			var criteria = new ProtocolingWorklistItemSearchCriteria();
 			criteria.ProcedureStep.State.EqualTo(ActivityStatus.IP);
-			criteria.ProcedureStep.Performer.Staff.EqualTo(wqc.Staff);
+			criteria.ProcedureStep.Performer.Staff.EqualTo(wqc.ExecutingStaff);
 			return new WorklistItemSearchCriteria[] { criteria };
 		}
 
@@ -201,7 +201,7 @@ namespace ClearCanvas.Healthcare
 		{
 			var criteria = new ProtocolingWorklistItemSearchCriteria();
 			criteria.ProcedureStep.State.EqualTo(ActivityStatus.CM);
-			criteria.ProcedureStep.Performer.Staff.EqualTo(wqc.Staff);
+			criteria.ProcedureStep.Performer.Staff.EqualTo(wqc.ExecutingStaff);
 			criteria.Protocol.Status.EqualTo(ProtocolStatus.PR);
 			return new WorklistItemSearchCriteria[] { criteria };
 		}
@@ -225,7 +225,7 @@ namespace ClearCanvas.Healthcare
 		{
 			var criteria = new ProtocolingWorklistItemSearchCriteria();
 			criteria.ProcedureStep.State.EqualTo(ActivityStatus.DC);
-			criteria.ProcedureStep.Performer.Staff.EqualTo(wqc.Staff);
+			criteria.ProcedureStep.Performer.Staff.EqualTo(wqc.ExecutingStaff);
 			criteria.Protocol.Status.EqualTo(ProtocolStatus.RJ);
 			return new WorklistItemSearchCriteria[] { criteria };
 		}
@@ -248,8 +248,8 @@ namespace ClearCanvas.Healthcare
 		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
 		{
 			var criteria = new ProtocolingWorklistItemSearchCriteria();
-			criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
-			criteria.Protocol.Author.EqualTo(wqc.Staff);
+			criteria.ProcedureStep.State.In(new [] { ActivityStatus.SC, ActivityStatus.IP });
+			criteria.Protocol.Author.EqualTo(wqc.ExecutingStaff);
 			criteria.Protocol.Status.EqualTo(ProtocolStatus.AA);
 			return new WorklistItemSearchCriteria[] { criteria };
 		}

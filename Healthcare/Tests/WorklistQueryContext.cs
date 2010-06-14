@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 
@@ -39,14 +36,12 @@ namespace ClearCanvas.Healthcare.Tests
 {
 	public class WorklistQueryContext : IWorklistQueryContext
 	{
-		private readonly bool _downtimeMode;
-		private readonly Staff _staff;
 		private readonly IPersistenceContext _ctx;
 
 		public WorklistQueryContext(IPersistenceContext ctx, Staff staff, Facility workingFacility, SearchResultPage page, bool downtimeMode)
 		{
 			_ctx = ctx;
-			this.Staff = staff;
+			this.ExecutingStaff = staff;
 			this.WorkingFacility = workingFacility;
 			this.Page = page;
 			this.DowntimeRecoveryMode = downtimeMode;
@@ -54,7 +49,7 @@ namespace ClearCanvas.Healthcare.Tests
 
 		#region IWorklistQueryContext Members
 
-		public Staff Staff { get; private set; }
+		public Staff ExecutingStaff { get; private set; }
 
 		public Facility WorkingFacility { get; private set; }
 

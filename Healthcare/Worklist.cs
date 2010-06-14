@@ -33,7 +33,6 @@ using System;
 using System.Collections;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Core.Modelling;
 using Iesi.Collections.Generic;

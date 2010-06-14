@@ -36,7 +36,6 @@ using ClearCanvas.Enterprise.Core.Modelling;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Workflow;
 using ClearCanvas.Healthcare.Workflow.Reporting;
-using System.Collections.Generic;
 
 namespace ClearCanvas.Healthcare
 {
@@ -190,7 +189,7 @@ namespace ClearCanvas.Healthcare
 		{
 			var criteria = new ReportingWorklistItemSearchCriteria();
 			criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);
-			criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.Staff);
+			criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.ExecutingStaff);
 			criteria.ProcedureStep.Scheduling.StartTime.IsNotNull();
 			return new[] { criteria };
 		}
@@ -222,7 +221,7 @@ namespace ClearCanvas.Healthcare
 			var criteria = new ReportingWorklistItemSearchCriteria();
 			criteria.ProcedureStep.State.In(new[] { ActivityStatus.SC, ActivityStatus.IP });
 
-			criteria.ReportPart.Interpreter.NotEqualTo(wqc.Staff);
+			criteria.ReportPart.Interpreter.NotEqualTo(wqc.ExecutingStaff);
 			criteria.ProcedureStep.Scheduling.Performer.Staff.IsNull();
 			criteria.ReportPart.Supervisor.IsNull();
 
@@ -255,10 +254,10 @@ namespace ClearCanvas.Healthcare
 		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
 		{
 			var assignedToMe = BaseCriteria();
-			assignedToMe.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.Staff);
+			assignedToMe.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.ExecutingStaff);
 
 			var bySupervisor = BaseCriteria();
-			bySupervisor.ReportPart.Supervisor.EqualTo(wqc.Staff);
+			bySupervisor.ReportPart.Supervisor.EqualTo(wqc.ExecutingStaff);
 
 			return new[] { assignedToMe, bySupervisor };
 		}
@@ -294,7 +293,7 @@ namespace ClearCanvas.Healthcare
 		{
 			var criteria = new ReportingWorklistItemSearchCriteria();
 			criteria.ProcedureStep.State.In(new[] { ActivityStatus.IP });
-			criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.Staff);
+			criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.ExecutingStaff);
 			return new WorklistItemSearchCriteria[] { criteria };
 		}
 
@@ -322,7 +321,7 @@ namespace ClearCanvas.Healthcare
 		{
 			var criteria = new ReportingWorklistItemSearchCriteria();
 			criteria.ProcedureStep.State.In(new[] { ActivityStatus.SC, ActivityStatus.IP });
-			criteria.ReportPart.Interpreter.EqualTo(wqc.Staff);
+			criteria.ReportPart.Interpreter.EqualTo(wqc.ExecutingStaff);
 			return new WorklistItemSearchCriteria[] { criteria };
 		}
 
@@ -350,7 +349,7 @@ namespace ClearCanvas.Healthcare
 		{
 			var criteria = new ReportingWorklistItemSearchCriteria();
 			criteria.ProcedureStep.State.In(new[] { ActivityStatus.SC, ActivityStatus.IP });
-			criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.Staff);
+			criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.ExecutingStaff);
 			return new WorklistItemSearchCriteria[] { criteria };
 		}
 
@@ -384,12 +383,12 @@ namespace ClearCanvas.Healthcare
 		{
 			var criteriaNotEqual = new ReportingWorklistItemSearchCriteria();
 			criteriaNotEqual.ProcedureStep.State.In(new[] { ActivityStatus.SC, ActivityStatus.IP });
-			criteriaNotEqual.ReportPart.Interpreter.EqualTo(wqc.Staff);
-			criteriaNotEqual.ProcedureStep.Scheduling.Performer.Staff.NotEqualTo(wqc.Staff);
+			criteriaNotEqual.ReportPart.Interpreter.EqualTo(wqc.ExecutingStaff);
+			criteriaNotEqual.ProcedureStep.Scheduling.Performer.Staff.NotEqualTo(wqc.ExecutingStaff);
 
 			var criteriaNull = new ReportingWorklistItemSearchCriteria();
 			criteriaNull.ProcedureStep.State.In(new[] { ActivityStatus.SC, ActivityStatus.IP });
-			criteriaNull.ReportPart.Interpreter.EqualTo(wqc.Staff);
+			criteriaNull.ReportPart.Interpreter.EqualTo(wqc.ExecutingStaff);
 			criteriaNull.ProcedureStep.Scheduling.Performer.Staff.IsNull();
 
 			return new WorklistItemSearchCriteria[] { criteriaNotEqual, criteriaNull };
@@ -419,12 +418,12 @@ namespace ClearCanvas.Healthcare
 		{
 			var unsupervised = new ReportingWorklistItemSearchCriteria();
 			unsupervised.ProcedureStep.State.In(new[] { ActivityStatus.SC, ActivityStatus.CM });
-			unsupervised.ReportPart.Verifier.EqualTo(wqc.Staff);
+			unsupervised.ReportPart.Verifier.EqualTo(wqc.ExecutingStaff);
 
 			var supervised = new ReportingWorklistItemSearchCriteria();
 			supervised.ProcedureStep.State.In(new[] { ActivityStatus.SC, ActivityStatus.CM });
-			supervised.ReportPart.Verifier.NotEqualTo(wqc.Staff);
-			supervised.ReportPart.Interpreter.EqualTo(wqc.Staff);
+			supervised.ReportPart.Verifier.NotEqualTo(wqc.ExecutingStaff);
+			supervised.ReportPart.Interpreter.EqualTo(wqc.ExecutingStaff);
 
 			return new WorklistItemSearchCriteria[] { unsupervised, supervised };
 		}

@@ -38,7 +38,6 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -60,7 +59,7 @@ namespace ClearCanvas.Ris.Application.Services
 
 
 	public abstract class WorkflowServiceBase : ApplicationServiceBase, IWorkflowService
-    {
+	{
 		#region ProbingWorklistQueryContext
 
 		class ProbingWorklistQueryContext : IWorklistQueryContext
@@ -70,34 +69,25 @@ namespace ClearCanvas.Ris.Application.Services
 			/// <summary>
 			/// Gets a value indicating if the worklist depends on the executing staff.
 			/// </summary>
-			public bool DependsOnExecutingStaff { get; internal set; }
-
-			/// <summary>
-			/// Gets a value indicating if the worklist depends on the working facility.
-			/// </summary>
-			public bool DependsOnWorkingFacility { get; internal set; }
+			public bool DependsOnExecutingStaff { get; private set; }
 
 			public ProbingWorklistQueryContext(ApplicationServiceBase service, Facility workingFacility, SearchResultPage page, bool downtimeRecoveryMode)
 			{
 				_wqc = new WorklistQueryContext(service, workingFacility, page, downtimeRecoveryMode);
 			}
 
-			public Staff Staff
+			public Staff ExecutingStaff
 			{
 				get
 				{
 					DependsOnExecutingStaff = true;
-					return _wqc.Staff;
+					return _wqc.ExecutingStaff;
 				}
 			}
 
 			public Facility WorkingFacility
 			{
-				get
-				{
-					DependsOnWorkingFacility = true;
-					return _wqc.WorkingFacility;
-				}
+				get { return _wqc.WorkingFacility; }
 			}
 
 			public bool DowntimeRecoveryMode
@@ -117,8 +107,6 @@ namespace ClearCanvas.Ris.Application.Services
 		}
 
 		#endregion
-
-
 
 		#region IWorkflowService implementation
 
@@ -150,7 +138,6 @@ namespace ClearCanvas.Ris.Application.Services
 
 		#endregion
 
-
 		#region Protected API
 
 		/// <summary>
@@ -170,45 +157,45 @@ namespace ClearCanvas.Ris.Application.Services
 		/// <param name="mapCallback"></param>
 		/// <returns></returns>
 		protected QueryWorklistResponse<TSummary> QueryWorklistHelper<TItem, TSummary>(QueryWorklistRequest request,
-            Converter<TItem, TSummary> mapCallback)
-        {
-            IWorklist worklist = GetWorklist(request);
+			Converter<TItem, TSummary> mapCallback)
+		{
+			IWorklist worklist = GetWorklist(request);
 
-            IList results = null;
-            var page = new SearchResultPage(request.Page.FirstRow, request.Page.MaxRows);
+			IList results = null;
+			var page = new SearchResultPage(request.Page.FirstRow, request.Page.MaxRows);
 			var workingFacility = GetWorkingFacility(request);
-            if(request.QueryItems)
-            {
-                // get the first page, up to the default max number of items per page
-                results = worklist.GetWorklistItems(new WorklistQueryContext(this, workingFacility, page, request.DowntimeRecoveryMode));
-            }
+			if (request.QueryItems)
+			{
+				// get the first page, up to the default max number of items per page
+				results = worklist.GetWorklistItems(new WorklistQueryContext(this, workingFacility, page, request.DowntimeRecoveryMode));
+			}
 
-            var count = -1;
-            if(request.QueryCount)
-            {
-                // if the items were already queried, and the number returned is less than the max per page, and this is the first page
-                // then there is no need to do a separate count query
-                if (results != null && results.Count < page.MaxRows && page.FirstRow == 0)
-                    count = results.Count;
-                else
+			var count = -1;
+			if (request.QueryCount)
+			{
+				// if the items were already queried, and the number returned is less than the max per page, and this is the first page
+				// then there is no need to do a separate count query
+				if (results != null && results.Count < page.MaxRows && page.FirstRow == 0)
+					count = results.Count;
+				else
 					count = worklist.GetWorklistItemCount(new WorklistQueryContext(this, workingFacility, null, request.DowntimeRecoveryMode));
-            }
+			}
 
-            return new QueryWorklistResponse<TSummary>(
-                request.QueryItems ? CollectionUtils.Map(results, mapCallback) : null, count);
-        }
+			return new QueryWorklistResponse<TSummary>(
+				request.QueryItems ? CollectionUtils.Map(results, mapCallback) : null, count);
+		}
 
 		protected ResponseCachingDirective GetQueryWorklistCacheDirective(object request, object response)
 		{
 			var req = (QueryWorklistRequest)request;
 
 			// items queries are never cached
-			if(req.QueryItems)
+			if (req.QueryItems)
 				return ResponseCachingDirective.DoNotCacheDirective;
 
 			// otherwise, check the settings to see if caching is enabled
 			var settings = new WorklistSettings();
-			if(!settings.WorklistItemCountCachingEnabled)
+			if (!settings.WorklistItemCountCachingEnabled)
 				return ResponseCachingDirective.DoNotCacheDirective;
 
 			// check if the worklist is user-affine (dependent upon the current user),
@@ -250,6 +237,24 @@ namespace ClearCanvas.Ris.Application.Services
 			return helper.Query(request);
 		}
 
+		protected void CreateLogicalHL7Event(Order order, string type)
+		{
+			if (new LogicalHL7EventSettings().LogicalHL7EventsEnabled)
+			{
+				var logicalEvent = LogicalHL7EventWorkQueueItem.CreateOrderLogicalEvent(type, order);
+				this.PersistenceContext.Lock(logicalEvent.Item, DirtyState.New);
+			}
+		}
+
+		protected void CreateLogicalHL7Event(Procedure procedure, string type)
+		{
+			if (new LogicalHL7EventSettings().LogicalHL7EventsEnabled)
+			{
+				var logicalEvent = LogicalHL7EventWorkQueueItem.CreateProcedureLogicalEvent(type, procedure);
+				this.PersistenceContext.Lock(logicalEvent.Item, DirtyState.New);
+			}
+		}
+
 		#endregion
 
 		#region Private
@@ -263,7 +268,7 @@ namespace ClearCanvas.Ris.Application.Services
 
 		private Facility GetWorkingFacility(QueryWorklistRequest request)
 		{
-			return request.WorkingFacilityRef == null ? null : 
+			return request.WorkingFacilityRef == null ? null :
 				PersistenceContext.Load<Facility>(request.WorkingFacilityRef, EntityLoadFlags.Proxy);
 		}
 
@@ -313,7 +318,7 @@ namespace ClearCanvas.Ris.Application.Services
 					if (enablementHelper == null)
 						throw new EnablementMethodNotFoundException(attrib.EnablementMethodName, info.Name);
 
-					var test = (bool)enablementHelper.Invoke(this, new [] { itemKey });
+					var test = (bool)enablementHelper.Invoke(this, new[] { itemKey });
 					if (test == false)
 					{
 						// No need to continue after any evaluation failed
@@ -326,24 +331,6 @@ namespace ClearCanvas.Ris.Application.Services
 			}
 
 			return results;
-		}
-
-		protected void CreateLogicalHL7Event(Order order, string type)
-		{
-			if (new LogicalHL7EventSettings().LogicalHL7EventsEnabled)
-			{
-				var logicalEvent = LogicalHL7EventWorkQueueItem.CreateOrderLogicalEvent(type, order);
-				this.PersistenceContext.Lock(logicalEvent.Item, DirtyState.New);
-			}
-		}
-
-		protected void CreateLogicalHL7Event(Procedure procedure, string type)
-		{
-			if (new LogicalHL7EventSettings().LogicalHL7EventsEnabled)
-			{
-				var logicalEvent = LogicalHL7EventWorkQueueItem.CreateProcedureLogicalEvent(type, procedure);
-				this.PersistenceContext.Lock(logicalEvent.Item, DirtyState.New);
-			}
 		}
 
 		#endregion

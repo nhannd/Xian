@@ -265,7 +265,7 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 			return summary == null ? null : new ReportingWorklistItemKey(summary.ProcedureStepRef, summary.ProcedureRef);
 		}
 
-		private void SaveReportHelper(TranscriptionStep step, Dictionary<string, string> reportPartExtendedProperties)
+		private static void SaveReportHelper(TranscriptionStep step, Dictionary<string, string> reportPartExtendedProperties)
 		{
 			if (reportPartExtendedProperties == null)
 				return;
@@ -274,7 +274,7 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 			op.Execute(step, reportPartExtendedProperties);
 		}
 
-		private void SaveReportHelper(TranscriptionStep step, Dictionary<string, string> reportPartExtendedProperties, Staff supervisor)
+		private static void SaveReportHelper(TranscriptionStep step, Dictionary<string, string> reportPartExtendedProperties, Staff supervisor)
 		{
 			var op = new TranscriptionOperations.SaveTranscription();
 			op.Execute(step, reportPartExtendedProperties, supervisor);

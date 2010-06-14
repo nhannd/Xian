@@ -80,7 +80,7 @@ namespace ClearCanvas.Healthcare
 		{
 			var criteria = new ReportingWorklistItemSearchCriteria();
 			criteria.ProcedureStep.State.In(new[] { ActivityStatus.IP });
-			criteria.ProcedureStep.Performer.Staff.EqualTo(wqc.Staff);
+			criteria.ProcedureStep.Performer.Staff.EqualTo(wqc.ExecutingStaff);
 			return new WorklistItemSearchCriteria[] { criteria };
 		}
 
@@ -103,7 +103,7 @@ namespace ClearCanvas.Healthcare
 		{
 			var criteria = new ReportingWorklistItemSearchCriteria();
 			criteria.ProcedureStep.State.In(new[] { ActivityStatus.SC });
-			criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.Staff);
+			criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.ExecutingStaff);
 			return new WorklistItemSearchCriteria[] { criteria };
 		}
 
@@ -126,8 +126,8 @@ namespace ClearCanvas.Healthcare
 		{
 			var criteria = new ReportingWorklistItemSearchCriteria();
 			criteria.ProcedureStep.State.In(new[] { ActivityStatus.IP, ActivityStatus.SC });
-			criteria.ProcedureStep.Scheduling.Performer.Staff.NotEqualTo(wqc.Staff);
-			criteria.ReportPart.Transcriber.EqualTo(wqc.Staff);
+			criteria.ProcedureStep.Scheduling.Performer.Staff.NotEqualTo(wqc.ExecutingStaff);
+			criteria.ReportPart.Transcriber.EqualTo(wqc.ExecutingStaff);
 			return new WorklistItemSearchCriteria[] { criteria };
 		}
 
@@ -150,7 +150,7 @@ namespace ClearCanvas.Healthcare
 		{
 			var criteria = new ReportingWorklistItemSearchCriteria();
 			criteria.ProcedureStep.State.EqualTo(ActivityStatus.CM);
-			criteria.ProcedureStep.Performer.Staff.EqualTo(wqc.Staff);
+			criteria.ProcedureStep.Performer.Staff.EqualTo(wqc.ExecutingStaff);
 
 			return new WorklistItemSearchCriteria[] { criteria };
 		}

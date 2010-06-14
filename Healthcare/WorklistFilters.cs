@@ -430,7 +430,7 @@ namespace ClearCanvas.Healthcare
 			var values = new List<Staff>(this.Values);
 			if (this.IncludeCurrentStaff)
 			{
-				values.Add(wqc.Staff);
+				values.Add(wqc.ExecutingStaff);
 			}
 			criteria.In(values);
 		}

@@ -29,84 +29,69 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-    /// <summary>
-    /// Implementation of <see cref="IWorklistQueryContext"/>.
-    /// </summary>
-    class WorklistQueryContext : IWorklistQueryContext
-    {
-        private readonly ApplicationServiceBase _applicationService;
-    	private readonly Facility _workingFacility;
-    	private readonly SearchResultPage _page;
-    	private readonly bool _downtimeRecoveryMode;
+	/// <summary>
+	/// Implementation of <see cref="IWorklistQueryContext"/>.
+	/// </summary>
+	class WorklistQueryContext : IWorklistQueryContext
+	{
+		private readonly ApplicationServiceBase _applicationService;
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="service"></param>
-        /// <param name="workingFacility"></param>
-        /// <param name="page"></param>
-        /// <param name="downtimeRecoveryMode"></param>
-        public WorklistQueryContext(ApplicationServiceBase service, Facility workingFacility, SearchResultPage page, bool downtimeRecoveryMode)
-        {
-            _applicationService = service;
-        	_workingFacility = workingFacility;
-        	_page = page;
-        	_downtimeRecoveryMode = downtimeRecoveryMode;
-        }
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="service"></param>
+		/// <param name="workingFacility"></param>
+		/// <param name="page"></param>
+		/// <param name="downtimeRecoveryMode"></param>
+		public WorklistQueryContext(ApplicationServiceBase service, Facility workingFacility, SearchResultPage page, bool downtimeRecoveryMode)
+		{
+			_applicationService = service;
+			WorkingFacility = workingFacility;
+			Page = page;
+			DowntimeRecoveryMode = downtimeRecoveryMode;
+		}
 
-        #region IWorklistQueryContext Members
+		#region IWorklistQueryContext Members
 
-        /// <summary>
-        /// Gets the current user <see cref="Healthcare.Staff"/> object.
-        /// </summary>
-        public Staff Staff
-        {
-            get { return _applicationService.CurrentUserStaff; }
-        }
+		/// <summary>
+		/// Gets the current user <see cref="Healthcare.Staff"/> object.
+		/// </summary>
+		public Staff ExecutingStaff
+		{
+			get { return _applicationService.CurrentUserStaff; }
+		}
 
-        /// <summary>
-        /// Gets the working <see cref="Facility"/> associated with the current user, or null if no facility is associated.
-        /// </summary>
-        public Facility WorkingFacility
-        {
-			get { return _workingFacility; }
-        }
+		/// <summary>
+		/// Gets the working <see cref="Facility"/> associated with the current user, or null if no facility is associated.
+		/// </summary>
+		public Facility WorkingFacility { get; private set; }
 
-    	/// <summary>
-    	/// Gets a value indicating whether the worklist is being invoked in downtime recovery mode.
-    	/// </summary>
-    	public bool DowntimeRecoveryMode
-    	{
-    		get { return _downtimeRecoveryMode; }
-    	}
+		/// <summary>
+		/// Gets a value indicating whether the worklist is being invoked in downtime recovery mode.
+		/// </summary>
+		public bool DowntimeRecoveryMode { get; private set; }
 
-    	/// <summary>
-        /// Gets the <see cref="SearchResultPage"/> that specifies which page of the worklist is requested.
-        /// </summary>
-        public SearchResultPage Page
-        {
-            get { return _page; }
-        }
+		/// <summary>
+		/// Gets the <see cref="SearchResultPage"/> that specifies which page of the worklist is requested.
+		/// </summary>
+		public SearchResultPage Page { get; private set; }
 
-        /// <summary>
-        /// Obtains an instance of the specified broker.
-        /// </summary>
-        /// <typeparam name="TBrokerInterface"></typeparam>
-        /// <returns></returns>
-        public TBrokerInterface GetBroker<TBrokerInterface>() where TBrokerInterface : IPersistenceBroker
-        {
-            return _applicationService.PersistenceContext.GetBroker<TBrokerInterface>();
-        }
+		/// <summary>
+		/// Obtains an instance of the specified broker.
+		/// </summary>
+		/// <typeparam name="TBrokerInterface"></typeparam>
+		/// <returns></returns>
+		public TBrokerInterface GetBroker<TBrokerInterface>() where TBrokerInterface : IPersistenceBroker
+		{
+			return _applicationService.PersistenceContext.GetBroker<TBrokerInterface>();
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

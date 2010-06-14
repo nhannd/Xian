@@ -42,7 +42,6 @@ using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
-using System;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -121,8 +120,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			return summary == null ? null : new RegistrationWorklistItemKey(summary.OrderRef, summary.PatientProfileRef);
 		}
 
-        public bool CanCheckInProcedure(RegistrationWorklistItemKey itemKey)
-        {
+		public bool CanCheckInProcedure(RegistrationWorklistItemKey itemKey)
+		{
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Procedure.CheckIn))
 				return false;
 
@@ -139,7 +138,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			var order = this.PersistenceContext.Load<Order>(orderRef, EntityLoadFlags.Proxy);
 
 			return CollectionUtils.Select(
-				order.Procedures, 
+				order.Procedures,
 				p => p.ProcedureCheckIn.IsPreCheckIn && !p.IsTerminated);
 		}
 	}
