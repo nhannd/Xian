@@ -133,7 +133,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 				if (_progressProvider.IsRunning(out progress, out message))
 				{
-					if (_updateTask == null)
+					if (_updateTask == null && _synchronizationContext != null)
 					{
 						_updateTask = new BackgroundTask(UpdateProgressBar, true, null);
 						_updateTask.Terminated += OnTaskTerminated;
@@ -150,7 +150,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 						_updateTask = null;
 					}
 
-					if (_autoClose)
+					if (_autoClose && _synchronizationContext != null)
 					{
 						_synchronizationContext.Post(s => Close(), null);
 					}
