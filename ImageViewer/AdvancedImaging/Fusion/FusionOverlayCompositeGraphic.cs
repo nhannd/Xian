@@ -123,9 +123,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					if (_overlayImageGraphic != null)
 					{
 						base.Graphics.Remove(_overlayImageGraphic);
-						_overlayImageGraphic.Dispose();
 						_voiLutManagerProxy.SetRealVoiLutManager(null);
 						_colorMapManagerProxy.SetRealColorMapManager(null);
+
+						// disposal must be last so that the proxy objects have a chance to grab a memento in case we need to reload it later
+						_overlayImageGraphic.Dispose();
 					}
 
 					_overlayImageGraphic = value;
