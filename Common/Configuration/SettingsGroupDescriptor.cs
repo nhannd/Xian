@@ -37,173 +37,177 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.Common.Configuration
 {
-    /// <summary>
-    /// Describes a settings group.
-    /// </summary>
-    [DataContract]
-    public class SettingsGroupDescriptor : IEquatable<SettingsGroupDescriptor>
-    {
-        /// <summary>
-        /// Returns a list of <see cref="SettingsGroupDescriptor"/> objects describing each settings class
-        /// that exists in the installed plugin base.
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// If <param name="excludeLocalSettingsGroups"/> is true, this method only returns settings classes 
-        /// that use the <see cref="StandardSettingsProvider"/> for persistence.
+	/// <summary>
+	/// Describes a settings group.
+	/// </summary>
+	[DataContract]
+	public class SettingsGroupDescriptor : IEquatable<SettingsGroupDescriptor>
+	{
+		/// <summary>
+		/// Returns a list of <see cref="SettingsGroupDescriptor"/> objects describing each settings class
+		/// that exists in the installed plugin base.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// If <param name="excludeLocalSettingsGroups"/> is true, this method only returns settings classes 
+		/// that use the <see cref="StandardSettingsProvider"/> for persistence.
 		/// </para>
 		/// <para>
 		/// This method is thread-safe.
 		/// </para>
-        /// </remarks>
-        public static List<SettingsGroupDescriptor> ListInstalledSettingsGroups(bool excludeLocalSettingsGroups)
-        {
-            List<SettingsGroupDescriptor> groups = new List<SettingsGroupDescriptor>();
+		/// </remarks>
+		public static List<SettingsGroupDescriptor> ListInstalledSettingsGroups(bool excludeLocalSettingsGroups)
+		{
+			var groups = new List<SettingsGroupDescriptor>();
 
-            foreach (PluginInfo plugin in Platform.PluginManager.Plugins)
-            {
-                foreach (Type t in plugin.Assembly.GetTypes())
-                {
-                    if (t.IsSubclassOf(typeof(ApplicationSettingsBase)) && !t.IsAbstract)
-                    {
-                        if (excludeLocalSettingsGroups)
-                        {
-                            bool isStandard = AttributeUtils.HasAttribute<SettingsProviderAttribute>(t, false,
-                                                   delegate(SettingsProviderAttribute a)
-                                                   {
-                                                       return a.ProviderTypeName == typeof(StandardSettingsProvider).AssemblyQualifiedName;
-                                                   });
+			foreach (var plugin in Platform.PluginManager.Plugins)
+			{
+				foreach (var t in plugin.Assembly.GetTypes())
+				{
+					if (t.IsSubclassOf(typeof(ApplicationSettingsBase)) && !t.IsAbstract)
+					{
+						if (excludeLocalSettingsGroups)
+						{
+							var isStandard = AttributeUtils.HasAttribute(t, false,
+								(SettingsProviderAttribute a) => a.ProviderTypeName == typeof (StandardSettingsProvider).AssemblyQualifiedName);
 
-                            // exclude non-standard settings groups
-                            if (!isStandard)
-                                continue;
-                        }
-                        groups.Add(new SettingsGroupDescriptor(t));
-                    }
-                }
-            }
+							// exclude non-standard settings groups
+							if (!isStandard)
+								continue;
+						}
+						groups.Add(new SettingsGroupDescriptor(t));
+					}
+				}
+			}
 
-            return groups;
-        }
+			return groups;
+		}
 
-        private string _name;
-        private Version _version;
-        private string _description;
-        private string _assemblyQualifiedTypeName;
-        private bool _hasUserScopedSettings;
+		private string _name;
+		private Version _version;
+		private string _description;
+		private string _assemblyQualifiedTypeName;
+		private bool _hasUserScopedSettings;
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        public SettingsGroupDescriptor(string name, Version version, string description, string assemblyQualifiedTypeName,
-            bool hasUserScopedSettings)
-        {
-            _name = name;
-            _version = version;
-            _description = description;
-            _assemblyQualifiedTypeName = assemblyQualifiedTypeName;
-            _hasUserScopedSettings = hasUserScopedSettings;
-        }
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		public SettingsGroupDescriptor()
+		{
+		}
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-        public SettingsGroupDescriptor(Type settingsClass)
-        {
-            _name = SettingsClassMetaDataReader.GetGroupName(settingsClass);
-            _version = SettingsClassMetaDataReader.GetVersion(settingsClass);
-            _description = SettingsClassMetaDataReader.GetGroupDescription(settingsClass);
-		    _hasUserScopedSettings = SettingsClassMetaDataReader.HasUserScopedSettings(settingsClass);
-            _assemblyQualifiedTypeName = GetSafeClassName(settingsClass);
-        }
+		public SettingsGroupDescriptor(string name, Version version, string description, string assemblyQualifiedTypeName,
+			bool hasUserScopedSettings)
+		{
+			_name = name;
+			_version = version;
+			_description = description;
+			_assemblyQualifiedTypeName = assemblyQualifiedTypeName;
+			_hasUserScopedSettings = hasUserScopedSettings;
+		}
 
-        /// <summary>
-        /// Gets the name of the settings group.
-        /// </summary>
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public SettingsGroupDescriptor(Type settingsClass)
+		{
+			_name = SettingsClassMetaDataReader.GetGroupName(settingsClass);
+			_version = SettingsClassMetaDataReader.GetVersion(settingsClass);
+			_description = SettingsClassMetaDataReader.GetGroupDescription(settingsClass);
+			_hasUserScopedSettings = SettingsClassMetaDataReader.HasUserScopedSettings(settingsClass);
+			_assemblyQualifiedTypeName = GetSafeClassName(settingsClass);
+		}
+
+		/// <summary>
+		/// Gets the name of the settings group.
+		/// </summary>
 		[DataMember]
 		public string Name
-        {
-            get { return _name; }
+		{
+			get { return _name; }
 			private set { _name = value; }
-        }
+		}
 
-        /// <summary>
-        /// Gets the version of the settings group.
-        /// </summary>
+		/// <summary>
+		/// Gets the version of the settings group.
+		/// </summary>
 		[DataMember]
 		public Version Version
-        {
-            get { return _version; }
+		{
+			get { return _version; }
 			private set { _version = value; }
 		}
 
-        /// <summary>
-        /// Gets the description of the settings group.
-        /// </summary>
+		/// <summary>
+		/// Gets the description of the settings group.
+		/// </summary>
 		[DataMember]
 		public string Description
-        {
-            get { return _description; }
+		{
+			get { return _description; }
 			private set { _description = value; }
 		}
 
-        /// <summary>
-        /// Gets a value indicating whether this settings class has user-scoped settings.
-        /// </summary>
+		/// <summary>
+		/// Gets a value indicating whether this settings class has user-scoped settings.
+		/// </summary>
 		[DataMember]
 		public bool HasUserScopedSettings
-        {
-            get { return _hasUserScopedSettings; }
+		{
+			get { return _hasUserScopedSettings; }
 			private set { _hasUserScopedSettings = value; }
 		}
 
-        /// <summary>
-        /// Gets the assembly-qualified type name of the class that implements the settings group.
-        /// </summary>
+		/// <summary>
+		/// Gets the assembly-qualified type name of the class that implements the settings group.
+		/// </summary>
 		[DataMember]
 		public string AssemblyQualifiedTypeName
-        {
-            get { return _assemblyQualifiedTypeName; }
+		{
+			get { return _assemblyQualifiedTypeName; }
 			private set { _assemblyQualifiedTypeName = value; }
 		}
 
-        /// <summary>
-        /// Settings groups are considered equal if they have the same name and version.
-        /// </summary>
-        public override bool Equals(object obj)
-        {
-            return this.Equals(obj as SettingsGroupDescriptor);
-        }
+		/// <summary>
+		/// Settings groups are considered equal if they have the same name and version.
+		/// </summary>
+		public override bool Equals(object obj)
+		{
+			return this.Equals(obj as SettingsGroupDescriptor);
+		}
 
 		/// <summary>
 		/// Gets the hash code for this object.
 		/// </summary>
-        public override int GetHashCode()
-        {
-            return _name.GetHashCode() ^ _version.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return _name.GetHashCode() ^ _version.GetHashCode();
+		}
 
-        #region IEquatable<SettingsGroupDescriptor> Members
+		#region IEquatable<SettingsGroupDescriptor> Members
 
-        /// <summary>
-        /// Settings groups are considered equal if they have the same name and version.
-        /// </summary>
-        public bool Equals(SettingsGroupDescriptor other)
-        {
-            return other != null && this._name == other._name && this._version == other._version;
-        }
+		/// <summary>
+		/// Settings groups are considered equal if they have the same name and version.
+		/// </summary>
+		public bool Equals(SettingsGroupDescriptor other)
+		{
+			return other != null && this._name == other._name && this._version == other._version;
+		}
 
-        #endregion
+		#endregion
 
-        /// <summary>
-        /// Gets the assembly qualified name of the type, but without all the version and culture info.
-        /// </summary>
-        /// <param name="settingsClass"></param>
-        /// <returns></returns>
-        private static string GetSafeClassName(Type settingsClass)
-        {
-            return string.Format("{0}, {1}", settingsClass.FullName, settingsClass.Assembly.GetName().Name);
-        }
+		/// <summary>
+		/// Gets the assembly qualified name of the type, but without all the version and culture info.
+		/// </summary>
+		/// <param name="settingsClass"></param>
+		/// <returns></returns>
+		private static string GetSafeClassName(Type settingsClass)
+		{
+			return string.Format("{0}, {1}", settingsClass.FullName, settingsClass.Assembly.GetName().Name);
+		}
 
-    }
+	}
 }

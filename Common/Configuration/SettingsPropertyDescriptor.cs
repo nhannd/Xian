@@ -37,104 +37,111 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.Common.Configuration
 {
-    /// <summary>
-    /// Describes a settings property.
-    /// </summary>
-    /// <remarks>
+	/// <summary>
+	/// Describes a settings property.
+	/// </summary>
+	/// <remarks>
 	/// A settings property is a single property belonging to a settings group.
 	/// </remarks>
 	[DataContract]
-    public class SettingsPropertyDescriptor
-    {
+	public class SettingsPropertyDescriptor
+	{
 		/// <summary>
 		/// Returns a list of <see cref="SettingsPropertyDescriptor"/> objects describing each property belonging
 		/// to a settings group.
 		/// </summary>
 		public static List<SettingsPropertyDescriptor> ListSettingsProperties(SettingsGroupDescriptor group)
-        {
-            Type settingsClass = Type.GetType(group.AssemblyQualifiedTypeName);
+		{
+			var settingsClass = Type.GetType(group.AssemblyQualifiedTypeName);
 
-            return CollectionUtils.Map<PropertyInfo, SettingsPropertyDescriptor, List<SettingsPropertyDescriptor>>(
-                SettingsClassMetaDataReader.GetSettingsProperties(settingsClass),
-                delegate(PropertyInfo p)
-                {
-                    SettingsPropertyDescriptor info = new SettingsPropertyDescriptor(
-                        SettingsClassMetaDataReader.GetName(p),
-                        SettingsClassMetaDataReader.GetType(p).FullName,
-                        SettingsClassMetaDataReader.GetDescription(p),
-                        SettingsClassMetaDataReader.GetScope(p),
-                        SettingsClassMetaDataReader.GetDefaultValue(p));
-                    return info;
-                });
-        }
+			return CollectionUtils.Map<PropertyInfo, SettingsPropertyDescriptor, List<SettingsPropertyDescriptor>>(
+				SettingsClassMetaDataReader.GetSettingsProperties(settingsClass),
+				delegate(PropertyInfo p)
+				{
+					var info = new SettingsPropertyDescriptor(
+						SettingsClassMetaDataReader.GetName(p),
+						SettingsClassMetaDataReader.GetType(p).FullName,
+						SettingsClassMetaDataReader.GetDescription(p),
+						SettingsClassMetaDataReader.GetScope(p),
+						SettingsClassMetaDataReader.GetDefaultValue(p));
+					return info;
+				});
+		}
 
 
-        private string _name;
-        private string _typeName;
-        private string _description;
-        private SettingScope _scope;
-        private string _defaultValue;
+		private string _name;
+		private string _typeName;
+		private string _description;
+		private SettingScope _scope;
+		private string _defaultValue;
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        public SettingsPropertyDescriptor(string name, string typeName, string description, SettingScope scope, string defaultValue)
-        {
-            _name = name;
-            _typeName = typeName;
-            _description = description;
-            _scope = scope;
-            _defaultValue = defaultValue;
-        }
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		public SettingsPropertyDescriptor()
+		{
+		}
 
-        /// <summary>
-        /// Gets the name of the property.
-        /// </summary>
-        [DataMember]
-        public string Name
-        {
-            get { return _name; }
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public SettingsPropertyDescriptor(string name, string typeName, string description, SettingScope scope, string defaultValue)
+		{
+			_name = name;
+			_typeName = typeName;
+			_description = description;
+			_scope = scope;
+			_defaultValue = defaultValue;
+		}
+
+		/// <summary>
+		/// Gets the name of the property.
+		/// </summary>
+		[DataMember]
+		public string Name
+		{
+			get { return _name; }
 			private set { _name = value; }
-        }
+		}
 
-        /// <summary>
-        /// Gets the name of the type of the property.
-        /// </summary>
+		/// <summary>
+		/// Gets the name of the type of the property.
+		/// </summary>
 		[DataMember]
 		public string TypeName
-        {
-            get { return _typeName; }
+		{
+			get { return _typeName; }
 			private set { _typeName = value; }
 		}
 
-        /// <summary>
-        /// Gets the description of the property.
-        /// </summary>
+		/// <summary>
+		/// Gets the description of the property.
+		/// </summary>
 		[DataMember]
 		public string Description
-        {
-            get { return _description; }
+		{
+			get { return _description; }
 			private set { _description = value; }
 		}
 
-        /// <summary>
-        /// Gets the scope of the property.
-        /// </summary>
+		/// <summary>
+		/// Gets the scope of the property.
+		/// </summary>
 		[DataMember]
 		public SettingScope Scope
-        {
-            get { return _scope; }
+		{
+			get { return _scope; }
 			private set { _scope = value; }
 		}
 
-        /// <summary>
-        /// Gets the serialized default value of the property.
-        /// </summary>
+		/// <summary>
+		/// Gets the serialized default value of the property.
+		/// </summary>
 		[DataMember]
 		public string DefaultValue
-        {
-            get { return _defaultValue; }
+		{
+			get { return _defaultValue; }
 			private set { _defaultValue = value; }
 		}
-    }
+	}
 }
