@@ -30,9 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Castle.DynamicProxy;
 using Castle.Core.Interceptor;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
@@ -41,78 +38,74 @@ using ClearCanvas.Common.Audit;
 
 namespace ClearCanvas.Enterprise.Core
 {
-    /// <summary>
-    /// Advice class responsible for honouring <see cref="AuditAttribute"/>s applied to service operation methods.
-    /// </summary>
-    public class AuditAdvice : IInterceptor
-    {
-        public AuditAdvice()
-        {
-        }
+	/// <summary>
+	/// Advice class responsible for honouring <see cref="AuditAttribute"/>s applied to service operation methods.
+	/// </summary>
+	public class AuditAdvice : IInterceptor
+	{
+		#region IInterceptor Members
 
-        #region IInterceptor Members
+		public void Intercept(IInvocation invocation)
+		{
+			Exception exception = null;
+			try
+			{
+				invocation.Proceed();
+			}
+			catch (Exception e)
+			{
+				exception = e;
+				throw;
+			}
+			finally
+			{
+				var auditAttrs = AttributeUtils.GetAttributes<AuditAttribute>(invocation.MethodInvocationTarget, true);
+				if (auditAttrs.Count > 0)
+				{
+					// inherit the current persistence scope, which should still be valid, or optionally create a new one
+					using (var scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.Required))
+					{
+						var operationName =
+							string.Format("{0}.{1}", invocation.InvocationTarget.GetType().FullName, invocation.Method.Name);
 
-        public void Intercept(IInvocation invocation)
-        {
-            Exception exception = null;
-            try
-            {
-                invocation.Proceed();
-            }
-            catch (Exception e)
-            {
-                exception = e;
-                throw;
-            }
-            finally
-            {
-                List<AuditAttribute> auditAttrs = AttributeUtils.GetAttributes<AuditAttribute>(invocation.MethodInvocationTarget, true);
-                if (auditAttrs.Count > 0)
-                {
-                    // inherit the current persistence scope, which should still be valid, or optionally create a new one
-                    using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.Required))
-                    {
-                        string operationName =
-                            string.Format("{0}.{1}", invocation.InvocationTarget.GetType().FullName, invocation.Method.Name);
+						var info = new ServiceOperationInvocationInfo(
+							operationName,
+							invocation.InvocationTarget.GetType(),
+							invocation.MethodInvocationTarget,
+							invocation.Arguments,
+							invocation.ReturnValue,
+							exception);
 
-                        ServiceOperationInvocationInfo info = new ServiceOperationInvocationInfo(
-                            operationName,
-                            invocation.InvocationTarget.GetType(),
-                            invocation.MethodInvocationTarget,
-                            invocation.Arguments,
-                            invocation.ReturnValue,
-                            exception);
+						// multiple audit recorders may be specified for a given service operation
+						foreach (var attr in auditAttrs)
+						{
+							try
+							{
+								Audit(attr, info);
+							}
+							catch (Exception e)
+							{
+								// audit operation failed - this is low-level, so we log directly to log file
+								Platform.Log(LogLevel.Error, e);
+							}
+						}
 
-                        // multiple audit recorders may be specified for a given service operation
-                        foreach (AuditAttribute attr in auditAttrs)
-                        {
-                            try
-                            {
-                                Audit(attr, info);
-                            }
-                            catch (Exception e)
-                            {
-                                // audit operation failed - this is low-level, so we log directly to log file
-                                Platform.Log(LogLevel.Error, e);
-                            }
-                        }
+						scope.Complete();
+					}
+				}
+			}
+		}
 
-                        scope.Complete();
-                    }
-                }
-            }
-        }
+		private static void Audit(AuditAttribute attr, ServiceOperationInvocationInfo info)
+		{
+			// create an instance of the specified recorder class
+			var recorder = (IServiceOperationRecorder)Activator.CreateInstance(attr.RecorderClass);
 
-        private void Audit(AuditAttribute attr, ServiceOperationInvocationInfo info)
-        {
-            // create an instance of the specified recorder class
-            IServiceOperationRecorder recorder = (IServiceOperationRecorder) Activator.CreateInstance(attr.RecorderClass);
-
-            // write to the audit log
-			AuditLog log = new AuditLog(null, recorder.Category);
+			// write to the audit log
+			var log = new AuditLog(null, recorder.Category);
 			recorder.WriteLogEntry(info, log);
-        }
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

@@ -29,24 +29,20 @@
 
 #endregion
 
+using ClearCanvas.Common;
 namespace ClearCanvas.Enterprise.Common.Caching
 {
 	public abstract class CacheOptionsBase
 	{
-		private string _region = "";
-
 		protected CacheOptionsBase(string region)
 		{
-			_region = region;
+			Platform.CheckForNullReference(region, "region");
+			Region = region;
 		}
 
 		/// <summary>
 		/// Gets or sets the region
 		/// </summary>
-		public string Region
-		{
-			get { return _region; }
-			set { _region = value; }
-		}
+		public string Region { get; set; }
 	}
 }

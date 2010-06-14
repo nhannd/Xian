@@ -32,7 +32,6 @@
 using Castle.Core.Interceptor;
 using ClearCanvas.Common.Utilities;
 using System.ServiceModel;
-using System.ServiceModel.Channels;
 using ClearCanvas.Enterprise.Common;
 using System.Reflection;
 using ClearCanvas.Enterprise.Common.Caching;

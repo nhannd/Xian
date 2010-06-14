@@ -30,9 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens;
-using System.Text;
 using System.Text.RegularExpressions;
 using ClearCanvas.Enterprise.Common.Authentication;
 using ClearCanvas.Enterprise.Core;
@@ -43,18 +40,18 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Authentication
 {
-    [ExtensionOf(typeof(CoreServiceExtensionPoint))]
-    [ServiceImplementsContract(typeof(IAuthenticationService))]
-    public class AuthenticationService : CoreServiceLayer, IAuthenticationService
-    {
-        private AuthenticationSettings _settings;
+	[ExtensionOf(typeof(CoreServiceExtensionPoint))]
+	[ServiceImplementsContract(typeof(IAuthenticationService))]
+	public class AuthenticationService : CoreServiceLayer, IAuthenticationService
+	{
+		private AuthenticationSettings _settings;
 
 
-        #region IAuthenticationService Members
+		#region IAuthenticationService Members
 
-    	[UpdateOperation(ChangeSetAuditable = false)]
+		[UpdateOperation(ChangeSetAuditable = false)]
 		public InitiateSessionResponse InitiateSession(InitiateSessionRequest request)
-        {
+		{
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.UserName, "UserName");
 			Platform.CheckMemberIsSet(request.Application, "Application");
@@ -66,100 +63,100 @@ namespace ClearCanvas.Enterprise.Authentication
 				throw new UserAccessDeniedException();
 
 			// check application name against white-list
-            if (!CheckWhiteList(this.Settings.ApplicationWhiteList, request.Application))
+			if (!CheckWhiteList(this.Settings.ApplicationWhiteList, request.Application))
 				throw new UserAccessDeniedException();
 
 
-            // find user
-			User user = GetUser(request.UserName);
-            if (user == null)
-                throw new UserAccessDeniedException();
+			// find user
+			var user = GetUser(request.UserName);
+			if (user == null)
+				throw new UserAccessDeniedException();
 
 			// clean-up any expired sessions
 			CleanExpiredSessions(user);
 
 			// initiate new session
-			UserSession session = user.InitiateSession(request.Application, request.HostName, request.Password, GetSessionTimeout());
+			var session = user.InitiateSession(request.Application, request.HostName, request.Password, GetSessionTimeout());
 
 			// get authority tokens if requested
-			string[] authorizations = request.GetAuthorizations ? 	
+			var authorizations = request.GetAuthorizations ?
 				PersistenceContext.GetBroker<IAuthorityTokenBroker>().FindTokensByUserName(request.UserName) : new string[0];
 
-            return new InitiateSessionResponse(session.GetToken(), authorizations, user.DisplayName);
-        }
+			return new InitiateSessionResponse(session.GetToken(), authorizations, user.DisplayName);
+		}
 
-    	[UpdateOperation(ChangeSetAuditable = false)]
+		[UpdateOperation(ChangeSetAuditable = false)]
 		public ChangePasswordResponse ChangePassword(ChangePasswordRequest request)
-        {
+		{
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.UserName, "UserName");
 			Platform.CheckMemberIsSet(request.CurrentPassword, "CurrentPassword");
 			Platform.CheckMemberIsSet(request.NewPassword, "NewPassword");
 
-        	DateTime now = Platform.Time;
-			User user = GetUser(request.UserName);
+			var now = Platform.Time;
+			var user = GetUser(request.UserName);
 
 			// ensure user found, account is active and the current password is correct
 			if (user == null || !user.IsActive(now) || !user.Password.Verify(request.CurrentPassword))
 			{
 				// no such user, account not active, or invalid password
 				// the error message is deliberately vague
-                throw new UserAccessDeniedException();
-            }
+				throw new UserAccessDeniedException();
+			}
 
 			// check new password meets policy
-            if (!Regex.Match(request.NewPassword, this.Settings.ValidPasswordRegex).Success)
-                throw new RequestValidationException(this.Settings.ValidPasswordMessage);
+			if (!Regex.Match(request.NewPassword, this.Settings.ValidPasswordRegex).Success)
+				throw new RequestValidationException(this.Settings.ValidPasswordMessage);
 
-            DateTime expiryTime = Platform.Time.AddDays(this.Settings.PasswordExpiryDays);
+			var expiryTime = Platform.Time.AddDays(this.Settings.PasswordExpiryDays);
 
 			// change the password
-            user.ChangePassword(request.NewPassword, expiryTime);
+			user.ChangePassword(request.NewPassword, expiryTime);
 
 			return new ChangePasswordResponse();
-        }
+		}
 
-        [UpdateOperation(ChangeSetAuditable = false)]
-        [ResponseCaching("GetSessionTokenCacheDirective")]
-        public ValidateSessionResponse ValidateSession(ValidateSessionRequest request)
-        {
+		[UpdateOperation(ChangeSetAuditable = false)]
+		[ResponseCaching("GetSessionTokenCacheDirective")]
+		public ValidateSessionResponse ValidateSession(ValidateSessionRequest request)
+		{
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.UserName, "UserName");
 			Platform.CheckMemberIsSet(request.SessionToken, "SessionToken");
 			Platform.CheckMemberIsSet(request.SessionToken.Id, "SessionToken.Id");
 
 			// get the session
-			UserSession session = GetSession(request.SessionToken);
-            if (session == null)
-                throw new InvalidUserSessionException();
+			var session = GetSession(request.SessionToken);
+			if (session == null)
+				throw new InvalidUserSessionException();
 
 			// determine if still valid
-            session.Validate(request.UserName, this.Settings.UserSessionTimeoutEnabled);
+			session.Validate(request.UserName, this.Settings.UserSessionTimeoutEnabled);
 
 			// renew
-            session.Renew(GetSessionTimeout());
+			session.Renew(GetSessionTimeout());
 
 			// get authority tokens if requested
-			string[] authorizations = request.GetAuthorizations ?
+			var authorizations = request.GetAuthorizations ?
 				PersistenceContext.GetBroker<IAuthorityTokenBroker>().FindTokensByUserName(request.UserName) : new string[0];
 
-            return new ValidateSessionResponse(session.GetToken(), authorizations);
-        }
+			return new ValidateSessionResponse(session.GetToken(), authorizations);
+		}
 
-        [UpdateOperation(ChangeSetAuditable = false)]
+		[UpdateOperation(ChangeSetAuditable = false)]
 		public TerminateSessionResponse TerminateSession(TerminateSessionRequest request)
-        {
+		{
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.UserName, "UserName");
 			Platform.CheckMemberIsSet(request.SessionToken, "SessionToken");
 			Platform.CheckMemberIsSet(request.SessionToken.Id, "SessionToken.Id");
 
 			// get the session and user
-			UserSession session = GetSession(request.SessionToken);
-            if (session == null)
-                throw new InvalidUserSessionException();
+			var session = GetSession(request.SessionToken);
+			if (session == null)
+				throw new InvalidUserSessionException();
 
-            User user = session.User;
+			var user = session.User;
 
 			// validate the session, ignoring the expiry time
 			session.Validate(request.UserName, false);
@@ -167,21 +164,21 @@ namespace ClearCanvas.Enterprise.Authentication
 			// terminate it
 			session.Terminate();
 
-            // delete the session object
-            IUserSessionBroker broker = PersistenceContext.GetBroker<IUserSessionBroker>();
-            broker.Delete(session);
+			// delete the session object
+			var broker = PersistenceContext.GetBroker<IUserSessionBroker>();
+			broker.Delete(session);
 
 			// while we're at it, clean-up any other expired sessions for that user
 			CleanExpiredSessions(user);
 
 			return new TerminateSessionResponse();
-        }
+		}
 
 
-        [ReadOperation]
-        [ResponseCaching("GetAuthorityTokenCacheDirective")]
-        public GetAuthorizationsResponse GetAuthorizations(GetAuthorizationsRequest request)
-        {
+		[ReadOperation]
+		[ResponseCaching("GetAuthorityTokenCacheDirective")]
+		public GetAuthorizationsResponse GetAuthorizations(GetAuthorizationsRequest request)
+		{
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.UserName, "UserName");
 
@@ -190,31 +187,30 @@ namespace ClearCanvas.Enterprise.Authentication
 			//however, there is an issue in the RIS right now that prevents the session token from being passed
 			// in the request... this is a WCF architecture question that needs to be resolved
 
-			string[] tokens = PersistenceContext.GetBroker<IAuthorityTokenBroker>().FindTokensByUserName(request.UserName);
+			var tokens = PersistenceContext.GetBroker<IAuthorityTokenBroker>().FindTokensByUserName(request.UserName);
 
 			return new GetAuthorizationsResponse(tokens);
-        }
+		}
 
-        #endregion
+		#endregion
 
-        /// <summary>
+		/// <summary>
 		/// Gets the user specified by the user name, or null if no such user exists.
 		/// </summary>
 		/// <param name="userName"></param>
 		/// <returns></returns>
 		private User GetUser(string userName)
 		{
-			UserSearchCriteria criteria = new UserSearchCriteria();
+			var criteria = new UserSearchCriteria();
 			criteria.UserName.EqualTo(userName);
 
 			// use query caching here to make this fast (assuming the user table is not often updated)
-			IList<User> users = PersistenceContext.GetBroker<IUserBroker>().Find(
-				criteria, new SearchResultPage(0, 1), new EntityFindOptions {Cache = true});
+			var users = PersistenceContext.GetBroker<IUserBroker>().Find(
+				criteria, new SearchResultPage(0, 1), new EntityFindOptions { Cache = true });
 
-            // bug #3701: to ensure the username match is case-sensitive, we need to compare the stored name to the supplied name
-            // returns null if no match
-            return CollectionUtils.SelectFirst(users,
-                delegate(User u) { return u.UserName == userName; });
+			// bug #3701: to ensure the username match is case-sensitive, we need to compare the stored name to the supplied name
+			// returns null if no match
+			return CollectionUtils.SelectFirst(users, u => u.UserName == userName);
 		}
 
 		/// <summary>
@@ -224,16 +220,15 @@ namespace ClearCanvas.Enterprise.Authentication
 		/// <returns></returns>
 		private UserSession GetSession(SessionToken sessionToken)
 		{
-			UserSessionSearchCriteria where = new UserSessionSearchCriteria();
+			var where = new UserSessionSearchCriteria();
 			where.SessionId.EqualTo(sessionToken.Id);
 
 			// use query caching here to hopefully speed this up a bit
-			IList<UserSession> sessions = PersistenceContext.GetBroker<IUserSessionBroker>().Find(
-				where, new SearchResultPage(0, 1), new EntityFindOptions {Cache = true});
+			var sessions = PersistenceContext.GetBroker<IUserSessionBroker>().Find(
+				where, new SearchResultPage(0, 1), new EntityFindOptions { Cache = true });
 
-            // ensure case-sensitive match, returns null if no match
-            return CollectionUtils.SelectFirst(sessions,
-                delegate(UserSession s) { return s.SessionId == sessionToken.Id; });
+			// ensure case-sensitive match, returns null if no match
+			return CollectionUtils.SelectFirst(sessions, s => s.SessionId == sessionToken.Id);
 		}
 
 		/// <summary>
@@ -242,11 +237,11 @@ namespace ClearCanvas.Enterprise.Authentication
 		/// <param name="user"></param>
 		private void CleanExpiredSessions(User user)
 		{
-			List<UserSession> expiredSessions = user.TerminateExpiredSessions();
+			var expiredSessions = user.TerminateExpiredSessions();
 
 			// delete the session objects
-			IUserSessionBroker broker = PersistenceContext.GetBroker<IUserSessionBroker>();
-			foreach (UserSession session in expiredSessions)
+			var broker = PersistenceContext.GetBroker<IUserSessionBroker>();
+			foreach (var session in expiredSessions)
 			{
 				broker.Delete(session);
 			}
@@ -265,67 +260,64 @@ namespace ClearCanvas.Enterprise.Authentication
 
 			value = StringUtilities.EmptyIfNull(value).Trim();
 
-			List<string> items = CollectionUtils.Map<string, string>(
-				commaDelimitedList.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries),
-				delegate(string s) { return s.Trim(); });
+			var items = CollectionUtils.Map(
+				commaDelimitedList.Trim().Split(new [] { ',' }, StringSplitOptions.RemoveEmptyEntries),
+				(string s) => s.Trim());
 
 			return items.Count == 0 || CollectionUtils.Contains(items,
-				delegate(string s) { return s.Equals(value, StringComparison.InvariantCultureIgnoreCase); });
+				s => s.Equals(value, StringComparison.InvariantCultureIgnoreCase));
 		}
 
-        /// <summary>
-        /// Gets the user session timeout from settings.
-        /// </summary>
-        /// <param name="settings"></param>
-        /// <returns></returns>
+		/// <summary>
+		/// Gets the user session timeout from settings.
+		/// </summary>
+		/// <returns></returns>
 		private TimeSpan GetSessionTimeout()
 		{
-            return TimeSpan.FromMinutes(this.Settings.UserSessionTimeoutMinutes);
+			return TimeSpan.FromMinutes(this.Settings.UserSessionTimeoutMinutes);
 		}
 
-        /// <summary>
-        /// Gets the session token response caching directive.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        private ResponseCachingDirective GetSessionTokenCacheDirective(object request)
-        {
-            AuthenticationSettings settings = new AuthenticationSettings();
-            return new ResponseCachingDirective(
-                this.Settings.SessionTokenCachingEnabled,
-                TimeSpan.FromSeconds(this.Settings.SessionTokenCachingTimeToLiveSeconds),
-                ResponseCachingSite.Client);
-        }
+		/// <summary>
+		/// Gets the session token response caching directive.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		private ResponseCachingDirective GetSessionTokenCacheDirective(object request)
+		{
+			return new ResponseCachingDirective(
+				this.Settings.SessionTokenCachingEnabled,
+				TimeSpan.FromSeconds(this.Settings.SessionTokenCachingTimeToLiveSeconds),
+				ResponseCachingSite.Client);
+		}
 
-        /// <summary>
-        /// Gets the authority token response caching directive.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        private ResponseCachingDirective GetAuthorityTokenCacheDirective(object request)
-        {
-            AuthenticationSettings settings = new AuthenticationSettings();
-            return new ResponseCachingDirective(
-                this.Settings.AuthorityTokenCachingEnabled,
-                TimeSpan.FromSeconds(this.Settings.AuthorityTokenCachingTimeToLiveSeconds),
-                ResponseCachingSite.Client);
-        }
+		/// <summary>
+		/// Gets the authority token response caching directive.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		private ResponseCachingDirective GetAuthorityTokenCacheDirective(object request)
+		{
+			return new ResponseCachingDirective(
+				this.Settings.AuthorityTokenCachingEnabled,
+				TimeSpan.FromSeconds(this.Settings.AuthorityTokenCachingTimeToLiveSeconds),
+				ResponseCachingSite.Client);
+		}
 
-        /// <summary>
-        /// Gets an instance of the settings.  The instance is loaded on demand
-        /// once per instance of this service class.
-        /// </summary>
-        private AuthenticationSettings Settings
-        {
-            get
-            {
-                if (_settings == null)
-                {
-                    _settings = new AuthenticationSettings();
-                }
-                return _settings;
-            }
-        }
+		/// <summary>
+		/// Gets an instance of the settings.  The instance is loaded on demand
+		/// once per instance of this service class.
+		/// </summary>
+		private AuthenticationSettings Settings
+		{
+			get
+			{
+				if (_settings == null)
+				{
+					_settings = new AuthenticationSettings();
+				}
+				return _settings;
+			}
+		}
 
 
 	}
