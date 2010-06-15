@@ -31,7 +31,6 @@
 
 using System.Collections.Generic;
 using Iesi.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare.Tests
 {

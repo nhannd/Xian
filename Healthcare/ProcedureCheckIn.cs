@@ -30,20 +30,15 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Workflow;
 
-namespace ClearCanvas.Healthcare {
-
-
-    /// <summary>
-    /// ProcedureCheckIn entity
-    /// </summary>
-	public partial class ProcedureCheckIn : ClearCanvas.Enterprise.Core.Entity
+namespace ClearCanvas.Healthcare
+{
+	/// <summary>
+	/// ProcedureCheckIn entity
+	/// </summary>
+	public partial class ProcedureCheckIn
 	{
 		/// <summary>
 		/// Returns true if this procedure is pre check-in (patient has not yet checked-in).
@@ -81,12 +76,12 @@ namespace ClearCanvas.Healthcare {
 			_checkInTime = checkInTime ?? Platform.Time;
 		}
 
-        /// <summary>
+		/// <summary>
 		/// Check out the procedure, optionally specifying a check-out time.  If not specified,
 		/// the current time is assumed.
-        /// </summary>
+		/// </summary>
 		protected internal virtual void CheckOut(DateTime? checkOutTime)
-        {
+		{
 			if (!IsCheckedIn)
 				throw new WorkflowException("Procedure already checked-out.");
 
@@ -94,16 +89,16 @@ namespace ClearCanvas.Healthcare {
 		}
 
 
-        /// <summary>
-        /// Reverts Check-In status if not already checked out
-        /// </summary>
+		/// <summary>
+		/// Reverts Check-In status if not already checked out
+		/// </summary>
 		protected internal virtual void RevertCheckIn()
-        {
+		{
 			if (!IsCheckedIn)
-                throw new WorkflowException("Cannot revert check-in status of a procedure that is not currently checked-in.");
+				throw new WorkflowException("Cannot revert check-in status of a procedure that is not currently checked-in.");
 
-            _checkInTime = null;
-        }
+			_checkInTime = null;
+		}
 
 		/// <summary>
 		/// Shifts the object in time by the specified number of days, which may be negative or positive.

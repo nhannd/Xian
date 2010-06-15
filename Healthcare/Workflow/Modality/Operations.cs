@@ -32,9 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Workflow;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.Healthcare.Workflow.Modality
 {
@@ -50,9 +48,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 		{
 			if (rp.IsCheckedIn)
 			{
-				bool allMpsTerminated = rp.ModalityProcedureSteps.TrueForAll(
-						delegate(ModalityProcedureStep mps) { return mps.IsTerminated; });
-
+				var allMpsTerminated = rp.ModalityProcedureSteps.TrueForAll(mps => mps.IsTerminated);
 				if (allMpsTerminated)
 				{
 					// auto check-out
@@ -63,15 +59,15 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 
 		protected void TryAutoTerminateProcedureSteps(Procedure procedure, DateTime? time, IWorkflow workflow)
 		{
-			foreach (ModalityProcedureStep mps in procedure.ModalityProcedureSteps)
+			foreach (var mps in procedure.ModalityProcedureSteps)
 			{
 				// if the MPS is not terminated and has some MPPS
 				if(!mps.IsTerminated && !mps.PerformedSteps.IsEmpty)
 				{
-					bool allMppsDiscontinued = CollectionUtils.TrueForAll<PerformedProcedureStep>(mps.PerformedSteps,
-							delegate(PerformedProcedureStep pps) { return pps.State == PerformedStepStatus.DC; });
-					bool allMppsTerminated = CollectionUtils.TrueForAll<PerformedProcedureStep>(mps.PerformedSteps,
-							delegate(PerformedProcedureStep pps) { return pps.IsTerminated; });
+					var allMppsDiscontinued = CollectionUtils.TrueForAll(mps.PerformedSteps,
+						(PerformedProcedureStep pps) => pps.State == PerformedStepStatus.DC);
+					var allMppsTerminated = CollectionUtils.TrueForAll(mps.PerformedSteps,
+						(PerformedProcedureStep pps) => pps.IsTerminated);
 
 					if (allMppsDiscontinued)
 					{
@@ -96,17 +92,16 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 				throw new WorkflowException("At least one procedure step is required.");
 
 			// validate that each mps being started is being performed on the same modality
-			if (!CollectionUtils.TrueForAll(modalitySteps,
-				delegate(ModalityProcedureStep step) { return step.Modality.Equals(modalitySteps[0].Modality); }))
+			if (!CollectionUtils.TrueForAll(modalitySteps, step => step.Modality.Equals(modalitySteps[0].Modality)))
 			{
 				throw new WorkflowException("Procedure steps cannot be started together because they are not on the same modality.");
 			}
 
 			// create an mpps
-			ModalityPerformedProcedureStep mpps = new ModalityPerformedProcedureStep(technologist, startTime);
+			var mpps = new ModalityPerformedProcedureStep(technologist, startTime);
 			workflow.AddEntity(mpps);
 
-			foreach (ModalityProcedureStep mps in modalitySteps)
+			foreach (var mps in modalitySteps)
 			{
 				mps.Start(technologist, startTime);
 				mps.AddPerformedStep(mpps);
@@ -116,7 +111,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 			}
 
 			// Create Documentation Step for each RP that has an MPS started by this service call
-			foreach (ModalityProcedureStep step in modalitySteps)
+			foreach (var step in modalitySteps)
 			{
 				if (step.Procedure.DocumentationProcedureStep == null)
 				{
@@ -145,11 +140,11 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 		{
 			TerminatePerformedProcedureStep(mpps, time);
 
-			ModalityProcedureStep oneMps = CollectionUtils.FirstElement<ProcedureStep>(mpps.Activities).As<ModalityProcedureStep>();
-			Order order = oneMps.Procedure.Order;
+			var oneMps = CollectionUtils.FirstElement<ProcedureStep>(mpps.Activities).As<ModalityProcedureStep>();
+			var order = oneMps.Procedure.Order;
 
 			// try to complete any mps that have all mpps completed
-			foreach (Procedure rp in order.Procedures)
+			foreach (var rp in order.Procedures)
 			{
 				if (rp.Status != ProcedureStatus.IP)
 					continue;
