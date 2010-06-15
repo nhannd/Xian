@@ -82,7 +82,7 @@ namespace ClearCanvas.Healthcare.Tests
 
 			public override bool IsPreStep
 			{
-				get { throw new Exception("The method or operation is not implemented."); }
+				get { return false; }
 			}
 
 			public override TimeSpan SchedulingOffset
@@ -633,6 +633,7 @@ namespace ClearCanvas.Healthcare.Tests
             ConcreteProcedureStep ps = new ConcreteProcedureStep(procedure);
             Assert.AreEqual(ProcedureStatus.SC, procedure.Status);
             Assert.AreEqual(ActivityStatus.SC, ps.State);
+			Assert.IsFalse(ps.IsPreStep);  // Only nPreStep will update procedure status
 
             procedure.Cancel();
 
