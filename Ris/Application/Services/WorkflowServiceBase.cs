@@ -193,21 +193,25 @@ namespace ClearCanvas.Ris.Application.Services
 			if (req.QueryItems)
 				return ResponseCachingDirective.DoNotCacheDirective;
 
-			// otherwise, check the settings to see if caching is enabled
 			var settings = new WorklistSettings();
-			if (!settings.WorklistItemCountCachingEnabled)
-				return ResponseCachingDirective.DoNotCacheDirective;
-
-			// check if the worklist is user-affine (dependent upon the current user),
-			// in which case the response cannot be cached
-			if (IsWorklistUserAffine(req))
-				return ResponseCachingDirective.DoNotCacheDirective;
-
-			// return cache directive according to settings
-			return new ResponseCachingDirective(
-				settings.WorklistItemCountCachingEnabled,
-				TimeSpan.FromSeconds(settings.WorklistItemCountCachingTimeToLiveSeconds),
-				ResponseCachingSite.Server);
+			if(IsWorklistUserDependent(req))
+			{
+				// return user-dependent cache directive according to settings
+				// cache on client, since it is user-dependent
+				return new ResponseCachingDirective(
+					settings.UserDependentWorklistItemCountCachingEnabled,
+					TimeSpan.FromSeconds(settings.UserDependentWorklistItemCountCachingTimeToLiveSeconds),
+					ResponseCachingSite.Client);
+			}
+			else
+			{
+				// return user-independent cache directive according to settings
+				// cache on server, to benefit from sharing among all users
+				return new ResponseCachingDirective(
+					settings.UserIndependentWorklistItemCountCachingEnabled,
+					TimeSpan.FromSeconds(settings.UserIndependentWorklistItemCountCachingTimeToLiveSeconds),
+					ResponseCachingSite.Server);
+			}
 		}
 
 
@@ -273,7 +277,7 @@ namespace ClearCanvas.Ris.Application.Services
 		}
 
 
-		private bool IsWorklistUserAffine(QueryWorklistRequest req)
+		private bool IsWorklistUserDependent(QueryWorklistRequest req)
 		{
 			// check if the worklist has a dependency on the executing staff (eg current user)
 			var worklist = GetWorklist(req);
@@ -281,7 +285,6 @@ namespace ClearCanvas.Ris.Application.Services
 			var probingWqc = new ProbingWorklistQueryContext(this, workingFacility, req.Page, req.DowntimeRecoveryMode);
 
 			// get the worklist to apply all of its criteria
-			// (TODO: would be better to encapsulate this in the model somehow)
 			worklist.GetInvariantCriteria(probingWqc);
 			worklist.GetFilterCriteria(probingWqc);
 

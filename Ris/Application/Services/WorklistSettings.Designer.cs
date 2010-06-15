@@ -49,21 +49,57 @@ namespace ClearCanvas.Ris.Application.Services {
             }
         }
         
+        /// <summary>
+        /// Specifies whether item count caching is enabled for user-independent worklists.  Caching occurs on server and is shared among all users.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Specifies whether item count caching is enabled for user-independent worklists.  " +
+            "Caching occurs on server and is shared among all users.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool WorklistItemCountCachingEnabled {
+        public bool UserIndependentWorklistItemCountCachingEnabled {
             get {
-                return ((bool)(this["WorklistItemCountCachingEnabled"]));
+                return ((bool)(this["UserIndependentWorklistItemCountCachingEnabled"]));
             }
         }
         
+        /// <summary>
+        /// Specifies item count caching time-to-live for user-independent worklists. 
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Specifies item count caching time-to-live for user-independent worklists. ")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("30")]
-        public int WorklistItemCountCachingTimeToLiveSeconds {
+        public int UserIndependentWorklistItemCountCachingTimeToLiveSeconds {
             get {
-                return ((int)(this["WorklistItemCountCachingTimeToLiveSeconds"]));
+                return ((int)(this["UserIndependentWorklistItemCountCachingTimeToLiveSeconds"]));
+            }
+        }
+        
+        /// <summary>
+        /// Specifies whether item count caching is enabled for user-dependent worklists.  Caching occurs on client because it is specific to each user.
+        /// </summary>
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Specifies whether item count caching is enabled for user-dependent worklists.  Ca" +
+            "ching occurs on client because it is specific to each user.")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UserDependentWorklistItemCountCachingEnabled {
+            get {
+                return ((bool)(this["UserDependentWorklistItemCountCachingEnabled"]));
+            }
+        }
+        
+        /// <summary>
+        /// Specifies item count caching time-to-live for user-dependent worklists. 
+        /// </summary>
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Specifies item count caching time-to-live for user-dependent worklists. ")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        public int UserDependentWorklistItemCountCachingTimeToLiveSeconds {
+            get {
+                return ((int)(this["UserDependentWorklistItemCountCachingTimeToLiveSeconds"]));
             }
         }
     }
