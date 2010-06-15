@@ -146,7 +146,7 @@ namespace ClearCanvas.Enterprise.Common
 		/// <returns></returns>
 		private static string GetCacheRegion(IInvocation invocation)
 		{
-			return string.Format("{0}.{1}", invocation.Method.DeclaringType.FullName, invocation.Method.Name);
+			return string.Format("{0}.{1}", invocation.InvocationTarget.GetType().FullName, invocation.Method.Name);
 		}
 
 
