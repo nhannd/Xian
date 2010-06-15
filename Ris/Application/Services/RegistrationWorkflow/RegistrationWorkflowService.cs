@@ -139,7 +139,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 			return CollectionUtils.Select(
 				order.Procedures,
-				p => p.ProcedureCheckIn.IsPreCheckIn && !p.IsTerminated);
+				p => p.IsPreCheckIn && !p.IsTerminated);
 		}
 	}
 }

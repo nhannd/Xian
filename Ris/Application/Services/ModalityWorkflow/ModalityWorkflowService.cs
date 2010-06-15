@@ -144,7 +144,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 
 			var hasProcedureNotCheckedIn = CollectionUtils.Contains(
 				modalitySteps,
-				mps => mps.Procedure.ProcedureCheckIn.IsPreCheckIn);
+				mps => mps.Procedure.IsPreCheckIn);
 
 			if (hasProcedureNotCheckedIn)
 				throw new RequestValidationException(SR.ExceptionProcedureNotCheckedIn);

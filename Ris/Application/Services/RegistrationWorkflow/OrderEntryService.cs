@@ -604,7 +604,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			foreach (var procedure in order.Procedures)
 			{
 				procedure.CreateProcedureSteps();
-				orderAssembler.UpdateProcedureFromRequisition(procedure, mapProcToReq[procedure], this.PersistenceContext);
+				orderAssembler.UpdateProcedureFromRequisition(procedure, mapProcToReq[procedure], this.CurrentUserStaff, this.PersistenceContext);
 			}
 
 			// add order notes
@@ -699,7 +699,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				procedure.CreateProcedureSteps();
 
 				// apply the requisition information to the actual procedure
-				assembler.UpdateProcedureFromRequisition(procedure, req, this.PersistenceContext);
+				assembler.UpdateProcedureFromRequisition(procedure, req, this.CurrentUserStaff, this.PersistenceContext);
 
 				CreateLogicalHL7Event(procedure, LogicalHL7EventType.OrderCreated);
 			}
@@ -715,7 +715,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 					throw new RequestValidationException("Order modification must not modify the type of a requested procedure.");
 
 				// apply the requisition information to the actual procedure
-				assembler.UpdateProcedureFromRequisition(procedure, req, this.PersistenceContext);
+				assembler.UpdateProcedureFromRequisition(procedure, req, this.CurrentUserStaff, this.PersistenceContext);
 
 				CreateLogicalHL7Event(
 					procedure,

@@ -35,7 +35,6 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
-using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -139,13 +138,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				procedure.PerformingDepartment == null ? null : departmentAssembler.CreateSummary(procedure.PerformingDepartment, context),
 				EnumUtils.GetEnumValueInfo(procedure.Laterality, context),
 				procedure.Portable,
-				procedure.ProcedureCheckIn.IsPreCheckIn == false,
+				procedure.IsPreCheckIn == false,
 				EnumUtils.GetEnumValueInfo(procedure.Status, context),
 				IsProcedureModifiable(procedure),
 				procedure.Status == ProcedureStatus.CA || procedure.Status == ProcedureStatus.DC);
 		}
 
-		public void UpdateProcedureFromRequisition(Procedure procedure, ProcedureRequisition requisition, IPersistenceContext context)
+		public void UpdateProcedureFromRequisition(Procedure procedure, ProcedureRequisition requisition, Staff currentUserStaff, IPersistenceContext context)
 		{
 			// check if the procedure was cancelled
 			if (requisition.Cancelled)
@@ -175,13 +174,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			procedure.Laterality = EnumUtils.GetEnumValue<Laterality>(requisition.Laterality);
 			procedure.Portable = requisition.PortableModality;
 
-			if (requisition.CheckedIn && procedure.ProcedureCheckIn.IsPreCheckIn)
+			if (requisition.CheckedIn && procedure.IsPreCheckIn)
 			{
-				procedure.ProcedureCheckIn.CheckIn(null);
+				procedure.CheckIn(currentUserStaff, null);
 			}
-			else if (!requisition.CheckedIn && procedure.ProcedureCheckIn.IsCheckedIn)
+			else if (!requisition.CheckedIn && procedure.IsCheckedIn)
 			{
-				procedure.ProcedureCheckIn.RevertCheckIn();
+				procedure.RevertCheckIn();
 			}
 		}
 
