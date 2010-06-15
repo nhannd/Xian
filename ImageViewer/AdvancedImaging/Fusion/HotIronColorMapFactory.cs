@@ -37,19 +37,22 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
 	public class HotIronColorMapFactory : IColorMapFactory
 	{
+		public static readonly string ColorMapName = "HOT_IRON";
+		private const string _colorMapDescription = "Hot Iron";
+
 		public string Name
 		{
-			get { return "HOT_IRON"; }
+			get { return ColorMapName; }
 		}
 
 		public string Description
 		{
-			get { return "Hot Iron"; }
+			get { return _colorMapDescription; }
 		}
 
 		public IDataLut Create()
 		{
-			return new DicomPaletteColorMap("Hot Iron", PaletteColorLut.HotIron);
+			return new DicomPaletteColorMap(_colorMapDescription, PaletteColorLut.HotIron);
 		}
 
 		private class DicomPaletteColorMap : ColorMap

@@ -33,7 +33,6 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
@@ -179,7 +178,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			private IDataLut _alphaColorMap;
 			private IDataLut _colorMap;
-			private string _colorMapName = "HOT_IRON";
+			private string _colorMapName = HotIronColorMapFactory.ColorMapName;
 			private bool _thresholding = false;
 			private float _opacity = 0.5f;
 

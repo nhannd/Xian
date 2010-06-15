@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			public IDataLut CreateColorMap()
 			{
 				IDataLut baseColorMap;
-				if (_colorMapName == "HOT_IRON")
+				if (_colorMapName == HotIronColorMapFactory.ColorMapName)
 				{
 					baseColorMap = new HotIronColorMapFactory().Create();
 				}
