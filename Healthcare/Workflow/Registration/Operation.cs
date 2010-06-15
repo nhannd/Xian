@@ -49,7 +49,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         {
             public void Execute(Procedure rp, Staff checkInStaff, DateTime? checkInTime, IWorkflow workflow)
             {
-				rp.ProcedureCheckIn.CheckIn(checkInTime);
+				rp.CheckIn(checkInStaff, checkInTime);
             }
         }
 

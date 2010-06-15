@@ -37,6 +37,11 @@ namespace ClearCanvas.Healthcare.Tests
 {
 	internal static class TestStaffFactory
 	{
+		internal static Staff CreateStaff()
+		{
+			return CreateStaff(new StaffTypeEnum("any", "any", "any"));
+		}
+
 		internal static Staff CreateStaff(StaffTypeEnum staffType)
 		{
 			return new Staff(

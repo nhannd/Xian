@@ -42,34 +42,13 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 	{
 		/// <summary>
 		/// Helper method implements some fuzzy logic to try and determine whether the procedure
-		/// should be checked-in, and check it in if necessary.
-		/// </summary>
-		/// <param name="rp"></param>
-		/// <param name="timestamp"></param>
-		protected void TryAutoCheckIn(Procedure rp, DateTime? timestamp)
-		{
-			if(rp.ProcedureCheckIn.IsPreCheckIn)
-			{
-				bool allMpsScheduled = rp.ModalityProcedureSteps.TrueForAll(
-					delegate(ModalityProcedureStep mps) { return mps.State == ActivityStatus.SC; });
-
-				if (!allMpsScheduled)
-				{
-					// check-in this procedure, since some mps has started
-					rp.ProcedureCheckIn.CheckIn(timestamp);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Helper method implements some fuzzy logic to try and determine whether the procedure
 		/// should be checked-out, and check it out if necessary.
 		/// </summary>
 		/// <param name="rp"></param>
 		/// <param name="timestamp"></param>
 		protected void TryAutoCheckOut(Procedure rp, DateTime? timestamp)
 		{
-			if (rp.ProcedureCheckIn.IsCheckedIn)
+			if (rp.IsCheckedIn)
 			{
 				bool allMpsTerminated = rp.ModalityProcedureSteps.TrueForAll(
 						delegate(ModalityProcedureStep mps) { return mps.IsTerminated; });
@@ -77,7 +56,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 				if (allMpsTerminated)
 				{
 					// auto check-out
-					rp.ProcedureCheckIn.CheckOut(timestamp);
+					rp.CheckOut(timestamp);
 				}
 			}
 		}

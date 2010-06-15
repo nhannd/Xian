@@ -56,6 +56,30 @@ namespace ClearCanvas.Healthcare
 
 		#region Public Properties
 
+
+		/// <summary>
+		/// Returns true if this procedure is pre check-in (patient has not yet checked-in).
+		/// </summary>
+		public virtual bool IsPreCheckIn
+		{
+			get { return _procedureCheckIn.IsPreCheckIn; }
+		}
+
+		/// <summary>
+		/// Returns true if the patient is currently checked-in for this procedure.
+		/// </summary>
+		public virtual bool IsCheckedIn
+		{
+			get { return !IsPreCheckIn && !IsCheckedOut; }
+		}
+
+		/// <summary>
+		/// Returns true if the patient has checked-out for this procedure.
+		/// </summary>
+		public virtual bool IsCheckedOut
+		{
+			get { return _procedureCheckIn.IsCheckedOut; }
+		}
 		/// <summary>
 		/// Gets the modality procedure steps.
 		/// </summary>
@@ -271,6 +295,45 @@ namespace ClearCanvas.Healthcare
 					ps.Schedule(stepStartTime);
 				}
 			}
+		}
+
+		/// <summary>
+		/// Check in the procedure, optionally specifying a check-in time.  If not specified,
+		/// the current time is assumed.
+		/// </summary>
+		public virtual void CheckIn(Staff checkInStaff, DateTime? checkInTime)
+		{
+			_procedureCheckIn.CheckIn(checkInTime);
+
+			// start the registration step, if not started
+			var regStep = GetProcedureStep(ps => ps.Is<RegistrationProcedureStep>());
+			if (regStep != null && regStep.State == ActivityStatus.SC)
+				regStep.Start(checkInStaff, checkInTime);
+		}
+
+		/// <summary>
+		/// Check out the procedure, optionally specifying a check-out time.  If not specified,
+		/// the current time is assumed.
+		/// </summary>
+		public virtual void CheckOut(DateTime? checkOutTime)
+		{
+			_procedureCheckIn.CheckOut(checkOutTime);
+
+			// complete the registration step, if not completed
+			var regStep = GetProcedureStep(ps => ps.Is<RegistrationProcedureStep>());
+			if (regStep != null && !regStep.IsTerminated)
+				regStep.Complete(checkOutTime);
+		}
+
+		/// <summary>
+		/// Reverts Check-In status if not already checked out
+		/// </summary>
+		public virtual void RevertCheckIn()
+		{
+			_procedureCheckIn.RevertCheckIn();
+
+			// JR: technically we should probably discontinue the registration step and schedule a new one here
+			// but that would create additional complexity and there is no real need for it right now
 		}
 
 		/// <summary>

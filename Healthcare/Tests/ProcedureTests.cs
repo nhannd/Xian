@@ -43,6 +43,8 @@ namespace ClearCanvas.Healthcare.Tests
 	[TestFixture]
 	public class ProcedureTests
 	{
+		#region ConcreteProcedureStep
+
 		class ConcreteProcedureStep : ProcedureStep
 		{
 			private readonly List<Procedure> _linkedProcedures = new List<Procedure>();
@@ -56,7 +58,7 @@ namespace ClearCanvas.Healthcare.Tests
 
 			public void AddRelatedStep(ProcedureStep step)
 			{
-				if(!Equals(step.Procedure, this.Procedure))
+				if (!Equals(step.Procedure, this.Procedure))
 					throw new Exception();
 
 				_relatedSteps.Add(step);
@@ -102,13 +104,17 @@ namespace ClearCanvas.Healthcare.Tests
 				return _relatedSteps.Contains(step);
 			}
 		}
+
+		#endregion
+
+		#region ConcreteReportingProcedureStep
 		class ConcreteReportingProcedureStep : ReportingProcedureStep
 		{
 
 			public ConcreteReportingProcedureStep(Procedure procedure)
-				:base(procedure, new ReportPart())
+				: base(procedure, new ReportPart())
 			{
-				
+
 			}
 
 			public override string Name
@@ -121,8 +127,13 @@ namespace ClearCanvas.Healthcare.Tests
 				throw new Exception("The method or operation is not implemented.");
 			}
 		}
+		#endregion
 
-		#region Constructor Tests
+		public ProcedureTests()
+		{
+			// set the extension factory to special test factory
+			Platform.SetExtensionFactory(new TestExtensionFactory());
+		}
 
 		[Test]
 		public void Test_Constructor()
@@ -136,8 +147,6 @@ namespace ClearCanvas.Healthcare.Tests
 			Assert.AreEqual(0, procedure.Reports.Count);
 			Assert.AreEqual(0, procedure.Protocols.Count);
 		}
-
-		#endregion
 
 		#region Property Tests
 
@@ -281,7 +290,7 @@ namespace ClearCanvas.Healthcare.Tests
 			var ps4 = new ModalityProcedureStep(procedure, "ps4", new Modality());
 			ps4.Start(new Staff());
 			ps4.Complete(Platform.Time + TimeSpan.FromDays(3));
-			
+
 			Assert.AreEqual(ps4.EndTime, procedure.PerformedTime);
 		}
 
@@ -304,10 +313,10 @@ namespace ClearCanvas.Healthcare.Tests
 			var ps3 = new ModalityProcedureStep(procedure, "ps3", new Modality());
 
 			Assert.IsFalse(procedure.IsPerformed);
-			
+
 			ps1.Start(new Staff());
 			Assert.IsFalse(procedure.IsPerformed);
-			
+
 			ps1.Complete(Platform.Time);
 			Assert.IsFalse(procedure.IsPerformed);
 
@@ -339,6 +348,87 @@ namespace ClearCanvas.Healthcare.Tests
 		#region Public Operations Tests
 
 		[Test]
+		public void Test_CheckIn()
+		{
+			DateTime? now = DateTime.Now;
+			var procedure = new Procedure { ProcedureCheckIn = new ProcedureCheckIn() };
+			var regStep = new RegistrationProcedureStep(procedure);
+			var staff = TestStaffFactory.CreateStaff();
+
+			Assert.IsTrue(procedure.IsPreCheckIn);
+			Assert.IsFalse(procedure.IsCheckedIn);
+			Assert.IsFalse(procedure.IsCheckedOut);
+			Assert.AreEqual(ActivityStatus.SC, regStep.State);
+			Assert.IsNull(regStep.StartTime);
+
+			procedure.CheckIn(staff, now);
+
+			Assert.IsFalse(procedure.IsPreCheckIn);
+			Assert.IsTrue(procedure.IsCheckedIn);
+			Assert.IsFalse(procedure.IsCheckedOut);
+			Assert.AreEqual(now, procedure.ProcedureCheckIn.CheckInTime);
+
+			Assert.AreEqual(ActivityStatus.IP, regStep.State);
+			Assert.AreEqual(staff, regStep.PerformingStaff);
+			Assert.AreEqual(now, regStep.StartTime);
+		}
+
+		[Test]
+		public void Test_CheckOut()
+		{
+			DateTime? now = DateTime.Now;
+			var procedure = new Procedure { ProcedureCheckIn = new ProcedureCheckIn() };
+			var regStep = new RegistrationProcedureStep(procedure);
+			var staff = TestStaffFactory.CreateStaff();
+			procedure.CheckIn(staff, now);
+
+			Assert.IsFalse(procedure.IsPreCheckIn);
+			Assert.IsTrue(procedure.IsCheckedIn);
+			Assert.IsFalse(procedure.IsCheckedOut);
+			Assert.AreEqual(ActivityStatus.IP, regStep.State);
+			Assert.IsNull(regStep.EndTime);
+
+			procedure.CheckOut(now);
+
+			Assert.IsFalse(procedure.IsPreCheckIn);
+			Assert.IsFalse(procedure.IsCheckedIn);
+			Assert.IsTrue(procedure.IsCheckedOut);
+			Assert.AreEqual(now, procedure.ProcedureCheckIn.CheckOutTime);
+
+			Assert.AreEqual(ActivityStatus.CM, regStep.State);
+			Assert.AreEqual(staff, regStep.PerformingStaff);
+			Assert.AreEqual(now, regStep.EndTime);
+		}
+
+		[Test]
+		public void Test_RevertCheckIn()
+		{
+			DateTime? now = DateTime.Now;
+			var procedure = new Procedure { ProcedureCheckIn = new ProcedureCheckIn() };
+			var regStep = new RegistrationProcedureStep(procedure);
+			var staff = TestStaffFactory.CreateStaff();
+			procedure.CheckIn(staff, now);
+
+			Assert.IsFalse(procedure.IsPreCheckIn);
+			Assert.IsTrue(procedure.IsCheckedIn);
+			Assert.IsFalse(procedure.IsCheckedOut);
+			Assert.AreEqual(ActivityStatus.IP, regStep.State);
+			Assert.IsNull(regStep.EndTime);
+
+			procedure.RevertCheckIn();
+
+			Assert.IsTrue(procedure.IsPreCheckIn);
+			Assert.IsFalse(procedure.IsCheckedIn);
+			Assert.IsFalse(procedure.IsCheckedOut);
+			Assert.IsNull(procedure.ProcedureCheckIn.CheckInTime);
+			Assert.IsNull(procedure.ProcedureCheckIn.CheckOutTime);
+
+			// the registration step is not reverted
+			Assert.AreEqual(ActivityStatus.IP, regStep.State);
+			Assert.AreEqual(staff, regStep.PerformingStaff);
+		}
+
+		[Test]
 		public void Test_GetProcedureSteps()
 		{
 			var procedure = new Procedure();
@@ -358,7 +448,7 @@ namespace ClearCanvas.Healthcare.Tests
 			Assert.AreEqual(0, procedure.GetProcedureSteps(ps => ps is ReportingProcedureStep).Count);
 			Assert.AreEqual(1, procedure.GetProcedureSteps(ps => ps is ProtocolProcedureStep).Count);
 		}
-		
+
 		[Test]
 		public void Test_GetProcedureStep()
 		{
@@ -612,7 +702,7 @@ namespace ClearCanvas.Healthcare.Tests
 			Assert.AreEqual(ActivityStatus.DC, ps.State);
 			Assert.AreEqual(ProcedureStatus.CA, procedure.Status);
 		}
-		
+
 		[Test]
 		[ExpectedException(typeof(WorkflowException))]
 		public void Test_Cancel_CancelledState()
@@ -716,7 +806,7 @@ namespace ClearCanvas.Healthcare.Tests
 		///      |   p22:
 		///      |---->ps221
 		///          ->ps222
-			
+
 
 		[Test]
 		public void Test_GetWorkflowHistory_TwoLevel()
@@ -841,7 +931,7 @@ namespace ClearCanvas.Healthcare.Tests
 
 			ps2.LinkTo(ps21); // link adjacent levels
 
-			Assert.AreEqual(10, pRoot.GetWorkflowHistory().Count); 
+			Assert.AreEqual(10, pRoot.GetWorkflowHistory().Count);
 			// Assert all items in "tree" are present in Workflow history... except these ones:
 			Assert.IsFalse(pRoot.GetWorkflowHistory().Contains(ps112));
 			Assert.IsFalse(pRoot.GetWorkflowHistory().Contains(ps122));

@@ -46,22 +46,36 @@ namespace ClearCanvas.Healthcare {
 	public partial class ProcedureCheckIn : ClearCanvas.Enterprise.Core.Entity
 	{
 		/// <summary>
-		/// This method is called from the constructor.  Use this method to implement any custom
-		/// object initialization.
+		/// Returns true if this procedure is pre check-in (patient has not yet checked-in).
 		/// </summary>
-		private void CustomInitialize()
+		protected internal virtual bool IsPreCheckIn
 		{
+			get { return _checkInTime == null; }
 		}
 
-        #region Public Operations
+		/// <summary>
+		/// Returns true if the patient is currently checked-in for this procedure.
+		/// </summary>
+		protected internal virtual bool IsCheckedIn
+		{
+			get { return !IsPreCheckIn && !IsCheckedOut; }
+		}
+
+		/// <summary>
+		/// Returns true if the patient has checked-out for this procedure.
+		/// </summary>
+		protected internal virtual bool IsCheckedOut
+		{
+			get { return _checkOutTime != null; }
+		}
 
 		/// <summary>
 		/// Check in the procedure, optionally specifying a check-in time.  If not specified,
 		/// the current time is assumed.
 		/// </summary>
-		public virtual void CheckIn(DateTime? checkInTime)
+		protected internal virtual void CheckIn(DateTime? checkInTime)
 		{
-			if (_checkInTime != null)
+			if (!IsPreCheckIn)
 				throw new WorkflowException("Procedure already checked-in.");
 
 			_checkInTime = checkInTime ?? Platform.Time;
@@ -71,49 +85,24 @@ namespace ClearCanvas.Healthcare {
 		/// Check out the procedure, optionally specifying a check-out time.  If not specified,
 		/// the current time is assumed.
         /// </summary>
-		public virtual void CheckOut(DateTime? checkOutTime)
+		protected internal virtual void CheckOut(DateTime? checkOutTime)
         {
-			if (_checkOutTime != null)
+			if (!IsCheckedIn)
 				throw new WorkflowException("Procedure already checked-out.");
 
 			_checkOutTime = checkOutTime ?? Platform.Time;
 		}
 
-		/// <summary>
-		/// Returns true if this procedure is pre check-in (patient has not yet checked-in).
-		/// </summary>
-        public virtual bool IsPreCheckIn
-        {
-            get { return _checkInTime == null; }
-        }
-
-		/// <summary>
-		/// Returns true if the patient is currently checked-in for this procedure.
-		/// </summary>
-    	public virtual bool IsCheckedIn
-    	{
-			get { return !IsPreCheckIn && !IsCheckedOut; }
-    	}
-
-		/// <summary>
-		/// Returns true if the patient has checked-out for this procedure.
-		/// </summary>
-		public virtual bool IsCheckedOut
-		{
-			get { return _checkOutTime != null; }
-		}
-
-        #endregion
 
         /// <summary>
         /// Reverts Check-In status if not already checked out
         /// </summary>
-        public virtual void RevertCheckIn()
+		protected internal virtual void RevertCheckIn()
         {
-            if (!IsCheckedOut)
-                _checkInTime = null;
-            else
-                throw new WorkflowException("Cannot revert check-in status of a procedure already checked-out.");
+			if (!IsCheckedIn)
+                throw new WorkflowException("Cannot revert check-in status of a procedure that is not currently checked-in.");
+
+            _checkInTime = null;
         }
 
 		/// <summary>
@@ -128,6 +117,14 @@ namespace ClearCanvas.Healthcare {
 		{
 			_checkInTime = _checkInTime.HasValue ? _checkInTime.Value.AddMinutes(minutes) : _checkInTime;
 			_checkOutTime = _checkOutTime.HasValue ? _checkOutTime.Value.AddMinutes(minutes) : _checkOutTime;
+		}
+
+		/// <summary>
+		/// This method is called from the constructor.  Use this method to implement any custom
+		/// object initialization.
+		/// </summary>
+		private void CustomInitialize()
+		{
 		}
 	}
 }
