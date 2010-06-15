@@ -208,7 +208,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			public XVoiLutInstaller(IVoiLutInstaller source)
 			{
 				this.Invert = source.Invert;
-				this.VoiLut = source.VoiLut;
+				this.VoiLut = source.VoiLut.Clone();
 			}
 
 			public void InstallVoiLut(IComposableLut voiLut)

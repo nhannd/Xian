@@ -187,8 +187,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			public XColorMapInstaller Clone()
 			{
 				var clone = new XColorMapInstaller();
-				clone._alphaColorMap = _alphaColorMap;
-				clone._colorMap = _colorMap;
+				clone._alphaColorMap = _alphaColorMap != null ? (IDataLut) _alphaColorMap.Clone() : null;
+				clone._colorMap = _colorMap != null ? (IDataLut) _colorMap.Clone() : null;
 				clone._colorMapName = _colorMapName;
 				clone._thresholding = _thresholding;
 				clone._opacity = _opacity;
