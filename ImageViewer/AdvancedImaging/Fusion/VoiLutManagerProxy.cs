@@ -59,11 +59,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			context.CloneFields(source, this);
 
-			_placeholderVoiLutManager = new VoiLutManager(new XVoiLutInstaller()
-			                                              	{
-			                                              		Invert = source._placeholderVoiLutManager.Invert,
-			                                              		VoiLut = source._placeholderVoiLutManager.VoiLut
-			                                              	}, false);
+			_placeholderVoiLutManager = new VoiLutManager(new XVoiLutInstaller(source._realVoiLutManager ?? source._placeholderVoiLutManager), false);
 		}
 
 		public void SetRealVoiLutManager(IVoiLutManager realVoiLutManager)
@@ -207,6 +203,12 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			{
 				this.Invert = false;
 				this.VoiLut = new BasicVoiLutLinear(32768, 16384);
+			}
+
+			public XVoiLutInstaller(IVoiLutInstaller source)
+			{
+				this.Invert = source.Invert;
+				this.VoiLut = source.VoiLut;
 			}
 
 			public void InstallVoiLut(IComposableLut voiLut)
