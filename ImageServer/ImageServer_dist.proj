@@ -79,6 +79,7 @@
 
   <ItemGroup Condition="$(ExecutableBuild)">
 	<PluginFiles Include="$(SolutionDir)\..\Utilities\bin\$(Configuration)\ClearCanvas.Utilities.dll" />
+    <PluginFiles Include="$(SolutionDir)\..\Utilities\Manifest\bin\$(Configuration)\ClearCanvas.Utilities.Manifest.dll" />
   </ItemGroup>
 
   <ItemGroup Condition="$(ShredHostBuild)">
