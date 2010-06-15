@@ -34,6 +34,9 @@ using System.Xml.Serialization;
 
 namespace ClearCanvas.Utilities.Manifest
 {
+    /// <summary>
+    /// Root element used for Product Manifests
+    /// </summary>
     [XmlRoot(ElementName = "ProductManifest")]
     public class ProductManifest
     {
@@ -53,6 +56,5 @@ namespace ClearCanvas.Utilities.Manifest
             }
             set { _files = value; }
         }
-
     }
 }

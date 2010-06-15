@@ -40,10 +40,16 @@ namespace ClearCanvas.Utilities.Manifest
     [XmlRoot(ElementName = "ClearCanvasManifest", Namespace = "http://www.clearcanvas.ca")]
     public class ClearCanvasManifest
     {
+        /// <summary>
+        /// If the manifest is for a Package, the actual Package Manifest
+        /// </summary>
         [XmlElement("PackageManifest")]
         [DefaultValue(null)]
         public PackageManifest PackageManifest { get; set; }
 
+        /// <summary>
+        /// If the manifest is for a Product, the actual Product Manifest
+        /// </summary>
         [XmlElement("ProductManifest")]
         [DefaultValue(null)]
         public ProductManifest ProductManifest { get; set; }

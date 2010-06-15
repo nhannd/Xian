@@ -35,7 +35,7 @@ using System.Xml.Serialization;
 namespace ClearCanvas.Utilities.Manifest
 {
     /// <summary>
-    /// Man
+    /// Root element for Package Manifests.
     /// </summary>
     [XmlRoot(ElementName = "PackageManifest")]
     public class PackageManifest

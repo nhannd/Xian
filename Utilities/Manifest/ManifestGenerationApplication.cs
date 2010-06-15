@@ -49,13 +49,18 @@ namespace ClearCanvas.Utilities.Manifest
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
     public class ManifestGenerationApplication : IApplicationRoot
     {
+        #region Private Members
+
         private readonly ClearCanvasManifest _manifest = new ClearCanvasManifest();
         private readonly ManifestCommandLine _cmdLine = new ManifestCommandLine();
-         
+        
+        #endregion Private Members
+
         #region Public Methods
+
         public void RunApplication(string[] args)
         {
-             try
+            try
             {
                 _cmdLine.Parse(args);
 
@@ -67,16 +72,23 @@ namespace ClearCanvas.Utilities.Manifest
 
                 if (_cmdLine.Package)
                 {
+                    if (string.IsNullOrEmpty(_cmdLine.ProductManifest))
+                        throw new ApplicationException("ProductManifest not specified on the command line");
+                    
+                    if (string.IsNullOrEmpty(_cmdLine.PackageName))
+                        throw new ApplicationException("PackageName not specified on the command line");
+
                     _manifest.PackageManifest = new PackageManifest
                                                     {
                                                         Package = new Package()
                                                     };
                     _manifest.PackageManifest.Package.Manifest = _cmdLine.Manifest;
-                    _manifest.PackageManifest.Package.Name = "Package";
+                    _manifest.PackageManifest.Package.Name = _cmdLine.PackageName;
                     _manifest.PackageManifest.Package.Product = new Product
                                                                     {
                                                                         Name = string.Empty
                                                                     };
+                    LoadReferencedProduct();
                 }
                 else
                 {
@@ -93,7 +105,7 @@ namespace ClearCanvas.Utilities.Manifest
 
                 Save();
 
-                Environment.ExitCode = 0;             
+                Environment.ExitCode = 0;
             }
             catch (CommandLineException e)
             {
@@ -107,6 +119,10 @@ namespace ClearCanvas.Utilities.Manifest
                 Environment.ExitCode = -1;
             }
         }
+
+        #endregion Public Methods
+
+        #region Private Methods
 
         private void Save()
         {
@@ -139,7 +155,6 @@ namespace ClearCanvas.Utilities.Manifest
                 foreach(ManifestInput.InputFile inputFile in input.Files)
                 {
                     string fullPath = Path.Combine(_cmdLine.DistributionDirectory, inputFile.Name);
-
 
                     if (!File.Exists(fullPath))
                     {
@@ -181,7 +196,6 @@ namespace ClearCanvas.Utilities.Manifest
                         _manifest.PackageManifest.Files.Add(file);
                 }
             }
-
         }
 
         private void ProcessConfiguration(IEnumerable<ManifestInput> inputs)
@@ -238,20 +252,34 @@ namespace ClearCanvas.Utilities.Manifest
                     }
                     else if (node.Attributes["name"].Value.Equals("Copyright"))
                     {
-
                     }
                     else if (node.Attributes["name"].Value.Equals("License"))
                     {
-
                     }
                 }
         }
 
+        private void LoadReferencedProduct()
+        {
+            XmlSerializer theSerializer = new XmlSerializer(typeof(ClearCanvasManifest));
+
+            using (FileStream fs = new FileStream(_cmdLine.ProductManifest, FileMode.Open))
+            {
+                ClearCanvasManifest input = (ClearCanvasManifest)theSerializer.Deserialize(fs);
+
+                _manifest.PackageManifest.Package.Product.Name = input.ProductManifest.Product.Name;
+                _manifest.PackageManifest.Package.Product.Suffix = input.ProductManifest.Product.Suffix;
+                _manifest.PackageManifest.Package.Product.Version = input.ProductManifest.Product.Version;
+            }
+        }
+
+        #endregion Private Methods
+
+        #region Private Static Methods
 
         private static ManifestInput Deserialize(string filename)
         {
             XmlSerializer theSerializer = new XmlSerializer(typeof(ManifestInput));
-
 
             using (FileStream fs = new FileStream(filename,FileMode.Open))
             {
@@ -260,11 +288,7 @@ namespace ClearCanvas.Utilities.Manifest
                 return input;
             }
         }
-        #endregion
 
-        #region Private Static Methods
-       
-
-        #endregion
+        #endregion Private Static Methods
     }
 }

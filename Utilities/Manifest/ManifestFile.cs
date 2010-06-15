@@ -44,26 +44,55 @@ namespace ClearCanvas.Utilities.Manifest
     [XmlRoot("File")]
     public class ManifestFile
     {
+        /// <summary>
+        /// The relative path of the file or directory in the manifest.
+        /// </summary>
         public string Filename { get; set; }
 
+        /// <summary>
+        /// The Version of the file.
+        /// </summary>
         public string Version { get; set; }
 
+        /// <summary>
+        /// The LegalCopyright of the file.
+        /// </summary>
         public string Copyright { get; set; }
 
+        /// <summary>
+        /// The class used to generate the Checksum.
+        /// </summary>
         public string ChecksumType { get; set; }
+
+        /// <summary>
+        /// The generated checksum.
+        /// </summary>
         public string Checksum { get; set; }
 
+        /// <summary>
+        /// The CreatedDate of the file.
+        /// </summary>
         [DefaultValue(null)]
         public DateTime? Timestamp { get; set; }
 
+        /// <summary>
+        /// An attribute telling if the file is optional.
+        /// </summary>
         [XmlAttribute(AttributeName = "optional", DataType = "boolean")]
         [DefaultValue(false)]
         public Boolean Optional { get; set; }
 
+        /// <summary>
+        /// An attribute telling if the file should be ignored.
+        /// </summary>
         [XmlAttribute(AttributeName = "ignore", DataType = "boolean")]
         [DefaultValue(false)]
         public Boolean Ignore { get; set; }
 
+        /// <summary>
+        /// Generate a checksum.
+        /// </summary>
+        /// <param name="fullPath">The full path of the file to generate a checksum for.</param>
         public void GenerateChecksum(string fullPath)
         {
             using (FileStream file = new FileStream(fullPath, FileMode.Open))

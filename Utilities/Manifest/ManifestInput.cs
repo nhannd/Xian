@@ -41,6 +41,8 @@ namespace ClearCanvas.Utilities.Manifest
     [XmlRoot("ManifestInput", Namespace = "http://www.clearcanvas.ca")]
     public class ManifestInput
     {
+        #region Class definitions
+
         [XmlRoot("File")]
         public class InputFile
         {
@@ -59,7 +61,15 @@ namespace ClearCanvas.Utilities.Manifest
             public string Name;
         }
 
+        #endregion Class definitions
+
+        #region Private Members
+
         private List<InputFile> _files;
+
+        #endregion Private Members
+
+        #region Public Properties
 
         [XmlArray("Files")]
         [XmlArrayItem("File")]
@@ -73,5 +83,7 @@ namespace ClearCanvas.Utilities.Manifest
             }
             set { _files = value; }
         }
+
+        #endregion Public Properties
     }
 }

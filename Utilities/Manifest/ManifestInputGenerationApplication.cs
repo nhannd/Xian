@@ -51,22 +51,28 @@ namespace ClearCanvas.Utilities.Manifest
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
     public class ManifestInputGenerationApplication : IApplicationRoot
     {
+        #region Private Members
+
         private readonly ManifestInput _manifestInput = new ManifestInput();
         private readonly ManifestCommandLine _parms = new ManifestCommandLine();
         private bool _addedIgnoreLogs;
+        
+        #endregion Private Members
 
         #region Public Methods
+        
         public void RunApplication(string[] args)
         {
             try
             {
                 _parms.Parse(args);
 
+                // Scan the specified directory
                 ScanDirectory();
 
+                // Save the manifest
                 if (File.Exists(_parms.Manifest))
                     File.Delete(_parms.Manifest);
-
 
                 Save();
 
@@ -85,6 +91,10 @@ namespace ClearCanvas.Utilities.Manifest
             }
         }
 
+        #endregion Public Methods
+
+        #region Private Methods
+        
         private void Save()
         {
             using (FileStream fs = new FileStream(_parms.Manifest, FileMode.CreateNew))
@@ -101,6 +111,7 @@ namespace ClearCanvas.Utilities.Manifest
                 XmlWriter writer = XmlWriter.Create(fs, settings);
                 if (writer != null)
                     theSerializer.Serialize(writer, _manifestInput);
+                
                 fs.Flush();
                 fs.Close();
             }
@@ -155,10 +166,6 @@ namespace ClearCanvas.Utilities.Manifest
             _manifestInput.Files.Add(input);
         }
 
-        #endregion
-
-        #region Private Static Methods
-
-        #endregion
+        #endregion Private Methods
     }
 }

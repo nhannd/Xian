@@ -36,8 +36,16 @@ using System.Text;
 
 namespace ClearCanvas.Utilities.Manifest
 {
+    /// <summary>
+    /// Class for Encryption/Decription of the ProductSettings in the app.config.
+    /// </summary>
     internal static class ProductSettingsEncryption
     {
+        /// <summary>
+        /// Decrypt a Product Settings string.
+        /// </summary>
+        /// <param name="string">The string to decrypt.</param>
+        /// <returns>The decrypted string.</returns>
         public static string Decrypt(string @string)
         {
             if (String.IsNullOrEmpty(@string))

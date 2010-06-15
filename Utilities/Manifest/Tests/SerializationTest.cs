@@ -44,12 +44,7 @@ namespace ClearCanvas.Utilities.Manifest.Tests
 	[TestFixture]
     public class SerializationTest
 	{
-	
-		public SerializationTest()
-		{
-		}
-
-		[TestFixtureSetUp]
+	    [TestFixtureSetUp]
 		public void Init()
 		{
 		}
@@ -70,11 +65,11 @@ namespace ClearCanvas.Utilities.Manifest.Tests
                                          Version = "1.2.12011.33333"
                                      };
 
-
 		    ProductManifest theManfest = new ProductManifest
 		                                     {
 		                                         Product = theProduct
 		                                     };
+
 		    ManifestFile theFile = new ManifestFile
 		                               {
 		                                   Checksum = "111",
@@ -84,15 +79,21 @@ namespace ClearCanvas.Utilities.Manifest.Tests
 
 		    theManfest.Files.Add(theFile);
 
-            ClearCanvasManifest manifest = new ClearCanvasManifest {ProductManifest = theManfest};
+            ClearCanvasManifest manifest = new ClearCanvasManifest
+                                               {
+                                                   ProductManifest = theManfest
+                                               };
 
 		    XmlSerializer theSerializer = new XmlSerializer(typeof(ClearCanvasManifest));
 
-		    FileStream stream = new FileStream("ProductTest.xml", FileMode.Create);
-		    XmlWriter writer = XmlWriter.Create(stream);
-		    theSerializer.Serialize(writer, manifest);
-            stream.Flush();
-            stream.Close();
+            using (FileStream fs = new FileStream("ProductTest.xml", FileMode.Create))
+            {
+                XmlWriter writer = XmlWriter.Create(fs);
+                if (writer != null)
+                    theSerializer.Serialize(writer, manifest);
+                fs.Flush();
+                fs.Close();
+            }
 		}
 
         [Test]
@@ -102,17 +103,19 @@ namespace ClearCanvas.Utilities.Manifest.Tests
             {
                 Manifest = "PackageManifest.xml",
                 Name = "ClearCanvas Test",
-                Product =  new Product(),
+                Product = new Product
+                               {
+                                   Name = "ClearCanvas Test",
+                                   Suffix = "SP1",
+                                   Version = "1.2.12011.33333"
+                               },
             };
-
-            package.Product.Name = "ClearCanvas Test";
-            package.Product.Suffix = "SP1";
-            package.Product.Version = "1.2.12011.33333";
 
             PackageManifest packageManifest = new PackageManifest
             {
                 Package = package
             };
+
             ManifestFile theFile = new ManifestFile
             {
                 Checksum = "111",
@@ -122,15 +125,21 @@ namespace ClearCanvas.Utilities.Manifest.Tests
 
             packageManifest.Files.Add(theFile);
 
-            ClearCanvasManifest manifest = new ClearCanvasManifest { PackageManifest = packageManifest };
+            ClearCanvasManifest manifest = new ClearCanvasManifest
+                                               {
+                                                   PackageManifest = packageManifest
+                                               };
 
             XmlSerializer theSerializer = new XmlSerializer(typeof(ClearCanvasManifest));
 
-            FileStream stream = new FileStream("PackageTest.xml", FileMode.Create);
-            XmlWriter writer = XmlWriter.Create(stream);
-            theSerializer.Serialize(writer, manifest);
-            stream.Flush();
-            stream.Close();
+            using (FileStream fs = new FileStream("PackageTest.xml", FileMode.Create))
+            {
+                XmlWriter writer = XmlWriter.Create(fs);
+                if (writer != null)
+                    theSerializer.Serialize(writer, manifest);
+                fs.Flush();
+                fs.Close();
+            }
         }
     }
 }
