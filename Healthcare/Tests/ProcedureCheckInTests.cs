@@ -32,148 +32,146 @@
 #if UNIT_TESTS
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using NUnit.Framework;
 using ClearCanvas.Workflow;
 
 
 namespace ClearCanvas.Healthcare.Tests
 {
-    [TestFixture]
-    public class ProcedureCheckInTests
-    {
-        # region Public Operations Tests
+	[TestFixture]
+	public class ProcedureCheckInTests
+	{
+		# region Public Operations Tests
 
-        [Test]
-        public void Test_CheckIn()
-        {
-            DateTime? now = DateTime.Now;
-            ProcedureCheckIn _procedureCheckIn = new ProcedureCheckIn();
-            _procedureCheckIn.CheckIn(now);
+		[Test]
+		public void Test_CheckIn()
+		{
+			DateTime? now = DateTime.Now;
+			var pc = new ProcedureCheckIn();
+			pc.CheckIn(now);
 
-            Assert.AreEqual(now, _procedureCheckIn.CheckInTime);    
-        }
+			Assert.AreEqual(now, pc.CheckInTime);
+		}
 
-        [Test]
-        [ExpectedException(typeof(WorkflowException))]
-        public void Test_CheckIn_ExistingCheckInTime()
-        {
-            DateTime? now = DateTime.Now;
-            ProcedureCheckIn _procedureCheckIn = new ProcedureCheckIn();
-            _procedureCheckIn.CheckIn(now);
-            _procedureCheckIn.CheckIn(now);
-        }
+		[Test]
+		[ExpectedException(typeof(WorkflowException))]
+		public void Test_CheckIn_ExistingCheckInTime()
+		{
+			DateTime? now = DateTime.Now;
+			var pc = new ProcedureCheckIn();
+			pc.CheckIn(now);
+			pc.CheckIn(now);
+		}
 
-        [Test]
-        public void Test_CheckOut()
-        {
-            DateTime? now = DateTime.Now;
-            ProcedureCheckIn _procedureCheckIn = new ProcedureCheckIn();
-            _procedureCheckIn.CheckOut(now);
+		[Test]
+		public void Test_CheckOut()
+		{
+			DateTime? now = DateTime.Now;
+			var pc = new ProcedureCheckIn();
+			pc.CheckOut(now);
 
-            Assert.AreEqual(now, _procedureCheckIn.CheckOutTime);
-        }
+			Assert.AreEqual(now, pc.CheckOutTime);
+		}
 
-        [Test]
-        [ExpectedException(typeof(WorkflowException))]
-        public void Test_CheckOut_ExistingCheckInTime()
-        {
-            DateTime? now = DateTime.Now;
-            ProcedureCheckIn _procedureCheckIn = new ProcedureCheckIn();
-            _procedureCheckIn.CheckOut(now);
-            _procedureCheckIn.CheckOut(now);
-        }
+		[Test]
+		[ExpectedException(typeof(WorkflowException))]
+		public void Test_CheckOut_ExistingCheckInTime()
+		{
+			DateTime? now = DateTime.Now;
+			var pc = new ProcedureCheckIn();
+			pc.CheckOut(now);
+			pc.CheckOut(now);
+		}
 
-        [Test]
-        public void Test_IsPreCheckIn_True()
-        {
-            ProcedureCheckIn _procedureCheckIn = new ProcedureCheckIn();
+		[Test]
+		public void Test_IsPreCheckIn_True()
+		{
+			var pc = new ProcedureCheckIn();
 
-            Assert.IsTrue(_procedureCheckIn.IsPreCheckIn);
-        }
+			Assert.IsTrue(pc.IsPreCheckIn);
+		}
 
-        [Test]
-        public void Test_IsPreCheckIn_False()
-        {
-            DateTime? now = DateTime.Now;
-            ProcedureCheckIn _procedureCheckIn = new ProcedureCheckIn();
-            _procedureCheckIn.CheckIn(now);
+		[Test]
+		public void Test_IsPreCheckIn_False()
+		{
+			DateTime? now = DateTime.Now;
+			var pc = new ProcedureCheckIn();
+			pc.CheckIn(now);
 
-            Assert.IsFalse(_procedureCheckIn.IsPreCheckIn);
-        }
+			Assert.IsFalse(pc.IsPreCheckIn);
+		}
 
-        [Test]
-        public void Test_IsCheckedIn()
-        {
-            DateTime? now = DateTime.Now;
-            ProcedureCheckIn _procedureCheckIn = new ProcedureCheckIn();
-            _procedureCheckIn.CheckIn(now);
+		[Test]
+		public void Test_IsCheckedIn()
+		{
+			DateTime? now = DateTime.Now;
+			var pc = new ProcedureCheckIn();
+			pc.CheckIn(now);
 
-            Assert.IsTrue(_procedureCheckIn.IsCheckedIn);
-        }
+			Assert.IsTrue(pc.IsCheckedIn);
+		}
 
-        [Test]
-        public void Test_IsCheckedIn_PreCheckInState()
-        {
-            ProcedureCheckIn _procedureCheckIn = new ProcedureCheckIn();
+		[Test]
+		public void Test_IsCheckedIn_PreCheckInState()
+		{
+			var pc = new ProcedureCheckIn();
 
-            Assert.IsFalse(_procedureCheckIn.IsCheckedIn);
-        }
+			Assert.IsFalse(pc.IsCheckedIn);
+		}
 
-        [Test]
-        public void Test_IsCheckedIn_CheckedOutState()
-        {
-            DateTime? now = DateTime.Now;
-            ProcedureCheckIn _procedureCheckIn = new ProcedureCheckIn();
-            _procedureCheckIn.CheckIn(now);
-            _procedureCheckIn.CheckOut(now + TimeSpan.FromSeconds(100));
+		[Test]
+		public void Test_IsCheckedIn_CheckedOutState()
+		{
+			DateTime? now = DateTime.Now;
+			var pc = new ProcedureCheckIn();
+			pc.CheckIn(now);
+			pc.CheckOut(now + TimeSpan.FromSeconds(100));
 
-            Assert.IsFalse(_procedureCheckIn.IsCheckedIn);
-        }
+			Assert.IsFalse(pc.IsCheckedIn);
+		}
 
-        [Test]
-        public void Test_IsCheckedOut()
-        {
-            DateTime? now = DateTime.Now;
-            ProcedureCheckIn _procedureCheckIn = new ProcedureCheckIn();
-            _procedureCheckIn.CheckOut(now);
+		[Test]
+		public void Test_IsCheckedOut()
+		{
+			DateTime? now = DateTime.Now;
+			var pc = new ProcedureCheckIn();
+			pc.CheckOut(now);
 
-            Assert.IsTrue(_procedureCheckIn.IsCheckedOut);
-        }
+			Assert.IsTrue(pc.IsCheckedOut);
+		}
 
-        [Test]
-        public void Test_IsCheckedOut_False()
-        {
-            ProcedureCheckIn _procedureCheckIn = new ProcedureCheckIn();
+		[Test]
+		public void Test_IsCheckedOut_False()
+		{
+			var pc = new ProcedureCheckIn();
 
-            Assert.IsFalse(_procedureCheckIn.IsCheckedOut);
-        }
+			Assert.IsFalse(pc.IsCheckedOut);
+		}
 
-        [Test]
-        public void Test_RevertCheckIn()
-        {
-            DateTime? now = DateTime.Now;
-            ProcedureCheckIn _procedureCheckIn = new ProcedureCheckIn();
-            _procedureCheckIn.CheckIn(now);
-            _procedureCheckIn.RevertCheckIn();
+		[Test]
+		public void Test_RevertCheckIn()
+		{
+			DateTime? now = DateTime.Now;
+			var pc = new ProcedureCheckIn();
+			pc.CheckIn(now);
+			pc.RevertCheckIn();
 
-            Assert.IsNull(_procedureCheckIn.CheckInTime);
-        }
+			Assert.IsNull(pc.CheckInTime);
+		}
 
-        [Test]
-        [ExpectedException(typeof(WorkflowException))]
-        public void Test_RevertCheckIn_IsCheckedout()
-        {
-            DateTime? now = DateTime.Now;
-            ProcedureCheckIn _procedureCheckIn = new ProcedureCheckIn();
-            _procedureCheckIn.CheckIn(now);
-            _procedureCheckIn.CheckOut(now + TimeSpan.FromSeconds(100));
-            _procedureCheckIn.RevertCheckIn();
-        }
+		[Test]
+		[ExpectedException(typeof(WorkflowException))]
+		public void Test_RevertCheckIn_IsCheckedout()
+		{
+			DateTime? now = DateTime.Now;
+			var pc = new ProcedureCheckIn();
+			pc.CheckIn(now);
+			pc.CheckOut(now + TimeSpan.FromSeconds(100));
+			pc.RevertCheckIn();
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }
 
 #endif
