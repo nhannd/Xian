@@ -233,17 +233,17 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			get { return _largeObjectData.RegenerationCost; }
 		}
 
-		bool ILargeObjectContainer.IsLocked
+		public bool IsLocked
 		{
 			get { return _largeObjectData.IsLocked; }
 		}
 
-		void ILargeObjectContainer.Lock()
+		public void Lock()
 		{
 			_largeObjectData.Lock();
 		}
 
-		void ILargeObjectContainer.Unlock()
+		public void Unlock()
 		{
 			_largeObjectData.Unlock();
 		}

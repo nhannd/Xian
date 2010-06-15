@@ -200,7 +200,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				get { return _thresholding; }
 				set
 				{
-					if (_thresholding!=value)
+					if (_thresholding != value)
 					{
 						_thresholding = value;
 						_alphaColorMap = null;
@@ -208,10 +208,13 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				}
 			}
 
-			public float Opacity {
+			public float Opacity
+			{
 				get { return _opacity; }
-				set {
-					if (_opacity != value) {
+				set
+				{
+					if (_opacity != value)
+					{
 						_opacity = value;
 						_alphaColorMap = null;
 					}

@@ -167,12 +167,20 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			while (!context.CancelRequested)
 			{
+				// if we didn't get a SynchronizationContext from the thread that calls .Draw(), then we can't update the progress bar
+				SynchronizationContext synchronizationContext = _synchronizationContext;
+				if (synchronizationContext == null)
+					break;
+
 				Box box = new Box();
-				_synchronizationContext.Send(s =>
-				                             	{
-				                             		((Box) s).Value = this.ParentPresentationImage.Visible;
-				                             		this.Draw();
-				                             	}, box);
+				synchronizationContext.Send(s =>
+				                            	{
+				                            		if (this.ParentPresentationImage != null)
+				                            		{
+				                            			((Box) s).Value = this.ParentPresentationImage.Visible;
+				                            			this.Draw();
+				                            		}
+				                            	}, box);
 				if (context.CancelRequested || !box.Value)
 					break;
 				Thread.Sleep(_animationTick);
@@ -196,6 +204,18 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		#region Static Helpers
+
+		/// <summary>
+		/// Gets a value indicating whether or not directly drawing a <see cref="ProgressGraphic"/> from the current thread is valid.
+		/// </summary>
+		/// <remarks>
+		/// If the value of this property is true, then the call to draw a <see cref="ProgressGraphic"/> must be marshalled to
+		/// a thread with a valid <see cref="SynchronizationContext"/> in order for progress updates to occur automatically.
+		/// </remarks>
+		public static bool RequiresInvoke
+		{
+			get { return SynchronizationContext.Current == null; }
+		}
 
 		/// <summary>
 		/// Creates and displays a <see cref="ProgressGraphic"/>.

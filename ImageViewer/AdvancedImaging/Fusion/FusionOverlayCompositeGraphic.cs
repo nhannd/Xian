@@ -71,6 +71,17 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			_overlayFrameDataReference.FusionOverlayFrameData.Unloaded += HandleOverlayFrameDataUnloaded;
 		}
 
+		[OnCloneComplete]
+		private void OnCloneComplete()
+		{
+			_overlayImageGraphic = (GrayscaleImageGraphic) CollectionUtils.SelectFirst(base.Graphics, g => g is GrayscaleImageGraphic);
+			if (_overlayImageGraphic != null)
+			{
+				_voiLutManagerProxy.SetRealVoiLutManager(_overlayImageGraphic.VoiLutManager);
+				_colorMapManagerProxy.SetRealColorMapManager(_overlayImageGraphic.ColorMapManager);
+			}
+		}
+
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
@@ -143,31 +154,45 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			if (_overlayImageGraphic == null)
 			{
-				var progressGraphic = (ProgressGraphic) CollectionUtils.SelectFirst(this.Graphics, g => g is ProgressGraphic);
-
-				float progress;
-				string message;
-				if (_overlayFrameDataReference.FusionOverlayFrameData.BeginLoad(out progress, out message))
+				_overlayFrameDataReference.FusionOverlayFrameData.Lock();
+				try
 				{
-					OverlayImageGraphic = _overlayFrameDataReference.FusionOverlayFrameData.CreateImageGraphic();
+					if (ProgressGraphic.RequiresInvoke)
+					{
+						// we're drawing from a background thread, so force the frame data to load synchronously now
+						_overlayFrameDataReference.FusionOverlayFrameData.Load();
+					}
+
+					var progressGraphic = (ProgressGraphic) CollectionUtils.SelectFirst(this.Graphics, g => g is ProgressGraphic);
+
+					float progress;
+					string message;
+					if (_overlayFrameDataReference.FusionOverlayFrameData.BeginLoad(out progress, out message))
+					{
+						OverlayImageGraphic = _overlayFrameDataReference.FusionOverlayFrameData.CreateImageGraphic();
 
 #if DEBUG
-					if (this.OverlayFrameData.BaseFrame.FrameOfReferenceUid != this.OverlayFrameData.OverlayFrameOfReferenceUid)
-					{
-						if (!CollectionUtils.Contains(base.Graphics, g => g is CenteredTextGraphic))
-							this.Graphics.Add(new CenteredTextGraphic("Frame of Reference (0020,0052) MISMATCH"));
-					}
+						if (this.OverlayFrameData.BaseFrame.FrameOfReferenceUid != this.OverlayFrameData.OverlayFrameOfReferenceUid)
+						{
+							if (!CollectionUtils.Contains(base.Graphics, g => g is CenteredTextGraphic))
+								this.Graphics.Add(new CenteredTextGraphic("Frame of Reference (0020,0052) MISMATCH"));
+						}
 #endif
 
-					if (progressGraphic != null)
+						if (progressGraphic != null)
+						{
+							this.Graphics.Remove(progressGraphic);
+							progressGraphic.Dispose();
+						}
+					}
+					else if (progressGraphic == null)
 					{
-						this.Graphics.Remove(progressGraphic);
-						progressGraphic.Dispose();
+						this.Graphics.Add(new ProgressGraphic(_overlayFrameDataReference.FusionOverlayFrameData, true, ProgressBarGraphicStyle.Continuous));
 					}
 				}
-				else if (progressGraphic == null)
+				finally
 				{
-					this.Graphics.Add(new ProgressGraphic(_overlayFrameDataReference.FusionOverlayFrameData, true, ProgressBarGraphicStyle.Continuous));
+					_overlayFrameDataReference.FusionOverlayFrameData.Unlock();
 				}
 			}
 			base.OnDrawing();
@@ -181,9 +206,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		#region CenteredTextGraphic Class
 
 #if DEBUG
+		[Cloneable(true)]
 		private class CenteredTextGraphic : InvariantTextPrimitive
 		{
 			public CenteredTextGraphic(string text) : base(text) {}
+
+			/// <summary>
+			/// Cloning constructor.
+			/// </summary>
+			private CenteredTextGraphic() : base() {}
 
 			public override void OnDrawing()
 			{
