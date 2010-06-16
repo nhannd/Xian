@@ -274,7 +274,6 @@
 
     <!-- Fusion -->
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\AdvancedImaging\Fusion\bin\$(Configuration)\ClearCanvas.ImageViewer.AdvancedImaging.Fusion.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\AdvancedImaging\Fusion\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.AdvancedImaging.Fusion.View.WinForms.dll" />
 
     <!-- Tools -->
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Measurement\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Measurement.dll" />

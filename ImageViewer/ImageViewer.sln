@@ -87,7 +87,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Executa
 		{2F464B93-3631-4886-96A0-D3F493536997} = {2F464B93-3631-4886-96A0-D3F493536997}
 		{BA5FDA96-AFD6-4546-A294-24D6BC77E808} = {BA5FDA96-AFD6-4546-A294-24D6BC77E808}
 		{BA5FDA96-AFD6-4546-A294-24D6BC77E808} = {BA5FDA96-AFD6-4546-A294-24D6BC77E808}
-		{F9E5E397-4B61-41BE-B3FA-C20B22156F65} = {F9E5E397-4B61-41BE-B3FA-C20B22156F65}
 		{8517089B-809E-4A62-9AB2-CFF8C72E1AEB} = {8517089B-809E-4A62-9AB2-CFF8C72E1AEB}
 		{8517089B-809E-4A62-9AB2-CFF8C72E1AEB} = {8517089B-809E-4A62-9AB2-CFF8C72E1AEB}
 		{DBBB259C-EACC-425D-991B-265A0CE93446} = {DBBB259C-EACC-425D-991B-265A0CE93446}
@@ -263,8 +262,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools", "Utilities\StudyFilters\Tools\ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.csproj", "{FC609751-68F8-4A87-87E1-D1BF366C350F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.AdvancedImaging.Fusion", "AdvancedImaging\Fusion\ClearCanvas.ImageViewer.AdvancedImaging.Fusion.csproj", "{BD56AC53-F4B2-46AA-9371-D0E6F569A9D2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.AdvancedImaging.Fusion.View.WinForms", "AdvancedImaging\Fusion\View\WinForms\ClearCanvas.ImageViewer.AdvancedImaging.Fusion.View.WinForms.csproj", "{F9E5E397-4B61-41BE-B3FA-C20B22156F65}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -532,10 +529,6 @@ Global
 		{BD56AC53-F4B2-46AA-9371-D0E6F569A9D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD56AC53-F4B2-46AA-9371-D0E6F569A9D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD56AC53-F4B2-46AA-9371-D0E6F569A9D2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F9E5E397-4B61-41BE-B3FA-C20B22156F65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F9E5E397-4B61-41BE-B3FA-C20B22156F65}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F9E5E397-4B61-41BE-B3FA-C20B22156F65}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F9E5E397-4B61-41BE-B3FA-C20B22156F65}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
