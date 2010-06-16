@@ -257,6 +257,22 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
+		/// Gets the slope of the linear modality LUT rescale function.
+		/// </summary>
+		public double RescaleSlope
+		{
+			get { return _rescaleSlope; }
+		}
+
+		/// <summary>
+		/// Gets the intercept of the linear modality LUT rescale function.
+		/// </summary>
+		public double RescaleIntercept
+		{
+			get { return _rescaleIntercept; }
+		}
+
+		/// <summary>
 		/// Gets an object that encapsulates the pixel data.
 		/// </summary>
 		public new GrayscalePixelData PixelData

@@ -185,6 +185,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			EventsHelper.Fire(_volumeUnloaded, this, EventArgs.Empty);
 		}
 
+		public bool IsLoaded
+		{
+			get { return _overlayDataReference.FusionOverlayData.IsLoaded; }
+		}
+
 		public bool BeginLoad(out float progress, out string message)
 		{
 			// LoadPixelData doesn't take very long if the overlay data is already loaded, so we won't bother asynchronously loading that
@@ -263,12 +268,10 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		}
 
 		[Cloneable]
-		private class FusionOverlayImageGraphic : GrayscaleImageGraphic
+		private sealed class FusionOverlayImageGraphic : GrayscaleImageGraphic
 		{
 			[CloneIgnore]
 			private IFusionOverlayFrameDataReference _overlayFrameData;
-
-			private bool _firstDraw;
 
 			public FusionOverlayImageGraphic(FusionOverlayFrameData fusionOverlayFrameData)
 				: base(fusionOverlayFrameData._overlayFrameParams.Rows, fusionOverlayFrameData._overlayFrameParams.Columns,
@@ -279,7 +282,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			{
 				// this image graphic needs to keep a transient reference on the slice, otherwise it could get disposed before we do!
 				_overlayFrameData = fusionOverlayFrameData.CreateTransientReference();
-				_firstDraw = true;
+
+				var spatialTransform = this.SpatialTransform;
+				if (spatialTransform != null)
+				{
+					var overlayFrameParams = _overlayFrameData.FusionOverlayFrameData._overlayFrameParams;
+					spatialTransform.Scale = overlayFrameParams.CoregistrationScale;
+					spatialTransform.TranslationX = overlayFrameParams.CoregistrationOffsetX;
+					spatialTransform.TranslationY = overlayFrameParams.CoregistrationOffsetY;
+				}
 			}
 
 			/// <summary>
@@ -287,7 +298,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			/// </summary>
 			/// <param name="source">The source object from which to clone.</param>
 			/// <param name="context">The cloning context object.</param>
-			protected FusionOverlayImageGraphic(FusionOverlayImageGraphic source, ICloningContext context) : base(source, context)
+			private FusionOverlayImageGraphic(FusionOverlayImageGraphic source, ICloningContext context) : base(source, context)
 			{
 				context.CloneFields(source, this);
 
@@ -306,23 +317,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				}
 
 				base.Dispose(disposing);
-			}
-
-			public override void OnDrawing()
-			{
-				if (_firstDraw)
-				{
-					var spatialTransform = this.SpatialTransform;
-					if (spatialTransform != null)
-					{
-						var overlayFrameParams = _overlayFrameData.FusionOverlayFrameData._overlayFrameParams;
-						spatialTransform.Scale = overlayFrameParams.CoregistrationScale;
-						spatialTransform.TranslationX = overlayFrameParams.CoregistrationOffsetX;
-						spatialTransform.TranslationY = overlayFrameParams.CoregistrationOffsetY;
-					}
-					_firstDraw = false;
-				}
-				base.OnDrawing();
 			}
 		}
 

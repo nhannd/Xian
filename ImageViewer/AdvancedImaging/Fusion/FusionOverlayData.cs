@@ -32,7 +32,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
@@ -305,6 +304,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		protected virtual void OnUnloaded()
 		{
 			EventsHelper.Fire(_volumeUnloaded, this, EventArgs.Empty);
+		}
+
+		public bool IsLoaded
+		{
+			get { return _volume != null; }
 		}
 
 		/// <summary>

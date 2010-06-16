@@ -157,9 +157,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				_overlayFrameDataReference.FusionOverlayFrameData.Lock();
 				try
 				{
-					if (ProgressGraphic.RequiresInvoke)
+					if (this.ParentPresentationImage == null || !this.ParentPresentationImage.Visible)
 					{
-						// we're drawing from a background thread, so force the frame data to load synchronously now
+						// we're drawing to an offscreen buffer, so force the frame data to load synchronously now (progress bars must be visible to be useful)
 						_overlayFrameDataReference.FusionOverlayFrameData.Load();
 					}
 
@@ -201,6 +201,39 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		private void HandleOverlayFrameDataUnloaded(object sender, EventArgs e)
 		{
 			OverlayImageGraphic = null;
+		}
+
+		public GrayscaleImageGraphic CreateStaticOverlayImageGraphic(bool forceLoad)
+		{
+			_overlayFrameDataReference.FusionOverlayFrameData.Lock();
+			try
+			{
+				if (!_overlayFrameDataReference.FusionOverlayFrameData.IsLoaded)
+				{
+					if (!forceLoad)
+						return null;
+
+					_overlayFrameDataReference.FusionOverlayFrameData.Load();
+				}
+
+				if (OverlayImageGraphic == null)
+					OverlayImageGraphic = _overlayFrameDataReference.FusionOverlayFrameData.CreateImageGraphic();
+
+				var staticClone = new GrayscaleImageGraphic(
+					OverlayImageGraphic.Rows, OverlayImageGraphic.Columns,
+					OverlayImageGraphic.BitsPerPixel, OverlayImageGraphic.BitsStored, OverlayImageGraphic.HighBit,
+					OverlayImageGraphic.IsSigned, OverlayImageGraphic.Invert,
+					OverlayImageGraphic.RescaleSlope, OverlayImageGraphic.RescaleIntercept,
+					OverlayImageGraphic.PixelData.Raw);
+				staticClone.VoiLutManager.SetMemento(OverlayImageGraphic.VoiLutManager.CreateMemento());
+				staticClone.ColorMapManager.SetMemento(OverlayImageGraphic.ColorMapManager.CreateMemento());
+				staticClone.SpatialTransform.SetMemento(OverlayImageGraphic.SpatialTransform.CreateMemento());
+				return staticClone;
+			}
+			finally
+			{
+				_overlayFrameDataReference.FusionOverlayFrameData.Unlock();
+			}
 		}
 
 		#region CenteredTextGraphic Class
