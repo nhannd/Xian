@@ -31,9 +31,6 @@
 
 using System;
 using System.IO;
-using System.Text;
-using System.Xml;
-using System.Xml.Serialization;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
@@ -74,7 +71,7 @@ namespace ClearCanvas.Utilities.Manifest
                 if (File.Exists(_parms.Manifest))
                     File.Delete(_parms.Manifest);
 
-                Save();
+                ManifestInput.Serialize(_parms.Manifest, _manifestInput);
 
                 Environment.ExitCode = 0;
             }
@@ -95,28 +92,6 @@ namespace ClearCanvas.Utilities.Manifest
 
         #region Private Methods
         
-        private void Save()
-        {
-            using (FileStream fs = new FileStream(_parms.Manifest, FileMode.CreateNew))
-            {
-                XmlSerializer theSerializer = new XmlSerializer(typeof(ManifestInput));
-
-                XmlWriterSettings settings = new XmlWriterSettings
-                {
-                    Indent = true,
-                    IndentChars = "  ",
-                    Encoding = Encoding.UTF8,
-                };
-
-                XmlWriter writer = XmlWriter.Create(fs, settings);
-                if (writer != null)
-                    theSerializer.Serialize(writer, _manifestInput);
-                
-                fs.Flush();
-                fs.Close();
-            }
-        }
-
         private void ScanDirectory()
         {
             if (!Directory.Exists(_parms.DistributionDirectory))

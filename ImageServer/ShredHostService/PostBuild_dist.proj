@@ -45,7 +45,8 @@
     <CommonDirectory>$(DistributionDirectory)\common</CommonDirectory>
     <PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
     <LogDirectory>$(DistributionDirectory)\logs</LogDirectory>
-	<UtilitiesDirectory>$(DistributionDirectory)\Utilities</UtilitiesDirectory>
+	  <UtilitiesDirectory>$(DistributionDirectory)\Utilities</UtilitiesDirectory>
+    <ManifestDirectory>$(DistributionDirectory)\Manifest</ManifestDirectory>
   </PropertyGroup>
 
   <ItemGroup>

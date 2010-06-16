@@ -142,11 +142,13 @@ namespace ClearCanvas.Common
 		private static string _pluginSubFolder = "plugins";
         private static string _commonSubFolder = "common";
         private static string _logSubFolder = "logs";
+        private static string _manifestSubFolder = "manifest";
 
 		private static volatile string _installDirectory = null;
 		private static volatile string _pluginsDirectory = null;
         private static volatile string _commonDirectory = null;
         private static volatile string _logDirectory = null;
+        private static volatile string _manifestDirectory = null;
 
 		private static volatile PluginManager _pluginManager;
 		private static volatile IApplicationRoot _applicationRoot;
@@ -340,6 +342,29 @@ namespace ClearCanvas.Common
                 return _logDirectory;
 			}
 		}
+
+        /// <summary>
+        /// Gets the fully qualified Manifest directory.
+        /// </summary>
+        /// <remarks>
+        /// This method is thread-safe.
+        /// </remarks>
+        public static string ManifestDirectory
+        {
+            get
+            {
+                if (_manifestDirectory == null)
+                {
+                    lock (_syncRoot)
+                    {
+                        if (_manifestDirectory == null)
+                            _manifestDirectory = Path.Combine(InstallDirectory, _manifestSubFolder);
+                    }
+                }
+
+                return _manifestDirectory;
+            }
+        }
 
         /// <summary>
         /// Gets the current time from an extension of <see cref="TimeProviderExtensionPoint"/>, if one exists.

@@ -31,6 +31,9 @@
 
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace ClearCanvas.Utilities.Manifest
@@ -85,5 +88,43 @@ namespace ClearCanvas.Utilities.Manifest
         }
 
         #endregion Public Properties
+
+        #region Public Static Methods
+
+        public static ManifestInput Deserialize(string filename)
+        {
+            XmlSerializer theSerializer = new XmlSerializer(typeof (ManifestInput));
+
+            using (FileStream fs = new FileStream(filename, FileMode.Open))
+            {
+                ManifestInput input = (ManifestInput) theSerializer.Deserialize(fs);
+
+                return input;
+            }
+        }
+
+        public static void Serialize(string filename, ManifestInput input)
+        {
+            using (FileStream fs = new FileStream(filename, FileMode.CreateNew))
+            {
+                XmlSerializer theSerializer = new XmlSerializer(typeof (ManifestInput));
+
+                XmlWriterSettings settings = new XmlWriterSettings
+                                                 {
+                                                     Indent = true,
+                                                     IndentChars = "  ",
+                                                     Encoding = Encoding.UTF8,
+                                                 };
+
+                XmlWriter writer = XmlWriter.Create(fs, settings);
+                if (writer != null)
+                    theSerializer.Serialize(writer, input);
+
+                fs.Flush();
+                fs.Close();
+            }
+        }
+
+        #endregion
     }
 }

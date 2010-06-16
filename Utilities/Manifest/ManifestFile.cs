@@ -89,13 +89,16 @@ namespace ClearCanvas.Utilities.Manifest
         [DefaultValue(false)]
         public Boolean Ignore { get; set; }
 
+        [XmlIgnore]
+        public Boolean IsDirectory { get; set; }
+
         /// <summary>
         /// Generate a checksum.
         /// </summary>
         /// <param name="fullPath">The full path of the file to generate a checksum for.</param>
         public void GenerateChecksum(string fullPath)
         {
-            using (FileStream file = new FileStream(fullPath, FileMode.Open))
+            using (FileStream file = new FileStream(fullPath, FileMode.Open,FileAccess.Read,FileShare.Read))
             {
                 MD5 md5 = new MD5CryptoServiceProvider();
                 byte[] retVal = md5.ComputeHash(file);
@@ -109,6 +112,37 @@ namespace ClearCanvas.Utilities.Manifest
 
                 Checksum = sb.ToString();
                 ChecksumType = md5.GetType().ToString();
+            }
+        }
+
+        /// <summary>
+        /// Verify a checksum.
+        /// </summary>
+        /// <param name="fullPath">The path to the file.</param>
+        public void VerifyChecksum(string fullPath)
+        {
+            MD5 md5 = new MD5CryptoServiceProvider();
+            if (md5.GetType().ToString().Equals(ChecksumType))
+            {
+                using (FileStream file = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+
+                    byte[] retVal = md5.ComputeHash(file);
+                    file.Close();
+
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < retVal.Length; i++)
+                    {
+                        sb.Append(retVal[i].ToString("x2"));
+                    }
+
+                    if (!Checksum.Equals(sb.ToString()))
+                        throw new ApplicationException("Checksum does not match for file " + fullPath);
+                }
+            }
+            else
+            {
+                throw new ApplicationException("Unknown checksum type: " + ChecksumType);
             }
         }
     }

@@ -30,6 +30,9 @@
 #endregion
 
 using System.ComponentModel;
+using System.IO;
+using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace ClearCanvas.Utilities.Manifest
@@ -40,6 +43,8 @@ namespace ClearCanvas.Utilities.Manifest
     [XmlRoot(ElementName = "ClearCanvasManifest", Namespace = "http://www.clearcanvas.ca")]
     public class ClearCanvasManifest
     {
+        #region Public Properties
+
         /// <summary>
         /// If the manifest is for a Package, the actual Package Manifest
         /// </summary>
@@ -53,5 +58,44 @@ namespace ClearCanvas.Utilities.Manifest
         [XmlElement("ProductManifest")]
         [DefaultValue(null)]
         public ProductManifest ProductManifest { get; set; }
+
+        #endregion Public Properties
+
+        #region Public Static Methods
+
+        public static void Serialize(string filename, ClearCanvasManifest manifest)
+        {
+            using (FileStream fs = new FileStream(filename, FileMode.CreateNew))
+            {
+                XmlSerializer theSerializer = new XmlSerializer(typeof(ClearCanvasManifest));
+
+                XmlWriterSettings settings = new XmlWriterSettings
+                {
+                    Indent = true,
+                    IndentChars = "  ",
+                    Encoding = Encoding.UTF8,
+                };
+
+                XmlWriter writer = XmlWriter.Create(fs, settings);
+                if (writer != null)
+                    theSerializer.Serialize(writer, manifest);
+                fs.Flush();
+                fs.Close();
+            }
+        }
+
+        public static ClearCanvasManifest Deserialize(string filename)
+        {
+            XmlSerializer theSerializer = new XmlSerializer(typeof(ClearCanvasManifest));
+
+            using (FileStream fs = new FileStream(filename, FileMode.Open))
+            {
+                ClearCanvasManifest input = (ClearCanvasManifest)theSerializer.Deserialize(fs);
+
+                return input;
+            }
+        }
+
+        #endregion Public Static Methods
     }
 }
