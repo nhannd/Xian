@@ -38,7 +38,6 @@ using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 {
@@ -121,8 +120,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		private void UpdateEnabled()
 		{
-			base.Enabled = base.SelectedPresentationImage is IImageSopProvider &&
-					((IImageSopProvider)base.SelectedPresentationImage).ImageSop.DataSource.IsStored &&
+			base.Enabled = KeyImagePublisher.IsSupportedImage(base.SelectedPresentationImage) &&
 			          LocalDataStoreActivityMonitor.IsConnected &&
 					  PermissionsHelper.IsInRole(AuthorityTokens.KeyImages);
 

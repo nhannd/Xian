@@ -352,7 +352,11 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 
 				// add each referenced presentation state to the evidence list as well
 				foreach (DicomSoftcopyPresentationState state in (IEnumerable<DicomSoftcopyPresentationState>) _framePresentationStates)
+				{
+					if (state == null)
+						continue;
 					currentRequestedProcedureEvidenceList.Add(state);
+				}
 
 				// set the content and the evidence sequences
 				iod.SrDocumentContent.ContentSequence = contentList.ToArray();

@@ -29,23 +29,23 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.ServiceModel;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Clipboard;
 using ClearCanvas.ImageViewer.KeyObjects;
 using ClearCanvas.ImageViewer.PresentationStates.Dicom;
+using ClearCanvas.ImageViewer.Services;
 using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.Services.DicomServer;
-using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Services.ServerTree;
-using ClearCanvas.ImageViewer.Services;
-using System;
-using ClearCanvas.Common;
-using System.ServiceModel;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
-using ClearCanvas.Desktop;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Services.ServerTree;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 {
@@ -154,6 +154,17 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 																{
 																	return server.Path == publishServer.Path;
 																});
+		}
+
+		/// <remarks>
+		/// The current implementation of <see cref="KeyImagePublisher"/> supports only locally stored images that are <see cref="IImageSopProvider"/>s and supports <see cref="DicomSoftcopyPresentationState"/>s.
+		/// </remarks>
+		public static bool IsSupportedImage(IPresentationImage image)
+		{
+			var imageSopProvider = image as IImageSopProvider;
+			if (imageSopProvider == null)
+				return false;
+			return imageSopProvider.ImageSop.DataSource.IsStored && DicomSoftcopyPresentationState.IsSupported(image);
 		}
 
 		private void CreateKeyObjectDocuments()
