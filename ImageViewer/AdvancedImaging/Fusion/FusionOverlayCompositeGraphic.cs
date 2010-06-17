@@ -113,7 +113,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		public ILayerOpacityManager LayerOpacityManager
 		{
-			get { return _colorMapManagerProxy; }
+			get { return _colorMapManagerProxy.LayerOpacityManager; }
 		}
 
 		public FusionOverlayFrameData OverlayFrameData

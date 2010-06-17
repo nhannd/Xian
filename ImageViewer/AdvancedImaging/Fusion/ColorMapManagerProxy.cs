@@ -38,7 +38,7 @@ using ClearCanvas.ImageViewer.Imaging;
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
 	[Cloneable]
-	internal class ColorMapManagerProxy : IColorMapManager, ILayerOpacityManager
+	internal class ColorMapManagerProxy : IColorMapManager
 	{
 		[CloneIgnore]
 		private readonly XColorMapInstaller _placeholderColorMapInstaller;
@@ -47,11 +47,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		private readonly IColorMapManager _placeholderColorMapManager;
 
 		[CloneIgnore]
+		private readonly ILayerOpacityManager _layerOpacityManager;
+
+		[CloneIgnore]
 		private IColorMapManager _realColorMapManager;
 
 		public ColorMapManagerProxy()
 		{
 			_placeholderColorMapManager = new ColorMapManager(_placeholderColorMapInstaller = new XColorMapInstaller());
+			_layerOpacityManager = new XLayerOpacityManager(this);
 		}
 
 		/// <summary>
@@ -64,6 +68,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			context.CloneFields(source, this);
 
 			_placeholderColorMapManager = new ColorMapManager(_placeholderColorMapInstaller = source._placeholderColorMapInstaller.Clone());
+			_layerOpacityManager = new XLayerOpacityManager(this);
 		}
 
 		public void SetRealColorMapManager(IColorMapManager realColorMapManager)
@@ -78,42 +83,10 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				_realColorMapManager.InstallColorMap(_placeholderColorMapManager.ColorMap);
 		}
 
-		#region ILayerOpacityManager Members
-
-		public bool Enabled
+		public ILayerOpacityManager LayerOpacityManager
 		{
-			get { return true; }
-			set { }
+			get { return _layerOpacityManager; }
 		}
-
-		public float Opacity
-		{
-			get { return _placeholderColorMapInstaller.Opacity; }
-			set
-			{
-				Platform.CheckTrue(value >= 0f && value <= 1f, "Opacity must be between 0 and 1.");
-				if (_placeholderColorMapInstaller.Opacity != value)
-				{
-					_placeholderColorMapInstaller.Opacity = value;
-					InstallColorMap();
-				}
-			}
-		}
-
-		public bool Thresholding
-		{
-			get { return _placeholderColorMapInstaller.Thresholding; }
-			set
-			{
-				if (_placeholderColorMapInstaller.Thresholding != value)
-				{
-					_placeholderColorMapInstaller.Thresholding = value;
-					InstallColorMap();
-				}
-			}
-		}
-
-		#endregion
 
 		#region IColorMapManager Members
 
@@ -168,6 +141,93 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			_placeholderColorMapManager.SetMemento(memento);
 			InstallColorMap();
+		}
+
+		#endregion
+
+		#region XLayerOpacityManager Class
+
+		private class XLayerOpacityManager : ILayerOpacityManager
+		{
+			private readonly ColorMapManagerProxy _owner;
+
+			public XLayerOpacityManager(ColorMapManagerProxy owner)
+			{
+				_owner = owner;
+			}
+
+			public bool Enabled
+			{
+				get { return true; }
+				set { }
+			}
+
+			public float Opacity
+			{
+				get { return _owner._placeholderColorMapInstaller.Opacity; }
+				set
+				{
+					Platform.CheckTrue(value >= 0f && value <= 1f, "Opacity must be between 0 and 1.");
+					if (_owner._placeholderColorMapInstaller.Opacity != value)
+					{
+						_owner._placeholderColorMapInstaller.Opacity = value;
+						_owner.InstallColorMap();
+					}
+				}
+			}
+
+			public bool Thresholding
+			{
+				get { return _owner._placeholderColorMapInstaller.Thresholding; }
+				set
+				{
+					if (_owner._placeholderColorMapInstaller.Thresholding != value)
+					{
+						_owner._placeholderColorMapInstaller.Thresholding = value;
+						_owner.InstallColorMap();
+					}
+				}
+			}
+
+			public object CreateMemento()
+			{
+				return new Memento(Opacity, Thresholding);
+			}
+
+			public void SetMemento(object @object)
+			{
+				if (@object is Memento)
+				{
+					var memento = (Memento) @object;
+					var isChanged = false;
+					if (_owner._placeholderColorMapInstaller.Opacity != memento.Opacity)
+					{
+						_owner._placeholderColorMapInstaller.Opacity = memento.Opacity;
+						isChanged = true;
+					}
+					if (_owner._placeholderColorMapInstaller.Thresholding != memento.Thresholding)
+					{
+						_owner._placeholderColorMapInstaller.Thresholding = memento.Thresholding;
+						isChanged = true;
+					}
+					if (isChanged)
+					{
+						_owner.InstallColorMap();
+					}
+				}
+			}
+
+			private class Memento
+			{
+				public readonly float Opacity;
+				public readonly bool Thresholding;
+
+				public Memento(float opacity, bool thresholding)
+				{
+					Opacity = opacity;
+					Thresholding = thresholding;
+				}
+			}
 		}
 
 		#endregion
