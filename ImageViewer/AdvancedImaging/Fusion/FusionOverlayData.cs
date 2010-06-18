@@ -192,14 +192,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			var volumeYAxis = (volume.ConvertToVolume(baseBottomLeft) - volume.ConvertToVolume(baseTopLeft)).Normalize();
 			var volumeZAxis = volumeXAxis.Cross(volumeYAxis);
 
-			// the volume slicing transformation matrix is thus just the rotation of the identity basis to the slicing basis
-			var volumeSlicerTransform = new Matrix(4, 4);
-			volumeSlicerTransform.SetRow(0, volumeXAxis.X, volumeXAxis.Y, volumeXAxis.Z, 0);
-			volumeSlicerTransform.SetRow(1, volumeYAxis.X, volumeYAxis.Y, volumeYAxis.Z, 0);
-			volumeSlicerTransform.SetRow(2, volumeZAxis.X, volumeZAxis.Y, volumeZAxis.Z, 0);
-			volumeSlicerTransform.SetRow(3, 0, 0, 0, 1);
-
-			var @params = new VolumeSlicerParams(volumeSlicerTransform);
+			var @params = new VolumeSlicerParams(volumeXAxis, volumeYAxis, volumeZAxis);
 			using (var slice = new VolumeSliceSopDataSource(volume, @params, volume.ConvertToVolume(baseFrameCentre)))
 			{
 				using (var sliceSop = new ImageSop(slice))

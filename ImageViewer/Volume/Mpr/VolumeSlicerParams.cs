@@ -74,6 +74,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		private VolumeSlicerInterpolationMode _interpolationMode = VolumeSlicerInterpolationMode.Linear;
 
+		/// <summary>
+		/// Initializes a <see cref="VolumeSlicerParams"/> for the identity slice orientation.
+		/// </summary>
 		public VolumeSlicerParams()
 		{
 			_slicingPlaneRotation = Matrix.GetIdentity(4);
@@ -81,9 +84,22 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_description = string.Format(SR.FormatSliceIdentity, 0, 0, 0);
 		}
 
+		/// <summary>
+		/// Initializes a <see cref="VolumeSlicerParams"/> for a slice orientation defined as rotations about individual axes.
+		/// </summary>
+		/// <param name="rotateAboutX">The desired rotation about the X-axis in degrees.</param>
+		/// <param name="rotateAboutY">The desired rotation about the Y-axis in degrees.</param>
+		/// <param name="rotateAboutZ">The desired rotation about the Z-axis in degrees.</param>
 		public VolumeSlicerParams(float rotateAboutX, float rotateAboutY, float rotateAboutZ)
 			: this(rotateAboutX, rotateAboutY, rotateAboutZ, string.Format(SR.FormatSliceCustom, rotateAboutX, rotateAboutY, rotateAboutZ)) {}
 
+		/// <summary>
+		/// Initializes a <see cref="VolumeSlicerParams"/> for a slice orientation defined as rotations about individual axes.
+		/// </summary>
+		/// <param name="rotateAboutX">The desired rotation about the X-axis in degrees.</param>
+		/// <param name="rotateAboutY">The desired rotation about the Y-axis in degrees.</param>
+		/// <param name="rotateAboutZ">The desired rotation about the Z-axis in degrees.</param>
+		/// <param name="description">A string value for describing the orientation.</param>
 		public VolumeSlicerParams(float rotateAboutX, float rotateAboutY, float rotateAboutZ, string description)
 		{
 			Matrix aboutX = CalcRotateMatrixAboutX(rotateAboutX);
@@ -98,12 +114,43 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_description = description;
 		}
 
+		/// <summary>
+		/// Initializes a <see cref="VolumeSlicerParams"/> for a slice orientation defined using a set of orthogonal basis vectors.
+		/// </summary>
+		/// <param name="xAxis">The desired X-axis of the coordinate system in the slice orientation.</param>
+		/// <param name="yAxis">The desired Y-axis of the coordinate system in the slice orientation.</param>
+		/// <param name="zAxis">The desired Z-axis of the coordinate system in the slice orientation.</param>
+		public VolumeSlicerParams(Vector3D xAxis, Vector3D yAxis, Vector3D zAxis)
+			: this(CalcRotateMatrixFromOrthogonalBasis(xAxis, yAxis, zAxis)) {}
+
+		/// <summary>
+		/// Initializes a <see cref="VolumeSlicerParams"/> for a slice orientation defined using a set of orthogonal basis vectors.
+		/// </summary>
+		/// <param name="xAxis">The desired X-axis of the coordinate system in the slice orientation.</param>
+		/// <param name="yAxis">The desired Y-axis of the coordinate system in the slice orientation.</param>
+		/// <param name="zAxis">The desired Z-axis of the coordinate system in the slice orientation.</param>
+		/// <param name="description">A string value for describing the orientation.</param>
+		public VolumeSlicerParams(Vector3D xAxis, Vector3D yAxis, Vector3D zAxis, string description)
+			: this(CalcRotateMatrixFromOrthogonalBasis(xAxis, yAxis, zAxis))
+		{
+			_description = description;
+		}
+
+		/// <summary>
+		/// Initializes a <see cref="VolumeSlicerParams"/> for a slice orientation defined as a 4x4 affine transformation matrix.
+		/// </summary>
+		/// <param name="sliceRotation">The desired 4x4 affine transformation matrix.</param>
+		/// <param name="description">A string value for describing the orientation.</param>
 		public VolumeSlicerParams(Matrix sliceRotation, string description)
 			: this(sliceRotation)
 		{
 			_description = description;
 		}
 
+		/// <summary>
+		/// Initializes a <see cref="VolumeSlicerParams"/> for a slice orientation defined as a 4x4 affine transformation matrix.
+		/// </summary>
+		/// <param name="sliceRotation">The desired 4x4 affine transformation matrix.</param>
 		public VolumeSlicerParams(Matrix sliceRotation)
 		{
 			const string invalidTransformMessage = "sliceRotation must be a 4x4 affine transformation matrix.";
@@ -292,6 +339,24 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				aboutZ = Matrix.GetIdentity(4);
 
 			return aboutZ;
+		}
+
+		private static Matrix CalcRotateMatrixFromOrthogonalBasis(Vector3D xAxis, Vector3D yAxis, Vector3D zAxis)
+		{
+			Platform.CheckForNullReference(xAxis, "xAxis");
+			Platform.CheckForNullReference(yAxis, "yAxis");
+			Platform.CheckForNullReference(zAxis, "zAxis");
+
+			xAxis = xAxis.Normalize();
+			yAxis = yAxis.Normalize();
+			zAxis = zAxis.Normalize();
+
+			var basis = new Matrix(4, 4);
+			basis.SetRow(0, xAxis.X, xAxis.Y, xAxis.Z, 0);
+			basis.SetRow(1, yAxis.X, yAxis.Y, yAxis.Z, 0);
+			basis.SetRow(2, zAxis.X, zAxis.Y, zAxis.Z, 0);
+			basis.SetRow(3, 0, 0, 0, 1);
+			return basis;
 		}
 
 		#endregion
