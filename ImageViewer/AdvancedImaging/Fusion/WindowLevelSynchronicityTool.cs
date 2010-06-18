@@ -110,8 +110,13 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			{
 				if (e.PresentationImage is IImageSopProvider && e.PresentationImage is IVoiLutProvider)
 				{
+					// if the image isn't part of the study tree, ignore it
+					Series series = ((IImageSopProvider) e.PresentationImage).ImageSop.ParentSeries;
+					if (series == null)
+						return;
+
 					object memento = ((IVoiLutProvider) e.PresentationImage).VoiLutManager.CreateMemento();
-					string series = ((IImageSopProvider) e.PresentationImage).ImageSop.ParentSeries.SeriesInstanceUid;
+					string seriesInstanceUid = series.SeriesInstanceUid;
 
 					// find any available display set containing the same series as the individual layers and replicate its VoiLutManager memento
 					foreach (IDisplaySet displaySet in _fusionDisplaySets)
@@ -119,7 +124,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 						var anyVisibleChange = false;
 
 						var descriptor = (PETFusionDisplaySetDescriptor) displaySet.Descriptor;
-						if (descriptor.SourceSeries.SeriesInstanceUid == series)
+						if (descriptor.SourceSeries.SeriesInstanceUid == seriesInstanceUid)
 						{
 							foreach (FusionPresentationImage image in displaySet.PresentationImages)
 							{
@@ -128,7 +133,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 								anyVisibleChange |= (image.Visible && changed);
 							}
 						}
-						else if (descriptor.PETSeries.SeriesInstanceUid == series)
+						else if (descriptor.PETSeries.SeriesInstanceUid == seriesInstanceUid)
 						{
 							foreach (FusionPresentationImage image in displaySet.PresentationImages)
 							{
