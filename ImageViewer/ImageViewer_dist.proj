@@ -299,6 +299,8 @@
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Externals\bin\$(Configuration)\ClearCanvas.ImageViewer.Externals.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Externals\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Externals.View.WinForms.dll" />
 
+    <!-- Manifest -->
+    <PluginFiles Include="$(TrunkDirectory)\Utilities\Manifest\bin\$(Configuration)\ClearCanvas.Utilities.Manifest.dll" />
   </ItemGroup>
 
   <ItemGroup Condition="$(ShredHostBuild)">
