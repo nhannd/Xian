@@ -74,27 +74,28 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		public override List<IDisplaySet> CreateDisplaySets(Series series)
 		{
 			List<IDisplaySet> displaySets = new List<IDisplaySet>();
-			if (this.IsValidBaseSeries(series))
+			if (IsValidPETFusionSeries(series))
 			{
-				foreach (var ptSeries in FindFuseablePETSeries(series))
+				var fuseableBaseSeries = new List<Series>(FindFuseableBaseSeries(series));
+				if (fuseableBaseSeries.Count > 0)
 				{
-					if (ptSeries.Sops.Count == 0)
-						continue;
-
-					var descriptor = new PETFusionDisplaySetDescriptor(series.GetIdentifier(), ptSeries.GetIdentifier(), IsAttenuationCorrected(ptSeries.Sops[0]));
-					var displaySet = new DisplaySet(descriptor);
-					using (var fusionOverlayData = new FusionOverlayData(GetFrames(ptSeries.Sops)))
+					using (var fusionOverlayData = new FusionOverlayData(GetFrames(series.Sops)))
 					{
-						foreach (var baseFrame in GetFrames(series.Sops))
+						foreach (var baseSeries in fuseableBaseSeries)
 						{
-							using (var fusionOverlaySlice = fusionOverlayData.CreateOverlaySlice(baseFrame))
+							var descriptor = new PETFusionDisplaySetDescriptor(baseSeries.GetIdentifier(), series.GetIdentifier(), IsAttenuationCorrected(series.Sops[0]));
+							var displaySet = new DisplaySet(descriptor);
+							foreach (var baseFrame in GetFrames(baseSeries.Sops))
 							{
-								var fus = new FusionPresentationImage(baseFrame, fusionOverlaySlice);
-								displaySet.PresentationImages.Add(fus);
+								using (var fusionOverlaySlice = fusionOverlayData.CreateOverlaySlice(baseFrame))
+								{
+									var fus = new FusionPresentationImage(baseFrame, fusionOverlaySlice);
+									displaySet.PresentationImages.Add(fus);
+								}
 							}
+							displaySets.Add(displaySet);
 						}
 					}
-					displaySets.Add(displaySet);
 				}
 			}
 			return displaySets;
@@ -199,15 +200,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			return true;
 		}
 
-		private IEnumerable<Series> FindFuseablePETSeries(Series baseSeries)
+		private IEnumerable<Series> FindFuseableBaseSeries(Series petSeries)
 		{
-			var baseStudy = baseSeries.ParentStudy;
-			if (baseStudy == null)
+			var petStudy = petSeries.ParentStudy;
+			if (petStudy == null)
 				yield break;
 
-			foreach (var series in baseStudy.Series)
+			foreach (var series in petStudy.Series)
 			{
-				if (CanFuse(baseSeries, series))
+				if (CanFuse(series, petSeries))
 					yield return series;
 			}
 		}

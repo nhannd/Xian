@@ -103,13 +103,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		}
 
 		[Obsolete("Use the Invert property instead.")]
-		void IVoiLutManager.ToggleInvert()
-		{
-			if (_realVoiLutManager != null)
-				_realVoiLutManager.ToggleInvert();
-			else
-				_placeholderVoiLutManager.ToggleInvert();
-		}
+		void IVoiLutManager.ToggleInvert() {}
 
 		bool IVoiLutManager.Enabled
 		{
@@ -154,20 +148,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		bool IVoiLutInstaller.Invert
 		{
-			get
-			{
-				if (_realVoiLutManager != null)
-					return _realVoiLutManager.Invert;
-				else
-					return _placeholderVoiLutManager.Invert;
-			}
-			set
-			{
-				if (_realVoiLutManager != null)
-					_realVoiLutManager.Invert = value;
-				else
-					_placeholderVoiLutManager.Invert = value;
-			}
+			get { return false; }
+			set { }
 		}
 
 		#endregion
@@ -185,9 +167,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		void IMemorable.SetMemento(object memento)
 		{
 			if (_realVoiLutManager != null)
+			{
 				_realVoiLutManager.SetMemento(memento);
+				_realVoiLutManager.Invert = false;
+			}
 			else
+			{
 				_placeholderVoiLutManager.SetMemento(memento);
+				_placeholderVoiLutManager.Invert = false;
+			}
 		}
 
 		#endregion
