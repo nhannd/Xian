@@ -35,6 +35,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Utilities.Manifest;
 
 namespace ClearCanvas.Desktop
 {
@@ -124,7 +125,11 @@ namespace ClearCanvas.Desktop
             _dialogs = new DialogBoxCollection(this);
 
             // if no title supplied, create default title
-			_baseTitle = !string.IsNullOrEmpty(args.Title) ? args.Title : ProductInformation.GetNameAndVersion(false, true);
+            _baseTitle = !string.IsNullOrEmpty(args.Title) 
+                ? args.Title 
+                : ManifestVerification.Valid 
+                    ? ProductInformation.GetNameAndVersion(false, true)
+                    : String.Format("{0} (Uncertified Installation)", ProductInformation.GetNameAndVersion(false, true));
 
             _menuActionSite = args.MenuSite ?? GlobalMenus;
             _toolbarActionSite = args.ToolbarSite ?? GlobalToolbars;

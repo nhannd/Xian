@@ -32,6 +32,7 @@
 using System;
 using System.ServiceProcess;
 using System.Threading;
+using ClearCanvas.Utilities.Manifest;
 
 namespace ClearCanvas.ImageServer.ShredHostService
 {
@@ -60,6 +61,8 @@ namespace ClearCanvas.ImageServer.ShredHostService
             else
             {
                 Thread.CurrentThread.Name = "Main thread";
+                if (!ManifestVerification.Valid)
+                    Console.WriteLine("The manifest detected an invalid installation.");
                 ShredHostService.InternalStart();
                 Console.WriteLine("Press <Enter> to terminate the ShredHost.");
                 Console.WriteLine();

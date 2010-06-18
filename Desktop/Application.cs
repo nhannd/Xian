@@ -31,11 +31,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Utilities.Manifest;
 
 namespace ClearCanvas.Desktop
 {
@@ -57,7 +57,7 @@ namespace ClearCanvas.Desktop
     /// </summary>
     /// <remarks>
     /// The framework will use one extension of this point if found, but no extension is required.</remarks>
-    [ExtensionPoint()]
+    [ExtensionPoint]
 	public sealed class SessionManagerExtensionPoint : ExtensionPoint<ISessionManager>
     {
     }
@@ -376,6 +376,9 @@ namespace ClearCanvas.Desktop
         /// </summary>
         protected virtual string GetName()
         {
+            if (!ManifestVerification.Valid)
+                return String.Format("{0} (Uncertified Installation)", ProductInformation.Name);
+
 			return ProductInformation.Name;
         }
 

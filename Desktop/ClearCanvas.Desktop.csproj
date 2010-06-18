@@ -407,6 +407,10 @@
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Utilities\Manifest\ClearCanvas.Utilities.Manifest.csproj">
+      <Project>{E2F1A5D4-73A4-4BA6-AA5A-87BBDEC727F8}</Project>
+      <Name>ClearCanvas.Utilities.Manifest</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Actions\ActionModelSettings.settings">

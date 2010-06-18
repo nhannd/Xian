@@ -77,6 +77,11 @@
       <Name>ClearCanvas.Common</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\..\Utilities\Manifest\ClearCanvas.Utilities.Manifest.csproj">
+      <Project>{E2F1A5D4-73A4-4BA6-AA5A-87BBDEC727F8}</Project>
+      <Name>ClearCanvas.Utilities.Manifest</Name>
+      <Private>False</Private>
+    </ProjectReference>
     <ProjectReference Include="..\Common\ClearCanvas.ImageServer.Common.csproj">
       <Project>{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}</Project>
       <Name>ClearCanvas.ImageServer.Common</Name>

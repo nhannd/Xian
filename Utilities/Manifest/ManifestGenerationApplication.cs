@@ -209,13 +209,16 @@ namespace ClearCanvas.Utilities.Manifest
 
         private void LoadConfiguration(string path)
         {
+            // Default value if its not included in the config file.
+            _manifest.ProductManifest.Product.Name = "ClearCanvas Workstation";
+            
             XmlDocument xmldoc = new XmlDocument();
 
             //Load Books.xml into the DOM.
             xmldoc.Load(path);
 
             XmlNodeList list = xmldoc.SelectNodes("configuration/applicationSettings/ClearCanvas.Common.ProductSettings/setting");
-
+            
             if (list != null)
                 foreach (XmlNode node in list)
                 {
@@ -231,7 +234,9 @@ namespace ClearCanvas.Utilities.Manifest
 
                     if (node.Attributes["name"].Value.Equals("Name"))
                     {
-                        _manifest.ProductManifest.Product.Name = val;
+                        _manifest.ProductManifest.Product.Name = string.IsNullOrEmpty(val) 
+                            ? "ClearCanvas Workstation" 
+                            : val;
                     }
                     else if (node.Attributes["name"].Value.Equals("Version"))
                     {

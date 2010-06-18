@@ -60,6 +60,7 @@
     <CommonDirectory>$(DistributionDirectory)\common</CommonDirectory>
     <PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
     <LogDirectory>$(DistributionDirectory)\logs</LogDirectory>
+    <ManifestDirectory>$(DistributionDirectory)\manifest</ManifestDirectory>
   </PropertyGroup>
 
   <ItemGroup>
@@ -67,6 +68,7 @@
     <DestinationDirectories Include="$(CommonDirectory)" />
     <DestinationDirectories Include="$(PluginsDirectory)" />
     <DestinationDirectories Include="$(LogDirectory)" />
+    <DestinationDirectories Include="$(ManifestDirectory)" />
   </ItemGroup>
 
   <!-- Config files, to be placed in distribution directory -->
@@ -96,6 +98,7 @@
     <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\Help\bin\$(Configuration)\ClearCanvas.Desktop.Help.dll" />
     <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\ExtensionBrowser\bin\$(Configuration)\ClearCanvas.Desktop.ExtensionBrowser.dll" />
     <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\ExtensionBrowser\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.dll" />
+    <SharedPluginFiles Include="$(ProjectDir)\..\..\Utilities\Manifest\bin\$(Configuration)\ClearCanvas.Utilities.Manifest.dll" />
   </ItemGroup>
 
   <!--Icon Files-->

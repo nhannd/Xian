@@ -40,6 +40,7 @@ using System.Reflection;
 using System.IO;
 using System.Diagnostics;
 using ClearCanvas.Common;
+using ClearCanvas.Utilities.Manifest;
 
 namespace ClearCanvas.Desktop.Help
 {
@@ -55,6 +56,8 @@ namespace ClearCanvas.Desktop.Help
 			_copyright.Text = ProductInformation.Copyright;
 			_license.Text = ProductInformation.License;
 
+            _manifest.Visible = !ManifestVerification.Valid;
+           
 			if (AboutSettings.Default.UseSettings)
 			{
 				Assembly assembly = Assembly.Load(AboutSettings.Default.BackgroundImageAssemblyName);
@@ -65,7 +68,7 @@ namespace ClearCanvas.Desktop.Help
 					if (stream != null)
 					{
 						this.BackgroundImage = new Bitmap(stream);
-						this.ClientSize = this.BackgroundImage.Size;
+						ClientSize = this.BackgroundImage.Size;
 					}
 				}
 
@@ -90,6 +93,13 @@ namespace ClearCanvas.Desktop.Help
 				this._license.ForeColor = AboutSettings.Default.LicenseForeColor;
 				this._license.Font = AboutSettings.Default.LicenseFontBold ? new Font(this._license.Font, FontStyle.Bold) : this._license.Font;
 				this._license.TextAlign = AboutSettings.Default.LicenseTextAlign;
+
+                this._manifest.Location = AboutSettings.Default.ManifestLocation;
+                this._manifest.Size = AboutSettings.Default.ManifestSize;
+                this._manifest.AutoSize = AboutSettings.Default.ManifestAutoSize;
+                this._manifest.ForeColor = AboutSettings.Default.ManifestForeColor;
+                this._manifest.Font = AboutSettings.Default.ManifestFontBold ? new Font(this._manifest.Font, FontStyle.Bold) : this._license.Font;
+                this._manifest.TextAlign = AboutSettings.Default.ManifestTextAlign;
 
 				this._closeButton.Anchor = AnchorStyles.Right | AnchorStyles.Top;
 				this._closeButton.LinkColor = AboutSettings.Default.CloseButtonLinkColor;

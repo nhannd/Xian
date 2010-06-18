@@ -42,6 +42,7 @@ using System.Windows.Forms;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Utilities.Manifest;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -140,6 +141,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// Make the window completely transparent
 			Opacity = 0;
 
+            // Set the manifest warning.
+            _manifest.Visible = !ManifestVerification.Valid;
+             
 			// Apply any splash screen settings, if requested
 			if (SplashScreenSettings.Default.UseSplashScreenSettings)
 			{
@@ -165,7 +169,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				this._status.Font = SplashScreenSettings.Default.StatusFontBold ? new Font(this._status.Font, FontStyle.Bold) : this._status.Font;
 				this._status.TextAlign = SplashScreenSettings.Default.StatusTextAlign;
 
-				this._copyright.Visible = SplashScreenSettings.Default.CopyrightVisible;
+              	this._copyright.Visible = SplashScreenSettings.Default.CopyrightVisible;
 				this._copyright.Location = SplashScreenSettings.Default.CopyrightLocation;
 				this._copyright.Size = SplashScreenSettings.Default.CopyrightSize;
 				this._copyright.AutoSize = SplashScreenSettings.Default.CopyrightAutoSize;
@@ -188,6 +192,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 				this._license.ForeColor = SplashScreenSettings.Default.LicenseForeColor;
 				this._license.Font = SplashScreenSettings.Default.LicenseFontBold ? new Font(this._license.Font, FontStyle.Bold) : this._license.Font;
 				this._license.TextAlign = SplashScreenSettings.Default.LicenseTextAlign;
+
+                this._manifest.Location = SplashScreenSettings.Default.ManifestLocation;
+                this._manifest.Size = SplashScreenSettings.Default.ManifestSize;
+                this._manifest.AutoSize = SplashScreenSettings.Default.ManifestAutoSize;
+                this._manifest.ForeColor = SplashScreenSettings.Default.ManifestForeColor;
+                this._manifest.Font = SplashScreenSettings.Default.ManifestFontBold ? new Font(this._manifest.Font, FontStyle.Bold) : this._license.Font;
+                this._manifest.TextAlign = SplashScreenSettings.Default.ManifestTextAlign;
 
 				this._pluginIconsRectangle = SplashScreenSettings.Default.PluginIconsRectangle;
 				this._nextIconPositionX = _pluginIconsRectangle.Left + IconPaddingX / 2;

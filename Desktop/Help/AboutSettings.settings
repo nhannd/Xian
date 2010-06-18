@@ -74,5 +74,23 @@
     <Setting Name="CloseButtonLinkColor" Type="System.Drawing.Color" Scope="Application">
       <Value Profile="(Default)">60, 150, 208</Value>
     </Setting>
+    <Setting Name="ManifestLocation" Type="System.Drawing.Point" Scope="Application">
+      <Value Profile="(Default)">447, 331</Value>
+    </Setting>
+    <Setting Name="ManifestSize" Type="System.Drawing.Size" Scope="Application">
+      <Value Profile="(Default)">214, 13</Value>
+    </Setting>
+    <Setting Name="ManifestAutoSize" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ManifestForeColor" Type="System.Drawing.Color" Scope="Application">
+      <Value Profile="(Default)">Firebrick</Value>
+    </Setting>
+    <Setting Name="ManifestFontBold" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ManifestTextAlign" Type="System.Drawing.ContentAlignment" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>
