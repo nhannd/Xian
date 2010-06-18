@@ -135,6 +135,9 @@
   <data name="MenuAdvanced" xml:space="preserve">
     <value>Ad&amp;vanced</value>
   </data>
+  <data name="MenuDebug" xml:space="preserve">
+    <value>&amp;Debug</value>
+  </data>
   <data name="MenuFusion" xml:space="preserve">
     <value>&amp;Fusion</value>
   </data>

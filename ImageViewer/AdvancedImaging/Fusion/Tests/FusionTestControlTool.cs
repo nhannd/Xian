@@ -29,22 +29,21 @@
 
 #endregion
 
-#if DEBUG
+#if	UNIT_TESTS
+#pragma warning disable 1591,0419,1574,1587
 
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Common;
-using ClearCanvas.ImageViewer.Graphics;
 
-namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Possum
+namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 {
-	[MenuAction("alpha", "global-menus/MenuDebug/Fusion.DropThisVolume", "DropThisVolume")]
-	[MenuAction("bravo", "global-menus/MenuDebug/Fusion.DropThisSlice", "DropThisSlice")]
-	[MenuAction("charlie", "global-menus/MenuDebug/Fusion.DropAllSlices", "DropAllSlices")]
+	[MenuAction("alpha", "global-menus/MenuDebug/MenuFusion/Unload PET Volume", "DropThisVolume")]
+	[MenuAction("bravo", "global-menus/MenuDebug/MenuFusion/Unload Selected Fused Image", "DropThisSlice")]
+	[MenuAction("charlie", "global-menus/MenuDebug/MenuFusion/Unload Fused Display Set", "DropAllSlices")]
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
-	public class FusionTestControlTool : ImageViewerTool
+	internal class FusionTestControlTool : ImageViewerTool
 	{
 		public void DropThisVolume()
 		{
