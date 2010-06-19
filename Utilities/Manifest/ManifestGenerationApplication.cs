@@ -79,7 +79,9 @@ namespace ClearCanvas.Utilities.Manifest
                 List<ManifestInput> list = new List<ManifestInput>();
                 foreach (string filename in _cmdLine.Positional)
                 {
-                    list.Add(ManifestInput.Deserialize(filename));
+                    string[] files = filename.Split(new[] {';'});
+                    foreach (string f in files)
+                        list.Add(ManifestInput.Deserialize(f));
                 }
 
                 if (_cmdLine.Package)
@@ -115,10 +117,13 @@ namespace ClearCanvas.Utilities.Manifest
 
                 ProcessFiles(list);
 
-                if (File.Exists(_cmdLine.Manifest))
-                    File.Delete(_cmdLine.Manifest);
+                string manifestPath = Path.Combine(_cmdLine.DistributionDirectory, Platform.ManifestDirectory);
+                manifestPath = Path.Combine(manifestPath, _cmdLine.Manifest);
 
-                ClearCanvasManifest.Serialize(_cmdLine.Manifest, _manifest);
+                if (File.Exists(manifestPath))
+                    File.Delete(manifestPath);
+
+                ClearCanvasManifest.Serialize(manifestPath, _manifest);
 
                 Environment.ExitCode = 0;
             }
@@ -130,7 +135,8 @@ namespace ClearCanvas.Utilities.Manifest
             }
             catch (Exception e)
             {
-                Console.WriteLine("Unexpected exception when upgrading database: {0}", e.Message);
+                Console.WriteLine("Unexpected exception when generating manifest: {0}", e.Message);
+                Console.WriteLine(e.StackTrace);
                 Environment.ExitCode = -1;
             }
         }
@@ -149,8 +155,8 @@ namespace ClearCanvas.Utilities.Manifest
 
                     if (!File.Exists(fullPath))
                     {
-                        if (!Directory.Exists(fullPath))
-                            continue;
+                        if (!Directory.Exists(fullPath) && !inputFile.Ignore)
+                            throw new ApplicationException("File in manifest not in distribution: " + inputFile.Name);
 
                         ManifestFile directory = new ManifestFile
                                                      {

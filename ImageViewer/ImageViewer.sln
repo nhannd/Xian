@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		ImageViewer_dist.config = ImageViewer_dist.config
 		ImageViewer_dist.proj = ImageViewer_dist.proj
 		ImageViewer_Shreds_dist.config = ImageViewer_Shreds_dist.config
+		ImageViewerManifest.proj = ImageViewerManifest.proj
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Common", "..\Common\ClearCanvas.Common.csproj", "{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}"
@@ -264,6 +265,25 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.AdvancedImaging.Fusion", "AdvancedImaging\Fusion\ClearCanvas.ImageViewer.AdvancedImaging.Fusion.csproj", "{BD56AC53-F4B2-46AA-9371-D0E6F569A9D2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Utilities.Manifest", "..\Utilities\Manifest\ClearCanvas.Utilities.Manifest.csproj", "{E2F1A5D4-73A4-4BA6-AA5A-87BBDEC727F8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Manifest Items", "Manifest Items", "{1662BA41-9AFC-481B-9511-911D770E3D5B}"
+	ProjectSection(SolutionItems) = preProject
+		ManifestInputDatabase.xml = ManifestInputDatabase.xml
+		ManifestInputDesktop.xml = ManifestInputDesktop.xml
+		ManifestInputDesktopServices.xml = ManifestInputDesktopServices.xml
+		ManifestInputDicomEditor.xml = ManifestInputDicomEditor.xml
+		ManifestInputDicomRemote.xml = ManifestInputDicomRemote.xml
+		ManifestInputEnterprise.xml = ManifestInputEnterprise.xml
+		ManifestInputHelpUpdate.xml = ManifestInputHelpUpdate.xml
+		ManifestInputMpr.xml = ManifestInputMpr.xml
+		ManifestInputReporting.xml = ManifestInputReporting.xml
+		ManifestInputSeriesDetails.xml = ManifestInputSeriesDetails.xml
+		ManifestInputServiceTools.xml = ManifestInputServiceTools.xml
+		ManifestInputStreaming.xml = ManifestInputStreaming.xml
+		ManifestInputStudyBrowser.xml = ManifestInputStudyBrowser.xml
+		ManifestInputStudyComposer.xml = ManifestInputStudyComposer.xml
+		ManifestInputStudyFilters.xml = ManifestInputStudyFilters.xml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

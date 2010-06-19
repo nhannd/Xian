@@ -1,0 +1,212 @@
+<Project DefaultTargets="Create Manifests" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- ImageViewer Manifest Creation -->
+
+  <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.RegexIsMatch" AssemblyFile="$(TrunkDirectory)\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
+
+  <PropertyGroup>
+    <TrunkDirectory>$(MSBuildProjectDirectory)\..\</TrunkDirectory>
+  </PropertyGroup>
+
+  <Choose>
+    <When Condition=" '$(ProjectOutDir)' != '$(DistributionDirectory)' ">
+      <PropertyGroup>
+        <ManifestDirectory>$(DistributionDirectory)\manifest</ManifestDirectory>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <ManifestDirectory>$(TrunkDirectory)\manifest</ManifestDirectory>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <Choose>
+    <When Condition=" '$(TargetPlatform)' != 'x86' ">
+      <PropertyGroup>
+        <PlatformSubFolder>$(TargetPlatform)</PlatformSubFolder>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <!-- assumes Win32 -->
+      <PropertyGroup>
+        <PlatformSubFolder></PlatformSubFolder>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <Choose>
+    <When Condition="'$(Options)' == ''">
+      <PropertyGroup>
+        <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeEnterprise+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr+ExcludeSeriesDetails</OptionsFlags>-->
+        <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr+ExcludeSeriesDetails</OptionsFlags>-->
+        <!--<OptionsFlags>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeMpr+ExcludeSeriesDetails</OptionsFlags>-->
+        <OptionsFlags>ExcludeStudyComposer+ExcludeEnterprise</OptionsFlags>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <OptionsFlags>$(Options)</OptionsFlags>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+ 
+  <Target Name="Create Desktop Manifest">
+    
+    <Exec Command="$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe ClearCanvas.Utilities.Manifest.ManifestGenerationApplication /d=$(DistributionDirectory) /m=Manifest.xml $(TrunkDirectory)\ImageViewer\ManifestInputDesktop.xml @(ManifestFiles)" WorkingDirectory="$(DistributionDirectory)"/>
+
+    <Delete Files="$(DistributionDirectory)\logs\*"/>
+  </Target>
+
+
+
+
+  <Target Name="StudyBrowser" >
+    <CreateItem Include="$(TrunkDirectory)\ImageViewer\ManifestInputStudyBrowser.xml">
+      <Output TaskParameter="Include" ItemName="ManifestFiles" />
+    </CreateItem>
+  </Target>
+  <Target Name="ServiceTools" >
+    <CreateItem Include="$(TrunkDirectory)\ImageViewer\ManifestInputServiceTools.xml">
+      <Output TaskParameter="Include" ItemName="ManifestFiles" />
+    </CreateItem>
+  </Target>
+  <Target Name="DesktopServices" >
+    <CreateItem Include="$(TrunkDirectory)\ImageViewer\ManifestInputDesktopServices.xml">
+      <Output TaskParameter="Include" ItemName="ManifestFiles" />
+    </CreateItem>
+  </Target>
+  <Target Name="StudyComposer" >
+    <CreateItem Include="$(TrunkDirectory)\ImageViewer\ManifestInputStudyComposer.xml">
+      <Output TaskParameter="Include" ItemName="ManifestFiles" />
+    </CreateItem>
+  </Target>
+  <Target Name="DicomEditor" >
+    <CreateItem Include="$(TrunkDirectory)\ImageViewer\ManifestInputDicomEditor.xml">
+      <Output TaskParameter="Include" ItemName="ManifestFiles" />
+    </CreateItem>
+  </Target>
+  <Target Name="StudyFilters" >
+    <CreateItem Include="$(TrunkDirectory)\ImageViewer\ManifestInputStudyFilters.xml">
+      <Output TaskParameter="Include" ItemName="ManifestFiles" />
+    </CreateItem>
+  </Target>
+  <Target Name="SeriesDetails" >
+    <CreateItem Include="$(TrunkDirectory)\ImageViewer\ManifestInputSeriesDetails.xml">
+      <Output TaskParameter="Include" ItemName="ManifestFiles" />
+    </CreateItem>
+  </Target>
+  <Target Name="Reporting" >
+    <CreateItem Include="$(TrunkDirectory)\ImageViewer\ManifestInputReporting.xml">
+      <Output TaskParameter="Include" ItemName="ManifestFiles" />
+    </CreateItem>
+  </Target>
+  <Target Name="HelpUpdate" >
+    <CreateItem Include="$(TrunkDirectory)\ImageViewer\ManifestInputHelpUpdate.xml">
+      <Output TaskParameter="Include" ItemName="ManifestFiles" />
+    </CreateItem>
+  </Target>
+  <Target Name="DicomRemote" >
+    <CreateItem Include="$(TrunkDirectory)\ImageViewer\ManifestInputDicomRemote.xml">
+      <Output TaskParameter="Include" ItemName="ManifestFiles" />
+    </CreateItem>
+  </Target>
+  <Target Name="Database" >
+    <CreateItem Include="$(TrunkDirectory)\ImageViewer\ManifestInputDatabase.xml">
+      <Output TaskParameter="Include" ItemName="ManifestFiles" />
+    </CreateItem>
+  </Target>
+  <Target Name="Streaming" >
+    <CreateItem Include="$(TrunkDirectory)\ImageViewer\ManifestInputStreaming.xml">
+      <Output TaskParameter="Include" ItemName="ManifestFiles" />
+    </CreateItem>
+  </Target>
+  <Target Name="Mpr" >
+    <CreateItem Include="$(TrunkDirectory)\ImageViewer\ManifestInputMpr.xml">
+      <Output TaskParameter="Include" ItemName="ManifestFiles" />
+    </CreateItem>
+  </Target>
+  <Target Name="Enterprise" >
+    <CreateItem Include="$(TrunkDirectory)\ImageViewer\ManifestInputEnterprise.xml">
+      <Output TaskParameter="Include" ItemName="ManifestFiles" />
+    </CreateItem>
+  </Target> 
+  
+  <Target Name ="Create Manifests" >
+
+    <RegexIsMatch Pattern="ExcludeStudyBrowser" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeStudyBrowser" />
+    </RegexIsMatch>
+    <CallTarget Targets="StudyBrowser" Condition ="!$(ExcludeStudyBrowser)"/>
+    
+    <RegexIsMatch Pattern="ExcludeServiceTools" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeServiceTools" />
+    </RegexIsMatch>
+    <CallTarget Targets="ServiceTools" Condition ="!$(ExcludeServiceTools)"/>
+    
+    <RegexIsMatch Pattern="ExcludeDesktopServices" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeDesktopServices" />
+    </RegexIsMatch>
+    <CallTarget Targets="DesktopServices" Condition ="!$(ExcludeDesktopServices)"/>
+
+    <RegexIsMatch Pattern="ExcludeStudyComposer" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeStudyComposer" />
+    </RegexIsMatch>
+    <CallTarget Targets="StudyComposer" Condition ="!$(ExcludeStudyComposer)"/>
+    
+    <RegexIsMatch Pattern="ExcludeDicomEditor" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeDicomEditor" />
+    </RegexIsMatch>
+    <CallTarget Targets="DicomEditor" Condition ="!$(ExcludeDicomEditor)"/>
+    
+    <RegexIsMatch Pattern="ExcludeStudyFilters" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeStudyFilters" />
+    </RegexIsMatch>
+    <CallTarget Targets="StudyFilters" Condition ="!$(ExcludeStudyFilters)"/>
+    
+    <RegexIsMatch Pattern="ExcludeSeriesDetails" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeSeriesDetails" />
+    </RegexIsMatch>
+    <CallTarget Targets="SeriesDetails" Condition ="!$(ExcludeSeriesDetails)"/>
+    
+    <RegexIsMatch Pattern="ExcludeReporting" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeReporting" />
+    </RegexIsMatch>
+    <CallTarget Targets="Reporting" Condition ="!$(ExcludeReporting)"/>
+    
+    <RegexIsMatch Pattern="ExcludeHelpUpdate" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeHelpUpdate" />
+    </RegexIsMatch>
+    <CallTarget Targets="HelpUpdate" Condition ="!$(ExcludeHelpUpdate)"/>
+    
+    <RegexIsMatch Pattern="ExcludeDatabase" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeDatabase" />
+    </RegexIsMatch>
+    <CallTarget Targets="Database" Condition ="!$(ExcludeDatabase)"/>
+    
+    <RegexIsMatch Pattern="ExcludeDicomRemote" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeDicomRemote" />
+    </RegexIsMatch>
+    <CallTarget Targets="DicomRemote" Condition ="!$(ExcludeDicomRemote)"/>
+        
+    <RegexIsMatch Pattern="ExcludeStreaming" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeStreaming" />
+    </RegexIsMatch>
+    <CallTarget Targets="Streaming" Condition ="!$(ExcludeStreaming)"/>
+    
+    <RegexIsMatch Pattern="ExcludeMpr" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeMpr" />
+    </RegexIsMatch>
+    <CallTarget Targets="Mpr" Condition ="!$(ExcludeMpr)"/>
+    
+    <RegexIsMatch Pattern="ExcludeEnterprise" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeEnterprise" />
+    </RegexIsMatch>
+    <CallTarget Targets="Enterprise" Condition ="!$(ExcludeEnterprise)"/>
+
+    <!-- Create the base manifest -->
+    <CallTarget Targets="Create Desktop Manifest" />
+    
+    
+  </Target>
+</Project>

@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ManifestInput xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.clearcanvas.ca">
+  <Files>
+    <File name="plugins\ClearCanvas.ImageViewer.Volume.Mpr.dll" signed="true" />
+    <File name="plugins\ClearCanvas.ImageViewer.Volume.Mpr.View.WinForms.dll" signed="true" />
+    <File name="plugins\vtkCommon.dll" signed="true" />
+    <File name="plugins\vtkCommonDotNet.dll" signed="true" />
+    <File name="plugins\vtkFiltering.dll" signed="true" />
+    <File name="plugins\vtkFilteringDotNet.dll" signed="true" />
+    <File name="plugins\vtkImaging.dll" signed="true" />
+    <File name="plugins\vtkImagingDotNet.dll" signed="true" />
+    <File name="plugins\vtksys.dll" signed="true" />
+  </Files>
+</ManifestInput>

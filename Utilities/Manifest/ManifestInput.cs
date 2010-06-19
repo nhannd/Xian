@@ -61,6 +61,7 @@ namespace ClearCanvas.Utilities.Manifest
             [DefaultValue(false)]
             public bool Config { get; set; }
 
+            [XmlAttribute(AttributeName = "name", DataType = "string")]
             public string Name;
         }
 
