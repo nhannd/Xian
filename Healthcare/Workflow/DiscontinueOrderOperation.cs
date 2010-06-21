@@ -29,10 +29,12 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare.Workflow
 {
+	[Obsolete("Use CancelOrDiscontinueOrderOperation instead")]
 	public class DiscontinueOrderOperation
 	{
         /// <summary>

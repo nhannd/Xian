@@ -32,6 +32,7 @@
 using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Threading;
+using ClearCanvas.Healthcare.Workflow.OrderEntry;
 using Iesi.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -39,7 +40,6 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Healthcare.Workflow;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
@@ -435,9 +435,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			var order = this.PersistenceContext.GetBroker<IOrderBroker>().Load(itemKey.OrderRef);
 
 			// the order can be replaced iff it can be cancelled/discontinued
-			var cancelOp = new CancelOrderOperation();
-			var discOp = new DiscontinueOrderOperation();
-			return discOp.CanExecute(order) || cancelOp.CanExecute(order);
+			var operation = new CancelOrDiscontinueOrderOperation();
+			return operation.CanExecute(order);
 		}
 
 		public bool CanMergeOrder(WorklistItemKey itemKey)
@@ -478,9 +477,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			var order = this.PersistenceContext.GetBroker<IOrderBroker>().Load(itemKey.OrderRef);
 
 			// cancel or discontinue
-			var cancelOp = new CancelOrderOperation();
-			var discOp = new DiscontinueOrderOperation();
-			return discOp.CanExecute(order) || cancelOp.CanExecute(order);
+			var operation = new CancelOrDiscontinueOrderOperation();
+			return operation.CanExecute(order);
 		}
 
 		#endregion
@@ -625,16 +623,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 		private static void CancelOrderHelper(Order order, OrderCancelInfo info)
 		{
-			if (order.Status == OrderStatus.SC)
-			{
-				var op = new CancelOrderOperation();
-				op.Execute(order, info);
-			}
-			else if (order.Status == OrderStatus.IP)
-			{
-				var op = new DiscontinueOrderOperation();
-				op.Execute(order, info);
-			}
+			var operation = new CancelOrDiscontinueOrderOperation();
+			operation.Execute(order, info);
 		}
 
 		private string GetAccessionNumberForOrder(OrderRequisition requisition)

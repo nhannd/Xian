@@ -192,6 +192,7 @@
     <Compile Include="TranscriptionReviewStepSearchCriteria.cs" />
     <Compile Include="TranscriptionWorklists.cs" />
     <Compile Include="Workflow\DiscontinueOrderOperation.cs" />
+    <Compile Include="Workflow\OrderEntry\Operations.cs" />
     <Compile Include="Workflow\Reporting\ReportingWorkflowSettings.cs" />
     <Compile Include="Workflow\Reporting\ReportingWorkflowSettings.Designer.cs">
       <AutoGen>True</AutoGen>

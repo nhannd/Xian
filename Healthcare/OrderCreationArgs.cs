@@ -194,5 +194,10 @@ namespace ClearCanvas.Healthcare
 		/// List of recipients to receive order results. Optional.
 		/// </summary>
 		public IList<ResultRecipient> ResultRecipients;
+
+		/// <summary>
+		/// Placer order number.  Optional.
+		/// </summary>
+		public string PlacerOrderNumber;
 	}
 }
