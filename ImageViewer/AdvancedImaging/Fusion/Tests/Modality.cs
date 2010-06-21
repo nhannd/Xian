@@ -32,53 +32,13 @@
 #if	UNIT_TESTS
 #pragma warning disable 1591,0419,1574,1587
 
-using ClearCanvas.Common;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.BaseTools;
-using ClearCanvas.ImageViewer.Common;
-
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 {
-	[MenuAction("alpha", "global-menus/MenuDebug/MenuFusion/Unload PET Volume", "DropThisVolume")]
-	[MenuAction("bravo", "global-menus/MenuDebug/MenuFusion/Unload Selected Fused Image", "DropThisSlice")]
-	[MenuAction("charlie", "global-menus/MenuDebug/MenuFusion/Unload Fused Display Set", "DropAllSlices")]
-	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
-	internal class FusionTestControlTool : ImageViewerTool
+	public enum Modality
 	{
-		public void DropThisVolume()
-		{
-			var image = base.SelectedPresentationImage as FusionPresentationImage;
-			if (image != null)
-			{
-				Unload(image.OverlayFrameData.OverlayData);
-			}
-		}
-
-		public void DropThisSlice()
-		{
-			var image = base.SelectedPresentationImage as FusionPresentationImage;
-			if (image != null)
-			{
-				Unload(image.OverlayFrameData);
-			}
-		}
-
-		public void DropAllSlices()
-		{
-			var image = base.SelectedPresentationImage as FusionPresentationImage;
-			if (image != null)
-			{
-				foreach (FusionPresentationImage singleImage in base.SelectedPresentationImage.ParentDisplaySet.PresentationImages)
-				{
-					Unload(singleImage.OverlayFrameData);
-				}
-			}
-		}
-
-		private static void Unload(ILargeObjectContainer loc)
-		{
-			loc.Unload();
-		}
+		CT,
+		MR,
+		PT
 	}
 }
 

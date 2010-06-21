@@ -117,19 +117,29 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		/// <summary>
 		/// Initializes a <see cref="VolumeSlicerParams"/> for a slice orientation defined using a set of orthogonal basis vectors.
 		/// </summary>
+		/// <remarks>
+		/// The provided orthogonal basis vectors need not be unit vectors.
+		/// </remarks>
 		/// <param name="xAxis">The desired X-axis of the coordinate system in the slice orientation.</param>
 		/// <param name="yAxis">The desired Y-axis of the coordinate system in the slice orientation.</param>
 		/// <param name="zAxis">The desired Z-axis of the coordinate system in the slice orientation.</param>
+		/// <exception cref="ArgumentNullException">Thrown if any of the provided vectors is null.</exception>
+		/// <exception cref="ArgumentException">Thrown if the provided vectors do not form an orthogonal basis.</exception>
 		public VolumeSlicerParams(Vector3D xAxis, Vector3D yAxis, Vector3D zAxis)
 			: this(CalcRotateMatrixFromOrthogonalBasis(xAxis, yAxis, zAxis)) {}
 
 		/// <summary>
 		/// Initializes a <see cref="VolumeSlicerParams"/> for a slice orientation defined using a set of orthogonal basis vectors.
 		/// </summary>
+		/// <remarks>
+		/// The provided orthogonal basis vectors need not be unit vectors.
+		/// </remarks>
 		/// <param name="xAxis">The desired X-axis of the coordinate system in the slice orientation.</param>
 		/// <param name="yAxis">The desired Y-axis of the coordinate system in the slice orientation.</param>
 		/// <param name="zAxis">The desired Z-axis of the coordinate system in the slice orientation.</param>
 		/// <param name="description">A string value for describing the orientation.</param>
+		/// <exception cref="ArgumentNullException">Thrown if any of the provided vectors is null.</exception>
+		/// <exception cref="ArgumentException">Thrown if the provided vectors do not form an orthogonal basis.</exception>
 		public VolumeSlicerParams(Vector3D xAxis, Vector3D yAxis, Vector3D zAxis, string description)
 			: this(CalcRotateMatrixFromOrthogonalBasis(xAxis, yAxis, zAxis))
 		{
@@ -141,6 +151,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		/// </summary>
 		/// <param name="sliceRotation">The desired 4x4 affine transformation matrix.</param>
 		/// <param name="description">A string value for describing the orientation.</param>
+		/// <exception cref="ArgumentNullException">Thrown if the provided matrix is null.</exception>
+		/// <exception cref="ArgumentException">Thrown if the provided matrix is not an affine transform.</exception>
 		public VolumeSlicerParams(Matrix sliceRotation, string description)
 			: this(sliceRotation)
 		{
@@ -151,6 +163,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		/// Initializes a <see cref="VolumeSlicerParams"/> for a slice orientation defined as a 4x4 affine transformation matrix.
 		/// </summary>
 		/// <param name="sliceRotation">The desired 4x4 affine transformation matrix.</param>
+		/// <exception cref="ArgumentNullException">Thrown if the provided matrix is null.</exception>
+		/// <exception cref="ArgumentException">Thrown if the provided matrix is not an affine transform.</exception>
 		public VolumeSlicerParams(Matrix sliceRotation)
 		{
 			const string invalidTransformMessage = "sliceRotation must be a 4x4 affine transformation matrix.";
@@ -346,6 +360,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Platform.CheckForNullReference(xAxis, "xAxis");
 			Platform.CheckForNullReference(yAxis, "yAxis");
 			Platform.CheckForNullReference(zAxis, "zAxis");
+			Platform.CheckFalse(xAxis.IsNull || yAxis.IsNull || zAxis.IsNull, "Input must be an orthogonal set of basis vectors (i.e. non-trivial vectors).");
+			Platform.CheckTrue(FloatComparer.AreEqual(xAxis.Dot(yAxis), 0)
+			                   && FloatComparer.AreEqual(xAxis.Dot(zAxis), 0)
+			                   && FloatComparer.AreEqual(yAxis.Dot(zAxis), 0), "Input must be an orthogonal set of basis vectors (i.e. mutually perpendicular).");
 
 			xAxis = xAxis.Normalize();
 			yAxis = yAxis.Normalize();
