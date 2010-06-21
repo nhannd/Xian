@@ -1,7 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ManifestInput xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.clearcanvas.ca">
   <Files>
-    <File name="app.ico" />
+    <File name="app.ico" ignore="true"/>
+    <File name="ClearCanvas Workstation.url" ignore="true"/>
+    <File name="actionmodels.xml" ignore="true"/>
+    <File name="install.log" ignore="true" />
+    <File name="uninst.exe" ignore="true" />
+    <File name="uninstall.log" ignore="true" />
     <File name="CCWorkstationUsersGuide.chm" />
     <File name="ClearCanvas.Desktop.Executable.exe" signed="true" />
     <File name="ClearCanvas.Desktop.Executable.exe.config" config="true" />
@@ -28,8 +33,14 @@
     <File name="common\sqlceqp35.dll" signed="true" />
     <File name="common\sqlcese35.dll" signed="true" />
     <File name="common\System.Data.SqlServerCe.dll" signed="true" />
-    <File name="logs/" ignore="true" />
+    <File name="logs\" ignore="true" />
+    <File name="filestore\" ignore="true" />
+    <File name="manifest\" ignore="true" />
+    <File name="dicom_interim\" ignore="true" />
+    <File name="badfiles\" ignore="true" />
     <File name="plugins\BilinearInterpolation.dll" signed="true" />
+    <File name="plugins\Castle.Core.dll" signed="true" />
+    <File name="plugins\Castle.DynamicProxy2.dll" signed="true" />
     <File name="plugins\ClearCanvas.Desktop.dll" signed="true" />
     <File name="plugins\ClearCanvas.Desktop.ExtensionBrowser.dll" signed="true" />
     <File name="plugins\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.dll" signed="true" />
