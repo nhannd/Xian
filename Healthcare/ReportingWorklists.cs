@@ -149,7 +149,6 @@ namespace ClearCanvas.Healthcare
 	/// ReportingToBeReportedWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(false)]
 	[WorklistClassDescription("ReportingToBeReportedWorklistDescription")]
 	public class ReportingToBeReportedWorklist : ReportingWorklist
 	{
@@ -180,7 +179,6 @@ namespace ClearCanvas.Healthcare
 	/// ReportingAssignedWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(false)]
 	[StaticWorklist(true)]
 	[WorklistClassDescription("ReportingAssignedWorklistDescription")]
 	public class ReportingAssignedWorklist : ReportingWorklist
@@ -212,7 +210,6 @@ namespace ClearCanvas.Healthcare
 	/// ReportingToBeReviewedReportWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(false)]
 	[WorklistClassDescription("ReportingToBeReviewedReportWorklistDescription")]
 	public class ReportingToBeReviewedReportWorklist : ReportingWorklist
 	{
@@ -246,7 +243,6 @@ namespace ClearCanvas.Healthcare
 	/// ReportingAssignedReviewWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(false)]
 	[StaticWorklist(true)]
 	[WorklistClassDescription("ReportingAssignedReviewWorklistDescription")]
 	public class ReportingAssignedReviewWorklist : ReportingWorklist
@@ -284,7 +280,6 @@ namespace ClearCanvas.Healthcare
 	}
 
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(false)]
 	[StaticWorklist(true)]
 	[WorklistClassDescription("ReportingDraftWorklistDescription")]
 	public class ReportingDraftWorklist : ReportingWorklist
@@ -312,7 +307,6 @@ namespace ClearCanvas.Healthcare
 	}
 
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(false)]
 	[StaticWorklist(true)]
 	[WorklistClassDescription("ReportingInTranscriptionWorklistDescription")]
 	public class ReportingInTranscriptionWorklist : ReportingWorklist
@@ -340,7 +334,6 @@ namespace ClearCanvas.Healthcare
 	}
 
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(false)]
 	[StaticWorklist(true)]
 	[WorklistClassDescription("ReportingReviewTranscriptionWorklistDescription")]
 	public class ReportingReviewTranscriptionWorklist : ReportingWorklist
@@ -374,7 +367,6 @@ namespace ClearCanvas.Healthcare
 	}
 
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(false)]
 	[StaticWorklist(true)]
 	[WorklistClassDescription("ReportingAwaitingReviewWorklistDescription")]
 	public class ReportingAwaitingReviewWorklist : ReportingWorklist
@@ -409,7 +401,6 @@ namespace ClearCanvas.Healthcare
 	}
 
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[StaticWorklist(true)]
 	[WorklistClassDescription("ReportingVerifiedWorklistDescription")]
 	public class ReportingVerifiedWorklist : ReportingWorklist

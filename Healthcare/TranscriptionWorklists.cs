@@ -49,7 +49,6 @@ namespace ClearCanvas.Healthcare
 	/// TranscriptionToBeTranscribedWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(false)]
 	[WorklistClassDescription("TranscriptionToBeTranscribedWorklistDescription")]
 	public class TranscriptionToBeTranscribedWorklist : TranscriptionWorklist
 	{
@@ -71,7 +70,6 @@ namespace ClearCanvas.Healthcare
 	}
 
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(false)]
 	[StaticWorklist(true)]
 	[WorklistClassDescription("TranscriptionDraftWorklistDescription")]
 	public class TranscriptionDraftWorklist : TranscriptionWorklist
@@ -94,7 +92,6 @@ namespace ClearCanvas.Healthcare
 	}
 
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(false)]
 	[StaticWorklist(true)]
 	[WorklistClassDescription("TranscriptionToBeReviewedWorklistDescription")]
 	public class TranscriptionToBeReviewedWorklist : TranscriptionWorklist
@@ -117,7 +114,6 @@ namespace ClearCanvas.Healthcare
 	}
 
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(false)]
 	[StaticWorklist(true)]
 	[WorklistClassDescription("TranscriptionAwaitingReviewWorklistDescription")]
 	public class TranscriptionAwaitingReviewWorklist : TranscriptionWorklist
@@ -141,7 +137,6 @@ namespace ClearCanvas.Healthcare
 	}
 
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[StaticWorklist(true)]
 	[WorklistClassDescription("TranscriptionCompletedWorklistDescription")]
 	public class TranscriptionCompletedWorklist : TranscriptionWorklist

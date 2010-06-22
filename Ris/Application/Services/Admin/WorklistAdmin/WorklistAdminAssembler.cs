@@ -59,7 +59,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 				Worklist.GetDescription(worklistClass),
 				ptgClass == null ? null : ptgClass.Name,
 				ptgClass == null ? null : TerminologyTranslator.Translate(ptgClass),
-				Worklist.GetSupportsTimeFilter(worklistClass),
 				Worklist.GetSupportsReportingStaffRoleFilter(worklistClass));
 		}
 
@@ -236,19 +235,15 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 				worklist.PortableFilter.Value = CollectionUtils.FirstElement(set, false);
 			}
 
-			// time window filters
-			if (Worklist.GetSupportsTimeFilter(worklist.GetClass()))
+			var start = CreateTimePoint(detail.StartTime);
+			var end = CreateTimePoint(detail.EndTime);
+			if (start != null || end != null)
 			{
-				var start = CreateTimePoint(detail.StartTime);
-				var end = CreateTimePoint(detail.EndTime);
-				if (start != null || end != null)
-				{
-					worklist.TimeFilter.Value = new WorklistTimeRange(start, end);
-					worklist.TimeFilter.IsEnabled = true;
-				}
-				else
-					worklist.TimeFilter.IsEnabled = false;
+				worklist.TimeFilter.Value = new WorklistTimeRange(start, end);
+				worklist.TimeFilter.IsEnabled = true;
 			}
+			else
+				worklist.TimeFilter.IsEnabled = false;
 
 			// process subscriptions
 			if (updateSubscribers)

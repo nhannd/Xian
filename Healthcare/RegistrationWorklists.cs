@@ -70,7 +70,6 @@ namespace ClearCanvas.Healthcare
 	/// RegistrationToBeScheduledWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistCategory("WorklistCategoryBooking")]
 	[WorklistClassDescription("RegistrationToBeScheduledWorklistDescription")]
 	public class RegistrationToBeScheduledWorklist : RegistrationWorklist
@@ -99,7 +98,6 @@ namespace ClearCanvas.Healthcare
 	/// RegistrationScheduledWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("RegistrationScheduledWorklistDescription")]
 	public class RegistrationScheduledWorklist : RegistrationWorklist
 	{
@@ -124,7 +122,6 @@ namespace ClearCanvas.Healthcare
 	/// RegistrationCheckedInWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("RegistrationCheckedInWorklistDescription")]
 	public class RegistrationCheckedInWorklist : RegistrationWorklist
 	{
@@ -150,7 +147,6 @@ namespace ClearCanvas.Healthcare
 	/// RegistrationInProgessWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("RegistrationInProgressWorklistDescription")]
 	public class RegistrationInProgressWorklist : RegistrationWorklist
 	{
@@ -175,7 +171,6 @@ namespace ClearCanvas.Healthcare
 	/// RegistrationPerformedWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("RegistrationPerformedWorklistDescription")]
 	public class RegistrationPerformedWorklist : RegistrationWorklist
 	{
@@ -202,7 +197,6 @@ namespace ClearCanvas.Healthcare
 	/// RegistrationCancelledWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("RegistrationCancelledWorklistDescription")]
 	public class RegistrationCancelledWorklist : RegistrationWorklist
 	{

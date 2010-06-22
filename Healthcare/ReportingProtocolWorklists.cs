@@ -74,7 +74,6 @@ namespace ClearCanvas.Healthcare
 	/// ReportingToBeProtocolledWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("ReportingToBeProtocolledWorklistDescription")]
 	public class ReportingToBeProtocolledWorklist : ProtocolingWorklist
 	{
@@ -98,7 +97,6 @@ namespace ClearCanvas.Healthcare
 	}
 
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[StaticWorklist(true)]
 	[WorklistClassDescription("ReportingAssignedProtocolWorklistDescription")]
 	public class ReportingAssignedProtocolWorklist : ProtocolingWorklist
@@ -122,7 +120,6 @@ namespace ClearCanvas.Healthcare
 	}
 
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("ReportingToBeReviewedProtocolWorklistDescription")]
 	public class ReportingToBeReviewedProtocolWorklist : ProtocolingWorklist
 	{
@@ -145,7 +142,6 @@ namespace ClearCanvas.Healthcare
 	}
 
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[StaticWorklist(true)]
 	[WorklistClassDescription("ReportingAssignedReviewProtocolWorklistDescription")]
 	public class ReportingAssignedReviewProtocolWorklist : ProtocolingWorklist
@@ -169,7 +165,6 @@ namespace ClearCanvas.Healthcare
 	}
 
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(false)]
 	[StaticWorklist(true)]
 	[WorklistClassDescription("ReportingDraftProtocolWorklistDescription")]
 	public class ReportingDraftProtocolWorklist : ProtocolingWorklist
@@ -192,7 +187,6 @@ namespace ClearCanvas.Healthcare
 	}
 
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[StaticWorklist(true)]
 	[WorklistClassDescription("ReportingCompletedProtocolWorklistDescription")]
 	public class ReportingCompletedProtocolWorklist : ProtocolingWorklist
@@ -216,7 +210,6 @@ namespace ClearCanvas.Healthcare
 	}
 
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[StaticWorklist(true)]
 	[WorklistClassDescription("ReportingRejectedProtocolWorklistDescription")]
 	public class ReportingRejectedProtocolWorklist : ProtocolingWorklist
@@ -240,7 +233,6 @@ namespace ClearCanvas.Healthcare
 	}
 
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(false)]
 	[StaticWorklist(true)]
 	[WorklistClassDescription("ReportingAwaitingApprovalProtocolWorklistDescription")]
 	public class ReportingAwaitingApprovalProtocolWorklist : ProtocolingWorklist

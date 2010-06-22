@@ -37,7 +37,6 @@ namespace ClearCanvas.Healthcare
 	/// EmergencyScheduledWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistCategory("WorklistCategoryEmergency")]
 	[WorklistClassDescription("EmergencyScheduledWorklistDescription")]
 	public class EmergencyScheduledWorklist : RegistrationWorklist
@@ -46,7 +45,7 @@ namespace ClearCanvas.Healthcare
 		{
 			// this is slightly different than the registration scheduled worklist, because we include
 			// 'checked in' items here, rather than having a separate 'checked in' worklist
-			RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
+			var criteria = new RegistrationWorklistItemSearchCriteria();
 			criteria.Procedure.Status.EqualTo(ProcedureStatus.SC);
 			//criteria.Order.Status.EqualTo(OrderStatus.SC);
 			return new WorklistItemSearchCriteria[] { criteria };
@@ -65,7 +64,6 @@ namespace ClearCanvas.Healthcare
 	/// EmergencyInProgressWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistCategory("WorklistCategoryEmergency")]
 	[WorklistClassDescription("EmergencyInProgressWorklistDescription")]
 	public class EmergencyInProgressWorklist : RegistrationInProgressWorklist
@@ -76,7 +74,6 @@ namespace ClearCanvas.Healthcare
 	/// EmergencyPerformedWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistCategory("WorklistCategoryEmergency")]
 	[WorklistClassDescription("EmergencyPerformedWorklistDescription")]
 	public class EmergencyPerformedWorklist : RegistrationPerformedWorklist
@@ -87,7 +84,6 @@ namespace ClearCanvas.Healthcare
 	/// EmergencyCancelledWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistCategory("WorklistCategoryEmergency")]
 	[WorklistClassDescription("EmergencyCancelledWorklistDescription")]
 	public class EmergencyCancelledWorklist : RegistrationCancelledWorklist

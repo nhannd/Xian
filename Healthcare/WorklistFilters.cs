@@ -390,7 +390,7 @@ namespace ClearCanvas.Healthcare
 				condition.SortDesc(0);
 
 			// apply range filtering, if supported by the worklist class, and not downtime recovery mode
-			if (Worklist.GetSupportsTimeFilter(worklistClass) && !wqc.DowntimeRecoveryMode)
+			if (!wqc.DowntimeRecoveryMode)
 			{
 				var range = this.IsEnabled ? this.Value : timeDirective.DefaultRange;
 				if (range != null)

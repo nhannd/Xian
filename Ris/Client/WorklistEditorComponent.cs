@@ -281,7 +281,7 @@ namespace ClearCanvas.Ris.Client
 					_locationFilterComponent = new SelectorEditorComponent<LocationSummary, LocationTable>(
 						_formDataResponse.PatientLocationChoices, _worklistDetail.PatientLocations, s => s.LocationRef);
 
-					_timeWindowComponent = new WorklistTimeWindowEditorComponent(_worklistDetail);
+					_timeWindowComponent = new WorklistTimeWindowEditorComponent(_worklistDetail, _mode == WorklistEditorMode.Add);
 
 					_interpretedByFilterComponent = new StaffSelectorEditorComponent(
 						_formDataResponse.StaffChoices, _worklistDetail.InterpretedByStaff.Staff, _worklistDetail.InterpretedByStaff.IncludeCurrentUser);
@@ -409,7 +409,7 @@ namespace ClearCanvas.Ris.Client
 
 			ShowAfterPage(_supervisedByFilterComponentPage, showStaffFilters, _verifiedByFilterComponentPage);
 
-			ShowBeforePage(_timeWindowComponentPage, ShowTimeFilterPage, _summaryComponentPage);
+			ShowBeforePage(_timeWindowComponentPage, true, _summaryComponentPage);
 		}
 
 		private void ShowAfterPage(NavigatorPage page, bool show, NavigatorPage insertAfterPage)
@@ -569,22 +569,12 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		private bool ShowTimeFilterPage
-		{
-			get
-			{
-				return _worklistDetail != null && _worklistDetail.WorklistClass != null
-						? _worklistDetail.WorklistClass.SupportsTimeWindow
-						: CollectionUtils.Contains<WorklistClassSummary>(_detailComponent.WorklistClassChoices, wc => wc.SupportsTimeWindow);
-			}
-		}
-
 		private void UpdateWorklistDetail()
 		{
 			if (_filterComponent.IsStarted)
 				_filterComponent.SaveData();
 
-			if (ShowTimeFilterPage && _timeWindowComponent.IsStarted)
+			if (_timeWindowComponent.IsStarted)
 				_timeWindowComponent.SaveData();
 
 			if (_procedureTypeFilterComponent.IsStarted)

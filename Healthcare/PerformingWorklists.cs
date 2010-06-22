@@ -71,7 +71,6 @@ namespace ClearCanvas.Healthcare
 	/// PerformingScheduledWorklist entity
     /// </summary>
     [ExtensionOf(typeof(WorklistExtensionPoint))]
-    [WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("PerformingScheduledWorklistDescription")]
 	public class PerformingScheduledWorklist : PerformingWorklist
     {
@@ -96,7 +95,6 @@ namespace ClearCanvas.Healthcare
 	/// PerformingWorklistCheckedInWorklist entity
     /// </summary>
     [ExtensionOf(typeof(WorklistExtensionPoint))]
-    [WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("PerformingWorklistCheckedInWorklistDescription")]
 	public class PerformingCheckedInWorklist : PerformingWorklist
     {
@@ -122,7 +120,6 @@ namespace ClearCanvas.Healthcare
 	/// PerformingWorklistInProgessWorklist entity
     /// </summary>
     [ExtensionOf(typeof(WorklistExtensionPoint))]
-    [WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("PerformingWorklistInProgressWorklistDescription")]
 	public class PerformingInProgressWorklist : PerformingWorklist
     {
@@ -146,7 +143,6 @@ namespace ClearCanvas.Healthcare
 	/// PerformingWorklistPerformedWorklist entity
     /// </summary>
     [ExtensionOf(typeof(WorklistExtensionPoint))]
-    [WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("PerformingWorklistPerformingWorklistDescription")]
 	public class PerformingPerformedWorklist : PerformingWorklist
     {
@@ -170,7 +166,6 @@ namespace ClearCanvas.Healthcare
 	/// PerformingCancelledWorklist entity
     /// </summary>
     [ExtensionOf(typeof(WorklistExtensionPoint))]
-    [WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("PerformingCancelledWorklistDescription")]
 	public class PerformingCancelledWorklist : PerformingWorklist
     {
@@ -194,7 +189,6 @@ namespace ClearCanvas.Healthcare
 	/// PerformingUndocumentedWorklist entity
     /// </summary>
     [ExtensionOf(typeof(WorklistExtensionPoint))]
-    [WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("PerformingUndocumentedWorklistDescription")]
 	public class PerformingUndocumentedWorklist : PerformingWorklist
     {

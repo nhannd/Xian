@@ -55,7 +55,6 @@ namespace ClearCanvas.Healthcare
 	/// ReportingAdminToBeReportedWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("ReportingAdminUnreportedWorklistDescription")]
 	public class ReportingAdminUnreportedWorklist : ReportingAdminWorklist
 	{
@@ -85,7 +84,6 @@ namespace ClearCanvas.Healthcare
 	/// ReportingAdminAssignedWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("ReportingAdminAssignedWorklistDescription")]
 	public class ReportingAdminAssignedWorklist : ReportingAdminWorklist
 	{
@@ -122,7 +120,6 @@ namespace ClearCanvas.Healthcare
 	}
 
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("ProtocollingAdminAssignedWorklist")]
 	public class ProtocollingAdminAssignedWorklist : ProtocolingAdminWorklist
 	{
@@ -157,7 +154,6 @@ namespace ClearCanvas.Healthcare
 	/// ReportingAdminToBeTranscribedWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("ReportingAdminToBeTranscribedDescription")]
 	public class ReportingAdminToBeTranscribedWorklist : ReportingAdminWorklist
 	{

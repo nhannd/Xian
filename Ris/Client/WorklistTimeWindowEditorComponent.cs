@@ -131,13 +131,15 @@ namespace ClearCanvas.Ris.Client
 		private DateTime _fixedStartTime;
 		private DateTime _fixedEndTime;
 		private object _slidingScale;
+		private bool _setDefaultTimeWindows;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public WorklistTimeWindowEditorComponent(WorklistAdminDetail detail)
+		public WorklistTimeWindowEditorComponent(WorklistAdminDetail detail, bool setDefaultTimeWindows)
 		{
 			_worklistDetail = detail;
+			_setDefaultTimeWindows = setDefaultTimeWindows;
 		}
 
 		public override void Start()
@@ -160,6 +162,11 @@ namespace ClearCanvas.Ris.Client
 					_slidingStartTime = ConvertTimePointToRelativeTime(_worklistDetail.StartTime);
 				}
 			}
+			else if (_setDefaultTimeWindows)
+			{
+				_startTimeChecked = true;
+				_slidingStartTime = new RelativeTimeInDays(0);
+			}
 
 			if (_worklistDetail.EndTime != null)
 			{
@@ -174,6 +181,11 @@ namespace ClearCanvas.Ris.Client
 				{
 					_slidingEndTime = ConvertTimePointToRelativeTime(_worklistDetail.EndTime);
 				}
+			}
+			else if (_setDefaultTimeWindows)
+			{
+				_endTimeChecked = true;
+				_slidingEndTime = new RelativeTimeInDays(0);
 			}
 
 			if (_slidingStartTime is RelativeTimeInHours || _slidingEndTime is RelativeTimeInHours)

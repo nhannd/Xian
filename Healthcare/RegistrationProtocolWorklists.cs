@@ -73,7 +73,6 @@ namespace ClearCanvas.Healthcare
 	/// RegistrationPendingProtocolWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("RegistrationPendingProtocolWorklistDescription")]
 	public class RegistrationPendingProtocolWorklist : RegistrationProtocolWorklist
 	{
@@ -98,7 +97,6 @@ namespace ClearCanvas.Healthcare
 	/// RegistrationAsapPendingProtocolWorklist entity 
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("RegistrationAsapPendingProtocolWorklistDescription")]
 	public class RegistrationAsapPendingProtocolWorklist : RegistrationProtocolWorklist
 	{
@@ -125,7 +123,6 @@ namespace ClearCanvas.Healthcare
 	/// RegistrationRejectedProtocolWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(false)]
 	[WorklistClassDescription("RegistrationRejectedProtocolWorklistDescription")]
 	public class RegistrationRejectedProtocolWorklist : RegistrationProtocolWorklist
 	{
@@ -154,7 +151,6 @@ namespace ClearCanvas.Healthcare
 	/// RegistrationCompletedProtocolWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(false)]
 	[WorklistClassDescription("RegistrationCompletedProtocolWorklistDescription")]
 	public class RegistrationCompletedProtocolWorklist : RegistrationProtocolWorklist
 	{

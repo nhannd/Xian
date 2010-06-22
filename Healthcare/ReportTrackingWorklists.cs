@@ -45,7 +45,6 @@ namespace ClearCanvas.Healthcare
 	/// ReportingTrackingActiveWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("ReportingTrackingActiveWorklistDescription")]
 	public class ReportingTrackingActiveWorklist : ReportingTrackingWorklist
 	{
@@ -85,7 +84,6 @@ namespace ClearCanvas.Healthcare
 	/// ReportingTrackingDraftWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("ReportingTrackingDraftWorklistDescription")]
 	public class ReportingTrackingDraftWorklist : ReportingTrackingWorklist
 	{
@@ -115,7 +113,6 @@ namespace ClearCanvas.Healthcare
 	/// ReportingTrackingPreliminaryWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("ReportingTrackingPreliminaryWorklistDescription")]
 	public class ReportingTrackingPreliminaryWorklist : ReportingTrackingWorklist
 	{
@@ -145,7 +142,6 @@ namespace ClearCanvas.Healthcare
 	/// ReportingTrackingFinalWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("ReportingTrackingFinalWorklistDescription")]
 	public class ReportingTrackingFinalWorklist : ReportingTrackingWorklist
 	{
@@ -174,7 +170,6 @@ namespace ClearCanvas.Healthcare
 	/// ReportingTrackingCorrectedWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
 	[WorklistClassDescription("ReportingTrackingCorrectedWorklistDescription")]
 	public class ReportingTrackingCorrectedWorklist : ReportingTrackingWorklist
 	{

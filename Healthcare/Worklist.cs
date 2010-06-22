@@ -179,19 +179,7 @@ namespace ClearCanvas.Healthcare
 
 		/// <summary>
 		/// Gets a value indicating whether the specified worklist class supports time-filters, as specified by
-		/// the <see cref="WorklistSupportsTimeFilterAttribute"/>.
-		/// </summary>
-		/// <param name="worklistClass"></param>
-		/// <returns></returns>
-		public static bool GetSupportsTimeFilter(Type worklistClass)
-		{
-			var a = AttributeUtils.GetAttribute<WorklistSupportsTimeFilterAttribute>(worklistClass, true);
-			return a == null ? false : a.SupportsTimeFilter;
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether the specified worklist class supports time-filters, as specified by
-		/// the <see cref="WorklistSupportsTimeFilterAttribute"/>.
+		/// the <see cref="WorklistSupportsReportingStaffRoleFilterAttribute"/>.
 		/// </summary>
 		/// <param name="worklistClass"></param>
 		/// <returns></returns>
@@ -631,8 +619,7 @@ namespace ClearCanvas.Healthcare
 				{
 					var settings = new WorklistSettings();
 					var maxDays = settings.TimeWindowMaxSpanDays;
-					//TODO: make all worklists support time filters
-					if (GetSupportsTimeFilter(w.GetClass()) && settings.TimeWindowRequired && maxDays > 0)
+					if (settings.TimeWindowRequired && maxDays > 0)
 					{
 						return new TestResult(w.CheckTimeFilterSpan(TimeSpan.FromDays(maxDays)),
 							string.Format(SR.MessageValidateWorklistTimeFilter, maxDays));
