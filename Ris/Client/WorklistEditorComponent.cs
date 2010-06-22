@@ -281,7 +281,9 @@ namespace ClearCanvas.Ris.Client
 					_locationFilterComponent = new SelectorEditorComponent<LocationSummary, LocationTable>(
 						_formDataResponse.PatientLocationChoices, _worklistDetail.PatientLocations, s => s.LocationRef);
 
-					_timeWindowComponent = new WorklistTimeWindowEditorComponent(_worklistDetail, _mode == WorklistEditorMode.Add);
+					_timeWindowComponent = new WorklistTimeWindowEditorComponent(
+						_worklistDetail,
+						_mode == WorklistEditorMode.Add && _formDataResponse.CurrentServerConfigurationRequiresTimeFilter);
 
 					_interpretedByFilterComponent = new StaffSelectorEditorComponent(
 						_formDataResponse.StaffChoices, _worklistDetail.InterpretedByStaff.Staff, _worklistDetail.InterpretedByStaff.IncludeCurrentUser);

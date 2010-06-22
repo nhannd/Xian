@@ -67,5 +67,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 
 		[DataMember]
 		public List<ProcedureTypeSummary> ProcedureTypeChoices;
+
+		[DataMember]
+		public bool CurrentServerConfigurationRequiresTimeFilter;
 	}
 }

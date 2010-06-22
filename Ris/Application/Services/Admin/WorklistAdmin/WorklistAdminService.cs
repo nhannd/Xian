@@ -272,6 +272,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 			response.OrderPriorityChoices = EnumUtils.GetEnumValueList<OrderPriorityEnum>(PersistenceContext);
 			response.PatientClassChoices = EnumUtils.GetEnumValueList<PatientClassEnum>(PersistenceContext);
 
+			response.CurrentServerConfigurationRequiresTimeFilter = Worklist.CurrentServerConfigurationRequiresTimeFilter();
+
 			// add extra data iff editing a user-defined worklist (bug #4871)
 			if (request.UserDefinedWorklist)
 			{

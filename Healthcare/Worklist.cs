@@ -522,6 +522,12 @@ namespace ClearCanvas.Healthcare
 		/// <returns></returns>
 		public abstract string GetWorklistItemsHql(IWorklistQueryContext wqc);
 
+		public static bool CurrentServerConfigurationRequiresTimeFilter()
+		{
+			var settings = new WorklistSettings();
+			return settings.TimeWindowRequired;
+		}
+
 		#endregion
 
 		#region Protected API
