@@ -29,19 +29,26 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Core
 {
-    public abstract class EntitySearchCriteria : SearchCriteria
-    {
+	/// <summary>
+	/// Abstract base class for entity search criteria classes.
+	/// </summary>
+	public abstract class EntitySearchCriteria : SearchCriteria
+	{
+		/// <summary>
+		/// Constructor
+		/// </summary>
 		protected EntitySearchCriteria()
 		{
 		}
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
 		protected EntitySearchCriteria(string key)
 			: base(key)
 		{
@@ -56,6 +63,9 @@ namespace ClearCanvas.Enterprise.Core
 		{
 		}
 
+		/// <summary>
+		/// Gets the search condition on OID.
+		/// </summary>
 		public ISearchCondition<object> OID
 		{
 			get
@@ -69,56 +79,81 @@ namespace ClearCanvas.Enterprise.Core
 		}
 	}
 
+	/// <summary>
+	/// Abstract base class for entity search criteria classes.
+	/// </summary>
 	public abstract class EntitySearchCriteria<TEntity> : EntitySearchCriteria
-        where TEntity : Entity
-    {
-        public EntitySearchCriteria(string key)
-            :base(key)
-        {
-        }
-
-        public EntitySearchCriteria()
-        {
-        }
-
-        /// <summary>
-        /// Copy constructor.
-        /// </summary>
-        /// <param name="other"></param>
-        protected EntitySearchCriteria(EntitySearchCriteria<TEntity> other)
-            :base(other)
-        {
-        }
-
-        public void EqualTo(TEntity entity)
-        {
-            this.OID.EqualTo(entity.OID);
-        }
-
-        public void NotEqualTo(TEntity entity)
-        {
-            this.OID.NotEqualTo(entity.OID);
-        }
-
-        public void In(IEnumerable<TEntity> entities)
-        {
-            this.OID.In(
-				CollectionUtils.Map<TEntity, object>(entities,
-					delegate (TEntity item) { return item.OID; }));
-        }
-
-        public void IsNull()
-        {
-            this.OID.IsNull();
-        }
-
-        public void IsNotNull()
-        {
-            this.OID.IsNotNull();
-        }
+		where TEntity : Entity
+	{
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		protected EntitySearchCriteria(string key)
+			: base(key)
+		{
+		}
 
 		/// <summary>
-		/// Specifies that the condition variable be less than the specified value.
+		/// Constructor
+		/// </summary>
+		protected EntitySearchCriteria()
+		{
+		}
+
+		/// <summary>
+		/// Copy constructor.
+		/// </summary>
+		/// <param name="other"></param>
+		protected EntitySearchCriteria(EntitySearchCriteria<TEntity> other)
+			: base(other)
+		{
+		}
+
+		/// <summary>
+		/// Specifies that the entity is equal to the specified entity.
+		/// </summary>
+		/// <param name="entity"></param>
+		public void EqualTo(TEntity entity)
+		{
+			this.OID.EqualTo(entity.OID);
+		}
+
+		/// <summary>
+		/// Specifies that the entity is not equal to the specified entity.
+		/// </summary>
+		/// <param name="entity"></param>
+		public void NotEqualTo(TEntity entity)
+		{
+			this.OID.NotEqualTo(entity.OID);
+		}
+
+		/// <summary>
+		/// Specifies that the entity is in the specified set of entities.
+		/// </summary>
+		/// <param name="entities"></param>
+		public void In(IEnumerable<TEntity> entities)
+		{
+			this.OID.In(CollectionUtils.Map(entities, (TEntity item) => item.OID));
+		}
+
+		/// <summary>
+		/// Specifies that the entity reference is null.
+		/// </summary>
+		public void IsNull()
+		{
+			this.OID.IsNull();
+		}
+
+		/// <summary>
+		/// Specifies that the entity reference is non null.
+		/// </summary>
+		public void IsNotNull()
+		{
+			this.OID.IsNotNull();
+		}
+
+		/// <summary>
+		/// Specifies that the entity be less than the specified entity (by OID).
 		/// </summary>
 		public void LessThan(TEntity entity)
 		{
@@ -126,40 +161,40 @@ namespace ClearCanvas.Enterprise.Core
 		}
 
 		/// <summary>
-		/// Specifies that the condition variable be less than or equal to the specified value.
+		/// Specifies that the entity be less than or equal to the specified entity (by OID).
 		/// </summary>
 		public void LessThanOrEqualTo(TEntity entity)
 		{
 			this.OID.LessThanOrEqualTo(entity.OID);
 		}
 
-    	/// <summary>
-		/// Specifies that the condition variable be more than the specified value.
+		/// <summary>
+		/// Specifies that the entity be more than the specified entity (by OID).
 		/// </summary>
 		public void MoreThan(TEntity entity)
-    	{
+		{
 			this.OID.MoreThan(entity.OID);
 		}
 
-    	/// <summary>
-		/// Specifies that the condition variable be more than or equal to the specified value.
+		/// <summary>
+		/// Specifies that the entity be more than or equal to the specified entity (by OID).
 		/// </summary>
 		public void MoreThanOrEqualTo(TEntity entity)
-    	{
+		{
 			this.OID.MoreThanOrEqualTo(entity.OID);
 		}
 
 		/// <summary>
-		/// Specifies that the condition variable be used to sort the results in ascending order.
+		/// Specifies that the entity be used to sort the results in ascending order (by OID).
 		/// </summary>
 		/// <param name="position">Specifies the priority of this sort constraint relative to other sort constraints</param>
 		public void SortAsc(int position)
 		{
-	    	this.OID.SortAsc(position);
+			this.OID.SortAsc(position);
 		}
 
 		/// <summary>
-		/// Specifies that the condition variable be used to sort the results in descending order.
+		/// Specifies that the entity be used to sort the results in descending order (by OID).
 		/// </summary>
 		/// <param name="position">Specifies the priority of this sort constraint relative to other sort constraints</param>
 		public void SortDesc(int position)
@@ -167,5 +202,5 @@ namespace ClearCanvas.Enterprise.Core
 			this.OID.SortDesc(position);
 		}
 
-   }
+	}
 }
