@@ -86,6 +86,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			get { return this.Volume.FrameOfReferenceUid; }
 		}
 
+		public IList<Frame> Frames
+		{
+			get { return CollectionUtils.Map<IFrameReference, Frame>(_frames, f => f.Frame).AsReadOnly(); }
+		}
+
 		protected VolumeData Volume
 		{
 			get

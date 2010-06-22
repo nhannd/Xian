@@ -32,6 +32,7 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -71,16 +72,21 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				{
 					_fusionDisplaySets.Add(e.NewDisplaySet);
 
+					// no point doing all this to find an appropriate VOI LUT if there are no images in the display set - but do update the fusionDisplaySets list!
+					if (e.NewDisplaySet.PresentationImages.Count == 0)
+						return;
+
 					// find any available display set containing the same series as the individual layers and replicate its VoiLutManager memento
 					object baseMemento = null, overlayMemento = null;
 					var descriptor = (PETFusionDisplaySetDescriptor) e.NewDisplaySet.Descriptor;
 					foreach (IImageBox imageBox in this.ImageViewer.PhysicalWorkspace.ImageBoxes)
 					{
+						var selectedImage = imageBox.TopLeftPresentationImage;
 						if (imageBox.DisplaySet == null || imageBox.DisplaySet.Descriptor is PETFusionDisplaySetDescriptor
-						    || !(imageBox.TopLeftPresentationImage is IVoiLutProvider))
+						    || !(selectedImage is IImageSopProvider && selectedImage is IVoiLutProvider))
 							continue;
 
-						var seriesUid = imageBox.DisplaySet != null ? imageBox.DisplaySet.Uid : string.Empty;
+						var seriesUid = ((IImageSopProvider) selectedImage).ImageSop.SeriesInstanceUid;
 						if (baseMemento == null && seriesUid == descriptor.SourceSeries.SeriesInstanceUid)
 							baseMemento = ((IVoiLutProvider) imageBox.TopLeftPresentationImage).VoiLutManager.CreateMemento();
 						else if (overlayMemento == null && seriesUid == descriptor.PETSeries.SeriesInstanceUid)
@@ -88,6 +94,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 						if (baseMemento != null && overlayMemento != null)
 							break;
+					}
+
+					if (baseMemento == null || overlayMemento == null)
+					{
+						var fusionImage = (FusionPresentationImage) e.NewDisplaySet.PresentationImages[0];
+						if (baseMemento == null)
+							baseMemento = GetInitialVoiLutMemento(fusionImage.Frame);
+						if (overlayMemento == null)
+							overlayMemento = GetInitialVoiLutMemento(fusionImage.OverlayFrameData.OverlayData.Frames[0]);
 					}
 
 					foreach (FusionPresentationImage image in e.NewDisplaySet.PresentationImages)
@@ -110,13 +125,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			{
 				if (e.PresentationImage is IImageSopProvider && e.PresentationImage is IVoiLutProvider)
 				{
-					// if the image isn't part of the study tree, ignore it
-					Series series = ((IImageSopProvider) e.PresentationImage).ImageSop.ParentSeries;
-					if (series == null)
-						return;
-
 					object memento = ((IVoiLutProvider) e.PresentationImage).VoiLutManager.CreateMemento();
-					string seriesInstanceUid = series.SeriesInstanceUid;
+					string seriesInstanceUid = ((IImageSopProvider) e.PresentationImage).ImageSop.SeriesInstanceUid;
 
 					// find any available display set containing the same series as the individual layers and replicate its VoiLutManager memento
 					foreach (IDisplaySet displaySet in _fusionDisplaySets)
@@ -148,6 +158,28 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					}
 				}
 			}
+		}
+
+		private static object GetInitialVoiLutMemento(Frame frame)
+		{
+			if (frame != null)
+			{
+				using (var image = PresentationImageFactory.Create(frame))
+				{
+					var voiLut = InitialVoiLutProvider.Instance.GetLut(image);
+					if (voiLut == null && image is IImageGraphicProvider)
+					{
+						var pixelData = ((IImageGraphicProvider) image).ImageGraphic.PixelData;
+						if (pixelData is GrayscalePixelData)
+							voiLut = new MinMaxPixelCalculatedLinearLut((GrayscalePixelData) pixelData);
+					}
+					var voiLutManager = (IVoiLutManager) new VoiLutManagerProxy();
+					if (voiLut != null)
+						voiLutManager.InstallVoiLut(voiLut);
+					return voiLutManager.CreateMemento();
+				}
+			}
+			return null;
 		}
 	}
 }
