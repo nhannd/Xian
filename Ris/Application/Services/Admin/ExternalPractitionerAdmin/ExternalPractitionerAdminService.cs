@@ -282,6 +282,36 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 				original.IsDefaultContactPoint = true;
 			}
 
+			foreach (var telephoneNumber in duplicate.TelephoneNumbers)
+			{
+				if (CollectionUtils.Contains(original.TelephoneNumbers, originalsPhoneNumber => originalsPhoneNumber.IsSameNumber(telephoneNumber)))
+					continue;
+
+				var copy = (TelephoneNumber)telephoneNumber.Clone();
+				copy.ValidRange.Until = copy.ValidRange.Until ?? Platform.Time;
+				original.TelephoneNumbers.Add(copy);
+			}
+
+			foreach (var address in duplicate.Addresses)
+			{
+				if (CollectionUtils.Contains(original.Addresses, originalAddress => originalAddress.IsSameAddress(address)))
+					continue;
+
+				var copy = (Address)address.Clone();
+				copy.ValidRange.Until = copy.ValidRange.Until ?? Platform.Time;
+				original.Addresses.Add(copy);
+			}
+
+			foreach (var emailAddress in duplicate.EmailAddresses)
+			{
+				if (CollectionUtils.Contains(original.EmailAddresses, originalsEmailAddress => originalsEmailAddress.IsSameEmailAddress(emailAddress)))
+					continue;
+
+				var copy = (EmailAddress)emailAddress.Clone();
+				copy.ValidRange.Until = copy.ValidRange.Until ?? Platform.Time;
+				original.EmailAddresses.Add(copy);
+			}
+
 			duplicate.Deactivated = true;
 
 			this.PersistenceContext.SynchState();
