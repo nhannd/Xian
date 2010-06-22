@@ -36,7 +36,40 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Core
 {
-    public abstract class EntitySearchCriteria<TEntity> : SearchCriteria
+    public abstract class EntitySearchCriteria : SearchCriteria
+    {
+		protected EntitySearchCriteria()
+		{
+		}
+
+		protected EntitySearchCriteria(string key)
+			: base(key)
+		{
+		}
+
+		/// <summary>
+		/// Copy constructor.
+		/// </summary>
+		/// <param name="other"></param>
+		protected EntitySearchCriteria(EntitySearchCriteria other)
+			: base(other)
+		{
+		}
+
+		public ISearchCondition<object> OID
+		{
+			get
+			{
+				if (!this.SubCriteria.ContainsKey("OID"))
+				{
+					this.SubCriteria["OID"] = new SearchCondition<object>("OID");
+				}
+				return (ISearchCondition<object>)this.SubCriteria["OID"];
+			}
+		}
+	}
+
+	public abstract class EntitySearchCriteria<TEntity> : EntitySearchCriteria
         where TEntity : Entity
     {
         public EntitySearchCriteria(string key)
@@ -134,16 +167,5 @@ namespace ClearCanvas.Enterprise.Core
 			this.OID.SortDesc(position);
 		}
 
-    	public ISearchCondition<object> OID
-        {
-            get
-            {
-                if (!this.SubCriteria.ContainsKey("OID"))
-                {
-					this.SubCriteria["OID"] = new SearchCondition<object>("OID");
-                }
-				return (ISearchCondition<object>)this.SubCriteria["OID"];
-            }
-        }
    }
 }

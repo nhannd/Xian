@@ -359,6 +359,16 @@ namespace ClearCanvas.Enterprise.Hibernate
 		}
 
 		/// <summary>
+		/// Executes the specified DML-style query, returning the number of affected rows.
+		/// </summary>
+		/// <param name="query"></param>
+		/// <returns></returns>
+		internal int ExecuteHqlDml(IQuery query)
+		{
+			return _queryExecutor.ExecuteHqlDml(query);
+		}
+
+		/// <summary>
 		/// Gets the NHibernate Session object, instantiating it if it does not already exist.
 		/// </summary>
 		internal ISession Session

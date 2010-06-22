@@ -246,9 +246,36 @@ namespace ClearCanvas.Enterprise.Hibernate
 		public void Delete(TEntity entity)
 		{
 			if (this.Context.ReadOnly)
-				throw new InvalidOperationException("Cannot delete entity via read-only persistence context.");
+				throw new InvalidOperationException("Cannot delete via read-only persistence context.");
 
 			this.Context.Session.Delete(entity);
+		}
+
+		public int Delete(TSearchCriteria criteria)
+		{
+			return Delete(new[] {criteria});
+		}
+
+		public int Delete(TSearchCriteria[] criteria)
+		{
+			if (this.Context.ReadOnly)
+				throw new InvalidOperationException("Cannot delete via read-only persistence context.");
+
+			var query = new HqlQuery(string.Format("delete {0} x", typeof(TEntity).Name));
+
+			var or = new HqlOr();
+			foreach (var c in criteria)
+			{
+				var and = new HqlAnd(HqlCondition.FromSearchCriteria("x", c));
+				if (and.Conditions.Count > 0)
+					or.Conditions.Add(and);
+			}
+
+			if (or.Conditions.Count > 0)
+				query.Conditions.Add(or);
+
+
+			return ExecuteHqlDml(query);
 		}
 
 		#endregion

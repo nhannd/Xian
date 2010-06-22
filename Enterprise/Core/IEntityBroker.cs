@@ -291,5 +291,19 @@ namespace ClearCanvas.Enterprise.Core
 		/// </summary>
 		/// <param name="entity">The entity instance to remove</param>
 		void Delete(TEntity entity);
+
+		/// <summary>
+		/// Deletes all entities that match the specified criteria.
+		/// </summary>
+		/// <param name="criteria"></param>
+		/// <returns></returns>
+		int Delete(TSearchCriteria criteria);
+
+		/// <summary>
+		/// Deletes all entities that match the specified criteria.
+		/// </summary>
+		/// <param name="criteria"></param>
+		/// <returns></returns>
+		int Delete(TSearchCriteria[] criteria);
 	}
 }

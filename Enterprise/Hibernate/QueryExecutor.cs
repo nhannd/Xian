@@ -90,6 +90,16 @@ namespace ClearCanvas.Enterprise.Hibernate
 		}
 
 		/// <summary>
+		/// Executes the specified DML-style query, returning the number of affected rows.
+		/// </summary>
+		/// <param name="query"></param>
+		/// <returns></returns>
+		public int ExecuteHqlDml(IQuery query)
+		{
+			return query.ExecuteUpdate();
+		}
+
+		/// <summary>
 		/// Obtains the result set associated with the specified token, forcing the current batch to execute if necessary.
 		/// </summary>
 		/// <remarks>

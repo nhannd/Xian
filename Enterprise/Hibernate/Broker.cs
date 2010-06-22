@@ -189,6 +189,26 @@ namespace ClearCanvas.Enterprise.Hibernate
 		}
 
 		/// <summary>
+		/// Executes the specified DML-style query, returning the number of affected rows.
+		/// </summary>
+		/// <param name="query"></param>
+		/// <returns></returns>
+		protected int ExecuteHqlDml(HqlQuery query)
+		{
+			return _ctx.ExecuteHqlDml(query.BuildHibernateQueryObject(_ctx));
+		}
+
+		/// <summary>
+		/// Executes the specified DML-style query, returning the number of affected rows.
+		/// </summary>
+		/// <param name="query"></param>
+		/// <returns></returns>
+		protected int ExecuteHqlDml(IQuery query)
+		{
+			return _ctx.ExecuteHqlDml(query);
+		}
+
+		/// <summary>
 		/// Clears the NHibernate session (i.e. first-level) cache.
 		/// </summary>
 		/// <remarks>
