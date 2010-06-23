@@ -23,7 +23,11 @@ namespace ClearCanvas.Healthcare {
             }
         }
         
+        /// <summary>
+        /// XML document specifying custom server-side validation rules
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("XML document specifying custom server-side validation rules")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("EntityValidationRules.xml")]
         public string CustomRulesXml {

@@ -5,8 +5,7 @@ using ClearCanvas.Common.Configuration;
 namespace ClearCanvas.Healthcare
 {
 
-	// TODO add a description of the purpose of the settings group here
-	[SettingsGroupDescription("")]
+	[SettingsGroupDescription("Settings that configure the behaviour of worklists.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class WorklistSettings
 	{

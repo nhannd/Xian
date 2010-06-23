@@ -23,7 +23,13 @@ namespace ClearCanvas.Enterprise.Core.Modelling {
             }
         }
         
+        /// <summary>
+        /// Specifies the maximum amount of time that the server may cache custom server-side validation rules.  Changes to rules may not take affect until this period of time has elapsed.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Specifies the maximum amount of time that the server may cache custom server-side" +
+            " validation rules.  Changes to rules may not take affect until this period of ti" +
+            "me has elapsed.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("60")]
         public int CustomRulesCachingTimeToLiveSeconds {
