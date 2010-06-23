@@ -95,7 +95,7 @@ namespace ClearCanvas.Utilities.Manifest
 
                 ProcessManifestFileList();
 
-                ScanInstallDirectory();
+                ScanDirectory(Platform.InstallDirectory);
 
                 VerifyProduct();
 
@@ -225,20 +225,30 @@ namespace ClearCanvas.Utilities.Manifest
             }
         }
 
-        private void ScanInstallDirectory()
+        private void ScanDirectory(string dir)
         {
-            FileProcessor.Process(Platform.InstallDirectory, null,
-                                   delegate(string filePath, out bool cancel)
-                                   {
-                                       if (!CheckIgnored(filePath))
-                                       {
-                                           string relativePath = filePath.Substring(Platform.InstallDirectory.Length);
+            // Process Root Directory Files
+            FileProcessor.Process(dir, null, delegate(string filePath, out bool cancel)
+                                                 {
+                                                     if (!CheckIgnored(filePath))
+                                                     {
+                                                         string relativePath =
+                                                             filePath.Substring(Platform.InstallDirectory.Length);
 
-                                           _installedFileDictionary.Add(relativePath, filePath);
-                                       }
+                                                         _installedFileDictionary.Add(relativePath, filePath);
+                                                     }
 
-                                       cancel = false;
-                                   }, true);
+                                                     cancel = false;
+                                                 }, false);
+
+            foreach (string subDir in Directory.GetDirectories(dir))
+            {
+                if (!CheckIgnored(subDir))
+                {
+                    // Process Recursive Folders Directory Files
+                    ScanDirectory(subDir);                   
+                }
+            }
         }
 
         private bool CheckIgnored(string path)
