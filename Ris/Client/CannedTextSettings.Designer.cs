@@ -24,11 +24,12 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        /// Enable validation of characters in the canned text name.  If true, the name can only contain space and alphabets.
+        /// Enable validation of characters in the canned text name.  If true, the name can only contain spaces and alphabetic characters, which ensures the name can be recognized by speech recognition.
         /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Configuration.SettingsDescriptionAttribute("Enable validation of characters in the canned text name.  If true, the name can o" +
-            "nly contain space and alphabets.")]
+            "nly contain spaces and alphabetic characters, which ensures the name can be reco" +
+            "gnized by speech recognition.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool RestrictNameToAlphaChars {
@@ -71,11 +72,12 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        /// Enable validation of characters in defined fields.  If true, contents enclosed within square brackets can only contain space and alphabets.
+        /// Enable validation of characters in defined fields.  If true, contents enclosed within square brackets can only contain spaces and alphabetic characters, which ensures the name can be recognized by speech recognition.
         /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Configuration.SettingsDescriptionAttribute("Enable validation of characters in defined fields.  If true, contents enclosed wi" +
-            "thin square brackets can only contain space and alphabets.")]
+            "thin square brackets can only contain spaces and alphabetic characters, which en" +
+            "sures the name can be recognized by speech recognition.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool RestrictFieldsToAlphaChars {

@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Client
     /// This code is adapted from the Visual Studio generated template code;  the generated code has been removed from the project.  Additional 
     /// settings need to be manually added to this class.
     /// </remarks>
-    [SettingsGroupDescription("")]
+    [SettingsGroupDescription("Settings that configure the display of the patient banner.")]
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
     public sealed class BannerSettings : global::System.Configuration.ApplicationSettingsBase
     {

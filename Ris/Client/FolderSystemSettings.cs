@@ -34,9 +34,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client
 {
-
-	// TODO add a description of the purpose of the settings group here
-	[SettingsGroupDescription("")]
+	[SettingsGroupDescription("Settings that configure the behaviour of folder systems.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class FolderSystemSettings
 	{

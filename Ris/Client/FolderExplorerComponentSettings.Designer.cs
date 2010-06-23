@@ -24,10 +24,10 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        /// XML document that describes the ordering of folders in folder systems.
+        /// XML document that describes the default ordering of folders in folder systems.
         /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("XML document that describes the ordering of folders in folder systems.")]
+        [global::System.Configuration.SettingsDescriptionAttribute("XML document that describes the default ordering of folders in folder systems.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("FolderExplorerComponentSettings.xml")]
         public string DefaultConfigurationXml {
@@ -36,7 +36,11 @@ namespace ClearCanvas.Ris.Client {
             }
         }
         
+        /// <summary>
+        /// XML document that describes user-customizations to folder system display.
+        /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("XML document that describes user-customizations to folder system display.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("FolderExplorerComponentUserSettings.xml")]
         public string UserConfigurationXml {

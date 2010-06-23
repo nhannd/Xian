@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Ris.Client" GeneratedClassName="OrderNoteConversationComponentSettings">
   <Profiles />
   <Settings>
-    <Setting Name="PreferredOnBehalfOfGroupName" Type="System.String" Scope="User">
+    <Setting Name="PreferredOnBehalfOfGroupName" Description="Stores the user's last used &quot;on-behalf of&quot; group name." Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>
