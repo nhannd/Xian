@@ -62,7 +62,11 @@ namespace ClearCanvas.Ris.Shreds.Publication {
             }
         }
         
+        /// <summary>
+        /// Specifies whether publication of reports to HL7 peers is enabled.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Specifies whether publication of reports to HL7 peers is enabled.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool HL7PublicationEnabled {

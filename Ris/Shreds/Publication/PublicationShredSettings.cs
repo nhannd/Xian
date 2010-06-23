@@ -36,8 +36,7 @@ using ClearCanvas.Common.Configuration;
 namespace ClearCanvas.Ris.Shreds.Publication
 {
 
-    // TODO add a description of the purpose of the settings group here
-    [SettingsGroupDescription("")]
+    [SettingsGroupDescription("Settings that configure the behaviour of the Report Publication Shred.")]
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
     internal sealed partial class PublicationShredSettings
     {

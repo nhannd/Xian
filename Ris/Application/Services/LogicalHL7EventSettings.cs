@@ -34,8 +34,7 @@ using System.Configuration;
 namespace ClearCanvas.Ris.Application.Services
 {
 
-	// TODO add a description of the purpose of the settings group here
-	[SettingsGroupDescription("")]
+	[SettingsGroupDescription("Settings that configure Logical HL7 outbound events.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class LogicalHL7EventSettings
 	{

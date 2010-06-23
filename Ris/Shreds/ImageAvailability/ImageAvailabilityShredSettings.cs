@@ -36,8 +36,7 @@ using ClearCanvas.Common.Configuration;
 namespace ClearCanvas.Ris.Shreds.ImageAvailability
 {
 
-    // TODO add a description of the purpose of the settings group here
-    [SettingsGroupDescription("")]
+    [SettingsGroupDescription("Settings that configure the behaviour of the Image Availability Shred.")]
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
     internal sealed partial class ImageAvailabilityShredSettings
     {

@@ -23,7 +23,11 @@ namespace ClearCanvas.Ris.Application.Services {
             }
         }
         
+        /// <summary>
+        /// Specifies whether the creation of logical HL7 outbound events is enabled.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Specifies whether the creation of logical HL7 outbound events is enabled.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool LogicalHL7EventsEnabled {
