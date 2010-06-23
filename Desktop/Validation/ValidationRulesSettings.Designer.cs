@@ -23,7 +23,11 @@ namespace ClearCanvas.Desktop.Validation {
             }
         }
         
+        /// <summary>
+        /// XML document specifying custom user-interface validation rules.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("XML document specifying custom user-interface validation rules.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("ValidationRules.xml")]
         public string CustomRulesXml {

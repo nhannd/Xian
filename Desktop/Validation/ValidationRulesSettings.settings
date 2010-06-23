@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Desktop.Validation" GeneratedClassName="ValidationRulesSettings">
   <Profiles />
   <Settings>
-    <Setting Name="CustomRulesXml" Type="System.String" Scope="Application">
+    <Setting Name="CustomRulesXml" Description="XML document specifying custom user-interface validation rules." Type="System.String" Scope="Application">
       <Value Profile="(Default)">ValidationRules.xml</Value>
     </Setting>
   </Settings>
