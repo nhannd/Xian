@@ -33,6 +33,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -117,14 +119,26 @@ namespace ClearCanvas.Utilities.Manifest
 
                 ProcessFiles(list);
 
-                string manifestPath = Path.Combine(_cmdLine.DistributionDirectory, Platform.ManifestDirectory);
+                //TODO: get rid of "manifest" constant  Derive from Platform.ManifestDirectory
+                string manifestPath = Path.Combine(_cmdLine.DistributionDirectory, "manifest");
                 manifestPath = Path.Combine(manifestPath, _cmdLine.Manifest);
 
                 if (File.Exists(manifestPath))
                     File.Delete(manifestPath);
 
-                ClearCanvasManifest.Serialize(manifestPath, _manifest);
+                XmlDocument doc = ClearCanvasManifest.Serialize(_manifest);
 
+                // Generate a signing key.
+                RSACryptoServiceProvider rsaCsp;
+                if (string.IsNullOrEmpty(_cmdLine.Certificate))
+                    rsaCsp = new RSACryptoServiceProvider(2048);
+                else
+                {                    
+                    X509Certificate2 certificate = new X509Certificate2(_cmdLine.Certificate, _cmdLine.Password ?? string.Empty);
+                    rsaCsp = (RSACryptoServiceProvider)certificate.PrivateKey;
+                }
+                                     
+                ManifestSignature.SignXmlFile(doc, manifestPath, rsaCsp);
                 Environment.ExitCode = 0;
             }
             catch (CommandLineException e)

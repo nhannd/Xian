@@ -53,7 +53,7 @@
  
   <Target Name="Create Desktop Manifest">
     
-    <Exec Command="$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe ClearCanvas.Utilities.Manifest.ManifestGenerationApplication /d=$(DistributionDirectory) /m=Manifest.xml $(TrunkDirectory)\ImageViewer\ManifestInputDesktop.xml @(ManifestFiles)" WorkingDirectory="$(DistributionDirectory)"/>
+    <Exec Command="$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe ClearCanvas.Utilities.Manifest.ManifestGenerationApplication /d=$(DistributionDirectory) /m=Manifest.xml /c=$(Certificate) /pw='$(Password)' $(TrunkDirectory)\ImageViewer\ManifestInputDesktop.xml @(ManifestFiles)" WorkingDirectory="$(DistributionDirectory)"/>
 
     <Delete Files="$(DistributionDirectory)\logs\*"/>
   </Target>

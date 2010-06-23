@@ -56,5 +56,11 @@ namespace ClearCanvas.Utilities.Manifest
         [CommandLineParameter("packagename", "pn", "The name of the package (only used when /p is specified).")]
         public string PackageName { get; set; }
 
+        [CommandLineParameter("certificate", "c", "The x509 certificate for signing the manifest.")]
+        public string Certificate { get; set; }
+
+        [CommandLineParameter("password", "pw", "The x509 certificate password for signing the manifest.")]
+        public string Password { get; set; }
+
     }
 }

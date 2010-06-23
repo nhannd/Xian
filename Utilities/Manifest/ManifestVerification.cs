@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
@@ -45,7 +46,7 @@ namespace ClearCanvas.Utilities.Manifest
         {
             get
             {
-                lock (_syncLock)
+                lock (SyncLock)
                 {
                     if (!_verificationRun)
                     {
@@ -66,7 +67,7 @@ namespace ClearCanvas.Utilities.Manifest
 
         #region Private Members
 
-        private static readonly object _syncLock = new object();
+        private static readonly object SyncLock = new object();
         private static bool _verificationRun;
         private static bool _verificationStatus;
 
@@ -133,6 +134,22 @@ namespace ClearCanvas.Utilities.Manifest
             {
                 try
                 {
+                    XmlDocument doc = new XmlDocument();
+                    doc.Load(file);
+
+                    XmlElement modulusNode =
+                        (XmlElement) CollectionUtils.FirstElement(doc.GetElementsByTagName("Modulus"));
+                    XmlElement exponentNode =
+                        (XmlElement) CollectionUtils.FirstElement(doc.GetElementsByTagName("Exponent"));
+
+                    if (!modulusNode.InnerText.Equals("gRuWfDdo9ZCQ9G4hIt6amEgr1DBPDltP0NoBQI/GpooT6hGh6UkFRpaYQMt4ijxbHI5UDGZvAU66Vjt+FUcRVJ4I8AAuhyI4mU2BIzsfpUsKjxJMNdh3fxjaAOjMc4s5pX0CUvCJuZEhY/+PY/aYnjX2a6wes3nGHTx/YJhh42M="))
+                        throw new ApplicationException("Invalid public key in digitial signature.");
+                    if (!exponentNode.InnerText.Equals("AQAB"))
+                        throw new ApplicationException("Invalid public key in digitial signature.");
+
+                    if (!ManifestSignature.VerifyXmlSignature(doc))
+                        throw new ApplicationException("Manifest digital signature failed verification.");
+
                     ClearCanvasManifest manifest = ClearCanvasManifest.Deserialize(file);
 
                     if (manifest.ProductManifest != null)

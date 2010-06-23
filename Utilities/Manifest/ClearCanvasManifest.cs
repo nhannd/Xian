@@ -67,22 +67,43 @@ namespace ClearCanvas.Utilities.Manifest
         {
             using (FileStream fs = new FileStream(filename, FileMode.CreateNew))
             {
-                XmlSerializer theSerializer = new XmlSerializer(typeof(ClearCanvasManifest));
-
-                XmlWriterSettings settings = new XmlWriterSettings
-                {
-                    Indent = true,
-                    IndentChars = "  ",
-                    Encoding = Encoding.UTF8,
-                };
-
-                XmlWriter writer = XmlWriter.Create(fs, settings);
-                if (writer != null)
-                    theSerializer.Serialize(writer, manifest);
-                fs.Flush();
+                Serialize(fs, manifest);
                 fs.Close();
             }
         }
+
+        public static void Serialize(Stream stream, ClearCanvasManifest manifest)
+        {
+            XmlSerializer theSerializer = new XmlSerializer(typeof (ClearCanvasManifest));
+
+            XmlWriterSettings settings = new XmlWriterSettings
+                                             {
+                                                 Indent = true,
+                                                 IndentChars = "  ",
+                                                 Encoding = Encoding.UTF8,
+                                             };
+
+            XmlWriter writer = XmlWriter.Create(stream, settings);
+            if (writer != null)
+                theSerializer.Serialize(writer, manifest);
+            stream.Flush();
+        }
+
+        public static XmlDocument Serialize(ClearCanvasManifest manifest)
+        {
+            using (MemoryStream fs = new MemoryStream())
+            {
+                Serialize(fs, manifest);
+
+                fs.Seek(0, SeekOrigin.Begin);
+                fs.Flush();
+
+                XmlDocument doc = new XmlDocument();
+                doc.Load(fs);
+                return doc;
+            }
+        }
+
 
         public static ClearCanvasManifest Deserialize(string filename)
         {

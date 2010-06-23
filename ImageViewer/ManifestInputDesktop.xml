@@ -39,8 +39,8 @@
     <File name="dicom_interim\" ignore="true" />
     <File name="badfiles\" ignore="true" />
     <File name="plugins\BilinearInterpolation.dll" signed="true" />
-    <File name="plugins\Castle.Core.dll" signed="true" />
-    <File name="plugins\Castle.DynamicProxy2.dll" signed="true" />
+    <File name="plugins\Castle.Core.dll" ignore="true" />
+    <File name="plugins\Castle.DynamicProxy2.dll" ignore="true" />
     <File name="plugins\ClearCanvas.Desktop.dll" signed="true" />
     <File name="plugins\ClearCanvas.Desktop.ExtensionBrowser.dll" signed="true" />
     <File name="plugins\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.dll" signed="true" />
