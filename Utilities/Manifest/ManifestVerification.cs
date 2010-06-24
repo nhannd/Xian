@@ -175,16 +175,16 @@ namespace ClearCanvas.Utilities.Manifest
                     }
                     else if (manifest.PackageManifest != null)
                     {
-                        if (manifest.PackageManifest.Package.Manifest.Equals(Path.GetFileName(file)))
-                            throw new ApplicationException("Manifest name does not match manifest: " +
+                        if (!manifest.PackageManifest.Package.Manifest.Equals(Path.GetFileName(file)))
+                            throw new ApplicationException("Package Manifest name does not match manifest: " +
                                                            Path.GetFileName(file));
                     }
         
                     manifests.Add(manifest);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    throw new ApplicationException("Unexpected problem parsing manifest: " + file);
+                    throw new ApplicationException("Unexpected problem parsing manifest: " + e.Message + " (" + Path.GetFileName(file) + ")");
                 }
             }
 

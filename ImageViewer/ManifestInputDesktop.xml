@@ -12,7 +12,7 @@
     <File name="ClearCanvas.Desktop.Executable.exe.config" config="true" />
     <File name="ClearCanvas.Dicom.DataStore.cfg.xml" />
     <File name="ClearCanvas.Server.ShredHostService.exe" signed="true" />
-    <File name="ClearCanvas.Server.ShredHostService.exe.config" config="true" />
+    <File name="ClearCanvas.Server.ShredHostService.exe.config" config="false" />
     <File name="DicomAEServers.xml" ignore="true"/>
     <File name="EULA.rtf" />
     <File name="License.rtf" />
