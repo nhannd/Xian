@@ -164,6 +164,7 @@
     <Compile Include="Graphics\GraphicFocusChangedEventArgs.cs" />
     <Compile Include="Graphics\InvariantSpatialTransform.cs" />
     <Compile Include="PresentationStates\GeometricShutterCache.cs" />
+    <Compile Include="Tests\ImageDiff.cs" />
     <Compile Include="ViewerActionFilter.cs" />
     <Compile Include="ImageBoxDrawingEventArgs.cs" />
     <Compile Include="Imaging\ComposedLut.cs" />
