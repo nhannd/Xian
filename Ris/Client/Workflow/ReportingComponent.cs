@@ -730,9 +730,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 					return;
 				}
 
-				if (!PreliminaryDiagnosis.ShowDialogOnVerifyIfRequired(this.WorklistItem, this.Host.DesktopWindow))
+				if(PreliminaryDiagnosis.Current.IsDialogNeeded())
 				{
-					return; // user cancelled out
+					PreliminaryDiagnosis.Current.OpenDialogModeless(
+						delegate
+						{
+							// yes, we are calling ourselves recursively, since IsDialogNeeded() is guaranteed
+							// to be false after this point
+							Verify();
+						});
+					return;
 				}
 
 				CloseImages();
@@ -1112,6 +1119,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private void OnWorklistItemChangedEvent(object sender, EventArgs args)
 		{
 			this.Modified = false;
+			PreliminaryDiagnosis.Clear();
 
 			if (this.WorklistItem != null)
 			{
@@ -1119,6 +1127,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				{
 					StartReportingWorklistItem();
 					UpdateChildComponents(true);
+
 					// notify extension pages that the worklist item has changed
 					EventsHelper.Fire(_worklistItemChanged, this, EventArgs.Empty);
 
@@ -1142,6 +1151,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private void StartReportingWorklistItem()
 		{
 			ClaimAndLinkWorklistItem(this.WorklistItem);
+
+			PreliminaryDiagnosis.SetCurrent(this.WorklistItem, this.Host.DesktopWindow);
 
 			Platform.GetService<IReportingWorkflowService>(service =>
 			{

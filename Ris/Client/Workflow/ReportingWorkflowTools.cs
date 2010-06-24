@@ -253,9 +253,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			// show PD dialog if required
-			if (!PreliminaryDiagnosis.ShowDialogOnVerifyIfRequired(item, this.Context.DesktopWindow))
+			PreliminaryDiagnosis.SetCurrent(item, this.Context.DesktopWindow);
+			if(PreliminaryDiagnosis.Current.IsDialogNeeded())
 			{
-				return false; // user cancelled out
+				var exitCode = PreliminaryDiagnosis.Current.OpenDialogModal();
+				if(exitCode != ApplicationComponentExitCode.Accepted)
+					return false;	// user cancelled
 			}
 
 			try

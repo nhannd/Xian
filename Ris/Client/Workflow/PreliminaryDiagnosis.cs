@@ -37,47 +37,133 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
+using System;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-    static class PreliminaryDiagnosis
-    {
-		/// <summary>
-		/// Determines if the PD dialog must be shown upon verification, for the specified worklist item.
-		/// </summary>
-		/// <param name="worklistItem"></param>
-		/// <param name="desktopWindow"></param>
-		/// <returns>True if the dialog was shown and accepted, or if it was not required.  False if the user cancelled out of the dialog.</returns>
-		public static bool ShowDialogOnVerifyIfRequired(ReportingWorklistItemSummary worklistItem, IDesktopWindow desktopWindow)
+	class PreliminaryDiagnosis
+	{
+		public static void SetCurrent(ReportingWorklistItemSummary worklistItem, IDesktopWindow desktopWindow)
 		{
+			Clear();
 
-			var existingConv = ConversationExists(worklistItem.OrderRef);
+			Current = new PreliminaryDiagnosis(worklistItem, desktopWindow);
+		}
 
-			// if no existing conversation, may not need to show the dialog
-			if(!existingConv)
+		public static void Clear()
+		{
+			if (Current != null)
 			{
-				// if this is not an emergency order, do not show the dialog
-				if (!IsEmergencyOrder(worklistItem.PatientClass.Code))
-					return true;
-
-				// otherwise, ask the user if they would like to initiate a PD review
-				var msg = string.Format(SR.MessageQueryPrelimDiagnosisReviewRequired, worklistItem.PatientClass.Value);
-				var action = desktopWindow.ShowMessageBox(msg, MessageBoxActions.YesNo);
-				if(action == DialogBoxAction.No)
-					return true;
+				Current.CloseDialog();
 			}
+			Current = null;
+		}
+
+		public static PreliminaryDiagnosis Current { get; private set; }
+
+
+		private readonly ReportingWorklistItemSummary _worklistItem;
+		private readonly IDesktopWindow _window;
+		private Shelf _shelf;
+		private bool _completed;
+		private bool? _dialogNeeded;
+
+		private PreliminaryDiagnosis(ReportingWorklistItemSummary worklistItem, IDesktopWindow window)
+		{
+			_worklistItem = worklistItem;
+			_window = window;
+		}
+
+		public bool IsDialogNeeded()
+		{
+			if (_completed)
+				return false;
+
+			if(!_dialogNeeded.HasValue)
+			{
+				_dialogNeeded = CheckIfDialogNeeded();
+			}
+			return _dialogNeeded.Value;
+		}
+
+
+		public void OpenDialogModeless(Action<object> onCompletion)
+		{
+			// don't open the shelf twice
+			if(_shelf != null)
+				return;
 
 			// show dialog
-			var title = string.Format(SR.FormatTitleContextDescriptionReviewOrderNoteConversation,
-				PersonNameFormat.Format(worklistItem.PatientName),
-				MrnFormat.Format(worklistItem.Mrn),
-				AccessionFormat.Format(worklistItem.AccessionNumber));
+			var component = CreateComponent();
+			_shelf = ApplicationComponent.LaunchAsShelf(_window, component, MakeTitle(), ShelfDisplayHint.DockFloat);
+			_shelf.Closed += delegate
+			                 {
+			                 	_completed = (component.ExitCode == ApplicationComponentExitCode.Accepted);
+			                 	_shelf = null;
+								 if(_completed)
+								 {
+								 	onCompletion(null);
+								 }
+			                 };
+		}
 
-			var component = new OrderNoteConversationComponent(worklistItem.OrderRef, OrderNoteCategory.PreliminaryDiagnosis.Key,
-															   PreliminaryDiagnosisSettings.Default.VerificationTemplatesXml,
-															   PreliminaryDiagnosisSettings.Default.VerificationSoftKeysXml);
+		public ApplicationComponentExitCode OpenDialogModal()
+		{
+			return ApplicationComponent.LaunchAsDialog(_window, CreateComponent(), MakeTitle());
+		}
 
-        	return ApplicationComponent.LaunchAsDialog(desktopWindow, component, title) == ApplicationComponentExitCode.Accepted;
+		public bool IsOpen
+		{
+			get { return _shelf != null;}
+		}
+
+		public bool IsCompleted
+		{
+			get { return _completed; }
+		}
+
+		public void CloseDialog()
+		{
+			if(_shelf != null)
+			{
+				_shelf.Close();
+				_shelf = null;
+			}
+		}
+
+		private bool CheckIfDialogNeeded()
+		{
+			var existingConv = ConversationExists(_worklistItem.OrderRef);
+
+			// if no existing conversation, may not need to show the dialog
+			if (!existingConv)
+			{
+				// if this is not an emergency order, do not show the dialog
+				if (!IsEmergencyOrder(_worklistItem.PatientClass.Code))
+					return false;
+
+				// otherwise, ask the user if they would like to initiate a PD review
+				var msg = string.Format(SR.MessageQueryPrelimDiagnosisReviewRequired, _worklistItem.PatientClass.Value);
+				var action = _window.ShowMessageBox(msg, MessageBoxActions.YesNo);
+				if (action == DialogBoxAction.No)
+					return false;
+			}
+			return true;
+		}
+
+		private OrderNoteConversationComponent CreateComponent()
+		{
+			return new OrderNoteConversationComponent(_worklistItem.OrderRef, OrderNoteCategory.PreliminaryDiagnosis.Key,
+													  PreliminaryDiagnosisSettings.Default.VerificationTemplatesXml,
+													  PreliminaryDiagnosisSettings.Default.VerificationSoftKeysXml);
+		}
+
+		private string MakeTitle()
+		{
+			return string.Format(SR.FormatTitleContextDescriptionReviewOrderNoteConversation,
+								 PersonNameFormat.Format(_worklistItem.PatientName),
+								 MrnFormat.Format(_worklistItem.Mrn),
+								 AccessionFormat.Format(_worklistItem.AccessionNumber));
 		}
 
 		private static bool ConversationExists(EntityRef orderRef)
