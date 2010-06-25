@@ -51,10 +51,10 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 		/// <remarks>
 		/// The Threed function consists of four non-co-planar spheres embedded in a volume.
 		/// </remarks>
-		public static TestDataFunction Threed = new TestDataFunction("Threed", (x, y, z) => UnitStep(5 - Distance(x, y, z, 25, 30, 35))
-		                                                                                    + 2*UnitStep(5 - Distance(x, y, z, 50, 25, 50))
-		                                                                                    + 3*UnitStep(5 - Distance(x, y, z, 63, 27, 36))
-		                                                                                    + 4*UnitStep(5 - Distance(x, y, z, 79, 49, 65))).Normalize(100);
+		public static TestDataFunction Threed = new TestDataFunction("Threed", (x, y, z) => UnitStep(20 - Distance(x, y, z, 25, 33, 25))
+		                                                                                    + 2*UnitStep(20 - Distance(x, y, z, 25, 67, 50))
+		                                                                                    + 3*UnitStep(20 - Distance(x, y, z, 25, 33, 75))
+		                                                                                    + 4*UnitStep(20 - Distance(x, y, z, 75, 50, 50))).Normalize(100);
 
 		private delegate float TestDataFunctionDelegate(float x, float y, float z);
 
