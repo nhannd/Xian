@@ -75,20 +75,25 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		protected override string GetName()
 		{
 			return string.Format(SR.FormatPETFusionDisplaySet, GetSeriesDisplaySetName(base.SourceSeries), GetSeriesDisplaySetName(this.PETSeries),
-			                     this.AttenuationCorrection ? SR.LabelAttenuationCorrection : SR.LabelNoAttentuationCorrection
+			                     GetAttentuationCorrectionLabel()
 				);
 		}
 
 		protected override string GetDescription()
 		{
 			return string.Format(SR.FormatPETFusionDisplaySet, GetSeriesDisplaySetDescription(base.SourceSeries), GetSeriesDisplaySetDescription(this.PETSeries),
-			                     this.AttenuationCorrection ? SR.LabelAttenuationCorrection : SR.LabelNoAttentuationCorrection
+			                     GetAttentuationCorrectionLabel()
 				);
 		}
 
 		protected override string GetUid()
 		{
 			return _fusionSeriesInstanceUid;
+		}
+
+		private string GetAttentuationCorrectionLabel()
+		{
+			return AttenuationCorrection ? SR.LabelAttenuationCorrection : SR.LabelNoAttentuationCorrection;
 		}
 
 		private static string GetSeriesDisplaySetName(ISeriesIdentifier series)

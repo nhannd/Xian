@@ -32,8 +32,11 @@
 #if	UNIT_TESTS
 #pragma warning disable 1591,0419,1574,1587
 
+using System;
 using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.StudyManagement;
 using NUnit.Framework;
 
@@ -48,7 +51,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			var factory = new PETFusionDisplaySetFactory(PETFusionType.CT);
 			var displaySets = CreateDisplaySets(factory, Combine<ISopDataSource>());
 
-			Assert.IsEmpty(displaySets);
+			Assert.IsEmpty(displaySets, "Display set factories should not throw an exception if there is nothing to create.");
 		}
 
 		[Test]
@@ -59,7 +62,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			var seriesPET = CreateSopSeries(25, "PatientA", "StudyA", "SeriesPET", 2, "FrameA", Modality.PT);
 			var displaySets = CreateDisplaySets(factory, Combine(seriesCT, seriesPET));
 
-			Assert.IsNotEmpty(displaySets);
+			Assert.IsNotEmpty(displaySets, "Fusion display sets should be created for trivially simple PET-CT data.");
 		}
 
 		[Test]
@@ -70,7 +73,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			var seriesPET = CreateSopSeries(25, "PatientA", "StudyA", "SeriesPET", 2, "FrameA", Modality.PT);
 			var displaySets = CreateDisplaySets(factory, Combine(seriesMR, seriesPET));
 
-			Assert.IsEmpty(displaySets);
+			Assert.IsEmpty(displaySets, "Fusion display sets should not be created for PET-MR using a PET-CT factory.");
 		}
 
 		[Test]
@@ -81,7 +84,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			var seriesMR = CreateSopSeries(25, "PatientA", "StudyA", "SeriesMR", 1, "FrameA", Modality.MR);
 			var displaySets = CreateDisplaySets(factory, Combine(seriesCT, seriesMR));
 
-			Assert.IsEmpty(displaySets);
+			Assert.IsEmpty(displaySets, "Fusion display sets should not be created between invalid modalities (e.g. CT and MR).");
 		}
 
 		[Test]
@@ -92,7 +95,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			var seriesPET = CreateSopSeries(25, "PatientA", "StudyB", "SeriesPET", 2, "FrameA", Modality.PT);
 			var displaySets = CreateDisplaySets(factory, Combine(seriesCT, seriesPET));
 
-			Assert.IsEmpty(displaySets);
+			Assert.IsEmpty(displaySets, "Fusion display sets should not be created for series in different studies.");
 		}
 
 		[Test]
@@ -103,12 +106,121 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			var seriesPET = CreateSopSeries(25, "PatientB", "StudyB", "SeriesPET", 2, "FrameA", Modality.PT);
 			var displaySets = CreateDisplaySets(factory, Combine(seriesCT, seriesPET));
 
-			Assert.IsEmpty(displaySets);
+			Assert.IsEmpty(displaySets, "Fusion display sets should not be created for series from different patients.");
+		}
+
+		[Test]
+		public void TestFusingDifferentFramesOfReference()
+		{
+			var factory = new PETFusionDisplaySetFactory(PETFusionType.CT);
+			var seriesCT = CreateSopSeries(25, "PatientA", "StudyA", "SeriesCT", 1, "FrameA", Modality.CT);
+			var seriesPET = CreateSopSeries(25, "PatientA", "StudyA", "SeriesPET", 2, "FrameB", Modality.PT);
+			var displaySets = CreateDisplaySets(factory, Combine(seriesCT, seriesPET));
+
+			Assert.IsNotEmpty(displaySets, "Fusion display sets should still be created even with different frames of reference.");
+		}
+
+		[Test]
+		public void TestPETFusionDisplaySetDescriptor()
+		{
+			StudyTree studyTree;
+			var factory = new PETFusionDisplaySetFactory(PETFusionType.CT);
+			var seriesCT = CreateSopSeries(25, "PatientA", "StudyA", "SeriesCT", 1, "FrameA", Modality.CT);
+			var seriesPET = CreateSopSeries(25, "PatientA", "StudyA", "SeriesPET", 2, "FrameA", Modality.PT);
+			var seriesPETCor = CreateSopSeries(25, "PatientA", "StudyA", "SeriesPETCor", 3, "FrameA", Modality.PT, true);
+			var displaySets = CreateDisplaySets(factory, Combine(seriesCT, seriesPET, seriesPETCor), out studyTree);
+
+			try
+			{
+				Assert.AreEqual(2, displaySets.Count, "There is only one valid combination of fuseable series.");
+
+				// Verify identity of fused series
+				var displaySet = CollectionUtils.SelectFirst(displaySets, d => ValidatePETFusionDisplaySetDescriptor(d.Descriptor, HashUid("SeriesCT"), HashUid("SeriesPET")));
+				Assert.IsNotNull(displaySet, "Could not find the uncorrected fusion series.");
+
+				var displaySetCor = CollectionUtils.SelectFirst(displaySets, d => ValidatePETFusionDisplaySetDescriptor(d.Descriptor, HashUid("SeriesCT"), HashUid("SeriesPETCor")));
+				Assert.IsNotNull(displaySet, "Could not find the corrected fusion series.");
+
+				var seriesCollection = CollectionUtils.FirstElement(CollectionUtils.FirstElement(studyTree.Patients).Studies).Series;
+				var ctSeries = CollectionUtils.SelectFirst(seriesCollection, s => s.SeriesDescription == "SeriesCT");
+				var petSeries = CollectionUtils.SelectFirst(seriesCollection, s => s.SeriesDescription == "SeriesPET");
+				var petCorSeries = CollectionUtils.SelectFirst(seriesCollection, s => s.SeriesDescription == "SeriesPETCor");
+
+				var expectedDescriptor = GetFusedDisplaySetName(ctSeries, petSeries, false);
+				var expectedDescriptorCor = GetFusedDisplaySetName(ctSeries, petCorSeries, true);
+
+				// Validate the names of the display sets (this is what is shown on the context menu)
+				Assert.AreEqual(expectedDescriptor, displaySet.Name, "Name string differs for uncorrected display set.");
+				Assert.AreEqual(expectedDescriptorCor, displaySetCor.Name, "Name string differs for corrected display set.");
+			}
+			catch (Exception)
+			{
+				if (displaySets.Count > 0)
+				{
+					Console.WriteLine("Generated Display Sets ({0})", displaySets.Count);
+					foreach (var displaySet in displaySets)
+						Console.WriteLine(" > {0}", displaySet.Descriptor.Description);
+				}
+				throw;
+			}
+		}
+
+		[Test]
+		public void TestFusionMatchMaker()
+		{
+			var factory = new PETFusionDisplaySetFactory(PETFusionType.CT);
+			var seriesCT = CreateSopSeries(25, "PatientA", "StudyA", "SeriesCT", 1, "FrameA", Modality.CT);
+			var seriesCTAx = CreateSopSeries(25, "PatientA", "StudyA", "SeriesCTAx", 1, "FrameA", Modality.CT);
+			var seriesPET = CreateSopSeries(25, "PatientA", "StudyA", "SeriesPET", 2, "FrameA", Modality.PT);
+			var seriesPETCor = CreateSopSeries(25, "PatientA", "StudyA", "SeriesPETCor", 3, "FrameA", Modality.PT, true);
+			var unrelatedSeries = CreateSopSeries(25, "PatientA", "StudyA", "UnrelatedSeries", 1, "FrameA", Modality.MR);
+			var unrelatedStudy = CreateSopSeries(25, "PatientA", "UnrelatedStudy", "UnrelatedSeries", 1, "FrameA", Modality.PT);
+			var unrelatedPatient = CreateSopSeries(25, "UnrelatedPatient", "UnrelatedStudy", "UnrelatedSeries", 1, "FrameA", Modality.PT);
+			var displaySets = CreateDisplaySets(factory, Combine(seriesCT, seriesPET, seriesCTAx, seriesPETCor, unrelatedSeries, unrelatedStudy, unrelatedPatient));
+
+			try
+			{
+				// There are 4 lights, obviously
+				Assert.AreEqual(4, displaySets.Count, "There are four valid combinations of fuseable series.");
+
+				// Verify identities of each fused series
+				Assert.IsTrue(CollectionUtils.Contains(displaySets, d => ValidatePETFusionDisplaySetDescriptor(d.Descriptor, HashUid("SeriesCT"), HashUid("SeriesPET"))));
+				Assert.IsTrue(CollectionUtils.Contains(displaySets, d => ValidatePETFusionDisplaySetDescriptor(d.Descriptor, HashUid("SeriesCT"), HashUid("SeriesPETCor"))));
+				Assert.IsTrue(CollectionUtils.Contains(displaySets, d => ValidatePETFusionDisplaySetDescriptor(d.Descriptor, HashUid("SeriesCTAx"), HashUid("SeriesPET"))));
+				Assert.IsTrue(CollectionUtils.Contains(displaySets, d => ValidatePETFusionDisplaySetDescriptor(d.Descriptor, HashUid("SeriesCTAx"), HashUid("SeriesPETCor"))));
+			}
+			catch (Exception)
+			{
+				if (displaySets.Count > 0)
+				{
+					Console.WriteLine("Generated Display Sets ({0})", displaySets.Count);
+					foreach (var displaySet in displaySets)
+						Console.WriteLine(" > {0}", displaySet.Descriptor.Description);
+				}
+				throw;
+			}
+		}
+
+		private static bool ValidatePETFusionDisplaySetDescriptor(IDisplaySetDescriptor descriptor, string baseSeriesInstanceUid, string petSeriesInstanceUid)
+		{
+			if (descriptor is PETFusionDisplaySetDescriptor)
+			{
+				var petFusionDisplaySetDescriptor = (PETFusionDisplaySetDescriptor) descriptor;
+				return petFusionDisplaySetDescriptor.SourceSeries.SeriesInstanceUid == baseSeriesInstanceUid
+				       && petFusionDisplaySetDescriptor.PETSeries.SeriesInstanceUid == petSeriesInstanceUid;
+			}
+			return false;
 		}
 
 		private static List<IDisplaySet> CreateDisplaySets(IDisplaySetFactory displaySetFactory, IEnumerable<ISopDataSource> sopDataSources)
 		{
-			var studyTree = new StudyTree();
+			StudyTree studyTree;
+			return CreateDisplaySets(displaySetFactory, sopDataSources, out studyTree);
+		}
+
+		private static List<IDisplaySet> CreateDisplaySets(IDisplaySetFactory displaySetFactory, IEnumerable<ISopDataSource> sopDataSources, out StudyTree studyTree)
+		{
+			studyTree = new StudyTree();
 			foreach (var sopDataSource in sopDataSources)
 			{
 				studyTree.AddSop(new ImageSop(sopDataSource));
@@ -131,16 +243,20 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 
 		private static IEnumerable<ISopDataSource> CreateSopSeries(int sopCount, string patientId, string studyId, string seriesDesc, int seriesNumber, string frameOfReferenceId, Modality modality)
 		{
-			return CreateSopSeries(sopCount, patientId, patientId, studyId, HashUid(studyId), seriesDesc, seriesNumber, HashUid(frameOfReferenceId), modality);
+			return CreateSopSeries(sopCount, patientId, patientId, studyId, HashUid(studyId), seriesDesc, seriesNumber, HashUid(seriesDesc), HashUid(frameOfReferenceId), modality, false);
+		}
+
+		private static IEnumerable<ISopDataSource> CreateSopSeries(int sopCount, string patientId, string studyId, string seriesDesc, int seriesNumber, string frameOfReferenceId, Modality modality, bool attnCorrected)
+		{
+			return CreateSopSeries(sopCount, patientId, patientId, studyId, HashUid(studyId), seriesDesc, seriesNumber, HashUid(seriesDesc), HashUid(frameOfReferenceId), modality, attnCorrected);
 		}
 
 		private static IEnumerable<ISopDataSource> CreateSopSeries(int sopCount,
 		                                                           string patientId, string patientName,
 		                                                           string studyId, string studyInstanceUid,
-		                                                           string seriesDesc, int seriesNumber,
-		                                                           string frameOfReferenceUid, Modality modality)
+		                                                           string seriesDesc, int seriesNumber, string seriesInstanceUid,
+		                                                           string frameOfReferenceUid, Modality modality, bool attnCorrected)
 		{
-			string seriesInstanceUid = DicomUid.GenerateUid().UID;
 			for (int n = 0; n < sopCount; n++)
 			{
 				var dicomFile = new DicomFile();
@@ -155,6 +271,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 				dataset[DicomTags.SopInstanceUid].SetStringValue(DicomUid.GenerateUid().UID);
 				dataset[DicomTags.SopClassUid].SetStringValue(ModalityConverter.ToSopClassUid(modality));
 				dataset[DicomTags.Modality].SetStringValue(modality.ToString());
+				dataset[DicomTags.CorrectedImage].SetStringValue(attnCorrected ? "ATTN" : string.Empty);
 				dataset[DicomTags.FrameOfReferenceUid].SetStringValue(frameOfReferenceUid);
 				dataset[DicomTags.ImageOrientationPatient].SetStringValue(string.Format(@"{0}\{1}\{2}\{3}\{4}\{5}", 1, 0, 0, 0, 1, 0));
 				dataset[DicomTags.ImagePositionPatient].SetStringValue(string.Format(@"{0}\{1}\{2}", 0, 0, n));
@@ -177,9 +294,18 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			}
 		}
 
+		private static string GetFusedDisplaySetName(ISeriesData baseSeries, ISeriesData petSeries, bool attenuationCorrection)
+		{
+			return string.Format(SR.FormatPETFusionDisplaySet,
+			                     string.Format("{0} - {1}", baseSeries.SeriesNumber, baseSeries.SeriesDescription),
+			                     string.Format("{0} - {1}", petSeries.SeriesNumber, petSeries.SeriesDescription),
+			                     attenuationCorrection ? SR.LabelAttenuationCorrection : SR.LabelNoAttentuationCorrection
+				);
+		}
+
 		private static string HashUid(string id)
 		{
-			return string.Format("411.12.8453.12.83109.70.5.{0}", id.GetHashCode());
+			return string.Format("411.12.8453.12.83109.70.5.{0}", BitConverter.ToUInt32(BitConverter.GetBytes(id.GetHashCode()), 0));
 		}
 
 		private static IEnumerable<T> Combine<T>(params IEnumerable<T>[] enumerables)

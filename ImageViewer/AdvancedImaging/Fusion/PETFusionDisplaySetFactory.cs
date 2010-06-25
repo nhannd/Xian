@@ -192,10 +192,10 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			if (!IsValidPETFusionSeries(petSeries))
 				return false;
 
-			//var baseFrames = GetFrames(baseSeries.Sops);
-			//var petFrames = GetFrames(petSeries.Sops);
-			//if (baseFrames[0].FrameOfReferenceUid != petFrames[0].FrameOfReferenceUid)
-			//	return false;
+			var baseFrames = GetFrames(baseSeries.Sops);
+			var petFrames = GetFrames(petSeries.Sops);
+			if (baseFrames[0].StudyInstanceUid != petFrames[0].StudyInstanceUid)
+				return false;
 
 			return true;
 		}
