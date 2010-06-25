@@ -32,13 +32,35 @@
 #if	UNIT_TESTS
 #pragma warning disable 1591,0419,1574,1587
 
+using ClearCanvas.Dicom;
+
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 {
 	public enum Modality
 	{
 		CT,
 		MR,
-		PT
+		PT,
+		SC
+	}
+
+	public class ModalityConverter
+	{
+		public static string ToSopClassUid(Modality modality)
+		{
+			switch (modality)
+			{
+				case Modality.CT:
+					return SopClass.CtImageStorageUid;
+				case Modality.MR:
+					return SopClass.MrImageStorageUid;
+				case Modality.PT:
+					return SopClass.PositronEmissionTomographyImageStorageUid;
+				case Modality.SC:
+				default:
+					return SopClass.SecondaryCaptureImageStorageUid;
+			}
+		}
 	}
 }
 

@@ -47,7 +47,7 @@ using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 {
-	[TestFixture]
+	[TestFixture(Description = "Tests for validating fused image pixel data alignment and orientation (including MPR of overlay data)")]
 	public class FusionImageGraphicTests
 	{
 		[TestFixtureSetUp]
@@ -184,7 +184,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 
 							Bitmap diff;
 							double result = ImageDiff.Compare(ImageDiffAlgorithm.Euclidian, referenceImage, testImage, out diff);
-							diff.Save(Path.Combine(outputPath.FullName, string.Format("{0}.png", index)));
+							diff.Save(Path.Combine(outputPath.FullName, string.Format("image{0}.png", index)));
 							diff.Dispose();
 							log.WriteLine("{0}, {1:f}", index, result);
 							list.Add(result);
