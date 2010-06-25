@@ -34,17 +34,23 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Tests;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 {
 	[MenuAction("setBase", "global-menus/MenuDebug/MenuFusion/Base Display Set", "SetBaseDisplaySet")]
 	[MenuAction("setOverlay", "global-menus/MenuDebug/MenuFusion/Overlay Display Set", "SetOverlayDisplaySet")]
 	[MenuAction("setFusion", "global-menus/MenuDebug/MenuFusion/Fusion Display Set", "SetFusionDisplaySet")]
+	[MenuAction("assertFusion", "global-menus/MenuDebug/MenuFusion/Assert Fusion Results", "AssertFusionResults")]
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	internal class TestDisplaySetsTool : ImageViewerTool
 	{
@@ -58,8 +64,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			{
 				if (_testDisplaySetGenerator == null)
 				{
-					_baseSopDataSources = TestDataFunction.Threed.CreateSops(true, Modality.CT, new Vector3D(0.3f, 0.3f, 0.3f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit);
-					_overlaySopDataSources = TestDataFunction.Threed.CreateSops(true, Modality.PT, new Vector3D(0.8f, 0.8f, 0.8f), Vector3D.zUnit, Vector3D.xUnit, Vector3D.yUnit);
+					_baseSopDataSources = TestDataFunction.Threed.CreateSops(true, Modality.CT, new Vector3D(0.8f, 0.8f, 0.8f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit);
+					_overlaySopDataSources = TestDataFunction.Threed.CreateSops(true, Modality.PT, new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.zUnit, Vector3D.xUnit, Vector3D.yUnit);
 					_testDisplaySetGenerator = new TestDisplaySetGenerator(_baseSopDataSources, _overlaySopDataSources);
 				}
 				return _testDisplaySetGenerator;
@@ -104,6 +110,45 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 		public void SetFusionDisplaySet()
 		{
 			SetDisplaySet(TestDisplaySetGenerator.CreateFusionDisplaySet());
+		}
+
+		public void AssertFusionResults()
+		{
+			try
+			{
+				using (var outputStream = File.CreateText(string.Format("{0}.AssertFusionResults.csv", this.GetType().FullName)))
+				{
+					using (var referenceDisplaySet = TestDisplaySetGenerator.CreateBaseDisplaySet())
+					{
+						using (var testDisplaySet = TestDisplaySetGenerator.CreateFusionDisplaySet())
+						{
+							int index = 0;
+							foreach (var testImage in testDisplaySet.PresentationImages)
+							{
+								var colorMapProvider = (IColorMapProvider) testImage;
+								colorMapProvider.ColorMapManager.InstallColorMap("Grayscale");
+
+								var layerOpacityProvider = (ILayerOpacityProvider) testImage;
+								layerOpacityProvider.LayerOpacityManager.Thresholding = false;
+								layerOpacityProvider.LayerOpacityManager.Opacity = 0.5f;
+
+								Bitmap diff;
+								var referenceImage = referenceDisplaySet.PresentationImages[index];
+								var result = ImageDiff.Compare(ImageDiffAlgorithm.Euclidian, referenceImage, testImage, out diff);
+								outputStream.WriteLine("{0}, {1:f4}", index, result);
+								diff.Save(index + ".png");
+								diff.Dispose();
+
+								++index;
+							}
+						}
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, "Fusion test assertion fail.", this.Context.DesktopWindow);
+			}
 		}
 
 		private void SetDisplaySet(IDisplaySet displaySet)

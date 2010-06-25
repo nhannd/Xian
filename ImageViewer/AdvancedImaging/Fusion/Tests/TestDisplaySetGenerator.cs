@@ -37,11 +37,15 @@ using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 {
-	internal class TestDisplaySetGenerator : IDisposable
+	/// <summary>
+	/// Generates <see cref="ImageSop"/>s and <see cref="IDisplaySet"/>s for testing of image fusion functionality.
+	/// </summary>
+	public class TestDisplaySetGenerator : IDisposable
 	{
 		private readonly IList<ISopDataSource> _baseSopDataSources;
 		private readonly IList<ISopDataSource> _overlaySopDataSources;
@@ -118,11 +122,14 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 
 			using (var fusionOverlayData = new FusionOverlayData(GetFrames(overlaySops)))
 			{
+				int bitDepth = fusionOverlayData.Frames[0].ParentImageSop.DataSource[DicomTags.BitsStored].GetInt32(0, 16);
 				foreach (var baseFrame in GetFrames(baseSops))
 				{
 					using (var fusionOverlaySlice = fusionOverlayData.CreateOverlaySlice(baseFrame))
 					{
 						var fus = new FusionPresentationImage(baseFrame, fusionOverlaySlice);
+						fus.BaseVoiLutManager.InstallVoiLut(new IdentityVoiLinearLut(fus.ImageSop.DataSource[DicomTags.BitsStored].GetInt32(0, 16)));
+						fus.OverlayVoiLutManager.InstallVoiLut(new IdentityVoiLinearLut(bitDepth));
 						displaySet.PresentationImages.Add(fus);
 					}
 				}
@@ -139,6 +146,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			{
 				foreach (var image in PresentationImageFactory.Create(sop))
 				{
+					if (image is IVoiLutProvider)
+						((IVoiLutProvider) image).VoiLutManager.InstallVoiLut(new IdentityVoiLinearLut(((IImageSopProvider) image).ImageSop.DataSource[DicomTags.BitsStored].GetInt32(0, 16)));
 					displaySet.PresentationImages.Add(image);
 				}
 			}

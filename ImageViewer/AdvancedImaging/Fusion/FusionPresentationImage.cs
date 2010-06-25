@@ -151,6 +151,16 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			get { return (GrayscaleImageGraphic) base.ImageGraphic; }
 		}
 
+		public IVoiLutManager BaseVoiLutManager
+		{
+			get { return ImageGraphic.VoiLutManager; }
+		}
+
+		public IVoiLutManager OverlayVoiLutManager
+		{
+			get { return _fusionOverlayComposite.VoiLutManager; }
+		}
+
 		public override IPresentationImage CreateFreshCopy()
 		{
 			return new FusionPresentationImage(this.Frame, _fusionOverlayComposite.OverlayFrameData) {PresentationState = this.PresentationState};
