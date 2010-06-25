@@ -49,9 +49,9 @@ namespace ClearCanvas.Utilities.Manifest
         [XmlRoot("File")]
         public class InputFile
         {
-            [XmlAttribute(AttributeName = "signed", DataType = "boolean")]
+            [XmlAttribute(AttributeName = "checksum", DataType = "boolean")]
             [DefaultValue(false)]
-            public bool Signed { get; set; }
+            public bool Checksum { get; set; }
 
             [XmlAttribute(AttributeName = "ignore", DataType = "boolean")]
             [DefaultValue(false)]

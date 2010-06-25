@@ -193,7 +193,7 @@ namespace ClearCanvas.Utilities.Manifest
                                                 Filename = inputFile.Name,                                                
                                             };
 
-                    if (inputFile.Signed)
+                    if (inputFile.Checksum)
                     {
                         file.Timestamp = info.CreationTimeUtc;
                         file.GenerateChecksum(fullPath);

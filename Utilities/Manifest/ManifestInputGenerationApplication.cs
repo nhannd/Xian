@@ -131,9 +131,9 @@ namespace ClearCanvas.Utilities.Manifest
             }
 
             if (input.Name.EndsWith("exe") || input.Name.EndsWith("dll"))
-                input.Signed = true;
+                input.Checksum = true;
             else
-                input.Signed = false;
+                input.Checksum = false;
 
             if (input.Name.EndsWith("exe.config"))
                 input.Config = true;
