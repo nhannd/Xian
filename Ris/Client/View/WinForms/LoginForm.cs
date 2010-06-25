@@ -33,6 +33,7 @@ using System;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 using System.Drawing;
+using ClearCanvas.Utilities.Manifest;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
@@ -50,6 +51,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 #endif
 
 			InitializeComponent();
+
+            _manifest.Visible = !ManifestVerification.Valid;           
 		}
 
 		public void SetMode(LoginDialogMode mode)
