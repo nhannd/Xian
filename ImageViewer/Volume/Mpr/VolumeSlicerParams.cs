@@ -357,13 +357,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		private static Matrix CalcRotateMatrixFromOrthogonalBasis(Vector3D xAxis, Vector3D yAxis, Vector3D zAxis)
 		{
+			const float zeroTolerance = 0.0000001f;
 			Platform.CheckForNullReference(xAxis, "xAxis");
 			Platform.CheckForNullReference(yAxis, "yAxis");
 			Platform.CheckForNullReference(zAxis, "zAxis");
 			Platform.CheckFalse(xAxis.IsNull || yAxis.IsNull || zAxis.IsNull, "Input must be an orthogonal set of basis vectors (i.e. non-trivial vectors).");
-			Platform.CheckTrue(FloatComparer.AreEqual(xAxis.Dot(yAxis), 0)
-			                   && FloatComparer.AreEqual(xAxis.Dot(zAxis), 0)
-			                   && FloatComparer.AreEqual(yAxis.Dot(zAxis), 0), "Input must be an orthogonal set of basis vectors (i.e. mutually perpendicular).");
+			Platform.CheckTrue(FloatComparer.AreEqual(xAxis.Dot(yAxis), 0, zeroTolerance)
+			                   && FloatComparer.AreEqual(xAxis.Dot(zAxis), 0, zeroTolerance)
+			                   && FloatComparer.AreEqual(yAxis.Dot(zAxis), 0, zeroTolerance), "Input must be an orthogonal set of basis vectors (i.e. mutually perpendicular).");
 
 			xAxis = xAxis.Normalize();
 			yAxis = yAxis.Normalize();
