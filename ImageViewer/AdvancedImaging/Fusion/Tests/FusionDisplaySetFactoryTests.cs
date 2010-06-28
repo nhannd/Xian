@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			var factory = new PETFusionDisplaySetFactory(PETFusionType.CT);
 			var seriesCT = CreateSopSeries(25, "PatientA", "StudyA", "SeriesCT", 1, "FrameA", Modality.CT);
 			var seriesPET = CreateSopSeries(25, "PatientA", "StudyA", "SeriesPET", 2, "FrameA", Modality.PT);
-			var seriesPETCor = CreateSopSeries(25, "PatientA", "StudyA", "SeriesPETCor", 3, "FrameA", Modality.PT, true);
+			var seriesPETCor = CreateSopSeries(25, "PatientA", "StudyA", "SeriesPETCor", 3, "FrameA", Modality.PT, true, false);
 			var displaySets = CreateDisplaySets(factory, Combine(seriesCT, seriesPET, seriesPETCor), out studyTree);
 
 			try
@@ -135,11 +135,13 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 				Assert.AreEqual(2, displaySets.Count, "There is only one valid combination of fuseable series.");
 
 				// Verify identity of fused series
-				var displaySet = CollectionUtils.SelectFirst(displaySets, d => ValidatePETFusionDisplaySetDescriptor(d.Descriptor, HashUid("SeriesCT"), HashUid("SeriesPET")));
+				var displaySet = CollectionUtils.SelectFirst(displaySets, d => ValidateFusionDisplaySetDescriptor(d.Descriptor, HashUid("SeriesCT"), HashUid("SeriesPET")));
 				Assert.IsNotNull(displaySet, "Could not find the uncorrected fusion series.");
+				Assert.IsFalse(((PETFusionDisplaySetDescriptor) displaySet.Descriptor).AttenuationCorrection, "Uncorrected fusion series is incorrectly flagged as corrected.");
 
-				var displaySetCor = CollectionUtils.SelectFirst(displaySets, d => ValidatePETFusionDisplaySetDescriptor(d.Descriptor, HashUid("SeriesCT"), HashUid("SeriesPETCor")));
-				Assert.IsNotNull(displaySet, "Could not find the corrected fusion series.");
+				var displaySetCor = CollectionUtils.SelectFirst(displaySets, d => ValidateFusionDisplaySetDescriptor(d.Descriptor, HashUid("SeriesCT"), HashUid("SeriesPETCor")));
+				Assert.IsNotNull(displaySetCor, "Could not find the corrected fusion series.");
+				Assert.IsTrue(((PETFusionDisplaySetDescriptor) displaySetCor.Descriptor).AttenuationCorrection, "Corrected fusion series is incorrectly flagged as uncorrected.");
 
 				var seriesCollection = CollectionUtils.FirstElement(CollectionUtils.FirstElement(studyTree.Patients).Studies).Series;
 				var ctSeries = CollectionUtils.SelectFirst(seriesCollection, s => s.SeriesDescription == "SeriesCT");
@@ -172,7 +174,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			var seriesCT = CreateSopSeries(25, "PatientA", "StudyA", "SeriesCT", 1, "FrameA", Modality.CT);
 			var seriesCTAx = CreateSopSeries(25, "PatientA", "StudyA", "SeriesCTAx", 1, "FrameA", Modality.CT);
 			var seriesPET = CreateSopSeries(25, "PatientA", "StudyA", "SeriesPET", 2, "FrameA", Modality.PT);
-			var seriesPETCor = CreateSopSeries(25, "PatientA", "StudyA", "SeriesPETCor", 3, "FrameA", Modality.PT, true);
+			var seriesPETCor = CreateSopSeries(25, "PatientA", "StudyA", "SeriesPETCor", 3, "FrameA", Modality.PT, true, false);
 			var unrelatedSeries = CreateSopSeries(25, "PatientA", "StudyA", "UnrelatedSeries", 1, "FrameA", Modality.MR);
 			var unrelatedStudy = CreateSopSeries(25, "PatientA", "UnrelatedStudy", "UnrelatedSeries", 1, "FrameA", Modality.PT);
 			var unrelatedPatient = CreateSopSeries(25, "UnrelatedPatient", "UnrelatedStudy", "UnrelatedSeries", 1, "FrameA", Modality.PT);
@@ -184,10 +186,10 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 				Assert.AreEqual(4, displaySets.Count, "There are four valid combinations of fuseable series.");
 
 				// Verify identities of each fused series
-				Assert.IsTrue(CollectionUtils.Contains(displaySets, d => ValidatePETFusionDisplaySetDescriptor(d.Descriptor, HashUid("SeriesCT"), HashUid("SeriesPET"))));
-				Assert.IsTrue(CollectionUtils.Contains(displaySets, d => ValidatePETFusionDisplaySetDescriptor(d.Descriptor, HashUid("SeriesCT"), HashUid("SeriesPETCor"))));
-				Assert.IsTrue(CollectionUtils.Contains(displaySets, d => ValidatePETFusionDisplaySetDescriptor(d.Descriptor, HashUid("SeriesCTAx"), HashUid("SeriesPET"))));
-				Assert.IsTrue(CollectionUtils.Contains(displaySets, d => ValidatePETFusionDisplaySetDescriptor(d.Descriptor, HashUid("SeriesCTAx"), HashUid("SeriesPETCor"))));
+				Assert.IsTrue(CollectionUtils.Contains(displaySets, d => ValidateFusionDisplaySetDescriptor(d.Descriptor, HashUid("SeriesCT"), HashUid("SeriesPET"))));
+				Assert.IsTrue(CollectionUtils.Contains(displaySets, d => ValidateFusionDisplaySetDescriptor(d.Descriptor, HashUid("SeriesCT"), HashUid("SeriesPETCor"))));
+				Assert.IsTrue(CollectionUtils.Contains(displaySets, d => ValidateFusionDisplaySetDescriptor(d.Descriptor, HashUid("SeriesCTAx"), HashUid("SeriesPET"))));
+				Assert.IsTrue(CollectionUtils.Contains(displaySets, d => ValidateFusionDisplaySetDescriptor(d.Descriptor, HashUid("SeriesCTAx"), HashUid("SeriesPETCor"))));
 			}
 			catch (Exception)
 			{
@@ -201,13 +203,13 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			}
 		}
 
-		private static bool ValidatePETFusionDisplaySetDescriptor(IDisplaySetDescriptor descriptor, string baseSeriesInstanceUid, string petSeriesInstanceUid)
+		private static bool ValidateFusionDisplaySetDescriptor(IDisplaySetDescriptor descriptor, string baseSeriesInstanceUid, string overlaySeriesInstanceUid)
 		{
-			if (descriptor is PETFusionDisplaySetDescriptor)
+			if (descriptor is IFusionDisplaySetDescriptor)
 			{
-				var petFusionDisplaySetDescriptor = (PETFusionDisplaySetDescriptor) descriptor;
-				return petFusionDisplaySetDescriptor.SourceSeries.SeriesInstanceUid == baseSeriesInstanceUid
-				       && petFusionDisplaySetDescriptor.PETSeries.SeriesInstanceUid == petSeriesInstanceUid;
+				var fusionDisplaySetDescriptor = (IFusionDisplaySetDescriptor) descriptor;
+				return fusionDisplaySetDescriptor.SourceSeries.SeriesInstanceUid == baseSeriesInstanceUid
+				       && fusionDisplaySetDescriptor.OverlaySeries.SeriesInstanceUid == overlaySeriesInstanceUid;
 			}
 			return false;
 		}
@@ -243,19 +245,20 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 
 		private static IEnumerable<ISopDataSource> CreateSopSeries(int sopCount, string patientId, string studyId, string seriesDesc, int seriesNumber, string frameOfReferenceId, Modality modality)
 		{
-			return CreateSopSeries(sopCount, patientId, patientId, studyId, HashUid(studyId), seriesDesc, seriesNumber, HashUid(seriesDesc), HashUid(frameOfReferenceId), modality, false);
+			return CreateSopSeries(sopCount, patientId, patientId, studyId, HashUid(studyId), seriesDesc, seriesNumber, HashUid(seriesDesc), HashUid(frameOfReferenceId), modality, false, false);
 		}
 
-		private static IEnumerable<ISopDataSource> CreateSopSeries(int sopCount, string patientId, string studyId, string seriesDesc, int seriesNumber, string frameOfReferenceId, Modality modality, bool attnCorrected)
+		private static IEnumerable<ISopDataSource> CreateSopSeries(int sopCount, string patientId, string studyId, string seriesDesc, int seriesNumber, string frameOfReferenceId, Modality modality, bool attnCorrected, bool lossyCompressed)
 		{
-			return CreateSopSeries(sopCount, patientId, patientId, studyId, HashUid(studyId), seriesDesc, seriesNumber, HashUid(seriesDesc), HashUid(frameOfReferenceId), modality, attnCorrected);
+			return CreateSopSeries(sopCount, patientId, patientId, studyId, HashUid(studyId), seriesDesc, seriesNumber, HashUid(seriesDesc), HashUid(frameOfReferenceId), modality, attnCorrected, lossyCompressed);
 		}
 
 		private static IEnumerable<ISopDataSource> CreateSopSeries(int sopCount,
 		                                                           string patientId, string patientName,
 		                                                           string studyId, string studyInstanceUid,
 		                                                           string seriesDesc, int seriesNumber, string seriesInstanceUid,
-		                                                           string frameOfReferenceUid, Modality modality, bool attnCorrected)
+		                                                           string frameOfReferenceUid, Modality modality,
+																   bool attnCorrected, bool lossyCompressed)
 		{
 			for (int n = 0; n < sopCount; n++)
 			{
@@ -271,6 +274,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 				dataset[DicomTags.SopInstanceUid].SetStringValue(DicomUid.GenerateUid().UID);
 				dataset[DicomTags.SopClassUid].SetStringValue(ModalityConverter.ToSopClassUid(modality));
 				dataset[DicomTags.Modality].SetStringValue(modality.ToString());
+				dataset[DicomTags.LossyImageCompression].SetStringValue(lossyCompressed ? "01" : "00");
+				dataset[DicomTags.LossyImageCompressionRatio].SetFloat32(0, lossyCompressed ? 9999 : 1);
+				dataset[DicomTags.LossyImageCompressionMethod].SetStringValue(lossyCompressed ? "IDUNNO" : string.Empty);
 				dataset[DicomTags.CorrectedImage].SetStringValue(attnCorrected ? "ATTN" : string.Empty);
 				dataset[DicomTags.FrameOfReferenceUid].SetStringValue(frameOfReferenceUid);
 				dataset[DicomTags.ImageOrientationPatient].SetStringValue(string.Format(@"{0}\{1}\{2}\{3}\{4}\{5}", 1, 0, 0, 0, 1, 0));

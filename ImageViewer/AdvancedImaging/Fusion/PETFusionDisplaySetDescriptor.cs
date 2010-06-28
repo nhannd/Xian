@@ -36,7 +36,7 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
 	[Cloneable]
-	public class PETFusionDisplaySetDescriptor : DicomDisplaySetDescriptor
+	public class PETFusionDisplaySetDescriptor : DicomDisplaySetDescriptor, IFusionDisplaySetDescriptor
 	{
 		[CloneCopyReference]
 		private readonly ISeriesIdentifier _petSeries;
@@ -65,6 +65,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		public ISeriesIdentifier PETSeries
 		{
 			get { return _petSeries; }
+		}
+
+		ISeriesIdentifier IFusionDisplaySetDescriptor.OverlaySeries
+		{
+			get { return PETSeries; }
 		}
 
 		public bool AttenuationCorrection
