@@ -282,15 +282,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			{
 				// this image graphic needs to keep a transient reference on the slice, otherwise it could get disposed before we do!
 				_overlayFrameData = fusionOverlayFrameData.CreateTransientReference();
-
-				var spatialTransform = this.SpatialTransform;
-				if (spatialTransform != null)
-				{
-					var overlayFrameParams = _overlayFrameData.FusionOverlayFrameData._overlayFrameParams;
-					spatialTransform.Scale = overlayFrameParams.CoregistrationScale;
-					spatialTransform.TranslationX = overlayFrameParams.CoregistrationOffsetX;
-					spatialTransform.TranslationY = overlayFrameParams.CoregistrationOffsetY;
-				}
 			}
 
 			/// <summary>
@@ -318,6 +309,49 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 				base.Dispose(disposing);
 			}
+
+			protected override SpatialTransform CreateSpatialTransform()
+			{
+				return new XSpatialTransform(this);
+			}
+
+			#region XSpatialTransform Class
+
+			// ReSharper disable SuggestBaseTypeForParameter
+
+			[Cloneable]
+			private class XSpatialTransform : SpatialTransform
+			{
+				public XSpatialTransform(FusionOverlayImageGraphic ownerGraphic) : base(ownerGraphic) {}
+
+				/// <summary>
+				/// Cloning constructor.
+				/// </summary>
+				/// <param name="source">The source object from which to clone.</param>
+				/// <param name="context">The cloning context object.</param>
+				protected XSpatialTransform(XSpatialTransform source, ICloningContext context) : base(source, context)
+				{
+					context.CloneFields(source, this);
+				}
+
+				private new FusionOverlayImageGraphic OwnerGraphic
+				{
+					get { return (FusionOverlayImageGraphic) base.OwnerGraphic; }
+				}
+
+				protected override void UpdateScaleParameters()
+				{
+					var overlayFrameParams = OwnerGraphic._overlayFrameData.FusionOverlayFrameData._overlayFrameParams;
+					this.ScaleX = overlayFrameParams.CoregistrationScale.X;
+					this.ScaleY = overlayFrameParams.CoregistrationScale.Y;
+					this.TranslationX = overlayFrameParams.CoregistrationOffset.X;
+					this.TranslationY = overlayFrameParams.CoregistrationOffset.Y;
+				}
+			}
+
+			// ReSharper restore SuggestBaseTypeForParameter
+
+			#endregion
 		}
 
 		#endregion

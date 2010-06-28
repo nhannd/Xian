@@ -161,22 +161,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			this.OnUnloaded();
 		}
 
-		public GrayscaleImageGraphic CreateOverlayImageGraphic(Frame baseFrame)
-		{
-			OverlayFrameParams overlayFrameParams;
-			byte[] pixelData = GetOverlay(baseFrame, out overlayFrameParams);
-			var imageGraphic = new GrayscaleImageGraphic(
-				overlayFrameParams.Rows, overlayFrameParams.Columns,
-				overlayFrameParams.BitsAllocated, overlayFrameParams.BitsStored, overlayFrameParams.HighBit,
-				overlayFrameParams.IsSigned, overlayFrameParams.IsInverted,
-				overlayFrameParams.RescaleSlope, overlayFrameParams.RescaleIntercept,
-				pixelData);
-			imageGraphic.SpatialTransform.Scale = overlayFrameParams.CoregistrationScale;
-			imageGraphic.SpatialTransform.TranslationX = overlayFrameParams.CoregistrationOffsetX;
-			imageGraphic.SpatialTransform.TranslationY = overlayFrameParams.CoregistrationOffsetY;
-			return imageGraphic;
-		}
-
 		public FusionOverlayFrameData CreateOverlaySlice(Frame baseFrame)
 		{
 			return new FusionOverlayFrameData(baseFrame.CreateTransientReference(), this.CreateTransientReference());
@@ -207,20 +191,21 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 						// compute the bounds of the target overlay image frame in patient coordinates
 						var overlayTopLeft = overlayFrame.ImagePlaneHelper.ConvertToPatient(new PointF(0, 0));
 						var overlayTopRight = overlayFrame.ImagePlaneHelper.ConvertToPatient(new PointF(overlayFrame.Columns, 0));
+						var overlayBottomLeft = overlayFrame.ImagePlaneHelper.ConvertToPatient(new PointF(0, overlayFrame.Rows));
+						var overlayOffset = overlayTopLeft - baseTopLeft;
 
 						// compute the overlay and base image resolution in pixels per unit patient space (mm).
-						var overlayResolution = overlayFrame.Columns/(overlayTopRight - overlayTopLeft).Magnitude;
-						var baseResolution = baseFrame.Columns/(baseTopRight - baseTopLeft).Magnitude;
+						var overlayResolutionX = overlayFrame.Columns/(overlayTopRight - overlayTopLeft).Magnitude;
+						var overlayResolutionY = overlayFrame.Rows/(overlayBottomLeft - overlayTopLeft).Magnitude;
+						var baseResolutionX = baseFrame.Columns/(baseTopRight - baseTopLeft).Magnitude;
+						var baseResolutionY = baseFrame.Rows/(baseBottomLeft - baseTopLeft).Magnitude;
 
 						// compute parameters to register the overlay on the base image
-						var scale = baseResolution/overlayResolution;
-						var offset = (overlayTopLeft - baseTopLeft)*overlayResolution;
+						var scale = new PointF(baseResolutionX/overlayResolutionX, baseResolutionY/overlayResolutionY);
+						var offset = new PointF(overlayOffset.X*overlayResolutionX, overlayOffset.Y*overlayResolutionY);
 
 						// validate computed transform parameters
-						var overlayBottomLeft = overlayFrame.ImagePlaneHelper.ConvertToPatient(new PointF(0, overlayFrame.Rows));
-						float scaleY = baseFrame.Rows*(overlayBottomLeft - overlayTopLeft).Magnitude/(overlayFrame.Rows*(baseBottomLeft - baseTopLeft).Magnitude);
-						Platform.CheckTrue(FloatComparer.AreEqual(scale, scaleY), "Computed ScaleX != ScaleY");
-						Platform.CheckTrue(offset.Z < 0.5f, "Compute OffsetZ != 0");
+						Platform.CheckTrue(overlayOffset.Z < 0.5f, "Compute OffsetZ != 0");
 
 						overlayFrameParams = new OverlayFrameParams(
 							overlayFrame.Rows, overlayFrame.Columns,
@@ -228,7 +213,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 							overlayFrame.HighBit, overlayFrame.PixelRepresentation != 0 ? true : false,
 							overlayFrame.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ? true : false,
 							overlayFrame.RescaleSlope, overlayFrame.RescaleIntercept,
-							scale, offset.X, offset.Y);
+							scale, offset);
 
 						return overlayFrame.GetNormalizedPixelData();
 					}
@@ -406,13 +391,13 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			public readonly int BitsAllocated, BitsStored, HighBit;
 			public readonly bool IsSigned, IsInverted;
 			public readonly double RescaleSlope, RescaleIntercept;
-			public readonly float CoregistrationScale, CoregistrationOffsetX, CoregistrationOffsetY;
+			public readonly PointF CoregistrationScale, CoregistrationOffset;
 
 			internal OverlayFrameParams(int rows, int columns,
 			                            int bitsAllocated, int bitsStored, int highBit,
 			                            bool isSigned, bool isInverted,
 			                            double rescaleSlope, double rescaleIntercept,
-			                            float scale, float offsetX, float offsetY)
+			                            PointF scale, PointF offset)
 			{
 				Rows = rows;
 				Columns = columns;
@@ -424,8 +409,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				RescaleSlope = rescaleSlope;
 				RescaleIntercept = rescaleIntercept;
 				CoregistrationScale = scale;
-				CoregistrationOffsetX = offsetX;
-				CoregistrationOffsetY = offsetY;
+				CoregistrationOffset = offset;
 			}
 		}
 

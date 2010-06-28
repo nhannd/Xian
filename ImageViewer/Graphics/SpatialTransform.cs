@@ -390,11 +390,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 			set { _validationPolicy = value; }
 		}
 
-
-		internal IGraphic OwnerGraphic
+		protected internal IGraphic OwnerGraphic
 		{
 			get { return _ownerGraphic; }
-			set { _ownerGraphic = value; }
+			internal set { _ownerGraphic = value; }
 		}
 
 		#endregion
