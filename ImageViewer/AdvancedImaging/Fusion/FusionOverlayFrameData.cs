@@ -318,6 +318,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			#region XSpatialTransform Class
 
 			// ReSharper disable SuggestBaseTypeForParameter
+			// ReSharper disable UnusedMember.Local
 
 			[Cloneable]
 			private class XSpatialTransform : SpatialTransform
@@ -342,13 +343,14 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				protected override void UpdateScaleParameters()
 				{
 					var overlayFrameParams = OwnerGraphic._overlayFrameData.FusionOverlayFrameData._overlayFrameParams;
-					this.ScaleX = overlayFrameParams.CoregistrationScale.X;
-					this.ScaleY = overlayFrameParams.CoregistrationScale.Y;
-					this.TranslationX = overlayFrameParams.CoregistrationOffset.X;
-					this.TranslationY = overlayFrameParams.CoregistrationOffset.Y;
+					ScaleX = overlayFrameParams.CoregistrationScale.X;
+					ScaleY = overlayFrameParams.CoregistrationScale.Y;
+					TranslationX = overlayFrameParams.CoregistrationOffset.X;
+					TranslationY = overlayFrameParams.CoregistrationOffset.Y;
 				}
 			}
 
+			// ReSharper restore UnusedMember.Local
 			// ReSharper restore SuggestBaseTypeForParameter
 
 			#endregion

@@ -385,6 +385,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		#region OverlayFrameParams Class
 
+		/// <summary>
+		/// Parameters of a fusion image's overlay pixel data, such as pixel format and coregistration values.
+		/// </summary>
 		protected internal class OverlayFrameParams
 		{
 			public readonly int Rows, Columns;
