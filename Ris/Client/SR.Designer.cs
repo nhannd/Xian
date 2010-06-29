@@ -2194,6 +2194,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Time window must not span more than {0} days..
+        /// </summary>
+        internal static string MessageValidateWorklistTimeSpan {
+            get {
+                return ResourceManager.GetString("MessageValidateWorklistTimeSpan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Must have at least one active contact point.
         /// </summary>
         internal static string MessageValidationAtLeastOneActiveContactPoint {

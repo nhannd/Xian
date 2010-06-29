@@ -29,78 +29,70 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="WorklistTimeWindowEditorComponent"/>
-    /// </summary>
-    public partial class WorklistTimeWindowEditorComponentControl : ApplicationComponentUserControl
-    {
-        private WorklistTimeWindowEditorComponent _component;
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="WorklistTimeWindowEditorComponent"/>
+	/// </summary>
+	public partial class WorklistTimeWindowEditorComponentControl : ApplicationComponentUserControl
+	{
+		private readonly WorklistTimeWindowEditorComponent _component;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public WorklistTimeWindowEditorComponentControl(WorklistTimeWindowEditorComponent component)
-            :base(component)
-        {
-            InitializeComponent();
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public WorklistTimeWindowEditorComponentControl(WorklistTimeWindowEditorComponent component)
+			:base(component)
+		{
+			InitializeComponent();
+			_component = component;
 
-            _component = component;
-            _component.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(_component_PropertyChanged);
+			_fixedWindowRadioButton.DataBindings.Add("Checked", _component, "IsFixedTimeWindow", true, DataSourceUpdateMode.OnPropertyChanged);
+			_fixedWindowRadioButton.DataBindings.Add("Enabled", _component, "FixedSlidingChoiceEnabled", true, DataSourceUpdateMode.Never);
+			_slidingWindowRadioButton.DataBindings.Add("Checked", _component, "IsSlidingTimeWindow", true, DataSourceUpdateMode.Never);
+			_slidingWindowRadioButton.DataBindings.Add("Enabled", _component, "FixedSlidingChoiceEnabled", true, DataSourceUpdateMode.Never);
 
-            _fixedWindowRadioButton.DataBindings.Add("Checked", _component, "IsFixedTimeWindow", true, DataSourceUpdateMode.OnPropertyChanged);
-            _fixedWindowRadioButton.DataBindings.Add("Enabled", _component, "FixedSlidingChoiceEnabled", true, DataSourceUpdateMode.Never);
-            _slidingWindowRadioButton.DataBindings.Add("Checked", _component, "IsSlidingTimeWindow", true, DataSourceUpdateMode.Never);
-            _slidingWindowRadioButton.DataBindings.Add("Enabled", _component, "FixedSlidingChoiceEnabled", true, DataSourceUpdateMode.Never);
-
-            _slidingScale.DataSource = _component.SlidingScaleChoices;
-            _slidingScale.DataBindings.Add("Value", _component, "SlidingScale", true, DataSourceUpdateMode.OnPropertyChanged);
-            _slidingScale.DataBindings.Add("Enabled", _component, "SlidingScaleEnabled", true, DataSourceUpdateMode.Never);
+			_slidingScale.DataSource = _component.SlidingScaleChoices;
+			_slidingScale.DataBindings.Add("Value", _component, "SlidingScale", true, DataSourceUpdateMode.OnPropertyChanged);
+			_slidingScale.DataBindings.Add("Enabled", _component, "SlidingScaleEnabled", true, DataSourceUpdateMode.Never);
 
 
-            _fromCheckBox.DataBindings.Add("Checked", _component, "StartTimeChecked", true, DataSourceUpdateMode.OnPropertyChanged);
-            _fromFixed.DataBindings.Add("Enabled", _component, "FixedStartTimeEnabled", true, DataSourceUpdateMode.Never);
-            _fromFixed.DataBindings.Add("Value", _component, "FixedStartTime", true, DataSourceUpdateMode.OnPropertyChanged);
+			_fromCheckBox.DataBindings.Add("Checked", _component, "StartTimeChecked", true, DataSourceUpdateMode.OnPropertyChanged);
+			_fromFixed.DataBindings.Add("Enabled", _component, "FixedStartTimeEnabled", true, DataSourceUpdateMode.Never);
+			_fromFixed.DataBindings.Add("Value", _component, "FixedStartTime", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _fromSliding.DataSource = _component.SlidingStartTimeChoices;
-            _fromSliding.DataBindings.Add("Enabled", _component, "SlidingStartTimeEnabled", true, DataSourceUpdateMode.Never);
-            _fromSliding.DataBindings.Add("Value", _component, "SlidingStartTime", true, DataSourceUpdateMode.OnPropertyChanged);
+			_fromSliding.Maximum = int.MaxValue;
+			_fromSliding.Minimum = int.MinValue;
+			_fromSliding.DataBindings.Add("Enabled", _component, "SlidingStartTimeEnabled", true, DataSourceUpdateMode.Never);
+			_fromSliding.DataBindings.Add("Value", _component, "SlidingStartTime", true, DataSourceUpdateMode.OnPropertyChanged);
+			_fromSlidingDescription.DataBindings.Add("Enabled", _component, "SlidingStartTimeEnabled", true, DataSourceUpdateMode.Never);
+			_fromSlidingDescription.DataBindings.Add("Text", _component, "SlidingStartTimeDescription", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _toCheckBox.DataBindings.Add("Checked", _component, "EndTimeChecked", true, DataSourceUpdateMode.OnPropertyChanged);
-            _toFixed.DataBindings.Add("Enabled", _component, "FixedEndTimeEnabled", true, DataSourceUpdateMode.Never);
-            _toFixed.DataBindings.Add("Value", _component, "FixedEndTime", true, DataSourceUpdateMode.OnPropertyChanged);
+			_toCheckBox.DataBindings.Add("Checked", _component, "EndTimeChecked", true, DataSourceUpdateMode.OnPropertyChanged);
+			_toFixed.DataBindings.Add("Enabled", _component, "FixedEndTimeEnabled", true, DataSourceUpdateMode.Never);
+			_toFixed.DataBindings.Add("Value", _component, "FixedEndTime", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _toSliding.DataSource = _component.SlidingEndTimeChoices;
-            _toSliding.DataBindings.Add("Enabled", _component, "SlidingEndTimeEnabled", true, DataSourceUpdateMode.Never);
-            _toSliding.DataBindings.Add("Value", _component, "SlidingEndTime", true, DataSourceUpdateMode.OnPropertyChanged);
-        }
+			_toSliding.Maximum = int.MaxValue;
+			_toSliding.Minimum = int.MinValue;
+			_toSliding.DataBindings.Add("Enabled", _component, "SlidingEndTimeEnabled", true, DataSourceUpdateMode.Never);
+			_toSliding.DataBindings.Add("Value", _component, "SlidingEndTime", true, DataSourceUpdateMode.OnPropertyChanged);
+			_toSlidingDescription.DataBindings.Add("Enabled", _component, "SlidingEndTimeEnabled", true, DataSourceUpdateMode.Never);
+			_toSlidingDescription.DataBindings.Add("Text", _component, "SlidingEndTimeDescription", true, DataSourceUpdateMode.OnPropertyChanged);
+		}
 
-        private void _component_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            // for some reason, if we try to data-bind to these properties we get weird exceptions
-            // therefore, workaround is to handle the PropertyChanged event manually
+		private void _fromSlidingDescription_Enter(object sender, System.EventArgs e)
+		{
+			// When the description is clicked, give away focus to the spin control.
+			_fromSliding.Focus();
+		}
 
-            if (e.PropertyName == "SlidingStartTimeChoices")
-            {
-                _fromSliding.DataSource = _component.SlidingStartTimeChoices;
-            }
-
-            if (e.PropertyName == "SlidingEndTimeChoices")
-            {
-                _toSliding.DataSource = _component.SlidingEndTimeChoices;
-            }
-        }
-
-    }
+		private void _toSlidingDescription_Enter(object sender, System.EventArgs e)
+		{
+			// When the description is clicked, give away focus to the spin control.
+			_toSliding.Focus();
+		}
+	}
 }

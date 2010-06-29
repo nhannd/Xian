@@ -528,6 +528,12 @@ namespace ClearCanvas.Healthcare
 			return settings.TimeWindowRequired;
 		}
 
+		public static int CurrentServerConfigurationMaxSpanDays()
+		{
+			var settings = new WorklistSettings();
+			return settings.TimeWindowMaxSpanDays;
+		}
+
 		#endregion
 
 		#region Protected API

@@ -73,80 +73,35 @@ namespace ClearCanvas.Ris.Client
 
 		private static readonly object[] _slidingScaleChoices = { Days, Hours };
 
-		private static readonly RelativeTime[] _slidingDayChoices = 
-			{
-				new RelativeTimeInDays(120),
-				new RelativeTimeInDays(90),
-				new RelativeTimeInDays(60),
-				new RelativeTimeInDays(45),
-				new RelativeTimeInDays(30),
-				new RelativeTimeInDays(21),
-				new RelativeTimeInDays(14),
-				new RelativeTimeInDays(7),
-				new RelativeTimeInDays(6),
-				new RelativeTimeInDays(5),
-				new RelativeTimeInDays(4),
-				new RelativeTimeInDays(3),
-				new RelativeTimeInDays(2),
-				new RelativeTimeInDays(1),
-				new RelativeTimeInDays(0),
-				new RelativeTimeInDays(-1),
-				new RelativeTimeInDays(-2),
-				new RelativeTimeInDays(-3),
-				new RelativeTimeInDays(-4),
-				new RelativeTimeInDays(-5),
-				new RelativeTimeInDays(-6),
-				new RelativeTimeInDays(-7),
-				new RelativeTimeInDays(-14),
-				new RelativeTimeInDays(-21),
-				new RelativeTimeInDays(-30),
-				new RelativeTimeInDays(-45),
-				new RelativeTimeInDays(-60),
-				new RelativeTimeInDays(-90),
-				new RelativeTimeInDays(-120)
-			};
-
-		private static readonly RelativeTime[] _slidingHourChoices = 
-			{
-				new RelativeTimeInHours(24),
-				new RelativeTimeInHours(18),
-				new RelativeTimeInHours(12),
-				new RelativeTimeInHours(8),
-				new RelativeTimeInHours(4),
-				new RelativeTimeInHours(0),
-				new RelativeTimeInHours(-4),
-				new RelativeTimeInHours(-8),
-				new RelativeTimeInHours(-12),
-				new RelativeTimeInHours(-18),
-				new RelativeTimeInHours(-24)
-			};
-
 		private readonly WorklistAdminDetail _worklistDetail;
 
 		private bool _isFixedTimeWindow;
 		private bool _startTimeChecked;
 		private bool _endTimeChecked;
-		private RelativeTime _slidingStartTime;
-		private RelativeTime _slidingEndTime;
+		private int _slidingStartTime;  // Represents the start time in hour or day depend on the sliding scale.
+		private int _slidingEndTime;  // Represents the end time in hour or day depend on the sliding scale.
 		private DateTime _fixedStartTime;
 		private DateTime _fixedEndTime;
 		private object _slidingScale;
-		private bool _setDefaultTimeWindows;
+		private readonly bool _setDefaultTimeWindows;
+		private readonly int _maxSpanDays;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public WorklistTimeWindowEditorComponent(WorklistAdminDetail detail, bool setDefaultTimeWindows)
+		public WorklistTimeWindowEditorComponent(WorklistAdminDetail detail, bool setDefaultTimeWindows, int maxSpanDays)
 		{
 			_worklistDetail = detail;
 			_setDefaultTimeWindows = setDefaultTimeWindows;
+			_maxSpanDays = maxSpanDays;
 		}
 
 		public override void Start()
 		{
 			// init both fixed and sliding times to "now"
 			_fixedStartTime = _fixedEndTime = Platform.Time;
-			_slidingStartTime = _slidingEndTime = new RelativeTimeInDays(0);
+			_slidingStartTime = _slidingEndTime = 0;
+			_slidingScale = Hours;
 
 			if (_worklistDetail.StartTime != null)
 			{
@@ -159,13 +114,13 @@ namespace ClearCanvas.Ris.Client
 
 				if (_worklistDetail.StartTime.RelativeTime != null)
 				{
+					_slidingScale = GetSlidingScale(_worklistDetail.StartTime);
 					_slidingStartTime = ConvertTimePointToRelativeTime(_worklistDetail.StartTime);
 				}
 			}
 			else if (_setDefaultTimeWindows)
 			{
 				_startTimeChecked = true;
-				_slidingStartTime = new RelativeTimeInDays(0);
 			}
 
 			if (_worklistDetail.EndTime != null)
@@ -179,19 +134,14 @@ namespace ClearCanvas.Ris.Client
 
 				if (_worklistDetail.EndTime.RelativeTime != null)
 				{
+					_slidingScale = GetSlidingScale(_worklistDetail.StartTime);
 					_slidingEndTime = ConvertTimePointToRelativeTime(_worklistDetail.EndTime);
 				}
 			}
 			else if (_setDefaultTimeWindows)
 			{
 				_endTimeChecked = true;
-				_slidingEndTime = new RelativeTimeInDays(0);
 			}
-
-			if (_slidingStartTime is RelativeTimeInHours || _slidingEndTime is RelativeTimeInHours)
-				_slidingScale = Hours;
-			else
-				_slidingScale = Days;
 
 			this.Validation.Add(new ValidationRule("SlidingEndTime",
 				delegate
@@ -200,19 +150,26 @@ namespace ClearCanvas.Ris.Client
 					// only need to validate the time difference if both Start and End are specified
 					if(!_isFixedTimeWindow && _startTimeChecked && _endTimeChecked)
 					{
-						int i = SlidingEndTime.CompareTo(SlidingStartTime);
+						var timeDiff = _slidingEndTime - _slidingStartTime;
 
 						// if the scale is Hours, then the end-time must be greater than start-time
 						// if the scale is Days, then the end-time must be greater than or equal to start-time
-						bool ok = _slidingScale == Hours ? (i > 0) : (i > -1);
-						return new ValidationResult(ok, _slidingScale == Hours ? SR.MessageEndTimeMustBeGreaterThanStartTime
-							: SR.MessageEndTimeMustBeGreaterOrEqualStartTime);
+						var ok = _slidingScale == Hours ? (timeDiff > 0) : (timeDiff >= 0);
+						var message = _slidingScale == Hours ? SR.MessageEndTimeMustBeGreaterThanStartTime : SR.MessageEndTimeMustBeGreaterOrEqualStartTime;
+
+						// If first validation pass, validate maximum span days
+						if (ok && _maxSpanDays > 0)
+						{
+							ok = _slidingScale == Days && timeDiff <= _maxSpanDays ||
+								_slidingScale == Hours && timeDiff <= _maxSpanDays * 24;
+							message = string.Format(SR.MessageValidateWorklistTimeSpan, _maxSpanDays);
+						}
+
+						return new ValidationResult(ok, message);
 					}
-					else
-					{
-						// rule not applicable
-						return new ValidationResult(true, "");
-					}
+
+					// rule not applicable
+					return new ValidationResult(true, "");
 				}));
 
 			this.Validation.Add(new ValidationRule("FixedEndTime",
@@ -222,14 +179,22 @@ namespace ClearCanvas.Ris.Client
 					// only need to validate the time difference if both Start and End are specified
 					if (_isFixedTimeWindow && _startTimeChecked && _endTimeChecked)
 					{
-						var ok = FixedEndTime.CompareTo(FixedStartTime) >= 0;
-						return new ValidationResult(ok, SR.MessageEndTimeMustBeGreaterOrEqualStartTime);
+						var timeDiff = _fixedEndTime.Subtract(_fixedStartTime);
+						var ok = timeDiff.Ticks >= 0;
+						var message = SR.MessageEndTimeMustBeGreaterOrEqualStartTime;
+
+						// If first validation pass, validate maximum span days
+						if (ok && _maxSpanDays > 0)
+						{
+							ok = timeDiff.TotalDays <= _maxSpanDays;
+							message = string.Format(SR.MessageValidateWorklistTimeSpan, _maxSpanDays);
+						}
+
+						return new ValidationResult(ok, message);
 					}
-					else
-					{
-						// rule not applicable
-						return new ValidationResult(true, "");
-					}
+
+					// rule not applicable
+					return new ValidationResult(true, "");
 				}));
 
 			base.Start();
@@ -375,66 +340,58 @@ namespace ClearCanvas.Ris.Client
 				var validationVisible = this.ValidationVisible;
 				ShowValidation(false);
 
-				NotifyPropertyChanged("SlidingStartTimeChoices");
-				NotifyPropertyChanged("SlidingEndTimeChoices");
-
-				if (_slidingScale == Hours)
-				{
-					_slidingStartTime = _slidingEndTime = new RelativeTimeInHours(0);
-				}
-				else
-				{
-					_slidingStartTime = _slidingEndTime = new RelativeTimeInDays(0);
-				}
+				_slidingStartTime = _slidingEndTime = 0;
 
 				NotifyPropertyChanged("SlidingStartTime");
 				NotifyPropertyChanged("SlidingEndTime");
+				NotifyPropertyChanged("SlidingStartTimeDescription");
+				NotifyPropertyChanged("SlidingEndTimeDescription");
+				NotifyPropertyChanged("SlidingTimeMaximum");
+				NotifyPropertyChanged("SlidingTimeMinimum");
 
 				// re-enable validation if enabled
 				ShowValidation(validationVisible);
+
+				this.Modified = true;
 			}
 		}
 
-		public IList SlidingStartTimeChoices
+		public int SlidingStartTime
 		{
-			get { return new ArrayList(SlidingTimeChoices); }
-		}
-
-		public IList SlidingEndTimeChoices
-		{
-			get { return new ArrayList(SlidingTimeChoices); }
-		}
-
-		public RelativeTime SlidingStartTime
-		{
-			get
-			{
-				return _slidingStartTime;
-			}
+			get { return _slidingStartTime; }
 			set
 			{
 				if (Equals(value, _slidingStartTime))
 					return;
 
 				_slidingStartTime = value;
+				NotifyPropertyChanged("SlidingStartTimeDescription");
 				this.Modified = true;
 			}
 		}
 
-		public RelativeTime SlidingEndTime
+		public int SlidingEndTime
 		{
-			get
-			{
-				return _slidingEndTime;
-			}
+			get { return _slidingEndTime; }
 			set
 			{
 				if (Equals(value, _slidingEndTime))
 					return;
 
 				_slidingEndTime = value;
+				NotifyPropertyChanged("SlidingEndTimeDescription");
 				this.Modified = true;
 			}
+		}
+
+		public string SlidingStartTimeDescription
+		{
+			get { return ConvertSlidingValueToRelativeTime(_slidingStartTime).ToString(); }
+		}
+
+		public string SlidingEndTimeDescription
+		{
+			get { return ConvertSlidingValueToRelativeTime(_slidingEndTime).ToString(); }
 		}
 
 		#endregion
@@ -445,7 +402,7 @@ namespace ClearCanvas.Ris.Client
 			{
 				_worklistDetail.StartTime = _isFixedTimeWindow 
 					? new WorklistAdminDetail.TimePoint(_fixedStartTime, 1440)
-					: ConvertRelativeTimeToTimePoint(_slidingStartTime);
+					: ConvertRelativeTimeToTimePoint(ConvertSlidingValueToRelativeTime(_slidingStartTime));
 			}
 			else
 				_worklistDetail.StartTime = null;
@@ -454,19 +411,22 @@ namespace ClearCanvas.Ris.Client
 			{
 				_worklistDetail.EndTime = _isFixedTimeWindow 
 					? new WorklistAdminDetail.TimePoint(_fixedEndTime, 1440)
-					: ConvertRelativeTimeToTimePoint(_slidingEndTime);
+					: ConvertRelativeTimeToTimePoint(ConvertSlidingValueToRelativeTime(_slidingEndTime));
 			}
 			else
 				_worklistDetail.EndTime = null;
 		}
 
-		private static RelativeTime ConvertTimePointToRelativeTime(WorklistAdminDetail.TimePoint ts)
+		private static object GetSlidingScale(WorklistAdminDetail.TimePoint ts)
 		{
 			// resolution 1440 minutes per day
-			if (ts.Resolution == 1440)
-				return new RelativeTimeInDays(ts.RelativeTime.Value.Days);
-			else
-				return new RelativeTimeInHours(ts.RelativeTime.Value.Hours);
+			return ts.Resolution == 1440 ? Days : Hours;
+		}
+
+		private static int ConvertTimePointToRelativeTime(WorklistAdminDetail.TimePoint ts)
+		{
+			// resolution 1440 minutes per day
+			return ts.Resolution == 1440 ? ts.RelativeTime.Value.Days : ts.RelativeTime.Value.Hours;
 		}
 
 		private static WorklistAdminDetail.TimePoint ConvertRelativeTimeToTimePoint(RelativeTime rt)
@@ -484,12 +444,12 @@ namespace ClearCanvas.Ris.Client
 			throw new NotImplementedException();
 		}
 
-		private IList SlidingTimeChoices
+		private RelativeTime ConvertSlidingValueToRelativeTime(int value)
 		{
-			get
-			{
-				return _slidingScale == Hours ? _slidingHourChoices : _slidingDayChoices;
-			}
+			if (_slidingScale == Hours)
+				return new RelativeTimeInHours(value);
+			
+			return new RelativeTimeInDays(value);
 		}
 	}
 }

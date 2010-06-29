@@ -70,5 +70,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 
 		[DataMember]
 		public bool CurrentServerConfigurationRequiresTimeFilter;
+
+		[DataMember]
+		public int CurrentServerConfigurationMaxSpanDays;
 	}
 }

@@ -273,6 +273,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 			response.PatientClassChoices = EnumUtils.GetEnumValueList<PatientClassEnum>(PersistenceContext);
 
 			response.CurrentServerConfigurationRequiresTimeFilter = Worklist.CurrentServerConfigurationRequiresTimeFilter();
+			response.CurrentServerConfigurationMaxSpanDays = Worklist.CurrentServerConfigurationMaxSpanDays();
 
 			// add extra data iff editing a user-defined worklist (bug #4871)
 			if (request.UserDefinedWorklist)

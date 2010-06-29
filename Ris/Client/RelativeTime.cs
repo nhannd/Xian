@@ -118,10 +118,10 @@ namespace ClearCanvas.Ris.Client
         {
             if (this.Value == 0)
                 return "Now";
-            if(Math.Abs(this.Value) == 1)
-                return string.Format("1 hour {1}", this.Value > 0 ? "from now" : "ago");
 
-            return string.Format("{0} hours {1}", Math.Abs(this.Value), this.Value > 0 ? "from now" : "ago");
+			var absoluteValue = Math.Abs(this.Value);
+			var formatting = absoluteValue == 1 ? "{0} hour {1}" : "{0} hours {1}";
+			return string.Format(formatting, absoluteValue, this.Value > 0 ? "from now" : "ago");
         }
     }
 }
