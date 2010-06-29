@@ -161,9 +161,211 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			}
 		}
 
+		[Test]
+		public void TestFusion4To3AnisotropicCTIsotropicPET()
+		{
+			string testName = MethodBase.GetCurrentMethod().Name;
+			using (var data = new FusionTestData(TestDataFunction.Threed,
+												 new Vector3D(0.8f, 0.6f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                     new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
+			{
+				var results = DiffFusionImages(data, testName);
+
+				for (int n = 0; n < results.Count; n++)
+					Assert.Less(results[n], 0.025, "{0}:: slice {1} exceeds difference limit.", testName, n);
+			}
+		}
+
+		[Test]
+		public void TestFusion3To4AnisotropicCTIsotropicPET()
+		{
+			string testName = MethodBase.GetCurrentMethod().Name;
+			using (var data = new FusionTestData(TestDataFunction.Threed,
+												 new Vector3D(0.6f, 0.8f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                     new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
+			{
+				var results = DiffFusionImages(data, testName);
+
+				for (int n = 0; n < results.Count; n++)
+					Assert.Less(results[n], 0.025, "{0}:: slice {1} exceeds difference limit.", testName, n);
+			}
+		}
+
+		private const string _anisotropicPixelAspectRatioMPRSupport = "MPR currently disallows anisotropic input (listed in outstanding ticket #6160)";
+
+		[Test]
+		public void TestFusionIsotropicCT4To3AnisotropicPET()
+		{
+			Assert.Ignore(_anisotropicPixelAspectRatioMPRSupport);
+
+			string testName = MethodBase.GetCurrentMethod().Name;
+			using (var data = new FusionTestData(TestDataFunction.Threed,
+			                                     new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                     new Vector3D(1.2f, 0.9f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
+			{
+				var results = DiffFusionImages(data, testName);
+
+				for (int n = 0; n < results.Count; n++)
+					Assert.Less(results[n], 0.027, "{0}:: slice {1} exceeds difference limit.", testName, n);
+			}
+		}
+
+		[Test]
+		public void TestFusionIsotropicCT3To4AnisotropicPET()
+		{
+			Assert.Ignore(_anisotropicPixelAspectRatioMPRSupport);
+
+			string testName = MethodBase.GetCurrentMethod().Name;
+			using (var data = new FusionTestData(TestDataFunction.Threed,
+			                                     new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                     new Vector3D(0.9f, 1.2f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
+			{
+				var results = DiffFusionImages(data, testName);
+
+				for (int n = 0; n < results.Count; n++)
+					Assert.Less(results[n], 0.027, "{0}:: slice {1} exceeds difference limit.", testName, n);
+			}
+		}
+
+		[Test]
+		public void TestFusion4To3AnisotropicCT4To3AnisotropicPET()
+		{
+			Assert.Ignore(_anisotropicPixelAspectRatioMPRSupport);
+
+			string testName = MethodBase.GetCurrentMethod().Name;
+			using (var data = new FusionTestData(TestDataFunction.Threed,
+			                                     new Vector3D(0.8f, 0.6f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                     new Vector3D(1.2f, 0.9f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
+			{
+				var results = DiffFusionImages(data, testName);
+
+				for (int n = 0; n < results.Count; n++)
+					Assert.Less(results[n], 0.025, "{0}:: slice {1} exceeds difference limit.", testName, n);
+			}
+		}
+
+		[Test]
+		public void TestFusion3To4AnisotropicCT4To3AnisotropicPET()
+		{
+			Assert.Ignore(_anisotropicPixelAspectRatioMPRSupport);
+
+			string testName = MethodBase.GetCurrentMethod().Name;
+			using (var data = new FusionTestData(TestDataFunction.Threed,
+			                                     new Vector3D(0.6f, 0.8f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                     new Vector3D(1.2f, 0.9f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
+			{
+				var results = DiffFusionImages(data, testName);
+
+				for (int n = 0; n < results.Count; n++)
+					Assert.Less(results[n], 0.025, "{0}:: slice {1} exceeds difference limit.", testName, n);
+			}
+		}
+
+		[Test]
+		public void TestFusion4To3AnisotropicCT3To4AnisotropicPET()
+		{
+			Assert.Ignore(_anisotropicPixelAspectRatioMPRSupport);
+
+			string testName = MethodBase.GetCurrentMethod().Name;
+			using (var data = new FusionTestData(TestDataFunction.Threed,
+			                                     new Vector3D(0.8f, 0.6f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                     new Vector3D(0.9f, 1.2f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
+			{
+				var results = DiffFusionImages(data, testName);
+
+				for (int n = 0; n < results.Count; n++)
+					Assert.Less(results[n], 0.025, "{0}:: slice {1} exceeds difference limit.", testName, n);
+			}
+		}
+
+		[Test]
+		public void TestFusion3To4AnisotropicCT3To4AnisotropicPET()
+		{
+			Assert.Ignore(_anisotropicPixelAspectRatioMPRSupport);
+
+			string testName = MethodBase.GetCurrentMethod().Name;
+			using (var data = new FusionTestData(TestDataFunction.Threed,
+			                                     new Vector3D(0.6f, 0.8f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                     new Vector3D(0.9f, 1.2f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
+			{
+				var results = DiffFusionImages(data, testName);
+
+				for (int n = 0; n < results.Count; n++)
+					Assert.Less(results[n], 0.025, "{0}:: slice {1} exceeds difference limit.", testName, n);
+			}
+		}
+
+		[Test]
+		public void TestFusionAnisotropicSpecialCase1Test()
+		{
+			Assert.Ignore(_anisotropicPixelAspectRatioMPRSupport);
+
+			string testName = MethodBase.GetCurrentMethod().Name;
+			using (var data = new FusionTestData(TestDataFunction.Threed,
+			                                     new Vector3D(0.75f, 0.7f, 0.8f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                     new Vector3D(0.75f, 0.7f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
+			{
+				var results = DiffFusionImages(data, testName);
+
+				for (int n = 0; n < results.Count; n++)
+					Assert.Less(results[n], 0.025, "{0}:: slice {1} exceeds difference limit.", testName, n);
+			}
+		}
+
+		[Test]
+		public void TestFusionAnisotropicSpecialCase2Test()
+		{
+			Assert.Ignore(_anisotropicPixelAspectRatioMPRSupport);
+
+			string testName = MethodBase.GetCurrentMethod().Name;
+			using (var data = new FusionTestData(TestDataFunction.Threed,
+			                                     new Vector3D(0.8f, 0.9f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+												 new Vector3D(0.8f, 0.9f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit))
+			{
+				var results = DiffFusionImages(data, testName);
+
+				for (int n = 0; n < results.Count; n++)
+					Assert.Less(results[n], 0.025, "{0}:: slice {1} exceeds difference limit.", testName, n);
+			}
+		}
+
+		[Test]
+		public void TestFusionAnisotropicSpecialCase3Test()
+		{
+			Assert.Ignore(_anisotropicPixelAspectRatioMPRSupport);
+
+			string testName = MethodBase.GetCurrentMethod().Name;
+			using (var data = new FusionTestData(TestDataFunction.Threed,
+			                                     new Vector3D(0.8f, 0.9f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+												 new Vector3D(0.8f, 0.9f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
+			{
+				var results = DiffFusionImages(data, testName);
+
+				for (int n = 0; n < results.Count; n++)
+					Assert.Less(results[n], 0.025, "{0}:: slice {1} exceeds difference limit.", testName, n);
+			}
+		}
+
+		[Test]
+		public void TestFusionAnisotropicSpecialCase4Test()
+		{
+			Assert.Ignore(_anisotropicPixelAspectRatioMPRSupport);
+
+			string testName = MethodBase.GetCurrentMethod().Name;
+			using (var data = new FusionTestData(TestDataFunction.Threed,
+			                                     new Vector3D(0.8f, 0.9f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+												 new Vector3D(0.9f, 1.0f, 0.8f), Vector3D.yUnit, Vector3D.zUnit, Vector3D.xUnit))
+			{
+				var results = DiffFusionImages(data, testName);
+
+				for (int n = 0; n < results.Count; n++)
+					Assert.Less(results[n], 0.025, "{0}:: slice {1} exceeds difference limit.", testName, n);
+			}
+		}
+
 		private static IList<double> DiffFusionImages(FusionTestData data, string testName)
 		{
-			var outputPath = new DirectoryInfo(string.Format("{0}_[{1}]", typeof (FusionImageGraphicTests).FullName, testName));
+			var outputPath = new DirectoryInfo(Path.Combine(typeof (FusionImageGraphicTests).FullName, testName));
 			if (outputPath.Exists)
 				outputPath.Delete(true);
 			outputPath.Create();
@@ -186,7 +388,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 							double result = ImageDiff.Compare(ImageDiffAlgorithm.Euclidian, referenceImage, testImage, out diff);
 							diff.Save(Path.Combine(outputPath.FullName, string.Format("image{0}.png", index)));
 							diff.Dispose();
-							log.WriteLine("{0}, {1:f}", index, result);
+							log.WriteLine("{0}, {1:f6}", index, result);
 							list.Add(result);
 
 							++index;
