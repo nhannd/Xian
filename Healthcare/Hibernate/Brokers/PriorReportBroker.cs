@@ -29,9 +29,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Healthcare.Brokers;
@@ -71,7 +69,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     	/// <returns></returns>
     	public IList<Report> GetPriors(Report report)
         {
-        	return GetPriorsHelper(report.Procedures);
+			var order = CollectionUtils.FirstElement(report.Procedures).Order;
+			var priors = new List<Report>();
+			priors.AddRange(GetAdditionalOrderReports(order, report));
+			priors.AddRange(GetPriorsHelper(order.Procedures));
+			return priors;
         }
 
     	/// <summary>
@@ -174,6 +176,26 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
 			// ensure unique results are returned (because fetch joins may have introduced duplicates into result set)
 			return CollectionUtils.Unique(reports);
+		}
+
+		/// <summary>
+		/// Returns a list of reports associated with the specified order other than the specifed report to exclude.
+		/// </summary>
+		/// <param name="order"></param>
+		/// <param name="reportToExclude"></param>
+		/// <returns></returns>
+		private IList<Report> GetAdditionalOrderReports(Order order, Report reportToExclude)
+		{
+			var proceduresFromSameOrderButWithDifferentReport = order.Procedures.Minus(reportToExclude.Procedures);
+
+			var additionalOrderReports = new List<Report>();
+			foreach (var procedure in proceduresFromSameOrderButWithDifferentReport)
+			{
+				additionalOrderReports.AddRange(CollectionUtils.Select(procedure.Reports, report => report.Status != ReportStatus.X));
+			}
+			additionalOrderReports = CollectionUtils.Unique(CollectionUtils.Select(additionalOrderReports, otherReport => otherReport != null));
+
+			return additionalOrderReports;
 		}
 	}
 }

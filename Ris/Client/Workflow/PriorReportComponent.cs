@@ -80,6 +80,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 
 		private ReportingWorklistItemSummary _worklistItem;
+		private EntityRef _reportRef;
 
 		private readonly PriorSummaryTable _reportList;
 		private PriorProcedureSummary _selectedPrior;
@@ -95,10 +96,23 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// Constructor for showing priors based on a reporting step.
 		/// </summary>
 		public PriorReportComponent(ReportingWorklistItemSummary worklistItem)
+			: this(worklistItem, null)
+		{
+		}
+
+		/// <summary>
+		/// Constructor for showing priors based on a reporting step when the report ref in the reporting step may be stale.
+		/// </summary>
+		public PriorReportComponent(ReportingWorklistItemSummary worklistItem, EntityRef reportRef)
+			: this()
 		{
 			_worklistItem = worklistItem;
-			_relevantPriorsOnly = PriorReportComponentSettings.Default.ShowRelevantPriorsOnly;
+			_reportRef = reportRef;
+		}
 
+		private PriorReportComponent()
+		{
+			_relevantPriorsOnly = PriorReportComponentSettings.Default.ShowRelevantPriorsOnly;
 			_reportList = new PriorSummaryTable();
 		}
 
@@ -216,8 +230,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 					var request = new GetPriorsRequest();
 					if (relevantOnly)
 					{
-						if (_worklistItem.ReportRef != null)
-							request.ReportRef = _worklistItem.ReportRef;
+						if (this.ReportRef != null)
+							request.ReportRef = this.ReportRef;
 						else
 							request.OrderRef = _worklistItem.OrderRef;
 					}
@@ -228,20 +242,26 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return response.Reports;
 		}
 
-		public ReportingWorklistItemSummary WorklistItem
+		private EntityRef ReportRef
 		{
-			get { return _worklistItem; }
-			set
+			get
 			{
-				_worklistItem = value;
+				return _reportRef 
+					?? (_worklistItem != null ? _worklistItem.ReportRef : null);
+			}
+		}
 
-				if (this.IsStarted)
-				{
-					_relevantPriors = null;
-					_allPriors = null;
-					UpdateReportList();
-					((ReportViewComponent)_reportViewComponentHost.Component).Refresh();
-				}
+		public void SetContext(ReportingWorklistItemSummary worklistItem, EntityRef reportRef)
+		{
+			_reportRef = reportRef;
+			_worklistItem = worklistItem;
+
+			if (this.IsStarted)
+			{
+				_relevantPriors = null;
+				_allPriors = null;
+				UpdateReportList();
+				((ReportViewComponent)_reportViewComponentHost.Component).Refresh();
 			}
 		}
 	}

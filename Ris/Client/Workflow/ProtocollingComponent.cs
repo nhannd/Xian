@@ -607,7 +607,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			((BannerComponent)_bannerComponentHost.Component).HealthcareContext = this.WorklistItem;
 			((ProtocolEditorComponent)_protocolEditorComponentHost.Component).WorklistItem = this.WorklistItem;
 			((ProtocolEditorComponent)_protocolEditorComponentHost.Component).CanEdit = this.SaveEnabled;
-			_priorReportsComponent.WorklistItem = this.WorklistItem;
+			_priorReportsComponent.SetContext(this.WorklistItem, null);
 			_orderDetailViewComponent.Context = new OrderDetailViewComponent.OrderContext(this.WorklistItem.OrderRef);
 			_orderAttachmentsComponent.OrderRef = this.WorklistItem.OrderRef;
 

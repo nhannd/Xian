@@ -460,7 +460,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_additionalInfoComponent.HealthcareContext = this.WorklistItem;
 				_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleAdditionalInfo, _additionalInfoComponent));
 
-				_priorReportComponent = new PriorReportComponent(this.WorklistItem);
+				_priorReportComponent = new PriorReportComponent(this.WorklistItem, _report.ReportRef);
 				_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitlePriors, _priorReportComponent));
 
 				// instantiate all extension pages
@@ -1213,7 +1213,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private void UpdateChildComponents(bool orderDetailIsCurrent)
 		{
 			((BannerComponent)_bannerHost.Component).HealthcareContext = this.WorklistItem;
-			_priorReportComponent.WorklistItem = this.WorklistItem;
+			_priorReportComponent.SetContext(this.WorklistItem, _report != null ? _report.ReportRef : null);
 			_orderComponent.Context = new ReportingOrderDetailViewComponent.PatientOrderContext(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef);
 			_orderAttachmentsComponent.OrderRef = this.WorklistItem.OrderRef;
 
