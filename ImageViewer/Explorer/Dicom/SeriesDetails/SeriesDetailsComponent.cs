@@ -32,10 +32,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.StudyLocator;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -45,31 +48,60 @@ using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 {
-	[ExtensionPoint]
-	public sealed class SeriesDetailsComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public interface ISeriesDetailComponentViewModel
 	{
+		string PatientId { get; }
+		string PatientsName { get; }
+		string PatientsBirthDate { get; }
+		string AccessionNumber { get; }
+		string StudyDate { get; }
+		string StudyDescription { get; }
+		ActionModelRoot ToolbarActionModel { get; }
+		ActionModelRoot ContextMenuActionModel { get; }
+		ITable SeriesTable { get; }
+		IList<ISeriesData> Series { get; }
+		IList<ISeriesData> SelectedSeries { get; }
+		event EventHandler SelectedSeriesChanged;
+		void SetSeriesSelection(ISelection selection);
+		void Refresh();
+		void Close();
 	}
 
+	[ExtensionPoint]
+	public sealed class SeriesDetailsComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> {}
+
 	[AssociateView(typeof(SeriesDetailsComponentViewExtensionPoint))]
-	public class SeriesDetailsComponent : ApplicationComponent
+	public class SeriesDetailsComponent : ApplicationComponent, ISeriesDetailComponentViewModel
 	{
+		private event EventHandler _selectedSeriesChanged;
+
 		private readonly StudyItem _studyItem;
 		private readonly Table<SeriesIdentifier> _seriesTable;
+		private readonly IList<ISeriesData> _seriesList;
 		private readonly IServerTreeNode _server;
+
+		private ToolSet _toolSet;
+		private ActionModelRoot _toolbarActionModel;
+		private ActionModelRoot _contextActionModel;
+
+		private IList<ISeriesData> _selectedSeries;
+		private ISelection _selection;
 
 		internal SeriesDetailsComponent(StudyItem studyItem, IServerTreeNode server)
 		{
 			_studyItem = studyItem;
 			_seriesTable = new Table<SeriesIdentifier>();
+			_seriesList = new ReadOnlyListWrapper<ISeriesData>(_seriesTable.Items);
+			_selectedSeries = new ReadOnlyListWrapper<ISeriesData>();
 			_server = server;
 		}
 
-		public string PatientId
+		string ISeriesDetailComponentViewModel.PatientId
 		{
 			get { return _studyItem.PatientId; }	
 		}
 
-		public string PatientsName
+		string ISeriesDetailComponentViewModel.PatientsName
 		{
 			get
 			{	
@@ -79,7 +111,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			}
 		}
 
-		public string PatientsBirthDate
+		string ISeriesDetailComponentViewModel.PatientsBirthDate
 		{
 			get
 			{
@@ -94,12 +126,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			}	
 		}
 
-		public string AccessionNumber
+		string ISeriesDetailComponentViewModel.AccessionNumber
 		{
 			get { return _studyItem.AccessionNumber; }
 		}
 
-		public string StudyDate
+		string ISeriesDetailComponentViewModel.StudyDate
 		{
 			get
 			{
@@ -114,14 +146,66 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			}
 		}
 
-		public string StudyDescription
+		string ISeriesDetailComponentViewModel.StudyDescription
 		{
-			get { return _studyItem.StudyDescription; }	
+			get { return _studyItem.StudyDescription; }
 		}
 
-		public ITable SeriesTable
+		protected internal StudyItem StudyItem
 		{
-			get { return _seriesTable; }	
+			get { return _studyItem; }
+		}
+
+		public IList<ISeriesData> Series
+		{
+			get { return _seriesList; }
+		}
+
+		public IList<ISeriesData> SelectedSeries
+		{
+			get { return _selectedSeries; }
+			private set
+			{
+				if (_selectedSeries != value)
+				{
+					_selectedSeries = value;
+					EventsHelper.Fire(_selectedSeriesChanged, this, EventArgs.Empty);
+				}
+			}
+		}
+
+		public event EventHandler SelectedSeriesChanged
+		{
+			add { _selectedSeriesChanged += value; }
+			remove { _selectedSeriesChanged -= value; }
+		}
+
+		ActionModelRoot ISeriesDetailComponentViewModel.ToolbarActionModel
+		{
+			get { return _toolbarActionModel; }
+		}
+
+		ActionModelRoot ISeriesDetailComponentViewModel.ContextMenuActionModel
+		{
+			get { return _contextActionModel; }
+		}
+
+		ITable ISeriesDetailComponentViewModel.SeriesTable
+		{
+			get { return _seriesTable; }
+		}
+
+		void ISeriesDetailComponentViewModel.SetSeriesSelection(ISelection selection)
+		{
+			if (_selection != selection)
+			{
+				_selection = selection;
+
+				if (_selection != null)
+					SelectedSeries = new ReadOnlyListWrapper<ISeriesData>(_selection.Items);
+				else
+					SelectedSeries = new ReadOnlyListWrapper<ISeriesData>();
+			}
 		}
 
 		public override void Start()
@@ -130,7 +214,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			RefreshInternal();
 			_seriesTable.Sort(new TableSortParams(_seriesTable.Columns[0], false));
 
+			_toolSet = new ToolSet(new SeriesDetailsToolExtensionPoint(), new SeriesDetailsToolContext(this));
+			_toolbarActionModel = ActionModelRoot.CreateModel(GetType().FullName, SeriesDetailsTool.ToolbarActionSite, _toolSet.Actions);
+			_contextActionModel = ActionModelRoot.CreateModel(GetType().FullName, SeriesDetailsTool.ContextMenuActionSite, _toolSet.Actions);
+
 			base.Start();
+		}
+
+		public override void Stop()
+		{
+			_toolbarActionModel = null;
+			_contextActionModel = null;
+			if (_toolSet != null)
+			{
+				_toolSet.Dispose();
+				_toolSet = null;
+			}
+
+			base.Stop();
 		}
 
 		private void InitializeTable()
@@ -257,5 +358,147 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			base.ExitCode = ApplicationComponentExitCode.Accepted;
 			Host.Exit();
 		}
+
+		#region SeriesDetailsToolContext Class
+
+		private class SeriesDetailsToolContext : ISeriesDetailsToolContext
+		{
+			private readonly SeriesDetailsComponent _component;
+
+			public SeriesDetailsToolContext(SeriesDetailsComponent component)
+			{
+				_component = component;
+			}
+
+			public IPatientData Patient
+			{
+				get { return _component.StudyItem; }
+			}
+
+			public IStudyData Study
+			{
+				get { return _component.StudyItem; }
+			}
+
+			public IList<ISeriesData> AllSeries
+			{
+				get { return _component.Series; }
+			}
+
+			public IList<ISeriesData> SelectedSeries
+			{
+				get { return _component.SelectedSeries; }
+			}
+
+			public event EventHandler SelectedSeriesChanged
+			{
+				add { _component.SelectedSeriesChanged += value; }
+				remove { _component.SelectedSeriesChanged -= value; }
+			}
+
+			public void RefreshSeriesTable()
+			{
+				_component.Refresh();
+			}
+
+			public SeriesDetailsComponent Component
+			{
+				get { return _component; }
+			}
+
+			public IDesktopWindow DesktopWindow
+			{
+				get { return _component.Host.DesktopWindow; }
+			}
+		}
+
+		#endregion
+
+		#region ReadOnlyListWrapper Class
+
+		private class ReadOnlyListWrapper<TOut> : IList<TOut>
+		{
+			private const string _collectionIsReadOnly = "Collection is read-only.";
+			private readonly IList _list;
+
+			public ReadOnlyListWrapper() : this(new ArrayList()) {}
+
+			public ReadOnlyListWrapper(object[] array) : this((Array) array) {}
+
+			public ReadOnlyListWrapper(IList list)
+			{
+				_list = list;
+			}
+
+			public int IndexOf(TOut item)
+			{
+				return _list.IndexOf(item);
+			}
+
+			public void Insert(int index, TOut item)
+			{
+				throw new NotSupportedException(_collectionIsReadOnly);
+			}
+
+			public void RemoveAt(int index)
+			{
+				throw new NotSupportedException(_collectionIsReadOnly);
+			}
+
+			public TOut this[int index]
+			{
+				get { return (TOut) _list[index]; }
+				set { throw new NotSupportedException(_collectionIsReadOnly); }
+			}
+
+			public void Add(TOut item)
+			{
+				throw new NotSupportedException(_collectionIsReadOnly);
+			}
+
+			public void Clear()
+			{
+				throw new NotSupportedException(_collectionIsReadOnly);
+			}
+
+			public bool Contains(TOut item)
+			{
+				return _list.Contains(item);
+			}
+
+			public void CopyTo(TOut[] array, int arrayIndex)
+			{
+				foreach (var item in _list)
+					array[arrayIndex++] = (TOut) item;
+			}
+
+			public int Count
+			{
+				get { return _list.Count; }
+			}
+
+			public bool IsReadOnly
+			{
+				get { return true; }
+			}
+
+			public bool Remove(TOut item)
+			{
+				throw new NotSupportedException(_collectionIsReadOnly);
+			}
+
+			public IEnumerator<TOut> GetEnumerator()
+			{
+				foreach (var item in _list)
+					yield return (TOut) item;
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				return this.GetEnumerator();
+			}
+		}
+
+		#endregion
 	}
 }

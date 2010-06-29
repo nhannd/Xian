@@ -187,13 +187,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails.View.WinForms
 			// 
 			// _seriesTable
 			// 
+			this._seriesTable.ColumnHeaderTooltip = null;
 			this._seriesTable.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._seriesTable.Location = new System.Drawing.Point(0, 0);
 			this._seriesTable.Name = "_seriesTable";
 			this._seriesTable.ReadOnly = false;
-			this._seriesTable.ShowToolbar = false;
 			this._seriesTable.Size = new System.Drawing.Size(457, 262);
+			this._seriesTable.SortButtonTooltip = null;
 			this._seriesTable.TabIndex = 7;
+			this._seriesTable.SelectionChanged += new System.EventHandler(this._seriesTable_SelectionChanged);
 			// 
 			// _close
 			// 

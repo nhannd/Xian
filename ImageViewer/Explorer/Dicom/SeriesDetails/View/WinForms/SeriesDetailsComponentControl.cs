@@ -36,7 +36,7 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails.View.WinForms
@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails.View.WinForms
     /// </summary>
     public partial class SeriesDetailsComponentControl : ApplicationComponentUserControl
     {
-		private SeriesDetailsComponent _component;
+		private ISeriesDetailComponentViewModel _component;
 
         /// <summary>
         /// Constructor.
@@ -57,18 +57,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails.View.WinForms
 			_component = component;
             InitializeComponent();
 
-            BindingSource bindingSource = new BindingSource();
-			bindingSource.DataSource = _component;
-
-        	_patientId.DataBindings.Add("Value", _component, "PatientId", true, DataSourceUpdateMode.OnPropertyChanged);
-			_patientsName.DataBindings.Add("Value", _component, "PatientsName", true, DataSourceUpdateMode.OnPropertyChanged);
-			_dob.DataBindings.Add("Value", _component, "PatientsBirthDate", true, DataSourceUpdateMode.OnPropertyChanged);
-			_accessionNumber.DataBindings.Add("Value", _component, "AccessionNumber", true, DataSourceUpdateMode.OnPropertyChanged);
-
-			_studyDate.DataBindings.Add("Value", _component, "StudyDate", true, DataSourceUpdateMode.OnPropertyChanged);
-			_studyDescription.DataBindings.Add("Value", _component, "StudyDescription", true, DataSourceUpdateMode.OnPropertyChanged);
+        	_patientId.Value = _component.PatientId;
+			_patientsName.Value = _component.PatientsName;
+			_dob.Value = _component.PatientsBirthDate;
+			_accessionNumber.Value = _component.AccessionNumber;
+			_studyDate.Value = _component.StudyDate;
+			_studyDescription.Value = _component.StudyDescription;
 
         	_seriesTable.Table = _component.SeriesTable;
+        	_seriesTable.ToolbarModel = _component.ToolbarActionModel;
+        	_seriesTable.MenuModel = _component.ContextMenuActionModel;
 
         	base.AcceptButton = _close;
 			base.CancelButton = _close;
@@ -82,6 +80,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails.View.WinForms
 		private void _refresh_Click(object sender, EventArgs e)
 		{
 			_component.Refresh();
+		}
+
+		private void _seriesTable_SelectionChanged(object sender, EventArgs e)
+		{
+			_component.SetSeriesSelection(_seriesTable.Selection);
 		}
     }
 }
