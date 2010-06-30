@@ -45,6 +45,7 @@
     <Compile Include="AlphaColorMapFactory.cs" />
     <Compile Include="IFusionDisplaySetDescriptor.cs" />
     <Compile Include="Tests\AsynchronousFusionTestTool.cs" />
+    <Compile Include="Tests\FusionColorCompositingTest.cs" />
     <Compile Include="Tests\FusionDisplaySetFactoryTests.cs" />
     <Compile Include="Tests\FusionLayerCoregistrationTests.cs" />
     <Compile Include="Tests\FusionTestDataContainer.cs" />

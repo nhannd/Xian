@@ -109,6 +109,42 @@ namespace ClearCanvas.ImageViewer.Tests
 			return FloatComparer.AreEqual((float) result, 0, tolerance);
 		}
 
+		public virtual bool AreEqual(IPresentationImage referenceImage, IPresentationImage testImage, Rectangle bounds)
+		{
+			using (var referenceBitmap = DrawToBitmap(referenceImage))
+			{
+				using (var testBitmap = DrawToBitmap(testImage))
+				{
+					return AreEqual(referenceBitmap, testBitmap, bounds);
+				}
+			}
+		}
+
+		public virtual bool AreEqual(IPresentationImage referenceImage, IPresentationImage testImage, Rectangle bounds, float tolerance)
+		{
+			using (var referenceBitmap = DrawToBitmap(referenceImage))
+			{
+				using (var testBitmap = DrawToBitmap(testImage))
+				{
+					return AreEqual(referenceBitmap, testBitmap, bounds, tolerance);
+				}
+			}
+		}
+
+		public virtual bool AreEqual(Bitmap referenceImage, Bitmap testImage, Rectangle bounds)
+		{
+			Bitmap diffImage;
+			var result = PerformComparison(referenceImage, testImage, bounds, false, out diffImage);
+			return FloatComparer.AreEqual((float) result, 0);
+		}
+
+		public virtual bool AreEqual(Bitmap referenceImage, Bitmap testImage, Rectangle bounds, float tolerance)
+		{
+			Bitmap diffImage;
+			var result = PerformComparison(referenceImage, testImage, bounds, false, out diffImage);
+			return FloatComparer.AreEqual((float) result, 0, tolerance);
+		}
+
 		public virtual double Compare(IPresentationImage referenceImage, IPresentationImage testImage)
 		{
 			using (var referenceBitmap = DrawToBitmap(referenceImage))
@@ -142,6 +178,39 @@ namespace ClearCanvas.ImageViewer.Tests
 			return PerformComparison(referenceImage, testImage, true, out difference);
 		}
 
+		public virtual double Compare(IPresentationImage referenceImage, IPresentationImage testImage, Rectangle bounds)
+		{
+			using (var referenceBitmap = DrawToBitmap(referenceImage))
+			{
+				using (var testBitmap = DrawToBitmap(testImage))
+				{
+					return Compare(referenceBitmap, testBitmap, bounds);
+				}
+			}
+		}
+
+		public virtual double Compare(Bitmap referenceImage, Bitmap testImage, Rectangle bounds)
+		{
+			Bitmap diffImage;
+			return PerformComparison(referenceImage, testImage, bounds, false, out diffImage);
+		}
+
+		public virtual double Compare(IPresentationImage referenceImage, IPresentationImage testImage, Rectangle bounds, out Bitmap difference)
+		{
+			using (var referenceBitmap = DrawToBitmap(referenceImage))
+			{
+				using (var testBitmap = DrawToBitmap(testImage))
+				{
+					return Compare(referenceBitmap, testBitmap, bounds, out difference);
+				}
+			}
+		}
+
+		public virtual double Compare(Bitmap referenceImage, Bitmap testImage, Rectangle bounds, out Bitmap difference)
+		{
+			return PerformComparison(referenceImage, testImage, bounds, true, out difference);
+		}
+
 		public virtual Bitmap Diff(IPresentationImage referenceImage, IPresentationImage testImage)
 		{
 			using (var referenceBitmap = DrawToBitmap(referenceImage))
@@ -160,7 +229,30 @@ namespace ClearCanvas.ImageViewer.Tests
 			return diffImage;
 		}
 
-		protected abstract double PerformComparison(Bitmap referenceImage, Bitmap testImage, bool generateDiffImage, out Bitmap diffImage);
+		public virtual Bitmap Diff(IPresentationImage referenceImage, IPresentationImage testImage, Rectangle bounds)
+		{
+			using (var referenceBitmap = DrawToBitmap(referenceImage))
+			{
+				using (var testBitmap = DrawToBitmap(testImage))
+				{
+					return Diff(referenceBitmap, testBitmap, bounds);
+				}
+			}
+		}
+
+		public virtual Bitmap Diff(Bitmap referenceImage, Bitmap testImage, Rectangle bounds)
+		{
+			Bitmap diffImage;
+			PerformComparison(referenceImage, testImage, bounds, true, out diffImage);
+			return diffImage;
+		}
+
+		private double PerformComparison(Bitmap referenceImage, Bitmap testImage, bool generateDiffImage, out Bitmap diffImage)
+		{
+			return PerformComparison(referenceImage, testImage, new Rectangle(Point.Empty, referenceImage.Size), generateDiffImage, out diffImage);
+		}
+
+		protected abstract double PerformComparison(Bitmap referenceImage, Bitmap testImage, Rectangle bounds, bool generateDiffImage, out Bitmap diffImage);
 
 		protected static Bitmap DrawToBitmap(IPresentationImage presentationImage)
 		{
@@ -231,6 +323,26 @@ namespace ClearCanvas.ImageViewer.Tests
 			return GetImplementation(algorithm).AreEqual(referenceImage, testImage, tolerance);
 		}
 
+		public static bool AreEqual(ImageDiffAlgorithm algorithm, IPresentationImage referenceImage, IPresentationImage testImage, Rectangle bounds)
+		{
+			return GetImplementation(algorithm).AreEqual(referenceImage, testImage, bounds);
+		}
+
+		public static bool AreEqual(ImageDiffAlgorithm algorithm, IPresentationImage referenceImage, IPresentationImage testImage, Rectangle bounds, float tolerance)
+		{
+			return GetImplementation(algorithm).AreEqual(referenceImage, testImage, bounds, tolerance);
+		}
+
+		public static bool AreEqual(ImageDiffAlgorithm algorithm, Bitmap referenceImage, Bitmap testImage, Rectangle bounds)
+		{
+			return GetImplementation(algorithm).AreEqual(referenceImage, testImage, bounds);
+		}
+
+		public static bool AreEqual(ImageDiffAlgorithm algorithm, Bitmap referenceImage, Bitmap testImage, Rectangle bounds, float tolerance)
+		{
+			return GetImplementation(algorithm).AreEqual(referenceImage, testImage, bounds, tolerance);
+		}
+
 		public static double Compare(ImageDiffAlgorithm algorithm, IPresentationImage referenceImage, IPresentationImage testImage)
 		{
 			return GetImplementation(algorithm).Compare(referenceImage, testImage);
@@ -251,6 +363,26 @@ namespace ClearCanvas.ImageViewer.Tests
 			return GetImplementation(algorithm).Compare(referenceImage, testImage, out difference);
 		}
 
+		public static double Compare(ImageDiffAlgorithm algorithm, IPresentationImage referenceImage, IPresentationImage testImage, Rectangle bounds)
+		{
+			return GetImplementation(algorithm).Compare(referenceImage, testImage, bounds);
+		}
+
+		public static double Compare(ImageDiffAlgorithm algorithm, Bitmap referenceImage, Bitmap testImage, Rectangle bounds)
+		{
+			return GetImplementation(algorithm).Compare(referenceImage, testImage, bounds);
+		}
+
+		public static double Compare(ImageDiffAlgorithm algorithm, IPresentationImage referenceImage, IPresentationImage testImage, Rectangle bounds, out Bitmap difference)
+		{
+			return GetImplementation(algorithm).Compare(referenceImage, testImage, bounds, out difference);
+		}
+
+		public static double Compare(ImageDiffAlgorithm algorithm, Bitmap referenceImage, Bitmap testImage, Rectangle bounds, out Bitmap difference)
+		{
+			return GetImplementation(algorithm).Compare(referenceImage, testImage, bounds, out difference);
+		}
+
 		public static Bitmap Diff(ImageDiffAlgorithm algorithm, IPresentationImage referenceImage, IPresentationImage testImage)
 		{
 			return GetImplementation(algorithm).Diff(referenceImage, testImage);
@@ -261,13 +393,23 @@ namespace ClearCanvas.ImageViewer.Tests
 			return GetImplementation(algorithm).Diff(referenceImage, testImage);
 		}
 
+		public static Bitmap Diff(ImageDiffAlgorithm algorithm, IPresentationImage referenceImage, IPresentationImage testImage, Rectangle bounds)
+		{
+			return GetImplementation(algorithm).Diff(referenceImage, testImage, bounds);
+		}
+
+		public static Bitmap Diff(ImageDiffAlgorithm algorithm, Bitmap referenceImage, Bitmap testImage, Rectangle bounds)
+		{
+			return GetImplementation(algorithm).Diff(referenceImage, testImage, bounds);
+		}
+
 		#endregion
 
 		#region Default Implementations
 
 		private delegate void Iterator(int x, int y, int index, double delta);
 
-		private static void PerformIterativeComparison(Bitmap referenceImage, Bitmap testImage, bool generateDiffImage, out Bitmap diffImage, Iterator iterator)
+		private static void PerformIterativeComparison(Bitmap referenceImage, Bitmap testImage, Rectangle bounds, bool generateDiffImage, out Bitmap diffImage, Iterator iterator)
 		{
 			if (referenceImage.Size != testImage.Size)
 			{
@@ -295,16 +437,22 @@ namespace ClearCanvas.ImageViewer.Tests
 						int* referenceData = (int*) referenceBits.Scan0;
 						for (int n = 0; n < count; n++)
 						{
+							var x = n%width;
+							var y = n/width;
 							var referenceValue = ToRgbVector(referenceData[n]);
 							var testValue = ToRgbVector(testData[n]);
-							var delta = (referenceValue - testValue).Magnitude/root3;
+							var delta = 0.0;
 
-							iterator.Invoke(n%width, n/width, n, delta);
+							if (bounds.Contains(x, y))
+							{
+								delta = (referenceValue - testValue).Magnitude/root3;
+								iterator.Invoke(x, y, n, delta);
+							}
 
 							if (generateDiffImage)
 							{
 								var v = (int) (Math.Min(255, Math.Max(0, delta)));
-								diffImage.SetPixel(n%width, n/width, Color.FromArgb(v, v, v));
+								diffImage.SetPixel(x, y, Color.FromArgb(v, v, v));
 							}
 						}
 					}
@@ -324,7 +472,7 @@ namespace ClearCanvas.ImageViewer.Tests
 
 		private class EuclidianImageDiff : ImageDiff
 		{
-			protected override double PerformComparison(Bitmap referenceImage, Bitmap testImage, bool generateDiffImage, out Bitmap diffImage)
+			protected override double PerformComparison(Bitmap referenceImage, Bitmap testImage, Rectangle bounds, bool generateDiffImage, out Bitmap diffImage)
 			{
 				if (referenceImage.Size != testImage.Size)
 				{
@@ -335,7 +483,7 @@ namespace ClearCanvas.ImageViewer.Tests
 				var count = referenceImage.Width*referenceImage.Height;
 				var sumDeltaSquares = 0.0;
 
-				PerformIterativeComparison(referenceImage, testImage, generateDiffImage, out diffImage, (x, y, i, d) => sumDeltaSquares += d*d);
+				PerformIterativeComparison(referenceImage, testImage, bounds, generateDiffImage, out diffImage, (x, y, i, d) => sumDeltaSquares += d*d);
 
 				return Math.Sqrt(sumDeltaSquares)/count;
 			}
@@ -347,7 +495,7 @@ namespace ClearCanvas.ImageViewer.Tests
 
 		private class StatisticalDifferenceImageDiff : ImageDiff
 		{
-			protected override double PerformComparison(Bitmap referenceImage, Bitmap testImage, bool generateDiffImage, out Bitmap diffImage)
+			protected override double PerformComparison(Bitmap referenceImage, Bitmap testImage, Rectangle bounds, bool generateDiffImage, out Bitmap diffImage)
 			{
 				if (referenceImage.Size != testImage.Size)
 				{
@@ -357,7 +505,7 @@ namespace ClearCanvas.ImageViewer.Tests
 
 				var list = new List<double>();
 
-				PerformIterativeComparison(referenceImage, testImage, generateDiffImage, out diffImage, (x, y, i, d) => list.Add(d));
+				PerformIterativeComparison(referenceImage, testImage, bounds, generateDiffImage, out diffImage, (x, y, i, d) => list.Add(d));
 
 				var results = new Statistics(list);
 				if (results.StandardDeviation < 16)
