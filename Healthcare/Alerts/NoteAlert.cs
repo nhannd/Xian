@@ -29,41 +29,35 @@
 
 #endregion
 
-using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare.Alerts
 {
-    [ExtensionOf(typeof(PatientAlertExtensionPoint))]
-    public class NoteAlert : PatientAlertBase
-    {
+	[ExtensionOf(typeof(PatientAlertExtensionPoint))]
+	public class NoteAlert : PatientAlertBase
+	{
 		public override string Id
 		{
 			get { return "NoteAlert"; }
 		}
-		
-		public override AlertNotification Test(Patient patient, IPersistenceContext context)
-        {
-            List<string> reasons = new List<string>();
-            foreach (PatientNote note in patient.Notes)
-            {
-                if (note.IsCurrent && note.Category.Severity == NoteSeverity.H)
-                {
-                    if(!string.IsNullOrEmpty(note.Comment))
-                       reasons.Add(string.Format("{0}: {1}", note.Category.Name, note.Comment));
-                    else
-                       reasons.Add(note.Category.Name);
-                }
-            }
 
-            return reasons.Count > 0 ? new AlertNotification(this.Id, reasons) : null; 
-        }
-    }
+		public override AlertNotification Test(Patient patient, IPersistenceContext context)
+		{
+			var reasons = new List<string>();
+			foreach (var note in patient.Notes)
+			{
+				if (note.IsCurrent && note.Category.Severity == NoteSeverity.H)
+				{
+					if (!string.IsNullOrEmpty(note.Comment))
+						reasons.Add(string.Format("{0}: {1}", note.Category.Name, note.Comment));
+					else
+						reasons.Add(note.Category.Name);
+				}
+			}
+
+			return reasons.Count > 0 ? new AlertNotification(this.Id, reasons) : null;
+		}
+	}
 }
