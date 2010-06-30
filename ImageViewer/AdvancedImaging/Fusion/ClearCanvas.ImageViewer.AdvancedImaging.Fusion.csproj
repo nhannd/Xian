@@ -46,7 +46,8 @@
     <Compile Include="IFusionDisplaySetDescriptor.cs" />
     <Compile Include="Tests\AsynchronousFusionTestTool.cs" />
     <Compile Include="Tests\FusionDisplaySetFactoryTests.cs" />
-    <Compile Include="Tests\FusionImageGraphicTests.cs" />
+    <Compile Include="Tests\FusionLayerCoregistrationTests.cs" />
+    <Compile Include="Tests\FusionTestDataContainer.cs" />
     <Compile Include="Tests\Modality.cs" />
     <Compile Include="Tests\TestDisplaySetGenerator.cs" />
     <Compile Include="Tests\TestDataFunction.cs" />

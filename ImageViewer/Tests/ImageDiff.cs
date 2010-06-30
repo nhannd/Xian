@@ -165,11 +165,26 @@ namespace ClearCanvas.ImageViewer.Tests
 		protected static Bitmap DrawToBitmap(IPresentationImage presentationImage)
 		{
 			var imageGraphicProvider = (IImageGraphicProvider) presentationImage;
+			var annotationLayoutProvider = presentationImage as IAnnotationLayoutProvider;
+			var annotationLayoutVisible = true;
 
-			if (presentationImage is IAnnotationLayoutProvider)
-				((IAnnotationLayoutProvider) presentationImage).AnnotationLayout.Visible = false;
+			if (annotationLayoutProvider != null)
+			{
+				annotationLayoutVisible = annotationLayoutProvider.AnnotationLayout.Visible;
+				annotationLayoutProvider.AnnotationLayout.Visible = false;
+			}
 
-			return presentationImage.DrawToBitmap(imageGraphicProvider.ImageGraphic.Columns, imageGraphicProvider.ImageGraphic.Rows);
+			try
+			{
+				return presentationImage.DrawToBitmap(imageGraphicProvider.ImageGraphic.Columns, imageGraphicProvider.ImageGraphic.Rows);
+			}
+			finally
+			{
+				if (annotationLayoutProvider != null)
+				{
+					annotationLayoutProvider.AnnotationLayout.Visible = annotationLayoutVisible;
+				}
+			}
 		}
 
 		protected static Vector3D ToRgbVector(Color color)

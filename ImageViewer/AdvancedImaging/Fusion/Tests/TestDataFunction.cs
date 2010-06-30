@@ -56,6 +56,22 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 		                                                                                    + 3*UnitStep(20 - Distance(x, y, z, 25, 33, 75))
 		                                                                                    + 4*UnitStep(20 - Distance(x, y, z, 75, 50, 50))).Normalize(100);
 
+		/// <summary>
+		/// The GradientX function. Generates SOPs in the same study as GradientY.
+		/// </summary>
+		/// <remarks>
+		/// The GradientX function consists of a full-range linear gradient along the patient X-axis.
+		/// </remarks>
+		public static TestDataFunction GradientX = new TestDataFunction("Gradient", (x, y, z) => x).Normalize(100);
+
+		/// <summary>
+		/// The GradientY function. Generates SOPs in the same study as GradientX.
+		/// </summary>
+		/// <remarks>
+		/// The GradientY function consists of a full-range linear gradient along the patient Y-axis.
+		/// </remarks>
+		public static TestDataFunction GradientY = new TestDataFunction("Gradient", (x, y, z) => y).Normalize(100);
+
 		private delegate float TestDataFunctionDelegate(float x, float y, float z);
 
 		private readonly TestDataFunctionDelegate _function;
@@ -65,10 +81,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 
 		private TestDataFunction(string name, TestDataFunctionDelegate function)
 		{
+			var uidBase = HashUid(name);
 			_function = function;
 			_name = name;
-			_studyInstanceUid = DicomUid.GenerateUid().UID;
-			_frameOfReferenceUid = DicomUid.GenerateUid().UID;
+			_studyInstanceUid = string.Format("{0}.0", uidBase);
+			_frameOfReferenceUid = string.Format("{0}.1", uidBase);
 		}
 
 		public string Name
@@ -192,6 +209,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 					return SopClass.PositronEmissionTomographyImageStorageUid;
 			}
 			return SopClass.SecondaryCaptureImageStorageUid;
+		}
+
+		private static string HashUid(string id)
+		{
+			return string.Format("1057.4.8.15.16.23.42.{0}", BitConverter.ToUInt32(BitConverter.GetBytes(id.GetHashCode()), 0));
 		}
 
 		#region Standard Functions

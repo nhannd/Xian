@@ -32,7 +32,6 @@
 #if	UNIT_TESTS
 #pragma warning disable 1591,0419,1574,1587
 
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -41,14 +40,13 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Mathematics;
-using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Tests;
 using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 {
 	[TestFixture(Description = "Tests for validating fused image pixel data alignment and orientation (including MPR of overlay data)")]
-	public class FusionImageGraphicTests
+	public class FusionLayerCoregistrationTests
 	{
 		[TestFixtureSetUp]
 		public void Initialize()
@@ -60,9 +58,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 		public void ValidateImageDifferenceEngine()
 		{
 			string testName = MethodBase.GetCurrentMethod().Name;
-			using (var data = new FusionTestData(TestDataFunction.Threed,
-			                                     new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
-			                                     new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit))
+			using (var data = new FusionTestDataContainer(TestDataFunction.Threed,
+			                                              new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                              new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit))
 			{
 				var results = DiffFusionImages(data, testName);
 
@@ -75,9 +73,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 		public void TestFusionLowPETResolution()
 		{
 			string testName = MethodBase.GetCurrentMethod().Name;
-			using (var data = new FusionTestData(TestDataFunction.Threed,
-			                                     new Vector3D(0.7f, 0.7f, 0.7f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
-			                                     new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit))
+			using (var data = new FusionTestDataContainer(TestDataFunction.Threed,
+			                                              new Vector3D(0.7f, 0.7f, 0.7f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                              new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit))
 			{
 				var results = DiffFusionImages(data, testName);
 
@@ -90,9 +88,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 		public void TestFusionDifferentPETOrientation()
 		{
 			string testName = MethodBase.GetCurrentMethod().Name;
-			using (var data = new FusionTestData(TestDataFunction.Threed,
-			                                     new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
-			                                     new Vector3D(1.0f, 1.0f, 1.0f), -Vector3D.yUnit, -Vector3D.zUnit, Vector3D.xUnit))
+			using (var data = new FusionTestDataContainer(TestDataFunction.Threed,
+			                                              new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                              new Vector3D(1.0f, 1.0f, 1.0f), -Vector3D.yUnit, -Vector3D.zUnit, Vector3D.xUnit))
 			{
 				var results = DiffFusionImages(data, testName);
 
@@ -105,9 +103,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 		public void TestFusionUnsignedCTUnsignedPET()
 		{
 			string testName = MethodBase.GetCurrentMethod().Name;
-			using (var data = new FusionTestData(TestDataFunction.Threed,
-			                                     false, new Vector3D(0.7f, 0.7f, 0.7f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
-			                                     false, new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit))
+			using (var data = new FusionTestDataContainer(TestDataFunction.Threed,
+			                                              false, new Vector3D(0.7f, 0.7f, 0.7f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                              false, new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit))
 			{
 				var results = DiffFusionImages(data, testName);
 
@@ -120,9 +118,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 		public void TestFusionSignedCTUnsignedPET()
 		{
 			string testName = MethodBase.GetCurrentMethod().Name;
-			using (var data = new FusionTestData(TestDataFunction.Threed,
-			                                     true, new Vector3D(0.7f, 0.7f, 0.7f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
-			                                     false, new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit))
+			using (var data = new FusionTestDataContainer(TestDataFunction.Threed,
+			                                              true, new Vector3D(0.7f, 0.7f, 0.7f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                              false, new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit))
 			{
 				var results = DiffFusionImages(data, testName);
 
@@ -135,9 +133,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 		public void TestFusionUnsignedCTSignedPET()
 		{
 			string testName = MethodBase.GetCurrentMethod().Name;
-			using (var data = new FusionTestData(TestDataFunction.Threed,
-			                                     false, new Vector3D(0.7f, 0.7f, 0.7f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
-			                                     true, new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit))
+			using (var data = new FusionTestDataContainer(TestDataFunction.Threed,
+			                                              false, new Vector3D(0.7f, 0.7f, 0.7f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                              true, new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit))
 			{
 				var results = DiffFusionImages(data, testName);
 
@@ -150,9 +148,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 		public void TestFusionSignedCTSignedPET()
 		{
 			string testName = MethodBase.GetCurrentMethod().Name;
-			using (var data = new FusionTestData(TestDataFunction.Threed,
-			                                     true, new Vector3D(0.7f, 0.7f, 0.7f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
-			                                     true, new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit))
+			using (var data = new FusionTestDataContainer(TestDataFunction.Threed,
+			                                              true, new Vector3D(0.7f, 0.7f, 0.7f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                              true, new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit))
 			{
 				var results = DiffFusionImages(data, testName);
 
@@ -165,9 +163,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 		public void TestFusion4To3AnisotropicCTIsotropicPET()
 		{
 			string testName = MethodBase.GetCurrentMethod().Name;
-			using (var data = new FusionTestData(TestDataFunction.Threed,
-												 new Vector3D(0.8f, 0.6f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
-			                                     new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
+			using (var data = new FusionTestDataContainer(TestDataFunction.Threed,
+			                                              new Vector3D(0.8f, 0.6f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                              new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
 			{
 				var results = DiffFusionImages(data, testName);
 
@@ -180,9 +178,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 		public void TestFusion3To4AnisotropicCTIsotropicPET()
 		{
 			string testName = MethodBase.GetCurrentMethod().Name;
-			using (var data = new FusionTestData(TestDataFunction.Threed,
-												 new Vector3D(0.6f, 0.8f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
-			                                     new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
+			using (var data = new FusionTestDataContainer(TestDataFunction.Threed,
+			                                              new Vector3D(0.6f, 0.8f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                              new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
 			{
 				var results = DiffFusionImages(data, testName);
 
@@ -199,9 +197,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			Assert.Ignore(_anisotropicPixelAspectRatioMPRSupport);
 
 			string testName = MethodBase.GetCurrentMethod().Name;
-			using (var data = new FusionTestData(TestDataFunction.Threed,
-			                                     new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
-			                                     new Vector3D(1.2f, 0.9f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
+			using (var data = new FusionTestDataContainer(TestDataFunction.Threed,
+			                                              new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                              new Vector3D(1.2f, 0.9f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
 			{
 				var results = DiffFusionImages(data, testName);
 
@@ -216,9 +214,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			Assert.Ignore(_anisotropicPixelAspectRatioMPRSupport);
 
 			string testName = MethodBase.GetCurrentMethod().Name;
-			using (var data = new FusionTestData(TestDataFunction.Threed,
-			                                     new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
-			                                     new Vector3D(0.9f, 1.2f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
+			using (var data = new FusionTestDataContainer(TestDataFunction.Threed,
+			                                              new Vector3D(1.0f, 1.0f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                              new Vector3D(0.9f, 1.2f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
 			{
 				var results = DiffFusionImages(data, testName);
 
@@ -233,9 +231,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			Assert.Ignore(_anisotropicPixelAspectRatioMPRSupport);
 
 			string testName = MethodBase.GetCurrentMethod().Name;
-			using (var data = new FusionTestData(TestDataFunction.Threed,
-			                                     new Vector3D(0.8f, 0.6f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
-			                                     new Vector3D(1.2f, 0.9f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
+			using (var data = new FusionTestDataContainer(TestDataFunction.Threed,
+			                                              new Vector3D(0.8f, 0.6f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                              new Vector3D(1.2f, 0.9f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
 			{
 				var results = DiffFusionImages(data, testName);
 
@@ -250,9 +248,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			Assert.Ignore(_anisotropicPixelAspectRatioMPRSupport);
 
 			string testName = MethodBase.GetCurrentMethod().Name;
-			using (var data = new FusionTestData(TestDataFunction.Threed,
-			                                     new Vector3D(0.6f, 0.8f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
-			                                     new Vector3D(1.2f, 0.9f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
+			using (var data = new FusionTestDataContainer(TestDataFunction.Threed,
+			                                              new Vector3D(0.6f, 0.8f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                              new Vector3D(1.2f, 0.9f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
 			{
 				var results = DiffFusionImages(data, testName);
 
@@ -267,9 +265,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			Assert.Ignore(_anisotropicPixelAspectRatioMPRSupport);
 
 			string testName = MethodBase.GetCurrentMethod().Name;
-			using (var data = new FusionTestData(TestDataFunction.Threed,
-			                                     new Vector3D(0.8f, 0.6f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
-			                                     new Vector3D(0.9f, 1.2f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
+			using (var data = new FusionTestDataContainer(TestDataFunction.Threed,
+			                                              new Vector3D(0.8f, 0.6f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                              new Vector3D(0.9f, 1.2f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
 			{
 				var results = DiffFusionImages(data, testName);
 
@@ -284,9 +282,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			Assert.Ignore(_anisotropicPixelAspectRatioMPRSupport);
 
 			string testName = MethodBase.GetCurrentMethod().Name;
-			using (var data = new FusionTestData(TestDataFunction.Threed,
-			                                     new Vector3D(0.6f, 0.8f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
-			                                     new Vector3D(0.9f, 1.2f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
+			using (var data = new FusionTestDataContainer(TestDataFunction.Threed,
+			                                              new Vector3D(0.6f, 0.8f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                              new Vector3D(0.9f, 1.2f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
 			{
 				var results = DiffFusionImages(data, testName);
 
@@ -301,9 +299,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			Assert.Ignore(_anisotropicPixelAspectRatioMPRSupport);
 
 			string testName = MethodBase.GetCurrentMethod().Name;
-			using (var data = new FusionTestData(TestDataFunction.Threed,
-			                                     new Vector3D(0.75f, 0.7f, 0.8f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
-			                                     new Vector3D(0.75f, 0.7f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
+			using (var data = new FusionTestDataContainer(TestDataFunction.Threed,
+			                                              new Vector3D(0.75f, 0.7f, 0.8f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                              new Vector3D(0.75f, 0.7f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
 			{
 				var results = DiffFusionImages(data, testName);
 
@@ -318,9 +316,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			Assert.Ignore(_anisotropicPixelAspectRatioMPRSupport);
 
 			string testName = MethodBase.GetCurrentMethod().Name;
-			using (var data = new FusionTestData(TestDataFunction.Threed,
-			                                     new Vector3D(0.8f, 0.9f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
-												 new Vector3D(0.8f, 0.9f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit))
+			using (var data = new FusionTestDataContainer(TestDataFunction.Threed,
+			                                              new Vector3D(0.8f, 0.9f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                              new Vector3D(0.8f, 0.9f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit))
 			{
 				var results = DiffFusionImages(data, testName);
 
@@ -335,9 +333,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			Assert.Ignore(_anisotropicPixelAspectRatioMPRSupport);
 
 			string testName = MethodBase.GetCurrentMethod().Name;
-			using (var data = new FusionTestData(TestDataFunction.Threed,
-			                                     new Vector3D(0.8f, 0.9f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
-												 new Vector3D(0.8f, 0.9f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
+			using (var data = new FusionTestDataContainer(TestDataFunction.Threed,
+			                                              new Vector3D(0.8f, 0.9f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                              new Vector3D(0.8f, 0.9f, 1.0f), Vector3D.yUnit, Vector3D.zUnit, -Vector3D.xUnit))
 			{
 				var results = DiffFusionImages(data, testName);
 
@@ -352,9 +350,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			Assert.Ignore(_anisotropicPixelAspectRatioMPRSupport);
 
 			string testName = MethodBase.GetCurrentMethod().Name;
-			using (var data = new FusionTestData(TestDataFunction.Threed,
-			                                     new Vector3D(0.8f, 0.9f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
-												 new Vector3D(0.9f, 1.0f, 0.8f), Vector3D.yUnit, Vector3D.zUnit, Vector3D.xUnit))
+			using (var data = new FusionTestDataContainer(TestDataFunction.Threed,
+			                                              new Vector3D(0.8f, 0.9f, 1.0f), Vector3D.xUnit, Vector3D.yUnit, Vector3D.zUnit,
+			                                              new Vector3D(0.9f, 1.0f, 0.8f), Vector3D.yUnit, Vector3D.zUnit, Vector3D.xUnit))
 			{
 				var results = DiffFusionImages(data, testName);
 
@@ -363,9 +361,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			}
 		}
 
-		private static IList<double> DiffFusionImages(FusionTestData data, string testName)
+		private static IList<double> DiffFusionImages(FusionTestDataContainer data, string testName)
 		{
-			var outputPath = new DirectoryInfo(Path.Combine(typeof (FusionImageGraphicTests).FullName, testName));
+			var outputPath = new DirectoryInfo(Path.Combine(typeof (FusionLayerCoregistrationTests).FullName, testName));
 			if (outputPath.Exists)
 				outputPath.Delete(true);
 			outputPath.Create();
@@ -386,7 +384,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 
 							Bitmap diff;
 							double result = ImageDiff.Compare(ImageDiffAlgorithm.Euclidian, referenceImage, testImage, out diff);
-							diff.Save(Path.Combine(outputPath.FullName, string.Format("image{0}.png", index)));
+							diff.Save(Path.Combine(outputPath.FullName, string.Format("diff{0}.png", index)));
 							diff.Dispose();
 							log.WriteLine("{0}, {1:f6}", index, result);
 							list.Add(result);
@@ -413,90 +411,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 				var layerOpacityProvider = (ILayerOpacityProvider) image;
 				layerOpacityProvider.LayerOpacityManager.Thresholding = false;
 				layerOpacityProvider.LayerOpacityManager.Opacity = 0.5f;
-			}
-		}
-
-		private class FusionTestData : IDisposable
-		{
-			public delegate IEnumerable<ISopDataSource> CreateSopsDelegate();
-
-			private IEnumerable<ISopDataSource> _baseSops;
-			private IEnumerable<ISopDataSource> _overlaySops;
-			private TestDisplaySetGenerator _testDisplaySetGenerator;
-
-			public FusionTestData(TestDataFunction function,
-			                      Vector3D baseSpacing, Vector3D baseOrientationX, Vector3D baseOrientationY, Vector3D baseOrientationZ,
-			                      Vector3D overlaySpacing, Vector3D overlayOrientationX, Vector3D overlayOrientationY, Vector3D overlayOrientationZ)
-			{
-				_baseSops = function.CreateSops(true, Modality.CT, baseSpacing, baseOrientationX, baseOrientationY, baseOrientationZ);
-				_overlaySops = function.CreateSops(true, Modality.PT, overlaySpacing, overlayOrientationX, overlayOrientationY, overlayOrientationZ);
-				_testDisplaySetGenerator = new TestDisplaySetGenerator(_baseSops, _overlaySops);
-			}
-
-			public FusionTestData(TestDataFunction function,
-			                      bool baseIsSigned, Vector3D baseSpacing, Vector3D baseOrientationX, Vector3D baseOrientationY, Vector3D baseOrientationZ,
-			                      bool overlayIsSigned, Vector3D overlaySpacing, Vector3D overlayOrientationX, Vector3D overlayOrientationY, Vector3D overlayOrientationZ)
-			{
-				_baseSops = function.CreateSops(baseIsSigned, Modality.CT, baseSpacing, baseOrientationX, baseOrientationY, baseOrientationZ);
-				_overlaySops = function.CreateSops(overlayIsSigned, Modality.PT, overlaySpacing, overlayOrientationX, overlayOrientationY, overlayOrientationZ);
-				_testDisplaySetGenerator = new TestDisplaySetGenerator(_baseSops, _overlaySops);
-			}
-
-			public FusionTestData(CreateSopsDelegate baseSopCreatorDelegate, CreateSopsDelegate overlaySopCreatorDelegate)
-			{
-				_baseSops = baseSopCreatorDelegate.Invoke();
-				_overlaySops = overlaySopCreatorDelegate.Invoke();
-				_testDisplaySetGenerator = new TestDisplaySetGenerator(_baseSops, _overlaySops);
-			}
-
-			public IList<ImageSop> BaseSops
-			{
-				get { return _testDisplaySetGenerator.BaseSops; }
-			}
-
-			public IList<ImageSop> OverlaySops
-			{
-				get { return _testDisplaySetGenerator.OverlaySops; }
-			}
-
-			public IDisplaySet CreateBaseDisplaySet()
-			{
-				return _testDisplaySetGenerator.CreateBaseDisplaySet();
-			}
-
-			public IDisplaySet CreateOverlayDisplaySet()
-			{
-				return _testDisplaySetGenerator.CreateOverlayDisplaySet();
-			}
-
-			public IDisplaySet CreateFusionDisplaySet()
-			{
-				return _testDisplaySetGenerator.CreateFusionDisplaySet();
-			}
-
-			public void Dispose()
-			{
-				if (_testDisplaySetGenerator != null)
-				{
-					_testDisplaySetGenerator.Dispose();
-					_testDisplaySetGenerator = null;
-				}
-				if (_overlaySops != null)
-				{
-					Dispose(_overlaySops);
-					_overlaySops = null;
-				}
-				if (_baseSops != null)
-				{
-					Dispose(_baseSops);
-					_baseSops = null;
-				}
-			}
-
-			private static void Dispose<T>(IEnumerable<T> list) where T : IDisposable
-			{
-				foreach (var item in list)
-					item.Dispose();
 			}
 		}
 	}
