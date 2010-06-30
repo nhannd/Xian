@@ -70,6 +70,7 @@
   <ItemGroup>
     <Compile Include="AddressAssembler.cs" />
     <Compile Include="Admin\DepartmentAdmin\DepartmentAdminService.cs" />
+    <Compile Include="PatientAllergyAssembler.cs" />
     <Compile Include="DepartmentAssembler.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceAdminService.cs" />
     <Compile Include="Admin\ProcedureTypeAdmin\ProcedureTypeAdminService.cs" />

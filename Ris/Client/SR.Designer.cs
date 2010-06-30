@@ -2833,6 +2833,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Patient Allergies.
+        /// </summary>
+        internal static string TitlePatientAllergies {
+            get {
+                return ResourceManager.GetString("TitlePatientAllergies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Patient Attachments.
         /// </summary>
         internal static string TitlePatientAttachments {

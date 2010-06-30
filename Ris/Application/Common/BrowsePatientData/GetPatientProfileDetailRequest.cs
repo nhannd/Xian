@@ -44,7 +44,8 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
             bool includeTelephoneNumbers,
             bool includeNotes,
             bool includeAttachments,
-            bool includeAlerts)
+            bool includeAlerts,
+			bool includeAllergies)
         {
             this.PatientProfileRef = patientProfileRef;
             this.IncludeAddresses = includeAddresses;
@@ -54,6 +55,7 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
             this.IncludeNotes = includeNotes;
             this.IncludeAttachments = includeAttachments;
             this.IncludeAlerts = includeAlerts;
+        	this.IncludeAllergies = includeAllergies;
         }
 
         public GetPatientProfileDetailRequest()
@@ -83,5 +85,8 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 
         [DataMember]
         public bool IncludeAlerts;
+
+		[DataMember]
+		public bool IncludeAllergies;
     }
 }

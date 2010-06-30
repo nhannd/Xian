@@ -172,6 +172,7 @@
     <Compile Include="Jsml\ShimUtil.cs" />
     <Compile Include="ModalityProcedureStepSummary.cs" />
     <Compile Include="ModalityWorkflow\DicomSeriesDetail.cs" />
+    <Compile Include="PatientAllergyDetail.cs" />
     <Compile Include="ProtocollingWorkflow\GetLinkableProtocolsRequest.cs" />
     <Compile Include="ProtocollingWorkflow\GetLinkableProtocolsResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\MergeOrderRequest.cs" />

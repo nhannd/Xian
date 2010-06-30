@@ -1143,4 +1143,7 @@
   <data name="MessageValidateWorklistTimeSpan" xml:space="preserve">
     <value>Time window must not span more than {0} days.</value>
   </data>
+  <data name="TitlePatientAllergies" xml:space="preserve">
+    <value>Patient Allergies</value>
+  </data>
 </root>

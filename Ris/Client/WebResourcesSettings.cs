@@ -268,6 +268,16 @@ namespace ClearCanvas.Ris.Client
 		#region Patient Biography settings
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute]
+		[global::System.Configuration.DefaultSettingValueAttribute("biography/allergy-detail.htm")]
+		public string BiographyAllergyDetailPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["BiographyAllergyDetailPageUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("biography/order-detail.htm")]
 		public string BiographyOrderDetailPageUrl
 		{

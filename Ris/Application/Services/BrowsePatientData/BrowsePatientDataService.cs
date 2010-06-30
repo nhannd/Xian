@@ -120,6 +120,12 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 				response.PatientAlerts = CollectionUtils.Map<AlertNotification, AlertNotificationDetail>(alerts, alertAssembler.CreateAlertNotification);
 			}
 
+			if (request.IncludeAllergies)
+			{
+				var allergyAssembler = new PatientAllergyAssembler();
+				response.PatientAllergies = CollectionUtils.Map<AlertNotification, AlertNotificationDetail>(profile.Patient.Allergies, allergyAssembler.CreateAllergyDetail);
+			}
+
 			return response;
 		}
 

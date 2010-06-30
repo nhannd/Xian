@@ -117,6 +117,7 @@ namespace ClearCanvas.Ris.Client
 		private BiographyDemographicComponent _demographicComponent;
 		private AttachedDocumentPreviewComponent _documentComponent;
 		private BiographyNoteComponent _noteComponent;
+		private BiographyAllergiesViewComponent _allergyComponent;
 
 		/// <summary>
 		/// Constructor
@@ -137,6 +138,7 @@ namespace ClearCanvas.Ris.Client
 			_demographicComponent = new BiographyDemographicComponent { DefaultProfileRef = _profileRef, PatientRef = _patientRef };
 			_documentComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Patient);
 			_noteComponent = new BiographyNoteComponent();
+			_allergyComponent = new BiographyAllergiesViewComponent();
 
 			// Create tab and tab groups
 			_pagesContainer = new TabComponentContainer();
@@ -145,6 +147,7 @@ namespace ClearCanvas.Ris.Client
 			_pagesContainer.Pages.Add(new TabPage(SR.TitleDemographicProfiles, _demographicComponent));
 			_pagesContainer.Pages.Add(new TabPage(SR.TitlePatientAttachments, _documentComponent));
 			_pagesContainer.Pages.Add(new TabPage(SR.TitlePatientNotes, _noteComponent));
+			_pagesContainer.Pages.Add(new TabPage(SR.TitlePatientAllergies, _allergyComponent));
 
 			var tabGroupContainer = new TabGroupComponentContainer(LayoutDirection.Horizontal);
 			tabGroupContainer.AddTabGroup(new TabGroup(_pagesContainer, 1.0f));
@@ -222,7 +225,9 @@ namespace ClearCanvas.Ris.Client
 								// include notes for the notes component
 								IncludeNotes = true,
 								// include attachments for the docs component
-								IncludeAttachments = true
+								IncludeAttachments = true,
+								// include patient allergies for allergies component
+								IncludeAllergies = true
 							}
 						};
 
@@ -236,6 +241,7 @@ namespace ClearCanvas.Ris.Client
 					_bannerComponent.HealthcareContext = _patientProfile;
 					_documentComponent.PatientAttachments = _patientProfile.Attachments;
 					_noteComponent.Notes = _patientProfile.Notes;
+					_allergyComponent.Allergies = response.GetPatientProfileDetailResponse.PatientAllergies;
 
 					NotifyPropertyChanged("SelectedOrder");
 					NotifyAllPropertiesChanged();
