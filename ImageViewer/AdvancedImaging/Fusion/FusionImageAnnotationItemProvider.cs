@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			return _annotationItems;
 		}
 
-		private class UncalibratedFusionImageAnnotationItem : AnnotationItem
+		internal class UncalibratedFusionImageAnnotationItem : AnnotationItem
 		{
 			public UncalibratedFusionImageAnnotationItem() : base("AdvancedImaging.Fusion.Uncalibrated", SR.LabelUncalibrated, SR.LabelUncalibrated) {}
 

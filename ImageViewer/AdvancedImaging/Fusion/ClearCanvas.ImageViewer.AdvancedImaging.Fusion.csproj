@@ -49,6 +49,7 @@
     <Compile Include="Tests\FusionColorCompositingTest.cs" />
     <Compile Include="Tests\FusionDisplaySetFactoryTests.cs" />
     <Compile Include="Tests\FusionLayerCoregistrationTests.cs" />
+    <Compile Include="Tests\FusionPresentationImageTextAnnotationTests.cs" />
     <Compile Include="Tests\FusionTestDataContainer.cs" />
     <Compile Include="Tests\Modality.cs" />
     <Compile Include="Tests\TestDisplaySetGenerator.cs" />
