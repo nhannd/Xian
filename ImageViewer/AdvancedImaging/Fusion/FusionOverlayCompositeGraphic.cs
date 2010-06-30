@@ -171,14 +171,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					{
 						OverlayImageGraphic = _overlayFrameDataReference.FusionOverlayFrameData.CreateImageGraphic();
 
-#if DEBUG
-						if (this.OverlayFrameData.BaseFrame.FrameOfReferenceUid != this.OverlayFrameData.OverlayFrameOfReferenceUid)
-						{
-							if (!CollectionUtils.Contains(base.Graphics, g => g is CenteredTextGraphic))
-								this.Graphics.Add(new CenteredTextGraphic("Frame of Reference (0020,0052) MISMATCH"));
-						}
-#endif
-
 						if (progressGraphic != null)
 						{
 							this.Graphics.Remove(progressGraphic);
@@ -235,40 +227,5 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				_overlayFrameDataReference.FusionOverlayFrameData.Unlock();
 			}
 		}
-
-		#region CenteredTextGraphic Class
-
-#if DEBUG
-		[Cloneable(true)]
-		private class CenteredTextGraphic : InvariantTextPrimitive
-		{
-			public CenteredTextGraphic(string text) : base(text) {}
-
-			/// <summary>
-			/// Cloning constructor.
-			/// </summary>
-			private CenteredTextGraphic() : base() {}
-
-			public override void OnDrawing()
-			{
-				if (ParentPresentationImage != null)
-				{
-					CoordinateSystem = CoordinateSystem.Destination;
-					try
-					{
-						var rectangle = ParentPresentationImage.ClientRectangle;
-						Location = new PointF(rectangle.Width/2f, rectangle.Height/2f);
-					}
-					finally
-					{
-						ResetCoordinateSystem();
-					}
-				}
-				base.OnDrawing();
-			}
-		}
-#endif
-
-		#endregion
 	}
 }

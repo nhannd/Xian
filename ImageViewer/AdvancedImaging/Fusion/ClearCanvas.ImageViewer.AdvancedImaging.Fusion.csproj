@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="DisplaySetFactoryProvider.cs" />
     <Compile Include="AlphaColorMapFactory.cs" />
+    <Compile Include="FusionImageAnnotationItemProvider.cs" />
     <Compile Include="IFusionDisplaySetDescriptor.cs" />
     <Compile Include="Tests\AsynchronousFusionTestTool.cs" />
     <Compile Include="Tests\FusionColorCompositingTest.cs" />

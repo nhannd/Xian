@@ -172,7 +172,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		/// <returns></returns>
 		protected override IAnnotationLayout CreateAnnotationLayout()
 		{
-			return AnnotationLayoutFactory.CreateLayout("Dicom.CT");
+			return AnnotationLayoutFactory.CreateLayout("AdvancedImaging.Fusion.PET-CT");
 		}
 
 		public override string ToString()

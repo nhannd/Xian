@@ -117,17 +117,29 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CodeUncalibrated" xml:space="preserve">
+    <value>UNCALIBRATED</value>
+  </data>
   <data name="CommandAdjustOpacity" xml:space="preserve">
     <value>AdjustOpacity</value>
   </data>
   <data name="FormatPETFusionDisplaySet" xml:space="preserve">
     <value>Fusion: {0}/{1} ({2})</value>
   </data>
+  <data name="LabelAdvancedImageFusion" xml:space="preserve">
+    <value>Advanced Imaging (Fusion)</value>
+  </data>
   <data name="LabelAttenuationCorrection" xml:space="preserve">
     <value>Attenuation Correction</value>
   </data>
+  <data name="LabelFusion" xml:space="preserve">
+    <value>Fusion</value>
+  </data>
   <data name="LabelNoAttentuationCorrection" xml:space="preserve">
     <value>No Attenuation Correction</value>
+  </data>
+  <data name="LabelUncalibrated" xml:space="preserve">
+    <value>Uncalibrated</value>
   </data>
   <data name="MenuAdjustOpacity" xml:space="preserve">
     <value>Adjust &amp;Opacity</value>

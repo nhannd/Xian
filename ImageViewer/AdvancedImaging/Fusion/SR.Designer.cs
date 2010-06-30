@@ -61,6 +61,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to UNCALIBRATED.
+        /// </summary>
+        internal static string CodeUncalibrated {
+            get {
+                return ResourceManager.GetString("CodeUncalibrated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to AdjustOpacity.
         /// </summary>
         internal static string CommandAdjustOpacity {
@@ -79,6 +88,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Advanced Imaging (Fusion).
+        /// </summary>
+        internal static string LabelAdvancedImageFusion {
+            get {
+                return ResourceManager.GetString("LabelAdvancedImageFusion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Attenuation Correction.
         /// </summary>
         internal static string LabelAttenuationCorrection {
@@ -88,11 +106,29 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fusion.
+        /// </summary>
+        internal static string LabelFusion {
+            get {
+                return ResourceManager.GetString("LabelFusion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No Attenuation Correction.
         /// </summary>
         internal static string LabelNoAttentuationCorrection {
             get {
                 return ResourceManager.GetString("LabelNoAttentuationCorrection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uncalibrated.
+        /// </summary>
+        internal static string LabelUncalibrated {
+            get {
+                return ResourceManager.GetString("LabelUncalibrated", resourceCulture);
             }
         }
         
