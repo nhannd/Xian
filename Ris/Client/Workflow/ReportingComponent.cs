@@ -1101,6 +1101,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void DoCancelCleanUp()
 		{
+			PreliminaryDiagnosis.Clear();
 			CloseImages();
 
 			if (!_userCancelled)

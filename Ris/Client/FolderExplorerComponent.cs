@@ -129,7 +129,8 @@ namespace ClearCanvas.Ris.Client
 
 					// this timer is responsible for monitoring the auto-invalidation of all folders
 					// in the folder system, and performing the appropriate invalidations
-					_folderInvalidateTimer = new Timer(delegate { AutoInvalidateFolders(); }) {IntervalMilliseconds = 1000};
+					// bug #6909: increase timer interval from 1 sec to 10 seconds, to reduce lockup issues when time provider can't access network
+					_folderInvalidateTimer = new Timer(delegate { AutoInvalidateFolders(); }) {IntervalMilliseconds = 10000};
 					_folderInvalidateTimer.Start();
 
 					// notify that this folder system is now initialized
