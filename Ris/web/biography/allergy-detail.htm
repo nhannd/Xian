@@ -28,7 +28,8 @@
 						return;
 					}
 
-					canedit = Ris.getTag("ReadOnly") != "true";
+					canEdit = Ris.getTag("ReadOnly") != "true";
+					data.Allergies = context.Allergies;
 					initAllergyTable(context);
 				}
 				catch(e)
@@ -40,65 +41,96 @@
 
 			function initAllergyTable(allergyContext)
 			{
+				var allergenTypeTextChoices = allergyContext.AllergenTypeChoices.map(function(item) { return item.Value; });
+				var severityTextChoices = allergyContext.SeverityChoices.map(function(item) { return item.Value; });
+				var sensitivityTypeTextChoices = allergyContext.SensitivityTypeChoices.map(function(item) { return item.Value; });
+				var personRelationShipTypeTextChoices = allergyContext.PersonRelationshipTypeChoices.map(function(item) { return item.Value; });
+
 				var table = Table.createTable($("allergyTable"), 
 						{ editInPlace: canEdit, flow: true, checkBoxes: canEdit, empty: Table.defaultEmptyOption },
 						[
 							{	label: "Allergen Type",
-								cellType: "text",
-								getValue: function(item) { return item.AllergenType.Value; },
+								cellType: "choice",
+								choices: allergenTypeTextChoices,
+								size: 20,
+								getValue: function(item) { return item.AllergenType ? item.AllergenType.Value : null; },
+								setValue: function(item, value) { item.AllergenType = allergyContext.AllergenTypeChoices.find(function(c) { return c.Value == value; }); },
 								getError: function(item) { return null; }
 							},
-							{	label: "Description",
+							{	label: "Allergen Description",
 								cellType: "text",
+								size: 50,
 								getValue: function(item) { return item.AllergenDescription; },
+								setValue: function(item, value) { item.AllergenDescription = value; },
 								getError: function(item) { return null; }
 							},
 							{	label: "Severity",
-								cellType: "text",
-								getValue: function(item) { return item.Severity ? item.Severity.Value; },
+								cellType: "choice",
+								choices: severityTextChoices,
+								size: 20,
+								getValue: function(item) { return item.Severity ? item.Severity.Value : null; },
+								setValue: function(item, value) { item.Severity = allergyContext.SeverityChoices.find(function(c) { return c.Value == value; }); },
 								getError: function(item) { return null; }
 							},
 							{	label: "Reaction",
 								cellType: "text",
+								size: 50,
 								getValue: function(item) { return item.Reaction; },
+								setValue: function(item, value) { item.Reaction = value; },
 								getError: function(item) { return null; }
 							},
 							{	label: "Sensitivity Type",
-								cellType: "text",
-								getValue: function(item) { return item.SensitivityType.Value; },
+								cellType: "choice",
+								choices: sensitivityTypeTextChoices,
+								size: 20,
+								getValue: function(item) { return item.SensitivityType ? item.SensitivityType.Value : null; },
+								setValue: function(item, value) { item.SensitivityType = allergyContext.SensitivityTypeChoices.find(function(c) { return c.Value == value; }); },
 								getError: function(item) { return null; }
 							},
 							{	label: "Onset Time",
 								cellType: "datetime",
 								getValue: function(item) { return item.OnsetTime; },
+								setValue: function(item, value) { item.OnsetTime = value; },
 								getError: function(item) { return null; }
 							},
 							{	label: "Reported Time",
 								cellType: "datetime",
 								getValue: function(item) { return item.ReportedTime; },
+								setValue: function(item, value) { item.ReportedTime = value; },
 								getError: function(item) { return null; }
 							},
-							{	label: "Reported By",
+							{	label: "Reported By (Family Name)",
 								cellType: "text",
-								getValue: function(item) { return item.ReportedByFamilyName + ", " + item.ReportedByGivenName; },
+								getValue: function(item) { return item.ReportedByFamilyName; },
+								setValue: function(item, value) { item.ReportedByFamilyName = value; },
+								getError: function(item) { return null; }
+							},
+							{	label: "Reported By (Given Name)",
+								cellType: "text",
+								getValue: function(item) { return item.ReportedByGivenName; },
+								setValue: function(item, value) { item.ReportedByGivenName = value; },
 								getError: function(item) { return null; }
 							},
 							{	label: "Relationship",
-								cellType: "text",
-								getValue: function(item) { return item.ReportedByRelationshipType.Value; },
+								getValue: function(item) { return item.ReportedByRelationshipType ? item.ReportedByRelationshipType.Value : null; },
+								cellType: "choice",
+								choices: personRelationShipTypeTextChoices,
+								getValue: function(item) { return item.ReportedByRelationshipType ? item.ReportedByRelationshipType.Value : null; },
+								setValue: function(item, value) { item.ReportedByRelationshipType = allergyContext.PersonRelationshipTypeChoices.find(function(c) { return c.Value == value; }); },
 								getError: function(item) { return null; }
 							}
 						]);
 
 				table.initAddDeleteButtons(canEdit, "Delete selected patient allergy");
 				table.errorProvider = errorProvider;
-				table.bindItems(allergyContext.Allergies);
+				table.bindItems(data.Allergies);
+				table.cellUpdated = function() { Ris.setModified(true); };
 			}
 
 			function saveData()
 			{
-				// Not yet implemented
-				Ris.setTag("???", JSML.create(data, "data"));
+				// TODO: There is a problem saving date.
+				Ris.setTag("Allergies", JSML.create(data.Allergies, "Allergies"));
 			}
 		</script>
 	</head>

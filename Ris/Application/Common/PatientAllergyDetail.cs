@@ -7,6 +7,11 @@ namespace ClearCanvas.Ris.Application.Common
 	[DataContract]
 	public class PatientAllergyDetail : DataContractBase
 	{
+		// Default parameterless constructor for Jsml deserialization
+		public PatientAllergyDetail()
+		{
+		}
+
 		public PatientAllergyDetail(EnumValueInfo allergenType,
 			string allergenDescription,
 			EnumValueInfo severity,

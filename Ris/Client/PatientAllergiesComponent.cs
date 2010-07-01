@@ -17,7 +17,7 @@ namespace ClearCanvas.Ris.Client
 				this.AllergenTypeChoices = new List<EnumValueInfo>();
 				this.SeverityChoices = new List<EnumValueInfo>();
 				this.SensitivityTypeChoices = new List<EnumValueInfo>();
-				this.ReportedByRelationshipTypeChoices = new List<EnumValueInfo>();
+				this.PersonRelationshipTypeChoices = new List<EnumValueInfo>();
 			}
 
 			[DataMember]
@@ -33,7 +33,7 @@ namespace ClearCanvas.Ris.Client
 			public List<EnumValueInfo> SensitivityTypeChoices;
 
 			[DataMember]
-			public List<EnumValueInfo> ReportedByRelationshipTypeChoices;
+			public List<EnumValueInfo> PersonRelationshipTypeChoices;
 		}
 
 		private readonly bool _readOnly;
@@ -54,12 +54,12 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="allergenTypeChoices"></param>
 		/// <param name="severityChoices"></param>
 		/// <param name="sensitivityTypeChoices"></param>
-		/// <param name="reportedByRelationshipTypeChoices"></param>
+		/// <param name="personRelationshipTypeChoices"></param>
 		public PatientAllergiesComponent(
 			List<EnumValueInfo> allergenTypeChoices,
 			List<EnumValueInfo> severityChoices,
 			List<EnumValueInfo> sensitivityTypeChoices,
-			List<EnumValueInfo> reportedByRelationshipTypeChoices)
+			List<EnumValueInfo> personRelationshipTypeChoices)
 		{
 			_readOnly = false;
 			_context = new AllergyContext
@@ -67,7 +67,7 @@ namespace ClearCanvas.Ris.Client
 					AllergenTypeChoices = allergenTypeChoices,
 					SeverityChoices = severityChoices,
 					SensitivityTypeChoices = sensitivityTypeChoices,
-					ReportedByRelationshipTypeChoices = reportedByRelationshipTypeChoices
+					PersonRelationshipTypeChoices = personRelationshipTypeChoices
 				};
 		}
 
@@ -100,6 +100,18 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			return base.GetTag(tag);
+		}
+
+		protected override void SetTag(string tag, string data)
+		{
+			if (string.Equals("Allergies", tag))
+			{
+				this.Allergies.Clear();
+				this.Allergies.AddRange(JsmlSerializer.Deserialize<List<PatientAllergyDetail>>(data));
+				return;
+			}
+
+			base.SetTag(tag, data);
 		}
 	}
 }
