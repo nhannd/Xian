@@ -249,6 +249,24 @@ namespace ClearCanvas.Ris.Client
 					TimeOfDeath = null
 				};
 
+			// Randomly create 0-2 allergies
+			for (var i = 0; i < GetRandomInteger(0, 2); i++)
+			{
+				var allergy = new PatientAllergyDetail(
+					ChooseRandom(_patientEditorFormData.AllergenTypeChoices),
+					string.Format("description {0}", GenerateRandomString(3)),
+					ChooseRandom(_patientEditorFormData.AllergySeverityChoices),
+					string.Format("reaction {0}", GenerateRandomString(3)),
+					ChooseRandom(_patientEditorFormData.AllergySensitivityTypeChoices),
+					Platform.Time,
+					Platform.Time,
+					GetRandomNameFromFile(RandomUtilsSettings.Default.FamilyNameDictionary),
+					GetRandomNameFromFile(RandomUtilsSettings.Default.MaleNameDictionary) + " Anonymous",
+					ChooseRandom(_patientEditorFormData.PersonRelationshipTypeChoices));
+
+				profile.Allergies.Add(allergy);
+			}
+
 			profile.Name = new PersonNameDetail
 			{
 				FamilyName = GetRandomNameFromFile(RandomUtilsSettings.Default.FamilyNameDictionary),

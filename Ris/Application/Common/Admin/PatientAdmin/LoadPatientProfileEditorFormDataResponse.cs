@@ -67,5 +67,17 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
 
         [DataMember]
         public List<EnumValueInfo> ReligionChoices;
+
+		[DataMember]
+		public List<EnumValueInfo> AllergenTypeChoices;
+
+		[DataMember]
+		public List<EnumValueInfo> AllergySeverityChoices;
+
+		[DataMember]
+		public List<EnumValueInfo> AllergySensitivityTypeChoices;
+
+		[DataMember]
+		public List<EnumValueInfo> PersonRelationshipTypeChoices;
     }
 }

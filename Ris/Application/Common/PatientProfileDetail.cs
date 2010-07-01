@@ -37,83 +37,87 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common
 {
-    [DataContract]
-    public class PatientProfileDetail : DataContractBase
-    {
-        public PatientProfileDetail()
-        {
-            this.Mrn = new CompositeIdentifierDetail();
-            this.Healthcard = new HealthcardDetail();
-            this.Addresses = new List<AddressDetail>();
-            this.ContactPersons = new List<ContactPersonDetail>();
-            this.EmailAddresses = new List<EmailAddressDetail>();
-            this.TelephoneNumbers = new List<TelephoneDetail>();
-            this.Notes = new List<PatientNoteDetail>();
-            this.Attachments = new List<PatientAttachmentSummary>();
-            this.Name = new PersonNameDetail();
-        }
+	[DataContract]
+	public class PatientProfileDetail : DataContractBase
+	{
+		public PatientProfileDetail()
+		{
+			this.Mrn = new CompositeIdentifierDetail();
+			this.Healthcard = new HealthcardDetail();
+			this.Addresses = new List<AddressDetail>();
+			this.ContactPersons = new List<ContactPersonDetail>();
+			this.EmailAddresses = new List<EmailAddressDetail>();
+			this.TelephoneNumbers = new List<TelephoneDetail>();
+			this.Notes = new List<PatientNoteDetail>();
+			this.Attachments = new List<PatientAttachmentSummary>();
+			this.Allergies = new List<PatientAllergyDetail>();
+			this.Name = new PersonNameDetail();
+		}
 
-        [DataMember]
-        public EntityRef PatientRef;
+		[DataMember]
+		public EntityRef PatientRef;
 
-        [DataMember]
-        public EntityRef PatientProfileRef;
+		[DataMember]
+		public EntityRef PatientProfileRef;
 
-        [DataMember]
-        public CompositeIdentifierDetail Mrn;
+		[DataMember]
+		public CompositeIdentifierDetail Mrn;
 
-        [DataMember]
-        public HealthcardDetail Healthcard;
+		[DataMember]
+		public HealthcardDetail Healthcard;
 
-        [DataMember]
-        public PersonNameDetail Name;
+		[DataMember]
+		public PersonNameDetail Name;
 
-        [DataMember]
-        public DateTime? DateOfBirth;
+		[DataMember]
+		public DateTime? DateOfBirth;
 
-        [DataMember]
-        public EnumValueInfo Sex;
+		[DataMember]
+		public EnumValueInfo Sex;
 
-        [DataMember]
-        public EnumValueInfo PrimaryLanguage;
+		[DataMember]
+		public EnumValueInfo PrimaryLanguage;
 
-        [DataMember]
-        public EnumValueInfo Religion;
+		[DataMember]
+		public EnumValueInfo Religion;
 
-        [DataMember]
-        public bool DeathIndicator;
+		[DataMember]
+		public bool DeathIndicator;
 
-        [DataMember]
-        public DateTime? TimeOfDeath;
+		[DataMember]
+		public DateTime? TimeOfDeath;
 
-        [DataMember]
-        public AddressDetail CurrentHomeAddress;
+		[DataMember]
+		public AddressDetail CurrentHomeAddress;
 
-        [DataMember]
-        public AddressDetail CurrentWorkAddress;
+		[DataMember]
+		public AddressDetail CurrentWorkAddress;
 
-        [DataMember]
-        public TelephoneDetail CurrentHomePhone;
+		[DataMember]
+		public TelephoneDetail CurrentHomePhone;
 
-        [DataMember]
-        public TelephoneDetail CurrentWorkPhone;
+		[DataMember]
+		public TelephoneDetail CurrentWorkPhone;
 
-        [DataMember]
-        public List<AddressDetail> Addresses;
+		[DataMember]
+		public List<AddressDetail> Addresses;
 
-        [DataMember]
-        public List<TelephoneDetail> TelephoneNumbers;
+		[DataMember]
+		public List<TelephoneDetail> TelephoneNumbers;
 
-        [DataMember]
-        public List<EmailAddressDetail> EmailAddresses;
+		[DataMember]
+		public List<EmailAddressDetail> EmailAddresses;
 
-        [DataMember]
-        public List<ContactPersonDetail> ContactPersons;
+		[DataMember]
+		public List<ContactPersonDetail> ContactPersons;
 
-        [DataMember]
-        public List<PatientNoteDetail> Notes;
+		[DataMember]
+		public List<PatientNoteDetail> Notes;
 
-        [DataMember]
-        public List<PatientAttachmentSummary> Attachments;
-    }
+		[DataMember]
+		public List<PatientAttachmentSummary> Attachments;
+
+		[DataMember]
+		public List<PatientAllergyDetail> Allergies;
+	}
 }

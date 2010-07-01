@@ -10,6 +10,10 @@
 		<script type="text/javascript" src="../js/preview.js"></script>
 		<script type="text/javascript" src="../js/layout.js"></script>
 		<script type="text/javascript" >
+			var data = {};
+			var errorProvider = new ErrorProvider();
+			var canEdit = false;
+
 			function onBodyLoad()
 			{
 				if(!Ris)
@@ -24,6 +28,8 @@
 						return;
 					}
 
+					canedit = Ris.getTag("ReadOnly") != "true";
+					initAllergyTable(context);
 				}
 				catch(e)
 				{
@@ -32,11 +38,75 @@
 				}
 			}
 
+			function initAllergyTable(allergyContext)
+			{
+				var table = Table.createTable($("allergyTable"), 
+						{ editInPlace: canEdit, flow: true, checkBoxes: canEdit, empty: Table.defaultEmptyOption },
+						[
+							{	label: "Allergen Type",
+								cellType: "text",
+								getValue: function(item) { return item.AllergenType.Value; },
+								getError: function(item) { return null; }
+							},
+							{	label: "Description",
+								cellType: "text",
+								getValue: function(item) { return item.AllergenDescription; },
+								getError: function(item) { return null; }
+							},
+							{	label: "Severity",
+								cellType: "text",
+								getValue: function(item) { return item.Severity ? item.Severity.Value; },
+								getError: function(item) { return null; }
+							},
+							{	label: "Reaction",
+								cellType: "text",
+								getValue: function(item) { return item.Reaction; },
+								getError: function(item) { return null; }
+							},
+							{	label: "Sensitivity Type",
+								cellType: "text",
+								getValue: function(item) { return item.SensitivityType.Value; },
+								getError: function(item) { return null; }
+							},
+							{	label: "Onset Time",
+								cellType: "datetime",
+								getValue: function(item) { return item.OnsetTime; },
+								getError: function(item) { return null; }
+							},
+							{	label: "Reported Time",
+								cellType: "datetime",
+								getValue: function(item) { return item.ReportedTime; },
+								getError: function(item) { return null; }
+							},
+							{	label: "Reported By",
+								cellType: "text",
+								getValue: function(item) { return item.ReportedByFamilyName + ", " + item.ReportedByGivenName; },
+								getError: function(item) { return null; }
+							},
+							{	label: "Relationship",
+								cellType: "text",
+								getValue: function(item) { return item.ReportedByRelationshipType.Value; },
+								getError: function(item) { return null; }
+							}
+						]);
+
+				table.initAddDeleteButtons(canEdit, "Delete selected patient allergy");
+				table.errorProvider = errorProvider;
+				table.bindItems(allergyContext.Allergies);
+			}
+
+			function saveData()
+			{
+				// Not yet implemented
+				Ris.setTag("???", JSML.create(data, "data"));
+			}
 		</script>
 	</head>
 	<body onload="javascript: onBodyLoad()">
 		<form id="myForm">
-			<div id="allergyDetailsSection"></div>
+			<table id="allergyTable" border="1" width="100%">
+				<tr><td></td></tr>
+			</table>
 		</form>
 	</body>
 </html>

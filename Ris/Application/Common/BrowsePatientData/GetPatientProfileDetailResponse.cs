@@ -42,9 +42,6 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 		public List<AlertNotificationDetail> PatientAlerts;
 
 		[DataMember]
-		public List<PatientAllergyDetail> PatientAllergies;
-
-		[DataMember]
 		public PatientProfileDetail PatientProfile;
 	}
 }

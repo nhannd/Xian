@@ -117,7 +117,7 @@ namespace ClearCanvas.Ris.Client
 		private BiographyDemographicComponent _demographicComponent;
 		private AttachedDocumentPreviewComponent _documentComponent;
 		private BiographyNoteComponent _noteComponent;
-		private BiographyAllergiesViewComponent _allergyComponent;
+		private PatientAllergiesComponent _allergyComponent;
 
 		/// <summary>
 		/// Constructor
@@ -138,7 +138,7 @@ namespace ClearCanvas.Ris.Client
 			_demographicComponent = new BiographyDemographicComponent { DefaultProfileRef = _profileRef, PatientRef = _patientRef };
 			_documentComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Patient);
 			_noteComponent = new BiographyNoteComponent();
-			_allergyComponent = new BiographyAllergiesViewComponent();
+			_allergyComponent = new PatientAllergiesComponent();
 
 			// Create tab and tab groups
 			_pagesContainer = new TabComponentContainer();
@@ -241,7 +241,7 @@ namespace ClearCanvas.Ris.Client
 					_bannerComponent.HealthcareContext = _patientProfile;
 					_documentComponent.PatientAttachments = _patientProfile.Attachments;
 					_noteComponent.Notes = _patientProfile.Notes;
-					_allergyComponent.Allergies = response.GetPatientProfileDetailResponse.PatientAllergies;
+					_allergyComponent.Allergies = _patientProfile.Allergies;
 
 					NotifyPropertyChanged("SelectedOrder");
 					NotifyAllPropertiesChanged();

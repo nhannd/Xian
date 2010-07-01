@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Application.Services
 
         public PatientProfileDetail CreatePatientProfileDetail(PatientProfile profile, IPersistenceContext context)
         {
-            return CreatePatientProfileDetail(profile, context, true, true, true, true, true, true);
+            return CreatePatientProfileDetail(profile, context, true, true, true, true, true, true, true);
         }
 
         public PatientProfileDetail CreatePatientProfileDetail(PatientProfile profile, 
@@ -67,7 +67,8 @@ namespace ClearCanvas.Ris.Application.Services
             bool includeEmailAddresses,
             bool includeTelephoneNumbers,
             bool includeNotes,
-            bool includeAttachments)
+            bool includeAttachments,
+			bool includeAllergies)
         {
             PatientProfileDetail detail = new PatientProfileDetail();
             detail.PatientRef = profile.Patient.GetRef();
@@ -153,6 +154,16 @@ namespace ClearCanvas.Ris.Application.Services
                     detail.Attachments.Add(attachmentAssembler.CreatePatientAttachmentSummary(a, context));
                 }
             }
+
+			if (includeAllergies)
+			{
+				var allergyAssembler = new PatientAllergyAssembler();
+				detail.Allergies = new List<PatientAllergyDetail>();
+				foreach (var a in profile.Patient.Allergies)
+				{
+					detail.Allergies.Add(allergyAssembler.CreateAllergyDetail(a));
+				}
+			}
 
             return detail;
         }

@@ -69,7 +69,7 @@
     <Compile Include="AttachmentSummaryTableBase.cs" />
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="BannerSettings.cs" />
-    <Compile Include="BiographyAllergiesViewComponent.cs" />
+    <Compile Include="PatientAllergiesComponent.cs" />
     <Compile Include="BiographyDemographicComponent.cs" />
     <Compile Include="BiographyOrderReportsComponent.cs" />
     <Compile Include="BiographyPublishReportTools.cs" />

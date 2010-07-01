@@ -83,6 +83,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             response.SexChoices = EnumUtils.GetEnumValueList<SexEnum>(PersistenceContext);
             response.PhoneTypeChoices = (new SimplifiedPhoneTypeAssembler()).GetPatientPhoneTypeChoices();
 
+			// Allergies related choices
+			response.AllergenTypeChoices = EnumUtils.GetEnumValueList<AllergyAllergenTypeEnum>(PersistenceContext);
+			response.AllergySeverityChoices = EnumUtils.GetEnumValueList<AllergySeverityEnum>(PersistenceContext);
+			response.AllergySensitivityTypeChoices = EnumUtils.GetEnumValueList<AllergySensitivityTypeEnum>(PersistenceContext);
+			response.PersonRelationshipTypeChoices = EnumUtils.GetEnumValueList<PersonRelationshipTypeEnum>(PersistenceContext);
+
             return response;
         }
 
@@ -145,6 +151,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
 
                 PatientAttachmentAssembler attachmentAssembler = new PatientAttachmentAssembler();
                 attachmentAssembler.Synchronize(patient.Attachments, detail.Attachments, this.CurrentUserStaff, PersistenceContext);
+
+				var allergyAssembler = new PatientAllergyAssembler();
+				allergyAssembler.Synchronize(patient.Allergies, detail.Allergies, PersistenceContext);
             }
 
             if (updateProfile)
