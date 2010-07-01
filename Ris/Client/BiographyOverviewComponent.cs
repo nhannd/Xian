@@ -31,7 +31,6 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
@@ -109,7 +108,6 @@ namespace ClearCanvas.Ris.Client
 		private ChildComponentHost _bannerComponentHost;
 		private ChildComponentHost _contentComponentHost;
 
-		private EntityRef _selectedOrderRef;
 		private TabComponentContainer _pagesContainer;
 		private BannerComponent _bannerComponent;
 		private BiographyOrderHistoryComponent _orderHistoryComponent;

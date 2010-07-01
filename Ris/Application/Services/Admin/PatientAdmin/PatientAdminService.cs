@@ -42,125 +42,115 @@ using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
 {
-    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    [ServiceImplementsContract(typeof(IPatientAdminService))]
-    public class PatientAdminService : ApplicationServiceBase, IPatientAdminService
-    {
-        #region IPatientAdminService Members
+	[ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+	[ServiceImplementsContract(typeof(IPatientAdminService))]
+	public class PatientAdminService : ApplicationServiceBase, IPatientAdminService
+	{
+		#region IPatientAdminService Members
 
-        [ReadOperation]
-        public LoadPatientProfileEditorFormDataResponse LoadPatientProfileEditorFormData(LoadPatientProfileEditorFormDataRequest request)
-        {
-            // ignore request
+		[ReadOperation]
+		public LoadPatientProfileEditorFormDataResponse LoadPatientProfileEditorFormData(LoadPatientProfileEditorFormDataRequest request)
+		{
+			// ignore request
+			// Sort the category from High to Low, then sort by name
+			var categoryAssembler = new PatientNoteCategoryAssembler();
+			IList<PatientNoteCategory> sortedCategoryList = CollectionUtils.Sort(
+				PersistenceContext.GetBroker<IPatientNoteCategoryBroker>().FindAll(false),
+				(x, y) => string.Compare(x.Name, y.Name));
 
-            LoadPatientProfileEditorFormDataResponse response = new LoadPatientProfileEditorFormDataResponse();
+			var response = new LoadPatientProfileEditorFormDataResponse
+				{
+					AddressTypeChoices = EnumUtils.GetEnumValueList<AddressTypeEnum>(PersistenceContext),
+					ContactPersonRelationshipChoices = EnumUtils.GetEnumValueList<ContactPersonRelationshipEnum>(PersistenceContext),
+					ContactPersonTypeChoices = EnumUtils.GetEnumValueList<ContactPersonTypeEnum>(PersistenceContext),
+					HealthcardAssigningAuthorityChoices = EnumUtils.GetEnumValueList<InsuranceAuthorityEnum>(PersistenceContext),
+					MrnAssigningAuthorityChoices = EnumUtils.GetEnumValueList<InformationAuthorityEnum>(PersistenceContext),
+					PrimaryLanguageChoices = EnumUtils.GetEnumValueList<SpokenLanguageEnum>(PersistenceContext),
+					ReligionChoices = EnumUtils.GetEnumValueList<ReligionEnum>(PersistenceContext),
+					SexChoices = EnumUtils.GetEnumValueList<SexEnum>(PersistenceContext),
+					PhoneTypeChoices = (new SimplifiedPhoneTypeAssembler()).GetPatientPhoneTypeChoices(),
+					NoteCategoryChoices = CollectionUtils.Map<PatientNoteCategory, PatientNoteCategorySummary, List<PatientNoteCategorySummary>>(sortedCategoryList,
+						category => categoryAssembler.CreateNoteCategorySummary(category, this.PersistenceContext)),
 
-            response.AddressTypeChoices = EnumUtils.GetEnumValueList<AddressTypeEnum>(PersistenceContext);
-            response.ContactPersonRelationshipChoices = EnumUtils.GetEnumValueList<ContactPersonRelationshipEnum>(PersistenceContext);
-            response.ContactPersonTypeChoices = EnumUtils.GetEnumValueList<ContactPersonTypeEnum>(PersistenceContext);
-            response.HealthcardAssigningAuthorityChoices = EnumUtils.GetEnumValueList<InsuranceAuthorityEnum>(PersistenceContext);
-            response.MrnAssigningAuthorityChoices = EnumUtils.GetEnumValueList<InformationAuthorityEnum>(PersistenceContext);
+					// Allergies related choices
+					AllergenTypeChoices = EnumUtils.GetEnumValueList<AllergyAllergenTypeEnum>(PersistenceContext),
+					AllergySeverityChoices = EnumUtils.GetEnumValueList<AllergySeverityEnum>(PersistenceContext),
+					AllergySensitivityTypeChoices = EnumUtils.GetEnumValueList<AllergySensitivityTypeEnum>(PersistenceContext),
+					PersonRelationshipTypeChoices = EnumUtils.GetEnumValueList<PersonRelationshipTypeEnum>(PersistenceContext)
+				};
 
-            // Sort the category from High to Low, then sort by name
-            IList<PatientNoteCategory> sortedCategoryList = CollectionUtils.Sort(
-                PersistenceContext.GetBroker<IPatientNoteCategoryBroker>().FindAll(false),
-                delegate(PatientNoteCategory x, PatientNoteCategory y)
-                {
-                    return string.Compare(x.Name, y.Name);
-                });
-
-            response.NoteCategoryChoices = new List<PatientNoteCategorySummary>();
-            PatientNoteCategoryAssembler categoryAssembler = new PatientNoteCategoryAssembler();
-            response.NoteCategoryChoices = CollectionUtils.Map<PatientNoteCategory, PatientNoteCategorySummary, List<PatientNoteCategorySummary>>(
-                    sortedCategoryList,
-                    delegate(PatientNoteCategory category)
-                    {
-                        return categoryAssembler.CreateNoteCategorySummary(category, this.PersistenceContext);
-                    });
-
-            response.PrimaryLanguageChoices = EnumUtils.GetEnumValueList<SpokenLanguageEnum>(PersistenceContext);
-            response.ReligionChoices = EnumUtils.GetEnumValueList<ReligionEnum>(PersistenceContext);
-            response.SexChoices = EnumUtils.GetEnumValueList<SexEnum>(PersistenceContext);
-            response.PhoneTypeChoices = (new SimplifiedPhoneTypeAssembler()).GetPatientPhoneTypeChoices();
-
-			// Allergies related choices
-			response.AllergenTypeChoices = EnumUtils.GetEnumValueList<AllergyAllergenTypeEnum>(PersistenceContext);
-			response.AllergySeverityChoices = EnumUtils.GetEnumValueList<AllergySeverityEnum>(PersistenceContext);
-			response.AllergySensitivityTypeChoices = EnumUtils.GetEnumValueList<AllergySensitivityTypeEnum>(PersistenceContext);
-			response.PersonRelationshipTypeChoices = EnumUtils.GetEnumValueList<PersonRelationshipTypeEnum>(PersistenceContext);
-
-            return response;
-        }
+			return response;
+		}
 
 
-        [ReadOperation]
-        public LoadPatientProfileForEditResponse LoadPatientProfileForEdit(LoadPatientProfileForEditRequest request)
-        {
-            IPatientProfileBroker broker = PersistenceContext.GetBroker<IPatientProfileBroker>();
+		[ReadOperation]
+		public LoadPatientProfileForEditResponse LoadPatientProfileForEdit(LoadPatientProfileForEditRequest request)
+		{
+			var broker = PersistenceContext.GetBroker<IPatientProfileBroker>();
 
-            PatientProfile profile = broker.Load(request.PatientProfileRef);
-            PatientProfileAssembler assembler = new PatientProfileAssembler();
-            return new LoadPatientProfileForEditResponse(profile.Patient.GetRef(), profile.GetRef(), assembler.CreatePatientProfileDetail(profile, PersistenceContext));
-        }
+			var profile = broker.Load(request.PatientProfileRef);
+			var assembler = new PatientProfileAssembler();
+			return new LoadPatientProfileForEditResponse(profile.Patient.GetRef(), profile.GetRef(), assembler.CreatePatientProfileDetail(profile, PersistenceContext));
+		}
 
-        [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Patient.Update)]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.PatientProfile.Update)]
-        public UpdatePatientProfileResponse UpdatePatientProfile(UpdatePatientProfileRequest request)
-        {
-            PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.PatientProfileRef, EntityLoadFlags.CheckVersion);
+		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Patient.Update)]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.PatientProfile.Update)]
+		public UpdatePatientProfileResponse UpdatePatientProfile(UpdatePatientProfileRequest request)
+		{
+			var profile = PersistenceContext.Load<PatientProfile>(request.PatientProfileRef, EntityLoadFlags.CheckVersion);
 
-            bool updatePatient = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Patient.Update);
-            bool updateProfile = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.PatientProfile.Update);
+			var updatePatient = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Patient.Update);
+			var updateProfile = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.PatientProfile.Update);
 
-            UpdateHelper(profile, request.PatientDetail, updatePatient, updateProfile);
+			UpdateHelper(profile, request.PatientDetail, updatePatient, updateProfile);
 
-            this.PersistenceContext.SynchState();
+			this.PersistenceContext.SynchState();
 
-            PatientProfileAssembler assembler = new PatientProfileAssembler();
-            return new UpdatePatientProfileResponse(assembler.CreatePatientProfileSummary(profile, PersistenceContext));
-        }
+			var assembler = new PatientProfileAssembler();
+			return new UpdatePatientProfileResponse(assembler.CreatePatientProfileSummary(profile, PersistenceContext));
+		}
 
-        [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Patient.Create)]
-        public AddPatientResponse AddPatient(AddPatientRequest request)
-        {
-            PatientProfile profile = new PatientProfile();
-            Patient patient = new Patient();
-            patient.AddProfile(profile);
+		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Patient.Create)]
+		public AddPatientResponse AddPatient(AddPatientRequest request)
+		{
+			var profile = new PatientProfile();
+			var patient = new Patient();
+			patient.AddProfile(profile);
 
-            UpdateHelper(profile, request.PatientDetail, true, true);
+			UpdateHelper(profile, request.PatientDetail, true, true);
 
-            PersistenceContext.Lock(patient, DirtyState.New);
-            PersistenceContext.SynchState();
+			PersistenceContext.Lock(patient, DirtyState.New);
+			PersistenceContext.SynchState();
 
-            PatientProfileAssembler assembler = new PatientProfileAssembler();
-            return new AddPatientResponse(assembler.CreatePatientProfileSummary(profile, PersistenceContext));
-        }
+			var assembler = new PatientProfileAssembler();
+			return new AddPatientResponse(assembler.CreatePatientProfileSummary(profile, PersistenceContext));
+		}
 
-        #endregion
+		#endregion
 
-        private void UpdateHelper(PatientProfile profile, PatientProfileDetail detail, bool updatePatient, bool updateProfile)
-        {
-            if (updatePatient)
-            {
-                Patient patient = profile.Patient;
+		private void UpdateHelper(PatientProfile profile, PatientProfileDetail detail, bool updatePatient, bool updateProfile)
+		{
+			if (updatePatient)
+			{
+				var patient = profile.Patient;
 
-                PatientNoteAssembler noteAssembler = new PatientNoteAssembler();
-                noteAssembler.Synchronize(patient, detail.Notes, CurrentUserStaff, PersistenceContext);
+				var noteAssembler = new PatientNoteAssembler();
+				noteAssembler.Synchronize(patient, detail.Notes, CurrentUserStaff, PersistenceContext);
 
-                PatientAttachmentAssembler attachmentAssembler = new PatientAttachmentAssembler();
-                attachmentAssembler.Synchronize(patient.Attachments, detail.Attachments, this.CurrentUserStaff, PersistenceContext);
+				var attachmentAssembler = new PatientAttachmentAssembler();
+				attachmentAssembler.Synchronize(patient.Attachments, detail.Attachments, this.CurrentUserStaff, PersistenceContext);
 
 				var allergyAssembler = new PatientAllergyAssembler();
 				allergyAssembler.Synchronize(patient.Allergies, detail.Allergies, PersistenceContext);
-            }
+			}
 
-            if (updateProfile)
-            {
-                PatientProfileAssembler assembler = new PatientProfileAssembler();
-                assembler.UpdatePatientProfile(profile, detail, PersistenceContext);
-            }
-        }
-    }
+			if (updateProfile)
+			{
+				var assembler = new PatientProfileAssembler();
+				assembler.UpdatePatientProfile(profile, detail, PersistenceContext);
+			}
+		}
+	}
 }

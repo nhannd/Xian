@@ -36,124 +36,124 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-    public class PatientProfileAssembler
-    {
-        public PatientProfileSummary CreatePatientProfileSummary(PatientProfile profile, IPersistenceContext context)
-        {
-            PersonNameAssembler nameAssembler = new PersonNameAssembler();
-            HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
+	public class PatientProfileAssembler
+	{
+		public PatientProfileSummary CreatePatientProfileSummary(PatientProfile profile, IPersistenceContext context)
+		{
+			var nameAssembler = new PersonNameAssembler();
+			var healthcardAssembler = new HealthcardAssembler();
 
-            PatientProfileSummary summary = new PatientProfileSummary();
-            summary.Mrn = new MrnAssembler().CreateMrnDetail(profile.Mrn);
-            summary.DateOfBirth = profile.DateOfBirth;
-            summary.Healthcard = healthcardAssembler.CreateHealthcardDetail(profile.Healthcard);
-            summary.Name = nameAssembler.CreatePersonNameDetail(profile.Name);
-            summary.PatientRef = profile.Patient.GetRef();
-            summary.PatientProfileRef = profile.GetRef();
-            summary.Sex = EnumUtils.GetEnumValueInfo(profile.Sex, context);
+			var summary = new PatientProfileSummary
+				{
+					Mrn = new MrnAssembler().CreateMrnDetail(profile.Mrn),
+					DateOfBirth = profile.DateOfBirth,
+					Healthcard = healthcardAssembler.CreateHealthcardDetail(profile.Healthcard),
+					Name = nameAssembler.CreatePersonNameDetail(profile.Name),
+					PatientRef = profile.Patient.GetRef(),
+					PatientProfileRef = profile.GetRef(),
+					Sex = EnumUtils.GetEnumValueInfo(profile.Sex, context)
+				};
 
-            return summary;
-        }
+			return summary;
+		}
 
-        public PatientProfileDetail CreatePatientProfileDetail(PatientProfile profile, IPersistenceContext context)
-        {
-            return CreatePatientProfileDetail(profile, context, true, true, true, true, true, true, true);
-        }
+		public PatientProfileDetail CreatePatientProfileDetail(PatientProfile profile, IPersistenceContext context)
+		{
+			return CreatePatientProfileDetail(profile, context, true, true, true, true, true, true, true);
+		}
 
-        public PatientProfileDetail CreatePatientProfileDetail(PatientProfile profile, 
-            IPersistenceContext context, 
-            bool includeAddresses,
-            bool includeContactPersons,
-            bool includeEmailAddresses,
-            bool includeTelephoneNumbers,
-            bool includeNotes,
-            bool includeAttachments,
+		public PatientProfileDetail CreatePatientProfileDetail(PatientProfile profile, 
+			IPersistenceContext context, 
+			bool includeAddresses,
+			bool includeContactPersons,
+			bool includeEmailAddresses,
+			bool includeTelephoneNumbers,
+			bool includeNotes,
+			bool includeAttachments,
 			bool includeAllergies)
-        {
-            PatientProfileDetail detail = new PatientProfileDetail();
-            detail.PatientRef = profile.Patient.GetRef();
-            detail.PatientProfileRef = profile.GetRef();
+		{
+			var healthcardAssembler = new HealthcardAssembler();
+			var nameAssembler = new PersonNameAssembler();
+			var addressAssembler = new AddressAssembler();
+			var telephoneAssembler = new TelephoneNumberAssembler();
 
-            detail.Mrn = new MrnAssembler().CreateMrnDetail(profile.Mrn);
+			var detail = new PatientProfileDetail
+				{
+					PatientRef = profile.Patient.GetRef(),
+					PatientProfileRef = profile.GetRef(),
+					Mrn = new MrnAssembler().CreateMrnDetail(profile.Mrn),
+					Healthcard = healthcardAssembler.CreateHealthcardDetail(profile.Healthcard),
+					Name = nameAssembler.CreatePersonNameDetail(profile.Name),
+					Sex = EnumUtils.GetEnumValueInfo(profile.Sex, context),
+					DateOfBirth = profile.DateOfBirth,
+					DeathIndicator = profile.DeathIndicator,
+					TimeOfDeath = profile.TimeOfDeath,
+					PrimaryLanguage = EnumUtils.GetEnumValueInfo(profile.PrimaryLanguage),
+					Religion = EnumUtils.GetEnumValueInfo(profile.Religion),
+					CurrentHomeAddress = addressAssembler.CreateAddressDetail(profile.CurrentHomeAddress, context),
+					CurrentWorkAddress = addressAssembler.CreateAddressDetail(profile.CurrentWorkAddress, context),
+					CurrentHomePhone = telephoneAssembler.CreateTelephoneDetail(profile.CurrentHomePhone, context),
+					CurrentWorkPhone = telephoneAssembler.CreateTelephoneDetail(profile.CurrentWorkPhone, context)
+				};
 
-            HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
-            detail.Healthcard = healthcardAssembler.CreateHealthcardDetail(profile.Healthcard);
+			if (includeTelephoneNumbers)
+			{
+				detail.TelephoneNumbers = new List<TelephoneDetail>();
+				foreach (var t in profile.TelephoneNumbers)
+				{
+					detail.TelephoneNumbers.Add(telephoneAssembler.CreateTelephoneDetail(t, context));
+				}
+			}
 
-            PersonNameAssembler nameAssembler = new PersonNameAssembler();
-            detail.Name = nameAssembler.CreatePersonNameDetail(profile.Name);
-            detail.Sex = EnumUtils.GetEnumValueInfo(profile.Sex, context);
-            detail.DateOfBirth = profile.DateOfBirth;
-            detail.DeathIndicator = profile.DeathIndicator;
-            detail.TimeOfDeath = profile.TimeOfDeath;
-            detail.PrimaryLanguage = EnumUtils.GetEnumValueInfo(profile.PrimaryLanguage);
-            detail.Religion = EnumUtils.GetEnumValueInfo(profile.Religion);
+			if (includeAddresses)
+			{
+				detail.Addresses = new List<AddressDetail>();
+				foreach (var a in profile.Addresses)
+				{
+					detail.Addresses.Add(addressAssembler.CreateAddressDetail(a, context));
+				}
+			}
 
-            AddressAssembler addressAssembler = new AddressAssembler();
-            detail.CurrentHomeAddress = addressAssembler.CreateAddressDetail(profile.CurrentHomeAddress, context);
-            detail.CurrentWorkAddress = addressAssembler.CreateAddressDetail(profile.CurrentWorkAddress, context);
+			if (includeContactPersons)
+			{
+				var contactPersonAssembler = new ContactPersonAssembler();
+				detail.ContactPersons = new List<ContactPersonDetail>();
+				foreach (var cp in profile.ContactPersons)
+				{
+					detail.ContactPersons.Add(contactPersonAssembler.CreateContactPersonDetail(cp));
+				}
+			}
 
-            TelephoneNumberAssembler telephoneAssembler = new TelephoneNumberAssembler();
-            detail.CurrentHomePhone = telephoneAssembler.CreateTelephoneDetail(profile.CurrentHomePhone, context);
-            detail.CurrentWorkPhone = telephoneAssembler.CreateTelephoneDetail(profile.CurrentWorkPhone, context);
+			if (includeEmailAddresses)
+			{
+				var emailAssembler = new EmailAddressAssembler();
+				detail.EmailAddresses = new List<EmailAddressDetail>();
+				foreach (var e in profile.EmailAddresses)
+				{
+					detail.EmailAddresses.Add(emailAssembler.CreateEmailAddressDetail(e, context));
+				}
+			}
 
-            if (includeTelephoneNumbers)
-            {
-                detail.TelephoneNumbers = new List<TelephoneDetail>();
-                foreach (TelephoneNumber t in profile.TelephoneNumbers)
-                {
-                    detail.TelephoneNumbers.Add(telephoneAssembler.CreateTelephoneDetail(t, context));
-                }
-            }
+			if (includeNotes)
+			{
+				var noteAssembler = new PatientNoteAssembler();
+				detail.Notes = new List<PatientNoteDetail>();
+				foreach (var n in profile.Patient.Notes)
+				{
+					detail.Notes.Add(noteAssembler.CreateNoteDetail(n, context));
+				}
+			}
 
-            if (includeAddresses)
-            {
-                detail.Addresses = new List<AddressDetail>();
-                foreach (Address a in profile.Addresses)
-                {
-                    detail.Addresses.Add(addressAssembler.CreateAddressDetail(a, context));
-                }
-            }
-
-            if (includeContactPersons)
-            {
-                ContactPersonAssembler contactPersonAssembler = new ContactPersonAssembler();
-                detail.ContactPersons = new List<ContactPersonDetail>();
-                foreach (ContactPerson cp in profile.ContactPersons)
-                {
-                    detail.ContactPersons.Add(contactPersonAssembler.CreateContactPersonDetail(cp));
-                }
-            }
-
-            if (includeEmailAddresses)
-            {
-                EmailAddressAssembler emailAssembler = new EmailAddressAssembler();
-                detail.EmailAddresses = new List<EmailAddressDetail>();
-                foreach (EmailAddress e in profile.EmailAddresses)
-                {
-                    detail.EmailAddresses.Add(emailAssembler.CreateEmailAddressDetail(e, context));
-                }
-            }
-
-            if (includeNotes)
-            {
-                PatientNoteAssembler noteAssembler = new PatientNoteAssembler();
-                detail.Notes = new List<PatientNoteDetail>();
-                foreach (PatientNote n in profile.Patient.Notes)
-                {
-                    detail.Notes.Add(noteAssembler.CreateNoteDetail(n, context));
-                }
-            }
-
-            if (includeAttachments)
-            {
-                PatientAttachmentAssembler attachmentAssembler = new PatientAttachmentAssembler();
-                detail.Attachments = new List<PatientAttachmentSummary>();
-                foreach (PatientAttachment a in profile.Patient.Attachments)
-                {
-                    
-                    detail.Attachments.Add(attachmentAssembler.CreatePatientAttachmentSummary(a, context));
-                }
-            }
+			if (includeAttachments)
+			{
+				var attachmentAssembler = new PatientAttachmentAssembler();
+				detail.Attachments = new List<PatientAttachmentSummary>();
+				foreach (var a in profile.Patient.Attachments)
+				{
+					
+					detail.Attachments.Add(attachmentAssembler.CreatePatientAttachmentSummary(a, context));
+				}
+			}
 
 			if (includeAllergies)
 			{
@@ -165,62 +165,62 @@ namespace ClearCanvas.Ris.Application.Services
 				}
 			}
 
-            return detail;
-        }
+			return detail;
+		}
 
-        public void UpdatePatientProfile(PatientProfile profile, PatientProfileDetail detail, IPersistenceContext context)
-        {
-            profile.Mrn.Id = detail.Mrn.Id;
-            profile.Mrn.AssigningAuthority = EnumUtils.GetEnumValue<InformationAuthorityEnum>(detail.Mrn.AssigningAuthority, context);
+		public void UpdatePatientProfile(PatientProfile profile, PatientProfileDetail detail, IPersistenceContext context)
+		{
+			profile.Mrn.Id = detail.Mrn.Id;
+			profile.Mrn.AssigningAuthority = EnumUtils.GetEnumValue<InformationAuthorityEnum>(detail.Mrn.AssigningAuthority, context);
 
-            profile.Healthcard = new HealthcardNumber();
-            new HealthcardAssembler().UpdateHealthcard(profile.Healthcard, detail.Healthcard, context);
+			profile.Healthcard = new HealthcardNumber();
+			new HealthcardAssembler().UpdateHealthcard(profile.Healthcard, detail.Healthcard, context);
 
-            PersonNameAssembler nameAssembler = new PersonNameAssembler();
-            nameAssembler.UpdatePersonName(detail.Name, profile.Name);
+			var nameAssembler = new PersonNameAssembler();
+			nameAssembler.UpdatePersonName(detail.Name, profile.Name);
 
-            profile.Sex = EnumUtils.GetEnumValue<Sex>(detail.Sex);
-            profile.DateOfBirth = detail.DateOfBirth;
-            profile.DeathIndicator = detail.DeathIndicator;
-            profile.TimeOfDeath = detail.TimeOfDeath;
+			profile.Sex = EnumUtils.GetEnumValue<Sex>(detail.Sex);
+			profile.DateOfBirth = detail.DateOfBirth;
+			profile.DeathIndicator = detail.DeathIndicator;
+			profile.TimeOfDeath = detail.TimeOfDeath;
 
-            profile.PrimaryLanguage = EnumUtils.GetEnumValue<SpokenLanguageEnum>(detail.PrimaryLanguage, context);
-            profile.Religion = EnumUtils.GetEnumValue<ReligionEnum>(detail.Religion, context);
+			profile.PrimaryLanguage = EnumUtils.GetEnumValue<SpokenLanguageEnum>(detail.PrimaryLanguage, context);
+			profile.Religion = EnumUtils.GetEnumValue<ReligionEnum>(detail.Religion, context);
 
-            TelephoneNumberAssembler telephoneAssembler = new TelephoneNumberAssembler();
-            profile.TelephoneNumbers.Clear();
-            if (detail.TelephoneNumbers != null)
-            {
-                foreach (TelephoneDetail phoneDetail in detail.TelephoneNumbers)
-                {
-                    profile.TelephoneNumbers.Add(telephoneAssembler.CreateTelephoneNumber(phoneDetail));
-                }
-            }
+			var telephoneAssembler = new TelephoneNumberAssembler();
+			profile.TelephoneNumbers.Clear();
+			if (detail.TelephoneNumbers != null)
+			{
+				foreach (var phoneDetail in detail.TelephoneNumbers)
+				{
+					profile.TelephoneNumbers.Add(telephoneAssembler.CreateTelephoneNumber(phoneDetail));
+				}
+			}
 
-            AddressAssembler addressAssembler = new AddressAssembler();
-            profile.Addresses.Clear();
-            if (detail.Addresses != null)
-            {
-                foreach (AddressDetail addressDetail in detail.Addresses)
-                {
-                    profile.Addresses.Add(addressAssembler.CreateAddress(addressDetail));
-                }
-            }
+			var addressAssembler = new AddressAssembler();
+			profile.Addresses.Clear();
+			if (detail.Addresses != null)
+			{
+				foreach (var addressDetail in detail.Addresses)
+				{
+					profile.Addresses.Add(addressAssembler.CreateAddress(addressDetail));
+				}
+			}
 
-            EmailAddressAssembler emailAssembler = new EmailAddressAssembler();
-            profile.EmailAddresses.Clear();
-            foreach (EmailAddressDetail e in detail.EmailAddresses)
-            {
-                profile.EmailAddresses.Add(emailAssembler.CreateEmailAddress(e));
-            }
+			var emailAssembler = new EmailAddressAssembler();
+			profile.EmailAddresses.Clear();
+			foreach (var e in detail.EmailAddresses)
+			{
+				profile.EmailAddresses.Add(emailAssembler.CreateEmailAddress(e));
+			}
 
-            ContactPersonAssembler contactAssembler = new ContactPersonAssembler();
-            profile.ContactPersons.Clear();
-            foreach (ContactPersonDetail cp in detail.ContactPersons)
-            {
-                profile.ContactPersons.Add(contactAssembler.CreateContactPerson(cp, context));
-            }
+			var contactAssembler = new ContactPersonAssembler();
+			profile.ContactPersons.Clear();
+			foreach (var cp in detail.ContactPersons)
+			{
+				profile.ContactPersons.Add(contactAssembler.CreateContactPerson(cp, context));
+			}
 
-        }
-    }
+		}
+	}
 }
