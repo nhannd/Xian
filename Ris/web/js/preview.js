@@ -10,6 +10,7 @@ var Preview = function () {
 			ReconciliationAlert: { icon: "AlertReconcile.png", getTooltip: function(name, reasons) { return name + " has unreconciled records"; } },
 			IncompleteDemographicDataAlert: { icon: "AlertIncompleteData.png", getTooltip: function(name, reasons) { return name + " has incomplete demographic data: " + reasons; } },
 			InvalidVisitAlert: { icon: "AlertVisit.png", getTooltip: function(name, reasons) { return "This order has invalid visit: " + reasons; } },
+			PatientAllergyAlert: { icon: "AlertAllergy2.png", getTooltip: function(name, reasons) { return name + " has allergies: " + reasons; } },
 
 			// External Practitioner Related Alerts
 			IncompleteDataAlert: { icon: "AlertIncompleteData.png", getTooltip: function(name, reasons) { return name + " has incomplete data: " + reasons; } },

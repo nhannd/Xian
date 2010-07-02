@@ -71,6 +71,7 @@
     <Compile Include="Alerts\PatientAlertBase.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Alerts\PatientAllergyAlert.cs" />
     <Compile Include="Alerts\PatientProfileAlertBase.cs">
       <SubType>Code</SubType>
     </Compile>
