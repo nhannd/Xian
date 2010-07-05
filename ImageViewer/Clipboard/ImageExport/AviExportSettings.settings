@@ -2,25 +2,25 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.ImageViewer.Clipboard.ImageExport" GeneratedClassName="AviExportSettings">
   <Profiles />
   <Settings>
-    <Setting Name="ExportOption" Type="System.Int32" Scope="User">
+    <Setting Name="ExportOption" Description="Stores the user's last selection for how the images should be exported (WYSIWYG vs. Complete)." Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="UseDefaultQuality" Type="System.Boolean" Scope="User">
+    <Setting Name="UseDefaultQuality" Description="Specifies whether or not to use each codec's default quality." Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="Quality" Type="System.Int32" Scope="User">
+    <Setting Name="Quality" Description="When not automatically using a codec's default quality, the desired quality value (between 0 and 100)." Type="System.Int32" Scope="User">
       <Value Profile="(Default)">80</Value>
     </Setting>
-    <Setting Name="FrameRate" Type="System.Int32" Scope="User">
+    <Setting Name="FrameRate" Description="Desired frame rate for the exported video." Type="System.Int32" Scope="User">
       <Value Profile="(Default)">20</Value>
     </Setting>
-    <Setting Name="PreferredCodecFccCode" Type="System.String" Scope="User">
+    <Setting Name="PreferredCodecFccCode" Description="User's preferred codec.  If it does not exist on a given machine, one will be chosen automatically." Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="SizeMode" Type="ClearCanvas.ImageViewer.Clipboard.ImageExport.SizeMode" Scope="User">
+    <Setting Name="SizeMode" Description="Specifies how images should be sized (e.g. scaled or fixed dimensions)." Type="ClearCanvas.ImageViewer.Clipboard.ImageExport.SizeMode" Scope="User">
       <Value Profile="(Default)">Scale</Value>
     </Setting>
-    <Setting Name="BackgroundColor" Type="System.Drawing.Color" Scope="User">
+    <Setting Name="BackgroundColor" Description="Background color to use when SizeMode is Fixed." Type="System.Drawing.Color" Scope="User">
       <Value Profile="(Default)">Black</Value>
     </Setting>
   </Settings>

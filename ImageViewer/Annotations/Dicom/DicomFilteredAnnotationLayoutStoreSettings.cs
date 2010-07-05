@@ -35,7 +35,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Annotations.Dicom
 {
-	[SettingsGroupDescription("Stores Filters for the selection of Text Annotation Layouts in a common place")]
+	[SettingsGroupDescription("Stores (pointers to) per-modality text overlay configurations in a common place.")]
 	[SettingsProvider(typeof(StandardSettingsProvider))]
 	internal sealed partial class DicomFilteredAnnotationLayoutStoreSettings
 	{

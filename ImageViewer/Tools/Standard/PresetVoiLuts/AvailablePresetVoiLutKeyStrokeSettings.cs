@@ -36,7 +36,7 @@ using System.ComponentModel;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {
-	[SettingsGroupDescription("Stores the available keystrokes for Lut Presets")]
+	[SettingsGroupDescription("Stores the available keystrokes for LUT presets.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class AvailablePresetVoiLutKeyStrokeSettings
 	{

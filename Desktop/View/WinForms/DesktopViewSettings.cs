@@ -43,7 +43,7 @@ using System;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-	[SettingsGroupDescription("Stores window positions for the application, so they can be restored the next time it runs.")]
+	[SettingsGroupDescription("Stores settings such as window size/position and toolstrip alignment.")]
 	[SettingsProvider(typeof(StandardSettingsProvider))]
 	internal sealed partial class DesktopViewSettings
 	{

@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.ImageViewer.Configuration" GeneratedClassName="ToolSettings">
   <Profiles />
   <Settings>
-    <Setting Name="ActionFilterRulesXml" Type="System.Xml.XmlDocument" Scope="User">
+    <Setting Name="ActionFilterRulesXml" Description="XML rules document allowing actions to be filtered out of the viewer context menu." Type="System.Xml.XmlDocument" Scope="User">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;action-filters&gt;
   &lt;!--&lt;action-filter name="context-menu"&gt;
@@ -17,7 +17,7 @@
             &lt;/action-filter&gt;--&gt;
 &lt;/action-filters&gt;</Value>
     </Setting>
-    <Setting Name="ApplyActionFilterRules" Type="System.Boolean" Scope="User">
+    <Setting Name="ApplyActionFilterRules" Description="Turns usage of the XML rules document on or off." Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>

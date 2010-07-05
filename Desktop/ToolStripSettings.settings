@@ -8,7 +8,7 @@
     <Setting Name="IconSize" Description="Controls the size of toolstrip buttons." Type="ClearCanvas.Desktop.IconSize" Scope="User">
       <Value Profile="(Default)">Large</Value>
     </Setting>
-    <Setting Name="ToolStripDock" Type="ClearCanvas.Desktop.ToolStripDock" Scope="User">
+    <Setting Name="ToolStripDock" Description="User's preference as to where the main toolbar should be docked." Type="ClearCanvas.Desktop.ToolStripDock" Scope="User">
       <Value Profile="(Default)">Top</Value>
     </Setting>
   </Settings>

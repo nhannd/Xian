@@ -2,10 +2,10 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.ImageViewer.Tools.Reporting.KeyImages" GeneratedClassName="KeyImageSettings">
   <Profiles />
   <Settings>
-    <Setting Name="PublishToDefaultServers" Type="System.Boolean" Scope="User">
+    <Setting Name="PublishToDefaultServers" Description="Specifies whether to publish newly created key images to the default servers." Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="PublishLocalToSourceAE" Type="System.Boolean" Scope="User">
+    <Setting Name="PublishLocalToSourceAE" Description="Specifies whether or not to publish newly created key images to the Source AE as specified in the source image's DICOM Header." Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>

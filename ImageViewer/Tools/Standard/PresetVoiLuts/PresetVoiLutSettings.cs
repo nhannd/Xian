@@ -40,7 +40,7 @@ using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {
-	[SettingsGroupDescription("Stores Preset Lut settings for each user")]
+	[SettingsGroupDescription("Stores user-defined LUT (e.g. window/level) presets.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class PresetVoiLutSettings
 	{

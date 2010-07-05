@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.ImageViewer.Utilities.StudyFilters" GeneratedClassName="StudyFilterSettings">
   <Profiles />
   <Settings>
-    <Setting Name="Columns" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="Columns" Description="List of user-selected columns to show in the Study Filters window." Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
   &lt;string&gt;Filename&lt;/string&gt;

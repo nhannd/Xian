@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts" GeneratedClassName="PresetVoiLutSettings">
   <Profiles />
   <Settings>
-    <Setting Name="SettingsXml" Type="System.String" Scope="User">
+    <Setting Name="SettingsXml" Description="XML document containing per-modality user defined LUT (e.g. window/level) presets.  These presets appear in the context menu and Window/Level tool drop-down." Type="System.String" Scope="User">
       <Value Profile="(Default)">DefaultPresetVoiLutConfiguration.xml</Value>
     </Setting>
   </Settings>

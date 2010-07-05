@@ -73,6 +73,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 		[global::System.Configuration.UserScopedSettingAttribute()]
 		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
 		[global::System.Configuration.DefaultSettingValueAttribute("1")]
+		[System.Configuration.SettingsDescription("Specifies whether viewers should be launched in the main window, or in a separate dedicated window.")]
 		public int WindowBehaviour
 		{
 			get
@@ -88,6 +89,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
 		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
 		[global::System.Configuration.DefaultSettingValueAttribute("False")]
+		[System.Configuration.SettingsDescription("Specifies whether or not to allow a viewer to open when there are no images to display.")]
 		public bool AllowEmptyViewer
 		{
 			get

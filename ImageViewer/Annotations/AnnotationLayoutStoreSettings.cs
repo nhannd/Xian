@@ -35,7 +35,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
-	[SettingsGroupDescription("Stores Text Annotation Layouts in a common place")]
+	[SettingsGroupDescription("Stores arbitrary text overlay configurations in a common place.")]
 	[SettingsProvider(typeof(StandardSettingsProvider))]
 	internal sealed partial class AnnotationLayoutStoreSettings
 	{

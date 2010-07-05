@@ -37,7 +37,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
-	[SettingsGroupDescription("Defines the standard list of modalities used primarily for (but not limited to) searching Dicom servers")]
+	[SettingsGroupDescription("A list of standard DICOM modalities that can be used anywhere a list of modalities is required.")]
 	[SettingsProvider(typeof(StandardSettingsProvider))]
 	internal sealed partial class StandardModalitySettings
 	{

@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.ImageViewer.Annotations.Dicom" GeneratedClassName="DicomFilteredAnnotationLayoutStoreSettings">
   <Profiles />
   <Settings>
-    <Setting Name="FilteredLayoutSettingsXml" Type="System.String" Scope="User">
+    <Setting Name="FilteredLayoutSettingsXml" Description="XML document stores the identifier of the text overlay configuration for each modality.  The actual configurations are stored in the AnnotationLayoutSettings." Type="System.String" Scope="User">
       <Value Profile="(Default)">DicomFilteredAnnotationLayoutStoreDefaults.xml</Value>
     </Setting>
   </Settings>

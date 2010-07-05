@@ -40,7 +40,7 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-	[SettingsGroupDescription("Stores the user's initial layout preferences for studies opened in the viewer")]
+	[SettingsGroupDescription("Stores the user's initial layout preferences for studies opened in the viewer.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class LayoutSettings
 	{

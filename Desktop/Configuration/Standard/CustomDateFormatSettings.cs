@@ -38,7 +38,7 @@ using System.IO;
 namespace ClearCanvas.Desktop.Configuration.Standard
 {
 
-	[SettingsGroupDescription("Provides a list of custom date formats the user can select from to set their own preferred date format")]
+	[SettingsGroupDescription("Provides a list of custom date formats the user can select from to set their own preferred date format.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class CustomDateFormatSettings
 	{
