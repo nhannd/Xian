@@ -99,24 +99,17 @@
 								setValue: function(item, value) { item.ReportedTime = value; },
 								getError: function(item) { return null; }
 							},
-							{	label: "Reported By (Family Name)",
+							{	label: "Reporter",
 								cellType: "text",
-								getValue: function(item) { return item.ReportedByFamilyName; },
-								setValue: function(item, value) { item.ReportedByFamilyName = value; },
-								getError: function(item) { return null; }
-							},
-							{	label: "Reported By (Given Name)",
-								cellType: "text",
-								getValue: function(item) { return item.ReportedByGivenName; },
-								setValue: function(item, value) { item.ReportedByGivenName = value; },
+								getValue: function(item) { return Ris.formatPersonName(item.ReporterName); },
 								getError: function(item) { return null; }
 							},
 							{	label: "Relationship",
-								getValue: function(item) { return item.ReportedByRelationshipType ? item.ReportedByRelationshipType.Value : null; },
+								getValue: function(item) { return item.ReporterRelationshipType ? item.ReporterRelationshipType.Value : null; },
 								cellType: "choice",
 								choices: personRelationShipTypeTextChoices,
-								getValue: function(item) { return item.ReportedByRelationshipType ? item.ReportedByRelationshipType.Value : null; },
-								setValue: function(item, value) { item.ReportedByRelationshipType = allergyContext.PersonRelationshipTypeChoices.find(function(c) { return c.Value == value; }); },
+								getValue: function(item) { return item.ReporterRelationshipType ? item.ReporterRelationshipType.Value : null; },
+								setValue: function(item, value) { item.ReporterRelationshipType = allergyContext.PersonRelationshipTypeChoices.find(function(c) { return c.Value == value; }); },
 								getError: function(item) { return null; }
 							}
 						]);

@@ -260,8 +260,11 @@ namespace ClearCanvas.Ris.Client
 					ChooseRandom(_patientEditorFormData.AllergySensitivityTypeChoices),
 					Platform.Time,
 					Platform.Time,
-					GetRandomNameFromFile(RandomUtilsSettings.Default.FamilyNameDictionary),
-					GetRandomNameFromFile(RandomUtilsSettings.Default.MaleNameDictionary) + " Anonymous",
+					new PersonNameDetail
+						{
+							FamilyName = GetRandomNameFromFile(RandomUtilsSettings.Default.FamilyNameDictionary),
+							GivenName = GetRandomNameFromFile(RandomUtilsSettings.Default.MaleNameDictionary) + " Anonymous"
+						},
 					ChooseRandom(_patientEditorFormData.PersonRelationshipTypeChoices));
 
 				profile.Allergies.Add(allergy);

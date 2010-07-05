@@ -19,9 +19,8 @@ namespace ClearCanvas.Ris.Application.Common
 			EnumValueInfo sensitivityType,
 			DateTime? onsetTime,
 			DateTime? reportedTime,
-			string reportedByFamilyName,
-			string reportedByGivenName,
-			EnumValueInfo reportedByRelationshipType)
+			PersonNameDetail reporterName,
+			EnumValueInfo reporterRelationshipType)
 		{
 			this.AllergenType = allergenType;
 			this.AllergenDescription = allergenDescription;
@@ -30,9 +29,8 @@ namespace ClearCanvas.Ris.Application.Common
 			this.SensitivityType = sensitivityType;
 			this.OnsetTime = onsetTime;
 			this.ReportedTime = reportedTime;
-			this.ReportedByFamilyName = reportedByFamilyName;
-			this.ReportedByGivenName = reportedByGivenName;
-			this.ReportedByRelationshipType = reportedByRelationshipType;
+			this.ReporterName = reporterName;
+			this.ReporterRelationshipType = reporterRelationshipType;
 		}
 
 		[DataMember]
@@ -57,12 +55,9 @@ namespace ClearCanvas.Ris.Application.Common
 		public DateTime? ReportedTime;
 
 		[DataMember]
-		public string ReportedByFamilyName;
+		public PersonNameDetail ReporterName;
 
 		[DataMember]
-		public string ReportedByGivenName;
-
-		[DataMember]
-		public EnumValueInfo ReportedByRelationshipType;
+		public EnumValueInfo ReporterRelationshipType;
 	}
 }
