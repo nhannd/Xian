@@ -44,8 +44,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	partial class ShowAnglesTool
 	{
 		[Cloneable]
-		private partial class ShowAnglesToolGraphic : CompositeGraphic, IVectorGraphic
+		internal partial class ShowAnglesToolGraphic : CompositeGraphic, IVectorGraphic
 		{
+			private const int _minLineLength = 5;
 			private const int _minLength = 36;
 
 			[CloneIgnore]
@@ -168,7 +169,16 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 					PointF q2 = _endPoints[3];
 					RectangleF bounds = base.ParentPresentationImage.ClientRectangle;
 
+					// show nothing if either line is completely outside the visible client rectangle
 					if (!RestrictLine(ref p1, ref p2, bounds) || !RestrictLine(ref q1, ref q2, bounds))
+						return;
+
+					// show nothing if the two lines appear as one (i.e. they are completely coincident)
+					if (FloatComparer.AreEqual(p1, q1) && FloatComparer.AreEqual(p2, q2))
+						return;
+
+					// show nothing if either line is extremely small so as to make comparing the lines' angle difficult
+					if (Vector.Distance(p1, p2) < _minLineLength || Vector.Distance(q1, q2) < _minLineLength)
 						return;
 
 					PointF intersection;

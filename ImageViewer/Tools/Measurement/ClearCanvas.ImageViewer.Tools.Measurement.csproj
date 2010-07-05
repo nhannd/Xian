@@ -149,6 +149,7 @@
     </Compile>
     <Compile Include="Tests\CalibrationTest.cs" />
     <Compile Include="Tests\ProtractorRoiTests.cs" />
+    <Compile Include="Tests\ShowAnglesToolTest.cs" />
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>

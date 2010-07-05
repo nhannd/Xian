@@ -40,23 +40,42 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
 	partial class ShowAnglesTool
 	{
-		[Cloneable(true)]
-		private partial class ShowAnglesToolCompositeGraphic : CompositeGraphic
+		[Cloneable]
+		internal partial class ShowAnglesToolCompositeGraphic : CompositeGraphic
 		{
+			// This must not be CloneIgnore because we lack framework support to pick the correct cloned instance from the parent image (#6668)
 			private IPointsGraphic _selectedLine;
+
+			[CloneIgnore]
 			private ShowAnglesTool _ownerTool;
 
 			[CloneIgnore]
 			private bool _isDirty = true;
 
-			public ShowAnglesToolCompositeGraphic(ShowAnglesTool ownerTool) : this()
+			[CloneIgnore]
+			private readonly bool _sourceGraphicVisible = true;
+
+			public ShowAnglesToolCompositeGraphic(ShowAnglesTool ownerTool) : base()
 			{
 				_ownerTool = ownerTool;
 			}
 
-			private ShowAnglesToolCompositeGraphic() : base()
+			/// <summary>
+			/// Cloning constructor.
+			/// </summary>
+			/// <param name="source">The source object from which to clone.</param>
+			/// <param name="context">The cloning context object.</param>
+			protected ShowAnglesToolCompositeGraphic(ShowAnglesToolCompositeGraphic source, ICloningContext context) : base()
 			{
-				_selectedLine = null;
+				context.CloneFields(source, this);
+
+				_sourceGraphicVisible = source.Visible;
+			}
+
+			[OnCloneComplete]
+			private void OnCloneComplete()
+			{
+				this.Visible = _sourceGraphicVisible;
 			}
 
 			protected override void Dispose(bool disposing)
@@ -76,6 +95,17 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				}
 				set { base.Visible = value; }
 			}
+
+			#region Unit Test Support
+
+#if UNIT_TESTS
+			internal IPointsGraphic SelectedLine
+			{
+				get { return _selectedLine; }
+			}
+#endif
+
+			#endregion
 
 			protected override void OnParentPresentationImageChanged(IPresentationImage oldParentPresentationImage, IPresentationImage newParentPresentationImage)
 			{

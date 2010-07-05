@@ -44,10 +44,10 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	partial class ShowAnglesTool
 	{
 		[DicomSerializableGraphicAnnotation(typeof (CompositeGraphicSerializer))]
-		private partial class ShowAnglesToolCompositeGraphic {}
+		partial class ShowAnglesToolCompositeGraphic {}
 
 		[DicomSerializableGraphicAnnotation(typeof (ShowAnglesToolGraphicSerializer))]
-		private partial class ShowAnglesToolGraphic {}
+		partial class ShowAnglesToolGraphic {}
 
 		private class ShowAnglesToolGraphicSerializer : GraphicAnnotationSerializer<ShowAnglesToolGraphic>
 		{
@@ -184,6 +184,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			protected override void Serialize(CompositeGraphic graphic, GraphicAnnotationSequenceItem serializationState)
 			{
+				if (!graphic.Visible)
+					return;
+
 				foreach (IGraphic subgraphic in graphic.Graphics)
 					SerializeGraphic(subgraphic, serializationState);
 			}
