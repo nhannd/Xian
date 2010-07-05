@@ -109,7 +109,7 @@ protected
     @fields << field
     
     # check for components/composite elements, and process them
-    if(fieldNode.name == 'component')
+    if(fieldNode.name == 'component' || fieldNode.name == 'nested-composite-element')
       # pass the namespace of this class as the default namespace for the component
       processComponent(fieldNode, namespace, @directives) 
     elsif(field.kind == :collection && (compositeElementNode = fieldNode.elements['composite-element']))

@@ -58,9 +58,9 @@ namespace ClearCanvas.Ris.Application.Services
 				EnumUtils.GetEnumValueInfo(allergy.SensitivityType),
 				allergy.OnsetTime,
 				allergy.ReportedTime,
-				allergy.ReportedByFamilyName,
-				allergy.ReportedByGivenName,
-				EnumUtils.GetEnumValueInfo(allergy.ReportedByRelationshipType));
+				allergy.Reporter.FamilyName,
+				allergy.Reporter.GivenName,
+				EnumUtils.GetEnumValueInfo(allergy.ReporterRelationshipType));
 		}
 
 		public Allergy CreateAllergy(PatientAllergyDetail detail, IPersistenceContext context)
@@ -79,9 +79,9 @@ namespace ClearCanvas.Ris.Application.Services
 			allergy.SensitivityType = EnumUtils.GetEnumValue<AllergySensitivityTypeEnum>(source.SensitivityType, context);
 			allergy.OnsetTime = source.OnsetTime;
 			allergy.ReportedTime = source.ReportedTime;
-			allergy.ReportedByFamilyName = source.ReportedByFamilyName;
-			allergy.ReportedByGivenName = source.ReportedByGivenName;
-			allergy.ReportedByRelationshipType = EnumUtils.GetEnumValue<PersonRelationshipTypeEnum>(source.ReportedByRelationshipType, context);
+			allergy.Reporter.FamilyName = source.ReportedByFamilyName;
+			allergy.Reporter.GivenName = source.ReportedByGivenName;
+			allergy.ReporterRelationshipType = EnumUtils.GetEnumValue<PersonRelationshipTypeEnum>(source.ReportedByRelationshipType, context);
 		}
 
 		public bool CompareAllergy(Allergy allergy, PatientAllergyDetail detail)
@@ -94,9 +94,9 @@ namespace ClearCanvas.Ris.Application.Services
 				&& Equals(allergy.SensitivityType.Code, detail.SensitivityType.Code)
 				&& Equals(allergy.OnsetTime, detail.OnsetTime)
 				&& Equals(allergy.ReportedTime, detail.ReportedTime)
-				&& Equals(allergy.ReportedByFamilyName, detail.ReportedByFamilyName)
-				&& Equals(allergy.ReportedByGivenName, detail.ReportedByGivenName)
-				&& Equals(allergy.ReportedByRelationshipType.Code, detail.ReportedByRelationshipType.Code);
+				&& Equals(allergy.Reporter.FamilyName, detail.ReportedByFamilyName)
+				&& Equals(allergy.Reporter.GivenName, detail.ReportedByGivenName)
+				&& Equals(allergy.ReporterRelationshipType.Code, detail.ReportedByRelationshipType.Code);
 		}
 	}
 }

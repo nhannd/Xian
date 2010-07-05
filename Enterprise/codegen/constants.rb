@@ -2,7 +2,7 @@
 NHIBERNATE_CLASS_TYPES = ['class', 'joined-subclass', 'subclass', 'union-subclass']
 
 # NHibernate elements that result in C# fields
-NHIBERNATE_FIELD_TYPES = ['property', 'many-to-one','one-to-one','component','map','set','idbag', 'bag', 'list']
+NHIBERNATE_FIELD_TYPES = ['property', 'many-to-one','one-to-one','component','map','set','idbag', 'bag', 'list', 'nested-composite-element']
 
 # NHibernate collection elements supported by this code generator
 NHIBERNATE_COLLECTION_TYPES = ['map', 'set', 'idbag', 'bag', 'list']

@@ -20,7 +20,7 @@ class FieldDefFactory
 			CollectionFieldDef.new(model, fieldNode, defaultNamespace)
     elsif(['many-to-one', 'one-to-one'].include?(fieldNode.name))
       return EntityFieldDef.new(model, fieldNode, defaultNamespace)
-    elsif(fieldNode.name == 'component')
+    elsif(fieldNode.name == 'component' || fieldNode.name == 'nested-composite-element')
       return ComponentFieldDef.new(model, fieldNode, defaultNamespace)
     elsif(TypeNameUtils.isEnumHbm(fieldNode.attributes['type']))
       return EnumFieldDef.new(model, fieldNode)

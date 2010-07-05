@@ -42,9 +42,15 @@
 				<many-to-one name="SensitivityType"  class="AllergySensitivityTypeEnum" column="SensitivityType_" not-null="false"/>
 				<property name="OnsetTime" column="OnsetTime_" type="DateTime" not-null="false"/>
 				<property name="ReportedTime" column="ReportedTime_" type="DateTime" not-null="false"/>
-				<property name="ReportedByFamilyName" column="ReportedByFamilyName_" type="String" length="255" not-null="false"/>
-				<property name="ReportedByGivenName" column="ReportedByGivenName_" type="String" length="255" not-null="false"/>
-				<many-to-one name="ReportedByRelationshipType"  class="PersonRelationshipTypeEnum" column="ReportedByRelationshipType_" not-null="false"/>
+				<nested-composite-element name="Reporter" class="PersonName">
+					<property name="FamilyName" column="ReporterFamilyName_" type="String" length="40" not-null="false"/>
+					<property name="GivenName" column="ReporterGivenName_" type="String" length="40" not-null="false"/>
+					<property name="MiddleName" column="ReporterMiddleName_" type="String" length="40" not-null="false"/>
+					<property name="Prefix" column="ReporterPrefix_" type="String" length="10" not-null="false"/>
+					<property name="Suffix" column="ReporterSuffix_" type="String" length="10" not-null="false"/>
+					<property name="Degree" column="ReporterDegree_" type="String" length="10" not-null="false"/>
+				</nested-composite-element>
+				<many-to-one name="ReporterRelationshipType"  class="PersonRelationshipTypeEnum" column="ReporterRelationshipType_" not-null="false"/>
 			</composite-element>
 		</idbag>
 	</class>
