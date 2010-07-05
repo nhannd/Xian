@@ -30,13 +30,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using MessageBox=ClearCanvas.Desktop.View.WinForms.MessageBox;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 {
@@ -45,52 +44,68 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
     /// </summary>
 	public partial class LocalDataStoreReindexApplicationComponentControl : ApplicationComponentUserControl
     {
-        private LocalDataStoreReindexApplicationComponent _component;
+    	private readonly IReindexLocalDataStore _reindexer;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public LocalDataStoreReindexApplicationComponentControl(LocalDataStoreReindexApplicationComponent component)
+        public LocalDataStoreReindexApplicationComponentControl(IReindexLocalDataStore reindexer)
         {
             InitializeComponent();
 
-            _component = component;
+			_reindexer = reindexer;
 
-			BindingSource bindingSource = new BindingSource();
-			bindingSource.DataSource = _component;
-
-			_reindexProgressControl.DataBindings.Add("StatusMessage", bindingSource, "StatusMessage", true, DataSourceUpdateMode.OnPropertyChanged);
-			_reindexProgressControl.DataBindings.Add("TotalToProcess", bindingSource, "TotalToProcess", true, DataSourceUpdateMode.OnPropertyChanged);
-			_reindexProgressControl.DataBindings.Add("TotalProcessed", bindingSource, "TotalProcessed", true, DataSourceUpdateMode.OnPropertyChanged);
-			_reindexProgressControl.DataBindings.Add("AvailableCount", bindingSource, "AvailableCount", true, DataSourceUpdateMode.OnPropertyChanged);
-			_reindexProgressControl.DataBindings.Add("FailedSteps", bindingSource, "FailedSteps", true, DataSourceUpdateMode.OnPropertyChanged);
+			_reindexProgressControl.DataBindings.Add("StatusMessage", _reindexer, "StatusMessage", true, DataSourceUpdateMode.OnPropertyChanged);
+			_reindexProgressControl.DataBindings.Add("TotalToProcess", _reindexer, "TotalToProcess", true, DataSourceUpdateMode.OnPropertyChanged);
+			_reindexProgressControl.DataBindings.Add("TotalProcessed", _reindexer, "TotalProcessed", true, DataSourceUpdateMode.OnPropertyChanged);
+			_reindexProgressControl.DataBindings.Add("AvailableCount", _reindexer, "AvailableCount", true, DataSourceUpdateMode.OnPropertyChanged);
+			_reindexProgressControl.DataBindings.Add("FailedSteps", _reindexer, "FailedSteps", true, DataSourceUpdateMode.OnPropertyChanged);
 
         	UpdateButtonText();
-        	_component.PropertyChanged += OnPropertyChanged;
+        	_reindexer.PropertyChanged += OnPropertyChanged;
+			_reindexProgressControl.ButtonClicked += OnReindexButtonClicked;
+		}
 
-			_reindexProgressControl.ButtonClicked += delegate(object sender, EventArgs args)
-			                                         	{
-															if (_component.CancelEnabled)
-			                                         			_component.Cancel();
-															else if (_component.ReindexEnabled)
-																_component.Reindex();
-			                                         	};
-        }
+		public bool StartEnabled { get; set; }
+
+		private void OnReindexButtonClicked(object sender, EventArgs e)
+		{
+			if (_reindexer.CanCancel)
+			{
+				MessageBox box = new MessageBox();
+				if (box.Show(SR.MessageConfirmCancelReindex, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+					_reindexer.Cancel();
+			}
+			else if (_reindexer.CanStart)
+			{
+				_reindexer.Start();
+			}
+		}
 
 		private void UpdateButtonText()
 		{
-			_reindexProgressControl.ButtonEnabled = (_component.CancelEnabled || _component.ReindexEnabled);
-
-			if (_component.CancelEnabled)
+			if (_reindexer.CanCancel)
+			{
 				_reindexProgressControl.ButtonText = SR.LabelCancel;
-			else
+				_reindexProgressControl.ButtonEnabled = true;
+			}
+			else if (_reindexer.CanStart)
+			{
+				_reindexProgressControl.ButtonEnabled = StartEnabled;
 				_reindexProgressControl.ButtonText = SR.LabelStart;
+			}
+			else
+			{
+				_reindexProgressControl.ButtonEnabled = false;
+			}
 		}
 
 		private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == "CancelEnabled" || e.PropertyName == "ReindexEnabled")
+			if (e.PropertyName == "CanCancel" || e.PropertyName == "CanStart")
+			{
 				UpdateButtonText();
+			}
 		}
     }
 }

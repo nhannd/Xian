@@ -123,4 +123,10 @@
   <data name="LabelStart" xml:space="preserve">
     <value>Start</value>
   </data>
+  <data name="MessageConfirmCancelReindex" xml:space="preserve">
+    <value>Cancelling will result in partial and/or missing studies in the local store, and you will have to reindex again later.  Are you sure you want to cancel?</value>
+  </data>
+  <data name="TitleReindexingLocalDataStore" xml:space="preserve">
+    <value>Reindexing Local Data Store ...</value>
+  </data>
 </root>

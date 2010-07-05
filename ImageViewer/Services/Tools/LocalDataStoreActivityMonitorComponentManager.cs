@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 					LocalDataStoreReindexApplicationComponent component = new LocalDataStoreReindexApplicationComponent();
 				    _reindexComponentShelf = ApplicationComponent.LaunchAsShelf(
 				        desktopWindow, component,
-				        component.Title,
+						SR.TitleReindexLocalDataStore,
 				        "Reindex",
 				        ShelfDisplayHint.DockBottom | ShelfDisplayHint.DockAutoHide);
 				    _reindexComponentShelf.Closed +=

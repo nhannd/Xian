@@ -151,6 +151,15 @@ Streaming Image Port: {1}</value>
   <data name="Location" xml:space="preserve">
     <value>Location: {0}</value>
   </data>
+  <data name="MessageActivityMonitorServiceUnavailable" xml:space="preserve">
+    <value>The Activity Monitor service is currently unavailable</value>
+  </data>
+  <data name="MessageFailedToStartReindex" xml:space="preserve">
+    <value>Failed to start reindex operation, possibly because a conflicting operation is currently running.  If this problem persists, please contact your system administrator.</value>
+  </data>
+  <data name="MessageReindexStatusUnknown" xml:space="preserve">
+    <value>Reindex status unknown</value>
+  </data>
   <data name="MyDataStoreTitle" xml:space="preserve">
     <value>My Studies</value>
   </data>

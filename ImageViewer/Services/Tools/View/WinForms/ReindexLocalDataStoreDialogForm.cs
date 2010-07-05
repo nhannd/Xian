@@ -29,24 +29,22 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Crownwood.DotNetMagic.Forms;
+using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using System.Windows.Forms;
 
-namespace ClearCanvas.Utilities.RebuildDatabase
+namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 {
-    public class DatabaseRebuildCompletedEventArgs : EventArgs
-    {
-        public DatabaseRebuildCompletedEventArgs(bool rebuildWasAborted)
-        {
-            _rebuildWasAborted = rebuildWasAborted;
-        }
+	public partial class ReindexLocalDataStoreDialogForm : DotNetMagicForm
+	{
+		public ReindexLocalDataStoreDialogForm(IReindexLocalDataStore reindexer)
+		{
+			InitializeComponent();
 
-        public bool RebulidWasAborted
-        {
-            get { return _rebuildWasAborted; }
-        }
-
-        private bool _rebuildWasAborted = false;
-    }
+			this.Text = SR.TitleReindexingLocalDataStore;
+			var control = new LocalDataStoreReindexApplicationComponentControl(reindexer);
+			control.Dock = DockStyle.Fill;
+			this._contentPanel.Controls.Add(control);
+		}
+	}
 }
