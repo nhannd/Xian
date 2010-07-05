@@ -996,7 +996,7 @@
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.175000\1.000000\0.200000" annotation-item-id="AdvancedImaging.Fusion.Uncalibrated">
+            <annotation-box normalized-rectangle="0.500000\0.175000\1.000000\0.200000" annotation-item-id="AdvancedImaging.Fusion.MismatchedFrameOfReference">
               <box-settings bold="true" color="Yellow" fit-width="true" always-visible="false" />
             </annotation-box>
             <annotation-box normalized-rectangle="0.500000\0.175000\1.000000\0.200000" annotation-item-id="" />

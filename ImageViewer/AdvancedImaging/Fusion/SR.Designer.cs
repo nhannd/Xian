@@ -61,11 +61,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to UNCALIBRATED.
+        ///   Looks up a localized string similar to FoR MISMATCH.
         /// </summary>
-        internal static string CodeUncalibrated {
+        internal static string CodeMismatchedFrameOfReference {
             get {
-                return ResourceManager.GetString("CodeUncalibrated", resourceCulture);
+                return ResourceManager.GetString("CodeMismatchedFrameOfReference", resourceCulture);
             }
         }
         
@@ -115,20 +115,20 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mismatched Frame of Reference.
+        /// </summary>
+        internal static string LabelMismatchedFrameOfReference {
+            get {
+                return ResourceManager.GetString("LabelMismatchedFrameOfReference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No Attenuation Correction.
         /// </summary>
         internal static string LabelNoAttentuationCorrection {
             get {
                 return ResourceManager.GetString("LabelNoAttentuationCorrection", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Uncalibrated.
-        /// </summary>
-        internal static string LabelUncalibrated {
-            get {
-                return ResourceManager.GetString("LabelUncalibrated", resourceCulture);
             }
         }
         

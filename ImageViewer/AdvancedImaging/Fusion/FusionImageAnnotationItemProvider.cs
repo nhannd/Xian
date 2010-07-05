@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			: base("AnnotationItemProviders.AdvancedImaging.Fusion", SR.LabelAdvancedImageFusion)
 		{
 			_annotationItems = new List<IAnnotationItem>();
-			_annotationItems.Add(new UncalibratedFusionImageAnnotationItem());
+			_annotationItems.Add(new MismatchedFrameOfReferenceFusionImageAnnotationItem());
 		}
 
 		public override IEnumerable<IAnnotationItem> GetAnnotationItems()
@@ -52,9 +52,10 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			return _annotationItems;
 		}
 
-		internal class UncalibratedFusionImageAnnotationItem : AnnotationItem
+		internal class MismatchedFrameOfReferenceFusionImageAnnotationItem : AnnotationItem
 		{
-			public UncalibratedFusionImageAnnotationItem() : base("AdvancedImaging.Fusion.Uncalibrated", SR.LabelUncalibrated, SR.LabelUncalibrated) {}
+			public MismatchedFrameOfReferenceFusionImageAnnotationItem()
+				: base("AdvancedImaging.Fusion.MismatchedFrameOfReference", SR.LabelMismatchedFrameOfReference, SR.LabelMismatchedFrameOfReference) {}
 
 			public override string GetAnnotationText(IPresentationImage presentationImage)
 			{
@@ -63,7 +64,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					var fusionImage = (FusionPresentationImage) presentationImage;
 					if (fusionImage.OverlayFrameData.BaseFrame.FrameOfReferenceUid != fusionImage.OverlayFrameData.OverlayFrameOfReferenceUid)
 					{
-						return SR.CodeUncalibrated;
+						return SR.CodeMismatchedFrameOfReference;
 					}
 				}
 				return string.Empty;

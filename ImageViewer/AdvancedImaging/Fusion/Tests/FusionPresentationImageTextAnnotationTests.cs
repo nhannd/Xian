@@ -63,11 +63,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 				{
 					var annotationLayoutProvider = (IAnnotationLayoutProvider) image;
 					var annotationItem = CollectionUtils.SelectFirst(annotationLayoutProvider.AnnotationLayout.AnnotationBoxes,
-					                                                 b => b.AnnotationItem is FusionImageAnnotationItemProvider.UncalibratedFusionImageAnnotationItem);
-					Assert.IsNotNull(annotationItem, "The UncalibratedFusionImageAnnotationItem is missing.");
+					                                                 b => b.AnnotationItem is FusionImageAnnotationItemProvider.MismatchedFrameOfReferenceFusionImageAnnotationItem);
+					Assert.IsNotNull(annotationItem, "The MismatchedFrameOfReferenceFusionImageAnnotationItem is missing.");
 
 					var annotationText = annotationItem.GetAnnotationText(image);
-					Assert.AreEqual(string.Empty, annotationText, "Fusion image where source data have same frames of reference should not show UNCALIBRATED on text overlay.");
+					Assert.AreEqual(string.Empty, annotationText, "Fusion image where source data have same frames of reference should not indicate FoR MISMATCH on text overlay.");
 				}
 			}
 		}
@@ -88,11 +88,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 				{
 					var annotationLayoutProvider = (IAnnotationLayoutProvider) image;
 					var annotationItem = CollectionUtils.SelectFirst(annotationLayoutProvider.AnnotationLayout.AnnotationBoxes,
-					                                                 b => b.AnnotationItem is FusionImageAnnotationItemProvider.UncalibratedFusionImageAnnotationItem);
-					Assert.IsNotNull(annotationItem, "The UncalibratedFusionImageAnnotationItem is missing.");
+					                                                 b => b.AnnotationItem is FusionImageAnnotationItemProvider.MismatchedFrameOfReferenceFusionImageAnnotationItem);
+					Assert.IsNotNull(annotationItem, "The MismatchedFrameOfReferenceFusionImageAnnotationItem is missing.");
 
 					var annotationText = annotationItem.GetAnnotationText(image);
-					Assert.AreEqual(SR.CodeUncalibrated, annotationText, "Fusion image where source data have different frames of reference should show UNCALIBRATED on text overlay.");
+					Assert.AreEqual(SR.CodeMismatchedFrameOfReference, annotationText, "Fusion image where source data have different frames of reference should indicate FoR MISMATCH on text overlay.");
 				}
 			}
 		}
