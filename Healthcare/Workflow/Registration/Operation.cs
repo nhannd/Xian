@@ -95,6 +95,14 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
 					thisPatient.Attachments.Add(attachment);
 				}
 
+				// copy the collection to iterate
+				var otherAllergies = new List<Allergy>(otherPatient.Allergies);
+				foreach (var allergy in otherAllergies)
+				{
+					otherPatient.Allergies.Remove(allergy);
+					thisPatient.Allergies.Add(allergy);
+				}
+
 				var visitCriteria = new VisitSearchCriteria();
 				visitCriteria.Patient.EqualTo(otherPatient);
 				var otherVisits = workflow.GetBroker<IVisitBroker>().Find(visitCriteria);
