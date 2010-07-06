@@ -225,6 +225,9 @@
   <data name="&gt;&gt;_lblLabel.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="_pnlIcon.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
   <data name="_pnlIcon.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Left</value>
   </data>

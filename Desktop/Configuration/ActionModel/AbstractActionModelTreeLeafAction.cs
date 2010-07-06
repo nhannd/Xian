@@ -62,7 +62,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 
 			if (_action.IconSet == null || _action.ResourceResolver == null)
 			{
-				base.IconSet = new IconSet(IconScheme.Colour, "Icons.ActionModelGroupBlank.png", "Icons.ActionModelGroupBlank.png", "Icons.ActionModelGroupBlank.png");
+				base.IconSet = new IconSet(IconScheme.Colour, "Icons.ActionModelNullSmall.png", "Icons.ActionModelNullMedium.png", "Icons.ActionModelNullLarge.png");
 				base.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
 			}
 			else

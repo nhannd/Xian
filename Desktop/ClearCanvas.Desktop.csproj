@@ -506,14 +506,26 @@
     <EmbeddedResource Include="Validation\ValidationRules.xml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Icons\AddActionModelGroupToolLarge.png" />
+    <EmbeddedResource Include="Icons\AddActionModelGroupToolMedium.png" />
+    <EmbeddedResource Include="Icons\AddActionModelGroupToolSmall.png" />
+    <EmbeddedResource Include="Icons\AddActionModelSeparatorToolLarge.png" />
+    <EmbeddedResource Include="Icons\AddActionModelSeparatorToolMedium.png" />
+    <EmbeddedResource Include="Icons\AddActionModelSeparatorToolSmall.png" />
     <EmbeddedResource Include="Icons\RenameToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Icons\ActionModelGroupLarge.png" />
+    <EmbeddedResource Include="Icons\ActionModelGroupMedium.png" />
     <EmbeddedResource Include="Icons\ActionModelGroupSmall.png" />
+    <EmbeddedResource Include="Icons\ActionModelNullLarge.png" />
+    <EmbeddedResource Include="Icons\ActionModelNullMedium.png" />
+    <EmbeddedResource Include="Icons\ActionModelNullSmall.png" />
+    <EmbeddedResource Include="Icons\ActionModelSeparatorLarge.png" />
+    <EmbeddedResource Include="Icons\ActionModelSeparatorMedium.png" />
     <EmbeddedResource Include="Icons\ActionModelSeparatorSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\ActionModelGroupBlank.png" />
     <EmbeddedResource Include="XKeysNames.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>XKeysNames.Designer.cs</LastGenOutput>

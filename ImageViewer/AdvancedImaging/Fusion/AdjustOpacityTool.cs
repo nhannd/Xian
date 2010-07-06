@@ -44,6 +44,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
+	[GroupHint("activate", "Tools.Image.Manipulation.Layers.Opacity")]
 	[MouseButtonIconSet("activate", IconScheme.Colour, "Icons.AdjustOpacityToolSmall.png", "Icons.AdjustOpacityToolMedium.png", "Icons.AdjustOpacityToolLarge.png")]
 	[MouseToolButton(XMouseButtons.Right, false)]
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
