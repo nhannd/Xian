@@ -43,8 +43,8 @@
 				<property name="OnsetTime" column="OnsetTime_" type="DateTime" not-null="false"/>
 				<property name="ReportedTime" column="ReportedTime_" type="DateTime" not-null="false"/>
 				<nested-composite-element name="Reporter" class="PersonName">
-					<property name="FamilyName" column="ReporterFamilyName_" type="String" length="40" not-null="false"/>
-					<property name="GivenName" column="ReporterGivenName_" type="String" length="40" not-null="false"/>
+					<property name="FamilyName" column="ReporterFamilyName_" type="String" length="40" not-null="true"/>
+					<property name="GivenName" column="ReporterGivenName_" type="String" length="40" not-null="true"/>
 					<property name="MiddleName" column="ReporterMiddleName_" type="String" length="40" not-null="false"/>
 					<property name="Prefix" column="ReporterPrefix_" type="String" length="10" not-null="false"/>
 					<property name="Suffix" column="ReporterSuffix_" type="String" length="10" not-null="false"/>

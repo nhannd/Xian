@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <enum class="AllergyAllergenType">
 	<enum-value code="DA">
-		<value>Drug allergy</value>
+		<value>Drug Allergy</value>
 		<description></description>
 	</enum-value>
 	<enum-value code="FA">
-		<value>Food allergy</value>
+		<value>Food Allergy</value>
 		<description></description>
 	</enum-value>
 	<enum-value code="MA">
-		<value>Miscellaneous allergy</value>
+		<value>Miscellaneous Allergy</value>
 		<description></description>
 	</enum-value>
 	<enum-value code="MC">
-		<value>Miscellaneous contraindication</value>
+		<value>Miscellaneous Contraindication</value>
 		<description></description>
 	</enum-value>
 	<enum-value code="EA">
