@@ -43,8 +43,5 @@
       <many-to-many column="ProtocolOID_" class="Protocol" fetch="join"/>
     </set>
     
-    <!-- Special column added for OWLS project - tracks the temporal partition -->
-    <property name="OwlsPartition" column="OwlsPartition_" type="int" not-null="true"/>
-
   </class>
 </hibernate-mapping>

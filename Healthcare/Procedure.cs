@@ -398,7 +398,7 @@ namespace ClearCanvas.Healthcare
 								this.PerformingFacility, this.PerformingDepartment,
 								this.Laterality, this.Portable, this.ProcedureCheckIn, this.ImageAvailability,
 								this.DowntimeRecoveryMode,
-								new HashedSet<Report>(), new HashedSet<Protocol>(), this.OwlsPartition);
+								new HashedSet<Report>(), new HashedSet<Protocol>());
 		}
 
 		/// <summary>
