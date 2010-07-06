@@ -211,7 +211,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		public override void Start()
 		{
 			InitializeTable();
-			RefreshInternal();
+			BlockingOperation.Run(RefreshInternal);
 			_seriesTable.Sort(new TableSortParams(_seriesTable.Columns[0], false));
 
 			_toolSet = new ToolSet(new SeriesDetailsToolExtensionPoint(), new SeriesDetailsToolContext(this));
@@ -313,7 +313,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		{
 			try
 			{
-				RefreshInternal();
+				BlockingOperation.Run(RefreshInternal);
 				_seriesTable.Sort();
 			}
 			catch(Exception e)
