@@ -67,13 +67,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._fixedWindowRadioButton = new System.Windows.Forms.RadioButton();
 			this._slidingWindowRadioButton = new System.Windows.Forms.RadioButton();
 			this._groupBox = new System.Windows.Forms.GroupBox();
-			this._toSlidingDescription = new System.Windows.Forms.TextBox();
-			this._toSliding = new System.Windows.Forms.NumericUpDown();
-			this._fromSlidingDescription = new System.Windows.Forms.TextBox();
-			this._fromSliding = new System.Windows.Forms.NumericUpDown();
+			this._toSliding = new ClearCanvas.Ris.Client.View.WinForms.DescriptiveSpinControl();
+			this._fromSliding = new ClearCanvas.Ris.Client.View.WinForms.DescriptiveSpinControl();
 			this._groupBox.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this._toSliding)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this._fromSliding)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _slidingScale
@@ -118,7 +114,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._toFixed.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
 			this._toFixed.Name = "_toFixed";
 			this._toFixed.Size = new System.Drawing.Size(150, 41);
-			this._toFixed.TabIndex = 10;
+			this._toFixed.TabIndex = 8;
 			this._toFixed.Value = new System.DateTime(2008, 3, 14, 10, 35, 2, 968);
 			// 
 			// _fromFixed
@@ -130,7 +126,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._fromFixed.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
 			this._fromFixed.Name = "_fromFixed";
 			this._fromFixed.Size = new System.Drawing.Size(150, 41);
-			this._fromFixed.TabIndex = 9;
+			this._fromFixed.TabIndex = 7;
 			this._fromFixed.Value = new System.DateTime(2008, 3, 14, 10, 35, 2, 968);
 			// 
 			// _fixedWindowRadioButton
@@ -157,9 +153,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _groupBox
 			// 
-			this._groupBox.Controls.Add(this._toSlidingDescription);
 			this._groupBox.Controls.Add(this._toSliding);
-			this._groupBox.Controls.Add(this._fromSlidingDescription);
 			this._groupBox.Controls.Add(this._fromSliding);
 			this._groupBox.Controls.Add(this._slidingScale);
 			this._groupBox.Controls.Add(this._fromCheckBox);
@@ -176,50 +170,21 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._groupBox.TabStop = false;
 			this._groupBox.Text = "Time Window";
 			// 
-			// _toSlidingDescription
-			// 
-			this._toSlidingDescription.Location = new System.Drawing.Point(288, 118);
-			this._toSlidingDescription.Name = "_toSlidingDescription";
-			this._toSlidingDescription.ReadOnly = true;
-			this._toSlidingDescription.Size = new System.Drawing.Size(100, 20);
-			this._toSlidingDescription.TabIndex = 7;
-			this._toSlidingDescription.TabStop = false;
-			this._toSlidingDescription.Enter += new System.EventHandler(this._toSlidingDescription_Enter);
-			// 
 			// _toSliding
 			// 
-			this._toSliding.Location = new System.Drawing.Point(388, 118);
+			this._toSliding.Format = null;
+			this._toSliding.Location = new System.Drawing.Point(288, 118);
 			this._toSliding.Name = "_toSliding";
-			this._toSliding.Size = new System.Drawing.Size(17, 20);
-			this._toSliding.TabIndex = 8;
-			// 
-			// _fromSlidingDescription
-			// 
-			this._fromSlidingDescription.BackColor = System.Drawing.SystemColors.Control;
-			this._fromSlidingDescription.Location = new System.Drawing.Point(108, 117);
-			this._fromSlidingDescription.Name = "_fromSlidingDescription";
-			this._fromSlidingDescription.ReadOnly = true;
-			this._fromSlidingDescription.Size = new System.Drawing.Size(100, 20);
-			this._fromSlidingDescription.TabIndex = 5;
-			this._fromSlidingDescription.TabStop = false;
-			this._fromSlidingDescription.Enter += new System.EventHandler(this._fromSlidingDescription_Enter);
+			this._toSliding.Size = new System.Drawing.Size(120, 20);
+			this._toSliding.TabIndex = 6;
 			// 
 			// _fromSliding
 			// 
-			this._fromSliding.Location = new System.Drawing.Point(208, 117);
-			this._fromSliding.Maximum = new decimal(new int[] {
-            120,
-            0,
-            0,
-            0});
-			this._fromSliding.Minimum = new decimal(new int[] {
-            120,
-            0,
-            0,
-            -2147483648});
+			this._fromSliding.Format = null;
+			this._fromSliding.Location = new System.Drawing.Point(108, 118);
 			this._fromSliding.Name = "_fromSliding";
-			this._fromSliding.Size = new System.Drawing.Size(17, 20);
-			this._fromSliding.TabIndex = 6;
+			this._fromSliding.Size = new System.Drawing.Size(120, 20);
+			this._fromSliding.TabIndex = 5;
 			// 
 			// WorklistTimeWindowEditorComponentControl
 			// 
@@ -230,8 +195,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Size = new System.Drawing.Size(455, 246);
 			this._groupBox.ResumeLayout(false);
 			this._groupBox.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this._toSliding)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this._fromSliding)).EndInit();
 			this.ResumeLayout(false);
 
         }
@@ -246,9 +209,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private System.Windows.Forms.RadioButton _fixedWindowRadioButton;
         private System.Windows.Forms.RadioButton _slidingWindowRadioButton;
         private System.Windows.Forms.GroupBox _groupBox;
-		private System.Windows.Forms.NumericUpDown _fromSliding;
-		private System.Windows.Forms.TextBox _toSlidingDescription;
-		private System.Windows.Forms.NumericUpDown _toSliding;
-		private System.Windows.Forms.TextBox _fromSlidingDescription;
+		private DescriptiveSpinControl _fromSliding;
+		private DescriptiveSpinControl _toSliding;
     }
 }

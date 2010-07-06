@@ -143,6 +143,12 @@
       <DependentUpon>DateTimeEntryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DateTimeEntryComponentView.cs" />
+    <Compile Include="DescriptiveSpinControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DescriptiveSpinControl.Designer.cs">
+      <DependentUpon>DescriptiveSpinControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="DiagnosticServiceEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -729,6 +735,9 @@
     <EmbeddedResource Include="DateTimeEntryComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>DateTimeEntryComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DescriptiveSpinControl.resx">
+      <DependentUpon>DescriptiveSpinControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DiagnosticServiceEditorComponentControl.resx">
       <DependentUpon>DiagnosticServiceEditorComponentControl.cs</DependentUpon>

@@ -160,8 +160,9 @@ namespace ClearCanvas.Ris.Client
 						// If first validation pass, validate maximum span days
 						if (ok && _maxSpanDays > 0)
 						{
-							ok = _slidingScale == Days && timeDiff <= _maxSpanDays ||
-								_slidingScale == Hours && timeDiff <= _maxSpanDays * 24;
+							// Add 1 days to timeDiff because "X days from now" means the end of the day "X days from now"
+							ok = _slidingScale == Days && (timeDiff+1) <= _maxSpanDays
+								|| _slidingScale == Hours && timeDiff <= _maxSpanDays * 24;
 							message = string.Format(SR.MessageValidateWorklistTimeSpan, _maxSpanDays);
 						}
 
@@ -344,8 +345,6 @@ namespace ClearCanvas.Ris.Client
 
 				NotifyPropertyChanged("SlidingStartTime");
 				NotifyPropertyChanged("SlidingEndTime");
-				NotifyPropertyChanged("SlidingStartTimeDescription");
-				NotifyPropertyChanged("SlidingEndTimeDescription");
 				NotifyPropertyChanged("SlidingTimeMaximum");
 				NotifyPropertyChanged("SlidingTimeMinimum");
 
@@ -365,8 +364,8 @@ namespace ClearCanvas.Ris.Client
 					return;
 
 				_slidingStartTime = value;
-				NotifyPropertyChanged("SlidingStartTimeDescription");
 				this.Modified = true;
+				NotifyPropertyChanged("SlidingStartTime");
 			}
 		}
 
@@ -379,19 +378,13 @@ namespace ClearCanvas.Ris.Client
 					return;
 
 				_slidingEndTime = value;
-				NotifyPropertyChanged("SlidingEndTimeDescription");
 				this.Modified = true;
 			}
 		}
 
-		public string SlidingStartTimeDescription
+		public string FormatSlidingTime(decimal value)
 		{
-			get { return ConvertSlidingValueToRelativeTime(_slidingStartTime).ToString(); }
-		}
-
-		public string SlidingEndTimeDescription
-		{
-			get { return ConvertSlidingValueToRelativeTime(_slidingEndTime).ToString(); }
+			return ConvertSlidingValueToRelativeTime((int)value).ToString();
 		}
 
 		#endregion

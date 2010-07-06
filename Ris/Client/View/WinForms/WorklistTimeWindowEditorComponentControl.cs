@@ -64,35 +64,17 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_fromFixed.DataBindings.Add("Enabled", _component, "FixedStartTimeEnabled", true, DataSourceUpdateMode.Never);
 			_fromFixed.DataBindings.Add("Value", _component, "FixedStartTime", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_fromSliding.Maximum = int.MaxValue;
-			_fromSliding.Minimum = int.MinValue;
 			_fromSliding.DataBindings.Add("Enabled", _component, "SlidingStartTimeEnabled", true, DataSourceUpdateMode.Never);
 			_fromSliding.DataBindings.Add("Value", _component, "SlidingStartTime", true, DataSourceUpdateMode.OnPropertyChanged);
-			_fromSlidingDescription.DataBindings.Add("Enabled", _component, "SlidingStartTimeEnabled", true, DataSourceUpdateMode.Never);
-			_fromSlidingDescription.DataBindings.Add("Text", _component, "SlidingStartTimeDescription", true, DataSourceUpdateMode.OnPropertyChanged);
+			_fromSliding.Format = _component.FormatSlidingTime;
 
 			_toCheckBox.DataBindings.Add("Checked", _component, "EndTimeChecked", true, DataSourceUpdateMode.OnPropertyChanged);
 			_toFixed.DataBindings.Add("Enabled", _component, "FixedEndTimeEnabled", true, DataSourceUpdateMode.Never);
 			_toFixed.DataBindings.Add("Value", _component, "FixedEndTime", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_toSliding.Maximum = int.MaxValue;
-			_toSliding.Minimum = int.MinValue;
 			_toSliding.DataBindings.Add("Enabled", _component, "SlidingEndTimeEnabled", true, DataSourceUpdateMode.Never);
 			_toSliding.DataBindings.Add("Value", _component, "SlidingEndTime", true, DataSourceUpdateMode.OnPropertyChanged);
-			_toSlidingDescription.DataBindings.Add("Enabled", _component, "SlidingEndTimeEnabled", true, DataSourceUpdateMode.Never);
-			_toSlidingDescription.DataBindings.Add("Text", _component, "SlidingEndTimeDescription", true, DataSourceUpdateMode.OnPropertyChanged);
-		}
-
-		private void _fromSlidingDescription_Enter(object sender, System.EventArgs e)
-		{
-			// When the description is clicked, give away focus to the spin control.
-			_fromSliding.Focus();
-		}
-
-		private void _toSlidingDescription_Enter(object sender, System.EventArgs e)
-		{
-			// When the description is clicked, give away focus to the spin control.
-			_toSliding.Focus();
+			_toSliding.Format = _component.FormatSlidingTime;
 		}
 	}
 }
