@@ -136,18 +136,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
 		public void Show()
 		{
-			try
-			{
-				ShowSeriesDetails();
-			}
-			catch(Exception e)
-			{
-				ExceptionHandler.Report(e, this.Context.DesktopWindow);
-			}
-		}
-
-		private void ShowSeriesDetails()
-		{
 			UpdateEnabled();
 
 			if (!Enabled)
@@ -155,9 +143,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
 			try
 			{
-				SeriesDetailsComponent component =
-					new SeriesDetailsComponent(base.Context.SelectedStudy, GetServerForStudy(base.Context.SelectedStudy));
-				ApplicationComponent.LaunchAsDialog(base.Context.DesktopWindow, component, SR.TitleSeriesDetails);
+				BlockingOperation.Run(delegate
+						{
+							SeriesDetailsComponent component =
+								new SeriesDetailsComponent(base.Context.SelectedStudy, GetServerForStudy(base.Context.SelectedStudy));
+							ApplicationComponent.LaunchAsDialog(base.Context.DesktopWindow, component, SR.TitleSeriesDetails);
+						});
 			}
 			catch(Exception e)
 			{
