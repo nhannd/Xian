@@ -10,6 +10,7 @@ namespace ClearCanvas.Ris.Application.Common
 		// Default parameterless constructor for Jsml deserialization
 		public PatientAllergyDetail()
 		{
+			this.ReporterName = new PersonNameDetail();
 		}
 
 		public PatientAllergyDetail(EnumValueInfo allergenType,

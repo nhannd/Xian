@@ -30,7 +30,8 @@
 
 					canEdit = Ris.getTag("ReadOnly") != "true";
 					data.Allergies = context.Allergies;
-					initAllergyTable(context);
+
+					initAllergyTable($("allergyTable"), context);
 				}
 				catch(e)
 				{
@@ -39,15 +40,15 @@
 				}
 			}
 
-			function initAllergyTable(allergyContext)
+			function initAllergyTable(htmlTable, allergyContext)
 			{
 				var allergenTypeTextChoices = allergyContext.AllergenTypeChoices.map(function(item) { return item.Value; });
 				var severityTextChoices = allergyContext.SeverityChoices.map(function(item) { return item.Value; });
 				var sensitivityTypeTextChoices = allergyContext.SensitivityTypeChoices.map(function(item) { return item.Value; });
 				var personRelationShipTypeTextChoices = allergyContext.PersonRelationshipTypeChoices.map(function(item) { return item.Value; });
 
-				var table = Table.createTable($("allergyTable"), 
-						{ editInPlace: canEdit, flow: true, checkBoxes: canEdit, empty: Table.defaultEmptyOption },
+				var htmlTable = Table.createTable(htmlTable, 
+						{ editInPlace: canEdit, flow: false, checkBoxes: canEdit, empty: Table.defaultEmptyOption },
 						[
 							{	label: "Allergen Type",
 								cellType: "choice",
@@ -101,7 +102,8 @@
 							},
 							{	label: "Reporter",
 								cellType: "text",
-								getValue: function(item) { return Ris.formatPersonName(item.ReporterName); },
+								getValue: function(item) { return item.ReporterName ? Ris.formatPersonName(item.ReporterName) : null; },
+								setValue: function(item, value) { item.ReporterName = { FamilyName: "FamilyName", GivenName: "GivenName" }; },
 								getError: function(item) { return null; }
 							},
 							{	label: "Relationship",
@@ -114,10 +116,15 @@
 							}
 						]);
 
-				table.initAddDeleteButtons(canEdit, "Delete selected patient allergy");
-				table.errorProvider = errorProvider;
-				table.bindItems(data.Allergies);
-				table.cellUpdated = function() { Ris.setModified(true); };
+				if (canEdit)
+				{
+					htmlTable.initAddDeleteButtons(canEdit, "Delete selected patient allergy");
+					htmlTable.cellUpdated = function() { Ris.setModified(true); };
+				}
+				
+				htmlTable.errorProvider = errorProvider;
+				htmlTable.rowCycleClassNames = ["row0", "row1"];
+				htmlTable.bindItems(data.Allergies);
 			}
 
 			function saveData()
@@ -129,8 +136,18 @@
 	</head>
 	<body onload="javascript: onBodyLoad()">
 		<form id="myForm">
-			<table id="allergyTable" border="1" width="100%">
-				<tr><td></td></tr>
+			<table  style="{margin-bottom:2em}" id="allergyTable" border="1" width="100%">
+				<tr class="tableheading">
+					<td>Allergen Type</td>
+					<td>Description</td>
+					<td>Severity</td>
+					<td>Reaction</td>
+					<td>Sensitivity Type</td>
+					<td>Onset Time</td>
+					<td>Reported Time</td>
+					<td>Reporter</td>
+					<td>Relationship</td>
+				</tr>
 			</table>
 		</form>
 	</body>
