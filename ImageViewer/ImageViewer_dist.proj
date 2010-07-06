@@ -12,8 +12,10 @@
     <EmptyViewerDatabaseFile>$(TrunkDirectory)\Dicom\DataStore\AuxiliaryFiles\$(PlatformSubFolder)\empty_viewer.sdf</EmptyViewerDatabaseFile>
     <DesktopBuild>false</DesktopBuild>
     <ShredHostBuild>false</ShredHostBuild>
+    <ConsoleBuild>false</ConsoleBuild>
     <DistributionDesktopConfig>$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.config</DistributionDesktopConfig>
     <DistributionShredHostConfig>$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config</DistributionShredHostConfig>
+    <DistributionConsoleConfig>$(DistributionDirectory)\ClearCanvas.Executable.exe.config</DistributionConsoleConfig>
   </PropertyGroup>
 
   <Choose>
@@ -80,11 +82,19 @@
   <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Desktop.Executable'">
     <DesktopBuild>true</DesktopBuild>
     <ShredHostBuild>false</ShredHostBuild>
+    <ConsoleBuild>false</ConsoleBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Server.ShredHostService'">
     <DesktopBuild>false</DesktopBuild>
     <ShredHostBuild>true</ShredHostBuild>
+    <ConsoleBuild>false</ConsoleBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Executable'">
+    <DesktopBuild>false</DesktopBuild>
+    <ShredHostBuild>false</ShredHostBuild>
+    <ConsoleBuild>true</ConsoleBuild>
   </PropertyGroup>
 
   <Choose>
@@ -308,6 +318,11 @@
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\StudyLocator\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLocator.dll" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ExecutableBootstrapFiles Include="$(TrunkDirectory)\Executable\bin\$(Configuration)\ClearCanvas.Executable.exe" />
+    <ExecutableBootstrapFiles Include="$(TrunkDirectory)\Executable\bin\$(Configuration)\ClearCanvas.Executable.exe.config" />
+  </ItemGroup>
+
   <Target Name="Copy License Files">
     <Copy SkipUnchangedFiles="true" SourceFiles="@(LicenseFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
   </Target>
@@ -505,9 +520,16 @@
     </RegexIsMatch>
 
     <CallTarget Condition="$(ExcludeHttpDesktopServices)" Targets="Exclude Http Desktop Services" />
+
+    <CallTarget Targets="Copy Executable Bootstrap" />
+    <Copy SourceFiles="$(DistributionDesktopConfig)" DestinationFiles="$(DistributionConsoleConfig)" />
     
   </Target>
 
+  <Target Name="Copy Executable Bootstrap">
+    <Copy SourceFiles="@(ExecutableBootstrapFiles)" DestinationFolder="$(DistributionDirectory)" />
+  </Target>
+  
   <Target Name="Copy ShredHost Files" DependsOnTargets="Copy ShredHost App Config;Copy License Files">
     <CallTarget Targets="Copy Project Files" />
   </Target>

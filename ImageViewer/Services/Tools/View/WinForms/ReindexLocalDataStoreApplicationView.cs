@@ -11,11 +11,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 	public class ReindexLocalDataStoreApplicationView : ApplicationView, IReindexLocalDataStoreApplicationView
 	{
 		private Form _form;
-		private IReindexLocalDataStore _reindexer;
+		private ILocalDataStoreReindexer _reindexer;
 
 		#region IReindexLocalDataStoreApplicationView Members
 
-		public void Initialize(IReindexLocalDataStore reindexer)
+		public void Initialize(ILocalDataStoreReindexer reindexer)
 		{
 			_reindexer = reindexer;
 			Cursor.Current = Cursors.WaitCursor;

@@ -15,7 +15,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		NotRunning
 	}
 
-	public interface IReindexLocalDataStore : INotifyPropertyChanged, IDisposable
+	public interface ILocalDataStoreReindexer : INotifyPropertyChanged, IDisposable
 	{
 		void Start();
 		void Cancel();
@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		string StatusMessage { get; }
 	}
 
-	public class ReindexLocalDataStoreFacade : IReindexLocalDataStore
+	public class LocalDataStoreReindexer : ILocalDataStoreReindexer
 	{
 		private ILocalDataStoreEventBroker _localDataStoreEventBroker;
 		private readonly ReindexProgressItem _reindexProgress;
@@ -48,14 +48,10 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		private bool _canceled;
 		private event PropertyChangedEventHandler _propertyChanged;
 
-		public ReindexLocalDataStoreFacade()
+		public LocalDataStoreReindexer()
 		{
 			_reindexProgress = new ReindexProgressItem();
-
-			_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker();
-			_localDataStoreEventBroker.LostConnection += OnLostConnection;
-			_localDataStoreEventBroker.ReindexProgressUpdate += OnReindexProgressUpdate;
-
+			CanStart = true; //assume we can.
 			StatusMessage = SR.MessageReindexStatusUnknown;
 		}
 
@@ -75,13 +71,23 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			_localDataStoreEventBroker = null;
 		}
 
+		private void InitializeBroker()
+		{
+			if (_localDataStoreEventBroker != null)
+				return;
+
+			_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker();
+			_localDataStoreEventBroker.LostConnection += OnLostConnection;
+			_localDataStoreEventBroker.ReindexProgressUpdate += OnReindexProgressUpdate;
+		}
+
 		private void Reset(bool connectionExists)
 		{
 			TotalProcessed = 0;
 			TotalToProcess = 0;
 			AvailableCount = 0;
 			FailedSteps = 0;
-
+			Canceled = false;
 			CanCancel = false;
 			CanStart = connectionExists;
 			RunningState = RunningState.Unknown;
@@ -103,11 +109,12 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		{
 			_reindexProgress.CopyFrom(e.Item);
 
-			StatusMessage = _reindexProgress.StatusMessage;
-			TotalProcessed = _reindexProgress.TotalImportsProcessed;
 			TotalToProcess = _reindexProgress.TotalFilesToImport;
+			TotalProcessed = _reindexProgress.TotalImportsProcessed;
 			AvailableCount = _reindexProgress.NumberOfFilesCommittedToDataStore;
 			FailedSteps = _reindexProgress.TotalDataStoreCommitFailures;
+			StatusMessage = _reindexProgress.StatusMessage;
+			Canceled = _reindexProgress.Cancelled;
 
 			CanCancel = (_reindexProgress.AllowedCancellationOperations & CancellationFlags.Cancel) == CancellationFlags.Cancel;
 			CanStart = (_reindexProgress.AllowedCancellationOperations & CancellationFlags.Clear) == CancellationFlags.Clear && (_reindexProgress.IsComplete() || 
@@ -164,7 +171,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		public RunningState RunningState
 		{
 			get { return _runningState; }
-			set
+			private set
 			{
 				if (_runningState == value)
 					return;
@@ -203,7 +210,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			{
 				return _statusMessage;
 			}
-			protected set
+			private set
 			{
 				if (value == _statusMessage)
 					return;
@@ -219,7 +226,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			{
 				return _totalProcessed;
 			}
-			protected set
+			private set
 			{
 				if (value == _totalProcessed)
 					return;
@@ -235,7 +242,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			{
 				return _totalToProcess;
 			}
-			protected set
+			private set
 			{
 				if (value == _totalToProcess)
 					return;
@@ -251,7 +258,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			{
 				return _availableCount;
 			}
-			protected set
+			private set
 			{
 				if (value == _availableCount)
 					return;
@@ -267,7 +274,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			{
 				return _failedSteps;
 			}
-			protected set
+			private set
 			{
 				if (value == _failedSteps)
 					return;
@@ -299,7 +306,11 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 
 		public event PropertyChangedEventHandler PropertyChanged
 		{
-			add { _propertyChanged += value; }
+			add
+			{
+				_propertyChanged += value;
+				InitializeBroker();
+			}
 			remove { _propertyChanged -= value; }
 		}
 

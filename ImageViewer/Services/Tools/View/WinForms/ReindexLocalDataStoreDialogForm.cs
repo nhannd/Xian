@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 {
 	public partial class ReindexLocalDataStoreDialogForm : DotNetMagicForm
 	{
-		public ReindexLocalDataStoreDialogForm(IReindexLocalDataStore reindexer)
+		public ReindexLocalDataStoreDialogForm(ILocalDataStoreReindexer reindexer)
 		{
 			InitializeComponent();
 

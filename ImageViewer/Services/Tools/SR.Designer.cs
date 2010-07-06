@@ -559,6 +559,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &apos;No wait&apos; specified - quitting..
+        /// </summary>
+        internal static string MessageNoWaitSpecified {
+            get {
+                return ResourceManager.GetString("MessageNoWaitSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 1 day ago.
         /// </summary>
         internal static string MessageOneDayAgo {
@@ -591,6 +600,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string MessageOneOfSelectedStudiesInUse {
             get {
                 return ResourceManager.GetString("MessageOneOfSelectedStudiesInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reindex was cancelled..
+        /// </summary>
+        internal static string MessageReindexCancelled {
+            get {
+                return ResourceManager.GetString("MessageReindexCancelled", resourceCulture);
             }
         }
         
@@ -628,6 +646,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string MessageReindexNotStarted {
             get {
                 return ResourceManager.GetString("MessageReindexNotStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reindex already running ....
+        /// </summary>
+        internal static string MessageReindexRunning {
+            get {
+                return ResourceManager.GetString("MessageReindexRunning", resourceCulture);
             }
         }
         
@@ -684,6 +711,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string MessageSomeOfSelectedStudiesInUse {
             get {
                 return ResourceManager.GetString("MessageSomeOfSelectedStudiesInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Starting reindex ....
+        /// </summary>
+        internal static string MessageStartingReindex {
+            get {
+                return ResourceManager.GetString("MessageStartingReindex", resourceCulture);
             }
         }
         

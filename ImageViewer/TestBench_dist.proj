@@ -8,14 +8,22 @@
   <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Desktop.Executable'">
     <DesktopBuild>true</DesktopBuild>
     <ShredHostBuild>false</ShredHostBuild>
+    <ConsoleBuild>false</ConsoleBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Server.ShredHostService'">
     <DesktopBuild>false</DesktopBuild>
     <ShredHostBuild>true</ShredHostBuild>
+    <ConsoleBuild>false</ConsoleBuild>
   </PropertyGroup>
 
-	<ItemGroup Condition="$(DesktopBuild)">
+  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Executable'">
+    <DesktopBuild>false</DesktopBuild>
+    <ShredHostBuild>false</ShredHostBuild>
+    <ConsoleBuild>true</ConsoleBuild>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$(DesktopBuild)">
 		<ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\TestTools\bin\$(Configuration)\ClearCanvas.ImageViewer.TestTools.dll" />
     <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\TestTools\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.TestTools.View.WinForms.dll" />
     <ImageViewerPluginFiles Include="$(TrunkDirectory)\Desktop\Applets\Scintilla\bin\$(Configuration)\ClearCanvas.Desktop.Applets.Scintilla.dll" />

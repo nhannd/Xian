@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new LocalDataStoreReindexApplicationComponentControl(_component.Reindexer);
+                    _control = new LocalDataStoreReindexApplicationComponentControl(_component.Reindexer){StartEnabled = true};
                 }
                 return _control;
             }

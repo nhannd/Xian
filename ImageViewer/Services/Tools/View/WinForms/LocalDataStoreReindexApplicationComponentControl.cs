@@ -44,12 +44,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
     /// </summary>
 	public partial class LocalDataStoreReindexApplicationComponentControl : ApplicationComponentUserControl
     {
-    	private readonly IReindexLocalDataStore _reindexer;
+    	private readonly ILocalDataStoreReindexer _reindexer;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public LocalDataStoreReindexApplicationComponentControl(IReindexLocalDataStore reindexer)
+        public LocalDataStoreReindexApplicationComponentControl(ILocalDataStoreReindexer reindexer)
         {
             InitializeComponent();
 

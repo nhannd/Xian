@@ -29,37 +29,25 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
-namespace ClearCanvas.ImageViewer.Services.Tools
+namespace ClearCanvas.Executable
 {
-	[ExtensionPoint]
-	public sealed class LocalDataStoreReindexApplicationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-	{
-	}
-
-	[AssociateView(typeof(LocalDataStoreReindexApplicationComponentViewExtensionPoint))]
-	public class LocalDataStoreReindexApplicationComponent : ApplicationComponent
-	{
-		internal LocalDataStoreReindexApplicationComponent()
-		{
-		}
-
-		public ILocalDataStoreReindexer Reindexer { get; private set; }
-
-		public override void Start()
-		{
-			Reindexer = new LocalDataStoreReindexer();
-			Reindexer.Start();
-			base.Start();
-		}
-
-		public override void Stop()
-		{
-			base.Stop();
-			Reindexer.Dispose();
-		}
-	}
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            if (args.Length > 0)
+            {
+                string[] args1 = new string[args.Length - 1];
+                Array.Copy(args, 1, args1, 0, args.Length - 1);
+                Platform.StartApp(args[0], args1);
+            }
+            else
+            {
+				Console.WriteLine("ERROR: Application Root must be specified.");
+            }
+        }
+    }
 }

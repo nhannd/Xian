@@ -285,6 +285,9 @@ Please ensure the ClearCanvas server is running or contact your system administr
   <data name="MessageNothingSelected" xml:space="preserve">
     <value>Nothing has been selected.</value>
   </data>
+  <data name="MessageNoWaitSpecified" xml:space="preserve">
+    <value>'No wait' specified - quitting.</value>
+  </data>
   <data name="MessageOneDayAgo" xml:space="preserve">
     <value>1 day ago</value>
   </data>
@@ -296,6 +299,9 @@ Please ensure the ClearCanvas server is running or contact your system administr
   </data>
   <data name="MessageOneOfSelectedStudiesInUse" xml:space="preserve">
     <value>One of the selected studies is in use.  Please close all relevant workspaces before deleting.</value>
+  </data>
+  <data name="MessageReindexCancelled" xml:space="preserve">
+    <value>Reindex was cancelled.</value>
   </data>
   <data name="MessageReindexFailure" xml:space="preserve">
     <value>An error has occurred while reindexing.  You will have to correct the problem and reindex manually.  Please check the logs for more details.</value>
@@ -309,6 +315,9 @@ Please ensure the ClearCanvas server is running or contact your system administr
   </data>
   <data name="MessageReindexNotStarted" xml:space="preserve">
     <value>The reindex operation couldn't start.  Please ensure the workstation service is running.</value>
+  </data>
+  <data name="MessageReindexRunning" xml:space="preserve">
+    <value>Reindex already running ...</value>
   </data>
   <data name="MessageReindexWillContinue" xml:space="preserve">
     <value>The reindex operation will continue to run in the background.</value>
@@ -329,6 +338,9 @@ Please ensure the ClearCanvas server is running or contact your system administr
   </data>
   <data name="MessageSomeOfSelectedStudiesInUse" xml:space="preserve">
     <value>{0} of the selected studies are in use.  Please close all relevant workspaces before deleting.</value>
+  </data>
+  <data name="MessageStartingReindex" xml:space="preserve">
+    <value>Starting reindex ...</value>
   </data>
   <data name="MessageStudyCountUnavailable" xml:space="preserve">
     <value>Unavailable</value>
