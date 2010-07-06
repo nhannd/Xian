@@ -285,8 +285,32 @@
   <data name="MenuIndex" xml:space="preserve">
     <value>Index</value>
   </data>
+  <data name="MenuInsertGroupAfter" xml:space="preserve">
+    <value>Insert Group After</value>
+  </data>
+  <data name="MenuInsertGroupAsChild" xml:space="preserve">
+    <value>Add Group</value>
+  </data>
+  <data name="MenuInsertGroupBefore" xml:space="preserve">
+    <value>Insert Group Before</value>
+  </data>
+  <data name="MenuInsertSeparatorAfter" xml:space="preserve">
+    <value>Insert Separator After</value>
+  </data>
+  <data name="MenuInsertSeparatorAsChild" xml:space="preserve">
+    <value>Add Separator</value>
+  </data>
+  <data name="MenuInsertSeparatorBefore" xml:space="preserve">
+    <value>Insert Separator After</value>
+  </data>
   <data name="MenuOptions" xml:space="preserve">
     <value>Options</value>
+  </data>
+  <data name="MenuRemove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="MenuRename" xml:space="preserve">
+    <value>Rename</value>
   </data>
   <data name="MenuTools" xml:space="preserve">
     <value>&amp;Tools</value>
