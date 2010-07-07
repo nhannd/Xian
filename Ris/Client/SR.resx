@@ -1141,7 +1141,7 @@
     <value>The following recipients have missing information.  The report could not be sent to the queue.</value>
   </data>
   <data name="MessageValidateWorklistTimeSpan" xml:space="preserve">
-    <value>Time window must not span more than {0} days.</value>
+    <value>Time window should span less than {0} days.</value>
   </data>
   <data name="TitlePatientAllergies" xml:space="preserve">
     <value>Patient Allergies</value>

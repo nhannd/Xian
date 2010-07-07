@@ -2194,7 +2194,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Time window must not span more than {0} days..
+        ///   Looks up a localized string similar to Time window should span less than {0} days..
         /// </summary>
         internal static string MessageValidateWorklistTimeSpan {
             get {
