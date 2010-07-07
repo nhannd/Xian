@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._okButton.Margin = new System.Windows.Forms.Padding(2);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
-			this._okButton.TabIndex = 7;
+			this._okButton.TabIndex = 9;
 			this._okButton.Text = "OK";
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
@@ -58,7 +58,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._cancelButton.Margin = new System.Windows.Forms.Padding(2);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 8;
+			this._cancelButton.TabIndex = 10;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
@@ -126,7 +126,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._laterality.Margin = new System.Windows.Forms.Padding(2);
 			this._laterality.Name = "_laterality";
 			this._laterality.Size = new System.Drawing.Size(223, 41);
-			this._laterality.TabIndex = 5;
+			this._laterality.TabIndex = 7;
 			this._laterality.Value = null;
 			// 
 			// _portable
@@ -136,7 +136,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._portable.Margin = new System.Windows.Forms.Padding(2);
 			this._portable.Name = "_portable";
 			this._portable.Size = new System.Drawing.Size(65, 17);
-			this._portable.TabIndex = 4;
+			this._portable.TabIndex = 5;
 			this._portable.Text = "Portable";
 			this._portable.UseVisualStyleBackColor = true;
 			// 
@@ -161,7 +161,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._performingDepartment.Margin = new System.Windows.Forms.Padding(2);
 			this._performingDepartment.Name = "_performingDepartment";
 			this._performingDepartment.Size = new System.Drawing.Size(485, 41);
-			this._performingDepartment.TabIndex = 9;
+			this._performingDepartment.TabIndex = 4;
 			this._performingDepartment.Value = null;
 			// 
 			// _schedulingCode
@@ -174,7 +174,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._schedulingCode.Margin = new System.Windows.Forms.Padding(2);
 			this._schedulingCode.Name = "_schedulingCode";
 			this._schedulingCode.Size = new System.Drawing.Size(223, 41);
-			this._schedulingCode.TabIndex = 10;
+			this._schedulingCode.TabIndex = 8;
 			this._schedulingCode.Value = null;
 			// 
 			// ProcedureEditorComponentControl
