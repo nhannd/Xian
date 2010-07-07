@@ -50,9 +50,12 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		internal class ContainerFolder : Folder
 		{
+			private readonly Table<object> _itemsTable;
+
 			public ContainerFolder(Path path, bool startExpanded)
 				: base(path, startExpanded)
 			{
+				_itemsTable = new Table<object>();
 			}
 
 			protected override bool IsItemCountKnown
@@ -76,7 +79,7 @@ namespace ClearCanvas.Ris.Client
 
 			public override ITable ItemsTable
 			{
-				get { return null; }
+				get { return _itemsTable; }
 			}
 
 			public override DragDropKind CanAcceptDrop(object[] items, DragDropKind kind)
