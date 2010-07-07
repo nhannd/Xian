@@ -2077,7 +2077,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The RIS is currently unavailable. Please restart this application once the RIS becomes available again. However, you may proceed with login in order to access image viewing capabilities..
+        ///   Looks up a localized string similar to NOTICE: The RIS is currently unavailable. Do you still want to login to view images?.
         /// </summary>
         internal static string MessageRisServerDowntime {
             get {
