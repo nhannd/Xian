@@ -83,8 +83,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
 				var otherNotes = new List<PatientNote>(otherPatient.Notes);
 				foreach (var note in otherNotes)
 				{
-					otherPatient.Notes.Remove(note);
-					thisPatient.Notes.Add(note);
+					thisPatient.AddNote(note);
 				}
 
 				// copy the collection to iterate
