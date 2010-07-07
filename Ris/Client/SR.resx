@@ -562,7 +562,7 @@
     <value>The canned text name can only contain space and alphabet characters.</value>
   </data>
   <data name="MessageNoActiveProcedures" xml:space="preserve">
-    <value>At least one active procedure is required.</value>
+    <value>Order must have at least one active procedure. Consider cancelling the order instead.</value>
   </data>
   <data name="MessageNoRecipientsSelected" xml:space="preserve">
     <value>At least one recipient must be selected in order to post a note.</value>

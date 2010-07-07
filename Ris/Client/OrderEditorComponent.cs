@@ -344,7 +344,7 @@ namespace ClearCanvas.Ris.Client
 					SR.MessageDowntimeAccessionNumberRequired)));
 
 			// add validation rule to ensure the table has at least non-cancelled procedure
-			this.Validation.Add(new ValidationRule("SelectedProcedure",
+			this.Validation.Add(new ValidationRule("SelectedProcedures",
 				component => new ValidationResult(CollectionUtils.Contains(_proceduresTable.Items, p => !p.Cancelled), SR.MessageNoActiveProcedures)));
 
 			_noteSummaryComponent = new OrderNoteSummaryComponent(OrderNoteCategory.General);

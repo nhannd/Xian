@@ -1996,7 +1996,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to At least one active procedure is required..
+        ///   Looks up a localized string similar to Order must have at least one active procedure. Consider cancelling the order instead..
         /// </summary>
         internal static string MessageNoActiveProcedures {
             get {
