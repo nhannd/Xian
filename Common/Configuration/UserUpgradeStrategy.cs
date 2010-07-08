@@ -56,6 +56,7 @@ namespace ClearCanvas.Common.Configuration
 		}
 
 		public bool IsRunning { get; private set; }
+
 		public void Run()
 		{
 			if (IsRunning)

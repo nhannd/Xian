@@ -10,21 +10,24 @@ namespace ClearCanvas.Common.Configuration
         {
             var upgradeSteps = new List<UserUpgradeStep>();
 
-            foreach (var group in SettingsGroupDescriptor.ListInstalledSettingsGroups(false))
-            {
-                try
-                {
-                	UserSettingsUpgradeStep step = UserSettingsUpgradeStep.Create(group);
-                    if (step != null)
-                    	upgradeSteps.Add(step);
-                }
-                catch (Exception e)
-                {
-                    Platform.Log(LogLevel.Warn, e, "Unable to migrate user settings: {0}", group.Name);
-                }
-            }
+			if (UpgradeSettings.IsUserUpgradeEnabled())
+			{
+				foreach (var group in SettingsGroupDescriptor.ListInstalledSettingsGroups(false))
+				{
+					try
+					{
+						UserSettingsUpgradeStep step = UserSettingsUpgradeStep.Create(group);
+						if (step != null)
+							upgradeSteps.Add(step);
+					}
+					catch (Exception e)
+					{
+						Platform.Log(LogLevel.Warn, e, "Unable to migrate user settings: {0}", group.Name);
+					}
+				}
+			}
 
-            return upgradeSteps;
+        	return upgradeSteps;
         }
     }
 
@@ -56,10 +59,15 @@ namespace ClearCanvas.Common.Configuration
 
     	public static UserSettingsUpgradeStep Create(Type settingsClass)
         {
+			//Important: this line first so we can't get into infinite recursion issues with trying
+			//to migrate the UpgradeSettings class on first access (SettingsStoreSettingsProvider does that).
+			if (!ApplicationSettingsHelper.IsUserSettingsMigrationEnabled(settingsClass))
+				return null;
+
 			if (!new SettingsGroupDescriptor(settingsClass).HasUserScopedSettings)
 				return null; //no point
 
-			if (!ApplicationSettingsHelper.IsUserSettingsMigrationEnabled(settingsClass))
+			if (!UpgradeSettings.IsUserUpgradeEnabled())
 				return null;
 
 			if (UpgradeSettings.Default.IsUserUpgradeStepCompleted(settingsClass.FullName))
