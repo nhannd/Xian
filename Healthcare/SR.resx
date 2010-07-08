@@ -574,6 +574,6 @@
     <value>Time Window must be specified and must not span more than {0} days.</value>
   </data>
   <data name="MessageValidateExternalPractitionerRequiresExactlyOneDefaultContactPoint" xml:space="preserve">
-    <value>An external practitioner requires exactly one default contact point.</value>
+    <value>An active external practitioner requires exactly one default contact point.</value>
   </data>
 </root>

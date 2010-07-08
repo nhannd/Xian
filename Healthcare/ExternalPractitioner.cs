@@ -88,6 +88,10 @@ namespace ClearCanvas.Healthcare
 			var exactlyOneDefaultContactPointRule = new ValidationRule<ExternalPractitioner>(
 				delegate(ExternalPractitioner externalPractitioner)
 				{
+					// The rule is not applicable to deactivated external practitioner
+					if (externalPractitioner.Deactivated)
+						return new TestResult(true, "");
+
 					var activeDefaultContactPoints = CollectionUtils.Select(
 						externalPractitioner.ContactPoints,
 						contactPoint => contactPoint.IsDefaultContactPoint && !contactPoint.Deactivated);
