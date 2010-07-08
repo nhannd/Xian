@@ -29,26 +29,47 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.Reflection;
 using System.ServiceProcess;
-using System.Text;
 using System;
+using ClearCanvas.Common.Configuration;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Server.ShredHost;
 
 namespace ClearCanvas.Server.ShredHostService
 {
     static class Program
     {
+		private class CommandLine : Common.Utilities.CommandLine
+		{
+			public CommandLine(string[] args)
+				: base(args)
+			{}
+
+			[CommandLineParameter("service", "s", "Instructs the application that it is to run as a service.", Required = false)]
+			public bool RunAsService { get; set; }
+
+			[CommandLineParameter("migrate", "m", "Migrates settings from a previous version of the application, given the previous config filename.", Required = false)]
+			public string PreviousExeConfigurationFilename { get; set; }
+		}
+
     	/// <summary>
         /// The main entry point for the application.
         /// </summary>
         static void Main(string[] args)
         {
-			if (args.Length > 0 && String.Compare(args[0], "-service", true) == 0)
+			var commandLine = new CommandLine(args);
+
+			if (commandLine.RunAsService)
 			{
-				ServiceBase[] ServicesToRun;
-				ServicesToRun = new ServiceBase[] { new ShredHostService() };
+				var ServicesToRun = new ServiceBase[] { new ShredHostService() };
 				ServiceBase.Run(ServicesToRun);
+			}
+			else if (!String.IsNullOrEmpty(commandLine.PreviousExeConfigurationFilename))
+			{
+				foreach (var settingsGroup in SettingsGroupDescriptor.ListInstalledSettingsGroups(false))
+					SettingsMigrator.MigrateSharedSettings(settingsGroup, commandLine.PreviousExeConfigurationFilename);
+
+				ShredSettingsMigrator.MigrateAll(commandLine.PreviousExeConfigurationFilename);
 			}
 			else
 			{

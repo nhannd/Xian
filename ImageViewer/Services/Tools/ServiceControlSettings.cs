@@ -31,16 +31,27 @@
 
 using System.Configuration;
 using ClearCanvas.Desktop;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
 	[SettingsGroupDescription("Provides settings for control of services.")]
 	[SettingsProvider(typeof(LocalFileSettingsProvider))]
-	internal sealed partial class ServiceControlSettings
+	internal sealed partial class ServiceControlSettings : IMigrateSettings
 	{
 		private ServiceControlSettings()
 		{
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
+
+		#region IMigrateSettings Members
+
+		public void MigrateSettingsProperty(SettingsPropertyMigrationValues migrationValues)
+		{
+			if (migrationValues.PropertyName == "TimeoutSeconds")
+				migrationValues.CurrentValue = migrationValues.PreviousValue;
+	}
+
+		#endregion
 	}
 }

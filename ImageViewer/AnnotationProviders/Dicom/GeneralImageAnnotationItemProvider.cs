@@ -198,36 +198,23 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						resolver,
 						delegate(Frame frame)
 							{
-								bool lossy = false;
+								if (frame.LossyImageCompressionRatio.Length > 0)
+								{
+									var lossyRatios = StringUtilities.Combine(frame.LossyImageCompressionRatio, "/", "F1");
+									if (!String.IsNullOrEmpty(lossyRatios))
+										return String.Format("{0}({1})", SR.ValueLossy, lossyRatios);
+								}
+
 								if (!String.IsNullOrEmpty(frame.LossyImageCompression))
 								{
 									int lossyValue;
 									if (Int32.TryParse(frame.LossyImageCompression, out lossyValue) && lossyValue != 0)
-										lossy = true;
-								}
-								else if (frame.LossyImageCompressionRatio != null && frame.LossyImageCompressionRatio.Length > 0)
-								{
-									lossy = true;
+										return SR.ValueLossy;
 								}
 
-								return lossy ? SR.ValueLossy : "";
+								return "";
 							},
 						DicomDataFormatHelper.RawStringFormat
-					)
-				);
-
-			_annotationItems.Add
-				(
-					new DicomAnnotationItem<double[]>
-					(
-						"Dicom.GeneralImage.LossyImageCompressionRatio",
-						resolver,
-						delegate(Frame frame) { return frame.LossyImageCompressionRatio; },
-						delegate(double[] values) 
-						{
-							return StringUtilities.Combine<double>(values, ",\n",
-								delegate(double value) { return value.ToString("F2"); });
-						}
 					)
 				);
 

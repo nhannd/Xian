@@ -30,6 +30,7 @@
 #endregion
 
 using System.Configuration;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Desktop
 {

@@ -35,6 +35,7 @@ using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Common
 {
@@ -213,6 +214,7 @@ namespace ClearCanvas.Common
 
 	[SettingsGroupDescription("Settings that describe the product, such as the product name and version.")]
 	[SettingsProvider(typeof(LocalFileSettingsProvider))]
+	[SharedSettingsMigrationDisabled]
 	internal sealed partial class ProductSettings
 	{
 		private ProductSettings()

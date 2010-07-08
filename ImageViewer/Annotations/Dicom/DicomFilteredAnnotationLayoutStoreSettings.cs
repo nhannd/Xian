@@ -37,11 +37,17 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 {
 	[SettingsGroupDescription("Stores (pointers to) per-modality text overlay configurations in a common place.")]
 	[SettingsProvider(typeof(StandardSettingsProvider))]
+	[UserSettingsMigrationDisabled]
+	[SharedSettingsMigrationDisabled]
 	internal sealed partial class DicomFilteredAnnotationLayoutStoreSettings
 	{
 		private DicomFilteredAnnotationLayoutStoreSettings()
 		{
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
+
+		public override void Upgrade()
+		{
+	}
 	}
 }

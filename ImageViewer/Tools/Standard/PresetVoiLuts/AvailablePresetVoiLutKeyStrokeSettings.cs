@@ -31,6 +31,7 @@
 
 using System.Configuration;
 using System.Collections.Generic;
+using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
 using System.ComponentModel;
 

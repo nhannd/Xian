@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using ClearCanvas.Common.Utilities;
 using System.Runtime.Serialization;
+using System.Reflection;
 
 namespace ClearCanvas.Common.Configuration
 {
@@ -58,18 +59,21 @@ namespace ClearCanvas.Common.Configuration
 		/// </remarks>
 		public static List<SettingsGroupDescriptor> ListInstalledSettingsGroups(bool excludeLocalSettingsGroups)
 		{
-			var groups = new List<SettingsGroupDescriptor>();
+			List<SettingsGroupDescriptor> groups = new List<SettingsGroupDescriptor>();
 
-			foreach (var plugin in Platform.PluginManager.Plugins)
+			List<Assembly> assemblies = CollectionUtils.Map(Platform.PluginManager.Plugins, (PluginInfo p) => p.Assembly);
+			assemblies.Add(typeof(SettingsGroupDescriptor).Assembly);
+
+			foreach (var assembly in assemblies)
 			{
-				foreach (var t in plugin.Assembly.GetTypes())
+				foreach (Type t in assembly.GetTypes())
 				{
 					if (t.IsSubclassOf(typeof(ApplicationSettingsBase)) && !t.IsAbstract)
 					{
 						if (excludeLocalSettingsGroups)
 						{
-							var isStandard = AttributeUtils.HasAttribute(t, false,
-								(SettingsProviderAttribute a) => a.ProviderTypeName == typeof (StandardSettingsProvider).AssemblyQualifiedName);
+							bool isStandard = AttributeUtils.HasAttribute(t, false,
+								(SettingsProviderAttribute a) => a.ProviderTypeName == typeof(StandardSettingsProvider).AssemblyQualifiedName);
 
 							// exclude non-standard settings groups
 							if (!isStandard)
@@ -88,13 +92,6 @@ namespace ClearCanvas.Common.Configuration
 		private string _description;
 		private string _assemblyQualifiedTypeName;
 		private bool _hasUserScopedSettings;
-
-		/// <summary>
-		/// Default constructor.
-		/// </summary>
-		public SettingsGroupDescriptor()
-		{
-		}
 
 		/// <summary>
 		/// Constructor.

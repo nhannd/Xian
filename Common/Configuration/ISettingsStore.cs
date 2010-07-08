@@ -59,6 +59,11 @@ namespace ClearCanvas.Common.Configuration
         IList<SettingsGroupDescriptor> ListSettingsGroups();
 
         /// <summary>
+		/// Gets the settings group that immediately precedes the one provided.
+		/// </summary>
+		SettingsGroupDescriptor GetPreviousSettingsGroup(SettingsGroupDescriptor group);
+
+        /// <summary>
         /// Lists the settings properties for the specified settings group.
         /// </summary>
         IList<SettingsPropertyDescriptor> ListSettingsProperties(SettingsGroupDescriptor group);
@@ -69,7 +74,6 @@ namespace ClearCanvas.Common.Configuration
         /// <param name="group"></param>
         /// <param name="properties"></param>
         void ImportSettingsGroup(SettingsGroupDescriptor group, List<SettingsPropertyDescriptor> properties);
-
 
         /// <summary>
         /// Obtains the settings values for the specified settings group, user and instance key.  If user is null,
@@ -98,14 +102,5 @@ namespace ClearCanvas.Common.Configuration
 		/// Application-scoped settings are unaffected.
 		/// </remarks>
         void RemoveUserSettings(SettingsGroupDescriptor group, string user, string instanceKey);
-
-        /// <summary>
-        /// Upgrades user settings in the group, effectively importing any settings saved in a previous version
-        /// of the application into the current version.
-        /// </summary>
-		/// <remarks>
-		/// Application-scoped settings are unaffected.
-		/// </remarks>
-		void UpgradeUserSettings(SettingsGroupDescriptor group, string user, string instanceKey);
     }
 }

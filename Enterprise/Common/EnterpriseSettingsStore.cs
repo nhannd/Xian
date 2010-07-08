@@ -31,11 +31,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.Enterprise.Common.Configuration;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Common
 {
@@ -43,7 +42,7 @@ namespace ClearCanvas.Enterprise.Common
     /// This class is an implementation of <see cref="ISettingsStore"/> that uses a <see cref="IConfigurationService"/>
     /// as a back-end storage.
     /// </summary>
-    [ExtensionOf(typeof(SettingsStoreExtensionPoint))]
+    [ExtensionOf(typeof(SettingsStoreExtensionPoint), Enabled = false)]
     public class EnterpriseSettingsStore : ISettingsStore
     {
         public EnterpriseSettingsStore()
@@ -54,32 +53,19 @@ namespace ClearCanvas.Enterprise.Common
 
         public Dictionary<string, string> GetSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey)
         {
-            // choose the anonymous-access service if possible (if there are no user-scoped settings)
-            Type serviceContract = group.HasUserScopedSettings ?
-                typeof(Configuration.IConfigurationService) : typeof(IApplicationConfigurationReadService);
+			Type serviceContract = !String.IsNullOrEmpty(user) ?
+				typeof(IConfigurationService) : typeof(IApplicationConfigurationReadService);
 
-            IApplicationConfigurationReadService service = (IApplicationConfigurationReadService)Platform.GetService(serviceContract);
+			var service = (IApplicationConfigurationReadService)Platform.GetService(serviceContract);
             using (service as IDisposable)
             {
-                Dictionary<string, string> values = new Dictionary<string, string>();
-                SettingsParser parser = new SettingsParser();
+				var values = new Dictionary<string, string>();
+				var parser = new SettingsParser();
 
-                // retrieve the shared settings
-                string sharedDocument = service.GetConfigurationDocument(
+				var userDocument = service.GetConfigurationDocument(
                     new GetConfigurationDocumentRequest(
-                        new ConfigurationDocumentKey(group.Name, group.Version, null, instanceKey))).Content;
-
-                parser.FromXml(sharedDocument, values);
-
-                // if the group contains user-scoped settings, get the user document
-                // and overwrite any values with the user's values
-                if (group.HasUserScopedSettings)
-                {
-                    string userDocument = service.GetConfigurationDocument(
-                                new GetConfigurationDocumentRequest(
                                     new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey))).Content;
                     parser.FromXml(userDocument, values);
-                }
                 return values;
             }
         }
@@ -93,32 +79,23 @@ namespace ClearCanvas.Enterprise.Common
             // the default settings (as specified by the settings group meta-data) and the modified settings,
             // and store that document in the configuration store
 
-            // the reason for storing only the diff is that, when a new version of the plugin(s) is deployed,
-            // the defaults of the new version should take precedence over the defaults of the old version
-            // but should not take precedence over the stored values
-            // the only way to make this distinction is to not store any values that are same as default
-
-
-			Platform.GetService<Configuration.IConfigurationService>(
-				delegate(Configuration.IConfigurationService service)
+			Platform.GetService(delegate(IConfigurationService service)
                 {
                     // first obtain the meta-data for the settings group properties
                     IList<SettingsPropertyDescriptor> properties = ListSettingsProperties(group, service);
 
-                    SettingsParser parser = new SettingsParser();
-                    Dictionary<string, string> values = new Dictionary<string, string>();
+                    var parser = new SettingsParser();
+                    var values = new Dictionary<string, string>();
+
+					var documentKey = new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey);
 
                     // next we obtain any previously stored configuration document for this settings group
-                    string document = service.GetConfigurationDocument(
-						new GetConfigurationDocumentRequest(
-							new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey))).Content;
+					string document = service.GetConfigurationDocument(new GetConfigurationDocumentRequest(documentKey)).Content;
                     parser.FromXml(document, values);
 
                     // update the values that have changed
                     foreach (KeyValuePair<string, string> kvp in dirtyValues)
-                    {
                         values[kvp.Key] = kvp.Value;
-                    }
 
                     // now remove any values that are identical to the default values
                     foreach (SettingsPropertyDescriptor property in properties)
@@ -126,16 +103,22 @@ namespace ClearCanvas.Enterprise.Common
                         string value;
                         if(values.TryGetValue(property.Name, out value))
                         {
-                            if (value.Equals(property.DefaultValue))
+							if (Equals(value, property.DefaultValue))
                                 values.Remove(property.Name);
                         }
                     }
 
+					if (values.Count > 0)
+					{
                     // generate the document and save it
                     document = parser.ToXml(values);
-                    service.SetConfigurationDocument(
-						new SetConfigurationDocumentRequest(
-							new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey), document));
+						service.SetConfigurationDocument(new SetConfigurationDocumentRequest(documentKey, document));
+					}
+					else
+					{
+						// every value is the same as the default, so the document can be removed
+						service.RemoveConfigurationDocument(new RemoveConfigurationDocumentRequest(documentKey));
+					}
                 });
         }
 
@@ -143,19 +126,8 @@ namespace ClearCanvas.Enterprise.Common
         {
             Platform.CheckForNullReference(user, "user");
 
-			Platform.GetService<Configuration.IConfigurationService>(
-				delegate(Configuration.IConfigurationService service)
-                {
-                    service.RemoveConfigurationDocument(
-						new RemoveConfigurationDocumentRequest(
-							new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey)));
-                });
-        }
-
-        public void UpgradeUserSettings(SettingsGroupDescriptor group, string user, string instanceKey)
-        {
-            // TODO implement this later
-            //throw new NotImplementedException();
+        	var documentKey = new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey);
+			Platform.GetService( (IConfigurationService service) => service.RemoveConfigurationDocument(new RemoveConfigurationDocumentRequest(documentKey)));
         }
 
         public IList<SettingsGroupDescriptor> ListSettingsGroups()
@@ -163,28 +135,42 @@ namespace ClearCanvas.Enterprise.Common
             List<SettingsGroupDescriptor> groups = null;
 
             // obtain the list of settings groups
-            Platform.GetService<IApplicationConfigurationReadService>(
-                delegate(IApplicationConfigurationReadService service)
-                {
-                    groups = ListSettingsGroups(service);
-                });
+            Platform.GetService((IApplicationConfigurationReadService service) => groups = ListSettingsGroups(service));
 
             return groups;
         }
+
+		public SettingsGroupDescriptor GetPreviousSettingsGroup(SettingsGroupDescriptor group)
+		{
+			List<SettingsGroupDescriptor> groups = null;
+			ListSettingsGroupsRequest request = new ListSettingsGroupsRequest();
+
+			//TODO/NOTE: I had changed the service interface so the server would return the previous group, but in order to
+			//not have to release enterprise for Summer, I just did this.
+			Platform.GetService((IApplicationConfigurationReadService service) => groups = service.ListSettingsGroups(request).Groups);
+
+			if (groups == null || groups.Count == 0)
+				return null;
+
+			var sameGroup = CollectionUtils.Select(groups, (other) => other.AssemblyQualifiedTypeName == group.AssemblyQualifiedTypeName);
+			var lessEqualGroups = CollectionUtils.Select(sameGroup, (other) => other.Version <= group.Version);
+			if (lessEqualGroups.Count < 2)
+				return null;
+
+			//Sort ascending.
+			lessEqualGroups.Sort((other1, other2) => other1.Version.CompareTo(other2.Version));
+			//The current version is last, the previous is second last.
+			return lessEqualGroups[lessEqualGroups.Count - 2];
+		}
 
         public IList<SettingsPropertyDescriptor> ListSettingsProperties(SettingsGroupDescriptor group)
         {
             // use the configuration service to obtain the properties
             IList<SettingsPropertyDescriptor> properties = null;
-			Platform.GetService<IApplicationConfigurationReadService>(
-                delegate(IApplicationConfigurationReadService service)
-                {
-                    properties = ListSettingsProperties(group, service);
-                });
+			Platform.GetService((IApplicationConfigurationReadService service) => properties = ListSettingsProperties(group, service));
             return properties;
         }
-
-
+		
         public bool SupportsImport
         {
             get { return true; }
@@ -192,12 +178,8 @@ namespace ClearCanvas.Enterprise.Common
 
         public void ImportSettingsGroup(SettingsGroupDescriptor group, List<SettingsPropertyDescriptor> properties)
         {
-            Platform.GetService<Configuration.IConfigurationService>(
-                delegate(Configuration.IConfigurationService service)
-                {
-                    service.ImportSettingsGroup(
-                        new ImportSettingsGroupRequest(group, properties));
-                });
+            Platform.GetService((IConfigurationService service) => 
+									service.ImportSettingsGroup(new ImportSettingsGroupRequest(group, properties)));
         }
 
         #endregion
@@ -210,6 +192,5 @@ namespace ClearCanvas.Enterprise.Common
         {
             return service.ListSettingsProperties(new ListSettingsPropertiesRequest(group)).Properties;
         }
-
     }
 }

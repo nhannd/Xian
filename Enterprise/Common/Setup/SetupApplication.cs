@@ -74,13 +74,24 @@ namespace ClearCanvas.Enterprise.Common.Setup
                     {
                         ImportSettingsGroups();
                     }
+
+					if (cmdLine.MigrateSharedSettings)
+					{
+						MigrateSharedSettings(cmdLine.PreviousExeConfigFilename);
 				}
+            }
             }
 			catch (CommandLineException e)
 			{
 				Console.WriteLine(e.Message);
 			}
         }
+
+		private void MigrateSharedSettings(string previousExeConfigFilename)
+		{
+			foreach (SettingsGroupDescriptor group in SettingsGroupDescriptor.ListInstalledSettingsGroups(false))
+				SettingsMigrator.MigrateSharedSettings(group, previousExeConfigFilename);
+		}
 
         #endregion
 

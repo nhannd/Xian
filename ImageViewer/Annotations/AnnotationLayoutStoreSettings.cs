@@ -37,11 +37,17 @@ namespace ClearCanvas.ImageViewer.Annotations
 {
 	[SettingsGroupDescription("Stores arbitrary text overlay configurations in a common place.")]
 	[SettingsProvider(typeof(StandardSettingsProvider))]
+	[UserSettingsMigrationDisabled]
+	[SharedSettingsMigrationDisabled]
 	internal sealed partial class AnnotationLayoutStoreSettings
 	{
 		private AnnotationLayoutStoreSettings()
 		{
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
+
+		public override void Upgrade()
+		{
+	}
 	}
 }

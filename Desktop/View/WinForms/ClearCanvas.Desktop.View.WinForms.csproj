@@ -237,6 +237,13 @@
     <Compile Include="TrackBarUpDown.Designer.cs">
       <DependentUpon>TrackBarUpDown.cs</DependentUpon>
     </Compile>
+    <Compile Include="UserUpgradeProgressDialog.cs" />
+    <Compile Include="UserUpgradeProgressForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserUpgradeProgressForm.Designer.cs">
+      <DependentUpon>UserUpgradeProgressForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Win32Constants.cs" />
     <Compile Include="WinFormsActionView.cs" />
     <Compile Include="WorkspaceView.cs" />
@@ -597,6 +604,9 @@
     <EmbeddedResource Include="TrackBarUpDown.resx">
       <DependentUpon>TrackBarUpDown.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserUpgradeProgressForm.resx">
+      <DependentUpon>UserUpgradeProgressForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

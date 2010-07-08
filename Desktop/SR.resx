@@ -174,23 +174,11 @@
   <data name="ExceptionObjectWithNameAlreadyExists" xml:space="preserve">
     <value>An object with the name {0} already exists</value>
   </data>
-  <data name="ExceptionOnlyDefaultProfileSupported" xml:space="preserve">
-    <value>Only the default profile is currently supported.  User profiles must be modified via standard means (e.g. Tools/Options).</value>
-  </data>
   <data name="ExceptionReferencePropertyMustBeOfSameType" xml:space="preserve">
     <value>Reference property must be of same type as validating property.</value>
   </data>
   <data name="ExceptionReferenceValueMustBeOfSameType" xml:space="preserve">
     <value>Reference value must be of same type as validating property.</value>
-  </data>
-  <data name="ExceptionRemoveUserSettingNotSupported" xml:space="preserve">
-    <value>Removal of User Settings is not supported.</value>
-  </data>
-  <data name="ExceptionSectionIsNotAClientSection" xml:space="preserve">
-    <value>The specified ConfigurationSection must be of Type ClientSettingsSection (Type is {0}).</value>
-  </data>
-  <data name="ExceptionSettingsPropertyDoesNotExist" xml:space="preserve">
-    <value>The specified settings property does not exist ({0}).</value>
   </data>
   <data name="ExceptionStackComponentCannotExit" xml:space="preserve">
     <value>Component cannot exit because it is not at the top of the component stack.</value>

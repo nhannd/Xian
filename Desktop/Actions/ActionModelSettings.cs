@@ -45,6 +45,8 @@ namespace ClearCanvas.Desktop.Actions
     /// </summary>
 	[SettingsGroupDescription("Stores the action model document that controls ordering and naming of menus and toolbar items.")]
 	[SettingsProvider(typeof(StandardSettingsProvider))]
+	[UserSettingsMigrationDisabled]
+	[SharedSettingsMigrationDisabled]
 	internal sealed partial class ActionModelSettings : IDisposable
     {
 		private XmlDocument _actionModelXmlDoc;
@@ -55,6 +57,10 @@ namespace ClearCanvas.Desktop.Actions
 		private ActionModelSettings()
 		{
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
+		}
+
+		public override void Upgrade()
+		{
 		}
 
 		#region Public Methods

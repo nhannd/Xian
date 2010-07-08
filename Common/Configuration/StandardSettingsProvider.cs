@@ -51,7 +51,7 @@ namespace ClearCanvas.Common.Configuration
 	/// the local file system and an implemetation of <see cref="SettingsStoreExtensionPoint"/>,
 	/// if an extension is found.  All methods on this class are thread-safe, as per MSDN guidelines.
 	/// </remarks>
-    public class StandardSettingsProvider : SettingsProvider, IApplicationSettingsProvider
+    public class StandardSettingsProvider : SettingsProvider, IApplicationSettingsProvider, ISharedApplicationSettingsProvider
     {
         private string _appName;
         private SettingsProvider _sourceProvider;
@@ -104,7 +104,7 @@ namespace ClearCanvas.Common.Configuration
                     Platform.Log(LogLevel.Warn, SR.LogConfigurationStoreNotFound);
 
                     // default to LocalFileSettingsProvider as a last resort
-                    _sourceProvider = new LocalFileSettingsProvider();
+                    _sourceProvider = new ExtendedLocalFileSettingsProvider(new LocalFileSettingsProvider());
                 }
 
                 // init source provider
@@ -134,11 +134,8 @@ namespace ClearCanvas.Common.Configuration
                 foreach (SettingsPropertyValue value in values)
                 {
 					if (value.SerializedValue == null || (value.SerializedValue is string) && ((string)value.SerializedValue) == ((string)value.Property.DefaultValue))
-					{
-						value.SerializedValue = SettingsClassMetaDataReader.TranslateDefaultValue(settingsClass,
-							(string)value.Property.DefaultValue);
+						value.SerializedValue = SettingsClassMetaDataReader.TranslateDefaultValue(settingsClass, (string)value.Property.DefaultValue);
 					}
-                }
                 return values;
             }
         }
@@ -218,6 +215,8 @@ namespace ClearCanvas.Common.Configuration
         {
             lock (_syncLock)
             {
+                lock (_syncLock)
+                {
                 if (_sourceProvider is IApplicationSettingsProvider)
                 {
                     (_sourceProvider as IApplicationSettingsProvider).Upgrade(context, properties);
@@ -228,9 +227,52 @@ namespace ClearCanvas.Common.Configuration
                 }
             }
         }
+        }
 
         #endregion
 
+        #region ISharedApplicationSettingsProvider Members
 
+        public void UpgradeSharedPropertyValues(SettingsContext context, SettingsPropertyCollection properties, string previousExeConfigFilename)
+        {
+            lock (_syncLock)
+            {
+                if (_sourceProvider is ISharedApplicationSettingsProvider)
+                    (_sourceProvider as ISharedApplicationSettingsProvider).UpgradeSharedPropertyValues(context, properties, previousExeConfigFilename);
+    }
+        }
+
+        public SettingsPropertyValueCollection GetPreviousSharedPropertyValues(SettingsContext context, SettingsPropertyCollection properties, string previousExeConfigFilename)
+        {
+            lock (_syncLock)
+            {
+                if (_sourceProvider is ISharedApplicationSettingsProvider)
+                    return (_sourceProvider as ISharedApplicationSettingsProvider).GetPreviousSharedPropertyValues(context, properties, previousExeConfigFilename);
+
+                return new SettingsPropertyValueCollection();
+            }
+        }
+
+        public SettingsPropertyValueCollection GetSharedPropertyValues(SettingsContext context, SettingsPropertyCollection properties)
+        {
+            lock (_syncLock)
+            {
+                if (_sourceProvider is ISharedApplicationSettingsProvider)
+                    return (_sourceProvider as ISharedApplicationSettingsProvider).GetSharedPropertyValues(context, properties);
+                
+                return new SettingsPropertyValueCollection();
+            }
+        }
+
+        public void SetSharedPropertyValues(SettingsContext context, SettingsPropertyValueCollection values)
+        {
+            lock (_syncLock)
+            {
+                if (_sourceProvider is ISharedApplicationSettingsProvider)
+                    (_sourceProvider as ISharedApplicationSettingsProvider).SetSharedPropertyValues(context, values);
+            }
+        }
+
+        #endregion
     }
 }

@@ -45,8 +45,18 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
 	[SettingsGroupDescription("Stores settings such as window size/position and toolstrip alignment.")]
 	[SettingsProvider(typeof(StandardSettingsProvider))]
-	internal sealed partial class DesktopViewSettings
+	internal sealed partial class DesktopViewSettings : IMigrateSettings
 	{
+		#region IMigrateSettings Members
+
+		public void MigrateSettingsProperty(SettingsPropertyMigrationValues migrationValues)
+		{
+			if (migrationValues.PropertyName != "EnableNonPermissibleActions")
+				migrationValues.CurrentValue = migrationValues.PreviousValue;
+		}
+
+		#endregion
+
 		#region Desktop class
 
 		private class Desktop

@@ -37,6 +37,7 @@ using System.Xml;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using System.ComponentModel;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
@@ -211,24 +212,59 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	}
 
 	[SettingsGroupDescription("Stores user options for how display sets are created.")]
-	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-	internal sealed partial class DisplaySetCreationSettings
+	[SettingsProvider(typeof(StandardSettingsProvider))]
+	internal sealed partial class DisplaySetCreationSettings : IMigrateSettings
 	{
 		private DisplaySetCreationSettings()
 		{
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
 
+		#region IMigrateSettings Members
+
+		public void MigrateSettingsProperty(SettingsPropertyMigrationValues migrationValues)
+		{
+			switch (migrationValues.PropertyName)
+			{
+				case "DisplaySetCreationSettingsXml":
+					migrationValues.CurrentValue = migrationValues.PreviousValue;
+					break;
+				case "SingleImageModalities":
+				case "MixedMultiframeModalities":
+					migrationValues.CurrentValue = CombineModalities(
+						migrationValues.CurrentValue as string, 
+						migrationValues.PreviousValue as string);
+					break;
+				default: break;
+			}
+		}
+
+		#endregion
+
+		private static string CombineModalities(string modalities1, string modalities2)
+		{
+			var combined = new SortedDictionary<string, string>();
+			foreach (string modality in GetModalities(modalities1 ?? ""))
+				combined[modality] = modality;
+			foreach (string modality in GetModalities(modalities2 ?? ""))
+				combined[modality] = modality;
+
+			return StringUtilities.Combine(combined.Values, ",");
+		}
+
+		private static List<string> GetModalities(string modalities)
+		{
+			return CollectionUtils.Map(modalities.Split(','), (string s) => s.Trim());
+		}
+
 		public List<string> GetSingleImageModalities()
 		{
-			return CollectionUtils.Map(SingleImageModalities.Split(','),
-			   delegate(string s) { return s.Trim(); });
+			return GetModalities(SingleImageModalities);
 		}
 
 		public List<string> GetMixedMultiframeModalities()
 		{
-			return CollectionUtils.Map(MixedMultiframeModalities.Split(','),
-			   delegate(string s) { return s.Trim(); });
+			return GetModalities(MixedMultiframeModalities);
 		}
 
 		public List<StoredDisplaySetCreationSetting> GetStoredSettings()

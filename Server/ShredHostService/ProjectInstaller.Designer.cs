@@ -59,33 +59,33 @@ namespace ClearCanvas.Server.ShredHostService
         /// </summary>
         private void InitializeComponent()
         {
-            this._serviceProcessInstaller1 = new System.ServiceProcess.ServiceProcessInstaller();
-            this._serviceInstaller1 = new System.ServiceProcess.ServiceInstaller();
+			this._serviceProcessInstaller = new System.ServiceProcess.ServiceProcessInstaller();
+			this._serviceInstaller = new System.ServiceProcess.ServiceInstaller();
             // 
-            // _serviceProcessInstaller1
+			// _serviceProcessInstaller
             // 
-            this._serviceProcessInstaller1.Account = System.ServiceProcess.ServiceAccount.LocalSystem;
-            this._serviceProcessInstaller1.Password = null;
-            this._serviceProcessInstaller1.Username = null;
+			this._serviceProcessInstaller.Account = System.ServiceProcess.ServiceAccount.LocalSystem;
+			this._serviceProcessInstaller.Password = null;
+			this._serviceProcessInstaller.Username = null;
             // 
-            // _serviceInstaller1
+			// _serviceInstaller
             // 
-            this._serviceInstaller1.Description = "Host container process for Shred plugins that run and provide server- and service" +
+			this._serviceInstaller.Description = "Host container process for Shred plugins that run and provide server- and service" +
                 "-like functionality to the suite of ClearCanvas components.";
-            this._serviceInstaller1.DisplayName = "ClearCanvas Shred Host Service";
-            this._serviceInstaller1.ServiceName = "ClearCanvas Shred Host Service";
+			this._serviceInstaller.DisplayName = "ClearCanvas Shred Host Service";
+			this._serviceInstaller.ServiceName = "ClearCanvas Shred Host Service";
             // 
             // ProjectInstaller
             // 
             this.Installers.AddRange(new System.Configuration.Install.Installer[] {
-            this._serviceProcessInstaller1,
-            this._serviceInstaller1});
+            this._serviceProcessInstaller,
+            this._serviceInstaller});
 
         }
 
         #endregion
 
-        private System.ServiceProcess.ServiceProcessInstaller _serviceProcessInstaller1;
-        private System.ServiceProcess.ServiceInstaller _serviceInstaller1;
+        private System.ServiceProcess.ServiceProcessInstaller _serviceProcessInstaller;
+        private System.ServiceProcess.ServiceInstaller _serviceInstaller;
     }
 }

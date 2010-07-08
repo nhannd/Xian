@@ -258,7 +258,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 				double[] values;
 				DicomStringHelper.TryGetDoubleArray(lossyImageCompressionRatios, out values);
-				return values;
+				return values ?? new double[0];
 			}
 		}
 

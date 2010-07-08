@@ -36,6 +36,7 @@ using System.IO;
 using ClearCanvas.Common.Utilities;
 using System.Xml;
 using System.Collections;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -220,7 +221,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 	#endregion
 
-	internal class DicomServerSettings : ShredConfigSection
+	internal class DicomServerSettings : ShredConfigSection, IMigrateSettings
     {
         private static DicomServerSettings _instance;
 
@@ -324,5 +325,24 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
             return clone;
         }
+
+		#region IMigrateSettings Members
+
+		public void MigrateSettingsProperty(SettingsPropertyMigrationValues migrationValues)
+		{
+			switch (migrationValues.PropertyName)
+			{
+				case "HostName":
+				case "AETitle":
+				case "Port":
+				case "InterimStorageDirectory":
+					migrationValues.CurrentValue = migrationValues.PreviousValue;
+					break;
+				default: //Don't migrate the storage sop classes or transfer syntaxes
+					break;
     }
+		}
+
+		#endregion
+	}
 }

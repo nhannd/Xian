@@ -33,12 +33,14 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Xml;
+using ClearCanvas.Common.Configuration;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common
 {
 	// these settings must be stored in a config file, not in the configuration store
 	[SettingsProvider(typeof(LocalFileSettingsProvider))]
+	[SharedSettingsMigrationDisabled]
     internal sealed partial class ExtensionSettings
 	{
         /// <summary>

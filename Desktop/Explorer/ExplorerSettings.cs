@@ -30,17 +30,23 @@
 #endregion
 
 using System.Configuration;
+using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Desktop.Explorer
 {
 	[SettingsGroupDescription("User settings for how/when the explorer is launched.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+	[UserSettingsMigrationDisabled]
 	internal sealed partial class ExplorerSettings
 	{
 		private ExplorerSettings()
 		{
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
+
+		public override void Upgrade()
+		{
+	}
 	}
 }

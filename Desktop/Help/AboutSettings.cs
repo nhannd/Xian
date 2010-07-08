@@ -30,11 +30,13 @@
 #endregion
 
 using System.Configuration;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Desktop.Help
 {
 	[SettingsGroupDescription("Provides settings that allow the About box to be customized.")]
 	[SettingsProvider(typeof(LocalFileSettingsProvider))]
+	[SharedSettingsMigrationDisabled]
 	internal sealed partial class AboutSettings
 	{
 		private AboutSettings()

@@ -38,7 +38,9 @@ using ClearCanvas.Common.Configuration;
 namespace ClearCanvas.Desktop.Help {
 	[SettingsGroupDescription("Configures the behaviour of application Help.")]
 	[SettingsProvider(typeof(StandardSettingsProvider))]
-	partial class HelpSettings {
+	[SharedSettingsMigrationDisabled]
+	partial class HelpSettings
+	{
 		public HelpSettings()
 		{
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);

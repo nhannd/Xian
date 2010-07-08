@@ -30,12 +30,14 @@
 #endregion
 
 using System.Configuration;
+using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Desktop.Help.UpdateTools
 {
 	[SettingsGroupDescription("Settings for the update tools.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+	[SharedSettingsMigrationDisabled]
 	internal sealed partial class Settings
 	{
 		private Settings()

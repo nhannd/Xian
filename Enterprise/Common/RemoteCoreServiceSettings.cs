@@ -30,11 +30,13 @@
 #endregion
 
 using System.Configuration;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Enterprise.Common
 {
 	// these settings must be stored in a config file, not in the configuration store
     [SettingsProvider(typeof(LocalFileSettingsProvider))]
+	[SharedSettingsMigrationDisabled]
     internal sealed partial class RemoteCoreServiceSettings
 	{
         

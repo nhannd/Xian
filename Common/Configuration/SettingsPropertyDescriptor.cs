@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using ClearCanvas.Common.Utilities;
 using System.Runtime.Serialization;
+using System.Configuration;
 
 namespace ClearCanvas.Common.Configuration
 {
@@ -52,20 +53,10 @@ namespace ClearCanvas.Common.Configuration
 		/// </summary>
 		public static List<SettingsPropertyDescriptor> ListSettingsProperties(SettingsGroupDescriptor group)
 		{
-			var settingsClass = Type.GetType(group.AssemblyQualifiedTypeName);
+			Type settingsClass = Type.GetType(group.AssemblyQualifiedTypeName);
 
-			return CollectionUtils.Map<PropertyInfo, SettingsPropertyDescriptor, List<SettingsPropertyDescriptor>>(
-				SettingsClassMetaDataReader.GetSettingsProperties(settingsClass),
-				delegate(PropertyInfo p)
-				{
-					var info = new SettingsPropertyDescriptor(
-						SettingsClassMetaDataReader.GetName(p),
-						SettingsClassMetaDataReader.GetType(p).FullName,
-						SettingsClassMetaDataReader.GetDescription(p),
-						SettingsClassMetaDataReader.GetScope(p),
-						SettingsClassMetaDataReader.GetDefaultValue(p));
-					return info;
-				});
+			return CollectionUtils.Map(SettingsClassMetaDataReader.GetSettingsProperties(settingsClass),
+									   (PropertyInfo property) => new SettingsPropertyDescriptor(property));
 		}
 
 
@@ -76,9 +67,14 @@ namespace ClearCanvas.Common.Configuration
 		private string _defaultValue;
 
 		/// <summary>
-		/// Default constructor.
+		/// Constructor.
 		/// </summary>
-		public SettingsPropertyDescriptor()
+		internal SettingsPropertyDescriptor(PropertyInfo property)
+			: this(SettingsClassMetaDataReader.GetName(property),
+				SettingsClassMetaDataReader.GetType(property).FullName,
+				SettingsClassMetaDataReader.GetDescription(property),
+				SettingsClassMetaDataReader.GetScope(property),
+				SettingsClassMetaDataReader.GetDefaultValue(property))
 		{
 		}
 

@@ -31,6 +31,7 @@
 
 using System.Configuration;
 using ClearCanvas.Desktop;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {

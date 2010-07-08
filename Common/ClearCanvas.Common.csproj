@@ -310,6 +310,34 @@
     <Compile Include="Audit\AuditLog.cs" />
     <Compile Include="Audit\AuditEntryInfo.cs" />
     <Compile Include="Audit\IAuditSink.cs" />
+    <Compile Include="Configuration\ApplicationSettingsExtensions.cs" />
+    <Compile Include="Configuration\ApplicationSettingsHelper.cs" />
+    <Compile Include="Configuration\ConfigurationSectionPath.cs" />
+    <Compile Include="Configuration\ISharedApplicationSettingsProvider.cs" />
+    <Compile Include="Configuration\IMigrateSettings.cs" />
+    <Compile Include="Configuration\ExtendedLocalFileSettingsProvider.cs" />
+    <Compile Include="Configuration\SettingsPropertyExtensions.cs" />
+    <Compile Include="Configuration\Setup\ImportSharedSettingsApplication.cs" />
+    <Compile Include="Configuration\SystemConfigurationHelper.cs" />
+    <Compile Include="Configuration\LocalFileSettingsProviderExtensions.cs" />
+    <Compile Include="Configuration\Setup\MigrateSharedSettingsApplication.cs" />
+    <Compile Include="Configuration\SettingsMigrator.cs" />
+    <Compile Include="Configuration\Tests\SystemConfigurationHelperTests.cs" />
+    <Compile Include="Configuration\Tests\ApplicationSettingsExtensionsTests.cs" />
+    <Compile Include="Configuration\Tests\SettingsTestBase.cs" />
+    <Compile Include="Configuration\Tests\SettingsMigrationTests.cs" />
+    <Compile Include="Configuration\Tests\SimpleSettingsMigrationTests.cs" />
+    <Compile Include="Configuration\Tests\SimpleSettingsStore.cs" />
+    <Compile Include="Configuration\Tests\TestSettingsClasses.cs" />
+    <Compile Include="Configuration\Tests\TestSettingsProvider.cs" />
+    <Compile Include="Configuration\UserUpgradeStep.cs" />
+    <Compile Include="Configuration\UserUpgradeStrategy.cs" />
+    <Compile Include="Configuration\UpgradeSettings.cs" />
+    <Compile Include="Configuration\UpgradeSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>UpgradeSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ExtensionSettings.cs" />
     <Compile Include="ExtensionSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -348,6 +376,12 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="ClassDiagrams\Platform.cd" />
+    <EmbeddedResource Include="Configuration\Tests\TestPreviousConfiguration.config">
+    </EmbeddedResource>
+    <None Include="Configuration\UpgradeSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>UpgradeSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="ExtensionSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ExtensionSettings.Designer.cs</LastGenOutput>

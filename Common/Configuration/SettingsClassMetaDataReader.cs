@@ -30,7 +30,9 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.IO;
 using System.Reflection;
@@ -97,7 +99,13 @@ namespace ClearCanvas.Common.Configuration
         public static ICollection<PropertyInfo> GetSettingsProperties(Type settingsClass)
         {
             return CollectionUtils.Select(settingsClass.GetProperties(),
-                delegate(PropertyInfo property) { return IsUserScoped(property) || IsAppScoped(property); });
+                                          property => IsUserScoped(property) || IsAppScoped(property));
+        }
+
+		public static ICollection<PropertyInfo> GetSettingsProperties(Type settingsClass, SettingScope scope)
+        {
+			return CollectionUtils.Select(GetSettingsProperties(settingsClass), 
+				property => GetScope(property) == scope);
         }
 
         /// <summary>
@@ -107,8 +115,7 @@ namespace ClearCanvas.Common.Configuration
         /// <returns></returns>
         public static bool HasUserScopedSettings(Type settingsClass)
         {
-            return CollectionUtils.Contains(GetSettingsProperties(settingsClass),
-                delegate(PropertyInfo p) { return IsUserScoped(p); });
+            return CollectionUtils.Contains(GetSettingsProperties(settingsClass), IsUserScoped);
         }
 
         /// <summary>
@@ -118,8 +125,7 @@ namespace ClearCanvas.Common.Configuration
         /// <returns></returns>
         public static bool HasAppScopedSettings(Type settingsClass)
         {
-            return CollectionUtils.Contains(GetSettingsProperties(settingsClass),
-                delegate(PropertyInfo p) { return IsAppScoped(p); });
+            return CollectionUtils.Contains(GetSettingsProperties(settingsClass), IsAppScoped);
         }
 
 		/// <summary>
@@ -217,6 +223,25 @@ namespace ClearCanvas.Common.Configuration
         }
 
         /// <summary>
+		/// Determines how a particular property should be serialized based on its type.
+		/// </summary>
+		/// <param name="property">the property whose SerializeAs method is to be determined</param>
+		/// <returns>a <see cref="SettingsSerializeAs"/> value</returns>
+		public static SettingsSerializeAs GetSerializeAs(PropertyInfo property)
+		{
+			object[] serializeAsAttributes = property.GetCustomAttributes(typeof(SettingsSerializeAsAttribute), false);
+			if (serializeAsAttributes.Length > 0)
+				return ((SettingsSerializeAsAttribute)serializeAsAttributes[0]).SerializeAs;
+
+			TypeConverter converter = TypeDescriptor.GetConverter(property.PropertyType);
+			Type stringType = typeof(string);
+			if (converter.CanConvertTo(stringType) && converter.CanConvertFrom(stringType))
+				return SettingsSerializeAs.String;
+
+			return SettingsSerializeAs.Xml;
+		}
+
+    	/// <summary>
         /// Returns the name of the settings property.
         /// </summary>
         public static string GetName(PropertyInfo property)
@@ -237,10 +262,7 @@ namespace ClearCanvas.Common.Configuration
         /// </summary>
         public static bool IsUserScoped(PropertyInfo property)
         {
-            UserScopedSettingAttribute a = CollectionUtils.FirstElement<UserScopedSettingAttribute>(
-                property.GetCustomAttributes(typeof(UserScopedSettingAttribute), false));
-
-            return a != null;
+        	return property.GetCustomAttributes(typeof (UserScopedSettingAttribute), false).Length > 0;
         }
 
         /// <summary>
@@ -248,10 +270,7 @@ namespace ClearCanvas.Common.Configuration
         /// </summary>
         public static bool IsAppScoped(PropertyInfo property)
         {
-            ApplicationScopedSettingAttribute a = CollectionUtils.FirstElement<ApplicationScopedSettingAttribute>(
-                property.GetCustomAttributes(typeof(ApplicationScopedSettingAttribute), false));
-
-            return a != null;
+			return property.GetCustomAttributes(typeof(ApplicationScopedSettingAttribute), false).Length > 0;
         }
     }
 }

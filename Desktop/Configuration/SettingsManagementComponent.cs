@@ -581,10 +581,8 @@ namespace ClearCanvas.Desktop.Configuration
 
 				try
 				{
-					_configStore.PutSettingsValues(
-						_selectedSettingsGroup,
-						null, null,    // save to the default profile
-						values);
+					// save to the default profile
+					_configStore.PutSettingsValues(_selectedSettingsGroup,null, null, values);
 
 					// mark all properties as clean again
 					foreach (SettingsProperty p in _settingsPropertiesTable.Items)

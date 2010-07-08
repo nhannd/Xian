@@ -232,15 +232,6 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Only the default profile is currently supported.  User profiles must be modified via standard means (e.g. Tools/Options)..
-        /// </summary>
-        public static string ExceptionOnlyDefaultProfileSupported {
-            get {
-                return ResourceManager.GetString("ExceptionOnlyDefaultProfileSupported", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Reference property must be of same type as validating property..
         /// </summary>
         public static string ExceptionReferencePropertyMustBeOfSameType {
@@ -255,33 +246,6 @@ namespace ClearCanvas.Desktop {
         public static string ExceptionReferenceValueMustBeOfSameType {
             get {
                 return ResourceManager.GetString("ExceptionReferenceValueMustBeOfSameType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Removal of User Settings is not supported..
-        /// </summary>
-        public static string ExceptionRemoveUserSettingNotSupported {
-            get {
-                return ResourceManager.GetString("ExceptionRemoveUserSettingNotSupported", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The specified ConfigurationSection must be of Type ClientSettingsSection (Type is {0})..
-        /// </summary>
-        public static string ExceptionSectionIsNotAClientSection {
-            get {
-                return ResourceManager.GetString("ExceptionSectionIsNotAClientSection", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The specified settings property does not exist ({0})..
-        /// </summary>
-        public static string ExceptionSettingsPropertyDoesNotExist {
-            get {
-                return ResourceManager.GetString("ExceptionSettingsPropertyDoesNotExist", resourceCulture);
             }
         }
         
