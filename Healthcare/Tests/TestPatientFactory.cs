@@ -35,13 +35,18 @@ using System.Text;
 
 namespace ClearCanvas.Healthcare.Tests
 {
-    internal static class TestPatientFactory
+	public static class TestPatientFactory
     {
-        internal static Patient CreatePatient()
+		public static Patient CreatePatient()
+        {
+        	return CreatePatient("0000111");
+        }
+
+		public static Patient CreatePatient(string mrn)
         {
             Patient patient = new Patient();
             PatientProfile profile = new PatientProfile(
-                new PatientIdentifier("0000111", new InformationAuthorityEnum("UHN", "UHN", "")),
+                new PatientIdentifier(mrn, new InformationAuthorityEnum("UHN", "UHN", "")),
                 null,
                 new HealthcardNumber("1111222333", new InsuranceAuthorityEnum("OHIP", "OHIP", ""), null, null),
                 new PersonName("Roberts", "Bob", null, null, null, null),

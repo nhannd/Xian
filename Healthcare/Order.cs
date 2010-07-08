@@ -131,6 +131,20 @@ namespace ClearCanvas.Healthcare
 		#region Public properties
 
 		/// <summary>
+		/// Gets the patient profile associated with the performing facility of this order.
+		/// </summary>
+		public virtual PatientProfile PatientProfile
+		{
+			get
+			{
+				// we just use the first procedure, because we have an invariant validation rule which specifies that
+				// all procedures must have the same performing facility and therefore the same PatientProfile
+				var procedure = CollectionUtils.FirstElement(_procedures);
+				return procedure == null ? null : procedure.PatientProfile;
+			}
+		}
+
+		/// <summary>
 		/// Gets a value indicating whether this order is in a terminal state.
 		/// </summary>
 		public virtual bool IsTerminated

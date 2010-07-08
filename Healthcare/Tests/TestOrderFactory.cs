@@ -36,20 +36,23 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Healthcare.Tests
 {
-    internal static class TestOrderFactory
+	public static class TestOrderFactory
     {
-        internal static Order CreateOrder(int numProcedures, int numMpsPerProcedure, bool createProcedureSteps)
+		public static Order CreateOrder(int numProcedures, int numMpsPerProcedure, bool createProcedureSteps)
         {
             return CreateOrder(numProcedures, numMpsPerProcedure, createProcedureSteps, true);
         }
-        internal static Order CreateOrder(int numProcedures, int numMpsPerProcedure, bool createProcedureSteps, bool schedule)
+		public static Order CreateOrder(int numProcedures, int numMpsPerProcedure, bool createProcedureSteps, bool schedule)
+		{
+			Patient patient = TestPatientFactory.CreatePatient();
+			Visit visit = TestVisitFactory.CreateVisit(patient);
+			return CreateOrder(patient, visit, "10000001", numProcedures, numMpsPerProcedure, createProcedureSteps, schedule);
+		}
+		public static Order CreateOrder(Patient patient, Visit visit, string accession, int numProcedures, int numMpsPerProcedure, bool createProcedureSteps, bool schedule)
         {
             DateTime? scheduleTime = DateTime.Now;
 
-            Patient patient = TestPatientFactory.CreatePatient();
-            Visit visit = TestVisitFactory.CreateVisit(patient);
             DiagnosticService ds = TestDiagnosticServiceFactory.CreateDiagnosticService(numProcedures);
-            string accession = "10000001";
             string reasonForStudy = "Test";
             ExternalPractitioner orderingPrac = TestExternalPractitionerFactory.CreatePractitioner();
             Facility facility = TestFacilityFactory.CreateFacility();

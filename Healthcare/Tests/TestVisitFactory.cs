@@ -35,13 +35,17 @@ using System.Text;
 
 namespace ClearCanvas.Healthcare.Tests
 {
-    internal static class TestVisitFactory
+    public static class TestVisitFactory
     {
-        internal static Visit CreateVisit(Patient patient)
+		public static Visit CreateVisit(Patient patient)
+        {
+        	return CreateVisit(patient, "10001111");
+        }
+		public static Visit CreateVisit(Patient patient, string visitNumber)
         {
             Visit visit = new Visit(
                 patient,
-                new VisitNumber("10001111", new InformationAuthorityEnum("UHN", "UHN", "")),
+				new VisitNumber(visitNumber, new InformationAuthorityEnum("UHN", "UHN", "")),
                 VisitStatus.AA,
                 DateTime.Now - TimeSpan.FromDays(2),
                 null,

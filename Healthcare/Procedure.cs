@@ -56,6 +56,17 @@ namespace ClearCanvas.Healthcare
 
 		#region Public Properties
 
+		/// <summary>
+		/// Gets the patient profile associated with the performing facility of this procedure.
+		/// </summary>
+		public virtual PatientProfile PatientProfile
+		{
+			get
+			{
+				return CollectionUtils.SelectFirst(_order.Patient.Profiles,
+					profile => Equals(profile.Mrn.AssigningAuthority, _performingFacility.InformationAuthority));
+			}
+		}
 
 		/// <summary>
 		/// Returns true if this procedure is pre check-in (patient has not yet checked-in).
@@ -246,7 +257,7 @@ namespace ClearCanvas.Healthcare
 		public virtual void AddProcedureStep(ProcedureStep step)
 		{
 			if ((step.Procedure != null && step.Procedure != this) || step.State != ActivityStatus.SC)
-				throw new ArgumentException("Only new ProcedureStep objects may be added to an order.");
+				throw new ArgumentException("Only new ProcedureStep objects may be added to a procedure.");
 
 			step.Procedure = this;
 			this.ProcedureSteps.Add(step);
