@@ -99,15 +99,32 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 		[Test]
 		public void TestInvalidConstructionFromClosedPolyline()
 		{
-			PolylineGraphic plg = new PolylineGraphic();
-			plg.Points.Add(new PointF(0, 0));
-			Assert.IsNull(new PolygonalRoi(plg).Polygon);
+			try
+			{
+				PolylineGraphic plg = new PolylineGraphic();
+				plg.Points.Add(new PointF(0, 0));
+				var polygon = new PolygonalRoi(plg).Polygon;
+				Assert.Fail("PolygonalRoi constructor should have thrown an exception");
+			}
+			catch (ArgumentException)
+			{
+			}
 
-			PolylineGraphic plg2 = new PolylineGraphic();
-			plg2.Points.Add(new PointF(0, 0));
-			plg2.Points.Add(new PointF(0, 0));
-			Assert.IsNull(new PolygonalRoi(plg2).Polygon);
+			try
+			{
+				PolylineGraphic plg2 = new PolylineGraphic();
+				plg2.Points.Add(new PointF(0, 0));
+				plg2.Points.Add(new PointF(0, 0));
+				var polygon = new PolygonalRoi(plg2).Polygon;
+				Assert.Fail("PolygonalRoi constructor should have thrown an exception");
+			}
+			catch (ArgumentException)
+			{
+			}
 
+			//TODO (CR May 2010): this case should also throw an exception, really,
+			//but we'll live with it like this until we can make the changes
+			//from the March 2010 code review.
 			PolylineGraphic plg3 = new PolylineGraphic();
 			plg3.Points.Add(new PointF(0, 0));
 			plg3.Points.Add(new PointF(1, 1));
