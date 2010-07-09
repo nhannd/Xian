@@ -41,6 +41,7 @@ namespace ClearCanvas.Healthcare
 	/// <summary>
 	/// Abstract base class for protocoling worklists.
 	/// </summary>
+	[WorklistProcedureTypeGroupClass(typeof(ReadingGroup))]
 	[WorklistCategory("WorklistCategoryProtocoling")]
 	public abstract class ProtocolingWorklist : Worklist
 	{
