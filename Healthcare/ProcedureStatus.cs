@@ -73,5 +73,11 @@ namespace ClearCanvas.Healthcare {
         /// </summary>
         [EnumValue("In Progress", Description = "In process, unspecified")]
         IP,
-    }
+
+		/// <summary>
+		/// Ghost
+		/// </summary>
+		[EnumValue("Ghost", Description = "Ghost of procedure that was moved to another order")]
+		GH,
+	}
 }

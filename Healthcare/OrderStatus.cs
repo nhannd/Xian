@@ -84,7 +84,7 @@ namespace ClearCanvas.Healthcare {
 		/// <summary>
 		/// Merged
 		/// </summary>
-		[EnumValue("Merged", Description = "Order was merged")]
+		[EnumValue("Merged", Description = "Order was merged into another order")]
 		MG,
 	}
 }

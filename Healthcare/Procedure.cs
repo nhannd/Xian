@@ -398,14 +398,17 @@ namespace ClearCanvas.Healthcare
 		}
 
 		/// <summary>
-		/// Create a copy of the current procedure without any collections.
+		/// Creates a ghost copy of this procedure.
 		/// </summary>
-		/// <param name="resultStatus"></param>
-		/// <returns></returns>
-		public virtual Procedure CreatePlaceHolder(ProcedureStatus resultStatus)
+		/// <remarks>
+		/// The ghost copy is what remains attached to an order that was merged into another order.
+		/// It has no procedure steps, reports, protocols, etc.
+		/// </remarks>
+		/// <returns></returns> 
+		public virtual Procedure CreateGhostCopy()
 		{
 			return new Procedure(this.Order, this.Type, this.Index, new HashedSet<ProcedureStep>(),
-								this.ScheduledStartTime, this.SchedulingCode, this.StartTime, this.EndTime, resultStatus,
+								this.ScheduledStartTime, this.SchedulingCode, this.StartTime, this.EndTime, ProcedureStatus.GH,
 								this.PerformingFacility, this.PerformingDepartment,
 								this.Laterality, this.Portable, this.ProcedureCheckIn, this.ImageAvailability,
 								this.DowntimeRecoveryMode,

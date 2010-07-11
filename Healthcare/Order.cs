@@ -269,9 +269,9 @@ namespace ClearCanvas.Healthcare
 				n.Order = destinationOrder;
 			}
 
-			// Create a copy of the original procedures (with empty collections) before it is added to the destination
-			// Theese place holder procedures are required for HL7 messages.
-			var placeHolderClonedProcedures = CollectionUtils.Map<Procedure, Procedure>(this.Procedures, p => p.CreatePlaceHolder(ProcedureStatus.CA));
+			// Create ghost copies of the original procedures before it is added to the destinations
+			// Theese ghost procedures are required for HL7 messages.
+			var ghostProcedures = CollectionUtils.Map<Procedure, Procedure>(this.Procedures, p => p.CreateGhostCopy());
 
 			// generate an index for the destination procedure
 			var highestIndex = CollectionUtils.Max(
@@ -289,9 +289,8 @@ namespace ClearCanvas.Healthcare
 			// update destination scheduling information
 			destinationOrder.UpdateScheduling();
 
-			// Add each place holder procedures back to the source order.
-			foreach (var newClonedProcedure in placeHolderClonedProcedures)
-				this.Procedures.Add(newClonedProcedure);
+			// Add ghost procedures back to the source order.
+			_procedures.AddAll(ghostProcedures);
 
 			// Set source order to merged status
 			SetStatus(OrderStatus.MG);
