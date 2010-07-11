@@ -20,7 +20,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 			// join protocol object, because may have criteria on this object
 			from.Joins.Add(HqlConstants.JoinProtocol);
 
-			//TODO: we can really only apply this condition if there is only one procedure step class, but what about otherwise?
+			// check if we need to apply the "most recent step" condition
+			// this is essentially a workaround to avoid showing duplicates in some worklist results
+			// we can only apply this workaround when there is exactly one ps class specified
+			// fortunately, there are no use cases yet where more than one ps class is specified
+			// that require the workaround
 			if (args.ProcedureStepClasses.Length == 1)
 			{
 				var psClass = CollectionUtils.FirstElement(args.ProcedureStepClasses);

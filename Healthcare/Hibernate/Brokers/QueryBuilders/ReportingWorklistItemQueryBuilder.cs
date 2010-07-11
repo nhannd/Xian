@@ -22,7 +22,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 			from.Joins.Add(HqlConstants.JoinReportPart);
 			from.Joins.Add(HqlConstants.JoinReport);
 
-			//TODO: we can really only apply this condition if there is only one procedure step class, but what about otherwise?
+			// check if we need to apply the "most recent step" condition
+			// this is essentially a workaround to avoid showing duplicates in some worklist results
+			// we can only apply this workaround when there is exactly one ps class specified
+			// fortunately, there are no use cases yet where more than one ps class is specified
+			// that require the workaround
 			if (args.ProcedureStepClasses.Length == 1 && CollectionUtils.FirstElement(args.ProcedureStepClasses) == typeof(PublicationStep))
 				query.Conditions.Add(ConditionMostRecentPublicationStep);
 		}
