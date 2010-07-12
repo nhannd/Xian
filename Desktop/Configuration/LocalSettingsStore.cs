@@ -93,7 +93,7 @@ namespace ClearCanvas.Desktop.Configuration
 
 			Type type = Type.GetType(group.AssemblyQualifiedTypeName, true);
             SystemConfigurationHelper.PutSettingsValues(_configuration, type, dirtyValues);
-			}
+		}
 
 		/// <summary>
 		/// Unsupported.  An exception will always be thrown.

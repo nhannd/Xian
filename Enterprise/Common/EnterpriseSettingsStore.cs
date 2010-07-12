@@ -42,7 +42,7 @@ namespace ClearCanvas.Enterprise.Common
     /// This class is an implementation of <see cref="ISettingsStore"/> that uses a <see cref="IConfigurationService"/>
     /// as a back-end storage.
     /// </summary>
-    [ExtensionOf(typeof(SettingsStoreExtensionPoint), Enabled = false)]
+    [ExtensionOf(typeof(SettingsStoreExtensionPoint))]
     public class EnterpriseSettingsStore : ISettingsStore
     {
         public EnterpriseSettingsStore()
