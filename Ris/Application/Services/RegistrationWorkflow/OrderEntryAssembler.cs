@@ -164,6 +164,10 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				return;
 			}
 
+			// The following properties are appropriate only for procedures in SC status.
+			if (!IsProcedureModifiable(procedure))
+				return;
+
 			procedure.Schedule(requisition.ScheduledTime);
 			procedure.SchedulingCode = EnumUtils.GetEnumValue<SchedulingCodeEnum>(requisition.SchedulingCode, context);
 
@@ -188,7 +192,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		// better place to put it right now
 		// note that the notion of "modifiable" here is specific to the idea of a "requisition"
 		// The "requisition" is modifiable only as long as the procedure is in the SC status
-		private bool IsProcedureModifiable(Procedure procedure)
+		private static bool IsProcedureModifiable(Procedure procedure)
 		{
 			return procedure.Status == ProcedureStatus.SC;
 		}
