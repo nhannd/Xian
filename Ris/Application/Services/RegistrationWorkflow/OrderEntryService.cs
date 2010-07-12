@@ -204,9 +204,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 			var order = PlaceOrderHelper(request.Requisition);
 
-			ValidatePatientProfilesExist(order);
 			ValidateVisitsExist(order);
-			ValidatePerformingDepartments(order);
 
 			// ensure the new order is assigned an OID before using it in the return value
 			this.PersistenceContext.SynchState();
@@ -232,9 +230,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			assembler.UpdateOrderFromRequisition(order, request.Requisition, this.CurrentUserStaff, this.PersistenceContext);
 
 			UpdateProceduresHelper(order, request.Requisition.Procedures);
-			ValidatePatientProfilesExist(order);
 			ValidateVisitsExist(order);
-			ValidatePerformingDepartments(order);
 
 			this.PersistenceContext.SynchState();
 
@@ -260,9 +256,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 			// place new order
 			var newOrder = PlaceOrderHelper(request.Requisition);
-			ValidatePatientProfilesExist(newOrder);
 			ValidateVisitsExist(newOrder);
-			ValidatePerformingDepartments(newOrder);
 
 			// cancel existing order
 			CancelOrderHelper(orderToReplace, new OrderCancelInfo(reason, this.CurrentUserStaff, null, newOrder));
@@ -493,19 +487,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				throw new RequestValidationException("Downtime orders cannot be replaced.  You must cancel the order and create a new one.");
 		}
 
-		// TODO: ideally this should be done in the model layer
-		private static void ValidatePatientProfilesExist(Order order)
-		{
-			foreach (var procedure in order.Procedures)
-			{
-				var hasProfile = CollectionUtils.Contains(order.Patient.Profiles,
-										profile => profile.Mrn.AssigningAuthority.Equals(procedure.PerformingFacility.InformationAuthority));
-				if (!hasProfile)
-					throw new RequestValidationException(string.Format("{0} is not a valid performing facility for this patient because the patient does not have a demographics profile for this facility.",
-						procedure.PerformingFacility.Name));
-			}
-		}
-
 		private void ValidateVisitsExist(Order order)
 		{
 			foreach (var procedure in order.Procedures)
@@ -524,18 +505,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 					throw new RequestValidationException(string.Format("{0} is not a valid performing facility for this patient because the patient does not have an active visit for this facility.",
 						procedure.PerformingFacility.Name));
 				}
-			}
-		}
-
-		// TODO: ideally this should be done in the model layer
-		private static void ValidatePerformingDepartments(Order order)
-		{
-			foreach (var procedure in order.Procedures)
-			{
-				var valid = procedure.PerformingDepartment == null || procedure.PerformingFacility.Departments.Contains(procedure.PerformingDepartment);
-				if (!valid)
-					throw new RequestValidationException(string.Format("{0} is not a valid performing department for this performing facility.",
-						procedure.PerformingDepartment.Name));
 			}
 		}
 

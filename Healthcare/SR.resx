@@ -576,4 +576,10 @@
   <data name="MessageValidateExternalPractitionerRequiresExactlyOneDefaultContactPoint" xml:space="preserve">
     <value>An active external practitioner requires exactly one default contact point.</value>
   </data>
+  <data name="MessageValidateProcedurePatientProfile" xml:space="preserve">
+    <value>A patient profile for the performing facilty must exist.</value>
+  </data>
+  <data name="MessageValidateProcedurePerformingFacilityAndDepartment" xml:space="preserve">
+    <value>A procedure's performing department must be part of its performing facility.</value>
+  </data>
 </root>

@@ -626,7 +626,28 @@ namespace ClearCanvas.Healthcare
 					return new TestResult(hasSameDepartment, SR.MessageValidateOrderPerformingDepartments);
 				});
 
-			return new ValidationRuleSet(new[] { samePerformingFacilityRule, samePerformingDepartmentRule });
+			var performingDepartmentIsInPerformingFacilityRule = new ValidationRule<Procedure>(
+				delegate(Procedure procedure)
+				{
+					var performingDepartmentIsInPerformingFacility = procedure.PerformingDepartment == null
+						|| procedure.PerformingFacility == procedure.PerformingDepartment.Facility;
+					return new TestResult(performingDepartmentIsInPerformingFacility, SR.MessageValidateProcedurePerformingFacilityAndDepartment);
+				});
+
+			var patientProfileExistsForPerformingFacilityRule = new ValidationRule<Procedure>(
+				delegate(Procedure procedure)
+				{
+					var patientProfileExists = procedure.PatientProfile != null;
+					return new TestResult(patientProfileExists, SR.MessageValidateProcedurePatientProfile);
+				});
+
+			return new ValidationRuleSet(new[]
+			{
+				samePerformingFacilityRule, 
+				samePerformingDepartmentRule, 
+				performingDepartmentIsInPerformingFacilityRule, 
+				patientProfileExistsForPerformingFacilityRule
+			});
 		}
 	}
 }
