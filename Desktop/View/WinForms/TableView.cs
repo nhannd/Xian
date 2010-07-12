@@ -1209,7 +1209,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             if (sortColumn != null)
             {
-                var sortParams = new TableSortParams(sortColumn, _table.SortParams.Ascending);
+                var direction = _table.SortParams == null ? true : _table.SortParams.Ascending;
+                var sortParams = new TableSortParams(sortColumn, direction);
                 _table.Sort(sortParams);
             }
         }

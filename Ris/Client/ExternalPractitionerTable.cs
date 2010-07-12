@@ -31,18 +31,23 @@ namespace ClearCanvas.Ris.Client
 	/// </summary>
 	public class ExternalPractitionerWorkflowTable : Table<ExternalPractitionerSummary>
 	{
+		private readonly ITableColumn _timeColumn;
 		private PropertyInfo _timeInfo;
 
 		public ExternalPractitionerWorkflowTable()
 		{
+
 			this.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnName
 				, item => PersonNameFormat.Format(item.Name), 1.0f));
 			this.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnLicenseNumber,
 				item => item.LicenseNumber, 0.5f));
 			this.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnBillingNumber,
 				item => item.BillingNumber, 0.5f));
-			this.Columns.Add(new DateTimeTableColumn<ExternalPractitionerSummary>(SR.ColumnTime,
+			this.Columns.Add(_timeColumn = new DateTimeTableColumn<ExternalPractitionerSummary>(SR.ColumnTime,
 				item => _timeInfo == null ? item.LastVerifiedTime : (DateTime?)_timeInfo.GetValue(item, null), 0.75f));
+
+			// Perform initial sort
+			this.Sort(new TableSortParams(_timeColumn, true));
 		}
 
 		public string PropertyNameForTimeColumn
@@ -56,5 +61,23 @@ namespace ClearCanvas.Ris.Client
 					_timeInfo = info;
 			}
 		}
+
+		public bool SortAscending
+		{
+			get { return this.SortParams == null ? true : this.SortParams.Ascending; }
+			set
+			{
+				if (this.SortParams == null)
+				{
+					this.Sort(new TableSortParams(_timeColumn, value));
+				}
+				else
+				{
+					var newSortParams = new TableSortParams(this.SortParams.Column, value);
+					this.Sort(newSortParams);
+				}
+			}
+		}
+
 	}
 }

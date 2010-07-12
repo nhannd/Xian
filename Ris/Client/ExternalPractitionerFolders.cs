@@ -10,7 +10,7 @@ namespace ClearCanvas.Ris.Client
 	internal class UnverifiedFolder : ExternalPractitionerFolder
 	{
 		public UnverifiedFolder()
-			: base(new ExternalPractitionerWorkflowTable { PropertyNameForTimeColumn = "LastEditedTime" })
+			: base(new ExternalPractitionerWorkflowTable { PropertyNameForTimeColumn = "LastEditedTime", SortAscending = true})
 		{
 		}
 
@@ -28,7 +28,7 @@ namespace ClearCanvas.Ris.Client
 	internal class VerifiedTodayFolder : ExternalPractitionerFolder
 	{
 		public VerifiedTodayFolder()
-			: base(new ExternalPractitionerWorkflowTable { PropertyNameForTimeColumn = "LastVerifiedTime" })
+			: base(new ExternalPractitionerWorkflowTable { PropertyNameForTimeColumn = "LastVerifiedTime", SortAscending = false})
 		{
 		}
 

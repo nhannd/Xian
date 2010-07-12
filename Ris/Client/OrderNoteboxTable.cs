@@ -44,6 +44,7 @@ namespace ClearCanvas.Ris.Client
 	public class OrderNoteboxTable : Table<OrderNoteboxItemSummary>
 	{
 		private const int NumRows = 4;
+		private readonly DateTimeTableColumn<OrderNoteboxItemSummary> _postTimeColumn;
 
 		public OrderNoteboxTable()
 			: this(NumRows)
@@ -82,13 +83,19 @@ namespace ClearCanvas.Ris.Client
 
 			this.Columns.Add(new TableColumn<OrderNoteboxItemSummary, string>(SR.ColumnFrom,
 				item => item.OnBehalfOfGroup != null
-						? String.Format(SR.FormatFromOnBehalf, StaffNameAndRoleFormat.Format(item.Author), item.OnBehalfOfGroup.Name, item.PostTime)
-						: String.Format(SR.FormatFrom, StaffNameAndRoleFormat.Format(item.Author), item.PostTime),
+					? String.Format(SR.FormatFromOnBehalf, StaffNameAndRoleFormat.Format(item.Author), item.OnBehalfOfGroup.Name, item.PostTime)
+					: String.Format(SR.FormatFrom, StaffNameAndRoleFormat.Format(item.Author), item.PostTime),
 				1.0f, 2));
 
 			this.Columns.Add(new TableColumn<OrderNoteboxItemSummary, string>(SR.ColumnTo,
 				item => String.Format(SR.FormatTo, RecipientsList(item.StaffRecipients, item.GroupRecipients)),
 				1.0f, 3));
+
+			this.Columns.Add(_postTimeColumn = new DateTimeTableColumn<OrderNoteboxItemSummary>(SR.ColumnPostTime,
+				item => item.PostTime));
+			_postTimeColumn.Visible = false;
+
+			this.Sort(new TableSortParams(_postTimeColumn, false));
 		}
 
 		/* this isn't needed right now, because acknowledged notes are never shown.
