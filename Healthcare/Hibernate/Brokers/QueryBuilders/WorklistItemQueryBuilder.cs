@@ -39,8 +39,12 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 			}
 			else
 			{
+				// either 0 or > 1 classes were specified
 				query.Froms.Add(new HqlFrom(typeof(ProcedureStep).Name, "ps", WorklistJoins));
-				query.Conditions.Add(HqlCondition.IsOfClass("ps", procedureStepClasses));
+				if(procedureStepClasses.Length > 1)
+				{
+					query.Conditions.Add(HqlCondition.IsOfClass("ps", procedureStepClasses));
+				}
 			}
 		}
 
