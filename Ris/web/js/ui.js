@@ -1203,7 +1203,7 @@ var Field =
 	
 	setPreFormattedValue: function(element, value)
 	{
-		element.innerHTML = (value === undefined || value === null) ? "" : (value + "").replaceLineBreak();
+		element.innerHTML = String.replaceLineBreak(value);
 	},
 
 	getValue: function(element)

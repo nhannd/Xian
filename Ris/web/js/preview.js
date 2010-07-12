@@ -1150,10 +1150,7 @@ Preview.ReportPreview = function () {
 		if (!reportText)
 			return "";
 			
-		// #5423: ensure that the reportText object is actually a string (not a Number or Date or whatever)	
-		reportText = String(reportText);		
-
-		return reportText.replaceLineBreak();
+		return String.replaceLineBreak(reportText);
 	}
 
 	var _formatReportStatus = function(report, isAddendum)
@@ -1780,18 +1777,18 @@ Preview.OrderNoteSection = function() {
 			{
 				html += '	<tr id="acknowledgedRow" class="orderNoteHeading">';
 				html += '		<td colspan="3" NOWRAP valign="top"><span style="{padding-right: 5px;}" class="orderNoteLabel">Acknowledged By:</span>';
-				html += '		' + _formatAcknowledged(acknowledgedGroups, acknowledgedStaffs).replaceLineBreak() + '<div id="acknowledged"></td>';
+				html += '		' + String.replaceLineBreak(_formatAcknowledged(acknowledgedGroups, acknowledgedStaffs)) + '<div id="acknowledged"></td>';
 				html += '	</tr>';
 			}
 			if (notAcknowledgedGroups.length > 0 || notAcknowledgedStaffs.length > 0)
 			{
 				html += '	<tr id="notAcknowledgedRow" class="orderNoteHeading">';
 				html += '		<td valign="top" colspan="3"><span style="{padding-right: 5px;}" class="orderNoteLabel">Waiting For Acknowledgement:</span>';
-				html += '		<B>' + _formatNotAcknowledged(notAcknowledgedGroups, notAcknowledgedStaffs).replaceLineBreak() + '</B></td>';
+				html += '		<B>' + String.replaceLineBreak(_formatNotAcknowledged(notAcknowledgedGroups, notAcknowledgedStaffs)) + '</B></td>';
 				html += '	</tr>';
 			}
 			html += '	<tr>';
-			html += '		<td colspan="3" class="orderNote">' +  note.NoteBody.replaceLineBreak() + '</td>';
+			html += '		<td colspan="3" class="orderNote">' +  String.replaceLineBreak(note.NoteBody) + '</td>';
 			html += '	</tr>';
 			html += '</table>';
 			
@@ -1889,7 +1886,7 @@ Preview.ConversationNote = function() {
 			if (acknowledgedGroups.length > 0 || acknowledgedStaffs.length > 0) {
 				html += '	<tr id="acknowledgedRow">';
 				html += '		<td colspan="2" NOWRAP valign="top"><span style="{color: #205F87; font-weight: bold; padding-right: 10px;}">Acknowledged By:</span>';
-				html += '		' + _formatAcknowledged(acknowledgedGroups, acknowledgedStaffs).replaceLineBreak() + '<div id="acknowledged"></td>';
+				html += '		' + String.replaceLineBreak(_formatAcknowledged(acknowledgedGroups, acknowledgedStaffs)) + '<div id="acknowledged"></td>';
 				html += '	</tr>';
 			}
 			if (notAcknowledgedGroups.length > 0 || notAcknowledgedStaffs.length > 0) {
@@ -1897,14 +1894,14 @@ Preview.ConversationNote = function() {
 				html += note.CanAcknowledge
 						? '		<td valign="middle" colspan="2" ><input type="checkbox" id="' + checkBoxId + '"/><span style="{margin-left: 5px; margin-right: 10px;}">Waiting For Acknowledgement:</span>'
 						: '		<td colspan="2" NOWRAP valign="top"><span style="{padding-right: 10px;}">Waiting For Acknowledgement:</span>';
-				html += '		' + _formatNotAcknowledged(notAcknowledgedGroups, notAcknowledgedStaffs).replaceLineBreak() + '</td>';
+				html += '		' + String.replaceLineBreak(_formatNotAcknowledged(notAcknowledgedGroups, notAcknowledgedStaffs)) + '</td>';
 				html += '	</tr>';
 			}
 			html += '   </table>';
 			html += '   </td><td class="ConversationNote_right_upper"></td></tr>';
 			html += '   <tr><td class="ConversationNote_left_lower"></td><td class="ConversationNote_content_lower"><table>'
 			html += '	<tr>';
-			html += '		<td colspan="4" style="{text-align:justify;}"><div class="ConversationNoteMessage">' +  note.NoteBody.replaceLineBreak() + '</div></td>';
+			html += '		<td colspan="4" style="{text-align:justify;}"><div class="ConversationNoteMessage">' +  String.replaceLineBreak(note.NoteBody) + '</div></td>';
 			html += '	</tr>';
 			html += '   </table>';
 			html += '</td><td class="ConversationNote_right_lower"></td></tr>';
