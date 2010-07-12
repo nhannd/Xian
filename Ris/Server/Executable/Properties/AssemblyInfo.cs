@@ -36,11 +36,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Executable")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("ClearCanvas Executable")]
+[assembly: AssemblyDescription("Console bootstrapper")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Executable")]
+[assembly: AssemblyCompany("ClearCanvas Inc.")]
+[assembly: AssemblyProduct("ClearCanvas.Executable")]
 [assembly: AssemblyCopyright("Copyright (c) 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
