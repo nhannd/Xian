@@ -101,25 +101,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return string.Format(SR.FormatMprWorkspaceTitle, StringUtilities.Combine(this.Volumes, String.Format(" {0} ", SR.VolumeLabelSeparator), delegate(IMprVolume volume) { return volume.Description; }));
 		}
 
-		protected override IEnumerable CreateTools()
-		{
-			ArrayList results = new ArrayList();
-			foreach (object tool in base.CreateTools())
-				results.Add(tool);
-
-			foreach (object tool in new MprViewerToolExtensionPoint().CreateExtensions())
-				results.Add(tool);
-			
-			return results;
-		}
-
-		protected override ImageViewerToolContext CreateToolContext()
-		{
-			return new MprViewerToolContext(this);
-		}
-
 		protected override void Dispose(bool disposing)
 		{
+			base.Dispose(disposing);
+
 			if (disposing)
 			{
 				if (_mprWorkspace != null)
@@ -134,26 +119,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 					_volumes = null;
 				}
 			}
-
-			base.Dispose(disposing);
 		}
-
-		#region Tool Context
-
-		private class MprViewerToolContext : ImageViewerToolContext, IMprViewerToolContext
-		{
-			public MprViewerToolContext(MprViewerComponent viewer)
-				: base(viewer)
-			{
-			}
-
-			public new MprViewerComponent Viewer
-			{
-				get { return (MprViewerComponent)base.Viewer; }
-			}
-		}
-
-		#endregion
 
 		#region MprWorkspace
 

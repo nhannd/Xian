@@ -99,9 +99,7 @@ namespace ClearCanvas.Desktop.Actions
 		/// </summary>
 		/// <remarks>
 		/// This method functions similarly to <see cref="BuildAndSynchronize"/> except that the resulting action model
-		/// consists solely of <see cref="AbstractAction"/>s which cannot actually perform any actions on tools nor components.
-		/// Additionally, the action model is constructed for all the actions for which the XML model specifies, thus presenting
-		/// a complete action model suitable for action model configuration interfaces.
+		/// consists solely of <see cref="AbstractAction"/>s which are not actually associated with any concrete actions on tools or components.
 		/// </remarks>
 		/// <param name="namespace">A namespace to qualify the site.</param>
 		/// <param name="site">The site.</param>
@@ -155,12 +153,6 @@ namespace ClearCanvas.Desktop.Actions
 							if (actionMap.ContainsKey(actionId))
 							{
 								abstractActions.Add(AbstractAction.Create(actionMap[actionId]));
-							}
-							else
-							{
-								string actionPath = childElement.GetAttribute("path");
-								if (!string.IsNullOrEmpty(actionPath))
-									abstractActions.Add(AbstractAction.Create(actionId, actionPath, !string.IsNullOrEmpty(childElement.GetAttribute("keystroke"))));
 							}
 						}
 						catch (Exception ex)

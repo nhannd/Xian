@@ -48,11 +48,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 	[DropDownButtonAction("dropdown", "global-toolbars/ToolbarMpr/ToolbarReslice", "ActivateLastSelected", "DropDownModel")]
 	[MouseButtonIconSet("dropdown", IconScheme.Colour, "Icons.ResliceToolSmall.png", "Icons.ResliceToolMedium.png", "Icons.ResliceToolLarge.png")]
 	[CheckedStateObserver("dropdown", "Active", "ActivationChanged")]
+	[EnabledStateObserver("dropdown", "Visible", "VisibleChanged")]
+	[VisibleStateObserver("dropdown", "Visible", "VisibleChanged")]
 	[LabelValueObserver("dropdown", "Label", "SelectedToolChanged")]
 	[TooltipValueObserver("dropdown", "Tooltip", "TooltipChanged")]
 	[GroupHint("dropdown", "Tools.Volume.MPR.Reslicing")]
 	[MouseToolButton(XMouseButtons.Left, false)]
-	[ExtensionOf(typeof (MprViewerToolExtensionPoint))]
+	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	public partial class ResliceToolGroup : MouseImageViewerToolGroup<MprViewerTool>
 	{
 		private static readonly Color[,] _colors = {
@@ -66,6 +68,18 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 		                                           };
 
 		private ResliceTool _lastSelectedTool;
+		private bool _visible = true;
+
+		public bool Visible
+		{
+			get { return _visible; }
+		}
+
+		public event EventHandler VisibleChanged
+		{
+			add { }
+			remove { }
+		}
 
 		protected override IEnumerable<MprViewerTool> CreateTools()
 		{
@@ -103,7 +117,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 			base.Initialize();
 			base.TooltipPrefix = SR.MenuReslice;
 
-			_resliceToolGroupState = new ResliceToolGroupState(this);
+			_visible = this.ImageViewer != null;
+			_resliceToolGroupState = this.ImageViewer != null ? new ResliceToolGroupState(this) : null;
 
 			this.InitializeResetAll();
 			if (this.ImageViewer != null)

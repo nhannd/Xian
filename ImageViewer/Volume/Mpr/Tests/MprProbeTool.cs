@@ -42,7 +42,6 @@ using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Volume.Mpr.Tools;
 using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
@@ -52,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[GroupHint("activate", "Tools.Volume.MPR.Reslicing")]
 	[MouseToolButton(XMouseButtons.Left, false)]
-	[ExtensionOf(typeof (MprViewerToolExtensionPoint))]
+	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	public class MprProbeTool : MouseImageViewerTool
 	{
 		private Tile _selectedTile;

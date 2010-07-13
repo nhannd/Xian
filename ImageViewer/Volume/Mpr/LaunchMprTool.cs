@@ -49,28 +49,32 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	[MenuAction("open", "global-menus/MenuTools/MenuMpr/MenuOpenSelectionWithMpr", "LaunchMpr")]
 	[IconSet("open", IconScheme.Colour, "Icons.LaunchMprToolSmall.png", "Icons.LaunchMprToolMedium.png", "Icons.LaunchMprToolLarge.png")]
 	[EnabledStateObserver("open", "Enabled", "EnabledChanged")]
+	[VisibleStateObserver("open", "Visible", "VisibleChanged")]
 	[GroupHint("open", "Tools.Volume.MPR")]
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	public class LaunchMprTool : ImageViewerTool
 	{
-		private static readonly IActionSet _emptyActionSet = new ActionSet();
 		private MprViewerComponent _viewer;
+		private bool _visible;
 
 		public LaunchMprTool() {}
 
-		public override IActionSet Actions
+		public bool Visible
 		{
-			get
-			{
-				if (base.ImageViewer is MprViewerComponent)
-					return _emptyActionSet;
-				return base.Actions;
-			}
+			get { return _visible; }
+		}
+
+		public event EventHandler VisibleChanged
+		{
+			add { }
+			remove { }
 		}
 
 		public override void Initialize()
 		{
 			base.Initialize();
+
+			_visible = !(base.ImageViewer is MprViewerComponent);
 
 			base.Context.Viewer.EventBroker.ImageBoxSelected += OnImageBoxSelected;
 			base.Context.Viewer.EventBroker.DisplaySetSelected += OnDisplaySetSelected;

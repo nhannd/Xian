@@ -29,21 +29,11 @@
 
 #endregion
 
-using ClearCanvas.Common;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 {
-	[ExtensionPoint]
-	public sealed class MprViewerToolExtensionPoint : ExtensionPoint<ITool> {}
-
-	public interface IMprViewerToolContext : IImageViewerToolContext
-	{
-		new MprViewerComponent Viewer { get; }
-	}
-
 	public abstract class MprViewerTool : MouseImageViewerTool
 	{
 		protected MprViewerTool() {}
@@ -51,11 +41,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 		public new MprViewerComponent ImageViewer
 		{
 			get { return base.ImageViewer as MprViewerComponent; }
-		}
-
-		public new IMprViewerToolContext Context
-		{
-			get { return base.Context as IMprViewerToolContext; }
 		}
 
 		protected MprSliceSop SelectedMprSliceSop

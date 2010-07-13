@@ -40,6 +40,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 	[MenuAction("resetAll", "imageviewer-contextmenu/MenuResetAll", "ResetAll")]
 	[MenuAction("resetAll", "global-menus/MenuTools/MenuMpr/MenuResetAll", "ResetAll")]
 	[EnabledStateObserver("resetAll", "CanReset", "CanResetChanged")]
+	[VisibleStateObserver("resetAll", "Visible", "VisibleChanged")]
 	[IconSet("resetAll", IconScheme.Colour, "Icons.ResetAllToolSmall.png", "Icons.ResetAllToolMedium.png", "Icons.ResetAllToolLarge.png")]
 	[Tooltip("resetAll", "TooltipResetAll")]
 	[GroupHint("resetAll", "Tools.Volume.MPR.ResetSlicing")]
@@ -50,6 +51,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 
 		private void InitializeResetAll()
 		{
+			if (this.ImageViewer == null)
+				return;
+
 			_canReset = false;
 			foreach (IImageSet imageSet in this.ImageViewer.MprWorkspace.ImageSets)
 			{
@@ -64,6 +68,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 
 		private void DisposeResetAll()
 		{
+			if (this.ImageViewer == null)
+				return;
+
 			foreach (IImageSet imageSet in this.ImageViewer.MprWorkspace.ImageSets)
 			{
 				foreach (MprDisplaySet displaySet in imageSet.DisplaySets)

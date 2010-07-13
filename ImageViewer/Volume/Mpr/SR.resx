@@ -191,14 +191,14 @@
     <comment>0 - Volume Label</comment>
   </data>
   <data name="MenuReslice" xml:space="preserve">
-    <value>Reslice</value>
+    <value>Reslice MPR</value>
   </data>
   <data name="MenuResliceFor" xml:space="preserve">
     <value>Reslice {0}</value>
     <comment>0 - Name of Display Set</comment>
   </data>
   <data name="ToolbarReslice" xml:space="preserve">
-    <value>Reslice</value>
+    <value>Reslice MPR</value>
   </data>
   <data name="ToolbarResliceFor" xml:space="preserve">
     <value>Reslice {0}</value>
@@ -250,10 +250,10 @@
     <value>&amp;Debug</value>
   </data>
   <data name="MenuResetAll" xml:space="preserve">
-    <value>&amp;Reset All</value>
+    <value>&amp;Reset MPR</value>
   </data>
   <data name="ToolbarResetAll" xml:space="preserve">
-    <value>Reset All</value>
+    <value>Reset MPR</value>
   </data>
   <data name="TooltipResetAll" xml:space="preserve">
     <value>Resets all MPR slice views</value>
