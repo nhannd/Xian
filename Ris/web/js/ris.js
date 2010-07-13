@@ -327,6 +327,11 @@ if(window.external)
 		getAttachedDocumentUrl: function(attachedDocumentSummary)
 		{
 			return window.external.GetAttachedDocumentUrl(JSML.create(attachedDocumentSummary, "AttachedDocument"));
+		},
+		
+		getWorkingFacility: function()
+		{
+			return JSML.parse(window.external.GetWorkingFacility());
 		}
 	};
 	

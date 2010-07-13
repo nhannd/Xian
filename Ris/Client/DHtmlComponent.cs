@@ -458,6 +458,11 @@ namespace ClearCanvas.Ris.Client
 			{
 				_component.OnScriptCompleted();
 			}
+
+			public string GetWorkingFacility()
+			{
+				return JsmlSerializer.Serialize(LoginSession.Current.WorkingFacility, "facility");
+			}
 		}
 
 		#endregion
