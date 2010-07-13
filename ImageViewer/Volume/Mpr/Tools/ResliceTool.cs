@@ -34,7 +34,6 @@ using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
@@ -48,8 +47,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 	partial class ResliceToolGroup
 	{
 		[MenuAction("activate", "mprviewer-reslicemenu/MenuReslice", "Select", Flags = ClickActionFlags.CheckAction)]
-		[MenuAction("activate", "imageviewer-contextmenu/MenuReslice", "Select", Flags = ClickActionFlags.CheckAction)]
-		[MenuAction("activate", "global-menus/MenuTools/MenuMpr/MenuReslice", "Select", Flags = ClickActionFlags.CheckAction)]
 		[MouseButtonIconSet("activate", IconScheme.Colour, "Icons.ResliceToolLarge.png", "Icons.ResliceToolMedium.png", "Icons.ResliceToolSmall.png")]
 		[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 		[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
