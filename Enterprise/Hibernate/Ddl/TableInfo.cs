@@ -114,7 +114,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		public ConstraintInfo PrimaryKey
 		{
 			get { return _primaryKey; }
-			private set { _primaryKey = value; }
+			set { _primaryKey = value; }
 		}
 
 		/// <summary>

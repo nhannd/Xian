@@ -72,6 +72,16 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// in the set of installed plugins.
 		/// </summary>
 		/// <param name="config"></param>
+		public RelationalModelInfo(Configuration config)
+			:this(config, new RelationalSchemaOptions.NamespaceFilterOption())
+		{
+		}
+
+		/// <summary>
+		/// Constructor that creates a model from all NHibernate mappings and embedded enumeration information
+		/// in the set of installed plugins.
+		/// </summary>
+		/// <param name="config"></param>
 		/// <param name="namespaceFilter"></param>
 		public RelationalModelInfo(Configuration config, RelationalSchemaOptions.NamespaceFilterOption namespaceFilter)
 		{

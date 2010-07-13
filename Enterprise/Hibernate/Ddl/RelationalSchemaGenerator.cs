@@ -42,7 +42,11 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 	{
 		public class NamespaceFilterOption
 		{
-			private string _namespaceSpec;
+			private readonly string _namespaceSpec;
+
+			public NamespaceFilterOption()
+			{
+			}
 
 			public NamespaceFilterOption(string namespaceSpec)
 			{

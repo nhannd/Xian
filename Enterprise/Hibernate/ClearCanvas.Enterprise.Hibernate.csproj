@@ -107,6 +107,7 @@
     <Compile Include="Ddl\RelationalModelSerializer.cs" />
     <Compile Include="Ddl\ScriptWriter.cs" />
     <Compile Include="Ddl\RelationalSchemaGenerator.cs" />
+    <Compile Include="Ddl\TableScripts.cs" />
     <Compile Include="DeferredQueryResultList.cs" />
     <Compile Include="EntityBroker.cs" />
     <Compile Include="EnumBroker.cs" />

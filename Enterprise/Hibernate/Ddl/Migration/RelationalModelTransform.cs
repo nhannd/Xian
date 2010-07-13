@@ -37,6 +37,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 {
 	internal class RenderOptions
 	{
+		public RenderOptions()
+		{
+		}
+
 		public RenderOptions(RelationalSchemaOptions options)
 		{
 			this.SuppressForeignKeys = options.SuppressForeignKeys;
