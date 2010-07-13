@@ -319,7 +319,7 @@ namespace ClearCanvas.Desktop
             if (!InitializeSessionManager())
                 return false;
 
-			RunUserUpgrade();
+			UserUpgradeProgressDialog.RunUpgradeAndShowProgress();
 			
             // load tools
             _toolSet = new ToolSet(new ApplicationToolExtensionPoint(), new ApplicationToolContext(this));
@@ -576,24 +576,6 @@ namespace ClearCanvas.Desktop
                 return false;
             }
         }
-
-		private static void RunUserUpgrade()
-		{
-			var strategy = UserUpgradeStrategy.Create();
-			if (strategy == null)
-				return;
-
-			try
-			{
-				IExtensionPoint xp = new UserUpgradeProgressDialogExtensionPoint();
-				var dialog = (IUserUpgradeProgressDialog) xp.CreateExtension();
-				dialog.Show(strategy);
-			}
-			catch (NotSupportedException)
-			{
-				strategy.Run();
-			}
-		}
 
         /// <summary>
         /// Gets the cached application name.

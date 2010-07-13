@@ -139,5 +139,10 @@ namespace ClearCanvas.Common.Configuration
 			get { return _defaultValue; }
 			private set { _defaultValue = value; }
 		}
+
+		public override string ToString()
+		{
+			return String.Format("{0} ({1}, {2})", Name, Scope, TypeName);
+		}
 	}
 }

@@ -184,6 +184,11 @@ namespace ClearCanvas.Common.Configuration
 			return _name.GetHashCode() ^ _version.GetHashCode();
 		}
 
+		public override string ToString()
+		{
+			return Name;
+		}
+
 		#region IEquatable<SettingsGroupDescriptor> Members
 
 		/// <summary>

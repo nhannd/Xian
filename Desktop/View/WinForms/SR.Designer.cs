@@ -243,24 +243,6 @@ namespace ClearCanvas.Desktop.View.WinForms {
             }
         }
         
-        /// <summary>
-        ///   Looks up a localized string similar to Updating your personal preferences ....
-        /// </summary>
-        internal static string MessageUpdatingPreferences {
-            get {
-                return ResourceManager.GetString("MessageUpdatingPreferences", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to One or more errors has occurred while attempting to update your preferences..
-        /// </summary>
-        internal static string MessageUserUpgradeFailures {
-            get {
-                return ResourceManager.GetString("MessageUserUpgradeFailures", resourceCulture);
-            }
-        }
-        
         internal static System.Drawing.Bitmap SearchToolMini {
             get {
                 object obj = ResourceManager.GetObject("SearchToolMini", resourceCulture);
@@ -280,15 +262,6 @@ namespace ClearCanvas.Desktop.View.WinForms {
                 object obj = ResourceManager.GetObject("Stop", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Updating Preferences ....
-        /// </summary>
-        internal static string TitleUpdatingPreferences {
-            get {
-                return ResourceManager.GetString("TitleUpdatingPreferences", resourceCulture);
-    }
         }
     }
 }

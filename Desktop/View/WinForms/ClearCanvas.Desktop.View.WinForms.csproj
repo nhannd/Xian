@@ -237,7 +237,7 @@
     <Compile Include="TrackBarUpDown.Designer.cs">
       <DependentUpon>TrackBarUpDown.cs</DependentUpon>
     </Compile>
-    <Compile Include="UserUpgradeProgressDialog.cs" />
+    <Compile Include="UserUpgradeProgressDialogView.cs" />
     <Compile Include="UserUpgradeProgressForm.cs">
       <SubType>Form</SubType>
     </Compile>

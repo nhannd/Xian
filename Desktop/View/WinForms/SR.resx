@@ -190,13 +190,4 @@
   <data name="MessageEmptySearchTree" xml:space="preserve">
     <value>Enter text here to search tree</value>
   </data>
-  <data name="MessageUpdatingPreferences" xml:space="preserve">
-    <value>Updating your personal preferences ...</value>
-  </data>
-  <data name="MessageUserUpgradeFailures" xml:space="preserve">
-    <value>One or more errors has occurred while attempting to update your preferences.</value>
-  </data>
-  <data name="TitleUpdatingPreferences" xml:space="preserve">
-    <value>Updating Preferences ...</value>
-  </data>
 </root>

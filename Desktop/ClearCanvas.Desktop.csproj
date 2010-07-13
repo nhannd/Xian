@@ -174,7 +174,7 @@
       <DependentUpon>FormatSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="IPagingController.cs" />
-    <Compile Include="Configuration\IUserUpgradeProgressDialog.cs" />
+    <Compile Include="Configuration\IUserUpgradeProgressDialogView.cs" />
     <Compile Include="ModifierFlags.cs" />
     <Compile Include="ModifierFlagsConverter.cs" />
     <Compile Include="PagingActionModel.cs" />

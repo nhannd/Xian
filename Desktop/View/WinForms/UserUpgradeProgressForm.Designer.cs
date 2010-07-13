@@ -73,6 +73,7 @@
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
 			this.Text = "UserUpgradeProgressForm";
+			this.TopMost = true;
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

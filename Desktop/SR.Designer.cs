@@ -709,6 +709,24 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Updating your personal preferences ....
+        /// </summary>
+        public static string MessageUpdatingPreferences {
+            get {
+                return ResourceManager.GetString("MessageUpdatingPreferences", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One or more errors have occurred while updating your preferences.  Some of your preferences may not have been properly configured..
+        /// </summary>
+        public static string MessageUserUpgradeFailures {
+            get {
+                return ResourceManager.GetString("MessageUserUpgradeFailures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Value required.
         /// </summary>
         public static string MessageValueRequired {
@@ -894,6 +912,15 @@ namespace ClearCanvas.Desktop {
         public static string TitleType {
             get {
                 return ResourceManager.GetString("TitleType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updating Preferences ....
+        /// </summary>
+        public static string TitleUpdatingPreferences {
+            get {
+                return ResourceManager.GetString("TitleUpdatingPreferences", resourceCulture);
             }
         }
         

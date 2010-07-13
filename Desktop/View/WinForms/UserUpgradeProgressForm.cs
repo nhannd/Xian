@@ -4,13 +4,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
 	public partial class UserUpgradeProgressForm : DotNetMagicForm
 	{
-		public UserUpgradeProgressForm(int totalSteps)
+		public UserUpgradeProgressForm(string title)
 		{
 			InitializeComponent();
 
-			Text = SR.TitleUpdatingPreferences;
+			Text = title;
 			_progressBar.Minimum = 0;
-			_progressBar.Maximum = totalSteps;
+			_progressBar.Maximum = 100;
 			_progressBar.Step = 1;
 		}
 
@@ -20,7 +20,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			set { _message.Text = value; }
 		}
 
-		public int Progress
+		public int ProgressPercent
 		{
 			get { return _progressBar.Value; }
 			set { _progressBar.Value = value; }

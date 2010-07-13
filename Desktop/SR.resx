@@ -333,6 +333,12 @@
   <data name="MessageUnrecognizedFormat" xml:space="preserve">
     <value>Unrecognized format</value>
   </data>
+  <data name="MessageUpdatingPreferences" xml:space="preserve">
+    <value>Updating your personal preferences ...</value>
+  </data>
+  <data name="MessageUserUpgradeFailures" xml:space="preserve">
+    <value>One or more errors have occurred while updating your preferences.  Some of your preferences may not have been properly configured.</value>
+  </data>
   <data name="MessageValueRequired" xml:space="preserve">
     <value>Value required</value>
   </data>
@@ -395,6 +401,9 @@
   </data>
   <data name="TitleType" xml:space="preserve">
     <value>Type</value>
+  </data>
+  <data name="TitleUpdatingPreferences" xml:space="preserve">
+    <value>Updating Preferences ...</value>
   </data>
   <data name="TitleValue" xml:space="preserve">
     <value>Value</value>

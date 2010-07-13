@@ -6,6 +6,9 @@ namespace ClearCanvas.Common.Configuration
 {
 	public interface IUserUpgradeStrategy
 	{
+		void Run();
+		bool IsRunning { get; }
+
 		int TotalSteps { get; }
 		int CurrentStep { get; }
 
@@ -14,9 +17,6 @@ namespace ClearCanvas.Common.Configuration
 		int RemainingCount { get; }
 
 		event EventHandler ProgressChanged;
-
-		bool IsRunning { get; }
-		void Run();
 	}
 
 	public class UserUpgradeStrategy : IUserUpgradeStrategy
@@ -64,9 +64,6 @@ namespace ClearCanvas.Common.Configuration
 
 			IsRunning = true;
 			
-			CodeClock clock = new CodeClock();
-			clock.Start();
-			
 			foreach (UserUpgradeStep step in Steps)
 			{
 				try
@@ -87,8 +84,8 @@ namespace ClearCanvas.Common.Configuration
 				}
 			}
 
-			clock.Stop();
-			Platform.Log(LogLevel.Debug, "User upgrade took: {0}", clock);
+			IsRunning = false;
+			EventsHelper.Fire(_progressChanged, this, EventArgs.Empty);
 		}
 	}
 }
