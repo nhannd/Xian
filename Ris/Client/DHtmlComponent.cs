@@ -459,9 +459,22 @@ namespace ClearCanvas.Ris.Client
 				_component.OnScriptCompleted();
 			}
 
+			/// <summary>
+			/// Gets a JSML-encoded FacilitySummary containing details of the client's current working facility
+			/// </summary>
+			/// <returns></returns>
 			public string GetWorkingFacility()
 			{
 				return JsmlSerializer.Serialize(LoginSession.Current.WorkingFacility, "facility");
+			}
+
+			/// <summary>
+			/// Gets the configured base URL for web resources.
+			/// </summary>
+			/// <returns></returns>
+			public string WebResourcesBaseUrl()
+			{
+				return WebResourcesSettings.Default.BaseUrl;
 			}
 		}
 
@@ -748,6 +761,8 @@ namespace ClearCanvas.Ris.Client
 
 		public void AsyncInvocationErrorEventHandler(object sender, AsyncInvocationErrorEventArgs e)
 		{
+			Platform.Log(LogLevel.Error, e);
+
 			// forward the event on to the view layer
 			EventsHelper.Fire(_asyncInvocationError, sender, e);
 		}

@@ -64,7 +64,7 @@ if(window.external)
 		// callback from an async service operation (see GetServiceProxy)
 		_asyncInvocationError: function(invocationId, errorMessage)
 		{
-			//TODO what is the best way to handle async errors?
+			window.location = window.external.WebResourcesBaseUrl + "/error.htm";
 		},
 		
 		// equivalent of the window.confirm function, but routes the message through the RIS client desktop application
