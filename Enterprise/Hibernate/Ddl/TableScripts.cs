@@ -22,10 +22,14 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		private readonly Configuration _configuration;
 		private readonly string _table;
 
-		public TableScripts(Configuration configuration, string table)
+		public TableScripts(Configuration configuration, string table, bool autoIndexForeignKeys)
 		{
 			_configuration = configuration;
 			_table = table;
+
+			// ensure that this configuration object has been pre-processed
+			var preProcessor = new PreProcessor(true, autoIndexForeignKeys);
+			preProcessor.Process(_configuration);
 		}
 
 		public string[] CreateTable(bool createIndexes, bool createConstraints)

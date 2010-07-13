@@ -158,8 +158,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 				            delegate(ConstraintInfo item) { return DropUniqueConstraint(table, item); },
 				            delegate(ConstraintInfo x, ConstraintInfo y) { return CompareUniqueConstraints(table, x, y); }));
 
+			var pkInitial = initial.PrimaryKey == null ? new ConstraintInfo[0] : new[] { initial.PrimaryKey };
+			var pkDesired = desired.PrimaryKey == null ? new ConstraintInfo[0] : new[] { desired.PrimaryKey };
 			changes.AddRange(
-				CompareSets(new ConstraintInfo[] { initial.PrimaryKey }, new ConstraintInfo[] { desired.PrimaryKey },
+				CompareSets(pkInitial, pkDesired,
 				            delegate(ConstraintInfo item) { return AddPrimaryKey(table, item); },
 				            delegate(ConstraintInfo item) { return DropPrimaryKey(table, item); },
 				            delegate(ConstraintInfo x, ConstraintInfo y) { return ComparePrimaryKeys(table, x, y); }));
