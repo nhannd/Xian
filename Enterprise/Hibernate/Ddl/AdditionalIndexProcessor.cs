@@ -92,20 +92,26 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
             {
                 Table table;
                 if(!tables.TryGetValue(tableName, out table))
-                    return;
-                List<Column> columns = new List<Column>();
-                foreach(string name in columnNames)
-                {
-                    columns.Add(CollectionUtils.SelectFirst(table.ColumnIterator,
-                        delegate(Column col)
-                            {
-                                return col.Name == name;
-                            }));
-                }
+					throw new DdlException(
+						string.Format("An additional index refers to a table ({0}) that does not exist.", table.Name),
+						null);
+
+            	var columns = new List<Column>();
+            	foreach (var columnName in columnNames)
+            	{
+            		var column = CollectionUtils.SelectFirst(table.ColumnIterator, col => col.Name == columnName);
+					// bug #6994: could be that the index file specifies a column name that does not actually exist, so we need to check for nulls
+					if (column == null)
+						throw new DdlException(
+							string.Format("An additional index on table {0} refers to a column ({1}) that does not exist.", table.Name, columnName),
+							null);
+					columns.Add(column);
+				}
 
                 CreateIndex(table, columns);
             }
         }
+
 
 		private Dictionary<string, Table> GetTables(Configuration config)
         {

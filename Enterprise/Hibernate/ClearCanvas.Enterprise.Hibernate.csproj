@@ -65,6 +65,7 @@
     <Compile Include="ChangeRecord.cs" />
     <Compile Include="ChangeTracker.cs" />
     <Compile Include="Ddl\AdditionalIndexProcessor.cs" />
+    <Compile Include="Ddl\DdlException.cs" />
     <Compile Include="Ddl\DdlScriptGenerator.cs" />
     <Compile Include="Ddl\EnumForeignKeyProcessor.cs" />
     <Compile Include="Ddl\EnumMetadataReader.cs" />
