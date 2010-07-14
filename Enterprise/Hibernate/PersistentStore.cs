@@ -33,11 +33,14 @@ using System;
 using System.Reflection;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
-using HibernatingRhinos.Profiler.Appender.NHibernate;
-using HibernatingRhinos.Profiler.Appender.StackTraces;
 using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Mapping;
+
+#if DEBUG
+using HibernatingRhinos.Profiler.Appender.NHibernate;
+using HibernatingRhinos.Profiler.Appender.StackTraces;
+#endif
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
@@ -87,8 +90,10 @@ namespace ClearCanvas.Enterprise.Hibernate
 			// create the session factory
 			_sessionFactory = _cfg.BuildSessionFactory();
 
+#if DEBUG
 			if (PersistentStoreProfilerSettings.Default.Enabled)
 				InitializeProfiler();
+#endif
 
 			Platform.Log(LogLevel.Info, "NHibernate initialization complete.");
 		}
@@ -144,6 +149,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 			get { return _sessionFactory; }
 		}
 
+#if DEBUG
 		private static void InitializeProfiler()
 		{
 			Platform.Log(LogLevel.Info, "Initializing NHProf...");
@@ -157,6 +163,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 
 			Platform.Log(LogLevel.Info, "NHProf initialization complete.");
 		}
+#endif
 
 		/// <summary>
 		/// Rather than explicitly specifying a cache-strategy in every class/collection mapping,

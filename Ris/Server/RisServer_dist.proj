@@ -27,7 +27,7 @@
 		<HL7Directory>$(SolutionDir)..\..\HL7</HL7Directory>
 		<ReferencedAssembliesDirectory>$(SolutionDir)..\..\ReferencedAssemblies</ReferencedAssembliesDirectory>
 		<RisApplicationDirectory>$(SolutionDir)..\Application</RisApplicationDirectory>
-    <ShredHostDirectory>$(SolutionDir)..\..\Server\ShredHost</ShredHostDirectory>
+		<ShredHostDirectory>$(SolutionDir)..\..\Server\ShredHost</ShredHostDirectory>
 		<ShredHostServiceDirectory>$(SolutionDir)..\..\Server\ShredHostService</ShredHostServiceDirectory>
 		<RisShredsDirectory>$(SolutionDir)..\Shreds</RisShredsDirectory>
 		<TrunkDirectory>$(SolutionDir)..\..</TrunkDirectory>
@@ -46,13 +46,16 @@
     <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.1\NHibernate.Caches.SysCache.dll" />
     <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.1\Antlr3.Runtime.dll" />
     <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.1\NHibernate.ByteCode.Castle.dll" />
-    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHProf\HibernatingRhinos.Profiler.Appender.dll" />
 
     <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Configuration\bin\$(Configuration)\ClearCanvas.Enterprise.Configuration.dll" />
     <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Configuration\Hibernate\bin\$(Configuration)\ClearCanvas.Enterprise.Configuration.Hibernate.dll" />
     <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Authentication\bin\$(Configuration)\ClearCanvas.Enterprise.Authentication.dll" />
     <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Authentication\Hibernate\bin\$(Configuration)\ClearCanvas.Enterprise.Authentication.Hibernate.dll" />
   </ItemGroup>
+
+	<ItemGroup Condition="'$(Configuration)'=='DEBUG'">
+		<EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHProf\HibernatingRhinos.Profiler.Appender.dll" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<ModelFiles Include="$(WorkflowDirectory)\bin\$(Configuration)\ClearCanvas.Workflow.dll" />
