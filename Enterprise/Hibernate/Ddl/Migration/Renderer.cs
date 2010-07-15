@@ -327,6 +327,22 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			else
 			{
 				colStr.Append(" not null");
+
+				switch(col.SqlType)
+				{
+					case "REAL": // single
+					case "SMALLINT": // Int16
+					case "INT": // integer or Int32
+					case "BIGINT": // Int64
+						colStr.Append(" default 0");
+						break;
+					case "BIT": // boolean
+						colStr.Append(" default 0");
+						break;
+					default:
+						// do nothing.  For other SqlType, whoever running the upgrade script will have to manually fill in the default values
+						break; 
+				}
 			}
 
 			return colStr.ToString();
