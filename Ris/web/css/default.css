@@ -358,6 +358,10 @@ a.collapsibleHeading {
 	left: 45%;
 }
 
+* html #loadingAnimation { 
+	position: absolute;
+}
+
 .divCell .errorProvider {
 	position:relative;
 	top:-25%;
