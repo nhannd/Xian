@@ -340,7 +340,7 @@ a.collapsibleHeading {
 }
 
 .errorProvider {
-	margin-left:0.5em;
+	background-position:center center;
 	background-image:url(../images/errorprovider.gif);
 	background-repeat:no-repeat;
 	height:20px;

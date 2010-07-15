@@ -1117,8 +1117,7 @@ function ErrorProvider(visible)
 				hasError: function() { return (this.img.title && this.img.title.length) ? true : false; },
 				showError: function(visible) 
 				{ 
-					this.img.style.display = (this.hasError() && visible) ? "inline" : "none"; 
-					this.img.innerText = "    ";
+					this.img.style.display = (this.hasError() && visible) ? "inline-block" : "none"; 
 					this.img.visiblity = "hidden";
 				} 
 			};
