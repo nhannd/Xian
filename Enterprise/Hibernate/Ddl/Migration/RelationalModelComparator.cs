@@ -105,17 +105,8 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 
 		private static IEnumerable<RelationalModelChange> DropTable(TableInfo t)
 		{
-			var changes = new List<RelationalModelChange>();
-			changes.AddRange(
-				CollectionUtils.Map<IndexInfo, RelationalModelChange>(t.Indexes, item => new DropIndexChange(t, item)));
-			changes.AddRange(
-				CollectionUtils.Map<ConstraintInfo, RelationalModelChange>(t.UniqueKeys, item => new DropUniqueConstraintChange(t, item)));
-			changes.AddRange(
-				CollectionUtils.Map<ForeignKeyInfo, RelationalModelChange>(t.ForeignKeys, item => new DropForeignKeyChange(t, item)));
-			changes.AddRange(
-				CollectionUtils.Map<ConstraintInfo, RelationalModelChange>(GetPrimaryKey(t), item => new DropPrimaryKeyChange(t, item)));
-			changes.Add(new DropTableChange(t));
-			return changes;
+			// dropping the table will automatically drop all of its indexes and constraints
+			return new List<RelationalModelChange> {new DropTableChange(t)};
 		}
 
 		private static IEnumerable<RelationalModelChange> CompareTables(TableInfo initial, TableInfo desired)
