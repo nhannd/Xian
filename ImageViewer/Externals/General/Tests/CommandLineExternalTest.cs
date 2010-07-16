@@ -103,6 +103,53 @@ namespace ClearCanvas.ImageViewer.Externals.General.Tests
 		}
 
 		[Test]
+		public void TestEnvironmentVariableExpansion()
+		{
+			string baseDirectory = Path.Combine(Path.Combine(Path.GetTempPath(), "ClearCanvas"), this.GetType().Name);
+			string commandDirectory = Path.Combine(baseDirectory, "Kirk");
+			string workingDirectory = Path.Combine(baseDirectory, "Archer");
+			Directory.CreateDirectory(commandDirectory);
+			Directory.CreateDirectory(workingDirectory);
+			using (MockCommandLine command = new MockCommandLine(commandDirectory))
+			{
+				using (var environmentVariables = new EnvironmentVariablesTestConstruct())
+				{
+					environmentVariables["CMDDIR"] = "Kirk";
+					environmentVariables["WRKDIR"] = "Archer";
+					environmentVariables["ARGA"] = "Sisko";
+					environmentVariables["ARGB"] = "Janeway";
+					environmentVariables["ARGC"] = "Picard";
+
+					CommandLineExternal external = new CommandLineExternal();
+					external.WorkingDirectory = baseDirectory + Path.DirectorySeparatorChar + environmentVariables.Format("WRKDIR");
+					external.Command = baseDirectory + Path.DirectorySeparatorChar + environmentVariables.Format("CMDDIR") + Path.DirectorySeparatorChar + Path.GetFileName(command.ScriptFilename);
+					external.Arguments = string.Format("\"{0}\" \"{1}\" \"{2}\"", environmentVariables.Format("ARGA"), environmentVariables.Format("ARGB"), environmentVariables.Format("ARGC"));
+					external.WaitForExit = true;
+
+					using (MockDicomPresentationImage image = new MockDicomPresentationImage())
+					{
+						external.Launch(image);
+
+						Thread.Sleep(_processEndWaitDelay); // wait for the external to finish
+						command.Refresh();
+
+						Trace.WriteLine(string.Format("Command Execution Report"));
+						Trace.WriteLine(command.ExecutionReport);
+
+						AssertAreEqualIgnoreCase(commandDirectory + Path.DirectorySeparatorChar + Path.GetFileName(command.ScriptFilename), command.ExecutedCommand, "Wrong command was executed: ENVVARS aren't being processed");
+						AssertAreEqualIgnoreCase(workingDirectory, command.ExecutedWorkingDirectory, "Command executed in wrong working directory: ENVVARS aren't being processed");
+
+						Assert.AreEqual("\"Sisko\"", command.ExecutedArguments[0], "Wrong argument passed at index {0}: ENVVARS aren't being processed", 0);
+						Assert.AreEqual("\"Janeway\"", command.ExecutedArguments[1], "Wrong argument passed at index {0}: ENVVARS aren't being processed", 1);
+						Assert.AreEqual("\"Picard\"", command.ExecutedArguments[2], "Wrong argument passed at index {0}: ENVVARS aren't being processed", 2);
+					}
+				}
+			}
+			Directory.Delete(commandDirectory);
+			Directory.Delete(workingDirectory);
+		}
+
+		[Test]
 		public void TestArguments()
 		{
 			using (MockCommandLine command = new MockCommandLine())

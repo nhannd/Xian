@@ -80,6 +80,7 @@
     <Compile Include="General\IArgumentHintResolver.cs" />
     <Compile Include="General\SopArgumentHint.cs" />
     <Compile Include="General\Tests\CommandLineExternalTest.cs" />
+    <Compile Include="General\Tests\EnvironmentVariablesTestConstruct.cs" />
     <Compile Include="General\Tests\MockCommandLine.cs" />
     <Compile Include="General\Tests\MockDicomPresentationImage.cs" />
     <Compile Include="IExternal.cs" />

@@ -63,6 +63,8 @@ namespace ClearCanvas.ImageViewer.Externals.General
 		private bool _allowMultiValueFields = true;
 		private string _multiValueFieldSeparator;
 
+		private bool _waitForExit = false;
+
 		public string Command
 		{
 			get { return this._command; }
@@ -195,6 +197,23 @@ namespace ClearCanvas.ImageViewer.Externals.General
 			}
 		}
 
+#if UNIT_TESTS
+
+		internal bool WaitForExit
+		{
+			get { return _waitForExit; }
+			set
+			{
+				if (_waitForExit != value)
+				{
+					_waitForExit = value;
+					this.NotifyPropertyChanged("WaitForExit");
+				}
+			}
+		}
+
+#endif
+
 		public override bool IsValid
 		{
 			get { return base.IsValid && !string.IsNullOrEmpty(_command); }
@@ -217,6 +236,10 @@ namespace ClearCanvas.ImageViewer.Externals.General
 			string command = hintResolver.Resolve(this._command, _allowMultiValueFields, multiValueSeparator);
 			string workingDirectory = hintResolver.Resolve(this._workingDirectory, _allowMultiValueFields, multiValueSeparator);
 			string arguments = hintResolver.Resolve(this._arguments, _allowMultiValueFields, multiValueSeparator);
+
+			command = Environment.ExpandEnvironmentVariables(command);
+			workingDirectory = Environment.ExpandEnvironmentVariables(workingDirectory);
+			arguments = Environment.ExpandEnvironmentVariables(arguments);
 
 			ProcessStartInfo nfo;
 			if (string.IsNullOrEmpty(arguments))
@@ -256,7 +279,15 @@ namespace ClearCanvas.ImageViewer.Externals.General
 
 			Platform.Log(LogLevel.Debug, "Command Line Execute: {2}> {0} {1}", nfo.FileName, nfo.Arguments, nfo.WorkingDirectory);
 
-			return process.Start();
+			bool result = process.Start();
+
+			if (_waitForExit)
+			{
+				process.WaitForExit();
+				process.Dispose();
+			}
+
+			return result;
 		}
 
 		public override string ToString()
