@@ -41,6 +41,7 @@
   </Target>
   -->
   <ItemGroup>
+    <Compile Include="FileSizeFormat.cs" />
     <Compile Include="FolderControl.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -124,15 +124,27 @@
     <value>{0:f0} bytes</value>
   </data>
   <data name="FormatFileSizeGB" xml:space="preserve">
+    <value>{0:f2} GB</value>
+  </data>
+  <data name="FormatFileSizeGiB" xml:space="preserve">
     <value>{0:f2} GiB</value>
   </data>
   <data name="FormatFileSizeKB" xml:space="preserve">
+    <value>{0:f2} KB</value>
+  </data>
+  <data name="FormatFileSizeKiB" xml:space="preserve">
     <value>{0:f2} KiB</value>
   </data>
   <data name="FormatFileSizeMB" xml:space="preserve">
+    <value>{0:f2} MB</value>
+  </data>
+  <data name="FormatFileSizeMiB" xml:space="preserve">
     <value>{0:f2} MiB</value>
   </data>
   <data name="FormatFileSizeTB" xml:space="preserve">
+    <value>{0:f2} TB</value>
+  </data>
+  <data name="FormatFileSizeTiB" xml:space="preserve">
     <value>{0:f2} TiB</value>
   </data>
   <data name="Name" xml:space="preserve">

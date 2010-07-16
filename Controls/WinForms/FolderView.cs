@@ -141,6 +141,29 @@ namespace ClearCanvas.Controls.WinForms
 
 		#endregion
 
+		#region FileSizeFormat
+
+		[DefaultValue(FileSizeFormat.BinaryOctets)]
+		public FileSizeFormat FileSizeFormat
+		{
+			get { return _folderListView.FileSizeFormat; }
+			set
+			{
+				if (_folderListView.FileSizeFormat != value)
+				{
+					_folderListView.FileSizeFormat = value;
+					this.OnPropertyChanged(new PropertyChangedEventArgs("FileSizeFormat"));
+				}
+			}
+		}
+
+		private void ResetFileSizeFormat()
+		{
+			this.FileSizeFormat = FileSizeFormat.BinaryOctets;
+		}
+
+		#endregion
+
 		#region MultiSelect
 
 		[DefaultValue(true)]
@@ -386,7 +409,7 @@ namespace ClearCanvas.Controls.WinForms
 			public readonly bool IsFolder;
 			public readonly DateTime LastModified;
 
-			public FolderListViewItem(Pidl absolutePidl, Pidl myDocumentsReferencePidl) : base()
+			public FolderListViewItem(Pidl absolutePidl, Pidl myDocumentsReferencePidl, FileSizeFormat fileSizeFormat) : base()
 			{
 				_pidl = absolutePidl;
 				_fullPath = absolutePidl.Path;
@@ -435,7 +458,7 @@ namespace ClearCanvas.Controls.WinForms
 
 				this.Text = this.DisplayName;
 				this.ImageIndex = this._iconIndex;
-				this.SubItems.Add(CreateSubItem(this, FormatFileSize(this.FileSize)));
+				this.SubItems.Add(CreateSubItem(this, FormatFileSize(this.FileSize, fileSizeFormat)));
 				this.SubItems.Add(CreateSubItem(this, this.TypeName));
 				this.SubItems.Add(CreateSubItem(this, FormatLastModified(this.LastModified, this._lastModifiedValid)));
 			}
@@ -454,21 +477,48 @@ namespace ClearCanvas.Controls.WinForms
 				get { return _pidl; }
 			}
 
-			private static string FormatFileSize(long fileSize)
+			private static string FormatFileSize(long fileSize, FileSizeFormat fileSizeFormat)
 			{
 				if (fileSize < 0) // file doesn't exist!
 					return string.Empty;
-				else if (fileSize < 896) // less than 896 bytes
-					return string.Format(SR.FormatFileSizeBytes, fileSize);
-				else if (fileSize < 917504) // between 896 bytes and 896 KiB
-					return string.Format(SR.FormatFileSizeKB, fileSize/1024.0);
-				else if (fileSize < 939524096) // between 896 KiB and 896 MiB
-					return string.Format(SR.FormatFileSizeMB, fileSize/1048576.0);
-				else if (fileSize < 841813590016) // between 896 MiB and 896 GiB
-					return string.Format(SR.FormatFileSizeGB, fileSize/1073741824.0);
 
-				// and finally, in the event of having a file greater than 896 GiB...
-				return string.Format(SR.FormatFileSizeTB, fileSize/1099511627776.0);
+				switch (fileSizeFormat)
+				{
+					case FileSizeFormat.MetricOctets:
+						if (fileSize < 900) // less than 900 bytes
+							return string.Format(SR.FormatFileSizeBytes, fileSize);
+						if (fileSize < 900000) // between 900 bytes and 900 KB
+							return string.Format(SR.FormatFileSizeKB, fileSize/1000.0);
+						else if (fileSize < 900000000) // between 900 KB and 900 MB
+							return string.Format(SR.FormatFileSizeMB, fileSize/1000000.0);
+						else if (fileSize < 900000000000) // between 900 MB and 900 GB
+							return string.Format(SR.FormatFileSizeGB, fileSize/1000000000.0);
+						else // greater than 900 GB...
+							return string.Format(SR.FormatFileSizeTB, fileSize/1000000000000.0);
+					case FileSizeFormat.LegacyOctets:
+						if (fileSize < 896) // less than 896 bytes
+							return string.Format(SR.FormatFileSizeBytes, fileSize);
+						if (fileSize < 917504) // between 896 bytes and 896 KiB
+							return string.Format(SR.FormatFileSizeKB, fileSize/1024.0);
+						else if (fileSize < 939524096) // between 896 KiB and 896 MiB
+							return string.Format(SR.FormatFileSizeMB, fileSize/1048576.0);
+						else if (fileSize < 841813590016) // between 896 MiB and 896 GiB
+							return string.Format(SR.FormatFileSizeGB, fileSize/1073741824.0);
+						else // greater than 896 GiB...
+							return string.Format(SR.FormatFileSizeTB, fileSize/1099511627776.0);
+					case FileSizeFormat.BinaryOctets:
+					default:
+						if (fileSize < 896) // less than 896 bytes
+							return string.Format(SR.FormatFileSizeBytes, fileSize);
+						if (fileSize < 917504) // between 896 bytes and 896 KiB
+							return string.Format(SR.FormatFileSizeKiB, fileSize/1024.0);
+						else if (fileSize < 939524096) // between 896 KiB and 896 MiB
+							return string.Format(SR.FormatFileSizeMiB, fileSize/1048576.0);
+						else if (fileSize < 841813590016) // between 896 MiB and 896 GiB
+							return string.Format(SR.FormatFileSizeGiB, fileSize/1073741824.0);
+						else // greater than 896 GiB...
+							return string.Format(SR.FormatFileSizeTiB, fileSize/1099511627776.0);
+				}
 			}
 
 			private static byte GetRootVolumeIndex(string fullPath)
@@ -519,6 +569,7 @@ namespace ClearCanvas.Controls.WinForms
 			private bool _autoDrillDown = true;
 			private bool _autoWaitCursor = true;
 			private Cursor _oldCursor = null;
+			private FileSizeFormat _fileSizeFormat = FileSizeFormat.BinaryOctets;
 
 			public FolderListView() : base()
 			{
@@ -711,6 +762,12 @@ namespace ClearCanvas.Controls.WinForms
 				set { _autoWaitCursor = value; }
 			}
 
+			public FileSizeFormat FileSizeFormat
+			{
+				get { return _fileSizeFormat; }
+				set { _fileSizeFormat = value; }
+			}
+
 			public new View View
 			{
 				get { return base.View; }
@@ -828,7 +885,7 @@ namespace ClearCanvas.Controls.WinForms
 					List<FolderListViewItem> items = new List<FolderListViewItem>();
 					foreach (Pidl pidl in _currentShellItem.EnumerateChildPidls())
 					{
-						items.Add(new FolderListViewItem(new Pidl(_currentShellItem.Pidl, pidl), _myDocumentsReferencePidl));
+						items.Add(new FolderListViewItem(new Pidl(_currentShellItem.Pidl, pidl), _myDocumentsReferencePidl, _fileSizeFormat));
 						pidl.Dispose(); // the enumerator makes relative PIDLs, but the FolderListViewItem needs an absolute one
 					}
 					this.Items.AddRange(items.ToArray());
