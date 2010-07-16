@@ -219,7 +219,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						return;
 					}
 
-					jobInformation.ProgressItem.LastActive = Platform.Time;
+					//TODO (Time Review): Change this back to use Platform.Time once we've resolved
+					//the exception throwing issue.
+					jobInformation.ProgressItem.LastActive = DateTime.Now;
 
 					if (results.Failed)
 					{

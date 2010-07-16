@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			private void Purge()
 			{
-				DateTime now = Platform.Time;
+				DateTime now = DateTime.Now;
 				TimeSpan timeLimit = TimeSpan.FromMinutes(LocalDataStoreServiceSettings.Instance.PurgeTimeMinutes);
 
 				List<SendProgressItem> clearItems = new List<SendProgressItem>();
@@ -190,7 +190,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 					progressItem.Identifier = Guid.NewGuid();
 
-					progressItem.StartTime = Platform.Time;
+					//TODO (Time Review): Change this back to use Platform.Time once we've resolved
+					//the exception throwing issue.
+					progressItem.StartTime = DateTime.Now;
 					progressItem.LastActive = progressItem.StartTime;
 					progressItem.ToAETitle = toAETitle;
 					progressItem.StudyInformation = studyInformation;
@@ -220,7 +222,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 								if (progressItem.StatusMessage == SR.MessagePending)
 									progressItem.StatusMessage = "";
 
-								progressItem.LastActive = Platform.Time;
+								progressItem.LastActive = DateTime.Now;
 								++progressItem.NumberOfFilesExported;
 								LocalDataStoreActivityPublisher.Instance.SendProgressChanged(progressItem.Clone());
 							}
@@ -241,7 +243,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						{
 							SendProgressItem progressItem = GetProgressItem(information.SendOperationReference, information.ToAETitle, information.StudyInformation);
 							progressItem.StudyInformation = information.StudyInformation;
-							progressItem.LastActive = Platform.Time; 
+							progressItem.LastActive = DateTime.Now; 
 							progressItem.StatusMessage = SR.MessagePending;
 							progressItem.SendOperationReference = information.SendOperationReference;
 							LocalDataStoreActivityPublisher.Instance.SendProgressChanged(progressItem.Clone());
@@ -258,7 +260,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						{
 							SendProgressItem progressItem = GetProgressItem(errorInformation.SendOperationReference, errorInformation.ToAETitle, errorInformation.StudyInformation);
 							progressItem.StudyInformation = errorInformation.StudyInformation;
-							progressItem.LastActive = Platform.Time;
+							progressItem.LastActive = DateTime.Now;
 							progressItem.StatusMessage = errorInformation.ErrorMessage;
 							progressItem.SendOperationReference = errorInformation.SendOperationReference;
 							LocalDataStoreActivityPublisher.Instance.SendProgressChanged(progressItem.Clone());

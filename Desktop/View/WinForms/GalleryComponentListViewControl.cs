@@ -59,6 +59,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		{
 			base.OnDragOver(drgevent);
 
+			//TODO (Time Review): Use Environment.TickCount
 			const int dragScrollDelay = 200; // in ms
 			long now = DateTime.Now.Ticks/10000;
 			if (base.Scrollable && now - _lastDragScrollEvent > dragScrollDelay)

@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			_softwareVersions = ProductInformation.GetVersion(true, true);
 			_presentationInstanceNumber = 1;
 			_presentationSopInstanceUid = string.Empty;
-			_presentationSeriesDateTime = DateTime.Now;
+			_presentationSeriesDateTime = Platform.Time;
 			_presentationSeriesNumber = null;
 			_presentationSeriesInstanceUid = string.Empty;
 			_presentationLabel = "FOR_PRESENTATION";
@@ -476,7 +476,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			presentationStateIdentificationModule.InitializeAttributes();
 			presentationStateIdentificationModule.ContentLabel = this.PresentationContentLabel;
 			presentationStateIdentificationModule.InstanceNumber = this.PresentationInstanceNumber;
-			presentationStateIdentificationModule.PresentationCreationDateTime = DateTime.Now;
+			presentationStateIdentificationModule.PresentationCreationDateTime = Platform.Time;
 
 			PerformSerialization(images);
 

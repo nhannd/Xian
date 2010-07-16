@@ -174,7 +174,8 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 
 			public void Wait(int callbackPeriod, DeletionProgressCallback progressCallback)
 			{
-				DateTime startTime = Platform.Time;
+				//TODO (Time Review): use Environment.TickCount
+				DateTime startTime = DateTime.Now;
 
 				DeletionProgressInformation information = new DeletionProgressInformation();
  
@@ -187,7 +188,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 						if (_error != null)
 							throw _error;
 
-						information.ElapsedTime = Platform.Time - startTime;
+						information.ElapsedTime = DateTime.Now - startTime;
 						information.NumberRemaining = _waitDeleteInstanceUids.Count;
 						information.NumberDeleted = _startingNumber - information.NumberRemaining;
 						information.LastDeletedUid = _lastDeletedUid;

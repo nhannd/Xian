@@ -206,12 +206,6 @@ namespace ClearCanvas.Common.Configuration
             bool isUserUpgrade = !String.IsNullOrEmpty(user);
 
             SettingsGroupDescriptor group = new SettingsGroupDescriptor(settingsClass);
-
-            Dictionary<string, string> currentValues = _store.GetSettingsValues(group, user, settingsKey);
-            bool currentValuesExist = currentValues != null && currentValues.Count > 0;
-            if (isUserUpgrade && currentValuesExist)
-                return; //there's already values stored for this user.
-
             Dictionary<string, string> previousValues = GetPreviousSettingsValues(group, user, settingsKey);
             bool oldValuesExist = previousValues != null && previousValues.Count > 0;
             if (!oldValuesExist)

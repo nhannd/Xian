@@ -84,6 +84,7 @@ namespace ClearCanvas.ImageViewer.Common
 
 			_regenerationCost = RegenerationCost.Low;
 
+			//TODO (Time Review): Use Environment.TickCount?
 			_collectionStartTime = DateTime.Now;
 			_timeSinceLastCollection = _collectionStartTime - _lastCollectionTime;
 			TimeSpan thirtySeconds = TimeSpan.FromSeconds(30);

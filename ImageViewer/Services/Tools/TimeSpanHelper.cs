@@ -41,7 +41,9 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	{
 		public static string CalculateTimeSpanDisplay(DateTime baseTime)
 		{
-			TimeSpan timeSpan = Platform.Time.Subtract(baseTime);
+			//TODO (Time Review): Change this back to use Platform.Time once we've resolved
+			//the exception throwing issue.
+			TimeSpan timeSpan = DateTime.Now.Subtract(baseTime);
 			return CalculateTimeSpanDisplay(timeSpan);
 		}
 

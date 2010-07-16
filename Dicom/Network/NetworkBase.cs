@@ -1330,6 +1330,8 @@ namespace ClearCanvas.Dicom.Network
         {
             try
             {
+				//TODO (Time Review): use Environment.TickCount.  It probably won't have much of
+				//a performance impact here, but it is pretty inefficient when called in a tight loop.
             	DateTime timeout = _assoc != null
             	                   	? DateTime.Now.AddMilliseconds(_assoc.ReadTimeout)
             	                   	: DateTime.Now.AddSeconds(Timeout);

@@ -245,6 +245,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			{
 				//we can't use the DelayedEventPublisher because that relies on the sync context,
 				//and we use graphics on worker threads for avi export ... so, we'll just do it custom.
+				//TODO (Time Review): use Environment.TickCount
 				lock (_syncLock) { _lastChange = Platform.Time; }
 
 				if (_uiThreadContext == null)

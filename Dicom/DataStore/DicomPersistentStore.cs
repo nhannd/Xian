@@ -105,7 +105,7 @@ namespace ClearCanvas.Dicom.DataStore
 				if (study == null)
 				{
 					study = new Study();
-					study.StoreTime = Platform.Time;
+					study.StoreTime = DateTime.Now;
 
 					string studyStoragePath = GetStudyStorageLocator().GetStudyStorageDirectory(studyInstanceUid);
 					if (String.IsNullOrEmpty(studyStoragePath))

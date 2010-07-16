@@ -223,7 +223,7 @@ namespace ClearCanvas.Dicom.Network
         
         #region Private Members
 
-        private DateTime _timeStamp = Platform.Time;
+        private DateTime _timeStamp = DateTime.Now;
         // Setting the value so a PDU (including the PDU header) fit into 
         // a multiple of the TCP/IP Maximum Segment Size of 1460 will help 
         // increase performance.  The PDU header is 6 bytes, and should 

@@ -552,7 +552,7 @@ namespace ClearCanvas.Dicom.DataStore
 		private FileStream GetFileStream(FileMode fileMode, FileAccess fileAccess)
 		{
 			bool alreadyLogged = false;
-			TimeSpan start = new TimeSpan(Platform.Time.Ticks);
+			TimeSpan start = new TimeSpan(DateTime.Now.Ticks);
 			
 			while(true)
 			{
@@ -568,7 +568,7 @@ namespace ClearCanvas.Dicom.DataStore
 						Platform.Log(LogLevel.Info, "Failed to open the study xml file because another process currently has it open.  Retry will continue for up to 5 seconds.");
 					}
 
-					TimeSpan diff = new TimeSpan(Platform.Time.Ticks) - start;
+					TimeSpan diff = new TimeSpan(DateTime.Now.Ticks) - start;
 					if (diff.TotalSeconds >= 5)
 					{
 						string message = String.Format("Another process has had the study xml (uid = {0}) file open for more than 5 seconds.  Aborting attempt to open file.", StudyInstanceUid);

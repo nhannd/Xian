@@ -120,7 +120,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			void OnPurge(object sender, EventArgs e)
 			{
-				DateTime now = Platform.Time;
+				//TODO (Time Review): Change this back to use Platform.Time once we've resolved
+				//the exception throwing issue.
+				DateTime now = DateTime.Now;
 				TimeSpan timeLimit = TimeSpan.FromMinutes(LocalDataStoreServiceSettings.Instance.PurgeTimeMinutes);
 				
 				lock (_syncLock)
@@ -200,7 +202,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					{
 						lock(item)
 						{
-							if (item.Pending && Platform.Time.Subtract(item.LastActive) >= oneMinute)
+							if (item.Pending && DateTime.Now.Subtract(item.LastActive) >= oneMinute)
 							{
 								if (item.StatusMessage != SR.MessageRetrieveLikelyFailed)
 								{
@@ -247,7 +249,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						progressItem = new InternalReceiveProgressItem();
 						progressItem.Identifier = Guid.NewGuid();
 						progressItem.AllowedCancellationOperations = CancellationFlags.Clear;
-						progressItem.StartTime = Platform.Time;
+						progressItem.StartTime = DateTime.Now;
 						progressItem.LastActive = progressItem.StartTime;
 
 						progressItem.FromAETitle = fromAETitle;
@@ -308,7 +310,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 					ImportedSopInstanceInformation importedSopInformation = null;
 
-					progressItem.LastActive = Platform.Time;
+					progressItem.LastActive = DateTime.Now;
 
 					if (receivedFileImportInformation.Failed)
 					{
@@ -378,7 +380,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					lock (progressItem)
 					{
 						progressItem.StudyInformation = information.StudyInformation;
-						progressItem.LastActive = Platform.Time;
+						progressItem.LastActive = DateTime.Now;
 						progressItem.TerminalErrorMessage = null;
 						progressItem.Pending = true;
 						progressItem.StatusMessage = SR.MessagePending;
@@ -396,7 +398,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					lock (progressItem)
 					{
 						progressItem.StudyInformation = errorInformation.StudyInformation;
-						progressItem.LastActive = Platform.Time;
+						progressItem.LastActive = DateTime.Now;
 						progressItem.TerminalErrorMessage = errorInformation.ErrorMessage;
 						progressItem.Pending = false;
 						this.FormatErrorMessage(progressItem, new Exception(errorInformation.ErrorMessage));

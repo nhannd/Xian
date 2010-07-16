@@ -145,7 +145,9 @@ namespace ClearCanvas.Desktop.View.WinForms
       // Save the event state.
       this._recentEventArgs = args;
       this._recentSender = sender;
-	  this._recentEventTime = Platform.Time;
+
+	  //TODO (Time Review): Use Environment.TickCount, or just delete this and use the DelayedEventPublisher.
+		this._recentEventTime = Platform.Time;
       
       // If postponing is disabled, raise the event directly.
       if (!this.DelayEnabled)

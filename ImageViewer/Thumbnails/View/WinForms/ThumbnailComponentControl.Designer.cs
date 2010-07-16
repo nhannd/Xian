@@ -81,8 +81,8 @@ namespace ClearCanvas.ImageViewer.Thumbnails.View.WinForms
 			// _splitContainer.Panel2
 			// 
 			this._splitContainer.Panel2.Controls.Add(this._galleryView);
-			this._splitContainer.Size = new System.Drawing.Size(770, 166);
-			this._splitContainer.SplitterDistance = 345;
+			this._splitContainer.Size = new System.Drawing.Size(1024, 166);
+			this._splitContainer.SplitterDistance = 425;
 			this._splitContainer.TabIndex = 2;
 			// 
 			// _imageSetTree
@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails.View.WinForms
 			this._imageSetTree.Margin = new System.Windows.Forms.Padding(2);
 			this._imageSetTree.Name = "_imageSetTree";
 			this._imageSetTree.ShowToolbar = false;
-			this._imageSetTree.Size = new System.Drawing.Size(345, 166);
+			this._imageSetTree.Size = new System.Drawing.Size(425, 166);
 			this._imageSetTree.TabIndex = 2;
 			this._imageSetTree.TreeBackColor = System.Drawing.SystemColors.Window;
 			this._imageSetTree.TreeForeColor = System.Drawing.SystemColors.WindowText;
@@ -115,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails.View.WinForms
 			this._galleryView.MultiSelect = false;
 			this._galleryView.Name = "_galleryView";
 			this._galleryView.ShowDescription = false;
-			this._galleryView.Size = new System.Drawing.Size(421, 166);
+			this._galleryView.Size = new System.Drawing.Size(595, 166);
 			this._galleryView.TabIndex = 1;
 			// 
 			// ThumbnailComponentControl
@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails.View.WinForms
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._splitContainer);
 			this.Name = "ThumbnailComponentControl";
-			this.Size = new System.Drawing.Size(770, 166);
+			this.Size = new System.Drawing.Size(1024, 166);
 			this._splitContainer.Panel1.ResumeLayout(false);
 			this._splitContainer.Panel2.ResumeLayout(false);
 			this._splitContainer.ResumeLayout(false);

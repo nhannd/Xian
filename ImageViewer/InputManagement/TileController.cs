@@ -134,6 +134,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 			public void UpdateLastWheelTime()
 			{
+				//TODO (Time Review): use Environment.TickCount
 				_timeOfLastWheel = Platform.Time;
 			}
 

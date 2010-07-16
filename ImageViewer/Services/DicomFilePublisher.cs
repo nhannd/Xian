@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Services
 		private static string GetTempDirectory(string path, string prefix)
 		{
 			prefix = FixTempDirectoryPrefix(prefix);
-			DateTime dateTime = Platform.Time;
+			DateTime dateTime = DateTime.Now;
 
 			int number = 0;
 			string tempDirectory;

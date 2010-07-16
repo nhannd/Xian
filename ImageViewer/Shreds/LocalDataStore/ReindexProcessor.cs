@@ -73,7 +73,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					{
 						_activeJobInformation.ProgressItem.Identifier = Guid.NewGuid();
 						_activeJobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.None;
-						_activeJobInformation.ProgressItem.StartTime = Platform.Time;
+						//TODO (Time Review): Change this back to use Platform.Time once we've resolved
+						//the exception throwing issue.
+						_activeJobInformation.ProgressItem.StartTime = DateTime.Now;
 						_activeJobInformation.ProgressItem.LastActive = _activeJobInformation.ProgressItem.StartTime;
 						_activeJobInformation.ProgressItem.Cancelled = false;
 						_activeJobInformation.ProgressItem.Removed = false;

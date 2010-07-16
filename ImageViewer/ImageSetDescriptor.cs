@@ -36,6 +36,7 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Common;
+using System.Text;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -135,11 +136,16 @@ namespace ClearCanvas.ImageViewer
 
 			string modalitiesInStudy = StringUtilities.Combine(_sourceStudy.ModalitiesInStudy, ", ");
 
-			return String.Format("{0} {1} [{2}] {3}",
-										  studyDate.ToString(Format.DateFormat),
-										  studyTime.ToString(Format.TimeFormat),
-										  modalitiesInStudy ?? "",
-										  _sourceStudy.StudyDescription);
+			StringBuilder nameBuilder = new StringBuilder();
+			nameBuilder.AppendFormat("{0} {1}", studyDate.ToString(Format.DateFormat), 
+												studyTime.ToString(Format.TimeFormat));
+
+			if (!String.IsNullOrEmpty(_sourceStudy.AccessionNumber))
+				nameBuilder.AppendFormat(", A#: {0}", _sourceStudy.AccessionNumber);
+
+			nameBuilder.AppendFormat(", [{0}] {1}", modalitiesInStudy ?? "", _sourceStudy.StudyDescription);
+
+			return nameBuilder.ToString();
 		}
 
 		/// <summary>

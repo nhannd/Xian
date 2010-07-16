@@ -401,10 +401,10 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			{
 				this.KeyObjectSeriesUid = DicomUid.GenerateUid().UID;
 				this.KeyObjectSeriesNumber = CalculateSeriesNumber(provider.Frame);
-				this.KeyObjectSeriesDateTime = DateTime.Now;
+				this.KeyObjectSeriesDateTime = Platform.Time;
 				this.PresentationSeriesUid = DicomUid.GenerateUid().UID;
 				this.PresentationSeriesNumber = KeyObjectSeriesNumber + 1;
-				this.PresentationSeriesDateTime = DateTime.Now;
+				this.PresentationSeriesDateTime = Platform.Time;
 				_presentationNextInstanceNumber = 1;
 			}
 

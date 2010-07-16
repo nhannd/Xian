@@ -115,7 +115,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			private void OnPurge(object sender, EventArgs e)
 			{
-				DateTime now = Platform.Time;
+				//TODO (Time Review): Change this back to use Platform.Time once we've resolved
+				//the exception throwing issue.
+				DateTime now = DateTime.Now;
 				TimeSpan timeLimit = TimeSpan.FromMinutes(LocalDataStoreServiceSettings.Instance.PurgeTimeMinutes);
 				
 				List<FileImportJobInformation> clearJobs = new List<FileImportJobInformation>();
@@ -277,7 +279,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				progressItem.Identifier = Guid.NewGuid();
 				progressItem.AllowedCancellationOperations = CancellationFlags.Cancel;
-				progressItem.StartTime = Platform.Time;
+				progressItem.StartTime = DateTime.Now;
 				progressItem.LastActive = progressItem.StartTime;
 				progressItem.StatusMessage = SR.MessagePending;
 				progressItem.IsBackground = request.IsBackground;

@@ -85,6 +85,7 @@ namespace ClearCanvas.Common.Utilities
 			if (_timer == null || !_timer.Enabled)
 				return;
 
+			//TODO (Time Review): Use Environment.TickCount
 			if (Platform.Time.Subtract(_lastPublishTime).TotalMilliseconds >= _timeoutMilliseconds)
 				Publish();
 		}

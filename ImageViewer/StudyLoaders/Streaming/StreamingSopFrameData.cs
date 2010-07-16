@@ -354,6 +354,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 					{
 						if (!_alreadyRetrieved)
 						{
+							//TODO (Time Review): use Environment.TickCount
 							DateTime start = DateTime.Now;
 							_retrieveResult = retriever.Retrieve();
 							DateTime end = DateTime.Now;
