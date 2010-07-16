@@ -415,7 +415,7 @@
     <value>1</value>
   </data>
   <data name="_pnlBackgroundColor.Location" type="System.Drawing.Point, System.Drawing">
-    <value>138, 6</value>
+    <value>144, 6</value>
   </data>
   <data name="_pnlBackgroundColor.Size" type="System.Drawing.Size, System.Drawing">
     <value>133, 44</value>
@@ -436,7 +436,7 @@
     <value>0</value>
   </data>
   <data name="_imageHeight.Location" type="System.Drawing.Point, System.Drawing">
-    <value>64, 30</value>
+    <value>70, 30</value>
   </data>
   <data name="_imageHeight.Size" type="System.Drawing.Size, System.Drawing">
     <value>68, 20</value>
@@ -457,7 +457,7 @@
     <value>1</value>
   </data>
   <data name="_imageWidth.Location" type="System.Drawing.Point, System.Drawing">
-    <value>64, 4</value>
+    <value>70, 4</value>
   </data>
   <data name="_imageWidth.Size" type="System.Drawing.Size, System.Drawing">
     <value>68, 20</value>
@@ -532,10 +532,10 @@
     <value>4</value>
   </data>
   <data name="_pnlFixedSize.Location" type="System.Drawing.Point, System.Drawing">
-    <value>35, 65</value>
+    <value>29, 65</value>
   </data>
   <data name="_pnlFixedSize.Size" type="System.Drawing.Size, System.Drawing">
-    <value>274, 58</value>
+    <value>280, 58</value>
   </data>
   <data name="_pnlFixedSize.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
