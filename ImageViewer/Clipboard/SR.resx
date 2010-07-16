@@ -286,7 +286,7 @@
     <value>Delete Selected</value>
   </data>
   <data name="TooltipExportToImage" xml:space="preserve">
-    <value>Export to different image formats</value>
+    <value>Export to Image</value>
   </data>
   <data name="TooltipExportToVideo" xml:space="preserve">
     <value>Export to Video</value>
