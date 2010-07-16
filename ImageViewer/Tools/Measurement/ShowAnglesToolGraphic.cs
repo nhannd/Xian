@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		[Cloneable]
 		internal partial class ShowAnglesToolGraphic : CompositeGraphic, IVectorGraphic
 		{
-			private const int _minLineLength = 5;
+			private const int _minLineLength = 10;
 			private const int _minLength = 36;
 
 			[CloneIgnore]
