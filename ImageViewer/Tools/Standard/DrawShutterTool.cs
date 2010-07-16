@@ -66,31 +66,43 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ButtonAction("selectDrawCircleShutter", "drawshutter-toolbar-dropdown/MenuDrawCircleShutter", "SelectDrawCircleShutter")]
 	[MouseButtonIconSet("selectDrawCircleShutter", IconScheme.Colour, "Icons.DrawCircularShutterToolSmall.png", "Icons.DrawCircularShutterToolMedium.png", "Icons.DrawCircularShutterToolLarge.png")]
 	[CheckedStateObserver("selectDrawCircleShutter", "DrawCircleShutterChecked", "SelectedShutterTypeChanged")]
+	[GroupHint("selectDrawCircleShutter", "Tools.Image.Manipulation.Shutter")]
+	[EnabledStateObserver("selectDrawCircleShutter", "Enabled", "EnabledChanged")]
 
 	[ButtonAction("selectDrawPolygonShutter", "drawshutter-toolbar-dropdown/MenuDrawPolygonShutter", "SelectDrawPolygonShutter")]
 	[MouseButtonIconSet("selectDrawPolygonShutter", IconScheme.Colour, "Icons.DrawPolygonalShutterToolSmall.png", "Icons.DrawPolygonalShutterToolMedium.png", "Icons.DrawPolygonalShutterToolLarge.png")]
 	[CheckedStateObserver("selectDrawPolygonShutter", "DrawPolygonShutterChecked", "SelectedShutterTypeChanged")]
+	[GroupHint("selectDrawPolygonShutter", "Tools.Image.Manipulation.Shutter")]
+	[EnabledStateObserver("selectDrawPolygonShutter", "Enabled", "EnabledChanged")]
 
 	[ButtonAction("selectDrawRectangleShutter", "drawshutter-toolbar-dropdown/MenuDrawRectangleShutter", "SelectDrawRectangleShutter")]
 	[MouseButtonIconSet("selectDrawRectangleShutter", IconScheme.Colour, "Icons.DrawRectangularShutterToolSmall.png", "Icons.DrawRectangularShutterToolMedium.png", "Icons.DrawRectangularShutterToolLarge.png")]
 	[CheckedStateObserver("selectDrawRectangleShutter", "DrawRectangleShutterChecked", "SelectedShutterTypeChanged")]
+	[GroupHint("selectDrawCircleShutter", "Tools.Image.Manipulation.Shutter")]
+	[EnabledStateObserver("selectDrawRectangleShutter", "Enabled", "EnabledChanged")]
 
 	#endregion
 	#endregion
 
 	#region Menu
 
-	[ButtonAction("selectDrawCircleShutter", "global-menus/MenuTools/MenuStandard/MenuDrawCircleShutter", "SelectDrawCircleShutter")]
-	[GroupHint("selectDrawCircleShutter", "Tools.Image.Manipulation.Shutter")]
-	[EnabledStateObserver("selectDrawCircleShutter", "Enabled", "EnabledChanged")]
+	[MenuAction("activateDrawCircleShutter", "global-menus/MenuTools/MenuStandard/MenuDrawCircleShutter", "SelectDrawCircleShutter")]
+	[MouseButtonIconSet("activateDrawCircleShutter", IconScheme.Colour, "Icons.DrawCircularShutterToolSmall.png", "Icons.DrawCircularShutterToolMedium.png", "Icons.DrawCircularShutterToolLarge.png")]
+	[CheckedStateObserver("activateDrawCircleShutter", "DrawCircleShutterCheckedAndActive", "SelectedShutterTypeChanged")]
+	[GroupHint("activateDrawCircleShutter", "Tools.Image.Manipulation.Shutter")]
+	[EnabledStateObserver("activateDrawCircleShutter", "Enabled", "EnabledChanged")]
 
-	[ButtonAction("selectDrawPolygonShutter", "global-menus/MenuTools/MenuStandard/MenuDrawPolygonShutter", "SelectDrawPolygonShutter")]
-	[GroupHint("selectDrawPolygonShutter", "Tools.Image.Manipulation.Shutter")]
-	[EnabledStateObserver("selectDrawPolygonShutter", "Enabled", "EnabledChanged")]
+	[MenuAction("activateDrawPolygonShutter", "global-menus/MenuTools/MenuStandard/MenuDrawPolygonShutter", "SelectDrawPolygonShutter")]
+	[MouseButtonIconSet("activateDrawPolygonShutter", IconScheme.Colour, "Icons.DrawPolygonalShutterToolSmall.png", "Icons.DrawPolygonalShutterToolMedium.png", "Icons.DrawPolygonalShutterToolLarge.png")]
+	[CheckedStateObserver("activateDrawPolygonShutter", "DrawPolygonShutterCheckedAndActive", "SelectedShutterTypeChanged")]
+	[GroupHint("activateDrawPolygonShutter", "Tools.Image.Manipulation.Shutter")]
+	[EnabledStateObserver("activateDrawPolygonShutter", "Enabled", "EnabledChanged")]
 
-	[ButtonAction("selectDrawRectangleShutter", "global-menus/MenuTools/MenuStandard/MenuDrawRectangleShutter", "SelectDrawRectangleShutter")]
-	[GroupHint("selectDrawCircleShutter", "Tools.Image.Manipulation.Shutter")]
-	[EnabledStateObserver("selectDrawRectangleShutter", "Enabled", "EnabledChanged")]
+	[MenuAction("activateDrawRectangleShutter", "global-menus/MenuTools/MenuStandard/MenuDrawRectangleShutter", "SelectDrawRectangleShutter")]
+	[MouseButtonIconSet("activateDrawRectangleShutter", IconScheme.Colour, "Icons.DrawRectangularShutterToolSmall.png", "Icons.DrawRectangularShutterToolMedium.png", "Icons.DrawRectangularShutterToolLarge.png")]
+	[CheckedStateObserver("activateDrawRectangleShutter", "DrawRectangleShutterCheckedAndActive", "SelectedShutterTypeChanged")]
+	[GroupHint("activateDrawCircleShutter", "Tools.Image.Manipulation.Shutter")]
+	[EnabledStateObserver("activateDrawRectangleShutter", "Enabled", "EnabledChanged")]
 
 	#endregion
 
@@ -125,6 +137,21 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			get { return _selectedShutterType == ShutterType.Polygon; }
 		}
 
+		public bool DrawCircleShutterCheckedAndActive
+		{
+			get { return this.Active && this.DrawCircleShutterChecked; }
+		}
+
+		public bool DrawRectangleShutterCheckedAndActive
+		{
+			get { return this.Active && this.DrawRectangleShutterChecked; }
+		}
+
+		public bool DrawPolygonShutterCheckedAndActive
+		{
+			get { return this.Active && this.DrawPolygonShutterChecked; }
+		}
+
 		private ShutterType SelectedShutterType
 		{
 			get { return _selectedShutterType; }
@@ -134,11 +161,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					return;
 
 				_selectedShutterType = value;
-				EventsHelper.Fire(SelectedShutterTypeChanged, this, EventArgs.Empty);
+				this.OnSelectedShutterTypeChanged();
 			}
 		}
 
 		public event EventHandler SelectedShutterTypeChanged;
+
+		protected virtual void OnSelectedShutterTypeChanged()
+		{
+			EventsHelper.Fire(this.SelectedShutterTypeChanged, this, EventArgs.Empty);
+		}
 
 		public IconSet IconSet
 		{
@@ -186,10 +218,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 
 		protected override void Dispose(bool disposing)
-			{
+		{
 			base.ImageViewer.EventBroker.ImageDrawing -= OnImageDrawing;
 			base.Dispose(disposing);
-			}
+		}
+
+		protected override void OnActivationChanged()
+		{
+			base.OnActivationChanged();
+			this.OnSelectedShutterTypeChanged();
+		}
 
 		protected override void OnTileSelected(object sender, TileSelectedEventArgs e)
 		{
