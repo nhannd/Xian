@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core.Modelling;
 using ClearCanvas.Ris.Application.Common.Admin.EnumerationAdmin;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
@@ -117,21 +118,30 @@ namespace ClearCanvas.Ris.Application.Services.Admin.EnumerationAdmin
             return new EditValueResponse();
         }
 
-        [UpdateOperation]
+		[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Enumeration)]
 		public RemoveValueResponse RemoveValue(RemoveValueRequest request)
-        {
-            Type enumClass = GetEnumClass(request.AssemblyQualifiedClassName);
+		{
+			Type enumClass = null;
+			
+			try
+			{
+				enumClass = GetEnumClass(request.AssemblyQualifiedClassName);
 
 			// Client side should enforce this.  But just in case it does not.
 			if (IsSoftEnum(enumClass) == false)
 				throw new RequestValidationException(SR.ExceptionUnableToDeleteHardEnumeration);
 
-            IEnumBroker broker = PersistenceContext.GetBroker<IEnumBroker>();
-            broker.RemoveValue(enumClass, request.Value.Code);
-
-            return new RemoveValueResponse();
-        }
+				IEnumBroker broker = PersistenceContext.GetBroker<IEnumBroker>();
+				broker.RemoveValue(enumClass, request.Value.Code);
+				PersistenceContext.SynchState();
+				return new RemoveValueResponse();
+			}
+			catch (PersistenceException)
+			{
+				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, TerminologyTranslator.Translate(enumClass)));
+			}
+		}
 
         #endregion
 
