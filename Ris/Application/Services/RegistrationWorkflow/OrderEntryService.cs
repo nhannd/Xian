@@ -660,7 +660,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				// apply the requisition information to the actual procedure
 				assembler.UpdateProcedureFromRequisition(procedure, req, this.CurrentUserStaff, this.PersistenceContext);
 
-				CreateLogicalHL7Event(procedure, LogicalHL7EventType.OrderCreated);
+				CreateLogicalHL7Event(procedure, LogicalHL7EventType.ProcedureCreated);
 			}
 
 			// process updates
@@ -673,13 +673,23 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				if (!procedure.Type.Equals(requestedType))
 					throw new RequestValidationException("Order modification must not modify the type of a requested procedure.");
 
+				var procedureAlreadyTerminated = procedure.IsTerminated;
+
 				// apply the requisition information to the actual procedure
 				assembler.UpdateProcedureFromRequisition(procedure, req, this.CurrentUserStaff, this.PersistenceContext);
 
-				CreateLogicalHL7Event(
-					procedure,
-					req.Cancelled ? LogicalHL7EventType.OrderCancelled : LogicalHL7EventType.OrderModified);
+				AddProcedureModifiedOrProcedureCancelledLogicalHL7Event(procedure, req.Cancelled, procedureAlreadyTerminated);
 			}
+		}
+
+		private void AddProcedureModifiedOrProcedureCancelledLogicalHL7Event(Procedure procedure, bool shouldCancel, bool procedureAlreadyTerminated)
+		{
+			if (shouldCancel && procedureAlreadyTerminated)
+				return;
+
+			CreateLogicalHL7Event(
+				procedure,
+				shouldCancel ? LogicalHL7EventType.ProcedureCancelled : LogicalHL7EventType.ProcedureModified);
 		}
 	}
 }

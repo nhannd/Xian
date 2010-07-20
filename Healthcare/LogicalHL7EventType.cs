@@ -42,6 +42,11 @@ namespace ClearCanvas.Healthcare
 		public const string OrderCreated = "OrderCreated";
 		public const string OrderModified = "OrderModified";
 		public const string OrderCancelled = "OrderCancelled";
+
+		public const string ProcedureCreated = "ProcedureCreated";
+		public const string ProcedureModified = "ProcedureModified";
+		public const string ProcedureCancelled = "ProcedureCancelled";
+
 		public const string ReportPublished = "ReportPublished";
 	}
 
