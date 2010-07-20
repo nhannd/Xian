@@ -673,23 +673,17 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				if (!procedure.Type.Equals(requestedType))
 					throw new RequestValidationException("Order modification must not modify the type of a requested procedure.");
 
-				var procedureAlreadyTerminated = procedure.IsTerminated;
+				// If the procedure is already terminated, just move on to the next one since procedures cannot be "un-terminated".
+				if (procedure.IsTerminated) 
+					continue;
 
 				// apply the requisition information to the actual procedure
 				assembler.UpdateProcedureFromRequisition(procedure, req, this.CurrentUserStaff, this.PersistenceContext);
 
-				AddProcedureModifiedOrProcedureCancelledLogicalHL7Event(procedure, req.Cancelled, procedureAlreadyTerminated);
+				CreateLogicalHL7Event(
+					procedure,
+					req.Cancelled ? LogicalHL7EventType.ProcedureCancelled : LogicalHL7EventType.ProcedureModified);
 			}
-		}
-
-		private void AddProcedureModifiedOrProcedureCancelledLogicalHL7Event(Procedure procedure, bool shouldCancel, bool procedureAlreadyTerminated)
-		{
-			if (shouldCancel && procedureAlreadyTerminated)
-				return;
-
-			CreateLogicalHL7Event(
-				procedure,
-				shouldCancel ? LogicalHL7EventType.ProcedureCancelled : LogicalHL7EventType.ProcedureModified);
 		}
 	}
 }
