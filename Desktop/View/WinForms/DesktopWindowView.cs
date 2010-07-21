@@ -118,6 +118,8 @@ namespace ClearCanvas.Desktop.View.WinForms
             switch (e.CloseReason)
             {
                 case System.Windows.Forms.CloseReason.ApplicationExitCall:
+            		Application.Shutdown();
+            		break;
                 case System.Windows.Forms.CloseReason.TaskManagerClosing:
                 case System.Windows.Forms.CloseReason.WindowsShutDown:
                     // windows is trying close the application, not just this window

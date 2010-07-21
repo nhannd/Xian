@@ -32,11 +32,11 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Configuration;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using System.Threading;
 using ClearCanvas.Utilities.Manifest;
 
 namespace ClearCanvas.Desktop
@@ -119,11 +119,16 @@ namespace ClearCanvas.Desktop
     [AssociateView(typeof(ApplicationViewExtensionPoint))]
     public class Application : IApplicationRoot
     {
-        #region Public Static Members
+		private static Application _instance;
+		
+		internal static SynchronizationContext SynchronizationContext
+		{
+			get { return _instance._synchronizationContext; }
+		}
 
-        private static Application _instance;
+		#region Public Static Members
 
-        /// <summary>
+		/// <summary>
         /// Gets the singleton instance of the <see cref="Application"/> object.
         /// </summary>
         public static Application Instance
@@ -204,10 +209,20 @@ namespace ClearCanvas.Desktop
         /// <returns>True if the application successfully quits, or false if it does not.</returns>
         public static bool Quit()
         {
-            return _instance.DoQuit();
+			_instance.Quit(false);
+        	return _instance._guiToolkit == null;
         }
 
-        /// <summary>
+		/// <summary>
+		/// Closes all open desktop windows and terminates the application.
+		/// </summary>
+		/// <remarks>The application is forcibly shut down, and the user will lose his/her work.</remarks>
+		public static void Shutdown()
+		{
+			_instance.Quit(true);
+		}
+
+    	/// <summary>
         /// Occurs when a request has been made for the application to quit.
         /// </summary>
         /// <remarks>
@@ -249,7 +264,7 @@ namespace ClearCanvas.Desktop
                 // do nothing
                 return true;
             }
-
+			
             public void TerminateSession()
             {
                 // do nothing
@@ -262,19 +277,18 @@ namespace ClearCanvas.Desktop
 
         private string _appName;
         private Version _appVersion;
-		private IGuiToolkit _guiToolkit;
+		private volatile IGuiToolkit _guiToolkit;
         private IApplicationView _view;
         private DesktopWindowCollection _windows;
         private ToolSet _toolSet;
         private ISessionManager _sessionManager;
 
-        private bool _initialized;  // flag to be set when initialization is complete
-
-        private event EventHandler<QuittingEventArgs> _quitting;
-        private bool _inProcessOfQuitting;
-
-
-        /// <summary>
+		private volatile bool _initialized;  // flag to be set when initialization is complete
+        private bool _quitInProgress;
+		private event EventHandler<QuittingEventArgs> _quitting;
+		private volatile SynchronizationContext _synchronizationContext;
+        
+		/// <summary>
         /// Default constructor, for internal framework use only.
         /// </summary>
         public Application()
@@ -331,8 +345,7 @@ namespace ClearCanvas.Desktop
             }
             catch (Exception e)
             {
-                // failed to create root window... this is a problem
-                Platform.Log(LogLevel.Fatal, e);
+				ExceptionHandler.ReportUnhandled(e);
                 return false;
             }
             return true;
@@ -344,27 +357,29 @@ namespace ClearCanvas.Desktop
         /// </summary>
         protected virtual void CleanUp()
         {
-            if (_view != null && _view is IDisposable)
-            {
-                (_view as IDisposable).Dispose();
-                _view = null;
-            }
+			_synchronizationContext = null;
+			_quitInProgress = true;
+			if (_view != null && _view is IDisposable)
+			{
+				(_view as IDisposable).Dispose();
+				_view = null;
+			}
 
-            if (_toolSet != null)
-            {
-                _toolSet.Dispose();
-                _toolSet = null;
-            }
+			if (_toolSet != null)
+			{
+				_toolSet.Dispose();
+				_toolSet = null;
+			}
 
-            if (_windows != null)
-            {
-                (_windows as IDisposable).Dispose();
-            }
+			if (_windows != null)
+			{
+				(_windows as IDisposable).Dispose();
+			}
 
-            if (_guiToolkit != null && _guiToolkit is IDisposable)
-            {
-                (_guiToolkit as IDisposable).Dispose();
-            }
+			if (_guiToolkit != null && _guiToolkit is IDisposable)
+			{
+				(_guiToolkit as IDisposable).Dispose();
+			}
         }
 
         /// <summary>
@@ -399,10 +414,15 @@ namespace ClearCanvas.Desktop
 
         #region Protected members
 
-        /// <summary>
-        /// Closes all desktop windows.
-        /// </summary>
-        protected bool CloseAllWindows()
+		/// <summary>
+		/// Closes all desktop windows.
+		/// </summary>
+		protected bool CloseAllWindows()
+        {
+        	return CloseAllWindows(false);
+        }
+
+        private bool CloseAllWindows(bool force)
         {
             // make a copy of the windows collection for iteration
             List<DesktopWindow> windows = new List<DesktopWindow>(_windows);
@@ -412,7 +432,8 @@ namespace ClearCanvas.Desktop
                 // (the check is necessary because there is no guarantee the window is still open)
                 if (window.State == DesktopObjectState.Open)
                 {
-                    bool closed = window.Close(UserInteraction.Allowed, CloseReason.ApplicationQuit);
+                	UserInteraction interaction = force ? UserInteraction.NotAllowed : UserInteraction.Allowed;
+					bool closed = window.Close(interaction, CloseReason.ApplicationQuit);
 
                     // if one fails, abort
                     if (!closed)
@@ -462,32 +483,33 @@ namespace ClearCanvas.Desktop
             }
             catch (Exception ex)
             {
-                Platform.Log(LogLevel.Fatal, ex);
+				ExceptionHandler.ReportUnhandled(ex);
                 return;
             }
 
-            _guiToolkit.Started += delegate(object sender, EventArgs e)
+            _guiToolkit.Started += delegate
             {
                 // load application view
                 try
                 {
-                    _view = (IApplicationView)ViewFactory.CreateAssociatedView(this.GetType());
+					_synchronizationContext = SynchronizationContext.Current;
+					_view = (IApplicationView)ViewFactory.CreateAssociatedView(this.GetType());
                 }
                 catch (Exception ex)
                 {
-                    Platform.Log(LogLevel.Fatal, ex);
-                    _guiToolkit.Terminate();
-                    return;
+					ExceptionHandler.ReportUnhandled(ex);
+					TerminateGuiToolkit(); 
+					return;
                 }
 
                 // initialize
                 if (!Initialize(args))
                 {
-                    _guiToolkit.Terminate();
-                    return;
+					TerminateGuiToolkit(); 
+					return;
                 }
 
-                _initialized = true;
+				_initialized = true;
             };
 
             // init windows collection
@@ -495,58 +517,106 @@ namespace ClearCanvas.Desktop
             _windows.ItemClosed += delegate
                 {
                     // terminate the app when the window count goes to 0 if the app isn't already quitting
-                    if (_windows.Count == 0 && !_inProcessOfQuitting)
+                    if (_windows.Count == 0 && !_quitInProgress)
                     {
-                        DoQuit();
+                        Quit(false);
                     }
                 };
 
 
             // start message pump - this will block until _guiToolkit.Terminate() is called
             _guiToolkit.Run();
-        }
-        
-        /// <summary>
+		}
+
+		#region Quitting
+
+    	private void Quit(bool force)
+		{
+			if (!_initialized && !force)
+				throw new InvalidOperationException("This method cannot be called until the Application is fully initialized");
+
+			SynchronizationContext syncContext = _synchronizationContext;
+    		if (syncContext == null)
+				return;
+
+    		if (SynchronizationContext.Current == syncContext)
+    		{
+    			DoQuit(force);
+    		}
+    		else
+    		{
+    			try
+    			{
+    				//Whether or not this actually gets executed on the UI thread is irrelevant,
+    				//because if it doesn't, then the app has already quit!
+    				syncContext.Send(unused => DoQuit(force), null);
+    			}
+    			catch
+    			{
+    			}
+    		}
+		}
+
+    	/// <summary>
         /// Implements the logic to terminate the desktop, including closing all windows and terminating the session.
         /// </summary>
         /// <returns>True if the application is really going to terminate, false otherwise.</returns>
-        private bool DoQuit()
-        {
-            if (!_initialized)
-                throw new InvalidOperationException("This method cannot be called until the Application is fully initialized");
+		private void DoQuit(bool force)
+    	{
+			if (_quitInProgress) //avoid recursion and calls after we've already quit.
+				return;
 
-            _inProcessOfQuitting = true;
+			_quitInProgress = true;
+			if (!CloseAllWindows(force))
+			{
+				_quitInProgress = false;
+				return;
+			}
 
-            if (!CloseAllWindows())
-            {
-                _inProcessOfQuitting = false;
-                return false;
-            }
-
-            // send quitting event
-            QuittingEventArgs args = new QuittingEventArgs();
-            OnQuitting(args);
+			// send quitting event
+			QuittingEventArgs args = new QuittingEventArgs();
+			OnQuitting(args);
 
 			// ensure the action model is disposed - this will cause it to be written out to the store
 			ActionModelSettings.Default.Dispose();
 
+			try
+			{
+				_sessionManager.TerminateSession();
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+			}
 
-            try
-            {
-               _sessionManager.TerminateSession();
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Error, e);
-            }
+			// shut down the GUI message loop
+			TerminateGuiToolkit();
+    	}
+		
+		#endregion
 
-            // shut down the GUI message loop
-            _guiToolkit.Terminate();
+		private void TerminateGuiToolkit()
+		{
+			if (_guiToolkit == null)
+				return;
 
-            return true;
-        }
+			try
+			{
+				_synchronizationContext = null;
+				_guiToolkit.Terminate();
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+				Environment.Exit(-1);
+			}
+			finally
+			{
+				_guiToolkit = null;
+			}
+		}
 
-        /// <summary>
+    	/// <summary>
         /// Initializes the session manager, using an extension if one is provided.
         /// </summary>
         /// <returns></returns>
@@ -612,5 +682,5 @@ namespace ClearCanvas.Desktop
         }
 
         #endregion
-    }
+	}
 }

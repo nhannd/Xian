@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 		private void OnFolderControlExceptionRaised(object sender, ItemEventArgs<Exception> e)
 		{
 			Exception ex = e.Item;
-			ExceptionHandler.Report(ex, ex.Message, _component.DesktopWindow);
+			ExceptionHandler.Report(ex, _component.DesktopWindow);
 		}
 
 		private IEnumerable<string> GetSelectedPaths()

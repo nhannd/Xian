@@ -32,45 +32,87 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="ExceptionHandlerComponent"/>
-    /// </summary>
-    public partial class ExceptionHandlerComponentControl : CustomUserControl
+    internal partial class ExceptionDialogControl : CustomUserControl
     {
-        private ExceptionHandlerComponent _component;
+    	private readonly Exception _exception;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public ExceptionHandlerComponentControl(ExceptionHandlerComponent component)
-        {
-            InitializeComponent();
+		internal ExceptionDialogControl(Exception exception, string message, ExceptionDialogActions buttonActions, ClickHandlerDelegate ok, ClickHandlerDelegate quit)
+		{
+        	_exception = exception;
 
-            _component = component;
-            _description.Text = _component.Message;
+			InitializeComponent();
 
-			base.AcceptButton = this._okButton;
-			base.CancelButton = this._okButton;
+			_description.Text = message;
 
-            // Update Exceptions detail tree
-            _detailTree.BeginUpdate();
-            BuildTreeFromException(null, _component.Exception);
-            _detailTree.ExpandAll();
-            _detailTree.EndUpdate();
+			AcceptButton = _okButton;
+			CancelButton = _okButton;
 
-            // Hide the details when dialog first startup
+			EventHandler okClick = delegate
+			                       	{
+			                       		Result = ExceptionDialogAction.Ok;
+			                       		ok();
+			                       	};
+
+			EventHandler quitClick = delegate
+			                         	{
+			                         		Result = ExceptionDialogAction.Quit;
+			                         		quit();
+			                         	};
+
+			if (buttonActions == ExceptionDialogActions.Ok)
+			{
+				if (ok == null)
+					throw new ArgumentException("Ok method must be supplied", "ok");
+
+				_okButton.Click += okClick;
+				_quitButton.Dispose();
+			}
+			else if (buttonActions == ExceptionDialogActions.Quit)
+			{
+				if (quit == null)
+					throw new ArgumentException("Quit method must be supplied", "quit");
+
+				_quitButton.Click += quitClick;
+				AcceptButton = _quitButton;
+				CancelButton = _quitButton;
+				_okButton.Dispose();
+			}
+			else
+			{
+				if (ok == null)
+					throw new ArgumentException("Ok method must be supplied", "ok");
+				if (quit == null)
+					throw new ArgumentException("Quit method must be supplied", "quit");
+
+				_okButton.Click += okClick;
+				_okButton.Text = "&Continue";
+				_quitButton.Click += quitClick;
+			}
+
+			if (_exception != null)
+			{
+				// Update Exceptions detail tree
+				_detailTree.BeginUpdate();
+				BuildTreeFromException(null, _exception);
+				_detailTree.ExpandAll();
+				_detailTree.EndUpdate();
+			}
+			else
+			{
+				_detailButton.Dispose();
+			}
+
+        	// Hide the details when dialog first startup
             HideDetails();
         }
 
-        #region Event functions
+		public ExceptionDialogAction Result { get; private set; }
 
-        private void _okButton_Click(object sender, EventArgs e)
-        {
-            _component.Cancel();
-        }
+        #region Event functions
 
         private void _detailButton_Click(object sender, EventArgs e)
         {
@@ -94,7 +136,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             // Copy exception details to clipboard
 			string clipboardMessage = SR.ExceptionHandlerMessagePrefix + _description.Text + "\r\n\r\n";
-            clipboardMessage += BuildMessageFromException(_component.Exception);
+            clipboardMessage += BuildMessageFromException(_exception);
             Clipboard.SetText(clipboardMessage);
         }
 
@@ -108,9 +150,9 @@ namespace ClearCanvas.Desktop.View.WinForms
             _detailButton.Text = _detailButton.Text.Replace("<", ">");
 
             // Shrink the user control
-            Rectangle thisBounds = this.Bounds;
-            thisBounds.Height = _okButton.Bounds.Bottom - thisBounds.Top + 10;
-            this.Bounds = thisBounds;
+            Rectangle thisBounds = Bounds;
+            thisBounds.Height = _quitButton.Bounds.Bottom - thisBounds.Top + 10;
+            Bounds = thisBounds;
         }
 
         private void ShowDetails()
@@ -119,9 +161,9 @@ namespace ClearCanvas.Desktop.View.WinForms
             _detailButton.Text = _detailButton.Text.Replace(">", "<");
 
             // Expand the user control
-            Rectangle thisBounds = this.Bounds;
+            Rectangle thisBounds = Bounds;
             thisBounds.Height = _detailTree.Bounds.Bottom - thisBounds.Top + 10;
-            this.Bounds = thisBounds;
+            Bounds = thisBounds;
         }
 
         private void BuildTreeFromException(TreeNode thisNode, Exception e)
@@ -135,7 +177,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             if (e.StackTrace != null)
             {
                 // Add a new node for each level of StackTrace
-                string lineBreak = "\r\n";
+                const string lineBreak = "\r\n";
                 int prevIndex = 0;
                 int startIndex = e.StackTrace.IndexOf(lineBreak, prevIndex);
                 while (startIndex != -1)
@@ -155,7 +197,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        private string BuildMessageFromException(Exception e)
+        private static string BuildMessageFromException(Exception e)
         {
             string message = "";
 

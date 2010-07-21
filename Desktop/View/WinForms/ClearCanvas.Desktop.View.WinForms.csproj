@@ -112,6 +112,13 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ConvertEnum.cs" />
+    <Compile Include="ExceptionDialog.cs" />
+    <Compile Include="ExceptionDialogControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ExceptionDialogControl.Designer.cs">
+      <DependentUpon>ExceptionDialogControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="GalleryComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -294,13 +301,6 @@
     <Compile Include="CustomUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ExceptionHandlerComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ExceptionHandlerComponentControl.Designer.cs">
-      <DependentUpon>ExceptionHandlerComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ExceptionHandlerComponentView.cs" />
     <Compile Include="HtmlComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -442,10 +442,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="StackTab.resx">
       <DependentUpon>StackTab.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ExceptionHandlerComponentControl.resx">
-      <DependentUpon>ExceptionHandlerComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="NavigatorComponentContainerControl.resx">

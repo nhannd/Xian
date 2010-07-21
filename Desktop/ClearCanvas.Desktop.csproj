@@ -166,6 +166,7 @@
     <Compile Include="Actions\DropDownAction.cs" />
     <Compile Include="DragDropOption.cs" />
     <Compile Include="DragDropPosition.cs" />
+    <Compile Include="ExceptionDialog.cs" />
     <Compile Include="Factories.cs" />
     <Compile Include="FileDialogCreationArgs.cs" />
     <Compile Include="FormatSettings.Designer.cs">
@@ -212,6 +213,7 @@
     <Compile Include="Tests\PathSegmentTests.cs" />
     <Compile Include="Tests\PathTests.cs" />
     <Compile Include="Tests\TableTest.cs" />
+    <Compile Include="Tests\UnhandledExceptionTests.cs" />
     <Compile Include="Tests\XKeysConverterTest.cs" />
     <Compile Include="Tests\XMouseButtonComboTest.cs" />
     <Compile Include="Tests\XMouseButtonsConverterTest.cs" />
@@ -254,7 +256,6 @@
     <Compile Include="SimpleComponentContainer.cs" />
     <Compile Include="DragDropKind.cs" />
     <Compile Include="ExceptionHandler.cs" />
-    <Compile Include="ExceptionHandlerComponent.cs" />
     <Compile Include="Format.cs" />
     <Compile Include="FormatSettings.cs" />
     <Compile Include="IApplicationComponentContainer.cs" />

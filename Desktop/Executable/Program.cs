@@ -30,9 +30,9 @@
 #endregion
 
 using System;
-using System.Reflection;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.View.WinForms;
+using System.Windows.Forms;
 #if !MONO
 
 #endif
@@ -47,6 +47,8 @@ namespace ClearCanvas.Desktop.Executable
 		[STAThread]
 		static void Main(string[] args)
 		{
+			Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+
 #if !MONO
 			SplashScreenManager.DisplaySplashScreen();
 #endif

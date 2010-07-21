@@ -101,7 +101,14 @@ namespace ClearCanvas.Desktop
 
         #endregion
 
-        #region Protected overridables
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+			if (disposing)
+				_activeWorkspace = null;
+		}
+
+		#region Protected overridables
 
 		/// <summary>
 		/// Called when a <see cref="Workspace"/> item's <see cref="DesktopObject.InternalActiveChanged"/> event

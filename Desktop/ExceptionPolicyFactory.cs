@@ -40,12 +40,7 @@ namespace ClearCanvas.Desktop
     ///</summary>
     internal class ExceptionPolicyFactory
     {
-
-        private sealed class DefaultExceptionPolicyKey
-        {
-        }
-
-        internal sealed class DefaultExceptionPolicy : IExceptionPolicy
+        private sealed class DefaultExceptionPolicy : IExceptionPolicy
         {
             public void Handle(Exception e, IExceptionHandlingContext context)
             {
@@ -54,54 +49,32 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        private static readonly Object _policyLock = new Object();
-        private static IDictionary<Type, IExceptionPolicy> _policies;
-        private static readonly Type _defaultExceptionPolicyKey = typeof(DefaultExceptionPolicyKey);
+    	private static readonly IDictionary<Type, IExceptionPolicy> _policies = CreatePolicies();
+    	private static readonly IExceptionPolicy _defaultPolicy = new DefaultExceptionPolicy();
 
-        // Initialise policies once
-        private static IDictionary<Type, IExceptionPolicy> Policies
+		private static IDictionary<Type, IExceptionPolicy> CreatePolicies()
         {
-            get
-            {
-                if (_policies == null)
-                {
-                    lock (_policyLock)
-                    {
-                        if (_policies == null)
-                        {
-                            InitialisePolicies();
-                        }
-                    }
-                }
-                return _policies;
-            }
-        }
+            var policies = new Dictionary<Type, IExceptionPolicy>();
 
-        // Add all ExceptionPolicyExtensionPoint extensions as well as a default policy
-        private static void InitialisePolicies()
-        {
-            _policies = new Dictionary<Type, IExceptionPolicy>();
+        	try
+        	{
+				foreach (IExceptionPolicy policy in new ExceptionPolicyExtensionPoint().CreateExtensions())
+        		{
+        			foreach (ExceptionPolicyForAttribute attr in policy.GetType().GetCustomAttributes(typeof (ExceptionPolicyForAttribute), true))
+        			{
+        				if (!policies.ContainsKey(attr.ExceptionType))
+        					policies[attr.ExceptionType] = policy;
+        			}
+        		}
+        	}
+			catch (NotSupportedException)
+			{}
+        	catch (Exception e)
+        	{
+        		Platform.Log(LogLevel.Debug, e);
+        	}
 
-            try
-            {
-                ExceptionPolicyExtensionPoint xp = new ExceptionPolicyExtensionPoint();
-                Object[] extensions = xp.CreateExtensions();
-                foreach (object extension in extensions)
-                {
-                    IExceptionPolicy policy = extension as IExceptionPolicy;
-                    if (policy != null)
-                    {
-                        foreach (ExceptionPolicyForAttribute attr in policy.GetType().GetCustomAttributes(typeof(ExceptionPolicyForAttribute), true))
-                        {
-                            _policies.Add(new KeyValuePair<Type, IExceptionPolicy>(attr.ExceptionType, policy));
-                        }
-                    }
-                }
-            }
-            finally
-            {
-                _policies.Add(new KeyValuePair<Type, IExceptionPolicy>(_defaultExceptionPolicyKey, new DefaultExceptionPolicy()));
-            }
+			return policies;
         }
 
         ///<summary>
@@ -112,11 +85,8 @@ namespace ClearCanvas.Desktop
         public static IExceptionPolicy GetPolicy(Type exceptionType)
         {
             IExceptionPolicy policy;
-
-            if(Policies.TryGetValue(exceptionType, out policy) == false)
-            {
-                policy = Policies[_defaultExceptionPolicyKey];
-            }
+            if(!_policies.TryGetValue(exceptionType, out policy))
+            	policy = _defaultPolicy;
 
             return policy;
         }

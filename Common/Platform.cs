@@ -427,26 +427,13 @@ namespace ClearCanvas.Common
         /// </remarks>
         public static void StartApp(ExtensionFilter applicationRootFilter, string[] args)
         {
-#if !DEBUG
-            try
-            {
-#endif
-            ApplicationRootExtensionPoint xp = new ApplicationRootExtensionPoint();
-            _applicationRoot = (applicationRootFilter == null) ?
-                (IApplicationRoot)xp.CreateExtension() :
-                (IApplicationRoot)xp.CreateExtension(applicationRootFilter);
-            _applicationRoot.RunApplication(args);
+        	FatalExceptionHandler.Initialize();
 
-#if !DEBUG
-            }
-            catch (Exception e)
-            {
-				Platform.Log(LogLevel.Fatal, e);
-
-                // for convenience, if this is console app, also print the message to the console
-                Console.WriteLine(e.Message);
-            }
-#endif
+			ApplicationRootExtensionPoint xp = new ApplicationRootExtensionPoint();
+			_applicationRoot = (applicationRootFilter == null) ?
+				(IApplicationRoot)xp.CreateExtension() :
+				(IApplicationRoot)xp.CreateExtension(applicationRootFilter);
+			_applicationRoot.RunApplication(args);
         }
 
 		// Public methods
@@ -1074,8 +1061,5 @@ namespace ClearCanvas.Common
 			if (variable == null)
 				throw new InvalidOperationException(String.Format(SR.ExceptionMemberNotSetVerbose, variableName, detailedMessage));
 		}
-
-
-        
     }
 }

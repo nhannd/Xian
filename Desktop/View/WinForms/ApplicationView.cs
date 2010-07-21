@@ -53,6 +53,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         public ApplicationView()
         {
+			System.Windows.Forms.Application.ThreadException += (sender, e) => ExceptionHandler.ReportUnhandled(e.Exception);
         }
 
         #region IApplicationView Members

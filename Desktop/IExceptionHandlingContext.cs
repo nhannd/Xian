@@ -59,11 +59,14 @@ namespace ClearCanvas.Desktop
         ///</summary>
         void Abort();
 
-        ///<summary>
-        /// Shows the specified message in a message box in the context's <see cref="IDesktopWindow"/>.
-        ///</summary>
-        ///<param name="message">The message to be displayed.</param>
-        void ShowMessageBox(string message);
+		///<summary>
+		/// Shows the specified detail message in a message box in the context's <see cref="IDesktopWindow"/>.
+		///</summary>
+		/// <remarks>
+		/// Automatically prepends the contextual message supplied by the application component to the detail message.
+		/// </remarks>
+		///<param name="detailMessage">The message to be shown.</param>
+		void ShowMessageBox(string detailMessage);
 
         ///<summary>
         /// Shows the specified detail message in a message box in the context's <see cref="IDesktopWindow"/>.

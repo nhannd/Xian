@@ -92,6 +92,13 @@ namespace ClearCanvas.Desktop
 
         #region Protected overrides
 
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+			if (disposing)
+				_activeWindow = null;
+		}
+
 		/// <summary>
 		/// Called when a <see cref="DesktopWindow"/> item's <see cref="DesktopObject.InternalActiveChanged"/> event
 		/// has fired.

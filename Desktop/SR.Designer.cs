@@ -700,6 +700,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error has occurred which prevents the further use of this application. This application will now shut down to prevent damage to the system..
+        /// </summary>
+        public static string MessageUnexpectedErrorQuit {
+            get {
+                return ResourceManager.GetString("MessageUnexpectedErrorQuit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unrecognized format.
         /// </summary>
         public static string MessageUnrecognizedFormat {

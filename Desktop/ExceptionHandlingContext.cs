@@ -36,30 +36,21 @@ namespace ClearCanvas.Desktop
 {
     internal class ExceptionHandlingContext : IExceptionHandlingContext
     {
-        private Exception _exception;
-        private readonly IDesktopWindow _desktopWindow;
-        private readonly string _contextualMessage;
-        private readonly AbortOperationDelegate _abortDelegate;
+        private readonly Exception _exception;
+    	private readonly AbortOperationDelegate _abortDelegate;
 
         public ExceptionHandlingContext(Exception e, string contextualMessage, IDesktopWindow desktopWindow, AbortOperationDelegate abortOperationDelegate)
         {
             _exception = e;
-            _contextualMessage = contextualMessage;
-            _desktopWindow = desktopWindow;
+            ContextualMessage = contextualMessage;
+            DesktopWindow = desktopWindow;
             _abortDelegate = abortOperationDelegate;
         }
 
-        public IDesktopWindow DesktopWindow
-        {
-            get { return _desktopWindow; }
-        }
+    	public IDesktopWindow DesktopWindow { get; private set; }
+    	public string ContextualMessage { get; private set; }
 
-        public string ContextualMessage
-        {
-            get { return _contextualMessage; }
-        }
-
-        public void Log(LogLevel level, Exception e)
+    	public void Log(LogLevel level, Exception e)
         {
             Platform.Log(level, e);
         }
@@ -72,60 +63,44 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        public void ShowMessageBox(string message)
+		public void ShowMessageBox(string detailMessage)
         {
-            // by default we choose the more secure option and don't show the stack trace
-            bool showStackTraceInDialog = false;
-
-            try
-            {
-                showStackTraceInDialog = ExceptionHandlerSettings.Default.ShowStackTraceInDialog;
-            }
-            catch (Exception e)
-            {
-                // if we can't retrieve the setting for whatever reason, just log it
-                // and move on
-                Platform.Log(LogLevel.Error, e);
-            }
-
-            if(showStackTraceInDialog)
-            {
-                ShowExceptionDialog(_exception, message);
-            }
-            else
-            {
-                _desktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);            
-            }
+			ShowMessageBox(detailMessage, true);
         }
 
         public void ShowMessageBox(string detailMessage, bool prependContextualMessage)
         {
-            string message =
-                string.IsNullOrEmpty(_contextualMessage) || prependContextualMessage == false
-                    ? detailMessage
-                    : string.Format("{0}: {1}", _contextualMessage, detailMessage);
-
-            ShowMessageBox(message);
+        	string message = GetMessage(detailMessage, prependContextualMessage);
+			if (ExceptionHandler.ShowStackTraceInDialog)
+			{
+				ShowExceptionDialog(message);
+			}
+			else
+			{
+				DesktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
+			}
         }
 
-        private void ShowExceptionDialog(Exception e, string message)
+		private string GetMessage(string detailMessage, bool prependContextualMessage)
+		{
+			return string.IsNullOrEmpty(ContextualMessage) || prependContextualMessage == false
+				? detailMessage
+				: string.Format("{0}\r\n - {1}", ContextualMessage, detailMessage);
+		}
+		
+		private void ShowExceptionDialog(string message)
         {
-            try
-            {
-                ApplicationComponent.LaunchAsDialog(
-                    _desktopWindow,
-                    new ExceptionHandlerComponent(e, message),
-                    Application.Name);
+			try
+			{
+				ExceptionDialog.Show(message, _exception, ExceptionDialogActions.Ok);
+			}
+			catch (Exception dialogException)
+			{
+				Platform.Log(LogLevel.Debug, dialogException);
 
-            }
-            catch (Exception dialogException)
-            {
-                // failed to launch ExceptionHandlerComponent - just log this
-                Platform.Log(LogLevel.Error, dialogException);
-
-                // fallback to displaying the message in a message box
-                _desktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
-            }
-        }
+				// fallback to displaying the message in a message box
+				DesktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
+			}
+		}
     }
 }

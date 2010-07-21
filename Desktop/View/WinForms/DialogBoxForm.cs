@@ -30,104 +30,103 @@
 #endregion
 
 using System;
+using System.Drawing;
 using System.Windows.Forms;
-using Crownwood.DotNetMagic.Forms;
 using ClearCanvas.Common;
+using Crownwood.DotNetMagic.Forms;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-    /// <summary>
-    /// Form used by the <see cref="DialogBoxView"/> class.
-    /// </summary>
-    /// <remarks>
-    /// This class may be subclassed.
-    /// </remarks>
-    public partial class DialogBoxForm : DotNetMagicForm
-    {
-        private Control _content;
-        private DialogBoxAction _closeAction;
+	/// <summary>
+	/// Form used by the <see cref="DialogBoxView"/> class.
+	/// </summary>
+	/// <remarks>
+	/// This class may be subclassed.
+	/// </remarks>
+	public partial class DialogBoxForm : DotNetMagicForm
+	{
+		private readonly Control _content;
+		private DialogBoxAction _closeAction;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="dialogBox"></param>
-        /// <param name="content"></param>
-        public DialogBoxForm(DialogBox dialogBox, Control content)
-        {
-            InitializeComponent();
-            this.Text = dialogBox.Title;
+		internal DialogBoxForm(string title, Control content, Size exactSize, DialogSizeHint sizeHint)
+		{
+			InitializeComponent();
+			Text = title;
 
-            _content = content;
+			_content = content;
 
-            // important - if we do not set a minimum size, the full content may not be displayed
-            _content.MinimumSize = _content.Size;
-            _content.Dock = DockStyle.Fill;
+			// important - if we do not set a minimum size, the full content may not be displayed
+			_content.MinimumSize = _content.Size;
+			_content.Dock = DockStyle.Fill;
 
-            if(dialogBox.Size != System.Drawing.Size.Empty)
-            {
-                this.ClientSize = dialogBox.Size;
-            }
-            else
-            {
-                switch (dialogBox.DialogSizeHint)
-                {
-                    case DialogSizeHint.Auto:
-                        // force the dialog client size to the size of the content
-                        this.ClientSize = _content.Size;
-                        break;
-                    case DialogSizeHint.Small:
-                        this.ClientSize = new System.Drawing.Size(320, 240);
-                        break;
-                    case DialogSizeHint.Medium:
-                        this.ClientSize = new System.Drawing.Size(640, 480);
-                        break;
-                    case DialogSizeHint.Large:
-                        this.ClientSize = new System.Drawing.Size(800, 600);
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-			if (dialogBox.AllowUserResize)
+			if (exactSize != Size.Empty)
 			{
-				base.FormBorderStyle = FormBorderStyle.Sizable;
-				base.MinimumSize = base.SizeFromClientSize(_content.Size);
+				ClientSize = exactSize;
+			}
+			else
+			{
+				switch (sizeHint)
+				{
+					case DialogSizeHint.Auto:
+						// force the dialog client size to the size of the content
+						ClientSize = _content.Size;
+						break;
+					case DialogSizeHint.Small:
+						ClientSize = new Size(320, 240);
+						break;
+					case DialogSizeHint.Medium:
+						ClientSize = new Size(640, 480);
+						break;
+					case DialogSizeHint.Large:
+						ClientSize = new Size(800, 600);
+						break;
+					default:
+						break;
+				}
 			}
 
-            _contentPanel.Controls.Add(_content);
+			_contentPanel.Controls.Add(_content);
 
-            // Resize the dialog if size of the underlying content changed
-            _content.SizeChanged += new EventHandler(OnContentSizeChanged);
-        }
+			// Resize the dialog if size of the underlying content changed
+			_content.SizeChanged += OnContentSizeChanged;
+		}
 
-        internal void DelayedClose(DialogBoxAction action)
-        {
-            _closeAction = action;
-            _delayedCloseTimer.Enabled = true;
-        }
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="dialogBox"></param>
+		/// <param name="content"></param>
+		public DialogBoxForm(DialogBox dialogBox, Control content)
+			: this(dialogBox.Title, content, dialogBox.Size, dialogBox.DialogSizeHint)
+		{
+		}
 
-        private void OnContentSizeChanged(object sender, EventArgs e)
-        {
-			if (this.ClientSize != _content.Size)
-				this.ClientSize = _content.Size;
-        }
+		internal void DelayedClose(DialogBoxAction action)
+		{
+			_closeAction = action;
+			_delayedCloseTimer.Enabled = true;
+		}
 
-        private void _delayedCloseTimer_Tick(object sender, EventArgs e)
-        {
-            // disable timer so it doesn't fire again
-            _delayedCloseTimer.Enabled = false;
+		private void OnContentSizeChanged(object sender, EventArgs e)
+		{
+			ClientSize = _content.Size;
+		}
 
-            // close the form
-            switch(_closeAction)
-            {
-                case DialogBoxAction.Cancel:
-                    this.DialogResult = DialogResult.Cancel;
-                    break;
-                case DialogBoxAction.Ok:
-                    this.DialogResult = DialogResult.OK;
-                    break;
-            }
-        }
-    }
+		private void _delayedCloseTimer_Tick(object sender, EventArgs e)
+		{
+			// disable timer so it doesn't fire again
+			_delayedCloseTimer.Enabled = false;
+
+			// close the form
+			switch (_closeAction)
+			{
+				case DialogBoxAction.Cancel:
+					DialogResult = DialogResult.Cancel;
+					break;
+				case DialogBoxAction.Ok:
+					DialogResult = DialogResult.OK;
+					break;
+			}
+		}
+	}
 }

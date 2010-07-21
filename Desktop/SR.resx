@@ -315,6 +315,9 @@
   <data name="MessageNoConfigurationPagesExist" xml:space="preserve">
     <value>No configuration pages exist.</value>
   </data>
+  <data name="MessageUnexpectedErrorQuit" xml:space="preserve">
+    <value>An error has occurred which prevents the further use of this application. This application will now shut down to prevent damage to the system.</value>
+  </data>
   <data name="MessageNodeNotEmpty" xml:space="preserve">
     <value>This group contains one or more items. Items may not be deleted, but can be hidden.</value>
   </data>
