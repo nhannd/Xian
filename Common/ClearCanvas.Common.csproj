@@ -344,6 +344,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ExtensionSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="FatalExceptionHandler.cs" />
     <Compile Include="IUserCredentialsProvider.cs" />
     <Compile Include="ProductSettings.cs" />
     <Compile Include="ProductSettings.Designer.cs">
