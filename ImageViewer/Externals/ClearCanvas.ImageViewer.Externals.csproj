@@ -93,6 +93,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="Tests\ExternalCollectionTest.cs" />
     <Compile Include="WindowStyle.cs" />
   </ItemGroup>
   <ItemGroup>

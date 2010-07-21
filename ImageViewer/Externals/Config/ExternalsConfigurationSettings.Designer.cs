@@ -30,10 +30,9 @@ namespace ClearCanvas.ImageViewer.Externals.Config {
         [global::System.Configuration.SettingsDescriptionAttribute("XML document containing all user-configured external applications, which can be l" +
             "aunched from within the viewer.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Externals {
+        public global::ClearCanvas.ImageViewer.Externals.ExternalCollection Externals {
             get {
-                return ((string)(this["Externals"]));
+                return ((global::ClearCanvas.ImageViewer.Externals.ExternalCollection)(this["Externals"]));
             }
             set {
                 this["Externals"] = value;

@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Externals.Config
 
 			try
 			{
-				_externals = ExternalCollection.Deserialize(_settings.Externals);
+				_externals = _settings.Externals;
 			}
 			catch(Exception ex)
 			{
@@ -96,7 +96,7 @@ namespace ClearCanvas.ImageViewer.Externals.Config
 			try
 			{
 				_externals.Sort();
-				_settings.Externals = _externals.Serialize();
+				_settings.Externals = _externals;
 			}
 			catch(Exception ex)
 			{

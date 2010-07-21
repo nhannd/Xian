@@ -118,15 +118,7 @@ namespace ClearCanvas.ImageViewer.Externals
 			_definitions.Sort((x, y) => string.Compare(x.Label, y.Label, StringComparison.CurrentCultureIgnoreCase));
 		}
 
-		public string Serialize()
-		{
-			return SerializeXml(this);
-		}
-
-		public static ExternalCollection Deserialize(string data)
-		{
-			return DeserializeXml(data, typeof (ExternalCollection)) as ExternalCollection;
-		}
+		#region SavedExternals Static Instance
 
 		private static ExternalCollection _savedExternals = null;
 
@@ -154,7 +146,7 @@ namespace ClearCanvas.ImageViewer.Externals
 			try
 			{
 				ExternalsConfigurationSettings settings = ExternalsConfigurationSettings.Default;
-				_savedExternals = Deserialize(settings.Externals);
+				_savedExternals = settings.Externals;
 				if (_savedExternals == null)
 					_savedExternals = new ExternalCollection();
 			}
@@ -165,6 +157,8 @@ namespace ClearCanvas.ImageViewer.Externals
 				throw;
 			}
 		}
+
+		#endregion
 
 		#region IXmlSerializable Members
 
@@ -254,6 +248,30 @@ namespace ClearCanvas.ImageViewer.Externals
 				throw;
 			}
 		}
+
+		#endregion
+
+		#region Unit Test Support
+
+#if UNIT_TESTS
+
+		/// <summary>
+		/// Unit test entry point for <see cref="ExternalCollection"/> serialization.
+		/// </summary>
+		internal static string Serialize(ExternalCollection collection)
+		{
+			return SerializeXml(collection);
+		}
+
+		/// <summary>
+		/// Unit test entry point for <see cref="ExternalCollection"/> deserialization.
+		/// </summary>
+		internal static ExternalCollection Deserialize(string xml)
+		{
+			return (ExternalCollection) DeserializeXml(xml, typeof (ExternalCollection));
+		}
+
+#endif
 
 		#endregion
 	}
