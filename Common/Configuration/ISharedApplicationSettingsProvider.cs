@@ -5,6 +5,7 @@ namespace ClearCanvas.Common.Configuration
     public interface ISharedApplicationSettingsProvider
     {
         //void ResetSharedPropertyValues();
+		bool CanUpgradeSharedPropertyValues(SettingsContext context);
 
         void UpgradeSharedPropertyValues(SettingsContext context, SettingsPropertyCollection properties,
                                          string previousExeConfigFilename);

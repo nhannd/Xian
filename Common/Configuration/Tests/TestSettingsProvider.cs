@@ -100,6 +100,11 @@ namespace ClearCanvas.Common.Configuration.Tests
 
 		#region ISharedApplicationSettingsProvider Members
 
+		public bool CanUpgradeSharedPropertyValues(SettingsContext context)
+		{
+			return true; //just let them get overwritten.
+		}
+
 		public void UpgradeSharedPropertyValues(SettingsContext context, SettingsPropertyCollection properties, string previousExeConfigFilename)
 		{
 			foreach (SettingsProperty property in properties)

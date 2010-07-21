@@ -284,9 +284,20 @@ namespace ClearCanvas.Common.Configuration
 
         #region ISharedApplicationSettingsProvider Members
 
-        public void UpgradeSharedPropertyValues(SettingsContext context, SettingsPropertyCollection properties, string previousExeConfigFilename)
+		public bool CanUpgradeSharedPropertyValues(SettingsContext context)
+		{
+			Type settingsClass = (Type)context["SettingsClassType"];
+			string settingsKey = (string)context["SettingsKey"];
+			var group = new SettingsGroupDescriptor(settingsClass);
+
+			var storedValues = _store.GetSettingsValues(group, null, settingsKey);
+			return storedValues == null || storedValues.Count == 0;
+		}
+		
+		public void UpgradeSharedPropertyValues(SettingsContext context, SettingsPropertyCollection properties, string previousExeConfigFilename)
         {
-            Upgrade(context, properties, null);
+			if (CanUpgradeSharedPropertyValues(context))
+				Upgrade(context, properties, null);
         }
 
         public SettingsPropertyValueCollection GetPreviousSharedPropertyValues(SettingsContext context, SettingsPropertyCollection properties, string ignoredPreviousExeConfigFilename)

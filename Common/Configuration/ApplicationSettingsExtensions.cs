@@ -112,7 +112,7 @@ namespace ClearCanvas.Common.Configuration
 				foreach (SettingsProvider settingsProvider in settings.Providers)
 				{
 					ISharedApplicationSettingsProvider sharedSettingsProvider = GetSharedSettingsProvider(settingsProvider);
-					if (sharedSettingsProvider == null)
+					if (sharedSettingsProvider == null || !sharedSettingsProvider.CanUpgradeSharedPropertyValues(settings.Context))
 						continue;
 
 					var properties = GetPropertiesForProvider(settings, settingsProvider);

@@ -66,7 +66,12 @@ namespace ClearCanvas.Common.Configuration
 
         #region ISharedApplicationSettingsProvider Members
 
-        public void UpgradeSharedPropertyValues(SettingsContext context, SettingsPropertyCollection properties, string previousExeConfigFilename)
+		public bool CanUpgradeSharedPropertyValues(SettingsContext context)
+		{
+			return true; //just let them get overwritten.
+		}
+
+    	public void UpgradeSharedPropertyValues(SettingsContext context, SettingsPropertyCollection properties, string previousExeConfigFilename)
         {
             LocalFileSettingsProviderExtensions.UpgradeSharedPropertyValues(_provider, context, properties, previousExeConfigFilename);
         }
