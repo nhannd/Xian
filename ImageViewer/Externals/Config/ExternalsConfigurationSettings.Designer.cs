@@ -23,10 +23,14 @@ namespace ClearCanvas.ImageViewer.Externals.Config {
             }
         }
         
+        /// <summary>
+        /// XML document containing all user-configured external applications, which can be launched from within the viewer.
+        /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("XML document containing all user-configured external applications, which can be l" +
+        [global::System.Configuration.SettingsDescriptionAttribute("XML document containing all user-configured external applications, which can be l" +
             "aunched from within the viewer.")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string Externals {
             get {
                 return ((string)(this["Externals"]));
