@@ -298,7 +298,7 @@ namespace ClearCanvas.ImageViewer.Externals.General
 			return sb.ToString();
 		}
 
-		public override string GetState()
+		public string GetState()
 		{
 			XmlDocument doc = new XmlDocument();
 			XmlElement root = doc.CreateElement("CommandLineProperties");
@@ -318,7 +318,7 @@ namespace ClearCanvas.ImageViewer.Externals.General
 			return doc.InnerXml;
 		}
 
-		public override void SetState(string stateData)
+		public void SetState(string stateData)
 		{
 			try
 			{

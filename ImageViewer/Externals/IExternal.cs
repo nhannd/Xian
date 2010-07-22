@@ -42,9 +42,6 @@ namespace ClearCanvas.ImageViewer.Externals
 		WindowStyle WindowStyle { get; set; }
 
 		bool IsValid { get; }
-
-		string GetState();
-		void SetState(string state);
 	}
 
 	public abstract class External : IExternal
@@ -124,8 +121,5 @@ namespace ClearCanvas.ImageViewer.Externals
 		{
 			EventsHelper.Fire(_propertyChanged, this, new PropertyChangedEventArgs(propertyName));
 		}
-
-		public abstract string GetState();
-		public abstract void SetState(string state);
 	}
 }

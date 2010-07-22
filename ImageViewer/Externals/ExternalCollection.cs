@@ -43,7 +43,6 @@ namespace ClearCanvas.ImageViewer.Externals
 {
 	public class ExternalCollection : ICollection<IExternal>, IXmlSerializable
 	{
-		private const string _concreteTypeElement = "Concrete-Type";
 		private readonly List<IExternal> _definitions;
 
 		public ExternalCollection()
@@ -132,7 +131,7 @@ namespace ClearCanvas.ImageViewer.Externals
 					{
 						ReloadSavedExternals();
 					}
-					catch(Exception ex)
+					catch (Exception ex)
 					{
 						Platform.Log(LogLevel.Error, ex, "Error encountered while deserializing External Application definitions. The XML may be corrupt.");
 					}
@@ -169,27 +168,90 @@ namespace ClearCanvas.ImageViewer.Externals
 
 		void IXmlSerializable.ReadXml(XmlReader reader)
 		{
-			if (reader.MoveToContent() == XmlNodeType.Element && reader.LocalName == typeof(ExternalCollection).Name)
+			if (reader.MoveToContent() == XmlNodeType.Element)
 			{
-				List<IExternal> list = new List<IExternal>();
-				if (reader.ReadToDescendant(typeof(IExternal).Name))
-				{
-					string type = reader.GetAttribute(_concreteTypeElement);
-					while (reader.MoveToContent() == XmlNodeType.Element && reader.LocalName == typeof(IExternal).Name)
-					{
-						string s = reader.ReadElementContentAsString();
+				var isEmptyElement = reader.IsEmptyElement; // yes, this must be checked before consuming the element tag
+				var list = new List<IExternal>();
 
-						Type t = Type.GetType(type, false);
-						if (t != null)
+				reader.ReadStartElement(); // consume the collection container (start) element tag
+				if (!isEmptyElement)
+				{
+					// descendents of collection container should all be elements representing individual externals
+					//  at the end of this loop, we must be positioned *past* each </External> tag
+					var count = 0;
+					while (reader.MoveToContent() == XmlNodeType.Element)
+					{
+						var external = (IExternal) null;
+						var elementName = reader.LocalName;
+						if (reader.IsEmptyElement) // An empty element
 						{
-							IExternal launcher = DeserializeXml(s, t) as IExternal;
-							list.Add(launcher);
+							reader.ReadStartElement(); // consume the empty element
+						}
+						else if (elementName == "External") // The "External" element denotes start of an external definition
+						{
+							var type = reader.GetAttribute("Type"); // "Type" is an attribute of External
+							var childReader = reader.ReadSubtree(); // use the External element as the root of a new reader
+							childReader.MoveToContent();
+							try
+							{
+								// perform deserialization of external
+								var factory = new ExternalFactoryExtensionPoint().CreateExtension(type);
+								if (factory != null)
+								{
+									childReader.ReadStartElement(); // consume the "External" element in the child reader
+									external = (IExternal) new XmlSerializer(factory.ExternalType).Deserialize(childReader);
+								}
+							}
+							catch (Exception ex)
+							{
+								Platform.Log(LogLevel.Warn, ex, "Error deserializing External Application definition at #{1}: <{0}> may contain corrupted XML.", elementName, count);
+							}
+							finally
+							{
+								// when we close the child reader, we are at the end element External, so consume it now to advance past it
+								childReader.Close();
+								reader.ReadEndElement();
+							}
+						}
+						else if (elementName == "IExternal") // The "IExternal" element denotes legacy definition format
+						{
+							try
+							{
+								var typeName = reader.GetAttribute("Concrete-Type"); // "Concrete-Type" is an attribute of IExternal
+								var data = reader.ReadElementContentAsString(); // read contents of IExternal as a string; advances *past* the IExternal end element
+
+								// perform deserialization of external
+								var type = Type.GetType(typeName, false);
+								if (type != null)
+								{
+									using (var szReader = new StringReader(data))
+									{
+										external = (IExternal) new XmlSerializer(type).Deserialize(szReader);
+									}
+								}
+							}
+							catch (Exception ex)
+							{
+								Platform.Log(LogLevel.Warn, ex, "Error deserializing External Application definition at #{1}: <{0}> may contain corrupted XML.", elementName, count);
+							}
+						}
+						else
+						{
+							Platform.Log(LogLevel.Debug, "Unrecognized External Application definition at #{1}: <{0}> is not a valid child element.", elementName, count);
+
+							// if this child node of ExternalCollection is unrecognized, we have to consume it!
+							//  otherwise MoveToContent in the next iteration doesn't do anything and we end up dividing by zero
+							reader.ReadSubtree().Close();
+							reader.ReadEndElement();
 						}
 
-						type = reader.GetAttribute(_concreteTypeElement);
+						if (external != null)
+							list.Add(external);
+
+						++count;
 					}
+					reader.ReadEndElement(); // consume the collection container end element tag
 				}
-				reader.Read();
 
 				_definitions.Clear();
 				_definitions.AddRange(list);
@@ -198,54 +260,13 @@ namespace ClearCanvas.ImageViewer.Externals
 
 		void IXmlSerializable.WriteXml(XmlWriter writer)
 		{
-			foreach (IExternal launcher in this)
+			foreach (var external in this)
 			{
-				writer.WriteStartElement(typeof(IExternal).Name);
-				writer.WriteAttributeString(_concreteTypeElement, launcher.GetType().AssemblyQualifiedName);
-				string s = SerializeXml(launcher);
-				writer.WriteCData(s);
+				var xmlSerializer = new XmlSerializer(external.GetType());
+				writer.WriteStartElement("External");
+				writer.WriteAttributeString("Type", external.GetType().FullName);
+				xmlSerializer.Serialize(writer, external);
 				writer.WriteEndElement();
-			}
-		}
-
-		private static string SerializeXml(object obj)
-		{
-			if (obj == null)
-				return string.Empty;
-
-			try
-			{
-				using (StringWriter writer = new StringWriter())
-				{
-					XmlSerializer xmlSerializer = new XmlSerializer(obj.GetType());
-					xmlSerializer.Serialize(writer, obj);
-					return writer.ToString();
-				}
-			}
-			catch (Exception)
-			{
-				Platform.Log(LogLevel.Debug, "Failed to serialize an object of type {0} to the XML stream.", obj.GetType());
-				throw;
-			}
-		}
-
-		private static object DeserializeXml(string xml, Type type)
-		{
-			if (string.IsNullOrEmpty(xml))
-				return null;
-
-			try
-			{
-				using (StringReader reader = new StringReader(xml))
-				{
-					XmlSerializer xmlSerializer = new XmlSerializer(type);
-					return xmlSerializer.Deserialize(reader);
-				}
-			}
-			catch (Exception)
-			{
-				Platform.Log(LogLevel.Debug, "Failed to deserialize an object of type {0} off the XML stream.", type);
-				throw;
 			}
 		}
 
@@ -258,9 +279,17 @@ namespace ClearCanvas.ImageViewer.Externals
 		/// <summary>
 		/// Unit test entry point for <see cref="ExternalCollection"/> serialization.
 		/// </summary>
-		internal static string Serialize(ExternalCollection collection)
+		internal static string Serialize(ExternalCollection obj)
 		{
-			return SerializeXml(collection);
+			if (obj == null)
+				return string.Empty;
+
+			using (StringWriter writer = new StringWriter())
+			{
+				XmlSerializer xmlSerializer = new XmlSerializer(obj.GetType());
+				xmlSerializer.Serialize(writer, obj);
+				return writer.ToString();
+			}
 		}
 
 		/// <summary>
@@ -268,7 +297,14 @@ namespace ClearCanvas.ImageViewer.Externals
 		/// </summary>
 		internal static ExternalCollection Deserialize(string xml)
 		{
-			return (ExternalCollection) DeserializeXml(xml, typeof (ExternalCollection));
+			if (string.IsNullOrEmpty(xml))
+				return null;
+
+			using (StringReader reader = new StringReader(xml))
+			{
+				XmlSerializer xmlSerializer = new XmlSerializer(typeof (ExternalCollection));
+				return (ExternalCollection) xmlSerializer.Deserialize(reader);
+			}
 		}
 
 #endif
