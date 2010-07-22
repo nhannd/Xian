@@ -30,110 +30,138 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Serialization;
-using System.Reflection;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Core
 {
-    /// <summary>
-    /// Abstract base class for all entities in the domain model.
-    /// </summary>
-    /// 
-    // TH (Oct 5, 2007): All entity objects should be serializable to use in ASP.NET app
-    // All parent classes must be serializable
-    [Serializable] 
-    public abstract class Entity : DomainObject
-    {
-        private object _oid;
-        private int _version;
+	/// <summary>
+	/// Abstract base class for all entities in the domain model.
+	/// </summary>
+	/// 
+	// TH (Oct 5, 2007): All entity objects should be serializable to use in ASP.NET app
+	// All parent classes must be serializable
+	[Serializable]
+	public abstract class Entity : DomainObject
+	{
+		private object _oid;
+		private int _version;
 
-        public Entity()
-        {
-        }
+		/// <summary>
+		/// Gets the OID of this entity instance.
+		/// </summary>
+		/// <remarks>
+		/// OID is short for object identifier, and is used to store the surrogate key that uniquely identifies the 
+		/// object in the database.  This property is public for compatibility with NHibernate proxies.  It should
+		/// not be used by application code.
+		/// </remarks>
+		public virtual object OID
+		{
+			get { return _oid; }
+			// private setter for NH compatability
+			private set { _oid = value; }
+		}
 
-        /// <summary>
-        /// OID is short for object identifier, and is used to store the surrogate key that uniquely identifies the 
-        /// object in the database.  This property is public for compatibility with NHibernate proxies.  It should
-        /// not be used by application code.
-        /// </summary>
-        public virtual object OID
-        {
-            get { return _oid; }
-            private set { _oid = value; }
-        }
+		/// <summary>
+		/// Gets the version of this entity instance.
+		/// </summary>
+		/// <remarks>
+		/// Keeps track of the object version for optimistic concurrency.  This property is public for compatibility
+		/// with NHibernate proxies.  It should not be used by application code.
+		/// </remarks>
+		public virtual int Version
+		{
+			get { return _version; }
+			protected set { _version = value; }
+		}
 
-        /// <summary>
-        /// Keeps track of the object version for optimistic concurrency.  This property is public for compatibility
-        /// with NHibernate proxies.  It should not be used by application code.
-        /// </summary>
-        public virtual int Version
-        {
-            get { return _version; }
-            protected set { _version = value; }
-        }
+		/// <summary>
+		/// Gets a <see cref="EntityRef"/> that refers to this entity.
+		/// </summary>
+		/// <returns></returns>
+		public virtual EntityRef GetRef()
+		{
+			if (_oid == null)
+				throw new InvalidOperationException("Cannot generate entity ref on transient entity");
 
-        /// <summary>
-        /// Gets a <see cref="EntityRef"/> that represents this entity.
-        /// </summary>
-        /// <returns></returns>
-        public virtual EntityRef GetRef()
-        {
-            if (_oid == null)
-                throw new InvalidOperationException("Cannot generate entity ref on transient entity");
-
-            return new EntityRef(GetClass(), _oid, _version);
-        }
+			return new EntityRef(GetClass(), _oid, _version);
+		}
 
 
-        /// <summary>
-        /// Performs a downcast on this object to the specified subclass type.  If this object is a proxy,
-        /// a regular C# downcast operation will fail.  Therefore, application code should always use this method
-        /// to perform a safe downcast.
-        /// </summary>
-        /// <typeparam name="TSubclass"></typeparam>
-        /// <returns></returns>
-        // Note this method must not be made virtual or Castle.DynamicProxy2 will try to proxy it
-        public TSubclass Downcast<TSubclass>()
-            where TSubclass : Entity
-        {
-            return (TSubclass)GetRawInstance();
-        }
+		/// <summary>
+		/// Performs a downcast on this object to the specified subclass type.
+		/// </summary>
+		/// <remarks>
+		/// If this object is a proxy, a regular C# downcast operation will fail.
+		/// Therefore, application code should always use this method to perform a safe downcast.
+		/// </remarks>
+		/// <typeparam name="TSubclass"></typeparam>
+		/// <returns></returns>
+		// note: this method must not be made virtual or Castle.DynamicProxy2 will try to proxy it
+		public TSubclass Downcast<TSubclass>()
+			where TSubclass : Entity
+		{
+			return (TSubclass)GetRawInstance();
+		}
 
-        /// <summary>
-        /// Subsitute for the C# 'is' operator.  If this object is a proxy, the C# 'is' operator will never
-        /// return true.  Therefore, application code must use this method instead.
-        /// </summary>
-        /// <typeparam name="TSubclass"></typeparam>
-        /// <returns></returns>
-        // Note this method must not be made virtual or Castle.DynamicProxy2 will try to proxy it
-        public bool Is<TSubclass>()
-            where TSubclass : Entity
-        {
-            return GetRawInstance() is TSubclass;
-        }
+		/// <summary>
+		/// Checks if this object is an instance of the specified subclass.
+		/// </summary>
+		/// <remarks>
+		/// Subsitute for the C# 'is' operator.  If this object is a proxy, the C# 'is' operator will never
+		/// return true.  Therefore, application code must use this method instead.
+		/// </remarks>
+		/// <typeparam name="TSubclass"></typeparam>
+		/// <returns></returns>
+		// note: this method must not be made virtual or Castle.DynamicProxy2 will try to proxy it
+		public bool Is<TSubclass>()
+			where TSubclass : Entity
+		{
+			return GetRawInstance() is TSubclass;
+		}
 
-        /// <summary>
-        /// Subsitute for the C# 'as' operator.  If this object is a proxy, the C# 'as' operator will fail.
-        /// Therefore, application code must use this method instead.
-        /// </summary>
-        /// <typeparam name="TSubclass"></typeparam>
-        /// <returns></returns>
-        // Note this method must not be made virtual or Castle.DynamicProxy2 will try to proxy it
-        public TSubclass As<TSubclass>()
-            where TSubclass : Entity
-        {
-            return GetRawInstance() as TSubclass;
-        }
+		/// <summary>
+		/// Performs a conditional cast of this instance to the specified subclass.
+		/// </summary>
+		/// <remarks>
+		/// Subsitute for the C# 'as' operator.  If this object is a proxy, the C# 'as' operator will fail.
+		/// Therefore, application code must use this method instead.
+		/// </remarks>
+		/// <typeparam name="TSubclass"></typeparam>
+		/// <returns></returns>
+		// note: this method must not be made virtual or Castle.DynamicProxy2 will try to proxy it
+		public TSubclass As<TSubclass>()
+			where TSubclass : Entity
+		{
+			return GetRawInstance() as TSubclass;
+		}
 
+		/// <summary>
+		/// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
+		/// </summary>
+		/// <remarks>
+		/// In the case where the argument is an uninitialized proxy, the implementation will not initialize the proxy.
+		/// </remarks>
+		/// <returns>
+		/// true if the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>; otherwise, false.
+		/// </returns>
+		/// <param name="obj">The <see cref="T:System.Object"/> to compare with the current <see cref="T:System.Object"/>. 
+		///                 </param><exception cref="T:System.NullReferenceException">The <paramref name="obj"/> parameter is null.
+		///                 </exception><filterpriority>2</filterpriority>
 		public override bool Equals(object obj)
 		{
 			return EqualityUtils.AreEqual(this, obj as Entity);
 		}
 
+		/// <summary>
+		/// Serves as a hash function for a particular type. 
+		/// </summary>
+		/// <remarks>
+		/// Guarantees that a proxy to an entity will have the same hash code as the entity itself.
+		/// </remarks>
+		/// <returns>
+		/// A hash code for the current <see cref="T:System.Object"/>.
+		/// </returns>
+		/// <filterpriority>2</filterpriority>
 		public override int GetHashCode()
 		{
 			// forward this call to the base class (object), so that we get a hash code
