@@ -66,6 +66,25 @@
       <DependentUpon>AuthorityGroupEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="AuthorityGroupEditorComponentView.cs" />
+    <Compile Include="Login\ChangePasswordDialog.cs" />
+    <Compile Include="Login\ChangePasswordForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Login\ChangePasswordForm.Designer.cs">
+      <DependentUpon>ChangePasswordForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Login\LoginDialog.cs" />
+    <Compile Include="Login\LoginForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Login\LoginForm.Designer.cs">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Login\SR.Designer.cs">
+      <DependentUpon>SR.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -108,6 +127,10 @@
       <Project>{BB434EC3-A580-4744-A635-A2B4029C66DE}</Project>
       <Name>ClearCanvas.Desktop.View.WinForms</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Utilities\Manifest\ClearCanvas.Utilities.Manifest.csproj">
+      <Project>{E2F1A5D4-73A4-4BA6-AA5A-87BBDEC727F8}</Project>
+      <Name>ClearCanvas.Utilities.Manifest</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ClearCanvas.Enterprise.Desktop.csproj">
       <Project>{CBD5EBD0-7AE9-4824-AE8C-4888983E1B5B}</Project>
       <Name>ClearCanvas.Enterprise.Desktop</Name>
@@ -116,6 +139,19 @@
   <ItemGroup>
     <EmbeddedResource Include="AuthorityGroupEditorComponentControl.resx">
       <DependentUpon>AuthorityGroupEditorComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Login\ChangePasswordForm.resx">
+      <DependentUpon>ChangePasswordForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Login\LoginForm.resx">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Login\SR.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="SR.resx">
@@ -171,6 +207,18 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Login\Resources\FacilityText.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Login\Resources\PasswordText.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Login\Resources\Splash.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Login\Resources\UserText.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
