@@ -128,5 +128,21 @@ namespace ClearCanvas.Enterprise.Core
         {
             return GetRawInstance() as TSubclass;
         }
-    }
+
+		public override bool Equals(object obj)
+		{
+			return EqualityUtils.AreEqual(this, obj as Entity);
+		}
+
+		public override int GetHashCode()
+		{
+			// forward this call to the base class (object), so that we get a hash code
+			// based on reference equality
+			// this enforces that an entity and its proxy return the same hash code,
+			// and it is stable over the lifetime of this object
+			// note however that calling this method will force the proxy to load!
+			// therefore, if proxies are used as keys into a dictionary, the proxies will be loaded
+			return base.GetHashCode();
+		}
+	}
 }

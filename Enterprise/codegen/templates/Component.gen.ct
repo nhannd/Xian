@@ -83,9 +83,9 @@ namespace <%= namespace %>
 	  	public bool Equals(<%= className %> that)
 		{
 			return (that != null) &&
-	  	<% fields.each do |f| %>
-			((this.<%= f.fieldName %> == default(<%= f.dataType %>)) ? (that.<%= f.fieldName %> == default(<%= f.dataType %>)) : this.<%= f.fieldName %>.Equals(that.<%= f.fieldName %>)) &&
-	  	<% end %>
+			<% fields.each do |f| %>
+				EqualityUtils.AreEqual(this.<%= f.fieldName %>, that.<%= f.fieldName %>) &&
+			<% end %>
 				true;
 		}
 	  	

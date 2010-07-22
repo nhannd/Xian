@@ -65,20 +65,5 @@ namespace ClearCanvas.Enterprise.Core
         {
             return GetRawInstance().GetType();
         }
-
-		public override bool Equals(object obj)
-		{
-			// Implement equals so a proxy can be used to compare with an entity.
-			if (obj is DomainObject)
-				return ReferenceEquals(this, ((DomainObject) obj).GetRawInstance());
-
-			return false;
-		}
-
-		public override int GetHashCode()
-		{
-			// The base class method is implemented intentionally.  The proxy and the entity should return the same hash code.
-			return base.GetHashCode();
-		}
     }
 }
