@@ -32,6 +32,9 @@
 #if	UNIT_TESTS
 #pragma warning disable 1591,0419,1574,1587
 
+using System;
+using System.Diagnostics;
+using System.Xml;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Externals.General;
 using NUnit.Framework;
@@ -41,6 +44,98 @@ namespace ClearCanvas.ImageViewer.Externals.Tests
 	[TestFixture]
 	public class ExternalCollectionTest
 	{
+		[Test]
+		public void TestNullXmlSerialization()
+		{
+			var xmlData = ExternalCollection.Serialize(null);
+			try
+			{
+				Assert.IsEmpty(xmlData, "Serialization of null should produce empty string output");
+			}
+			catch (Exception)
+			{
+				Trace.WriteLine("XML Data Dump");
+				Trace.WriteLine(xmlData);
+				throw;
+			}
+		}
+
+		[Test]
+		public void TestEmptyXmlSerialization()
+		{
+			var xmlData = ExternalCollection.Serialize(new ExternalCollection());
+			try
+			{
+				var xmlDoc = LoadXml(xmlData);
+				AssertXmlNodeEmpty(xmlDoc, "/ExternalCollection", "Serialization of empty collection should produce empty element output");
+			}
+			catch (Exception)
+			{
+				Trace.WriteLine("XML Data Dump");
+				Trace.WriteLine(xmlData);
+				throw;
+			}
+		}
+
+		[Test]
+		public void TestXmlSerialization()
+		{
+			var external1 = new CommandLineExternal {Name = "external1", Label = "Label1", Enabled = true, WindowStyle = WindowStyle.Normal, Command = @"C:\Temp\CommandA.cmd", WorkingDirectory = "$DIRECTORY$", Arguments = "", Username = "", Domain = "", AllowMultiValueFields = false};
+			var external2 = new CommandLineExternal {Name = "external2", Label = "Label2", Enabled = false, WindowStyle = WindowStyle.Hidden, Command = @"\ComputerA\ShareB\CommandC.cmd", WorkingDirectory = "$DIRECTORY$", Arguments = "\"$FILENAMEONLY$\"", Username = "\u5305\u9752\u5929", Domain = "\u958B\u5C01\u5E9C", AllowMultiValueFields = true, MultiValueFieldSeparator = "\" \""};
+			var external3 = new CommandLineExternal {Name = "external3"};
+			var xmlData = ExternalCollection.Serialize(new ExternalCollection {external1, external2, external3});
+			try
+			{
+				var xmlDoc = LoadXml(xmlData);
+				AssertXmlNodeValue(typeof (CommandLineExternal).AssemblyQualifiedName, xmlDoc, "/ExternalCollection/IExternal[1]/@Concrete-Type", "Concrete-Type should be assembly qualified type name");
+
+				var xmlExternal1 = LoadXml(xmlDoc.SelectSingleNode("/ExternalCollection/IExternal[1]").InnerText);
+				AssertXmlNodeValue("external1", xmlExternal1, "/CommandLineExternal/Name", "external1");
+				AssertXmlNodeValue("Label1", xmlExternal1, "/CommandLineExternal/Label", "external1");
+				AssertXmlNodeValue("true", xmlExternal1, "/CommandLineExternal/Enabled", "external1");
+				AssertXmlNodeValue("Normal", xmlExternal1, "/CommandLineExternal/WindowStyle", "external1");
+				AssertXmlNodeValue("C:\\Temp\\CommandA.cmd", xmlExternal1, "/CommandLineExternal/Command", "external1");
+				AssertXmlNodeValue("$DIRECTORY$", xmlExternal1, "/CommandLineExternal/WorkingDirectory", "external1");
+				AssertXmlNodeEmpty(xmlExternal1, "/CommandLineExternal/Arguments", "external1");
+				AssertXmlNodeEmpty(xmlExternal1, "/CommandLineExternal/Username", "external1");
+				AssertXmlNodeEmpty(xmlExternal1, "/CommandLineExternal/Domain", "external1");
+				AssertXmlNodeValue("false", xmlExternal1, "/CommandLineExternal/AllowMultiValueFields", "external1");
+				AssertXmlNodeEmpty(xmlExternal1, "/CommandLineExternal/MultiValueFieldSeparator", "external1");
+
+				var xmlExternal2 = LoadXml(xmlDoc.SelectSingleNode("/ExternalCollection/IExternal[2]").InnerText);
+				AssertXmlNodeValue("external2", xmlExternal2, "/CommandLineExternal/Name", "external2");
+				AssertXmlNodeValue("Label2", xmlExternal2, "/CommandLineExternal/Label", "external2");
+				AssertXmlNodeValue("false", xmlExternal2, "/CommandLineExternal/Enabled", "external2");
+				AssertXmlNodeValue("Hidden", xmlExternal2, "/CommandLineExternal/WindowStyle", "external2");
+				AssertXmlNodeValue("\\ComputerA\\ShareB\\CommandC.cmd", xmlExternal2, "/CommandLineExternal/Command", "external2");
+				AssertXmlNodeValue("$DIRECTORY$", xmlExternal2, "/CommandLineExternal/WorkingDirectory", "external2");
+				AssertXmlNodeValue("\"$FILENAMEONLY$\"", xmlExternal2, "/CommandLineExternal/Arguments", "external2");
+				AssertXmlNodeValue("\u5305\u9752\u5929", xmlExternal2, "/CommandLineExternal/Username", "external2");
+				AssertXmlNodeValue("\u958B\u5C01\u5E9C", xmlExternal2, "/CommandLineExternal/Domain", "external2");
+				AssertXmlNodeValue("true", xmlExternal2, "/CommandLineExternal/AllowMultiValueFields", "external2");
+				AssertXmlNodeValue("\" \"", xmlExternal2, "/CommandLineExternal/MultiValueFieldSeparator", "external2");
+
+				var xmlExternal3 = LoadXml(xmlDoc.SelectSingleNode("/ExternalCollection/IExternal[3]").InnerText);
+				AssertXmlNodeValue("external3", xmlExternal3, "/CommandLineExternal/Name", "external3");
+				AssertXmlNodeEmpty(xmlExternal3, "/CommandLineExternal/Label", "external3");
+				AssertXmlNodeValue("true", xmlExternal3, "/CommandLineExternal/Enabled", "external3");
+				AssertXmlNodeValue("Normal", xmlExternal3, "/CommandLineExternal/WindowStyle", "external3");
+				AssertXmlNodeEmpty(xmlExternal3, "/CommandLineExternal/Command", "external3");
+				AssertXmlNodeEmpty(xmlExternal3, "/CommandLineExternal/WorkingDirectory", "external3");
+				AssertXmlNodeEmpty(xmlExternal3, "/CommandLineExternal/Arguments", "external3");
+				AssertXmlNodeEmpty(xmlExternal3, "/CommandLineExternal/Username", "external3");
+				AssertXmlNodeEmpty(xmlExternal3, "/CommandLineExternal/Domain", "external3");
+				AssertXmlNodeValue("true", xmlExternal3, "/CommandLineExternal/AllowMultiValueFields", "external3");
+				AssertXmlNodeEmpty(xmlExternal3, "/CommandLineExternal/MultiValueFieldSeparator", "external3");
+			}
+			catch (Exception)
+			{
+				Trace.WriteLine("XML Data Dump");
+				Trace.WriteLine(xmlData);
+				throw;
+			}
+		}
+
 		[Test]
 		public void TestNullXmlDeserialization()
 		{
@@ -134,18 +229,39 @@ namespace ClearCanvas.ImageViewer.Externals.Tests
 			AssertCommandLineExternal(expectedExternal3, (CommandLineExternal) external3, "external3");
 		}
 
-		private static void AssertCommandLineExternal(CommandLineExternal expectedExternal, CommandLineExternal actualExternal, string id)
+		private static void AssertCommandLineExternal(CommandLineExternal expectedExternal, CommandLineExternal actualExternal, string message)
 		{
-			Assert.AreEqual(expectedExternal.Label, actualExternal.Label, "{0}: Wrong value for Label", id);
-			Assert.AreEqual(expectedExternal.Enabled, actualExternal.Enabled, "{0}: Wrong value for Enabled", id);
-			Assert.AreEqual(expectedExternal.WindowStyle, actualExternal.WindowStyle, "{0}: Wrong value for WindowStyle", id);
-			Assert.AreEqual(expectedExternal.Command, actualExternal.Command, "{0}: Wrong value for Command", id);
-			Assert.AreEqual(expectedExternal.WorkingDirectory, actualExternal.WorkingDirectory, "{0}: Wrong value for WorkingDirectory", id);
-			Assert.AreEqual(expectedExternal.Arguments, actualExternal.Arguments, "{0}: Wrong value for Arguments", id);
-			Assert.AreEqual(expectedExternal.Username, actualExternal.Username, "{0}: Wrong value for Username", id);
-			Assert.AreEqual(expectedExternal.Domain, actualExternal.Domain, "{0}: Wrong value for Domain", id);
-			Assert.AreEqual(expectedExternal.AllowMultiValueFields, actualExternal.AllowMultiValueFields, "{0}: Wrong value for AllowMultiValueFields", id);
-			Assert.AreEqual(expectedExternal.MultiValueFieldSeparator, actualExternal.MultiValueFieldSeparator, "{0}: Wrong value for MultiValueFieldSeparator", id);
+			Assert.AreEqual(expectedExternal.Label, actualExternal.Label, "{0} (Wrong Label)", message);
+			Assert.AreEqual(expectedExternal.Enabled, actualExternal.Enabled, "{0} (Wrong Enabled)", message);
+			Assert.AreEqual(expectedExternal.WindowStyle, actualExternal.WindowStyle, "{0} (Wrong WindowStyle)", message);
+			Assert.AreEqual(expectedExternal.Command, actualExternal.Command, "{0} (Wrong Command)", message);
+			Assert.AreEqual(expectedExternal.WorkingDirectory, actualExternal.WorkingDirectory, "{0} (Wrong WorkingDirectory)", message);
+			Assert.AreEqual(expectedExternal.Arguments, actualExternal.Arguments, "{0} (Wrong Arguments)", message);
+			Assert.AreEqual(expectedExternal.Username, actualExternal.Username, "{0} (Wrong Username)", message);
+			Assert.AreEqual(expectedExternal.Domain, actualExternal.Domain, "{0} (Wrong Domain)", message);
+			Assert.AreEqual(expectedExternal.AllowMultiValueFields, actualExternal.AllowMultiValueFields, "{0} (Wrong AllowMultiValueFields)", message);
+			Assert.AreEqual(expectedExternal.MultiValueFieldSeparator, actualExternal.MultiValueFieldSeparator, "{0} (Wrong MultiValueFieldSeparator)", message);
+		}
+
+		private static void AssertXmlNodeValue(string expected, XmlNode root, string xPath, string message)
+		{
+			var node = root.SelectSingleNode(xPath);
+			Assert.IsNotNull(node, "{0} ({1} Not Found)", message, xPath);
+			Assert.AreEqual(expected, node.InnerText, "{0} ({1} Wrong Value)", message, xPath);
+		}
+
+		private static void AssertXmlNodeEmpty(XmlNode root, string xPath, string message)
+		{
+			var node = root.SelectSingleNode(xPath);
+			if (node != null && !string.IsNullOrEmpty(node.InnerText))
+				Assert.AreEqual(string.Empty, node.InnerText, "{0} ({1} Should Be Empty)", message, xPath);
+		}
+
+		private static XmlDocument LoadXml(string xml)
+		{
+			var xmlDocument = new XmlDocument();
+			xmlDocument.LoadXml(xml);
+			return xmlDocument;
 		}
 	}
 }
