@@ -149,7 +149,7 @@ namespace ClearCanvas.Enterprise.Core
 		///                 </exception><filterpriority>2</filterpriority>
 		public override bool Equals(object obj)
 		{
-			return EqualityUtils.AreEqual(this, obj as Entity);
+			return EqualityUtils<Entity>.AreEqual(this, obj as Entity);
 		}
 
 		/// <summary>

@@ -84,7 +84,7 @@ namespace <%= namespace %>
 		{
 			return (that != null) &&
 			<% fields.each do |f| %>
-				EqualityUtils.AreEqual(this.<%= f.fieldName %>, that.<%= f.fieldName %>) &&
+				EqualityUtils<<%= f.dataType %>>.AreEqual(this.<%= f.fieldName %>, that.<%= f.fieldName %>) &&
 			<% end %>
 				true;
 		}

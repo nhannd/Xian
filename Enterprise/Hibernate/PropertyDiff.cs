@@ -80,24 +80,28 @@ namespace ClearCanvas.Enterprise.Hibernate
 				// if we're dealing with a collection property
 				if (IsCollectionProperty)
 				{
-					// an uninitialized collection's contents cannot have changed,
-					// so the only way the value could have changed is if the entire collection instance was replaced
-					if (!NHibernateUtil.IsInitialized(_newValue))
-						return !ReferenceEquals(_oldValue, _newValue);
+					// two collections are effectively equal if their contents are equal (we do not even care if they are the same instance)
+					// however, we also want to avoid lazy loading an uninitialized collection if possible.
+					// if both values refer to the same instance, and this instance is uninitialized, we know the contents
+					// have not changed, and a content-comparison is not needed
+					if (ReferenceEquals(_oldValue, _newValue) && !NHibernateUtil.IsInitialized(_newValue))
+						return false;
 
-					//need to compare collection contents
+					// otherwise, we need to compare collection contents (even if it means causing a lazy-load to occur)
 					//TODO: collections with list semantics should use order-sensitive comparisons, but how do we know??
 					//(e.g how do we differentiate a "bag" from a "list"?)
 					return !CollectionUtils.Equal((ICollection)_oldValue, (ICollection)_newValue, false);
 				}
 
 				// if we're dealing with an entity-ref property
-				if(_oldValue is Entity || _newValue is Entity)
+				// (need to explicitly check that values are Entity rather than EnumValue based)
+				if (_hibernateType.IsEntityType && (_oldValue is Entity || _newValue is Entity))
 				{
 					// ensure we do an efficient comparison that does not cause proxy initialization
-					return !EqualityUtils.AreEqual((Entity)_oldValue, (Entity)_newValue);
+					return !EqualityUtils<Entity>.AreEqual((Entity)_oldValue, (Entity)_newValue);
 				}
 
+				// use standard equality check
 				return !Equals(_oldValue, _newValue);
 			}
 		}
