@@ -114,10 +114,10 @@ namespace ClearCanvas.Utilities.Manifest
                                                     };
                     _manifest.ProductManifest.Product.Manifest = _cmdLine.Manifest;
                 }
+                
+                ProcessFiles(list);
 
                 ProcessConfiguration(list);
-
-                ProcessFiles(list);
 
                 //TODO: get rid of "manifest" constant  Derive from Platform.ManifestDirectory
                 string manifestPath = Path.Combine(_cmdLine.DistributionDirectory, "manifest");
@@ -222,6 +222,21 @@ namespace ClearCanvas.Utilities.Manifest
                     if (inputFile.Config && _manifest.ProductManifest != null)
                     {
                         LoadConfiguration(fullPath);
+                    }
+                }
+            }
+
+            if (_manifest.ProductManifest != null)
+            {
+                if (string.IsNullOrEmpty(_manifest.ProductManifest.Product.Version))
+                {
+                    foreach (ManifestFile file in _manifest.ProductManifest.Files)
+                    {
+                        if (file.Filename.ToLower().Equals("common\\clearcanvas.common.dll"))
+                        {
+                            _manifest.ProductManifest.Product.Version = file.Version;
+                            break;
+                        }
                     }
                 }
             }
