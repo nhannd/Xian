@@ -87,7 +87,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
 			action(delta);
 
-			var comparator = new RelationalModelComparator(EnumOptions.none);
+			var comparator = new RelationalModelComparator(EnumOptions.None);
 			var transform = comparator.CompareModels(delta.From, delta.To);
 
 			var renderer = Renderer.GetRenderer(_configuration);

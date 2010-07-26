@@ -49,7 +49,7 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 			CreateForeignKeys = true;
 			CreateIndexes = true;
 			AutoIndexForeignKeys = true;
-			EnumOption = EnumOptions.all;
+			EnumOption = EnumOptions.All;
 			Format = FormatOptions.sql;
 		}
 

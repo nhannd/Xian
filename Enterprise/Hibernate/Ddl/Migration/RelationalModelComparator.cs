@@ -74,7 +74,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 							CompareTables)
 			);
 
-			if (_enumOption != EnumOptions.none)
+			if (_enumOption != EnumOptions.None)
 			{
 				// compare enumeration values
 				changes.AddRange(
@@ -237,7 +237,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 		private IEnumerable<RelationalModelChange> AddEnumeration(TableInfo table, EnumerationInfo item)
 		{
 			// check enum options to determine if this item should be considered
-			if (_enumOption == EnumOptions.all || (_enumOption == EnumOptions.hard && item.IsHard))
+			if (_enumOption == EnumOptions.All || (_enumOption == EnumOptions.Hard && item.IsHard))
 			{
 				return CollectionUtils.Map<EnumerationMemberInfo, RelationalModelChange>(
 					item.Members,
@@ -258,7 +258,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 		{
 			// note: for soft enumerations, we don't do any updates, because they may have been customized already
 			// hence only hard enums should ever be compared (need to ensure what is in the database matches the C# enum definition)
-			if (_enumOption != EnumOptions.none && desired.IsHard)
+			if (_enumOption != EnumOptions.None && desired.IsHard)
 			{
 				return CompareSets(initial.Members, desired.Members,
 									item => AddEnumerationValue(table, item),

@@ -34,6 +34,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using ClearCanvas.Common.Utilities;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Common.Scripting
 {
@@ -57,6 +58,23 @@ namespace ClearCanvas.Common.Scripting
 		private IExecutableScript _script;
 
 		/// <summary>
+		/// Instantiates an active template from an embedded resource.
+		/// </summary>
+		/// <param name="resource"></param>
+		/// <param name="resolver"></param>
+		/// <returns></returns>
+		public static ActiveTemplate FromEmbeddedResource(string resource, IResourceResolver resolver)
+		{
+			using (var stream = resolver.OpenResource(resource))
+			{
+				using (var reader = new StreamReader(stream))
+				{
+					return new ActiveTemplate(reader);
+				}
+			}
+		}
+
+		/// <summary>
 		/// Constructs a template from the specified content.
 		/// </summary>
 		public ActiveTemplate(TextReader content)
@@ -69,7 +87,7 @@ namespace ClearCanvas.Common.Scripting
 		/// </summary>
 		/// <param name="context">A dictionary of objects to pass into the script.</param>
 		/// <param name="output">A text writer to which the output should be written.</param>
-		public void Evaluate(IDictionary context, TextWriter output)
+		public void Evaluate(Dictionary<string, object> context, TextWriter output)
 		{
 			try
 			{
@@ -98,21 +116,21 @@ namespace ClearCanvas.Common.Scripting
 		/// <remarks>
 		/// The context parameter allows a set of named objects to be passed into 
 		/// the scripting environment.  Within the scripting environment
-		/// these objects can be referenced directly as properties of "this".  For example,
+		/// these objects can be referenced as globals.  For example,
 		/// <code>
-		///     Hashtable scriptingContext = new Hashtable();
+		///     Dictionary&lt;string, object&gt; scriptingContext = new Dictionary&lt;string, object&gt;();
 		///     scriptingContext["Patient"] = patient;  // add a reference to an existing instance of a patient object
 		/// 
 		///     Template template = new Template(...);
 		///     template.Evaluate(scriptingContext);
 		/// 
 		///     // now, in the template, the script would access the object as shown
-		///     &lt;%= this.Patient.Name %&gt;
+		///     &lt;%= Patient.Name %&gt;
 		/// </code>
 		/// </remarks>
 		/// <param name="context">A dictionary of objects to pass into the script.</param>
 		/// <returns>The result of the template evaluation as a string.</returns>
-		public string Evaluate(IDictionary context)
+		public string Evaluate(Dictionary<string, object> context)
 		{
 			var output = new StringWriter();
 			Evaluate(context, output);

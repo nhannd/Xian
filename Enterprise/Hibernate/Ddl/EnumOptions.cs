@@ -29,10 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
 	/// <summary>
@@ -43,16 +39,16 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// <summary>
 		/// Both hard and soft enumerations should be generated/processed.
 		/// </summary>
-		all,
+		All,
 
 		/// <summary>
 		/// Only hard enumerations should be generated/processed.
 		/// </summary>
-		hard,
+		Hard,
 
 		/// <summary>
 		/// No enumerations should be generated/processed.
 		/// </summary>
-		none
+		None
 	}
 }
