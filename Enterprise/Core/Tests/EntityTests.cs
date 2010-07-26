@@ -1,0 +1,75 @@
+﻿#if UNIT_TESTS
+
+#pragma warning disable 1591
+
+using NUnit.Framework;
+
+namespace ClearCanvas.Enterprise.Core.Tests
+{
+	[TestFixture]
+	public class EntityTests
+	{
+		public class ConcreteEntity : Entity
+		{
+			
+		}
+
+
+		[Test]
+		public void Test_CreateProxy()
+		{
+			var raw = new ConcreteEntity();
+			var proxy = EntityProxyFactory.CreateProxy(raw);
+
+			// the proxy and raw instance are not the same
+			Assert.IsFalse(ReferenceEquals(raw, proxy));
+		}
+
+		[Test]
+		public void Test_GetClass_returns_type_of_raw_instance()
+		{
+			var raw = new ConcreteEntity();
+			var proxy = EntityProxyFactory.CreateProxy(raw);
+
+			// the type of the proxy is not the type of the raw instance
+			Assert.AreNotEqual(typeof(ConcreteEntity), proxy.GetType());
+			
+			// the GetClass method returns the type of the raw instance
+			Assert.AreEqual(typeof(ConcreteEntity), proxy.GetClass());
+		}
+
+		[Test]
+		public void Test_Equals_correctly_compares_proxy_and_raw_instances()
+		{
+			var raw = new ConcreteEntity();
+			var proxy = EntityProxyFactory.CreateProxy(raw);
+
+			// the proxy and raw instance are not the same
+			Assert.IsFalse(ReferenceEquals(raw, proxy));
+
+			// check every possible permutation
+			Assert.IsTrue(raw.Equals(raw));
+			Assert.IsTrue(proxy.Equals(proxy));
+			Assert.IsTrue(raw.Equals(proxy));
+			Assert.IsTrue(proxy.Equals(raw));
+		}
+
+		[Test]
+		public void Test_GetHashCode_identical_between_proxy_and_raw_instances()
+		{
+			var raw = new ConcreteEntity();
+			var proxy = EntityProxyFactory.CreateProxy(raw);
+
+			// the proxy and raw instance are not the same
+			Assert.IsFalse(ReferenceEquals(raw, proxy));
+
+			var x = raw.GetHashCode();
+			var y = proxy.GetHashCode();
+
+			// hash codes are same
+			Assert.AreEqual(x, y);
+		}
+	}
+}
+
+#endif

@@ -12,15 +12,17 @@ namespace ClearCanvas.Enterprise.Core
 		#region EntityEqualityComparer class
 
 		/// <summary>
-		/// Implementation of EqualityComparer that provides efficient comparison of entities.
+		/// Implementation of EqualityComparer that ensures efficient comparison of entities.
 		/// </summary>
 		/// <typeparam name="TEntity"></typeparam>
 		class EntityEqualityComparer<TEntity> : EqualityComparer<TEntity>
-			where TEntity : Entity
 		{
 			public override bool Equals(TEntity x, TEntity y)
 			{
 				// if these are the same instance, or both null, they are obviously equal
+				// note: this check is critical! by checking for reference equality first,
+				// we ensure that no proxy is unnecessarily initialized, which can significantly
+				// affect performance
 				if (ReferenceEquals(x, y))
 					return true;
 
@@ -29,22 +31,15 @@ namespace ClearCanvas.Enterprise.Core
 					return false;
 
 				// we already know they are not the same instance,
-				// but they could still be equal if one is a proxy to the other
-				// in this case, they would have to have the same OID
-				// and OID is the only property we can test without causing the proxy to load
-
-				// however, if either lacks an OID (eg is transient), we cannot consider them to be equal
-				// (even if both have OID == null, there is no basis for saying that they are the same entity)
-				if (ReferenceEquals(x.OID, null) || ReferenceEquals(y.OID, null))
-					return false;
-
-				// at this point we know that both instance have an OID, so we can just compare
-				return x.OID.Equals(y.OID);
+				// but they could still be equal if one is a proxy to the other 
+				// we can rely on the implementation of Entity.Equals to handle this.
+				// note that if an uninitialized proxy is involved, this call will initialize it
+				return x.Equals(y);
 			}
 
 			public override int GetHashCode(TEntity obj)
 			{
-				// use default implementation
+				// use Entity implementation
 				return obj.GetHashCode();
 			}
 		}
@@ -59,8 +54,9 @@ namespace ClearCanvas.Enterprise.Core
 		/// </summary>
 		static EqualityUtils()
 		{
-			// if T is Entity or a subclass of Entity, then we want to use the special EntityEqualityComparer
-			if (typeof(Entity).IsAssignableFrom(typeof(T)))
+			// if T is Entity or a subclass of Entity/EnumValue, then we want to use the special EntityEqualityComparer
+			if (typeof(Entity).IsAssignableFrom(typeof(T))
+				|| typeof(EnumValue).IsAssignableFrom(typeof(T)))
 			{
 				var type = typeof (EntityEqualityComparer<>).MakeGenericType(typeof(T), typeof(T));
 				_comparer = (EqualityComparer<T>)Activator.CreateInstance(type);

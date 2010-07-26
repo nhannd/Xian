@@ -201,6 +201,9 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="RelatedEntityCondition.cs" />
+    <Compile Include="Tests\EqualityUtilsTests.cs" />
+    <Compile Include="Tests\EntityProxyFactory.cs" />
+    <Compile Include="Tests\EntityTests.cs" />
     <Compile Include="Tests\SearchConditionTests.cs" />
     <Compile Include="Tests\SearchCriteriaTests.cs" />
     <Compile Include="TimeService.cs" />

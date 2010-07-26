@@ -94,11 +94,18 @@ namespace ClearCanvas.Enterprise.Hibernate
 				}
 
 				// if we're dealing with an entity-ref property
-				// (need to explicitly check that values are Entity rather than EnumValue based)
-				if (_hibernateType.IsEntityType && (_oldValue is Entity || _newValue is Entity))
+				if (_hibernateType.IsEntityType)
 				{
-					// ensure we do an efficient comparison that does not cause proxy initialization
-					return !EqualityUtils<Entity>.AreEqual((Entity)_oldValue, (Entity)_newValue);
+					if (_oldValue is Entity || _newValue is Entity)
+					{
+						// ensure we do an efficient comparison that does not cause unnecessary proxy initialization
+						return !EqualityUtils<Entity>.AreEqual((Entity)_oldValue, (Entity)_newValue);
+					}
+					if (_oldValue is EnumValue || _newValue is EnumValue)
+					{
+						// ensure we do an efficient comparison that does not cause unnecessary proxy initialization
+						return !EqualityUtils<EnumValue>.AreEqual((EnumValue)_oldValue, (EnumValue)_newValue);
+					}
 				}
 
 				// use standard equality check

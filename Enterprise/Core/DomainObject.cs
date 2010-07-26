@@ -51,6 +51,7 @@ namespace ClearCanvas.Enterprise.Core
 		/// <returns></returns>
 		protected virtual DomainObject GetRawInstance()
 		{
+			// because GetRawInstance is virtual, 'this' refers to the raw instance
 			return this;
 		}
 
@@ -64,7 +65,8 @@ namespace ClearCanvas.Enterprise.Core
 		/// <returns></returns>
 		public virtual Type GetClass()
 		{
-			return GetRawInstance().GetType();
+			// because GetClass is virtual, 'this' refers to the raw instance
+			return this.GetType();
 		}
 	}
 }

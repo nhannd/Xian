@@ -139,7 +139,7 @@ namespace ClearCanvas.Enterprise.Core
 		/// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
 		/// </summary>
 		/// <remarks>
-		/// In the case where the argument is an uninitialized proxy, the implementation will not initialize the proxy.
+		/// Overridden to handle equality between proxy and raw instance correctly.
 		/// </remarks>
 		/// <returns>
 		/// true if the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>; otherwise, false.
@@ -149,14 +149,25 @@ namespace ClearCanvas.Enterprise.Core
 		///                 </exception><filterpriority>2</filterpriority>
 		public override bool Equals(object obj)
 		{
-			return EqualityUtils<Entity>.AreEqual(this, obj as Entity);
+			// handle the easy case right off
+			if (ReferenceEquals(this, obj))
+				return true;
+
+
+			// false if obj is null, or not castable to Entity
+			var that = obj as Entity;
+			if (ReferenceEquals(that, null))
+				return false;
+
+			// handle the case where 'that' is a proxy, and 'this' is not
+			return ReferenceEquals(this, that.GetRawInstance());
 		}
 
 		/// <summary>
 		/// Serves as a hash function for a particular type. 
 		/// </summary>
 		/// <remarks>
-		/// Guarantees that a proxy to an entity will have the same hash code as the entity itself.
+		/// Overridden to handle equality between proxy and raw instance correctly.
 		/// </remarks>
 		/// <returns>
 		/// A hash code for the current <see cref="T:System.Object"/>.
@@ -164,12 +175,12 @@ namespace ClearCanvas.Enterprise.Core
 		/// <filterpriority>2</filterpriority>
 		public override int GetHashCode()
 		{
-			// forward this call to the base class (object), so that we get a hash code
-			// based on reference equality
-			// this enforces that an entity and its proxy return the same hash code,
-			// and it is stable over the lifetime of this object
-			// note however that calling this method will force the proxy to load!
-			// therefore, if proxies are used as keys into a dictionary, the proxies will be loaded
+			// Although this override seems redundant, it is crucial to correct proxy handling.
+			// Because GetHashCode is a virtual method, we know that it is proxied.
+			// If we do not override it, the hashcode returned will be that of the proxy.
+			// By overriding it and calling base, we ensure that the hashcode of the raw
+			// instance is returned.  This this enforces that an entity and its proxy return
+			// the same hash code.
 			return base.GetHashCode();
 		}
 	}
