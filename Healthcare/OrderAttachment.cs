@@ -42,6 +42,21 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class OrderAttachment
 	{
+		/// <summary>
+		/// Shifts the object in time by the specified number of minutes, which may be negative or positive.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// The method is not intended for production use, but is provided for the purpose
+		/// of generating back-dated data for demos and load-testing.
+		/// </para>
+		/// </remarks>
+		/// <param name="minutes"></param>
+		public virtual void TimeShift(int minutes)
+		{
+			_attachedTime = _attachedTime.AddMinutes(minutes);
+			_document.TimeShift(minutes);
+		}
 	
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom

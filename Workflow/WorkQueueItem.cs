@@ -103,6 +103,25 @@ namespace ClearCanvas.Workflow {
 		{
 			Reschedule(Platform.Time);
 		}
+
+		/// <summary>
+		/// Shifts the object in time by the specified number of minutes, which may be negative or positive.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// The method is not intended for production use, but is provided for the purpose
+		/// of generating back-dated data for demos and load-testing.
+		/// </para>
+		/// </remarks>
+		/// <param name="minutes"></param>
+		public virtual void TimeShift(int minutes)
+		{
+			_creationTime = _creationTime.AddMinutes(minutes);
+			_scheduledTime = _scheduledTime.AddMinutes(minutes);
+
+			_expirationTime = _expirationTime.HasValue ? _expirationTime.Value.AddMinutes(minutes) : _expirationTime;
+			_processedTime = _processedTime.HasValue ? _processedTime.Value.AddMinutes(minutes) : _processedTime;
+		}
 	}
 
 	public static class MailFaxWorkQueueItem

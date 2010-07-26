@@ -82,6 +82,22 @@ namespace ClearCanvas.Healthcare {
 			get { return "Attached Document"; }
 		}
 
+		/// <summary>
+		/// Shifts the object in time by the specified number of minutes, which may be negative or positive.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// The method is not intended for production use, but is provided for the purpose
+		/// of generating back-dated data for demos and load-testing.
+		/// </para>
+		/// </remarks>
+		/// <param name="minutes"></param>
+		public virtual void TimeShift(int minutes)
+		{
+			_creationTime = _creationTime.AddMinutes(minutes);
+			_receivedTime = _receivedTime.AddMinutes(minutes);
+		}
+
 		public static string BuildContentUrl(AttachedDocument document, string pathDelimiter)
 		{
 			var builder = new StringBuilder();

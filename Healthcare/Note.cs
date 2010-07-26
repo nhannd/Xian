@@ -143,6 +143,21 @@ namespace ClearCanvas.Healthcare {
             _isFullyAcknowledged = CollectionUtils.TrueForAll(_postings, posting => posting.IsAcknowledged);
         }
 
+		/// <summary>
+		/// Shifts the object in time by the specified number of minutes, which may be negative or positive.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// The method is not intended for production use, but is provided for the purpose
+		/// of generating back-dated data for demos and load-testing.
+		/// </para>
+		/// </remarks>
+		/// <param name="minutes"></param>
+		public virtual void TimeShift(int minutes)
+		{
+			_creationTime = _creationTime.AddMinutes(minutes);
+			_postTime = _postTime.HasValue ? _postTime.Value.AddMinutes(minutes) : _postTime;
+		}
 
     	#endregion
 
