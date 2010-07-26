@@ -34,7 +34,7 @@ using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Common.UsageTracking
 {
-    [SettingsGroupDescription("Settings that determine if usage tracking information is sent to a ClearCanvas server.")]
+    [SettingsGroupDescription("Settings that determine if application usage tracking information is sent to a ClearCanvas server.")]
     [SettingsProvider(typeof(LocalFileSettingsProvider))]
     [SharedSettingsMigrationDisabled]
     internal sealed partial class UsageTrackingSettings

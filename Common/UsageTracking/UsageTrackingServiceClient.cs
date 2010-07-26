@@ -84,10 +84,10 @@ namespace ClearCanvas.Common.UsageTracking
         /// <summary>
         /// Register the application.
         /// </summary>
-        /// <param name="xml"></param>
-        public void Register(string xml)
+        /// <param name="request">The register request.</param>
+        public void Register(RegisterRequest request)
         {
-            Channel.Register(xml);
+            Channel.Register(request);
         }
 
         #endregion

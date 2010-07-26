@@ -29,21 +29,29 @@
 
 #endregion
 
-using System.ServiceModel;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.Common.UsageTracking
 {
     /// <summary>
-    /// Usage tracking service.
+    /// Request object for the <see cref="IUsageTracking.Register"/>
     /// </summary>
-    [ServiceContract]
-    public interface IUsageTracking
+    [DataContract]
+    public class RegisterRequest : IExtensibleDataObject
     {
+        #region IExtensibleDataObject Members
+
         /// <summary>
-        /// Register the startup of an application with the tracking service.
+        /// Extensible data for serialization.
         /// </summary>
-        /// <param name="request"></param>
-        [OperationContract]
-        void Register(RegisterRequest request);
+        public ExtensionDataObject ExtensionData { get; set; }
+
+        #endregion
+
+        /// <summary>
+        /// The usage data to register.
+        /// </summary>
+        [DataMember]
+        public UsageMessage Message { get; set; }
     }
 }
