@@ -36,30 +36,36 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 namespace ClearCanvas.ImageViewer.Services.Automation
 {
 	/// <summary>
-	/// Enum specifying how to treat the study request when the primary study is the
-	/// primary study in an existing viewer.
+	/// Class containing flags that specify how to behave when opening a study
+	/// for display in the viewer.
 	/// </summary>
-	public enum OpenStudiesBehaviour
+	public class OpenStudiesBehaviour
 	{
+		internal OpenStudiesBehaviour()
+		{
+			ActivateExistingViewer = true;
+		}
+
 		/// <summary>
-		/// Specifies that the existing viewer should be activated (Default).
+		/// 
 		/// </summary>
-		ActivateExistingViewer = 0,
+		public bool ActivateExistingViewer { get; set; }
+
 		/// <summary>
-		/// Specifies that a new viewer should always be opened.
+		/// 
 		/// </summary>
-		AlwaysOpenNewViewer
+		public bool ReportFaultToUser { get; set; }
 	}
 
 	/// <summary>
 	/// Exception thrown when a query fails via <see cref="IStudyRootQuery"/>.
 	/// </summary>
-	public class QueryFailedException : Exception
+	public class QueryNoMatchesException : Exception
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public QueryFailedException(string message)
+		public QueryNoMatchesException(string message)
 			: base(message)
 		{
 		}
@@ -77,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 		/// <summary>
 		/// Specifies what the behaviour should be if the primary study is already the primary study in an existing viewer.
 		/// </summary>
-		OpenStudiesBehaviour OpenStudiesBehaviour { get; set; }
+		OpenStudiesBehaviour OpenStudiesBehaviour { get; }
 
 		/// <summary>
 		/// Comparer used to sort results from <see cref="IStudyRootQuery.StudyQuery"/>.

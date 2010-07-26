@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Client
@@ -73,6 +71,20 @@ namespace ClearCanvas.Ris.Client
 		public static bool IsSupported
 		{
 			get { return _viewer != null; }
+		}
+
+		public static bool TryOpen(string accession)
+		{
+			try
+			{
+				Open(accession);
+				return true;
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Info, e);
+				return false;
+			}
 		}
 
 		public static void Open(string accession)

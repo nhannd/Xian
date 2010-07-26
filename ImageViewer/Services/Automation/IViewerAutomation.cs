@@ -30,6 +30,7 @@
 #endregion
 
 using System.ServiceModel;
+using ClearCanvas.Dicom.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Services.Automation
 {
@@ -60,6 +61,10 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 		/// </summary>
 		/// <exception cref="FaultException{OpenStudiesFault}">Thrown if the primary study could not be opened.</exception>
 		[OperationContract(IsOneWay = false)]
+		[FaultContract(typeof(StudyNotFoundFault))]
+		[FaultContract(typeof(StudyOfflineFault))]
+		[FaultContract(typeof(StudyNearlineFault))]
+		[FaultContract(typeof(StudyInUseFault))]
 		[FaultContract(typeof(OpenStudiesFault))]
 		OpenStudiesResult OpenStudies(OpenStudiesRequest request);
 

@@ -41,7 +41,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		/// <summary>
 		/// The namespace for all the query data and service contracts.
 		/// </summary>
-		public const string Value = "http://www.clearcanvas.ca/dicom/query";
+		public const string Value = DicomNamespace.Value + "/query";
 	}
 
 	/// <summary>

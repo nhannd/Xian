@@ -706,6 +706,9 @@ namespace ClearCanvas.ImageViewer
 		/// <exception cref="StudyLoaderNotFoundException">The specified <see cref="IStudyLoader"/> could not be found.</exception>
 		public void LoadStudies(IList<LoadStudyArgs> loadStudyArgs)
 		{
+			if (loadStudyArgs.Count == 0)
+				throw new ArgumentException("At least one study must be specified.");
+
 			if (loadStudyArgs.Count == 1)
 			{
 				LoadStudy(loadStudyArgs[0]);

@@ -33,56 +33,56 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.Dicom.ServiceModel
 {
-	[DataContract]
+	[DataContract(Namespace = DicomNamespace.Value)]
 	public class UnknownDestinationAEFault
 	{
 		public UnknownDestinationAEFault()
 		{}
 	}
 
-	[DataContract]
+	[DataContract(Namespace = DicomNamespace.Value)]
 	public class UnknownCalledAEFault
 	{
 		public UnknownCalledAEFault()
 		{ }
 	}
 
-	[DataContract]
+	[DataContract(Namespace = DicomNamespace.Value)]
 	public class UnknownCallingAEFault
 	{
 		public UnknownCallingAEFault()
 		{ }
 	}
 
-	[DataContract]
+	[DataContract(Namespace = DicomNamespace.Value)]
 	public class UnknownSourceAEFault
 	{
 		public UnknownSourceAEFault()
 		{ }
 	}
 
-	[DataContract]
+	[DataContract(Namespace = DicomNamespace.Value)]
 	public class StudyOfflineFault
 	{
 		public StudyOfflineFault()
 		{ }
 	}
 
-	[DataContract]
+	[DataContract(Namespace = DicomNamespace.Value)]
 	public class StudyInUseFault
 	{
 		public StudyInUseFault()
 		{ }
 	}
 
-	[DataContract]
+	[DataContract(Namespace = DicomNamespace.Value)]
 	public class StudyNearlineFault
 	{
 		public StudyNearlineFault()
 		{ }
 	}
 
-	[DataContract]
+	[DataContract(Namespace = DicomNamespace.Value)]
 	public class StudyNotFoundFault
 	{
 		public StudyNotFoundFault()

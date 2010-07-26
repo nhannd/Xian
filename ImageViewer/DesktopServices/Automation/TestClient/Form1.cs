@@ -179,7 +179,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 				try
 				{
 					OpenStudiesRequest request = new OpenStudiesRequest();
-					BindingList<OpenStudyInfo> studiesToOpen = new BindingList<OpenStudyInfo>();
+					List<OpenStudyInfo> studiesToOpen = new List<OpenStudyInfo>();
 					foreach (StudyItem s in GetSelectedStudies())
 					{
 						OpenStudyInfo info = new OpenStudyInfo();
@@ -331,7 +331,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 					if (!String.IsNullOrEmpty(patientIdFilter))
 						identifier.PatientId = patientIdFilter + "*";
 
-					BindingList<StudyRootStudyIdentifier> results = DoStudyQuery(client, identifier);
+					var results = client.StudyQuery(identifier);
 
 					foreach (StudyRootStudyIdentifier study in results)
 						_studyItemBindingSource.Add(new StudyItem(study));
@@ -423,19 +423,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			}
 		}
 
-#if USE_ASP
-
-		private static string GetIdentifier(Guid selectedViewer)
-		{
-			return selectedViewer.ToString();
-		}
-
-		private static BindingList<StudyRootStudyIdentifier> DoStudyQuery(QueryClient client, StudyRootStudyIdentifier identifier)
-		{
-			return new BindingList<StudyRootStudyIdentifier>(client.StudyQuery(identifier));
-		}
-
-		private OpenStudyInfo[] GetStudiesToOpen(BindingList<OpenStudyInfo> studiesToOpen)
+		private OpenStudyInfo[] GetStudiesToOpen(ICollection<OpenStudyInfo> studiesToOpen)
 		{
 			OpenStudyInfo[] returnInfo = new OpenStudyInfo[studiesToOpen.Count];
 			int i = 0;
@@ -444,20 +432,18 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 
 			return returnInfo;
 		}
+
+#if USE_ASP
+
+		private static string GetIdentifier(Guid selectedViewer)
+		{
+			return selectedViewer.ToString();
+		}
+
 #else
 		private static Guid GetIdentifier(Guid selectedViewer)
 		{
 			return selectedViewer;
-		}
-
-		private static BindingList<StudyRootStudyIdentifier> DoStudyQuery(QueryClient client, StudyRootStudyIdentifier identifier)
-		{
-			return client.StudyQuery(identifier);
-		}
-
-		private BindingList<OpenStudyInfo> GetStudiesToOpen(BindingList<OpenStudyInfo> studiesToOpen)
-		{
-			return studiesToOpen;
 		}
 
 #endif

@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 		private IViewerAutomation _viewerAutomationClient;
 		private IStudyRootQueryBridge _studyRootQueryBridge;
 		
-		private OpenStudiesBehaviour _openStudiesBehaviour;
+		private readonly OpenStudiesBehaviour _openStudiesBehaviour = new OpenStudiesBehaviour();
 		private IComparer<StudyRootStudyIdentifier> _studyComparer;
 
 		/// <summary>
@@ -79,7 +79,6 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 
 			_viewerAutomationClient = viewerAutomationClient;
 			_studyRootQueryBridge = studyRootQueryBridge;
-			_openStudiesBehaviour = OpenStudiesBehaviour.ActivateExistingViewer;
 
 			_studyComparer = new StudyDateTimeComparer();
 		}
@@ -117,7 +116,6 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 		public OpenStudiesBehaviour OpenStudiesBehaviour
 		{
 			get { return _openStudiesBehaviour; }
-			set { _openStudiesBehaviour = value; }
 		}
 
 		/// <summary>
@@ -228,7 +226,8 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 		public Viewer OpenStudies(List<OpenStudyInfo> studiesToOpen)
 		{
 			OpenStudiesRequest request = new OpenStudiesRequest();
-			request.ActivateIfAlreadyOpen = (_openStudiesBehaviour == OpenStudiesBehaviour.ActivateExistingViewer);
+			request.ActivateIfAlreadyOpen = _openStudiesBehaviour.ActivateExistingViewer;
+			request.ReportFaultToUser = _openStudiesBehaviour.ReportFaultToUser;
 			request.StudiesToOpen = studiesToOpen;
 
 			return _viewerAutomationClient.OpenStudies(request).Viewer;
@@ -279,7 +278,7 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 		private static void CheckAtLeastOneStudy(IList<StudyRootStudyIdentifier> studies)
 		{
 			if (studies.Count == 0)
-				throw new QueryFailedException("No studies were found matching the given criteria.");
+				throw new QueryNoMatchesException("No studies were found matching the given criteria.");
 		}
 
 		private IList<Viewer> GetViewers(IEnumerable<StudyRootStudyIdentifier> studies)

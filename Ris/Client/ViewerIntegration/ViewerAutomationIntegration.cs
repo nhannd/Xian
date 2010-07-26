@@ -29,12 +29,48 @@
 
 #endregion
 
+using System.ServiceModel;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Services.Automation;
+using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Services.Automation;
+using ClearCanvas.Desktop;
+using System;
 
 namespace ClearCanvas.Ris.Client.ViewerIntegration
 {
+	[ExceptionPolicyFor(typeof(OpenStudyException))]
+	[ExtensionOf(typeof(ExceptionPolicyExtensionPoint))]
+	internal class FaultExceptionPolicy : IExceptionPolicy
+	{
+		#region IExceptionPolicy Members
+
+		public void Handle(Exception e, IExceptionHandlingContext exceptionHandlingContext)
+		{
+			//We told the viewer automation service to handle showing contract fault
+			//messages to the user, so we just log the exception.
+			Platform.Log(LogLevel.Info, e);
+		}
+
+		#endregion
+	}
+
+	internal class QueryFailedException : Exception
+	{
+		public QueryFailedException(string message, Exception innerException)
+			: base(message, innerException)
+		{
+		}
+	}
+
+	internal class OpenStudyException : Exception
+	{
+		public OpenStudyException(string accessionNumber, Exception innerException)
+			: base(String.Format("Failed to open images with accession number {0}.", accessionNumber), innerException)
+		{
+		}
+	}
+
 	[ExtensionOf(typeof(ViewerIntegrationExtensionPoint))]
 	public class ViewerAutomationIntegration : IViewerIntegration
 	{
@@ -44,17 +80,38 @@ namespace ClearCanvas.Ris.Client.ViewerIntegration
 
 		private static IViewerAutomationBridge CreateBridge()
 		{
-			return new ViewerAutomationBridge(
+			var bridge = new ViewerAutomationBridge(
 				Platform.GetService<IViewerAutomation>(), 
 				Platform.GetService<IStudyRootQuery>());
+
+			bridge.OpenStudiesBehaviour.ActivateExistingViewer = true;
+			//The viewer knows what the problem is better than us, so let it show the user an error.
+			bridge.OpenStudiesBehaviour.ReportFaultToUser = true;
+			return bridge;
 		}
 
 		#region IViewerIntegration Members
 
 		public void Open(string accessionNumber)
 		{
-			using (IViewerAutomationBridge bridge = CreateBridge())
-				bridge.OpenStudiesByAccessionNumber(accessionNumber);
+			try
+			{
+				using (IViewerAutomationBridge bridge = CreateBridge())
+					bridge.OpenStudiesByAccessionNumber(accessionNumber);
+			}
+			catch (QueryNoMatchesException e)
+			{
+				throw new QueryFailedException(String.Format("No studies with accession number {0} could be found.", accessionNumber), e);
+			}
+			catch (FaultException<QueryFailedFault> e)
+			{
+				throw new QueryFailedException(String.Format("Query failed for studies matching accession number {0}.", accessionNumber), e);
+			}
+			catch (FaultException<StudyNotFoundFault> e) { throw new OpenStudyException(accessionNumber, e); }
+			catch (FaultException<StudyOfflineFault> e) { throw new OpenStudyException(accessionNumber, e); }
+			catch (FaultException<StudyNearlineFault> e) { throw new OpenStudyException(accessionNumber, e); }
+			catch (FaultException<StudyInUseFault> e) { throw new OpenStudyException(accessionNumber, e); }
+			catch (FaultException<OpenStudiesFault> e) { throw new OpenStudyException(accessionNumber, e); }
 		}
 
 		public void Close(string accessionNumber)

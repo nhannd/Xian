@@ -1240,15 +1240,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if (!ViewImagesHelper.IsSupported || !_shouldOpenImages)
 				return;
 
-			try
-			{
-				ViewImagesHelper.Open(this.WorklistItem.AccessionNumber);
-				this.ImagesAvailable = true;
-			}
-			catch (Exception)
-			{
-				this.ImagesAvailable = false;
-			}
+			this.ImagesAvailable = ViewImagesHelper.TryOpen(this.WorklistItem.AccessionNumber);
 		}
 
 		private void CloseImages()

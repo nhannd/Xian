@@ -37,9 +37,14 @@ using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.Dicom.ServiceModel
 {
+	public static class DicomNamespace
+	{
+		public const string Value = "http://www.clearcanvas.ca/dicom";
+	}
+
 	[KnownType(typeof(DicomServerApplicationEntity))]
 	[KnownType(typeof(StreamingServerApplicationEntity))]
-	[DataContract]
+	[DataContract(Namespace = DicomNamespace.Value)]
 	public class ApplicationEntity : IApplicationEntity
 	{
 		public ApplicationEntity()

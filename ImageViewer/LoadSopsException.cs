@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageViewer
 				else
 					message = SR.MessageLoadStudyCompleteFailure;
 
-				message = String.Format("{0}\n{1}", message, SR.MessageContactPacsAdmin);
+				message = String.Format("{0} {1}", message, SR.MessageContactPacsAdmin);
 			}
 
 			exceptionHandlingContext.ShowMessageBox(message);
@@ -107,7 +107,7 @@ namespace ClearCanvas.ImageViewer
 
 		private static void Handle(StudyLoaderNotFoundException e, IExceptionHandlingContext exceptionHandlingContext)
 		{
-			String message = String.Format("{0}\n{1}", SR.MessageLoadStudyCompleteFailure, SR.MessageContactPacsAdmin);
+			String message = String.Format("{0} {1}", SR.MessageLoadStudyCompleteFailure, SR.MessageContactPacsAdmin);
 			exceptionHandlingContext.ShowMessageBox(message);
 		}
 

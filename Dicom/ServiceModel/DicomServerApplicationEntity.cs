@@ -34,7 +34,7 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.Dicom.ServiceModel
 {
-	[DataContract]
+	[DataContract(Namespace = DicomNamespace.Value)]
 	public class DicomServerApplicationEntity : ApplicationEntity, IDicomServerApplicationEntity
 	{
 		public DicomServerApplicationEntity()

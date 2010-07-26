@@ -436,6 +436,16 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 			set { _activateIfAlreadyOpen = value; }
 		}
 
+		/// <summary>
+		/// When the primary study cannot be opened, a fault exception will be thrown.
+		/// This flag specifies whether or not to report the error to the user in the workstation.
+		/// </summary>
+		/// <remarks>
+		/// Regardless of the value of this property, the fault exception is always thrown.
+		/// </remarks>
+		[DataMember(IsRequired = false)]
+		public bool ReportFaultToUser { get; set; }
+
 		//TODO: add study source(s), viewer layout, hanging protocols.
 	}
 

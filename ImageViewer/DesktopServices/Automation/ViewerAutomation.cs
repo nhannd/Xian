@@ -37,11 +37,13 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.Services.Automation;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ApplicationEntity=ClearCanvas.ImageViewer.StudyManagement.ApplicationEntity;
 
 namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 {
@@ -137,18 +139,19 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			try
 			{
 				string primaryStudyInstanceUid = request.StudiesToOpen[0].StudyInstanceUid;
-				Workspace workspace = GetViewerWorkspace(primaryStudyInstanceUid);
-
-				IImageViewer viewer;
-				if (activateIfOpen && workspace != null)
+				IImageViewer viewer = null;
+				if (activateIfOpen)
 				{
-					viewer = ImageViewerComponent.GetAsImageViewer(workspace);
-					workspace.Activate();
+					Workspace workspace = GetViewerWorkspace(primaryStudyInstanceUid);
+					if (workspace != null)
+					{
+						viewer = ImageViewerComponent.GetAsImageViewer(workspace);
+						workspace.Activate();
+					}
 				}
-				else
-				{
-					viewer = OpenStudies(request, primaryStudyInstanceUid);
-				}
+				
+				if (viewer == null)
+					viewer = LaunchViewer(request, primaryStudyInstanceUid);
 
 				Guid? viewerId = ViewerAutomationTool.GetViewerId(viewer);
 				if (viewerId == null)
@@ -298,15 +301,15 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			}
 		}
 
-		private static IImageViewer OpenStudies(OpenStudiesRequest args, string primaryStudyInstanceUid)
+		private static IImageViewer LaunchViewer(OpenStudiesRequest request, string primaryStudyInstanceUid)
 		{
-			CompleteOpenStudyInfo(args.StudiesToOpen);
-			IDictionary<string, ApplicationEntity> serverMap = GetServerMap(args.StudiesToOpen);
+			CompleteOpenStudyInfo(request.StudiesToOpen);
+			IDictionary<string, ApplicationEntity> serverMap = GetServerMap(request.StudiesToOpen);
 
 			ImageViewerComponent viewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
 			List<LoadStudyArgs> loadStudyArgs = new List<LoadStudyArgs>();
 
-			foreach (OpenStudyInfo info in args.StudiesToOpen)
+			foreach (OpenStudyInfo info in request.StudiesToOpen)
 			{
 				//None of the servers should be empty now, but if they are, assume local.
 				//The worst that will happen is it will fail to load when it doesn't exist.
@@ -323,39 +326,59 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 				loadStudyArgs.Add(new LoadStudyArgs(info.StudyInstanceUid, server, loader));
 			}
 
-			Exception loadException = null;
-
 			try
 			{
 				viewer.LoadStudies(loadStudyArgs);
 			}
 			catch (Exception e)
 			{
-				loadException = e;
+				bool faultThrown = false;
+				try
+				{
+					HandleLoadStudiesException(e, primaryStudyInstanceUid, viewer);
+				}
+				catch
+				{
+					faultThrown = true;
+					viewer.Dispose();
+					throw;
+				}
+				finally
+				{
+					if (!faultThrown || request.ReportFaultToUser)
+						SynchronizationContext.Current.Post(ReportLoadFailures, e);
+				}
 			}
 
-			if (primaryStudyInstanceUid != GetPrimaryStudyInstanceUid(viewer))
-			{
-				viewer.Dispose();
-				string message = "Failed to open the primary study.";
-				throw new FaultException<OpenStudiesFault>(new OpenStudiesFault(message), message);
-			}
-			else if (viewer.StudyTree.Patients.Count == 0)
-			{
-				viewer.Dispose();
-				string message = "Failed to open any of the specified studies.";
-				throw new FaultException<OpenStudiesFault>(new OpenStudiesFault(message), message);
-			}
-			else
-			{
-				ImageViewerComponent.Launch(viewer, new LaunchImageViewerArgs(ViewerLaunchSettings.WindowBehaviour));
-			}
-
-			//don't block waiting for the user to dismiss a dialog.
-			if (loadException != null)
-				SynchronizationContext.Current.Post(ReportLoadFailures, loadException);
-
+			ImageViewerComponent.Launch(viewer, new LaunchImageViewerArgs(ViewerLaunchSettings.WindowBehaviour));
 			return viewer;
+		}
+
+		/// <summary>
+		/// As long as the primary study is loaded, even partially, we continue opening the viewer and
+		/// just report the loading errors to the user.  If other studies failed to load, we still just
+		/// open the viewer and report to the user.
+		/// </summary>
+		private static void HandleLoadStudiesException(Exception e, string primaryStudyInstanceUid, IImageViewer viewer)
+		{
+			if (GetPrimaryStudyInstanceUid(viewer) == primaryStudyInstanceUid)
+				return; //the primary study was at least partiallly loaded.
+
+			if (e is NotFoundLoadStudyException)
+				throw new FaultException<StudyNotFoundFault>(new StudyNotFoundFault(), "The study was not found.");
+			if (e is NearlineLoadStudyException)
+				throw new FaultException<StudyNearlineFault>(new StudyNearlineFault(), "The study is nearline.");
+			if (e is OfflineLoadStudyException)
+				throw new FaultException<StudyOfflineFault>(new StudyOfflineFault(), "The study is offline.");
+			if (e is InUseLoadStudyException)
+				throw new FaultException<StudyInUseFault>(new StudyInUseFault(), "The study is in use.");
+			if (e is StudyLoaderNotFoundException)
+			{
+				const string reason = "The study cannot be loaded directly from the specified server/location.";
+				throw new FaultException<OpenStudiesFault>(new OpenStudiesFault { FailureDescription = reason }, reason);
+			}
+
+			throw new FaultException<OpenStudiesFault>(new OpenStudiesFault(), "The primary study could not be loaded.");
 		}
 
 		private static IDictionary<string, ApplicationEntity> GetServerMap(IEnumerable<OpenStudyInfo> openStudies)
