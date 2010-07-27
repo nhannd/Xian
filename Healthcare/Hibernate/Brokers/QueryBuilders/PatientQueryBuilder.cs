@@ -8,8 +8,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 	/// </summary>
 	public class PatientQueryBuilder : QueryBuilderBase
 	{
-		private static readonly HqlFrom DefaultFrom = new HqlFrom(typeof(Patient).Name,
-			"p", new[] { HqlConstants.JoinPatientProfile });
+		private static readonly HqlFrom DefaultFrom = new HqlFrom(typeof(PatientProfile).Name,
+			"pp", new[] { new HqlJoin("pp.Patient", "p", HqlJoinMode.Left) });
 
 		#region Overrides of QueryBuilderBase
 
@@ -33,7 +33,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 		public override void AddConstrainPatientProfile(HqlProjectionQuery query, QueryBuilderArgs args)
 		{
 			// calling this method on this class would not make any sense
-			throw new NotSupportedException();
+			throw new InvalidOperationException();
 		}
 
 		#endregion
