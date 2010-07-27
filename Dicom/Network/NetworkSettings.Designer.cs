@@ -94,13 +94,18 @@ namespace ClearCanvas.Dicom.Network {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Configuration.SettingsDescriptionAttribute("Maximum length of a PDU.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("116794")]
         public uint LocalMaxPduLength {
             get {
                 return ((uint)(this["LocalMaxPduLength"]));
             }
         }
         
+        /// <summary>
+        /// Maximum length of a PDU (remote).
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Maximum length of a PDU (remote).")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("116794")]
         public uint RemoteMaxPduLength {

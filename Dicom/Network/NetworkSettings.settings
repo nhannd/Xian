@@ -17,10 +17,10 @@
     <Setting Name="SendBufferSize" Description="The size of buffers used for sending data." Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">118341</Value>
     </Setting>
-    <Setting Name="LocalMaxPduLength" Description="Maximum length of a PDU." GenerateDefaultValueInCode="false" Type="System.UInt32" Scope="Application">
+    <Setting Name="LocalMaxPduLength" Description="Maximum length of a PDU." Type="System.UInt32" Scope="Application">
       <Value Profile="(Default)">116794</Value>
     </Setting>
-    <Setting Name="RemoteMaxPduLength" Type="System.UInt32" Scope="Application">
+    <Setting Name="RemoteMaxPduLength" Description="Maximum length of a PDU (remote)." Type="System.UInt32" Scope="Application">
       <Value Profile="(Default)">116794</Value>
     </Setting>
     <Setting Name="DisableNagle" Description="Specifies whether or not to disable use of the Nagle algorithm on socket connections." Type="System.Boolean" Scope="Application">
