@@ -134,7 +134,7 @@ namespace ClearCanvas.Ris.Client
 
 				if (_worklistDetail.EndTime.RelativeTime != null)
 				{
-					_slidingScale = GetSlidingScale(_worklistDetail.StartTime);
+					_slidingScale = GetSlidingScale(_worklistDetail.EndTime);
 					_slidingEndTime = ConvertTimePointToRelativeTime(_worklistDetail.EndTime);
 				}
 			}
