@@ -52,7 +52,7 @@ namespace ClearCanvas.Healthcare {
 		/// </para>
 		/// </remarks>
 		/// <param name="minutes"></param>
-		public virtual void TimeShift(int minutes)
+		public void TimeShift(int minutes)
 		{
 			_attachedTime = _attachedTime.AddMinutes(minutes);
 			_document.TimeShift(minutes);
