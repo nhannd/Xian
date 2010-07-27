@@ -499,6 +499,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public StudyItemList()
 		{
 		}
+
+		public StudyItemList(IEnumerable<StudyItem> items)
+			: base(items)
+		{
+		}
 	}
 
 	/// <summary>

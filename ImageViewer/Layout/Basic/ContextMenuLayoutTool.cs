@@ -135,21 +135,26 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			bool notFoundError = e.Error is NotFoundLoadStudyException;
 			if (!notFoundError && (e.Error is LoadSopsException || e.Error is StudyLoaderNotFoundException))
 			{
-				if (null == CollectionUtils.SelectFirst(base.ImageViewer.LogicalWorkspace.ImageSets,
+				if (null != CollectionUtils.SelectFirst(base.ImageViewer.LogicalWorkspace.ImageSets,
 				                                        imageSet => imageSet.Uid == e.Study.StudyInstanceUid))
 				{
-					var reconciled = _patientReconciliationStrategy.ReconcilePatientInformation(e.Study);
-					var studyItem = new StudyItem(reconciled, e.Study, e.Study.Server, e.Study.StudyLoaderName);
-
-					if (!_unavailableImageSets.ContainsKey(studyItem.StudyInstanceUid))
-					{
-						ImageSetDescriptor descriptor = new UnavailableImageSetDescriptor(studyItem, e.Error);
-						ImageSet unavailableImageSet = new ImageSet(descriptor);
-
-						_imageSetGroups.Root.Add(unavailableImageSet);
-						_unavailableImageSets[studyItem.StudyInstanceUid] = unavailableImageSet;
-					}
+					return;
 				}
+
+				if (_unavailableImageSets.ContainsKey(e.Study.StudyInstanceUid))
+					return;
+
+				var reconciled = _patientReconciliationStrategy.ReconcilePatientInformation(e.Study);
+				if (reconciled == null)
+					return;
+
+				var studyItem = new StudyItem(reconciled, e.Study, e.Study.Server, e.Study.StudyLoaderName);
+
+				ImageSetDescriptor descriptor = new UnavailableImageSetDescriptor(studyItem, e.Error);
+				ImageSet unavailableImageSet = new ImageSet(descriptor);
+
+				_imageSetGroups.Root.Add(unavailableImageSet);
+				_unavailableImageSets[studyItem.StudyInstanceUid] = unavailableImageSet;
 			}
 		}
 

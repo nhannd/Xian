@@ -247,7 +247,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				int presentationIntentX = GetPresentationIntent(x) == forProcessing ? 1 : 0;
 				int presentationIntentY = GetPresentationIntent(y) == forProcessing ? 1 : 0;
 				int result = presentationIntentX - presentationIntentY;
-				if (this.Reverse)
+				if (Reverse)
 					return -result;
 				return result;
 			}

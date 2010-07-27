@@ -33,31 +33,27 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Services.ServerTree;
-using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.ImageViewer.Services.ServerTree;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-	[ExceptionPolicyFor(typeof(LoadPriorStudiesException))]
-
-	[ExtensionOf(typeof(ExceptionPolicyExtensionPoint))]
+	[ExceptionPolicyFor(typeof (LoadPriorStudiesException))]
+	[ExtensionOf(typeof (ExceptionPolicyExtensionPoint))]
 	public class PriorStudyLoaderExceptionPolicy : IExceptionPolicy
 	{
-		public PriorStudyLoaderExceptionPolicy()
-		{
-		}
-
 		#region IExceptionPolicy Members
 
-		public void Handle(System.Exception e, IExceptionHandlingContext exceptionHandlingContext)
+		public void Handle(Exception e, IExceptionHandlingContext exceptionHandlingContext)
 		{
 			if (e is LoadPriorStudiesException)
 			{
 				exceptionHandlingContext.Log(LogLevel.Error, e);
-				
+
 				Handle(e as LoadPriorStudiesException, exceptionHandlingContext);
 			}
 		}
@@ -72,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			}
 			else if (ShouldShowErrorMessage(exception))
 			{
-				StringBuilder summary = new StringBuilder();
+				var summary = new StringBuilder();
 
 				summary.AppendLine(SR.MessageLoadPriorsErrorPrefix);
 				summary.Append(exception.GetExceptionSummary());
@@ -81,7 +77,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			}
 		}
 
-		private static bool ShouldShowErrorMessage(LoadPriorStudiesException exception)
+		private static bool ShouldShowErrorMessage(LoadMultipleStudiesException exception)
 		{
 			if (exception.IncompleteCount > 0)
 				return true;
@@ -96,40 +92,34 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		}
 	}
 
-	[ExtensionOf(typeof(PriorStudyFinderExtensionPoint))]
-	public class PriorStudyFinder : ClearCanvas.ImageViewer.PriorStudyFinder
+	[ExtensionOf(typeof (PriorStudyFinderExtensionPoint))]
+	public class PriorStudyFinder : ImageViewer.PriorStudyFinder
 	{
 		private volatile bool _cancel;
-
-		public PriorStudyFinder()
-		{
-		}
 
 		public override StudyItemList FindPriorStudies()
 		{
 			_cancel = false;
-			StudyItemList results = new StudyItemList();
+			var results = new Dictionary<string, StudyItem>();
 
 			IPatientReconciliationStrategy reconciliationStrategy = new DefaultPatientReconciliationStrategy();
 			reconciliationStrategy.SetStudyTree(Viewer.StudyTree);
 
-			List<string> patientIds = new List<string>();
+			var patientIds = new Dictionary<string, string>();
 			foreach (Patient patient in Viewer.StudyTree.Patients)
 			{
 				if (_cancel)
 					break;
 
 				IPatientData reconciled = reconciliationStrategy.ReconcileSearchCriteria(patient);
-				if (!patientIds.Contains(reconciled.PatientId))
-					patientIds.Add(reconciled.PatientId);
+				patientIds[reconciled.PatientId] = reconciled.PatientId;
 			}
 
-			using (StudyRootQueryBridge bridge = new StudyRootQueryBridge(Platform.GetService<IStudyRootQuery>()))
+			using (var bridge = new StudyRootQueryBridge(Platform.GetService<IStudyRootQuery>()))
 			{
-				foreach (string patientId in patientIds)
+				foreach (string patientId in patientIds.Keys)
 				{
-					StudyRootStudyIdentifier identifier = new StudyRootStudyIdentifier();
-					identifier.PatientId = patientId;
+					var identifier = new StudyRootStudyIdentifier {PatientId = patientId};
 
 					IList<StudyRootStudyIdentifier> studies = bridge.StudyQuery(identifier);
 					foreach (StudyRootStudyIdentifier study in studies)
@@ -137,14 +127,21 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 						if (_cancel)
 							break;
 
+						//Eliminate false positives right away.
+						IPatientData reconciled = reconciliationStrategy.ReconcilePatientInformation(study);
+						if (reconciled == null)
+							continue;
+
 						StudyItem studyItem = ConvertToStudyItem(study);
-						if (studyItem != null)
-							results.Add(studyItem);
+						if (studyItem == null || results.ContainsKey(studyItem.StudyInstanceUid))
+							continue;
+
+						results[studyItem.StudyInstanceUid] = studyItem;
 					}
 				}
 			}
 
-			return results;
+			return new StudyItemList(results.Values);
 		}
 
 		public override void Cancel()
@@ -152,7 +149,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			_cancel = true;
 		}
 
-		private StudyItem ConvertToStudyItem(StudyRootStudyIdentifier study)
+		private static StudyItem ConvertToStudyItem(IStudyRootStudyIdentifier study)
 		{
 			string studyLoaderName;
 			ApplicationEntity applicationEntity = null;
@@ -164,26 +161,22 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			}
 			else if (node.IsServer)
 			{
-				Server server = (Server)node;
-				if (server.IsStreaming)
-					studyLoaderName = "CC_STREAMING";
-				else
-					studyLoaderName = "DICOM_REMOTE";
+				var server = (Server) node;
+				studyLoaderName = server.IsStreaming ? "CC_STREAMING" : "DICOM_REMOTE";
 
 				applicationEntity = new ApplicationEntity(server.Host, server.AETitle, server.Name, server.Port,
-											server.IsStreaming, server.HeaderServicePort, server.WadoServicePort);
+				                                          server.IsStreaming, server.HeaderServicePort, server.WadoServicePort);
 			}
 			else // (node == null)
 			{
 				Platform.Log(LogLevel.Warn,
-					String.Format("Unable to find server information '{0}' in order to load study '{1}'",
-					study.RetrieveAeTitle, study.StudyInstanceUid));
+				             String.Format("Unable to find server information '{0}' in order to load study '{1}'",
+				                           study.RetrieveAeTitle, study.StudyInstanceUid));
 
 				return null;
 			}
 
-			StudyItem item = new StudyItem(study, applicationEntity, studyLoaderName);
-			item.InstanceAvailability = study.InstanceAvailability;
+			var item = new StudyItem(study, applicationEntity, studyLoaderName){ InstanceAvailability = study.InstanceAvailability };
 			if (String.IsNullOrEmpty(item.InstanceAvailability))
 				item.InstanceAvailability = "ONLINE";
 
@@ -192,11 +185,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		private static IServerTreeNode FindServer(string retrieveAETitle)
 		{
-			ServerTree serverTree = new ServerTree();
+			var serverTree = new ServerTree();
 			if (retrieveAETitle == serverTree.RootNode.LocalDataStoreNode.GetClientAETitle())
 				return serverTree.RootNode.LocalDataStoreNode;
 
-			List<Server> remoteServers = Configuration.DefaultServers.SelectFrom(serverTree);
+			List<Server> remoteServers = DefaultServers.SelectFrom(serverTree);
 			foreach (Server server in remoteServers)
 			{
 				if (server.AETitle == retrieveAETitle)
