@@ -89,11 +89,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			InternalClearDates();
 
 			char separator = DicomExplorerConfigurationSettings.Default.NameSeparator;
-			string allowedExceptSeparator = @"[^" + _disallowedCharacters + separator + @"]";
-			string allowedExceptSeparatorAndWhitespace = @"[^" + _disallowedCharacters + separator + @"\s]";
+			string allowedExceptSeparator = String.Format("[^{0}{1}]", _disallowedCharacters, separator);
 
 			// Last Name, First Name search
-			// \A\s*[^\r\n\e\f\\,\s]+\s*,{1}[^\r\n\e\f\\,]*\Z
+			// \A\s*[^\r\n\e\f\\,]+\s*[^\r\n\e\f\\,]*\s*,[^\r\n\e\f\\,]*\Z
 			//
 			// Examples of matches:
 			// Doe, John
@@ -103,8 +102,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			// ,
 			// Doe, John,
 
-			_lastNameFirstNameRegex = new Regex(@"\A\s*" + allowedExceptSeparatorAndWhitespace + @"+\s*"
-				+ separator + @"{1}" + allowedExceptSeparator + @"*\Z");
+			_lastNameFirstNameRegex = new Regex(String.Format(@"\A\s*{0}+\s*{0}*\s*{1}{0}*\Z", allowedExceptSeparator, separator));
 
 			// Open search
 			// \A\s*[^\r\n\e\f\\,]+\s*\Z
@@ -117,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			// Doe,
 			// John
 
-			_openNameSearchRegex = new Regex(@"\A\s*" + allowedExceptSeparator + @"+\s*\Z");
+			_openNameSearchRegex = new Regex(String.Format(@"\A\s*{0}+\s*\Z", allowedExceptSeparator));
 		}
 
 		public IDesktopWindow DesktopWindow
