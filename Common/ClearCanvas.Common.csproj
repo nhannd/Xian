@@ -364,6 +364,7 @@
     <Compile Include="Shreds\Shred.cs" />
     <Compile Include="Shreds\ShredExtensionPoint.cs" />
     <Compile Include="UsageTracking\IUsageTracking.cs" />
+    <Compile Include="UsageTracking\RegisterRequest.cs" />
     <Compile Include="UsageTracking\UsageTrackingSettings.cs" />
     <Compile Include="UsageTracking\UsageTrackingSettings.Designer.cs">
       <AutoGen>True</AutoGen>
