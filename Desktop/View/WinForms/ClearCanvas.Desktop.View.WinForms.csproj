@@ -238,6 +238,12 @@
     <Compile Include="TextField.Designer.cs">
       <DependentUpon>TextField.cs</DependentUpon>
     </Compile>
+    <Compile Include="TimestampField.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TimestampField.Designer.cs">
+      <DependentUpon>TimestampField.cs</DependentUpon>
+    </Compile>
     <Compile Include="TrackBarUpDown.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -596,6 +602,9 @@
     <EmbeddedResource Include="TextField.resx">
       <DependentUpon>TextField.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TimestampField.resx">
+      <DependentUpon>TimestampField.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TrackBarUpDown.resx">
       <DependentUpon>TrackBarUpDown.cs</DependentUpon>
