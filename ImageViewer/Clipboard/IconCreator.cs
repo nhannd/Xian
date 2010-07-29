@@ -31,6 +31,7 @@
 
 using System;
 using System.Drawing;
+using ClearCanvas.Common;
 
 #pragma warning disable 0419,1574,1587,1591
 
@@ -46,7 +47,9 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			float aspectRatio = _iconHeight / (float)_iconWidth;
 
 			int dimension = Math.Max(image.ClientRectangle.Width, image.ClientRectangle.Height);
-			Bitmap img = image.DrawToBitmap(dimension, (int)(dimension * aspectRatio));
+
+			// rendered twice to rasterize the invariant text first and then downsample to icon size
+			Bitmap img = DrawToIcon(image, dimension, (int)(dimension * aspectRatio));
 			Bitmap bmp = new Bitmap(img, _iconWidth, _iconHeight);
 			
 			System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp);
@@ -77,7 +80,9 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			int dimension = Math.Max(displayedClientRectangle.Width, displayedClientRectangle.Height);
 
 			IPresentationImage image = GetMiddlePresentationImage(displaySet);
-			Bitmap img = image.DrawToBitmap(dimension, (int)(dimension * aspectRatio));
+
+			// rendered twice to rasterize the invariant text first and then downsample to icon size
+			Bitmap img = DrawToIcon(image, dimension, (int)(dimension * aspectRatio));
 			Bitmap iconBmp = new Bitmap(img, subIconWidth, subIconHeight);
 			img.Dispose();
 
@@ -96,9 +101,31 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			}
 
 			pen.Dispose();
+			iconBmp.Dispose();
 			g.Dispose();
 
 			return bmp;
+		}
+
+		private static Bitmap DrawToIcon(IPresentationImage image, int width, int height)
+		{
+			try
+			{
+				return image.DrawToBitmap(width, height);
+			}
+			catch (Exception ex)
+			{
+				// rendering the error text to a 100x100 icon is useless, so we'll just paint a placeholder error icon and log the icon error
+				Platform.Log(LogLevel.Warn, ex, "Failed to render icon with dimensions {0}x{1}", width, height);
+				var bitmap = new Bitmap(width, height);
+				using (var graphics = System.Drawing.Graphics.FromImage(bitmap))
+				{
+					graphics.FillRectangle(Brushes.Black, 0, 0, width, height);
+					graphics.DrawLine(Pens.WhiteSmoke, 0, 0, width, height);
+					graphics.DrawLine(Pens.WhiteSmoke, 0, height, width, 0);
+				}
+				return bitmap;
+			}
 		}
 
 		private static IPresentationImage GetMiddlePresentationImage(IDisplaySet displaySet)

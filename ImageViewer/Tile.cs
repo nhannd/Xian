@@ -485,6 +485,7 @@ namespace ClearCanvas.ImageViewer
 		/// <remarks>This is called by the GUI control associated with this
 		/// component.  Never call this method directly.  Instead, use
 		/// <see cref="Draw()"/>.</remarks>
+		/// <exception cref="RenderingException">Thrown if any <see cref="Exception"/> is encountered while rendering the image.</exception>
 		public void Draw(DrawArgs drawArgs)
 		{
 			// No PresentationImage associated with this Tile, so nothing to draw

@@ -63,16 +63,18 @@ namespace ClearCanvas.ImageViewer.Rendering
 		IRenderingSurface GetRenderingSurface(IntPtr windowID, int width, int height);
 
 		/// <summary>
-		/// Draws the <see cref="IPresentationImage"/> passed in through the 
-		/// <see cref="DrawArgs"/>.
+		/// Renders the specified scene graph to the graphics surface.
 		/// </summary>
-		/// <param name="args"></param>
 		/// <remarks>
-		/// This method is called by the <see cref="PresentationImage"/> whenever
-		/// <see cref="IDrawable.Draw"/> is called.  If you are implementing
-		/// your own renderer, <see cref="DrawArgs"/> contains all you need to 
-		/// know to perform the rendering, such as the <see cref="IRenderingSurface"/>, etc.  
+		/// Calling code should take care to handle any exceptions in a manner suitable to the context of
+		/// the rendering operation. For example, the view control for an
+		/// <see cref="ITile"/> may wish to display the error message in the tile's client area <i>without
+		/// crashing the control</i>, whereas an image export routine may wish to notify the user via an error
+		/// dialog and have the export output <i>fail to be created</i>. Automated routines (such as unit
+		/// tests) may even wish that the exception bubble all the way to the top for debugging purposes.
 		/// </remarks>
+		/// <param name="args">A <see cref="DrawArgs"/> object that specifies the graphics surface and the scene graph to be rendered.</param>
+		/// <exception cref="RenderingException">Thrown if any <see cref="Exception"/> is encountered in the rendering pipeline.</exception>
 		void Draw(DrawArgs args);
 	}
 }

@@ -29,19 +29,21 @@
 
 #endregion
 
+using System;
 using System.Drawing;
 using System.Windows.Forms;
+using ClearCanvas.Common;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Rendering;
-using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Annotations;
-using System;
+using DrawMode=ClearCanvas.ImageViewer.Rendering.DrawMode;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 {
 	internal partial class MagnificationForm : Form
 	{
+		private string _lastRenderExceptionMessage = null;
 		private float _magnificationFactor;
 		private PresentationImage _sourceImage;
 		private PresentationImage _magnificationImage;
@@ -306,9 +308,29 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 
 			try
 			{
-				WinFormsScreenProxy screen = new WinFormsScreenProxy(Screen.FromControl(this));
-				DrawArgs args = new DrawArgs(_renderingSurface, screen, ClearCanvas.ImageViewer.Rendering.DrawMode.Refresh);
-				_magnificationImage.Draw(args);
+				// if there was an exception the last time we rendered the buffer, don't refresh from the buffer and instead redraw the error message
+				if (string.IsNullOrEmpty(_lastRenderExceptionMessage))
+				{
+					WinFormsScreenProxy screen = new WinFormsScreenProxy(Screen.FromControl(this));
+					DrawArgs args = new DrawArgs(_renderingSurface, screen, DrawMode.Refresh);
+					_magnificationImage.Draw(args);
+				}
+				else
+				{
+					// we cannot simply pass the existing Graphics because we haven't released its hDC yet
+					// if we do, we'll get a "Object is currently in use elsewhere" exception
+					DrawErrorMessage(_lastRenderExceptionMessage, _renderingSurface.ContextID, ClientRectangle);
+				}
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Error, ex, "An error has occured while refreshing the magnified contents of the tile.");
+
+				var exceptionMessage = ex is RenderingException ? ((RenderingException) ex).SpecificMessage : ex.Message;
+
+				// we cannot simply pass the Graphics because we haven't released its hDC yet
+				// if we do, we'll get a "Object is currently in use elsewhere" exception
+				DrawErrorMessage(exceptionMessage, _renderingSurface.ContextID, ClientRectangle);
 			}
 			finally
 			{
@@ -328,6 +350,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 				_renderingSurface.ClientRectangle = ClientRectangle;
 				_renderingSurface.ClipRectangle = ClientRectangle;
 
+				try
+				{
+
 				ImageSpatialTransform sourceTransform = (ImageSpatialTransform)((ISpatialTransformProvider)_sourceImage).SpatialTransform;
 				ImageSpatialTransform transform = (ImageSpatialTransform)((ISpatialTransformProvider)_magnificationImage).SpatialTransform;
 
@@ -341,9 +366,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 				float scale = sourceTransform.Scale * _magnificationFactor;
 				float translationX = sourceTransform.TranslationX - renderingOffsetSource.Width;
 				float translationY = sourceTransform.TranslationY - renderingOffsetSource.Height;
-
-				try
-				{
 					transform.ScaleToFit = false;
 					transform.Scale = scale;
 					transform.TranslationX = translationX;
@@ -352,6 +374,20 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 					WinFormsScreenProxy screen = new WinFormsScreenProxy(Screen.FromControl(this));
 					DrawArgs args = new DrawArgs(_renderingSurface, screen, ClearCanvas.ImageViewer.Rendering.DrawMode.Render);
 					_magnificationImage.Draw(args);
+
+					// clear the rendering exception message
+					_lastRenderExceptionMessage = null;
+				}
+				catch (Exception ex)
+				{
+					Platform.Log(LogLevel.Error, ex, "An error has occured while rendering the magnified contents of the tile.");
+
+					// a rendering exception was encountered, so set the message field
+					_lastRenderExceptionMessage = ex is RenderingException ? ((RenderingException) ex).SpecificMessage : ex.Message;
+
+					// we cannot simply pass the existing Graphics because we haven't released its hDC yet
+					// if we do, we'll get a "Object is currently in use elsewhere" exception
+					DrawErrorMessage(_lastRenderExceptionMessage, _renderingSurface.ContextID, ClientRectangle);
 				}
 				finally
 				{
@@ -360,6 +396,30 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			}
 
 			Refresh();
+		}
+
+		private static void DrawErrorMessage(string errorMessage, IntPtr hDC, Rectangle bounds)
+		{
+			using (var errorGraphics = System.Drawing.Graphics.FromHdc(hDC))
+			{
+				// don't give the user any false expectation of the validity of the magnified output by clearing any partially rendered results
+				errorGraphics.FillRectangle(Brushes.Black, bounds);
+
+				using (var format = new StringFormat
+				                    	{
+				                    		Trimming = StringTrimming.EllipsisCharacter,
+				                    		Alignment = StringAlignment.Center,
+				                    		LineAlignment = StringAlignment.Center,
+				                    		FormatFlags = StringFormatFlags.NoClip
+				                    	})
+				{
+					// use the system-determined default font to ensure we can't fail at drawing error messages (cause some systems might not have Arial)
+					using (var font = new Font(SystemFonts.DefaultFont.Name, 12.0f))
+					{
+						errorGraphics.DrawString(errorMessage, font, Brushes.WhiteSmoke, bounds, format);
+					}
+				}
+			}
 		}
 	}
 }

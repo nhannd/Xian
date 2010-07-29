@@ -295,6 +295,7 @@ namespace ClearCanvas.ImageViewer
 		/// <remarks>
 		/// For internal Framework use only.
 		/// </remarks>
+		/// <exception cref="RenderingException">Thrown if any <see cref="Exception"/> is encountered while rendering the image.</exception>
 		public override void Draw(DrawArgs drawArgs)
 		{
 			base.Draw(drawArgs);

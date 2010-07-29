@@ -434,6 +434,7 @@ namespace ClearCanvas.ImageViewer
 		/// <remarks>
 		/// For internal Framework use only.
 		/// </remarks>
+		/// <exception cref="RenderingException">Thrown if any <see cref="Exception"/> is encountered while rendering the image.</exception>
 		public virtual void Draw(DrawArgs drawArgs)
 		{
 			drawArgs.SceneGraph = this.SceneGraph;
@@ -459,13 +460,25 @@ namespace ClearCanvas.ImageViewer
 		/// This method can be used anywhere an offscreen bitmap is required, such as 
 		/// paper/DICOM printing, thumbnail generation, creation of new DICOM images, etc.
 		/// </remarks>
+		/// <exception cref="ArgumentException">Thrown if invalid image dimensions are supplied.</exception>
+		/// <exception cref="RenderingException">Thrown if any <see cref="Exception"/> is encountered while rendering the image.</exception>
 		public virtual Bitmap DrawToBitmap(int width, int height)
 		{
+			Platform.CheckPositive(width, "width");
+			Platform.CheckPositive(height, "height");
+
 			Bitmap bmp = new Bitmap(width, height);
-
-			DrawToBitmap(bmp);
-
-			return bmp;
+			try
+			{
+				DrawToBitmap(bmp);
+				return bmp;
+			}
+			catch (Exception)
+			{
+				// if an exception is thrown, then the calling code won't get the reference to the bitmap, so we need to dispose of it here
+				bmp.Dispose();
+				throw;
+			}
 		}
 
 		/// <summary>
@@ -477,6 +490,9 @@ namespace ClearCanvas.ImageViewer
 		/// This method can be used anywhere an offscreen bitmap is required, such as 
 		/// paper/DICOM printing, thumbnail generation, creation of new DICOM images, etc.
 		/// </remarks>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="bmp"/> is null.</exception>
+		/// <exception cref="ArgumentException">Thrown if <paramref name="bmp"/> has invalid dimensions.</exception>
+		/// <exception cref="RenderingException">Thrown if any <see cref="Exception"/> is encountered while rendering the image.</exception>
 		public virtual void DrawToBitmap(Bitmap bmp)
 		{
 			Platform.CheckForNullReference(bmp, "bmp");
@@ -484,20 +500,26 @@ namespace ClearCanvas.ImageViewer
 			Platform.CheckPositive(bmp.Width, "bmp.Width");
 			Platform.CheckPositive(bmp.Height, "bmp.Height");
 
-			System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp);
+			var graphics = System.Drawing.Graphics.FromImage(bmp);
+			var contextId = graphics.GetHdc();
+			try
+			{
+				using (var surface = ImageRenderer.GetRenderingSurface(IntPtr.Zero, bmp.Width, bmp.Height))
+				{
+					surface.ContextID = contextId;
+					surface.ClipRectangle = new Rectangle(0, 0, bmp.Width, bmp.Height);
 
-			IRenderingSurface surface = this.ImageRenderer.GetRenderingSurface(IntPtr.Zero, bmp.Width, bmp.Height);
-			surface.ContextID = g.GetHdc();
-			surface.ClipRectangle = new Rectangle(0, 0, bmp.Width, bmp.Height);
-
-			DrawArgs drawArgs = new DrawArgs(surface, null, DrawMode.Render);
-			DrawNoEvents(drawArgs);
-			drawArgs = new DrawArgs(surface, null, DrawMode.Refresh);
-			DrawNoEvents(drawArgs);
-			g.ReleaseHdc(surface.ContextID);
-			g.Dispose();
-
-			surface.Dispose();
+					var drawArgs = new DrawArgs(surface, null, DrawMode.Render);
+					DrawNoEvents(drawArgs);
+					drawArgs = new DrawArgs(surface, null, DrawMode.Refresh);
+					DrawNoEvents(drawArgs);
+				}
+			}
+			finally
+			{
+				graphics.ReleaseHdc(contextId);
+				graphics.Dispose();
+			}
 		}
 
 		#endregion
@@ -505,6 +527,7 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Renders the <see cref="PresentationImage"/> without firing any events.
 		/// </summary>
+		/// <exception cref="RenderingException">Thrown if any <see cref="Exception"/> is encountered while rendering the image.</exception>
 		protected void DrawNoEvents(DrawArgs drawArgs)
 		{
 			drawArgs.SceneGraph = this.SceneGraph;

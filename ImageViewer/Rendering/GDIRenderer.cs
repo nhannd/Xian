@@ -500,6 +500,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// <summary>
 		/// Draws an error message in the Scene Graph's client area of the screen.
 		/// </summary>
+		[Obsolete("Renderer implementations are no longer responsible for handling render pipeline errors.")]
 		protected override void ShowErrorMessage(string message)
 		{
 			Font font = new Font("Arial", 12.0f);

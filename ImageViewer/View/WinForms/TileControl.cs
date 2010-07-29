@@ -68,6 +68,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		private CursorWrapper _currentCursorWrapper;
 
 		private bool _suppressDrawOnSizeChanged = false;
+		private string _lastRenderExceptionMessage = null;
 
 		[ThreadStatic]
 		private static bool _isDrawing = false;
@@ -210,30 +211,30 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				                             new WinFormsScreenProxy(Screen.FromControl(this)),
 				                             DrawMode.Render);
 
-				string errorMessage = null;
-
 				_isDrawing = true;
 
 				try
 				{
 					_tile.Draw(args);
+
+					_lastRenderExceptionMessage = null;
 				}
 				catch (Exception ex)
 				{
-					errorMessage = ex.Message;
+					Platform.Log(LogLevel.Error, ex, "An error has occured while rendering the contents of a tile.");
+
+					_lastRenderExceptionMessage = ex is RenderingException ? ((RenderingException) ex).SpecificMessage : ex.Message;
+
+					// we cannot simply pass the existing Graphics because we haven't released its hDC yet
+					// if we do, we'll get a "Object is currently in use elsewhere" exception
+					DrawErrorMessage(_lastRenderExceptionMessage, Surface.ContextID, ClientRectangle);
 				}
 				finally
 				{
-					_isDrawing = false;
-
 					graphics.ReleaseHdc(this.Surface.ContextID);
 					graphics.Dispose();
 
-					if (errorMessage != null)
-					{
-						MessageBox mb = new MessageBox();
-						mb.Show(errorMessage);
-					}
+					_isDrawing = false;
 				}
 			}
 
@@ -256,6 +257,29 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			finally
 			{
 				_surface = null;
+			}
+		}
+
+		private static void DrawErrorMessage(string errorMessage, IntPtr hDC, Rectangle bounds)
+		{
+			using (var errorGraphics = System.Drawing.Graphics.FromHdc(hDC))
+			{
+				using (var format = new StringFormat
+				                    	{
+				                    		Trimming = StringTrimming.EllipsisCharacter,
+				                    		Alignment = StringAlignment.Center,
+				                    		LineAlignment = StringAlignment.Center,
+				                    		FormatFlags = StringFormatFlags.NoClip
+				                    	})
+				{
+					// use the system-determined default font to ensure we can't fail at drawing error messages (cause some systems might not have Arial)
+					using (var font = new Font(SystemFonts.DefaultFont.Name, 12.0f))
+					{
+						// we don't clear the background before drawing the error message, so give it a drop shadow effect
+						errorGraphics.DrawString(errorMessage, font, Brushes.Black, new Rectangle(new Point(1, 1), bounds.Size), format);
+						errorGraphics.DrawString(errorMessage, font, Brushes.WhiteSmoke, bounds, format);
+					}
+				}
 			}
 		}
 
@@ -337,28 +361,35 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				                             new WinFormsScreenProxy(Screen.FromControl(this)),
 				                             DrawMode.Refresh);
 
-				string errorMessage = null;
-
 				_painting = true;
 
 				try
 				{
 					_tile.Draw(args);
+
+					// if an exception was encountered the last time we rendered the buffer, refresh the error text now
+					if (!string.IsNullOrEmpty(_lastRenderExceptionMessage))
+					{
+						// we cannot simply pass the Graphics because we haven't released its hDC yet
+						// if we do, we'll get a "Object is currently in use elsewhere" exception
+						DrawErrorMessage(_lastRenderExceptionMessage, Surface.ContextID, ClientRectangle);
+					}
 				}
 				catch (Exception ex)
 				{
-					errorMessage = ex.Message;
+					Platform.Log(LogLevel.Error, ex, "An error has occured while refreshing the contents of a tile.");
+
+					var exceptionMessage = ex is RenderingException ? ((RenderingException) ex).SpecificMessage : ex.Message;
+
+					// we cannot simply pass the existing Graphics because we haven't released its hDC yet
+					// if we do, we'll get a "Object is currently in use elsewhere" exception
+					DrawErrorMessage(exceptionMessage, Surface.ContextID, ClientRectangle);
 				}
 				finally
 				{
-					_painting = false;
 					e.Graphics.ReleaseHdc(this.Surface.ContextID);
 
-					if (errorMessage != null)
-					{
-						MessageBox mb = new MessageBox();
-						mb.Show(errorMessage);
-					}
+					_painting = false;
 				}
 			}
 

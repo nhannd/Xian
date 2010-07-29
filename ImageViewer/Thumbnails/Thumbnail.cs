@@ -230,7 +230,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 				if (image is IAnnotationLayoutProvider)
 					((IAnnotationLayoutProvider) image).AnnotationLayout.Visible = false;
 
-				Bitmap bmp = image.DrawToBitmap(width, height);
+				Bitmap bmp = DrawToThumbnail(image, width, height);
 				System.Drawing.Graphics graphics = System.Drawing.Graphics.FromImage(bmp);
 
 				DrawBorder(graphics, width, height);
@@ -246,6 +246,27 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 				using (Pen pen = new Pen(Color.DarkGray))
 				{
 					graphics.DrawRectangle(pen, 0, 0, width - 1, height - 1);
+				}
+			}
+
+			private static Bitmap DrawToThumbnail(IPresentationImage image, int width, int height)
+			{
+				try
+				{
+					return image.DrawToBitmap(width, height);
+				}
+				catch (Exception ex)
+				{
+					// rendering the error text to a 100x100 icon is useless, so we'll just paint a placeholder error icon and log the icon error
+					Platform.Log(LogLevel.Warn, ex, "Failed to render thumbnail with dimensions {0}x{1}", width, height);
+					var bitmap = new Bitmap(width, height);
+					using (var graphics = System.Drawing.Graphics.FromImage(bitmap))
+					{
+						graphics.FillRectangle(Brushes.Black, 0, 0, width, height);
+						graphics.DrawLine(Pens.WhiteSmoke, 0, 0, width, height);
+						graphics.DrawLine(Pens.WhiteSmoke, 0, height, width, 0);
+					}
+					return bitmap;
 				}
 			}
 
