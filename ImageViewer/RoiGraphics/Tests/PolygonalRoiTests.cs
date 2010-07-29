@@ -97,39 +97,57 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 		}
 
 		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void TestInvalidConstructionFromUnclosedPolyline3()
+		{
+			PolylineGraphic plg = new PolylineGraphic();
+			plg.Points.Add(new PointF(0, 0));
+			plg.Points.Add(new PointF(0, 1));
+			plg.Points.Add(new PointF(1, 1));
+			plg.Points.Add(new PointF(1, 2));
+			new PolygonalRoi(plg);
+		}
+
+		[Test]
 		public void TestInvalidConstructionFromClosedPolyline()
 		{
 			try
 			{
-				PolylineGraphic plg = new PolylineGraphic();
-				plg.Points.Add(new PointF(0, 0));
-				var polygon = new PolygonalRoi(plg).Polygon;
-				Assert.Fail("PolygonalRoi constructor should have thrown an exception");
+				PolylineGraphic graphic = new PolylineGraphic();
+				new PolygonalRoi(graphic);
+				Assert.Fail("PolygonalRoi constructor should have thrown an exception (0 points in graphic).");
 			}
-			catch (ArgumentException)
-			{
-			}
+			catch (ArgumentException) {}
 
 			try
 			{
-				PolylineGraphic plg2 = new PolylineGraphic();
-				plg2.Points.Add(new PointF(0, 0));
-				plg2.Points.Add(new PointF(0, 0));
-				var polygon = new PolygonalRoi(plg2).Polygon;
-				Assert.Fail("PolygonalRoi constructor should have thrown an exception");
+				PolylineGraphic graphic = new PolylineGraphic();
+				graphic.Points.Add(new PointF(0, 0));
+				new PolygonalRoi(graphic);
+				Assert.Fail("PolygonalRoi constructor should have thrown an exception (1 point in graphic).");
 			}
-			catch (ArgumentException)
-			{
-			}
+			catch (ArgumentException) {}
 
-			//TODO (CR May 2010): this case should also throw an exception, really,
-			//but we'll live with it like this until we can make the changes
-			//from the March 2010 code review.
-			PolylineGraphic plg3 = new PolylineGraphic();
-			plg3.Points.Add(new PointF(0, 0));
-			plg3.Points.Add(new PointF(1, 1));
-			plg3.Points.Add(new PointF(0, 0));
-			Assert.IsNull(new PolygonalRoi(plg3).Polygon);
+			try
+			{
+				PolylineGraphic graphic = new PolylineGraphic();
+				graphic.Points.Add(new PointF(0, 0));
+				graphic.Points.Add(new PointF(0, 0));
+				new PolygonalRoi(graphic);
+				Assert.Fail("PolygonalRoi constructor should have thrown an exception (2 points in graphic).");
+			}
+			catch (ArgumentException) {}
+
+			try
+			{
+				PolylineGraphic graphic = new PolylineGraphic();
+				graphic.Points.Add(new PointF(0, 0));
+				graphic.Points.Add(new PointF(1, 1));
+				graphic.Points.Add(new PointF(0, 0));
+				new PolygonalRoi(graphic);
+				Assert.Fail("PolygonalRoi constructor should have thrown an exception (3 points in graphic).");
+			}
+			catch (ArgumentException) {}
 		}
 
 		[Test]

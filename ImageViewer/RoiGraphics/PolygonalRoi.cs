@@ -45,8 +45,6 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		private readonly PolygonF _polygon;
 		private Units _units;
 
-		//TODO (cr Feb 2010): public constructor and we don't do same checks as in other one.
-
 		/// <summary>
 		/// Constructs a new polygonal region of interest.
 		/// </summary>
@@ -54,6 +52,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <param name="presentationImage">The image containing the source pixel data.</param>
 		public PolygonalRoi(IEnumerable<PointF> vertices, IPresentationImage presentationImage) : base(presentationImage)
 		{
+			var list = new List<PointF>(vertices);
+			if (list.Count < 3) // a valid list of vertices needs 3 items
+				throw new ArgumentException("Three vertices are required to define a polygon.", "vertices");
+
 			// vertices should not contain repeated start point
 			_polygon = new PolygonF(vertices);
 		}
@@ -65,28 +67,20 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		public PolygonalRoi(IPointsGraphic polygon)
 			: base(polygon.ParentPresentationImage)
 		{
-			//TODO (cr Feb 2010): Just check Count > 3?
-
-			if (!polygon.Points.IsClosed)
-				throw new ArgumentException("Supplied graphic must be a closed polygon.", "polygon");
+			if (polygon.Points.Count < 4 || !polygon.Points.IsClosed) // a valid points graphic needs 4 endpoints to define 3 sides
+				throw new ArgumentException("Supplied graphic must be a valid closed polygon.", "polygon");
 
 			polygon.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
-				if (polygon.Points.Count > 3)
+				// this list of vertices *has* the repeated start point, so we remove it here
+				// the repeated point is an artifact of the polyline graphics system, and should not be replicated in abstract polygon models.
+				List<PointF> vertices = new List<PointF>(polygon.Points.Count - 1);
+				for (int n = 0; n < polygon.Points.Count - 1; n++)
 				{
-					// this list of vertices *has* the repeated start point, so we remove it here
-					List<PointF> vertices = new List<PointF>(polygon.Points.Count - 1);
-					for (int n = 0; n < polygon.Points.Count - 1; n++)
-					{
-						vertices.Add(polygon.Points[n]);
-					}
-					_polygon = new PolygonF(vertices);
+					vertices.Add(polygon.Points[n]);
 				}
-				else
-				{
-					_polygon = null;
-				}
+				_polygon = new PolygonF(vertices);
 			}
 			finally
 			{
