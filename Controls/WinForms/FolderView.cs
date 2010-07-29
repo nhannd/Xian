@@ -980,8 +980,8 @@ namespace ClearCanvas.Controls.WinForms
 		{
 			public static readonly SortKey Name = new SortKey((x, y) => string.Compare(x.DisplayName, y.DisplayName, StringComparison.InvariantCultureIgnoreCase));
 			public static readonly SortKey Type = new SortKey((x, y) => string.Compare(x.TypeName, y.TypeName, StringComparison.InvariantCultureIgnoreCase));
-			public static readonly SortKey Size = new SortKey((x, y) => DateTime.Compare(x.LastModified, y.LastModified));
-			public static readonly SortKey Date = new SortKey((x, y) => x.FileSize.CompareTo(y.FileSize));
+			public static readonly SortKey Date = new SortKey((x, y) => DateTime.Compare(x.LastModified, y.LastModified));
+			public static readonly SortKey Size = new SortKey((x, y) => x.FileSize.CompareTo(y.FileSize));
 
 			private readonly Comparison<FolderListViewItem> _comparison;
 
