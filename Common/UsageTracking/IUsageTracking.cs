@@ -44,6 +44,6 @@ namespace ClearCanvas.Common.UsageTracking
         /// </summary>
         /// <param name="request"></param>
         [OperationContract]
-        void Register(RegisterRequest request);
+        RegisterResponse Register(RegisterRequest request);
     }
 }

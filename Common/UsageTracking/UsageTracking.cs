@@ -32,6 +32,7 @@
 using System;
 using System.Globalization;
 using System.Threading;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common.UsageTracking
 {
@@ -40,6 +41,27 @@ namespace ClearCanvas.Common.UsageTracking
     /// </summary>
     public static class UsageTracking
     {
+        private static event EventHandler<ItemEventArgs<DisplayMessage>> _message;
+        private static readonly object _syncLock = new object();
+		
+        /// <summary>
+        /// Event which can receive messages from the UsageTracking server
+        /// </summary>
+        public static event EventHandler<ItemEventArgs<DisplayMessage>> MessageEvent
+		{
+            add
+            {
+                lock (_syncLock)
+                    _message += value;
+            }
+            remove
+            {
+                lock (_syncLock)
+                    _message -= value;
+            }
+		}
+
+        #region Private Methods
         private static void Send(object theMessage)
         {
             try
@@ -52,9 +74,15 @@ namespace ClearCanvas.Common.UsageTracking
                                                   Message = message
                                               };
 
+                    RegisterResponse response;
                     using (UsageTrackingServiceClient client = new UsageTrackingServiceClient())
                     {
-                        client.Register(req);
+                        response = client.Register(req);
+                    }
+                    if (response.Message != null
+                        && UsageTrackingSettings.Default.DisplayMessages)
+                    {
+                        EventsHelper.Fire(_message, null, new ItemEventArgs<DisplayMessage>(response.Message)); 
                     }
                 }
             }
@@ -63,6 +91,7 @@ namespace ClearCanvas.Common.UsageTracking
                 Platform.Log(LogLevel.Debug, e);
             }
         }
+        #endregion
 
         /// <summary>
         /// Register the usage of the application with a ClearCanvas server.

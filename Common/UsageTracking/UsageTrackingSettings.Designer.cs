@@ -31,5 +31,14 @@ namespace ClearCanvas.Common.UsageTracking {
                 return ((bool)(this["Enabled"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DisplayMessages {
+            get {
+                return ((bool)(this["DisplayMessages"]));
+            }
+        }
     }
 }

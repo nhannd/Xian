@@ -85,9 +85,9 @@ namespace ClearCanvas.Common.UsageTracking
         /// Register the application.
         /// </summary>
         /// <param name="request">The register request.</param>
-        public void Register(RegisterRequest request)
+        public RegisterResponse Register(RegisterRequest request)
         {
-            Channel.Register(request);
+            return Channel.Register(request);
         }
 
         #endregion
