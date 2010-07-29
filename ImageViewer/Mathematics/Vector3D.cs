@@ -163,21 +163,9 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		public bool IsParallelTo(Vector3D other, float angleToleranceRadians)
 		{
 			angleToleranceRadians = Math.Abs(angleToleranceRadians);
-			float upper = angleToleranceRadians;
-			float lower = -angleToleranceRadians;
-
 			float angle = GetAngleBetween(other);
-
-			bool parallel = FloatComparer.IsGreaterThan(angle, lower) && FloatComparer.IsLessThan(angle, upper);
-
-			if (!parallel)
-			{
-				upper = (float)Math.PI + angleToleranceRadians;
-				lower = (float)Math.PI - angleToleranceRadians;
-				parallel = FloatComparer.IsGreaterThan(angle, lower) && FloatComparer.IsLessThan(angle, upper);
-			}
-
-			return parallel;
+			return FloatComparer.AreEqual(angle, 0, angleToleranceRadians) ||
+			       FloatComparer.AreEqual(angle, (float)Math.PI, angleToleranceRadians);
 		}
 
 		/// <summary>
@@ -186,12 +174,9 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		public bool IsOrthogonalTo(Vector3D other, float angleToleranceRadians)
 		{
 			angleToleranceRadians = Math.Abs(angleToleranceRadians);
-			float upper = (float)Math.PI / 2 + angleToleranceRadians;
-			float lower = (float)Math.PI / 2 - angleToleranceRadians;
-
 			float angle = GetAngleBetween(other);
-
-			return FloatComparer.IsGreaterThan(angle, lower) && FloatComparer.IsLessThan(angle, upper);
+			const float halfPi = (float)Math.PI/2;
+			return FloatComparer.AreEqual(angle, halfPi, angleToleranceRadians);
 		}
 
 		/// <summary>

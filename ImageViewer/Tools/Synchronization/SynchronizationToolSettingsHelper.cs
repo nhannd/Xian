@@ -42,25 +42,22 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		private event PropertyChangedEventHandler _propertyChanged;
 		private readonly SynchronizationToolSettings _settings;
-		private float _parallelPlanesToleranceAngleRadians = 0f;
-		private bool _suspendSettingChangingEvent = false;
+		private volatile float _parallelPlanesToleranceAngleRadians = -1;
 
 		private SynchronizationToolSettingsHelper(SynchronizationToolSettings settings)
 		{
 			_settings = settings;
-			_settings.SettingChanging += OnSettingChanged;
-			_parallelPlanesToleranceAngleRadians = (float) (_settings.ParallelPlanesToleranceAngle*Math.PI/180f);
+			_settings.PropertyChanged += OnSettingChanged;
 		}
 
-		private void OnSettingChanged(object sender, SettingChangingEventArgs e)
+		private void OnSettingChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (!_suspendSettingChangingEvent && e.SettingName == "ParallelPlanesToleranceAngle")
-			{
-				float value = (float) e.NewValue;
-				_parallelPlanesToleranceAngleRadians = (float) (value*Math.PI/180f);
-				this.NotifyPropertyChanged("ParallelPlanesToleranceAngleRadians");
-				this.NotifyPropertyChanged("ParallelPlanesToleranceAngleDegrees");
-			}
+			if (e.PropertyName != "ParallelPlanesToleranceAngle")
+				return;
+			
+			_parallelPlanesToleranceAngleRadians = -1;
+			NotifyPropertyChanged("ParallelPlanesToleranceAngleRadians");
+			NotifyPropertyChanged("ParallelPlanesToleranceAngleDegrees");
 		}
 
 		private void NotifyPropertyChanged(string propertyName)
@@ -78,55 +75,29 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		}
 
 		/// <summary>
-		/// Gets or sets the maximum angle difference, in degrees, between two planes for synchronization tools to treat the planes as parallel.
+		/// Gets the maximum angle difference, in degrees, between two planes for synchronization tools to treat the planes as parallel.
 		/// </summary>
 		/// <seealso cref="ParallelPlanesToleranceAngleRadians"/>
 		public float ParallelPlanesToleranceAngleDegrees
 		{
-			get { return _settings.ParallelPlanesToleranceAngle; }
-			set
+			get
 			{
-				if (this.ParallelPlanesToleranceAngleDegrees != value)
-				{
-					_suspendSettingChangingEvent = true;
-					try
-					{
-						_settings.ParallelPlanesToleranceAngle = value;
-					}
-					finally
-					{
-						_suspendSettingChangingEvent = false;
-					}
-					this.NotifyPropertyChanged("ParallelPlanesToleranceAngleDegrees");
-				}
+				var value = _settings.ParallelPlanesToleranceAngle;
+				return value == 0F ? 100*float.Epsilon : value;
 			}
 		}
 
 		/// <summary>
-		/// Gets or sets the maximum angle difference, in radians, between two planes for synchronization tools to treat the planes as parallel.
+		/// Gets the maximum angle difference, in radians, between two planes for synchronization tools to treat the planes as parallel.
 		/// </summary>
 		/// <seealso cref="ParallelPlanesToleranceAngleDegrees"/>
 		public float ParallelPlanesToleranceAngleRadians
 		{
-			get { return _parallelPlanesToleranceAngleRadians; }
-			set
+			get
 			{
-				if (_parallelPlanesToleranceAngleRadians != value)
-				{
-					_parallelPlanesToleranceAngleRadians = value;
-
-					_suspendSettingChangingEvent = true;
-					try
-					{
-						_settings.ParallelPlanesToleranceAngle = (float) (value*180f/Math.PI);
-					}
-					finally
-					{
-						_suspendSettingChangingEvent = false;
-					}
-
-					this.NotifyPropertyChanged("ParallelPlanesToleranceAngleRadians");
-				}
+				if (_parallelPlanesToleranceAngleRadians < 0)
+					_parallelPlanesToleranceAngleRadians = ParallelPlanesToleranceAngleDegrees*(float)Math.PI/180F;
+				return _parallelPlanesToleranceAngleRadians;
 			}
 		}
 	}

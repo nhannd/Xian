@@ -125,7 +125,112 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 
 			Assert.IsTrue(Vector3D.AreEqual(v1.Cross(v2), result));
 		}
-		
+
+		[Test]
+		public void TestAngleBetween()
+		{
+			const float halfPi = (float)Math.PI/2;
+			const float tolerance = 1e-5F;
+			var v1 = Vector3D.xUnit;
+			var v2 = Vector3D.yUnit;
+			Assert.AreEqual(halfPi, v1.GetAngleBetween(v2), tolerance);
+
+			v2 = -Vector3D.yUnit;
+			Assert.AreEqual(halfPi, v1.GetAngleBetween(v2), tolerance);
+
+			v2 = Vector3D.zUnit;
+			Assert.AreEqual(halfPi, v1.GetAngleBetween(v2), tolerance);
+
+			v2 = -Vector3D.zUnit;
+			Assert.AreEqual(halfPi, v1.GetAngleBetween(v2), tolerance);
+
+			v1 = Vector3D.yUnit;
+			v2 = Vector3D.zUnit;
+			Assert.AreEqual(halfPi, v1.GetAngleBetween(v2), tolerance);
+
+			v2 = -Vector3D.zUnit;
+			Assert.AreEqual(halfPi, v1.GetAngleBetween(v2), tolerance);
+
+			v1 = new Vector3D(2.2F, -6.1F, 7.4F);
+			v2 = new Vector3D(3.8F, 3.7F, 4.1F);
+			const float result = 1.32374F; //75.845 degrees.
+			Assert.AreEqual(result, v1.GetAngleBetween(v2), tolerance);
+
+			v1 = v2 = Vector3D.xUnit;
+			Assert.AreEqual(0, v1.GetAngleBetween(v2), tolerance);
+
+		}
+
+		[Test]
+		public void TestIsOrthogonalTo()
+		{
+			const float tolerance = 1e-5F;
+			
+			Vector3D v1 = Vector3D.xUnit;
+			Vector3D v2 = Vector3D.yUnit;
+			Assert.IsTrue(v1.IsOrthogonalTo(v2, tolerance));
+			v2 = -Vector3D.yUnit;
+			Assert.IsTrue(v1.IsOrthogonalTo(v2, tolerance));
+
+			v2 = Vector3D.zUnit;
+			Assert.IsTrue(v1.IsOrthogonalTo(v2, tolerance));
+			v2 = -Vector3D.zUnit;
+			Assert.IsTrue(v1.IsOrthogonalTo(v2, tolerance));
+
+			v1 = Vector3D.yUnit;
+			v2 = Vector3D.zUnit;
+			Assert.IsTrue(v1.IsOrthogonalTo(v2, tolerance));
+			v2 = -Vector3D.zUnit;
+			Assert.IsTrue(v1.IsOrthogonalTo(v2, tolerance));
+
+			v1 = Vector3D.xUnit;
+			v2 = Vector3D.xUnit;
+			Assert.IsFalse(v1.IsOrthogonalTo(v2, tolerance));
+			v2 = -Vector3D.xUnit;
+			Assert.IsFalse(v1.IsOrthogonalTo(v2, tolerance));
+
+			v1 = new Vector3D(2.2F, -6.1F, 7.4F);
+			v2 = new Vector3D(3.8F, 3.7F, 4.1F);
+			Assert.IsFalse(v1.IsOrthogonalTo(v2, tolerance));
+
+			//Angle between is 75.845 degrees; "big" tolerance is 14.156
+			const float bigTolerance = 0.24706F;
+			Assert.IsTrue(v1.IsOrthogonalTo(v2, bigTolerance));
+		}
+
+		[Test]
+		public void TestIsParallelTo()
+		{
+			const float tolerance = 1e-5F;
+
+			Vector3D v1 = Vector3D.xUnit;
+			Vector3D v2 = Vector3D.yUnit;
+			Assert.IsFalse(v1.IsParallelTo(v2, tolerance));
+			v2 = -Vector3D.yUnit;
+			Assert.IsFalse(v1.IsParallelTo(v2, tolerance));
+
+			v2 = Vector3D.zUnit;
+			Assert.IsFalse(v1.IsParallelTo(v2, tolerance));
+			v2 = -Vector3D.zUnit;
+			Assert.IsFalse(v1.IsParallelTo(v2, tolerance));
+
+			v1 = Vector3D.yUnit;
+			v2 = Vector3D.zUnit;
+			Assert.IsFalse(v1.IsParallelTo(v2, tolerance));
+			v2 = -Vector3D.zUnit;
+			Assert.IsFalse(v1.IsParallelTo(v2, tolerance));
+
+			v1 = Vector3D.xUnit;
+			v2 = Vector3D.xUnit;
+			Assert.IsTrue(v1.IsParallelTo(v2, tolerance));
+			v2 = -Vector3D.xUnit;
+			Assert.IsTrue(v1.IsParallelTo(v2, tolerance));
+
+			v1 = new Vector3D(2.2F, -6.1F, 7.4F);
+			v2 = new Vector3D(3.8F, 3.7F, 4.1F);
+			Assert.IsFalse(v1.IsParallelTo(v2, tolerance));
+		}
+
 		[Test]
 		public void TestLinePlaneIntersection()
 		{
