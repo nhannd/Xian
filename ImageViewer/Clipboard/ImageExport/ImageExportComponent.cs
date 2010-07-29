@@ -235,7 +235,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 		public int MaximumDimension
 		{
-			get { return 100000; }
+			get { return 4096; }
 		}
 
 		public int Width
