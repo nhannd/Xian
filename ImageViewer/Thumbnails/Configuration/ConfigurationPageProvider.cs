@@ -32,6 +32,7 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Configuration;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Thumbnails.Configuration
 {
@@ -40,7 +41,8 @@ namespace ClearCanvas.ImageViewer.Thumbnails.Configuration
 	{
 		public IEnumerable<IConfigurationPage> GetPages()
 		{
-			yield return new ConfigurationPage(ThumbnailsConfigurationComponent.Path, new ThumbnailsConfigurationComponent());
+			if (PermissionsHelper.IsInRole(AuthorityTokens.ViewerVisible))
+				yield return new ConfigurationPage(ThumbnailsConfigurationComponent.Path, new ThumbnailsConfigurationComponent());
 		}
 	}
 }

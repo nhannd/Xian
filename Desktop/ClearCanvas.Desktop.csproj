@@ -144,7 +144,7 @@
     <Compile Include="Configuration\Standard\DateFormatApplicationComponent.cs" />
     <Compile Include="Configuration\Standard\ToolbarConfigurationComponent.cs" />
     <Compile Include="Configuration\Tools\OptionsTool.cs" />
-    <Compile Include="Configuration\Tools\StandardOptionsConfigurationPageProvider.cs" />
+    <Compile Include="Configuration\Standard\ConfigurationPageProvider.cs" />
     <Compile Include="Checkable.cs" />
     <Compile Include="ChildComponentHost.cs" />
     <Compile Include="ClosedEventArgs.cs" />

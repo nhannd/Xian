@@ -29,19 +29,17 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Configuration.Standard;
 
-namespace ClearCanvas.Desktop.Configuration.Tools
+namespace ClearCanvas.Desktop.Configuration.Standard
 {
 	/// <summary>
 	/// Provides common <see cref="IConfigurationPage"/>s for settings defined in the framework.
 	/// </summary>
 	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
-	public class StandardOptionsConfigurationPageProvider : IConfigurationPageProvider
+	internal class StandardOptionsConfigurationPageProvider : IConfigurationPageProvider
 	{
 		/// <summary>
 		/// Constructor.
