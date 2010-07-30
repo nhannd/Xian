@@ -31,6 +31,8 @@
 
 using System;
 using System.Globalization;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
 using System.Threading;
 using ClearCanvas.Common.Utilities;
 
@@ -75,7 +77,13 @@ namespace ClearCanvas.Common.UsageTracking
                                               };
 
                     RegisterResponse response;
-                    using (UsageTrackingServiceClient client = new UsageTrackingServiceClient())
+
+                    WSHttpBinding binding = new WSHttpBinding();
+                    //binding.Security.Mode = WSHttpSecurity.;
+                    string endPointAddr = "http://localhost/UsageTracking/Service.svc";
+
+                    EndpointAddress endpointAddress = new EndpointAddress(endPointAddr);
+                    using (UsageTrackingServiceClient client = new UsageTrackingServiceClient(binding,endpointAddress))
                     {
                         response = client.Register(req);
                     }
