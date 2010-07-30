@@ -118,6 +118,19 @@ namespace ClearCanvas.Healthcare
 		}
 
 		/// <summary>
+		/// Gets the protocol procedure steps.
+		/// </summary>
+		public virtual List<ProtocolProcedureStep> ProtocolProcedureSteps
+		{
+			get
+			{
+				return CollectionUtils.Map<ProcedureStep, ProtocolProcedureStep>(
+					CollectionUtils.Select(this.ProcedureSteps, ps => ps.Is<ProtocolProcedureStep>()),
+					ps => ps.As<ProtocolProcedureStep>());
+			}
+		}
+
+		/// <summary>
 		/// Gets a value indicating whether this procedure is in a terminal state.
 		/// </summary>
 		public virtual bool IsTerminated
