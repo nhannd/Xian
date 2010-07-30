@@ -29,15 +29,18 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer.Comparers
 {
+	public interface IDisplaySetComparer : IComparer<IDisplaySet>, IEquatable<IDisplaySetComparer>
+	{}
+
 	/// <summary>
-	/// Base class for comparers that compare some aspect of
-	/// <see cref="IDisplaySet"/>.
+	/// Base class for comparers that compare some aspect of <see cref="IDisplaySet"/>s.
 	/// </summary>
-	public abstract class DisplaySetComparer : ComparerBase, IComparer<IDisplaySet>
+	public abstract class DisplaySetComparer : ComparerBase, IDisplaySetComparer
 	{
 		/// <summary>
 		/// Initializes a new instance of <see cref="DisplaySetComparer"/>.
@@ -65,5 +68,15 @@ namespace ClearCanvas.ImageViewer.Comparers
 		public abstract int Compare(IDisplaySet x, IDisplaySet y);
 
 		#endregion
+
+		public bool Equals(IDisplaySetComparer other)
+		{
+			return other is DisplaySetComparer && Equals((DisplaySetComparer)other);
+		}
+
+		public virtual bool Equals(DisplaySetComparer other)
+		{
+			return base.Equals(other);
+		}
 	}
 }

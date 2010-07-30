@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.Comparers
 	/// <summary>
 	/// Base class for comparers that are used for sorting collections.
 	/// </summary>
-	public abstract class ComparerBase
+	public abstract class ComparerBase : IEquatable<ComparerBase>
 	{
 		private int _returnValue;
 
@@ -142,5 +142,27 @@ namespace ClearCanvas.ImageViewer.Comparers
 
 			return 0;
 		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
+		
+		public sealed override bool Equals(object obj)
+		{
+			if (obj is ComparerBase)
+				return Equals((ComparerBase) obj);
+
+			return base.Equals(obj);
+		}
+
+		#region IEquatable<ComparerBase> Members
+
+		public virtual bool Equals(ComparerBase other)
+		{
+			return other != null && GetType().Equals(other.GetType()) && Reverse == other.Reverse;
+		}
+
+		#endregion
 	}
 }

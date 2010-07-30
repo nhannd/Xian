@@ -123,6 +123,9 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public bool AllowEmptyViewer { get; set; }
 
+		/// <summary>
+		/// Gets or sets whether or not to reconcile patient information.
+		/// </summary>
 		public bool ReconcilePatientInfo { get; set; }
 
 		#endregion
@@ -402,7 +405,6 @@ namespace ClearCanvas.ImageViewer
 			// Abort if image set has already been added
 			if (imageSet != null)
 				return;
-
 
 			imageSet = CreateImageSet(GetStudyIdentifier(study));
 			if (imageSet.Uid != study.StudyInstanceUid)
