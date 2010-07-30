@@ -48,23 +48,32 @@ namespace ClearCanvas.Dicom.DataStore
 
 			public void Validate(DicomFile dicomFile)
 			{
+				const string metaInfoErrorMessageFormat = "Invalid DICOM File Meta Info ({0})";
+
 				DicomAttributeCollection sopInstanceDataset = dicomFile.DataSet;
 				DicomAttributeCollection metaInfo = dicomFile.MetaInfo;
 
 				DicomAttribute attribute = metaInfo[DicomTags.MediaStorageSopClassUid];
 				// we want to skip Media Storage Directory Storage (DICOMDIR directories)
 				if ("1.2.840.10008.1.3.10" == attribute.ToString())
-					throw new DataStoreException("Cannot process dicom directory files.");
+					throw new DataStoreException("Cannot process DICOM directory files.");
 
 				DicomValidator.ValidateStudyInstanceUID(sopInstanceDataset[DicomTags.StudyInstanceUid]);
 				DicomValidator.ValidateSeriesInstanceUID(sopInstanceDataset[DicomTags.SeriesInstanceUid]);
 				DicomValidator.ValidateSOPInstanceUID(sopInstanceDataset[DicomTags.SopInstanceUid]);
 				DicomValidator.ValidateTransferSyntaxUID(metaInfo[DicomTags.TransferSyntaxUid]);
-				
-				if (dicomFile.SopClass == null)
-					throw new DataStoreException("The sop class must not be empty.");
 
-				DicomValidator.ValidateSopClassUid(dicomFile.SopClass.Uid);
+				if (dicomFile.SopClass == null)
+					throw new DataStoreException(string.Format(metaInfoErrorMessageFormat, "SOP Class UID is missing"));
+
+				try
+				{
+					DicomValidator.ValidateSopClassUid(dicomFile.SopClass.Uid);
+				}
+				catch (DicomDataException ex)
+				{
+					throw new DataStoreException(string.Format(metaInfoErrorMessageFormat, "SOP Class UID is missing"), ex);
+				}
 
 				Study study = new Study();
 				study.Initialize(dicomFile);
