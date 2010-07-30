@@ -73,15 +73,18 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 			if (comboBoxDatabase.Text.Equals("ImageServer"))
 			{
 				generator.ConnectionStringName = "ImageServerConnectString";
+			    generator.Proprietary = false;
 			}
             else if (comboBoxDatabase.Text.Equals("MigrationTool"))
 			{
 				generator.ConnectionStringName = "MonarchConnectString";
-			}
+                generator.Proprietary = true;
+            }
             else if (comboBoxDatabase.Text.Equals("UsageTracking"))
 			{
                 generator.ConnectionStringName = "UsageTrackingConnectString";
-			}
+                generator.Proprietary = true;
+            }
 
 			generator.Generate();
 		}
