@@ -29,12 +29,13 @@
 
 #endregion
 
+using System.ComponentModel;
 using System.Runtime.Serialization;
 
 namespace ClearCanvas.Common.UsageTracking
 {
     /// <summary>
-    /// Request object for the <see cref="IUsageTracking.Register"/>
+    /// Request object for the <see cref="IUsageTracking.Register"/> service.
     /// </summary>
     [DataContract]
     public class RegisterRequest : IExtensibleDataObject
@@ -44,6 +45,7 @@ namespace ClearCanvas.Common.UsageTracking
         /// <summary>
         /// Extensible data for serialization.
         /// </summary>
+        [DefaultValue(null)]
         public ExtensionDataObject ExtensionData { get; set; }
 
         #endregion

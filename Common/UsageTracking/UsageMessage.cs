@@ -48,6 +48,7 @@ namespace ClearCanvas.Common.UsageTracking
         /// <summary>
         /// Extensible data for serialization.
         /// </summary>
+        [DefaultValue(null)]
         public ExtensionDataObject ExtensionData { get; set; }
 
         #endregion
@@ -76,6 +77,7 @@ namespace ClearCanvas.Common.UsageTracking
         /// <summary>
         /// Extensible data for serialization.
         /// </summary>
+        [DefaultValue(null)]
         public ExtensionDataObject ExtensionData { get; set; }
 
         #endregion
@@ -111,7 +113,7 @@ namespace ClearCanvas.Common.UsageTracking
         public string Region { get; set; }
 
         /// <summary>
-        /// License information for the product.
+        /// License information configured for the product.
         /// </summary>
         [DataMember(IsRequired = false)]
         public string License { get; set; }

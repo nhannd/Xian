@@ -42,7 +42,8 @@ namespace ClearCanvas.Common.UsageTracking
         /// <summary>
         /// Register the startup of an application with the tracking service.
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="request">The request</param>
+        /// <returns>Returns a response, which may include a message to be displayed.</returns>
         [OperationContract]
         RegisterResponse Register(RegisterRequest request);
     }
