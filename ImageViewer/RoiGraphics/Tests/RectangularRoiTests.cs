@@ -131,6 +131,16 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 			base.TestRoiStatsCalculationConsistency();
 		}
 
+		[Test]
+		public void TestRoiContainedPixels()
+		{
+			TestRoiContainedPixels(new RectangleF(-5, -5, 7, 7), new[] {new PointF(0, 0), new PointF(0, 1), new PointF(1, 0), new PointF(1, 1)}, false, "Rect (+W,+H,-Loc)");
+			TestRoiContainedPixels(new RectangleF(49, -5, 2, 7), new[] {new PointF(49, 0), new PointF(49, 1), new PointF(50, 0), new PointF(50, 1)}, false, "Rect (+W,+H,+-Loc)");
+			TestRoiContainedPixels(new RectangleF(2, 49, -7, 2), new[] {new PointF(0, 49), new PointF(0, 50), new PointF(1, 49), new PointF(1, 50)}, false, "Rect (-W,+H)");
+			TestRoiContainedPixels(new RectangleF(49, 105, 2, -7), new[] {new PointF(49, 98), new PointF(49, 99), new PointF(50, 98), new PointF(50, 99)}, false, "Rect (+W,-H)");
+			TestRoiContainedPixels(new RectangleF(105, 51, -7, -2), new[] {new PointF(98, 49), new PointF(98, 50), new PointF(99, 49), new PointF(99, 50)}, false, "Rect (-W,-H)");
+		}
+
 		protected override RectangleF CreateCoreSampleShape(PointF location, int imageRows, int imageCols)
 		{
 			const int s = 10;

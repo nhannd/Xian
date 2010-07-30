@@ -34,10 +34,13 @@
 #pragma warning disable 1591,0419,1574,1587
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
+using System.Text;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.StudyManagement;
 using NUnit.Framework;
@@ -115,6 +118,103 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 						WriteLine("Red channel is painted by user mode ROI. Green channel is painted by SDK. Blue channel is painted by GDI+.");
 					}
 					Assert.AreEqual(0, errorCount, 0.01*totalCount, "Automated pixel containment test failed. Please review the test output manually.");
+				}
+			}
+		}
+
+		/// <summary>
+		/// Tests the <see cref="Roi.GetPixelCoordinates"/>, <see cref="Roi.GetRawPixelValues"/> and <see cref="Roi.GetPixelValues"/> method output
+		/// for any given ROI shape on a 100x100 test image.
+		/// </summary>
+		/// <remarks>
+		/// The pixel data and modality LUT is computed according to a built-in algorithm and automatically verified.
+		/// </remarks>
+		protected void TestRoiContainedPixels(T shapeData, IEnumerable<PointF> expectedPixels, bool traceLists, string testId)
+		{
+			// use the provided list of expected pixel coordinates to determine the expected raw values according to the algorithm
+			var expectedRawValues = CollectionUtils.Map<PointF, int>(expectedPixels, p => (int) (p.X + p.Y)).AsReadOnly();
+
+			// use the computed list of expected raw values to determine the expected post modality LUT values according to the algorithm
+			var expectedValues = CollectionUtils.Map<int, int>(expectedRawValues, x => 3*x + 100).AsReadOnly();
+
+			using (var image = new GrayscalePresentationImage(100, 100, 8, 8, 7, false, false, 3, 100, 1, 1, 1, 1, () =>
+			                                                                                                       	{
+			                                                                                                       		var buffer = new byte[10000];
+			                                                                                                       		for (int i = 0; i < 10000; i++)
+			                                                                                                       			buffer[i] = (byte) ((i%100) + (i/100));
+			                                                                                                       		return buffer;
+			                                                                                                       	}))
+			{
+				var roi = CreateRoiFromImage(image, shapeData);
+				var error = false;
+
+				// enumerate the pixel coordinates and compare with the expected list of coordinates
+				var actualPixels = new List<PointF>(roi.GetPixelCoordinates()).AsReadOnly();
+				try
+				{
+					var list = new List<PointF>(actualPixels);
+					foreach (var expectedPixel in expectedPixels)
+						Assert.IsTrue(list.Remove(expectedPixel), "{0}: The expected pixel {1} was not returned by the enumerator.", testId, expectedPixel);
+					Assert.IsTrue(list.Count == 0, "{0}: The enumerator returned unexpected pixels.", testId);
+				}
+				catch (Exception)
+				{
+					error = true;
+					throw;
+				}
+				finally
+				{
+					if (traceLists || error)
+					{
+						Trace.WriteLine(string.Format(" Expected Pixels: {0}", Format(expectedPixels)));
+						Trace.WriteLine(string.Format("   Actual Pixels: {0}", Format(actualPixels)));
+					}
+				}
+
+				// enumerate the raw values and compare with the expected list of raw values
+				var actualRawValues = new List<int>(roi.GetRawPixelValues()).AsReadOnly();
+				try
+				{
+					var list = new List<int>(actualRawValues);
+					foreach (var expectedRawValue in expectedRawValues)
+						Assert.IsTrue(list.Remove(expectedRawValue), "{0}: The expected raw value {1} was not returned by the enumerator.", testId, expectedRawValue);
+					Assert.IsTrue(list.Count == 0, "{0}: The enumerator returned unexpected raw values.", testId);
+				}
+				catch (Exception)
+				{
+					error = true;
+					throw;
+				}
+				finally
+				{
+					if (traceLists || error)
+					{
+						Trace.WriteLine(string.Format(" Expected Raw Values: {0}", Format(expectedRawValues)));
+						Trace.WriteLine(string.Format("   Actual Raw Values: {0}", Format(actualRawValues)));
+					}
+				}
+
+				// enumerate the post modality LUT values and compare with the expected list of values
+				var actualValues = new List<int>(roi.GetPixelValues()).AsReadOnly();
+				try
+				{
+					var list = new List<int>(actualValues);
+					foreach (var expectedValue in expectedValues)
+						Assert.IsTrue(list.Remove(expectedValue), "{0}: The expected value {1} was not returned by the enumerator.", testId, expectedValue);
+					Assert.IsTrue(list.Count == 0, "{0}: The enumerator returned unexpected values.", testId);
+				}
+				catch (Exception)
+				{
+					error = true;
+					throw;
+				}
+				finally
+				{
+					if (traceLists || error)
+					{
+						Trace.WriteLine(string.Format(" Expected Values: {0}", Format(expectedValues)));
+						Trace.WriteLine(string.Format("   Actual Values: {0}", Format(actualValues)));
+					}
 				}
 			}
 		}
@@ -343,6 +443,19 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 			{
 				throw new FileNotFoundException("Unable to load requested test image. Please check that the assembly has been built.", filename, ex);
 			}
+		}
+
+		private static string Format<TItem>(IEnumerable<TItem> enumerable)
+		{
+			var builder = new StringBuilder();
+			foreach (var item in enumerable)
+			{
+				builder.Append(item.ToString());
+				builder.Append("; ");
+			}
+			if (builder.Length == 0)
+				return string.Empty;
+			return builder.ToString(0, builder.Length - 2);
 		}
 
 		private static Color ShiftColor(Color original, bool shiftRed, bool shiftGreen, bool shiftBlue)
