@@ -361,6 +361,30 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 		}
 
 		[Test]
+		public void TestSimpleAreaAlgorithmNoBufferOverrun2()
+		{
+			PointF[] data = new PointF[4];
+			data[0] = new PointF(-10001, 10000);
+			data[1] = new PointF(-10001, 10002);
+			data[2] = new PointF(-10000, 10002);
+
+			// test for a possible buffer overrun in the computation
+			foreach (PointF garbagePoint in SimulatedBufferOverrunPoints)
+			{
+				data[data.Length - 1] = garbagePoint;
+				unsafe
+				{
+					fixed (PointF* points = data)
+					{
+						// inside PolygonF, the vertexCount is always exactly the expected array length
+						// which is 3 (the 4th point simulates garbage data beyond the array)
+						Assert.AreEqual(1, PolygonF.TestSimpleAreaComputation(points, data.Length - 1));
+					}
+				}
+			}
+		}
+
+		[Test]
 		public void TestComplexAreaAlgorithmWithSimplePolygon()
 		{
 			// the complex area algorithm is very low resolution compared to simple area, so the error magnitude is higher
