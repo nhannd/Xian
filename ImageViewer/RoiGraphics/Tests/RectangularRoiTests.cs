@@ -53,6 +53,19 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Tests
 		}
 
 		[Test]
+		public void TestContainsAntiShapes()
+		{
+			RectangleF rectangle = new RectangleF(77, 179, 100, -100);
+			base.TestRoiContains(ImageKey.Simple01, rectangle, "anti_rect_1");
+
+			RectangleF rectangle2 = new RectangleF(177, 79, -100, 100);
+			base.TestRoiContains(ImageKey.Simple01, rectangle2, "anti_rect_2");
+
+			RectangleF rectangle3 = new RectangleF(177, 179, -100, -100);
+			base.TestRoiContains(ImageKey.Simple01, rectangle3, "anti_rect_3");
+		}
+
+		[Test]
 		public void TestStatsCalculationSimple01()
 		{
 			// these expected values were independently computed by hand

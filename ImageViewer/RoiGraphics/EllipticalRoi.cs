@@ -32,6 +32,7 @@
 using System;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
@@ -72,7 +73,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			ellipse.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
-				_bounds = ellipse.BoundingBox;
+				_bounds = ellipse.Rectangle;
 
 				a = _bounds.Width/2;
 				b = _bounds.Height/2;
@@ -118,7 +119,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <returns>A rectangle defining the bounding box.</returns>
 		protected override RectangleF ComputeBounds()
 		{
-			return _bounds;
+			return RectangleUtilities.ConvertToPositiveRectangle(_bounds);
 		}
 
 		/// <summary>

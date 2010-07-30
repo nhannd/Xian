@@ -32,6 +32,7 @@
 using System;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
@@ -52,9 +53,8 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			rectangle.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
-				// we need a normalized rectangle, and rectangles can sometimes
-				// be defined negatively (negative width or height)
-				_rectangle = rectangle.BoundingBox;
+				// note that this is the rectangle complete with orientation information
+				_rectangle = rectangle.Rectangle;
 			}
 			finally
 			{
@@ -73,8 +73,11 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		}
 
 		/// <summary>
-		/// Gets the region of interest.
+		/// Gets the rectangular region of interest.
 		/// </summary>
+		/// <remarks>
+		/// This value maintains the original orientation of the rectangle when the <see cref="RectangularRoi"/> was constructed.
+		/// </remarks>
 		public RectangleF Rectangle
 		{
 			get { return _rectangle; }
@@ -111,7 +114,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <returns>A rectangle defining the bounding box.</returns>
 		protected override RectangleF ComputeBounds()
 		{
-			return _rectangle;
+			return RectangleUtilities.ConvertToPositiveRectangle(_rectangle);
 		}
 
 		/// <summary>
@@ -135,7 +138,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <returns>True if the point is defined as within the region of interest; False otherwise.</returns>
 		public override bool Contains(PointF point)
 		{
-			return _rectangle.Contains(point);
+			return this.BoundingBox.Contains(point);
 		}
 
 		#region IRoiStatisticsProvider Members
