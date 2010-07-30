@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
@@ -84,12 +85,20 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 				_owner = owner;
 			}
 
-			public IEnumerable<string> SelectedPaths
+			public event EventHandler SelectedPathsChanged
+			{
+				add { _owner.Context.SelectedItems.SelectionChanged += value; }
+				remove { _owner.Context.SelectedItems.SelectionChanged -= value; }
+			}
+
+			public Selection<string> SelectedPaths
 			{
 				get
 				{
+					var selection = new List<string>();
 					foreach (IStudyItem item in _owner.SelectedItems)
-						yield return item.Filename;
+						selection.Add(item.Filename);
+					return new Selection<string>(selection);
 				}
 			}
 

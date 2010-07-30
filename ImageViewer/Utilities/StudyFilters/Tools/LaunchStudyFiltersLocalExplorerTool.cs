@@ -29,8 +29,10 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
@@ -41,15 +43,49 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 	[MenuAction("Open", "explorerlocal-contextmenu/MenuOpenInStudyFilters", "Open")]
 	[Tooltip("Open", "TooltipOpenInStudyFilters")]
 	[IconSet("Open", IconScheme.Colour, "Icons.StudyFilterToolSmall.png", "Icons.StudyFilterToolMedium.png", "Icons.StudyFilterToolLarge.png")]
+	[EnabledStateObserver("Open", "Enabled", "EnabledChanged")]
 	[ViewerActionPermission("Open", AuthorityTokens.StudyFilters)]
 	[ExtensionOf(typeof (LocalImageExplorerToolExtensionPoint))]
 	public class LaunchStudyFiltersLocalExplorerTool : Tool<ILocalImageExplorerToolContext>
 	{
+		public event EventHandler EnabledChanged;
+		private bool _enabled = true;
+
+		public bool Enabled
+		{
+			get { return _enabled; }
+			private set
+			{
+				if (_enabled != value)
+				{
+					_enabled = value;
+					EventsHelper.Fire(EnabledChanged, this, EventArgs.Empty);
+				}
+			}
+		}
+
+		public override void Initialize()
+		{
+			base.Initialize();
+			Context.SelectedPathsChanged += OnContextSelectedPathsChanged;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			Context.SelectedPathsChanged -= OnContextSelectedPathsChanged;
+			base.Dispose(disposing);
+		}
+
+		private void OnContextSelectedPathsChanged(object sender, EventArgs e)
+		{
+			Enabled = Context.SelectedPaths.Count > 0;
+		}
+
 		public void Open()
 		{
-			List<string> paths = new List<string>();
-			foreach (string path in base.Context.SelectedPaths)
-				paths.Add(path);
+			List<string> paths = new List<string>(base.Context.SelectedPaths);
+			if (paths.Count == 0)
+				return;
 
 			StudyFilterComponent component = new StudyFilterComponent();
 			component.BulkOperationsMode = true;

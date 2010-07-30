@@ -73,8 +73,17 @@ namespace ClearCanvas.Utilities.DicomEditor
         /// </summary>
         public override void Initialize()
         {
-            base.Initialize();
+        	base.Initialize();
+        	if (ContextBase is ILocalImageExplorerToolContext)
+        		((ILocalImageExplorerToolContext) ContextBase).SelectedPathsChanged += OnContextSelectedPathsChanged;
         }
+
+		protected override void Dispose(bool disposing)
+		{
+			if (ContextBase is ILocalImageExplorerToolContext)
+				((ILocalImageExplorerToolContext) ContextBase).SelectedPathsChanged -= OnContextSelectedPathsChanged;
+			base.Dispose(disposing);
+		}
 
         /// <summary>
         /// Called to determine whether this tool is enabled/disabled in the UI.
@@ -87,7 +96,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                 if (_enabled != value)
                 {
                     _enabled = value;
-                    //EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
+                    EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
                 }
             }
         }
@@ -146,6 +155,9 @@ namespace ClearCanvas.Utilities.DicomEditor
                 ILocalImageExplorerToolContext context = this.ContextBase as ILocalImageExplorerToolContext;
                 _desktopWindow = context.DesktopWindow;
                 List<string> files = new List<string>();
+
+            	if (context.SelectedPaths.Count == 0)
+            		return;
 
                 foreach (string rawPath in context.SelectedPaths)
                 {
@@ -239,5 +251,11 @@ namespace ClearCanvas.Utilities.DicomEditor
             _shelf.Closed -= OnShelfClosed;
             _shelf = null;
         }
+
+		private void OnContextSelectedPathsChanged(object sender, EventArgs e)
+		{
+			if (ContextBase is ILocalImageExplorerToolContext)
+				Enabled = ((ILocalImageExplorerToolContext) ContextBase).SelectedPaths.Count > 0;
+		}
     }
 }
