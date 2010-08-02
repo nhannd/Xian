@@ -31,62 +31,58 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
+using ClearCanvas.Common.UsageTracking;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.TestApp
 {
-    public partial class Startup : Form
+    public partial class UsageTrackingForm : Form
     {
-        public Startup()
+        private readonly UsageMessage _message;
+
+        public UsageTrackingForm()
         {
             InitializeComponent();
+            UsageTracking.MessageEvent += DisplayMessage;
+
+            _message = UsageTracking.GetUsageMessage();
+
+            textBoxVersion.Text = _message.Version;
+            textBoxProduct.Text = _message.Product;
+            textBoxOS.Text = _message.OS;
+            textBoxRegion.Text = _message.Region;
+            textBoxLicense.Text = _message.License;
         }
 
-
-        private void TestRule_Click(object sender, EventArgs e)
+        private void buttonSend_Click(object sender, EventArgs e)
         {
-            TestDicomFileForm test = new TestDicomFileForm();
-            test.Show();
+            _message.Version = textBoxVersion.Text;
+            _message.Product = textBoxProduct.Text;
+            _message.OS = textBoxOS.Text;
+            _message.Region = textBoxRegion.Text;
+            _message.License = textBoxLicense.Text;
+
+            if (!string.IsNullOrEmpty(textBoxAppKey.Text) 
+                && !string.IsNullOrEmpty(textBoxAppValue.Text))
+            {
+                UsageApplicationData d = new UsageApplicationData
+                                             {
+                                                 Key = textBoxAppKey.Text,
+                                                 Value = textBoxAppValue.Text
+                                             };
+                _message.AppData = new List<UsageApplicationData>
+                                       {
+                                           d
+                                       };
+            }
+
+            UsageTracking.Register(_message);
         }
 
-        private void TestHeaderStreamButton_Click(object sender, EventArgs e)
+        private static void DisplayMessage(object o, ItemEventArgs<DisplayMessage> m)
         {
-            TestHeaderStreamingForm test = new TestHeaderStreamingForm();
-            test.Show();
-        }
-
-        private void buttonCompression_Click(object sender, EventArgs e)
-        {
-            TestCompressionForm test = new TestCompressionForm();
-            test.Show();
-        }
-
-        private void buttonEditStudy_Click(object sender, EventArgs e)
-        {
-            TestEditStudyForm test = new TestEditStudyForm();
-            test.Show();
-        }
-
-        private void RandomImageSender_Click(object sender, EventArgs e)
-        {
-            TestSendImagesForm test = new TestSendImagesForm();
-            test.Show();
-        }
-
-        private void ExtremeStreaming_Click(object sender, EventArgs e)
-        {
-            ImageStreamingStressTest test = new ImageStreamingStressTest();
-            test.Show();
-        }
-
-        private void UsageTracking_Click(object sender, EventArgs e)
-        {
-            UsageTrackingForm form = new UsageTrackingForm();
-            form.Show();
+            MessageBox.Show(m.Item.Message, m.Item.Title);
         }
     }
 }

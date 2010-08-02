@@ -48,7 +48,6 @@ namespace ClearCanvas.Common.UsageTracking
         /// <summary>
         /// Extensible data for serialization.
         /// </summary>
-        [DefaultValue(null)]
         public ExtensionDataObject ExtensionData { get; set; }
 
         #endregion
@@ -57,11 +56,13 @@ namespace ClearCanvas.Common.UsageTracking
         /// Key/Value pair for application specific usage data.
         /// </summary>
         [XmlAttribute("Key")]
+        [DataMember(IsRequired = true)]
         public string Key { get; set; }
 
         /// <summary>
         /// Key/Value pair for application specific usage data.
         /// </summary>
+        [DataMember(IsRequired = true)]
         public string Value { get; set; }
 
     }
@@ -77,7 +78,6 @@ namespace ClearCanvas.Common.UsageTracking
         /// <summary>
         /// Extensible data for serialization.
         /// </summary>
-        [DefaultValue(null)]
         public ExtensionDataObject ExtensionData { get; set; }
 
         #endregion
@@ -124,7 +124,8 @@ namespace ClearCanvas.Common.UsageTracking
         [XmlArray("AppData")]
         [XmlArrayItem("UsageApplicationData")]
         [DefaultValue(null)]
-        public List<UsageApplicationData> AppData { get; set;}
+        [DataMember(IsRequired = false)]
+        public List<UsageApplicationData> AppData { get; set; }
 
         /// <summary>
         /// A list of packages installed with the <see cref="Product"/>.
@@ -132,7 +133,8 @@ namespace ClearCanvas.Common.UsageTracking
         [XmlArray("Packages")]
         [XmlArrayItem("Package")]
         [DefaultValue(null)]
-        public List<string> Packages { get; set;}
+        [DataMember(IsRequired = false)]
+        public List<string> Packages { get; set; }
 
     }
 }

@@ -35,6 +35,7 @@ namespace ClearCanvas.ImageServer.TestApp
             this.RandomImageSender = new System.Windows.Forms.Button();
             this.ExtremeStreaming = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
+            this.UsageTracking = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // TestRule
@@ -106,11 +107,22 @@ namespace ClearCanvas.ImageServer.TestApp
             this.button1.Text = "Streaming";
             this.button1.UseVisualStyleBackColor = true;
             // 
+            // UsageTracking
+            // 
+            this.UsageTracking.Location = new System.Drawing.Point(28, 312);
+            this.UsageTracking.Name = "UsageTracking";
+            this.UsageTracking.Size = new System.Drawing.Size(183, 52);
+            this.UsageTracking.TabIndex = 4;
+            this.UsageTracking.Text = "Usage Tracking";
+            this.UsageTracking.UseVisualStyleBackColor = true;
+            this.UsageTracking.Click += new System.EventHandler(this.UsageTracking_Click);
+            // 
             // Startup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(467, 399);
+            this.Controls.Add(this.UsageTracking);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.ExtremeStreaming);
             this.Controls.Add(this.RandomImageSender);
@@ -133,5 +145,6 @@ namespace ClearCanvas.ImageServer.TestApp
         private System.Windows.Forms.Button RandomImageSender;
         private System.Windows.Forms.Button ExtremeStreaming;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button UsageTracking;
     }
 }
