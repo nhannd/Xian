@@ -393,6 +393,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				string studyInstanceUid = _frames[0].Frame.StudyInstanceUid;
 				string seriesInstanceUid = _frames[0].Frame.SeriesInstanceUid;
 				string frameOfReferenceUid = _frames[0].Frame.FrameOfReferenceUid;
+
+				if (string.IsNullOrEmpty(studyInstanceUid) || string.IsNullOrEmpty(seriesInstanceUid))
+					throw new NullSourceSeriesException();
+				if (string.IsNullOrEmpty(frameOfReferenceUid))
+					throw new NullFrameOfReferenceException();
+
 				foreach (IFrameReference frame in _frames)
 				{
 					if (frame.Frame.StudyInstanceUid != studyInstanceUid)
