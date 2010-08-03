@@ -96,9 +96,21 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (currentImage == null)
 				return;
 
-			BackgroundTaskParams @params = new BackgroundTaskParams(FilterSourceFrames(currentImage.ParentDisplaySet, currentImage));
+			// gather the source frames which MPR will operate on. exceptions are reported.
+			BackgroundTaskParams @params;
+			try
+			{
+				@params = new BackgroundTaskParams(FilterSourceFrames(currentImage.ParentDisplaySet, currentImage));
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, SR.ExceptionMprLoadFailure, base.Context.DesktopWindow);
+				return;
+			}
+
+			// execute the task to create an MPR component. exceptions (either thrown or passed via task) are reported, but any created component must be disposed
 			BackgroundTask task = new BackgroundTask(LoadVolume, true, @params);
-			task.Terminated += delegate(object sender, BackgroundTaskTerminatedEventArgs e) { exception = e.Exception; };
+			task.Terminated += (sender, e) => exception = e.Exception;
 			try
 			{
 				ProgressDialog.Show(task, base.Context.DesktopWindow, true, ProgressBarStyle.Blocks);
@@ -123,6 +135,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				return;
 			}
 
+			// launch the created MPR component as a workspace. any exceptions here are just reported.
 			try
 			{
 				LaunchImageViewerArgs args = new LaunchImageViewerArgs(ViewerLaunchSettings.WindowBehaviour);
@@ -141,6 +154,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		private static IEnumerable<Frame> FilterSourceFrames(IDisplaySet displaySet, IPresentationImage currentImage)
 		{
+			// this method tries to filter the source display set based on the currently selected image before passing it to MPR
+			// we need this because sometimes MPR-able content is found in a series concatenated with other frames (e.g. 3-plane loc)
 			if (currentImage is IImageSopProvider)
 			{
 				Frame currentFrame = ((IImageSopProvider) currentImage).Frame;
@@ -149,12 +164,21 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				string frameOfReferenceUid = currentFrame.FrameOfReferenceUid;
 				ImageOrientationPatient imageOrientationPatient = currentFrame.ImageOrientationPatient;
 
+				// if the current frame is missing any of the matching parameters, then it is always an error
+				if (string.IsNullOrEmpty(studyInstanceUid) || string.IsNullOrEmpty(seriesInstanceUid))
+					throw new NullSourceSeriesException();
+				if (string.IsNullOrEmpty(frameOfReferenceUid))
+					throw new NullFrameOfReferenceException();
+				if (imageOrientationPatient == null || imageOrientationPatient.IsNull)
+					throw new NullImageOrientationException();
+
 				// perform a very basic filtering of the selected display set based on the currently selected image
+				var filteredFrames = new List<Frame>();
 				foreach (IPresentationImage image in displaySet.PresentationImages)
 				{
 					if (image == currentImage)
 					{
-						yield return currentFrame;
+						filteredFrames.Add(currentFrame);
 					}
 					else if (image is IImageSopProvider)
 					{
@@ -164,9 +188,24 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 						    && frame.FrameOfReferenceUid == frameOfReferenceUid
 						    && !frame.ImageOrientationPatient.IsNull
 						    && frame.ImageOrientationPatient.EqualsWithinTolerance(imageOrientationPatient, .01f))
-							yield return frame;
+							filteredFrames.Add(frame);
 					}
 				}
+
+				// if we found at least 3 frames matching the current image, then return those to MPR
+				if (filteredFrames.Count > 3)
+					return filteredFrames;
+
+				// JY: #6164 - Error message not accurate for MPR with no location information
+				// if we don't find 3 matching frames, then MPR fails on the minimum frames error
+				// which masks the fact that there *were* enough frames, just not enough frames matching some aspect filter criteria
+				// we don't know what was the specific failed criterion, so we'll just pass all frames unfiltered
+				// this lets MPR decide what's wrong with the display set here and throw the correct exception
+				return CollectionUtils.Map<IPresentationImage, Frame>(displaySet.PresentationImages, img => img is IImageSopProvider ? ((IImageSopProvider) img).Frame : null);
+			}
+			else
+			{
+				throw new UnsupportedSourceImagesException();
 			}
 		}
 
