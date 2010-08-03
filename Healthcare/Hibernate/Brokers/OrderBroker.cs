@@ -57,13 +57,14 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			return CollectionUtils.Unique(q.List<Order>());
 		}
 
-		public IList<Order> FindByResultRecipient(ResultRecipientSearchCriteria recipientSearchCriteria)
+		public IList<Order> FindByResultRecipient(ResultRecipientSearchCriteria recipientSearchCriteria, OrderSearchCriteria orderSearchCriteria)
 		{
 			var hqlFrom = new HqlFrom(typeof(Order).Name, "o");
 			hqlFrom.Joins.Add(new HqlJoin("o.ResultRecipients", "rr"));
 
 			var query = new HqlProjectionQuery(hqlFrom);
 			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("rr", recipientSearchCriteria));
+			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("o", orderSearchCriteria));
 			return ExecuteHql<Order>(query);
 		}
 

@@ -432,9 +432,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			{
 				var broker = PersistenceContext.GetBroker<IExternalPractitionerContactPointBroker>();
 				var contactPoints = CollectionUtils.Map<EntityRef, ExternalPractitionerContactPoint>(request.DeactivatedContactPointRefs, broker.Load);
-				var recipientCriteria = new ResultRecipientSearchCriteria();
-				recipientCriteria.PractitionerContactPoint.In(contactPoints);
-				var orders = this.PersistenceContext.GetBroker<IOrderBroker>().FindByResultRecipient(recipientCriteria);
+
+				var orders = GetActiveOrdersForContactPoints(contactPoints);
 
 				var assembler = new OrderAssembler();
 				var createOrderDetailOptions = new OrderAssembler.CreateOrderDetailOptions(false, false, false, null, false, true, false);
@@ -446,12 +445,21 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 
 		#endregion
 
-		private List<Order> GetActiveOrdersForContactPoint(ExternalPractitionerContactPoint contactPoint)
+		private IList<Order> GetActiveOrdersForContactPoint(ExternalPractitionerContactPoint contactPoint)
+		{
+			return GetActiveOrdersForContactPoints(new[] { contactPoint });
+		}
+
+		private IList<Order> GetActiveOrdersForContactPoints(IEnumerable<ExternalPractitionerContactPoint> contactPoints)
 		{
 			var recipientCriteria = new ResultRecipientSearchCriteria();
-			recipientCriteria.PractitionerContactPoint.EqualTo(contactPoint);
-			var relatedOrders = this.PersistenceContext.GetBroker<IOrderBroker>().FindByResultRecipient(recipientCriteria);
-			return CollectionUtils.Select(relatedOrders, order => !order.IsTerminated);
+			recipientCriteria.PractitionerContactPoint.In(contactPoints);
+
+			// Active order search criteria
+			var orderCriteria = new OrderSearchCriteria();
+			orderCriteria.Status.In(new[] { OrderStatus.SC, OrderStatus.IP });
+
+			return this.PersistenceContext.GetBroker<IOrderBroker>().FindByResultRecipient(recipientCriteria, orderCriteria);
 		}
 
 		private void EnsureNoDeactivatedContactPointsWithActiveOrders(List<ExternalPractitionerContactPointDetail> details)
@@ -466,7 +474,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 
 					var contactPoint = broker.Load(detail.ContactPointRef);
 					return contactPoint.Deactivated == false
-						&& detail.Deactivated == true 
+						&& detail.Deactivated
 						&& GetActiveOrdersForContactPoint(contactPoint).Count > 0;
 				});
 

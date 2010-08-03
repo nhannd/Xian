@@ -126,31 +126,41 @@ namespace ClearCanvas.Ris.Client
 
 		private void UpdateAffectedOrderTableItems()
 		{
-			var deactivatedContactPointRefs = CollectionUtils.Map<ExternalPractitionerContactPointDetail, EntityRef>(_deactivatedContactPoints, cp => cp.ContactPointRef);
-			var affectedOrders = LoadAffectedOrders(deactivatedContactPointRefs);
+			var task = new BackgroundTask(
+				delegate(IBackgroundTaskContext context)
+				{
+					context.ReportProgress(new BackgroundTaskProgress(0, SR.MessageLoadingAffectedOrders));
 
-			UpdateRecipientReplacementMap();
+					var deactivatedContactPointRefs = CollectionUtils.Map<ExternalPractitionerContactPointDetail, EntityRef>(_deactivatedContactPoints, cp => cp.ContactPointRef);
 
-			// From each affected recipient in each affected order, build AffectedOrderTableItem
-			_affectedOrderTableItems.Clear();
-			CollectionUtils.ForEach(affectedOrders, order => 
-				CollectionUtils.ForEach(order.ResultRecipients,
-					delegate(ResultRecipientDetail recipient)
-					{
-						var recipientFound = CollectionUtils.Contains(deactivatedContactPointRefs,
-							cpRef => cpRef.Equals(recipient.ContactPoint.ContactPointRef, false));
+					var affectedOrders = LoadAffectedOrders(deactivatedContactPointRefs);
 
-						if (!recipientFound)
-							return;
+					UpdateRecipientReplacementMap();
 
-						var tableItem = new ExternalPractitionerMergeAffectedOrderTableItem(order, recipient, ShowOrderPreview, ShowPractitionerPreview)
+					// From each affected recipient in each affected order, build AffectedOrderTableItem
+					_affectedOrderTableItems.Clear();
+					CollectionUtils.ForEach(affectedOrders, order =>
+						CollectionUtils.ForEach(order.ResultRecipients,
+							delegate(ResultRecipientDetail recipient)
 							{
-								SelectedContactPoint = GetDefaultOrPreviousSelection(order, recipient),
-								ContactPointChoices = this.ActiveContactPoints
-							};
+								var recipientFound = CollectionUtils.Contains(deactivatedContactPointRefs,
+									cpRef => cpRef.Equals(recipient.ContactPoint.ContactPointRef, false));
 
-						_affectedOrderTableItems.Add(tableItem);
-					}));
+								if (!recipientFound)
+									return;
+
+								var tableItem = new ExternalPractitionerMergeAffectedOrderTableItem(order, recipient, ShowOrderPreview, ShowPractitionerPreview)
+								{
+									SelectedContactPoint = GetDefaultOrPreviousSelection(order, recipient),
+									ContactPointChoices = this.ActiveContactPoints
+								};
+
+								_affectedOrderTableItems.Add(tableItem);
+							}));
+				},
+				true);
+			
+			ProgressDialog.Show(task, this.Host.DesktopWindow, true, ProgressBarStyle.Marquee);
 
 			NotifyAllPropertiesChanged();
 		}

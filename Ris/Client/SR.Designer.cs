@@ -1933,6 +1933,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loading affected orders....
+        /// </summary>
+        internal static string MessageLoadingAffectedOrders {
+            get {
+                return ResourceManager.GetString("MessageLoadingAffectedOrders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Access denied.  The user name and/or password may be incorrect..
         /// </summary>
         internal static string MessageLoginAccessDenied {

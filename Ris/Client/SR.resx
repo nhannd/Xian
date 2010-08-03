@@ -1146,4 +1146,7 @@
   <data name="TitlePatientAllergies" xml:space="preserve">
     <value>Patient Allergies</value>
   </data>
+  <data name="MessageLoadingAffectedOrders" xml:space="preserve">
+    <value>Loading affected orders...</value>
+  </data>
 </root>
