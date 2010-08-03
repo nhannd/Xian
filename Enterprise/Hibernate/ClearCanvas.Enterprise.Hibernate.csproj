@@ -179,6 +179,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Ddl\AdditionalIndexProcessor.dbi.xml" />
+    <EmbeddedResource Include="Mappings\AuditLogEntry.dbi.xml" />
     <EmbeddedResource Include="Mappings\ExceptionLogEntry.hbm.xml" />
     <EmbeddedResource Include="Mappings\AuditLogEntry.hbm.xml" />
   </ItemGroup>
