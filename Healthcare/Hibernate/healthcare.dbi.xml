@@ -37,8 +37,7 @@ on key tables that play a central role in the workflow queries.
   <!-- PatientProfile -->
   <index table="PatientProfile_" columns="MrnId_" />
   <index table="PatientProfile_" columns="HealthcardId_"/>
-  <index table="PatientProfile_" columns="FamilyName_"/>
-  <index table="PatientProfile_" columns="GivenName_"/>
+  <index table="PatientProfile_" columns="FamilyName_, GivenName_"/>
   <index table="PatientProfile_" columns="DateOfBirth_"/>
 
   <!-- ExternalPractitioner -->
