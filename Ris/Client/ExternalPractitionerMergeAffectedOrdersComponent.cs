@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -126,41 +127,48 @@ namespace ClearCanvas.Ris.Client
 
 		private void UpdateAffectedOrderTableItems()
 		{
-			var task = new BackgroundTask(
-				delegate(IBackgroundTaskContext context)
-				{
-					context.ReportProgress(new BackgroundTaskProgress(0, SR.MessageLoadingAffectedOrders));
+			var deactivatedContactPointRefs = CollectionUtils.Map<ExternalPractitionerContactPointDetail, EntityRef>(_deactivatedContactPoints, cp => cp.ContactPointRef);
+			var affectedOrders = new List<OrderDetail>();
 
-					var deactivatedContactPointRefs = CollectionUtils.Map<ExternalPractitionerContactPointDetail, EntityRef>(_deactivatedContactPoints, cp => cp.ContactPointRef);
+			try
+			{
+				var task = new BackgroundTask(
+					delegate(IBackgroundTaskContext context)
+					{
+						context.ReportProgress(new BackgroundTaskProgress(0, SR.MessageLoadingAffectedOrders));
+						affectedOrders.AddRange(LoadAffectedOrders(deactivatedContactPointRefs));
+					},
+					true);
 
-					var affectedOrders = LoadAffectedOrders(deactivatedContactPointRefs);
+				ProgressDialog.Show(task, this.Host.DesktopWindow, true, ProgressBarStyle.Marquee);
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
 
-					UpdateRecipientReplacementMap();
+			UpdateRecipientReplacementMap();
 
-					// From each affected recipient in each affected order, build AffectedOrderTableItem
-					_affectedOrderTableItems.Clear();
-					CollectionUtils.ForEach(affectedOrders, order =>
-						CollectionUtils.ForEach(order.ResultRecipients,
-							delegate(ResultRecipientDetail recipient)
-							{
-								var recipientFound = CollectionUtils.Contains(deactivatedContactPointRefs,
-									cpRef => cpRef.Equals(recipient.ContactPoint.ContactPointRef, false));
+			// From each affected recipient in each affected order, build AffectedOrderTableItem
+			_affectedOrderTableItems.Clear();
+			CollectionUtils.ForEach(affectedOrders, order =>
+				CollectionUtils.ForEach(order.ResultRecipients,
+					delegate(ResultRecipientDetail recipient)
+					{
+						var recipientFound = CollectionUtils.Contains(deactivatedContactPointRefs,
+							cpRef => cpRef.Equals(recipient.ContactPoint.ContactPointRef, false));
 
-								if (!recipientFound)
-									return;
+						if (!recipientFound)
+							return;
 
-								var tableItem = new ExternalPractitionerMergeAffectedOrderTableItem(order, recipient, ShowOrderPreview, ShowPractitionerPreview)
-								{
-									SelectedContactPoint = GetDefaultOrPreviousSelection(order, recipient),
-									ContactPointChoices = this.ActiveContactPoints
-								};
+						var tableItem = new ExternalPractitionerMergeAffectedOrderTableItem(order, recipient, ShowOrderPreview, ShowPractitionerPreview)
+						{
+							SelectedContactPoint = GetDefaultOrPreviousSelection(order, recipient),
+							ContactPointChoices = this.ActiveContactPoints
+						};
 
-								_affectedOrderTableItems.Add(tableItem);
-							}));
-				},
-				true);
-			
-			ProgressDialog.Show(task, this.Host.DesktopWindow, true, ProgressBarStyle.Marquee);
+						_affectedOrderTableItems.Add(tableItem);
+					}));
 
 			NotifyAllPropertiesChanged();
 		}
