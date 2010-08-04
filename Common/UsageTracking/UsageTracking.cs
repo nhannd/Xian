@@ -129,6 +129,8 @@ namespace ClearCanvas.Common.UsageTracking
         /// <param name="message">The usage message to send.</param>
         public static void Register(UsageMessage message)
         {
+            #if	!DEBUG
+
             if (UsageTrackingSettings.Default.Enabled)
                 try
                 {
@@ -141,6 +143,8 @@ namespace ClearCanvas.Common.UsageTracking
                     // Fail silently
                     Platform.Log(LogLevel.Debug, e);
                 }
+
+            #endif
         }
 
         /// <summary>
