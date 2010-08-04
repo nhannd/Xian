@@ -126,15 +126,5 @@ namespace ClearCanvas.Common.UsageTracking
         [DefaultValue(null)]
         [DataMember(IsRequired = false)]
         public List<UsageApplicationData> AppData { get; set; }
-
-        /// <summary>
-        /// A list of packages installed with the <see cref="Product"/>.
-        /// </summary>
-        [XmlArray("Packages")]
-        [XmlArrayItem("Package")]
-        [DefaultValue(null)]
-        [DataMember(IsRequired = false)]
-        public List<string> Packages { get; set; }
-
     }
 }
