@@ -186,7 +186,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				return this.IsItemCountKnown ?
+				return this.IsItemCountKnown && this.DisplayCount ?
 					string.Format("{0} ({1})", this.Name, this.TotalItemCount) : this.Name;
 			}
 		}
@@ -417,6 +417,14 @@ namespace ClearCanvas.Ris.Client
 		public abstract ITable ItemsTable
 		{
 			get;
+		}
+
+		/// <summary>
+		/// Gets whether or not this folder will display count.
+		/// </summary>
+		public virtual bool DisplayCount
+		{
+			get { return true; }
 		}
 
 		/// <summary>
