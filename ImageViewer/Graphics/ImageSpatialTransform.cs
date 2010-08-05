@@ -311,7 +311,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 				}
 			}
 
-			this.Scale = scaleX;
+			// CalculateScaleXY never downsamples the image to account for pixel aspect ratio.
+			// We thus have to make sure that we report the correct scale value relative to the image after normalizing for pixel aspect ratio.
+			this.Scale = PixelAspectRatio >= 1 ? scaleX : scaleY;
 			this.ScaleX = scaleX;
 			this.ScaleY = scaleY;
 		}
