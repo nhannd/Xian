@@ -405,59 +405,45 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		public GetPriorsResponse GetPriors(GetPriorsRequest request)
 		{
 			Platform.CheckForNullReference(request, "request");
-			if (request.PatientRef == null && request.OrderRef == null && request.ReportRef == null)
-				throw new ArgumentException("Either PatientRef or ReportingProcedureStepRef must be non-null");
+			if (request.OrderRef == null && request.ReportRef == null)
+				throw new ArgumentException("Either OrderRef or ReportRef must be non-null");
 
-			var priorReports = new HashedSet<Report>();
-
-			//TODO: ensure IPriorReportBroker uses fetch joins to get report, procedures, order, etc in one go
+			var priorReports = new HashedSet<Prior>();
 			var broker = this.PersistenceContext.GetBroker<IPriorReportBroker>();
 
-			// if a patient was supplied, find all reports for the patient
-			if (request.PatientRef != null)
-			{
-				var patient = this.PersistenceContext.Load<Patient>(request.PatientRef, EntityLoadFlags.Proxy);
-				priorReports.AddAll(broker.GetPriors(patient));
-			}
 			// if an order was supplied, find relevant priors for the order
-			else if (request.OrderRef != null)
+			if (request.OrderRef != null)
 			{
 				var order = this.PersistenceContext.Load<Order>(request.OrderRef, EntityLoadFlags.Proxy);
-				priorReports.AddAll(broker.GetPriors(order));
+				priorReports.AddAll(broker.GetPriors(order, request.RelevantOnly));
 			}
-			// if a report was supplied, find relevent priors
+			// if a report was supplied, find relevent priors for the report
 			else if (request.ReportRef != null)
 			{
 				var report = this.PersistenceContext.Load<Report>(request.ReportRef, EntityLoadFlags.Proxy);
-				priorReports.AddAll(broker.GetPriors(report));
+				priorReports.AddAll(broker.GetPriors(report, request.RelevantOnly));
 			}
 
 			// assemble results
 			var procedureTypeAssembler = new ProcedureTypeAssembler();
 			var diagnosticServiceAssembler = new DiagnosticServiceAssembler();
-			var priorSummaries = new List<PriorProcedureSummary>();
-			foreach (var priorReport in priorReports)
-			{
-				foreach (var procedure in priorReport.Procedures)
-				{
-					// Note: we use the ProcedureCheckin.CheckOutTime as the PerformedDate
-					// because it is the closest to the end of modality procedure step completion time.
-					// However, if we change the definition of CheckOutTime in the future, this won't be accurate
-					var summary = new PriorProcedureSummary(
-						procedure.Order.GetRef(),
-						procedure.GetRef(),
-						priorReport.GetRef(),
-						procedure.Order.AccessionNumber,
-						diagnosticServiceAssembler.CreateSummary(procedure.Order.DiagnosticService),
-						procedureTypeAssembler.CreateSummary(procedure.Type),
-						procedure.Portable,
-						EnumUtils.GetEnumValueInfo(procedure.Laterality, PersistenceContext),
-						EnumUtils.GetEnumValueInfo(priorReport.Status, PersistenceContext),
-						procedure.ProcedureCheckIn.CheckOutTime);
 
-					priorSummaries.Add(summary);
-				}
-			}
+			// Note: we use the ProcedureCheckin.CheckOutTime as the PerformedDate
+			// because it is the closest to the end of modality procedure step completion time.
+			// However, if we change the definition of CheckOutTime in the future, this won't be accurate
+			var priorSummaries = CollectionUtils.Map(priorReports,
+				(Prior prior) => new PriorProcedureSummary(
+							prior.Order.GetRef(),
+							prior.Procedure.GetRef(),
+				         	prior.Report.GetRef(),
+							prior.Order.AccessionNumber,
+							diagnosticServiceAssembler.CreateSummary(prior.Order.DiagnosticService),
+							procedureTypeAssembler.CreateSummary(prior.ProcedureType),
+							prior.Procedure.Portable,
+							EnumUtils.GetEnumValueInfo(prior.Procedure.Laterality, PersistenceContext),
+							EnumUtils.GetEnumValueInfo(prior.Report.Status, PersistenceContext),
+							prior.Procedure.ProcedureCheckIn.CheckOutTime));
+
 			return new GetPriorsResponse(priorSummaries);
 		}
 

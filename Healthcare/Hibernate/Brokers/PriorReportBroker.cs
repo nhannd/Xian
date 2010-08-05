@@ -34,7 +34,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Hibernate.Hql;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -55,146 +54,97 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		{
 			// by caching this query, we effectively build up a kind of in-memory index
 			// of relevant procedure types
-			// TODO: we could even set up a different cache-region with a much longer expiry time (eg hours) if we need to make this fast!!!
-			NHibernate.IQuery q = this.GetNamedHqlQuery("relevantProcedureTypes");
-			q.SetCacheable(true);
-			q.SetParameter(0, procType);
-			return q.List<ProcedureType>();
+			return GetRelevantTypes(procType);
 		}
 
 		/// <summary>
-		/// Obtains the set of prior procedures relevant to the specified report.
+		/// Obtains a list of priors for the patient associated with the specified report,
+		/// optionally filtering by relevancy to the specified report.
 		/// </summary>
-		/// <param name="report"></param>
 		/// <returns></returns>
-		public IList<Report> GetPriors(Report report)
+		public IList<Prior> GetPriors(Report report, bool relevantOnly)
 		{
 			var order = CollectionUtils.FirstElement(report.Procedures).Order;
-			var priors = new List<Report>();
-			priors.AddRange(GetAdditionalOrderReports(order, report));
-			priors.AddRange(GetPriorsHelper(order.Procedures));
-			return priors;
+			return GetPriorsHelper(order.Patient, report.Procedures, report.Procedures, order.Procedures, relevantOnly);
 		}
 
-		/// <summary>
-		/// Obtains the set of prior procedures relevant to the specified order.
-		/// </summary>
-		/// <returns></returns>
-		public IList<Report> GetPriors(Order order)
-		{
-			return GetPriorsHelper(order.Procedures);
-		}
 
 		/// <summary>
-		/// Obtains a list of prior procedures relevant to the specified procedures.
+		/// Obtains a list of priors for the patient associated with the specified order,
+		/// optionally filtering by relevancy to the specified order.
 		/// </summary>
-		/// <param name="procedures"></param>
 		/// <returns></returns>
-		public IList<Report> GetPriors(IEnumerable<Procedure> procedures)
+		public IList<Prior> GetPriors(Order order, bool relevantOnly)
 		{
-			return GetPriorsHelper(procedures);
-		}
-
-		/// <summary>
-		/// Obtains a list of all prior procedures for the specified patient.
-		/// </summary>
-		/// <param name="patient"></param>
-		/// <returns></returns>
-		public IList<Report> GetPriors(Patient patient)
-		{
-			NHibernate.IQuery q = this.GetNamedHqlQuery("allPriorsByPatient");
-			q.SetParameter(0, patient);
-			return q.List<Report>();
+			return GetPriorsHelper(order.Patient, order.Procedures, new Procedure[]{}, order.Procedures, relevantOnly);
 		}
 
 		#endregion
 
 		/// <summary>
-		/// Obtains the set of prior reports relevant to the specified set of procedures, which must all be for the same patient.
+		/// 
 		/// </summary>
-		/// <remarks>
-		/// Excludes draft and deleted reports, as well as any report that is directly associated with the input procedures.
-		/// </remarks>
-		/// <param name="inputProcedures"></param>
+		/// <param name="patient"></param>
+		/// <param name="relevancyReferenceProcedures">Set of procedures whose types are used to determine relevancy.</param>
+		/// <param name="excludeProcedures">Set of procedures to exclude, even if they are relevant.</param>
+		/// <param name="includeProcedures">Set of procedure to include, even if they are not relevant. These must
+		/// not be in the exclude list.</param>
+		/// <param name="relevantOnly">Specifies whether to apply the relevancy filter.</param>
 		/// <returns></returns>
-		private IList<Report> GetPriorsHelper(IEnumerable<Procedure> inputProcedures)
+		private IList<Prior> GetPriorsHelper(
+			Patient patient,
+			ICollection<Procedure> relevancyReferenceProcedures,
+			ICollection<Procedure> excludeProcedures,
+			ICollection<Procedure> includeProcedures,
+			bool relevantOnly)
 		{
-			// Notes on strategy:
-			// The algorithm is split into two parts.
+			var priors = GetAllPriorsForPatient(patient);
 
-			// 1) Obtain the set of relevant procedure types, based on the set of input procedures.
-			// This query is for practical purposes a constant function, because the relevance groups
-			// rarely change.  Therefore, the query can be cached, which should improve performance
-			// (even though the raw performance seems quite reasonable to begin with).
-			var inputTypes = CollectionUtils.Map<Procedure, ProcedureType>(inputProcedures, p => p.Type);
+			// filter out priors representing the set of excluded procedures
+			priors = CollectionUtils.Select(priors, prior => !excludeProcedures.Contains(prior.Procedure));
 
-			var relevantTypes = new List<ProcedureType>();
-			foreach (var type in inputTypes)
+			if (relevantOnly)
 			{
-				// get relevant types for each input procedure
+				var relevantTypes = GetRelevantTypes(relevancyReferenceProcedures);
+
+				// select only those rows where
+				// the procedure type is relevant as determined above, or the procedure is in the includeProcedures list
+				priors = CollectionUtils.Select(priors, prior => relevantTypes.Contains(prior.ProcedureType) || includeProcedures.Contains(prior.Procedure));
+			}
+
+			return priors;
+		}
+
+		private IList<ProcedureType> GetRelevantTypes(ProcedureType procType)
+		{
+			var q = this.GetNamedHqlQuery("relevantProcedureTypes");
+			q.SetCacheable(true);
+			q.SetParameter(0, procType);
+			return q.List<ProcedureType>();
+		}
+
+		private IList<ProcedureType> GetRelevantTypes(ICollection<Procedure> inputProcedures)
+		{
+			var procTypes = CollectionUtils.Map<Procedure, ProcedureType>(inputProcedures, p => p.Type);
+			var relevantTypes = new List<ProcedureType>();
+			foreach (var type in procTypes)
+			{
+				// get relevant types for each input procedure type
 				// typically there should be 1 to 3 elements in this collection, with 1 being the most common scenario
 				// therefore, don't worry about having to do a separate query for each
 				// (we could try to write a query that would accept all inputs at once, but this would defeat the value of
 				// caching the query)
-				relevantTypes.AddRange(GetRelevantProcedureTypes(type));
+				relevantTypes.AddRange(GetRelevantTypes(type));
 			}
-
-			// 2) Obtain the set of prior reports for this patient, where the report is associated
-			// with procedure types as determined above
-
-			// obtain patient from any of the input procedures (since all must be for same patient)
-			var patient = CollectionUtils.FirstElement(inputProcedures).Order.Patient;
-
-
-			// build query for prior reports
-			var reportsQuery = new HqlProjectionQuery(
-				new HqlFrom("Report", "priorReport", new[]
-				{
-					new HqlJoin("priorReport.Procedures", "priorProcedure"),
-					new HqlJoin("priorProcedure.Type", "priorProcedureType"),
-
-					// add fetch join for procedures, to save one query
-					new HqlJoin("priorReport.Procedures", null, HqlJoinMode.Inner, true)
-				}),
-				new[] { new HqlSelect("priorReport") });
-
-			// must be for same patient
-			reportsQuery.Conditions.Add(HqlCondition.EqualTo("priorProcedure.Order.Patient", patient));
-
-			// exclude the input procedures
-			reportsQuery.Conditions.Add(HqlCondition.NotIn("priorProcedure", inputProcedures));
-
-			// not a draft or deleted report
-			reportsQuery.Conditions.Add(HqlCondition.In("priorReport.Status", ReportStatus.P, ReportStatus.F, ReportStatus.C));
-
-			// consider only reports with relevant procedure types
-			if (relevantTypes.Count > 0)
-				reportsQuery.Conditions.Add(HqlCondition.In("priorProcedureType", relevantTypes));
-
-			var reports = ExecuteHql<Report>(reportsQuery);
-
-			// ensure unique results are returned (because fetch joins may have introduced duplicates into result set)
-			return CollectionUtils.Unique(reports);
+			return CollectionUtils.Unique(relevantTypes);
 		}
 
-		/// <summary>
-		/// Returns a list of reports associated with the specified order other than the specifed report to exclude.
-		/// </summary>
-		/// <param name="order"></param>
-		/// <param name="reportToExclude"></param>
-		/// <returns></returns>
-		private IList<Report> GetAdditionalOrderReports(Order order, Report reportToExclude)
+		private IList<Prior> GetAllPriorsForPatient(Patient patient)
 		{
-			var proceduresFromSameOrderButWithDifferentReport = order.Procedures.Minus(reportToExclude.Procedures);
-
-			var additionalOrderReports = new List<Report>();
-			foreach (var procedure in proceduresFromSameOrderButWithDifferentReport)
-			{
-				additionalOrderReports.AddRange(CollectionUtils.Select(procedure.Reports, report => report.Status != ReportStatus.X));
-			}
-			additionalOrderReports = CollectionUtils.Unique(CollectionUtils.Select(additionalOrderReports, otherReport => otherReport != null));
-
-			return additionalOrderReports;
+			var q = this.GetNamedHqlQuery("allPriorsByPatient");
+			q.SetParameter(0, patient);
+			return CollectionUtils.Map(ExecuteHql<object[]>(q),
+									   (object[] tuple) => new Prior((Report)tuple[0], (Procedure)tuple[1], (ProcedureType)tuple[2], (Order)tuple[3]));
 		}
 	}
 }
