@@ -234,13 +234,13 @@ namespace ClearCanvas.ImageViewer.Externals.General
 			if (string.IsNullOrEmpty(multiValueSeparator))
 				multiValueSeparator = " ";
 
-			string command = hintResolver.Resolve(this._command, _allowMultiValueFields, multiValueSeparator);
-			string workingDirectory = hintResolver.Resolve(this._workingDirectory, _allowMultiValueFields, multiValueSeparator);
-			string arguments = hintResolver.Resolve(this._arguments, _allowMultiValueFields, multiValueSeparator);
+			var command = ExpandEnvironmentVariables(_command);
+			var workingDirectory = ExpandEnvironmentVariables(_workingDirectory);
+			var arguments = ExpandEnvironmentVariables(_arguments);
 
-			command = ExpandEnvironmentVariables(command);
-			workingDirectory = ExpandEnvironmentVariables(workingDirectory);
-			arguments = ExpandEnvironmentVariables(arguments);
+			command = hintResolver.Resolve(command, _allowMultiValueFields, multiValueSeparator);
+			workingDirectory = hintResolver.Resolve(workingDirectory, _allowMultiValueFields, multiValueSeparator);
+			arguments = hintResolver.Resolve(arguments, _allowMultiValueFields, multiValueSeparator);
 
 			ProcessStartInfo nfo;
 			if (string.IsNullOrEmpty(arguments))
