@@ -325,7 +325,7 @@ namespace ClearCanvas.ImageViewer.Externals.General
 		private static string ExpandEnvironmentVariables(string input)
 		{
 			if (string.IsNullOrEmpty(input))
-				return string.Empty;
+				return input;
 			return _environmentVariableRegex.Replace(input, m =>
 			                                                	{
 			                                                		var name = m.Groups[1].Value;
