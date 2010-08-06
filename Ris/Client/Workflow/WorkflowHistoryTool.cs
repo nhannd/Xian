@@ -57,7 +57,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(ProtocolWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(EmergencyWorkflowItemToolExtensionPoint))]
-	[ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
 	[ExtensionOf(typeof(RadiologistAdminWorkflowItemToolExtensionPoint))]
 	public class WorkflowHistoryTool : Tool<IWorkflowItemToolContext>
 	{
