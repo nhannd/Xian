@@ -34,6 +34,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Security;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using ClearCanvas.Common;
 
@@ -237,9 +238,9 @@ namespace ClearCanvas.ImageViewer.Externals.General
 			string workingDirectory = hintResolver.Resolve(this._workingDirectory, _allowMultiValueFields, multiValueSeparator);
 			string arguments = hintResolver.Resolve(this._arguments, _allowMultiValueFields, multiValueSeparator);
 
-			command = Environment.ExpandEnvironmentVariables(command);
-			workingDirectory = Environment.ExpandEnvironmentVariables(workingDirectory);
-			arguments = Environment.ExpandEnvironmentVariables(arguments);
+			command = ExpandEnvironmentVariables(command);
+			workingDirectory = ExpandEnvironmentVariables(workingDirectory);
+			arguments = ExpandEnvironmentVariables(arguments);
 
 			ProcessStartInfo nfo;
 			if (string.IsNullOrEmpty(arguments))
@@ -297,6 +298,49 @@ namespace ClearCanvas.ImageViewer.Externals.General
 				sb.AppendFormat(" {0}", this.Arguments);
 			return sb.ToString();
 		}
+
+		#region Environment Variable Handling
+
+		private static readonly Regex _environmentVariableRegex = new Regex("%(.*?)%", RegexOptions.Compiled);
+
+		/// <summary>
+		/// Expands environment variables in the <paramref name="input"/> string.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// Replacement only occurs for defined environment variables. For example, suppose <paramref name="input"/> is "MyENV = %MyENV%".
+		/// If the environment variable MyENV is set to 42, this method returns "MyENV = 42". If MyENV is not set, no change occurs; "MyENV = %MyENV%"
+		/// is returned.
+		/// </para>
+		/// <para>
+		/// This method differs from <see cref="Environment.ExpandEnvironmentVariables"/> in that this method always reads the environment variables
+		/// at the time the expansion is requested, rather than using the values of environment variables as they were when the process was started
+		/// (which is what the .NET version does). Since the whole point of this <see cref="IExternal"/> is to spawn a new process, we should let it
+		/// use the most up-to-date environment variables which is what would happen if the user were to execute the command manually from a command
+		/// line.
+		/// </para>
+		/// </remarks>
+		/// <param name="input">A string containing the names of zero or more environment variables. Each environment variable name is quoted with the percent sign character (%).</param>
+		/// <returns>A string with each environment variable replaced by its value.</returns>
+		private static string ExpandEnvironmentVariables(string input)
+		{
+			if (string.IsNullOrEmpty(input))
+				return string.Empty;
+			return _environmentVariableRegex.Replace(input, m =>
+			                                                	{
+			                                                		var name = m.Groups[1].Value;
+			                                                		if (string.IsNullOrEmpty(name))
+			                                                			return "%";
+			                                                		var result = Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.User);
+			                                                		if (result == null)
+			                                                			result = Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Machine);
+			                                                		if (result == null)
+			                                                			result = m.Groups[0].Value;
+			                                                		return result;
+			                                                	});
+		}
+
+		#endregion
 
 		public string GetState()
 		{
