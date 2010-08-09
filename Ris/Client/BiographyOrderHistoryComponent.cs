@@ -356,7 +356,7 @@ namespace ClearCanvas.Ris.Client
 				{
 					var request = new GetDataRequest
 					{
-						GetOrderDetailRequest = new GetOrderDetailRequest(_selectedOrder.OrderRef, true, true, false, false, true, false)
+						GetOrderDetailRequest = new GetOrderDetailRequest(orderRef, true, true, false, false, true, false)
 						{
 							IncludeExtendedProperties = true
 						}
