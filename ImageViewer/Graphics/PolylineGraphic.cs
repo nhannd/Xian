@@ -260,7 +260,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			{
 				return new LinearRoi(this);
 			}
-			else if (_points.IsClosed)
+			else if (_points.Count >= 4 && _points.IsClosed)
 			{
 				return new PolygonalRoi(this);
 			}
