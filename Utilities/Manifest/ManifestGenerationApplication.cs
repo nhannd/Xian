@@ -202,8 +202,14 @@ namespace ClearCanvas.Utilities.Manifest
                     }
 
                     if (_manifest.ProductManifest != null)
+                    {
                         _manifest.ProductManifest.Files.Add(file);
-                    else if (_manifest.PackageManifest !=null)
+                        // Set the default product name, based on the product name in the 
+                        // common assembly
+                        if (file.Filename.ToLower().Equals("common\\clearcanvas.common.dll"))
+                            _manifest.ProductManifest.Product.Name = versionInfo.ProductName;
+                    }
+                    else if (_manifest.PackageManifest != null)
                         _manifest.PackageManifest.Files.Add(file);
                 }
             }
@@ -244,8 +250,6 @@ namespace ClearCanvas.Utilities.Manifest
 
         private void LoadConfiguration(string path)
         {
-            // Default value if its not included in the config file.
-            _manifest.ProductManifest.Product.Name = "ClearCanvas Workstation";
             
             XmlDocument xmldoc = new XmlDocument();
 
