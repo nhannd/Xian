@@ -61,6 +61,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 
 			_protocolGroup.DataSource = _component.ProtocolGroupChoices;
 			_protocolGroup.DataBindings.Add("Value", _component, "ProtocolGroup", true, DataSourceUpdateMode.OnPropertyChanged);
+			_protocolGroup.DataBindings.Add("Enabled", _component, "CanEdit", true, DataSourceUpdateMode.OnPropertyChanged);
 			_btnSetDefault.DataBindings.Add("Enabled", _component, "SetDefaultProtocolGroupEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 			_component.PropertyChanged += _component_PropertyChanged;
 
