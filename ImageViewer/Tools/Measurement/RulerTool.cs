@@ -75,5 +75,10 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			return new InteractivePolylineGraphicBuilder(2, (IPointsGraphic) graphic);
 		}
+
+		protected override IAnnotationCalloutLocationStrategy CreateCalloutLocationStrategy()
+		{
+			return new RulerCalloutLocationStrategy();
+		}
 	}
 }

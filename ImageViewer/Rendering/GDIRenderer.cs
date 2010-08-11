@@ -352,11 +352,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			Font font = new Font(textPrimitive.Font, textPrimitive.SizeInPoints);
 
 			// Calculate how big the text will be so we can set the bounding box
-			Font tempFont = new Font(textPrimitive.Font, textPrimitive.SizeInPoints);
-
 			textPrimitive.Dimensions = Surface.FinalBuffer.Graphics.MeasureString(textPrimitive.Text, font);
-
-			tempFont.Dispose();
 
 			// Draw drop shadow
 			_brush.Color = Color.Black;

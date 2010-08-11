@@ -69,6 +69,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			return new InteractiveBoundableGraphicBuilder((IBoundableGraphic) graphic);
 		}
 
+		protected override IAnnotationCalloutLocationStrategy CreateCalloutLocationStrategy()
+		{
+			return new DefaultRoiCalloutLocationStrategy();
+		}
+
 		protected override IGraphic CreateGraphic()
 		{
 			return new BoundableResizeControlGraphic(new BoundableStretchControlGraphic(new MoveControlGraphic(new RectanglePrimitive())));

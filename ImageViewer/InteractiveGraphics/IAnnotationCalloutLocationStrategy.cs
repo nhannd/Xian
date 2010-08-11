@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
 
@@ -37,7 +38,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// <summary>
 	/// A strategy for automatically calculating the location of a <see cref="AnnotationGraphic"/>'s callout.
 	/// </summary>
-	public interface IAnnotationCalloutLocationStrategy
+	public interface IAnnotationCalloutLocationStrategy : IDisposable
 	{
 		/// <summary>
 		/// Sets the <see cref="AnnotationGraphic"/> that owns this strategy.

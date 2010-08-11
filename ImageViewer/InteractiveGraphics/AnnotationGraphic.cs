@@ -184,7 +184,16 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			this.Subject.VisualStateChanged -= OnSubjectVisualStateChanged;
+			if (disposing)
+			{
+				if (_calloutLocationStrategy != null)
+				{
+					_calloutLocationStrategy.Dispose();
+					_calloutLocationStrategy = null;
+				}
+
+				Subject.VisualStateChanged -= OnSubjectVisualStateChanged;
+			}
 			base.Dispose(disposing);
 		}
 

@@ -119,6 +119,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DefaultRoiCalloutLocationStrategy.cs" />
     <Compile Include="CalibrationComponent.cs" />
     <Compile Include="CalibrationTool.cs" />
     <Compile Include="RectangularRoiTool.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="ProtractorRoiCalloutLocationStrategy.cs" />
     <Compile Include="ProtractorRoiInfo.cs" />
     <Compile Include="ProtractorTool.cs" />
+    <Compile Include="RulerCalloutLocationStrategy.cs" />
     <Compile Include="RulerTool.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Settings.Designer.cs">
