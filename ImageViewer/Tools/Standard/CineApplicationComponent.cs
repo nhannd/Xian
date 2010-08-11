@@ -33,7 +33,6 @@ using System;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -97,19 +96,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 				_enabled = value;
 				NotifyPropertyChanged("Enabled");
-			}
-		}
-
-		public bool AutoCineEnabled
-		{
-			get { return CineTool.GetAutoCineEnabled(base.ImageViewer); }
-			set
-			{
-				if (CineTool.GetAutoCineEnabled(base.ImageViewer) != value)
-				{
-					CineTool.SetAutoCineEnabled(base.ImageViewer, value);
-					NotifyPropertyChanged("AutoCineEnabled");
-				}
 			}
 		}
 
@@ -188,22 +174,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			this.ImageViewer.PhysicalWorkspace.Enabled = true;
 		}
 
-		public bool TryStartAutoCine()
-		{
-			if (this.AutoCineEnabled)
-			{
-				if (CanAutoPlay(this.ImageViewer.SelectedPresentationImage))
-				{
-					if (!Running)
-					{
-						this.StartCine();
-						return Running;
-					}
-				}
-			}
-			return false;
-		}
-
 		#endregion
 
 		#region Overrides
@@ -224,13 +194,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			StopCine();
 
 			base.Stop();
-
-			// ImageViewer may not have been unassigned, so manually execute the important part of OnActiveImageViewerChanged
-			if (this.ImageViewer != null)
-			{
-				this.ImageViewer.EventBroker.TileSelected -= OnTileSelected;
-				this.ImageViewer.CommandHistory.CurrentCommandChanging -= OnCommandChanging;
-			}
 		}
 
 		protected override void OnActiveImageViewerChanging(ActiveImageViewerChangedEventArgs e)
@@ -263,13 +226,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private void OnTileSelected(object sender, TileSelectedEventArgs e)
 		{
 			bool canStart = CanStart();
-
 			if (!Running)
 			{
 				Enabled = canStart;
-
-				TryStartAutoCine();
-
 				return;
 			}
 
@@ -412,20 +371,5 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 
 		#endregion
-
-		public static bool CanAutoPlay(IPresentationImage image)
-		{
-			IImageSopProvider imageSopProvider = image as IImageSopProvider;
-			if (imageSopProvider != null)
-			{
-				ImageSop imageSop = imageSopProvider.ImageSop;
-				if (imageSop.NumberOfFrames > 1
-					&& ToolSettings.Default.ToolSettingsProfile[imageSop.Modality].AutoCineMultiframes.GetValueOrDefault(false))
-				{
-					return true;
-				}
-			}
-			return false;
-		}
 	}
 }
