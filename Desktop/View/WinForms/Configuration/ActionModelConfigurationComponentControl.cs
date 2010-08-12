@@ -40,9 +40,9 @@ namespace ClearCanvas.Desktop.View.WinForms.Configuration
 {
 	public partial class ActionModelConfigurationComponentControl : UserControl
 	{
-		private ActionModelConfigurationComponent _component;
+		private IActionModelConfigurationComponentViewModel _component;
 
-		public ActionModelConfigurationComponentControl(ActionModelConfigurationComponent component)
+		public ActionModelConfigurationComponentControl(IActionModelConfigurationComponentViewModel component)
 		{
 			InitializeComponent();
 

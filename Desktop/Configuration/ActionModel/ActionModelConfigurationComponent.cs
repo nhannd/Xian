@@ -42,8 +42,54 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 	[ExtensionPoint]
 	public sealed class ActionModelConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> {}
 
+	/// <summary>
+	/// View model interface for the <see cref="ActionModelConfigurationComponent"/>.
+	/// </summary>
+	public interface IActionModelConfigurationComponentViewModel
+	{
+		/// <summary>
+		/// Gets the current action model configuration <see cref="ITree"/>.
+		/// </summary>
+		ITree ActionModelTreeRoot { get; }
+
+		/// <summary>
+		/// Gets a value indicating whether or not the action model configuration tree must be flat.
+		/// </summary>
+		bool EnforceFlatActionModel { get; }
+
+		/// <summary>
+		/// Gets the toolbar action model for the component's view.
+		/// </summary>
+		ActionModelRoot ToolbarActionModel { get; }
+
+		/// <summary>
+		/// Gets the context menu action model for the component's view.
+		/// </summary>
+		ActionModelRoot ContextMenuActionModel { get; }
+
+		/// <summary>
+		/// Gets or sets the currently selected node in the <see cref="ActionModelTreeRoot"/>.
+		/// </summary>
+		AbstractActionModelTreeNode SelectedNode { get; set; }
+
+		/// <summary>
+		/// Fired when the value of <see cref="SelectedNode"/> changes.
+		/// </summary>
+		event EventHandler SelectedNodeChanged;
+
+		/// <summary>
+		/// Gets the extended properties components of the currently selected node.
+		/// </summary>
+		ActionModelConfigurationComponent.INodeProperties SelectedNodeProperties { get; }
+
+		/// <summary>
+		/// Gets or sets the current validation policy in effect.
+		/// </summary>
+		NodePropertiesValidationPolicy ValidationPolicy { get; set; }
+	}
+
 	[AssociateView(typeof (ActionModelConfigurationComponentViewExtensionPoint))]
-	public partial class ActionModelConfigurationComponent : ApplicationComponent, IConfigurationApplicationComponent
+	public partial class ActionModelConfigurationComponent : ApplicationComponent, IConfigurationApplicationComponent, IActionModelConfigurationComponentViewModel
 	{
 		private const string _tolbarActionSite = "actionmodelconfig-toolbar";
 		private const string _contextMenuActionSite = "actionmodelconfig-contextmenu";
@@ -114,7 +160,17 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return string.Format("{0}:{1}", _namespace, _site); }
 		}
 
-		public ITree ActionModelTreeRoot
+		public string ActionModelNamespace
+		{
+			get { return _namespace; }
+		}
+
+		public string ActionModelSite
+		{
+			get { return _site; }
+		}
+
+		ITree IActionModelConfigurationComponentViewModel.ActionModelTreeRoot
 		{
 			get { return _actionModelTreeRoot.Tree; }
 		}
@@ -148,17 +204,17 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			set { _validationPolicy = value; }
 		}
 
-		public ActionModelRoot ToolbarActionModel
+		ActionModelRoot IActionModelConfigurationComponentViewModel.ToolbarActionModel
 		{
 			get { return _toolbarActionModel; }
 		}
 
-		public ActionModelRoot ContextMenuActionModel
+		ActionModelRoot IActionModelConfigurationComponentViewModel.ContextMenuActionModel
 		{
 			get { return _contextMenuActionModel; }
 		}
 
-		public INodeProperties SelectedNodeProperties
+		INodeProperties IActionModelConfigurationComponentViewModel.SelectedNodeProperties
 		{
 			get { return _propertiesContainerHost.Component; }
 		}

@@ -179,6 +179,9 @@ Please choose another Server Group Name.</value>
   <data name="MessageKeyStrokeAlreadyAssigned" xml:space="preserve">
     <value>The shortcut {0} is already assigned to {1}. Do you wish to reassign the shortcut?</value>
   </data>
+  <data name="MessageKeyStrokeReserved" xml:space="preserve">
+    <value>The shortcut {0} is reserved and cannot be reassigned.</value>
+  </data>
   <data name="MessageMouseButtonGlobalToolAlreadyAssigned" xml:space="preserve">
     <value>The global tool for {0} is already assigned to {1}. Do you wish to reassign the mouse button shortcut?</value>
   </data>
