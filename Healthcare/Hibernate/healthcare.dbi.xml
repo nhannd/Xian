@@ -54,4 +54,12 @@ on key tables that play a central role in the workflow queries.
   <!-- AttachedDocument -->
   <index table="AttachedDocument_" columns="CreationTime_"/>
   <index table="AttachedDocument_" columns="ReceivedTime_"/>
+
+  <!-- Note_ -->
+  <index table="Note_" columns="IsFullyAcknowledged_, AuthorOID_, PostTime_"/>
+
+  <!-- NotePosting_ -->
+  <index table="NotePosting_" columns="IsAcknowledged_, RecipientGroupOID_, CreationTime_"/>
+  <index table="NotePosting_" columns="IsAcknowledged_, RecipientStaffOID_, CreationTime_"/>
+
 </indexes>
