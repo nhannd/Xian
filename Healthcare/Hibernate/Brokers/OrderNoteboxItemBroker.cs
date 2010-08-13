@@ -314,11 +314,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 				{
 					// Find the appropriate patient profile based on OrderingFacility
 					var profile = CollectionUtils.SelectFirst(profiles,
-						pp => pp.Patient == item.Patient
-							&& pp.Mrn.AssigningAuthority.Code == item.OrderingFacilityInformationAuthority.Code);
+						pp => pp.Patient.Equals(item.Patient)
+							&& pp.Mrn.AssigningAuthority.Code.Equals(item.OrderingFacilityInformationAuthority.Code));
 
-					var postingsForThisNote = CollectionUtils.Select(postings, np => np.Note == item.Note);
-
+					// Find all the recipients
+					var postingsForThisNote = CollectionUtils.Select(postings, np => np.Note.Equals(item.Note));
 					var recipients = CollectionUtils.Map<NotePosting, object>(postingsForThisNote,
 						posting => posting is StaffNotePosting
 							? (object)((StaffNotePosting)posting).Recipient

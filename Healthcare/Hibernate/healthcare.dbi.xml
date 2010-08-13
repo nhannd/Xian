@@ -55,10 +55,10 @@ on key tables that play a central role in the workflow queries.
   <index table="AttachedDocument_" columns="CreationTime_"/>
   <index table="AttachedDocument_" columns="ReceivedTime_"/>
 
-  <!-- Note_ -->
+  <!-- OrderNotebox sent items query -->
   <index table="Note_" columns="IsFullyAcknowledged_, AuthorOID_, PostTime_"/>
 
-  <!-- NotePosting_ -->
+  <!-- OrderNotebox inbox query -->
   <index table="NotePosting_" columns="IsAcknowledged_, RecipientGroupOID_, CreationTime_"/>
   <index table="NotePosting_" columns="IsAcknowledged_, RecipientStaffOID_, CreationTime_"/>
 
