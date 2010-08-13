@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Common.Utilities;
@@ -198,6 +199,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		private ISelection _selection;
 		private event EventHandler _selectionUpdated;
 
+		private int _failedItemsCount = 0;
+
 		private Timer _timer;
 		private ILocalDataStoreEventBroker _localDataStoreEventBroker;
 
@@ -260,8 +263,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				if (_filteredItems.ChildGroups.Count > 0)
 					return;
 
-				_filteredItems.ChildGroups.Add(new FilteredGroup<SendQueueItem>("Background", "Background",
-												delegate(SendQueueItem item) { return item.IsBackground; }));
+				_filteredItems.ChildGroups.Add(new FilteredGroup<SendQueueItem>("Background", "Background", item => item.IsBackground && !item.HasErrors));
 			}
 		}
 
@@ -326,6 +328,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 					foundItem.UpdateFromProgressItem(e.Item);
 					if (_sendTable.Items.Contains(foundItem))
 						_sendTable.Items.NotifyItemUpdated(foundItem);
+					else
+					{
+						// trigger the filters because the update may have changed whether or not the item shows
+						_filteredItems.Remove(foundItem);
+						_filteredItems.Add(foundItem);
+					}
 				}
 			}
 			else
@@ -335,6 +343,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 					_filteredItems.Add(new SendQueueItem(e.Item));
 				}
 			}
+
+			FailedItemsCount = CollectionUtils.Select(_filteredItems.Items, item => item.HasErrors).Count;
 		}
 
 		private string FormatString(string input)
@@ -488,6 +498,29 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				UpdateTable();
 				NotifyPropertyChanged("ShowBackgroundSends");
 			}
+		}
+
+		public int FailedItemsCount
+		{
+			get { return _failedItemsCount; }
+			private set
+			{
+				if (_failedItemsCount != value)
+				{
+					_failedItemsCount = value;
+					NotifyPropertyChanged("FailedItemsCount");
+				}
+			}
+		}
+
+		public ISelection Selection
+		{
+			get { return _selection; }
+		}
+
+		public void SetSelection(SendOperationReference sendOperationReference)
+		{
+			SetSelection(new Selection(CollectionUtils.Select(_sendTable.Items, item => item.SendOperationReference.Equals(sendOperationReference))));
 		}
 
 		public void SetSelection(ISelection selection)
