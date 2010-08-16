@@ -291,7 +291,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			// Add a orderNote to the source Order
 			var noteMessage = string.Format("Auto-generated note.  This order was merged into {0}", destinationOrder.AccessionNumber);
 			var newNote = new OrderNote("General", noteMessage, false, Platform.Time, this.CurrentUserStaff,
-				null, Platform.Time, true, new HashedSet<NotePosting>(),
+				null, Platform.Time, true, false, new HashedSet<NotePosting>(),
 				sourceOrder);
 			this.PersistenceContext.Lock(newNote, DirtyState.New);
 

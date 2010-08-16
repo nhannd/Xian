@@ -56,7 +56,7 @@ on key tables that play a central role in the workflow queries.
   <index table="AttachedDocument_" columns="ReceivedTime_"/>
 
   <!-- OrderNotebox sent items query -->
-  <index table="Note_" columns="IsFullyAcknowledged_, AuthorOID_, PostTime_"/>
+  <index table="Note_" columns="IsFullyAcknowledged_, HasPostings_, AuthorOID_, PostTime_"/>
 
   <!-- OrderNotebox inbox query -->
   <index table="NotePosting_" columns="IsAcknowledged_, RecipientGroupOID_, CreationTime_"/>

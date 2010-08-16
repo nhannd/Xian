@@ -199,6 +199,9 @@ namespace ClearCanvas.Healthcare {
 				_postings.Add(posting);
 			}
 
+			if (_postings.Count > 0)
+				_hasPostings = true;
+
             // give subclass a chance to do some processing
             BeforePost();
 
