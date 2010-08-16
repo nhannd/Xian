@@ -414,7 +414,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				foreach (IFrameReference frame in _frames)
 				{
 					if (frame.Frame.ImageOrientationPatient.IsNull)
+					{
+						if (frame.ImageSop.NumberOfFrames > 1)
+							throw new UnsupportedMultiFrameSourceImagesException(new NullImageOrientationException());
 						throw new NullImageOrientationException();
+					}
 					if (!frame.Frame.ImageOrientationPatient.EqualsWithinTolerance(orient, _orientationTolerance))
 						throw new MultipleImageOrientationsException();
 					if (frame.Frame.PixelSpacing.IsNull)
@@ -433,7 +437,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				{
 					float currentSpacing = CalcSpaceBetweenPlanes(_frames[i].Frame, _frames[i - 1].Frame);
 					if (currentSpacing < _minimumSliceSpacing)
+					{
+						if (_frames[i].ImageSop.NumberOfFrames > 1)
+							throw new UnsupportedMultiFrameSourceImagesException(new UnevenlySpacedFramesException());
 						throw new UnevenlySpacedFramesException();
+					}
+
 					if (!nominalSpacing.HasValue)
 						nominalSpacing = currentSpacing;
 					if (!FloatComparer.AreEqual(currentSpacing, nominalSpacing.Value, _sliceSpacingTolerance))

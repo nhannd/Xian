@@ -47,6 +47,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public UnsupportedSourceImagesException() : base("Source images are of an unsupported type.") {}
 	}
 
+	public class UnsupportedMultiFrameSourceImagesException : CreateVolumeException
+	{
+		public UnsupportedMultiFrameSourceImagesException() : this(null) {}
+
+		public UnsupportedMultiFrameSourceImagesException(Exception innerException) : base("Multiframe source images are currently not supported.", innerException) {}
+	}
+
 	public class InsufficientFramesException : CreateVolumeException
 	{
 		public InsufficientFramesException() : base("Insufficient frames from which to create a volume. At least three are required.") {}
@@ -113,6 +120,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				message = SR.MessageSourceDataSetNeedsThreeImagesForMpr;
 			else if (ex is UnsupportedSourceImagesException)
 				message = SR.MessageSourceDataSetImagesAreNotSupported;
+			else if (ex is UnsupportedMultiFrameSourceImagesException)
+				message = SR.MessageSourceDataSetMultiFrameImagesAreNotSupported;
 			else if (ex is MultipleFramesOfReferenceException)
 				message = SR.MessageSourceDataSetMustBeSingleFrameOfReference;
 			else if (ex is MultipleImageOrientationsException)

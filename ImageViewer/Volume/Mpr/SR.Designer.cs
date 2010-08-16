@@ -340,6 +340,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The selected multiframe images are of an unsupported type..
+        /// </summary>
+        public static string MessageSourceDataSetMultiFrameImagesAreNotSupported {
+            get {
+                return ResourceManager.GetString("MessageSourceDataSetMultiFrameImagesAreNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Each frame in the source dataset must have the same image orientation (Patient)..
         /// </summary>
         public static string MessageSourceDataSetMustBeSameImageOrientationPatient {
