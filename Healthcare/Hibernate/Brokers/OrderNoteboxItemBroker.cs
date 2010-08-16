@@ -250,7 +250,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
 				// for sent items, IsAcknowledged means fully acknowledged (all readers have acknowledged)
 				and.Conditions.Add(new HqlCondition("n.IsFullyAcknowledged = ?", criteria.IsAcknowledged));
-				and.Conditions.Add(new HqlCondition("n.HasPostings = ?", true));
 
 				if (criteria.SentByMe)
 					and.Conditions.Add(new HqlCondition("n.Author = ?", nqc.Staff));
@@ -258,6 +257,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 				or.Conditions.Add(and);
 			}
 			query.Conditions.Add(or);
+			query.Conditions.Add(new HqlCondition("n.HasPostings = ?", true));
 
 			if (!countQuery)
 				query.Sorts.AddRange(SentItemOrdering);
