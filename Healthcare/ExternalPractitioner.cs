@@ -41,7 +41,7 @@ namespace ClearCanvas.Healthcare
 	/// <summary>
 	/// ExternalPractitioner entity
 	/// </summary>
-	[ValidationRules("GetValidationRules")]
+	[Validation(HighLevelRulesProviderMethod="GetValidationRules")]
 	public partial class ExternalPractitioner : ClearCanvas.Enterprise.Core.Entity
 	{
 		/// <summary>

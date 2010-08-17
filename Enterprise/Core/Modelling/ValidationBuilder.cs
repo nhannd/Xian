@@ -79,22 +79,26 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 			if (pair.Attribute is UniqueKeyAttribute)
 				ProcessUniqueKeyAttribute(entityClass, pair, rules);
 
-			if (pair.Attribute is ValidationRulesAttribute)
-				ProcessValidationRulesAttribute(entityClass, pair, rules);
+			if (pair.Attribute is ValidationAttribute)
+				ProcessValidationSupportAttribute(entityClass, pair, rules);
 		}
 
-		private static void ProcessValidationRulesAttribute(Type entityClass, AttributeEntityClassPair pair, ICollection<ISpecification> rules)
+		private static void ProcessValidationSupportAttribute(Type entityClass, AttributeEntityClassPair pair, ICollection<ISpecification> rules)
 		{
+			// check if the attribute specifies a method for retrieving additional rules
+			var a = (ValidationAttribute)pair.Attribute;
+			if (string.IsNullOrEmpty(a.HighLevelRulesProviderMethod))
+				return;
+
 			// find method on class (use the class that declared the attribute, not the entityClass)
-			var a = (ValidationRulesAttribute)pair.Attribute;
-			var bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.DeclaredOnly;
-			var method = pair.DeclaringClass.GetMethod(a.MethodName, bindingFlags);
+			const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.DeclaredOnly;
+			var method = pair.DeclaringClass.GetMethod(a.HighLevelRulesProviderMethod, bindingFlags);
 
 			// validate method signature
 			if (method == null)
-				throw new InvalidOperationException(string.Format("Method {0} not found on class {1}", a.MethodName, pair.DeclaringClass.FullName));
+				throw new InvalidOperationException(string.Format("Method {0} not found on class {1}", a.HighLevelRulesProviderMethod, pair.DeclaringClass.FullName));
 			if (method.GetParameters().Length != 0 || !typeof(IValidationRuleSet).IsAssignableFrom(method.ReturnType))
-				throw new InvalidOperationException(string.Format("Method {0} must have 0 parameters and return IValidationRuleSet", a.MethodName));
+				throw new InvalidOperationException(string.Format("Method {0} must have 0 parameters and return IValidationRuleSet", a.HighLevelRulesProviderMethod));
 
 			var ruleSet = (IValidationRuleSet)method.Invoke(null, null);
 
@@ -189,7 +193,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
 		private static List<AttributeEntityClassPair> GetClassAttributes(Type entityClass)
 		{
-			// get attributes on this class only, not on the base class
+			// get attributes on this class only - do not get inherited attributes, since these will be handled by recursion below
 			var pairs = CollectionUtils.Map(entityClass.GetCustomAttributes(false),
 								(Attribute a) => new AttributeEntityClassPair { DeclaringClass = entityClass, Attribute = a });
 
