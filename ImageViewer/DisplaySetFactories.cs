@@ -31,9 +31,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Annotations;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.PresentationStates;
@@ -240,9 +243,73 @@ namespace ClearCanvas.ImageViewer
 		public bool CreateSingleImageDisplaySets { get; set; }
 
 		/// <summary>
+		/// Gets or sets a value indicating whether or not placeholder image display sets should be generated for unsupported SOP classes.
+		/// </summary>
+		public bool ShouldCreatePlaceholderImageDisplaySets { get; set; }
+
+		/// <summary>
 		/// Creates <see cref="IDisplaySet"/>s from the given <see cref="Series"/>.
 		/// </summary>
+		/// <param name="series">The series for which <see cref="IDisplaySet"/>s are to be created.</param>
+		/// <returns>A list of created <see cref="IDisplaySet"/>s.</returns>
 		public override List<IDisplaySet> CreateDisplaySets(Series series)
+		{
+			return CreateDisplaySets(series, ShouldCreatePlaceholderImageDisplaySets);
+		}
+
+		/// <summary>
+		/// Creates <see cref="IDisplaySet"/>s from the given <see cref="Series"/>.
+		/// </summary>
+		/// <param name="series">The series for which <see cref="IDisplaySet"/>s are to be created.</param>
+		/// <param name="shouldCreatePlaceholders">A value indicating whether or not placeholder image display sets should be generated for unsupported SOP classes.</param>
+		/// <returns>A list of created <see cref="IDisplaySet"/>s.</returns>
+		public virtual List<IDisplaySet> CreateDisplaySets(Series series, bool shouldCreatePlaceholders)
+		{
+			// try to create basic display sets first
+			var displaySets = CreateBasicDisplaySets(series);
+			if (displaySets.Count > 0)
+				return displaySets;
+			if (shouldCreatePlaceholders)
+				return CreatePlaceholderDisplaySets(series);
+			return new List<IDisplaySet>();
+		}
+
+		/// <summary>
+		/// Creates placeholder image display sets for unsupported SOP classes.
+		/// </summary>
+		/// <param name="series">The series for which <see cref="IDisplaySet"/>s are to be created.</param>
+		/// <returns>A list of created <see cref="IDisplaySet"/>s.</returns>
+		public virtual List<IDisplaySet> CreatePlaceholderDisplaySets(Series series)
+		{
+			var images = new List<IPresentationImage>();
+			foreach (var sop in series.Sops)
+			{
+				// only create placeholders for any non-image, non-presentation state SOPs
+				if (sop.IsImage
+				    || sop.SopClassUid == SopClass.GrayscaleSoftcopyPresentationStateStorageSopClassUid
+				    || sop.SopClassUid == SopClass.ColorSoftcopyPresentationStateStorageSopClassUid
+				    || sop.SopClassUid == SopClass.PseudoColorSoftcopyPresentationStateStorageSopClassUid
+				    || sop.SopClassUid == SopClass.BlendingSoftcopyPresentationStateStorageSopClassUid)
+					continue;
+				images.Add(new PlaceholderPresentationImage(sop));
+			}
+
+			if (images.Count > 0)
+			{
+				var displaySet = new DisplaySet(new SeriesDisplaySetDescriptor(series.GetIdentifier(), PresentationImageFactory));
+				foreach (var image in images)
+					displaySet.PresentationImages.Add(image);
+				return new List<IDisplaySet>(new[] {displaySet});
+			}
+			return new List<IDisplaySet>();
+		}
+
+		/// <summary>
+		/// Creates <see cref="IDisplaySet"/>s from the given <see cref="Series"/>.
+		/// </summary>
+		/// <param name="series">The series for which <see cref="IDisplaySet"/>s are to be created.</param>
+		/// <returns>A list of created <see cref="IDisplaySet"/>s.</returns>
+		public virtual List<IDisplaySet> CreateBasicDisplaySets(Series series)
 		{
 			if (CreateSingleImageDisplaySets)
 			{
@@ -354,6 +421,93 @@ namespace ClearCanvas.ImageViewer
 			factory.SetStudyTree(studyTree);
 			return factory.CreateDisplaySets(series);
 		}
+
+		#region PlaceholderPresentationImage Class
+
+		[Cloneable]
+		private sealed class PlaceholderPresentationImage : BasicPresentationImage, ISopProvider
+		{
+			[CloneIgnore]
+			private ISopReference _sopReference;
+
+			public PlaceholderPresentationImage(Sop sop)
+				: base(new GrayscaleImageGraphic(1, 1))
+			{
+				_sopReference = sop.CreateTransientReference();
+
+				var sopClass = SopClass.GetSopClass(sop.SopClassUid);
+				var sopClassDescription = sopClass != null ? sopClass.Name : SR.LabelUnknown;
+				CompositeImageGraphic.Graphics.Add(new ErrorMessageGraphic {Text = string.Format(SR.MessageUnsupportedImageType, sopClassDescription), Color = Color.WhiteSmoke});
+				Platform.Log(LogLevel.Warn, "Unsupported SOP Class \"{0} ({1})\" (SOP Instance {2})", sopClassDescription, sop.SopClassUid, sop.SopInstanceUid);
+			}
+
+			/// <summary>
+			/// Cloning constructor.
+			/// </summary>
+			/// <param name="source">The source object from which to clone.</param>
+			/// <param name="context">The cloning context object.</param>
+			private PlaceholderPresentationImage(PlaceholderPresentationImage source, ICloningContext context)
+				: base(source, context)
+			{
+				_sopReference = source._sopReference.Clone();
+
+				context.CloneFields(source, this);
+			}
+
+			protected override void Dispose(bool disposing)
+			{
+				if (_sopReference != null)
+				{
+					_sopReference.Dispose();
+					_sopReference = null;
+				}
+				base.Dispose(disposing);
+			}
+
+			public Sop Sop
+			{
+				get { return _sopReference.Sop; }
+			}
+
+			protected override IAnnotationLayout CreateAnnotationLayout()
+			{
+				return new AnnotationLayout();
+			}
+
+			public override IPresentationImage CreateFreshCopy()
+			{
+				return new PlaceholderPresentationImage(_sopReference.Sop);
+			}
+
+			[Cloneable(true)]
+			private class ErrorMessageGraphic : InvariantTextPrimitive
+			{
+				protected override SpatialTransform CreateSpatialTransform()
+				{
+					return new InvariantSpatialTransform(this);
+				}
+
+				public override void OnDrawing()
+				{
+					if (base.ParentPresentationImage != null)
+					{
+						CoordinateSystem = CoordinateSystem.Destination;
+						try
+						{
+							var clientRectangle = ParentPresentationImage.ClientRectangle;
+							Location = new PointF(clientRectangle.Width/2f, clientRectangle.Height/2f);
+						}
+						finally
+						{
+							ResetCoordinateSystem();
+						}
+					}
+					base.OnDrawing();
+				}
+			}
+		}
+
+		#endregion
 	}
 	
 	#endregion
