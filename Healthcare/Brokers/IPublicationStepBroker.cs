@@ -30,6 +30,8 @@
 #endregion
 
 using ClearCanvas.Enterprise.Core;
+using System.Collections.Generic;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Brokers
 {
@@ -38,5 +40,6 @@ namespace ClearCanvas.Healthcare.Brokers
 	/// </summary>
 	public interface IPublicationStepBroker : IEntityBroker<PublicationStep, PublicationStepSearchCriteria>
 	{
+		IList<PublicationStep> FindUnprocessedSteps(int failedItemRetryDelay, SearchResultPage page);
 	}
 }

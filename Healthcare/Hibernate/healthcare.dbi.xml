@@ -17,6 +17,9 @@ on key tables that play a central role in the workflow queries.
   <index table="ProcedureStep_" columns="StartTime_"/>
   <index table="ProcedureStep_" columns="EndTime_"/>
 
+  <!-- Publication Shred query -->
+  <index table="ProcedureStep_" columns="State_, Discriminator_, ScheduledStartTime_"/>
+
   <!-- Procedure -->
   <index table="Procedure_" columns="ScheduledStartTime_"/>
   <index table="Procedure_" columns="StartTime_"/>
