@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -30,51 +30,49 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Text;
+
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Admin.WorkQueueAdmin;
+using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Ris.Client.Admin
+namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
-	public class WorkQueuePreviewComponent : DHtmlComponent
-	{
-		private WorkQueueItemDetail _workQueueItem;
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="WorkQueueAdminComponent"/>.
+    /// </summary>
+    [ExtensionOf(typeof(WorkQueueAdminComponentViewExtensionPoint))]
+    public class WorkQueueAdminComponentView : WinFormsView, IApplicationComponentView
+    {
+        private WorkQueueAdminComponent _component;
+        private WorkQueueAdminComponentControl _control;
 
-		public WorkQueueItemSummary WorkQueueItem
-		{
-			set
-			{
-				if (value == null)
-				{
-					_workQueueItem = null;
-				}
-				else
-				{
-					try
-					{
-						Platform.GetService<IWorkQueueAdminService>(
-							delegate(IWorkQueueAdminService service)
-								{
-									LoadWorkQueueItemForEditResponse response = service.LoadWorkQueueItemForEdit(new LoadWorkQueueItemForEditRequest(value.WorkQueueItemRef));
-									_workQueueItem = response.WorkQueueItemDetail;
-								});
-					}
-					catch (Exception e)
-					{
-						_workQueueItem = null;
-						ExceptionHandler.Report(e, this.Host.DesktopWindow);
-					}
-				}
+        #region IApplicationComponentView Members
 
-				this.SetUrl(WebResourcesSettings.Default.WorkQueuePreviewPageUrl);
-			}
-		}
+        /// <summary>
+        /// Called by the host to assign this view to a component.
+        /// </summary>
+        public void SetComponent(IApplicationComponent component)
+        {
+            _component = (WorkQueueAdminComponent)component;
+        }
 
-		protected override DataContractBase GetHealthcareContext()
-		{
-			return _workQueueItem;
-		}
-	}
+        #endregion
+
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new WorkQueueAdminComponentControl(_component);
+                }
+                return _control;
+            }
+        }
+    }
 }

@@ -77,6 +77,7 @@
     <Compile Include="ProcedureTypeGroupEditorComponent.cs" />
     <Compile Include="ProcedureTypeGroupSummaryTable.cs" />
     <Compile Include="ProcedureTypeGroupSummaryTool.cs" />
+    <Compile Include="QueueAdminComponentBase.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -88,8 +89,8 @@
     <Compile Include="WorklistSummaryComponent.cs" />
     <Compile Include="WorklistAdminSummaryTable.cs" />
     <Compile Include="WorklistSummaryTool.cs" />
-    <Compile Include="WorkQueuePreviewComponent.cs" />
-    <Compile Include="WorkQueueSummaryComponent.cs" />
+    <Compile Include="WorkQueueAdminComponent.cs" />
+    <Compile Include="WorkQueueSummaryTable.cs" />
     <Compile Include="WorkQueueSummaryTool.cs" />
   </ItemGroup>
   <ItemGroup>

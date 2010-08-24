@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -48,18 +49,21 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorkQueueAdmin
 		}
 
 		[DataMember]
-		public DateTime? StartTime;
+		public DateTime? ScheduledStartTime;
 
 		[DataMember]
-		public DateTime? EndTime;
+		public DateTime? ScheduledEndTime;
 
 		[DataMember]
-		public string User;
+		public DateTime? ProcessedStartTime;
 
 		[DataMember]
-		public string Type;
+		public DateTime? ProcessedEndTime;
 
 		[DataMember]
-		public EnumValueInfo Status;
+		public List<string> Types;
+
+		[DataMember]
+		public List<EnumValueInfo> Statuses;
 	}
 }

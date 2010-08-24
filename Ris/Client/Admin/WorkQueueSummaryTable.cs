@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,50 +29,24 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Ris.Application.Common;
 
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.View.WinForms;
-
-namespace ClearCanvas.Ris.Client.Admin.View.WinForms
+namespace ClearCanvas.Ris.Client.Admin
 {
-    /// <summary>
-    /// Provides a Windows Forms view onto <see cref="WorkQueueSummaryComponent"/>.
-    /// </summary>
-    [ExtensionOf(typeof(WorkQueueSummaryComponentViewExtensionPoint))]
-    public class WorkQueueSummaryComponentView : WinFormsView, IApplicationComponentView
-    {
-        private WorkQueueSummaryComponent _component;
-        private WorkQueueSummaryComponentControl _control;
-
-        #region IApplicationComponentView Members
-
-        /// <summary>
-        /// Called by the host to assign this view to a component.
-        /// </summary>
-        public void SetComponent(IApplicationComponent component)
-        {
-            _component = (WorkQueueSummaryComponent)component;
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Gets the underlying GUI component for this view.
-        /// </summary>
-        public override object GuiElement
-        {
-            get
-            {
-                if (_control == null)
-                {
-                    _control = new WorkQueueSummaryComponentControl(_component);
-                }
-                return _control;
-            }
-        }
-    }
+	public class WorkQueueSummaryTable : Table<WorkQueueItemSummary>
+	{
+		public WorkQueueSummaryTable()
+		{
+			this.Columns.Add(new DateTimeTableColumn<WorkQueueItemSummary>(SR.ColumnCreationTime, item => item.CreationTime));
+			this.Columns.Add(new DateTimeTableColumn<WorkQueueItemSummary>(SR.ColumnScheduledTime, item => item.ScheduledTime));
+			//this.Columns.Add(new DateTimeTableColumn<WorkQueueItemSummary>(SR.ColumnExpirationTime, item => item.ExpirationTime));
+			//this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnUser, item => item.User));
+			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnType, item => item.Type));
+			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnStatus, item => item.Status.Value));
+			this.Columns.Add(new DateTimeTableColumn<WorkQueueItemSummary>(SR.ColumnProcessedTime, item => item.ProcessedTime));
+			//this.Columns.Add(new TableColumn<WorkQueueItemSummary, int>(SR.ColumnFailureCount, item => item.FailureCount));
+			//this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnFailureDescription, item => item.FailureDescription));
+		}
+	}
 }

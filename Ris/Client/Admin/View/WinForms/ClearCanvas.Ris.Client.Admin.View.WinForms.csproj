@@ -179,13 +179,13 @@
       <DependentUpon>WorklistSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="WorklistSummaryComponentView.cs" />
-    <Compile Include="WorkQueueSummaryComponentControl.cs">
+    <Compile Include="WorkQueueAdminComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="WorkQueueSummaryComponentControl.Designer.cs">
-      <DependentUpon>WorkQueueSummaryComponentControl.cs</DependentUpon>
+    <Compile Include="WorkQueueAdminComponentControl.Designer.cs">
+      <DependentUpon>WorkQueueAdminComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="WorkQueueSummaryComponentView.cs" />
+    <Compile Include="WorkQueueAdminComponentView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Common\ClearCanvas.Common.csproj">
@@ -306,9 +306,8 @@
       <SubType>Designer</SubType>
       <DependentUpon>WorklistSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="WorkQueueSummaryComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>WorkQueueSummaryComponentControl.cs</DependentUpon>
+    <EmbeddedResource Include="WorkQueueAdminComponentControl.resx">
+      <DependentUpon>WorkQueueAdminComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
