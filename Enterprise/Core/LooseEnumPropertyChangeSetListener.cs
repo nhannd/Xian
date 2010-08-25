@@ -29,6 +29,10 @@
 
 #endregion
 
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
+
 namespace ClearCanvas.Enterprise.Core
 {
 	/// <summary>
@@ -56,29 +60,13 @@ namespace ClearCanvas.Enterprise.Core
 		{
 			foreach (var entityChange in args.ChangeSet.Changes)
 			{
+				if (entityChange.ChangeType != EntityChangeType.Create)
+					continue;
+
 				if (entityChange.GetEntityClass() != typeof(TChangedEntityClass))
 					continue;
 
-				var workQueueItem = args.PersistenceContext.Load<TChangedEntityClass>(entityChange.EntityRef);
-				var queueItemTypeBroker = args.PersistenceContext.GetBroker<IEnumBroker>();
-
-				var code = GetEnumCodeFromEntity(workQueueItem);
-				try
-				{
-					var foo = queueItemTypeBroker.TryFind(typeof(TLooseEnumClass), code);
-				}
-				catch (EnumValueNotFoundException)
-				{
-					var displayOrder = queueItemTypeBroker.Load(typeof(TLooseEnumClass), true).Count;
-
-					queueItemTypeBroker.AddValue(
-						typeof(TLooseEnumClass),
-						code,
-						code,
-						string.Empty,
-						displayOrder,
-						false);
-				}
+				SyncEnumValue(entityChange.EntityRef, args.PersistenceContext);
 			}
 		}
 
@@ -87,5 +75,51 @@ namespace ClearCanvas.Enterprise.Core
 		}
 
 		#endregion
+
+		private void SyncEnumValue(EntityRef entityRef, IPersistenceContext persistenceContext)
+		{
+			var changedEntity = persistenceContext.Load<TChangedEntityClass>(entityRef);
+			var enumBroker = persistenceContext.GetBroker<IEnumBroker>();
+
+			var code = GetEnumCodeFromEntity(changedEntity);
+			try
+			{
+				var foo = enumBroker.TryFind(typeof(TLooseEnumClass), code);
+			}
+			catch (EnumValueNotFoundException)
+			{
+				AddEnumValue(code, enumBroker, persistenceContext);
+			}
+		}
+
+		private void AddEnumValue(string code, IEnumBroker enumBroker, IPersistenceContext persistenceContext)
+		{
+			try
+			{
+				enumBroker.AddValue(
+					typeof(TLooseEnumClass),
+					code,
+					code,
+					string.Empty,
+					GetDisplayOrder(enumBroker),
+					false);
+
+				persistenceContext.SynchState();
+			}
+			catch (System.Exception)
+			{
+				Platform.Log(LogLevel.Error, string.Format("Cannot add code '{0}' to enumeration '{1}'", code, typeof(TLooseEnumClass).Name));
+			}
+		}
+
+		private float GetDisplayOrder(IEnumBroker enumBroker)
+		{
+			var lastDisplayed = CollectionUtils.Max(
+				enumBroker.Load(typeof(TLooseEnumClass), true), 
+				null,
+				(enumValue1, enumValue2) => enumValue1.DisplayOrder.CompareTo(enumValue2.DisplayOrder));
+
+			return lastDisplayed != null ? lastDisplayed.DisplayOrder + 1 : 0;
+		}
 	}
 }
