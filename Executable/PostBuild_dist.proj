@@ -57,7 +57,7 @@
   <!-- Config files, to be placed in distribution directory -->
   <ItemGroup>
     <ConfigFiles Include="$(ProjectDir)\Logging.config" />
-    <ConfigFiles Include="$(ProjectDir)\bin\$(Configuration)\ClearCanvas.Ris.Server.Executable.exe.config" />
+    <ConfigFiles Include="$(ProjectDir)\bin\$(Configuration)\ClearCanvas.Executable.exe.config" />
   </ItemGroup>
 
   <!-- Shared library files, to be placed in common directory -->
