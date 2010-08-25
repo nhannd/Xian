@@ -34,6 +34,9 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Workflow
 {
+	/// <summary>
+	/// Enforces loose coupling between WorkQueueItem.Type and WorkQueueItemTypeEnum
+	/// </summary>
 	[ExtensionOf(typeof(EntityChangeSetListenerExtensionPoint))]
 	public class WorkQueueItemChangeSetListener : LooseEnumPropertyChangeSetListener<WorkQueueItem, WorkQueueItemTypeEnum>
 	{
