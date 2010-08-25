@@ -35,11 +35,11 @@ using ClearCanvas.Enterprise.Core;
 namespace ClearCanvas.Workflow
 {
 	[ExtensionOf(typeof(EntityChangeSetListenerExtensionPoint))]
-	public class WorkQueueItemChangeSetListener : EntityWithEchoedEnumPropertyChangeSetListener<WorkQueueItem, WorkQueueItemTypeEnum>
+	public class WorkQueueItemChangeSetListener : LooseEnumPropertyChangeSetListener<WorkQueueItem, WorkQueueItemTypeEnum>
 	{
 		#region Implementation of EntityWithEchoedEnumPropertyChangeSetListener
 
-		public override string GetEchoedEnumCodeFromEntity(WorkQueueItem workQueueItem)
+		public override string GetEnumCodeFromEntity(WorkQueueItem workQueueItem)
 		{
 			return workQueueItem.Type;
 		}

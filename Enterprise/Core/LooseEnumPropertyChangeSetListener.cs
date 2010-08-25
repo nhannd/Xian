@@ -31,11 +31,24 @@
 
 namespace ClearCanvas.Enterprise.Core
 {
-	public abstract class EntityWithEchoedEnumPropertyChangeSetListener<TChangedEntityClass, TEchoedEnumClass> : IEntityChangeSetListener
+	/// <summary>
+	/// This listener synchronizes values in a string property of an entity with a specified enumeration.  It is basically a trigger 
+	/// to implement a loose coupling between the entity's property and the enumeration with the result that the enumeration then contains
+	/// the distinct set of values for that property.  The enumeration can then be queried for the distinct set of values at a much lower
+	/// cost than querying the entities themselves.
+	/// </summary>
+	/// <typeparam name="TChangedEntityClass"></typeparam>
+	/// <typeparam name="TLooseEnumClass"></typeparam>
+	public abstract class LooseEnumPropertyChangeSetListener<TChangedEntityClass, TLooseEnumClass> : IEntityChangeSetListener
 		where TChangedEntityClass : Entity
-		where TEchoedEnumClass : EnumValue
+		where TLooseEnumClass : EnumValue
 	{
-		public abstract string GetEchoedEnumCodeFromEntity(TChangedEntityClass changedEntity);
+		/// <summary>
+		/// Returns a string value from the specified entity which should be synchronized with this listener's enumeration class.
+		/// </summary>
+		/// <param name="changedEntity"></param>
+		/// <returns></returns>
+		public abstract string GetEnumCodeFromEntity(TChangedEntityClass changedEntity);
 
 		#region Implementation of IEntityChangeSetListener
 
@@ -49,19 +62,19 @@ namespace ClearCanvas.Enterprise.Core
 				var workQueueItem = args.PersistenceContext.Load<TChangedEntityClass>(entityChange.EntityRef);
 				var queueItemTypeBroker = args.PersistenceContext.GetBroker<IEnumBroker>();
 
-				var shadowEnumCode = GetEchoedEnumCodeFromEntity(workQueueItem);
+				var code = GetEnumCodeFromEntity(workQueueItem);
 				try
 				{
-					var foo = queueItemTypeBroker.TryFind(typeof(TEchoedEnumClass), shadowEnumCode);
+					var foo = queueItemTypeBroker.TryFind(typeof(TLooseEnumClass), code);
 				}
 				catch (EnumValueNotFoundException)
 				{
-					var displayOrder = queueItemTypeBroker.Load(typeof(TEchoedEnumClass), true).Count;
+					var displayOrder = queueItemTypeBroker.Load(typeof(TLooseEnumClass), true).Count;
 
 					queueItemTypeBroker.AddValue(
-						typeof(TEchoedEnumClass),
-						shadowEnumCode,
-						shadowEnumCode,
+						typeof(TLooseEnumClass),
+						code,
+						code,
 						string.Empty,
 						displayOrder,
 						false);

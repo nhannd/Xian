@@ -73,7 +73,7 @@
     <Compile Include="AuditLogEntry.cs" />
     <Compile Include="Audit\AuditLogEntryAssembler.cs" />
     <Compile Include="Audit\AuditService.cs" />
-    <Compile Include="EntityWithEchoedEnumPropertyChangeSetListener.cs" />
+    <Compile Include="LooseEnumPropertyChangeSetListener.cs" />
     <Compile Include="EqualityUtils.cs" />
     <Compile Include="ExtendedPropertiesSearchCriteria.cs" />
     <Compile Include="EntityChangeSetPublisher.cs" />
