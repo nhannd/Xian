@@ -74,6 +74,7 @@
     <Compile Include="Tests\PerformedStepTests.cs" />
     <Compile Include="WorkflowException.cs" />
     <Compile Include="WorkQueueItem.cs" />
+    <Compile Include="WorkQueueItemChangeSetListener.cs" />
     <Compile Include="WorkQueueProcessor.cs" />
     <Compile Include="WorkQueueStatus.cs" />
   </ItemGroup>
@@ -97,6 +98,9 @@
       <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
       <Name>ClearCanvas.Enterprise.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="WorkQueueItemType.enum.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

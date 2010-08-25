@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -52,10 +51,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorkQueueAdmin
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Management.WorkQueue)]
 		public GetWorkQueueFormDataResponse GetWorkQueueFormData(GetWorkQueueFormDataRequest request)
 		{
-			List<EnumValueInfo> statuses = EnumUtils.GetEnumValueList<WorkQueueStatusEnum>(this.PersistenceContext);
+			var statuses = EnumUtils.GetEnumValueList<WorkQueueStatusEnum>(this.PersistenceContext);
+			var types = CollectionUtils.Map<EnumValueInfo, string>(
+				EnumUtils.GetEnumValueList<WorkQueueItemTypeEnum>(this.PersistenceContext),
+				workQueueTypeEnum => workQueueTypeEnum.Code
+			);
 
-			//List<string> types = new List<string>(PersistenceContext.GetBroker<IWorkQueueItemBroker>().GetTypes());
-			List<string> types = new List<string>();
 			return new GetWorkQueueFormDataResponse(statuses, types);
 		}
 
@@ -125,8 +126,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorkQueueAdmin
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Management.WorkQueue)]
 		public LoadWorkQueueItemForEditResponse LoadWorkQueueItemForEdit(LoadWorkQueueItemForEditRequest request)
 		{
-			WorkQueueItem item = PersistenceContext.Load<WorkQueueItem>(request.WorkQueueItemRef);
-			WorkQueueItemAssembler assembler = new WorkQueueItemAssembler();
+			var item = this.PersistenceContext.Load<WorkQueueItem>(request.WorkQueueItemRef);
+			var assembler = new WorkQueueItemAssembler();
 			return new LoadWorkQueueItemForEditResponse(assembler.CreateWorkQueueItemDetail(item, this.PersistenceContext));
 		}
 
@@ -141,7 +142,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorkQueueAdmin
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Management.WorkQueue)]
 		public ResubmitWorkQueueItemResponse ResubmitWorkQueueItem(ResubmitWorkQueueItemRequest request)
 		{
-			WorkQueueItem item = this.PersistenceContext.Load<WorkQueueItem>(request.WorkQueueItemRef);
+			var item = this.PersistenceContext.Load<WorkQueueItem>(request.WorkQueueItemRef);
 			item.Reschedule();
 			this.PersistenceContext.SynchState();
 			return new ResubmitWorkQueueItemResponse(new WorkQueueItemAssembler().CreateWorkQueueItemSummary(item, this.PersistenceContext));

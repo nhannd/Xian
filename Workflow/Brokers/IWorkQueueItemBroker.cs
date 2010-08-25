@@ -35,8 +35,6 @@ namespace ClearCanvas.Workflow.Brokers
 {
 	public partial interface IWorkQueueItemBroker
 	{
-		IList<string> GetTypes();
-
 		/// <summary>
 		/// Gets pending work queue items of the specified type.
 		/// </summary>

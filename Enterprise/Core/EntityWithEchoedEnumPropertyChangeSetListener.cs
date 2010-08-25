@@ -29,30 +29,48 @@
 
 #endregion
 
-using System.Collections.Generic;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Enterprise.Hibernate.Hql;
-using ClearCanvas.Common;
-
-namespace ClearCanvas.Workflow.Hibernate.Brokers
+namespace ClearCanvas.Enterprise.Core
 {
-	public partial class WorkQueueItemBroker
+	public abstract class EntityWithEchoedEnumPropertyChangeSetListener<TChangedEntityClass, TEchoedEnumClass> : IEntityChangeSetListener
+		where TChangedEntityClass : Entity
+		where TEchoedEnumClass : EnumValue
 	{
-		#region IWorkQueueItemBroker Members
+		public abstract string GetEchoedEnumCodeFromEntity(TChangedEntityClass changedEntity);
 
-		public IList<WorkQueueItem> GetPendingItems(string type, int maxItems)
+		#region Implementation of IEntityChangeSetListener
+
+		public void PreCommit(EntityChangeSetPreCommitArgs args)
 		{
-			var query = new HqlQuery("from WorkQueueItem item");
-			query.Conditions.Add(new HqlCondition("item.Type = ?", type));
-			query.Conditions.Add(new HqlCondition("item.Status = ?", WorkQueueStatus.PN));
+			foreach (var entityChange in args.ChangeSet.Changes)
+			{
+				if (entityChange.GetEntityClass() != typeof(TChangedEntityClass))
+					continue;
 
-			var now = Platform.Time;
-			query.Conditions.Add(new HqlCondition("item.ScheduledTime < ?", now));
-			query.Conditions.Add(new HqlCondition("(item.ExpirationTime is null or item.ExpirationTime > ?)", now));
-			query.Sorts.Add(new HqlSort("item.ScheduledTime", true, 0));
-			query.Page = new SearchResultPage(0, maxItems);
+				var workQueueItem = args.PersistenceContext.Load<TChangedEntityClass>(entityChange.EntityRef);
+				var queueItemTypeBroker = args.PersistenceContext.GetBroker<IEnumBroker>();
 
-			return ExecuteHql<WorkQueueItem>(query);
+				var shadowEnumCode = GetEchoedEnumCodeFromEntity(workQueueItem);
+				try
+				{
+					var foo = queueItemTypeBroker.TryFind(typeof(TEchoedEnumClass), shadowEnumCode);
+				}
+				catch (EnumValueNotFoundException)
+				{
+					var displayOrder = queueItemTypeBroker.Load(typeof(TEchoedEnumClass), true).Count;
+
+					queueItemTypeBroker.AddValue(
+						typeof(TEchoedEnumClass),
+						shadowEnumCode,
+						shadowEnumCode,
+						string.Empty,
+						displayOrder,
+						false);
+				}
+			}
+		}
+
+		public void PostCommit(EntityChangeSetPostCommitArgs args)
+		{
 		}
 
 		#endregion

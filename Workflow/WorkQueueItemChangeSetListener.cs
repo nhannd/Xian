@@ -29,32 +29,22 @@
 
 #endregion
 
-using System.Collections.Generic;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Workflow.Hibernate.Brokers
+namespace ClearCanvas.Workflow
 {
-	public partial class WorkQueueItemBroker
+	[ExtensionOf(typeof(EntityChangeSetListenerExtensionPoint))]
+	public class WorkQueueItemChangeSetListener : EntityWithEchoedEnumPropertyChangeSetListener<WorkQueueItem, WorkQueueItemTypeEnum>
 	{
-		#region IWorkQueueItemBroker Members
+		#region Implementation of EntityWithEchoedEnumPropertyChangeSetListener
 
-		public IList<WorkQueueItem> GetPendingItems(string type, int maxItems)
+		public override string GetEchoedEnumCodeFromEntity(WorkQueueItem workQueueItem)
 		{
-			var query = new HqlQuery("from WorkQueueItem item");
-			query.Conditions.Add(new HqlCondition("item.Type = ?", type));
-			query.Conditions.Add(new HqlCondition("item.Status = ?", WorkQueueStatus.PN));
-
-			var now = Platform.Time;
-			query.Conditions.Add(new HqlCondition("item.ScheduledTime < ?", now));
-			query.Conditions.Add(new HqlCondition("(item.ExpirationTime is null or item.ExpirationTime > ?)", now));
-			query.Sorts.Add(new HqlSort("item.ScheduledTime", true, 0));
-			query.Page = new SearchResultPage(0, maxItems);
-
-			return ExecuteHql<WorkQueueItem>(query);
+			return workQueueItem.Type;
 		}
 
 		#endregion
 	}
+
 }
