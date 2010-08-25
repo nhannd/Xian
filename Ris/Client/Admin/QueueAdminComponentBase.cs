@@ -41,13 +41,13 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-	public interface IWorkQueueToolContext<TQueueItemDetail> : IToolContext
+	public interface IQueueItemToolContext<TQueueItemDetail> : IToolContext
 	{
 		IDesktopWindow DesktopWindow { get; }
 		ClickHandlerDelegate DefaultAction { get; set; }
 
-		TQueueItemDetail SelectedWorkQueueItem { get; }
-		event EventHandler SelectedWorkQueueItemChanged;
+		TQueueItemDetail SelectedQueueItem { get; }
+		event EventHandler SelectedQueueItemChanged;
 
 		void Refresh();
 	}
@@ -56,11 +56,11 @@ namespace ClearCanvas.Ris.Client.Admin
 		where TQueueItemSummary : DataContractBase
 		where TQueueItemDetail : DataContractBase
 	{
-		protected class WorkQueueItemPreviewComponent : DHtmlComponent
+		protected class QueueItemPreviewComponent : DHtmlComponent
 		{
 			private readonly QueueAdminComponentBase<TQueueItemSummary, TQueueItemDetail> _owner;
 
-			public WorkQueueItemPreviewComponent(QueueAdminComponentBase<TQueueItemSummary, TQueueItemDetail> owner)
+			public QueueItemPreviewComponent(QueueAdminComponentBase<TQueueItemSummary, TQueueItemDetail> owner)
 			{
 				_owner = owner;
 			}
@@ -89,11 +89,11 @@ namespace ClearCanvas.Ris.Client.Admin
 			}
 		}
 
-		protected class WorkQueueToolContext : ToolContext, IWorkQueueToolContext<TQueueItemDetail>
+		protected class QueueItemToolContext : ToolContext, IQueueItemToolContext<TQueueItemDetail>
 		{
 			private readonly QueueAdminComponentBase<TQueueItemSummary, TQueueItemDetail> _component;
 
-			public WorkQueueToolContext(QueueAdminComponentBase<TQueueItemSummary, TQueueItemDetail> component)
+			public QueueItemToolContext(QueueAdminComponentBase<TQueueItemSummary, TQueueItemDetail> component)
 			{
 				_component = component;
 			}
@@ -111,12 +111,12 @@ namespace ClearCanvas.Ris.Client.Admin
 				set { _component._defaultAction = value; }
 			}
 
-			public TQueueItemDetail SelectedWorkQueueItem
+			public TQueueItemDetail SelectedQueueItem
 			{
 				get { return _component.SelectedWorkQueueItem; }
 			}
 
-			public event EventHandler SelectedWorkQueueItemChanged
+			public event EventHandler SelectedQueueItemChanged
 			{
 				add { _component.SelectedHL7QueueItemChanged += value; }
 				remove { _component.SelectedHL7QueueItemChanged -= value; }
@@ -164,7 +164,7 @@ namespace ClearCanvas.Ris.Client.Admin
 		protected QueueAdminComponentBase(Table<TQueueItemSummary> queue, IExtensionPoint extensionPoint)
 		{
 			_queue = queue;
-			_toolSet = new ToolSet(extensionPoint, new WorkQueueToolContext(this));
+			_toolSet = new ToolSet(extensionPoint, new QueueItemToolContext(this));
 		}
 
 		public abstract string PreviewPageUrl { get; }
@@ -178,7 +178,7 @@ namespace ClearCanvas.Ris.Client.Admin
 			InitialisePaging();
 			InitialiseFormData();
 
-			_previewComponent = new WorkQueueItemPreviewComponent(this);
+			_previewComponent = new QueueItemPreviewComponent(this);
 			_previewComponentHost = new ChildComponentHost(this.Host, _previewComponent);
 			_previewComponentHost.StartComponent();
 
@@ -276,7 +276,7 @@ namespace ClearCanvas.Ris.Client.Admin
 			EventsHelper.Fire(_selectedWorkQueueItemChanged, this, EventArgs.Empty);
 		}
 
-		#region WorkQueueToolContext Helpers
+		#region QueueItemToolContext Helpers
 
 		public TQueueItemDetail SelectedWorkQueueItem
 		{
