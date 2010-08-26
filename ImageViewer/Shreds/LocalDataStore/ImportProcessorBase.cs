@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				private readonly FileImportJobInformation _fileImportJobInformation;
 
 				public FileImportInformation(FileImportJobInformation jobInformation, string file, FileImportBehaviour importBehaviour, BadFileBehaviour badFileBehaviour)
-					: base(file, importBehaviour, badFileBehaviour)
+					: base(file, importBehaviour, badFileBehaviour, jobInformation.UserIdentityContext)
 				{
 					_fileImportJobInformation = jobInformation;
 				}
@@ -72,12 +72,17 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				private readonly Queue<string> _filesToImport;
 				private readonly BadFileBehaviour _badFileBehaviour;
 				private readonly FileImportBehaviour _fileImportBehaviour;
+				private UserIdentityContext _userIdentityContext;
 
 				public FileImportJobInformation(ImportProgressItem progressItem, FileImportBehaviour fileImportBehaviour, BadFileBehaviour badFileBehaviour)
+					: this(progressItem, fileImportBehaviour, badFileBehaviour, null) {}
+
+				public FileImportJobInformation(ImportProgressItem progressItem, FileImportBehaviour fileImportBehaviour, BadFileBehaviour badFileBehaviour, UserIdentityContext userIdentityContext)
 				{
 					_fileImportBehaviour = fileImportBehaviour;
 					_badFileBehaviour = badFileBehaviour;
 					_progressItem = progressItem;
+					_userIdentityContext = userIdentityContext ?? new UserIdentityContext();
 					_filesToImport = new Queue<string>();
 				}
 
@@ -94,6 +99,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				public BadFileBehaviour BadFileBehaviour
 				{
 					get { return _badFileBehaviour; }
+				}
+
+				public UserIdentityContext UserIdentityContext
+				{
+					get { return _userIdentityContext; }
 				}
 
 				public int NumberOfFilesInQueue
@@ -113,6 +123,15 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 					return _filesToImport.Dequeue();
 				}
+
+				public void DisposeClientUserContext()
+				{
+					if (_userIdentityContext != null)
+					{
+						_userIdentityContext.Dispose();
+						_userIdentityContext = null;
+					}
+				}
 			}
 
 			private void AddNextFileToImportQueue(FileImportJobInformation jobInformation)
@@ -120,10 +139,16 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				lock (jobInformation.SyncRoot)
 				{
 					if (jobInformation.ProgressItem.Removed)
+					{
+						jobInformation.DisposeClientUserContext();
 						return;
+					}
 
 					if (jobInformation.ProgressItem.Cancelled)
+					{
+						jobInformation.DisposeClientUserContext();
 						return;
+					}
 
 					string file = jobInformation.Dequeue();
 					if (file == null)
@@ -170,6 +195,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					jobInformation.ProgressItem.Cancelled = true;
 					jobInformation.ProgressItem.StatusMessage = SR.MessageCancelled;
 					jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+					if (jobInformation.ProgressItem.IsImportComplete())
+						jobInformation.DisposeClientUserContext();
 
 					UpdateProgress(jobInformation.ProgressItem);
 				}
@@ -198,6 +225,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 					jobInformation.ProgressItem.Removed = true;
 					jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.None;
+					jobInformation.DisposeClientUserContext();
 
 					UpdateProgress(jobInformation.ProgressItem);
 				}
@@ -216,6 +244,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					if (jobInformation.ProgressItem.Removed)
 					{
 						//forget it, just return.
+						jobInformation.DisposeClientUserContext();
 						return;
 					}
 
@@ -246,12 +275,14 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						{
 							jobInformation.ProgressItem.StatusMessage = SR.MessageWaitingForFilesToBecomeAvailable;
 							jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+							jobInformation.DisposeClientUserContext();
 						}
 
 						if (jobInformation.ProgressItem.IsComplete())
 						{
 							jobInformation.ProgressItem.StatusMessage = SR.MessageCompleteWithFailures;
 							jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+							jobInformation.DisposeClientUserContext();
 						}
 
 						AddNextFileToImportQueue(jobInformation);
@@ -268,6 +299,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						{
 							jobInformation.ProgressItem.StatusMessage = SR.MessageWaitingForFilesToBecomeAvailable;
 							jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+							jobInformation.DisposeClientUserContext();
 						}
 
 						AddNextFileToImportQueue(jobInformation);
@@ -279,6 +311,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						if (jobInformation.ProgressItem.IsComplete())
 						{
 							jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+							jobInformation.DisposeClientUserContext();
 							
 							if (jobInformation.ProgressItem.TotalDataStoreCommitFailures == 0)
 								jobInformation.ProgressItem.StatusMessage = SR.MessageComplete;
@@ -381,6 +414,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						if (jobInformation.NumberOfFilesInQueue == 0)
 						{
 							OnNoFilesToImport(jobInformation);
+							jobInformation.DisposeClientUserContext();
 						}
 						else
 						{
