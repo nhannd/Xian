@@ -78,6 +78,7 @@
     <Compile Include="Alerts\ReconciliationAlert.cs" />
     <Compile Include="Allergy.cs" />
     <Compile Include="AttachedDocument.cs" />
+    <Compile Include="Brokers\IPerformedProcedureStepBroker.cs" />
     <Compile Include="Brokers\IProtocolWorklistItemBroker.cs" />
     <Compile Include="Brokers\IExternalPractitionerBroker.cs" />
     <Compile Include="Brokers\IExternalPractitionerContactPointBroker.cs" />
