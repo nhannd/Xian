@@ -345,6 +345,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				IList<string> fileExtensions, 
 				bool recursive)
 			{
+				// no impersonation of the job's user identity context is necessary inside the task delegate since
+				// the .NET thread pool automatically captures the current execution context for you, which includes
+				// the impersonated client credentials if you're calling this from the import service implementation
 				WaitCallback enumerateFilesToImport = delegate(object nothing)
 				{
 					List<string> extensions = new List<string>();
