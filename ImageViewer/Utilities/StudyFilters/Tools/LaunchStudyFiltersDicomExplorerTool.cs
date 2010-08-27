@@ -40,11 +40,11 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 {
-	[ButtonAction("Open", "dicomstudybrowser-toolbar/ToolbarOpenInStudyFilters", "Open")]
-	[MenuAction("Open", "dicomstudybrowser-contextmenu/MenuOpenInStudyFilters", "Open")]
+	[ButtonAction("Open", "dicomstudybrowser-toolbar/ToolbarFilterStudy", "Open")]
+	[MenuAction("Open", "dicomstudybrowser-contextmenu/MenuFilterStudy", "Open")]
 	[VisibleStateObserver("Open", "Visible", "VisibleChanged")]
 	[EnabledStateObserver("Open", "Enabled", "EnabledChanged")]
-	[Tooltip("Open", "TooltipOpenInStudyFilters")]
+	[Tooltip("Open", "TooltipFilterStudy")]
 	[IconSet("Open", IconScheme.Colour, "Icons.StudyFilterToolSmall.png", "Icons.StudyFilterToolMedium.png", "Icons.StudyFilterToolLarge.png")]
 	[ViewerActionPermission("Open", AuthorityTokens.StudyFilters)]
 	[ExtensionOf(typeof (StudyBrowserToolExtensionPoint))]

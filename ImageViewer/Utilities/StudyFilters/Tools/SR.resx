@@ -120,6 +120,9 @@
   <data name="MenuDumpFiles" xml:space="preserve">
     <value>&amp;Dump Files</value>
   </data>
+  <data name="MenuFilterStudy" xml:space="preserve">
+    <value>&amp;Filter Study</value>
+  </data>
   <data name="MenuImportToLocalDataStore" xml:space="preserve">
     <value>&amp;Import to Local Data Store</value>
   </data>
@@ -135,6 +138,9 @@
   <data name="ToolbarDumpFiles" xml:space="preserve">
     <value>Dump Files</value>
   </data>
+  <data name="ToolbarFilterStudy" xml:space="preserve">
+    <value>Filter Study</value>
+  </data>
   <data name="ToolbarImportToLocalDataStore" xml:space="preserve">
     <value>Import to Local Data Store</value>
   </data>
@@ -143,6 +149,9 @@
   </data>
   <data name="TooltipDumpFiles" xml:space="preserve">
     <value>Dumps the selected instances to the DICOM Editor</value>
+  </data>
+  <data name="TooltipFilterStudy" xml:space="preserve">
+    <value>Filter Study</value>
   </data>
   <data name="TooltipImportToLocalDataStore" xml:space="preserve">
     <value>Imports the selected instances to the Local Data Store</value>
