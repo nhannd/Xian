@@ -42,10 +42,10 @@
 			// 
 			// _pnlNodeProperties
 			// 
+			resources.ApplyResources(this._pnlNodeProperties, "_pnlNodeProperties");
 			this._pnlNodeProperties.Controls.Add(this._lyoNodePropertiesExtensions);
 			this._pnlNodeProperties.Controls.Add(this._lblTooltip);
 			this._pnlNodeProperties.Controls.Add(this._pnlTitleBar);
-			resources.ApplyResources(this._pnlNodeProperties, "_pnlNodeProperties");
 			this._pnlNodeProperties.Name = "_pnlNodeProperties";
 			// 
 			// _lyoNodePropertiesExtensions

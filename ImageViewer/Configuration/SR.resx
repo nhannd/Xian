@@ -182,8 +182,14 @@ Please choose another Server Group Name.</value>
   <data name="MessageKeyStrokeReserved" xml:space="preserve">
     <value>The shortcut {0} is reserved and cannot be reassigned.</value>
   </data>
+  <data name="MessageMouseButtonActiveToolAssignmentConflict" xml:space="preserve">
+    <value>The global tool for {0} is already assigned to {1}. You will not be able to use the global shortcut for {1} whenever this tool is active. Do you still wish to assign this mouse button?</value>
+  </data>
   <data name="MessageMouseButtonGlobalToolAlreadyAssigned" xml:space="preserve">
     <value>The global tool for {0} is already assigned to {1}. Do you wish to reassign the mouse button shortcut?</value>
+  </data>
+  <data name="MessageMouseButtonGlobalToolAssignmentConflict" xml:space="preserve">
+    <value>There are active tools for {0} (e.g. {1}). You will not be able to use this global shortcut whenever {1} is active. Do you still wish to assign this mouse button?</value>
   </data>
   <data name="MessageMouseButtonInitialToolAlreadyAssigned" xml:space="preserve">
     <value>The default tool for {0} is already assigned to {1}. Do you wish to reassign the mouse button?</value>

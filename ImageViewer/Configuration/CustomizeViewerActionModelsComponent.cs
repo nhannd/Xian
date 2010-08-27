@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			NodePropertiesValidationPolicy validationPolicy = new NodePropertiesValidationPolicy();
 			validationPolicy.AddRule<AbstractActionModelTreeLeafAction>("CheckState", (n, value) => n.ActionId != typeof (CustomizeViewerActionModelTool).FullName + ":customize" || Equals(value, CheckState.Checked));
 			validationPolicy.AddRule<AbstractActionModelTreeLeafAction>("CheckState", (n, value) => n.ActionId != "ClearCanvas.Desktop.Configuration.Tools.OptionsTool:show" || Equals(value, CheckState.Checked));
-			validationPolicy.AddRule<AbstractActionModelTreeLeafAction>("ActiveMouseButtons", (n, value) => !Equals(value, XMouseButtons.None));
+			validationPolicy.AddRule<AbstractActionModelTreeLeafAction, XMouseButtons>("ActiveMouseButtons", ValidateMouseToolMouseButton);
 			validationPolicy.AddRule<AbstractActionModelTreeLeafClickAction, XKeys>("KeyStroke", this.ValidateClickActionKeyStroke);
 			validationPolicy.AddRule<AbstractActionModelTreeLeafAction, bool>("InitiallyActive", this.ValidateMouseToolInitiallyActive);
 			validationPolicy.AddRule<AbstractActionModelTreeLeafAction, XMouseButtonCombo>("GlobalMouseButtonCombo", this.ValidateDefaultMouseButtons);
@@ -192,6 +192,33 @@ namespace ClearCanvas.ImageViewer.Configuration
 			}
 		}
 
+		private bool ValidateMouseToolMouseButton(AbstractActionModelTreeLeafAction node, XMouseButtons mouseButton)
+		{
+			// if we're just synchronizing the value due to another update action, short the validation request
+			if (_updatingKeyStrokes)
+				return true;
+
+			// check that we're not setting it to none
+			if (mouseButton == XMouseButtons.None)
+				return false;
+
+			// check for presence of a global tool for this button
+			var defaultMouseButtonCombo = new XMouseButtonCombo(mouseButton, ModifierFlags.None);
+			if (_defaultMouseToolsMap.IsAssigned(defaultMouseButtonCombo))
+			{
+				IList<AbstractActionModelTreeLeafAction> actions = _actionMap[_defaultMouseToolsMap[defaultMouseButtonCombo]];
+				if (actions.Count > 0)
+				{
+					string message = string.Format(SR.MessageMouseButtonActiveToolAssignmentConflict, defaultMouseButtonCombo, actions[0].Label);
+					DialogBoxAction result = base.Host.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo);
+					if (result != DialogBoxAction.Yes)
+						return false;
+				}
+			}
+
+			return true;
+		}
+
 		private void UpdateMouseToolMouseButton(AbstractActionModelTreeLeafAction node, XMouseButtons mouseButton)
 		{
 			if (_updatingKeyStrokes)
@@ -278,13 +305,27 @@ namespace ClearCanvas.ImageViewer.Configuration
 			if (_updatingKeyStrokes)
 				return true;
 
-			// check for presence of another initial tool for this button
+			// check for presence of another global tool for this button
 			if (_defaultMouseToolsMap.IsAssignedToOther(defaultMouseButtonCombo, node.ActionId))
 			{
 				IList<AbstractActionModelTreeLeafAction> actions = _actionMap[_defaultMouseToolsMap[defaultMouseButtonCombo]];
 				if (actions.Count > 0)
 				{
 					string message = string.Format(SR.MessageMouseButtonGlobalToolAlreadyAssigned, defaultMouseButtonCombo, actions[0].Label);
+					DialogBoxAction result = base.Host.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo);
+					if (result != DialogBoxAction.Yes)
+						return false;
+				}
+			}
+
+			// check for presence of an active tool for this button
+			var unmodifiedMouseButton = defaultMouseButtonCombo.MouseButtons;
+			if (defaultMouseButtonCombo.Modifiers == ModifierFlags.None && _mouseButtonMap[unmodifiedMouseButton].Count > 0)
+			{
+				IList<AbstractActionModelTreeLeafAction> actions = _actionMap[_mouseButtonMap[unmodifiedMouseButton][0]];
+				if (actions.Count > 0)
+				{
+					string message = string.Format(SR.MessageMouseButtonGlobalToolAssignmentConflict, unmodifiedMouseButton, actions[0].Label);
 					DialogBoxAction result = base.Host.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo);
 					if (result != DialogBoxAction.Yes)
 						return false;
