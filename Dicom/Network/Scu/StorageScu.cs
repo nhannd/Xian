@@ -281,6 +281,19 @@ namespace ClearCanvas.Dicom.Network.Scu
 				FailRemaining(DicomStatuses.QueryRetrieveMoveDestinationUnknown);
 				throw;
 			}
+
+			// if the operation terminated prematurely with a failure status, fail any remaining instances
+			switch (Status)
+			{
+				case ScuOperationStatus.AssociationRejected:
+				case ScuOperationStatus.ConnectFailed:
+				case ScuOperationStatus.Failed:
+				case ScuOperationStatus.NetworkError:
+				case ScuOperationStatus.TimeoutExpired:
+				case ScuOperationStatus.UnexpectedMessage:
+					FailRemaining(DicomStatuses.ProcessingFailure);
+					break;
+			}
 		}
 
 		/// <summary>

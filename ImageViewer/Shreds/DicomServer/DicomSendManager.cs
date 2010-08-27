@@ -52,6 +52,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 	internal interface ISendOperation
 	{
 		SendOperationReference Reference { get; }
+
+		/// <summary>
+		/// Gets a value indicating whether or not the operation as a whole (as opposed to an individual sub-operation) has failed.
+		/// </summary>
+		/// <remarks>
+		/// Typically, this refers to exceptions being thrown on the connection socket.
+		/// </remarks>
+		bool Failed { get; }
 		bool Canceled { get; }
 
 		int RemainingSubOperations { get; }
@@ -191,6 +199,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			private void DoSend()
 			{
+				Failed = false;
 				try
 				{
 					SendInternal();
@@ -198,10 +207,31 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				}
 				catch (Exception e)
 				{
+					// set the connection failure flag
+					Failed = true;
+
+					// when an exception is thrown the callback isn't called for additional subop failures, so we have to call it manually here
+					if (_callback != null)
+					{
+						try
+						{
+							_callback(this);
+						}
+						catch (Exception ex)
+						{
+							Platform.Log(LogLevel.Error, ex, "Unexpected error thrown from SendScu callback.");
+						}
+					}
+
 					if (base.Status == ScuOperationStatus.ConnectFailed)
 					{
 						OnSendError(String.Format("Unable to connect to remote server ({0}: {1}).",
 							RemoteAE, base.FailureDescription ?? "no failure description provided"));
+					}
+					else if (StorageInstances.Count == 0)
+					{
+						// if the storage instance count is zero, we know exactly why the storage operation failed
+						OnSendError(String.Format("Store operation failed (nothing to store)."));
 					}
 					else
 					{
@@ -462,6 +492,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 
 			#region IStorageScu Members
+
+			/// <summary>
+			/// Gets a value indicating whether or not the operation as a whole (as opposed to an individual sub-operation) has failed.
+			/// </summary>
+			/// <remarks>
+			/// Typically, this refers to exceptions being thrown on the connection socket.
+			/// </remarks>
+			public bool Failed { get; private set; }
 
 			public SendOperationReference Reference
 			{
