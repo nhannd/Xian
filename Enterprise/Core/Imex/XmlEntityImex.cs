@@ -47,7 +47,7 @@ namespace ClearCanvas.Enterprise.Core.Imex
     {
         #region ExportItem class
 
-        class ExportItem : IExportItem
+        protected class ExportItem : IExportItem
         {
             private readonly TDataContract _data;
 
@@ -55,6 +55,11 @@ namespace ClearCanvas.Enterprise.Core.Imex
             {
                 _data = data;
             }
+
+        	public TDataContract Data
+        	{
+        		get { return _data; }
+        	}
 
             public void Write(XmlWriter writer)
             {
