@@ -47,6 +47,13 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 	[TestFixture]
 	public class FusionPresentationImageTextAnnotationTests
 	{
+		[TestFixtureSetUp]
+		public void Init()
+		{
+			Platform.SetExtensionFactory(new UnitTestExtensionFactory(new Dictionary<Type, Type> {{typeof (AnnotationItemProviderExtensionPoint), typeof (FusionImageAnnotationItemProvider)}}));
+			AnnotationLayoutFactory.Reinitialize();
+		}
+
 		[Test]
 		public void TestSameFrameOfReference()
 		{
@@ -55,20 +62,28 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			var seriesPET = CreateSopSeries(25, "PatientA", "StudyA", "SeriesPET", 2, "FrameA", Modality.PT);
 			var displaySets = CreateDisplaySets(factory, Combine(seriesCT, seriesPET));
 
-			Platform.CheckTrue(displaySets.Count > 0, "displaySets should not be empty.");
-
-			foreach (var displaySet in displaySets)
+			try
 			{
-				foreach (var image in displaySet.PresentationImages)
-				{
-					var annotationLayoutProvider = (IAnnotationLayoutProvider) image;
-					var annotationItem = CollectionUtils.SelectFirst(annotationLayoutProvider.AnnotationLayout.AnnotationBoxes,
-					                                                 b => b.AnnotationItem is FusionImageAnnotationItemProvider.MismatchedFrameOfReferenceFusionImageAnnotationItem);
-					Assert.IsNotNull(annotationItem, "The MismatchedFrameOfReferenceFusionImageAnnotationItem is missing.");
+				Platform.CheckTrue(displaySets.Count > 0, "displaySets should not be empty.");
 
-					var annotationText = annotationItem.GetAnnotationText(image);
-					Assert.AreEqual(string.Empty, annotationText, "Fusion image where source data have same frames of reference should not indicate FoR MISMATCH on text overlay.");
+				foreach (var displaySet in displaySets)
+				{
+					foreach (var image in displaySet.PresentationImages)
+					{
+						var annotationLayoutProvider = (IAnnotationLayoutProvider) image;
+						var annotationItem = CollectionUtils.SelectFirst(annotationLayoutProvider.AnnotationLayout.AnnotationBoxes,
+						                                                 b => b.AnnotationItem is FusionImageAnnotationItemProvider.MismatchedFrameOfReferenceFusionImageAnnotationItem);
+						Assert.IsNotNull(annotationItem, "The MismatchedFrameOfReferenceFusionImageAnnotationItem is missing.");
+
+						var annotationText = annotationItem.GetAnnotationText(image);
+						Assert.AreEqual(string.Empty, annotationText, "Fusion image where source data have same frames of reference should not indicate FoR MISMATCH on text overlay.");
+					}
 				}
+			}
+			finally
+			{
+				Dispose(displaySets);
+				Dispose(seriesCT, seriesPET);
 			}
 		}
 
@@ -79,21 +94,28 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			var seriesCT = CreateSopSeries(25, "PatientA", "StudyA", "SeriesCT", 1, "FrameA", Modality.CT);
 			var seriesPET = CreateSopSeries(25, "PatientA", "StudyA", "SeriesPET", 2, "FrameB", Modality.PT);
 			var displaySets = CreateDisplaySets(factory, Combine(seriesCT, seriesPET));
-
-			Platform.CheckTrue(displaySets.Count > 0, "displaySets should not be empty.");
-
-			foreach (var displaySet in displaySets)
+			try
 			{
-				foreach (var image in displaySet.PresentationImages)
-				{
-					var annotationLayoutProvider = (IAnnotationLayoutProvider) image;
-					var annotationItem = CollectionUtils.SelectFirst(annotationLayoutProvider.AnnotationLayout.AnnotationBoxes,
-					                                                 b => b.AnnotationItem is FusionImageAnnotationItemProvider.MismatchedFrameOfReferenceFusionImageAnnotationItem);
-					Assert.IsNotNull(annotationItem, "The MismatchedFrameOfReferenceFusionImageAnnotationItem is missing.");
+				Platform.CheckTrue(displaySets.Count > 0, "displaySets should not be empty.");
 
-					var annotationText = annotationItem.GetAnnotationText(image);
-					Assert.AreEqual(SR.CodeMismatchedFrameOfReference, annotationText, "Fusion image where source data have different frames of reference should indicate FoR MISMATCH on text overlay.");
+				foreach (var displaySet in displaySets)
+				{
+					foreach (var image in displaySet.PresentationImages)
+					{
+						var annotationLayoutProvider = (IAnnotationLayoutProvider) image;
+						var annotationItem = CollectionUtils.SelectFirst(annotationLayoutProvider.AnnotationLayout.AnnotationBoxes,
+						                                                 b => b.AnnotationItem is FusionImageAnnotationItemProvider.MismatchedFrameOfReferenceFusionImageAnnotationItem);
+						Assert.IsNotNull(annotationItem, "The MismatchedFrameOfReferenceFusionImageAnnotationItem is missing.");
+
+						var annotationText = annotationItem.GetAnnotationText(image);
+						Assert.AreEqual(SR.CodeMismatchedFrameOfReference, annotationText, "Fusion image where source data have different frames of reference should indicate FoR MISMATCH on text overlay.");
+					}
 				}
+			}
+			finally
+			{
+				Dispose(displaySets);
+				Dispose(seriesCT, seriesPET);
 			}
 		}
 
@@ -205,6 +227,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			foreach (var enumerable in enumerables)
 				foreach (var item in enumerable)
 					yield return item;
+		}
+
+		private static void Dispose<T>(params IEnumerable<T>[] disposableses) where T : IDisposable
+		{
+			if (disposableses != null)
+				foreach (var disposables in disposableses)
+					if (disposables != null)
+						foreach (var disposable in disposables)
+							disposable.Dispose();
 		}
 
 		private class XSopDataSource : DicomMessageSopDataSource

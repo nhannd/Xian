@@ -51,7 +51,14 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			var factory = new PETFusionDisplaySetFactory(PETFusionType.CT);
 			var displaySets = CreateDisplaySets(factory, Combine<ISopDataSource>());
 
-			Assert.IsEmpty(displaySets, "Display set factories should not throw an exception if there is nothing to create.");
+			try
+			{
+				Assert.IsEmpty(displaySets, "Display set factories should not throw an exception if there is nothing to create.");
+			}
+			finally
+			{
+				Dispose(displaySets);
+			}
 		}
 
 		[Test]
@@ -62,7 +69,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			var seriesPET = CreateSopSeries(25, "PatientA", "StudyA", "SeriesPET", 2, "FrameA", Modality.PT);
 			var displaySets = CreateDisplaySets(factory, Combine(seriesCT, seriesPET));
 
-			Assert.IsNotEmpty(displaySets, "Fusion display sets should be created for trivially simple PET-CT data.");
+			try
+			{
+				Assert.IsNotEmpty(displaySets, "Fusion display sets should be created for trivially simple PET-CT data.");
+			}
+			finally
+			{
+				Dispose(displaySets);
+				Dispose(seriesCT, seriesPET);
+			}
 		}
 
 		[Test]
@@ -73,7 +88,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			var seriesPET = CreateSopSeries(25, "PatientA", "StudyA", "SeriesPET", 2, "FrameA", Modality.PT);
 			var displaySets = CreateDisplaySets(factory, Combine(seriesMR, seriesPET));
 
-			Assert.IsEmpty(displaySets, "Fusion display sets should not be created for PET-MR using a PET-CT factory.");
+			try
+			{
+				Assert.IsEmpty(displaySets, "Fusion display sets should not be created for PET-MR using a PET-CT factory.");
+			}
+			finally
+			{
+				Dispose(displaySets);
+				Dispose(seriesMR, seriesPET);
+			}
 		}
 
 		[Test]
@@ -84,7 +107,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			var seriesMR = CreateSopSeries(25, "PatientA", "StudyA", "SeriesMR", 1, "FrameA", Modality.MR);
 			var displaySets = CreateDisplaySets(factory, Combine(seriesCT, seriesMR));
 
-			Assert.IsEmpty(displaySets, "Fusion display sets should not be created between invalid modalities (e.g. CT and MR).");
+			try
+			{
+				Assert.IsEmpty(displaySets, "Fusion display sets should not be created between invalid modalities (e.g. CT and MR).");
+			}
+			finally
+			{
+				Dispose(displaySets);
+				Dispose(seriesCT, seriesMR);
+			}
 		}
 
 		[Test]
@@ -95,7 +126,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			var seriesPET = CreateSopSeries(25, "PatientA", "StudyB", "SeriesPET", 2, "FrameA", Modality.PT);
 			var displaySets = CreateDisplaySets(factory, Combine(seriesCT, seriesPET));
 
-			Assert.IsEmpty(displaySets, "Fusion display sets should not be created for series in different studies.");
+			try
+			{
+				Assert.IsEmpty(displaySets, "Fusion display sets should not be created for series in different studies.");
+			}
+			finally
+			{
+				Dispose(displaySets);
+				Dispose(seriesCT, seriesPET);
+			}
 		}
 
 		[Test]
@@ -106,7 +145,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			var seriesPET = CreateSopSeries(25, "PatientB", "StudyB", "SeriesPET", 2, "FrameA", Modality.PT);
 			var displaySets = CreateDisplaySets(factory, Combine(seriesCT, seriesPET));
 
-			Assert.IsEmpty(displaySets, "Fusion display sets should not be created for series from different patients.");
+			try
+			{
+				Assert.IsEmpty(displaySets, "Fusion display sets should not be created for series from different patients.");
+			}
+			finally
+			{
+				Dispose(displaySets);
+				Dispose(seriesCT, seriesPET);
+			}
 		}
 
 		[Test]
@@ -117,7 +164,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			var seriesPET = CreateSopSeries(25, "PatientA", "StudyA", "SeriesPET", 2, "FrameB", Modality.PT);
 			var displaySets = CreateDisplaySets(factory, Combine(seriesCT, seriesPET));
 
-			Assert.IsNotEmpty(displaySets, "Fusion display sets should still be created even with different frames of reference.");
+			try
+			{
+				Assert.IsNotEmpty(displaySets, "Fusion display sets should still be created even with different frames of reference.");
+			}
+			finally
+			{
+				Dispose(displaySets);
+				Dispose(seriesCT, seriesPET);
+			}
 		}
 
 		[Test]
@@ -165,6 +220,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 				}
 				throw;
 			}
+			finally
+			{
+				Dispose(displaySets);
+				Dispose(seriesCT, seriesPET, seriesPETCor);
+			}
 		}
 
 		[Test]
@@ -200,6 +260,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 						Console.WriteLine(" > {0}", displaySet.Descriptor.Description);
 				}
 				throw;
+			}
+			finally
+			{
+				Dispose(displaySets);
+				Dispose(seriesCT, seriesCTAx, seriesPET, seriesPETCor, unrelatedSeries, unrelatedStudy, unrelatedPatient);
 			}
 		}
 
@@ -258,7 +323,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 		                                                           string studyId, string studyInstanceUid,
 		                                                           string seriesDesc, int seriesNumber, string seriesInstanceUid,
 		                                                           string frameOfReferenceUid, Modality modality,
-																   bool attnCorrected, bool lossyCompressed)
+		                                                           bool attnCorrected, bool lossyCompressed)
 		{
 			for (int n = 0; n < sopCount; n++)
 			{
@@ -322,6 +387,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			foreach (var enumerable in enumerables)
 				foreach (var item in enumerable)
 					yield return item;
+		}
+
+		private static void Dispose<T>(params IEnumerable<T>[] disposableses) where T : IDisposable
+		{
+			if (disposableses != null)
+				foreach (var disposables in disposableses)
+					if (disposables != null)
+						foreach (var disposable in disposables)
+							disposable.Dispose();
 		}
 
 		private class XSopDataSource : DicomMessageSopDataSource
