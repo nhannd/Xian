@@ -54,8 +54,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 
 			comboBoxDatabase.Items.Add("ImageServer");
 			comboBoxDatabase.Items.Add("MigrationTool");
-            comboBoxDatabase.Items.Add("UsageTracking");
-        }
+		}
 
 		private void buttonGenerateCode_Click(object sender, EventArgs e)
 		{
@@ -70,17 +69,13 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 			generator.EntityInterfaceFolder = textBoxEntityInterfaceFolder.Text;
 			generator.EntityInterfaceNamespace = textBoxEntityInterfaceNamespace.Text;
 
-			if (comboBoxDatabase.Text.Equals("ImageServer"))
+			if (comboBoxDatabase.SelectedText.Equals("ImageServer"))
 			{
 				generator.ConnectionStringName = "ImageServerConnectString";
 			}
-            else if (comboBoxDatabase.Text.Equals("MigrationTool"))
+			else
 			{
 				generator.ConnectionStringName = "MonarchConnectString";
-			}
-            else if (comboBoxDatabase.Text.Equals("UsageTracking"))
-			{
-                generator.ConnectionStringName = "UsageTrackingConnectString";
 			}
 
 			generator.Generate();
@@ -124,16 +119,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 				textBoxEntityInterfaceFolder.Text = "c:\\Projects\\Monarch\\Monarch\\Model\\EntityBrokers";
 				textBoxEntityImplementationFolder.Text = "c:\\Projects\\Monarch\\Monarch\\Model\\SqlServer2005\\EntityBrokers";
 			}
-            if (comboBoxDatabase.SelectedItem.Equals("UsageTracking"))
-            {
-                textBoxModelNamespace.Text = "ClearCanvas.UsageTracking.Model";
-                textBoxEntityInterfaceNamespace.Text = "ClearCanvas.UsageTracking.Model.EntityBrokers";
-                textBoxEntityImplementationNamespace.Text = "ClearCanvas.UsageTracking.Model.SqlServer.EntityBrokers";
-                textBoxModelFolder.Text = "c:\\Projects\\Jin\\UsageTracking\\Model";
-                textBoxEntityInterfaceFolder.Text = "c:\\Projects\\Jin\\UsageTracking\\Model\\EntityBrokers";
-                textBoxEntityImplementationFolder.Text = "c:\\Projects\\Jin\\UsageTracking\\Model\\SqlServer\\EntityBrokers";
-            }
-            this.Refresh();
+			this.Refresh();
 		}
 	}
 }

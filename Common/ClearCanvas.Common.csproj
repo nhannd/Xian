@@ -39,9 +39,6 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-    <TargetFrameworkSubset>
-    </TargetFrameworkSubset>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -108,7 +105,6 @@
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
-    <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
@@ -363,17 +359,6 @@
     <Compile Include="Shreds\QueueProcessorShred.cs" />
     <Compile Include="Shreds\Shred.cs" />
     <Compile Include="Shreds\ShredExtensionPoint.cs" />
-    <Compile Include="UsageTracking\IUsageTracking.cs" />
-    <Compile Include="UsageTracking\RegisterRequest.cs" />
-    <Compile Include="UsageTracking\UsageTrackingSettings.cs" />
-    <Compile Include="UsageTracking\UsageTrackingSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>UsageTrackingSettings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="UsageTracking\UsageMessage.cs" />
-    <Compile Include="UsageTracking\UsageTracking.cs" />
-    <Compile Include="UsageTracking\UsageTrackingServiceClient.cs" />
     <Compile Include="Utilities\FtpFileTransfer.cs" />
     <Compile Include="Utilities\IObservableList.cs" />
     <Compile Include="Utilities\IRemoteFileTransfer.cs" />
@@ -406,10 +391,6 @@
     <None Include="ProductSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ProductSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="UsageTracking\UsageTrackingSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>UsageTrackingSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
