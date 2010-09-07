@@ -47,7 +47,7 @@ namespace ClearCanvas.Enterprise.Core.Imex
     {
         #region ExportItem class
 
-        protected class ExportItem : IExportItem
+        class ExportItem : IExportItem
         {
             private readonly TDataContract _data;
 
@@ -55,11 +55,6 @@ namespace ClearCanvas.Enterprise.Core.Imex
             {
                 _data = data;
             }
-
-        	public TDataContract Data
-        	{
-        		get { return _data; }
-        	}
 
             public void Write(XmlWriter writer)
             {
@@ -103,7 +98,7 @@ namespace ClearCanvas.Enterprise.Core.Imex
 
         #region Protected overrides
 
-        protected override IEnumerable<IExportItem> ExportCore()
+        protected sealed override IEnumerable<IExportItem> ExportCore()
         {
             bool more = true;
             for (int row = 0; more; row += ItemsPerReadTransaction)
@@ -125,7 +120,7 @@ namespace ClearCanvas.Enterprise.Core.Imex
             }
         }
 
-        protected override void ImportCore(IEnumerable<IImportItem> items)
+		protected sealed override void ImportCore(IEnumerable<IImportItem> items)
         {
             IEnumerator<IImportItem> enumerator = items.GetEnumerator();
             for(bool more = true; more; )
