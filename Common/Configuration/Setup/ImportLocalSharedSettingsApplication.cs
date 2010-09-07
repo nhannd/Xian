@@ -29,57 +29,40 @@
 
 #endregion
 
-using System.ServiceProcess;
 using System;
-using ClearCanvas.Common.Configuration;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Server.ShredHost;
+using System.Xml;
 
-namespace ClearCanvas.Server.ShredHostService
+namespace ClearCanvas.Common.Configuration.Setup
 {
-    static class Program
-    {
-		private class CommandLine : Common.Utilities.CommandLine
+	[ExtensionOf(typeof(ApplicationRootExtensionPoint))]
+	internal class ImportLocalSharedSettingsApplication : IApplicationRoot
+	{
+		private class CommandLine : Utilities.CommandLine
 		{
 			public CommandLine(string[] args)
 				: base(args)
-			{}
+			{
+			}
 
-			[CommandLineParameter("service", "s", "Instructs the application that it is to run as a service.", Required = false)]
-			public bool RunAsService { get; set; }
-
-			[CommandLineParameter("migrate", "m", "Migrates settings from a previous version of the application, given the previous config filename.", Required = false)]
-			public string PreviousExeConfigurationFilename { get; set; }
+			[CommandLineParameter(0, "The name of the local file where settings should be imported from.", Required = true)]
+			public string ConfigurationFilename { get; set; }
 		}
 
-    	/// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        static void Main(string[] args)
-        {
-			var commandLine = new CommandLine(args);
+		#region IApplicationRoot Members
 
-			if (commandLine.RunAsService)
-			{
-				var ServicesToRun = new ServiceBase[] { new ShredHostService() };
-				ServiceBase.Run(ServicesToRun);
-			}
-			else if (!String.IsNullOrEmpty(commandLine.PreviousExeConfigurationFilename))
-			{
-				var groups = SettingsGroupDescriptor.ListInstalledLocalSettingsGroups();
-				foreach (var group in groups)
-					SettingsMigrator.MigrateSharedSettings(group, commandLine.PreviousExeConfigurationFilename);
+		public void RunApplication(string[] args)
+		{
+			CommandLine commandLine = new CommandLine(args);
 
-				ShredSettingsMigrator.MigrateAll(commandLine.PreviousExeConfigurationFilename);
-			}
-			else
+			foreach (SettingsGroupDescriptor group in SettingsGroupDescriptor.ListInstalledLocalSettingsGroups())
 			{
-				ShredHostService.InternalStart();
-				Console.WriteLine("Press <Enter> to terminate the ShredHost.");
-				Console.WriteLine();
-				Console.ReadLine();
-				ShredHostService.InternalStop();
+				Type type = Type.GetType(group.AssemblyQualifiedTypeName, true);
+				var settings = ApplicationSettingsHelper.GetSettingsClassInstance(type);
+				ApplicationSettingsExtensions.ImportSharedSettings(settings, commandLine.ConfigurationFilename);
 			}
-        }
-    }
+		}
+
+		#endregion
+	}
 }

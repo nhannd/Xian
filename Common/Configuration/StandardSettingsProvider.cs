@@ -66,6 +66,13 @@ namespace ClearCanvas.Common.Configuration
 			_appName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
 		}
 
+		static StandardSettingsProvider()
+		{
+			IsLocal = new SettingsStoreExtensionPoint().ListExtensions().Length == 0;
+		}
+
+		internal static bool IsLocal { get; private set; }
+
 		#region SettingsProvider overrides
 
 		/// <summary>
@@ -170,7 +177,7 @@ namespace ClearCanvas.Common.Configuration
 			{
 				if (_sourceProvider is IApplicationSettingsProvider)
 				{
-					return (_sourceProvider as IApplicationSettingsProvider).GetPreviousVersion(context, property);
+					return ((IApplicationSettingsProvider)_sourceProvider).GetPreviousVersion(context, property);
 				}
 				else
 				{
@@ -191,7 +198,7 @@ namespace ClearCanvas.Common.Configuration
 			{
 				if (_sourceProvider is IApplicationSettingsProvider)
 				{
-					(_sourceProvider as IApplicationSettingsProvider).Reset(context);
+					((IApplicationSettingsProvider)_sourceProvider).Reset(context);
 				}
 				else
 				{
@@ -214,7 +221,7 @@ namespace ClearCanvas.Common.Configuration
 				{
 					if (_sourceProvider is IApplicationSettingsProvider)
 					{
-						(_sourceProvider as IApplicationSettingsProvider).Upgrade(context, properties);
+						((IApplicationSettingsProvider)_sourceProvider).Upgrade(context, properties);
 					}
 					else
 					{
@@ -233,7 +240,7 @@ namespace ClearCanvas.Common.Configuration
 			lock (_syncLock)
 			{
 				if (_sourceProvider is ISharedApplicationSettingsProvider)
-					return (_sourceProvider as ISharedApplicationSettingsProvider).CanUpgradeSharedPropertyValues(context);
+					return ((ISharedApplicationSettingsProvider)_sourceProvider).CanUpgradeSharedPropertyValues(context);
 			}
 
 			return false;
@@ -244,7 +251,7 @@ namespace ClearCanvas.Common.Configuration
 			lock (_syncLock)
 			{
 				if (_sourceProvider is ISharedApplicationSettingsProvider)
-					(_sourceProvider as ISharedApplicationSettingsProvider).UpgradeSharedPropertyValues(context, properties, previousExeConfigFilename);
+					((ISharedApplicationSettingsProvider)_sourceProvider).UpgradeSharedPropertyValues(context, properties, previousExeConfigFilename);
 			}
 		}
 
@@ -254,7 +261,7 @@ namespace ClearCanvas.Common.Configuration
 			{
 				if (_sourceProvider is ISharedApplicationSettingsProvider)
 				{
-					var values = (_sourceProvider as ISharedApplicationSettingsProvider).GetPreviousSharedPropertyValues(context, properties, previousExeConfigFilename);
+					var values = ((ISharedApplicationSettingsProvider)_sourceProvider).GetPreviousSharedPropertyValues(context, properties, previousExeConfigFilename);
 					var settingsClass = (Type)context["SettingsClassType"];
 					TranslateValues(settingsClass, values);
 					return values;
@@ -270,7 +277,7 @@ namespace ClearCanvas.Common.Configuration
 			{
 				if (_sourceProvider is ISharedApplicationSettingsProvider)
 				{
-					var values = (_sourceProvider as ISharedApplicationSettingsProvider).GetSharedPropertyValues(context, properties);
+					var values = ((ISharedApplicationSettingsProvider)_sourceProvider).GetSharedPropertyValues(context, properties);
 					var settingsClass = (Type)context["SettingsClassType"];
 					TranslateValues(settingsClass, values);
 					return values;
@@ -285,7 +292,7 @@ namespace ClearCanvas.Common.Configuration
 			lock (_syncLock)
 			{
 				if (_sourceProvider is ISharedApplicationSettingsProvider)
-					(_sourceProvider as ISharedApplicationSettingsProvider).SetSharedPropertyValues(context, values);
+					((ISharedApplicationSettingsProvider)_sourceProvider).SetSharedPropertyValues(context, values);
 			}
 		}
 
