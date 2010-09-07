@@ -317,10 +317,10 @@
     <Compile Include="Configuration\IMigrateSettings.cs" />
     <Compile Include="Configuration\ExtendedLocalFileSettingsProvider.cs" />
     <Compile Include="Configuration\SettingsPropertyExtensions.cs" />
-    <Compile Include="Configuration\Setup\ImportSharedSettingsApplication.cs" />
+    <Compile Include="Configuration\Setup\ImportLocalSharedSettingsApplication.cs" />
     <Compile Include="Configuration\SystemConfigurationHelper.cs" />
     <Compile Include="Configuration\LocalFileSettingsProviderExtensions.cs" />
-    <Compile Include="Configuration\Setup\MigrateSharedSettingsApplication.cs" />
+    <Compile Include="Configuration\Setup\MigrateLocalSharedSettingsApplication.cs" />
     <Compile Include="Configuration\SettingsMigrator.cs" />
     <Compile Include="Configuration\Tests\SystemConfigurationHelperTests.cs" />
     <Compile Include="Configuration\Tests\ApplicationSettingsExtensionsTests.cs" />
