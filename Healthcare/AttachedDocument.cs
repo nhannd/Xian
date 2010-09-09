@@ -53,6 +53,11 @@ namespace ClearCanvas.Healthcare {
 		{
 		}
 
+		public virtual DateTime? DocumentReceivedTime
+		{
+			get { return null; }
+		}
+
 		/// <summary>
 		/// Marks this document as having been attached.
 		/// </summary>
@@ -95,7 +100,6 @@ namespace ClearCanvas.Healthcare {
 		public virtual void TimeShift(int minutes)
 		{
 			_creationTime = _creationTime.AddMinutes(minutes);
-			_receivedTime = _receivedTime.AddMinutes(minutes);
 		}
 
 		public static string BuildContentUrl(AttachedDocument document, string pathDelimiter)

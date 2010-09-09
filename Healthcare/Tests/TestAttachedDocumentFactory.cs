@@ -44,7 +44,6 @@ namespace ClearCanvas.Healthcare.Tests
 				"txt",
 				"txt",
 				DateTime.Now,
-				DateTime.Now,
 				testString);
 		}
 	}
