@@ -44,6 +44,9 @@ namespace ClearCanvas.Common.Configuration
 	[DataContract]
 	public class SettingsGroupDescriptor : IEquatable<SettingsGroupDescriptor>
 	{
+		//TODO (CR Sept 2010): get rid of the specialized list methods and just
+		//put properties on this class that say whether or not the settings group is "local"
+	
 		/// <summary>
 		/// Returns a list of <see cref="SettingsGroupDescriptor"/> objects describing each settings class
 		/// that exists in the installed plugin base, and is a locally stored setting.

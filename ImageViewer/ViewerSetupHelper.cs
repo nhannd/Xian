@@ -46,6 +46,7 @@ namespace ClearCanvas.ImageViewer
 		ILayoutManager GetLayoutManager(); 
 		
 		ITool[] GetTools();
+		//TODO (CR Sept 2010): remove this stuff
 		IViewerActionFilter GetContextMenuFilter();
 
 		IPriorStudyFinder GetPriorStudyFinder();

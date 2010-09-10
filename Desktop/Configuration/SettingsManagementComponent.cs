@@ -244,6 +244,8 @@ namespace ClearCanvas.Desktop.Configuration
 
 		#endregion
 
+		//TODO (CR Sept 2010): Change this to use ApplicationSettingsExtensions to set the shared property values.
+		//That way, we can edit enterprise and local settings at the same time.
 		private ISettingsStore _configStore;
 
 		private Table<SettingsGroupDescriptor> _settingsGroupTable;

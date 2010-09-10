@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.Reflection;
 using System.Xml;
@@ -44,14 +45,26 @@ namespace ClearCanvas.Common.Configuration
     /// </summary>
     public static class SystemConfigurationHelper
 	{
-		internal static void RemoveXmlDeclaration(XmlElement element)
+		internal static SettingsSerializeAs GetSerializeAs(string serializeAs)
 		{
-			XmlNode declaration = element.FirstChild;
-			while (declaration != null && declaration.NodeType != XmlNodeType.XmlDeclaration)
-				declaration = declaration.NextSibling;
+			var converter = new EnumConverter(typeof(SettingsSerializeAs));
+			if (!String.IsNullOrEmpty(serializeAs))
+				return (SettingsSerializeAs)converter.ConvertFromInvariantString(serializeAs);
 
-			if (declaration != null)
-				element.RemoveChild(declaration);
+			return default(SettingsSerializeAs);
+		}
+
+		internal static string GetElementValue(XmlNode xmlNode, SettingsSerializeAs serializeAs)
+		{
+			return serializeAs == SettingsSerializeAs.Xml ? xmlNode.InnerXml : xmlNode.InnerText;
+		}
+
+		private static string GetElementValue(SettingElement element)
+		{
+			if (element.Value == null || element.Value.ValueXml == null)
+				return null;
+
+			return GetElementValue(element.Value.ValueXml, element.SerializeAs);
 		}
 
 		private static void SetElementValue(SettingElement element, string value)
@@ -79,14 +92,15 @@ namespace ClearCanvas.Common.Configuration
 			element.Value.ValueXml = valueXml;
 		}
 
-        private static string GetElementValue(SettingElement element)
-        {
-			if (element.Value == null || element.Value.ValueXml == null)
-				return null;
+		private static void RemoveXmlDeclaration(XmlElement element)
+		{
+			XmlNode declaration = element.FirstChild;
+			while (declaration != null && declaration.NodeType != XmlNodeType.XmlDeclaration)
+				declaration = declaration.NextSibling;
 
-        	return element.SerializeAs == SettingsSerializeAs.Xml ? 
-				element.Value.ValueXml.InnerXml : element.Value.ValueXml.InnerText;
-        }
+			if (declaration != null)
+				element.RemoveChild(declaration);
+		}
 
 		private static ClientSettingsSection CastToClientSection(ConfigurationSection section)
 		{
@@ -109,6 +123,9 @@ namespace ClearCanvas.Common.Configuration
 			return element;
 		}
 
+		//TODO (CR Sept 2010): instead of automatically storing all the defaults, should we 
+		//just store what we're given and also delete stuff when we're given null?  Then
+		//we could just return what's there in the "get" method rather than removing the defaults.
 		private static ClientSettingsSection CreateDefaultSection(IEnumerable<PropertyInfo> properties)
 		{
 			var section = new ClientSettingsSection();
@@ -120,7 +137,7 @@ namespace ClearCanvas.Common.Configuration
 				var valueElement = new SettingValueElement();
 				element.Value = valueElement;
 				
-				string value = SettingsClassMetaDataReader.GetDefaultValue(property);
+				string value = SettingsClassMetaDataReader.GetDefaultValue(property, false);
 				SetElementValue(element, value);
 				section.Settings.Add(element);
 			}
@@ -132,7 +149,7 @@ namespace ClearCanvas.Common.Configuration
 		{
 			ClientSettingsSection newClientSection = CreateDefaultSection(properties);
 			sectionGroup.Sections.Add(sectionName, newClientSection);
-			if (sectionGroup.Name == ConfigurationSectionGroupPath.UserSettings)
+			if (sectionGroup.Name == ConfigurationSectionGroupPath.UserSettings.ToString())
 				newClientSection.SectionInformation.AllowExeDefinition = ConfigurationAllowExeDefinition.MachineToLocalUser;
 			return newClientSection;
 		}
@@ -150,17 +167,16 @@ namespace ClearCanvas.Common.Configuration
 				SettingElement element = GetSettingElement(clientSection, property, false);
 				string currentValue = element == null ? null : GetElementValue(element);
 
-				string defaultValueUntranslated = SettingsClassMetaDataReader.GetDefaultValue(property, false);
-				string defaultValueTranslated = SettingsClassMetaDataReader.GetDefaultValue(property);
+				string defaultValue = SettingsClassMetaDataReader.GetDefaultValue(property, false);
 
-				bool newValueIsDefault = newValue == null || Equals(newValue, defaultValueTranslated) || Equals(newValue, defaultValueUntranslated);
-				bool currentValueIsDefault = currentValue == null || Equals(currentValue, defaultValueTranslated) || Equals(currentValue, defaultValueUntranslated);
+				bool newValueIsDefault = newValue == null || Equals(newValue, defaultValue);
+				bool currentValueIsDefault = currentValue == null || Equals(currentValue, defaultValue);
 				if (currentValueIsDefault && newValueIsDefault || Equals(currentValue, newValue))
 					continue;
 
 				element = GetSettingElement(clientSection, property, true);
 				if (newValueIsDefault)
-					newValue = defaultValueTranslated; //store defaults because it's convenient for editing.
+					newValue = defaultValue; //store defaults because it's convenient for editing.
 
 				SetElementValue(element, newValue);
 				modified = true;
@@ -192,56 +208,37 @@ namespace ClearCanvas.Common.Configuration
 			return modified;
 		}
 
-		private static void GetNonDefaultSettingsValues
-			(
-				ConfigurationSectionGroup sectionGroup,
-				string sectionName,
-				IEnumerable<PropertyInfo> properties,
-				IDictionary<string, string> values
-			)	
-		{
-			if (sectionGroup == null)
-				return; //the values are the same as the defaults.
-
-			ConfigurationSection section = sectionGroup.Sections[sectionName];
-			if (section == null)
-				return; //the values are the same as the defaults.
-
-			var clientSection = CastToClientSection(section);
-
-			foreach (PropertyInfo property in properties)
-			{
-				SettingElement element = GetSettingElement(clientSection, property, false);
-				if (element == null)
-					continue;
-
-				string currentValue = GetElementValue(element);
-				if (currentValue == null) //not there means it's the default.
-					continue;
-
-				//translated or untranslated, it's still the default.
-				string defaultValueUntranslated = SettingsClassMetaDataReader.GetDefaultValue(property, false);
-				string defaultValueTranslated = SettingsClassMetaDataReader.GetDefaultValue(property);
-
-				bool isDefaultValue = Equals(currentValue, defaultValueTranslated) || Equals(currentValue, defaultValueUntranslated);
-				if (!isDefaultValue)
-					values[property.Name] = currentValue;
-			}
-		}
-
-		private static ConfigurationSectionGroup GetSectionGroup(SystemConfiguration configuration, ConfigurationSectionGroupPath sectionGroupPath, bool create)
-		{
-			if (configuration.GetSectionGroup(sectionGroupPath) == null && create)
-				configuration.SectionGroups.Add(sectionGroupPath, sectionGroupPath.CreateSectionGroup());
-
-			return configuration.GetSectionGroup(sectionGroupPath);
-		}
-
-        private static Dictionary<string, string> GetSettingsValues(SystemConfiguration configuration, ConfigurationSectionPath sectionPath, ICollection<PropertyInfo> properties)
+        private static Dictionary<string, string> GetSettingsValues(
+			SystemConfiguration configuration, 
+			ConfigurationSectionPath sectionPath, 
+			ICollection<PropertyInfo> properties)
         {
             var values = new Dictionary<string, string>();
 			if (properties.Count > 0)
-				GetNonDefaultSettingsValues(GetSectionGroup(configuration, sectionPath.GroupPath, false), sectionPath.SectionName, properties, values);
+			{
+				var section = sectionPath.GetSection(configuration);
+				if (section != null)
+				{
+					var clientSection = CastToClientSection(section);
+					if (clientSection != null)
+					{
+						foreach (PropertyInfo property in properties)
+						{
+							SettingElement element = GetSettingElement(clientSection, property, false);
+							if (element == null)
+								continue;
+
+							string currentValue = GetElementValue(element);
+							if (currentValue == null) //not there means it's the default.
+								continue;
+
+							var defaultValue = SettingsClassMetaDataReader.GetDefaultValue(property, false);
+							if (!Equals(currentValue, defaultValue))
+								values[property.Name] = currentValue;
+						}
+					}
+				}
+			}
 
             return values;
         }
@@ -295,13 +292,13 @@ namespace ClearCanvas.Common.Configuration
 			if (applicationScopedProperties.Count > 0)
 			{
 				var sectionPath = new ConfigurationSectionPath(settingsClass, SettingScope.Application);
-				var group = GetSectionGroup(configuration, sectionPath.GroupPath, true);
+				var group = sectionPath.GroupPath.GetSectionGroup(configuration, true);
 				modified = StoreSettings(group, sectionPath.SectionName, applicationScopedProperties, dirtyValues);
 			}
 			if (userScopedProperties.Count > 0)
 			{
 				var sectionPath = new ConfigurationSectionPath(settingsClass, SettingScope.User);
-				var group = GetSectionGroup(configuration, sectionPath.GroupPath, true);
+				var group = sectionPath.GroupPath.GetSectionGroup(configuration, true);
 				if (StoreSettings(group, sectionPath.SectionName, userScopedProperties, dirtyValues))
 					modified = true;
 			}

@@ -110,8 +110,8 @@ namespace ClearCanvas.Enterprise.Common
 
 					if (values.Count > 0)
 					{
-                    // generate the document and save it
-                    document = parser.ToXml(values);
+						// generate the document and save it
+						document = parser.ToXml(values);
 						service.SetConfigurationDocument(new SetConfigurationDocumentRequest(documentKey, document));
 					}
 					else

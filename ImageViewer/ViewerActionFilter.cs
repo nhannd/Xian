@@ -47,6 +47,7 @@ namespace ClearCanvas.ImageViewer
 		bool Evaluate(IAction action);
 	}
 
+	//TODO (CR Sept 2010): remove this stuff
 	public abstract class ViewerActionFilter : IViewerActionFilter
 	{
 		private class AlwaysTrueFilter : IViewerActionFilter

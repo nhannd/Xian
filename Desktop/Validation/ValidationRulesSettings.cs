@@ -61,6 +61,8 @@ namespace ClearCanvas.Desktop.Validation
 			}
 		}
 
+		//TODO (CR Sept 2010): we can now save these values via ApplicationSettingsExtensions
+
 		/// <summary>
 		/// Saves any changes made to the rules document to the specified settings store.
 		/// </summary>

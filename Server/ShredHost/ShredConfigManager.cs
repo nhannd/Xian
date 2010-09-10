@@ -30,13 +30,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Configuration;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Server.ShredHost
 {
+	//TODO (CR Sept 2010): Turn these into ApplicationSettingsBase classes and use the ApplicationSettingsExtensions to set the shared property values.
     public abstract class ShredConfigSection : ConfigurationSection, ICloneable
     {
         //[ConfigurationProperty("sampleProperty", DefaultValue="test")]

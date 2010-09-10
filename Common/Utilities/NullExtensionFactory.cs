@@ -31,6 +31,8 @@
 
 namespace ClearCanvas.Common.Utilities
 {
+	//TODO (CR Sept 2010): move to Tests namespace?
+	//TODO (CR Sept 2010): #if UNIT_TESTS?
     /// <summary>
     /// An implementation of <see cref="IExtensionFactory"/> that returns no extensions.
     /// </summary>

@@ -1,3 +1,34 @@
+#region License
+
+// Copyright (c) 2010, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -108,14 +139,14 @@ namespace ClearCanvas.Common.Configuration
 			return scope == SettingScope.Application ? ApplicationSettings : UserSettings;
 		}
 
-		public ConfigurationSectionGroupPath DownOne(string name)
+		public ConfigurationSectionGroupPath GetChildGroupPath(string name)
 		{
 			List<string> segments = new List<string>(_pathSegments);
 			segments.Add(name);
 			return new ConfigurationSectionGroupPath(segments.ToArray());
 		}
 
-		public ConfigurationSectionGroupPath UpOne()
+		public ConfigurationSectionGroupPath GetParentPath()
 		{
 			if (IsRoot)
 				throw new InvalidOperationException("Can't go above the root level of a path");
@@ -128,7 +159,7 @@ namespace ClearCanvas.Common.Configuration
 			return new ConfigurationSectionGroupPath(segments.ToArray());
 		}
 
-		public ConfigurationSectionGroup GetGroupFromConfiguration(System.Configuration.Configuration configuration, bool create)
+		public ConfigurationSectionGroup GetSectionGroup(System.Configuration.Configuration configuration, bool create)
 		{
 			if (IsRoot)
 				return configuration.RootSectionGroup;
@@ -141,7 +172,7 @@ namespace ClearCanvas.Common.Configuration
 
 			foreach (string pathSegment in _pathSegments)
 			{
-				path = path.DownOne(pathSegment);
+				path = path.GetChildGroupPath(pathSegment);
 				var childGroup = group.SectionGroups[pathSegment];
 				if (childGroup != null)
 				{
@@ -191,6 +222,12 @@ namespace ClearCanvas.Common.Configuration
 
 		public ConfigurationSectionGroupPath GroupPath { get; private set; }
 		public string SectionName { get; private set; }
+
+		public ConfigurationSection GetSection(System.Configuration.Configuration configuration)
+		{
+			var group = GroupPath.GetSectionGroup(configuration, false);
+			return group == null ? null : group.Sections[SectionName];
+		}
 
 		#region IEquatable<ConfigurationSectionPath> Members
 
