@@ -61,14 +61,19 @@
 
 		function test_CR_LF_Spaces()
 		{
-			currentTest = "Testing Carriage Return \r";
+			currentTest = "Testing LF (\\n)";
+			SerializeHelper("ABC\n", "<Tag>ABC\n</Tag>");
+			DeserializeHelper("ABC\n", "<Tag>ABC\n</Tag>");
+
+			currentTest = "Testing CR (\\r)";
 			SerializeHelper("ABC\r", "<Tag>ABC\r</Tag>");
-
-			//This test is supposed to pass as described in http://support.microsoft.com/kb/261293
+			// \r is deserialized to\n, as described here: http://support.microsoft.com/kb/261293
 			DeserializeHelper("ABC\n", "<Tag>ABC\r</Tag>");
-
-			//This test is supposed to failed as described in http://support.microsoft.com/kb/261293
-			// DeserializeHelper("ABC\r", "<Tag>ABC\r</Tag>");
+	
+			currentTest = "Testing CR-LF (\\r\\n)";
+			SerializeHelper("ABC\r\n", "<Tag>ABC\r\n</Tag>");
+			// \r\n is deserialized to just \n, as described here: http://support.microsoft.com/kb/261293
+			DeserializeHelper("ABC\n", "<Tag>ABC\r\n</Tag>");
 
 			// Because of the \r problem, all subsequent tests will ignore deserializing \r.
 			currentTest = "CR, LF, spaces between words";
@@ -197,7 +202,7 @@
 			SerializeHelper(nowWithoutMilliseconds, null);
 			DeserializeDate(nowWithoutMilliseconds, null);
 			DeserializeDate(nowWithoutMilliseconds, "");
-}
+		}
 
 		function testList()
 		{
