@@ -52,6 +52,14 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 			_settings = settings;
 		}
 
+		public override string Name
+		{
+			get
+			{
+				return SR.ImageAvailabilityProcedureProcessor;
+			}
+		}
+
 		protected override IList<Procedure> GetNextEntityBatch(int batchSize)
 		{
 			// Find a list of procedures that match the criteria

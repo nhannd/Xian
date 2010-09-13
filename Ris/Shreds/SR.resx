@@ -141,4 +141,10 @@
   <data name="PublicationShredName" xml:space="preserve">
     <value>Publication</value>
   </data>
+  <data name="ImageAvailabilityProcedureProcessor" xml:space="preserve">
+    <value>Image Availability Procedure Processor</value>
+  </data>
+  <data name="ImageAvailabilityWorkQueueProcessor" xml:space="preserve">
+    <value>Image Availability Work Queue Processor</value>
+  </data>
 </root>

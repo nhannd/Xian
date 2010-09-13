@@ -36,7 +36,8 @@ using ClearCanvas.Common.Shreds;
 namespace ClearCanvas.Ris.Shreds.Publication
 {
 	[ExtensionOf(typeof(ShredExtensionPoint))]
-	public class PublicationShred : QueueProcessorShred
+	[ExtensionOf(typeof(ApplicationRootExtensionPoint))]
+	public class PublicationShred : QueueProcessorShred, IApplicationRoot
 	{
 		public PublicationShred()
 		{
@@ -58,5 +59,14 @@ namespace ClearCanvas.Ris.Shreds.Publication
 			return new QueueProcessor[] { p };
         }
 
+
+		#region IApplicationRoot Members
+
+		public void RunApplication(string[] args)
+		{
+			Start();
+		}
+
+		#endregion
 	}
 }

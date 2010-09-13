@@ -70,6 +70,14 @@ namespace ClearCanvas.Ris.Shreds.Publication
             _publicationActions = new PublicationActionExtensionPoint().CreateExtensions();
         }
 
+		public override string Name
+		{
+			get
+			{
+				return SR.PublicationShredName;
+			}
+		}
+
 		protected override IList<PublicationStep> GetNextEntityBatch(int batchSize)
 		{
 			// Get scheduled steps, where the "publishing cool-down" has elapsed
