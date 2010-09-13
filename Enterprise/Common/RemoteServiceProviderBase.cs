@@ -38,6 +38,7 @@ using System.Security.Cryptography.X509Certificates;
 using Castle.DynamicProxy;
 using Castle.Core.Interceptor;
 using System.Collections.Generic;
+using ClearCanvas.Enterprise.Common.Configuration;
 
 namespace ClearCanvas.Enterprise.Common
 {
@@ -239,7 +240,6 @@ namespace ClearCanvas.Enterprise.Common
 		private readonly ProxyGenerator _proxyGenerator;
 		private readonly IChannelProvider _channelProvider;
 		private readonly IUserCredentialsProvider _userCredentialsProvider;
-		private List<IInterceptor> _interceptors;
 
 		/// <summary>
 		/// Constructor.
@@ -300,15 +300,16 @@ namespace ClearCanvas.Enterprise.Common
 		/// in the list is the outermost, and the last entry in the list is the 
 		/// innermost.
 		/// </remarks>
+		/// <param name="serviceType"></param>
 		/// <param name="interceptors"></param>
-		protected virtual void ApplyInterceptors(IList<IInterceptor> interceptors)
+		protected virtual void ApplyInterceptors(Type serviceType, IList<IInterceptor> interceptors)
 		{
 			// this must be added as the outer-most interceptor
 			// it is basically a hack to prevent the interception chain from acting on a call to Dispose(),
 			// because Dispose() is not a service operation
 			interceptors.Add(new DisposableInterceptor());
 
-			if (Caching.Cache.IsSupported())
+			if (Caching.Cache.IsSupported() && IsResponseCachingEnabled(serviceType))
 			{
 				// add response-caching client-side advice
 				interceptors.Add(new ResponseCachingClientSideAdvice());
@@ -355,12 +356,11 @@ namespace ClearCanvas.Enterprise.Common
 			// ensure we only access the proxy generator in a thread-safe manner
 			lock(_proxyGenerator)
 			{
-				// get list of interceptors if not yet created
-				if (_interceptors == null)
-				{
-					_interceptors = new List<IInterceptor>();
-					ApplyInterceptors(_interceptors);
-				}
+				//These interceptors used to be initialized once and shared amongst all
+				//the clients.  #7179 changed that, so if we find another solution for it
+				//later, we could make them shared again.
+				var interceptors = new List<IInterceptor>();
+				ApplyInterceptors(serviceContract, interceptors);
 
 				var options = new ProxyGenerationOptions();
 
@@ -373,8 +373,15 @@ namespace ClearCanvas.Enterprise.Common
 					new[] { serviceContract, typeof(IDisposable) },
 					channel,
 					options,
-					_interceptors.ToArray());
+					interceptors.ToArray());
 			}
+		}
+
+		private static bool IsResponseCachingEnabled(Type serviceType)
+		{
+			//TODO (CR Sept 2010): Temporary hack to disable configuration document caching on the client side (#7179).
+			bool isConfigurationService = typeof (IApplicationConfigurationReadService).IsAssignableFrom(serviceType);
+			return !isConfigurationService || RemoteCoreServiceSettings.Default.ConfigurationServiceResponseCachingEnabled;
 		}
 
 		#endregion
