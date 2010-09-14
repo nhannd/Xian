@@ -146,12 +146,16 @@ namespace ClearCanvas.Enterprise.Core
 				{
 					IUpdateContext failContext = (IUpdateContext)PersistenceScope.CurrentContext;
 					failContext.ChangeSetRecorder.OperationName = this.GetType().FullName;
+					
+					// Reload the TItem in this scope;  using the existing item results in NHibernate throwing a lazy loading exception for 
+					// some TItem.  See: ticket #7191 
+					var itemForThisScope = failContext.Load<TItem>(item.GetRef());
 
 					// lock item into this context
-					failContext.Lock(item);
+					failContext.Lock(itemForThisScope);
 
 					// failure callback
-					OnItemFailed(item, error);
+					OnItemFailed(itemForThisScope, error);
 
 					// complete the transaction
 					scope.Complete();
