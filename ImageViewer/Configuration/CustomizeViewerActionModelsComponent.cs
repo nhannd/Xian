@@ -47,6 +47,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 	[AssociateView(typeof (CustomizeViewerActionModelsComponentViewExtensionPoint))]
 	public class CustomizeViewerActionModelsComponent : ApplicationComponentContainer
 	{
+		//TODO (CR Sept 2010): make these public consts on the desktopwindow, too?
 		private const string _globalMenusActionSite = "global-menus";
 		private const string _globalToolbarActionSite = "global-toolbars";
 		private const string _viewerContextMenuActionSite = ImageViewerComponent.ContextMenuSite;
@@ -428,6 +429,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 				}
 			}
 			MouseToolSettingsProfile.Current = toolProfile;
+			//TODO (CR Sept 2010): is this method necessary?
 			MouseToolSettingsProfile.SaveCurrentAsDefault();
 
 			base.Exit(ApplicationComponentExitCode.Accepted);
@@ -595,6 +597,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			}
 		}
 
+		//TODO (CR Sept 2010): for some reason I find this more confusing than just using a dictionary.  In particular, the Me/Other part.
 		/// <summary>
 		/// Convenience class since mapping any of the assignments consist of the same operations
 		/// </summary>

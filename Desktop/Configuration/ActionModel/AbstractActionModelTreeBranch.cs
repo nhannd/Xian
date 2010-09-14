@@ -74,6 +74,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			}
 		}
 
+		//TODO (CR Sept 2010): is Descendents the right term?  It's just getting the children recursively.
 		protected IEnumerable<AbstractActionModelTreeNode> EnumerateDescendants()
 		{
 			List<AbstractActionModelTreeNode> list = new List<AbstractActionModelTreeNode>();
@@ -104,6 +105,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _subtree; }
 		}
 
+		//TODO (CR Sept 2010): Create methods usually return an object.
 		protected void CreateActionModelRoot(ActionModelRoot actionModelRoot)
 		{
 			foreach (AbstractActionModelTreeNode child in this.Subtree.Items)

@@ -118,6 +118,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					{
 						if (frame.ImageOrientationPatient.IsNull)
 							return false;
+						//TODO (CR Sept 2010): ImagePositionPatient?
 						if (frame.NormalizedPixelSpacing.IsNull)
 							return false;
 					}

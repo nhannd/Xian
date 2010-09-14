@@ -96,6 +96,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			}
 		}
 
+		//TODO (CR Sept 2010): remove or call InnerExceptionMessage.
 		/// <summary>
 		/// Gets the message of the actual exception that was thrown.
 		/// </summary>

@@ -208,6 +208,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 					this.SpatialTransform.TranslationX = _location.X;
 					this.SpatialTransform.TranslationY = _location.Y;
 					this.OnLocationChanged();
+					//TODO (CR Sept 2010): VisualStateChanged?
 				}
 			}
 		}
@@ -440,6 +441,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private class GradientPixelData : IDisposable
 		{
+			//TODO (CR Sept 2010): General comment.  For something that is essentially created through a factory
+			//you could use simple proxies with reference counting instead of "transient references".  The transient
+			//reference idea was invented for objects that are publicly exposed (like Sop) and can't be "hidden" behind
+			//a proxy/interface, but still need to "live" after it's original owner/creator has disposed it.  I've always wanted to scrap it.
+			//Also, for anything that is essentially a simple data buffer that can be recreated at will from some
+			//basic parameters, you could avoid reference counting entirely and use a weak reference cache.  A
+			//weak reference cache is ideal for this type of object and avoids problems with forgetting to dispose
+			//references, which ultimately causes memory leaks.
+
+			//TODO (CR Sept 2010): this object should be synchronized, especially since we could end up modifying
+			//it from multiple threads (e.g. UI thread and clipboard worker).
 			private static readonly Dictionary<Size, GradientPixelData> _cachedGradients = new Dictionary<Size, GradientPixelData>();
 			private readonly Size _normalizedSize;
 			private byte[] _data;
@@ -449,6 +461,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 				var normalizedSize = new Size(width, length);
 				if (_cachedGradients.ContainsKey(normalizedSize))
 					return _cachedGradients[normalizedSize].CreateTransientReference();
+				//TODO (CR Sept 2010): because a transient reference is always created and returned, the "real"
+				//object will never get disposed, and hence _selfDisposed will never be true.
+				//_cachedGradients is therefore a memory leak, albeit small (there will only ever be one item in it based on current usage).
 				return new GradientPixelData(normalizedSize).CreateTransientReference();
 			}
 
@@ -471,6 +486,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 			{
 				get
 				{
+					//TODO (CR Sept 2010): since this could be shared between threads, it should technically be sync'ed,
+					//but it doesn't really do any harm not to (you might just end up with the odd "rogue" one).
 					if (_data == null)
 					{
 						int bufferSize = _normalizedSize.Height*_normalizedSize.Width;
@@ -561,7 +578,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				}
 				catch (Exception e)
 				{
-					Platform.Log(LogLevel.Warn, e);
+					Platform.Log(LogLevel.Debug, e);
 				}
 			}
 
@@ -580,6 +597,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			{
 				lock (_syncLock)
 				{
+					//TODO (CR Sept 2010): this will never be called; see comments above.
 					_selfDisposed = true;
 
 					//Only dispose for real when self has been disposed and all the transient references have been disposed.

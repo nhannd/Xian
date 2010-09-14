@@ -259,6 +259,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		#region Private Helpers
 
+		//TODO (CR Sept 2010): Name - Create implies it will create an instance of FusionPresentationImage.
 		private static GrayscaleImageGraphic Create(IImageSopProvider frameReference)
 		{
 			return new GrayscaleImageGraphic(

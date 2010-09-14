@@ -85,6 +85,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				graphic.Visible = visible;
 		}
 
+		//TODO (CR Sept 2010): GetCompositeColorBarGraphic?
 		private static ColorBarCompositeGraphic GetCompositeScaleGraphic(IPresentationImage image, bool createIfNull)
 		{
 			if (image is IColorMapProvider && image is IApplicationGraphicsProvider)

@@ -262,6 +262,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <returns>An enumeration of points.</returns>
 		public IEnumerable<PointF> GetPixelCoordinates()
 		{
+			//TODO (CR Sept 2010): should be RoundInflate, not Ceiling.
 			Rectangle bounds = Rectangle.Ceiling(this.BoundingBox);
 			bounds.Intersect(new Rectangle(Point.Empty, this.ImageSize));
 			for (int x = bounds.Left; x < bounds.Right; x++)
@@ -284,6 +285,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			if (this.PixelData == null)
 				yield break;
 
+			//TODO (CR Sept 2010): should be RoundInflate, not Ceiling.
 			Rectangle bounds = Rectangle.Ceiling(this.BoundingBox);
 			bounds.Intersect(new Rectangle(Point.Empty, this.ImageSize));
 			for (int x = bounds.Left; x < bounds.Right; x++)
@@ -313,6 +315,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			if (this.ModalityLut != null)
 				lut = v => this.ModalityLut[v];
 
+			//TODO (CR Sept 2010): put these 2 lines into a method, since it's used numerous times.  Even if it were
+			//only used once, a method name tells someone what this does instead of having to figure it out.
+
+			//TODO (CR Sept 2010): should be RoundInflate, not Ceiling.
 			Rectangle bounds = Rectangle.Ceiling(this.BoundingBox);
 			bounds.Intersect(new Rectangle(Point.Empty, this.ImageSize));
 			for (int x = bounds.Left; x < bounds.Right; x++)

@@ -100,6 +100,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			var roiHalfHeight = roiBoundingBox.Height/2;
 			var textHalfHeight = textSize.Height/2;
 
+			//TODO (CR Sept 2010): can this be written more descriptively?
+			// e.g. if (IsBeyondTopEdge(roiY)) MoveInsideTopEdge(RoiY);
 			if (roiY < textSize.Height + roiHalfHeight + roiVOffset)
 				return roiY + textHalfHeight + roiHalfHeight + roiVOffset;
 			else if (roiY < clientRectangle.Height/2)
@@ -116,6 +118,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			var roiHalfWidth = roiBoundingBox.Width/2;
 			var textHalfWidth = textSize.Width/2;
 
+			//TODO (CR Sept 2010): can this be written more descriptively?
+			// e.g. if (IsBeyondLeftEdge(roiX)) MoveInsideLeftEdge(RoiX);
 			if (roiX < -roiHalfWidth)
 				return roiX + roiHalfWidth + textHalfWidth;
 			else if (roiX < textHalfWidth)

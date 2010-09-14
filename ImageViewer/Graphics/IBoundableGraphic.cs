@@ -70,6 +70,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </remarks>
 		PointF BottomRight { get; set; }
 
+		//TODO (CR Sept 2010): not sure about the name.
+
 		/// <summary>
 		/// Gets the bounding rectangle of the graphic in either source or destination coordinates.
 		/// </summary>

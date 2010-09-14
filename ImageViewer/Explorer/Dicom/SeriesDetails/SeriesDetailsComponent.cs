@@ -48,6 +48,9 @@ using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 {
+	//TODO (CR Sept 2010): get rid of this - the public API of an application component
+	//is meant for the view to consume.  It would be better to expose methods on the context 
+	//rather than the component itself and delete the explicit interface.
 	public interface ISeriesDetailComponentViewModel
 	{
 		string PatientId { get; }
@@ -201,6 +204,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			{
 				_selection = selection;
 
+				//TODO (CR Sept 2010): since we're creating a new wrapper, why not just use
+				//ReadOnlyCollection<T> and CollectionUtils.Cast<T>?
 				if (_selection != null)
 					SelectedSeries = new ReadOnlyListWrapper<ISeriesData>(_selection.Items);
 				else
@@ -401,6 +406,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 				_component.Refresh();
 			}
 
+			//TODO (CR Sept 2010): anything that needs to be done should be exposed via the context
 			public SeriesDetailsComponent Component
 			{
 				get { return _component; }

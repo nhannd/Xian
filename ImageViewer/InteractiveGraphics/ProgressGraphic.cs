@@ -35,6 +35,11 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	//TODO (CR Sept 2010): the BackgroundTask is essentially being used as a timer, so may as well
+	//just use the Timer class in Common.Utilities, which also automatically marshals calls over to the UI thread.
+	//Could also improve the efficiency a little and only draw if the progress has changed or draw has been
+	//called externally.
+
 	/// <summary>
 	/// A dialog-like graphic for displaying the current progress of some abstract operation in a scene graph.
 	/// </summary>
@@ -43,6 +48,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private readonly ProgressBarGraphicStyle _progressBarStyle;
 		private readonly ProgressCompositeGraphic _graphics;
 		private IProgressGraphicProgressProvider _progressProvider;
+
 		private SynchronizationContext _synchronizationContext;
 		private BackgroundTask _updateTask;
 
@@ -165,6 +171,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		private void UpdateProgressBar(IBackgroundTaskContext context)
 		{
+			//TODO (CR Sept 2010): just use a timer, and all this could be done on the UI thread.
+
 			while (!context.CancelRequested)
 			{
 				// if we didn't get a SynchronizationContext from the thread that calls .Draw(), then we can't update the progress bar
@@ -204,6 +212,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		#region Static Helpers
+
+		//TODO (CR Sept 2010): I'd prefer to get rid of this if we can.
 
 		/// <summary>
 		/// Gets a value indicating whether or not directly drawing a <see cref="ProgressGraphic"/> from the current thread is valid.
@@ -349,6 +359,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// </summary>
 	public interface IProgressGraphicProgressProvider
 	{
+		//TODO (CR Sept 2010): this isn't really a clear API.  It's accounting for the fact that the progress operation
+		//is actually asynchronous and needs to get all the information at once.  It would simplify things quite a bit
+		//if the progress provider object provided the updates (events, callback interface) and this
+		//class immediately marshalled it over to the UI thread to deal with it.
+
 		/// <summary>
 		/// Called to get progress information about the abstract operation.
 		/// </summary>

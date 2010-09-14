@@ -51,6 +51,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		event EventHandler SelectedSeriesChanged;
 		void RefreshSeriesTable();
 
+		//TODO (CR Sept 2010): don't expose the component.
 		SeriesDetailsComponent Component { get; }
 		IDesktopWindow DesktopWindow { get; }
 	}

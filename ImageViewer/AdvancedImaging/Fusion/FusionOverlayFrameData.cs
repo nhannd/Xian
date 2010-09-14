@@ -38,6 +38,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
+	//TODO (CR Sept 2010): try to separate the frame data and graphic concerns?
 	public partial class FusionOverlayFrameData : IDisposable, ILargeObjectContainer, IProgressGraphicProgressProvider
 	{
 		private readonly object _syncPixelDataLock = new object();
@@ -104,6 +105,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 		}
 
+		//TODO (CR Sept 2010): CreatePixelData?
 		private byte[] LoadPixelData()
 		{
 			// wait for synchronized access
@@ -150,6 +152,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			this.OnUnloaded();
 		}
 
+		//TODO (CR Sept 2010): this method doesn't do much.  Just let client code create a new FusionOverlayImageGraphic.
 		public GrayscaleImageGraphic CreateImageGraphic()
 		{
 			this.LoadPixelData();
