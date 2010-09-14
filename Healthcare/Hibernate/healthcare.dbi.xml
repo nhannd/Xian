@@ -36,8 +36,9 @@ on key tables that play a central role in the workflow queries.
   <index table="Order_" columns="ScheduledStartTime_"/>
   <index table="Order_" columns="StartTime_"/>
   <index table="Order_" columns="EndTime_"/>
+	<index table="Order_" columns="PlacerNumber_"/>
 
-  <!-- PatientProfile -->
+	<!-- PatientProfile -->
   <index table="PatientProfile_" columns="MrnId_" />
   <index table="PatientProfile_" columns="HealthcardId_"/>
   <index table="PatientProfile_" columns="FamilyName_, GivenName_"/>
