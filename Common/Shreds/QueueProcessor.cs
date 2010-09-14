@@ -43,14 +43,6 @@ namespace ClearCanvas.Common.Shreds
 	public abstract class QueueProcessor
 	{
 		private volatile bool _stopRequested;
-		private bool _suspendRequested;
-
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		protected QueueProcessor()
-		{
-		}
 
 		/// <summary>
 		/// Runs the processor.
@@ -77,14 +69,6 @@ namespace ClearCanvas.Common.Shreds
 		public void RequestStop()
 		{
 			_stopRequested = true;
-		}
-
-		/// <summary>
-		/// Requests the task to suspend.  The processor will pause for some duration then resume processing.
-		/// </summary>
-		protected void RequestSuspend()
-		{
-			_suspendRequested = true;
 		}
 
 		/// <summary>
@@ -115,21 +99,6 @@ namespace ClearCanvas.Common.Shreds
 			get { return _stopRequested; }
 		}
 
-		/// <summary>
-		/// Gets a value indicating whether this processor has been requested to suspend.
-		/// </summary>
-		protected  bool SuspendRequested
-		{
-			get { return _suspendRequested; }
-		}
-
-		/// <summary>
-		/// Called to indicate that processing should resume.
-		/// </summary>
-		protected virtual void Suspend()
-		{
-			_suspendRequested = false;
-		}
 	}
 
 	/// <summary>
@@ -152,6 +121,8 @@ namespace ClearCanvas.Common.Shreds
 
 		private readonly int _batchSize;
 		private TimeSpan _sleepTime;
+		private int _sleepTimeFactor;
+		private bool _suspendRequested;
 
 		/// <summary>
 		/// Constructor.
@@ -178,21 +149,20 @@ namespace ClearCanvas.Common.Shreds
 		protected abstract void ProcessItem(TItem item);
 
 		/// <summary>
-		/// Override default Suspend method to sleep for some factor of the default empty queue sleep duration.
+		/// Requests the task to suspend.  The processor will pause for some duration then resume processing.
 		/// </summary>
-		protected override void Suspend()
+		protected void RequestSuspend(int sleepTimeFactor)
 		{
-			Sleep(SuspendTimeFactor());
-			base.Suspend();
+			_suspendRequested = true;
+			_sleepTimeFactor = sleepTimeFactor;
 		}
 
 		/// <summary>
-		/// Returns a multiplicative factor for how long the processor will sleep beyond the default empty queue sleep duration
+		/// Gets a value indicating whether this processor has been requested to suspend.
 		/// </summary>
-		/// <returns></returns>
-		protected virtual int SuspendTimeFactor()
+		protected bool SuspendRequested
 		{
-			return 1;
+			get { return _suspendRequested; }
 		}
 
 		#region Override Methods
@@ -252,6 +222,12 @@ namespace ClearCanvas.Common.Shreds
 		#endregion
 
 		#region Helpers
+
+		private void Suspend()
+		{
+			Sleep(_sleepTimeFactor);
+			_suspendRequested = false;
+		}
 
 		private void Sleep()
 		{
