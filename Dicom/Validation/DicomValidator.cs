@@ -257,11 +257,11 @@ namespace ClearCanvas.Dicom.Validation
 			}
 			catch (DicomDataException e)
 			{
-				throw new DicomDataException(String.Format("Invalid sop class: {0} ", e.Message));
+				throw new DicomDataException(String.Format("Invalid SOP Class: {0} ", e.Message));
 			}
 
 			if (String.IsNullOrEmpty(uid) || uid.TrimEnd(' ').Length == 0)
-				throw new DicomDataException("The sop class uid cannot be empty.");
+				throw new DicomDataException("The SOP Class UID cannot be empty.");
 		}
 
 		/// <summary>
