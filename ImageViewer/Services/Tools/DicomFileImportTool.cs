@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
@@ -46,19 +47,47 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[MenuAction("Import", "explorerlocal-contextmenu/ImportDicomFiles", "Import")]
 	[Tooltip("Import", "TooltipImportDicomFiles")]
 	[IconSet("Import", IconScheme.Colour, "Icons.DicomFileImportToolSmall.png", "Icons.DicomFileImportToolMedium.png", "Icons.DicomFileImportToolLarge.png")]
-
+	[EnabledStateObserver("Import", "Enabled", "EnabledChanged")]
 	[ViewerActionPermission("Import", ImageViewer.Services.AuthorityTokens.Study.Import)]
 
 	[ExtensionOf(typeof(LocalImageExplorerToolExtensionPoint))]
 	public class DicomFileImportTool : Tool<ILocalImageExplorerToolContext>
 	{
+		public event EventHandler EnabledChanged;
+		private bool _enabled = true;
+
 		public DicomFileImportTool()
 		{
+		}
+
+		public bool Enabled
+		{
+			get { return _enabled; }
+			private set
+			{
+				if (_enabled != value)
+				{
+					_enabled = value;
+					EventsHelper.Fire(EnabledChanged, this, EventArgs.Empty);
+				}
+			}
 		}
 
 		public override void Initialize()
 		{
 			base.Initialize();
+			Context.SelectedPathsChanged += OnContextSelectedPathsChanged;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			Context.SelectedPathsChanged -= OnContextSelectedPathsChanged;
+			base.Dispose(disposing);
+		}
+
+		private void OnContextSelectedPathsChanged(object sender, EventArgs e)
+		{
+			Enabled = Context.SelectedPaths.Count > 0;
 		}
 
 		public void Import()
@@ -69,6 +98,9 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			{
 				filePaths.Add(path);
 			}
+
+			if (filePaths.Count == 0)
+				return;
 
 			FileImportRequest request = new FileImportRequest();
 			request.FilePaths = filePaths;

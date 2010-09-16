@@ -286,6 +286,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The selected images are of an unsupported type. MPR currently only supports DICOM image SOPs..
+        /// </summary>
+        public static string MessageSourceDataSetImagesAreNotSupported {
+            get {
+                return ResourceManager.GetString("MessageSourceDataSetImagesAreNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The selected images have a gantry slew. MPR currently only supports gantry tilts..
         /// </summary>
         public static string MessageSourceDataSetImagesMayBotBeGantrySlewed {
@@ -372,6 +381,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr {
         public static string MessageSourceDataSetMustDefineImageOrientationPatient {
             get {
                 return ResourceManager.GetString("MessageSourceDataSetMustDefineImageOrientationPatient", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Each frame in the source dataset must specify a frame of reference..
+        /// </summary>
+        public static string MessageSourceDataSetMustSpecifyFrameOfReference {
+            get {
+                return ResourceManager.GetString("MessageSourceDataSetMustSpecifyFrameOfReference", resourceCulture);
             }
         }
         

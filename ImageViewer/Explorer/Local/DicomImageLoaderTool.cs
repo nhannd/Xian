@@ -69,6 +69,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 		{
 			base.Initialize();
 			this.Context.DefaultActionHandler = Open;
+			Context.SelectedPathsChanged += OnContextSelectedPathsChanged;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			Context.SelectedPathsChanged -= OnContextSelectedPathsChanged;
+			base.Dispose(disposing);
 		}
 
 		/// <summary>
@@ -125,6 +132,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 			}
 
 			return fileList.ToArray();
+		}
+
+		private void OnContextSelectedPathsChanged(object sender, EventArgs e)
+		{
+			Enabled = Context.SelectedPaths.Count > 0;
 		}
 	}
 }

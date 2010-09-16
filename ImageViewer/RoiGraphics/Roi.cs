@@ -117,6 +117,14 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		}
 
 		/// <summary>
+		/// Gets the pixel dimensions of the image.
+		/// </summary>
+		public Size ImageSize
+		{
+			get { return new Size(_imageColumns, _imageRows); }
+		}
+
+		/// <summary>
 		/// Gets the pixel data of the image.
 		/// </summary>
 		public PixelData PixelData
@@ -254,9 +262,8 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <returns>An enumeration of points.</returns>
 		public IEnumerable<PointF> GetPixelCoordinates()
 		{
-			//TODO (cr Feb 2010): should actually be RoundInflate intersected with Image Bounds.
-
-			Rectangle bounds = Rectangle.Round(this.BoundingBox);
+			Rectangle bounds = Rectangle.Ceiling(this.BoundingBox);
+			bounds.Intersect(new Rectangle(Point.Empty, this.ImageSize));
 			for (int x = bounds.Left; x < bounds.Right; x++)
 			{
 				for (int y = bounds.Top; y < bounds.Bottom; y++)
@@ -277,8 +284,8 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			if (this.PixelData == null)
 				yield break;
 
-			//TODO (cr Feb 2010): should actually be RoundInflate intersected with Image Bounds.
-			Rectangle bounds = Rectangle.Round(this.BoundingBox);
+			Rectangle bounds = Rectangle.Ceiling(this.BoundingBox);
+			bounds.Intersect(new Rectangle(Point.Empty, this.ImageSize));
 			for (int x = bounds.Left; x < bounds.Right; x++)
 			{
 				for (int y = bounds.Top; y < bounds.Bottom; y++)
@@ -302,19 +309,19 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			if (this.PixelData == null)
 				yield break;
 
-			ILut lut = this.ModalityLut;
-			if (lut == null)
-				lut = new IdentityLut();
+			LutFunction lut = v => v;
+			if (this.ModalityLut != null)
+				lut = v => this.ModalityLut[v];
 
-			//TODO (cr Feb 2010): should actually be RoundInflate intersected with Image Bounds.
-			Rectangle bounds = Rectangle.Round(this.BoundingBox);
+			Rectangle bounds = Rectangle.Ceiling(this.BoundingBox);
+			bounds.Intersect(new Rectangle(Point.Empty, this.ImageSize));
 			for (int x = bounds.Left; x < bounds.Right; x++)
 			{
 				for (int y = bounds.Top; y < bounds.Bottom; y++)
 				{
 					PointF p = new PointF(x, y);
 					if (this.Contains(p))
-						yield return lut[this.PixelData.GetPixel(x, y)];
+						yield return lut(this.PixelData.GetPixel(x, y));
 				}
 			}
 		}
@@ -380,32 +387,6 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			return true;
 		}
 
-		private class IdentityLut : ILut
-		{
-			public int this[int index]
-			{
-				get { return index; }
-			}
-
-			public int MinOutputValue
-			{
-				get { return int.MinValue; }
-			}
-
-			public int MaxOutputValue
-			{
-				get { return int.MaxValue; }
-			}
-
-			public int MinInputValue
-			{
-				get { return int.MinValue; }
-			}
-
-			public int MaxInputValue
-			{
-				get { return int.MaxValue; }
-			}
-		}
+		private delegate int LutFunction(int v);
 	}
 }

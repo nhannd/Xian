@@ -81,11 +81,35 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 		}
 
 		[Test]
+		[ExpectedException(typeof (NullSourceSeriesException))]
+		public void TestMissingStudySource()
+		{
+			// it doesn't really matter what function we use
+			TestVolume(VolumeFunction.Void, sopDataSource => sopDataSource[DicomTags.StudyInstanceUid].SetEmptyValue(), null);
+		}
+
+		[Test]
+		[ExpectedException(typeof (NullSourceSeriesException))]
+		public void TestMissingSeriesSource()
+		{
+			// it doesn't really matter what function we use
+			TestVolume(VolumeFunction.Void, sopDataSource => sopDataSource[DicomTags.SeriesInstanceUid].SetEmptyValue(), null);
+		}
+
+		[Test]
 		[ExpectedException(typeof (MultipleSourceSeriesException))]
 		public void TestDifferentSeriesSource()
 		{
 			// it doesn't really matter what function we use
 			TestVolume(VolumeFunction.Void, sopDataSource => sopDataSource[DicomTags.SeriesInstanceUid].SetStringValue(DicomUid.GenerateUid().UID), null);
+		}
+
+		[Test]
+		[ExpectedException(typeof (NullFrameOfReferenceException))]
+		public void TestMissingFramesOfReferenceSource()
+		{
+			// it doesn't really matter what function we use
+			TestVolume(VolumeFunction.Void, sopDataSource => sopDataSource[DicomTags.FrameOfReferenceUid].SetEmptyValue(), null);
 		}
 
 		[Test]

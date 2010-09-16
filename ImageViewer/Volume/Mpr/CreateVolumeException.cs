@@ -42,14 +42,29 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public CreateVolumeException(string message, Exception innerException) : base(message, innerException) {}
 	}
 
+	public class UnsupportedSourceImagesException : CreateVolumeException
+	{
+		public UnsupportedSourceImagesException() : base("Source images are of an unsupported type.") {}
+	}
+
 	public class InsufficientFramesException : CreateVolumeException
 	{
 		public InsufficientFramesException() : base("Insufficient frames from which to create a volume. At least three are required.") {}
 	}
 
+	public class NullSourceSeriesException : CreateVolumeException
+	{
+		public NullSourceSeriesException() : base("One or more source frames are missing study and/or series information.") {}
+	}
+
 	public class MultipleSourceSeriesException : CreateVolumeException
 	{
-		public MultipleSourceSeriesException() : base("Multiple studies/series were found in the source frames. All source frames must be from the same study/series.") {}
+		public MultipleSourceSeriesException() : base("Multiple studies/series were found in the source frames. All source frames must be from the same study and series.") {}
+	}
+
+	public class NullFrameOfReferenceException : CreateVolumeException
+	{
+		public NullFrameOfReferenceException() : base("One or more source frames do not specify the frame of reference.") {}
 	}
 
 	public class MultipleFramesOfReferenceException : CreateVolumeException
@@ -96,14 +111,20 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			string message = SR.MessageUnexpectedCreateVolumeException;
 			if (ex is InsufficientFramesException)
 				message = SR.MessageSourceDataSetNeedsThreeImagesForMpr;
+			else if (ex is UnsupportedSourceImagesException)
+				message = SR.MessageSourceDataSetImagesAreNotSupported;
 			else if (ex is MultipleFramesOfReferenceException)
 				message = SR.MessageSourceDataSetMustBeSingleFrameOfReference;
 			else if (ex is MultipleImageOrientationsException)
 				message = SR.MessageSourceDataSetMustBeSameImageOrientationPatient;
 			else if (ex is MultipleSourceSeriesException)
 				message = SR.MessageSourceDataSetMustBeSingleSeries;
+			else if (ex is NullFrameOfReferenceException)
+				message = SR.MessageSourceDataSetMustSpecifyFrameOfReference;
 			else if (ex is NullImageOrientationException)
 				message = SR.MessageSourceDataSetMustDefineImageOrientationPatient;
+			else if (ex is NullSourceSeriesException)
+				message = SR.MessageSourceDataSetMustBeSingleSeries;
 			else if (ex is UnevenlySpacedFramesException)
 				message = SR.MessageSourceDataSetImagesMustBeEvenlySpacedForMpr;
 			else if (ex is UncalibratedFramesException)

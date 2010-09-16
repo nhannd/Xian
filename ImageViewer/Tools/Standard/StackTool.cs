@@ -87,30 +87,34 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				foreach (ISortMenuItemFactory factory in xp.CreateExtensions())
 					items.AddRange(factory.Create());
 
-				items.Sort(delegate(ISortMenuItem x, ISortMenuItem y)
-								{
-									return x.Description.CompareTo(y.Description);
-								});
+				items.Sort((x, y) => x.Description.CompareTo(y.Description));
 
 				foreach (ISortMenuItem item in items)
 				{
-					// whenever you use foreach with an anonymouse delegate, you have to copy the reference
-					// to a new variable, otherwise each anonymous delegate ends up referencing the same (last) object.
 					ISortMenuItem itemVar = item;
-					actionModel.AddAction(itemVar.Name, itemVar.Description, null, itemVar.Description, delegate { Sort(itemVar); });
+					var action = actionModel.AddAction(itemVar.Name, itemVar.Description, null, itemVar.Description, () => Sort(itemVar));
+					action.Checked = GetSortMenuItemCheckState(itemVar);
 				}
 
 				return actionModel;
 			}
 		}
 
+		private bool GetSortMenuItemCheckState(ISortMenuItem item)
+		{
+			return SelectedPresentationImage != null && base.SelectedPresentationImage.ParentDisplaySet != null &&
+			       item.Comparer.Equals(SelectedPresentationImage.ParentDisplaySet.PresentationImages.SortComparer);
+		}
+
 		private void Sort(ISortMenuItem sortMenuItem)
 		{
-			if (this.ImageViewer.SelectedImageBox == null || this.ImageViewer.SelectedImageBox.DisplaySet == null)
+			IImageBox imageBox = ImageViewer.SelectedImageBox;
+			IDisplaySet displaySet;
+			if (imageBox == null || (displaySet = ImageViewer.SelectedImageBox.DisplaySet) == null)
 				return;
 
-			IImageBox imageBox = ImageViewer.SelectedImageBox;
-			IDisplaySet displaySet = imageBox.DisplaySet;
+			if (displaySet.PresentationImages.Count == 0)
+				return;
 
 			//try to keep the top-left image the same.
 			IPresentationImage topLeftImage = imageBox.TopLeftPresentationImage;

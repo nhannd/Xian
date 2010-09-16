@@ -283,6 +283,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			this._folderView.FolderCoordinator = this._folderCoordinator;
 			this._folderView.Name = "_folderView";
 			this._folderView.EndBrowse += new System.EventHandler(this._folderControl_EndBrowse);
+			this._folderView.SelectedItemsChanged += new System.EventHandler(this._folderView_SelectedItemsChanged);
 			this._folderView.BeginBrowse += new System.EventHandler(this._folderControl_BeginBrowse);
 			this._folderView.ItemDoubleClick += new ClearCanvas.Controls.WinForms.FolderViewItemEventHandler(this._folderView_ItemDoubleClick);
 			this._folderView.KeyDown += new System.Windows.Forms.KeyEventHandler(this._folderControl_KeyDown);
@@ -296,6 +297,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			this._folderTree.FolderCoordinator = this._folderCoordinator;
 			this._folderTree.Name = "_folderTree";
 			this._folderTree.EndBrowse += new System.EventHandler(this._folderControl_EndBrowse);
+			this._folderTree.SelectedItemsChanged += new System.EventHandler(this._folderTree_SelectedItemsChanged);
 			this._folderTree.BeginBrowse += new System.EventHandler(this._folderControl_BeginBrowse);
 			this._folderTree.KeyDown += new System.Windows.Forms.KeyEventHandler(this._folderControl_KeyDown);
 			// 

@@ -47,7 +47,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 	public partial class LocalImageExplorerControl : UserControl
 	{
 		private LocalImageExplorerComponent _component;
-		private bool _lastClickOnFolderView = false;
 		private Pidl _homeLocation = null;
 
 		public LocalImageExplorerControl(LocalImageExplorerComponent component)
@@ -67,11 +66,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 
 			ResetFocus(); // reset focus must happen after explorer controls are initially populated
 
-			//Tell the component how to get the paths to use.
-			component.GetSelectedPathsDelegate = GetSelectedPaths;
-
-			//Build the menus here, as the tools have no access to any events to decide whether to enable/disable or show/hide themselves.
-			//TODO: fix the tool context so that there are such events, and revert the changes from this revision (hint: blame this file)
+			// Initialize menus here
 			ToolStripBuilder.BuildMenu(_folderViewContextMenu.Items, _component.ContextMenuModel.ChildNodes);
 			ToolStripBuilder.BuildMenu(_folderTreeContextMenu.Items, _component.ContextMenuModel.ChildNodes);
 		}
@@ -91,19 +86,25 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			ExceptionHandler.Report(ex, _component.DesktopWindow);
 		}
 
-		private IEnumerable<string> GetSelectedPaths()
+		private void UpdateSelection(bool triggeredFromFolderView)
 		{
-			if (_lastClickOnFolderView)
+			if (triggeredFromFolderView)
 			{
+				var selection = new List<string>();
 				foreach (FolderView.FolderViewItem item in _folderView.SelectedItems)
 				{
 					if (!string.IsNullOrEmpty(item.Path))
-						yield return item.Path;
+						selection.Add(item.Path);
 				}
+				_component.Selection = new Selection<string>(selection);
 			}
 			else
 			{
-				yield return _folderTree.SelectedItem.Path;
+				var path = _folderTree.SelectedItem.Path;
+				if (!string.IsNullOrEmpty(path))
+					_component.Selection = new Selection<string>(path);
+				else
+					_component.Selection = Selection<string>.Empty;
 			}
 		}
 
@@ -463,9 +464,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 		{
 			if (!e.Item.IsFolder)
 			{
-				_lastClickOnFolderView = true;
+				UpdateSelection(true);
 				this.OnItemOpened(sender, e);
 			}
+		}
+
+		private void _folderView_SelectedItemsChanged(object sender, EventArgs e)
+		{
+			UpdateSelection(true);
+		}
+
+		private void _folderTree_SelectedItemsChanged(object sender, EventArgs e)
+		{
+			UpdateSelection(false);
 		}
 
 		private void _folderControl_KeyDown(object sender, KeyEventArgs e)
@@ -491,12 +502,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 
 		private void _folderViewContextMenu_Opening(object sender, CancelEventArgs e)
 		{
-			_lastClickOnFolderView = true;
+			UpdateSelection(true);
 		}
 
 		private void _folderTreeContextMenu_Opening(object sender, CancelEventArgs e)
 		{
-			_lastClickOnFolderView = false;
+			UpdateSelection(false);
 		}
 
 		#endregion

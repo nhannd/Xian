@@ -276,4 +276,10 @@
   <data name="MessageSourceDataSetImagesMustBeCalibrated" xml:space="preserve">
     <value>The selected images must be calibrated.</value>
   </data>
+  <data name="MessageSourceDataSetImagesAreNotSupported" xml:space="preserve">
+    <value>The selected images are of an unsupported type. MPR currently only supports DICOM image SOPs.</value>
+  </data>
+  <data name="MessageSourceDataSetMustSpecifyFrameOfReference" xml:space="preserve">
+    <value>Each frame in the source dataset must specify a frame of reference.</value>
+  </data>
 </root>

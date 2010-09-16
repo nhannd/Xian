@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -41,14 +42,11 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class DisplaySetCollection : ObservableList<IDisplaySet>
 	{
-		private IComparer<IDisplaySet> _comparer;
-
 		/// <summary>
 		/// Instantiates a new instance of <see cref="DisplaySetCollection"/>.
 		/// </summary>
 		internal DisplaySetCollection()
 		{
-
 		}
 
 		internal static IComparer<IDisplaySet> GetDefaultComparer()
@@ -56,20 +54,48 @@ namespace ClearCanvas.ImageViewer
 			return new DisplaySetNumberComparer();
 		}
 
-		internal IComparer<IDisplaySet> Comparer
+		/// <summary>
+		/// The comparer that was last used to sort the collection, via <see cref="Sort"/>.
+		/// </summary>
+		/// <remarks>
+		/// When an item is added to or replaced, this value is set to null.  When an item is
+		/// simply removed, the sort order is maintained, so this value also will not change.
+		/// </remarks>
+		public IComparer<IDisplaySet> SortComparer { get; internal set; }
+
+		/// <summary>
+		/// Sorts the collection using <see cref="SortComparer"/>.
+		/// </summary>
+		/// <remarks>
+		/// If <see cref="SortComparer"/> is null, it is first set to a default one.
+		/// </remarks>
+		public void Sort()
 		{
-			get { return _comparer; }
-			set { _comparer = value; }
+			if (SortComparer == null)
+				SortComparer = GetDefaultComparer();
+			Sort(SortComparer);
 		}
 
 		/// <summary>
 		/// Sorts the collection with the given comparer.
 		/// </summary>
-		public override void Sort(IComparer<IDisplaySet> comparer)
+		public sealed override void Sort(IComparer<IDisplaySet> sortComparer)
 		{
-			Platform.CheckForNullReference(comparer, "comparer");
-			_comparer = comparer;
-			base.Sort(_comparer);
+			Platform.CheckForNullReference(sortComparer, "comparer");
+			SortComparer = sortComparer;
+			base.Sort(SortComparer);
+		}
+
+		protected override void OnItemAdded(ListEventArgs<IDisplaySet> e)
+		{
+			SortComparer = null; //we don't know the sort order anymore.
+			base.OnItemAdded(e);
+		}
+
+		protected override void OnItemChanged(ListEventArgs<IDisplaySet> e)
+		{
+			SortComparer = null;//we don't know the sort order anymore.
+			base.OnItemChanged(e);
 		}
 	}
 }

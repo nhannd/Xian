@@ -29,7 +29,7 @@
 
 #endregion
 
-using ClearCanvas.ImageViewer.Graphics;
+using System;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -41,12 +41,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			get
 			{
-				if (base.SelectedImageGraphicProvider != null)
+				if (SelectedVoiLutProvider != null)
 				{
-					if (base.SelectedImageGraphicProvider.ImageGraphic is ColorImageGraphic)
-						return Sensitivity[8];
-					if (base.SelectedImageGraphicProvider.ImageGraphic is GrayscaleImageGraphic)
-						return Sensitivity[((GrayscaleImageGraphic) base.SelectedImageGraphicProvider.ImageGraphic).BitsStored];
+					var voiLutManager = SelectedVoiLutProvider.VoiLutManager;
+					if (voiLutManager != null && voiLutManager.VoiLut != null)
+					{
+						// compute the effective bit depth of the image (that is, the bit depth of values on which the W/L tool operates, rather than that of the raw pixel data)
+						// the formula to compute this is: ceil(log2(EFFECTIVE_VALUE_RANGE))
+						var effectiveBitDepth = (int) Math.Ceiling(Math.Log(Math.Abs(voiLutManager.VoiLut.MaxOutputValue - voiLutManager.VoiLut.MinOutputValue), 2));
+						return Sensitivity[effectiveBitDepth];
+					}
 				}
 				return 10;
 			}
@@ -77,13 +81,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				_increment[15] = 10;
 			}
 
-			public double this[int bitsStored]
+			public double this[int bitDepth]
 			{
 				get
 				{
-					if (bitsStored > 16)
-						bitsStored = 16;
-					return _increment[bitsStored - 1];
+					if (bitDepth > 16)
+						bitDepth = 16;
+					if (bitDepth < 1)
+						bitDepth = 1;
+					return _increment[bitDepth - 1];
 				}
 			}
 		}

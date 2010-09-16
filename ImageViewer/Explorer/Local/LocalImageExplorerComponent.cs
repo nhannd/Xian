@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Explorer;
 using ClearCanvas.Desktop.Actions;
@@ -42,7 +43,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 {
 	public interface ILocalImageExplorerToolContext : IToolContext
 	{
-		IEnumerable<string> SelectedPaths { get; }
+		event EventHandler SelectedPathsChanged;
+		Selection<string> SelectedPaths { get; }
 		IDesktopWindow DesktopWindow { get; }
 		ClickHandlerDelegate DefaultActionHandler { get; set; }
 	}
@@ -52,11 +54,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 	{
 	}
 
+	[ExtensionPoint]
 	public sealed class LocalImageExplorerComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
-
-	public delegate IEnumerable<string> GetSelectedPathsDelegate();
 
 	[AssociateView(typeof(LocalImageExplorerComponentViewExtensionPoint))]
 	public class LocalImageExplorerComponent : ApplicationComponent
@@ -72,15 +73,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 
 			#region LocalImageExplorerToolContext Members
 
-			public IEnumerable<string> SelectedPaths
+			public event EventHandler SelectedPathsChanged
 			{
-				get
-				{
-					if (_component._getSelectedPathsDelegate == null)
-						return new List<string>(); //an empty list
+				add { _component.SelectionChanged += value; }
+				remove { _component.SelectionChanged -= value; }
+			}
 
-					return _component._getSelectedPathsDelegate();
-				}
+			public Selection<string> SelectedPaths
+			{
+				get { return _component.Selection; }
 			}
 
 			public IDesktopWindow DesktopWindow
@@ -102,9 +103,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 
 		/// LocalImageExplorerComponent members
 
+		private event EventHandler _selectionChanged;
+		private Selection<string> _selection;
+
 		private ToolSet _toolSet;
 		private ClickHandlerDelegate _defaultActionHandler;
-		private GetSelectedPathsDelegate _getSelectedPathsDelegate;
 
 		public LocalImageExplorerComponent()
 		{
@@ -122,10 +125,28 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 			set { _defaultActionHandler = value; }
 		}
 
-		public GetSelectedPathsDelegate GetSelectedPathsDelegate
+		public Selection<string> Selection
 		{
-			get { return _getSelectedPathsDelegate; }
-			set { _getSelectedPathsDelegate = value; }
+			get { return _selection ?? Selection<string>.Empty; }
+			set
+			{
+				if (_selection != value)
+				{
+					_selection = value;
+					OnSelectionChanged();
+				}
+			}
+		}
+
+		public event EventHandler SelectionChanged
+		{
+			add { _selectionChanged += value; }
+			remove { _selectionChanged -= value; }
+		}
+
+		protected void OnSelectionChanged()
+		{
+			EventsHelper.Fire(_selectionChanged, this, EventArgs.Empty);
 		}
 
 		public void DefaultAction()

@@ -33,14 +33,12 @@
 
 #pragma warning disable 1591,0419,1574,1587
 
-using System.Threading;
-using ClearCanvas.ImageViewer.InteractiveGraphics;
-using ClearCanvas.ImageViewer.RoiGraphics;
-using NUnit.Framework;
-using System.Drawing;
 using System;
+using System.Drawing;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Mathematics;
-using Matrix = System.Drawing.Drawing2D.Matrix;
+using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.Graphics.Tests
 {
@@ -54,6 +52,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[TestFixtureSetUp]
 		public void Init()
 		{
+			Platform.SetExtensionFactory(new NullExtensionFactory());
 		}
 	
 		[TestFixtureTearDown]
@@ -64,8 +63,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void DefaultTransform()
 		{
-			ImageSpatialTransform transform = CreateTransform();
-			transform.ScaleToFit = false;
+			var transform = CreateTransform();
 
 			Assert.AreEqual(1.0f, transform.Transform.Elements[0]);
 			Assert.AreEqual(0.0f, transform.Transform.Elements[1]);
@@ -76,96 +74,27 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void Scale()
 		{
-			ImageSpatialTransform transform = CreateTransform();
-			transform.ScaleToFit = false;
+			var transform = CreateTransform();
 			transform.Scale = 2.0f;
 
 			Assert.AreEqual(transform.ScaleX, 2.0f);
 			Assert.AreEqual(transform.ScaleY, 2.0f);
-		}
 
-		[Test]
-		public void ScaleIsotropicPixel()
-		{
-			ImageSpatialTransform transform = CreateTransform();
-			transform.ScaleToFit = false;
-			transform.Scale = 2.0f;
-
+			// this tests the conversion to destination of (1,1)_src
 			Assert.AreEqual(2.0f, transform.Transform.Elements[0]);
 			Assert.AreEqual(0.0f, transform.Transform.Elements[1]);
 			Assert.AreEqual(0.0f, transform.Transform.Elements[2]);
 			Assert.AreEqual(2.0f, transform.Transform.Elements[3]);
-		}
 
-
-		[Test]
-		public void ScaleAnisotropicPixelSpacing1()
-		{
-			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384, 1, 2, 0, 0);
-			ImageSpatialTransform transform = (ImageSpatialTransform)graphic.SpatialTransform;
-			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
-
-			transform.ScaleToFit = false;
-			transform.Scale = 2.0f;
-
-			Assert.AreEqual(2.0f, transform.Transform.Elements[0]);
-			Assert.AreEqual(0.0f, transform.Transform.Elements[1]);
-			Assert.AreEqual(0.0f, transform.Transform.Elements[2]);
-			Assert.AreEqual(4.0f, transform.Transform.Elements[3]);
-		}
-
-		[Test]
-		public void ScaleAnisotropicPixelSpacing2()
-		{
-			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384, 2, 1, 0, 0);
-			ImageSpatialTransform transform = (ImageSpatialTransform)graphic.SpatialTransform;
-			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
-
-			transform.ScaleToFit = false;
-			transform.Scale = 2.0f;
-
-			Assert.AreEqual(4.0f, transform.Transform.Elements[0]);
-			Assert.AreEqual(0.0f, transform.Transform.Elements[1]);
-			Assert.AreEqual(0.0f, transform.Transform.Elements[2]);
-			Assert.AreEqual(2.0f, transform.Transform.Elements[3]);
-		}
-
-		[Test]
-		public void ScaleAnisotropicPixelAspectRatio1()
-		{
-			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384, 0, 0, 1, 2);
-			ImageSpatialTransform transform = (ImageSpatialTransform)graphic.SpatialTransform;
-			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
-
-			transform.ScaleToFit = false;
-			transform.Scale = 2.0f;
-
-			Assert.AreEqual(2.0f, transform.Transform.Elements[0]);
-			Assert.AreEqual(0.0f, transform.Transform.Elements[1]);
-			Assert.AreEqual(0.0f, transform.Transform.Elements[2]);
-			Assert.AreEqual(4.0f, transform.Transform.Elements[3]);
-		}
-
-		[Test]
-		public void ScaleAnisotropicPixelAspectRatio2()
-		{
-			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384, 0, 0, 2, 1);
-			ImageSpatialTransform transform = (ImageSpatialTransform)graphic.SpatialTransform;
-			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
-
-			transform.ScaleToFit = false;
-			transform.Scale = 2.0f;
-
-			Assert.AreEqual(4.0f, transform.Transform.Elements[0]);
-			Assert.AreEqual(0.0f, transform.Transform.Elements[1]);
-			Assert.AreEqual(0.0f, transform.Transform.Elements[2]);
-			Assert.AreEqual(2.0f, transform.Transform.Elements[3]);
+			var actual = transform.ConvertToDestination(new SizeF(384, 512));
+			Assert.AreEqual(768, actual.Width, 0.001f);
+			Assert.AreEqual(1024, actual.Height, 0.001f);
 		}
 
 		[Test]
 		public void FlipY()
 		{
-			ImageSpatialTransform transform = CreateTransform();
+			var transform = CreateTransform();
 			transform.FlipY = true;
 
 			Assert.AreEqual(-1.0f, transform.Transform.Elements[0]);
@@ -180,8 +109,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void FlipX()
 		{
-			ImageSpatialTransform transform = CreateTransform();
-			transform.ScaleToFit = false;
+			var transform = CreateTransform();
 			transform.FlipX = true;
 
 			Assert.AreEqual(1.0f, transform.Transform.Elements[0]);
@@ -196,7 +124,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void FlipXY()
 		{
-			ImageSpatialTransform transform = CreateTransform();
+			var transform = CreateTransform();
 			transform.FlipX = true;
 			transform.FlipY = true;
 
@@ -212,8 +140,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void Rotate1()
 		{
-			ImageSpatialTransform transform = CreateTransform();
-			transform.ScaleToFit = false;
+			var transform = CreateTransform();
 			transform.RotationXY = 90;
 
 			Assert.IsTrue(Math.Abs(0.0f - transform.Transform.Elements[0]) < 1.0E-05);
@@ -225,8 +152,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void Rotate2()
 		{
-			ImageSpatialTransform transform = CreateTransform();
-			transform.ScaleToFit = false;
+			var transform = CreateTransform();
 
 			transform.RotationXY = 0;
 			Assert.AreEqual(0, transform.RotationXY);
@@ -247,7 +173,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void Translate()
 		{
-			ImageSpatialTransform transform = CreateTransform();
+			var transform = CreateTransform();
 			transform.TranslationX = 10;
 			transform.TranslationY = 20;
 
@@ -260,45 +186,29 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		}
 
 		[Test]
-		public void ScaleToFit()
-		{
-			ImageSpatialTransform transform = CreateTransform();
-
-			transform.ScaleToFit = false;
-			transform.Scale = 2.0f;
-
-			Assert.AreEqual(2.0f, transform.Transform.Elements[0]);
-			Assert.AreEqual(0.0f, transform.Transform.Elements[1]);
-			Assert.AreEqual(0.0f, transform.Transform.Elements[2]);
-			Assert.AreEqual(2.0f, transform.Transform.Elements[3]);
-			Assert.AreEqual(2.0f, transform.Scale);
-			Assert.AreEqual(2.0f, transform.ScaleX);
-			Assert.AreEqual(2.0f, transform.ScaleY);
-
-			transform.ScaleToFit = true;
-
-			Assert.AreEqual(1.0f, transform.Transform.Elements[0]);
-			Assert.AreEqual(0.0f, transform.Transform.Elements[1]);
-			Assert.AreEqual(0.0f, transform.Transform.Elements[2]);
-			Assert.AreEqual(1.0f, transform.Transform.Elements[3]);
-			Assert.AreEqual(1.0f, transform.Scale);
-			Assert.AreEqual(1.0f, transform.ScaleX);
-			Assert.AreEqual(1.0f, transform.ScaleY);
-		}
-
-		[Test]
-		public void SourceToDestination()
+		public void SourceToDestinationRoundtrip()
 		{
 			// be sure to covert back and forth
-			CompositeImageGraphic graphic = new CompositeImageGraphic(3062, 3732);
-			ImageSpatialTransform transform = (ImageSpatialTransform)graphic.SpatialTransform;
-			transform.ClientRectangle = new Rectangle(6, 6, 493, 626);
+			var transform = CreateTransform();
 
 			PointF srcPt1 = new Point(100, 200);
 			PointF dstPt = transform.ConvertToDestination(srcPt1);
 
 			PointF srcPt2 = transform.ConvertToSource(dstPt);
 			Assert.IsTrue(FloatComparer.AreEqual(srcPt1, srcPt2));
+		}
+
+		[Test]
+		public void DestinationToSourceRoundtrip()
+		{
+			// be sure to covert back and forth
+			var transform = CreateTransform();
+
+			PointF dstPt1 = new Point(100, 200);
+			PointF srcPt = transform.ConvertToSource(dstPt1);
+
+			PointF dstPt2 = transform.ConvertToDestination(srcPt);
+			Assert.IsTrue(FloatComparer.AreEqual(dstPt1, dstPt2));
 		}
 
 		[Test]
@@ -416,110 +326,9 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			Assert.AreEqual(graphic2.SpatialTransform.CumulativeTransform.Elements[3], -0.1736, 0.0001F);
 		}
 
-		[Test]
-		public void CumulativeTransform()
+		private static SpatialTransform CreateTransform()
 		{
-			//this will cause a non-1:1 scale in y
-			CompositeImageGraphic composite = new CompositeImageGraphic(512, 384, 0, 0, 3, 4);
-			ImageSpatialTransform transform = (ImageSpatialTransform)composite.SpatialTransform;
-			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
-			transform.ScaleToFit = false;
-			transform.Scale = 2;
-
-			CompositeGraphic graphic = new CompositeGraphic();
-			composite.Graphics.Add(graphic);
-			graphic.SpatialTransform.RotationXY = 30;
-
-			Assert.AreEqual(graphic.SpatialTransform.Transform.Elements[0], 0.8660, 0.0001F);
-			Assert.AreEqual(graphic.SpatialTransform.Transform.Elements[1], 0.5, 0.0001F);
-			Assert.AreEqual(graphic.SpatialTransform.Transform.Elements[2], -0.5, 0.0001F);
-			Assert.AreEqual(graphic.SpatialTransform.Transform.Elements[3], 0.866, 0.0001F);
-			Assert.AreEqual(graphic.SpatialTransform.CumulativeTransform.Elements[0], 1.7321, 0.0001F);
-			Assert.AreEqual(graphic.SpatialTransform.CumulativeTransform.Elements[1], 1.3333, 0.0001F);
-			Assert.AreEqual(graphic.SpatialTransform.CumulativeTransform.Elements[2], -1, 0.0001F);
-			Assert.AreEqual(graphic.SpatialTransform.CumulativeTransform.Elements[3], 2.3094, 0.0001F);
-		}
-
-		[ExpectedException(typeof(ArgumentException))]
-		[Test]
-		public void TestRotationConstraints()
-		{
-			SynchronizationContext oldContext = SynchronizationContext.Current;
-			if (oldContext == null)
-				SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
-			try
-			{
-				CompositeGraphic sceneGraph = CreateTestSceneGraph();
-				CompositeImageGraphic imageComposite = (CompositeImageGraphic) sceneGraph.Graphics[0];
-				ImageGraphic image = (ImageGraphic) imageComposite.Graphics[0];
-				CompositeGraphic primitiveOwner = (CompositeGraphic) imageComposite.Graphics[1];
-				Graphic primitive = (Graphic) primitiveOwner.Graphics[0];
-
-				RoiGraphic roiGraphic = (RoiGraphic) imageComposite.Graphics[2];
-
-				try
-				{
-					sceneGraph.SpatialTransform.RotationXY = 90;
-					imageComposite.SpatialTransform.RotationXY = 90;
-					primitiveOwner.SpatialTransform.RotationXY = 10;
-					primitive.SpatialTransform.RotationXY = -20;
-				}
-				catch (Exception)
-				{
-					Assert.Fail("These operations should not throw an exception!");
-				}
-
-				Matrix cumulativeTransform;
-				try
-				{
-					imageComposite.SpatialTransform.RotationXY = 30;
-					//should throw; no non-90 degree rotations allowed on an image
-					cumulativeTransform = image.SpatialTransform.CumulativeTransform;
-					Assert.Fail("expected exception not thrown!");
-				}
-				catch (ArgumentException)
-				{
-					imageComposite.SpatialTransform.RotationXY = 90;
-				}
-
-				roiGraphic.SpatialTransform.RotationXY = 100;
-				//should throw; no rotation allowed on a roi
-				cumulativeTransform = roiGraphic.SpatialTransform.CumulativeTransform;
-			}
-			finally
-			{
-				if (oldContext != SynchronizationContext.Current)
-					SynchronizationContext.SetSynchronizationContext(oldContext);
-			}
-		}
-
-		private static CompositeGraphic CreateTestSceneGraph()
-		{
-			CompositeGraphic sceneGraph = new CompositeGraphic();
-			ImageSpatialTransform imageTransform = CreateTransform();
-
-			sceneGraph.Graphics.Add(imageTransform.OwnerGraphic);
-
-			CompositeGraphic composite = new CompositeGraphic();
-			Graphic leaf = new LinePrimitive();
-			composite.Graphics.Add(leaf);
-			((CompositeImageGraphic)imageTransform.OwnerGraphic).Graphics.Add(composite);
-
-			RoiGraphic roiGraphic = new RoiGraphic(new EllipsePrimitive());
-			((CompositeImageGraphic)imageTransform.OwnerGraphic).Graphics.Add(roiGraphic);
-
-			return sceneGraph;
-		}
-
-		private static ImageSpatialTransform CreateTransform()
-		{
-			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384);
-			GrayscaleImageGraphic image = new GrayscaleImageGraphic(512, 384);
-			graphic.Graphics.Add(image);
-
-			ImageSpatialTransform transform = (ImageSpatialTransform)graphic.SpatialTransform;
-			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
-			return transform;
+			return new CompositeGraphic().SpatialTransform;
 		}
 
 		//[Test]

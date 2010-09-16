@@ -174,6 +174,30 @@
   <metadata name="_toolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="_toolStrip.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="_toolStrip.Size" type="System.Drawing.Size, System.Drawing">
+    <value>959, 25</value>
+  </data>
+  <data name="_toolStrip.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="_toolStrip.Text" xml:space="preserve">
+    <value>Standard Buttons</value>
+  </data>
+  <data name="&gt;&gt;_toolStrip.Name" xml:space="preserve">
+    <value>_toolStrip</value>
+  </data>
+  <data name="&gt;&gt;_toolStrip.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_toolStrip.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;_toolStrip.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
   <data name="_btnBack.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
@@ -342,30 +366,6 @@
   <data name="_btnShowFolders.Text" xml:space="preserve">
     <value>Folders</value>
   </data>
-  <data name="_mnuTilesView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>106, 22</value>
-  </data>
-  <data name="_mnuTilesView.Text" xml:space="preserve">
-    <value>Tile&amp;s</value>
-  </data>
-  <data name="_mnuIconsView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>106, 22</value>
-  </data>
-  <data name="_mnuIconsView.Text" xml:space="preserve">
-    <value>Ico&amp;ns</value>
-  </data>
-  <data name="_mnuListView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>106, 22</value>
-  </data>
-  <data name="_mnuListView.Text" xml:space="preserve">
-    <value>&amp;List</value>
-  </data>
-  <data name="_mnuDetailsView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>106, 22</value>
-  </data>
-  <data name="_mnuDetailsView.Text" xml:space="preserve">
-    <value>&amp;Details</value>
-  </data>
   <data name="_btnViews.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
@@ -393,33 +393,57 @@
   <data name="_btnViews.Text" xml:space="preserve">
     <value>Views</value>
   </data>
-  <data name="_toolStrip.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
+  <data name="_mnuTilesView.Size" type="System.Drawing.Size, System.Drawing">
+    <value>106, 22</value>
   </data>
-  <data name="_toolStrip.Size" type="System.Drawing.Size, System.Drawing">
-    <value>959, 25</value>
+  <data name="_mnuTilesView.Text" xml:space="preserve">
+    <value>Tile&amp;s</value>
   </data>
-  <data name="_toolStrip.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+  <data name="_mnuIconsView.Size" type="System.Drawing.Size, System.Drawing">
+    <value>106, 22</value>
   </data>
-  <data name="_toolStrip.Text" xml:space="preserve">
-    <value>Standard Buttons</value>
+  <data name="_mnuIconsView.Text" xml:space="preserve">
+    <value>Ico&amp;ns</value>
   </data>
-  <data name="&gt;&gt;_toolStrip.Name" xml:space="preserve">
-    <value>_toolStrip</value>
+  <data name="_mnuListView.Size" type="System.Drawing.Size, System.Drawing">
+    <value>106, 22</value>
   </data>
-  <data name="&gt;&gt;_toolStrip.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="_mnuListView.Text" xml:space="preserve">
+    <value>&amp;List</value>
   </data>
-  <data name="&gt;&gt;_toolStrip.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="_mnuDetailsView.Size" type="System.Drawing.Size, System.Drawing">
+    <value>106, 22</value>
   </data>
-  <data name="&gt;&gt;_toolStrip.ZOrder" xml:space="preserve">
-    <value>6</value>
+  <data name="_mnuDetailsView.Text" xml:space="preserve">
+    <value>&amp;Details</value>
   </data>
   <metadata name="_addressStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>116, 17</value>
   </metadata>
+  <data name="_addressStrip.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 25</value>
+  </data>
+  <data name="_addressStrip.Size" type="System.Drawing.Size, System.Drawing">
+    <value>959, 27</value>
+  </data>
+  <data name="_addressStrip.TabIndex" type="System.Int32, mscorlib">
+    <value>300</value>
+  </data>
+  <data name="_addressStrip.Text" xml:space="preserve">
+    <value>Address Bar</value>
+  </data>
+  <data name="&gt;&gt;_addressStrip.Name" xml:space="preserve">
+    <value>_addressStrip</value>
+  </data>
+  <data name="&gt;&gt;_addressStrip.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_addressStrip.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;_addressStrip.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
   <data name="_lblAddress.Size" type="System.Drawing.Size, System.Drawing">
     <value>46, 24</value>
   </data>
@@ -455,30 +479,6 @@
   </data>
   <data name="_btnGo.Text" xml:space="preserve">
     <value>Go</value>
-  </data>
-  <data name="_addressStrip.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 25</value>
-  </data>
-  <data name="_addressStrip.Size" type="System.Drawing.Size, System.Drawing">
-    <value>959, 27</value>
-  </data>
-  <data name="_addressStrip.TabIndex" type="System.Int32, mscorlib">
-    <value>300</value>
-  </data>
-  <data name="_addressStrip.Text" xml:space="preserve">
-    <value>Address Bar</value>
-  </data>
-  <data name="&gt;&gt;_addressStrip.Name" xml:space="preserve">
-    <value>_addressStrip</value>
-  </data>
-  <data name="&gt;&gt;_addressStrip.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_addressStrip.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;_addressStrip.ZOrder" xml:space="preserve">
-    <value>5</value>
   </data>
   <metadata name="_largeIconImageList.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>728, 17</value>

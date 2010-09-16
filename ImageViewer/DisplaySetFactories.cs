@@ -253,7 +253,10 @@ namespace ClearCanvas.ImageViewer
 				List<IDisplaySet> displaySets = new List<IDisplaySet>();
 				IDisplaySet displaySet = CreateSeriesDisplaySet(series);
 				if (displaySet != null)
+				{
+					displaySet.PresentationImages.Sort();
 					displaySets.Add(displaySet);
+				}
 				return displaySets;
 			}
 		}
@@ -463,6 +466,7 @@ namespace ClearCanvas.ImageViewer
 							foreach (IPresentationImage image in images)
 								displaySet.PresentationImages.Add(image);
 
+							displaySet.PresentationImages.Sort();
 							displaySets.Add(displaySet);
 						}
 					}
@@ -676,6 +680,7 @@ namespace ClearCanvas.ImageViewer
 						foreach (IPresentationImage multiFrameImage in multiFrameImages)
 							displaySet.PresentationImages.Add(multiFrameImage);
 
+						displaySet.PresentationImages.Sort();
 						displaySets.Add(displaySet);
 					}
 				}

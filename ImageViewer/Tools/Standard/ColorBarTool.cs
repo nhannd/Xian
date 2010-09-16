@@ -123,7 +123,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			this.Enabled = e.SelectedPresentationImage is IColorMapProvider;
 		}
 
-		[Cloneable]
 		private class ColorBarCompositeGraphic : CompositeGraphic
 		{
 			[CloneIgnore]

@@ -51,23 +51,7 @@ namespace ClearCanvas.ImageViewer
 
 			public DisplaySetMemento(IDisplaySet displaySet)
 			{
-				Comparer = displaySet.PresentationImages.Comparer;
-			}
-
-			public bool ComparersEqual(IComparer<IPresentationImage> x, IComparer<IPresentationImage> y)
-			{
-				if (x == y)
-					return true;
-
-				if (x == null || y == null)
-					return false;
-
-				return x.GetType() == y.GetType();
-			}
-
-			public override int GetHashCode()
-			{
-				return base.GetHashCode();
+				Comparer = displaySet.PresentationImages.SortComparer;
 			}
 
 			public override bool Equals(object obj)
@@ -78,7 +62,7 @@ namespace ClearCanvas.ImageViewer
 				if (obj is DisplaySetMemento)
 				{
 					DisplaySetMemento other = (DisplaySetMemento) obj;
-					return ComparersEqual(Comparer, other.Comparer);
+					return Equals(Comparer, other.Comparer);
 				}
 
 				return false;
@@ -405,7 +389,7 @@ namespace ClearCanvas.ImageViewer
 			foreach (IPresentationImage image in this.PresentationImages)
 				displaySet.PresentationImages.Add(image.CreateFreshCopy());
 
-			displaySet.PresentationImages.Comparer = PresentationImages.Comparer;
+			displaySet.PresentationImages.SortComparer = PresentationImages.SortComparer;
 
 			if (ParentImageSet != null)
 				((ImageSet)ParentImageSet).AddCopy(displaySet);
@@ -535,7 +519,7 @@ namespace ClearCanvas.ImageViewer
 			}
 
 			//keep the sort order.
-			PresentationImages.Comparer = source.PresentationImages.Comparer;
+			PresentationImages.SortComparer = source.PresentationImages.SortComparer;
 		}
 
 		#region IMemorable Members

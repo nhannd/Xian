@@ -63,11 +63,11 @@ namespace ClearCanvas.ImageViewer.Annotations.Tests
 			AnnotationLayoutStore.Instance.Clear();
 
 			IList<StoredAnnotationLayout> layouts = AnnotationLayoutStore.Instance.GetLayouts(annotationItems);
-			Assert.AreEqual(layouts.Count, 0);
+			Assert.AreEqual(0, layouts.Count);
 
 			AnnotationLayoutStore.Instance.Update(this.CreateLayout("testLayout1"));
 			layouts = AnnotationLayoutStore.Instance.GetLayouts(annotationItems);
-			Assert.AreEqual(layouts.Count, 1);
+			Assert.AreEqual(1, layouts.Count);
 
 			layouts = new List<StoredAnnotationLayout>();
 			layouts.Clear();
@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Tests
 			AnnotationLayoutStore.Instance.Update(layouts);
 
 			layouts = AnnotationLayoutStore.Instance.GetLayouts(annotationItems);
-			Assert.AreEqual(layouts.Count, 4);
+			Assert.AreEqual(4, layouts.Count);
 
 			ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
 			using (Stream stream = resolver.OpenResource("AnnotationLayoutStoreDefaults.xml"))
@@ -89,27 +89,27 @@ namespace ClearCanvas.ImageViewer.Annotations.Tests
 			}
 
 			layouts = AnnotationLayoutStore.Instance.GetLayouts(annotationItems);
-			Assert.AreEqual(layouts.Count, 8);
+			int xmlLayoutCount = layouts.Count;
 
 			StoredAnnotationLayout layout = AnnotationLayoutStore.Instance.GetLayout("Dicom.OT", annotationItems);
 			layout = CopyLayout(layout, "Dicom.OT.Copied");
 
 			AnnotationLayoutStore.Instance.Update(layout);
 			layouts = AnnotationLayoutStore.Instance.GetLayouts(annotationItems);
-			Assert.AreEqual(layouts.Count, 9);
+			Assert.AreEqual(xmlLayoutCount + 1, layouts.Count);
 
 			layout = AnnotationLayoutStore.Instance.GetLayout("Dicom.OT.Copied", annotationItems);
-			Assert.AreNotEqual(layout, null);
+			Assert.IsNotNull(layout);
 			
 			AnnotationLayoutStore.Instance.RemoveLayout("Dicom.OT.Copied");
 			layouts = AnnotationLayoutStore.Instance.GetLayouts(annotationItems);
-			Assert.AreEqual(layouts.Count, 8);
+			Assert.AreEqual(xmlLayoutCount, layouts.Count);
 
 			layout = AnnotationLayoutStore.Instance.GetLayout("Dicom.OT.Copied", annotationItems);
-			Assert.AreEqual(layout, null);
+			Assert.IsNull(layout);
 
 			layout = AnnotationLayoutStore.Instance.GetLayout("Dicom.OT", annotationItems);
-			Assert.AreNotEqual(layout, null);
+			Assert.IsNotNull(layout);
 
 			layouts = new List<StoredAnnotationLayout>(); 
 			layouts.Clear();
@@ -121,27 +121,27 @@ namespace ClearCanvas.ImageViewer.Annotations.Tests
 			AnnotationLayoutStore.Instance.Update(layouts);
 
 			layouts = AnnotationLayoutStore.Instance.GetLayouts(annotationItems);
-			Assert.AreEqual(layouts.Count, 12);
+			Assert.AreEqual(xmlLayoutCount + 4, layouts.Count);
 
 			AnnotationLayoutStore.Instance.RemoveLayout("testLayout1");
 			layouts = AnnotationLayoutStore.Instance.GetLayouts(annotationItems);
-			Assert.AreEqual(layouts.Count, 11);
+			Assert.AreEqual(xmlLayoutCount + 3, layouts.Count);
 
 			AnnotationLayoutStore.Instance.RemoveLayout("testLayout2");
 			layouts = AnnotationLayoutStore.Instance.GetLayouts(annotationItems);
-			Assert.AreEqual(layouts.Count, 10);
+			Assert.AreEqual(xmlLayoutCount + 2, layouts.Count);
 
 			layout = AnnotationLayoutStore.Instance.GetLayout("Dicom.OT", annotationItems);
-			Assert.AreNotEqual(layout, null);
+			Assert.IsNotNull(layout);
 
 			layout = AnnotationLayoutStore.Instance.GetLayout("testLayout3", annotationItems); 
-			Assert.AreEqual(layout.AnnotationBoxGroups.Count, 1);
+			Assert.AreEqual(1, layout.AnnotationBoxGroups.Count);
 
 			layout = AnnotationLayoutStore.Instance.GetLayout("Dicom.OT", annotationItems);
 			layout = CopyLayout(layout, "testLayout3");
 			AnnotationLayoutStore.Instance.Update(layout);
 			layout = AnnotationLayoutStore.Instance.GetLayout("testLayout3", annotationItems);
-			Assert.AreEqual(layout.AnnotationBoxGroups.Count, 4);
+			Assert.AreEqual(4, layout.AnnotationBoxGroups.Count);
 		}
 
 		StoredAnnotationLayout CopyLayout(StoredAnnotationLayout layout, string newIdentifier)
