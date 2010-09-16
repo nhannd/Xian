@@ -35,6 +35,8 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Annotations;
+using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
 {
@@ -251,23 +253,61 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
 			private static Bitmap DrawToThumbnail(IPresentationImage image, int width, int height)
 			{
-				try
+				const int rasterResolution = 256;
+
+				var bitmap = new Bitmap(width, height);
+				using (var graphics = System.Drawing.Graphics.FromImage(bitmap))
 				{
-					return image.DrawToBitmap(width, height);
-				}
-				catch (Exception ex)
-				{
-					// rendering the error text to a 100x100 icon is useless, so we'll just paint a placeholder error icon and log the icon error
-					Platform.Log(LogLevel.Warn, ex, "Failed to render thumbnail with dimensions {0}x{1}", width, height);
-					var bitmap = new Bitmap(width, height);
-					using (var graphics = System.Drawing.Graphics.FromImage(bitmap))
+					try
 					{
+						var imageAspectRatio = 1f;
+						var thumbnailAspectRatio = (float) height/width;
+						var thumbnailBounds = new RectangleF(0, 0, width, height);
+
+						if (image is IImageGraphicProvider)
+						{
+							var imageGraphic = ((IImageGraphicProvider) image).ImageGraphic;
+							imageAspectRatio = (float) imageGraphic.Rows/imageGraphic.Columns;
+						}
+						if (image is IImageSopProvider)
+						{
+							var ig = ((IImageSopProvider) image).Frame;
+							if (!ig.PixelAspectRatio.IsNull)
+								imageAspectRatio *= ig.PixelAspectRatio.Value;
+							else if (!ig.PixelSpacing.IsNull)
+								imageAspectRatio *= (float) ig.PixelSpacing.AspectRatio;
+						}
+
+						if (thumbnailAspectRatio >= imageAspectRatio)
+						{
+							thumbnailBounds.Width = width;
+							thumbnailBounds.Height = width*imageAspectRatio;
+							thumbnailBounds.Y = (height - thumbnailBounds.Height)/2;
+						}
+						else
+						{
+							thumbnailBounds.Width = height/imageAspectRatio;
+							thumbnailBounds.Height = height;
+							thumbnailBounds.X = (width - thumbnailBounds.Width)/2;
+						}
+
+						// rasterize any invariant vector graphics at a semi-normal image box resolution first before rendering as a thumbnail
+						using (var raster = image.DrawToBitmap(rasterResolution, (int) (rasterResolution*imageAspectRatio)))
+						{
+							graphics.DrawImage(raster, thumbnailBounds);
+						}
+					}
+					catch (Exception ex)
+					{
+						// rendering the error text to a 100x100 icon is useless, so we'll just paint a placeholder error icon and log the icon error
+						Platform.Log(LogLevel.Warn, ex, "Failed to render thumbnail with dimensions {0}x{1}", width, height);
+
 						graphics.FillRectangle(Brushes.Black, 0, 0, width, height);
 						graphics.DrawLine(Pens.WhiteSmoke, 0, 0, width, height);
 						graphics.DrawLine(Pens.WhiteSmoke, 0, height, width, 0);
 					}
-					return bitmap;
 				}
+				return bitmap;
 			}
 
 			private static IPresentationImage GetMiddlePresentationImage(IDisplaySet displaySet)

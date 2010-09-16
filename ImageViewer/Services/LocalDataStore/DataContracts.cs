@@ -497,11 +497,13 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 	{
 		private int _totalFilesToExport;
 		private int _numberOfFilesExported;
+		private bool _hasErrors;
 
 		public ExportProgressItem()
 		{
 			_totalFilesToExport = 0;
 			_numberOfFilesExported = 0;
+			_hasErrors = false;
 		}
 
 		[DataMember(IsRequired = true)]
@@ -518,10 +520,18 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			set { _numberOfFilesExported = value; }
 		}
 
+		[DataMember(IsRequired = false)]
+		public bool HasErrors
+		{
+			get { return _hasErrors; }
+			set { _hasErrors = value; }
+		}
+
 		public void CopyTo(ExportProgressItem progressItem)
 		{
 			progressItem.TotalFilesToExport = this.TotalFilesToExport;
 			progressItem.NumberOfFilesExported = this.NumberOfFilesExported;
+			progressItem.HasErrors = this.HasErrors;
 
 			base.CopyTo(progressItem);
 		}
@@ -530,6 +540,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		{
 			this.TotalFilesToExport = progressItem.TotalFilesToExport;
 			this.NumberOfFilesExported = progressItem.NumberOfFilesExported;
+			this.HasErrors = progressItem.HasErrors;
 
 			base.CopyFrom(progressItem);
 		}

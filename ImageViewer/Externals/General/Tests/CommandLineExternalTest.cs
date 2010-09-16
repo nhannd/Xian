@@ -133,15 +133,19 @@ namespace ClearCanvas.ImageViewer.Externals.General.Tests
 							machineVars["ARGB"] = "Locutus";
 							machineVars["ARGC"] = "Sisko";
 							machineVars["ARGD"] = "Janeway";
+							machineVars["ARGE"] = "$00100020$";
 
 							CommandLineExternal external = new CommandLineExternal();
 							external.WorkingDirectory = baseDirectory + Path.DirectorySeparatorChar + userVars.Format("WRKDIR");
 							external.Command = baseDirectory + Path.DirectorySeparatorChar + userVars.Format("CMDDIR") + Path.DirectorySeparatorChar + Path.GetFileName(command.ScriptFilename);
-							external.Arguments = string.Format("\"{0}\" \"Chateau {1} 2347\" \"{2} vs. {3}\" \"Over 9000%%\" \"%Kim%: Ensign for Life\"", userVars.Format("ARGA"), userVars.Format("ARGB"), userVars.Format("ARGC"), userVars.Format("ARGD"));
+							external.Arguments = string.Format("\"{0}\" \"Chateau {1} 2347\" \"{2} vs. {3}\" \"Over 9000%%\" \"%Kim%: Ensign for Life\" \"{4}\" \"$00100021$\"", userVars.Format("ARGA"), userVars.Format("ARGB"), userVars.Format("ARGC"), userVars.Format("ARGD"), userVars.Format("ARGE"));
 							external.WaitForExit = true;
 
 							using (MockDicomPresentationImage image = new MockDicomPresentationImage())
 							{
+								image[0x00100020].SetStringValue("Archer");
+								image[0x00100021].SetStringValue(userVars.Format("ARGB"));
+
 								external.Launch(image);
 
 								Thread.Sleep(_processEndWaitDelay); // wait for the external to finish
@@ -153,7 +157,7 @@ namespace ClearCanvas.ImageViewer.Externals.General.Tests
 								// verify that command path is processed for environment variables
 								AssertAreEqualIgnoreCase(commandDirectory + Path.DirectorySeparatorChar + Path.GetFileName(command.ScriptFilename), command.ExecutedCommand, "Wrong command was executed: ENVVARS aren't being processed correctly");
 
-								// verify that working directory is processed for environment variables and that process-scope variables **are not** being used
+								// verify that working directory is processed for environment variables and that process-scope variables are **not** being used
 								AssertAreEqualIgnoreCase(workingDirectory, command.ExecutedWorkingDirectory, "Command executed in wrong working directory: ENVVARS aren't being processed correctly (should not be using process-scope)");
 
 								// verify that user-scope variables override machine-scope variables
@@ -170,6 +174,12 @@ namespace ClearCanvas.ImageViewer.Externals.General.Tests
 
 								// verify that variable expansion treats undefined variables as a literal sequence
 								Assert.AreEqual("\"%Kim%: Ensign for Life\"", command.ExecutedArguments[4], "Wrong argument passed at index {0}: ENVVARS aren't processing undefined variables", 4);
+
+								// verify that variable expansion results are processed for special fields
+								Assert.AreEqual("\"Archer\"", command.ExecutedArguments[5], "Wrong argument passed at index {0}: ENVVARS should be processed for built-in/DICOM special fields", 5);
+
+								// verify that special field expansion results are **not** processed for environment variables
+								Assert.AreEqual('"' + userVars.Format("ARGB") + '"', command.ExecutedArguments[6], "Wrong argument passed at index {0}: Built-in/DICOM special fields should not be processed for ENVVARS", 6);
 							}
 						}
 					}

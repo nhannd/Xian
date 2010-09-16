@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Configuration.ActionModel;
@@ -46,10 +47,15 @@ namespace ClearCanvas.ImageViewer.Configuration
 	[AssociateView(typeof (CustomizeViewerActionModelsComponentViewExtensionPoint))]
 	public class CustomizeViewerActionModelsComponent : ApplicationComponentContainer
 	{
+		private const string _globalMenusActionSite = "global-menus";
+		private const string _globalToolbarActionSite = "global-toolbars";
+		private const string _viewerContextMenuActionSite = ImageViewerComponent.ContextMenuSite;
+
 		private readonly ContainedComponentHost _tabComponentHost;
 		private readonly TabComponentContainer _tabComponent;
 		private readonly IImageViewer _imageViewer;
 		private readonly NodePropertiesValidationPolicy _validationPolicy;
+		private readonly IList<XKeys> _reservedKeystrokes;
 		private readonly AssignmentMap<XKeys> _keyStrokeMap;
 		private readonly AssignmentMap<XMouseButtons> _initialMouseToolsMap;
 		private readonly AssignmentMap<XMouseButtonCombo> _defaultMouseToolsMap;
@@ -61,6 +67,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
 			_imageViewer = imageViewer;
 
+			_reservedKeystrokes = ReservedActionModelKeyStrokeProviderExtensionPoint.GetReservedActionModelKeyStrokes(_imageViewer);
 			_keyStrokeMap = new AssignmentMap<XKeys>();
 			_initialMouseToolsMap = new AssignmentMap<XMouseButtons>();
 			_defaultMouseToolsMap = new AssignmentMap<XMouseButtonCombo>();
@@ -70,7 +77,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			NodePropertiesValidationPolicy validationPolicy = new NodePropertiesValidationPolicy();
 			validationPolicy.AddRule<AbstractActionModelTreeLeafAction>("CheckState", (n, value) => n.ActionId != typeof (CustomizeViewerActionModelTool).FullName + ":customize" || Equals(value, CheckState.Checked));
 			validationPolicy.AddRule<AbstractActionModelTreeLeafAction>("CheckState", (n, value) => n.ActionId != "ClearCanvas.Desktop.Configuration.Tools.OptionsTool:show" || Equals(value, CheckState.Checked));
-			validationPolicy.AddRule<AbstractActionModelTreeLeafAction>("ActiveMouseButtons", (n, value) => !Equals(value, XMouseButtons.None));
+			validationPolicy.AddRule<AbstractActionModelTreeLeafAction, XMouseButtons>("ActiveMouseButtons", ValidateMouseToolMouseButton);
 			validationPolicy.AddRule<AbstractActionModelTreeLeafClickAction, XKeys>("KeyStroke", this.ValidateClickActionKeyStroke);
 			validationPolicy.AddRule<AbstractActionModelTreeLeafAction, bool>("InitiallyActive", this.ValidateMouseToolInitiallyActive);
 			validationPolicy.AddRule<AbstractActionModelTreeLeafAction, XMouseButtonCombo>("GlobalMouseButtonCombo", this.ValidateDefaultMouseButtons);
@@ -81,17 +88,17 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 			_tabComponent.Pages.Add(new TabPage(SR.LabelToolbar, new ImageViewerActionModelConfigurationComponent(
 			                                                     	_imageViewer.GlobalActionsNamespace,
-			                                                     	"global-toolbars",
+			                                                     	_globalToolbarActionSite,
 			                                                     	this)));
 
 			_tabComponent.Pages.Add(new TabPage(SR.LabelContextMenu, new ImageViewerActionModelConfigurationComponent(
 			                                                         	_imageViewer.ActionsNamespace,
-			                                                         	"imageviewer-contextmenu",
+			                                                         	_viewerContextMenuActionSite,
 			                                                         	this)));
 
 			_tabComponent.Pages.Add(new TabPage(SR.LabelMainMenu, new ImageViewerActionModelConfigurationComponent(
 			                                                      	_imageViewer.GlobalActionsNamespace,
-			                                                      	"global-menus",
+			                                                      	_globalMenusActionSite,
 			                                                      	this)));
 
 			_tabComponentHost = new ContainedComponentHost(this, _tabComponent);
@@ -114,6 +121,14 @@ namespace ClearCanvas.ImageViewer.Configuration
 			// if the action is not part of the viewer component then it is handled by the desktop and must be modified
 			if (GetActionsById(_imageViewer.ExportedActions, node.ActionId).Count == 0 && (keys & XKeys.Modifiers) == 0)
 				return false;
+
+			// if the key stroke is a value reserved by built-in viewer operations, then it cannot be allowed
+			if (_reservedKeystrokes.Contains(keys))
+			{
+				var message = string.Format(SR.MessageKeyStrokeReserved, XKeysConverter.Format(keys));
+				Host.DesktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
+				return false;
+			}
 
 			// check for other assignments to the same key stroke and confirm the action if there are pre-existing assignments
 			if (_keyStrokeMap.IsAssignedToOther(keys, node.ActionId))
@@ -175,6 +190,33 @@ namespace ClearCanvas.ImageViewer.Configuration
 			{
 				_updatingKeyStrokes = false;
 			}
+		}
+
+		private bool ValidateMouseToolMouseButton(AbstractActionModelTreeLeafAction node, XMouseButtons mouseButton)
+		{
+			// if we're just synchronizing the value due to another update action, short the validation request
+			if (_updatingKeyStrokes)
+				return true;
+
+			// check that we're not setting it to none
+			if (mouseButton == XMouseButtons.None)
+				return false;
+
+			// check for presence of a global tool for this button
+			var defaultMouseButtonCombo = new XMouseButtonCombo(mouseButton, ModifierFlags.None);
+			if (_defaultMouseToolsMap.IsAssigned(defaultMouseButtonCombo))
+			{
+				IList<AbstractActionModelTreeLeafAction> actions = _actionMap[_defaultMouseToolsMap[defaultMouseButtonCombo]];
+				if (actions.Count > 0)
+				{
+					string message = string.Format(SR.MessageMouseButtonActiveToolAssignmentConflict, defaultMouseButtonCombo, actions[0].Label);
+					DialogBoxAction result = base.Host.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo);
+					if (result != DialogBoxAction.Yes)
+						return false;
+				}
+			}
+
+			return true;
 		}
 
 		private void UpdateMouseToolMouseButton(AbstractActionModelTreeLeafAction node, XMouseButtons mouseButton)
@@ -263,13 +305,27 @@ namespace ClearCanvas.ImageViewer.Configuration
 			if (_updatingKeyStrokes)
 				return true;
 
-			// check for presence of another initial tool for this button
+			// check for presence of another global tool for this button
 			if (_defaultMouseToolsMap.IsAssignedToOther(defaultMouseButtonCombo, node.ActionId))
 			{
 				IList<AbstractActionModelTreeLeafAction> actions = _actionMap[_defaultMouseToolsMap[defaultMouseButtonCombo]];
 				if (actions.Count > 0)
 				{
 					string message = string.Format(SR.MessageMouseButtonGlobalToolAlreadyAssigned, defaultMouseButtonCombo, actions[0].Label);
+					DialogBoxAction result = base.Host.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo);
+					if (result != DialogBoxAction.Yes)
+						return false;
+				}
+			}
+
+			// check for presence of an active tool for this button
+			var unmodifiedMouseButton = defaultMouseButtonCombo.MouseButtons;
+			if (defaultMouseButtonCombo.Modifiers == ModifierFlags.None && _mouseButtonMap[unmodifiedMouseButton].Count > 0)
+			{
+				IList<AbstractActionModelTreeLeafAction> actions = _actionMap[_mouseButtonMap[unmodifiedMouseButton][0]];
+				if (actions.Count > 0)
+				{
+					string message = string.Format(SR.MessageMouseButtonGlobalToolAssignmentConflict, unmodifiedMouseButton, actions[0].Label);
 					DialogBoxAction result = base.Host.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo);
 					if (result != DialogBoxAction.Yes)
 						return false;
@@ -431,7 +487,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			private readonly MouseToolSettingsProfile _toolProfile;
 
 			public ImageViewerActionModelConfigurationComponent(string @namespace, string site, CustomizeViewerActionModelsComponent owner)
-				: base(@namespace, site, owner._imageViewer.ExportedActions, owner._imageViewer.DesktopWindow, site == "global-toolbars")
+				: base(@namespace, site, owner._imageViewer.ExportedActions, owner._imageViewer.DesktopWindow, site == _globalToolbarActionSite)
 			{
 				_owner = owner;
 
@@ -590,6 +646,44 @@ namespace ClearCanvas.ImageViewer.Configuration
 						return pair.Key;
 				}
 				return defaultValue;
+			}
+		}
+
+		/// <summary>
+		/// An <see cref="IReservedActionModelKeyStrokeProvider"/> that reserves all assigned keystrokes on action sites that aren't available for configuration.
+		/// </summary>
+		[ExtensionOf(typeof (ReservedActionModelKeyStrokeProviderExtensionPoint))]
+		internal sealed class DefaultReservedActionModelKeyStrokeProvider : ReservedActionModelKeyStrokeProviderBase
+		{
+			public override IEnumerable<XKeys> ReservedKeyStrokes
+			{
+				get
+				{
+					var nonStandardSites = new List<string>();
+					foreach (var action in ImageViewer.ExportedActions)
+					{
+						var site = action.Path.Site;
+						if (!string.IsNullOrEmpty(site) && !nonStandardSites.Contains(site)
+						    && site != _globalMenusActionSite && site != _globalToolbarActionSite && site != _viewerContextMenuActionSite)
+						{
+							nonStandardSites.Add(site);
+						}
+					}
+
+					// we must create the model (i.e. cannot just use ExportedActions) because we need to load the action model configuration
+					foreach (var site in nonStandardSites)
+					{
+						foreach (var action in ActionModelRoot.CreateModel(ImageViewer.ActionsNamespace, site, ImageViewer.ExportedActions).GetActionsInOrder())
+						{
+							if (action is IClickAction)
+							{
+								var clickAction = (IClickAction) action;
+								if (clickAction.KeyStroke != XKeys.None)
+									yield return clickAction.KeyStroke;
+							}
+						}
+					}
+				}
 			}
 		}
 	}

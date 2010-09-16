@@ -68,6 +68,22 @@ namespace ClearCanvas.ImageViewer.Annotations
 			get{ return _instance; }
 		}
 
+#if UNIT_TESTS
+
+		/// <summary>
+		/// Resets the <see cref="AnnotationLayoutStore"/> to the default layout configuration.
+		/// </summary>
+		public void Reset()
+		{
+			lock (_syncLock)
+			{
+				ResetSettings();
+				Initialize(true);
+			}
+		}
+
+#endif
+
 		public void Clear()
 		{
 			lock (_syncLock)
@@ -191,6 +207,15 @@ namespace ClearCanvas.ImageViewer.Annotations
 		private void SaveSettings(string settingsXml)
 		{
 			AnnotationLayoutStoreSettings.Default.LayoutSettingsXml = settingsXml;
+			AnnotationLayoutStoreSettings.Default.Save();
+
+			if (_storeChanged != null)
+				_storeChanged(this, EventArgs.Empty);
+		}
+
+		private void ResetSettings()
+		{
+			AnnotationLayoutStoreSettings.Default.Reset();
 			AnnotationLayoutStoreSettings.Default.Save();
 
 			if (_storeChanged != null)

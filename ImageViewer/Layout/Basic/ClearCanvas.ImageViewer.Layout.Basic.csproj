@@ -103,6 +103,10 @@
       <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
       <Name>ClearCanvas.ImageViewer.Services</Name>
     </ProjectReference>
+    <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\ReferencedAssemblies\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
       <HintPath>C:\WINDOWS\assembly\GAC_MSIL\System\2.0.0.0__b77a5c561934e089\System.dll</HintPath>
@@ -168,6 +172,7 @@
     <Compile Include="DisplaySetNavigationTool.cs" />
     <Compile Include="ExplodeImageBoxTool.cs" />
     <Compile Include="ListObserver.cs" />
+    <Compile Include="Tests\LayoutManagerTests.cs" />
     <Compile Include="UnavailableImageSetDescriptor.cs" />
     <Compile Include="XmlActionsApplicator.cs" />
   </ItemGroup>

@@ -176,5 +176,40 @@ namespace ClearCanvas.ImageViewer.Annotations
 				return layout;
 			}
 		}
+
+		#region Unit Test Support
+
+#if UNIT_TESTS
+
+		/// <summary>
+		/// Forces the <see cref="AnnotationLayoutFactory"/> to be reinitialized.
+		/// </summary>
+		/// <remarks>
+		/// This may be necessary because the list of <see cref="IAnnotationLayoutProvider"/>s as well as individual layouts are cached.
+		/// Unit tests relying on <see cref="IAnnotationItem"/>s may need to reset the caches to a pristine state, particularly if other
+		/// unit tests have been using different extension factories.
+		/// </remarks>
+		public static void Reinitialize()
+		{
+			ClearCache();
+			try
+			{
+				_providers.Clear();
+				foreach (object extension in new AnnotationItemProviderExtensionPoint().CreateExtensions())
+					_providers.Add((IAnnotationItemProvider) extension);
+			}
+			catch (NotSupportedException e)
+			{
+				Platform.Log(LogLevel.Info, e);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+			}
+		}
+
+#endif
+
+		#endregion
 	}
 }

@@ -257,9 +257,9 @@ namespace ClearCanvas.ImageViewer
 			_toolSet = new ToolSet(CreateTools(), CreateToolContext());
 
 			// since the keyboard action model is otherwise never used, we explicitly invoke it here to apply the persisted action model values to the actions
-			ActionModelRoot.CreateModel(typeof(ImageViewerComponent).FullName, KeyboardSite, _toolSet.Actions);
+			ActionModelRoot.CreateModel(ActionsNamespace, KeyboardSite, _toolSet.Actions);
 
-			_shortcutManager = new ViewerShortcutManager();
+			_shortcutManager = new ViewerShortcutManager(this);
 
 			foreach (ITool tool in _toolSet.Tools)
 				_shortcutManager.RegisterImageViewerTool(tool);

@@ -125,14 +125,23 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			SendOperationInfo sendOperationInfo = GetSendOperationInfo(operation.Reference);
 			if (sendOperationInfo == null)
 			{
-				Platform.Log(LogLevel.Warn, "Received progress update for unknown send operation {0}", operation.Reference.Identifier);
+				// there are some conditions that both throw an exception as well as fails remaining items, so we'll just ignore the second attempt to send a final response
+				// namely, the catch handler block for the call to Connect() in StorageScu.Send()
+				if (!operation.Failed)
+					Platform.Log(LogLevel.Debug, "Received progress update for unknown send operation {0}", operation.Reference.Identifier);
 				return;
 			}
 
 			DicomMessage msg = new DicomMessage();
 			DicomStatus status;
 
-			if (operation.RemainingSubOperations == 0)
+			if (operation.Failed)
+			{
+				RemoveSendOperationInfo(sendOperationInfo);
+
+				status = DicomStatuses.QueryRetrieveUnableToProcess;
+			}
+			else if (operation.RemainingSubOperations == 0)
 			{
 				RemoveSendOperationInfo(sendOperationInfo);
 

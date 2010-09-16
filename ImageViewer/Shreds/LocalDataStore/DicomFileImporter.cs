@@ -91,6 +91,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				private readonly string _sourceFile;
 				private readonly FileImportBehaviour _importBehaviour;
 				private readonly BadFileBehaviour _badFileBehaviour;
+				private readonly UserIdentityContext _userIdentityContext;
 
 				private bool _audit = true;
 
@@ -117,10 +118,14 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				}
 
 				public FileImportInformation(string sourceFile, FileImportBehaviour importBehaviour, BadFileBehaviour badFileBehaviour)
+					: this(sourceFile, importBehaviour, badFileBehaviour, null) {}
+
+				public FileImportInformation(string sourceFile, FileImportBehaviour importBehaviour, BadFileBehaviour badFileBehaviour, UserIdentityContext userIdentityContext)
 				{
 					_sourceFile = sourceFile;
 					_importBehaviour = importBehaviour;
 					_badFileBehaviour = badFileBehaviour;
+					_userIdentityContext = userIdentityContext ?? UserIdentityContext.DefaultUserIdentityContext;
 				}
 
 				private FileImportInformation()
@@ -146,6 +151,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				public FileImportBehaviour ImportBehaviour
 				{
 					get { return _importBehaviour; }
+				}
+
+				public UserIdentityContext UserIdentityContext
+				{
+					get { return _userIdentityContext; }
 				}
 
 				public ImportStage CompletedStage
@@ -506,8 +516,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				try
 				{
-					setImportInformation.File = new DicomFile(fileImportInformation.SourceFile);
-					setImportInformation.File.Load(DicomTags.PixelData, DicomReadOptions.Default);
+					using (fileImportInformation.UserIdentityContext.Impersonate())
+					{
+						setImportInformation.File = new DicomFile(fileImportInformation.SourceFile);
+						setImportInformation.File.Load(DicomTags.PixelData, DicomReadOptions.Default);
+					}
 
 					Validator.Validate(setImportInformation.File);
 					setImportInformation.CompletedStage = ImportStage.FileParsed;
@@ -577,40 +590,43 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							//to write to is exactly the same one, which will happen very infrequently.
 							lock (storedUri)
 							{
-								string directoryName = System.IO.Path.GetDirectoryName(storedFile);
-								if (!System.IO.Directory.Exists(directoryName))
-									System.IO.Directory.CreateDirectory(directoryName);
-
-								System.IO.FileInfo sourceFileInfo = new FileInfo(fileImportInformation.SourceFile);
-
-								bool moveFailed = false;
-								if (fileImportInformation.ImportBehaviour == FileImportBehaviour.Move)
+								using (fileImportInformation.UserIdentityContext.Impersonate())
 								{
-									FileInfo destInfo = new FileInfo(storedFile);
+									string directoryName = Path.GetDirectoryName(storedFile);
+									if (!Directory.Exists(directoryName))
+										Directory.CreateDirectory(directoryName);
 
-									try
+									FileInfo sourceFileInfo = new FileInfo(fileImportInformation.SourceFile);
+
+									bool moveFailed = false;
+									if (fileImportInformation.ImportBehaviour == FileImportBehaviour.Move)
 									{
-										if (destInfo.Exists)
-											destInfo.Delete();
+										FileInfo destInfo = new FileInfo(storedFile);
 
-										sourceFileInfo.MoveTo(storedFile);
-										destInfo.Refresh();
+										try
+										{
+											if (destInfo.Exists)
+												destInfo.Delete();
+
+											sourceFileInfo.MoveTo(storedFile);
+											destInfo.Refresh();
+											destInfo.Attributes = FileAttributes.Normal;
+										}
+										catch (Exception e)
+										{
+											moveFailed = true;
+											String message = String.Format("Failed to move file {0} to {1}; a copy operation will be attempted.",
+											                               fileImportInformation.SourceFile, storedFile);
+
+											Platform.Log(LogLevel.Warn, e, message);
+										}
+									}
+
+									if (fileImportInformation.ImportBehaviour == FileImportBehaviour.Copy || moveFailed)
+									{
+										FileInfo destInfo = sourceFileInfo.CopyTo(storedFile, true);
 										destInfo.Attributes = FileAttributes.Normal;
 									}
-									catch(Exception e)
-									{
-										moveFailed = true;
-										String message = String.Format("Failed to move file {0} to {1}; a copy operation will be attempted.",
-										                         fileImportInformation.SourceFile, storedFile);
-
-										Platform.Log(LogLevel.Warn, e, message);
-									}
-								}
-
-								if (fileImportInformation.ImportBehaviour == FileImportBehaviour.Copy || moveFailed)
-								{
-									System.IO.FileInfo destInfo = sourceFileInfo.CopyTo(storedFile, true);
-									destInfo.Attributes = FileAttributes.Normal;
 								}
 							}
 						}

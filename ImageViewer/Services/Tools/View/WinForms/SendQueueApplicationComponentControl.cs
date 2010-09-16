@@ -40,21 +40,26 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="SendQueueApplicationComponent"/>
-    /// </summary>
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="SendQueueApplicationComponent"/>
+	/// </summary>
 	public partial class SendQueueApplicationComponentControl : ApplicationComponentUserControl
-    {
-        private SendQueueApplicationComponent _component;
+	{
+		private SendQueueApplicationComponent _component;
+		private bool _updating;
+		private int _failedItemsCount;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public SendQueueApplicationComponentControl(SendQueueApplicationComponent component)
-        {
-            InitializeComponent();
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public SendQueueApplicationComponentControl(SendQueueApplicationComponent component)
+			: base(component)
+		{
+			InitializeComponent();
+			FailedItemsCount = 0;
 
 			_component = component;
+			_component.SelectionUpdated += OnComponentSelectionUpdated;
 
 			ClearCanvasStyle.SetTitleBarStyle(_titleBar);
 
@@ -69,11 +74,59 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			bindingSource.DataSource = _component;
 
 			_titleBar.DataBindings.Add("Text", _component, "Title", true, DataSourceUpdateMode.OnPropertyChanged);
+			DataBindings.Add("FailedItemsCount", _component, "FailedItemsCount", false, DataSourceUpdateMode.Never);
 		}
 
-		void OnSelectionChanged(object sender, EventArgs e)
+		private void DoDispose(bool disposing)
 		{
-			_component.SetSelection(_sendTable.Selection);
+			if (disposing)
+			{
+				if (_component != null)
+				{
+					_component.SelectionUpdated -= OnComponentSelectionUpdated;
+					_component = null;
+				}
+			}
+		}
+
+		private void OnComponentSelectionUpdated(object sender, EventArgs e)
+		{
+			if (!_updating)
+			{
+				_sendTable.Selection = _component.Selection;
+			}
+		}
+
+		private void OnSelectionChanged(object sender, EventArgs e)
+		{
+			_updating = true;
+			try
+			{
+				_component.SetSelection(_sendTable.Selection);
+			}
+			finally
+			{
+				_updating = false;
+			}
+		}
+
+		public int FailedItemsCount
+		{
+			get { return _failedItemsCount; }
+			set
+			{
+				if (_failedItemsCount != value)
+				{
+					var oldCount = _failedItemsCount;
+					_failedItemsCount = value;
+					_failuresStatusItem.Text = string.Format(SR.FormatFailedItemsStatusMessage, _failedItemsCount);
+
+					if (_failedItemsCount > oldCount)
+					{
+						_toolTip.Show(SR.MessageOneOrMoreFailedSendTasks, _statusBar, _failuresStatusItem.Bounds.Location, 5000);
+					}
+				}
+			}
 		}
 	}
 }

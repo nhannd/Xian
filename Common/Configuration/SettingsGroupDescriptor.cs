@@ -46,12 +46,30 @@ namespace ClearCanvas.Common.Configuration
 	{
 		/// <summary>
 		/// Returns a list of <see cref="SettingsGroupDescriptor"/> objects describing each settings class
+		/// that exists in the installed plugin base, and is a locally stored setting.
+		/// </summary>
+		/// <remarks>
+		/// This method is thread-safe.
+		/// </remarks>
+		public static List<SettingsGroupDescriptor> ListInstalledLocalSettingsGroups()
+		{
+			return ListInstalledSettingsGroups(IsLocalSettingsGroup);
+		}
+
+		/// <summary>
+		/// Returns a list of <see cref="SettingsGroupDescriptor"/> objects describing each settings class
 		/// that exists in the installed plugin base.
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// If <param name="excludeLocalSettingsGroups"/> is true, this method only returns settings classes 
-		/// that use the <see cref="StandardSettingsProvider"/> for persistence.
+		/// If <param name="excludeLocalSettingsGroups"/> is true, this method only returns settings classes
+		/// where:
+		/// <list type="bullet">
+		/// <item>the <see cref="StandardSettingsProvider"/> is used for persistence.</item>
+		/// <item>the <see cref="StandardSettingsProvider"/> is using a valid <see cref="ISettingsStore"/> via
+		/// the <see cref="SettingsStoreExtensionPoint"/>.  When there is no such extension, such settings are
+		/// actually stored locally.</item>
+		/// </list>
 		/// </para>
 		/// <para>
 		/// This method is thread-safe.
@@ -59,7 +77,33 @@ namespace ClearCanvas.Common.Configuration
 		/// </remarks>
 		public static List<SettingsGroupDescriptor> ListInstalledSettingsGroups(bool excludeLocalSettingsGroups)
 		{
-			List<SettingsGroupDescriptor> groups = new List<SettingsGroupDescriptor>();
+			return ListInstalledSettingsGroups(t => !excludeLocalSettingsGroups || !IsLocalSettingsGroup(t));
+		}
+
+		private static bool IsLocalSettingsGroup(Type t)
+		{
+			var attributes = t.GetCustomAttributes(typeof (SettingsProviderAttribute), true);
+			if (attributes.Length == 0)
+				return true;
+
+			var attribute = (SettingsProviderAttribute)attributes[0];
+			if (attribute.ProviderTypeName == typeof(LocalFileSettingsProvider).AssemblyQualifiedName)
+				return true;
+
+			if (attribute.ProviderTypeName == typeof(ExtendedLocalFileSettingsProvider).AssemblyQualifiedName)
+				return true;
+
+			if (attribute.ProviderTypeName == typeof(StandardSettingsProvider).AssemblyQualifiedName && StandardSettingsProvider.IsLocal)
+				return true;
+
+			return false;
+		}
+
+		private static List<SettingsGroupDescriptor> ListInstalledSettingsGroups(Predicate<Type> includePredicate)
+		{
+			includePredicate = includePredicate ?? (obj => true);
+
+			var groups = new List<SettingsGroupDescriptor>();
 
 			List<Assembly> assemblies = CollectionUtils.Map(Platform.PluginManager.Plugins, (PluginInfo p) => p.Assembly);
 			assemblies.Add(typeof(SettingsGroupDescriptor).Assembly);
@@ -70,16 +114,8 @@ namespace ClearCanvas.Common.Configuration
 				{
 					if (t.IsSubclassOf(typeof(ApplicationSettingsBase)) && !t.IsAbstract)
 					{
-						if (excludeLocalSettingsGroups)
-						{
-							bool isStandard = AttributeUtils.HasAttribute(t, false,
-								(SettingsProviderAttribute a) => a.ProviderTypeName == typeof(StandardSettingsProvider).AssemblyQualifiedName);
-
-							// exclude non-standard settings groups
-							if (!isStandard)
-								continue;
-						}
-						groups.Add(new SettingsGroupDescriptor(t));
+						if (includePredicate(t))
+							groups.Add(new SettingsGroupDescriptor(t));
 					}
 				}
 			}

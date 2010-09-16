@@ -56,9 +56,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			get { return (IPointsGraphic) base.Roi; }
 		}
 
-		public override void SetAnnotationGraphic(AnnotationGraphic roiGraphic)
+		protected override void OnAnnotationGraphicChanged(AnnotationGraphic oldAnnotationGraphic, AnnotationGraphic annotationGraphic)
 		{
-			base.SetAnnotationGraphic(roiGraphic);
+			base.OnAnnotationGraphicChanged(oldAnnotationGraphic, annotationGraphic);
 			if (_firstCalculation)
 				base.Callout.Visible = false;
 		}

@@ -36,6 +36,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
 using NUnit.Framework;
@@ -339,6 +340,221 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 			           			Assert.AreEqual(sample.Value, actual, "Wrong colour sample @{0} ({1} before padding)", paddedPoint, realPoint);
 			           		}
 			           	});
+		}
+
+		[Test]
+		public void TestVoxelPaddingValueFromAttributes()
+		{
+			Trace.WriteLine("Testing Pixel Padding Value (0028,0120)");
+			TestVolume(VolumeFunction.Void,
+			           s =>
+			           	{
+			           		s[DicomTags.PixelRepresentation].SetInt32(0, 0);
+			           		s[DicomTags.BitsStored].SetInt32(0, 16);
+			           		s[DicomTags.PixelPaddingValue].SetInt32(0, 747);
+			           		s[DicomTags.SmallestPixelValueInSeries].SetInt32(0, 767);
+			           		s[DicomTags.SmallestImagePixelValue].SetInt32(0, 787);
+			           	},
+			           volume => Assert.AreEqual(747, volume.PaddingValue, "Volume padding value should be Pixel Padding Value (0028,0120) where available."));
+
+			Trace.WriteLine("Testing Smallest Pixel Value In Series (0028,0108)");
+			TestVolume(VolumeFunction.Void,
+			           s =>
+			           	{
+			           		s[DicomTags.PixelRepresentation].SetInt32(0, 0);
+			           		s[DicomTags.BitsStored].SetInt32(0, 16);
+			           		s[DicomTags.SmallestPixelValueInSeries].SetInt32(0, 767);
+			           		s[DicomTags.SmallestImagePixelValue].SetInt32(0, 787);
+			           	},
+			           volume => Assert.AreEqual(767, volume.PaddingValue, "Volume padding value should be Smallest Pixel Value In Series (0028,0108)"
+			                                                               + " if Pixel Padding Value (0028,0120) is not available."));
+
+			Trace.WriteLine("Testing Smallest Image Pixel Value (0028,0106)");
+			TestVolume(VolumeFunction.Void,
+			           s =>
+			           	{
+			           		s[DicomTags.PixelRepresentation].SetInt32(0, 0);
+			           		s[DicomTags.BitsStored].SetInt32(0, 16);
+			           		s[DicomTags.SmallestImagePixelValue].SetInt32(0, 787);
+			           	},
+			           volume => Assert.AreEqual(787, volume.PaddingValue, "Volume padding value should be Smallest Image Pixel Value (0028,0106)"
+			                                                               + " if Pixel Padding Value (0028,0120) and Smallest Pixel Value In Series (0028,0108) are not available."));
+		}
+
+		[Test]
+		public void TestVoxelPaddingValueAutoUnsigned()
+		{
+			Trace.WriteLine("Testing 16-bit unsigned");
+			TestVolume(VolumeFunction.Void,
+			           s =>
+			           	{
+			           		s[DicomTags.PixelRepresentation].SetInt32(0, 0);
+			           		s[DicomTags.BitsStored].SetInt32(0, 16);
+			           	},
+			           volume => Assert.AreEqual(0, volume.PaddingValue, "Volume padding value should be 0 if images are unsigned (16-bit)."));
+
+			Trace.WriteLine("Testing 15-bit unsigned");
+			TestVolume(VolumeFunction.Void,
+			           s =>
+			           	{
+			           		s[DicomTags.PixelRepresentation].SetInt32(0, 0);
+			           		s[DicomTags.BitsStored].SetInt32(0, 15);
+			           	},
+			           volume => Assert.AreEqual(0, volume.PaddingValue, "Volume padding value should be 0 if images are unsigned (15-bit)."));
+
+			Trace.WriteLine("Testing 8-bit unsigned");
+			TestVolume(VolumeFunction.Void,
+			           s =>
+			           	{
+			           		s[DicomTags.PixelRepresentation].SetInt32(0, 0);
+			           		s[DicomTags.BitsStored].SetInt32(0, 8);
+			           	},
+			           volume => Assert.AreEqual(0, volume.PaddingValue, "Volume padding value should be 0 if images are unsigned (8-bit)."));
+
+			Trace.WriteLine("Testing 1-bit unsigned");
+			TestVolume(VolumeFunction.Void,
+			           s =>
+			           	{
+			           		s[DicomTags.PixelRepresentation].SetInt32(0, 0);
+			           		s[DicomTags.BitsStored].SetInt32(0, 1);
+			           	},
+			           volume => Assert.AreEqual(0, volume.PaddingValue, "Volume padding value should be 0 if images are unsigned (1-bit)."));
+
+			Trace.WriteLine("Testing 16-bit unsigned MONOCHROME1");
+			TestVolume(VolumeFunction.Void,
+			           s =>
+			           	{
+			           		s[DicomTags.PhotometricInterpretation].SetString(0, PhotometricInterpretation.Monochrome1.Code);
+			           		s[DicomTags.PixelRepresentation].SetInt32(0, 0);
+			           		s[DicomTags.BitsStored].SetInt32(0, 16);
+			           	},
+					   volume => Assert.AreEqual(65535, volume.PaddingValue, "Volume padding value should be 65535 if images are 16-bit unsigned MONOCHROME1."));
+		}
+
+		[Test]
+		public void TestVoxelPaddingValueAutoSigned()
+		{
+			Trace.WriteLine("Testing 16-bit signed");
+			TestVolume(VolumeFunction.Void,
+			           s =>
+			           	{
+			           		s[DicomTags.PixelRepresentation].SetInt32(0, 1);
+			           		s[DicomTags.BitsStored].SetInt32(0, 16);
+			           	},
+			           volume => Assert.AreEqual(-32768, volume.PaddingValue, "Volume padding value should be -2**15 if images are 16-bit signed."));
+
+			Trace.WriteLine("Testing 15-bit signed");
+			TestVolume(VolumeFunction.Void,
+			           s =>
+			           	{
+			           		s[DicomTags.PixelRepresentation].SetInt32(0, 1);
+			           		s[DicomTags.BitsStored].SetInt32(0, 15);
+			           	},
+			           volume => Assert.AreEqual(-16384, volume.PaddingValue, "Volume padding value should be -2**14 if images are 15-bit signed."));
+
+			Trace.WriteLine("Testing 8-bit signed");
+			TestVolume(VolumeFunction.Void,
+			           s =>
+			           	{
+			           		s[DicomTags.PixelRepresentation].SetInt32(0, 1);
+			           		s[DicomTags.BitsStored].SetInt32(0, 8);
+			           	},
+			           volume => Assert.AreEqual(-128, volume.PaddingValue, "Volume padding value should be -2**7 if images are 8-bit signed."));
+
+			Trace.WriteLine("Testing 2-bit signed");
+			TestVolume(VolumeFunction.Void,
+			           s =>
+			           	{
+			           		s[DicomTags.PixelRepresentation].SetInt32(0, 1);
+			           		s[DicomTags.BitsStored].SetInt32(0, 2);
+			           	},
+			           volume => Assert.AreEqual(-2, volume.PaddingValue, "Volume padding value should be -2 if images are 2-bit signed."));
+
+			Trace.WriteLine("Testing 16-bit signed MONOCHROME1");
+			TestVolume(VolumeFunction.Void,
+			           s =>
+			           	{
+			           		s[DicomTags.PhotometricInterpretation].SetString(0, PhotometricInterpretation.Monochrome1.Code);
+			           		s[DicomTags.PixelRepresentation].SetInt32(0, 1);
+			           		s[DicomTags.BitsStored].SetInt32(0, 16);
+			           	},
+			           volume => Assert.AreEqual(32767, volume.PaddingValue, "Volume padding value should be 32767 if images are 16-bit signed MONOCHROME1."));
+		}
+
+		[Test(Description = "Brought to you by the letter G, as in Garbage.")]
+		public void TestVoxelPaddingValueBadInputs()
+		{
+			try
+			{
+				short dummySigned16;
+				ushort dummyUnsigned16;
+
+				Trace.WriteLine("Testing 17-bit unsigned");
+				TestVolume(VolumeFunction.Void,
+				           s =>
+				           	{
+				           		s[DicomTags.PixelRepresentation].SetInt32(0, 0);
+				           		s[DicomTags.BitsStored].SetInt32(0, 17);
+				           	},
+				           volume => Assert.IsTrue(ushort.TryParse(volume.PaddingValue.ToString("d"), out dummyUnsigned16),
+												   "Volume padding value should still be a valid UInt16 if images are purportedly 17-bit unsigned (GIGO)."));
+
+				Trace.WriteLine("Testing 17-bit signed");
+				TestVolume(VolumeFunction.Void,
+				           s =>
+				           	{
+				           		s[DicomTags.PixelRepresentation].SetInt32(0, 1);
+				           		s[DicomTags.BitsStored].SetInt32(0, 17);
+				           	},
+				           volume => Assert.IsTrue(short.TryParse(volume.PaddingValue.ToString("d"), out dummySigned16),
+												   "Volume padding value should still be a valid Int16 if images are purportedly 17-bit signed (GIGO)."));
+
+				Trace.WriteLine("Testing 1-bit signed");
+				TestVolume(VolumeFunction.Void,
+				           s =>
+				           	{
+				           		s[DicomTags.PixelRepresentation].SetInt32(0, 1);
+				           		s[DicomTags.BitsStored].SetInt32(0, 1);
+				           	},
+				           volume => Assert.IsTrue(short.TryParse(volume.PaddingValue.ToString("d"), out dummySigned16),
+												   "Volume padding value should still be a valid Int16 if images are purportedly 1-bit signed (GIGO)."));
+			}
+			catch (Exception)
+			{
+				Trace.WriteLine("Exception was thrown. Even if the input is garbage, the voxel padding value determination algorithm shouldn't explode...");
+				throw;
+			}
+		}
+
+		[Test(Description = "Validates that pixel padding attributes are correct for image encoding")]
+		public void TestVoxelPaddingValueCorrectedForBug7026()
+		{
+			DicomTag tagPixelPaddingValueUS = new DicomTag(DicomTags.PixelPaddingValue, "Pixel Padding Value US", "pixelPaddingValueUS", DicomVr.USvr, true, 1, 1, false);
+			DicomTag tagPixelPaddingValueSS = new DicomTag(DicomTags.PixelPaddingValue, "Pixel Padding Value SS", "pixelPaddingValueSS", DicomVr.SSvr, true, 1, 1, false);
+
+			Trace.WriteLine("Testing for correct SS pixel padding value in a signed image");
+			TestVolume(VolumeFunction.Void,
+			           s =>
+			           	{
+			           		s[DicomTags.PixelRepresentation].SetInt32(0, 1);
+			           		s[DicomTags.BitsStored].SetInt32(0, 16);
+
+			           		// simulates an ILE dataset where an SS tag value is incorrectly assumed to be US
+			           		s[tagPixelPaddingValueUS].Values = new[] {BitConverter.ToUInt16(BitConverter.GetBytes((short) -32000), 0)};
+			           	},
+			           volume => Assert.AreEqual(-32000, volume.PaddingValue, ""));
+
+			Trace.WriteLine("Testing for correct US pixel padding value in an unsigned image");
+			TestVolume(VolumeFunction.Void,
+			           s =>
+			           	{
+			           		s[DicomTags.PixelRepresentation].SetInt32(0, 0);
+			           		s[DicomTags.BitsStored].SetInt32(0, 16);
+
+			           		// simulates an ILE dataset where a US tag value is incorrectly assumed to be SS
+			           		s[tagPixelPaddingValueSS].Values = new[] {BitConverter.ToInt16(BitConverter.GetBytes((ushort) 64000), 0)};
+			           	},
+			           volume => Assert.AreEqual(64000, volume.PaddingValue, ""));
 		}
 	}
 }

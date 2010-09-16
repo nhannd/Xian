@@ -730,21 +730,27 @@ namespace ClearCanvas.Dicom
         }
 
         /// <summary>
-        /// Get a specific uncompressed frame.
+        /// Gets a specific uncompressed frame.
         /// </summary>
-        /// <param name="frame">The zero offset frame to retrieve</param>
-        /// <returns>A byte array containing the frame data.</returns>
+        /// <param name="frame">The zero-offset index of the frame to be retrieved.</param>
         /// <param name="photometricInterpretation">The photometric interpretation of the pixel data.</param>
+        /// <returns>A byte array containing the frame data.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="frame"/> specifies an invalid frame index.</exception>
+        /// <exception cref="DicomDataException">Thrown if there was a problem extracting the specified frame from the pixel data buffer.</exception>
         public override byte[] GetFrame(int frame, out string photometricInterpretation)
-    
         {
-            if (frame >= NumberOfFrames)
+        	const string messageBufferOverrun = "Requested frame exceeds available pixel data in buffer.";
+
+        	if (frame >= NumberOfFrames || frame < 0)
                 throw new ArgumentOutOfRangeException("frame");
 
             photometricInterpretation = PhotometricInterpretation;
 
             if (_ms != null)
             {
+            	if (_ms.Length < (frame + 1)*UncompressedFrameSize)
+            		throw new DicomDataException(messageBufferOverrun);
+
                 _ms.Seek(frame*UncompressedFrameSize, SeekOrigin.Begin);
 				byte[] pixels = new byte[UncompressedFrameSize];
 
@@ -756,6 +762,9 @@ namespace ClearCanvas.Dicom
             DicomAttributeOB obAttrib = _pd as DicomAttributeOB;
             if (obAttrib != null)
             {
+            	if (obAttrib.StreamLength < (frame + 1)*UncompressedFrameSize)
+            		throw new DicomDataException(messageBufferOverrun);
+
                 if (obAttrib._reference != null)
                 {
                     ByteBuffer bb;
@@ -783,6 +792,9 @@ namespace ClearCanvas.Dicom
             DicomAttributeOW owAttrib = _pd as DicomAttributeOW;
             if (owAttrib != null)
             {
+            	if (owAttrib.StreamLength < (frame + 1)*UncompressedFrameSize)
+            		throw new DicomDataException(messageBufferOverrun);
+
                 if (owAttrib._reference != null)
                 {
                     ByteBuffer bb;

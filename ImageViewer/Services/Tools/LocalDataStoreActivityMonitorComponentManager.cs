@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
@@ -140,6 +141,19 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 					_reindexComponentShelf = null;
 					throw;
 				}
+			}
+		}
+
+		public static SendQueueApplicationComponent SendActivityComponent
+		{
+			get
+			{
+				if (_dicomSendReceiveActivityComponentShelf != null)
+				{
+					var container = (SplitComponentContainer) _dicomSendReceiveActivityComponentShelf.Component;
+					return (SendQueueApplicationComponent) CollectionUtils.SelectFirst(container.ContainedComponents, c => c is SendQueueApplicationComponent);
+				}
+				return null;
 			}
 		}
 	}

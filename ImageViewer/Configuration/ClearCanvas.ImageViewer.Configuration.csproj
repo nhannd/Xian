@@ -59,6 +59,7 @@
     <Compile Include="MonitorConfigurationSettings.cs" />
     <Compile Include="MouseImageViewerToolPropertyComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReservedActionModelKeyStrokeProviderExtensionPoint.cs" />
     <Compile Include="ServerTree\AddServerGroupTool.cs" />
     <Compile Include="ServerTree\AddServerTool.cs" />
     <Compile Include="ServerTree\DeleteServerTool.cs" />

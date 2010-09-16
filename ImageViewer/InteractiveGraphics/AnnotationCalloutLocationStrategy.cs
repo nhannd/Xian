@@ -31,6 +31,7 @@
 
 using System;
 using System.Drawing;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
@@ -38,8 +39,20 @@ using ClearCanvas.ImageViewer.Mathematics;
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	/// <summary>
-	/// The default strategy for automatically calculating the location of a <see cref="AnnotationGraphic"/>'s callout.
+	/// A default implementation of <see cref="IAnnotationCalloutLocationStrategy"/>.
 	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// This implementation sets the initial callout position to be a location offset
+	/// from the top left corner of the ROI measurement's bounding box. Once set, the
+	/// callout is not moved along with the measurement.
+	/// </para>
+	/// <para>
+	/// Implementors of <see cref="IAnnotationCalloutLocationStrategy"/> may wish to
+	/// derive from this class to take advantage of built-in functionality and only
+	/// override methods to implement the desired strategy.
+	/// </para>
+	/// </remarks>
 	[Cloneable(true)]
 	public class AnnotationCalloutLocationStrategy : IAnnotationCalloutLocationStrategy
 	{
@@ -53,6 +66,22 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		internal protected AnnotationCalloutLocationStrategy()
 		{
 			_initialLocationSet = false;
+		}
+
+		/// <summary>
+		/// Releases unmanaged resources held by this object.
+		/// </summary>
+		public void Dispose()
+		{
+			try
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Error, ex);
+			}
 		}
 
 		/// <summary>
@@ -79,22 +108,38 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			get { return _annotationGraphic.Callout; }
 		}
 
+		/// <summary>
+		/// Called to release any unmanaged resources held by this object.
+		/// </summary>
+		/// <param name="disposing">True if <see cref="IDisposable.Dispose"/> was called; False if the object is being finalized.</param>
+		protected virtual void Dispose(bool disposing) {}
+
+		/// <summary>
+		/// Called when the <see cref="AnnotationGraphic"/> changes.
+		/// </summary>
+		/// <param name="oldAnnotationGraphic">The former value of <see cref="AnnotationGraphic"/>.</param>
+		/// <param name="annotationGraphic">The new value of <see cref="AnnotationGraphic"/>.</param>
+		protected virtual void OnAnnotationGraphicChanged(AnnotationGraphic oldAnnotationGraphic, AnnotationGraphic annotationGraphic) {}
+
 		#region IRoiCalloutLocationStrategy Members
 
 		/// <summary>
 		/// Sets the <see cref="AnnotationGraphic"/> that owns this strategy.
 		/// </summary>
-		public virtual void SetAnnotationGraphic(AnnotationGraphic annotationGraphic)
+		public void SetAnnotationGraphic(AnnotationGraphic annotationGraphic)
 		{
-			_annotationGraphic = annotationGraphic;
+			if (_annotationGraphic != annotationGraphic)
+			{
+				var oldAnnotationGraphic = _annotationGraphic;
+				_annotationGraphic = annotationGraphic;
+				OnAnnotationGraphicChanged(oldAnnotationGraphic, annotationGraphic);
+			}
 		}
 
 		/// <summary>
-		/// Does nothing, unless overridden.
+		/// Called when the <see cref="InteractiveGraphics.AnnotationGraphic"/>'s callout location has been changed externally; for example, by the user.
 		/// </summary>
-		public virtual void OnCalloutLocationChangedExternally()
-		{
-		}
+		public virtual void OnCalloutLocationChangedExternally() {}
 
 		/// <summary>
 		/// Calculates the initial callout location only; returns false thereafter.
@@ -108,7 +153,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			{
 				_initialLocationSet = true;
 
-				//TODO: make the offset less hard-coded (use case Roi analyzers with many results).
 				SizeF offset = new SizeF(0, 55);
 
 				// Setup the callout
@@ -134,7 +178,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Creates a deep copy of this strategy object.
 		/// </summary>
 		/// <remarks>
-		/// <see cref="IAnnotationCalloutLocationStrategy"/>s should not return null from this method.
+		/// Implementations should never return null from this method.
 		/// </remarks>
 		public IAnnotationCalloutLocationStrategy Clone()
 		{

@@ -170,7 +170,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				if (string.IsNullOrEmpty(frameOfReferenceUid))
 					throw new NullFrameOfReferenceException();
 				if (imageOrientationPatient == null || imageOrientationPatient.IsNull)
+				{
+					if (currentFrame.ParentImageSop.NumberOfFrames > 1)
+						throw new UnsupportedMultiFrameSourceImagesException(new NullImageOrientationException());
 					throw new NullImageOrientationException();
+				}
 
 				// perform a very basic filtering of the selected display set based on the currently selected image
 				var filteredFrames = new List<Frame>();

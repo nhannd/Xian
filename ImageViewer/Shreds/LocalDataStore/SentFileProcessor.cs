@@ -263,6 +263,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							progressItem.LastActive = DateTime.Now;
 							progressItem.StatusMessage = errorInformation.ErrorMessage;
 							progressItem.SendOperationReference = errorInformation.SendOperationReference;
+							progressItem.HasErrors = true;
 							LocalDataStoreActivityPublisher.Instance.SendProgressChanged(progressItem.Clone());
 						}
 					);

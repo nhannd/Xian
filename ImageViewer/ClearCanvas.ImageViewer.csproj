@@ -165,7 +165,9 @@
     <Compile Include="Graphics\InvariantSpatialTransform.cs" />
     <Compile Include="PresentationStates\GeometricShutterCache.cs" />
     <Compile Include="Rendering\RenderingException.cs" />
+    <Compile Include="StudyManagement\Tests\UnitTestStudyLoader.cs" />
     <Compile Include="Tests\ImageDiff.cs" />
+    <Compile Include="Tests\MockScreenInfoProvider.cs" />
     <Compile Include="ViewerActionFilter.cs" />
     <Compile Include="ImageBoxDrawingEventArgs.cs" />
     <Compile Include="Imaging\ComposedLut.cs" />
@@ -236,6 +238,7 @@
     <Compile Include="Graphics\ITextGraphic.cs" />
     <Compile Include="Graphics\PointsList.cs" />
     <Compile Include="Graphics\PolylineGraphic.cs" />
+    <Compile Include="Graphics\Tests\PolylineGraphicTests.cs" />
     <Compile Include="IDicomPresentationImage.cs" />
     <Compile Include="ImageSetGroups.cs" />
     <Compile Include="Imaging\DicomVoiLuts.cs" />
@@ -633,6 +636,7 @@
     <Compile Include="Imaging\PixelData.cs" />
     <Compile Include="Graphics\PointChangedEventArgs.cs" />
     <Compile Include="Graphics\RectanglePrimitive.cs" />
+    <Compile Include="Graphics\Tests\PrimitiveTests.cs" />
     <Compile Include="Graphics\Tests\PixelDataWrapperTest.cs" />
     <Compile Include="LinkageChangedEventArgs.cs" />
     <Compile Include="LogicalWorkspace.cs" />

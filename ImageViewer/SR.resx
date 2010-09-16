@@ -519,4 +519,7 @@ Please check the log for more details.</value>
   <data name="MessageReferencedKeyImageFromOtherStudy" xml:space="preserve">
     <value>The referenced key image could not be displayed because it is not part of the loaded study.</value>
   </data>
+  <data name="MessageUnsupportedImageType" xml:space="preserve">
+    <value>Unsupported Image Type: {0}</value>
+  </data>
 </root>

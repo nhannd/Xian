@@ -182,6 +182,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		public Guid Import(FileImportRequest request)
 		{
+			var impersonationContext = new ServiceClientImpersonationContext();
 			try
 			{
 				return LocalDataStoreService.Instance.Import(request);
@@ -192,6 +193,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				string message = SR.ExceptionErrorProcessingImportRequest;
 				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
 				throw new LocalDataStoreException(exceptionMessage);
+			}
+			finally
+			{
+				impersonationContext.Dispose();
 			}
 		}
 

@@ -238,6 +238,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					{
 						jobInformation.ProgressItem.StatusMessage = SR.MessageNoFilesToImport;
 						jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+						jobInformation.DisposeClientUserContext();
 
 						UpdateProgress(jobInformation.ProgressItem);
 					}
@@ -284,7 +285,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				progressItem.StatusMessage = SR.MessagePending;
 				progressItem.IsBackground = request.IsBackground;
 
-				FileImportJobInformation jobInformation = new FileImportJobInformation(progressItem, request.FileImportBehaviour, request.BadFileBehaviour);
+				FileImportJobInformation jobInformation = new FileImportJobInformation(progressItem, request.FileImportBehaviour, request.BadFileBehaviour, UserIdentityContext.CreateFromCurrentThreadPrincipal());
 
 				List<string> fileExtensions = new List<string>();
 				if (request.FileExtensions != null)

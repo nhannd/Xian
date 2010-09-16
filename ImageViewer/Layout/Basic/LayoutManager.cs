@@ -164,7 +164,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			foreach (IDisplaySetFactory displaySetFactory in _modalityDisplaySetFactories.Values)
 				displaySetFactory.SetStudyTree(studyTree);
 
-			_modalityDisplaySetFactories[_defaultModality] = new BasicDisplaySetFactory();
+			_modalityDisplaySetFactories[_defaultModality] = new BasicDisplaySetFactory {ShouldCreatePlaceholderImageDisplaySets = true};
 		}
 
 		private IDisplaySetFactory GetDisplaySetFactory(string modality)

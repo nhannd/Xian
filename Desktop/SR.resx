@@ -289,7 +289,7 @@
     <value>Add Separator</value>
   </data>
   <data name="MenuInsertSeparatorBefore" xml:space="preserve">
-    <value>Insert Separator After</value>
+    <value>Insert Separator Before</value>
   </data>
   <data name="MenuOptions" xml:space="preserve">
     <value>Options</value>

@@ -55,6 +55,13 @@ namespace ClearCanvas.ImageViewer.Annotations.Tests
 			Platform.SetExtensionFactory(new NullExtensionFactory());
 		}
 
+		[TestFixtureTearDown]
+		public void Teardown()
+		{
+			// reset all the changes we made in this test
+			AnnotationLayoutStore.Instance.Reset();
+		}
+
 		[Test]
 		public void Test()
 		{

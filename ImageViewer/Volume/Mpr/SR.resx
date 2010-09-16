@@ -282,4 +282,7 @@
   <data name="MessageSourceDataSetMustSpecifyFrameOfReference" xml:space="preserve">
     <value>Each frame in the source dataset must specify a frame of reference.</value>
   </data>
+  <data name="MessageSourceDataSetMultiFrameImagesAreNotSupported" xml:space="preserve">
+    <value>The selected multiframe images are of an unsupported type.</value>
+  </data>
 </root>

@@ -49,6 +49,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private DialogBoxAction _closeAction;
 
 		internal DialogBoxForm(string title, Control content, Size exactSize, DialogSizeHint sizeHint)
+			: this(title, content, exactSize, sizeHint, false) {}
+
+		internal DialogBoxForm(string title, Control content, Size exactSize, DialogSizeHint sizeHint, bool allowResize)
 		{
 			InitializeComponent();
 			Text = title;
@@ -85,6 +88,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 				}
 			}
 
+			if (allowResize)
+			{
+				FormBorderStyle = FormBorderStyle.Sizable;
+				MinimumSize = base.SizeFromClientSize(_content.Size);
+			}
+
 			_contentPanel.Controls.Add(_content);
 
 			// Resize the dialog if size of the underlying content changed
@@ -97,7 +106,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <param name="dialogBox"></param>
 		/// <param name="content"></param>
 		public DialogBoxForm(DialogBox dialogBox, Control content)
-			: this(dialogBox.Title, content, dialogBox.Size, dialogBox.DialogSizeHint)
+			: this(dialogBox.Title, content, dialogBox.Size, dialogBox.DialogSizeHint, dialogBox.AllowUserResize)
 		{
 		}
 
@@ -109,7 +118,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void OnContentSizeChanged(object sender, EventArgs e)
 		{
-			ClientSize = _content.Size;
+			if (ClientSize != _content.Size)
+				ClientSize = _content.Size;
 		}
 
 		private void _delayedCloseTimer_Tick(object sender, EventArgs e)

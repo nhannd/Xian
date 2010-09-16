@@ -61,6 +61,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} Failed Item(s).
+        /// </summary>
+        internal static string FormatFailedItemsStatusMessage {
+            get {
+                return ResourceManager.GetString("FormatFailedItemsStatusMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         internal static string LabelCancel {
@@ -84,6 +93,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms {
         internal static string MessageConfirmCancelReindex {
             get {
                 return ResourceManager.GetString("MessageConfirmCancelReindex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One or more tasks have failed to send..
+        /// </summary>
+        internal static string MessageOneOrMoreFailedSendTasks {
+            get {
+                return ResourceManager.GetString("MessageOneOrMoreFailedSendTasks", resourceCulture);
             }
         }
         
