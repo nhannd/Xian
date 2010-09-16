@@ -34,6 +34,7 @@
 #pragma warning disable 1591,0419,1574,1587
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using ClearCanvas.Common;
@@ -62,7 +63,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void DefaultTransform()
 		{
-			ImageSpatialTransform transform = CreateTransform();
+			var transform = CreateTransform();
 			transform.ScaleToFit = false;
 
 			Assert.AreEqual(1.0f, transform.Transform.Elements[0]);
@@ -74,7 +75,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void Scale()
 		{
-			ImageSpatialTransform transform = CreateTransform();
+			var transform = CreateTransform();
 			transform.ScaleToFit = false;
 			transform.Scale = 2.0f;
 
@@ -85,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void ScaleIsotropicPixel()
 		{
-			ImageSpatialTransform transform = CreateTransform();
+			var transform = CreateTransform();
 			transform.ScaleToFit = false;
 			transform.Scale = 2.0f;
 
@@ -102,10 +103,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void ScaleAnisotropicPixelSpacing2To1()
 		{
-			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384, 1, 2, 0, 0);
-			ImageSpatialTransform transform = (ImageSpatialTransform) graphic.SpatialTransform;
-			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
-
+			var transform = CreateTransform(1, 2, 0, 0);
 			transform.ScaleToFit = false;
 			transform.Scale = 2.0f;
 
@@ -124,10 +122,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void ScaleAnisotropicPixelSpacing1To2()
 		{
-			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384, 2, 1, 0, 0);
-			ImageSpatialTransform transform = (ImageSpatialTransform) graphic.SpatialTransform;
-			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
-
+			var transform = CreateTransform(2, 1, 0, 0);
 			transform.ScaleToFit = false;
 			transform.Scale = 2.0f;
 
@@ -146,10 +141,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void ScaleAnisotropicPixelSpacing4To3()
 		{
-			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384, 0.3, 0.4, 0, 0);
-			ImageSpatialTransform transform = (ImageSpatialTransform) graphic.SpatialTransform;
-			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
-
+			var transform = CreateTransform(0.3, 0.4, 0, 0);
 			transform.ScaleToFit = false;
 			transform.Scale = 2.0f;
 
@@ -168,10 +160,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void ScaleAnisotropicPixelSpacing3To4()
 		{
-			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384, 0.4, 0.3, 0, 0);
-			ImageSpatialTransform transform = (ImageSpatialTransform) graphic.SpatialTransform;
-			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
-
+			var transform = CreateTransform(0.4, 0.3, 0, 0);
 			transform.ScaleToFit = false;
 			transform.Scale = 2.0f;
 
@@ -190,10 +179,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void ScaleAnisotropicPixelAspectRatio2To1()
 		{
-			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384, 0, 0, 1, 2);
-			ImageSpatialTransform transform = (ImageSpatialTransform) graphic.SpatialTransform;
-			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
-
+			var transform = CreateTransform(0, 0, 1, 2);
 			transform.ScaleToFit = false;
 			transform.Scale = 2.0f;
 
@@ -212,10 +198,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void ScaleAnisotropicPixelAspectRatio1To2()
 		{
-			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384, 0, 0, 2, 1);
-			ImageSpatialTransform transform = (ImageSpatialTransform) graphic.SpatialTransform;
-			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
-
+			var transform = CreateTransform(0, 0, 2, 1);
 			transform.ScaleToFit = false;
 			transform.Scale = 2.0f;
 
@@ -234,10 +217,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void ScaleAnisotropicPixelAspectRatio4To3()
 		{
-			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384, 0, 0, 3, 4);
-			ImageSpatialTransform transform = (ImageSpatialTransform) graphic.SpatialTransform;
-			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
-
+			var transform = CreateTransform(0, 0, 3, 4);
 			transform.ScaleToFit = false;
 			transform.Scale = 2.0f;
 
@@ -256,10 +236,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void ScaleAnisotropicPixelAspectRatio3To4()
 		{
-			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384, 0, 0, 4, 3);
-			ImageSpatialTransform transform = (ImageSpatialTransform) graphic.SpatialTransform;
-			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
-
+			var transform = CreateTransform(0, 0, 4, 3);
 			transform.ScaleToFit = false;
 			transform.Scale = 2.0f;
 
@@ -397,6 +374,252 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			Assert.AreEqual(1.0f, transform.Scale);
 			Assert.AreEqual(1.0f, transform.ScaleX);
 			Assert.AreEqual(1.0f, transform.ScaleY);
+		}
+
+		[Test]
+		public void ScaleToFitIsotropicPixel()
+		{
+			var transform = CreateTransform();
+			transform.ScaleToFit = true;
+
+			transform.ClientRectangle = new Rectangle(0, 0, 768, 1024);
+			Assert.AreEqual(2.0f, transform.Scale, 0.001f, "wrong normalized scale");
+			Assert.AreEqual(2.0f, transform.ScaleX, 0.001f, "wrong scale along X");
+			Assert.AreEqual(2.0f, transform.ScaleY, 0.001f, "wrong scale along Y");
+
+			var screenSize = transform.ConvertToDestination(new SizeF(384, 512));
+			AssertAreSimilar(0.75f, screenSize);
+		}
+
+		[Test]
+		public void ScaleToFitAnisotropicPixelSpacing2To1()
+		{
+			var transform = CreateTransform(0.1, 0.2, 0, 0);
+			transform.ScaleToFit = true;
+
+			transform.ClientRectangle = new Rectangle(0, 0, 768, 2048);
+			Assert.AreEqual(2.0f, transform.Scale, 0.001f, "wrong normalized scale");
+			Assert.AreEqual(2.0f, transform.ScaleX, 0.001f, "wrong scale along X");
+			Assert.AreEqual(4.0f, transform.ScaleY, 0.001f, "wrong scale along Y");
+
+			var screenSize = transform.ConvertToDestination(new SizeF(384, 512));
+			AssertAreSimilar(0.375f, screenSize);
+		}
+
+		[Test]
+		public void ScaleToFitAnisotropicPixelSpacing1To2()
+		{
+			var transform = CreateTransform(0.2, 0.1, 0, 0);
+			transform.ScaleToFit = true;
+
+			transform.ClientRectangle = new Rectangle(0, 0, 1536, 1024);
+			Assert.AreEqual(2.0f, transform.Scale, 0.001f, "wrong normalized scale");
+			Assert.AreEqual(4.0f, transform.ScaleX, 0.001f, "wrong scale along X");
+			Assert.AreEqual(2.0f, transform.ScaleY, 0.001f, "wrong scale along Y");
+
+			var screenSize = transform.ConvertToDestination(new SizeF(384, 512));
+			AssertAreSimilar(1.5f, screenSize);
+		}
+
+		[Test]
+		public void ScaleToFitAnisotropicPixelSpacing4To3()
+		{
+			var transform = CreateTransform(0.3, 0.4, 0, 0);
+			transform.ScaleToFit = true;
+
+			transform.ClientRectangle = new Rectangle(0, 0, 1152, 2048);
+			Assert.AreEqual(3.0f, transform.Scale, 0.001f, "wrong normalized scale");
+			Assert.AreEqual(3.0f, transform.ScaleX, 0.001f, "wrong scale along X");
+			Assert.AreEqual(4.0f, transform.ScaleY, 0.001f, "wrong scale along Y");
+
+			var screenSize = transform.ConvertToDestination(new SizeF(384, 512));
+			AssertAreSimilar(0.5625f, screenSize);
+		}
+
+		[Test]
+		public void ScaleToFitAnisotropicPixelSpacing3To4()
+		{
+			var transform = CreateTransform(0.4, 0.3, 0, 0);
+			transform.ScaleToFit = true;
+
+			transform.ClientRectangle = new Rectangle(0, 0, 1024, 1024);
+			Assert.AreEqual(2.0f, transform.Scale, 0.001f, "wrong normalized scale");
+			Assert.AreEqual(2 + 2/3f, transform.ScaleX, 0.001f, "wrong scale along X");
+			Assert.AreEqual(2.0f, transform.ScaleY, 0.001f, "wrong scale along Y");
+
+			var screenSize = transform.ConvertToDestination(new SizeF(384, 512));
+			AssertAreSimilar(1f, screenSize);
+		}
+
+		[Test]
+		public void ScaleToFitAnisotropicPixelAspectRatio2To1()
+		{
+			var transform = CreateTransform(0, 0, 0.1, 0.2);
+			transform.ScaleToFit = true;
+
+			transform.ClientRectangle = new Rectangle(0, 0, 768, 2048);
+			Assert.AreEqual(2.0f, transform.Scale, 0.001f, "wrong normalized scale");
+			Assert.AreEqual(2.0f, transform.ScaleX, 0.001f, "wrong scale along X");
+			Assert.AreEqual(4.0f, transform.ScaleY, 0.001f, "wrong scale along Y");
+
+			var screenSize = transform.ConvertToDestination(new SizeF(384, 512));
+			AssertAreSimilar(0.375f, screenSize);
+		}
+
+		[Test]
+		public void ScaleToFitAnisotropicPixelAspectRatio1To2()
+		{
+			var transform = CreateTransform(0, 0, 0.2, 0.1);
+			transform.ScaleToFit = true;
+
+			transform.ClientRectangle = new Rectangle(0, 0, 1536, 1024);
+			Assert.AreEqual(2.0f, transform.Scale, 0.001f, "wrong normalized scale");
+			Assert.AreEqual(4.0f, transform.ScaleX, 0.001f, "wrong scale along X");
+			Assert.AreEqual(2.0f, transform.ScaleY, 0.001f, "wrong scale along Y");
+
+			var screenSize = transform.ConvertToDestination(new SizeF(384, 512));
+			AssertAreSimilar(1.5f, screenSize);
+		}
+
+		[Test]
+		public void ScaleToFitAnisotropicPixelAspectRatio4To3()
+		{
+			var transform = CreateTransform(0, 0, 0.3, 0.4);
+			transform.ScaleToFit = true;
+
+			transform.ClientRectangle = new Rectangle(0, 0, 1152, 2048);
+			Assert.AreEqual(3.0f, transform.Scale, 0.001f, "wrong normalized scale");
+			Assert.AreEqual(3.0f, transform.ScaleX, 0.001f, "wrong scale along X");
+			Assert.AreEqual(4.0f, transform.ScaleY, 0.001f, "wrong scale along Y");
+
+			var screenSize = transform.ConvertToDestination(new SizeF(384, 512));
+			AssertAreSimilar(0.5625f, screenSize);
+		}
+
+		[Test]
+		public void ScaleToFitAnisotropicPixelAspectRatio3To4()
+		{
+			var transform = CreateTransform(0, 0, 0.4, 0.3);
+			transform.ScaleToFit = true;
+
+			transform.ClientRectangle = new Rectangle(0, 0, 1024, 1024);
+			Assert.AreEqual(2.0f, transform.Scale, 0.001f, "wrong normalized scale");
+			Assert.AreEqual(2 + 2/3f, transform.ScaleX, 0.001f, "wrong scale along X");
+			Assert.AreEqual(2.0f, transform.ScaleY, 0.001f, "wrong scale along Y");
+
+			var screenSize = transform.ConvertToDestination(new SizeF(384, 512));
+			AssertAreSimilar(1f, screenSize);
+		}
+
+		[Test]
+		public void TileFittingIsotropicPixel()
+		{
+			var transform = CreateTransform();
+			transform.ScaleToFit = true;
+
+			// test a client area with exactly the same image aspect ratio
+			Trace.WriteLine(string.Format("same image aspect ratio"), "UNIT_TESTS");
+			{
+				transform.ClientRectangle = new Rectangle(0, 0, 192, 256);
+				transform.RotationXY = 0;
+				var screenRect = transform.ConvertToDestination(new Rectangle(0, 0, 384, 512));
+				AssertAreEqual(new RectangleF(0, 0, 192, 256), screenRect);
+				AssertScaleIsConsistent(transform);
+			}
+
+			// test a client area with a different image aspect ratio
+			Trace.WriteLine(string.Format("different image aspect ratio"), "UNIT_TESTS");
+			{
+				transform.ClientRectangle = new Rectangle(0, 0, 256, 192);
+				transform.RotationXY = 0;
+				var screenRect = transform.ConvertToDestination(new Rectangle(0, 0, 384, 512));
+				AssertAreEqual(new RectangleF(56, 0, 144, 192), screenRect);
+				AssertScaleIsConsistent(transform);
+			}
+
+			// test a client area with a rotated image aspect ratio, and the image is rotated
+			Trace.WriteLine(string.Format("rotated image aspect ratio, rotated image"), "UNIT_TESTS");
+			{
+				transform.ClientRectangle = new Rectangle(0, 0, 256, 192);
+				transform.RotationXY = 90;
+				var screenRect = transform.ConvertToDestination(new Rectangle(0, 0, 384, 512));
+				AssertAreEqual(new RectangleF(256, 0, -256, 192), screenRect);
+				AssertScaleIsConsistent(transform);
+			}
+		}
+
+		[Test]
+		public void TileFittingAnisotropicPixel2To1()
+		{
+			var transform = CreateTransform(0.1, 0.2, 0, 0);
+			transform.ScaleToFit = true;
+
+			// test a client area with exactly the same image aspect ratio
+			Trace.WriteLine(string.Format("same image aspect ratio"), "UNIT_TESTS");
+			{
+				transform.ClientRectangle = new Rectangle(0, 0, 192, 512);
+				transform.RotationXY = 0;
+				var screenRect = transform.ConvertToDestination(new Rectangle(0, 0, 384, 512));
+				AssertAreEqual(new RectangleF(0, 0, 192, 512), screenRect);
+				AssertScaleIsConsistent(transform);
+			}
+
+			// test a client area with a different image aspect ratio
+			Trace.WriteLine(string.Format("different image aspect ratio"), "UNIT_TESTS");
+			{
+				transform.ClientRectangle = new Rectangle(0, 0, 512, 192);
+				transform.RotationXY = 0;
+				var screenRect = transform.ConvertToDestination(new Rectangle(0, 0, 384, 512));
+				AssertAreEqual(new RectangleF(220, 0, 72, 192), screenRect);
+				AssertScaleIsConsistent(transform);
+			}
+
+			// test a client area with a rotated image aspect ratio, and the image is rotated
+			Trace.WriteLine(string.Format("rotated image aspect ratio, rotated image"), "UNIT_TESTS");
+			{
+				transform.ClientRectangle = new Rectangle(0, 0, 512, 192);
+				transform.RotationXY = 90;
+				var screenRect = transform.ConvertToDestination(new Rectangle(0, 0, 384, 512));
+				AssertAreEqual(new RectangleF(512, 0, -512, 192), screenRect);
+				AssertScaleIsConsistent(transform);
+			}
+		}
+
+		[Test]
+		public void TileFittingAnisotropicPixel1To2()
+		{
+			var transform = CreateTransform(0.2, 0.1, 0, 0);
+			transform.ScaleToFit = true;
+
+			// test a client area with exactly the same image aspect ratio
+			Trace.WriteLine(string.Format("same image aspect ratio"), "UNIT_TESTS");
+			{
+				transform.ClientRectangle = new Rectangle(0, 0, 384, 256);
+				transform.RotationXY = 0;
+				var screenRect = transform.ConvertToDestination(new Rectangle(0, 0, 384, 512));
+				AssertAreEqual(new RectangleF(0, 0, 384, 256), screenRect);
+				AssertScaleIsConsistent(transform);
+			}
+
+			// test a client area with a different image aspect ratio
+			Trace.WriteLine(string.Format("different image aspect ratio"), "UNIT_TESTS");
+			{
+				transform.ClientRectangle = new Rectangle(0, 0, 256, 384);
+				transform.RotationXY = 0;
+				var screenRect = transform.ConvertToDestination(new Rectangle(0, 0, 384, 512));
+				AssertAreEqual(new RectangleF(0, 106 + 2/3f, 256, 170 + 2/3f), screenRect);
+				AssertScaleIsConsistent(transform);
+			}
+
+			// test a client area with a rotated image aspect ratio, and the image is rotated
+			Trace.WriteLine(string.Format("rotated image aspect ratio, rotated image"), "UNIT_TESTS");
+			{
+				transform.ClientRectangle = new Rectangle(0, 0, 256, 384);
+				transform.RotationXY = 90;
+				var screenRect = transform.ConvertToDestination(new Rectangle(0, 0, 384, 512));
+				AssertAreEqual(new RectangleF(256, 0, -256, 384), screenRect);
+				AssertScaleIsConsistent(transform);
+			}
 		}
 
 		[Test]
@@ -639,6 +862,9 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			return sceneGraph;
 		}
 
+		/// <summary>
+		/// Creates a spatial transform for a 384x512 image (i.e. 512 rows, 384 columns).
+		/// </summary>
 		private static ImageSpatialTransform CreateTransform()
 		{
 			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384);
@@ -650,11 +876,104 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			return transform;
 		}
 
+		/// <summary>
+		/// Creates a spatial transform for a 384x512 image (i.e. 512 rows, 384 columns) with the specified pixel spacing and/or pixel aspect ratio.
+		/// </summary>
+		private static ImageSpatialTransform CreateTransform(double pixelSpacingX, double pixelSpacingY, double pixelAspectRatioX, double pixelAspectRatioY)
+		{
+			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384, pixelSpacingX, pixelSpacingY, pixelAspectRatioX, pixelAspectRatioY);
+			GrayscaleImageGraphic image = new GrayscaleImageGraphic(512, 384);
+			graphic.Graphics.Add(image);
+
+			ImageSpatialTransform transform = (ImageSpatialTransform) graphic.SpatialTransform;
+			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
+			return transform;
+		}
+
+		/// <summary>
+		/// Clones a spatial transform.
+		/// </summary>
+		private static T CloneTransform<T>(T transform) where T : SpatialTransform
+		{
+			return (T) ((IGraphic) CloneBuilder.Clone(transform.OwnerGraphic)).SpatialTransform;
+		}
+
+		/// <summary>
+		/// Asserts that the <paramref name="actual"/> dimensions are equal to the <paramref name="expected"/> dimensions.
+		/// </summary>
 		private static void AssertAreEqual(SizeF expected, SizeF actual)
 		{
+			try
+			{
+				const float tolerance = 0.001f;
+				Assert.AreEqual(expected.Width, actual.Width, tolerance, "wrong dimensions: width");
+				Assert.AreEqual(expected.Height, actual.Height, tolerance, "wrong dimensions: height");
+			}
+			catch (Exception)
+			{
+				Trace.WriteLine(string.Format("Expected: {0}", expected), "UNIT_TESTS");
+				Trace.WriteLine(string.Format("Actual: {0}", actual), "UNIT_TESTS");
+				throw;
+			}
+		}
+
+		/// <summary>
+		/// Asserts that the <paramref name="actual"/> rectangle is equal to the <paramref name="expected"/> rectangle.
+		/// </summary>
+		private static void AssertAreEqual(RectangleF expected, RectangleF actual)
+		{
+			try
+			{
+				const float tolerance = 0.001f;
+				Assert.AreEqual(expected.X, actual.X, tolerance, "wrong rectangle: locX");
+				Assert.AreEqual(expected.Y, actual.Y, tolerance, "wrong rectangle: locY");
+				Assert.AreEqual(expected.Width, actual.Width, tolerance, "wrong rectangle: width");
+				Assert.AreEqual(expected.Height, actual.Height, tolerance, "wrong rectangle: height");
+			}
+			catch (Exception)
+			{
+				Trace.WriteLine(string.Format("Expected: {0}", expected), "UNIT_TESTS");
+				Trace.WriteLine(string.Format("Actual: {0}", actual), "UNIT_TESTS");
+				throw;
+			}
+		}
+
+		/// <summary>
+		/// Asserts that the <paramref name="actual"/> dimensions have the <paramref name="expected"/> aspect ratio.
+		/// </summary>
+		private static void AssertAreSimilar(float expected, SizeF actual)
+		{
 			const float tolerance = 0.001f;
-			Assert.AreEqual(expected.Width, actual.Width, tolerance);
-			Assert.AreEqual(expected.Height, actual.Height, tolerance);
+			Assert.AreEqual(expected, actual.Width/actual.Height, tolerance, "wrong image aspect ratio");
+		}
+
+		/// <summary>
+		/// Asserts that the resulting scale computed by ScaleToFit is consistent with ScaleXY.
+		/// </summary>
+		private static void AssertScaleIsConsistent(ImageSpatialTransform transform)
+		{
+			const float tolerance = 0.001f;
+
+			var transformToFit = CloneTransform(transform);
+			transformToFit.ScaleToFit = true;
+
+			var transformXy = CloneTransform(transform);
+			transformXy.ScaleToFit = false;
+			transformXy.Scale = transform.Scale;
+
+			var screenSizeToFit = transformToFit.ConvertToDestination(new SizeF(384, 512));
+			var screenSizeXy = transformXy.ConvertToDestination(new SizeF(384, 512));
+			try
+			{
+				Assert.AreEqual(screenSizeXy.Width, screenSizeToFit.Width, tolerance, "ScaleToFit and ScaleXY produce different dimensions at ZOOM={0:f6}: width", transform.Scale);
+				Assert.AreEqual(screenSizeXy.Height, screenSizeToFit.Height, tolerance, "ScaleToFit and ScaleXY produce different dimensions at ZOOM={0:f6}: height", transform.Scale);
+			}
+			catch (Exception)
+			{
+				Trace.WriteLine(string.Format("ScaleXY: {0}", screenSizeXy), "UNIT_TESTS");
+				Trace.WriteLine(string.Format("ScaleToFit: {0}", screenSizeToFit), "UNIT_TESTS");
+				throw;
+			}
 		}
 	}
 }

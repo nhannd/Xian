@@ -130,7 +130,11 @@
     <value>Open Image with {0}</value>
   </data>
   <data name="HelpCommandLineExternalArgumentFields" xml:space="preserve">
-    <value>The following argument fields may be used when the external is with images on a file system:
+    <value>Environment variables may be included by including the name of the variable surrounded by
+percent sign (%) characters (e.g. %PATH%).
+The sequence %% may be used where a literal % character is required.
+
+The following argument fields may be used when the external is with images on a file system:
 * $FILENAME$ (e.g. c:\datastore\image.dcm)
 * $DIRECTORY$ (e.g. c:\datastore)
 * $FILENAMEONLY$ (e.g. image.dcm)

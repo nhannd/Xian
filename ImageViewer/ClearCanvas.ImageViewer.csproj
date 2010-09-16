@@ -611,6 +611,7 @@
     <Compile Include="Graphics\SpatialTransform.cs" />
     <Compile Include="Graphics\SpatialTransformMemento.cs" />
     <Compile Include="Graphics\Tests\SpatialTransformTest.cs" />
+    <Compile Include="Graphics\Tests\ImageSpatialTransformTests.cs" />
     <Compile Include="BasicPresentationImage.cs" />
     <Compile Include="Imaging\IComposableLut.cs" />
     <Compile Include="ImageOperationApplicator.cs" />

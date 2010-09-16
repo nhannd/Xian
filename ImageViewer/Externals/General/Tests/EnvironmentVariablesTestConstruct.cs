@@ -40,53 +40,62 @@ namespace ClearCanvas.ImageViewer.Externals.General.Tests
 	public sealed class EnvironmentVariablesTestConstruct : IDisposable
 	{
 		private const string _format = "__CC_TEST_{0}";
+		private readonly EnvironmentVariableTarget _target;
 		private readonly IList<string> _keys;
 
-		public EnvironmentVariablesTestConstruct()
+		public EnvironmentVariablesTestConstruct(EnvironmentVariableTarget target)
 		{
+			_target = target;
 			_keys = new List<string>();
 		}
 
 		public string this[string key]
 		{
-			// pointless to handle EnvironmentVariableTargets other than Process,
-			// since environment variables are only read once at process start
 			get
 			{
+				if (string.IsNullOrEmpty(key))
+					throw new ArgumentNullException("key");
 				string fullKey = string.Format(_format, key);
-				try
-				{
-					return Environment.GetEnvironmentVariable(fullKey);
-				}
-				catch (Exception)
-				{
-					return null;
-				}
+
+				return Environment.GetEnvironmentVariable(fullKey, _target);
 			}
 			set
 			{
+				if (string.IsNullOrEmpty(key))
+					throw new ArgumentNullException("key");
 				string fullKey = string.Format(_format, key);
-				try
-				{
-					Environment.SetEnvironmentVariable(fullKey, value);
-					if (!_keys.Contains(key))
-						_keys.Add(key);
-				}
-				catch (Exception) {}
+
+				Environment.SetEnvironmentVariable(fullKey, value, _target);
+				if (!_keys.Contains(key))
+					_keys.Add(key);
 			}
 		}
 
 		public string Format(string key)
 		{
+			if (string.IsNullOrEmpty(key))
+				throw new ArgumentNullException("key");
 			return string.Format("%{0}%", string.Format(_format, key));
+		}
+
+		public string PercentChar
+		{
+			get { return "%%"; }
 		}
 
 		public void Dispose()
 		{
 			foreach (var key in _keys)
 			{
-				string fullKey = string.Format(_format, key);
-				Environment.SetEnvironmentVariable(fullKey, string.Empty);
+				try
+				{
+					string fullKey = string.Format(_format, key);
+					Environment.SetEnvironmentVariable(fullKey, string.Empty, _target);
+				}
+				catch (Exception)
+				{
+					// don't throw exceptions in a Dispose()
+				}
 			}
 		}
 	}

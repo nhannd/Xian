@@ -106,46 +106,77 @@ namespace ClearCanvas.ImageViewer.Externals.General.Tests
 		public void TestEnvironmentVariableExpansion()
 		{
 			string baseDirectory = Path.Combine(Path.Combine(Path.GetTempPath(), "ClearCanvas"), this.GetType().Name);
-			string commandDirectory = Path.Combine(baseDirectory, "Kirk");
-			string workingDirectory = Path.Combine(baseDirectory, "Archer");
+			string commandDirectory = Path.Combine(baseDirectory, "TestEnvironmentVariableExpansion");
+			string invalidDirectory = Path.Combine(baseDirectory, "TestEnvironmentVariableExpansion.April");
+			string workingDirectory = Path.Combine(baseDirectory, "TestEnvironmentVariableExpansion.Archer");
 			Directory.CreateDirectory(commandDirectory);
+			Directory.CreateDirectory(invalidDirectory);
 			Directory.CreateDirectory(workingDirectory);
 			using (MockCommandLine command = new MockCommandLine(commandDirectory))
 			{
-				using (var environmentVariables = new EnvironmentVariablesTestConstruct())
+				using (var processVars = new EnvironmentVariablesTestConstruct(EnvironmentVariableTarget.Process))
 				{
-					environmentVariables["CMDDIR"] = "Kirk";
-					environmentVariables["WRKDIR"] = "Archer";
-					environmentVariables["ARGA"] = "Sisko";
-					environmentVariables["ARGB"] = "Janeway";
-					environmentVariables["ARGC"] = "Picard";
+					processVars["CMDDIR"] = "TestEnvironmentVariableExpansion";
+					processVars["WRKDIR"] = "TestEnvironmentVariableExpansion.April";
 
-					CommandLineExternal external = new CommandLineExternal();
-					external.WorkingDirectory = baseDirectory + Path.DirectorySeparatorChar + environmentVariables.Format("WRKDIR");
-					external.Command = baseDirectory + Path.DirectorySeparatorChar + environmentVariables.Format("CMDDIR") + Path.DirectorySeparatorChar + Path.GetFileName(command.ScriptFilename);
-					external.Arguments = string.Format("\"{0}\" \"{1}\" \"{2}\"", environmentVariables.Format("ARGA"), environmentVariables.Format("ARGB"), environmentVariables.Format("ARGC"));
-					external.WaitForExit = true;
-
-					using (MockDicomPresentationImage image = new MockDicomPresentationImage())
+					using (var userVars = new EnvironmentVariablesTestConstruct(EnvironmentVariableTarget.User))
 					{
-						external.Launch(image);
+						userVars["CMDDIR"] = "TestEnvironmentVariableExpansion";
+						userVars["WRKDIR"] = "TestEnvironmentVariableExpansion.Archer";
+						userVars["ARGA"] = "Kirk";
+						userVars["ARGB"] = "Picard";
 
-						Thread.Sleep(_processEndWaitDelay); // wait for the external to finish
-						command.Refresh();
+						using (var machineVars = new EnvironmentVariablesTestConstruct(EnvironmentVariableTarget.Machine))
+						{
+							machineVars["CMDDIR"] = "TestEnvironmentVariableExpansion";
+							machineVars["ARGA"] = "Decker";
+							machineVars["ARGB"] = "Locutus";
+							machineVars["ARGC"] = "Sisko";
+							machineVars["ARGD"] = "Janeway";
 
-						Trace.WriteLine(string.Format("Command Execution Report"));
-						Trace.WriteLine(command.ExecutionReport);
+							CommandLineExternal external = new CommandLineExternal();
+							external.WorkingDirectory = baseDirectory + Path.DirectorySeparatorChar + userVars.Format("WRKDIR");
+							external.Command = baseDirectory + Path.DirectorySeparatorChar + userVars.Format("CMDDIR") + Path.DirectorySeparatorChar + Path.GetFileName(command.ScriptFilename);
+							external.Arguments = string.Format("\"{0}\" \"Chateau {1} 2347\" \"{2} vs. {3}\" \"Over 9000%%\" \"%Kim%: Ensign for Life\"", userVars.Format("ARGA"), userVars.Format("ARGB"), userVars.Format("ARGC"), userVars.Format("ARGD"));
+							external.WaitForExit = true;
 
-						AssertAreEqualIgnoreCase(commandDirectory + Path.DirectorySeparatorChar + Path.GetFileName(command.ScriptFilename), command.ExecutedCommand, "Wrong command was executed: ENVVARS aren't being processed");
-						AssertAreEqualIgnoreCase(workingDirectory, command.ExecutedWorkingDirectory, "Command executed in wrong working directory: ENVVARS aren't being processed");
+							using (MockDicomPresentationImage image = new MockDicomPresentationImage())
+							{
+								external.Launch(image);
 
-						Assert.AreEqual("\"Sisko\"", command.ExecutedArguments[0], "Wrong argument passed at index {0}: ENVVARS aren't being processed", 0);
-						Assert.AreEqual("\"Janeway\"", command.ExecutedArguments[1], "Wrong argument passed at index {0}: ENVVARS aren't being processed", 1);
-						Assert.AreEqual("\"Picard\"", command.ExecutedArguments[2], "Wrong argument passed at index {0}: ENVVARS aren't being processed", 2);
+								Thread.Sleep(_processEndWaitDelay); // wait for the external to finish
+								command.Refresh();
+
+								Trace.WriteLine(string.Format("Command Execution Report"));
+								Trace.WriteLine(command.ExecutionReport);
+
+								// verify that command path is processed for environment variables
+								AssertAreEqualIgnoreCase(commandDirectory + Path.DirectorySeparatorChar + Path.GetFileName(command.ScriptFilename), command.ExecutedCommand, "Wrong command was executed: ENVVARS aren't being processed correctly");
+
+								// verify that working directory is processed for environment variables and that process-scope variables **are not** being used
+								AssertAreEqualIgnoreCase(workingDirectory, command.ExecutedWorkingDirectory, "Command executed in wrong working directory: ENVVARS aren't being processed correctly (should not be using process-scope)");
+
+								// verify that user-scope variables override machine-scope variables
+								Assert.AreEqual("\"Kirk\"", command.ExecutedArguments[0], "Wrong argument passed at index {0}: ENVVARS of different scopes aren't being processed with the correct priority", 0);
+
+								// verify that variable expansion takes place without modifying literals
+								Assert.AreEqual("\"Chateau Picard 2347\"", command.ExecutedArguments[1], "Wrong argument passed at index {0}: ENVVARS aren't processing literals", 1);
+
+								// verify that variable expansion handles more than one variable in a single argument
+								Assert.AreEqual("\"Sisko vs. Janeway\"", command.ExecutedArguments[2], "Wrong argument passed at index {0}: ENVVARS aren't processing more than one variable", 2);
+
+								// verify that variable expansion handles literal percent sign character escape sequence
+								Assert.AreEqual("\"Over 9000%\"", command.ExecutedArguments[3], "Wrong argument passed at index {0}: ENVVARS aren't processing literal percent sign characters", 3);
+
+								// verify that variable expansion treats undefined variables as a literal sequence
+								Assert.AreEqual("\"%Kim%: Ensign for Life\"", command.ExecutedArguments[4], "Wrong argument passed at index {0}: ENVVARS aren't processing undefined variables", 4);
+							}
+						}
 					}
 				}
 			}
 			Directory.Delete(commandDirectory);
+			Directory.Delete(invalidDirectory);
 			Directory.Delete(workingDirectory);
 		}
 
