@@ -44,6 +44,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		IFusionOverlayFrameDataReference Clone();
 	}
 
+	//TODO (CR Sept 2010): These references don't need to be "transient".  Transient references
+	//should only be for objects that must continue to "live" after they've been disposed because they can't
+	//be hidden behind some interface via a factory, for example.
 	partial class FusionOverlayFrameData
 	{
 		private class FusionOverlayFrameDataReference : IFusionOverlayFrameDataReference
@@ -132,6 +135,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			lock (_syncLock)
 			{
+				//TODO (CR Sept 2010): seems there's no owner of "this", so _selfDisposed will never be set to true, and this
+				//object will never be disposed.
 				_selfDisposed = true;
 
 				//Only dispose for real when self has been disposed and all the transient references have been disposed.

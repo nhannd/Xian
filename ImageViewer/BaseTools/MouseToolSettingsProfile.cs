@@ -92,6 +92,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			}
 		}
 
+		//TODO (CR Sept 2010): name of these methods is awkward, maybe because it's ActivationAction.  Can we use SelectAction instead?
 		public bool IsRegisteredMouseToolActivationAction(string actionId)
 		{
 			Platform.CheckForEmptyString(actionId, "toolActivationActionId");
@@ -107,6 +108,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			return this.HasEntryCore(key);
 		}
 
+		//TODO (CR Sept 2010): GetSetting instead of GetEntry?
 		public Setting GetEntryByActivationActionId(string toolActivationActionId)
 		{
 			Platform.CheckForEmptyString(toolActivationActionId, "toolActivationActionId");
@@ -166,6 +168,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			remove { _currentProfileChanged -= value; }
 		}
 
+		//TODO (CR Sept 2010): why not just do this when Current is set?
 		public static void SaveCurrentAsDefault()
 		{
 			if (_profile != null)

@@ -75,6 +75,8 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 	[VisibleStateObserver("renameNodeCxt", "CanRename", "SelectedNodeChanged")]
 	[IconSet("renameNodeCxt", IconScheme.Colour, "Icons.RenameToolSmall.png", "Icons.RenameToolSmall.png", "Icons.RenameToolSmall.png")]
 	[ExtensionOf(typeof (ActionModelConfigurationComponentToolExtensionPoint))]
+
+	//TODO (CR Sept 2010): base class name - ActionModelConfigurationTool?
 	public class BasicActionModelConfigurationComponentTools : ActionModelConfigurationComponentTool
 	{
 		public event EventHandler SelectedNodeChanged;

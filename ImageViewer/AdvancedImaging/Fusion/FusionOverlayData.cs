@@ -45,6 +45,12 @@ using VolumeData = ClearCanvas.ImageViewer.Volume.Mpr.Volume;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
+	//TODO (CR Sept 2010): to the extent that this can be a pure class, unrelated to progress graphics,
+	//that would be better from a design standpoint. Generally, this class is trying to do too many things, 
+	//and it would be easier to deal with thread safety if it were separated into 2 or 3 classes.
+
+	//TODO (CR Sept 2010): use the word "volume" instead of OverlayData?  I keep thinking this is a per-frame object
+	//and confuse it with OverlayFrameData.
 	public partial class FusionOverlayData : IDisposable, ILargeObjectContainer, IProgressGraphicProgressProvider
 	{
 		private readonly object _syncVolumeDataLock = new object();
@@ -204,6 +210,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 						var scale = new PointF(baseResolutionX/overlayResolutionX, baseResolutionY/overlayResolutionY);
 						var offset = new PointF(overlayOffset.X*overlayResolutionX, overlayOffset.Y*overlayResolutionY);
 
+						//TODO (CR Sept 2010): could this be negative?
 						// validate computed transform parameters
 						Platform.CheckTrue(overlayOffset.Z < 0.5f, "Compute OffsetZ != 0");
 
@@ -294,6 +301,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			get { return _volume != null; }
 		}
 
+		//TODO (CR Sept 2010): same comment as with the ProgressGraphic stuff; the API is unclear
+		//as to what it is doing (return value) because it's trying to account for the async loading.
+
 		/// <summary>
 		/// Attempts to start loading the overlay data asynchronously, if not already loaded.
 		/// </summary>
@@ -306,6 +316,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			_largeObjectData.UpdateLastAccessTime();
 
 			// if the data is already available without blocking, return success immediately
+
+			//TODO (CR Sept 2010): because unloading the volume involves disposing it, if every operation that uses it
+			//isn't in the same lock (e.g. lock(_syncVolumeDataLock)) you could be getting a disposed/null volume here.
 			VolumeData volume = _volume;
 			if (volume != null)
 			{

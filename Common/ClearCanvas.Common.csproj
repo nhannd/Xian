@@ -316,6 +316,7 @@
     <Compile Include="Audit\IAuditSink.cs" />
     <Compile Include="Configuration\ApplicationSettingsExtensions.cs" />
     <Compile Include="Configuration\ApplicationSettingsHelper.cs" />
+    <Compile Include="Configuration\ConfigurationFileReader.cs" />
     <Compile Include="Configuration\ConfigurationSectionPath.cs" />
     <Compile Include="Configuration\ISharedApplicationSettingsProvider.cs" />
     <Compile Include="Configuration\IMigrateSettings.cs" />
@@ -326,6 +327,7 @@
     <Compile Include="Configuration\LocalFileSettingsProviderExtensions.cs" />
     <Compile Include="Configuration\Setup\MigrateLocalSharedSettingsApplication.cs" />
     <Compile Include="Configuration\SettingsMigrator.cs" />
+    <Compile Include="Configuration\Tests\ConfigurationFileReaderTests.cs" />
     <Compile Include="Configuration\Tests\SystemConfigurationHelperTests.cs" />
     <Compile Include="Configuration\Tests\ApplicationSettingsExtensionsTests.cs" />
     <Compile Include="Configuration\Tests\SettingsTestBase.cs" />

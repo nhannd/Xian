@@ -39,6 +39,10 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Utilities
 {
+	//TODO (CR Sept 2010): now that we've put this in 3 places, we have a use case for generalizing it.
+	//It may be ok as-is but we just need to think about it a bit before putting it in the core viewer code.
+	//It may make more sense to just make it part of ImagePlaneHelper.
+
 	/// <summary>
 	/// An adapter to unify the interface of dicom presentation images
 	/// that have valid slice information (e.g. in 3D patient coordinate system).

@@ -169,6 +169,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					var voiLut = InitialVoiLutProvider.Instance.GetLut(image);
 					if (voiLut == null && image is IImageGraphicProvider)
 					{
+						//TODO (CR Sept 2010): will this always happen for the PT layer?  Could it be an
+						//average of the w/l of the source PT image frames?
 						var pixelData = ((IImageGraphicProvider) image).ImageGraphic.PixelData;
 						if (pixelData is GrayscalePixelData)
 							voiLut = new MinMaxPixelCalculatedLinearLut((GrayscalePixelData) pixelData);

@@ -49,6 +49,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			_thresholding = thresholding;
 		}
 
+		//TODO (CR Sept 2010): maybe we should just build this into the base ColorMap class.
 		public byte Alpha
 		{
 			get { return _alpha; }
@@ -62,6 +63,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 		}
 
+		//TODO (CR Sept 2010): unused?
 		public bool Thresholding
 		{
 			get { return _thresholding; }

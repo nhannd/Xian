@@ -477,6 +477,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 			#region CompiledColorMap Class
 
+			//TODO (CR Sept 2010): just use SimpleDataLut directly?
 			private class CompiledColorMap : SimpleDataLut
 			{
 				internal CompiledColorMap(IDataLut source)

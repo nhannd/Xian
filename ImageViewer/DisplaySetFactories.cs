@@ -269,6 +269,10 @@ namespace ClearCanvas.ImageViewer
 			var displaySets = CreateBasicDisplaySets(series);
 			if (displaySets.Count > 0)
 				return displaySets;
+
+			//TODO (CR Sept 2010): this really feels like a separate factory because the above
+			//behaviour is much like what we do elsewhere when we combine multiple factories; if 
+			//one produces no display sets, carry onto the next one.
 			if (shouldCreatePlaceholders)
 				return CreatePlaceholderDisplaySets(series);
 			return new List<IDisplaySet>();

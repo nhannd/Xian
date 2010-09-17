@@ -42,6 +42,7 @@ namespace ClearCanvas.Dicom.Iod
 		private readonly int _countEntries;
 		private readonly Color[] _data;
 
+		//TODO (CR Sept 2010): maybe make the source sop instance UID a settable property, since it's not mandatory.
 		public PaletteColorLut(string sourceSopInstanceUid,
 		                       int size,
 		                       int firstMappedPixel,
@@ -74,6 +75,7 @@ namespace ClearCanvas.Dicom.Iod
 			get { return _firstMappedPixelValue; }
 		}
 
+		//TODO (CR Sept 2010): name?
 		public int CountEntries
 		{
 			get { return _countEntries; }
@@ -180,6 +182,7 @@ namespace ClearCanvas.Dicom.Iod
 			if (lutSize == 0)
 				lutSize = 65536;
 
+			//TODO (CR Sept 2010): just leave it blank?  There are plenty of use cases for this class without need of a source sop instance uid
 			if (!dataSource[DicomTags.SopInstanceUid].TryGetString(0, out sourceSopInstanceUid))
 				sourceSopInstanceUid = DicomUid.GenerateUid().UID;
 

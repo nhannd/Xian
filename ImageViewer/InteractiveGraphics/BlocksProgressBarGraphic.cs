@@ -73,6 +73,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			{
 				if (disposing)
 				{
+					//TODO (CR Sept 2010): dispose _border and _block?
 					if (_tray != null)
 					{
 						_tray.Dispose();

@@ -217,6 +217,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				}
 			}
 
+			//TODO (CR Sept 2010): unless it's not actually used outside of this class, all mementos should override Equals
 			private class Memento
 			{
 				public readonly float Opacity;

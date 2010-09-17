@@ -39,6 +39,8 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.Common.Utilities
 {
+	//TODO (CR Sept 2010): move to Tests namespace?
+
 	/// <summary>
 	/// An <see cref="IExtensionFactory"/> that returns only extensions that have been explicitly mapped.
 	/// </summary>

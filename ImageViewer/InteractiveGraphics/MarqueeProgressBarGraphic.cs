@@ -76,6 +76,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			{
 				if (disposing)
 				{
+					//TODO (CR Sept 2010): what about _tray, etc?
 					if (_mask != null)
 					{
 						_mask.Dispose();

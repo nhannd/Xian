@@ -385,6 +385,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 
 		#region ActionNodeMapDictionary Class
 
+		//TODO (CR Sept 2010): MapDictionary?
 		private class ActionNodeMapDictionary : IActionNodeMap
 		{
 			private readonly Dictionary<string, IList<AbstractActionModelTreeLeafAction>> _actionMap = new Dictionary<string, IList<AbstractActionModelTreeLeafAction>>();

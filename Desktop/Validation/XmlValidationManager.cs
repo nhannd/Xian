@@ -79,6 +79,7 @@ namespace ClearCanvas.Desktop.Validation
 		/// </summary>
 		public bool IsSupported
 		{
+			//TODO (CR Sept 2010): If ValidationRulesSettings used ApplicationSettingsExtensions to save, we wouldn't need this.
 			get { return _settingsStore != null; }
 		}
 

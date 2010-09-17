@@ -38,6 +38,7 @@ using ClearCanvas.Common.Specifications;
 using System.Xml;
 using ClearCanvas.Desktop.Actions;
 using System.Diagnostics;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
@@ -76,6 +77,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 		}
 	}
 
+	//TODO (CR Sept 2010): remove this stuff
 	[ExtensionOf(typeof(ViewerContextMenuFilterExtensionPoint))]
 	internal class ViewerContextMenuFilter : ViewerActionFilter
 	{
@@ -201,11 +203,18 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 	[SettingsGroupDescription("Default configuration for tools in the viewer.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+	[UserSettingsMigrationDisabled]
+	[SharedSettingsMigrationDisabled]
 	internal sealed partial class ToolSettings
 	{
 		private ToolSettings()
 		{
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
+		}
+
+		public override void Upgrade()
+		{
+			//disabled.	
 		}
 
 		public List<ActionFilter> GetActionFilters()

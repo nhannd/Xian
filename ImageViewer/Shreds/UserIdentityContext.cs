@@ -103,6 +103,7 @@ namespace ClearCanvas.ImageViewer.Shreds
 			return null;
 		}
 
+		//TODO (CR Sept 2010): long name; just call it "Default"?
 		/// <summary>
 		/// Gets a static instance of an empty <see cref="UserIdentityContext"/>.
 		/// </summary>

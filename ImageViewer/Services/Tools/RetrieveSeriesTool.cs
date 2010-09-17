@@ -110,6 +110,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			}
 
+			//TODO (CR Sept 2010): put a Close method on the context, or put a property on SeriesDetailsTool
+			//that somehow allows a tool to flag that when it is clicked, the component should close.
 			if (result == EventResult.Success)
 				SeriesDetailsComponent.Close();
 		}

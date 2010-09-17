@@ -70,7 +70,7 @@ namespace ClearCanvas.Common.Configuration
             }
         }
 
-        private static SettingsPropertyValueCollection GetSettingsValues(SettingsPropertyCollection properties, Dictionary<string,string> storedValues)
+        private static SettingsPropertyValueCollection GetSettingsValues(SettingsPropertyCollection properties, IDictionary<string, string> storedValues)
         {
             // Create new collection of values
             SettingsPropertyValueCollection values = new SettingsPropertyValueCollection();
@@ -147,7 +147,7 @@ namespace ClearCanvas.Common.Configuration
 				//If storing the shared values, we store everything, otherwise only store user values.
 				if (value.IsDirty && (storeSharedValues || IsUserScoped(value.Property)))
                     valuesToStore[value.Name] = (string)value.SerializedValue;
-                }
+            }
 
 			if (valuesToStore.Count > 0)
             {
@@ -155,15 +155,11 @@ namespace ClearCanvas.Common.Configuration
                 string settingsKey = (string)context["SettingsKey"];
 
                 _store.PutSettingsValues(new SettingsGroupDescriptor(settingsClass), user, settingsKey, valuesToStore);
-            }
 
-            // mark all user-settings as no longer dirty, since they were successfully saved
-    	    foreach (SettingsPropertyValue value in settings)
-    	    {
-				if (storeSharedValues || IsUserScoped(value.Property))
-    	            value.IsDirty = false;
-    	    }
-
+				// successfully saved user settings are no longer dirty
+				foreach (var storedValue in valuesToStore)
+					settings[storedValue.Key].IsDirty = false;
+			}
         }
 
     	private static bool IsUserScoped(SettingsProperty property)

@@ -176,8 +176,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Platform.CheckTrue(FloatComparer.AreEqual(sliceRotation[3, 2], 0), invalidTransformMessage);
 			Platform.CheckTrue(FloatComparer.AreEqual(sliceRotation[3, 3], 1), invalidTransformMessage);
 
+			//is this a "rotation matrix" or a "desired coordinate system"
 			_slicingPlaneRotation = sliceRotation;
 
+			//TODO (CR Sept 2010): if the input matrix is a rotation matrix, why are we not just extracting values
+			//for _rotateAboutX, etc.  Also, _slicingPlaneRotation seems more or less unused.
 			double yRadians = (float) Math.Asin(sliceRotation[0, 2]);
 			double cosY = Math.Cos(yRadians);
 			_rotateAboutX = (float) Math.Atan2(-sliceRotation[1, 2]/cosY, sliceRotation[2, 2]/cosY)*_degreesPerRadian;
@@ -193,9 +196,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			set { _description = value; }
 		}
 
+		//TODO (CR Sept 2010): Unclear what this is for.  If you can infer _rotateAboutX, etc. from this, why are they separate?
 		public Matrix SlicingPlaneRotation
 		{
 			get { return _slicingPlaneRotation; }
+			//TODO (CR Sept 2010): Shouldn't changing this change _rotateAboutX etc.
 			set { _slicingPlaneRotation = value; }
 		}
 
@@ -370,6 +375,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			yAxis = yAxis.Normalize();
 			zAxis = zAxis.Normalize();
 
+			//TODO (CR Sept 2010): is this a rotation matrix, or the definition of a coordinate system?
 			var basis = new Matrix(4, 4);
 			basis.SetRow(0, xAxis.X, xAxis.Y, xAxis.Z, 0);
 			basis.SetRow(1, yAxis.X, yAxis.Y, yAxis.Z, 0);

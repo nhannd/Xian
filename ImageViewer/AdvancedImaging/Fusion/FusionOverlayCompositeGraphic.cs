@@ -152,6 +152,10 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		public override void OnDrawing()
 		{
+			//TODO (CR Sept 2010): we already uncovered a bug related to this class and the MemoryManager.
+			//We need to figure out a way to synchronize the functionality in this class along with the
+			//volume/frame data being loaded and unloaded.
+
 			if (_overlayImageGraphic == null)
 			{
 				_overlayFrameDataReference.FusionOverlayFrameData.Lock();
@@ -165,6 +169,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 					var progressGraphic = (ProgressGraphic) CollectionUtils.SelectFirst(this.Graphics, g => g is ProgressGraphic);
 
+					//TODO (CR Sept 2010): as mentioned in the progress graphic code, this API is unclear
+					//and doesn't guarantee that the image won't be unloaded before CreateImageGraphic is called.
 					float progress;
 					string message;
 					if (_overlayFrameDataReference.FusionOverlayFrameData.BeginLoad(out progress, out message))
@@ -195,6 +201,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			OverlayImageGraphic = null;
 		}
 
+		//TODO (CR Sept 2010): Remove if unused.
 		public GrayscaleImageGraphic CreateStaticOverlayImageGraphic(bool forceLoad)
 		{
 			_overlayFrameDataReference.FusionOverlayFrameData.Lock();

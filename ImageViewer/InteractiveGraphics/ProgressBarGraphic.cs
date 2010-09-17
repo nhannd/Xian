@@ -73,6 +73,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	[Cloneable(true)]
 	public abstract partial class ProgressBarGraphic : CompositeGraphic
 	{
+		//TODO (CR Sept 2010): I think inheritance is the wrong model here.  Seems like each type of
+		//progress bar only overrides one method.  If the contents of that method were part of a "style"
+		//class, then there would only need to be a single ProgressBarGraphic with a settable Style property.
+
 		/// <summary>
 		/// Creates a new <see cref="ProgressBarGraphic"/> in the specified style.
 		/// </summary>
@@ -96,6 +100,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		private float _progress;
 
+		//TODO (CR Sept 2010): follow the "typical" progress bar API where you can set the min/max/step?
+
 		/// <summary>
 		/// Gets or sets the current progress value as a fractional number between 0 and 1, inclusive.
 		/// </summary>
@@ -113,6 +119,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				}
 			}
 		}
+
+		//TODO (CR Sept 2010): ProgressPercent?  Int is not clear.
 
 		/// <summary>
 		/// Gets or sets the current progress value as an integer between 0 and 100, inclusive.
