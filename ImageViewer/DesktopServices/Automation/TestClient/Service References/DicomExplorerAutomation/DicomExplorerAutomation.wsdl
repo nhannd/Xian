@@ -54,11 +54,11 @@
   <wsdl:message name="IDicomExplorerAutomation_SearchRemoteStudies_OutputMessage">
     <wsdl:part name="parameters" element="tns:SearchRemoteStudiesResponse" />
   </wsdl:message>
-  <wsdl:message name="IDicomExplorerAutomation_SearchRemoteStudies_ServerNotFoundFaultFault_FaultMessage">
-    <wsdl:part name="detail" element="tns:ServerNotFoundFault" />
-  </wsdl:message>
   <wsdl:message name="IDicomExplorerAutomation_SearchRemoteStudies_DicomExplorerNotFoundFaultFault_FaultMessage">
     <wsdl:part name="detail" element="tns:DicomExplorerNotFoundFault" />
+  </wsdl:message>
+  <wsdl:message name="IDicomExplorerAutomation_SearchRemoteStudies_ServerNotFoundFaultFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:ServerNotFoundFault" />
   </wsdl:message>
   <wsdl:portType name="IDicomExplorerAutomation">
     <wsdl:operation name="SearchLocalStudies">
@@ -70,8 +70,8 @@
     <wsdl:operation name="SearchRemoteStudies">
       <wsdl:input wsaw:Action="http://www.clearcanvas.ca/imageViewer/automation/IDicomExplorerAutomation/SearchRemoteStudies" message="tns:IDicomExplorerAutomation_SearchRemoteStudies_InputMessage" />
       <wsdl:output wsaw:Action="http://www.clearcanvas.ca/imageViewer/automation/IDicomExplorerAutomation/SearchRemoteStudiesResponse" message="tns:IDicomExplorerAutomation_SearchRemoteStudies_OutputMessage" />
-      <wsdl:fault wsaw:Action="http://www.clearcanvas.ca/imageViewer/automation/IDicomExplorerAutomation/SearchRemoteStudiesServerNotFoundFaultFault" name="ServerNotFoundFaultFault" message="tns:IDicomExplorerAutomation_SearchRemoteStudies_ServerNotFoundFaultFault_FaultMessage" />
       <wsdl:fault wsaw:Action="http://www.clearcanvas.ca/imageViewer/automation/IDicomExplorerAutomation/SearchRemoteStudiesDicomExplorerNotFoundFaultFault" name="DicomExplorerNotFoundFaultFault" message="tns:IDicomExplorerAutomation_SearchRemoteStudies_DicomExplorerNotFoundFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.clearcanvas.ca/imageViewer/automation/IDicomExplorerAutomation/SearchRemoteStudiesServerNotFoundFaultFault" name="ServerNotFoundFaultFault" message="tns:IDicomExplorerAutomation_SearchRemoteStudies_ServerNotFoundFaultFault_FaultMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="DicomExplorerAutomation" type="tns:IDicomExplorerAutomation">
@@ -99,11 +99,11 @@
       <wsdl:output>
         <soap:body use="literal" />
       </wsdl:output>
-      <wsdl:fault name="ServerNotFoundFaultFault">
-        <soap:fault use="literal" name="ServerNotFoundFaultFault" namespace="" />
-      </wsdl:fault>
       <wsdl:fault name="DicomExplorerNotFoundFaultFault">
         <soap:fault use="literal" name="DicomExplorerNotFoundFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServerNotFoundFaultFault">
+        <soap:fault use="literal" name="ServerNotFoundFaultFault" namespace="" />
       </wsdl:fault>
     </wsdl:operation>
   </wsdl:binding>
@@ -133,11 +133,11 @@
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>
-      <wsdl:fault name="ServerNotFoundFaultFault">
-        <soap12:fault use="literal" name="ServerNotFoundFaultFault" namespace="" />
-      </wsdl:fault>
       <wsdl:fault name="DicomExplorerNotFoundFaultFault">
         <soap12:fault use="literal" name="DicomExplorerNotFoundFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServerNotFoundFaultFault">
+        <soap12:fault use="literal" name="ServerNotFoundFaultFault" namespace="" />
       </wsdl:fault>
     </wsdl:operation>
   </wsdl:binding>

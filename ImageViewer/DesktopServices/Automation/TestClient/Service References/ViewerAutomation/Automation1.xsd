@@ -79,6 +79,7 @@
   <xs:complexType name="OpenStudiesRequest">
     <xs:sequence>
       <xs:element minOccurs="0" name="ActivateIfAlreadyOpen" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="ReportFaultToUser" type="xs:boolean" />
       <xs:element xmlns:q16="http://www.clearcanvas.ca/imageViewer/automation" name="StudiesToOpen" nillable="true" type="q16:ArrayOfOpenStudyInfo" />
     </xs:sequence>
   </xs:complexType>
