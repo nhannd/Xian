@@ -42,7 +42,7 @@ namespace ClearCanvas.Healthcare
 	/// <summary>
 	/// Procedure entity
 	/// </summary>
-	[ValidationRules("GetValidationRules")]
+	[Validation(HighLevelRulesProviderMethod="GetValidationRules")]
 	public partial class Procedure
 	{
 		public Procedure(ProcedureType type)

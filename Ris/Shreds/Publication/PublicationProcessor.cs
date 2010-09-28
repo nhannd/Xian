@@ -70,21 +70,21 @@ namespace ClearCanvas.Ris.Shreds.Publication
             _publicationActions = new PublicationActionExtensionPoint().CreateExtensions();
         }
 
+		public override string Name
+		{
+			get
+			{
+				return SR.PublicationShredName;
+			}
+		}
+
 		protected override IList<PublicationStep> GetNextEntityBatch(int batchSize)
 		{
 			// Get scheduled steps, where the "publishing cool-down" has elapsed
-            // eg LastFailureTime is more than a specified number of seconds ago
-			PublicationStepSearchCriteria noFailures = GetCriteria();
-			noFailures.LastFailureTime.IsNull();
-			noFailures.Scheduling.StartTime.SortAsc(0);
+			// eg LastFailureTime is more than a specified number of seconds ago
 
-			PublicationStepSearchCriteria failures = GetCriteria();
-			failures.LastFailureTime.LessThan(Platform.Time.AddSeconds(-_settings.FailedItemRetryDelay));
-
-			PublicationStepSearchCriteria[] criteria = new PublicationStepSearchCriteria[] { noFailures, failures };
-			SearchResultPage page = new SearchResultPage(0, batchSize);
-
-			return PersistenceScope.CurrentContext.GetBroker<IPublicationStepBroker>().Find(criteria, page);
+			var page = new SearchResultPage(0, batchSize);
+			return PersistenceScope.CurrentContext.GetBroker<IPublicationStepBroker>().FindUnprocessedSteps(_settings.FailedItemRetryDelay, page);
 		}
 
 		protected override void ActOnItem(PublicationStep item)
@@ -106,15 +106,6 @@ namespace ClearCanvas.Ris.Shreds.Publication
 		{
 			// all actions succeeded, so mark the publication item as being completed
 			item.Complete(item.AssignedStaff);
-		}
-
-		private static PublicationStepSearchCriteria GetCriteria()
-		{
-			PublicationStepSearchCriteria criteria = new PublicationStepSearchCriteria();
-			criteria.State.EqualTo(ActivityStatus.SC);
-			criteria.Scheduling.Performer.Staff.IsNotNull();
-			criteria.Scheduling.StartTime.LessThan(Platform.Time);
-			return criteria;
 		}
 	}
 }

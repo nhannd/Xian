@@ -154,6 +154,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private readonly string _folderName;
 		private readonly EntityRef _worklistRef;
 		private readonly string _worklistClassName;
+		private int _allAvailableItemsCount = 0;
 		private int _completedItemsCount = 0;
 		private int _skippedItemsCount = 0;
 		private bool _isInitialItem = true;
@@ -243,6 +244,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				}
 
 				_worklistItem = _worklistCache.Count > 0 ? _worklistCache.Dequeue() : null;
+				_allAvailableItemsCount--;
 			}
 			else
 			{
@@ -279,7 +281,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				if (!_isInitialItem)
 				{
-					status = status + string.Format(SR.FormatReportingStatusText, _worklistCache.Count, _completedItemsCount, _skippedItemsCount);
+					status = status + string.Format(SR.FormatReportingStatusText, _allAvailableItemsCount, _completedItemsCount, _skippedItemsCount);
 				}
 
 				return status;
@@ -332,13 +334,23 @@ namespace ClearCanvas.Ris.Client.Workflow
 						? new QueryWorklistRequest(_worklistRef, true, true, DowntimeRecovery.InDowntimeRecoveryMode, workingFacilityRef)
 						: new QueryWorklistRequest(_worklistClassName, true, true, DowntimeRecovery.InDowntimeRecoveryMode, workingFacilityRef);
 
+					// Only cache the first 50 items instead of the whole worklist; querying for the whole worklist faults the connection when the
+					// result set is ~1100 items or more.
+					request.Page = new SearchResultPage(0, 50);
+
 					var response = service.QueryWorklist(request);
 
+					_allAvailableItemsCount = response.ItemCount;
 					foreach (var item in response.WorklistItems)
 					{
 						if (WorklistItemWasPreviouslyVisited(item) == false)
 						{
 							_worklistCache.Enqueue(item);
+						}
+						else
+						{
+							// If any excluded items are still in the worklist, don't include them in the available items count
+							_allAvailableItemsCount--;
 						}
 					}
 				});

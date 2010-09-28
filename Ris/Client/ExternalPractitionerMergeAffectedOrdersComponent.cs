@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -127,13 +128,30 @@ namespace ClearCanvas.Ris.Client
 		private void UpdateAffectedOrderTableItems()
 		{
 			var deactivatedContactPointRefs = CollectionUtils.Map<ExternalPractitionerContactPointDetail, EntityRef>(_deactivatedContactPoints, cp => cp.ContactPointRef);
-			var affectedOrders = LoadAffectedOrders(deactivatedContactPointRefs);
+			var affectedOrders = new List<OrderDetail>();
+
+			try
+			{
+				var task = new BackgroundTask(
+					delegate(IBackgroundTaskContext context)
+					{
+						context.ReportProgress(new BackgroundTaskProgress(0, SR.MessageLoadingAffectedOrders));
+						affectedOrders.AddRange(LoadAffectedOrders(deactivatedContactPointRefs));
+					},
+					true);
+
+				ProgressDialog.Show(task, this.Host.DesktopWindow, true, ProgressBarStyle.Marquee);
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
 
 			UpdateRecipientReplacementMap();
 
 			// From each affected recipient in each affected order, build AffectedOrderTableItem
 			_affectedOrderTableItems.Clear();
-			CollectionUtils.ForEach(affectedOrders, order => 
+			CollectionUtils.ForEach(affectedOrders, order =>
 				CollectionUtils.ForEach(order.ResultRecipients,
 					delegate(ResultRecipientDetail recipient)
 					{
@@ -144,10 +162,10 @@ namespace ClearCanvas.Ris.Client
 							return;
 
 						var tableItem = new ExternalPractitionerMergeAffectedOrderTableItem(order, recipient, ShowOrderPreview, ShowPractitionerPreview)
-							{
-								SelectedContactPoint = GetDefaultOrPreviousSelection(order, recipient),
-								ContactPointChoices = this.ActiveContactPoints
-							};
+						{
+							SelectedContactPoint = GetDefaultOrPreviousSelection(order, recipient),
+							ContactPointChoices = this.ActiveContactPoints
+						};
 
 						_affectedOrderTableItems.Add(tableItem);
 					}));

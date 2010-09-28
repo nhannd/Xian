@@ -7,6 +7,7 @@
     <discriminator column="Discriminator_" type ="String"/>
     <version name="Version" column="Version_"/>
 
+    <property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true"/>
     <many-to-one name="Note" class="Note" column="NoteOID_" not-null="true"/>
     <property name="IsAcknowledged" column="IsAcknowledged_" type="Boolean" not-null="true"/>
 		<component name="AcknowledgedBy" class="NoteAcknowledgement">

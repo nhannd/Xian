@@ -30,9 +30,8 @@
 #endregion
 
 using System;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
 using System.Collections;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare
 {
@@ -64,9 +63,13 @@ namespace ClearCanvas.Healthcare
 		/// <param name="order"></param>
 		/// <param name="patient"></param>
 		/// <param name="patientProfile"></param>
+		/// <param name="noteAuthor"></param>
+		/// <param name="recipients"></param>
+		/// <param name="diagnosticServiceName"></param>
 		/// <param name="isAcknowledged"></param>
-		public OrderNoteboxItem(Note note, Order order,
-			Patient patient, PatientProfile patientProfile, bool isAcknowledged)
+		public OrderNoteboxItem(Note note, Order order, Patient patient, PatientProfile patientProfile,
+			Staff noteAuthor, IList recipients,
+			string diagnosticServiceName, bool isAcknowledged)
 		{
 			_noteRef = note.GetRef();
 			_orderRef = order.GetRef();
@@ -76,20 +79,14 @@ namespace ClearCanvas.Healthcare
 			_patientName = patientProfile.Name;
 			_dateOfBirth = patientProfile.DateOfBirth;
 			_accessionNumber = order.AccessionNumber;
-			_diagnosticServiceName = order.DiagnosticService.Name;
+			_diagnosticServiceName = diagnosticServiceName;
 			_category = note.Category;
 			_urgent = note.Urgent;
 			_postTime = note.PostTime;
-			_author = note.Author;
+			_author = noteAuthor;
 			_onBehalfOfGroup = note.OnBehalfOfGroup;
 			_isAcknowledged = isAcknowledged;
-
-			_recipients = CollectionUtils.Map<NotePosting, object>(note.Postings,
-				delegate(NotePosting posting)
-				{
-					 return posting is StaffNotePosting ? (object)((StaffNotePosting)posting).Recipient :
-						 (object)((GroupNotePosting)posting).Recipient;
-				});
+			_recipients = recipients;
 		}
 
 		public EntityRef NoteRef

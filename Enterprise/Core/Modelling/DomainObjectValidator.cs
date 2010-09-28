@@ -41,6 +41,8 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 	/// </summary>
 	/// <remarks>
 	/// Instances of this class are not thread-safe and should never be used by more than one thread.
+	/// A corollary is that these objects are intended to be short-lived, not spanning more than a
+	/// single request.
 	/// </remarks>
 	public class DomainObjectValidator
 	{
@@ -56,6 +58,19 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 		private readonly Dictionary<Type, ValidationRuleSet> _ruleSets = new Dictionary<Type, ValidationRuleSet>();
 
 		#region Public API
+
+		/// <summary>
+		/// Checks whether validation is enabled on the specified domain class.
+		/// </summary>
+		/// <param name="domainClass"></param>
+		/// <returns></returns>
+		public static bool IsValidationEnabled(Type domainClass)
+		{
+			var a = AttributeUtils.GetAttribute<ValidationAttribute>(domainClass, true);
+
+			// if no attribute present, then by default validation is enabled
+			return (a == null) || a.EnableValidation;
+		}
 
 		/// <summary>
 		/// Validates the specified domain object, applying all known validation rules.
@@ -127,8 +142,10 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 			if (!_ruleSets.TryGetValue(domainClass, out rules))
 			{
 				// otherwise build it
-				rules = ValidationRuleSetCache.GetInvariantRules(domainClass)
-					.Add(ValidationRuleSetCache.GetCustomRules(domainClass));
+				rules = IsValidationEnabled(domainClass) ?
+					ValidationRuleSetCache.GetInvariantRules(domainClass).Add(ValidationRuleSetCache.GetCustomRules(domainClass))
+					: new ValidationRuleSet();
+
 				_ruleSets.Add(domainClass, rules);
 			}
 

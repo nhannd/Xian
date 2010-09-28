@@ -31,6 +31,7 @@
 
 #if UNIT_TESTS
 
+using ClearCanvas.Common.Specifications;
 using NUnit.Framework;
 using ClearCanvas.Common.Utilities;
 
@@ -71,6 +72,30 @@ namespace ClearCanvas.Enterprise.Core.Modelling.Tests
 
 			[Required]
 			public string Color { get; set; }
+		}
+
+		[Validation(HighLevelRulesProviderMethod = "GetRules")]
+		class BarA
+		{
+			private static IValidationRuleSet GetRules()
+			{
+				var rule = new ValidationRule<BarA>(i => new TestResult(false, "This rule always fails."));
+				return new ValidationRuleSet(new ISpecification[]{rule});
+			}
+		}
+
+		class BarB : BarA
+		{
+		}
+
+		[Validation(HighLevelRulesProviderMethod = "GetRules")]
+		class BarC : BarA
+		{
+			private static IValidationRuleSet GetRules()
+			{
+				var rule = new ValidationRule<BarA>(i => new TestResult(false, "This rule always fails."));
+				return new ValidationRuleSet(new ISpecification[] { rule });
+			}
 		}
 
 		[Test]
@@ -170,6 +195,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling.Tests
 			Assert.AreEqual(0, result.Reasons.Length);
 		}
 
+		[Test]
 		public void Test_MultipleBrokenRules()
 		{
 			var builder = new ValidationBuilder();
@@ -184,20 +210,55 @@ namespace ClearCanvas.Enterprise.Core.Modelling.Tests
 
 			// should fail only Name length
 			foo.Color = "Blue";
+			result = ruleSet.Test(foo);
 			Assert.IsFalse(result.Success);
 			Assert.AreEqual(1, result.Reasons.Length);
 
 			// should fail neither
 			foo.Name = "Bot";
+			result = ruleSet.Test(foo);
 			Assert.IsTrue(result.Success);
 			Assert.AreEqual(0, result.Reasons.Length);
 
-			// should fail Name required
-			foo.Name = null;
+			// should fail Color required
+			foo.Color = null;
+			result = ruleSet.Test(foo);
 			Assert.IsFalse(result.Success);
 			Assert.AreEqual(1, result.Reasons.Length);
 		}
 
+		[Test]
+		public void Test_Additional_rules_method()
+		{
+			var builder = new ValidationBuilder();
+			var ruleSet = builder.BuildRuleSet(typeof (BarA));
+			var result = ruleSet.Test(new BarA());
+
+			// expect exactly one broken rule
+			Assert.IsFalse(result.Success);
+			Assert.AreEqual(1, result.Reasons.Length);
+		}
+
+		[Test]
+		public void Test_Additional_rules_method_inherited()
+		{
+			// BarB inherits from BarA, but does not define its own additional rules method
+			var builder = new ValidationBuilder();
+			var ruleSet = builder.BuildRuleSet(typeof(BarB));
+			var result = ruleSet.Test(new BarB());
+
+			// expect exactly one broken rule (more than 1 would indicate that the GetRules had been processed more than once)
+			Assert.IsFalse(result.Success);
+			Assert.AreEqual(1, result.Reasons.Length);
+
+			// BarC inherits from BarA, and also defines its own additional rules method
+			ruleSet = builder.BuildRuleSet(typeof(BarC));
+			result = ruleSet.Test(new BarC());
+
+			// expect 2 broken rules, one from BarA and one from BarC
+			Assert.IsFalse(result.Success);
+			Assert.AreEqual(2, result.Reasons.Length);
+		}
 	}
 }
 

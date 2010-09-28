@@ -579,15 +579,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 					return;
 				}
 
-				if (!_transcriptionEditor.Save(TranscriptionEditorCloseReason.Complete))
-					return;
-
 				EnumValueInfo rejectReason;
 				string additionalComments;
 
 				var rejectReasonSelected = GetRejectReason("Reject Reason", out rejectReason, out additionalComments);
 
 				if (!rejectReasonSelected || rejectReason == null)
+					return;
+
+				if (!_transcriptionEditor.Save(TranscriptionEditorCloseReason.Complete))
 					return;
 
 				Platform.GetService<ITranscriptionWorkflowService>(service =>

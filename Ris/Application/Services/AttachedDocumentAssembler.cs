@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Application.Services
 		{
 			summary.DocumentRef = doc.GetRef();
 			summary.CreationTime = doc.CreationTime;
-			summary.ReceivedTime = doc.ReceivedTime;
+			summary.ReceivedTime = doc.DocumentReceivedTime;
 			summary.MimeType = doc.MimeType;
 			summary.ContentUrl = doc.ContentUrl;
 			summary.FileExtension = doc.FileExtension;

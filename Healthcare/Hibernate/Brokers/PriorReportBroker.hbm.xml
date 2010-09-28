@@ -21,16 +21,19 @@
 
 
   <!-- 
-    Obtains all prior reports for a given patient.
+    Obtains all reports for a given patient.
     Parameters: 1. the reference Patient
+    Note: it is important that the join on Type be a left join, for performance reasons.
   -->
   <query name="allPriorsByPatient">
-    select priorReport
+    select priorReport, priorProcedure, priorProcType, priorOrder
     from
-    Report priorReport
-    join priorReport.Procedures priorProcedure
+    Order priorOrder
+    join priorOrder.Procedures priorProcedure
+    left join priorProcedure.Type priorProcType
+    join priorProcedure.Reports priorReport
     where
-    priorReport.Status in ('P', 'F', 'C')
-    and priorProcedure.Order.Patient = ?
+    priorReport.Status not in ('X')
+    and priorOrder.Patient = ?
   </query>
 </hibernate-mapping>

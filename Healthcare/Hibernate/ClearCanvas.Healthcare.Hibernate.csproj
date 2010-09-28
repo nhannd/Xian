@@ -49,6 +49,7 @@
     <Compile Include="*.gen.cs" />
     <Compile Include="Brokers\*.gen.cs" />
     <Compile Include="Brokers\AccessionNumberBroker.cs" />
+    <Compile Include="Brokers\PerformedProcedureStepBroker.cs" />
     <Compile Include="Brokers\ProtocolWorklistItemBroker.cs" />
     <Compile Include="Brokers\DefaultWorklistItemSearchExecutionStrategy.cs" />
     <Compile Include="Brokers\ExternalPractitionerBroker.cs" />

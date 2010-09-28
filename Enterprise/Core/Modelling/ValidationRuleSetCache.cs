@@ -76,9 +76,11 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 				if (_invariantRuleSets.TryGetValue(domainClass, out rules))
 					return rules;
 
-				// build rules for entityClass, and put in cache
+				// build rules for domainClass
 				var builder = new ValidationBuilder();
 				rules = builder.BuildRuleSet(domainClass);
+
+				// cache for future use
 				_invariantRuleSets.Add(domainClass, rules);
 				return rules;
 			}
@@ -95,6 +97,13 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 			// be cached in a static variable like the invariant rules.
 			// instead they are cached using the Cache object with an absolute expiry time, which should be relatively short (a few minutes)
 			// This ensures that changes made to these rules will be applied eventually, when the cache expires.
+
+			// however, if the Cache object is not available in this environment, then we have no choice but to build from source
+			if(!Cache.IsSupported())
+			{
+				Platform.Log(LogLevel.Warn, "Caching of custom rules is not supported in this configuration - rules are being compiled from source.");
+				return BuildCustomRules(domainClass);
+			}
 
 			using (var cacheClient = Cache.CreateClient(CacheId))
 			{
@@ -146,5 +155,6 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 				return new ValidationRuleSet();
 			}
 		}
+
 	}
 }

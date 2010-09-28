@@ -59,6 +59,14 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 			}
 		}
 
+		public override string Name
+		{
+			get
+			{
+				return SR.ImageAvailabilityWorkQueueProcessor;
+			}
+		}
+
 		protected override string WorkQueueItemType
 		{
 			get { return ImageAvailabilityWorkQueue.WorkQueueItemType; }

@@ -363,7 +363,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				if (_protocolGroup == null) return false;
+				if (_protocolGroup == null || !this.CanEdit)
+					return false;
 
 				return _defaultProtocolGroupName != _protocolGroup.Name;
 			}

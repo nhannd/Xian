@@ -190,14 +190,17 @@ namespace ClearCanvas.Healthcare {
             // create postings for any recipients
 			foreach (var recipient in staffRecipients)
             {
-            	NotePosting posting = new StaffNotePosting(this, false, null, recipient);
+            	NotePosting posting = new StaffNotePosting(postTime, this, false, null, recipient);
                 _postings.Add(posting);
             }
 			foreach (var recipient in groupRecipients)
 			{
-				NotePosting posting = new GroupNotePosting(this, false, null, recipient);
+				NotePosting posting = new GroupNotePosting(postTime, this, false, null, recipient);
 				_postings.Add(posting);
 			}
+
+			if (_postings.Count > 0)
+				_hasPostings = true;
 
             // give subclass a chance to do some processing
             BeforePost();

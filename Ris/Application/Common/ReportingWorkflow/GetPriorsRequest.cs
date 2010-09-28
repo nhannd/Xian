@@ -38,32 +38,27 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     /// Request object for <see cref="IReportingWorkflowService.GetPriors"/>.
     /// </summary>
     /// <remarks>
-    /// If <see cref="PatientRef"/> is supplied, all priors for the patient will be returned.
-    /// The <see cref="ReportRef"/> and <see cref="OrderRef"/> values will be ignored.
-    /// If <see cref="PatientRef"/> is null and the <see cref="OrderRef"/> is supplied, only priors relevant to the order for <see cref="OrderRef"/>
-    /// will be returned. The <see cref="ReportRef"/> value will be ignored.
-    /// If <see cref="PatientRef"/> and <see cref="OrderRef"/> are null and the <see cref="ReportRef"/> is supplied, only priors relevant to the report 
-    /// for <see cref="ReportRef"/> will be returned.
     /// </remarks>
     [DataContract]
     public class GetPriorsRequest : DataContractBase
     {
         /// <summary>
-        /// A report for which relevant priors are obtained.
+        /// A report for which relevant priors are obtained.  Only one of ReportRef and OrderRef should be set.
         /// </summary>
         [DataMember]
         public EntityRef ReportRef;
 
         /// <summary>
-        /// An order for which relevant priors are obtained.
+		/// An order for which relevant priors are obtained.  Only one of ReportRef and OrderRef should be set.
         /// </summary>
         [DataMember]
         public EntityRef OrderRef;
 
-        /// <summary>
-        /// A patient for which all priors are obtained.
-        /// </summary>
-        [DataMember]
-        public EntityRef PatientRef;
+		/// <summary>
+		/// Specifies whether only relevant priors should be returned, as opposed to all priors for the patient.
+		/// </summary>
+		[DataMember]
+    	public bool RelevantOnly;
+
     }
 }

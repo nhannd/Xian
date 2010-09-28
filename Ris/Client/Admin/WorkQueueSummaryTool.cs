@@ -34,7 +34,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -51,21 +50,9 @@ namespace ClearCanvas.Ris.Client.Admin
 			{
 				try
 				{
-					WorkQueueSummaryComponent summaryComponent = new WorkQueueSummaryComponent();
-					WorkQueuePreviewComponent previewComponent = new WorkQueuePreviewComponent();
-
-					SplitComponentContainer splitComponent = new SplitComponentContainer(SplitOrientation.Vertical);
-					splitComponent.Pane1 = new SplitPane("Summary", summaryComponent, 1.0f);
-					splitComponent.Pane2 = new SplitPane("Preview", previewComponent, 1.0f);
-
-					summaryComponent.SummarySelectionChanged += delegate
-						{
-							previewComponent.WorkQueueItem = (WorkQueueItemSummary) summaryComponent.SummarySelection.Item;
-						};
-
 					_workspace = ApplicationComponent.LaunchAsWorkspace(
 						this.Context.DesktopWindow,
-						splitComponent,
+						new WorkQueueAdminComponent(),
 						SR.TitleWorkQueue);
 					_workspace.Closed += delegate { _workspace = null; };
 				}

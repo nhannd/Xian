@@ -16,6 +16,7 @@
     <many-to-one name="OnBehalfOfGroup" class="StaffGroup" column="OnBehalfOfGroupOID_" not-null="false"/>
     <property name="PostTime" column="PostTime_" type="DateTime" not-null="false"/>
     <property name="IsFullyAcknowledged" column="IsFullyAcknowledged_" type="Boolean" not-null="true" access="nosetter.camelcase-underscore"/>
+    <property name="HasPostings" column="HasPostings_" type="Boolean" not-null="true" access="nosetter.camelcase-underscore"/>
 
     <set name="Postings" lazy="true" cascade="all-delete-orphan" fetch="subselect">
       <key column="NoteOID_"/>

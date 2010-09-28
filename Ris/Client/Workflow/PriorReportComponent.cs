@@ -227,16 +227,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 			GetPriorsResponse response = null;
 			Platform.GetService<IReportingWorkflowService>(service =>
 				{
-					var request = new GetPriorsRequest();
-					if (relevantOnly)
-					{
-						if (this.ReportRef != null)
-							request.ReportRef = this.ReportRef;
-						else
-							request.OrderRef = _worklistItem.OrderRef;
-					}
+					var request = new GetPriorsRequest {RelevantOnly = relevantOnly};
+
+					// ReportRef will be null when used from Protocolling component
+					if (this.ReportRef != null)
+						request.ReportRef = this.ReportRef;
 					else
-						request.PatientRef = _worklistItem.PatientRef;
+						request.OrderRef = _worklistItem.OrderRef;
+
 					response = service.GetPriors(request);
 				});
 			return response.Reports;

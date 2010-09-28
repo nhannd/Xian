@@ -73,6 +73,7 @@
     <Compile Include="AuditLogEntry.cs" />
     <Compile Include="Audit\AuditLogEntryAssembler.cs" />
     <Compile Include="Audit\AuditService.cs" />
+    <Compile Include="LooseEnumPropertyChangeSetListener.cs" />
     <Compile Include="EqualityUtils.cs" />
     <Compile Include="ExtendedPropertiesSearchCriteria.cs" />
     <Compile Include="EntityChangeSetPublisher.cs" />
@@ -88,8 +89,9 @@
       <DependentUpon>EntityValidationSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="Modelling\IValidationRuleSetSource.cs" />
+    <Compile Include="Modelling\Tests\DomainObjectValidatorTests.cs" />
     <Compile Include="Modelling\ValidationRule.cs" />
-    <Compile Include="Modelling\ValidationRulesAttribute.cs" />
+    <Compile Include="Modelling\ValidationAttribute.cs" />
     <Compile Include="Modelling\XmlValidationRuleSetSource.cs" />
     <Compile Include="ResponseCachingServerSideAdvice.cs" />
     <Compile Include="ResponseCachingAttribute.cs" />

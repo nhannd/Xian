@@ -10,6 +10,7 @@
     <property name="ScheduledTime" column="ScheduledTime_" type="DateTime" not-null="true" access="nosetter.camelcase-underscore"/>
     <property name="ExpirationTime" column="ExpirationTime_" type="DateTime"/>
     <property name="User" column="User_" type="String" access="nosetter.camelcase-underscore"/>
+    <!-- NB:  Type is implemented as a "loose" enum with WorkQueueItemTypeEnum synchronized to any of its values via WorkQueueItemChangeSetListener -->
     <property name="Type" column="Type_" type="String" not-null="true" access="nosetter.camelcase-underscore"/>
     <property name="Status" column="Status_" type="ClearCanvas.Workflow.Hibernate.WorkQueueStatusEnumHbm, ClearCanvas.Workflow.Hibernate" not-null="true" access="nosetter.camelcase-underscore"/>
     <property name="ProcessedTime" column="ProcessedTime_" type="DateTime" access="nosetter.camelcase-underscore"/>
