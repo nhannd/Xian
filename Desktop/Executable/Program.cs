@@ -47,8 +47,6 @@ namespace ClearCanvas.Desktop.Executable
 		[STAThread]
 		static void Main(string[] args)
 		{
-			Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-
 #if !MONO
 			SplashScreenManager.DisplaySplashScreen();
 #endif

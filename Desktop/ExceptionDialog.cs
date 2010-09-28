@@ -32,12 +32,11 @@
 using System;
 using System.Threading;
 using ClearCanvas.Common;
-using System.Reflection;
 
 namespace ClearCanvas.Desktop
 {
 	[ExtensionPoint]
-	public sealed class ExceptionDialogExtensionPoint : ExtensionPoint<IExceptionDialog>
+	public sealed class ExceptionDialogFactoryExtensionPoint : ExtensionPoint<IExceptionDialogFactory>
 	{
 	}
 
@@ -54,6 +53,11 @@ namespace ClearCanvas.Desktop
 		Ok = ExceptionDialogAction.Ok,
 		Quit = ExceptionDialogAction.Quit,
 		QuitContinue = ExceptionDialogAction.Ok | ExceptionDialogAction.Quit
+	}
+
+	public interface IExceptionDialogFactory
+	{
+		IExceptionDialog CreateExceptionDialog();
 	}
 
 	public interface IExceptionDialog
@@ -80,7 +84,7 @@ namespace ClearCanvas.Desktop
 
 			private void ShowAsync()
 			{
-				var displayThread = new Thread(unused => ShowReal()) { IsBackground = false };
+				var displayThread = new Thread(ignored => ShowReal()) { IsBackground = false };
 				displayThread.SetApartmentState(ApartmentState.STA);
 				displayThread.Start();
 				displayThread.Join();
@@ -118,7 +122,7 @@ namespace ClearCanvas.Desktop
 			}
 		}
 
-		private static readonly ConstructorInfo _dialogConstructor = GetDialogConstructor();
+		private static readonly IExceptionDialogFactory _factory = CreateFactory();
 
 		protected string Title { get; private set; }
 		protected Exception Exception { get; private set; }
@@ -127,7 +131,7 @@ namespace ClearCanvas.Desktop
 
 		internal static bool CanShow
 		{
-			get { return _dialogConstructor != null; }
+			get { return _factory != null; }
 		}
 
 		internal static void CheckCanShow()
@@ -139,20 +143,19 @@ namespace ClearCanvas.Desktop
 		private static IExceptionDialog Create()
 		{
 			CheckCanShow();
-			return new MarshallingProxy((IExceptionDialog) _dialogConstructor.Invoke(null)); 
+			return new MarshallingProxy(_factory.CreateExceptionDialog()); 
 		}
 
-		private static ConstructorInfo GetDialogConstructor()
+		private static IExceptionDialogFactory CreateFactory()
 		{
 			try
 			{
-				//TODO (CR Sept 2010): make it a factory extension point, then you don't need to do this.
-				return new ExceptionDialogExtensionPoint().CreateExtension().GetType().GetConstructor(new Type[0]);
+				return (IExceptionDialogFactory)new ExceptionDialogFactoryExtensionPoint().CreateExtension();
 			}
 			catch (NotSupportedException)
 			{
 			}
-			catch (ArgumentException e)
+			catch (Exception e)
 			{
 				Platform.Log(LogLevel.Debug, e);
 			}

@@ -482,10 +482,8 @@ namespace ClearCanvas.Desktop
         /// <returns>True if the object was closed, otherwise false.</returns>
         protected internal bool Close(UserInteraction interactive, CloseReason reason)
         {
-        	bool forcedShutdown = interactive == UserInteraction.NotAllowed && reason == CloseReason.ApplicationQuit;
-
             // easy case - bail if interaction is prohibited and we can't close without interacting
-			if (!forcedShutdown && !CanClose())
+            if (interactive == UserInteraction.NotAllowed && !CanClose())
                 return false;
 
             // either we can close without interacting, or interaction is allowed, so let's try and close
@@ -496,7 +494,7 @@ namespace ClearCanvas.Desktop
             ClosingEventArgs args = new ClosingEventArgs(reason, interactive);
             OnClosing(args);
 
-            if (!forcedShutdown && (args.Cancel || !PrepareClose(reason)))
+            if (args.Cancel || !PrepareClose(reason))
             {
                 _state = DesktopObjectState.Open;
                 return false;
