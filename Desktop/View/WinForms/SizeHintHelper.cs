@@ -29,12 +29,34 @@
 
 #endregion
 
-namespace ClearCanvas.Desktop
+using System.Drawing;
+
+namespace ClearCanvas.Desktop.View.WinForms
 {
 	/// <summary>
-	/// Extends <see cref="IApplicationComponentHost"/> with functionality specific to dialog boxes.
+	/// Utility class for working with <see cref="DialogSizeHint"/>.
 	/// </summary>
-	public interface IDialogBoxHost : IApplicationComponentHost
+	public static class SizeHintHelper
 	{
+		/// <summary>
+		/// Translates the specified size hint into an absolute size.
+		/// </summary>
+		/// <param name="hint"></param>
+		/// <param name="defaultSize"></param>
+		/// <returns></returns>
+		public static Size TranslateHint(DialogSizeHint hint, Size defaultSize)
+		{
+			switch (hint)
+			{
+				case DialogSizeHint.Small:
+					return new Size(320, 240);
+				case DialogSizeHint.Medium:
+					return new Size(640, 480);
+				case DialogSizeHint.Large:
+					return new Size(800, 600);
+				default:
+					return defaultSize;
+			}
+		}
 	}
 }

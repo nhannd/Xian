@@ -68,6 +68,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._setTitle = new System.Windows.Forms.Button();
 			this._modify = new System.Windows.Forms.Button();
 			this._accept = new System.Windows.Forms.Button();
+			this._showWorkspaceDialog = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// _label
@@ -108,7 +109,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			// _showDialogBox
 			// 
-			this._showDialogBox.Location = new System.Drawing.Point(195, 260);
+			this._showDialogBox.Location = new System.Drawing.Point(183, 260);
 			this._showDialogBox.Name = "_showDialogBox";
 			this._showDialogBox.Size = new System.Drawing.Size(132, 23);
 			this._showDialogBox.TabIndex = 5;
@@ -118,7 +119,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			// _close
 			// 
-			this._close.Location = new System.Drawing.Point(281, 306);
+			this._close.Location = new System.Drawing.Point(379, 306);
 			this._close.Name = "_close";
 			this._close.Size = new System.Drawing.Size(74, 23);
 			this._close.TabIndex = 7;
@@ -148,7 +149,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			// _accept
 			// 
-			this._accept.Location = new System.Drawing.Point(201, 306);
+			this._accept.Location = new System.Drawing.Point(299, 306);
 			this._accept.Name = "_accept";
 			this._accept.Size = new System.Drawing.Size(74, 23);
 			this._accept.TabIndex = 6;
@@ -156,10 +157,21 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._accept.UseVisualStyleBackColor = true;
 			this._accept.Click += new System.EventHandler(this._accept_Click);
 			// 
+			// _showWorkspaceDialog
+			// 
+			this._showWorkspaceDialog.Location = new System.Drawing.Point(321, 260);
+			this._showWorkspaceDialog.Name = "_showWorkspaceDialog";
+			this._showWorkspaceDialog.Size = new System.Drawing.Size(132, 23);
+			this._showWorkspaceDialog.TabIndex = 9;
+			this._showWorkspaceDialog.Text = "Workspace Dialog";
+			this._showWorkspaceDialog.UseVisualStyleBackColor = true;
+			this._showWorkspaceDialog.Click += new System.EventHandler(this._showWorkspaceDialogBox_Click);
+			// 
 			// TestComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._showWorkspaceDialog);
 			this.Controls.Add(this._accept);
 			this.Controls.Add(this._modify);
 			this.Controls.Add(this._setTitle);
@@ -170,7 +182,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.Controls.Add(this._text);
 			this.Controls.Add(this._label);
 			this.Name = "TestComponentControl";
-			this.Size = new System.Drawing.Size(422, 353);
+			this.Size = new System.Drawing.Size(483, 353);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -187,6 +199,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private System.Windows.Forms.Button _setTitle;
         private System.Windows.Forms.Button _modify;
         private System.Windows.Forms.Button _accept;
+		private System.Windows.Forms.Button _showWorkspaceDialog;
 
     }
 }

@@ -174,6 +174,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>FormatSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="IWorkspaceDialogBox.cs" />
+    <Compile Include="IWorkspaceDialogBoxHost.cs" />
+    <Compile Include="IWorkspaceDialogBoxView.cs" />
     <Compile Include="IPagingController.cs" />
     <Compile Include="Configuration\IUserUpgradeProgressDialogView.cs" />
     <Compile Include="ModifierFlags.cs" />
@@ -393,6 +396,8 @@
     <Compile Include="XMouseButtonCombo.cs" />
     <Compile Include="XMouseButtons.cs" />
     <Compile Include="XMouseButtonsConverter.cs" />
+    <Compile Include="WorkspaceDialogBox.cs" />
+    <Compile Include="WorkspaceDialogBoxCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />

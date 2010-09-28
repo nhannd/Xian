@@ -34,136 +34,101 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
-using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
 using System;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	class PreliminaryDiagnosis
+	static class PreliminaryDiagnosis
 	{
-		public static void SetCurrent(ReportingWorklistItemSummary worklistItem, IDesktopWindow desktopWindow)
+		/// <summary>
+		/// Determines if the PD dialog must be shown upon verification for the specified worklist item, and shows it if needed.
+		/// </summary>
+		/// <param name="worklistItem"></param>
+		/// <param name="desktopWindow"></param>
+		/// <param name="continuation">Code block that is executed if the dialog was shown and accepted, or if it was not required. </param>
+		/// <returns>True if the dialog was shown and accepted, or if it was not required.  False if the user cancelled out of the dialog.</returns>
+		public static bool ShowDialogOnVerifyIfRequired(WorklistItemSummaryBase worklistItem, IDesktopWindow desktopWindow,
+			Action<object> continuation)
 		{
-			Clear();
-
-			Current = new PreliminaryDiagnosis(worklistItem, desktopWindow);
-		}
-
-		public static void Clear()
-		{
-			if (Current != null)
+			if(!NeedDialogOnVerify(worklistItem, desktopWindow))
 			{
-				Current.CloseDialog();
+				// we don't need the dialog, so we can continue
+				continuation(null);
+				return true;
 			}
-			Current = null;
+
+			// show the pd dialog
+			var completed = false;
+			ShowDialog(worklistItem, desktopWindow,
+				exitCode =>
+				{
+					if(exitCode == ApplicationComponentExitCode.Accepted)
+					{
+						// if the dialog was accepted, continue
+						continuation(null);
+						completed = true;
+					}
+				});
+
+			return completed;
 		}
 
-		public static PreliminaryDiagnosis Current { get; private set; }
-
-
-		private readonly ReportingWorklistItemSummary _worklistItem;
-		private readonly IDesktopWindow _window;
-		private Shelf _shelf;
-		private bool _completed;
-		private bool? _dialogNeeded;
-
-		private PreliminaryDiagnosis(ReportingWorklistItemSummary worklistItem, IDesktopWindow window)
+		/// <summary>
+		/// Checks the PD dialog must be shown when verifying the specified worklist item.
+		/// </summary>
+		/// <param name="worklistItem"></param>
+		/// <param name="window"></param>
+		/// <returns></returns>
+		private static bool NeedDialogOnVerify(WorklistItemSummaryBase worklistItem, IDesktopWindow window)
 		{
-			_worklistItem = worklistItem;
-			_window = window;
-		}
-
-		public bool IsDialogNeeded()
-		{
-			if (_completed)
-				return false;
-
-			if(!_dialogNeeded.HasValue)
-			{
-				_dialogNeeded = CheckIfDialogNeeded();
-			}
-			return _dialogNeeded.Value;
-		}
-
-
-		public void OpenDialogModeless(Action<object> onCompletion)
-		{
-			// don't open the shelf twice
-			if(_shelf != null)
-				return;
-
-			// show dialog
-			var component = CreateComponent();
-			_shelf = ApplicationComponent.LaunchAsShelf(_window, component, MakeTitle(), ShelfDisplayHint.DockFloat);
-			_shelf.Closed += delegate
-			                 {
-			                 	_completed = (component.ExitCode == ApplicationComponentExitCode.Accepted);
-			                 	_shelf = null;
-								 if(_completed)
-								 {
-								 	onCompletion(null);
-								 }
-			                 };
-		}
-
-		public ApplicationComponentExitCode OpenDialogModal()
-		{
-			return ApplicationComponent.LaunchAsDialog(_window, CreateComponent(), MakeTitle());
-		}
-
-		public bool IsOpen
-		{
-			get { return _shelf != null;}
-		}
-
-		public bool IsCompleted
-		{
-			get { return _completed; }
-		}
-
-		public void CloseDialog()
-		{
-			if(_shelf != null)
-			{
-				_shelf.Close();
-				_shelf = null;
-			}
-		}
-
-		private bool CheckIfDialogNeeded()
-		{
-			var existingConv = ConversationExists(_worklistItem.OrderRef);
+			var existingConv = ConversationExists(worklistItem.OrderRef);
 
 			// if no existing conversation, may not need to show the dialog
 			if (!existingConv)
 			{
 				// if this is not an emergency order, do not show the dialog
-				if (!IsEmergencyOrder(_worklistItem.PatientClass.Code))
+				if (!IsEmergencyOrder(worklistItem.PatientClass.Code))
 					return false;
 
 				// otherwise, ask the user if they would like to initiate a PD review
-				var msg = string.Format(SR.MessageQueryPrelimDiagnosisReviewRequired, _worklistItem.PatientClass.Value);
-				var action = _window.ShowMessageBox(msg, MessageBoxActions.YesNo);
+				var msg = string.Format(SR.MessageQueryPrelimDiagnosisReviewRequired, worklistItem.PatientClass.Value);
+				var action = window.ShowMessageBox(msg, MessageBoxActions.YesNo);
 				if (action == DialogBoxAction.No)
 					return false;
 			}
 			return true;
 		}
 
-		private OrderNoteConversationComponent CreateComponent()
+		/// <summary>
+		/// Displays the PD dialog.
+		/// </summary>
+		/// <param name="worklistItem"></param>
+		/// <param name="window"></param>
+		/// <param name="continuationCode"></param>
+		private static void ShowDialog(WorklistItemSummaryBase worklistItem, IDesktopWindow window, Action<ApplicationComponentExitCode> continuationCode)
 		{
-			return new OrderNoteConversationComponent(_worklistItem.OrderRef, OrderNoteCategory.PreliminaryDiagnosis.Key,
+			var component = CreateComponent(worklistItem);
+			var dialog = ApplicationComponent.LaunchAsWorkspaceDialog(window, component, MakeTitle(worklistItem));
+			dialog.Closed += delegate { continuationCode(component.ExitCode); };
+		}
+
+
+		private static OrderNoteConversationComponent CreateComponent(WorklistItemSummaryBase worklistItem)
+		{
+			return new OrderNoteConversationComponent(worklistItem.OrderRef, OrderNoteCategory.PreliminaryDiagnosis.Key,
 													  PreliminaryDiagnosisSettings.Default.VerificationTemplatesXml,
 													  PreliminaryDiagnosisSettings.Default.VerificationSoftKeysXml);
 		}
 
-		private string MakeTitle()
+		private static string MakeTitle(WorklistItemSummaryBase worklistItem)
 		{
 			return string.Format(SR.FormatTitleContextDescriptionReviewOrderNoteConversation,
-								 PersonNameFormat.Format(_worklistItem.PatientName),
-								 MrnFormat.Format(_worklistItem.Mrn),
-								 AccessionFormat.Format(_worklistItem.AccessionNumber));
+								 PersonNameFormat.Format(worklistItem.PatientName),
+								 MrnFormat.Format(worklistItem.Mrn),
+								 AccessionFormat.Format(worklistItem.AccessionNumber));
 		}
 
 		private static bool ConversationExists(EntityRef orderRef)

@@ -61,7 +61,15 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 			public void Execute(ReportingProcedureStep step, Dictionary<string, string> reportPartExtendedProperties, Staff supervisor)
 			{
 				step.ReportPart.Supervisor = supervisor;
-				ExtendedPropertyUtils.Update(step.ReportPart.ExtendedProperties, reportPartExtendedProperties);
+
+				// if this value is null, it means we don't want to update the report content
+				if (reportPartExtendedProperties == null)
+					return;
+
+				foreach (var pair in reportPartExtendedProperties)
+				{
+					step.ReportPart.ExtendedProperties[pair.Key] = pair.Value;
+				}
 			}
 
 			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)

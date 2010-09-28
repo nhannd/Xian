@@ -105,10 +105,10 @@ namespace ClearCanvas.Ris.Client
 			try
 			{
 				var component = new OrderNoteConversationComponent(this.OrderRef, this.OrderNoteCategories, this.TemplatesXml, this.SoftKeysXml);
-				var exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow,
+				var dialog = ApplicationComponent.LaunchAsWorkspaceDialog(this.Context.DesktopWindow,
 					component,
 					GetTitle());
-				OnDialogClosed(exitCode);
+				dialog.Closed += delegate { OnDialogClosed(component.ExitCode); };
 			}
 			catch (Exception e)
 			{

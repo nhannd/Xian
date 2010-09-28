@@ -86,6 +86,11 @@ namespace ClearCanvas.Desktop
             ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, new TestComponent("Dialog from " + _name), "Dialog from " + _name);
         }
 
+		public void ShowWorkspaceDialogBox()
+		{
+			ApplicationComponent.LaunchAsWorkspaceDialog(this.Host.DesktopWindow, new TestComponent("WorkspaceDialog from " + _name), "WorkspaceDialog from " + _name);
+		}
+
         public void SetTitle()
         {
             this.Host.Title = _text;

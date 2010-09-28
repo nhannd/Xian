@@ -722,60 +722,50 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public void Verify()
 		{
-			try
+			if (this.HasValidationErrors)
 			{
-				if (this.HasValidationErrors)
-				{
-					this.ShowValidation(true);
-					return;
-				}
+				this.ShowValidation(true);
+				return;
+			}
 
-				if(PreliminaryDiagnosis.Current.IsDialogNeeded())
+			PreliminaryDiagnosis.ShowDialogOnVerifyIfRequired(this.WorklistItem, this.Host.DesktopWindow,
+				delegate
 				{
-					PreliminaryDiagnosis.Current.OpenDialogModeless(
-						delegate
+					try
+					{
+						CloseImages();
+
+						if (!_reportEditor.Save(ReportEditorCloseReason.Verify))
+							return;
+
+						if (_canCompleteInterpretationAndVerify)
 						{
-							// yes, we are calling ourselves recursively, since IsDialogNeeded() is guaranteed
-							// to be false after this point
-							Verify();
-						});
-					return;
-				}
+							Platform.GetService<IReportingWorkflowService>(service =>
+								service.CompleteInterpretationAndVerify(
+									new CompleteInterpretationAndVerifyRequest(
+										this.WorklistItem.ProcedureStepRef,
+										_reportPartExtendedProperties,
+										_supervisor == null ? null : _supervisor.StaffRef)));
+						}
+						else if (_canCompleteVerification)
+						{
+							Platform.GetService<IReportingWorkflowService>(service =>
+								service.CompleteVerification(
+									new CompleteVerificationRequest(this.WorklistItem.ProcedureStepRef, _reportPartExtendedProperties)));
+						}
 
-				CloseImages();
+						// Source Folders
+						DocumentManager.InvalidateFolder(typeof(Folders.Reporting.DraftFolder));
+						// Destination Folders
+						DocumentManager.InvalidateFolder(typeof(Folders.Reporting.VerifiedFolder));
 
-				if (!_reportEditor.Save(ReportEditorCloseReason.Verify))
-					return;
-
-				if (_canCompleteInterpretationAndVerify)
-				{
-					Platform.GetService<IReportingWorkflowService>(service =>
-						service.CompleteInterpretationAndVerify(
-							new CompleteInterpretationAndVerifyRequest(
-								this.WorklistItem.ProcedureStepRef,
-								_reportPartExtendedProperties,
-								_supervisor == null ? null : _supervisor.StaffRef)));
-				}
-				else if (_canCompleteVerification)
-				{
-					Platform.GetService<IReportingWorkflowService>(service =>
-						service.CompleteVerification(
-							new CompleteVerificationRequest(this.WorklistItem.ProcedureStepRef, _reportPartExtendedProperties)));
-				}
-
-				// Source Folders
-				//DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeReportedFolder));
-				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.DraftFolder));
-				//DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeVerifiedFolder));
-				// Destination Folders
-				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.VerifiedFolder));
-
-				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Completed);
-			}
-			catch (Exception ex)
-			{
-				ExceptionHandler.Report(ex, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow, () => this.Exit(ApplicationComponentExitCode.Error));
-			}
+						_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Completed);
+					}
+					catch (Exception ex)
+					{
+						ExceptionHandler.Report(ex, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow, () => this.Exit(ApplicationComponentExitCode.Error));
+					}
+				});
 		}
 
 		public bool VerifyEnabled
@@ -1101,7 +1091,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void DoCancelCleanUp()
 		{
-			PreliminaryDiagnosis.Clear();
 			CloseImages();
 
 			if (!_userCancelled)
@@ -1120,7 +1109,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private void OnWorklistItemChangedEvent(object sender, EventArgs args)
 		{
 			this.Modified = false;
-			PreliminaryDiagnosis.Clear();
 
 			if (this.WorklistItem != null)
 			{
@@ -1152,8 +1140,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private void StartReportingWorklistItem()
 		{
 			ClaimAndLinkWorklistItem(this.WorklistItem);
-
-			PreliminaryDiagnosis.SetCurrent(this.WorklistItem, this.Host.DesktopWindow);
 
 			Platform.GetService<IReportingWorkflowService>(service =>
 			{

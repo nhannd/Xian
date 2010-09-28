@@ -29,49 +29,25 @@
 
 #endregion
 
-using ClearCanvas.Common;
+
 using System.Drawing;
-using System;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
 	/// <summary>
-	/// An enumeration that can be used to provide a <see cref="DialogBox"/> with a hint for what size it should display.
+	/// Represents a workspace-modal dialog box.
 	/// </summary>
-	public enum DialogSizeHint
+	public class WorkspaceDialogBox : DesktopObject, IWorkspaceDialogBox
 	{
-		/// <summary>
-		/// Indicates that the dialog should size itself to the content.
-		/// </summary>
-		Auto,
+		#region Host Implementation
 
-		/// <summary>
-		/// Indicates that the dialog should be small.
-		/// </summary>
-		Small,
-
-		/// <summary>
-		/// Indicates that the dialog should be medium.
-		/// </summary>
-		Medium,
-
-		/// <summary>
-		/// Indicatest that the dialog should be large.
-		/// </summary>
-		Large
-	}
-
-	/// <summary>
-	/// Represents a dialog box.
-	/// </summary>
-	public class DialogBox : DesktopObject
-	{
 		// implements the host interface, which is exposed to the hosted application component
-		private class Host : ApplicationComponentHost, IDialogBoxHost
+		private class Host : ApplicationComponentHost, IWorkspaceDialogBoxHost
 		{
-			private readonly DialogBox _owner;
+			private readonly WorkspaceDialogBox _owner;
 
-			internal Host(DialogBox owner, IApplicationComponent component)
+			internal Host(WorkspaceDialogBox owner, IApplicationComponent component)
 				: base(component)
 			{
 				Platform.CheckForNullReference(owner, "owner");
@@ -88,7 +64,7 @@ namespace ClearCanvas.Desktop
 
 			public override DesktopWindow DesktopWindow
 			{
-				get { return _owner._desktopWindow; }
+				get { return _owner.Workspace.DesktopWindow; }
 			}
 
 			public override string Title
@@ -96,57 +72,54 @@ namespace ClearCanvas.Desktop
 				get { return _owner.Title; }
 				set { _owner.Title = value; }
 			}
-
 		}
 
-		private readonly DesktopWindow _desktopWindow;
-		private readonly IApplicationComponent _component;
-		private bool _exitRequestedByComponent;
+		#endregion
+
 		private Host _host;
-		private readonly DialogSizeHint _dialogSize;
+		private bool _exitRequestedByComponent;
+		private readonly DialogSizeHint _sizeHint;
 		private readonly Size _size;
-    	private readonly bool _allowUserResize;
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="args">Creation args for the dialog box.</param>
-        /// <param name="desktopWindow">The <see cref="DesktopWindow"/> that owns the dialog box.</param>
-        protected internal DialogBox(DialogBoxCreationArgs args, DesktopWindow desktopWindow)
-            :base(args)
-        {
-            _component = args.Component;
-            _dialogSize = args.SizeHint;
-            _size = args.Size;
-        	_allowUserResize = args.AllowUserResize;
-            _desktopWindow = desktopWindow;
-
-			_host = new Host(this, _component);
-		}
+		private Workspace _workspace;
 
 		/// <summary>
-		/// Gets the component hosted by this dialog box.
+		/// Constructor.
+		/// </summary>
+		/// <param name="args"></param>
+		/// <param name="workspace"></param>
+		protected internal WorkspaceDialogBox(DialogBoxCreationArgs args, Workspace workspace)
+			: base(args)
+		{
+			_workspace = workspace;
+			_host = new Host(this, args.Component);
+			_size = args.Size;
+			_sizeHint = args.SizeHint;
+		}
+
+		#region Public properties
+
+		/// <summary>
+		/// Gets the hosted component.
 		/// </summary>
 		public object Component
 		{
-			get { return _component; }
+			get { return _host.Component; }
 		}
 
 		/// <summary>
-		/// Gets the dialog size hint.
+		/// Gets the workspace that owns this dialog box.
+		/// </summary>
+		public Workspace Workspace
+		{
+			get { return _workspace; }
+		}
+
+		/// <summary>
+		/// Gets the size hint.
 		/// </summary>
 		public DialogSizeHint SizeHint
 		{
-			get { return _dialogSize; }
-		}
-
-		/// <summary>
-		/// Gets the dialog size hint.
-		/// </summary>
-		[Obsolete("Use the property named SizeHint instead.")]
-		public DialogSizeHint DialogSizeHint
-		{
-			get { return _dialogSize; }
+			get { return _sizeHint; }
 		}
 
 		/// <summary>
@@ -156,36 +129,15 @@ namespace ClearCanvas.Desktop
 		{
 			get { return _size; }
 		}
-		/// <summary>
-		/// Gets a value indicating whether or not the user should be allowed to resize the dialog.
-		/// </summary>
-    	public bool AllowUserResize
-    	{
-			get { return _allowUserResize; }
-    	}
+
+		#endregion
+
+		#region Protected overrides
 
 		/// <summary>
-		/// Starts the hosted component.
+		/// Asks the object whether it is in a closable state without user intervention.
 		/// </summary>
-		protected override void Initialize()
-		{
-			_host.StartComponent();
-
-			base.Initialize();
-		}
-
-		/// <summary>
-		/// Runs this dialog on a modal loop, blocking until the dialog is closed.
-		/// </summary>
-		/// <returns></returns>
-		internal DialogBoxAction RunModal()
-		{
-			return this.DialogBoxView.RunModal();
-		}
-
-		/// <summary>
-		/// Checks if the hosted component can close without user interaction.
-		/// </summary>
+		/// <returns>True if the object can be closed, otherwise false.</returns>
 		protected internal override bool CanClose()
 		{
 			return _exitRequestedByComponent || _host.Component.CanExit();
@@ -202,7 +154,17 @@ namespace ClearCanvas.Desktop
 		}
 
 		/// <summary>
-		/// Disposes of this object.
+		/// Starts the hosted component.
+		/// </summary>
+		protected override void Initialize()
+		{
+			_host.StartComponent();
+
+			base.Initialize();
+		}
+
+		/// <summary>
+		/// Stops the hosted component.
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
@@ -212,24 +174,44 @@ namespace ClearCanvas.Desktop
 			{
 				_host.StopComponent();
 				_host = null;
+				_workspace = null;
 			}
 		}
 
 		/// <summary>
-		/// Creates a view for this object.
+		/// Creates a view for this dialog box.
 		/// </summary>
-		/// <returns></returns>
 		protected sealed override IDesktopObjectView CreateView()
 		{
-			return _desktopWindow.CreateDialogView(this);
+			return _workspace.CreateWorkspaceDialogBoxView(this);
 		}
 
+		#endregion
+
+		#region Helpers
+
+
 		/// <summary>
-		/// Gets the view for this object as a <see cref="IDialogBoxView"/>.
+		/// Gets the view for this object as an <see cref="IWorkspaceDialogBoxView"/>.
 		/// </summary>
-		protected IDialogBoxView DialogBoxView
+		protected IWorkspaceDialogBoxView WorkspaceDialogBoxView
 		{
-			get { return (IDialogBoxView)this.View; }
+			get { return (IWorkspaceDialogBoxView)this.View; }
 		}
+
+		#endregion
+
+		#region IWorkspace Members
+
+		/// <summary>
+		/// Gets the workspace that owns this dialog box.
+		/// </summary>
+		IWorkspace IWorkspaceDialogBox.Workspace
+		{
+			get { return _workspace; }
+		}
+
+		#endregion
+
 	}
 }

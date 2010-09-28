@@ -83,5 +83,10 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             _component.Accept();
         }
+
+		private void _showWorkspaceDialogBox_Click(object sender, EventArgs e)
+		{
+			_component.ShowWorkspaceDialogBox();
+		}
     }
 }
