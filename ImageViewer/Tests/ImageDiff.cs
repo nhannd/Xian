@@ -508,6 +508,7 @@ namespace ClearCanvas.ImageViewer.Tests
 				PerformIterativeComparison(referenceImage, testImage, bounds, generateDiffImage, out diffImage, (x, y, i, d) => list.Add(d));
 
 				var results = new Statistics(list);
+				//TODO (CR Sept 2010): what's the significance of the number 16 here?
 				if (results.StandardDeviation < 16)
 					return results.Mean;
 				return double.NaN;

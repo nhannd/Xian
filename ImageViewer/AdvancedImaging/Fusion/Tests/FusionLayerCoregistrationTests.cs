@@ -45,6 +45,12 @@ using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 {
+	//TODO (CR Sept 2010): these tests create somewhat "ideal" data sets that are completely coincident in the patient space.
+	//Ideally, I'd like to see some tests where the volumes are slightly offset from each other in the patient space.
+
+	//TODO (CR Sept 2010): In general, I'm not sure diffing the images is the right approach for the coregistration tests.  Might
+	//be more appropriate to inspect values at certain known locations.
+
 	[TestFixture(Description = "Tests for validating fused image pixel data alignment and orientation (including MPR of overlay data)")]
 	public class FusionLayerCoregistrationTests
 	{
@@ -370,6 +376,10 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 
 			using (var log = File.CreateText(Path.Combine(outputPath.FullName, "data.csv")))
 			{
+				//TODO (CR Sept 2010): this is testing that the fused image is essentially unchanged from the "base" image
+				//by applying a grayscale color map to the overlay image?  If there were a bug that caused the overlay image
+				//to not be rendered at all, this test would pass.
+
 				using (var referenceDisplaySet = data.CreateBaseDisplaySet())
 				{
 					using (var testDisplaySet = data.CreateFusionDisplaySet())
