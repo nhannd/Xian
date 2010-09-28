@@ -29,32 +29,42 @@
 
 #endregion
 
+
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using ClearCanvas.Common;
-using Crownwood.DotNetMagic.Forms;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
 	/// <summary>
-	/// Form used by the <see cref="DialogBoxView"/> class.
+	/// Form that implements the workspace dialog.
 	/// </summary>
-	/// <remarks>
-	/// This class may be subclassed.
-	/// </remarks>
-	public partial class DialogBoxForm : DotNetMagicForm
+	public partial class WorkspaceDialogBoxForm : Form
 	{
 		private readonly Control _content;
-		private DialogBoxAction _closeAction;
+		private readonly Size _idealSize;
 
-		internal DialogBoxForm(string title, Control content, Size exactSize, DialogSizeHint sizeHint)
-			: this(title, content, exactSize, sizeHint, false) {}
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="dialogBox"></param>
+		/// <param name="content"></param>
+		internal WorkspaceDialogBoxForm(WorkspaceDialogBox dialogBox, Control content)
+			: this(dialogBox.Title, content, dialogBox.Size, dialogBox.SizeHint)
+		{
+		}
 
-		internal DialogBoxForm(string title, Control content, Size exactSize, DialogSizeHint sizeHint, bool allowResize)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="title"></param>
+		/// <param name="content"></param>
+		/// <param name="exactSize"></param>
+		/// <param name="sizeHint"></param>
+		private WorkspaceDialogBoxForm(string title, Control content, Size exactSize, DialogSizeHint sizeHint)
 		{
 			InitializeComponent();
-			Text = title;
+			this.Text = title;
 
 			_content = content;
 
@@ -62,58 +72,38 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_content.MinimumSize = _content.Size;
 			_content.Dock = DockStyle.Fill;
 
-			// adjust size of client area
-			this.ClientSize = exactSize != Size.Empty ? exactSize : SizeHintHelper.TranslateHint(sizeHint, _content.Size);
+			// adjust size of client area to its ideal size
+			var contentSize = exactSize != Size.Empty ? exactSize : SizeHintHelper.TranslateHint(sizeHint, _content.Size);
+			this.ClientSize = contentSize;// +new Size(0, 4);
 
-			if (allowResize)
-			{
-				FormBorderStyle = FormBorderStyle.Sizable;
-				MinimumSize = base.SizeFromClientSize(_content.Size);
-			}
+			// record the ideal size for future reference
+			_idealSize = this.Size;
 
 			_contentPanel.Controls.Add(_content);
-
-			// Resize the dialog if size of the underlying content changed
-			_content.SizeChanged += OnContentSizeChanged;
 		}
 
 		/// <summary>
-		/// Constructor
+		/// Position this form in the centre of the specified control.
 		/// </summary>
-		/// <param name="dialogBox"></param>
-		/// <param name="content"></param>
-		public DialogBoxForm(DialogBox dialogBox, Control content)
-			: this(dialogBox.Title, content, dialogBox.Size, dialogBox.DialogSizeHint, dialogBox.AllowUserResize)
+		internal void CentreInControl(Control control)
 		{
-		}
+			// max size of this form is the size of the specified control
+			var maxSize = control.Size;
 
-		internal void DelayedClose(DialogBoxAction action)
-		{
-			_closeAction = action;
-			_delayedCloseTimer.Enabled = true;
-		}
+			// computer centre of host control in screen coordinates
+			var centre = control.PointToScreen(new Point(0, 0));
+			centre.Offset(control.Width / 2, control.Height / 2);
 
-		private void OnContentSizeChanged(object sender, EventArgs e)
-		{
-			if (ClientSize != _content.Size)
-				ClientSize = _content.Size;
-		}
+			// compute size of form
+			var w = Math.Min(_idealSize.Width, maxSize.Width);
+			var h = Math.Min(_idealSize.Height, maxSize.Height);
 
-		private void _delayedCloseTimer_Tick(object sender, EventArgs e)
-		{
-			// disable timer so it doesn't fire again
-			_delayedCloseTimer.Enabled = false;
-
-			// close the form
-			switch (_closeAction)
-			{
-				case DialogBoxAction.Cancel:
-					DialogResult = DialogResult.Cancel;
-					break;
-				case DialogBoxAction.Ok:
-					DialogResult = DialogResult.OK;
-					break;
-			}
+			// compute upper left corner location
+			var x = centre.X - (w/2);
+			var y = centre.Y - (h/2);
+			
+			// update position
+			this.Bounds = new Rectangle(x, y, w, h);
 		}
 	}
 }

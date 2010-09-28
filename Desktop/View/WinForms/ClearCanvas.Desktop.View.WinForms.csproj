@@ -147,6 +147,14 @@
     <Compile Include="KeyStrokeCaptureBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="WorkspaceDialogBoxForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WorkspaceDialogBoxForm.Designer.cs">
+      <DependentUpon>WorkspaceDialogBoxForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WorkspaceDialogBoxViewManager.cs" />
+    <Compile Include="SizeHintHelper.cs" />
     <Compile Include="StandardIconSizes.cs" />
     <Compile Include="PopupForm.cs">
       <SubType>Form</SubType>
@@ -259,6 +267,7 @@
     </Compile>
     <Compile Include="Win32Constants.cs" />
     <Compile Include="WinFormsActionView.cs" />
+    <Compile Include="WorkspaceDialogBoxView.cs" />
     <Compile Include="WorkspaceView.cs" />
     <Compile Include="ApplicationComponentUserControl.cs">
       <SubType>UserControl</SubType>
@@ -548,6 +557,9 @@
     <EmbeddedResource Include="GalleryComponentControl.resx">
       <DependentUpon>GalleryComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorkspaceDialogBoxForm.resx">
+      <DependentUpon>WorkspaceDialogBoxForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\ClearFilterLarge.png" />
     <EmbeddedResource Include="Resources\ClearFilterMedium.png" />

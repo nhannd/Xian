@@ -29,12 +29,22 @@
 
 #endregion
 
+
 namespace ClearCanvas.Desktop
 {
 	/// <summary>
-	/// Extends <see cref="IApplicationComponentHost"/> with functionality specific to dialog boxes.
+	/// Defines the public interface to a workspace dialog box.
 	/// </summary>
-	public interface IDialogBoxHost : IApplicationComponentHost
+	public interface IWorkspaceDialogBox : IDesktopObject
 	{
+		/// <summary>
+		/// Gets the workspace that owns this dialog box.
+		/// </summary>
+		IWorkspace Workspace { get; }
+
+		/// <summary>
+		/// Gets the hosted component.
+		/// </summary>
+		object Component { get; }
 	}
 }

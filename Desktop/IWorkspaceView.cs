@@ -31,10 +31,14 @@
 
 namespace ClearCanvas.Desktop
 {
-    /// <summary>
-    /// Defines the interface to a view for a <see cref="Workspace"/> object.
-    /// </summary>
-    public interface IWorkspaceView : IDesktopObjectView
+	/// <summary>
+	/// Defines the interface to a view for a <see cref="Workspace"/> object.
+	/// </summary>
+	public interface IWorkspaceView : IDesktopObjectView
 	{
+		/// <summary>
+		/// Creates a view for the specified dialog box.
+		/// </summary>
+		IWorkspaceDialogBoxView CreateDialogBoxView(WorkspaceDialogBox dialogBox);
 	}
 }

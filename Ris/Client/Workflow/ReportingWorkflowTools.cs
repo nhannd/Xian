@@ -253,26 +253,20 @@ namespace ClearCanvas.Ris.Client.Workflow
 		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			// show PD dialog if required
-			PreliminaryDiagnosis.SetCurrent(item, this.Context.DesktopWindow);
-			if(PreliminaryDiagnosis.Current.IsDialogNeeded())
-			{
-				var exitCode = PreliminaryDiagnosis.Current.OpenDialogModal();
-				if(exitCode != ApplicationComponentExitCode.Accepted)
-					return false;	// user cancelled
-			}
+			return PreliminaryDiagnosis.ShowDialogOnVerifyIfRequired(item, this.Context.DesktopWindow,
+				delegate
+				{
+					try
+					{
+						ExecuteHelper(item.ProcedureStepName, item.ProcedureStepRef, null);
+					}
+					catch (FaultException<SupervisorValidationException>)
+					{
+						ExecuteHelper(item.ProcedureStepName, item.ProcedureStepRef, GetSupervisorRef());
+					}
 
-			try
-			{
-				ExecuteHelper(item.ProcedureStepName, item.ProcedureStepRef, null);
-			}
-			catch (FaultException<SupervisorValidationException>)
-			{
-				ExecuteHelper(item.ProcedureStepName, item.ProcedureStepRef, GetSupervisorRef());
-			}
-
-			this.Context.InvalidateFolders(typeof(Folders.Reporting.VerifiedFolder));
-
-			return true;
+					this.Context.InvalidateFolders(typeof(Folders.Reporting.VerifiedFolder));
+				});
 		}
 
 		private void ExecuteHelper(string procedureStepName, EntityRef procedureStepRef, EntityRef supervisorRef)

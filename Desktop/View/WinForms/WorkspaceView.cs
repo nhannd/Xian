@@ -33,115 +33,150 @@ using System.Windows.Forms;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-    /// <summary>
-    /// WinForms implementation of <see cref="IWorkspaceView"/>. 
-    /// </summary>
-    /// <remarks>
-    /// <para>
-    /// This class may subclassed if customization is desired.  In this case, the <see cref="DesktopWindowView"/>
-    /// class must also be subclassed in order to instantiate the subclass from 
-    /// its <see cref="DesktopWindowView.CreateWorkspaceView"/> method.
-    /// </para>
-    /// <para>
-    /// Reasons for subclassing may include: overriding <see cref="SetTitle"/> to customize the display of the workspace title.
-    /// </para>
-    /// </remarks>
-    public class WorkspaceView : DesktopObjectView, IWorkspaceView
-    {
-        private Crownwood.DotNetMagic.Controls.TabPage _tabPage;
-        private DesktopWindowView _desktopView;
-        private Control _control;
+	/// <summary>
+	/// WinForms implementation of <see cref="IWorkspaceView"/>. 
+	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// This class may subclassed if customization is desired.  In this case, the <see cref="DesktopWindowView"/>
+	/// class must also be subclassed in order to instantiate the subclass from 
+	/// its <see cref="DesktopWindowView.CreateWorkspaceView"/> method.
+	/// </para>
+	/// <para>
+	/// Reasons for subclassing may include: overriding <see cref="SetTitle"/> to customize the display of the workspace title.
+	/// </para>
+	/// </remarks>
+	public class WorkspaceView : DesktopObjectView, IWorkspaceView
+	{
+		private Crownwood.DotNetMagic.Controls.TabPage _tabPage;
+		private Control _control;
+		private WorkspaceDialogBoxViewManager _dialogBoxManager;
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="workspace"></param>
-        /// <param name="desktopView"></param>
-        protected internal WorkspaceView(Workspace workspace, DesktopWindowView desktopView)
-        {
-            IApplicationComponentView componentView = (IApplicationComponentView)ViewFactory.CreateAssociatedView(workspace.Component.GetType());
-            componentView.SetComponent((IApplicationComponent)workspace.Component);
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="workspace"></param>
+		/// <param name="desktopView"></param>
+		protected internal WorkspaceView(Workspace workspace, DesktopWindowView desktopView)
+		{
+			var componentView = (IApplicationComponentView)ViewFactory.CreateAssociatedView(workspace.Component.GetType());
+			componentView.SetComponent((IApplicationComponent)workspace.Component);
 
-            _tabPage = new Crownwood.DotNetMagic.Controls.TabPage();
-            _tabPage.Control = _control = componentView.GuiElement as Control;
-            _tabPage.Tag = this;
+			_control = (Control)componentView.GuiElement;
+			_tabPage = new Crownwood.DotNetMagic.Controls.TabPage { Control = _control, Tag = this };
+			this.DesktopView = desktopView;
 
-            _desktopView = desktopView;
-        }
+			_dialogBoxManager = new WorkspaceDialogBoxViewManager(this, _control);
+		}
 
-        /// <summary>
-        /// Gets the tab page that hosts this workspace view.
-        /// </summary>
-        protected internal Crownwood.DotNetMagic.Controls.TabPage TabPage
-        {
-            get { return _tabPage; }
-        }
 
-        #region DesktopObjectView overrides
+		protected internal DesktopWindowView DesktopView { get; private set; }
 
-        /// <summary>
-        /// Sets the title of the workspace.
-        /// </summary>
-        /// <param name="title"></param>
-        public override void SetTitle(string title)
-        {
-            _tabPage.Title = title;
-            _tabPage.ToolTip = title;
-        }
+		/// <summary>
+		/// Gets the tab page that hosts this workspace view.
+		/// </summary>
+		protected internal Crownwood.DotNetMagic.Controls.TabPage TabPage
+		{
+			get { return _tabPage; }
+		}
 
-        /// <summary>
-        /// Opens the workspace, adding the tab to the tab group.
-        /// </summary>
-        public override void Open()
-        {
-            _desktopView.AddWorkspaceView(this);
-        }
+		/// <summary>
+		/// Creates a new view for the specified <see cref="WorkspaceDialogBox"/>.
+		/// </summary>
+		/// <remarks>
+		/// Override this method if you want to return a custom implementation of <see cref="IWorkspaceDialogBoxView"/>.
+		/// In practice, it is preferable to subclass <see cref="WorkspaceDialogBoxView"/> rather than implement <see cref="IWorkspaceDialogBoxView"/>
+		/// directly.
+		/// </remarks>
+		/// <param name="dialogBox"></param>
+		/// <returns></returns>
+		public virtual IWorkspaceDialogBoxView CreateDialogBoxView(WorkspaceDialogBox dialogBox)
+		{
+			return new WorkspaceDialogBoxView(dialogBox, this);
+		}
 
-        /// <summary>
-        /// Activates the workspace, making the tab the selected tab.
-        /// </summary>
-        public override void Activate()
-        {
-            _tabPage.Selected = true;
-        }
+		#region DesktopObjectView overrides
 
-        /// <summary>
-        /// Not implemented.
-        /// </summary>
-        public override void Show()
-        {
-        }
+		/// <summary>
+		/// Sets the title of the workspace.
+		/// </summary>
+		/// <param name="title"></param>
+		public override void SetTitle(string title)
+		{
+			_tabPage.Title = title;
+			_tabPage.ToolTip = title;
+		}
 
-        /// <summary>
-        /// Not implemented.
-        /// </summary>
-        public override void Hide()
-        {
-        }
+		/// <summary>
+		/// Opens the workspace, adding the tab to the tab group.
+		/// </summary>
+		public override void Open()
+		{
+			DesktopView.AddWorkspaceView(this);
+		}
 
-        /// <summary>
-        /// Disposes of this object.
-        /// </summary>
-        /// <param name="disposing"></param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (_tabPage != null)
-                {
-                    // Remove the tab
-                    _desktopView.RemoveWorkspaceView(this);
+		/// <summary>
+		/// Activates the workspace, making the tab the selected tab.
+		/// </summary>
+		public override void Activate()
+		{
+			_tabPage.Selected = true;
+		}
 
-                    _control.Dispose();
-                    _control = null;
-                    _tabPage.Dispose();
-                    _tabPage = null;
-                }
-            }
-            base.Dispose(disposing);
-        }
+		/// <summary>
+		/// Not implemented.
+		/// </summary>
+		public override void Show()
+		{
+		}
 
-        #endregion
+		/// <summary>
+		/// Not implemented.
+		/// </summary>
+		public override void Hide()
+		{
+		}
 
-    }
+		/// <summary>
+		/// Disposes of this object.
+		/// </summary>
+		/// <param name="disposing"></param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (_tabPage != null)
+				{
+					// Remove the tab
+					this.DesktopView.RemoveWorkspaceView(this);
+
+					_dialogBoxManager.Dispose();
+					_dialogBoxManager = null;
+					_control.Dispose();
+					_control = null;
+					_tabPage.Dispose();
+					_tabPage = null;
+
+				}
+			}
+			base.Dispose(disposing);
+		}
+
+		#endregion
+
+		#region DialogBoxView management
+
+		internal void AddDialogBoxView(WorkspaceDialogBoxView view)
+		{
+			_dialogBoxManager.AddDialogBoxView(view);
+		}
+
+		internal void RemoveDialogBoxView(WorkspaceDialogBoxView view)
+		{
+			_dialogBoxManager.RemoveDialogBoxView(view);
+		}
+
+		#endregion
+
+	}
 }
