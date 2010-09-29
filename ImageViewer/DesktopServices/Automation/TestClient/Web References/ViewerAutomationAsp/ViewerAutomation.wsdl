@@ -34,7 +34,7 @@
       <xsd:import schemaLocation="http://localhost:51124/ClearCanvas/ImageViewer/Automation?xsd=xsd0" namespace="http://www.clearcanvas.ca/imageViewer/automation" />
       <xsd:import schemaLocation="http://localhost:51124/ClearCanvas/ImageViewer/Automation?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
       <xsd:import schemaLocation="http://localhost:51124/ClearCanvas/ImageViewer/Automation?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
-      <xsd:import schemaLocation="http://localhost:51124/ClearCanvas/ImageViewer/Automation?xsd=xsd3" namespace="http://www.clearcanvas.ca/dicom" />
+      <xsd:import schemaLocation="http://localhost:51124/ClearCanvas/ImageViewer/Automation?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.Dicom.ServiceModel" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="IViewerAutomation_GetActiveViewers_InputMessage">
@@ -61,20 +61,20 @@
   <wsdl:message name="IViewerAutomation_OpenStudies_OutputMessage">
     <wsdl:part name="parameters" element="tns:OpenStudiesResponse" />
   </wsdl:message>
+  <wsdl:message name="IViewerAutomation_OpenStudies_StudyNearlineFaultFault_FaultMessage">
+    <wsdl:part xmlns:q1="http://schemas.datacontract.org/2004/07/ClearCanvas.Dicom.ServiceModel" name="detail" element="q1:StudyNearlineFault" />
+  </wsdl:message>
+  <wsdl:message name="IViewerAutomation_OpenStudies_StudyInUseFaultFault_FaultMessage">
+    <wsdl:part xmlns:q2="http://schemas.datacontract.org/2004/07/ClearCanvas.Dicom.ServiceModel" name="detail" element="q2:StudyInUseFault" />
+  </wsdl:message>
+  <wsdl:message name="IViewerAutomation_OpenStudies_StudyOfflineFaultFault_FaultMessage">
+    <wsdl:part xmlns:q3="http://schemas.datacontract.org/2004/07/ClearCanvas.Dicom.ServiceModel" name="detail" element="q3:StudyOfflineFault" />
+  </wsdl:message>
   <wsdl:message name="IViewerAutomation_OpenStudies_OpenStudiesFaultFault_FaultMessage">
     <wsdl:part name="detail" element="tns:OpenStudiesFault" />
   </wsdl:message>
   <wsdl:message name="IViewerAutomation_OpenStudies_StudyNotFoundFaultFault_FaultMessage">
-    <wsdl:part xmlns:q1="http://www.clearcanvas.ca/dicom" name="detail" element="q1:StudyNotFoundFault" />
-  </wsdl:message>
-  <wsdl:message name="IViewerAutomation_OpenStudies_StudyNearlineFaultFault_FaultMessage">
-    <wsdl:part xmlns:q2="http://www.clearcanvas.ca/dicom" name="detail" element="q2:StudyNearlineFault" />
-  </wsdl:message>
-  <wsdl:message name="IViewerAutomation_OpenStudies_StudyInUseFaultFault_FaultMessage">
-    <wsdl:part xmlns:q3="http://www.clearcanvas.ca/dicom" name="detail" element="q3:StudyInUseFault" />
-  </wsdl:message>
-  <wsdl:message name="IViewerAutomation_OpenStudies_StudyOfflineFaultFault_FaultMessage">
-    <wsdl:part xmlns:q4="http://www.clearcanvas.ca/dicom" name="detail" element="q4:StudyOfflineFault" />
+    <wsdl:part xmlns:q4="http://schemas.datacontract.org/2004/07/ClearCanvas.Dicom.ServiceModel" name="detail" element="q4:StudyNotFoundFault" />
   </wsdl:message>
   <wsdl:message name="IViewerAutomation_ActivateViewer_InputMessage">
     <wsdl:part name="parameters" element="tns:ActivateViewer" />
@@ -108,11 +108,11 @@
     <wsdl:operation name="OpenStudies">
       <wsdl:input wsaw:Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/OpenStudies" message="tns:IViewerAutomation_OpenStudies_InputMessage" />
       <wsdl:output wsaw:Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/OpenStudiesResponse" message="tns:IViewerAutomation_OpenStudies_OutputMessage" />
-      <wsdl:fault wsaw:Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/OpenStudiesOpenStudiesFaultFault" name="OpenStudiesFaultFault" message="tns:IViewerAutomation_OpenStudies_OpenStudiesFaultFault_FaultMessage" />
-      <wsdl:fault wsaw:Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/OpenStudiesStudyNotFoundFaultFault" name="StudyNotFoundFaultFault" message="tns:IViewerAutomation_OpenStudies_StudyNotFoundFaultFault_FaultMessage" />
       <wsdl:fault wsaw:Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/OpenStudiesStudyNearlineFaultFault" name="StudyNearlineFaultFault" message="tns:IViewerAutomation_OpenStudies_StudyNearlineFaultFault_FaultMessage" />
       <wsdl:fault wsaw:Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/OpenStudiesStudyInUseFaultFault" name="StudyInUseFaultFault" message="tns:IViewerAutomation_OpenStudies_StudyInUseFaultFault_FaultMessage" />
       <wsdl:fault wsaw:Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/OpenStudiesStudyOfflineFaultFault" name="StudyOfflineFaultFault" message="tns:IViewerAutomation_OpenStudies_StudyOfflineFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/OpenStudiesOpenStudiesFaultFault" name="OpenStudiesFaultFault" message="tns:IViewerAutomation_OpenStudies_OpenStudiesFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/OpenStudiesStudyNotFoundFaultFault" name="StudyNotFoundFaultFault" message="tns:IViewerAutomation_OpenStudies_StudyNotFoundFaultFault_FaultMessage" />
     </wsdl:operation>
     <wsdl:operation name="ActivateViewer">
       <wsdl:input wsaw:Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/ActivateViewer" message="tns:IViewerAutomation_ActivateViewer_InputMessage" />
@@ -159,12 +159,6 @@
       <wsdl:output>
         <soap:body use="literal" />
       </wsdl:output>
-      <wsdl:fault name="OpenStudiesFaultFault">
-        <soap:fault use="literal" name="OpenStudiesFaultFault" namespace="" />
-      </wsdl:fault>
-      <wsdl:fault name="StudyNotFoundFaultFault">
-        <soap:fault use="literal" name="StudyNotFoundFaultFault" namespace="" />
-      </wsdl:fault>
       <wsdl:fault name="StudyNearlineFaultFault">
         <soap:fault use="literal" name="StudyNearlineFaultFault" namespace="" />
       </wsdl:fault>
@@ -173,6 +167,12 @@
       </wsdl:fault>
       <wsdl:fault name="StudyOfflineFaultFault">
         <soap:fault use="literal" name="StudyOfflineFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="OpenStudiesFaultFault">
+        <soap:fault use="literal" name="OpenStudiesFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="StudyNotFoundFaultFault">
+        <soap:fault use="literal" name="StudyNotFoundFaultFault" namespace="" />
       </wsdl:fault>
     </wsdl:operation>
     <wsdl:operation name="ActivateViewer">
@@ -235,12 +235,6 @@
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>
-      <wsdl:fault name="OpenStudiesFaultFault">
-        <soap12:fault use="literal" name="OpenStudiesFaultFault" namespace="" />
-      </wsdl:fault>
-      <wsdl:fault name="StudyNotFoundFaultFault">
-        <soap12:fault use="literal" name="StudyNotFoundFaultFault" namespace="" />
-      </wsdl:fault>
       <wsdl:fault name="StudyNearlineFaultFault">
         <soap12:fault use="literal" name="StudyNearlineFaultFault" namespace="" />
       </wsdl:fault>
@@ -249,6 +243,12 @@
       </wsdl:fault>
       <wsdl:fault name="StudyOfflineFaultFault">
         <soap12:fault use="literal" name="StudyOfflineFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="OpenStudiesFaultFault">
+        <soap12:fault use="literal" name="OpenStudiesFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="StudyNotFoundFaultFault">
+        <soap12:fault use="literal" name="StudyNotFoundFaultFault" namespace="" />
       </wsdl:fault>
     </wsdl:operation>
     <wsdl:operation name="ActivateViewer">

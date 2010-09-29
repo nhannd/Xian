@@ -37,6 +37,8 @@ using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.Dicom.ServiceModel
 {
+	//TODO (CR Sept 2010): restore data contract references to this later (e.g. next time we are releasing migration services).
+	//Make sure and analyze everthing that might be affected first.
 	public static class DicomNamespace
 	{
 		public const string Value = "http://www.clearcanvas.ca/dicom";
@@ -44,7 +46,7 @@ namespace ClearCanvas.Dicom.ServiceModel
 
 	[KnownType(typeof(DicomServerApplicationEntity))]
 	[KnownType(typeof(StreamingServerApplicationEntity))]
-	[DataContract(Namespace = DicomNamespace.Value)]
+	//[DataContract(Namespace = DicomNamespace.Value)]
 	public class ApplicationEntity : IApplicationEntity
 	{
 		public ApplicationEntity()

@@ -34,7 +34,7 @@ using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.Dicom.ServiceModel
 {
-	[DataContract(Namespace = DicomNamespace.Value)]
+	//[DataContract(Namespace = DicomNamespace.Value)]
 	public class StreamingServerApplicationEntity : DicomServerApplicationEntity, IStreamingServerApplicationEntity
 	{
 		public StreamingServerApplicationEntity()
