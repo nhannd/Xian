@@ -41,7 +41,7 @@ namespace ClearCanvas.Desktop
 		{
 			// We don't want to rely on the extension framework in the 
 			// case of a fatal exception, so the ExceptionDialog class will
-			// get a reference to the extension class constructor on app startup.
+			// create it's factory on app startup.
 			ExceptionDialog.CheckCanShow();
 		}
 

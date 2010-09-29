@@ -36,7 +36,19 @@ using System.Windows.Forms;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-	[ExtensionOf(typeof(ExceptionDialogExtensionPoint))]
+	[ExtensionOf(typeof(ExceptionDialogFactoryExtensionPoint))]
+	public class ExceptionDialogFactory : IExceptionDialogFactory
+	{
+		#region IExceptionDialogFactory Members
+
+		public IExceptionDialog CreateExceptionDialog()
+		{
+			return new ExceptionDialog();
+		}
+
+		#endregion
+	}
+
 	public class ExceptionDialog : Desktop.ExceptionDialog
 	{
 		private DialogBoxForm _form;

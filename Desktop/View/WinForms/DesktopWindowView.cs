@@ -112,14 +112,11 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <param name="e"></param>
         private void FormFormClosingEventHandler(object sender, FormClosingEventArgs e)
         {
-            // cancel the request - don't let winforms close the form
-            e.Cancel = true;
-
             switch (e.CloseReason)
             {
                 case System.Windows.Forms.CloseReason.ApplicationExitCall:
-            		Application.Shutdown();
-            		break;
+            		//DO let winforms close the form.
+					return;
                 case System.Windows.Forms.CloseReason.TaskManagerClosing:
                 case System.Windows.Forms.CloseReason.WindowsShutDown:
                     // windows is trying close the application, not just this window
@@ -137,6 +134,9 @@ namespace ClearCanvas.Desktop.View.WinForms
                     // other close reasons are not applicable
                     break;
             }
+
+			// cancel the request - don't let winforms close the form
+			e.Cancel = true;
         }
 
         private void FormDeactivateEventHandler(object sender, EventArgs e)

@@ -213,11 +213,7 @@ namespace ClearCanvas.Desktop
         	return _instance._guiToolkit == null;
         }
 
-		/// <summary>
-		/// Closes all open desktop windows and terminates the application.
-		/// </summary>
-		/// <remarks>The application is forcibly shut down, and the user will lose his/her work.</remarks>
-		public static void Shutdown()
+		internal static void Shutdown()
 		{
 			_instance.Quit(true);
 		}
@@ -275,6 +271,13 @@ namespace ClearCanvas.Desktop
 
         #endregion
 
+		private enum QuitState
+		{
+			NotQuitting,
+			QuittingNormally,
+			QuittingForcefully
+		}
+
         private string _appName;
         private Version _appVersion;
 		private volatile IGuiToolkit _guiToolkit;
@@ -284,10 +287,10 @@ namespace ClearCanvas.Desktop
         private ISessionManager _sessionManager;
 
 		private volatile bool _initialized;  // flag to be set when initialization is complete
-        private bool _quitInProgress;
+    	private QuitState _quitState;
 		private event EventHandler<QuittingEventArgs> _quitting;
 		private volatile SynchronizationContext _synchronizationContext;
-        
+
 		/// <summary>
         /// Default constructor, for internal framework use only.
         /// </summary>
@@ -303,14 +306,11 @@ namespace ClearCanvas.Desktop
         /// </summary>
         void IApplicationRoot.RunApplication(string[] args)
         {
-            try
-            {
-                Run(args);
-            }
-            finally
-            {
-                CleanUp();
-            }
+            Run(args);
+			//When we're quitting forcefully, typically due to an unhandled error,
+			//Cleanup probably won't work anyway.
+            if (IsQuittingNormally)
+				CleanUp();
         }
 
         #endregion
@@ -358,7 +358,6 @@ namespace ClearCanvas.Desktop
         protected virtual void CleanUp()
         {
 			_synchronizationContext = null;
-			_quitInProgress = true;
 			if (_view != null && _view is IDisposable)
 			{
 				(_view as IDisposable).Dispose();
@@ -414,15 +413,10 @@ namespace ClearCanvas.Desktop
 
         #region Protected members
 
-		/// <summary>
-		/// Closes all desktop windows.
-		/// </summary>
-		protected bool CloseAllWindows()
-        {
-        	return CloseAllWindows(false);
-        }
-
-        private bool CloseAllWindows(bool force)
+        /// <summary>
+        /// Closes all desktop windows.
+        /// </summary>
+        protected bool CloseAllWindows()
         {
             // make a copy of the windows collection for iteration
             List<DesktopWindow> windows = new List<DesktopWindow>(_windows);
@@ -432,8 +426,7 @@ namespace ClearCanvas.Desktop
                 // (the check is necessary because there is no guarantee the window is still open)
                 if (window.State == DesktopObjectState.Open)
                 {
-                	UserInteraction interaction = force ? UserInteraction.NotAllowed : UserInteraction.Allowed;
-					bool closed = window.Close(interaction, CloseReason.ApplicationQuit);
+                    bool closed = window.Close(UserInteraction.Allowed, CloseReason.ApplicationQuit);
 
                     // if one fails, abort
                     if (!closed)
@@ -517,7 +510,7 @@ namespace ClearCanvas.Desktop
             _windows.ItemClosed += delegate
                 {
                     // terminate the app when the window count goes to 0 if the app isn't already quitting
-                    if (_windows.Count == 0 && !_quitInProgress)
+					if (_windows.Count == 0 && !IsQuitting)
                     {
                         Quit(false);
                     }
@@ -529,6 +522,14 @@ namespace ClearCanvas.Desktop
 		}
 
 		#region Quitting
+
+		private bool IsQuittingForcefully { get { return _quitState == QuitState.QuittingForcefully; } }
+		private bool IsQuittingNormally { get { return _quitState == QuitState.QuittingNormally; } }
+		private bool IsQuitting { get { return _quitState != QuitState.NotQuitting; } }
+		
+		#region Fatal
+
+    	#endregion
 
     	private void Quit(bool force)
 		{
@@ -563,24 +564,31 @@ namespace ClearCanvas.Desktop
         /// <returns>True if the application is really going to terminate, false otherwise.</returns>
 		private void DoQuit(bool force)
     	{
-			if (_quitInProgress) //avoid recursion and calls after we've already quit.
+			if (IsQuitting)
 				return;
 
-			_quitInProgress = true;
-			if (!CloseAllWindows(force))
+			if (!force)
 			{
-				_quitInProgress = false;
-				return;
+				_quitState = QuitState.QuittingNormally;
+				if (!CloseAllWindows())
+				{
+					_quitState = QuitState.NotQuitting;
+					return;
+				}
+
+				// send quitting event
+				QuittingEventArgs args = new QuittingEventArgs();
+				OnQuitting(args);
+
+				// ensure the action model is disposed - this will cause it to be written out to the store
+				ActionModelSettings.Default.Dispose();
+			}
+			else
+			{
+				_quitState = QuitState.QuittingForcefully;
 			}
 
-			// send quitting event
-			QuittingEventArgs args = new QuittingEventArgs();
-			OnQuitting(args);
-
-			// ensure the action model is disposed - this will cause it to be written out to the store
-			ActionModelSettings.Default.Dispose();
-
-			try
+    		try
 			{
 				_sessionManager.TerminateSession();
 			}
