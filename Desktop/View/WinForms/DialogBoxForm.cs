@@ -46,7 +46,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 	public partial class DialogBoxForm : DotNetMagicForm
 	{
 		private readonly Control _content;
-		private DialogBoxAction _closeAction;
 
 		internal DialogBoxForm(string title, Control content, Size exactSize, DialogSizeHint sizeHint)
 			: this(title, content, exactSize, sizeHint, false) {}
@@ -89,8 +88,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		internal void DelayedClose(DialogBoxAction action)
 		{
-			_closeAction = action;
-			_delayedCloseTimer.Enabled = true;
+			BeginInvoke(new MethodInvoker(() => EndDialog(action)));
 		}
 
 		private void OnContentSizeChanged(object sender, EventArgs e)
@@ -99,13 +97,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 				ClientSize = _content.Size;
 		}
 
-		private void _delayedCloseTimer_Tick(object sender, EventArgs e)
+		private void EndDialog(DialogBoxAction action)
 		{
-			// disable timer so it doesn't fire again
-			_delayedCloseTimer.Enabled = false;
-
 			// close the form
-			switch (_closeAction)
+			switch (action)
 			{
 				case DialogBoxAction.Cancel:
 					DialogResult = DialogResult.Cancel;
@@ -115,5 +110,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 					break;
 			}
 		}
+
 	}
 }
