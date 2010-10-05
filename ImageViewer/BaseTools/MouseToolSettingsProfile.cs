@@ -297,6 +297,8 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			{
 				_initiallyActive = null;
 				_mouseButton = null;
+				_defaultMouseButton = null;
+				_defaultMouseButtonModifiers = null;
 
 				reader.MoveToContent();
 
@@ -349,8 +351,9 @@ namespace ClearCanvas.ImageViewer.BaseTools
 
 			private static T? Parse<T>(string value) where T : struct
 			{
+				// a serialized null value indicates the type default, not a T? null (which actually indicates that it was not serialized at all)
 				if (string.IsNullOrEmpty(value))
-					return null;
+					return default(T);
 
 				try
 				{
