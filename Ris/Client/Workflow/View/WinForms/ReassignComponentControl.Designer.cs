@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._radiologist.Location = new System.Drawing.Point(8, 8);
 			this._radiologist.Margin = new System.Windows.Forms.Padding(2);
 			this._radiologist.Name = "_radiologist";
-			this._radiologist.Size = new System.Drawing.Size(290, 41);
+			this._radiologist.Size = new System.Drawing.Size(290, 43);
 			this._radiologist.TabIndex = 0;
 			this._radiologist.Value = null;
 			// 
@@ -75,7 +75,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._radiologist);
 			this.Name = "ReassignComponentControl";
-			this.Size = new System.Drawing.Size(305, 89);
+			this.Size = new System.Drawing.Size(318, 89);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
