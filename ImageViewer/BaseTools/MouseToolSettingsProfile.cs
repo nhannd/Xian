@@ -346,6 +346,9 @@ namespace ClearCanvas.ImageViewer.BaseTools
 
 			private static string Format<T>(T value) where T : struct
 			{
+				// for enum types, format using constant labels and standard flags formatting.
+				if (typeof (T).IsEnum)
+					return Enum.Format(typeof (T), value, "g");
 				return TypeDescriptor.GetConverter(typeof (T)).ConvertToInvariantString(value);
 			}
 
@@ -357,6 +360,9 @@ namespace ClearCanvas.ImageViewer.BaseTools
 
 				try
 				{
+					// for enum types, parse using constant labels and standard flags formatting.
+					if (typeof (T).IsEnum)
+						return (T) Enum.Parse(typeof (T), value);
 					return (T) TypeDescriptor.GetConverter(typeof (T)).ConvertFromInvariantString(value);
 				}
 				catch (Exception)
