@@ -130,21 +130,24 @@ namespace ClearCanvas.Ris.Client
 			var deactivatedContactPointRefs = CollectionUtils.Map<ExternalPractitionerContactPointDetail, EntityRef>(_deactivatedContactPoints, cp => cp.ContactPointRef);
 			var affectedOrders = new List<OrderDetail>();
 
-			try
+			if (ShouldLoadAffectedOrders(deactivatedContactPointRefs))
 			{
-				var task = new BackgroundTask(
-					delegate(IBackgroundTaskContext context)
-					{
-						context.ReportProgress(new BackgroundTaskProgress(0, SR.MessageLoadingAffectedOrders));
-						affectedOrders.AddRange(LoadAffectedOrders(deactivatedContactPointRefs));
-					},
-					true);
+				try
+				{
+					var task = new BackgroundTask(
+						delegate(IBackgroundTaskContext context)
+						{
+							context.ReportProgress(new BackgroundTaskProgress(0, SR.MessageLoadingAffectedOrders));
+							affectedOrders.AddRange(LoadAffectedOrders(deactivatedContactPointRefs));
+						},
+						true);
 
-				ProgressDialog.Show(task, this.Host.DesktopWindow, true, ProgressBarStyle.Marquee);
-			}
-			catch (Exception e)
-			{
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+					ProgressDialog.Show(task, this.Host.DesktopWindow, true, ProgressBarStyle.Marquee);
+				}
+				catch (Exception e)
+				{
+					ExceptionHandler.Report(e, this.Host.DesktopWindow);
+				}
 			}
 
 			UpdateRecipientReplacementMap();
@@ -215,19 +218,21 @@ namespace ClearCanvas.Ris.Client
 		{
 			var affectedOrders = new List<OrderDetail>();
 
-			if (deactivatedContactPointRefs != null && deactivatedContactPointRefs.Count > 0)
-			{
-				Platform.GetService(
-					delegate(IExternalPractitionerAdminService service)
-					{
-						var request = new LoadMergeExternalPractitionerFormDataRequest { DeactivatedContactPointRefs = deactivatedContactPointRefs };
-						var response = service.LoadMergeExternalPractitionerFormData(request);
+			Platform.GetService(
+				delegate(IExternalPractitionerAdminService service)
+				{
+					var request = new LoadMergeExternalPractitionerFormDataRequest { DeactivatedContactPointRefs = deactivatedContactPointRefs };
+					var response = service.LoadMergeExternalPractitionerFormData(request);
 
-						affectedOrders = response.AffectedOrders;
-					});
-			}
+					affectedOrders = response.AffectedOrders;
+				});
 
 			return affectedOrders;
+		}
+
+		private static bool ShouldLoadAffectedOrders(ICollection<EntityRef> deactivatedContactPointRefs)
+		{
+			return deactivatedContactPointRefs != null && deactivatedContactPointRefs.Count > 0;
 		}
 
 		private void ShowOrderPreview(OrderDetail order)
