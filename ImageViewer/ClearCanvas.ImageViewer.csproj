@@ -820,6 +820,12 @@
     <EmbeddedResource Include="BaseTools\RightMouseButtonOverlayLarge.png" />
     <EmbeddedResource Include="BaseTools\RightMouseButtonOverlayMedium.png" />
     <EmbeddedResource Include="BaseTools\RightMouseButtonOverlaySmall.png" />
+    <EmbeddedResource Include="BaseTools\X1MouseButtonOverlayLarge.png" />
+    <EmbeddedResource Include="BaseTools\X1MouseButtonOverlayMedium.png" />
+    <EmbeddedResource Include="BaseTools\X1MouseButtonOverlaySmall.png" />
+    <EmbeddedResource Include="BaseTools\X2MouseButtonOverlayLarge.png" />
+    <EmbeddedResource Include="BaseTools\X2MouseButtonOverlayMedium.png" />
+    <EmbeddedResource Include="BaseTools\X2MouseButtonOverlaySmall.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="InteractiveGraphics\Resources\ProgressBarGraphicBlocksUnit.png" />

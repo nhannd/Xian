@@ -162,7 +162,11 @@ namespace ClearCanvas.ImageViewer.BaseTools
 						resourceNames = new string[] {"BaseTools.MiddleMouseButtonOverlaySmall.png", "BaseTools.MiddleMouseButtonOverlayMedium.png", "BaseTools.MiddleMouseButtonOverlayLarge.png"};
 						break;
 					case XMouseButtons.XButton1:
+						resourceNames = new string[] {"BaseTools.X1MouseButtonOverlaySmall.png", "BaseTools.X1MouseButtonOverlayMedium.png", "BaseTools.X1MouseButtonOverlayLarge.png"};
+						break;
 					case XMouseButtons.XButton2:
+						resourceNames = new string[] {"BaseTools.X2MouseButtonOverlaySmall.png", "BaseTools.X2MouseButtonOverlayMedium.png", "BaseTools.X2MouseButtonOverlayLarge.png"};
+						break;
 					case XMouseButtons.None:
 					default:
 						return null;
