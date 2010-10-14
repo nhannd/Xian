@@ -30,7 +30,10 @@
 #endregion
 
 using System;
+using System.Security;
+using System.Threading;
 using ClearCanvas.Common;
+using System.Security.Permissions;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -62,15 +65,16 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		private static void CheckSupported()
-		{
-			if (_viewer == null)
-				throw new NotSupportedException("No viewer integration extension found.");
-		}
+		#region Public API
 
 		public static bool IsSupported
 		{
 			get { return _viewer != null; }
+		}
+
+		public static bool UserHasAccessToViewImages
+		{
+			get { return Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.Images.View); }
 		}
 
 		public static bool TryOpen(string accession)
@@ -90,12 +94,34 @@ namespace ClearCanvas.Ris.Client
 		public static void Open(string accession)
 		{
 			CheckSupported();
+			CheckAccess();
+
 			_viewer.Open(accession);
+		}
+
+		public static bool Activate(string accessionNumber)
+		{
+			CheckSupported();
+			CheckAccess();
+
+			try
+			{
+				_viewer.Activate(accessionNumber);
+				return true;
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Warn, e, String.Format("Failed to activate the viewer for Accession# {0}.", accessionNumber));
+			}
+
+			return false;
 		}
 
 		public static bool Close(string accessionNumber)
 		{
 			CheckSupported();
+
+			// no need to check access on close!
 
 			try
 			{
@@ -110,21 +136,20 @@ namespace ClearCanvas.Ris.Client
 			return false;
 		}
 
-		public static bool Activate(string accessionNumber)
+		#endregion
+
+
+		private static void CheckSupported()
 		{
-			CheckSupported();
-
-			try
-			{
-				_viewer.Activate(accessionNumber);
-				return true;
-			}
-			catch(Exception e)
-			{
-				Platform.Log(LogLevel.Warn, e, String.Format("Failed to activate the viewer for Accession# {0}.", accessionNumber));
-			}
-
-			return false;
+			if (_viewer == null)
+				throw new NotSupportedException("No viewer integration extension found.");
 		}
+
+		private static void CheckAccess()
+		{
+			if (!UserHasAccessToViewImages)
+				throw new SecurityException("Access to images denied.");
+		}
+
 	}
 }

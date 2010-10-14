@@ -1223,10 +1223,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void OpenImages()
 		{
-			if (!ViewImagesHelper.IsSupported || !_shouldOpenImages)
-				return;
-
-			this.ImagesAvailable = ViewImagesHelper.TryOpen(this.WorklistItem.AccessionNumber);
+			// open images if appropriate
+			if (_shouldOpenImages && ViewImagesHelper.IsSupported && ViewImagesHelper.UserHasAccessToViewImages)
+			{
+				this.ImagesAvailable = ViewImagesHelper.TryOpen(this.WorklistItem.AccessionNumber);
+			}
 		}
 
 		private void CloseImages()
