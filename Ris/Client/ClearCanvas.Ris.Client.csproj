@@ -236,6 +236,7 @@
     <Compile Include="StaffSelectorEditorComponent.cs" />
     <Compile Include="StaffStaffGroupEditorComponent.cs" />
     <Compile Include="FolderExplorerUserConfiguration.cs" />
+    <Compile Include="TestViewerIntegration.cs" />
     <Compile Include="UserLookupHandler.cs" />
     <Compile Include="UserWorklistTool.cs" />
     <Compile Include="ViewImagesHelper.cs" />
