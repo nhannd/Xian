@@ -109,6 +109,16 @@ namespace ClearCanvas.Ris.Client
 	[ExtensionOf(typeof(ExternalPractitionerItemToolExtensionPoint))]
 	public class ExternalPractitionerEditTool : ExternalPractitionerTool
 	{
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			this.Context.RegisterDoubleClickHandler(
+				(IClickAction)CollectionUtils.SelectFirst(
+					this.Actions,
+					a => a is IClickAction && a.ActionID.EndsWith("apply")));
+		}
+
 		public void Apply()
 		{
 			var item = (ExternalPractitionerSummary)this.Context.Selection.Item;
