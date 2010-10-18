@@ -111,13 +111,19 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 			var facilityAssembler = new FacilityAssembler();
 			var departmentAssembler = new DepartmentAssembler();
+
+			var departmentSearchCriteria = new DepartmentSearchCriteria();
+			departmentSearchCriteria.Deactivated.EqualTo(false);
+			departmentSearchCriteria.Name.SortAsc(0);
+			var departments = this.PersistenceContext.GetBroker<IDepartmentBroker>().Find(departmentSearchCriteria);
+
 			return new GetOrderEntryFormDataResponse(
 				CollectionUtils.Map(
 					this.PersistenceContext.GetBroker<IFacilityBroker>().FindAll(false),
 					(Facility f) => facilityAssembler.CreateFacilitySummary(f)),
 				CollectionUtils.Map(
-					this.PersistenceContext.GetBroker<IDepartmentBroker>().FindAll(false),
-					(Department d) => departmentAssembler.CreateSummary(d, PersistenceContext)),
+					departments, 
+					(Department d) => departmentAssembler.CreateSummary(d, this.PersistenceContext)),
 				EnumUtils.GetEnumValueList<OrderPriorityEnum>(this.PersistenceContext),
 				EnumUtils.GetEnumValueList<OrderCancelReasonEnum>(this.PersistenceContext),
 				EnumUtils.GetEnumValueList<LateralityEnum>(this.PersistenceContext),
