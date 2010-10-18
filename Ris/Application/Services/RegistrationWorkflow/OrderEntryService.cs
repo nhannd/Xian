@@ -109,21 +109,27 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		{
 			Platform.CheckForNullReference(request, "request");
 
+			// Sorted list of facility summaries for active facilities
 			var facilityAssembler = new FacilityAssembler();
-			var departmentAssembler = new DepartmentAssembler();
+			var facilitySearchCriteria = new FacilitySearchCriteria();
+			facilitySearchCriteria.Deactivated.EqualTo(false);
+			facilitySearchCriteria.Name.SortAsc(0);
+			var facilities = CollectionUtils.Map(
+				this.PersistenceContext.GetBroker<IFacilityBroker>().Find(facilitySearchCriteria),
+				(Facility f) => facilityAssembler.CreateFacilitySummary(f));
 
+			// Sorted list of department summaries for active departments
+			var departmentAssembler = new DepartmentAssembler();
 			var departmentSearchCriteria = new DepartmentSearchCriteria();
 			departmentSearchCriteria.Deactivated.EqualTo(false);
 			departmentSearchCriteria.Name.SortAsc(0);
-			var departments = this.PersistenceContext.GetBroker<IDepartmentBroker>().Find(departmentSearchCriteria);
+			var departments = CollectionUtils.Map(
+				this.PersistenceContext.GetBroker<IDepartmentBroker>().Find(departmentSearchCriteria), 
+				(Department d) => departmentAssembler.CreateSummary(d, this.PersistenceContext));
 
 			return new GetOrderEntryFormDataResponse(
-				CollectionUtils.Map(
-					this.PersistenceContext.GetBroker<IFacilityBroker>().FindAll(false),
-					(Facility f) => facilityAssembler.CreateFacilitySummary(f)),
-				CollectionUtils.Map(
-					departments, 
-					(Department d) => departmentAssembler.CreateSummary(d, this.PersistenceContext)),
+				facilities,
+				departments,
 				EnumUtils.GetEnumValueList<OrderPriorityEnum>(this.PersistenceContext),
 				EnumUtils.GetEnumValueList<OrderCancelReasonEnum>(this.PersistenceContext),
 				EnumUtils.GetEnumValueList<LateralityEnum>(this.PersistenceContext),
