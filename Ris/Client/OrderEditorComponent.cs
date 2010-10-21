@@ -247,6 +247,8 @@ namespace ClearCanvas.Ris.Client
 		private Dictionary<string, string> _extendedProperties = new Dictionary<string, string>();
 
 		private string _downtimeAccessionNumber;
+		private bool _visitsLoaded;
+		private bool _formDataLoaded;
 
 		#endregion
 
@@ -372,6 +374,22 @@ namespace ClearCanvas.Ris.Client
 			_recipientLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
 			_diagnosticServiceLookupHandler = new DiagnosticServiceLookupHandler(this.Host.DesktopWindow);
 			_orderingPractitionerLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
+			_facilityChoices = new List<FacilitySummary>();
+			_departmentChoices = new List<DepartmentSummary>();
+			_priorityChoices = new List<EnumValueInfo>();
+			_cancelReasonChoices = new List<EnumValueInfo>();
+			_lateralityChoices = new List<EnumValueInfo>();
+			_schedulingCodeChoices = new List<EnumValueInfo>();
+
+			if (_mode == Mode.NewOrder)
+			{
+				_orderingFacility = LoginSession.Current.WorkingFacility;
+				_schedulingRequestTime = Platform.Time;
+				_orderAdditionalInfoComponent.OrderExtendedProperties = _extendedProperties;
+				_attachmentSummaryComponent.OrderAttachments = _newAttachments;
+			}
+
+			InitializeTabPages();
 
 			Async.Request(this,
 				(IOrderEntryService service) => service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientRef)),
@@ -385,14 +403,13 @@ namespace ClearCanvas.Ris.Client
 					}
 
 					NotifyPropertyChanged("ActiveVisits");
+
+					_visitsLoaded = true;
+
+					if (_mode != Mode.NewOrder)
+						LoadOrderRequisition();
 				});
 
-			_facilityChoices = new List<FacilitySummary>();
-			_departmentChoices = new List<DepartmentSummary>();
-			_priorityChoices = new List<EnumValueInfo>();
-			_cancelReasonChoices = new List<EnumValueInfo>();
-			_lateralityChoices = new List<EnumValueInfo>();
-			_schedulingCodeChoices = new List<EnumValueInfo>();
 
 			Async.Request(this,
 				(IOrderEntryService service) => service.GetOrderEntryFormData(new GetOrderEntryFormDataRequest()),
@@ -415,40 +432,40 @@ namespace ClearCanvas.Ris.Client
 
 					NotifyPropertyChanged("PriorityChoices");
 					NotifyPropertyChanged("CancelReasonChoices");
+
+					_formDataLoaded = true;
+
+					if (_mode != Mode.NewOrder)
+						LoadOrderRequisition();
 				});
 
-			if (_mode == Mode.NewOrder)
-			{
-				_orderingFacility = LoginSession.Current.WorkingFacility;
-				_schedulingRequestTime = Platform.Time;
-				_orderAdditionalInfoComponent.OrderExtendedProperties = _extendedProperties;
-				_attachmentSummaryComponent.OrderAttachments = _newAttachments;
-			}
-			else
-			{
-				// Pre-populate the order entry page with details
-				Async.Request(this,
-					(IOrderEntryService service) => service.GetOrderRequisitionForEdit(new GetOrderRequisitionForEditRequest(_orderRef)),
-					response =>
-					{
-						// update order ref so we have the latest version
-						_orderRef = response.OrderRef;
-
-						// update form
-						UpdateFromRequisition(response.Requisition);
-						_isComplete = response.IsCompleted;
-					});
-
-				// bug #3506: in replace mode, overwrite the procedures with clean one(s) based on diagnostic service
-				if (_mode == Mode.ReplaceOrder)
-				{
-					UpdateDiagnosticService(_selectedDiagnosticService);
-				}
-			}
-
-			InitializeTabPages();
-
 			base.Start();
+		}
+
+
+		private void LoadOrderRequisition()
+		{
+			if (!_visitsLoaded || !_formDataLoaded)
+				return;
+
+			// Pre-populate the order entry page with details
+			Async.Request(this,
+				(IOrderEntryService service) => service.GetOrderRequisitionForEdit(new GetOrderRequisitionForEditRequest(_orderRef)),
+				response =>
+				{
+					// update order ref so we have the latest version
+					_orderRef = response.OrderRef;
+
+					// update form
+					UpdateFromRequisition(response.Requisition);
+					_isComplete = response.IsCompleted;
+
+					// bug #3506: in replace mode, overwrite the procedures with clean one(s) based on diagnostic service
+					if (_mode == Mode.ReplaceOrder)
+					{
+						UpdateDiagnosticService(_selectedDiagnosticService);
+					}
+				});
 		}
 
 		public override void Stop()
@@ -609,19 +626,19 @@ namespace ClearCanvas.Ris.Client
 
 				// regardless of whether the user pressed OK or cancel, we should still update the list of active visits
 				// because they could have added a new visit prior to cancelling out of the dialog
-				Async.Request(this,
-					(IOrderEntryService service) => service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientRef)),
-					response =>
-					{
-						_activeVisits = response.Visits;
+				// Bug: #7355 - this service call does not need asynchronous performance, and making synchronous avoids race 
+				// condition where selected visit may be overwritten.
+				Platform.GetService<IOrderEntryService>(service =>
+				{
+					var response = service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientRef));
+					_activeVisits = response.Visits;
+					NotifyPropertyChanged("ActiveVisits");
+				});
 
-						NotifyPropertyChanged("ActiveVisits");
-
-						if (selectedVisitRef != null)
-						{
-							this.SelectedVisit = CollectionUtils.SelectFirst(_activeVisits, visit => visit.VisitRef.Equals(selectedVisitRef, true));
-						}
-					});
+				if (selectedVisitRef != null)
+				{
+					this.SelectedVisit = CollectionUtils.SelectFirst(_activeVisits, visit => visit.VisitRef.Equals(selectedVisitRef, true));
+				}
 			}
 			catch (Exception e)
 			{
@@ -850,32 +867,32 @@ namespace ClearCanvas.Ris.Client
 		{
 			try
 			{
-				Async.Request(this,
-					(IOrderEntryService service) => service.ListOrderableProcedureTypes(new ListOrderableProcedureTypesRequest(
+				var orderableProcedureTypes = new List<ProcedureTypeSummary>();
+				Platform.GetService<IOrderEntryService>(service =>
+				{
+					var response = service.ListOrderableProcedureTypes(
+						new ListOrderableProcedureTypesRequest(
 							CollectionUtils.Map<ProcedureRequisition, EntityRef>(
 								_proceduresTable.Items,
-								req => req.ProcedureType.ProcedureTypeRef))),
-					response =>
-					{
-						var orderableProcedureTypes = response.OrderableProcedureTypes;
+								req => req.ProcedureType.ProcedureTypeRef)));
+					orderableProcedureTypes = response.OrderableProcedureTypes;
+				});
 
-						var procedureRequisition = new ProcedureRequisition(null, _orderingFacility);
-						var procedureEditor = new ProcedureEditorComponent(
-							procedureRequisition,
-							_facilityChoices,
-							_departmentChoices,
-							_lateralityChoices,
-							_schedulingCodeChoices,
-							orderableProcedureTypes);
+				var procedureRequisition = new ProcedureRequisition(null, _orderingFacility);
+				var procedureEditor = new ProcedureEditorComponent(
+					procedureRequisition,
+					_facilityChoices,
+					_departmentChoices,
+					_lateralityChoices,
+					_schedulingCodeChoices,
+					orderableProcedureTypes);
 
-						if (LaunchAsDialog(this.Host.DesktopWindow, procedureEditor, "Add Procedure")
-							== ApplicationComponentExitCode.Accepted)
-						{
-							_proceduresTable.Items.Add(procedureRequisition);
-
-							this.Modified = true;
-						}
-					});
+				if (LaunchAsDialog(this.Host.DesktopWindow, procedureEditor, "Add Procedure")
+					== ApplicationComponentExitCode.Accepted)
+				{
+					_proceduresTable.Items.Add(procedureRequisition);
+					this.Modified = true;
+				}
 			}
 			catch (Exception e)
 			{
@@ -1122,11 +1139,11 @@ namespace ClearCanvas.Ris.Client
 			_noteSummaryComponent.Notes = existingOrder.Notes;
 			_orderAdditionalInfoComponent.OrderExtendedProperties = _extendedProperties = existingOrder.ExtendedProperties;
 
-			// initialize contact point choices for ordering practitioner
-			UpdateOrderingPractitionerContactPointChoices();
-
 			_recipientsTable.Items.Clear();
 			_recipientsTable.Items.AddRange(existingOrder.ResultRecipients);
+
+			// initialize contact point choices for ordering practitioner
+			UpdateOrderingPractitionerContactPointChoices();
 		}
 
 		private bool SubmitOrder()
@@ -1299,10 +1316,11 @@ namespace ClearCanvas.Ris.Client
 		{
 			if (practitioner != null)
 			{
-				Async.Request(this,
-					(IOrderEntryService service) => service.GetExternalPractitionerContactPoints(
-						new GetExternalPractitionerContactPointsRequest(practitioner.PractitionerRef)),
-					callback);
+				Platform.GetService<IOrderEntryService>(service =>
+				{
+					var response = service.GetExternalPractitionerContactPoints(new GetExternalPractitionerContactPointsRequest(practitioner.PractitionerRef));
+					callback(response);
+				});
 			}
 			else
 			{
