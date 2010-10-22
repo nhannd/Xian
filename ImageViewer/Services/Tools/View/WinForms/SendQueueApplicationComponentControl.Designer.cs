@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._sendTable.Location = new System.Drawing.Point(0, 31);
 			this._sendTable.Name = "_sendTable";
 			this._sendTable.ReadOnly = false;
-			this._sendTable.Size = new System.Drawing.Size(687, 389);
+			this._sendTable.Size = new System.Drawing.Size(687, 367);
 			this._sendTable.SortButtonTooltip = null;
 			this._sendTable.TabIndex = 1;
 			// 
@@ -133,8 +133,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._statusBar);
 			this.Controls.Add(this._sendTable);
+			this.Controls.Add(this._statusBar);
 			this.Controls.Add(this._titleBar);
 			this.Name = "SendQueueApplicationComponentControl";
 			this.Size = new System.Drawing.Size(687, 420);
