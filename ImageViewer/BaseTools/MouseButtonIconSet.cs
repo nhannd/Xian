@@ -43,8 +43,8 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		{
 			foreach (IAction action in actions)
 			{
-				if (action.IconSet is MouseButtonIconSet)
-					((MouseButtonIconSet) action.IconSet).AssignedButton = mouseButton;
+				if (action is Action && action.IconSet is MouseButtonIconSet)
+					((Action) action).IconSet = new MouseButtonIconSet(action.IconSet, mouseButton);
 			}
 		}
 
@@ -129,12 +129,11 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			}
 
 			/// <summary>
-			/// Gets or sets the mouse button that is assigned to the associated tool.
+			/// Gets the mouse button that is assigned to the associated tool.
 			/// </summary>
 			public XMouseButtons AssignedButton
 			{
 				get { return _assignedButton; }
-				set { _assignedButton = value; }
 			}
 
 			private bool ShowMouseButtonIconOverlay

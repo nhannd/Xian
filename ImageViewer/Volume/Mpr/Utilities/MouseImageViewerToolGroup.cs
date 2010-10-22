@@ -151,8 +151,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 		{
 			foreach (IAction action in actions)
 			{
-				if (action.IconSet is MouseButtonIconSet)
-					((MouseButtonIconSet) action.IconSet).AssignedButton = mouseButton;
+				if (action is Action && action.IconSet is MouseButtonIconSet)
+					((Action)action).IconSet = new MouseButtonIconSet(action.IconSet, mouseButton);
 			}
 		}
 
