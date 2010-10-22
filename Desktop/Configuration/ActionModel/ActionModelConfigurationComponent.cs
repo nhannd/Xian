@@ -131,7 +131,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 					actionSet = actionSet.Union(concreteDesktopWindow.DesktopTools.Actions);
 			}
 
-			_actionModel = ActionModelSettings.Default.BuildAbstractActionModel(_namespace, _site, actionSet.Select(a => a.Path.Site == site));
+			_actionModel = ActionModelSettings.Default.BuildAbstractActionModel(_namespace, _site, actionSet.Select(a => a.Path.Site == site && a.Permissible));
 			_actionModelTreeRoot = new AbstractActionModelTreeRoot(_site);
 
 			_enforceFlatActionModel = flatActionModel;
