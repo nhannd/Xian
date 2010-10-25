@@ -189,7 +189,8 @@ namespace ClearCanvas.Ris.Client
 		private readonly EntityRef _profileRef;
 		private EntityRef _orderRef;
 
-		private List<VisitSummary> _activeVisits;
+		private List<VisitSummary> _allVisits;
+		private List<VisitSummary> _applicableVisits;
 		private VisitSummary _selectedVisit;
 
 		private DiagnosticServiceLookupHandler _diagnosticServiceLookupHandler;
@@ -395,14 +396,10 @@ namespace ClearCanvas.Ris.Client
 				(IOrderEntryService service) => service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientRef)),
 				response =>
 				{
-					_activeVisits = response.Visits;
-
-					if (_mode == Mode.NewOrder)
-					{
-						_selectedVisit = _activeVisits.Count > 0 ? _activeVisits[0] : null;
-					}
+					_allVisits = _applicableVisits = response.Visits;
 
 					NotifyPropertyChanged("ActiveVisits");
+					this.SelectedVisit = null;  // undo any default selection imposed by setting ActiveVisits
 
 					_visitsLoaded = true;
 
@@ -557,7 +554,7 @@ namespace ClearCanvas.Ris.Client
 
 		public IList ActiveVisits
 		{
-			get { return _activeVisits; }
+			get { return _applicableVisits; }
 		}
 
 		[ValidateNotNull]
@@ -631,13 +628,13 @@ namespace ClearCanvas.Ris.Client
 				Platform.GetService<IOrderEntryService>(service =>
 				{
 					var response = service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientRef));
-					_activeVisits = response.Visits;
-					NotifyPropertyChanged("ActiveVisits");
+					_allVisits = response.Visits;
+					UpdateVisits();
 				});
 
 				if (selectedVisitRef != null)
 				{
-					this.SelectedVisit = CollectionUtils.SelectFirst(_activeVisits, visit => visit.VisitRef.Equals(selectedVisitRef, true));
+					this.SelectedVisit = CollectionUtils.SelectFirst(_applicableVisits, visit => visit.VisitRef.Equals(selectedVisitRef, true));
 				}
 			}
 			catch (Exception e)
@@ -686,7 +683,7 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_selectedProcedures = CollectionUtils.Map<object, ProcedureRequisition, List<ProcedureRequisition>>(
-					value.Items, item => (ProcedureRequisition) item);
+					value.Items, item => (ProcedureRequisition)item);
 				UpdateProcedureActionModel();
 			}
 		}
@@ -891,6 +888,9 @@ namespace ClearCanvas.Ris.Client
 					== ApplicationComponentExitCode.Accepted)
 				{
 					_proceduresTable.Items.Add(procedureRequisition);
+
+					UpdateVisits();
+
 					this.Modified = true;
 				}
 			}
@@ -932,11 +932,13 @@ namespace ClearCanvas.Ris.Client
 						_schedulingCodeChoices);
 				}
 
-				if (ApplicationComponentExitCode.Accepted == 
+				if (ApplicationComponentExitCode.Accepted ==
 					LaunchAsDialog(this.Host.DesktopWindow, editor, title))
 				{
 					foreach (var p in _selectedProcedures)
 						_proceduresTable.Items.NotifyItemUpdated(p);
+
+					UpdateVisits();
 
 					this.Modified = true;
 				}
@@ -959,6 +961,9 @@ namespace ClearCanvas.Ris.Client
 				{
 					// unsaved procedure
 					_proceduresTable.Items.Remove(p);
+
+					UpdateVisits();
+
 					NotifyPropertyChanged("SelectedProcedure");
 				}
 				else
@@ -1041,11 +1046,11 @@ namespace ClearCanvas.Ris.Client
 		private string FormatPerformingFacility(ProcedureRequisition requisition)
 		{
 			var sb = new StringBuilder();
-			if(requisition.PerformingFacility != null)
+			if (requisition.PerformingFacility != null)
 			{
 				sb.Append(requisition.PerformingFacility.Name);
 			}
-			if(requisition.PerformingDepartment != null)
+			if (requisition.PerformingDepartment != null)
 			{
 				sb.Append(" (" + requisition.PerformingDepartment.Name + ")");
 			}
@@ -1071,8 +1076,31 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			UpdateProcedureActionModel();
+			UpdateVisits();
 
 			NotifyPropertyChanged("SelectedDiagnosticService");
+		}
+
+		private void UpdateVisits()
+		{
+			var selectedVisit = _selectedVisit;
+
+			var performingFacilities = CollectionUtils.Map<ProcedureRequisition, FacilitySummary>(
+				_proceduresTable.Items, item => item.PerformingFacility);
+
+			_applicableVisits = CollectionUtils.Select(
+				_allVisits,
+				visit => CollectionUtils.Contains(
+							performingFacilities,
+							facility => visit.VisitNumber.AssigningAuthority.Code == facility.InformationAuthority.Code));
+
+			NotifyPropertyChanged("ActiveVisits");
+
+			// Change to ActiveVisits may have caused the SelectedVisit to update, so use either the saved selectedVisit
+			// if it is still applicable, or empty selection.
+			this.SelectedVisit = CollectionUtils.Contains(_applicableVisits, visit => visit == selectedVisit)
+									? selectedVisit
+									: null;
 		}
 
 		private OrderRequisition BuildOrderRequisition()
