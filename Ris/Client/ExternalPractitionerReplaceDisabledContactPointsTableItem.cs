@@ -45,6 +45,7 @@ namespace ClearCanvas.Ris.Client
 
 		public string AffectedOrdersCount { get; private set; }
 		public ExternalPractitionerContactPointDetail OldContactPoint { get; private set; }
+		public string OldContactPointName { get; private set; }
 		public string OldContactPointInfo { get; private set; }
 		public List<ExternalPractitionerContactPointDetail> NewContactPointChoices { get; private set; }
 		public string NewContactPointInfo { get; private set; }
@@ -52,6 +53,7 @@ namespace ClearCanvas.Ris.Client
 		public ExternalPractitionerReplaceDisabledContactPointsTableItem(ExternalPractitionerContactPointDetail oldContactPoint, List<ExternalPractitionerContactPointDetail> newContactPointChoices)
 		{
 			this.OldContactPoint = oldContactPoint;
+			this.OldContactPointName = oldContactPoint.Name;
 			this.OldContactPointInfo = GetContactPointInfo(oldContactPoint);
 
 			this.NewContactPointChoices = newContactPointChoices;
@@ -84,8 +86,8 @@ namespace ClearCanvas.Ris.Client
 		public string FormatNewContactPointChoice(object item)
 		{
 			var detail = (ExternalPractitionerContactPointDetail)item;
-			
-			return string.IsNullOrEmpty(detail.Description) 
+
+			return string.IsNullOrEmpty(detail.Description)
 				? ExternalPractitionerContactPointFormat.Format(detail, "%N")
 				: ExternalPractitionerContactPointFormat.Format(detail, "%N - %D");
 		}
@@ -93,13 +95,8 @@ namespace ClearCanvas.Ris.Client
 		private static string GetContactPointInfo(ExternalPractitionerContactPointDetail cp)
 		{
 			var builder = new StringBuilder();
-			builder.AppendFormat("Contact Point: {0}", cp.Name);
+			builder.AppendFormat("Description: {0}", cp.Description);
 			builder.AppendLine();
-			if (!string.IsNullOrEmpty(cp.Description))
-			{
-				builder.AppendFormat("Description: {0}", cp.Description);
-				builder.AppendLine();
-			}
 			builder.AppendFormat(SR.FormatPhone, cp.CurrentPhoneNumber == null ? "" : TelephoneFormat.Format(cp.CurrentPhoneNumber));
 			builder.AppendLine();
 			builder.AppendFormat(SR.FormatFax, cp.CurrentFaxNumber == null ? "" : TelephoneFormat.Format(cp.CurrentFaxNumber));

@@ -43,6 +43,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			InitializeComponent();
 			_item = item;
 
+			_oldContactPointName.DataBindings.Add("Text", _item, "OldContactPointName", true, DataSourceUpdateMode.OnPropertyChanged);
 			_oldContactPointInfo.DataBindings.Add("Text", _item, "OldContactPointInfo", true, DataSourceUpdateMode.OnPropertyChanged);
 			_newContactPointInfo.DataBindings.Add("Text", _item, "NewContactPointInfo", true, DataSourceUpdateMode.OnPropertyChanged);
 
