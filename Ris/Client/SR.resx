@@ -1149,4 +1149,10 @@
   <data name="MessageLoadingAffectedOrders" xml:space="preserve">
     <value>Loading affected orders...</value>
   </data>
+  <data name="TitleReplaceInactiveContactPoints" xml:space="preserve">
+    <value>Select Replacement Contact Points</value>
+  </data>
+  <data name="MessageInstructionReplacementContactPoints" xml:space="preserve">
+    <value>Select a replacement contact point for each deactivated contact point.</value>
+  </data>
 </root>

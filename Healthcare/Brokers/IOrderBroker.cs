@@ -39,5 +39,6 @@ namespace ClearCanvas.Healthcare.Brokers
 
 		IList<Order> FindByOrderingPractitioner(ExternalPractitioner practitioner);
 		IList<Order> FindByResultRecipient(ResultRecipientSearchCriteria recipientSearchCriteria, OrderSearchCriteria orderSearchCriteria);
+		int CountByResultRecipient(ResultRecipientSearchCriteria recipientSearchCriteria, OrderSearchCriteria orderSearchCriteria);
 	}
 }

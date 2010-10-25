@@ -29,38 +29,37 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
-using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 {
 	[DataContract]
-	public class MergeExternalPractitionerRequest : DataContractBase
+	public class GetActiveOrdersCountsForContactPointsResponse : DataContractBase
 	{
 		[DataContract]
-		public class ContactPointReplacement : DataContractBase
+		public class AffectedOrderSummary : DataContractBase
 		{
-			public ContactPointReplacement(EntityRef deactivatedContactPointRef, EntityRef replacementContactPointRef)
+			public AffectedOrderSummary(EntityRef contactPointRef, int affectedOrders)
 			{
-				this.DeactivatedContactPointRef = deactivatedContactPointRef;
-				this.ReplacementContactPointRef = replacementContactPointRef;
+				this.ContactPointRef = contactPointRef;
+				this.AffectedOrders = affectedOrders;
 			}
 
 			[DataMember]
-			public EntityRef DeactivatedContactPointRef;
+			public EntityRef ContactPointRef;
 
 			[DataMember]
-			public EntityRef ReplacementContactPointRef;
+			public int AffectedOrders;
+		}
+
+		public GetActiveOrdersCountsForContactPointsResponse()
+		{
+			this.AffectedOrderSummaries = new List<AffectedOrderSummary>();
 		}
 
 		[DataMember]
-		public EntityRef DuplicatePractitionerRef;
-
-		[DataMember]
-		public ExternalPractitionerDetail MergedPractitioner;
-
-		[DataMember]
-		public List<ContactPointReplacement> ContactPointReplacements;
+		public List<AffectedOrderSummary> AffectedOrderSummaries;
 	}
 }

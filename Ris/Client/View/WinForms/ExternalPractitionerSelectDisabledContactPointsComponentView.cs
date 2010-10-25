@@ -29,37 +29,50 @@
 
 #endregion
 
-using System.Windows.Forms;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-	/// <summary>
-	/// Provides a Windows Forms user-interface for <see cref="ExternalPractitionerMergeAffectedOrdersComponent"/>.
-	/// </summary>
-	public partial class ExternalPractitionerMergeAffectedOrdersComponentControl : ApplicationComponentUserControl
-	{
-		private readonly ExternalPractitionerMergeAffectedOrdersComponent _component;
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="ExternalPractitionerSelectDisabledContactPointsComponent"/>.
+    /// </summary>
+    [ExtensionOf(typeof(ExternalPractitionerSelectDisabledContactPointsComponentViewExtensionPoint))]
+    public class ExternalPractitionerSelectDisabledContactPointsComponentView : WinFormsView, IApplicationComponentView
+    {
+        private ExternalPractitionerSelectDisabledContactPointsComponent _component;
+        private ExternalPractitionerSelectDisabledContactPointsComponentControl _control;
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public ExternalPractitionerMergeAffectedOrdersComponentControl(ExternalPractitionerMergeAffectedOrdersComponent component)
-			:base(component)
-		{
-			_component = component;
-			InitializeComponent();
+        #region IApplicationComponentView Members
 
-			_instruction.DataBindings.Add("Text", _component, "Instruction", true, DataSourceUpdateMode.OnPropertyChanged);
+        /// <summary>
+        /// Called by the host to assign this view to a component.
+        /// </summary>
+        public void SetComponent(IApplicationComponent component)
+        {
+            _component = (ExternalPractitionerSelectDisabledContactPointsComponent)component;
+        }
 
-			_table.Items.AddRange(_component.AffectedOrderTableItems);
-			_component.AllPropertiesChanged += OnAllPropertiesChanged;
-		}
+        #endregion
 
-		private void OnAllPropertiesChanged(object sender, System.EventArgs e)
-		{
-			_table.Items.Clear();
-			_table.Items.AddRange(_component.AffectedOrderTableItems);
-		}
-	}
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new ExternalPractitionerSelectDisabledContactPointsComponentControl(_component);
+                }
+                return _control;
+            }
+        }
+    }
 }

@@ -47,7 +47,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		{
 			var q = this.GetNamedHqlQuery("documentOrderOwner");
 			q.SetParameter(0, document);
-			return (Order) q.UniqueResult(); 
+			return (Order)q.UniqueResult();
 		}
 
 		public IList<Order> FindByOrderingPractitioner(ExternalPractitioner practitioner)
@@ -66,6 +66,19 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("rr", recipientSearchCriteria));
 			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("o", orderSearchCriteria));
 			return ExecuteHql<Order>(query);
+		}
+
+		public int CountByResultRecipient(ResultRecipientSearchCriteria recipientSearchCriteria, OrderSearchCriteria orderSearchCriteria)
+		{
+			var hqlSelect = new HqlSelect("count(*)");
+
+			var hqlFrom = new HqlFrom(typeof(Order).Name, "o");
+			hqlFrom.Joins.Add(new HqlJoin("o.ResultRecipients", "rr"));
+
+			var query = new HqlProjectionQuery(hqlFrom, new[] { hqlSelect });
+			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("rr", recipientSearchCriteria));
+			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("o", orderSearchCriteria));
+			return (int)ExecuteHqlUnique<long>(query);
 		}
 
 		#endregion

@@ -29,50 +29,21 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.View.WinForms;
-
-namespace ClearCanvas.Ris.Client.View.WinForms
+namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 {
-    /// <summary>
-    /// Provides a Windows Forms view onto <see cref="ExternalPractitionerMergeAffectedOrdersComponent"/>.
-    /// </summary>
-    [ExtensionOf(typeof(ExternalPractitionerMergeAffectedOrdersComponentViewExtensionPoint))]
-    public class ExternalPractitionerMergeAffectedOrdersComponentView : WinFormsView, IApplicationComponentView
-    {
-        private ExternalPractitionerMergeAffectedOrdersComponent _component;
-        private ExternalPractitionerMergeAffectedOrdersComponentControl _control;
+	[DataContract]
+	public class GetActiveOrdersCountsForContactPointsRequest : DataContractBase
+	{
+		public GetActiveOrdersCountsForContactPointsRequest(List<EntityRef> deactivatedContactPoints)
+		{
+			this.DeactivatedContactPoints = deactivatedContactPoints;
+		}
 
-        #region IApplicationComponentView Members
-
-        /// <summary>
-        /// Called by the host to assign this view to a component.
-        /// </summary>
-        public void SetComponent(IApplicationComponent component)
-        {
-            _component = (ExternalPractitionerMergeAffectedOrdersComponent)component;
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Gets the underlying GUI component for this view.
-        /// </summary>
-        public override object GuiElement
-        {
-            get
-            {
-                if (_control == null)
-                {
-                    _control = new ExternalPractitionerMergeAffectedOrdersComponentControl(_component);
-                }
-                return _control;
-            }
-        }
-    }
+		[DataMember]
+		public List<EntityRef> DeactivatedContactPoints;
+	}
 }

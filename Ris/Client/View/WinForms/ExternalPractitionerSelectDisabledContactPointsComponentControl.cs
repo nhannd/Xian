@@ -35,16 +35,16 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
 	/// <summary>
-	/// Provides a Windows Forms user-interface for <see cref="ExternalPractitionerMergeSelectedContactPointsComponent"/>.
+	/// Provides a Windows Forms user-interface for <see cref="ExternalPractitionerSelectDisabledContactPointsComponent"/>.
 	/// </summary>
-	public partial class ExternalPractitionerMergeSelectedContactPointsComponentControl : ApplicationComponentUserControl
+	public partial class ExternalPractitionerSelectDisabledContactPointsComponentControl : ApplicationComponentUserControl
 	{
-		private readonly ExternalPractitionerMergeSelectedContactPointsComponent _component;
+		private readonly ExternalPractitionerSelectDisabledContactPointsComponent _component;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public ExternalPractitionerMergeSelectedContactPointsComponentControl(ExternalPractitionerMergeSelectedContactPointsComponent component)
+		public ExternalPractitionerSelectDisabledContactPointsComponentControl(ExternalPractitionerSelectDisabledContactPointsComponent component)
 			:base(component)
 		{
 			_component = component;

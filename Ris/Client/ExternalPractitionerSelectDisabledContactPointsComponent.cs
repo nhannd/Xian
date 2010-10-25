@@ -42,18 +42,18 @@ using ClearCanvas.Ris.Client.Formatting;
 namespace ClearCanvas.Ris.Client
 {
 	/// <summary>
-	/// Extension point for views onto <see cref="ExternalPractitionerMergeSelectedContactPointsComponent"/>.
+	/// Extension point for views onto <see cref="ExternalPractitionerSelectDisabledContactPointsComponent"/>.
 	/// </summary>
 	[ExtensionPoint]
-	public sealed class ExternalPractitionerMergeSelectedContactPointsComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class ExternalPractitionerSelectDisabledContactPointsComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
 	/// <summary>
-	/// ExternalPractitionerMergeSelectedContactPointsComponent class.
+	/// ExternalPractitionerSelectDisabledContactPointsComponent class.
 	/// </summary>
-	[AssociateView(typeof(ExternalPractitionerMergeSelectedContactPointsComponentViewExtensionPoint))]
-	public class ExternalPractitionerMergeSelectedContactPointsComponent : ApplicationComponent
+	[AssociateView(typeof(ExternalPractitionerSelectDisabledContactPointsComponentViewExtensionPoint))]
+	public class ExternalPractitionerSelectDisabledContactPointsComponent : ApplicationComponent
 	{
 		private class ExternalPractitionerContactPointTable : Table<ExternalPractitionerContactPointDetail>
 		{
@@ -141,7 +141,7 @@ namespace ClearCanvas.Ris.Client
 		private ExternalPractitionerDetail _originalPractitioner;
 		private ExternalPractitionerDetail _duplicatePractitioner;
 
-		public ExternalPractitionerMergeSelectedContactPointsComponent()
+		public ExternalPractitionerSelectDisabledContactPointsComponent()
 		{
 			_table = new ExternalPractitionerContactPointTable();
 			_deactivatedContactPointNotShown = new List<ExternalPractitionerContactPointDetail>();

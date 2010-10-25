@@ -174,12 +174,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="DynamicTableCommonControlFactory.cs" />
-    <Compile Include="ExternalPractitionerMergeAffectedOrderCustomControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ExternalPractitionerMergeAffectedOrderCustomControl.Designer.cs">
-      <DependentUpon>ExternalPractitionerMergeAffectedOrderCustomControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="ExternalPractitionerContactPointDetailsEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -197,13 +191,6 @@
     <Compile Include="ExtendedPropertyChoicesTable.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ExternalPractitionerMergeAffectedOrdersComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ExternalPractitionerMergeAffectedOrdersComponentControl.Designer.cs">
-      <DependentUpon>ExternalPractitionerMergeAffectedOrdersComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ExternalPractitionerMergeAffectedOrdersComponentView.cs" />
     <Compile Include="ExternalPractitionerMergePropertiesComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -211,13 +198,26 @@
       <DependentUpon>ExternalPractitionerMergePropertiesComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ExternalPractitionerMergePropertiesComponentView.cs" />
-    <Compile Include="ExternalPractitionerMergeSelectedContactPointsComponentControl.cs">
+    <Compile Include="ExternalPractitionerReplaceDisabledContactPointsTableItemControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ExternalPractitionerMergeSelectedContactPointsComponentControl.Designer.cs">
-      <DependentUpon>ExternalPractitionerMergeSelectedContactPointsComponentControl.cs</DependentUpon>
+    <Compile Include="ExternalPractitionerReplaceDisabledContactPointsTableItemControl.Designer.cs">
+      <DependentUpon>ExternalPractitionerReplaceDisabledContactPointsTableItemControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExternalPractitionerMergeSelectedContactPointsComponentView.cs" />
+    <Compile Include="ExternalPractitionerReplaceDisabledContactPointsComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ExternalPractitionerReplaceDisabledContactPointsComponentControl.Designer.cs">
+      <DependentUpon>ExternalPractitionerReplaceDisabledContactPointsComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExternalPractitionerReplaceDisabledContactPointsComponentView.cs" />
+    <Compile Include="ExternalPractitionerSelectDisabledContactPointsComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ExternalPractitionerSelectDisabledContactPointsComponentControl.Designer.cs">
+      <DependentUpon>ExternalPractitionerSelectDisabledContactPointsComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExternalPractitionerSelectDisabledContactPointsComponentView.cs" />
     <Compile Include="ExternalPractitionerMergeSelectedDuplicateComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -750,17 +750,17 @@
     <EmbeddedResource Include="ComboBoxCellEditorControl.resx">
       <DependentUpon>ComboBoxCellEditorControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExternalPractitionerMergeAffectedOrderCustomControl.resx">
-      <DependentUpon>ExternalPractitionerMergeAffectedOrderCustomControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ExternalPractitionerMergeAffectedOrdersComponentControl.resx">
-      <DependentUpon>ExternalPractitionerMergeAffectedOrdersComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="ExternalPractitionerMergePropertiesComponentControl.resx">
       <DependentUpon>ExternalPractitionerMergePropertiesComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExternalPractitionerMergeSelectedContactPointsComponentControl.resx">
-      <DependentUpon>ExternalPractitionerMergeSelectedContactPointsComponentControl.cs</DependentUpon>
+    <EmbeddedResource Include="ExternalPractitionerReplaceDisabledContactPointsComponentControl.resx">
+      <DependentUpon>ExternalPractitionerReplaceDisabledContactPointsComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExternalPractitionerReplaceDisabledContactPointsTableItemControl.resx">
+      <DependentUpon>ExternalPractitionerReplaceDisabledContactPointsTableItemControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExternalPractitionerSelectDisabledContactPointsComponentControl.resx">
+      <DependentUpon>ExternalPractitionerSelectDisabledContactPointsComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ExternalPractitionerMergeSelectedDuplicateComponentControl.resx">
       <DependentUpon>ExternalPractitionerMergeSelectedDuplicateComponentControl.cs</DependentUpon>

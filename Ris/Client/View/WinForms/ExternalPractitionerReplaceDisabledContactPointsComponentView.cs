@@ -40,13 +40,13 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="ExternalPractitionerMergeSelectedContactPointsComponent"/>.
+    /// Provides a Windows Forms view onto <see cref="ExternalPractitionerReplaceDisabledContactPointsComponent"/>.
     /// </summary>
-    [ExtensionOf(typeof(ExternalPractitionerMergeSelectedContactPointsComponentViewExtensionPoint))]
-    public class ExternalPractitionerMergeSelectedContactPointsComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(ExternalPractitionerReplaceDisabledContactPointsComponentViewExtensionPoint))]
+    public class ExternalPractitionerReplaceDisabledContactPointsComponentView : WinFormsView, IApplicationComponentView
     {
-        private ExternalPractitionerMergeSelectedContactPointsComponent _component;
-        private ExternalPractitionerMergeSelectedContactPointsComponentControl _control;
+        private ExternalPractitionerReplaceDisabledContactPointsComponent _component;
+        private ExternalPractitionerReplaceDisabledContactPointsComponentControl _control;
 
         #region IApplicationComponentView Members
 
@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (ExternalPractitionerMergeSelectedContactPointsComponent)component;
+            _component = (ExternalPractitionerReplaceDisabledContactPointsComponent)component;
         }
 
         #endregion
@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new ExternalPractitionerMergeSelectedContactPointsComponentControl(_component);
+                    _control = new ExternalPractitionerReplaceDisabledContactPointsComponentControl(_component);
                 }
                 return _control;
             }

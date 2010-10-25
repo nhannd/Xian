@@ -29,38 +29,42 @@
 
 #endregion
 
-using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
-using System.Collections.Generic;
+using System.Windows.Forms;
 
-namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-	[DataContract]
-	public class MergeExternalPractitionerRequest : DataContractBase
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="ExternalPractitionerReplaceDisabledContactPointsComponent"/>.
+	/// </summary>
+	public partial class ExternalPractitionerReplaceDisabledContactPointsComponentControl : ApplicationComponentUserControl
 	{
-		[DataContract]
-		public class ContactPointReplacement : DataContractBase
+		private readonly ExternalPractitionerReplaceDisabledContactPointsComponent _component;
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public ExternalPractitionerReplaceDisabledContactPointsComponentControl(ExternalPractitionerReplaceDisabledContactPointsComponent component)
+			: base(component)
 		{
-			public ContactPointReplacement(EntityRef deactivatedContactPointRef, EntityRef replacementContactPointRef)
-			{
-				this.DeactivatedContactPointRef = deactivatedContactPointRef;
-				this.ReplacementContactPointRef = replacementContactPointRef;
-			}
+			_component = component;
+			InitializeComponent();
 
-			[DataMember]
-			public EntityRef DeactivatedContactPointRef;
+			_instruction.DataBindings.Add("Text", _component, "Instruction", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			[DataMember]
-			public EntityRef ReplacementContactPointRef;
+			_table.Items.AddRange(_component.ReplaceDisabledContactPointsTableItems);
+			_table.DataBindings.Add("Selection", _component, "ValidationPlaceHolder", true, DataSourceUpdateMode.OnPropertyChanged);
+			_component.AllPropertiesChanged += OnAllPropertiesChanged;
+
+			_component.ItemUpdateStarted += delegate { _countsProgress.Show(); };
+			_component.ItemUpdateComplete += delegate { _countsProgress.Hide(); };
 		}
 
-		[DataMember]
-		public EntityRef DuplicatePractitionerRef;
-
-		[DataMember]
-		public ExternalPractitionerDetail MergedPractitioner;
-
-		[DataMember]
-		public List<ContactPointReplacement> ContactPointReplacements;
+		private void OnAllPropertiesChanged(object sender, System.EventArgs e)
+		{
+			_table.Items.Clear();
+			_table.Items.AddRange(_component.ReplaceDisabledContactPointsTableItems);
+		}
 	}
 }
