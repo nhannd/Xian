@@ -32,14 +32,13 @@
 using System.Collections.Generic;
 using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
 	/// <summary>
 	/// Implementation of <see cref="IOrderBroker"/>. See OrderBroker.hbm.xml for queries.
 	/// </summary>
-	public partial class OrderBroker : IOrderBroker
+	public partial class OrderBroker
 	{
 		#region IOrderBroker Members
 
@@ -50,14 +49,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			return (Order)q.UniqueResult();
 		}
 
-		public IList<Order> FindByOrderingPractitioner(ExternalPractitioner practitioner)
-		{
-			var q = this.GetNamedHqlQuery("ordersForOrderingPractitioner");
-			q.SetParameter(0, practitioner);
-			return CollectionUtils.Unique(q.List<Order>());
-		}
-
-		public IList<Order> FindByResultRecipient(ResultRecipientSearchCriteria recipientSearchCriteria, OrderSearchCriteria orderSearchCriteria)
+		public IList<Order> FindByResultRecipient(OrderSearchCriteria orderSearchCriteria, ResultRecipientSearchCriteria recipientSearchCriteria)
 		{
 			var hqlFrom = new HqlFrom(typeof(Order).Name, "o");
 			hqlFrom.Joins.Add(new HqlJoin("o.ResultRecipients", "rr"));
@@ -66,19 +58,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("rr", recipientSearchCriteria));
 			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("o", orderSearchCriteria));
 			return ExecuteHql<Order>(query);
-		}
-
-		public int CountByResultRecipient(ResultRecipientSearchCriteria recipientSearchCriteria, OrderSearchCriteria orderSearchCriteria)
-		{
-			var hqlSelect = new HqlSelect("count(*)");
-
-			var hqlFrom = new HqlFrom(typeof(Order).Name, "o");
-			hqlFrom.Joins.Add(new HqlJoin("o.ResultRecipients", "rr"));
-
-			var query = new HqlProjectionQuery(hqlFrom, new[] { hqlSelect });
-			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("rr", recipientSearchCriteria));
-			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("o", orderSearchCriteria));
-			return (int)ExecuteHqlUnique<long>(query);
 		}
 
 		#endregion

@@ -56,9 +56,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_table.Items.AddRange(_component.ReplaceDisabledContactPointsTableItems);
 			_table.DataBindings.Add("Selection", _component, "ValidationPlaceHolder", true, DataSourceUpdateMode.OnPropertyChanged);
 			_component.AllPropertiesChanged += OnAllPropertiesChanged;
-
-			_component.ItemUpdateStarted += delegate { _countsProgress.Show(); };
-			_component.ItemUpdateComplete += delegate { _countsProgress.Hide(); };
 		}
 
 		private void OnAllPropertiesChanged(object sender, System.EventArgs e)

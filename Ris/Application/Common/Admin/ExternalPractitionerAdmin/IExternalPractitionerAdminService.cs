@@ -101,8 +101,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 		/// <summary>
 		/// Loads all form data needed to merge two practitioners.
 		/// </summary>
-		[OperationContract]
-		LoadMergeDuplicatePractitionerFormDataResponse LoadMergeDuplicatePractitionerFormData(LoadMergeDuplicatePractitionerFormDataRequest request);
+		//[OperationContract]
+		//LoadMergeDuplicatePractitionerFormDataResponse LoadMergeDuplicatePractitionerFormData(LoadMergeDuplicatePractitionerFormDataRequest request);
 
 		/// <summary>
 		/// Loads all form data needed to merge two contact points.
@@ -121,11 +121,5 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 		/// </summary>
 		[OperationContract]
 		LoadMergeExternalPractitionerFormDataResponse LoadMergeExternalPractitionerFormData(LoadMergeExternalPractitionerFormDataRequest request);
-
-		/// <summary>
-		/// Gets the number of active orders for each specified contact point.
-		/// </summary>
-		[OperationContract] 
-		GetActiveOrdersCountsForContactPointsResponse GetActiveOrdersCountsForContactPoints(GetActiveOrdersCountsForContactPointsRequest request);
 	}
 }

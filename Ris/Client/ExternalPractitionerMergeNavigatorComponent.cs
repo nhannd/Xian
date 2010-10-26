@@ -36,6 +36,7 @@ using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -82,8 +83,6 @@ namespace ClearCanvas.Ris.Client
 
 			_selectedDuplicateComponent.SelectedPractitionerChanged += delegate { this.ForwardEnabled = _selectedDuplicateComponent.HasValidationErrors == false; };
 			_selectContactPointsComponent.ContactPointSelectionChanged += delegate { this.ForwardEnabled = _selectContactPointsComponent.HasValidationErrors == false; };
-			_replaceContactPointsComponent.ItemUpdateStarted += delegate { this.ForwardEnabled = false; this.BackEnabled = false; };
-			_replaceContactPointsComponent.ItemUpdateComplete += delegate { this.ForwardEnabled = true; this.BackEnabled = true; };
 
 			base.Start();
 
@@ -115,13 +114,22 @@ namespace ClearCanvas.Ris.Client
 
 			try
 			{
+				var defaultContactPoint = CollectionUtils.SelectFirst(_mergedPractitioner.ContactPoints, cp => cp.IsDefaultContactPoint);
+				var deactivatedContactPoints = CollectionUtils.Select(_mergedPractitioner.ContactPoints, cp => cp.Deactivated);
+
 				Platform.GetService(
 					delegate(IExternalPractitionerAdminService service)
 					{
 						var request = new MergeExternalPractitionerRequest
 						{
-							MergedPractitioner = _mergedPractitioner,
-							DuplicatePractitionerRef = _selectedDuplicate.PractitionerRef,
+							RightPractitionerRef = _mergedPractitioner.PractitionerRef,
+							LeftPractitionerRef = _selectedDuplicate.PractitionerRef,
+							Name = _mergedPractitioner.Name,
+							LicenseNumber = _mergedPractitioner.LicenseNumber,
+							BillingNumber = _mergedPractitioner.BillingNumber,
+							ExtendedProperties = _mergedPractitioner.ExtendedProperties,
+							DefaultContactPointRef = defaultContactPoint == null ? null : defaultContactPoint.ContactPointRef,
+							DeactivatedContactPointRefs = CollectionUtils.Map(deactivatedContactPoints, (ExternalPractitionerContactPointDetail cp) => cp.ContactPointRef),
 							ContactPointReplacements = _replaceContactPointsComponent.ContactPointReplacements
 						};
 

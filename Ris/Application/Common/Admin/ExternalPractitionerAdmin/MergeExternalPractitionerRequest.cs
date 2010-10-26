@@ -55,10 +55,28 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 		}
 
 		[DataMember]
-		public EntityRef DuplicatePractitionerRef;
+		public EntityRef RightPractitionerRef;
 
 		[DataMember]
-		public ExternalPractitionerDetail MergedPractitioner;
+		public EntityRef LeftPractitionerRef;
+
+		[DataMember]
+		public PersonNameDetail Name;
+
+		[DataMember]
+		public string LicenseNumber;
+
+		[DataMember]
+		public string BillingNumber;
+
+		[DataMember]
+		public Dictionary<string, string> ExtendedProperties;
+
+		[DataMember]
+		public EntityRef DefaultContactPointRef;
+
+		[DataMember]
+		public List<EntityRef> DeactivatedContactPointRefs;
 
 		[DataMember]
 		public List<ContactPointReplacement> ContactPointReplacements;

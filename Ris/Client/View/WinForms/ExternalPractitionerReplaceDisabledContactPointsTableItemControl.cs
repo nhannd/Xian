@@ -50,8 +50,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_replacedWith.DataSource = _item.NewContactPointChoices;
 			_replacedWith.Format += delegate(object sender, ListControlConvertEventArgs args) { args.Value = _item.FormatNewContactPointChoice(args.ListItem); };
 			_replacedWith.DataBindings.Add("Value", _item, "SelectedNewContactPoint", true, DataSourceUpdateMode.OnPropertyChanged);
-
-			_affectedOrderCount.DataBindings.Add("Text", _item, "AffectedOrdersCount", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 	}
 

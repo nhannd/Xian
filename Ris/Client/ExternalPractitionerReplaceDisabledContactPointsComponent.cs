@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -37,7 +36,6 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -59,8 +57,6 @@ namespace ClearCanvas.Ris.Client
 		private List<ExternalPractitionerContactPointDetail> _activeContactPoints;
 		private readonly List<MergeExternalPractitionerRequest.ContactPointReplacement> _contactPointReplacements;
 		private readonly List<ExternalPractitionerReplaceDisabledContactPointsTableItem> _tableItems;
-		private event EventHandler<EventArgs> _itemUpdateStarted;
-		private event EventHandler<EventArgs> _itemUpdateComplete;
 
 		/// <summary>
 		/// Constructor.
@@ -73,18 +69,6 @@ namespace ClearCanvas.Ris.Client
 
 		// Dummy property for binding the validation icon to.
 		public ExternalPractitionerReplaceDisabledContactPointsTableItem ValidationPlaceHolder { get; set; }
-
-		public event EventHandler<EventArgs> ItemUpdateStarted
-		{
-			add { _itemUpdateStarted += value; }
-			remove { _itemUpdateStarted -= value; }
-		}
-
-		public event EventHandler<EventArgs> ItemUpdateComplete
-		{
-			add { _itemUpdateComplete += value; }
-			remove { _itemUpdateComplete -= value; }
-		}
 
 		public List<ExternalPractitionerContactPointDetail> DeactivatedContactPoints
 		{
@@ -112,7 +96,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				UpdateTableItems();
+				UpdateContactPointReplacementMap();
 				return _contactPointReplacements;
 			}
 		}
@@ -164,10 +148,6 @@ namespace ClearCanvas.Ris.Client
 
 		private void UpdateTableItems()
 		{
-			EventsHelper.Fire(_itemUpdateStarted, this, EventArgs.Empty);
-
-			UpdateContactPointReplacementMap();
-
 			_tableItems.Clear();
 			foreach (var deactivatedContactPoint in this.DeactivatedContactPoints)
 			{
@@ -177,28 +157,6 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			NotifyAllPropertiesChanged();
-
-			Async.Request(this,
-				(IExternalPractitionerAdminService service) =>
-				{
-					var request = new GetActiveOrdersCountsForContactPointsRequest(
-						CollectionUtils.Map<ExternalPractitionerContactPointDetail, EntityRef, List<EntityRef>>(
-							this.DeactivatedContactPoints,
-							contactPoint => contactPoint.ContactPointRef));
-					return service.GetActiveOrdersCountsForContactPoints(request);
-				},
-				response =>
-				{
-					foreach (var affectedOrderSummary in response.AffectedOrderSummaries)
-					{
-						var affectedTableItem = CollectionUtils.SelectFirst(
-							_tableItems, tableItem => tableItem.OldContactPoint.ContactPointRef == affectedOrderSummary.ContactPointRef);
-						affectedTableItem.SetAffectedOrdersCount(affectedOrderSummary.AffectedOrders);
-					}
-
-					NotifyAllPropertiesChanged();
-					EventsHelper.Fire(_itemUpdateComplete, this, EventArgs.Empty);
-				});
 		}
 	}
 }
