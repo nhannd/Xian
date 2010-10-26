@@ -403,6 +403,7 @@ namespace ClearCanvas.Ris.Client
 
 					_visitsLoaded = true;
 
+					this.Modified = false; // bug 6299: ensure we begin without modifications
 					if (_mode != Mode.NewOrder)
 						LoadOrderRequisition();
 				});
@@ -432,6 +433,7 @@ namespace ClearCanvas.Ris.Client
 
 					_formDataLoaded = true;
 
+					this.Modified = false; // bug 6299: ensure we begin without modifications
 					if (_mode != Mode.NewOrder)
 						LoadOrderRequisition();
 				});
@@ -464,6 +466,7 @@ namespace ClearCanvas.Ris.Client
 					}
 
 					UpdateVisits();
+					this.Modified = false; // bug 6299: ensure we begin without modifications
 				});
 		}
 
