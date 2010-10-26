@@ -335,5 +335,10 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			}
 			return DragDropKind.None;
 		}
+
+		public override string ToString()
+		{
+			return String.IsNullOrEmpty(Label) ? "<no label>" : Label;
+		}
 	}
 }

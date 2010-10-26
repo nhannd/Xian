@@ -85,7 +85,13 @@ namespace ClearCanvas.Desktop.View.WinForms.Configuration
 				if (selectedNode != null)
 				{
 					_lblLabel.Text = selectedNode.CanonicalLabel;
-					_lblTooltip.Text = selectedNode.Tooltip;
+
+					string tooltip = selectedNode.Tooltip;
+					if (String.IsNullOrEmpty(tooltip))
+						tooltip = selectedNode.CanonicalLabel;
+
+					_toolTip.SetToolTip(_lblLabel, tooltip);
+					_toolTip.SetToolTip(_pnlIcon, tooltip);
 
 					// destroy old icon
 					Image image = _pnlIcon.BackgroundImage;
@@ -164,11 +170,6 @@ namespace ClearCanvas.Desktop.View.WinForms.Configuration
 			{
 				bindingTreeView.DoDragDrop(selection.Item, DragDropEffects.All);
 			}
-		}
-
-		private void OnLabelTooltipTextChanged(object sender, EventArgs e)
-		{
-			_lblTooltip.Visible = !string.IsNullOrEmpty(_lblTooltip.Text);
 		}
 
 		private void OnLyoNodePropertiesExtensionsSizeChanged(object sender, EventArgs e)

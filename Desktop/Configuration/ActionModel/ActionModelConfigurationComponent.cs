@@ -42,6 +42,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 	[ExtensionPoint]
 	public sealed class ActionModelConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> {}
 
+	//TODO (CR Sept 2010): Name?
 	/// <summary>
 	/// View model interface for the <see cref="ActionModelConfigurationComponent"/>.
 	/// </summary>
@@ -131,7 +132,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 					actionSet = actionSet.Union(concreteDesktopWindow.DesktopTools.Actions);
 			}
 
-			_actionModel = ActionModelSettings.Default.BuildAbstractActionModel(_namespace, _site, actionSet.Select(a => a.Path.Site == site && a.Permissible));
+			_actionModel = ActionModelSettings.Default.BuildAbstractActionModel(_namespace, _site, actionSet.Select(a => a.Path.Site == site));
 			_actionModelTreeRoot = new AbstractActionModelTreeRoot(_site);
 
 			_enforceFlatActionModel = flatActionModel;

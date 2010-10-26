@@ -284,6 +284,11 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			return base.AcceptDrop(dropData, dragDropKind, dragDropPosition);
 		}
 
+		public override string ToString()
+		{
+			return String.Format("{0} ({1} children)", base.ToString(), Children.Count);
+		}
+
 		private class Binding : TreeItemBinding<AbstractActionModelTreeNode>
 		{
 			public Binding()
@@ -297,7 +302,8 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 				this.IconSetProvider = (node => node.IconSet);
 				this.ResourceResolverProvider = (node => node.ResourceResolver);
 
-				this.TooltipTextProvider = (node => node.Tooltip);
+				//Tooltips in the tree itself are actually really annoying.
+				//this.TooltipTextProvider = (node => node.Tooltip);
 
 				this.IsExpandedGetter = (node => node.IsExpanded);
 				this.IsExpandedSetter = ((node, v) => node.IsExpanded = v);

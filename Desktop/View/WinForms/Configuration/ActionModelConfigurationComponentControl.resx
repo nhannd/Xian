@@ -133,7 +133,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="_lyoNodePropertiesExtensions.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 81</value>
+    <value>10, 63</value>
   </data>
   <data name="_lyoNodePropertiesExtensions.Size" type="System.Drawing.Size, System.Drawing">
     <value>224, 0</value>
@@ -155,42 +155,6 @@
   </data>
   <data name="&gt;&gt;_lyoNodePropertiesExtensions.ZOrder" xml:space="preserve">
     <value>0</value>
-  </data>
-  <data name="_lblTooltip.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="_lblTooltip.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Top</value>
-  </data>
-  <data name="_lblTooltip.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="_lblTooltip.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 63</value>
-  </data>
-  <data name="_lblTooltip.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 0, 5</value>
-  </data>
-  <data name="_lblTooltip.Size" type="System.Drawing.Size, System.Drawing">
-    <value>39, 18</value>
-  </data>
-  <data name="_lblTooltip.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="_lblTooltip.Text" xml:space="preserve">
-    <value>Tooltip</value>
-  </data>
-  <data name="&gt;&gt;_lblTooltip.Name" xml:space="preserve">
-    <value>_lblTooltip</value>
-  </data>
-  <data name="&gt;&gt;_lblTooltip.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_lblTooltip.Parent" xml:space="preserve">
-    <value>_pnlNodeProperties</value>
-  </data>
-  <data name="&gt;&gt;_lblTooltip.ZOrder" xml:space="preserve">
-    <value>1</value>
   </data>
   <data name="_lblLabel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -283,7 +247,7 @@
     <value>_pnlNodeProperties</value>
   </data>
   <data name="&gt;&gt;_pnlTitleBar.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>1</value>
   </data>
   <data name="_pnlNodeProperties.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -315,6 +279,12 @@
   <data name="&gt;&gt;_pnlNodeProperties.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="_pnlSplit.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="_pnlSplit.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
   <data name="_actionModelTree.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
@@ -341,12 +311,6 @@
   </data>
   <data name="&gt;&gt;_actionModelTree.ZOrder" xml:space="preserve">
     <value>0</value>
-  </data>
-  <data name="_pnlSplit.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="_pnlSplit.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
   </data>
   <data name="&gt;&gt;_pnlSplit.Panel1.Name" xml:space="preserve">
     <value>_pnlSplit.Panel1</value>
@@ -393,6 +357,9 @@
   <data name="&gt;&gt;_pnlSplit.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <metadata name="_toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -401,6 +368,12 @@
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
     <value>520, 387</value>
+  </data>
+  <data name="&gt;&gt;_toolTip.Name" xml:space="preserve">
+    <value>_toolTip</value>
+  </data>
+  <data name="&gt;&gt;_toolTip.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolTip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>ActionModelConfigurationComponentControl</value>

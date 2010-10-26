@@ -113,6 +113,7 @@
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeRoot.cs" />
     <Compile Include="Configuration\ActionModel\ActionModelConfigurationComponent.cs" />
     <Compile Include="Configuration\ActionModel\ActionModelConfigurationComponentTool.cs" />
+    <Compile Include="Configuration\ActionModel\GrayscaleIconSet.cs" />
     <Compile Include="Configuration\ActionModel\NodePropertiesValidationRule.cs" />
     <Compile Include="Configuration\ActionModel\NodePropertiesComponent.cs" />
     <Compile Include="Configuration\ActionModel\BasicActionModelConfigurationComponentTools.cs" />
