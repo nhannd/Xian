@@ -30,8 +30,10 @@
 #endregion
 
 using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Enterprise.Core;
+using Iesi.Collections.Generic;
 
 
 namespace ClearCanvas.Healthcare {
@@ -71,6 +73,19 @@ namespace ClearCanvas.Healthcare {
 			//run a query to find order notes
 			//TODO: using PersistenceScope is maybe not ideal but no other option right now (fix #3472)
 			return PersistenceScope.CurrentContext.GetBroker<IOrderNoteBroker>().Find(where);
+		}
+
+		/// <summary>
+		/// Constructs a new General order note with the specified properties.
+		/// </summary>
+		/// <param name="order"></param>
+		/// <param name="author"></param>
+		/// <param name="body"></param>
+		/// <returns></returns>
+		public static OrderNote CreateGeneralNote(Order order, Staff author, string body)
+		{
+			return new OrderNote("General", body, false, Platform.Time, author,
+				null, Platform.Time, false, false, new HashedSet<NotePosting>(), order);
 		}
 
         /// <summary>

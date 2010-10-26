@@ -301,11 +301,15 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			sourceOrder.Merge(new OrderMergeInfo(this.CurrentUserStaff, destinationOrder));
 
 			// Add a orderNote to the source Order
-			var noteMessage = string.Format("Auto-generated note.  This order was merged into {0}", destinationOrder.AccessionNumber);
-			var newNote = new OrderNote("General", noteMessage, false, Platform.Time, this.CurrentUserStaff,
-				null, Platform.Time, true, false, new HashedSet<NotePosting>(),
-				sourceOrder);
-			this.PersistenceContext.Lock(newNote, DirtyState.New);
+			var sourceNote = OrderNote.CreateGeneralNote(sourceOrder, this.CurrentUserStaff,
+				string.Format("Auto-generated note.  This order was merged into {0}", destinationOrder.AccessionNumber));
+			PersistenceContext.Lock(sourceNote, DirtyState.New);
+
+			// bug 7364: Add a orderNote to the dest Order, to compensate for the lack of
+			// a back-link
+			var destNote = OrderNote.CreateGeneralNote(destinationOrder, this.CurrentUserStaff,
+				string.Format("Auto-generated note.  Order {0} was merged into this order.", sourceOrder.AccessionNumber));
+			PersistenceContext.Lock(destNote, DirtyState.New);
 
 			CreateLogicalHL7Event(sourceOrder, LogicalHL7EventType.OrderCancelled);
 			CreateLogicalHL7Event(destinationOrder, LogicalHL7EventType.OrderModified);
