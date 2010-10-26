@@ -462,6 +462,8 @@ namespace ClearCanvas.Ris.Client
 					{
 						UpdateDiagnosticService(_selectedDiagnosticService);
 					}
+
+					UpdateVisits();
 				});
 		}
 
@@ -1088,19 +1090,21 @@ namespace ClearCanvas.Ris.Client
 			var performingFacilities = CollectionUtils.Map<ProcedureRequisition, FacilitySummary>(
 				_proceduresTable.Items, item => item.PerformingFacility);
 
-			_applicableVisits = CollectionUtils.Select(
-				_allVisits,
-				visit => CollectionUtils.Contains(
-							performingFacilities,
-							facility => visit.VisitNumber.AssigningAuthority.Code == facility.InformationAuthority.Code));
+			_applicableVisits = performingFacilities.Count <= 0
+				? _allVisits
+				: CollectionUtils.Select(
+					_allVisits,
+					visit => CollectionUtils.Contains(
+						performingFacilities,
+						facility => visit.VisitNumber.AssigningAuthority.Code == facility.InformationAuthority.Code));
 
 			NotifyPropertyChanged("ActiveVisits");
 
 			// Change to ActiveVisits may have caused the SelectedVisit to update, so use either the saved selectedVisit
 			// if it is still applicable, or empty selection.
-			this.SelectedVisit = CollectionUtils.Contains(_applicableVisits, visit => visit == selectedVisit)
-									? selectedVisit
-									: null;
+			this.SelectedVisit = selectedVisit != null 
+				? CollectionUtils.SelectFirst(_applicableVisits, visit => EntityRef.Equals(visit.VisitRef, selectedVisit.VisitRef, true)) 
+				: null;
 		}
 
 		private OrderRequisition BuildOrderRequisition()
