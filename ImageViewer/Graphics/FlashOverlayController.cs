@@ -196,23 +196,20 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			public FlashOverlayGraphic(FlashOverlayController controller) : base(controller.Rows, controller.Columns, controller.GetPixelData) {}
 
+			protected override SpatialTransform CreateSpatialTransform()
+			{
+				return new InvariantSpatialTransform(this);
+			}
+
 			public override void OnDrawing()
 			{
-				// This method makes the graphic one time use only... but that's okay because we dispose of it almost immediately
-				SpatialTransform transform = base.SpatialTransform;
-
-				PointF srcXAxis = new PointF(1, 0);
-				PointF srcOrigin = new PointF(0, 0);
-				PointF dstOrigin = transform.ConvertToDestination(srcOrigin);
-
-				// figure out where the positive x axis went to determine the cumulative rotation
-				transform.RotationXY = -(int) Vector.SubtendedAngle(transform.ConvertToDestination(srcXAxis) - new SizeF(dstOrigin), srcOrigin, srcXAxis);
-
-				transform.TranslationX = (base.ParentPresentationImage.ClientRectangle.Width - base.Columns)/2 - dstOrigin.X;
-				transform.TranslationY = (base.ParentPresentationImage.ClientRectangle.Height - base.Rows)/2 - dstOrigin.Y;
-
-				transform.Scale = 1/transform.CumulativeScale;
-
+				if (base.ParentPresentationImage != null)
+				{
+					var clientRectangle = base.ParentPresentationImage.ClientRectangle;
+					var spatialTransform = base.SpatialTransform;
+					spatialTransform.TranslationX = (clientRectangle.Width - Columns)/2f;
+					spatialTransform.TranslationY = (clientRectangle.Height - Rows)/2f;
+				}
 				base.OnDrawing();
 			}
 		}
