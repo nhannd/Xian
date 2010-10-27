@@ -33,7 +33,6 @@ using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Threading;
 using ClearCanvas.Healthcare.Workflow.OrderEntry;
-using Iesi.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
@@ -263,8 +262,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			ValidateOrderReplacable(orderToReplace);
 
 			// reason is optional
-			var reason = (request.CancelReason != null) ?
+			var reason = (request.CancelReason != null) ? 
 				EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.CancelReason, this.PersistenceContext) : null;
+
+			// duplicate any attachments in the requisition,
+			// so that the replacement order gets a copy while the replaced order
+			// retains the association to the originals
+			DuplicateAttachmentsForOrderReplace(orderToReplace, request.Requisition);
 
 			// place new order
 			var newOrder = PlaceOrderHelper(request.Requisition);
@@ -315,42 +319,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			CreateLogicalHL7Event(destinationOrder, LogicalHL7EventType.OrderModified);
 
 			return new MergeOrderResponse();
-		}
-
-		private MergeOrderResponse MergeOrderDryRun(MergeOrderRequest request)
-		{
-			var response = new MergeOrderResponse();
-
-			try
-			{
-				// create a new persistence scope, so that we do not use the scope inherited by the service
-				using (var scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.RequiresNew))
-				{
-					var srcOrder = this.PersistenceContext.Load<Order>(request.SourceOrderRef);
-					var destOrder = this.PersistenceContext.Load<Order>(request.DestinationOrderRef);
-
-					// Merge the source order into the destination order.
-					srcOrder.Merge(new OrderMergeInfo(this.CurrentUserStaff, destOrder));
-
-					// try to synch state to see if DB will accept changes
-					scope.Context.SynchState();
-
-					var orderAssembler = new OrderAssembler();
-					response.DryRunMergedOrder = orderAssembler.CreateOrderDetail(destOrder, 
-						new OrderAssembler.CreateOrderDetailOptions(true, true, true, null, true, true, true), scope.Context);
-
-					//note: do not call scope.Complete() under any circumstances - we want this transaction to rollback
-				}
-
-				return response;
-			}
-			catch (WorkflowException e)
-			{
-				// changes not accepted, probably because two invalid orders are being merged.
-				response.DryRunFailureReason = e.Message;
-			}
-
-			return response;
 		}
 
 		[UpdateOperation]
@@ -612,6 +580,42 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			operation.Execute(order, info);
 		}
 
+		private MergeOrderResponse MergeOrderDryRun(MergeOrderRequest request)
+		{
+			var response = new MergeOrderResponse();
+
+			try
+			{
+				// create a new persistence scope, so that we do not use the scope inherited by the service
+				using (var scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.RequiresNew))
+				{
+					var srcOrder = this.PersistenceContext.Load<Order>(request.SourceOrderRef);
+					var destOrder = this.PersistenceContext.Load<Order>(request.DestinationOrderRef);
+
+					// Merge the source order into the destination order.
+					srcOrder.Merge(new OrderMergeInfo(this.CurrentUserStaff, destOrder));
+
+					// try to synch state to see if DB will accept changes
+					scope.Context.SynchState();
+
+					var orderAssembler = new OrderAssembler();
+					response.DryRunMergedOrder = orderAssembler.CreateOrderDetail(destOrder,
+						new OrderAssembler.CreateOrderDetailOptions(true, true, true, null, true, true, true), scope.Context);
+
+					//note: do not call scope.Complete() under any circumstances - we want this transaction to rollback
+				}
+
+				return response;
+			}
+			catch (WorkflowException e)
+			{
+				// changes not accepted, probably because two invalid orders are being merged.
+				response.DryRunFailureReason = e.Message;
+			}
+
+			return response;
+		}
+
 		private string GetAccessionNumberForOrder(OrderRequisition requisition)
 		{
 			// if this is a downtime requisition, validate the downtime A#, otherwise obtain a new A#
@@ -701,5 +705,29 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 					req.Cancelled ? LogicalHL7EventType.ProcedureCancelled : LogicalHL7EventType.ProcedureModified);
 			}
 		}
+
+		/// <summary>
+		/// Creates duplicates of any attached documents in the order that also appear in the
+		/// requisition, and then replaces the references in the requisition to refer to the
+		/// duplicates.
+		/// </summary>
+		/// <param name="order"></param>
+		/// <param name="requisition"></param>
+		private void DuplicateAttachmentsForOrderReplace(Order order, OrderRequisition requisition)
+		{
+			foreach (var attachment in order.Attachments)
+			{
+				var summary = CollectionUtils.SelectFirst(requisition.Attachments,
+								  s => s.Document.DocumentRef.Equals(attachment.Document.GetRef(), true));
+
+				if (summary != null)
+				{
+					var dup = attachment.Document.Duplicate(AttachmentStore.GetClient());
+					PersistenceContext.Lock(dup, DirtyState.New);
+					summary.Document.DocumentRef = dup.GetRef();
+				}
+			}
+		}
+
 	}
 }

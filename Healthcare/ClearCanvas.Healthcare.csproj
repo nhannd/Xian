@@ -99,6 +99,8 @@
     <Compile Include="Brokers\IWorklistItemBroker.cs" />
     <Compile Include="CannedText.cs" />
     <Compile Include="Department.cs" />
+    <Compile Include="FtpAttachedDocumentStore.cs" />
+    <Compile Include="IAttachedDocumentStore.cs" />
     <Compile Include="Imex\DepartmentImex.cs" />
     <Compile Include="OrderMergeInfo.cs" />
     <Compile Include="ProtocolingWorklistItemSearchCriteria.cs" />

@@ -11,7 +11,7 @@
 
 		<property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true" access="nosetter.camelcase-underscore"/>
 
-    <property name="ContentUrl" column="ContentUrl_" type="string" length="1024" not-null="true"/>
+    <property name="ContentUrl" column="ContentUrl_" type="string" length="1024" not-null="true" access="nosetter.camelcase-underscore"/>
 
 	</class>
 </hibernate-mapping>

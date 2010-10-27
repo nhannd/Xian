@@ -34,7 +34,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare {
 
@@ -42,8 +41,21 @@ namespace ClearCanvas.Healthcare {
 	/// <summary>
 	/// AttachedDocument entity
 	/// </summary>
-	public partial class AttachedDocument : ClearCanvas.Enterprise.Core.Entity
+	public partial class AttachedDocument
 	{
+		/// <summary>
+		/// Copy constructor that creates either an exact copy, or an "unprocessed" copy.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="unprocessed"></param>
+		protected AttachedDocument(AttachedDocument source, bool unprocessed)
+		{
+			_creationTime = unprocessed ? Platform.Time : source.CreationTime;
+			_mimeType = source.MimeType;
+	  		_fileExtension = source.FileExtension;
+
+			_contentUrl = unprocessed ? null : source.ContentUrl;
+		}
 	
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
@@ -51,6 +63,35 @@ namespace ClearCanvas.Healthcare {
 		/// </summary>
 		private void CustomInitialize()
 		{
+		}
+
+		/// <summary>
+		/// Duplicates this document, including duplicating the remote resource.
+		/// </summary>
+		/// <returns></returns>
+		public virtual AttachedDocument Duplicate(IAttachedDocumentStore documentStore)
+		{
+			string tempFile = null;
+
+			try
+			{
+				// get the associated remote file to a temp local file
+				tempFile = GetFile(documentStore);
+
+				// create a copy of the AttachedDocument object
+				var copy = CreateUnprocessedCopy();
+
+				// use local file to create remote file for duplicate
+				copy.PutFile(documentStore, tempFile);
+
+				return copy;
+			}
+			finally
+			{
+				// ensure any temp file is deleted
+				if (tempFile != null)
+					File.Delete(tempFile);
+			}
 		}
 
 		public virtual DateTime? DocumentReceivedTime
@@ -63,7 +104,6 @@ namespace ClearCanvas.Healthcare {
 		/// </summary>
 		public virtual void Attach()
 		{
-			return;
 		}
 
 		/// <summary>
@@ -71,7 +111,6 @@ namespace ClearCanvas.Healthcare {
 		/// </summary>
 		public virtual void Detach()
 		{
-			
 		}
 
 		/// <summary>
@@ -88,6 +127,37 @@ namespace ClearCanvas.Healthcare {
 		}
 
 		/// <summary>
+		/// Creates an unprocessed copy of this instance.
+		/// </summary>
+		/// <returns></returns>
+		public virtual AttachedDocument CreateUnprocessedCopy()
+		{
+			// derived classes may implement support
+			throw new NotSupportedException();
+		}
+
+		/// <summary>
+		/// Gets the file associated with this attached document, from the document store.
+		/// </summary>
+		/// <returns></returns>
+		public virtual string GetFile(IAttachedDocumentStore documentStore)
+		{
+			return documentStore.GetDocument(_contentUrl);
+		}
+
+		/// <summary>
+		/// Sets the file associated with this attached document, and stores a copy to the document store.
+		/// </summary>
+		/// <returns></returns> 
+		public virtual void PutFile(IAttachedDocumentStore documentStore, string localFilePath)
+		{
+			_contentUrl = BuildContentUrl(this, "/");
+			documentStore.PutDocument(_contentUrl, localFilePath);
+		}
+
+
+
+		/// <summary>
 		/// Shifts the object in time by the specified number of minutes, which may be negative or positive.
 		/// </summary>
 		/// <remarks>
@@ -102,7 +172,7 @@ namespace ClearCanvas.Healthcare {
 			_creationTime = _creationTime.AddMinutes(minutes);
 		}
 
-		public static string BuildContentUrl(AttachedDocument document, string pathDelimiter)
+		private static string BuildContentUrl(AttachedDocument document, string pathDelimiter)
 		{
 			var builder = new StringBuilder();
 			builder.Append(document.CreationTime.Year.ToString());
@@ -111,7 +181,7 @@ namespace ClearCanvas.Healthcare {
 			builder.Append(pathDelimiter);
 			builder.Append(document.CreationTime.Day.ToString());
 			builder.Append(pathDelimiter);
-			builder.AppendFormat("{0}.{1}", document.GetRef().ToString(false, false), document.FileExtension);
+			builder.AppendFormat("{0}.{1}", Guid.NewGuid().ToString("D"), document.FileExtension);
 			return builder.ToString();
 		}
 	}
