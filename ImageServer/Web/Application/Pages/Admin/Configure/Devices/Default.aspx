@@ -1,4 +1,4 @@
-<!--
+<%--
 #region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
@@ -29,7 +29,7 @@
 // OF SUCH DAMAGE.
 
 #endregion
--->
+--%>
 
 <%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true"
     EnableEventValidation="false" CodeBehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.Default" %>
