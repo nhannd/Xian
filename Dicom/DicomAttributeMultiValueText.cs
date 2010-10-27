@@ -2,54 +2,11 @@
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
+// http://www.clearcanvas.ca
 //
-// Redistribution and use in source and binary forms, with or without modification, 
-// are permitted provided that the following conditions are met:
-//
-//    * Redistributions of source code must retain the above copyright notice, 
-//      this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above copyright notice, 
-//      this list of conditions and the following disclaimer in the documentation 
-//      and/or other materials provided with the distribution.
-//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
-//      may be used to endorse or promote products derived from this software without 
-//      specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
-// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
-// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
-// OF SUCH DAMAGE.
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
-#endregion
-
-#region mDCM License
-// mDCM: A C# DICOM library
-//
-// Copyright (c) 2008  Colby Dillion
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-//
-// Author:
-//    Colby Dillion (colby.dillion@gmail.com)
 #endregion
 
 using System;
@@ -70,17 +27,6 @@ namespace ClearCanvas.Dicom
         #region Private Members
 
         protected string[] _values = new string[0];
-
-        /// <summary>
-        /// Value validator to be used to verify a string can be set to the attribute.
-        /// Derived attribute classes should provide its own validator.
-        /// 
-        /// </summary>
-        virtual protected StringValueValidator Validator
-        {
-            get { return null; }
-        }
-
 
         #endregion
 
@@ -106,26 +52,26 @@ namespace ClearCanvas.Dicom
             valueArray = item.GetString();
 
             // store the length before removing pad chars
-            this.StreamLength = (uint) valueArray.Length;
+            StreamLength = (uint) valueArray.Length;
 
             // Saw some Osirix images that had padding on SH attributes with a null character, just
             // pull them out here.
 			// Leading and trailing space characters are non-significant in all multi-valued VRs,
 			// so pull them out here as well since some devices seem to pad UI attributes with spaces too.
-            valueArray = valueArray.Trim(new char[] {tag.VR.PadChar, '\0', ' '});
+            valueArray = valueArray.Trim(new [] {tag.VR.PadChar, '\0', ' '});
 
             if (valueArray.Length == 0)
             {
                 _values = new string[0];
-                this.Count = 1;
-                this.StreamLength = 0;
+                Count = 1;
+                StreamLength = 0;
             }
             else
             {
                 _values = valueArray.Split(new char[] {'\\'});
 
-                this.Count = (long) _values.Length;
-                this.StreamLength = (uint) valueArray.Length;
+                Count = (long) _values.Length;
+                StreamLength = (uint) valueArray.Length;
             }
         }
 
@@ -191,11 +137,6 @@ namespace ClearCanvas.Dicom
 						}
                     }
                 }
-            }
-
-            if ((ValidateVrValues || DicomImplementation.UnitTest) && Validator != null)
-            {
-                Validator.ValidateString(Tag, value);
             }
         }
 
@@ -305,7 +246,7 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if ((this.Count == 1) && (_values != null) && (_values.Length == 0))
+                if ((Count == 1) && (_values != null) && (_values.Length == 0))
                     return true;
                 return false;
             }
@@ -315,7 +256,7 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if ((this.Count == 0) && (_values == null || _values.Length == 0))
+                if ((Count == 0) && (_values == null || _values.Length == 0))
                     return true;
                 return false;
             }
@@ -331,8 +272,8 @@ namespace ClearCanvas.Dicom
                 {
                     _values = (string[])value;
                     // If the values array length is 0, then it is technically an empty string and we want Count to be 1
-                    this.Count = _values.Length == 0 ? 1 : _values.Length;
-                    this.StreamLength = (uint)ToString().Length;
+                    Count = _values.Length == 0 ? 1 : _values.Length;
+                    StreamLength = (uint)ToString().Length;
                 }
                 else if (value is string)
                 {
@@ -395,19 +336,19 @@ namespace ClearCanvas.Dicom
         {            
             if (stringValue == null || stringValue.Length == 0)
             {
-                this.Count = 1;
-                this.StreamLength = 0;
+                Count = 1;
+                StreamLength = 0;
                 _values = new string[0];
                 return;
             }
 
             ValidateString(stringValue);
 
-            _values = stringValue.Split(new char[] { '\\' });
+            _values = stringValue.Split(new [] { '\\' });
 
-            this.Count = _values.Length;
+            Count = _values.Length;
 
-            this.StreamLength = (uint)stringValue.Length;
+            StreamLength = (uint)stringValue.Length;
         }
 
         /// <summary>
@@ -458,7 +399,7 @@ namespace ClearCanvas.Dicom
         {
             ValidateString(stringValue);
 
-			//TODO: optimize the following code... there are a lot of redudant computations
+            //TODO: optimize the following code... there are a lot of redudant computations
 
             int newArrayLength = 1;
             int oldArrayLength = 0;
@@ -467,20 +408,18 @@ namespace ClearCanvas.Dicom
             {
                 newArrayLength = _values.Length + 1;
                 oldArrayLength = _values.Length;
-        }
+            }
 
             string[] newArray = new string[newArrayLength];
             if (oldArrayLength > 0)
                 _values.CopyTo(newArray, 0);
             newArray[newArrayLength - 1] = stringValue;
             _values = newArray;
-        
-            StreamLength = (uint)this.ToString().Length;
+
+            StreamLength = (uint) ToString().Length;
 
             Count = newArray.Length;
         }
-
-        
         #endregion
 
     }
@@ -638,19 +577,6 @@ namespace ClearCanvas.Dicom
     /// </summary>
     public class DicomAttributeDA : DicomAttributeMultiValueText
     {
-        protected   DAStringValidator _validator = null;
-
-        protected override  StringValueValidator Validator
-        {
-            get
-            {
-                if (_validator == null)
-                    _validator = DAStringValidator.GetInstance(this);
-                return _validator;
-            }
-            
-        }
-            
 
         #region Constructors
 
@@ -690,7 +616,15 @@ namespace ClearCanvas.Dicom
         {
             return new DicomAttributeDA(this);
         }
-        
+
+        internal override void ValidateString(string value)
+        {
+            base.ValidateString(value);
+
+            if (ValidateVrValues || DicomImplementation.UnitTest)
+                DAStringValidator.ValidateString(Tag, value);
+        }
+
         /// <summary>
         /// Method to retrieve a datetime value from a DA attribute.
         /// 
@@ -738,7 +672,7 @@ namespace ClearCanvas.Dicom
             else
             {
                 _values[index] = value.ToString(DateParser.DicomDateFormat);
-                this.StreamLength = (uint) ToString().Length;
+                StreamLength = (uint) ToString().Length;
 
             }
         }
@@ -759,8 +693,8 @@ namespace ClearCanvas.Dicom
 
             _values = temp;
 			_values[_values.Length-1] = value.ToString(DateParser.DicomDateFormat);
-        	this.Count = _values.Length;
-            this.StreamLength = (uint) ToString().Length;
+        	Count = _values.Length;
+            StreamLength = (uint) ToString().Length;
 
         }
 
@@ -776,16 +710,6 @@ namespace ClearCanvas.Dicom
     /// 
     public class DicomAttributeDS : DicomAttributeMultiValueText
     {
-        protected DSStringValidator _validator = null;
-        protected override StringValueValidator Validator
-        {
-            get
-            {
-                if (_validator == null)
-                    _validator = DSStringValidator.GetInstance(this);
-                return _validator;
-            }
-        }
         protected NumberStyles _numberStyle = NumberStyles.Any;
         
         #region Constructors
@@ -825,6 +749,14 @@ namespace ClearCanvas.Dicom
 
         
         #endregion
+
+        internal override void ValidateString(string value)
+        {
+            base.ValidateString(value);
+
+            if (ValidateVrValues || DicomImplementation.UnitTest)
+                DSStringValidator.ValidateString(Tag, value);
+        }
 
         public override DicomAttribute Copy()
         {
@@ -883,7 +815,7 @@ namespace ClearCanvas.Dicom
             else
             {
 				_values[index] = value.ToString(CultureInfo.InvariantCulture);
-                this.StreamLength = (uint)ToString().Length;
+                StreamLength = (uint)ToString().Length;
             }
         }
 
@@ -932,7 +864,7 @@ namespace ClearCanvas.Dicom
             else
             {
 				_values[index] = value.ToString(CultureInfo.InvariantCulture);
-                this.StreamLength = (uint)ToString().Length;
+                StreamLength = (uint)ToString().Length;
             }
         }
 
@@ -956,7 +888,7 @@ namespace ClearCanvas.Dicom
         	else
         	{
 				_values[index] = value.ToString("G12", CultureInfo.InvariantCulture);
-        		this.StreamLength = (uint) ToString().Length;
+        		StreamLength = (uint) ToString().Length;
         	}
         }
 
@@ -978,7 +910,7 @@ namespace ClearCanvas.Dicom
             else
             {
 				_values[index] = value.ToString("G12", CultureInfo.InvariantCulture);
-                this.StreamLength = (uint)ToString().Length;
+                StreamLength = (uint)ToString().Length;
             }
         }
 
@@ -1004,8 +936,8 @@ namespace ClearCanvas.Dicom
 			// Originallly had R here, but ran into problems with the attribute value being too large
 			// for a DS tag (16 bytes)
 			_values[_values.Length - 1] = value.ToString("G12", CultureInfo.InvariantCulture); 
-            this.StreamLength = (uint)ToString().Length;
-			this.Count = _values.Length;
+            StreamLength = (uint)ToString().Length;
+			Count = _values.Length;
         }
 
         /// <summary>
@@ -1028,8 +960,8 @@ namespace ClearCanvas.Dicom
 			// Originallly had R here, but ran into problems with the attribute value being too large
 			// for a DS tag (16 bytes)
 			_values[_values.Length - 1] = value.ToString("G12", CultureInfo.InvariantCulture); 
-            this.StreamLength = (uint)ToString().Length;
-			this.Count = _values.Length;
+            StreamLength = (uint)ToString().Length;
+			Count = _values.Length;
         }
 
         /// <summary>
@@ -1070,8 +1002,8 @@ namespace ClearCanvas.Dicom
             _values = temp;
 
 			_values[_values.Length - 1] = value.ToString(CultureInfo.InvariantCulture);
-            this.StreamLength = (uint)ToString().Length;
-			this.Count = _values.Length;
+            StreamLength = (uint)ToString().Length;
+			Count = _values.Length;
 
         }
 
@@ -1113,8 +1045,8 @@ namespace ClearCanvas.Dicom
             _values = temp;
 
 			_values[_values.Length - 1] = value.ToString(CultureInfo.InvariantCulture);
-            this.StreamLength = (uint)ToString().Length;
-			this.Count = _values.Length;
+            StreamLength = (uint)ToString().Length;
+			Count = _values.Length;
 
         }
 
@@ -1145,10 +1077,7 @@ namespace ClearCanvas.Dicom
                 value = 0;
                 return false;
             }
-            else
-            {
-                return true;
-            }
+            return true;
         }
         /// <summary>
         /// Method to retrieve an Int32 value from a DS attribute.
@@ -1177,10 +1106,7 @@ namespace ClearCanvas.Dicom
                 value = 0;
                 return false;
             }
-            else
-            {
-                return true;
-            }
+            return true;
         }
         /// <summary>
         /// Method to retrieve an Int64 value from a DS attribute.
@@ -1208,10 +1134,7 @@ namespace ClearCanvas.Dicom
                 value = 0;
                 return false;
             }
-            else
-            {
-                return true;
-            }
+            return true;
         }
 
         /// <summary>
@@ -1241,10 +1164,7 @@ namespace ClearCanvas.Dicom
                 value = 0;
                 return false;
             }
-            else
-            {
-                return true;
-            }
+            return true;
         }
         /// <summary>
         /// Method to retrieve an UInt32 value from a DS attribute.
@@ -1273,10 +1193,7 @@ namespace ClearCanvas.Dicom
                 value = 0;
                 return false;
             }
-            else
-            {
-                return true;
-            }
+            return true;
         }
         /// <summary>
         /// Method to retrieve an UInt64 value from a DS attribute.
@@ -1305,10 +1222,7 @@ namespace ClearCanvas.Dicom
                 value = 0;
                 return false;
             }
-            else
-            {
-                return true;
-            }
+            return true;
         }
 
         /// <summary>
@@ -1337,10 +1251,7 @@ namespace ClearCanvas.Dicom
                 value = 0;
                 return false;
             }
-            else
-            {
-                return true;
-            }
+            return true;
         }
         /// <summary>
         /// Method to retrieve a double value from a DS attribute.
@@ -1367,10 +1278,7 @@ namespace ClearCanvas.Dicom
                 value = 0;
                 return false;
             }
-            else
-            {
-                return true;
-            }
+            return true;
         }
 
         public override object Values
@@ -1405,17 +1313,6 @@ namespace ClearCanvas.Dicom
     /// 
     public class DicomAttributeDT : DicomAttributeMultiValueText
     {
-        protected DTStringValidator _validator = null;
-        protected override StringValueValidator Validator
-        {
-            get
-            {
-                if (_validator == null)
-                    _validator = DTStringValidator.GetInstance(this);
-                return _validator;
-            }
-        }
-        
         #region Constructors
 
         public DicomAttributeDT(uint tag)
@@ -1460,6 +1357,14 @@ namespace ClearCanvas.Dicom
             get { return _useTimeZone; }
         }
         #endregion
+
+        internal override void ValidateString(string value)
+        {
+            base.ValidateString(value);
+
+            if (ValidateVrValues || DicomImplementation.UnitTest)
+                DTStringValidator.ValidateString(Tag, value);
+        }
 
         public override DicomAttribute Copy()
         {
@@ -1514,7 +1419,7 @@ namespace ClearCanvas.Dicom
             else
             {
                 _values[index] = DateTimeParser.ToDicomString(value, UseTimeZone);
-                this.StreamLength = (uint)ToString().Length;
+                StreamLength = (uint)ToString().Length;
             }
         }
         /// <summary>
@@ -1533,12 +1438,9 @@ namespace ClearCanvas.Dicom
 
             _values = temp;
 			_values[_values.Length - 1] = DateTimeParser.ToDicomString(value, UseTimeZone);
-        	this.Count = _values.Length;
-            this.StreamLength = (uint)ToString().Length;
+        	Count = _values.Length;
+            StreamLength = (uint)ToString().Length;
         }
-
-        
-
     }
     #endregion
 
@@ -1548,17 +1450,6 @@ namespace ClearCanvas.Dicom
     /// </summary>
     public class DicomAttributeIS : DicomAttributeMultiValueText
     {
-        protected ISStringValidator _validator = null;
-        protected override StringValueValidator Validator
-        {
-            get
-            {
-                if (_validator == null)
-                    _validator = ISStringValidator.GetInstance(this);
-                return _validator;
-            }
-        }
-        
         protected NumberStyles _numberStyle = NumberStyles.Any;
 
         #region Constructors
@@ -1589,6 +1480,14 @@ namespace ClearCanvas.Dicom
         }
 
         #endregion
+
+        internal override void ValidateString(string value)
+        {
+            base.ValidateString(value);
+
+            if (ValidateVrValues || DicomImplementation.UnitTest)
+                ISStringValidator.ValidateString(Tag, value);
+        }
 
         public override DicomAttribute Copy()
         {
@@ -1861,7 +1760,7 @@ namespace ClearCanvas.Dicom
 			}
 			else {
 				_values[index] = value.ToString(CultureInfo.InvariantCulture);
-				this.StreamLength = (uint)ToString().Length;
+				StreamLength = (uint)ToString().Length;
 			}
         }
 
@@ -1912,7 +1811,7 @@ namespace ClearCanvas.Dicom
             else
             {
 				_values[index] = value.ToString(CultureInfo.InvariantCulture);
-                this.StreamLength = (uint)ToString().Length;
+                StreamLength = (uint)ToString().Length;
             }
         }
 
@@ -1953,8 +1852,8 @@ namespace ClearCanvas.Dicom
             _values = newArray;
 
 			_values[_values.Length - 1] = intValue.ToString(CultureInfo.InvariantCulture);
-            this.StreamLength = (uint)ToString().Length;
-        	this.Count = _values.Length;
+            StreamLength = (uint)ToString().Length;
+        	Count = _values.Length;
         }
 
         /// <summary>
@@ -1994,8 +1893,8 @@ namespace ClearCanvas.Dicom
                 Array.Copy(_values, temp, _values.Length);
             _values = temp;
 			_values[_values.Length - 1] = value.ToString(CultureInfo.InvariantCulture);
-            this.StreamLength = (uint)ToString().Length;
-        	this.Count = _values.Length;
+            StreamLength = (uint)ToString().Length;
+        	Count = _values.Length;
         }
 
         public override object Values
@@ -2185,18 +2084,6 @@ namespace ClearCanvas.Dicom
     /// </summary>
     public class DicomAttributeTM : DicomAttributeMultiValueText
     {
-        protected TMStringValidator _validator = null;
-        protected override StringValueValidator Validator
-        {
-            get
-            {
-                if (_validator == null)
-                    _validator = TMStringValidator.GetInstance(this);
-                return _validator;
-            }
-        }
-        
-
         #region Constructors
 
         public DicomAttributeTM(uint tag)
@@ -2229,6 +2116,14 @@ namespace ClearCanvas.Dicom
         #region Propperties
         #endregion
 
+
+        internal override void ValidateString(string value)
+        {
+            base.ValidateString(value);
+
+            if (ValidateVrValues || DicomImplementation.UnitTest)
+                TMStringValidator.ValidateString(Tag, value);
+        }
 
         public override DicomAttribute Copy()
         {
@@ -2287,7 +2182,7 @@ namespace ClearCanvas.Dicom
             else
             {
                 _values[index] = value.ToString(TimeParser.DicomFullTimeFormat);
-                this.StreamLength = (uint)ToString().Length;
+                StreamLength = (uint)ToString().Length;
             }
         }
 
@@ -2305,8 +2200,8 @@ namespace ClearCanvas.Dicom
 
             _values = temp;
 			_values[_values.Length-1] = value.ToString(TimeParser.DicomFullTimeFormat);
-        	this.Count = _values.Length;
-            this.StreamLength = (uint)ToString().Length;
+        	Count = _values.Length;
+            StreamLength = (uint)ToString().Length;
         }
 
     }
@@ -2386,33 +2281,33 @@ namespace ClearCanvas.Dicom
         public override bool TryGetUid(int i, out DicomUid value)
         {
 
-            if (i < 0 || i >= this.Count || _values.Length == 0)
+            if (i < 0 || i >= Count || _values.Length == 0)
             {
                 value = null;
                 return false;
             }
 
-            if (_values[i] == null || _values[i]=="")
+            if (string.IsNullOrEmpty(_values[i]))
             {
                 value = null;
                 return true; // this is special case
             }
 
-            SopClass sop = SopClass.GetSopClass(base._values[i]);
+            SopClass sop = SopClass.GetSopClass(_values[i]);
             if (sop != null)
             {
                 value = sop.DicomUid;
                 return true;
             }
 
-            TransferSyntax ts = TransferSyntax.GetTransferSyntax(base._values[i]);
+            TransferSyntax ts = TransferSyntax.GetTransferSyntax(_values[i]);
             if (ts != null)
             {
                 value = ts.DicomUid;
                 return true;
             }
 
-            value = new DicomUid(base._values[i], base._values[i], UidType.Unknown);
+            value = new DicomUid(_values[i], _values[i], UidType.Unknown);
             return true;
         }
 
@@ -2435,7 +2330,7 @@ namespace ClearCanvas.Dicom
             else
             {
                 _values[index] = value.UID;
-                this.StreamLength = (uint)ToString().Length;
+                StreamLength = (uint)ToString().Length;
             }
         }
 
@@ -2452,15 +2347,9 @@ namespace ClearCanvas.Dicom
 
             _values = temp;
 			_values[_values.Length - 1] = uid.UID;
-            this.StreamLength = (uint)ToString().Length;
-        	this.Count = _values.Length;
+            StreamLength = (uint)ToString().Length;
+        	Count = _values.Length;
         }
-       
-        
-
-
-        
-
     }
     #endregion
 }

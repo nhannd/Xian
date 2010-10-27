@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://www.clearcanvas.ca/web/application/viewer" elementFormDefault="qualified" targetNamespace="http://www.clearcanvas.ca/web/application/viewer" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:50221/?xsd=xsd2" namespace="http://www.clearcanvas.ca/web/application" />
+  <xs:import schemaLocation="http://localhost:50221/?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.ImageViewer.Web.Common" />
+  <xs:import schemaLocation="http://localhost:50221/?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.ImageViewer.Web.Common.Entities" />
+  <xs:complexType name="Viewer">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q1="http://www.clearcanvas.ca/web/application" base="q1:Entity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Layout" nillable="true" type="tns:Layout" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Viewer" nillable="true" type="tns:Viewer" />
+  <xs:complexType name="Layout">
+    <xs:sequence>
+      <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/ClearCanvas.ImageViewer.Web.Common" name="ClientRectangle" nillable="true" type="q2:Rectangle" />
+      <xs:element name="ImageBoxes" nillable="true" type="tns:ArrayOfImageBox" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Layout" nillable="true" type="tns:Layout" />
+  <xs:complexType name="ArrayOfImageBox">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ImageBox" nillable="true" type="tns:ImageBox" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfImageBox" nillable="true" type="tns:ArrayOfImageBox" />
+  <xs:complexType name="ImageBox">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q3="http://www.clearcanvas.ca/web/application" base="q3:Entity">
+        <xs:sequence>
+          <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/ClearCanvas.ImageViewer.Web.Common" name="NormalizedRectangle" nillable="true" type="q4:RectangleF" />
+          <xs:element name="Tiles" nillable="true" type="tns:ArrayOfTile" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ImageBox" nillable="true" type="tns:ImageBox" />
+  <xs:complexType name="ArrayOfTile">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Tile" nillable="true" type="tns:Tile" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfTile" nillable="true" type="tns:ArrayOfTile" />
+  <xs:complexType name="Tile">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q5="http://www.clearcanvas.ca/web/application" base="q5:Entity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Image" nillable="true" type="xs:base64Binary" />
+          <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/ClearCanvas.ImageViewer.Web.Common" name="NormalizedRectangle" nillable="true" type="q6:RectangleF" />
+          <xs:element minOccurs="0" name="Selected" type="xs:boolean" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Tile" nillable="true" type="tns:Tile" />
+  <xs:complexType name="ActionModelEvent">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q7="http://www.clearcanvas.ca/web/application" base="q7:Event">
+        <xs:sequence>
+          <xs:element xmlns:q8="http://schemas.datacontract.org/2004/07/ClearCanvas.ImageViewer.Web.Common.Entities" name="ActionItems" nillable="true" type="q8:ArrayOfWebAction" />
+          <xs:element name="Viewer" nillable="true" type="tns:Viewer" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ActionModelEvent" nillable="true" type="tns:ActionModelEvent" />
+  <xs:complexType name="ContextMenuEvent">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q9="http://www.clearcanvas.ca/web/application" base="q9:Event">
+        <xs:sequence>
+          <xs:element xmlns:q10="http://schemas.datacontract.org/2004/07/ClearCanvas.ImageViewer.Web.Common.Entities" minOccurs="0" name="ContextMenuModelRoot" nillable="true" type="q10:WebActionNode" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ContextMenuEvent" nillable="true" type="tns:ContextMenuEvent" />
+  <xs:complexType name="ActionUpdateEvent">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q11="http://www.clearcanvas.ca/web/application" base="q11:Event">
+        <xs:sequence>
+          <xs:element xmlns:q12="http://schemas.datacontract.org/2004/07/ClearCanvas.ImageViewer.Web.Common.Entities" name="ActionItem" nillable="true" type="q12:WebAction" />
+          <xs:element name="Property" nillable="true" type="xs:string" />
+          <xs:element name="Viewer" nillable="true" type="tns:Viewer" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ActionUpdateEvent" nillable="true" type="tns:ActionUpdateEvent" />
+  <xs:complexType name="ViewerLayoutChangedEvent">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q13="http://www.clearcanvas.ca/web/application" base="q13:Event">
+        <xs:sequence>
+          <xs:element name="Viewer" nillable="true" type="tns:Viewer" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ViewerLayoutChangedEvent" nillable="true" type="tns:ViewerLayoutChangedEvent" />
+  <xs:complexType name="TileUpdatedEvent">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q14="http://www.clearcanvas.ca/web/application" base="q14:Event">
+        <xs:sequence>
+          <xs:element name="MimeType" nillable="true" type="xs:string" />
+          <xs:element name="Tile" nillable="true" type="tns:Tile" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="TileUpdatedEvent" nillable="true" type="tns:TileUpdatedEvent" />
+  <xs:complexType name="MouseCaptureChangedEvent">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q15="http://www.clearcanvas.ca/web/application" base="q15:Event">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Gained" type="xs:boolean" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="MouseCaptureChangedEvent" nillable="true" type="tns:MouseCaptureChangedEvent" />
+  <xs:complexType name="SessionUpdatedEvent">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q16="http://www.clearcanvas.ca/web/application" base="q16:Event">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ExpiryTimeUtc" type="xs:dateTime" />
+          <xs:element minOccurs="0" name="Username" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="SessionUpdatedEvent" nillable="true" type="tns:SessionUpdatedEvent" />
+  <xs:complexType name="ViewerClientRectangleChangedMessage">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q17="http://www.clearcanvas.ca/web/application" base="q17:Message">
+        <xs:sequence>
+          <xs:element xmlns:q18="http://schemas.datacontract.org/2004/07/ClearCanvas.ImageViewer.Web.Common" name="ClientRectangle" nillable="true" type="q18:Rectangle" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ViewerClientRectangleChangedMessage" nillable="true" type="tns:ViewerClientRectangleChangedMessage" />
+  <xs:complexType name="MouseMessage">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q19="http://www.clearcanvas.ca/web/application" base="q19:Message">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Button" type="tns:MouseButton" />
+          <xs:element minOccurs="0" name="ClickCount" type="xs:int" />
+          <xs:element minOccurs="0" name="MouseButtonState" type="tns:MouseButtonState" />
+          <xs:element minOccurs="0" name="MousePosition" nillable="true" type="tns:Position" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="MouseMessage" nillable="true" type="tns:MouseMessage" />
+  <xs:simpleType name="MouseButton">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="Left" />
+      <xs:enumeration value="Right" />
+      <xs:enumeration value="Middle" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="MouseButton" nillable="true" type="tns:MouseButton" />
+  <xs:simpleType name="MouseButtonState">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Up" />
+      <xs:enumeration value="Down" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="MouseButtonState" nillable="true" type="tns:MouseButtonState" />
+  <xs:complexType name="Position">
+    <xs:sequence>
+      <xs:element name="X" type="xs:int" />
+      <xs:element name="Y" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Position" nillable="true" type="tns:Position" />
+  <xs:complexType name="MouseMoveMessage">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:MouseMessage">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="MouseMoveMessage" nillable="true" type="tns:MouseMoveMessage" />
+  <xs:complexType name="MouseWheelMessage">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q20="http://www.clearcanvas.ca/web/application" base="q20:Message">
+        <xs:sequence>
+          <xs:element name="Delta" type="xs:int" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="MouseWheelMessage" nillable="true" type="tns:MouseWheelMessage" />
+</xs:schema>

@@ -1,3 +1,14 @@
+/* License
+ *
+ * Copyright (c) 2010, ClearCanvas Inc.
+ * All rights reserved.
+ * http://www.clearcanvas.ca
+ *
+ * This software is licensed under the Open Software License v3.0.
+ * For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+ *
+ */
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
 /// This script contains the javascript component class for the study search panel
@@ -37,6 +48,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
         initialize: function() {
             ClearCanvas.ImageServer.Web.Application.Pages.Studies.SearchPanel.callBaseMethod(this, 'initialize');
 
+            this._OnViewImagesButtonClickedHandler = Function.createDelegate(this, this._OnViewImagesButtonClicked);
             this._OnOpenButtonClickedHandler = Function.createDelegate(this, this._OnOpenButtonClicked);
             this._OnSendButtonClickedHandler = Function.createDelegate(this, this._OnSendButtonClicked);
             this._OnStudyListRowClickedHandler = Function.createDelegate(this, this._OnStudyListRowClicked);
@@ -73,15 +85,25 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
             var sendButton = $find(this._SendButtonClientID);
             if (sendButton != null) sendButton.add_onClientClick(this._OnSendButtonClickedHandler);
 
+            var viewButton = $find(this._ViewImageButtonClientID);
+            if (viewButton != null) viewButton.add_onClientClick(this._OnViewImagesButtonClickedHandler);
+
             var studylist = $find(this._StudyListClientID);
             studylist.add_onClientRowClick(this._OnStudyListRowClickedHandler);
 
-            if (this._CanViewStudyDetails) {
-                studylist.add_onClientRowDblClick(this._OnStudyListRowDblClickedHandler);
-            }
+            studylist.add_onClientRowDblClick(this._OnStudyListRowDblClickedHandler);
+
 
             this._updateToolbarButtonStates();
+
         },
+
+        // called when the View Images button is clicked
+        _OnViewImagesButtonClicked: function(src, event) {
+            this._viewSelectedStudies();
+            return false;
+        },
+
 
         // called when the Open Study button is clicked
         _OnOpenButtonClicked: function(src, event) {
@@ -101,7 +123,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
         // called when user double-clicked on a row in the study list
         _OnStudyListRowDblClicked: function(sender, event) {
             this._updateToolbarButtonStates();
-            this._openSelectedStudies();
+            this._viewSelectedStudies();
         },
 
 
@@ -136,6 +158,47 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
         _canMoveStudy: function(row) {
             //"canmove" is a custom attribute injected by the study list control
             return row.getAttribute('canmove') == 'true';
+        },
+
+        _canViewImages: function(row) {
+            //"canviewimages" is a custom attribute injected by the study list control
+            return row.getAttribute('canviewimages') == 'true';
+        },
+
+        _canViewImagesMessage: function(row) {
+            //"canviewimages" is a custom attribute injected by the study list control
+            return row.getAttribute('canviewimagesreason');
+        },
+
+        _viewSelectedStudies: function() {
+            var studylist = $find(this._StudyListClientID);
+            // open the selected studies
+            if (studylist != null) {
+                var rows = studylist.getSelectedRowElements();
+                var serverae;
+                var urlPartStudies = '';
+                if (rows.length > 0) {
+                    for (i = 0; i < rows.length; i++) {
+
+                        if (!this._canViewImages(rows[i])) {
+                            alert("The selected study cannot be viewed at this time: " + this._canViewImagesMessage(rows[i]));
+                            return;
+                        }
+
+                        serverae = this._getServerPartitionAE(rows[i]);
+                        var instanceuid = this._getInstanceUid(rows[i]);
+                        if (instanceuid != undefined && serverae != undefined) {
+                            if (i == 0)
+                                urlPartStudies += String.format('study={0}', instanceuid);
+                            else
+                                urlPartStudies += String.format(',study={0}', instanceuid);
+                        }
+                    }
+                    var url = String.format('{0}?aetitle={1},{2}', this._ViewImagePageUrl, serverae, urlPartStudies);
+                    window.open(url);
+                }
+            }
+            return false;
         },
 
         _openSelectedStudies: function() {
@@ -192,6 +255,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
 
             this._enableDeleteButton(false);
             this._enableOpenStudyButton(false);
+            this._enableViewImageButton(false);
             this._enableSendStudyButton(false);
             this._enableRestoreButton(false);
 
@@ -203,6 +267,8 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
                     var canMoveCount = 0;
                     var canDeleteCount = 0;
                     var canRestoreCount = 0;
+                    var canViewImagesCount = 0;
+
                     if (rows.length > 0) {
                         for (i = 0; i < rows.length; i++) {
                             if (this._canMoveStudy(rows[i])) {
@@ -214,11 +280,15 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
                             if (this._canRestoreStudy(rows[i])) {
                                 canRestoreCount++;
                             }
+                            if (this._canViewImages(rows[i])) {
+                                canViewImagesCount++;
+                            }
                         }
                     }
                     // always enabled open button when a row is selected
                     this._enableOpenStudyButton(true);
 
+                    this._enableViewImageButton(canViewImagesCount == selectedStudyCount);
                     this._enableDeleteButton(canDeleteCount == selectedStudyCount);
                     this._enableSendStudyButton(canMoveCount == selectedStudyCount);
                     this._enableRestoreButton(canRestoreCount == selectedStudyCount);
@@ -236,6 +306,11 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
         _enableOpenStudyButton: function(en) {
             var openButton = $find(this._OpenButtonClientID);
             if (openButton != null) openButton.set_enable(en);
+        },
+
+        _enableViewImageButton: function(en) {
+            var button = $find(this._ViewImageButtonClientID);
+            if (button != null) button.set_enable(en);
         },
 
         _enableSendStudyButton: function(en) {
@@ -299,6 +374,15 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
             this.raisePropertyChanged('OpenButtonClientID');
         },
 
+        get_ViewImageButtonClientID: function() {
+            return this._ViewImageButtonClientID;
+        },
+
+        set_ViewImageButtonClientID: function(value) {
+            this._ViewImageButtonClientID = value;
+            this.raisePropertyChanged('ViewImageButtonClientID');
+        },
+
         get_StudyListClientID: function() {
             return this._StudyListClientID;
         },
@@ -326,14 +410,25 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
             this.raisePropertyChanged('SendStudyPageUrl');
         },
 
-        get_CanViewStudyDetails: function() {
-            return this._CanViewStudyDetails;
+        get_ViewImagePageUrl: function() {
+            return this._ViewImagePageUrl;
         },
 
-        set_CanViewStudyDetails: function(value) {
-            this._CanViewStudyDetails = value;
-            this.raisePropertyChanged('CanViewStudyDetails');
+        set_ViewImagePageUrl: function(value) {
+            this._ViewImagePageUrl = value;
+            this.raisePropertyChanged('ViewImagePageUrl');
+        },
+
+        get_CanViewImages: function() {
+            return this._CanViewImages;
+        },
+
+        set_CanViewImages: function(value) {
+            this._CanViewImages = value;
+            this.raisePropertyChanged('CanViewImages');
         }
+
+
     }
 
     // Register the class as a type that inherits from Sys.UI.Control.

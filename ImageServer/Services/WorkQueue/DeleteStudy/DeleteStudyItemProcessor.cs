@@ -2,30 +2,10 @@
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
+// http://www.clearcanvas.ca
 //
-// Redistribution and use in source and binary forms, with or without modification, 
-// are permitted provided that the following conditions are met:
-//
-//    * Redistributions of source code must retain the above copyright notice, 
-//      this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above copyright notice, 
-//      this list of conditions and the following disclaimer in the documentation 
-//      and/or other materials provided with the distribution.
-//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
-//      may be used to endorse or promote products derived from this software without 
-//      specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
-// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
-// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
-// OF SUCH DAMAGE.
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 #endregion
 
@@ -259,6 +239,35 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
             return context;
         }
 
+        private void ReinsertFilesystemQueue(TimeSpan delay)
+        {
+            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IWorkQueueUidEntityBroker broker = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
+                WorkQueueUidSelectCriteria workQueueUidCriteria = new WorkQueueUidSelectCriteria();
+                workQueueUidCriteria.WorkQueueKey.EqualTo(WorkQueueItem.Key);
+                broker.Delete(workQueueUidCriteria);
+
+                FilesystemQueueInsertParameters parms = new FilesystemQueueInsertParameters
+                                                            {
+                                                                FilesystemQueueTypeEnum =
+                                                                    FilesystemQueueTypeEnum.DeleteStudy,
+                                                                ScheduledTime = Platform.Time + delay,
+                                                                StudyStorageKey = WorkQueueItem.StudyStorageKey,
+                                                                FilesystemKey = StorageLocation.FilesystemKey,
+                                                                QueueXml = WorkQueueItem.Data
+                                                            };
+
+                IInsertFilesystemQueue insertQueue = updateContext.GetBroker<IInsertFilesystemQueue>();
+
+                if (false == insertQueue.Execute(parms))
+                {
+                    Platform.Log(LogLevel.Error, "Unexpected failure inserting FilesystemQueue entry");
+                }
+                else
+                    updateContext.Commit();
+            }
+        } 
         #endregion
 
         #region Overridden Protected Method
@@ -267,8 +276,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 		{
 			if (StorageLocation.IsReconcileRequired)
 			{
-				// fail immediately
-				FailQueueItem(item, "Study needs to be reconciled first");
+                // Reinsert.  This was failing previously, but it caused issues with the reconcile
+                // not able to complete, because of the failed entry in the WorkQueue.  Putting it
+                // back in the FilesystemQueue instead will work better.
+                Platform.Log(LogLevel.Info, "Study {0} cannot be deleted at this time because of pending reconciliation. Reinserting into FilesystemQueue", StorageLocation.StudyInstanceUid);
+                TimeSpan delay = TimeSpan.FromMinutes(60);
+                ReinsertFilesystemQueue(delay);
+                PostProcessing(WorkQueueItem, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
 			}
 			else
 			{
@@ -316,8 +330,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 
             if (! (relatedItems == null || relatedItems.Count == 0))
             {
-                PostponeItem("Study is being processed or reconciled");
-            	return false;
+                // Note, due to GUI restrictions this shouldn't work.  Still reinserting just in case.
+                Platform.Log(LogLevel.Info, "Study {0} cannot be deleted at this time because of pending reconciliation. Reinserting into FilesystemQueue", StorageLocation.StudyInstanceUid);
+                TimeSpan delay = TimeSpan.FromMinutes(60);
+                ReinsertFilesystemQueue(delay);
+                PostProcessing(WorkQueueItem, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+                return false;
             }
     		return true;
         }

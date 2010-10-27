@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/ClearCanvas.ImageViewer.Web" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/ClearCanvas.ImageViewer.Web" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:40221/ApplicationServices?xsd=xsd2" namespace="http://www.clearcanvas.ca/web/application" />
+  <xs:complexType name="OpenStudyCommand">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q1="http://www.clearcanvas.ca/web/application" base="q1:Command">
+        <xs:sequence>
+          <xs:element name="StudyInstanceUid" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="OpenStudyCommand" nillable="true" type="tns:OpenStudyCommand" />
+</xs:schema>

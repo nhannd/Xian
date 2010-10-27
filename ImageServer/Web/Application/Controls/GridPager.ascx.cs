@@ -2,30 +2,10 @@
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
+// http://www.clearcanvas.ca
 //
-// Redistribution and use in source and binary forms, with or without modification, 
-// are permitted provided that the following conditions are met:
-//
-//    * Redistributions of source code must retain the above copyright notice, 
-//      this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above copyright notice, 
-//      this list of conditions and the following disclaimer in the documentation 
-//      and/or other materials provided with the distribution.
-//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
-//      may be used to endorse or promote products derived from this software without 
-//      specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
-// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
-// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
-// OF SUCH DAMAGE.
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 #endregion
 
@@ -57,6 +37,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             set { _position = value; }
         }
 
+        public string CurrentPageSaver
+        {
+            get; set;
+        }
+
         public string AssociatedUpdatePanelID
         {
             set { _targetUpdatePanelID = value; }
@@ -85,11 +70,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         {
             get 
             {
-                if (ViewState[ImageServerConstants.PagerItemCount] != null)
-                {
-                    return Int32.Parse(ViewState[ImageServerConstants.PagerItemCount].ToString());
-                }
-
                 int count = 0;
                 if(GetRecordCountMethod != null)
                 {
@@ -98,10 +78,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 }
 
                 return count;
-            }
-            set
-            {
-                ViewState[ImageServerConstants.PagerItemCount] = value;
             }
         }
 
@@ -114,7 +90,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         /// </summary>
         /// <returns></returns>
         /// <remarks>
-        /// The number of records may be different than the value reported by <seealso cref="GridPager.Target.Rows.Count"/>
+        /// The number of records may be different than the value reported by <seealso cref="GridPager.Target"/>
         /// </remarks>
         public delegate int GetRecordCountMethodDelegate();
 
@@ -135,22 +111,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 {
                     Target.DataBind();    
                 }
-
             }
-        }
-
-        protected override void OnPreRender(EventArgs e)
-        {
-            base.OnPreRender(e);
-
+            Target.DataBound += DataBoundHandler;
             UpdateUI();
-        }
+         }
 
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
             SearchUpdateProgress.AssociatedUpdatePanelID = _targetUpdatePanelID;
+            SetPageContainerCssClass();
         }
 
         protected void PageButtonClick(object sender, CommandEventArgs e)
@@ -181,7 +152,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                         Target.PageIndex = intCurIndex;
                     else
                     {
-                        int newPage = Convert.ToInt32(CurrentPage.Text);
+                        int newPage = Convert.ToInt32(Request.Form[CurrentPage.UniqueID]);
 
                         //Adjust page to match 0..n, and handle boundary conditions.
                         if (newPage > Target.PageCount)
@@ -255,10 +226,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 PageCountLabel.Text =
                     string.Format(" of {0}", AdjustCurrentPageForDisplay(_target.PageCount));
 
-                    ItemCountLabel.Text = string.Format("{0} {1}", ItemCount, ItemCount == 1 ? ItemName : PluralItemName);
-
-                
-
+                SetPageContainerWidth(_target.PageCount);
+               
                 if (_target.PageIndex > 0)
                 {
                     PrevPageButton.Enabled = true;
@@ -266,7 +235,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
                     FirstPageButton.Enabled = true;
                     FirstPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerFirstEnabled;
- 
                 }
                 else
                 {
@@ -275,7 +243,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
                     FirstPageButton.Enabled = false;
                     FirstPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerFirstDisabled;
-
                 }
 
 
@@ -322,7 +289,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             PluralItemName = multipleItemLabel;
             Target = grid;
             GetRecordCountMethod = recordCount;
-            ItemCount = 0;
 
             // TODO: add this code so that the pager is updated automatically whenever the grid is updated
             //      Target.DataBound += delegate { GridPagerTop.Refresh(); };
@@ -346,7 +312,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         /// 
         public void Refresh()
         {
-            ItemCount = GetRecordCountMethod();
             if (Target.Rows.Count == 0 && ItemCount > 0)
             {
                 // This happens when the last item on the current page is removed
@@ -357,11 +322,38 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             else
             {
                 UpdateUI();
-            }
-            
+                // Set the label here.  The datasource has been bound and ItemCount is set.This was done in UpdateUI, which is
+                // called on Page_Load and from here, causing the ItemCount to be calculated on Page_Load when it didn't need to be
+                // for some tabs that were not being searched on.
+                if (_target != null && _target.DataSource != null)
+                    ItemCountLabel.Text = string.Format("{0} {1}", ItemCount, ItemCount == 1 ? ItemName : PluralItemName);            
+            }   
         }
 
         #endregion Public methods
 
+        #region Private Methods
+
+        private void SetPageContainerWidth(int pageCount)
+        {
+            if (pageCount > 9999) CurrentPageContainer.Style.Add("width", "187px");
+            else if (pageCount > 99999) CurrentPageContainer.Style.Add("width", "197px");
+            else if (pageCount > 999999) CurrentPageContainer.Style.Add("width", "207px");
+            else if (pageCount > 9999999) CurrentPageContainer.Style.Add("width", "217px");
+        }
+
+        private void SetPageContainerCssClass()
+        {
+            if (Request.UserAgent.Contains("Chrome")) CurrentPageContainer.CssClass = "CurrentPageContainer_Chrome";
+            else if (Request.UserAgent.Contains("MSIE")) CurrentPageContainer.CssClass = "CurrentPageContainer";
+            else CurrentPageContainer.CssClass = "CurrentPageContainer_FF";
+        }
+
+        private void DataBoundHandler(object sender, EventArgs e)
+        {
+            Refresh();
+        }
+
+        #endregion
     }
 }

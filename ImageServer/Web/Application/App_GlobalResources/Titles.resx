@@ -324,4 +324,7 @@
   <data name="LoginPageTitle" xml:space="preserve">
     <value>{0}</value>
   </data>
+  <data name="ViewImagesPageTitle" xml:space="preserve">
+    <value>Webstation | {0}</value>
+  </data>
 </root>

@@ -1,3 +1,11 @@
+#pragma region License (non-CC)
+
+// This source code contains the work of the Independent JPEG Group.
+// Please see accompanying notice in code comments and/or readme file
+// for the terms of distribution and use regarding this code.
+
+#pragma endregion
+
 /*
  * jdpostct.c
  *

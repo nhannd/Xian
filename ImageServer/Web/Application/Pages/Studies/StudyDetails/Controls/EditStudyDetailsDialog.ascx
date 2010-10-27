@@ -238,7 +238,7 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                         <table cellpadding="0" cellspacing="0">
                                 <tr valign="top">
                                     <td>
-                            <asp:DropDownList runat="server" ID="ReasonListBox" style="font-family: Arial, Sans-Serif; font-size: 14px;" Width="175"/>                                        
+                            <asp:DropDownList runat="server" ID="ReasonListBox" style="font-family: Arial, Sans-Serif; font-size: 14px;" Width="175" />                                        
                             </td><td style="padding-left: 2px;">
                                 <ccAsp:InvalidInputIndicator ID="InvalidReasonIndicator" runat="server" SkinID="InvalidInputIndicator" />
                             </td>
@@ -274,7 +274,16 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                                  
                         </td>
                         <td>
-                            <asp:TextBox runat="server" ID="SaveReasonAsName" style="font-family: Arial, Sans-Serif; font-size: 14px;"/>
+                            <table cellpadding="0" cellspacing="0">
+                              <tr valign="top">
+                                <td>
+                                    <asp:TextBox runat="server" ID="SaveReasonAsName" style="font-family: Arial, Sans-Serif; font-size: 14px;"/>
+                                </td>
+                                <td valign="middle" style="padding-left: 8px;">
+                                    <ccAsp:InvalidInputIndicator ID="InvalidSaveReasonAsNameInputIndicator" runat="server" SkinID="InvalidInputIndicator" />
+                                </td>
+                              </tr>
+                            </table>
                         </td>
                 </tr>
                 </table>
@@ -300,6 +309,10 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
        <ccValidator:ConditionalRequiredFieldValidator ID="CommentValidator" runat="server"
                                                 ControlToValidate="Comment" InvalidInputIndicatorID="InvalidCommentIndicator" 
                                                 ValidationGroup='EditStudyValidationGroup'
-                                                Text="You must specify a comment for the reason for editing the studies for future auditing purposes." Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>                                                
+                                                Text="You must specify a comment for the reason for editing the studies for future auditing purposes." Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>
+       <ccValidator:ConditionalRequiredFieldValidator ID="SaveReasonAsNameValidator" runat="server"
+                                                ControlToValidate="SaveReasonAsName" InvalidInputIndicatorID="InvalidSaveReasonAsNameInputIndicator" 
+                                                ValidationGroup='EditStudyValidationGroup'
+                                                Text="You must specify a name for the reason." Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>
 </ContentTemplate>
 </ccAsp:ModalDialog>

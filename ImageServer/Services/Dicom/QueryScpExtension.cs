@@ -2,30 +2,10 @@
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
+// http://www.clearcanvas.ca
 //
-// Redistribution and use in source and binary forms, with or without modification, 
-// are permitted provided that the following conditions are met:
-//
-//    * Redistributions of source code must retain the above copyright notice, 
-//      this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above copyright notice, 
-//      this list of conditions and the following disclaimer in the documentation 
-//      and/or other materials provided with the distribution.
-//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
-//      may be used to endorse or promote products derived from this software without 
-//      specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
-// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
-// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
-// OF SUCH DAMAGE.
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 #endregion
 
@@ -638,10 +618,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// Method for processing Patient level queries.
         /// </summary>
         /// <param name="server"></param>
-        /// <param name="presentationID"></param>
+        /// <param name="presentationId"></param>
         /// <param name="message">The Patient level query message.</param>
         /// <returns></returns>
-        private void OnReceivePatientQuery(DicomServer server, byte presentationID, DicomMessage message)
+        private void OnReceivePatientQuery(DicomServer server, byte presentationId, DicomMessage message)
         {
             List<uint> tagList = new List<uint>();
 
@@ -710,7 +690,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 												if (DicomSettings.Default.MaxQueryResponses != -1
 													&& DicomSettings.Default.MaxQueryResponses < resultCount)
 												{
-													SendBufferedResponses(server, presentationID, message);
+													SendBufferedResponses(server, presentationId, message);
 													throw new DicomException("Maximum Configured Query Responses Exceeded: " + resultCount);
 												}
 
@@ -719,10 +699,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                                             	_responseQueue.Enqueue(response);
 
 												if (_responseQueue.Count >= DicomSettings.Default.BufferedQueryResponses)
-													SendBufferedResponses(server, presentationID, message);
+													SendBufferedResponses(server, presentationId, message);
                                             });
 
-                	SendBufferedResponses(server, presentationID, message);
+                	SendBufferedResponses(server, presentationId, message);
 
                 }
                 catch (Exception e)
@@ -730,7 +710,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					if (CancelReceived)
 					{
 						DicomMessage errorResponse = new DicomMessage();
-						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+						server.SendCFindResponse(presentationId, message.MessageId, errorResponse,
 												 DicomStatuses.Cancel);
 					}
 					else if (DicomSettings.Default.MaxQueryResponses != -1 
@@ -738,7 +718,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					{
 						Platform.Log(LogLevel.Warn, "Maximum Configured Query Responses Exceeded: {0} on query from {1}", resultCount, server.AssociationParams.CallingAE);
 						DicomMessage errorResponse = new DicomMessage();
-						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+						server.SendCFindResponse(presentationId, message.MessageId, errorResponse,
 												 DicomStatuses.Success);
 						AuditLog(server.AssociationParams,
 								 EventIdentificationTypeEventOutcomeIndicator.Success, message);
@@ -747,7 +727,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					{
 						Platform.Log(LogLevel.Error, e, "Unexpected exception when processing FIND request.");
 						DicomMessage errorResponse = new DicomMessage();
-						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+						server.SendCFindResponse(presentationId, message.MessageId, errorResponse,
 						                         DicomStatuses.QueryRetrieveUnableToProcess);
 						AuditLog(server.AssociationParams,
 								 EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated, message);
@@ -757,7 +737,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             }
 
             DicomMessage finalResponse = new DicomMessage();
-            server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
+            server.SendCFindResponse(presentationId, message.MessageId, finalResponse, DicomStatuses.Success);
 			AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success, message);
         	return;
         }
@@ -766,10 +746,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// Method for processing Study level queries.
         /// </summary>
         /// <param name="server"></param>
-        /// <param name="presentationID"></param>
+        /// <param name="presentationId"></param>
         /// <param name="message"></param>
         /// <returns></returns>
-        private void OnReceiveStudyLevelQuery(DicomServer server, byte presentationID, DicomMessage message)
+        private void OnReceiveStudyLevelQuery(DicomServer server, byte presentationId, DicomMessage message)
         {
             List<uint> tagList = new List<uint>();
 
@@ -858,7 +838,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 													if (DicomSettings.Default.MaxQueryResponses != -1
 														&& DicomSettings.Default.MaxQueryResponses < resultCount)
 													{
-														SendBufferedResponses(server, presentationID, message);
+														SendBufferedResponses(server, presentationId, message);
 														throw new DicomException("Maximum Configured Query Responses Exceeded: " + resultCount);
 													}
 
@@ -867,7 +847,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 													_responseQueue.Enqueue(response);
 
 													if (_responseQueue.Count >= DicomSettings.Default.BufferedQueryResponses)
-														SendBufferedResponses(server, presentationID, message);
+														SendBufferedResponses(server, presentationId, message);
 											
                                                 });
 
@@ -886,7 +866,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 													if (DicomSettings.Default.MaxQueryResponses != -1
 														&& DicomSettings.Default.MaxQueryResponses < resultCount)
 													{
-														SendBufferedResponses(server, presentationID, message);
+														SendBufferedResponses(server, presentationId, message);
 														throw new DicomException("Maximum Configured Query Responses Exceeded: " + resultCount);
 													}
 
@@ -895,11 +875,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 													_responseQueue.Enqueue(response);
 
 													if (_responseQueue.Count >= DicomSettings.Default.BufferedQueryResponses)
-														SendBufferedResponses(server, presentationID, message);
+														SendBufferedResponses(server, presentationId, message);
 
 												});
 
-						SendBufferedResponses(server, presentationID, message);
+						SendBufferedResponses(server, presentationId, message);
 					}
                 }
                 catch (Exception e)
@@ -907,7 +887,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					if (CancelReceived)
 					{
 						DicomMessage errorResponse = new DicomMessage();
-						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+						server.SendCFindResponse(presentationId, message.MessageId, errorResponse,
 												 DicomStatuses.Cancel);
 						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success, message);
         
@@ -917,7 +897,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					{
 						Platform.Log(LogLevel.Warn, "Maximum Configured Query Responses Exceeded: {0} on query from {1}", resultCount, server.AssociationParams.CallingAE);
 						DicomMessage errorResponse = new DicomMessage();
-						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+						server.SendCFindResponse(presentationId, message.MessageId, errorResponse,
 												 DicomStatuses.Success);
 						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success, message);
         
@@ -926,7 +906,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					{
 						Platform.Log(LogLevel.Error, e, "Unexpected exception when processing FIND request.");
 						DicomMessage errorResponse = new DicomMessage();
-						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+						server.SendCFindResponse(presentationId, message.MessageId, errorResponse,
 						                         DicomStatuses.ProcessingFailure);
 						AuditLog(server.AssociationParams,
 								 EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated, message);
@@ -937,7 +917,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             }
 
             DicomMessage finalResponse = new DicomMessage();
-            server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
+            server.SendCFindResponse(presentationId, message.MessageId, finalResponse, DicomStatuses.Success);
 
 			AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success, message);
         
@@ -948,10 +928,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// Method for processing Series level queries.
         /// </summary>
         /// <param name="server"></param>
-        /// <param name="presentationID"></param>
+        /// <param name="presentationId"></param>
         /// <param name="message"></param>
         /// <returns></returns>
-        private void OnReceiveSeriesLevelQuery(DicomServer server, byte presentationID, DicomMessage message)
+        private void OnReceiveSeriesLevelQuery(DicomServer server, byte presentationId, DicomMessage message)
         {
             //Read context for the query.
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
@@ -973,6 +953,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                             case DicomTags.StudyInstanceUid:
                                 List<ServerEntityKey> list =
                                     LoadStudyKey(read, (string[]) data[DicomTags.StudyInstanceUid].Values);
+                                if (list.Count == 0)
+                                {
+                                    server.SendCFindResponse(presentationId, message.MessageId, new DicomMessage(), 
+                                                             DicomStatuses.Success);
+                                    AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success, message);
+                                    return;
+                                }
                                 SetKeyCondition(criteria.StudyKey, list.ToArray());
                                 break;
                             case DicomTags.SeriesInstanceUid:
@@ -1019,7 +1006,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 															if (DicomSettings.Default.MaxQueryResponses != -1
 																&& DicomSettings.Default.MaxQueryResponses < resultCount)
 															{
-																SendBufferedResponses(server, presentationID, message);
+																SendBufferedResponses(server, presentationId, message);
 																throw new DicomException("Maximum Configured Query Responses Exceeded: " + resultCount);
 															}
 
@@ -1028,9 +1015,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 															_responseQueue.Enqueue(response);
 
 															if (_responseQueue.Count >= DicomSettings.Default.BufferedQueryResponses)
-																SendBufferedResponses(server, presentationID, message);
+																SendBufferedResponses(server, presentationId, message);
 														});
-						SendBufferedResponses(server, presentationID, message);
+						SendBufferedResponses(server, presentationId, message);
 					}
                 }
                 catch (Exception e)
@@ -1038,7 +1025,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					if (CancelReceived)
 					{
 						DicomMessage errorResponse = new DicomMessage();
-						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+						server.SendCFindResponse(presentationId, message.MessageId, errorResponse,
 												 DicomStatuses.Cancel);
 						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success, message);
         
@@ -1049,7 +1036,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						Platform.Log(LogLevel.Warn, "Maximum Configured Query Responses Exceeded: {0} on query from {1}",resultCount,server.AssociationParams.CallingAE);
 
 						DicomMessage errorResponse = new DicomMessage();
-						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+						server.SendCFindResponse(presentationId, message.MessageId, errorResponse,
 												 DicomStatuses.Success);
 						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success, message);
         
@@ -1058,7 +1045,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					{
 						Platform.Log(LogLevel.Error, e, "Unexpected exception when processing FIND request.");
 						DicomMessage errorResponse = new DicomMessage();
-						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+						server.SendCFindResponse(presentationId, message.MessageId, errorResponse,
 						                         DicomStatuses.ProcessingFailure);
 						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated, message);
         
@@ -1067,7 +1054,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 }
 
                 DicomMessage finalResponse = new DicomMessage();
-                server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
+                server.SendCFindResponse(presentationId, message.MessageId, finalResponse, DicomStatuses.Success);
 
 				AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success, message);
         
@@ -1118,10 +1105,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// Method for processing Image level queries.
         /// </summary>
         /// <param name="server"></param>
-        /// <param name="presentationID"></param>
+        /// <param name="presentationId"></param>
         /// <param name="message"></param>
         /// <returns></returns>
-        private void OnReceiveImageLevelQuery(DicomServer server, byte presentationID, DicomMessage message)
+        private void OnReceiveImageLevelQuery(DicomServer server, byte presentationId, DicomMessage message)
         {
             List<uint> tagList = new List<uint>();
             List<uint> matchingTagList = new List<uint>();
@@ -1140,11 +1127,12 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         	{
         	    Platform.Log(LogLevel.Error, "Unable to load storage location for study {0}: {1}", studyInstanceUid, e.Message);
                 DicomMessage failureResponse = new DicomMessage();
-				message.DataSet[DicomTags.InstanceAvailability].SetStringValue("NEARLINE");
-				message.DataSet[DicomTags.RetrieveAeTitle].SetStringValue(Partition.AeTitle);
-            	message.DataSet[DicomTags.StudyInstanceUid].SetStringValue(studyInstanceUid);
-				message.DataSet[DicomTags.SeriesInstanceUid].SetStringValue(seriesInstanceUid);
-				server.SendCFindResponse(presentationID, message.MessageId, failureResponse,
+                failureResponse.DataSet[DicomTags.InstanceAvailability].SetStringValue("NEARLINE");
+                failureResponse.DataSet[DicomTags.QueryRetrieveLevel].SetStringValue("IMAGE");
+                failureResponse.DataSet[DicomTags.RetrieveAeTitle].SetStringValue(Partition.AeTitle);
+                failureResponse.DataSet[DicomTags.StudyInstanceUid].SetStringValue(studyInstanceUid);
+				failureResponse.DataSet[DicomTags.SeriesInstanceUid].SetStringValue(seriesInstanceUid);
+				server.SendCFindResponse(presentationId, message.MessageId, failureResponse,
                                          DicomStatuses.QueryRetrieveUnableToProcess);
 
 				AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated, message);
@@ -1158,17 +1146,16 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             SeriesXml seriesXml = studyXml[seriesInstanceUid];
 			if (seriesXml == null)
 			{
-				server.SendCFindResponse(presentationID, message.MessageId, new DicomMessage(), DicomStatuses.QueryRetrieveUnableToProcess);
+                DicomMessage failureResponse = new DicomMessage();
+                failureResponse.DataSet[DicomTags.QueryRetrieveLevel].SetStringValue("IMAGE");
+                server.SendCFindResponse(presentationId, message.MessageId, failureResponse, DicomStatuses.QueryRetrieveUnableToProcess);
 				AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated, message);
 				return;
 			}
 
             foreach (DicomAttribute attrib in message.DataSet)
             {
-				if (attrib.Tag.TagValue == DicomTags.QueryRetrieveLevel)
-					continue;
-
-                tagList.Add(attrib.Tag.TagValue);
+	            tagList.Add(attrib.Tag.TagValue);
                 if (!attrib.IsNull)
                     matchingTagList.Add(attrib.Tag.TagValue);
             }
@@ -1181,8 +1168,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 {
 					if (CancelReceived)
 					{
-						DicomMessage errorResponse = new DicomMessage();
-						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+                        DicomMessage failureResponse = new DicomMessage();
+                        failureResponse.DataSet[DicomTags.QueryRetrieveLevel].SetStringValue("IMAGE");
+                        server.SendCFindResponse(presentationId, message.MessageId, failureResponse,
 												 DicomStatuses.Cancel);
 
 						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success, message);
@@ -1192,7 +1180,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 	if (DicomSettings.Default.MaxQueryResponses != -1
                 	    && DicomSettings.Default.MaxQueryResponses < resultCount)
                 	{
-                		SendBufferedResponses(server, presentationID, message);
+                		SendBufferedResponses(server, presentationId, message);
                 		Platform.Log(LogLevel.Warn, "Maximum Configured Query Responses Exceeded: " + resultCount);
                 		break;
                 	}
@@ -1202,14 +1190,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 	_responseQueue.Enqueue(response);
 
                 	if (_responseQueue.Count >= DicomSettings.Default.BufferedQueryResponses)
-                		SendBufferedResponses(server, presentationID, message);
+                		SendBufferedResponses(server, presentationId, message);
                 }
             }
 
-			SendBufferedResponses(server, presentationID, message);
+			SendBufferedResponses(server, presentationId, message);
 
             DicomMessage finalResponse = new DicomMessage();
-            server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
+            server.SendCFindResponse(presentationId, message.MessageId, finalResponse, DicomStatuses.Success);
 
 			AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success, message);
 
@@ -1226,11 +1214,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// </summary>
         /// <param name="server"></param>
         /// <param name="association"></param>
-        /// <param name="presentationID"></param>
+        /// <param name="presentationId"></param>
         /// <param name="message"></param>
         /// <returns></returns>
         public override bool OnReceiveRequest(DicomServer server, ServerAssociationParameters association,
-                                              byte presentationID, DicomMessage message)
+                                              byte presentationId, DicomMessage message)
         {
             String level = message.DataSet[DicomTags.QueryRetrieveLevel].GetString(0, string.Empty);
 
@@ -1253,7 +1241,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					// the .NET Thread pool fills up.
                 	ThreadPool.QueueUserWorkItem(delegate
 													{
-														OnReceiveStudyLevelQuery(server, presentationID, message);
+														OnReceiveStudyLevelQuery(server, presentationId, message);
 													});
                 	return true;
                 }
@@ -1261,7 +1249,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             	{
             		ThreadPool.QueueUserWorkItem(delegate
             		                             	{
-            		                             		OnReceiveSeriesLevelQuery(server, presentationID, message);
+            		                             		OnReceiveSeriesLevelQuery(server, presentationId, message);
             		                             	});
             		return true;
             	}
@@ -1269,13 +1257,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             	{
             		ThreadPool.QueueUserWorkItem(delegate
             		                             	{
-            		                             		OnReceiveImageLevelQuery(server, presentationID, message);
+            		                             		OnReceiveImageLevelQuery(server, presentationId, message);
             		                             	});
             		return true;
             	}
             	Platform.Log(LogLevel.Error, "Unexpected Study Root Query/Retrieve level: {0}", level);
 
-            	server.SendCFindResponse(presentationID, message.MessageId, new DicomMessage(),
+            	server.SendCFindResponse(presentationId, message.MessageId, new DicomMessage(),
             	                         DicomStatuses.QueryRetrieveIdentifierDoesNotMatchSOPClass);
             	return true;
             }
@@ -1285,7 +1273,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         		{
         			ThreadPool.QueueUserWorkItem(delegate
         			                             	{
-        			                             		OnReceivePatientQuery(server, presentationID, message);
+        			                             		OnReceivePatientQuery(server, presentationId, message);
         			                             	});
 
         			return true;
@@ -1294,7 +1282,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         		{
         			ThreadPool.QueueUserWorkItem(delegate
         			                             	{
-        			                             		OnReceiveStudyLevelQuery(server, presentationID, message);
+        			                             		OnReceiveStudyLevelQuery(server, presentationId, message);
         			                             	});
         			return true;
         		}
@@ -1302,7 +1290,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         		{
         			ThreadPool.QueueUserWorkItem(delegate
         			                             	{
-        			                             		OnReceiveSeriesLevelQuery(server, presentationID, message);
+        			                             		OnReceiveSeriesLevelQuery(server, presentationId, message);
         			                             	});
         			return true;
         		}
@@ -1310,19 +1298,19 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         		{
         			ThreadPool.QueueUserWorkItem(delegate
         			                             	{
-        			                             		OnReceiveImageLevelQuery(server, presentationID, message);
+        			                             		OnReceiveImageLevelQuery(server, presentationId, message);
         			                             	});
         			return true;
         		}
         		Platform.Log(LogLevel.Error, "Unexpected Patient Root Query/Retrieve level: {0}", level);
 
-        		server.SendCFindResponse(presentationID, message.MessageId, new DicomMessage(),
+        		server.SendCFindResponse(presentationId, message.MessageId, new DicomMessage(),
         		                         DicomStatuses.QueryRetrieveIdentifierDoesNotMatchSOPClass);
         		return true;
         	}
 
         	// Not supported message type, send a failure status.
-            server.SendCFindResponse(presentationID, message.MessageId, new DicomMessage(),
+            server.SendCFindResponse(presentationId, message.MessageId, new DicomMessage(),
                                      DicomStatuses.QueryRetrieveIdentifierDoesNotMatchSOPClass);
             return true;
         }

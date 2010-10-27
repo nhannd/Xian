@@ -21,18 +21,21 @@
 	<ShredHostBuild>true</ShredHostBuild>
 	<TestAppBuild>false</TestAppBuild>
 	<ExecutableBuild>false</ExecutableBuild>
+	<WebViewerBuild>true</WebViewerBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.ImageServer.TestApp'">
 	<ShredHostBuild>false</ShredHostBuild>
 	<TestAppBuild>true</TestAppBuild>
 	<ExecutableBuild>false</ExecutableBuild>
+	  <WebViewerBuild>false</WebViewerBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.ImageServer.Executable'">
 	<ShredHostBuild>false</ShredHostBuild>
 	<TestAppBuild>false</TestAppBuild>
 	<ExecutableBuild>true</ExecutableBuild>
+	<WebViewerBuild>false</WebViewerBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -54,7 +57,6 @@
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\common\app.config" />
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Enterprise\Common\app.config" />
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\ShredHostService\app.config" />
-	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\ImageServer_Shreds_dist.config" />
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Dicom\app.config" />
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Common\app.config" />
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Services\Dicom\app.config" />
@@ -63,6 +65,11 @@
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Services\WorkQueue\app.config" />
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Services\Archiving\Hsm\app.config" />
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\SqlServer2005\app.config" />
+    <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Web\Services\app.config" />
+    <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Web\Common\app.config" />
+    <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageViewer\Web\Server\ImageServer\app.config" />
+    <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageViewer\Web\app.config" />
+    <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\ImageServer_Shreds_dist.config" />
   </ItemGroup>
 
   <ItemGroup>
@@ -74,7 +81,7 @@
 	<ImageServerCommonFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Ionic.Zip.dll" />
 	<ImageServerCommonFiles Include="$(SolutionDir)\..\Common\bin\$(Configuration)\ClearCanvas.Common.dll" />
 	<ImageServerCommonFiles Include="$(SolutionDir)\..\ImageServer\Model\bin\$(Configuration)\ClearCanvas.ImageServer.Model.dll" />
-	
+	  
   </ItemGroup>
 
   <ItemGroup Condition="$(ExecutableBuild)">
@@ -83,32 +90,64 @@
   </ItemGroup>
 
   <ItemGroup Condition="$(ShredHostBuild)">
-    <PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Archiving\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Archiving.dll" />
-    <PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Archiving\Hsm\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Archiving.Hsm.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Archiving\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Archiving.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Archiving\Hsm\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Archiving.Hsm.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\Dicom\Codec\Rle\bin\$(Configuration)\ClearCanvas.Dicom.Codec.Rle.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
+	<PluginFiles Include="$(SolutionDir)\..\JScript\bin\$(Configuration)\ClearCanvas.Jscript.dll"/>
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TestAppBuild)">
+    <PluginFiles Include="$(SolutionDir)\..\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
     <PluginFiles Include="$(SolutionDir)\..\Dicom\Codec\Rle\bin\$(Configuration)\ClearCanvas.Dicom.Codec.Rle.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
+    <PluginFiles Include="$(SolutionDir)\..\JScript\bin\$(Configuration)\ClearCanvas.Jscript.dll"/>
   </ItemGroup>
 
   <ItemGroup>
-    <PluginFiles Include="$(SolutionDir)\..\ImageServer\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Common.dll" />
-    <PluginFiles Include="$(SolutionDir)\..\ImageServer\Model\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer2005.dll" />
-    <PluginFiles Include="$(SolutionDir)\..\ImageServer\Core\bin\$(Configuration)\ClearCanvas.ImageServer.Core.dll" />
-    <PluginFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer2005.dll" />
-    <PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Common.dll" />
-    <PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Dicom\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Dicom.dll" />
-    <PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\WorkQueue\bin\$(Configuration)\ClearCanvas.ImageServer.Services.WorkQueue.dll" />
-    <PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Streaming\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Streaming.dll" />
-    <PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\ServiceLock\bin\$(Configuration)\ClearCanvas.ImageServer.Services.ServiceLock.dll" />
-    <PluginFiles Include="$(SolutionDir)\..\ImageServer\Rules\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.dll" />
-    <PluginFiles Include="$(SolutionDir)\..\ImageServer\Rules\RleCodec\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.RleCodec.dll" />
-    <PluginFiles Include="$(SolutionDir)\..\ImageServer\Rules\JpegCodec\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.JpegCodec.dll" />
-    <PluginFiles Include="$(SolutionDir)\..\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
-    <PluginFiles Include="$(SolutionDir)\..\Enterprise\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll" />
-    <PluginFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.dll" />
-    <PluginFiles Include="$(SolutionDir)\..\ImageServer\Utilities\bin\$(Configuration)\ClearCanvas.ImageServer.Utilities.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Common.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Model\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer2005.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Core\bin\$(Configuration)\ClearCanvas.ImageServer.Core.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer2005.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Common.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Dicom\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Dicom.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\WorkQueue\bin\$(Configuration)\ClearCanvas.ImageServer.Services.WorkQueue.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Streaming\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Streaming.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\ServiceLock\bin\$(Configuration)\ClearCanvas.ImageServer.Services.ServiceLock.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Rules\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Rules\RleCodec\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.RleCodec.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Rules\JpegCodec\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.JpegCodec.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\Enterprise\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Utilities\bin\$(Configuration)\ClearCanvas.ImageServer.Utilities.dll" />
     <PluginFiles Include="$(SolutionDir)\..\Utilities\Manifest\bin\$(Configuration)\ClearCanvas.Utilities.Manifest.dll" />
   </ItemGroup>
 
+	<ItemGroup Condition="$(WebViewerBuild)">
+		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\Configuration\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.dll" />
+
+
+		<PluginFiles Include="$(SolutionDir)\..\Web\Services\bin\$(Configuration)\ClearCanvas.Web.Services.dll" />
+		<PluginFiles Include="$(SolutionDir)\..\Web\Common\bin\$(Configuration)\ClearCanvas.Web.Common.dll" />
+		<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\WebViewer\bin\$(Configuration)\ClearCanvas.ImageServer.Services.WebViewer.dll" />
+		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\Services\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.dll" />
+		<PluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Interpolators\$(PlatformSubFolder)\BilinearInterpolation.dll" />
+		<PluginFiles Include="$(SolutionDir)\..\Desktop\bin\$(Configuration)\ClearCanvas.Desktop.dll" />
+		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\bin\$(Configuration)\ClearCanvas.ImageViewer.dll" />
+		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\Web\bin\$(Configuration)\ClearCanvas.ImageViewer.Web.dll" />
+		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\Web\Common\bin\$(Configuration)\ClearCanvas.ImageViewer.Web.Common.dll" />
+		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\AnnotationProviders\bin\$(Configuration)\ClearCanvas.ImageViewer.AnnotationProviders.dll" />
+		
+		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\Layout\Basic\bin\$(Configuration)\ClearCanvas.ImageViewer.Layout.Basic.dll" />
+    <PluginFiles Include="$(SolutionDir)\..\ImageViewer\StudyFinders\Remote\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.Remote.dll" />
+    <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Standard\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Standard.dll" />
+		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Measurement\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Measurement.dll" />
+		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Synchronization\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Synchronization.dll" />
+		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\Web\Server\ImageServer\bin\$(Configuration)\ClearCanvas.ImageViewer.Web.Server.ImageServer.dll" />
+
+	</ItemGroup>
+	
 	<ItemGroup>
 		<UtilBatchFiles Include="$(SolutionDir)\..\ImageServer\Utilities\bin\$(Configuration)\ReconcileCleanup.bat" />
 	</ItemGroup>
@@ -158,9 +197,11 @@
   <!-- The actual build task -->
   <Target Name ="Copy Files" DependsOnTargets="Build BuildTasks">
 
-    <CallTarget Condition="$(ShredHostBuild)" Targets="Copy Project Files;Copy ShredHost App Config" />
-    <CallTarget Condition="$(TestAppBuild)" Targets="Copy Project Files" />
-    <CallTarget Condition="$(ExecutableBuild)" Targets="Copy Project Files;Copy ImageServer Executable App Config" />
+  <MSBuild Projects="$(SolutionDir)\..\JScript\Build.proj" Properties="Configuration=$(Configuration)"/>
+
+  <CallTarget Condition="$(ShredHostBuild)" Targets="Copy Project Files;Copy ShredHost App Config" />
+	<CallTarget Condition="$(TestAppBuild)" Targets="Copy Project Files" />
+	<CallTarget Condition="$(ExecutableBuild)" Targets="Copy Project Files;Copy ImageServer Executable App Config" />
 
   </Target>
 

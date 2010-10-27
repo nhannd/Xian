@@ -10,7 +10,7 @@
                     <td>
                         <asp:Image runat="server" ImageUrl="~/App_Themes/Default/images/Controls/GridView/GridViewPagerTotalStudiesLeft.png" />
                     </td>
-                    <td>
+                    <td nowrap="nowrap">
                         <%
                             if (Request.UserAgent.Contains("Chrome"))
                             {%>
@@ -55,26 +55,14 @@
                         <asp:ImageButton ID="PrevPageButton" runat="server" CommandArgument="Prev" CommandName="Page"
                             OnCommand="PageButtonClick" CssClass="GlobalGridPagerLink" />
                     </td>
-                    <td>
-                        <%
-                            if (Request.UserAgent.Contains("Chrome"))
-                            {%>
-                        <div id="CurrentPageContainer_Chrome">
-                        <%}
-                            else if (Request.UserAgent.Contains("MSIE"))
-                            {%>
-                        <div id="CurrentPageContainer">
-                        <%}
-                            else
-                            {%>
-                        <div id="CurrentPageContainer_FF">
-                        <%} %>
+                    <td nowrap="nowrap">
+                        <asp:panel ID="CurrentPageContainer" runat="server">
                             <asp:Label ID="Label3" runat="server" Text="Page" CssClass="GlobalGridPagerLabel" />
                             <asp:TextBox ID="CurrentPage" runat="server" Width="85px" CssClass="GridViewTextBox"
                                 Style="font-size: 12px;" />
                             <asp:Label ID="PageCountLabel" runat="server" Text="Label" CssClass="GlobalGridPagerLabel" />
                             <aspAjax:FilteredTextBoxExtender runat="server" ID="CurrentPageFilter" FilterType="Numbers" TargetControlID="CurrentPage"  />
-                        </div>
+                        </asp:panel>
                     </td>
                     <td valign="top" style="padding-top: 1px;">
                         <asp:ImageButton ID="NextPageButton" runat="server" CommandArgument="Next" CommandName="Page"

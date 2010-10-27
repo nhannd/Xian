@@ -2,30 +2,10 @@
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
+// http://www.clearcanvas.ca
 //
-// Redistribution and use in source and binary forms, with or without modification, 
-// are permitted provided that the following conditions are met:
-//
-//    * Redistributions of source code must retain the above copyright notice, 
-//      this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above copyright notice, 
-//      this list of conditions and the following disclaimer in the documentation 
-//      and/or other materials provided with the distribution.
-//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
-//      may be used to endorse or promote products derived from this software without 
-//      specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
-// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
-// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
-// OF SUCH DAMAGE.
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 #endregion
 
@@ -34,6 +14,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Core.Process;
+using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Core.Rebuild
@@ -46,12 +27,12 @@ namespace ClearCanvas.ImageServer.Core.Rebuild
 		#region Private Members
 
 		private readonly StudyStorageLocation _location;
-		
-		#endregion
 
-		#region Constructor
+        #endregion
 
-		/// <summary>
+        #region Constructor
+
+        /// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="location">The location of the Study to rebuild.</param>
@@ -73,12 +54,26 @@ namespace ClearCanvas.ImageServer.Core.Rebuild
 			{
 				using (ServerCommandProcessor processor = new ServerCommandProcessor("Rebuild XML"))
 				{
-					processor.AddCommand(new RebuildStudyXmlCommand(_location.StudyInstanceUid, rootStudyPath));
+				    RebuildStudyXmlCommand command = new RebuildStudyXmlCommand(_location.StudyInstanceUid, rootStudyPath);
+					processor.AddCommand(command);
 
 					if (!processor.Execute())
 					{
 						throw new ApplicationException(processor.FailureReason, processor.FailureException);
 					}
+
+                    Study theStudy = _location.Study;
+                    if (theStudy.NumberOfStudyRelatedInstances != command.StudyXml.NumberOfStudyRelatedInstances)
+                    {
+                        // We rebuilt, but the counts don't match.
+                        throw new StudyIntegrityValidationFailure(ValidationErrors.InconsistentObjectCount,
+                                                                  new ValidationStudyInfo(theStudy,
+                                                                                          _location.ServerPartition),
+                                                                  string.Format(
+                                                                      "Database study count {0} does not match study xml {1}",
+                                                                      theStudy.NumberOfStudyRelatedInstances,
+                                                                      command.StudyXml.NumberOfStudyRelatedInstances));
+                    }
 
 					Platform.Log(LogLevel.Info, "Completed reprocessing Study XML file for study {0}", _location.StudyInstanceUid);
 				}

@@ -13,12 +13,12 @@
             $("#<%=TypeListBox.ClientID %>").multiSelect({
                 noneSelected: '',
                 oneOrMoreSelected: '*',
-                style: 'width: 260px'
+                dropdownStyle: 'width: 260px'
             });
             $("#<%=StatusListBox.ClientID %>").multiSelect({
                 noneSelected: '',
                 oneOrMoreSelected: '*',
-                style: 'width: 130px;'
+                dropdownStyle: 'width: 130px;'
             });
         }
         </script>

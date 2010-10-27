@@ -121,23 +121,6 @@
                                 <table width="100%">
                                     <tr align="left">
                                         <td>
-                                            <asp:Label ID="Label4" runat="server" Text="Partition" CssClass="DialogTextBoxLabel" /><br />
-                                            <asp:DropDownList ID="ServerPartitionDropDownList" runat="server" Width="100%" CssClass="DialogDropDownList">
-                                            </asp:DropDownList>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                            </td>
-                            <td valign="bottom">
-                                <table width="100%">
-                                    <tr align="left">
-                                        <td>
                                             <asp:CheckBox ID="ActiveCheckBox" runat="server" Checked="True" Text="Enabled" CssClass="DialogCheckBox" />
                                         </td>
                                         <td>

@@ -2,34 +2,17 @@
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
+// http://www.clearcanvas.ca
 //
-// Redistribution and use in source and binary forms, with or without modification, 
-// are permitted provided that the following conditions are met:
-//
-//    * Redistributions of source code must retain the above copyright notice, 
-//      this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above copyright notice, 
-//      this list of conditions and the following disclaimer in the documentation 
-//      and/or other materials provided with the distribution.
-//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
-//      may be used to endorse or promote products derived from this software without 
-//      specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
-// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
-// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
-// OF SUCH DAMAGE.
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Text;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Audit;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
@@ -47,8 +30,46 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
 		public void WriteLogEntry(IEnumerable<EntityChange> changeSet, AuditLog auditLog)
 		{
-			AuditLogEntry entry = CreateLogEntry(changeSet);
-			auditLog.WriteEntry(entry.Category, entry.Details);
+            AuditLogEntry entry = null;
+            try
+			{
+                entry = CreateLogEntry(changeSet);
+                auditLog.WriteEntry(entry.Category, entry.Details);
+            }
+			catch(Exception ex)
+			{
+                // Error saving the audit log repository. Write to log file instead.
+
+                Platform.Log(LogLevel.Error, ex, "Error occurred when writing audit log");
+                
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("Audit log entry failed to save:");
+
+                if (entry!=null)
+                {
+                    sb.AppendLine(String.Format("Operation: {0}", entry.Operation));
+                    sb.AppendLine(String.Format("Details: {0}", entry.Details));
+                }
+                else
+                {
+                    foreach (EntityChange change in changeSet)
+                    {
+                        sb.AppendLine(String.Format("Changeset: {0} on entity: {1}", change.ChangeType, change.EntityRef));
+                        if (change.PropertyChanges != null)
+                        {
+                            foreach (PropertyChange property in change.PropertyChanges)
+                            {
+                                sb.AppendLine(String.Format("{0} : Old Value: {1}\tNew Value: {2}",
+                                                            property.PropertyName, property.OldValue, property.NewValue));
+
+                            }
+                        }
+                    }
+                }
+                
+			    Platform.Log(LogLevel.Info, sb.ToString());
+			}
+
 		}
 
 		public AuditLogEntry CreateLogEntry(IEnumerable<EntityChange> changeSet)

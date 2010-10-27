@@ -140,8 +140,6 @@
 
                                 </tr>
                             </table>
-                            
-                            
                         </td>
                     </tr>
                     <tr id="ReasonSavePanel" runat="server">
@@ -151,7 +149,16 @@
                                  
                         </td>
                         <td>
-                            <asp:TextBox runat="server" ID="SaveReasonAsName" style="font-family: Arial, Sans-Serif; font-size: 14px;"/>
+                            <table cellpadding="0" cellspacing="0">
+                              <tr valign="top">
+                                <td>
+                                    <asp:TextBox runat="server" ID="SaveReasonAsName" style="font-family: Arial, Sans-Serif; font-size: 14px;"/>
+                                </td>
+                                <td valign="middle" style="padding-left: 8px;">
+                                    <ccAsp:InvalidInputIndicator ID="InvalidSaveReasonAsNameInputIndicator" runat="server" SkinID="InvalidInputIndicator" />
+                                </td>
+                              </tr>
+                            </table>
                         </td>
                 </tr>
                 </table>
@@ -179,6 +186,9 @@
                                                 ControlToValidate="ReasonListBox" InvalidInputIndicatorID="InvalidReasonIndicator" 
                                                 ValidationGroup="SeriesGroup"
                                                 Text="You must specify the reason for deleting the studies for future auditing purposes." Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>
-           
+       <ccValidator:ConditionalRequiredFieldValidator ID="SaveReasonAsNameValidator" runat="server"
+                                                ControlToValidate="SaveReasonAsName" InvalidInputIndicatorID="InvalidSaveReasonAsNameInputIndicator" 
+                                                ValidationGroup='SeriesGroup'
+                                                Text="You must specify a name for the reason." Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>           
     </ContentTemplate>
 </ccAsp:ModalDialog>

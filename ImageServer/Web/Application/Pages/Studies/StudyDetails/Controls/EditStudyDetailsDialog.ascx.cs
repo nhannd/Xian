@@ -2,30 +2,10 @@
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
+// http://www.clearcanvas.ca
 //
-// Redistribution and use in source and binary forms, with or without modification, 
-// are permitted provided that the following conditions are met:
-//
-//    * Redistributions of source code must retain the above copyright notice, 
-//      this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above copyright notice, 
-//      this list of conditions and the following disclaimer in the documentation 
-//      and/or other materials provided with the distribution.
-//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
-//      may be used to endorse or promote products derived from this software without 
-//      specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
-// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
-// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
-// OF SUCH DAMAGE.
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 #endregion
 
@@ -54,8 +34,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
     public partial class EditStudyDetailsDialog : System.Web.UI.UserControl
     {
+        #region Private Members
+
         private const string REASON_CANNEDTEXT_CATEGORY = "EditStudyReason";
 
+        #endregion
 
         #region Public Properties
 
@@ -77,6 +60,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         }
 
         #endregion
+ 
         #region Events
 
         /// <summary>
@@ -90,6 +74,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         public event OnOKClickedEventHandler StudyEdited;
 
         #endregion Events
+        
         #region Private Methods
 
         private void SetupJavascript()
@@ -213,55 +198,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             return changes;
         }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-
-            // Ensure the birthdate entered if invalid will not be erased by the calendar extender
-            // Note: this code is actually needed for Firefox because the server validation is used.
-            // For IE, because of client-side validation, all input is already valid on postback.
-            if (!String.IsNullOrEmpty(PatientBirthDate.Text))
-            {
-                DateTime result;
-                if (InputDateParser.TryParse(PatientBirthDate.Text, out result))
-                {
-                    // entered value is actually valid... update the calendar
-                    PatientBirthDateCalendarExtender.SelectedDate = result;
-                }
-                else
-                {
-                    PatientBirthDateCalendarExtender.SelectedDate = null;
-                }
-            }
-            else
-            {
-                // Prevents the calendar from copying its value into the textbox
-                PatientBirthDateCalendarExtender.SelectedDate = null;
-            }
-
-            // Ensure the study date entered if invalid will not be erased by the calendar extender
-            // Note: this code is actually needed for Firefox because the server validation is used.
-            // For IE, because of client-side validation, all input is already valid on postback.
-            if (!String.IsNullOrEmpty(StudyDate.Text))
-            {
-                DateTime result;
-                if (InputDateParser.TryParse(StudyDate.Text, out result))
-                {
-                    // entered value is actually valid... update the calendar
-                    StudyDateCalendarExtender.SelectedDate = result;
-                }
-                else
-                {
-                    StudyDateCalendarExtender.SelectedDate = null;
-                }
-            }
-            else
-            {
-                // Prevents the calendar from copying its value into the textbox
-                StudyDateCalendarExtender.SelectedDate = null;
-            }
-        }
-
         private void UpdateFields()
         {
             if(Study == null) return;
@@ -369,28 +305,41 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 StudyTimeSeconds.Text = "00";
             }
 
-            Comment.Text = string.Empty;
             ReasonListBox.SelectedIndex = 0;
+            if(string.IsNullOrEmpty(ReasonListBox.SelectedValue))
+            {
+                Comment.Text = string.Empty;
+            } else
+            {
+                Comment.Text = App_GlobalResources.SR.CustomReasonComment;
+            }
+            SaveReasonAsName.Text = string.Empty;
 
             DataBind();
         }
 
         private void EnsurePredefinedReasonsLoaded()
         {
-            if (ReasonListBox.Items.Count == 0)
+            ReasonListBox.Items.Clear();
+
+            var broker = HttpContextData.Current.ReadContext.GetBroker<ICannedTextEntityBroker>();
+            var criteria = new CannedTextSelectCriteria();
+            criteria.Category.EqualTo(REASON_CANNEDTEXT_CATEGORY);
+            IList<CannedText> list = broker.Find(criteria);
+
+            if (SessionManager.Current.User.IsInRole(Enterprise.Authentication.AuthorityTokens.Study.SaveReason))
             {
-                var broker = HttpContextData.Current.ReadContext.GetBroker<ICannedTextEntityBroker>();
-                var criteria = new CannedTextSelectCriteria();
-                criteria.Category.EqualTo(REASON_CANNEDTEXT_CATEGORY);
-                IList<CannedText> list = broker.Find(criteria);
-
-                ReasonListBox.Items.Add(new ListItem("-- Select one --", ""));
-                foreach (CannedText text in list)
-                {
-                    ReasonListBox.Items.Add(new ListItem(text.Label, text.Text));
-                }
-
+                ReasonListBox.Items.Add(new ListItem(App_GlobalResources.SR.CustomReason, App_GlobalResources.SR.CustomReasonComment));
+            } else
+            {
+                ReasonListBox.Items.Add(new ListItem(App_GlobalResources.SR.SelectOne, string.Empty));    
             }
+
+            foreach (CannedText text in list)
+            {
+                ReasonListBox.Items.Add(new ListItem(text.Label, text.Text));
+            }
+
         }
 
         private static void AuditLog(Study study, List<UpdateItem> fields)
@@ -452,6 +401,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         }
 
         #endregion
+
         #region Protected Methods
        
         protected override void OnInit(EventArgs e)
@@ -461,9 +411,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             CalendarLink.ImageUrl = ImageServerConstants.ImageURLs.CalendarIcon;
             EnsurePredefinedReasonsLoaded();
 
+            //Set up the control to handle custom reasons if the user has the authority.
             if (!SessionManager.Current.User.IsInRole(Enterprise.Authentication.AuthorityTokens.Study.SaveReason))
             {
                 ReasonSavePanel.Visible = false;
+                SaveReasonAsName.Attributes.Add("display", "none");
+                SaveReasonAsNameValidator.Enabled = false;
+            } else
+            {
+                //Hide/Disable the "Save As Reason" textbox/validation depending on whether the user is using a custom reason or not.
+                ReasonListBox.Attributes.Add("onchange", "if(document.getElementById('" + ReasonListBox.ClientID + "').options[document.getElementById('" + ReasonListBox.ClientID + "').selectedIndex].text != '" + App_GlobalResources.SR.CustomReason + "') { document.getElementById('" + ReasonSavePanel.ClientID + "').style.display = 'none'; document.getElementById('" + SaveReasonAsName.ClientID + "').style.display = 'none'; } else { document.getElementById('" + ReasonSavePanel.ClientID + "').style.display = 'inline'; document.getElementById('" + SaveReasonAsName.ClientID + "').style.display = 'inline'; }");
+                ReasonListBox.TextChanged += delegate
+                {
+                    if (ReasonListBox.SelectedItem.Text == App_GlobalResources.SR.CustomReason) SaveReasonAsNameValidator.Enabled = true;
+                    else SaveReasonAsNameValidator.Enabled = false;
+                };
             }
 
             string pattern = InputDateParser.DateFormat;
@@ -474,6 +436,55 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     CultureInfo.CurrentUICulture.DateTimeFormat.DateSeparator, "/");
             PatientBirthDateCalendarExtender.Format = pattern;
             StudyDateCalendarExtender.Format = pattern;
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            // Ensure the birthdate entered if invalid will not be erased by the calendar extender
+            // Note: this code is actually needed for Firefox because the server validation is used.
+            // For IE, because of client-side validation, all input is already valid on postback.
+            if (!String.IsNullOrEmpty(PatientBirthDate.Text))
+            {
+                DateTime result;
+                if (InputDateParser.TryParse(PatientBirthDate.Text, out result))
+                {
+                    // entered value is actually valid... update the calendar
+                    PatientBirthDateCalendarExtender.SelectedDate = result;
+                }
+                else
+                {
+                    PatientBirthDateCalendarExtender.SelectedDate = null;
+                }
+            }
+            else
+            {
+                // Prevents the calendar from copying its value into the textbox
+                PatientBirthDateCalendarExtender.SelectedDate = null;
+            }
+
+            // Ensure the study date entered if invalid will not be erased by the calendar extender
+            // Note: this code is actually needed for Firefox because the server validation is used.
+            // For IE, because of client-side validation, all input is already valid on postback.
+            if (!String.IsNullOrEmpty(StudyDate.Text))
+            {
+                DateTime result;
+                if (InputDateParser.TryParse(StudyDate.Text, out result))
+                {
+                    // entered value is actually valid... update the calendar
+                    StudyDateCalendarExtender.SelectedDate = result;
+                }
+                else
+                {
+                    StudyDateCalendarExtender.SelectedDate = null;
+                }
+            }
+            else
+            {
+                // Prevents the calendar from copying its value into the textbox
+                StudyDateCalendarExtender.SelectedDate = null;
+            }
         }
 
         /// <summary>

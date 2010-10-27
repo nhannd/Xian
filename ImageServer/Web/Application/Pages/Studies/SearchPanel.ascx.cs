@@ -2,35 +2,16 @@
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
+// http://www.clearcanvas.ca
 //
-// Redistribution and use in source and binary forms, with or without modification, 
-// are permitted provided that the following conditions are met:
-//
-//    * Redistributions of source code must retain the above copyright notice, 
-//      this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above copyright notice, 
-//      this list of conditions and the following disclaimer in the documentation 
-//      and/or other materials provided with the distribution.
-//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
-//      may be used to endorse or promote products derived from this software without 
-//      specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
-// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
-// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
-// OF SUCH DAMAGE.
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 #endregion
 
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Text;
 using System.Threading;
 using System.Web.UI;
@@ -39,12 +20,9 @@ using AjaxControlToolkit;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Audit;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
-using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.Security;
@@ -79,6 +57,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             add { _deleteButtonClickedHandler += value; }
             remove { _deleteButtonClickedHandler -= value; }
         }
+        #endregion
+
+        #region Private Properties
+        
+        private bool DisplaySearchWarning
+        {
+            get
+            {
+                return String.IsNullOrEmpty(PatientId.Text) &&
+                       String.IsNullOrEmpty(PatientName.Text) &&
+                       String.IsNullOrEmpty(AccessionNumber.Text) &&
+                       String.IsNullOrEmpty(ToStudyDate.Text) &&
+                       String.IsNullOrEmpty(FromStudyDate.Text) &&
+                       String.IsNullOrEmpty(StudyDescription.Text) &&
+                       String.IsNullOrEmpty(ReferringPhysiciansName.Text) &&
+                       ModalityListBox.SelectedIndex < 0 &&
+                       StatusListBox.SelectedIndex < 0 &&
+                       ConfigurationManager.AppSettings["DisplaySearchWarning"].ToLower().Equals("true");
+            }
+        }
+
         #endregion
 
         #region Public Properties
@@ -133,10 +132,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         }
 
         [ExtenderControlProperty]
-        [ClientPropertyName("CanViewStudyDetails")]
-        public bool CanViewStudyDetails
+        [ClientPropertyName("ViewImagePageUrl")]
+        public string ViewImagePageUrl
         {
-            get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Study.View); }
+            get { return Page.ResolveClientUrl(ImageServerConstants.PageURLs.ViewImagesPage); }
+        }
+        
+        [ExtenderControlProperty]
+        [ClientPropertyName("CanViewImages")]
+        public bool CanViewImages
+        {
+            get { return Thread.CurrentPrincipal.IsInRole(ImageServerConstants.WebViewerAuthorityToken); }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("ViewImageButtonClientID")]
+        public string ViewImageButtonClientID
+        {
+            get { return ViewImageButton.ClientID; }
         }
 
         public ServerPartition ServerPartition
@@ -202,17 +215,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                             source.DateFormats = ToStudyDateCalendarExtender.Format;
 
                                             if (!String.IsNullOrEmpty(PatientId.Text))
-                                                source.PatientId = PatientId.Text;
+                                                source.PatientId = SearchHelper.TrailingWildCard(PatientId.Text);
                                             if (!String.IsNullOrEmpty(PatientName.Text))
-                                                source.PatientName = PatientName.Text;
+                                                source.PatientName = SearchHelper.NameWildCard(PatientName.Text);
                                             if (!String.IsNullOrEmpty(AccessionNumber.Text))
-                                                source.AccessionNumber = AccessionNumber.Text;
+                                                source.AccessionNumber = SearchHelper.TrailingWildCard(AccessionNumber.Text);
                                             if (!String.IsNullOrEmpty(ToStudyDate.Text))
                                                 source.ToStudyDate = ToStudyDate.Text;
                                             if (!String.IsNullOrEmpty(FromStudyDate.Text))
                                                 source.FromStudyDate = FromStudyDate.Text;
                                             if (!String.IsNullOrEmpty(StudyDescription.Text))
-                                                source.StudyDescription = StudyDescription.Text;
+                                                source.StudyDescription = SearchHelper.LeadingAndTrailingWildCard(StudyDescription.Text);
+                                            if (!String.IsNullOrEmpty(ReferringPhysiciansName.Text))
+                                                source.ReferringPhysiciansName = SearchHelper.NameWildCard(ReferringPhysiciansName.Text);
 
                                             if (ModalityListBox.SelectedIndex > -1)
                                             {
@@ -242,10 +257,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                         };
 
             //Set Roles
+            ViewImageButton.Roles = ImageServerConstants.WebViewerAuthorityToken;
             ViewStudyDetailsButton.Roles = AuthorityTokens.Study.View;
             MoveStudyButton.Roles = AuthorityTokens.Study.Move;
             DeleteStudyButton.Roles = AuthorityTokens.Study.Delete;
             RestoreStudyButton.Roles = AuthorityTokens.Study.Restore;
+
         }
 
     	#endregion Private Methods
@@ -263,6 +280,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             StudyDescription.Text = string.Empty;
             ToStudyDate.Text = string.Empty;
             FromStudyDate.Text = string.Empty;
+            ReferringPhysiciansName.Text = string.Empty;
+        }
+
+        public void Refresh()
+        {
+            if (!StudyListGridView.IsDataSourceSet()) StudyListGridView.SetDataSource();
+            StudyListGridView.RefreshCurrentPage();
         }
 
         #endregion Public Methods
@@ -275,25 +299,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
             SetupChildControls();
         }
-
-        public void Refresh()
-        {
-            if(!StudyListGridView.IsDataSourceSet()) StudyListGridView.SetDataSource();
-            StudyListGridView.RefreshCurrentPage();
-        }
-
+        
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {   
-            if(String.IsNullOrEmpty(PatientId.Text) && 
-               String.IsNullOrEmpty(PatientName.Text) &&
-               String.IsNullOrEmpty(AccessionNumber.Text) &&
-               String.IsNullOrEmpty(ToStudyDate.Text) &&
-               String.IsNullOrEmpty(FromStudyDate.Text) &&
-               String.IsNullOrEmpty(StudyDescription.Text) &&
-               ModalityListBox.SelectedIndex < 0 &&
-               StatusListBox.SelectedIndex < 0) {
+            if(DisplaySearchWarning) {
                 StudyListGridView.DataBindOnPreRender = false;
-                ConfirmStudySearchMessageBox.Message = "With no filters specified, this search may return a large number of studies.<br/>Are you sure you want to continue?";
+                ConfirmStudySearchMessageBox.Message = App_GlobalResources.SR.NoFiltersSearchWarning;
                    ConfirmStudySearchMessageBox.MessageStyle = "font-weight: bold; color: #205F87;";
                 ConfirmStudySearchMessageBox.Show();
             } else
@@ -362,8 +373,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 			}
 		}
 
-        #endregion Protected Methods
-
         protected void DeleteStudyButton_Click(object sender, ImageClickEventArgs e)
         {
             StudyListGridView.RefreshCurrentPage();
@@ -371,5 +380,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             args.SelectedStudies = StudyListGridView.SelectedStudies;
             EventsHelper.Fire(_deleteButtonClickedHandler, this, args);
         }
+
+        protected void OpenStudyButton_Click(object sender, ImageClickEventArgs e)
+        {
+            foreach(StudySummary study in StudyListGridView.SelectedStudies)
+            {
+                String url = String.Format("{0}?study={1}", ImageServerConstants.PageURLs.StudyDetailsPage, study.StudyInstanceUid);
+
+                string script = String.Format("window.open(\"{0}\", \"{1}\");", Page.ResolveClientUrl(url), "_blank");
+
+                ScriptManager.RegisterStartupScript(Page, typeof(Page), "Redirect", script, true);
+            }
+        }
+
+        #endregion Protected Methods
+
     }
 }

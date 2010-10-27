@@ -2,30 +2,10 @@
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
+// http://www.clearcanvas.ca
 //
-// Redistribution and use in source and binary forms, with or without modification, 
-// are permitted provided that the following conditions are met:
-//
-//    * Redistributions of source code must retain the above copyright notice, 
-//      this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above copyright notice, 
-//      this list of conditions and the following disclaimer in the documentation 
-//      and/or other materials provided with the distribution.
-//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
-//      may be used to endorse or promote products derived from this software without 
-//      specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
-// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
-// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
-// OF SUCH DAMAGE.
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 #endregion
 
@@ -42,19 +22,24 @@ namespace ClearCanvas.Enterprise.Common
     /// The initial call to CurrentTime will query the database to calculate an offset from the local machine time.  If the database query fails, the local time
     /// is returned, and subsequent calls to CurrentTime will attempt to re-query the database.  If the database query is successful, subsequent calls CurrentTime will 
     /// calculate the appropriate enterprise time from the local machine time using this offset.  The offset will be periodically re-calculated from 
-    /// the database (by default, every 60 seconds).  
+    /// the database (by default, every 60 seconds).
+    /// 
+    /// If we are unable to syncronize the time for 10 minutes, a warning will be logged every 60 seconds when attempting to resynchronize.   
     /// </summary>    
     [ExtensionOf(typeof(TimeProviderExtensionPoint))]
     public class EnterpriseTimeProvider : ITimeProvider
     {
         private TimeSpan _localToEnterpriseOffset;
         private DateTime _lastResyncInLocalTime;
+        private DateTime _lastSyncTime;
         private TimeSpan _resyncThreshold;
+        private readonly TimeSpan _maxTimeBetweenSync;
         
         public EnterpriseTimeProvider()
         {
             _lastResyncInLocalTime = DateTime.MinValue;
             _resyncThreshold = new TimeSpan(0, 0, 60);
+            _maxTimeBetweenSync = new TimeSpan(0, 10, 0);
         }
 
         #region ITimeProvider Members
@@ -95,15 +80,25 @@ namespace ClearCanvas.Enterprise.Common
 
         private void ReSyncLocalToEnterpriseTime()
         {
-            _localToEnterpriseOffset = DateTime.Now - CurrentEnterpriseTime();
+            try
+            {
+                DateTime eTime = CurrentEnterpriseTime();
+                _lastSyncTime = DateTime.Now;
+                _localToEnterpriseOffset = _lastSyncTime - eTime;
+            }
+            catch (Exception)
+            {
+                if ((DateTime.Now - _lastSyncTime) > _maxTimeBetweenSync)
+                    Platform.Log(LogLevel.Warn, "Unable to contact time server for synchronization");
+            }
         }
 
         private DateTime CurrentEnterpriseTime()
         {
             DateTime time = default(DateTime);
 
-            Platform.GetService<Time.ITimeService>(
-				delegate(Time.ITimeService service)
+            Platform.GetService(
+				delegate(ITimeService service)
                 {
                     time = service.GetTime(new GetTimeRequest()).Time;
                 });

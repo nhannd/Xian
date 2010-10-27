@@ -14,19 +14,21 @@ Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(InputHover);
 function MultiSelect() {
 
         $("#<%=ModalityListBox.ClientID %>").multiSelect({
+            selectAllText: 'All',
             noneSelected: '',
             oneOrMoreSelected: '*',
-            style: 'width: 120px;'
+            dropdownStyle: 'width: 85px;',
+            textboxStyle: 'width: 75px;'
         });   
         
         $("#<%=StatusListBox.ClientID %>").multiSelect({
             noneSelected: '',
             oneOrMoreSelected: '*',
-            style: 'width: 200px;'
+            dropdownStyle: 'width: 200px;',
+            textboxStyle: 'width: 90px;'            
         });   
 
 }
-
 
 </script>
             <asp:Table runat="server">
@@ -35,43 +37,47 @@ function MultiSelect() {
                        <table cellpadding="0" cellspacing="0"  width="100%">
                             <tr>
                                 <td align="left">
-                                <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContent" DefaultButton="SearchButton">
+                                <asp:Panel ID="Panel6" runat="server" style="border-bottom: solid 1px #3D98D1; padding: 6px 4px 6px 4px;" DefaultButton="SearchButton">
                                     <table width="100%" cellpadding="0" cellspacing="0">
                                         <tr>
                                         <td>
-                                            <table cellpadding="0" cellspacing="0">
-                                            <tr>
-
+                                            <table cellpadding="0" cellspacing="0" border="0">
+                                            <tr>   
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label1" runat="server" Text="Patient Name" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:TextBox ID="PatientName" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Patient Name" />
+                                                <asp:TextBox ID="PatientName" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Patient Name" style="width: 95px"/>
                                             </td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label2" runat="server" Text="Patient ID" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:TextBox ID="PatientId" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Patient Id" />
+                                                <asp:TextBox ID="PatientId" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Patient Id" style="width: 95px"/>
                                             </td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label3" runat="server" Text="Accession#" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:TextBox ID="AccessionNumber" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Accession Number" />
+                                                <asp:TextBox ID="AccessionNumber" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Accession Number" style="width: 95px"/>
                                             </td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label5" runat="server" Text="From Date" CssClass="SearchTextBoxLabel" EnableViewState="false"/>
-                                                <asp:LinkButton ID="ClearFromStudyDateButton" runat="server" Text="X" CssClass="SmallLink"/><br />
-                                                <ccUI:TextBox ID="FromStudyDate" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="Search the list by Study Date" />
+                                                <asp:LinkButton ID="ClearFromStudyDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 0px;"/><br />
+                                                <ccUI:TextBox ID="FromStudyDate" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="Search the list by Study Date" style="width: 75px;"/>
                                             </td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label7" runat="server" Text="To Date" CssClass="SearchTextBoxLabel" EnableViewState="false"/>
-                                                <asp:LinkButton ID="ClearToStudyDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 35px;"/><br />
-                                                <ccUI:TextBox ID="ToStudyDate" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="Search the list by Study Date" />
-                                            </td>                                            
+                                                <asp:LinkButton ID="ClearToStudyDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 15px;"/><br />
+                                                <ccUI:TextBox ID="ToStudyDate" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="Search the list by Study Date" style="width: 75px;"/>
+                                            </td>                                                                                     
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label4" runat="server" Text="Description" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:TextBox ID="StudyDescription" runat="server"  CssClass="SearchTextBox" ToolTip="Search the list by Study Description" />
-                                            </td>                                            
+                                                <asp:TextBox ID="StudyDescription" runat="server"  CssClass="SearchTextBox" ToolTip="Search the list by Study Description" style="width: 95px"/>
+                                            </td>
+                                            <td align="left" valign="bottom">
+                                                <asp:Label ID="Label9" runat="server" Text="Ref. Physician" CssClass="SearchTextBoxLabel"
+                                                    EnableViewState="False" /><br />
+                                                <asp:TextBox ID="ReferringPhysiciansName" runat="server"  CssClass="SearchTextBox" ToolTip="Search the list by Referring Physician" style="width: 95px"/>
+                                            </td>                                                                                                  
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label6" runat="server" Text="Modality" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
@@ -106,12 +112,9 @@ function MultiSelect() {
                                             <td valign="bottom">
                                                 <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="SearchIcon" OnClick="SearchButton_Click" /></asp:Panel>
                                             </td>
-                                            </tr>
+                                            </tr>                                          
                                             </table>
                                         </td>
-                                         <td align="right" valign="bottom">
-
-                                         </td>
                                      </tr>
                                     </table>
                                 </asp:Panel>
@@ -134,6 +137,7 @@ function MultiSelect() {
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
                                     <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
+                                        <ccUI:ToolbarButton ID="ViewImageButton" runat="server" SkinID="ViewImagesButton" />
                                         <ccUI:ToolbarButton ID="ViewStudyDetailsButton" runat="server" SkinID="ViewDetailsButton" />
                                         <ccUI:ToolbarButton ID="MoveStudyButton" runat="server" SkinID="MoveButton" />
                                         <ccUI:ToolbarButton ID="DeleteStudyButton" runat="server" SkinID="DeleteButton" OnClick="DeleteStudyButton_Click" />

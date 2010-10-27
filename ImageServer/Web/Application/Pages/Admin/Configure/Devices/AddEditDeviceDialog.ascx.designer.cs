@@ -266,24 +266,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices 
         protected global::System.Web.UI.HtmlControls.HtmlTableCell Td9;
         
         /// <summary>
-        /// Label4 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label4;
-        
-        /// <summary>
-        /// ServerPartitionDropDownList control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ServerPartitionDropDownList;
-        
-        /// <summary>
         /// ActiveCheckBox control.
         /// </summary>
         /// <remarks>

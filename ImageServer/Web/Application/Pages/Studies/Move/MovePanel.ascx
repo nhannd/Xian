@@ -14,7 +14,7 @@
             $("#<%=DeviceTypeFilter.ClientID %>").multiSelect({
                 noneSelected: '',
                 oneOrMoreSelected: '*',
-                style: 'width: 160px'
+                dropdownStyle: 'width: 160px'
             });
         }
     </script>

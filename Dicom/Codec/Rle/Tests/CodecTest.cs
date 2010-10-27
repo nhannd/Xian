@@ -1,35 +1,27 @@
-﻿#region License
+﻿#region License (non-CC)
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
 //
-// Redistribution and use in source and binary forms, with or without modification, 
-// are permitted provided that the following conditions are met:
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
 //
-//    * Redistributions of source code must retain the above copyright notice, 
-//      this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above copyright notice, 
-//      this list of conditions and the following disclaimer in the documentation 
-//      and/or other materials provided with the distribution.
-//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
-//      may be used to endorse or promote products derived from this software without 
-//      specific prior written permission.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
-// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
-// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
-// OF SUCH DAMAGE.
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #endregion
 
 #if UNIT_TESTS
+using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Codec.Tests;
 using NUnit.Framework;
 using ClearCanvas.Common;
@@ -107,6 +99,25 @@ namespace ClearCanvas.Dicom.Codec.Rle.Tests
             RleTest(file);
         }
 
+        [Test]
+        public void RleUNVRTest()
+        {
+            DicomFile file = new DicomFile("RleCodecUNTest.dcm");
+
+            SetupMRWithUNVR(file.DataSet);
+
+            SetupMetaInfo(file);
+
+            file.Save();
+
+            DicomFile newFile = new DicomFile(file.Filename);
+
+            newFile.Load();
+
+
+            RleTest(newFile);
+        }
+
 
         public void RleTest(DicomFile file)
         {
@@ -128,7 +139,9 @@ namespace ClearCanvas.Dicom.Codec.Rle.Tests
             newFile.Filename = "Output" + file.Filename;
             newFile.Save();
 
-            Assert.AreEqual(originalFile.DataSet.Equals(newFile.DataSet), true);
+            List<DicomAttributeComparisonResult> results = new List<DicomAttributeComparisonResult>();
+            bool compare = originalFile.DataSet.Equals(newFile.DataSet, ref results);
+            Assert.IsTrue(compare, results.Count > 0 ? CollectionUtils.FirstElement(results).Details : string.Empty);
         }
 
         [Test]

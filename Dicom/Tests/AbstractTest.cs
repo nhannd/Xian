@@ -2,41 +2,36 @@
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
+// http://www.clearcanvas.ca
 //
-// Redistribution and use in source and binary forms, with or without modification, 
-// are permitted provided that the following conditions are met:
-//
-//    * Redistributions of source code must retain the above copyright notice, 
-//      this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above copyright notice, 
-//      this list of conditions and the following disclaimer in the documentation 
-//      and/or other materials provided with the distribution.
-//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
-//      may be used to endorse or promote products derived from this software without 
-//      specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
-// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
-// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
-// OF SUCH DAMAGE.
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 #endregion
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Dicom.IO;
 using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.Dicom.Tests
 {
     public abstract class AbstractTest
     {
+        public void ConvertAttributeToUN(DicomAttributeCollection theSet, uint tag)
+        {
+            ByteBuffer theData =
+                theSet[tag].GetByteBuffer(TransferSyntax.ImplicitVrLittleEndian,
+                                          theSet.SpecificCharacterSet);
+
+            DicomTag baseTag = DicomTagDictionary.GetDicomTag(tag);
+            DicomTag theTag = new DicomTag(tag,
+                baseTag.Name, baseTag.VariableName, DicomVr.UNvr, baseTag.MultiVR, baseTag.VMLow, baseTag.VMHigh, baseTag.Retired);
+
+            DicomAttribute unAttrib = DicomVr.UNvr.CreateDicomAttribute(theTag, theData);
+            theSet[tag] = unAttrib;
+        }
+
         public void SetupMetaInfo(DicomFile theFile)
         {
             DicomAttributeCollection theSet = theFile.MetaInfo;
@@ -207,7 +202,8 @@ namespace ClearCanvas.Dicom.Tests
 			theSet[DicomTags.ImageType].SetStringValue("ORIGINAL\\PRIMARY\\OTHER\\M\\FFE");
 			theSet[DicomTags.InstanceCreationDate].SetStringValue(DateParser.ToDicomString(DateTime.Now));
 			theSet[DicomTags.InstanceCreationTime].SetStringValue(TimeParser.ToDicomString(DateTime.Now));
-			theSet[DicomTags.SopClassUid].SetStringValue(SopClass.MrImageStorageUid);
+            theSet[DicomTags.AcquisitionDatetime].SetDateTime(0, DateTime.Now);
+            theSet[DicomTags.SopClassUid].SetStringValue(SopClass.MrImageStorageUid);
 			theSet[DicomTags.SopInstanceUid].SetStringValue(DicomUid.GenerateUid().UID);
 			theSet[DicomTags.StudyDate].SetStringValue(DateParser.ToDicomString(studyTime));
 			theSet[DicomTags.StudyTime].SetStringValue(TimeParser.ToDicomString(studyTime));
@@ -226,7 +222,9 @@ namespace ClearCanvas.Dicom.Tests
 			theSet[DicomTags.PatientsBirthDate].SetStringValue("19600101");
 			theSet[DicomTags.PatientsSex].SetStringValue("M");
 			theSet[DicomTags.PatientsWeight].SetStringValue("70");
-			theSet[DicomTags.SequenceVariant].SetStringValue("OTHER");
+            theSet[DicomTags.PatientsSize].SetStringValue("10.000244140625");
+            theSet[DicomTags.PatientsAge].SetStringValue("035Y");
+            theSet[DicomTags.SequenceVariant].SetStringValue("OTHER");
 			theSet[DicomTags.ScanOptions].SetStringValue("CG");
 			theSet[DicomTags.MrAcquisitionType].SetStringValue("2D");
 			theSet[DicomTags.SliceThickness].SetStringValue("10.000000");
@@ -278,6 +276,8 @@ namespace ClearCanvas.Dicom.Tests
 			theSet[DicomTags.PixelRepresentation].SetStringValue("0");
 			theSet[DicomTags.WindowCenter].SetStringValue("238");
 			theSet[DicomTags.WindowWidth].SetStringValue("471");
+            theSet[DicomTags.RescaleSlope].SetStringValue("1.1234567890123");
+            theSet[DicomTags.RescaleIntercept].SetStringValue("0.0123456789012");
 
 			uint length = 256 * 256 * 2;
 
@@ -337,7 +337,8 @@ namespace ClearCanvas.Dicom.Tests
 			theSet[DicomTags.PatientsName].SetStringValue("Patient^Test");
 			theSet[DicomTags.PatientId].SetStringValue("ID123-45-9999");
 			theSet[DicomTags.PatientsBirthDate].SetStringValue("19600102");
-			theSet[DicomTags.SequenceVariant].SetStringValue("OTHER");
+            theSet[DicomTags.PatientsSize].SetStringValue("10.000244140625");
+            theSet[DicomTags.SequenceVariant].SetStringValue("OTHER");
 			theSet[DicomTags.DeviceSerialNumber].SetStringValue("1234");
 			theSet[DicomTags.SoftwareVersions].SetStringValue("V1.0");
 			theSet[DicomTags.PatientPosition].SetStringValue("HFS");
@@ -355,7 +356,7 @@ namespace ClearCanvas.Dicom.Tests
 			theSet[DicomTags.BitsStored].SetStringValue("12");
 			theSet[DicomTags.HighBit].SetStringValue("11");
 			theSet[DicomTags.PixelRepresentation].SetStringValue("0");
-
+            
 			uint length = 256 * 256 * 2;
 
 			DicomAttributeOW pixels = new DicomAttributeOW(DicomTags.PixelData);
@@ -416,6 +417,7 @@ namespace ClearCanvas.Dicom.Tests
             theSet[DicomTags.PatientsBirthDate].SetStringValue("19600101");
             theSet[DicomTags.PatientsSex].SetStringValue("M");
             theSet[DicomTags.PatientsWeight].SetStringValue("80");
+            theSet[DicomTags.PatientsSize].SetStringValue("10.000244140625");
             theSet[DicomTags.Kvp].SetStringValue("80");
             theSet[DicomTags.ProtocolName].SetStringValue("25  FPS Koronarien");
             theSet[DicomTags.FrameTime].SetStringValue("40");
@@ -540,7 +542,20 @@ namespace ClearCanvas.Dicom.Tests
 			return file;
 		}
 
-    	protected static void CreateMonochromePixelData(DicomUncompressedPixelData pd)
+        public DicomFile CreateUNFile(ushort rows, ushort columns, string photometricInterpretation, ushort bitsStored, ushort bitsAllocated, bool isSigned, ushort numberOfFrames)
+        {
+            DicomFile file = CreateFile(rows, columns, photometricInterpretation, bitsStored, bitsAllocated, isSigned,
+                                   numberOfFrames);
+            
+            DicomAttributeCollection theSet = file.DataSet;
+
+            theSet[DicomTags.LossyImageCompressionMethod].SetStringValue("ISO_15444_1");
+            ConvertAttributeToUN(theSet,DicomTags.LossyImageCompressionMethod);
+
+            return file;
+        }
+
+        protected static void CreateMonochromePixelData(DicomUncompressedPixelData pd)
     	{
     		int rows = pd.ImageHeight;
     		int cols = pd.ImageWidth;

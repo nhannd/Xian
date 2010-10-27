@@ -1123,3 +1123,8 @@ INSERT INTO [ImageServer].[dbo].[DeviceTypeEnum]
      VALUES
            (newid(),103,'Broker','Broker','Broker')
 GO
+INSERT INTO [ImageServer].[dbo].[DeviceTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),104,'PriorsServer','Priors Server','Server with Prior Studies for the Web Viewer')
+GO

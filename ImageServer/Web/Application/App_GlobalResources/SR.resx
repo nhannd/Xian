@@ -435,4 +435,19 @@
   <data name="DeleteSeriesMessage" xml:space="preserve">
     <value>Are you sure you want to delete the following series?</value>
   </data>
+  <data name="CustomReason" xml:space="preserve">
+    <value>-- Custom Reason --</value>
+  </data>
+  <data name="CustomReasonComment" xml:space="preserve">
+    <value>Enter Custom Reason Comment</value>
+  </data>
+  <data name="SelectAll" xml:space="preserve">
+    <value>-- Select All --</value>
+  </data>
+  <data name="SelectOne" xml:space="preserve">
+    <value>-- Select One --</value>
+  </data>
+  <data name="NoFiltersSearchWarning" xml:space="preserve">
+    <value>With no filters specified, this search may return a large number of studies.&lt;br/&gt;Are you sure you want to continue?</value>
+  </data>
 </root>

@@ -1,3 +1,14 @@
+#pragma region License
+
+// Copyright (c) 2010, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+#pragma endregion
+
 // The following ifdef block is the standard way of creating macros which make exporting 
 // from a DLL simpler. All files within this DLL are compiled with the BILINEARINTERPOLATION_EXPORTS
 // symbol defined on the command line. this symbol should not be defined on any project

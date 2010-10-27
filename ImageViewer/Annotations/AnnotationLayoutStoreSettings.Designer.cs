@@ -29,10 +29,9 @@ namespace ClearCanvas.ImageViewer.Annotations {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Configuration.SettingsDescriptionAttribute("XML document containing text overlay configurations.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("AnnotationLayoutStoreDefaults.xml")]
-        public string LayoutSettingsXml {
+        public global::System.Xml.XmlDocument LayoutSettingsXml {
             get {
-                return ((string)(this["LayoutSettingsXml"]));
+                return ((global::System.Xml.XmlDocument)(this["LayoutSettingsXml"]));
             }
             set {
                 this["LayoutSettingsXml"] = value;

@@ -1,3 +1,4 @@
+#pragma region License (non-CC)
 /*
  * Copyright (c) 2005, Hervé Drolon, FreeImage Team
  * All rights reserved.
@@ -23,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#pragma endregion
 
 #include "opj_includes.h"
 

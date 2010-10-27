@@ -36,6 +36,7 @@ namespace ClearCanvas.ImageServer.TestApp
             this.ExtremeStreaming = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.UsageTracking = new System.Windows.Forms.Button();
+            this.DatabaseGenerator = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // TestRule
@@ -100,7 +101,7 @@ namespace ClearCanvas.ImageServer.TestApp
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(258, 312);
+            this.button1.Location = new System.Drawing.Point(258, 316);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(183, 52);
             this.button1.TabIndex = 3;
@@ -117,11 +118,22 @@ namespace ClearCanvas.ImageServer.TestApp
             this.UsageTracking.UseVisualStyleBackColor = true;
             this.UsageTracking.Click += new System.EventHandler(this.UsageTracking_Click);
             // 
+            // DatabaseGenerator
+            // 
+            this.DatabaseGenerator.Location = new System.Drawing.Point(259, 395);
+            this.DatabaseGenerator.Name = "DatabaseGenerator";
+            this.DatabaseGenerator.Size = new System.Drawing.Size(182, 51);
+            this.DatabaseGenerator.TabIndex = 4;
+            this.DatabaseGenerator.Text = "Database Generator";
+            this.DatabaseGenerator.UseVisualStyleBackColor = true;
+            this.DatabaseGenerator.Click += new System.EventHandler(this.DatabaseGenerator_Click);
+            // 
             // Startup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(467, 399);
+            this.ClientSize = new System.Drawing.Size(467, 470);
+            this.Controls.Add(this.DatabaseGenerator);
             this.Controls.Add(this.UsageTracking);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.ExtremeStreaming);
@@ -146,5 +158,6 @@ namespace ClearCanvas.ImageServer.TestApp
         private System.Windows.Forms.Button ExtremeStreaming;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button UsageTracking;
+        private System.Windows.Forms.Button DatabaseGenerator;
     }
 }

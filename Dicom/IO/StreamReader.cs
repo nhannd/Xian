@@ -2,54 +2,11 @@
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
+// http://www.clearcanvas.ca
 //
-// Redistribution and use in source and binary forms, with or without modification, 
-// are permitted provided that the following conditions are met:
-//
-//    * Redistributions of source code must retain the above copyright notice, 
-//      this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above copyright notice, 
-//      this list of conditions and the following disclaimer in the documentation 
-//      and/or other materials provided with the distribution.
-//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
-//      may be used to endorse or promote products derived from this software without 
-//      specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
-// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
-// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
-// OF SUCH DAMAGE.
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
-#endregion
-
-#region mDCM License
-// mDCM: A C# DICOM library
-//
-// Copyright (c) 2008  Colby Dillion
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-//
-// Author:
-//    Colby Dillion (colby.dillion@gmail.com)
 #endregion
 
 using System;
@@ -139,6 +96,7 @@ namespace ClearCanvas.Dicom.IO
     	public uint BytesNeeded { get; set; }
 
     	public DicomTag LastTagRead { get; private set; }
+        public DicomTag SaveTagRead { get; private set; }
 
     	#endregion
 
@@ -190,16 +148,16 @@ namespace ClearCanvas.Dicom.IO
 						tagValue = DicomTag.GetTagValue(g, e);
 						if (DicomTag.IsPrivateGroup(g) && e > 0x00ff)
 						{
-							LastTagRead = DicomTagDictionary.GetDicomTag(g, e) ??
+							SaveTagRead = LastTagRead = DicomTagDictionary.GetDicomTag(g, e) ??
 							       new DicomTag((uint) g << 16 | e, "Private Tag", "PrivateTag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
 						}
 						else
 						{
 							if (e == 0x0000)
-								LastTagRead = new DicomTag((uint) g << 16 | e, "Group Length", "GroupLength", DicomVr.ULvr, false, 1, 1, false);
+                                SaveTagRead = LastTagRead = new DicomTag((uint)g << 16 | e, "Group Length", "GroupLength", DicomVr.ULvr, false, 1, 1, false);
 							else
 							{
-								LastTagRead = DicomTagDictionary.GetDicomTag(g, e) ??
+                                SaveTagRead = LastTagRead = DicomTagDictionary.GetDicomTag(g, e) ??
 								       new DicomTag((uint) g << 16 | e, "Private Tag", "PrivateTag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
 							}
 						}
@@ -214,7 +172,7 @@ namespace ClearCanvas.Dicom.IO
 						&& (_sqrs.Count == 0)) // only exit in root message when after stop tag
                         return DicomReadStatus.Success;
 
-                	bool twoByteLength = false;
+                	bool twoByteLength;
                 	if (_vr == null)
                     {
 						if (_syntax.ExplicitVr)
@@ -301,8 +259,6 @@ namespace ClearCanvas.Dicom.IO
                                 	_stream.Position = pos;
                                 }
                             }
-                            else if (!_syntax.ExplicitVr || Flags.IsSet(options, DicomReadOptions.UseDictionaryForExplicitUN))
-                                _vr = LastTagRead.VR;
                         }
                     }
                     else
@@ -652,8 +608,19 @@ namespace ClearCanvas.Dicom.IO
 											bb.SpecificCharacterSet = Dataset.SpecificCharacterSet;
 										}
 									}
+                                    if (LastTagRead.VR.Equals(DicomVr.UNvr) 
+                                        && !SaveTagRead.VR.Equals(DicomVr.UNvr)
+                                        && !SaveTagRead.VR.Equals(DicomVr.SQvr)
+                                        && Flags.IsSet(options, DicomReadOptions.UseDictionaryForExplicitUN))
+                                    {
+                                        LastTagRead = SaveTagRead;
+                                        bb.Endian = Endian.Little;
+                                    }
+                                    else
+                                    {
+                                        bb.Endian = _endian;
+                                    }
 
-									bb.Endian = _endian;
 									bb.CopyFrom(_stream, (int) _len);
 
 									DicomAttribute elem = LastTagRead.CreateDicomAttribute(bb);

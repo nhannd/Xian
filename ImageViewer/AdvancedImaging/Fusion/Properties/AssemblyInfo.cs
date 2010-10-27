@@ -1,4 +1,15 @@
-﻿using System.Reflection;
+#region License
+
+// Copyright (c) 2010, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+#endregion
+
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -10,7 +21,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ClearCanvas")]
 [assembly: AssemblyProduct("ClearCanvas.ImageViewer.AdvancedImaging.Fusion")]
-[assembly: AssemblyCopyright("Copyright © ClearCanvas 2010")]
+[assembly: AssemblyCopyright("Copyright (c) 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

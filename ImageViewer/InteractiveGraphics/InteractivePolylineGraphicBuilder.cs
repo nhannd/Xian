@@ -1,35 +1,17 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
+// http://www.clearcanvas.ca
 //
-// Redistribution and use in source and binary forms, with or without modification, 
-// are permitted provided that the following conditions are met:
-//
-//    * Redistributions of source code must retain the above copyright notice, 
-//      this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above copyright notice, 
-//      this list of conditions and the following disclaimer in the documentation 
-//      and/or other materials provided with the distribution.
-//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
-//      may be used to endorse or promote products derived from this software without 
-//      specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
-// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
-// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
-// OF SUCH DAMAGE.
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 #endregion
 
 using System;
+using System.Drawing;
+using System.Text;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 
@@ -110,13 +92,24 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			// We're done creating
 			else if (_numberOfPointsAnchored == _maximumVertices)
 			{
+                // When user moves very quickly and events are filtered for performance purpose (eg web viewer case), 
+                // the final point may not be the same as the last tracked point. Must update the final point based on the latest mouse position.
+                this.Graphic.CoordinateSystem = CoordinateSystem.Destination;
+			    this.Graphic.Points[this.Graphic.Points.Count-1] = mouseInformation.Location;
+                this.Graphic.ResetCoordinateSystem();
+
 				this.NotifyGraphicComplete();
 			}
 			// We're in the middle of creating
 			else if (_numberOfPointsAnchored >= 2 && _maximumVertices > 2)
 			{
 				this.Graphic.CoordinateSystem = CoordinateSystem.Destination;
-				this.Graphic.Points.Add(mouseInformation.Location);
+
+                // Update the final position of current point based on the latest mouse position.
+                this.Graphic.Points[Graphic.Points.Count-1] = mouseInformation.Location;
+
+                // Add a new point for tracking
+                this.Graphic.Points.Add(mouseInformation.Location);
 				this.Graphic.ResetCoordinateSystem();
 			}
 

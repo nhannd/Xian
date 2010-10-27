@@ -1,5 +1,17 @@
+/* License
+ *
+ * Copyright (c) 2010, ClearCanvas Inc.
+ * All rights reserved.
+ * http://www.clearcanvas.ca
+ *
+ * This software is licensed under the Open Software License v3.0.
+ * For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+ *
+ */
+
 /*
-    Helper class for creating class hiearchy based on javascript prototype.
+
+Helper class for creating class hiearchy based on javascript prototype.
     
 */    
 ClassHelper = {};
@@ -81,7 +93,8 @@ function BaseClientValidator(
 }
 
 BaseClientValidator.prototype.ShouldSkip = function() {
-    var val = this.input.value;
+        
+    if(this.input.style.display == 'none') return true;
 
     if (this.conditionalCtrl != null) {
         if (this.validateWhenUnchecked) {
@@ -95,6 +108,8 @@ BaseClientValidator.prototype.ShouldSkip = function() {
                 return true;
         }
     }
+
+    var val = this.input.value;
 
     if (val == null || val == '')
         return this.ignoreEmptyValue;

@@ -16,7 +16,7 @@ function MultiSelect() {
         $("#<%=ReasonListBox.ClientID %>").multiSelect({
             noneSelected: '',
             oneOrMoreSelected: '*',
-            style: 'width: 150px;'
+            dropdownStyle: 'width: 150px;'
         });   
 
 }
@@ -51,14 +51,14 @@ function MultiSelect() {
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label2" runat="server" Text="From Date " CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" />
-                                                <asp:LinkButton ID="ClearFromDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 10px;"/><br />
-                                                <asp:TextBox ID="FromDate" runat="server" CssClass="SearchDateBox" />
+                                                <asp:LinkButton ID="ClearFromDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 8px;"/><br />
+                                                <ccUI:TextBox ID="FromDate" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="Search the list by Study Date" style="width:85px"/>
                                             </td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label6" runat="server" Text="To Date " CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" />
-                                                <asp:LinkButton ID="ClearToDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 2px;"/><br />
-                                                <asp:TextBox ID="ToDate" runat="server" CssClass="SearchDateBox" />
+                                                <asp:LinkButton ID="ClearToDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 22px;"/><br />
+                                                <ccUI:TextBox ID="ToDate" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="Search the list by Study Date" style="width:85px"/>
                                             </td>                                            
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label5" runat="server" Text="Reason" CssClass="SearchTextBoxLabel"

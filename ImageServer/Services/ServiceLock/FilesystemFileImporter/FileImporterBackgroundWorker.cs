@@ -2,30 +2,10 @@
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
+// http://www.clearcanvas.ca
 //
-// Redistribution and use in source and binary forms, with or without modification, 
-// are permitted provided that the following conditions are met:
-//
-//    * Redistributions of source code must retain the above copyright notice, 
-//      this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above copyright notice, 
-//      this list of conditions and the following disclaimer in the documentation 
-//      and/or other materials provided with the distribution.
-//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
-//      may be used to endorse or promote products derived from this software without 
-//      specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
-// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
-// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
-// OF SUCH DAMAGE.
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 #endregion
 
@@ -38,6 +18,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Common.Utilities;
 
@@ -199,14 +180,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                                     }
                                     else
                                     {
-										Platform.Log(LogLevel.Warn, "Failure importing sop {0}: {1}", filePath, result.ErrorMessage);
+										Platform.Log(LogLevel.Warn, "Failed to import {0} to {1} : {2}", filePath, _parms.PartitionAE, result.ErrorMessage);
                                     }
                                 }
                             }
                             catch (DicomDataException ex)
                             {
                                 // skip to next file, this file will be deleted
-                                Platform.Log(LogLevel.Warn, ex, "Failure importing sop {0}: {1}", filePath, ex.Message);
+                                Platform.Log(LogLevel.Warn, ex, "Failed to import {0} to {1}: {2}", filePath, _parms.PartitionAE, ex.Message);
                                 skipped = true;
                             }
                         }
@@ -223,24 +204,50 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                 }
                 finally
                 {
-                    if (importedSopCount>0)
+                    try
                     {
-                        fileInfo.Delete();
+                        if (importedSopCount > 0)
+                        {
+                            DeleteFile(fileInfo);
+                        }
+                        else if (!isDicomFile)
+                        {
+                            DeleteFile(fileInfo);
+                        }
+                        else
+                        {
+                            //is dicom file but could not be imported.
+                            if (!skipped)
+                                DeleteFile(fileInfo);
+                        }
                     }
-                    else if (!isDicomFile)
+                    catch(IOException ex)
                     {
-                        fileInfo.Delete();
+                        Platform.Log(LogLevel.Error, ex, "Unable to delete file after it has been imported: {0}", fileInfo.FullName);
+                        // Raise alert because this file is stuck in the incoming folder and becomes a duplicate when it is imported again later on.
+                        // Depending on the duplicate policy, SIQ may be filled with many duplicate entries.
+                        ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical, "File Importer", -1, null, TimeSpan.Zero,
+                                             "The following file has been imported but could not be removed : {0}.\nError: {1}",
+                                             fileInfo.FullName, ex.Message);
                     }
-                    else
-                    {
-                        //is dicom file but could not be imported.
-                        if (!skipped)
-                            fileInfo.Delete();
-                    }
+
                 }
             }
 
             return importedSopCount;
+        }
+
+        private static void DeleteFile(FileInfo file)
+        {
+            Platform.CheckForNullReference(file, "file");
+
+            if (file.Exists)
+            {
+                if (file.IsReadOnly)
+                    file.IsReadOnly = false;
+
+                file.Delete();
+            }
         }
 
         private void InitializeImporter()

@@ -35,6 +35,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -149,6 +151,8 @@
     <Compile Include="UpgradeScripts\UpgradeFrom_1_5_10676_32680.cs" />
     <Compile Include="UpgradeScripts\UpgradeFrom_1_5_10852_32944.cs" />
     <Compile Include="UpgradeScripts\UpgradeFrom_1_5_12104_35993 .cs" />
+    <Compile Include="UpgradeScripts\UpgradeFrom_2_0_12655_37768.cs" />
+    <Compile Include="UpgradeScripts\UpgradeFrom_2_2_13745_40623.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
@@ -181,6 +185,7 @@
     <None Include="Scripts\ImageServerDefaultData.sql" />
     <EmbeddedResource Include="Scripts\ImageServerStoredProcedures.sql" />
     <None Include="Scripts\ImageServerTables.sql" />
+    <EmbeddedResource Include="UpgradeScripts\UpgradeFrom_2_0_12655_37768.sql" />
     <EmbeddedResource Include="UpgradeScripts\UpgradeFrom_1_5_12104_35993.sql" />
     <EmbeddedResource Include="UpgradeScripts\UpgradeFrom_1_5_10019_31163.sql" />
     <EmbeddedResource Include="UpgradeScripts\UpgradeFrom_NoOp.sql" />

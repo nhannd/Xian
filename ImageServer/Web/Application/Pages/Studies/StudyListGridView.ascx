@@ -34,6 +34,8 @@
 							ItemStyle-HorizontalAlign="Center" />
 						<asp:BoundField DataField="ModalitiesInStudy" HeaderText="Modality" HeaderStyle-HorizontalAlign="Center"
 							ItemStyle-HorizontalAlign="Center" />
+						<asp:BoundField DataField="ReferringPhysiciansName" HeaderText="Ref. Physician" HeaderStyle-HorizontalAlign="Center"
+							ItemStyle-HorizontalAlign="Center" />							
 						<asp:TemplateField HeaderText="Status" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 							<itemtemplate>
                             <asp:Label ID="StudyStatusEnum" runat="server" Text='<%# Eval("StudyStatusEnum") %>' ></asp:Label>

@@ -21,7 +21,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;SILVERLIGHT4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -212,6 +212,14 @@
     <Compile Include="GlobalMasterPage.master.designer.cs">
       <DependentUpon>GlobalMasterPage.master</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\SearchHelper.cs" />
+    <Compile Include="KeepSessionAlive.aspx.cs">
+      <DependentUpon>KeepSessionAlive.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="KeepSessionAlive.aspx.designer.cs">
+      <DependentUpon>KeepSessionAlive.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Admin\Alerts\AlertHoverPopupDetails.ascx.cs">
       <DependentUpon>AlertHoverPopupDetails.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -360,6 +368,41 @@
     <Compile Include="Pages\Error\CookiesRequired.aspx.designer.cs">
       <DependentUpon>CookiesRequired.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Error\WebViewerMultipleStudiesTimeoutErrorPage.aspx.cs">
+      <DependentUpon>WebViewerMultipleStudiesTimeoutErrorPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Error\WebViewerMultipleStudiesTimeoutErrorPage.aspx.designer.cs">
+      <DependentUpon>WebViewerMultipleStudiesTimeoutErrorPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Error\WebViewerErrorPageMaster.Master.cs">
+      <DependentUpon>WebViewerErrorPageMaster.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Error\WebViewerErrorPageMaster.Master.designer.cs">
+      <DependentUpon>WebViewerErrorPageMaster.Master</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Error\WebViewerErrorPage.aspx.cs">
+      <DependentUpon>WebViewerErrorPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Error\WebViewerErrorPage.aspx.designer.cs">
+      <DependentUpon>WebViewerErrorPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Error\WebViewerAuthorizationErrorPage.aspx.cs">
+      <DependentUpon>WebViewerAuthorizationErrorPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Error\WebViewerAuthorizationErrorPage.aspx.designer.cs">
+      <DependentUpon>WebViewerAuthorizationErrorPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Error\WebViewerTimeoutErrorPage.aspx.cs">
+      <DependentUpon>WebViewerTimeoutErrorPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Error\WebViewerTimeoutErrorPage.aspx.designer.cs">
+      <DependentUpon>WebViewerTimeoutErrorPage.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Login\ChangePasswordDialog.ascx.cs">
       <DependentUpon>ChangePasswordDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -462,6 +505,38 @@
     </Compile>
     <Compile Include="Pages\Studies\MoveSeries\SeriesGridView.ascx.designer.cs">
       <DependentUpon>SeriesGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Studies\SeriesDetails\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\SeriesDetails\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Studies\SeriesDetails\PatientSummary.cs" />
+    <Compile Include="Pages\Studies\SeriesDetails\PatientSummaryAssembler.cs" />
+    <Compile Include="Pages\Studies\SeriesDetails\PatientSummaryPanel.ascx.cs">
+      <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\SeriesDetails\PatientSummaryPanel.ascx.designer.cs">
+      <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Studies\SeriesDetails\SeriesDetails.cs" />
+    <Compile Include="Pages\Studies\SeriesDetails\SeriesDetailsAssembler.cs" />
+    <Compile Include="Pages\Studies\SeriesDetails\SeriesDetailsPanel.ascx.cs">
+      <DependentUpon>SeriesDetailsPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\SeriesDetails\SeriesDetailsPanel.ascx.designer.cs">
+      <DependentUpon>SeriesDetailsPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Studies\SeriesDetails\SeriesDetailsView.ascx.cs">
+      <DependentUpon>SeriesDetailsView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\SeriesDetails\SeriesDetailsView.ascx.designer.cs">
+      <DependentUpon>SeriesDetailsView.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Studies\SeriesDetails\StudySummaryPanel.ascx.cs">
       <DependentUpon>StudySummaryPanel.ascx</DependentUpon>
@@ -1031,38 +1106,6 @@
     <Compile Include="Pages\Studies\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Studies\SeriesDetails\Default.aspx.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\Studies\SeriesDetails\Default.aspx.designer.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Studies\SeriesDetails\PatientSummary.cs" />
-    <Compile Include="Pages\Studies\SeriesDetails\PatientSummaryAssembler.cs" />
-    <Compile Include="Pages\Studies\SeriesDetails\PatientSummaryPanel.ascx.cs">
-      <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\Studies\SeriesDetails\PatientSummaryPanel.ascx.designer.cs">
-      <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Studies\SeriesDetails\SeriesDetails.cs" />
-    <Compile Include="Pages\Studies\SeriesDetails\SeriesDetailsAssembler.cs" />
-    <Compile Include="Pages\Studies\SeriesDetails\SeriesDetailsPanel.ascx.cs">
-      <DependentUpon>SeriesDetailsPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\Studies\SeriesDetails\SeriesDetailsPanel.ascx.designer.cs">
-      <DependentUpon>SeriesDetailsPanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Studies\SeriesDetails\SeriesDetailsView.ascx.cs">
-      <DependentUpon>SeriesDetailsView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\Studies\SeriesDetails\SeriesDetailsView.ascx.designer.cs">
-      <DependentUpon>SeriesDetailsView.ascx</DependentUpon>
-    </Compile>
     <Compile Include="Pages\Studies\MoveSeries\StudySummaryPanel.ascx.cs">
       <DependentUpon>StudySummaryPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1276,6 +1319,64 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>WorkQueueSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Pages\WebViewer\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\WebViewer\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WebViewer\GridPager.ascx.cs">
+      <DependentUpon>GridPager.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\WebViewer\GridPager.ascx.designer.cs">
+      <DependentUpon>GridPager.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WebViewer\JQuery.ascx.cs">
+      <DependentUpon>JQuery.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\WebViewer\JQuery.ascx.designer.cs">
+      <DependentUpon>JQuery.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WebViewer\SearchPanel.ascx.cs">
+      <DependentUpon>SearchPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\WebViewer\SearchPanel.ascx.designer.cs">
+      <DependentUpon>SearchPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WebViewer\SessionTimeout.ascx.cs">
+      <DependentUpon>SessionTimeout.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\WebViewer\SessionTimeout.ascx.designer.cs">
+      <DependentUpon>SessionTimeout.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WebViewer\StudyList.aspx.cs">
+      <DependentUpon>StudyList.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\WebViewer\StudyList.aspx.designer.cs">
+      <DependentUpon>StudyList.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WebViewer\Launch.aspx.cs">
+      <DependentUpon>Launch.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\WebViewer\Launch.aspx.designer.cs">
+      <DependentUpon>Launch.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WebViewer\StudyListGridView.ascx.cs">
+      <DependentUpon>StudyListGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\WebViewer\StudyListGridView.ascx.designer.cs">
+      <DependentUpon>StudyListGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WebViewer\WebViewerInitParams.cs" />
+    <Compile Include="Pages\WebViewer\WebViewerServerConfiguration.cs" />
     <Compile Include="PersistantImage.ashx.cs">
       <DependentUpon>PersistantImage.ashx</DependentUpon>
     </Compile>
@@ -1293,6 +1394,14 @@
       <DependentUpon>ValidationServices.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Pages\Studies\View\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\View\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Studies\View\WebViewerServerConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Themes\Default\images\blank.gif" />
@@ -1346,6 +1455,9 @@
     <Content Include="App_Themes\Default\images\Buttons\ResetPasswordDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ResetPasswordEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ResetPasswordHover.png" />
+    <Content Include="App_Themes\Default\images\Buttons\ViewImagesDisabled.png" />
+    <Content Include="App_Themes\Default\images\Buttons\ViewImagesEnabled.png" />
+    <Content Include="App_Themes\Default\images\Buttons\ViewImagesHover.png" />
     <Content Include="App_Themes\Default\images\Buttons\ViewSeriesDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ViewSeriesEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ViewSeriesHover.png" />
@@ -1353,6 +1465,23 @@
     <Content Include="App_Themes\Default\images\Buttons\ViewStudyEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ViewStudyHover.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogBodyBackgroundTall.png" />
+    <Content Include="Pages\WebViewer\GridPager.ascx" />
+    <Content Include="Pages\WebViewer\Images\Searching.gif" />
+    <Content Include="Pages\WebViewer\JQuery.ascx" />
+    <Content Include="Pages\WebViewer\SearchPanel.ascx" />
+    <EmbeddedResource Include="Pages\WebViewer\SearchPanel.js" />
+    <Content Include="Pages\WebViewer\SessionTimeout.ascx" />
+    <Content Include="Pages\WebViewer\StudyList.aspx" />
+    <Content Include="Pages\WebViewer\Images\WebViewerPagerFirstDisabled.png" />
+    <Content Include="Pages\WebViewer\Images\WebViewerPagerFirstEnabled.png" />
+    <Content Include="Pages\WebViewer\Images\WebViewerPagerLastDisabled.png" />
+    <Content Include="Pages\WebViewer\Images\WebViewerPagerLastEnabled.png" />
+    <Content Include="Pages\WebViewer\Images\WebViewerPagerNextDisabled.png" />
+    <Content Include="Pages\WebViewer\Images\WebViewerPagerNextEnabled.png" />
+    <Content Include="Pages\WebViewer\Images\WebViewerPagerPreviousDisabled.png" />
+    <Content Include="Pages\WebViewer\Images\WebViewerPagerPreviousEnabled.png" />
+    <Content Include="Pages\WebViewer\Images\WebViewerPagerTotalStudiesLeft.png" />
+    <Content Include="Pages\WebViewer\Images\WebViewerPagerTotalStudiesRight.png" />
     <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerFirstDisabled.png" />
     <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerFirstEnabled.png" />
     <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerLastDisabled.png" />
@@ -1420,6 +1549,8 @@
     <Content Include="App_Themes\Default\images\Controls\GridView\GridViewHeaderBackground.png" />
     <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerTopBackground.png" />
     <Content Include="App_Themes\Default\images\Controls\GridView\GridViewSelectedBackground.png" />
+    <Content Include="Pages\WebViewer\Images\WebViewerPagerBackground.png" />
+    <Content Include="App_Themes\Default\images\MainContent\WebViewerToolbarBackground.png" />
     <Content Include="App_Themes\Default\images\Controls\Tabs\TabActiveLeft.png" />
     <Content Include="App_Themes\Default\images\Controls\Tabs\TabActiveMiddle.png" />
     <Content Include="App_Themes\Default\images\Controls\Tabs\TabActiveRight.png" />
@@ -1501,6 +1632,8 @@
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG.png" />
     <Content Include="App_Themes\Default\StyleSheets\StudyIntegrityQueue.css" />
     <Content Include="App_Themes\Default\StyleSheets\WorkQueue.css" />
+    <Content Include="ClientBin\SplashScreen\ClearCanvasWebViewerLogo.png">
+    </Content>
     <Content Include="Controls\AlertIndicator.ascx" />
     <Content Include="Controls\ApplicationAlertPanel.ascx" />
     <Content Include="Controls\CheckJavascript.ascx" />
@@ -1522,6 +1655,7 @@
     <Content Include="Controls\SessionTimeout.ascx" />
     <Content Include="Controls\TimedDialog.ascx" />
     <Content Include="Global.asax" />
+    <Content Include="KeepSessionAlive.aspx" />
     <Content Include="Pages\Admin\Alerts\AlertHoverPopupDetails.ascx" />
     <Content Include="Pages\Admin\Alerts\WorkQueueAlertContextDataView.ascx" />
     <Content Include="Pages\Admin\Dashboard\AlertHoverPopupDetails.ascx" />
@@ -1534,6 +1668,10 @@
     <Content Include="Pages\Admin\Dashboard\WorkQueueAlertContextDataView.ascx" />
     <Content Include="Pages\Admin\Dashboard\WorkQueueSummary.ascx" />
     <Content Include="Pages\Error\CookiesRequired.aspx" />
+    <Content Include="Pages\Error\WebViewerMultipleStudiesTimeoutErrorPage.aspx" />
+    <Content Include="Pages\Error\WebViewerErrorPage.aspx" />
+    <Content Include="Pages\Error\WebViewerAuthorizationErrorPage.aspx" />
+    <Content Include="Pages\Error\WebViewerTimeoutErrorPage.aspx" />
     <Content Include="Pages\Queues\StudyIntegrityQueue\DuplicateSopDialog.ascx" />
     <EmbeddedResource Include="Pages\Queues\WorkQueue\Edit\WorkQueueItemDetailsPanel.js" />
     <Content Include="Pages\Queues\WorkQueue\Edit\ProcessDuplicateWorkQueueDetailsView.ascx" />
@@ -1544,14 +1682,37 @@
     <EmbeddedResource Include="Pages\Studies\MoveSeries\MovePanel.js" />
     <Content Include="Pages\Studies\MoveSeries\PatientSummaryPanel.ascx" />
     <Content Include="Pages\Studies\MoveSeries\SeriesGridView.ascx" />
+    <Content Include="Pages\Studies\SeriesDetails\Default.aspx" />
+    <Content Include="Pages\Studies\SeriesDetails\PatientSummaryPanel.ascx" />
+    <Content Include="Pages\Studies\SeriesDetails\SeriesDetailsPanel.ascx" />
+    <Content Include="Pages\Studies\SeriesDetails\SeriesDetailsView.ascx" />
     <Content Include="Pages\Studies\SeriesDetails\StudySummaryPanel.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\DeleteSeriesConfirmDialog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\DuplicateProcessChangeLog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\SeriesDeleteChangeLog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\StudyIntegrityQueueGridView.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\StudyReprocessChangeLog.ascx" />
+    <Page Include="Pages\Studies\View\SplashScreen\SplashScreen.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Content Include="Pages\WebViewer\AutomaticLoginDemo.htm" />
+    <Content Include="Pages\WebViewer\Default.aspx" />
+    <Content Include="Pages\WebViewer\jquery-1.4.2.min.js" />
+    <Content Include="Pages\WebViewer\silverlight.js" />
+    <Content Include="Pages\WebViewer\SplashScreen\SplashScreen.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Pages\Studies\View\SplashScreen\SplashScreen.js" />
+    <Content Include="Pages\WebViewer\SplashScreen\SplashScreen.js" />
+    <Content Include="Pages\WebViewer\Launch.aspx" />
+    <Content Include="Pages\WebViewer\StandaloneDemo.htm" />
+    <Content Include="Pages\WebViewer\Images\StudiesPageLogo.png" />
+    <Content Include="Pages\WebViewer\StudyListGridView.ascx" />
     <Content Include="Scripts\date.js" />
     <Content Include="Scripts\jquery\jquery.scrollabletable.js" />
+    <Content Include="Pages\Studies\View\silverlight.js" />
     <Content Include="Users.xml" />
     <Content Include="Default.aspx" />
     <Content Include="Images\favicon.ico" />
@@ -1676,10 +1837,6 @@
     <Content Include="Pages\Studies\Move\StudyGridView.ascx" />
     <Content Include="Pages\Studies\SearchPanel.ascx" />
     <EmbeddedResource Include="Pages\Studies\SearchPanel.js" />
-    <Content Include="Pages\Studies\SeriesDetails\Default.aspx" />
-    <Content Include="Pages\Studies\SeriesDetails\PatientSummaryPanel.ascx" />
-    <Content Include="Pages\Studies\SeriesDetails\SeriesDetailsPanel.ascx" />
-    <Content Include="Pages\Studies\SeriesDetails\SeriesDetailsView.ascx" />
     <Content Include="Pages\Studies\MoveSeries\StudySummaryPanel.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\ArchivePanel.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\DeleteStudyConfirmDialog.ascx" />
@@ -1744,12 +1901,35 @@
     <Content Include="App_Themes\Default\Global.skin" />
     <Content Include="Pages\Common\MainContentSection.Master" />
     <Content Include="Pages\Error\ErrorPageMaster.Master" />
+    <None Include="Builds\PreBuild.proj" />
     <None Include="Builds\PostBuild.proj" />
+    <Content Include="Pages\Error\WebViewerErrorPageMaster.Master" />
     <None Include="Pages\Queues\WorkQueue\WorkQueueSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WorkQueueSettings.Designer.cs</LastGenOutput>
     </None>
     <Content Include="PersistantImage.ashx" />
+    <None Include="Pages\Studies\SeriesDetails\.svn\dir-prop-base" />
+    <None Include="Pages\Studies\SeriesDetails\.svn\entries" />
+    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\Default.aspx.cs.svn-base" />
+    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\Default.aspx.designer.cs.svn-base" />
+    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\Default.aspx.svn-base" />
+    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\PatientSummary.cs.svn-base" />
+    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\PatientSummaryAssembler.cs.svn-base" />
+    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\PatientSummaryPanel.ascx.cs.svn-base" />
+    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\PatientSummaryPanel.ascx.designer.cs.svn-base" />
+    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\PatientSummaryPanel.ascx.svn-base" />
+    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\SeriesDetails.cs.svn-base" />
+    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\SeriesDetailsAssembler.cs.svn-base" />
+    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\SeriesDetailsPanel.ascx.cs.svn-base" />
+    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\SeriesDetailsPanel.ascx.designer.cs.svn-base" />
+    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\SeriesDetailsPanel.ascx.svn-base" />
+    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\SeriesDetailsView.ascx.cs.svn-base" />
+    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\SeriesDetailsView.ascx.designer.cs.svn-base" />
+    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\SeriesDetailsView.ascx.svn-base" />
+    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\StudySummaryPanel.ascx.cs.svn-base" />
+    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\StudySummaryPanel.ascx.designer.cs.svn-base" />
+    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\StudySummaryPanel.ascx.svn-base" />
     <None Include="Scripts\CodeMirror\LICENSE" />
     <Content Include="App_Themes\Default\images\Indicators\HelpSmall.png" />
     <EmbeddedResource Include="App_GlobalResources\SR.resx">
@@ -1760,6 +1940,7 @@
     <Content Include="Services\FilesystemInfoService.asmx" />
     <Content Include="Services\ValidationServices.asmx" />
     <Content Include="Services\webservice.htc" />
+    <Content Include="Pages\Studies\View\Default.aspx" />
     <Content Include="Web.sitemap" />
   </ItemGroup>
   <ItemGroup>
@@ -1845,6 +2026,13 @@
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Pages\Studies\SeriesDetails\.svn\prop-base\" />
+    <Folder Include="Pages\Studies\SeriesDetails\.svn\props\" />
+    <Folder Include="Pages\Studies\SeriesDetails\.svn\tmp\prop-base\" />
+    <Folder Include="Pages\Studies\SeriesDetails\.svn\tmp\props\" />
+    <Folder Include="Pages\Studies\SeriesDetails\.svn\tmp\text-base\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" Condition="" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -1862,7 +2050,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>2628</DevelopmentServerPort>
           <DevelopmentServerVPath>/ImageServer</DevelopmentServerVPath>
-          <IISUrl>http://localhost/ImageServerTrunk</IISUrl>
+          <IISUrl>http://localhost/ImageServer22</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
@@ -1875,7 +2063,11 @@
   <PropertyGroup>
     <PreBuildEvent>REM Prevent lock up by ASP.NET dev server in debug mode
 
-IF EXIST $(TargetPath).LOCKED (del $(TargetPath).LOCKED) ELSE (IF EXIST $(TargetPath) (move $(TargetPath) $(TargetPath).LOCKED))</PreBuildEvent>
+IF EXIST $(TargetPath).LOCKED (del $(TargetPath).LOCKED) ELSE (IF EXIST $(TargetPath) (move $(TargetPath) $(TargetPath).LOCKED))
+
+REM Run PreBuild msbuild project
+
+C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe  "$(ProjectDir)Builds\PreBuild.proj" "/property:ProjectDir=$(ProjectDir);ConfigurationName=$(ConfigurationName);TargetPlatform=$(PlatformName)"</PreBuildEvent>
     <PostBuildEvent>
       REM Run PostBuild msbuild project
 

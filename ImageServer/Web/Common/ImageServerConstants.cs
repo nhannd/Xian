@@ -2,34 +2,14 @@
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
+// http://www.clearcanvas.ca
 //
-// Redistribution and use in source and binary forms, with or without modification, 
-// are permitted provided that the following conditions are met:
-//
-//    * Redistributions of source code must retain the above copyright notice, 
-//      this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above copyright notice, 
-//      this list of conditions and the following disclaimer in the documentation 
-//      and/or other materials provided with the distribution.
-//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
-//      may be used to endorse or promote products derived from this software without 
-//      specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
-// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
-// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
-// OF SUCH DAMAGE.
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 #endregion
 
-    public class ImageServerConstants
+public class ImageServerConstants
     {
         #region GridViewPagerPosition enum
 
@@ -42,7 +22,7 @@
         #endregion
 
         public const string CookieDateTimeFormat = "yyyy-M-d H:m:s";
-
+        public const string DefaultApplicationName = "ImageServer";
         public const string Default = "Default";
         public const string DefaultConfigurationXml = "<HsmArchive><RootDir>e:\\Archive</RootDir></HsmArchive>";
         public const string First = "first";
@@ -56,6 +36,8 @@
         public const string Prev = "prev";
 
         public static string[] ReasonCommentSeparator = {"::"};
+
+        public const string WebViewerAuthorityToken = "Viewer/Visible";
 
         /// <summary>
         /// Sets or gets the theme for the web application.
@@ -122,6 +104,30 @@
             public static readonly string GridPagerPreviousEnabled =
                 string.Format("~/App_Themes/{0}/images/Controls/GridView/GridViewPagerPreviousEnabled.png", Theme);
 
+            public static readonly string WebViewerPagerFirstDisabled =
+                string.Format("~/Pages/WebViewer/Images/WebViewerPagerFirstDisabled.png", Theme);
+
+            public static readonly string WebViewerPagerFirstEnabled =
+                string.Format("~/Pages/WebViewer/Images/WebViewerPagerFirstEnabled.png", Theme);
+
+            public static readonly string WebViewerPagerLastDisabled =
+                string.Format("~/Pages/WebViewer/Images/WebViewerPagerLastDisabled.png", Theme);
+
+            public static readonly string WebViewerPagerLastEnabled =
+                string.Format("~/Pages/WebViewer/Images/WebViewerPagerLastEnabled.png", Theme);
+
+            public static readonly string WebViewerPagerNextDisabled =
+                string.Format("~/Pages/WebViewer/Images/WebViewerPagerNextDisabled.png", Theme);
+
+            public static readonly string WebViewerPagerNextEnabled =
+                string.Format("~/Pages/WebViewer/Images/WebViewerPagerNextEnabled.png", Theme);
+
+            public static readonly string WebViewerPagerPreviousDisabled =
+                string.Format("~/Pages/WebViewer/Images/WebViewerPagerPreviousDisabled.png", Theme);
+
+            public static readonly string WebViewerPagerPreviousEnabled =
+                string.Format("~/Pages/WebViewer/Images/WebViewerPagerPreviousEnabled.png", Theme);
+
             public static readonly string IdeographyName =
                 string.Format("~/App_Themes/{0}/images/Indicators/IdeographicName.gif", Theme);
 
@@ -174,6 +180,15 @@
             public const string WorkQueueItemDeletedPage = "~/Pages/Queues/WorkQueue/Edit/WorkQueueItemDeleted.aspx";
             public const string WorkQueueItemDetailsPage = "~/Pages/Queues/WorkQueue/Edit/Default.aspx";
             public const string WorkQueuePage = "~/Pages/Queues/WorkQueue/Default.aspx";
+            public const string ViewImagesPage = "~/Pages/Studies/View/Default.aspx";
+
+            public const string DefaultTimeoutPage = "~/Pages/Error/TimeoutErrorPage.aspx";
+            public const string WebViewerTimeoutPage = "~/Pages/Error/WebViewerTimeoutErrorPage.aspx";
+            public const string WebViewerAuthorizationErrorPage = "~/Pages/Error/WebViewerAuthorizationErrorPage.aspx";
+            public const string WebViewerErrorPage = "~/Pages/Error/WebViewerAuthorizationErrorPage.aspx";
+            public const string WebViewerDefaultPage = "~/Pages/WebViewer/Default.aspx";
+            public const string WebViewerStudiesPage = "~/Pages/WebViewer/StudyList.aspx";
+            
         }
 
         #endregion
@@ -188,5 +203,43 @@
             public const string StudyUID = "studyuid";
         }
 
+        public class WebViewerQueryStrings
+        {
+            public const string ApplicationName = "application";
+            public const string Username = "username";
+            public const string Password = "password";
+            public const string Aetitle = "aetitle";
+            public const string Study = "study";
+            public const string Session = "session";
+            public const string WebViewerInitParams = "WebViewerInitParams";
+            public const string ListStudies = "liststudies";
+        }
+
+        #endregion
+
+		#region
+
+		/// <summary>
+        /// Names of the paramters passed to the viewer.
+        /// </summary>
+        public class WebViewerStartupParameters
+        {
+            public const string LANMode= "LANMode";
+            public const string Username = "username";
+            public const string Password = "password";
+            public const string Session = "session";
+			public const string IsSessionShared = "sessionshared";
+			public const string TimeoutUrl = "TimeoutUrl";
+            public const string Port = "Port";
+            public const string InactivityTimeout = "InactivityTimeout";
+            public const string LocalIPAddress = "LocalIPAddress";
+		    public const string PatientID = "patientid";
+		    public const string AccessionNumber = "accession";
+            public const string Study = "study";
+            public const string ListStudies = "liststudies";
+            public const string AeTitle = "aetitle";
+            public const string ApplicationName = "application";
+        }
+        	
         #endregion
     }

@@ -1,0 +1,17 @@
+﻿<configuration>
+	<system.serviceModel>
+		<client>
+   <endpoint address="net.tcp://localhost:4520/ApplicationServices"
+    binding="customBinding" bindingConfiguration="NetTcpBinding_IApplicationService"
+    contract="AppServiceReference.IApplicationService" name="NetTcpBinding_IApplicationService" />
+  </client>
+  <bindings>
+   <customBinding>
+    <binding name="NetTcpBinding_IApplicationService">
+     <binaryMessageEncoding />
+     <tcpTransport maxReceivedMessageSize="2147483647" maxBufferSize="2147483647" />
+    </binding>
+   </customBinding>
+  </bindings>
+	</system.serviceModel>
+</configuration>

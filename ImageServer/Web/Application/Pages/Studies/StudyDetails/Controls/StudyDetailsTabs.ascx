@@ -11,10 +11,10 @@
 <%@ Register Src="StudyIntegrityQueueGridView.ascx" TagName="StudyIntegrityQueueGridView" TagPrefix="localAsp" %>
 
 <aspAjax:TabContainer ID="StudyDetailsTabContainer" runat="server" ActiveTabIndex="0"
-    CssClass="TabControl" Width="100%">
+    CssClass="TabControl" Width="100%" style="border-bottom: #618FAD 1px solid;">
     <aspAjax:TabPanel ID="StudyDetailsTab" HeaderText="<%$Resources: Titles, StudyDetails %>" runat="server">
         <ContentTemplate>
-            <asp:Table runat="server">
+            <asp:Table runat="server" >
                 <asp:TableRow>
                     <asp:TableCell>
                         <table width="100%" cellpadding="8" cellspacing="0" style="background-color: #B8D8EE;">

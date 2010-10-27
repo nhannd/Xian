@@ -2,35 +2,16 @@
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
+// http://www.clearcanvas.ca
 //
-// Redistribution and use in source and binary forms, with or without modification, 
-// are permitted provided that the following conditions are met:
-//
-//    * Redistributions of source code must retain the above copyright notice, 
-//      this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above copyright notice, 
-//      this list of conditions and the following disclaimer in the documentation 
-//      and/or other materials provided with the distribution.
-//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
-//      may be used to endorse or promote products derived from this software without 
-//      specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
-// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
-// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
-// OF SUCH DAMAGE.
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 #endregion
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -282,7 +263,25 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			return true;
 		}
 
-		public bool CanScheduleRestore(out string reason)
+        public bool CanViewImages(out string reason)
+        {
+            if (!Thread.CurrentPrincipal.IsInRole(ImageServerConstants.WebViewerAuthorityToken))
+            {
+                reason = "You are not authorized to view images.";
+                return false;
+            }
+            
+            if (IsNearline)
+            {
+                reason = "Study is nearline and needs to be restored before viewing.";
+                return false;
+            }
+
+            reason = String.Empty;
+            return true;
+        }
+
+	    public bool CanScheduleRestore(out string reason)
 		{
 			if (IsArchiving)
 			{
@@ -402,6 +401,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 		public string[] Modalities { get; set; }
 
+        public string ReferringPhysiciansName { get; set; }
+
 		public string[] Statuses { get; set; }
 
 		#endregion
@@ -418,7 +419,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			{
 				string key = PatientId.Replace("*", "%");
 				key = key.Replace("?", "_");
-				key = "%" + key + "%";
 				criteria.PatientId.Like(key);
 			}
 
@@ -426,7 +426,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			{
 				string key = PatientName.Replace("*", "%");
 				key = key.Replace("?", "_");
-				key = "%" + key + "%";
 				criteria.PatientsName.Like(key);
 			}
 			criteria.PatientsName.SortAsc(0);
@@ -435,7 +434,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			{
 				string key = AccessionNumber.Replace("*", "%");
 				key = key.Replace("?", "_");
-				key = "%" + key + "%";
 				criteria.AccessionNumber.Like(key);
 			}
 
@@ -460,9 +458,15 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			{
 				string key = StudyDescription.Replace("*", "%");
 				key = key.Replace("?", "_");
-				key = "%" + key + "%";
 				criteria.StudyDescription.Like(key);
 			}
+
+            if (!String.IsNullOrEmpty(ReferringPhysiciansName))
+            {
+                string key = ReferringPhysiciansName.Replace("*", "%");
+                key = key.Replace("?", "_");
+                criteria.ReferringPhysiciansName.Like(key);
+            }
 
 			if(Modalities != null && Modalities.Length > 0)
 			{
@@ -567,6 +571,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			studySummary.StudyInstanceUid = study.StudyInstanceUid;
 			studySummary.StudyDescription = study.StudyDescription;
 			studySummary.ModalitiesInStudy = controller.GetModalitiesInStudy(read, study);
+		    studySummary.ReferringPhysiciansName = study.ReferringPhysiciansName;
 			studySummary.StudyTime = study.StudyTime;
 			studySummary.StudyId = study.StudyId;
 			studySummary.TheStudy = study;
@@ -576,13 +581,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 				studySummary.ThePartition = ServerPartition.Load(read, study.ServerPartitionKey);
 
 			studySummary.ReferringPhysiciansName = study.ReferringPhysiciansName;
-			studySummary.TheStudyStorage = StudyStorage.Load(read, study.ServerPartitionKey, study.StudyInstanceUid);
+			studySummary.TheStudyStorage = StudyStorage.Load(read, study.StudyStorageKey);
 			studySummary.StudyStatusEnum = studySummary.TheStudyStorage.StudyStatusEnum;
 			studySummary.QueueStudyStateEnum = studySummary.TheStudyStorage.QueueStudyStateEnum;
 
-			IList<ArchiveStudyStorage> archiveList = controller.GetArchiveStudyStorage(read, studySummary.TheStudyStorage.Key);
-			if (archiveList.Count > 0)
-				studySummary.TheArchiveLocation = CollectionUtils.FirstElement(archiveList);
+			studySummary.TheArchiveLocation = controller.GetFirstArchiveStudyStorage(read, studySummary.TheStudyStorage.Key);
 
 			studySummary.IsArchiving = controller.GetArchiveQueueCount(study) > 0;
 
@@ -592,25 +595,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			// No additional action should be allowed on the study until everything is completed.
 			studySummary.IsLocked = studySummary.IsProcessing ||
 			                        (studySummary.TheStudyStorage.QueueStudyStateEnum != QueueStudyStateEnum.Idle);
-
-           IList<StudyIntegrityQueue> integrityQueueItems =
-				controller.GetStudyIntegrityQueueItems(studySummary.TheStudyStorage.Key);
-
-			if (integrityQueueItems != null && integrityQueueItems.Count > 0)
+           
+    		if (controller.GetStudyIntegrityQueueCount(studySummary.TheStudyStorage.Key) > 0)
 			{
 				studySummary.IsReconcileRequired = true;
 			}
 
-		    IList<WorkQueue> workQueueItems = controller.GetWorkQueueItems(study);
-		    studySummary.HasPendingWorkQueueItems = CollectionUtils.Contains(workQueueItems, 
-                delegate(WorkQueue item)
-                     {
-                         return
-                             item.WorkQueueStatusEnum.Equals(WorkQueueStatusEnum.Idle) ||
-                             item.WorkQueueStatusEnum.Equals(WorkQueueStatusEnum.InProgress) ||
-                             item.WorkQueueStatusEnum.Equals(WorkQueueStatusEnum.Pending);
-                     });
-
+		    studySummary.HasPendingWorkQueueItems = controller.GetCountPendingWorkQueueItems(study) > 0;
             
 			return studySummary;
 		}

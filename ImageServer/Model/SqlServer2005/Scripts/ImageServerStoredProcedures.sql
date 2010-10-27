@@ -329,6 +329,7 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- History:
 --	July 29, 2009 - Added ProcessorID parameter. (Jon Bluks)
 --	Sept 16, 2009 - Added LastUpdatedTime in the result
+--  Aug 25, 2010  - Removed adding wildcards to text search terms (Steve)
 -- =============================================
 CREATE PROCEDURE [dbo].[WebQueryWorkQueue] 
 	@ServerPartitionGUID uniqueidentifier = null,
@@ -404,7 +405,7 @@ BEGIN
 		IF (@where<>'''')
 			SET @where = @where + '' AND ''
 
-		SET @where = @where + ''Study.PatientID Like ''''%'' + @PatientID + ''%'''' ''
+		SET @where = @where + ''Study.PatientID Like '''''' + @PatientID + '''''' ''
 	END
 
 	IF (@PatientsName IS NOT NULL and @PatientsName<>'''')
@@ -412,7 +413,7 @@ BEGIN
 		IF (@where<>'''')
 			SET @where = @where + '' AND ''
 
-		SET @where = @where + ''Study.PatientsName Like ''''%'' + @PatientsName + ''%'''' ''
+		SET @where = @where + ''Study.PatientsName Like '''''' + @PatientsName + '''''' ''
 	END
 	
 	IF (@ProcessorID IS NOT NULL and @ProcessorID<>'''')
@@ -420,15 +421,19 @@ BEGIN
 		IF (@where<>'''')
 			SET @where = @where + '' AND ''
 
-		SET @where = @where + ''WorkQueue.ProcessorID Like ''''%'' + @ProcessorID + ''%'''' ''
+		SET @where = @where + ''WorkQueue.ProcessorID Like '''''' + @ProcessorID + '''''' ''
 	END
 
 	if (@where<>'''')
 		SET @stmt = @stmt + '' WHERE '' + @where
-
+		
 	--PRINT @stmt
 	SET @stmt = ''SELECT W.GUID, W.ServerPartitionGUID, W.StudyStorageGUID, W.DeviceGUID, W.WorkQueueTypeEnum, W.WorkQueueStatusEnum, W.WorkQueuePriorityEnum, W.ProcessorID, W.ExpirationTime, W.ScheduledTime, W.InsertTime, W.FailureCount, W.FailureDescription, W.Data, W.LastUpdatedTime FROM ('' + @stmt
-	SET @stmt = @stmt + '') AS W WHERE W.RowNum BETWEEN '' + str(@StartIndex) + '' AND ('' + str(@StartIndex) + '' + '' + str(@MaxRowCount) + '') - 1''
+
+	if (@StartIndex = 0)
+		SET @stmt = @stmt + '') AS W WHERE W.RowNum BETWEEN '' + str(@StartIndex) + '' AND ('' + str(@StartIndex) + '' + '' + str(@MaxRowCount) + '')''
+	else 
+		SET @stmt = @stmt + '') AS W WHERE W.RowNum BETWEEN '' + str(@StartIndex + 1) + '' AND ('' + str(@StartIndex) + '' + '' + str(@MaxRowCount) + '')''
 
 	EXEC(@stmt)
 
@@ -3358,7 +3363,9 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Author:		Steve Wranovsky
 -- Create date: August 5, 2008
 -- Description:	Query ArchiveQueue entries based on criteria
---				
+--
+-- History:
+--  Aug 25, 2010  - Removed adding wildcards to text search terms (Steve)
 -- =============================================
 CREATE PROCEDURE [dbo].[WebQueryArchiveQueue] 
 	@ServerPartitionGUID uniqueidentifier = null,
@@ -3414,7 +3421,7 @@ BEGIN
 		IF (@where<>'''')
 			SET @where = @where + '' AND ''
 
-		SET @where = @where + ''Study.PatientsName Like ''''%'' + @PatientsName + ''%'''' ''
+		SET @where = @where + ''Study.PatientsName Like '''''' + @PatientsName + '''''' ''
 	END
 
 	IF (@PatientId IS NOT NULL and @PatientId<>'''')
@@ -3422,7 +3429,7 @@ BEGIN
 		IF (@where<>'''')
 			SET @where = @where + '' AND ''
 
-		SET @where = @where + ''Study.PatientId Like ''''%'' + @PatientId + ''%'''' ''
+		SET @where = @where + ''Study.PatientId Like '''''' + @PatientId + '''''' ''
 	END
 
 	IF (@AccessionNumber IS NOT NULL and @AccessionNumber<>'''')
@@ -3430,16 +3437,19 @@ BEGIN
 		IF (@where<>'''')
 			SET @where = @where + '' AND ''
 
-		SET @where = @where + ''Study.AccessionNumber Like ''''%'' + @AccessionNumber + ''%'''' ''
+		SET @where = @where + ''Study.AccessionNumber Like '''''' + @AccessionNumber + '''''' ''
 	END
-
 
 	if (@where<>'''')
 		SET @stmt = @stmt + '' WHERE '' + @where
-
+	
 	PRINT @stmt
 	SET @stmt = ''SELECT A.GUID, A.PartitionArchiveGUID, A.ScheduledTime, A.StudyStorageGUID, A.ArchiveQueueStatusEnum, A.ProcessorId, A.FailureDescription FROM ('' + @stmt
-	SET @stmt = @stmt + '') AS A WHERE A.RowNum BETWEEN '' + str(@StartIndex) + '' AND ('' + str(@StartIndex) + '' + '' + str(@MaxRowCount) + '') - 1''
+
+	if (@StartIndex = 0)
+		SET @stmt = @stmt + '') AS A WHERE A.RowNum BETWEEN '' + str(@StartIndex) + '' AND ('' + str(@StartIndex) + '' + '' + str(@MaxRowCount) + '')''
+	else 
+		SET @stmt = @stmt + '') AS A WHERE A.RowNum BETWEEN '' + str(@StartIndex + 1) + '' AND ('' + str(@StartIndex) + '' + '' + str(@MaxRowCount) + '')''
 
 	EXEC(@stmt)
 
@@ -3473,6 +3483,8 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Create date: August 21, 2008
 -- Description:	Query Restore entries based on criteria
 --				
+-- History:
+--  Aug 25, 2010  - Removed adding wildcards to text search terms (Steve)	
 -- =============================================
 CREATE PROCEDURE [dbo].[WebQueryRestoreQueue] 
 	@ServerPartitionGUID uniqueidentifier = null,
@@ -3529,7 +3541,7 @@ BEGIN
 		IF (@where<>'''')
 			SET @where = @where + '' AND ''
 
-		SET @where = @where + ''Study.PatientsName Like ''''%'' + @PatientsName + ''%'''' ''
+		SET @where = @where + ''Study.PatientsName Like '''''' + @PatientsName + '''''' ''
 	END
 
 	IF (@PatientId IS NOT NULL and @PatientId<>'''')
@@ -3537,7 +3549,7 @@ BEGIN
 		IF (@where<>'''')
 			SET @where = @where + '' AND ''
 
-		SET @where = @where + ''Study.PatientId Like ''''%'' + @PatientId + ''%'''' ''
+		SET @where = @where + ''Study.PatientId Like '''''' + @PatientId + '''''' ''
 	END
 
 	IF (@AccessionNumber IS NOT NULL and @AccessionNumber<>'''')
@@ -3545,7 +3557,7 @@ BEGIN
 		IF (@where<>'''')
 			SET @where = @where + '' AND ''
 
-		SET @where = @where + ''Study.AccessionNumber Like ''''%'' + @AccessionNumber + ''%'''' ''
+		SET @where = @where + ''Study.AccessionNumber Like '''''' + @AccessionNumber + '''''' ''
 	END
 
 
@@ -3554,7 +3566,11 @@ BEGIN
 
 	PRINT @stmt
 	SET @stmt = ''SELECT A.GUID, A.ArchiveStudyStorageGUID, A.ScheduledTime, A.StudyStorageGUID, A.RestoreQueueStatusEnum, A.ProcessorId, A.FailureDescription FROM ('' + @stmt
-	SET @stmt = @stmt + '') AS A WHERE A.RowNum BETWEEN '' + str(@StartIndex) + '' AND ('' + str(@StartIndex) + '' + '' + str(@MaxRowCount) + '') - 1''
+	
+	if (@StartIndex = 0)
+		SET @stmt = @stmt + '') AS A WHERE A.RowNum BETWEEN '' + str(@StartIndex) + '' AND ('' + str(@StartIndex) + '' + '' + str(@MaxRowCount) + '')''
+	else 
+		SET @stmt = @stmt + '') AS A WHERE A.RowNum BETWEEN '' + str(@StartIndex + 1) + '' AND ('' + str(@StartIndex) + '' + '' + str(@MaxRowCount) + '')''
 
 	EXEC(@stmt)
 

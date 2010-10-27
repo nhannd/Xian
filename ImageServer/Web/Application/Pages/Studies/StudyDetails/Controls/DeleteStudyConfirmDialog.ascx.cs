@@ -2,30 +2,10 @@
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
+// http://www.clearcanvas.ca
 //
-// Redistribution and use in source and binary forms, with or without modification, 
-// are permitted provided that the following conditions are met:
-//
-//    * Redistributions of source code must retain the above copyright notice, 
-//      this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above copyright notice, 
-//      this list of conditions and the following disclaimer in the documentation 
-//      and/or other materials provided with the distribution.
-//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
-//      may be used to endorse or promote products derived from this software without 
-//      specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
-// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
-// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
-// OF SUCH DAMAGE.
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 #endregion
 
@@ -179,21 +159,47 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             set { ViewState["DeletedStudies"] = value; }
         }
 
-        protected override void OnLoad(EventArgs e)
+        protected override void OnInit(EventArgs e)
         {
-            base.OnLoad(e);
-
-            if(!SessionManager.Current.User.IsInRole(Enterprise.Authentication.AuthorityTokens.Study.SaveReason))
+            //Set up the control to handle custom reasons if the user has the authority.
+            if (!SessionManager.Current.User.IsInRole(Enterprise.Authentication.AuthorityTokens.Study.SaveReason))
             {
-                ReasonSavePanel.Visible = false;    
+                ReasonSavePanel.Visible = false;
+                SaveReasonAsName.Attributes.Add("display", "none");
+                SaveReasonAsNameValidator.Enabled = false;
             }
+            else
+            {
+                //Hide/Disable the "Save As Reason" textbox/validation depending on whether the user is using a custom reason or not.
+                ReasonListBox.Attributes.Add("onchange", "if(document.getElementById('" + ReasonListBox.ClientID + "').options[document.getElementById('" + ReasonListBox.ClientID + "').selectedIndex].text != '" + App_GlobalResources.SR.CustomReason + "') { document.getElementById('" + ReasonSavePanel.ClientID + "').style.display = 'none'; document.getElementById('" + SaveReasonAsName.ClientID + "').style.display = 'none'; } else { document.getElementById('" + ReasonSavePanel.ClientID + "').style.display = 'inline'; document.getElementById('" + SaveReasonAsName.ClientID + "').style.display = 'inline'; }");
+                ReasonListBox.SelectedIndexChanged += delegate
+                {
+                    if (ReasonListBox.SelectedItem.Text == App_GlobalResources.SR.CustomReason) SaveReasonAsNameValidator.Enabled = true;
+                    else SaveReasonAsNameValidator.Enabled = false;
+                };
+            }
+
         }
 
         private void ClearInputs()
         {
-            Comment.Text = "";
             SaveReasonAsName.Text = "";
-            ReasonListBox.Items.Clear();
+            if (ReasonListBox.Items.Count > 0)
+            {
+                ReasonListBox.SelectedIndex = 0;
+                if (string.IsNullOrEmpty(ReasonListBox.SelectedValue))
+                {
+                    Comment.Text = string.Empty;
+                }
+                else
+                {
+                    Comment.Text = App_GlobalResources.SR.CustomReasonComment;
+                }
+            }
+            else
+            {
+                Comment.Text = string.Empty;
+            }
         }
 
         public override void DataBind()
@@ -207,21 +213,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         private void EnsurePredefinedReasonsLoaded()
         {
-            if (ReasonListBox.Items.Count == 0)
+            ReasonListBox.Items.Clear();
+
+            ICannedTextEntityBroker broker = HttpContextData.Current.ReadContext.GetBroker<ICannedTextEntityBroker>();
+            CannedTextSelectCriteria criteria = new CannedTextSelectCriteria();
+            criteria.Category.EqualTo(REASON_CANNEDTEXT_CATEGORY);
+            IList<CannedText> list = broker.Find(criteria);
+
+            if (SessionManager.Current.User.IsInRole(Enterprise.Authentication.AuthorityTokens.Study.SaveReason))
             {
-                IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
+                ReasonListBox.Items.Add(new ListItem(App_GlobalResources.SR.CustomReason, App_GlobalResources.SR.CustomReasonComment));
+            }
+            else
+            {
+                ReasonListBox.Items.Add(new ListItem(App_GlobalResources.SR.SelectOne, string.Empty));
+            }
 
-                ICannedTextEntityBroker broker = HttpContextData.Current.ReadContext.GetBroker<ICannedTextEntityBroker>();
-                CannedTextSelectCriteria criteria = new CannedTextSelectCriteria();
-                criteria.Category.EqualTo(REASON_CANNEDTEXT_CATEGORY);
-                IList<CannedText> list = broker.Find(criteria);
-
-                ReasonListBox.Items.Add(new ListItem("-- Select one --", ""));
-                foreach (CannedText text in list)
-                {
-                    ReasonListBox.Items.Add(new ListItem(text.Label, text.Text));
-                }
-                
+            foreach (CannedText text in list)
+            {
+                ReasonListBox.Items.Add(new ListItem(text.Label, text.Text));
             }
         }
 
@@ -344,13 +354,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         public void Initialize(List<DeleteStudyInfo> list)
         {
-            ClearInputs(); 
             DeletingStudies = list;
         }
 
         internal void Show()
         {
             DataBind();
+            ClearInputs(); 
             EnsureDialogVisible();
         }
     }

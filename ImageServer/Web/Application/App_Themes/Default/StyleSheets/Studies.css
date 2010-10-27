@@ -328,3 +328,8 @@ div.DeleteStudiesTableContainer {
 	border-top: #618FAD 1px solid;
 	border-bottom: #cccccc 1px solid;
 }
+
+.ModalityListBox
+{
+    width: 85px;
+}

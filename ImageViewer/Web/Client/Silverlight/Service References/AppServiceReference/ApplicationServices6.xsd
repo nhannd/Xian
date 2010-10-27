@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://www.clearcanvas.ca/web/application" xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" elementFormDefault="qualified" targetNamespace="http://www.clearcanvas.ca/web/application" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:40221/ApplicationServices?xsd=xsd0" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:import schemaLocation="http://localhost:40221/ApplicationServices?xsd=xsd3" namespace="http://www.clearcanvas.ca/web/application/viewer" />
+  <xs:complexType name="Command">
+    <xs:sequence>
+      <xs:element name="Identifier" type="ser:guid" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Command" nillable="true" type="tns:Command" />
+  <xs:complexType name="StudyOpenedEvent">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Event">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="StudyInstanceUid" nillable="true" type="xs:string" />
+          <xs:element xmlns:q1="http://www.clearcanvas.ca/web/application/viewer" minOccurs="0" name="Viewer" nillable="true" type="q1:Viewer" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="StudyOpenedEvent" nillable="true" type="tns:StudyOpenedEvent" />
+  <xs:complexType name="Event">
+    <xs:sequence>
+      <xs:element name="Identifier" type="ser:guid" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Event" nillable="true" type="tns:Event" />
+  <xs:complexType name="Entity">
+    <xs:sequence>
+      <xs:element name="Identifier" type="ser:guid" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Entity" nillable="true" type="tns:Entity" />
+  <xs:element name="ExecuteCommands">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="commands" nillable="true" type="tns:CommandSet" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="CommandSet">
+    <xs:sequence>
+      <xs:element name="Commands" nillable="true" type="tns:ArrayOfCommand" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CommandSet" nillable="true" type="tns:CommandSet" />
+  <xs:complexType name="ArrayOfCommand">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Command" nillable="true" type="tns:Command" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCommand" nillable="true" type="tns:ArrayOfCommand" />
+  <xs:element name="ExecuteCommandsResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ProcessMessages">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="messages" nillable="true" type="tns:MessageSet" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="MessageSet">
+    <xs:sequence>
+      <xs:element name="Messages" nillable="true" type="tns:ArrayOfMessage" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="MessageSet" nillable="true" type="tns:MessageSet" />
+  <xs:complexType name="ArrayOfMessage">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Message" nillable="true" type="tns:Message" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfMessage" nillable="true" type="tns:ArrayOfMessage" />
+  <xs:complexType name="Message">
+    <xs:sequence>
+      <xs:element name="Identifier" type="ser:guid" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Message" nillable="true" type="tns:Message" />
+  <xs:element name="ProcessMessagesResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="EventNotification">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="events" nillable="true" type="tns:EventSet" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="EventSet">
+    <xs:sequence>
+      <xs:element name="Events" nillable="true" type="tns:ArrayOfEvent" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="EventSet" nillable="true" type="tns:EventSet" />
+  <xs:complexType name="ArrayOfEvent">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Event" nillable="true" type="tns:Event" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfEvent" nillable="true" type="tns:ArrayOfEvent" />
+</xs:schema>
