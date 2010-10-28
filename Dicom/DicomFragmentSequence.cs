@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using ClearCanvas.Dicom.IO;
 
 namespace ClearCanvas.Dicom
@@ -330,6 +331,42 @@ namespace ClearCanvas.Dicom
                 length += fragment.Length;
             }    
             return length;
+        }
+        #endregion
+
+        #region Dump
+        /// <summary>
+        /// Method for dumping the contents of the attribute to a string.
+        /// </summary>
+        /// <param name="sb">The StringBuilder to write the attribute to.</param>
+        /// <param name="prefix">A prefix to place before the value.</param>
+        /// <param name="options">The <see cref="DicomDumpOptions"/> to use for the output string.</param>
+        public override void Dump(StringBuilder sb, string prefix, DicomDumpOptions options)
+        {
+            int ValueWidth = 40 - prefix.Length;
+            int SbLength = sb.Length;
+
+            sb.Append(prefix);
+            sb.AppendFormat("({0:x4},{1:x4}) {2} ", Tag.Group, Tag.Element, Tag.VR.Name);
+            long length = 0;
+            foreach (DicomFragment frag in Fragments)
+            {
+                length += frag.Length;
+            }
+            
+            String value = string.Format("{0} encapsulated fragment{1} of {2} bytes", Fragments.Count, Fragments.Count > 1 ? "s" : "",length);
+            sb.Append(value.PadRight(ValueWidth, ' '));
+
+            sb.AppendFormat(" # {0,4} {2} {1}", StreamLength, Tag.VM, Tag.Name.Replace("&apos;", "'"));
+
+            if (Flags.IsSet(options, DicomDumpOptions.Restrict80CharactersPerLine))
+            {
+                if (sb.Length > (SbLength + 79))
+                {
+                    sb.Length = SbLength + 79;
+                    //sb.Append(">");
+                }
+            }
         }
         #endregion
     }    

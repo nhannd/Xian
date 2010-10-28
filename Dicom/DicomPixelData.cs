@@ -125,14 +125,20 @@ namespace ClearCanvas.Dicom
     	#endregion
 
         #region Constructors
-
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="message"></param>
     	protected DicomPixelData(DicomMessageBase message)
 			: this(message.DataSet)
         {
             _transferSyntax = message.TransferSyntax;
 		}
 
-
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="collection"></param>
     	protected DicomPixelData(DicomAttributeCollection collection)
         {
             collection.LoadDicomFields(this);
@@ -175,6 +181,10 @@ namespace ClearCanvas.Dicom
 			}
         }
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="attrib"></param>
         internal DicomPixelData(DicomPixelData attrib)
         {
         	SopClass = attrib.SopClass;
@@ -304,6 +314,9 @@ namespace ClearCanvas.Dicom
 			set { _planarConfiguration = value; }
 		}
 
+        /// <summary>
+        /// Flag telling if the pixel data is encoded in planes.
+        /// </summary>
 		public bool IsPlanar
 		{
 			get { return _planarConfiguration != 0; }
@@ -356,6 +369,9 @@ namespace ClearCanvas.Dicom
 			}
 		}
 
+        /// <summary>
+        /// Decimal representation of the <see cref="RescaleSlope"/>.
+        /// </summary>
 		public decimal DecimalRescaleSlope
 		{
 			get { return _rescaleSlope; }
@@ -366,6 +382,10 @@ namespace ClearCanvas.Dicom
 				_rescaleSlopeString = _rescaleSlope.ToString("G10");
 			}
 		}
+
+        /// <summary>
+        /// Decimal representation of the <see cref="RescaleIntercept"/>.
+        /// </summary>
 		public decimal DecimalRescaleIntercept
 		{
 			get { return _rescapeIntercept; }
@@ -377,6 +397,9 @@ namespace ClearCanvas.Dicom
 			}
 		}
 
+        /// <summary>
+        /// Flag telling if the pixel data has a data modality LUT.
+        /// </summary>
     	public bool HasDataModalityLut
     	{
 			get { return _hasDataModalityLut; }
@@ -444,18 +467,48 @@ namespace ClearCanvas.Dicom
             }
 		}
 
+        /// <summary>
+        /// The frame size of an uncompressed frame calculated by using the Bits Stored.
+        /// </summary>
+        /// <remarks>
+        /// When performing a compression ratio for a compressed image, the actual source 
+        /// image size should be calculated based on the Bits Stored, and not based on 
+        /// Bits Allocated.  This property is used to calculate the size based on 
+        /// Bits Stored.
+        /// </remarks>
+        public int BitsStoredFrameSize
+        {
+            get
+            {
+                // ybr full 422 only stores 2/3 of the pixels
+                if (_photometricInterpretation != null && _photometricInterpretation.Equals("YBR_FULL_422"))
+                    return ImageWidth * ImageHeight * BytesAllocated * 2;
+
+                return (ImageWidth * ImageHeight * BitsStored * SamplesPerPixel) / 8;
+            }
+        }
+
+        /// <summary>
+        /// The <see cref="TransferSyntax"/> the pixel data is encoded in.
+        /// </summary>
 		public TransferSyntax TransferSyntax
         {
             get { return _transferSyntax; }
             set { _transferSyntax = value; }
         }
 
+        /// <summary>
+        /// The <see cref="SopClass"/> of the pixel data.
+        /// </summary>
     	public SopClass SopClass
     	{
 			get { return _sopClass; }
 			set { _sopClass = value; }
 		}
 
+        /// <summary>
+        /// Flag telling if the SOP Class of the pixel data supports Modality LUTs.
+        /// </summary>
     	public bool SopSupportsModalityLut
     	{
 			get
@@ -483,21 +536,33 @@ namespace ClearCanvas.Dicom
 
 		#region General Image Module
 
-		// Not always in an image, do a manual update.        
+		/// <summary>
+        /// A flag telling if the pixel dat ahas been lossy compressed at any time.
+        /// </summary>
         public string LossyImageCompression
         {
+            // Not always in an image, do a manual update.   
             get { return _lossyImageCompression; }
             set { _lossyImageCompression = value; }
         }
 
+        /// <summary>
+        /// If the pixel data has been lossy compressed at any time, the ratio of the compression.
+        /// </summary>
     	public float LossyImageCompressionRatio { get; set; }
 
+        /// <summary>
+        /// If the pixel data is derived, a description of the derivation.
+        /// </summary>
     	public string DerivationDescription
         {
             get { return _derivationDescription; }
             set { _derivationDescription = value; }
         }
 
+        /// <summary>
+        /// If the pixel data has been lossy compressed at any time, the method of the compression.
+        /// </summary>
         public string LossyImageCompressionMethod
         {
             get { return _lossyImageCompressionMethod; }

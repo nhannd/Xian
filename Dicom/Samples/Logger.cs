@@ -86,22 +86,26 @@ namespace ClearCanvas.Dicom.Samples
 		public static void LogError(string message, params object[] formatArgs)
 		{
 			Log(LogLevel.Error, null, message, formatArgs);
+            Platform.Log(LogLevel.Error, message, formatArgs);
 		}
 
 		public static void LogErrorException(Exception e, string message, params object[] formatArgs)
 		{
 			Log(LogLevel.Error, e, message, formatArgs);
-		}
+            Platform.Log(LogLevel.Error, e, message, formatArgs);
+        }
 
 		public static void LogInfo(string message, params object[] formatArgs)
 		{
 			Log(LogLevel.Info, null, message, formatArgs);
-		}
+            Platform.Log(LogLevel.Info, message, formatArgs);
+        }
 
 		public static void LogWarn(string message, params object[] formatArgs)
 		{
 			Log(LogLevel.Warn, null, message, formatArgs);
-		}
+            Platform.Log(LogLevel.Warn, message, formatArgs);
+        }
 
 		public static void LogDebug(string message, params object[] formatArgs)
 		{

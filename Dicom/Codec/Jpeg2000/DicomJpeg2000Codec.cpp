@@ -312,7 +312,7 @@ void DicomJpeg2000Codec::Encode(DicomUncompressedPixelData^ oldPixelData, DicomC
 	if (newPixelData->TransferSyntax->Equals(TransferSyntax::Jpeg2000ImageCompression) && jparams->Irreversible) {
 		newPixelData->LossyImageCompressionMethod = "ISO_15444_1";
 		
-		double oldSize = oldPixelData->UncompressedFrameSize;
+		double oldSize = oldPixelData->BitsStoredFrameSize;
 		double newSize = newPixelData->GetCompressedFrameSize(0);
 		newPixelData->LossyImageCompressionRatio = (float) (oldSize / newSize);
 		newPixelData->LossyImageCompression = "01";
