@@ -1,4 +1,4 @@
-<%-- 
+<%-- License (non-CC)
 
 This control has been downloaded from CodeProject @ http://www.codeproject.com/KB/user-controls/CheckJavascriptEnabled.aspx 
 Include the control in the MasterPage.
