@@ -1,4 +1,4 @@
-﻿#region License (non-CC)
+#region License (non-CC)
 
 // The SL3Menu project (http://sl3menu.codeplex.com/) and the Silverlight toolkit (http://silverlight.codeplex.com/)
 // were used as a reference when writing this code.  As such this is considered a derived work and licensed under Ms-PL.

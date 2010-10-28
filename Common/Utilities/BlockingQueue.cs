@@ -1,4 +1,4 @@
-﻿#region License (non-CC)
+#region License (non-CC)
 
 // This software is licensed under the Microsoft Limited Public License,
 // the terms of which are listed as follows.

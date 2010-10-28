@@ -1,4 +1,4 @@
-﻿#region License (non-CC)
+#region License (non-CC)
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.

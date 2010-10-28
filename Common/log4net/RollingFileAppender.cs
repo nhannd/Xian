@@ -1,4 +1,4 @@
-﻿#region License (non-CC)
+#region License (non-CC)
 //
 // Copyright 2001-2006 The Apache Software Foundation
 //

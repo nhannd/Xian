@@ -1,4 +1,4 @@
-﻿#region License (non-CC)
+#region License (non-CC)
 
 // This software is licensed un the Code Project Open License 1.02,
 // the terms of which are listed as follows.
