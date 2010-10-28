@@ -30,6 +30,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
@@ -37,6 +39,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -109,35 +112,49 @@ namespace ClearCanvas.Ris.Client
 				return;
 			}
 
-			if (DialogBoxAction.Cancel == this.Host.ShowMessageBox(SR.MessageConfirmMergePractitioners, MessageBoxActions.OkCancel))
-				return;
-
 			try
 			{
+				// build request
 				var defaultContactPoint = CollectionUtils.SelectFirst(_mergedPractitioner.ContactPoints, cp => cp.IsDefaultContactPoint);
 				var deactivatedContactPoints = CollectionUtils.Select(_mergedPractitioner.ContactPoints, cp => cp.Deactivated);
+				var request = new MergeExternalPractitionerRequest
+				{
+					RightPractitionerRef = _mergedPractitioner.PractitionerRef,
+					LeftPractitionerRef = _selectedDuplicate.PractitionerRef,
+					Name = _mergedPractitioner.Name,
+					LicenseNumber = _mergedPractitioner.LicenseNumber,
+					BillingNumber = _mergedPractitioner.BillingNumber,
+					ExtendedProperties = _mergedPractitioner.ExtendedProperties,
+					DefaultContactPointRef = defaultContactPoint == null ? null : defaultContactPoint.ContactPointRef,
+					DeactivatedContactPointRefs = CollectionUtils.Map(deactivatedContactPoints, (ExternalPractitionerContactPointDetail cp) => cp.ContactPointRef),
+					ContactPointReplacements = _replaceContactPointsComponent.ContactPointReplacements
+				};
 
-				Platform.GetService(
-					delegate(IExternalPractitionerAdminService service)
-					{
-						var request = new MergeExternalPractitionerRequest
-						{
-							RightPractitionerRef = _mergedPractitioner.PractitionerRef,
-							LeftPractitionerRef = _selectedDuplicate.PractitionerRef,
-							Name = _mergedPractitioner.Name,
-							LicenseNumber = _mergedPractitioner.LicenseNumber,
-							BillingNumber = _mergedPractitioner.BillingNumber,
-							ExtendedProperties = _mergedPractitioner.ExtendedProperties,
-							DefaultContactPointRef = defaultContactPoint == null ? null : defaultContactPoint.ContactPointRef,
-							DeactivatedContactPointRefs = CollectionUtils.Map(deactivatedContactPoints, (ExternalPractitionerContactPointDetail cp) => cp.ContactPointRef),
-							ContactPointReplacements = _replaceContactPointsComponent.ContactPointReplacements
-						};
+				var cost = CalculateMergeCost(request);
 
-						service.MergeExternalPractitioner(request);
-					});
+				var msg = string.Format("Merge operation will affect {0} orders and/or visits.", cost);
 
-				this.ExitCode = ApplicationComponentExitCode.Accepted;
-				this.Host.Exit();
+				if (cost > ExternalPractitionerMergeSettings.Default.MergeCostUserWarningThreshold)
+				{
+					msg += "\n\nPerforming this operation during regular working hours may adversely affect the system performance for other users.";
+					msg += "\nIt is recommended that you do not proceed with the operation unless you are certain it will not impact other users.";
+				}
+				msg += "\n\nPress 'Cancel' to cancel the operation.\nPress 'OK' to continue. The merge operation cannot be undone.";
+				var action = this.Host.ShowMessageBox(msg, MessageBoxActions.OkCancel);
+				if (action == DialogBoxAction.Cancel)
+				{
+					return;
+				}
+
+				// perform the merge
+				IList<string> affectedOrders, affectedVisits;
+				PerformMergeOperation(request, out affectedOrders, out affectedVisits);
+				if (affectedOrders.Count > 0 || affectedVisits.Count > 0)
+				{
+					ShowReport(affectedOrders, affectedVisits);
+				}
+
+				Exit(ApplicationComponentExitCode.Accepted);
 			}
 			catch (Exception e)
 			{
@@ -253,6 +270,69 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			return detail;
+		}
+
+		private long CalculateMergeCost(MergeExternalPractitionerRequest request)
+		{
+			request.EstimateCostOnly = true;
+			return ShowProgress("Calculating number of records affected...",
+					  service => service.MergeExternalPractitioner(request).CostEstimate);
+		}
+
+		private void PerformMergeOperation(MergeExternalPractitionerRequest request, out IList<string> affectedOrders, out IList<string> affectedVisits)
+		{
+			request.EstimateCostOnly = false;
+			var response = ShowProgress("Performing merge operation...",
+					  service => service.MergeExternalPractitioner(request));
+
+			affectedOrders = CollectionUtils.Map(response.AffectedOrders, (MergeExternalPractitionerResponse.AffectedOrder o) => AccessionFormat.Format(o.AccessionNumber));
+			affectedVisits = CollectionUtils.Map(response.AffectedVisits, (MergeExternalPractitionerResponse.AffectedVisit v) => VisitNumberFormat.Format(v.VisitNumber));
+		}
+
+		private T ShowProgress<T>(
+			string message,
+			Converter<IExternalPractitionerAdminService, T> action)
+		{
+			var result = default(T);
+			var task = new BackgroundTask(
+				delegate(IBackgroundTaskContext context)
+				{
+					context.ReportProgress(new BackgroundTaskProgress(0, message));
+
+					try
+					{
+						Platform.GetService<IExternalPractitionerAdminService>(service =>
+						{
+							result = action(service);
+						});
+					}
+					catch (Exception e)
+					{
+						context.Error(e);
+					}
+				}, false);
+
+			ProgressDialog.Show(task, this.Host.DesktopWindow, true, ProgressBarStyle.Marquee);
+			return result;
+		}
+
+		private void ShowReport(IList<string> affectedOrders, IList<string> affectedVisits)
+		{
+			var reportBuilder = new StringBuilder();
+			reportBuilder.Append("Merge succeeded. ");
+			reportBuilder.AppendLine("The following orders were modified:");
+			foreach (var order in affectedOrders)
+			{
+				reportBuilder.AppendLine(order);
+			}
+			reportBuilder.AppendLine();
+			reportBuilder.AppendLine("The following visits were modified:");
+			foreach (var visit in affectedVisits)
+			{
+				reportBuilder.AppendLine(visit);
+			}
+			var reportComponent = new MergeOutcomeReportComponent(reportBuilder.ToString());
+			LaunchAsDialog(this.Host.DesktopWindow, reportComponent, "Merge Outcome");
 		}
 	}
 }

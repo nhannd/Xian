@@ -343,14 +343,22 @@ namespace ClearCanvas.Ris.Client
 
 		private void MergePractitioner()
 		{
-			var firstItem = CollectionUtils.FirstElement(this.SelectedItems);
-			var secondItem = this.SelectedItems.Count > 1 ? CollectionUtils.LastElement(this.SelectedItems) : null;
-			var editor = new ExternalPractitionerMergeNavigatorComponent(firstItem.PractitionerRef, secondItem == null ? null : secondItem.PractitionerRef);
+			try
+			{
+				var firstItem = CollectionUtils.FirstElement(this.SelectedItems);
+				var secondItem = this.SelectedItems.Count > 1 ? CollectionUtils.LastElement(this.SelectedItems) : null;
+				var editor = new ExternalPractitionerMergeNavigatorComponent(firstItem.PractitionerRef, secondItem == null ? null : secondItem.PractitionerRef);
 
-			var title = SR.TitleMergePractitioner + " - " + Formatting.PersonNameFormat.Format(firstItem.Name);
-			var creationArg = new DialogBoxCreationArgs(editor, title, null, DialogSizeHint.Large);
+				var title = SR.TitleMergePractitioner + " - " + Formatting.PersonNameFormat.Format(firstItem.Name);
+				var creationArg = new DialogBoxCreationArgs(editor, title, null, DialogSizeHint.Large);
 
-			LaunchAsDialog(this.Host.DesktopWindow, creationArg);
+				LaunchAsDialog(this.Host.DesktopWindow, creationArg);
+			}
+			catch (Exception e)
+			{
+				// failed to launch editor
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
 		}
 
 		private void MergeContactPoint()

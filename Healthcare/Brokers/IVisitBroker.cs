@@ -36,7 +36,10 @@ namespace ClearCanvas.Healthcare.Brokers
 {
 	public partial interface IVisitBroker
 	{
-		IList<Visit> FindByVisitPractitioner(ExternalPractitioner practitioner);
-		long CountByVisitPractitioner(ExternalPractitioner practitioner);
+		IList<Visit> FindByVisitPractitioner(VisitSearchCriteria visitSearchCriteria,
+											 VisitPractitionerSearchCriteria practitionerSearchCriteria);
+
+		long CountByVisitPractitioner(VisitSearchCriteria visitSearchCriteria,
+									  VisitPractitionerSearchCriteria practitionerSearchCriteria);
 	}
 }

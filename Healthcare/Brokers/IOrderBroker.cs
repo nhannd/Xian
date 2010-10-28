@@ -38,5 +38,6 @@ namespace ClearCanvas.Healthcare.Brokers
 		Order FindDocumentOwner(AttachedDocument document);
 
 		IList<Order> FindByResultRecipient(OrderSearchCriteria orderSearchCriteria, ResultRecipientSearchCriteria recipientSearchCriteria);
+		long CountByResultRecipient(OrderSearchCriteria orderSearchCriteria, ResultRecipientSearchCriteria recipientSearchCriteria);
 	}
 }

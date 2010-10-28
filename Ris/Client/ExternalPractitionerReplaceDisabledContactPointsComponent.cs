@@ -34,6 +34,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 
@@ -55,7 +56,7 @@ namespace ClearCanvas.Ris.Client
 	{
 		private List<ExternalPractitionerContactPointDetail> _deactivatedContactPoints;
 		private List<ExternalPractitionerContactPointDetail> _activeContactPoints;
-		private readonly List<MergeExternalPractitionerRequest.ContactPointReplacement> _contactPointReplacements;
+		private readonly Dictionary<EntityRef, EntityRef> _contactPointReplacements;
 		private readonly List<ExternalPractitionerReplaceDisabledContactPointsTableItem> _tableItems;
 
 		/// <summary>
@@ -64,7 +65,7 @@ namespace ClearCanvas.Ris.Client
 		public ExternalPractitionerReplaceDisabledContactPointsComponent()
 		{
 			_tableItems = new List<ExternalPractitionerReplaceDisabledContactPointsTableItem>();
-			_contactPointReplacements = new List<MergeExternalPractitionerRequest.ContactPointReplacement>();
+			_contactPointReplacements = new Dictionary<EntityRef, EntityRef>();
 		}
 
 		// Dummy property for binding the validation icon to.
@@ -92,7 +93,7 @@ namespace ClearCanvas.Ris.Client
 			set { _activeContactPoints = value; }
 		}
 
-		public List<MergeExternalPractitionerRequest.ContactPointReplacement> ContactPointReplacements
+		public Dictionary<EntityRef, EntityRef> ContactPointReplacements
 		{
 			get
 			{
@@ -140,9 +141,9 @@ namespace ClearCanvas.Ris.Client
 				if (item.SelectedNewContactPoint == null)
 					continue;
 
-				_contactPointReplacements.Add(new MergeExternalPractitionerRequest.ContactPointReplacement(
+				_contactPointReplacements.Add(
 					item.OldContactPoint.ContactPointRef,
-					item.SelectedNewContactPoint.ContactPointRef));
+					item.SelectedNewContactPoint.ContactPointRef);
 			}
 		}
 

@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,47 +29,40 @@
 
 #endregion
 
-using ClearCanvas.Enterprise.Common;
-using System.Runtime.Serialization;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
 
-namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-	[DataContract]
-	public class MergeDuplicateContactPointResponse : DataContractBase
-	{
-		[DataContract]
-		public class AffectedOrder
+    /// <summary>
+    /// Provides a Windows Forms user-interface for <see cref="MergeOutcomeReportComponent"/>.
+    /// </summary>
+    public partial class MergeOutcomeReportComponentControl : ApplicationComponentUserControl
+    {
+        private MergeOutcomeReportComponent _component;
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public MergeOutcomeReportComponentControl(MergeOutcomeReportComponent component)
+            :base(component)
+        {
+			_component = component;
+            InitializeComponent();
+
+        	_reportText.DataBindings.Add("Text", _component, "ReportText");
+        }
+
+		private void _closeButton_Click(object sender, EventArgs e)
 		{
-			[DataMember]
-			public string AccessionNumber;
-
-			[DataMember]
-			public EnumValueInfo Status;
+			_component.Close();
 		}
-
-
-		public MergeDuplicateContactPointResponse(ExternalPractitionerContactPointSummary mergedContactPoint, List<AffectedOrder> affectedOrders)
-		{
-			AffectedOrders = affectedOrders;
-			MergedContactPoint = mergedContactPoint;
-		}
-
-		public MergeDuplicateContactPointResponse(long costEstimate)
-		{
-			this.CostEstimate = costEstimate;
-		}
-
-		[DataMember]
-		public ExternalPractitionerContactPointSummary MergedContactPoint;
-
-		[DataMember]
-		public List<AffectedOrder> AffectedOrders;
-		
-		
-		[DataMember]
-		public long CostEstimate;
-
-
-	}
+    }
 }

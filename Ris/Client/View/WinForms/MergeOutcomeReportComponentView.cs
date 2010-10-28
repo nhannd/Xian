@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,47 +29,50 @@
 
 #endregion
 
-using ClearCanvas.Enterprise.Common;
-using System.Runtime.Serialization;
+using System;
 using System.Collections.Generic;
+using System.Text;
 
-namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-	[DataContract]
-	public class MergeDuplicateContactPointResponse : DataContractBase
-	{
-		[DataContract]
-		public class AffectedOrder
-		{
-			[DataMember]
-			public string AccessionNumber;
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="MergeOutcomeReportComponent"/>.
+    /// </summary>
+    [ExtensionOf(typeof(MergeOutcomeReportComponentViewExtensionPoint))]
+    public class MergeOutcomeReportComponentView : WinFormsView, IApplicationComponentView
+    {
+        private MergeOutcomeReportComponent _component;
+        private MergeOutcomeReportComponentControl _control;
 
-			[DataMember]
-			public EnumValueInfo Status;
-		}
+        #region IApplicationComponentView Members
 
+        /// <summary>
+        /// Called by the host to assign this view to a component.
+        /// </summary>
+        public void SetComponent(IApplicationComponent component)
+        {
+            _component = (MergeOutcomeReportComponent)component;
+        }
 
-		public MergeDuplicateContactPointResponse(ExternalPractitionerContactPointSummary mergedContactPoint, List<AffectedOrder> affectedOrders)
-		{
-			AffectedOrders = affectedOrders;
-			MergedContactPoint = mergedContactPoint;
-		}
+        #endregion
 
-		public MergeDuplicateContactPointResponse(long costEstimate)
-		{
-			this.CostEstimate = costEstimate;
-		}
-
-		[DataMember]
-		public ExternalPractitionerContactPointSummary MergedContactPoint;
-
-		[DataMember]
-		public List<AffectedOrder> AffectedOrders;
-		
-		
-		[DataMember]
-		public long CostEstimate;
-
-
-	}
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new MergeOutcomeReportComponentControl(_component);
+                }
+                return _control;
+            }
+        }
+    }
 }

@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,47 +29,20 @@
 
 #endregion
 
-using ClearCanvas.Enterprise.Common;
-using System.Runtime.Serialization;
-using System.Collections.Generic;
+using System.Configuration;
+using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
+namespace ClearCanvas.Ris.Client
 {
-	[DataContract]
-	public class MergeDuplicateContactPointResponse : DataContractBase
+
+	// TODO add a description of the purpose of the settings group here
+	[SettingsGroupDescription("")]
+	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+	internal sealed partial class ExternalPractitionerMergeSettings
 	{
-		[DataContract]
-		public class AffectedOrder
+		private ExternalPractitionerMergeSettings()
 		{
-			[DataMember]
-			public string AccessionNumber;
-
-			[DataMember]
-			public EnumValueInfo Status;
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
-
-
-		public MergeDuplicateContactPointResponse(ExternalPractitionerContactPointSummary mergedContactPoint, List<AffectedOrder> affectedOrders)
-		{
-			AffectedOrders = affectedOrders;
-			MergedContactPoint = mergedContactPoint;
-		}
-
-		public MergeDuplicateContactPointResponse(long costEstimate)
-		{
-			this.CostEstimate = costEstimate;
-		}
-
-		[DataMember]
-		public ExternalPractitionerContactPointSummary MergedContactPoint;
-
-		[DataMember]
-		public List<AffectedOrder> AffectedOrders;
-		
-		
-		[DataMember]
-		public long CostEstimate;
-
-
 	}
 }

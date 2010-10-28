@@ -38,22 +38,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 	[DataContract]
 	public class MergeExternalPractitionerRequest : DataContractBase
 	{
-		[DataContract]
-		public class ContactPointReplacement : DataContractBase
-		{
-			public ContactPointReplacement(EntityRef deactivatedContactPointRef, EntityRef replacementContactPointRef)
-			{
-				this.DeactivatedContactPointRef = deactivatedContactPointRef;
-				this.ReplacementContactPointRef = replacementContactPointRef;
-			}
-
-			[DataMember]
-			public EntityRef DeactivatedContactPointRef;
-
-			[DataMember]
-			public EntityRef ReplacementContactPointRef;
-		}
-
 		[DataMember]
 		public EntityRef RightPractitionerRef;
 
@@ -79,6 +63,13 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 		public List<EntityRef> DeactivatedContactPointRefs;
 
 		[DataMember]
-		public List<ContactPointReplacement> ContactPointReplacements;
+		public Dictionary<EntityRef, EntityRef> ContactPointReplacements;
+
+		/// <summary>
+		/// If true, no merge will actually be performed.  Instead, the server will return some estimated
+		/// measures of the cost of the merge operation if it were to be performed.
+		/// </summary>
+		[DataMember]
+		public bool EstimateCostOnly;
 	}
 }

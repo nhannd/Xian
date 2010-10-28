@@ -31,23 +31,38 @@
 
 
 using System.Collections.Generic;
+using ClearCanvas.Enterprise.Hibernate.Hql;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
 	public partial class VisitBroker
 	{
-		public IList<Visit> FindByVisitPractitioner(ExternalPractitioner practitioner)
+		#region IVisitBroker members
+
+		public IList<Visit> FindByVisitPractitioner(VisitSearchCriteria visitSearchCriteria, VisitPractitionerSearchCriteria practitionerSearchCriteria)
 		{
-			var q = this.GetNamedHqlQuery("visitsByPractitioner");
-			q.SetParameter(0, practitioner);
-			return q.List<Visit>();
+			var query = GetBaseVisitPractitionerQuery(visitSearchCriteria, practitionerSearchCriteria);
+			return ExecuteHql<Visit>(query);
 		}
 
-		public long CountByVisitPractitioner(ExternalPractitioner practitioner)
+		public long CountByVisitPractitioner(VisitSearchCriteria visitSearchCriteria, VisitPractitionerSearchCriteria practitionerSearchCriteria)
 		{
-			var q = this.GetNamedHqlQuery("visitCountByPractitioner");
-			q.SetParameter(0, practitioner);
-			return (long)q.UniqueResult();
+			var query = GetBaseVisitPractitionerQuery(visitSearchCriteria, practitionerSearchCriteria);
+			query.Selects.Add(new HqlSelect("count(*)"));
+			return ExecuteHqlUnique<long>(query);
+		}
+
+		#endregion
+
+		private static HqlProjectionQuery GetBaseVisitPractitionerQuery(VisitSearchCriteria visitSearchCriteria, VisitPractitionerSearchCriteria practitionerSearchCriteria)
+		{
+			var hqlFrom = new HqlFrom(typeof(Visit).Name, "v");
+			hqlFrom.Joins.Add(new HqlJoin("v.Practitioners", "vp"));
+
+			var query = new HqlProjectionQuery(hqlFrom);
+			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("vp", practitionerSearchCriteria));
+			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("v", visitSearchCriteria));
+			return query;
 		}
 	}
 }

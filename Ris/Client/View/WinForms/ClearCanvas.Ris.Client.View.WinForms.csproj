@@ -331,6 +331,13 @@
     <Compile Include="LookupField.Designer.cs">
       <DependentUpon>LookupField.cs</DependentUpon>
     </Compile>
+    <Compile Include="MergeOutcomeReportComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MergeOutcomeReportComponentControl.Designer.cs">
+      <DependentUpon>MergeOutcomeReportComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MergeOutcomeReportComponentView.cs" />
     <Compile Include="MultipleProceduresEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -779,6 +786,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="LookupHandlerCellEditorControl.resx">
       <DependentUpon>LookupHandlerCellEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MergeOutcomeReportComponentControl.resx">
+      <DependentUpon>MergeOutcomeReportComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MultipleProceduresEditorComponentControl.resx">
       <DependentUpon>MultipleProceduresEditorComponentControl.cs</DependentUpon>

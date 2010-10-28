@@ -51,6 +51,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 	[ServiceImplementsContract(typeof(IExternalPractitionerAdminService))]
 	public class ExternalPractitionerAdminService : ApplicationServiceBase, IExternalPractitionerAdminService
 	{
+		private delegate TOutput Converter<TInput1, TInput2, TOutput>(TInput1 input1, TInput2 input2);
+
 		#region IExternalPractitionerAdminService Members
 
 		[ReadOperation]
@@ -127,8 +129,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			var practitioner = PersistenceContext.Load<ExternalPractitioner>(request.PractitionerRef);
 			var assembler = new ExternalPractitionerAssembler();
 
-			var response = new LoadExternalPractitionerForEditResponse
-				{ PractitionerDetail = assembler.CreateExternalPractitionerDetail(practitioner, this.PersistenceContext) };
+			var response = new LoadExternalPractitionerForEditResponse { PractitionerDetail = assembler.CreateExternalPractitionerDetail(practitioner, this.PersistenceContext) };
 
 			if (request.IncludeAlerts)
 			{
@@ -262,135 +263,125 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.ExternalPractitioner.Merge)]
 		public MergeDuplicateContactPointResponse MergeDuplicateContactPoint(MergeDuplicateContactPointRequest request)
 		{
-			var broker = PersistenceContext.GetBroker<IExternalPractitionerContactPointBroker>();
-			var duplicate = broker.Load(request.Duplicate.ContactPointRef, EntityLoadFlags.Proxy);
-			var original = broker.Load(request.Original.ContactPointRef, EntityLoadFlags.Proxy);
+			var dest = PersistenceContext.Load<ExternalPractitionerContactPoint>(request.RetainedContactPointRef, EntityLoadFlags.Proxy);
+			var src = PersistenceContext.Load<ExternalPractitionerContactPoint>(request.ReplacedContactPointRef, EntityLoadFlags.Proxy);
 
-			// Change reference of result recipient to the new contact point
-			foreach (var order in GetActiveOrdersForContactPoint(duplicate))
+			// sanity check
+			if (!Equals(dest.Practitioner, src.Practitioner))
+				throw new RequestValidationException("Only contact points belonging to the same practitioner can be merged.");
+
+			// if we are only doing a cost estimate, exit here without modifying any data
+			if (request.EstimateCostOnly)
 			{
-				foreach (var resultRecipient in order.ResultRecipients)
-				{
-					if (resultRecipient.PractitionerContactPoint == duplicate)
-						resultRecipient.PractitionerContactPoint = original;
-				}
+				// compute cost estimate
+				var cost = EstimateMergeCost(src);
+				return new MergeDuplicateContactPointResponse(cost);
 			}
 
-			if (duplicate.IsDefaultContactPoint)
-			{
-				duplicate.IsDefaultContactPoint = false;
-				original.IsDefaultContactPoint = true;
-			}
+			// merge contact points
+			MergeContactPointRecords(dest, src);
 
-			foreach (var telephoneNumber in duplicate.TelephoneNumbers)
-			{
-				if (CollectionUtils.Contains(original.TelephoneNumbers, originalsPhoneNumber => originalsPhoneNumber.IsSameNumber(telephoneNumber)))
-					continue;
+			// update affected orders
+			var replacements = new Dictionary<ExternalPractitionerContactPoint, ExternalPractitionerContactPoint> { { src, dest } };
+			IList<Order> affectedOrders;
+			DoContactPointReplacements(replacements, out affectedOrders);
 
-				var copy = (TelephoneNumber)telephoneNumber.Clone();
-				copy.ValidRange.Until = copy.ValidRange.Until ?? Platform.Time;
-				original.TelephoneNumbers.Add(copy);
-			}
+			// if user has verify permission, re-verify the dest
+			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.ExternalPractitionerVerification))
+				dest.Practitioner.MarkVerified();
 
-			foreach (var address in duplicate.Addresses)
-			{
-				if (CollectionUtils.Contains(original.Addresses, originalAddress => originalAddress.IsSameAddress(address)))
-					continue;
-
-				var copy = (Address)address.Clone();
-				copy.ValidRange.Until = copy.ValidRange.Until ?? Platform.Time;
-				original.Addresses.Add(copy);
-			}
-
-			foreach (var emailAddress in duplicate.EmailAddresses)
-			{
-				if (CollectionUtils.Contains(original.EmailAddresses, originalsEmailAddress => originalsEmailAddress.IsSameEmailAddress(emailAddress)))
-					continue;
-
-				var copy = (EmailAddress)emailAddress.Clone();
-				copy.ValidRange.Until = copy.ValidRange.Until ?? Platform.Time;
-				original.EmailAddresses.Add(copy);
-			}
-
-			duplicate.Deactivated = true;
-
-			this.PersistenceContext.SynchState();
-
-			duplicate.Practitioner.MarkEdited();
+			PersistenceContext.SynchState();
 
 			var assembler = new ExternalPractitionerAssembler();
-			return new MergeDuplicateContactPointResponse(assembler.CreateExternalPractitionerContactPointSummary(original));
+			return new MergeDuplicateContactPointResponse(
+				assembler.CreateExternalPractitionerContactPointSummary(dest),
+					CollectionUtils.Map(affectedOrders,
+						(Order o) => new MergeDuplicateContactPointResponse.AffectedOrder
+									{
+										AccessionNumber = o.AccessionNumber,
+										Status = EnumUtils.GetEnumValueInfo(o.Status, PersistenceContext)
+									}));
 		}
-
-		//[ReadOperation]
-		//public LoadMergeDuplicatePractitionerFormDataResponse LoadMergeDuplicatePractitionerFormData(LoadMergeDuplicatePractitionerFormDataRequest request)
-		//{
-		//    var practitioner = this.PersistenceContext.Load<ExternalPractitioner>(request.Practitioner.PractitionerRef, EntityLoadFlags.Proxy);
-
-		//    var orderAssembler = new OrderAssembler();
-		//    var affectedOrders = CollectionUtils.Map<Order, OrderSummary>(
-		//        this.PersistenceContext.GetBroker<IOrderBroker>().FindByOrderingPractitioner(practitioner),
-		//        o => orderAssembler.CreateOrderSummary(o, this.PersistenceContext));
-
-		//    var visitAssembler = new VisitAssembler();
-		//    var affectedVisits = CollectionUtils.Map<Visit, VisitSummary>(
-		//        this.PersistenceContext.GetBroker<IVisitBroker>().FindByPractitioner(practitioner),
-		//        v => visitAssembler.CreateVisitSummary(v, this.PersistenceContext));
-
-		//    return new LoadMergeDuplicatePractitionerFormDataResponse(affectedOrders, affectedVisits);
-		//}
 
 		[ReadOperation]
 		public LoadMergeDuplicateContactPointFormDataResponse LoadMergeDuplicateContactPointFormData(LoadMergeDuplicateContactPointFormDataRequest request)
 		{
-			var broker = this.PersistenceContext.GetBroker<IExternalPractitionerContactPointBroker>();
-			var contactPoint = broker.Load(request.ContactPoint.ContactPointRef, EntityLoadFlags.Proxy);
-
-			var orderAssembler = new OrderAssembler();
-			var affectedOrderSummaries = CollectionUtils.Map<Order, OrderSummary>(
-				GetActiveOrdersForContactPoint(contactPoint),
-				order => orderAssembler.CreateOrderSummary(order, this.PersistenceContext));
-
-			return new LoadMergeDuplicateContactPointFormDataResponse(affectedOrderSummaries);
+			return new LoadMergeDuplicateContactPointFormDataResponse();
 		}
 
 		[UpdateOperation]
 		public MergeExternalPractitionerResponse MergeExternalPractitioner(MergeExternalPractitionerRequest request)
 		{
-			var prac1 = PersistenceContext.Load<ExternalPractitioner>(request.LeftPractitionerRef, EntityLoadFlags.Proxy);
-			var prac2 = PersistenceContext.Load<ExternalPractitioner>(request.RightPractitionerRef, EntityLoadFlags.Proxy);
+			// unpack the request, loading all required entities
+			var left = PersistenceContext.Load<ExternalPractitioner>(request.LeftPractitionerRef, EntityLoadFlags.Proxy);
+			var right = PersistenceContext.Load<ExternalPractitioner>(request.RightPractitionerRef, EntityLoadFlags.Proxy);
 
-			// determine the optimal merge direction
-			var n1 = CountAffectedOrdersAndVisits(prac1);
-			var n2 = CountAffectedOrdersAndVisits(prac2);
+			var nameAssembler = new PersonNameAssembler();
+			var name = new PersonName();
+			nameAssembler.UpdatePersonName(request.Name, name);
 
-			// merge practitioner in the optimal direction
-			var result = (n1 > n2) ? MergePractitionerHelper(prac1, prac2, request) :
-				MergePractitionerHelper(prac2, prac1, request);
+			var defaultContactPoint = request.DefaultContactPointRef != null ?
+				PersistenceContext.Load<ExternalPractitionerContactPoint>(request.DefaultContactPointRef) : null;
 
-			// do contact point replacements
-			if(request.ContactPointReplacements != null)
-			{
-				foreach (var contactPointReplacement in request.ContactPointReplacements)
-				{
-					var deactivatedContactPoint = PersistenceContext.Load<ExternalPractitionerContactPoint>(
-						contactPointReplacement.DeactivatedContactPointRef, EntityLoadFlags.Proxy);
-					var replacementContactPoint = PersistenceContext.Load<ExternalPractitionerContactPoint>(
-						contactPointReplacement.ReplacementContactPointRef, EntityLoadFlags.Proxy);
+			var deactivatedContactPoints = request.DeactivatedContactPointRefs == null ? new List<ExternalPractitionerContactPoint>() :
+				CollectionUtils.Map(request.DeactivatedContactPointRefs,
+				(EntityRef cpRef) => PersistenceContext.Load<ExternalPractitionerContactPoint>(cpRef));
 
-					foreach (var affectedOrder in GetActiveOrdersForContactPoint(deactivatedContactPoint))
-					{
-						foreach (var rr in affectedOrder.ResultRecipients)
-						{
-							if (rr.PractitionerContactPoint.Equals(deactivatedContactPoint))
-								rr.PractitionerContactPoint = replacementContactPoint;
-						}
-					}
-				}
-			}
+			var cpReplacements = CollectionUtils.Map(request.ContactPointReplacements ?? (new Dictionary<EntityRef, EntityRef>()),
+				kvp => new KeyValuePair<ExternalPractitionerContactPoint, ExternalPractitionerContactPoint>(
+							PersistenceContext.Load<ExternalPractitionerContactPoint>(kvp.Key, EntityLoadFlags.Proxy),
+							PersistenceContext.Load<ExternalPractitionerContactPoint>(kvp.Value, EntityLoadFlags.Proxy)));
 
+			// compute cost estimate and determine the optimal merge direction
+			ExternalPractitioner src, dest;
+			var cost = EstimateMergeCost(right, left, deactivatedContactPoints, out dest);
+			src = dest.Equals(left) ? right : left;
+
+			// if we are only doing a cost estimate, exit here without modifying any data
+			if (request.EstimateCostOnly)
+				return new MergeExternalPractitionerResponse(cost);
+
+			// merge the practitioners
+			MergePractitionerRecords(dest, src,
+				name,
+				request.LicenseNumber,
+				request.BillingNumber,
+				request.ExtendedProperties,
+				defaultContactPoint,
+				deactivatedContactPoints);
+
+			// update all references
+			IList<Order> affectedOrders1;
+			IList<Visit> affectedVisits;
+			UpdateReferencingOrdersAndVisits(dest, src, out affectedOrders1, out affectedVisits);
+
+			// do contact point replacements in result recipients
+			IList<Order> affectedOrders2;
+			DoContactPointReplacements(cpReplacements, out affectedOrders2);
+
+			// if user has verify permission, re-verify the dest
+			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.ExternalPractitionerVerification))
+				dest.MarkVerified();
+
+			PersistenceContext.SynchState();
+
+			var affectedOrders = CollectionUtils.Unique(CollectionUtils.Concat(affectedOrders1, affectedOrders2));
 			var assembler = new ExternalPractitionerAssembler();
-			return new MergeExternalPractitionerResponse(assembler.CreateExternalPractitionerSummary(result, this.PersistenceContext));
+			return new MergeExternalPractitionerResponse(
+				assembler.CreateExternalPractitionerSummary(dest, this.PersistenceContext),
+					CollectionUtils.Map(affectedOrders,
+						(Order o) => new MergeExternalPractitionerResponse.AffectedOrder
+						{
+							AccessionNumber = o.AccessionNumber,
+							Status = EnumUtils.GetEnumValueInfo(o.Status, PersistenceContext)
+						}),
+					CollectionUtils.Map(affectedVisits,
+						(Visit v) => new MergeExternalPractitionerResponse.AffectedVisit
+						{
+							VisitNumber = new CompositeIdentifierDetail(v.VisitNumber.Id, EnumUtils.GetEnumValueInfo(v.VisitNumber.AssigningAuthority)),
+							Status = EnumUtils.GetEnumValueInfo(v.Status, PersistenceContext)
+						})
+						);
 		}
 
 		[ReadOperation]
@@ -414,67 +405,113 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 
 		#endregion
 
-		private long CountAffectedOrdersAndVisits(ExternalPractitioner practitioner)
+		private long EstimateMergeCost(ExternalPractitioner right, ExternalPractitioner left,
+			ICollection<ExternalPractitionerContactPoint> deactivatedContactPoints,
+			out ExternalPractitioner optimalDest)
 		{
-			var ordersWhere = new OrderSearchCriteria();
-			ordersWhere.OrderingPractitioner.EqualTo(practitioner);
-			var orderCount = PersistenceContext.GetBroker<IOrderBroker>().Count(ordersWhere);
+			// TODO: optimize this - if right side returns < N, don't even bother with left side (where N is a small number, maybe 5 or 10)
+			var rightOrderCount = QueryOrders<long>(right, PersistenceContext.GetBroker<IOrderBroker>().Count);
+			var rightVisitCount = QueryVisits<long>(right, PersistenceContext.GetBroker<IVisitBroker>().CountByVisitPractitioner);
+			var leftOrderCount = QueryOrders<long>(left, PersistenceContext.GetBroker<IOrderBroker>().Count);
+			var leftVisitCount = QueryVisits<long>(left, PersistenceContext.GetBroker<IVisitBroker>().CountByVisitPractitioner);
 
-			var visitCount = PersistenceContext.GetBroker<IVisitBroker>().CountByVisitPractitioner(practitioner);
+			// total number of references
+			var r = rightOrderCount + rightVisitCount;
+			var l = leftOrderCount + leftVisitCount;
 
-			return orderCount + visitCount;
+			// determine the optimal merge direction
+			// choose the side with the higher number of total references to be the dest
+			optimalDest = (r > l) ? right : left;
+
+			// minimum number of practitioner references that must be updated
+			var pracCount = Math.Min(r, l);
+
+			// number of contact point references that must be updated
+			var cpCount = deactivatedContactPoints.Count == 0 ? 0
+				:QueryOrders<long>(deactivatedContactPoints, PersistenceContext.GetBroker<IOrderBroker>().CountByResultRecipient);
+
+			// the cost is measured in terms of the total number of references that must be updated 
+			return pracCount + cpCount;
 		}
 
-		private ExternalPractitioner MergePractitionerHelper(ExternalPractitioner dest, ExternalPractitioner src, MergeExternalPractitionerRequest details)
+		private long EstimateMergeCost(ExternalPractitionerContactPoint target)
 		{
-			// Update the dest details
-			var nameAssembler = new PersonNameAssembler();
-			nameAssembler.UpdatePersonName(details.Name, dest.Name);
+			// number of contact point referneces that must be updated
+			return QueryOrders<long>(new[] { target }, PersistenceContext.GetBroker<IOrderBroker>().CountByResultRecipient);
+		}
 
-			dest.LicenseNumber = details.LicenseNumber;
-			dest.BillingNumber = details.BillingNumber;
+		private void MergePractitionerRecords(
+			ExternalPractitioner dest,
+			ExternalPractitioner src,
+			PersonName name,
+			string licenseNumber,
+			string billingNumber,
+			IDictionary<string, string> extendedProperties,
+			ExternalPractitionerContactPoint defaultContactPoint,
+			ICollection<ExternalPractitionerContactPoint> deactivatedContactPoints)
+		{
+			// update properties on dest record
+			dest.Name = name;
+			dest.LicenseNumber = licenseNumber;
+			dest.BillingNumber = billingNumber;
 
-			ExtendedPropertyUtils.Update(dest.ExtendedProperties, details.ExtendedProperties);
+			ExtendedPropertyUtils.Update(dest.ExtendedProperties, extendedProperties);
 
-			// move all contact points to dest practitioner,
+			// move all contact points to dest
 			foreach (var cp in src.ContactPoints)
 			{
 				cp.Practitioner = dest;
 			}
 			dest.ContactPoints.AddAll(src.ContactPoints);
 
-			// set "default" and "deactivated" status appropriately
-			var defaultContactPoint = details.DefaultContactPointRef != null ?
-				PersistenceContext.Load<ExternalPractitionerContactPoint>(details.DefaultContactPointRef) : null;
-
-			var deactivatedContactPoints = details.DeactivatedContactPointRefs == null ? new List<ExternalPractitionerContactPoint>() :
-				CollectionUtils.Map(details.DeactivatedContactPointRefs,
-				(EntityRef cpRef) => PersistenceContext.Load<ExternalPractitionerContactPoint>(cpRef));
-
+			// set contact point default/deactivated status appropriately
 			foreach (var cp in dest.ContactPoints)
 			{
 				cp.IsDefaultContactPoint = cp.Equals(defaultContactPoint);
 				cp.Deactivated = deactivatedContactPoints.Contains(cp);
 			}
 
-			// update edited/verified status of dest
+			// mark both src and dest as edited
+			src.MarkEdited();
 			dest.MarkEdited();
-			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.ExternalPractitionerVerification))
-				dest.MarkVerified();
 
+			// de-activate source
+			src.Deactivated = true;
+		}
+
+		private void MergeContactPointRecords(ExternalPractitionerContactPoint dest, ExternalPractitionerContactPoint src)
+		{
+			// merge the value collections so that the history of src is preserved on dest
+			// JR: the collection merging was added in #6823 - I'm reverting it because I don't think it was a good idea
+			// since this is more a "replace" operation rather than a true merge operation
+			//MergeValueCollection(dest.TelephoneNumbers, src.TelephoneNumbers, (x, y) => x.IsSameNumber(y), x => x.ValidRange);
+			//MergeValueCollection(dest.Addresses, src.Addresses, (x, y) => x.IsSameAddress(y), x => x.ValidRange);
+			//MergeValueCollection(dest.EmailAddresses, src.EmailAddresses, (x, y) => x.IsSameEmailAddress(y), x => x.ValidRange);
+
+			if (src.IsDefaultContactPoint)
+			{
+				src.IsDefaultContactPoint = false;
+				dest.IsDefaultContactPoint = true;
+			}
+
+			// de-activate the src
+			src.Deactivated = true;
+
+			// mark the practitioner as being edited (same practitioner for both)
+			src.Practitioner.MarkEdited();
+		}
+
+		private void UpdateReferencingOrdersAndVisits(ExternalPractitioner dest, ExternalPractitioner src, out IList<Order> affectedOrders, out IList<Visit> affectedVisits)
+		{
 			// move all referenced orders to the dest
-			var ordersWhere = new OrderSearchCriteria();
-			ordersWhere.OrderingPractitioner.EqualTo(src);
-			var orderBroker = PersistenceContext.GetBroker<IOrderBroker>();
-			var orders = orderBroker.Find(ordersWhere);
+			var orders = QueryOrders<IList<Order>>(src, PersistenceContext.GetBroker<IOrderBroker>().Find);
 			foreach (var order in orders)
 			{
 				order.OrderingPractitioner = dest;
 			}
 
 			// move all referenced visits to the dest
-			var visitBroker = PersistenceContext.GetBroker<IVisitBroker>();
-			var visits = visitBroker.FindByVisitPractitioner(src);
+			var visits = QueryVisits<IList<Visit>>(src, PersistenceContext.GetBroker<IVisitBroker>().FindByVisitPractitioner);
 			foreach (var visit in visits)
 			{
 				foreach (var visitPractitioner in visit.Practitioners)
@@ -484,26 +521,88 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 				}
 			}
 
-			// at this point, there should not be any references left to the source practitioner, so we can safely delete it
-			// Deactivate the src
-			src.Deactivated = true;
-			src.MarkEdited();
-			//src.ContactPoints.Clear();
-			//PersistenceContext.GetBroker<IExternalPractitionerBroker>().Delete(src);
-
-			return dest;
+			affectedOrders = CollectionUtils.Unique(orders);
+			affectedVisits = CollectionUtils.Unique(visits);
 		}
 
-		private IList<Order> GetActiveOrdersForContactPoint(ExternalPractitionerContactPoint contactPoint)
+		private void DoContactPointReplacements(IDictionary<ExternalPractitionerContactPoint, ExternalPractitionerContactPoint> replacements, out IList<Order> affectedOrders)
+		{
+			if(replacements.Count == 0)
+			{
+				affectedOrders = new List<Order>();
+				return;
+			}
+
+			// find all orders that require a cp replacement
+			var orders = QueryOrders<IList<Order>>(replacements.Keys, PersistenceContext.GetBroker<IOrderBroker>().FindByResultRecipient);
+
+			// do replacements
+			foreach (var order in orders)
+			{
+				foreach (var kvp in replacements)
+				{
+					foreach (var rr in order.ResultRecipients)
+					{
+						if (rr.PractitionerContactPoint.Equals(kvp.Key))
+							rr.PractitionerContactPoint = kvp.Value;
+					}
+				}
+			}
+
+			// return list of affected orders
+			affectedOrders = CollectionUtils.Unique(orders);
+		}
+
+
+		private static T QueryOrders<T>(ExternalPractitioner practitioner, Converter<OrderSearchCriteria, T> queryAction)
+		{
+			var ordersWhere = new OrderSearchCriteria();
+			ordersWhere.OrderingPractitioner.EqualTo(practitioner);
+			return queryAction(ordersWhere);
+		}
+
+		private static T QueryVisits<T>(ExternalPractitioner practitioner, Converter<VisitSearchCriteria, VisitPractitionerSearchCriteria, T> queryAction)
+		{
+			var visitsWhere = new VisitPractitionerSearchCriteria();
+			visitsWhere.Practitioner.EqualTo(practitioner);
+			return queryAction(new VisitSearchCriteria(), visitsWhere);
+		}
+
+		private static T QueryOrders<T>(ICollection<ExternalPractitionerContactPoint> contactPoints, Converter<OrderSearchCriteria, ResultRecipientSearchCriteria, T> queryAction)
+		{
+			return QueryOrders(contactPoints, false, queryAction);
+		}
+
+		private static T QueryOrders<T>(ICollection<ExternalPractitionerContactPoint> contactPoints, bool activeOnly, Converter<OrderSearchCriteria, ResultRecipientSearchCriteria, T> queryAction)
 		{
 			var recipientCriteria = new ResultRecipientSearchCriteria();
-			recipientCriteria.PractitionerContactPoint.EqualTo(contactPoint);
+			recipientCriteria.PractitionerContactPoint.In(contactPoints);
 
-			// Active order search criteria
 			var orderCriteria = new OrderSearchCriteria();
-			orderCriteria.Status.In(new[] { OrderStatus.SC, OrderStatus.IP });
+			if(activeOnly)
+			{
+				// Active order search criteria
+				orderCriteria.Status.In(new[] { OrderStatus.SC, OrderStatus.IP });
+			}
 
-			return PersistenceContext.GetBroker<IOrderBroker>().FindByResultRecipient(orderCriteria, recipientCriteria);
+			return queryAction(orderCriteria, recipientCriteria);
+		}
+
+		private static void MergeValueCollection<T>(ICollection<T> dest, IEnumerable<T> src,
+			Converter<T, T, bool> isSameFunction,
+			Converter<T, DateTimeRange> rangeFunction)
+			where T : ICloneable
+		{
+			foreach (var srcItem in src)
+			{
+				if (CollectionUtils.Contains(dest, destItem => isSameFunction(destItem, srcItem)))
+					continue;
+
+				var copy = (T)srcItem.Clone();
+				var validRange = rangeFunction(copy);
+				validRange.Until = validRange.Until ?? Platform.Time;
+				dest.Add(copy);
+			}
 		}
 
 		private void EnsureNoDeactivatedContactPointsWithActiveOrders(List<ExternalPractitionerContactPointDetail> details)
@@ -513,20 +612,20 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 				details,
 				detail =>
 				{
-					if(detail.ContactPointRef == null)
+					if (detail.ContactPointRef == null)
 						return false;  // a new contact point will not have associated orders.q
 
 					var contactPoint = broker.Load(detail.ContactPointRef);
 					return contactPoint.Deactivated == false
 						&& detail.Deactivated
-						&& GetActiveOrdersForContactPoint(contactPoint).Count > 0;
+						&& QueryOrders<long>(new[] { contactPoint }, true, PersistenceContext.GetBroker<IOrderBroker>().CountByResultRecipient) > 0;
 				});
 
 			if (contactPointsWithOrders.Count == 0)
 				return;
 
 			var contactPointNames = CollectionUtils.Map<ExternalPractitionerContactPointDetail, string>(
-				contactPointsWithOrders, 
+				contactPointsWithOrders,
 				contactPoint => contactPoint.Name);
 			var contactPointNameList = string.Join(", ", contactPointNames.ToArray());
 

@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,47 +29,56 @@
 
 #endregion
 
-using ClearCanvas.Enterprise.Common;
-using System.Runtime.Serialization;
+using System;
 using System.Collections.Generic;
+using System.Text;
 
-namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+
+namespace ClearCanvas.Ris.Client
 {
-	[DataContract]
-	public class MergeDuplicateContactPointResponse : DataContractBase
+	/// <summary>
+	/// Extension point for views onto <see cref="MergeOutcomeReportComponent"/>.
+	/// </summary>
+	[ExtensionPoint]
+	public sealed class MergeOutcomeReportComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
-		[DataContract]
-		public class AffectedOrder
-		{
-			[DataMember]
-			public string AccessionNumber;
+	}
 
-			[DataMember]
-			public EnumValueInfo Status;
+	/// <summary>
+	/// MergeOutcomeReportComponent class.
+	/// </summary>
+	[AssociateView(typeof(MergeOutcomeReportComponentViewExtensionPoint))]
+	public class MergeOutcomeReportComponent : ApplicationComponent
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public MergeOutcomeReportComponent()
+		{
 		}
 
-
-		public MergeDuplicateContactPointResponse(ExternalPractitionerContactPointSummary mergedContactPoint, List<AffectedOrder> affectedOrders)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public MergeOutcomeReportComponent(string reportText)
 		{
-			AffectedOrders = affectedOrders;
-			MergedContactPoint = mergedContactPoint;
+			this.ReportText = reportText;
 		}
 
-		public MergeDuplicateContactPointResponse(long costEstimate)
-		{
-			this.CostEstimate = costEstimate;
-		}
-
-		[DataMember]
-		public ExternalPractitionerContactPointSummary MergedContactPoint;
-
-		[DataMember]
-		public List<AffectedOrder> AffectedOrders;
+		#region Presentation Model
 		
-		
-		[DataMember]
-		public long CostEstimate;
+		public string ReportText
+		{
+			get; set;
+		}
 
+		public void Close()
+		{
+			Exit(ApplicationComponentExitCode.None);
+		}
 
+		#endregion
 	}
 }
