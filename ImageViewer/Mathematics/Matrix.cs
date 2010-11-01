@@ -121,7 +121,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		}
 
 		/// <summary>
-		/// Gets the value of the matrix at the specified row and column indices.
+		/// Gets or sets the value of the cell at the specified row and column indices.
 		/// </summary>
 		public float this[int row, int column]
 		{

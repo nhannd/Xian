@@ -99,49 +99,66 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		//TODO (cr Oct 2009): return ISlice or Slice
 		public IEnumerable<ISopDataSource> CreateSlices()
 		{
-			Vector3D initialThroughPoint = GetSliceThroughPoint();
+			// get the slice spacing in voxel units
+			var sliceSpacing = GetSliceSpacing();
 
-			// Determine spacing vector along which we will slice
-			Vector3D spacingVector = GetSliceSpacing()*GetSliceNormalVector();
-			// I chose to use the volume diagonal magnitude to define the maximum number of slices as
-			//	it seemed like a reasonable upper limit to the number of slices in a display set.
-			//	Note that in the worst case scenario, this would only generate half the number of possible
-			//	slices. Consider the slice plane with normal along the volume diagonal, and through point
-			//	on a corner of the volume. This would require the full maxSlices defined here, but because
-			//	we start half way in one direction we would only get half of what is possible.
-			int maxSlices = (int) (_volume.Volume.DiagonalMagnitude/GetSliceSpacing() + 0.5f);
+			// get the normal to the plane of slicing (the plane of slicing is the XY plane in the slicing coordinate frame)
+			var slicePlaneNormal = GetSliceNormalVector();
 
-			// Start slicing half way in one direction. Chose to start positive and step
-			//	negative as it creates a DisplaySet that is sorted such that the MPR sort
-			//	order is consistent with the default 2D sort order. Perhaps in the future
-			//	it could be based off of the order of the source DisplaySet.
-			Vector3D startPoint = initialThroughPoint + (maxSlices/2)*spacingVector;
+			// get a point through which the slices should pass
+			var sliceThroughPoint = GetSliceThroughPoint();
 
-			// Walk along trying to create maxSlices, if a point is outside the volume we'll
-			//	skip it, ensuring that all slices are from through points that are in the volume.
-			int pointIndex = 0, sliceIndex = 0;
-			while (sliceIndex < maxSlices)
+			// compute the number of slices required in this slicing rotation, and the slice location at which to start
+			int sliceCount;
+			float startingSliceLocation;
 			{
-				Vector3D throughPoint = startPoint - (pointIndex*spacingVector);
-				pointIndex++;
+				// the algorithm for this involves computing the bounding cube for the volume *in the slicing coordinate frame*
+				// the number of required slices is thus the span of the Z components (i.e. slice location) of the bounding cube, divided by the slice spacing
+				// this algorithm reduces to determining the projection of each of the 8 corners of the volume onto the normal vector of the slice plane
 
-				// Don't generate slice if point is not in volume
-				if (_volume.Volume.Contains(throughPoint) == false)
-					// If we've already found some slices, or we've reached maxSlices and haven't
-					//	found any, it's time to call it a day
-					if (sliceIndex > 0 || pointIndex > maxSlices)
-						break;
-					else
-						// Check next point location
-						continue;
+				var minSliceLocation = float.MaxValue;
+				var maxSliceLocation = float.MinValue;
 
-				yield return CreateSlice(sliceIndex, throughPoint);
-				sliceIndex++;
+				var volumeDimensions = _volume.Volume.Dimensions;
+				foreach (var corner in new[]
+				                       	{
+				                       		new Vector3D(0, 0, 0),
+				                       		new Vector3D(volumeDimensions.X, 0, 0),
+				                       		new Vector3D(0, volumeDimensions.Y, 0),
+				                       		new Vector3D(0, 0, volumeDimensions.Z),
+				                       		new Vector3D(volumeDimensions.X, volumeDimensions.Y, 0),
+				                       		new Vector3D(volumeDimensions.X, 0, volumeDimensions.Z),
+				                       		new Vector3D(0, volumeDimensions.Y, volumeDimensions.Z),
+				                       		new Vector3D(volumeDimensions.X, volumeDimensions.Y, volumeDimensions.Z)
+				                       	})
+				{
+					// project the corner vector onto the slice plane normal vector
+					var zCoord = slicePlaneNormal.Dot(corner);
+					minSliceLocation = Math.Min(minSliceLocation, zCoord);
+					maxSliceLocation = Math.Max(maxSliceLocation, zCoord);
+				}
+
+				// divide the span of the slice locations by the slice spacing to determine the required number of slices
+				sliceCount = (int) Math.Ceiling((maxSliceLocation - minSliceLocation)/sliceSpacing);
+
+				// the starting slice location could be either end, but we choose the larger end to be consistent with the original implementation
+				startingSliceLocation = maxSliceLocation;
 			}
 
-			// If the through point is outside volume we want to ensure that at least one slice is generated
-			if (sliceIndex == 0)
-				yield return CreateSlice(sliceIndex, initialThroughPoint);
+			// compute the incremental spacing vector
+			var spacingVector = sliceSpacing*slicePlaneNormal;
+
+			// compute the slice location of the specified through point
+			var throughPointSliceLocation = slicePlaneNormal.Dot(sliceThroughPoint);
+
+			// compute the through point of the first slice
+			var initialThroughPoint = sliceThroughPoint + (startingSliceLocation - throughPointSliceLocation)/sliceSpacing*spacingVector;
+
+			// generate the slice SOPs by computing additional through points 
+			var list = new List<ISopDataSource>();
+			for (var n = 0; n < sliceCount; n++)
+				list.Add(CreateSlice(n, initialThroughPoint - n*spacingVector));
+			return list;
 		}
 
 		//TODO (cr Oct 2009): return Slice, remove SeriesUID
@@ -511,10 +528,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#region Reslice Matrix helpers
 
+		/// <summary>
+		/// Gets the directional unit vector of the normal to the slicing plane.
+		/// </summary>
 		private Vector3D GetSliceNormalVector()
 		{
-			Matrix _resliceAxes = _slicerParams.SlicingPlaneRotation;
-			return new Vector3D(_resliceAxes[2, 0], _resliceAxes[2, 1], _resliceAxes[2, 2]);
+			var resliceAxes = _slicerParams.SlicingPlaneRotation;
+			return new Vector3D(resliceAxes[2, 0], resliceAxes[2, 1], resliceAxes[2, 2]);
 		}
 
 		#endregion
