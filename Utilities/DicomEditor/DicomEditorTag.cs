@@ -102,6 +102,11 @@ namespace ClearCanvas.Utilities.DicomEditor
             }
         }
 
+    	public bool IsRootLevelTag
+    	{
+    		get { return _parentTag == null; }
+    	}
+
         #region Display Utilities
 
         public string DisplayKey

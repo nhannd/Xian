@@ -351,6 +351,15 @@ namespace ClearCanvas.Utilities.DicomEditor {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Replicating sequence and binary attributes is not supported..
+        /// </summary>
+        internal static string MessageSequenceBinaryReplicationNotSupported {
+            get {
+                return ResourceManager.GetString("MessageSequenceBinaryReplicationNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The tag cannot be created.  Please ensure that the values are properly entered and are appropriate for the tag being created..
         /// </summary>
         internal static string MessageTagCannotBeCreated {

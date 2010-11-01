@@ -284,4 +284,7 @@ NOTE: if any of the edited files are from the local data store, it should be rei
   <data name="MessageNoFilesSelected" xml:space="preserve">
     <value>DICOM Dump operation failed.  The selected path did not contain any files.</value>
   </data>
+  <data name="MessageSequenceBinaryReplicationNotSupported" xml:space="preserve">
+    <value>Replicating sequence and binary attributes is not supported.</value>
+  </data>
 </root>

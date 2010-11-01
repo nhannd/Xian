@@ -11,6 +11,7 @@
 
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 
@@ -28,13 +29,20 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
 
 		public void Replicate()
 		{
-			if (this.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmReplicateTagsInAllFiles, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+			// if it's not a root level tag, it's part of a sequence. if it's not editable, it's SQ or OB or OW or UN or ?? and thus cannot be set by string value
+			if (CollectionUtils.Contains(Context.SelectedTags, t => !t.IsRootLevelTag || !t.IsEditable()))
 			{
-				foreach (DicomEditorTag tag in this.Context.SelectedTags)
+				Context.DesktopWindow.ShowMessageBox(SR.MessageSequenceBinaryReplicationNotSupported, MessageBoxActions.Ok);
+				return;
+			}
+
+			if (Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmReplicateTagsInAllFiles, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+			{
+				foreach (DicomEditorTag tag in Context.SelectedTags)
 				{
-					this.Context.DumpManagement.EditTag(tag.TagId, tag.Value, true);
+					Context.DumpManagement.EditTag(tag.TagId, tag.Value, true);
 				}
-				this.Context.UpdateDisplay();
+				Context.UpdateDisplay();
 			}
 		}
 
