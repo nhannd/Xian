@@ -11,16 +11,20 @@
 
 using System;
 using System.Windows.Forms;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 {
-	public partial class CustomizeViewerActionModelsComponentControl : UserControl
+	public partial class CustomizeViewerActionModelsComponentControl : CustomUserControl
 	{
 		private readonly CustomizeViewerActionModelsComponent _component;
 
 		public CustomizeViewerActionModelsComponentControl(CustomizeViewerActionModelsComponent component)
 		{
 			InitializeComponent();
+
+			AcceptButton = _btnOk;
+			CancelButton = _btnCancel;
 
 			_component = component;
 
