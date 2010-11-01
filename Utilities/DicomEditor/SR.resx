@@ -281,4 +281,7 @@ NOTE: if any of the edited files are from the local data store, it should be rei
   <data name="TooltipSave" xml:space="preserve">
     <value>Saves edits</value>
   </data>
+  <data name="MessageNoFilesSelected" xml:space="preserve">
+    <value>DICOM Dump operation failed.  The selected path did not contain any files.</value>
+  </data>
 </root>

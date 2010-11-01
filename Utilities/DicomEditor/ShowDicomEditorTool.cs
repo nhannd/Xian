@@ -136,13 +136,18 @@ namespace ClearCanvas.Utilities.DicomEditor
                 _desktopWindow = context.DesktopWindow;
                 List<string> files = new List<string>();
 
-            	if (context.SelectedPaths.Count == 0)
-            		return;
+                if (context.SelectedPaths.Count == 0)
+                    return;
 
                 foreach (string rawPath in context.SelectedPaths)
                 {
-                    FileProcessor.ProcessFile process = new FileProcessor.ProcessFile(delegate(string path) { files.Add(path); });
-                    FileProcessor.Process(rawPath, "*.*", process, true);
+                    FileProcessor.Process(rawPath, "*.*", files.Add, true);
+                }
+
+                if (files.Count == 0)
+                {
+                    context.DesktopWindow.ShowMessageBox(SR.MessageNoFilesSelected, MessageBoxActions.Ok);
+                    return;
                 }
 
                 if (_component == null)
