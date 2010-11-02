@@ -16,53 +16,59 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-    /// <summary>
-    /// Subclass of DataGridView - overrides the mouse behaviour to allow rows to be "dragged".  This class
-    /// is used internally by the <see cref="TableView"/> control and is not intended to be used directly
-    /// by application code.
-    /// </summary>
-    public class DataGridViewWithDragSupport : DataGridView
-    {
-        private Rectangle _dragBoxFromMouseDown;
-        private int _rowIndexFromMouseDown;
-        private event EventHandler<ItemDragEventArgs> _itemDrag;
+	/// <summary>
+	/// Subclass of DataGridView - overrides the mouse behaviour to allow rows to be "dragged".  This class
+	/// is used internally by the <see cref="TableView"/> control and is not intended to be used directly
+	/// by application code.
+	/// </summary>
+	internal class DataGridViewWithDragSupport : DataGridView
+	{
+		private Rectangle _dragBoxFromMouseDown;
+		private bool _suppressSelectionChangedEvent = false;
+		private int _anchorRowIndex = -1;
+		private int _rowIndexFromMouseDown;
+		private event EventHandler<ItemDragEventArgs> _itemDrag;
 
-        public event EventHandler<ItemDragEventArgs> ItemDrag
-        {
-            add { _itemDrag += value; }
-            remove { _itemDrag -= value; }
-        }
+		public event EventHandler<ItemDragEventArgs> ItemDrag
+		{
+			add { _itemDrag += value; }
+			remove { _itemDrag -= value; }
+		}
 
-        protected override void OnMouseDown(MouseEventArgs e)
-        {
-            // Get the index of the item the mouse is below.
-            _rowIndexFromMouseDown = HitTest(e.X, e.Y).RowIndex;
- 
-            // call the base class, so that the row gets selected, etc.
-            base.OnMouseDown(e);
+		protected override void OnMouseDown(MouseEventArgs e)
+		{
+			// get the index of the clicked item
+			_rowIndexFromMouseDown = HitTest(e.X, e.Y).RowIndex;
 
-            if (_rowIndexFromMouseDown > -1)
-            {
-                // Remember the point where the mouse down occurred. 
-                // The DragSize indicates the size that the mouse can move 
-                // before a drag event should be started.                
-                Size dragSize = SystemInformation.DragSize;
+			// basic mouse handling has right clicks show context menu without changing selection, so we handle it manually here
+			if (e.Button == MouseButtons.Right)
+				HandleRightMouseDown(e);
 
-                // Create a rectangle using the DragSize, with the mouse position being
-                // at the center of the rectangle.
-                _dragBoxFromMouseDown = new Rectangle(new Point(e.X - (dragSize.Width / 2), e.Y - (dragSize.Height / 2)), dragSize);
-            }
-            else
-            {
-                // Reset the rectangle if the mouse is not over an item in the ListBox.
-                _dragBoxFromMouseDown = Rectangle.Empty;
-            }
-        }
+			// call the base class, so that the row gets selected, etc.
+			base.OnMouseDown(e);
 
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
-			if (_rowIndexFromMouseDown != -1 && 
-				(e.Button & MouseButtons.Left) == MouseButtons.Left)
+			if (_rowIndexFromMouseDown > -1)
+			{
+				// Remember the point where the mouse down occurred. 
+				// The DragSize indicates the size that the mouse can move 
+				// before a drag event should be started.                
+				Size dragSize = SystemInformation.DragSize;
+
+				// Create a rectangle using the DragSize, with the mouse position being
+				// at the center of the rectangle.
+				_dragBoxFromMouseDown = new Rectangle(new Point(e.X - (dragSize.Width/2), e.Y - (dragSize.Height/2)), dragSize);
+			}
+			else
+			{
+				// Reset the rectangle if the mouse is not over an item in the ListBox.
+				_dragBoxFromMouseDown = Rectangle.Empty;
+			}
+		}
+
+		protected override void OnMouseMove(MouseEventArgs e)
+		{
+			if (_rowIndexFromMouseDown != -1 &&
+			    (e.Button & MouseButtons.Left) == MouseButtons.Left)
 			{
 				if (ShouldBeginDrag(e))
 				{
@@ -79,26 +85,117 @@ namespace ClearCanvas.Desktop.View.WinForms
 				// allow the base class to handle it only if the left mouse button was not pressed
 				base.OnMouseMove(e);
 			}
-        }
+		}
 
-        protected override void OnMouseUp(MouseEventArgs e)
-        {
-            /*                if (this.SelectedRows.Count <= 1)
-                            {
-                                // call the base class, so that the row gets selected, etc.
-                                base.OnMouseUp(e);
-                            }
-                            _rowIndexFromMouseDown = HitTest(e.X, e.Y).RowIndex;
-             */
-            base.OnMouseUp(e);
-        }
+		protected override bool SetCurrentCellAddressCore(int columnIndex, int rowIndex, bool setAnchorCellAddress, bool validateCurrentCell, bool throughMouseClick)
+		{
+			// the base control doesn't make the current anchor cell address available, so we have to keep track of it ourselves
+			var result = base.SetCurrentCellAddressCore(columnIndex, rowIndex, setAnchorCellAddress, validateCurrentCell, throughMouseClick);
+			if (result && setAnchorCellAddress)
+				_anchorRowIndex = rowIndex;
+			return result;
+		}
 
-        private bool ShouldBeginDrag(MouseEventArgs e)
-        {
-            // If the mouse moves outside the rectangle, start the drag.
-            return ((e.Button & MouseButtons.Left) == MouseButtons.Left)
-                && (_dragBoxFromMouseDown != Rectangle.Empty)
-                && !_dragBoxFromMouseDown.Contains(e.X, e.Y);
-        }
-    }
+		protected override void OnSelectionChanged(EventArgs e)
+		{
+			if (!_suppressSelectionChangedEvent)
+				base.OnSelectionChanged(e);
+		}
+
+		/// <summary>
+		/// Handles right mouse button down events in a similar fashion as the base implementation's left mouse button down.
+		/// </summary>
+		/// <remarks>
+		/// The base implementation's left mouse button down handling includes support for updating the row selection, but
+		/// does not do so for the right mouse button. This function handles all that manually, including support for using
+		/// the CTRL and SHIFT modifier keys while selecting. One single <see cref="DataGridView.SelectionChanged"/> event
+		/// is fired afterwards, making the operation appear atomic to <see cref="DataGridView"/> consumers. Since this occurs
+		/// on mouse down, it should allow drag-drop and context menu operations to see the updated selections if applicable.
+		/// </remarks>
+		/// <param name="e">The <see cref="MouseEventArgs"/> from the <see cref="OnMouseDown"/> event.</param>
+		private void HandleRightMouseDown(MouseEventArgs e)
+		{
+			// identify the target cell that was clicked
+			var targetCell = HitTest(e.X, e.Y);
+
+			var selectionChanged = false;
+			var anchorChanged = false;
+
+			// suppress transient selection change events
+			_suppressSelectionChangedEvent = true;
+			try
+			{
+				if ((ModifierKeys & Keys.Control) == Keys.Control) // ctrl right click
+				{
+					// toggle select the clicked row
+					if (targetCell.RowIndex >= 0)
+						Rows[targetCell.RowIndex].Selected = !Rows[targetCell.RowIndex].Selected;
+
+					// set flag so that selection changed event will fire
+					selectionChanged = true;
+
+					// set flag so that the anchor row will update
+					anchorChanged = true;
+				}
+				else if ((ModifierKeys & Keys.Shift) == Keys.Shift) // shift right click
+				{
+					// if the clicked row forms a valid range, replace selection with new range
+					if (_anchorRowIndex >= 0 && targetCell.RowIndex >= 0)
+					{
+						// deselect all previously selected rows
+						while (SelectedRows.Count > 0)
+							SelectedRows[0].Selected = false;
+
+						// select everything between the anchor row and the clicked row
+						for (int n = Math.Min(_anchorRowIndex, targetCell.RowIndex); n <= Math.Max(_anchorRowIndex, targetCell.RowIndex); n++)
+							Rows[n].Selected = true;
+
+						// set flag so that selection changed event will fire
+						selectionChanged = true;
+					}
+				}
+				else // plain right click
+				{
+					// if the clicked row is not already selected, replace selection with new row
+					if (!CollectionUtils.Contains<DataGridViewRow>(SelectedRows, r => r.Index == targetCell.RowIndex))
+					{
+						// deselect all previously selected rows
+						while (SelectedRows.Count > 0)
+							SelectedRows[0].Selected = false;
+
+						// select the new row
+						if (targetCell.RowIndex >= 0)
+							Rows[targetCell.RowIndex].Selected = true;
+
+						// set flag so that selection changed event will fire
+						selectionChanged = true;
+
+						// set flag so that the anchor row will update
+						anchorChanged = true;
+					}
+				}
+			}
+			finally
+			{
+				// stop suppressing transient selection change events
+				_suppressSelectionChangedEvent = false;
+
+				// update the core current cell, otherwise we'll break shift+click range select
+				if (targetCell.RowIndex >= 0 && targetCell.ColumnIndex >= 0)
+					SetCurrentCellAddressCore(targetCell.ColumnIndex, targetCell.RowIndex, anchorChanged, true, true);
+
+				// fire one single selection change now that all transients have settled
+				if (selectionChanged)
+					OnSelectionChanged(EventArgs.Empty);
+			}
+		}
+
+		private bool ShouldBeginDrag(MouseEventArgs e)
+		{
+			// If the mouse moves outside the rectangle, start the drag.
+			return ((e.Button & MouseButtons.Left) == MouseButtons.Left)
+			       && (_dragBoxFromMouseDown != Rectangle.Empty)
+			       && !_dragBoxFromMouseDown.Contains(e.X, e.Y);
+		}
+	}
 }

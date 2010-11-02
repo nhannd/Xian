@@ -35,10 +35,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         private bool _multiLine;
 
     	private bool _smartColumnSizing = false;
-
-        private bool _delaySelectionChangeNotification = true; // see bug 386
-        private bool _surpressSelectionChangedEvent = false;
-
         private bool _isLoaded = false;
 
         private const int CELL_SUBROW_HEIGHT = 18;
@@ -51,7 +47,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		public TableView()
         {
-            InitializeComponent();
+			SuppressSelectionChangedEvent = false;
+			InitializeComponent();
 
             // if we allow the framework to generate columns, there seems to be a bug with 
             // setting the minimum column width > 100 pixels
@@ -251,26 +248,22 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 		}
 
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public bool SuppressSelectionChangedEvent
-        {
-            get { return _surpressSelectionChangedEvent; }
-            set { _surpressSelectionChangedEvent = value; }
-        }
+    	[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    	public bool SuppressSelectionChangedEvent { get; set; }
 
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ActionModelNode ToolbarModel
-        {
-            get { return _toolbarModel; }
-            set
-            {
-                _toolbarModel = value;
+    	[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    	public ActionModelNode ToolbarModel
+    	{
+    		get { return _toolbarModel; }
+    		set
+    		{
+    			_toolbarModel = value;
 
-                // Defer initialization of ToolStrip until after Load() has been called
-                // so that parameters from application settings are initialized properly
-                if (_isLoaded) InitializeToolStrip();
-            }
-        }
+    			// Defer initialization of ToolStrip until after Load() has been called
+    			// so that parameters from application settings are initialized properly
+    			if (_isLoaded) InitializeToolStrip();
+    		}
+    	}
 
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -902,84 +895,20 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        private void _contextMenu_Opening(object sender, CancelEventArgs e)
-        {
-            // if a context menu is being opened, need to flush any pending selection change notification immediately before
-            // showing menu (bug 386)
-            FlushPendingSelectionChangeNotification();
+    	private void _contextMenu_Opening(object sender, CancelEventArgs e)
+    	{
+    		// if a context menu is being opened, need to flush any pending selection change notification immediately before showing menu (bug 386)
+    		FlushPendingSelectionChangeNotification();
+    	}
 
-            // Find the row we're on
-            var pt = _dataGridView.PointToClient(MousePosition);
-            var info = _dataGridView.HitTest(pt.X, pt.Y);
+    	private void _dataGridView_SelectionChanged(object sender, EventArgs e)
+    	{
+    		if (SuppressSelectionChangedEvent)
+    			return;
 
-
-            try
-            {
-                // temporarily disable the delaying of selection change notifications
-                // if we modify the selection while opening the context menu, we need those notifications to propagate immediately
-                _delaySelectionChangeNotification = false;
-
-                if (_dataGridView.SelectedRows.Count == 0)
-                {
-                    // select the new row
-                    if (info.RowIndex >= 0)
-                        _dataGridView.Rows[info.RowIndex].Selected = true;
-                }
-                else if (_dataGridView.SelectedRows.Count == 1 && _dataGridView.SelectedRows[0].Index != info.RowIndex)
-                {
-                    // deselect the selected row
-                    _dataGridView.SelectedRows[0].Selected = false;
-
-                    // Now select the new row
-                    if (info.RowIndex >= 0)
-                        _dataGridView.Rows[info.RowIndex].Selected = true;
-                }
-                else
-                {
-                    // If multiple
-                    // rows are selected we don't want to deselect anything, since the
-                    // user's intent is to perform a context menu operation on all
-                    // selected rows.
-                }
-
-            }
-            finally
-            {
-                // re-enable the delaying of selection change notifications
-                _delaySelectionChangeNotification = true;
-            }
-        }
-
-        private void _contextMenu_Opened(object sender, EventArgs e)
-        {
-
-        }
-
-        private void _contextMenu_Closing(object sender, ToolStripDropDownClosingEventArgs e)
-        {
-
-        }
-
-        private void _contextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
-        {
-
-        }
-
-        private void _dataGridView_SelectionChanged(object sender, EventArgs e)
-        {
-            if (_surpressSelectionChangedEvent)
-                return;
-
-            if (_delaySelectionChangeNotification)
-            {
-                // fix Bug 386: rather than firing our own _selectionChanged event immediately, post delayed notification
-                PostSelectionChangeNotification();
-            }
-            else
-            {
-                NotifySelectionChanged();
-            }
-        }
+    		// fix Bug 386: rather than firing our own _selectionChanged event immediately, post delayed notification
+    		PostSelectionChangeNotification();
+    	}
 
         /// <summary>
         /// Handling this event is necessary to ensure that changes to checkbox cells are propagated
@@ -1057,7 +986,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void NotifySelectionChanged()
         {
-            if (_surpressSelectionChangedEvent)
+            if (SuppressSelectionChangedEvent)
                 return;
 
             // notify clients of this class of a *real* selection change
