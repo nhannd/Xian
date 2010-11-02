@@ -147,11 +147,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 							SelectedRows[0].Selected = false;
 
 						// select everything between the anchor row and the clicked row
-						for (int n = Math.Min(_anchorRowIndex, targetCell.RowIndex); n <= Math.Max(_anchorRowIndex, targetCell.RowIndex); n++)
+						var first = Math.Min(targetCell.RowIndex, _anchorRowIndex);
+						var last = Math.Max(targetCell.RowIndex, _anchorRowIndex);
+						for (int n = first; n <= last; n++)
 							Rows[n].Selected = true;
 
 						// set flag so that selection changed event will fire
 						selectionChanged = true;
+
+						// N.B. anchor row does not update when shift clicking the end of the range!
 					}
 				}
 				else // plain right click
