@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.Common.Utilities;
@@ -45,11 +46,14 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     /// This tool runs an instance of <see cref="LayoutComponent"/> in a shelf, and coordinates
     /// it so that it reflects the state of the active workspace.
 	/// </summary>
-	[ActionPlaceholder("display0", "imageviewer-contextmenu/DisplaySets", "DisplaySets")]
+	[ActionPlaceholder(_placeHolderActionId, _contextMenuSite + "/DisplaySets", _groupHint)]
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public partial class ContextMenuLayoutTool : ImageViewerTool
 	{
+		private const string _placeHolderActionId = "display0";
+		private const string _groupHint = "DisplaySets";
     	private const string _contextMenuSite = "imageviewer-contextmenu";
+
 		private static readonly List<IActionFactory> _actionFactories = CreateActionFactories();
 		private static readonly DefaultContextMenuActionFactory _defaultActionFactory = new DefaultContextMenuActionFactory();
 
@@ -77,7 +81,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			}
 			catch (NotSupportedException)
 			{
-				throw;
 			}
 			catch(Exception e)
 			{
@@ -168,7 +171,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 #if TRACEGROUPS
 			TraceGroups();
 #endif
-    		string rootPath = _contextMenuSite;
+    		const string rootPath = _contextMenuSite;
 
 			_currentPathElements = new List<string>();
 			List<IAction> actions = new List<IAction>();
@@ -176,12 +179,14 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			FilteredGroup<IImageSet> rootGroup = GetRootGroup(_imageSetGroups.Root);
 			if (rootGroup != null)
 			{
+				var actionPlaceholder = ActionPlaceholder.GetPlaceholderAction(_contextMenuSite, base.Actions, _placeHolderActionId);
+
 				ActionFactoryContext context = new ActionFactoryContext
 				{
 					DesktopWindow = Context.DesktopWindow,
 					ImageViewer = Context.Viewer,
 					Namespace = GetType().FullName,
-					ActionPlaceholder = ActionPlaceholder.GetPlaceholderAction(_contextMenuSite, base.Actions, "display0")
+					ActionPlaceholder = actionPlaceholder
 				};
 
 				bool showImageSetNames = base.ImageViewer.LogicalWorkspace.ImageSets.Count > 1 || _unavailableImageSets.Count > 0;
@@ -213,7 +218,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 					}
 
 					if (group.Items.Count > 0 && base.ImageViewer.PriorStudyLoader.IsActive)
-						actions.Add(CreateLoadingPriorsAction(basePath, ++loadingPriorsNumber));
+						actions.Add(CreateLoadingPriorsAction(actionPlaceholder, basePath, ++loadingPriorsNumber));
 				}
 			}
 
@@ -269,15 +274,17 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     		return null;
 		}
 
-		private IClickAction CreateLoadingPriorsAction(string basePath, int number)
+		private static IClickAction CreateLoadingPriorsAction(ActionPlaceholder actionPlaceholder, string basePath, int number)
 		{
-			string pathString = String.Format("{0}/loadingPriors", basePath);
-			ActionPath path = new ActionPath(pathString, null);
-			MenuAction action = new MenuAction(string.Format("{0}:loadingPriors{1}", GetType().FullName, number), path, ClickActionFlags.None, null)
-			                    	{
-			                    		Label = SR.LabelLoadingPriors,
-			                    		Persistent = false
-			                    	};
+			const string actionIdPrefix = "loadingPriors";
+			
+			Path pathSuffix = new Path(basePath);
+			pathSuffix = pathSuffix.SubPath(1, pathSuffix.Segments.Count - 1);
+			pathSuffix = pathSuffix.Append(new PathSegment(actionIdPrefix));
+
+			string actionId = actionIdPrefix + number;
+			var action = actionPlaceholder.CreateMenuAction(actionId, pathSuffix.ToString(), ClickActionFlags.None, null);
+			action.Label = SR.LabelLoadingPriors;
 			action.SetClickHandler(delegate { });
 			return action;
 		}
