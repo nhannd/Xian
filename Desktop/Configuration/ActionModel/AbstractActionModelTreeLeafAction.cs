@@ -14,6 +14,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Trees;
+using System;
 
 namespace ClearCanvas.Desktop.Configuration.ActionModel
 {
@@ -38,17 +39,29 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			// that might (probably are) in use or cached in some tool or component somewhere.
 			_action = AbstractAction.Create(action);
 
-			base.CheckState = _action.Available ? CheckState.Checked : CheckState.Unchecked;
+			CheckState = _action.Available ? CheckState.Checked : CheckState.Unchecked;
 
-			if (_action.IconSet == null || _action.ResourceResolver == null)
+			IconSet iconSet;
+			if (action.IconSet == null || action.ResourceResolver == null)
 			{
-				base.IconSet = new IconSet(IconScheme.Colour, "Icons.ActionModelNullSmall.png", "Icons.ActionModelNullMedium.png", "Icons.ActionModelNullLarge.png");
-				base.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
+				iconSet = new IconSet(IconScheme.Colour, "Icons.ActionModelNullSmall.png", "Icons.ActionModelNullMedium.png", "Icons.ActionModelNullLarge.png");
+				ResourceResolver = new ResourceResolver(typeof(AbstractActionModelTreeLeafAction).Assembly, action.ResourceResolver);
 			}
 			else
 			{
-				base.IconSet = _action.IconSet;
-				base.ResourceResolver = _action.ResourceResolver;
+				iconSet = _action.IconSet;
+				ResourceResolver = _action.ResourceResolver;
+			}
+
+			if (_action.Permissible)
+			{
+				IconSet = iconSet;
+			}
+			else
+			{
+				IconSet = new GrayscaleIconSet(iconSet);
+				Tooltip = String.IsNullOrEmpty(CanonicalLabel) ?
+					SR.TooltipActionNotPermitted : String.Format(SR.TooltipFormatActionNotPermitted, CanonicalLabel);
 			}
 		}
 
@@ -66,7 +79,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		{
 			base.OnCheckStateChanged();
 
-			_action.Available = this.CheckState == CheckState.Checked;
+			_action.Available = CheckState == CheckState.Checked;
 		}
 
 		internal IAction BuildAction()

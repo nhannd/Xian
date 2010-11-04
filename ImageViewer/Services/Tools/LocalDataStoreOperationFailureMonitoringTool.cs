@@ -32,7 +32,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			_synchronizationContext = SynchronizationContext.Current;
 
 			_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker(_synchronizationContext);
-			_localDataStoreEventBroker.SendProgressUpdate += OnProgressUpdate;
+			_localDataStoreEventBroker.SendProgressUpdate += OnSendProgressUpdate;
+			_localDataStoreEventBroker.InstanceDeleted += OnInstanceDeleted;
 		}
 
 		protected override void Dispose(bool disposing)
@@ -41,7 +42,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			{
 				if (_localDataStoreEventBroker != null)
 				{
-					_localDataStoreEventBroker.SendProgressUpdate -= OnProgressUpdate;
+					_localDataStoreEventBroker.InstanceDeleted -= OnInstanceDeleted;
+					_localDataStoreEventBroker.SendProgressUpdate -= OnSendProgressUpdate;
 					_localDataStoreEventBroker.Dispose();
 					_localDataStoreEventBroker = null;
 				}
@@ -52,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			base.Dispose(disposing);
 		}
 
-		private static void OnProgressUpdate(object sender, ItemEventArgs<SendProgressItem> e)
+		private static void OnSendProgressUpdate(object sender, ItemEventArgs<SendProgressItem> e)
 		{
 			if (e.Item.HasErrors)
 			{
@@ -71,6 +73,32 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				catch (Exception ex)
 				{
 					ExceptionHandler.Report(ex, SR.MessageFailedToLaunchSendReceiveActivityComponent, desktopWindow);
+				}
+			}
+		}
+
+		private static bool _isDeleteFailureMessageShowing = false;
+
+		private static void OnInstanceDeleted(object sender, ItemEventArgs<DeletedInstanceInformation> e)
+		{
+			if (e.Item.Failed)
+			{
+				// don't show error message if it's already showing!
+				if (_isDeleteFailureMessageShowing)
+					return;
+
+				var desktopWindow = Application.ActiveDesktopWindow;
+				if (desktopWindow == null)
+					return;
+
+				_isDeleteFailureMessageShowing = true;
+				try
+				{
+					desktopWindow.ShowMessageBox(SR.MessageFailedToDeleteOneOrMoreStudies, MessageBoxActions.Ok);
+				}
+				finally
+				{
+					_isDeleteFailureMessageShowing = false;
 				}
 			}
 		}

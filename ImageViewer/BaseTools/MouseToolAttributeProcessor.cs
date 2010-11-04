@@ -96,8 +96,12 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			if (MouseToolSettingsProfile.Current.HasEntry(mouseToolType))
 			{
 				MouseToolSettingsProfile.Setting value = MouseToolSettingsProfile.Current[mouseToolType];
-				if (value.DefaultMouseButton.HasValue && value.DefaultMouseButton.Value != XMouseButtons.None)
-					defaultMouseButtonShortcut = new MouseButtonShortcut(value.DefaultMouseButton.Value, value.DefaultMouseButtonModifiers.GetValueOrDefault(ModifierFlags.None));
+				if (value.DefaultMouseButton.HasValue)
+				{
+					defaultMouseButtonShortcut = null;
+					if (value.DefaultMouseButton.Value != XMouseButtons.None)
+						defaultMouseButtonShortcut = new MouseButtonShortcut(value.DefaultMouseButton.Value, value.DefaultMouseButtonModifiers.GetValueOrDefault(ModifierFlags.None));
+				}
 			}
 
 			// apply the selected value to the tool (don't write back to the profile! - that's not for us to decide)

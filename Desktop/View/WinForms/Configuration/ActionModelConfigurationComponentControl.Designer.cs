@@ -24,15 +24,16 @@
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
+			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ActionModelConfigurationComponentControl));
 			this._pnlNodeProperties = new System.Windows.Forms.Panel();
 			this._lyoNodePropertiesExtensions = new System.Windows.Forms.FlowLayoutPanel();
-			this._lblTooltip = new System.Windows.Forms.Label();
 			this._pnlTitleBar = new System.Windows.Forms.Panel();
 			this._lblLabel = new System.Windows.Forms.Label();
 			this._pnlIcon = new System.Windows.Forms.Panel();
-			this._actionModelTree = new ClearCanvas.Desktop.View.WinForms.BindingTreeView();
 			this._pnlSplit = new System.Windows.Forms.SplitContainer();
+			this._actionModelTree = new ClearCanvas.Desktop.View.WinForms.BindingTreeView();
+			this._toolTip = new System.Windows.Forms.ToolTip(this.components);
 			this._pnlNodeProperties.SuspendLayout();
 			this._pnlTitleBar.SuspendLayout();
 			this._pnlSplit.Panel1.SuspendLayout();
@@ -44,7 +45,6 @@
 			// 
 			resources.ApplyResources(this._pnlNodeProperties, "_pnlNodeProperties");
 			this._pnlNodeProperties.Controls.Add(this._lyoNodePropertiesExtensions);
-			this._pnlNodeProperties.Controls.Add(this._lblTooltip);
 			this._pnlNodeProperties.Controls.Add(this._pnlTitleBar);
 			this._pnlNodeProperties.Name = "_pnlNodeProperties";
 			// 
@@ -53,12 +53,6 @@
 			resources.ApplyResources(this._lyoNodePropertiesExtensions, "_lyoNodePropertiesExtensions");
 			this._lyoNodePropertiesExtensions.Name = "_lyoNodePropertiesExtensions";
 			this._lyoNodePropertiesExtensions.SizeChanged += new System.EventHandler(this.OnLyoNodePropertiesExtensionsSizeChanged);
-			// 
-			// _lblTooltip
-			// 
-			resources.ApplyResources(this._lblTooltip, "_lblTooltip");
-			this._lblTooltip.Name = "_lblTooltip";
-			this._lblTooltip.TextChanged += new System.EventHandler(this.OnLabelTooltipTextChanged);
 			// 
 			// _pnlTitleBar
 			// 
@@ -78,6 +72,19 @@
 			resources.ApplyResources(this._pnlIcon, "_pnlIcon");
 			this._pnlIcon.Name = "_pnlIcon";
 			// 
+			// _pnlSplit
+			// 
+			resources.ApplyResources(this._pnlSplit, "_pnlSplit");
+			this._pnlSplit.Name = "_pnlSplit";
+			// 
+			// _pnlSplit.Panel1
+			// 
+			this._pnlSplit.Panel1.Controls.Add(this._actionModelTree);
+			// 
+			// _pnlSplit.Panel2
+			// 
+			this._pnlSplit.Panel2.Controls.Add(this._pnlNodeProperties);
+			// 
 			// _actionModelTree
 			// 
 			this._actionModelTree.AllowDrop = true;
@@ -94,18 +101,9 @@
 			this._actionModelTree.SelectionChanged += new System.EventHandler(this.OnActionModelTreeSelectionChanged);
 			this._actionModelTree.ItemDrag += new System.EventHandler<System.Windows.Forms.ItemDragEventArgs>(this.OnBindingTreeViewItemDrag);
 			// 
-			// _pnlSplit
+			// _toolTip
 			// 
-			resources.ApplyResources(this._pnlSplit, "_pnlSplit");
-			this._pnlSplit.Name = "_pnlSplit";
-			// 
-			// _pnlSplit.Panel1
-			// 
-			this._pnlSplit.Panel1.Controls.Add(this._actionModelTree);
-			// 
-			// _pnlSplit.Panel2
-			// 
-			this._pnlSplit.Panel2.Controls.Add(this._pnlNodeProperties);
+			this._toolTip.StripAmpersands = true;
 			// 
 			// ActionModelConfigurationComponentControl
 			// 
@@ -130,8 +128,8 @@
 		private System.Windows.Forms.Panel _pnlTitleBar;
 		private System.Windows.Forms.Label _lblLabel;
 		private System.Windows.Forms.Panel _pnlIcon;
-		private System.Windows.Forms.Label _lblTooltip;
 		private System.Windows.Forms.SplitContainer _pnlSplit;
 		private System.Windows.Forms.FlowLayoutPanel _lyoNodePropertiesExtensions;
+		private System.Windows.Forms.ToolTip _toolTip;
 	}
 }

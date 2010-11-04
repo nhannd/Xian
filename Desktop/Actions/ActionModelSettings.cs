@@ -555,8 +555,13 @@ namespace ClearCanvas.Desktop.Actions
                 return null;
 
             // get the actions appearing immediately before and after the separator
-            XmlElement preXmlAction = actionNodes[i - 1];
-            XmlElement postXmlAction = actionNodes[i + 1];
+			XmlElement preXmlAction = GetFirstAdjacentAction(actionNodes, i, -1);
+			XmlElement postXmlAction = GetFirstAdjacentAction(actionNodes, i, 1);
+
+			// if either could not be found, the separator can be ignored,
+			// because it would be located at the edge of the menu/toolbar
+			if (preXmlAction == null || postXmlAction == null)
+				return null;
 
             // use these to determine the location of the separator, based on the longest common path
             string commonPath = GetLongestCommonPath(preXmlAction.GetAttribute("path"), postXmlAction.GetAttribute("path"));
@@ -570,7 +575,7 @@ namespace ClearCanvas.Desktop.Actions
             postXmlAction = GetFirstExistingAdjacentAction(actionNodes, i, 1, actions);
 
             // if either could not be found, the separator can be ignored,
-            // because it would be located at the edge of the menu/toolbar
+            // because it would also be located at the edge of the menu/toolbar
             if (preXmlAction == null || postXmlAction == null)
                 return null;
 
@@ -628,6 +633,21 @@ namespace ClearCanvas.Desktop.Actions
             }
             return null;
         }
+
+		/// <summary>
+		/// Finds the first XML action element adjacent to the start position (i.e. separators excluded)
+		/// </summary>
+		private static XmlElement GetFirstAdjacentAction(IList<XmlElement> actionNodes, int start, int increment)
+		{
+			for (int i = start + increment; i >= 0 && i < actionNodes.Count; i += increment)
+			{
+				XmlElement actionNode = actionNodes[i];
+
+				if (actionNode.Name == "action")
+					return actionNode;
+			}
+			return null;
+		}
 
         /// <summary>
         /// Appends the specified action to the specified XML action model.  The "group-hint"

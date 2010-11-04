@@ -311,7 +311,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		{
 			_seriesTable.Items.Clear();
 
-			//NOTE: this whole thing is a total hack and should not be publicly distributed or used right now.
 			IStudyRootQuery query;
 			if (_server.IsLocalDataStore)
 			{

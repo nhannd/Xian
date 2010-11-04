@@ -986,5 +986,24 @@ namespace ClearCanvas.Desktop {
                 return ResourceManager.GetString("ToolbarRename", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can configure this item, but you do not have permission to use it..
+        /// </summary>
+        public static string TooltipActionNotPermitted {
+            get {
+                return ResourceManager.GetString("TooltipActionNotPermitted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}:
+        ///You can configure this item, but you do not have permission to use it..
+        /// </summary>
+        public static string TooltipFormatActionNotPermitted {
+            get {
+                return ResourceManager.GetString("TooltipFormatActionNotPermitted", resourceCulture);
+            }
+        }
     }
 }

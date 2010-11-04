@@ -218,7 +218,9 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		{
 			get
 			{
-				return String.Format("{0} ({1})", this.TooltipPrefix, this.MouseButton.ToString());
+				if (MouseButton == XMouseButtons.None)
+					return TooltipPrefix;
+				return string.Format("{0} ({1})", TooltipPrefix, XMouseButtonsConverter.Format(MouseButton));
 			}
 		}
 
@@ -592,6 +594,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		#endregion
 
 		#region Mouse Wheel
+
 		#region IMouseWheelHandler Members
 
 		/// <summary>

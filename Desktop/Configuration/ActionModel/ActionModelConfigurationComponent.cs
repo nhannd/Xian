@@ -22,6 +22,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 	[ExtensionPoint]
 	public sealed class ActionModelConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> {}
 
+	//TODO (CR Sept 2010): Name?
 	/// <summary>
 	/// View model interface for the <see cref="ActionModelConfigurationComponent"/>.
 	/// </summary>

@@ -426,4 +426,11 @@
   <data name="ToolbarRename" xml:space="preserve">
     <value>Rename</value>
   </data>
+  <data name="TooltipActionNotPermitted" xml:space="preserve">
+    <value>You can configure this item, but you do not have permission to use it.</value>
+  </data>
+  <data name="TooltipFormatActionNotPermitted" xml:space="preserve">
+    <value>{0}:
+You can configure this item, but you do not have permission to use it.</value>
+  </data>
 </root>
