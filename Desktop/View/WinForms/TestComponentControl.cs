@@ -29,8 +29,6 @@
 
 #endregion
 
-#if DEBUG
-
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -195,5 +193,3 @@ namespace ClearCanvas.Desktop.View.WinForms
 		}
 	}
 }
-
-#endif

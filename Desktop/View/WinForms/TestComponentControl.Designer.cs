@@ -29,8 +29,6 @@
 
 #endregion
 
-#if DEBUG
-
 namespace ClearCanvas.Desktop.View.WinForms
 {
     partial class TestComponentControl
@@ -310,5 +308,3 @@ namespace ClearCanvas.Desktop.View.WinForms
 
     }
 }
-
-#endif
