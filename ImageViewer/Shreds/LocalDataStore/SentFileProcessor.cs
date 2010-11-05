@@ -87,7 +87,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						delegate()
 						{
 							foreach (SendProgressItem item in _sendProgressItems)
-								LocalDataStoreActivityPublisher.Instance.SendProgressChanged(item.Clone());
+							{
+								var republishItem = item.Clone();
+								republishItem.MessageType = MessageType.Republish;
+								LocalDataStoreActivityPublisher.Instance.SendProgressChanged(republishItem);
+							}
 						}
 					);
 			}

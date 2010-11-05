@@ -138,7 +138,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					{
 						lock (item)
 						{
-							LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(item.Clone());
+							var republishItem = item.Clone();
+							republishItem.MessageType = MessageType.Republish;
+							LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(republishItem);
 						}
 					}
 				}

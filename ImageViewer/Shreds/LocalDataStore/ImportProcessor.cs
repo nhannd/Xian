@@ -142,7 +142,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					{
 						lock (jobInformation.SyncRoot)
 						{
-							UpdateProgress(jobInformation.ProgressItem);
+							var republishItem = jobInformation.ProgressItem.Clone();
+							republishItem.MessageType = MessageType.Republish;
+							UpdateProgress(republishItem);
 						}
 					}
 				}

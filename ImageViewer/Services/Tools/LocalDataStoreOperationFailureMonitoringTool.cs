@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private static void OnSendProgressUpdate(object sender, ItemEventArgs<SendProgressItem> e)
 		{
-			if (e.Item.HasErrors)
+			if (e.Item.HasErrors && e.Item.MessageType == MessageType.Current)
 			{
 				var desktopWindow = Application.ActiveDesktopWindow;
 				if (desktopWindow == null)

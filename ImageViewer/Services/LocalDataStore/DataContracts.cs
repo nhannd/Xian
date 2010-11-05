@@ -24,6 +24,22 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		Clear = 2
 	}
 
+	/// <summary>
+	/// Enumerated values indicating whether the message represents an event that is currently occurring, or is being republished in response to a refresh request.
+	/// </summary>
+	public enum MessageType
+	{
+		/// <summary>
+		/// Indicates that the message represents an event is currently occurring.
+		/// </summary>
+		Current = 0,
+
+		/// <summary>
+		/// Indicates that the message is being republished in response to a refresh request.
+		/// </summary>
+		Republish = 1
+	}
+
 	//TODO: One of these days clean up the services and contracts to be in the right places(s).
 	//Some of the 'local data store' contracts really belong in the Dicom Server.
 	#region Send / Receive contracts
@@ -239,6 +255,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		private DateTime _lastActive;
 		private string _statusMessage;
 		private bool _isBackground;
+		private MessageType _messageType;
 
 		public FileOperationProgressItem()
 		{ 
@@ -300,6 +317,13 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			set { _isBackground = value; }
 		}
 
+		[DataMember(IsRequired = false)]
+		public MessageType MessageType
+		{
+			get { return _messageType; }
+			set { _messageType = value; }
+		}
+
 		public void CopyTo(FileOperationProgressItem progressItem)
 		{
 			progressItem.Identifier = this.Identifier;
@@ -310,6 +334,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			progressItem.LastActive = this.LastActive;
 			progressItem.StatusMessage = this.StatusMessage;
 			progressItem.IsBackground = this.IsBackground;
+			progressItem.MessageType = this.MessageType;
 		}
 
 		public void CopyFrom(FileOperationProgressItem progressItem)
@@ -322,6 +347,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			this.LastActive = progressItem.LastActive;
 			this.StatusMessage = progressItem.StatusMessage;
 			this.IsBackground = progressItem.IsBackground;
+			this.MessageType = progressItem.MessageType;
 		}
 	}
 
