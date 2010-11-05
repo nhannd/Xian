@@ -91,11 +91,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 
 			try
 			{
-				OpenStudyHelper.OpenFiles(files, ViewerLaunchSettings.WindowBehaviour);
+				new OpenFilesHelper(files) {WindowBehaviour = ViewerLaunchSettings.WindowBehaviour}.OpenFiles();
 			}
 			catch(Exception e)
 			{
-				ExceptionHandler.Report(e, this.Context.DesktopWindow);
+				ExceptionHandler.Report(e, Context.DesktopWindow);
 			}
 		}
 

@@ -121,11 +121,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public WindowBehaviour WindowBehaviour { get; set; }
 
 		/// <summary>
-		/// Gets or sets the title that should be used for the workspace in which the <see cref="ImageViewerComponent"/>
-		/// will be launced.
+		/// Gets or sets the workspace title for the <see cref="ImageViewerComponent"/>.
 		/// </summary>
 		/// <remarks>
-		/// The default value is null, which means that the title will be automatically figured out.
+		/// This value may be null, indicating that the component should automatically generate an appropriate title.
 		/// </remarks>
 		public string Title { get; set; }
 
@@ -210,22 +209,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#region Public
 
-		//TODO (later): create a class called OpenFilesHelper
-
 		/// <summary>
 		/// Launches a new <see cref="ImageViewerComponent"/> with the specified local files.
 		/// </summary>
+		[Obsolete("This method may be removed in a future version.  Please use an instance of OpenFilesHelper instead.")]
 		public static IImageViewer OpenFiles(string[] localFileList, WindowBehaviour windowBehaviour)
 		{
-			Platform.CheckForNullReference(localFileList, "localFileList");
-			if (localFileList.Length == 0)
-				throw new ArgumentException("localFileList array cannot be empty.");
-
-			ImageViewerComponent viewer = OpenFiles(localFileList);
-			if (viewer != null)
-				ImageViewerComponent.Launch(viewer, new LaunchImageViewerArgs(windowBehaviour));
-
-			return viewer;
+			return new OpenFilesHelper(localFileList) {WindowBehaviour = windowBehaviour}.OpenFiles();
 		}
 
 		/// <summary>
@@ -265,32 +255,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		#endregion 
 
 		#region Private
-
-		private static ImageViewerComponent OpenFiles(string[] localFileList)
-		{
-			//don't find priors for files loaded off the local disk.
-			ImageViewerComponent imageViewer = CreateViewer(false);
-
-			bool cancelled = false;
-
-			try
-			{
-				imageViewer.LoadImages(localFileList, imageViewer.DesktopWindow, out cancelled);
-			}
-			catch(Exception e)
-			{
-				if (!cancelled) // silence any exceptions if the operation was cancelled
-					ExceptionHandler.Report(e, imageViewer.DesktopWindow);
-			}
-
-			if (cancelled || !AnySopsLoaded(imageViewer))
-			{
-				imageViewer.Dispose();
-				imageViewer = null;
-			}
-
-			return imageViewer;
-		}
 
 		private static ImageViewerComponent CreateViewer(bool loadPriors)
 		{

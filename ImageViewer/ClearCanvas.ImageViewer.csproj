@@ -485,6 +485,7 @@
     <Compile Include="StudyManagement\NormalizedPixelSpacing.cs" />
     <Compile Include="StudyManagement\ImagePlaneHelper.cs" />
     <Compile Include="StudyManagement\FrameDataRetrieverFactory.cs" />
+    <Compile Include="StudyManagement\OpenFilesHelper.cs" />
     <Compile Include="StudyManagement\OpenStudyHelper.cs" />
     <Compile Include="StudyManagement\SopDataCache.cs" />
     <Compile Include="StudyManagement\SopDataSource.cs" />

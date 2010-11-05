@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 					CommandLine commandLine = new CommandLine(args.ToArray());
 					List<string> files = BuildFileList(commandLine.Positional);
 					if (files.Count > 0)
-						OpenStudyHelper.OpenFiles(files.ToArray(), ViewerLaunchSettings.WindowBehaviour);
+						new OpenFilesHelper(files) {WindowBehaviour = ViewerLaunchSettings.WindowBehaviour}.OpenFiles();
 					else
 						this.Context.DesktopWindow.ShowMessageBox(SR.MessageFileNotFound, MessageBoxActions.Ok);
 				}
