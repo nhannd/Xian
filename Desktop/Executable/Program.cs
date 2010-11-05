@@ -33,9 +33,6 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.View.WinForms;
 using System.Windows.Forms;
-#if !MONO
-
-#endif
 
 namespace ClearCanvas.Desktop.Executable
 {
@@ -47,6 +44,11 @@ namespace ClearCanvas.Desktop.Executable
 		[STAThread]
 		static void Main(string[] args)
 		{
+			//Always at least try to let our application code handle the exception.
+			//Setting this to "catch" means the Application.ThreadException event
+			//will fire first, essentially causing the app to crash right away and shut down.
+			Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
+
 #if !MONO
 			SplashScreenManager.DisplaySplashScreen();
 #endif

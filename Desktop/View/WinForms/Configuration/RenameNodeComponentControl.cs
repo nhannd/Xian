@@ -40,7 +40,7 @@ namespace ClearCanvas.Desktop.View.WinForms.Configuration
 		{
 			InitializeComponent();
 
-			_txtName.DataBindings.Add("Value", component, "Name", false, DataSourceUpdateMode.OnPropertyChanged);
+			_txtName.DataBindings.Add("Value", component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 	}
 }

@@ -205,14 +205,16 @@ namespace ClearCanvas.Desktop.View.WinForms
     
         private void _form_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!_reallyClose)
-            {
-                e.Cancel = true;
+			//When there is a "fatal exception", we terminate the gui toolkit, which calls Application.Exit().
+			//So, we can't cancel the close, otherwise the application can get into a funny state.
+        	if (e.CloseReason == System.Windows.Forms.CloseReason.ApplicationExitCall || _reallyClose)
+				return;
 
-                // raise the close requested event
-                // if this results in an actual close, the Dispose method will be called, setting the _reallyClose flag
-                RaiseCloseRequested();
-            }
+        	e.Cancel = true;
+
+        	// raise the close requested event
+        	// if this results in an actual close, the Dispose method will be called, setting the _reallyClose flag
+        	RaiseCloseRequested();
         }
     }
 }
