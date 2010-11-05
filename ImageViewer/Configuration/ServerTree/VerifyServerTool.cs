@@ -63,6 +63,9 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 						msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultSuccess + "\r\n", server.Path);
 					else
 						msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultFail + "\r\n", server.Path);
+
+					// must wait for the SCU thread to release the connection properly before disposal, otherwise we might end up aborting the connection instead
+					scu.Join(new TimeSpan(0, 0, 2));
 				}
 			}
 
