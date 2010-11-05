@@ -29,6 +29,8 @@
 
 #endregion
 
+#if DEBUG
+
 namespace ClearCanvas.Desktop.View.WinForms
 {
     partial class TestComponentControl
@@ -69,13 +71,21 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._modify = new System.Windows.Forms.Button();
 			this._accept = new System.Windows.Forms.Button();
 			this._showWorkspaceDialog = new System.Windows.Forms.Button();
+			this._buttonCrashThread = new System.Windows.Forms.Button();
+			this._buttonCrashUI = new System.Windows.Forms.Button();
+			this._crashThreadPool = new System.Windows.Forms.Button();
+			this._delayCrash = new System.Windows.Forms.CheckBox();
+			this._crashDelay = new System.Windows.Forms.NumericUpDown();
+			this._catchAndReport = new System.Windows.Forms.CheckBox();
+			this._circumventCrash = new System.Windows.Forms.CheckBox();
+			((System.ComponentModel.ISupportInitialize)(this._crashDelay)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _label
 			// 
 			this._label.AutoSize = true;
 			this._label.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this._label.Location = new System.Drawing.Point(39, 58);
+			this._label.Location = new System.Drawing.Point(40, 104);
 			this._label.Name = "_label";
 			this._label.Size = new System.Drawing.Size(58, 26);
 			this._label.TabIndex = 0;
@@ -167,10 +177,99 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._showWorkspaceDialog.UseVisualStyleBackColor = true;
 			this._showWorkspaceDialog.Click += new System.EventHandler(this._showWorkspaceDialogBox_Click);
 			// 
+			// _buttonCrashThread
+			// 
+			this._buttonCrashThread.Location = new System.Drawing.Point(351, 44);
+			this._buttonCrashThread.Name = "_buttonCrashThread";
+			this._buttonCrashThread.Size = new System.Drawing.Size(102, 23);
+			this._buttonCrashThread.TabIndex = 10;
+			this._buttonCrashThread.Text = "Crash Thread";
+			this._buttonCrashThread.UseVisualStyleBackColor = true;
+			this._buttonCrashThread.Click += new System.EventHandler(this._buttonCrashThread_Click);
+			// 
+			// _buttonCrashUI
+			// 
+			this._buttonCrashUI.Location = new System.Drawing.Point(351, 15);
+			this._buttonCrashUI.Name = "_buttonCrashUI";
+			this._buttonCrashUI.Size = new System.Drawing.Size(102, 23);
+			this._buttonCrashUI.TabIndex = 11;
+			this._buttonCrashUI.Text = "Crash UI";
+			this._buttonCrashUI.UseVisualStyleBackColor = true;
+			this._buttonCrashUI.Click += new System.EventHandler(this._buttonCrashUI_Click);
+			// 
+			// _crashThreadPool
+			// 
+			this._crashThreadPool.Location = new System.Drawing.Point(351, 73);
+			this._crashThreadPool.Name = "_crashThreadPool";
+			this._crashThreadPool.Size = new System.Drawing.Size(102, 23);
+			this._crashThreadPool.TabIndex = 12;
+			this._crashThreadPool.Text = "Crash ThreadPool";
+			this._crashThreadPool.UseVisualStyleBackColor = true;
+			this._crashThreadPool.Click += new System.EventHandler(this._crashThreadPool_Click);
+			// 
+			// _delayCrash
+			// 
+			this._delayCrash.AutoSize = true;
+			this._delayCrash.Location = new System.Drawing.Point(153, 21);
+			this._delayCrash.Name = "_delayCrash";
+			this._delayCrash.Size = new System.Drawing.Size(83, 17);
+			this._delayCrash.TabIndex = 13;
+			this._delayCrash.Text = "Delay Crash";
+			this._delayCrash.UseVisualStyleBackColor = true;
+			// 
+			// _crashDelay
+			// 
+			this._crashDelay.Location = new System.Drawing.Point(242, 21);
+			this._crashDelay.Maximum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+			this._crashDelay.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+			this._crashDelay.Name = "_crashDelay";
+			this._crashDelay.Size = new System.Drawing.Size(83, 20);
+			this._crashDelay.TabIndex = 14;
+			this._crashDelay.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+			// 
+			// _catchAndReport
+			// 
+			this._catchAndReport.AutoSize = true;
+			this._catchAndReport.Location = new System.Drawing.Point(153, 67);
+			this._catchAndReport.Name = "_catchAndReport";
+			this._catchAndReport.Size = new System.Drawing.Size(105, 17);
+			this._catchAndReport.TabIndex = 15;
+			this._catchAndReport.Text = "Catch and report";
+			this._catchAndReport.UseVisualStyleBackColor = true;
+			// 
+			// _circumventCrash
+			// 
+			this._circumventCrash.AutoSize = true;
+			this._circumventCrash.Location = new System.Drawing.Point(153, 44);
+			this._circumventCrash.Name = "_circumventCrash";
+			this._circumventCrash.Size = new System.Drawing.Size(79, 17);
+			this._circumventCrash.TabIndex = 16;
+			this._circumventCrash.Text = "Circumvent";
+			this._circumventCrash.UseVisualStyleBackColor = true;
+			// 
 			// TestComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._circumventCrash);
+			this.Controls.Add(this._catchAndReport);
+			this.Controls.Add(this._crashDelay);
+			this.Controls.Add(this._delayCrash);
+			this.Controls.Add(this._crashThreadPool);
+			this.Controls.Add(this._buttonCrashUI);
+			this.Controls.Add(this._buttonCrashThread);
 			this.Controls.Add(this._showWorkspaceDialog);
 			this.Controls.Add(this._accept);
 			this.Controls.Add(this._modify);
@@ -183,6 +282,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.Controls.Add(this._label);
 			this.Name = "TestComponentControl";
 			this.Size = new System.Drawing.Size(483, 353);
+			((System.ComponentModel.ISupportInitialize)(this._crashDelay)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -200,6 +300,15 @@ namespace ClearCanvas.Desktop.View.WinForms
         private System.Windows.Forms.Button _modify;
         private System.Windows.Forms.Button _accept;
 		private System.Windows.Forms.Button _showWorkspaceDialog;
+		private System.Windows.Forms.Button _buttonCrashThread;
+		private System.Windows.Forms.Button _buttonCrashUI;
+		private System.Windows.Forms.Button _crashThreadPool;
+		private System.Windows.Forms.CheckBox _delayCrash;
+		private System.Windows.Forms.NumericUpDown _crashDelay;
+		private System.Windows.Forms.CheckBox _catchAndReport;
+		private System.Windows.Forms.CheckBox _circumventCrash;
 
     }
 }
+
+#endif

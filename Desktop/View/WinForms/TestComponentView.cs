@@ -29,6 +29,8 @@
 
 #endregion
 
+#if DEBUG
+
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop.View.WinForms
@@ -65,3 +67,5 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
     }
 }
+
+#endif
