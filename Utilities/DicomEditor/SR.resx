@@ -287,4 +287,7 @@ NOTE: if any of the edited files are from the local data store, it should be rei
   <data name="MessageSequenceBinaryReplicationNotSupported" xml:space="preserve">
     <value>Replicating sequence and binary attributes is not supported.</value>
   </data>
+  <data name="MessageErrorUpdatingSomeFiles" xml:space="preserve">
+    <value>There was an error saving one or more of the selected files.  Please check the logs to make sure the indicated files are accessible and try again.</value>
+  </data>
 </root>

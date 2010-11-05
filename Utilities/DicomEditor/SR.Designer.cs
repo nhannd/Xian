@@ -288,6 +288,15 @@ namespace ClearCanvas.Utilities.DicomEditor {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There was an error saving one or more of the selected files.  Please check the logs to make sure the indicated files are accessible and try again..
+        /// </summary>
+        internal static string MessageErrorUpdatingSomeFiles {
+            get {
+                return ResourceManager.GetString("MessageErrorUpdatingSomeFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DICOM Dump operation failed.  File(s) in selection may not be DICOM..
         /// </summary>
         internal static string MessageFailedDump {

@@ -228,26 +228,42 @@ namespace ClearCanvas.Utilities.DicomEditor
             }
         }
 
-    	public void SaveAll()
-        {
-			AuditedInstances modifiedInstances = new AuditedInstances();
+		public void SaveAll()
+		{
+			var modifiedInstances = new AuditedInstances();
+			var failureCount = 0;
 
-            for (int i = 0; i < _loadedFiles.Count; i++)
-            {
+			for (int i = 0; i < _loadedFiles.Count; i++)
+			{
 				//TODO: deal with saving mixtures of local and non-local files.
-				DicomFile file = _loadedFiles[i];
-                file.Save(DicomWriteOptions.Default);
+				var file = _loadedFiles[i];
+				try
+				{
+					var studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
+					var patientId = file.DataSet[DicomTags.PatientId].ToString();
+					var patientsName = file.DataSet[DicomTags.PatientsName].ToString();
 
-				string studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
-				string patientId = file.DataSet[DicomTags.PatientId].ToString();
-				string patientsName = file.DataSet[DicomTags.PatientsName].ToString();
-				modifiedInstances.AddInstance(patientId, patientsName, studyInstanceUid);
+					file.Save(DicomWriteOptions.Default);
+					_dirtyFlags[i] = false;
 
-                _dirtyFlags[i] = false;
-            }
+					modifiedInstances.AddInstance(patientId, patientsName, studyInstanceUid);
+				}
+				catch (Exception ex)
+				{
+					++failureCount;
+
+					if (file != null && !string.IsNullOrEmpty(file.Filename))
+						Platform.Log(LogLevel.Warn, ex, "An exception was encountered while trying to update the file \'{0}\'.", file.Filename);
+					else
+						Platform.Log(LogLevel.Warn, ex, "An unexpected error was encountered while trying to update a file.");
+				}
+			}
+
+			if (failureCount > 0)
+				Host.DesktopWindow.ShowMessageBox(SR.MessageErrorUpdatingSomeFiles, MessageBoxActions.Ok);
 
 			AuditHelper.LogUpdateInstances(new string[0], modifiedInstances, EventSource.CurrentUser, EventResult.Success);
-        }
+		}
 
         public bool TagExists(uint tag)
         {
