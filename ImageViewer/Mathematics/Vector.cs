@@ -282,6 +282,17 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return LineSegments.Intersect;
 		}
 
+		public static bool ComputeLineSegmentIntersection(PointF p1, PointF p2, PointF q1, PointF q2, out PointF intersection)
+		{
+			return LineSegmentIntersection(p1, p2, q1, q2, out intersection) == LineSegments.Intersect;
+		}
+
+		public static bool AreColinear(PointF p1, PointF p2, PointF q1, PointF q2)
+		{
+			PointF dummy;
+			return LineSegmentIntersection(p1, p2, q1, q2, out dummy) == LineSegments.Colinear;
+		}
+
 		/// <summary>
 		/// Given two points (current and last), returns a <see cref="SizeF"/> 
 		/// object representing the delta in x and y between the 2 points.
