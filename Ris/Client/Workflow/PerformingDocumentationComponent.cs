@@ -562,6 +562,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_documentationTabContainer.Pages.Add(new TabPage(page.Path, page.GetComponent()));
 			}
 
+			// For Ticket #7401, we must explicitly start component of all pages, so the data loaded asynchronously will
+			// be available for validation when users try to complete the documentation.
+			CollectionUtils.ForEach(_documentationTabContainer.Pages, p => p.LazyStart = false);
+
 			_documentationHost = new ChildComponentHost(this.Host, _documentationTabContainer);
 			_documentationHost.StartComponent();
 
