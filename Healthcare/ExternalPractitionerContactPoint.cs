@@ -34,13 +34,14 @@ using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Workflow;
 
-namespace ClearCanvas.Healthcare {
+namespace ClearCanvas.Healthcare
+{
 
 
-    /// <summary>
-    /// ExternalPractitionerContactPoint entity
-    /// </summary>
-	public partial class ExternalPractitionerContactPoint : ClearCanvas.Enterprise.Core.Entity
+	/// <summary>
+	/// ExternalPractitionerContactPoint entity
+	/// </summary>
+	public partial class ExternalPractitionerContactPoint
 	{
 		private delegate TOutput Converter<TInput1, TInput2, TOutput>(TInput1 input1, TInput2 input2);
 
@@ -80,9 +81,9 @@ namespace ClearCanvas.Healthcare {
 				description,
 				preferredCommunicationMode,
 				right.IsDefaultContactPoint || left.IsDefaultContactPoint,
-				new List<TelephoneNumber>(), 
-				new List<Address>(), 
-				new List<EmailAddress>(), 
+				new List<TelephoneNumber>(),
+				new List<Address>(),
+				new List<EmailAddress>(),
 				null);
 
 			practitioner.ContactPoints.Add(result);
@@ -109,49 +110,57 @@ namespace ClearCanvas.Healthcare {
 		/// Constructor.
 		/// </summary>
 		/// <param name="practitioner"></param>
-        public ExternalPractitionerContactPoint(ExternalPractitioner practitioner)
-        {
-            _practitioner = practitioner;
-            _practitioner.ContactPoints.Add(this);
+		public ExternalPractitionerContactPoint(ExternalPractitioner practitioner)
+		{
+			_practitioner = practitioner;
+			_practitioner.ContactPoints.Add(this);
 
-            _telephoneNumbers = new List<ClearCanvas.Healthcare.TelephoneNumber>();
-            _addresses = new List<ClearCanvas.Healthcare.Address>();
-            _emailAddresses = new List<ClearCanvas.Healthcare.EmailAddress>();
-        }
+			_telephoneNumbers = new List<TelephoneNumber>();
+			_addresses = new List<Address>();
+			_emailAddresses = new List<EmailAddress>();
+		}
 
-        public virtual Address CurrentAddress
-        {
-            get
-            {
-                return CollectionUtils.SelectFirst(this.Addresses,
-                    delegate(Address address) { return address.Type == AddressType.B && address.IsCurrent; });
-            }
-        }
+		/// <summary>
+		/// Gets the current work address, or null if there is no current work address.
+		/// </summary>
+		public virtual Address CurrentAddress
+		{
+			get
+			{
+				return CollectionUtils.SelectFirst(this.Addresses, address => address.Type == AddressType.B && address.IsCurrent);
+			}
+		}
 
-        public virtual TelephoneNumber CurrentFaxNumber
-        {
-            get
-            {
-                return CollectionUtils.SelectFirst(this.TelephoneNumbers,
-                  delegate(TelephoneNumber phone) { return phone.Use == TelephoneUse.WPN && phone.Equipment == TelephoneEquipment.FX && phone.IsCurrent; });
-            }
-        }
+		/// <summary>
+		/// Gets the current work fax number, or null if there is no current work fax number.
+		/// </summary>
+		public virtual TelephoneNumber CurrentFaxNumber
+		{
+			get
+			{
+				return CollectionUtils.SelectFirst(this.TelephoneNumbers, f => f.Use == TelephoneUse.WPN && f.Equipment == TelephoneEquipment.FX && f.IsCurrent);
+			}
+		}
 
-        public virtual TelephoneNumber CurrentPhoneNumber
-        {
-            get
-            {
-                return CollectionUtils.SelectFirst(this.TelephoneNumbers,
-                  delegate(TelephoneNumber phone) { return phone.Use == TelephoneUse.WPN && phone.Equipment == TelephoneEquipment.PH && phone.IsCurrent; });
-            }
-        }
+		/// <summary>
+		/// Gets the current work phone number, or null if there is no current work phone number.
+		/// </summary>
+		public virtual TelephoneNumber CurrentPhoneNumber
+		{
+			get
+			{
+				return CollectionUtils.SelectFirst(this.TelephoneNumbers, p => p.Use == TelephoneUse.WPN && p.Equipment == TelephoneEquipment.PH && p.IsCurrent);
+			}
+		}
 
+		/// <summary>
+		/// Gets the current email address, or null if there is no email address.
+		/// </summary>
 		public virtual EmailAddress CurrentEmailAddress
 		{
 			get
 			{
-				return CollectionUtils.SelectFirst(this.EmailAddresses,
-				  delegate(EmailAddress emailAddress) { return emailAddress.IsCurrent; });
+				return CollectionUtils.SelectFirst(this.EmailAddresses, emailAddress => emailAddress.IsCurrent);
 			}
 		}
 
@@ -192,7 +201,7 @@ namespace ClearCanvas.Healthcare {
 				CollectionUtils.Map(_telephoneNumbers, (TelephoneNumber tn) => (TelephoneNumber)tn.Clone()),
 				CollectionUtils.Map(_addresses, (Address a) => (Address)a.Clone()),
 				CollectionUtils.Map(_emailAddresses, (EmailAddress e) => (EmailAddress)e.Clone()),
-				null) {Deactivated = _deactivated};
+				null) { Deactivated = _deactivated };
 
 			owner.ContactPoints.Add(copy);
 			return copy;

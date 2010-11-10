@@ -45,8 +45,8 @@ namespace ClearCanvas.Healthcare
 	/// <summary>
 	/// ExternalPractitioner entity
 	/// </summary>
-	[Validation(HighLevelRulesProviderMethod="GetValidationRules")]
-	public partial class ExternalPractitioner : ClearCanvas.Enterprise.Core.Entity
+	[Validation(HighLevelRulesProviderMethod = "GetValidationRules")]
+	public partial class ExternalPractitioner
 	{
 		/// <summary>
 		/// Creates a new practitioner that is the result of merging the two specified practitioners.
@@ -126,14 +126,13 @@ namespace ClearCanvas.Healthcare
 		}
 
 		/// <summary>
-		/// Returns the default contact point, or null if no default contact point exists.
+		/// Gets the default contact point, or null if no default contact point exists.
 		/// </summary>
 		public virtual ExternalPractitionerContactPoint DefaultContactPoint
 		{
 			get
 			{
-				return CollectionUtils.SelectFirst(_contactPoints,
-					delegate(ExternalPractitionerContactPoint cp) { return cp.IsDefaultContactPoint; });
+				return CollectionUtils.SelectFirst(_contactPoints, cp => cp.IsDefaultContactPoint);
 			}
 		}
 

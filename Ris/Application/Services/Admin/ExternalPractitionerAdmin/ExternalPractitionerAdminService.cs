@@ -163,7 +163,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			assembler.UpdateExternalPractitioner(request.PractitionerDetail, prac, PersistenceContext);
 
 			prac.MarkEdited();
-			var userCanVerify = Thread.CurrentPrincipal.IsInRole(Common.AuthorityTokens.Admin.Data.ExternalPractitionerVerification);
+			var userCanVerify = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.ExternalPractitionerVerification);
 			if (request.MarkVerified && userCanVerify)
 				prac.MarkVerified();
 
@@ -188,7 +188,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			assembler.UpdateExternalPractitioner(request.PractitionerDetail, prac, PersistenceContext);
 
 			prac.MarkEdited();
-			var userCanVerify = Thread.CurrentPrincipal.IsInRole(Common.AuthorityTokens.Admin.Data.ExternalPractitionerVerification);
+			var userCanVerify = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.ExternalPractitionerVerification);
 			if (request.MarkVerified && userCanVerify)
 				prac.MarkVerified();
 
@@ -316,10 +316,17 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			Platform.CheckMemberIsSet(request.LeftPractitionerRef, "LeftPractitionerRef");
 			Platform.CheckMemberIsSet(request.RightPractitionerRef, "RightPractitionerRef");
 
-			// unpack the request, loading all required entities
 			var left = PersistenceContext.Load<ExternalPractitioner>(request.LeftPractitionerRef, EntityLoadFlags.Proxy);
 			var right = PersistenceContext.Load<ExternalPractitioner>(request.RightPractitionerRef, EntityLoadFlags.Proxy);
 
+			// if we are only doing a cost estimate, exit here without modifying any data
+			if (request.EstimateCostOnly)
+			{
+				var cost = EstimateAffectedRecords(right, left);
+				return new MergeExternalPractitionerResponse(cost);
+			}
+
+			// unpack the request, loading all required entities
 			var nameAssembler = new PersonNameAssembler();
 			var name = new PersonName();
 			nameAssembler.UpdatePersonName(request.Name, name);
@@ -336,12 +343,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 							PersistenceContext.Load<ExternalPractitionerContactPoint>(kvp.Key, EntityLoadFlags.Proxy),
 							PersistenceContext.Load<ExternalPractitionerContactPoint>(kvp.Value, EntityLoadFlags.Proxy)));
 
-			// compute cost estimate
-			var cost = EstimateAffectedRecords(right, left);
-
-			// if we are only doing a cost estimate, exit here without modifying any data
-			if (request.EstimateCostOnly)
-				return new MergeExternalPractitionerResponse(cost);
 
 			// merge the practitioners
 			var result = ExternalPractitioner.MergePractitioners(left, right,
@@ -420,12 +421,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			return queryAction(new VisitSearchCriteria(), visitsWhere);
 		}
 
-		private static T QueryOrders<T>(ICollection<ExternalPractitionerContactPoint> contactPoints, Converter<OrderSearchCriteria, ResultRecipientSearchCriteria, T> queryAction)
+		private static T QueryOrders<T>(IEnumerable<ExternalPractitionerContactPoint> contactPoints, Converter<OrderSearchCriteria, ResultRecipientSearchCriteria, T> queryAction)
 		{
 			return QueryOrders(contactPoints, false, queryAction);
 		}
 
-		private static T QueryOrders<T>(ICollection<ExternalPractitionerContactPoint> contactPoints, bool activeOnly, Converter<OrderSearchCriteria, ResultRecipientSearchCriteria, T> queryAction)
+		private static T QueryOrders<T>(IEnumerable<ExternalPractitionerContactPoint> contactPoints, bool activeOnly, Converter<OrderSearchCriteria, ResultRecipientSearchCriteria, T> queryAction)
 		{
 			var recipientCriteria = new ResultRecipientSearchCriteria();
 			recipientCriteria.PractitionerContactPoint.In(contactPoints);
@@ -441,7 +442,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 		}
 
 
-		private void EnsureNoDeactivatedContactPointsWithActiveOrders(List<ExternalPractitionerContactPointDetail> details)
+		private void EnsureNoDeactivatedContactPointsWithActiveOrders(IEnumerable<ExternalPractitionerContactPointDetail> details)
 		{
 			var broker = this.PersistenceContext.GetBroker<IExternalPractitionerContactPointBroker>();
 			var contactPointsWithOrders = CollectionUtils.Select(
