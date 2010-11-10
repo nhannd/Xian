@@ -69,7 +69,12 @@ namespace ClearCanvas.Workflow
 		/// <param name="item"></param>
 		protected override void OnItemSucceeded(WorkQueueItem item)
 		{
-			item.Complete();
+			// See if the item needs to be rescheduled for another processing before completing it.
+			DateTime rescheduleTime;
+			if (ShouldReschedule(item, out rescheduleTime))
+				item.Reschedule(rescheduleTime);
+			else
+				item.Complete();
 		}
 
 		/// <summary>
@@ -117,5 +122,21 @@ namespace ClearCanvas.Workflow
 		/// <returns></returns>
 		protected abstract bool ShouldRetry(WorkQueueItem item, Exception error, out DateTime retryTime);
 
+		/// <summary>
+		/// Called after a work item is successfully processed.  However, the item may have more work to be done.
+		/// Check if it should be rescheduled for further processing.
+		/// </summary>
+		/// <param name="item"></param>
+		/// <param name="rescheduleTime"></param>
+		/// <returns></returns>
+		/// <remarks>
+		/// Subclasses should override this method if it takes several stages to completely process an item.
+		/// </remarks>
+		protected virtual bool ShouldReschedule(WorkQueueItem item, out DateTime rescheduleTime)
+		{
+			// By default, an item does not need to be rescheduled and the schedule time is unchanged.
+			rescheduleTime = item.ScheduledTime;
+			return false;
+		}
 	}
 }
