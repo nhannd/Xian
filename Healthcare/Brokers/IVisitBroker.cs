@@ -31,6 +31,7 @@
 
 
 using System.Collections.Generic;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Brokers
 {
@@ -38,6 +39,8 @@ namespace ClearCanvas.Healthcare.Brokers
 	{
 		IList<Visit> FindByVisitPractitioner(VisitSearchCriteria visitSearchCriteria,
 											 VisitPractitionerSearchCriteria practitionerSearchCriteria);
+		IList<Visit> FindByVisitPractitioner(VisitSearchCriteria visitSearchCriteria,
+											 VisitPractitionerSearchCriteria practitionerSearchCriteria, SearchResultPage page);
 
 		long CountByVisitPractitioner(VisitSearchCriteria visitSearchCriteria,
 									  VisitPractitionerSearchCriteria practitionerSearchCriteria);

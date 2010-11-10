@@ -74,5 +74,6 @@
     </idbag>
     
     <property name="Deactivated" column="Deactivated_" type="Boolean" not-null="true"/>
+    <many-to-one name="MergedInto" class="ExternalPractitionerContactPoint" column="MergedIntoOID_"/>
   </class>
 </hibernate-mapping>

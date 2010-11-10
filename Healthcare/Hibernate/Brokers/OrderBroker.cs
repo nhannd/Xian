@@ -32,6 +32,7 @@
 using System.Collections.Generic;
 using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -51,7 +52,13 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
 		public IList<Order> FindByResultRecipient(OrderSearchCriteria orderSearchCriteria, ResultRecipientSearchCriteria recipientSearchCriteria)
 		{
+			return FindByResultRecipient(orderSearchCriteria, recipientSearchCriteria, new SearchResultPage());
+		}
+
+		public IList<Order> FindByResultRecipient(OrderSearchCriteria orderSearchCriteria, ResultRecipientSearchCriteria recipientSearchCriteria, SearchResultPage page)
+		{
 			var query = GetBaseResultRecipientQuery(orderSearchCriteria, recipientSearchCriteria);
+			query.Page = page;
 			return ExecuteHql<Order>(query);
 		}
 

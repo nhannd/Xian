@@ -82,6 +82,15 @@ namespace ClearCanvas.Healthcare
 			_isVerified = true;
 		}
 
+		public virtual ExternalPractitioner GetUltimateMergeDestination()
+		{
+			var dest = this;
+			while (dest.MergedInto != null)
+				dest = dest.MergedInto;
+
+			return dest;
+		}
+
 		private static IValidationRuleSet GetValidationRules()
 		{
 			// ensure that not both the procedure type and procedure type groups filters are being applied

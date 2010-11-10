@@ -176,7 +176,8 @@ namespace ClearCanvas.Healthcare.Imex
 					data.LastVerifiedTime, 
 					data.LastEditedTime, 
 					new HashedSet<ExternalPractitionerContactPoint>(),
-					new Dictionary<string, string>());
+					new Dictionary<string, string>(),
+					null);
 				context.Lock(prac, DirtyState.New);
 			}
 			else

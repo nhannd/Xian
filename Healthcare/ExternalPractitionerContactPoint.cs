@@ -91,6 +91,15 @@ namespace ClearCanvas.Healthcare {
 			}
 		}
 
+		public virtual ExternalPractitionerContactPoint GetUltimateMergeDestination()
+		{
+			var dest = this;
+			while (dest.MergedInto != null)
+				dest = dest.MergedInto;
+
+			return dest;
+		}
+
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
 		/// object initialization.
