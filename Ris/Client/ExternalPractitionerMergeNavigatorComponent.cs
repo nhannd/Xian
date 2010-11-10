@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
@@ -39,7 +37,6 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -133,12 +130,6 @@ namespace ClearCanvas.Ris.Client
 				var cost = CalculateMergeCost(request);
 
 				var msg = string.Format("Merge operation will affect {0} orders and/or visits.", cost);
-
-				if (cost > ExternalPractitionerMergeSettings.Default.MergeCostUserWarningThreshold)
-				{
-					msg += "\n\nPerforming this operation during regular working hours may adversely affect the system performance for other users.";
-					msg += "\nIt is recommended that you do not proceed with the operation unless you are certain it will not impact other users.";
-				}
 				msg += "\n\nPress 'Cancel' to cancel the operation.\nPress 'OK' to continue. The merge operation cannot be undone.";
 				var action = this.Host.ShowMessageBox(msg, MessageBoxActions.OkCancel);
 				if (action == DialogBoxAction.Cancel)
@@ -147,12 +138,7 @@ namespace ClearCanvas.Ris.Client
 				}
 
 				// perform the merge
-				IList<string> affectedOrders, affectedVisits;
-				PerformMergeOperation(request, out affectedOrders, out affectedVisits);
-				if (affectedOrders.Count > 0 || affectedVisits.Count > 0)
-				{
-					ShowReport(affectedOrders, affectedVisits);
-				}
+				PerformMergeOperation(request);
 
 				Exit(ApplicationComponentExitCode.Accepted);
 			}
@@ -279,14 +265,11 @@ namespace ClearCanvas.Ris.Client
 					  service => service.MergeExternalPractitioner(request).CostEstimate);
 		}
 
-		private void PerformMergeOperation(MergeExternalPractitionerRequest request, out IList<string> affectedOrders, out IList<string> affectedVisits)
+		private static void PerformMergeOperation(MergeExternalPractitionerRequest request)
 		{
 			request.EstimateCostOnly = false;
-			var response = ShowProgress("Performing merge operation...",
-					  service => service.MergeExternalPractitioner(request));
-
-			affectedOrders = CollectionUtils.Map(response.AffectedOrders, (MergeExternalPractitionerResponse.AffectedOrder o) => AccessionFormat.Format(o.AccessionNumber));
-			affectedVisits = CollectionUtils.Map(response.AffectedVisits, (MergeExternalPractitionerResponse.AffectedVisit v) => VisitNumberFormat.Format(v.VisitNumber));
+			Platform.GetService<IExternalPractitionerAdminService>(
+					service => service.MergeExternalPractitioner(request));
 		}
 
 		private T ShowProgress<T>(
@@ -314,25 +297,6 @@ namespace ClearCanvas.Ris.Client
 
 			ProgressDialog.Show(task, this.Host.DesktopWindow, true, ProgressBarStyle.Marquee);
 			return result;
-		}
-
-		private void ShowReport(IList<string> affectedOrders, IList<string> affectedVisits)
-		{
-			var reportBuilder = new StringBuilder();
-			reportBuilder.Append("Merge succeeded. ");
-			reportBuilder.AppendLine("The following orders were modified:");
-			foreach (var order in affectedOrders)
-			{
-				reportBuilder.AppendLine(order);
-			}
-			reportBuilder.AppendLine();
-			reportBuilder.AppendLine("The following visits were modified:");
-			foreach (var visit in affectedVisits)
-			{
-				reportBuilder.AppendLine(visit);
-			}
-			var reportComponent = new MergeOutcomeReportComponent(reportBuilder.ToString());
-			LaunchAsDialog(this.Host.DesktopWindow, reportComponent, "Merge Outcome");
 		}
 	}
 }

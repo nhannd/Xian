@@ -38,20 +38,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 	[DataContract]
 	public class MergeDuplicateContactPointResponse : DataContractBase
 	{
-		[DataContract]
-		public class AffectedOrder
+		public MergeDuplicateContactPointResponse(ExternalPractitionerContactPointSummary mergedContactPoint)
 		{
-			[DataMember]
-			public string AccessionNumber;
-
-			[DataMember]
-			public EnumValueInfo Status;
-		}
-
-
-		public MergeDuplicateContactPointResponse(ExternalPractitionerContactPointSummary mergedContactPoint, List<AffectedOrder> affectedOrders)
-		{
-			AffectedOrders = affectedOrders;
 			MergedContactPoint = mergedContactPoint;
 		}
 
@@ -63,10 +51,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 		[DataMember]
 		public ExternalPractitionerContactPointSummary MergedContactPoint;
 
-		[DataMember]
-		public List<AffectedOrder> AffectedOrders;
-		
-		
 		[DataMember]
 		public long CostEstimate;
 

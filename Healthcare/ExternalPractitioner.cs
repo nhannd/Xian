@@ -29,10 +29,14 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Core.Modelling;
+using ClearCanvas.Workflow;
+using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Healthcare
 {
@@ -44,6 +48,83 @@ namespace ClearCanvas.Healthcare
 	[Validation(HighLevelRulesProviderMethod="GetValidationRules")]
 	public partial class ExternalPractitioner : ClearCanvas.Enterprise.Core.Entity
 	{
+		/// <summary>
+		/// Creates a new practitioner that is the result of merging the two specified practitioners.
+		/// </summary>
+		/// <param name="right"></param>
+		/// <param name="left"></param>
+		/// <param name="name"></param>
+		/// <param name="licenseNumber"></param>
+		/// <param name="billingNumber"></param>
+		/// <param name="extendedProperties"></param>
+		/// <param name="defaultContactPoint"></param>
+		/// <param name="deactivatedContactPoints"></param>
+		/// <param name="contactPointReplacements"></param>
+		/// <returns></returns>
+		public static ExternalPractitioner MergePractitioners(
+			ExternalPractitioner right,
+			ExternalPractitioner left,
+			PersonName name,
+			string licenseNumber,
+			string billingNumber,
+			IDictionary<string, string> extendedProperties,
+			ExternalPractitionerContactPoint defaultContactPoint,
+			ICollection<ExternalPractitionerContactPoint> deactivatedContactPoints,
+			IDictionary<ExternalPractitionerContactPoint, ExternalPractitionerContactPoint> contactPointReplacements)
+		{
+			// sanity check
+			if (right.Deactivated || left.Deactivated)
+				throw new WorkflowException("Cannot merge a practitioner that is de-activated.");
+			if (right.IsMerged || left.IsMerged)
+				throw new WorkflowException("Cannot merge a practitioner that has already been merged.");
+
+			// update properties on result record
+			var result = new ExternalPractitioner { Name = name, LicenseNumber = licenseNumber, BillingNumber = billingNumber };
+
+			ExtendedPropertyUtils.Update(result.ExtendedProperties, extendedProperties);
+
+			// construct the set of retained contact points
+			var retainedContactPoints = new HashedSet<ExternalPractitionerContactPoint>();
+			retainedContactPoints.AddAll(contactPointReplacements.Values);
+
+			// add any existing contact point that was not in the replacement list (because it is implicitly being retained)
+			foreach (var contactPoint in CollectionUtils.Concat(right.ContactPoints, left.ContactPoints))
+			{
+				if (!contactPointReplacements.ContainsKey(contactPoint))
+					retainedContactPoints.Add(contactPoint);
+			}
+
+			// for all retained contact points, create a copy attached to the result practitioner,
+			// and mark the original as having been merged into the copy
+			foreach (var original in retainedContactPoints)
+			{
+				var copy = original.CreateCopy(result);
+				result.ContactPoints.Add(copy);
+
+				copy.IsDefaultContactPoint = original.Equals(defaultContactPoint);
+				copy.Deactivated = original.Deactivated || deactivatedContactPoints.Contains(original);
+				original.SetMergedInto(copy);
+			}
+
+			// for all replaced contact points, mark the original as being merged into the 
+			// copy of the replacement
+			foreach (var kvp in contactPointReplacements)
+			{
+				kvp.Key.SetMergedInto(kvp.Value.MergedInto);
+			}
+
+			// mark both left and right as edited and merged
+			foreach (var practitioner in new[] { right, left })
+			{
+				practitioner.SetMergedInto(result);
+				practitioner.MarkEdited();
+			}
+
+			// mark the result as being edited
+			result.MarkEdited();
+			return result;
+		}
+
 		/// <summary>
 		/// Returns the default contact point, or null if no default contact point exists.
 		/// </summary>
@@ -82,6 +163,18 @@ namespace ClearCanvas.Healthcare
 			_isVerified = true;
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether this entity was merged.
+		/// </summary>
+		public virtual bool IsMerged
+		{
+			get { return _mergedInto != null; }
+		}
+
+		/// <summary>
+		/// Gets the ultimate merge destination by following the merge link chain to the end.
+		/// </summary>
+		/// <returns></returns>
 		public virtual ExternalPractitioner GetUltimateMergeDestination()
 		{
 			var dest = this;
@@ -89,6 +182,16 @@ namespace ClearCanvas.Healthcare
 				dest = dest.MergedInto;
 
 			return dest;
+		}
+
+		/// <summary>
+		/// Marks this practitioner as being merged into the specified other.
+		/// </summary>
+		/// <param name="other"></param>
+		protected internal virtual void SetMergedInto(ExternalPractitioner other)
+		{
+			_mergedInto = other;
+			_deactivated = true;
 		}
 
 		private static IValidationRuleSet GetValidationRules()

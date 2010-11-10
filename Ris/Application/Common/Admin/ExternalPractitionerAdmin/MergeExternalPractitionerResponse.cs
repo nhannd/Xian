@@ -30,7 +30,6 @@
 #endregion
 
 
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -39,31 +38,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 	[DataContract]
 	public class MergeExternalPractitionerResponse : DataContractBase
 	{
-		[DataContract]
-		public class AffectedOrder
-		{
-			[DataMember]
-			public string AccessionNumber;
 
-			[DataMember]
-			public EnumValueInfo Status;
-		}
-
-		[DataContract]
-		public class AffectedVisit
-		{
-			[DataMember]
-			public CompositeIdentifierDetail VisitNumber;
-
-			[DataMember]
-			public EnumValueInfo Status;
-		}
-
-		public MergeExternalPractitionerResponse(ExternalPractitionerSummary mergedPractitioner, List<AffectedOrder> affectedOrders, List<AffectedVisit> affectedVisits)
+		public MergeExternalPractitionerResponse(ExternalPractitionerSummary mergedPractitioner)
 		{
 			MergedPractitioner = mergedPractitioner;
-			AffectedOrders = affectedOrders;
-			AffectedVisits = affectedVisits;
 		}
 
 		public MergeExternalPractitionerResponse(long costEstimate)
@@ -73,12 +51,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 
 		[DataMember]
 		public ExternalPractitionerSummary MergedPractitioner;
-
-		[DataMember]
-		public List<AffectedOrder> AffectedOrders;
-
-		[DataMember]
-		public List<AffectedVisit> AffectedVisits;
 
 		[DataMember]
 		public long CostEstimate;

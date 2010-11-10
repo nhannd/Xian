@@ -30,11 +30,9 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare {
 
@@ -44,7 +42,73 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class ExternalPractitionerContactPoint : ClearCanvas.Enterprise.Core.Entity
 	{
+		private delegate TOutput Converter<TInput1, TInput2, TOutput>(TInput1 input1, TInput2 input2);
 
+		/// <summary>
+		/// Creates a new contact point that is the result of merging the two specified contact points.
+		/// </summary>
+		/// <param name="right"></param>
+		/// <param name="left"></param>
+		/// <param name="name"></param>
+		/// <param name="description"></param>
+		/// <param name="preferredCommunicationMode"></param>
+		/// <returns></returns>
+		public static ExternalPractitionerContactPoint MergeContactPoints(
+			ExternalPractitionerContactPoint right,
+			ExternalPractitionerContactPoint left,
+			string name,
+			string description,
+			ResultCommunicationMode preferredCommunicationMode
+			)
+		{
+			// sanity checks
+			if (!Equals(right.Practitioner, left.Practitioner))
+				throw new WorkflowException("Only contact points belonging to the same practitioner can be merged.");
+			if (right.Deactivated || left.Deactivated)
+				throw new WorkflowException("Cannot merge a contact point that is de-activated.");
+			if (right.IsMerged || left.IsMerged)
+				throw new WorkflowException("Cannot merge a contact point that has already been merged.");
+
+			var practitioner = right.Practitioner; // same practitioner for both
+
+			// create new contact point, using specified name and description
+			// the new contact point is default if either of the source contact points were the default
+			// start with empty value collections
+			var result = new ExternalPractitionerContactPoint(
+				practitioner,
+				name,
+				description,
+				preferredCommunicationMode,
+				right.IsDefaultContactPoint || left.IsDefaultContactPoint,
+				new List<TelephoneNumber>(), 
+				new List<Address>(), 
+				new List<EmailAddress>(), 
+				null);
+
+			practitioner.ContactPoints.Add(result);
+
+			// merge value collections from source contact points, and update source contact points appropriately
+			foreach (var contactPoint in new[] { right, left })
+			{
+				// merge all value collections into the result
+				MergeValueCollection(result.TelephoneNumbers, contactPoint.TelephoneNumbers, (x, y) => x.IsSameNumber(y));
+				MergeValueCollection(result.Addresses, contactPoint.Addresses, (x, y) => x.IsSameAddress(y));
+				MergeValueCollection(result.EmailAddresses, contactPoint.EmailAddresses, (x, y) => x.IsSameEmailAddress(y));
+
+				// mark as merged
+				contactPoint.SetMergedInto(result);
+			}
+
+			// mark the practitioner as being edited
+			practitioner.MarkEdited();
+
+			return result;
+		}
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="practitioner"></param>
         public ExternalPractitionerContactPoint(ExternalPractitioner practitioner)
         {
             _practitioner = practitioner;
@@ -91,6 +155,18 @@ namespace ClearCanvas.Healthcare {
 			}
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether this entity was merged.
+		/// </summary>
+		public virtual bool IsMerged
+		{
+			get { return _mergedInto != null; }
+		}
+
+		/// <summary>
+		/// Gets the ultimate merge destination by following the merge link chain to the end.
+		/// </summary>
+		/// <returns></returns>
 		public virtual ExternalPractitionerContactPoint GetUltimateMergeDestination()
 		{
 			var dest = this;
@@ -101,11 +177,65 @@ namespace ClearCanvas.Healthcare {
 		}
 
 		/// <summary>
+		/// Creates a copy of this contact point, assigning it to the specified owner.
+		/// </summary>
+		/// <param name="owner"></param>
+		/// <returns></returns>
+		public virtual ExternalPractitionerContactPoint CreateCopy(ExternalPractitioner owner)
+		{
+			var copy = new ExternalPractitionerContactPoint(
+				owner,
+				_name,
+				_description,
+				_preferredResultCommunicationMode,
+				_isDefaultContactPoint,
+				CollectionUtils.Map(_telephoneNumbers, (TelephoneNumber tn) => (TelephoneNumber)tn.Clone()),
+				CollectionUtils.Map(_addresses, (Address a) => (Address)a.Clone()),
+				CollectionUtils.Map(_emailAddresses, (EmailAddress e) => (EmailAddress)e.Clone()),
+				null) {Deactivated = _deactivated};
+
+			owner.ContactPoints.Add(copy);
+			return copy;
+		}
+
+		/// <summary>
+		/// Marks this contact point as being merged into the specified other.
+		/// </summary>
+		/// <param name="other"></param>
+		protected internal virtual void SetMergedInto(ExternalPractitionerContactPoint other)
+		{
+			_mergedInto = other;
+			_deactivated = true;
+			_isDefaultContactPoint = false;
+		}
+
+		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
 		/// object initialization.
 		/// </summary>
 		private void CustomInitialize()
 		{
 		}
+
+		/// <summary>
+		/// Copies items in the source collection into the dest collection, if the item does not already exist in the dest collection.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="dest"></param>
+		/// <param name="src"></param>
+		/// <param name="isSameFunction"></param>
+		private static void MergeValueCollection<T>(ICollection<T> dest, IEnumerable<T> src, Converter<T, T, bool> isSameFunction)
+			where T : ICloneable
+		{
+			foreach (var srcItem in src)
+			{
+				if (CollectionUtils.Contains(dest, destItem => isSameFunction(destItem, srcItem)))
+					continue;
+
+				var copy = (T)srcItem.Clone();
+				dest.Add(copy);
+			}
+		}
+
 	}
 }

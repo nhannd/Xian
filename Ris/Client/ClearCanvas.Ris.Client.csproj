@@ -69,12 +69,6 @@
     <Compile Include="AttachmentSummaryTableBase.cs" />
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="BannerSettings.cs" />
-    <Compile Include="ExternalPractitionerMergeSettings.cs" />
-    <Compile Include="ExternalPractitionerMergeSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>ExternalPractitionerMergeSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="ExternalPractitionerReplaceDisabledContactPointsComponent.cs" />
     <Compile Include="ExternalPractitionerReplaceDisabledContactPointsTableItem.cs" />
     <Compile Include="MergeOutcomeReportComponent.cs" />
@@ -435,10 +429,6 @@
     <None Include="CannedTextSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>CannedTextSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="ExternalPractitionerMergeSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>ExternalPractitionerMergeSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="FolderSystemSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

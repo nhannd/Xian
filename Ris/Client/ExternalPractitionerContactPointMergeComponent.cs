@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Desktop;
@@ -75,12 +74,6 @@ namespace ClearCanvas.Ris.Client
 				var cost = CalculateMergeCost(this.SelectedOriginalSummary, this.SelectedDuplicateSummary);
 
                 var msg = string.Format("Merge operation will affect {0} orders.", cost);
-
-				if (cost > ExternalPractitionerMergeSettings.Default.MergeCostUserWarningThreshold)
-				{
-					msg += "\n\nPerforming this operation during regular working hours may adversely affect the system performance for other users.";
-					msg += "\nIt is recommended that you do not proceed with the operation unless you are certain it will not impact other users.";
-				}
 				msg += "\n\nPress 'Cancel' to cancel the operation.\nPress 'OK' to continue. The merge operation cannot be undone.";
 				var action = this.Host.ShowMessageBox(msg, MessageBoxActions.OkCancel);
 				if (action == DialogBoxAction.Cancel)
@@ -89,11 +82,7 @@ namespace ClearCanvas.Ris.Client
 				}
 
 				// perform the merge
-				var affectedOrders = PerformMergeOperation(this.SelectedOriginalSummary, this.SelectedDuplicateSummary);
-				if(affectedOrders.Count > 0)
-				{
-					ShowReport(affectedOrders);
-				}
+				PerformMergeOperation(this.SelectedOriginalSummary, this.SelectedDuplicateSummary);
 
 				base.Accept();
 			}
@@ -110,13 +99,11 @@ namespace ClearCanvas.Ris.Client
 										original.ContactPointRef, duplicate.ContactPointRef) { EstimateCostOnly = true }).CostEstimate);
 		}
 
-		private IList<string> PerformMergeOperation(ExternalPractitionerContactPointDetail original, ExternalPractitionerContactPointDetail duplicate)
+		private static void PerformMergeOperation(ExternalPractitionerContactPointDetail original, ExternalPractitionerContactPointDetail duplicate)
 		{
-			var response = ShowProgress("Performing merge operation...",
-					  service => service.MergeDuplicateContactPoint(new MergeDuplicateContactPointRequest(
+			Platform.GetService<IExternalPractitionerAdminService>(
+				service => service.MergeDuplicateContactPoint(new MergeDuplicateContactPointRequest(
 										original.ContactPointRef, duplicate.ContactPointRef)));
-
-			return CollectionUtils.Map(response.AffectedOrders, (MergeDuplicateContactPointResponse.AffectedOrder o) => AccessionFormat.Format(o.AccessionNumber));
 		}
 
 		private T ShowProgress<T>(
@@ -145,19 +132,5 @@ namespace ClearCanvas.Ris.Client
 			ProgressDialog.Show(task, this.Host.DesktopWindow, true, ProgressBarStyle.Marquee);
 			return result;
 		}
-
-		private void ShowReport(IList<string> affectedOrders)
-		{
-			var reportBuilder = new StringBuilder();
-			reportBuilder.Append("Merge succeeded. ");
-			reportBuilder.AppendLine("The following orders have result recipients that were modified to use the replacement contact point.");
-			foreach (var order in affectedOrders)
-			{
-				reportBuilder.AppendLine(order);
-			}
-			var reportComponent = new MergeOutcomeReportComponent(reportBuilder.ToString());
-			LaunchAsDialog(this.Host.DesktopWindow, reportComponent, "Merge Outcome");
-		}
-
 	}
 }
