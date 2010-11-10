@@ -28,6 +28,10 @@ namespace ClearCanvas.Ris.Shreds.Merge
 
 		private readonly int _itemsPerTransaction;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="itemsPerTransaction"></param>
 		protected MergeHandlerBase(int itemsPerTransaction)
 		{
 			_itemsPerTransaction = itemsPerTransaction;
@@ -36,21 +40,32 @@ namespace ClearCanvas.Ris.Shreds.Merge
 
 		#region IMergeHandler members
 
-		public bool Supports(Entity entity)
+		/// <summary>
+		/// Gets a value indicating whether this handler supports merging of the specified target.
+		/// </summary>
+		/// <param name="target"></param>
+		/// <returns></returns>
+		public bool SupportsTarget(Entity target)
 		{
-			return entity.Is<TTarget>();
+			return target.Is<TTarget>();
 		}
 
-		public int Merge(Entity entity, int stage, IPersistenceContext context)
+		/// <summary>
+		/// Asks this handler to perform part of the merge operation, beginning at the specified stage.
+		/// </summary>
+		/// <param name="target"></param>
+		/// <param name="stage"></param>
+		/// <param name="context"></param>
+		/// <returns>The stage at which the merge operation should continue next.</returns>
+		public int Merge(Entity target, int stage, IPersistenceContext context)
 		{
-			var practitioner = (TTarget)entity;
 			var steps = this.MergeSteps;
 
 			if (stage < 0 || stage >= steps.Length)
 				throw new InvalidOperationException("Invalid stage.");
 
 			var step = steps[stage];
-			return step(practitioner, stage, context);
+			return step((TTarget)target, stage, context);
 		}
 
 		#endregion

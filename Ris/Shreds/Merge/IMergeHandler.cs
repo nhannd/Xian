@@ -13,9 +13,25 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Ris.Shreds.Merge
 {
+	/// <summary>
+	/// Defines an interface for handling an asynchronous merge operation in stages.
+	/// </summary>
 	public interface IMergeHandler
 	{
-		bool Supports(Entity entity);
-		int Merge(Entity entity, int stage, IPersistenceContext context);
+		/// <summary>
+		/// Gets a value indicating whether this handler supports merging of the specified target.
+		/// </summary>
+		/// <param name="target"></param>
+		/// <returns></returns>
+		bool SupportsTarget(Entity target);
+
+		/// <summary>
+		/// Asks this handler to perform part of the merge operation, beginning at the specified stage.
+		/// </summary>
+		/// <param name="target"></param>
+		/// <param name="stage"></param>
+		/// <param name="context"></param>
+		/// <returns>The stage at which the merge operation should continue next.</returns>
+		int Merge(Entity target, int stage, IPersistenceContext context);
 	}
 }

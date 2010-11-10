@@ -46,7 +46,7 @@ namespace ClearCanvas.Ris.Shreds.Merge
 			var target = PersistenceScope.CurrentContext.Load(MergeWorkQueueItem.GetTargetRef(item), EntityLoadFlags.Proxy);
 
 			var handler = CollectionUtils.SelectFirst<IMergeHandler>(
-				new MergeHandlerExtensionPoint().CreateExtensions(),h => h.Supports(target));
+				new MergeHandlerExtensionPoint().CreateExtensions(),h => h.SupportsTarget(target));
 
 			if(handler == null)
 				throw new NotSupportedException(
