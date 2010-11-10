@@ -47,12 +47,12 @@ namespace ClearCanvas.Ris.Shreds.Merge
 				return new MergeStep[]
 				{
 					(item, stage, context) => Migrate<Order, OrderSearchCriteria>(item, stage, GetOrderBatchByOrderingPractitioner, OrderMigrationPriority.CompletedRecently, MigrateOrder, context),
-					(item, stage, context) => Migrate<Order, OrderSearchCriteria>(item, stage, GetOrderBatchByOrderingPractitioner, OrderMigrationPriority.InProgress, MigrateOrder, context),
-					(item, stage, context) => Migrate<Order, OrderSearchCriteria>(item, stage, GetOrderBatchByOrderingPractitioner, OrderMigrationPriority.Scheduled, MigrateOrder, context),
-					(item, stage, context) => Migrate<Order, OrderSearchCriteria>(item, stage, GetOrderBatchByOrderingPractitioner, OrderMigrationPriority.All, MigrateOrder, context),
 					(item, stage, context) => Migrate<Order, OrderSearchCriteria>(item, stage, GetOrderBatchByResultRecipient, OrderMigrationPriority.CompletedRecently, MigrateOrder, context),
+					(item, stage, context) => Migrate<Order, OrderSearchCriteria>(item, stage, GetOrderBatchByOrderingPractitioner, OrderMigrationPriority.InProgress, MigrateOrder, context),
 					(item, stage, context) => Migrate<Order, OrderSearchCriteria>(item, stage, GetOrderBatchByResultRecipient, OrderMigrationPriority.InProgress, MigrateOrder, context),
+					(item, stage, context) => Migrate<Order, OrderSearchCriteria>(item, stage, GetOrderBatchByOrderingPractitioner, OrderMigrationPriority.Scheduled, MigrateOrder, context),
 					(item, stage, context) => Migrate<Order, OrderSearchCriteria>(item, stage, GetOrderBatchByResultRecipient, OrderMigrationPriority.Scheduled, MigrateOrder, context),
+					(item, stage, context) => Migrate<Order, OrderSearchCriteria>(item, stage, GetOrderBatchByOrderingPractitioner, OrderMigrationPriority.All, MigrateOrder, context),
 					(item, stage, context) => Migrate<Order, OrderSearchCriteria>(item, stage, GetOrderBatchByResultRecipient, OrderMigrationPriority.All, MigrateOrder, context),
 					(item, stage, context) => Migrate<Visit, VisitSearchCriteria>(item, stage, GetVisitBatch, VisitMigrationPriority.All, MigrateVisit, context),
 					(item, stage, context) => DeletePractitioner(item, stage, context)
