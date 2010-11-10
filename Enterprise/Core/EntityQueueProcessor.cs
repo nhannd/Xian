@@ -93,6 +93,20 @@ namespace ClearCanvas.Enterprise.Core
 		/// <param name="error"></param>
 		protected abstract void OnItemFailed(TItem item, Exception error);
 
+		/// <summary>
+		/// Called when the update context surrounding <see cref="ActOnItem"/> succeeds.
+		/// </summary>
+		/// <remarks>
+		/// This method is intended to cleanup any additional resources after the actions succeeded.
+		/// It is assumed that failure to cleanup the resources does not affect the workflow.
+		/// Any error and exceptions will be logged and ignored.
+		/// </remarks>
+		/// <param name="item"></param>
+		protected virtual void OnTransactionSucceeded(TItem item)
+		{
+			// Do nothing by default
+		}
+
 		#region Override Methods
 
 		protected override IList<TItem> GetNextBatch(int batchSize)
@@ -159,6 +173,18 @@ namespace ClearCanvas.Enterprise.Core
 
 					// complete the transaction
 					scope.Complete();
+				}
+			}
+			else
+			{
+				try
+				{
+					OnTransactionSucceeded(item);
+				}
+				catch (Exception e)
+				{
+					// Swallow exception on purpose.  We don't care if the resources failed to get cleanup.
+					ExceptionLogger.Log(this.GetType().FullName + ".ProcessItem", e);
 				}
 			}
 		}

@@ -92,6 +92,18 @@ namespace ClearCanvas.Workflow
 		}
 
 		/// <summary>
+		/// Called when <see cref="QueueProcessor{TItem}.ProcessItem"/> succeeds and transaction is completed successfully.
+		/// </summary>
+		/// <remarks>
+		/// Subclasses should override this method if there are additional resources that need to be cleaned up.
+		/// </remarks>
+		/// <param name="item"></param>
+		protected override void OnTransactionSucceeded(WorkQueueItem item)
+		{
+			// do nothing by default
+		}
+
+		/// <summary>
 		/// Gets the type of work queue item that this processor operates on.
 		/// </summary>
 		protected abstract string WorkQueueItemType { get; }
