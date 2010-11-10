@@ -14,8 +14,9 @@
 #pragma warning disable 1591,0419,1574,1587
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
-using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.Mathematics.Tests
@@ -194,59 +195,7 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 		}
 
 		[Test]
-		public void TestLegacyLineSegmentIntersection()
-		{
-			var p0 = new PointF(0, 0);
-			var p1 = new PointF(3, 0);
-			var p2 = new PointF(2, 1);
-			var p3 = new PointF(1.5f, 0);
-			var p4 = new PointF(1, -1);
-			var p5 = new PointF(4, 0);
-			var p6 = new PointF(2.5f, 2);
-			var p7 = new PointF(5, 1);
-
-			// exercise dual degenerate intersection computations
-			AssertLineSegmentIntersection(Vector.LineSegments.Colinear, null, p0, p0, p0, p0, "P0P0 and P0P0 (point and point)");
-			AssertLineSegmentIntersection(Vector.LineSegments.Colinear, null, p1, p1, p1, p1, "P1P1 and P1P1 (point and point)");
-			AssertLineSegmentIntersection(Vector.LineSegments.Colinear, null, p0, p0, p1, p1, "P0P0 and P1P1 (point and point)");
-			AssertLineSegmentIntersection(Vector.LineSegments.Colinear, null, p1, p1, p0, p0, "P1P1 and P0P0 (point and point)");
-
-			// exercise single degenerate intersection computations
-			AssertLineSegmentIntersection(Vector.LineSegments.DoNotIntersect, null, p2, p2, p0, p1, "P2P2 and P0P1 (point and line segment)");
-			AssertLineSegmentIntersection(Vector.LineSegments.DoNotIntersect, null, p2, p2, p1, p0, "P2P2 and P1P0 (point and line segment)");
-			AssertLineSegmentIntersection(Vector.LineSegments.Colinear, null, p3, p3, p0, p1, "P3P3 and P0P1 (point and line segment)");
-			AssertLineSegmentIntersection(Vector.LineSegments.Colinear, null, p3, p3, p1, p0, "P3P3 and P1P0 (point and line segment)");
-			AssertLineSegmentIntersection(Vector.LineSegments.Colinear, null, p5, p5, p0, p1, "P5P5 and P0P1 (point and line segment)");
-			AssertLineSegmentIntersection(Vector.LineSegments.Colinear, null, p5, p5, p1, p0, "P5P5 and P1P0 (point and line segment)");
-
-			// exercise two non-colinear line segments
-			AssertLineSegmentIntersection(Vector.LineSegments.Intersect, p3, p2, p4, p0, p1, "P2P4 and P0P1 (distinct line segments)");
-			AssertLineSegmentIntersection(Vector.LineSegments.Intersect, p3, p4, p2, p0, p1, "P4P2 and P0P1 (distinct line segments)");
-			AssertLineSegmentIntersection(Vector.LineSegments.DoNotIntersect, null, p2, p6, p0, p1, "P2P6 and P0P1 (distinct line segments)");
-			AssertLineSegmentIntersection(Vector.LineSegments.DoNotIntersect, null, p6, p2, p0, p1, "P6P2 and P0P1 (distinct line segments)");
-			AssertLineSegmentIntersection(Vector.LineSegments.DoNotIntersect, null, p2, p7, p0, p1, "P2P7 and P0P1 (distinct line segments)");
-			AssertLineSegmentIntersection(Vector.LineSegments.DoNotIntersect, null, p7, p2, p0, p1, "P7P2 and P0P1 (distinct line segments)");
-			AssertLineSegmentIntersection(Vector.LineSegments.DoNotIntersect, null, p6, p7, p0, p1, "P6P7 and P0P1 (distinct line segments)");
-			AssertLineSegmentIntersection(Vector.LineSegments.DoNotIntersect, null, p7, p6, p0, p1, "P7P6 and P0P1 (distinct line segments)");
-
-			// exercise two colinear line segments
-			AssertLineSegmentIntersection(Vector.LineSegments.Colinear, null, p0, p1, p3, p5, "P0P1 and P3P5 (partially overlapping line segments)");
-			AssertLineSegmentIntersection(Vector.LineSegments.Colinear, null, p0, p1, p5, p3, "P0P1 and P5P3 (partially overlapping line segments)");
-			AssertLineSegmentIntersection(Vector.LineSegments.Colinear, null, p1, p0, p3, p5, "P1P0 and P3P5 (partially overlapping line segments)");
-			AssertLineSegmentIntersection(Vector.LineSegments.Colinear, null, p1, p0, p5, p3, "P1P0 and P5P3 (partially overlapping line segments)");
-			AssertLineSegmentIntersection(Vector.LineSegments.Colinear, null, p0, p5, p3, p1, "P0P5 and P3P1 (overlapping line segments)");
-			AssertLineSegmentIntersection(Vector.LineSegments.Colinear, null, p0, p5, p1, p3, "P0P5 and P1P3 (overlapping line segments)");
-			AssertLineSegmentIntersection(Vector.LineSegments.Colinear, null, p3, p1, p5, p0, "P3P1 and P5P0 (overlapping line segments)");
-			AssertLineSegmentIntersection(Vector.LineSegments.Colinear, null, p1, p3, p5, p0, "P1P3 and P5P0 (overlapping line segments)");
-			AssertLineSegmentIntersection(Vector.LineSegments.Colinear, null, p0, p3, p1, p5, "P0P3 and P1P5 (distinct line segments)");
-			AssertLineSegmentIntersection(Vector.LineSegments.Colinear, null, p3, p0, p5, p1, "P3P0 and P5P1 (distinct line segments)");
-			AssertLineSegmentIntersection(Vector.LineSegments.Colinear, null, p2, p4, p2, p6, "P2P4 and P2P6 (common vertex line segments)");
-			AssertLineSegmentIntersection(Vector.LineSegments.Colinear, null, p2, p4, p6, p2, "P2P4 and P6P2 (common vertex line segments)");
-			AssertLineSegmentIntersection(Vector.LineSegments.Colinear, null, p4, p2, p2, p6, "P4P2 and P2P6 (common vertex line segments)");
-			AssertLineSegmentIntersection(Vector.LineSegments.Colinear, null, p4, p2, p6, p2, "P4P2 and P6P2 (common vertex line segments)");
-		}
-
-		[Test]
+		[Obsolete("Function under test is deprecated.")]
 		public void TestLineSegmentIntersection()
 		{
 			var p0 = new PointF(0, 0);
@@ -259,95 +208,180 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 			var p7 = new PointF(5, 1);
 
 			// exercise dual degenerate intersection computations
-			AssertLineSegmentIntersection(null, p0, p0, p0, p0, "P0P0 and P0P0 (point and point)");
-			AssertLineSegmentIntersection(null, p1, p1, p1, p1, "P1P1 and P1P1 (point and point)");
-			AssertLineSegmentIntersection(null, p0, p0, p1, p1, "P0P0 and P1P1 (point and point)");
-			AssertLineSegmentIntersection(null, p1, p1, p0, p0, "P1P1 and P0P0 (point and point)");
+			AssertLineSegmentIntersection(p0, p0, p0, p0, "P0P0 and P0P0 (point and point)");
+			AssertLineSegmentIntersection(p1, p1, p1, p1, "P1P1 and P1P1 (point and point)");
+			AssertLineSegmentIntersection(p0, p0, p1, p1, "P0P0 and P1P1 (point and point)");
+			AssertLineSegmentIntersection(p1, p1, p0, p0, "P1P1 and P0P0 (point and point)");
 
 			// exercise single degenerate intersection computations
-			AssertLineSegmentIntersection(null, p2, p2, p0, p1, "P2P2 and P0P1 (point and line segment)");
-			AssertLineSegmentIntersection(null, p2, p2, p1, p0, "P2P2 and P1P0 (point and line segment)");
-			AssertLineSegmentIntersection(null, p3, p3, p0, p1, "P3P3 and P0P1 (point and line segment)");
-			AssertLineSegmentIntersection(null, p3, p3, p1, p0, "P3P3 and P1P0 (point and line segment)");
-			AssertLineSegmentIntersection(null, p5, p5, p0, p1, "P5P5 and P0P1 (point and line segment)");
-			AssertLineSegmentIntersection(null, p5, p5, p1, p0, "P5P5 and P1P0 (point and line segment)");
+			AssertLineSegmentIntersection(p2, p2, p0, p1, "P2P2 and P0P1 (point and line segment)");
+			AssertLineSegmentIntersection(p2, p2, p1, p0, "P2P2 and P1P0 (point and line segment)");
+			AssertLineSegmentIntersection(p3, p3, p0, p1, "P3P3 and P0P1 (point and line segment)");
+			AssertLineSegmentIntersection(p3, p3, p1, p0, "P3P3 and P1P0 (point and line segment)");
+			AssertLineSegmentIntersection(p5, p5, p0, p1, "P5P5 and P0P1 (point and line segment)");
+			AssertLineSegmentIntersection(p5, p5, p1, p0, "P5P5 and P1P0 (point and line segment)");
 
 			// exercise two non-colinear line segments
-			AssertLineSegmentIntersection(p3, p2, p4, p0, p1, "P2P4 and P0P1 (distinct line segments)");
-			AssertLineSegmentIntersection(p3, p4, p2, p0, p1, "P4P2 and P0P1 (distinct line segments)");
-			AssertLineSegmentIntersection(null, p2, p6, p0, p1, "P2P6 and P0P1 (distinct line segments)");
-			AssertLineSegmentIntersection(null, p6, p2, p0, p1, "P6P2 and P0P1 (distinct line segments)");
-			AssertLineSegmentIntersection(null, p2, p7, p0, p1, "P2P7 and P0P1 (distinct line segments)");
-			AssertLineSegmentIntersection(null, p7, p2, p0, p1, "P7P2 and P0P1 (distinct line segments)");
-			AssertLineSegmentIntersection(null, p6, p7, p0, p1, "P6P7 and P0P1 (distinct line segments)");
-			AssertLineSegmentIntersection(null, p7, p6, p0, p1, "P7P6 and P0P1 (distinct line segments)");
+			AssertLineSegmentIntersection(p2, p4, p0, p1, "P2P4 and P0P1 (distinct line segments)");
+			AssertLineSegmentIntersection(p4, p2, p0, p1, "P4P2 and P0P1 (distinct line segments)");
+			AssertLineSegmentIntersection(p2, p6, p0, p1, "P2P6 and P0P1 (distinct line segments)");
+			AssertLineSegmentIntersection(p6, p2, p0, p1, "P6P2 and P0P1 (distinct line segments)");
+			AssertLineSegmentIntersection(p2, p7, p0, p1, "P2P7 and P0P1 (distinct line segments)");
+			AssertLineSegmentIntersection(p7, p2, p0, p1, "P7P2 and P0P1 (distinct line segments)");
+			AssertLineSegmentIntersection(p6, p7, p0, p1, "P6P7 and P0P1 (distinct line segments)");
+			AssertLineSegmentIntersection(p7, p6, p0, p1, "P7P6 and P0P1 (distinct line segments)");
 
 			// exercise two colinear line segments
-			AssertLineSegmentIntersection(null, p0, p1, p3, p5, "P0P1 and P3P5 (partially overlapping line segments)");
-			AssertLineSegmentIntersection(null, p0, p1, p5, p3, "P0P1 and P5P3 (partially overlapping line segments)");
-			AssertLineSegmentIntersection(null, p1, p0, p3, p5, "P1P0 and P3P5 (partially overlapping line segments)");
-			AssertLineSegmentIntersection(null, p1, p0, p5, p3, "P1P0 and P5P3 (partially overlapping line segments)");
-			AssertLineSegmentIntersection(null, p0, p5, p3, p1, "P0P5 and P3P1 (overlapping line segments)");
-			AssertLineSegmentIntersection(null, p0, p5, p1, p3, "P0P5 and P1P3 (overlapping line segments)");
-			AssertLineSegmentIntersection(null, p3, p1, p5, p0, "P3P1 and P5P0 (overlapping line segments)");
-			AssertLineSegmentIntersection(null, p1, p3, p5, p0, "P1P3 and P5P0 (overlapping line segments)");
-			AssertLineSegmentIntersection(null, p0, p3, p1, p5, "P0P3 and P1P5 (distinct line segments)");
-			AssertLineSegmentIntersection(null, p3, p0, p5, p1, "P3P0 and P5P1 (distinct line segments)");
-			AssertLineSegmentIntersection(null, p2, p4, p2, p6, "P2P4 and P2P6 (common vertex line segments)");
-			AssertLineSegmentIntersection(null, p2, p4, p6, p2, "P2P4 and P6P2 (common vertex line segments)");
-			AssertLineSegmentIntersection(null, p4, p2, p2, p6, "P4P2 and P2P6 (common vertex line segments)");
-			AssertLineSegmentIntersection(null, p4, p2, p6, p2, "P4P2 and P6P2 (common vertex line segments)");
+			AssertLineSegmentIntersection(p0, p1, p3, p5, "P0P1 and P3P5 (partially overlapping line segments)");
+			AssertLineSegmentIntersection(p0, p1, p5, p3, "P0P1 and P5P3 (partially overlapping line segments)");
+			AssertLineSegmentIntersection(p1, p0, p3, p5, "P1P0 and P3P5 (partially overlapping line segments)");
+			AssertLineSegmentIntersection(p1, p0, p5, p3, "P1P0 and P5P3 (partially overlapping line segments)");
+			AssertLineSegmentIntersection(p0, p5, p3, p1, "P0P5 and P3P1 (overlapping line segments)");
+			AssertLineSegmentIntersection(p0, p5, p1, p3, "P0P5 and P1P3 (overlapping line segments)");
+			AssertLineSegmentIntersection(p3, p1, p5, p0, "P3P1 and P5P0 (overlapping line segments)");
+			AssertLineSegmentIntersection(p1, p3, p5, p0, "P1P3 and P5P0 (overlapping line segments)");
+			AssertLineSegmentIntersection(p0, p3, p1, p5, "P0P3 and P1P5 (distinct line segments)");
+			AssertLineSegmentIntersection(p3, p0, p5, p1, "P3P0 and P5P1 (distinct line segments)");
+			AssertLineSegmentIntersection(p2, p4, p2, p6, "P2P4 and P2P6 (concurrent line segments)");
+			AssertLineSegmentIntersection(p2, p4, p6, p2, "P2P4 and P6P2 (concurrent line segments)");
+			AssertLineSegmentIntersection(p4, p2, p2, p6, "P4P2 and P2P6 (concurrent line segments)");
+			AssertLineSegmentIntersection(p4, p2, p6, p2, "P4P2 and P6P2 (concurrent line segments)");
 		}
 
-		private static void AssertLineSegmentIntersectionP(Vector.LineSegments expectedResult, PointF? expectedIntersection, PointF p1, PointF p2, PointF q1, PointF q2, string message, params object[] args)
+		[Obsolete("Function under test is deprecated.")]
+		private static void AssertLineSegmentIntersection(PointF p1, PointF p2, PointF q1, PointF q2, string message, params object[] args)
 		{
-			AssertLineSegmentIntersection(expectedResult, expectedIntersection, p1, p2, q1, q2, string.Format(message, args) + " [Permutation {0}]", "p1p2,q1q2");
-			AssertLineSegmentIntersection(expectedResult, expectedIntersection, p2, p1, q1, q2, string.Format(message, args) + " [Permutation {0}]", "p2p1,q1q2");
-			AssertLineSegmentIntersection(expectedResult, expectedIntersection, p1, p2, q2, q1, string.Format(message, args) + " [Permutation {0}]", "p1p2,q2q1");
-			AssertLineSegmentIntersection(expectedResult, expectedIntersection, p2, p1, q2, q1, string.Format(message, args) + " [Permutation {0}]", "p2p1,q2q1");
-			AssertLineSegmentIntersection(expectedResult, expectedIntersection, q1, q2, p1, p2, string.Format(message, args) + " [Permutation {0}]", "q1q2,p1p2");
-			AssertLineSegmentIntersection(expectedResult, expectedIntersection, q2, q1, p1, p2, string.Format(message, args) + " [Permutation {0}]", "q2q1,p1p2");
-			AssertLineSegmentIntersection(expectedResult, expectedIntersection, q1, q2, p2, p1, string.Format(message, args) + " [Permutation {0}]", "q1q2,p2p1");
-			AssertLineSegmentIntersection(expectedResult, expectedIntersection, q2, q1, p2, p1, string.Format(message, args) + " [Permutation {0}]", "q2q1,p2p1");
-		}
-
-		private static void AssertLineSegmentIntersection(Vector.LineSegments expectedResult, PointF? expectedIntersection, PointF p1, PointF p2, PointF q1, PointF q2, string message, params object[] args)
-		{
-			// these checks protect against errors in the test case
-			Platform.CheckFalse(expectedResult != Vector.LineSegments.Intersect && expectedIntersection.HasValue, "Expected intersection point must be null if not expecting an intersection.");
-			Platform.CheckFalse(expectedResult == Vector.LineSegments.Intersect && !expectedIntersection.HasValue, "Expected intersection point must be provided if expecting an intersection.");
+			// the legacy function had an error of up to +/- (0.5,0.5)
+			PointF expectedIntersection;
+			var expectedResult = LegacyLineSegmentIntersection(p1, p2, q1, q2, out expectedIntersection);
 
 			PointF actualIntersection;
 			var actualResult = Vector.LineSegmentIntersection(p1, p2, q1, q2, out actualIntersection);
-			Assert.AreEqual(expectedResult, actualResult, message, args);
 
-			if (actualResult == Vector.LineSegments.Intersect)
+			Assert.AreEqual(expectedResult, actualResult, message, args);
+			Assert.Less(Math.Abs(expectedIntersection.X - actualIntersection.X), 0.5000001, message, args);
+			Assert.Less(Math.Abs(expectedIntersection.Y - actualIntersection.Y), 0.5000001, message, args);
+		}
+
+		[Test]
+		[Obsolete("Function under test is deprecated.")]
+		public void TestLineSegmentIntersectionBrutal()
+		{
+			var values = new[] {-100300.43245325f, -1, -float.Epsilon, 0, float.Epsilon, 1, 90952.343542f};
+			var mod = values.Length;
+			var permutations = (int) Math.Pow(mod, 8);
+			for (int n = 0; n < permutations; n++)
 			{
-				Console.WriteLine(" Expected: {0}", expectedIntersection.Value);
-				Console.WriteLine("   Actual: {0}", actualIntersection);
-				Assert.IsTrue(Math.Abs(expectedIntersection.Value.X - actualIntersection.X) <= 0.5001f, message, args);
-				Assert.IsTrue(Math.Abs(expectedIntersection.Value.Y - actualIntersection.Y) <= 0.5001f, message, args);
-				//Assert.AreEqual(expectedIntersection, actualIntersection, message, args);
-			}
-			else
-			{
-				Assert.AreEqual(actualIntersection, PointF.Empty, message, args);
+				var p1 = new PointF(values[(n)%mod], values[(n/mod/mod/mod/mod/mod/mod/mod)%mod]);
+				var p2 = new PointF(values[(n/mod/mod)%mod], values[(n/mod/mod/mod/mod/mod)%mod]);
+				var q1 = new PointF(values[(n/mod/mod/mod/mod)%mod], values[(n/mod/mod/mod)%mod]);
+				var q2 = new PointF(values[(n/mod/mod/mod/mod/mod/mod)%mod], values[(n/mod)%mod]);
+
+				PointF expectedIntersection;
+				var expectedResult = LegacyLineSegmentIntersection(p1, p2, q1, q2, out expectedIntersection);
+
+				PointF actualIntersection;
+				var actualResult = Vector.LineSegmentIntersection(p1, p2, q1, q2, out actualIntersection);
+
+				var messagePrefix = string.Format("{0}{1} :: {2}{3}", p1, p2, q1, q2);
+
+				if (expectedResult == actualResult)
+				{
+					Assert.Less(Math.Abs(expectedIntersection.X - actualIntersection.X), 1, messagePrefix + string.Format(" (delta X) {0}, {1}", expectedIntersection, actualIntersection));
+					Assert.Less(Math.Abs(expectedIntersection.Y - actualIntersection.Y), 1, messagePrefix + string.Format(" (delta X) {0}, {1}", expectedIntersection, actualIntersection));
+				}
+				else
+				{
+					Trace.WriteLine(messagePrefix + string.Format(" Expecting {0} but got {1}", expectedResult, actualResult));
+					if (expectedResult == Vector.LineSegments.Intersect)
+					{
+						PointF lineIntersection;
+						if (Vector.IntersectLines(p1, p2, q1, q2, out lineIntersection))
+						{
+							var error = Vector.Distance(expectedIntersection, lineIntersection);
+							Trace.WriteLine(string.Format("Floating point error: magnitude of {0}", error));
+							Assert.Less(error, 1, " Legacy function found intersection at {0}, whereas function would have found intersection at {1}", expectedIntersection, lineIntersection);
+						}
+						else
+						{
+							Assert.Fail(messagePrefix + string.Format(" Legacy function found intersection at {0}", expectedIntersection));
+						}
+					}
+					else if (actualResult == Vector.LineSegments.Intersect)
+					{
+						Trace.WriteLine(messagePrefix + string.Format(" Legacy function did not find intersection at {0}", actualIntersection));
+					}
+					else
+					{
+						// the functions disagree on whether two non-intersecting lines are or are not colinear
+						// we shall allow these to pass, since we already know that the legacy function does not
+						// handle degenerate inputs particularly well or consistently
+					}
+				}
 			}
 		}
 
-		private static void AssertLineSegmentIntersection(PointF? expectedIntersection, PointF p1, PointF p2, PointF q1, PointF q2, string message, params object[] args)
+		[Test]
+		public void TestIntersectLineSegments()
+		{
+			var p0 = new PointF(0, 0);
+			var p1 = new PointF(3, 0);
+			var p2 = new PointF(2, 1);
+			var p3 = new PointF(1.5f, 0);
+			var p4 = new PointF(1, -1);
+			var p5 = new PointF(4, 0);
+			var p6 = new PointF(2.5f, 2);
+			var p7 = new PointF(5, 1);
+
+			// exercise dual degenerate intersection computations
+			AssertIntersectLineSegments(null, p0, p0, p0, p0, "P0P0 and P0P0 (point and point)");
+			AssertIntersectLineSegments(null, p1, p1, p1, p1, "P1P1 and P1P1 (point and point)");
+			AssertIntersectLineSegments(null, p0, p0, p1, p1, "P0P0 and P1P1 (point and point)");
+			AssertIntersectLineSegments(null, p1, p1, p0, p0, "P1P1 and P0P0 (point and point)");
+
+			// exercise single degenerate intersection computations
+			AssertIntersectLineSegments(null, p2, p2, p0, p1, "P2P2 and P0P1 (point and line segment)");
+			AssertIntersectLineSegments(null, p2, p2, p1, p0, "P2P2 and P1P0 (point and line segment)");
+			AssertIntersectLineSegments(null, p3, p3, p0, p1, "P3P3 and P0P1 (point and line segment)");
+			AssertIntersectLineSegments(null, p3, p3, p1, p0, "P3P3 and P1P0 (point and line segment)");
+			AssertIntersectLineSegments(null, p5, p5, p0, p1, "P5P5 and P0P1 (point and line segment)");
+			AssertIntersectLineSegments(null, p5, p5, p1, p0, "P5P5 and P1P0 (point and line segment)");
+
+			// exercise two non-colinear line segments
+			AssertIntersectLineSegments(p3, p2, p4, p0, p1, "P2P4 and P0P1 (distinct line segments)");
+			AssertIntersectLineSegments(p3, p4, p2, p0, p1, "P4P2 and P0P1 (distinct line segments)");
+			AssertIntersectLineSegments(null, p2, p6, p0, p1, "P2P6 and P0P1 (distinct line segments)");
+			AssertIntersectLineSegments(null, p6, p2, p0, p1, "P6P2 and P0P1 (distinct line segments)");
+			AssertIntersectLineSegments(null, p2, p7, p0, p1, "P2P7 and P0P1 (distinct line segments)");
+			AssertIntersectLineSegments(null, p7, p2, p0, p1, "P7P2 and P0P1 (distinct line segments)");
+			AssertIntersectLineSegments(null, p6, p7, p0, p1, "P6P7 and P0P1 (distinct line segments)");
+			AssertIntersectLineSegments(null, p7, p6, p0, p1, "P7P6 and P0P1 (distinct line segments)");
+
+			// exercise two colinear line segments
+			AssertIntersectLineSegments(null, p0, p1, p3, p5, "P0P1 and P3P5 (partially overlapping line segments)");
+			AssertIntersectLineSegments(null, p0, p1, p5, p3, "P0P1 and P5P3 (partially overlapping line segments)");
+			AssertIntersectLineSegments(null, p1, p0, p3, p5, "P1P0 and P3P5 (partially overlapping line segments)");
+			AssertIntersectLineSegments(null, p1, p0, p5, p3, "P1P0 and P5P3 (partially overlapping line segments)");
+			AssertIntersectLineSegments(null, p0, p5, p3, p1, "P0P5 and P3P1 (overlapping line segments)");
+			AssertIntersectLineSegments(null, p0, p5, p1, p3, "P0P5 and P1P3 (overlapping line segments)");
+			AssertIntersectLineSegments(null, p3, p1, p5, p0, "P3P1 and P5P0 (overlapping line segments)");
+			AssertIntersectLineSegments(null, p1, p3, p5, p0, "P1P3 and P5P0 (overlapping line segments)");
+			AssertIntersectLineSegments(null, p0, p3, p1, p5, "P0P3 and P1P5 (distinct line segments)");
+			AssertIntersectLineSegments(null, p3, p0, p5, p1, "P3P0 and P5P1 (distinct line segments)");
+			AssertIntersectLineSegments(null, p2, p4, p2, p6, "P2P4 and P2P6 (concurrent line segments)");
+			AssertIntersectLineSegments(null, p2, p4, p6, p2, "P2P4 and P6P2 (concurrent line segments)");
+			AssertIntersectLineSegments(null, p4, p2, p2, p6, "P4P2 and P2P6 (concurrent line segments)");
+			AssertIntersectLineSegments(null, p4, p2, p6, p2, "P4P2 and P6P2 (concurrent line segments)");
+		}
+
+		private static void AssertIntersectLineSegments(PointF? expectedIntersection, PointF p1, PointF p2, PointF q1, PointF q2, string message, params object[] args)
 		{
 			PointF actualIntersection;
-			var result = Vector.ComputeLineSegmentIntersection(p1, p2, q1, q2, out actualIntersection);
+			var result = Vector.IntersectLineSegments(p1, p2, q1, q2, out actualIntersection);
 			if (expectedIntersection.HasValue)
 			{
 				Assert.IsTrue(result, message, args);
-				//Assert.AreEqual(expectedIntersection.Value, actualIntersection, message, args);
-
-				Console.WriteLine(" Expected: {0}", expectedIntersection.Value);
-				Console.WriteLine("   Actual: {0}", actualIntersection);
-				Assert.IsTrue(Math.Abs(expectedIntersection.Value.X - actualIntersection.X) <= 0.5001f, message, args);
-				Assert.IsTrue(Math.Abs(expectedIntersection.Value.Y - actualIntersection.Y) <= 0.5001f, message, args);
+				Assert.AreEqual(expectedIntersection.Value, actualIntersection, message, args);
 			}
 			else
 			{
@@ -403,11 +437,147 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 			Assert.AreEqual(true, Vector.AreColinear(p1, p3, p5, p0), "P1P3 and P5P0 (overlapping lines)");
 			Assert.AreEqual(true, Vector.AreColinear(p0, p3, p1, p5), "P0P3 and P1P5 (distinct lines)");
 			Assert.AreEqual(true, Vector.AreColinear(p3, p0, p5, p1), "P3P0 and P5P1 (distinct lines)");
-			Assert.AreEqual(true, Vector.AreColinear(p2, p4, p2, p6), "P2P4 and P2P6 (common vertex lines)");
-			Assert.AreEqual(true, Vector.AreColinear(p2, p4, p6, p2), "P2P4 and P6P2 (common vertex lines)");
-			Assert.AreEqual(true, Vector.AreColinear(p4, p2, p2, p6), "P4P2 and P2P6 (common vertex lines)");
-			Assert.AreEqual(true, Vector.AreColinear(p4, p2, p6, p2), "P4P2 and P6P2 (common vertex lines)");
+			Assert.AreEqual(true, Vector.AreColinear(p2, p4, p2, p6), "P2P4 and P2P6 (concurrent lines)");
+			Assert.AreEqual(true, Vector.AreColinear(p2, p4, p6, p2), "P2P4 and P6P2 (concurrent lines)");
+			Assert.AreEqual(true, Vector.AreColinear(p4, p2, p2, p6), "P4P2 and P2P6 (concurrent lines)");
+			Assert.AreEqual(true, Vector.AreColinear(p4, p2, p6, p2), "P4P2 and P6P2 (concurrent lines)");
 		}
+
+		[Test]
+		public void ComparePerformance()
+		{
+			PointF dummy;
+			Trace.WriteLine(string.Format(" Legacy      : {0:f8} [\u00B5s]", ExecutePerformanceTest((p, q, r, s) => LegacyLineSegmentIntersection(p, q, r, s, out dummy))));
+			Trace.WriteLine(string.Format(" Intersect   : {0:f8} [\u00B5s]", ExecutePerformanceTest((p, q, r, s) => Vector.IntersectLineSegments(p, q, r, s, out dummy))));
+			Trace.WriteLine(string.Format(" AreColinear : {0:f8} [\u00B5s]", ExecutePerformanceTest((p, q, r, s) => Vector.AreColinear(p, q, r, s))));
+		}
+
+		#region Performance Testing Helpers
+
+		private delegate void PerformanceTestCallback(PointF p1, PointF p2, PointF p3, PointF p4);
+
+		private static float ExecutePerformanceTest(PerformanceTestCallback callback)
+		{
+			var values = new[] {-100300.43245325f, -1, -float.Epsilon, 0, float.Epsilon, 1, 90952.343542f};
+			var mod = values.Length;
+			var permutations = (int) Math.Pow(mod, 8);
+
+			var cc = new CodeClock();
+			cc.Start();
+			for (int n = 0; n < permutations; n++)
+			{
+				callback.Invoke(
+					new PointF(values[(n)%mod], values[(n/mod/mod/mod/mod/mod/mod/mod)%mod]),
+					new PointF(values[(n/mod/mod)%mod], values[(n/mod/mod/mod/mod/mod)%mod]),
+					new PointF(values[(n/mod/mod/mod/mod)%mod], values[(n/mod/mod/mod)%mod]),
+					new PointF(values[(n/mod/mod/mod/mod/mod/mod)%mod], values[(n/mod)%mod])
+					);
+			}
+			cc.Stop();
+			return cc.Seconds*1000000/permutations;
+		}
+
+		#endregion
+
+		#region Reference Implementations
+
+		/// <summary>
+		/// Legacy implementation of computing line segment intersection and colinearity for baseline reference.
+		/// </summary>
+		private static Vector.LineSegments LegacyLineSegmentIntersection(PointF p1, PointF p2, PointF q1, PointF q2, out PointF intersectionPoint)
+		{
+			float x1 = p1.X;
+			float y1 = p1.Y;
+			float x2 = p2.X;
+			float y2 = p2.Y;
+			float x3 = q1.X;
+			float y3 = q1.Y;
+			float x4 = q2.X;
+			float y4 = q2.Y;
+
+			float a1, a2, b1, b2, c1, c2; /* Coefficients of line eqns. */
+			float r1, r2, r3, r4; /* 'Sign' values */
+			float denom, offset, num; /* Intermediate values */
+
+			/* Compute a1, b1, c1, where line joining points 1 and 2
+			 * is "a1 x  +  b1 y  +  c1  =  0".
+			 */
+
+			a1 = y2 - y1;
+			b1 = x1 - x2;
+			c1 = x2*y1 - x1*y2;
+
+			/* Compute r3 and r4.
+			 */
+
+			r3 = a1*x3 + b1*y3 + c1;
+			r4 = a1*x4 + b1*y4 + c1;
+
+			/* Check signs of r3 and r4.  If both point 3 and point 4 lie on
+			 * same side of line 1, the line segments do not intersect.
+			 */
+
+			if (r3 != 0 &&
+			    r4 != 0 &&
+			    Math.Sign(r3) == Math.Sign(r4))
+			{
+				intersectionPoint = new PointF(0, 0);
+				return Vector.LineSegments.DoNotIntersect;
+			}
+
+			/* Compute a2, b2, c2 */
+
+			a2 = y4 - y3;
+			b2 = x3 - x4;
+			c2 = x4*y3 - x3*y4;
+
+			/* Compute r1 and r2 */
+
+			r1 = a2*x1 + b2*y1 + c2;
+			r2 = a2*x2 + b2*y2 + c2;
+
+			/* Check signs of r1 and r2.  If both point 1 and point 2 lie
+			 * on same side of second line segment, the line segments do
+			 * not intersect.
+			 */
+
+			if (r1 != 0 &&
+			    r2 != 0 &&
+			    Math.Sign(r1) == Math.Sign(r2))
+			{
+				intersectionPoint = new PointF(0, 0);
+				return Vector.LineSegments.DoNotIntersect;
+			}
+
+			/* Line segments intersect: compute intersection point. 
+			 */
+
+			denom = a1*b2 - a2*b1;
+			if (denom == 0)
+			{
+				intersectionPoint = new PointF(0, 0);
+				return Vector.LineSegments.Colinear;
+			}
+
+			offset = denom < 0 ? -denom/2 : denom/2;
+
+			/* The denom/2 is to get rounding instead of truncating.  It
+			 * is added or subtracted to the numerator, depending upon the
+			 * sign of the numerator.
+			 */
+
+			num = b1*c2 - b2*c1;
+			float x = (num < 0 ? num - offset : num + offset)/denom;
+
+			num = a2*c1 - a1*c2;
+			float y = (num < 0 ? num - offset : num + offset)/denom;
+
+			intersectionPoint = new PointF(x, y);
+
+			return Vector.LineSegments.Intersect;
+		}
+
+		#endregion
 	}
 }
 
