@@ -16,6 +16,7 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Text;
 using ClearCanvas.Common.Utilities;
 using NUnit.Framework;
 
@@ -272,6 +273,9 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 			var permutations = (int) Math.Pow(mod, 8);
 			for (int n = 0; n < permutations; n++)
 			{
+				var log = new StringBuilder();
+				var printLog = false;
+
 				var p1 = new PointF(values[(n)%mod], values[(n/mod/mod/mod/mod/mod/mod/mod)%mod]);
 				var p2 = new PointF(values[(n/mod/mod)%mod], values[(n/mod/mod/mod/mod/mod)%mod]);
 				var q1 = new PointF(values[(n/mod/mod/mod/mod)%mod], values[(n/mod/mod/mod)%mod]);
@@ -283,40 +287,64 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 				PointF actualIntersection;
 				var actualResult = Vector.LineSegmentIntersection(p1, p2, q1, q2, out actualIntersection);
 
-				var messagePrefix = string.Format("{0}{1} :: {2}{3}", p1, p2, q1, q2);
+				try
+				{
+					log.AppendLine(string.Format("Under Test <{0}{1}> :: <{2}{3}>", p1, p2, q1, q2));
 
-				if (expectedResult == actualResult)
-				{
-					Assert.Less(Math.Abs(expectedIntersection.X - actualIntersection.X), 1, messagePrefix + string.Format(" (delta X) {0}, {1}", expectedIntersection, actualIntersection));
-					Assert.Less(Math.Abs(expectedIntersection.Y - actualIntersection.Y), 1, messagePrefix + string.Format(" (delta X) {0}, {1}", expectedIntersection, actualIntersection));
-				}
-				else
-				{
-					Trace.WriteLine(messagePrefix + string.Format(" Expecting {0} but got {1}", expectedResult, actualResult));
-					if (expectedResult == Vector.LineSegments.Intersect)
+					if (expectedResult == actualResult)
 					{
-						PointF lineIntersection;
-						if (Vector.IntersectLines(p1, p2, q1, q2, out lineIntersection))
-						{
-							var error = Vector.Distance(expectedIntersection, lineIntersection);
-							Trace.WriteLine(string.Format("Floating point error: magnitude of {0}", error));
-							Assert.Less(error, 1, " Legacy function found intersection at {0}, whereas function would have found intersection at {1}", expectedIntersection, lineIntersection);
-						}
-						else
-						{
-							Assert.Fail(messagePrefix + string.Format(" Legacy function found intersection at {0}", expectedIntersection));
-						}
-					}
-					else if (actualResult == Vector.LineSegments.Intersect)
-					{
-						Trace.WriteLine(messagePrefix + string.Format(" Legacy function did not find intersection at {0}", actualIntersection));
+						log.AppendLine(string.Format("  Expected intersection at {0}", expectedIntersection));
+						log.AppendLine(string.Format("  Computed intersection at {0}", actualIntersection));
+						Assert.Less(Math.Abs(expectedIntersection.X - actualIntersection.X), 1.00001, "Intersection has excessive difference in Y dimension");
+						Assert.Less(Math.Abs(expectedIntersection.Y - actualIntersection.Y), 1.00001, "Intersection has excessive difference in Y dimension");
 					}
 					else
 					{
-						// the functions disagree on whether two non-intersecting lines are or are not colinear
-						// we shall allow these to pass, since we already know that the legacy function does not
-						// handle degenerate inputs particularly well or consistently
+						log.AppendLine(string.Format("  Expected {0} but got {1}", expectedResult, actualResult));
+						if (expectedResult == Vector.LineSegments.Intersect)
+						{
+							log.AppendLine(string.Format("  Expected intersection at {0}", expectedIntersection));
+
+							PointF lineIntersection;
+							if (Vector.IntersectLines(p1, p2, q1, q2, out lineIntersection))
+							{
+								var error = Vector.Distance(expectedIntersection, lineIntersection);
+								log.AppendLine(string.Format("  Theoretical intersection at {0} (delta magnitude of {1})", lineIntersection, error));
+								Assert.Less(error, 1.00001, "Intersection error exceeds threshold for floating point error while restricting intersection to line segment");
+								printLog = true;
+							}
+							else
+							{
+								log.AppendLine(string.Format("  Theoretical intersection not found"));
+								Assert.Fail("Legacy function found intersection at {0}, but computation did not produce any near results", expectedIntersection);
+								printLog = true;
+							}
+						}
+						else if (actualResult == Vector.LineSegments.Intersect)
+						{
+							log.AppendLine(string.Format("  Computed intersection at {0}", actualIntersection));
+							log.AppendLine(string.Format("  Explained as a corner case that the legacy function does not handle well."));
+							//printLog = true;
+						}
+						else
+						{
+							// the functions disagree on whether two non-intersecting lines are or are not colinear
+							// we shall allow these to pass, since we already know that the legacy function does not
+							// handle degenerate inputs particularly well or consistently
+							log.AppendLine(string.Format("  Explained as a corner case that the legacy function does not handle well."));
+							//printLog = true;
+						}
 					}
+				}
+				catch (Exception)
+				{
+					printLog = true;
+					throw;
+				}
+				finally
+				{
+					if (printLog)
+						Console.WriteLine(log.ToString());
 				}
 			}
 		}
