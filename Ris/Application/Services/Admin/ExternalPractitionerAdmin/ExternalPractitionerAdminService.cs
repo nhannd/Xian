@@ -286,6 +286,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 				dest.Description,
 				dest.PreferredResultCommunicationMode);
 
+			PersistenceContext.Lock(result, DirtyState.New);
+
 			// if user has verify permission, verify the practitioner
 			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.ExternalPractitionerVerification))
 				result.Practitioner.MarkVerified();
@@ -354,6 +356,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 				deactivatedContactPoints,
 				cpReplacements
 				);
+
+			PersistenceContext.Lock(result, DirtyState.New);
 
 			// if user has verify permission, verify the result
 			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.ExternalPractitionerVerification))
