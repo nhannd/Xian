@@ -296,8 +296,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 				for (int i = 0; i <= n - 2; i++)
 				{
 					PointF intersection;
-					Vector.LineSegments type = Vector.LineSegmentIntersection(vertices[n], vertices[n + 1], vertices[i], vertices[i + 1], out intersection);
-					if (type == Vector.LineSegments.Intersect)
+					if (Vector.IntersectLineSegments(vertices[n], vertices[n + 1], vertices[i], vertices[i + 1], out intersection))
 						return true;
 				}
 			}
@@ -306,8 +305,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			for (int i = 1; i < vertexCount - 2; i++)
 			{
 				PointF intersection;
-				Vector.LineSegments type = Vector.LineSegmentIntersection(vertices[vertexCount - 1], vertices[0], vertices[i], vertices[i + 1], out intersection);
-				if (type == Vector.LineSegments.Intersect)
+				if (Vector.IntersectLineSegments(vertices[vertexCount - 1], vertices[0], vertices[i], vertices[i + 1], out intersection))
 					return true;
 			}
 			return false;

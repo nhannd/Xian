@@ -215,13 +215,11 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			PointF clientBottomRight = new PointF(clientRectangle.Right, clientRectangle.Bottom);
 
 			PointF intersectionPoint;
-			if (Vector.LineSegments.Intersect == 
-			    Vector.LineSegmentIntersection(lineSegmentStartPoint, lineSegmentEndPoint, clientTopRight, clientBottomRight, out intersectionPoint))
+			if (Vector.IntersectLineSegments(lineSegmentStartPoint, lineSegmentEndPoint, clientTopRight, clientBottomRight, out intersectionPoint))
 			{
 				return intersectionPoint;
 			}
-			else if (Vector.LineSegments.Intersect ==
-			         Vector.LineSegmentIntersection(lineSegmentStartPoint, lineSegmentEndPoint, clientBottomLeft, clientBottomRight, out intersectionPoint))
+			else if (Vector.IntersectLineSegments(lineSegmentStartPoint, lineSegmentEndPoint, clientBottomLeft, clientBottomRight, out intersectionPoint))
 			{
 				return intersectionPoint;
 			}

@@ -162,20 +162,18 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 						return;
 
 					PointF intersection;
-					Vector.LineSegments result = Vector.LineSegmentIntersection(p1, p2, q1, q2, out intersection);
-
-					if (result == Vector.LineSegments.Colinear)
+					if (Vector.AreColinear(p1, p2, q1, q2))
 					{
 						// line segments are colinear - do nothing
 						return;
 					}
-					else if (result == Vector.LineSegments.DoNotIntersect)
+					else if (!Vector.IntersectLineSegments(p1, p2, q1, q2, out intersection))
 					{
 						// the line segments do not intersect onscreen, so figure out where they would have intersected and decide from there
-						intersection = Intersect(p1, p2, q1, q2);
+						bool areParallel = !Vector.IntersectLines(p1, p2, q1, q2, out intersection);
 
 						bool drawRisers = false;
-						if (!base.ParentPresentationImage.ClientRectangle.Contains(Point.Round(intersection)))
+						if (areParallel || !base.ParentPresentationImage.ClientRectangle.Contains(Point.Round(intersection)))
 						{
 							// the virtual intersection isn't onscreen either - average the points to find a suitable onscreen intersection
 							intersection = new PointF((p1.X + p2.X + q1.X + q2.X)/4, (p1.Y + p2.Y + q1.Y + q2.Y)/4);
@@ -330,7 +328,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				for (int n = 0; n < 4; n++)
 				{
 					PointF intersection;
-					if (Vector.LineSegmentIntersection(p1, p2, sides[n], sides[(n + 1)%4], out intersection) == Vector.LineSegments.Intersect)
+					if (Vector.IntersectLineSegments(p1, p2, sides[n], sides[(n + 1)%4], out intersection))
 					{
 						if (p1Inside)
 							p2 = intersection;
@@ -345,24 +343,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			private static float DotProduct(PointF p1, PointF p2, PointF q1, PointF q2)
 			{
 				return (p2.X - p1.X)*(q2.X - q1.X) + (p2.Y - p1.Y)*(q2.Y - q1.Y);
-			}
-
-			private static PointF Intersect(PointF p1, PointF p2, PointF q1, PointF q2)
-			{
-				// The computation is really just one of the two equations formed by:
-				// [ a b ] [ s ]   [ x ]
-				// [ c d ] [ t ]   [ y ]
-
-				//TODO (CR Mar 2010): use more vector-y variable names - easier to read.
-				float a = p2.X - p1.X;
-				float b = q1.X - q2.X;
-				float c = p2.Y - p1.Y;
-				float d = q1.Y - q2.Y;
-				float x = q1.X - p1.X;
-				float y = q1.Y - p1.Y;
-				float s = (d * x - b * y) / (a * d - b * c);
-
-				return new PointF(p1.X + s*(p2.X - p1.X), p1.Y + s*(p2.Y - p1.Y));
 			}
 
 			/// <summary>

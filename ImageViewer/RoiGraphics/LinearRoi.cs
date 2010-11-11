@@ -147,7 +147,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			for (int n = 1; n < _points.Count; n++)
 			{
 				PointF intersection;
-				if (Vector.LineSegmentIntersection(topLeft, topLeft + new SizeF(1, 1), _points[n - 1], _points[n], out intersection) != Vector.LineSegments.DoNotIntersect)
+				if (Vector.IntersectLineSegments(topLeft, topLeft + new SizeF(1, 1), _points[n - 1], _points[n], out intersection))
 					return true;
 			}
 			return false;

@@ -351,16 +351,16 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			PointF geoCenter = Vector.Midpoint(topLeft, bottomRight);
 			PointF intersectionPoint;
 
-			if (Vector.LineSegmentIntersection(geoCenter, point, topLeft, topRight, out intersectionPoint) == Vector.LineSegments.Intersect)
+			if (Vector.IntersectLineSegments(geoCenter, point, topLeft, topRight, out intersectionPoint))
 				return intersectionPoint;
 
-			if (Vector.LineSegmentIntersection(geoCenter, point, bottomLeft, bottomRight, out intersectionPoint) == Vector.LineSegments.Intersect)
+			if (Vector.IntersectLineSegments(geoCenter, point, bottomLeft, bottomRight, out intersectionPoint))
 				return intersectionPoint;
 
-			if (Vector.LineSegmentIntersection(geoCenter, point, topLeft, bottomLeft, out intersectionPoint) == Vector.LineSegments.Intersect)
+			if (Vector.IntersectLineSegments(geoCenter, point, topLeft, bottomLeft, out intersectionPoint))
 				return intersectionPoint;
 
-			if (Vector.LineSegmentIntersection(geoCenter, point, topRight, bottomRight, out intersectionPoint) == Vector.LineSegments.Intersect)
+			if (Vector.IntersectLineSegments(geoCenter, point, topRight, bottomRight, out intersectionPoint))
 				return intersectionPoint;
 
 			return point;
