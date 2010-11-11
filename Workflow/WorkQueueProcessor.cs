@@ -71,7 +71,7 @@ namespace ClearCanvas.Workflow
 		{
 			// See if the item needs to be rescheduled for another processing before completing it.
 			DateTime rescheduleTime;
-			if (ShouldReschedule(item, out rescheduleTime))
+			if (ShouldReschedule(item, null, out rescheduleTime))
 				item.Reschedule(rescheduleTime);
 			else
 				item.Complete();
@@ -92,7 +92,7 @@ namespace ClearCanvas.Workflow
 
 			// optionally reschedule the item
 			DateTime retryTime;
-			if (ShouldRetry(item, error, out retryTime))
+			if (ShouldReschedule(item, error, out retryTime))
 				item.Reschedule(retryTime);
 		}
 
@@ -108,22 +108,27 @@ namespace ClearCanvas.Workflow
 		/// <param name="error"></param>
 		/// <param name="retryTime"></param>
 		/// <returns></returns>
-		protected abstract bool ShouldRetry(WorkQueueItem item, Exception error, out DateTime retryTime);
+		//protected abstract bool ShouldRetry(WorkQueueItem item, Exception error, out DateTime retryTime);
 
 		/// <summary>
-		/// Called after a work item is successfully processed.  However, the item may have more work to be done.
-		/// Check if it should be rescheduled for further processing.
+		/// Called after a work item is processed, regardless of whether it succeeded or failed,
+		/// to determine whether it should be rescheduled for further processing.
 		/// </summary>
-		/// <param name="item"></param>
-		/// <param name="rescheduleTime"></param>
+		/// <remarks>
+		/// If the item failed, it may need to rescheduled to try again.  If the item succeeded, it may need to be
+		/// rescheduled for further work.
+		/// </remarks>
+		/// <param name="item">Item in question.</param>
+		/// <param name="error">If processing failed, the exception that it failed with.  Otherwise null.</param>
+		/// <param name="rescheduleTime">Time for which processing should be rescheduled.</param>
 		/// <returns></returns>
 		/// <remarks>
 		/// Subclasses should override this method if it takes several stages to completely process an item.
 		/// </remarks>
-		protected virtual bool ShouldReschedule(WorkQueueItem item, out DateTime rescheduleTime)
+		protected virtual bool ShouldReschedule(WorkQueueItem item, Exception error, out DateTime rescheduleTime)
 		{
-			// By default, an item does not need to be rescheduled and the schedule time is unchanged.
-			rescheduleTime = item.ScheduledTime;
+			// By default, an item should not be rescheduled
+			rescheduleTime = DateTime.MinValue;
 			return false;
 		}
 	}

@@ -36,6 +36,11 @@ namespace ClearCanvas.Ris.Shreds.Merge
 			_throttleInterval = TimeSpan.FromSeconds(settings.ThrottleInterval);
 		}
 
+		public override string Name
+		{
+			get { return SR.MergeShredName; }
+		}
+
 		protected override string WorkQueueItemType
 		{
 			get { return MergeWorkQueueItem.Tag; }
@@ -60,7 +65,7 @@ namespace ClearCanvas.Ris.Shreds.Merge
 			item.ExtendedProperties[StageProperty] = stage.ToString();
 		}
 
-		protected override bool ShouldReschedule(WorkQueueItem item, out DateTime retryTime)
+		protected override bool ShouldReschedule(WorkQueueItem item, Exception error, out DateTime retryTime)
 		{
 			var stage = GetStage(item);
 
@@ -74,12 +79,6 @@ namespace ClearCanvas.Ris.Shreds.Merge
 			// re-schedule
 			retryTime = Platform.Time + _throttleInterval;
 			return true;
-		}
-
-		protected override bool ShouldRetry(WorkQueueItem item, Exception error, out DateTime retryTime)
-		{
-			// Same action as ShouldReschedule, to restart from the last stage.
-			return ShouldReschedule(item, out retryTime);
 		}
 
 		private static int GetStage(WorkQueueItem item)
