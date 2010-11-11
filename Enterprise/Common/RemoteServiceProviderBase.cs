@@ -368,12 +368,13 @@ namespace ClearCanvas.Enterprise.Common
 				// note: _proxyGenerator does internal caching based on service contract
 				// so subsequent calls based on the same contract will be fast
 				// note: important to proxy IDisposable too, otherwise channels can't get disposed!!!
+				var aopChain = new AopInterceptorChain(interceptors);
 				return _proxyGenerator.CreateInterfaceProxyWithTarget(
 					serviceContract,
 					new[] { serviceContract, typeof(IDisposable) },
 					channel,
 					options,
-					interceptors.ToArray());
+					aopChain);
 			}
 		}
 

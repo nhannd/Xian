@@ -106,6 +106,10 @@ namespace ClearCanvas.Enterprise.Common
 
 			public void Proceed()
 			{
+				// we can't call _rootInvocation.Proceed() here, because Proceed() can only be invoked once per interceptor
+				// (use .NET Reflector to look at the Castle code to understand why this is so)
+				// and that doesn't satisfy the requirements of some of our interceptors that want to retry failed calls
+				// instead, we take control of the interception process
 				try
 				{
 					_interceptLevel++;
@@ -118,10 +122,14 @@ namespace ClearCanvas.Enterprise.Common
 					else
 					{
 						// no more interceptors, time for the real deal
-						// we can't call Proceed() here, because Proceed() can only be invoked once
-						// and that doesn't satisfy the requirements of some of our interceptors that want to retry failed calls
+						// can't call _rootInvocation.Proceed() here, because that would go through the entire interception chain again
 						// instead, we invoke a delegate mapped (via reflection) to a protected method, that has no such restriction
-						_surrogateForProceed((AbstractInvocation)_rootInvocation);
+						// but this protected method is only available on AbstractInvocation subclasses
+						var invocation = _rootInvocation as AbstractInvocation;
+						if(invocation == null)
+							throw new InvalidOperationException("AopInterceptorChain can only be used with IInvocation implementations derived from Castle.DynamicProxy.AbstractInvocation.");
+						
+						_surrogateForProceed(invocation);
 					}
 				}
 				finally
@@ -187,7 +195,7 @@ namespace ClearCanvas.Enterprise.Common
 		/// <param name="interceptors"></param>
 		public AopInterceptorChain(IList<IInterceptor> interceptors)
 		{
-			this.Interceptors = interceptors;
+			this.Interceptors = interceptors ?? new List<IInterceptor>();
 		}
 
 

@@ -35,6 +35,7 @@ using Castle.Core.Interceptor;
 using Castle.DynamicProxy;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Core
 {
@@ -88,7 +89,8 @@ namespace ClearCanvas.Enterprise.Core
 
 				// note: _proxyGenerator does internal caching based on service contract
 				// so subsequent calls based on the same contract will be fast
-				return _proxyGenerator.CreateInterfaceProxyWithTarget(serviceContract, service, _interceptors.ToArray());
+				var aopChain = new AopInterceptorChain(_interceptors);
+				return _proxyGenerator.CreateInterfaceProxyWithTarget(serviceContract, service, aopChain);
 			}
 		}
 

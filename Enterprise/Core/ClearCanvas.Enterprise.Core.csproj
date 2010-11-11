@@ -73,6 +73,9 @@
     <Compile Include="AuditLogEntry.cs" />
     <Compile Include="Audit\AuditLogEntryAssembler.cs" />
     <Compile Include="Audit\AuditService.cs" />
+    <Compile Include="DeadlockException.cs" />
+    <Compile Include="DeadlockRetryAdvice.cs" />
+    <Compile Include="DeadlockRetryManager.cs" />
     <Compile Include="LooseEnumPropertyChangeSetListener.cs" />
     <Compile Include="EqualityUtils.cs" />
     <Compile Include="ExtendedPropertiesSearchCriteria.cs" />
@@ -203,6 +206,7 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="RelatedEntityCondition.cs" />
+    <Compile Include="Tests\DeadlockRetryManagerTests.cs" />
     <Compile Include="Tests\EnumValueTests.cs" />
     <Compile Include="Tests\EqualityUtilsTests.cs" />
     <Compile Include="Tests\EntityProxyFactory.cs" />
