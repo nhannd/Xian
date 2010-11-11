@@ -153,44 +153,58 @@ namespace ClearCanvas.Enterprise.Core
 				}
 			}
 
-			// exceptions thrown upon exiting the using block are intentionally not caught here
+			// exceptions thrown upon exiting the using block are intentionally not caught here,
+			// allow them to be caught by the calling method
 
+			// post-processing
 			if(error == null)
 			{
-				try
-				{
-					OnTransactionCommitted(item);
-				}
-				catch (Exception e)
-				{
-					// Swallow exception on purpose.  We don't care if the resources failed to get cleanup.
-					ExceptionLogger.Log(this.GetType().FullName + ".ProcessItem", e);
-				}
+				AfterCommit(item);
 			}
 			else
 			{
-				// use a new scope to mark the item as failed
-				using (var scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.RequiresNew))
-				{
-					var failContext = (IUpdateContext)PersistenceScope.CurrentContext;
-					failContext.ChangeSetRecorder.OperationName = this.GetType().FullName;
-
-					// bug #7191 : Reload the TItem in this scope;  using the existing item results in NHibernate throwing a lazy loading exception
-					var itemForThisScope = failContext.Load<TItem>(item.GetRef());
-
-					// lock item into this context
-					failContext.Lock(itemForThisScope);
-
-					// failure callback
-					OnItemFailed(itemForThisScope, error);
-
-					// complete the transaction
-					scope.Complete();
-				}
+				UpdateQueueItemOnError(item, error);
 			}
 		}
 
 		#endregion
+
+		private void UpdateQueueItemOnError(TItem item, Exception error)
+		{
+			// use a new scope to mark the item as failed, because we don't want to commit any changes made in the outer scope
+			using (var scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.RequiresNew))
+			{
+				var failContext = (IUpdateContext)PersistenceScope.CurrentContext;
+				failContext.ChangeSetRecorder.OperationName = this.GetType().FullName;
+
+				// bug #7191 : Reload the TItem in this scope;  using the existing item results in NHibernate throwing a lazy loading exception
+				var itemForThisScope = failContext.Load<TItem>(item.GetRef());
+
+				// lock item into this context
+				failContext.Lock(itemForThisScope);
+
+				// failure callback
+				OnItemFailed(itemForThisScope, error);
+
+				// complete the transaction
+				scope.Complete();
+			}
+		}
+
+		private void AfterCommit(TItem item)
+		{
+			try
+			{
+				OnTransactionCommitted(item);
+			}
+			catch (Exception e)
+			{
+				// Swallow exception on purpose.  We don't care if the resources failed to get cleanup.
+				ExceptionLogger.Log(this.GetType().FullName + ".ProcessItem", e);
+			}
+		}
+
+
 
 	}
 }
