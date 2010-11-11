@@ -48,18 +48,19 @@ namespace ClearCanvas.Healthcare
 		/// <summary>
 		/// Creates a new contact point that is the result of merging the two specified contact points.
 		/// </summary>
-		/// <param name="right"></param>
-		/// <param name="left"></param>
-		/// <param name="name"></param>
-		/// <param name="description"></param>
-		/// <param name="preferredCommunicationMode"></param>
-		/// <returns></returns>
+		/// <remarks>
+		/// Any phone numbers, addresses and email addresses in the supplied arguments will supercede those
+		/// from the source contact points.
+		/// </remarks> 
 		public static ExternalPractitionerContactPoint MergeContactPoints(
 			ExternalPractitionerContactPoint right,
 			ExternalPractitionerContactPoint left,
 			string name,
 			string description,
-			ResultCommunicationMode preferredCommunicationMode
+			ResultCommunicationMode preferredCommunicationMode,
+			IList<TelephoneNumber> phoneNumbers,
+			IList<Address> addresses,
+			IList<EmailAddress> emailAddresses
 			)
 		{
 			// sanity checks
@@ -81,9 +82,9 @@ namespace ClearCanvas.Healthcare
 				description,
 				preferredCommunicationMode,
 				right.IsDefaultContactPoint || left.IsDefaultContactPoint,
-				new List<TelephoneNumber>(),
-				new List<Address>(),
-				new List<EmailAddress>(),
+				phoneNumbers ?? new List<TelephoneNumber>(),
+				addresses ?? new List<Address>(),
+				emailAddresses ?? new List<EmailAddress>(),
 				null);
 
 			practitioner.ContactPoints.Add(result);

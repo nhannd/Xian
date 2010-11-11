@@ -44,6 +44,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 using ClearCanvas.Workflow;
+using System;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 {
@@ -278,13 +279,27 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 				return new MergeDuplicateContactPointResponse(cost);
 			}
 
+			// combine all phone numbers and addresses, expiring those from the src object
+			var allPhoneNumbers = CollectionUtils.Concat(
+				CloneAndExpire(dest.TelephoneNumbers, tn => tn.ValidRange, false),
+				CloneAndExpire(src.TelephoneNumbers, tn => tn.ValidRange, true));
+			var allAddresses = CollectionUtils.Concat(
+				CloneAndExpire(dest.Addresses, tn => tn.ValidRange, false),
+				CloneAndExpire(src.Addresses, tn => tn.ValidRange, true));
+			var allEmailAddresses = CollectionUtils.Concat(
+				CloneAndExpire(dest.EmailAddresses, tn => tn.ValidRange, false),
+				CloneAndExpire(src.EmailAddresses, tn => tn.ValidRange, true));
+
 			// merge contact points
 			var result = ExternalPractitionerContactPoint.MergeContactPoints(
 				dest,
 				src,
 				dest.Name,
 				dest.Description,
-				dest.PreferredResultCommunicationMode);
+				dest.PreferredResultCommunicationMode,
+				allPhoneNumbers,
+				allAddresses,
+				allEmailAddresses);
 
 			PersistenceContext.Lock(result, DirtyState.New);
 
@@ -472,5 +487,29 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 
 			throw new RequestValidationException(string.Format(SR.ExceptionContactPointsHaveActiveOrders, contactPointNameList));
 		}
+
+		/// <summary>
+		/// Clones all items in the collection, optionally expiring them.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="items"></param>
+		/// <param name="validRangeFunction"></param>
+		/// <param name="expire"></param>
+		/// <returns></returns>
+		private static ICollection<T> CloneAndExpire<T>(ICollection<T> items, Converter<T, DateTimeRange> validRangeFunction, bool expire)
+			where T : ICloneable
+		{
+			return CollectionUtils.Map(items, (T item) =>
+					{
+						var clone = (T)item.Clone();
+						if (expire)
+						{
+							var validRange = validRangeFunction(clone);
+							validRange.Until = validRange.Until ?? Platform.Time;
+						}
+						return clone;
+					});
+		}
+
 	}
 }
