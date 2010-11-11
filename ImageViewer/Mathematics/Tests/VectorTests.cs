@@ -316,7 +316,7 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 								// use 0.71 error as we've seen that the legacy function adds up to 0.5 in each dimension for rounding
 								// and 0.5 in each dimension is 0.707 in magnitude form
 								Assert.Less(error, 0.71, "Intersection error exceeds threshold for floating point error while restricting intersection to line segment");
-								printLog = true;
+								//printLog = true;
 							}
 							else
 							{
