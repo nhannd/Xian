@@ -57,6 +57,8 @@ namespace ClearCanvas.Ris.Shreds.Merge
 
 		private static int DeleteContactPoint(ExternalPractitionerContactPoint contactPoint, int stage, IPersistenceContext context)
 		{
+			Platform.Log(LogLevel.Debug, "Attempting to delete contact point {0}", contactPoint.OID);
+
 			try
 			{
 				// since there are no more referencing orders or visits, we can delete the contact point
@@ -73,6 +75,8 @@ namespace ClearCanvas.Ris.Shreds.Merge
 				// looks like the delete failed, most likely meaning that new references to the item
 				// were introduced during the migration process
 				// therefore we need to start over at stage 0
+				Platform.Log(LogLevel.Debug, "Failed to delete contact point {0}, returning to stage 0.", contactPoint.OID);
+
 				return 0;
 			}
 		}
@@ -81,6 +85,11 @@ namespace ClearCanvas.Ris.Shreds.Merge
 		{
 			// update result recipients
 			var dest = contactPoint.GetUltimateMergeDestination();
+
+			// debug logging
+			Platform.Log(LogLevel.Debug, "Migrating order A# {0} from contact point {1} to {2}",
+				order.AccessionNumber, contactPoint.OID, dest.OID);
+
 			foreach (var rr in order.ResultRecipients)
 			{
 				if (rr.PractitionerContactPoint.Equals(contactPoint))

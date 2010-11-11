@@ -62,6 +62,8 @@ namespace ClearCanvas.Ris.Shreds.Merge
 
 		private static int DeletePractitioner(ExternalPractitioner practitioner, int stage, IPersistenceContext context)
 		{
+			Platform.Log(LogLevel.Debug, "Attempting to delete practitioner {0}", practitioner.OID);
+
 			try
 			{
 				// since there are no more referencing orders or visits, we can delete the practitioner
@@ -79,15 +81,25 @@ namespace ClearCanvas.Ris.Shreds.Merge
 				// looks like the delete failed, most likely meaning that new references to the item
 				// were introduced during the migration process
 				// therefore we need to start over at stage 0
+
+				Platform.Log(LogLevel.Debug, "Failed to delete practitioner {0}, returning to stage 0.", practitioner.OID);
+				
 				return 0;
 			}
 		}
 
 		private static void MigrateOrder(ExternalPractitioner practitioner, Order order)
 		{
+			var destPractitioner = practitioner.GetUltimateMergeDestination();
+
+			// debug logging
+			Platform.Log(LogLevel.Debug, "Migrating order A# {0} from practitioner {1} to {2}",
+				order.AccessionNumber, practitioner.OID, destPractitioner.OID);
+
+
 			// update ordering practitioner
 			if (order.OrderingPractitioner.Equals(practitioner))
-				order.OrderingPractitioner = practitioner.GetUltimateMergeDestination();
+				order.OrderingPractitioner = destPractitioner;
 
 			// update result recipients
 			foreach (var contactPoint in practitioner.ContactPoints)
@@ -103,6 +115,11 @@ namespace ClearCanvas.Ris.Shreds.Merge
 		private static void MigrateVisit(ExternalPractitioner practitioner, Visit visit)
 		{
 			var dest = practitioner.GetUltimateMergeDestination();
+
+			// debug logging
+			Platform.Log(LogLevel.Debug, "Migrating visit {0} from practitioner {1} to {2}",
+				visit.VisitNumber, practitioner.OID, dest.OID);
+
 			foreach (var visitPractitioner in visit.Practitioners)
 			{
 				if (visitPractitioner.Practitioner.Equals(practitioner))

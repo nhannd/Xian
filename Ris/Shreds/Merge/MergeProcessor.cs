@@ -59,10 +59,14 @@ namespace ClearCanvas.Ris.Shreds.Merge
 
 			var stage = GetStage(item);
 
-			stage = handler.Merge(target, stage, PersistenceScope.CurrentContext);
+			Platform.Log(LogLevel.Info, "Starting merge step on target {0} (stage {1})...", target.GetRef(), stage);
+
+			var nextStage = handler.Merge(target, stage, PersistenceScope.CurrentContext);
+
+			Platform.Log(LogLevel.Info, "Completed merge step on target {0} (stage {1}, next stage is {2}).", target.GetRef(), stage, nextStage);
 
 			// update the work item with the new stage value
-			item.ExtendedProperties[StageProperty] = stage.ToString();
+			item.ExtendedProperties[StageProperty] = nextStage.ToString();
 		}
 
 		protected override bool ShouldReschedule(WorkQueueItem item, Exception error, out DateTime retryTime)
