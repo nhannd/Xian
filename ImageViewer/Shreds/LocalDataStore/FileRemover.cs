@@ -74,11 +74,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			foreach (string directoryName in directoriesToDelete)
 			{
 				DirectoryInfo directoryInfo = new DirectoryInfo(directoryName);
-				if (directoryInfo.Exists && 
-						directoryInfo.GetFiles("*", SearchOption.AllDirectories).Length <= 0 && 
-						directoryInfo.FullName != _topLevelDirectory)
+				if (directoryInfo.FullName != _topLevelDirectory && IsEmptyDirectory(directoryInfo))
 				{
-					if (!parentDirectoriesToDelete.Contains(directoryInfo.Parent.FullName))
+					if (directoryInfo.Parent != null && !parentDirectoriesToDelete.Contains(directoryInfo.Parent.FullName))
 						parentDirectoriesToDelete.Add(directoryInfo.Parent.FullName);
 
 					directoryInfo.Delete(true);
@@ -86,6 +84,25 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 
 			DeleteEmptyDirectories(parentDirectoriesToDelete);
+		}
+
+		private static bool IsEmptyDirectory(DirectoryInfo directoryInfo)
+		{
+			// if the directory doesn't exist, it's not empty
+			// if the directory contains at least one file, it's not empty
+			if (!directoryInfo.Exists || directoryInfo.GetFiles().Length > 0)
+				return false;
+
+			// otherwise, loop through each subdirectory
+			foreach (var directory in directoryInfo.GetDirectories())
+			{
+				// if the subdirectory is not empty, then this directory isn't empty either
+				if (!IsEmptyDirectory(directory))
+					return false;
+			}
+
+			// otherwise, if all subdirectories are empty, then this directory is empty
+			return true;
 		}
 	}
 }

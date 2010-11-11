@@ -59,7 +59,7 @@
     <Compile Include="DicomServer\DicomSendManager.cs" />
     <Compile Include="DicomServer\StoreScpExtension.cs" />
     <Compile Include="DicomServer\VerifyScpExtension.cs" />
-    <Compile Include="DiskspaceManager\DMDriveInfo.cs" />
+    <Compile Include="DiskspaceManager\DiskUsageInfo.cs" />
     <Compile Include="DiskspaceManager\DiskspaceManagerExtension.cs" />
     <Compile Include="DiskspaceManager\DiskspaceManagerProcessor.cs" />
     <Compile Include="DiskspaceManager\DiskspaceManagerServiceType.cs" />

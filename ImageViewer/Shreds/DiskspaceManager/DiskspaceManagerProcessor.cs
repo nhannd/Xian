@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 		private volatile bool _stop;
 
 		private readonly object _settingsSyncLock = new object();
-		private volatile DMDriveInfo _currentDriveInfo;
+		private volatile DiskUsageInfo _currentDriveInfo;
 		private volatile int _checkingFrequency;
 
     	private bool _enforceStudyLimit = false;
@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
 					CheckUsage(true, Timeout.Infinite);
 
-					if (_currentDriveInfo.BytesOverHighWaterMark > 0 || IsStudyLimitExceeded())
+					if (_currentDriveInfo.BytesOverHighWatermark > 0 || IsStudyLimitExceeded())
 					{
 						RemoveStudies();
 						CheckUsage(true, Timeout.Infinite);
@@ -171,17 +171,18 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 		{
 			Platform.Log(LogLevel.Info, SR.MessageBeginDeleting);
 
-			List<IStudy> studies = new List<IStudy>();
+			Queue<IStudy> studies;
 			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
 			{
-				studies.AddRange(reader.GetStudiesByStoreTime(false));
+				studies = new Queue<IStudy>(reader.GetStudiesByStoreTime(false));
 			}
 
 			long totalExpectedFreeSpace = 0;
 			List<string> deleteStudyUids = new List<string>();
 
-			foreach (IStudy study in studies)
+			while (studies.Count > 0)
 			{
+				var study = studies.Dequeue();
 				long expectedFreeSpace = 0;
 
 				try
@@ -207,7 +208,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 				//always try to delete down to the low watermark.
 				bool continueDeleting = false;
 
-				if (totalExpectedFreeSpace < _currentDriveInfo.BytesOverLowWaterMark)
+				if (totalExpectedFreeSpace < _currentDriveInfo.BytesOverLowWatermark)
 				{
 					continueDeleting = true;
 				}
@@ -270,8 +271,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 				{
 					try
 					{
-						if (_currentDriveInfo == null || String.Compare(_currentDriveInfo.DriveName, driveName, true) != 0)
-							_currentDriveInfo = new DMDriveInfo(driveName.ToUpper());
+						if (_currentDriveInfo == null || string.Compare(_currentDriveInfo.DiskName, driveName, true) != 0)
+							_currentDriveInfo = new DiskUsageInfo(driveName.ToUpper());
 					}
 					catch (Exception e)
 					{
@@ -290,10 +291,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 				_checkingFrequency = DiskspaceManagerSettings.Instance.CheckFrequency * 60000;
 
 				if (_currentDriveInfo != null)
-				{
-					_currentDriveInfo.LowWatermark = DiskspaceManagerSettings.Instance.LowWatermark;
-					_currentDriveInfo.HighWatermark = DiskspaceManagerSettings.Instance.HighWatermark;
-				}
+					_currentDriveInfo.SetWatermarks(DiskspaceManagerSettings.Instance.LowWatermark, DiskspaceManagerSettings.Instance.HighWatermark);
 
 				_enforceStudyLimit = DiskspaceManagerSettings.Instance.EnforceStudyLimit;
 				if (_enforceStudyLimit)
@@ -314,8 +312,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 				CheckUsage(false, 5000);
 
 				DiskspaceManagerServiceInformation returnInformation = new DiskspaceManagerServiceInformation();
-				returnInformation.DriveName = _currentDriveInfo.DriveName;
-				returnInformation.DriveSize = _currentDriveInfo.DriveSize;
+				returnInformation.DriveName = _currentDriveInfo.DiskName;
+				returnInformation.DriveSize = _currentDriveInfo.DiskSize;
 				returnInformation.UsedSpace = _currentDriveInfo.UsedSpace;
 				returnInformation.LowWatermark = DiskspaceManagerSettings.Instance.LowWatermark;
 				returnInformation.HighWatermark = DiskspaceManagerSettings.Instance.HighWatermark;
