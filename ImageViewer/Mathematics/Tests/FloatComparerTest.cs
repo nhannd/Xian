@@ -85,6 +85,7 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 			AssertSinglePrecisionCompare(CompareResult.AreEqual, -100, 1.2345678f, 1.23457968f, 100);
 
 			// tests that basic relationship holds for numbers differing only in sign
+			AssertSinglePrecisionCompare(CompareResult.AreEqual, 2, float.Epsilon, -float.Epsilon, 2);
 			AssertSinglePrecisionCompare(CompareResult.GreaterThan, null, 1.2345678f, -1.2345678f, 100);
 			AssertSinglePrecisionCompare(CompareResult.LessThan, null, -1.2345678f, 1.2345678f, 100);
 
@@ -144,6 +145,7 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 			AssertDoublePrecisionCompare(CompareResult.AreEqual, -100, 1.234567890123456, 1.2345678901234782, 100);
 
 			// tests that basic relationship holds for numbers differing only in sign
+			AssertDoublePrecisionCompare(CompareResult.AreEqual, 2, double.Epsilon, -double.Epsilon, 2);
 			AssertDoublePrecisionCompare(CompareResult.GreaterThan, null, 1.234567890123456, -1.234567890123456, 100);
 			AssertDoublePrecisionCompare(CompareResult.LessThan, null, -1.234567890123456, 1.234567890123456, 100);
 
