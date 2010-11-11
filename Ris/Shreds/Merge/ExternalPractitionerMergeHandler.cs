@@ -9,13 +9,13 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
-using System.Collections.Generic;
 using ClearCanvas.Healthcare.Brokers;
-using System;
 
 namespace ClearCanvas.Ris.Shreds.Merge
 {
@@ -86,7 +86,8 @@ namespace ClearCanvas.Ris.Shreds.Merge
 		private static void MigrateOrder(ExternalPractitioner practitioner, Order order)
 		{
 			// update ordering practitioner
-			order.OrderingPractitioner = practitioner.GetUltimateMergeDestination();
+			if (order.OrderingPractitioner.Equals(practitioner))
+				order.OrderingPractitioner = practitioner.GetUltimateMergeDestination();
 
 			// update result recipients
 			foreach (var contactPoint in practitioner.ContactPoints)
