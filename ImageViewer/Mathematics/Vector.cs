@@ -230,37 +230,39 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			// => [P2-P1 Q1-Q2] * [s t]^T = Q1-P1
 			// => [s t]^T = [P2-P1 Q1-Q2]^-1 * [Q1-P1]
 
+			// use double precision floating point variables to minimize precision loss
+
 			// compute elements of the matrix M
-			var m11 = p2.X - p1.X; // M[R1C1]
-			var m12 = q1.X - q2.X; // M[R1C2]
-			var m21 = p2.Y - p1.Y; // M[R2C1]
-			var m22 = q1.Y - q2.Y; // M[R2C2]
+			double m11 = p2.X - p1.X; // M[R1C1]
+			double m12 = q1.X - q2.X; // M[R1C2]
+			double m21 = p2.Y - p1.Y; // M[R2C1]
+			double m22 = q1.Y - q2.Y; // M[R2C2]
 
 			// compute determinant of the matrix M
-			var determinant = m11*m22 - m12*m21; // det(M)
+			double determinant = m11*m22 - m12*m21; // det(M)
 			if (!FloatComparer.AreEqual(determinant, 0))
 			{
 				// compute elements of the inverted matrix M^-1
-				var v11 = m22/determinant;
-				var v12 = -m12/determinant;
-				var v21 = -m21/determinant;
-				var v22 = m11/determinant;
+				double v11 = m22/determinant;
+				double v12 = -m12/determinant;
+				double v21 = -m21/determinant;
+				double v22 = m11/determinant;
 
 				// compute elements of the RHS vector
-				var r1 = q1.X - p1.X;
-				var r2 = q1.Y - p1.Y;
+				double r1 = q1.X - p1.X;
+				double r2 = q1.Y - p1.Y;
 
 				// left-multiply inverted matrix with RHS to get solution of {s,t}
-				var s = v11*r1 + v12*r2;
-				var t = v21*r1 + v22*r2;
+				double s = v11*r1 + v12*r2;
+				double t = v21*r1 + v22*r2;
 
 				// the solution {s,t} represents the intersection of the lines
 				// for line segments, we must therefore further restrict the valid range of {s,t} to [0,1]
 				const int tolerance = 100000; // allow additional tolerance due to amount of floating-point computation
-				if (FloatComparer.Compare(s, 0, tolerance) >= 0 && FloatComparer.Compare(s, 1, tolerance) <= 0
-				    && FloatComparer.Compare(t, 0, tolerance) >= 0 && FloatComparer.Compare(t, 1, tolerance) <= 0)
+				if (FloatComparer.Compare(s, 0, tolerance) >= 0 && FloatComparer.Compare(s, 1, tolerance) <= 0 &&
+				    FloatComparer.Compare(t, 0, tolerance) >= 0 && FloatComparer.Compare(t, 1, tolerance) <= 0)
 				{
-					intersection = new PointF(p1.X + s*m11, p1.Y + s*m21);
+					intersection = new PointF((float) (p1.X + s*m11), (float) (p1.Y + s*m21));
 					return true;
 				}
 			}
@@ -286,32 +288,34 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			// => [P2-P1 Q1-Q2] * [s t]^T = Q1-P1
 			// => [s t]^T = [P2-P1 Q1-Q2]^-1 * [Q1-P1]
 
+			// use double precision floating point variables to minimize precision loss
+
 			// compute elements of the matrix M
-			var m11 = p2.X - p1.X; // M[R1C1]
-			var m12 = q1.X - q2.X; // M[R1C2]
-			var m21 = p2.Y - p1.Y; // M[R2C1]
-			var m22 = q1.Y - q2.Y; // M[R2C2]
+			double m11 = p2.X - p1.X; // M[R1C1]
+			double m12 = q1.X - q2.X; // M[R1C2]
+			double m21 = p2.Y - p1.Y; // M[R2C1]
+			double m22 = q1.Y - q2.Y; // M[R2C2]
 
 			// compute determinant of the matrix M
-			var determinant = m11*m22 - m12*m21; // det(M)
+			double determinant = m11*m22 - m12*m21; // det(M)
 			if (!FloatComparer.AreEqual(determinant, 0))
 			{
 				// compute elements of the inverted matrix M^-1
-				var v11 = m22/determinant;
-				var v12 = -m12/determinant;
-				// var v21 = -m21/determinant;
-				// var v22 = m11/determinant;
+				double v11 = m22/determinant;
+				double v12 = -m12/determinant;
+				// double v21 = -m21/determinant;
+				// double v22 = m11/determinant;
 
 				// compute elements of the RHS vector
-				var r1 = q1.X - p1.X;
-				var r2 = q1.Y - p1.Y;
+				double r1 = q1.X - p1.X;
+				double r2 = q1.Y - p1.Y;
 
 				// left-multiply inverted matrix with RHS to get solution of {s,t}
-				var s = v11*r1 + v12*r2;
-				// var t = v21*r1 + v22*r2;
+				double s = v11*r1 + v12*r2;
+				// double t = v21*r1 + v22*r2;
 
 				// the solution {s,t} represents the intersection of the lines
-				intersection = new PointF(p1.X + s*m11, p1.Y + s*m21);
+				intersection = new PointF((float) (p1.X + s*m11), (float) (p1.Y + s*m21));
 				return true;
 			}
 
@@ -335,14 +339,16 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			// => [P2-P1 Q1-Q2] * [s t]^T = Q1-P1
 			// => [s t]^T = [P2-P1 Q1-Q2]^-1 * [Q1-P1]
 
+			// use double precision floating point variables to minimize precision loss
+
 			// compute elements of the matrix M
-			var m11 = p2.X - p1.X; // M[R1C1]
-			var m12 = q1.X - q2.X; // M[R1C2]
-			var m21 = p2.Y - p1.Y; // M[R2C1]
-			var m22 = q1.Y - q2.Y; // M[R2C2]
+			double m11 = p2.X - p1.X; // M[R1C1]
+			double m12 = q1.X - q2.X; // M[R1C2]
+			double m21 = p2.Y - p1.Y; // M[R2C1]
+			double m22 = q1.Y - q2.Y; // M[R2C2]
 
 			// compute determinant of the matrix M
-			var determinant = m11*m22 - m12*m21; // det(M)
+			double determinant = m11*m22 - m12*m21; // det(M)
 
 			// if a distinct solution does not exist then the lines must be parallel
 			return FloatComparer.AreEqual(determinant, 0);

@@ -268,7 +268,7 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 		[Obsolete("Function under test is deprecated.")]
 		public void TestLineSegmentIntersectionBrutal()
 		{
-			var values = new[] {-100300.43245325f, -1, -float.Epsilon, 0, float.Epsilon, 1, 90952.343542f};
+			var values = new[] {-100.253f, -10, -1, 0, 1, 10, 99.3435f};
 			var mod = values.Length;
 			var permutations = (int) Math.Pow(mod, 8);
 			for (int n = 0; n < permutations; n++)
@@ -295,8 +295,10 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 					{
 						log.AppendLine(string.Format("  Expected intersection at {0}", expectedIntersection));
 						log.AppendLine(string.Format("  Computed intersection at {0}", actualIntersection));
-						Assert.Less(Math.Abs(expectedIntersection.X - actualIntersection.X), 1.00001, "Intersection has excessive difference in Y dimension");
-						Assert.Less(Math.Abs(expectedIntersection.Y - actualIntersection.Y), 1.00001, "Intersection has excessive difference in Y dimension");
+
+						// use 0.51 error as we've seen that the legacy function adds up to 0.5 in each dimension for rounding
+						Assert.Less(Math.Abs(expectedIntersection.X - actualIntersection.X), 0.51, "Intersection has excessive difference in Y dimension");
+						Assert.Less(Math.Abs(expectedIntersection.Y - actualIntersection.Y), 0.51, "Intersection has excessive difference in Y dimension");
 					}
 					else
 					{
@@ -310,7 +312,10 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 							{
 								var error = Vector.Distance(expectedIntersection, lineIntersection);
 								log.AppendLine(string.Format("  Theoretical intersection at {0} (delta magnitude of {1})", lineIntersection, error));
-								Assert.Less(error, 1.00001, "Intersection error exceeds threshold for floating point error while restricting intersection to line segment");
+
+								// use 0.71 error as we've seen that the legacy function adds up to 0.5 in each dimension for rounding
+								// and 0.5 in each dimension is 0.707 in magnitude form
+								Assert.Less(error, 0.71, "Intersection error exceeds threshold for floating point error while restricting intersection to line segment");
 								printLog = true;
 							}
 							else
