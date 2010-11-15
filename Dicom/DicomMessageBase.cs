@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Iod.Modules;
 
 namespace ClearCanvas.Dicom
 {
@@ -24,9 +25,6 @@ namespace ClearCanvas.Dicom
     /// <seealso cref="DicomMessage"/>
     public abstract class DicomMessageBase
     {
-        internal DicomAttributeCollection _metaInfo = null;
-        internal DicomAttributeCollection _dataSet = null;
-
         /// <summary>
         /// The Transfer Syntax of the DICOM file or message
         /// </summary>
@@ -37,7 +35,8 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public DicomAttributeCollection MetaInfo
         {
-            get { return _metaInfo; }
+            get;
+            internal set;
         }
 
         /// <summary>
@@ -45,7 +44,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public DicomAttributeCollection DataSet
         {
-            get { return _dataSet; }
+            get; internal set;
         }
 
         public void ChangeTransferSyntax(TransferSyntax newTransferSyntax)
@@ -77,37 +76,53 @@ namespace ClearCanvas.Dicom
             	DicomAttribute pixelData;
                 if (DataSet.TryGetAttribute(DicomTags.PixelData, out pixelData))
                 {
-					if (pixelData.IsNull)
-						throw new DicomCodecException("Sop pixel data has no valid value and cannot be compressed.");
+                    if (pixelData.IsNull)
+                        throw new DicomCodecException("Sop pixel data has no valid value and cannot be compressed.");
 
                     DicomUncompressedPixelData pd = new DicomUncompressedPixelData(DataSet);
                     DicomCompressedPixelData fragments = new DicomCompressedPixelData(pd);
 
-					// Set before compression, the codecs need it.
-					fragments.TransferSyntax = newTransferSyntax;
+                    // Check if Overlay is embedded in pixels
+                    OverlayPlaneModuleIod overlayIod = new OverlayPlaneModuleIod(DataSet);
+                    for (int i = 0; i < 16; i++)
+                    {
+                        if (overlayIod.HasOverlayPlane(i))
+                        {
+                            OverlayPlane overlay = overlayIod[i];
+                            if (overlay.OverlayData == null)
+                            {
+                                Platform.Log(LogLevel.Debug,
+                                             "SOP Instance has embedded overlay in pixel data, extracting");
+                                overlay.ConvertEmbeddedOverlay(pd);
+                            }
+                        }
+                    }
 
-					codec.Encode(pd, fragments, parameters);
+                    // Set before compression, the codecs need it.
+                    fragments.TransferSyntax = newTransferSyntax;
+
+                    codec.Encode(pd, fragments, parameters);
 
                     fragments.UpdateMessage(this);
 
-					//TODO: should we validate the number of frames in the compressed data?
-					if (!DataSet.TryGetAttribute(DicomTags.PixelData, out pixelData) || pixelData.IsNull)
-						throw new DicomCodecException("Sop has no pixel data after compression.");
+                    //TODO: should we validate the number of frames in the compressed data?
+                    if (!DataSet.TryGetAttribute(DicomTags.PixelData, out pixelData) || pixelData.IsNull)
+                        throw new DicomCodecException("Sop has no pixel data after compression.");
                 }
                 else
                 {
-					//A bit cheap, but check for basic image attributes - if any exist
-					// and are non-empty, there should probably be pixel data too.
+                    //A bit cheap, but check for basic image attributes - if any exist
+                    // and are non-empty, there should probably be pixel data too.
 
-					DicomAttribute attribute;
-					if (DataSet.TryGetAttribute(DicomTags.Rows, out attribute) && !attribute.IsNull)
-						throw new DicomCodecException("Suspect Sop appears to be an image (Rows is non-empty), but has no pixel data.");
+                    DicomAttribute attribute;
+                    if (DataSet.TryGetAttribute(DicomTags.Rows, out attribute) && !attribute.IsNull)
+                        throw new DicomCodecException("Suspect Sop appears to be an image (Rows is non-empty), but has no pixel data.");
 
-					if (DataSet.TryGetAttribute(DicomTags.Columns, out attribute) && !attribute.IsNull)
-						throw new DicomCodecException("Suspect Sop appears to be an image (Columns is non-empty), but has no pixel data.");
+                    if (DataSet.TryGetAttribute(DicomTags.Columns, out attribute) && !attribute.IsNull)
+                        throw new DicomCodecException("Suspect Sop appears to be an image (Columns is non-empty), but has no pixel data.");
 
-                	TransferSyntax = newTransferSyntax;
-				}
+                    TransferSyntax = newTransferSyntax;
+                }
             }
             else
             {
@@ -173,8 +188,8 @@ namespace ClearCanvas.Dicom
         /// <param name="obj"></param>
         public void LoadDicomFields(object obj)
         {
-            _metaInfo.LoadDicomFields(obj);
-            _dataSet.LoadDicomFields(obj);
+            MetaInfo.LoadDicomFields(obj);
+            DataSet.LoadDicomFields(obj);
         }
 
         #region Dump
@@ -225,12 +240,12 @@ namespace ClearCanvas.Dicom
 		/// <returns>The sum of the hashes of the attributes in the message.</returns>
 		public override int GetHashCode()
 		{
-			if (_metaInfo.Count > 0 || _dataSet.Count > 0)
+			if (MetaInfo.Count > 0 || DataSet.Count > 0)
 			{
 				int hash = 0;
-				foreach (DicomAttribute attrib in _metaInfo)
+				foreach (DicomAttribute attrib in MetaInfo)
 					hash += attrib.GetHashCode();
-				foreach (DicomAttribute attrib in _dataSet)
+				foreach (DicomAttribute attrib in DataSet)
 					hash += attrib.GetHashCode();
 				return hash;
 			}
@@ -260,9 +275,13 @@ namespace ClearCanvas.Dicom
 			DicomFile a = obj as DicomFile;
 			if (a == null)
 			{
-			    DicomAttributeComparisonResult result = new DicomAttributeComparisonResult();
-			    result.ResultType = ComparisonResultType.InvalidType;
-                result.Details = String.Format("Comparison object is invalid type: {0}", obj.GetType());
+			    DicomAttributeComparisonResult result = new DicomAttributeComparisonResult
+			                                                {
+			                                                    ResultType = ComparisonResultType.InvalidType,
+			                                                    Details =
+			                                                        String.Format("Comparison object is invalid type: {0}",
+			                                                                      obj.GetType())
+			                                                };
 			    comparisonResults.Add(result);
 
 				return false;

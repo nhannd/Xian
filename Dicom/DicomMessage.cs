@@ -32,16 +32,16 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string AffectedSopClassUid
         {
-            get { return _metaInfo[DicomTags.AffectedSopClassUid].GetString(0,String.Empty); }
-            set { _metaInfo[DicomTags.AffectedSopClassUid].Values = value; }
+            get { return MetaInfo[DicomTags.AffectedSopClassUid].GetString(0,String.Empty); }
+            set { MetaInfo[DicomTags.AffectedSopClassUid].Values = value; }
         }
         /// <summary>
         /// The requested SOP Class UID associated with the operation.
         /// </summary>
         public string RequestedSopClassUid
         {
-            get { return _metaInfo[DicomTags.RequestedSopClassUid].GetString(0,String.Empty); }
-            set { _metaInfo[DicomTags.RequestedSopClassUid].Values = value; }
+            get { return MetaInfo[DicomTags.RequestedSopClassUid].GetString(0, String.Empty); }
+            set { MetaInfo[DicomTags.RequestedSopClassUid].Values = value; }
         }
         /// <summary>
         /// This field distinguishes the DIMSE operation conveyed by this Message.
@@ -50,12 +50,12 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                ushort command = _metaInfo[DicomTags.CommandField].GetUInt16(0, (ushort)DicomCommandField.CStoreRequest);
+                ushort command = MetaInfo[DicomTags.CommandField].GetUInt16(0, (ushort)DicomCommandField.CStoreRequest);
                 return (DicomCommandField)command;
             }
             set
             {
-                _metaInfo[DicomTags.CommandField].Values = (ushort)value;
+                MetaInfo[DicomTags.CommandField].Values = (ushort)value;
             }
         }
         /// <summary>
@@ -63,24 +63,24 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public ushort MessageId
         {
-            get { return _metaInfo[DicomTags.MessageId].GetUInt16(0, 0); }
-            set { _metaInfo[DicomTags.MessageId].Values = value; }
+            get { return MetaInfo[DicomTags.MessageId].GetUInt16(0, 0); }
+            set { MetaInfo[DicomTags.MessageId].Values = value; }
         }
         /// <summary>
         /// Shall be set to the value of the Message ID (0000,0110) field used in the associated request Message.
         /// </summary>
         public ushort MessageIdBeingRespondedTo
         {
-            get { return _metaInfo[DicomTags.MessageIdBeingRespondedTo].GetUInt16(0, 0); }
-            set { _metaInfo[DicomTags.MessageIdBeingRespondedTo].Values = value; }
+            get { return MetaInfo[DicomTags.MessageIdBeingRespondedTo].GetUInt16(0, 0); }
+            set { MetaInfo[DicomTags.MessageIdBeingRespondedTo].Values = value; }
         }
         /// <summary>
         /// Shall be set to the DICOM AE Ttile of the destination DICOM AE for which the C-STORE sub-operations are being performed.
         /// </summary>
         public string MoveDestination
         {
-            get { return _metaInfo[DicomTags.MoveDestination].GetString(0,String.Empty); }
-            set { _metaInfo[DicomTags.MoveDestination].Values = value; }
+            get { return MetaInfo[DicomTags.MoveDestination].GetString(0, String.Empty); }
+            set { MetaInfo[DicomTags.MoveDestination].Values = value; }
         }
         /// <summary>
         /// The priority shall be set to one of the following values: 
@@ -92,12 +92,12 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                ushort priority = _metaInfo[DicomTags.Priority].GetUInt16(0, (ushort)DicomPriority.Medium);
+                ushort priority = MetaInfo[DicomTags.Priority].GetUInt16(0, (ushort)DicomPriority.Medium);
                 return (DicomPriority)priority;
             }
             set
             {
-                _metaInfo[DicomTags.Priority].Values = (ushort)value;
+                MetaInfo[DicomTags.Priority].Values = (ushort)value;
             }
         }
         /// <summary>
@@ -106,8 +106,8 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public ushort DataSetType
         {
-            get { return _metaInfo[DicomTags.DataSetType].GetUInt16(0, 0); }
-            set { _metaInfo[DicomTags.DataSetType].Values = value; }
+            get { return MetaInfo[DicomTags.DataSetType].GetUInt16(0, 0); }
+            set { MetaInfo[DicomTags.DataSetType].Values = value; }
         }
         /// <summary>
         /// Confirmation status of the operation.
@@ -116,12 +116,12 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                ushort status = _metaInfo[DicomTags.Status].GetUInt16(0, 0);
+                ushort status = MetaInfo[DicomTags.Status].GetUInt16(0, 0);
                 return DicomStatuses.Lookup(status);
             }
             set
             {
-                _metaInfo[DicomTags.Status].Values = value.Code;
+                MetaInfo[DicomTags.Status].Values = value.Code;
             }
         }
         /// <summary>
@@ -129,64 +129,64 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public uint[] OffendingElement
         {
-            get { return (uint[])_metaInfo[DicomTags.OffendingElement].Values; }
-            set { _metaInfo[DicomTags.OffendingElement].Values = value; }
+            get { return (uint[])MetaInfo[DicomTags.OffendingElement].Values; }
+            set { MetaInfo[DicomTags.OffendingElement].Values = value; }
         }
         /// <summary>
         /// This field contains an application-specific text description of the error detected.
         /// </summary>
         public string ErrorComment
         {
-            get { return _metaInfo[DicomTags.ErrorComment].GetString(0,String.Empty); }
-            set { _metaInfo[DicomTags.ErrorComment].Values = value; }
+            get { return MetaInfo[DicomTags.ErrorComment].GetString(0, String.Empty); }
+            set { MetaInfo[DicomTags.ErrorComment].Values = value; }
         }
         /// <summary>
         /// This field shall optionally contain an application-specific error code.
         /// </summary>
         public ushort ErrorId
         {
-            get { return _metaInfo[DicomTags.ErrorId].GetUInt16(0, 0); }
-            set { _metaInfo[DicomTags.ErrorId].Values = value; }
+            get { return MetaInfo[DicomTags.ErrorId].GetUInt16(0, 0); }
+            set { MetaInfo[DicomTags.ErrorId].Values = value; }
         }
         /// <summary>
         /// Contains the UID of the SOP Instance for which this operation occurred.
         /// </summary>
         public string AffectedSopInstanceUid
         {
-            get { return _metaInfo[DicomTags.AffectedSopInstanceUid].GetString(0,String.Empty); }
-            set { _metaInfo[DicomTags.AffectedSopInstanceUid].Values = value; }
+            get { return MetaInfo[DicomTags.AffectedSopInstanceUid].GetString(0, String.Empty); }
+            set { MetaInfo[DicomTags.AffectedSopInstanceUid].Values = value; }
         }
         /// <summary>
         /// Contains the UID of the SOP Instance for which this operation occurred.
         /// </summary>
         public string RequestedSopInstanceUid
         {
-            get { return _metaInfo[DicomTags.RequestedSopInstanceUid].GetString(0,String.Empty); }
-            set { _metaInfo[DicomTags.RequestedSopInstanceUid].Values = value; }
+            get { return MetaInfo[DicomTags.RequestedSopInstanceUid].GetString(0, String.Empty); }
+            set { MetaInfo[DicomTags.RequestedSopInstanceUid].Values = value; }
         }
         /// <summary>
         /// Values for this field are application-specific.
         /// </summary>
         public ushort EventTypeId
         {
-            get { return _metaInfo[DicomTags.EventTypeId].GetUInt16(0, 0); }
-            set { _metaInfo[DicomTags.EventTypeId].Values = value; }
+            get { return MetaInfo[DicomTags.EventTypeId].GetUInt16(0, 0); }
+            set { MetaInfo[DicomTags.EventTypeId].Values = value; }
         }
         /// <summary>
         /// This field contains an Attribute Tag for each of the n Attributes applicable.
         /// </summary>
         public uint[] AttributeIdentifierList
         {
-            get { return (uint[])_metaInfo[DicomTags.AttributeIdentifierList].Values; }
-            set { _metaInfo[DicomTags.AttributeIdentifierList].Values = value; }
+            get { return (uint[])MetaInfo[DicomTags.AttributeIdentifierList].Values; }
+            set { MetaInfo[DicomTags.AttributeIdentifierList].Values = value; }
         }
         /// <summary>
         /// Values for this field are application-specific.
         /// </summary>
         public ushort ActionTypeId
         {
-            get { return _metaInfo[DicomTags.ActionTypeId].GetUInt16(0, 0); }
-            set { _metaInfo[DicomTags.ActionTypeId].Values = value; }
+            get { return MetaInfo[DicomTags.ActionTypeId].GetUInt16(0, 0); }
+            set { MetaInfo[DicomTags.ActionTypeId].Values = value; }
         }
         /// <summary>
         /// The number of reamining C-STORE sub-operations to be 
@@ -194,8 +194,8 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public ushort NumberOfRemainingSubOperations
         {
-            get { return _metaInfo[DicomTags.NumberOfRemainingSubOperations].GetUInt16(0, 0); }
-            set { _metaInfo[DicomTags.NumberOfRemainingSubOperations].Values = value; }
+            get { return MetaInfo[DicomTags.NumberOfRemainingSubOperations].GetUInt16(0, 0); }
+            set { MetaInfo[DicomTags.NumberOfRemainingSubOperations].Values = value; }
         }
         /// <summary>
         /// The number of C-STORE sub-operations associated with this operation which have 
@@ -203,8 +203,8 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public ushort NumberOfCompletedSubOperations
         {
-            get { return _metaInfo[DicomTags.NumberOfCompletedSubOperations].GetUInt16(0, 0); }
-            set { _metaInfo[DicomTags.NumberOfCompletedSubOperations].Values = value; }
+            get { return MetaInfo[DicomTags.NumberOfCompletedSubOperations].GetUInt16(0, 0); }
+            set { MetaInfo[DicomTags.NumberOfCompletedSubOperations].Values = value; }
         }
         /// <summary>
         /// The number of C-STORE sub-operations associated with this operation which
@@ -212,8 +212,8 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public ushort NumberOfFailedSubOperations
         {
-            get { return _metaInfo[DicomTags.NumberOfFailedSubOperations].GetUInt16(0, 0); }
-            set { _metaInfo[DicomTags.NumberOfFailedSubOperations].Values = value; }
+            get { return MetaInfo[DicomTags.NumberOfFailedSubOperations].GetUInt16(0, 0); }
+            set { MetaInfo[DicomTags.NumberOfFailedSubOperations].Values = value; }
         }
         /// <summary>
         /// The number of C-STORE sub-operations associated with this operation which 
@@ -221,8 +221,8 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public ushort NumberOfWarningSubOperations
         {
-            get { return _metaInfo[DicomTags.NumberOfWarningSubOperations].GetUInt16(0, 0); }
-            set { _metaInfo[DicomTags.NumberOfWarningSubOperations].Values = value; }
+            get { return MetaInfo[DicomTags.NumberOfWarningSubOperations].GetUInt16(0, 0); }
+            set { MetaInfo[DicomTags.NumberOfWarningSubOperations].Values = value; }
         }
         /// <summary>
         /// Contains the DICOM AE Title of the DICOM AE which invoked the C-MOVE operation from which this
@@ -230,8 +230,8 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string MoveOriginatorApplicationEntityTitle
         {
-            get { return _metaInfo[DicomTags.MoveOriginatorApplicationEntityTitle].GetString(0,String.Empty); }
-            set { _metaInfo[DicomTags.MoveOriginatorApplicationEntityTitle].Values = value; }
+            get { return MetaInfo[DicomTags.MoveOriginatorApplicationEntityTitle].GetString(0, String.Empty); }
+            set { MetaInfo[DicomTags.MoveOriginatorApplicationEntityTitle].Values = value; }
         }
         /// <summary>
         /// Contains the Message ID (0000,0110) of the C-MOVE-RQ Message from which this
@@ -239,8 +239,8 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public ushort MoveOriginatorMessageId
         {
-            get { return _metaInfo[DicomTags.MoveOriginatorMessageId].GetUInt16(0, 0); }
-            set { _metaInfo[DicomTags.MoveOriginatorMessageId].Values = value; }
+            get { return MetaInfo[DicomTags.MoveOriginatorMessageId].GetUInt16(0, 0); }
+            set { MetaInfo[DicomTags.MoveOriginatorMessageId].Values = value; }
         }
 
         #endregion
@@ -263,12 +263,10 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                String sopClassUid = base.DataSet[DicomTags.SopClassUid].GetString(0, String.Empty);
+                String sopClassUid = DataSet[DicomTags.SopClassUid].GetString(0, String.Empty);
 
-                SopClass sop = SopClass.GetSopClass(sopClassUid);
-
-                if (sop == null)
-                    sop = new SopClass("Unknown Sop Class", sopClassUid, false);
+                SopClass sop = SopClass.GetSopClass(sopClassUid) ??
+                               new SopClass("Unknown Sop Class", sopClassUid, false);
 
                 return sop;
             }
@@ -290,15 +288,9 @@ namespace ClearCanvas.Dicom
         /// <param name="data">The data set.</param>
         public DicomMessage(DicomAttributeCollection command, DicomAttributeCollection data)
         {
-            if (command == null)
-                _metaInfo = new DicomAttributeCollection(0x00000000,0x0000FFFF);
-            else
-                _metaInfo = command;
+            MetaInfo = command ?? new DicomAttributeCollection(0x00000000, 0x0000FFFF);
 
-            if (data == null)
-                _dataSet = new DicomAttributeCollection(0x00040000,0xFFFFFFFF);
-            else
-                _dataSet = data;
+            DataSet = data ?? new DicomAttributeCollection(0x00040000,0xFFFFFFFF);
         }
 
         /// <summary>
@@ -311,8 +303,8 @@ namespace ClearCanvas.Dicom
         public DicomMessage(DicomFile file)
         {
             _transferSyntax = file.TransferSyntax;
-            _metaInfo = new DicomAttributeCollection(0x00000000,0x0000FFFF);
-            _dataSet = file.DataSet;
+            MetaInfo = new DicomAttributeCollection(0x00000000,0x0000FFFF);
+            DataSet = file.DataSet;
         }
 
         /// <summary>
@@ -320,8 +312,8 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public DicomMessage()
         {
-            _metaInfo = new DicomAttributeCollection(0x00000000, 0x0000FFFF);
-            _dataSet = new DicomAttributeCollection(0x00040000, 0xFFFFFFFF);
+            MetaInfo = new DicomAttributeCollection(0x00000000, 0x0000FFFF);
+            DataSet = new DicomAttributeCollection(0x00040000, 0xFFFFFFFF);
         }
         #endregion
 
@@ -336,9 +328,9 @@ namespace ClearCanvas.Dicom
         {
             if (sb == null) throw new NullReferenceException("sb");
             sb.Append(prefix).Append("Command Elements:").AppendLine();
-            _metaInfo.Dump(sb, prefix, options);
+            MetaInfo.Dump(sb, prefix, options);
             sb.AppendLine().Append(prefix).Append("Data Set:").AppendLine();
-            _dataSet.Dump(sb, prefix, options);
+            DataSet.Dump(sb, prefix, options);
             sb.AppendLine();
         }
         #endregion

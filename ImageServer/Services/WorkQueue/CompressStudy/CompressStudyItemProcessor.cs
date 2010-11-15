@@ -206,27 +206,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                     file.Load(DicomReadOptions.StorePixelDataReferences | DicomReadOptions.Default);
                     _instanceStats.FileLoadTime.End();
 
-					if (!file.TransferSyntax.Encapsulated)
-					{
-						//TODO: just move this right into ChangeTransferSyntax?
-
-						// Check if Overlay is embedded in pixels
-						OverlayPlaneModuleIod overlayIod = new OverlayPlaneModuleIod(file.DataSet);
-						for (int i = 0; i < 16; i++)
-						{
-							if (overlayIod.HasOverlayPlane(i))
-							{
-								Platform.Log(ServerPlatform.InstanceLogLevel, "SOP Instance {0} has embedded overlay in pixel data, extracting", file.MediaStorageSopInstanceUid);
-								OverlayPlane overlay = overlayIod[i];
-								if (overlay.OverlayData == null)
-								{
-									DicomUncompressedPixelData pd = new DicomUncompressedPixelData(file);
-									overlay.ConvertEmbeddedOverlay(pd);
-								}
-							}
-						}
-					}
-
                 	modality = file.DataSet[DicomTags.Modality].GetString(0, String.Empty);
 
                     FileInfo fileInfo = new FileInfo(path);

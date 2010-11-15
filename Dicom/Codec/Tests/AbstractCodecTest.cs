@@ -10,10 +10,12 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Text;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.IO;
+using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.Dicom.Tests;
 using NUnit.Framework;
 
@@ -58,7 +60,24 @@ namespace ClearCanvas.Dicom.Codec.Tests
             ConvertAttributeToUN(theSet, DicomTags.LossyImageCompressionMethod);
         }
 
-		public static void LosslessImageTest(TransferSyntax syntax, DicomFile theFile)
+        public void SetupMRWithOverlay(DicomAttributeCollection theSet)
+        {
+            SetupMR(theSet);
+
+            OverlayPlaneModuleIod overlayIod = new OverlayPlaneModuleIod(theSet);
+            DicomUncompressedPixelData pd = new DicomUncompressedPixelData(theSet);
+            OverlayPlane overlay = overlayIod[0];
+
+            // Embedded overlays are retired in dicom, just doing it for testing purposes
+            theSet[DicomTags.OverlayBitPosition].SetInt32(0, pd.HighBit + 1);
+            overlay.OverlayBitsAllocated = 1;
+            overlay.OverlayColumns = pd.ImageWidth;
+            overlay.OverlayRows = pd.ImageHeight;
+            overlay.OverlayOrigin = new Point(0, 0);
+            overlay.OverlayType = OverlayType.R;
+        }
+
+	    public static void LosslessImageTest(TransferSyntax syntax, DicomFile theFile)
 		{
 			if (File.Exists(theFile.Filename))
 				File.Delete(theFile.Filename);

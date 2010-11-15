@@ -23,6 +23,7 @@
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Codec.Tests;
+using ClearCanvas.Dicom.Iod.Modules;
 using NUnit.Framework;
 using ClearCanvas.Common;
 using System.Reflection;
@@ -118,6 +119,54 @@ namespace ClearCanvas.Dicom.Codec.Rle.Tests
             RleTest(newFile);
         }
 
+
+        [Test]
+        public void RleOverlayTest()
+        {
+            DicomFile file = new DicomFile("RleCodecOverlayTest.dcm");
+
+            SetupMRWithOverlay(file.DataSet);
+
+            SetupMetaInfo(file);
+
+            // Save a copy
+            file.Save();
+
+
+            // Load the file into new DicomFile object
+            DicomFile newFile = new DicomFile(file.Filename);
+
+            newFile.Load();
+
+            OverlayPlaneModuleIod overlayIod = new OverlayPlaneModuleIod(newFile.DataSet);
+            OverlayPlane overlay = overlayIod[0];
+            
+            // SHould be no OverlayData tag
+            Assert.IsNull(overlay.OverlayData, "Overlay should be in pixel data");
+
+            // Overlay should be extracted out of pixel data here
+            newFile.ChangeTransferSyntax(TransferSyntax.RleLossless);
+
+            Assert.IsNotNull(overlay.OverlayData,"Overlay Data is not null");
+
+            newFile.Save();
+
+            // Load a new copy
+            newFile = new DicomFile(file.Filename);
+
+            newFile.Load();
+
+            newFile.ChangeTransferSyntax(TransferSyntax.ExplicitVrLittleEndian);
+
+            newFile.Filename = "Output" + file.Filename;
+            newFile.Save();
+
+            List<DicomAttributeComparisonResult> results = new List<DicomAttributeComparisonResult>();
+            bool compare = file.DataSet.Equals(newFile.DataSet, ref results);
+
+            // Shouldn't be the same, OverlayData tag should have been added
+            Assert.IsFalse(compare, results.Count > 0 ? CollectionUtils.FirstElement(results).Details : string.Empty);                      
+        }
 
         public void RleTest(DicomFile file)
         {
