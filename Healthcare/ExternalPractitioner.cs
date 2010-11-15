@@ -116,8 +116,8 @@ namespace ClearCanvas.Healthcare
 			// mark both left and right as edited and merged
 			foreach (var practitioner in new[] { right, left })
 			{
-				practitioner.SetMergedInto(result);
 				practitioner.MarkEdited();
+				practitioner.SetMergedInto(result);
 			}
 
 			// mark the result as being edited
@@ -149,6 +149,9 @@ namespace ClearCanvas.Healthcare
 		/// </summary>
 		public virtual void MarkEdited()
 		{
+			if (this.IsMerged)
+				throw new WorkflowException("Cannot edit a merged practitioners");
+
 			_lastEditedTime = Platform.Time;
 			_isVerified = false;
 		}
@@ -158,9 +161,28 @@ namespace ClearCanvas.Healthcare
 		/// </summary>
 		public virtual void MarkVerified()
 		{
+			if (this.IsMerged)
+				throw new WorkflowException("Cannot verify a merged practitioners");
+
 			_lastVerifiedTime = Platform.Time;
 			_isVerified = true;
 		}
+
+		/// <summary>
+		/// Mark the entity as being deactivated.
+		/// </summary>
+		public virtual void MarkDeactivated(bool deactivated)
+		{
+			if (_deactivated == deactivated)
+				return;
+
+			// Trying to activate a merged practitioner
+			if (_deactivated && this.IsMerged)
+				throw new WorkflowException("Cannot activate a merged practitioner");
+
+			_deactivated = deactivated;
+		}
+
 
 		/// <summary>
 		/// Gets a value indicating whether this entity was merged.

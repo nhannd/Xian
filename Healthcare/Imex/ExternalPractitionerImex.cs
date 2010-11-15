@@ -186,7 +186,7 @@ namespace ClearCanvas.Healthcare.Imex
 				prac.MarkEdited();
 			}
 
-			prac.Deactivated = data.Deactivated;
+			prac.MarkDeactivated(data.Deactivated);
 
 			if (data.ContactPoints != null)
 			{

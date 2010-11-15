@@ -98,7 +98,7 @@ namespace ClearCanvas.Ris.Application.Services
 
 			prac.LicenseNumber = detail.LicenseNumber;
 			prac.BillingNumber = detail.BillingNumber;
-			prac.Deactivated = detail.Deactivated;
+			prac.MarkDeactivated(detail.Deactivated);
 
 			// update contact points collection
 			var syncHelper = new CollectionSynchronizeHelper<ExternalPractitionerContactPoint, ExternalPractitionerContactPointDetail>(
