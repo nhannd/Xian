@@ -98,7 +98,24 @@ namespace ClearCanvas.Healthcare.Tests
 			}
 		}
 
-		#region Test Changing Activate/Deactivate status
+		#region Test Edit Merged Practitioner
+
+		[Test]
+		[ExpectedException(typeof(WorkflowException))]
+		public void Test_Edit_Merged_Practitioner()
+		{
+			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
+			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
+			TestExternalPractitionerHelper.SimpleMerge(p1, p2);
+
+			// Changing the property won't change _lastEditedTime.  Must call MarkEdited
+			p1.LicenseNumber = "Modified value";
+			p1.MarkEdited();
+		}
+
+		#endregion
+
+		#region Test Activate/Deactivate Merged/NotMerged Practitioner
 
 		[Test]
 		public void Test_Deactivate_Merged_Practitioner()
@@ -171,7 +188,7 @@ namespace ClearCanvas.Healthcare.Tests
 
 		#endregion
 
-		#region Test Merge Practitioners with Activate/Deactivated status
+		#region Test Merge Activated/Deactivated Practitioners
 
 		[Test]
 		public void Test_Merge_Activated_Practitioner()
@@ -224,7 +241,7 @@ namespace ClearCanvas.Healthcare.Tests
 
 		#endregion
 
-		#region Test Merge Practitioners with Merged status
+		#region Test Merge Merged Practitioners
 
 		[Test]
 		[ExpectedException(typeof(WorkflowException))]
@@ -259,7 +276,33 @@ namespace ClearCanvas.Healthcare.Tests
 
 		#endregion
 
-		#region Test Practitioner Properties after merging.
+		#region Test Merged Practitioner Properties
+
+		[Test]
+		public void Test_Merged_Practitioner_Basic_Properties()
+		{
+			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
+			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
+			var dest = TestExternalPractitionerHelper.SimpleMerge(p1, p2);
+
+			Assert.AreEqual(p1.Name, dest.Name);
+			Assert.AreEqual(p1.LicenseNumber, dest.LicenseNumber);
+			Assert.AreEqual(p1.BillingNumber, dest.BillingNumber);
+		}
+
+		[Test]
+		public void Test_Merged_Practitioner_Extended_Properties()
+		{
+			const string testKey = "TestKey";
+			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
+			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
+			p1.ExtendedProperties.Add(testKey, "Test Value");
+
+			var dest = TestExternalPractitionerHelper.SimpleMerge(p1, p2);
+
+			Assert.AreEqual(p1.ExtendedProperties.Count, dest.ExtendedProperties.Count);
+			Assert.AreEqual(p1.ExtendedProperties[testKey], dest.ExtendedProperties[testKey]);
+		}
 
 		[Test]
 		public void Test_Merged_Practitioner_IsMerged_Property()
@@ -309,132 +352,199 @@ namespace ClearCanvas.Healthcare.Tests
 			Assert.IsNotNull(p3.LastEditedTime);
 		}
 
-		#endregion
-
 		[Test]
-		public void Test_Chain_Merge()
-		{
-			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
-			var p3 = TestExternalPractitionerHelper.CreatePractitioner("C", "3");
-			var p4 = TestExternalPractitionerHelper.CreatePractitioner("D", "4");
-
-			var p12 = TestExternalPractitionerHelper.SimpleMerge(p1, p2);
-			var p123 = TestExternalPractitionerHelper.SimpleMerge(p12, p3);
-			var ultimateDest = TestExternalPractitionerHelper.SimpleMerge(p123, p4);
-
-			Assert.AreEqual(ultimateDest, p1.GetUltimateMergeDestination());
-			Assert.AreEqual(ultimateDest, p2.GetUltimateMergeDestination());
-			Assert.AreEqual(ultimateDest, p3.GetUltimateMergeDestination());
-			Assert.AreEqual(ultimateDest, p4.GetUltimateMergeDestination());
-			Assert.AreEqual(ultimateDest, p12.GetUltimateMergeDestination());
-			Assert.AreEqual(ultimateDest, p123.GetUltimateMergeDestination());
-		}
-
-		[Test]
-		public void Test_Binary_Merge()
-		{
-			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
-			var p3 = TestExternalPractitionerHelper.CreatePractitioner("C", "3");
-			var p4 = TestExternalPractitionerHelper.CreatePractitioner("D", "4");
-
-			var p12 = TestExternalPractitionerHelper.SimpleMerge(p1, p2);
-			var p34 = TestExternalPractitionerHelper.SimpleMerge(p3, p4);
-			var ultimateDest = TestExternalPractitionerHelper.SimpleMerge(p12, p34);
-
-			Assert.AreEqual(ultimateDest, p1.GetUltimateMergeDestination());
-			Assert.AreEqual(ultimateDest, p2.GetUltimateMergeDestination());
-			Assert.AreEqual(ultimateDest, p3.GetUltimateMergeDestination());
-			Assert.AreEqual(ultimateDest, p4.GetUltimateMergeDestination());
-			Assert.AreEqual(ultimateDest, p12.GetUltimateMergeDestination());
-			Assert.AreEqual(ultimateDest, p34 .GetUltimateMergeDestination());
-		}
-
-		[Test]
-		public void Test_Content_After_Merge()
-		{
-			const string testKey = "TestKey";
-			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
-			p1.ExtendedProperties.Add(testKey, "Test Value");
-
-			var dest = TestExternalPractitionerHelper.SimpleMerge(p1, p2);
-
-			Assert.AreEqual(p1.Name, dest.Name);
-			Assert.AreEqual(p1.LicenseNumber, dest.LicenseNumber);
-			Assert.AreEqual(p1.BillingNumber, dest.BillingNumber);
-			Assert.AreEqual(p1.ExtendedProperties.Count, dest.ExtendedProperties.Count);
-			Assert.AreEqual(p1.ExtendedProperties[testKey], dest.ExtendedProperties[testKey]);
-		}
-
-		[Test]
-		public void Test_Topology_After_Merge()
+		public void Test_Merged_Default_Contact_Point()
 		{
 			var pA = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-			var cpA1 = TestExternalPractitionerHelper.AddContactPoint(pA, "cpA1", "cpA1");
-			var cpA2 = TestExternalPractitionerHelper.AddContactPoint(pA, "cpA2", "cpA2");
+			var cpPA1 = TestExternalPractitionerHelper.AddContactPoint(pA, "cpPA1", "cpPA1");
+			var cpPA2 = TestExternalPractitionerHelper.AddContactPoint(pA, "cpPA2", "cpPA2");
+			Assert.IsTrue(cpPA1.IsDefaultContactPoint);
+			Assert.IsFalse(cpPA2.IsDefaultContactPoint);
 
 			var pB = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
-			var cpB1 = TestExternalPractitionerHelper.AddContactPoint(pB, "cpB1", "cpB1");
-			var cpB2 = TestExternalPractitionerHelper.AddContactPoint(pB, "cpB2", "cpB2");
+			var cpPB1 = TestExternalPractitionerHelper.AddContactPoint(pB, "cpPB1", "cpPB1");
+			var cpPB2 = TestExternalPractitionerHelper.AddContactPoint(pB, "cpPB2", "cpPB2");
+			Assert.IsTrue(cpPB1.IsDefaultContactPoint);
+			Assert.IsFalse(cpPB2.IsDefaultContactPoint);
 
-			var dest = TestExternalPractitionerHelper.SimpleMerge(pA, pB);
-			var destA1 = CollectionUtils.SelectFirst(dest.ContactPoints, cp => cp.Name == cpA1.Name);
-			var destA2 = CollectionUtils.SelectFirst(dest.ContactPoints, cp => cp.Name == cpA2.Name);
-			var destB1 = CollectionUtils.SelectFirst(dest.ContactPoints, cp => cp.Name == cpB1.Name);
-			var destB2 = CollectionUtils.SelectFirst(dest.ContactPoints, cp => cp.Name == cpB2.Name);
-
-			// Test Practitioner MergedInto
-			Assert.AreEqual(dest, pA.MergedInto);
-			Assert.AreEqual(dest, pB.MergedInto);
-
-			// Test ContactPoint MergedInto
-			Assert.IsNotNull(destA1);
-			Assert.IsNotNull(destA2);
-			Assert.IsNotNull(destB1);
-			Assert.IsNotNull(destB2);
-			Assert.AreEqual(destA1, cpA1.MergedInto);
-			Assert.AreEqual(destA2, cpA2.MergedInto);
-			Assert.AreEqual(destB1, cpB1.MergedInto);
-			Assert.AreEqual(destB2, cpB2.MergedInto);
-		}
-
-
-		[Test]
-		public void Test_Default_Contact_Point_After_Merge()
-		{
-			var pA = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-			TestExternalPractitionerHelper.AddContactPoint(pA, "cpA1", "cpA1");
-			TestExternalPractitionerHelper.AddContactPoint(pA, "cpA2", "cpA2");
-
-			var pB = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
-			TestExternalPractitionerHelper.AddContactPoint(pB, "cpB1", "cpB1");
-			var cpB2 = TestExternalPractitionerHelper.AddContactPoint(pB, "cpB2", "cpB2");
-
-
+			var defaultContactPointAfterMerge = cpPB2;
 			var dest = ExternalPractitioner.MergePractitioners(pA, pB,
-				pA.Name, pA.LicenseNumber, pA.BillingNumber, pA.ExtendedProperties, cpB2,
+				pA.Name, pA.LicenseNumber, pA.BillingNumber, pA.ExtendedProperties, defaultContactPointAfterMerge,
 				new List<ExternalPractitionerContactPoint>(),
 				new Dictionary<ExternalPractitionerContactPoint, ExternalPractitionerContactPoint>());
 
 			Assert.AreEqual(dest.ContactPoints.Count, pA.ContactPoints.Count + pB.ContactPoints.Count);
 			Assert.IsNotNull(dest.DefaultContactPoint);
-			Assert.AreEqual(dest.DefaultContactPoint.Name, cpB2.Name);
+			Assert.AreEqual(dest.DefaultContactPoint.Name, defaultContactPointAfterMerge.Name);
 		}
 
+		#endregion
 
-		/// Contact POint test
+		#region Test Merge Topology
 
-		//[Test]
-		//public void Test_Circular_Merge()
-		//{
-		//    var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-		//    var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
+		[Test]
+		public void Test_Topology_Chain_Merge()
+		{
+			// Setup the basic practitioners, each with one contact point.
+			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
+			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
+			var p3 = TestExternalPractitionerHelper.CreatePractitioner("C", "3");
+			var p4 = TestExternalPractitionerHelper.CreatePractitioner("D", "4");
+			var cpP1 = TestExternalPractitionerHelper.AddContactPoint(p1, "cpP1", "cpP1");
+			var cpP2 = TestExternalPractitionerHelper.AddContactPoint(p2, "cpP2", "cpP2");
+			var cpP3 = TestExternalPractitionerHelper.AddContactPoint(p3, "cpP3", "cpP3");
+			var cpP4 = TestExternalPractitionerHelper.AddContactPoint(p4, "cpP4", "cpP4");
 
-		//    var p12 = TestExternalPractitionerHelper.SimpleMerge(p1, p2);
-		//    TestExternalPractitionerHelper.SimpleMerge(p12, p3);
-		//}
+			// Perform Merge p1 -> p2 -> p3 -> p4 -> ultimateDest
+			var p12 = TestExternalPractitionerHelper.SimpleMerge(p1, p2);
+			var p123 = TestExternalPractitionerHelper.SimpleMerge(p12, p3);
+			var ultimateDest = TestExternalPractitionerHelper.SimpleMerge(p123, p4);
 
+			// Get a reference to all the contact points
+			var p12_cpP1 = CollectionUtils.SelectFirst(p12.ContactPoints, cp => cp.Name == cpP1.Name);
+			var p12_cpP2 = CollectionUtils.SelectFirst(p12.ContactPoints, cp => cp.Name == cpP2.Name);
+			var p123_cpP1 = CollectionUtils.SelectFirst(p123.ContactPoints, cp => cp.Name == cpP1.Name);
+			var p123_cpP2 = CollectionUtils.SelectFirst(p123.ContactPoints, cp => cp.Name == cpP2.Name);
+			var p123_cpP3 = CollectionUtils.SelectFirst(p123.ContactPoints, cp => cp.Name == cpP3.Name);
+			var dest_cpP1 = CollectionUtils.SelectFirst(ultimateDest.ContactPoints, cp => cp.Name == cpP1.Name);
+			var dest_cpP2 = CollectionUtils.SelectFirst(ultimateDest.ContactPoints, cp => cp.Name == cpP2.Name);
+			var dest_cpP3 = CollectionUtils.SelectFirst(ultimateDest.ContactPoints, cp => cp.Name == cpP3.Name);
+			var dest_cpP4 = CollectionUtils.SelectFirst(ultimateDest.ContactPoints, cp => cp.Name == cpP4.Name);
+
+			// Verifying all practitioners are merged into the right one
+			Assert.AreEqual(p1.MergedInto, p12);
+			Assert.AreEqual(p2.MergedInto, p12);
+			Assert.AreEqual(p3.MergedInto, p123);
+			Assert.AreEqual(p12.MergedInto, p123);
+			Assert.AreEqual(p123.MergedInto, ultimateDest);
+			Assert.IsNull(ultimateDest.MergedInto);
+
+			// Verifying all practitioners are ultimately merged into the right one
+			Assert.AreEqual(p1.GetUltimateMergeDestination(), ultimateDest);
+			Assert.AreEqual(p2.GetUltimateMergeDestination(), ultimateDest);
+			Assert.AreEqual(p3.GetUltimateMergeDestination(), ultimateDest);
+			Assert.AreEqual(p4.GetUltimateMergeDestination(), ultimateDest);
+			Assert.AreEqual(p12.GetUltimateMergeDestination(), ultimateDest);
+			Assert.AreEqual(p123.GetUltimateMergeDestination(), ultimateDest);
+			Assert.AreEqual(ultimateDest.GetUltimateMergeDestination(), ultimateDest);
+
+			// Verifying all contact points are ultimately merged into the right one
+			Assert.AreEqual(cpP1.MergedInto, p12_cpP1);
+			Assert.AreEqual(cpP2.MergedInto, p12_cpP2);
+			Assert.AreEqual(p12_cpP1.MergedInto, p123_cpP1);
+			Assert.AreEqual(p12_cpP2.MergedInto, p123_cpP2);
+			Assert.AreEqual(cpP3.MergedInto, p123_cpP3);
+			Assert.AreEqual(p123_cpP1.MergedInto, dest_cpP1);
+			Assert.AreEqual(p123_cpP2.MergedInto, dest_cpP2);
+			Assert.AreEqual(p123_cpP3.MergedInto, dest_cpP3);
+			Assert.AreEqual(cpP4.MergedInto, dest_cpP4);
+			Assert.IsNull(dest_cpP1.MergedInto);
+			Assert.IsNull(dest_cpP2.MergedInto);
+			Assert.IsNull(dest_cpP3.MergedInto);
+			Assert.IsNull(dest_cpP4.MergedInto);
+
+			// Verifying all contact points are ultimately merged into the right one
+			Assert.AreEqual(cpP1.GetUltimateMergeDestination(), dest_cpP1);
+			Assert.AreEqual(cpP2.GetUltimateMergeDestination(), dest_cpP2);
+			Assert.AreEqual(cpP3.GetUltimateMergeDestination(), dest_cpP3);
+			Assert.AreEqual(cpP4.GetUltimateMergeDestination(), dest_cpP4);
+			Assert.AreEqual(p12_cpP1.GetUltimateMergeDestination(), dest_cpP1);
+			Assert.AreEqual(p12_cpP2.GetUltimateMergeDestination(), dest_cpP2);
+			Assert.AreEqual(p123_cpP1.GetUltimateMergeDestination(), dest_cpP1);
+			Assert.AreEqual(p123_cpP2.GetUltimateMergeDestination(), dest_cpP2);
+			Assert.AreEqual(p123_cpP3.GetUltimateMergeDestination(), dest_cpP3);
+			Assert.AreEqual(dest_cpP1.GetUltimateMergeDestination(), dest_cpP1);
+			Assert.AreEqual(dest_cpP2.GetUltimateMergeDestination(), dest_cpP2);
+			Assert.AreEqual(dest_cpP3.GetUltimateMergeDestination(), dest_cpP3);
+			Assert.AreEqual(dest_cpP4.GetUltimateMergeDestination(), dest_cpP4);
+		}
+
+		[Test]
+		public void Test_Topology_Binary_Merge()
+		{
+			// Setup the basic practitioners, each with one contact point.
+			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
+			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
+			var p3 = TestExternalPractitionerHelper.CreatePractitioner("C", "3");
+			var p4 = TestExternalPractitionerHelper.CreatePractitioner("D", "4");
+			var cpP1 = TestExternalPractitionerHelper.AddContactPoint(p1, "cpP1", "cpP1");
+			var cpP2 = TestExternalPractitionerHelper.AddContactPoint(p2, "cpP2", "cpP2");
+			var cpP3 = TestExternalPractitionerHelper.AddContactPoint(p3, "cpP3", "cpP3");
+			var cpP4 = TestExternalPractitionerHelper.AddContactPoint(p4, "cpP4", "cpP4");
+
+			// Perform Merge p1+p2->p12, p3+p4->p34, p12+p34->ultimateDest
+			var p12 = TestExternalPractitionerHelper.SimpleMerge(p1, p2);
+			var p34 = TestExternalPractitionerHelper.SimpleMerge(p3, p4);
+			var ultimateDest = TestExternalPractitionerHelper.SimpleMerge(p12, p34);
+
+			// Get a reference to all the contact points
+			var p12_cpP1 = CollectionUtils.SelectFirst(p12.ContactPoints, cp => cp.Name == cpP1.Name);
+			var p12_cpP2 = CollectionUtils.SelectFirst(p12.ContactPoints, cp => cp.Name == cpP2.Name);
+			var p34_cpP3 = CollectionUtils.SelectFirst(p34.ContactPoints, cp => cp.Name == cpP3.Name);
+			var p34_cpP4 = CollectionUtils.SelectFirst(p34.ContactPoints, cp => cp.Name == cpP4.Name);
+			var dest_cpP1 = CollectionUtils.SelectFirst(ultimateDest.ContactPoints, cp => cp.Name == cpP1.Name);
+			var dest_cpP2 = CollectionUtils.SelectFirst(ultimateDest.ContactPoints, cp => cp.Name == cpP2.Name);
+			var dest_cpP3 = CollectionUtils.SelectFirst(ultimateDest.ContactPoints, cp => cp.Name == cpP3.Name);
+			var dest_cpP4 = CollectionUtils.SelectFirst(ultimateDest.ContactPoints, cp => cp.Name == cpP4.Name);
+
+			// Verifying all practitioners are merged into the right one
+			Assert.AreEqual(p1.MergedInto, p12);
+			Assert.AreEqual(p2.MergedInto, p12);
+			Assert.AreEqual(p3.MergedInto, p34);
+			Assert.AreEqual(p4.MergedInto, p34);
+			Assert.AreEqual(p12.MergedInto, ultimateDest);
+			Assert.AreEqual(p34.MergedInto, ultimateDest);
+			Assert.IsNull(ultimateDest.MergedInto);
+
+			// Verifying all practitioners are ultimately merged into the right one
+			Assert.AreEqual(p1.GetUltimateMergeDestination(), ultimateDest);
+			Assert.AreEqual(p2.GetUltimateMergeDestination(), ultimateDest);
+			Assert.AreEqual(p3.GetUltimateMergeDestination(), ultimateDest);
+			Assert.AreEqual(p4.GetUltimateMergeDestination(), ultimateDest);
+			Assert.AreEqual(p12.GetUltimateMergeDestination(), ultimateDest);
+			Assert.AreEqual(p34.GetUltimateMergeDestination(), ultimateDest);
+			Assert.AreEqual(ultimateDest.GetUltimateMergeDestination(), ultimateDest);
+
+			// Verifying all contact points are merged into the right one
+			Assert.AreEqual(cpP1.MergedInto, p12_cpP1);
+			Assert.AreEqual(cpP2.MergedInto, p12_cpP2);
+			Assert.AreEqual(cpP3.MergedInto, p34_cpP3);
+			Assert.AreEqual(cpP4.MergedInto, p34_cpP4);
+			Assert.AreEqual(p12_cpP1.MergedInto, dest_cpP1);
+			Assert.AreEqual(p12_cpP2.MergedInto, dest_cpP2);
+			Assert.AreEqual(p34_cpP3.MergedInto, dest_cpP3);
+			Assert.AreEqual(p34_cpP4.MergedInto, dest_cpP4);
+			Assert.IsNull(dest_cpP1.MergedInto);
+			Assert.IsNull(dest_cpP2.MergedInto);
+			Assert.IsNull(dest_cpP3.MergedInto);
+			Assert.IsNull(dest_cpP4.MergedInto);
+
+			// Verifying all contact points are ultimately merged into the right one
+			Assert.AreEqual(cpP1.GetUltimateMergeDestination(), dest_cpP1);
+			Assert.AreEqual(cpP2.GetUltimateMergeDestination(), dest_cpP2);
+			Assert.AreEqual(cpP3.GetUltimateMergeDestination(), dest_cpP3);
+			Assert.AreEqual(cpP4.GetUltimateMergeDestination(), dest_cpP4);
+			Assert.AreEqual(p12_cpP1.GetUltimateMergeDestination(), dest_cpP1);
+			Assert.AreEqual(p12_cpP2.GetUltimateMergeDestination(), dest_cpP2);
+			Assert.AreEqual(p34_cpP3.GetUltimateMergeDestination(), dest_cpP3);
+			Assert.AreEqual(p34_cpP4.GetUltimateMergeDestination(), dest_cpP4);
+			Assert.AreEqual(dest_cpP1.GetUltimateMergeDestination(), dest_cpP1);
+			Assert.AreEqual(dest_cpP2.GetUltimateMergeDestination(), dest_cpP2);
+			Assert.AreEqual(dest_cpP3.GetUltimateMergeDestination(), dest_cpP3);
+			Assert.AreEqual(dest_cpP4.GetUltimateMergeDestination(), dest_cpP4);
+		}
+
+		[Test]
+		[ExpectedException(typeof(WorkflowException))]
+		public void Test_Circular_Merge()
+		{
+			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
+			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
+
+			var p12 = TestExternalPractitionerHelper.SimpleMerge(p1, p2);
+			TestExternalPractitionerHelper.SimpleMerge(p12, p1);
+		}
+
+		#endregion
 	}
 }
