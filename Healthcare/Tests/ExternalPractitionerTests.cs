@@ -29,6 +29,8 @@
 
 #endregion
 
+#if UNIT_TESTS
+
 using System.Collections.Generic;
 using NUnit.Framework;
 using Iesi.Collections.Generic;
@@ -676,3 +678,5 @@ namespace ClearCanvas.Healthcare.Tests
 		#endregion
 	}
 }
+
+#endif
