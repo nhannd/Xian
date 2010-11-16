@@ -27,6 +27,14 @@ namespace ClearCanvas.Ris.Shreds.Merge
 	/// </summary>
 	class MergeProcessor : WorkQueueProcessor
 	{
+		public class CannotDeleteException : Exception
+		{
+			public CannotDeleteException(Exception innerException)
+				: base("", innerException)
+			{
+			}
+		}
+
 		private const string StageProperty = "Stage";
 		private readonly TimeSpan _throttleInterval;
 
@@ -83,6 +91,28 @@ namespace ClearCanvas.Ris.Shreds.Merge
 			// re-schedule
 			retryTime = Platform.Time + _throttleInterval;
 			return true;
+		}
+
+		protected override void OnItemFailed(WorkQueueItem item, Exception error)
+		{
+			if (error is CannotDeleteException)
+			{
+				RestartItemAtStageZero(item);
+			}
+
+			base.OnItemFailed(item, error);
+		}
+
+		private void RestartItemAtStageZero(WorkQueueItem item)
+		{
+			var target = PersistenceScope.CurrentContext.Load(MergeWorkQueueItem.GetTargetRef(item), EntityLoadFlags.Proxy);
+			var stage = GetStage(item);
+			var nextStage = 0;
+
+			Platform.Log(LogLevel.Info, "Failed to complete merge step on target {0} (stage {1}).  Restarting at stage 0.", target.GetRef(), stage, nextStage);
+
+			// update the work item with the new stage value
+			item.ExtendedProperties[StageProperty] = nextStage.ToString();
 		}
 
 		private static int GetStage(WorkQueueItem item)

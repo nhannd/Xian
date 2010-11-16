@@ -70,14 +70,9 @@ namespace ClearCanvas.Ris.Shreds.Merge
 				// merge completed
 				return -1;
 			}
-			catch (PersistenceException)
+			catch (PersistenceException e)
 			{
-				// looks like the delete failed, most likely meaning that new references to the item
-				// were introduced during the migration process
-				// therefore we need to start over at stage 0
-				Platform.Log(LogLevel.Debug, "Failed to delete contact point {0}, returning to stage 0.", contactPoint.OID);
-
-				return 0;
+				throw new MergeProcessor.CannotDeleteException(e);
 			}
 		}
 

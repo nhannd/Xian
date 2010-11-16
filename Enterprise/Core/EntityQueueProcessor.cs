@@ -178,7 +178,7 @@ namespace ClearCanvas.Enterprise.Core
 				failContext.ChangeSetRecorder.OperationName = this.GetType().FullName;
 
 				// bug #7191 : Reload the TItem in this scope;  using the existing item results in NHibernate throwing a lazy loading exception
-				var itemForThisScope = failContext.Load<TItem>(item.GetRef());
+				var itemForThisScope = failContext.Load<TItem>(item.GetRef(), EntityLoadFlags.None);
 
 				// lock item into this context
 				failContext.Lock(itemForThisScope);
