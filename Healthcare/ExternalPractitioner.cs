@@ -73,6 +73,8 @@ namespace ClearCanvas.Healthcare
 			IDictionary<ExternalPractitionerContactPoint, ExternalPractitionerContactPoint> contactPointReplacements)
 		{
 			// sanity check
+			if (Equals(right, left))
+				throw new WorkflowException("Cannot merge a practitioner with itself.");
 			if (right.Deactivated || left.Deactivated)
 				throw new WorkflowException("Cannot merge a practitioner that is de-activated.");
 			if (right.IsMerged || left.IsMerged)
@@ -102,7 +104,7 @@ namespace ClearCanvas.Healthcare
 				result.ContactPoints.Add(copy);
 
 				copy.IsDefaultContactPoint = original.Equals(defaultContactPoint);
-				copy.Deactivated = original.Deactivated || deactivatedContactPoints.Contains(original);
+				copy.MarkDeactivated(original.Deactivated || deactivatedContactPoints.Contains(original));
 				original.SetMergedInto(copy);
 			}
 
@@ -182,7 +184,6 @@ namespace ClearCanvas.Healthcare
 
 			_deactivated = deactivated;
 		}
-
 
 		/// <summary>
 		/// Gets a value indicating whether this entity was merged.

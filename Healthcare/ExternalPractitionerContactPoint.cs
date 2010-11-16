@@ -64,6 +64,8 @@ namespace ClearCanvas.Healthcare
 			)
 		{
 			// sanity checks
+			if (Equals(right, left))
+				throw new WorkflowException("Cannot merge a contact point with itself.");
 			if (!Equals(right.Practitioner, left.Practitioner))
 				throw new WorkflowException("Only contact points belonging to the same practitioner can be merged.");
 			if (right.Deactivated || left.Deactivated)
@@ -199,10 +201,12 @@ namespace ClearCanvas.Healthcare
 				_description,
 				_preferredResultCommunicationMode,
 				_isDefaultContactPoint,
-				CollectionUtils.Map(_telephoneNumbers, (TelephoneNumber tn) => (TelephoneNumber)tn.Clone()),
-				CollectionUtils.Map(_addresses, (Address a) => (Address)a.Clone()),
-				CollectionUtils.Map(_emailAddresses, (EmailAddress e) => (EmailAddress)e.Clone()),
-				null) { Deactivated = _deactivated };
+				CollectionUtils.Map(_telephoneNumbers, (TelephoneNumber tn) => (TelephoneNumber) tn.Clone()),
+				CollectionUtils.Map(_addresses, (Address a) => (Address) a.Clone()),
+				CollectionUtils.Map(_emailAddresses, (EmailAddress e) => (EmailAddress) e.Clone()),
+				null);
+			
+			copy.MarkDeactivated(_deactivated);
 
 			owner.ContactPoints.Add(copy);
 			return copy;
@@ -225,6 +229,21 @@ namespace ClearCanvas.Healthcare
 		/// </summary>
 		private void CustomInitialize()
 		{
+		}
+
+		/// <summary>
+		/// Mark the entity as being deactivated.
+		/// </summary>
+		public virtual void MarkDeactivated(bool deactivated)
+		{
+			if (_deactivated == deactivated)
+				return;
+
+			// Trying to activate a merged practitioner
+			if (_deactivated && this.IsMerged)
+				throw new WorkflowException("Cannot activate a merged contact point");
+
+			_deactivated = deactivated;
 		}
 
 		/// <summary>

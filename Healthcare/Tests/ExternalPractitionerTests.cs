@@ -40,7 +40,7 @@ namespace ClearCanvas.Healthcare.Tests
 	[TestFixture]
 	public class ExternalPractitionerTests
 	{
-		private static class TestExternalPractitionerHelper
+		internal static class TestHelper
 		{
 			/// <summary>
 			/// Create a simple practitioner with no contact point and properties.
@@ -63,40 +63,37 @@ namespace ClearCanvas.Healthcare.Tests
 			}
 
 			/// <summary>
-			/// Add a contact point to a practitioner with the specified name and description.
-			/// </summary>
-			/// <remarks>
-			/// No telephone/address/emails are added to the new contact point
-			/// </remarks>
-			public static ExternalPractitionerContactPoint AddContactPoint(ExternalPractitioner p, string name, string description)
-			{
-				var isDefault = p.ContactPoints.Count == 0;
-				var cp = new ExternalPractitionerContactPoint(p,
-					name, description, ResultCommunicationMode.ANY, isDefault,
-					new List<TelephoneNumber>(), 
-					new List<Address>(), 
-					new List<EmailAddress>(), null);
-
-				p.ContactPoints.Add(cp);
-
-				return cp;
-			}
-
-			/// <summary>
 			/// Perform a simple merge of two practitioners.
 			/// </summary>
 			/// <remarks>
-			/// P1 is the primary practitioner.  The new practitioner will ahve all info inherit from P1.
+			/// Destination is the primary practitioner.  The result will have all info inherit from destination.
 			/// No contact points are deactivated or replaced.
 			/// </remarks>
-			public static ExternalPractitioner SimpleMerge(ExternalPractitioner p1, ExternalPractitioner p2)
+			public static ExternalPractitioner SimpleMerge(ExternalPractitioner src, ExternalPractitioner dest)
 			{
-				return ExternalPractitioner.MergePractitioners(p1, p2,
-					p1.Name, p1.LicenseNumber, p1.BillingNumber, p1.ExtendedProperties, p1.DefaultContactPoint,
-					new List<ExternalPractitionerContactPoint>(),
-					new Dictionary<ExternalPractitionerContactPoint, ExternalPractitionerContactPoint>());
+				var deactivatedContactPoints = new List<ExternalPractitionerContactPoint>();
+				var contactPointReplacements = new Dictionary<ExternalPractitionerContactPoint, ExternalPractitionerContactPoint>();
+				return ExternalPractitioner.MergePractitioners(src, dest,
+					dest.Name, dest.LicenseNumber, dest.BillingNumber, 
+					dest.ExtendedProperties, dest.DefaultContactPoint,
+					deactivatedContactPoints, contactPointReplacements);
 			}
 		}
+
+		#region Basic Sanity Tests
+
+		[Test]
+		[ExpectedException(typeof(WorkflowException))]
+		public void Test_Merge_Same_Practitioner()
+		{
+			var p1 = TestHelper.CreatePractitioner("A", "1");
+			Assert.IsFalse(p1.IsMerged);
+			Assert.IsFalse(p1.Deactivated);
+
+			TestHelper.SimpleMerge(p1, p1);
+		}
+
+		#endregion
 
 		#region Test Edit Merged Practitioner
 
@@ -104,9 +101,9 @@ namespace ClearCanvas.Healthcare.Tests
 		[ExpectedException(typeof(WorkflowException))]
 		public void Test_Edit_Merged_Practitioner()
 		{
-			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
-			TestExternalPractitionerHelper.SimpleMerge(p1, p2);
+			var p1 = TestHelper.CreatePractitioner("A", "1");
+			var p2 = TestHelper.CreatePractitioner("B", "2");
+			TestHelper.SimpleMerge(p1, p2);
 
 			// Changing the property won't change _lastEditedTime.  Must call MarkEdited
 			p1.LicenseNumber = "Modified value";
@@ -120,21 +117,22 @@ namespace ClearCanvas.Healthcare.Tests
 		[Test]
 		public void Test_Deactivate_Merged_Practitioner()
 		{
-			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
+			var p1 = TestHelper.CreatePractitioner("A", "1");
+			var p2 = TestHelper.CreatePractitioner("B", "2");
 
 			Assert.IsFalse(p1.IsMerged);
 			Assert.IsFalse(p1.Deactivated);
 			Assert.IsFalse(p2.IsMerged);
 			Assert.IsFalse(p2.Deactivated);
 
-			TestExternalPractitionerHelper.SimpleMerge(p1, p2);
+			TestHelper.SimpleMerge(p1, p2);
 
 			Assert.IsTrue(p1.IsMerged);
 			Assert.IsTrue(p1.Deactivated);
 			Assert.IsTrue(p2.IsMerged);
 			Assert.IsTrue(p2.Deactivated);
 
+			// Should be a no-op
 			p1.MarkDeactivated(true);
 			p2.MarkDeactivated(true);
 		}
@@ -143,21 +141,22 @@ namespace ClearCanvas.Healthcare.Tests
 		[ExpectedException(typeof(WorkflowException))]
 		public void Test_Activate_Merged_Practitioner()
 		{
-			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
+			var p1 = TestHelper.CreatePractitioner("A", "1");
+			var p2 = TestHelper.CreatePractitioner("B", "2");
 
 			Assert.IsFalse(p1.IsMerged);
 			Assert.IsFalse(p1.Deactivated);
 			Assert.IsFalse(p2.IsMerged);
 			Assert.IsFalse(p2.Deactivated);
 
-			TestExternalPractitionerHelper.SimpleMerge(p1, p2);
+			TestHelper.SimpleMerge(p1, p2);
 
 			Assert.IsTrue(p1.IsMerged);
 			Assert.IsTrue(p1.Deactivated);
 			Assert.IsTrue(p2.IsMerged);
 			Assert.IsTrue(p2.Deactivated);
 
+			// Activated merged/deactivated practitioners
 			p1.MarkDeactivated(false);
 			p2.MarkDeactivated(false);
 		}
@@ -165,7 +164,7 @@ namespace ClearCanvas.Healthcare.Tests
 		[Test]
 		public void Test_Deactivate_NotMerged_Practitioner()
 		{
-			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
+			var p1 = TestHelper.CreatePractitioner("A", "1");
 			Assert.IsFalse(p1.IsMerged);
 			Assert.IsFalse(p1.Deactivated);
 
@@ -176,7 +175,7 @@ namespace ClearCanvas.Healthcare.Tests
 		[Test]
 		public void Test_Activate_NotMerged_Practitioner()
 		{
-			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
+			var p1 = TestHelper.CreatePractitioner("A", "1");
 			p1.MarkDeactivated(true);
 
 			Assert.IsFalse(p1.IsMerged);
@@ -191,52 +190,49 @@ namespace ClearCanvas.Healthcare.Tests
 		#region Test Merge Activated/Deactivated Practitioners
 
 		[Test]
-		public void Test_Merge_Activated_Practitioner()
+		public void Test_Merge_Activated_Practitioners()
 		{
-			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
+			var p1 = TestHelper.CreatePractitioner("A", "1");
+			var p2 = TestHelper.CreatePractitioner("B", "2");
 
 			Assert.IsFalse(p1.IsMerged);
 			Assert.IsFalse(p1.Deactivated);
 			Assert.IsFalse(p2.IsMerged);
 			Assert.IsFalse(p2.Deactivated);
 
-			TestExternalPractitionerHelper.SimpleMerge(p1, p2);
+			TestHelper.SimpleMerge(p1, p2);
 		}
 
 		[Test]
 		[ExpectedException(typeof(WorkflowException))]
-		public void Test_Merge_One_Deactivated_Practitioners()
+		public void Test_Merge_Deactivated_Practitioners_Left()
 		{
-			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
+			var p1 = TestHelper.CreatePractitioner("A", "1");
+			var p2 = TestHelper.CreatePractitioner("B", "2");
 
 			p1.MarkDeactivated(true);
 			Assert.IsFalse(p1.IsMerged);
-			Assert.IsTrue(p1.Deactivated);
-
 			Assert.IsFalse(p2.IsMerged);
+			Assert.IsTrue(p1.Deactivated); // left is deactivated
 			Assert.IsFalse(p2.Deactivated);
 
-			TestExternalPractitionerHelper.SimpleMerge(p1, p2);
+			TestHelper.SimpleMerge(p1, p2);
 		}
 
 		[Test]
 		[ExpectedException(typeof(WorkflowException))]
-		public void Test_Merge_Two_Deactivated_Practitioners()
+		public void Test_Merge_Deactivated_Practitioners_Right()
 		{
-			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
-
-			p1.MarkDeactivated(true);
-			Assert.IsFalse(p1.IsMerged);
-			Assert.IsTrue(p1.Deactivated);
+			var p1 = TestHelper.CreatePractitioner("A", "1");
+			var p2 = TestHelper.CreatePractitioner("B", "2");
 
 			p2.MarkDeactivated(true);
+			Assert.IsFalse(p1.IsMerged);
+			Assert.IsFalse(p1.Deactivated);
 			Assert.IsFalse(p2.IsMerged);
-			Assert.IsTrue(p2.Deactivated);
+			Assert.IsTrue(p2.Deactivated); // Right is deactivated
 
-			TestExternalPractitionerHelper.SimpleMerge(p1, p2);
+			TestHelper.SimpleMerge(p1, p2);
 		}
 
 		#endregion
@@ -245,33 +241,32 @@ namespace ClearCanvas.Healthcare.Tests
 
 		[Test]
 		[ExpectedException(typeof(WorkflowException))]
-		public void Test_Merge_One_Merged_Practitioners()
+		public void Test_Merge_Merged_Practitioners_Left()
 		{
-			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
-			var p3 = TestExternalPractitionerHelper.CreatePractitioner("C", "3");
+			var p1 = TestHelper.CreatePractitioner("A", "1");
+			var p2 = TestHelper.CreatePractitioner("B", "2");
+			var p3 = TestHelper.CreatePractitioner("C", "3");
 
 			p1.SetMergedInto(p3);
-			Assert.IsTrue(p1.IsMerged);
+			Assert.IsTrue(p1.IsMerged); // Left is already merged
 			Assert.IsFalse(p2.IsMerged);
 
-			TestExternalPractitionerHelper.SimpleMerge(p1, p2);
+			TestHelper.SimpleMerge(p1, p2);
 		}
 
 		[Test]
 		[ExpectedException(typeof(WorkflowException))]
-		public void Test_Merge_Two_Merged_Practitioners()
+		public void Test_Merge_Merged_Practitioners_Right()
 		{
-			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
-			var p3 = TestExternalPractitionerHelper.CreatePractitioner("C", "3");
+			var p1 = TestHelper.CreatePractitioner("A", "1");
+			var p2 = TestHelper.CreatePractitioner("B", "2");
+			var p3 = TestHelper.CreatePractitioner("C", "3");
 
-			p1.SetMergedInto(p3);
 			p2.SetMergedInto(p3);
-			Assert.IsTrue(p1.IsMerged);
-			Assert.IsTrue(p2.IsMerged);
+			Assert.IsFalse(p1.IsMerged);
+			Assert.IsTrue(p2.IsMerged); // Right is already merged
 
-			TestExternalPractitionerHelper.SimpleMerge(p1, p2);
+			TestHelper.SimpleMerge(p1, p2);
 		}
 
 		#endregion
@@ -281,101 +276,101 @@ namespace ClearCanvas.Healthcare.Tests
 		[Test]
 		public void Test_Merged_Practitioner_Basic_Properties()
 		{
-			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
-			var dest = TestExternalPractitionerHelper.SimpleMerge(p1, p2);
+			var p1 = TestHelper.CreatePractitioner("A", "1");
+			var p2 = TestHelper.CreatePractitioner("B", "2");
+			var result = TestHelper.SimpleMerge(p1, p2);
 
-			Assert.AreEqual(p1.Name, dest.Name);
-			Assert.AreEqual(p1.LicenseNumber, dest.LicenseNumber);
-			Assert.AreEqual(p1.BillingNumber, dest.BillingNumber);
+			Assert.AreEqual(p2.Name, result.Name);
+			Assert.AreEqual(p2.LicenseNumber, result.LicenseNumber);
+			Assert.AreEqual(p2.BillingNumber, result.BillingNumber);
 		}
 
 		[Test]
 		public void Test_Merged_Practitioner_Extended_Properties()
 		{
-			const string testKey = "TestKey";
-			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
-			p1.ExtendedProperties.Add(testKey, "Test Value");
+			const string testKeyP1 = "TestKey1";
+			const string testKeyP2 = "TestKey2";
+			var p1 = TestHelper.CreatePractitioner("A", "1");
+			p1.ExtendedProperties.Add(testKeyP1, "Ignored");
+			p1.ExtendedProperties.Add(testKeyP2, "Ignored");
 
-			var dest = TestExternalPractitionerHelper.SimpleMerge(p1, p2);
+			var p2 = TestHelper.CreatePractitioner("B", "2");
+			p2.ExtendedProperties.Add(testKeyP1, "Test Value 1");
+			p2.ExtendedProperties.Add(testKeyP2, "Test Value 2");
 
-			Assert.AreEqual(p1.ExtendedProperties.Count, dest.ExtendedProperties.Count);
-			Assert.AreEqual(p1.ExtendedProperties[testKey], dest.ExtendedProperties[testKey]);
+			var result = TestHelper.SimpleMerge(p1, p2);
+
+			Assert.AreEqual(p2.ExtendedProperties.Count, 2);
+			Assert.AreEqual(p2.ExtendedProperties[testKeyP1], result.ExtendedProperties[testKeyP1]);
+			Assert.AreEqual(p2.ExtendedProperties[testKeyP2], result.ExtendedProperties[testKeyP2]);
 		}
 
 		[Test]
-		public void Test_Merged_Practitioner_IsMerged_Property()
+		public void Test_Merged_Practitioner_IsMerged()
 		{
-			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
-			var p3 = TestExternalPractitionerHelper.SimpleMerge(p1, p2);
+			var p1 = TestHelper.CreatePractitioner("A", "1");
+			var p2 = TestHelper.CreatePractitioner("B", "2");
+
+			Assert.IsFalse(p1.IsMerged);
+			Assert.IsFalse(p2.IsMerged);
+
+			var result = TestHelper.SimpleMerge(p1, p2);
 
 			Assert.IsTrue(p1.IsMerged);
 			Assert.IsTrue(p2.IsMerged);
-			Assert.IsFalse(p3.IsMerged);
+			Assert.IsFalse(result.IsMerged); // Result is not merged
 		}
 
 		[Test]
-		public void Test_Merged_Practitioner_IsVerified_Property()
+		public void Test_Merged_Practitioner_IsVerified()
 		{
-			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
+			var p1 = TestHelper.CreatePractitioner("A", "1");
+			var p2 = TestHelper.CreatePractitioner("B", "2");
 
 			// Verify p1 and p2 first
 			p1.MarkVerified();
 			p2.MarkVerified();
+
 			Assert.IsTrue(p1.IsVerified);
 			Assert.IsTrue(p2.IsVerified);
 
-			var p3 = TestExternalPractitionerHelper.SimpleMerge(p1, p2);
+			var result = TestHelper.SimpleMerge(p1, p2);
 
-			// Now test for verified status
 			Assert.IsFalse(p1.IsVerified);
 			Assert.IsFalse(p2.IsVerified);
-			Assert.IsFalse(p3.IsVerified);
+			Assert.IsFalse(result.IsVerified); // result is not verified
 		}
 
 		[Test]
-		public void Test_Merged_Practitioner_LastEditedTime_Property()
+		public void Test_Merged_Practitioner_Deactivated()
 		{
-			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
+			var p1 = TestHelper.CreatePractitioner("A", "1");
+			var p2 = TestHelper.CreatePractitioner("B", "2");
+
+			Assert.IsFalse(p1.Deactivated);
+			Assert.IsFalse(p2.Deactivated);
+	
+			var result = TestHelper.SimpleMerge(p1, p2);
+
+			Assert.IsTrue(p1.Deactivated);
+			Assert.IsTrue(p2.Deactivated);
+			Assert.IsFalse(result.Deactivated); // result is not deactivated
+		}
+
+		[Test]
+		public void Test_Merged_Practitioner_LastEditedTime()
+		{
+			var p1 = TestHelper.CreatePractitioner("A", "1");
+			var p2 = TestHelper.CreatePractitioner("B", "2");
 
 			Assert.IsNull(p1.LastEditedTime);
 			Assert.IsNull(p2.LastEditedTime);
 
-			var p3 = TestExternalPractitionerHelper.SimpleMerge(p1, p2);
+			var result = TestHelper.SimpleMerge(p1, p2);
 
 			Assert.IsNotNull(p1.LastEditedTime);
 			Assert.IsNotNull(p2.LastEditedTime);
-			Assert.IsNotNull(p3.LastEditedTime);
-		}
-
-		[Test]
-		public void Test_Merged_Default_Contact_Point()
-		{
-			var pA = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-			var cpPA1 = TestExternalPractitionerHelper.AddContactPoint(pA, "cpPA1", "cpPA1");
-			var cpPA2 = TestExternalPractitionerHelper.AddContactPoint(pA, "cpPA2", "cpPA2");
-			Assert.IsTrue(cpPA1.IsDefaultContactPoint);
-			Assert.IsFalse(cpPA2.IsDefaultContactPoint);
-
-			var pB = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
-			var cpPB1 = TestExternalPractitionerHelper.AddContactPoint(pB, "cpPB1", "cpPB1");
-			var cpPB2 = TestExternalPractitionerHelper.AddContactPoint(pB, "cpPB2", "cpPB2");
-			Assert.IsTrue(cpPB1.IsDefaultContactPoint);
-			Assert.IsFalse(cpPB2.IsDefaultContactPoint);
-
-			var defaultContactPointAfterMerge = cpPB2;
-			var dest = ExternalPractitioner.MergePractitioners(pA, pB,
-				pA.Name, pA.LicenseNumber, pA.BillingNumber, pA.ExtendedProperties, defaultContactPointAfterMerge,
-				new List<ExternalPractitionerContactPoint>(),
-				new Dictionary<ExternalPractitionerContactPoint, ExternalPractitionerContactPoint>());
-
-			Assert.AreEqual(dest.ContactPoints.Count, pA.ContactPoints.Count + pB.ContactPoints.Count);
-			Assert.IsNotNull(dest.DefaultContactPoint);
-			Assert.AreEqual(dest.DefaultContactPoint.Name, defaultContactPointAfterMerge.Name);
+			Assert.IsNotNull(result.LastEditedTime);
 		}
 
 		#endregion
@@ -386,19 +381,19 @@ namespace ClearCanvas.Healthcare.Tests
 		public void Test_Topology_Chain_Merge()
 		{
 			// Setup the basic practitioners, each with one contact point.
-			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
-			var p3 = TestExternalPractitionerHelper.CreatePractitioner("C", "3");
-			var p4 = TestExternalPractitionerHelper.CreatePractitioner("D", "4");
-			var cpP1 = TestExternalPractitionerHelper.AddContactPoint(p1, "cpP1", "cpP1");
-			var cpP2 = TestExternalPractitionerHelper.AddContactPoint(p2, "cpP2", "cpP2");
-			var cpP3 = TestExternalPractitionerHelper.AddContactPoint(p3, "cpP3", "cpP3");
-			var cpP4 = TestExternalPractitionerHelper.AddContactPoint(p4, "cpP4", "cpP4");
+			var p1 = TestHelper.CreatePractitioner("A", "1");
+			var p2 = TestHelper.CreatePractitioner("B", "2");
+			var p3 = TestHelper.CreatePractitioner("C", "3");
+			var p4 = TestHelper.CreatePractitioner("D", "4");
+			var cpP1 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(p1, "cpP1", "cpP1");
+			var cpP2 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(p2, "cpP2", "cpP2");
+			var cpP3 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(p3, "cpP3", "cpP3");
+			var cpP4 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(p4, "cpP4", "cpP4");
 
 			// Perform Merge p1 -> p2 -> p3 -> p4 -> ultimateDest
-			var p12 = TestExternalPractitionerHelper.SimpleMerge(p1, p2);
-			var p123 = TestExternalPractitionerHelper.SimpleMerge(p12, p3);
-			var ultimateDest = TestExternalPractitionerHelper.SimpleMerge(p123, p4);
+			var p12 = TestHelper.SimpleMerge(p1, p2);
+			var p123 = TestHelper.SimpleMerge(p12, p3);
+			var ultimateDest = TestHelper.SimpleMerge(p123, p4);
 
 			// Get a reference to all the contact points
 			var p12_cpP1 = CollectionUtils.SelectFirst(p12.ContactPoints, cp => cp.Name == cpP1.Name);
@@ -463,19 +458,19 @@ namespace ClearCanvas.Healthcare.Tests
 		public void Test_Topology_Binary_Merge()
 		{
 			// Setup the basic practitioners, each with one contact point.
-			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
-			var p3 = TestExternalPractitionerHelper.CreatePractitioner("C", "3");
-			var p4 = TestExternalPractitionerHelper.CreatePractitioner("D", "4");
-			var cpP1 = TestExternalPractitionerHelper.AddContactPoint(p1, "cpP1", "cpP1");
-			var cpP2 = TestExternalPractitionerHelper.AddContactPoint(p2, "cpP2", "cpP2");
-			var cpP3 = TestExternalPractitionerHelper.AddContactPoint(p3, "cpP3", "cpP3");
-			var cpP4 = TestExternalPractitionerHelper.AddContactPoint(p4, "cpP4", "cpP4");
+			var p1 = TestHelper.CreatePractitioner("A", "1");
+			var p2 = TestHelper.CreatePractitioner("B", "2");
+			var p3 = TestHelper.CreatePractitioner("C", "3");
+			var p4 = TestHelper.CreatePractitioner("D", "4");
+			var cpP1 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(p1, "cpP1", "cpP1");
+			var cpP2 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(p2, "cpP2", "cpP2");
+			var cpP3 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(p3, "cpP3", "cpP3");
+			var cpP4 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(p4, "cpP4", "cpP4");
 
 			// Perform Merge p1+p2->p12, p3+p4->p34, p12+p34->ultimateDest
-			var p12 = TestExternalPractitionerHelper.SimpleMerge(p1, p2);
-			var p34 = TestExternalPractitionerHelper.SimpleMerge(p3, p4);
-			var ultimateDest = TestExternalPractitionerHelper.SimpleMerge(p12, p34);
+			var p12 = TestHelper.SimpleMerge(p1, p2);
+			var p34 = TestHelper.SimpleMerge(p3, p4);
+			var ultimateDest = TestHelper.SimpleMerge(p12, p34);
 
 			// Get a reference to all the contact points
 			var p12_cpP1 = CollectionUtils.SelectFirst(p12.ContactPoints, cp => cp.Name == cpP1.Name);
@@ -538,11 +533,144 @@ namespace ClearCanvas.Healthcare.Tests
 		[ExpectedException(typeof(WorkflowException))]
 		public void Test_Circular_Merge()
 		{
-			var p1 = TestExternalPractitionerHelper.CreatePractitioner("A", "1");
-			var p2 = TestExternalPractitionerHelper.CreatePractitioner("B", "2");
+			var p1 = TestHelper.CreatePractitioner("A", "1");
+			var p2 = TestHelper.CreatePractitioner("B", "2");
 
-			var p12 = TestExternalPractitionerHelper.SimpleMerge(p1, p2);
-			TestExternalPractitionerHelper.SimpleMerge(p12, p1);
+			var p12 = TestHelper.SimpleMerge(p1, p2);
+			TestHelper.SimpleMerge(p12, p1); // Merge back with p1
+		}
+
+		#endregion
+
+		#region Test Merged Default/Deactivated/Replaced Contact Points
+
+		[Test]
+		public void Test_Merged_Default_Contact_Point()
+		{
+			var pA = TestHelper.CreatePractitioner("A", "1");
+			var cpPA1 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(pA, "cpPA1", "cpPA1");
+			var cpPA2 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(pA, "cpPA2", "cpPA2");
+			Assert.IsTrue(cpPA1.IsDefaultContactPoint); // oroginal default
+			Assert.IsFalse(cpPA2.IsDefaultContactPoint);
+
+			var pB = TestHelper.CreatePractitioner("B", "2");
+			var cpPB1 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(pB, "cpPB1", "cpPB1");
+			var cpPB2 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(pB, "cpPB2", "cpPB2");
+			Assert.IsTrue(cpPB1.IsDefaultContactPoint);
+			Assert.IsFalse(cpPB2.IsDefaultContactPoint);
+
+			var newDefault = cpPB2;
+			var deactivated = new List<ExternalPractitionerContactPoint>();  // None
+			var replacements = new Dictionary<ExternalPractitionerContactPoint, ExternalPractitionerContactPoint>(); // None
+			var result = ExternalPractitioner.MergePractitioners(pA, pB,
+				pA.Name, pA.LicenseNumber, pA.BillingNumber, pA.ExtendedProperties, 
+				newDefault, deactivated, replacements);
+			var result_cpPA1 = CollectionUtils.SelectFirst(result.ContactPoints, cp => cp.Name == newDefault.Name);
+
+			Assert.AreEqual(result.ContactPoints.Count, 4);
+			Assert.IsTrue(result_cpPA1.IsDefaultContactPoint); // new default with the same content
+		}
+
+		[Test]
+		public void Test_Deactivate_Replace_Contact_Point_1()
+		{
+			var pA = TestHelper.CreatePractitioner("A", "1");
+			var cpPA1 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(pA, "cpPA1", "cpPA1");
+			var cpPA2 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(pA, "cpPA2", "cpPA2");
+
+			var pB = TestHelper.CreatePractitioner("B", "2");
+			var cpPB1 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(pB, "cpPB1", "cpPB1");
+			var cpPB2 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(pB, "cpPB2", "cpPB2");
+
+			// This test does the following:
+			// cpPA1 - replaced
+			// cpPA2 - deactivated
+			// cpPB1 - replaced destination
+			// cpPB2 - new default
+			var newDefault = cpPB2;
+			var deactivated = new List<ExternalPractitionerContactPoint> {cpPA2};
+			var replacements = new Dictionary<ExternalPractitionerContactPoint, ExternalPractitionerContactPoint>
+				{ {cpPA1, cpPB1} };
+
+			var result = ExternalPractitioner.MergePractitioners(pA, pB,
+				pA.Name, pA.LicenseNumber, pA.BillingNumber, pA.ExtendedProperties, 
+				newDefault, deactivated, replacements);
+
+			var result_cpPA1 = CollectionUtils.SelectFirst(result.ContactPoints, cp => cp.Name == cpPA1.Name);
+			var result_cpPA2 = CollectionUtils.SelectFirst(result.ContactPoints, cp => cp.Name == cpPA2.Name);
+			var result_cpPB1 = CollectionUtils.SelectFirst(result.ContactPoints, cp => cp.Name == cpPB1.Name);
+			var result_cpPB2 = CollectionUtils.SelectFirst(result.ContactPoints, cp => cp.Name == cpPB2.Name);
+
+			Assert.AreEqual(result.ContactPoints.Count, 3);
+			Assert.IsNull(result_cpPA1); // replaced
+			Assert.IsNotNull(result_cpPA2);
+			Assert.IsNotNull(result_cpPB1);
+			Assert.IsNotNull(result_cpPB2);
+
+			// Check default
+			Assert.IsTrue(result_cpPB2.IsDefaultContactPoint);
+
+			// Check deactivated status
+			Assert.IsTrue(result_cpPA2.Deactivated); // The only one deactivated
+			Assert.IsFalse(result_cpPB1.Deactivated);
+			Assert.IsFalse(result_cpPB2.Deactivated);
+
+			// Check MergedInto
+			Assert.AreEqual(cpPA1.MergedInto, result_cpPB1); // Replaced
+			Assert.AreEqual(cpPA2.MergedInto, result_cpPA2);
+			Assert.AreEqual(cpPB1.MergedInto, result_cpPB1);
+			Assert.AreEqual(cpPB2.MergedInto, result_cpPB2);
+		}
+
+		[Test]
+		public void Test_Deactivate_Replace_Contact_Point_2()
+		{
+			var pA = TestHelper.CreatePractitioner("A", "1");
+			var cpPA1 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(pA, "cpPA1", "cpPA1");
+			var cpPA2 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(pA, "cpPA2", "cpPA2");
+
+			var pB = TestHelper.CreatePractitioner("B", "2");
+			var cpPB1 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(pB, "cpPB1", "cpPB1");
+			var cpPB2 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(pB, "cpPB2", "cpPB2");
+
+			// This test does the following:
+			// cpPA1 - no-op, simply migrated
+			// cpPA2 - deactivated and replaced
+			// cpPB1 - no-op, simply migrated
+			// cpPB2 - new default and new replacement
+			var newDefault = cpPB2;
+			var deactivated = new List<ExternalPractitionerContactPoint> { cpPA2 };
+			var replacements = new Dictionary<ExternalPractitionerContactPoint, ExternalPractitionerContactPoint>
+				{ { cpPA2, cpPB2 } };
+
+			var result = ExternalPractitioner.MergePractitioners(pA, pB,
+				pA.Name, pA.LicenseNumber, pA.BillingNumber, pA.ExtendedProperties,
+				newDefault, deactivated, replacements);
+
+			var result_cpPA1 = CollectionUtils.SelectFirst(result.ContactPoints, cp => cp.Name == cpPA1.Name);
+			var result_cpPA2 = CollectionUtils.SelectFirst(result.ContactPoints, cp => cp.Name == cpPA2.Name);
+			var result_cpPB1 = CollectionUtils.SelectFirst(result.ContactPoints, cp => cp.Name == cpPB1.Name);
+			var result_cpPB2 = CollectionUtils.SelectFirst(result.ContactPoints, cp => cp.Name == cpPB2.Name);
+
+			Assert.AreEqual(result.ContactPoints.Count, 3);
+			Assert.IsNotNull(result_cpPA1);
+			Assert.IsNull(result_cpPA2); // replaced
+			Assert.IsNotNull(result_cpPB1);
+			Assert.IsNotNull(result_cpPB2);
+
+			// Check default
+			Assert.IsTrue(result_cpPB2.IsDefaultContactPoint);
+
+			// Check deactivated status.  All are active, because the only deactivated cp is replaced.
+			Assert.IsFalse(result_cpPA1.Deactivated);
+			Assert.IsFalse(result_cpPB1.Deactivated);
+			Assert.IsFalse(result_cpPB2.Deactivated);
+
+			// Check MergedInto
+			Assert.AreEqual(cpPA1.MergedInto, result_cpPA1);
+			Assert.AreEqual(cpPA2.MergedInto, result_cpPB2); // Replaced
+			Assert.AreEqual(cpPB1.MergedInto, result_cpPB1);
+			Assert.AreEqual(cpPB2.MergedInto, result_cpPB2);
 		}
 
 		#endregion

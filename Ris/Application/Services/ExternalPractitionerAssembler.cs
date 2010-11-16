@@ -166,7 +166,7 @@ namespace ClearCanvas.Ris.Application.Services
 			contactPoint.IsDefaultContactPoint = detail.IsDefaultContactPoint;
 			contactPoint.PreferredResultCommunicationMode =
 				EnumUtils.GetEnumValue<ResultCommunicationMode>(detail.PreferredResultCommunicationMode);
-			contactPoint.Deactivated = detail.Deactivated;
+			contactPoint.MarkDeactivated(detail.Deactivated);
 
 			var phoneAssembler = new TelephoneNumberAssembler();
 			var addressAssembler = new AddressAssembler();

@@ -73,7 +73,7 @@
       </composite-element>
     </idbag>
     
-    <property name="Deactivated" column="Deactivated_" type="Boolean" not-null="true"/>
+    <property name="Deactivated" column="Deactivated_" type="Boolean" not-null="true" access="nosetter.camelcase-underscore"/>
     <many-to-one name="MergedInto" class="ExternalPractitionerContactPoint" column="MergedIntoOID_" access="nosetter.camelcase-underscore"/>
   </class>
 </hibernate-mapping>
