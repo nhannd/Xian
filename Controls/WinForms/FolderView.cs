@@ -17,6 +17,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using ClearCanvas.Controls.WinForms.Native;
 
 namespace ClearCanvas.Controls.WinForms
 {
@@ -395,14 +396,20 @@ namespace ClearCanvas.Controls.WinForms
 				_fullPath = absolutePidl.Path;
 
 				// request shell item info now - it's faster than binding to ShellItem directly, and we need it for sorting purposes anyway
-				const Native.SFGAO REQUEST_ATTRIBUTES = Native.SFGAO.SFGAO_FILESYSTEM | Native.SFGAO.SFGAO_FOLDER | Native.SFGAO.SFGAO_HASSUBFOLDER;
+				const SFGAO REQUEST_ATTRIBUTES = SFGAO.SFGAO_FILESYSTEM | SFGAO.SFGAO_FOLDER | SFGAO.SFGAO_HASSUBFOLDER | SFGAO.SFGAO_LINK;
 				IntPtr pidl = (IntPtr) _pidl;
-				Native.SHFILEINFO shInfo = new Native.SHFILEINFO();
-				Native.Shell32.SHGetFileInfo(pidl, (uint) REQUEST_ATTRIBUTES, out shInfo, (uint) Marshal.SizeOf(shInfo),
-				                             Native.SHGFI.SHGFI_PIDL | Native.SHGFI.SHGFI_ATTRIBUTES | Native.SHGFI.SHGFI_TYPENAME | Native.SHGFI.SHGFI_DISPLAYNAME | Native.SHGFI.SHGFI_SYSICONINDEX);
+				SHFILEINFO shInfo = new SHFILEINFO();
+				Shell32.SHGetFileInfo(pidl, (uint) REQUEST_ATTRIBUTES, out shInfo, (uint) Marshal.SizeOf(shInfo),
+				                      SHGFI.SHGFI_PIDL | SHGFI.SHGFI_ATTRIBUTES | SHGFI.SHGFI_TYPENAME | SHGFI.SHGFI_DISPLAYNAME | SHGFI.SHGFI_SYSICONINDEX);
 
-				bool isPureVirtual = !(((Native.SFGAO) shInfo.dwAttributes & Native.SFGAO.SFGAO_FILESYSTEM) != 0);
-				bool isFolder = (((Native.SFGAO) shInfo.dwAttributes & (Native.SFGAO.SFGAO_FOLDER | Native.SFGAO.SFGAO_HASSUBFOLDER)) != 0) && !File.Exists(_fullPath);
+				// check if item is purely virtual or is a physical file system object
+				bool isPureVirtual = !(((SFGAO) shInfo.dwAttributes & SFGAO.SFGAO_FILESYSTEM) != 0);
+
+				// check if item is a shortcut
+				bool isShortcut = (((SFGAO) shInfo.dwAttributes & SFGAO.SFGAO_LINK) != 0) && File.Exists(_fullPath);
+
+				// check if item is actually a folder or potentially has subfolders; exclude real files that provide subfolders via shell namespace extensions (e.g. ZIP files in WinXP)
+				bool isFolder = (((SFGAO) shInfo.dwAttributes & (SFGAO.SFGAO_FOLDER | SFGAO.SFGAO_HASSUBFOLDER)) != 0) && !File.Exists(_fullPath);
 
 				byte itemClass;
 				if (_pidl == myDocumentsReferencePidl)
@@ -606,11 +613,11 @@ namespace ClearCanvas.Controls.WinForms
 
 				try
 				{
-					int hRes = Native.User32.SendMessage(base.Handle, Native.ListView.LVM_SETIMAGELIST, Native.ListView.LVSIL_SMALL, SystemImageList.SmallIcons);
+					int hRes = User32.SendMessage(Handle, LV.LVM_SETIMAGELIST, LV.LVSIL_SMALL, SystemImageList.SmallIcons);
 					if (hRes != 0)
 						Marshal.ThrowExceptionForHR(hRes);
 
-					hRes = Native.User32.SendMessage(base.Handle, Native.ListView.LVM_SETIMAGELIST, Native.ListView.LVSIL_NORMAL, SystemImageList.LargeIcons);
+					hRes = User32.SendMessage(Handle, LV.LVM_SETIMAGELIST, LV.LVSIL_NORMAL, SystemImageList.LargeIcons);
 					if (hRes != 0)
 						Marshal.ThrowExceptionForHR(hRes);
 				}
@@ -625,7 +632,7 @@ namespace ClearCanvas.Controls.WinForms
 				get
 				{
 					CreateParams cp = base.CreateParams;
-					cp.Style = cp.Style | Native.ListView.LVS_SHAREIMAGELISTS;
+					cp.Style = cp.Style | LV.LVS_SHAREIMAGELISTS;
 					return cp;
 				}
 			}

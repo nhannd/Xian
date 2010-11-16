@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using ClearCanvas.Controls.WinForms.Native;
 
 namespace ClearCanvas.Controls.WinForms
 {
@@ -112,7 +113,7 @@ namespace ClearCanvas.Controls.WinForms
 				// create the item's IShellFolder interface
 				if ((attributeFlags & Native.SFGAO.SFGAO_FOLDER) != 0)
 				{
-					Guid iidIShellFolder = Native.IID_IShellFolder;
+					Guid iidIShellFolder = new Guid(IID.IID_IShellFolder);
 					if (_pidl == _rootItem._pidl)
 					{
 						// if the requested PIDL is the root namespace (the desktop) we can't use the the BindToObject method, so get it directly

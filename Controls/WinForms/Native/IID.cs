@@ -11,16 +11,14 @@
 
 // ReSharper disable InconsistentNaming
 
-using System;
-
 namespace ClearCanvas.Controls.WinForms.Native
 {
-	[Flags]
-	internal enum STRRET : uint
+	internal static class IID
 	{
-		STRRET_WSTR = 0,
-		STRRET_OFFSET = 0x1,
-		STRRET_CSTR = 0x2,
+		public const string IID_IShellFolder = "000214E6-0000-0000-C000-000000000046";
+		public const string IID_IEnumIDList = "000214F2-0000-0000-C000-000000000046";
+		public const string IID_IPersistFile = "0000010b-0000-0000-C000-000000000046";
+		public const string IID_IShellLinkW = "000214F9-0000-0000-C000-000000000046";
 	}
 }
 

@@ -59,21 +59,27 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="IFolderCoordinatee.cs" />
+    <Compile Include="Native\CLSID.cs" />
     <Compile Include="Native\Comctl32.cs" />
     <Compile Include="Native\CSIDL.cs" />
     <Compile Include="Native\IEnumIDList.cs" />
     <Compile Include="Native\IShellFolder.cs" />
-    <Compile Include="Native\ListView.cs" />
-    <Compile Include="Native\Native.cs" />
+    <Compile Include="Native\IShellLink.cs" />
+    <Compile Include="Native\LV.cs" />
+    <Compile Include="Native\Msi.cs" />
+    <Compile Include="Native\IID.cs" />
     <Compile Include="Native\SFGAO.cs" />
     <Compile Include="Native\SHCONTF.cs" />
     <Compile Include="Native\Shell32.cs" />
     <Compile Include="Native\SHFILEINFO.cs" />
     <Compile Include="Native\SHGFI.cs" />
     <Compile Include="Native\SHGNO.cs" />
+    <Compile Include="Native\SLR_FLAGs.cs" />
+    <Compile Include="Native\STGM.cs" />
     <Compile Include="Native\STRRET.cs" />
-    <Compile Include="Native\TreeView.cs" />
+    <Compile Include="Native\TV.cs" />
     <Compile Include="Native\User32.cs" />
+    <Compile Include="Native\WIN32_FIND_DATA.cs" />
     <Compile Include="PathNotFoundException.cs" />
     <Compile Include="Pidl.cs" />
     <Compile Include="ShellItem.cs" />

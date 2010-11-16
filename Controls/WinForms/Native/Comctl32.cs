@@ -9,18 +9,19 @@
 
 #endregion
 
+// ReSharper disable InconsistentNaming
+
 using System;
 using System.Runtime.InteropServices;
 
-namespace ClearCanvas.Controls.WinForms
+namespace ClearCanvas.Controls.WinForms.Native
 {
-	partial class Native
+	internal static class Comctl32
 	{
-		public static class Comctl32
-		{
-			[DllImport("comctl32.dll")]
-			[return : MarshalAs(UnmanagedType.Bool)]
-			public static extern bool ImageList_Destroy(IntPtr hImageList);
-		}
+		[DllImport("comctl32.dll")]
+		[return : MarshalAs(UnmanagedType.Bool)]
+		public static extern bool ImageList_Destroy(IntPtr hImageList);
 	}
 }
+
+// ReSharper restore InconsistentNaming

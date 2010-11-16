@@ -29,6 +29,7 @@ namespace ClearCanvas.Controls.WinForms
 			//JY: We use static instances here without IDisposable here because the system image list is allocated
 			// to us by shell32, and we only get one per process for a given icon size. Even doing an ImageList_Destroy
 			// in a destructor can cause funny business.
+			const int FILE_ATTRIBUTE_NORMAL = 0x80;
 
 			// retrieve the info for a fake file so we can get the image list handle.
 			Native.SHFILEINFO shInfo = new Native.SHFILEINFO();
@@ -37,7 +38,7 @@ namespace ClearCanvas.Controls.WinForms
 				dwAttribs |= Native.SHGFI.SHGFI_SMALLICON;
 			else
 				dwAttribs |= Native.SHGFI.SHGFI_LARGEICON;
-			_handle = Native.Shell32.SHGetFileInfo(".txt", Native.FILE_ATTRIBUTE_NORMAL, out shInfo, (uint) Marshal.SizeOf(shInfo), dwAttribs);
+			_handle = Native.Shell32.SHGetFileInfo(".txt", FILE_ATTRIBUTE_NORMAL, out shInfo, (uint) Marshal.SizeOf(shInfo), dwAttribs);
 		}
 
 		public IntPtr Handle

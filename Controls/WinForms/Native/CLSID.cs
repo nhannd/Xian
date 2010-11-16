@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
@@ -11,16 +11,12 @@
 
 // ReSharper disable InconsistentNaming
 
-using System;
-
 namespace ClearCanvas.Controls.WinForms.Native
 {
-	[Flags]
-	internal enum STRRET : uint
+	internal static class CLSID
 	{
-		STRRET_WSTR = 0,
-		STRRET_OFFSET = 0x1,
-		STRRET_CSTR = 0x2,
+		public const string CLSID_ShellLink = "00021401-0000-0000-C000-000000000046";
+		public const string CLSID_FolderShortcut = "0AFACED1-E828-11D1-9187-B532F1E9575D";
 	}
 }
 

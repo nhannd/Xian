@@ -9,16 +9,17 @@
 
 #endregion
 
+// ReSharper disable InconsistentNaming
+
 using System;
 
-namespace ClearCanvas.Controls.WinForms
+namespace ClearCanvas.Controls.WinForms.Native
 {
-	partial class Native
+	internal static class TV
 	{
-		public static class TreeView
-		{
-			public const UInt32 TVSIL_NORMAL = 0;
-			public const UInt32 TVM_SETIMAGELIST = 4361;
-		}
+		public const UInt32 TVSIL_NORMAL = 0;
+		public const UInt32 TVM_SETIMAGELIST = 4361;
 	}
 }
+
+// ReSharper restore InconsistentNaming

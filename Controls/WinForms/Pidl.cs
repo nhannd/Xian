@@ -13,7 +13,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
+using ClearCanvas.Controls.WinForms.Native;
 
 namespace ClearCanvas.Controls.WinForms
 {
@@ -97,8 +99,12 @@ namespace ClearCanvas.Controls.WinForms
 		{
 			get
 			{
-				StringBuilder strBuffer = new StringBuilder(Native.MAX_PATH);
-				Native.Shell32.SHGetPathFromIDList(this.GetPidl(), strBuffer);
+				// The maximum component length (i.e. for any given filename or directory name) is 256.
+				// The maximum path length (i.e. the concatenation of all components in the path) is 260.
+				const int MAX_PATH = 260;
+
+				StringBuilder strBuffer = new StringBuilder(MAX_PATH);
+				Shell32.SHGetPathFromIDList(GetPidl(), strBuffer);
 				return strBuffer.ToString();
 			}
 		}
@@ -165,12 +171,23 @@ namespace ClearCanvas.Controls.WinForms
 		{
 			get
 			{
-				const Native.SFGAO REQUEST_ATTRIBUTES = Native.SFGAO.SFGAO_FOLDER | Native.SFGAO.SFGAO_HASSUBFOLDER;
-				IntPtr pidl = this.GetPidl();
-				Native.SHFILEINFO shInfo = new Native.SHFILEINFO();
-				Native.Shell32.SHGetFileInfo(pidl, (uint) REQUEST_ATTRIBUTES, out shInfo, (uint) Marshal.SizeOf(shInfo),
-				                             Native.SHGFI.SHGFI_PIDL | Native.SHGFI.SHGFI_ATTRIBUTES);
-				return (((Native.SFGAO) shInfo.dwAttributes) & Native.SFGAO.SFGAO_FOLDER) != 0;
+				const SFGAO REQUEST_ATTRIBUTES = SFGAO.SFGAO_FOLDER;
+				IntPtr pidl = GetPidl();
+				SHFILEINFO shInfo = new SHFILEINFO();
+				Shell32.SHGetFileInfo(pidl, (uint) REQUEST_ATTRIBUTES, out shInfo, (uint) Marshal.SizeOf(shInfo), SHGFI.SHGFI_PIDL | SHGFI.SHGFI_ATTRIBUTES);
+				return (((SFGAO) shInfo.dwAttributes) & SFGAO.SFGAO_FOLDER) != 0;
+			}
+		}
+
+		public bool IsShortcut
+		{
+			get
+			{
+				const SFGAO REQUEST_ATTRIBUTES = SFGAO.SFGAO_LINK;
+				IntPtr pidl = GetPidl();
+				SHFILEINFO shInfo = new SHFILEINFO();
+				Shell32.SHGetFileInfo(pidl, (uint) REQUEST_ATTRIBUTES, out shInfo, (uint) Marshal.SizeOf(shInfo), SHGFI.SHGFI_PIDL | SHGFI.SHGFI_ATTRIBUTES);
+				return (((SFGAO) shInfo.dwAttributes) & SFGAO.SFGAO_LINK) != 0;
 			}
 		}
 
@@ -236,6 +253,78 @@ namespace ClearCanvas.Controls.WinForms
 				return new Pidl(pidl, true);
 			Marshal.FreeCoTaskMem(pidl);
 			return null;
+		}
+
+		public bool TryResolveShortcut(out Pidl realPath)
+		{
+			return TryResolveShortcut(IntPtr.Zero, out realPath);
+		}
+
+		public bool TryResolveShortcut(IntPtr hWnd, out Pidl realPath)
+		{
+			try
+			{
+				realPath = ResolveShortcut(hWnd);
+				return true;
+			}
+			catch (Exception)
+			{
+				realPath = null;
+				return false;
+			}
+		}
+
+		public Pidl ResolveShortcut()
+		{
+			return ResolveShortcut(IntPtr.Zero);
+		}
+
+		public Pidl ResolveShortcut(IntPtr hWnd)
+		{
+			if (!IsShortcut)
+				throw new InvalidOperationException("Item is not a shortcut.");
+
+			var fullPath = Path;
+			try
+			{
+				var instance = Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid(CLSID.CLSID_ShellLink)));
+				try
+				{
+					var punk = Marshal.GetIUnknownForObject(instance);
+					var persistFile = (IPersistFile) Marshal.GetTypedObjectForIUnknown(punk, typeof (IPersistFile));
+					try
+					{
+						persistFile.Load(fullPath, (int) STGM.READ);
+
+						var shellLink = (IShellLink) Marshal.GetTypedObjectForIUnknown(punk, typeof (IShellLink));
+						try
+						{
+							shellLink.Resolve(hWnd, hWnd != IntPtr.Zero ? SLR_FLAGS.SLR_UPDATE : SLR_FLAGS.SLR_NO_UI);
+
+							WIN32_FIND_DATA findData;
+							var path = new StringBuilder(1024);
+							shellLink.GetPath(path, path.Capacity, out findData, SLGP_FLAGS.SLGP_UNCPRIORITY);
+							return new Pidl(ILCreateFromPath(path.ToString()), true);
+						}
+						finally
+						{
+							Marshal.ReleaseComObject(shellLink);
+						}
+					}
+					finally
+					{
+						Marshal.ReleaseComObject(persistFile);
+					}
+				}
+				finally
+				{
+					Marshal.ReleaseComObject(instance);
+				}
+			}
+			catch (Exception ex)
+			{
+				throw new PathNotFoundException("Failed to resolve shortcut.", fullPath, ex);
+			}
 		}
 
 		private IntPtr GetPidl()

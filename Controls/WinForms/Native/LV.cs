@@ -11,16 +11,17 @@
 
 // ReSharper disable InconsistentNaming
 
-using System;
-
 namespace ClearCanvas.Controls.WinForms.Native
 {
-	[Flags]
-	internal enum STRRET : uint
+	internal static class LV
 	{
-		STRRET_WSTR = 0,
-		STRRET_OFFSET = 0x1,
-		STRRET_CSTR = 0x2,
+		public const int LVS_SMALLICON = 0x0002;
+		public const int LVS_SHAREIMAGELISTS = 0x0040;
+		public const int LVM_SETIMAGELIST = 0x1003;
+
+		public const int LVSIL_NORMAL = 0;
+		public const int LVSIL_SMALL = 1;
+		public const int LVSIL_STATE = 2;
 	}
 }
 

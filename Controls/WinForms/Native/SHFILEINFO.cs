@@ -9,24 +9,25 @@
 
 #endregion
 
+// ReSharper disable InconsistentNaming
+
 using System;
 using System.Runtime.InteropServices;
 
-namespace ClearCanvas.Controls.WinForms
+namespace ClearCanvas.Controls.WinForms.Native
 {
-	partial class Native
+	internal struct SHFILEINFO
 	{
-		public struct SHFILEINFO
-		{
-			public IntPtr hIcon;
-			public int iIcon;
-			public uint dwAttributes;
+		public IntPtr hIcon;
+		public int iIcon;
+		public uint dwAttributes;
 
-			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-			public string szDisplayName;
+		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
+		public string szDisplayName;
 
-			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
-			public string szTypeName;
-		}
+		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
+		public string szTypeName;
 	}
 }
+
+// ReSharper restore InconsistentNaming

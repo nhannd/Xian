@@ -14,6 +14,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using ClearCanvas.Controls.WinForms.Native;
 
 namespace ClearCanvas.Controls.WinForms
 {
@@ -300,7 +301,7 @@ namespace ClearCanvas.Controls.WinForms
 
 				try
 				{
-					int hRes = Native.User32.SendMessage(base.Handle, Native.TreeView.TVM_SETIMAGELIST, Native.TreeView.TVSIL_NORMAL, SystemImageList.SmallIcons);
+					int hRes = User32.SendMessage(Handle, TV.TVM_SETIMAGELIST, TV.TVSIL_NORMAL, SystemImageList.SmallIcons);
 					if (hRes != 0)
 						Marshal.ThrowExceptionForHR(hRes);
 				}
