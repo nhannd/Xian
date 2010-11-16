@@ -73,32 +73,13 @@
 <b>ClearCanvas Inc.</b>
 Copyright (c) 2010, ClearCanvas Inc.
 All rights reserved.
+<a href="http://www.clearcanvas.ca" >http://www.clearcanvas.ca</a>
 
-Redistribution and use in source and binary forms, with or without modification,
-are permitted provided that the following conditions are met:
-
-    * Redistributions of source code must retain the above copyright notice, 
-      this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright notice,
-      this list of conditions and the following disclaimer in the documentation 
-      and/or other materials provided with the distribution.
-    * Neither the name of ClearCanvas Inc. nor the names of its contributors may
-      be used to endorse or promote products derived from this software without 
-      specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
-BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
-LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
-OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
-OF THE POSSIBILITY OF SUCH DAMAGE.
+This software is licensed under the Open Software License v3.0.
+For the complete license, see <a href="http://www.clearcanvas.ca/OSLv3.0" >http://www.clearcanvas.ca/OSLv3.0</a>
 </pre>
 <p></p>
-<div class="LicenseLink"><b><a href="#" onclick="showLicense('mDCMLicense')">mDCM: A C# DICOM library</a></b></div>
+<div class="LicenseLink"><b><a href="#" onclick="showLicense('mDCMLicense')">mDCM: Jpeg Codec</a></b></div>
 <div id="mDCMLicense" class="License"><pre>
 Copyright (c) 2008  Colby Dillion
 
@@ -119,7 +100,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Author:
    Colby Dillion (colby.dillion@gmail.com)
 </pre></div>
-<div class="LicenseLink"><a href="#" onclick="showLicense('ajaxLicense')"><b>AJAX Control Toolkit</b>, <b>Silverlight Toolkit</b>, <b>Silverlight Menu</b>, and <b>DotNetZip Library</b></a></div>
+<div class="LicenseLink"><a href="#" onclick="showLicense('ajaxLicense')"><b>AJAX Control Toolkit</b>, <b>Silverlight Toolkit</b>, <b>Silverlight (SL3) Menu</b>, and <b>DotNetZip Library</b></a></div>
 <div id="ajaxLicense" class="License"><pre>
 License: Microsoft Public License (Ms-PL)
 Microsoft Public License (Ms-PL)
@@ -1023,6 +1004,8 @@ and Brandon Aaron (brandon.aaron@gmail.com || http://brandonaaron.net)
  
 jQuery Multi-select, Copyright (c) 2008 A Beautiful Site, LLC.
 
+jQuery Masked Input Plugin, Copyright (c) 2007-2008 Josh Bush (digitalbush.com)
+ 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -1041,29 +1024,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-jQuery Masked Input Plugin
 
-Copyright (c) 2007-2008 Josh Bush (digitalbush.com)
- 
-Permission is hereby granted, free of charge, to any person
-obtaining a copy of this software and associated documentation
-files (the "Software"), to deal in the Software without
-restriction, including without limitation the rights to use,
-copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the
-Software is furnished to do so, subject to the following
-conditions:
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-OTHER DEALINGS IN THE SOFTWARE. 
 
 </pre></div>
   
@@ -1077,8 +1038,8 @@ OTHER DEALINGS IN THE SOFTWARE.
   <div style="font-weight: bold; font-size: 16px; ">Part of the ClearCanvas RIS/PACS</div>
 
 <p><b>ClearCanvas Inc.</b><br />
-620-438 Richmond St. W.<br />
-Toronto, ON M5V 3S6<br />
+1920-439 University Ave.<br />
+Toronto, ON M5G 1Y8<br />
 Canada
 </p>
 <p>
