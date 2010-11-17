@@ -79,6 +79,8 @@ namespace ClearCanvas.Healthcare
 				throw new WorkflowException("Cannot merge a practitioner that is de-activated.");
 			if (right.IsMerged || left.IsMerged)
 				throw new WorkflowException("Cannot merge a practitioner that has already been merged.");
+			if (defaultContactPoint != null && defaultContactPoint.IsMerged)
+				throw new WorkflowException("Cannot assigned a merged contact point as default");
 
 			// update properties on result record
 			var result = new ExternalPractitioner { Name = name, LicenseNumber = licenseNumber, BillingNumber = billingNumber };
@@ -89,10 +91,15 @@ namespace ClearCanvas.Healthcare
 			var retainedContactPoints = new HashedSet<ExternalPractitionerContactPoint>();
 			retainedContactPoints.AddAll(contactPointReplacements.Values);
 
+			// some of the replacement contact points are merged.  This should not be allowed.
+			if (CollectionUtils.Contains(contactPointReplacements.Values, cp => cp.IsMerged))
+				throw new WorkflowException("Cannot replace a contact point with another that has already been merged.");
+
 			// add any existing contact point that was not in the replacement list (because it is implicitly being retained)
 			foreach (var contactPoint in CollectionUtils.Concat(right.ContactPoints, left.ContactPoints))
 			{
-				if (!contactPointReplacements.ContainsKey(contactPoint))
+				// No need to retain a merged contact point.  Because its replacement would already be retained.
+				if (!contactPointReplacements.ContainsKey(contactPoint) && !contactPoint.IsMerged)
 					retainedContactPoints.Add(contactPoint);
 			}
 

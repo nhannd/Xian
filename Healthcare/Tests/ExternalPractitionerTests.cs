@@ -97,23 +97,6 @@ namespace ClearCanvas.Healthcare.Tests
 
 		#endregion
 
-		#region Test Edit Merged Practitioner
-
-		[Test]
-		[ExpectedException(typeof(WorkflowException))]
-		public void Test_Edit_Merged_Practitioner()
-		{
-			var p1 = TestHelper.CreatePractitioner("A", "1");
-			var p2 = TestHelper.CreatePractitioner("B", "2");
-			TestHelper.SimpleMerge(p1, p2);
-
-			// Changing the property won't change _lastEditedTime.  Must call MarkEdited
-			p1.LicenseNumber = "Modified value";
-			p1.MarkEdited();
-		}
-
-		#endregion
-
 		#region Test Activate/Deactivate Merged/NotMerged Practitioner
 
 		[Test]
@@ -551,7 +534,7 @@ namespace ClearCanvas.Healthcare.Tests
 
 		#endregion
 
-		#region Test Merged Default/Deactivated/Replaced Contact Points
+		#region Test Merged Default/Deactivated/Replaced/Merged Contact Points
 
 		[Test]
 		public void Test_Merged_Default_Contact_Point()
@@ -581,7 +564,28 @@ namespace ClearCanvas.Healthcare.Tests
 		}
 
 		[Test]
-		public void Test_Deactivate_Replace_Contact_Point_1()
+		public void Test_Merge_With_No_Default_Contact_Point()
+		{
+			var p1 = TestHelper.CreatePractitioner("A", "1");
+			var cp1 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(p1, "cp1", "cp1");
+			Assert.AreEqual(p1.DefaultContactPoint, cp1);
+
+			var p2 = TestHelper.CreatePractitioner("B", "2");
+			Assert.IsNull(p2.DefaultContactPoint);
+
+			var deactivatedContactPoints = new List<ExternalPractitionerContactPoint>();
+			var contactPointReplacements = new Dictionary<ExternalPractitionerContactPoint, ExternalPractitionerContactPoint>();
+			var result = ExternalPractitioner.MergePractitioners(p1, p2,
+				p2.Name, p2.LicenseNumber, p2.BillingNumber,
+				p2.ExtendedProperties, p2.DefaultContactPoint,
+				deactivatedContactPoints, contactPointReplacements);
+
+			Assert.AreEqual(result.ContactPoints.Count, 1);
+			Assert.IsNull(result.DefaultContactPoint);
+		}
+
+		[Test]
+		public void Test_Deactivate_And_Replace_Contact_Point_1()
 		{
 			var pA = TestHelper.CreatePractitioner("A", "1");
 			var cpPA1 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(pA, "cpPA1", "cpPA1");
@@ -632,7 +636,7 @@ namespace ClearCanvas.Healthcare.Tests
 		}
 
 		[Test]
-		public void Test_Deactivate_Replace_Contact_Point_2()
+		public void Test_Deactivate_And_Replace_Contact_Point_2()
 		{
 			var pA = TestHelper.CreatePractitioner("A", "1");
 			var cpPA1 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(pA, "cpPA1", "cpPA1");
@@ -680,6 +684,91 @@ namespace ClearCanvas.Healthcare.Tests
 			Assert.AreEqual(cpPA2.MergedInto, result_cpPB2); // Replaced
 			Assert.AreEqual(cpPB1.MergedInto, result_cpPB1);
 			Assert.AreEqual(cpPB2.MergedInto, result_cpPB2);
+		}
+
+		[Test]
+		[ExpectedException(typeof(WorkflowException))]
+		public void Test_Merge_With_Merged_Replacements()
+		{
+			var p1 = TestHelper.CreatePractitioner("A", "1");
+			var cp1 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(p1, "cp1", "cp1");
+			var cp2 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(p1, "cp2", "cp2");
+			var cp3 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(p1, "cp3", "cp3");
+
+			// Merge into cp12, change name and description for easy identification.
+			var cp12 = ExternalPractitionerContactPointTests.TestHelper.SimpleMerge(cp1, cp2);
+			cp12.Name = "cp12";
+			cp12.Description = "cp12";
+			Assert.IsTrue(cp12.IsDefaultContactPoint);
+
+			// This test does the following:
+			// cp1 - a merged cp that is chosen as replaced destination
+			// cp2 - merged, deactivated
+			// cp3 - replace
+			// cp12 - retain as default
+			var newDefault = cp12;
+			var deactivated = new List<ExternalPractitionerContactPoint> ();
+			var replacements = new Dictionary<ExternalPractitionerContactPoint, ExternalPractitionerContactPoint> { { cp3, cp1 } };
+
+			var p2 = TestHelper.CreatePractitioner("B", "2");
+			ExternalPractitioner.MergePractitioners(p1, p2,
+				p2.Name, p2.LicenseNumber, p2.BillingNumber, p2.ExtendedProperties,
+				newDefault, deactivated, replacements);
+		}
+
+		[Test]
+		[ExpectedException(typeof(WorkflowException))]
+		public void Test_Merge_With_Merged_Default_ContactPoint()
+		{
+			var p1 = TestHelper.CreatePractitioner("A", "1");
+			var cp1 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(p1, "cp1", "cp1");
+			var cp2 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(p1, "cp2", "cp2");
+
+			// Merge into cp12, change name and description for easy identification.
+			var cp12 = ExternalPractitionerContactPointTests.TestHelper.SimpleMerge(cp1, cp2);
+			cp12.Name = "cp12";
+			cp12.Description = "cp12";
+
+			// This test does the following:
+			// cp1 - a merged cp that is chosen as new default
+			// cp2 - merged, deactivated
+			// cp12 - previous default
+			var newDefault = cp1;
+			var deactivated = new List<ExternalPractitionerContactPoint>();
+			var replacements = new Dictionary<ExternalPractitionerContactPoint, ExternalPractitionerContactPoint>();
+
+			var p2 = TestHelper.CreatePractitioner("B", "2");
+			ExternalPractitioner.MergePractitioners(p1, p2,
+				p2.Name, p2.LicenseNumber, p2.BillingNumber, p2.ExtendedProperties,
+				newDefault, deactivated, replacements);
+		}
+
+		[Test]
+		public void Test_Merge_With_Merged_ContactPoints()
+		{
+			var p1 = TestHelper.CreatePractitioner("A", "1");
+			var cp1 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(p1, "cp1", "cp1");
+			var cp2 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(p1, "cp2", "cp2");
+
+			// Merge into cp12, change name and description for easy identification.
+			var cp12 = ExternalPractitionerContactPointTests.TestHelper.SimpleMerge(cp1, cp2);
+			cp12.Name = "cp12";
+			cp12.Description = "cp12";
+
+			var p2 = TestHelper.CreatePractitioner("B", "2");
+			var cp3 = ExternalPractitionerContactPointTests.TestHelper.AddContactPoint(p2, "cp3", "cp3");
+
+			var result = TestHelper.SimpleMerge(p1, p2);
+			var result_cp1 = CollectionUtils.SelectFirst(result.ContactPoints, cp => cp.Name == cp1.Name);
+			var result_cp2 = CollectionUtils.SelectFirst(result.ContactPoints, cp => cp.Name == cp2.Name);
+			var result_cp12 = CollectionUtils.SelectFirst(result.ContactPoints, cp => cp.Name == cp12.Name);
+			var result_cp3 = CollectionUtils.SelectFirst(result.ContactPoints, cp => cp.Name == cp3.Name);
+
+			Assert.AreEqual(2, result.ContactPoints.Count);  // should only have result_cp12 and result_cp3
+			Assert.IsNull(result_cp1);
+			Assert.IsNull(result_cp2);
+			Assert.IsNotNull(result_cp12);
+			Assert.IsNotNull(result_cp3);
 		}
 
 		#endregion
