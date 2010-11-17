@@ -19,13 +19,15 @@ namespace ClearCanvas.Controls.WinForms
 		private readonly string _path;
 		private readonly string _virtualPath;
 		private readonly bool _isFolder;
+		private readonly bool _isLink;
 
-		protected FolderObject(Pidl pidl)
+		protected FolderObject(string path, string virtualPath, string displayName, bool isFolder, bool isLink)
 		{
-			_displayName = pidl.DisplayName;
-			_path = pidl.Path;
-			_virtualPath = pidl.VirtualPath;
-			_isFolder = pidl.IsFolder;
+			_path = path;
+			_virtualPath = virtualPath;
+			_displayName = displayName;
+			_isFolder = isFolder;
+			_isLink = isLink;
 		}
 
 		public string DisplayName
@@ -46,6 +48,44 @@ namespace ClearCanvas.Controls.WinForms
 		public bool IsFolder
 		{
 			get { return _isFolder; }
+		}
+
+		public bool IsLink
+		{
+			get { return _isLink; }
+		}
+
+		public string ResolveLink()
+		{
+			return ResolveLink(IntPtr.Zero);
+		}
+
+		public string ResolveLink(IntPtr hWnd)
+		{
+			if (!IsLink)
+				throw new InvalidOperationException("Object is not a file system link.");
+			return ShellItem.ResolveLink(hWnd, Path);
+		}
+
+		public string GetPath()
+		{
+			return GetPath(false);
+		}
+
+		public string GetPath(bool resolveLinks)
+		{
+			return GetPath(IntPtr.Zero, resolveLinks);
+		}
+
+		public string GetPath(IntPtr hWnd, bool resolveLinks)
+		{
+			if (resolveLinks && IsLink)
+			{
+				string resolvedPath;
+				if (ShellItem.TryResolveLink(hWnd, Path, out resolvedPath))
+					return resolvedPath;
+			}
+			return Path;
 		}
 
 		public bool Equals(FolderObject other)

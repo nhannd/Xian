@@ -122,6 +122,29 @@ namespace ClearCanvas.Controls.WinForms
 
 		#endregion
 
+		#region DereferenceLinks
+
+		[DefaultValue(true)]
+		public bool DereferenceLinks
+		{
+			get { return _folderListView.DereferenceLinks; }
+			set
+			{
+				if (_folderListView.DereferenceLinks != value)
+				{
+					_folderListView.DereferenceLinks = value;
+					OnPropertyChanged(new PropertyChangedEventArgs("DereferenceLinks"));
+				}
+			}
+		}
+
+		private void ResetDereferenceLinks()
+		{
+			DereferenceLinks = true;
+		}
+
+		#endregion
+
 		#region FileSizeFormat
 
 		[DefaultValue(FileSizeFormat.BinaryOctets)]
@@ -369,7 +392,8 @@ namespace ClearCanvas.Controls.WinForms
 
 		public class FolderViewItem : FolderObject
 		{
-			internal FolderViewItem(Pidl pidl) : base(pidl) {}
+			internal FolderViewItem(Pidl pidl)
+				: base(pidl.Path, pidl.VirtualPath, pidl.DisplayName, pidl.IsFolder, pidl.IsLink) {}
 		}
 
 		#endregion
@@ -567,6 +591,7 @@ namespace ClearCanvas.Controls.WinForms
 				this.AllowColumnReorder = false;
 				this.AutoArrange = true;
 				this.CheckBoxes = false;
+				this.DereferenceLinks = true;
 				this.HeaderStyle = ColumnHeaderStyle.Clickable;
 				this.HideSelection = false;
 				this.LabelEdit = false;
@@ -667,14 +692,40 @@ namespace ClearCanvas.Controls.WinForms
 						FolderListViewItem item = (FolderListViewItem) this.GetItemAt(point.X, point.Y);
 						if (item != null)
 						{
-							FolderView control = base.Parent as FolderView;
-							if (control != null)
-								control.OnItemDoubleClick(new FolderViewItemEventArgs(new FolderViewItem(item.Pidl)));
-
-							if (_autoDrillDown && item.IsFolder)
+							var pidl = item.Pidl.Clone();
+							try
 							{
-								// if the user double clicked on a folder item, perform a drill down
-								this.Browse(new ShellItem(item.Pidl, _rootShellItem, false));
+								if (DereferenceLinks && pidl.IsLink)
+								{
+									// attempt to resolve links first if necessary
+									string resolvedPath;
+									Pidl resolvedPidl;
+									if (ShellItem.TryResolveLink(Handle, pidl.Path, out resolvedPath) && Pidl.TryParse(resolvedPath, out resolvedPidl))
+									{
+										pidl.Dispose();
+										pidl = resolvedPidl;
+									}
+								}
+
+								var handled = false;
+
+								var control = Parent as FolderView;
+								if (control != null)
+								{
+									var args = new FolderViewItemEventArgs(new FolderViewItem(pidl));
+									control.OnItemDoubleClick(args);
+									handled = args.Handled;
+								}
+
+								if (AutoDrillDown && pidl.IsFolder && !handled)
+								{
+									// if the user double clicked on a folder item, perform a drill down
+									Browse(new ShellItem(pidl, _rootShellItem, false));
+								}
+							}
+							finally
+							{
+								pidl.Dispose();
 							}
 						}
 					}
@@ -697,14 +748,40 @@ namespace ClearCanvas.Controls.WinForms
 							FolderListViewItem item = (FolderListViewItem) this.FocusedItem;
 							if (item != null)
 							{
-								FolderView control = base.Parent as FolderView;
-								if (control != null)
-									control.OnItemKeyEnterPressed(new FolderViewItemEventArgs(new FolderViewItem(item.Pidl)));
-
-								if (_autoDrillDown && item.IsFolder)
+								var pidl = item.Pidl.Clone();
+								try
 								{
-									// if the user pressed ENTER on a folder item, perform a drill down
-									this.Browse(new ShellItem(item.Pidl, _rootShellItem, false));
+									if (DereferenceLinks && pidl.IsLink)
+									{
+										// attempt to resolve links first if necessary
+										string resolvedPath;
+										Pidl resolvedPidl;
+										if (ShellItem.TryResolveLink(Handle, pidl.Path, out resolvedPath) && Pidl.TryParse(resolvedPath, out resolvedPidl))
+										{
+											pidl.Dispose();
+											pidl = resolvedPidl;
+										}
+									}
+
+									var handled = false;
+
+									var control = Parent as FolderView;
+									if (control != null)
+									{
+										var args = new FolderViewItemEventArgs(new FolderViewItem(pidl));
+										control.OnItemKeyEnterPressed(args);
+										handled = args.Handled;
+									}
+
+									if (AutoDrillDown && pidl.IsFolder && !handled)
+									{
+										// if the user pressed ENTER on a folder item, perform a drill down
+										Browse(new ShellItem(pidl, _rootShellItem, false));
+									}
+								}
+								finally
+								{
+									pidl.Dispose();
 								}
 							}
 						}
@@ -748,6 +825,8 @@ namespace ClearCanvas.Controls.WinForms
 				get { return _autoWaitCursor; }
 				set { _autoWaitCursor = value; }
 			}
+
+			public bool DereferenceLinks { get; set; }
 
 			public FileSizeFormat FileSizeFormat
 			{
@@ -1001,5 +1080,7 @@ namespace ClearCanvas.Controls.WinForms
 		{
 			get { return _item; }
 		}
+
+		public bool Handled { get; set; }
 	}
 }

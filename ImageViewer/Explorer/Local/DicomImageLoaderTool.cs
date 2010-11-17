@@ -105,6 +105,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 
 			foreach (string path in this.Context.SelectedPaths)
 			{
+				if (string.IsNullOrEmpty(path))
+					continue;
+
 				if (File.Exists(path))
 					fileList.Add(path);
 				else if (Directory.Exists(path))

@@ -141,6 +141,9 @@ namespace ClearCanvas.Utilities.DicomEditor
 
                 foreach (string rawPath in context.SelectedPaths)
                 {
+                	if (string.IsNullOrEmpty(rawPath))
+                		continue;
+
                     FileProcessor.Process(rawPath, "*.*", files.Add, true);
                 }
 

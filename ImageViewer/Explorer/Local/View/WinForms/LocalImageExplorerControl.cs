@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -69,23 +70,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 		private void UpdateSelection(bool triggeredFromFolderView)
 		{
 			if (triggeredFromFolderView)
-			{
-				var selection = new List<string>();
-				foreach (FolderView.FolderViewItem item in _folderView.SelectedItems)
-				{
-					if (!string.IsNullOrEmpty(item.Path))
-						selection.Add(item.Path);
-				}
-				_component.Selection = new Selection<string>(selection);
-			}
+				_component.Selection = new PathSelection(CollectionUtils.Cast<FolderObject>(_folderView.SelectedItems));
 			else
-			{
-				var path = _folderTree.SelectedItem.Path;
-				if (!string.IsNullOrEmpty(path))
-					_component.Selection = new Selection<string>(path);
-				else
-					_component.Selection = Selection<string>.Empty;
-			}
+				_component.Selection = new PathSelection(_folderTree.SelectedItem);
 		}
 
 		private void OnItemOpened(object sender, EventArgs e)
@@ -160,7 +147,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			List<KeyValuePair<Control, FocusDelegate>> focusDelegates = new List<KeyValuePair<Control, FocusDelegate>>(3);
 			focusDelegates.Add(new KeyValuePair<Control, FocusDelegate>(_folderTree, f => _folderTree.SelectNextControl(_folderTree, f, false, true, false)));
 			focusDelegates.Add(new KeyValuePair<Control, FocusDelegate>(_folderView, f => _folderView.SelectNextControl(_folderView, f, false, true, false)));
-			focusDelegates.Add(new KeyValuePair<Control, FocusDelegate>(_addressStrip, f => { _txtAddress.Focus(); return _addressStrip.ContainsFocus; }));
+			focusDelegates.Add(new KeyValuePair<Control, FocusDelegate>(_addressStrip, f =>
+			                                                                           	{
+			                                                                           		_txtAddress.Focus();
+			                                                                           		return _addressStrip.ContainsFocus;
+			                                                                           	}));
 			_focusDelegates = focusDelegates.AsReadOnly();
 		}
 
@@ -182,7 +173,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 					// try to focus the next control in sequence
 					for (int offset = 1; offset < _focusDelegates.Count; offset++)
 					{
-						int index = (indexFocusedControl + (forward ? offset : _focusDelegates.Count - offset)) % _focusDelegates.Count;
+						int index = (indexFocusedControl + (forward ? offset : _focusDelegates.Count - offset))%_focusDelegates.Count;
 						if (_focusDelegates[index].Value.Invoke(forward))
 							break; // end loop on first control that successfully focused
 					}
@@ -445,7 +436,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			if (!e.Item.IsFolder)
 			{
 				UpdateSelection(true);
-				this.OnItemOpened(sender, e);
+				OnItemOpened(sender, e);
+				e.Handled = true;
 			}
 		}
 
@@ -492,6 +484,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 
 		#endregion
 
+		#region ExceptionPolicy Class
+
 		[ExceptionPolicyFor(typeof (PathNotFoundException))]
 		[ExtensionOf(typeof (ExceptionPolicyExtensionPoint))]
 		private class ExceptionPolicy : IExceptionPolicy
@@ -504,5 +498,47 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 				exceptionHandlingContext.ShowMessageBox(sb.ToString());
 			}
 		}
+
+		#endregion
+
+		#region PathSelection Class
+
+		/// <summary>
+		/// Custom <see cref="IPathSelection"/> implementation that allows for delayed shortcut resolution.
+		/// </summary>
+		/// <remarks>
+		/// Resolving shortcuts can be expensive, so always call at the last possible moment (in conjunction with a user GUI action, preferably).
+		/// </remarks>
+		private class PathSelection : Selection<FolderObject>, IPathSelection
+		{
+			public PathSelection(FolderObject item) : base(item) {}
+			public PathSelection(IEnumerable<FolderObject> folderObjects) : base(folderObjects) {}
+
+			public string this[int index]
+			{
+				get { return Items[index].GetPath(true); }
+			}
+
+			public bool Contains(string path)
+			{
+				foreach (var item in Items)
+					if (string.Equals(path, item.GetPath(true), StringComparison.InvariantCultureIgnoreCase))
+						return true;
+				return false;
+			}
+
+			public new IEnumerator<string> GetEnumerator()
+			{
+				foreach (var item in Items)
+					yield return item.GetPath(true);
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				return GetEnumerator();
+			}
+		}
+
+		#endregion
 	}
 }

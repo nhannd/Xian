@@ -71,14 +71,14 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 				remove { _owner.Context.SelectedItems.SelectionChanged -= value; }
 			}
 
-			public Selection<string> SelectedPaths
+			public IPathSelection SelectedPaths
 			{
 				get
 				{
 					var selection = new List<string>();
 					foreach (IStudyItem item in _owner.SelectedItems)
 						selection.Add(item.Filename);
-					return new Selection<string>(selection);
+					return new PathSelection(selection);
 				}
 			}
 

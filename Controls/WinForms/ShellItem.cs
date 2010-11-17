@@ -11,7 +11,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
+using System.Text;
 using ClearCanvas.Controls.WinForms.Native;
 
 namespace ClearCanvas.Controls.WinForms
@@ -342,6 +345,173 @@ namespace ClearCanvas.Controls.WinForms
 			Files = 1,
 			Folders = 2
 		}
+
+		#region Link Resolution
+
+		/// <summary>
+		/// Attempts to resolve the specified file system link to the path of the link target.
+		/// </summary>
+		/// <remarks>
+		/// Target resolution will fail if it is unable to automatically find the target within 3000 milliseconds.
+		/// </remarks>
+		/// <param name="linkPath">The full path to the file system link.</param>
+		/// <param name="resolvedPath">The resolved path to the link target. If the link target does not exist, simply returns <paramref name="linkPath"/>.</param>
+		/// <returns>True if link target resolution completed successfully or target was not found; False if an error was encountered while attempting to resolve the link.</returns>
+		public static bool TryResolveLink(string linkPath, out string resolvedPath)
+		{
+			return TryResolveLink(linkPath, 0, out resolvedPath);
+		}
+
+		/// <summary>
+		/// Attempts to resolve the specified file system link to the path of the link target.
+		/// </summary>
+		/// <remarks>
+		/// Target resolution will fail if it is unable to automatically find the target within the specified timeout.
+		/// </remarks>
+		/// <param name="linkPath">The full path to the file system link.</param>
+		/// <param name="timeout">Timeout for target resolution in milliseconds. If 0, the system default of 3000 milliseconds is used.</param>
+		/// <param name="resolvedPath">The resolved path to the link target. If the link target does not exist, simply returns <paramref name="linkPath"/>.</param>
+		/// <returns>True if link target resolution completed successfully or target was not found; False if an error was encountered while attempting to resolve the link.</returns>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="timeout"/> is negative or exceeds 65535.</exception>
+		public static bool TryResolveLink(string linkPath, int timeout, out string resolvedPath)
+		{
+			if (timeout > ushort.MaxValue || timeout < ushort.MinValue)
+				throw new ArgumentOutOfRangeException("timeout", "Timeout must be a value between 0 and 65535.");
+			try
+			{
+				resolvedPath = ResolveLink(IntPtr.Zero, linkPath, (ushort) timeout);
+				return true;
+			}
+			catch (Exception)
+			{
+				resolvedPath = linkPath;
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Attempts to resolve the specified file system link to the path of the link target.
+		/// </summary>
+		/// <remarks>
+		/// The Window handle is used to request additional input from the user if the link target does not exist (such as the familiar
+		/// animated flashlight search dialog in Windows). If no Window handle is provided, the target resolution will fail if it is
+		/// unable to automatically find the target within 3 seconds.
+		/// </remarks>
+		/// <param name="hWnd">Window handle for any necessary GUI during link resolution. Set to <see cref="IntPtr.Zero"/> to disable all UI interactions.</param>
+		/// <param name="linkPath">The full path to the file system link.</param>
+		/// <param name="resolvedPath">The resolved path to the link target. If the link target does not exist, simply returns <paramref name="linkPath"/>.</param>
+		/// <returns>True if link target resolution completed successfully or target was not found; False if an error was encountered while attempting to resolve the link.</returns>
+		public static bool TryResolveLink(IntPtr hWnd, string linkPath, out string resolvedPath)
+		{
+			try
+			{
+				resolvedPath = ResolveLink(hWnd, linkPath, 0);
+				return true;
+			}
+			catch (Exception)
+			{
+				resolvedPath = linkPath;
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Attempts to resolve the specified file system link to the path of the link target.
+		/// </summary>
+		/// <remarks>
+		/// Target resolution will fail if it is unable to automatically find the target within 3000 milliseconds.
+		/// </remarks>
+		/// <param name="linkPath">The full path to the file system link.</param>
+		/// <returns>The resolved path to the link target. If the link target does not exist, simply returns <paramref name="linkPath"/>.</returns>
+		/// <exception cref="PathNotFoundException">Thrown if an error was encountered while attempting to resolve the link. Not thrown if the link target does not exist.</exception>
+		public static string ResolveLink(string linkPath)
+		{
+			return ResolveLink(linkPath, 0);
+		}
+
+		/// <summary>
+		/// Attempts to resolve the specified file system link to the path of the link target.
+		/// </summary>
+		/// <remarks>
+		/// Target resolution will fail if it is unable to automatically find the target within the specified timeout.
+		/// </remarks>
+		/// <param name="linkPath">The full path to the file system link.</param>
+		/// <param name="timeout">Timeout for target resolution in milliseconds. If 0, the system default of 3000 milliseconds is used.</param>
+		/// <returns>The resolved path to the link target. If the link target does not exist, simply returns <paramref name="linkPath"/>.</returns>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="timeout"/> is negative or exceeds 65535.</exception>
+		/// <exception cref="PathNotFoundException">Thrown if an error was encountered while attempting to resolve the link. Not thrown if the link target does not exist.</exception>
+		public static string ResolveLink(string linkPath, int timeout)
+		{
+			if (timeout > ushort.MaxValue || timeout < ushort.MinValue)
+				throw new ArgumentOutOfRangeException("timeout", "Timeout must be a value between 0 and 65535.");
+			return ResolveLink(IntPtr.Zero, linkPath, (ushort) timeout);
+		}
+
+		/// <summary>
+		/// Attempts to resolve the specified file system link to the path of the link target.
+		/// </summary>
+		/// <remarks>
+		/// The Window handle is used to request additional input from the user if the link target does not exist (such as the familiar
+		/// animated flashlight search dialog in Windows). If no Window handle is provided, the target resolution will fail if it is
+		/// unable to automatically find the target within 3 seconds.
+		/// </remarks>
+		/// <param name="hWnd">Window handle for any necessary GUI during link resolution. Set to <see cref="IntPtr.Zero"/> to disable all UI interactions.</param>
+		/// <param name="linkPath">The full path to the file system link.</param>
+		/// <returns>The resolved path to the link target. If the link target does not exist, simply returns <paramref name="linkPath"/>.</returns>
+		/// <exception cref="PathNotFoundException">Thrown if an error was encountered while attempting to resolve the link. Not thrown if the link target does not exist.</exception>
+		public static string ResolveLink(IntPtr hWnd, string linkPath)
+		{
+			return ResolveLink(hWnd, linkPath, 0);
+		}
+
+		private static string ResolveLink(IntPtr hWnd, string linkPath, ushort timeout)
+		{
+			if (!File.Exists(linkPath))
+				throw new PathNotFoundException(linkPath, "Specified path does not exist.");
+
+			try
+			{
+				var instance = Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid(CLSID.CLSID_ShellLink)));
+				try
+				{
+					var punk = Marshal.GetIUnknownForObject(instance);
+					var persistFile = (IPersistFile) Marshal.GetTypedObjectForIUnknown(punk, typeof (IPersistFile));
+					try
+					{
+						persistFile.Load(linkPath, (int) STGM.READ);
+
+						var shellLink = (IShellLink) Marshal.GetTypedObjectForIUnknown(punk, typeof (IShellLink));
+						try
+						{
+							shellLink.Resolve(hWnd, hWnd != IntPtr.Zero ? SLR_FLAGS.SLR_UPDATE : (SLR_FLAGS) ((timeout << 16) | (ushort) SLR_FLAGS.SLR_NO_UI));
+
+							WIN32_FIND_DATA findData;
+							var path = new StringBuilder(1024);
+							shellLink.GetPath(path, path.Capacity, out findData, SLGP_FLAGS.SLGP_UNCPRIORITY);
+							return path.ToString();
+						}
+						finally
+						{
+							Marshal.ReleaseComObject(shellLink);
+						}
+					}
+					finally
+					{
+						Marshal.ReleaseComObject(persistFile);
+					}
+				}
+				finally
+				{
+					Marshal.ReleaseComObject(instance);
+				}
+			}
+			catch (Exception ex)
+			{
+				throw new PathNotFoundException("Failed to resolve shortcut.", linkPath, ex);
+			}
+		}
+
+		#endregion
 	}
 
 	// ReSharper restore RedundantAssignment

@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using ClearCanvas.Controls.WinForms.Native;
 
@@ -179,7 +178,7 @@ namespace ClearCanvas.Controls.WinForms
 			}
 		}
 
-		public bool IsShortcut
+		public bool IsLink
 		{
 			get
 			{
@@ -253,78 +252,6 @@ namespace ClearCanvas.Controls.WinForms
 				return new Pidl(pidl, true);
 			Marshal.FreeCoTaskMem(pidl);
 			return null;
-		}
-
-		public bool TryResolveShortcut(out Pidl realPath)
-		{
-			return TryResolveShortcut(IntPtr.Zero, out realPath);
-		}
-
-		public bool TryResolveShortcut(IntPtr hWnd, out Pidl realPath)
-		{
-			try
-			{
-				realPath = ResolveShortcut(hWnd);
-				return true;
-			}
-			catch (Exception)
-			{
-				realPath = null;
-				return false;
-			}
-		}
-
-		public Pidl ResolveShortcut()
-		{
-			return ResolveShortcut(IntPtr.Zero);
-		}
-
-		public Pidl ResolveShortcut(IntPtr hWnd)
-		{
-			if (!IsShortcut)
-				throw new InvalidOperationException("Item is not a shortcut.");
-
-			var fullPath = Path;
-			try
-			{
-				var instance = Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid(CLSID.CLSID_ShellLink)));
-				try
-				{
-					var punk = Marshal.GetIUnknownForObject(instance);
-					var persistFile = (IPersistFile) Marshal.GetTypedObjectForIUnknown(punk, typeof (IPersistFile));
-					try
-					{
-						persistFile.Load(fullPath, (int) STGM.READ);
-
-						var shellLink = (IShellLink) Marshal.GetTypedObjectForIUnknown(punk, typeof (IShellLink));
-						try
-						{
-							shellLink.Resolve(hWnd, hWnd != IntPtr.Zero ? SLR_FLAGS.SLR_UPDATE : SLR_FLAGS.SLR_NO_UI);
-
-							WIN32_FIND_DATA findData;
-							var path = new StringBuilder(1024);
-							shellLink.GetPath(path, path.Capacity, out findData, SLGP_FLAGS.SLGP_UNCPRIORITY);
-							return new Pidl(ILCreateFromPath(path.ToString()), true);
-						}
-						finally
-						{
-							Marshal.ReleaseComObject(shellLink);
-						}
-					}
-					finally
-					{
-						Marshal.ReleaseComObject(persistFile);
-					}
-				}
-				finally
-				{
-					Marshal.ReleaseComObject(instance);
-				}
-			}
-			catch (Exception ex)
-			{
-				throw new PathNotFoundException("Failed to resolve shortcut.", fullPath, ex);
-			}
 		}
 
 		private IntPtr GetPidl()

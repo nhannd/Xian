@@ -10,12 +10,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Explorer;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 
@@ -24,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 	public interface ILocalImageExplorerToolContext : IToolContext
 	{
 		event EventHandler SelectedPathsChanged;
-		Selection<string> SelectedPaths { get; }
+		IPathSelection SelectedPaths { get; }
 		IDesktopWindow DesktopWindow { get; }
 		ClickHandlerDelegate DefaultActionHandler { get; set; }
 	}
@@ -59,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 				remove { _component.SelectionChanged -= value; }
 			}
 
-			public Selection<string> SelectedPaths
+			public IPathSelection SelectedPaths
 			{
 				get { return _component.Selection; }
 			}
@@ -84,7 +81,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 		/// LocalImageExplorerComponent members
 
 		private event EventHandler _selectionChanged;
-		private Selection<string> _selection;
+		private IPathSelection _selection;
 
 		private ToolSet _toolSet;
 		private ClickHandlerDelegate _defaultActionHandler;
@@ -105,9 +102,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 			set { _defaultActionHandler = value; }
 		}
 
-		public Selection<string> Selection
+		public IPathSelection Selection
 		{
-			get { return _selection ?? Selection<string>.Empty; }
+			get { return _selection ?? new PathSelection(); }
 			set
 			{
 				if (_selection != value)

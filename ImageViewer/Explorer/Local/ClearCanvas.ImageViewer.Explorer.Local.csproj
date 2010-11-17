@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{AD9F87CF-0F30-442D-ACCD-80FACC339F22}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="CommandLineOpenTool.cs" />
     <Compile Include="DicomImageLoaderTool.cs" />
+    <Compile Include="IPathSelection.cs" />
     <Compile Include="LocalImageExplorer.cs" />
     <Compile Include="LocalImageExplorerComponent.cs">
     </Compile>

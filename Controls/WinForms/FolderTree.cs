@@ -178,7 +178,8 @@ namespace ClearCanvas.Controls.WinForms
 
 		public class FolderTreeItem : FolderObject
 		{
-			internal FolderTreeItem(Pidl pidl) : base(pidl) {}
+			internal FolderTreeItem(Pidl pidl)
+				: base(pidl.Path, pidl.VirtualPath, pidl.DisplayName, pidl.IsFolder, pidl.IsLink) {}
 		}
 
 		#endregion

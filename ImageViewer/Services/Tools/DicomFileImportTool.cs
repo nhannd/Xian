@@ -76,6 +76,9 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			foreach (string path in this.Context.SelectedPaths)
 			{
+				if (string.IsNullOrEmpty(path))
+					continue;
+
 				filePaths.Add(path);
 			}
 
