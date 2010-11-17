@@ -82,6 +82,7 @@ namespace ClearCanvas.Ris.Application.Services
 				prac.LastEditedTime,
 				contactPointDetails,
 				ExtendedPropertyUtils.Copy(prac.ExtendedProperties),
+				CreateExternalPractitionerSummary(prac.GetUltimateMergeDestination(), context),
 				prac.IsMerged,
 				prac.Deactivated);
 
@@ -159,6 +160,7 @@ namespace ClearCanvas.Ris.Application.Services
 				currentFax == null ? null : telephoneNumberAssembler.CreateTelephoneDetail(currentFax, context),
 				currentAddress == null ? null : addressAssembler.CreateAddressDetail(currentAddress, context),
 				currentEmailAddress == null ? null : emailAddressAssembler.CreateEmailAddressDetail(currentEmailAddress, context),
+				CreateExternalPractitionerContactPointSummary(contactPoint.GetUltimateMergeDestination()),
 				contactPoint.IsMerged,
 				contactPoint.Deactivated);
 		}

@@ -49,6 +49,7 @@ namespace ClearCanvas.Ris.Application.Common
 			DateTime? lastEditedTime,
 			List<ExternalPractitionerContactPointDetail> contactPoints,
 			Dictionary<string, string> extendedProperties,
+			ExternalPractitionerSummary mergeDestination,
 			bool isMerged,
 			bool deactivated)
 		{
@@ -61,6 +62,7 @@ namespace ClearCanvas.Ris.Application.Common
 			this.LastEditedTime = lastEditedTime;
 			this.ContactPoints = contactPoints;
 			this.ExtendedProperties = extendedProperties;
+			this.MergeDestination = mergeDestination;
 			this.IsMerged = isMerged;
 			this.Deactivated = deactivated;
 		}
@@ -98,6 +100,9 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public Dictionary<string, string> ExtendedProperties;
+
+		[DataMember]
+		public ExternalPractitionerSummary MergeDestination;
 
 		[DataMember]
 		public bool IsMerged;

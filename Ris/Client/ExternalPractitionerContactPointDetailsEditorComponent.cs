@@ -106,6 +106,20 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		public bool HasWarning
+		{
+			get { return _contactPointDetail.IsMerged; }
+		}
+
+		public string WarningMessage
+		{
+			get
+			{
+				var destination = _contactPointDetail.MergeDestination.Name;
+				return string.Format(SR.WarnEditMergedContactPoint, destination);
+			}
+		}
+
 		public IList ResultCommunicationModeChoices
 		{
 			get { return (IList)_resultCommunicationModeChoices; }

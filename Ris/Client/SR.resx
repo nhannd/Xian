@@ -1164,4 +1164,13 @@
   <data name="MessageCannotMergeSelectedPractitioners" xml:space="preserve">
     <value>One or more selected external practitioners are deactivated or merged.  Please select other external practitioners.</value>
   </data>
+  <data name="MessageCannotActivateSelectedContactPoints" xml:space="preserve">
+    <value>One or more selected contact points are merged.  Please select other contact points.</value>
+  </data>
+  <data name="WarnEditMergedContactPoint" xml:space="preserve">
+    <value>This contact point is already merged and will be deleted eventually.  Please edit the active contact point {0} instead.</value>
+  </data>
+  <data name="WarnEditMergedPractitioner" xml:space="preserve">
+    <value>This practitioner is already merged and will be deleted eventually.  Please edit the active practitioner {0} instead.</value>
+  </data>
 </root>

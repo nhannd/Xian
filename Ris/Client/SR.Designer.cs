@@ -1690,6 +1690,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to One or more selected contact points are merged.  Please select other contact points..
+        /// </summary>
+        internal static string MessageCannotActivateSelectedContactPoints {
+            get {
+                return ResourceManager.GetString("MessageCannotActivateSelectedContactPoints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to One or more selected external practitioners are merged.  Please select other external practitioners..
         /// </summary>
         internal static string MessageCannotActivateSelectedPractitioners {
@@ -3198,6 +3207,24 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleVisits {
             get {
                 return ResourceManager.GetString("TitleVisits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This contact point is already merged and will be deleted eventually.  Please edit the active contact point {0} instead..
+        /// </summary>
+        internal static string WarnEditMergedContactPoint {
+            get {
+                return ResourceManager.GetString("WarnEditMergedContactPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This practitioner is already merged and will be deleted eventually.  Please edit the active practitioner {0} instead..
+        /// </summary>
+        internal static string WarnEditMergedPractitioner {
+            get {
+                return ResourceManager.GetString("WarnEditMergedPractitioner", resourceCulture);
             }
         }
     }

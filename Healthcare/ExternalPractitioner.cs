@@ -151,9 +151,6 @@ namespace ClearCanvas.Healthcare
 		/// </summary>
 		public virtual void MarkEdited()
 		{
-			if (this.IsMerged)
-				throw new WorkflowException("Cannot edit a merged practitioner");
-
 			_lastEditedTime = Platform.Time;
 			_isVerified = false;
 		}

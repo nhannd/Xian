@@ -51,6 +51,7 @@ namespace ClearCanvas.Ris.Client
 			this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>(SR.ColumnName, cp => cp.Name, 0.5f));
 			this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>(SR.ColumnDescription, cp => cp.Description, 0.5f));
 			this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, bool>(SR.ColumnDefault, cp => cp.IsDefaultContactPoint, 0.15f));
+			this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, bool>(SR.ColumnMerged, cp => cp.IsMerged, 0.15f));
 		}
 
 		public event EventHandler DefaultContactPointChanged
@@ -301,6 +302,13 @@ namespace ClearCanvas.Ris.Client
 		/// <returns>True if items were edited, false otherwise.</returns>
 		protected override bool UpdateItemsActivation(IList<ExternalPractitionerContactPointDetail> items, out IList<ExternalPractitionerContactPointDetail> editedItems)
 		{
+			if (CollectionUtils.Contains(items, item => item.Deactivated && item.IsMerged))
+			{
+				this.Host.ShowMessageBox(SR.MessageCannotActivateSelectedContactPoints, MessageBoxActions.Ok);
+				editedItems = new List<ExternalPractitionerContactPointDetail>();
+				return false;
+			}
+
 			editedItems = new List<ExternalPractitionerContactPointDetail>();
 			foreach (var item in items)
 			{
