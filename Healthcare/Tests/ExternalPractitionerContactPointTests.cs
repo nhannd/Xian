@@ -31,7 +31,6 @@
 
 #if UNIT_TESTS
 
-using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using ClearCanvas.Common.Utilities;
@@ -49,19 +48,13 @@ namespace ClearCanvas.Healthcare.Tests
 			/// </summary>
 			/// <remarks>
 			/// Destination is the primary contact point.  The result will have all info inherit from destination.
-			/// All the collections are copied to the target.  The source collections will be expired.
+			/// The Merge operation should clone/copy all the value collections.
 			/// </remarks>
 			public static ExternalPractitionerContactPoint SimpleMerge(ExternalPractitionerContactPoint src, ExternalPractitionerContactPoint dest)
 			{
-				var allPhoneNumbers = CollectionUtils.Concat(CloneCollection(dest.TelephoneNumbers), CloneCollection(src.TelephoneNumbers));
-				var allAddresses = CollectionUtils.Concat(CloneCollection(dest.Addresses), CloneCollection(src.Addresses));
-				var allEmailAddresses = CollectionUtils.Concat(CloneCollection(dest.EmailAddresses), CloneCollection(src.EmailAddresses));
-
-				var result = ExternalPractitionerContactPoint.MergeContactPoints(src, dest,
+				return ExternalPractitionerContactPoint.MergeContactPoints(src, dest,
 					dest.Name, dest.Description, dest.PreferredResultCommunicationMode,
-					allPhoneNumbers, allAddresses, allEmailAddresses);
-
-				return result;
+					null, null, null);
 			}
 
 			/// <summary>
@@ -115,15 +108,6 @@ namespace ClearCanvas.Healthcare.Tests
 				var email = new EmailAddress { Address = address };
 				cp.EmailAddresses.Add(email);
 				return email;
-			}
-
-			/// <summary>
-			/// Clones all items in the collection.
-			/// </summary>
-			private static ICollection<T> CloneCollection<T>(ICollection<T> items)
-				where T : ICloneable
-			{
-				return CollectionUtils.Map(items, (T item) => (T)item.Clone());
 			}
 		}
 

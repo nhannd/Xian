@@ -292,6 +292,7 @@ namespace ClearCanvas.Healthcare.Tests
 		{
 			const string testKeyP1 = "TestKey1";
 			const string testKeyP2 = "TestKey2";
+			const string testKeyP3 = "TestKey3";
 			var p1 = TestHelper.CreatePractitioner("A", "1");
 			p1.ExtendedProperties.Add(testKeyP1, "Ignored");
 			p1.ExtendedProperties.Add(testKeyP2, "Ignored");
@@ -299,12 +300,18 @@ namespace ClearCanvas.Healthcare.Tests
 			var p2 = TestHelper.CreatePractitioner("B", "2");
 			p2.ExtendedProperties.Add(testKeyP1, "Test Value 1");
 			p2.ExtendedProperties.Add(testKeyP2, "Test Value 2");
+			p2.ExtendedProperties.Add(testKeyP3, "Test Value 3");
 
 			var result = TestHelper.SimpleMerge(p1, p2);
 
-			Assert.AreEqual(p2.ExtendedProperties.Count, 2);
+			Assert.AreEqual(result.ExtendedProperties.Count, 3);
+
+			// Verify value of these key in p2, which is shared with p1, is propagated to result
 			Assert.AreEqual(p2.ExtendedProperties[testKeyP1], result.ExtendedProperties[testKeyP1]);
 			Assert.AreEqual(p2.ExtendedProperties[testKeyP2], result.ExtendedProperties[testKeyP2]);
+
+			// Verify value of this key, which does not exist in p1, is propagated to result
+			Assert.AreEqual(p2.ExtendedProperties[testKeyP3], result.ExtendedProperties[testKeyP3]);
 		}
 
 		[Test]
