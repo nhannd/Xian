@@ -50,6 +50,7 @@ namespace ClearCanvas.Ris.Application.Services
 				prac.IsVerified,
 				prac.LastVerifiedTime,
 				prac.LastEditedTime,
+				prac.IsMerged,
 				prac.Deactivated);
 
 			return summary;
@@ -81,6 +82,7 @@ namespace ClearCanvas.Ris.Application.Services
 				prac.LastEditedTime,
 				contactPointDetails,
 				ExtendedPropertyUtils.Copy(prac.ExtendedProperties),
+				prac.IsMerged,
 				prac.Deactivated);
 
 			return detail;
@@ -128,6 +130,7 @@ namespace ClearCanvas.Ris.Application.Services
 				contactPoint.Name,
 				contactPoint.Description,
 				contactPoint.IsDefaultContactPoint,
+				contactPoint.IsMerged,
 				contactPoint.Deactivated);
 		}
 
@@ -156,6 +159,7 @@ namespace ClearCanvas.Ris.Application.Services
 				currentFax == null ? null : telephoneNumberAssembler.CreateTelephoneDetail(currentFax, context),
 				currentAddress == null ? null : addressAssembler.CreateAddressDetail(currentAddress, context),
 				currentEmailAddress == null ? null : emailAddressAssembler.CreateEmailAddressDetail(currentEmailAddress, context),
+				contactPoint.IsMerged,
 				contactPoint.Deactivated);
 		}
 

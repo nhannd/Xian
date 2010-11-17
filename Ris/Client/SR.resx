@@ -1155,4 +1155,13 @@
   <data name="MessageInstructionReplacementContactPoints" xml:space="preserve">
     <value>Select a replacement contact point for each deactivated contact point.</value>
   </data>
+  <data name="ColumnMerged" xml:space="preserve">
+    <value>Merged</value>
+  </data>
+  <data name="MessageCannotActivateSelectedPractitioners" xml:space="preserve">
+    <value>One or more selected external practitioners are merged.  Please select other external practitioners.</value>
+  </data>
+  <data name="MessageCannotMergeSelectedPractitioners" xml:space="preserve">
+    <value>One or more selected external practitioners are deactivated or merged.  Please select other external practitioners.</value>
+  </data>
 </root>

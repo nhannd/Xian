@@ -289,6 +289,13 @@ namespace ClearCanvas.Ris.Client
 		/// <returns>True if items were edited, false otherwise.</returns>
 		protected override bool UpdateItemsActivation(IList<ExternalPractitionerSummary> items, out IList<ExternalPractitionerSummary> editedItems)
 		{
+			if (CollectionUtils.Contains(items, item => item.Deactivated && item.IsMerged))
+			{
+				this.Host.ShowMessageBox(SR.MessageCannotActivateSelectedPractitioners, MessageBoxActions.Ok);
+				editedItems = new List<ExternalPractitionerSummary>();
+				return false;
+			}
+
 			var results = new List<ExternalPractitionerSummary>();
 			foreach (var item in items)
 			{
@@ -347,6 +354,14 @@ namespace ClearCanvas.Ris.Client
 			{
 				var firstItem = CollectionUtils.FirstElement(this.SelectedItems);
 				var secondItem = this.SelectedItems.Count > 1 ? CollectionUtils.LastElement(this.SelectedItems) : null;
+
+				if (firstItem != null && !CanMerge(firstItem) || 
+					secondItem != null && !CanMerge(secondItem))
+				{
+					this.Host.ShowMessageBox(SR.MessageCannotMergeSelectedPractitioners, MessageBoxActions.Ok);
+					return;
+				}
+
 				var editor = new ExternalPractitionerMergeNavigatorComponent(firstItem.PractitionerRef, secondItem == null ? null : secondItem.PractitionerRef);
 
 				var title = SR.TitleMergePractitioner + " - " + Formatting.PersonNameFormat.Format(firstItem.Name);
@@ -392,6 +407,11 @@ namespace ClearCanvas.Ris.Client
 				detail = forEditResponse.PractitionerDetail;
 			});
 			return detail;
+		}
+
+		private static bool CanMerge(ExternalPractitionerSummary practitioner)
+		{
+			return !practitioner.Deactivated && !practitioner.IsMerged;
 		}
 	}
 }

@@ -43,12 +43,14 @@ namespace ClearCanvas.Ris.Application.Common
 			string name, 
 			string description, 
 			bool isDefaultContactPoint,
+			bool isMerged,
 			bool deactivated)
 		{
 			this.ContactPointRef = contactPointRef;
 			this.Name = name;
 			this.Description = description;
 			this.IsDefaultContactPoint = isDefaultContactPoint;
+			this.IsMerged = isMerged;
 			this.Deactivated = deactivated;
 		}
 
@@ -69,6 +71,9 @@ namespace ClearCanvas.Ris.Application.Common
 		public bool IsDefaultContactPoint;
 
 		[DataMember]
+		public bool IsMerged;
+
+		[DataMember]
 		public bool Deactivated;
 
 		#region ICloneable Members
@@ -80,6 +85,7 @@ namespace ClearCanvas.Ris.Application.Common
 				this.Name,
 				this.Description,
 				this.IsDefaultContactPoint,
+				this.IsMerged,
 				this.Deactivated);
 		}
 

@@ -493,6 +493,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Merged.
+        /// </summary>
+        internal static string ColumnMerged {
+            get {
+                return ResourceManager.GetString("ColumnMerged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Middle Name.
         /// </summary>
         internal static string ColumnMiddleName {
@@ -1681,6 +1690,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to One or more selected external practitioners are merged.  Please select other external practitioners..
+        /// </summary>
+        internal static string MessageCannotActivateSelectedPractitioners {
+            get {
+                return ResourceManager.GetString("MessageCannotActivateSelectedPractitioners", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot edit the selected canned texts.  This may be because you do not have permission to edit personal canned texts, group canned texts or both..
         /// </summary>
         internal static string MessageCannotEditCategories {
@@ -1695,6 +1713,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string MessageCannotMergeNewContactPoints {
             get {
                 return ResourceManager.GetString("MessageCannotMergeNewContactPoints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One or more selected external practitioners are deactivated or merged.  Please select other external practitioners..
+        /// </summary>
+        internal static string MessageCannotMergeSelectedPractitioners {
+            get {
+                return ResourceManager.GetString("MessageCannotMergeSelectedPractitioners", resourceCulture);
             }
         }
         

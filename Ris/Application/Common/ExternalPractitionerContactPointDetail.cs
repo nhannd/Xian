@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Application.Common
 			EntityRef contactPointRef, string name, string description, bool isDefaultContactPoint, EnumValueInfo preferredResultCommunicationMode, 
 			List<TelephoneDetail> phoneDetails, List<AddressDetail> addressDetails, List<EmailAddressDetail> emailAddressDetails,
 			TelephoneDetail currentPhone, TelephoneDetail currentFax, AddressDetail currentAddress, EmailAddressDetail currentEmailAddress,
-			bool deactivated)
+			bool isMerged, bool deactivated)
 		{
 			this.ContactPointRef = contactPointRef;
 			this.Name = name;
@@ -58,6 +58,7 @@ namespace ClearCanvas.Ris.Application.Common
 			this.CurrentFaxNumber = currentFax;
 			this.CurrentAddress = currentAddress;
 			this.CurrentEmailAddress = currentEmailAddress;
+			this.IsMerged = isMerged;
 			this.Deactivated = deactivated;
 		}
 
@@ -105,6 +106,9 @@ namespace ClearCanvas.Ris.Application.Common
 		public List<EmailAddressDetail> EmailAddresses;
 
 		[DataMember]
+		public bool IsMerged;
+
+		[DataMember]
 		public bool Deactivated;
 
 		public ExternalPractitionerContactPointSummary GetSummary()
@@ -114,6 +118,7 @@ namespace ClearCanvas.Ris.Application.Common
 				this.Name,
 				this.Description,
 				this.IsDefaultContactPoint,
+				this.IsMerged,
 				this.Deactivated);
 		}
 
@@ -134,6 +139,7 @@ namespace ClearCanvas.Ris.Application.Common
 				(TelephoneDetail) (this.CurrentFaxNumber == null ? null : this.CurrentFaxNumber.Clone()),
 				(AddressDetail) (this.CurrentAddress == null ? null : this.CurrentAddress.Clone()),
 				(EmailAddressDetail)(this.CurrentEmailAddress == null ? null : this.CurrentEmailAddress.Clone()),
+				this.IsMerged,
 				this.Deactivated
 			);
 		}
