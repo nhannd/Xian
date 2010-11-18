@@ -86,12 +86,6 @@ namespace ClearCanvas.Ris.Shreds.Merge
 
 		protected override bool ShouldReschedule(WorkQueueItem item, Exception error, out DateTime retryTime)
 		{
-			if (error is TargetAlreadyDeletedException)
-			{
-				retryTime = DateTime.MinValue;
-				return false;
-			}
-
 			var stage = GetStage(item);
 
 			// a stage value of -1 signals that the merge operation is complete
@@ -111,18 +105,41 @@ namespace ClearCanvas.Ris.Shreds.Merge
 			if (error is CannotDeleteException)
 			{
 				RestartItemAtStageZero(item);
+				return;
+			}
+
+			if (error is TargetAlreadyDeletedException)
+			{
+				ConsiderItemCompletedSuccessfully(item);
+				return;
 			}
 
 			base.OnItemFailed(item, error);
 		}
 
+		private void ConsiderItemCompletedSuccessfully(WorkQueueItem item)
+		{
+			var nextStage = -1;
+
+			Platform.Log(LogLevel.Info, 
+				"Failed to complete merge step on target {0} (stage {1}) because target has already been deleted.  Setting to stage {2}.", 
+				MergeWorkQueueItem.GetTargetRef(item), 
+				GetStage(item), 
+				nextStage);
+
+			item.Complete();
+			item.ExtendedProperties[StageProperty] = nextStage.ToString();
+		}
+
 		private void RestartItemAtStageZero(WorkQueueItem item)
 		{
-			var target = PersistenceScope.CurrentContext.Load(MergeWorkQueueItem.GetTargetRef(item), EntityLoadFlags.Proxy);
-			var stage = GetStage(item);
 			var nextStage = 0;
 
-			Platform.Log(LogLevel.Info, "Failed to complete merge step on target {0} (stage {1}).  Restarting at stage 0.", target.GetRef(), stage, nextStage);
+			Platform.Log(LogLevel.Info, 
+				"Failed to complete merge step on target {0} (stage {1}).  Restarting at stage {2}.",
+				MergeWorkQueueItem.GetTargetRef(item),
+				GetStage(item),
+				nextStage);
 
 			// update the work item with the new stage value
 			item.ExtendedProperties[StageProperty] = nextStage.ToString();
