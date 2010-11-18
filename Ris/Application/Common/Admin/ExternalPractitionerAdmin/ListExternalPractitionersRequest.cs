@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 		}
 
 		public ListExternalPractitionersRequest(string surname, string givenname, SearchResultPage page)
-			: this(surname, givenname, VerifiedState.All, null, null, true, false, false, false, false, page)
+			: this(surname, givenname, VerifiedState.All, null, null, true, false, false, false, false, false, page)
 		{
 			this.LastName = surname;
 			this.FirstName = givenname;
@@ -75,6 +75,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 			bool sortByLastVerifiedTime,
 			bool sortByLastEditedTime,
 			bool sortAscending,
+			bool includeMerged,
 			SearchResultPage page)
 		{
 			this.LastName = surname;
@@ -87,6 +88,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 			this.SortByLastVerifiedTime = sortByLastVerifiedTime;
 			this.SortByLastEditedTime = sortByLastEditedTime;
 			this.SortAscending = sortAscending;
+			this.IncludeMerged = includeMerged;
 			this.Page = page;
 		}
 
@@ -113,6 +115,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 
 		[DataMember]
 		public bool SortAscending;
+
+		[DataMember]
+		public bool IncludeMerged;
 
 		[DataMember]
 		public DateTime? LastVerifiedRangeFrom;

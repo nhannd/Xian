@@ -54,8 +54,6 @@ namespace ClearCanvas.Ris.Client
 				item => item.BillingNumber, 0.5f));
 			this.Columns.Add(new TableColumn<ExternalPractitionerSummary, bool>(SR.ColumnVerified,
 				item => item.IsVerified, 0.25f));
-			this.Columns.Add(new TableColumn<ExternalPractitionerSummary, bool>(SR.ColumnMerged,
-				item => item.IsMerged, 0.25f));
 		}
 	}
 

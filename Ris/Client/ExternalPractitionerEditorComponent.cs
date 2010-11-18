@@ -37,6 +37,7 @@ using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -110,6 +111,7 @@ namespace ClearCanvas.Ris.Client
 
 		private ExternalPractitionerDetailsEditorComponent _detailsEditor;
 		private ExternalPractitionerContactPointSummaryComponent _contactPointSummaryComponent;
+		private readonly List<ExternalPractitionerContactPointDetail> _hiddenMergedContactPoints;
 
 		private List<IExternalPractitionerEditorPage> _extensionPages;
 
@@ -119,6 +121,7 @@ namespace ClearCanvas.Ris.Client
 		public ExternalPractitionerEditorComponent()
 		{
 			_isNew = true;
+			_hiddenMergedContactPoints = new List<ExternalPractitionerContactPointDetail>();
 		}
 
 		/// <summary>
@@ -129,6 +132,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			_isNew = false;
 			_practitionerRef = reference;
+			_hiddenMergedContactPoints = new List<ExternalPractitionerContactPointDetail>();
 		}
 
 		/// <summary>
@@ -173,7 +177,16 @@ namespace ClearCanvas.Ris.Client
 			this.ValidationStrategy = new AllComponentsValidationStrategy();
 
 			_detailsEditor.ExternalPractitionerDetail = _practitionerDetail;
-			_practitionerDetail.ContactPoints.ForEach(contactPointDetail => _contactPointSummaryComponent.Subject.Add(contactPointDetail));
+
+			// Hide the merged contact points from user.
+			CollectionUtils.ForEach(_practitionerDetail.ContactPoints,
+				delegate(ExternalPractitionerContactPointDetail cp)
+					{
+						if (cp.IsMerged)
+							_hiddenMergedContactPoints.Add(cp);
+						else
+							_contactPointSummaryComponent.Subject.Add(cp);
+					});
 
 			// instantiate all extension pages
 			_extensionPages = new List<IExternalPractitionerEditorPage>();
@@ -207,6 +220,9 @@ namespace ClearCanvas.Ris.Client
 				{
 					_practitionerDetail.ContactPoints.Add(detail);
 				}
+
+				// Add the contact points back, otherwise server will think they are deleted.
+				_practitionerDetail.ContactPoints.AddRange(_hiddenMergedContactPoints);
 
 				// give extension pages a chance to save data prior to commit
 				_extensionPages.ForEach(page => page.Save());

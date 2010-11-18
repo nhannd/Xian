@@ -106,6 +106,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			else if (request.LastVerifiedRangeUntil != null)
 				criteria.LastVerifiedTime.LessThanOrEqualTo(request.LastVerifiedRangeUntil);
 
+			if (!request.IncludeMerged)
+				criteria.MergedInto.IsNull();
+
 			if (!request.IncludeDeactivated)
 				criteria.Deactivated.EqualTo(false);
 
