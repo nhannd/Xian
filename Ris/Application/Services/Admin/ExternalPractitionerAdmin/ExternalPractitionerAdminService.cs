@@ -277,8 +277,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			// if we are only doing a cost estimate, exit here without modifying any data
 			if (request.EstimateCostOnly)
 			{
-				// compute cost estimate
-				var cost = EstimateAffectedRecords(src);
+				// compute cost estimate.  Need to include affected records of both src and dest, because both will be merged and deactivated.
+				var cost = EstimateAffectedRecords(dest, src);
 				return new MergeDuplicateContactPointResponse(cost);
 			}
 
@@ -430,10 +430,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			return r + l;
 		}
 
-		private long EstimateAffectedRecords(ExternalPractitionerContactPoint target)
+		private long EstimateAffectedRecords(ExternalPractitionerContactPoint right, ExternalPractitionerContactPoint left)
 		{
+			var rightOrderCount = QueryOrders<long>(new[] { right }, PersistenceContext.GetBroker<IOrderBroker>().CountByResultRecipient);
+			var leftOrderCount = QueryOrders<long>(new[] { left }, PersistenceContext.GetBroker<IOrderBroker>().CountByResultRecipient);
+
 			// number of contact point referneces that must be updated
-			return QueryOrders<long>(new[] { target }, PersistenceContext.GetBroker<IOrderBroker>().CountByResultRecipient);
+			return rightOrderCount + leftOrderCount;
 		}
 
 		private static T QueryVisits<T>(ExternalPractitioner practitioner, Converter<VisitSearchCriteria, VisitPractitionerSearchCriteria, T> queryAction)
