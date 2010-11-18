@@ -75,6 +75,12 @@ namespace ClearCanvas.Common.UsageTracking
         public string Product { get; set; }
 
         /// <summary>
+        /// The component being tracked.
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        public string Component { get; set; }
+
+        /// <summary>
         /// The version of the product being tracked.
         /// </summary>
         [DataMember(IsRequired = true)]
@@ -93,10 +99,10 @@ namespace ClearCanvas.Common.UsageTracking
         public string Region { get; set; }
 
         /// <summary>
-        /// License information configured for the product.
+        /// License String, if configured, for the product.
         /// </summary>
         [DataMember(IsRequired = false)]
-        public string License { get; set; }
+        public string LicenseString { get; set; }
 
         /// <summary>
         /// A set of application data specific to the <see cref="Product"/>.

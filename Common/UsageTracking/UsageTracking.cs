@@ -109,7 +109,7 @@ namespace ClearCanvas.Common.UsageTracking
         /// <param name="message">The usage message to send.</param>
         public static void Register(UsageMessage message)
         {
-            #if	!DEBUG
+            //#if	!DEBUG
 
             if (UsageTrackingSettings.Default.Enabled)
                 try
@@ -124,7 +124,7 @@ namespace ClearCanvas.Common.UsageTracking
                     Platform.Log(LogLevel.Debug, e);
                 }
 
-            #endif
+            //#endif
         }
 
         /// <summary>
@@ -144,11 +144,12 @@ namespace ClearCanvas.Common.UsageTracking
             UsageMessage msg = new UsageMessage
                                    {
                                        Version = ProductInformation.GetVersion(true, true),
-                                       Product = ProductInformation.Name,
+                                       Product = ProductInformation.Product,
+                                       Component = ProductInformation.Name,
                                        Region = CultureInfo.CurrentCulture.Name,
                                        Timestamp = Platform.Time,
                                        OS = Environment.OSVersion.ToString(),
-                                       License = ProductInformation.License
+                                       //LicenseString = ProductInformation.LicenseString
                                    };
             return msg;
         }

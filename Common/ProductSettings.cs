@@ -29,6 +29,7 @@ namespace ClearCanvas.Common
 		private static string _versionSuffix;
 		private static string _copyright;
 		private static string _license;
+	    private static string _product;
 
 		static ProductInformation()
 		{
@@ -45,7 +46,7 @@ namespace ClearCanvas.Common
 		}
 
 		/// <summary>
-		/// Gets the product name.
+		/// Gets the component name.
 		/// </summary>
 		public static string Name
 		{
@@ -58,6 +59,19 @@ namespace ClearCanvas.Common
 			}
 		}
 
+        /// <summary>
+        /// Gets the product name.
+        /// </summary>
+        public static string Product
+        {
+            get
+            {
+                if (_product == null)
+                    _product = Decrypt(ProductSettings.Default.Product);
+
+                return _product;
+            }
+        }
 		/// <summary>
 		/// Gets the product version.
 		/// </summary>
