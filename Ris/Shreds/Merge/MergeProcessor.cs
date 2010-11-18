@@ -35,6 +35,10 @@ namespace ClearCanvas.Ris.Shreds.Merge
 			}
 		}
 
+		public class TargetAlreadyDeletedException : Exception
+		{
+		}
+
 		private const string StageProperty = "Stage";
 		private readonly TimeSpan _throttleInterval;
 
@@ -56,7 +60,10 @@ namespace ClearCanvas.Ris.Shreds.Merge
 
 		protected override void ActOnItem(WorkQueueItem item)
 		{
-			var target = PersistenceScope.CurrentContext.Load(MergeWorkQueueItem.GetTargetRef(item), EntityLoadFlags.Proxy);
+			// We need to know if the target still exist.  Use the default entity flag, rather than proxy.
+			var target = PersistenceScope.CurrentContext.Load(MergeWorkQueueItem.GetTargetRef(item), EntityLoadFlags.None);
+			if (target == null)
+				throw new TargetAlreadyDeletedException();  // target has already been deleted somewhere else.  Nothing to act on.
 
 			var handler = CollectionUtils.SelectFirst<IMergeHandler>(
 				new MergeHandlerExtensionPoint().CreateExtensions(),h => h.SupportsTarget(target));
@@ -79,6 +86,12 @@ namespace ClearCanvas.Ris.Shreds.Merge
 
 		protected override bool ShouldReschedule(WorkQueueItem item, Exception error, out DateTime retryTime)
 		{
+			if (error is TargetAlreadyDeletedException)
+			{
+				retryTime = DateTime.MinValue;
+				return false;
+			}
+
 			var stage = GetStage(item);
 
 			// a stage value of -1 signals that the merge operation is complete
