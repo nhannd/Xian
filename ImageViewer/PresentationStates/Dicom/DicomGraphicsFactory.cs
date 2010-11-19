@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.Dicom.Iod.Sequences;
@@ -83,6 +84,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 					{
 						failedOverlays = true;
 						Platform.Log(LogLevel.Warn, ex, "Failed to load overlay in image header.");
+
+						overlayPlaneGraphics.Add(new ErrorOverlayPlaneGraphic(frame.Rows, frame.Columns, SR.MessageErrorDisplayingOverlays));
 					}
 				}
 			}
@@ -112,6 +115,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 						{
 							failedOverlays = true;
 							Platform.Log(LogLevel.Warn, ex, "Failed to load overlay from softcopy presentation state.");
+
+							overlayPlaneGraphics.Add(new ErrorOverlayPlaneGraphic(frame.Rows, frame.Columns, SR.MessageErrorDisplayingOverlays));
 						}
 					}
 				}
@@ -123,6 +128,22 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			}
 
 			return overlayPlaneGraphics;
+		}
+
+		[Cloneable]
+		private class ErrorOverlayPlaneGraphic : OverlayPlaneGraphic
+		{
+			public ErrorOverlayPlaneGraphic(int rows, int columns, string errorMessage)
+				: base(rows, columns)
+			{
+				SetError(errorMessage);
+			}
+
+			/// <summary>
+			/// Cloning constructor.
+			/// </summary>
+			private ErrorOverlayPlaneGraphic(OverlayPlaneGraphic source, ICloningContext context)
+				: base(source, context) {}
 		}
 
 		#endregion

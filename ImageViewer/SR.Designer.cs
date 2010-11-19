@@ -844,6 +844,16 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to One or more DICOM overlay planes could not be displayed.
+        ///Please use image with caution..
+        /// </summary>
+        public static string MessageErrorDisplayingOverlays {
+            get {
+                return ResourceManager.GetString("MessageErrorDisplayingOverlays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An unrecoverable error occurred while attempting to load the text overlay.  Please see the log for details..
         /// </summary>
         public static string MessageErrorLoadingAnnotationLayout {

@@ -522,4 +522,8 @@ Please check the log for more details.</value>
   <data name="MessageUnsupportedImageType" xml:space="preserve">
     <value>Unsupported Image Type: {0}</value>
   </data>
+  <data name="MessageErrorDisplayingOverlays" xml:space="preserve">
+    <value>One or more DICOM overlay planes could not be displayed.
+Please use image with caution.</value>
+  </data>
 </root>
