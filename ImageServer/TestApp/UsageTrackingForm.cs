@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageServer.TestApp
             textBoxProduct.Text = _message.Product;
             textBoxOS.Text = _message.OS;
             textBoxRegion.Text = _message.Region;
-            textBoxLicense.Text = _message.License;
+            textBoxLicense.Text = _message.LicenseString;
         }
 
         private void buttonSend_Click(object sender, EventArgs e)
@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageServer.TestApp
             _message.Product = textBoxProduct.Text;
             _message.OS = textBoxOS.Text;
             _message.Region = textBoxRegion.Text;
-            _message.License = textBoxLicense.Text;
+            _message.LicenseString = textBoxLicense.Text;
 
             if (!string.IsNullOrEmpty(textBoxAppKey.Text) 
                 && !string.IsNullOrEmpty(textBoxAppValue.Text))
