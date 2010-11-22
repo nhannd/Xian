@@ -185,6 +185,7 @@
     <None Include="Scripts\ImageServerDefaultData.sql" />
     <EmbeddedResource Include="Scripts\ImageServerStoredProcedures.sql" />
     <None Include="Scripts\ImageServerTables.sql" />
+    <None Include="UpgradeScripts\UpgradeFrom_2_2_13745_40623.sql" />
     <EmbeddedResource Include="UpgradeScripts\UpgradeFrom_2_0_12655_37768.sql" />
     <EmbeddedResource Include="UpgradeScripts\UpgradeFrom_1_5_12104_35993.sql" />
     <EmbeddedResource Include="UpgradeScripts\UpgradeFrom_1_5_10019_31163.sql" />
