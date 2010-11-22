@@ -179,11 +179,12 @@ namespace ClearCanvas.Enterprise.Common
 		/// </summary>
 		static AopInterceptorChain()
 		{
+			// the AbstractInvocation class has a protected method InvokeMethodOnTarget()
 			var method = typeof(AbstractInvocation).GetMethod("InvokeMethodOnTarget", BindingFlags.Instance | BindingFlags.NonPublic);
 			if (method == null)
 				throw new MissingMethodException("Error finding method named 'InvokeMethodOnTarget' on Castle.DynamicProxy.AbstractInvocation.");
 
-			// create a delegate bound to the getter method of this property
+			// create a delegate bound to this method
 			_surrogateForProceed = (Action<AbstractInvocation>)Delegate.CreateDelegate(typeof(Action<AbstractInvocation>), null, method);
 		}
 

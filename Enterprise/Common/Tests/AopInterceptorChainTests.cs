@@ -216,7 +216,7 @@ namespace ClearCanvas.Enterprise.Common.Tests
 			Assert.AreEqual(0, inv.ProceedCount);
 			Assert.AreEqual(10, inv.InvokeCount);
 
-			// check each interceptor called in correct order
+			// check each interceptor called correct number of times
 			Assert.AreEqual(1, a.InterceptCount);
 			Assert.AreEqual(1, b.InterceptCount);
 			Assert.AreEqual(10, c.InterceptCount);
