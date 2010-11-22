@@ -11,6 +11,7 @@
 
 using System;
 using System.Globalization;
+using System.Management;
 using System.ServiceModel;
 using System.Threading;
 using ClearCanvas.Common.Utilities;
@@ -25,8 +26,8 @@ namespace ClearCanvas.Common.UsageTracking
 
         #region Private Members
         
-        private static event EventHandler<ItemEventArgs<DisplayMessage>> _message;
-        private static readonly object _syncLock = new object();
+        private static event EventHandler<ItemEventArgs<DisplayMessage>> Message;
+        private static readonly object SyncLock = new object();
         
         #endregion
 
@@ -43,13 +44,39 @@ namespace ClearCanvas.Common.UsageTracking
 		{
             add
             {
-                lock (_syncLock)
-                    _message += value;
+                lock (SyncLock)
+                    Message += value;
             }
             remove
             {
-                lock (_syncLock)
-                    _message -= value;
+                lock (SyncLock)
+                    Message -= value;
+            }
+        }
+
+        /// <summary>
+        /// A unique identifier for the machine based on the processor ID and drive ID
+        /// </summary>
+        public static string MachineIdentifier
+        {
+            get
+            {
+                string cpuInfo = string.Empty;
+                ManagementClass mc = new ManagementClass("win32_processor");
+                ManagementObjectCollection moc = mc.GetInstances();
+
+                foreach (ManagementObject mo in moc)
+                {
+                    cpuInfo = mo.Properties["processorID"].Value.ToString();
+                    break;
+                }
+
+                const string drive = "C";
+                ManagementObject dsk = new ManagementObject(
+                    @"win32_logicaldisk.deviceid=""" + drive + @":""");
+                dsk.Get();
+                string volumeSerial = dsk["VolumeSerialNumber"].ToString();
+                return cpuInfo + "_" + volumeSerial;
             }
         }
 
@@ -85,7 +112,7 @@ namespace ClearCanvas.Common.UsageTracking
                         && response.Message != null
                         && UsageTrackingSettings.Default.DisplayMessages)
                     {
-                        EventsHelper.Fire(_message, null, new ItemEventArgs<DisplayMessage>(response.Message)); 
+                        EventsHelper.Fire(Message, null, new ItemEventArgs<DisplayMessage>(response.Message)); 
                     }
                 }
             }
@@ -149,6 +176,7 @@ namespace ClearCanvas.Common.UsageTracking
                                        Region = CultureInfo.CurrentCulture.Name,
                                        Timestamp = Platform.Time,
                                        OS = Environment.OSVersion.ToString(),
+                                       MachineIdentifier =  MachineIdentifier,
                                        //LicenseString = ProductInformation.LicenseString
                                    };
             return msg;
