@@ -101,7 +101,14 @@ namespace ClearCanvas.Common.UsageTracking
                                               };
 
                     WSHttpBinding binding = new WSHttpBinding();
+
+
+#if UNIT_TESTS_USAGE_TRACKING
+                    EndpointAddress endpointAddress = new EndpointAddress("http://localhost:8080/UsageTracking");
+#else
+                    //TODO:  This should be updated to real address
                     EndpointAddress endpointAddress = new EndpointAddress("http://localhost/UsageTracking/Service.svc");
+#endif
 
                     RegisterResponse response;
                     using (UsageTrackingServiceClient client = new UsageTrackingServiceClient(binding, endpointAddress))

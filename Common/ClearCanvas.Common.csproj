@@ -89,6 +89,17 @@
     <WarningsAsErrors>
     </WarningsAsErrors>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UNIT_TESTS_USAGE_TRACKING|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\UNIT_TESTS_USAGE_TRACKING\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;UNIT_TESTS, UNIT_TESTS_USAGE_TRACKING</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <DocumentationFile>ClearCanvas.Common.xml</DocumentationFile>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -366,6 +377,7 @@
     <Compile Include="Shreds\QueueProcessorShred.cs" />
     <Compile Include="Shreds\Shred.cs" />
     <Compile Include="Shreds\ShredExtensionPoint.cs" />
+    <Compile Include="Tests\UsageTrackingTest.cs" />
     <Compile Include="UsageTracking\DisplayMessage.cs" />
     <Compile Include="UsageTracking\IUsageTracking.cs" />
     <Compile Include="UsageTracking\RegisterRequest.cs" />
