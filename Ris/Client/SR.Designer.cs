@@ -1690,20 +1690,20 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to One or more selected contact points are merged.  Please select other contact points..
+        ///   Looks up a localized string similar to The selected practitioner(s) has already been merged, and cannot be re-activated..
         /// </summary>
-        internal static string MessageCannotActivateSelectedContactPoints {
+        internal static string MessageCannotActivateMergedPractitioners {
             get {
-                return ResourceManager.GetString("MessageCannotActivateSelectedContactPoints", resourceCulture);
+                return ResourceManager.GetString("MessageCannotActivateMergedPractitioners", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to One or more selected external practitioners are merged.  Please select other external practitioners..
+        ///   Looks up a localized string similar to The selected contact point(s) has already been merged, and cannot be re-activated..
         /// </summary>
-        internal static string MessageCannotActivateSelectedPractitioners {
+        internal static string MessageCannotActivateSelectedContactPoints {
             get {
-                return ResourceManager.GetString("MessageCannotActivateSelectedPractitioners", resourceCulture);
+                return ResourceManager.GetString("MessageCannotActivateSelectedContactPoints", resourceCulture);
             }
         }
         
@@ -1717,7 +1717,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to New contact points cannot be merged.  Please deselect &apos;{0}&apos; and select another item..
+        ///   Looks up a localized string similar to New contact points cannot be merged.  Please deselect &apos;{0}&apos; and select another item to merge..
         /// </summary>
         internal static string MessageCannotMergeNewContactPoints {
             get {
@@ -1726,7 +1726,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to One or more selected external practitioners are deactivated or merged.  Please select other external practitioners..
+        ///   Looks up a localized string similar to The selected practitioner(s) is de-activated, or has already been merged.  Only active, non-merged practitioners can be merged..
         /// </summary>
         internal static string MessageCannotMergeSelectedPractitioners {
             get {

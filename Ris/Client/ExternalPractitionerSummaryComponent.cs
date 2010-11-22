@@ -167,7 +167,7 @@ namespace ClearCanvas.Ris.Client
 			model.ToggleActivation.SetPermissibility(Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner);
 
 			_mergePractitionerAction = model.AddAction("mergePractitioner", SR.TitleMergePractitioner, "Icons.MergePersonToolMedium.png",
-				SR.TitleMergePractitioner, MergePractitioner);
+				SR.TitleMergePractitioner, MergePractitioners);
 			_mergePractitionerAction.Enabled = false;
 			_mergePractitionerAction.SetPermissibility(
 				OrPermissions(
@@ -291,7 +291,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			if (CollectionUtils.Contains(items, item => item.Deactivated && item.IsMerged))
 			{
-				this.Host.ShowMessageBox(SR.MessageCannotActivateSelectedPractitioners, MessageBoxActions.Ok);
+				this.Host.ShowMessageBox(SR.MessageCannotActivateMergedPractitioners, MessageBoxActions.Ok);
 				editedItems = new List<ExternalPractitionerSummary>();
 				return false;
 			}
@@ -348,7 +348,7 @@ namespace ClearCanvas.Ris.Client
 			return or;
 		}
 
-		private void MergePractitioner()
+		private void MergePractitioners()
 		{
 			try
 			{

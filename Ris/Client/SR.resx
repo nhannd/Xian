@@ -517,7 +517,7 @@
     <value>A cancellation reason is required to replace an order.</value>
   </data>
   <data name="MessageCannotMergeNewContactPoints" xml:space="preserve">
-    <value>New contact points cannot be merged.  Please deselect '{0}' and select another item.</value>
+    <value>New contact points cannot be merged.  Please deselect '{0}' and select another item to merge.</value>
   </data>
   <data name="MessageCommunicationError" xml:space="preserve">
     <value>A communication error occured while attempting to contact the server.</value>
@@ -1158,14 +1158,14 @@
   <data name="ColumnMerged" xml:space="preserve">
     <value>Merged</value>
   </data>
-  <data name="MessageCannotActivateSelectedPractitioners" xml:space="preserve">
-    <value>One or more selected external practitioners are merged.  Please select other external practitioners.</value>
+  <data name="MessageCannotActivateMergedPractitioners" xml:space="preserve">
+    <value>The selected practitioner(s) has already been merged, and cannot be re-activated.</value>
   </data>
   <data name="MessageCannotMergeSelectedPractitioners" xml:space="preserve">
-    <value>One or more selected external practitioners are deactivated or merged.  Please select other external practitioners.</value>
+    <value>The selected practitioner(s) is de-activated, or has already been merged.  Only active, non-merged practitioners can be merged.</value>
   </data>
   <data name="MessageCannotActivateSelectedContactPoints" xml:space="preserve">
-    <value>One or more selected contact points are merged.  Please select other contact points.</value>
+    <value>The selected contact point(s) has already been merged, and cannot be re-activated.</value>
   </data>
   <data name="WarnEditMergedContactPoint" xml:space="preserve">
     <value>This contact point is already merged and will be deleted eventually.  Please edit the active contact point {0} instead.</value>
