@@ -19,6 +19,21 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Common.UsageTracking
 {
     /// <summary>
+    /// Enum for specifying if a Usage Tracking message will be sent on the current thread or a background thread.
+    /// </summary>
+    public enum UsageTrackingThread
+    {
+        /// <summary>
+        /// The Usage Tracking message will be sent on a background thread
+        /// </summary>
+        Background,
+        /// <summary>
+        /// The UsageTracking message will be sent on the current thread.
+        /// </summary>
+        Current,
+    }
+
+    /// <summary>
     /// Static helper class for implementing usage tracking of ClearCanvas applications.
     /// </summary>
     public static class UsageTracking
@@ -134,14 +149,15 @@ namespace ClearCanvas.Common.UsageTracking
         #region Public Static Methods
 
         /// <summary>
-        /// Register the usage of the application with a ClearCanvas server.
+        /// Register the usage of the application with a ClearCanvas server on a background thread.
         /// </summary>
         /// <remarks>
         /// A check is done of the <see cref="UsageTrackingSettings"/>, and if usage tracking is enabled, the 
         /// <paramref name="message"/> is sent to the ClearCanvas server.
         /// </remarks>
         /// <param name="message">The usage message to send.</param>
-        public static void Register(UsageMessage message)
+        /// <param name="thread">Flag telling if the usage will be sent on the current thread or a background thread.</param>
+        public static void Register(UsageMessage message, UsageTrackingThread thread)
         {
             //#if	!DEBUG
 
@@ -149,8 +165,10 @@ namespace ClearCanvas.Common.UsageTracking
                 try
                 {
                     UsageMessage theMessage = message;
-
-                    ThreadPool.QueueUserWorkItem(Send,theMessage);
+                    if (thread == UsageTrackingThread.Current)
+                        Send(theMessage);
+                    else if (thread == UsageTrackingThread.Background)
+                        ThreadPool.QueueUserWorkItem(Send,theMessage);
                 }
                 catch (Exception e)
                 {
@@ -184,6 +202,7 @@ namespace ClearCanvas.Common.UsageTracking
                                        Timestamp = Platform.Time,
                                        OS = Environment.OSVersion.ToString(),
                                        MachineIdentifier =  MachineIdentifier,
+                                       MessageType = UsageType.Other,
                                        //LicenseString = ProductInformation.LicenseString
                                    };
             return msg;

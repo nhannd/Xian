@@ -48,6 +48,29 @@ namespace ClearCanvas.Common.UsageTracking
     }
 
     /// <summary>
+    /// The type of usage tracking message.
+    /// </summary>
+    [DataContract]
+    public enum UsageType
+    {
+        /// <summary>
+        /// The message is being sent at startup of the application.
+        /// </summary>
+        [EnumMember]
+        Startup = 1,
+        /// <summary>
+        /// The message is being sent at shutdown of the application.
+        /// </summary>
+        [EnumMember]
+        Shutdown = 2,
+        /// <summary>
+        /// The message is being sent
+        /// </summary>
+        [EnumMember]
+        Other = 4
+    }
+
+    /// <summary>
     /// A product usage message for usage tracking.
     /// </summary>
     [DataContract]
@@ -61,6 +84,12 @@ namespace ClearCanvas.Common.UsageTracking
         public ExtensionDataObject ExtensionData { get; set; }
 
         #endregion
+
+        /// <summary>
+        /// The type of usage tracking message
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        public UsageType MessageType { get; set; }
 
         /// <summary>
         /// The timestamp for the usage data.
@@ -107,7 +136,7 @@ namespace ClearCanvas.Common.UsageTracking
         /// <summary>
         /// A unique machine identifier.
         /// </summary>
-        [DataMember(IsRequired = false)]
+        [DataMember(IsRequired = true)]
         public string MachineIdentifier { get; set; }
 
         /// <summary>
