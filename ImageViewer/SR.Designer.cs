@@ -844,8 +844,9 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to One or more DICOM overlay planes could not be displayed.
-        ///Please use image with caution..
+        ///   Looks up a localized string similar to One or more overlays
+        ///cannot be displayed.
+        ///Use image with caution..
         /// </summary>
         public static string MessageErrorDisplayingOverlays {
             get {

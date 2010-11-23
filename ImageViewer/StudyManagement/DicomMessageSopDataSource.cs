@@ -386,11 +386,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 							// multiframe overlay: fill each frame of the overlay into associated image frame(s)
 							for (int n = 1; n <= numberOfFrames; n++)
 							{
+								//TODO (CR November 2010): CreateNormalizedOverlayData is called by a method that calls
+								//GetRelevantOverlayFrames, passes in a single overlay frame number only to call 
+								//GetRelevantOverlayFrames here again.  Should consolidate all the decision-making code
+								//into the Sop/Frame classes, rather than having it in multiple places.
 								foreach (int frameIndex in overlayPlane.GetRelevantOverlayFrames(n - 1, numberOfFrames))
 								{
 									// TODO: handle unpacking individual frames
 									Platform.Log(LogLevel.Warn, new NotSupportedException("Multiframe overlays are not supported."));
 									overlayData = odpd.Unpack();
+
+									//TODO (CR November 2010): this is not a thread-safe operation, and although it's
+									//unlikely, it could cause some weird effects.
 									DicomMessageSopFrameData fd = (DicomMessageSopFrameData)this.Parent.GetFrameData(n);
 									fd._overlayCache[index, frameIndex] = overlayData;
 								}
@@ -401,6 +408,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 							overlayData = odpd.Unpack();
 							for (int n = 1; n <= numberOfFrames; n++)
 							{
+								//TODO (CR November 2010): this is not a thread-safe operation, and although it's
+								//unlikely, it could cause some weird effects.
 								DicomMessageSopFrameData fd = (DicomMessageSopFrameData)this.Parent.GetFrameData(n);
 								fd._overlayCache[index, 0] = overlayData;
 							}

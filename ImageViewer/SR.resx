@@ -523,7 +523,8 @@ Please check the log for more details.</value>
     <value>Unsupported Image Type: {0}</value>
   </data>
   <data name="MessageErrorDisplayingOverlays" xml:space="preserve">
-    <value>One or more DICOM overlay planes could not be displayed.
-Please use image with caution.</value>
+    <value>One or more overlays
+cannot be displayed.
+Use image with caution.</value>
   </data>
 </root>

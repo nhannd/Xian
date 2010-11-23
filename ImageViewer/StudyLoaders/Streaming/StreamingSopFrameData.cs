@@ -163,6 +163,9 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 						}
 						else
 						{
+							//TODO (CR November 2010): we support multi-frame overlays here,
+							//but not in DicomMessageSopDataSource, although in the other place
+							//we handle a multi-frame overlay quite differently.
 							int bitOffset;
 							overlayPlane.TryComputeOverlayDataBitOffset(frameIndex, out bitOffset);
 
@@ -422,6 +425,9 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 		private static bool IsOverlayEmbedded(OverlayPlane overlayPlane)
 		{
 			IDicomAttributeProvider provider = overlayPlane.DicomAttributeProvider;
+
+			//TODO (CR November 2010): Could probably use the same method in Iod.OverlayPlane class,
+			//but remove the check for whether or not the pixel data is empty from that method.
 
 			// OverlayData exists => not embedded
 			DicomAttribute overlayData = provider[overlayPlane.TagOffset + DicomTags.OverlayData];
