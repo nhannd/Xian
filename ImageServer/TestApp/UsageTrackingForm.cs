@@ -33,6 +33,8 @@ namespace ClearCanvas.ImageServer.TestApp
             textBoxOS.Text = _message.OS;
             textBoxRegion.Text = _message.Region;
             textBoxLicense.Text = _message.LicenseString;
+            textBoxComponent.Text = _message.Component;
+            textBoxMachineIdentifier.Text = _message.MachineIdentifier;
         }
 
         private void buttonSend_Click(object sender, EventArgs e)
@@ -42,6 +44,9 @@ namespace ClearCanvas.ImageServer.TestApp
             _message.OS = textBoxOS.Text;
             _message.Region = textBoxRegion.Text;
             _message.LicenseString = textBoxLicense.Text;
+            _message.Component = textBoxComponent.Text;
+            _message.MachineIdentifier = textBoxMachineIdentifier.Text;
+            _message.MessageType = UsageType.Other;
 
             if (!string.IsNullOrEmpty(textBoxAppKey.Text) 
                 && !string.IsNullOrEmpty(textBoxAppValue.Text))
@@ -57,7 +62,7 @@ namespace ClearCanvas.ImageServer.TestApp
                                        };
             }
 
-            UsageTracking.Register(_message);
+            UsageTracking.Register(_message,UsageTrackingThread.Background);
         }
 
         private static void DisplayMessage(object o, ItemEventArgs<DisplayMessage> m)
