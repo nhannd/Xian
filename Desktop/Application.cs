@@ -483,6 +483,9 @@ namespace ClearCanvas.Desktop
                 }
 
 				_initialized = true;
+
+                PhoneHome.Startup();
+			
             };
 
             // init windows collection
@@ -546,6 +549,8 @@ namespace ClearCanvas.Desktop
     	{
 			if (IsQuitting)
 				return;
+
+            PhoneHome.ShutDown();
 
 			if (!force)
 			{
