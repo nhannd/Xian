@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 					return false;
 				}
 
-				bool changPassword = false;
+				bool changePassword = false;
 
 				// attempt to re-enable auditing, in case it was turned off in an earlier session
 				AuditHelper.Enabled = true;
@@ -141,11 +141,11 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 				}
 				catch (FaultException<PasswordExpiredException>)
 				{
-					changPassword = true;
+					changePassword = true;
 				}
 				catch (PasswordExpiredException)
 				{
-					changPassword = true;
+					changePassword = true;
 				}
 				catch (Exception e)
 				{
@@ -154,7 +154,7 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 
 				needLoginDialog = true;
 
-				if (changPassword)
+				if (changePassword)
 				{
 					string newPassword;
 					if (!ChangePassword(userName, password, out newPassword))
@@ -208,8 +208,8 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 						if (response.SessionToken == null)
 							throw new Exception("Invalid session token returned from authentication service.");
 
-					Session.Create(userName, response.DisplayName, response.AuthorityTokens, response.SessionToken);
-					Thread.CurrentPrincipal = Session.Current.Principal;
+						Session.Create(userName, response.DisplayName, response.AuthorityTokens, response.SessionToken);
+						Thread.CurrentPrincipal = Session.Current.Principal;
 
 						AuditHelper.LogLogin(userName, EventResult.Success);
 					}
