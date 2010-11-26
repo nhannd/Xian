@@ -193,7 +193,7 @@ namespace ClearCanvas.Desktop
         	return _instance._guiToolkit == null;
         }
 
-		internal static void Shutdown()
+		public static void Shutdown()
 		{
 			_instance.Quit(true);
 		}
