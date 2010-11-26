@@ -81,7 +81,7 @@ namespace ClearCanvas.Common.Configuration.Tests
 				//NOTE: not truly a no-op because we purposely store the default value, and it's not always exactly the same on reading it back in.
 	
 				LocalXmlSettings settings = (LocalXmlSettings)ApplicationSettingsHelper.GetSettingsClassInstance(settingsClass);
-				Assert.IsNull(ApplicationSettingsExtensions.GetSharedVersion(settings, LocalXmlSettings.PropertyUser));
+				Assert.IsNull(ApplicationSettingsExtensions.GetSharedPropertyValue(settings, LocalXmlSettings.PropertyUser));
 
 				XmlDocument defaultDoc = new XmlDocument();
 				defaultDoc.LoadXml(LocalXmlSettings.DefaultValueApp);

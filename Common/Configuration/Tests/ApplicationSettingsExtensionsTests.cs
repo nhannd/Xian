@@ -57,7 +57,7 @@ namespace ClearCanvas.Common.Configuration.Tests
 
 			foreach (SettingsProperty property in settings.Properties)
 			{
-				var shared = ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+				var shared = ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 				Assert.AreEqual(property.DefaultValue, shared);
 
 				if (SettingsPropertyExtensions.IsAppScoped(property))
@@ -76,7 +76,7 @@ namespace ClearCanvas.Common.Configuration.Tests
 
 			foreach (SettingsProperty property in settings.Properties)
 			{
-				var shared = ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+				var shared = ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 				string expected = CreateSettingValue(property, MigrationScope.Shared, SettingValue.Current);
 				Assert.AreEqual(expected, shared);
 
@@ -94,7 +94,7 @@ namespace ClearCanvas.Common.Configuration.Tests
 			settings.Reload();
 			foreach (SettingsProperty property in settings.Properties)
 			{
-				var previous = ApplicationSettingsExtensions.GetPreviousSharedVersion(settings, property.Name, null);
+				var previous = ApplicationSettingsExtensions.GetPreviousSharedPropertyValue(settings, property.Name, null);
 				Assert.IsNull(previous);
 			}
 		}
@@ -114,7 +114,7 @@ namespace ClearCanvas.Common.Configuration.Tests
 				settings.Reload();
 				foreach (SettingsProperty property in settings.Properties)
 				{
-					var actual = ApplicationSettingsExtensions.GetPreviousSharedVersion(settings, property.Name, fileName);
+					var actual = ApplicationSettingsExtensions.GetPreviousSharedPropertyValue(settings, property.Name, fileName);
 					var expected = CreateSettingValue(property, MigrationScope.Shared, SettingValue.Previous);
 					Assert.AreEqual(expected, actual);
 				}

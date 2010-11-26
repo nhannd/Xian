@@ -174,7 +174,7 @@ namespace ClearCanvas.Common.Configuration
 			settings.Reload();
 		}
 
-		public static object GetPreviousSharedVersion(ApplicationSettingsBase settings, string propertyName, string previousExeConfigFilename)
+		public static object GetPreviousSharedPropertyValue(ApplicationSettingsBase settings, string propertyName, string previousExeConfigFilename)
         {
             SettingsProperty property = settings.Properties[propertyName];
             if (property == null)
@@ -191,7 +191,7 @@ namespace ClearCanvas.Common.Configuration
             return value == null ? null : value.PropertyValue;
         }
 
-        public static object GetSharedVersion(ApplicationSettingsBase settings, string propertyName)
+        public static object GetSharedPropertyValue(ApplicationSettingsBase settings, string propertyName)
         {
             SettingsProperty property = settings.Properties[propertyName];
             if (property == null)
@@ -206,7 +206,7 @@ namespace ClearCanvas.Common.Configuration
             return value == null ? null : value.PropertyValue;
         }
 
-		public static void SetSharedVersion(ApplicationSettingsBase settings, string propertyName, object value)
+		public static void SetSharedPropertyValue(ApplicationSettingsBase settings, string propertyName, object value)
 		{
 			SettingsProperty property = settings.Properties[propertyName];
 			if (property == null)

@@ -133,7 +133,7 @@ namespace ClearCanvas.Common.Configuration.Tests
 						Assert.AreEqual(expected, actual);
 					}
 
-					string shared = (string)ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+					string shared = (string)ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 					Assert.AreEqual(expected, shared);
 				}
 			}

@@ -34,24 +34,24 @@ namespace ClearCanvas.Common.Configuration.Tests
 			string expected = CreateSettingValue(property, MigrationScope.Shared, settingValue);
 			string actual = (string)settings[property.Name];
 			Assert.AreEqual(expected, actual);
-			actual = (string)ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+			actual = (string)ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 			Assert.AreEqual(expected, actual);
 
 			property = settings.Properties[LocalMixedScopeSettings.PropertyApp2];
 			expected = CreateSettingValue(property, MigrationScope.Shared, settingValue);
 			actual = (string)settings[property.Name];
 			Assert.AreEqual(expected, actual);
-			actual = (string)ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+			actual = (string)ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 			Assert.AreEqual(expected, actual);
 
 			property = settings.Properties[LocalMixedScopeSettings.PropertyUser1];
 			expected = CreateSettingValue(property, MigrationScope.Shared, settingValue);
-			actual = (string)ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+			actual = (string)ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 			Assert.AreEqual(expected, actual);
 
 			property = settings.Properties[LocalMixedScopeSettings.PropertyUser2];
 			expected = CreateSettingValue(property, MigrationScope.Shared, settingValue);
-			actual = (string)ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+			actual = (string)ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 			Assert.AreEqual(expected, actual);
 
 			var values = SystemConfigurationHelper.GetSettingsValues(configuration, settingsClass, SettingScope.Application);
@@ -131,7 +131,7 @@ namespace ClearCanvas.Common.Configuration.Tests
 				configuration = SystemConfigurationHelper.GetExeConfiguration();
 				settings = (LocalXmlSettings)ApplicationSettingsHelper.GetSettingsClassInstance(settingsClass);
 				settings.Reload();
-				document = (XmlDocument)ApplicationSettingsExtensions.GetSharedVersion(settings, LocalXmlSettings.PropertyApp);
+				document = (XmlDocument)ApplicationSettingsExtensions.GetSharedPropertyValue(settings, LocalXmlSettings.PropertyApp);
 				Assert.AreEqual("PreviousApp", document.SelectSingleNode("//test").InnerXml);
 				document = settings.App;
 				Assert.AreEqual("PreviousApp", document.SelectSingleNode("//test").InnerXml);
@@ -191,26 +191,26 @@ namespace ClearCanvas.Common.Configuration.Tests
 
 			property = settings.Properties[CustomMigrationMixedScopeSettings.PropertyApp1];
 			expected = CreateSettingValue(property, MigrationScope.Shared, SettingValue.Current);
-			actual = (string)ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+			actual = (string)ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 			Assert.AreEqual(expected, actual);
 			actual = (string)settings[property.Name];
 			Assert.AreEqual(expected, actual);
 
 			property = settings.Properties[CustomMigrationMixedScopeSettings.PropertyApp2];
 			expected = CreateSettingValue(property, MigrationScope.Shared, SettingValue.Current);
-			actual = (string)ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+			actual = (string)ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 			Assert.AreEqual(expected, actual);
 			actual = (string)settings[property.Name];
 			Assert.AreEqual(expected, actual);
 
 			property = settings.Properties[CustomMigrationMixedScopeSettings.PropertyUser1];
 			expected = CreateSettingValue(property, MigrationScope.Shared, SettingValue.Current);
-			actual = (string)ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+			actual = (string)ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 			Assert.AreEqual(expected, actual);
 
 			property = settings.Properties[CustomMigrationMixedScopeSettings.PropertyUser2];
 			expected = CreateSettingValue(property, MigrationScope.Shared, SettingValue.Current);
-			actual = (string)ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+			actual = (string)ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 			Assert.AreEqual(expected, actual);
 		}
 
@@ -238,26 +238,26 @@ namespace ClearCanvas.Common.Configuration.Tests
 
 			property = settings.Properties[CustomMigrationMixedScopeSettings.PropertyApp1];
 			expected = CreateSettingValue(property, MigrationScope.Shared, SettingValue.Current);
-			actual = (string)ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+			actual = (string)ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 			Assert.AreEqual(expected, actual);
 			actual = (string)settings[property.Name];
 			Assert.AreEqual(expected, actual);
 
 			property = settings.Properties[CustomMigrationMixedScopeSettings.PropertyApp2];
 			expected = "CustomApp2";
-			actual = (string)ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+			actual = (string)ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 			Assert.AreEqual(expected, actual);
 			actual = (string)settings[property.Name];
 			Assert.AreEqual(expected, actual);
 
 			property = settings.Properties[CustomMigrationMixedScopeSettings.PropertyUser1];
 			expected = CreateSettingValue(property, MigrationScope.Shared, SettingValue.Previous);
-			actual = (string)ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+			actual = (string)ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 			Assert.AreEqual(expected, actual);
 
 			property = settings.Properties[CustomMigrationMixedScopeSettings.PropertyUser2];
 			expected = CreateSettingValue(property, MigrationScope.Shared, SettingValue.Current);
-			actual = (string)ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+			actual = (string)ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 			Assert.AreEqual(expected, actual);
 		}
 
@@ -286,26 +286,26 @@ namespace ClearCanvas.Common.Configuration.Tests
 
 			property = settings.Properties[MixedScopeSettingsBase.PropertyApp1];
 			expected = CreateSettingValue(property, MigrationScope.Shared, SettingValue.Current);
-			actual = (string)ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+			actual = (string)ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 			Assert.AreEqual(expected, actual);
 			actual = (string) settings[property.Name];
 			Assert.AreEqual(expected, actual);
 
 			property = settings.Properties[MixedScopeSettingsBase.PropertyApp2];
 			expected = CreateSettingValue(property, MigrationScope.Shared, SettingValue.Current);
-			actual = (string)ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+			actual = (string)ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 			Assert.AreEqual(expected, actual);
 			actual = (string)settings[property.Name];
 			Assert.AreEqual(expected, actual);
 
 			property = settings.Properties[MixedScopeSettingsBase.PropertyUser1];
 			expected = CreateSettingValue(property, MigrationScope.Shared, SettingValue.Current);
-			actual = (string)ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+			actual = (string)ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 			Assert.AreEqual(expected, actual);
 
 			property = settings.Properties[MixedScopeSettingsBase.PropertyUser2];
 			expected = CreateSettingValue(property, MigrationScope.Shared, SettingValue.Current);
-			actual = (string)ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+			actual = (string)ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 			Assert.AreEqual(expected, actual);
 		}
 
@@ -334,26 +334,26 @@ namespace ClearCanvas.Common.Configuration.Tests
 
 			property = settings.Properties[MixedScopeSettingsBase.PropertyApp1];
 			expected = CreateSettingValue(property, MigrationScope.Shared, SettingValue.Previous);
-			actual = (string)ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+			actual = (string)ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 			Assert.AreEqual(expected, actual);
 			actual = (string)settings[property.Name];
 			Assert.AreEqual(expected, actual);
 
 			property = settings.Properties[MixedScopeSettingsBase.PropertyApp2];
 			expected = CreateSettingValue(property, MigrationScope.Shared, SettingValue.Previous);
-			actual = (string)ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+			actual = (string)ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 			Assert.AreEqual(expected, actual);
 			actual = (string)settings[property.Name];
 			Assert.AreEqual(expected, actual);
 
 			property = settings.Properties[MixedScopeSettingsBase.PropertyUser1];
 			expected = CreateSettingValue(property, MigrationScope.Shared, SettingValue.Previous);
-			actual = (string)ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+			actual = (string)ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 			Assert.AreEqual(expected, actual);
 
 			property = settings.Properties[MixedScopeSettingsBase.PropertyUser2];
 			expected = CreateSettingValue(property, MigrationScope.Shared, SettingValue.Previous);
-			actual = (string)ApplicationSettingsExtensions.GetSharedVersion(settings, property.Name);
+			actual = (string)ApplicationSettingsExtensions.GetSharedPropertyValue(settings, property.Name);
 			Assert.AreEqual(expected, actual);
 		}
 	}

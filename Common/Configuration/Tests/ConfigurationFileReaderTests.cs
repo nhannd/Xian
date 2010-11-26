@@ -44,10 +44,10 @@ namespace ClearCanvas.Common.Configuration.Tests
 			Type settingsClass = typeof (LocalMixedScopeSettings);
 			var settings = ApplicationSettingsHelper.GetSettingsClassInstance(settingsClass);
 
-			ApplicationSettingsExtensions.SetSharedVersion(settings, LocalMixedScopeSettings.PropertyApp1, "TestApp1");
-			ApplicationSettingsExtensions.SetSharedVersion(settings, LocalMixedScopeSettings.PropertyApp2, "TestApp2");
-			ApplicationSettingsExtensions.SetSharedVersion(settings, LocalMixedScopeSettings.PropertyUser1, "TestUser1");
-			ApplicationSettingsExtensions.SetSharedVersion(settings, LocalMixedScopeSettings.PropertyUser2, "TestUser2");
+			ApplicationSettingsExtensions.SetSharedPropertyValue(settings, LocalMixedScopeSettings.PropertyApp1, "TestApp1");
+			ApplicationSettingsExtensions.SetSharedPropertyValue(settings, LocalMixedScopeSettings.PropertyApp2, "TestApp2");
+			ApplicationSettingsExtensions.SetSharedPropertyValue(settings, LocalMixedScopeSettings.PropertyUser1, "TestUser1");
+			ApplicationSettingsExtensions.SetSharedPropertyValue(settings, LocalMixedScopeSettings.PropertyUser2, "TestUser2");
 
 			var reader = new ConfigurationFileReader(SystemConfigurationHelper.GetExeConfiguration().FilePath);
 			var path = new ConfigurationSectionPath(typeof(LocalMixedScopeSettings), SettingScope.Application);
@@ -74,12 +74,12 @@ namespace ClearCanvas.Common.Configuration.Tests
 			var appValue = @"<test><app/></test>";
 			XmlDocument appDocument = new XmlDocument();
 			appDocument.LoadXml(appValue);
-			ApplicationSettingsExtensions.SetSharedVersion(settings, LocalXmlSettings.PropertyApp, appDocument);
+			ApplicationSettingsExtensions.SetSharedPropertyValue(settings, LocalXmlSettings.PropertyApp, appDocument);
 
 			var userValue = @"<test><user/></test>";
 			XmlDocument userDocument= new XmlDocument();
 			userDocument.LoadXml(userValue);
-			ApplicationSettingsExtensions.SetSharedVersion(settings, LocalXmlSettings.PropertyUser, userDocument);
+			ApplicationSettingsExtensions.SetSharedPropertyValue(settings, LocalXmlSettings.PropertyUser, userDocument);
 
 			var reader = new ConfigurationFileReader(SystemConfigurationHelper.GetExeConfiguration().FilePath);
 			var path = new ConfigurationSectionPath(typeof(LocalXmlSettings), SettingScope.Application);
