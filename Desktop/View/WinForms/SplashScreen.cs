@@ -129,16 +129,23 @@ namespace ClearCanvas.Desktop.View.WinForms
 			{
 				this.SuspendLayout();
 
-				Assembly assembly = Assembly.Load(SplashScreenSettings.Default.BackgroundImageAssemblyName);
-				if (assembly != null)
+				try
 				{
-					string streamName = SplashScreenSettings.Default.BackgroundImageAssemblyName + "." + SplashScreenSettings.Default.BackgroundImageResourceName;
-					Stream stream = assembly.GetManifestResourceStream(streamName);
-					if (stream != null)
+					Assembly assembly = Assembly.Load(SplashScreenSettings.Default.BackgroundImageAssemblyName);
+					if (assembly != null)
 					{
-						this.BackgroundImage = new Bitmap(stream);
-						this.ClientSize = this.BackgroundImage.Size;
+						string streamName = SplashScreenSettings.Default.BackgroundImageAssemblyName + "." + SplashScreenSettings.Default.BackgroundImageResourceName;
+						Stream stream = assembly.GetManifestResourceStream(streamName);
+						if (stream != null)
+						{
+							this.BackgroundImage = new Bitmap(stream);
+							this.ClientSize = this.BackgroundImage.Size;
+						}
 					}
+				}
+				catch (Exception ex)
+				{
+					Platform.Log(LogLevel.Warn, ex, "Failed to resolve splash screen resources.");
 				}
 
 				this._status.Visible = SplashScreenSettings.Default.StatusVisible;

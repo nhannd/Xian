@@ -40,16 +40,23 @@ namespace ClearCanvas.Desktop.Help
            
 			if (AboutSettings.Default.UseSettings)
 			{
-				Assembly assembly = Assembly.Load(AboutSettings.Default.BackgroundImageAssemblyName);
-				if (assembly != null)
+				try
 				{
-					string streamName = AboutSettings.Default.BackgroundImageAssemblyName + "." + AboutSettings.Default.BackgroundImageResourceName;
-					Stream stream = assembly.GetManifestResourceStream(streamName);
-					if (stream != null)
+					Assembly assembly = Assembly.Load(AboutSettings.Default.BackgroundImageAssemblyName);
+					if (assembly != null)
 					{
-						this.BackgroundImage = new Bitmap(stream);
-						ClientSize = this.BackgroundImage.Size;
+						string streamName = AboutSettings.Default.BackgroundImageAssemblyName + "." + AboutSettings.Default.BackgroundImageResourceName;
+						Stream stream = assembly.GetManifestResourceStream(streamName);
+						if (stream != null)
+						{
+							this.BackgroundImage = new Bitmap(stream);
+							ClientSize = this.BackgroundImage.Size;
+						}
 					}
+				}
+				catch (Exception ex)
+				{
+					Platform.Log(LogLevel.Warn, ex, "Failed to resolve about dialog resources.");
 				}
 
 				this._copyright.Location = AboutSettings.Default.CopyrightLocation;
