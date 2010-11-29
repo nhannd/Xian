@@ -135,7 +135,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 			{
 				IPrincipal p = Thread.CurrentPrincipal;
 				if (p == null || p.Identity == null || string.IsNullOrEmpty(p.Identity.Name))
-					return string.Format("{0}/{1}", Environment.UserDomainName, Environment.UserName);
+					return string.Format("{0}@{1}", Environment.UserName, Environment.UserDomainName);
 				return p.Identity.Name;
 			}
 		}
