@@ -44,6 +44,12 @@ namespace ClearCanvas.Ris.Application.Common
         public LocationSummary Location;
 
         [DataMember]
+        public string Room;
+
+        [DataMember]
+        public string Bed;
+
+        [DataMember]
         public EnumValueInfo Role;
 
         [DataMember]

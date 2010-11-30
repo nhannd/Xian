@@ -68,12 +68,6 @@ namespace ClearCanvas.Healthcare.Imex
 
 			[DataMember]
 			public string PointOfCare;
-
-			[DataMember]
-			public string Room;
-
-			[DataMember]
-			public string Bed;
 		}
 
 		#region Overrides
@@ -97,8 +91,6 @@ namespace ClearCanvas.Healthcare.Imex
 			data.Building = entity.Building;
 			data.Floor = entity.Floor;
 			data.PointOfCare = entity.PointOfCare;
-			data.Room = entity.Room;
-			data.Bed = entity.Bed;
 
 			return data;
 		}
@@ -115,8 +107,6 @@ namespace ClearCanvas.Healthcare.Imex
 			l.Building = data.Building;
 			l.Floor = data.Floor;
 			l.PointOfCare = data.PointOfCare;
-			l.Room = data.Room;
-			l.Bed = data.Bed;
 		}
 
 		#endregion
@@ -134,7 +124,7 @@ namespace ClearCanvas.Healthcare.Imex
 			catch (EntityNotFoundException)
 			{
 				// create it
-				l = new Location(id, name, null, facility, null, null, null, null, null);
+				l = new Location(id, name, null, facility, null, null, null);
 				context.Lock(l, DirtyState.New);
 			}
 

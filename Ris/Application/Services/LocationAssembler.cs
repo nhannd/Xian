@@ -48,8 +48,6 @@ namespace ClearCanvas.Ris.Application.Services
                 location.Building,
                 location.Floor,
                 location.PointOfCare,
-                location.Room,
-                location.Bed,
 				location.Deactivated);
         }
 
@@ -65,8 +63,6 @@ namespace ClearCanvas.Ris.Application.Services
                 location.Building,
                 location.Floor,
                 location.PointOfCare,
-                location.Room,
-                location.Bed,
 				location.Deactivated);
         }
 
@@ -80,8 +76,6 @@ namespace ClearCanvas.Ris.Application.Services
             location.Building = detail.Building;
             location.Floor = detail.Floor;
             location.PointOfCare = detail.PointOfCare;
-            location.Room = detail.Room;
-            location.Bed = detail.Bed;
         	location.Deactivated = detail.Deactivated;
         }
 

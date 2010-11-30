@@ -58,6 +58,8 @@ namespace ClearCanvas.Ris.Application.Services
 
 			var locationAssembler = new LocationAssembler();
 			summary.CurrentLocation = visit.CurrentLocation == null ? null : locationAssembler.CreateLocationSummary(visit.CurrentLocation);
+			summary.CurrentRoom = visit.CurrentRoom;
+			summary.CurrentBed = visit.CurrentBed;
 
 			return summary;
 		}
@@ -78,6 +80,8 @@ namespace ClearCanvas.Ris.Application.Services
 					DischargeDisposition = visit.DischargeDisposition,
 					Facility = new FacilityAssembler().CreateFacilitySummary(visit.Facility),
 					CurrentLocation = visit.CurrentLocation == null ? null : new LocationAssembler().CreateLocationSummary(visit.CurrentLocation),
+					CurrentRoom = visit.CurrentRoom,
+					CurrentBed = visit.CurrentBed,
 					Locations = new List<VisitLocationDetail>(),
 					PreadmitNumber = visit.PreadmitNumber,
 					VipIndicator = visit.VipIndicator,
@@ -129,12 +133,16 @@ namespace ClearCanvas.Ris.Application.Services
 				context.Load<Facility>(detail.Facility.FacilityRef, EntityLoadFlags.Proxy);
 			visit.CurrentLocation = detail.CurrentLocation == null ? null :
 				context.Load<Location>(detail.CurrentLocation.LocationRef, EntityLoadFlags.Proxy);
+			visit.CurrentRoom = detail.CurrentRoom;
+			visit.CurrentBed = detail.CurrentBed;
 
 			visit.Locations.Clear();
 			foreach (var vlDetail in detail.Locations)
 			{
 				visit.Locations.Add(new VisitLocation(
 					context.Load<Location>(vlDetail.Location.LocationRef, EntityLoadFlags.Proxy),
+					vlDetail.Room,
+					vlDetail.Bed,
 					EnumUtils.GetEnumValue<VisitLocationRole>(vlDetail.Role),
 					vlDetail.StartTime,
 					vlDetail.EndTime));
@@ -164,6 +172,8 @@ namespace ClearCanvas.Ris.Application.Services
 			var detail = new VisitLocationDetail
 				{
 					Location = new LocationAssembler().CreateLocationSummary(vl.Location),
+					Room = vl.Room,
+					Bed = vl.Bed,
 					Role = EnumUtils.GetEnumValueInfo(vl.Role, context),
 					StartTime = vl.StartTime,
 					EndTime = vl.EndTime
