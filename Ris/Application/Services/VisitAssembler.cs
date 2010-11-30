@@ -161,7 +161,7 @@ namespace ClearCanvas.Ris.Application.Services
 			visit.AmbulatoryStatuses.Clear();
 			foreach (var ambulatoryStatus in detail.AmbulatoryStatuses)
 			{
-				visit.AmbulatoryStatuses.Add(EnumUtils.GetEnumValue<AmbulatoryStatusEnum>(ambulatoryStatus, context));   
+				visit.AmbulatoryStatuses.Add(EnumUtils.GetEnumValue<AmbulatoryStatusEnum>(ambulatoryStatus, context));
 			}
 
 			ExtendedPropertyUtils.Update(visit.ExtendedProperties, detail.ExtendedProperties);

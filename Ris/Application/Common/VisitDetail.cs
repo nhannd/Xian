@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public EntityRef VisitRef;
-		
+
 		[DataMember]
 		public EntityRef PatientRef;
 
