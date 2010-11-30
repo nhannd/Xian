@@ -214,29 +214,32 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private class OverlayDataCache
 		{
-			private readonly Dictionary<int, byte[]> _data = new Dictionary<int, byte[]>();
-			
-			public byte[] this[int overlayIndex, int overlayFrame]
+			private readonly byte[][] _data = new byte[16][];
+
+			public byte[] this[int overlayIndex]
 			{
-				get
-				{
-					int key = (overlayFrame << 8) | (overlayIndex & 0x000000ff);
-					if (!_data.ContainsKey(key))
-						return null;
-					return _data[key];
-				}
-				set
-				{
-					int key = (overlayFrame << 8) | (overlayIndex & 0x000000ff);
-					if (!_data.ContainsKey(key))
-						_data.Add(key, null);
-					_data[key] = value;
-				}
+				get { return _data[overlayIndex]; }
+				set { _data[overlayIndex] = value; }
 			}
 
 			public void Clear()
 			{
-				_data.Clear();
+				_data[0x0] = null;
+				_data[0x1] = null;
+				_data[0x2] = null;
+				_data[0x3] = null;
+				_data[0x4] = null;
+				_data[0x5] = null;
+				_data[0x6] = null;
+				_data[0x7] = null;
+				_data[0x8] = null;
+				_data[0x9] = null;
+				_data[0xA] = null;
+				_data[0xB] = null;
+				_data[0xC] = null;
+				_data[0xD] = null;
+				_data[0xE] = null;
+				_data[0xF] = null;
 			}
 		}
 
@@ -319,106 +322,87 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 
 			/// <summary>
-			/// Called by the base class to create a new byte buffer containing normalized 
-			/// overlay pixel data for a particular overlay frame that is applicable to this image frame.
+			/// Called by <see cref="StandardSopFrameData.GetNormalizedOverlayData"/> to create a new byte buffer containing normalized 
+			/// overlay pixel data for a particular overlay plane.
 			/// </summary>
-			/// <param name="overlayGroupNumber">The group number of the overlay plane (1-16).</param>
-			/// <param name="overlayFrameNumber">The 1-based frame number of the overlay frame to be retrieved.</param>
+			/// <remarks>
+			/// See <see cref="StandardSopFrameData.GetNormalizedOverlayData"/> for details on the expected format of the byte buffer.
+			/// </remarks>
+			/// <param name="overlayNumber">The 1-based overlay plane number.</param>
 			/// <returns>A new byte buffer containing the normalized overlay pixel data.</returns>
-			protected override byte[] CreateNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber)
+			protected override byte[] CreateNormalizedOverlayData(int overlayNumber)
 			{
-				int overlayIndex = overlayGroupNumber - 1;
-				int overlayFrame = overlayFrameNumber - 1;
+				var overlayIndex = overlayNumber - 1;
 
-				// get the overlay data from cache if it has already been extracted/unpacked
-				byte[] overlayData = _overlayCache[overlayIndex, overlayFrame];
-				if (overlayData == null)
+				byte[] overlayData = null;
+
+				var clock = new CodeClock();
+				clock.Start();
+
+				// check whether or not the overlay plane exists before attempting to ascertain
+				// whether or not the overlay is embedded in the pixel data
+				var overlayPlaneModuleIod = new OverlayPlaneModuleIod(Parent);
+				if (overlayPlaneModuleIod.HasOverlayPlane(overlayIndex))
 				{
-					LoadOverlayPlane(overlayIndex); // force a load of the overlay plane
-					overlayData = _overlayCache[overlayIndex, overlayFrame];
+					if (_overlayCache[overlayIndex] == null)
+					{
+						var overlayPlane = overlayPlaneModuleIod[overlayIndex];
+						if (overlayPlane.IsEmbedded)
+						{
+							// if the overlay is embedded, trigger retrieval of pixel data which will populate the cache for us
+							GetNormalizedPixelData();
+						}
+						else
+						{
+							// try to compute the offset in the OverlayData bit stream where we can find the overlay frame that applies to this image frame
+							int overlayFrame;
+							int bitOffset;
+							if (overlayPlane.TryGetRelevantOverlayFrame(FrameNumber, Parent.NumberOfFrames, out overlayFrame) &&
+							    overlayPlane.TryComputeOverlayDataBitOffset(overlayFrame, out bitOffset))
+							{
+								// offset found - unpack only that overlay frame
+								var od = new OverlayData(bitOffset,
+								                         overlayPlane.OverlayRows,
+								                         overlayPlane.OverlayColumns,
+								                         overlayPlane.IsBigEndianOW,
+								                         overlayPlane.OverlayData);
+								_overlayCache[overlayIndex] = od.Unpack();
+							}
+							else
+							{
+								// no relevant overlay frame found - i.e. the overlay for this image frame is blank
+								_overlayCache[overlayIndex] = new byte[overlayPlane.GetOverlayFrameLength()];
+							}
+						}
+					}
+
+					overlayData = _overlayCache[overlayIndex];
 				}
 
-				// release our strong reference and stick a placeholder in the cache so that we don't re-extract/re-unpack
-				_overlayCache[overlayIndex, overlayFrame] = new byte[0];
+				clock.Stop();
+				PerformanceReportBroker.PublishReport("DicomMessageSopDataSource", "CreateNormalizedOverlayData", clock.Seconds);
+
 				return overlayData;
 			}
 
 			private void ExtractOverlayFrames(byte[] rawPixelData, int bitsAllocated)
 			{
 				// if any overlays have embedded pixel data, extract them now or forever hold your peace
-				DicomMessageBase message = this.Parent.SourceMessage;
-				OverlayPlaneModuleIod overlayPlaneModule = new OverlayPlaneModuleIod(message.DataSet);
-				foreach (OverlayPlane overlay in overlayPlaneModule)
+				var overlayPlaneModuleIod = new OverlayPlaneModuleIod(Parent.SourceMessage.DataSet);
+				foreach (var overlayPlane in overlayPlaneModuleIod)
 				{
-					if (overlay.IsEmbedded && _overlayCache[overlay.Index, _frameIndex] == null)
-						_overlayCache[overlay.Index, _frameIndex] = OverlayData.UnpackFromPixelData(overlay.OverlayBitPosition, bitsAllocated, false, rawPixelData);
-					else if (!overlay.HasOverlayData)
-						Platform.Log(LogLevel.Warn, "The image {0} appears to be missing OverlayData for group 0x{1:X4}.", this.Parent.SopInstanceUid, overlay.Group);
-				}
-			}
-
-			/// <summary>
-			/// Loads all frames from the given overlay plane.
-			/// </summary>
-			/// <param name="index"></param>
-			private void LoadOverlayPlane(int index)
-			{
-				DicomMessageBase message = this.Parent.SourceMessage;
-
-				CodeClock clock = new CodeClock();
-				clock.Start();
-
-				OverlayPlaneModuleIod overlayPlanes = new OverlayPlaneModuleIod(message.DataSet);
-				if (overlayPlanes.HasOverlayPlane(index))
-				{
-					OverlayPlane overlayPlane = overlayPlanes[index];
-					if (overlayPlane.IsEmbedded)
+					if (overlayPlane.IsEmbedded && _overlayCache[overlayPlane.Index] == null)
 					{
-						this.GetNormalizedPixelData();
+						// if the overlay is embedded in pixel data and we haven't cached it yet, extract it now before we normalize the frame pixel data
+						var overlayData = OverlayData.UnpackFromPixelData(overlayPlane.OverlayBitPosition, bitsAllocated, false, rawPixelData);
+						_overlayCache[overlayPlane.Index] = overlayData;
 					}
-					else
+					else if (!overlayPlane.HasOverlayData)
 					{
-						OverlayData odpd = new OverlayData(0, overlayPlane.OverlayRows, overlayPlane.OverlayColumns, overlayPlane.IsBigEndianOW, overlayPlane.OverlayData);
-						int numberOfFrames = this.Parent.NumberOfFrames;
-						byte[] overlayData;
-						if (overlayPlane.IsMultiFrame)
-						{
-							// multiframe overlay: fill each frame of the overlay into associated image frame(s)
-							for (int n = 1; n <= numberOfFrames; n++)
-							{
-								//TODO (CR November 2010): CreateNormalizedOverlayData is called by a method that calls
-								//GetRelevantOverlayFrames, passes in a single overlay frame number only to call 
-								//GetRelevantOverlayFrames here again.  Should consolidate all the decision-making code
-								//into the Sop/Frame classes, rather than having it in multiple places.
-								foreach (int frameIndex in overlayPlane.GetRelevantOverlayFrames(n - 1, numberOfFrames))
-								{
-									// TODO: handle unpacking individual frames
-									Platform.Log(LogLevel.Warn, new NotSupportedException("Multiframe overlays are not supported."));
-									overlayData = odpd.Unpack();
-
-									//TODO (CR November 2010): this is not a thread-safe operation, and although it's
-									//unlikely, it could cause some weird effects.
-									DicomMessageSopFrameData fd = (DicomMessageSopFrameData)this.Parent.GetFrameData(n);
-									fd._overlayCache[index, frameIndex] = overlayData;
-								}
-							}
-						}
-						else
-						{
-							overlayData = odpd.Unpack();
-							for (int n = 1; n <= numberOfFrames; n++)
-							{
-								//TODO (CR November 2010): this is not a thread-safe operation, and although it's
-								//unlikely, it could cause some weird effects.
-								DicomMessageSopFrameData fd = (DicomMessageSopFrameData)this.Parent.GetFrameData(n);
-								fd._overlayCache[index, 0] = overlayData;
-							}
-						}
+						// if the overlay is not embedded and OverlayData appears to be missing, log a warning now
+						Platform.Log(LogLevel.Warn, "The image {0} appears to be missing OverlayData for group 0x{1:X4}.", Parent.SopInstanceUid, overlayPlane.Group);
 					}
 				}
-
-				clock.Stop();
-				PerformanceReportBroker.PublishReport("DicomMessageSopDataSource", "LoadOverlayPlane", clock.Seconds);
 			}
 
 			/// <summary>
@@ -426,8 +410,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			/// </summary>
 			protected override void OnUnloaded()
 			{
-				_overlayCache.Clear();
 				base.OnUnloaded();
+				_overlayCache.Clear();
 			}
 		}
 

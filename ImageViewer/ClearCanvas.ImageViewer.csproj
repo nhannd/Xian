@@ -163,6 +163,9 @@
     <Compile Include="Graphics\ColorBarGraphic.cs" />
     <Compile Include="Graphics\GraphicFocusChangedEventArgs.cs" />
     <Compile Include="Graphics\InvariantSpatialTransform.cs" />
+    <Compile Include="PresentationStates\Dicom\DicomOverlayDeserializationException.cs" />
+    <Compile Include="PresentationStates\Dicom\Tests\GeneratedOverlayTestImages.cs" />
+    <Compile Include="PresentationStates\Dicom\Tests\OverlayPlanePresentationTests.cs" />
     <Compile Include="PresentationStates\GeometricShutterCache.cs" />
     <Compile Include="Rendering\RenderingException.cs" />
     <Compile Include="StudyManagement\Tests\UnitTestStudyLoader.cs" />

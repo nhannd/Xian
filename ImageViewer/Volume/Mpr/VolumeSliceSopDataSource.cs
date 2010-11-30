@@ -195,7 +195,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				}
 			}
 
-			protected override byte[] CreateNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber)
+			protected override byte[] CreateNormalizedOverlayData(int overlayNumber)
 			{
 				Debug.Assert(false, "We should never get here... we don't support overlays in the volume (yet)!!!");
 				return new byte[0];

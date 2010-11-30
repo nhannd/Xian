@@ -84,6 +84,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// <param name="overlayPlaneIod">The IOD object containing properties of the overlay plane.</param>
 		/// <param name="overlayPixelData">The overlay pixel data in 8-bits per pixel format, with each pixel being either 0 or 255.</param>
 		/// <param name="source">A value identifying the source of the overlay plane.</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="overlayPixelData"/> is NULL or 0-length.</exception>
 		public OverlayPlaneGraphic(OverlayPlane overlayPlaneIod, byte[] overlayPixelData, OverlayPlaneSource source) : this(overlayPlaneIod, overlayPixelData, 0, source) {}
 
 		/// <summary>
@@ -102,6 +103,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// <param name="overlayPixelData">The overlay pixel data in 8-bits per pixel format, with each pixel being either 0 or 255.</param>
 		/// <param name="frameIndex">The overlay frame index (0-based). Single-frame overlays should specify 0.</param>
 		/// <param name="source">A value identifying the source of the overlay plane.</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="overlayPixelData"/> is NULL or 0-length.</exception>
 		public OverlayPlaneGraphic(OverlayPlane overlayPlaneIod, byte[] overlayPixelData, int frameIndex, OverlayPlaneSource source)
 		{
 			Platform.CheckNonNegative(frameIndex, "frameIndex");
@@ -188,7 +190,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			int cols = overlayPlaneIod.OverlayColumns;
 
 			if (overlayData == null || overlayData.Length == 0)
-				throw new Exception("Overlay plane data is invalid.");
+				throw new ArgumentNullException("overlayData", "Overlay plane data is invalid.");
 
 			GrayscaleImageGraphic imageGraphic = new GrayscaleImageGraphic(
 				rows, cols, // the reported overlay dimensions

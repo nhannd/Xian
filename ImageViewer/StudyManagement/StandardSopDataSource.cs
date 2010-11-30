@@ -135,7 +135,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			/// </summary>
 			protected readonly object SyncLock = new object();
 
-			private readonly Dictionary<int, byte[]> _overlayData = new Dictionary<int, byte[]>();
+			private readonly Dictionary<int, byte[]> _overlayData = new Dictionary<int, byte[]>(16);
 			private volatile byte[] _pixelData = null;
 
 			private readonly LargeObjectContainerData _largeObjectContainerData = new LargeObjectContainerData(Guid.NewGuid());
@@ -264,33 +264,48 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			/// Called by <see cref="GetNormalizedPixelData"/> to create a new byte buffer
 			/// containing normalized pixel data for this frame (8 or 16-bit grayscale, or 32-bit ARGB).
 			/// </summary>
+			/// <remarks>
+			/// See <see cref="GetNormalizedPixelData"/> for details on the expected format of the byte buffer.
+			/// </remarks>
 			/// <returns>A new byte buffer containing the normalized pixel data.</returns>
 			protected abstract byte[] CreateNormalizedPixelData();
 
 			/// <summary>
-			/// Gets the normalized overlay pixel data buffer for a particular overlay frame
-			/// that is applicable to this image frame (8 or 16-bit grayscale, or 32-bit ARGB).
+			/// Gets the normalized overlay data buffer for a particular overlay group (8-bit grayscale).
 			/// </summary>
-			/// <param name="overlayGroupNumber">The group number of the overlay plane (1-16).</param>
-			/// <param name="overlayFrameNumber">The 1-based frame number of the overlay frame to be retrieved.</param>
+			/// <remarks>
+			/// <para>
+			/// <i>Normalized</i> overlay data means that the 1-bit overlay pixel data is extracted and
+			/// unpacked as necessary to form an 8-bit-per-pixel buffer with values of either 0 or 255.
+			/// </para>
+			/// <para>
+			/// Ensuring that the overlay data always meets the above criteria allows clients to easily
+			/// consume overlay data without having to worry about the storage of overlay data, whether
+			/// embedded in unused bits of the pixel data or in a separate packed bits buffer.
+			/// </para>
+			/// <para>
+			/// Overlay data is reloaded when this method is called after a call to <see cref="ISopFrameData.Unload"/>.
+			/// The pixel data will also be reloaded if this method is called before
+			/// <see cref="ISopFrameData.GetNormalizedPixelData"/> and there are overlays stored in unused bits of the
+			/// pixel data.
+			/// </para>
+			/// </remarks>
+			/// <param name="overlayNumber">The 1-based overlay plane number.</param>
 			/// <returns>A byte buffer containing the normalized overlay pixel data.</returns>
-			public override byte[] GetNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber)
+			/// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="overlayNumber"/> is not a positive non-zero number.</exception>
+			public override byte[] GetNormalizedOverlayData(int overlayNumber)
 			{
 				_largeObjectContainerData.UpdateLastAccessTime();
 
-				if(overlayGroupNumber < 1)
-					throw new ArgumentOutOfRangeException("overlayGroupNumber", overlayGroupNumber, "Must be a positive, non-zero number.");
-				if (overlayFrameNumber < 1)
-					throw new ArgumentOutOfRangeException("overlayFrameNumber", overlayFrameNumber, "Must be a positive, non-zero number.");
+				if (overlayNumber < 1)
+					throw new ArgumentOutOfRangeException("overlayNumber", overlayNumber, "Overlay number must be a positive, non-zero number.");
 
-				int key = ((overlayFrameNumber - 1) << 8) | ((overlayGroupNumber - 1) & 0x000000ff);
-
-				lock (this.SyncLock)
+				lock (SyncLock)
 				{
 					byte[] data;
-					if (!_overlayData.TryGetValue(key, out data) || data == null)
+					if (!_overlayData.TryGetValue(overlayNumber, out data) || data == null)
 					{
-						_overlayData[key] = data = CreateNormalizedOverlayData(overlayGroupNumber, overlayFrameNumber);
+						_overlayData[overlayNumber] = data = CreateNormalizedOverlayData(overlayNumber);
 						if (data != null)
 						{
 							UpdateLargeObjectInfo();
@@ -305,12 +320,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			/// <summary>
 			/// Called by <see cref="GetNormalizedOverlayData"/> to create a new byte buffer containing normalized 
-			/// overlay pixel data for a particular overlay frame that is applicable to this image frame.
+			/// overlay pixel data for a particular overlay plane.
 			/// </summary>
-			/// <param name="overlayGroupNumber">The group number of the overlay plane (1-16).</param>
-			/// <param name="overlayFrameNumber">The 1-based frame number of the overlay frame to be retrieved.</param>
+			/// <remarks>
+			/// See <see cref="GetNormalizedOverlayData"/> for details on the expected format of the byte buffer.
+			/// </remarks>
+			/// <param name="overlayNumber">The 1-based overlay plane number.</param>
 			/// <returns>A new byte buffer containing the normalized overlay pixel data.</returns>
-			protected abstract byte[] CreateNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber);
+			protected abstract byte[] CreateNormalizedOverlayData(int overlayNumber);
 
 			/// <summary>
 			/// Unloads any cached byte buffers owned by this <see cref="ISopFrameData"/>.

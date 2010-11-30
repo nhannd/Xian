@@ -66,65 +66,78 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 			bool failedOverlays = false;
 
-			foreach (OverlayPlane overlay in overlaysIod)
+			foreach (var overlayPlane in overlaysIod)
 			{
-				if (overlay.OverlayType != OverlayType.None)
+				// if overlay claims to be multiframe while the base image isn't a multiframe, treat as an encoding error
+				if (overlayPlane.IsMultiFrame && frame.ParentImageSop.NumberOfFrames <= 1)
 				{
-					try
-					{
-						foreach (int overlayFrame in overlay.GetRelevantOverlayFrames(frame.FrameNumber, frame.ParentImageSop.NumberOfFrames))
-						{
-							byte[] overlayData = dataSource.GetFrameData(frame.FrameNumber).GetNormalizedOverlayData(overlay.Index + 1, overlayFrame + 1);
+					failedOverlays = true;
+					Platform.Log(LogLevel.Warn, new DicomOverlayDeserializationException(overlayPlane.Group, OverlayPlaneSource.Image), "Encoding error encountered while reading overlay from image headers.");
+					continue;
+				}
 
-							OverlayPlaneGraphic overlayPlaneGraphic = new OverlayPlaneGraphic(overlay, overlayData, OverlayPlaneSource.Image);
-							overlayPlaneGraphics.Add(overlayPlaneGraphic);
-						}
-					}
-					catch (Exception ex)
-					{
-						failedOverlays = true;
-						Platform.Log(LogLevel.Warn, ex, "Failed to load overlay in image header.");
-
-						overlayPlaneGraphics.Add(new ErrorOverlayPlaneGraphic(frame.Rows, frame.Columns, SR.MessageErrorDisplayingOverlays));
-					}
+				try
+				{
+					byte[] overlayData = dataSource.GetFrameData(frame.FrameNumber).GetNormalizedOverlayData(overlayPlane.Index + 1);
+					overlayPlaneGraphics.Add(new OverlayPlaneGraphic(overlayPlane, overlayData, OverlayPlaneSource.Image));
+				}
+				catch (Exception ex)
+				{
+					failedOverlays = true;
+					Platform.Log(LogLevel.Warn, new DicomOverlayDeserializationException(overlayPlane.Group, OverlayPlaneSource.Image, ex), "Failed to load overlay from the image header.");
 				}
 			}
 
 			if (overlaysFromPresentationState != null)
 			{
-				foreach (OverlayPlane overlay in overlaysFromPresentationState)
+				foreach (var overlayPlane in overlaysFromPresentationState)
 				{
-					// it is highly unlikely that an overlay should be embedded in the pixel data of an image-less instance, but worth the sanity check anyway
-					if (overlay.OverlayType != OverlayType.None && !overlay.IsEmbedded)
+					// if overlay claims to be embedded in the pixel data of a non-image instance, treat as an encoding error
+					if (overlayPlane.IsEmbedded)
 					{
-						try
-						{
-							foreach (int overlayFrame in overlay.GetRelevantOverlayFrames(frame.FrameNumber, frame.ParentImageSop.NumberOfFrames))
-							{
-								int bitOffset;
-								overlay.TryComputeOverlayDataBitOffset(overlayFrame, out bitOffset);
+						failedOverlays = true;
+						Platform.Log(LogLevel.Warn, new DicomOverlayDeserializationException(overlayPlane.Group, OverlayPlaneSource.PresentationState), "Encoding error encountered while reading overlay from softcopy presentation state.");
+						continue;
+					}
 
-								OverlayData od = new OverlayData(bitOffset,
-								                                 overlay.OverlayRows, overlay.OverlayColumns,
-								                                 overlay.IsBigEndianOW, overlay.OverlayData);
-								OverlayPlaneGraphic overlayPlaneGraphic = new OverlayPlaneGraphic(overlay, od.Unpack(), OverlayPlaneSource.PresentationState);
-								overlayPlaneGraphics.Add(overlayPlaneGraphic);
-							}
-						}
-						catch (Exception ex)
-						{
-							failedOverlays = true;
-							Platform.Log(LogLevel.Warn, ex, "Failed to load overlay from softcopy presentation state.");
+					try
+					{
+						byte[] overlayData;
 
-							overlayPlaneGraphics.Add(new ErrorOverlayPlaneGraphic(frame.Rows, frame.Columns, SR.MessageErrorDisplayingOverlays));
+						// try to compute the offset in the OverlayData bit stream where we can find the overlay frame that applies to this image frame
+						int overlayFrame, bitOffset;
+						if (overlayPlane.TryGetRelevantOverlayFrame(frame.FrameNumber, frame.ParentImageSop.NumberOfFrames, out overlayFrame) &&
+						    overlayPlane.TryComputeOverlayDataBitOffset(overlayFrame, out bitOffset))
+						{
+							// offset found - unpack only that overlay frame
+							var od = new OverlayData(bitOffset,
+							                         overlayPlane.OverlayRows,
+							                         overlayPlane.OverlayColumns,
+							                         overlayPlane.IsBigEndianOW,
+							                         overlayPlane.OverlayData);
+
+							overlayData = od.Unpack();
 						}
+						else
+						{
+							// no relevant overlay frame found - i.e. the overlay for this image frame is blank
+							overlayData = new byte[overlayPlane.GetOverlayFrameLength()];
+						}
+
+						overlayPlaneGraphics.Add(new OverlayPlaneGraphic(overlayPlane, overlayData, OverlayPlaneSource.PresentationState));
+					}
+					catch (Exception ex)
+					{
+						failedOverlays = true;
+						Platform.Log(LogLevel.Warn, new DicomOverlayDeserializationException(overlayPlane.Group, OverlayPlaneSource.PresentationState, ex), "Failed to load overlay from softcopy presentation state.");
 					}
 				}
 			}
 
 			if (failedOverlays)
 			{
-				Platform.Log(LogLevel.Warn, "At least one overlay failed to load.");
+				// add an error graphic if any overlays are not being displayed due to deserialization errors.
+				overlayPlaneGraphics.Add(new ErrorOverlayPlaneGraphic(SR.MessageErrorDisplayingOverlays));
 			}
 
 			return overlayPlaneGraphics;
@@ -133,8 +146,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		[Cloneable]
 		private class ErrorOverlayPlaneGraphic : OverlayPlaneGraphic
 		{
-			public ErrorOverlayPlaneGraphic(int rows, int columns, string errorMessage)
-				: base(rows, columns)
+			public ErrorOverlayPlaneGraphic(string errorMessage)
+				: base(1, 1)
 			{
 				SetError(errorMessage);
 			}

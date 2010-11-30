@@ -319,6 +319,7 @@
     <Compile Include="Iod\Modules\SpecimenIdentificationModuleIod.cs" />
     <Compile Include="Iod\Modules\SrDocumentContentModule.cs" />
     <Compile Include="Iod\Modules\StudyModuleIod.cs" />
+    <Compile Include="Iod\Modules\Tests\OverlayPlaneTests.cs" />
     <Compile Include="Iod\PaletteColorLut.cs" />
     <Compile Include="Iod\PatientsSexNeutered.cs" />
     <Compile Include="Iod\ResponsiblePersonRole.cs" />
@@ -419,6 +420,7 @@
     <Compile Include="ServiceModel\Streaming\StudyIsInUseFault.cs" />
     <Compile Include="ServiceModel\Streaming\StudyIsNearlineFault.cs" />
     <Compile Include="Tests\AttributeCollectionTest.cs" />
+    <Compile Include="Tests\DicomOverlayTestHelper.cs" />
     <Compile Include="Tests\GlobalizedCultureAttributeTests.cs" />
     <Compile Include="Tests\DicomDirectoryTests.cs" />
     <Compile Include="Tests\ScuTests.cs" />

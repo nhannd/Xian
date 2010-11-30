@@ -34,7 +34,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.IO;
 
 namespace ClearCanvas.Dicom.Iod.Modules
@@ -66,7 +65,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// of the form 60xx, where xx is an even number from 00 to 1E inclusive. In order to make
 		/// these IOD classes easier to use, each of these 16 sets of tags are represented as
 		/// separate items of a collection, and may be addressed by an index between 0 and 15
-		/// inclusive (mapping to the even groups between 6000 and 601E).
+		/// inclusive (mapping to the even groups from 6000 to 601E).
 		/// </remarks>
 		public OverlayPlane this[int index]
 		{
@@ -97,7 +96,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				return false;
 			else if (attrib != null)
 				return !attrib.IsEmpty;
-			else 
+			else
 				return false;
 		}
 
@@ -241,7 +240,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			this.DefinedTerm = definedTerm;
 		}
 
-		public sealed override int GetHashCode()
+		public override sealed int GetHashCode()
 		{
 			return this.DefinedTerm.GetHashCode() ^ -0x2D417CC3;
 		}
@@ -283,7 +282,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public int Index
 		{
-			get { return _index; }	
+			get { return _index; }
 		}
 
 		/// <summary>
@@ -442,7 +441,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		public int OverlayBitPosition
 		{
 			get { return base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayBitPosition].GetInt32(0, 0); }
-			set {
+			set
+			{
 				if (value != 0)
 					throw new ArgumentOutOfRangeException("value", "OverlayBitPosition must be 0. Encoding overlay data in the unused bits of PixelData is not supported.");
 				base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayBitPosition].SetInt32(0, value);
@@ -485,7 +485,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public OverlaySubtype OverlaySubtype
 		{
-			get { return Modules.OverlaySubtype.FromDefinedTerm(base.DicomAttributeProvider[_tagOffset + DicomTags.OverlaySubtype].GetString(0, string.Empty)); }
+			get { return OverlaySubtype.FromDefinedTerm(base.DicomAttributeProvider[_tagOffset + DicomTags.OverlaySubtype].GetString(0, string.Empty)); }
 			set
 			{
 				if (value == null)
@@ -636,84 +636,157 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public bool IsMultiFrame
 		{
-			get { return this.NumberOfFramesInOverlay.HasValue; }
+			get { return NumberOfFramesInOverlay.HasValue; }
 		}
 
 		/// <summary>
-		/// Enumerates the overlay frame indices that are applicable to a given frame of an image.
+		/// Enumerates the overlay frames that are applicable to a given image frame, if any.
 		/// </summary>
-		/// <param name="imageFrameNumber">The zero-based index of the image frame.</param>
-		/// <param name="countImageFrames">The total number of frames in the image.</param>
-		/// <returns>An enumeration of zero-based indices of the overlay frame(s) that are applicable to the frame.</returns>
-		public IEnumerable<int> GetRelevantOverlayFrames(int imageFrameNumber, int countImageFrames)
+		/// <remarks>
+		/// This method has since been deprecated in favour of <see cref="GetRelevantOverlayFrame"/> or
+		/// <see cref="TryGetRelevantOverlayFrame"/> as the interpretation of the overlay frame matching attributes
+		/// does not allow for more than one overlay frame to be matched to any particular image frame.
+		/// For a description of the matching algorithm, please see <see cref="TryGetRelevantOverlayFrame"/>.
+		/// </remarks>
+		/// <param name="imageFrameNumber">The one-based image frame number.</param>
+		/// <param name="totalImageFrames">The total number of frames in the image.</param>
+		/// <returns>An enumeration of one-based overlay frame number that are applicable to the given image frame.</returns>
+		[Obsolete("Use GetRelevantOverlayFrame or TryGetRelevantOverlayFrame instead.")]
+		public IEnumerable<int> GetRelevantOverlayFrames(int imageFrameNumber, int totalImageFrames)
 		{
-			// if the overlay is not multi-frame, then this overlay is applicable to all frames
-			if (!this.IsMultiFrame)
-			{
-				yield return 0;
-				yield break;
-			}
+			int overlayFrameNumber;
+			if (TryGetRelevantOverlayFrame(imageFrameNumber, totalImageFrames, out overlayFrameNumber))
+				yield return overlayFrameNumber;
+		}
 
-			int origin = this.ImageFrameOrigin ?? 0;
-			int count = this.NumberOfFramesInOverlay ?? 1;
+		/// <summary>
+		/// Gets the number of the overlay frame that is applicable to a given image frame, if any.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// The DICOM Standard 2008, Part 3, Section C.9.3.1.1 states:
+		/// "The frames within a Multi-frame Overlay shall be conveyed as a logical sequence. If Multi-frame
+		/// Overlays are related to a Multi-frame Image, the order of the Overlay Frames are one to one with
+		/// the order of the Image frames. Otherwise, no attribute is used to indicate the sequencing of the
+		/// Overlay Frames. If Image Frame Origin (60xx,0051) is present, the Overlay frames are applied
+		/// one to one to the Image frames, beginning at the indicated frame number. Otherwise, no attribute
+		/// is used to indicated the sequencing of the Overlay Frames."
+		/// </para>
+		/// <para>
+		/// This is taken to mean that each image frame may have at most ONE overlay frame from any given
+		/// overlay plane group. The algorithm used here evaluates a number of conditions and computes an
+		/// appropriate overlay frame number, if any. The cases are, in order of precedence:
+		/// </para>
+		/// <list>
+		/// <item>If the overlay is embedded in the pixel data, this function always returns the same frame number
+		/// as this was required under the 2004 version of the standard (the last version to allow this usage).</item>
+		/// <item>If the overlay is not multi-frame, all image frames will match with the sole overlay frame.</item>
+		/// <item>If the image frame number is less than <see cref="ImageFrameOrigin"/> or greater than
+		/// <see cref="ImageFrameOrigin"/>+<see cref="NumberOfFramesInOverlay"/>-1, it will have no overlay frame.</item>
+		/// <item>Otherwise, this function returns the matching overlay frame number as determined by the
+		/// <see cref="ImageFrameOrigin"/>.</item>
+		/// </list>
+		/// <para>
+		/// N.B.: This function does NOT access attributes outside this module (i.e. Number of Frames (0028,0008))
+		/// so as to prevent unintended side effects in the dataset. Therefore, this information must be provided
+		/// by the calling code via <paramref cref="totalImageFrames"/>.
+		/// </para>
+		/// </remarks>
+		/// <param name="imageFrameNumber">The one-based image frame number.</param>
+		/// <param name="totalImageFrames">The total number of frames in the image.</param>
+		/// <returns>The one-based overlay frame number if an overlay frame exists for the given image frame; NULL otherwise.</returns>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="imageFrameNumber"/> does not specify a valid frame number according to <paramref name="totalImageFrames"/>.</exception>
+		public int? GetRelevantOverlayFrame(int imageFrameNumber, int totalImageFrames)
+		{
+			// if image frame identification is invalid, fail
+			if (imageFrameNumber < 1 || imageFrameNumber > totalImageFrames)
+				throw new ArgumentOutOfRangeException("imageFrameNumber", "imageFrameNumber must be a positive, non-zero value and less than or equal to totalImageFrames.");
 
-			// if image is not multi-frame, then all overlay frames are applicable to the image separately
-			if (countImageFrames <= 1)
-			{
-				for (int n = 0; n < count; n++)
-					yield return n;
-				yield break;
-			}
+			// if the overlay plane is embedded in the pixel data, the overlay frames are required to be 1-to-1 with each image frame
+			if (IsEmbedded)
+				return imageFrameNumber;
+
+			// if the overlay is not a multi-frame, then the only overlay frame is applicable to all image frames
+			if (!IsMultiFrame)
+				return 1;
+
+			var origin = ImageFrameOrigin.GetValueOrDefault(1);
+			var count = NumberOfFramesInOverlay.GetValueOrDefault(1);
 
 			// otherwise the origin and count specify the range of image frames for which a 1-to-1 relation exists to the overlay frames
-			if (imageFrameNumber < origin || imageFrameNumber >= origin + count)
-				yield break;
+			if (imageFrameNumber >= origin && imageFrameNumber < origin + count)
+				return imageFrameNumber - (origin - 1);
 
-			yield return imageFrameNumber - origin;
+			return null;
 		}
 
 		/// <summary>
-		/// Computes the bit offset in the <see cref="OverlayData"/> from which to read the overlay data for a specific frame.
+		/// Gets the number of the overlay frame that is applicable to a given image frame, if any.
 		/// </summary>
-		/// <param name="overlayFrameNumber">The zero-based frame number for which to compute the bit offset in the <see cref="OverlayData"/>.</param>
+		/// <remarks>
+		/// For a description of the matching algorithm, please see <see cref="TryGetRelevantOverlayFrame"/>.
+		/// </remarks>
+		/// <param name="imageFrameNumber">The one-based image frame number.</param>
+		/// <param name="totalImageFrames">The total number of frames in the image.</param>
+		/// <param name="overlayFrameNumber">The one-based overlay frame number. This value is invalid if the function returns false.</param>
+		/// <returns>True if there an overlay frame exists for the given image frame; False otherwise.</returns>
+		public bool TryGetRelevantOverlayFrame(int imageFrameNumber, int totalImageFrames, out int overlayFrameNumber)
+		{
+			// if image frame identification is invalid, fail
+			if (imageFrameNumber < 1 || imageFrameNumber > totalImageFrames)
+			{
+				overlayFrameNumber = -1;
+				return false;
+			}
+
+			var result = GetRelevantOverlayFrame(imageFrameNumber, totalImageFrames);
+			overlayFrameNumber = result.GetValueOrDefault(-1);
+			return result.HasValue;
+		}
+
+		/// <summary>
+		/// Computes the offset in the <see cref="OverlayData"/> bit stream from which a specific overlay frame can be read.
+		/// </summary>
+		/// <param name="overlayFrameNumber">The one-based frame number for which the offset in the <see cref="OverlayData"/> bit stream is to be computed.</param>
 		/// <returns>The offset from the beginning of the <see cref="OverlayData"/> in bits.</returns>
-		/// <exception cref="NotSupportedException">Thrown if this overlay plane does is not multi-frame.</exception>
-		/// <exception cref="ArgumentOutOfRangeException">Thrown if no overlay frame exists at the index.</exception>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if this overlay plane does not contain a frame with the specified number.</exception>
+		/// <exception cref="InvalidOperationException">Thrown if the overlay plane is embedded in the pixel data.</exception>
 		public int ComputeOverlayDataBitOffset(int overlayFrameNumber)
 		{
-			if (!this.IsMultiFrame)
-				throw new NotSupportedException("This is not a multi-frame overlay.");
-
-			Platform.CheckNonNegative(overlayFrameNumber, "overlayFrameNumber");
+			// if the overlay is embedded in the pixel data, fail
+			if (IsEmbedded)
+				throw new InvalidOperationException("This operation is invalid when the overlay plane is embedded in the pixel data.");
 
 			int result;
-			if (!this.TryComputeOverlayDataBitOffset(overlayFrameNumber, out result))
-				throw new ArgumentOutOfRangeException("overlayFrameNumber", string.Format("No overlay frame exists at the index {0}.", overlayFrameNumber));
-
+			if (!TryComputeOverlayDataBitOffset(overlayFrameNumber, out result))
+				throw new ArgumentOutOfRangeException("overlayFrameNumber", string.Format("The overlay plane does not contain a frame with the number {0}.", overlayFrameNumber));
 			return result;
 		}
 
 		/// <summary>
-		/// Computes the bit offset in the <see cref="OverlayData"/> from which to read the overlay data for a specific frame.
+		/// Computes the offset in the <see cref="OverlayData"/> bit stream from which a specific overlay frame can be read.
 		/// </summary>
-		/// <param name="overlayFrameNumber">The zero-based frame number for which to compute the bit offset in the <see cref="OverlayData"/>.</param>
+		/// <param name="overlayFrameNumber">The one-based frame number for which the offset in the <see cref="OverlayData"/> bit stream is to be computed.</param>
 		/// <param name="bitOffset">The offset from the beginning of the <see cref="OverlayData"/> in bits.</param>
 		/// <returns>True if a valid bit offset was computed; False otherwise.</returns>
 		public bool TryComputeOverlayDataBitOffset(int overlayFrameNumber, out int bitOffset)
 		{
-			bitOffset = 0;
-
-			if (!this.IsMultiFrame)
-				return true;
-			if (overlayFrameNumber <= 0)
+			// if the overlay is embedded in the pixel data, fail
+			if (IsEmbedded)
+			{
+				bitOffset = -1;
 				return false;
+			}
 
-			int origin = this.ImageFrameOrigin ?? 0;
-			int count = this.NumberOfFramesInOverlay ?? 1;
-			if (overlayFrameNumber < origin || overlayFrameNumber >= origin + count)
+			// if the overlay is out of range, fail
+			var count = NumberOfFramesInOverlay ?? 1;
+			if (overlayFrameNumber < 1 || overlayFrameNumber > count)
+			{
+				bitOffset = -1;
 				return false;
+			}
 
-			bitOffset = this.OverlayRows*this.OverlayColumns*(overlayFrameNumber - origin);
+			bitOffset = OverlayRows*OverlayColumns*(overlayFrameNumber - 1);
 			return true;
 		}
 
@@ -723,7 +796,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <returns>The length of each overlay frame in bits.</returns>
 		public int GetOverlayFrameLength()
 		{
-			return this.OverlayRows*this.OverlayColumns;
+			return OverlayRows*OverlayColumns;
 		}
 
 		#endregion
@@ -790,7 +863,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 
 				if (pd.BitsAllocated <= 8)
 				{
-					byte pixelMask = ((byte)(0x1 << this.OverlayBitPosition ));
+					byte pixelMask = ((byte) (0x1 << this.OverlayBitPosition));
 					byte overlayMask = 0x01;
 
 					fixed (byte* pFrameData = frameData)
@@ -801,7 +874,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 							if ((*pixelData & pixelMask) != 0)
 							{
 								overlay[overlayOffset] |= overlayMask;
-								*pixelData &= (byte)~pixelMask;
+								*pixelData &= (byte) ~pixelMask;
 							}
 
 							if (overlayMask == 0x80)
@@ -818,7 +891,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				{
 					fixed (byte* pFrameData = frameData)
 					{
-						ushort pixelMask = ((ushort)(0x1 << OverlayBitPosition));
+						ushort pixelMask = ((ushort) (0x1 << OverlayBitPosition));
 						byte overlayMask = 0x01;
 
 						ushort* pixelData = (ushort*) pFrameData;
@@ -827,7 +900,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 							if ((*pixelData & pixelMask) != 0)
 							{
 								overlay[overlayOffset] |= overlayMask;
-								*pixelData &= (ushort)~pixelMask;
+								*pixelData &= (ushort) ~pixelMask;
 							}
 
 							if (overlayMask == 0x80)

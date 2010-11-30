@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		int FrameNumber { get; }
 
 		/// <summary>
-		/// Gets pixel data in normalized form (8 or 16-bit grayscale, or ARGB).
+		/// Gets pixel data in normalized form (8 or 16-bit grayscale, or 32-bit ARGB).
 		/// </summary>
 		/// <remarks>
 		/// <i>Normalized</i> pixel data means that:
@@ -80,12 +80,29 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		byte[] GetNormalizedPixelData();
 
 		/// <summary>
-		/// Gets the normalized overlay pixel data buffer for a particular overlay frame that is applicable to this image frame (8 or 16-bit grayscale, or 32-bit ARGB).
+		/// Gets the normalized overlay data buffer for a particular overlay group (8-bit grayscale).
 		/// </summary>
-		/// <param name="overlayGroupNumber">The group number of the overlay plane (1-16).</param>
-		/// <param name="overlayFrameNumber">The 1-based frame number of the overlay frame to be retrieved.</param>
+		/// <remarks>
+		/// <para>
+		/// <i>Normalized</i> overlay data means that the 1-bit overlay pixel data is extracted and
+		/// unpacked as necessary to form an 8-bit-per-pixel buffer with values of either 0 or 255.
+		/// </para>
+		/// <para>
+		/// Ensuring that the overlay data always meets the above criteria allows clients to easily
+		/// consume overlay data without having to worry about the storage of overlay data, whether
+		/// embedded in unused bits of the pixel data or in a separate packed bits buffer.
+		/// </para>
+		/// <para>
+		/// Overlay data is reloaded when this method is called after a call to <see cref="Unload"/>.
+		/// The pixel data will also be reloaded if this method is called before
+		/// <see cref="GetNormalizedPixelData"/> and there are overlays stored in unused bits of the
+		/// pixel data.
+		/// </para>
+		/// </remarks>
+		/// <param name="overlayNumber">The 1-based overlay plane number.</param>
 		/// <returns>A byte buffer containing the normalized overlay pixel data.</returns>
-		byte[] GetNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber);
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="overlayNumber"/> is not a positive non-zero number.</exception>
+		byte[] GetNormalizedOverlayData(int overlayNumber);
 
 		/// <summary>
 		/// Unloads any cached byte buffers owned by this <see cref="ISopFrameData"/>.
@@ -141,7 +158,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// Gets pixel data in normalized form (8 or 16-bit grayscale, or ARGB).
+		/// Gets pixel data in normalized form (8 or 16-bit grayscale, or 32-bit ARGB).
 		/// </summary>
 		/// <returns></returns>
 		/// <remarks>
@@ -172,13 +189,29 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public abstract byte[] GetNormalizedPixelData();
 
 		/// <summary>
-		/// Gets the normalized overlay pixel data buffer for a particular overlay frame
-		/// that is applicable to this image frame (8 or 16-bit grayscale, or 32-bit ARGB).
+		/// Gets the normalized overlay data buffer for a particular overlay group (8-bit grayscale).
 		/// </summary>
-		/// <param name="overlayGroupNumber">The group number of the overlay plane (1-16).</param>
-		/// <param name="overlayFrameNumber">The 1-based frame number of the overlay frame to be retrieved.</param>
+		/// <remarks>
+		/// <para>
+		/// <i>Normalized</i> overlay data means that the 1-bit overlay pixel data is extracted and
+		/// unpacked as necessary to form an 8-bit-per-pixel buffer with values of either 0 or 255.
+		/// </para>
+		/// <para>
+		/// Ensuring that the overlay data always meets the above criteria allows clients to easily
+		/// consume overlay data without having to worry about the storage of overlay data, whether
+		/// embedded in unused bits of the pixel data or in a separate packed bits buffer.
+		/// </para>
+		/// <para>
+		/// Overlay data is reloaded when this method is called after a call to <see cref="ISopFrameData.Unload"/>.
+		/// The pixel data will also be reloaded if this method is called before
+		/// <see cref="ISopFrameData.GetNormalizedPixelData"/> and there are overlays stored in unused bits of the
+		/// pixel data.
+		/// </para>
+		/// </remarks>
+		/// <param name="overlayNumber">The 1-based overlay plane number.</param>
 		/// <returns>A byte buffer containing the normalized overlay pixel data.</returns>
-		public abstract byte[] GetNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber);
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="overlayNumber"/> is not a positive non-zero number.</exception>
+		public abstract byte[] GetNormalizedOverlayData(int overlayNumber);
 
 		/// <summary>
 		/// Unloads any cached byte buffers owned by this <see cref="ISopFrameData"/>.
