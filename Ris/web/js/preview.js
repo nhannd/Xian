@@ -201,8 +201,8 @@ var Preview = function () {
 			if (!visit || !visit.CurrentLocation)
 				return null;
 			
-			if (visit.CurrentLocation.Room || visit.CurrentLocation.Bed)
-				return visit.CurrentLocation.Name + ", " + (visit.CurrentLocation.Room || "") + (visit.CurrentLocation.Bed ? "/" + visit.CurrentLocation.Bed : "");
+			if (visit.CurrentRoom || visit.CurrentBed)
+				return visit.CurrentLocation.Name + ", " + (visit.CurrentRoom || "Room Not Specified") + (visit.CurrentBed ? "/" + visit.CurrentBed : "");
 			else
 				return visit.CurrentLocation.Name;
 		}
@@ -2052,8 +2052,14 @@ Preview.VisitDetailsSection = function () {
 		'		<tr>'+
 		'			<td width="120" class="propertyname">Patient Class</td>'+
 		'			<td width="200"><div id="PatientClass"/></td>'+
+		'			<td width="120" class="propertyname">Current Room</td>'+
+		'			<td width="200"><div id="CurrentRoom"/></td>'+
+		'		</tr>'+
+		'		<tr>'+
 		'			<td width="120" class="propertyname">Patient Type</td>'+
 		'			<td width="200"><div id="PatientType"/></td>'+
+		'			<td width="120" class="propertyname">Current Bed</td>'+
+		'			<td width="200"><div id="CurrentBed"/></td>'+
 		'		</tr>'+
 		'		<tr>'+
 		'			<td width="120" class="propertyname">Admission Type</td>'+
@@ -2100,6 +2106,8 @@ Preview.VisitDetailsSection = function () {
 			Field.setValue($("AdmissionType"), visitDetail.AdmissionType.Value);
 			Field.setValue($("DischargeDisposition"), visitDetail.DischargeDisposition);
 			Field.setValue($("CurrentLocation"), visitDetail.CurrentLocation ? visitDetail.CurrentLocation.Name : null);
+			Field.setValue($("CurrentRoom"), visitDetail.CurrentRoom ? visitDetail.CurrentRoom : null);
+			Field.setValue($("CurrentBed"), visitDetail.CurrentBed ? visitDetail.CurrentBed : null);
 			Field.setValue($("PreAdmitNumber"), visitDetail.PreadmitNumber);
 			Field.setValue($("VipFlag"), visitDetail.VipIndicator ? "Yes" : "No");
 			

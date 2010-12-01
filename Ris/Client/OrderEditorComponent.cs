@@ -603,7 +603,13 @@ namespace ClearCanvas.Ris.Client
 
 			if (visitSummary.CurrentBed != null)
 			{
-				visitLocationBuilder.Append(", ");
+				if (visitSummary.CurrentRoom == null)
+				{
+					visitLocationBuilder.Append(", ");
+					visitLocationBuilder.Append("Room not specified");
+				}
+
+				visitLocationBuilder.Append("/");
 				visitLocationBuilder.Append(visitSummary.CurrentBed);
 			}
 
