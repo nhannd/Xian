@@ -140,6 +140,12 @@ namespace ClearCanvas.Common.UsageTracking
         public string MachineIdentifier { get; set; }
 
         /// <summary>
+        /// A unique machine identifier.
+        /// </summary>
+        [DataMember(IsRequired = false)]
+        public bool Certified { get; set; }
+
+        /// <summary>
         /// A set of application data specific to the <see cref="Product"/>.
         /// </summary>
         [XmlArray("AppData")]

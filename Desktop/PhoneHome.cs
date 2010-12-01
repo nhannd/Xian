@@ -15,6 +15,7 @@ using System.Globalization;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.UsageTracking;
+using ClearCanvas.Utilities.Manifest;
 using Timer=System.Threading.Timer;
 
 namespace ClearCanvas.Desktop
@@ -122,6 +123,7 @@ namespace ClearCanvas.Desktop
         static UsageMessage CreateUsageMessage(UsageType type)
         {
             var msg = UsageTracking.GetUsageMessage();
+            msg.Certified = ManifestVerification.Valid;
             msg.MessageType = type;
             return msg;
         }
