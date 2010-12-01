@@ -12,7 +12,9 @@
 using System;
 using System.Globalization;
 using System.Management;
+using System.Security.Cryptography;
 using System.ServiceModel;
+using System.Text;
 using System.Threading;
 using ClearCanvas.Common.Utilities;
 
@@ -77,8 +79,8 @@ namespace ClearCanvas.Common.UsageTracking
             get
             {
                 string cpuInfo = string.Empty;
-                ManagementClass mc = new ManagementClass("win32_processor");
-                ManagementObjectCollection moc = mc.GetInstances();
+                ManagementClass processor = new ManagementClass("win32_processor");
+                ManagementObjectCollection moc = processor.GetInstances();
 
                 foreach (ManagementObject mo in moc)
                 {
@@ -87,11 +89,17 @@ namespace ClearCanvas.Common.UsageTracking
                 }
 
                 const string drive = "C";
-                ManagementObject dsk = new ManagementObject(
+                ManagementObject disk = new ManagementObject(
                     @"win32_logicaldisk.deviceid=""" + drive + @":""");
-                dsk.Get();
-                string volumeSerial = dsk["VolumeSerialNumber"].ToString();
-                return cpuInfo + "_" + volumeSerial;
+                disk.Get();
+                string volumeSerial = disk["VolumeSerialNumber"].ToString();
+
+                byte[] data = Encoding.Default.GetBytes(cpuInfo + "_" + volumeSerial);
+
+                SHA256 sha = new SHA256Managed();
+                byte[] result = sha.ComputeHash(data);
+
+                return Convert.ToBase64String(result);
             }
         }
 
