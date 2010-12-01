@@ -580,32 +580,49 @@ namespace ClearCanvas.Ris.Client
 		public string FormatVisit(object visit)
 		{
 			var visitSummary = (VisitSummary)visit;
-			var visitIdentity = new StringBuilder();
+			var visitIdentityBuilder = new StringBuilder();
 			if (visitSummary.Facility != null)
 			{
-				visitIdentity.Append(visitSummary.Facility.Name);
-				visitIdentity.Append(" ");
+				visitIdentityBuilder.Append(visitSummary.Facility.Name);
+				visitIdentityBuilder.Append(" ");
 			}
-			visitIdentity.Append(visitSummary.VisitNumber.Id);
+			visitIdentityBuilder.Append(visitSummary.VisitNumber.Id);
 
+			var visitLocationBuilder = new StringBuilder();
 			if (visitSummary.CurrentLocation != null)
 			{
-				visitIdentity.Append(", ");
-				visitIdentity.Append(visitSummary.CurrentLocation.Name);
-				visitIdentity.Append(",");
+				visitLocationBuilder.Append(", ");
+				visitLocationBuilder.Append(visitSummary.CurrentLocation.Name);
 			}
 
-			var visitType = new StringBuilder();
-			visitType.Append(visitSummary.PatientClass.Value);
+			if (visitSummary.CurrentRoom != null)
+			{
+				visitLocationBuilder.Append(", ");
+				visitLocationBuilder.Append(visitSummary.CurrentRoom);
+			}
+
+			if (visitSummary.CurrentBed != null)
+			{
+				visitLocationBuilder.Append(", ");
+				visitLocationBuilder.Append(visitSummary.CurrentBed);
+			}
+
+			if (visitLocationBuilder.Length > 0)
+				visitLocationBuilder.Append(", ");
+
+
+			var visitTypeBuilder = new StringBuilder();
+			visitTypeBuilder.Append(visitSummary.PatientClass.Value);
 			if (visitSummary.Status != null)
 			{
-				visitType.Append(" - ");
-				visitType.Append(visitSummary.Status.Value);
+				visitTypeBuilder.Append(" - ");
+				visitTypeBuilder.Append(visitSummary.Status.Value);
 			}
 
-			return string.Format("{0} {1} {2}",
-				visitIdentity,
-				visitType,
+			return string.Format("{0} {1}{2} {3}",
+				visitIdentityBuilder,
+				visitLocationBuilder,
+				visitTypeBuilder,
 				Format.DateTime(visitSummary.AdmitTime));
 		}
 
@@ -614,7 +631,8 @@ namespace ClearCanvas.Ris.Client
 			try
 			{
 				var visitSummaryComponent = new VisitSummaryComponent(_patientRef, true);
-				var exitCode = LaunchAsDialog(this.Host.DesktopWindow, visitSummaryComponent, SR.TitlePatientVisits);
+				var visitDialogArg = new DialogBoxCreationArgs(visitSummaryComponent, SR.TitlePatientVisits, null, DialogSizeHint.Large);
+				var exitCode = LaunchAsDialog(this.Host.DesktopWindow, visitDialogArg);
 
 				// remember the previous selection before updating the list
 				var selectedVisitRef = _selectedVisit == null ? null : _selectedVisit.VisitRef;

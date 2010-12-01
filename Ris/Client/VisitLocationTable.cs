@@ -57,9 +57,18 @@ namespace ClearCanvas.Ris.Client
                 {
                     //TODO: LocationSummary formatting
                     //return vl.Location.ToString();
-                    return string.Format("{0}, {1}, {2}, {3}, {4}", vl.Location.Bed, vl.Location.Room, vl.Location.Floor, vl.Location.Building, vl.Location.Facility.Name);
+                    return string.Format("{0}, {1}, {2}, {3}, {4}", vl.Bed, vl.Room, vl.Location.Floor, vl.Location.Building, vl.Location.Facility.Name);
                 },
                 2.5f));
+
+			this.Columns.Add(new TableColumn<VisitLocationDetail, string>(SR.ColumnRoom,
+				delegate(VisitLocationDetail vl) { return vl.Room; },
+				0.2f));
+
+			this.Columns.Add(new TableColumn<VisitLocationDetail, string>(SR.ColumnBed,
+				delegate(VisitLocationDetail vl) { return vl.Bed; },
+				0.2f));
+
             this.Columns.Add(new DateTimeTableColumn<VisitLocationDetail>(
                 SR.ColumnStartTime,
                 delegate(VisitLocationDetail vl) { return vl.StartTime; },

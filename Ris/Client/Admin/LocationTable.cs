@@ -29,7 +29,6 @@
 
 #endregion
 
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
 
@@ -62,15 +61,6 @@ namespace ClearCanvas.Ris.Client.Admin
             this.Columns.Add(new TableColumn<LocationSummary, string>(SR.ColumnPointOfCare,
                 delegate(LocationSummary loc) { return loc.PointOfCare; },
                 0.5f));
-
-            this.Columns.Add(new TableColumn<LocationSummary, string>(SR.ColumnRoom,
-                delegate(LocationSummary loc) { return loc.Room; },
-                0.2f));
-
-            this.Columns.Add(new TableColumn<LocationSummary, string>(SR.ColumnBed,
-                delegate(LocationSummary loc) { return loc.Bed; },
-                0.2f));
-
         }
     }
 }

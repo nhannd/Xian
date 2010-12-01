@@ -65,8 +65,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._building = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._floor = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._pointOfCare = new ClearCanvas.Desktop.View.WinForms.TextField();
-			this._room = new ClearCanvas.Desktop.View.WinForms.TextField();
-			this._bed = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._id = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._name = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._description = new ClearCanvas.Desktop.View.WinForms.TextField();
@@ -115,7 +113,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._building.Mask = "";
 			this._building.Name = "_building";
 			this._building.PasswordChar = '\0';
-			this._building.Size = new System.Drawing.Size(184, 41);
+			this._building.Size = new System.Drawing.Size(280, 41);
 			this._building.TabIndex = 4;
 			this._building.ToolTip = null;
 			this._building.Value = null;
@@ -123,12 +121,12 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// _floor
 			// 
 			this._floor.LabelText = "Floor";
-			this._floor.Location = new System.Drawing.Point(351, 98);
+			this._floor.Location = new System.Drawing.Point(9, 148);
 			this._floor.Margin = new System.Windows.Forms.Padding(2);
 			this._floor.Mask = "";
 			this._floor.Name = "_floor";
 			this._floor.PasswordChar = '\0';
-			this._floor.Size = new System.Drawing.Size(92, 41);
+			this._floor.Size = new System.Drawing.Size(150, 41);
 			this._floor.TabIndex = 5;
 			this._floor.ToolTip = null;
 			this._floor.Value = null;
@@ -136,41 +134,15 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// _pointOfCare
 			// 
 			this._pointOfCare.LabelText = "Point Of Care";
-			this._pointOfCare.Location = new System.Drawing.Point(9, 143);
+			this._pointOfCare.Location = new System.Drawing.Point(163, 148);
 			this._pointOfCare.Margin = new System.Windows.Forms.Padding(2);
 			this._pointOfCare.Mask = "";
 			this._pointOfCare.Name = "_pointOfCare";
 			this._pointOfCare.PasswordChar = '\0';
-			this._pointOfCare.Size = new System.Drawing.Size(150, 41);
+			this._pointOfCare.Size = new System.Drawing.Size(280, 41);
 			this._pointOfCare.TabIndex = 6;
 			this._pointOfCare.ToolTip = null;
 			this._pointOfCare.Value = null;
-			// 
-			// _room
-			// 
-			this._room.LabelText = "Room";
-			this._room.Location = new System.Drawing.Point(163, 143);
-			this._room.Margin = new System.Windows.Forms.Padding(2);
-			this._room.Mask = "";
-			this._room.Name = "_room";
-			this._room.PasswordChar = '\0';
-			this._room.Size = new System.Drawing.Size(184, 41);
-			this._room.TabIndex = 7;
-			this._room.ToolTip = null;
-			this._room.Value = null;
-			// 
-			// _bed
-			// 
-			this._bed.LabelText = "Bed";
-			this._bed.Location = new System.Drawing.Point(351, 143);
-			this._bed.Margin = new System.Windows.Forms.Padding(2);
-			this._bed.Mask = "";
-			this._bed.Name = "_bed";
-			this._bed.PasswordChar = '\0';
-			this._bed.Size = new System.Drawing.Size(92, 41);
-			this._bed.TabIndex = 8;
-			this._bed.ToolTip = null;
-			this._bed.Value = null;
 			// 
 			// _id
 			// 
@@ -225,8 +197,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this.Controls.Add(this._facility);
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._acceptButton);
-			this.Controls.Add(this._bed);
-			this.Controls.Add(this._room);
 			this.Controls.Add(this._pointOfCare);
 			this.Name = "LocationEditorComponentControl";
 			this.Size = new System.Drawing.Size(470, 229);
@@ -239,9 +209,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _facility;
         private ClearCanvas.Desktop.View.WinForms.TextField _building;
         private ClearCanvas.Desktop.View.WinForms.TextField _floor;
-        private ClearCanvas.Desktop.View.WinForms.TextField _pointOfCare;
-        private ClearCanvas.Desktop.View.WinForms.TextField _room;
-		private ClearCanvas.Desktop.View.WinForms.TextField _bed;
+		private ClearCanvas.Desktop.View.WinForms.TextField _pointOfCare;
         private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.Button _acceptButton;
 		private ClearCanvas.Desktop.View.WinForms.TextField _id;

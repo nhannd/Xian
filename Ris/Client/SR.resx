@@ -1173,4 +1173,10 @@
   <data name="WarnEditMergedPractitioner" xml:space="preserve">
     <value>This practitioner is already merged and will be deleted eventually.  Please edit the active practitioner {0} instead.</value>
   </data>
+  <data name="ColumnBed" xml:space="preserve">
+    <value>Bed</value>
+  </data>
+  <data name="ColumnRoom" xml:space="preserve">
+    <value>Room</value>
+  </data>
 </root>

@@ -216,25 +216,6 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        public string Room
-        {
-            get { return _locationDetail.Room; }
-            set 
-            { 
-                _locationDetail.Room = value;
-                this.Modified = true;
-            }
-        }
-
-        public string Bed
-        {
-            get { return _locationDetail.Bed; }
-            set 
-            { 
-                _locationDetail.Bed = value;
-                this.Modified = true;
-            }
-        }
 
         public void Accept()
         {

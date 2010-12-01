@@ -151,6 +151,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bed.
+        /// </summary>
+        internal static string ColumnBed {
+            get {
+                return ResourceManager.GetString("ColumnBed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Billing #.
         /// </summary>
         internal static string ColumnBillingNumber {
@@ -741,6 +750,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string ColumnRole {
             get {
                 return ResourceManager.GetString("ColumnRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Room.
+        /// </summary>
+        internal static string ColumnRoom {
+            get {
+                return ResourceManager.GetString("ColumnRoom", resourceCulture);
             }
         }
         

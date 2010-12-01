@@ -74,6 +74,14 @@ namespace ClearCanvas.Ris.Client
 				delegate(VisitSummary v) { return v.CurrentLocation != null ? v.CurrentLocation.Name : null; },
 				1.0f));
 
+			this.Columns.Add(new TableColumn<VisitSummary, string>(SR.ColumnRoom,
+				delegate(VisitSummary v) { return v.CurrentRoom; },
+				1.0f));
+
+			this.Columns.Add(new TableColumn<VisitSummary, string>(SR.ColumnBed,
+				delegate(VisitSummary v) { return v.CurrentBed; },
+				1.0f));
+
 			//status
             this.Columns.Add(new TableColumn<VisitSummary, string>(SR.ColumnStatus,
                 delegate(VisitSummary v) { return v.Status.Value; },
