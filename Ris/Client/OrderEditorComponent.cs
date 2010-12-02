@@ -580,55 +580,32 @@ namespace ClearCanvas.Ris.Client
 		public string FormatVisit(object visit)
 		{
 			var visitSummary = (VisitSummary)visit;
-			var visitIdentityBuilder = new StringBuilder();
+			var visitIdentity = new StringBuilder();
 			if (visitSummary.Facility != null)
 			{
-				visitIdentityBuilder.Append(visitSummary.Facility.Name);
-				visitIdentityBuilder.Append(" ");
+				visitIdentity.Append(visitSummary.Facility.Name);
+				visitIdentity.Append(" ");
 			}
-			visitIdentityBuilder.Append(visitSummary.VisitNumber.Id);
+			visitIdentity.Append(visitSummary.VisitNumber.Id);
 
-			var visitLocationBuilder = new StringBuilder();
 			if (visitSummary.CurrentLocation != null)
 			{
-				visitLocationBuilder.Append(", ");
-				visitLocationBuilder.Append(visitSummary.CurrentLocation.Name);
+				visitIdentity.Append(", ");
+				visitIdentity.Append(visitSummary.CurrentLocation.Name);
+				visitIdentity.Append(",");
 			}
 
-			if (visitSummary.CurrentRoom != null)
-			{
-				visitLocationBuilder.Append(", ");
-				visitLocationBuilder.Append(visitSummary.CurrentRoom);
-			}
-
-			if (visitSummary.CurrentBed != null)
-			{
-				if (visitSummary.CurrentRoom == null)
-				{
-					visitLocationBuilder.Append(", ");
-					visitLocationBuilder.Append("Room not specified");
-				}
-
-				visitLocationBuilder.Append("/");
-				visitLocationBuilder.Append(visitSummary.CurrentBed);
-			}
-
-			if (visitLocationBuilder.Length > 0)
-				visitLocationBuilder.Append(", ");
-
-
-			var visitTypeBuilder = new StringBuilder();
-			visitTypeBuilder.Append(visitSummary.PatientClass.Value);
+			var visitType = new StringBuilder();
+			visitType.Append(visitSummary.PatientClass.Value);
 			if (visitSummary.Status != null)
 			{
-				visitTypeBuilder.Append(" - ");
-				visitTypeBuilder.Append(visitSummary.Status.Value);
+				visitType.Append(" - ");
+				visitType.Append(visitSummary.Status.Value);
 			}
 
-			return string.Format("{0} {1}{2} {3}",
-				visitIdentityBuilder,
-				visitLocationBuilder,
-				visitTypeBuilder,
+			return string.Format("{0} {1} {2}",
+				visitIdentity,
+				visitType,
 				Format.DateTime(visitSummary.AdmitTime));
 		}
 
