@@ -133,7 +133,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ImageViewerAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\Desktop\Executable\app.config" />
+	<ImageViewerAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\Common\app.config" />
+	<ImageViewerAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\Desktop\Executable\app.config" />
     <ImageViewerAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\ImageViewer\ImageViewer_dist.config" />
   </ItemGroup>
   

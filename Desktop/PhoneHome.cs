@@ -24,6 +24,7 @@ namespace ClearCanvas.Desktop
     {
         #region Private Fields
 
+        private static readonly TimeSpan _repeat24Hours = TimeSpan.FromHours(24);
         static private Timer _phoneHomeTimer;
         static private readonly object _sync = new object();
         static private bool _started;
@@ -47,8 +48,11 @@ namespace ClearCanvas.Desktop
                     UsageTracking.Register(msg, UsageTrackingThread.Background);
 
                     _phoneHomeTimer = new Timer(ignore =>
-                                                UsageTracking.Register(UsageTracking.GetUsageMessage(), UsageTrackingThread.Background),
-                                                null, TimeSpan.FromHours(24), TimeSpan.FromHours(24));
+                                                    {
+                                                        msg = UsageTracking.GetUsageMessage();
+                                                        UsageTracking.Register(msg, UsageTrackingThread.Background);
+                                                    },
+                                                null, _repeat24Hours, _repeat24Hours);
                 }
                 catch (Exception ex)
                 {
@@ -64,6 +68,10 @@ namespace ClearCanvas.Desktop
         /// </summary>
         static internal void ShutDown()
         {
+            // Guard against incorrect use of this class when Startup() is not called.
+            if (!_started)
+                return;
+            
             lock (_sync)
             {
                 try
@@ -107,15 +115,6 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        private static void OnShutdown()
-        {
-            if (_phoneHomeTimer != null)
-            {
-                _phoneHomeTimer.Dispose();
-                _phoneHomeTimer = null;
-            }
-        }
-
         #endregion
 
         #region Helpers
@@ -138,6 +137,16 @@ namespace ClearCanvas.Desktop
             }
         }
 
+
+        static private void OnShutdown()
+        {
+            if (_phoneHomeTimer != null)
+            {
+                _phoneHomeTimer.Dispose();
+                _phoneHomeTimer = null;
+                _started = false;
+            }
+        }
         #endregion
     }
 
