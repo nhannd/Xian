@@ -1,4 +1,35 @@
-﻿using System;
+﻿#region License
+
+// Copyright (c) 2010, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
+using System;
 using System.Threading;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
@@ -17,23 +48,26 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		public void Run()
 		{
-			_reindexer = new LocalDataStoreReindexer();
-			_reindexer.PropertyChanged += OnPropertyChanged;
-			_quitEvent = new ManualResetEvent(false);
-			
-			Console.WriteLine("Determining reindex state ...");
-			bool signaled = _quitEvent.WaitOne(10000);
-			if (signaled)
-				return;
-
-			if (!_hasStarted)
+			using (_reindexer = new LocalDataStoreReindexer())
 			{
-				Console.WriteLine(SR.MessageReindexNotStarted);
-				Environment.ExitCode = -1; 
-				return;
+				_reindexer.PropertyChanged += OnPropertyChanged;
+				_quitEvent = new ManualResetEvent(false);
+				
+				Console.WriteLine("Determining reindex state ...");
+				const int tenSeconds = 10000;
+				bool signaled = _quitEvent.WaitOne(tenSeconds, false);
+				if (signaled)
+					return;
+
+				if (!_hasStarted)
+				{
+					Console.WriteLine(SR.MessageReindexNotStarted);
+					Environment.ExitCode = -1;
+					return;
+				}
+
+				_quitEvent.WaitOne();
 			}
-			
-			_quitEvent.WaitOne();
 		}
 
 		private float PercentComplete
@@ -44,11 +78,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		private void Quit()
 		{
 			_quitting = true;
-			Thread.Sleep(3000);
+			const int threeSeconds = 3000;
+			Thread.Sleep(threeSeconds);
 			_quitEvent.Set();
 		}
 
-		void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if (_quitting)
 				return;
