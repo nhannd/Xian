@@ -49,7 +49,7 @@ namespace ClearCanvas.Desktop
 
                     _phoneHomeTimer = new Timer(ignore =>
                                                     {
-                                                        msg = UsageTracking.GetUsageMessage();
+                                                        msg = CreateUsageMessage(UsageType.Other);
                                                         UsageTracking.Register(msg, UsageTrackingThread.Background);
                                                     },
                                                 null, _repeat24Hours, _repeat24Hours);
@@ -78,26 +78,8 @@ namespace ClearCanvas.Desktop
                 {
                     OnShutdown();
                     
-                    TimeSpan uptime = DateTime.Now - _startTimestamp;
-
-                    // Message must be sent using the current thread instead of threadpool when the app is being shut down
-                    Thread workerThread =
-                        new Thread(ignore =>
-                        {
-                            try
-                            {
-                                var msg = CreateUsageMessage(UsageType.Shutdown);
-                                msg.AppData = new List<UsageApplicationData>();
-                                msg.AppData.Add(new UsageApplicationData
-                                                    {Key = "PROCESSUPTIME", Value = String.Format(CultureInfo.InvariantCulture, "{0}", uptime.TotalHours)});
-                                UsageTracking.Register(msg, UsageTrackingThread.Current);
-                            }
-                            catch (Exception ex)
-                            {
-                                // Requirement says log must be in debug
-                                Platform.Log(LogLevel.Debug, ex, "Error occurred when shutting down phone home service");
-                            }
-                        });
+                    // Note: use a thread to send the message because we don't want to block the app
+                    Thread workerThread = new Thread(SendShutdownMessage);
                     workerThread.Start();
 
                     // wait up to 10 seconds, this is a requirement.
@@ -118,6 +100,28 @@ namespace ClearCanvas.Desktop
         #endregion
 
         #region Helpers
+
+
+        private static void SendShutdownMessage()
+        {
+            const string keyProcessUptime = "PROCESSUPTIME";
+            try
+            {
+                TimeSpan uptime = DateTime.Now - _startTimestamp;
+
+                var msg = CreateUsageMessage(UsageType.Shutdown);
+                msg.AppData = new List<UsageApplicationData>();
+                msg.AppData.Add(new UsageApplicationData { Key = keyProcessUptime, Value = String.Format(CultureInfo.InvariantCulture, "{0}", uptime.TotalHours) });
+
+                // Message must be sent using the current thread instead of threadpool when the app is being shut down
+                UsageTracking.Register(msg, UsageTrackingThread.Current);
+            }
+            catch (Exception ex)
+            {
+                // Requirement says log must be in debug
+                Platform.Log(LogLevel.Debug, ex, "Error occurred when shutting down phone home service");
+            }
+        }
 
         static UsageMessage CreateUsageMessage(UsageType type)
         {
