@@ -395,6 +395,7 @@
     <Compile Include="Utilities\IObservableList.cs" />
     <Compile Include="Utilities\IRemoteFileTransfer.cs" />
     <Compile Include="Utilities\HttpFileTransfer.cs" />
+    <Compile Include="Utilities\MachineIdentifierUtilities.cs" />
     <Compile Include="Utilities\UnitTestExtensionFactory.cs" />
   </ItemGroup>
   <ItemGroup>

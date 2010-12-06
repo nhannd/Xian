@@ -71,38 +71,6 @@ namespace ClearCanvas.Common.UsageTracking
             }
         }
 
-        /// <summary>
-        /// A unique identifier for the machine based on the processor ID and drive ID
-        /// </summary>
-        public static string MachineIdentifier
-        {
-            get
-            {
-                string cpuInfo = string.Empty;
-                ManagementClass processor = new ManagementClass("win32_processor");
-                ManagementObjectCollection moc = processor.GetInstances();
-
-                foreach (ManagementObject mo in moc)
-                {
-                    cpuInfo = mo.Properties["processorID"].Value.ToString();
-                    break;
-                }
-
-                const string drive = "C";
-                ManagementObject disk = new ManagementObject(
-                    @"win32_logicaldisk.deviceid=""" + drive + @":""");
-                disk.Get();
-                string volumeSerial = disk["VolumeSerialNumber"].ToString();
-
-                byte[] data = Encoding.Default.GetBytes(cpuInfo + "_" + volumeSerial);
-
-                SHA256 sha = new SHA256Managed();
-                byte[] result = sha.ComputeHash(data);
-
-                return Convert.ToBase64String(result);
-            }
-        }
-
         #endregion
 
         #region Private Methods
@@ -209,7 +177,7 @@ namespace ClearCanvas.Common.UsageTracking
                                        Region = CultureInfo.CurrentCulture.Name,
                                        Timestamp = Platform.Time,
                                        OS = Environment.OSVersion.ToString(),
-                                       MachineIdentifier =  MachineIdentifier,
+                                       MachineIdentifier =  MachineIdentifierUtilities.MachineIdentifier,
                                        MessageType = UsageType.Other,
                                        //LicenseString = ProductInformation.LicenseString
                                    };
