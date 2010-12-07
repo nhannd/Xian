@@ -64,6 +64,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// <param name="overlayPlaneIod">The IOD object containing properties of the overlay plane.</param>
 		/// <param name="overlayPixelData">The overlay pixel data in 8-bits per pixel format, with each pixel being either 0 or 255.</param>
 		/// <param name="source">A value identifying the source of the overlay plane.</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="overlayPixelData"/> is NULL or 0-length.</exception>
 		public OverlayPlaneGraphic(OverlayPlane overlayPlaneIod, byte[] overlayPixelData, OverlayPlaneSource source) : this(overlayPlaneIod, overlayPixelData, 0, source) {}
 
 		/// <summary>
@@ -82,6 +83,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// <param name="overlayPixelData">The overlay pixel data in 8-bits per pixel format, with each pixel being either 0 or 255.</param>
 		/// <param name="frameIndex">The overlay frame index (0-based). Single-frame overlays should specify 0.</param>
 		/// <param name="source">A value identifying the source of the overlay plane.</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="overlayPixelData"/> is NULL or 0-length.</exception>
 		public OverlayPlaneGraphic(OverlayPlane overlayPlaneIod, byte[] overlayPixelData, int frameIndex, OverlayPlaneSource source)
 		{
 			Platform.CheckNonNegative(frameIndex, "frameIndex");
@@ -168,7 +170,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			int cols = overlayPlaneIod.OverlayColumns;
 
 			if (overlayData == null || overlayData.Length == 0)
-				throw new Exception("Overlay plane data is invalid.");
+				throw new ArgumentNullException("overlayData", "Overlay plane data is invalid.");
 
 			GrayscaleImageGraphic imageGraphic = new GrayscaleImageGraphic(
 				rows, cols, // the reported overlay dimensions
@@ -370,6 +372,18 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				pixelData.Raw);
 		}
 
+		/// <summary>
+		/// Sets any error text to be displayed on the overlay plane.
+		/// </summary>
+		/// <param name="errorMessage">The error text to be displayed.</param>
+		public void SetError(string errorMessage)
+		{
+			var errorGraphic = (ErrorGraphic) CollectionUtils.SelectFirst(Graphics, g => g is ErrorGraphic);
+			if (errorGraphic == null)
+				Graphics.Add(errorGraphic = new ErrorGraphic());
+			errorGraphic.ErrorText = !string.IsNullOrEmpty(errorMessage) ? errorMessage : string.Empty;
+		}
+
 		#region IShutterGraphic Members
 
 		/// <summary>
@@ -542,6 +556,53 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			public override string GetDescription()
 			{
 				return string.Format("OverlayColorMap_{0}_{1}_{2}_{3}", this.Color.A, this.Color.R, this.Color.G, this.Color.B);
+			}
+		}
+
+		#endregion
+
+		#region ErrorGraphic
+
+		[Cloneable]
+		private class ErrorGraphic : CompositeGraphic
+		{
+			[CloneIgnore]
+			private InvariantTextPrimitive _textGraphic;
+
+			public ErrorGraphic()
+			{
+				Graphics.Add(_textGraphic = new InvariantTextPrimitive {Color = System.Drawing.Color.WhiteSmoke});
+			}
+
+			/// <summary>
+			/// Cloning constructor.
+			/// </summary>
+			private ErrorGraphic(ErrorGraphic source, ICloningContext context)
+			{
+				context.CloneFields(source, this);
+			}
+
+			[OnCloneComplete]
+			private void OnCloneComplete()
+			{
+				_textGraphic = (InvariantTextPrimitive) CollectionUtils.SelectFirst(Graphics, g => g is InvariantTextPrimitive);
+			}
+
+			public string ErrorText
+			{
+				get { return _textGraphic.Text; }
+				set { _textGraphic.Text = value; }
+			}
+
+			public override void OnDrawing()
+			{
+				// upon drawing, re-centre the text
+				RectangleF bounds = base.ParentPresentationImage.ClientRectangle;
+				PointF anchor = new PointF(bounds.Left + bounds.Width/2, bounds.Top + bounds.Height/2);
+				_textGraphic.CoordinateSystem = CoordinateSystem.Destination;
+				_textGraphic.Location = anchor;
+				_textGraphic.ResetCoordinateSystem();
+				base.OnDrawing();
 			}
 		}
 

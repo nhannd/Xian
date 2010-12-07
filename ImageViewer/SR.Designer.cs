@@ -826,7 +826,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An error has occured while attempting to clone a display set.  Please contact your PACS administrator or check the log for more details..
+        ///   Looks up a localized string similar to An error has occured while attempting to clone a display set.  Please check the log for more details..
         /// </summary>
         public static string MessageErrorCloningDisplaySet {
             get {
@@ -835,7 +835,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An error has occured while attempting to clone an image.  Please contact your PACS administrator or check the log for more details..
+        ///   Looks up a localized string similar to An error has occured while attempting to clone an image.  Please check the log for more details..
         /// </summary>
         public static string MessageErrorCloningPresentationImage {
             get {
@@ -844,7 +844,18 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An unrecoverable error occurred while attempting to load the text overlay.  Please contact your PACS administrator or check the log for details..
+        ///   Looks up a localized string similar to One or more overlays
+        ///cannot be displayed.
+        ///Use image with caution..
+        /// </summary>
+        public static string MessageErrorDisplayingOverlays {
+            get {
+                return ResourceManager.GetString("MessageErrorDisplayingOverlays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unrecoverable error occurred while attempting to load the text overlay.  Please see the log for details..
         /// </summary>
         public static string MessageErrorLoadingAnnotationLayout {
             get {
@@ -1033,7 +1044,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An error has occured while attempting to load a presentation state. The presentation state may not have been loaded in its entirety. Please contact your PACS administrator or check the log for more details..
+        ///   Looks up a localized string similar to An error has occured while attempting to load a presentation state. The presentation state may not have been loaded in its entirety. Please check the log for more details..
         /// </summary>
         public static string MessagePresentationStateApplicationFailure {
             get {
@@ -1051,7 +1062,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An error has occured while attempting to read a presentation state file. Please contact your PACS administrator or check the log for more details..
+        ///   Looks up a localized string similar to An error has occured while attempting to read a presentation state file. Please check the log for more details..
         /// </summary>
         public static string MessagePresentationStateReadFailure {
             get {
@@ -1078,7 +1089,8 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An error has occurred while analyzing the Roi.  Please contact your PACS administrator or check the log for more details..
+        ///   Looks up a localized string similar to An error has occurred while analyzing the Roi.
+        ///Please check the log for more details..
         /// </summary>
         public static string MessageRoiAnalysisError {
             get {
@@ -1096,7 +1108,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The study is nearline and cannot be loaded.  The study must be restored by a PACS administrator..
+        ///   Looks up a localized string similar to The study is nearline and cannot be loaded.  If your PACS is a ClearCanvas ImageServer, try waiting a few minutes and load the study again.  Otherwise, the study must be restored by a PACS administrator..
         /// </summary>
         public static string MessageStudyNearline {
             get {

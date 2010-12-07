@@ -28,8 +28,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 	{
 		internal static readonly DicomDefaultPresentationState Instance = new DicomDefaultPresentationState();
 
-		private DicomDefaultPresentationState()
-		{}
+		private DicomDefaultPresentationState() {}
 
 		private static void Deserialize(IDicomPresentationImage image)
 		{
@@ -63,7 +62,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				List<OverlayPlaneGraphic> overlayPlaneGraphics = DicomGraphicsFactory.CreateOverlayPlaneGraphics(image.Frame);
 				foreach (OverlayPlaneGraphic overlay in overlayPlaneGraphics)
 				{
-					if (overlay.Index == bitmapShutterIndex)
+					if (bitmapShutterIndex != -1 && overlay.Index == bitmapShutterIndex)
 					{
 						// Someday when we support CIELab colour, we should set presentation value/colour based on client display type
 						if (bitmapShutterIod.ShutterPresentationValue != null)
@@ -73,11 +72,17 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 						// insert the bitmap shutter into the shutters graphic instead of with the other overlays
 						dicomGraphicsPlane.Shutters.Add(overlay);
 					}
-					else
+					else if (overlay.Index >= 0 && overlay.Index < 16)
 					{
 						// otherwise just add the overlay to the default layer for overlays and activate immediately
 						dicomGraphicsPlane.ImageOverlays.Add(overlay);
 						dicomGraphicsPlane.ImageOverlays.ActivateAsLayer(overlay, "OVERLAY");
+					}
+					else
+					{
+						// otherwise just add the overlay to the default layer for overlays and activate immediately
+						dicomGraphicsPlane.UserOverlays.Add(overlay);
+						dicomGraphicsPlane.UserOverlays.ActivateAsLayer(overlay, "OVERLAY");
 					}
 				}
 			}

@@ -81,10 +81,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Extracts an overlay embedded in a DICOM Pixel Data buffer and unpacks it to form an 8-bit overlay pixel data buffer.
 		/// </summary>
 		/// <remarks>
+		/// <para>
+		/// This method processes all pixel allocations in the pixel data buffer. If the pixel data contains mutliple image frames,
+		/// the unpacked overlay data buffer will also be multi-frame (with the key difference that the overlay data will always
+		/// be 8 bits per pixel, rather than potentially 16 bits per pixel).
+		/// </para>
+		/// <para>
 		/// Embedded overlays were last defined in the 2004 DICOM Standard. Since then, their usage has been retired.
 		/// As such, there is no mechanism to directly read or encode embedded overlays. This method may be used as a
 		/// helper to extract overlays in images encoded with a previous version of the standard for display in compatibility
 		/// mode or storage as packed bit data.
+		/// </para>
 		/// </remarks>
 		/// <param name="bitPosition">The bit position the the overlay is embedded at within the DICOM Pixel Data buffer.</param>
 		/// <param name="bitsAllocated">The number of bits allocated per pixel. Must be 8 or 16.</param>
@@ -153,6 +160,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Creates a packed overlay data object using the specified 8-bit pixel data buffer.
 		/// </summary>
+		/// <remarks>
+		/// This function creates an overlay from the non-zero pixels of the specified pixel data.
+		/// </remarks>
 		/// <param name="rows">The number of rows of pixels.</param>
 		/// <param name="columns">The number of columns of pixels.</param>
 		/// <param name="bigEndianWords">A value indicating if the output overlay data should be encoded as 16-bit words with big endian byte ordering.</param>
@@ -166,6 +176,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Creates a packed overlay data object using the specified pixel data buffer.
 		/// </summary>
+		/// <remarks>
+		/// This function creates an overlay from the non-zero pixels of the specified pixel data. Only the bits
+		/// specified by <paramref name="bitsStored"/> and <paramref name="highBit"/> are considered.
+		/// </remarks>
 		/// <param name="rows">The number of rows of pixels.</param>
 		/// <param name="columns">The number of columns of pixels.</param>
 		/// <param name="bitsStored">The number of bits stored per pixel.</param>

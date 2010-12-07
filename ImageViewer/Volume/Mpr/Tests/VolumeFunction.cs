@@ -322,7 +322,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 					return (byte[]) base.Parent[DicomTags.PixelData].Values;
 				}
 
-				public override byte[] GetNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber)
+				public override byte[] GetNormalizedOverlayData(int overlayNumber)
 				{
 					return new byte[0];
 				}

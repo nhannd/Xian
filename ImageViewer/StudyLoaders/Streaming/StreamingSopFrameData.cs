@@ -103,17 +103,19 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 				}
 				else
 				{
-					OverlayPlaneModuleIod opmi = new OverlayPlaneModuleIod(this.Parent);
-					foreach (OverlayPlane overlayPlane in opmi)
+					var overlayPlaneModuleIod = new OverlayPlaneModuleIod(Parent);
+					foreach (var overlayPlane in overlayPlaneModuleIod)
 					{
 						if (IsOverlayEmbedded(overlayPlane) && _overlayData[overlayPlane.Index] == null)
 						{
-							byte[] overlayData = OverlayData.UnpackFromPixelData(overlayPlane.OverlayBitPosition, this.Parent[DicomTags.BitsAllocated].GetInt32(0, 0), false, pixelData);
+							// if the overlay is embedded in pixel data and we haven't cached it yet, extract it now before we normalize the frame pixel data
+							var overlayData = OverlayData.UnpackFromPixelData(overlayPlane.OverlayBitPosition, Parent[DicomTags.BitsAllocated].GetInt32(0, 0), false, pixelData);
 							_overlayData[overlayPlane.Index] = overlayData;
 						}
 						else if (!overlayPlane.HasOverlayData)
 						{
-							Platform.Log(LogLevel.Warn, "The image {0} appears to be missing OverlayData for group 0x{1:X4}.", this.Parent.SopInstanceUid, overlayPlane.Group);
+							// if the overlay is not embedded and OverlayData appears to be missing, log a warning now
+							Platform.Log(LogLevel.Warn, "The image {0} appears to be missing OverlayData for group 0x{1:X4}.", Parent.SopInstanceUid, overlayPlane.Group);
 						}
 					}
 
@@ -123,37 +125,58 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 				return pixelData;
 			}
 
-			protected override byte[] CreateNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber)
+			/// <summary>
+			/// Called by <see cref="StandardSopFrameData.GetNormalizedOverlayData"/> to create a new byte buffer containing normalized 
+			/// overlay pixel data for a particular overlay plane.
+			/// </summary>
+			/// <remarks>
+			/// See <see cref="StandardSopFrameData.GetNormalizedOverlayData"/> for details on the expected format of the byte buffer.
+			/// </remarks>
+			/// <param name="overlayNumber">The 1-based overlay plane number.</param>
+			/// <returns>A new byte buffer containing the normalized overlay pixel data.</returns>
+			protected override byte[] CreateNormalizedOverlayData(int overlayNumber)
 			{
-				int frameIndex = overlayFrameNumber - 1;
-				int overlayIndex = overlayGroupNumber - 1;
+				var overlayIndex = overlayNumber - 1;
 
 				byte[] overlayData = null;
 
-				OverlayPlaneModuleIod opmi = new OverlayPlaneModuleIod(this.Parent);
-				if (opmi.HasOverlayPlane(overlayIndex))
+				// check whether or not the overlay plane exists before attempting to ascertain
+				// whether or not the overlay is embedded in the pixel data
+				var overlayPlaneModuleIod = new OverlayPlaneModuleIod(Parent);
+				if (overlayPlaneModuleIod.HasOverlayPlane(overlayIndex))
 				{
-					OverlayPlane overlayPlane = opmi[overlayIndex];
-
 					if (_overlayData[overlayIndex] == null)
 					{
+						var overlayPlane = overlayPlaneModuleIod[overlayIndex];
 						if (IsOverlayEmbedded(overlayPlane))
 						{
-							this.GetNormalizedPixelData();
+							// if the overlay is embedded, trigger retrieval of pixel data which will populate the cache for us
+							GetNormalizedPixelData();
 						}
 						else
 						{
+							// try to compute the offset in the OverlayData bit stream where we can find the overlay frame that applies to this image frame
+							int overlayFrame;
 							int bitOffset;
-							overlayPlane.TryComputeOverlayDataBitOffset(frameIndex, out bitOffset);
-
-							OverlayData od = new OverlayData(bitOffset,
-							                                 overlayPlane.OverlayRows,
-							                                 overlayPlane.OverlayColumns,
-							                                 overlayPlane.IsBigEndianOW,
-							                                 overlayPlane.OverlayData);
-							_overlayData[overlayIndex] = od.Unpack();
+							if (overlayPlane.TryGetRelevantOverlayFrame(FrameNumber, Parent.NumberOfFrames, out overlayFrame) &&
+							    overlayPlane.TryComputeOverlayDataBitOffset(overlayFrame, out bitOffset))
+							{
+								// offset found - unpack only that overlay frame
+								var od = new OverlayData(bitOffset,
+								                         overlayPlane.OverlayRows,
+								                         overlayPlane.OverlayColumns,
+								                         overlayPlane.IsBigEndianOW,
+								                         overlayPlane.OverlayData);
+								_overlayData[overlayIndex] = od.Unpack();
+							}
+							else
+							{
+								// no relevant overlay frame found - i.e. the overlay for this image frame is blank
+								_overlayData[overlayIndex] = new byte[overlayPlane.GetOverlayFrameLength()];
+							}
 						}
 					}
+
 					overlayData = _overlayData[overlayIndex];
 				}
 
@@ -399,7 +422,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 		/// <remarks>
 		/// We cannot use <see cref="OverlayPlane.IsEmbedded"/> because the PixelData attribute is not in the dataset since we stream it separately.
 		/// </remarks>
-		private static bool IsOverlayEmbedded(OverlayPlane overlayPlane)
+		internal static bool IsOverlayEmbedded(OverlayPlane overlayPlane)
 		{
 			IDicomAttributeProvider provider = overlayPlane.DicomAttributeProvider;
 

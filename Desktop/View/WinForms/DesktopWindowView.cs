@@ -95,7 +95,8 @@ namespace ClearCanvas.Desktop.View.WinForms
             switch (e.CloseReason)
             {
                 case System.Windows.Forms.CloseReason.ApplicationExitCall:
-            		//DO let winforms close the form.
+					//When there is a "fatal exception", we terminate the gui toolkit, which calls Application.Exit().
+					//So, we can't cancel the close, otherwise the application can get into a funny state.
 					return;
                 case System.Windows.Forms.CloseReason.TaskManagerClosing:
                 case System.Windows.Forms.CloseReason.WindowsShutDown:
