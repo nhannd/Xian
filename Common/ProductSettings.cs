@@ -207,7 +207,7 @@ namespace ClearCanvas.Common
 	}
 
 	[SettingsGroupDescription("Settings that describe the product, such as the product name and version.")]
-	[SettingsProvider(typeof(LocalFileSettingsProvider))]
+	[SettingsProvider(typeof(ApplicationCriticalSettingsProvider))]
 	[SharedSettingsMigrationDisabled]
 	internal sealed partial class ProductSettings
 	{

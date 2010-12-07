@@ -330,6 +330,7 @@
     <Compile Include="Configuration\ApplicationSettingsHelper.cs" />
     <Compile Include="Configuration\ConfigurationFileReader.cs" />
     <Compile Include="Configuration\ConfigurationSectionPath.cs" />
+    <Compile Include="Configuration\ApplicationCriticalSettingsProvider.cs" />
     <Compile Include="Configuration\ISharedApplicationSettingsProvider.cs" />
     <Compile Include="Configuration\IMigrateSettings.cs" />
     <Compile Include="Configuration\ExtendedLocalFileSettingsProvider.cs" />
