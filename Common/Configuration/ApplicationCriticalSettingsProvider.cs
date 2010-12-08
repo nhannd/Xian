@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Reflection;
 
 namespace ClearCanvas.Common.Configuration
@@ -31,6 +32,7 @@ namespace ClearCanvas.Common.Configuration
 	/// </remarks>
 	public sealed class ApplicationCriticalSettingsProvider : LocalFileSettingsProvider
 	{
+        private const string DefaultFilename = "CriticalSettings";
 		private readonly string _criticalSettingsPath;
 
 		/// <summary>
@@ -38,7 +40,7 @@ namespace ClearCanvas.Common.Configuration
 		/// </summary>
 		public ApplicationCriticalSettingsProvider()
 		{
-			_criticalSettingsPath = string.Format("{0}.xcfg", Assembly.GetEntryAssembly().Location);
+            _criticalSettingsPath = string.Format("{0}.xcfg", Path.Combine(Platform.InstallDirectory, DefaultFilename));
 		}
 
 		/// <summary>
