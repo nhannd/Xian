@@ -313,49 +313,27 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// Gets a value indicating if the overlay data for this plane is embedded in the unused bits of the <see cref="DicomTags.PixelData"/>.
 		/// </summary>
 		/// <remarks>
-		/// <para>
-		/// This determination algorithm checks for non-existence of <see cref="DicomTags.OverlayData"/>,
-		/// existence of <see cref="DicomTags.PixelData"/>, and that <see cref="DicomTags.OverlayBitPosition"/>
-		/// is valid given <see cref="DicomTags.BitsAllocated"/>, <see cref="DicomTags.BitsStored"/>, and
-		/// <see cref="DicomTags.HighBit"/>.
-		/// </para>
-		/// <para>
-		/// If <b>any</b> of these tags (which, it should be noted, are not part of the Overlay Plane Module)
-		/// may not be in the same dataset, then it is highly recommended that a custom determination be made
-		/// instead of using this property.
-		/// </para>
+		/// A previous implementation of this property checked for consistency of the attributes in the Overlay Plane Module
+		/// with the attributes in the Image Pixel Module. This has since been deprecated as there are legitimate
+		/// use cases where the Image Pixel Module is not necessarily in the same dataset as the Overlay Plane Module.
+		/// This property now simply returns the inverse of <see cref="HasOverlayData"/>.
 		/// </remarks>
+		[Obsolete("This property has been deprecated in favour of checking the inverse of HasOverlayData.")]
 		public bool IsEmbedded
 		{
-			get
-			{
-				// OverlayData exists => not embedded
-				DicomAttribute overlayData = base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayData];
-				if (overlayData.IsEmpty || overlayData.IsNull)
-				{
-					// embedded => PixelData exists, not empty
-					DicomAttribute pixelData = base.DicomAttributeProvider[DicomTags.PixelData];
-					if (!pixelData.IsEmpty && !pixelData.IsNull)
-					{
-						// embedded => BitsAllocated={8|16}, OverlayBitPosition in [0, BitsAllocated)
-						int overlayBitPosition = base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayBitPosition].GetInt32(0, -1);
-						int bitsAllocated = base.DicomAttributeProvider[DicomTags.BitsAllocated].GetInt32(0, 0);
-						if (overlayBitPosition >= 0 && overlayBitPosition < bitsAllocated && (bitsAllocated == 8 || bitsAllocated == 16))
-						{
-							// embedded => OverlayBitPosition in (HighBit, BitsAllocated) or [0, HighBit - BitsStored + 1)
-							int highBit = base.DicomAttributeProvider[DicomTags.HighBit].GetInt32(0, 0);
-							int bitsStored = base.DicomAttributeProvider[DicomTags.BitsStored].GetInt32(0, 0);
-							return (overlayBitPosition > highBit || overlayBitPosition < highBit - bitsStored + 1);
-						}
-					}
-				}
-				return false;
-			}
+			get { return !HasOverlayData; }
 		}
 
 		/// <summary>
-		/// Gets a value indicating if the <see cref="DicomTags.OverlayData"/> exists for this plane.
+		/// Gets a value indicating if the <see cref="DicomTags.OverlayData"/> attribute exists for this plane in the underlying collection.
 		/// </summary>
+		/// <remarks>
+		/// In previous versions of the DICOM Standard, overlay data bits could be stored in unused bits of an image SOP's
+		/// <see cref="DicomTags.PixelData"/>, provided the image had 1 sample per pixel and the overlay pixels had a
+		/// 1-to-1 relationship with the image pixels. If the overlay plane was stored in such a manner, the <see cref="DicomTags.OverlayData"/>
+		/// attribute would not be included at all. This property may be used to determine whether or not the <see cref="DicomTags.OverlayData"/>
+		/// exists in the collection in order to support legacy SOP instances.
+		/// </remarks>
 		public bool HasOverlayData
 		{
 			get
@@ -703,7 +681,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				throw new ArgumentOutOfRangeException("imageFrameNumber", "imageFrameNumber must be a positive, non-zero value and less than or equal to totalImageFrames.");
 
 			// if the overlay plane is embedded in the pixel data, the overlay frames are required to be 1-to-1 with each image frame
-			if (IsEmbedded)
+			if (!HasOverlayData)
 				return imageFrameNumber;
 
 			// if the overlay is not a multi-frame, then the only overlay frame is applicable to all image frames
@@ -754,7 +732,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		public int ComputeOverlayDataBitOffset(int overlayFrameNumber)
 		{
 			// if the overlay is embedded in the pixel data, fail
-			if (IsEmbedded)
+			if (!HasOverlayData)
 				throw new InvalidOperationException("This operation is invalid when the overlay plane is embedded in the pixel data.");
 
 			int result;
@@ -772,7 +750,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		public bool TryComputeOverlayDataBitOffset(int overlayFrameNumber, out int bitOffset)
 		{
 			// if the overlay is embedded in the pixel data, fail
-			if (IsEmbedded)
+			if (!HasOverlayData)
 			{
 				bitOffset = -1;
 				return false;

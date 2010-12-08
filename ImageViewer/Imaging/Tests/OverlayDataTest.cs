@@ -45,27 +45,27 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		[Test]
 		public void TestUnpack_SingleFrameA()
 		{
-			// 1 frame, 5x3
-			// 11111
-			// 10001
-			// 11111
-			// continuous bit stream: 11111100 0111111x
-			// continuous LE byte stream: 00111111 x1111110
-			// continuous BE word stream: x1111110 00111111
+			// 1 frame, 7x3
+			// 1111111
+			// 1000101
+			// 1111111
+			// continuous bit stream: 11111111 00010111 11111xxx xxxxxxxx
+			// continuous LE byte stream: 11111111 11101000 xxx11111 xxxxxxxx
+			// continuous BE word stream: 11101000 11111111 xxxxxxxx xxx11111
 
-			const string expectedResult = "111111000111111";
-			var packedBits = new byte[] {0x3f, 0x7e};
+			const string expectedResult = "111111110001011111111";
+			var packedBits = new byte[] {0xff, 0xe8, 0x9f, 0xf9};
 
 			// little endian test
 			{
-				var unpackedBits = new OverlayData(3, 5, false, packedBits).Unpack();
+				var unpackedBits = new OverlayData(3, 7, false, packedBits).Unpack();
 				var actualResult = FormatNonZeroBytes(unpackedBits);
 				Assert.AreEqual(expectedResult, actualResult, "Error in unpacked bits for single frame case A (little endian)");
 			}
 
 			// big endian test
 			{
-				var unpackedBits = new OverlayData(3, 5, true, SwapBytes(packedBits)).Unpack();
+				var unpackedBits = new OverlayData(3, 7, true, SwapBytes(packedBits)).Unpack();
 				var actualResult = FormatNonZeroBytes(unpackedBits);
 				Assert.AreEqual(expectedResult, actualResult, "Error in unpacked bits for single frame case A (big endian)");
 			}
@@ -74,26 +74,26 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		[Test]
 		public void TestUnpack_SingleFrameB()
 		{
-			// 1 frame, 5x3
-			// 11111
-			// 10010
-			// 00000
-			// continuous bit stream: 11111100 1000000x
-			// continuous LE byte stream: 00111111 x0000001
+			// 1 frame, 7x3
+			// 1111111
+			// 1001011
+			// 0000011
+			// continuous bit stream: 11111111 00101100 00011xxx xxxxxxxx
+			// continuous LE byte stream: 11111111 00110100 xxx11000 xxxxxxxx
 
-			const string expectedResult = "111111001000000";
-			var packedBits = new byte[] {0x3f, 0x81};
+			const string expectedResult = "111111110010110000011";
+			var packedBits = new byte[] {0xff, 0x34, 0x78, 0xf9};
 
 			// little endian test
 			{
-				var unpackedBits = new OverlayData(3, 5, false, packedBits).Unpack();
+				var unpackedBits = new OverlayData(3, 7, false, packedBits).Unpack();
 				var actualResult = FormatNonZeroBytes(unpackedBits);
 				Assert.AreEqual(expectedResult, actualResult, "Error in unpacked bits for single frame case B (little endian)");
 			}
 
 			// big endian test
 			{
-				var unpackedBits = new OverlayData(3, 5, true, SwapBytes(packedBits)).Unpack();
+				var unpackedBits = new OverlayData(3, 7, true, SwapBytes(packedBits)).Unpack();
 				var actualResult = FormatNonZeroBytes(unpackedBits);
 				Assert.AreEqual(expectedResult, actualResult, "Error in unpacked bits for single frame case B (big endian)");
 			}
@@ -171,13 +171,12 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		[Test]
 		public void TestUnpackFromPixelData_16BitsAllocated()
 		{
-			// 1 frame, 5x3
-			// 11111
-			// 10010
-			// 00000
-			// continuous bit stream: 11111100 1000000x
-			// continuous LE byte stream: 00111111 x0000001
-			const string expectedResult = "111111001000000";
+			// 1 frame, 7x3
+			// 1111111
+			// 1001011
+			// 0000011
+			// continuous bit stream: 11111111 00101100 00011xxx xxxxxxxx
+			const string expectedResult = "111111110010110000011";
 
 			// 16 bits allocated
 
@@ -191,15 +190,21 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			                          		(0xB3 & 0x0F) | (1 << 6), 0x17,
 			                          		(0xFC & 0x0F) | (1 << 6), 0x0c,
 			                          		(0xBC & 0x0F) | (1 << 6), 0xc4,
+			                          		(0x0B & 0x0F) | (1 << 6), 0x4c,
+			                          		(0x74 & 0x0F) | (1 << 6), 0xe5,
 			                          		(0x4d & 0x0F) | (0 << 6), 0x45,
 			                          		(0xbf & 0x0F) | (0 << 6), 0xcd,
 			                          		(0x86 & 0x0F) | (1 << 6), 0xAE,
 			                          		(0x75 & 0x0F) | (0 << 6), 0xA9,
+			                          		(0x51 & 0x0F) | (1 << 6), 0xbe,
+			                          		(0x71 & 0x0F) | (1 << 6), 0x7e,
 			                          		(0xA8 & 0x0F) | (0 << 6), 0x29,
 			                          		(0x19 & 0x0F) | (0 << 6), 0x11,
 			                          		(0xAC & 0x0F) | (0 << 6), 0xDD,
 			                          		(0xD4 & 0x0F) | (0 << 6), 0x01,
-			                          		(0x79 & 0x0F) | (0 << 6), 0xF0
+			                          		(0x79 & 0x0F) | (0 << 6), 0xF0,
+			                          		(0xA0 & 0x0F) | (1 << 6), 0xe2,
+			                          		(0xBA & 0x0F) | (1 << 6), 0x98
 			                          	});
 
 			// little endian

@@ -58,7 +58,6 @@ namespace ClearCanvas.Dicom.Iod.Modules.Tests
 				// assert overlay plane encoding detection
 				Assert.AreEqual(true, overlayPlane.HasOverlayData, "Incorrect OverlayData detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(false, overlayPlane.IsBigEndianOW, "Incorrect OW/OB detection for plane #{0}", overlayIndex);
-				Assert.AreEqual(false, overlayPlane.IsEmbedded, "Incorrect embedded overlay detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(false, overlayPlane.IsMultiFrame, "Incorrect multiframe detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(103*89, overlayPlane.GetOverlayFrameLength(), "Incorrect frame size computation for plane #{0}", overlayIndex);
 
@@ -88,7 +87,6 @@ namespace ClearCanvas.Dicom.Iod.Modules.Tests
 				// assert overlay plane encoding detection
 				Assert.AreEqual(false, overlayPlane.HasOverlayData, "Incorrect OverlayData detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(false, overlayPlane.IsBigEndianOW, "Incorrect OW/OB detection for plane #{0}", overlayIndex);
-				Assert.AreEqual(true, overlayPlane.IsEmbedded, "Incorrect embedded overlay detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(false, overlayPlane.IsMultiFrame, "Incorrect multiframe detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(97*101, overlayPlane.GetOverlayFrameLength(), "Incorrect frame size computation for plane #{0}", overlayIndex);
 
@@ -118,7 +116,6 @@ namespace ClearCanvas.Dicom.Iod.Modules.Tests
 				// assert overlay plane encoding detection
 				Assert.AreEqual(true, overlayPlane.HasOverlayData, "Incorrect OverlayData detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(false, overlayPlane.IsBigEndianOW, "Incorrect OW/OB detection for plane #{0}", overlayIndex);
-				Assert.AreEqual(false, overlayPlane.IsEmbedded, "Incorrect embedded overlay detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(false, overlayPlane.IsMultiFrame, "Incorrect multiframe detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(67*71, overlayPlane.GetOverlayFrameLength(), "Incorrect frame size computation for plane #{0}", overlayIndex);
 
@@ -148,7 +145,6 @@ namespace ClearCanvas.Dicom.Iod.Modules.Tests
 				// assert overlay plane encoding detection
 				Assert.AreEqual(false, overlayPlane.HasOverlayData, "Incorrect OverlayData detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(false, overlayPlane.IsBigEndianOW, "Incorrect OW/OB detection for plane #{0}", overlayIndex);
-				Assert.AreEqual(true, overlayPlane.IsEmbedded, "Incorrect embedded overlay detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(false, overlayPlane.IsMultiFrame, "Incorrect multiframe detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(97*101, overlayPlane.GetOverlayFrameLength(), "Incorrect frame size computation for plane #{0}", overlayIndex);
 
@@ -204,7 +200,6 @@ namespace ClearCanvas.Dicom.Iod.Modules.Tests
 				// assert overlay plane encoding detection
 				Assert.AreEqual(true, overlayPlane.HasOverlayData, "Incorrect OverlayData detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(false, overlayPlane.IsBigEndianOW, "Incorrect OW/OB detection for plane #{0}", overlayIndex);
-				Assert.AreEqual(false, overlayPlane.IsEmbedded, "Incorrect embedded overlay detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(true, overlayPlane.IsMultiFrame, "Incorrect multiframe detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(103*89, overlayPlane.GetOverlayFrameLength(), "Incorrect frame size computation for plane #{0}", overlayIndex);
 
@@ -234,7 +229,6 @@ namespace ClearCanvas.Dicom.Iod.Modules.Tests
 				// assert overlay plane encoding detection
 				Assert.AreEqual(false, overlayPlane.HasOverlayData, "Incorrect OverlayData detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(false, overlayPlane.IsBigEndianOW, "Incorrect OW/OB detection for plane #{0}", overlayIndex);
-				Assert.AreEqual(true, overlayPlane.IsEmbedded, "Incorrect embedded overlay detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(true, overlayPlane.IsMultiFrame, "Incorrect multiframe detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(97*101, overlayPlane.GetOverlayFrameLength(), "Incorrect frame size computation for plane #{0}", overlayIndex);
 
@@ -264,7 +258,6 @@ namespace ClearCanvas.Dicom.Iod.Modules.Tests
 				// assert overlay plane encoding detection
 				Assert.AreEqual(true, overlayPlane.HasOverlayData, "Incorrect OverlayData detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(false, overlayPlane.IsBigEndianOW, "Incorrect OW/OB detection for plane #{0}", overlayIndex);
-				Assert.AreEqual(false, overlayPlane.IsEmbedded, "Incorrect embedded overlay detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(true, overlayPlane.IsMultiFrame, "Incorrect multiframe detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(67*71, overlayPlane.GetOverlayFrameLength(), "Incorrect frame size computation for plane #{0}", overlayIndex);
 
@@ -294,7 +287,6 @@ namespace ClearCanvas.Dicom.Iod.Modules.Tests
 				// assert overlay plane encoding detection
 				Assert.AreEqual(false, overlayPlane.HasOverlayData, "Incorrect OverlayData detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(false, overlayPlane.IsBigEndianOW, "Incorrect OW/OB detection for plane #{0}", overlayIndex);
-				Assert.AreEqual(true, overlayPlane.IsEmbedded, "Incorrect embedded overlay detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(true, overlayPlane.IsMultiFrame, "Incorrect multiframe detection for plane #{0}", overlayIndex);
 				Assert.AreEqual(97*101, overlayPlane.GetOverlayFrameLength(), "Incorrect frame size computation for plane #{0}", overlayIndex);
 
@@ -343,7 +335,6 @@ namespace ClearCanvas.Dicom.Iod.Modules.Tests
 			// assert overlay plane encoding detection
 			Assert.AreEqual(true, overlayPlane.HasOverlayData, "Incorrect OverlayData detection for plane #{0}", overlayIndex);
 			Assert.AreEqual(false, overlayPlane.IsBigEndianOW, "Incorrect OW/OB detection for plane #{0}", overlayIndex);
-			Assert.AreEqual(false, overlayPlane.IsEmbedded, "Incorrect embedded overlay detection for plane #{0}", overlayIndex);
 			Assert.AreEqual(false, overlayPlane.IsMultiFrame, "Incorrect multiframe detection for plane #{0}", overlayIndex);
 			Assert.AreEqual(67*71, overlayPlane.GetOverlayFrameLength(), "Incorrect frame size computation for plane #{0}", overlayIndex);
 
@@ -358,60 +349,6 @@ namespace ClearCanvas.Dicom.Iod.Modules.Tests
 			// assert overlay plane multiframe attribute values
 			Assert.AreEqual(null, overlayPlane.ImageFrameOrigin, "Wrong image frame origin for plane #{0}", overlayIndex);
 			Assert.AreEqual(null, overlayPlane.NumberOfFramesInOverlay, "Wrong number of frames in overlay for plane #{0}", overlayIndex);
-		}
-
-		#endregion
-
-		#region IsEmbedded Tests
-
-		[Test]
-		public void TestIsEmbedded()
-		{
-			// no values => not embedded
-			AssertIsEmbedded(false, false, false, null, null, null, null);
-
-			// normal embedded => embedded
-			AssertIsEmbedded(true, false, true, 16, 15, 14, 15);
-			AssertIsEmbedded(true, false, true, 16, 15, 15, 0);
-			AssertIsEmbedded(true, false, true, 8, 6, 7, 0);
-			AssertIsEmbedded(true, false, true, 8, 6, 5, 6);
-
-			// has embedded attributes, but already has overlay data => not embedded
-			AssertIsEmbedded(false, true, true, 16, 15, 14, 15);
-
-			// missing pixel data => not embedded
-			AssertIsEmbedded(false, false, false, 16, 15, 14, 15);
-
-			// not 8 or 16 bits allocated => not embedded
-			AssertIsEmbedded(false, false, true, null, 12, 11, 13);
-			AssertIsEmbedded(false, false, true, 6, 12, 11, 13);
-
-			// bit position overlaps pixel data as defined by bits stored and high bit => not embedded
-			AssertIsEmbedded(false, false, true, 16, 12, 11, 11);
-		}
-
-		private static void AssertIsEmbedded(bool expectedResult,
-		                                     bool hasOverlayData, bool hasPixelData, int? bitsAllocated, int? bitsStored, int? highBit, int? overlayBitPosition)
-		{
-			var dataset = new DicomAttributeCollection();
-
-			if (hasOverlayData)
-				dataset[DicomTags.OverlayData].Values = new byte[1];
-			if (hasPixelData)
-				dataset[DicomTags.PixelData].Values = new byte[1];
-			if (bitsAllocated.HasValue)
-				dataset[DicomTags.BitsAllocated].SetInt32(0, bitsAllocated.Value);
-			if (bitsStored.HasValue)
-				dataset[DicomTags.BitsStored].SetInt32(0, bitsStored.Value);
-			if (highBit.HasValue)
-				dataset[DicomTags.HighBit].SetInt32(0, highBit.Value);
-			if (overlayBitPosition.HasValue)
-				dataset[DicomTags.OverlayBitPosition].SetInt32(0, overlayBitPosition.Value);
-
-			var plane = new OverlayPlane(0, dataset);
-			Assert.AreEqual(expectedResult, plane.IsEmbedded,
-			                "Embedded overlay status incorrectly detected (OD:{0},PD:{1},bA{2},bS{3},hb{4},bp{5})",
-			                hasOverlayData, hasPixelData, bitsAllocated, bitsStored, highBit, overlayBitPosition);
 		}
 
 		#endregion

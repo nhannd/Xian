@@ -33,10 +33,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ReferencedAssemblies\nunit.framework.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
@@ -66,7 +62,6 @@
     </Compile>
     <Compile Include="StreamingSopFrameData.cs" />
     <Compile Include="StreamingStudyLoader.cs" />
-    <Compile Include="Tests\StreamingSopDataSourceTests.cs" />
     <Compile Include="ViewerFrameEnumerator.cs" />
   </ItemGroup>
   <ItemGroup>
