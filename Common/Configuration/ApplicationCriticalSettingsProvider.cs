@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using System.Reflection;
 
 namespace ClearCanvas.Common.Configuration
 {
@@ -32,7 +31,6 @@ namespace ClearCanvas.Common.Configuration
 	/// </remarks>
 	public sealed class ApplicationCriticalSettingsProvider : LocalFileSettingsProvider
 	{
-        private const string DefaultFilename = "CriticalSettings";
 		private readonly string _criticalSettingsPath;
 
 		/// <summary>
@@ -40,7 +38,14 @@ namespace ClearCanvas.Common.Configuration
 		/// </summary>
 		public ApplicationCriticalSettingsProvider()
 		{
-            _criticalSettingsPath = string.Format("{0}.xcfg", Path.Combine(Platform.InstallDirectory, DefaultFilename));
+			try
+			{
+				_criticalSettingsPath = Path.ChangeExtension(SystemConfigurationHelper.GetExeConfiguration().FilePath, "xcfg");
+			}
+			catch (Exception)
+			{
+				_criticalSettingsPath = null;
+			}
 		}
 
 		/// <summary>
@@ -53,6 +58,10 @@ namespace ClearCanvas.Common.Configuration
 
 		private IDictionary<string, string> GetCriticalSettingsValues(Type settingsClassType)
 		{
+			// if the critical settings file doesn't exist or we couldn't figure out the path for some reason, fail silently
+			if (string.IsNullOrEmpty(_criticalSettingsPath) || !File.Exists(_criticalSettingsPath))
+				return new Dictionary<string, string>(0);
+
 			var criticalConfiguration = SystemConfigurationHelper.GetExeConfiguration(_criticalSettingsPath);
 			return SystemConfigurationHelper.GetSettingsValues(criticalConfiguration, settingsClassType);
 		}
