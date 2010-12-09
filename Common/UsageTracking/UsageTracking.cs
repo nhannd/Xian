@@ -12,7 +12,10 @@
 using System;
 using System.Globalization;
 using System.Management;
+using System.Net;
+using System.Net.Security;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.Text;
 using System.Threading;
@@ -40,12 +43,11 @@ namespace ClearCanvas.Common.UsageTracking
     /// </summary>
     public static class UsageTracking
     {
-
         #region Private Members
         
         private static event EventHandler<ItemEventArgs<DisplayMessage>> Message;
         private static readonly object SyncLock = new object();
-        
+        private static bool _first = true;
         #endregion
 
         #region Public Static Properties
@@ -83,6 +85,18 @@ namespace ClearCanvas.Common.UsageTracking
         {
             try
             {
+                lock (SyncLock)
+                {
+                    if (_first)
+                    {
+                        //TODO double check to see if this is required on final configuration
+                        ServicePointManager.ServerCertificateValidationCallback +=
+                            ((sender, certificate, chain, sslPolicyErrors) =>
+                             true);
+                        _first = false;
+                    }
+                }
+
                 UsageMessage message = theMessage as UsageMessage;
                 if (message != null)
                 {
@@ -91,14 +105,17 @@ namespace ClearCanvas.Common.UsageTracking
                                                   Message = message
                                               };
 
-                    WSHttpBinding binding = new WSHttpBinding();
-
+                  
 
 #if UNIT_TESTS_USAGE_TRACKING
+                    WSHttpBinding binding = new WSHttpBinding();
                     EndpointAddress endpointAddress = new EndpointAddress("http://localhost:8080/UsageTracking");
 #else
                     //TODO:  This should be updated to real address
-                    EndpointAddress endpointAddress = new EndpointAddress("http://localhost/UsageTracking/Service.svc");
+                    WSHttpBinding binding = new WSHttpBinding(SecurityMode.Transport);
+                    binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.None;
+                    binding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
+                    EndpointAddress endpointAddress = new EndpointAddress("https://apps.clearcanvas.ca/UsageTracking/Service.svc");
 #endif
 
                     RegisterResponse response;
