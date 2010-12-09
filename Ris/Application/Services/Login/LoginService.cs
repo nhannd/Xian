@@ -54,9 +54,9 @@ namespace ClearCanvas.Ris.Application.Services.Login
 		[ReadOperation]
 		public GetWorkingFacilityChoicesResponse GetWorkingFacilityChoices(GetWorkingFacilityChoicesRequest request)
 		{
-			// load all facilities and sort by name
+			// load all facilities and sort by code
 			var facilities = PersistenceContext.GetBroker<IFacilityBroker>().FindAll(false);
-			facilities = CollectionUtils.Sort(facilities, (x, y) => x.Name.CompareTo(y.Name));
+			facilities = CollectionUtils.Sort(facilities, (x, y) => x.Code.CompareTo(y.Code));
 
 			var facilityAssembler = new FacilityAssembler();
 			return new GetWorkingFacilityChoicesResponse(
