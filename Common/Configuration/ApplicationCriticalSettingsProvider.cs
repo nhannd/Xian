@@ -32,19 +32,22 @@ namespace ClearCanvas.Common.Configuration
 	public sealed class ApplicationCriticalSettingsProvider : LocalFileSettingsProvider
 	{
 		private readonly string _criticalSettingsPath;
+        private const string DefaultConfigFilename = "CriticalSettings.xcfg";
 
-		/// <summary>
+	    /// <summary>
 		/// Initializes a new instance of the <see cref="ApplicationCriticalSettingsProvider"/> class.
 		/// </summary>
 		public ApplicationCriticalSettingsProvider()
 		{
 			try
 			{
-				_criticalSettingsPath = Path.ChangeExtension(SystemConfigurationHelper.GetExeConfiguration().FilePath, "xcfg");
+			    _criticalSettingsPath = Path.ChangeExtension(SystemConfigurationHelper.GetExeConfiguration().FilePath, "xcfg");
 			}
 			catch (Exception)
 			{
-				_criticalSettingsPath = null;
+                // SystemConfigurationHelper.GetExeConfiguration() will throw exception when used in ASP.NET
+                // Use the default filename instead.
+                _criticalSettingsPath = Path.Combine(Platform.InstallDirectory, DefaultConfigFilename);
 			}
 		}
 
