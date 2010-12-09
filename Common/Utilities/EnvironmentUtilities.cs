@@ -19,7 +19,7 @@ namespace ClearCanvas.Common.Utilities
 	/// <summary>
 	/// A unique identifier for the machine based on the processor ID and drive ID
 	/// </summary>
-	public sealed class MachineIdentifierUtilities
+	public sealed class EnvironmentUtilities
 	{
 		/// <summary>
 		/// A unique identifier for the machine based on the processor ID and drive ID

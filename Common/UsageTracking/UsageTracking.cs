@@ -194,7 +194,7 @@ namespace ClearCanvas.Common.UsageTracking
                                        Region = CultureInfo.CurrentCulture.Name,
                                        Timestamp = Platform.Time,
                                        OS = Environment.OSVersion.ToString(),
-                                       MachineIdentifier =  MachineIdentifierUtilities.MachineIdentifier,
+                                       MachineIdentifier =  EnvironmentUtilities.MachineIdentifier,
                                        MessageType = UsageType.Other,
                                        //LicenseString = ProductInformation.LicenseString
                                    };
