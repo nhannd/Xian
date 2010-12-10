@@ -115,7 +115,7 @@ namespace ClearCanvas.Common.UsageTracking
                     WSHttpBinding binding = new WSHttpBinding(SecurityMode.Transport);
                     binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.None;
                     binding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
-                    EndpointAddress endpointAddress = new EndpointAddress("https://apps.clearcanvas.ca/UsageTracking/Service.svc");
+                    EndpointAddress endpointAddress = new EndpointAddress("https://4rf/UsageTracking/Service.svc");
 #endif
 
                     RegisterResponse response;
