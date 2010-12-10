@@ -124,7 +124,7 @@
     <value>Could not find license file.</value>
   </data>
   <data name="MenuLicense" xml:space="preserve">
-    <value>Show License</value>
+    <value>Show License Agreement</value>
   </data>
   <data name="MenuShowLogs" xml:space="preserve">
     <value>&amp;Show Logs</value>

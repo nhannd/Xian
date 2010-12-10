@@ -79,7 +79,7 @@ namespace ClearCanvas.Desktop.Help {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show License.
+        ///   Looks up a localized string similar to Show License Agreement.
         /// </summary>
         public static string MenuLicense {
             get {
