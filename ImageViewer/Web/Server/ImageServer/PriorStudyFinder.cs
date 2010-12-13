@@ -126,9 +126,13 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 		    ServerPartition partiton = ServerPartitionMonitor.Instance.GetPartition(study.RetrieveAeTitle);
 			if (partiton != null)
 			{
-                studyLoaderName = "CC_ImageServer";
-			    applicationEntity = new ApplicationEntity("localhost", study.RetrieveAeTitle, partiton.Description, partiton.Port,
-			                                              false, 0, 0);
+                studyLoaderName = WebViewerServices.Default.StudyLoaderName;
+                string host = WebViewerServices.Default.ArchiveServerHostname;
+                int port = WebViewerServices.Default.ArchiveServerPort;
+                int headerPort = WebViewerServices.Default.ArchiveServerHeaderPort;
+                int wadoPort = WebViewerServices.Default.ArchiveServerWADOPort;
+                applicationEntity = new ApplicationEntity(host, study.RetrieveAeTitle, study.RetrieveAeTitle, port, true, headerPort, wadoPort);
+
 			}
             else
 			{

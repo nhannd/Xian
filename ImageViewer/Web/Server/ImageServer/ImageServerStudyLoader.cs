@@ -22,7 +22,7 @@ using ApplicationEntity=ClearCanvas.ImageViewer.StudyManagement.ApplicationEntit
 
 namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 {
-
+    //TODO: Delete this since we are now using streaming study loader only?
     [ExtensionOf(typeof(StudyLoaderExtensionPoint))]
     public class ImageServerStudyLoader : StudyLoader
     {

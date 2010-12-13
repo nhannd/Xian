@@ -14,6 +14,7 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
+    //TODO: Do we still need this? or is it covered by ApplicationStartupParameters ?
     public class ServerConfiguration
     {
         public bool LANMode { get; set; }

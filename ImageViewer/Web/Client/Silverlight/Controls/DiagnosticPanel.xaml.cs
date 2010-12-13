@@ -19,30 +19,25 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls
     {
         public DiagnosticPanel()
         {
-            Logger.SetWriteMethod(LogMessage);
-            Logger.SetErrorMethod(OnError);
-            
             InitializeComponent();
+            
+            ApplicationLog.LogAppended += new EventHandler<ApplicationLogAppendEventArgs>(ApplicationLog_LogAppended);
+            Log.Text = ApplicationLog.GetLogContent();
         }
 
-        private void OnError(string msg)
+        void ApplicationLog_LogAppended(object sender, ApplicationLogAppendEventArgs e)
         {
             Dispatcher.BeginInvoke(() =>
-                                       {
-                                           Log.Text += msg;
-                                           DialogControl.Show("Error", msg, "Dismiss");
-                                       });
+            {
+                Log.Text += e.Message;
+            });
         }
-
-        private void LogMessage(string msg)
-        {
-            Dispatcher.BeginInvoke(() => { Log.Text += msg; });
-        }
-
 
         private void ClearLog_Click(object sender, RoutedEventArgs e)
         {
+            ApplicationLog.Clear();
             Log.Text = "";
         }
+        
     }
 }

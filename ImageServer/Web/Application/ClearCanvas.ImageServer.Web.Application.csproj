@@ -1904,32 +1904,12 @@
     <None Include="Builds\PreBuild.proj" />
     <None Include="Builds\PostBuild.proj" />
     <Content Include="Pages\Error\WebViewerErrorPageMaster.Master" />
+    <Content Include="critical.config" />
     <None Include="Pages\Queues\WorkQueue\WorkQueueSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WorkQueueSettings.Designer.cs</LastGenOutput>
     </None>
     <Content Include="PersistantImage.ashx" />
-    <None Include="Pages\Studies\SeriesDetails\.svn\dir-prop-base" />
-    <None Include="Pages\Studies\SeriesDetails\.svn\entries" />
-    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\Default.aspx.cs.svn-base" />
-    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\Default.aspx.designer.cs.svn-base" />
-    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\Default.aspx.svn-base" />
-    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\PatientSummary.cs.svn-base" />
-    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\PatientSummaryAssembler.cs.svn-base" />
-    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\PatientSummaryPanel.ascx.cs.svn-base" />
-    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\PatientSummaryPanel.ascx.designer.cs.svn-base" />
-    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\PatientSummaryPanel.ascx.svn-base" />
-    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\SeriesDetails.cs.svn-base" />
-    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\SeriesDetailsAssembler.cs.svn-base" />
-    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\SeriesDetailsPanel.ascx.cs.svn-base" />
-    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\SeriesDetailsPanel.ascx.designer.cs.svn-base" />
-    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\SeriesDetailsPanel.ascx.svn-base" />
-    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\SeriesDetailsView.ascx.cs.svn-base" />
-    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\SeriesDetailsView.ascx.designer.cs.svn-base" />
-    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\SeriesDetailsView.ascx.svn-base" />
-    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\StudySummaryPanel.ascx.cs.svn-base" />
-    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\StudySummaryPanel.ascx.designer.cs.svn-base" />
-    <None Include="Pages\Studies\SeriesDetails\.svn\text-base\StudySummaryPanel.ascx.svn-base" />
     <None Include="Scripts\CodeMirror\LICENSE" />
     <Content Include="App_Themes\Default\images\Indicators\HelpSmall.png" />
     <EmbeddedResource Include="App_GlobalResources\SR.resx">
@@ -2026,13 +2006,6 @@
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Pages\Studies\SeriesDetails\.svn\prop-base\" />
-    <Folder Include="Pages\Studies\SeriesDetails\.svn\props\" />
-    <Folder Include="Pages\Studies\SeriesDetails\.svn\tmp\prop-base\" />
-    <Folder Include="Pages\Studies\SeriesDetails\.svn\tmp\props\" />
-    <Folder Include="Pages\Studies\SeriesDetails\.svn\tmp\text-base\" />
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" Condition="" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -2050,7 +2023,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>2628</DevelopmentServerPort>
           <DevelopmentServerVPath>/ImageServer</DevelopmentServerVPath>
-          <IISUrl>http://localhost/ImageServer22</IISUrl>
+          <IISUrl>http://localhost/ImageServerTrunk</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

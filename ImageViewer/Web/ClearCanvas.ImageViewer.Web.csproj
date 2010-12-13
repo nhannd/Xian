@@ -52,15 +52,20 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.ServiceModel">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EntityHandlers\DefaultQFactorStrategy.cs" />
     <Compile Include="EntityHandlers\MessageBoxEntityHandler.cs" />
     <Compile Include="KnownTypeProviders.cs" />
     <Compile Include="DiagnosticsSettings.Designer.cs">
@@ -131,6 +136,10 @@
       <Project>{EA38C1F1-C4BD-4ED7-9B60-C95DF22D6A72}</Project>
       <Name>ClearCanvas.ImageViewer.Layout.Basic</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Services\ClearCanvas.ImageViewer.Services.csproj">
+      <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
+      <Name>ClearCanvas.ImageViewer.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="Common\ClearCanvas.ImageViewer.Web.Common.csproj">
       <Project>{E53B5474-B705-4373-B1DE-0CC7162734A2}</Project>
       <Name>ClearCanvas.ImageViewer.Web.Common</Name>
@@ -143,7 +152,7 @@
       <LastGenOutput>DiagnosticsSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="WebViewerServices.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>WebViewerServices.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>

@@ -53,6 +53,7 @@
     <Compile Include="Event.cs" />
     <Compile Include="IApplicationService.cs" />
     <Compile Include="IApplicationServiceCallback.cs" />
+    <Compile Include="ProcessMessagesResult.cs" />
     <Compile Include="SessionValidationFault.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Namespace.cs" />

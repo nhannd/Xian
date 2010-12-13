@@ -14,6 +14,7 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
+    //TODO: Consolidate this and ApplicationStartupParameters?
     public class StartupArguments
     {
         public StartupArguments(IDictionary<String, String> args)

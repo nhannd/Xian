@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
@@ -13,11 +13,11 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Web.Common
 {
-    [ServiceContract(Namespace = Namespace.Value)]
-	[ServiceKnownType("GetKnownTypes", typeof(ServiceKnownTypeExtensionPoint))]
-	public interface IApplicationServiceCallback
-    {
-		[OperationContract(IsOneWay = true)]
-        void EventNotification(EventSet events);
-    }
+    //[ServiceContract(Namespace = Namespace.Value)]
+    //[ServiceKnownType("GetKnownTypes", typeof(ServiceKnownTypeExtensionPoint))]
+    //public interface IApplicationServiceCallback
+    //{
+    //    [OperationContract(IsOneWay = true)]
+    //    void EventNotification(EventSet events);
+    //}
 }

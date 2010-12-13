@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
@@ -10,8 +10,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Security.Principal;
 using System.Threading;
 using ClearCanvas.Enterprise.Common;
@@ -27,7 +25,8 @@ namespace ClearCanvas.Web.Services
 		public const string MessageAccessDenied = "You are not authorized to view images.";
 		public const string MessagePasswordExpired = "Your password has expired.";
 		public const string MessageSessionEnded  = "Your session has ended.";
-		public const string MessageUnexpectedError = "An unexpected error has occurred.";
+		public const string MessageUnexpectedError = "An unexpected error has occurred on the server.";
+        public const string MessageNoCommunicationFromClientError = "No communication has been received from the client since {0}";
 	}
 
 	[ExtensionOf(typeof(ExceptionTranslatorExtensionPoint))]
@@ -84,10 +83,21 @@ namespace ClearCanvas.Web.Services
 		IApplicationContext Context { get; }
 
 		void Start(StartApplicationRequest request);
-		void ProcessMessages(MessageSet messages);
+        ProcessMessagesResult ProcessMessages(MessageSet messages);
 		void Stop();
 		void Stop(string message);
+	    EventSet GetPendingOutboundEvent(int wait);
+
+	    void SetProperty(string key, object value);
+
+        void Shutdown();
 	}
+
+    public enum MessageBatchMode
+    {
+        PerType,
+        PerTarget
+    }
 
 	public abstract partial class Application : IApplication
 	{
@@ -103,7 +113,9 @@ namespace ClearCanvas.Web.Services
 		private volatile int _lastSessionCheckTicks;
 
 		private TimeSpan? _inactivityTimeoutMinutes;
-		private volatile int _lastActivityTicks = Environment.TickCount;
+
+        private volatile int _lastActivityTicks = Environment.TickCount;
+        private DateTime _lastGetPendingTimestamp = DateTime.Now;
 		private volatile bool _timedOut;
 
 		private readonly object _syncLock = new object();
@@ -119,7 +131,7 @@ namespace ClearCanvas.Web.Services
 
 		protected Application()
 		{
-			Identifier = Guid.NewGuid();
+		    Identifier = Guid.NewGuid();
 			_incomingMessageQueue = new IncomingMessageQueue(
 				messageSet => _synchronizationContext.Send(nothing => DoProcessMessages(messageSet), null));
 		}
@@ -148,7 +160,9 @@ namespace ClearCanvas.Web.Services
 
 		private bool IsSessionShared { get; set; }
 
-		private void AuthenticateUser(StartApplicationRequest request)
+        public MessageBatchMode BatchMode { get; protected set; }
+
+	    private void AuthenticateUser(StartApplicationRequest request)
 		{
 			_userName = request.Username;
 			if (!String.IsNullOrEmpty(request.SessionId))
@@ -181,7 +195,7 @@ namespace ClearCanvas.Web.Services
 			if (_sessionToken == null)
 				return;
 
-			bool nearExpiry = Platform.Time.Add(TimeSpan.FromMinutes(_sessionRenewalOffsetMinutes)) > _sessionToken.ExpiryTime;
+            bool nearExpiry = Platform.Time.Add(TimeSpan.FromMinutes(_sessionRenewalOffsetMinutes)) > _sessionToken.ExpiryTime;
 			TimeSpan timeSinceLastCheck = TimeSpan.FromMilliseconds(Environment.TickCount - _lastSessionCheckTicks);
 			if (nearExpiry || timeSinceLastCheck > _sessionPollingIntervalSeconds)
 			{
@@ -215,9 +229,9 @@ namespace ClearCanvas.Web.Services
 			throw new InvalidOperationException("Start must be called internally.");
 		}
 
-		internal void Start(StartApplicationRequest request)
+		internal void InternalStart(StartApplicationRequest request)
 		{
-			try
+            try
 			{
 				//TODO: do this here (which will fault the channel), or inside DoStart and stop the app?
 				AuthenticateUser(request);
@@ -227,8 +241,10 @@ namespace ClearCanvas.Web.Services
 			catch (Exception)
 			{
 				Logout();
-				//need to dispose _context.
-				DisposeMembers();
+
+				// need to dispose _context.				
+				// DisposeMembers(); // Commented out for non-duplex binding since app is ow managed by the cache
+                
 				throw;
 			}
 
@@ -244,7 +260,7 @@ namespace ClearCanvas.Web.Services
 
 		private void DoStart(StartApplicationRequest request)
 		{
-			//_context.SuspendEvents = true;
+            //_context.SuspendEvents = true;
 
 			try
 			{
@@ -278,7 +294,14 @@ namespace ClearCanvas.Web.Services
 			Stop("");
 		}
 
-		public void Stop(string message)
+        public void Shutdown()
+        {
+            Stop();
+            DisposeMembers();
+            //TODO: Remove from cache immediately?
+        }
+
+	    public void Stop(string message)
 		{
 			lock (_syncLock)
 			{
@@ -303,19 +326,24 @@ namespace ClearCanvas.Web.Services
 			}
 
 			Logout();
-			DisposeMembers();
-		}
 
-		internal void Stop(Exception e)
+			// DisposeMembers(); // Commented out for non-duplex binding since app is ow managed by the cache
+		}
+        
+	    public void SetProperty(string key, object value)
+	    {
+	        Platform.Log(LogLevel.Debug, "Setting {0}={1}", key, value);
+	        _context.SetProperty(key, value);
+	    }
+
+	    internal void Stop(Exception e)
 		{
-			Platform.Log(LogLevel.Error, e);
+            Platform.Log(LogLevel.Error, e);
 			Stop(ExceptionTranslator.Translate(e));
 		}
 
 		private void DoStop(string message)
 		{
-			_context.SuspendEvents = true;
-
 			try
 			{
 				OnStop();
@@ -333,8 +361,6 @@ namespace ClearCanvas.Web.Services
 					Message = message,
                     IsTimedOut = _timedOut
 				});
-
-				_context.SuspendEvents = false;
 
 				//TODO (CR May 2010): just use the ConsoleHelper's formatting
 				string logMessage;
@@ -366,12 +392,33 @@ namespace ClearCanvas.Web.Services
 				if (!_inactivityTimeoutMinutes.HasValue)
 					return;
 
-				TimeSpan timeSinceLastActivity = TimeSpan.FromMilliseconds(Environment.TickCount - _lastActivityTicks);
+                // TODO: Review this
+                // Per MSDN: Environment.TickCount wraps to Int32.MinValue (negative)
+                TimeSpan timeSinceLastActivity = TimeSpan.FromMilliseconds(Environment.TickCount - _lastActivityTicks);
 				if (timeSinceLastActivity > _inactivityTimeoutMinutes)
 				{
                     _timedOut = true;
 				    Stop(SR.MessageSessionEnded);
 				}
+                else
+				{
+                    // TODO: REVIEW THIS
+                    // This is a temporary workaround to ensure the app shuts down when the connection is lost.
+                    // Although the app will eventually timed out after 11 min (_inactivityTimeoutMinutes),
+                    // for security reason it's better to detect this situation asap. 
+                    // Without a permanent connection, we now rely on the timeout and GetPendingEvent 
+                    // to guess if the client is still alive.
+                    //
+                    // Assumption: The client is supposed to send a GetPendingEvent request repeatedly while
+                    // it is idle. Assume max waiting time for GetPendingEvent is 10 seconds,
+                    // we can assume the client browser is closed or connection is lost if we don't receive 
+                    // one for 20 seconds
+                    if (DateTime.Now - _lastGetPendingTimestamp > TimeSpan.FromSeconds(20))
+				    {
+                        Stop(String.Format(SR.MessageNoCommunicationFromClientError, _lastGetPendingTimestamp));
+				    }
+				}
+
 			}
 			catch (Exception e)
 			{
@@ -386,8 +433,11 @@ namespace ClearCanvas.Web.Services
 			}
 		}
 
+
 		private void DisposeMembers()
 		{
+            //NOTE: For non-duplex binding, this method should be called when the client has received all the pending messages.
+
 			//NOTE: This class has purposely been designed such that this method (and these members) do not need to be synchronized.
             //If you were to synchronize this method, it could deadlock with the other objects that can call
 			//back into this class.
@@ -425,38 +475,42 @@ namespace ClearCanvas.Web.Services
 			remove { lock (_syncLock) { _stopped -= value; } }
 		}
 
-		void IApplication.ProcessMessages(MessageSet messageSet)
+		ProcessMessagesResult IApplication.ProcessMessages(MessageSet messageSet)
 		{
 			lock (_syncLock)
 			{
 				if (_stop)
-					return;
+					return null;
 			}
 
-			//TODO: do this here (which will fault the channel), or inside DoProcessMessages and stop the app?
+            //TODO: do this here (which will fault the channel), or inside DoProcessMessages and stop the app?
 			EnsureSessionIsValid();
 
-			_incomingMessageQueue.ProcessMessageSet(messageSet);
+			bool processed = _incomingMessageQueue.ProcessMessageSet(messageSet);
+
+		    return OnProcessMessageEnd(messageSet, processed);
 		}
 
-		private void DoProcessMessages(MessageSet messageSet)
+
+	    private void DoProcessMessages(MessageSet messageSet)
 		{
-			_lastActivityTicks = Environment.TickCount;
-			_context.SuspendEvents = true;
-
-			try
-			{
-				foreach (var message in messageSet.Messages)
-					ProcessMessage(message);
-			}
-			finally
-			{
-				_context.SuspendEvents = false;
-			}
+            _lastActivityTicks = Environment.TickCount;
+            foreach (var message in messageSet.Messages)
+                ProcessMessage(message);
 		}
 
+        protected abstract ProcessMessagesResult OnProcessMessageEnd(MessageSet messageSet, bool processed);
 		protected abstract void OnStart(StartApplicationRequest request);
 		protected abstract void OnStop();
+	    protected abstract EventSet OnGetPendingOutboundEvent(int wait);
+        
+
+        public EventSet GetPendingOutboundEvent(int wait)
+        {
+            _lastGetPendingTimestamp = DateTime.Now;
+            EventSet result = OnGetPendingOutboundEvent(wait);
+            return result;
+        }
 
 		protected virtual void ProcessMessage(Message message)
 		{
@@ -479,7 +533,7 @@ namespace ClearCanvas.Web.Services
 
 		#region Static Helpers
 
-		internal static Application Start(StartApplicationRequest request, IApplicationServiceCallback callback)
+		internal static Application Start(StartApplicationRequest request)
 		{
 			var filter = new AttributeExtensionFilter(new ApplicationAttribute(request.GetType()));
 			var app = new ApplicationExtensionPoint().CreateExtension(filter) as IApplication;
@@ -492,7 +546,7 @@ namespace ClearCanvas.Web.Services
 			#region Setup
 
 			var application = (Application)app;
-			var context = new ApplicationContext(application, callback);
+			var context = new ApplicationContext(application);
 			application._context = context;
 
 			application._sessionPollingIntervalSeconds = TimeSpan.FromSeconds(ApplicationServiceSettings.Default.SessionPollingIntervalSeconds);
@@ -503,9 +557,10 @@ namespace ClearCanvas.Web.Services
 			#endregion
 
 			//NOTE: must call start before adding to the cache; we want the app to be fully initialized before it can be accessed from outside this method.
-			application.Start(request);
-			Cache.Instance.Add(application);
-			application.Stopped += delegate { Cache.Instance.Remove(application.Identifier); };
+            
+            application.InternalStart(request);
+			
+            Cache.Instance.Add(application);
 
 			return application;
 		}
@@ -517,10 +572,7 @@ namespace ClearCanvas.Web.Services
 
 		public static void StopAll(string message)
 		{
-			List<Application> applications;
-			Cache.Instance.Clear(out applications);
-			foreach (IApplication application in applications)
-				application.Stop(message);
+		    Cache.Instance.StopAndClearAll(message);
 		}
 
 		#endregion

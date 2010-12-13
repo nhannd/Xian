@@ -83,13 +83,13 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Extensions, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.ServiceModel.NetTcp, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="System.ServiceModel.PollingDuplex, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Windows" />
     <Reference Include="mscorlib" />
     <Reference Include="system" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net" />
     <Reference Include="System.Windows.Controls, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Windows.Controls.Input.Toolkit, Version=4.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Windows.Controls.Layout.Toolkit, Version=4.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Windows.Controls.Toolkit, Version=4.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
@@ -99,6 +99,20 @@
     <Compile Include="Actions\ActionDispatcher.cs" />
     <Compile Include="Actions\HelpButton.xaml.cs">
       <DependentUpon>HelpButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ApplicationActivityMonitor.cs" />
+    <Compile Include="ApplicationLog.cs" />
+    <Compile Include="Controls\ConnectionIndicator.xaml.cs">
+      <DependentUpon>ConnectionIndicator.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\StatisticsPanel.xaml.cs">
+      <DependentUpon>StatisticsPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ThrottlePanel.xaml.cs">
+      <DependentUpon>ThrottlePanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ThrottleSettingsIcon.xaml.cs">
+      <DependentUpon>ThrottleSettingsIcon.xaml</DependentUpon>
     </Compile>
     <Compile Include="HelpDialogContent.xaml.cs">
       <DependentUpon>HelpDialogContent.xaml</DependentUpon>
@@ -140,8 +154,10 @@
     <Compile Include="Helpers\BrowserExtensions.cs" />
     <Compile Include="Helpers\Cookies.cs" />
     <Compile Include="Helpers\IMouseElement.cs" />
+    <Compile Include="Helpers\MessageBoxHelper.cs" />
     <Compile Include="Helpers\MouseHelper.cs" />
     <Compile Include="Helpers\ResourceHelper.cs" />
+    <Compile Include="Helpers\SpeedTester.cs" />
     <Compile Include="Helpers\UIElementExtensions.cs" />
     <Compile Include="Helpers\UIThread.cs" />
     <Compile Include="ImageViewer.xaml.cs">
@@ -149,10 +165,17 @@
     </Compile>
     <Compile Include="IncomingEventQueue.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="ServerMessagePoller.cs" />
     <Compile Include="PerformanceLogger.cs" />
+    <Compile Include="PerformanceMonitor.cs" />
     <Compile Include="ServerConfiguration.cs" />
     <Compile Include="ServerEventArgs.cs" />
     <Compile Include="ServerEventDispatcher.cs" />
+    <Compile Include="Service References\AppServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -160,6 +183,8 @@
     </Compile>
     <Compile Include="StartupArguments.cs" />
     <Compile Include="Helpers\MenuBuilder.cs" />
+    <Compile Include="ThrottleSettings.cs" />
+    <Compile Include="TileImageHistory.cs" />
     <Compile Include="ViewerSessionUpdatedEventArgs.cs" />
     <Compile Include="Views\ImageBoxScrollbarView.xaml.cs">
       <DependentUpon>ImageBoxScrollbarView.xaml</DependentUpon>
@@ -171,11 +196,6 @@
       <DependentUpon>TestPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service References\AppServiceReference\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
     <Compile Include="Helpers\StatisticsHelper.cs" />
     <Compile Include="Controls\StudyInfo.cs" />
     <Compile Include="Views\StudyView.xaml.cs">
@@ -202,6 +222,22 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Actions\HelpButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ConnectionIndicator.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\StatisticsPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ThrottlePanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ThrottleSettingsIcon.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -288,46 +324,68 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AppManifest.xml" />
+    <None Include="Service References\AppServiceReference\ApplicationService.wsdl" />
+    <None Include="Service References\AppServiceReference\ApplicationService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService1.wsdl" />
+    <None Include="Service References\AppServiceReference\ApplicationService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService2.wsdl" />
+    <None Include="Service References\AppServiceReference\ApplicationService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService3.wsdl" />
+    <None Include="Service References\AppServiceReference\ApplicationService3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService4.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <Resource Include="Images\Gear.png" />
+    <None Include="Service References\AppServiceReference\ApplicationService.disco" />
+    <None Include="Service References\AppServiceReference\ApplicationService5.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService6.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService7.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService8.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService9.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.EventSet.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\AppServiceReference\ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ProcessMessagesResult.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\AppServiceReference\ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StartApplicationRequestResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\AppServiceReference\configuration91.svcinfo" />
+    <None Include="Service References\AppServiceReference\configuration.svcinfo" />
+    <None Include="Service References\AppServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService1.disco" />
+    <Content Include="ServiceReferences.ClientConfig" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\AppServiceReference\ApplicationServices2.wsdl" />
-    <None Include="Service References\AppServiceReference\configuration91.svcinfo" />
-    <None Include="Service References\AppServiceReference\configuration.svcinfo" />
-    <None Include="Service References\AppServiceReference\item.wsdl" />
-    <None Include="Service References\AppServiceReference\item.xsd" />
-    <None Include="Service References\AppServiceReference\item1.wsdl" />
-    <None Include="Service References\AppServiceReference\item1.xsd" />
-    <None Include="Service References\AppServiceReference\item10.xsd" />
-    <None Include="Service References\AppServiceReference\item11.xsd" />
-    <None Include="Service References\AppServiceReference\item12.xsd" />
-    <None Include="Service References\AppServiceReference\item15.xsd" />
-    <None Include="Service References\AppServiceReference\item16.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\AppServiceReference\item17.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\AppServiceReference\item3.xsd" />
-    <None Include="Service References\AppServiceReference\item5.xsd" />
-    <None Include="Service References\AppServiceReference\item6.xsd" />
-    <None Include="Service References\AppServiceReference\item7.xsd" />
-    <None Include="Service References\AppServiceReference\item8.xsd" />
-    <None Include="Service References\AppServiceReference\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Service References\AppServiceReference\item.disco" />
     <Resource Include="Images\DropDownArrow.png" />
     <Resource Include="Images\HelpMedium.png" />
     <Resource Include="Images\HelpLarge.png" />
     <Resource Include="Images\HelpSmall.png" />
-    <Content Include="ServiceReferences.ClientConfig" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadataStorage Include="Service References\AppServiceReference\" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -357,6 +415,9 @@
       <Project>{1CAF9ABD-C8ED-4EF7-BDCF-C9FB3C23FA17}</Project>
       <Name>ClearCanvas.Web.Client.Silverlight</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\AppServiceReference\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

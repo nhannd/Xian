@@ -162,10 +162,14 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
             if (@event.PropertyName == "ImageCount")
             {
-                ServerEntity.ImageCount = (int)@event.Value;
-                // Note: Because the scrollbar observes PropertyChanged event on the ServerEntity, its visibility will be updated automatically in ImageBoxScrollbarView
-                // When UpdateLayout() is called in UpdateSize(), the size of the TileContainer will be updated accordingly.
-                UpdateSize();
+                int count = (int)@event.Value;
+                if (ServerEntity.ImageCount!=count)
+                {
+                    ServerEntity.ImageCount = count;
+                    // Note: Because the scrollbar observes PropertyChanged event on the ServerEntity, its visibility will be updated automatically in ImageBoxScrollbarView
+                    // When UpdateLayout() is called in UpdateSize(), the size of the TileContainer will be updated accordingly.
+                    UpdateSize();
+                }
             }
 
 		}

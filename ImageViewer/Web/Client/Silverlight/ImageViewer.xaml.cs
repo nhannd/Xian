@@ -23,6 +23,9 @@ using System.Threading;
 using System.Text;
 using System.Collections.Generic;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls;
+using System.Windows.Media.Imaging;
+using System.IO;
+using System.Windows.Controls.Primitives;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
@@ -42,14 +45,14 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         public ImageViewer(StartViewerApplicationRequest startRequest)
         {
             InitializeComponent();
-
+            
 			_context = ApplicationContext.Current;
 			ApplicationContext.Current.ServerEventBroker.RegisterEventHandler(typeof(ApplicationStartedEvent), ApplicationStarted);
             ApplicationContext.Current.ServerEventBroker.RegisterEventHandler(typeof(SessionUpdatedEvent), OnSessionUpdated);
             ApplicationContext.Current.ServerEventBroker.RegisterEventHandler(typeof(MessageBoxShownEvent), OnMessageBox);
             ApplicationContext.Current.ServerEventBroker.ChannelError += OnChannelError;
             ApplicationContext.Current.ServerEventBroker.ServerApplicationStopped += OnServerApplicationStopped;
-
+            
             _studyView = new StudyView();
 			StudyViewContainer.Children.Add(_studyView);
             MouseHelper.SetBackgroundElement(LayoutRoot);
@@ -70,8 +73,27 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 ApplicationContext.Current.ServerEventBroker.StartApplication(startRequest);
 
                 TileView.ApplicationRootVisual = _studyView.StudyViewCanvas;
+                
+                this.LayoutRoot.KeyUp += new System.Windows.Input.KeyEventHandler(OnKeyUp);
             }
-		}
+		}        
+
+        void OnKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.D:
+                {
+                    if ((Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Alt)) == (ModifierKeys.Control | ModifierKeys.Alt))
+                    {
+                        //TODO: close this on error/timeout
+                        PopupHelper.PopupContent("Statistics", new StatisticsPanel());
+                    }
+                    break;
+                }
+
+            }
+        }
 
         private void OnServerApplicationStopped(object sender, ServerApplicationStopEventArgs e)
         {
@@ -259,11 +281,14 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             };
             dialog.Show();
         }
-               
+
+
 		private void ApplicationStarted(object sender, ServerEventArgs e)
 		{
             if (ApplicationContext.Current.ServerEventBroker == null)
-				return;
+            {
+                return;
+            }
 
 			ApplicationStartedEvent ev = (ApplicationStartedEvent)e.ServerEvent;
             if (ev == null)
@@ -367,7 +392,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                         ApplicationContext.Current.ServerEventBroker.StopApplication(_serverApplication.Identifier);
 
                         // Free the connection on the server
-                        ApplicationContext.Current.ServerEventBroker.Disconnect();
+                        ApplicationContext.Current.ServerEventBroker.Disconnect("WebViewer is actively shutting down");
                     }
                 }
                 catch (Exception)
@@ -400,6 +425,5 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 				_studyView = null;
 			}
 	    }
-
     }
 }

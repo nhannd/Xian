@@ -18,6 +18,13 @@ using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
 using System.Windows.Controls;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls;
 using ClearCanvas.Web.Client.Silverlight;
+using System.ServiceModel.Channels;
+using System.ServiceModel;
+using System.Net;
+using System.Net.Browser;
+using System.Windows.Media;
+using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
+using System.Windows.Input;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
@@ -28,50 +35,125 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
 		public App()
 		{
+            Startup += new StartupEventHandler(App_Startup);
 
-			Startup += Application_Startup;
 			Exit += Application_Exit;
 			UnhandledException += Application_UnhandledException;
            
             InitializeComponent();
-
+            
             MenuManager.SuppressBrowserContextMenu = true;
             MenuManager.AutoCloseMenus = false;
 		}
 
-		private void Application_Startup(object sender, StartupEventArgs e)
-		{
-			//TODO (CR May 2010): need the lock?
-			lock (_startLock)
-			{
-				if (_context != null)
-					return;
-
-				// Initialize the communication channel with the host
-				ApplicationBridge.Initialize();
-				_context = ApplicationContext.Initialize();
-			}
+        void App_Startup(object sender, StartupEventArgs e)
+        {
+            OnStartup();
+        }
 
 
+        private void OnStartup()
+        {
+            ApplicationLog.Initialize();
+
+            // Initialize the communication channel with the host
+            ApplicationBridge.Initialize();
+            
             Panel rootPanel = new Grid();
             RootVisual = rootPanel;
-
             DialogControl.ApplicationRootVisual = rootPanel;
+            
+            SelectBinding();
+            TestConnection();
+		}
 
-			string query = HtmlPage.Document.DocumentUri.Query;
+        private void TestConnection()
+        {
+            ConnectionTester.StartAsync((result) => 
+            {
+                if (result.Error == null)
+                {
+                    // TODO: Should we continue if the speed is too low? It won't be useful for the user anyway.
+                    if (result.SpeedInMbps < 1)
+                    {
+                        PopupHelper.PopupMessage("Warning", "Your current connection speed seems too slow.", "Continue");
+                    }
+
+                    SelectThrottleSettings(result);
+                    StartWebViewer(); 
+                }
+                else
+                {
+                    PopupHelper.PopupMessage("Warning", "Unable to determine your connection speed.", "Continue");
+                }
+
+            });
+        }
+
+        private static void SelectThrottleSettings(SpeedTestResult result)
+        {
+            if (result == null || result.Error != null)
+            {
+                ThrottleSettings.Default.EnableDynamicImageQuality = true;
+                ThrottleSettings.Default.MaxPendingMouseMoveMsgAllowed = 1;
+                return;
+            }
+
+            if (result.SpeedInMbps >= 150)
+            {
+                // the connection is fast enough
+                ThrottleSettings.Default.EnableDynamicImageQuality = false; 
+                ThrottleSettings.Default.MaxPendingMouseMoveMsgAllowed = 4;
+            }
+            else if (result.SpeedInMbps >= 10)
+            {
+                // the connection is fast enough
+                ThrottleSettings.Default.EnableDynamicImageQuality = false;
+                ThrottleSettings.Default.MaxPendingMouseMoveMsgAllowed = 3;
+            }
+            else if (result.SpeedInMbps >= 2)
+            {
+                ThrottleSettings.Default.EnableDynamicImageQuality = true;
+                ThrottleSettings.Default.MaxPendingMouseMoveMsgAllowed = 2;
+            }
+            else
+            {
+                ThrottleSettings.Default.EnableDynamicImageQuality = true;
+                ThrottleSettings.Default.MaxPendingMouseMoveMsgAllowed = 1;
+            }
+
+            
+        }
+
+        private void StartWebViewer()
+        {
+            StartupArguments args = new StartupArguments(System.Windows.Application.Current.Host.InitParams);
+            StartImageViewer(args);
+        }
+
+        private void StartImageViewer(StartupArguments args)
+        {
+            Panel rootPanel = RootVisual as Panel;
+            
+            //TODO (CR May 2010): need the lock?
+            lock (_startLock)
+            {
+                if (_context != null)
+                    return;
+
+                _context = ApplicationContext.Initialize();
+            }
+
+            string query = HtmlPage.Document.DocumentUri.Query;
+
             if (!string.IsNullOrEmpty(query))
             {
-                StartupArguments args = new StartupArguments(e.InitParams);
-
                 ServerConfiguration.Current = new ServerConfiguration
-                                                   {
-                                                       InactivityTimeout = args.InactivityTimeout,
-                                                       LANMode = args.LANMode,
-                                                       Port = args.Port
-                                                   };
-
-                Logger.SetWriteMethod(LogMessage);
-                Logger.SetErrorMethod(OnError);
+                {
+                    InactivityTimeout = args.InactivityTimeout,
+                    LANMode = args.LANMode,
+                    Port = args.Port
+                };
 
                 StartViewerApplicationRequest request = new StartViewerApplicationRequest
                 {
@@ -79,7 +161,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     StudyInstanceUid = new ObservableCollection<string>(),
                     PatientId = new ObservableCollection<string>()
                 };
-                
+
                 string[] vals = HttpUtility.UrlDecode(query).Split(new[] { '?', ';', '=', ',', '&' });
                 for (int i = 0; i < vals.Length - 1; i++)
                 {
@@ -120,18 +202,25 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 rootPanel.Children.Add(new ImageViewer(request));
             }
             else
-            {  
+            {
                 rootPanel.Children.Add(new ImageViewer(null));
             }
-		}
+
+        }
+
+        private static void SelectBinding()
+        {
+            // See ApplicationStartupParameters
+        }
 
 	    private void OnError(string msg)
         {
-            if (SynchronizationContext.Current != null)
+            //if (SynchronizationContext.Current != null)
+            UIThread.Execute(() =>
             {
                 string message = msg;
                 DialogControl.Show("Error", message, "Dismiss");
-            }
+            });
         }
 
         private void LogMessage(string msg)
@@ -147,6 +236,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
 			if (_context != null)
 			{
+				// TODO: SL does not support calling web service in Application Exit event
 				_context.Dispose();
 				_context = null;
 			}
@@ -181,5 +271,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 			{
 			}
 		}
-	}
+
+    }
 }

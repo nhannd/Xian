@@ -1,62 +1,100 @@
 <Project DefaultTargets="CopyPlugins;CopyBin;CopyConfigFiles" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Choose>
-	<When Condition=" '$(PROCESSOR_ARCHITEW6432)' == 'IA64' Or '$(PROCESSOR_ARCHITEW6432)' == 'AMD64' Or '$(PROCESSOR_ARCHITECTURE)' == 'IA64' Or '$(PROCESSOR_ARCHITECTURE)' == 'AMD64'">
-	  <PropertyGroup>
-		<BuildPlatform>x64</BuildPlatform>
-	  </PropertyGroup>
-	</When>
-	<When Condition="'$(PROCESSOR_ARCHITECTURE)' == 'x86' ">
-	  <PropertyGroup>
-		<BuildPlatform>x86</BuildPlatform>
-	  </PropertyGroup>
-	</When>
-	<Otherwise>
-	  <PropertyGroup>
-		<BuildPlatform></BuildPlatform>
-	  </PropertyGroup>
-	</Otherwise>
-  </Choose>
+	<Choose>
+		<When Condition=" '$(PROCESSOR_ARCHITEW6432)' == 'IA64' Or '$(PROCESSOR_ARCHITEW6432)' == 'AMD64' Or '$(PROCESSOR_ARCHITECTURE)' == 'IA64' Or '$(PROCESSOR_ARCHITECTURE)' == 'AMD64'">
+			<PropertyGroup>
+				<BuildPlatform>x64</BuildPlatform>
+			</PropertyGroup>
+		</When>
+		<When Condition="'$(PROCESSOR_ARCHITECTURE)' == 'x86' ">
+			<PropertyGroup>
+				<BuildPlatform>x86</BuildPlatform>
+			</PropertyGroup>
+		</When>
+		<Otherwise>
+			<PropertyGroup>
+				<BuildPlatform></BuildPlatform>
+			</PropertyGroup>
+		</Otherwise>
+	</Choose>
 
-  <PropertyGroup>
-	<TargetPlatform>$(BuildPlatform)</TargetPlatform>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetPlatform>$(BuildPlatform)</TargetPlatform>
+		<TrunkDirectory>$(ProjectDir)..\..\..</TrunkDirectory>
+	</PropertyGroup>
 
-  <Choose>
-	<When Condition=" '$(TargetPlatform)' != 'x86' ">
-	  <PropertyGroup>
-		<PlatformSubFolder>$(TargetPlatform)</PlatformSubFolder>
-	  </PropertyGroup>
-	</When>
-	<Otherwise>
-	  <!-- assumes Win32 -->
-	  <PropertyGroup>
-		<PlatformSubFolder></PlatformSubFolder>
-	  </PropertyGroup>
-	</Otherwise>
-  </Choose>
+	<Choose>
+		<When Condition=" '$(TargetPlatform)' != 'x86' ">
+			<PropertyGroup>
+				<PlatformSubFolder>$(TargetPlatform)</PlatformSubFolder>
+			</PropertyGroup>
+		</When>
+		<Otherwise>
+			<!-- assumes Win32 -->
+			<PropertyGroup>
+				<PlatformSubFolder></PlatformSubFolder>
+			</PropertyGroup>
+		</Otherwise>
+	</Choose>
 
-  <ItemGroup>
-	<PluginFiles Include="$(ProjectDir)\..\..\Enterprise\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer2005.dll"/>
-	<PluginFiles Include="$(ProjectDir)\..\..\Model\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer2005.dll"/>
-	<ConfigFiles Include="$(ProjectDir)\..\..\..\ImageServer\Executable\Logging.config"/>
-  </ItemGroup>
-  <Target Name="CopyPlugins">
-	<Message Text="Copying plugin assemblies into plugins folder (ASP.NET Development Server must not be running)"/>
-	<Message Text="$(ProjectDir)"/>
-	<Message Text="@(PluginFiles)"/>
-	<Copy SkipUnchangedFiles="true" SourceFiles="@(PluginFiles)" DestinationFolder="$(ProjectDir)\bin"/>
-  </Target>
-  <Target Name="CopyBin">
-	<Message Text="Copying common assemblies into bin folder (ASP.NET Development Server must not be running)"/>
-	<Message Text="$(ProjectDir)"/>
-	<Message Text="@(BinFiles)"/>
-	<Copy SkipUnchangedFiles="true" SourceFiles="@(BinFiles)" DestinationFolder="$(ProjectDir)\bin"/>
-  </Target>
-  <Target Name="CopyConfigFiles">
-	<Message Text="Copying config files into output folder (ASP.NET Development Server must not be running)"/>
-	<Message Text="$(ProjectDir)"/>
-	<Message Text="@(ConfigFiles)"/>
-	<Copy SkipUnchangedFiles="true" SourceFiles="@(ConfigFiles)" DestinationFolder="$(ProjectDir)"/>
-  </Target>
+	<ItemGroup>
+		<ConfigFiles Include="$(ProjectDir)\..\..\..\ImageServer\Executable\Logging.config"/>
+		<PluginFiles Include="$(ProjectDir)\..\..\Enterprise\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer2005.dll"/>
+		<PluginFiles Include="$(ProjectDir)\..\..\Model\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer2005.dll"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<WebViewerPlugins Include="$(TrunkDirectory)\Desktop\bin\$(Configuration)\ClearCanvas.Desktop.dll"/>
+		
+		<WebViewerPlugins Include="$(TrunkDirectory)\ImageServer\Services\WebViewer\bin\$(Configuration)\ClearCanvas.ImageServer.Services.WebViewer.dll"/>
+		<WebViewerPlugins Include="$(TrunkDirectory)\ImageServer\Utilities\bin\$(Configuration)\ClearCanvas.ImageServer.Utilities.dll"/>
+		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\AnnotationProviders\bin\$(Configuration)\ClearCanvas.ImageViewer.AnnotationProviders.dll"/>
+		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\Configuration\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.dll"/>
+		
+		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\bin\$(Configuration)\ClearCanvas.ImageViewer.dll"/>
+		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\Layout\Basic\bin\$(Configuration)\ClearCanvas.ImageViewer.Layout.Basic.dll"/>
+		
+		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\Services\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.dll"/>
+		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\StudyFinders\Remote\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.Remote.dll"/>
+		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\StudyLoaders\Streaming\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.Streaming.dll"/>
+
+		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\Tools\Measurement\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Measurement.dll"/>
+		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\Tools\Standard\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Standard.dll"/>
+		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\Tools\Synchronization\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Synchronization.dll"/>
+
+		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\Web\Common\bin\$(Configuration)\ClearCanvas.ImageViewer.Web.Common.dll"/>
+		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\Web\bin\$(Configuration)\ClearCanvas.ImageViewer.Web.dll"/>
+		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\Web\Server\ImageServer\bin\$(Configuration)\ClearCanvas.ImageViewer.Web.Server.ImageServer.dll"/>
+
+		<WebViewerPlugins Include="$(TrunkDirectory)\JScript\bin\$(Configuration)\ClearCanvas.Jscript.dll"/>
+		<WebViewerPlugins Include="$(TrunkDirectory)\Utilities\Manifest\bin\$(Configuration)\ClearCanvas.Utilities.Manifest.dll"/>
+		<WebViewerPlugins Include="$(TrunkDirectory)\Web\Common\bin\$(Configuration)\ClearCanvas.Web.Common.dll"/>
+		<WebViewerPlugins Include="$(TrunkDirectory)\Web\Services\bin\$(Configuration)\ClearCanvas.Web.Services.dll"/>
+
+		<WebViewerPlugins Include="$(TrunkDirectory)\ReferencedAssemblies\Interpolators\$(PlatformSubFolder)\BilinearInterpolation.dll"/>
+		<WebViewerPlugins Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
+		<WebViewerPlugins Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Rle.dll"/>
+
+	</ItemGroup>
+
+	<Target Name="CopyPlugins">
+		<Message Text="Copying plugin assemblies into plugins folder (ASP.NET Development Server must not be running)"/>
+		<Message Text="$(ProjectDir)"/>
+		<Message Text="@(PluginFiles)"/>
+		<Message Text="@(WebViewerPlugins)"/>
+		<Copy SkipUnchangedFiles="false" SourceFiles="@(PluginFiles)" DestinationFolder="$(ProjectDir)\bin"/>
+		<Copy SkipUnchangedFiles="false" SourceFiles="@(WebViewerPlugins)" DestinationFolder="$(ProjectDir)\bin"/>
+	</Target>
+	<Target Name="CopyBin">
+		<Message Text="Copying common assemblies into bin folder (ASP.NET Development Server must not be running)"/>
+		<Message Text="$(ProjectDir)"/>
+		<Message Text="@(BinFiles)"/>
+		<Copy SkipUnchangedFiles="true" SourceFiles="@(BinFiles)" DestinationFolder="$(ProjectDir)\bin"/>
+	</Target>
+	<Target Name="CopyConfigFiles">
+		<Message Text="Copying config files into output folder (ASP.NET Development Server must not be running)"/>
+		<Message Text="$(ProjectDir)"/>
+		<Message Text="@(ConfigFiles)"/>
+		<Copy SkipUnchangedFiles="true" SourceFiles="@(ConfigFiles)" DestinationFolder="$(ProjectDir)"/>
+	</Target>
 </Project>

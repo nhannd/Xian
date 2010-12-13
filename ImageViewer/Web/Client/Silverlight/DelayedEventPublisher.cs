@@ -47,15 +47,16 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         {
             lock (_timer)
             {
+                _lastSender = sender;
+                _lastEvent = @event;
+
                 if (_timer.IsEnabled)
                 {
-                    Logger.Write("Delayed event\n");
+                   //Logger.Write("Delayed event\n");
                     return; //ignore it
                 }
 
-                _lastSender = sender;
-                _lastEvent = @event;
-                _timer.Start();
+                 _timer.Start();
             }
             
         }

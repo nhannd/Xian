@@ -62,16 +62,17 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
             ImageScrollBar.Visibility = ImageScrollBar.Maximum > 0 ? Visibility.Visible : Visibility.Collapsed;
 
             ServerEntity.PropertyChanged += OnPropertyChanged;
-            
-            _scrollbarEventPublisher = new DelayedEventPublisher<ScrollBarUpdateEventArgs> ((s, ev) => {
-                    ApplicationContext.Current.ServerEventBroker.DispatchMessage(new UpdatePropertyMessage()
-                    {
-                        Identifier = Guid.NewGuid(),
-                        PropertyName = TOP_LEFT_PRESENTATION_IMAGE_INDEX_PROPERTY_NAME,
-                        TargetId = ServerEntity.Identifier,
-                        Value = ev.ScrollbarPosition
-                    });
-                },  50);
+
+            _scrollbarEventPublisher = new DelayedEventPublisher<ScrollBarUpdateEventArgs>((s, ev) =>
+            {
+                ApplicationContext.Current.ServerEventBroker.DispatchMessage(new UpdatePropertyMessage()
+                {
+                    Identifier = Guid.NewGuid(),
+                    PropertyName = TOP_LEFT_PRESENTATION_IMAGE_INDEX_PROPERTY_NAME,
+                    TargetId = ServerEntity.Identifier,
+                    Value = ev.ScrollbarPosition
+                });
+            }, 100);
         }
 
 
@@ -119,7 +120,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                     // Update will be done via PropertyChange event
                     ImageScrollBar.Value = ServerEntity.TopLeftPresentationImageIndex;
                     break;
-                case ScrollEventType.EndScroll:
+
+                case ScrollEventType.EndScroll: 
+                    // ignore it
                     break;
             }
         }

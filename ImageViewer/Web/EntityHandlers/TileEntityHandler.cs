@@ -72,10 +72,23 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 		#endregion
 	}
 
-	public class TileEntityHandler : EntityHandler<TileEntity>
+    public interface IQFactorStrategy
+    {
+        long GetOptimalQFactor(int imageWidth, int imageHeight, IImageSopProvider sop);
+    }
+
+    public class QFactorExtensionPoint : ExtensionPoint<IQFactorStrategy> { }
+
+    public class TileEntityHandler : EntityHandler<TileEntity>
 	{
 		private readonly string _mimeType = "image/jpeg";
-		private readonly long _quality = 80L;
+
+        // TODO: Should this be at the application level?
+        // So that all images are at the same quality during sync stacking
+        // How can other tiles actively refresh themselves when this tile does?
+        private readonly long _defaultJpegQFactor = WebViewerServices.Default.JpegQualityFactor;
+        private long _quality = WebViewerServices.Default.JpegQualityFactor;
+
 		private StatisticsSet _stats = new StatisticsSet("AverageRender");
 
 		private Tile _tile;
@@ -87,10 +100,10 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 		private IRenderingSurface _surface;
 		private Bitmap _bitmap;
 
-		private bool _dropNextMouseMove;
-		private int _prevMouseMoveTick;
-
+	    private bool _isMouseDown;
 		[ThreadStatic]private static ContextMenuContainer _contextMenu;
+
+	    private readonly IQFactorStrategy _qFactorPlugin;
 
 		public TileEntityHandler()
 		{
@@ -101,8 +114,49 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             else
                 _mimeType = "image/jpeg"; // Default to jpeg
 
-		    _quality = WebViewerServices.Default.JpegQualityFactor;            
+		    _quality = _defaultJpegQFactor;
+
+            try
+            {
+                _qFactorPlugin = new QFactorExtensionPoint().CreateExtension() as IQFactorStrategy;
+            }
+            catch (Exception)
+            {
+                _qFactorPlugin = new DefaultQFactorStrategy();
+            }
 		}
+
+	    private long GetOptimalQFactor(int w, int h, IImageSopProvider sop)
+        {
+            if (_qFactorPlugin!=null)
+            {
+                return _qFactorPlugin.GetOptimalQFactor(w, h, sop);
+            }
+
+	        return 80L; //default
+        }
+
+        private bool IsDynamicImageQualityEnabled
+        {
+            get
+            {
+                //TODO: Cache this and update whenever the client changes it?
+
+                const string key = "DynamicImageQualityEnabled";
+
+                if (ApplicationContext.HasProperty(key))
+                {
+                    string value;
+                    if (ApplicationContext.TryGetValue(key, out value))
+                    {
+                        bool isEnabled;
+                        if (Boolean.TryParse(value, out isEnabled))
+                            return isEnabled;
+                    }
+                }
+                return false;
+            }
+        }
 
 		private Rectangle ClientRectangle
 		{
@@ -349,13 +403,14 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 				Identifier = Guid.NewGuid(),
 				SenderId = Identifier,
 				Tile = GetEntity(),
-				MimeType = _mimeType
+				MimeType = _mimeType,
+                Quality = _quality
 			};
 			
 			ApplicationContext.FireEvent(ev);
 		}
 
-		private byte[] CreateImage()
+        private byte[] CreateImage()
 		{
 			if (_tile.PresentationImage == null)
 				DisposeSurface();
@@ -391,11 +446,13 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 			//long t0 = Environment.TickCount;
 			stats.DrawToBitmapTime.Start();
 
-			using (System.Drawing.Graphics graphics = System.Drawing.Graphics.FromImage(Bitmap))
+            Bitmap bitmap = Bitmap;
+
+            using (System.Drawing.Graphics graphics = System.Drawing.Graphics.FromImage(bitmap))
 			{
 				Surface.ContextID = graphics.GetHdc();
-				Surface.ClipRectangle = new Rectangle(0, 0, Bitmap.Width, Bitmap.Height);
-
+                Surface.ClipRectangle = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
+                
 				DrawArgs drawArgs = new DrawArgs(Surface, null, Rendering.DrawMode.Render);
 				CurrentImage.Draw(drawArgs);
 				drawArgs = new DrawArgs(Surface, null, Rendering.DrawMode.Refresh);
@@ -415,22 +472,35 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 			//TODO (CR May 2010): should be in using and/or closed.  Separate function?
 			MemoryStream ms = new MemoryStream();
 
+            _quality = _defaultJpegQFactor;
+            if (_isMouseDown && IsDynamicImageQualityEnabled)
+                _quality = GetOptimalQFactor(Bitmap.Width, Bitmap.Height, sop);
+                
 			stats.SaveTime.Start();
 			if (_mimeType.Equals("image/jpeg"))
 			{
 				EncoderParameters eps = new EncoderParameters(1);
-				eps.Param[0] = new EncoderParameter(Encoder.Quality, _quality);
-				ImageCodecInfo ici = GetEncoderInfo(_mimeType);
-				Bitmap.Save(ms, ici, eps);
-			}
+                eps.Param[0] = new EncoderParameter(Encoder.Quality, _quality);
+                ImageCodecInfo ici = GetEncoderInfo(_mimeType);
+
+                bitmap.Save(ms, ici, eps);
+            
+			} 
 			else if (_mimeType.Equals("image/png"))
 			{
-				Bitmap.Save(ms, ImageFormat.Png);
+                bitmap.Save(ms, ImageFormat.Png);
 			}
 			stats.SaveTime.End();
 
+            byte[] imageBuffer = ms.ToArray();
+            
+            if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+                Platform.Log(LogLevel.Debug, "Render Frame #{0}. Size= {1}bytes. Q={2} {3}. Highbit={4}",
+                    sop.ImageSop.InstanceNumber, imageBuffer.Length, _quality, _isMouseDown && IsDynamicImageQualityEnabled ? "[Dynamic]" : "",
+                    sop.Frame.HighBit);
+
 			ms.Position = 0;
-			stats.ImageSize = (ulong)ms.Length;
+            stats.ImageSize = (ulong) imageBuffer.LongLength;
 			_stats.AddSubStats(stats);
 
 			//StatisticsLogger.Log(LogLevel.Info, false, stats);
@@ -456,7 +526,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 			}
 
-			return ms.GetBuffer();
+            return imageBuffer;
 		}
 
 		private static ImageCodecInfo GetEncoderInfo(String mimeType)
@@ -524,18 +594,13 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 			//TODO (CR May 2010): should we remove this code?  We should be very careful if we do.
 			//Theoretically, this could limit us to 10 fps.
 
-			//Console.WriteLine("Processing Mouse Move event");
-			long now = Environment.TickCount;
-			if (_dropNextMouseMove && now - _prevMouseMoveTick < 100)
-			{
-				// the server is going slow.. 
-				// drop this message to catch up with the client
-				// Console.WriteLine("Drop Mouse Move");
-				_dropNextMouseMove = false;
-				return;
-			}
+            Event ack = new MouseMoveProcessedEvent()
+            {
+                Identifier = Guid.NewGuid(),
+                SenderId = this.Identifier
+            };
 
-			_prevMouseMoveTick = Environment.TickCount;
+            ApplicationContext.FireEvent(ack);
 
 			MouseButtons mouseButtons = MouseButtons.None;
 
@@ -547,9 +612,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 			MouseEventArgs e = new MouseEventArgs(mouseButtons, 0, message.MousePosition.X, message.MousePosition.Y, 0);
 			object msg = _tileInputTranslator.OnMouseMove(e);
-			int t0 = Environment.TickCount;
 			_tileController.ProcessMessage(msg);
-			_dropNextMouseMove = Environment.TickCount - t0 > 100;
 		}
 
 		private void ProcessMouseMessage(MouseMessage message)
@@ -560,7 +623,10 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 				{
 					MouseEventArgs e = new MouseEventArgs(MouseButtons.Left, message.ClickCount, message.MousePosition.X, message.MousePosition.Y, 0);
 					object msg = _tileInputTranslator.OnMouseDown(e);
-					_tileController.ProcessMessage(msg);
+                    if (_tileController.ProcessMessage(msg))
+                    {
+                        _isMouseDown = true;
+                    }
 				}
 				else if (message.MouseButtonState == MouseButtonState.Up)
 				{
@@ -572,6 +638,13 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 					e = new MouseEventArgs(MouseButtons.None, 0, message.MousePosition.X, message.MousePosition.Y, 0);
 					msg = _tileInputTranslator.OnMouseMove(e);
 					_tileController.ProcessMessage(msg);
+
+                    if (_isMouseDown)
+                    {
+                        _isMouseDown = false;
+                        if (_quality != _defaultJpegQFactor)
+                            Draw(); // send the full quality image to client
+                    }
 				}
 			}
 			else if (message.Button == MouseButton.Right)
@@ -580,8 +653,10 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 				{
 					MouseEventArgs e = new MouseEventArgs(MouseButtons.Right, message.ClickCount, message.MousePosition.X, message.MousePosition.Y, 0);
 					object msg = _tileInputTranslator.OnMouseDown(e);
-					_tileController.ProcessMessage(msg);
-
+					if (_tileController.ProcessMessage(msg))
+                    {
+                        _isMouseDown = true;
+                    }
 				}
 				else if (message.MouseButtonState == MouseButtonState.Up)
 				{
@@ -595,6 +670,12 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 					e = new MouseEventArgs(MouseButtons.None, 0, message.MousePosition.X, message.MousePosition.Y, 0);
 					msg = _tileInputTranslator.OnMouseMove(e);
 					_tileController.ProcessMessage(msg);
+
+                    if (_isMouseDown && _quality != _defaultJpegQFactor)
+                    {
+                        _isMouseDown = false;
+                        Draw(); // send the full quality image to client
+                    }
 				}
 			}
 		}

@@ -22,6 +22,8 @@ using System.Windows.Media.Imaging;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
 using ClearCanvas.Web.Client.Silverlight;
+using ContextMenu = ClearCanvas.Web.Client.Silverlight.ContextMenu;
+using MenuItem = ClearCanvas.Web.Client.Silverlight.MenuItem;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
 {

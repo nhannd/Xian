@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
@@ -10,12 +10,15 @@
 #endregion
 
 using System;
+using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Web.Common;
+using Binding=System.ServiceModel.Channels.Binding;
+using Message=System.ServiceModel.Channels.Message;
 
 namespace ClearCanvas.Web.Services
 {
@@ -33,9 +36,20 @@ namespace ClearCanvas.Web.Services
         {
             PerformanceMonitor.Initialize();
 
+            AddNetTcpBinding();
 
-			// Define the binding and set time-outs
-            
+            if (MexHttpUrl != null)
+            {
+                ServiceMetadataBehavior mexBehaviour = new ServiceMetadataBehavior();
+                mexBehaviour.HttpGetEnabled = true;
+                mexBehaviour.HttpGetUrl = MexHttpUrl;
+                Description.Behaviors.Add(mexBehaviour);
+            }
+            base.InitializeRuntime();
+        }
+
+        private void AddNetTcpBinding()
+        {
             ServiceThrottlingBehavior throttling = new ServiceThrottlingBehavior();
 
         	//TODO (CR May 2010): we're limiting connections, but not applications
@@ -57,24 +71,26 @@ namespace ClearCanvas.Web.Services
             netTcpBinding.MaxBufferPoolSize = ApplicationServiceSettings.Default.MaxBufferPoolSize;
             netTcpBinding.MaxReceivedMessageSize = ApplicationServiceSettings.Default.MaxReceivedMessageSize;
 
-			if (MexHttpUrl != null)
-			{
-				ServiceMetadataBehavior mexBehaviour = new ServiceMetadataBehavior();
-				mexBehaviour.HttpGetEnabled = true;
-				mexBehaviour.HttpGetUrl = MexHttpUrl;
-				Description.Behaviors.Add(mexBehaviour);
-			}
-
 			LogSettings(netTcpBinding);
 
             // Add an endpoint for the given service contract
             ServiceEndpoint sep = AddServiceEndpoint(typeof(IApplicationService), netTcpBinding, "ApplicationServices");
 			sep.Behaviors.Add(new SilverlightFaultBehavior()); // override the default fault handling behaviour which does not work for Silverlight app.
             
-            base.InitializeRuntime();
         }
 
         private void LogSettings(NetTcpBinding binding)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("Web viewer service settings:");
+            sb.AppendLine(String.Format("\t{0}\t: {1}", "Maximum Simultaneous Applications", ApplicationServiceSettings.Default.MaximumSimultaneousApplications));
+            sb.AppendLine(String.Format("\t{0}\t: {1}", "Inactivity Timeout", binding.ReceiveTimeout));
+            sb.AppendLine(String.Format("\t{0}\t: {1}", "MaxBufferPoolSize", binding.MaxBufferPoolSize));
+            sb.AppendLine(String.Format("\t{0}\t: {1}", "MaxReceivedMessageSize", binding.MaxReceivedMessageSize));
+            Platform.Log(LogLevel.Info, sb.ToString());
+        }
+
+        private void LogHttpSettings(BasicHttpBinding binding)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("Web viewer service settings:");

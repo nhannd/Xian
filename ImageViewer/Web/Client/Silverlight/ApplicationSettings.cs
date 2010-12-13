@@ -20,21 +20,28 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
+using System.ServiceModel.Channels;
+using System.Windows.Browser;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
+    public enum ApplicationServiceMode
+    {
+        BasicHttp        
+    }
+
     public class ApplicationStartupParameters
     {
+        static private ApplicationStartupParameters _current = new ApplicationStartupParameters(Application.Current.Host.InitParams);
 
         public string TimeoutUrl { get; set; }
-
         public string Username { get; private set; }
         public string SessionToken { get; private set; }
 		public bool IsSessionShared { get; private set; }
         public bool LogPerformance { get; private set; }
         public string LocalIPAddress { get; private set; }
-
         public ServerConfiguration ServerSettings { get; set; }
+        public ApplicationServiceMode Mode { get; set; }
 
         private ApplicationStartupParameters(System.Collections.Generic.IDictionary<string, string> initParams)
         {
@@ -75,6 +82,15 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             if (initParams.ContainsKey(Constants.SilverlightInitParameters.Port))
                 serverPort = int.Parse(initParams[Constants.SilverlightInitParameters.Port]);
 
+            Mode = ApplicationServiceMode.BasicHttp; 
+            if (initParams.ContainsKey(Constants.SilverlightInitParameters.Mode))
+            {
+                ApplicationServiceMode mode;
+                if (Enum.TryParse<ApplicationServiceMode>(initParams[Constants.SilverlightInitParameters.Mode], out mode))
+                    Mode = mode;
+            }
+
+
             ServerSettings = new ServerConfiguration
             {
                 InactivityTimeout = inactivityTimeout,
@@ -87,8 +103,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         {
             get
             {
-                return new ApplicationStartupParameters(Application.Current.Host.InitParams);
+                return _current;
             }
         }
+
     }
 }

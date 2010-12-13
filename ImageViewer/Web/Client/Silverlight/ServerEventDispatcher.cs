@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ServiceModel;
 using System.Text;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Browser;
@@ -25,6 +26,11 @@ using System.ServiceModel.Channels;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls;
 using System.Net.NetworkInformation;
+using ClearCanvas.ImageViewer.Web.Client.Silverlight.Views;
+using System.Net;
+using System.Net.Browser;
+using System.Windows.Media;
+using System.IO;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
@@ -46,6 +52,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
     //feedback from this class.
 	public class ServerEventDispatcher : IDisposable
 	{
+        Thread _outboundThread;
         private delegate void DialogResultHandler();
         public delegate void ServerCallCompletedCallback(AsyncCompletedEventArgs ev);
 
@@ -62,9 +69,27 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 	    private Dispatcher _dispatcher;
         private ApplicationContext _context;
 		private int _pendingSend;
-		private IncomingEventQueue _incomingEventQueue;
         private StartApplicationRequest _startRequest;
         private bool _connectionOpened;
+
+        private Binding binding = null;
+        private EndpointAddress address = null;
+
+		private int _nextMessageId = 1;
+
+        private Queue<MessageSet> _outboundQueue = new Queue<MessageSet>();
+        private object _outboundQueueSync = new object();
+
+
+        private Dictionary<int, EventSet> _incomingEventSets = new Dictionary<int, EventSet>();
+        private int NextEventSetNumber = 1;
+
+        private object _incomingEventSync = new object();
+        private Dictionary<Guid, long> _timePrevTileUpdateEvent = new Dictionary<Guid, long>();
+        private long renderLoopCount = 0;
+
+        //TODO: this should not be here
+        private ServerMessagePoller _poller;
 
 		public bool Faulted { 
             get {
@@ -75,17 +100,16 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             } 
         }
 
+        public ApplicationServiceClient Proxy
+        {
+            get { return _proxy; }
+        }
 
         public ServerEventDispatcher(ApplicationContext context)
         {
             _context = context;
             _dispatcher = Deployment.Current.Dispatcher;
         }
-
-		public int PendingSend
-		{
-			get { return Interlocked.Add(ref _pendingSend, 0); }
-		}
 
         public void Initialize(ApplicationStartupParameters appParameters)
 		{
@@ -95,28 +119,76 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 if (_queue == null)
                     _queue = new MessageQueue(DoSend);
 
-				if (_incomingEventQueue == null)
-					_incomingEventQueue = new IncomingEventQueue(ProcessEventSet);
-
+                CompositionTarget.Rendering += CompositionTarget_Rendering;
 				SetupChannel();
+
             }
             catch (Exception ex)
             {
-                Logger.Error(ex);
+                OnError(ex);
             }
         }
+ 
+        private void OnError(Exception exception)
+        {
+            if (exception is CommunicationException)
+            {
+                if (!NetworkInterface.GetIsNetworkAvailable())
+                    DisplayFaulted("Network Error", "Network connection has been lost.");
+                else
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine(String.Format("{0}: {1}", exception.GetType(), exception.Message));
+                    sb.AppendLine("Stack Trace:");
+                    sb.AppendLine(exception.StackTrace);
 
+
+                    if (exception.InnerException != null)
+                    {
+                        sb.AppendLine(String.Format("{0}: {1}", exception.InnerException.GetType(), exception.InnerException.Message));
+                        sb.AppendLine("Stack Trace:");
+                        sb.AppendLine(exception.InnerException.StackTrace);
+                    }
+
+                    DisplayFaulted("Communication Error", sb.ToString());
+                }
+            }
+            else if (exception is FaultException<SessionValidationFault>)
+            {
+                FaultException<SessionValidationFault> fault = exception as FaultException<SessionValidationFault>;
+                DisplayFaulted("Session Error", fault.Detail.ErrorMessage);
+            }
+            else
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine(String.Format("{0}", exception.Message));
+                sb.AppendLine("Stack Trace:");
+                sb.AppendLine(exception.StackTrace);
+
+                if (exception.InnerException != null)
+                {
+                    sb.AppendLine(String.Format("{0}: {1}", exception.InnerException.GetType(), exception.InnerException.Message));
+                    sb.AppendLine("Stack Trace:");
+                    sb.AppendLine(exception.InnerException.StackTrace);
+                }
+
+
+                DisplayFaulted("Error", sb.ToString());
+            }
+        }
 
         private void SetupChannel()
         {
             Binding binding = GetChannelBinding();
             EndpointAddress remoteAddress = GetServerAddress();
             _proxy = new ApplicationServiceClient(binding, remoteAddress);
+
             _proxy.InnerChannel.Faulted += OnChannelFaulted;
             _proxy.InnerChannel.Opening += OnChannelOpening;
             _proxy.InnerChannel.Opened += Connection_Opened;
-            _proxy.EventNotificationReceived += ServerEventReceived;
-            _proxy.ProcessMessagesCompleted += MessageSent;
+
+            _proxy.ProcessMessagesCompleted += new EventHandler<ProcessMessagesCompletedEventArgs>(MessageSent);
+            //_proxy.GetPendingEventCompleted += new EventHandler<GetPendingEventCompletedEventArgs>(GetPendingEventCompleted);
             _proxy.StartApplicationCompleted += StartApplicationCompleted;
             _proxy.StopApplicationCompleted += StopApplicationCompleted;
             _proxy.InnerChannel.OperationTimeout = TimeSpan.FromMinutes(10);
@@ -124,11 +196,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
         //TODO (CR May 2010): this should be part of a UI element.
         DialogControl _stateDialog;
-
         private void OnChannelOpening(object sender, EventArgs e)
         {
             UIThread.Execute(() =>
-            {
+            {    
                 _stateDialog = DialogControl.PopupMessage("Initialization", "Opening connection...");
             });
         }
@@ -154,7 +225,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             {
                 _proxy.InnerChannel.Opened -= Connection_Opened;
                 _proxy.InnerChannel.Opening -= OnChannelOpening;
-                _proxy.EventNotificationReceived -= ServerEventReceived;
                 _proxy.ProcessMessagesCompleted -= MessageSent;
                 _proxy.StartApplicationCompleted -= StartApplicationCompleted;
                 _proxy.StopApplicationCompleted -= StopApplicationCompleted;
@@ -165,37 +235,52 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             }
         }
 
-        private EndpointAddress GetServerAddress()
+        
+		private EndpointAddress GetServerAddress()
         {
-            string uri = string.Format("{0}://{1}:{2}/ApplicationServices",
-                                        _appParameters.ServerSettings.LANMode? Uri.UriSchemeNetTcp: Uri.UriSchemeHttp,
-                                        HtmlPage.Document.DocumentUri.Host,
-                                        _appParameters.ServerSettings.Port);
-            EndpointAddress address = new EndpointAddress(uri); 
-            return address;
+          
+            switch(ApplicationStartupParameters.Current.Mode)
+            {
+                case ApplicationServiceMode.BasicHttp:
+                                var uri = "../Services/ApplicationService.svc/basicHttp";
+                                var address = new EndpointAddress(new Uri(uri, UriKind.RelativeOrAbsolute)); 
+                                return address;
+            }
+
+            // This should never occur
+            throw new Exception();
         }
 
         private Binding GetChannelBinding()
         {
-            Binding binding = null;
 
-            BinaryMessageEncodingBindingElement binaryMessageEncoding = new BinaryMessageEncodingBindingElement();
-            TcpTransportBindingElement tcpTransport = new TcpTransportBindingElement() { MaxReceivedMessageSize = int.MaxValue, MaxBufferSize = int.MaxValue };
-            tcpTransport.ConnectionPoolSettings.IdleTimeout = _appParameters.ServerSettings.InactivityTimeout;
+            switch(ApplicationStartupParameters.Current.Mode)
+            {
+                    case ApplicationServiceMode.BasicHttp:
+                                var binaryMessageEncoding = new BinaryMessageEncodingBindingElement();
 
-            // Net tcp in SL4 does not provide transport level security :(
-            // TransportSecurityBindingElement sec = SecurityBindingElement.CreateUserNameOverTransportBindingElement();
-            // binding = new CustomBinding(binaryMessageEncoding, sec, tcpTransport);
-
-            binding = new CustomBinding(binaryMessageEncoding, tcpTransport);
-            
-            return binding;
+                                if (HtmlPage.Document.DocumentUri.Scheme.Equals(Uri.UriSchemeHttp))
+                                {
+                                    HttpTransportBindingElement http = new HttpTransportBindingElement() { MaxReceivedMessageSize = int.MaxValue, MaxBufferSize = int.MaxValue, TransferMode = TransferMode.Buffered };
+                                    binding = new CustomBinding(binaryMessageEncoding, http);
+                                    return binding;
+                                }
+                                else
+                                {
+                                    HttpsTransportBindingElement https = new HttpsTransportBindingElement() { MaxReceivedMessageSize = int.MaxValue, MaxBufferSize = int.MaxValue, TransferMode = TransferMode.Buffered };
+                                    binding = new CustomBinding(binaryMessageEncoding, https);
+                                    return binding;
+                                }
+                
+            }
+                
+            return null;
         }
 
         private void OnChannelFaulted(object sender, EventArgs e)
         {
             //TODO (CR May 2010) How to deal with string resources?
-            DisplayFaulted( _connectionOpened? "Connection to the server has been lost.": String.Format("Could not establish connection to {0}", _proxy.InnerChannel.RemoteAddress.Uri));
+            DisplayFaulted("Connection Error", _connectionOpened? "Connection to the server has been lost.": String.Format("Could not establish connection to {0}", _proxy.InnerChannel.RemoteAddress.Uri));
             UIThread.Execute(() =>
             {
                 if (_stateDialog != null)
@@ -206,22 +291,52 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             });
         }
 
-	    private void StartApplicationCompleted(object sender, AsyncCompletedEventArgs e)
-	    {            
-            if (e.Error != null && _connectionOpened)
+	    private void StartApplicationCompleted(object sender, StartApplicationCompletedEventArgs e)
+	    {
+            if (e.Error != null )
             {
-                if (e.Error is FaultException<SessionValidationFault>)
-                {
-                    FaultException<SessionValidationFault> fault = e.Error as FaultException<SessionValidationFault>;
-                    DisplayFaulted("Error", fault.Detail.ErrorMessage, false);
-                }
-                else
-                {
+                OnError(e.Error);
+                return;
+            }
 
-                    DisplayFaulted(e.Error.Message);
-                }
-            }            
+            ApplicationContext.Current.ID = e.Result.AppIdentifier;
+
+            ThrottleSettings.Default.PropertyChanged += new PropertyChangedEventHandler(ThrottleSettings_PropertyChanged);
+
+            // TODO:
+            // For fast connection, dynamic Image Quality may not be necessary
+            _proxy.SetPropertyAsync(new SetPropertyRequest{ ApplicationId = ApplicationContext.Current.ID , 
+                        Key = "DynamicImageQualityEnabled",
+                        Value= ThrottleSettings.Default.EnableDynamicImageQuality.ToString() });
+
+            StartPolling();
+
+            _outboundThread = new Thread((ignore)=>{ ProcessOutboundQueue(); } );
+
+            _outboundThread.Start();
 	    }
+
+        private void StartPolling()
+        {
+            _poller = new ServerMessagePoller(_proxy);
+            _poller.Error += (sender, ev) => { OnError(ev.Error); };
+            _poller.MessageReceived += (sender, ev) => { OnServerEventReceived(ev.EventSet); };
+            _poller.Start();
+        }
+
+        private void ThrottleSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals("DynamicImageQualityEnabled"))
+            {
+                _proxy.SetPropertyAsync(new SetPropertyRequest
+                {
+                    ApplicationId = ApplicationContext.Current.ID,
+                    Key = "DynamicImageQualityEnabled",
+                    Value = ThrottleSettings.Default.EnableDynamicImageQuality.ToString()
+                });
+
+            }
+        }
 
         private void StopApplicationCompleted(object sender, AsyncCompletedEventArgs e)
         {
@@ -235,47 +350,67 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 //TODO (CR May 2010) This shouldn't be in the else, error could happen when a callback is available.
                 if (e.Error != null && _connectionOpened)
                 {
-                    DisplayFaulted( e.Error.Message);
+                    DisplayFaulted("Error", e.Error.Message);
                 }
             }
         }
 
-	    private void MessageSent(object sender, AsyncCompletedEventArgs e)
-	    {
-            MessageSet msgs = e.UserState as MessageSet;
-            Interlocked.Add(ref _pendingSend, - msgs.Messages.Count);
 
-            if (e.Error != null && _connectionOpened)
+        private void MessageSent(object sender, ProcessMessagesCompletedEventArgs e)
+	    {
+            // TODO: REVIEW THIS
+            // Per MSDN:
+            // if the system runs continuously, TickCount will increment from zero to Int32.MaxValue for approximately 24.9 days, 
+            // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
+            ApplicationActivityMonitor.Instance.LastActivityTick = Environment.TickCount; 
+            MessageSet msgs = e.UserState as MessageSet;
+
+            if (ThrottleSettings.Default.LagDetectionStrategy == LagDetectionStrategy.WhenMMRequestIsSent)
+                PerformanceMonitor.CurrentInstance.DecrementSendLag(msgs.Messages.Count((i)=> i is MouseMoveMessage));
+
+            Interlocked.Add(ref _pendingSend, -msgs.Messages.Count);
+
+            if (e.Error != null)
             {
-                if (e.Error.GetType().Equals(typeof(CommunicationException)))
-                {
-                    if (!NetworkInterface.GetIsNetworkAvailable())
-                        DisplayFaulted("Network connection has been lost.");
-                    else
-                        DisplayFaulted(e.Error.Message);
-                }
-                else
-                    DisplayFaulted(e.Error.Message);
+                OnError(e.Error);
+                return;
             }
+
+            if (e.Result!=null)
+            {
+                if (e.Result.EventSet!=null && e.Result.EventSet.Events!=null)
+                {
+                    bool isMoveMoveMsg =  msgs.Messages.Any((i) => i is MouseMoveMessage);
+                    if (isMoveMoveMsg)
+                    {
+                    
+                        long dt = Environment.TickCount - msgs.Tick;
+                        var p = PerformanceMonitor.CurrentInstance;
+
+                        bool tileUpdateEventReturned = e.Result.EventSet != null && e.Result.EventSet.Events.Any((i) => i is TileUpdatedEvent);
+
+                        p.LogMouseMoveRTTWithResponse(msgs.Number, dt);
+                    }                 
+
+                    if (e.Result.EventSet != null)
+                    {
+                        OnServerEventReceived(e.Result.EventSet);
+                    }
+                }
+                
+            }
+            
+
 	    }
 
-        private void DisplayFaulted(string errorMessage)
-        {
-            DisplayFaulted("Error", errorMessage, true);
-        }
-
-		private void DisplayFaulted(string errorMessage, bool allowReload)
-        {
-            DisplayFaulted("Error", errorMessage, allowReload);
-        }
 
         //TODO (CR May 2010): see my comments at the top RE: separation of responsibilities.
-        private void DisplayFaulted(string error, string details, bool allowReload)
+        private void DisplayFaulted(string error, string details)
         {
             try
             {
                 if (ChannelError != null)
-                    ChannelError(_proxy, new ChannelErrorEventArgs { ErrorName = error, Details = details, IsReloadAllowed = allowReload });
+                    ChannelError(_proxy, new ChannelErrorEventArgs { ErrorName = error, Details = details, IsReloadAllowed = false });
                 else
                 {
                     Logger.Error(details);
@@ -285,7 +420,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             {
             	// In some case, this is not necessary because the connection is already faulted.
             	// But let's do it anyway.
-                Disconnect();
+                Disconnect(details);
             }
         }
 
@@ -296,7 +431,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             if (ApplicationContext.Current.ID.Equals(applicationNotFoundEvent.ApplicationId))
             {
                 DisplayFaulted("Synchronization Lost",
-                            String.Format("The application has not been found on the server: {0}", applicationNotFoundEvent.ApplicationId), true);
+                            String.Format("The application has not been found on the server: {0}", applicationNotFoundEvent.ApplicationId));
             }
         }
 
@@ -315,11 +450,41 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             }
             finally
             {
-                Disconnect();
+                Disconnect("Application has stopped");
             }
         }
 
-		private int _nextMessageId = 1;
+        public void ProcessOutboundQueue()
+        {
+            while(true)
+            {
+                lock (_outboundQueueSync)
+                {
+                    if (_outboundQueue.Count == 0)
+                    {
+                        Monitor.Wait(_outboundQueueSync);
+                    }
+                }
+
+
+                if (_outboundQueue.Count == 0)
+                {
+                    continue;
+                }
+
+                if (_outboundQueue.Count > 0)
+                {
+                    MessageSet msgset = _outboundQueue.Dequeue();
+                    msgset.Tick = Environment.TickCount;
+                    msgset.Timestamp = DateTime.Now; 
+                    
+                    _proxy.ProcessMessagesAsync(msgset, msgset);
+
+                    ApplicationActivityMonitor.Instance.LastActivityTick = Environment.TickCount;
+                }
+            }
+        }
+        
 	    private void DoSend(List<Message> msgs)
 	    {
 			if (Faulted)
@@ -329,32 +494,59 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             if (_proxy.State == CommunicationState.Faulted
                 || _proxy.InnerChannel.State == CommunicationState.Faulted)
             {
-                DisplayFaulted( string.Empty);
+                DisplayFaulted("Error", "Unexpected error");
                 return;
             }
 
-            MessageSet msgset = new MessageSet();
-	        msgset.Messages = new System.Collections.ObjectModel.ObservableCollection<Message>();
-			msgset.ApplicationId = _context.ID;
-			msgset.Number = _nextMessageId++;
+            
+                MessageSet msgset = new MessageSet();
+                msgset.Messages = new System.Collections.ObjectModel.ObservableCollection<Message>();
+                msgset.ApplicationId = _context.ID;
+                msgset.Number = _nextMessageId++;
 
-			foreach (Message msg in msgs)
-            {
-                if (msg != null)
-                    msgset.Messages.Add(msg);
-            }
-            try
-            {
+                foreach (Message msg in msgs)
+                {
+                    if (msg != null)
+                        msgset.Messages.Add(msg);
+                }
+                try
+                    {
 
-                _proxy.ProcessMessagesAsync(msgset, msgset);
-            }
-            catch (Exception e)
-            {
-                // happens on timeout of connection
-                Logger.Error(e);
-                if (_proxy.State == CommunicationState.Faulted)
-                    DisplayFaulted( e.Message);
-            }
+                        // TODO: REVIEW THIS
+                        // Per MSDN:
+                        // if the system runs continuously, TickCount will increment from zero to Int32.MaxValue for approximately 24.9 days, 
+                        // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
+                        msgset.Tick = Environment.TickCount;
+                        msgset.Timestamp = DateTime.Now;
+
+                        if (ThrottleSettings.Default.SimulateNetworkTrafficOrder)
+                        {
+                            lock (_outboundQueueSync)
+                            {
+                                _outboundQueue.Enqueue(msgset);
+                                Monitor.Pulse(_outboundQueueSync);
+                            }
+                        }
+                        else
+                        {
+                            Logger.Write(String.Format("<== {0}: MSG # {1}\n", Environment.TickCount, msgset.Number));
+                            _proxy.ProcessMessagesAsync(msgset, msgset);
+
+                            // TODO: REVIEW THIS
+                            // Per MSDN:
+                            // if the system runs continuously, TickCount will increment from zero to Int32.MaxValue for approximately 24.9 days, 
+                            // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
+                            ApplicationActivityMonitor.Instance.LastActivityTick = Environment.TickCount;
+                        }
+                        
+                    }
+                    catch (Exception e)
+                    {
+                        // happens on timeout of connection
+                        Logger.Error(e);
+                        if (_proxy.State == CommunicationState.Faulted)
+                            DisplayFaulted("Channel Error", e.Message);
+                    }
 	    }
 
 		/// <summary>
@@ -422,47 +614,34 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             }
         }
 
-		public void ServerEventReceived(object sender, EventNotificationReceivedEventArgs e)
-		{
-			if (e.Error != null)
-			{
-				if (_proxy.State == CommunicationState.Faulted)
-					DisplayFaulted(e.Error.Message);
-				return;
-			}
-
-			if (e.events == null || e.events.Events == null || e.events.Events.Count == 0)
-			{
-				Logger.Write("Recieve an empty event from the server");
-			}
-			else if (e.Cancelled)
-			{
-				StringBuilder sb = new StringBuilder();
-				foreach (Event @event in e.events.Events)
-				{
-					if (sb.Length != 0)
-						sb.AppendFormat(", ");
-
-					sb.AppendFormat("{0}", @event.Identifier);
-				}
-				Logger.Write("Received server event: Asynchronous events were cancelled: {0}");
-
-                //TODO (CR May 2010) Fault the channel?
-			}
-			else
-			{
-				_incomingEventQueue.ProcessEventSet(e.events);
-			}
-		}
 
 		private void ProcessEventSet(EventSet eventSet)
-		{
-			foreach (Event ev in eventSet.Events)
-			{
-				EventHandler<ServerEventArgs> handler;
-				Logger.Write("Received {0} {1} from {2}\n", ev.GetType().Name, ev.Identifier, ev.SenderId);
+        {
+            if (eventSet == null)
+                return;
 
-				try
+            if (eventSet.Events == null)
+                return;
+
+#if DEBUG
+            if (eventSet.Events!=null)
+            {
+                int updateEvents =  eventSet.Events.Count((i)=> i is TileUpdatedEvent);
+                if (updateEvents>1)
+                {
+                    //UIThread.Execute(()=> System.Windows.MessageBox.Show(String.Format("Multiple tile update events in message set #{0}", eventSet.Number)));
+                }
+            }
+#endif
+
+            
+            foreach (Event @event in eventSet.Events)
+			{
+                var ev = @event;
+                
+                EventHandler<ServerEventArgs> handler;
+
+                try
 				{
                     if (ev is ApplicationNotFoundEvent)
                     {
@@ -506,21 +685,28 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 				catch (Exception ex)
 				{
 					if (_proxy.State == CommunicationState.Faulted)
-                        DisplayFaulted( ex.Message);
+                        DisplayFaulted("Channel Error", ex.Message);
                 }
 			}
 		}
 
+        // TODO: should return bool instead
 	    public void DispatchMessage(Message message)
         {
             try
             {
                 if (!Faulted)
                 {
+                    ApplicationActivityMonitor.Instance.LastActivityTick = Environment.TickCount;
                     Interlocked.Increment(ref _pendingSend);
+
                     _queue.Enqueue(message);
-                    //Logger.Write(String.Format("Pending messages: {0}\n", PendingSend));
-                }
+
+                    if (message is MouseMoveMessage)
+                    {
+                        PerformanceMonitor.CurrentInstance.IncrementSendLag(1);
+                    }
+                } 
                 
             }
             catch (Exception ex)
@@ -548,13 +734,19 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 			_proxy.StopApplicationAsync(new StopApplicationRequest { ApplicationId = identifier });
 		}
 
-        public void Disconnect()
+        public void Disconnect(string reason)
         {
             if (_proxy != null)
             {
                 //TODO (CR May 2010): we don't sync the proxy anywhere else.
                 lock (_sync)
                 {
+                    if (_poller != null)
+                    {
+                        _poller.Dispose();
+                        _poller = null;
+                    }
+
                     if (_proxy != null)
                     {
                         ReleaseChannel();
@@ -566,9 +758,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
         public void Dispose()
         {
+            // TODO: This method is called on Application Exit. 
+            // But SL does not support calling web service on this event
             if (_proxy != null)
             {
-                Disconnect();
+                Disconnect("Disposing");
             }
 
             if (_queue != null)
@@ -576,8 +770,92 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 _queue.Dispose();
                 _queue = null;
             }
+
+            CompositionTarget.Rendering -= CompositionTarget_Rendering;
         }
-	}
+
+        private void OnServerEventReceived(EventSet eventSet)
+        {
+            Logger.Write(String.Format("==> {0}: IN MSG # {1}\n", Environment.TickCount, eventSet.Number));
+            
+            if (ThrottleSettings.Default.LagDetectionStrategy == LagDetectionStrategy.WhenMouseMoveIsProcessed)
+                PerformanceMonitor.CurrentInstance.DecrementSendLag(eventSet.Events.Count((i) => i is MouseMoveProcessedEvent));
+
+            int tileUpdateEvCount = eventSet.Events.Count((i) => i is TileUpdatedEvent);
+            if (tileUpdateEvCount > 0)
+            {
+                //if (ThrottleSettings.Default.LagDetectionStrategy == LagDetectionStrategy.WhenTileUpdateReturn)
+                //    PerformanceMonitor.CurrentInstance.DecrementSendLag(eventSet.Events.Count((i) => i is TileUpdatedEvent));
+
+                PerformanceMonitor.CurrentInstance.RenderingLag += tileUpdateEvCount;
+                if (tileUpdateEvCount>1)
+                    Logger.Write(String.Format("########## {0} tile update events received ###########\n",tileUpdateEvCount));
+            }
+
+
+            lock (_incomingEventSync)
+            {
+                _incomingEventSets[eventSet.Number] = eventSet;
+                Monitor.Pulse(_incomingEventSync);
+            }
+        }
+
+        private void CompositionTarget_Rendering(Object sender, EventArgs e)
+        {
+            ProcessIncomingQueue(null);
+        }
+
+
+        
+        internal void ProcessIncomingQueue(object ignore)
+        {
+            EventSet current;
+            lock (_incomingEventSync)
+            {
+                //TODO: will renderLoopCount overflow?
+                renderLoopCount++;
+               
+                if (!_incomingEventSets.TryGetValue(NextEventSetNumber, out current))
+                {
+                    return;
+                }
+                    
+                bool hasTileUpdateEvent = current.Events.Any((i) => i is TileUpdatedEvent);
+                TileUpdatedEvent tileUpdateEv = hasTileUpdateEvent ? current.Events.First((i) => i is TileUpdatedEvent) as TileUpdatedEvent : null;
+                    
+                if (hasTileUpdateEvent)
+                {
+                    long prevTileUpdate=0;
+                    if (_timePrevTileUpdateEvent.TryGetValue(tileUpdateEv.SenderId, out prevTileUpdate))
+                    {
+                        // For some reason, image on the screen is not updated if it is changed too fast
+                        // My guess is it takes another iteration to refresh the UI.
+                        //
+                        // NOTE: From MSDN http://msdn.microsoft.com/en-us/library/system.windows.media.compositiontarget.rendering.aspx
+                        // This event handler gets called once per frame. Each time that Windows Presentation Foundation (WPF) marshals the persisted rendering data in the visual tree across to the composition tree, 
+                        // your event handler is called. In addition, if changes to the visual tree force updates to the composition tree, your event handler is also called. 
+                        // Note that your event handler is called after layout has been computed. 
+                        // However, you can modify layout in your event handler, which means that layout will be computed once more before rendering.
+                        //
+                        if (ThrottleSettings.Default.EnableFPSCap)
+                            if (renderLoopCount - prevTileUpdate < 3)
+                                return;
+                    }                   
+                }
+
+                _incomingEventSets.Remove(NextEventSetNumber);
+                NextEventSetNumber = current.Number + 1;
+                var ev = current;
+
+                ProcessEventSet(ev); 
+
+                if (hasTileUpdateEvent)
+                {
+                    _timePrevTileUpdateEvent[tileUpdateEv.SenderId] = renderLoopCount;
+                }
+            }
+		}
+    }
 
 	class MessageQueue : IDisposable
     {
@@ -633,8 +911,21 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 					if (msgs.Count == 0)
 						continue;
 
-					sendDelegate(msgs);
 				}
+
+                // send is called outside the lock block to avoid deadlock when polling duplex http binding is used
+                // it happens when the server for some reason decides to wait for the client to finish processing the "app started" message,
+                // and the client attempts to send the "client rect size" msg to the server when it processes he "app started" message.
+                //
+                // Basic http binding appears to have the same problem too
+                try
+                {
+                    sendDelegate(msgs);
+                }
+                catch (Exception ex)
+                {
+                    //??
+                }
             }
         }
 
@@ -650,5 +941,16 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 			if (_thread.IsAlive)
 				_thread.Join();
         }
-    }  
+    }
+
+}
+
+
+namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference
+{
+
+    public partial class MessageSet
+    {
+        public int Tick;
+    }
 }

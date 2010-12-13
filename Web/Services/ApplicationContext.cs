@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Web.Common;
 using System.Security.Principal;
@@ -23,17 +24,25 @@ namespace ClearCanvas.Web.Services
         Guid ApplicationId { get; }
 		void FireEvent(Event e);
 		void FatalError(Exception e);
-	}
+
+        EventSet GetPendingOutboundEvent(int wait);
+
+	    bool HasProperty(string key);
+        bool TryGetValue<T>(string key, out T value);
+	    void SetProperty<T>(string key, T value);
+    }
 
 	public class ApplicationContext : IApplicationContext, IDisposable
     {
 		private readonly Application _application;
 		internal EventBroker _eventBroker;
-		
-        internal ApplicationContext(Application application, IApplicationServiceCallback callback)
+	    private readonly Dictionary<string, object> _properties;
+
+        internal ApplicationContext(Application application)
         {
+            _properties = new Dictionary<string, object>();
 			_application = application;
-			_eventBroker = new EventBroker(application, callback);
+			_eventBroker = new EventBroker(application);
 			EntityHandlers = new EntityHandlerStore();
         }
 
@@ -44,12 +53,6 @@ namespace ClearCanvas.Web.Services
 				IApplication application = Application.Current;
 				return application != null ? application.Context : null;
 			}
-		}
-
-		internal bool SuspendEvents
-		{
-			get { return _eventBroker.Suspended; }
-			set { _eventBroker.Suspended = value; }
 		}
 
 		public IPrincipal Principal
@@ -70,8 +73,38 @@ namespace ClearCanvas.Web.Services
         {
 			_application.Stop(e);
         }
-		
-		public void FireEvent(Event @event)
+
+        public EventSet GetPendingOutboundEvent(int wait)
+	    {
+            
+            if (_eventBroker == null)
+                return null;
+	        return _eventBroker.GetPendingOutboundEvent(wait);
+	    }
+
+        public bool TryGetValue<T>(string key, out T value)
+	    {
+            object temp;
+            if (_properties.TryGetValue(key, out temp))
+            {
+                value = (T) temp;
+                return true;
+            }
+            value = default(T);
+            return false;
+	    }
+
+        public bool HasProperty(string key)
+        {
+            return _properties.ContainsKey(key);
+        }
+
+	    public void SetProperty<T>(string key, T value)
+	    {
+            _properties[key] = value;
+	    }
+
+	    public void FireEvent(Event @event)
         {
 			InjectSenderName(@event);
 			if (_eventBroker != null)

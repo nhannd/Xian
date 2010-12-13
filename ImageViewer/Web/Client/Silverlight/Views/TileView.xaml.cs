@@ -24,6 +24,9 @@ using System.Windows.Threading;
 using System.Windows.Resources;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls;
 using ClearCanvas.Web.Client.Silverlight;
+using System.ComponentModel;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 {
@@ -36,7 +39,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
 		private readonly TimeSpan _doubleClickTime = TimeSpan.FromMilliseconds(500);
 
-		private int? _firstLeftClickTicks;
+		private object _tileEventSync = new object();
+
+        private int? _firstLeftClickTicks;
 		private int? _firstRightClickTicks;
 
         private long _lastMouseWheelTick;
@@ -155,34 +160,55 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 			
             _parentSize = size;
             UpdateSize();
-            Draw();
+            Draw(Guid.Empty, ServerEntity!=null? ServerEntity.Image:null);
         }
 
-        public void Draw()
+
+        public void Draw(Guid evid, byte[] imageBuffer)
         {
-			if (_destroyed)
+            if (_destroyed)
 				return;
-			
-			if (ServerEntity.Image != null)
-            {
-                BitmapImage bmp = new BitmapImage();
-                bmp.SetSource(new MemoryStream(ServerEntity.Image));
 
-                TileImage.Source = bmp;
-            }
-            else
-            {
-                if (!double.IsNaN(TileCanvas.ActualHeight) && !double.IsNaN(TileCanvas.ActualWidth))
+                if (imageBuffer != null)
                 {
+#if DEBUG
+                    WriteableBitmap snapshot = new WriteableBitmap(TileImage, null);
+                    TileImageHistory.Instance.Add(evid, snapshot);
+#endif
+                    using (MemoryStream ms = new MemoryStream(imageBuffer))
+                    {
+                        BitmapImage bmp = new BitmapImage() { CreateOptions = BitmapCreateOptions.IgnoreImageCache | BitmapCreateOptions.None };
+                        bmp.SetSource(ms);
+                        
+                        TileImage.Source = null;
+                        TileImage.Source = bmp;
 
-                    WriteableBitmap bitmap = new WriteableBitmap((int)TileCanvas.ActualWidth, (int)TileCanvas.ActualHeight);
-                    TileImage.Source = bitmap;
+#if DEBUG
+                        //Logger.Write(String.Format("{0} T{1} : @@@@@@ tile image updated. size: {4}x{5}, {2} bytes, evid={3}\n", Environment.TickCount, Thread.CurrentThread.ManagedThreadId, imageBuffer.Length, evid,
+                        //    TileImage.ActualWidth, TileImage.ActualHeight));
+#endif                    
+                    }
+                    
                 }
-            }
+                else
+                {
+                    if (!double.IsNaN(TileCanvas.ActualHeight) && !double.IsNaN(TileCanvas.ActualWidth))
+                    {
+                        
+                        WriteableBitmap bitmap = new WriteableBitmap((int)TileCanvas.ActualWidth, (int)TileCanvas.ActualHeight);
+                        TileImage.Source = bitmap;
+#if DEBUG
+                        Logger.Write(String.Format("{0} T{1} : @@@@@@ tile image size {2}x{3}\n", Environment.TickCount, Thread.CurrentThread.ManagedThreadId, bitmap.PixelHeight, bitmap.PixelWidth));
+#endif
+                    }
+                }
 
-            UpdateBorder();
-            OnTileImageDrawn();
+
+                UpdateBorder();
+                OnTileImageDrawn();
+            
         }
+
 
         public void Destroy()
         {
@@ -228,7 +254,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
         {
 			if (_destroyed)
 				return;
-			
+
+            PerformanceMonitor.CurrentInstance.ResetClientStats();
+            PerformanceMonitor.CurrentInstance.Begin(-1);
+            
 			MouseHelper.PreprocessRightMouseButtonDown(this, sender, e);
         }
 
@@ -236,7 +265,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
         {
             if (_destroyed)
 				return;
-			
+            PerformanceMonitor.CurrentInstance.ResetClientStats(); 
+            PerformanceMonitor.CurrentInstance.Begin(-1);
 			MouseHelper.PreprocessLeftMouseButtonDown(this, sender, e);
         }
 
@@ -244,6 +274,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
         {
 			if (_destroyed)
 				return;
+            
+            _displayFps = false;
+            DebugInformation.Text = "";
 
 			//TODO (CR May 2010): we probably don't need a lot of the locks in the client; could just remove them.
             lock (_mouseEventLock)
@@ -256,10 +289,15 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
         {
 			if (_destroyed)
 				return;
-			
+
+            ApplicationActivityMonitor.Instance.LastActivityTick = Environment.TickCount;
+            
+            _displayFps = true;
+
 			lock (_mouseEventLock)
             {
                 Focus();
+                PerformanceMonitor.CurrentInstance.CurrentTile = this;
 
                 System.Windows.Point curPos = e.GetPosition(TileImage);
                 _rightClickPosition = curPos;
@@ -303,15 +341,25 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 			
 			lock (_mouseEventLock)
             {
+            	// TODO: Why was this commented out?
+                // StopMouseMoveTimer();
                 _mouseInside = false;
             }
 		}
 
+        
         public void OnMouseMoving(object sender, MouseEventArgs e)
         {
 			if (_destroyed)
 				return;
-			
+
+
+            // TODO: REVIEW THIS
+            // Per MSDN:
+            // if the system runs continuously, TickCount will increment from zero to Int32.MaxValue for approximately 24.9 days, 
+            // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
+            long elapsed = Environment.TickCount - _lastMouseMoveMessageTick;
+
 			lock (_mouseEventLock)
             {
                 _lastMouseMoveTick = Environment.TickCount;
@@ -325,6 +373,17 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                     return; // Happens sometimes on layout changes
                 }
 
+                bool okToSend = false;
+
+                ThrottleSettings settings = ThrottleSettings.Default;
+                PerformanceMonitor p = PerformanceMonitor.CurrentInstance;
+
+
+                // TODO: Should maxPendingAllowed be adjusted based on FPS? Image Size? and the current operation? 
+                // Experiment shows that 2 provides the smoothest experience for pan, zoom, w/l and 4 is best for stacking (in office).
+                // For big images (1x1 layout), pan and zoom work best when maxPendingAllowed=1.
+                int maxPendingAllowed = settings.MaxPendingMouseMoveMsgAllowed;                
+                            
                 if (!ServerEntity.HasCapture)
                 {
                     if (IsSelected)
@@ -335,15 +394,33 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                         if (_timer == null)
                         {
 							//TODO (CR May 2010): should we just start handling the mouse globally through the helper?  It might simplify the code.
-                            _lastMouseMoveMessageTick = Environment.TickCount;
+                            //_lastMouseMoveMessageTick = Environment.TickCount;
                             //SendMouseMoveMessage();
                             StartMouseMoveTimer();
-                        }
+                        } 
                         else
                         {
-                            long elapsedTime = Environment.TickCount - _lastMouseMoveMessageTick;
-                            if (elapsedTime >= MOUSE_MOVE_INBETWEEN_MSG_DELAY.TotalMilliseconds)
+                            switch (settings.Strategy)
                             {
+                                case ThrottleStrategy.ConstantRate:
+                                    okToSend = elapsed >= settings.ConstantRate && p.SendLag < maxPendingAllowed && p.RenderingLag < 5;
+                                    break;
+                                case ThrottleStrategy.UseMouseMoveRTT:
+                                    okToSend = PerformanceMonitor.CurrentInstance.SendLag == 0 || (elapsed >= p.AverageMouseMoveMsgRTTWithResponse
+                                        && p.SendLag < maxPendingAllowed && p.RenderingLag < 5);
+                                    break;
+                                case ThrottleStrategy.WhenMouseMoveRspReceived:
+                                    okToSend = elapsed >= p.AverageMouseMoveMsgRTTWithResponse / settings.MaxPendingMouseMoveMsgAllowed && p.SendLag < maxPendingAllowed && p.RenderingLag < 5;
+                                    break;
+                            }
+
+
+                            if (okToSend)
+                            {
+                                // TODO: REVIEW THIS
+                                // Per MSDN:
+                                // if the system runs continuously, TickCount will increment from zero to Int32.MaxValue for approximately 24.9 days, 
+                                // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
                                 _lastMouseMoveMessageTick = Environment.TickCount;
                                 SendMouseMoveMessage();
                             }
@@ -352,19 +429,25 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                     return;
                 } 
 
-                long elapsed = Environment.TickCount - _lastMouseMoveMessageTick;
-                const int minMouseMouveMessageFiringPeriod = 30;
-
-                if (elapsed > minMouseMouveMessageFiringPeriod)
+                switch (settings.Strategy)
                 {
-                    if (ApplicationContext.Current.ServerEventBroker.PendingSend > 1)
-                    {
-                        Logger.Write("Ignore mouse move: Pending send\n");
-                        return;
-                    }
+                    case ThrottleStrategy.ConstantRate:
+                        okToSend = elapsed >= settings.ConstantRate && p.SendLag < maxPendingAllowed && p.RenderingLag < 5;
+                        break;
+                    case ThrottleStrategy.UseMouseMoveRTT:
+                        okToSend = PerformanceMonitor.CurrentInstance.SendLag == 0 || (elapsed >= p.AverageMouseMoveMsgRTTWithResponse
+                            && elapsed >= p.AverageMouseMoveMsgRTTWithResponse / settings.MaxPendingMouseMoveMsgAllowed && p.SendLag < maxPendingAllowed && p.RenderingLag < 5);
+                        break;
+                    case ThrottleStrategy.WhenMouseMoveRspReceived:
+                        okToSend = elapsed>=p.AverageMouseMoveMsgRTTWithResponse / settings.MaxPendingMouseMoveMsgAllowed && p.SendLag < maxPendingAllowed && p.RenderingLag < 5; 
+                        break;                    
+                }
 
+                if (okToSend)
+                {
                     _lastMouseMoveMessageTick = Environment.TickCount;
                     SendMouseMoveMessage();
+
                 }
             }
         }
@@ -373,12 +456,23 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
         {
 			if (_destroyed)
 				return;
-			
-			long elapsed = Environment.TickCount - _lastMouseWheelTick;
+
+            _displayFps = true;
+            PerformanceMonitor.CurrentInstance.Begin(1000);
+
+            // TODO: REVIEW THIS
+            // Per MSDN:
+            // if the system runs continuously, TickCount will increment from zero to Int32.MaxValue for approximately 24.9 days, 
+            // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
+            long elapsed = Environment.TickCount - _lastMouseWheelTick;
             const int MIN_WHEEL_MSG_FIRING_PERIOD = 20;
 
             if (elapsed > MIN_WHEEL_MSG_FIRING_PERIOD)
             {
+                // TODO: REVIEW THIS
+                // Per MSDN:
+                // if the system runs continuously, TickCount will increment from zero to Int32.MaxValue for approximately 24.9 days, 
+                // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
                 _lastMouseWheelTick = Environment.TickCount;
                 Message msg = new MouseWheelMessage
                 {
@@ -447,8 +541,13 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
         {
 			if (_destroyed)
 				return;
+            
+            ApplicationActivityMonitor.Instance.LastActivityTick = Environment.TickCount;
+            
+            _displayFps = true;
 
             Focus();
+            PerformanceMonitor.CurrentInstance.CurrentTile = this;
 
             lock (_mouseEventLock)  
             {
@@ -467,8 +566,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
                 };
                 ApplicationContext.Current.ServerEventBroker.DispatchMessage(msg);
-                Logger.Write(String.Format("MouseDown {0}\n", msg.Identifier));
-
+                
                 _mouseInside = true;
                 OnCursorChanged(ServerEntity.Cursor);
                 MouseHelper.SetActiveElement(this);
@@ -479,73 +577,98 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
         {
 			if (_destroyed)
 				return;
-			
+
+            DebugInformation.Text = "";
+            _displayFps = false;
+
 			lock (_mouseEventLock)
             {
                 MouseLeftButtonUp(e==null ? new Point() : e.GetPosition(TileImage));
             }
+
         }
+
+        bool _displayFps;
+        long _prevUpdateTileEventTick;
 
 		private void OnTileEvent(object sender, ServerEventArgs e)
         {
-            if (e.ServerEvent is TileUpdatedEvent)
+            lock (_tileEventSync)
             {
-				TileUpdatedEvent ev = (TileUpdatedEvent)e.ServerEvent;
-
-                // TODO: review this. We are changing ServerEntity without notifying others. 
-                //
-                // This code makes the ImageBoxView and its TileViews all out-of-sync.
-                // The Tiles referenced by the ServerEntity of the ImageBoxView still references the old Tile entities.
-                // If another object observes PropertyChange event on the ImageBoxView.ServerEntity to detect
-                // changes, it may stop working after this.
-                //
-                ServerEntity = ev.Tile; 
-
-				Draw();
-			}
-            if (e.ServerEvent is ContextMenuEvent)
-            {
-                OnContextMenuEvent((e.ServerEvent as ContextMenuEvent));
-            }
-			else if (e.ServerEvent is PropertyChangedEvent)
-			{
-				PropertyChangedEvent ev = (PropertyChangedEvent)e.ServerEvent;
-				if (ev.PropertyName == "Selected")
-				{
-					ServerEntity.Selected = (bool)ev.Value;
-                    if (ServerEntity.Selected)
-                        MouseHelper.SetActiveElement(this);
-
-					UpdateBorder();
-					return;
-				}
-				if (ev.PropertyName == "Image")
-				{
-					ServerEntity.Image = (byte[])ev.Value;
-					Draw();
-					return;
-				}
-				if (ev.PropertyName == "Cursor")
-				{
-					OnCursorChanged(ev.Value as AppServiceReference.Cursor);
-					return;
-				}
-				if (ev.PropertyName == "MousePosition")
-				{
-					OnMousePositionChanged((Position)ev.Value);
-				}
-				if (ev.PropertyName == "HasCapture")
-				{
-                    ServerEntity.HasCapture = (bool)ev.Value;
-					return;
-				}
-                if (ev.PropertyName == "InformationBox")
+                if (e.ServerEvent is TileUpdatedEvent)
                 {
-                    OnInformationBoxChanges(ev.Value as InformationBox);
-                    return;
+                    _prevUpdateTileEventTick = Environment.TickCount;
+
+                    TileUpdatedEvent ev = (TileUpdatedEvent)e.ServerEvent;
+
+                    // TODO: review this. We are changing ServerEntity without notifying others. 
+                    //
+                    // This code makes the ImageBoxView and its TileViews all out-of-sync.
+                    // The Tiles referenced by the ServerEntity of the ImageBoxView still references the old Tile entities.
+                    // If another object observes PropertyChange event on the ImageBoxView.ServerEntity to detect
+                    // changes, it may stop working after this.
+                    //
+                    ServerEntity = ev.Tile;
+
+                    PerformanceMonitor performance = PerformanceMonitor.CurrentInstance;
+                    if (performance.CurrentTile == this)
+                        performance.LogImageDraw(ev.Tile.Image.Length);
+
+                    Draw(ev.Identifier, ev.Tile.Image);
+
+                    performance.RenderingLag--;
                 }
-			}
+                else if (e.ServerEvent is ContextMenuEvent)
+                {
+                    OnContextMenuEvent((e.ServerEvent as ContextMenuEvent));
+                }
+                else if (e.ServerEvent is PropertyChangedEvent)
+                {
+                    PropertyChangedEvent ev = (PropertyChangedEvent)e.ServerEvent;
+                    if (ev.PropertyName == "Selected")
+                    {
+                        ServerEntity.Selected = (bool)ev.Value;
+                        if (ServerEntity.Selected)
+                            MouseHelper.SetActiveElement(this);
+
+                        UpdateBorder();
+                        return;
+                    }
+                    if (ev.PropertyName == "HasCapture")
+                    {
+                        ServerEntity.HasCapture = (bool)ev.Value;
+                        return;
+                    }
+                    if (ev.PropertyName == "Image")
+                    {
+                        //ServerEntity.Image = (byte[])ev.Value;
+                        Draw(ev.Identifier, (byte[])ev.Value);
+                        return;
+                    }
+                    if (ev.PropertyName == "Cursor")
+                    {
+                        OnCursorChanged(ev.Value as AppServiceReference.Cursor);
+                        return;
+                    }
+                    if (ev.PropertyName == "MousePosition")
+                    {
+                        OnMousePositionChanged((Position)ev.Value);
+                    }
+                    if (ev.PropertyName == "HasCapture")
+                    {
+                        ServerEntity.HasCapture = (bool)ev.Value;
+                        return;
+                    }
+                    if (ev.PropertyName == "InformationBox")
+                    {
+                        OnInformationBoxChanges(ev.Value as InformationBox);
+                        return;
+                    }
+                }
+            }
         }
+
+
 
         #endregion
 
@@ -737,30 +860,31 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
 		private void UpdateBorder()
 		{
+            // TODO: Maybe we should only change the border when the "Selected" property is updated
 			TileImageBorder.BorderBrush = ServerEntity.Selected
 							 ? new SolidColorBrush(Color.FromArgb(255, 0xCC, 0xFF, 0x66))
 							 : new SolidColorBrush(Color.FromArgb(128, 0x66, 0x66, 0x66));
 
 		}
-        
+
 		private void OnTileImageDrawn()
         {
             if (_logPerformance)
             {
-                StatisticsHelper.OnFrameDrawn();
-
-            	if (HasCapture)
+                
+                if (HasCapture)
                 {
                     // Log the speed when stacking/window-leveling
                     if (_fpsPublisher == null)
                     {
                         _fpsPublisher = new DelayedEventPublisher<EventArgs>((s, ev) =>
                         {
-                            int fps = StatisticsHelper.FPS;
+                            PerformanceMonitor p = PerformanceMonitor.CurrentInstance;
+                            double fps = p.AverageClientFps;
                             PerformancePublisher.Publish(new PerformanceData { 
                                 ClientIp = ApplicationContext.Current.Parameters.LocalIPAddress,
                                 Name = "CLIENT_STACKING_SPEED", Value = fps });
-                            BrowserWindow.SetStatus(String.Format("Stacking Speed: {0} fps", fps));                        
+                            BrowserWindow.SetStatus(String.Format("Stacking Speed: {0:0} fps", fps));                        
                         }, 1000);                        
                     }
 
@@ -771,24 +895,29 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
         private void StartMouseMoveTimer()
         {
-            _timer = new DispatcherTimer();
-            _timer.Interval = MOUSE_MOVE_STOP_MSG_DELAY;
-            _timer.Tick += (s, ev) =>
+            if (_timer == null)
             {
-				if (_destroyed)
-					return;
-
-				long elapsedTime = Environment.TickCount - _lastMouseMoveTick;
-                if (elapsedTime >= MOUSE_MOVE_STOP_MSG_DELAY.TotalMilliseconds)
+                _timer = new DispatcherTimer();
+                _timer.Interval = PerformanceMonitor.CurrentInstance.AverageClientFps>10? MOUSE_MOVE_STOP_MSG_DELAY:TimeSpan.FromMilliseconds(100);
+                _timer.Tick += (s, ev) =>
                 {
-					StopMouseMoveTimer();
+                    if (_destroyed)
+                        return;
 
-					_lastMouseMoveMessageTick = Environment.TickCount;
-					SendMouseMoveMessage();
-                }
-            };
+                    long elapsedTime = Environment.TickCount - _lastMouseMoveTick;
+                    if (elapsedTime >= MOUSE_MOVE_STOP_MSG_DELAY.TotalMilliseconds)
+                    {
+                        StopMouseMoveTimer();
 
-			_timer.Start();
+                        _lastMouseMoveMessageTick = Environment.TickCount;
+                        SendMouseMoveMessage();
+                    }
+                };
+
+                _timer.Start();
+            }
+
+			
         }
 
 		private void StopMouseMoveTimer()
@@ -802,10 +931,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
         private void SendMouseMoveMessage()
         {
-			if (_destroyed)
+            if (_destroyed)
 				return;
 
-			System.Windows.Point pos = _currentMousePosition;
+            System.Windows.Point pos = _currentMousePosition;
             Message msg = new MouseMoveMessage
             {
                 Identifier = Guid.NewGuid(),
@@ -814,15 +943,15 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                 Button = MouseButton.None,
                 MouseButtonState = MouseButtonState.Up
             };
-            ApplicationContext.Current.ServerEventBroker.DispatchMessage(msg);
 
-            Logger.Write(String.Format("MouseMoving {0}\n", msg.Identifier));
+            ApplicationContext.Current.ServerEventBroker.DispatchMessage(msg);
         }
 
         private new void MouseLeftButtonUp(System.Windows.Point pos)
         {
             lock (_mouseEventLock)
             {
+                StopMouseMoveTimer();
                 Message msg = new MouseMessage
                 {
                     Identifier = Guid.NewGuid(),
@@ -904,3 +1033,4 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
     }
 }
+

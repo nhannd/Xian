@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
@@ -76,6 +76,10 @@ namespace ClearCanvas.Web.Common
     [DataContract(Namespace = Namespace.Value)]
     public class EventSet : IEnumerable
     {
+    	// TODO: Is it used?
+        [DataMember(IsRequired = true)]
+        public bool HasMorePending { get; set; }
+
         [DataMember(IsRequired = true)]
         public Event[] Events { get; set; }
 

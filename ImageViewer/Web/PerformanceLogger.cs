@@ -18,6 +18,8 @@ using ClearCanvas.Web.Services;
 
 namespace ClearCanvas.ImageViewer.Web
 {
+	// TODO: Rewrite this class because
+	// When hosted in IIS, the service must have special permissions to access the system performance log
     [ExtensionOf(typeof(PerformanceMonitorExtensionPoint), Enabled=false)]
     public class PerformanceLogger : IPerformanceLogger
     {

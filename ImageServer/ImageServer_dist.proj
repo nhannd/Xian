@@ -21,7 +21,7 @@
 	<ShredHostBuild>true</ShredHostBuild>
 	<TestAppBuild>false</TestAppBuild>
 	<ExecutableBuild>false</ExecutableBuild>
-	<WebViewerBuild>true</WebViewerBuild>
+	<WebViewerBuild>false</WebViewerBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.ImageServer.TestApp'">
@@ -140,11 +140,12 @@
 		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\AnnotationProviders\bin\$(Configuration)\ClearCanvas.ImageViewer.AnnotationProviders.dll" />
 		
 		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\Layout\Basic\bin\$(Configuration)\ClearCanvas.ImageViewer.Layout.Basic.dll" />
-    <PluginFiles Include="$(SolutionDir)\..\ImageViewer\StudyFinders\Remote\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.Remote.dll" />
-    <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Standard\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Standard.dll" />
+		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\StudyFinders\Remote\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.Remote.dll" />
+		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Standard\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Standard.dll" />
 		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Measurement\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Measurement.dll" />
 		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Synchronization\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Synchronization.dll" />
 		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\Web\Server\ImageServer\bin\$(Configuration)\ClearCanvas.ImageViewer.Web.Server.ImageServer.dll" />
+		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\StudyLoaders\Streaming\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.Streaming.dll" />
 
 	</ItemGroup>
 	

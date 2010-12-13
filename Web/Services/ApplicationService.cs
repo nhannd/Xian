@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
@@ -11,15 +11,18 @@
 
 using System;
 using System.ServiceModel;
-using System.Threading;
+using System.ServiceModel.Activation;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Web.Common;
-using ClearCanvas.Web.Common.Events;
 
 namespace ClearCanvas.Web.Services
 {
-    [ServiceBehavior(IncludeExceptionDetailInFaults = true, InstanceContextMode = InstanceContextMode.PerSession,AddressFilterMode = AddressFilterMode.Prefix)]
+    [ServiceBehavior( IncludeExceptionDetailInFaults = true, 
+        InstanceContextMode = InstanceContextMode.PerSession,
+        ConcurrencyMode= ConcurrencyMode.Multiple,
+        AddressFilterMode = AddressFilterMode.Prefix)]
+    [AspNetCompatibilityRequirements(RequirementsMode=AspNetCompatibilityRequirementsMode.Allowed)]
     class ApplicationService : IApplicationService
     {
         static ApplicationService()
@@ -32,28 +35,14 @@ namespace ClearCanvas.Web.Services
 			Application application = Application.Find(applicationId);
 			if (application == null)
 			{
-				var notFoundEvent = new ApplicationNotFoundEvent { ApplicationId = applicationId, Identifier = Guid.NewGuid()};
-				var callback = OperationContext.Current.GetCallbackChannel<IApplicationServiceCallback>();
-				ThreadPool.QueueUserWorkItem(
-					delegate
-					{
-						try
-						{
-							callback.EventNotification(new EventSet { Events = new Event[] { notFoundEvent } });
-						}
-						catch (Exception e)
-						{
-							Platform.Log(LogLevel.Error, e, "Error sending application not found exception.");
-						}
-					});
-
-				return null;
+                string reason = string.Format("Could not find the specified app id {0}", applicationId);
+                throw new FaultException(reason);
 			}
 
 			return application;
 		}
 
-        public void StartApplication(StartApplicationRequest request)
+        public StartApplicationRequestResponse StartApplication(StartApplicationRequest request)
         {
         	//TODO (CR May 2010): should we be checking the max# of applications?
             bool memoryAvailable = ApplicationServiceSettings.Default.MinimumFreeMemoryMB <= 0
@@ -69,11 +58,14 @@ namespace ClearCanvas.Web.Services
 					// 5 minute timeout, mostly for debugging.
 					operationContext.Channel.OperationTimeout = TimeSpan.FromMinutes(5);
 
-					Application application = Application.Start(request, operationContext.GetCallbackChannel<IApplicationServiceCallback>());
-
+					Application application = Application.Start(request);
+                    
 					//TODO: when we start allowing application recovery, remove these lines.
+                    // NOTE: These events are fired only if the underlying connection is permanent (eg, duplex http or net tcp).
 					operationContext.Channel.Closed += delegate { application.Stop(); };
 					operationContext.Channel.Faulted += delegate { application.Stop(); };
+
+                    return new StartApplicationRequestResponse { AppIdentifier = application.Identifier };
                 }
                 catch(Enterprise.Common.InvalidUserSessionException ex)
                 {
@@ -109,53 +101,54 @@ namespace ClearCanvas.Web.Services
             }
         }
 
-		public void ProcessMessages(MessageSet messageSet)
+        public ProcessMessagesResult ProcessMessages(MessageSet messageSet)
 		{
-			IApplication application = FindApplication(messageSet.ApplicationId);
-			//FindApplication has already dealt with it (ApplicationNotFoundEvent).
+            IApplication application = FindApplication(messageSet.ApplicationId);
 			if (application == null)
-				return;
+				return null;
 
-			try
+            try
 			{
-				application.ProcessMessages(messageSet);
+				return application.ProcessMessages(messageSet);
 			}
 			catch (Enterprise.Common.InvalidUserSessionException ex)
 			{
-				throw new FaultException<SessionValidationFault>(new SessionValidationFault { ErrorMessage = ExceptionTranslator.Translate(ex) });
+                Platform.Log(LogLevel.Error, ex, "Error has occurred in ProcessMessages"); 
+                throw new FaultException<SessionValidationFault>(new SessionValidationFault { ErrorMessage = ExceptionTranslator.Translate(ex) });
 			}
 			catch (Enterprise.Common.PasswordExpiredException ex)
 			{
-				throw new FaultException<SessionValidationFault>(new SessionValidationFault { ErrorMessage = ExceptionTranslator.Translate(ex) });
+                Platform.Log(LogLevel.Error, ex, "Error has occurred in ProcessMessages"); 
+                throw new FaultException<SessionValidationFault>(new SessionValidationFault { ErrorMessage = ExceptionTranslator.Translate(ex) });
 			}
 			catch (Enterprise.Common.UserAccessDeniedException ex)
 			{
-				throw new FaultException<SessionValidationFault>(new SessionValidationFault { ErrorMessage = ExceptionTranslator.Translate(ex) });
+                Platform.Log(LogLevel.Error, ex, "Error has occurred in ProcessMessages"); 
+                throw new FaultException<SessionValidationFault>(new SessionValidationFault { ErrorMessage = ExceptionTranslator.Translate(ex) });
 			}
 			catch (Enterprise.Common.RequestValidationException ex)
 			{
-				throw new FaultException<SessionValidationFault>(new SessionValidationFault { ErrorMessage = ExceptionTranslator.Translate(ex) });
+                Platform.Log(LogLevel.Error, ex, "Error has occurred in ProcessMessages"); 
+                throw new FaultException<SessionValidationFault>(new SessionValidationFault { ErrorMessage = ExceptionTranslator.Translate(ex) });
 			}
 			catch (Exception ex)
 			{
+			    Platform.Log(LogLevel.Error, ex, "Error has occurred in ProcessMessages");
 				throw new FaultException(ExceptionTranslator.Translate(ex));
 			}
 		}
 
 		public void StopApplication(StopApplicationRequest request)
 		{
-			IApplication application = FindApplication(request.ApplicationId);
-			//FindApplication has already dealt with it (ApplicationNotFoundEvent).
-			if (application == null)
-				return;
-
+            IApplication application = FindApplication(request.ApplicationId);
+			
 			try
 			{
-				application.Stop();
+                application.Shutdown();
 			}
 			catch (Exception ex)
 			{
-				throw new FaultException(ExceptionTranslator.Translate(ex));
+				throw new FaultException(ExceptionTranslator.Translate(ex)); 
 			}
 		}
 
@@ -163,6 +156,34 @@ namespace ClearCanvas.Web.Services
         {
             PerformanceMonitor.Initialize();
             PerformanceMonitor.Report(data);
+        }
+
+        public EventSet GetPendingEvent(GetPendingEventRequest request)
+        {
+
+            IApplication application = Application.Find(request.ApplicationId);
+
+            if (application!=null)
+                return application.GetPendingOutboundEvent(Math.Max(0, request.MaxWaitTime));
+
+
+            // Without a permanent connection, there's a chance the client is polling even when the application has stopped on the server.
+            // Throw fault exception to tell the client to stop.
+            string reason = string.Format("Could not find the specified app id {0}", request.ApplicationId);
+            throw new FaultException<InvalidOperationFault>(new InvalidOperationFault(), reason);
+
+            // TODO:
+            // When the app is stopped, it is also removed from the cache. 
+            // The client will not get any events fired by the app prior to stopping (eg, when study is not found)
+        }
+
+        public void SetProperty(SetPropertyRequest request)
+        {
+            IApplication application = Application.Find(request.ApplicationId);
+            if (application != null)
+            {
+                application.SetProperty(request.Key, request.Value);
+            }
         }
     }
 }

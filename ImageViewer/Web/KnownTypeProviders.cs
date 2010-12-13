@@ -44,7 +44,8 @@ namespace ClearCanvas.ImageViewer.Web
 			       		typeof (ContextMenuEvent),
 			       		typeof (TileUpdatedEvent),
 			       		typeof (SessionUpdatedEvent),
-			       		typeof (MessageBoxShownEvent)
+			       		typeof (MessageBoxShownEvent),
+                        typeof(MouseMoveProcessedEvent)
 			       	};
 		}
 

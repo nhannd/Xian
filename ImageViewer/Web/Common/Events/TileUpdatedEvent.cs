@@ -24,6 +24,9 @@ namespace ClearCanvas.ImageViewer.Web.Common.Events
         [DataMember(IsRequired = true)]
         public string MimeType { get; set; }
 
+        [DataMember(IsRequired = false)]
+        public long Quality { get; set; }
+
         public override bool AllowSendInBatch
         {
             get
@@ -36,5 +39,19 @@ namespace ClearCanvas.ImageViewer.Web.Common.Events
                 return false;
             }
         }
+    }
+
+	//TODO: delete ?
+    [DataContract(Namespace = ViewerNamespace.Value)]
+    public class SpecialImageEvent : Event
+    {
+        [DataMember(IsRequired = false)]
+        public byte[] Image { get; set; }
+
+    }
+
+    [DataContract(Namespace = ViewerNamespace.Value)]
+    public class MouseMoveProcessedEvent : Event
+    {
     }
 }

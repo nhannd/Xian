@@ -5,21 +5,25 @@
     xmlns:SLControls="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Toolkit" 
     mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
-    <Border Padding="2,2,2,2" >
-        <Border x:Name="TileImageBorder" BorderThickness="1" BorderBrush="#55CCCCCC">
-            <Canvas x:Name="TileCanvas">
-                <Grid x:Name="LayoutRoot">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Image x:Name="TileImage" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">
+    
+        <Border Padding="2,2,2,2" >
+            <Border x:Name="TileImageBorder" BorderThickness="1" BorderBrush="#55CCCCCC">
+                <Canvas x:Name="TileCanvas">
+                    <Grid x:Name="LayoutRoot">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Image x:Name="TileImage" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">
+                        </Image>
+                        <TextBlock x:Name="DebugInformation" VerticalAlignment="Top" HorizontalAlignment="Center" FontSize="16" FontWeight="Bold" Foreground="Yellow" Margin="10,10,0,0">
+
+                        </TextBlock>
+                    </Grid>
+                    <Image x:Name="ClientCursorImage" IsHitTestVisible="False">
                     </Image>
-                </Grid>
-                <Image x:Name="ClientCursorImage" IsHitTestVisible="False">
-                </Image>
                 <Popup Name="TileToolTip" Opened="TileToolTip_Opened" SizeChanged="TileToolTip_SizeChanged">
                     <Border CornerRadius="1" Padding="1" x:Name="TooltipContent" 
                                     BorderBrush="#FFBAD2EC"

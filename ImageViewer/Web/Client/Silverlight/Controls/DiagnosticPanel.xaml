@@ -3,15 +3,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:Controls1="clr-namespace:ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls"
 >
-    <Grid x:Name="LayoutRoot" Background="SlateGray"  Margin="5,5,5,5">
-        <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
-            <StackPanel>
-                <Controls1:FPSCounter/>
-                <StackPanel>
-                    <Button x:Name="ClearLog"  HorizontalAlignment="Left" Content="Clear Log" Click="ClearLog_Click" Width="100"/>
-                    <TextBlock x:Name="Log" />
-                </StackPanel>
-            </StackPanel>
+    <Grid x:Name="LayoutRoot" Background="SlateGray">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Button x:Name="ClearLog" Grid.Row="0" HorizontalAlignment="Left" Content="Clear Log" Click="ClearLog_Click"  Width="100"/>
+        <ScrollViewer  Grid.Row="1" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" HorizontalAlignment="Stretch">
+            <TextBlock x:Name="Log" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </ScrollViewer>
     </Grid>
 </UserControl>

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
@@ -23,7 +23,8 @@ namespace ClearCanvas.Web.Services
 		private readonly object _syncLock = new object();
 		private readonly ProcessMessageSetDelegate _processMessageSet;
 		private readonly Dictionary<int, MessageSet> _messageSets;
-
+        private long _totalNumMouseMoveMsgs;
+        
 		public IncomingMessageQueue(ProcessMessageSetDelegate processMessageSet)
 		{
 			_processMessageSet = processMessageSet;
@@ -32,28 +33,41 @@ namespace ClearCanvas.Web.Services
 		}
 
 		internal int NextMessageSetNumber { get; private set; }
-		
-		public void ProcessMessageSet(MessageSet messageSet)
+
+	    public int Count
+	    {
+            get
+            {
+                return _messageSets.Count;
+            }
+	    }
+
+        
+	    public bool ProcessMessageSet(MessageSet messageSet)
 		{
 			lock (_syncLock)
 			{
-				if (messageSet.Number == NextMessageSetNumber)
+
+			    if (messageSet.Number == NextMessageSetNumber)
 				{
 					ProcessPendingMessageSets(messageSet);
+				    return true;
 				}
-				else
-				{
-					string logMessage = String.Format("Received message set out of order (received:{0}, expected:{1})", 
-						messageSet.Number, NextMessageSetNumber);
-					Platform.Log(LogLevel.Debug, logMessage);
-
-					_messageSets[messageSet.Number] = messageSet;
-				}
+                else
+                {
+                    string logMessage = String.Format("Received message set out of order (received:{0}, expected:{1})", 
+                        messageSet.Number, NextMessageSetNumber);
+                    Platform.Log(LogLevel.Error, logMessage);
+                     
+                    _messageSets[messageSet.Number] = messageSet;
+                    return false;
+                }
 			}
 		}
 
 		private void ProcessPendingMessageSets(MessageSet current)
 		{
+		    int n = current.Number;
 			NextMessageSetNumber = current.Number + 1;
 			_processMessageSet(current);
 
@@ -62,7 +76,7 @@ namespace ClearCanvas.Web.Services
 				_messageSets.Remove(NextMessageSetNumber);
 				NextMessageSetNumber = current.Number + 1;
 				_processMessageSet(current);
-			}
+			}    
 		}
 	}
 }

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Web.Services
@@ -19,6 +20,9 @@ namespace ClearCanvas.Web.Services
 	{
 		private class Cache
 		{
+		    private const int CheckIntervalInSeconds = 30;
+            private const int ApplicationShutdownDelayInSeconds = 10;
+
 			public static readonly Cache Instance;
 
 			static Cache()
@@ -28,12 +32,73 @@ namespace ClearCanvas.Web.Services
 
 			private readonly object _syncLock = new object();
 			private readonly Dictionary<Guid, Application> _applications = new Dictionary<Guid, Application>();
+            private Dictionary<Guid, DateTime> _appsToBeRemoved = new Dictionary<Guid, DateTime>();
+		    
+            private Timer _cleanupTimer;
 
-			public void Add(Application application)
+
+            private Cache()
+            {
+                // TODO: Cleanup ther timer?
+                _cleanupTimer = new Timer(OnCleanupTimerCallback, null, TimeSpan.FromSeconds(CheckIntervalInSeconds),
+                                          TimeSpan.FromSeconds(CheckIntervalInSeconds));
+                
+            }
+
+            private void OnCleanupTimerCallback(object ignore)
+            {
+                try
+                {
+                    if (_appsToBeRemoved.Count > 0)
+                    {
+                        
+                        List<Guid> removalList = new List<Guid>();
+                        foreach (Guid appId in _appsToBeRemoved.Keys)
+                        {
+                            if (DateTime.Now - _appsToBeRemoved[appId] > TimeSpan.FromSeconds(ApplicationShutdownDelayInSeconds))
+                            {
+                                removalList.Add(appId);
+                            }
+                        }
+
+                        if (removalList.Count>0)
+                        {
+                            foreach(Guid appId in removalList)
+                            {
+                                Application app = null;
+                                try
+                                {
+                                    lock (_syncLock)
+                                    {
+                                        app = _applications[appId];
+                                        _applications.Remove(appId);
+                                    }
+                                    _appsToBeRemoved.Remove(appId);
+                                }
+                                finally
+                                {
+                                    if (app != null)
+                                    {
+                                        app.DisposeMembers();
+                                    }
+                                    Platform.Log(LogLevel.Info, "Application {0} removed from cache.", appId);
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    //ignore
+                }
+            }
+
+		    public void Add(Application application)
 			{
 				lock (_syncLock)
 				{
 					_applications.Add(application.Identifier, application);
+                    application.Stopped += delegate { Remove(application.Identifier); };
 				}
 			}
 
@@ -53,16 +118,30 @@ namespace ClearCanvas.Web.Services
 					if (!_applications.ContainsKey(applicationId))
 						return;
 
-					_applications.Remove(applicationId);
-					Platform.Log(LogLevel.Debug, "Application {0} removed from cache.", applicationId);
+					// NOTE: For non-duplex binding we can't remove the app right away
+					// because the client still hasn't received the last event. If the app 
+					// is removed from the cache here, the client won't be able to poll
+					// the remaining messages beause the app id is no longer valid.
+					// 
+					// App shutdown must be delayed to give the client some time to poll the remaining events.
+					//
+                    _appsToBeRemoved.Add(applicationId, DateTime.Now);
+                    
+					// _applications.Remove(applicationId);
+					// Platform.Log(LogLevel.Debug, "Application {0} removed from cache.", applicationId);
 				}
 			}
 
-			public void Clear(out List<Application> applications)
+			public void StopAndClearAll(string message)
 			{
 				lock (_syncLock)
 				{
-					applications = new List<Application>(_applications.Values);
+					foreach(Application app in _applications.Values)
+					{
+                        app.Stop(message);
+					    app.DisposeMembers();
+					}
+
 					_applications.Clear();
 				}
 			}

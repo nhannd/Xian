@@ -22,6 +22,7 @@ using System.Windows.Shapes;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
 {
+    //TODO: Delete this
     public class StatisticsHelper
     {
         public delegate void FPSUpdateMethodDelegate(int fps);
@@ -39,6 +40,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
         {
             FrameCount++;
 
+            // TODO: REVIEW THIS
+            // Per MSDN:
+            // if the system runs continuously, TickCount will increment from zero to Int32.MaxValue for approximately 24.9 days, 
+            // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
             int now = Environment.TickCount;
             if (now - _lastUpdateTick > 2000)
             {
@@ -62,6 +67,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
         private static void Reset()
         {
             FrameCount = 0;
+            // TODO: REVIEW THIS
+            // Per MSDN:
+            // if the system runs continuously, TickCount will increment from zero to Int32.MaxValue for approximately 24.9 days, 
+            // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
             _startTick = Environment.TickCount;
         }
     }

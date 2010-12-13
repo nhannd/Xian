@@ -35,9 +35,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
     {
         internal ServerEventDispatcher ServerEventBroker { get; private set; }
 
-        [ThreadStatic]
+        // TODO: Review this
+        // [ThreadStatic]   Commented out.. why did it have to be thread static?
         private static ApplicationContext _current;
-        [ThreadStatic]
+        // TODO: Review this
+        // [ThreadStatic]   Commented out.. why did it have to be thread static?
         private static object _syncLock = new object();
 
         public Guid ID { get; set; }

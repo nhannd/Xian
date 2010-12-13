@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
@@ -166,7 +166,10 @@ namespace ClearCanvas.Web.Services
                     }
                     catch (Exception e)
                     {
+                        //TODO: Review this
+                        // Should we break out of the loop?
                         _application.Stop(e);
+                        
                     }
                 }
             }

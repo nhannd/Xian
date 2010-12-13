@@ -66,6 +66,9 @@ namespace ClearCanvas.Web.Common
     [DataContract(Namespace = Namespace.Value)]
     public class MessageSet : IEnumerable
     {
+        [DataMember(IsRequired = true)]
+        public DateTime Timestamp { get; set; }
+
 		[DataMember(IsRequired = true)]
 		public Guid ApplicationId { get; set; }
 		

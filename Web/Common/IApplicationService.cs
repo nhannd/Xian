@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
@@ -31,6 +31,14 @@ namespace ClearCanvas.Web.Common
 		public bool IsSessionShared { get; set; }
 	}
 
+    [DataContract(Namespace = Namespace.Value)]
+    public class StartApplicationRequestResponse
+    {
+        [DataMember(IsRequired = true)]
+        public Guid AppIdentifier { get; set; }
+
+    }
+    
 	[DataContract(Namespace = Namespace.Value)]
 	public class StopApplicationRequest
 	{
@@ -38,33 +46,58 @@ namespace ClearCanvas.Web.Common
 		public Guid ApplicationId { get; set; }
 	}
 
-	//[DataContract(Namespace = Namespace.Value)]
-	//public class RestoreApplicationRequest
-	//{
-	//    [DataMember(IsRequired = true)]
-	//    public Guid ApplicationIdentifer { get; set; }
-	//}
+    [DataContract(Namespace = Namespace.Value)]
+    public class GetPendingEventRequest
+	{
+		[DataMember(IsRequired = true)]
+		public Guid ApplicationId { get; set; }
 
-    [ServiceContract(Namespace = Namespace.Value, CallbackContract = typeof(IApplicationServiceCallback), SessionMode = SessionMode.Required)]
+        [DataMember(IsRequired = false)]
+        public int MaxWaitTime { get; set; }
+	}
+
+    [ServiceContract(Namespace = Namespace.Value)]
 	[ServiceKnownType("GetKnownTypes", typeof(ServiceKnownTypeExtensionPoint))]
 	public interface IApplicationService
     {
 		[OperationContract(IsOneWay = false)]
         [FaultContract(typeof(SessionValidationFault))]
-		void StartApplication(StartApplicationRequest request);
+        StartApplicationRequestResponse StartApplication(StartApplicationRequest request);
 
-		//[OperationContract(IsOneWay = true)]
-		//void RestoreApplication(RestoreApplicationRequest request);
+		[OperationContract(IsOneWay = false)]
+        [FaultContract(typeof(InvalidOperationFault))]
+        void StopApplication(StopApplicationRequest request);
 
-		[OperationContract(IsOneWay = true)]
-		void StopApplication(StopApplicationRequest request);
-
-        //messages must be process synchronously, so IsOneWay has to be false
         [OperationContract(IsOneWay = false)]
-        void ProcessMessages(MessageSet messages);
+        [FaultContract(typeof(InvalidOperationFault))]
+        ProcessMessagesResult ProcessMessages(MessageSet messages);
+        
+        [OperationContract(IsOneWay = false)]
+        [FaultContract(typeof(InvalidOperationFault))]
+        EventSet GetPendingEvent(GetPendingEventRequest request);
 
         [OperationContract(IsOneWay = true)]
         void ReportPerformance(PerformanceData data);
-        
+
+        [OperationContract(IsOneWay = false)]
+        void SetProperty(SetPropertyRequest request);
+    }
+
+    [DataContract]
+    public class InvalidOperationFault
+    {
+    }
+
+    [DataContract]
+    public class SetPropertyRequest
+    {
+        [DataMember(IsRequired = true)]
+        public Guid ApplicationId { get; set; }
+
+        [DataMember]
+        public string Key { get; set; }
+
+        [DataMember]
+        public string Value { get; set; }
     }
 }

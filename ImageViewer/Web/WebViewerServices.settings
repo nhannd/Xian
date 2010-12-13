@@ -8,5 +8,23 @@
     <Setting Name="JpegQualityFactor" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">80</Value>
     </Setting>
+    <Setting Name="StudyLoaderName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">CC_STREAMING</Value>
+    </Setting>
+    <Setting Name="ArchiveServerHostname" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">localhost</Value>
+    </Setting>
+    <Setting Name="ArchiveServerPort" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">104</Value>
+    </Setting>
+    <Setting Name="ArchiveServerHeaderPort" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">50221</Value>
+    </Setting>
+    <Setting Name="ArchiveServerWADOPort" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">1000</Value>
+    </Setting>
+    <Setting Name="AETitle" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">CCWEBVIEWER</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -11,12 +11,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.ServiceModel;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Web.Utiltities;
+using ClearCanvas.ImageViewer.Web.Common.Messages;
 using ClearCanvas.Web.Common;
 using ClearCanvas.Web.Common.Events;
 using ClearCanvas.Web.Services;
@@ -242,24 +243,55 @@ namespace ClearCanvas.ImageViewer.Web
 			return false;
 		}
 
-		protected override void OnStart(StartApplicationRequest request)
+
+	    protected override EventSet OnGetPendingOutboundEvent(int wait)
+	    {
+            if (_context == null)
+            {
+                string reason = string.Format("Application context no longer exists");
+
+                throw new FaultException<InvalidOperationFault>(new InvalidOperationFault(), reason);
+            }
+
+            return _context.GetPendingOutboundEvent(wait);
+	    }
+
+	    protected override ProcessMessagesResult OnProcessMessageEnd(MessageSet messageSet, bool messageWasProcessed)
+	    {
+            if (!messageWasProcessed)
+            {
+                return new ProcessMessagesResult { EventSet = null, Pending = true };
+            }
+            
+            bool hasMouseMoveMsg = false;
+            foreach (Message m in messageSet.Messages)
+            {
+                if (m is MouseMoveMessage)
+                {
+                    hasMouseMoveMsg = true;
+                    break;
+                }
+            }
+            EventSet ev = GetPendingOutboundEvent(hasMouseMoveMsg ? 100 : 0);
+
+            return new ProcessMessagesResult { EventSet = ev, Pending = false };
+	    }
+
+	    protected override void OnStart(StartApplicationRequest request)
 		{
 			lock (_syncLock)
 			{
-				if (Application.Instance == null)
+                Platform.Log(LogLevel.Info, "Viewer Application is starting...");
+                if (Application.Instance == null)
 					Platform.StartApp();
 			}
 
+            if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+                Platform.Log(LogLevel.Debug, "Finding studies...");
 			var startRequest = (StartViewerApplicationRequest)request;
 			IList<StudyRootStudyIdentifier> studies = FindStudies(startRequest);
 
-			List<LoadStudyArgs> loadArgs = CollectionUtils.Map(studies, 
-				delegate(StudyRootStudyIdentifier identifier)
-					{
-						var ae = new StudyManagement.ApplicationEntity("host", identifier.RetrieveAeTitle,
-															 identifier.RetrieveAeTitle, 0, false, 0, 0);
-						return new LoadStudyArgs(identifier.StudyInstanceUid, ae, "CC_ImageServer");
-					});
+			List<LoadStudyArgs> loadArgs = CollectionUtils.Map(studies, (StudyRootStudyIdentifier identifier) => CreateLoadStudyArgs(identifier));
 
 		    DesktopWindowCreationArgs args = new DesktopWindowCreationArgs("", Identifier.ToString());
             WebDesktopWindow window = new WebDesktopWindow(args, Application.Instance);
@@ -269,7 +301,9 @@ namespace ClearCanvas.ImageViewer.Web
 
 			try
 			{
-				_viewer.LoadStudies(loadArgs);
+                if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+                    Platform.Log(LogLevel.Debug, "Loading study...");
+                _viewer.LoadStudies(loadArgs);
 			}
 			catch (Exception e)
 			{
@@ -280,6 +314,9 @@ namespace ClearCanvas.ImageViewer.Web
 				ExceptionHandler.Report(e, window);
 			}
 
+            if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+                Platform.Log(LogLevel.Info, "Launching viewer...");
+			
 			ImageViewerComponent.Launch(_viewer, window, "");
 
 			_viewerHandler = EntityHandler.Create<ViewerEntityHandler>();
@@ -309,7 +346,34 @@ namespace ClearCanvas.ImageViewer.Web
             ApplicationContext.Current.FireEvent(@event);
 		}
 
-		protected override void OnStop()
+	    private LoadStudyArgs CreateLoadStudyArgs(StudyRootStudyIdentifier identifier)
+	    {
+
+            // TODO: Need to think about this more. What's the best way to swap different loader?
+            // Do we need to support loading studies from multiple servers? 
+
+	        if (WebViewerServices.Default.StudyLoaderName.Equals("CC_STREAMING"))
+	        {
+	            string host = WebViewerServices.Default.ArchiveServerHostname;
+	            int port = WebViewerServices.Default.ArchiveServerPort;
+
+	            int headerPort = WebViewerServices.Default.ArchiveServerHeaderPort;
+	            int wadoPort = WebViewerServices.Default.ArchiveServerWADOPort;
+
+	            var serverAe = new StudyManagement.ApplicationEntity(host,
+	                                                                 identifier.RetrieveAeTitle,
+	                                                                 identifier.RetrieveAeTitle, port, true,
+	                                                                 headerPort, wadoPort);
+
+	            return new LoadStudyArgs(identifier.StudyInstanceUid, serverAe, WebViewerServices.Default.StudyLoaderName);
+	        }
+	        else
+	        {
+	            throw new NotSupportedException("Only streaming study loader is supported at this time");
+	        }
+	    }
+
+	    protected override void OnStop()
 		{
 			if (_viewerHandler != null)
 			{
@@ -331,4 +395,48 @@ namespace ClearCanvas.ImageViewer.Web
 			return _app;
 		}
 	}
+
+    [ExtensionOf(typeof(SettingsStoreExtensionPoint))]
+    public class StandardSettingsProvider : ISettingsStore
+    {
+        public bool SupportsImport
+        {
+            get { return false; }
+        }
+
+        public IList<SettingsGroupDescriptor> ListSettingsGroups()
+        {
+            return new List<SettingsGroupDescriptor>();
+        }
+
+        public SettingsGroupDescriptor GetPreviousSettingsGroup(SettingsGroupDescriptor group)
+        {
+            return null;
+        }
+
+        public IList<SettingsPropertyDescriptor> ListSettingsProperties(SettingsGroupDescriptor group)
+        {
+            return new List<SettingsPropertyDescriptor>();
+        }
+
+        public void ImportSettingsGroup(SettingsGroupDescriptor group, List<SettingsPropertyDescriptor> properties)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Dictionary<string, string> GetSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey)
+        {
+            return new Dictionary<string, string>();
+        }
+
+        public void PutSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey, Dictionary<string, string> dirtyValues)
+        {
+
+        }
+
+        public void RemoveUserSettings(SettingsGroupDescriptor group, string user, string instanceKey)
+        {
+            //throw new NotSupportedException();
+        }
+    }
 }

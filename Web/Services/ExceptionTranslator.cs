@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
@@ -48,6 +48,7 @@ namespace ClearCanvas.Web.Services
 
 		public static string Translate(Exception e, bool returnExceptionMessage)
 		{
+		    Platform.Log(LogLevel.Error, e, "Exception has occurred");
 			return DoTranslate(e) ?? (returnExceptionMessage ? e.Message : SR.MessageUnexpectedError);
 		}
 
