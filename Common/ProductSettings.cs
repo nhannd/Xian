@@ -59,6 +59,17 @@ namespace ClearCanvas.Common
 			}
 		}
 
+		/// <summary>
+		/// Gets the edition.
+		/// </summary>
+		public static string Edition
+		{
+			get
+			{
+				return "Clinical";
+			}
+		}
+
         /// <summary>
         /// Gets the product name.
         /// </summary>
