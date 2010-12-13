@@ -369,16 +369,14 @@ namespace ClearCanvas.Desktop
             EventsHelper.Fire(_quitting, this, args);
         }
 
-        /// <summary>
-        /// Gets the display name for the application. Override this method to provide a custom display name.
-        /// </summary>
-        protected virtual string GetName()
-        {
-            if (!ManifestVerification.Valid)
-                return String.Format("{0} (Uncertified Installation)", ProductInformation.Name);
-
-			return ProductInformation.Name;
-        }
+    	/// <summary>
+    	/// Gets the display name for the application. Override this method to provide a custom display name.
+    	/// </summary>
+    	protected virtual string GetName()
+    	{
+    		var name = ProductInformation.Component;
+    		return !ManifestVerification.Valid ? String.Format("{0} ({1})", name, DesktopWindow.LabelUncertifiedInstallation) : name;
+    	}
 
         /// <summary>
         /// Gets the version of the application, which is by default the version of this assembly.

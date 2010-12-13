@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Common" GeneratedClassName="ProductSettings">
   <Profiles />
   <Settings>
-    <Setting Name="Name" Description="The product name." Type="System.String" Scope="Application">
+    <Setting Name="Component" Description="The product name." Type="System.String" Scope="Application">
       <Value Profile="(Default)">jL55pMp+3yM7A6LSOywdX1oRfRZd9RvJ</Value>
     </Setting>
     <Setting Name="Version" Description="The version of the product, which can be different from that of the assemblies." Type="System.String" Scope="Application">
@@ -19,6 +19,12 @@
     </Setting>
     <Setting Name="Product" Type="System.String" Scope="Application">
       <Value Profile="(Default)">jL55pMp+3yM9uLAdmMqy1EZCbfkuN9/i</Value>
+    </Setting>
+    <Setting Name="Edition" Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="DiagnosticRelease" Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

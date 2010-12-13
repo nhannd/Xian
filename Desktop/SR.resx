@@ -433,4 +433,7 @@
     <value>{0}:
 You can configure this item, but you do not have permission to use it.</value>
   </data>
+  <data name="LabelNotForDiagnosticUse" xml:space="preserve">
+    <value>Not for Diagnostic Use</value>
+  </data>
 </root>

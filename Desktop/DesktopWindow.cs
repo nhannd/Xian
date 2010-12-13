@@ -104,12 +104,8 @@ namespace ClearCanvas.Desktop
             _shelves = new ShelfCollection(this);
             _dialogs = new DialogBoxCollection(this);
 
-            // if no title supplied, create default title
-            _baseTitle = !string.IsNullOrEmpty(args.Title) 
-                ? args.Title 
-                : ManifestVerification.Valid 
-                    ? ProductInformation.GetNameAndVersion(false, true)
-                    : String.Format("{0} (Uncertified Installation)", ProductInformation.GetNameAndVersion(false, true));
+        	// if no title supplied, create a default title
+        	_baseTitle = !string.IsNullOrEmpty(args.Title) ? args.Title : DefaultBaseTitle;
 
             _menuActionSite = args.MenuSite ?? GlobalMenus;
             _toolbarActionSite = args.ToolbarSite ?? GlobalToolbars;
@@ -362,6 +358,28 @@ namespace ClearCanvas.Desktop
         #endregion
 
         #region Helpers
+
+    	internal static readonly string LabelUncertifiedInstallation = "Uncertified Installation";
+
+    	private static string DefaultBaseTitle
+    	{
+    		get
+    		{
+    			var tags = new List<string>();
+    			if (!ProductInformation.DiagnosticRelease)
+    				tags.Add(SR.LabelNotForDiagnosticUse);
+    			if (!ManifestVerification.Valid)
+    				// should be hardcoded because manifest verification is all that prevents localizing this tag away
+    				tags.Add(LabelUncertifiedInstallation);
+
+    			var name = ProductInformation.Component;
+    			if (tags.Count == 0)
+    				return name;
+
+    			var tagString = string.Join(" | ", tags.ToArray());
+    			return string.IsNullOrEmpty(name) ? tagString : string.Format("{0} - {1}", name, tagString);
+    		}
+    	}
 
         /// <summary>
         /// Creates a workspace view for the specified workspace.
