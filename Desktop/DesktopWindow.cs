@@ -366,7 +366,7 @@ namespace ClearCanvas.Desktop
     		get
     		{
     			var tags = new List<string>();
-    			if (!ProductInformation.DiagnosticRelease)
+    			if (!ProductInformation.AllowDiagnosticUse)
     				tags.Add(SR.LabelNotForDiagnosticUse);
     			if (!ManifestVerification.Valid)
     				// should be hardcoded because manifest verification is all that prevents localizing this tag away

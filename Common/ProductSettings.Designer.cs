@@ -81,7 +81,7 @@ namespace ClearCanvas.Common {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Configuration.SettingsDescriptionAttribute("Product license.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"SQpazixeCBD4G1zRA+eXWoOkhHpv4j+3ZFb8u6nTqdHUCrHs03TmjVNqz3nFBQnQrGTwhxAjmuQ0DBhC2+vHA6CI2jCC4pwsA7DitYNJDilFVMvNsJTitOPvZ2WpmJfjCs/uCmaoBw0lqA7NrCVKZJaGgaD8XIudDqkFPU4OsL/wgjqVOo83xyCs3b9xcBItyeTUFHNppcNj4NqIyv8guNYRwXNheWprF18wtLHeYjrMUurLJkcNhtzMnVh8kJtrAEiaCpZ9X54u1rB6IDHH+tyC+2I5GiVXW6ML03cmaAs=")]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"SQpazixeCBD4G1zRA+eXWoOkhHpv4j+3ZFb8u6nTqdHUCrHs03TmjVNqz3nFBQnQrGTwhxAjmuQ0DBhC2+vHA6CI2jCC4pwsA7DitYNJDilFVMvNsJTitOPvZ2WpmJfjCs/uCmaoBw0lqA7NrCVKZJaGgaD8XIudDqkFPU4OsL/wgjqVOo83xyCs3b9xcBItyeTUFHNppcNj4NqIyv8guNYRwXNheWprF18wtLHeYjrMUurLJkcNhtzMnVh8kJtrAEiaCpZ9X54u1rB6IDHH+tyC+2I5GiVXtcoJy7TDWO0=")]
         public string License {
             get {
                 return ((string)(this["License"]));
@@ -109,9 +109,9 @@ namespace ClearCanvas.Common {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string DiagnosticRelease {
+        public string AllowDiagnosticUse {
             get {
-                return ((string)(this["DiagnosticRelease"]));
+                return ((string)(this["AllowDiagnosticUse"]));
             }
         }
     }

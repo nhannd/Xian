@@ -174,12 +174,12 @@ namespace ClearCanvas.Common
 		/// <summary>
 		/// Gets a value indicating whether or not this product version is suitable for diagnostic use.
 		/// </summary>
-		public static bool DiagnosticRelease
+		public static bool AllowDiagnosticUse
 		{
 			get
 			{
 				if (!_diagnosticRelease.HasValue)
-					_diagnosticRelease = string.Equals("True", Decrypt(ProductSettings.Default.DiagnosticRelease), StringComparison.InvariantCultureIgnoreCase);
+					_diagnosticRelease = string.Equals("True", Decrypt(ProductSettings.Default.AllowDiagnosticUse), StringComparison.InvariantCultureIgnoreCase);
 				return _diagnosticRelease.Value;
 			}
 		}
