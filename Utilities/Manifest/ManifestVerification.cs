@@ -259,7 +259,7 @@ namespace ClearCanvas.Utilities.Manifest
 
         private void VerifyProduct()
         {
-            if (!ProductInformation.Name.Equals(_productManifest.ProductManifest.Product.Name))
+            if (!ProductInformation.Component.Equals(_productManifest.ProductManifest.Product.Name))
                 throw new ApplicationException("Product Name does not match the manifest: "
                                                + _productManifest.ProductManifest.Product.Name);
 

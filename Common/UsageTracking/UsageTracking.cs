@@ -190,7 +190,7 @@ namespace ClearCanvas.Common.UsageTracking
                                    {
                                        Version = ProductInformation.GetVersion(true, true),
                                        Product = ProductInformation.Product,
-                                       Component = ProductInformation.Name,
+                                       Component = ProductInformation.Component,
                                        Region = CultureInfo.CurrentCulture.Name,
                                        Timestamp = Platform.Time,
                                        OS = Environment.OSVersion.ToString(),
