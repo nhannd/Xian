@@ -35,7 +35,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
 		public App()
 		{
-            Startup += new StartupEventHandler(App_Startup);
+            Startup += OnAppStartup;
 
 			Exit += Application_Exit;
 			UnhandledException += Application_UnhandledException;
@@ -46,24 +46,18 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             MenuManager.AutoCloseMenus = false;
 		}
 
-        void App_Startup(object sender, StartupEventArgs e)
-        {
-            OnStartup();
-        }
-
-
-        private void OnStartup()
+        private void OnAppStartup(object sender, StartupEventArgs e)
         {
             ApplicationLog.Initialize();
 
             // Initialize the communication channel with the host
             ApplicationBridge.Initialize();
-            
+
             Panel rootPanel = new Grid();
             RootVisual = rootPanel;
             DialogControl.ApplicationRootVisual = rootPanel;
-            
-            SelectBinding();
+
+            // Test the connection speed and launch the webviewer once it's completed
             TestConnection();
 		}
 
@@ -99,6 +93,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 return;
             }
 
+            // These speeds are picked based on experiments.
             if (result.SpeedInMbps >= 150)
             {
                 // the connection is fast enough
@@ -128,11 +123,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         private void StartWebViewer()
         {
             StartupArguments args = new StartupArguments(System.Windows.Application.Current.Host.InitParams);
-            StartImageViewer(args);
-        }
-
-        private void StartImageViewer(StartupArguments args)
-        {
             Panel rootPanel = RootVisual as Panel;
             
             //TODO (CR May 2010): need the lock?
@@ -206,25 +196,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 rootPanel.Children.Add(new ImageViewer(null));
             }
 
-        }
-
-        private static void SelectBinding()
-        {
-            // See ApplicationStartupParameters
-        }
-
-	    private void OnError(string msg)
-        {
-            //if (SynchronizationContext.Current != null)
-            UIThread.Execute(() =>
-            {
-                string message = msg;
-                DialogControl.Show("Error", message, "Dismiss");
-            });
-        }
-
-        private void LogMessage(string msg)
-        {
         }
 
 		private void Application_Exit(object sender, EventArgs e)

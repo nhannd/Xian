@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         private Dictionary<Guid, long> _timePrevTileUpdateEvent = new Dictionary<Guid, long>();
         private long renderLoopCount = 0;
 
-        //TODO: this should not be here
+        //TODO: this should not be here. Belong to the app instead?
         private ServerMessagePoller _poller;
 
 		public bool Faulted { 
@@ -234,8 +234,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 _connectionOpened = false;
             }
         }
-
-        
+  
 		private EndpointAddress GetServerAddress()
         {
           
@@ -303,8 +302,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
             ThrottleSettings.Default.PropertyChanged += new PropertyChangedEventHandler(ThrottleSettings_PropertyChanged);
 
-            // TODO:
-            // For fast connection, dynamic Image Quality may not be necessary
+            //TODO: put the key in some assembly that can be shared with the server-side code
             _proxy.SetPropertyAsync(new SetPropertyRequest{ ApplicationId = ApplicationContext.Current.ID , 
                         Key = "DynamicImageQualityEnabled",
                         Value= ThrottleSettings.Default.EnableDynamicImageQuality.ToString() });

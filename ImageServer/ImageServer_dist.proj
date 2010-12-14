@@ -21,21 +21,18 @@
 	<ShredHostBuild>true</ShredHostBuild>
 	<TestAppBuild>false</TestAppBuild>
 	<ExecutableBuild>false</ExecutableBuild>
-	<WebViewerBuild>false</WebViewerBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.ImageServer.TestApp'">
 	<ShredHostBuild>false</ShredHostBuild>
 	<TestAppBuild>true</TestAppBuild>
 	<ExecutableBuild>false</ExecutableBuild>
-	  <WebViewerBuild>false</WebViewerBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.ImageServer.Executable'">
 	<ShredHostBuild>false</ShredHostBuild>
 	<TestAppBuild>false</TestAppBuild>
 	<ExecutableBuild>true</ExecutableBuild>
-	<WebViewerBuild>false</WebViewerBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -123,31 +120,6 @@
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Utilities\bin\$(Configuration)\ClearCanvas.ImageServer.Utilities.dll" />
     <PluginFiles Include="$(SolutionDir)\..\Utilities\Manifest\bin\$(Configuration)\ClearCanvas.Utilities.Manifest.dll" />
   </ItemGroup>
-
-	<ItemGroup Condition="$(WebViewerBuild)">
-		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\Configuration\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.dll" />
-
-
-		<PluginFiles Include="$(SolutionDir)\..\Web\Services\bin\$(Configuration)\ClearCanvas.Web.Services.dll" />
-		<PluginFiles Include="$(SolutionDir)\..\Web\Common\bin\$(Configuration)\ClearCanvas.Web.Common.dll" />
-		<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\WebViewer\bin\$(Configuration)\ClearCanvas.ImageServer.Services.WebViewer.dll" />
-		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\Services\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.dll" />
-		<PluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Interpolators\$(PlatformSubFolder)\BilinearInterpolation.dll" />
-		<PluginFiles Include="$(SolutionDir)\..\Desktop\bin\$(Configuration)\ClearCanvas.Desktop.dll" />
-		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\bin\$(Configuration)\ClearCanvas.ImageViewer.dll" />
-		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\Web\bin\$(Configuration)\ClearCanvas.ImageViewer.Web.dll" />
-		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\Web\Common\bin\$(Configuration)\ClearCanvas.ImageViewer.Web.Common.dll" />
-		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\AnnotationProviders\bin\$(Configuration)\ClearCanvas.ImageViewer.AnnotationProviders.dll" />
-		
-		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\Layout\Basic\bin\$(Configuration)\ClearCanvas.ImageViewer.Layout.Basic.dll" />
-		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\StudyFinders\Remote\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.Remote.dll" />
-		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Standard\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Standard.dll" />
-		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Measurement\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Measurement.dll" />
-		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Synchronization\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Synchronization.dll" />
-		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\Web\Server\ImageServer\bin\$(Configuration)\ClearCanvas.ImageViewer.Web.Server.ImageServer.dll" />
-		<PluginFiles Include="$(SolutionDir)\..\ImageViewer\StudyLoaders\Streaming\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.Streaming.dll" />
-
-	</ItemGroup>
 	
 	<ItemGroup>
 		<UtilBatchFiles Include="$(SolutionDir)\..\ImageServer\Utilities\bin\$(Configuration)\ReconcileCleanup.bat" />
