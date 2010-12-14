@@ -41,7 +41,7 @@ namespace ClearCanvas.Common.UsageTracking
     /// <summary>
     /// Static helper class for implementing usage tracking of ClearCanvas applications.
     /// </summary>
-    public static class UsageTracking
+    public static class UsageUtilities
     {
         #region Private Members
         
@@ -110,12 +110,15 @@ namespace ClearCanvas.Common.UsageTracking
 #if UNIT_TESTS_USAGE_TRACKING
                     WSHttpBinding binding = new WSHttpBinding();
                     EndpointAddress endpointAddress = new EndpointAddress("http://localhost:8080/UsageTracking");
+#elif	DEBUG
+                    WSHttpBinding binding = new WSHttpBinding();
+                    EndpointAddress endpointAddress = new EndpointAddress("http://localhost/UsageTracking/Service.svc");
 #else
                     //TODO:  This should be updated to real address
                     WSHttpBinding binding = new WSHttpBinding(SecurityMode.Transport);
                     binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.None;
                     binding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
-                    EndpointAddress endpointAddress = new EndpointAddress("https://4rf/UsageTracking/Service.svc");
+                    EndpointAddress endpointAddress = new EndpointAddress("https://4rf/UsageTracking/Service.svc");        
 #endif
 
                     RegisterResponse response;
@@ -152,8 +155,6 @@ namespace ClearCanvas.Common.UsageTracking
         /// <param name="thread">Flag telling if the usage will be sent on the current thread or a background thread.</param>
         public static void Register(UsageMessage message, UsageTrackingThread thread)
         {
-            //#if	!DEBUG
-
             if (UsageTrackingSettings.Default.Enabled)
                 try
                 {
@@ -168,8 +169,6 @@ namespace ClearCanvas.Common.UsageTracking
                     // Fail silently
                     Platform.Log(LogLevel.Debug, e);
                 }
-
-            //#endif
         }
 
         /// <summary>
@@ -191,6 +190,8 @@ namespace ClearCanvas.Common.UsageTracking
                                        Version = ProductInformation.GetVersion(true, true),
                                        Product = ProductInformation.Product,
                                        Component = ProductInformation.Component,
+                                       Edition = ProductInformation.Edition,
+                                       AllowDiagnosticUse = ProductInformation.AllowDiagnosticUse,
                                        Region = CultureInfo.CurrentCulture.Name,
                                        Timestamp = Platform.Time,
                                        OS = Environment.OSVersion.ToString(),

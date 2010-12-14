@@ -45,12 +45,12 @@ namespace ClearCanvas.Desktop
                     OnStartUp();
 
                     var msg = CreateUsageMessage(UsageType.Startup);
-                    UsageTracking.Register(msg, UsageTrackingThread.Background);
+                    UsageUtilities.Register(msg, UsageTrackingThread.Background);
 
                     _phoneHomeTimer = new Timer(ignore =>
                                                     {
                                                         msg = CreateUsageMessage(UsageType.Other);
-                                                        UsageTracking.Register(msg, UsageTrackingThread.Background);
+                                                        UsageUtilities.Register(msg, UsageTrackingThread.Background);
                                                     },
                                                 null, _repeat24Hours, _repeat24Hours);
                 }
@@ -114,7 +114,7 @@ namespace ClearCanvas.Desktop
                 msg.AppData.Add(new UsageApplicationData { Key = keyProcessUptime, Value = String.Format(CultureInfo.InvariantCulture, "{0}", uptime.TotalHours) });
 
                 // Message must be sent using the current thread instead of threadpool when the app is being shut down
-                UsageTracking.Register(msg, UsageTrackingThread.Current);
+                UsageUtilities.Register(msg, UsageTrackingThread.Current);
             }
             catch (Exception ex)
             {
@@ -125,7 +125,7 @@ namespace ClearCanvas.Desktop
 
         static UsageMessage CreateUsageMessage(UsageType type)
         {
-            var msg = UsageTracking.GetUsageMessage();
+            var msg = UsageUtilities.GetUsageMessage();
             msg.Certified = ManifestVerification.Valid;
             msg.MessageType = type;
             return msg;

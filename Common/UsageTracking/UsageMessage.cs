@@ -110,6 +110,12 @@ namespace ClearCanvas.Common.UsageTracking
         public string Component { get; set; }
 
         /// <summary>
+        /// The edition being tracked.
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        public string Edition { get; set; }
+
+        /// <summary>
         /// The version of the product being tracked.
         /// </summary>
         [DataMember(IsRequired = true)]
@@ -145,6 +151,13 @@ namespace ClearCanvas.Common.UsageTracking
         [DataMember(IsRequired = false)]
         public bool Certified { get; set; }
 
+        /// <summary>
+        /// If the app is allowed for diagnostic use.
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        public bool AllowDiagnosticUse { get; set; }
+
+        
         /// <summary>
         /// A set of application data specific to the <see cref="Product"/>.
         /// </summary>
