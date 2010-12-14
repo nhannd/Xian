@@ -87,7 +87,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     if ((Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Alt)) == (ModifierKeys.Control | ModifierKeys.Alt))
                     {
                         //TODO: close this on error/timeout
-                        PopupHelper.PopupContent("Statistics", new StatisticsPanel());
+                        StackPanel panel = new StackPanel() { Orientation = System.Windows.Controls.Orientation.Horizontal };
+                        panel.Children.Add(new StatisticsPanel() { Margin = new Thickness(10) });
+                        panel.Children.Add(new ThrottlePanel(){ Margin = new Thickness(10)});
+
+                        PopupHelper.PopupContent("Throttle Settings", panel);
                     }
                     break;
                 }

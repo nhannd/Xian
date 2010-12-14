@@ -102,17 +102,11 @@
     </Compile>
     <Compile Include="ApplicationActivityMonitor.cs" />
     <Compile Include="ApplicationLog.cs" />
-    <Compile Include="Controls\ConnectionIndicator.xaml.cs">
-      <DependentUpon>ConnectionIndicator.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\StatisticsPanel.xaml.cs">
       <DependentUpon>StatisticsPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ThrottlePanel.xaml.cs">
       <DependentUpon>ThrottlePanel.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ThrottleSettingsIcon.xaml.cs">
-      <DependentUpon>ThrottleSettingsIcon.xaml</DependentUpon>
     </Compile>
     <Compile Include="HelpDialogContent.xaml.cs">
       <DependentUpon>HelpDialogContent.xaml</DependentUpon>
@@ -154,7 +148,7 @@
     <Compile Include="Helpers\BrowserExtensions.cs" />
     <Compile Include="Helpers\Cookies.cs" />
     <Compile Include="Helpers\IMouseElement.cs" />
-    <Compile Include="Helpers\MessageBoxHelper.cs" />
+    <Compile Include="Helpers\PopupHelper.cs" />
     <Compile Include="Helpers\MouseHelper.cs" />
     <Compile Include="Helpers\ResourceHelper.cs" />
     <Compile Include="Helpers\SpeedTester.cs" />
@@ -225,19 +219,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\ConnectionIndicator.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\StatisticsPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\ThrottlePanel.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\ThrottleSettingsIcon.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -343,7 +329,6 @@
     <None Include="Service References\AppServiceReference\ApplicationService4.xsd">
       <SubType>Designer</SubType>
     </None>
-    <Resource Include="Images\Gear.png" />
     <None Include="Service References\AppServiceReference\ApplicationService.disco" />
     <None Include="Service References\AppServiceReference\ApplicationService5.xsd">
       <SubType>Designer</SubType>
