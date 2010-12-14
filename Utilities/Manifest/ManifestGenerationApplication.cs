@@ -251,7 +251,7 @@ namespace ClearCanvas.Utilities.Manifest
                         break;
                     }
 
-                    if (node.Attributes["name"].Value.Equals("Name"))
+                    if (node.Attributes["name"].Value.Equals("Component"))
                     {
                         _manifest.ProductManifest.Product.Name = string.IsNullOrEmpty(val) 
                             ? "ClearCanvas Workstation" 
