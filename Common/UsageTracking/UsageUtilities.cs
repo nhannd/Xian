@@ -11,13 +11,8 @@
 
 using System;
 using System.Globalization;
-using System.Management;
 using System.Net;
-using System.Net.Security;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
-using System.Text;
 using System.Threading;
 using ClearCanvas.Common.Utilities;
 
@@ -197,7 +192,7 @@ namespace ClearCanvas.Common.UsageTracking
                                        OS = Environment.OSVersion.ToString(),
                                        MachineIdentifier =  EnvironmentUtilities.MachineIdentifier,
                                        MessageType = UsageType.Other,
-                                       //LicenseString = ProductInformation.LicenseString
+                                       LicenseString = LicenseSettings.Default.LicenseKey
                                    };
             return msg;
         }
