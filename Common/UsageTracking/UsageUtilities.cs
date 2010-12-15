@@ -192,7 +192,7 @@ namespace ClearCanvas.Common.UsageTracking
                                        OS = Environment.OSVersion.ToString(),
                                        MachineIdentifier =  EnvironmentUtilities.MachineIdentifier,
                                        MessageType = UsageType.Other,
-                                       LicenseString = LicenseSettings.Default.LicenseKey
+                                       LicenseString = LicenseInformation.LicenseKey
                                    };
             return msg;
         }

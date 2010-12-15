@@ -35,13 +35,16 @@ using ClearCanvas.Common.Configuration;
 namespace ClearCanvas.Common
 {
 	/// <summary>
-	/// Provides some basic information about the current license.
+	/// Provides access to the current license key.
 	/// </summary>
 	public static class LicenseInformation
 	{
 		/// <summary>
 		/// Gets and sets the license key string from the local app.config file.
 		/// </summary>
+		/// <remarks>
+		/// Use this instead of the LicenseKey property in <see cref="LicenseSettings"/>
+		/// </remarks>
 		/// <returns></returns>
 		public static string LicenseKey
 		{
