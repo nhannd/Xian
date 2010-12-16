@@ -267,6 +267,13 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             set { this["InterimStorageDirectory"] = value; }
         }
 
+		[ConfigurationProperty("AllowUnknownCaller", DefaultValue = true)]
+		public bool AllowUnknownCaller
+		{
+			get { return (bool)this["AllowUnknownCaller"]; }
+			set { this["AllowUnknownCaller"] = value; }
+		}
+
 		[ConfigurationProperty("ImageStorageSopClasses")]
 		public ImageSopClassConfigurationElementCollection ImageStorageSopClasses
 		{

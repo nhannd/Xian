@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			result = DicomRejectResult.Permanent;
 			reason = DicomRejectReason.NoReasonGiven;
 
-			if (null == RemoteServerDirectory.Lookup(callingAE))
+			if (!DicomServerSettings.Instance.AllowUnknownCaller && null == RemoteServerDirectory.Lookup(callingAE))
 			{
 				reason = DicomRejectReason.CallingAENotRecognized;
 			}
