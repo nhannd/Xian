@@ -170,6 +170,7 @@ namespace ClearCanvas.Web.Services
             // Without a permanent connection, there's a chance the client is polling even when the application has stopped on the server.
             // Throw fault exception to tell the client to stop.
             string reason = string.Format("Could not find the specified app id {0}", request.ApplicationId);
+            Platform.Log(LogLevel.Error, reason);
             throw new FaultException<InvalidOperationFault>(new InvalidOperationFault(), reason);
 
             // TODO:

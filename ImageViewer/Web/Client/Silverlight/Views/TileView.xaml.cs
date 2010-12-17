@@ -44,9 +44,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
         private int? _firstLeftClickTicks;
 		private int? _firstRightClickTicks;
 
-        private long _lastMouseWheelTick;
-		private long _lastMouseMoveMessageTick;
-		private long _lastMouseMoveTick;
+        private long _lastMouseWheelTick = Environment.TickCount;
+        private long _lastMouseMoveMessageTick = Environment.TickCount;
+        private long _lastMouseMoveTick = Environment.TickCount;
 
         private Image _serverCursorImage = new Image() { IsHitTestVisible  = false };
 
@@ -402,13 +402,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                         {
                             switch (settings.Strategy)
                             {
-                                case ThrottleStrategy.ConstantRate:
-                                    okToSend = elapsed >= settings.ConstantRate && p.SendLag < maxPendingAllowed && p.RenderingLag < 5;
-                                    break;
-                                case ThrottleStrategy.UseMouseMoveRTT:
-                                    okToSend = PerformanceMonitor.CurrentInstance.SendLag == 0 || (elapsed >= p.AverageMouseMoveMsgRTTWithResponse
-                                        && p.SendLag < maxPendingAllowed && p.RenderingLag < 5);
-                                    break;
                                 case ThrottleStrategy.WhenMouseMoveRspReceived:
                                     okToSend = elapsed >= p.AverageMouseMoveMsgRTTWithResponse / settings.MaxPendingMouseMoveMsgAllowed && p.SendLag < maxPendingAllowed && p.RenderingLag < 5;
                                     break;
@@ -431,14 +424,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
                 switch (settings.Strategy)
                 {
-                    case ThrottleStrategy.ConstantRate:
-                        okToSend = elapsed >= settings.ConstantRate && p.SendLag < maxPendingAllowed && p.RenderingLag < 5;
-                        break;
-                    case ThrottleStrategy.UseMouseMoveRTT:
-                        okToSend = PerformanceMonitor.CurrentInstance.SendLag == 0 || (elapsed >= p.AverageMouseMoveMsgRTTWithResponse
-                            && elapsed >= p.AverageMouseMoveMsgRTTWithResponse / settings.MaxPendingMouseMoveMsgAllowed && p.SendLag < maxPendingAllowed && p.RenderingLag < 5);
-                        break;
-                    case ThrottleStrategy.WhenMouseMoveRspReceived:
+                     case ThrottleStrategy.WhenMouseMoveRspReceived:
                         okToSend = elapsed>=p.AverageMouseMoveMsgRTTWithResponse / settings.MaxPendingMouseMoveMsgAllowed && p.SendLag < maxPendingAllowed && p.RenderingLag < 5; 
                         break;                    
                 }
@@ -456,23 +442,15 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
         {
 			if (_destroyed)
 				return;
+                        
+            PerformanceMonitor p = PerformanceMonitor.CurrentInstance;
+            bool okToSend = p.MouseWheelMsgCount <= ThrottleSettings.Default.MaxPendingMouseMoveMsgAllowed;
 
-            _displayFps = true;
-            PerformanceMonitor.CurrentInstance.Begin(1000);
-
-            // TODO: REVIEW THIS
-            // Per MSDN:
-            // if the system runs continuously, TickCount will increment from zero to Int32.MaxValue for approximately 24.9 days, 
-            // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
-            long elapsed = Environment.TickCount - _lastMouseWheelTick;
-            const int MIN_WHEEL_MSG_FIRING_PERIOD = 20;
-
-            if (elapsed > MIN_WHEEL_MSG_FIRING_PERIOD)
+            if (okToSend)
             {
-                // TODO: REVIEW THIS
-                // Per MSDN:
-                // if the system runs continuously, TickCount will increment from zero to Int32.MaxValue for approximately 24.9 days, 
-                // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
+                _displayFps = true;
+                PerformanceMonitor.CurrentInstance.Begin(1000);
+
                 _lastMouseWheelTick = Environment.TickCount;
                 Message msg = new MouseWheelMessage
                 {
@@ -481,7 +459,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                     Delta = e.Delta
                 };
 
-                Logger.Write(String.Format("Wheel msg firing delay {0} ms\n", elapsed));
                 ApplicationContext.Current.ServerEventBroker.DispatchMessage(msg);
             }
         }

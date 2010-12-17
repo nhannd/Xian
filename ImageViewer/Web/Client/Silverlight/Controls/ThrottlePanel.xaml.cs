@@ -33,14 +33,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls
             DataContext = ThrottleSettings.Default;
         }
 
-        private void Strategies_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (Strategies != null)
-            {
-                ConstantRatePanel.Visibility = ThrottleSettings.Default.Strategy == ThrottleStrategy.ConstantRate ? Visibility.Visible : Visibility.Collapsed;
-
-            }
-        }
     }
 
     public class EnumValuesConverter : IValueConverter

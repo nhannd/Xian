@@ -249,8 +249,7 @@ namespace ClearCanvas.ImageViewer.Web
             if (_context == null)
             {
                 string reason = string.Format("Application context no longer exists");
-
-                throw new FaultException<InvalidOperationFault>(new InvalidOperationFault(), reason);
+                throw new Exception(reason);
             }
 
             return _context.GetPendingOutboundEvent(wait);

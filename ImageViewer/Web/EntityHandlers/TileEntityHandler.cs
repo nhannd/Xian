@@ -100,12 +100,18 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 		private IRenderingSurface _surface;
 		private Bitmap _bitmap;
 
-	    private bool _isMouseDown;
 		[ThreadStatic]private static ContextMenuContainer _contextMenu;
 
 	    private readonly IQFactorStrategy _qFactorPlugin;
 
-		public TileEntityHandler()
+        private bool _isMouseDown;
+        private readonly object _drawLock = new object();
+        private bool _refreshingClient = false;
+
+        // timer to push image to the client when dynamic image quality is used
+        private System.Threading.Timer _refreshTimer; 
+        
+        public TileEntityHandler()
 		{
             if (WebViewerServices.Default.CompressionType.ToLower().Equals("jpeg"))
                 _mimeType = "image/jpeg";
@@ -393,21 +399,30 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 		private void OnTileDrawing(object sender, EventArgs e)
 		{
-			Draw();
+			Draw(false);
 		}
 
-		public void Draw()
+		public void Draw(bool refresh)
 		{
-			Event ev = new TileUpdatedEvent
-			{
-				Identifier = Guid.NewGuid(),
-				SenderId = Identifier,
-				Tile = GetEntity(),
-				MimeType = _mimeType,
-                Quality = _quality
-			};
-			
-			ApplicationContext.FireEvent(ev);
+            lock (_drawLock)
+            {
+                if (refresh)
+                    _refreshingClient = true;
+
+                Event ev = new TileUpdatedEvent
+                               {
+                                   Identifier = Guid.NewGuid(),
+                                   SenderId = Identifier,
+                                   Tile = GetEntity(),
+                                   MimeType = _mimeType,
+                                   Quality = _quality
+                               };
+
+                ApplicationContext.FireEvent(ev);
+               
+                if (refresh) 
+                    _refreshingClient = false;
+            }
 		}
 
         private byte[] CreateImage()
@@ -418,118 +433,190 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 			if (Surface == null)
 				return null;
 
-			IImageSopProvider sop = _tile.PresentationImage as IImageSopProvider;
-			if (sop != null)
-			{
-				//TODO (CR May 2010): sops are shared between users and threads.  This will be an issue
-				//for dynamic quality changes.
-				DicomAttribute attrib = sop.ImageSop[DicomTags.LossyImageCompression];
-				DicomAttribute ratioAttrib = sop.ImageSop[DicomTags.LossyImageCompressionRatio];
-				bool lossy = false;
-				if (_mimeType.Equals("image/jpeg"))
-					lossy = true;
-				if (lossy)
-				{
-					attrib.SetStringValue("01");
-				}
-				else
-				{
-					if (ratioAttrib.IsEmpty)
-					{
-						attrib.SetEmptyValue();
-					}
-				}
-			}
+            if (_refreshingClient)
+            {
+                return GetCurrentTileBitmap();
+            }
 
-			WebViewStudyStatistics stats = new WebViewStudyStatistics(_mimeType);
+            IImageSopProvider sop = _tile.PresentationImage as IImageSopProvider;
+            if (sop != null)
+            {
+                //TODO (CR May 2010): sops are shared between users and threads.  This will be an issue
+                //for dynamic quality changes.
+                DicomAttribute attrib = sop.ImageSop[DicomTags.LossyImageCompression];
+                DicomAttribute ratioAttrib = sop.ImageSop[DicomTags.LossyImageCompressionRatio];
+                bool lossy = false;
+                if (_mimeType.Equals("image/jpeg"))
+                    lossy = true;
+                if (lossy)
+                {
+                    attrib.SetStringValue("01");
+                }
+                else
+                {
+                    if (ratioAttrib.IsEmpty)
+                    {
+                        attrib.SetEmptyValue();
+                    }
+                }
+            }
 
-			//long t0 = Environment.TickCount;
-			stats.DrawToBitmapTime.Start();
+            WebViewStudyStatistics stats = new WebViewStudyStatistics(_mimeType);
+
+            //long t0 = Environment.TickCount;
+            stats.DrawToBitmapTime.Start();
 
             Bitmap bitmap = Bitmap;
 
             using (System.Drawing.Graphics graphics = System.Drawing.Graphics.FromImage(bitmap))
-			{
-				Surface.ContextID = graphics.GetHdc();
+            {
+                Surface.ContextID = graphics.GetHdc();
                 Surface.ClipRectangle = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
-                
-				DrawArgs drawArgs = new DrawArgs(Surface, null, Rendering.DrawMode.Render);
-				CurrentImage.Draw(drawArgs);
-				drawArgs = new DrawArgs(Surface, null, Rendering.DrawMode.Refresh);
-				CurrentImage.Draw(drawArgs);
-				graphics.ReleaseHdc(Surface.ContextID);
-			}
 
-			stats.DrawToBitmapTime.End();
+                DrawArgs drawArgs = new DrawArgs(Surface, null, Rendering.DrawMode.Render);
+                CurrentImage.Draw(drawArgs);
+                drawArgs = new DrawArgs(Surface, null, Rendering.DrawMode.Refresh);
+                CurrentImage.Draw(drawArgs);
+                graphics.ReleaseHdc(Surface.ContextID);
+            }
 
-			Bitmap bmp1 = null;
-			if (DiagnosticsSettings.Default.CompareImageQuality)
-			{
-				// make a copy in case Bitmap.Save() has any side effects.
-				bmp1 = (Bitmap)Bitmap.Clone();
-			}
+            stats.DrawToBitmapTime.End();
 
-			//TODO (CR May 2010): should be in using and/or closed.  Separate function?
-			MemoryStream ms = new MemoryStream();
+            Bitmap bmp1 = null;
+            if (DiagnosticsSettings.Default.CompareImageQuality)
+            {
+                // make a copy in case Bitmap.Save() has any side effects.
+                bmp1 = (Bitmap)Bitmap.Clone();
+            }
+
+            //TODO (CR May 2010): should be in using and/or closed.  Separate function?
+            MemoryStream ms = new MemoryStream();
 
             _quality = _defaultJpegQFactor;
             if (_isMouseDown && IsDynamicImageQualityEnabled)
+            {
                 _quality = GetOptimalQFactor(Bitmap.Width, Bitmap.Height, sop);
-                
-			stats.SaveTime.Start();
-			if (_mimeType.Equals("image/jpeg"))
-			{
-				EncoderParameters eps = new EncoderParameters(1);
+
+                InitOrUpdateRefreshClientTimer();
+            }
+
+            stats.SaveTime.Start();
+            if (_mimeType.Equals("image/jpeg"))
+            {
+                EncoderParameters eps = new EncoderParameters(1);
                 eps.Param[0] = new EncoderParameter(Encoder.Quality, _quality);
                 ImageCodecInfo ici = GetEncoderInfo(_mimeType);
 
                 bitmap.Save(ms, ici, eps);
-            
-			} 
-			else if (_mimeType.Equals("image/png"))
-			{
+
+            }
+            else if (_mimeType.Equals("image/png"))
+            {
                 bitmap.Save(ms, ImageFormat.Png);
-			}
-			stats.SaveTime.End();
+            }
+            stats.SaveTime.End();
 
             byte[] imageBuffer = ms.ToArray();
-            
+
             if (Platform.IsLogLevelEnabled(LogLevel.Debug))
                 Platform.Log(LogLevel.Debug, "Render Frame #{0}. Size= {1}bytes. Q={2} {3}. Highbit={4}",
                     sop.ImageSop.InstanceNumber, imageBuffer.Length, _quality, _isMouseDown && IsDynamicImageQualityEnabled ? "[Dynamic]" : "",
                     sop.Frame.HighBit);
 
-			ms.Position = 0;
-            stats.ImageSize = (ulong) imageBuffer.LongLength;
-			_stats.AddSubStats(stats);
+            ms.Position = 0;
+            stats.ImageSize = (ulong)imageBuffer.LongLength;
+            _stats.AddSubStats(stats);
 
-			//StatisticsLogger.Log(LogLevel.Info, false, stats);
-			if (_stats.SubStatistics.Count > 20)
-			{
-				_stats.CalculateAverage();
-				//StatisticsLogger.Log(LogLevel.Info, false, _stats);
-				_stats = new StatisticsSet("AverageRender");
-			}
+            //StatisticsLogger.Log(LogLevel.Info, false, stats);
+            if (_stats.SubStatistics.Count > 20)
+            {
+                _stats.CalculateAverage();
+                //StatisticsLogger.Log(LogLevel.Info, false, _stats);
+                _stats = new StatisticsSet("AverageRender");
+            }
 
-			//Console.WriteLine("Tile {0} : DrawToBitmap (size: {3}, mime: {2}):{1}ms", tile.Identifier,Environment.TickCount - t0,mimeType, ms.Length);
+            //Console.WriteLine("Tile {0} : DrawToBitmap (size: {3}, mime: {2}):{1}ms", tile.Identifier,Environment.TickCount - t0,mimeType, ms.Length);
 
-			//TODO (CR May 2010): #if DEBUG?
-			if (DiagnosticsSettings.Default.CompareImageQuality)
-			{
-				Bitmap bmp2 = new Bitmap(ms);
-				ImageComparisonResult result = BitmapComparison.Compare(ref bmp1, ref bmp2);
-				//TODO (CR May 2010): ConsoleHelper
-				Console.WriteLine("BMP vs {0} w/ client size: {1}x{2}", _mimeType, bmp2.Height, bmp2.Width);
-				Console.WriteLine("\tR: MinError={2:0.00} MaxError={3:0.00}  Mean={0:0.00}  STD={1:0.00}", result.Channels[0].MeanError, result.Channels[0].StdDeviation, Math.Abs(result.Channels[0].MinError), Math.Abs(result.Channels[0].MaxError));
-				Console.WriteLine("\tG: MinError={2:0.00} MaxError={3:0.00}  Mean={0:0.00}  STD={1:0.00}", result.Channels[1].MeanError, result.Channels[1].StdDeviation, Math.Abs(result.Channels[1].MinError), Math.Abs(result.Channels[1].MaxError));
-				Console.WriteLine("\tB: MinError={2:0.00} MaxError={3:0.00}  Mean={0:0.00}  STD={1:0.00}", result.Channels[2].MeanError, result.Channels[2].StdDeviation, Math.Abs(result.Channels[2].MinError), Math.Abs(result.Channels[2].MaxError));
+            //TODO (CR May 2010): #if DEBUG?
+            if (DiagnosticsSettings.Default.CompareImageQuality)
+            {
+                Bitmap bmp2 = new Bitmap(ms);
+                ImageComparisonResult result = BitmapComparison.Compare(ref bmp1, ref bmp2);
+                //TODO (CR May 2010): ConsoleHelper
+                Console.WriteLine("BMP vs {0} w/ client size: {1}x{2}", _mimeType, bmp2.Height, bmp2.Width);
+                Console.WriteLine("\tR: MinError={2:0.00} MaxError={3:0.00}  Mean={0:0.00}  STD={1:0.00}", result.Channels[0].MeanError, result.Channels[0].StdDeviation, Math.Abs(result.Channels[0].MinError), Math.Abs(result.Channels[0].MaxError));
+                Console.WriteLine("\tG: MinError={2:0.00} MaxError={3:0.00}  Mean={0:0.00}  STD={1:0.00}", result.Channels[1].MeanError, result.Channels[1].StdDeviation, Math.Abs(result.Channels[1].MinError), Math.Abs(result.Channels[1].MaxError));
+                Console.WriteLine("\tB: MinError={2:0.00} MaxError={3:0.00}  Mean={0:0.00}  STD={1:0.00}", result.Channels[2].MeanError, result.Channels[2].StdDeviation, Math.Abs(result.Channels[2].MinError), Math.Abs(result.Channels[2].MaxError));
 
-			}
+            }
 
             return imageBuffer;
 		}
 
-		private static ImageCodecInfo GetEncoderInfo(String mimeType)
+        private void InitOrUpdateRefreshClientTimer()
+        {
+            // If user is drawing an ellipse, the ROI info will be updated a short time after
+            // user stops moving the mouse. If we don't wait long enough user will see
+            // a high-res image, the low res and another high-res image again. 
+            // 500 ms is picked arbitrarily.
+            TimeSpan refreshTime = TimeSpan.FromMilliseconds(500);
+            
+            // If the timer is running then just postpone it
+            if (_refreshTimer != null)
+            {
+                _refreshTimer.Change(refreshTime, TimeSpan.Zero);
+            }
+            else {
+                _refreshTimer = new System.Threading.Timer((ignore) =>
+                                                               {
+                                                                   try
+                                                                   {
+                                                                       // Note: the image will not go to the client until it polls
+                                                                       // The assumption is the client continues polling if the user
+                                                                       // stops moving the mouse
+                                                                       Draw(true);
+                                                                   }
+                                                                   catch (Exception ex)
+                                                                   {
+                                                                       // catch exceptions to prevent crashing
+                                                                       Platform.Log(LogLevel.Error, ex);
+                                                                   }
+                                                                   finally
+                                                                   {
+                                                                       _refreshTimer.Dispose();
+                                                                       _refreshTimer = null;
+                                                                   }
+                                                               }, null, refreshTime, TimeSpan.Zero);
+            }
+            
+            
+        }
+
+        private byte[] GetCurrentTileBitmap()
+        {
+            Bitmap bitmap = Bitmap;
+            MemoryStream ms = new MemoryStream();
+
+            _quality = _defaultJpegQFactor;
+
+            if (_mimeType.Equals("image/jpeg"))
+            {
+                EncoderParameters eps = new EncoderParameters(1);
+                eps.Param[0] = new EncoderParameter(Encoder.Quality, _quality);
+                ImageCodecInfo ici = GetEncoderInfo(_mimeType);
+
+                bitmap.Save(ms, ici, eps);
+
+            }
+            else if (_mimeType.Equals("image/png"))
+            {
+                bitmap.Save(ms, ImageFormat.Png);
+            }
+
+            return ms.ToArray();
+        }
+
+        private static ImageCodecInfo GetEncoderInfo(String mimeType)
 		{
 			//TODO (CR May 2010): cache the encoder
 			int j;
@@ -544,7 +631,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 		public override void ProcessMessage(Message message)
 		{
-			if (message is MouseMoveMessage)
+            if (message is MouseMoveMessage)
 			{
 				ProcessMouseMoveMessage((MouseMoveMessage)message);
 				//TODO: ideally, the tilecontroller would have an event and the handler would listen
@@ -623,10 +710,8 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 				{
 					MouseEventArgs e = new MouseEventArgs(MouseButtons.Left, message.ClickCount, message.MousePosition.X, message.MousePosition.Y, 0);
 					object msg = _tileInputTranslator.OnMouseDown(e);
-                    if (_tileController.ProcessMessage(msg))
-                    {
-                        _isMouseDown = true;
-                    }
+				    _tileController.ProcessMessage(msg);
+                    _isMouseDown = true;
 				}
 				else if (message.MouseButtonState == MouseButtonState.Up)
 				{
@@ -638,13 +723,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 					e = new MouseEventArgs(MouseButtons.None, 0, message.MousePosition.X, message.MousePosition.Y, 0);
 					msg = _tileInputTranslator.OnMouseMove(e);
 					_tileController.ProcessMessage(msg);
-
-                    if (_isMouseDown)
-                    {
-                        _isMouseDown = false;
-                        if (_quality != _defaultJpegQFactor)
-                            Draw(); // send the full quality image to client
-                    }
+                    _isMouseDown = false;
 				}
 			}
 			else if (message.Button == MouseButton.Right)
@@ -653,10 +732,8 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 				{
 					MouseEventArgs e = new MouseEventArgs(MouseButtons.Right, message.ClickCount, message.MousePosition.X, message.MousePosition.Y, 0);
 					object msg = _tileInputTranslator.OnMouseDown(e);
-					if (_tileController.ProcessMessage(msg))
-                    {
-                        _isMouseDown = true;
-                    }
+					_tileController.ProcessMessage(msg);
+                    _isMouseDown = false;
 				}
 				else if (message.MouseButtonState == MouseButtonState.Up)
 				{
@@ -670,12 +747,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 					e = new MouseEventArgs(MouseButtons.None, 0, message.MousePosition.X, message.MousePosition.Y, 0);
 					msg = _tileInputTranslator.OnMouseMove(e);
 					_tileController.ProcessMessage(msg);
-
-                    if (_isMouseDown && _quality != _defaultJpegQFactor)
-                    {
-                        _isMouseDown = false;
-                        Draw(); // send the full quality image to client
-                    }
+                    _isMouseDown = true;
 				}
 			}
 		}

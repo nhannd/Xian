@@ -68,7 +68,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         private ApplicationStartupParameters _appParameters;
 	    private Dispatcher _dispatcher;
         private ApplicationContext _context;
-		private int _pendingSend;
         private StartApplicationRequest _startRequest;
         private bool _connectionOpened;
 
@@ -324,7 +323,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
         private void ThrottleSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName.Equals("DynamicImageQualityEnabled"))
+            if (e.PropertyName.Equals("EnableDynamicImageQuality"))
             {
                 _proxy.SetPropertyAsync(new SetPropertyRequest
                 {
@@ -353,7 +352,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             }
         }
 
-
         private void MessageSent(object sender, ProcessMessagesCompletedEventArgs e)
 	    {
             // TODO: REVIEW THIS
@@ -363,10 +361,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             ApplicationActivityMonitor.Instance.LastActivityTick = Environment.TickCount; 
             MessageSet msgs = e.UserState as MessageSet;
 
-            if (ThrottleSettings.Default.LagDetectionStrategy == LagDetectionStrategy.WhenMMRequestIsSent)
-                PerformanceMonitor.CurrentInstance.DecrementSendLag(msgs.Messages.Count((i)=> i is MouseMoveMessage));
-
-            Interlocked.Add(ref _pendingSend, -msgs.Messages.Count);
+            PerformanceMonitor.CurrentInstance.DecrementMouseWheelMsgCount(msgs.Messages.Count((i) => i is MouseWheelMessage));
 
             if (e.Error != null)
             {
@@ -400,8 +395,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             
 
 	    }
-
-
+        
         //TODO (CR May 2010): see my comments at the top RE: separation of responsibilities.
         private void DisplayFaulted(string error, string details)
         {
@@ -695,15 +689,19 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             {
                 if (!Faulted)
                 {
-                    ApplicationActivityMonitor.Instance.LastActivityTick = Environment.TickCount;
-                    Interlocked.Increment(ref _pendingSend);
-
-                    _queue.Enqueue(message);
+                    
 
                     if (message is MouseMoveMessage)
                     {
                         PerformanceMonitor.CurrentInstance.IncrementSendLag(1);
                     }
+                    else if (message is MouseWheelMessage)
+                    {
+                        PerformanceMonitor.CurrentInstance.IncrementMouseWheelMsgCount(1);
+                    }
+
+                    ApplicationActivityMonitor.Instance.LastActivityTick = Environment.TickCount;
+                    _queue.Enqueue(message);
                 } 
                 
             }

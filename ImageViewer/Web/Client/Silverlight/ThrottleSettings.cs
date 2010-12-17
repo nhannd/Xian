@@ -26,22 +26,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
     public enum ThrottleStrategy
     {
-        ConstantRate,
-        UseMouseMoveRTT,
         WhenMouseMoveRspReceived
     }
 
     public enum LagDetectionStrategy
-    {
-        // note: When MM request is sent (web service call returns). The message may be queued for processing on the server.
-        // This works very well in the office but causes a lot of lag at home, because of network latency.
-        // It got worse when RESP > 1 is used, because of the packet reordering.
-        /// <summary>
-        /// Detect lag based on when the mouse move message is sent (not yet processed)
-        /// </summary>
-        WhenMMRequestIsSent, 
-
-        
+    {        
         /// <summary>
         /// Detect lag based on the mouse move message processed events.
         /// </summary>

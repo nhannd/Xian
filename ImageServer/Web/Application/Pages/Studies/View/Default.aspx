@@ -123,7 +123,8 @@
 			<param name="onLoad" value="OnSilverlightAppLoaded" />
 			<param name="onError" value="onSilverlightError" />
 			<param name="background" value="#222222" />
-			<param name="windowless" value="true" />
+			<!-- mouse wheel does not work if windowless is true -->
+			<param name="windowless" value="false" />
 			<param name="minRuntimeVersion" value="4.0.41108.0" />
 			<param name="autoUpgrade" value="true" />
 			<param name="initParams" value="<%= WebServiceConfiguration.InitParamString %>,<%= UserCredentialsString %>,<%= ApplicationSettings %>,<%= OtherParameters %>" />

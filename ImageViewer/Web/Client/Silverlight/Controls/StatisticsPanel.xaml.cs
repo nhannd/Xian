@@ -35,7 +35,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls
             DataContext = PerformanceMonitor.CurrentInstance;
 
             PerformanceMonitor.CurrentInstance.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(Instance_PropertyChanged);
-            Speed.Text = PerformanceMonitor.CurrentInstance.SpeedInMbps > 0 ? String.Format("{0:0.0} Mpbs", PerformanceMonitor.CurrentInstance.SpeedInMbps) : "Unknown";
+            Speed.Text = PerformanceMonitor.CurrentInstance.SpeedInMbps > 0 ? String.Format(" : {0:0.0} Mpbs", PerformanceMonitor.CurrentInstance.SpeedInMbps) : "Unknown";
             FPS.Text = String.Format(" : {0:0.0}", PerformanceMonitor.CurrentInstance.AverageClientFps);
 
             double rtt = PerformanceMonitor.CurrentInstance.AverageMouseMoveMsgRTTWithResponse;

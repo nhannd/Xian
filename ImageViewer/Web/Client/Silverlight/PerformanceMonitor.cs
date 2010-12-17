@@ -377,5 +377,36 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 OnPropertyChanged("SpeedInMbps");
             }
         }
+
+        long _mouseWheelCount;
+        public long MouseWheelMsgCount
+        {
+            get
+            {
+                lock (_sync)
+                {
+                    return _mouseWheelCount;
+                }
+
+            }
+        }
+
+        internal void IncrementMouseWheelMsgCount(int count)
+        {
+            lock (_sync)
+            {
+                Interlocked.Add(ref _mouseWheelCount, count);
+                OnPropertyChanged("MouseWheelMsgCount");
+            }
+        }
+
+        internal void DecrementMouseWheelMsgCount(int count)
+        {
+            lock (_sync)
+            {
+                Interlocked.Add(ref _mouseWheelCount, -count);
+                OnPropertyChanged("MouseWheelMsgCount");
+            }
+        }
     }
 }
