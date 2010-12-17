@@ -13,9 +13,12 @@
     <File name="ClearCanvas.Dicom.DataStore.cfg.xml" />
     <File name="ClearCanvas.Server.ShredHostService.exe" checksum="true" />
     <File name="ClearCanvas.Server.ShredHostService.exe.config" config="false" />
+    <File name="ClearCanvas.Executable.exe" checksum="true" />
+    <File name="ClearCanvas.Executable.exe.config" config="false" />
     <File name="DicomAEServers.xml" ignore="true"/>
     <File name="EULA.rtf" />
     <File name="License.rtf" />
+    <File name="PrivacyNotice.rtf" />
     <File name="Logging.config" />
     <File name="common\ClearCanvas.Common.dll" checksum="true" />
     <File name="common\ClearCanvas.Dicom.DataStore.dll" checksum="true" />
