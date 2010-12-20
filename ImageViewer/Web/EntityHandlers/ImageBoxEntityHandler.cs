@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 		public void Draw()
 		{
 			foreach (TileEntityHandler handler in _tileHandlers)
-				handler.Draw();
+				handler.Draw(false);
 
 			NotifyEntityPropertyChanged("ImageCount", ImageCount);
 			NotifyEntityPropertyChanged("TopLeftPresentationImageIndex", _imageBox.TopLeftPresentationImageIndex);
