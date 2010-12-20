@@ -13,6 +13,7 @@ using System;
 using System.Management;
 using System.Security.Cryptography;
 using System.Text;
+using System.IO;
 
 namespace ClearCanvas.Common.Utilities
 {
@@ -38,7 +39,9 @@ namespace ClearCanvas.Common.Utilities
 					break;
 				}
 
-				const string drive = "C";
+				var driveInfo = CollectionUtils.SelectFirst(DriveInfo.GetDrives(), d => d.DriveType == DriveType.Fixed);
+				var drive = driveInfo.Name.Substring(0, 1);  // Get the drive letter from DriveInfo.Name (eg. C:\)
+
 				ManagementObject disk = new ManagementObject(
 					@"win32_logicaldisk.deviceid=""" + drive + @":""");
 				disk.Get();
