@@ -23,6 +23,16 @@ namespace ClearCanvas.Utilities.Manifest
         /// </summary>
         public string Name { get; set; }
         /// <summary>
+        /// The component name.
+        /// </summary>
+        [DefaultValue(null)]
+        public string Component { get; set; }
+        /// <summary>
+        /// The edition of the component.
+        /// </summary>
+        [DefaultValue(null)]
+        public string Edition { get; set; }
+        /// <summary>
         /// The version associated with the product.
         /// </summary>
         public string Version { get; set; }

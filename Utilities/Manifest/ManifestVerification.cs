@@ -259,17 +259,31 @@ namespace ClearCanvas.Utilities.Manifest
 
         private void VerifyProduct()
         {
-            if (!ProductInformation.Component.Equals(_productManifest.ProductManifest.Product.Name))
-                throw new ApplicationException("Product Name does not match the manifest: "
-                                               + _productManifest.ProductManifest.Product.Name);
+            if (!ProductInformation.Component.Equals(_productManifest.ProductManifest.Product.Component))
+                throw new ApplicationException(string.Format("Component Name does not match the manifest: {0}, {1}",
+                                                             _productManifest.ProductManifest.Product.Component,
+                                                             ProductInformation.Component));
+
+            if (!ProductInformation.Edition.Equals(_productManifest.ProductManifest.Product.Edition))
+                throw new ApplicationException(string.Format("Edition Name does not match the manifest: {0}, {1}",
+                                                             _productManifest.ProductManifest.Product.Edition,
+                                                             ProductInformation.Edition));
+
+            if (!ProductInformation.Product.Equals(_productManifest.ProductManifest.Product.Name))
+                throw new ApplicationException(string.Format("Product Name does not match the manifest: {0}, {1}",
+                                                             _productManifest.ProductManifest.Product.Name,
+                                                             ProductInformation.Product));
 
             if (!ProductInformation.Version.ToString().Equals(_productManifest.ProductManifest.Product.Version))
-                throw new ApplicationException("Product Version does not match the manifest: "
-                                               + _productManifest.ProductManifest.Product.Version);
+                throw new ApplicationException(string.Format("Product Version does not match the manifest: {0}, {1}",
+                                                             _productManifest.ProductManifest.Product.Version,
+                                                             ProductInformation.Version));
 
             if (!ProductInformation.VersionSuffix.Equals(_productManifest.ProductManifest.Product.Suffix))
-                throw new ApplicationException("Product Version Suffix does not match the manifest: "
-                                               + _productManifest.ProductManifest.Product.Suffix);
+                throw new ApplicationException(
+                    string.Format("Product Version Suffix does not match the manifest: {0}, {1}",
+                                  _productManifest.ProductManifest.Product.Suffix,
+                                  ProductInformation.VersionSuffix));
         }
 
         private void VerifyPackageManifests()

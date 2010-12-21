@@ -233,7 +233,7 @@ namespace ClearCanvas.Utilities.Manifest
             
             XmlDocument xmldoc = new XmlDocument();
 
-            //Load Books.xml into the DOM.
+            //Load config into the DOM.
             xmldoc.Load(path);
 
             XmlNodeList list = xmldoc.SelectNodes("configuration/applicationSettings/ClearCanvas.Common.ProductSettings/setting");
@@ -253,7 +253,7 @@ namespace ClearCanvas.Utilities.Manifest
 
                     if (node.Attributes["name"].Value.Equals("Component"))
                     {
-                        _manifest.ProductManifest.Product.Name = string.IsNullOrEmpty(val) 
+                        _manifest.ProductManifest.Product.Component = string.IsNullOrEmpty(val) 
                             ? "ClearCanvas Workstation" 
                             : val;
                     }
@@ -274,6 +274,16 @@ namespace ClearCanvas.Utilities.Manifest
                     else if (node.Attributes["name"].Value.Equals("License"))
                     {
                     }
+                    else if (node.Attributes["name"].Value.Equals("Product"))
+                    {
+                        if (!string.IsNullOrEmpty(val))
+                            _manifest.ProductManifest.Product.Name = val;
+                    }
+                    else if (node.Attributes["name"].Value.Equals("Edition"))
+                    {
+                        if (!string.IsNullOrEmpty(val))
+                            _manifest.ProductManifest.Product.Edition = val;
+                    }
                 }
         }
 
@@ -284,6 +294,8 @@ namespace ClearCanvas.Utilities.Manifest
             _manifest.PackageManifest.Package.Product.Name = input.ProductManifest.Product.Name;
             _manifest.PackageManifest.Package.Product.Suffix = input.ProductManifest.Product.Suffix;
             _manifest.PackageManifest.Package.Product.Version = input.ProductManifest.Product.Version;
+            _manifest.PackageManifest.Package.Product.Component = input.ProductManifest.Product.Component;
+            _manifest.PackageManifest.Package.Product.Edition = input.ProductManifest.Product.Edition;
         }
 
         #endregion Private Methods
