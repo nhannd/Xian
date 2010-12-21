@@ -41,7 +41,17 @@ namespace ClearCanvas.Common.Configuration
 		{
 			try
 			{
-				_criticalSettingsPath = Path.ChangeExtension(SystemConfigurationHelper.GetExeConfiguration().FilePath, "critical.config");
+				var baseAppConfig = SystemConfigurationHelper.GetExeConfiguration().FilePath;
+
+#if DEBUG
+
+				const string vshostExeConfigExtension = ".vshost.exe.config";
+				if (baseAppConfig.EndsWith(vshostExeConfigExtension, StringComparison.InvariantCultureIgnoreCase))
+					baseAppConfig = string.Format("{0}.exe.config", baseAppConfig.Substring(0, baseAppConfig.Length - vshostExeConfigExtension.Length));
+
+#endif
+
+				_criticalSettingsPath = Path.ChangeExtension(baseAppConfig, "critical.config");
 			}
 			catch (Exception)
 			{

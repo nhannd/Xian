@@ -15,7 +15,7 @@ using ClearCanvas.Common.Configuration;
 namespace ClearCanvas.Desktop.View.WinForms
 {
 	[SettingsGroupDescription("Stores settings for display and customization of the splash screen.")]
-	[SettingsProvider(typeof(LocalFileSettingsProvider))]
+	[SettingsProvider(typeof (ApplicationCriticalSettingsProvider))]
 	[SharedSettingsMigrationDisabled]
 	public sealed partial class SplashScreenSettings
 	{
