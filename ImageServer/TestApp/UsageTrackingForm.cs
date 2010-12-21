@@ -24,9 +24,9 @@ namespace ClearCanvas.ImageServer.TestApp
         public UsageTrackingForm()
         {
             InitializeComponent();
-            UsageTracking.MessageEvent += DisplayMessage;
+            UsageUtilities.MessageEvent += DisplayMessage;
 
-            _message = UsageTracking.GetUsageMessage();
+            _message = UsageUtilities.GetUsageMessage();
 
             textBoxVersion.Text = _message.Version;
             textBoxProduct.Text = _message.Product;
@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageServer.TestApp
                                        };
             }
 
-            UsageTracking.Register(_message,UsageTrackingThread.Background);
+            UsageUtilities.Register(_message, UsageTrackingThread.Background);
         }
 
         private static void DisplayMessage(object o, ItemEventArgs<DisplayMessage> m)

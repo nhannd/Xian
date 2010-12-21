@@ -41,9 +41,9 @@ namespace ClearCanvas.ImageServer.ShredHostService
             }
             else
             {
-                UsageMessage theMessage = UsageTracking.GetUsageMessage();
+                UsageMessage theMessage = UsageUtilities.GetUsageMessage();
                 theMessage.MessageType = UsageType.Startup;
-                UsageTracking.Register(theMessage,UsageTrackingThread.Background);
+                UsageUtilities.Register(theMessage, UsageTrackingThread.Background);
 
                 Thread.CurrentThread.Name = "Main thread";
                 if (!ManifestVerification.Valid)
