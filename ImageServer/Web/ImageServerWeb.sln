@@ -19,6 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Web
 		{E53B5474-B705-4373-B1DE-0CC7162734A2} = {E53B5474-B705-4373-B1DE-0CC7162734A2}
 		{89DF567B-A0D1-456A-A28F-043FD57D7F9A} = {89DF567B-A0D1-456A-A28F-043FD57D7F9A}
 		{EEB72380-0C31-4EBA-81B6-4B467431FFF2} = {EEB72380-0C31-4EBA-81B6-4B467431FFF2}
+		{FC11FD83-BD57-4DF0-A2B9-50D33B398D20} = {FC11FD83-BD57-4DF0-A2B9-50D33B398D20}
 		{A7C78084-947E-4955-9473-9F186B760AEC} = {A7C78084-947E-4955-9473-9F186B760AEC}
 		{7F89848A-B05C-4FF5-93D4-9B59A1A36F5E} = {7F89848A-B05C-4FF5-93D4-9B59A1A36F5E}
 		{2F464B93-3631-4886-96A0-D3F493536997} = {2F464B93-3631-4886-96A0-D3F493536997}
@@ -109,6 +110,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Web.Services", "..\..\Web\Services\ClearCanvas.Web.Services.csproj", "{8EAC6A5A-ADC1-49E4-B1A3-9A87812EE661}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.StudyLoaders.Streaming", "..\..\ImageViewer\StudyLoaders\Streaming\ClearCanvas.ImageViewer.StudyLoaders.Streaming.csproj", "{7F89848A-B05C-4FF5-93D4-9B59A1A36F5E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Services.WebViewer", "..\Services\WebViewer\ClearCanvas.ImageServer.Services.WebViewer.csproj", "{FC11FD83-BD57-4DF0-A2B9-50D33B398D20}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -626,6 +629,18 @@ Global
 		{7F89848A-B05C-4FF5-93D4-9B59A1A36F5E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{7F89848A-B05C-4FF5-93D4-9B59A1A36F5E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{7F89848A-B05C-4FF5-93D4-9B59A1A36F5E}.Release|Win32.ActiveCfg = Release|Any CPU
+		{FC11FD83-BD57-4DF0-A2B9-50D33B398D20}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{FC11FD83-BD57-4DF0-A2B9-50D33B398D20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC11FD83-BD57-4DF0-A2B9-50D33B398D20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC11FD83-BD57-4DF0-A2B9-50D33B398D20}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{FC11FD83-BD57-4DF0-A2B9-50D33B398D20}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{FC11FD83-BD57-4DF0-A2B9-50D33B398D20}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{FC11FD83-BD57-4DF0-A2B9-50D33B398D20}.Release|.NET.ActiveCfg = Release|Any CPU
+		{FC11FD83-BD57-4DF0-A2B9-50D33B398D20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC11FD83-BD57-4DF0-A2B9-50D33B398D20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC11FD83-BD57-4DF0-A2B9-50D33B398D20}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FC11FD83-BD57-4DF0-A2B9-50D33B398D20}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{FC11FD83-BD57-4DF0-A2B9-50D33B398D20}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
