@@ -2040,8 +2040,6 @@ IF EXIST $(TargetPath).LOCKED (del $(TargetPath).LOCKED) ELSE (IF EXIST $(Target
 
 REM Run PreBuild msbuild project
 
-C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\MSBuild.exe  "$(ProjectDir)..\..\..\JScript\Build.proj" "/property:ConfigurationName=$(ConfigurationName);TargetPlatform=$(PlatformName)"
-
 C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe  "$(ProjectDir)Builds\PreBuild.proj" "/property:ProjectDir=$(ProjectDir);ConfigurationName=$(ConfigurationName);TargetPlatform=$(PlatformName)"</PreBuildEvent>
     <PostBuildEvent>
       REM Run PostBuild msbuild project
