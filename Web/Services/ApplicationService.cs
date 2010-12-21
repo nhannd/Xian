@@ -12,6 +12,7 @@
 using System;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
+using System.ServiceModel.Channels;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Web.Common;
@@ -29,6 +30,19 @@ namespace ClearCanvas.Web.Services
         {
             PerformanceMonitor.Initialize();
         }
+
+
+
+        private static string GetClientAddress()
+        {
+            OperationContext context = OperationContext.Current;
+            MessageProperties prop = context.IncomingMessageProperties;
+            RemoteEndpointMessageProperty endpoint =
+                prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
+
+            return endpoint!=null? endpoint.Address : "Unknown";
+        }
+
 
         private static Application FindApplication(Guid applicationId)
 		{
@@ -144,6 +158,8 @@ namespace ClearCanvas.Web.Services
 			
 			try
 			{
+			    Platform.Log(LogLevel.Info, "Received application shutdown request from {0}", GetClientAddress());
+                   
                 application.Shutdown();
 			}
 			catch (Exception ex)

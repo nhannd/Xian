@@ -2824,7 +2824,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference {
                     httpCookieContainerManager.CookieContainer = value;
                 }
                 else {
-                    throw new System.InvalidOperationException("Unable to set the CookieContainer. Please make sure the binding contains an HttpC" +
+                    throw new System.InvalidOperationException("Unable to set the CookieContainer. Please make sure the _binding contains an HttpC" +
                             "ookieContainerBindingElement.");
                 }
             }

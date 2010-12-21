@@ -55,7 +55,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
             Panel rootPanel = new Grid();
             RootVisual = rootPanel;
-            DialogControl.ApplicationRootVisual = rootPanel;
 
             // Test the connection speed and launch the webviewer once it's completed
             TestConnection();

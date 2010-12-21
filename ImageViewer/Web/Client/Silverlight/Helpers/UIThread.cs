@@ -27,7 +27,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
     {
         public static void Execute(Action action)
         {
-            Deployment.Current.Dispatcher.BeginInvoke(action);
+            if (Deployment.Current.Dispatcher.CheckAccess())
+                action.Invoke();
+            else
+                Deployment.Current.Dispatcher.BeginInvoke(action);
         }
     }
 }

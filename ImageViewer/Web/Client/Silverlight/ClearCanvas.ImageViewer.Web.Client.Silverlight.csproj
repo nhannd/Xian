@@ -102,6 +102,7 @@
     </Compile>
     <Compile Include="ApplicationActivityMonitor.cs" />
     <Compile Include="ApplicationLog.cs" />
+    <Compile Include="ErrorHandler.cs" />
     <Compile Include="Controls\StatisticsPanel.xaml.cs">
       <DependentUpon>StatisticsPanel.xaml</DependentUpon>
     </Compile>

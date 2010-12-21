@@ -47,10 +47,12 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             InitializeComponent();
             
 			_context = ApplicationContext.Current;
+
+            ErrorHandler.OnCriticalError += new EventHandler(ErrorHandler_OnCriticalError);
+
 			ApplicationContext.Current.ServerEventBroker.RegisterEventHandler(typeof(ApplicationStartedEvent), ApplicationStarted);
             ApplicationContext.Current.ServerEventBroker.RegisterEventHandler(typeof(SessionUpdatedEvent), OnSessionUpdated);
             ApplicationContext.Current.ServerEventBroker.RegisterEventHandler(typeof(MessageBoxShownEvent), OnMessageBox);
-            ApplicationContext.Current.ServerEventBroker.ChannelError += OnChannelError;
             ApplicationContext.Current.ServerEventBroker.ServerApplicationStopped += OnServerApplicationStopped;
             
             _studyView = new StudyView();
@@ -76,7 +78,12 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 
                 this.LayoutRoot.KeyUp += new System.Windows.Input.KeyEventHandler(OnKeyUp);
             }
-		}        
+		}
+
+        void ErrorHandler_OnCriticalError(object sender, EventArgs e)
+        {
+            Shutdown();
+        }        
 
         void OnKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
@@ -119,47 +126,12 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     String title= @event.IsTimedOut? "Timeout":"Error";
                     String mesage = @event.Message;
 
-                    DialogControl dialog = DialogControl.Create(title, mesage, buttons);
-                    EventHandler viewerShutdownHandler = new EventHandler((s, ev) => { dialog.Close(); });
-                    this.Shuttingdown += viewerShutdownHandler;
-                    dialog.Closed += (s, ev) =>
-                    {
-                        _suppressError = false;
-                        Shuttingdown -= viewerShutdownHandler;
-                    };
-                    dialog.Show();
+
+                    var window = PopupHelper.PopupMessage(title, mesage);            
                 }
             });
         }
-
-        private void OnChannelError(object sender, ChannelErrorEventArgs @event)
-        {
-            UIThread.Execute(() =>
-            {
-                if (!_suppressError)
-                {
-                    _suppressError = true;
-
-                    Visibility = System.Windows.Visibility.Collapsed;
-
-                    List<Button> buttons = new List<Button>();                   
-                    Button closeButton = new Button { Content = "Close", Margin = new Thickness(5) };
-                    closeButton.Click += (s, ev) => { BrowserWindow.Close(); };
-                    buttons.Add(closeButton);
-
-                    DialogControl dialog = DialogControl.Create(@event.ErrorName, @event.Details, buttons);
-                    EventHandler viewerShutdownHandler = new EventHandler((s, ev) => { dialog.Close(); });
-                    this.Shuttingdown += viewerShutdownHandler;
-                    dialog.Closed += (s, ev) =>
-                    {
-                        _suppressError = false;
-                        Shuttingdown -= viewerShutdownHandler;
-                    };
-                    dialog.Show();
-                }
-            });
-        }
-
+        
         private void OnSessionUpdated(object sender, ServerEventArgs ev)
         {
             SessionUpdatedEvent @event = ev.ServerEvent as SessionUpdatedEvent;
@@ -275,17 +247,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 buttonList.Add(cancelButton);
             }
                            
-            DialogControl dialog = DialogControl.Create(@event.MessageBox.Title, @event.MessageBox.Message, buttonList.ToArray());
-            EventHandler viewerShutdownHandler = new EventHandler((s, e) => { dialog.Close(); });
-            this.Shuttingdown += viewerShutdownHandler;
-            dialog.Closed += (s, e) =>
-            {
-                _suppressError = false;
-                Shuttingdown -= viewerShutdownHandler;
-            };
-            dialog.Show();
+            PopupHelper.PopupContent(@event.MessageBox.Title, @event.MessageBox.Message, buttonList.ToArray());      
         }
-
 
 		private void ApplicationStarted(object sender, ServerEventArgs e)
 		{
@@ -297,7 +260,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 			ApplicationStartedEvent ev = (ApplicationStartedEvent)e.ServerEvent;
             if (ev == null)
             {
-                Logger.Error("Unexpected event type: {0}", e.ServerEvent);
+                ErrorHandler.HandleCriticalError("Unexpected event type: {0}", e.ServerEvent);
                 return;
             }
 
@@ -414,7 +377,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 				{
                     ApplicationContext.Current.ServerEventBroker.UnregisterEventHandler(typeof(ApplicationStartedEvent), ApplicationStarted);
                     ApplicationContext.Current.ServerEventBroker.UnregisterEventHandler(_serverApplication.Viewer.Identifier);
-                    ApplicationContext.Current.ServerEventBroker.ChannelError -= OnChannelError;
                     ApplicationContext.Current.ServerEventBroker.ServerApplicationStopped -= OnServerApplicationStopped;
                     ApplicationContext.Current.ServerEventBroker.StopApplication(_serverApplication.Identifier);
                     _serverApplication = null;

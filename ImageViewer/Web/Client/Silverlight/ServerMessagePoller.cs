@@ -48,7 +48,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         private int _pendingPollingCount;
 
         public event EventHandler<MessagePollerEventReceivedEventArgs> MessageReceived;
-        public event EventHandler<MessagePollerErrorEventArgs> Error;
         
         public ServerMessagePoller(ApplicationServiceClient service)
         {
@@ -111,7 +110,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
             if (e.Error != null)
             {
-                OnError(e.Error);
+                ErrorHandler.HandleException(e.Error);
             }
             else
             {
@@ -148,9 +147,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
                         Monitor.Wait(_sync, maxWaitTime - 100); // -100 so that another one will go out while the prev one is coming back. -100 = RTT/2
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-
+                        // catch exception to prevent crashing
                     }
                     finally
                     {
@@ -168,18 +167,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
             return false;
 
-        }
-
-        private void OnError(Exception exception)
-        {
-            if (Error != null)
-            {
-                Error(this, new MessagePollerErrorEventArgs { Error = exception });
-            }
-            else
-            {
-                ApplicationLog.LogError(exception);
-            }
         }
 
         #region IDisposable Members

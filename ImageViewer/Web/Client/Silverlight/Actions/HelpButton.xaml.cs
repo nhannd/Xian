@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 
         private void ButtonComponent_Click(object sender, RoutedEventArgs e)
         {
-            DialogControl.Show("About", new HelpDialogContent(), "Close");
+            PopupHelper.PopupContent("About", new HelpDialogContent());
         }
 
         private void ButtonComponent_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)

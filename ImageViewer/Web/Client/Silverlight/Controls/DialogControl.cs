@@ -27,10 +27,10 @@ using ClearCanvas.Web.Client.Silverlight;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls
 {
-    //TODO: make this implement IPopup and register it with the PopupManager.
-
+    //TODO: Delete this. Use the new and better PopupHelper instead.
     [TemplatePart(Name = "Popup", Type = typeof(Popup))]
-    [TemplatePart(Name = "LayoutRoot", Type = typeof(Control))]    
+    [TemplatePart(Name = "LayoutRoot", Type = typeof(Control))] 
+    [Obsolete("Use PopupHelper instead")]
     public class DialogControl : ContentControl, IDisposable
     {
         private static DialogControl _currentDialog;

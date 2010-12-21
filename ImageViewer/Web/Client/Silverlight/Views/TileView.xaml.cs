@@ -72,6 +72,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
         private Tile _tileEntity;
 
+        long _prevUpdateTileEventTick;
+
 		#endregion
 
         #region Properties
@@ -275,7 +277,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 			if (_destroyed)
 				return;
             
-            _displayFps = false;
             DebugInformation.Text = "";
 
 			//TODO (CR May 2010): we probably don't need a lot of the locks in the client; could just remove them.
@@ -292,8 +293,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
             ApplicationActivityMonitor.Instance.LastActivityTick = Environment.TickCount;
             
-            _displayFps = true;
-
 			lock (_mouseEventLock)
             {
                 Focus();
@@ -448,7 +447,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
             if (okToSend)
             {
-                _displayFps = true;
                 PerformanceMonitor.CurrentInstance.Begin(1000);
 
                 _lastMouseWheelTick = Environment.TickCount;
@@ -521,8 +519,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
             
             ApplicationActivityMonitor.Instance.LastActivityTick = Environment.TickCount;
             
-            _displayFps = true;
-
             Focus();
             PerformanceMonitor.CurrentInstance.CurrentTile = this;
 
@@ -556,7 +552,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 				return;
 
             DebugInformation.Text = "";
-            _displayFps = false;
 
 			lock (_mouseEventLock)
             {
@@ -565,8 +560,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
         }
 
-        bool _displayFps;
-        long _prevUpdateTileEventTick;
 
 		private void OnTileEvent(object sender, ServerEventArgs e)
         {
@@ -799,7 +792,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
         
 		private void OnContextMenuEvent(ContextMenuEvent @event)
         {
-            if (DialogControl.DialogActive) return;
+            if (PopupHelper.IsPopupActive) return;
 			
 			if (_menu != null)
 				_menu.Dispose();

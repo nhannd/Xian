@@ -38,7 +38,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
     {
         public string ErrorName { get; set; }
         public string Details { get; set; }
-        public bool IsReloadAllowed { get; set; }
     }
 
     public class ServerApplicationStopEventArgs : EventArgs
@@ -56,7 +55,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         private delegate void DialogResultHandler();
         public delegate void ServerCallCompletedCallback(AsyncCompletedEventArgs ev);
 
-        public event EventHandler<ChannelErrorEventArgs> ChannelError;
         public event EventHandler<ServerApplicationStopEventArgs> ServerApplicationStopped;
 
         ///TODO (CR May 2010): we should be able to get rid of these "type handlers" entirely (I have a design change in mind).
@@ -71,8 +69,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         private StartApplicationRequest _startRequest;
         private bool _connectionOpened;
 
-        private Binding binding = null;
-        private EndpointAddress address = null;
+        private Binding _binding = null;
 
 		private int _nextMessageId = 1;
 
@@ -194,12 +191,12 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         }
 
         //TODO (CR May 2010): this should be part of a UI element.
-        DialogControl _stateDialog;
+        ChildWindow _stateDialog;
         private void OnChannelOpening(object sender, EventArgs e)
         {
             UIThread.Execute(() =>
             {    
-                _stateDialog = DialogControl.PopupMessage("Initialization", "Opening connection...");
+                _stateDialog = PopupHelper.PopupMessage("Initialization", "Opening connection...");
             });
         }
 
@@ -260,14 +257,14 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                                 if (HtmlPage.Document.DocumentUri.Scheme.Equals(Uri.UriSchemeHttp))
                                 {
                                     HttpTransportBindingElement http = new HttpTransportBindingElement() { MaxReceivedMessageSize = int.MaxValue, MaxBufferSize = int.MaxValue, TransferMode = TransferMode.Buffered };
-                                    binding = new CustomBinding(binaryMessageEncoding, http);
-                                    return binding;
+                                    _binding = new CustomBinding(binaryMessageEncoding, http);
+                                    return _binding;
                                 }
                                 else
                                 {
                                     HttpsTransportBindingElement https = new HttpsTransportBindingElement() { MaxReceivedMessageSize = int.MaxValue, MaxBufferSize = int.MaxValue, TransferMode = TransferMode.Buffered };
-                                    binding = new CustomBinding(binaryMessageEncoding, https);
-                                    return binding;
+                                    _binding = new CustomBinding(binaryMessageEncoding, https);
+                                    return _binding;
                                 }
                 
             }
@@ -316,7 +313,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         private void StartPolling()
         {
             _poller = new ServerMessagePoller(_proxy);
-            _poller.Error += (sender, ev) => { OnError(ev.Error); };
             _poller.MessageReceived += (sender, ev) => { OnServerEventReceived(ev.EventSet); };
             _poller.Start();
         }
@@ -401,12 +397,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         {
             try
             {
-                if (ChannelError != null)
-                    ChannelError(_proxy, new ChannelErrorEventArgs { ErrorName = error, Details = details, IsReloadAllowed = false });
-                else
-                {
-                    Logger.Error(details);
-                }
+                ErrorHandler.HandleCriticalError(details);
             }
             finally
             {
@@ -437,7 +428,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 }
                 else
                 {
-                    Logger.Error(applicationStoppedEvent.Message);
+                    ErrorHandler.HandleCriticalError(applicationStoppedEvent.Message);
                 }
             }
             finally
@@ -535,7 +526,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     catch (Exception e)
                     {
                         // happens on timeout of connection
-                        Logger.Error(e);
+                        ErrorHandler.HandleException(e);
                         if (_proxy.State == CommunicationState.Faulted)
                             DisplayFaulted("Channel Error", e.Message);
                     }
@@ -671,7 +662,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                             msg = sb.ToString();                                
                         }
 
-                        DialogControl.Show("Event Handler Not Found", msg, "Dismiss");
+                        PopupHelper.PopupMessage("Error Handler Not Found", msg);
                     }
 				}
 				catch (Exception ex)
@@ -707,7 +698,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             }
             catch (Exception ex)
             {
-                Logger.Error(ex);
+                ErrorHandler.HandleException(ex);
             }
 	    }
 
@@ -909,16 +900,16 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
 				}
 
-                // send is called outside the lock block to avoid deadlock when polling duplex http binding is used
+                // send is called outside the lock block to avoid deadlock when polling duplex http _binding is used
                 // it happens when the server for some reason decides to wait for the client to finish processing the "app started" message,
                 // and the client attempts to send the "client rect size" msg to the server when it processes he "app started" message.
                 //
-                // Basic http binding appears to have the same problem too
+                // Basic http _binding appears to have the same problem too
                 try
                 {
                     sendDelegate(msgs);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     //??
                 }
