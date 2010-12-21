@@ -137,6 +137,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Gets or sets whether or not to allow an empty viewer to be opened (e.g. with no studies loaded).
 		/// </summary>
 		public bool AllowEmptyViewer { get; set; }
+
+		/// <summary>
+		/// Gets or sets the owner <see cref="IDesktopWindow"/>.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// This is the <see cref="IDesktopWindow"/> on which error messages will be shown and
+		/// on which the <see cref="ImageViewerComponent"/> will launch if not launching in a new window.
+		/// </para>
+		/// <para>
+		/// This value may be null, thus indicating that the currently active <see cref="IDesktopWindow"/> should be used.
+		/// </para>
+		/// </remarks>
+		public IDesktopWindow DesktopWindow { get; set; }
 		
 		#endregion
 
@@ -171,18 +185,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private ImageViewerComponent LoadAndOpenStudies()
 		{
-			CodeClock codeClock = new CodeClock();
+			var codeClock = new CodeClock();
 			codeClock.Start();
 
-			ImageViewerComponent viewer = CreateViewer(LoadPriors);
+			var viewer = CreateViewer(LoadPriors);
+			var desktopWindow = DesktopWindow ?? Application.ActiveDesktopWindow;
 
 			try
 			{
 				viewer.LoadStudies(_studiesToOpen);
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
-				ExceptionHandler.Report(e, viewer.DesktopWindow);
+				ExceptionHandler.Report(e, desktopWindow);
 			}
 
 			if (!AnySopsLoaded(viewer) && !AllowEmptyViewer)
@@ -191,13 +206,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				return null;
 			}
 
-			LaunchImageViewerArgs args = new LaunchImageViewerArgs(WindowBehaviour);
-			args.Title = Title;
+			var args = new LaunchImageViewerArgs(WindowBehaviour) {Title = Title};
 			ImageViewerComponent.Launch(viewer, args);
 
 			codeClock.Stop();
-			string message = String.Format("TTFI: {0}", codeClock);
-			Platform.Log(LogLevel.Debug, message);
+			Platform.Log(LogLevel.Debug, string.Format("TTFI: {0}", codeClock));
 
 			return viewer;
 		}
