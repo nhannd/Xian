@@ -107,13 +107,13 @@ namespace ClearCanvas.Common.UsageTracking
                     EndpointAddress endpointAddress = new EndpointAddress("http://localhost:8080/UsageTracking");
 #elif	DEBUG
                     WSHttpBinding binding = new WSHttpBinding();
-                    EndpointAddress endpointAddress = new EndpointAddress("http://localhost/UsageTracking/Service.svc");
+                    EndpointAddress endpointAddress = new EndpointAddress("http://localhost/Tracking/Service.svc");
 #else
                     //TODO:  This should be updated to real address
                     WSHttpBinding binding = new WSHttpBinding(SecurityMode.Transport);
                     binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.None;
                     binding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
-                    EndpointAddress endpointAddress = new EndpointAddress("https://4rf/UsageTracking/Service.svc");        
+                    EndpointAddress endpointAddress = new EndpointAddress("https://4rf/Tracking/Service.svc");
 #endif
 
                     RegisterResponse response;
