@@ -612,6 +612,13 @@ namespace ClearCanvas.Healthcare
 
 		private static IValidationRuleSet GetValidationRules()
 		{
+			var sameInformationAuthorityRule = new ValidationRule<Procedure>(
+				delegate(Procedure procedure)
+				{
+					var hasSameInformationAuthority = CollectionUtils.TrueForAll(procedure.Order.Procedures, p => Equals(p.PerformingFacility.InformationAuthority, p.Order.Visit.VisitNumber.AssigningAuthority));
+					return new TestResult(hasSameInformationAuthority, SR.MessageValidateInformationAuthorityForVisitAndPerformingFacilities);
+				});
+
 			var samePerformingFacilityRule = new ValidationRule<Procedure>(
 				delegate(Procedure procedure)
 				{
@@ -643,6 +650,7 @@ namespace ClearCanvas.Healthcare
 
 			return new ValidationRuleSet(new[]
 			{
+				sameInformationAuthorityRule,
 				samePerformingFacilityRule, 
 				samePerformingDepartmentRule, 
 				performingDepartmentIsInPerformingFacilityRule, 

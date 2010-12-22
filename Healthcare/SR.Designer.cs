@@ -538,6 +538,15 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All performing facilities must have the same information authority as the visit..
+        /// </summary>
+        internal static string MessageValidateInformationAuthorityForVisitAndPerformingFacilities {
+            get {
+                return ResourceManager.GetString("MessageValidateInformationAuthorityForVisitAndPerformingFacilities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All procedures must have the same performing departments..
         /// </summary>
         internal static string MessageValidateOrderPerformingDepartments {

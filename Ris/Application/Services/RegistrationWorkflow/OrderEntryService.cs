@@ -473,22 +473,17 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 		private void ValidateVisitsExist(Order order)
 		{
-			foreach (var procedure in order.Procedures)
+			try
 			{
-				try
-				{
-					var visitSearchCriteria = new VisitSearchCriteria();
-					visitSearchCriteria.Patient.EqualTo(order.Patient);
-					visitSearchCriteria.VisitNumber.AssigningAuthority.EqualTo(procedure.PerformingFacility.InformationAuthority);
-					visitSearchCriteria.Status.In(new[] { VisitStatus.AA, VisitStatus.PD, VisitStatus.PA });
-
-					this.PersistenceContext.GetBroker<IVisitBroker>().FindOne(visitSearchCriteria);
-				}
-				catch (EntityNotFoundException)
-				{
-					throw new RequestValidationException(string.Format("{0} is not a valid performing facility for this patient because the patient does not have an active visit for this facility.",
-						procedure.PerformingFacility.Name));
-				}
+				var visitSearchCriteria = new VisitSearchCriteria();
+				visitSearchCriteria.Patient.EqualTo(order.Patient);
+				visitSearchCriteria.VisitNumber.AssigningAuthority.EqualTo(order.OrderingFacility.InformationAuthority);
+				this.PersistenceContext.GetBroker<IVisitBroker>().FindOne(visitSearchCriteria);
+			}
+			catch (EntityNotFoundException)
+			{
+				throw new RequestValidationException(string.Format("The order placed at {0} must have a visit at the same assigning authority.",
+					order.OrderingFacility.Name));
 			}
 		}
 

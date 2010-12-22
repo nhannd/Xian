@@ -582,4 +582,7 @@
   <data name="MessageValidateProcedurePerformingFacilityAndDepartment" xml:space="preserve">
     <value>A procedure's performing department must be part of its performing facility.</value>
   </data>
+  <data name="MessageValidateInformationAuthorityForVisitAndPerformingFacilities" xml:space="preserve">
+    <value>All performing facilities must have the same information authority as the visit.</value>
+  </data>
 </root>
