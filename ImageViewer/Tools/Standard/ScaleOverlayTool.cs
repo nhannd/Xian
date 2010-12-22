@@ -37,10 +37,10 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
+	[MenuAction("showHide", "imageviewer-contextmenu/MenuShowHideScaleOverlay", "ShowHide", InitiallyAvailable = false)]
 	[MenuAction("showHide", "global-menus/MenuTools/MenuStandard/MenuShowHideScaleOverlay", "ShowHide")]
 	[Tooltip("showHide", "TooltipShowHideScaleOverlay")]
 	[GroupHint("showHide", "Tools.Image.Overlays.Scale.ShowHide")]

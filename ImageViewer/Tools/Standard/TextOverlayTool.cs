@@ -32,11 +32,11 @@
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.Annotations;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
+	[MenuAction("showHide", "imageviewer-contextmenu/MenuShowHideTextOverlay", "ShowHide", InitiallyAvailable = false)]
 	[MenuAction("showHide", "global-menus/MenuTools/MenuStandard/MenuShowHideTextOverlay", "ShowHide")]
 	[Tooltip("showHide", "TooltipShowHideTextOverlay")]
 	[GroupHint("showHide", "Tools.Image.Overlays.Text.ShowHide")]

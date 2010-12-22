@@ -43,6 +43,7 @@ using ClearCanvas.ImageViewer.InteractiveGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
+	[MenuAction("activateTextCallout", "imageviewer-contextmenu/MenuTextCallout", "SelectTextCallout", InitiallyAvailable = false)]
 	[MenuAction("activateTextCallout", "global-menus/MenuTools/MenuStandard/MenuTextCallout", "SelectTextCallout")]
 	[CheckedStateObserver("activateTextCallout", "IsTextCalloutModeActive", "ModeOrActiveChanged")]
 	[Tooltip("activateTextCallout", "TooltipTextCallout")]
@@ -55,6 +56,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[MouseButtonIconSet("selectTextCallout", IconScheme.Colour, SmallTextCalloutIcon, MediumTextCalloutIcon, LargeTextCalloutIcon)]
 	[GroupHint("selectTextCallout", "Tools.Image.Standard.TextCallout")]
 	//
+	[MenuAction("activateTextArea", "imageviewer-contextmenu/MenuTextArea", "SelectTextArea", InitiallyAvailable = false)]
 	[MenuAction("activateTextArea", "global-menus/MenuTools/MenuStandard/MenuTextArea", "SelectTextArea")]
 	[CheckedStateObserver("activateTextArea", "IsTextAreaModeActive", "ModeOrActiveChanged")]
 	[Tooltip("activateTextArea", "TooltipTextArea")]

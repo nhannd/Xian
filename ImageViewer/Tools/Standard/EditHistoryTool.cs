@@ -34,11 +34,11 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
+	[MenuAction("undo", "imageviewer-contextmenu/MenuUndo", "Undo", KeyStroke = XKeys.Control | XKeys.Z, InitiallyAvailable = false)]
 	[MenuAction("undo", "global-menus/MenuEdit/MenuUndo", "Undo", KeyStroke = XKeys.Control | XKeys.Z)]
 	[ButtonAction("undo", "global-toolbars/ToolbarStandard/ToolbarUndo", "Undo", KeyStroke = XKeys.Control | XKeys.Z)]
 	[EnabledStateObserver("undo", "UndoEnabled", "UndoEnabledChanged")]
@@ -46,6 +46,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[Tooltip("undo", "TooltipUndo")]
 	[GroupHint("undo", "Application.Edit.Undo")]
 
+	[MenuAction("redo", "imageviewer-contextmenu/MenuRedo", "Redo", KeyStroke = XKeys.Control | XKeys.Y, InitiallyAvailable = false)]
 	[MenuAction("redo", "global-menus/MenuEdit/MenuRedo", "Redo", KeyStroke = XKeys.Control | XKeys.Y)]
 	[ButtonAction("redo", "global-toolbars/ToolbarStandard/ToolbarRedo", "Redo", KeyStroke = XKeys.Control | XKeys.Y)]
 	[EnabledStateObserver("redo", "RedoEnabled", "RedoEnabledChanged")]

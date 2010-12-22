@@ -29,15 +29,14 @@
 
 #endregion
 
+using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.InputManagement;
-using System;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
 
@@ -56,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		void UpdateMouseLocation(Point location);
 	}
 
-
+	[MenuAction("activate", "imageviewer-contextmenu/MenuMagnification", "Select", Flags = ClickActionFlags.CheckAction, InitiallyAvailable = false)]
 	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuMagnification", "Select", Flags = ClickActionFlags.CheckAction)]
 	[DropDownButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarMagnification", "Select", "MagnificationMenuModel", Flags = ClickActionFlags.CheckAction)]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]

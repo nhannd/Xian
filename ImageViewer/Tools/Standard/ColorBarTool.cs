@@ -40,6 +40,7 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
+	[MenuAction("showHide", "imageviewer-contextmenu/MenuShowHideColorBar", "ShowHide", InitiallyAvailable = false)]
 	[MenuAction("showHide", "global-menus/MenuTools/MenuStandard/MenuShowHideColorBar", "ShowHide")]
 	[EnabledStateObserver("showHide", "Enabled", "EnabledChanged")]
 	[Tooltip("showHide", "TooltipShowHideColorBar")]

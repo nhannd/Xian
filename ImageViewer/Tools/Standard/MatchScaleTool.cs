@@ -42,6 +42,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
+	[MenuAction("activate", "imageviewer-contextmenu/MenuMatchScale", "Activate", InitiallyAvailable = false)]
 	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuMatchScale", "Activate")]
 	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarMatchScale", "Activate", KeyStroke = XKeys.M)]
 	[IconSet("activate", IconScheme.Colour, "Icons.MatchScaleToolSmall.png", "Icons.MatchScaleToolMedium.png", "Icons.MatchScaleToolLarge.png")]
