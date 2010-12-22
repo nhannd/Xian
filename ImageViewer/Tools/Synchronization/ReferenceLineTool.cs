@@ -21,6 +21,7 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Tools.Synchronization
 {
+	[MenuAction("activate", "imageviewer-contextmenu/MenuReferenceLines", "Toggle", Flags = ClickActionFlags.CheckAction, InitiallyAvailable = false)]
 	[MenuAction("activate", "global-menus/MenuTools/MenuSynchronization/MenuReferenceLines", "Toggle", Flags = ClickActionFlags.CheckAction)]
 	[DropDownButtonAction("activate", "global-toolbars/ToolbarSynchronization/ToolbarReferenceLines", "Toggle", "ReferenceLineDropDownMenuModel", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("activate", "Active", "ActiveChanged")]

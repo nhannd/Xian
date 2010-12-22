@@ -312,6 +312,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			/// <returns>A new byte buffer containing the normalized overlay pixel data.</returns>
 			protected override byte[] CreateNormalizedOverlayData(int overlayNumber)
 			{
+				//TODO (CR December 2010): make this a helper method somewhere, since it's now identical to the one in StreamingSopFrameData?
+
 				var overlayIndex = overlayNumber - 1;
 
 				byte[] overlayData = null;
@@ -327,7 +329,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					if (_overlayCache[overlayIndex] == null)
 					{
 						var overlayPlane = overlayPlaneModuleIod[overlayIndex];
-						if (overlayPlane.IsEmbedded)
+						if (!overlayPlane.HasOverlayData)
 						{
 							// if the overlay is embedded, trigger retrieval of pixel data which will populate the cache for us
 							GetNormalizedPixelData();
@@ -351,7 +353,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 							else
 							{
 								// no relevant overlay frame found - i.e. the overlay for this image frame is blank
-								_overlayCache[overlayIndex] = new byte[overlayPlane.GetOverlayFrameLength()];
+								_overlayCache[overlayIndex] = new byte[0];
 							}
 						}
 					}
@@ -368,19 +370,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			private void ExtractOverlayFrames(byte[] rawPixelData, int bitsAllocated)
 			{
 				// if any overlays have embedded pixel data, extract them now or forever hold your peace
-				var overlayPlaneModuleIod = new OverlayPlaneModuleIod(Parent.SourceMessage.DataSet);
+				var overlayPlaneModuleIod = new OverlayPlaneModuleIod(Parent);
 				foreach (var overlayPlane in overlayPlaneModuleIod)
 				{
-					if (overlayPlane.IsEmbedded && _overlayCache[overlayPlane.Index] == null)
+					if (!overlayPlane.HasOverlayData && _overlayCache[overlayPlane.Index] == null)
 					{
 						// if the overlay is embedded in pixel data and we haven't cached it yet, extract it now before we normalize the frame pixel data
 						var overlayData = OverlayData.UnpackFromPixelData(overlayPlane.OverlayBitPosition, bitsAllocated, false, rawPixelData);
 						_overlayCache[overlayPlane.Index] = overlayData;
-					}
-					else if (!overlayPlane.HasOverlayData)
-					{
-						// if the overlay is not embedded and OverlayData appears to be missing, log a warning now
-						Platform.Log(LogLevel.Warn, "The image {0} appears to be missing OverlayData for group 0x{1:X4}.", Parent.SopInstanceUid, overlayPlane.Group);
 					}
 				}
 			}

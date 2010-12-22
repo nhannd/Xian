@@ -21,6 +21,7 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Tools.Synchronization
 {
+	[MenuAction("synchronize", "imageviewer-contextmenu/MenuSynchronizeStacking", "ToggleSynchronize", Flags = ClickActionFlags.CheckAction, InitiallyAvailable = false)]
 	[MenuAction("synchronize", "global-menus/MenuTools/MenuSynchronization/MenuSynchronizeStacking", "ToggleSynchronize", Flags = ClickActionFlags.CheckAction)]
 	[ButtonAction("synchronize", "global-toolbars/ToolbarSynchronization/ToolbarSynchronizeStacking", "ToggleSynchronize", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("synchronize", "SynchronizeActive", "SynchronizeActiveChanged")]
@@ -28,6 +29,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 	[IconSet("synchronize", IconScheme.Colour, "Icons.SynchronizeToolSmall.png", "Icons.SynchronizeToolMedium.png", "Icons.SynchronizeToolLarge.png")]
 	[GroupHint("synchronize", "Tools.Image.Manipulation.Stacking.Synchronize")]
 
+	[MenuAction("linkStudies", "imageviewer-contextmenu/MenuSynchronizeStackingLinkStudies", "ToggleLinkStudies", InitiallyAvailable = false)]
 	[MenuAction("linkStudies", "global-menus/MenuTools/MenuSynchronization/MenuSynchronizeStackingLinkStudies", "ToggleLinkStudies")]
 	[ButtonAction("linkStudies", "global-toolbars/ToolbarSynchronization/ToolbarSynchronizeStackingLinkStudies", "ToggleLinkStudies")]
 	[EnabledStateObserver("linkStudies", "LinkStudiesEnabled", "LinkStudiesEnabledChanged")]

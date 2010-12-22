@@ -9,17 +9,17 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
-using System;
-using ClearCanvas.Common.Utilities;
-using System.Drawing;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.PresentationStates;
 using ClearCanvas.ImageViewer.PresentationStates.Dicom;
@@ -66,18 +66,21 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 	#region Menu
 
+	[MenuAction("activateDrawCircleShutter", "imageviewer-contextmenu/MenuDrawCircleShutter", "SelectDrawCircleShutter", InitiallyAvailable = false)]
 	[MenuAction("activateDrawCircleShutter", "global-menus/MenuTools/MenuStandard/MenuDrawCircleShutter", "SelectDrawCircleShutter")]
 	[MouseButtonIconSet("activateDrawCircleShutter", IconScheme.Colour, "Icons.DrawCircularShutterToolSmall.png", "Icons.DrawCircularShutterToolMedium.png", "Icons.DrawCircularShutterToolLarge.png")]
 	[CheckedStateObserver("activateDrawCircleShutter", "DrawCircleShutterCheckedAndActive", "SelectedShutterTypeChanged")]
 	[GroupHint("activateDrawCircleShutter", "Tools.Image.Manipulation.Shutter")]
 	[EnabledStateObserver("activateDrawCircleShutter", "Enabled", "EnabledChanged")]
 
+	[MenuAction("activateDrawPolygonShutter", "imageviewer-contextmenu/MenuDrawPolygonShutter", "SelectDrawPolygonShutter", InitiallyAvailable = false)]
 	[MenuAction("activateDrawPolygonShutter", "global-menus/MenuTools/MenuStandard/MenuDrawPolygonShutter", "SelectDrawPolygonShutter")]
 	[MouseButtonIconSet("activateDrawPolygonShutter", IconScheme.Colour, "Icons.DrawPolygonalShutterToolSmall.png", "Icons.DrawPolygonalShutterToolMedium.png", "Icons.DrawPolygonalShutterToolLarge.png")]
 	[CheckedStateObserver("activateDrawPolygonShutter", "DrawPolygonShutterCheckedAndActive", "SelectedShutterTypeChanged")]
 	[GroupHint("activateDrawPolygonShutter", "Tools.Image.Manipulation.Shutter")]
 	[EnabledStateObserver("activateDrawPolygonShutter", "Enabled", "EnabledChanged")]
 
+	[MenuAction("activateDrawRectangleShutter", "imageviewer-contextmenu/MenuDrawRectangleShutter", "SelectDrawRectangleShutter", InitiallyAvailable = false)]
 	[MenuAction("activateDrawRectangleShutter", "global-menus/MenuTools/MenuStandard/MenuDrawRectangleShutter", "SelectDrawRectangleShutter")]
 	[MouseButtonIconSet("activateDrawRectangleShutter", IconScheme.Colour, "Icons.DrawRectangularShutterToolSmall.png", "Icons.DrawRectangularShutterToolMedium.png", "Icons.DrawRectangularShutterToolLarge.png")]
 	[CheckedStateObserver("activateDrawRectangleShutter", "DrawRectangleShutterCheckedAndActive", "SelectedShutterTypeChanged")]

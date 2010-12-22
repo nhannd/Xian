@@ -100,6 +100,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <returns>The unpacked, 8-bit overlay pixel data buffer.</returns>
 		public static byte[] UnpackFromPixelData(int bitPosition, int bitsAllocated, bool bigEndianWords, byte[] pixelData)
 		{
+			//TODO (CR December 2010): sanity check on bitPosition vs bitsAllocated?
 			const byte ONE = 0xff;
 			const byte ZERO = 0x00;
 
@@ -156,6 +157,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			return extractedPixels;
 		}
+
+		//TODO (CR December 2010): The API of these 2 methods isn't entirely clear, especially this overload.
+		//TODO (CR December 2010): there are no unit tests for this code even though our presentation state code uses it.
 
 		/// <summary>
 		/// Creates a packed overlay data object using the specified 8-bit pixel data buffer.
@@ -234,6 +238,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 								mask = 0x01;
 							}
 						}
+
+						//TODO (CR December 2010): just do this unconditionally?  What if the passed in buffer
+						//weren't initialized to zeros?
 						if (window > 0)
 						{
 							output[outPos] = (byte)(window >> 8);
@@ -258,6 +265,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 								mask = 0x01;
 							}
 						}
+						//TODO (CR December 2010): just do this unconditionally?  What if the passed in buffer
+						//weren't initialized to zeros?
 						if (window > 0)
 							output[outPos] = window;
 					}

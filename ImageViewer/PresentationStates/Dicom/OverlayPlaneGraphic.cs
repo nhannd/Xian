@@ -170,7 +170,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			int cols = overlayPlaneIod.OverlayColumns;
 
 			if (overlayData == null || overlayData.Length == 0)
-				throw new ArgumentNullException("overlayData", "Overlay plane data is invalid.");
+				return null;
 
 			GrayscaleImageGraphic imageGraphic = new GrayscaleImageGraphic(
 				rows, cols, // the reported overlay dimensions
@@ -189,6 +189,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		private void UpdateLuts()
 		{
+			if (_overlayGraphic == null)
+				return;
+
 			// NOTE: this determination is actually supposed to be based on the client display device
 			if (_color == null || _color.Value.IsEmpty)
 			{
@@ -210,12 +213,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// </summary>
 		protected byte[] OverlayPixelData
 		{
-			get { return _overlayGraphic.PixelData.Raw; }
-		}
-
-		private GrayscaleImageGraphic OverlayImageGraphic
-		{
-			get { return _overlayGraphic; }
+			get { return _overlayGraphic != null ? _overlayGraphic.PixelData.Raw : null; }
 		}
 
 		/// <summary>
@@ -283,11 +281,19 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// </summary>
 		public PointF Origin
 		{
-			get { return new PointF(_overlayGraphic.SpatialTransform.TranslationX + 1, _overlayGraphic.SpatialTransform.TranslationY + 1); }
+			get
+			{
+				if (_overlayGraphic == null)
+					return new PointF(1, 1);
+				return new PointF(_overlayGraphic.SpatialTransform.TranslationX + 1, _overlayGraphic.SpatialTransform.TranslationY + 1);
+			}
 			protected set
 			{
-				_overlayGraphic.SpatialTransform.TranslationX = value.X - 1;
-				_overlayGraphic.SpatialTransform.TranslationY = value.Y - 1;
+				if (_overlayGraphic != null)
+				{
+					_overlayGraphic.SpatialTransform.TranslationX = value.X - 1;
+					_overlayGraphic.SpatialTransform.TranslationY = value.Y - 1;
+				}
 			}
 		}
 
@@ -296,7 +302,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// </summary>
 		public int Rows
 		{
-			get { return _overlayGraphic.Rows; }
+			get { return _overlayGraphic != null ? _overlayGraphic.Rows : 0; }
 		}
 
 		/// <summary>
@@ -304,7 +310,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// </summary>
 		public int Columns
 		{
-			get { return _overlayGraphic.Columns; }
+			get { return _overlayGraphic != null ? _overlayGraphic.Columns : 0; }
 		}
 
 		/// <summary>
@@ -362,6 +368,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// <returns>A packed overlay data object.</returns>
 		public OverlayData CreateOverlayData(bool bigEndianWords)
 		{
+			if (_overlayGraphic == null)
+				return null;
+
 			GrayscalePixelData pixelData = _overlayGraphic.PixelData;
 			return OverlayData.CreateOverlayData(
 				pixelData.Rows, pixelData.Columns,
@@ -370,18 +379,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				pixelData.HighBit,
 				bigEndianWords,
 				pixelData.Raw);
-		}
-
-		/// <summary>
-		/// Sets any error text to be displayed on the overlay plane.
-		/// </summary>
-		/// <param name="errorMessage">The error text to be displayed.</param>
-		public void SetError(string errorMessage)
-		{
-			var errorGraphic = (ErrorGraphic) CollectionUtils.SelectFirst(Graphics, g => g is ErrorGraphic);
-			if (errorGraphic == null)
-				Graphics.Add(errorGraphic = new ErrorGraphic());
-			errorGraphic.ErrorText = !string.IsNullOrEmpty(errorMessage) ? errorMessage : string.Empty;
 		}
 
 		#region IShutterGraphic Members
@@ -556,53 +553,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			public override string GetDescription()
 			{
 				return string.Format("OverlayColorMap_{0}_{1}_{2}_{3}", this.Color.A, this.Color.R, this.Color.G, this.Color.B);
-			}
-		}
-
-		#endregion
-
-		#region ErrorGraphic
-
-		[Cloneable]
-		private class ErrorGraphic : CompositeGraphic
-		{
-			[CloneIgnore]
-			private InvariantTextPrimitive _textGraphic;
-
-			public ErrorGraphic()
-			{
-				Graphics.Add(_textGraphic = new InvariantTextPrimitive {Color = System.Drawing.Color.WhiteSmoke});
-			}
-
-			/// <summary>
-			/// Cloning constructor.
-			/// </summary>
-			private ErrorGraphic(ErrorGraphic source, ICloningContext context)
-			{
-				context.CloneFields(source, this);
-			}
-
-			[OnCloneComplete]
-			private void OnCloneComplete()
-			{
-				_textGraphic = (InvariantTextPrimitive) CollectionUtils.SelectFirst(Graphics, g => g is InvariantTextPrimitive);
-			}
-
-			public string ErrorText
-			{
-				get { return _textGraphic.Text; }
-				set { _textGraphic.Text = value; }
-			}
-
-			public override void OnDrawing()
-			{
-				// upon drawing, re-centre the text
-				RectangleF bounds = base.ParentPresentationImage.ClientRectangle;
-				PointF anchor = new PointF(bounds.Left + bounds.Width/2, bounds.Top + bounds.Height/2);
-				_textGraphic.CoordinateSystem = CoordinateSystem.Destination;
-				_textGraphic.Location = anchor;
-				_textGraphic.ResetCoordinateSystem();
-				base.OnDrawing();
 			}
 		}
 

@@ -19,7 +19,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
 	[Cloneable]
-	public class FusionPresentationImage : BasicPresentationImage, IImageSopProvider, IColorMapProvider, ILayerOpacityProvider
+	public class FusionPresentationImage : BasicPresentationImage, IImageSopProvider, IColorMapProvider, ILayerOpacityProvider, IModalityLutProvider
 	{
 		private const string _fusionOverlayLayerName = "Fusion";
 
@@ -233,6 +233,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		public ILayerOpacityManager LayerOpacityManager
 		{
 			get { return _fusionOverlayComposite.LayerOpacityManager; }
+		}
+
+		#endregion
+
+		#region IModalityLutProvider Members
+
+		public IComposableLut ModalityLut
+		{
+			get { return ImageGraphic.ModalityLut; }
 		}
 
 		#endregion

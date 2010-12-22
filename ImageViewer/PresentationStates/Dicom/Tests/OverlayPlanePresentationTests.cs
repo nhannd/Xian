@@ -259,6 +259,60 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 			// should check that there is an error displayed
 		}
 
+		[Test]
+		public void TestImageEmbeddedOverlay8Bit()
+		{
+			var file = _testImages.ImageEmbeddedOverlay8Bit;
+			using (var images = CreateImages(file))
+			{
+				Assert.AreEqual(1, images.Count, "should be exactly 1 frames in this instance");
+
+				// that frames should be exactly 1-to-1
+				AssertFrameIdentity(1, 1, images[0], "image with embedded overlay image #{0}", 1);
+			}
+		}
+
+		[Test]
+		public void TestImageDataOverlayOWAttribute()
+		{
+			var file = _testImages.ImageDataOverlayOWAttribute;
+			using (var images = CreateImages(file))
+			{
+				Assert.AreEqual(1, images.Count, "should be exactly 1 frames in this instance");
+
+				// that frames should be exactly 1-to-1
+				AssertFrameIdentity(1, 1, images[0], "image with data overlay image #{0}", 1);
+			}
+		}
+
+		[Test]
+		public void TestMultiframeImageEmbeddedOverlay8Bit()
+		{
+			var file = _testImages.MultiframeImageEmbeddedOverlay8Bit;
+			using (var images = CreateImages(file))
+			{
+				Assert.AreEqual(17, images.Count, "should be exactly 17 frames in this instance");
+
+				// these frames should be exactly 1-to-1
+				for (int n = 0; n < 17; n++)
+					AssertFrameIdentity(n + 1, n + 1, images[n], "multiframe image with embedded overlay image #{0}", n + 1);
+			}
+		}
+
+		[Test]
+		public void TestMultiframeImageDataOverlayOWAttribute()
+		{
+			var file = _testImages.MultiframeImageDataOverlayOWAttribute;
+			using (var images = CreateImages(file))
+			{
+				Assert.AreEqual(17, images.Count, "should be exactly 17 frames in this instance");
+
+				// these frames should be exactly 1-to-1
+				for (int n = 0; n < 17; n++)
+					AssertFrameIdentity(n + 1, n + 1, images[n], "multiframe image with data overlay image #{0}", n + 1);
+			}
+		}
+
 		private static void AssertFrameIdentity(int expectedImageFrameNumber, int? expectedOverlayFrameNumber, IPresentationImage image, string message, params object[] args)
 		{
 			int actualImageFrameNumber;

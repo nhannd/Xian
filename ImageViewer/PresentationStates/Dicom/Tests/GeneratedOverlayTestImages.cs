@@ -40,6 +40,11 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 		private DicomFile _multiframeImageDataOverlayMidSubrange;
 		private DicomFile _multiframeImageDataOverlayHighSubrange;
 
+		private DicomFile _imageEmbeddedOverlay8Bit;
+		private DicomFile _imageDataOverlayOWAttribute;
+		private DicomFile _multiframeImageEmbeddedOverlay8Bit;
+		private DicomFile _multiframeImageDataOverlayOWAttribute;
+
 		public DicomFile ImageEmbeddedOverlay
 		{
 			get
@@ -304,6 +309,94 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 			}
 		}
 
+		public DicomFile ImageEmbeddedOverlay8Bit
+		{
+			get
+			{
+				if (_imageEmbeddedOverlay8Bit == null)
+				{
+					const int number = 13;
+					const string description = "8-bit image with embedded overlay";
+
+					var dcf = CreateInstance(number, description, SopClass.SecondaryCaptureImageStorage, _baseDataset);
+					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
+					                                      CreatePixelData(CreateImageFrame, 1, 8, 7, 7, false),
+					                                      257, 263, 1, 8, 7, 7, false);
+					DicomOverlayTestHelper.AddOverlayPlane(dcf.DataSet, 0, CreateOverlayData(CreateLargeOverlayFrame, 1),
+					                                       OverlayType.G, new Point(1, 1), 0, false);
+					dcf.Save(Path.Combine(_path, string.Format("{0}.dcm", description.Replace(' ', '_'))));
+					_imageEmbeddedOverlay8Bit = dcf;
+				}
+				return _imageEmbeddedOverlay8Bit;
+			}
+		}
+
+		public DicomFile ImageDataOverlayOWAttribute
+		{
+			get
+			{
+				if (_imageDataOverlayOWAttribute == null)
+				{
+					const int number = 14;
+					const string description = "image with OW data overlay";
+
+					var dcf = CreateInstance(number, description, SopClass.SecondaryCaptureImageStorage, _baseDataset);
+					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
+					                                      CreatePixelData(CreateImageFrame, 1, 16, 12, 11, false),
+					                                      257, 263, 1, 16, 12, 11, false);
+					DicomOverlayTestHelper.AddOverlayPlane(dcf.DataSet, 0, CreateOverlayData(CreateLargeOverlayFrame, 1),
+					                                       OverlayType.G, new Point(1, 1), 257, 263, false, true);
+					dcf.Save(Path.Combine(_path, string.Format("{0}.dcm", description.Replace(' ', '_'))));
+					_imageDataOverlayOWAttribute = dcf;
+				}
+				return _imageDataOverlayOWAttribute;
+			}
+		}
+
+		public DicomFile MultiframeImageEmbeddedOverlay8Bit
+		{
+			get
+			{
+				if (_multiframeImageEmbeddedOverlay8Bit == null)
+				{
+					const int number = 15;
+					const string description = "8-bit multiframe image with embedded overlay";
+
+					var dcf = CreateInstance(number, description, SopClass.MultiFrameGrayscaleByteSecondaryCaptureImageStorage, _baseDataset);
+					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
+					                                      CreatePixelData(CreateImageFrame, 17, 8, 7, 7, false),
+					                                      257, 263, 17, 8, 7, 7, false);
+					DicomOverlayTestHelper.AddOverlayPlane(dcf.DataSet, 0, CreateOverlayData(CreateLargeOverlayFrame, 17),
+					                                       OverlayType.G, new Point(1, 1), 0, false);
+					dcf.Save(Path.Combine(_path, string.Format("{0}.dcm", description.Replace(' ', '_'))));
+					_multiframeImageEmbeddedOverlay8Bit = dcf;
+				}
+				return _multiframeImageEmbeddedOverlay8Bit;
+			}
+		}
+
+		public DicomFile MultiframeImageDataOverlayOWAttribute
+		{
+			get
+			{
+				if (_multiframeImageDataOverlayOWAttribute == null)
+				{
+					const int number = 16;
+					const string description = "multiframe image with OW data overlay";
+
+					var dcf = CreateInstance(number, description, SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage, _baseDataset);
+					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
+					                                      CreatePixelData(CreateImageFrame, 17, 16, 12, 11, false),
+					                                      257, 263, 17, 16, 12, 11, false);
+					DicomOverlayTestHelper.AddOverlayPlane(dcf.DataSet, 0, CreateOverlayData(CreateLargeOverlayFrame, 17),
+					                                       OverlayType.G, new Point(1, 1), 257, 263, 17, null, false, true);
+					dcf.Save(Path.Combine(_path, string.Format("{0}.dcm", description.Replace(' ', '_'))));
+					_multiframeImageDataOverlayOWAttribute = dcf;
+				}
+				return _multiframeImageDataOverlayOWAttribute;
+			}
+		}
+
 		public GeneratedOverlayTestImages()
 		{
 			_path = Path.Combine(Environment.CurrentDirectory, GetType().FullName);
@@ -318,8 +411,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 
 		private static byte[] CreatePixelData(FrameDataGetter frameDataGetter, int frameCount, int bitsAllocated, int bitsStored, int highBit, bool isSigned)
 		{
-			var min = isSigned ? (int) short.MinValue : ushort.MinValue;
-			var max = isSigned ? short.MaxValue : (int) ushort.MaxValue;
+			if (bitsAllocated != 8 && bitsAllocated != 16)
+				throw new ArgumentException("bitsAllocated must be either 8 or 16.", "bitsAllocated");
+
 			byte[] pixelData = null;
 			for (int n = 0; n < frameCount; n++)
 			{
@@ -329,19 +423,36 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 					pixelData = new byte[frameData.Length*frameCount*bitsAllocated/8];
 				}
 
-				var cursor = frameData.Length*n*bitsAllocated/8;
-				for (int i = 0; i < frameData.Length; i++)
+				if (bitsAllocated == 16)
 				{
-					var value = Math.Max(min, Math.Min(max, (int) (min + 65535*frameData[i])));
-					value = value << (highBit - bitsStored + 1);
-					if (ByteBuffer.LocalMachineEndian == Endian.Little)
+					var min = isSigned ? (int) short.MinValue : ushort.MinValue;
+					var max = isSigned ? short.MaxValue : (int) ushort.MaxValue;
+					var cursor = frameData.Length*n*2;
+					for (int i = 0; i < frameData.Length; i++)
 					{
-						pixelData[cursor++] = (byte) (value & 0x00FF);
-						pixelData[cursor++] = (byte) ((value >> 8) & 0x00FF);
+						var value = Math.Max(min, Math.Min(max, (int) (min + 65535*frameData[i])));
+						value = value << (highBit - bitsStored + 1);
+						if (ByteBuffer.LocalMachineEndian == Endian.Little)
+						{
+							pixelData[cursor++] = (byte) (value & 0x00FF);
+							pixelData[cursor++] = (byte) ((value >> 8) & 0x00FF);
+						}
+						else
+						{
+							pixelData[cursor++] = (byte) ((value >> 8) & 0x00FF);
+							pixelData[cursor++] = (byte) (value & 0x00FF);
+						}
 					}
-					else
+				}
+				else if (bitsAllocated == 8)
+				{
+					var min = isSigned ? (int) sbyte.MinValue : byte.MinValue;
+					var max = isSigned ? sbyte.MaxValue : (int) byte.MaxValue;
+					var cursor = frameData.Length*n;
+					for (int i = 0; i < frameData.Length; i++)
 					{
-						pixelData[cursor++] = (byte) ((value >> 8) & 0x00FF);
+						var value = Math.Max(min, Math.Min(max, (int) (min + 255*frameData[i])));
+						value = value << (highBit - bitsStored + 1);
 						pixelData[cursor++] = (byte) (value & 0x00FF);
 					}
 				}

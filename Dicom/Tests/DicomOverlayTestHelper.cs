@@ -58,7 +58,7 @@ namespace ClearCanvas.Dicom.Tests
 			dataset[DicomTags.PixelRepresentation].SetInt32(0, isSigned ? 1 : 0);
 			dataset[DicomTags.NumberOfFrames].SetInt32(0, frames);
 			dataset[DicomTags.PhotometricInterpretation].SetStringValue(PhotometricInterpretation.Monochrome2.Code);
-			dataset[DicomTags.PixelData].Values = pixelData;
+			dataset[FixVR(DicomTags.PixelData, bitsAllocated == 16 ? DicomVr.OWvr : DicomVr.OBvr)].Values = pixelData;
 		}
 
 		/// <summary>
@@ -156,7 +156,7 @@ namespace ClearCanvas.Dicom.Tests
 				ushort window = 0;
 				for (int n = 0; n < overlayData.Length; n++)
 				{
-					window = (ushort) (((window >> 1) & 0x007F00) | (overlayData[n] ? 0x008000 : 0x000000));
+					window = (ushort) (((window >> 1) & 0x007FFF) | (overlayData[n] ? 0x008000 : 0x000000));
 					if ((n + 1)%16 == 0)
 					{
 						packedBits[cursor + highByte] = (byte) ((window >> 8) & 0x00FF);

@@ -9,16 +9,14 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
+	[MenuAction("showHide", "imageviewer-contextmenu/MenuShowHideShutterOverlay", "ShowHide", InitiallyAvailable = false)]
 	[MenuAction("showHide", "global-menus/MenuTools/MenuStandard/MenuShowHideShutterOverlay", "ShowHide")]
 	[Tooltip("showHide", "TooltipShowHideShutterOverlay")]
 	[GroupHint("showHide", "Tools.Image.Overlays.Shutter.ShowHide")]

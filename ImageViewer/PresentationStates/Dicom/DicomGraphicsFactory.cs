@@ -17,6 +17,8 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.Dicom.Iod.Sequences;
+using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -72,8 +74,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			{
 				foreach (var overlayPlane in overlaysFromPresentationState)
 				{
-					// if overlay claims to be embedded in the pixel data of a non-image instance, treat as an encoding error
-					if (overlayPlane.IsEmbedded)
+					// if overlay data is missing, treat as an encoding error
+					if (!overlayPlane.HasOverlayData)
 					{
 						failedOverlays = true;
 						Platform.Log(LogLevel.Warn, new DicomOverlayDeserializationException(overlayPlane.Group, OverlayPlaneSource.PresentationState), "Encoding error encountered while reading overlay from softcopy presentation state.");
@@ -101,7 +103,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 						else
 						{
 							// no relevant overlay frame found - i.e. the overlay for this image frame is blank
-							overlayData = new byte[overlayPlane.GetOverlayFrameLength()];
+							overlayData = new byte[0];
 						}
 
 						overlayPlaneGraphics.Add(new OverlayPlaneGraphic(overlayPlane, overlayData, OverlayPlaneSource.PresentationState));
@@ -127,9 +129,10 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		private class ErrorOverlayPlaneGraphic : OverlayPlaneGraphic
 		{
 			public ErrorOverlayPlaneGraphic(string errorMessage)
-				: base(1, 1)
+				: base(10, 10)
 			{
-				SetError(errorMessage);
+				errorMessage = !string.IsNullOrEmpty(errorMessage) ? errorMessage : string.Empty;
+				Graphics.Add(new ErrorText {Color = System.Drawing.Color.WhiteSmoke, Text = errorMessage});
 			}
 
 			/// <summary>
@@ -137,6 +140,29 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			/// </summary>
 			private ErrorOverlayPlaneGraphic(OverlayPlaneGraphic source, ICloningContext context)
 				: base(source, context) {}
+
+			[Cloneable(true)]
+			private class ErrorText : InvariantTextPrimitive
+			{
+				public override void OnDrawing()
+				{
+					// upon drawing, re-centre the text
+					var bounds = base.ParentPresentationImage.ClientRectangle;
+					var anchor = new PointF(bounds.Left + bounds.Width/2, bounds.Top + bounds.Height/2);
+
+					CoordinateSystem = CoordinateSystem.Destination;
+					try
+					{
+						Location = anchor;
+					}
+					finally
+					{
+						ResetCoordinateSystem();
+					}
+
+					base.OnDrawing();
+				}
+			}
 		}
 
 		#endregion

@@ -56,6 +56,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 
 		private void StopButtonClicked(object sender, EventArgs e)
 		{
+			_component.AutoCineEnabled = false;
 			_component.StopCine();
 		}
 

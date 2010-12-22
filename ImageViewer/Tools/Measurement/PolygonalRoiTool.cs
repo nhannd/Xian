@@ -18,6 +18,7 @@ using ClearCanvas.ImageViewer.InteractiveGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
+	[MenuAction("activate", "imageviewer-contextmenu/MenuPolygonalRoi", "Select", Flags = ClickActionFlags.CheckAction, InitiallyAvailable = false)]
 	[MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuPolygonalRoi", "Select", Flags = ClickActionFlags.CheckAction)]
 	[ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarPolygonalRoi", "Select", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]

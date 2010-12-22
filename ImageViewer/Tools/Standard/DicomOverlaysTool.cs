@@ -19,6 +19,7 @@ using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
+	[MenuAction("showHide", "imageviewer-contextmenu/MenuShowHideDicomOverlay", "ShowHide", InitiallyAvailable = false)]
 	[MenuAction("showHide", "global-menus/MenuTools/MenuStandard/MenuShowHideDicomOverlay", "ShowHide")]
 	[Tooltip("showHide", "TooltipShowHideDicomOverlay")]
 	[GroupHint("showHide", "Tools.Image.Overlays.DicomOverlay.ShowHide")]

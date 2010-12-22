@@ -9,13 +9,8 @@
 
 #endregion
 
-using System;
-using System.Drawing;
-using System.Diagnostics;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
@@ -23,6 +18,7 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
+	[MenuAction("activate", "imageviewer-contextmenu/MenuFlipHorizontal", "Activate", InitiallyAvailable = false)]
 	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuFlipHorizontal", "Activate")]
 	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarFlipHorizontal", "Activate", KeyStroke = XKeys.H)]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]

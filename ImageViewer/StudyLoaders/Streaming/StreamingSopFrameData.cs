@@ -106,16 +106,11 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 					var overlayPlaneModuleIod = new OverlayPlaneModuleIod(Parent);
 					foreach (var overlayPlane in overlayPlaneModuleIod)
 					{
-						if (IsOverlayEmbedded(overlayPlane) && _overlayData[overlayPlane.Index] == null)
+						if (!overlayPlane.HasOverlayData && _overlayData[overlayPlane.Index] == null)
 						{
 							// if the overlay is embedded in pixel data and we haven't cached it yet, extract it now before we normalize the frame pixel data
 							var overlayData = OverlayData.UnpackFromPixelData(overlayPlane.OverlayBitPosition, Parent[DicomTags.BitsAllocated].GetInt32(0, 0), false, pixelData);
 							_overlayData[overlayPlane.Index] = overlayData;
-						}
-						else if (!overlayPlane.HasOverlayData)
-						{
-							// if the overlay is not embedded and OverlayData appears to be missing, log a warning now
-							Platform.Log(LogLevel.Warn, "The image {0} appears to be missing OverlayData for group 0x{1:X4}.", Parent.SopInstanceUid, overlayPlane.Group);
 						}
 					}
 
@@ -148,7 +143,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 					if (_overlayData[overlayIndex] == null)
 					{
 						var overlayPlane = overlayPlaneModuleIod[overlayIndex];
-						if (IsOverlayEmbedded(overlayPlane))
+						if (!overlayPlane.HasOverlayData)
 						{
 							// if the overlay is embedded, trigger retrieval of pixel data which will populate the cache for us
 							GetNormalizedPixelData();
@@ -172,7 +167,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 							else
 							{
 								// no relevant overlay frame found - i.e. the overlay for this image frame is blank
-								_overlayData[overlayIndex] = new byte[overlayPlane.GetOverlayFrameLength()];
+								_overlayData[overlayIndex] = new byte[0];
 							}
 						}
 					}
@@ -414,34 +409,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 					_retrieveResult = null;
 				}
 			}
-		}
-
-		/// <summary>
-		/// Determines if the overlay data for this plane is embedded in the pixel data.
-		/// </summary>
-		/// <remarks>
-		/// We cannot use <see cref="OverlayPlane.IsEmbedded"/> because the PixelData attribute is not in the dataset since we stream it separately.
-		/// </remarks>
-		internal static bool IsOverlayEmbedded(OverlayPlane overlayPlane)
-		{
-			IDicomAttributeProvider provider = overlayPlane.DicomAttributeProvider;
-
-			// OverlayData exists => not embedded
-			DicomAttribute overlayData = provider[overlayPlane.TagOffset + DicomTags.OverlayData];
-			if (overlayData.IsEmpty || overlayData.IsNull)
-			{
-				// embedded => BitsAllocated={8|16}, OverlayBitPosition in [0, BitsAllocated)
-				int overlayBitPosition = provider[overlayPlane.TagOffset + DicomTags.OverlayBitPosition].GetInt32(0, -1);
-				int bitsAllocated = provider[DicomTags.BitsAllocated].GetInt32(0, 0);
-				if (overlayBitPosition >= 0 && overlayBitPosition < bitsAllocated && (bitsAllocated == 8 || bitsAllocated == 16))
-				{
-					// embedded => OverlayBitPosition in (HighBit, BitsAllocated) or [0, HighBit - BitsStored + 1)
-					int highBit = provider[DicomTags.HighBit].GetInt32(0, 0);
-					int bitsStored = provider[DicomTags.BitsStored].GetInt32(0, 0);
-					return (overlayBitPosition > highBit || overlayBitPosition < highBit - bitsStored + 1);
-				}
-			}
-			return false;
 		}
 	}
 }

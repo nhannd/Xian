@@ -12,12 +12,12 @@
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
+	[MenuAction("activate", "imageviewer-contextmenu/MenuInvert", "Apply", InitiallyAvailable = false)]
 	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuInvert", "Apply")]
 	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarInvert", "Apply", KeyStroke = XKeys.I)]
 	[Tooltip("activate", "TooltipInvert")]

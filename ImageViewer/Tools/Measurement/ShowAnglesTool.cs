@@ -19,6 +19,7 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
+	[MenuAction("activate", "imageviewer-contextmenu/MenuShowAngles", "ToggleShowAngles", InitiallyAvailable = false)]
 	[MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuShowAngles", "ToggleShowAngles")]
 	[ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarShowAngles", "ToggleShowAngles")]
 	[CheckedStateObserver("activate", "ShowAngles", "ShowAnglesChanged")]
