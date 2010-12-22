@@ -396,9 +396,9 @@ namespace ClearCanvas.Ris.Client
 				(IOrderEntryService service) => service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientRef)),
 				response =>
 				{
-					_allVisits = _applicableVisits = response.Visits;
+					_allVisits = response.Visits;
+					UpdateVisits();
 
-					NotifyPropertyChanged("ActiveVisits");
 					this.SelectedVisit = null;  // undo any default selection imposed by setting ActiveVisits
 
 					_visitsLoaded = true;
@@ -1094,13 +1094,21 @@ namespace ClearCanvas.Ris.Client
 			var performingFacilities = CollectionUtils.Map<ProcedureRequisition, FacilitySummary>(
 				_proceduresTable.Items, item => item.PerformingFacility);
 
-			_applicableVisits = performingFacilities.Count <= 0
-				? _allVisits
-				: CollectionUtils.Select(
-					_allVisits,
-					visit => CollectionUtils.Contains(
-						performingFacilities,
-						facility => visit.VisitNumber.AssigningAuthority.Code == facility.InformationAuthority.Code));
+			if (performingFacilities.Count <= 0)
+			{
+				// If there are no pricedures, filter visit by Ordering facility information authority
+				// If editing an order and orderingFacility hasn't been loaded, use all visits.
+				_applicableVisits = _orderingFacility == null
+					? _allVisits
+					: CollectionUtils.Select(_allVisits, visit => Equals(visit.VisitNumber.AssigningAuthority.Code, _orderingFacility.InformationAuthority.Code));
+			}
+			else
+			{
+				// Otherwise, filter by performing facility information authority.
+				_applicableVisits = CollectionUtils.Select(_allVisits,
+						visit => CollectionUtils.Contains(performingFacilities,
+							facility => Equals(visit.VisitNumber.AssigningAuthority.Code, facility.InformationAuthority.Code)));
+			}
 
 			NotifyPropertyChanged("ActiveVisits");
 
