@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
@@ -36,7 +37,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -49,8 +49,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	public class CineTool : ImageViewerTool
 	{
 		private static readonly Dictionary<IDesktopWindow, IShelf> _shelves = new Dictionary<IDesktopWindow, IShelf>();
+		private static readonly Dictionary<IImageViewer, CineTool> _tools = new Dictionary<IImageViewer, CineTool>();
 
 		private SynchronizationContext _synchronizationContext;
+		private bool _autoCineEnabled = true;
 
 		public CineTool() {}
 
@@ -58,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			IDesktopWindow desktopWindow = this.Context.DesktopWindow;
 
-			// check if a cine component is already displayed
+			// check if a layout component is already displayed
 			if (_shelves.ContainsKey(desktopWindow))
 			{
 				_shelves[desktopWindow].Activate();
@@ -66,6 +68,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			else
 			{
 				LaunchShelf(desktopWindow, new CineApplicationComponent(desktopWindow), ShelfDisplayHint.DockFloat);
+			}
+		}
+
+		protected IImageBox SelectedImageBox
+		{
+			get
+			{
+				if (this.ImageViewer == null)
+					return null;
+				return this.ImageViewer.SelectedImageBox;
 			}
 		}
 
@@ -94,101 +106,112 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public override void Initialize()
 		{
 			base.Initialize();
+			base.ImageViewer.DesktopWindow.Workspaces.ItemActivationChanged += OnWorkspaceItemActivationChanged;
+			base.ImageViewer.EventBroker.ImageBoxSelected += OnImageBoxSelected;
+			base.ImageViewer.EventBroker.DisplaySetChanged += OnDisplaySetChanged;
+
+			_tools.Add(base.ImageViewer, this);
 
 			_synchronizationContext = SynchronizationContext.Current;
-
-			Context.DesktopWindow.Workspaces.ItemActivationChanged += OnWorkspaceItemActivationChanged;
-			Context.Viewer.EventBroker.ImageBoxSelected += OnImageViewerImageBoxSelected;
-			Context.Viewer.EventBroker.DisplaySetChanged += OnImageViewerDisplaySetChanged;
 		}
 
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing)
-			{
-				Context.Viewer.EventBroker.DisplaySetChanged -= OnImageViewerDisplaySetChanged;
-				Context.Viewer.EventBroker.ImageBoxSelected -= OnImageViewerImageBoxSelected;
-				Context.DesktopWindow.Workspaces.ItemActivationChanged -= OnWorkspaceItemActivationChanged;
-			}
-
 			_synchronizationContext = null;
 
+			_tools.Remove(base.ImageViewer);
+
+			base.ImageViewer.EventBroker.DisplaySetChanged -= OnDisplaySetChanged;
+			base.ImageViewer.EventBroker.ImageBoxSelected -= OnImageBoxSelected;
+			base.ImageViewer.DesktopWindow.Workspaces.ItemActivationChanged -= OnWorkspaceItemActivationChanged;
 			base.Dispose(disposing);
 		}
 
-		private void OnWorkspaceItemActivationChanged(object sender, ItemEventArgs<Workspace> e)
+		protected virtual void OnWorkspaceItemActivationChanged(object sender, ItemEventArgs<Workspace> e)
 		{
-			// retry autocine whenever the parent viewer workspace is activated
-			if (e.Item.Active && ReferenceEquals(e.Item.Component, Context.Viewer))
-				TryStartAutoCine();
-		}
-
-		private void OnImageViewerImageBoxSelected(object sender, ImageBoxSelectedEventArgs e)
-		{
-			// retry autocine whenever the selected image box changes
-			TryStartAutoCine();
-		}
-
-		private void OnImageViewerDisplaySetChanged(object sender, DisplaySetChangedEventArgs e)
-		{
-			// retry autocine whenever the display set in the selected image box changes
-			if (e.NewDisplaySet != null && ReferenceEquals(e.NewDisplaySet.ImageBox, Context.Viewer.SelectedImageBox))
+			if (e.Item.Active && e.Item.Component == this.ImageViewer)
 			{
-				// this is not as straightforward since the cine component stops if the user commits some undoable command, such as stack or changing the display set
-				// we actually have to post the call to TryStartAutoCine so that it gets called *after* the GUI event finishes processing
-				if (_synchronizationContext != null)
-					_synchronizationContext.Post(o => TryStartAutoCine(), null);
+				TryUpdateAutoCineComponent(this.Context.DesktopWindow, this.SelectedImageBox);
 			}
 		}
 
-		/// <summary>
-		/// Called to attempt automatically starting cine in the context of this tool's parent <see cref="ImageViewerTool.ImageViewer"/>.
-		/// </summary>
-		protected virtual void TryStartAutoCine()
+		protected virtual void OnDisplaySetChanged(object sender, DisplaySetChangedEventArgs e)
 		{
-			var desktopWindow = Context.DesktopWindow;
-			if (IsAutoCineEnabled(Context.Viewer.SelectedImageBox))
+			if (this.SelectedImageBox != null && this.ImageViewer.SelectedImageBox.DisplaySet == e.NewDisplaySet)
 			{
-				// if we should auto cine the selected image box, find the existing cine component or create a new one if necessary
-				CineApplicationComponent cineComponent;
-				if (_shelves.ContainsKey(desktopWindow))
+				this.TryUpdateAutoCineComponent(this.Context.DesktopWindow, this.SelectedImageBox);
+			}
+		}
+
+		protected virtual void OnImageBoxSelected(object sender, ImageBoxSelectedEventArgs e)
+		{
+			this.TryUpdateAutoCineComponent(this.Context.DesktopWindow, e.SelectedImageBox);
+		}
+
+		/// <summary>
+		/// This handles autocine state change operations within the same viewer instance
+		/// </summary>
+		protected virtual void TryUpdateAutoCineComponent(IDesktopWindow desktopWindow, IImageBox selectedImageBox)
+		{
+			// if we're in autocine mode, then start cine if image supports it (opening shelf as necessary), else stop cine and close shelf
+			if (_autoCineEnabled)
+			{
+				if (selectedImageBox != null
+					&& selectedImageBox.SelectedTile != null
+					&& CineApplicationComponent.CanAutoPlay(selectedImageBox.SelectedTile.PresentationImage))
 				{
-					cineComponent = (CineApplicationComponent) _shelves[desktopWindow].Component;
-					_shelves[desktopWindow].Activate();
+					CineApplicationComponent component;
+					if (!_shelves.ContainsKey(desktopWindow))
+					{
+						component = new CineApplicationComponent(desktopWindow);
+						component.Reverse = false;
+						LaunchShelf(desktopWindow, component, ShelfDisplayHint.DockFloat);
+					}
+					else
+					{
+						component = (CineApplicationComponent) _shelves[desktopWindow].Component;
+					}
+
+					// queue an attempt to start auto cine
+					_synchronizationContext.Post(TryStartAutoCineCallback, component);
 				}
 				else
 				{
-					cineComponent = new CineApplicationComponent(desktopWindow);
-					LaunchShelf(desktopWindow, cineComponent, ShelfDisplayHint.DockFloat);
+					if (_shelves.ContainsKey(desktopWindow))
+						_shelves[desktopWindow].Close(UserInteraction.NotAllowed);
 				}
-
-				// start cine if it isn't already playing
-				if (!cineComponent.Running)
-					cineComponent.StartCine();
 			}
 		}
 
-		/// <summary>
-		/// Checks to see if the viewer should automatically start cine on the contents of the specified <see cref="IImageBox"/>.
-		/// </summary>
-		/// <param name="imageBox">The <see cref="IImageBox"/> to be checked.</param>
-		/// <returns>True if the viewer should automatically start cine on the contents of <paramref name="imageBox"/>; False otherwise.</returns>
-		protected internal static bool IsAutoCineEnabled(IImageBox imageBox)
+		private static void TryStartAutoCineCallback(object component)
 		{
-			if (imageBox == null || imageBox.SelectedTile == null)
-				return false;
-
-			var imageSopProvider = imageBox.SelectedTile.PresentationImage as IImageSopProvider;
-			if (imageSopProvider != null)
+			try
 			{
-				var imageSop = imageSopProvider.ImageSop;
-				if (imageSop.NumberOfFrames > 1
-				    && ToolSettings.Default.ToolSettingsProfile[imageSop.Modality].AutoCineMultiframes.GetValueOrDefault(false))
-				{
-					return true;
-				}
+				CineApplicationComponent cineApplicationComponent = component as CineApplicationComponent;
+				if (cineApplicationComponent != null && cineApplicationComponent.DesktopWindow != null)
+					cineApplicationComponent.TryStartAutoCine();
 			}
+			catch (Exception ex)
+			{
+				// since this callback is posted directly to the message pump, we *must* log and silence exceptions, else the entire app will die
+				Platform.Log(LogLevel.Debug, ex, "AutoCine callback threw an exception in TryStartAutoCineCallback.");
+#if DEBUG
+				throw;
+#endif
+			}
+		}
+
+		internal static bool GetAutoCineEnabled(IImageViewer imageViewer)
+		{
+			if (_tools.ContainsKey(imageViewer))
+				return _tools[imageViewer]._autoCineEnabled;
 			return false;
+		}
+
+		internal static void SetAutoCineEnabled(IImageViewer imageViewer, bool value)
+		{
+			if (_tools.ContainsKey(imageViewer))
+				_tools[imageViewer]._autoCineEnabled = value;
 		}
 	}
 }
