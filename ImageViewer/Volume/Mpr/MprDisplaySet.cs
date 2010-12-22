@@ -112,6 +112,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			base.SetMemento(mprDisplaySetMemento.DisplaySetMemento);
 		}
 
+		//TODO (CR November 2010): Should implement IEquatable.
 		private class MprDisplaySetMemento
 		{
 			public readonly IVolumeSlicerParams SlicerParams;
