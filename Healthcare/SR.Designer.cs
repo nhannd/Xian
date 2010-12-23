@@ -538,7 +538,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All performing facilities must have the same information authority as the visit..
+        ///   Looks up a localized string similar to Visit must have the same information authority as the performing facility..
         /// </summary>
         internal static string MessageValidateInformationAuthorityForVisitAndPerformingFacilities {
             get {
