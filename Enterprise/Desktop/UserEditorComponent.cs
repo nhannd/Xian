@@ -26,13 +26,13 @@ namespace ClearCanvas.Enterprise.Desktop
     {
         private readonly AuthorityGroupSummary _summary;
         private bool _selected;
-        private event EventHandler _selectedChanged;
+        private event EventHandler SelectedChanged;
 
         public AuthorityGroupTableEntry(AuthorityGroupSummary authorityGroupSummary, EventHandler onChanged)
         {
             _summary = authorityGroupSummary;
             _selected = false;
-            _selectedChanged += onChanged;
+            SelectedChanged += onChanged;
         }
 
         public bool Selected
@@ -43,7 +43,7 @@ namespace ClearCanvas.Enterprise.Desktop
                 if (_selected != value)
                 {
                     _selected = value;
-                    EventsHelper.Fire(_selectedChanged, this, EventArgs.Empty);
+                    EventsHelper.Fire(SelectedChanged, this, EventArgs.Empty);
                 }
             }
         }
@@ -58,13 +58,13 @@ namespace ClearCanvas.Enterprise.Desktop
     {
         public SelectableAuthorityGroupTable()
         {
-            this.Columns.Add(new TableColumn<AuthorityGroupTableEntry, bool>(SR.ColumnActive,
-                delegate(AuthorityGroupTableEntry entry) { return entry.Selected; },
+            Columns.Add(new TableColumn<AuthorityGroupTableEntry, bool>(SR.ColumnActive,
+                                                                        entry => entry.Selected,
                 delegate(AuthorityGroupTableEntry entry, bool value) { entry.Selected = value; },
                 0.5f));
 
-            this.Columns.Add(new TableColumn<AuthorityGroupTableEntry, string>(SR.ColumnAuthorityGroup,
-                delegate(AuthorityGroupTableEntry entry) { return entry.AuthorityGroupSummary.Name; },
+            Columns.Add(new TableColumn<AuthorityGroupTableEntry, string>(SR.ColumnAuthorityGroup,
+                                                                          entry => entry.AuthorityGroupSummary.Name,
                 2.5f));
         }
     }
@@ -122,21 +122,21 @@ namespace ClearCanvas.Enterprise.Desktop
 		public override void Start()
         {
 			// load all auth groups
-			Platform.GetService<IAuthorityGroupAdminService>(
+			Platform.GetService(
 				delegate(IAuthorityGroupAdminService service)
 				{
 					ListAuthorityGroupsResponse authorityGroupsResponse = service.ListAuthorityGroups(new ListAuthorityGroupsRequest());
 
-					_authorityGroups = CollectionUtils.Map<AuthorityGroupSummary, AuthorityGroupTableEntry>(
+					_authorityGroups = CollectionUtils.Map(
 						authorityGroupsResponse.AuthorityGroups,
 						delegate(AuthorityGroupSummary summary)
 						{
-							return new AuthorityGroupTableEntry(summary, this.OnAuthorityGroupChecked);
+							return new AuthorityGroupTableEntry(summary, OnAuthorityGroupChecked);
 						});
 				});
 
 			// load user
-            Platform.GetService<IUserAdminService>(
+            Platform.GetService(
                 delegate(IUserAdminService service)
                 {
                     if (_isNew)
@@ -164,7 +164,7 @@ namespace ClearCanvas.Enterprise.Desktop
             set
             {
                 _userDetail.UserName = value;
-                this.Modified = true;
+                Modified = true;
             }
         }
 
@@ -174,7 +174,7 @@ namespace ClearCanvas.Enterprise.Desktop
 			set
 			{
 				_userDetail.DisplayName = value;
-				this.Modified = true;
+				Modified = true;
 			}
 		}
 
@@ -190,7 +190,7 @@ namespace ClearCanvas.Enterprise.Desktop
             {
                 // set valid from to the start of the day
                 _userDetail.ValidFrom = value == null ? value : value.Value.Date;
-                this.Modified = true;
+                Modified = true;
             }
         }
 
@@ -201,7 +201,7 @@ namespace ClearCanvas.Enterprise.Desktop
             {
                 // set valid unitl to the end of the day
                 _userDetail.ValidUntil = value == null ? value : value.Value.Date.AddDays(1).AddTicks(-1);
-                this.Modified = true;
+                Modified = true;
              }
         }
 
@@ -212,7 +212,7 @@ namespace ClearCanvas.Enterprise.Desktop
             {
                 // set valid unitl to the end of the day
                 _userDetail.PasswordExpiryTime = value == null ? value : value.Value.Date;
-                this.Modified = true;
+                Modified = true;
             }
         }
 
@@ -222,7 +222,7 @@ namespace ClearCanvas.Enterprise.Desktop
             set
             {
                 _userDetail.Enabled = value;
-                this.Modified = true;
+                Modified = true;
             }
         }
 
@@ -233,16 +233,16 @@ namespace ClearCanvas.Enterprise.Desktop
 
         public void Accept()
         {
-            if (this.HasValidationErrors)
+            if (HasValidationErrors)
             {
-                this.ShowValidation(true);
+                ShowValidation(true);
                 return;
             }
 
             try
             {
 				// add or update the user account
-                Platform.GetService<IUserAdminService>(
+                Platform.GetService(
                     delegate(IUserAdminService service)
                     {
                         if (_isNew)
@@ -257,37 +257,37 @@ namespace ClearCanvas.Enterprise.Desktop
                         }
                     });
 
-                this.Exit(ApplicationComponentExitCode.Accepted);
+                Exit(ApplicationComponentExitCode.Accepted);
             }
             catch (Exception e)
             {
                 ExceptionHandler.Report(
                     e, 
                     SR.ExceptionSaveUser, 
-                    this.Host.DesktopWindow,
+                    Host.DesktopWindow,
                     delegate
                     {
-                        this.ExitCode = ApplicationComponentExitCode.Error;
-                        this.Host.Exit();
+                        ExitCode = ApplicationComponentExitCode.Error;
+                        Host.Exit();
                     });
             }
         }
 
         public bool AcceptEnabled
         {
-            get { return this.Modified && string.IsNullOrEmpty(UserId) == false; }
+            get { return Modified && string.IsNullOrEmpty(UserId) == false; }
         }
 
         public event EventHandler AcceptEnabledChanged
         {
-            add { this.ModifiedChanged += value; }
-            remove { this.ModifiedChanged -= value; }
+            add { ModifiedChanged += value; }
+            remove { ModifiedChanged -= value; }
         }
 
         public void Cancel()
         {
-            this.ExitCode = ApplicationComponentExitCode.None;
-            this.Host.Exit();
+            ExitCode = ApplicationComponentExitCode.None;
+            Host.Exit();
         }
 
         public void OnAuthorityGroupChecked(object sender, EventArgs e)
@@ -302,7 +302,7 @@ namespace ClearCanvas.Enterprise.Desktop
                     {
                         return summary.Name == changedEntry.AuthorityGroupSummary.Name;
                     });
-                this.Modified = true;
+                Modified = true;
             }
             else
             {
@@ -315,10 +315,9 @@ namespace ClearCanvas.Enterprise.Desktop
                 if (alreadyAdded == false)
                 {
                     _userDetail.AuthorityGroups.Add(changedEntry.AuthorityGroupSummary);
-                    this.Modified = true;
+                    Modified = true;
                 }
             }
-
         }
 
         #endregion
@@ -330,11 +329,10 @@ namespace ClearCanvas.Enterprise.Desktop
 
             foreach (AuthorityGroupSummary selectedSummary in _userDetail.AuthorityGroups)
             {
+                AuthorityGroupSummary summary = selectedSummary;
                 AuthorityGroupTableEntry foundEntry = CollectionUtils.SelectFirst(_authorityGroups,
-                    delegate(AuthorityGroupTableEntry entry)
-                    {
-                        return selectedSummary.Name == entry.AuthorityGroupSummary.Name;
-                    });
+                                                                                  entry =>
+                                                                                  summary.Name == entry.AuthorityGroupSummary.Name);
 
                 if (foundEntry != null) foundEntry.Selected = true;
             }

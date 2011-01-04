@@ -9,16 +9,12 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Authentication;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Authentication.Brokers;
 
 namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
 {
@@ -34,12 +30,9 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
         {
             AuthorityGroupAssembler assembler = new AuthorityGroupAssembler();
 
-        	List<AuthorityGroupSummary> groups = CollectionUtils.Map<AuthorityGroup, AuthorityGroupSummary>(
+        	List<AuthorityGroupSummary> groups = CollectionUtils.Map(
         		user.AuthorityGroups,
-        		delegate(AuthorityGroup group)
-        		{
-        			return assembler.CreateAuthorityGroupSummary(group);
-        		});
+        		(AuthorityGroup group) => assembler.CreateAuthorityGroupSummary(group));
 				
             return new UserDetail(user.UserName, user.DisplayName, user.CreationTime, user.ValidFrom, user.ValidUntil,
                 user.LastLoginTime, user.Enabled, user.Password.ExpiryTime, groups);
@@ -56,12 +49,9 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
             user.Password.ExpiryTime = detail.PasswordExpiryTime;
 
             // process authority groups
-			List<AuthorityGroup> authGroups = CollectionUtils.Map<AuthorityGroupSummary, AuthorityGroup>(
+			List<AuthorityGroup> authGroups = CollectionUtils.Map(
 				detail.AuthorityGroups,
-                delegate(AuthorityGroupSummary group)
-                {
-                	return context.Load<AuthorityGroup>(group.AuthorityGroupRef, EntityLoadFlags.Proxy);
-                });
+				(AuthorityGroupSummary group) => context.Load<AuthorityGroup>(group.AuthorityGroupRef, EntityLoadFlags.Proxy));
 
             user.AuthorityGroups.Clear();
 			user.AuthorityGroups.AddAll(authGroups);
