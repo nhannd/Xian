@@ -42,7 +42,7 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
         		});
 				
             return new UserDetail(user.UserName, user.DisplayName, user.CreationTime, user.ValidFrom, user.ValidUntil,
-                user.LastLoginTime, user.Enabled, groups);
+                user.LastLoginTime, user.Enabled, user.Password.ExpiryTime, groups);
         }
 
         internal void UpdateUser(User user, UserDetail detail, IPersistenceContext context)
@@ -53,6 +53,7 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
             user.ValidFrom = detail.ValidFrom;
             user.ValidUntil = detail.ValidUntil;
             user.Enabled = detail.Enabled;
+            user.Password.ExpiryTime = detail.PasswordExpiryTime;
 
             // process authority groups
 			List<AuthorityGroup> authGroups = CollectionUtils.Map<AuthorityGroupSummary, AuthorityGroup>(

@@ -205,6 +205,17 @@ namespace ClearCanvas.Enterprise.Desktop
              }
         }
 
+        public DateTime? PasswordExpiryTime
+        {
+            get { return _userDetail.PasswordExpiryTime; }
+            set
+            {
+                // set valid unitl to the end of the day
+                _userDetail.PasswordExpiryTime = value == null ? value : value.Value.Date;
+                this.Modified = true;
+            }
+        }
+
         public bool AccountEnabled
         {
             get { return _userDetail.Enabled; }

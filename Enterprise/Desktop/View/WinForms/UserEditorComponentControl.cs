@@ -42,6 +42,8 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
             _validUntil.DataBindings.Add("Value", _component, "ValidUntil", true, DataSourceUpdateMode.OnPropertyChanged);
             _accountEnabledCheckBox.DataBindings.Add("Checked", _component, "AccountEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
+            _passwordExpiryDate.DataBindings.Add("Value", _component, "PasswordExpiryTime", true, DataSourceUpdateMode.OnPropertyChanged);
+
             _authorityGroups.Table = _component.Groups;
             _acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
         }

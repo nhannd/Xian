@@ -22,7 +22,7 @@ namespace ClearCanvas.Enterprise.Common.Admin.UserAdmin
     public class UserDetail : DataContractBase
     {
         public UserDetail(string userId, string displayName, DateTime creationTime, DateTime? validFrom, DateTime? validUntil, 
-            DateTime? lastLoginTime, bool enabled, List<AuthorityGroupSummary> authorityGroups)
+            DateTime? lastLoginTime, bool enabled, DateTime? expiryTime, List<AuthorityGroupSummary> authorityGroups)
         {
             this.UserName = userId;
             this.DisplayName = displayName;
@@ -32,6 +32,7 @@ namespace ClearCanvas.Enterprise.Common.Admin.UserAdmin
             this.ValidUntil = validUntil;
             this.LastLoginTime = lastLoginTime;
             this.Enabled = enabled;
+            this.PasswordExpiryTime = expiryTime;
         }
 
         public UserDetail()
@@ -68,5 +69,9 @@ namespace ClearCanvas.Enterprise.Common.Admin.UserAdmin
         /// </summary>
         [DataMember]
         public bool ResetPassword;
+
+        [DataMember]
+        public DateTime? PasswordExpiryTime;
+
     }
 }
