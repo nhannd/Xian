@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -51,9 +51,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_component = component;
 			InitializeComponent();
 
-			_order1Description.Text = _component.Order1Description;
-			_order2Description.Text = _component.Order2Description;
-			UpdateMergeDirection();
+			_ordersTableView.Table = _component.OrdersTable;
+			_ordersTableView.DataBindings.Add("Selection", _component, "OrdersTableSelection", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			var previewControl = (Control)_component.MergedOrderPreviewComponentHost.ComponentView.GuiElement;
 			_mergedOrderPreviewPanel.Controls.Add(previewControl);
@@ -68,17 +69,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 		private void _cancelButton_Click(object sender, EventArgs e)
 		{
 			_component.Cancel();
-		}
-
-		private void _mergeDirectionButton_Click(object sender, EventArgs e)
-		{
-			_component.ToggleMergeDirection();
-			UpdateMergeDirection();
-		}
-
-		private void UpdateMergeDirection()
-		{
-			_mergeDirectionButton.Image = _component.MergingRight ? SR.MergeRightSmall : SR.MergeLeftSmall;
 		}
 	}
 }

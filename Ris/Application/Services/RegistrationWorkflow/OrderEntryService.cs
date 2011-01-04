@@ -292,31 +292,36 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		public MergeOrderResponse MergeOrder(MergeOrderRequest request)
 		{
 			Platform.CheckForNullReference(request, "request");
-			Platform.CheckMemberIsSet(request.SourceOrderRef, "SourceOrderRef");
+			Platform.CheckMemberIsSet(request.SourceOrderRefs, "SourceOrderRefs");
+			Platform.CheckTrue(request.SourceOrderRefs.Count > 0, "SourceOrderRefs.Count > 0");
 			Platform.CheckMemberIsSet(request.DestinationOrderRef, "DestinationOrderRef");
 
 			if (request.DryRun)
 				return MergeOrderDryRun(request);
 
-			var sourceOrder = this.PersistenceContext.Load<Order>(request.SourceOrderRef);
 			var destinationOrder = this.PersistenceContext.Load<Order>(request.DestinationOrderRef);
 
-			// Merge the source order into the destination order.
-			sourceOrder.Merge(new OrderMergeInfo(this.CurrentUserStaff, destinationOrder));
+			foreach (var sourceOrderRef in request.SourceOrderRefs)
+			{
+				var sourceOrder = this.PersistenceContext.Load<Order>(sourceOrderRef);
 
-			// Add a orderNote to the source Order
-			var sourceNote = OrderNote.CreateGeneralNote(sourceOrder, this.CurrentUserStaff,
-				string.Format("Auto-generated note.  This order was merged into {0}", destinationOrder.AccessionNumber));
-			PersistenceContext.Lock(sourceNote, DirtyState.New);
+				// Merge the source order into the destination order.
+				sourceOrder.Merge(new OrderMergeInfo(this.CurrentUserStaff, destinationOrder));
 
-			// bug 7364: Add a orderNote to the dest Order, to compensate for the lack of
-			// a back-link
-			var destNote = OrderNote.CreateGeneralNote(destinationOrder, this.CurrentUserStaff,
-				string.Format("Auto-generated note.  Order {0} was merged into this order.", sourceOrder.AccessionNumber));
-			PersistenceContext.Lock(destNote, DirtyState.New);
+				// Add a orderNote to the source Order
+				var sourceNote = OrderNote.CreateGeneralNote(sourceOrder, this.CurrentUserStaff,
+					string.Format("Auto-generated note.  This order was merged into {0}", destinationOrder.AccessionNumber));
+				PersistenceContext.Lock(sourceNote, DirtyState.New);
 
-			CreateLogicalHL7Event(sourceOrder, LogicalHL7EventType.OrderCancelled);
-			CreateLogicalHL7Event(destinationOrder, LogicalHL7EventType.OrderModified);
+				// bug 7364: Add a orderNote to the dest Order, to compensate for the lack of
+				// a back-link
+				var destNote = OrderNote.CreateGeneralNote(destinationOrder, this.CurrentUserStaff,
+					string.Format("Auto-generated note.  Order {0} was merged into this order.", sourceOrder.AccessionNumber));
+				PersistenceContext.Lock(destNote, DirtyState.New);
+
+				CreateLogicalHL7Event(sourceOrder, LogicalHL7EventType.OrderCancelled);
+				CreateLogicalHL7Event(destinationOrder, LogicalHL7EventType.OrderModified);
+			}
 
 			return new MergeOrderResponse();
 		}
@@ -584,18 +589,22 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				// create a new persistence scope, so that we do not use the scope inherited by the service
 				using (var scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.RequiresNew))
 				{
-					var srcOrder = this.PersistenceContext.Load<Order>(request.SourceOrderRef);
 					var destOrder = this.PersistenceContext.Load<Order>(request.DestinationOrderRef);
+					
+					foreach (var sourceOrderRef in request.SourceOrderRefs)
+					{
+						var srcOrder = this.PersistenceContext.Load<Order>(sourceOrderRef);
 
-					// Merge the source order into the destination order.
-					srcOrder.Merge(new OrderMergeInfo(this.CurrentUserStaff, destOrder));
+						// Merge the source order into the destination order.
+						srcOrder.Merge(new OrderMergeInfo(this.CurrentUserStaff, destOrder));
 
-					// try to synch state to see if DB will accept changes
-					scope.Context.SynchState();
+						// try to synch state to see if DB will accept changes
+						scope.Context.SynchState();
 
-					var orderAssembler = new OrderAssembler();
-					response.DryRunMergedOrder = orderAssembler.CreateOrderDetail(destOrder,
-						new OrderAssembler.CreateOrderDetailOptions(true, true, true, null, true, true, true), scope.Context);
+						var orderAssembler = new OrderAssembler();
+						response.DryRunMergedOrder = orderAssembler.CreateOrderDetail(destOrder,
+							new OrderAssembler.CreateOrderDetailOptions(true, true, true, null, true, true, true), scope.Context);
+					}
 
 					//note: do not call scope.Complete() under any circumstances - we want this transaction to rollback
 				}
