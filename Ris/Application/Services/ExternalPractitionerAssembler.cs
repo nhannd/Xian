@@ -153,6 +153,7 @@ namespace ClearCanvas.Ris.Application.Services
 				contactPoint.Description,
 				contactPoint.IsDefaultContactPoint,
 				EnumUtils.GetEnumValueInfo(contactPoint.PreferredResultCommunicationMode, context),
+				EnumUtils.GetEnumValueInfo(contactPoint.InformationAuthority),
 				CollectionUtils.Map(contactPoint.TelephoneNumbers, (TelephoneNumber phone) => telephoneNumberAssembler.CreateTelephoneDetail(phone, context)),
 				CollectionUtils.Map(contactPoint.Addresses, (Address address) => addressAssembler.CreateAddressDetail(address, context)),
 				CollectionUtils.Map(contactPoint.EmailAddresses, (EmailAddress emailAddress) => emailAddressAssembler.CreateEmailAddressDetail(emailAddress, context)),
@@ -170,8 +171,8 @@ namespace ClearCanvas.Ris.Application.Services
 			contactPoint.Name = detail.Name;
 			contactPoint.Description = detail.Description;
 			contactPoint.IsDefaultContactPoint = detail.IsDefaultContactPoint;
-			contactPoint.PreferredResultCommunicationMode =
-				EnumUtils.GetEnumValue<ResultCommunicationMode>(detail.PreferredResultCommunicationMode);
+			contactPoint.PreferredResultCommunicationMode = EnumUtils.GetEnumValue<ResultCommunicationMode>(detail.PreferredResultCommunicationMode);
+			contactPoint.InformationAuthority = EnumUtils.GetEnumValue<InformationAuthorityEnum>(detail.InformationAuthority, context);
 			contactPoint.MarkDeactivated(detail.Deactivated);
 
 			var phoneAssembler = new TelephoneNumberAssembler();

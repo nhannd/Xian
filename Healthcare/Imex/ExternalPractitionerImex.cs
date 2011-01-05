@@ -102,6 +102,9 @@ namespace ClearCanvas.Healthcare.Imex
 			public string PreferredResultCommunicationMode;
 
 			[DataMember]
+			public string InformationAuthority;
+
+			[DataMember]
 			public bool IsDefaultContactPoint;
 
 			[DataMember]
@@ -147,6 +150,7 @@ namespace ClearCanvas.Healthcare.Imex
 								Name = cp.Name,
 								IsDefaultContactPoint = cp.IsDefaultContactPoint,
 								PreferredResultCommunicationMode = cp.PreferredResultCommunicationMode.ToString(),
+								InformationAuthority = cp.InformationAuthority.Code,
 								Description = cp.Description,
 								Addresses = CollectionUtils.Map(cp.Addresses, (Address a) => new AddressData(a)),
 								TelephoneNumbers = CollectionUtils.Map(cp.TelephoneNumbers, (TelephoneNumber tn) => new TelephoneNumberData(tn)),
@@ -193,7 +197,7 @@ namespace ClearCanvas.Healthcare.Imex
 				foreach (var cpData in data.ContactPoints)
 				{
 					var cp = CollectionUtils.SelectFirst(prac.ContactPoints, p => p.Name == cpData.Name) ?? new ExternalPractitionerContactPoint(prac);
-					UpdateExternalPractitionerContactPoint(cpData, cp);
+					UpdateExternalPractitionerContactPoint(cpData, cp, context);
 				}
 			}
 
@@ -202,12 +206,13 @@ namespace ClearCanvas.Healthcare.Imex
 
 		#endregion
 
-		private static void UpdateExternalPractitionerContactPoint(ExternalPractitionerContactPointData data, ExternalPractitionerContactPoint cp)
+		private static void UpdateExternalPractitionerContactPoint(ExternalPractitionerContactPointData data, ExternalPractitionerContactPoint cp, IUpdateContext context)
 		{
 			cp.Name = data.Name;
 			cp.Description = data.Description;
 			cp.IsDefaultContactPoint = data.IsDefaultContactPoint;
 			cp.PreferredResultCommunicationMode = (ResultCommunicationMode) Enum.Parse(typeof(ResultCommunicationMode), data.PreferredResultCommunicationMode);
+			cp.InformationAuthority = context.GetBroker<IEnumBroker>().Find<InformationAuthorityEnum>(data.InformationAuthority);
 
 			if (data.TelephoneNumbers != null)
 			{

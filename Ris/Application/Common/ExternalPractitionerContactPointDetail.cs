@@ -41,7 +41,8 @@ namespace ClearCanvas.Ris.Application.Common
 	public class ExternalPractitionerContactPointDetail : DataContractBase, ICloneable
 	{
 		public ExternalPractitionerContactPointDetail(
-			EntityRef contactPointRef, string name, string description, bool isDefaultContactPoint, EnumValueInfo preferredResultCommunicationMode, 
+			EntityRef contactPointRef, string name, string description, bool isDefaultContactPoint,
+			EnumValueInfo preferredResultCommunicationMode, EnumValueInfo informationAuthority,
 			List<TelephoneDetail> phoneDetails, List<AddressDetail> addressDetails, List<EmailAddressDetail> emailAddressDetails,
 			TelephoneDetail currentPhone, TelephoneDetail currentFax, AddressDetail currentAddress, EmailAddressDetail currentEmailAddress,
 			ExternalPractitionerContactPointSummary mergeDestination, bool isMerged, bool deactivated)
@@ -51,6 +52,7 @@ namespace ClearCanvas.Ris.Application.Common
 			this.Description = description;
 			this.IsDefaultContactPoint = isDefaultContactPoint;
 			this.PreferredResultCommunicationMode = preferredResultCommunicationMode;
+			this.InformationAuthority = informationAuthority;
 			this.TelephoneNumbers = phoneDetails;
 			this.Addresses = addressDetails;
 			this.EmailAddresses = emailAddressDetails;
@@ -84,6 +86,9 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public EnumValueInfo PreferredResultCommunicationMode;
+
+		[DataMember]
+		public EnumValueInfo InformationAuthority;
 
 		[DataMember]
 		public TelephoneDetail CurrentPhoneNumber;
@@ -135,7 +140,8 @@ namespace ClearCanvas.Ris.Application.Common
 				this.Name,
 				this.Description,
 				this.IsDefaultContactPoint,
-				this.PreferredResultCommunicationMode,
+				(EnumValueInfo)(this.PreferredResultCommunicationMode == null ? null : this.PreferredResultCommunicationMode.Clone()),
+				(EnumValueInfo)(this.InformationAuthority == null ? null : this.InformationAuthority.Clone()),
 				CollectionUtils.Map(this.TelephoneNumbers, (TelephoneDetail detail) => (TelephoneDetail) detail.Clone()),
 				CollectionUtils.Map(this.Addresses, (AddressDetail detail) => (AddressDetail) detail.Clone()),
 				CollectionUtils.Map(this.EmailAddresses, (EmailAddressDetail detail) => (EmailAddressDetail)detail.Clone()),

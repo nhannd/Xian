@@ -41,11 +41,13 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
         public LoadExternalPractitionerEditorFormDataResponse(
             List<EnumValueInfo> addressTypeChoices,
             List<EnumValueInfo> phoneTypeChoices,
-            List<EnumValueInfo> resultCommunicationModeChoices)
+            List<EnumValueInfo> resultCommunicationModeChoices,
+            List<EnumValueInfo> informationAuthorityChoices)
         {
             this.AddressTypeChoices = addressTypeChoices;
             this.PhoneTypeChoices = phoneTypeChoices;
             this.ResultCommunicationModeChoices = resultCommunicationModeChoices;
+            this.InformationAuthorityChoices = informationAuthorityChoices;
         }
 
         [DataMember]
@@ -56,5 +58,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 
         [DataMember]
         public List<EnumValueInfo> ResultCommunicationModeChoices;
+
+        [DataMember]
+        public List<EnumValueInfo> InformationAuthorityChoices;
     }
 }

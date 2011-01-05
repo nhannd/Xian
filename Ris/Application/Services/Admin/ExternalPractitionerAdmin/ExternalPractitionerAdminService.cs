@@ -153,7 +153,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			return new LoadExternalPractitionerEditorFormDataResponse(
 				EnumUtils.GetEnumValueList<AddressTypeEnum>(PersistenceContext),
 				(new SimplifiedPhoneTypeAssembler()).GetPractitionerPhoneTypeChoices(),
-				EnumUtils.GetEnumValueList<ResultCommunicationModeEnum>(PersistenceContext));
+				EnumUtils.GetEnumValueList<ResultCommunicationModeEnum>(PersistenceContext),
+				EnumUtils.GetEnumValueList<InformationAuthorityEnum>(PersistenceContext));
 		}
 
 		[UpdateOperation]
@@ -300,6 +301,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 				dest.Name,
 				dest.Description,
 				dest.PreferredResultCommunicationMode,
+				dest.InformationAuthority,
 				allPhoneNumbers,
 				allAddresses,
 				allEmailAddresses);

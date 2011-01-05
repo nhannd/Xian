@@ -58,6 +58,7 @@ namespace ClearCanvas.Healthcare
 			string name,
 			string description,
 			ResultCommunicationMode preferredCommunicationMode,
+			InformationAuthorityEnum informationAuthority,
 			IList<TelephoneNumber> phoneNumbers,
 			IList<Address> addresses,
 			IList<EmailAddress> emailAddresses
@@ -83,6 +84,7 @@ namespace ClearCanvas.Healthcare
 				name,
 				description,
 				preferredCommunicationMode,
+				informationAuthority,
 				right.IsDefaultContactPoint || left.IsDefaultContactPoint,
 				phoneNumbers ?? new List<TelephoneNumber>(),
 				addresses ?? new List<Address>(),
@@ -200,8 +202,9 @@ namespace ClearCanvas.Healthcare
 				_name,
 				_description,
 				_preferredResultCommunicationMode,
+				_informationAuthority,
 				_isDefaultContactPoint,
-				CollectionUtils.Map(_telephoneNumbers, (TelephoneNumber tn) => (TelephoneNumber) tn.Clone()),
+				CollectionUtils.Map(_telephoneNumbers, (TelephoneNumber tn) => (TelephoneNumber)tn.Clone()),
 				CollectionUtils.Map(_addresses, (Address a) => (Address) a.Clone()),
 				CollectionUtils.Map(_emailAddresses, (EmailAddress e) => (EmailAddress) e.Clone()),
 				null);

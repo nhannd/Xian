@@ -53,7 +53,7 @@ namespace ClearCanvas.Healthcare.Tests
 			public static ExternalPractitionerContactPoint SimpleMerge(ExternalPractitionerContactPoint src, ExternalPractitionerContactPoint dest)
 			{
 				return ExternalPractitionerContactPoint.MergeContactPoints(src, dest,
-					dest.Name, dest.Description, dest.PreferredResultCommunicationMode,
+					dest.Name, dest.Description, dest.PreferredResultCommunicationMode, dest.InformationAuthority,
 					null, null, null);
 			}
 
@@ -67,7 +67,8 @@ namespace ClearCanvas.Healthcare.Tests
 			{
 				var isDefault = p.ContactPoints.Count == 0;
 				var cp = new ExternalPractitionerContactPoint(p,
-					name, description, ResultCommunicationMode.ANY, isDefault,
+					name, description, 
+					ResultCommunicationMode.ANY, null, isDefault,
 					new List<TelephoneNumber>(),
 					new List<Address>(),
 					new List<EmailAddress>(), null);
