@@ -65,6 +65,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_isDefaultContactPoint.DataBindings.Add("Checked", _component, "IsDefaultContactPoint", true, DataSourceUpdateMode.OnPropertyChanged);
 			_resultCommunicationMode.DataBindings.Add("Value", _component, "SelectedResultCommunicationMode", true, DataSourceUpdateMode.OnPropertyChanged);
 			_resultCommunicationMode.DataSource = _component.ResultCommunicationModeChoices;
+			_informationAuthority.DataBindings.Add("Value", _component, "SelectedInformationAuthority", true, DataSourceUpdateMode.OnPropertyChanged);
+			_informationAuthority.DataSource = _component.InformationAuthorityChoices;
 		}
 
 		private void _component_PropertyChanged(object sender, PropertyChangedEventArgs e)

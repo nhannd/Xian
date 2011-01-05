@@ -64,6 +64,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._isDefaultContactPoint = new System.Windows.Forms.CheckBox();
 			this._resultCommunicationMode = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+			this._warning = new System.Windows.Forms.Label();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
 			this._hasErrors = new System.Windows.Forms.Label();
@@ -99,7 +100,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
 			this.checkBox2 = new System.Windows.Forms.CheckBox();
 			this.lookupField1 = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
-			this._warning = new System.Windows.Forms.Label();
+			this._informationAuthority = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
@@ -126,7 +127,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _description
 			// 
 			this._description.LabelText = "Description";
-			this._description.Location = new System.Drawing.Point(14, 78);
+			this._description.Location = new System.Drawing.Point(14, 55);
 			this._description.Margin = new System.Windows.Forms.Padding(2);
 			this._description.Mask = "";
 			this._description.Name = "_description";
@@ -139,7 +140,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _isDefaultContactPoint
 			// 
 			this._isDefaultContactPoint.AutoSize = true;
-			this._isDefaultContactPoint.Location = new System.Drawing.Point(244, 29);
+			this._isDefaultContactPoint.Location = new System.Drawing.Point(244, 25);
 			this._isDefaultContactPoint.Name = "_isDefaultContactPoint";
 			this._isDefaultContactPoint.Size = new System.Drawing.Size(127, 17);
 			this._isDefaultContactPoint.TabIndex = 1;
@@ -152,7 +153,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._resultCommunicationMode.DisplayMember = "";
 			this._resultCommunicationMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._resultCommunicationMode.LabelText = "Preferred means of result communication";
-			this._resultCommunicationMode.Location = new System.Drawing.Point(14, 142);
+			this._resultCommunicationMode.Location = new System.Drawing.Point(14, 101);
 			this._resultCommunicationMode.Margin = new System.Windows.Forms.Padding(2);
 			this._resultCommunicationMode.Name = "_resultCommunicationMode";
 			this._resultCommunicationMode.Size = new System.Drawing.Size(224, 41);
@@ -174,8 +175,28 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.tableLayoutPanel1.Size = new System.Drawing.Size(425, 225);
 			this.tableLayoutPanel1.TabIndex = 4;
 			// 
+			// _warning
+			// 
+			this._warning.AutoSize = true;
+			this._warning.BackColor = System.Drawing.Color.White;
+			this._warning.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.tableLayoutPanel1.SetColumnSpan(this._warning, 2);
+			this._warning.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._warning.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._warning.ForeColor = System.Drawing.Color.Red;
+			this._warning.Location = new System.Drawing.Point(3, 3);
+			this._warning.Margin = new System.Windows.Forms.Padding(3);
+			this._warning.Name = "_warning";
+			this._warning.Padding = new System.Windows.Forms.Padding(3, 3, 3, 1);
+			this._warning.Size = new System.Drawing.Size(419, 22);
+			this._warning.TabIndex = 1;
+			this._warning.Text = "Warning Message";
+			this._warning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this._warning.Visible = false;
+			// 
 			// panel1
 			// 
+			this.panel1.Controls.Add(this._informationAuthority);
 			this.panel1.Controls.Add(this._name);
 			this.panel1.Controls.Add(this._resultCommunicationMode);
 			this.panel1.Controls.Add(this._description);
@@ -627,24 +648,18 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.lookupField1.TabIndex = 0;
 			this.lookupField1.Value = null;
 			// 
-			// _warning
+			// _informationAuthority
 			// 
-			this._warning.AutoSize = true;
-			this._warning.BackColor = System.Drawing.Color.White;
-			this._warning.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.tableLayoutPanel1.SetColumnSpan(this._warning, 2);
-			this._warning.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._warning.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this._warning.ForeColor = System.Drawing.Color.Red;
-			this._warning.Location = new System.Drawing.Point(3, 3);
-			this._warning.Margin = new System.Windows.Forms.Padding(3);
-			this._warning.Name = "_warning";
-			this._warning.Padding = new System.Windows.Forms.Padding(3, 3, 3, 1);
-			this._warning.Size = new System.Drawing.Size(419, 22);
-			this._warning.TabIndex = 1;
-			this._warning.Text = "Warning Message";
-			this._warning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this._warning.Visible = false;
+			this._informationAuthority.DataSource = null;
+			this._informationAuthority.DisplayMember = "";
+			this._informationAuthority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._informationAuthority.LabelText = "Information Authority";
+			this._informationAuthority.Location = new System.Drawing.Point(14, 147);
+			this._informationAuthority.Margin = new System.Windows.Forms.Padding(2);
+			this._informationAuthority.Name = "_informationAuthority";
+			this._informationAuthority.Size = new System.Drawing.Size(224, 41);
+			this._informationAuthority.TabIndex = 4;
+			this._informationAuthority.Value = null;
 			// 
 			// ExternalPractitionerContactPointDetailsEditorComponentControl
 			// 
@@ -714,5 +729,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private System.Windows.Forms.CheckBox checkBox2;
 		private LookupField lookupField1;
 		private System.Windows.Forms.Label _warning;
+		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _informationAuthority;
     }
 }

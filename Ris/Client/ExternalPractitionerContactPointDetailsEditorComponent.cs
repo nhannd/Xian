@@ -54,14 +54,21 @@ namespace ClearCanvas.Ris.Client
 	{
 		private readonly ExternalPractitionerContactPointDetail _contactPointDetail;
 		private readonly IList<EnumValueInfo> _resultCommunicationModeChoices;
+		private readonly IList<EnumValueInfo> _informationAuthorityChoices;
+		private static readonly EnumValueInfo _nullInformationAuthorityItem = new EnumValueInfo(null, "");
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public ExternalPractitionerContactPointDetailsEditorComponent(ExternalPractitionerContactPointDetail contactPointDetail, IList<EnumValueInfo> resultCommunicationModeChoices)
+		public ExternalPractitionerContactPointDetailsEditorComponent(
+			ExternalPractitionerContactPointDetail contactPointDetail,
+			IList<EnumValueInfo> resultCommunicationModeChoices,
+			IList<EnumValueInfo> informationAuthorityChoices)
 		{
 			_contactPointDetail = contactPointDetail;
 			_resultCommunicationModeChoices = resultCommunicationModeChoices;
+			_informationAuthorityChoices = new List<EnumValueInfo>(informationAuthorityChoices);
+			_informationAuthorityChoices.Insert(0, _nullInformationAuthorityItem);
 		}
 
 		#region Presentation Model
@@ -125,6 +132,11 @@ namespace ClearCanvas.Ris.Client
 			get { return (IList)_resultCommunicationModeChoices; }
 		}
 
+		public IList InformationAuthorityChoices
+		{
+			get { return (IList)_informationAuthorityChoices; }
+		}
+
 		[ValidateNotNull]
 		public EnumValueInfo SelectedResultCommunicationMode
 		{
@@ -136,15 +148,21 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		public EnumValueInfo SelectedInformationAuthority
+		{
+			get { return _contactPointDetail.InformationAuthority ?? _nullInformationAuthorityItem; }
+			set
+			{
+				_contactPointDetail.InformationAuthority = value == _nullInformationAuthorityItem ? null : value;
+				this.Modified = true;
+			}
+		}
+
 		#endregion
 
 		private bool UserLeavesContactPointDeactivated()
 		{
-			var activateResponse =
-				this.Host.ShowMessageBox(
-					"This contact point is not currently active and must be active in order to set it as the default.  Would you like to make it active?",
-					MessageBoxActions.YesNo);
-
+			var activateResponse = this.Host.ShowMessageBox(SR.MessageDefaultContactPointMustBeActive, MessageBoxActions.YesNo);
 			if (activateResponse != DialogBoxAction.Yes)
 			{
 				return true;

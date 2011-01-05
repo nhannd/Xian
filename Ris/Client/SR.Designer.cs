@@ -1843,6 +1843,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This contact point is not currently active and must be active in order to set it as the default.  Would you like to make it active?.
+        /// </summary>
+        internal static string MessageDefaultContactPointMustBeActive {
+            get {
+                return ResourceManager.GetString("MessageDefaultContactPointMustBeActive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A default contact point is required..
         /// </summary>
         internal static string MessageDefaultContactPointRequired {

@@ -1179,4 +1179,7 @@
   <data name="ColumnRoom" xml:space="preserve">
     <value>Room</value>
   </data>
+  <data name="MessageDefaultContactPointMustBeActive" xml:space="preserve">
+    <value>This contact point is not currently active and must be active in order to set it as the default.  Would you like to make it active?</value>
+  </data>
 </root>

@@ -167,6 +167,7 @@ namespace ClearCanvas.Ris.Client
 				formDataResponse.AddressTypeChoices,
 				formDataResponse.PhoneTypeChoices,
 				formDataResponse.ResultCommunicationModeChoices,
+				formDataResponse.InformationAuthorityChoices,
 				Formatting.PersonNameFormat.Format(_practitionerDetail.Name));
 			_contactPointSummaryComponent.SetModifiedOnListChange = true;
 
