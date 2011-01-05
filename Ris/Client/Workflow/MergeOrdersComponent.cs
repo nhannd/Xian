@@ -112,6 +112,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 				});
 
 			_ordersTable.Sort();
+
+			// Re-populate orderRef list by sorted accession number
+			_orderRefs.Clear();
+			_orderRefs.AddRange(CollectionUtils.Map<OrderDetail, EntityRef>(_ordersTable.Items, item => item.OrderRef));
+
 			_selectedOrder = CollectionUtils.FirstElement(_ordersTable.Items);
 			DryRunForSelectedOrder();
 

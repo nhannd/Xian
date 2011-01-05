@@ -301,27 +301,29 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 			var destinationOrder = this.PersistenceContext.Load<Order>(request.DestinationOrderRef);
 
+			var sourceOrderAccessionNumbers = new List<string>();
 			foreach (var sourceOrderRef in request.SourceOrderRefs)
 			{
 				var sourceOrder = this.PersistenceContext.Load<Order>(sourceOrderRef);
+				sourceOrderAccessionNumbers.Add(sourceOrder.AccessionNumber);
 
 				// Merge the source order into the destination order.
 				sourceOrder.Merge(new OrderMergeInfo(this.CurrentUserStaff, destinationOrder));
 
 				// Add a orderNote to the source Order
 				var sourceNote = OrderNote.CreateGeneralNote(sourceOrder, this.CurrentUserStaff,
-					string.Format("Auto-generated note.  This order was merged into {0}", destinationOrder.AccessionNumber));
+					string.Format(SR.MessageSourceMergeOrderNote, destinationOrder.AccessionNumber));
 				PersistenceContext.Lock(sourceNote, DirtyState.New);
-
-				// bug 7364: Add a orderNote to the dest Order, to compensate for the lack of
-				// a back-link
-				var destNote = OrderNote.CreateGeneralNote(destinationOrder, this.CurrentUserStaff,
-					string.Format("Auto-generated note.  Order {0} was merged into this order.", sourceOrder.AccessionNumber));
-				PersistenceContext.Lock(destNote, DirtyState.New);
 
 				CreateLogicalHL7Event(sourceOrder, LogicalHL7EventType.OrderCancelled);
 				CreateLogicalHL7Event(destinationOrder, LogicalHL7EventType.OrderModified);
 			}
+
+			// bug 7364: Add a orderNote to the dest Order, to compensate for the lack of a back-link
+			var destNote = OrderNote.CreateGeneralNote(destinationOrder, this.CurrentUserStaff,
+				string.Format(SR.MessageDestinationMergeOrderNote, StringUtilities.Combine(sourceOrderAccessionNumbers, ", ")));
+
+			PersistenceContext.Lock(destNote, DirtyState.New);
 
 			return new MergeOrderResponse();
 		}
