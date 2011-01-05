@@ -106,18 +106,21 @@ namespace ClearCanvas.Healthcare
 				order.ResultRecipients,
 				r => r.PractitionerContactPoint.Practitioner.Equals(args.OrderingPractitioner));
 
-			// if the result recipients collection does not contain the ordering practitioner, add it by force, using the default contact point
+			// if the result recipients collection does not contain the ordering practitioner, add it by force
 			if (!recipientsContainsOrderingPractitioner)
 			{
-				// find the default
-				var defaultContactPoint =
-					CollectionUtils.SelectFirst(args.OrderingPractitioner.ContactPoints, cp => cp.IsDefaultContactPoint)
-					// if no default, use first available
+				var orderingPractitionerContactPoint =
+					// use the contact point associated to the ordering facility's information authority
+					CollectionUtils.SelectFirst(args.OrderingPractitioner.ContactPoints, 
+						cp => cp.InformationAuthority == args.OrderingFacility.InformationAuthority && cp.Deactivated == false)
+					// or, use the default contact point
+					?? CollectionUtils.SelectFirst(args.OrderingPractitioner.ContactPoints, cp => cp.IsDefaultContactPoint)
+					// or, if no default, use first available (should never happen)
 					?? CollectionUtils.FirstElement(args.OrderingPractitioner.ContactPoints);
 
-				if (defaultContactPoint != null)
+				if (orderingPractitionerContactPoint != null)
 				{
-					order.ResultRecipients.Add(new ResultRecipient(defaultContactPoint, ResultCommunicationMode.ANY));
+					order.ResultRecipients.Add(new ResultRecipient(orderingPractitionerContactPoint, ResultCommunicationMode.ANY));
 				}
 			}
 
