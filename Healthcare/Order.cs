@@ -111,8 +111,8 @@ namespace ClearCanvas.Healthcare
 			{
 				var orderingPractitionerContactPoint =
 					// use the contact point associated to the ordering facility's information authority
-					CollectionUtils.SelectFirst(args.OrderingPractitioner.ContactPoints, 
-						cp => cp.InformationAuthority == args.OrderingFacility.InformationAuthority && cp.Deactivated == false)
+					CollectionUtils.SelectFirst(args.OrderingPractitioner.ContactPoints,
+						cp => args.OrderingFacility.InformationAuthority.Equals(cp.InformationAuthority) && cp.Deactivated == false)
 					// or, use the default contact point
 					?? CollectionUtils.SelectFirst(args.OrderingPractitioner.ContactPoints, cp => cp.IsDefaultContactPoint)
 					// or, if no default, use first available (should never happen)
