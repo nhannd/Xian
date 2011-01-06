@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -15,7 +15,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("Release")]
 [assembly: AssemblyCompany("ClearCanvas Inc")]
 [assembly: AssemblyProduct("Image Viewer")]
-[assembly: AssemblyCopyright("Copyright (c) 2010")]
+[assembly: AssemblyCopyright("Copyright (c) 2011")]
 [assembly: AssemblyVersion("1.0.2623.13258")]
 [assembly: AssemblyFileVersion("1.0.2623.13258")]
 [assembly: ClearCanvas.Common.Plugin]
