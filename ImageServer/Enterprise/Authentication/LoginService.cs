@@ -10,9 +10,11 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.ServiceModel;
-using System.Web;
+using System.Text;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Authentication;
@@ -33,7 +35,7 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
 
             SessionInfo session = null;
             
-            Platform.GetService<IAuthenticationService>(
+            Platform.GetService(
                 delegate(IAuthenticationService  service)
                     {
                         try
@@ -46,16 +48,24 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
 
                             if (response != null)
                             {
+                                
                                 LoginCredentials credentials = new LoginCredentials();
                                 credentials.UserName = userName;
                                 credentials.DisplayName = response.DisplayName;
                                 credentials.SessionToken = response.SessionToken;
                                 credentials.Authorities = response.AuthorityTokens;
                                 CustomPrincipal user = new CustomPrincipal(new CustomIdentity(userName, response.DisplayName),credentials);
+
                                 session = new SessionInfo(user);
 
+                                // Note: need to insert into the cache before calling SessionInfo.Validate()
+                                SessionCache.Instance.AddSession(response.SessionToken.Id, session);
+                                session.Validate();
+                                
                                 Platform.Log(LogLevel.Info, "{0} has successfully logged in.", userName);                                
                             }
+
+                            
                         }
                         catch (FaultException<PasswordExpiredException> ex)
                         {
@@ -72,38 +82,67 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
             return session;
         }
 
-        public void Logout(SessionInfo session)
+        public SessionInfo Query(string id)
         {
-            TerminateSessionRequest request =
-                new TerminateSessionRequest(session.User.Identity.Name, session.Credentials.SessionToken);
+            var sessionInfo = SessionCache.Instance.Find(id);
+            return sessionInfo;
 
-            Platform.GetService<IAuthenticationService>(
+        }
+
+        public void Logout(string tokenId)
+        {
+            var session = SessionCache.Instance.Find(tokenId);
+            if (session == null)
+            {
+                throw new Exception(String.Format("Unexpected error: session {0} does not exist in the cache", tokenId));
+            }
+
+            TerminateSessionRequest request = new TerminateSessionRequest(session.Credentials.UserName,
+                                                                          session.Credentials.SessionToken);
+
+
+            Platform.GetService(
                 delegate(IAuthenticationService service)
                     {
                         service.TerminateSession(request);
+                        SessionCache.Instance.RemoveSession(tokenId);
                     });
         }
 
-        public void Validate(SessionInfo session)
+        public SessionToken Renew(string tokenId)
         {
-            ValidateSessionRequest request = new ValidateSessionRequest(session.User.Identity.Name, session.Credentials.SessionToken);
+            SessionInfo sessionInfo = SessionCache.Instance.Find(tokenId);
+            if (sessionInfo == null)
+            {
+                throw new Exception(String.Format("Unexpected error: session {0} does not exist in the cache", tokenId));
+            }
+
+            ValidateSessionRequest request = new ValidateSessionRequest(sessionInfo.Credentials.UserName, sessionInfo.Credentials.SessionToken);
             request.GetAuthorizations = true;
 
             try
             {
-                Platform.GetService<IAuthenticationService>(
+                SessionToken newToken = null;
+                Platform.GetService(
                 delegate(IAuthenticationService service)
                     {
                         ValidateSessionResponse response = service.ValidateSession(request);
                         // update session info
-                        session.Credentials.Authorities = response.AuthorityTokens;
-                        session.Credentials.SessionToken = response.SessionToken;
+                        string id = response.SessionToken.Id;
+                        newToken= SessionCache.Instance.Renew(id, response.SessionToken.ExpiryTime);
+                        Platform.Log(LogLevel.Info, "Session {0} for {1} is renewed. Valid until {2}", id, sessionInfo.Credentials.UserName, newToken.ExpiryTime);
                     });
+
+                return newToken;
             }
 			catch(FaultException<InvalidUserSessionException> ex)
 			{
 				throw new SessionValidationException(ex.Detail);
 			}
+            catch(FaultException<UserAccessDeniedException> ex)
+            {
+                throw new SessionValidationException(ex.Detail);   
+            }
             catch(Exception ex)
             {
                 //TODO: for now we can't distinguish communicate errors and credential validation errors.
@@ -120,7 +159,7 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
         {
 
             ChangePasswordRequest request = new ChangePasswordRequest(userName, oldPassword, newPassword);
-            Platform.GetService<IAuthenticationService>(
+            Platform.GetService(
                 delegate(IAuthenticationService service)
                     {
                         service.ChangePassword(request);
@@ -135,5 +174,151 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
         }
 
         #endregion
+
+    }
+
+
+    /// <summary>
+    /// Internal session cache. 
+    /// </summary>
+    class SessionCache : IDisposable
+    {
+        private static readonly SessionCache _instance = new SessionCache();
+        private static readonly Dictionary<string, SessionInfo> _cacheSessionInfo = new Dictionary<string, SessionInfo>();
+        private Timer _timer;
+        private readonly object _sync = new object();
+
+        public static SessionCache Instance
+        {
+            get { return _instance; }
+        }
+
+        private SessionCache()
+        {
+            _timer = new Timer(OnTimer, this, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
+        }
+
+        private void OnTimer(object state)
+        {
+            if (_cacheSessionInfo.Count == 0)
+                return;
+
+            List<SessionInfo> list = new List<SessionInfo>(_cacheSessionInfo.Values);
+            StringBuilder active = new StringBuilder();
+            active.AppendLine("Active Sessions:");
+            StringBuilder inactive = new StringBuilder();
+            inactive.AppendLine("Inactive Sessions:");
+
+            int activeCount = 0;
+            int inactiveCount = 0;
+            foreach (SessionInfo session in list)
+            {
+                if (session.Credentials.SessionToken.ExpiryTime < Platform.Time)
+                {
+                    if (Platform.Time - session.Credentials.SessionToken.ExpiryTime > TimeSpan.FromSeconds(10))
+                    {
+                        CleanupSession(session);
+                        Platform.Log(LogLevel.Info, "Removed expired idle session: {0} for user {1}",
+                                     session.Credentials.SessionToken.Id, session.Credentials.UserName);
+                    }
+                    else
+                    {
+                        inactive.AppendLine(String.Format("\t{0}\t{1}: Expired on {2}", session.Credentials.UserName,
+                                                          session.Credentials.SessionToken.Id,
+                                                          session.Credentials.SessionToken.ExpiryTime));
+                        inactiveCount++;
+                    }
+                }
+                else
+                {
+                    activeCount++;
+                    active.AppendLine(String.Format("\t{0}\t{1}: Active. Expiring on {2}", session.Credentials.UserName,
+                                                 session.Credentials.SessionToken.Id, session.Credentials.SessionToken.ExpiryTime));
+                }
+            }
+            if (activeCount > 0)
+                Platform.Log(LogLevel.Info, active.ToString());
+            if (inactiveCount > 0)
+                Platform.Log(LogLevel.Info, inactive.ToString());
+        }
+
+        public void AddSession(string id, SessionInfo session)
+        {
+            lock (_sync)
+            {
+                _cacheSessionInfo.Add(id, session);
+            }
+
+        }
+
+        private void OnSessionRemoved(SessionInfo session)
+        {
+
+        }
+
+        private void CleanupSession(SessionInfo session)
+        {
+            lock (_sync)
+            {
+                using (LoginService service = new LoginService())
+                {
+                    try
+                    {
+                        service.Logout(session.Credentials.SessionToken.Id);
+                    }
+                    finally
+                    {
+                        RemoveSession(session.Credentials.SessionToken.Id);
+                    }
+                }
+            }
+        }
+
+        public void RemoveSession(string id)
+        {
+            lock (_sync)
+            {
+                SessionInfo session;
+                if (_cacheSessionInfo.TryGetValue(id, out session))
+                {
+                    _cacheSessionInfo.Remove(id);
+                    OnSessionRemoved(session);
+                }
+            }
+        }
+
+        public SessionInfo Find(string id)
+        {
+            lock (_sync)
+            {
+                if (_cacheSessionInfo.ContainsKey(id))
+                    return _cacheSessionInfo[id];
+
+                return null;
+            }
+        }
+
+        public SessionToken Renew(string tokenId, DateTime time)
+        {
+            lock (_sync)
+            {
+                SessionInfo sessionInfo = _cacheSessionInfo[tokenId];
+                SessionToken newToken = new SessionToken(sessionInfo.Credentials.SessionToken.Id, time);
+                sessionInfo.Credentials.SessionToken = newToken;
+
+                if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+                    Platform.Log(LogLevel.Debug, "Session {0} renewed. Will expire on {1}", sessionInfo.Credentials.SessionToken.Id, sessionInfo.Credentials.SessionToken.ExpiryTime);
+                return newToken;
+            }
+        }
+
+        public void Dispose()
+        {
+            if (_timer != null)
+            {
+                _timer.Dispose();
+                _timer = null;
+            }
+        }
     }
 }

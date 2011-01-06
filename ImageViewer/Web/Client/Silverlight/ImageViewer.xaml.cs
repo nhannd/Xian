@@ -134,8 +134,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         
         private void OnSessionUpdated(object sender, ServerEventArgs ev)
         {
-            SessionUpdatedEvent @event = ev.ServerEvent as SessionUpdatedEvent;
-            ApplicationBridge.Current.OnViewerSessionUpdated(this, @event);
+            UIThread.Execute(() =>
+            {
+                SessionUpdatedEvent @event = ev.ServerEvent as SessionUpdatedEvent;
+                ApplicationBridge.Current.OnViewerSessionUpdated(this, @event);
+            });
         }
 
         private void OnMessageBox(object sender, ServerEventArgs ev)

@@ -50,9 +50,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ImageServerUserAuthentication.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shreds\WebViewerServerExtension.cs" />
     <Compile Include="Shreds\WebViewerServerManager.cs" />

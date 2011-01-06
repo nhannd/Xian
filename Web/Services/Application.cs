@@ -107,14 +107,11 @@ namespace ClearCanvas.Web.Services
 		protected ApplicationContext _context;
 
 		private string _userName;
-		private volatile SessionToken _sessionToken;
+	    private volatile UserSessionInfo _session;
 		private const int _sessionRenewalOffsetMinutes = 1; // renew the session 1 min before it is expired.
 		private TimeSpan _sessionPollingIntervalSeconds;
 		private volatile int _lastSessionCheckTicks;
 
-		private TimeSpan? _inactivityTimeoutMinutes;
-
-        private volatile int _lastActivityTicks = Environment.TickCount;
         private DateTime _lastGetPendingTimestamp = DateTime.Now;
 		private volatile bool _timedOut;
 
@@ -168,54 +165,62 @@ namespace ClearCanvas.Web.Services
 			if (!String.IsNullOrEmpty(request.SessionId))
 			{
 				IsSessionShared = request.IsSessionShared;
-				//Have to do this so we can log out right away when the session is not shared.
-				_sessionToken = new SessionToken(request.SessionId);
 			}
 
-			UserSessionInfo sessionInfo = UserAuthentication.ValidateSession(request.Username, request.SessionId);
-			if (sessionInfo == null)
+			_session = UserAuthentication.ValidateSession(request.Username, request.SessionId);
+            if (_session == null)
 				return;
 
-			if (sessionInfo.Principal != null)
-				Thread.CurrentPrincipal = Principal = sessionInfo.Principal;
+            if (_session.Principal != null)
+                Thread.CurrentPrincipal = Principal = _session.Principal;
 
-			_sessionToken = sessionInfo.SessionToken;
 		}
 
 		private void Logout()
 		{
-			if (IsSessionShared || _sessionToken == null)
+            if (IsSessionShared || _session == null)
 				return;
 
-			UserAuthentication.Logout(_userName, _sessionToken);
+            UserAuthentication.Logout(_session);
 		}
 
 		protected void EnsureSessionIsValid()
 		{
-			if (_sessionToken == null)
+            if (_session == null)
 				return;
 
-            bool nearExpiry = Platform.Time.Add(TimeSpan.FromMinutes(_sessionRenewalOffsetMinutes)) > _sessionToken.ExpiryTime;
+            bool nearExpiry = Platform.Time.Add(TimeSpan.FromMinutes(_sessionRenewalOffsetMinutes)) > _session.SessionToken.ExpiryTime;
 			TimeSpan timeSinceLastCheck = TimeSpan.FromMilliseconds(Environment.TickCount - _lastSessionCheckTicks);
 			if (nearExpiry || timeSinceLastCheck > _sessionPollingIntervalSeconds)
 			{
 				_lastSessionCheckTicks = Environment.TickCount;
-				_sessionToken = UserAuthentication.RenewSession(_userName, _sessionToken);
-
+                _session = UserAuthentication.RenewSession(_session);
 				OnSessionRenewed();
 			}
 		}
 
+
+        protected void CheckIfSessionIsStillValid()
+        {
+            _session = UserAuthentication.ValidateSession(_session.Principal.Identity.Name, _session.SessionToken.Id);
+            _lastSessionCheckTicks = Environment.TickCount;
+            
+            if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+                Platform.Log(LogLevel.Debug, "Session {0} for user {1} is still valid. Will expire on {2}", _session.SessionToken.Id, _session.Principal.Identity.Name, _session.SessionToken.ExpiryTime);
+                
+        }
+
+
 		private void OnSessionRenewed()
 		{
-			if (_sessionToken == null)
+            if (_session == null)
 				return;
 
-			_context.FireEvent(new SessionUpdatedEvent
+		    _context.FireEvent(new SessionUpdatedEvent
 			{
 				Identifier = Guid.NewGuid(),
 				SenderId = Identifier,
-				ExpiryTimeUtc = _sessionToken.ExpiryTime.ToUniversalTime(),
+                ExpiryTimeUtc = _session.SessionToken.ExpiryTime.ToUniversalTime(),
 				Username = _userName
 			});
 		}
@@ -274,10 +279,10 @@ namespace ClearCanvas.Web.Services
 				OnStart(request);
 
 				string logMessage;
-				if (_sessionToken == null)
+                if (_session == null)
 					logMessage = String.Format("Application {0} has started.", Identifier);
 				else
-					logMessage = String.Format("Application {0} has started (user={1}, session={2}, expiry={3}).", Identifier, _userName, _sessionToken.Id, _sessionToken.ExpiryTime);
+					logMessage = String.Format("Application {0} has started (user={1}, session={2}, expiry={3}).", Identifier, _userName, _session.SessionToken.Id, _session.SessionToken.ExpiryTime);
 				
 				ConsoleHelper.Log(LogLevel.Info, ConsoleColor.Green, logMessage);
 
@@ -365,11 +370,11 @@ namespace ClearCanvas.Web.Services
 				//TODO (CR May 2010): just use the ConsoleHelper's formatting
 				string logMessage;
 				string stopMessage = String.IsNullOrEmpty(message) ? "<none>" : message;
-				if (_sessionToken == null)
+				if (_session == null)
 					logMessage = String.Format("Application {0} has stopped (message={1}).", Identifier, stopMessage);
 				else
 					logMessage = String.Format("Application {0} has stopped (user={1}, session={2}, message={3}).",
-						Identifier, _userName, _sessionToken.Id, stopMessage);
+                        Identifier, _userName, _session.SessionToken.Id, stopMessage);
 
 				ConsoleHelper.Log(LogLevel.Info, ConsoleColor.Red, logMessage);
 			}
@@ -387,39 +392,34 @@ namespace ClearCanvas.Web.Services
 					_timerMethodExecuting = true;
 				}
 
-				EnsureSessionIsValid();
+				CheckIfSessionIsStillValid();
 
-				if (!_inactivityTimeoutMinutes.HasValue)
-					return;
-
-                // TODO: Review this
-                // Per MSDN: Environment.TickCount wraps to Int32.MinValue (negative)
-                TimeSpan timeSinceLastActivity = TimeSpan.FromMilliseconds(Environment.TickCount - _lastActivityTicks);
-				if (timeSinceLastActivity > _inactivityTimeoutMinutes)
-				{
-                    _timedOut = true;
-				    Stop(SR.MessageSessionEnded);
-				}
-                else
-				{
-                    // TODO: REVIEW THIS
-                    // This is a temporary workaround to ensure the app shuts down when the connection is lost.
-                    // Although the app will eventually timed out after 11 min (_inactivityTimeoutMinutes),
-                    // for security reason it's better to detect this situation asap. 
-                    // Without a permanent connection, we now rely on the timeout and GetPendingEvent 
-                    // to guess if the client is still alive.
-                    //
-                    // Assumption: The client is supposed to send a GetPendingEvent request repeatedly while
-                    // it is idle. Assume max waiting time for GetPendingEvent is 10 seconds,
-                    // we can assume the client browser is closed or connection is lost if we don't receive 
-                    // one for 20 seconds
-                    if (DateTime.Now - _lastGetPendingTimestamp > TimeSpan.FromSeconds(20))
-				    {
-                        Stop(String.Format(SR.MessageNoCommunicationFromClientError, _lastGetPendingTimestamp));
-				    }
-				}
-
+                // TODO: REVIEW THIS
+                // This is a temporary workaround to ensure the app shuts down when the connection is lost.
+                // Although the app will eventually timed out after 11 min (_inactivityTimeoutMinutes),
+                // for security reason it's better to detect this situation asap. 
+                // Without a permanent connection, we now rely on the timeout and GetPendingEvent 
+                // to guess if the client is still alive.
+                //
+                // Assumption: The client is supposed to send a GetPendingEvent request repeatedly while
+                // it is idle. Assume max waiting time for GetPendingEvent is 10 seconds,
+                // we can assume the client browser is closed or connection is lost if we don't receive 
+                // one for 20 seconds
+                if (DateTime.Now - _lastGetPendingTimestamp > TimeSpan.FromSeconds(20))
+                {
+                    Stop(String.Format(SR.MessageNoCommunicationFromClientError, _lastGetPendingTimestamp));
+                }
 			}
+            catch(SessionDoesNotExistException)
+            {
+                _timedOut = true;
+                Stop(SR.MessageSessionEnded);
+            }
+            catch(SessionExpiredException)
+            {
+                _timedOut = true;
+                Stop(SR.MessageSessionEnded);
+            }
 			catch (Exception e)
 			{
 				Stop(e);
@@ -434,10 +434,8 @@ namespace ClearCanvas.Web.Services
 		}
 
 
-		private void DisposeMembers()
+	    private void DisposeMembers()
 		{
-            //NOTE: For non-duplex binding, this method should be called when the client has received all the pending messages.
-
 			//NOTE: This class has purposely been designed such that this method (and these members) do not need to be synchronized.
             //If you were to synchronize this method, it could deadlock with the other objects that can call
 			//back into this class.
@@ -494,7 +492,6 @@ namespace ClearCanvas.Web.Services
 
 	    private void DoProcessMessages(MessageSet messageSet)
 		{
-            _lastActivityTicks = Environment.TickCount;
             foreach (var message in messageSet.Messages)
                 ProcessMessage(message);
 		}
@@ -551,9 +548,6 @@ namespace ClearCanvas.Web.Services
 
 			application._sessionPollingIntervalSeconds = TimeSpan.FromSeconds(ApplicationServiceSettings.Default.SessionPollingIntervalSeconds);
 
-			if (ApplicationServiceSettings.Default.InactivityTimeoutMinutes > 0)
-				application._inactivityTimeoutMinutes = TimeSpan.FromMinutes(ApplicationServiceSettings.Default.InactivityTimeoutMinutes);
-
 			#endregion
 
 			//NOTE: must call start before adding to the cache; we want the app to be fully initialized before it can be accessed from outside this method.
@@ -577,4 +571,5 @@ namespace ClearCanvas.Web.Services
 
 		#endregion
 	}
+
 }

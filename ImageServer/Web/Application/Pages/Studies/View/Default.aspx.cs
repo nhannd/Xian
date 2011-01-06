@@ -14,8 +14,6 @@ using System.Configuration;
 using System.Security.Permissions;
 using System.Web;
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Enterprise.Authentication;
-using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls;
 using ClearCanvas.ImageServer.Web.Common.Security;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.View

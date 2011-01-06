@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageServer.Web.Application
         {
             Platform.Log(LogLevel.Info, "{0} has logged out.", SessionManager.Current.User.Identity.Name);
             SessionManager.SignOut();
-            Response.Redirect(SessionManager.LoginUrl);
+            Response.Redirect(SessionManager.LoginUrl, false);
         }
 
         protected void GlobalScriptManager_AsyncPostBackError(object sender, AsyncPostBackErrorEventArgs e)

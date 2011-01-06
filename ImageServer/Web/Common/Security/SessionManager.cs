@@ -10,8 +10,6 @@
 #endregion
 
 using System;
-using System.Configuration;
-using System.Globalization;
 using System.Threading;
 using System.Web;
 using System.Web.Security;
@@ -30,6 +28,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
         #region Private Fields
         private static TimeSpan _sessionTimeOut;
         #endregion
+
+        static SessionManager()
+        {
+            Platform.Log(LogLevel.Info, " Initilizing SessionManager");
+        }
 
         /// <summary>
         /// Returns the current session information
@@ -68,13 +71,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
         /// <param name="session"></param>
         public static void InitializeSession(SessionInfo session)
         {
+            // this should throw exception if the session is no longer valid. It also loads the authority tokens}
             if (!session.Valid)
             {
-                throw new SessionValidationException();
+                throw new Exception("This session is no longer valid");
             }
             else
             {
-                // this should throw exception if the session is no longer valid. It also loads the authority tokens}
                 Current = session;
 
                 string loginId = session.User.Identity.Name;
@@ -87,9 +90,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
 
                 String data = String.Format("{0}|{1}|{2}", token.Id, displayName, authorities);
 
-                DateTime expiryTime =
-                    Platform.Time.AddMinutes(Int32.Parse(ConfigurationManager.AppSettings["SessionTimeout"]));
-
+                // the expiry time is determined by the authentication service
+                DateTime expiryTime = token.ExpiryTime; 
+                
                 FormsAuthenticationTicket authTicket = new
                     FormsAuthenticationTicket(1,  // version
                                               loginId,         // user name
@@ -105,7 +108,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
 
                 //Create an unencrypted cookie that contains the userid and the expiry time so the browser
                 //can check for session timeout.
-                HttpCookie expiryCookie = new HttpCookie("ImageServer." + loginId, DateTimeFormatter.Format(expiryTime.ToUniversalTime(), ImageServerConstants.CookieDateTimeFormat));
+                HttpCookie expiryCookie = new HttpCookie(GetExpiryTimeCookieName(session), DateTimeFormatter.Format(expiryTime.ToUniversalTime(), ImageServerConstants.CookieDateTimeFormat));
                 
                 HttpContext.Current.Response.Cookies.Add(authCookie);
                 HttpContext.Current.Response.Cookies.Add(expiryCookie);
@@ -168,33 +171,39 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
         }
 
         /// <summary>
-        /// Signs out the current users without redirection to the login screen.
+        /// Signs out the current user without redirection to the login screen.
         /// </summary>
         public static void SignOut()
         {
-            SessionInfo session = Current;
-            
+            SignOut(Current);
+        }
+
+        public static void SignOut(SessionInfo session)
+        {
+
             FormsAuthentication.SignOut();
             
-            if (session!=null)
+            if (session != null)
             {
-            	try
-            	{
-					using (LoginService service = new LoginService())
-					{
-						service.Logout(session);
-					}
-            	}
-            	catch (NotSupportedException)
-            	{
-            		//ignore this.
-            	}
-				catch(Exception e)
-				{
-					Platform.Log(LogLevel.Warn, e, "Failed to log user out.");
-				}
-				
-				UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(
+                try
+                {
+                    ForceOtherPagesToLogout(session);
+
+                    using (LoginService service = new LoginService())
+                    {
+                        service.Logout(session.Credentials.SessionToken.Id);
+                    }
+                }
+                catch (NotSupportedException)
+                {
+                    //ignore this.
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Warn, e, "Failed to log user out.");
+                }
+
+                UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(
                     ServerPlatform.AuditSource,
                     EventIdentificationTypeEventOutcomeIndicator.Success,
                     UserAuthenticationEventType.Logout);
@@ -233,5 +242,36 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
                 return FormsAuthentication.LoginUrl;
             }
         }
+
+        public static string GetExpiryTimeCookieName()
+        {
+            return GetExpiryTimeCookieName(Current);
+        }
+        public static string GetExpiryTimeCookieName(SessionInfo session)
+        {
+            if (session == null)
+                return null;
+
+            string loginId = session.User.Identity.Name;
+            return "ImageServer." + loginId;
+        }
+
+        private static void ForceOtherPagesToLogout(SessionInfo session)
+        {
+            //NOTE: SessionTimeout.ascx must be updated if this method  is modified.
+
+			// Ideally we want to remove the expiry time cookie on the client.
+			// However, this is not possible. We can only update the cookie.
+			// By removing the expiry time value in the cookie, we are implicity 
+			// other pages to redirect to the login page instead. (see SessionTimeout.ascx)
+            HttpCookie expiryCookie = new HttpCookie(GetExpiryTimeCookieName(session))
+            {
+                Expires = Platform.Time.AddMinutes(5),
+                Value = string.Empty
+            };
+
+            HttpContext.Current.Response.Cookies.Set(expiryCookie);
+        }
+
     }
 }

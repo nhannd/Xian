@@ -15,6 +15,7 @@ using System.Web;
 using System.Web.Caching;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.ImageServer.Common;
 
 namespace ClearCanvas.ImageServer.Services.Common.Authentication
 {
@@ -22,7 +23,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Authentication
     {
         private readonly Cache _cache = HttpRuntime.Cache;
         private static readonly SessionTokenManager _instance = new SessionTokenManager();
-        
+        private readonly object _sync = new object();
         static public SessionTokenManager Instance
         {
             get{ return _instance; }
@@ -34,26 +35,68 @@ namespace ClearCanvas.ImageServer.Services.Common.Authentication
 
         public SessionToken FindSession(string username)
         {
-            SessionToken session = _cache[username] as SessionToken;
-            if (session != null && session.ExpiryTime > Platform.Time)
+            lock (_sync)
             {
-                session = new SessionToken(session.Id, Platform.Time.AddMinutes(Int32.Parse(ConfigurationManager.AppSettings["SessionTimeout"])));
-                AddSession(session);
-                return session;
+                SessionToken session = _cache[username] as SessionToken;
+                if (session != null)
+                {
+                    return session;
+                }
+                else
+                    return null;
             }
-            else
-                return null;
         }
 
         public void AddSession(SessionToken session)
         {
-            _cache.Insert(session.Id, session, null, Cache.NoAbsoluteExpiration, TimeSpan.FromMinutes(Int32.Parse(ConfigurationManager.AppSettings["SessionTimeout"])));
+            if (session == null)
+                throw new Exception("Token cannot be null");
+            if (session.ExpiryTime < Platform.Time)
+            {
+                throw new Exception(String.Format("Token {0} already expired. Cannot be updated.", session.Id));
+            }
+
+            lock (_sync)
+            {
+                _cache.Insert(session.Id, session, null, Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration);
+                if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+                    Platform.Log(LogLevel.Debug, "Session {0} is added", session.Id);
+            }
         }
 
         public void RemoveSession(SessionToken session)
         {
-            _cache.Remove(session.Id);
+            if (session == null)
+                throw new Exception("Token cannot be null");
+
+            lock (_sync)
+            {
+                _cache.Remove(session.Id);
+                if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+                    Platform.Log(LogLevel.Debug, "Session {0} is removed", session.Id);
+            }
         }
 
+        public SessionToken UpdateSession(SessionToken token)
+        {
+            if (token == null)
+                throw new Exception("Token cannot be null");
+
+            if (token.ExpiryTime < Platform.Time)
+            {
+                throw new Exception(String.Format("Token {0} already expired. Cannot be updated.", token.Id));
+            }
+
+            lock (_sync)
+            {
+                RemoveSession(token);
+
+                var newSession = new SessionToken(token.Id, Platform.Time + ServerPlatform.WebSessionTimeout);
+
+                AddSession(newSession);
+
+                return newSession;
+            }
+        }
     }
 }

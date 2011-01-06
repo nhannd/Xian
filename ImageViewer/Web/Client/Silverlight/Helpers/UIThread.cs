@@ -25,6 +25,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
 {
     public static class UIThread
     {
+        /// <summary>
+        /// Helper class to ensure an action is executed on the UI thread. 
+        /// If the current thread is no the UI thread, the action will be queued for execution.
+        /// </summary>
+        /// <param name="action"></param>
         public static void Execute(Action action)
         {
             if (Deployment.Current.Dispatcher.CheckAccess())

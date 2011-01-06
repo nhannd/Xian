@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="fe356e2d-e303-4b90-a7ac-c83a2e186fa2" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>true</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings>
+      <CollectionMapping TypeName="System.Collections.ObjectModel.Collection`1" Category="List" />
+    </CollectionMappings>
+    <GenerateSerializableTypes>false</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost/ImageServerTrunk/Services/ApplicationService.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="ApplicationService.xsd" MetadataType="Schema" ID="f2a9e25d-8e7d-4ca7-b2c8-594c2edac748" SourceId="1" SourceUrl="http://thanh/ImageServerTrunk/Services/ApplicationService.svc?xsd=xsd3" />
+    <MetadataFile FileName="ApplicationService1.xsd" MetadataType="Schema" ID="f7243991-0b44-4a73-a7f7-4014b9df530b" SourceId="1" SourceUrl="http://thanh/ImageServerTrunk/Services/ApplicationService.svc?xsd=xsd2" />
+    <MetadataFile FileName="ApplicationService.wsdl" MetadataType="Wsdl" ID="0968cb48-4fe9-4885-8a44-8b8ee2aa6f6f" SourceId="1" SourceUrl="http://thanh/ImageServerTrunk/Services/ApplicationService.svc?wsdl" />
+    <MetadataFile FileName="ApplicationService.disco" MetadataType="Disco" ID="d77acadb-d2a4-4085-8640-941eeabe32db" SourceId="1" SourceUrl="http://thanh/ImageServerTrunk/Services/ApplicationService.svc?disco" />
+    <MetadataFile FileName="ApplicationService2.xsd" MetadataType="Schema" ID="7ec3bd7d-6479-48ce-83e8-3ce58b43b3bd" SourceId="1" SourceUrl="http://thanh/ImageServerTrunk/Services/ApplicationService.svc?xsd=xsd4" />
+    <MetadataFile FileName="ApplicationService1.wsdl" MetadataType="Wsdl" ID="c41237c6-d0d2-4919-b59c-15da4bd18d4e" SourceId="1" SourceUrl="http://thanh/ImageServerTrunk/Services/ApplicationService.svc?wsdl=wsdl0" />
+    <MetadataFile FileName="ApplicationService3.xsd" MetadataType="Schema" ID="dc6da0b1-213c-4db0-9a17-07150180bc2d" SourceId="1" SourceUrl="http://thanh/ImageServerTrunk/Services/ApplicationService.svc?xsd=xsd1" />
+    <MetadataFile FileName="ApplicationService4.xsd" MetadataType="Schema" ID="5808f5bf-a41f-42de-87db-e50790863cb8" SourceId="1" SourceUrl="http://thanh/ImageServerTrunk/Services/ApplicationService.svc?xsd=xsd0" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

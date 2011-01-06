@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageServer.Enterprise
     public class CustomPrincipal : IPrincipal
     {
         private IIdentity _identity;
-        private readonly LoginCredentials _credentials;
+        private LoginCredentials _credentials;
 
         public CustomPrincipal(IIdentity identity, LoginCredentials credentials)
         {
@@ -38,6 +38,7 @@ namespace ClearCanvas.ImageServer.Enterprise
         public LoginCredentials Credentials
         {
             get { return _credentials; }
+            set { _credentials = value; }
         }
 
         public bool IsInRole(string role)

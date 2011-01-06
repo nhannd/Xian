@@ -28,6 +28,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (SessionManager.Current != null)
+            {
+                // already logged in. Maybe from a different page
+                HttpContext.Current.Response.Redirect(FormsAuthentication.GetRedirectUrl(SessionManager.Current.Credentials.UserName, false), true);
+            } 
+            
             DataBind();
 
             SetPageTitle(Titles.LoginPageTitle);
@@ -49,8 +55,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
 
         protected void LoginClicked(object sender, EventArgs e)
         {
+            if (SessionManager.Current != null)
+            {
+                // already logged in. Maybe from different page
+                HttpContext.Current.Response.Redirect(FormsAuthentication.GetRedirectUrl(SessionManager.Current.Credentials.UserName, false), true);
+            } 
+
             try
-            {               
+            {
                 SessionManager.InitializeSession(UserName.Text, Password.Text);
 
 				UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,

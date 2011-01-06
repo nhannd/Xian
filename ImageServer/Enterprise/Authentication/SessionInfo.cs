@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.ImageServer.Common;
 
@@ -19,13 +20,11 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
     public class SessionInfo
     {
         private readonly CustomPrincipal _user;
-        private bool _valid = false;
+        private bool _valid;
 
         public SessionInfo(CustomPrincipal user)
         {
             _user = user;
-
-            Validate(); // this would refresh the authority groups
         }
 
         public SessionInfo(string loginId, string name, SessionToken token)
@@ -38,10 +37,14 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
         /// <summary>
         /// Gets a value indicating whether or not the session information is valid.
         /// </summary>
+        /// <remarks>
+        /// Exception will be thrown if session cannot be validated in the process.
+        /// </remarks>
         public bool Valid
         {
             get
             {
+                Validate();
                 return _valid;
             }
         }
@@ -53,7 +56,10 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
 
         public LoginCredentials Credentials
         {
-            get { return _user.Credentials; }
+            get
+            {
+                return _user.Credentials;
+            }
         }
 
         private static LoginCredentials CreateLoginCredentials(string loginId, string name, SessionToken token)
@@ -65,14 +71,25 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
             return credentials;
         }
 
-        private void Validate()
+        public void Validate()
         {
             _valid = false;
+
             using(LoginService service = new LoginService())
             {
-                service.Validate(this);
+                SessionInfo sessionInfo = service.Query(this.Credentials.SessionToken.Id);
+
+                if (sessionInfo == null)
+                {
+                    throw new SessionValidationException();
+                }
+
+                _user.Credentials = sessionInfo.Credentials;
+                SessionToken newToken = service.Renew(this.Credentials.SessionToken.Id);
+                _user.Credentials.SessionToken = newToken;
                 _valid = true;
             }   
         }
+
     }
 }

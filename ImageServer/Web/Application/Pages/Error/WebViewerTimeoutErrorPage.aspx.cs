@@ -11,6 +11,7 @@
 
 using System;
 using System.Web.UI;
+using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
 
@@ -27,6 +28,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
         {
             base.Render(writer);
             SessionManager.SignOut();
+            Platform.Log(LogLevel.Info, "Session has timed out");
         }
     }
 }

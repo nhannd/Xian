@@ -10,8 +10,6 @@
 #endregion
 
 using System;
-using System.Configuration;
-using System.Security;
 using System.ServiceModel;
 using System.Web.Security;
 using ClearCanvas.Common;
@@ -56,12 +54,22 @@ namespace ClearCanvas.ImageServer.Services.Common.Authentication
             SessionToken session = SessionTokenManager.Instance.FindSession(request.SessionToken.Id);
             if (session!=null)
             {
-                string[] authorities = Roles.GetRolesForUser(request.SessionToken.Id);
-                return new ValidateSessionResponse(session, authorities);
+                if (session.ExpiryTime < Platform.Time)
+                {
+                    Platform.Log(LogLevel.Error, "Session ID {0} already expired", session.Id);
+                    throw new FaultException<UserAccessDeniedException>(new UserAccessDeniedException() { });
+                }
+
+                session = SessionTokenManager.Instance.UpdateSession(session);
+
+                if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+                    Platform.Log(LogLevel.Debug, "Session ID {0} is updated. Valid until {1}", session.Id, session.ExpiryTime);
+                return new ValidateSessionResponse(session, Roles.GetRolesForUser(session.Id));
             }
             else
             {
-                throw new FaultException<UserAccessDeniedException>(new UserAccessDeniedException());
+                Platform.Log(LogLevel.Error, "Session ID {0} does not exist", request.SessionToken.Id);
+                throw new FaultException<UserAccessDeniedException>(new UserAccessDeniedException(){});
             }
         }
 

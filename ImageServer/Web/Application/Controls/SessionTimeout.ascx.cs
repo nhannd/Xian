@@ -10,8 +10,8 @@
 #endregion
 
 using System;
-using System.Data;
 using System.Configuration;
+using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
 
 namespace ClearCanvas.ImageServer.Web.Application.Controls
@@ -23,9 +23,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         {
             get
             {
-                int duration = 30; // seconds
-                Int32.TryParse(ConfigurationManager.AppSettings.Get("ClientTimeoutWarningMinDuration"), out duration);
-                duration = Math.Min(duration, (int) SessionManager.SessionTimeout.TotalSeconds);
+                double duration = 30; // seconds
+                double.TryParse(ConfigurationManager.AppSettings.Get("ClientTimeoutWarningMinDuration"), out duration);
+                duration = Math.Min(duration, (SessionManager.Current.Credentials.SessionToken.ExpiryTime - Platform.Time).TotalSeconds);
+
                 return TimeSpan.FromSeconds(duration);
             }
         }

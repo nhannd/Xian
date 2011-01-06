@@ -9,6 +9,7 @@
 
 #endregion
 
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 
@@ -26,6 +27,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
         {
             get
             {
+                if (Thread.CurrentPrincipal is DefaultPrincipal)
+                    return Thread.CurrentPrincipal.Identity.Name;
+
                 return SessionManager.Current.User.Identity.Name;
             }
         }
@@ -34,6 +38,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
         {
             get
             {
+                if (Thread.CurrentPrincipal is DefaultPrincipal)
+                    return (Thread.CurrentPrincipal as DefaultPrincipal).SessionToken.Id;
                 return SessionManager.Current.Credentials.SessionToken.Id;
             }
         }
