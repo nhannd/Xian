@@ -87,7 +87,7 @@
 		<Message Text="@(PluginFiles)"/>
 		<Message Text="@(WebViewerPlugins)"/>
 		<Copy SkipUnchangedFiles="false" SourceFiles="@(PluginFiles)" DestinationFolder="$(ProjectDir)\bin"/>
-		<Copy SkipUnchangedFiles="false" SourceFiles="@(WebViewerPlugins)" DestinationFolder="$(ProjectDir)\bin"/>
+		<Copy SkipUnchangedFiles="true" SourceFiles="@(WebViewerPlugins)" DestinationFolder="$(ProjectDir)\bin"/>
 	</Target>
 	<Target Name="CopyBin">
 		<Message Text="Copying common assemblies into bin folder (ASP.NET Development Server must not be running)"/>
