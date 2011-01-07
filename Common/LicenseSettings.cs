@@ -48,7 +48,7 @@ namespace ClearCanvas.Common
         /// <summary>
         /// Gets the current license and machine Id.
         /// </summary>
-        void GetLicenseInfo(out string licenseKey, out string machineID);
+        void GetLicenseInfo(out string licenseKey, out string machineID, out int sessionCount);
 
         /// <summary>
         /// Sets the current license
@@ -74,10 +74,11 @@ namespace ClearCanvas.Common
     /// </summary>
     internal class LocalLicenseProvider: ILicenseProvider
     {
-        public void GetLicenseInfo(out string licenseKey, out string machineID)
+        public void GetLicenseInfo(out string licenseKey, out string machineID, out int sessionCount)
         {
             licenseKey = ApplicationSettingsExtensions.GetSharedPropertyValue(new LicenseSettings(), "LicenseKey").ToString();
             machineID = EnvironmentUtilities.MachineIdentifier;
+            sessionCount = 1;
         }
 
         public void SetLicenseInfo(string licenseKey)
@@ -95,6 +96,7 @@ namespace ClearCanvas.Common
 	    private static ILicenseProvider _licenseProvider;
         private static string _licenseKey;
 	    private static string _machineIdentifier;
+	    private static int _sessionCount;
 
         private static void CheckProvider()
         {
@@ -120,6 +122,26 @@ namespace ClearCanvas.Common
             }
         }
 
+        /// <summary>
+        /// A count of the current active sessions
+        /// </summary>
+        public static int SessionCount
+        {
+            get
+            {
+                CheckProvider();
+
+                lock (SyncRoot)
+                {
+                    if (_machineIdentifier == null)
+                    {
+                        _licenseProvider.GetLicenseInfo(out _licenseKey, out _machineIdentifier, out _sessionCount);
+                    }
+                    return _sessionCount;
+                }
+            }
+        }
+
 	    /// <summary>
         /// A unique identifier for the machine based on the processor ID and drive ID
         /// </summary>
@@ -133,7 +155,7 @@ namespace ClearCanvas.Common
                 {
                     if (_machineIdentifier == null)
                     {
-                        _licenseProvider.GetLicenseInfo(out _licenseKey, out _machineIdentifier);
+                        _licenseProvider.GetLicenseInfo(out _licenseKey, out _machineIdentifier, out _sessionCount);
                     }
                     return _machineIdentifier;
                 }
@@ -157,7 +179,7 @@ namespace ClearCanvas.Common
                 {
                     if (_machineIdentifier == null)
                     {
-                        _licenseProvider.GetLicenseInfo(out _licenseKey, out _machineIdentifier);
+                        _licenseProvider.GetLicenseInfo(out _licenseKey, out _machineIdentifier, out _sessionCount);
                     }
                     return _licenseKey;
                 }
