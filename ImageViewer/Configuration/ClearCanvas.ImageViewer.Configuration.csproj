@@ -53,6 +53,7 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="LocalFileOrDefaultValueSettingsProvider.cs" />
     <Compile Include="MultiValuedDictionary.cs" />
     <Compile Include="MonitorConfigurationApplicationComponent.cs" />
     <Compile Include="MonitorConfigurationPageProvider.cs" />
