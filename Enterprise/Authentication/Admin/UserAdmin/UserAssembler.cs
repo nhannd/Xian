@@ -23,7 +23,7 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
         internal UserSummary GetUserSummary(User user)
         {
             return new UserSummary(user.UserName, user.DisplayName, user.CreationTime, user.ValidFrom, user.ValidUntil,
-                user.LastLoginTime, user.Enabled);
+                                   user.LastLoginTime, user.Password.ExpiryTime, user.Enabled);
         }
 
         internal UserDetail GetUserDetail(User user)

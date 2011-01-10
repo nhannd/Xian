@@ -18,33 +18,37 @@ namespace ClearCanvas.Enterprise.Desktop
     {
         public UserTable()
         {
-            this.Columns.Add(new TableColumn<UserSummary, string>(SR.ColumnUserId,
-                delegate(UserSummary user) { return user.UserName; },
-                0.5f));
+            Columns.Add(new TableColumn<UserSummary, string>(SR.ColumnUserId,
+                                                             user => user.UserName,
+                                                             0.5f));
 
-            this.Columns.Add(new TableColumn<UserSummary, string>(SR.ColumnUserName,
-                delegate(UserSummary user) { return user.DisplayName; },
-                1.0f));
+            Columns.Add(new TableColumn<UserSummary, string>(SR.ColumnUserName,
+                                                             user => user.DisplayName,
+                                                             1.0f));
 
-            this.Columns.Add(new DateTimeTableColumn<UserSummary>("Created On",
-                delegate(UserSummary user) { return user.CreationTime; },
-                0.75f));
+            Columns.Add(new DateTimeTableColumn<UserSummary>("Created On",
+                                                             user => user.CreationTime,
+                                                             0.75f));
 
-            this.Columns.Add(new TableColumn<UserSummary, bool>("Enabled",
-               delegate(UserSummary user) { return user.Enabled; },
-               0.25f));
+            Columns.Add(new TableColumn<UserSummary, bool>("Enabled",
+                                                           user => user.Enabled,
+                                                           0.25f));
 
-			this.Columns.Add(new DateTimeTableColumn<UserSummary>("Valid From",
-                delegate(UserSummary user) { return user.ValidFrom; },
-                0.75f));
+            Columns.Add(new DateTimeTableColumn<UserSummary>("Valid From",
+                                                             user => user.ValidFrom,
+                                                             0.75f));
 
-			this.Columns.Add(new DateTimeTableColumn<UserSummary>("Valid Until",
-               delegate(UserSummary user) { return user.ValidUntil; },
-               0.75f));
+            Columns.Add(new DateTimeTableColumn<UserSummary>("Valid Until",
+                                                             user => user.ValidUntil,
+                                                             0.75f));
 
-			this.Columns.Add(new DateTimeTableColumn<UserSummary>("Last Login Time",
-               delegate(UserSummary user) { return user.LastLoginTime; },
-               0.75f));
+            Columns.Add(new DateTimeTableColumn<UserSummary>("Password Expiry",
+                                                             user => user.PasswordExpiry,
+                                                             0.75f));
+
+            Columns.Add(new DateTimeTableColumn<UserSummary>("Last Login Time",
+                                                             user => user.LastLoginTime,
+                                                             0.75f));
         }
     }
 }

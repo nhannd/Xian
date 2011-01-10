@@ -11,7 +11,6 @@
 
 using System;
 using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Common.Admin.UserAdmin
 {
@@ -19,15 +18,16 @@ namespace ClearCanvas.Enterprise.Common.Admin.UserAdmin
     public class UserSummary : DataContractBase
     {
         public UserSummary(string userId, string displayName, DateTime creationTime, DateTime? validFrom, DateTime? validUntil,
-            DateTime? lastLoginTime, bool enabled)
+            DateTime? lastLoginTime, DateTime? passwordExpiry, bool enabled)
         {
-            this.UserName = userId;
-            this.DisplayName = displayName;
-            this.CreationTime = creationTime;
-            this.ValidFrom = validFrom;
-            this.ValidUntil = validUntil;
-            this.LastLoginTime = lastLoginTime;
-            this.Enabled = enabled;
+            UserName = userId;
+            DisplayName = displayName;
+            CreationTime = creationTime;
+            ValidFrom = validFrom;
+            ValidUntil = validUntil;
+            LastLoginTime = lastLoginTime;
+            Enabled = enabled;
+            PasswordExpiry = passwordExpiry;
         }
 
         [DataMember]
@@ -50,6 +50,9 @@ namespace ClearCanvas.Enterprise.Common.Admin.UserAdmin
 
         [DataMember]
         public bool Enabled;
+
+        [DataMember]
+        public DateTime? PasswordExpiry;
 
         protected bool Equals(UserSummary userSummary)
         {
