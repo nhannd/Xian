@@ -115,7 +115,9 @@ namespace ClearCanvas.Healthcare
 						cp => args.OrderingFacility.InformationAuthority.Equals(cp.InformationAuthority) && cp.Deactivated == false)
 					// or, use the default contact point
 					?? CollectionUtils.SelectFirst(args.OrderingPractitioner.ContactPoints, cp => cp.IsDefaultContactPoint)
-					// or, if no default, use first available (should never happen)
+					// or, if no default, use first available active CP (should never happen)
+					?? CollectionUtils.SelectFirst(args.OrderingPractitioner.ContactPoints, cp => !cp.Deactivated)
+					// or, if no active CPs, use first in the collection (should never happen)
 					?? CollectionUtils.FirstElement(args.OrderingPractitioner.ContactPoints);
 
 				if (orderingPractitionerContactPoint != null)
