@@ -66,6 +66,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._warning = new System.Windows.Forms.Label();
 			this.panel1 = new System.Windows.Forms.Panel();
+			this._informationAuthority = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
 			this._hasErrors = new System.Windows.Forms.Label();
 			this._imagesUnavailable = new System.Windows.Forms.Label();
@@ -100,7 +101,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
 			this.checkBox2 = new System.Windows.Forms.CheckBox();
 			this.lookupField1 = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
-			this._informationAuthority = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
@@ -207,6 +207,19 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(425, 197);
 			this.panel1.TabIndex = 0;
+			// 
+			// _informationAuthority
+			// 
+			this._informationAuthority.DataSource = null;
+			this._informationAuthority.DisplayMember = "";
+			this._informationAuthority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._informationAuthority.LabelText = "Associated Information Authority (if applicable)";
+			this._informationAuthority.Location = new System.Drawing.Point(14, 147);
+			this._informationAuthority.Margin = new System.Windows.Forms.Padding(2);
+			this._informationAuthority.Name = "_informationAuthority";
+			this._informationAuthority.Size = new System.Drawing.Size(224, 41);
+			this._informationAuthority.TabIndex = 4;
+			this._informationAuthority.Value = null;
 			// 
 			// tableLayoutPanel2
 			// 
@@ -647,19 +660,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.lookupField1.Size = new System.Drawing.Size(299, 43);
 			this.lookupField1.TabIndex = 0;
 			this.lookupField1.Value = null;
-			// 
-			// _informationAuthority
-			// 
-			this._informationAuthority.DataSource = null;
-			this._informationAuthority.DisplayMember = "";
-			this._informationAuthority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this._informationAuthority.LabelText = "Information Authority";
-			this._informationAuthority.Location = new System.Drawing.Point(14, 147);
-			this._informationAuthority.Margin = new System.Windows.Forms.Padding(2);
-			this._informationAuthority.Name = "_informationAuthority";
-			this._informationAuthority.Size = new System.Drawing.Size(224, 41);
-			this._informationAuthority.TabIndex = 4;
-			this._informationAuthority.Value = null;
 			// 
 			// ExternalPractitionerContactPointDetailsEditorComponentControl
 			// 
