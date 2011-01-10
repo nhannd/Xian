@@ -52,5 +52,11 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 
 		[DataMember]
 		public bool DryRun;
+
+		/// <summary>
+		/// Validation will always be performed for dry-run.  But if only validation is needed, set this flag to true.  The DryRun flag will then be ignored.
+		/// </summary>
+		[DataMember]
+		public bool ValidationOnly;
 	}
 }

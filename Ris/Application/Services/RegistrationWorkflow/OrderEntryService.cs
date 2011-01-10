@@ -296,6 +296,9 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			Platform.CheckTrue(request.SourceOrderRefs.Count > 0, "SourceOrderRefs.Count > 0");
 			Platform.CheckMemberIsSet(request.DestinationOrderRef, "DestinationOrderRef");
 
+			if (request.ValidationOnly)
+				return MergeOrderValidation(request);
+
 			if (request.DryRun)
 				return MergeOrderDryRun(request);
 
@@ -616,7 +619,24 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			catch (WorkflowException e)
 			{
 				// changes not accepted, probably because two invalid orders are being merged.
-				response.DryRunFailureReason = e.Message;
+				response.ValidationFailureReason = e.Message;
+			}
+
+			return response;
+		}
+
+		private MergeOrderResponse MergeOrderValidation(MergeOrderRequest request)
+		{
+			var destOrder = this.PersistenceContext.Load<Order>(request.DestinationOrderRef);
+			var mergeInfo = new OrderMergeInfo(this.CurrentUserStaff, destOrder);
+
+			var response = new MergeOrderResponse();
+			foreach (var sourceOrderRef in request.SourceOrderRefs)
+			{
+				var srcOrder = this.PersistenceContext.Load<Order>(sourceOrderRef);
+
+				if (!srcOrder.CanMerge(mergeInfo, out response.ValidationFailureReason))
+					break;
 			}
 
 			return response;

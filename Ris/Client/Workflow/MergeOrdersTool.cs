@@ -97,12 +97,37 @@ namespace ClearCanvas.Ris.Client.Workflow
 			var orderRefs = CollectionUtils.Map<TItem, EntityRef>(list, x => x.OrderRef);
 			var component = new MergeOrdersComponent(orderRefs);
 
+			string failureReason;
+			if (!ValidateMergeRequest(orderRefs, out failureReason))
+			{
+				this.Context.DesktopWindow.ShowMessageBox(failureReason, MessageBoxActions.Ok);
+				return false;
+			}
+
 			if (ApplicationComponentExitCode.Accepted != ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, component, SR.TitleMergeOrders))
 				return false;
 
 			InvalidateFolders();
 
 			return true;
+		}
+
+		private static bool ValidateMergeRequest(IList<EntityRef> orderRefs, out string failureReason)
+		{
+			var destinationOrderRef = orderRefs[0];
+			var sourceOrderRefs = new List<EntityRef>(orderRefs);
+			sourceOrderRefs.Remove(destinationOrderRef);
+
+			MergeOrderResponse response = null;
+			Platform.GetService(
+				delegate(IOrderEntryService service)
+				{
+					var request = new MergeOrderRequest(sourceOrderRefs, destinationOrderRef) { ValidationOnly = true };
+					response = service.MergeOrder(request);
+				});
+
+			failureReason = response.ValidationFailureReason;
+			return string.IsNullOrEmpty(failureReason);
 		}
 	}
 

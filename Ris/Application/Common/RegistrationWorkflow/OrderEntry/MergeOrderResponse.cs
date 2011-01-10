@@ -44,9 +44,9 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 		public OrderDetail DryRunMergedOrder;
 
 		/// <summary>
-		/// If a dry-run was requested and failed, specifies the failure reason.
+		/// If a dry-run or validation was requested and failed, specifies the failure reason.
 		/// </summary>
 		[DataMember]
-		public string DryRunFailureReason;
+		public string ValidationFailureReason;
 	}
 }

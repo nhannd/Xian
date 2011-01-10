@@ -253,7 +253,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					response = service.MergeOrder(request);
 				});
 
-			failureReason = response.DryRunFailureReason;
+			failureReason = response.ValidationFailureReason;
 			mergedOrder = response.DryRunMergedOrder;
 		}
 	}
