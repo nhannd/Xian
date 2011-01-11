@@ -11,6 +11,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using ClearCanvas.Common.Utilities;
 
@@ -25,18 +26,17 @@ namespace ClearCanvas.Desktop.View.WinForms
         public DateTimeField()
         {
             InitializeComponent();
-
-            _dateTimePicker.ValueChanged += new EventHandler(DateTimePickerValueChangedEventHandler);
-        }
-
-        private void DateTimePickerValueChangedEventHandler(object sender, EventArgs e)
-        {
-            FireValueChanged();
         }
 
         private void FireValueChanged()
         {
-            EventsHelper.Fire(_valueChanged, this, EventArgs.Empty);
+        	// This is the fix for #7632
+        	// There is an old (circa .NET 1) bug in the WinForms DateTimePicker control wrapper
+        	// This bug causes the ValueChanged event of the control to not always fire (particularly when the user clicks the checkbox to clear the value)
+        	// Fortunately, the bug is in the wrapper, not the underlying MFC control, so we manually trigger the event when we:
+        	// 1. detect the WM_NOTIFY message which tells us when the UI initiates a value change
+        	// 2. detect when our Value property setter changes the value through code
+        	EventsHelper.Fire(_valueChanged, this, EventArgs.Empty);
         }
 
         [DefaultValue(false)]
@@ -85,6 +85,8 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
             set
             {
+            	var oldValue = Value;
+
                 bool isNull = TestNull(value);
                 if (!isNull)
                 {
@@ -96,6 +98,10 @@ namespace ClearCanvas.Desktop.View.WinForms
                 }
 
                 _dateTimePicker.Checked = !isNull;
+
+            	// trigger ValueChanged event manually if the value changed here
+            	if (!oldValue.Equals(value))
+            		FireValueChanged();
             }
         }
 
@@ -150,5 +156,38 @@ namespace ClearCanvas.Desktop.View.WinForms
                 _dateTimePicker.CustomFormat = "";
         }
 
+		protected override void WndProc(ref Message m)
+		{
+			base.WndProc(ref m);
+
+			// perform special handling if it's a WM_NOTIFY message from the date time picker
+			if (m.Msg == (int) WindowsMessages.WM_NOTIFY && m.WParam == _dateTimePicker.Handle)
+			{
+				// if the NMHDR indicates a UI-initiated value change, trigger our ValueChanged event
+				const uint DTN_DATETIMECHANGE = 0xFFFFFD09;
+				var nmhdr = (NMHDR) m.GetLParam(typeof (NMHDR));
+				if (nmhdr.code == DTN_DATETIMECHANGE)
+					FireValueChanged();
+			}
+		}
+
+		#region NMHDR Struct
+
+		// ReSharper disable InconsistentNaming
+
+		/// <summary>
+		/// Base lParam structure for WM_NOTIFY messages.
+		/// </summary>
+		[StructLayout(LayoutKind.Sequential)]
+		private struct NMHDR
+		{
+			public IntPtr hwndFrom;
+			public uint idFrom;
+			public uint code;
+		}
+
+		// ReSharper restore InconsistentNaming 
+
+		#endregion
     }
 }
