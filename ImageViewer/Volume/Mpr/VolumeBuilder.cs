@@ -378,6 +378,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 						throw new MultipleFramesOfReferenceException();
 				}
 
+				// ensure all frames are of the same supported format
+				foreach (IFrameReference frame in _frames)
+				{
+					if (frame.Frame.BitsAllocated != 16)
+						throw new UnsupportedPixelFormatSourceImagesException();
+				}
+
 				// ensure all frames have the same orientation
 				ImageOrientationPatient orient = _frames[0].Frame.ImageOrientationPatient;
 				foreach (IFrameReference frame in _frames)

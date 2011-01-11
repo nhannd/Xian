@@ -156,6 +156,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 					throw new NullImageOrientationException();
 				}
 
+				// if the current frame is not a supported pixel format, then it is always an error
+				if (currentFrame.BitsAllocated != 16)
+					throw new UnsupportedPixelFormatSourceImagesException();
+
 				// perform a very basic filtering of the selected display set based on the currently selected image
 				var filteredFrames = new List<Frame>();
 				foreach (IPresentationImage image in displaySet.PresentationImages)
