@@ -12,29 +12,26 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Shreds;
-using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.Server.ShredHost;
+using ClearCanvas.ImageServer.Services.Common.Misc;
 
 namespace ClearCanvas.ImageServer.Services.Common.Shreds
 {
     /// <summary>
-    /// Plugin to host ImageServer-specific web services.
+    /// Plugin to host Usage Tracking service.
     /// </summary>
     [ExtensionOf(typeof(ShredExtensionPoint))]
-    public class RemoteServicesServer : WcfShred
+    public class UsageTrackingShred : Shred
     {
-
         #region Private Members
 
         private readonly string _className;
-        private ServiceMount _serviceMount;
+        private UsageTrackingService _service;
 
         #endregion
 
         #region Constructors
 
-        public RemoteServicesServer()
+        public UsageTrackingShred()
         {
             _className = GetType().ToString();
         }
@@ -49,36 +46,30 @@ namespace ClearCanvas.ImageServer.Services.Common.Shreds
 
             try
             {
-                MountWebServices();
+                _service = new UsageTrackingService();
+                _service.Start();
             }
             catch (Exception e)
             {
-                Platform.Log(LogLevel.Fatal, e, "Unexpected exception starting Web Services Server Shred");
+                Platform.Log(LogLevel.Fatal, e, "Unexpected exception starting {0}", GetDisplayName());
             }
-        }
-
-        private void MountWebServices()
-        {
-            _serviceMount = new ServiceMount(new Uri(WebServicesSettings.Default.BaseUri), typeof(ServerWsHttpConfiguration).AssemblyQualifiedName);
-            _serviceMount.AddServices(new ApplicationServiceExtensionPoint());
-            _serviceMount.OpenServices();
         }
 
         public override void Stop()
         {
             Platform.Log(LogLevel.Info, "{0}[{1}]: Stop invoked", _className, AppDomain.CurrentDomain.FriendlyName);
-            if (_serviceMount!=null)
-                _serviceMount.CloseServices();
+            if (_service != null)
+                _service.Stop();
         }
 
         public override string GetDisplayName()
         {
-            return SR.RemoteImageServerServicesServer;
+            return SR.UsageTrackingService;
         }
 
         public override string GetDescription()
         {
-            return SR.RemoteImageServerServicesServerDescription;
+            return SR.UsageTrackingServiceDescription;
         }
 
         #endregion

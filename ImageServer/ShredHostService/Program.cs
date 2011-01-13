@@ -41,10 +41,6 @@ namespace ClearCanvas.ImageServer.ShredHostService
             }
             else
             {
-                UsageMessage theMessage = UsageUtilities.GetUsageMessage();
-                theMessage.MessageType = UsageType.Startup;
-                UsageUtilities.Register(theMessage, UsageTrackingThread.Background);
-
                 Thread.CurrentThread.Name = "Main thread";
                 if (!ManifestVerification.Valid)
                     Console.WriteLine("The manifest detected an invalid installation.");
