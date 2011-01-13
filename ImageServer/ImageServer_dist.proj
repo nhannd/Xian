@@ -51,7 +51,6 @@
   </ItemGroup>
 
   <ItemGroup>
-	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\common\app.config" />
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Enterprise\Common\app.config" />
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\ShredHostService\app.config" />
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Dicom\app.config" />
@@ -67,6 +66,7 @@
     <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageViewer\Web\Server\ImageServer\app.config" />
     <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageViewer\Web\app.config" />
     <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\ImageServer_Shreds_dist.config" />
+	<ShredHostAppCriticalConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\ImageServer_Shreds_dist.critical.config" />
   </ItemGroup>
 
   <ItemGroup>
@@ -139,7 +139,15 @@
 
   <!-- ShredHost App Config -->
   <Target Name="Copy ShredHost App Config">
-    <CombineAppConfigs CheckDependency="false" SourceFiles="@(ShredHostAppConfigCreatorSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.ImageServer.ShredHostService.exe.config"/>
+    <CombineAppConfigs CheckDependency="false" 
+					   SourceFiles="@(ShredHostAppConfigCreatorSourceFiles)" 
+					   OutputFile="$(DistributionDirectory)\ClearCanvas.ImageServer.ShredHostService.exe.config"/>
+
+	  <CombineAppConfigs CheckDependency="false"
+							 SourceFiles="@(ShredHostAppCriticalConfigCreatorSourceFiles)"
+							 OutputFile="$(DistributionDirectory)\ClearCanvas.ImageServer.ShredHostService.exe.critical.config"/>
+
+	  
   </Target>
 
   <!-- ImageServer.Executable App Config -->

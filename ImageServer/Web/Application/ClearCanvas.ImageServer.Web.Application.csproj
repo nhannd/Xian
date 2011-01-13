@@ -1914,7 +1914,7 @@
     <Content Include="App_Themes\Default\images\Indicators\HelpSmall.png" />
     <EmbeddedResource Include="App_GlobalResources\SR.resx">
       <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <Content Include="Services\FilesystemInfoService.asmx" />

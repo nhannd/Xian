@@ -83,6 +83,12 @@
     <Compile Include="ImageStreamingStressTest.Designer.cs">
       <DependentUpon>ImageStreamingStressTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="ProductVerificationTest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProductVerificationTest.Designer.cs">
+      <DependentUpon>ProductVerificationTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Service References\services.cs">
       <DependentUpon>services.map</DependentUpon>
     </Compile>
@@ -148,6 +154,9 @@
     <EmbeddedResource Include="ImageStreamingStressTest.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ImageStreamingStressTest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProductVerificationTest.resx">
+      <DependentUpon>ProductVerificationTest.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="StreamingTest.resx">
       <SubType>Designer</SubType>
@@ -279,6 +288,10 @@
       <Project>{523EDDC1-7C6E-404D-A8ED-5F043F5E6BE3}</Project>
       <Name>ClearCanvas.ImageServer.Rules</Name>
       <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Services\Common\ClearCanvas.ImageServer.Services.Common.csproj">
+      <Project>{6863F5CE-F1D3-46A7-915C-DE02D1452EED}</Project>
+      <Name>ClearCanvas.ImageServer.Services.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -41,6 +41,8 @@ namespace ClearCanvas.ImageServer.Common
     	private static string _hostId;
     	private static string _serverInstanceId;
     	private static string _processorId;
+
+        private static bool? _manifestVerified;
     	#endregion
 
         /// <summary>
@@ -354,7 +356,39 @@ namespace ClearCanvas.ImageServer.Common
     		}
     	}
 
-		public static StudyHistory CreateStudyHistoryRecord(IUpdateContext updateContext,
+
+	    public static bool IsManifestVerified
+	    {
+	        get
+	        {
+                lock (_syncLock)
+                {
+                    if (_manifestVerified==null)
+                    {
+                        lock (_syncLock)
+                        {
+                            try
+                            {
+                                Platform.GetService(delegate(IProductVerificationService service)
+                                                        {
+                                                            var result = service.Verify(new ProductVerificationRequest());
+                                                            _manifestVerified = result.IsManifestValid;
+                                                        }
+                                    );
+                            }
+                            catch(Exception ex)
+                            {
+                                Platform.Log(LogLevel.Error, ex, "Unable to verify shred host service manifest");
+                            }
+                        }
+                    }
+                }
+
+                return _manifestVerified.HasValue ? _manifestVerified.Value : false;
+	        }
+	    }
+
+	    public static StudyHistory CreateStudyHistoryRecord(IUpdateContext updateContext,
 			StudyStorageLocation primaryStudyLocation, StudyStorageLocation secondaryStudyLocation,
 			StudyHistoryTypeEnum type, object entryInfo, object changeLog)
 		{

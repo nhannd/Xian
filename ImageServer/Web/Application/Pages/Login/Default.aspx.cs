@@ -21,6 +21,7 @@ using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
+using SR=ClearCanvas.ImageServer.Web.Application.App_GlobalResources.SR;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
 {
@@ -34,6 +35,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                 HttpContext.Current.Response.Redirect(FormsAuthentication.GetRedirectUrl(SessionManager.Current.Credentials.UserName, false), true);
             } 
             
+            if (!ServerPlatform.IsManifestVerified)
+            {
+                ManifestWarningTextLabel.Text = SR.NonStandardInstallation;
+            }
+
             DataBind();
 
             SetPageTitle(Titles.LoginPageTitle);

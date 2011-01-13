@@ -1,3 +1,14 @@
+<-- License
+
+// Copyright (c) 2010, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+-->
+
 <%@ Page Language="C#" AutoEventWireup="true" Codebehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Login._Default" %>
 <%@ Import namespace="ClearCanvas.ImageServer.Common"%>
 
@@ -33,6 +44,10 @@
         <div id="LoginCredentials">
         
         <table>      
+            <tr>
+            <td align="right" colspan="2"><asp:Label runat="server" ID="ManifestWarningTextLabel" CssClass="ManifestWarningTextLabel"
+            ></asp:Label></td>
+            </tr>
             <tr>
             <td align="right">User ID:</td>
             <td align="right"><asp:TextBox runat="server" ID="UserName" Width="100" CssClass="LoginTextInput"></asp:TextBox></td>

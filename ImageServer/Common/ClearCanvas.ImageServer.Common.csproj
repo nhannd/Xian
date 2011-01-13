@@ -94,6 +94,8 @@
     <Compile Include="FilesystemSelector.cs" />
     <Compile Include="InProcessImageServerServiceProvider.cs" />
     <Compile Include="ServiceModel\IFilesystemService.cs" />
+    <Compile Include="ServiceModel\IProductVerificationService.cs" />
+    <Compile Include="ServiceModel\ProductVerificationResponse.cs" />
     <Compile Include="ServiceMount.cs" />
     <Compile Include="Helpers\StudyComparer.cs" />
     <Compile Include="HttpServer.cs" />

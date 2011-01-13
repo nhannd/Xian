@@ -1036,6 +1036,7 @@ THE SOFTWARE.
   <div style="margin-left: 20px; margin-top: 20px; font-size: 20px; color: #205F87">
   <span style="font-weight: bold; font-size: 16px; "><%= ProductInformation.GetNameAndVersion(false,true)%> [<%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%>]</span><br />
   <div style="font-weight: bold; font-size: 16px; ">Part of the ClearCanvas RIS/PACS</div>
+  <div style="font-weight:bold; font-size:12pt; color:Red"><%= ServerPlatform.IsManifestVerified? "": ClearCanvas.ImageServer.Web.Application.App_GlobalResources.SR.NonStandardInstallation %></div>
 
 <p><b>ClearCanvas Inc.</b><br />
 1920-439 University Ave.<br />
@@ -1047,7 +1048,6 @@ Canada
 </p>
 <p>
   <span style="color: #999999; font-size: 12px; font-weight: bold;">Server Regional Settings: <%=System.Globalization.CultureInfo.CurrentCulture %>, <%=System.Globalization.CultureInfo.CurrentUICulture %></span><br />
-  <span style="color: #999999; font-size: 12px; font-weight: bold;">Mode: <%= EnterpriseMode ? "Enterprise" : "Stand-alone"%></span><br />  
 </p>
 
 <p style="font-weight: bold;">

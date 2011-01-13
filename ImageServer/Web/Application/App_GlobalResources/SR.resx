@@ -450,4 +450,7 @@
   <data name="NoFiltersSearchWarning" xml:space="preserve">
     <value>With no filters specified, this search may return a large number of studies.&lt;br/&gt;Are you sure you want to continue?</value>
   </data>
+  <data name="NonStandardInstallation" xml:space="preserve">
+    <value>This is a non-standard installation</value>
+  </data>
 </root>
