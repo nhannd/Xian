@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
 
 namespace ClearCanvas.Dicom.Codec
 {
@@ -23,7 +22,8 @@ namespace ClearCanvas.Dicom.Codec
     {
         #region Private Members
 
-    	private static readonly Dictionary<TransferSyntax, IDicomCodecFactory> _dictionary;
+        private static readonly List<IDicomCodecFactory> Codecs;
+    	private static readonly Dictionary<TransferSyntax, IDicomCodecFactory> Dictionary;
 
 		#endregion
 
@@ -31,15 +31,18 @@ namespace ClearCanvas.Dicom.Codec
         
 		static DicomCodecRegistry()
         {
-			_dictionary = new Dictionary<TransferSyntax, IDicomCodecFactory>();
-
+			Dictionary = new Dictionary<TransferSyntax, IDicomCodecFactory>();
+            Codecs = new List<IDicomCodecFactory>();
 			try
 			{
 				DicomCodecFactoryExtensionPoint ep = new DicomCodecFactoryExtensionPoint();
 				object[] codecFactories = ep.CreateExtensions();
 
-				foreach (IDicomCodecFactory codecFactory in codecFactories)
-					_dictionary[codecFactory.CodecTransferSyntax] = codecFactory;
+                foreach (IDicomCodecFactory codecFactory in codecFactories)
+                {
+                    Codecs.Add(codecFactory);
+                    Dictionary[codecFactory.CodecTransferSyntax] = codecFactory;
+                }
 			}
 			catch(NotSupportedException)
 			{
@@ -60,8 +63,8 @@ namespace ClearCanvas.Dicom.Codec
 		/// </summary>
 		public static TransferSyntax[] GetCodecTransferSyntaxes()
 		{
-			TransferSyntax[] syntaxes = new TransferSyntax[_dictionary.Count];
-			_dictionary.Keys.CopyTo(syntaxes, 0);
+			TransferSyntax[] syntaxes = new TransferSyntax[Dictionary.Count];
+			Dictionary.Keys.CopyTo(syntaxes, 0);
 			return syntaxes;
 		}
 
@@ -70,9 +73,9 @@ namespace ClearCanvas.Dicom.Codec
     	/// </summary>
 		public static IDicomCodec[] GetCodecs()
 		{
-			IDicomCodec[] codecs = new IDicomCodec[_dictionary.Count];
+			IDicomCodec[] codecs = new IDicomCodec[Codecs.Count];
 			int i = 0;
-			foreach (IDicomCodecFactory factory in _dictionary.Values)
+			foreach (IDicomCodecFactory factory in Codecs)
 				codecs[i++] = factory.GetDicomCodec();
 
 			return codecs;
@@ -81,14 +84,14 @@ namespace ClearCanvas.Dicom.Codec
 		/// <summary>
 		/// Gets an array <see cref="IDicomCodecFactory"/> instances.
 		/// </summary>
-		/// <returns></returns>
+		/// <remarks>
+		/// Extensions are loaded for the codec factories.  If more than one codec support a <see cref="TransferSyntax"/>,
+		/// both codecs are returned in this list, although only one would be used.
+		/// </remarks>
+		/// <returns>An array of codec factories.</returns>
 		public static IDicomCodecFactory[] GetCodecFactories()
-		{
-			DicomCodecFactoryExtensionPoint ep = new DicomCodecFactoryExtensionPoint();
-			object[] extensions = ep.CreateExtensions();
-			IDicomCodecFactory[] codecFactories = new IDicomCodecFactory[extensions.Length];
-			extensions.CopyTo(codecFactories, 0);
-			return codecFactories;
+		{			
+			return Codecs.ToArray();
 		}
 		
 		/// <summary>
@@ -99,10 +102,20 @@ namespace ClearCanvas.Dicom.Codec
         public static IDicomCodec GetCodec(TransferSyntax syntax)
         {
 			IDicomCodecFactory factory;
-            if (!_dictionary.TryGetValue(syntax, out factory))
+            if (!Dictionary.TryGetValue(syntax, out factory))
                 return null;
 
             return factory.GetDicomCodec();
+        }
+
+        /// <summary>
+        /// Set an <see cref="IDicomCodecFactory"/> for a transfer syntax, overriding the current value.
+        /// </summary>
+        /// <param name="syntax">The transfer syntax of the codec.</param>
+        /// <param name="factory">The factor for the codec.</param>
+        public static void SetCodec(TransferSyntax syntax, IDicomCodecFactory factory)
+        {
+            Dictionary[syntax] = factory;
         }
 
         /// <summary>
@@ -114,7 +127,7 @@ namespace ClearCanvas.Dicom.Codec
         public static DicomCodecParameters GetCodecParameters(TransferSyntax syntax, DicomAttributeCollection collection)
         {
 			IDicomCodecFactory factory;
-			if (!_dictionary.TryGetValue(syntax, out factory))
+			if (!Dictionary.TryGetValue(syntax, out factory))
 				return null;
 
             return factory.GetCodecParameters(collection);
