@@ -133,7 +133,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="_lyoNodePropertiesExtensions.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 63</value>
+    <value>10, 76</value>
   </data>
   <data name="_lyoNodePropertiesExtensions.Size" type="System.Drawing.Size, System.Drawing">
     <value>224, 0</value>
@@ -155,6 +155,30 @@
   </data>
   <data name="&gt;&gt;_lyoNodePropertiesExtensions.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="_lblDescription.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="_lblDescription.Location" type="System.Drawing.Point, System.Drawing">
+    <value>10, 63</value>
+  </data>
+  <data name="_lblDescription.Size" type="System.Drawing.Size, System.Drawing">
+    <value>224, 13</value>
+  </data>
+  <data name="_lblDescription.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;_lblDescription.Name" xml:space="preserve">
+    <value>_lblDescription</value>
+  </data>
+  <data name="&gt;&gt;_lblDescription.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_lblDescription.Parent" xml:space="preserve">
+    <value>_pnlNodeProperties</value>
+  </data>
+  <data name="&gt;&gt;_lblDescription.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="_lblLabel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -247,7 +271,7 @@
     <value>_pnlNodeProperties</value>
   </data>
   <data name="&gt;&gt;_pnlTitleBar.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="_pnlNodeProperties.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>

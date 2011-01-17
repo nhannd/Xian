@@ -50,6 +50,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		private IResourceResolver _resourceResolver = null;
 		private PathSegment _pathSegment = null;
 		private string _canonicalLabel = null;
+		private string _description = null;
 		private string _tooltip = string.Empty;
 		private CheckState _checkState = CheckState.Unchecked;
 		private bool _isExpanded = false;
@@ -93,6 +94,19 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 					_canonicalLabel = _escapeRegex.Replace(this.Label, "$1");
 				}
 				return _canonicalLabel;
+			}
+		}
+
+		public string Description
+		{
+			get { return _description; }
+			protected set
+			{
+				if (_description != value)
+				{
+					_description = value;
+					NotifyItemChanged();
+				}
 			}
 		}
 
