@@ -34,10 +34,10 @@ namespace ClearCanvas.Common.Utilities
 			{
 				if (_machineIdentifier == null)
 				{
-					var input = Encoding.Default.GetBytes(string.Format("CLEARCANVASRTW_{0}_{1}_{2}", GetProcessorId(), GetMotherboardSerial(), GetDiskSerial()));
+					var input = string.Format("CLEARCANVASRTW::{0}::{1}::{2}", GetProcessorId(), GetMotherboardSerial(), GetDiskSerial());
 					using (var sha256 = new SHA256Managed())
 					{
-						_machineIdentifier = Convert.ToBase64String(sha256.ComputeHash(input));
+						_machineIdentifier = Convert.ToBase64String(sha256.ComputeHash(Encoding.Default.GetBytes(input)));
 					}
 				}
 				return _machineIdentifier;
@@ -48,16 +48,34 @@ namespace ClearCanvas.Common.Utilities
 		{
 			try
 			{
-				// read the cpuid of the first processor
+				// read the CPUID of the first processor
 				using (var searcher = new ManagementObjectSearcher("SELECT ProcessorId FROM Win32_Processor"))
 				{
 					using (var results = new ManagementObjectSearcherResults(searcher))
 					{
 						foreach (var processor in results)
 						{
-							var processorId = processor["ProcessorId"];
-							if (processorId != null)
-								return processorId.ToString().Trim();
+							var processorId = ReadString(processor, "ProcessorId");
+							if (!string.IsNullOrEmpty(processorId))
+								return processorId.Trim();
+						}
+					}
+				}
+
+				// if the processor doesn't support the CPUID opcode, concatenate some immutable characteristics of the processor
+				using (var searcher = new ManagementObjectSearcher("SELECT Manufacturer, AddressWidth, Architecture, Family, Level, Revision FROM Win32_Processor"))
+				{
+					using (var results = new ManagementObjectSearcherResults(searcher))
+					{
+						foreach (var processor in results)
+						{
+							var manufacturer = ReadString(processor, "Manufacturer");
+							var addressWidth = ReadUInt16(processor, "AddressWidth");
+							var architecture = ReadUInt16(processor, "Architecture");
+							var family = ReadUInt16(processor, "Family");
+							var level = ReadUInt16(processor, "Level");
+							var revision = ReadUInt16(processor, "Revision");
+							return string.Format("CPU-{0}-{1}-{2:X2}-{3:X2}-{4}-{5:X4}", manufacturer, addressWidth, architecture, family, level, revision);
 						}
 					}
 				}
@@ -80,9 +98,9 @@ namespace ClearCanvas.Common.Utilities
 					{
 						foreach (var motherboard in results)
 						{
-							var serialNumber = motherboard["SerialNumber"];
-							if (serialNumber != null)
-								return serialNumber.ToString().Trim();
+							var serialNumber = ReadString(motherboard, "SerialNumber");
+							if (!string.IsNullOrEmpty(serialNumber))
+								return serialNumber.Trim();
 						}
 					}
 				}
@@ -106,12 +124,10 @@ namespace ClearCanvas.Common.Utilities
 					{
 						foreach (var diskDrive in results)
 						{
-							var index = diskDrive["Index"];
-							var deviceId = diskDrive["DeviceId"];
-							if (index == null || deviceId == null)
-								continue;
-
-							diskDriveIds.Add((uint) index, deviceId.ToString());
+							var index = ReadUInt32(diskDrive, "Index");
+							var deviceId = ReadString(diskDrive, "DeviceId");
+							if (index.HasValue && !string.IsNullOrEmpty(deviceId))
+								diskDriveIds.Add(index.Value, deviceId);
 						}
 					}
 				}
@@ -128,9 +144,9 @@ namespace ClearCanvas.Common.Utilities
 						{
 							foreach (var media in results)
 							{
-								var serialNumber = media["SerialNumber"];
-								if (serialNumber != null)
-									return serialNumber.ToString().Trim();
+								var serialNumber = ReadString(media, "SerialNumber");
+								if (!string.IsNullOrEmpty(serialNumber))
+									return serialNumber.Trim();
 							}
 						}
 					}
@@ -141,6 +157,51 @@ namespace ClearCanvas.Common.Utilities
 				Platform.Log(LogLevel.Debug, ex, "Failed to retrieve disk drive serial.");
 			}
 			return string.Empty;
+		}
+
+		private static string ReadString(ManagementBaseObject wmiObject, string propertyName)
+		{
+			try
+			{
+				var value = wmiObject[propertyName];
+				if (value != null)
+					return value.ToString();
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Debug, ex, @"WMI property ""{0}"" was not in the expected format.", propertyName);
+			}
+			return null;
+		}
+
+		private static ushort? ReadUInt16(ManagementBaseObject wmiObject, string propertyName)
+		{
+			try
+			{
+				var value = wmiObject[propertyName];
+				if (value != null)
+					return (ushort) value;
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Debug, ex, @"WMI property ""{0}"" was not in the expected format.", propertyName);
+			}
+			return null;
+		}
+
+		private static uint? ReadUInt32(ManagementBaseObject wmiObject, string propertyName)
+		{
+			try
+			{
+				var value = wmiObject[propertyName];
+				if (value != null)
+					return (uint) value;
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Debug, ex, @"WMI property ""{0}"" was not in the expected format.", propertyName);
+			}
+			return null;
 		}
 
 		private static string WqlEscape(string literal)
