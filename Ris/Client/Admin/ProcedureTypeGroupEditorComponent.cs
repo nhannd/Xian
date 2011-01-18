@@ -108,6 +108,10 @@ namespace ClearCanvas.Ris.Client.Admin
 					SubtractSelectedFromAvailable();
 				});
 
+			// sort both lists
+			_availableProcedureTypes.Sort();
+			_selectedProcedureTypes.Sort();
+
 			base.Start();
 		}
 
@@ -249,6 +253,7 @@ namespace ClearCanvas.Ris.Client.Admin
 					_availableProcedureTypes.Items.Clear();
 					_availableProcedureTypes.Items.AddRange(formDataResponse.ProcedureTypes);
 					SubtractSelectedFromAvailable();
+					_availableProcedureTypes.Sort();
 				});
 		}
 
