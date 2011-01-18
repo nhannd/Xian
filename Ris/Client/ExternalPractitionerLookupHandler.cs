@@ -66,7 +66,8 @@ namespace ClearCanvas.Ris.Client
             result = null;
 
             ExternalPractitionerSummaryComponent component = new ExternalPractitionerSummaryComponent(true);
-            if (!string.IsNullOrEmpty(query))
+			component.IncludeDeactivatedItems = this.IncludeDeactivatedItems;
+			if (!string.IsNullOrEmpty(query))
             {
                 string[] names = query.Split(',');
                 if (names.Length > 0)

@@ -73,6 +73,11 @@ namespace ClearCanvas.Ris.Client
 		#region Public members
 
 		/// <summary>
+		/// Gets or sets a value indicating whether de-activated items are included in the lookup.
+		/// </summary>
+    	public bool IncludeDeactivatedItems { get; set; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="minQueryStringLength"></param>
@@ -215,6 +220,7 @@ namespace ClearCanvas.Ris.Client
                 TRequest request = new TRequest();
                 request.TextQuery = query;
                 request.SpecificityThreshold = specificityThreshold;
+            	request.IncludeDeactivated = this.IncludeDeactivatedItems;
 
                 TextQueryResponse<TSummary> response = DoQuery(request);
                 if (!response.TooManyMatches)
