@@ -59,6 +59,8 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _category.DataSource = _component.CategoryChoices;
             _category.DataBindings.Add("Value", _component, "Category", true, DataSourceUpdateMode.OnPropertyChanged);
             _category.DataBindings.Add("Enabled", _component, "CategoryEnabled");
+        	_includeDeactivatedItems.DataBindings.Add("Checked", _component, "IncludeDeactivatedProcedureTypes", true,
+        	                                          DataSourceUpdateMode.OnPropertyChanged);
 
             _procedureTypesSelector.AvailableItemsTable = _component.AvailableProcedureTypes;
             _procedureTypesSelector.SelectedItemsTable = _component.SelectedProcedureTypes;

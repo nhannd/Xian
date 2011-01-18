@@ -87,7 +87,7 @@ namespace ClearCanvas.Ris.Client.Admin
 				delegate(IProcedureTypeGroupAdminService service)
 				{
 					var formDataResponse = service.GetProcedureTypeGroupEditFormData(
-						new GetProcedureTypeGroupEditFormDataRequest());
+						new GetProcedureTypeGroupEditFormDataRequest {IncludeDeactivated = _includeDeactivatedProcedureTypes});
 					_procedureTypeGroupCategoryChoices = formDataResponse.Categories;
 					_availableProcedureTypes.Items.AddRange(formDataResponse.ProcedureTypes);
 
@@ -105,10 +105,7 @@ namespace ClearCanvas.Ris.Client.Admin
 						_selectedProcedureTypes.Items.AddRange(_editedItemDetail.ProcedureTypes);
 					}
 
-					foreach (var selectedSummary in _selectedProcedureTypes.Items)
-					{
-						_availableProcedureTypes.Items.Remove(selectedSummary);
-					}
+					SubtractSelectedFromAvailable();
 				});
 
 			base.Start();
@@ -173,6 +170,16 @@ namespace ClearCanvas.Ris.Client.Admin
 			get { return _selectedProcedureTypes; }
 		}
 
+		public bool IncludeDeactivatedProcedureTypes
+		{
+			get { return _includeDeactivatedProcedureTypes; }
+			set
+			{
+				_includeDeactivatedProcedureTypes = value;
+				UpdateAvailableItems();
+			}
+		}
+
 		#endregion
 
 		public void Accept()
@@ -231,5 +238,27 @@ namespace ClearCanvas.Ris.Client.Admin
 		{
 			this.Modified = true;
 		}
+
+		private void UpdateAvailableItems()
+		{
+			Platform.GetService(
+				delegate(IProcedureTypeGroupAdminService service)
+				{
+					var formDataResponse = service.GetProcedureTypeGroupEditFormData(
+						new GetProcedureTypeGroupEditFormDataRequest {IncludeDeactivated = _includeDeactivatedProcedureTypes});
+					_availableProcedureTypes.Items.Clear();
+					_availableProcedureTypes.Items.AddRange(formDataResponse.ProcedureTypes);
+					SubtractSelectedFromAvailable();
+				});
+		}
+
+		private void SubtractSelectedFromAvailable()
+		{
+			foreach (var selectedSummary in _selectedProcedureTypes.Items)
+			{
+				_availableProcedureTypes.Items.Remove(selectedSummary);
+			}
+		}
+
 	}
 }

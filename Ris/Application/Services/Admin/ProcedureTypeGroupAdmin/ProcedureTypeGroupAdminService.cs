@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeGroupAdmin
             // ProcedureType choices
             ProcedureTypeAssembler assembler = new ProcedureTypeAssembler();
             response.ProcedureTypes = CollectionUtils.Map<ProcedureType, ProcedureTypeSummary>(
-				PersistenceContext.GetBroker<IProcedureTypeBroker>().FindAll(false),
+				PersistenceContext.GetBroker<IProcedureTypeBroker>().FindAll(request.IncludeDeactivated),
                 delegate(ProcedureType rpt)
                 {
                     return assembler.CreateSummary(rpt);

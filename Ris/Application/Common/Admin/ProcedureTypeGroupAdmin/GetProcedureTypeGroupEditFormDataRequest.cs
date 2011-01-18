@@ -37,5 +37,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeGroupAdmin
     [DataContract]
     public class GetProcedureTypeGroupEditFormDataRequest : DataContractBase
     {
+		[DataMember]
+    	public bool IncludeDeactivated;
     }
 }
