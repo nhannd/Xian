@@ -57,74 +57,81 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 		private const string CacheRegion = "default";
 
 		/// <summary>
-		/// Invariant rulesets are cached in a static variable, since they cannot change during the lifetime of the process.
+		/// Low-level rulesets are cached in a static variable, since they cannot change during the lifetime of the process.
 		/// </summary>
-		private static readonly Dictionary<Type, ValidationRuleSet> _invariantRuleSets = new Dictionary<Type, ValidationRuleSet>();
+		private static readonly Dictionary<Type, ValidationRuleSet> _lowLevelRuleSets = new Dictionary<Type, ValidationRuleSet>();
 
 		/// <summary>
-		/// Gets the invariant rule-set (rules that are hard-coded into the domain model).
+		/// Gets the low-level rule-set (rules for things like required fields, unique constraints, field lengths).
 		/// </summary>
 		/// <param name="domainClass"></param>
 		/// <returns></returns>
-		internal static ValidationRuleSet GetInvariantRules(Type domainClass)
+		internal static ValidationRuleSet GetLowLevelRules(Type domainClass)
 		{
-			lock (_invariantRuleSets)
+			lock (_lowLevelRuleSets)
 			{
 				ValidationRuleSet rules;
 
 				// return cached rules if possible
-				if (_invariantRuleSets.TryGetValue(domainClass, out rules))
+				if (_lowLevelRuleSets.TryGetValue(domainClass, out rules))
 					return rules;
 
 				// build rules for domainClass
-				var builder = new ValidationBuilder();
-				rules = builder.BuildRuleSet(domainClass);
+				var builder = new ValidationBuilder(domainClass);
+				rules = builder.LowLevelRules;
 
 				// cache for future use
-				_invariantRuleSets.Add(domainClass, rules);
+				_lowLevelRuleSets.Add(domainClass, rules);
 				return rules;
 			}
 		}
 
 		/// <summary>
-		/// Gets the custom rule-set (rules that are specified in an XML format).
+		/// Gets the high-level rule-set, which may include both hard-coded high-level rules,
+		/// and custom rules specified in XML.
 		/// </summary>
 		/// <param name="domainClass"></param>
 		/// <returns></returns>
-		internal static ValidationRuleSet GetCustomRules(Type domainClass)
+		internal static ValidationRuleSet GetHighLevelRules(Type domainClass)
 		{
-			// Because custom rules may potentially be modified by an administrator, they cannot
-			// be cached in a static variable like the invariant rules.
-			// instead they are cached using the Cache object with an absolute expiry time, which should be relatively short (a few minutes)
+			// get the static rules
+			var builder = new ValidationBuilder(domainClass);
+			var staticRules = builder.HighLevelRules;
+
+			// get the custom rules
+			// Because custom rules may potentially be modified by an administrator, 
+			// they are cached using the Cache object with an absolute expiry time,
+			// which should be relatively short (a few minutes).
 			// This ensures that changes made to these rules will be applied eventually, when the cache expires.
-
-			// however, if the Cache object is not available in this environment, then we have no choice but to build from source
-			if(!Cache.IsSupported())
+			ValidationRuleSet customRules;
+			if (Cache.IsSupported())
 			{
-				Platform.Log(LogLevel.Warn, "Caching of custom rules is not supported in this configuration - rules are being compiled from source.");
-				return BuildCustomRules(domainClass);
-			}
-
-			using (var cacheClient = Cache.CreateClient(CacheId))
-			{
-				// check the cache for a compiled ruleset
-				var ruleSet = (ValidationRuleSet)cacheClient.Get(domainClass.FullName, new CacheGetOptions(CacheRegion));
-				if (ruleSet != null)
-					return ruleSet;
-
-				// no cached, so compile the ruleset from source
-				ruleSet = BuildCustomRules(domainClass);
-
-				// cache the ruleset if desired
-				var settings = new EntityValidationSettings();
-				var ttl = TimeSpan.FromSeconds(settings.CustomRulesCachingTimeToLiveSeconds);
-				if (ttl > TimeSpan.Zero)
+				using (var cacheClient = Cache.CreateClient(CacheId))
 				{
-					cacheClient.Put(domainClass.FullName, ruleSet, new CachePutOptions(CacheRegion, ttl, false));
-				}
+					// check the cache for a compiled ruleset
+					customRules = (ValidationRuleSet)cacheClient.Get(domainClass.FullName, new CacheGetOptions(CacheRegion));
+					if (customRules != null)
+						return customRules;
 
-				return ruleSet;
+					// no cached, so compile the ruleset from source
+					customRules = BuildCustomRules(domainClass);
+
+					// cache the ruleset if desired
+					var settings = new EntityValidationSettings();
+					var ttl = TimeSpan.FromSeconds(settings.CustomRulesCachingTimeToLiveSeconds);
+					if (ttl > TimeSpan.Zero)
+					{
+						cacheClient.Put(domainClass.FullName, customRules, new CachePutOptions(CacheRegion, ttl, false));
+					}
+				}
 			}
+			else
+			{
+				// if the Cache object is not available in this environment, then we have no choice but to build from source
+				Platform.Log(LogLevel.Warn, "Caching of custom rules is not supported in this configuration - rules are being compiled from source.");
+				customRules = BuildCustomRules(domainClass);
+			}
+			return new ValidationRuleSet(new[]{staticRules, customRules});
 		}
 
 		/// <summary>

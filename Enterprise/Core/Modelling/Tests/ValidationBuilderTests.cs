@@ -101,8 +101,8 @@ namespace ClearCanvas.Enterprise.Core.Modelling.Tests
 		[Test]
 		public void Test_LengthSpecification()
 		{
-			var builder = new ValidationBuilder();
-			var ruleSet = builder.BuildRuleSet(typeof(FooA));
+			var builder = new ValidationBuilder(typeof(FooA));
+			var ruleSet = builder.LowLevelRules;
 
 			Assert.AreEqual(1, ruleSet.Rules.Count);
 			object rule = ruleSet.Rules[0];
@@ -122,8 +122,8 @@ namespace ClearCanvas.Enterprise.Core.Modelling.Tests
 		[Test]
 		public void Test_RequiredSpecification()
 		{
-			var builder = new ValidationBuilder();
-			var ruleSet = builder.BuildRuleSet(typeof(FooB));
+			var builder = new ValidationBuilder(typeof(FooB));
+			var ruleSet = builder.LowLevelRules;
 
 			Assert.AreEqual(1, ruleSet.Rules.Count);
 			object rule = ruleSet.Rules[0];
@@ -147,8 +147,8 @@ namespace ClearCanvas.Enterprise.Core.Modelling.Tests
 		[Test]
 		public void Test_EmbeddedValue()
 		{
-			var builder = new ValidationBuilder();
-			var ruleSet = builder.BuildRuleSet(typeof(FooC));
+			var builder = new ValidationBuilder(typeof(FooC));
+			var ruleSet = builder.LowLevelRules;
 
 			Assert.AreEqual(1, ruleSet.Rules.Count);
 			object rule = ruleSet.Rules[0];
@@ -172,8 +172,8 @@ namespace ClearCanvas.Enterprise.Core.Modelling.Tests
 		[Test]
 		public void Test_CombinationOfRequiredAndLengthOnSameProperty()
 		{
-			var builder = new ValidationBuilder();
-			var ruleSet = builder.BuildRuleSet(typeof(FooD));
+			var builder = new ValidationBuilder(typeof(FooD));
+			var ruleSet = builder.LowLevelRules;
 
 			var foo = new FooD();
 
@@ -198,8 +198,8 @@ namespace ClearCanvas.Enterprise.Core.Modelling.Tests
 		[Test]
 		public void Test_MultipleBrokenRules()
 		{
-			var builder = new ValidationBuilder();
-			var ruleSet = builder.BuildRuleSet(typeof(FooE));
+			var builder = new ValidationBuilder(typeof(FooE));
+			var ruleSet = builder.LowLevelRules;
 
 			var foo = new FooE {Name = "Robert"};
 
@@ -228,11 +228,10 @@ namespace ClearCanvas.Enterprise.Core.Modelling.Tests
 		}
 
 		[Test]
-		public void Test_Additional_rules_method()
+		public void Test_HighLevel_rules_method()
 		{
-			var builder = new ValidationBuilder();
-			var ruleSet = builder.BuildRuleSet(typeof (BarA));
-			var result = ruleSet.Test(new BarA());
+			var builder = new ValidationBuilder(typeof(BarA));
+			var result = builder.HighLevelRules.Test(new BarA());
 
 			// expect exactly one broken rule
 			Assert.IsFalse(result.Success);
@@ -240,20 +239,19 @@ namespace ClearCanvas.Enterprise.Core.Modelling.Tests
 		}
 
 		[Test]
-		public void Test_Additional_rules_method_inherited()
+		public void Test_HighLevel_rules_method_inherited()
 		{
 			// BarB inherits from BarA, but does not define its own additional rules method
-			var builder = new ValidationBuilder();
-			var ruleSet = builder.BuildRuleSet(typeof(BarB));
-			var result = ruleSet.Test(new BarB());
+			var builder = new ValidationBuilder(typeof(BarB));
+			var result = builder.HighLevelRules.Test(new BarB());
 
 			// expect exactly one broken rule (more than 1 would indicate that the GetRules had been processed more than once)
 			Assert.IsFalse(result.Success);
 			Assert.AreEqual(1, result.Reasons.Length);
 
 			// BarC inherits from BarA, and also defines its own additional rules method
-			ruleSet = builder.BuildRuleSet(typeof(BarC));
-			result = ruleSet.Test(new BarC());
+			builder = new ValidationBuilder(typeof(BarC));
+			result = builder.HighLevelRules.Test(new BarC());
 
 			// expect 2 broken rules, one from BarA and one from BarC
 			Assert.IsFalse(result.Success);
