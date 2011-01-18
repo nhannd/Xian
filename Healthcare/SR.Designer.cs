@@ -547,7 +547,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All procedures must have the same performing departments..
+        ///   Looks up a localized string similar to All procedures must have the same performing department..
         /// </summary>
         internal static string MessageValidateOrderPerformingDepartments {
             get {

@@ -228,11 +228,11 @@ namespace ClearCanvas.Healthcare
 			if (this.AccessionNumber == destinationOrder.AccessionNumber)
 				failureReason = "Orders with the same accession number cannot be merged.";
 			else if (this.Status != OrderStatus.SC || destinationOrder.Status != OrderStatus.SC)
-				failureReason = "Only scheduled orders can be merged";
+				failureReason = "Orders that have already been started cannot be merged.";
 			else if (this.Patient != destinationOrder.Patient)
-				failureReason = "Orders that belong to differnt patients cannot be merged.";
+				failureReason = "Orders that belong to different patients cannot be merged.";
 			else if (this.OrderingFacility.InformationAuthority != destinationOrder.OrderingFacility.InformationAuthority)
-				failureReason = "Orders that were ordered by different facilities cannot be merged.";
+				failureReason = "Orders with different ordering facilities cannot be merged.";
 
 			return string.IsNullOrEmpty(failureReason);
 		}

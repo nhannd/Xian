@@ -612,6 +612,7 @@ namespace ClearCanvas.Healthcare
 
 		private static IValidationRuleSet GetValidationRules()
 		{
+			// all procedures for the order must have the same performing information authority as the visit
 			var sameInformationAuthorityRule = new ValidationRule<Procedure>(
 				delegate(Procedure procedure)
 				{
@@ -619,6 +620,7 @@ namespace ClearCanvas.Healthcare
 					return new TestResult(hasSameInformationAuthority, SR.MessageValidateInformationAuthorityForVisitAndPerformingFacilities);
 				});
 
+			// all procedures for the order must have the same performing facility
 			var samePerformingFacilityRule = new ValidationRule<Procedure>(
 				delegate(Procedure procedure)
 				{
@@ -626,6 +628,7 @@ namespace ClearCanvas.Healthcare
 					return new TestResult(hasSameFacility, SR.MessageValidateOrderPerformingFacilities);
 				});
 
+			// all procedures for the order must have the same performing department
 			var samePerformingDepartmentRule = new ValidationRule<Procedure>(
 				delegate(Procedure procedure)
 				{
@@ -633,14 +636,16 @@ namespace ClearCanvas.Healthcare
 					return new TestResult(hasSameDepartment, SR.MessageValidateOrderPerformingDepartments);
 				});
 
+			// performing department must be associated with performing facility
 			var performingDepartmentIsInPerformingFacilityRule = new ValidationRule<Procedure>(
 				delegate(Procedure procedure)
 				{
 					var performingDepartmentIsInPerformingFacility = procedure.PerformingDepartment == null
-						|| procedure.PerformingFacility == procedure.PerformingDepartment.Facility;
+						|| procedure.PerformingFacility.Equals(procedure.PerformingDepartment.Facility);
 					return new TestResult(performingDepartmentIsInPerformingFacility, SR.MessageValidateProcedurePerformingFacilityAndDepartment);
 				});
 
+			// patient must have a profile at the performing facility
 			var patientProfileExistsForPerformingFacilityRule = new ValidationRule<Procedure>(
 				delegate(Procedure procedure)
 				{

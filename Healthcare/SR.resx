@@ -562,7 +562,7 @@
     <value>Department Name and Facility</value>
   </data>
   <data name="MessageValidateOrderPerformingDepartments" xml:space="preserve">
-    <value>All procedures must have the same performing departments.</value>
+    <value>All procedures must have the same performing department.</value>
   </data>
   <data name="MessageValidateOrderPerformingFacilities" xml:space="preserve">
     <value>All procedures must have the same performing facility.</value>
