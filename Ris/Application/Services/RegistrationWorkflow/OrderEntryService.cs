@@ -492,8 +492,9 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			}
 			catch (EntityNotFoundException)
 			{
-				throw new RequestValidationException(string.Format("The order placed at {0} must have a visit at the same assigning authority.",
-					order.OrderingFacility.Name));
+				throw new RequestValidationException(
+					string.Format("The order cannot be entered because the patient does not have any visits at {0}.",
+					order.OrderingFacility.InformationAuthority.Value));
 			}
 		}
 
