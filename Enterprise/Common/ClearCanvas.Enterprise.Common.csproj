@@ -208,6 +208,9 @@
     </Compile>
     <Compile Include="TransactionNotifier.cs" />
     <Compile Include="DefaultUserCredentialsProvider.cs" />
+    <Compile Include="ServerVersion\GetVersionRequest.cs" />
+    <Compile Include="ServerVersion\GetVersionResponse.cs" />
+    <Compile Include="ServerVersion\IVersionService.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
