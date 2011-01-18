@@ -163,6 +163,9 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 
 		private void _placeOrderButton_Click(object sender, EventArgs e)
 		{
+			// bug #7781: switch back to this tab prior to validation
+			_lowerLeftTabControl.SelectedTab = _proceduresTab;
+
 			using (new CursorManager(Cursors.WaitCursor))
 			{
 				_component.Accept();
