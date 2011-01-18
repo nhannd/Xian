@@ -70,18 +70,21 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
 			// 
 			// _summaryTableView
 			// 
+			this._summaryTableView.ColumnHeaderTooltip = null;
 			this._summaryTableView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._summaryTableView.FilterTextBoxVisible = true;
 			this._summaryTableView.Location = new System.Drawing.Point(3, 3);
+			this._summaryTableView.Margin = new System.Windows.Forms.Padding(3, 3, 20, 3);
 			this._summaryTableView.Name = "_summaryTableView";
 			this._summaryTableView.ReadOnly = false;
-			this._summaryTableView.Size = new System.Drawing.Size(644, 451);
+			this._summaryTableView.Size = new System.Drawing.Size(627, 451);
+			this._summaryTableView.SortButtonTooltip = null;
 			this._summaryTableView.TabIndex = 0;
 			this._summaryTableView.ItemDoubleClicked += new System.EventHandler(this._staffGroupTableView_ItemDoubleClicked);
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Location = new System.Drawing.Point(566, 3);
+			this._cancelButton.Location = new System.Drawing.Point(549, 3);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 2;
@@ -91,7 +94,7 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
 			// 
 			// _okButton
 			// 
-			this._okButton.Location = new System.Drawing.Point(485, 3);
+			this._okButton.Location = new System.Drawing.Point(468, 3);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
 			this._okButton.TabIndex = 1;
@@ -120,9 +123,10 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
 			this._buttonsPanel.Controls.Add(this._okButton);
 			this._buttonsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._buttonsPanel.Location = new System.Drawing.Point(3, 460);
+			this._buttonsPanel.Margin = new System.Windows.Forms.Padding(3, 3, 20, 3);
 			this._buttonsPanel.Name = "_buttonsPanel";
 			this._buttonsPanel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-			this._buttonsPanel.Size = new System.Drawing.Size(644, 29);
+			this._buttonsPanel.Size = new System.Drawing.Size(627, 29);
 			this._buttonsPanel.TabIndex = 0;
 			// 
 			// SummaryComponentBaseControl

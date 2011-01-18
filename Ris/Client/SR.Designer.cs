@@ -2005,6 +2005,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The selected visit should have the same assigning authority as one of the performing facilities..
+        /// </summary>
+        internal static string MessageInvalidVisitAssigningAuthority {
+            get {
+                return ResourceManager.GetString("MessageInvalidVisitAssigningAuthority", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Loading affected orders....
         /// </summary>
         internal static string MessageLoadingAffectedOrders {

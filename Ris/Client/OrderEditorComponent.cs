@@ -614,6 +614,14 @@ namespace ClearCanvas.Ris.Client
 			try
 			{
 				var visitSummaryComponent = new VisitSummaryComponent(_patientRef, true);
+
+				// Add a validation to the visit summary component, validating assigning authority of the selected visit.
+				var validCodes = GetValidVisitAssigningAuthorityCodes();
+				visitSummaryComponent.Validation.Add(new ValidationRule("SummarySelection",
+					component => new ValidationResult(
+						visitSummaryComponent.SummarySelection.Item != null && validCodes.Contains(((VisitSummary)visitSummaryComponent.SummarySelection.Item).VisitNumber.AssigningAuthority.Code),
+						SR.MessageInvalidVisitAssigningAuthority)));
+
 				var visitDialogArg = new DialogBoxCreationArgs(visitSummaryComponent, SR.TitlePatientVisits, null, DialogSizeHint.Large);
 				var exitCode = LaunchAsDialog(this.Host.DesktopWindow, visitDialogArg);
 
@@ -1091,24 +1099,10 @@ namespace ClearCanvas.Ris.Client
 		{
 			var selectedVisit = _selectedVisit;
 
-			var performingFacilities = CollectionUtils.Map<ProcedureRequisition, FacilitySummary>(
-				_proceduresTable.Items, item => item.PerformingFacility);
-
-			if (performingFacilities.Count <= 0)
-			{
-				// If there are no pricedures, filter visit by Ordering facility information authority
-				// If editing an order and orderingFacility hasn't been loaded, use all visits.
-				_applicableVisits = _orderingFacility == null
-					? _allVisits
-					: CollectionUtils.Select(_allVisits, visit => Equals(visit.VisitNumber.AssigningAuthority.Code, _orderingFacility.InformationAuthority.Code));
-			}
-			else
-			{
-				// Otherwise, filter by performing facility information authority.
-				_applicableVisits = CollectionUtils.Select(_allVisits,
-						visit => CollectionUtils.Contains(performingFacilities,
-							facility => Equals(visit.VisitNumber.AssigningAuthority.Code, facility.InformationAuthority.Code)));
-			}
+			var validCodes = GetValidVisitAssigningAuthorityCodes();
+			_applicableVisits = validCodes.Count == 0
+				? _allVisits
+				: CollectionUtils.Select(_allVisits, v=> validCodes.Contains(v.VisitNumber.AssigningAuthority.Code));
 
 			NotifyPropertyChanged("ActiveVisits");
 
@@ -1117,6 +1111,31 @@ namespace ClearCanvas.Ris.Client
 			this.SelectedVisit = selectedVisit != null 
 				? CollectionUtils.SelectFirst(_applicableVisits, visit => EntityRef.Equals(visit.VisitRef, selectedVisit.VisitRef, true)) 
 				: null;
+		}
+
+		private List<string> GetValidVisitAssigningAuthorityCodes()
+		{
+			// Default is an empty list, meaning no filters.
+			var validCodes = new List<string>();
+
+			if (_proceduresTable.Items.Count > 0)
+			{
+				// Filter by performing facility information authority if there are procedures present
+				CollectionUtils.ForEach(_proceduresTable.Items,
+					delegate(ProcedureRequisition requisition)
+						{
+							if (!validCodes.Contains(requisition.PerformingFacility.InformationAuthority.Code))
+								validCodes.Add(requisition.PerformingFacility.InformationAuthority.Code);
+						});
+			}
+			else if (_orderingFacility != null)
+			{
+				// No procedures but there is an Ordering facility.  use its information authority
+				validCodes.Add(_orderingFacility.InformationAuthority.Code);
+			}
+			// else // If editing an order and orderingFacility hasn't been loaded, use all visits.
+
+			return validCodes;
 		}
 
 		private OrderRequisition BuildOrderRequisition()

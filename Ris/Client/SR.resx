@@ -1182,4 +1182,7 @@
   <data name="MessageDefaultContactPointMustBeActive" xml:space="preserve">
     <value>This contact point is not currently active and must be active in order to set it as the default.  Would you like to make it active?</value>
   </data>
+  <data name="MessageInvalidVisitAssigningAuthority" xml:space="preserve">
+    <value>The selected visit should have the same assigning authority as one of the performing facilities.</value>
+  </data>
 </root>
