@@ -62,32 +62,6 @@ namespace ClearCanvas.Common {
             }
         }
         
-        /// <summary>
-        /// Product copyright.
-        /// </summary>
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Product copyright.")]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("SQpazixeCBBvq0bzF3/Un/1Jj+VVYb1ASJnvtW5wOq0MkD6q0e5fsBbTSf/1f3YmOupFw9rtXbA=")]
-        public string Copyright {
-            get {
-                return ((string)(this["Copyright"]));
-            }
-        }
-        
-        /// <summary>
-        /// Product license.
-        /// </summary>
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Product license.")]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"SQpazixeCBD4G1zRA+eXWoOkhHpv4j+3ZFb8u6nTqdHUCrHs03TmjVNqz3nFBQnQrGTwhxAjmuQ0DBhC2+vHA6CI2jCC4pwsA7DitYNJDilFVMvNsJTitOPvZ2WpmJfjCs/uCmaoBw0lqA7NrCVKZJaGgaD8XIudDqkFPU4OsL/wgjqVOo83xyCs3b9xcBItyeTUFHNppcNj4NqIyv8guNYRwXNheWprF18wtLHeYjrMUurLJkcNhtzMnVh8kJtrAEiaCpZ9X54u1rB6IDHH+tyC+2I5GiVXtcoJy7TDWO0=")]
-        public string License {
-            get {
-                return ((string)(this["License"]));
-            }
-        }
-        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("jL55pMp+3yM9uLAdmMqy1EZCbfkuN9/i")]
@@ -112,6 +86,32 @@ namespace ClearCanvas.Common {
         public string AllowDiagnosticUse {
             get {
                 return ((string)(this["AllowDiagnosticUse"]));
+            }
+        }
+        
+        /// <summary>
+        /// Product copyright.
+        /// </summary>
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Product copyright.")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("SQpazixeCBDhrViLMH+USHI4o/OthHQfW6qpQqn2uwDIlCdWk8KsdsC7hHtQ9QsPIn5f2/hhj6s=")]
+        public string Copyright {
+            get {
+                return ((string)(this["Copyright"]));
+            }
+        }
+        
+        /// <summary>
+        /// Product license.
+        /// </summary>
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Product license.")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"SQpazixeCBD4G1zRA+eXWheAmZyJFUq8gGDK5TOBR7YIggfHag3jRXiRuZCymFq37uHZE8Zk+8ar7cdLpW/lNB29fp+l7e7MKFHuWixc0AVqnmuTmKlAzF208LjCPiLDst91oXMbPhN/XAeSeSfbijyYUNeIsbKz+HUJEeOlPcQui/BLNc0pbXZEoHrt+5gSjwSa2I8DIPYmhHcB31YGU52R8CetvGeCrh5O06/YTtpFvwu5Q6kUx3bb+tXW/49/3LW4woGGvjW9I36XOdg1YoYjgDWpxfYGVbUzhjrLjXc=")]
+        public string License {
+            get {
+                return ((string)(this["License"]));
             }
         }
     }
