@@ -141,6 +141,13 @@ namespace ClearCanvas.Common.Configuration
 
 		public ConfigurationSectionGroup GetSectionGroup(System.Configuration.Configuration configuration, bool create)
 		{
+			bool created;
+			return GetSectionGroup(configuration, create, out created);
+		}
+	
+		public ConfigurationSectionGroup GetSectionGroup(System.Configuration.Configuration configuration, bool create, out bool created)
+		{
+			created = false;
 			if (IsRoot)
 				return configuration.RootSectionGroup;
 
@@ -160,6 +167,7 @@ namespace ClearCanvas.Common.Configuration
 					continue;
 				}
 
+				created = true;
 				childGroup = path.CreateSectionGroup();
 				group.SectionGroups.Add(pathSegment, childGroup);
 				group = group.SectionGroups[pathSegment];
@@ -205,8 +213,41 @@ namespace ClearCanvas.Common.Configuration
 
 		public ConfigurationSection GetSection(System.Configuration.Configuration configuration)
 		{
-			var group = GroupPath.GetSectionGroup(configuration, false);
-			return group == null ? null : group.Sections[SectionName];
+			return GetSection(configuration, false);
+		}
+
+		public ConfigurationSection GetSection(System.Configuration.Configuration configuration, bool create)
+		{
+			bool created;
+			return GetSection(configuration, create, out created);
+		}
+
+		public ConfigurationSection GetSection(System.Configuration.Configuration configuration, bool create, out bool created)
+		{
+			created = false;
+			var group = GroupPath.GetSectionGroup(configuration, create);
+			if (group == null) //create is false.
+				return null;
+
+			var section = group.Sections[SectionName];
+			if (section == null && create)
+			{
+				created = true;
+				section = CreateSection();
+				group.Sections.Add(SectionName, section);
+			}
+
+			return section;
+		}
+
+		public ConfigurationSection CreateSection()
+		{
+			var section = new ClientSettingsSection();
+			section.SectionInformation.RequirePermission = false;
+			if (GroupPath.IsUserSettings)
+				section.SectionInformation.AllowExeDefinition = ConfigurationAllowExeDefinition.MachineToLocalUser;
+			
+			return section;
 		}
 
 		#region IEquatable<ConfigurationSectionPath> Members
