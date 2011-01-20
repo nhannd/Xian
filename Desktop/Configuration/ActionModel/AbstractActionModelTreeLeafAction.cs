@@ -59,7 +59,8 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			}
 			else
 			{
-				IconSet = new GrayscaleIconSet(iconSet);
+				IconSet = new UnavailableActionIconSet(iconSet);
+				Description = SR.TooltipActionNotPermitted;
 				Tooltip = String.IsNullOrEmpty(CanonicalLabel) ?
 					SR.TooltipActionNotPermitted : String.Format(SR.TooltipFormatActionNotPermitted, CanonicalLabel);
 			}
