@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -21,7 +21,7 @@ using ClearCanvas.Common;
 [assembly: Plugin]
 [assembly: AssemblyTitle("Clipboard")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyCopyright("Copyright (c) 2010")]
+[assembly: AssemblyCopyright("Copyright (c) 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]

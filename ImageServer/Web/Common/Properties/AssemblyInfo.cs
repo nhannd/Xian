@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -25,7 +25,7 @@ using ClearCanvas.Common;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ClearCanvas Inc.")]
 [assembly: AssemblyProduct("ClearCanvas.ImageServer.Web.Common")]
-[assembly: AssemblyCopyright("Copyright (c) 2010")]
+[assembly: AssemblyCopyright("Copyright (c) 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
