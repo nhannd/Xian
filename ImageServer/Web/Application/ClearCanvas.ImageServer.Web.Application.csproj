@@ -1465,6 +1465,7 @@
     <Content Include="App_Themes\Default\images\Buttons\ViewStudyEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ViewStudyHover.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogBodyBackgroundTall.png" />
+    <Content Include="Builds\SplashScreen\ClearCanvasWebViewerLogo.png" />
     <Content Include="Pages\WebViewer\GridPager.ascx" />
     <Content Include="Pages\WebViewer\Images\Searching.gif" />
     <Content Include="Pages\WebViewer\JQuery.ascx" />
@@ -1902,9 +1903,7 @@
     <Content Include="App_Themes\Default\Global.skin" />
     <Content Include="Pages\Common\MainContentSection.Master" />
     <Content Include="Pages\Error\ErrorPageMaster.Master" />
-    <None Include="Builds\PostBuild.proj" />
     <Content Include="Pages\Error\WebViewerErrorPageMaster.Master" />
-    <Content Include="critical.config" />
     <None Include="Pages\Queues\WorkQueue\WorkQueueSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WorkQueueSettings.Designer.cs</LastGenOutput>
@@ -2008,6 +2007,35 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" Condition="" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <DistributionBuild>false</DistributionBuild>
+  </PropertyGroup>
+  <Choose>
+    <When Condition="$(DistributionBuild)">
+      <PropertyGroup>
+        <DistributionDir>$(MSBuildProjectDirectory)\..\Distribution\Build\ImageServerWeb$(BuildSuffix)\$(PlatformSubFolder)\$(Configuration)</DistributionDir>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <DistributionDir>
+        </DistributionDir>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+  <Choose>
+    <When Condition="$(DistributionBuild) AND '$(Configuration)'=='Release' And '$(KeyFile)' != ''">
+      <PropertyGroup>
+        <ImageServerWebProperties>SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);ProjectDir=$(ProjectDir);Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir);SignAssembly=true;DelaySign=false;AssemblyOriginatorKeyFile=$(KeyFile);Options=$(BuildOptions)</ImageServerWebProperties>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <ImageServerWebProperties>SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);ProjectDir=$(ProjectDir);Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir);Options=$(BuildOptions)</ImageServerWebProperties>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.  -->
   <Target Name="BeforeBuild">
@@ -2034,16 +2062,11 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PreBuildEvent>REM Prevent lock up by ASP.NET dev server in debug mode
-
-IF EXIST $(TargetPath).LOCKED (del $(TargetPath).LOCKED) ELSE (IF EXIST $(TargetPath) (move $(TargetPath) $(TargetPath).LOCKED))
-
-REM Run PreBuild msbuild project
-
-REM C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe  "$(ProjectDir)Builds\PreBuild.proj" "/property:ProjectDir=$(ProjectDir);ConfigurationName=$(ConfigurationName);TargetPlatform=$(PlatformName)"</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
     <PostBuildEvent>
-      REM Run PostBuild msbuild project
+		REM Run PostBuild msbuild project
 
-      C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe  "$(ProjectDir)Builds\PostBuild.proj" "/property:ProjectDir=$(ProjectDir);Configuration=$(ConfigurationName);ConfigurationName=$(ConfigurationName);TargetPlatform=$(TargetPlatform)"</PostBuildEvent>
+		C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe  "$(SolutionDir)\$(SolutionName)_WebPostBuild.proj" "/property:$(ImageServerWebProperties)"</PostBuildEvent>
   </PropertyGroup>
 </Project>

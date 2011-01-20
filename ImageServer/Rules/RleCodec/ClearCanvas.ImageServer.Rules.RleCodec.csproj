@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{4E4B60EC-FFB9-49A9-A40F-385FC68D798F}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -53,10 +53,6 @@
     <ProjectReference Include="..\..\..\Dicom\ClearCanvas.Dicom.csproj">
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Dicom\Codec\Rle\ClearCanvas.Dicom.Codec.Rle.csproj">
-      <Project>{AB89527E-B1B6-49A4-B3A0-D07948FC23E0}</Project>
-      <Name>ClearCanvas.Dicom.Codec.Rle</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj">
       <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>

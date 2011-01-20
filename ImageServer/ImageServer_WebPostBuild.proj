@@ -43,6 +43,8 @@
 
 	<ItemGroup>
 		<ConfigFiles Include="$(ProjectDir)\..\..\..\ImageServer\Executable\Logging.config"/>
+
+		<CriticalConfigFiles Include="$(SolutionDir)\$(SolutionName)_web_critical.config"/>
 		<PluginFiles Include="$(ProjectDir)\..\..\Enterprise\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer2005.dll"/>
 		<PluginFiles Include="$(ProjectDir)\..\..\Model\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer2005.dll"/>
 	</ItemGroup>
@@ -100,11 +102,13 @@
 		<Message Text="$(ProjectDir)"/>
 		<Message Text="@(ConfigFiles)"/>
 		<Copy SkipUnchangedFiles="true" SourceFiles="@(ConfigFiles)" DestinationFolder="$(ProjectDir)"/>
+		<Copy SkipUnchangedFiles="true" SourceFiles="@(CriticalConfigFiles)" DestinationFiles="$(ProjectDir)\critical.config"/>
+
 	</Target>
 
 	<Target Name="Build Web Viewer">
 		<Message Text="Building Web Viewer"/>
-		<MSBuild Projects="$(WebViewerSolutionDir)\Viewer.sln"  Properties="ProjectDir=$(ProjectDir);Configuration=$(ConfigurationName);"/>
+		<MSBuild Projects="$(WebViewerSolutionDir)\Viewer.sln"  Properties="ProjectDir=$(ProjectDir);Configuration=$(Configuration);"/>
 		<Message Text="Updating Silverlight Package"/>
 		<Delete Files="$(SilverlightBinFolder)\Silverlight.xap" />
 		<Copy SourceFiles="$(WebViewerSolutionDir)\SilverlightHost\ClientBin\Silverlight.xap"  DestinationFolder="$(SilverlightBinFolder)"/>

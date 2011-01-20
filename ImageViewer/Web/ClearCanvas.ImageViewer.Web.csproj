@@ -136,10 +136,6 @@
       <Project>{EA38C1F1-C4BD-4ED7-9B60-C95DF22D6A72}</Project>
       <Name>ClearCanvas.ImageViewer.Layout.Basic</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Services\ClearCanvas.ImageViewer.Services.csproj">
-      <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
-      <Name>ClearCanvas.ImageViewer.Services</Name>
-    </ProjectReference>
     <ProjectReference Include="Common\ClearCanvas.ImageViewer.Web.Common.csproj">
       <Project>{E53B5474-B705-4373-B1DE-0CC7162734A2}</Project>
       <Name>ClearCanvas.ImageViewer.Web.Common</Name>

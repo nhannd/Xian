@@ -42,7 +42,6 @@
   </ItemGroup>
 
   <ItemGroup>
-	<ExecutableAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Enterprise\Common\app.config" />
 	<ExecutableAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Executable\app.config" />
 	<ExecutableAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\ImageServer_Shreds_dist.config" />
 	<ExecutableAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Dicom\app.config" />
@@ -51,7 +50,7 @@
   </ItemGroup>
 
   <ItemGroup>
-	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Enterprise\Common\app.config" />
+	  <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\ImageServer_ConnectionString_dist.config" />
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\ShredHostService\app.config" />
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Dicom\app.config" />
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Common\app.config" />
@@ -61,12 +60,11 @@
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Services\WorkQueue\app.config" />
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Services\Archiving\Hsm\app.config" />
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\SqlServer2005\app.config" />
-    <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Web\Services\app.config" />
-    <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Web\Common\app.config" />
+    <!--<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Web\Services\app.config" />
+    <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Web\Common\app.config" />-->
     <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageViewer\Web\Server\ImageServer\app.config" />
     <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageViewer\Web\app.config" />
-    <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\ImageServer_Shreds_dist.config" />
-	<ShredHostAppCriticalConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\ImageServer_Shreds_dist.critical.config" />
+	<ShredHostAppCriticalConfigCreatorSourceFiles Include="$(SolutionDir)\ImageServer_Shreds_dist.critical.config" />
   </ItemGroup>
 
   <ItemGroup>
