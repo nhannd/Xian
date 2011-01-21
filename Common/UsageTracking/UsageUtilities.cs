@@ -186,13 +186,14 @@ namespace ClearCanvas.Common.UsageTracking
                                        Product = ProductInformation.Product,
                                        Component = ProductInformation.Component,
                                        Edition = ProductInformation.Edition,
+                                       Release = ProductInformation.Release,
                                        AllowDiagnosticUse = ProductInformation.Release == string.Empty,
                                        Region = CultureInfo.CurrentCulture.Name,
                                        Timestamp = Platform.Time,
                                        OS = Environment.OSVersion.ToString(),
                                        MachineIdentifier =  EnvironmentUtilities.MachineIdentifier,
                                        MessageType = UsageType.Other,
-                                       LicenseString = LicenseInformation.LicenseKey
+                                       LicenseString = LicenseInformation.LicenseKey,
                                    };
             return msg;
         }
