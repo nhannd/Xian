@@ -34,7 +34,7 @@ namespace ClearCanvas.Common.Utilities
 			{
 				if (_machineIdentifier == null)
 				{
-					var input = string.Format("CLEARCANVASRTW::{0}::{1}::{2}", GetProcessorId(), GetMotherboardSerial(), GetDiskSerial());
+					var input = string.Format("CLEARCANVASRTW::{0}::{1}::{2}", GetProcessorId(), GetMotherboardSerial(), GetDiskSignature());
 					using (var sha256 = new SHA256Managed())
 					{
 						_machineIdentifier = Convert.ToBase64String(sha256.ComputeHash(Encoding.Default.GetBytes(input)));
@@ -112,49 +112,33 @@ namespace ClearCanvas.Common.Utilities
 			return string.Empty;
 		}
 
-		private static string GetDiskSerial()
+		private static string GetDiskSignature()
 		{
 			try
 			{
 				// identify the disk drives sorted by hardware order
-				var diskDriveIds = new SortedList<uint, string>();
-				using (var searcher = new ManagementObjectSearcher("SELECT Index, DeviceID FROM Win32_DiskDrive"))
+				var diskDrives = new SortedList<uint, uint>();
+				using (var searcher = new ManagementObjectSearcher("SELECT Index, Signature FROM Win32_DiskDrive"))
 				{
 					using (var results = new ManagementObjectSearcherResults(searcher))
 					{
 						foreach (var diskDrive in results)
 						{
 							var index = ReadUInt32(diskDrive, "Index");
-							var deviceId = ReadString(diskDrive, "DeviceId");
-							if (index.HasValue && !string.IsNullOrEmpty(deviceId))
-								diskDriveIds.Add(index.Value, deviceId);
+							var signature = ReadUInt32(diskDrive, "Signature");
+							if (index.HasValue && signature.HasValue)
+								diskDrives.Add(index.Value, signature.Value);
 						}
 					}
 				}
 
-				// read the s/n of the first disk drive
-				foreach (var diskDriveId in diskDriveIds.Values)
-				{
-					var query = string.Format(
-						"ASSOCIATORS OF {0}Win32_DiskDrive.DeviceID=\"{2}\"{1} WHERE ResultClass = Win32_PhysicalMedia", '{', '}',
-						WqlEscape(diskDriveId));
-					using (var searcher = new ManagementObjectSearcher(query))
-					{
-						using (var results = new ManagementObjectSearcherResults(searcher))
-						{
-							foreach (var media in results)
-							{
-								var serialNumber = ReadString(media, "SerialNumber");
-								if (!string.IsNullOrEmpty(serialNumber))
-									return serialNumber.Trim();
-							}
-						}
-					}
-				}
+				// use the signature of the first physical disk drive
+				foreach (var diskDriveId in diskDrives)
+					return diskDriveId.Value.ToString("X8");
 			}
 			catch (Exception ex)
 			{
-				Platform.Log(LogLevel.Debug, ex, "Failed to retrieve disk drive serial.");
+				Platform.Log(LogLevel.Debug, ex, "Failed to retrieve disk drive signature.");
 			}
 			return string.Empty;
 		}
@@ -202,13 +186,6 @@ namespace ClearCanvas.Common.Utilities
 				Platform.Log(LogLevel.Debug, ex, @"WMI property ""{0}"" was not in the expected format.", propertyName);
 			}
 			return null;
-		}
-
-		private static string WqlEscape(string literal)
-		{
-			// there's probably more characters that need escaping for WQL, but we only use this for deviceID
-			// and it doesn't appear that there are any other likely character candidates for escaping
-			return literal.Replace("\\", "\\\\").Replace("\"", "\"\"");
 		}
 
 		/// <summary>
