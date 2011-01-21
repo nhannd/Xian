@@ -35,6 +35,7 @@ namespace ClearCanvas.ImageServer.TestApp
             textBoxLicense.Text = _message.LicenseString;
             textBoxComponent.Text = _message.Component;
             textBoxMachineIdentifier.Text = _message.MachineIdentifier;
+            textBoxEdition.Text = _message.Edition;
         }
 
         private void buttonSend_Click(object sender, EventArgs e)
@@ -46,6 +47,7 @@ namespace ClearCanvas.ImageServer.TestApp
             _message.LicenseString = textBoxLicense.Text;
             _message.Component = textBoxComponent.Text;
             _message.MachineIdentifier = textBoxMachineIdentifier.Text;
+            _message.Edition = textBoxEdition.Text;
             _message.MessageType = UsageType.Other;
 
             if (!string.IsNullOrEmpty(textBoxAppKey.Text) 
