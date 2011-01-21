@@ -55,7 +55,7 @@ namespace ClearCanvas.Common {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Configuration.SettingsDescriptionAttribute("Product version suffix (e.g. SP1).")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("vKfTr+ue1fm9jaIYbfkY5g==")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string VersionSuffix {
             get {
                 return ((string)(this["VersionSuffix"]));
@@ -77,15 +77,6 @@ namespace ClearCanvas.Common {
         public string Edition {
             get {
                 return ((string)(this["Edition"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string AllowDiagnosticUse {
-            get {
-                return ((string)(this["AllowDiagnosticUse"]));
             }
         }
         
@@ -112,6 +103,15 @@ namespace ClearCanvas.Common {
         public string License {
             get {
                 return ((string)(this["License"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("vKfTr+ue1fm9jaIYbfkY5g==")]
+        public string Release {
+            get {
+                return ((string)(this["Release"]));
             }
         }
     }

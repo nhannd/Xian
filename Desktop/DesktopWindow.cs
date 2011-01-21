@@ -359,20 +359,20 @@ namespace ClearCanvas.Desktop
 
         #region Helpers
 
-    	internal static readonly string LabelUncertifiedInstallation = "Uncertified Installation";
+    	internal static readonly string LabelModifiedInstallation = "Modified Installation";
 
     	private static string DefaultBaseTitle
     	{
     		get
     		{
     			var tags = new List<string>();
-    			if (!ProductInformation.AllowDiagnosticUse)
+    			if (ProductInformation.Release != string.Empty)
     				tags.Add(SR.LabelNotForDiagnosticUse);
     			if (!ManifestVerification.Valid)
     				// should be hardcoded because manifest verification is all that prevents localizing this tag away
-    				tags.Add(LabelUncertifiedInstallation);
+    				tags.Add(LabelModifiedInstallation);
 
-    			var name = ProductInformation.Component;
+    			var name = ProductInformation.GetName(false, true);
     			if (tags.Count == 0)
     				return name;
 

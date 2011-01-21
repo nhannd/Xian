@@ -186,7 +186,7 @@ namespace ClearCanvas.Common.UsageTracking
                                        Product = ProductInformation.Product,
                                        Component = ProductInformation.Component,
                                        Edition = ProductInformation.Edition,
-                                       AllowDiagnosticUse = ProductInformation.AllowDiagnosticUse,
+                                       AllowDiagnosticUse = ProductInformation.Release == string.Empty,
                                        Region = CultureInfo.CurrentCulture.Name,
                                        Timestamp = Platform.Time,
                                        OS = Environment.OSVersion.ToString(),

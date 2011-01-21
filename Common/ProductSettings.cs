@@ -38,7 +38,7 @@ namespace ClearCanvas.Common
 			Console.WriteLine("Edition: {0}", settings.Edition);
 			Console.WriteLine("Version: {0}", settings.Version);
 			Console.WriteLine("VersionSuffix: {0}", settings.VersionSuffix);
-			Console.WriteLine("AllowDiagnosticUse: {0}", settings.AllowDiagnosticUse);
+			Console.WriteLine("Release: {0}", settings.Release);
 			Console.WriteLine("Copyright:\n{0}", settings.Copyright);
 			Console.WriteLine("\nLicense:\n{0}", settings.License);
 		}
@@ -54,11 +54,11 @@ namespace ClearCanvas.Common
 		private string _product;
 		private string _component;
 		private string _edition;
+		private string _release;
 		private Version _version;
 		private string _versionSuffix;
 		private string _copyright;
 		private string _license;
-		private bool? _diagnosticRelease;
 
 		private readonly ProductSettings _settings;
 
@@ -73,11 +73,11 @@ namespace ClearCanvas.Common
 			_product = null;
 			_component = null;
 			_edition = null;
+			_release = null;
 			_version = null;
 			_versionSuffix = null;
 			_copyright = null;
 			_license = null;
-			_diagnosticRelease = null;
 		}
 
 		/// <summary>
@@ -116,6 +116,22 @@ namespace ClearCanvas.Common
 				if (_edition == null)
 					_edition = Decrypt(_settings.Edition);
 				return _edition;
+			}
+		}
+
+		/// <summary>
+		/// Gets the product release type.
+		/// </summary>
+		public string Release
+		{
+			get
+			{
+				if (_release == null)
+				{
+					var release = Decrypt(_settings.Release);
+					_release = string.IsNullOrEmpty(release) || release[0] != '*' ? "Unverified" : release.Substring(1);
+				}
+				return _release;
 			}
 		}
 
@@ -188,19 +204,6 @@ namespace ClearCanvas.Common
 				if (_license == null)
 					_license = Decrypt(_settings.License);
 				return _license;
-			}
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether or not this product version is suitable for diagnostic use.
-		/// </summary>
-		public bool AllowDiagnosticUse
-		{
-			get
-			{
-				if (!_diagnosticRelease.HasValue)
-					_diagnosticRelease = string.Equals("True", Decrypt(_settings.AllowDiagnosticUse), StringComparison.InvariantCultureIgnoreCase);
-				return _diagnosticRelease.Value;
 			}
 		}
 
@@ -277,6 +280,14 @@ namespace ClearCanvas.Common
 		}
 
 		/// <summary>
+		/// Gets the product release type.
+		/// </summary>
+		public static string Release
+		{
+			get { return _settings.Release; }
+		}
+
+		/// <summary>
 		/// Gets the product version.
 		/// </summary>
 		public static Version Version
@@ -309,44 +320,48 @@ namespace ClearCanvas.Common
 		}
 
 		/// <summary>
-		/// Gets a value indicating whether or not this product version is suitable for diagnostic use.
+		/// Gets the component name, optionally with the product edition and/or release type.
 		/// </summary>
-		public static bool AllowDiagnosticUse
+		/// <param name="includeEdition">A value indciating whether or not to include the product edition in the name.</param>
+		/// <param name="includeRelease">A value indicating whether or not to include the release type in the name.</param>
+		public static string GetName(bool includeEdition, bool includeRelease)
 		{
-			get { return _settings.AllowDiagnosticUse; }
+			var sb = new StringBuilder(Component);
+			if (includeEdition && !string.IsNullOrEmpty(Edition))
+			{
+				if (sb.Length > 0)
+					sb.Append(' ');
+				sb.Append(Edition);
+			}
+			if (includeRelease && !string.IsNullOrEmpty(Release))
+			{
+				if (sb.Length > 0)
+					sb.Append(' ');
+				sb.AppendFormat("({0})", Release);
+			}
+			return sb.ToString();
 		}
 
-
 		/// <summary>
-		/// Gets the component name, optionally with the product edition.
+		/// Gets a string containing both the component name, product edition, release type and version.
 		/// </summary>
-		/// <param name="includeEdition">A value indciating whether or not the include the product edition in the name.</param>
-		public static string GetName(bool includeEdition)
-		{
-			if (includeEdition && !string.IsNullOrEmpty(Edition) && !string.IsNullOrEmpty(Component))
-				return string.Format("{0} {1}", Component, Edition);
-			return Component;
-		}
-
-		/// <summary>
-		/// Gets a string containing both the component name, product edition and version.
-		/// </summary>
-		/// <param name="includeBuildAndRevision">Specifies whether to include the build and revision numbers in the version; false means only the major and minor numbers are included.</param>
-		/// <param name="includeVersionSuffix">Specifies whether to include the version suffix.</param>
+		/// <param name="includeBuildAndRevision">A value indicating whether or not to include the build and revision numbers in the version; False means only the major and minor numbers are included.</param>
+		/// <param name="includeVersionSuffix">A value indicating whether or not to include the version suffix.</param>
 		public static string GetNameAndVersion(bool includeBuildAndRevision, bool includeVersionSuffix)
 		{
-			return GetNameAndVersion(includeBuildAndRevision, includeVersionSuffix, true);
+			return GetNameAndVersion(includeBuildAndRevision, includeVersionSuffix, true, true);
 		}
 
 		/// <summary>
-		/// Gets a string containing both the component name and version, optionally with the product edition.
+		/// Gets a string containing both the component name and version, optionally with the product edition and/or release type.
 		/// </summary>
-		/// <param name="includeBuildAndRevision">Specifies whether to include the build and revision numbers in the version; false means only the major and minor numbers are included.</param>
-		/// <param name="includeVersionSuffix">Specifies whether to include the version suffix.</param>
-		/// <param name="includeEdition">A value indciating whether or not the include the product edition in the name.</param>
-		public static string GetNameAndVersion(bool includeBuildAndRevision, bool includeVersionSuffix, bool includeEdition)
+		/// <param name="includeBuildAndRevision">A value indicating whether or not to include the build and revision numbers in the version; False means only the major and minor numbers are included.</param>
+		/// <param name="includeVersionSuffix">A value indicating whether or not to include the version suffix.</param>
+		/// <param name="includeEdition">A value indciating whether or not to include the product edition in the name.</param>
+		/// <param name="includeRelease">A value indicating whether or not to include the release type in the name.</param>
+		public static string GetNameAndVersion(bool includeBuildAndRevision, bool includeVersionSuffix, bool includeEdition, bool includeRelease)
 		{
-			return string.Format("{0} {1}", GetName(includeEdition), GetVersion(includeBuildAndRevision, includeVersionSuffix));
+			return string.Format("{0} {1}", GetName(includeEdition, includeRelease), GetVersion(includeBuildAndRevision, includeVersionSuffix));
 		}
 
 		/// <summary>
