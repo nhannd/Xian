@@ -45,8 +45,8 @@
 		<ConfigFiles Include="$(ProjectDir)\..\..\..\ImageServer\Executable\Logging.config"/>
 
 		<CriticalConfigFiles Include="$(SolutionDir)\$(SolutionName)_web_critical.config"/>
-		<PluginFiles Include="$(ProjectDir)\..\..\Enterprise\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer2005.dll"/>
-		<PluginFiles Include="$(ProjectDir)\..\..\Model\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer2005.dll"/>
+		<PluginFiles Include="$(ProjectDir)\..\..\Enterprise\SqlServer\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer.dll"/>
+		<PluginFiles Include="$(ProjectDir)\..\..\Model\SqlServer\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer.dll"/>
 	</ItemGroup>
 
 	<ItemGroup>

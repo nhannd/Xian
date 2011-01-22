@@ -2051,7 +2051,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>2628</DevelopmentServerPort>
           <DevelopmentServerVPath>/ImageServer</DevelopmentServerVPath>
-          <IISUrl>http://localhost/ImageServerTrunk</IISUrl>
+          <IISUrl>http://localhost/ImageServerJin</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
@@ -2064,9 +2064,8 @@
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
-    <PostBuildEvent>
-		REM Run PostBuild msbuild project
+    <PostBuildEvent>REM Run PostBuild msbuild project
 
-		C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe  "$(SolutionDir)\$(SolutionName)_WebPostBuild.proj" "/property:$(ImageServerWebProperties)"</PostBuildEvent>
+C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe  "$(SolutionDir)\$(SolutionName)_WebPostBuild.proj" "/property:$(ImageServerWebProperties)"</PostBuildEvent>
   </PropertyGroup>
 </Project>

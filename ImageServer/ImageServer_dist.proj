@@ -46,7 +46,7 @@
 	<ExecutableAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\ImageServer_Shreds_dist.config" />
 	<ExecutableAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Dicom\app.config" />
 	<ExecutableAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Common\app.config" />
-	<ExecutableAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\SqlServer2005\app.config" />
+	<ExecutableAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\SqlServer\app.config" />
   </ItemGroup>
 
   <ItemGroup>
@@ -59,7 +59,7 @@
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Services\Streaming\app.config" />
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Services\WorkQueue\app.config" />
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Services\Archiving\Hsm\app.config" />
-	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\SqlServer2005\app.config" />
+	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\SqlServer\app.config" />
     <!--<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Web\Services\app.config" />
     <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Web\Common\app.config" />-->
     <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageViewer\Web\Server\ImageServer\app.config" />
@@ -102,9 +102,9 @@
 
   <ItemGroup>
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Common.dll" />
-	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Model\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer2005.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Model\SqlServer\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Core\bin\$(Configuration)\ClearCanvas.ImageServer.Core.dll" />
-	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer2005.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\SqlServer\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Common.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Dicom\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Dicom.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\WorkQueue\bin\$(Configuration)\ClearCanvas.ImageServer.Services.WorkQueue.dll" />
