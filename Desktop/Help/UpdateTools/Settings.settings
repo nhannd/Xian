@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="UpdateInformationServiceUrl" Description="URL of the update information service, which tells the application whether or not a new version is available." Type="(Web Service URL)" Scope="Application">
-      <Value Profile="(Default)">http://localhost:4472/UpdateInformationService.asmx</Value>
+      <Value Profile="(Default)">http://localhost/ClearCanvas.Distribution.UpdateService/UpdateInformationService.asmx</Value>
     </Setting>
   </Settings>
 </SettingsFile>

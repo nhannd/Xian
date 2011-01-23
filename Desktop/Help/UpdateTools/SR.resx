@@ -124,7 +124,7 @@
     <value>No update is available at this time.</value>
   </data>
   <data name="MessageUpdateAvailable" xml:space="preserve">
-    <value>{0} {1} is now available!</value>
+    <value>{0} is now available!</value>
   </data>
   <data name="MessageUpdateRequestFailed" xml:space="preserve">
     <value>The request for update information failed.
