@@ -94,6 +94,7 @@
     <Compile Include="EntityBrokers\DatabaseVersionEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\DeviceEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\DevicePreferredTransferSyntaxEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\DeviceTypeEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\DuplicateSopEntryEntityBroker.cs" />
     <Compile Include="EntityBrokers\DuplicateSopPolicyEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\FilesystemEntityBroker.gen.cs" />
@@ -169,6 +170,10 @@
     <ProjectReference Include="..\..\Enterprise\ClearCanvas.ImageServer.Enterprise.csproj">
       <Project>{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}</Project>
       <Name>ClearCanvas.ImageServer.Enterprise</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Enterprise\SqlServer\ClearCanvas.ImageServer.Enterprise.SqlServer.csproj">
+      <Project>{D8B59C0F-A097-4D7D-A488-0188100AF8E2}</Project>
+      <Name>ClearCanvas.ImageServer.Enterprise.SqlServer</Name>
     </ProjectReference>
     <ProjectReference Include="..\ClearCanvas.ImageServer.Model.csproj">
       <Project>{2C9126D3-5B73-4539-BBC9-D56E6097D335}</Project>
