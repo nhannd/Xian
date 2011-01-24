@@ -361,28 +361,44 @@ namespace ClearCanvas.Common
 		/// <param name="includeRelease">A value indicating whether or not to include the release type in the name.</param>
 		public static string GetNameAndVersion(bool includeBuildAndRevision, bool includeVersionSuffix, bool includeEdition, bool includeRelease)
 		{
-			return string.Format("{0} {1}", GetName(includeEdition, includeRelease), GetVersion(includeBuildAndRevision, includeVersionSuffix));
+			return string.Format("{0} {1}", GetName(includeEdition, includeRelease), GetVersion(includeBuildAndRevision, includeVersionSuffix, false));
 		}
 
 		/// <summary>
-		/// Gets the version as a string, formatted based on the input options.
+		/// Gets the version as a string, optionally with build and revision numbers, and/or version suffix.
 		/// </summary>
 		/// <param name="includeBuildAndRevision">Specifies whether to include the build and revision numbers in the version; false means only the major and minor numbers are included.</param>
 		/// <param name="includeVersionSuffix">Specifies whether to include the version suffix.</param>
 		public static string GetVersion(bool includeBuildAndRevision, bool includeVersionSuffix)
 		{
-			string versionString;
-			Version version = Version;
+			return GetVersion(includeBuildAndRevision, includeVersionSuffix, false);
+		}
 
-			if (includeBuildAndRevision)
-				versionString = String.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
-			else
-				versionString = String.Format("{0}.{1}", version.Major, version.Minor);
+		/// <summary>
+		/// Gets the version as a string, optionally with build and revision numbers, version suffix, and/or release type.
+		/// </summary>
+		/// <param name="includeBuildAndRevision">Specifies whether to include the build and revision numbers in the version; false means only the major and minor numbers are included.</param>
+		/// <param name="includeVersionSuffix">Specifies whether to include the version suffix.</param>
+		/// <param name="includeRelease">A value indicating whether or not to include the release type in the name.</param>
+		public static string GetVersion(bool includeBuildAndRevision, bool includeVersionSuffix, bool includeRelease)
+		{
+			var version = Version;
+			var versionString = new StringBuilder(string.Format("{0}.{1}", version.Major, version.Minor));
 
-			if (includeVersionSuffix && !String.IsNullOrEmpty(VersionSuffix))
-				return String.Format("{0} {1}", versionString, VersionSuffix);
+			if (includeBuildAndRevision && version.Build >= 0)
+			{
+				versionString.AppendFormat(".{0}", version.Build);
+				if (version.Revision >= 0)
+					versionString.AppendFormat(".{0}", version.Revision);
+			}
 
-			return versionString;
+			if (includeVersionSuffix && !string.IsNullOrEmpty(VersionSuffix))
+				versionString.Append(" " + VersionSuffix);
+
+			if (includeRelease && !string.IsNullOrEmpty(Release))
+				versionString.Append(" " + Release);
+
+			return versionString.ToString();
 		}
 	}
 
