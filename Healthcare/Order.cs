@@ -30,9 +30,12 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Workflow;
+using ClearCanvas.Enterprise.Core;
+using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Healthcare
 {
@@ -167,10 +170,19 @@ namespace ClearCanvas.Healthcare
 		/// <param name="procedure"></param>
 		public virtual void AddProcedure(Procedure procedure)
 		{
-			if (procedure.Order != null || procedure.Status != ProcedureStatus.SC)
-				throw new ArgumentException("Only new Procedure objects may be added to an order.");
+			if (procedure.Status != ProcedureStatus.SC)
+				throw new WorkflowException("Only Procedures in the SC status may be added to an order.");
+			if(procedure.Order == this)
+				throw new WorkflowException("This procedure is already part of this order.");
 			if (this.IsTerminated)
 				throw new WorkflowException(string.Format("Cannot add procedure to order with status {0}.", _status));
+
+			if(procedure.Order != null)
+			{
+				// JR: ideally we want to remove it from its current order collection,
+				// but there seems to be a bug in NH that will cause an exception upon save if we do this
+				//procedure.Order.RemoveProcedure(procedure);
+			}
 
 			procedure.Order = this;
 
@@ -190,15 +202,18 @@ namespace ClearCanvas.Healthcare
 		/// Removes the specified procedure from this order.
 		/// </summary>
 		/// <param name="procedure"></param>
-		public virtual void RemoveProcedure(Procedure procedure)
+		public virtual bool RemoveProcedure(Procedure procedure)
 		{
-			if (!_procedures.Contains(procedure))
-				throw new ArgumentException("Specified procedure does not exist for this order.");
 			if (procedure.Status != ProcedureStatus.SC)
 				throw new WorkflowException("Only procedures in the SC status can be removed from an order.");
 
-			_procedures.Remove(procedure);
-			procedure.Order = null;
+			if(_procedures.Contains(procedure))
+			{
+				_procedures.Remove(procedure);
+				procedure.Order = null;
+				return true;
+			}
+			return false;
 		}
 
 		/// <summary>
@@ -233,6 +248,9 @@ namespace ClearCanvas.Healthcare
 				failureReason = "Orders that belong to different patients cannot be merged.";
 			else if (this.OrderingFacility.InformationAuthority != destinationOrder.OrderingFacility.InformationAuthority)
 				failureReason = "Orders with different ordering facilities cannot be merged.";
+			else if (CollectionUtils.Contains(this.Procedures, p => p.DowntimeRecoveryMode)
+				|| CollectionUtils.Contains(destinationOrder.Procedures, p => p.DowntimeRecoveryMode))
+				failureReason = "Downtime orders cannot be merged.";
 
 			return string.IsNullOrEmpty(failureReason);
 		}
@@ -243,7 +261,7 @@ namespace ClearCanvas.Healthcare
 		/// <param name="mergeInfo"></param>
 		public virtual void Merge(OrderMergeInfo mergeInfo)
 		{
-			var destinationOrder = mergeInfo.MergeDestinationOrder;
+			var destOrder = mergeInfo.MergeDestinationOrder;
 
 			string failureReason;
 			if (!CanMerge(mergeInfo, out failureReason))
@@ -251,19 +269,20 @@ namespace ClearCanvas.Healthcare
 
 			_mergeInfo = mergeInfo;
 
-			// Move all the result recipients to destination
+			// copy all the result recipients to destination
 			foreach (var rr in _resultRecipients)
 			{
-				var recipientAlreadyExist = CollectionUtils.Contains(destinationOrder.ResultRecipients, recipients => recipients.PractitionerContactPoint.Equals(rr.PractitionerContactPoint));
+				var recipientAlreadyExist = CollectionUtils.Contains(
+					destOrder.ResultRecipients, recipients => recipients.PractitionerContactPoint.Equals(rr.PractitionerContactPoint));
 				if (!recipientAlreadyExist)
-					destinationOrder.ResultRecipients.Add(rr);
+					destOrder.ResultRecipients.Add((ResultRecipient)rr.Clone());
 			}
-			_resultRecipients.Clear();
 
 			// Move all the attachments to destination
+			// TODO: copy instead of move
 			foreach (var a in _attachments)
 			{
-				destinationOrder.Attachments.Add(a);
+				destOrder.Attachments.Add(a);
 			}
 			_attachments.Clear();
 
@@ -271,34 +290,116 @@ namespace ClearCanvas.Healthcare
 			var notes = OrderNote.GetNotesForOrder(this);
 			foreach (var n in notes)
 			{
-				n.Order = destinationOrder;
+				n.Order = destOrder;
 			}
 
 			// Create ghost copies of the original procedures before it is added to the destinations
 			// Theese ghost procedures are required for HL7 messages.
-			var ghostProcedures = CollectionUtils.Map<Procedure, Procedure>(this.Procedures, p => p.CreateGhostCopy());
-
-			// generate an index for the destination procedure
-			var highestIndex = CollectionUtils.Max(
-				CollectionUtils.Map<Procedure, int>(destinationOrder.Procedures, p => int.Parse(p.Index)), 0);
+			var ghostProcedures = CollectionUtils.Map(_procedures, (Procedure p) => p.CreateGhostCopy());
 
 			// Move all the procedures to the destination order.
 			foreach (var p in _procedures)
 			{
-				p.Order = destinationOrder;
-				p.Index = (highestIndex + 1).ToString();
-				destinationOrder.Procedures.Add(p);
-				highestIndex = highestIndex + 1;
+				destOrder.AddProcedure(p);
 			}
 
 			// update destination scheduling information
-			destinationOrder.UpdateScheduling();
+			destOrder.UpdateScheduling();
 
 			// Add ghost procedures back to the source order.
 			_procedures.AddAll(ghostProcedures);
 
 			// Set source order to merged status
 			SetStatus(OrderStatus.MG);
+		}
+
+		public virtual bool CanUnmerge(OrderCancelInfo cancelInfo, out string failureReason)
+		{
+			var destOrder = _mergeInfo.MergeDestinationOrder;
+			failureReason = null;
+			if (_status != OrderStatus.MG || destOrder == null)
+				failureReason = "Only orders in the MG status can be unmerged.";
+			else if (destOrder.Status != OrderStatus.SC)
+				failureReason = "Cannot unmerge because the merge target order has already been started.";
+			else if (cancelInfo.Reason == null)
+				failureReason = "A reason must be provided to unmerge.";
+			else if (CollectionUtils.Contains(this.Procedures, p => p.DowntimeRecoveryMode)
+				|| CollectionUtils.Contains(destOrder.Procedures, p => p.DowntimeRecoveryMode))
+				failureReason = "Downtime orders cannot be unmerged.";
+
+			return string.IsNullOrEmpty(failureReason);
+		}
+
+		public virtual Order Unmerge(OrderCancelInfo cancelInfo, string newAccessionNumber)
+		{
+			string failureReason;
+			if (!CanUnmerge(cancelInfo, out failureReason))
+				throw new WorkflowException(failureReason);
+
+			var destOrder = _mergeInfo.MergeDestinationOrder;
+
+			// determine procedures to be reclaimed from dest order
+			var reclaimProcedures = CollectionUtils.Select(destOrder.Procedures,
+				p => CollectionUtils.Contains(_procedures, q => Equals(p.Type, q.Type)));
+
+			var newOrder = new Order(
+					_patient,
+					_visit,
+					null,	// do not copy placer-number
+					newAccessionNumber,  // assign new acc #
+					_diagnosticService,
+					_enteredTime,
+					_enteredBy,
+					_enteredComment,
+					_schedulingRequestTime,
+					null, // will be set later
+					null, // will be set later
+					null, // will be set later
+					_orderingPractitioner,
+					_orderingFacility,
+					new HashedSet<Procedure>(), // will be added later
+					CollectionUtils.Map(_resultRecipients, (ResultRecipient rr) => (ResultRecipient) rr.Clone()),
+					new List<OrderAttachment>(), //TODO
+					_reasonForStudy,
+					_priority,
+					OrderStatus.SC,
+					null,
+					null,
+					new HashedSet<Order>(),
+					ExtendedPropertyUtils.Copy(_extendedProperties)
+				);
+
+
+			// todo notes
+			// todo attachments
+
+			// reclaim procedures
+			var ghostCopies = CollectionUtils.Map(reclaimProcedures, (Procedure p) => p.CreateGhostCopy());
+			foreach (var procedure in reclaimProcedures)
+			{
+				newOrder.AddProcedure(procedure);
+			}
+			destOrder.Procedures.AddAll(ghostCopies);
+
+			// update scheduling/status information
+			newOrder.UpdateScheduling();
+			newOrder.UpdateStatus();
+
+			// any orders that were merged into this order must be redirected to the new order,
+			// in order to support recursive unmerge
+			foreach (var sourceOrder in _mergeSourceOrders)
+			{
+				sourceOrder.MergeInfo.MergeDestinationOrder = newOrder;
+				newOrder.MergeSourceOrders.Add(sourceOrder);
+			}
+			_mergeSourceOrders.Clear();
+
+			// change status of this order to RP, and setting cancel info
+			_cancelInfo = (OrderCancelInfo)cancelInfo.Clone();
+			_cancelInfo.ReplacementOrder = newOrder;
+			SetStatus(OrderStatus.RP);
+
+			return newOrder;
 		}
 
 		/// <summary>
@@ -311,10 +412,6 @@ namespace ClearCanvas.Healthcare
 				throw new WorkflowException("Only orders in the SC status can be canceled");
 
 			_cancelInfo = cancelInfo;
-
-			// update the status prior to cancelling the procedures
-			// (otherwise cancelling the procedures will cause them to try and update the order status)
-			//SetStatus(OrderStatus.CA);
 
 			// cancel/discontinue all procedures
 			foreach (var procedure in _procedures)

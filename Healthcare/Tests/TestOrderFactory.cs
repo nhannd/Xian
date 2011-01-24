@@ -46,16 +46,24 @@ namespace ClearCanvas.Healthcare.Tests
 		{
 			Patient patient = TestPatientFactory.CreatePatient();
 			Visit visit = TestVisitFactory.CreateVisit(patient);
-			return CreateOrder(patient, visit, "10000001", numProcedures, numMpsPerProcedure, createProcedureSteps, schedule);
+			var facility = TestFacilityFactory.CreateFacility();
+			return CreateOrder(patient, visit, facility, "10000001", numProcedures, numMpsPerProcedure, createProcedureSteps, schedule);
 		}
+
 		public static Order CreateOrder(Patient patient, Visit visit, string accession, int numProcedures, int numMpsPerProcedure, bool createProcedureSteps, bool schedule)
+		{
+			var facility = TestFacilityFactory.CreateFacility();
+			return CreateOrder(patient, visit, facility, accession, numProcedures, numMpsPerProcedure, createProcedureSteps,
+			                   schedule);
+		}
+
+		public static Order CreateOrder(Patient patient, Visit visit, Facility facility, string accession, int numProcedures, int numMpsPerProcedure, bool createProcedureSteps, bool schedule)
         {
             DateTime? scheduleTime = DateTime.Now;
 
             DiagnosticService ds = TestDiagnosticServiceFactory.CreateDiagnosticService(numProcedures);
             string reasonForStudy = "Test";
             ExternalPractitioner orderingPrac = TestExternalPractitionerFactory.CreatePractitioner();
-            Facility facility = TestFacilityFactory.CreateFacility();
 
             Order order =  Order.NewOrder(new OrderCreationArgs(
 				Platform.Time,

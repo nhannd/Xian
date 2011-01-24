@@ -151,6 +151,17 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 		MergeOrderResponse MergeOrder(MergeOrderRequest request);
 
 		/// <summary>
+		/// Un-merge all orders that were merged into the specified order.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[OperationContract]
+		[FaultContract(typeof(RequestValidationException))]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		UnmergeOrderResponse UnmergeOrder(UnmergeOrderRequest request);
+
+
+		/// <summary>
 		/// Cancel orders with a cancellation reason for a patient
 		/// </summary>
 		/// <param name="request"><see cref="CancelOrderRequest"/></param>

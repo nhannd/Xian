@@ -178,6 +178,7 @@
     <Compile Include="Tests\ExternalPractitionerTests.cs" />
     <Compile Include="Tests\InterpretationStepTests.cs" />
     <Compile Include="Tests\ModalityProcedureStepTests.cs" />
+    <Compile Include="Tests\OrderTests.cs" />
     <Compile Include="Tests\ProcedureCheckInTests.cs" />
     <Compile Include="Tests\ProcedureStepTests.cs" />
     <Compile Include="Tests\ProcedureTests.cs" />

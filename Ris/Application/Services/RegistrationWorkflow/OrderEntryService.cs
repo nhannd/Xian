@@ -42,8 +42,9 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
-using ClearCanvas.Workflow;
+using Iesi.Collections.Generic;
 using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using System;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -123,7 +124,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			departmentSearchCriteria.Deactivated.EqualTo(false);
 			departmentSearchCriteria.Name.SortAsc(0);
 			var departments = CollectionUtils.Map(
-				this.PersistenceContext.GetBroker<IDepartmentBroker>().Find(departmentSearchCriteria), 
+				this.PersistenceContext.GetBroker<IDepartmentBroker>().Find(departmentSearchCriteria),
 				(Department d) => departmentAssembler.CreateSummary(d, this.PersistenceContext));
 
 			return new GetOrderEntryFormDataResponse(
@@ -262,7 +263,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			ValidateOrderReplacable(orderToReplace);
 
 			// reason is optional
-			var reason = (request.CancelReason != null) ? 
+			var reason = (request.CancelReason != null) ?
 				EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.CancelReason, this.PersistenceContext) : null;
 
 			// duplicate any attachments in the requisition,
@@ -296,39 +297,60 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			Platform.CheckTrue(request.SourceOrderRefs.Count > 0, "SourceOrderRefs.Count > 0");
 			Platform.CheckMemberIsSet(request.DestinationOrderRef, "DestinationOrderRef");
 
-			if (request.ValidationOnly)
-				return MergeOrderValidation(request);
+			var response = new MergeOrderResponse();
+			DryRunHelper(request.DryRun,
+				delegate
+				{
+					var destinationOrder = this.PersistenceContext.Load<Order>(request.DestinationOrderRef);
+					var sourceOrders = CollectionUtils.Map(request.SourceOrderRefs, (EntityRef r) => PersistenceContext.Load<Order>(r));
+					var mergeInfo = new OrderMergeInfo(this.CurrentUserStaff, destinationOrder);
 
-			if (request.DryRun)
-				return MergeOrderDryRun(request);
+					MergeOrderHelper(destinationOrder, sourceOrders, mergeInfo, request.ValidationOnly);
 
-			var destinationOrder = this.PersistenceContext.Load<Order>(request.DestinationOrderRef);
+					if(request.DryRun)
+					{
+						var orderAssembler = new OrderAssembler();
+						var orderDetail = orderAssembler.CreateOrderDetail(destinationOrder,
+							new OrderAssembler.CreateOrderDetailOptions(true, true, true, null, true, true, true), PersistenceContext);
+						response.DryRunMergedOrder = orderDetail;
+					}
+				});
+			return response;
+		}
 
-			var sourceOrderAccessionNumbers = new List<string>();
-			foreach (var sourceOrderRef in request.SourceOrderRefs)
-			{
-				var sourceOrder = this.PersistenceContext.Load<Order>(sourceOrderRef);
-				sourceOrderAccessionNumbers.Add(sourceOrder.AccessionNumber);
+		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Unmerge)]
+		[OperationEnablement("CanUnmergeOrder")]
+		public UnmergeOrderResponse UnmergeOrder(UnmergeOrderRequest request)
+		{
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.OrderRef, "OrderRef");
 
-				// Merge the source order into the destination order.
-				sourceOrder.Merge(new OrderMergeInfo(this.CurrentUserStaff, destinationOrder));
+			// reason is not required for dry run, but otherwise it is
+			if(!request.DryRun && request.UnmergeReason == null)
+				throw new ArgumentNullException("UnmergeReason");
 
-				// Add a orderNote to the source Order
-				var sourceNote = OrderNote.CreateGeneralNote(sourceOrder, this.CurrentUserStaff,
-					string.Format(SR.MessageSourceMergeOrderNote, destinationOrder.AccessionNumber));
-				PersistenceContext.Lock(sourceNote, DirtyState.New);
+			DryRunHelper(request.DryRun,
+				delegate
+				{
+					var destinationOrder = this.PersistenceContext.Load<Order>(request.OrderRef);
+					var sourceOrders = destinationOrder.MergeSourceOrders;
+					if (sourceOrders.Count == 0)
+						throw new RequestValidationException("This order does not have any orders to un-merge.");
 
-				CreateLogicalHL7Event(sourceOrder, LogicalHL7EventType.OrderCancelled);
-				CreateLogicalHL7Event(destinationOrder, LogicalHL7EventType.OrderModified);
-			}
+					// load the reason; if reason is null (eg dry run), just get the first available reason
+					var reason = request.UnmergeReason == null ?
+						CollectionUtils.FirstElement(PersistenceContext.GetBroker<IEnumBroker>().Load<OrderCancelReasonEnum>(false))
+						: EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.UnmergeReason, PersistenceContext);
 
-			// bug 7364: Add a orderNote to the dest Order, to compensate for the lack of a back-link
-			var destNote = OrderNote.CreateGeneralNote(destinationOrder, this.CurrentUserStaff,
-				string.Format(SR.MessageDestinationMergeOrderNote, StringUtilities.Combine(sourceOrderAccessionNumbers, ", ")));
+					var cancelInfo = new OrderCancelInfo(reason, this.CurrentUserStaff, "Un-merged");
+					var accBroker = PersistenceContext.GetBroker<IAccessionNumberBroker>();
 
-			PersistenceContext.Lock(destNote, DirtyState.New);
+					// do unmerge
+					UnmergeHelper(sourceOrders, cancelInfo, accBroker);
+				});
 
-			return new MergeOrderResponse();
+			return new UnmergeOrderResponse();
 		}
 
 		[UpdateOperation]
@@ -437,6 +459,18 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 			var order = this.PersistenceContext.Load<Order>(itemKey.OrderRef);
 			return order.Status == OrderStatus.SC;
+		}
+
+		public bool CanUnmergeOrder(WorklistItemKey itemKey)
+		{
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Order.Unmerge))
+				return false;
+
+			if (itemKey.OrderRef == null)
+				return false;
+
+			var order = this.PersistenceContext.Load<Order>(itemKey.OrderRef);
+			return order.Status == OrderStatus.SC && order.MergeSourceOrders.Count > 0;
 		}
 
 		public bool CanModifyOrder(WorklistItemKey itemKey)
@@ -586,61 +620,82 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			operation.Execute(order, info);
 		}
 
-		private MergeOrderResponse MergeOrderDryRun(MergeOrderRequest request)
+		private void MergeOrderHelper(Order destinationOrder, IEnumerable<Order> sourceOrders, OrderMergeInfo mergeInfo, bool validateOnly)
 		{
-			var response = new MergeOrderResponse();
+			var sourceOrderAccessionNumbers = new List<string>();
+			foreach (var sourceOrder in sourceOrders)
+			{
+				sourceOrderAccessionNumbers.Add(sourceOrder.AccessionNumber);
 
-			try
+				string failureReason;
+				if (!sourceOrder.CanMerge(mergeInfo, out failureReason))
+					throw new RequestValidationException(failureReason);
+
+				if(validateOnly)
+					continue;
+
+				// Merge the source order into the destination order.
+				sourceOrder.Merge(mergeInfo);
+
+				// Add a orderNote to the source Order
+				var sourceNote = OrderNote.CreateGeneralNote(sourceOrder, this.CurrentUserStaff, string.Format(SR.MessageSourceMergeOrderNote, destinationOrder.AccessionNumber));
+				PersistenceContext.Lock(sourceNote, DirtyState.New);
+
+				CreateLogicalHL7Event(sourceOrder, LogicalHL7EventType.OrderCancelled);
+				CreateLogicalHL7Event(destinationOrder, LogicalHL7EventType.OrderModified);
+			}
+
+			if (validateOnly)
+				return;
+
+			// bug 7364: Add a orderNote to the dest Order, to compensate for the lack of a back-link
+			var destNote = OrderNote.CreateGeneralNote(destinationOrder, this.CurrentUserStaff, string.Format(SR.MessageDestinationMergeOrderNote, StringUtilities.Combine(sourceOrderAccessionNumbers, ", ")));
+			PersistenceContext.Lock(destNote, DirtyState.New);
+		}
+
+		private void UnmergeHelper(IEnumerable<Order> sourceOrders, OrderCancelInfo cancelInfo, IAccessionNumberBroker accBroker)
+		{
+			foreach (var order in sourceOrders)
+			{
+				string failureReason;
+				if (!order.CanUnmerge(cancelInfo, out failureReason))
+					throw new RequestValidationException(failureReason);
+
+				var replacementOrder = order.Unmerge(cancelInfo, accBroker.GetNextAccessionNumber());
+				PersistenceContext.Lock(replacementOrder, DirtyState.New);
+
+				// if the replacement order is terminated, no point in continuing
+				if (!replacementOrder.IsTerminated)
+				{
+					// notify HL7 of replacement
+					CreateLogicalHL7Event(replacementOrder, LogicalHL7EventType.OrderCreated);
+
+					// recur on items that were merged into this order
+					UnmergeHelper(replacementOrder.MergeSourceOrders, cancelInfo, accBroker);
+				}
+			}
+		}
+
+		private static void DryRunHelper(bool dryRun, Action<object> action)
+		{
+			if (dryRun)
 			{
 				// create a new persistence scope, so that we do not use the scope inherited by the service
 				using (var scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.RequiresNew))
 				{
-					var destOrder = this.PersistenceContext.Load<Order>(request.DestinationOrderRef);
-					
-					foreach (var sourceOrderRef in request.SourceOrderRefs)
-					{
-						var srcOrder = this.PersistenceContext.Load<Order>(sourceOrderRef);
+					action(null);
 
-						// Merge the source order into the destination order.
-						srcOrder.Merge(new OrderMergeInfo(this.CurrentUserStaff, destOrder));
-
-						// try to synch state to see if DB will accept changes
-						scope.Context.SynchState();
-
-						var orderAssembler = new OrderAssembler();
-						response.DryRunMergedOrder = orderAssembler.CreateOrderDetail(destOrder,
-							new OrderAssembler.CreateOrderDetailOptions(true, true, true, null, true, true, true), scope.Context);
-					}
+					// try to synch state to see if DB will accept changes
+					scope.Context.SynchState();
 
 					//note: do not call scope.Complete() under any circumstances - we want this transaction to rollback
 				}
-
-				return response;
 			}
-			catch (WorkflowException e)
+			else
 			{
-				// changes not accepted, probably because two invalid orders are being merged.
-				response.ValidationFailureReason = e.Message;
+				// just do the action in the usual scope
+				action(null);
 			}
-
-			return response;
-		}
-
-		private MergeOrderResponse MergeOrderValidation(MergeOrderRequest request)
-		{
-			var destOrder = this.PersistenceContext.Load<Order>(request.DestinationOrderRef);
-			var mergeInfo = new OrderMergeInfo(this.CurrentUserStaff, destOrder);
-
-			var response = new MergeOrderResponse();
-			foreach (var sourceOrderRef in request.SourceOrderRefs)
-			{
-				var srcOrder = this.PersistenceContext.Load<Order>(sourceOrderRef);
-
-				if (!srcOrder.CanMerge(mergeInfo, out response.ValidationFailureReason))
-					break;
-			}
-
-			return response;
 		}
 
 		private string GetAccessionNumberForOrder(OrderRequisition requisition)
@@ -721,7 +776,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 					throw new RequestValidationException("Order modification must not modify the type of a requested procedure.");
 
 				// If the procedure is already terminated, just move on to the next one since procedures cannot be "un-terminated".
-				if (procedure.IsTerminated) 
+				if (procedure.IsTerminated)
 					continue;
 
 				// apply the requisition information to the actual procedure

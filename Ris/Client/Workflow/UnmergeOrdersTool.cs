@@ -29,31 +29,30 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	[ButtonAction("apply", "folderexplorer-items-toolbar/Merge Orders", "Apply")]
-	[MenuAction("apply", "folderexplorer-items-contextmenu/Merge Orders", "Apply")]
-	[Tooltip("apply", "Merge Orders")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/Undo Merge Orders", "Apply")]
+	[MenuAction("apply", "folderexplorer-items-contextmenu/Undo Merge Orders", "Apply")]
+	[Tooltip("apply", "Undo Merge Orders")]
 	[IconSet("apply", IconScheme.Colour, "MergeOrdersSmall.png", "MergeOrdersMedium.png", "MergeOrdersLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[ActionPermission("apply", Application.Common.AuthorityTokens.Workflow.Order.Merge)]
-	public abstract class MergeOrdersToolBase<TItem, TContext> : WorkflowItemTool<TItem, TContext>
+	[ActionPermission("apply", Application.Common.AuthorityTokens.Workflow.Order.Unmerge)]
+	public abstract class UnmergeOrdersToolBase<TItem, TContext> : WorkflowItemTool<TItem, TContext>
 		where TItem : WorklistItemSummaryBase
 		where TContext : IWorkflowItemToolContext<TItem>
 	{
-		protected MergeOrdersToolBase()
-			: base("MergeOrder")
+		protected UnmergeOrdersToolBase()
+			: base("UnmergeOrder")
 		{
 		}
 
@@ -70,78 +69,54 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				if(DowntimeRecovery.InDowntimeRecoveryMode)
+				if (DowntimeRecovery.InDowntimeRecoveryMode)
 					return false;
 
-				if (this.Context.SelectedItems.Count < 2)
+				// we can tolerate a multi-select, as long as all selected items have the same accession number
+				var accNumbers = CollectionUtils.Unique(CollectionUtils.Map(this.Context.SelectedItems, (TItem item) => item.AccessionNumber));
+				if(accNumbers.Count != 1)
 					return false;
 
-				var list = new List<TItem>(this.Context.SelectedItems);
-
-				// Obvious cases where merging should not be allowed.
-				// Cannot merge the same order.  If Unique list has the same number as the original list, every item in the list is unique.
-				var sameOrder = CollectionUtils.TrueForAll(list, item => item.AccessionNumber.Equals(list[0].AccessionNumber));
-				if (sameOrder)
-					return false;
-
-				// Cannot merge orders from different patient
-				var differentPatient = CollectionUtils.Contains(list, item => !item.PatientRef.Equals(list[0].PatientRef, true));
-				if (differentPatient)
-					return false;
-
-				// Return true, let the server decide how to inform user of more complicated error.
-				return true;
+				return this.Context.GetOperationEnablement("UnmergeOrder");
 			}
 		}
 
 		protected bool ExecuteCore(WorklistItemSummaryBase item)
 		{
-			var list = new List<TItem>(this.Context.SelectedItems);
-			var orderRefs = CollectionUtils.Map<TItem, EntityRef>(list, x => x.OrderRef);
-			var component = new MergeOrdersComponent(orderRefs);
-
-			string failureReason;
-			if (!ValidateMergeRequest(orderRefs, out failureReason))
+			EnumValueInfo reason;
+			var reasonCode = OrderMergeSettings.Default.UnmergeDefaultReasonCode;
+			if(string.IsNullOrEmpty(reasonCode))
 			{
-				this.Context.DesktopWindow.ShowMessageBox(failureReason, MessageBoxActions.Ok);
-				return false;
+				var cancelOrderComponent = new CancelOrderComponent();
+				var exitCode = ApplicationComponent.LaunchAsDialog(
+					this.Context.DesktopWindow,
+					cancelOrderComponent,
+					string.Format("Undo merge into order {0}", AccessionFormat.Format(item.AccessionNumber)));
+
+				if (exitCode != ApplicationComponentExitCode.Accepted)
+					return false;
+
+				reason = cancelOrderComponent.SelectedCancelReason;
+			}
+			else
+			{
+				reason = new EnumValueInfo(reasonCode, null, null);
 			}
 
-			if (ApplicationComponentExitCode.Accepted != ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, component, SR.TitleMergeOrders))
-				return false;
+			Platform.GetService(
+				delegate(IOrderEntryService service)
+				{
+					var request = new UnmergeOrderRequest(item.OrderRef) {UnmergeReason = reason};
+					service.UnmergeOrder(request);
+				});
 
 			InvalidateFolders();
-
 			return true;
-		}
-
-		private static bool ValidateMergeRequest(IList<EntityRef> orderRefs, out string failureReason)
-		{
-			var destinationOrderRef = orderRefs[0];
-			var sourceOrderRefs = new List<EntityRef>(orderRefs);
-			sourceOrderRefs.Remove(destinationOrderRef);
-
-			try
-			{
-				Platform.GetService(
-					delegate(IOrderEntryService service)
-					{
-						var request = new MergeOrderRequest(sourceOrderRefs, destinationOrderRef) { ValidationOnly = true };
-						service.MergeOrder(request);
-					});
-				failureReason = null;
-				return true;
-			}
-			catch (RequestValidationException e)
-			{
-				failureReason = e.Message;
-				return false;
-			}
 		}
 	}
 
 	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
-	public class RegistrationMergeOrdersTool : MergeOrdersToolBase<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>
+	public class RegistrationUnmergeOrdersTool : UnmergeOrdersToolBase<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>
 	{
 		protected override bool Execute(RegistrationWorklistItemSummary item)
 		{
@@ -156,7 +131,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	}
 
 	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
-	public class BookingMergeOrdersTool : MergeOrdersToolBase<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>
+	public class BookingUnmergeOrdersTool : UnmergeOrdersToolBase<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>
 	{
 		protected override bool Execute(RegistrationWorklistItemSummary item)
 		{
@@ -171,7 +146,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	}
 
 	[ExtensionOf(typeof(PerformingWorkflowItemToolExtensionPoint))]
-	public class PerformingMergeOrdersTool : MergeOrdersToolBase<ModalityWorklistItemSummary, IPerformingWorkflowItemToolContext>
+	public class PerformingUnmergeOrdersTool : UnmergeOrdersToolBase<ModalityWorklistItemSummary, IPerformingWorkflowItemToolContext>
 	{
 		protected override bool Execute(ModalityWorklistItemSummary item)
 		{

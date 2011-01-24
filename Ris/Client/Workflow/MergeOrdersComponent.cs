@@ -245,16 +245,24 @@ namespace ClearCanvas.Ris.Client.Workflow
 			var sourceOrderRefs = new List<EntityRef>(_orderRefs);
 			sourceOrderRefs.Remove(_selectedOrder.OrderRef);
 
-			MergeOrderResponse response = null;
-			Platform.GetService(
-				delegate(IOrderEntryService service)
-				{
-					var request = new MergeOrderRequest(sourceOrderRefs, destinationOrderRef) { DryRun = true };
-					response = service.MergeOrder(request);
-				});
+			try
+			{
+				MergeOrderResponse response = null;
+				Platform.GetService(
+					delegate(IOrderEntryService service)
+					{
+						var request = new MergeOrderRequest(sourceOrderRefs, destinationOrderRef) { DryRun = true };
+						response = service.MergeOrder(request);
+					});
 
-			failureReason = response.ValidationFailureReason;
-			mergedOrder = response.DryRunMergedOrder;
+				mergedOrder = response.DryRunMergedOrder;
+				failureReason = null;
+			}
+			catch (RequestValidationException e)
+			{
+				failureReason = e.Message;
+				mergedOrder = null;
+			}
 		}
 	}
 }

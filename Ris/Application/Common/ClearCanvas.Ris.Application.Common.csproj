@@ -181,6 +181,8 @@
     <Compile Include="RegistrationWorkflow\OrderEntry\MergeOrderResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\QueryCancelOrderWarningsRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\QueryCancelOrderWarningsResponse.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\UnmergeOrderRequest.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\UnmergeOrderResponse.cs" />
     <Compile Include="ReportingWorkflow\GetDocumentationStatusResponse.cs" />
     <Compile Include="ReportingWorkflow\GetDocumentationStatusRequest.cs" />
     <Compile Include="ReportingWorkflow\ReturnToInterpreterRequest.cs" />

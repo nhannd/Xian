@@ -88,8 +88,14 @@
 			<!-- Link to the destination order, if the order was merged -->
 			<many-to-one name="MergeDestinationOrder" class="Order" column="MergeDestinationOrderOID_"/>
 		</component>
+    
+    <!-- Collection of orders that were merged into this order. -->
+    <set name="MergeSourceOrders" lazy="true" inverse="true">
+      <key column="MergeDestinationOrderOID_"/>
+      <one-to-many class="Order"/>
+    </set>
 
-		<map name="ExtendedProperties" lazy="true" table="OrderExtendedProperty_">
+    <map name="ExtendedProperties" lazy="true" table="OrderExtendedProperty_">
 			<key column="OrderOID_"/>
 			<index column="Name_" type="String"/>
 			<element type="String" column="Value_" length="65000"/>

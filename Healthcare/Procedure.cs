@@ -42,7 +42,7 @@ namespace ClearCanvas.Healthcare
 	/// <summary>
 	/// Procedure entity
 	/// </summary>
-	[Validation(HighLevelRulesProviderMethod="GetValidationRules")]
+	[Validation(HighLevelRulesProviderMethod = "GetValidationRules")]
 	public partial class Procedure
 	{
 		public Procedure(ProcedureType type)
@@ -376,7 +376,7 @@ namespace ClearCanvas.Healthcare
 		public virtual void Cancel()
 		{
 			if (_status != ProcedureStatus.SC)
-				throw new WorkflowException("Only procedures in the SC status can be cancelled");
+				throw new WorkflowException("Only procedures in the SC status can be cancelled.");
 
 			// update the status prior to cancelling the procedure steps
 			// (otherwise cancelling the steps will cause them to try and update the procedure status)
@@ -407,12 +407,25 @@ namespace ClearCanvas.Healthcare
 		/// <returns></returns> 
 		public virtual Procedure CreateGhostCopy()
 		{
-			return new Procedure(this.Order, this.Type, this.Index, new HashedSet<ProcedureStep>(),
-								this.ScheduledStartTime, this.SchedulingCode, this.StartTime, this.EndTime, ProcedureStatus.GH,
-								this.PerformingFacility, this.PerformingDepartment,
-								this.Laterality, this.Portable, this.ProcedureCheckIn, this.ImageAvailability,
-								this.DowntimeRecoveryMode,
-								new HashedSet<Report>(), new HashedSet<Protocol>());
+			return new Procedure(
+				_order,
+				_type,
+				_index,
+				new HashedSet<ProcedureStep>(),
+				_scheduledStartTime,
+				_schedulingCode,
+				_startTime,
+				_endTime,
+				ProcedureStatus.GH,
+				_performingFacility,
+				_performingDepartment,
+				_laterality,
+				_portable,
+				new ProcedureCheckIn(),
+				_imageAvailability,
+				_downtimeRecoveryMode,
+				new HashedSet<Report>(),
+				new HashedSet<Protocol>());
 		}
 
 		/// <summary>
@@ -662,5 +675,6 @@ namespace ClearCanvas.Healthcare
 				patientProfileExistsForPerformingFacilityRule
 			});
 		}
+
 	}
 }

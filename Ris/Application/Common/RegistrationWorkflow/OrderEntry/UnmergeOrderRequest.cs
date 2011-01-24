@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,18 +29,28 @@
 
 #endregion
 
-using System.Runtime.Serialization;
+
+
 using ClearCanvas.Enterprise.Common;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 {
 	[DataContract]
-	public class MergeOrderResponse : DataContractBase
+	public class UnmergeOrderRequest : DataContractBase
 	{
-		/// <summary>
-		/// If a dry-run was requested and succeeded, specifies what the merged order would look like.
-		/// </summary>
+		public UnmergeOrderRequest(EntityRef orderRef)
+		{
+			OrderRef = orderRef;
+		}
+
 		[DataMember]
-		public OrderDetail DryRunMergedOrder;
+		public EntityRef OrderRef;
+
+		[DataMember]
+		public EnumValueInfo UnmergeReason;
+
+		[DataMember]
+		public bool DryRun;
 	}
 }

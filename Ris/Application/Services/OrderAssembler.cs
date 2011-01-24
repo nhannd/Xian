@@ -119,9 +119,9 @@ namespace ClearCanvas.Ris.Application.Services
 
 			if (options.IncludeProcedures)
 			{
-				orderDetail.Procedures = CollectionUtils.Map<Procedure, ProcedureDetail>(
-					order.Procedures,
-					procedure => procedureAssembler.CreateProcedureDetail(procedure, context));
+				var nonGhost = CollectionUtils.Select(order.Procedures, p => p.Status != ProcedureStatus.GH);
+				orderDetail.Procedures = CollectionUtils.Map(nonGhost,
+					(Procedure p) => procedureAssembler.CreateProcedureDetail(p, context));
 			}
 
 			if (options.IncludeNotes)
