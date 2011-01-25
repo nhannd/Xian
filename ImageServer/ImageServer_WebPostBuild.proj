@@ -41,14 +41,22 @@
 		</Otherwise>
 	</Choose>
 
-	<ItemGroup>
-		<ConfigFiles Include="$(ProjectDir)\..\..\..\ImageServer\Executable\Logging.config"/>
+	<UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.CombineAppConfigs" AssemblyFile="$(TrunkDirectory)\Utilities\BuildTasks\bin\$(Configuration)\ClearCanvas.Utilities.BuildTasks.dll"/>
 
-		<CriticalConfigFiles Include="$(SolutionDir)\$(SolutionName)_web_critical.config"/>
+
+	<ItemGroup>
+		<LogConfigFiles Include="$(ProjectDir)\..\..\..\ImageServer\Executable\Logging.config"/>
+
+		<WebCriticalConfigCreatorSourceFiles Include="$(SolutionDir)\$(SolutionName)_web_critical.config"/>
+		<WebConfig Include="$(SolutionDir)\$(SolutionName)_Web.config"/>
+	</ItemGroup>
+
+	<ItemGroup>		
 		<PluginFiles Include="$(ProjectDir)\..\..\Enterprise\SqlServer\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer.dll"/>
 		<PluginFiles Include="$(ProjectDir)\..\..\Model\SqlServer\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer.dll"/>
 	</ItemGroup>
 
+	
 	<ItemGroup>
 		<WebViewerPlugins Include="$(TrunkDirectory)\Desktop\bin\$(Configuration)\ClearCanvas.Desktop.dll"/>
 		
@@ -98,12 +106,13 @@
 		<Copy SkipUnchangedFiles="true" SourceFiles="@(BinFiles)" DestinationFolder="$(ProjectDir)\bin"/>
 	</Target>
 	<Target Name="CopyConfigFiles">
-		<Message Text="Copying config files into output folder (ASP.NET Development Server must not be running)"/>
-		<Message Text="$(ProjectDir)"/>
-		<Message Text="@(ConfigFiles)"/>
-		<Copy SkipUnchangedFiles="true" SourceFiles="@(ConfigFiles)" DestinationFolder="$(ProjectDir)"/>
-		<Copy SkipUnchangedFiles="true" SourceFiles="@(CriticalConfigFiles)" DestinationFiles="$(ProjectDir)\critical.config"/>
+		<Copy SkipUnchangedFiles="true" SourceFiles="@(LogConfigFiles)" DestinationFiles="$(ProjectDir)\Logging.config"/>
 
+		<CombineAppConfigs CheckDependency="false" SourceFiles="@(WebCriticalConfigCreatorSourceFiles)" 
+						   OutputFile="$(ProjectDir)\critical.config"/>
+
+		<Copy SkipUnchangedFiles="false" SourceFiles="@(WebConfig)" DestinationFiles="$(ProjectDir)\Web.config"/>
+		
 	</Target>
 
 	<Target Name="Build Web Viewer">

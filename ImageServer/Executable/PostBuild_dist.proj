@@ -60,7 +60,7 @@
   <!-- Config files, to be placed in distribution directory -->
   <ItemGroup>
     <ConfigFiles Include="$(ProjectDir)\..\Executable\Logging.config" />
-    <ConfigFiles Include="$(ProjectDir)\bin\$(Configuration)\ClearCanvas.ImageServer.ShredHostService.exe.config" />
+    <ExecutableCriticalConfigFiles Include="$(SolutionDir)\$(SolutionName)_Executable_dist.critical.config" />
   </ItemGroup>
 
   <!-- Shared library files, to be placed in common directory -->
@@ -80,7 +80,7 @@
 
   <!-- Execution files -->
   <ItemGroup>
-    <ExecutionFiles Include="$(ProjectDir)\bin\$(Configuration)\ClearCanvas.ImageServer.ShredHostService.exe" />
+    <ExecutionFiles Include="$(ProjectDir)\bin\$(Configuration)\ClearCanvas.ImageServer.Executable.exe" />
   </ItemGroup>
 
   <!-- Plugin files -->
@@ -90,6 +90,14 @@
 
   <Target Name="Copy files">
 
+  
+    <!-- Override the value of TargetPlatform for this task. -->
+    <CreateProperty Value="$(BuildPlatform)" Condition=" '$(TargetPlatform)' == '' ">
+      <Output TaskParameter="Value" PropertyName="TargetPlatform" />
+    </CreateProperty>
+	<!-- Run the solution specific build file -->
+	<MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory);UtilitiesDirectory=$(UtilitiesDirectory)" />
+	  
     <!-- Make required directories -->
     <MakeDir Directories="@(DestinationDirectories)" ContinueOnError="true" />
 
@@ -99,7 +107,7 @@
     <!-- Copy shared config files -->
     <Copy SourceFiles="@(ConfigFiles)" Condition="!Exists('$(DistributionDirectory)\%(FileName).%(Extension)')" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
 
-    <!-- Copy shared libraries -->
+	  <!-- Copy shared libraries -->
     <Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(CommonDirectory)" />
 
     <!-- Copy license file -->
@@ -108,12 +116,6 @@
     <!-- Copy execution files -->
     <Copy SkipUnchangedFiles="true" SourceFiles="@(ExecutionFiles)" DestinationFolder="$(DistributionDirectory)" />
 
-    <!-- Override the value of TargetPlatform for this task. -->
-    <CreateProperty Value="$(BuildPlatform)" Condition=" '$(TargetPlatform)' == '' ">
-      <Output TaskParameter="Value" PropertyName="TargetPlatform" />
-    </CreateProperty>
 
-    <!-- Run the solution specific build file -->
-    <MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory);UtilitiesDirectory=$(UtilitiesDirectory)" />
   </Target>
 </Project>

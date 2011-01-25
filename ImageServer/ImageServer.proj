@@ -39,7 +39,7 @@
   <!-- set out some defaults -->
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <DistributionBuild>false</DistributionBuild>
+    <DistributionBuild>true</DistributionBuild>
   </PropertyGroup>
 
   <Choose>
@@ -58,12 +58,12 @@
   <Choose>
     <When Condition="$(DistributionBuild) And '$(Configuration)' == 'Release' And '$(KeyFile)' != ''">
       <PropertyGroup>
-        <ImageServerProperties>Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir);SignAssembly=true;DelaySign=false;AssemblyOriginatorKeyFile=$(KeyFile)</ImageServerProperties>
+        <ImageServerProperties>Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionBuild=$(DistributionBuild);DistributionDir=$(DistributionDir);SignAssembly=true;DelaySign=false;AssemblyOriginatorKeyFile=$(KeyFile)</ImageServerProperties>
       </PropertyGroup>
     </When>
     <Otherwise>
       <PropertyGroup>
-        <ImageServerProperties>Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir)</ImageServerProperties>
+        <ImageServerProperties>Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionBuild=$(DistributionBuild);DistributionDir=$(DistributionDir)</ImageServerProperties>
       </PropertyGroup>
     </Otherwise>
   </Choose>
@@ -75,6 +75,7 @@
   <Target Name="BuildSolution" DependsOnTargets="Build JScript">
     <RemoveDir Condition="$(DistributionBuild)" Directories="$(DistributionDir)" />
     <MSBuild Projects="ImageServer.sln" Properties="$(ImageServerProperties)" />
+	<MSBuild Projects="$(MSBuildProjectDirectory)\Web\ApplicationDeployment\WebApplicationDeployment.wdproj" Properties="$(ImageServerProperties)" Condition="$(DistributionBuild)" />
   </Target>
 
 </Project>

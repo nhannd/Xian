@@ -86,7 +86,7 @@
     <PluginDeleteFiles Include="$(PluginsDirectory)\*.*" />
   </ItemGroup>
 
-  <Target Name="Copy files">
+  <Target Name="Copy files" Condition="'$(DistributionDir)' == ''">
 
     <!-- Make required directories -->
     <MakeDir Directories="@(DestinationDirectories)" ContinueOnError="true" />
