@@ -85,7 +85,7 @@ namespace ClearCanvas.Healthcare {
 		public static OrderNote CreateGeneralNote(Order order, Staff author, string body)
 		{
 			return new OrderNote("General", body, false, Platform.Time, author,
-				null, Platform.Time, false, false, new HashedSet<NotePosting>(), order);
+				null, Platform.Time, false, false, new HashedSet<NotePosting>(), null, order);
 		}
 
         /// <summary>
@@ -102,6 +102,24 @@ namespace ClearCanvas.Healthcare {
         {
             _order = order;
         }
+
+		public virtual OrderNote CreateGhostCopy()
+		{
+			return new OrderNote(
+				this.Category,
+				this.Body,
+				this.Urgent,
+				this.CreationTime,
+				this.Author,
+				this.OnBehalfOfGroup,
+				this.PostTime,
+				this.IsFullyAcknowledged,
+				false,							// ghost copies do not have postings
+				new HashedSet<NotePosting>(),	// ghost copies do not have postings
+				this,
+				_order);
+		}
+
 
 		/* Commented out for ticket #3709, where it is explicitly requested that user can post new notes without acknowledging previous notes. */
 		///// <summary>

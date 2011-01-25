@@ -286,11 +286,16 @@ namespace ClearCanvas.Healthcare
 			}
 			_attachments.Clear();
 
-			// Move all the order notes to destination
+			// Move all the order notes to destination, and create ghosts of notes for this order
 			var notes = OrderNote.GetNotesForOrder(this);
+			var ghostNotes = CollectionUtils.Map(notes, (OrderNote n) => n.CreateGhostCopy());
 			foreach (var n in notes)
 			{
 				n.Order = destOrder;
+			}
+			foreach (var n in ghostNotes)
+			{
+				PersistenceScope.CurrentContext.Lock(n, DirtyState.New);
 			}
 
 			// Create ghost copies of the original procedures before it is added to the destinations
@@ -339,8 +344,7 @@ namespace ClearCanvas.Healthcare
 			var destOrder = _mergeInfo.MergeDestinationOrder;
 
 			// determine procedures to be reclaimed from dest order
-			var reclaimProcedures = CollectionUtils.Select(destOrder.Procedures,
-				p => CollectionUtils.Contains(_procedures, q => Equals(p.Type, q.Type)));
+			var reclaimProcedures = CollectionUtils.Map(_procedures, (Procedure p) => p.GhostOf);
 
 			var newOrder = new Order(
 					_patient,
@@ -352,9 +356,9 @@ namespace ClearCanvas.Healthcare
 					_enteredBy,
 					_enteredComment,
 					_schedulingRequestTime,
-					null, // will be set later
-					null, // will be set later
-					null, // will be set later
+					null, // will be set by call to UpdateScheduling()
+					null,
+					null,
 					_orderingPractitioner,
 					_orderingFacility,
 					new HashedSet<Procedure>(), // will be added later
@@ -370,16 +374,26 @@ namespace ClearCanvas.Healthcare
 				);
 
 
-			// todo notes
+			// reclaim order notes
+			var notes = OrderNote.GetNotesForOrder(this);
+			var reclaimNotes = CollectionUtils.Map(
+				CollectionUtils.Select(notes, n => n.GhostOf != null),
+				(OrderNote n) => n.GhostOf.Downcast<OrderNote>());
+			foreach (var note in reclaimNotes)
+			{
+				note.Order = newOrder;
+			}
+
+
 			// todo attachments
 
 			// reclaim procedures
-			var ghostCopies = CollectionUtils.Map(reclaimProcedures, (Procedure p) => p.CreateGhostCopy());
+			//var ghostCopies = CollectionUtils.Map(reclaimProcedures, (Procedure p) => p.CreateGhostCopy());
 			foreach (var procedure in reclaimProcedures)
 			{
 				newOrder.AddProcedure(procedure);
 			}
-			destOrder.Procedures.AddAll(ghostCopies);
+			//destOrder.Procedures.AddAll(ghostCopies);
 
 			// update scheduling/status information
 			newOrder.UpdateScheduling();

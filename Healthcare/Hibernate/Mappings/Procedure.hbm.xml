@@ -42,6 +42,7 @@
       <key column="ProcedureOID_"/>
       <many-to-many column="ProtocolOID_" class="Protocol" fetch="join"/>
     </set>
-    
+    <!-- if this procedure is a ghost, this references the live procedure that it is a ghost of -->
+    <many-to-one name="GhostOf" class="Procedure" column="GhostOfOID_"/>
   </class>
 </hibernate-mapping>

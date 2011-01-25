@@ -425,7 +425,8 @@ namespace ClearCanvas.Healthcare
 				_imageAvailability,
 				_downtimeRecoveryMode,
 				new HashedSet<Report>(),
-				new HashedSet<Protocol>());
+				new HashedSet<Protocol>(),
+				this);
 		}
 
 		/// <summary>
