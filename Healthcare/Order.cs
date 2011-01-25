@@ -44,6 +44,28 @@ namespace ClearCanvas.Healthcare
 	/// </summary>
 	public partial class Order
 	{
+		public class MergeResult
+		{
+			/// <summary>
+			/// Gets the set of ghost procedures that were generated.
+			/// </summary>
+			public List<Procedure> GhostProcedures { get; internal set; }
+		}
+
+		public class UnmergeResult
+		{
+			/// <summary>
+			/// Gets the replacement order.
+			/// </summary>
+			public Order ReplacementOrder { get; internal set; }
+
+			/// <summary>
+			/// Gets the set of ghost procedures that were generated.
+			/// </summary>
+			public List<Procedure> GhostProcedures { get; internal set; }
+		}
+
+
 		#region Static Factory methods
 
 		/// <summary>
@@ -259,7 +281,7 @@ namespace ClearCanvas.Healthcare
 		/// Merge the current order into the destination order specified in the mergeInfo.
 		/// </summary>
 		/// <param name="mergeInfo"></param>
-		public virtual void Merge(OrderMergeInfo mergeInfo)
+		public virtual MergeResult Merge(OrderMergeInfo mergeInfo)
 		{
 			var destOrder = mergeInfo.MergeDestinationOrder;
 
@@ -278,13 +300,21 @@ namespace ClearCanvas.Healthcare
 					destOrder.ResultRecipients.Add((ResultRecipient)rr.Clone());
 			}
 
-			// Move all the attachments to destination
-			// TODO: copy instead of move
+			// move all the attachments to destination, and replace with ghosts
+			var ghostAttachments = CollectionUtils.Map(_attachments, (OrderAttachment a) => a.CreateGhostCopy());
 			foreach (var a in _attachments)
 			{
 				destOrder.Attachments.Add(a);
 			}
 			_attachments.Clear();
+			foreach (var ghost in ghostAttachments)
+			{
+				if(PersistenceScope.Current != null)
+				{
+					PersistenceScope.CurrentContext.Lock(ghost.Document, DirtyState.New);
+				}
+				_attachments.Add(ghost);
+			}
 
 			// Move all the order notes to destination, and create ghosts of notes for this order
 			var notes = OrderNote.GetNotesForOrder(this);
@@ -316,8 +346,16 @@ namespace ClearCanvas.Healthcare
 
 			// Set source order to merged status
 			SetStatus(OrderStatus.MG);
+
+			return new MergeResult {GhostProcedures = ghostProcedures};
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether this order can be unmerged from its merge destination.
+		/// </summary>
+		/// <param name="cancelInfo"></param>
+		/// <param name="failureReason"></param>
+		/// <returns></returns>
 		public virtual bool CanUnmerge(OrderCancelInfo cancelInfo, out string failureReason)
 		{
 			var destOrder = _mergeInfo.MergeDestinationOrder;
@@ -335,7 +373,14 @@ namespace ClearCanvas.Healthcare
 			return string.IsNullOrEmpty(failureReason);
 		}
 
-		public virtual Order Unmerge(OrderCancelInfo cancelInfo, string newAccessionNumber)
+		/// <summary>
+		/// Un-merges this order from its merge destination, returning a new order with the specified accession #,
+		/// and marking this order as Replaced by the new order.
+		/// </summary>
+		/// <param name="cancelInfo"></param>
+		/// <param name="newAccessionNumber"></param>
+		/// <returns></returns>
+		public virtual UnmergeResult Unmerge(OrderCancelInfo cancelInfo, string newAccessionNumber)
 		{
 			string failureReason;
 			if (!CanUnmerge(cancelInfo, out failureReason))
@@ -346,6 +391,7 @@ namespace ClearCanvas.Healthcare
 			// determine procedures to be reclaimed from dest order
 			var reclaimProcedures = CollectionUtils.Map(_procedures, (Procedure p) => p.GhostOf);
 
+			// create replacement order
 			var newOrder = new Order(
 					_patient,
 					_visit,
@@ -363,7 +409,7 @@ namespace ClearCanvas.Healthcare
 					_orderingFacility,
 					new HashedSet<Procedure>(), // will be added later
 					CollectionUtils.Map(_resultRecipients, (ResultRecipient rr) => (ResultRecipient) rr.Clone()),
-					new List<OrderAttachment>(), //TODO
+					new List<OrderAttachment>(),
 					_reasonForStudy,
 					_priority,
 					OrderStatus.SC,
@@ -384,16 +430,23 @@ namespace ClearCanvas.Healthcare
 				note.Order = newOrder;
 			}
 
+			// reclaim attachments
+			var reclaimAttachments = CollectionUtils.Map(_attachments,
+				(OrderAttachment a) => 
+					CollectionUtils.SelectFirst(destOrder.Attachments, b => Equals(a.Document.GhostOf, b.Document)));
+			foreach (var attachment in reclaimAttachments)
+			{
+				destOrder.Attachments.Remove(attachment);
+				newOrder.Attachments.Add(attachment);
+			}
 
-			// todo attachments
-
-			// reclaim procedures
-			//var ghostCopies = CollectionUtils.Map(reclaimProcedures, (Procedure p) => p.CreateGhostCopy());
+			// reclaim procedures (need to create ghost copies on the dest order, so that HL7 can cancel them)
+			var ghostProcedures = CollectionUtils.Map(reclaimProcedures, (Procedure p) => p.CreateGhostCopy());
 			foreach (var procedure in reclaimProcedures)
 			{
 				newOrder.AddProcedure(procedure);
 			}
-			//destOrder.Procedures.AddAll(ghostCopies);
+			destOrder.Procedures.AddAll(ghostProcedures);	// note: procedure Indexes are already set correctly
 
 			// update scheduling/status information
 			newOrder.UpdateScheduling();
@@ -413,7 +466,7 @@ namespace ClearCanvas.Healthcare
 			_cancelInfo.ReplacementOrder = newOrder;
 			SetStatus(OrderStatus.RP);
 
-			return newOrder;
+			return new UnmergeResult {ReplacementOrder = newOrder, GhostProcedures = ghostProcedures};
 		}
 
 		/// <summary>

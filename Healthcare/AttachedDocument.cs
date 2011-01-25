@@ -54,7 +54,7 @@ namespace ClearCanvas.Healthcare {
 			_mimeType = source.MimeType;
 	  		_fileExtension = source.FileExtension;
 
-			_contentUrl = unprocessed ? null : source.ContentUrl;
+			_contentUrl = source.ContentUrl;
 		}
 	
 		/// <summary>
@@ -66,32 +66,27 @@ namespace ClearCanvas.Healthcare {
 		}
 
 		/// <summary>
-		/// Duplicates this document, including duplicating the remote resource.
+		/// Duplicates this document.
+		/// </summary>
+		/// <remarks>
+		/// Does not duplicate the remote resource. However, the remote resource is treated as immutable,
+		/// so having multiple instances referring to the same remote resource poses no problems.
+		/// </remarks>
+		/// <returns></returns>
+		public virtual AttachedDocument Duplicate(bool unprocessed)
+		{
+			// derived classes may implement support
+			throw new NotSupportedException();
+		}
+
+		/// <summary>
+		/// Creates a ghost copy of this document.
 		/// </summary>
 		/// <returns></returns>
-		public virtual AttachedDocument Duplicate(IAttachedDocumentStore documentStore)
+		public virtual AttachedDocument CreateGhostCopy()
 		{
-			string tempFile = null;
-
-			try
-			{
-				// get the associated remote file to a temp local file
-				tempFile = GetFile(documentStore);
-
-				// create a copy of the AttachedDocument object
-				var copy = CreateUnprocessedCopy();
-
-				// use local file to create remote file for duplicate
-				copy.PutFile(documentStore, tempFile);
-
-				return copy;
-			}
-			finally
-			{
-				// ensure any temp file is deleted
-				if (tempFile != null)
-					File.Delete(tempFile);
-			}
+			// derived classes may implement support
+			throw new NotSupportedException();
 		}
 
 		public virtual DateTime? DocumentReceivedTime
@@ -127,16 +122,6 @@ namespace ClearCanvas.Healthcare {
 		}
 
 		/// <summary>
-		/// Creates an unprocessed copy of this instance.
-		/// </summary>
-		/// <returns></returns>
-		public virtual AttachedDocument CreateUnprocessedCopy()
-		{
-			// derived classes may implement support
-			throw new NotSupportedException();
-		}
-
-		/// <summary>
 		/// Gets the file associated with this attached document, from the document store.
 		/// </summary>
 		/// <returns></returns>
@@ -151,7 +136,22 @@ namespace ClearCanvas.Healthcare {
 		/// <returns></returns> 
 		public virtual void PutFile(IAttachedDocumentStore documentStore, string localFilePath)
 		{
-			_contentUrl = BuildContentUrl(this, "/");
+			const string pathDelimiter = "/";
+
+			var builder = new StringBuilder();
+			builder.Append(_creationTime.Year.ToString());
+			builder.Append(pathDelimiter);
+			builder.Append(_creationTime.Month.ToString());
+			builder.Append(pathDelimiter);
+			builder.Append(_creationTime.Day.ToString());
+			builder.Append(pathDelimiter);
+
+			// important that we always generate a new GUID here, because multiple AttachedDocument objects
+			// are allowed to refer to the same remote resource - therefore we must treat the remote resource
+			// as immutable
+			builder.AppendFormat("{0}.{1}", Guid.NewGuid().ToString("D"), _fileExtension);
+
+			_contentUrl = builder.ToString();
 			documentStore.PutDocument(_contentUrl, localFilePath);
 		}
 
@@ -170,19 +170,6 @@ namespace ClearCanvas.Healthcare {
 		public virtual void TimeShift(int minutes)
 		{
 			_creationTime = _creationTime.AddMinutes(minutes);
-		}
-
-		private static string BuildContentUrl(AttachedDocument document, string pathDelimiter)
-		{
-			var builder = new StringBuilder();
-			builder.Append(document.CreationTime.Year.ToString());
-			builder.Append(pathDelimiter);
-			builder.Append(document.CreationTime.Month.ToString());
-			builder.Append(pathDelimiter);
-			builder.Append(document.CreationTime.Day.ToString());
-			builder.Append(pathDelimiter);
-			builder.AppendFormat("{0}.{1}", Guid.NewGuid().ToString("D"), document.FileExtension);
-			return builder.ToString();
 		}
 	}
 }

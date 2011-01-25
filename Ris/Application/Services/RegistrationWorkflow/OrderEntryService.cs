@@ -635,14 +635,19 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 					continue;
 
 				// Merge the source order into the destination order.
-				sourceOrder.Merge(mergeInfo);
+				var result = sourceOrder.Merge(mergeInfo);
 
 				// Add a orderNote to the source Order
 				var sourceNote = OrderNote.CreateGeneralNote(sourceOrder, this.CurrentUserStaff, string.Format(SR.MessageSourceMergeOrderNote, destinationOrder.AccessionNumber));
 				PersistenceContext.Lock(sourceNote, DirtyState.New);
 
+				// create all necessary HL7 events
 				CreateLogicalHL7Event(sourceOrder, LogicalHL7EventType.OrderCancelled);
 				CreateLogicalHL7Event(destinationOrder, LogicalHL7EventType.OrderModified);
+				foreach (var ghostProcedure in result.GhostProcedures)
+				{
+					CreateLogicalHL7Event(ghostProcedure.GhostOf, LogicalHL7EventType.ProcedureCreated);
+				}
 			}
 
 			if (validateOnly)
@@ -661,14 +666,25 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				if (!order.CanUnmerge(cancelInfo, out failureReason))
 					throw new RequestValidationException(failureReason);
 
-				var replacementOrder = order.Unmerge(cancelInfo, accBroker.GetNextAccessionNumber());
+				var result = order.Unmerge(cancelInfo, accBroker.GetNextAccessionNumber());
+				var replacementOrder = result.ReplacementOrder;
 				PersistenceContext.Lock(replacementOrder, DirtyState.New);
 
-				// if the replacement order is terminated, no point in continuing
+				// sync state so that ghost procedures get OIDs, prior to queuing ghost HL7 events
+				PersistenceContext.SynchState();
+
+				// notify HL7 of cancelled procedures (now existing as ghosts on dest order)
+				foreach (var procedure in result.GhostProcedures)
+				{
+					CreateLogicalHL7Event(procedure, LogicalHL7EventType.ProcedureCancelled);
+				}
+
+				// if the replacement order is not terminated
 				if (!replacementOrder.IsTerminated)
 				{
 					// notify HL7 of replacement
 					CreateLogicalHL7Event(replacementOrder, LogicalHL7EventType.OrderCreated);
+
 
 					// recur on items that were merged into this order
 					UnmergeHelper(replacementOrder.MergeSourceOrders, cancelInfo, accBroker);
@@ -804,7 +820,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 				if (summary != null)
 				{
-					var dup = attachment.Document.Duplicate(AttachmentStore.GetClient());
+					var dup = attachment.Document.Duplicate(true);
 					PersistenceContext.Lock(dup, DirtyState.New);
 					summary.Document.DocumentRef = dup.GetRef();
 				}
