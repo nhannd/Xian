@@ -85,7 +85,8 @@
 		<!-- Information about where the order was merged, populated if the order status is MG -->
 		<component name="MergeInfo" class="OrderMergeInfo" access="nosetter.camelcase-underscore">
 			<many-to-one name="MergedBy" class="Staff" column="MergedByOID_"/>
-			<!-- Link to the destination order, if the order was merged -->
+      <property name="MergedTime" column="MergedTime_" type="DateTime"/>
+      <!-- Link to the destination order, if the order was merged -->
 			<many-to-one name="MergeDestinationOrder" class="Order" column="MergeDestinationOrderOID_"/>
 		</component>
     

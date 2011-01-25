@@ -178,14 +178,17 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 
 			var response = new GetOrderDetailResponse();
 			var orderAssembler = new OrderAssembler();
-			var createOrderDetailOptions = new OrderAssembler.CreateOrderDetailOptions(
-				request.IncludeVisit,
-				request.IncludeProcedures,
-				request.IncludeNotes,
-				request.NoteCategoriesFilter,
-				request.IncludeAttachments,
-				request.IncludeResultRecipients,
-				request.IncludeExtendedProperties);
+			var createOrderDetailOptions = new OrderAssembler.CreateOrderDetailOptions
+			{
+				IncludeVisit = request.IncludeVisit,
+				IncludeProcedures = request.IncludeProcedures,
+				IncludeNotes = request.IncludeNotes,
+				IncludeVirtualNotes = request.IncludeNotes,	// include virtual notes, if including notes at all
+				NoteCategoriesFilter = request.NoteCategoriesFilter,
+				IncludeAttachments = request.IncludeAttachments,
+				IncludeResultRecipients = request.IncludeResultRecipients,
+				IncludeExtendedProperties = request.IncludeExtendedProperties
+			};
 			response.Order = orderAssembler.CreateOrderDetail(order, createOrderDetailOptions, this.PersistenceContext);
 
 			if (request.IncludeAlerts)

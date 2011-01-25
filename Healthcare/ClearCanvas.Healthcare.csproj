@@ -102,6 +102,8 @@
     <Compile Include="FtpAttachedDocumentStore.cs" />
     <Compile Include="IAttachedDocumentStore.cs" />
     <Compile Include="Imex\DepartmentImex.cs" />
+    <Compile Include="IOrderNoteProvider.cs" />
+    <Compile Include="OrderMergeHistoryVirtualOrderNoteProvider.cs" />
     <Compile Include="OrderMergeInfo.cs" />
     <Compile Include="ProtocolingWorklistItemSearchCriteria.cs" />
     <Compile Include="DicomSeries.cs" />

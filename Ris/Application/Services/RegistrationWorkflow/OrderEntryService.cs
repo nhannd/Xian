@@ -303,7 +303,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				{
 					var destinationOrder = this.PersistenceContext.Load<Order>(request.DestinationOrderRef);
 					var sourceOrders = CollectionUtils.Map(request.SourceOrderRefs, (EntityRef r) => PersistenceContext.Load<Order>(r));
-					var mergeInfo = new OrderMergeInfo(this.CurrentUserStaff, destinationOrder);
+					var mergeInfo = new OrderMergeInfo(this.CurrentUserStaff, Platform.Time, destinationOrder);
 
 					MergeOrderHelper(destinationOrder, sourceOrders, mergeInfo, request.ValidationOnly);
 
@@ -311,7 +311,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 					{
 						var orderAssembler = new OrderAssembler();
 						var orderDetail = orderAssembler.CreateOrderDetail(destinationOrder,
-							new OrderAssembler.CreateOrderDetailOptions(true, true, true, null, true, true, true), PersistenceContext);
+							OrderAssembler.CreateOrderDetailOptions.GetVerboseOptions(), PersistenceContext);
 						response.DryRunMergedOrder = orderDetail;
 					}
 				});
@@ -637,10 +637,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				// Merge the source order into the destination order.
 				var result = sourceOrder.Merge(mergeInfo);
 
-				// Add a orderNote to the source Order
-				var sourceNote = OrderNote.CreateGeneralNote(sourceOrder, this.CurrentUserStaff, string.Format(SR.MessageSourceMergeOrderNote, destinationOrder.AccessionNumber));
-				PersistenceContext.Lock(sourceNote, DirtyState.New);
-
 				// create all necessary HL7 events
 				CreateLogicalHL7Event(sourceOrder, LogicalHL7EventType.OrderCancelled);
 				CreateLogicalHL7Event(destinationOrder, LogicalHL7EventType.OrderModified);
@@ -649,13 +645,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 					CreateLogicalHL7Event(ghostProcedure.GhostOf, LogicalHL7EventType.ProcedureCreated);
 				}
 			}
-
-			if (validateOnly)
-				return;
-
-			// bug 7364: Add a orderNote to the dest Order, to compensate for the lack of a back-link
-			var destNote = OrderNote.CreateGeneralNote(destinationOrder, this.CurrentUserStaff, string.Format(SR.MessageDestinationMergeOrderNote, StringUtilities.Combine(sourceOrderAccessionNumbers, ", ")));
-			PersistenceContext.Lock(destNote, DirtyState.New);
 		}
 
 		private void UnmergeHelper(IEnumerable<Order> sourceOrders, OrderCancelInfo cancelInfo, IAccessionNumberBroker accBroker)

@@ -461,10 +461,16 @@ namespace ClearCanvas.Healthcare
 			}
 			_mergeSourceOrders.Clear();
 
-			// change status of this order to RP, and setting cancel info
+			// change status of this order to RP, and set cancel info
 			_cancelInfo = (OrderCancelInfo)cancelInfo.Clone();
 			_cancelInfo.ReplacementOrder = newOrder;
+
+			// clear merge info on this order, since it is no longer considered merged
+			_mergeInfo = null;
+
+			// set status of this order to RP, and set end time manually
 			SetStatus(OrderStatus.RP);
+			_endTime = Platform.Time;
 
 			return new UnmergeResult {ReplacementOrder = newOrder, GhostProcedures = ghostProcedures};
 		}

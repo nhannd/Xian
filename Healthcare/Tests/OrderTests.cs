@@ -65,7 +65,7 @@ namespace ClearCanvas.Healthcare.Tests
 			var staff = TestStaffFactory.CreateStaff();
 
 			// merge order1 into order2
-			order1.Merge(new OrderMergeInfo(staff, order2));
+			order1.Merge(new OrderMergeInfo(staff, DateTime.Now, order2));
 
 			// order1 post conditions
 			Assert.AreEqual(OrderStatus.MG, order1.Status);
