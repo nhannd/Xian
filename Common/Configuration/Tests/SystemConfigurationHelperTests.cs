@@ -16,9 +16,7 @@ using System;
 using NUnit.Framework;
 using System.Collections.Generic;
 using SystemConfiguration = System.Configuration.Configuration;
-using System.Xml.Serialization;
 using System.Xml;
-using System.IO;
 
 namespace ClearCanvas.Common.Configuration.Tests
 {
@@ -51,16 +49,22 @@ namespace ClearCanvas.Common.Configuration.Tests
 		}
 
 		[Test]
-		public void TestWriteSettingsDefaultValues_NoOp()
+		public void TestReadWriteValues_String()
 		{
 			RemoveSettings();
 
 			WriteSharedValuesToConfig(_settingsClass, SettingValue.Default);
 			ValidateValuesInConfig(MigrationScope.Shared, SettingValue.Default);
+
+			WriteSharedValuesToConfig(_settingsClass, SettingValue.Previous);
+			ValidateValuesInConfig(MigrationScope.Shared, SettingValue.Previous);
+
+			WriteSharedValuesToConfig(_settingsClass, SettingValue.Current);
+			ValidateValuesInConfig(MigrationScope.Shared, SettingValue.Current);
 		}
 
 		[Test]
-		public void TestReadWriteDefaultValueXml_Noop()
+		public void TestReadWriteValues_Xml()
 		{
 			Type settingsClass = typeof(LocalXmlSettings);
 			SystemConfigurationHelper.RemoveSettingsValues(SystemConfigurationHelper.GetExeConfiguration(), settingsClass);
@@ -76,10 +80,8 @@ namespace ClearCanvas.Common.Configuration.Tests
 
 				SystemConfigurationHelper.PutSettingsValues(SystemConfigurationHelper.GetExeConfiguration(), settingsClass, values);
 				values = SystemConfigurationHelper.GetSettingsValues(GetExeConfiguration(), settingsClass);
-				//Assert.AreEqual(0, values.Count); 
+				Assert.AreEqual(1, values.Count); 
 
-				//NOTE: not truly a no-op because we purposely store the default value, and it's not always exactly the same on reading it back in.
-	
 				LocalXmlSettings settings = (LocalXmlSettings)ApplicationSettingsHelper.GetSettingsClassInstance(settingsClass);
 				Assert.IsNull(ApplicationSettingsExtensions.GetSharedPropertyValue(settings, LocalXmlSettings.PropertyUser));
 
@@ -94,66 +96,7 @@ namespace ClearCanvas.Common.Configuration.Tests
 		}
 
 		[Test]
-		public void TestReadWriteSettingsValues()
-		{
-			RemoveSettings();
-
-			WriteSharedValuesToConfig(_settingsClass, SettingValue.Current);
-			ValidateValuesInConfig(MigrationScope.Shared, SettingValue.Current);
-
-			WriteSharedValuesToConfig(_settingsClass, SettingValue.Previous);
-			ValidateValuesInConfig(MigrationScope.Shared, SettingValue.Previous);
-		}
-
-		[Test]
-		public void TestReadWriteSettingsValues_SomeDefault()
-		{
-			RemoveSettings();
-			var configuration = SystemConfigurationHelper.GetExeConfiguration();
-
-			var values = CreateSettingsValues(_settingsClass, MigrationScope.Shared, SettingValue.Current);
-			values[LocalMixedScopeSettings.PropertyApp1] = LocalMixedScopeSettings.PropertyApp1;
-			values[LocalMixedScopeSettings.PropertyApp2] = LocalMixedScopeSettings.PropertyApp2;
-
-			SystemConfigurationHelper.PutSettingsValues(configuration, _settingsClass, values);
-			values.Remove(LocalMixedScopeSettings.PropertyApp1);
-			values.Remove(LocalMixedScopeSettings.PropertyApp2);
-
-			var readValues = SystemConfigurationHelper.GetSettingsValues(GetExeConfiguration(), _settingsClass);
-			ValidateValues(values, readValues);
-		}
-
-		[Test]
-		public void TestResetIndividualValues()
-		{
-			RemoveSettings();
-			var configuration = SystemConfigurationHelper.GetExeConfiguration();
-
-			var values = new Dictionary<string, string>();
-			values[LocalMixedScopeSettings.PropertyApp1] = "Test1";
-			values[LocalMixedScopeSettings.PropertyApp2] = "Test2";
-
-			SystemConfigurationHelper.PutSettingsValues(configuration, _settingsClass, values);
-			values = SystemConfigurationHelper.GetSettingsValues(GetExeConfiguration(), _settingsClass);
-			Assert.AreEqual(2, values.Count);
-			Assert.AreEqual("Test1", values[LocalMixedScopeSettings.PropertyApp1]);
-			Assert.AreEqual("Test2", values[LocalMixedScopeSettings.PropertyApp2]);
-
-			values = new Dictionary<string, string>();
-			values[LocalMixedScopeSettings.PropertyApp1] = null;
-			values[LocalMixedScopeSettings.PropertyApp2] = null;
-
-			SystemConfigurationHelper.PutSettingsValues(configuration, _settingsClass, values);
-			values = SystemConfigurationHelper.GetSettingsValues(GetExeConfiguration(), _settingsClass);
-			Assert.AreEqual(0, values.Count);
-
-			var settings = (LocalMixedScopeSettings)ApplicationSettingsHelper.GetSettingsClassInstance(_settingsClass);
-			Assert.AreEqual(LocalMixedScopeSettings.PropertyApp1, settings.App1);
-			Assert.AreEqual(LocalMixedScopeSettings.PropertyApp2, settings.App2);
-		}
-
-		[Test]
-		public void TestWriteEmptyString()
+		public void TestWriteEmptyString_String()
 		{
 			RemoveSettings();
 			var configuration = SystemConfigurationHelper.GetExeConfiguration();
@@ -178,13 +121,14 @@ namespace ClearCanvas.Common.Configuration.Tests
 			Assert.AreEqual("", values[LocalMixedScopeSettings.PropertyApp1]);
 			Assert.AreEqual("", values[LocalMixedScopeSettings.PropertyApp2]);
 
+			//For string values, empty string means empty string.
 			var settings = (LocalMixedScopeSettings)ApplicationSettingsHelper.GetSettingsClassInstance(_settingsClass);
 			Assert.AreEqual("", settings.App1);
 			Assert.AreEqual("", settings.App2);
 		}
 
 		[Test]
-		public void TestWriteDefaultValue_EntriesRemoved()
+		public void TestWriteNull_String()
 		{
 			RemoveSettings();
 			var configuration = SystemConfigurationHelper.GetExeConfiguration();
@@ -200,9 +144,10 @@ namespace ClearCanvas.Common.Configuration.Tests
 			Assert.AreEqual("Test2", values[LocalMixedScopeSettings.PropertyApp2]);
 
 			values = new Dictionary<string, string>();
-			values[LocalMixedScopeSettings.PropertyApp1] = LocalMixedScopeSettings.PropertyApp1;
-			values[LocalMixedScopeSettings.PropertyApp2] = LocalMixedScopeSettings.PropertyApp2;
+			values[LocalMixedScopeSettings.PropertyApp1] = null;
+			values[LocalMixedScopeSettings.PropertyApp2] = null;
 
+			//writing null essentially means to reset it to the default, which is equivalent to removing it.
 			SystemConfigurationHelper.PutSettingsValues(configuration, _settingsClass, values);
 			values = SystemConfigurationHelper.GetSettingsValues(GetExeConfiguration(), _settingsClass);
 			Assert.AreEqual(0, values.Count);
@@ -213,9 +158,9 @@ namespace ClearCanvas.Common.Configuration.Tests
 		}
 
 		[Test]
-		public void TestStoreXmlSettingValueNull()
+		public void TestWriteEmptyString_Xml()
 		{
-			Type settingsClass = typeof (LocalXmlSettings);
+			Type settingsClass = typeof(LocalXmlSettings);
 			SystemConfigurationHelper.RemoveSettingsValues(SystemConfigurationHelper.GetExeConfiguration(), settingsClass);
 
 			try
@@ -229,7 +174,37 @@ namespace ClearCanvas.Common.Configuration.Tests
 				SystemConfigurationHelper.PutSettingsValues(SystemConfigurationHelper.GetExeConfiguration(), settingsClass, values);
 				values = SystemConfigurationHelper.GetSettingsValues(GetExeConfiguration(), settingsClass);
 				Assert.AreEqual(1, values.Count);
-				Assert.IsTrue(String.IsNullOrEmpty(values[LocalXmlSettings.PropertyApp]));
+				Assert.AreEqual("", values[LocalXmlSettings.PropertyApp]);
+
+				//For xml values, empty string means "default".
+				LocalXmlSettings settings = (LocalXmlSettings)ApplicationSettingsHelper.GetSettingsClassInstance(settingsClass);
+				XmlDocument defaultDoc = new XmlDocument();
+				defaultDoc.LoadXml(LocalXmlSettings.DefaultValueApp);
+				Assert.AreEqual(defaultDoc.DocumentElement.OuterXml, settings.App.DocumentElement.OuterXml);
+			}
+			finally
+			{
+				SystemConfigurationHelper.RemoveSettingsValues(SystemConfigurationHelper.GetExeConfiguration(), settingsClass);
+			}
+		}
+
+		[Test]
+		public void TestWriteNull_Xml()
+		{
+			Type settingsClass = typeof (LocalXmlSettings);
+			SystemConfigurationHelper.RemoveSettingsValues(SystemConfigurationHelper.GetExeConfiguration(), settingsClass);
+
+			try
+			{
+				var values = SystemConfigurationHelper.GetSettingsValues(GetExeConfiguration(), settingsClass);
+				Assert.AreEqual(0, values.Count);
+
+				values = new Dictionary<string, string>();
+				values[LocalXmlSettings.PropertyApp] = null;
+
+				SystemConfigurationHelper.PutSettingsValues(SystemConfigurationHelper.GetExeConfiguration(), settingsClass, values);
+				values = SystemConfigurationHelper.GetSettingsValues(GetExeConfiguration(), settingsClass);
+				Assert.AreEqual(0, values.Count);
 
 				LocalXmlSettings settings = (LocalXmlSettings)ApplicationSettingsHelper.GetSettingsClassInstance(settingsClass);
 				XmlDocument defaultDoc = new XmlDocument();
@@ -284,12 +259,6 @@ namespace ClearCanvas.Common.Configuration.Tests
 
 		private void ValidateValues(Dictionary<string, string> values, MigrationScope migrationScope, SettingValue settingValue)
 		{
-			if (settingValue == SettingValue.Default)
-			{
-				Assert.AreEqual(0, values.Count);
-				return;
-			}
-
 			var expected = CreateSettingsValues(_settingsClass, migrationScope, settingValue);
 			ValidateValues(values, expected);
 		}

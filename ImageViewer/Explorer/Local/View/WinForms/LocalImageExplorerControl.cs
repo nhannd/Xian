@@ -28,11 +28,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 	public partial class LocalImageExplorerControl : UserControl
 	{
 		private LocalImageExplorerComponent _component;
+		private DelayedEventPublisher _folderViewSelectionUpdatePublisher;
 		private Pidl _homeLocation = null;
 
 		public LocalImageExplorerControl(LocalImageExplorerComponent component)
 		{
 			_component = component;
+
+			_folderViewSelectionUpdatePublisher = new DelayedEventPublisher(OnFolderViewSelectionUpdatePublished);
 
 			InitializeComponent();
 			InitializeHistoryMenu();
@@ -54,10 +57,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 
 		private void PerformDispose(bool disposing)
 		{
-			if (_homeLocation != null)
+			if (disposing)
 			{
-				_homeLocation.Dispose();
-				_homeLocation = null;
+				// this is a managed wrapper so it should only be disposed on disposing
+				if (_homeLocation != null)
+				{
+					_homeLocation.Dispose();
+					_homeLocation = null;
+				}
+
+				if (_folderViewSelectionUpdatePublisher != null)
+				{
+					_folderViewSelectionUpdatePublisher.Dispose();
+					_folderViewSelectionUpdatePublisher = null;
+				}
 			}
 		}
 
@@ -67,12 +80,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			ExceptionHandler.Report(ex, _component.DesktopWindow);
 		}
 
-		private void UpdateSelection(bool triggeredFromFolderView)
+		private void UpdateFolderTreeSelection()
 		{
-			if (triggeredFromFolderView)
-				_component.Selection = new PathSelection(CollectionUtils.Cast<FolderObject>(_folderView.SelectedItems));
-			else
-				_component.Selection = new PathSelection(_folderTree.SelectedItem);
+			_component.Selection = new PathSelection(_folderTree.SelectedItem);
+		}
+
+		private void OnFolderViewSelectionUpdatePublished(object sender, EventArgs e)
+		{
+			_component.Selection = new PathSelection(CollectionUtils.Cast<FolderObject>(_folderView.SelectedItems));
 		}
 
 		private void OnItemOpened(object sender, EventArgs e)
@@ -435,7 +450,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 		{
 			if (!e.Item.IsFolder)
 			{
-				UpdateSelection(true);
+				_folderViewSelectionUpdatePublisher.PublishNow(sender, e);
 				OnItemOpened(sender, e);
 				e.Handled = true;
 			}
@@ -443,12 +458,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 
 		private void _folderView_SelectedItemsChanged(object sender, EventArgs e)
 		{
-			UpdateSelection(true);
+			// listview-type controls fire the event for each item in the selection
+			// (because each item selection change is conceptually separate in this type of GUI)
+			// this can generate a lot of unecessary calls to update the component's selection
+			// so we delay the event here until the selection settles down
+			_folderViewSelectionUpdatePublisher.Publish(sender, e);
 		}
 
 		private void _folderTree_SelectedItemsChanged(object sender, EventArgs e)
 		{
-			UpdateSelection(false);
+			UpdateFolderTreeSelection();
 		}
 
 		private void _folderControl_KeyDown(object sender, KeyEventArgs e)
@@ -474,12 +493,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 
 		private void _folderViewContextMenu_Opening(object sender, CancelEventArgs e)
 		{
-			UpdateSelection(true);
+			_folderViewSelectionUpdatePublisher.PublishNow(sender, e);
 		}
 
 		private void _folderTreeContextMenu_Opening(object sender, CancelEventArgs e)
 		{
-			UpdateSelection(false);
+			UpdateFolderTreeSelection();
 		}
 
 		#endregion

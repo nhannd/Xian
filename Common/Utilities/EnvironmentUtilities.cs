@@ -10,51 +10,223 @@
 #endregion
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Management;
 using System.Security.Cryptography;
 using System.Text;
-using System.IO;
 
 namespace ClearCanvas.Common.Utilities
 {
 	/// <summary>
-	/// A unique identifier for the machine based on the processor ID and drive ID
+	/// Generic environment utilities.
 	/// </summary>
 	public sealed class EnvironmentUtilities
 	{
+		private static string _machineIdentifier;
+
 		/// <summary>
-		/// A unique identifier for the machine based on the processor ID and drive ID
+		/// Gets a unique identifier for the machine.
 		/// </summary>
 		public static string MachineIdentifier
 		{
 			get
 			{
-				string cpuInfo = string.Empty;
-				ManagementClass processor = new ManagementClass("win32_processor");
-				ManagementObjectCollection moc = processor.GetInstances();
-
-				foreach (ManagementObject mo in moc)
+				if (_machineIdentifier == null)
 				{
-					cpuInfo = mo.Properties["processorID"].Value.ToString();
-					break;
+					var input = string.Format("CLEARCANVASRTW::{0}::{1}::{2}", GetProcessorId(), GetMotherboardSerial(), GetDiskSignature());
+					using (var sha256 = new SHA256Managed())
+					{
+						_machineIdentifier = Convert.ToBase64String(sha256.ComputeHash(Encoding.Default.GetBytes(input)));
+					}
 				}
-
-				var driveInfo = CollectionUtils.SelectFirst(DriveInfo.GetDrives(), d => d.DriveType == DriveType.Fixed);
-				var drive = driveInfo.Name.Substring(0, 1);  // Get the drive letter from DriveInfo.Name (eg. C:\)
-
-				ManagementObject disk = new ManagementObject(
-					@"win32_logicaldisk.deviceid=""" + drive + @":""");
-				disk.Get();
-				string volumeSerial = disk["VolumeSerialNumber"].ToString();
-
-				byte[] data = Encoding.Default.GetBytes(cpuInfo + "_" + volumeSerial);
-
-				SHA256 sha = new SHA256Managed();
-				byte[] result = sha.ComputeHash(data);
-
-				return Convert.ToBase64String(result);
+				return _machineIdentifier;
 			}
 		}
 
+		private static string GetProcessorId()
+		{
+			try
+			{
+				// read the CPUID of the first processor
+				using (var searcher = new ManagementObjectSearcher("SELECT ProcessorId FROM Win32_Processor"))
+				{
+					using (var results = new ManagementObjectSearcherResults(searcher))
+					{
+						foreach (var processor in results)
+						{
+							var processorId = ReadString(processor, "ProcessorId");
+							if (!string.IsNullOrEmpty(processorId))
+								return processorId.Trim();
+						}
+					}
+				}
+
+				// if the processor doesn't support the CPUID opcode, concatenate some immutable characteristics of the processor
+				using (var searcher = new ManagementObjectSearcher("SELECT Manufacturer, AddressWidth, Architecture, Family, Level, Revision FROM Win32_Processor"))
+				{
+					using (var results = new ManagementObjectSearcherResults(searcher))
+					{
+						foreach (var processor in results)
+						{
+							var manufacturer = ReadString(processor, "Manufacturer");
+							var addressWidth = ReadUInt16(processor, "AddressWidth");
+							var architecture = ReadUInt16(processor, "Architecture");
+							var family = ReadUInt16(processor, "Family");
+							var level = ReadUInt16(processor, "Level");
+							var revision = ReadUInt16(processor, "Revision");
+							return string.Format("CPU-{0}-{1}-{2:X2}-{3:X2}-{4}-{5:X4}", manufacturer, addressWidth, architecture, family, level, revision);
+						}
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Debug, ex, "Failed to retrieve processor ID.");
+			}
+			return string.Empty;
+		}
+
+		private static string GetMotherboardSerial()
+		{
+			try
+			{
+				// read the s/n of the motherboard
+				using (var searcher = new ManagementObjectSearcher("SELECT SerialNumber FROM Win32_BaseBoard"))
+				{
+					using (var results = new ManagementObjectSearcherResults(searcher))
+					{
+						foreach (var motherboard in results)
+						{
+							var serialNumber = ReadString(motherboard, "SerialNumber");
+							if (!string.IsNullOrEmpty(serialNumber))
+								return serialNumber.Trim();
+						}
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Debug, ex, "Failed to retrieve baseboard serial.");
+			}
+			return string.Empty;
+		}
+
+		private static string GetDiskSignature()
+		{
+			try
+			{
+				// identify the disk drives sorted by hardware order
+				var diskDrives = new SortedList<uint, uint>();
+				using (var searcher = new ManagementObjectSearcher("SELECT Index, Signature FROM Win32_DiskDrive"))
+				{
+					using (var results = new ManagementObjectSearcherResults(searcher))
+					{
+						foreach (var diskDrive in results)
+						{
+							var index = ReadUInt32(diskDrive, "Index");
+							var signature = ReadUInt32(diskDrive, "Signature");
+							if (index.HasValue && signature.HasValue)
+								diskDrives.Add(index.Value, signature.Value);
+						}
+					}
+				}
+
+				// use the signature of the first physical disk drive
+				foreach (var diskDriveId in diskDrives)
+					return diskDriveId.Value.ToString("X8");
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Debug, ex, "Failed to retrieve disk drive signature.");
+			}
+			return string.Empty;
+		}
+
+		private static string ReadString(ManagementBaseObject wmiObject, string propertyName)
+		{
+			try
+			{
+				var value = wmiObject[propertyName];
+				if (value != null)
+					return value.ToString();
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Debug, ex, @"WMI property ""{0}"" was not in the expected format.", propertyName);
+			}
+			return null;
+		}
+
+		private static ushort? ReadUInt16(ManagementBaseObject wmiObject, string propertyName)
+		{
+			try
+			{
+				var value = wmiObject[propertyName];
+				if (value != null)
+					return (ushort) value;
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Debug, ex, @"WMI property ""{0}"" was not in the expected format.", propertyName);
+			}
+			return null;
+		}
+
+		private static uint? ReadUInt32(ManagementBaseObject wmiObject, string propertyName)
+		{
+			try
+			{
+				var value = wmiObject[propertyName];
+				if (value != null)
+					return (uint) value;
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Debug, ex, @"WMI property ""{0}"" was not in the expected format.", propertyName);
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Utility class for proper disposal of results from WMI queries.
+		/// </summary>
+		private class ManagementObjectSearcherResults : IEnumerable<ManagementBaseObject>, IDisposable
+		{
+			private List<ManagementBaseObject> _results;
+
+			public ManagementObjectSearcherResults(ManagementObjectSearcher searcher)
+			{
+				// the result collection is a wrapper around a COM enumerator that constructs new COM objects per iteration
+				// because of this, don't ever enumerate the collection directly - cache the results from one iteration and enumerate the cache instead
+				_results = new List<ManagementBaseObject>();
+				using (var results = searcher.Get())
+				{
+					foreach (var result in results)
+						_results.Add(result);
+				}
+			}
+
+			public void Dispose()
+			{
+				if (_results != null)
+				{
+					foreach (var result in _results)
+						result.Dispose();
+					_results.Clear();
+					_results = null;
+				}
+			}
+
+			public IEnumerator<ManagementBaseObject> GetEnumerator()
+			{
+				return _results.GetEnumerator();
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				return GetEnumerator();
+			}
+		}
 	}
 }

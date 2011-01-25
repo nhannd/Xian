@@ -10,11 +10,13 @@
 #endregion
 
 using System;
+using System.Text;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Help;
 using ClearCanvas.Desktop.Help.UpdateTools.UpdateInformationService;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop.Help.UpdateTools
 {
@@ -30,50 +32,72 @@ namespace ClearCanvas.Desktop.Help.UpdateTools
 
 		public void CheckForUpdates()
 		{
-			using (UpdateInformationService.UpdateInformationService service = new UpdateInformationService.UpdateInformationService())
+			using (var service = new UpdateInformationService.UpdateInformationService())
 			{
 				service.Url = Settings.Default.UpdateInformationServiceUrl;
 
-				Product installedProduct = new Product();
-				installedProduct.Name = Application.Name;
-				installedProduct.Version = Application.Version.ToString();
+				var installedProduct = new Product
+				                               	{
+				                               		Name = ProductInformation.Component,
+				                               		Version = ProductInformation.Version.ToString(),
+				                               		VersionSuffix = ProductInformation.VersionSuffix,
+				                               		Edition = ProductInformation.Edition,
+				                               		Release = ProductInformation.Release
+				                               	};
 
 				try
 				{
-					UpdateInformationRequest request = new UpdateInformationRequest();
-					request.InstalledProduct = installedProduct;
+					var request = new UpdateInformationRequest {InstalledProduct = installedProduct};
 					UpdateInformationResult result = service.GetUpdateInformation(request);
 					if (result == null)
 						throw new Exception("Bad data received from service.");
 
-					if (!IsValidProduct(result.InstalledProduct) || IsSameProduct(result.InstalledProduct, installedProduct))
+					if (!IsValidComponent(result.InstalledProduct) || IsSameComponent(result.InstalledProduct, installedProduct))
 					{
-						base.Context.DesktopWindow.ShowMessageBox(SR.MessageNoUpdate, Common.MessageBoxActions.Ok);
+						base.Context.DesktopWindow.ShowMessageBox(SR.MessageNoUpdate, MessageBoxActions.Ok);
 					}
 					else
 					{
-						string message = String.Format(SR.MessageUpdateAvailable,
-							result.InstalledProduct.Name, result.InstalledProduct.Version);
-
+						var upgrade = result.InstalledProduct;
+						string message = String.Format(SR.MessageUpdateAvailable, ToString(upgrade));
 						UpdateAvailableForm.Show(message, result.DownloadUrl);
 					}
 				}
 				catch (Exception e)
 				{
-					Common.Platform.Log(Common.LogLevel.Warn, e, "The request for update information failed.");
-					base.Context.DesktopWindow.ShowMessageBox(SR.MessageUpdateRequestFailed, Common.MessageBoxActions.Ok);
+					Platform.Log(LogLevel.Warn, e, "The request for update information failed.");
+					Context.DesktopWindow.ShowMessageBox(SR.MessageUpdateRequestFailed, MessageBoxActions.Ok);
 				}
 			}
 		}
 
-		private static bool IsValidProduct(Product product)
+		private string ToString(Component component)
 		{
-			return product != null && !String.IsNullOrEmpty(product.Version);
+			var builder = new StringBuilder();
+
+			builder.Append(String.IsNullOrEmpty(component.Name) ? "Unknown" : component.Name);
+			builder.AppendFormat(" {0}", String.IsNullOrEmpty(component.Version) ? "?" : component.Version);
+			if (!String.IsNullOrEmpty(component.Edition))
+				builder.AppendFormat(" {0}", component.Edition);
+
+			if (!String.IsNullOrEmpty(component.VersionSuffix))
+				builder.AppendFormat(" {0}", component.VersionSuffix);
+
+			if (!String.IsNullOrEmpty(component.Release))
+				builder.AppendFormat(" {0}", component.Release);
+
+			return builder.ToString();
+
 		}
 
-		private static bool IsSameProduct(Product product1, Product product2)
+		private bool IsSameComponent(Component component1, Component component2)
 		{
-			return product1.Name == product2.Name && product1.Version == product2.Version;
+			return component1.Name == component2.Name && component1.Version == component2.Version;
+		}
+
+		private static bool IsValidComponent(Component component)
+		{
+			return component != null && !String.IsNullOrEmpty(component.Version);
 		}
 	}
 }

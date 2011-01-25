@@ -285,4 +285,7 @@
   <data name="MessageSourceDataSetMultiFrameImagesAreNotSupported" xml:space="preserve">
     <value>The selected multiframe images are of an unsupported type.</value>
   </data>
+  <data name="MessageSourceDataSetImagesMustBe16BitGreyscale" xml:space="preserve">
+    <value>MPR only supports 16-bit greyscale images.</value>
+  </data>
 </root>

@@ -374,8 +374,7 @@ namespace ClearCanvas.Desktop
     	/// </summary>
     	protected virtual string GetName()
     	{
-    		var name = ProductInformation.Component;
-    		return !ManifestVerification.Valid ? String.Format("{0} ({1})", name, DesktopWindow.LabelUncertifiedInstallation) : name;
+    		return ProductInformation.GetName(false, false);
     	}
 
         /// <summary>

@@ -116,6 +116,12 @@ namespace ClearCanvas.Common.UsageTracking
         public string Edition { get; set; }
 
         /// <summary>
+        /// Release type.
+        /// </summary>
+        [DataMember(IsRequired = false)]
+        public string Release { get; set; }
+
+        /// <summary>
         /// The version of the product being tracked.
         /// </summary>
         [DataMember(IsRequired = true)]

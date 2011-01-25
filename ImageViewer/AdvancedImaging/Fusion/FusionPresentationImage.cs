@@ -160,33 +160,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			return Frame.ParentImageSop.InstanceNumber.ToString();
 		}
 
-		#region VOI LUT Synchronization Support
-
-		private object _lastBaseVoiLutManagerMemento;
-		private object _lastOverlayVoiLutManagerMemento;
-
-		internal bool SetBaseVoiLutManagerMemento(object memento)
-		{
-			if (!Equals(memento, _lastBaseVoiLutManagerMemento))
-			{
-				ImageGraphic.VoiLutManager.SetMemento(_lastBaseVoiLutManagerMemento = memento);
-				return true;
-			}
-			return false;
-		}
-
-		internal bool SetOverlayVoiLutManagerMemento(object memento)
-		{
-			if (!Equals(memento, _lastOverlayVoiLutManagerMemento))
-			{
-				_fusionOverlayComposite.VoiLutManager.SetMemento(_lastOverlayVoiLutManagerMemento = memento);
-				return true;
-			}
-			return false;
-		}
-
-		#endregion
-
 		#region IImageSopProvider Members
 
 		/// <summary>

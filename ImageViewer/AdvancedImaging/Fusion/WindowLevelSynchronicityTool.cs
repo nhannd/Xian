@@ -27,14 +27,14 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			base.Initialize();
 
-			base.ImageViewer.EventBroker.ImageDrawing += OnImageDrawing;
-			base.ImageViewer.EventBroker.DisplaySetChanged += OnDisplaySetChanged;
+			ImageViewer.EventBroker.ImageDrawing += OnImageDrawing;
+			ImageViewer.EventBroker.DisplaySetChanged += OnDisplaySetChanged;
 		}
 
 		protected override void Dispose(bool disposing)
 		{
-			base.ImageViewer.EventBroker.DisplaySetChanged -= OnDisplaySetChanged;
-			base.ImageViewer.EventBroker.ImageDrawing -= OnImageDrawing;
+			ImageViewer.EventBroker.DisplaySetChanged -= OnDisplaySetChanged;
+			ImageViewer.EventBroker.ImageDrawing -= OnImageDrawing;
 
 			base.Dispose(disposing);
 		}
@@ -56,10 +56,10 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					if (e.NewDisplaySet.PresentationImages.Count == 0)
 						return;
 
-					// find any available display set containing the same series as the individual layers and replicate its VoiLutManager memento
-					object baseMemento = null, overlayMemento = null;
+					// find any available display set containing the same series as the individual layers and replicate its VOI LUT
+					IComposableLut baseVoiLut = null, overlayVoiLut = null;
 					var descriptor = (PETFusionDisplaySetDescriptor) e.NewDisplaySet.Descriptor;
-					foreach (IImageBox imageBox in this.ImageViewer.PhysicalWorkspace.ImageBoxes)
+					foreach (IImageBox imageBox in ImageViewer.PhysicalWorkspace.ImageBoxes)
 					{
 						var selectedImage = imageBox.TopLeftPresentationImage;
 						if (imageBox.DisplaySet == null || imageBox.DisplaySet.Descriptor is PETFusionDisplaySetDescriptor
@@ -67,30 +67,30 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 							continue;
 
 						var seriesUid = ((IImageSopProvider) selectedImage).ImageSop.SeriesInstanceUid;
-						if (baseMemento == null && seriesUid == descriptor.SourceSeries.SeriesInstanceUid)
-							baseMemento = ((IVoiLutProvider) imageBox.TopLeftPresentationImage).VoiLutManager.CreateMemento();
-						else if (overlayMemento == null && seriesUid == descriptor.PETSeries.SeriesInstanceUid)
-							overlayMemento = ((IVoiLutProvider) imageBox.TopLeftPresentationImage).VoiLutManager.CreateMemento();
+						if (baseVoiLut == null && seriesUid == descriptor.SourceSeries.SeriesInstanceUid)
+							baseVoiLut = ((IVoiLutProvider) imageBox.TopLeftPresentationImage).VoiLutManager.VoiLut.Clone();
+						else if (overlayVoiLut == null && seriesUid == descriptor.PETSeries.SeriesInstanceUid)
+							overlayVoiLut = ((IVoiLutProvider) imageBox.TopLeftPresentationImage).VoiLutManager.VoiLut.Clone();
 
-						if (baseMemento != null && overlayMemento != null)
+						if (baseVoiLut != null && overlayVoiLut != null)
 							break;
 					}
 
-					if (baseMemento == null || overlayMemento == null)
+					if (baseVoiLut == null || overlayVoiLut == null)
 					{
 						var fusionImage = (FusionPresentationImage) e.NewDisplaySet.PresentationImages[0];
-						if (baseMemento == null)
-							baseMemento = GetInitialVoiLutMemento(fusionImage.Frame);
-						if (overlayMemento == null)
-							overlayMemento = GetInitialVoiLutMemento(fusionImage.OverlayFrameData.OverlayData.Frames[0]);
+						if (baseVoiLut == null)
+							baseVoiLut = GetInitialVoiLutMemento(fusionImage.Frame);
+						if (overlayVoiLut == null)
+							overlayVoiLut = GetInitialVoiLutMemento(fusionImage.OverlayFrameData.OverlayData.Frames[0]);
 					}
 
 					foreach (FusionPresentationImage image in e.NewDisplaySet.PresentationImages)
 					{
-						if (baseMemento != null)
-							image.SetBaseVoiLutManagerMemento(baseMemento);
-						if (overlayMemento != null)
-							image.SetOverlayVoiLutManagerMemento(overlayMemento);
+						if (baseVoiLut != null)
+							image.BaseVoiLutManager.InstallVoiLut(baseVoiLut);
+						if (overlayVoiLut != null)
+							image.OverlayVoiLutManager.InstallVoiLut(overlayVoiLut);
 					}
 				}
 			}
@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			{
 				if (e.PresentationImage is IImageSopProvider && e.PresentationImage is IVoiLutProvider)
 				{
-					object memento = ((IVoiLutProvider) e.PresentationImage).VoiLutManager.CreateMemento();
+					IComposableLut voiLut = ((IVoiLutProvider) e.PresentationImage).VoiLutManager.VoiLut.Clone();
 					string seriesInstanceUid = ((IImageSopProvider) e.PresentationImage).ImageSop.SeriesInstanceUid;
 
 					// find any available display set containing the same series as the individual layers and replicate its VoiLutManager memento
@@ -119,8 +119,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 							foreach (FusionPresentationImage image in displaySet.PresentationImages)
 							{
 								// written this way because we want to set the memento regardless whether or not the image is visible
-								var changed = image.SetBaseVoiLutManagerMemento(memento);
-								anyVisibleChange |= (image.Visible && changed);
+								image.BaseVoiLutManager.InstallVoiLut(voiLut);
+								anyVisibleChange |= (image.Visible);
 							}
 						}
 						else if (descriptor.PETSeries.SeriesInstanceUid == seriesInstanceUid)
@@ -128,8 +128,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 							foreach (FusionPresentationImage image in displaySet.PresentationImages)
 							{
 								// written this way because we want to set the memento regardless whether or not the image is visible
-								var changed = image.SetOverlayVoiLutManagerMemento(memento);
-								anyVisibleChange |= (image.Visible && changed);
+								image.OverlayVoiLutManager.InstallVoiLut(voiLut);
+								anyVisibleChange |= (image.Visible);
 							}
 						}
 
@@ -140,7 +140,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 		}
 
-		private static object GetInitialVoiLutMemento(Frame frame)
+		private static IComposableLut GetInitialVoiLutMemento(Frame frame)
 		{
 			if (frame != null)
 			{
@@ -155,10 +155,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 						if (pixelData is GrayscalePixelData)
 							voiLut = new MinMaxPixelCalculatedLinearLut((GrayscalePixelData) pixelData);
 					}
-					var voiLutManager = (IVoiLutManager) new VoiLutManagerProxy();
-					if (voiLut != null)
-						voiLutManager.InstallVoiLut(voiLut);
-					return voiLutManager.CreateMemento();
+					return voiLut;
 				}
 			}
 			return null;

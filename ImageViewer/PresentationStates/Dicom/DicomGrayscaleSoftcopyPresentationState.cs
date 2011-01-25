@@ -56,18 +56,34 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			this.SerializeGraphicLayer(iod.GraphicLayer, images);
 			this.SerializeModalityLut(iod.ModalityLut, images);
 			this.SerializeSoftcopyVoiLut(iod.SoftcopyVoiLut, images);
-			this.SerializeSoftcopyPresentationLut(iod.SoftcopyPresentationLut);
+			this.SerializeSoftcopyPresentationLut(iod.SoftcopyPresentationLut, images);
 		}
 
 		/// <summary>
 		/// Serializes the Softcopy Presentation LUT IOD module (DICOM PS 3.3, C.11.6)
 		/// </summary>
-		/// <remarks>Softcopy Presentation LUTs are not currently supported by this product.</remarks>
 		/// <param name="module">The IOD module.</param>
-		private void SerializeSoftcopyPresentationLut(SoftcopyPresentationLutModuleIod module)
+		/// <param name="images">The images to be serialized.</param>
+		private void SerializeSoftcopyPresentationLut(SoftcopyPresentationLutModuleIod module, DicomPresentationImageCollection<DicomGrayscalePresentationImage> images)
 		{
+			var inverted = false;
+			if (images.Count > 0)
+			{
+				inverted = images.FirstImage.VoiLutManager.Invert;
+
+				// if more than one image is being serialized in the same presentation state, and they have different inversion states, then just don't invert any of them
+				foreach (var image in images)
+				{
+					if (inverted != image.VoiLutManager.Invert)
+					{
+						inverted = false;
+						break;
+					}
+				}
+			}
+
 			module.InitializeAttributes();
-			module.PresentationLutShape = PresentationLutShape.Identity;
+			module.PresentationLutShape = !inverted ? PresentationLutShape.Identity : PresentationLutShape.Inverse;
 		}
 
 		#endregion
@@ -98,10 +114,13 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// <summary>
 		/// Deserializes the Softcopy Presentation LUT IOD module (DICOM PS 3.3, C.11.6)
 		/// </summary>
-		/// <remarks>Softcopy Presentation LUTs are not currently supported by this product.</remarks>
 		/// <param name="module">The IOD module.</param>
 		/// <param name="image">The <see cref="IPresentationImage"/> to deserialize to.</param>
-		private void DeserializeSoftcopyPresentationLut(SoftcopyPresentationLutModuleIod module, DicomGrayscalePresentationImage image) {}
+		private void DeserializeSoftcopyPresentationLut(SoftcopyPresentationLutModuleIod module, DicomGrayscalePresentationImage image)
+		{
+			// if the presentation LUT shape is anything but inverse, always assume identity
+			image.VoiLutManager.Invert = (module.PresentationLutShape == PresentationLutShape.Inverse);
+		}
 
 		#endregion
 

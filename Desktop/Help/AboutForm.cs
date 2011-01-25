@@ -32,7 +32,7 @@ namespace ClearCanvas.Desktop.Help
 
 			InitializeComponent();
 
-			_version.Text = String.Format(AboutSettings.Default.VersionTextFormat, ProductInformation.GetVersion(true, true));
+			_version.Text = String.Format(AboutSettings.Default.VersionTextFormat, ProductInformation.GetVersion(true, true, true));
 			_copyright.Text = ProductInformation.Copyright;
 			_license.Text = ProductInformation.License;
 

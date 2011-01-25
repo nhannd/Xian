@@ -87,6 +87,7 @@
     <Compile Include="Actions\ActionPermissionAttribute.cs" />
     <Compile Include="Actions\ActionSet.cs" />
     <Compile Include="Actions\ActionViewContext.cs" />
+    <Compile Include="Actions\Tests\MockActionPermissionAttribute.cs" />
     <Compile Include="Actions\DropDownActionAttribute.cs" />
     <Compile Include="Actions\CrudActionModel.cs" />
     <Compile Include="Actions\DropDownButtonAction.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="Configuration\ActionModel\NodePropertiesComponent.cs" />
     <Compile Include="Configuration\ActionModel\BasicActionModelConfigurationComponentTools.cs" />
     <Compile Include="Configuration\ActionModel\ClickActionKeystrokePropertyComponent.cs" />
+    <Compile Include="Configuration\ActionModel\UnavailableActionIconSet.cs" />
     <Compile Include="Configuration\AuthorityTokens.cs" />
     <Compile Include="Configuration\ConfigurationApplicationComponent.cs" />
     <Compile Include="Configuration\ConfigurationDialog.cs" />
@@ -524,6 +526,9 @@
     <EmbeddedResource Include="Icons\AddActionModelSeparatorToolMedium.png" />
     <EmbeddedResource Include="Icons\AddActionModelSeparatorToolSmall.png" />
     <EmbeddedResource Include="Icons\RenameToolSmall.png" />
+    <EmbeddedResource Include="Icons\UnavailableToolOverlayLarge.png" />
+    <EmbeddedResource Include="Icons\UnavailableToolOverlayMedium.png" />
+    <EmbeddedResource Include="Icons\UnavailableToolOverlaySmall.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\ActionModelGroupLarge.png" />

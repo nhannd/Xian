@@ -28,6 +28,7 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ActionModelConfigurationComponentControl));
 			this._pnlNodeProperties = new System.Windows.Forms.Panel();
 			this._lyoNodePropertiesExtensions = new System.Windows.Forms.FlowLayoutPanel();
+			this._lblDescription = new System.Windows.Forms.Label();
 			this._pnlTitleBar = new System.Windows.Forms.Panel();
 			this._lblLabel = new System.Windows.Forms.Label();
 			this._pnlIcon = new System.Windows.Forms.Panel();
@@ -45,6 +46,7 @@
 			// 
 			resources.ApplyResources(this._pnlNodeProperties, "_pnlNodeProperties");
 			this._pnlNodeProperties.Controls.Add(this._lyoNodePropertiesExtensions);
+			this._pnlNodeProperties.Controls.Add(this._lblDescription);
 			this._pnlNodeProperties.Controls.Add(this._pnlTitleBar);
 			this._pnlNodeProperties.Name = "_pnlNodeProperties";
 			// 
@@ -53,6 +55,11 @@
 			resources.ApplyResources(this._lyoNodePropertiesExtensions, "_lyoNodePropertiesExtensions");
 			this._lyoNodePropertiesExtensions.Name = "_lyoNodePropertiesExtensions";
 			this._lyoNodePropertiesExtensions.SizeChanged += new System.EventHandler(this.OnLyoNodePropertiesExtensionsSizeChanged);
+			// 
+			// _lblDescription
+			// 
+			resources.ApplyResources(this._lblDescription, "_lblDescription");
+			this._lblDescription.Name = "_lblDescription";
 			// 
 			// _pnlTitleBar
 			// 
@@ -131,5 +138,6 @@
 		private System.Windows.Forms.SplitContainer _pnlSplit;
 		private System.Windows.Forms.FlowLayoutPanel _lyoNodePropertiesExtensions;
 		private System.Windows.Forms.ToolTip _toolTip;
+		private System.Windows.Forms.Label _lblDescription;
 	}
 }

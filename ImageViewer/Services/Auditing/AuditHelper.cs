@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Mime;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Audit;
 using ClearCanvas.Dicom;
@@ -62,7 +63,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 				AuditSinkExtensionPoint xp = new AuditSinkExtensionPoint();
 				_auditingEnabled = xp.ListExtensions().Length > 0;
 				if (_auditingEnabled)
-					_log = new AuditLog("ImageViewer", "DICOM");
+					_log = new AuditLog(ProductInformation.Component, "DICOM");
 				else 
 					Platform.Log(LogLevel.Warn, "No audit sink extensions found - Auditing will be disabled for the remainder of the session.");
 			}

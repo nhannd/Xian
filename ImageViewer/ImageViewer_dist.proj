@@ -16,6 +16,9 @@
     <DistributionDesktopConfig>$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.config</DistributionDesktopConfig>
     <DistributionShredHostConfig>$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config</DistributionShredHostConfig>
     <DistributionConsoleConfig>$(DistributionDirectory)\ClearCanvas.Executable.exe.config</DistributionConsoleConfig>
+    <DistributionDesktopCriticalConfig>$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.critical.config</DistributionDesktopCriticalConfig>
+    <DistributionShredHostCriticalConfig>$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config</DistributionShredHostCriticalConfig>
+    <DistributionConsoleCriticalConfig>$(DistributionDirectory)\ClearCanvas.Executable.exe.critical.config</DistributionConsoleCriticalConfig>
   </PropertyGroup>
 
   <Choose>
@@ -133,14 +136,17 @@
   </ItemGroup>
 
   <ItemGroup>
-	<ImageViewerAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\Common\app.config" />
-	<ImageViewerAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\Desktop\Executable\app.config" />
+  	<ImageViewerAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\Desktop\Executable\app.config" />
     <ImageViewerAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\ImageViewer\ImageViewer_dist.config" />
   </ItemGroup>
   
   <ItemGroup>
     <ShredHostAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\Server\ShredHostService\app.config" />
     <ShredHostAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\ImageViewer\ImageViewer_Shreds_dist.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <CriticalConfigFiles Include="$(TrunkDirectory)\ImageViewer\ImageViewer_critical.config" />
   </ItemGroup>
 
   <ItemGroup>
@@ -322,7 +328,7 @@
 
   <ItemGroup>
     <ExecutableBootstrapFiles Include="$(TrunkDirectory)\Executable\bin\$(Configuration)\ClearCanvas.Executable.exe" />
-    <ExecutableBootstrapFiles Include="$(TrunkDirectory)\Executable\bin\$(Configuration)\ClearCanvas.Executable.exe.config" />
+    <ExecutableBootstrapFiles Include="$(DistributionConsoleConfig)" />
   </ItemGroup>
 
   <Target Name="Copy License Files">
@@ -335,6 +341,7 @@
 
   <Target Name="Copy ImageViewer App Config">
     <CombineAppConfigs SourceFiles="@(ImageViewerAppConfigCreatorSourceFiles)" OutputFile="$(DistributionDesktopConfig)" />
+    <Copy SourceFiles="@(CriticalConfigFiles)" DestinationFiles="$(DistributionDesktopCriticalConfig)" />
   </Target>
 
   <Target Name="Exclude Http Desktop Services">
@@ -513,7 +520,11 @@
     <Copy Condition="$(DesktopBuild)" SourceFiles="@(JScriptFiles)" DestinationFolder="$(PluginsDirectory)" />
 
   </Target>
-  
+
+  <Target Name="Copy Executable Bootstrap">
+    <Copy SourceFiles="@(ExecutableBootstrapFiles)" DestinationFolder="$(DistributionDirectory)" />
+  </Target>
+
   <Target Name="Copy Desktop Files" DependsOnTargets="Copy ImageViewer App Config;Copy JScript Files;Copy License Files;Copy Help Files">
     <CallTarget Targets="Copy Project Files" />
 
@@ -525,13 +536,10 @@
 
     <CallTarget Targets="Copy Executable Bootstrap" />
     <Copy SourceFiles="$(DistributionDesktopConfig)" DestinationFiles="$(DistributionConsoleConfig)" />
-    
+    <!--<Copy SourceFiles="$(DistributionDesktopCriticalConfig)" DestinationFiles="$(DistributionConsoleCriticalConfig)" />-->
+
   </Target>
 
-  <Target Name="Copy Executable Bootstrap">
-    <Copy SourceFiles="@(ExecutableBootstrapFiles)" DestinationFolder="$(DistributionDirectory)" />
-  </Target>
-  
   <Target Name="Copy ShredHost Files" DependsOnTargets="Copy ShredHost App Config;Copy License Files">
     <CallTarget Targets="Copy Project Files" />
   </Target>

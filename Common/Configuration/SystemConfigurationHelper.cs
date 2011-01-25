@@ -42,7 +42,7 @@ namespace ClearCanvas.Common.Configuration
 		private static string GetElementValue(SettingElement element)
 		{
 			if (element.Value == null || element.Value.ValueXml == null)
-				return null;
+				return String.Empty; //If the element even exists, we return "".
 
 			return GetElementValue(element.Value.ValueXml, element.SerializeAs);
 		}
@@ -103,92 +103,63 @@ namespace ClearCanvas.Common.Configuration
 			return element;
 		}
 
-		//TODO (CR Sept 2010): instead of automatically storing all the defaults, should we 
-		//just store what we're given and also delete stuff when we're given null?  Then
-		//we could just return what's there in the "get" method rather than removing the defaults.
-		private static ClientSettingsSection CreateDefaultSection(IEnumerable<PropertyInfo> properties)
-		{
-			var section = new ClientSettingsSection();
-			section.SectionInformation.RequirePermission = false;
-
-			foreach (PropertyInfo property in properties)
-			{
-				var element = new SettingElement(property.Name, SettingsClassMetaDataReader.GetSerializeAs(property));
-				var valueElement = new SettingValueElement();
-				element.Value = valueElement;
-				
-				string value = SettingsClassMetaDataReader.GetDefaultValue(property, false);
-				SetElementValue(element, value);
-				section.Settings.Add(element);
-			}
-
-			return section;
-		}
-
-		private static ClientSettingsSection AddDefaultSection(ConfigurationSectionGroup sectionGroup, string sectionName, IEnumerable<PropertyInfo> properties)
-		{
-			ClientSettingsSection newClientSection = CreateDefaultSection(properties);
-			sectionGroup.Sections.Add(sectionName, newClientSection);
-			if (sectionGroup.Name == ConfigurationSectionGroupPath.UserSettings.ToString())
-				newClientSection.SectionInformation.AllowExeDefinition = ConfigurationAllowExeDefinition.MachineToLocalUser;
-			return newClientSection;
-		}
-
-		private static bool UpdateSection(ClientSettingsSection clientSection, IEnumerable<PropertyInfo> properties, IDictionary<string, string> newValues)
+		private static bool UpdateSection(ClientSettingsSection section, IEnumerable<PropertyInfo> properties, IDictionary<string, string> newValues)
 		{
 			bool modified = false;
-			
+
 			foreach (PropertyInfo property in properties)
 			{
 				string newValue;
 				if (!newValues.TryGetValue(property.Name, out newValue))
 					continue;
 
-				SettingElement element = GetSettingElement(clientSection, property, false);
-				string currentValue = element == null ? null : GetElementValue(element);
+				SettingElement element = GetSettingElement(section, property, false);
+				if (newValue == null)
+				{
+					if (element != null)
+					{
+						section.Settings.Remove(element);
+						modified = true;
+					}
 
-				string defaultValue = SettingsClassMetaDataReader.GetDefaultValue(property, false);
-
-				bool newValueIsDefault = newValue == null || Equals(newValue, defaultValue);
-				bool currentValueIsDefault = currentValue == null || Equals(currentValue, defaultValue);
-				if (currentValueIsDefault && newValueIsDefault || Equals(currentValue, newValue))
 					continue;
+				}
 
-				element = GetSettingElement(clientSection, property, true);
-				if (newValueIsDefault)
-					newValue = defaultValue; //store defaults because it's convenient for editing.
+				if (element != null)
+				{
+					string currentValue = GetElementValue(element);
+					if (Equals(newValue, currentValue))
+						continue;
+				}
+				else
+				{
+					element = GetSettingElement(section, property, true);
+				}
 
-				SetElementValue(element, newValue);
 				modified = true;
+				SetElementValue(element, newValue);
 			}
 
 			return modified;
 		}
 
-		private static bool StoreSettings
-			(
-				ConfigurationSectionGroup sectionGroup,
-				string sectionName,
-				IEnumerable<PropertyInfo> properties,
-				IDictionary<string, string> newValues
-			)
+		private static bool UpdateSection(SystemConfiguration configuration, ConfigurationSectionPath sectionPath, IEnumerable<PropertyInfo> properties, IDictionary<string, string> newValues)
 		{
-			bool newSection = false;
-			ConfigurationSection section = sectionGroup.Sections[sectionName];
-			if (section == null)
-			{
-				newSection = true;
-				section = AddDefaultSection(sectionGroup, sectionName, properties);
-			}
+			var section = sectionPath.GetSection(configuration);
+			if (section != null)
+				return UpdateSection(CastToClientSection(section), properties, newValues);
 
-			bool modified = UpdateSection(CastToClientSection(section), properties, newValues);
-			if (newSection && !modified)
-				sectionGroup.Sections.Remove(sectionName);
+			var group = sectionPath.GroupPath.GetSectionGroup(configuration, true);
+			section = sectionPath.CreateSection();
 
-			return modified;
+			if (!UpdateSection(CastToClientSection(section), properties, newValues))
+				return false;
+
+			group.Sections.Add(sectionPath.SectionName, section);
+			return true;
 		}
 
-        private static Dictionary<string, string> GetSettingsValues(
+		private static Dictionary<string, string> GetSettingsValues(
 			SystemConfiguration configuration, 
 			ConfigurationSectionPath sectionPath, 
 			ICollection<PropertyInfo> properties)
@@ -200,22 +171,11 @@ namespace ClearCanvas.Common.Configuration
 				if (section != null)
 				{
 					var clientSection = CastToClientSection(section);
-					if (clientSection != null)
+					foreach (PropertyInfo property in properties)
 					{
-						foreach (PropertyInfo property in properties)
-						{
-							SettingElement element = GetSettingElement(clientSection, property, false);
-							if (element == null)
-								continue;
-
-							string currentValue = GetElementValue(element);
-							if (currentValue == null) //not there means it's the default.
-								continue;
-
-							var defaultValue = SettingsClassMetaDataReader.GetDefaultValue(property, false);
-							if (!Equals(currentValue, defaultValue))
-								values[property.Name] = currentValue;
-						}
+						SettingElement element = GetSettingElement(clientSection, property, false);
+						if (element != null) //If the setting element is there, we'll assume it means the value is to be set.
+							values[property.Name] = GetElementValue(element);
 					}
 				}
 			}
@@ -263,7 +223,7 @@ namespace ClearCanvas.Common.Configuration
         /// <param name="configuration">the configuration where the values will be stored</param>
 		/// <param name="settingsClass">the settings class for which to store the values</param>
 		/// <param name="dirtyValues">contains the values to be stored</param>
-        public static void PutSettingsValues(SystemConfiguration configuration, Type settingsClass, Dictionary<string, string> dirtyValues)
+        public static void PutSettingsValues(SystemConfiguration configuration, Type settingsClass, IDictionary<string, string> dirtyValues)
 		{
 			var applicationScopedProperties = GetProperties(settingsClass, SettingScope.Application);
 			var userScopedProperties = GetProperties(settingsClass, SettingScope.User);
@@ -272,14 +232,12 @@ namespace ClearCanvas.Common.Configuration
 			if (applicationScopedProperties.Count > 0)
 			{
 				var sectionPath = new ConfigurationSectionPath(settingsClass, SettingScope.Application);
-				var group = sectionPath.GroupPath.GetSectionGroup(configuration, true);
-				modified = StoreSettings(group, sectionPath.SectionName, applicationScopedProperties, dirtyValues);
+				modified = UpdateSection(configuration, sectionPath, applicationScopedProperties, dirtyValues);
 			}
 			if (userScopedProperties.Count > 0)
 			{
 				var sectionPath = new ConfigurationSectionPath(settingsClass, SettingScope.User);
-				var group = sectionPath.GroupPath.GetSectionGroup(configuration, true);
-				if (StoreSettings(group, sectionPath.SectionName, userScopedProperties, dirtyValues))
+				if (UpdateSection(configuration, sectionPath, userScopedProperties, dirtyValues))
 					modified = true;
 			}
 

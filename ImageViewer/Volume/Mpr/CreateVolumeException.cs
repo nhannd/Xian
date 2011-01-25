@@ -27,6 +27,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public UnsupportedSourceImagesException() : base("Source images are of an unsupported type.") {}
 	}
 
+	public class UnsupportedPixelFormatSourceImagesException : CreateVolumeException
+	{
+		public UnsupportedPixelFormatSourceImagesException() : base("Source images must be 16-bit monochrome images.") {}
+	}
+
 	public class UnsupportedMultiFrameSourceImagesException : CreateVolumeException
 	{
 		public UnsupportedMultiFrameSourceImagesException() : this(null) {}
@@ -100,6 +105,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				message = SR.MessageSourceDataSetNeedsThreeImagesForMpr;
 			else if (ex is UnsupportedSourceImagesException)
 				message = SR.MessageSourceDataSetImagesAreNotSupported;
+			else if (ex is UnsupportedPixelFormatSourceImagesException)
+				message = SR.MessageSourceDataSetImagesMustBe16BitGreyscale;
 			else if (ex is UnsupportedMultiFrameSourceImagesException)
 				message = SR.MessageSourceDataSetMultiFrameImagesAreNotSupported;
 			else if (ex is MultipleFramesOfReferenceException)

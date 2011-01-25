@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D780A782-15DA-4E46-B642-7EA60F2D1A0A}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -101,10 +101,10 @@
     <None Include="Web References\UpdateInformationService\UpdateInformationService.wsdl" />
   </ItemGroup>
   <ItemGroup>
-    <WebReferenceUrl Include="http://localhost:4472/UpdateInformationService.asmx">
+    <WebReferenceUrl Include="http://localhost/ClearCanvas.Distribution.UpdateService/UpdateInformationService.asmx">
       <UrlBehavior>Static</UrlBehavior>
       <RelPath>Web References\UpdateInformationService\</RelPath>
-      <UpdateFromURL>http://localhost:4472/UpdateInformationService.asmx</UpdateFromURL>
+      <UpdateFromURL>http://localhost/ClearCanvas.Distribution.UpdateService/UpdateInformationService.asmx</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>

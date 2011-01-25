@@ -20,55 +20,75 @@ using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Common
 {
+	[ExtensionOf(typeof(ApplicationRootExtensionPoint))]
+	internal class DumpProductSettingsApplication : IApplicationRoot
+	{
+		#region IApplicationRoot Members
+
+		public void RunApplication(string[] args)
+		{
+			Dump();
+		}
+
+		private void Dump()
+		{
+			var settings = new DecryptedProductSettings();
+			Console.WriteLine("Product: {0}", settings.Product);
+			Console.WriteLine("Component: {0}", settings.Component);
+			Console.WriteLine("Edition: {0}", settings.Edition);
+			Console.WriteLine("Version: {0}", settings.Version);
+			Console.WriteLine("VersionSuffix: {0}", settings.VersionSuffix);
+			Console.WriteLine("Release: {0}", settings.Release);
+			Console.WriteLine("Copyright:\n{0}", settings.Copyright);
+			Console.WriteLine("\nLicense:\n{0}", settings.License);
+		}
+
+		#endregion
+	}
+
 	/// <summary>
 	/// Provides some basic information about the product, such as the name and version.
 	/// </summary>
-	public static class ProductInformation
+	internal class DecryptedProductSettings
 	{
-		private static string _product;
-		private static string _component;
-		private static string _edition;
-		private static Version _version;
-		private static string _versionSuffix;
-		private static string _copyright;
-		private static string _license;
-		private static bool? _diagnosticRelease;
+		private string _product;
+		private string _component;
+		private string _edition;
+		private string _release;
+		private Version _version;
+		private string _versionSuffix;
+		private string _copyright;
+		private string _license;
 
-		static ProductInformation()
+		private readonly ProductSettings _settings;
+
+		public DecryptedProductSettings()
 		{
-			ProductSettings.Default.PropertyChanged += OnSettingPropertyChanged;
+			_settings = new ProductSettings();
+			_settings.PropertyChanged += OnSettingPropertyChanged;
 		}
 
-		private static void OnSettingPropertyChanged(object sender, PropertyChangedEventArgs e)
+		private void OnSettingPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			_product = null;
 			_component = null;
 			_edition = null;
+			_release = null;
 			_version = null;
 			_versionSuffix = null;
 			_copyright = null;
 			_license = null;
-			_diagnosticRelease = null;
 		}
 
 		/// <summary>
 		/// Gets the component name.
 		/// </summary>
-		[Obsolete("It is recommended that the Component property be used to avoid ambiguity.")]
-		public static string Name
-		{
-			get { return Component; }
-		}
-
-		/// <summary>
-		/// Gets the component name.
-		/// </summary>
-		public static string Component
+		public string Component
 		{
 			get
 			{
 				if (_component == null)
-					_component = Decrypt(ProductSettings.Default.Component);
+					_component = Decrypt(_settings.Component);
 				return _component;
 			}
 		}
@@ -76,12 +96,12 @@ namespace ClearCanvas.Common
 		/// <summary>
 		/// Gets the product name.
 		/// </summary>
-		public static string Product
+		public string Product
 		{
 			get
 			{
 				if (_product == null)
-					_product = Decrypt(ProductSettings.Default.Product);
+					_product = Decrypt(_settings.Product);
 				return _product;
 			}
 		}
@@ -89,26 +109,42 @@ namespace ClearCanvas.Common
 		/// <summary>
 		/// Gets the product edition.
 		/// </summary>
-		public static string Edition
+		public string Edition
 		{
 			get
 			{
 				if (_edition == null)
-					_edition = Decrypt(ProductSettings.Default.Edition);
+					_edition = Decrypt(_settings.Edition);
 				return _edition;
+			}
+		}
+
+		/// <summary>
+		/// Gets the product release type.
+		/// </summary>
+		public string Release
+		{
+			get
+			{
+				if (_release == null)
+				{
+					var release = Decrypt(_settings.Release);
+					_release = string.IsNullOrEmpty(release) || release[0] != '*' ? "Unverified" : release.Substring(1);
+				}
+				return _release;
 			}
 		}
 
 		/// <summary>
 		/// Gets the product version.
 		/// </summary>
-		public static Version Version
+		public Version Version
 		{
 			get
 			{
 				if (_version == null)
 				{
-					string version = Decrypt(ProductSettings.Default.Version);
+					string version = Decrypt(_settings.Version);
 					try
 					{
 						if (String.IsNullOrEmpty(version))
@@ -129,13 +165,13 @@ namespace ClearCanvas.Common
 		/// <summary>
 		/// Gets the product version suffix (e.g. "SP1").
 		/// </summary>
-		public static string VersionSuffix
+		public string VersionSuffix
 		{
 			get
 			{
 				if (_versionSuffix == null)
 				{
-					string versionSuffix = Decrypt(ProductSettings.Default.VersionSuffix);
+					string versionSuffix = Decrypt(_settings.VersionSuffix);
 					if (String.IsNullOrEmpty(versionSuffix) || versionSuffix[0] != '*')
 						_versionSuffix = "Unverified Build";
 					else
@@ -148,12 +184,12 @@ namespace ClearCanvas.Common
 		/// <summary>
 		/// Gets the product copyright (e.g. "Copyright 2009 ClearCanvas Inc.").
 		/// </summary>
-		public static string Copyright
+		public string Copyright
 		{
 			get
 			{
 				if (_copyright == null)
-					_copyright = Decrypt(ProductSettings.Default.Copyright);
+					_copyright = Decrypt(_settings.Copyright);
 				return _copyright;
 			}
 		}
@@ -161,26 +197,13 @@ namespace ClearCanvas.Common
 		/// <summary>
 		/// Gets the product license.
 		/// </summary>
-		public static string License
+		public string License
 		{
 			get
 			{
 				if (_license == null)
-					_license = Decrypt(ProductSettings.Default.License);
+					_license = Decrypt(_settings.License);
 				return _license;
-			}
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether or not this product version is suitable for diagnostic use.
-		/// </summary>
-		public static bool AllowDiagnosticUse
-		{
-			get
-			{
-				if (!_diagnosticRelease.HasValue)
-					_diagnosticRelease = string.Equals("True", Decrypt(ProductSettings.Default.AllowDiagnosticUse), StringComparison.InvariantCultureIgnoreCase);
-				return _diagnosticRelease.Value;
 			}
 		}
 
@@ -217,58 +240,165 @@ namespace ClearCanvas.Common
 			}
 			return result;
 		}
+	}
+	
+	public static class ProductInformation
+	{
+		private static readonly DecryptedProductSettings _settings = new DecryptedProductSettings();
 
 		/// <summary>
-		/// Gets the component name, optionally with the product edition.
+		/// Gets the component name.
 		/// </summary>
-		/// <param name="includeEdition">A value indciating whether or not the include the product edition in the name.</param>
-		public static string GetName(bool includeEdition)
+		[Obsolete("It is recommended that the Component property be used to avoid ambiguity.")]
+		public static string Name
 		{
-			if (includeEdition && !string.IsNullOrEmpty(Edition) && !string.IsNullOrEmpty(Component))
-				return string.Format("{0} {1}", Component, Edition);
-			return Component;
+			get { return _settings.Component; }
 		}
 
 		/// <summary>
-		/// Gets a string containing both the component name, product edition and version.
+		/// Gets the component name.
 		/// </summary>
-		/// <param name="includeBuildAndRevision">Specifies whether to include the build and revision numbers in the version; false means only the major and minor numbers are included.</param>
-		/// <param name="includeVersionSuffix">Specifies whether to include the version suffix.</param>
+		public static string Component
+		{
+			get { return _settings.Component; }
+		}
+
+		/// <summary>
+		/// Gets the product name.
+		/// </summary>
+		public static string Product
+		{
+			get { return _settings.Product; }
+		}
+
+		/// <summary>
+		/// Gets the product edition.
+		/// </summary>
+		public static string Edition
+		{
+			get { return _settings.Edition; }
+		}
+
+		/// <summary>
+		/// Gets the product release type.
+		/// </summary>
+		public static string Release
+		{
+			get { return _settings.Release; }
+		}
+
+		/// <summary>
+		/// Gets the product version.
+		/// </summary>
+		public static Version Version
+		{
+			get { return _settings.Version; }
+		}
+
+		/// <summary>
+		/// Gets the product version suffix (e.g. "SP1").
+		/// </summary>
+		public static string VersionSuffix
+		{
+			get { return _settings.VersionSuffix; }
+		}
+
+		/// <summary>
+		/// Gets the product copyright (e.g. "Copyright 2009 ClearCanvas Inc.").
+		/// </summary>
+		public static string Copyright
+		{
+			get { return _settings.Copyright; }
+		}
+
+		/// <summary>
+		/// Gets the product license.
+		/// </summary>
+		public static string License
+		{
+			get { return _settings.License; }
+		}
+
+		/// <summary>
+		/// Gets the component name, optionally with the product edition and/or release type.
+		/// </summary>
+		/// <param name="includeEdition">A value indciating whether or not to include the product edition in the name.</param>
+		/// <param name="includeRelease">A value indicating whether or not to include the release type in the name.</param>
+		public static string GetName(bool includeEdition, bool includeRelease)
+		{
+			var sb = new StringBuilder(Component);
+			if (includeEdition && !string.IsNullOrEmpty(Edition))
+			{
+				if (sb.Length > 0)
+					sb.Append(' ');
+				sb.Append(Edition);
+			}
+			if (includeRelease && !string.IsNullOrEmpty(Release))
+			{
+				if (sb.Length > 0)
+					sb.Append(' ');
+				sb.AppendFormat("({0})", Release);
+			}
+			return sb.ToString();
+		}
+
+		/// <summary>
+		/// Gets a string containing both the component name, product edition, release type and version.
+		/// </summary>
+		/// <param name="includeBuildAndRevision">A value indicating whether or not to include the build and revision numbers in the version; False means only the major and minor numbers are included.</param>
+		/// <param name="includeVersionSuffix">A value indicating whether or not to include the version suffix.</param>
 		public static string GetNameAndVersion(bool includeBuildAndRevision, bool includeVersionSuffix)
 		{
-			return GetNameAndVersion(includeBuildAndRevision, includeVersionSuffix, true);
+			return GetNameAndVersion(includeBuildAndRevision, includeVersionSuffix, true, true);
 		}
 
 		/// <summary>
-		/// Gets a string containing both the component name and version, optionally with the product edition.
+		/// Gets a string containing both the component name and version, optionally with the product edition and/or release type.
 		/// </summary>
-		/// <param name="includeBuildAndRevision">Specifies whether to include the build and revision numbers in the version; false means only the major and minor numbers are included.</param>
-		/// <param name="includeVersionSuffix">Specifies whether to include the version suffix.</param>
-		/// <param name="includeEdition">A value indciating whether or not the include the product edition in the name.</param>
-		public static string GetNameAndVersion(bool includeBuildAndRevision, bool includeVersionSuffix, bool includeEdition)
+		/// <param name="includeBuildAndRevision">A value indicating whether or not to include the build and revision numbers in the version; False means only the major and minor numbers are included.</param>
+		/// <param name="includeVersionSuffix">A value indicating whether or not to include the version suffix.</param>
+		/// <param name="includeEdition">A value indciating whether or not to include the product edition in the name.</param>
+		/// <param name="includeRelease">A value indicating whether or not to include the release type in the name.</param>
+		public static string GetNameAndVersion(bool includeBuildAndRevision, bool includeVersionSuffix, bool includeEdition, bool includeRelease)
 		{
-			return string.Format("{0} {1}", GetName(includeEdition), GetVersion(includeBuildAndRevision, includeVersionSuffix));
+			return string.Format("{0} {1}", GetName(includeEdition, includeRelease), GetVersion(includeBuildAndRevision, includeVersionSuffix, false));
 		}
 
 		/// <summary>
-		/// Gets the version as a string, formatted based on the input options.
+		/// Gets the version as a string, optionally with build and revision numbers, and/or version suffix.
 		/// </summary>
 		/// <param name="includeBuildAndRevision">Specifies whether to include the build and revision numbers in the version; false means only the major and minor numbers are included.</param>
 		/// <param name="includeVersionSuffix">Specifies whether to include the version suffix.</param>
 		public static string GetVersion(bool includeBuildAndRevision, bool includeVersionSuffix)
 		{
-			string versionString;
-			Version version = Version;
+			return GetVersion(includeBuildAndRevision, includeVersionSuffix, false);
+		}
 
-			if (includeBuildAndRevision)
-				versionString = String.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
-			else
-				versionString = String.Format("{0}.{1}", version.Major, version.Minor);
+		/// <summary>
+		/// Gets the version as a string, optionally with build and revision numbers, version suffix, and/or release type.
+		/// </summary>
+		/// <param name="includeBuildAndRevision">Specifies whether to include the build and revision numbers in the version; false means only the major and minor numbers are included.</param>
+		/// <param name="includeVersionSuffix">Specifies whether to include the version suffix.</param>
+		/// <param name="includeRelease">A value indicating whether or not to include the release type in the name.</param>
+		public static string GetVersion(bool includeBuildAndRevision, bool includeVersionSuffix, bool includeRelease)
+		{
+			var version = Version;
+			var versionString = new StringBuilder(string.Format("{0}.{1}", version.Major, version.Minor));
 
-			if (includeVersionSuffix && !String.IsNullOrEmpty(VersionSuffix))
-				return String.Format("{0} {1}", versionString, VersionSuffix);
+			if (includeBuildAndRevision && version.Build >= 0)
+			{
+				versionString.AppendFormat(".{0}", version.Build);
+				if (version.Revision >= 0)
+					versionString.AppendFormat(".{0}", version.Revision);
+			}
 
-			return versionString;
+			if (includeVersionSuffix && !string.IsNullOrEmpty(VersionSuffix))
+				versionString.Append(" " + VersionSuffix);
+
+			if (includeRelease && !string.IsNullOrEmpty(Release))
+				versionString.Append(" " + Release);
+
+			return versionString.ToString();
 		}
 	}
 
@@ -277,6 +407,6 @@ namespace ClearCanvas.Common
 	[SharedSettingsMigrationDisabled]
 	internal sealed partial class ProductSettings
 	{
-		private ProductSettings() {}
+		internal ProductSettings() {}
 	}
 }

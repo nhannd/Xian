@@ -73,6 +73,17 @@ namespace ClearCanvas.Desktop.View.WinForms.Configuration
 					_toolTip.SetToolTip(_lblLabel, tooltip);
 					_toolTip.SetToolTip(_pnlIcon, tooltip);
 
+					if (!string.IsNullOrEmpty(selectedNode.Description))
+					{
+						_lblDescription.Text = selectedNode.Description;
+						_lblDescription.Height = _lblDescription.GetPreferredSize(new Size(_lblDescription.Width, 100)).Height;
+					}
+					else
+					{
+						_lblDescription.Text = string.Empty;
+						_lblDescription.Height = 0;
+					}
+
 					// destroy old icon
 					Image image = _pnlIcon.BackgroundImage;
 					_pnlIcon.BackgroundImage = null;
