@@ -239,11 +239,12 @@ namespace ClearCanvas.Controls.WinForms
 			{
 				if (_selectedItems == null)
 				{
-					List<FolderViewItem> selection = new List<FolderViewItem>();
+					var baseName = _folderListView.CurrentPidl.DisplayName + System.IO.Path.DirectorySeparatorChar;
+					var selection = new List<FolderViewItem>();
 					if (_folderListView.SelectedItems != null)
 					{
 						foreach (FolderListViewItem item in _folderListView.SelectedItems)
-							selection.Add(new FolderViewItem(item.Pidl));
+							selection.Add(new FolderViewItem(item.Pidl.Path, baseName + item.DisplayName, item.DisplayName, item.IsFolder, item.IsShortcut));
 					}
 					_selectedItems = selection.AsReadOnly();
 				}
@@ -394,6 +395,9 @@ namespace ClearCanvas.Controls.WinForms
 		{
 			internal FolderViewItem(Pidl pidl)
 				: base(pidl.Path, pidl.VirtualPath, pidl.DisplayName, pidl.IsFolder, pidl.IsLink) {}
+
+			internal FolderViewItem(string path, string virtualPath, string displayName, bool isFolder, bool isLink)
+				: base(path, virtualPath, displayName, isFolder, isLink) {}
 		}
 
 		#endregion
@@ -412,6 +416,7 @@ namespace ClearCanvas.Controls.WinForms
 			public readonly byte ItemClass;
 			public readonly long FileSize;
 			public readonly bool IsFolder;
+			public readonly bool IsShortcut;
 			public readonly DateTime LastModified;
 
 			public FolderListViewItem(Pidl absolutePidl, Pidl myDocumentsReferencePidl, FileSizeFormat fileSizeFormat) : base()
@@ -452,6 +457,7 @@ namespace ClearCanvas.Controls.WinForms
 				this.ItemClass = itemClass;
 				this.LastModified = DateTime.MinValue;
 				this.IsFolder = isFolder;
+				this.IsShortcut = isShortcut;
 				this.FileSize = -1;
 
 				if (File.Exists(_fullPath))
@@ -946,6 +952,7 @@ namespace ClearCanvas.Controls.WinForms
 			private void PopulateItems()
 			{
 				this.BeginWaitCursor();
+				this.BeginUpdate();
 				try
 				{
 					List<FolderListViewItem> items = new List<FolderListViewItem>();
@@ -958,6 +965,7 @@ namespace ClearCanvas.Controls.WinForms
 				}
 				finally
 				{
+					this.EndUpdate();
 					this.EndWaitCursor();
 				}
 			}

@@ -26,6 +26,13 @@ namespace ClearCanvas.Controls.WinForms
 		private IntPtr _pidl;
 		private bool _disposed = false;
 
+		private string _path;
+		private string _displayName;
+		private string _virtualPath;
+		private bool? _isRoot;
+		private bool? _isFolder;
+		private bool? _isLink;
+
 		public Pidl(IntPtr pidl) : this(pidl, false) {}
 
 		public Pidl(Environment.SpecialFolder specialFolder) : this(CreateSpecialFolderPidl(specialFolder), true) {}
@@ -98,13 +105,17 @@ namespace ClearCanvas.Controls.WinForms
 		{
 			get
 			{
-				// The maximum component length (i.e. for any given filename or directory name) is 256.
-				// The maximum path length (i.e. the concatenation of all components in the path) is 260.
-				const int MAX_PATH = 260;
+				if (_path == null)
+				{
+					// The maximum component length (i.e. for any given filename or directory name) is 256.
+					// The maximum path length (i.e. the concatenation of all components in the path) is 260.
+					const int MAX_PATH = 260;
 
-				StringBuilder strBuffer = new StringBuilder(MAX_PATH);
-				Shell32.SHGetPathFromIDList(GetPidl(), strBuffer);
-				return strBuffer.ToString();
+					var strBuffer = new StringBuilder(MAX_PATH);
+					Shell32.SHGetPathFromIDList(GetPidl(), strBuffer);
+					_path = strBuffer.ToString();
+				}
+				return _path;
 			}
 		}
 
@@ -112,10 +123,9 @@ namespace ClearCanvas.Controls.WinForms
 		{
 			get
 			{
-				IntPtr pidl = this.GetPidl();
-				Native.SHFILEINFO shInfo = new Native.SHFILEINFO();
-				Native.Shell32.SHGetFileInfo(pidl, 0, out shInfo, (uint) Marshal.SizeOf(shInfo), Native.SHGFI.SHGFI_PIDL | Native.SHGFI.SHGFI_DISPLAYNAME);
-				return shInfo.szDisplayName;
+				if (_displayName == null)
+					GetShellFileInfo();
+				return _displayName;
 			}
 		}
 
@@ -123,29 +133,33 @@ namespace ClearCanvas.Controls.WinForms
 		{
 			get
 			{
-				using (Pidl pidl = this.Clone())
+				if (_virtualPath == null)
 				{
-					Stack<string> stack = new Stack<string>();
-					string displayName = this.DisplayName;
-					int countChars = displayName.Length;
-
-					stack.Push(displayName);
-					while (ILRemoveLastID((IntPtr) pidl))
+					using (var pidl = Clone())
 					{
-						displayName = pidl.DisplayName;
-						countChars += displayName.Length;
+						var stack = new Stack<string>();
+						var displayName = DisplayName;
+						var countChars = displayName.Length;
+
 						stack.Push(displayName);
-					}
+						while (ILRemoveLastID((IntPtr) pidl))
+						{
+							displayName = pidl.DisplayName;
+							countChars += displayName.Length;
+							stack.Push(displayName);
+						}
 
-					StringBuilder sb = new StringBuilder(countChars + stack.Count - 1);
-					while (stack.Count > 0)
-					{
-						sb.Append(stack.Pop());
-						if (stack.Count > 0)
-							sb.Append(System.IO.Path.DirectorySeparatorChar);
+						var sb = new StringBuilder(countChars + stack.Count - 1);
+						while (stack.Count > 0)
+						{
+							sb.Append(stack.Pop());
+							if (stack.Count > 0)
+								sb.Append(System.IO.Path.DirectorySeparatorChar);
+						}
+						_virtualPath = sb.ToString();
 					}
-					return sb.ToString();
 				}
+				return _virtualPath;
 			}
 		}
 
@@ -153,16 +167,19 @@ namespace ClearCanvas.Controls.WinForms
 		{
 			get
 			{
-				IntPtr pidl = this.GetPidl();
-				pidl = ILClone(pidl);
-				try
+				if (!_isRoot.HasValue)
 				{
-					return !ILRemoveLastID(pidl);
+					var pidl = ILClone(GetPidl());
+					try
+					{
+						_isRoot = !ILRemoveLastID(pidl);
+					}
+					finally
+					{
+						Marshal.FreeCoTaskMem(pidl);
+					}
 				}
-				finally
-				{
-					Marshal.FreeCoTaskMem(pidl);
-				}
+				return _isRoot.Value;
 			}
 		}
 
@@ -170,11 +187,9 @@ namespace ClearCanvas.Controls.WinForms
 		{
 			get
 			{
-				const SFGAO REQUEST_ATTRIBUTES = SFGAO.SFGAO_FOLDER;
-				IntPtr pidl = GetPidl();
-				SHFILEINFO shInfo = new SHFILEINFO();
-				Shell32.SHGetFileInfo(pidl, (uint) REQUEST_ATTRIBUTES, out shInfo, (uint) Marshal.SizeOf(shInfo), SHGFI.SHGFI_PIDL | SHGFI.SHGFI_ATTRIBUTES);
-				return (((SFGAO) shInfo.dwAttributes) & SFGAO.SFGAO_FOLDER) != 0;
+				if (!_isFolder.HasValue)
+					GetShellFileInfo();
+				return _isFolder.Value;
 			}
 		}
 
@@ -182,12 +197,20 @@ namespace ClearCanvas.Controls.WinForms
 		{
 			get
 			{
-				const SFGAO REQUEST_ATTRIBUTES = SFGAO.SFGAO_LINK;
-				IntPtr pidl = GetPidl();
-				SHFILEINFO shInfo = new SHFILEINFO();
-				Shell32.SHGetFileInfo(pidl, (uint) REQUEST_ATTRIBUTES, out shInfo, (uint) Marshal.SizeOf(shInfo), SHGFI.SHGFI_PIDL | SHGFI.SHGFI_ATTRIBUTES);
-				return (((SFGAO) shInfo.dwAttributes) & SFGAO.SFGAO_LINK) != 0;
+				if (!_isLink.HasValue)
+					GetShellFileInfo();
+				return _isLink.Value;
 			}
+		}
+
+		public void Refresh()
+		{
+			_path = null;
+			_displayName = null;
+			_virtualPath = null;
+			_isRoot = null;
+			_isFolder = null;
+			_isLink = null;
 		}
 
 		public Pidl Clone()
@@ -254,6 +277,25 @@ namespace ClearCanvas.Controls.WinForms
 			return null;
 		}
 
+		/// <summary>
+		/// Updates the values of <see cref="_displayName"/>, <see cref="_isFolder"/> and <see cref="_isLink"/>.
+		/// </summary>
+		private void GetShellFileInfo()
+		{
+			const SFGAO REQUEST_ATTRIBUTES = SFGAO.SFGAO_LINK | SFGAO.SFGAO_FOLDER;
+			var pidl = GetPidl();
+			var shInfo = new SHFILEINFO();
+			Shell32.SHGetFileInfo(pidl, (uint) REQUEST_ATTRIBUTES, out shInfo, (uint) Marshal.SizeOf(shInfo), SHGFI.SHGFI_PIDL | SHGFI.SHGFI_ATTRIBUTES | SHGFI.SHGFI_DISPLAYNAME);
+
+			_displayName = shInfo.szDisplayName;
+			_isFolder = (((SFGAO) shInfo.dwAttributes) & SFGAO.SFGAO_FOLDER) != 0;
+			_isLink = (((SFGAO) shInfo.dwAttributes) & SFGAO.SFGAO_LINK) != 0;
+		}
+
+		/// <summary>
+		/// Gets the pointer to current PIDL instance.
+		/// </summary>
+		/// <exception cref="ObjectDisposedException">If the current PIDL instance has already been disposed.</exception>
 		private IntPtr GetPidl()
 		{
 			if (IntPtr.Zero.Equals(_pidl))
