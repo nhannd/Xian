@@ -57,10 +57,10 @@
   <Choose>
     <When Condition="'$(Options)' == ''">
       <PropertyGroup>
-        <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeEnterprise+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr+ExcludeSeriesDetails</OptionsFlags>-->
+        <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr+ExcludeSeriesDetails</OptionsFlags>-->
         <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr+ExcludeSeriesDetails</OptionsFlags>-->
         <!--<OptionsFlags>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeMpr+ExcludeSeriesDetails</OptionsFlags>-->
-        <OptionsFlags>ExcludeStudyComposer+ExcludeEnterprise</OptionsFlags>
+        <OptionsFlags>ExcludeStudyComposer</OptionsFlags>
       </PropertyGroup>
     </When>
     <Otherwise>
@@ -225,19 +225,6 @@
   <ItemGroup>
     <LocalDataStoreClientFiles Include="$(TrunkDirectory)\ImageViewer\StudyFinders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.dll" />
     <LocalDataStoreClientFiles Include="$(TrunkDirectory)\ImageViewer\StudyLoaders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EnterpriseCommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.0\Castle.Core.dll "/>
-    <EnterpriseCommonFiles  Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.0\Castle.DynamicProxy2.dll" />
-    <EnterpriseCommonFiles  Include="$(TrunkDirectory)\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <EnterpriseDesktopFiles Include="$(TrunkDirectory)\Enterprise\Desktop\bin\$(Configuration)\ClearCanvas.Enterprise.Desktop.dll" />
-    <EnterpriseDesktopFiles Include="$(TrunkDirectory)\Enterprise\Desktop\View\WinForms\bin\$(Configuration)\ClearCanvas.Enterprise.Desktop.View.WinForms.dll" />
-    <EnterpriseDesktopFiles Include="$(JinDirectory)\ImageViewer\EnterpriseDesktop\bin\$(Configuration)\ClearCanvas.ImageViewer.EnterpriseDesktop.dll" />
-    <EnterpriseDesktopFiles Include="$(JinDirectory)\ImageViewer\EnterpriseDesktop\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -410,12 +397,6 @@
   <Target Name="Copy Local DataStore Client Files">
     <Copy SourceFiles="@(LocalDataStoreClientFiles)" DestinationFolder="$(PluginsDirectory)" />
   </Target>
-  <Target Name="Copy Enterprise Files">
-    <Copy SourceFiles="@(EnterpriseCommonFiles)" DestinationFolder="$(PluginsDirectory)" />
-    <Copy Condition="$(DesktopBuild)" SourceFiles="@(EnterpriseDesktopFiles)" DestinationFolder="$(PluginsDirectory)" />
-
-    <CombineAppConfigs SourceFiles="$(TrunkDirectory)\ImageViewer\ImageViewer.EnterpriseCommon_dist.config;$(DistributionAppConfig)" OutputFile="$(DistributionAppConfig)" />
-  </Target>
   
   <Target Name="Copy Dicom Remote Client Files">
     <Copy SourceFiles="@(DicomRemoteClientFiles)" DestinationFolder="$(PluginsDirectory)" />
@@ -503,11 +484,6 @@
     <RegexIsMatch Pattern="ExcludeDatabase" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeDatabase" />
     </RegexIsMatch>
-
-    <RegexIsMatch Pattern="ExcludeEnterprise" Input="$(OptionsFlags)" >
-      <Output TaskParameter="IsMatch" PropertyName="ExcludeEnterprise" />
-    </RegexIsMatch>
-    <CallTarget Condition="!$(ExcludeEnterprise)" Targets="Copy Enterprise Files" />
 
     <!-- Always copy database for shred host -->
     <CallTarget Condition="$(ShredHostBuild) Or !$(ExcludeDatabase)" Targets="Copy Database Files" />
