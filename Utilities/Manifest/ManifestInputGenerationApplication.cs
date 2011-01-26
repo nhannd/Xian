@@ -118,6 +118,9 @@ namespace ClearCanvas.Utilities.Manifest
             if (input.Name.EndsWith("exe.config"))
                 input.Config = true;
 
+            if (input.Name.EndsWith("critical.config"))
+                input.Config = true;
+
             _manifestInput.Files.Add(input);
         }
 
