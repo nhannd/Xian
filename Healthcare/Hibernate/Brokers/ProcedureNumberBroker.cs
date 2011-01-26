@@ -29,37 +29,24 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using NHibernate.Cfg;
-using NHibernate.Dialect;
+using ClearCanvas.Enterprise.Hibernate;
+using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Hibernate.Ddl;
 
-namespace ClearCanvas.Enterprise.Hibernate.Ddl
+namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
-	/// <summary>
-	/// Abstract base implementation of <see cref="IDdlScriptGenerator"/>.
-	/// </summary>
-	public abstract class DdlScriptGenerator : IDdlScriptGenerator
+	[ExtensionOf(typeof(BrokerExtensionPoint))]
+	[ExtensionOf(typeof(DdlScriptGeneratorExtensionPoint))]
+	public class ProcedureNumberBroker : SequenceBroker, IProcedureNumberBroker, IDdlScriptGenerator
 	{
-		#region IDdlScriptGenerator Members
+		private const string TableName = "ProcedureNumberSequence_";
+		private const string ColumnName = "NextValue_";
+		private const long InitialValue = 1000000000;
 
-		public abstract string[] GenerateCreateScripts(Configuration config);
-
-		public abstract string[] GenerateUpgradeScripts(Configuration config, RelationalModelInfo baselineModel);
-
-		public abstract string[] GenerateDropScripts(Configuration config);
-
-		#endregion
-
-		/// <summary>
-		/// Gets the dialect object specified by the configuration.
-		/// </summary>
-		/// <param name="config"></param>
-		/// <returns></returns>
-		public static Dialect GetDialect(Configuration config)
+		public ProcedureNumberBroker()
+			: base(TableName, ColumnName, InitialValue)
 		{
-			return Dialect.GetDialect(config.Properties);
 		}
 	}
 }

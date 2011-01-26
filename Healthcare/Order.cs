@@ -36,6 +36,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Workflow;
 using ClearCanvas.Enterprise.Core;
 using Iesi.Collections.Generic;
+using ClearCanvas.Healthcare.Brokers;
 
 namespace ClearCanvas.Healthcare
 {
@@ -65,13 +66,12 @@ namespace ClearCanvas.Healthcare
 			public List<Procedure> GhostProcedures { get; internal set; }
 		}
 
-
 		#region Static Factory methods
 
 		/// <summary>
 		/// Factory method to create a new order.
 		/// </summary>
-		public static Order NewOrder(OrderCreationArgs args)
+		public static Order NewOrder(OrderCreationArgs args, IProcedureNumberBroker procedureNumberBroker)
 		{
 			// validate required members are set
 			Platform.CheckMemberIsSet(args.Patient, "Patient");
@@ -105,7 +105,7 @@ namespace ClearCanvas.Healthcare
 				// create procedures according to the diagnostic service plan
 				args.Procedures = CollectionUtils.Map<ProcedureType, Procedure>(
 					args.DiagnosticService.ProcedureTypes,
-					type => new Procedure(type)
+					type => new Procedure(type, procedureNumberBroker.GetNext())
 								{
 									PerformingFacility = args.PerformingFacility ?? args.OrderingFacility
 								});
@@ -207,11 +207,6 @@ namespace ClearCanvas.Healthcare
 			}
 
 			procedure.Order = this;
-
-			// generate an index for the procedure
-			var highestIndex = CollectionUtils.Max(
-				CollectionUtils.Map<Procedure, int>(_procedures, p => int.Parse(p.Index)), 0);
-			procedure.Index = (highestIndex + 1).ToString();
 
 			// add to collection
 			_procedures.Add(procedure);
@@ -364,6 +359,8 @@ namespace ClearCanvas.Healthcare
 				failureReason = "Only orders in the MG status can be unmerged.";
 			else if (destOrder.Status != OrderStatus.SC)
 				failureReason = "Cannot unmerge because the merge target order has already been started.";
+			else if(CollectionUtils.Contains(destOrder.Procedures, p => p.Status == ProcedureStatus.CA))
+				failureReason = "Cannot unmerge because the merge target order has cancelled procedures.";
 			else if (cancelInfo.Reason == null)
 				failureReason = "A reason must be provided to unmerge.";
 			else if (CollectionUtils.Contains(this.Procedures, p => p.DowntimeRecoveryMode)
@@ -388,8 +385,6 @@ namespace ClearCanvas.Healthcare
 
 			var destOrder = _mergeInfo.MergeDestinationOrder;
 
-			// determine procedures to be reclaimed from dest order
-			var reclaimProcedures = CollectionUtils.Map(_procedures, (Procedure p) => p.GhostOf);
 
 			// create replacement order
 			var newOrder = new Order(
@@ -408,7 +403,8 @@ namespace ClearCanvas.Healthcare
 					_orderingPractitioner,
 					_orderingFacility,
 					new HashedSet<Procedure>(), // will be added later
-					CollectionUtils.Map(_resultRecipients, (ResultRecipient rr) => (ResultRecipient) rr.Clone()),
+					new HashedSet<Procedure>(), // ghosts
+					CollectionUtils.Map(_resultRecipients, (ResultRecipient rr) => (ResultRecipient)rr.Clone()),
 					new List<OrderAttachment>(),
 					_reasonForStudy,
 					_priority,
@@ -440,7 +436,9 @@ namespace ClearCanvas.Healthcare
 				newOrder.Attachments.Add(attachment);
 			}
 
-			// reclaim procedures (need to create ghost copies on the dest order, so that HL7 can cancel them)
+			// reclaim procedures
+			// need to create new ghost copies on the dest order, so that HL7 can cancel them
+			var reclaimProcedures = CollectionUtils.Map(_ghostProcedures, (Procedure p) => p.GhostOf);
 			var ghostProcedures = CollectionUtils.Map(reclaimProcedures, (Procedure p) => p.CreateGhostCopy());
 			foreach (var procedure in reclaimProcedures)
 			{

@@ -79,6 +79,7 @@
     <Compile Include="Allergy.cs" />
     <Compile Include="AttachedDocument.cs" />
     <Compile Include="Brokers\IPerformedProcedureStepBroker.cs" />
+    <Compile Include="Brokers\IProcedureNumberBroker.cs" />
     <Compile Include="Brokers\IProtocolWorklistItemBroker.cs" />
     <Compile Include="Brokers\IExternalPractitionerBroker.cs" />
     <Compile Include="Brokers\IExternalPractitionerContactPointBroker.cs" />
@@ -193,6 +194,7 @@
     <Compile Include="Tests\TestExtensionFactory.cs" />
     <Compile Include="Tests\TestLocationFactory.cs" />
     <Compile Include="Tests\TestOrderNoteFactory.cs" />
+    <Compile Include="Tests\TestProcedureNumberBroker.cs" />
     <Compile Include="Tests\TranscriptionReviewStepTests.cs" />
     <Compile Include="Tests\TranscriptionStepTests.cs" />
     <Compile Include="Tests\VerificationStepTests.cs" />

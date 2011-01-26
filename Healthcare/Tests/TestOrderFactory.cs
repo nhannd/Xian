@@ -33,11 +33,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Healthcare.Brokers;
 
 namespace ClearCanvas.Healthcare.Tests
 {
 	public static class TestOrderFactory
     {
+
+
 		public static Order CreateOrder(int numProcedures, int numMpsPerProcedure, bool createProcedureSteps)
         {
             return CreateOrder(numProcedures, numMpsPerProcedure, createProcedureSteps, true);
@@ -59,7 +63,8 @@ namespace ClearCanvas.Healthcare.Tests
 
 		public static Order CreateOrder(Patient patient, Visit visit, Facility facility, string accession, int numProcedures, int numMpsPerProcedure, bool createProcedureSteps, bool schedule)
         {
-            DateTime? scheduleTime = DateTime.Now;
+			var procedureNumberBroker = new TestProcedureNumberBroker();
+			DateTime? scheduleTime = DateTime.Now;
 
             DiagnosticService ds = TestDiagnosticServiceFactory.CreateDiagnosticService(numProcedures);
             string reasonForStudy = "Test";
@@ -79,7 +84,7 @@ namespace ClearCanvas.Healthcare.Tests
                 facility,
                 scheduleTime,
                 orderingPrac,
-                new List<ResultRecipient>()));
+                new List<ResultRecipient>()), procedureNumberBroker);
 
             if(createProcedureSteps)
             {

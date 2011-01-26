@@ -42,7 +42,6 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
-using Iesi.Collections.Generic;
 using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 using System;
 
@@ -417,7 +416,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		{
 			// obtain a new acc number
 			var broker = this.PersistenceContext.GetBroker<IAccessionNumberBroker>();
-			var accNum = broker.GetNextAccessionNumber();
+			var accNum = broker.GetNext();
 
 			return new ReserveAccessionNumberResponse(accNum);
 		}
@@ -552,12 +551,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			// create a temp map from procedure back to its requisition, this will be needed later
 			var orderAssembler = new OrderEntryAssembler();
 			var mapProcToReq = new Dictionary<Procedure, ProcedureRequisition>();
+			var procedureNumberBroker = PersistenceContext.GetBroker<IProcedureNumberBroker>();
 			var procedures = CollectionUtils.Map(
 				requisition.Procedures,
 				delegate(ProcedureRequisition req)
 				{
 					var rpt = this.PersistenceContext.Load<ProcedureType>(req.ProcedureType.ProcedureTypeRef);
-					var rp = new Procedure(rpt);
+					var rp = new Procedure(rpt, procedureNumberBroker.GetNext());
 					mapProcToReq.Add(rp, req);
 
 					// important to set this flag prior to creating the procedure steps, because it may affect
@@ -585,7 +585,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 					requisition.SchedulingRequestTime,
 					orderingPhysician,
 					resultRecipients,
-					procedures));
+					procedures),
+				procedureNumberBroker);
 
 			// note: need to lock the new order now, prior to creating the procedure steps
 			// otherwise may get exceptions saying the Procedure is a transient object
@@ -637,13 +638,16 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				// Merge the source order into the destination order.
 				var result = sourceOrder.Merge(mergeInfo);
 
+				// sync state so that ghost procedures get OIDs, prior to queuing ghost HL7 events
+				PersistenceContext.SynchState();
+
 				// create all necessary HL7 events
-				CreateLogicalHL7Event(sourceOrder, LogicalHL7EventType.OrderCancelled);
-				CreateLogicalHL7Event(destinationOrder, LogicalHL7EventType.OrderModified);
 				foreach (var ghostProcedure in result.GhostProcedures)
 				{
+					CreateLogicalHL7Event(ghostProcedure, LogicalHL7EventType.ProcedureCancelled);
 					CreateLogicalHL7Event(ghostProcedure.GhostOf, LogicalHL7EventType.ProcedureCreated);
 				}
+				CreateLogicalHL7Event(destinationOrder, LogicalHL7EventType.OrderModified);
 			}
 		}
 
@@ -655,7 +659,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				if (!order.CanUnmerge(cancelInfo, out failureReason))
 					throw new RequestValidationException(failureReason);
 
-				var result = order.Unmerge(cancelInfo, accBroker.GetNextAccessionNumber());
+				var result = order.Unmerge(cancelInfo, accBroker.GetNext());
 				var replacementOrder = result.ReplacementOrder;
 				PersistenceContext.Lock(replacementOrder, DirtyState.New);
 
@@ -710,7 +714,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			if (requisition.IsDowntimeOrder)
 			{
 				// validate that the downtime A# is less than then current sequence position
-				var currentMaxAccession = accessionBroker.PeekNextAccessionNumber();
+				var currentMaxAccession = accessionBroker.PeekNext();
 				if (requisition.DowntimeAccessionNumber.CompareTo(currentMaxAccession) > -1)
 					throw new RequestValidationException("Invalid downtime accession number.");
 
@@ -718,7 +722,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			}
 
 			// get new A#
-			return this.PersistenceContext.GetBroker<IAccessionNumberBroker>().GetNextAccessionNumber();
+			return this.PersistenceContext.GetBroker<IAccessionNumberBroker>().GetNext();
 		}
 
 		private void UpdateProceduresHelper(Order order, IEnumerable<ProcedureRequisition> procedureReqs)
@@ -738,7 +742,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 			foreach (var req in procedureReqs)
 			{
-				if (CollectionUtils.Contains(order.Procedures, x => req.ProcedureIndex == x.Index))
+				if (CollectionUtils.Contains(order.Procedures, x => req.ProcedureNumber == x.Number))
 				{
 					existingReqs.Add(req);
 				}
@@ -749,12 +753,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			}
 
 			// process the additions first, so that we don't accidentally cancel an order (if all its procedures are cancelled momentarily)
+			var procedureNumberBroker = PersistenceContext.GetBroker<IProcedureNumberBroker>();
 			foreach (var req in addedReqs)
 			{
 				var requestedType = this.PersistenceContext.Load<ProcedureType>(req.ProcedureType.ProcedureTypeRef);
 
 				// create a new procedure for this requisition
-				var procedure = new Procedure(requestedType) { DowntimeRecoveryMode = isDowntime };
+				var procedure = new Procedure(requestedType, procedureNumberBroker.GetNext()) { DowntimeRecoveryMode = isDowntime };
 				order.AddProcedure(procedure);
 
 				// note: need to lock the new procedure now, prior to creating the procedure steps
@@ -774,7 +779,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			foreach (var req in existingReqs)
 			{
 				var requestedType = this.PersistenceContext.Load<ProcedureType>(req.ProcedureType.ProcedureTypeRef);
-				var procedure = CollectionUtils.SelectFirst(order.Procedures, x => req.ProcedureIndex == x.Index);
+				var procedure = CollectionUtils.SelectFirst(order.Procedures, x => req.ProcedureNumber == x.Number);
 
 				// validate that the type has not changed
 				if (!procedure.Type.Equals(requestedType))

@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,37 +29,29 @@
 
 #endregion
 
+
 using System;
-using System.Collections.Generic;
-using System.Text;
-using NHibernate.Cfg;
-using NHibernate.Dialect;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Healthcare.Brokers;
 
-namespace ClearCanvas.Enterprise.Hibernate.Ddl
+namespace ClearCanvas.Healthcare.Tests
 {
-	/// <summary>
-	/// Abstract base implementation of <see cref="IDdlScriptGenerator"/>.
-	/// </summary>
-	public abstract class DdlScriptGenerator : IDdlScriptGenerator
+	internal class TestProcedureNumberBroker : IProcedureNumberBroker
 	{
-		#region IDdlScriptGenerator Members
-
-		public abstract string[] GenerateCreateScripts(Configuration config);
-
-		public abstract string[] GenerateUpgradeScripts(Configuration config, RelationalModelInfo baselineModel);
-
-		public abstract string[] GenerateDropScripts(Configuration config);
-
-		#endregion
-
-		/// <summary>
-		/// Gets the dialect object specified by the configuration.
-		/// </summary>
-		/// <param name="config"></param>
-		/// <returns></returns>
-		public static Dialect GetDialect(Configuration config)
+		private int _number = 100000;
+		public void SetContext(IPersistenceContext context)
 		{
-			return Dialect.GetDialect(config.Properties);
+			throw new NotImplementedException();
+		}
+
+		public string PeekNext()
+		{
+			throw new NotImplementedException();
+		}
+
+		public string GetNext()
+		{
+			return (_number++).ToString();
 		}
 	}
 }

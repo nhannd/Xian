@@ -75,7 +75,7 @@ namespace ClearCanvas.Healthcare.Tests
 
             Order order = Order.NewOrder(new OrderCreationArgs(Platform.Time, TestStaffFactory.CreateStaff(new StaffTypeEnum("SCLR", null, null)), null,
                 accession, patient, visit, ds, reasonForStudy, OrderPriority.R, facility, facility,
-                scheduleTime, orderingPrac, new List<ResultRecipient>()));
+                scheduleTime, orderingPrac, new List<ResultRecipient>()), new TestProcedureNumberBroker());
 
             // check basics
             Assert.AreEqual(accession, order.AccessionNumber);

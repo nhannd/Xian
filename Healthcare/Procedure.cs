@@ -45,9 +45,10 @@ namespace ClearCanvas.Healthcare
 	[Validation(HighLevelRulesProviderMethod = "GetValidationRules")]
 	public partial class Procedure
 	{
-		public Procedure(ProcedureType type)
+		public Procedure(ProcedureType type, string procedureNumber)
 		{
 			_type = type;
+			_number = procedureNumber;
 			_procedureSteps = new HashedSet<ProcedureStep>();
 			_procedureCheckIn = new ProcedureCheckIn();
 			_reports = new HashedSet<Report>();
@@ -124,7 +125,7 @@ namespace ClearCanvas.Healthcare
 		{
 			get
 			{
-				return _status == ProcedureStatus.CM || _status == ProcedureStatus.CA || _status == ProcedureStatus.DC;
+				return _status == ProcedureStatus.CM || _status == ProcedureStatus.CA || _status == ProcedureStatus.DC || _status == ProcedureStatus.GH;
 			}
 		}
 
@@ -410,7 +411,7 @@ namespace ClearCanvas.Healthcare
 			return new Procedure(
 				_order,
 				_type,
-				_index,
+				_number,
 				new HashedSet<ProcedureStep>(),
 				_scheduledStartTime,
 				_schedulingCode,
