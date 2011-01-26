@@ -590,11 +590,27 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		}
 
 		/// <summary>
-		/// Gets a value indicating if this overlay has multiple frames.
+		/// Gets a value indicating if this overlay plane uses the Multi-Frame Overlay Module (DICOM Standard 2008, Part 3, Section C.9.3 (Table C.9-3))
 		/// </summary>
 		public bool IsMultiFrame
 		{
 			get { return NumberOfFramesInOverlay.HasValue; }
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether or not this multi-frame overlay plane is valid given the total number of frames in the image.
+		/// </summary>
+		/// <remarks>
+		/// DICOM 2009 PS 3.3 Section C.9.3.1.1 states that &quot;The Number of Frames in Overlay (60xx,0015) plus the Image Frame Origin (60xx,0051) minus 1
+		/// shall be less than or equal to the total number of frames in the Multi-frame Image.&quot;
+		/// </remarks>
+		/// <param name="totalImageFrames">The total number of frames in the image.</param>
+		/// <returns>True if this multi-frame overlay plane is valid or the overlay plane is not a multi-frame; False otherwise.</returns>
+		public bool IsValidMultiFrameOverlay(int totalImageFrames)
+		{
+			if (totalImageFrames < 1)
+				throw new ArgumentOutOfRangeException("totalImageFrames", "Total number of frames in the image must be 1 or greater.");
+			return NumberOfFramesInOverlay.GetValueOrDefault(1) + ImageFrameOrigin.GetValueOrDefault(1) - 1 <= totalImageFrames;
 		}
 
 		/// <summary>

@@ -21,6 +21,43 @@ namespace ClearCanvas.Dicom.Iod.Modules.Tests
 	[TestFixture]
 	public class OverlayPlaneTests
 	{
+		#region Misc Tests
+
+		[Test]
+		public void TestIsValidMultiFrameOverlay()
+		{
+			const int size = 3;
+
+			var dataset = new DicomAttributeCollection();
+			SetOverlay(dataset, 0, new bool[size*size], OverlayType.R, new Point(0, 0), size, size, null, false, false);
+			SetOverlay(dataset, 1, new bool[size*size], OverlayType.R, new Point(0, 0), size, size, 1, false, false);
+			SetOverlay(dataset, 2, new bool[size*size*5], OverlayType.R, new Point(0, 0), size, size, 5, false, false);
+			SetOverlay(dataset, 3, new bool[size*size], OverlayType.R, new Point(0, 0), size, size, 1, 3, false, false);
+			SetOverlay(dataset, 4, new bool[size*size*5], OverlayType.R, new Point(0, 0), size, size, 5, 2, false, false);
+
+			var module = new OverlayPlaneModuleIod(dataset);
+
+			Assert.IsTrue(module[0].IsValidMultiFrameOverlay(1), "Single Frame Overlay / 1 Frame in Image");
+			Assert.IsTrue(module[0].IsValidMultiFrameOverlay(2), "Single Frame Overlay / 2 Frames in Image");
+
+			Assert.IsTrue(module[1].IsValidMultiFrameOverlay(1), "1 Frame in Overlay (origin null==1) / 1 Frame in Image");
+			Assert.IsTrue(module[1].IsValidMultiFrameOverlay(2), "1 Frame in Overlay (origin null==1) / 2 Frames in Image");
+
+			Assert.IsFalse(module[2].IsValidMultiFrameOverlay(4), "5 Frames in Overlay (origin null==1) / 4 Frames in Image");
+			Assert.IsTrue(module[2].IsValidMultiFrameOverlay(5), "5 Frames in Overlay (origin null==1) / 5 Frames in Image");
+			Assert.IsTrue(module[2].IsValidMultiFrameOverlay(6), "5 Frames in Overlay (origin null==1) / 6 Frames in Image");
+
+			Assert.IsFalse(module[3].IsValidMultiFrameOverlay(2), "1 Frames in Overlay (origin 3) / 2 Frames in Image");
+			Assert.IsTrue(module[3].IsValidMultiFrameOverlay(3), "1 Frames in Overlay (origin 3) / 3 Frames in Image");
+			Assert.IsTrue(module[3].IsValidMultiFrameOverlay(4), "1 Frames in Overlay (origin 3) / 4 Frames in Image");
+
+			Assert.IsFalse(module[4].IsValidMultiFrameOverlay(5), "5 Frames in Overlay (origin 2) / 5 Frames in Image");
+			Assert.IsTrue(module[4].IsValidMultiFrameOverlay(6), "5 Frames in Overlay (origin 2) / 6 Frames in Image");
+			Assert.IsTrue(module[4].IsValidMultiFrameOverlay(7), "5 Frames in Overlay (origin 2) / 7 Frames in Image");
+		}
+
+		#endregion
+
 		#region Basic Tests
 
 		[Test]
