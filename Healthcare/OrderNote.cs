@@ -65,7 +65,12 @@ namespace ClearCanvas.Healthcare
 		/// <returns></returns>
 		public static IList<OrderNote> GetNotesForOrder(Order order)
 		{
-			return GetNotesForOrder(order, null, false);
+			return GetNotesForOrder(order, new string[0], false);
+		}
+
+		public static IList<OrderNote> GetNotesForOrder(Order order, string category, bool includeVirtual)
+		{
+			return GetNotesForOrder(order, new[] {category}, includeVirtual);
 		}
 
 		/// <summary>
