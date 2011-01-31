@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core.Modelling;
 using ClearCanvas.Workflow;
 using ClearCanvas.Enterprise.Core;
 using Iesi.Collections.Generic;
@@ -43,6 +44,7 @@ namespace ClearCanvas.Healthcare
 	/// <summary>
 	/// Order entity
 	/// </summary>
+	[Validation(HighLevelRulesProviderMethod = "GetValidationRules")]
 	public partial class Order
 	{
 		public class MergeResult
@@ -185,6 +187,12 @@ namespace ClearCanvas.Healthcare
 		#endregion
 
 		#region Public operations
+
+		public virtual List<Procedure> GetProcedures(Predicate<Procedure> filter)
+		{
+			return CollectionUtils.Select(_procedures, filter);
+		}
+
 
 		/// <summary>
 		/// Adds the specified procedure to this order.
@@ -656,6 +664,17 @@ namespace ClearCanvas.Healthcare
 		/// </summary>
 		private void CustomInitialize()
 		{
+		}
+
+		private static IValidationRuleSet GetValidationRules()
+		{
+			var sameInformationAuthorityRule = new ValidationRule<Order>(
+				OrderRules.VisitAndPerformingFacilitiesHaveSameInformationAuthority);
+
+			return new ValidationRuleSet(new[]
+			{
+				sameInformationAuthorityRule
+			});
 		}
 
 		#endregion

@@ -106,6 +106,7 @@
     <Compile Include="IOrderNoteProvider.cs" />
     <Compile Include="OrderMergeHistoryVirtualOrderNoteProvider.cs" />
     <Compile Include="OrderMergeInfo.cs" />
+    <Compile Include="OrderRules.cs" />
     <Compile Include="ProtocolingWorklistItemSearchCriteria.cs" />
     <Compile Include="DicomSeries.cs" />
     <Compile Include="EmergencyWorklists.cs" />

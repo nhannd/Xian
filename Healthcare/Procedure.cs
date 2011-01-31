@@ -130,6 +130,17 @@ namespace ClearCanvas.Healthcare
 		}
 
 		/// <summary>
+		/// Gets a value indicating whether this procedure is in a defunct state - that is, cancelled, discontinued, or ghost.
+		/// </summary>
+		public virtual bool IsDefunct
+		{
+			get
+			{
+				return _status == ProcedureStatus.CA || _status == ProcedureStatus.DC || _status == ProcedureStatus.GH;
+			}
+		}
+
+		/// <summary>
 		/// Gets the documentation procedure step, or null if it does not exist.
 		/// </summary>
 		public virtual DocumentationProcedureStep DocumentationProcedureStep
@@ -627,46 +638,22 @@ namespace ClearCanvas.Healthcare
 
 		private static IValidationRuleSet GetValidationRules()
 		{
-			// all procedures for the order must have the same performing information authority as the visit
 			var sameInformationAuthorityRule = new ValidationRule<Procedure>(
-				delegate(Procedure procedure)
-				{
-					var hasSameInformationAuthority = CollectionUtils.TrueForAll(procedure.Order.Procedures, p => Equals(p.PerformingFacility.InformationAuthority, p.Order.Visit.VisitNumber.AssigningAuthority));
-					return new TestResult(hasSameInformationAuthority, SR.MessageValidateInformationAuthorityForVisitAndPerformingFacilities);
-				});
+				procedure => OrderRules.VisitAndPerformingFacilitiesHaveSameInformationAuthority(procedure.Order));
 
-			// all procedures for the order must have the same performing facility
 			var samePerformingFacilityRule = new ValidationRule<Procedure>(
-				delegate(Procedure procedure)
-				{
-					var hasSameFacility = CollectionUtils.TrueForAll(procedure.Order.Procedures, p => Equals(p.PerformingFacility, procedure.PerformingFacility));
-					return new TestResult(hasSameFacility, SR.MessageValidateOrderPerformingFacilities);
-				});
+				procedure => OrderRules.AllNonDefunctProceduresHaveSamePerformingFacility(procedure.Order));
 
-			// all procedures for the order must have the same performing department
 			var samePerformingDepartmentRule = new ValidationRule<Procedure>(
-				delegate(Procedure procedure)
-				{
-					var hasSameDepartment = CollectionUtils.TrueForAll(procedure.Order.Procedures, p => Equals(p.PerformingDepartment, procedure.PerformingDepartment));
-					return new TestResult(hasSameDepartment, SR.MessageValidateOrderPerformingDepartments);
-				});
+				procedure => OrderRules.AllNonDefunctProceduresHaveSamePerformingDepartment(procedure.Order));
 
 			// performing department must be associated with performing facility
 			var performingDepartmentIsInPerformingFacilityRule = new ValidationRule<Procedure>(
-				delegate(Procedure procedure)
-				{
-					var performingDepartmentIsInPerformingFacility = procedure.PerformingDepartment == null
-						|| procedure.PerformingFacility.Equals(procedure.PerformingDepartment.Facility);
-					return new TestResult(performingDepartmentIsInPerformingFacility, SR.MessageValidateProcedurePerformingFacilityAndDepartment);
-				});
+				OrderRules.PerformingDepartmentAlignsWithPerformingFacility);
 
 			// patient must have a profile at the performing facility
 			var patientProfileExistsForPerformingFacilityRule = new ValidationRule<Procedure>(
-				delegate(Procedure procedure)
-				{
-					var patientProfileExists = procedure.PatientProfile != null;
-					return new TestResult(patientProfileExists, SR.MessageValidateProcedurePatientProfile);
-				});
+				OrderRules.PatientProfileExistsForPerformingFacility);
 
 			return new ValidationRuleSet(new[]
 			{
