@@ -178,13 +178,21 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
-				if (DialogBoxAction.No == this.Host.DesktopWindow.ShowMessageBox(SR.MessageMergeOrders, MessageBoxActions.YesNo))
+				var destAccNumber = _selectedOrder.AccessionNumber;
+				var sourceAccNumbers = CollectionUtils.Map(_ordersTable.Items, (OrderDetail o) => o.AccessionNumber);
+				sourceAccNumbers.Remove(destAccNumber);
+
+				var message = string.Format("Merge order(s) {0} into order {1}?",
+					StringUtilities.Combine(sourceAccNumbers, ","),
+					destAccNumber);
+
+				if (DialogBoxAction.No == this.Host.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo))
 					return;
+
 
 				var destinationOrderRef = _selectedOrder.OrderRef;
 				var sourceOrderRefs = new List<EntityRef>(_orderRefs);
 				sourceOrderRefs.Remove(_selectedOrder.OrderRef);
-
 				Platform.GetService(
 					delegate(IOrderEntryService service)
 					{

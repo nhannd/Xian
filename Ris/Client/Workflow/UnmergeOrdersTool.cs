@@ -41,10 +41,9 @@ using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	[ButtonAction("apply", "folderexplorer-items-toolbar/Undo Merge Orders", "Apply")]
 	[MenuAction("apply", "folderexplorer-items-contextmenu/Undo Merge Orders", "Apply")]
 	[Tooltip("apply", "Undo Merge Orders")]
-	[IconSet("apply", IconScheme.Colour, "MergeOrdersSmall.png", "MergeOrdersMedium.png", "MergeOrdersLarge.png")]
+	[IconSet("apply", IconScheme.Colour, "UnmergeOrdersSmall.png", "UnmergeOrdersMedium.png", "UnmergeOrdersLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", Application.Common.AuthorityTokens.Workflow.Order.Unmerge)]
 	public abstract class UnmergeOrdersToolBase<TItem, TContext> : WorkflowItemTool<TItem, TContext>
@@ -91,7 +90,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				var exitCode = ApplicationComponent.LaunchAsDialog(
 					this.Context.DesktopWindow,
 					cancelOrderComponent,
-					string.Format("Undo merge into order {0}", AccessionFormat.Format(item.AccessionNumber)));
+					string.Format("Undo merge order {0}", AccessionFormat.Format(item.AccessionNumber)));
 
 				if (exitCode != ApplicationComponentExitCode.Accepted)
 					return false;
@@ -100,6 +99,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 			else
 			{
+				// confirm
+				var message = string.Format("Un-merge all orders merged into {0}?", item.AccessionNumber);
+				if (DialogBoxAction.No == this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo))
+					return false;
 				reason = new EnumValueInfo(reasonCode, null, null);
 			}
 

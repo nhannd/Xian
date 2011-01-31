@@ -472,6 +472,9 @@
     <Content Include="Icons\ImportAuthorityTokensLarge.png" />
     <Content Include="Icons\ImportAuthorityTokensMedium.png" />
     <Content Include="Icons\ImportAuthorityTokensSmall.png" />
+    <EmbeddedResource Include="Icons\UnmergeOrdersLarge.png" />
+    <EmbeddedResource Include="Icons\UnmergeOrdersMedium.png" />
+    <EmbeddedResource Include="Icons\UnmergeOrdersSmall.png" />
     <EmbeddedResource Include="PreliminaryDiagnosisFromRadiologyTemplates.xml" />
     <EmbeddedResource Include="Icons\RejectProtocolLarge.png" />
     <EmbeddedResource Include="Icons\RejectProtocolMedium.png" />
