@@ -110,18 +110,18 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 				{
 					// check the cache for a compiled ruleset
 					customRules = (ValidationRuleSet)cacheClient.Get(domainClass.FullName, new CacheGetOptions(CacheRegion));
-					if (customRules != null)
-						return customRules;
-
-					// no cached, so compile the ruleset from source
-					customRules = BuildCustomRules(domainClass);
-
-					// cache the ruleset if desired
-					var settings = new EntityValidationSettings();
-					var ttl = TimeSpan.FromSeconds(settings.CustomRulesCachingTimeToLiveSeconds);
-					if (ttl > TimeSpan.Zero)
+					if (customRules == null)
 					{
-						cacheClient.Put(domainClass.FullName, customRules, new CachePutOptions(CacheRegion, ttl, false));
+						// no cached, so compile the ruleset from source
+						customRules = BuildCustomRules(domainClass);
+
+						// cache the ruleset if desired
+						var settings = new EntityValidationSettings();
+						var ttl = TimeSpan.FromSeconds(settings.CustomRulesCachingTimeToLiveSeconds);
+						if (ttl > TimeSpan.Zero)
+						{
+							cacheClient.Put(domainClass.FullName, customRules, new CachePutOptions(CacheRegion, ttl, false));
+						}
 					}
 				}
 			}
