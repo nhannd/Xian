@@ -104,11 +104,17 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// Gets or sets the pixel aspect ratio.
         /// </summary>
         /// <value>The pixel aspect ratio.</value>
-        public int PixelAspectRatio
+		public PixelAspectRatio PixelAspectRatio
         {
-            get { return base.DicomAttributeProvider[DicomTags.PixelAspectRatio].GetInt32(0, 0); }
-            set { base.DicomAttributeProvider[DicomTags.PixelAspectRatio].SetInt32(0, value); }
-        }
+			get { return PixelAspectRatio.FromString(base.DicomAttributeProvider[DicomTags.PixelAspectRatio].ToString()); }
+			set
+			{
+				if (value == null || value.IsNull)
+					base.DicomAttributeProvider[DicomTags.PixelAspectRatio].SetNullValue();
+				else
+					base.DicomAttributeProvider[DicomTags.PixelAspectRatio].SetStringValue(value.ToString());
+			}
+		}
 
         /// <summary>
         /// Gets or sets the bits allocated.
@@ -149,11 +155,11 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <para>Possible values for Basic Color Sequence Iod is 0 (000H).</para>
         /// </summary>
         /// <value>The pixel representation.</value>
-        public string PixelRepresentation
-        {
-            get { return base.DicomAttributeProvider[DicomTags.PixelRepresentation].GetString(0, String.Empty); }
-            set { base.DicomAttributeProvider[DicomTags.PixelRepresentation].SetString(0, value); }
-        }
+		public ushort PixelRepresentation
+		{
+			get { return base.DicomAttributeProvider[DicomTags.PixelRepresentation].GetUInt16(0, 0); }
+			set { base.DicomAttributeProvider[DicomTags.PixelRepresentation].SetUInt16(0, value); }
+		}
 
         /// <summary>
         /// Gets or sets the pixel data.

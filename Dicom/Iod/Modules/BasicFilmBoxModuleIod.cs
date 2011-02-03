@@ -198,7 +198,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         public string ConfigurationInformation
         {
             get { return base.DicomAttributeProvider[DicomTags.ConfigurationInformation].GetString(0, String.Empty); }
-            set { base.DicomAttributeProvider[DicomTags.ConfigurationInformation].SetString(0, value); }
+            set { base.DicomAttributeProvider[DicomTags.ConfigurationInformation].SetStringValue(value); }
         }
 
         /// <summary>

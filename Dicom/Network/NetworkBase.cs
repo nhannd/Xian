@@ -1114,10 +1114,7 @@ namespace ClearCanvas.Dicom.Network
 			message.AffectedSopClassUid = affectedClass.UID;
 			message.MessageId = messageID;
 			message.CommandField = DicomCommandField.NGetRequest;
-
-			if (!message.CommandSet.Contains(DicomTags.Priority))
-				message.Priority = DicomPriority.Medium;
-			message.DataSetType = 0x0202;
+			message.DataSetType = 0x0102;
 
 			message.CommandSet[DicomTags.RequestedSopClassUid].SetStringValue(affectedClass.UID);
 			message.CommandSet[DicomTags.RequestedSopInstanceUid].SetStringValue(requestedSopInstanceUid.UID);
@@ -1154,15 +1151,13 @@ namespace ClearCanvas.Dicom.Network
 			if (affectedClass == null)
 				affectedClass = _assoc.GetAbstractSyntax(presentationID);
 
-			message.AffectedSopClassUid = affectedClass.UID;
-			message.MessageId = messageID;
-			message.CommandField = DicomCommandField.NCreateRequest;
-			if (!message.CommandSet.Contains(DicomTags.Priority))
-				message.Priority = DicomPriority.Medium;
-			message.DataSetType = 0x0202;
+			message.CommandSet[DicomTags.AffectedSopClassUid].SetStringValue(affectedClass.UID);
+			message.CommandSet[DicomTags.MessageId].SetUInt16(0, messageID);
+			message.CommandSet[DicomTags.CommandField].SetUInt16(0, (ushort) DicomCommandField.NCreateRequest);
+			message.CommandSet[DicomTags.DataSetType].SetUInt16(0, 0x0102);
 
 			if (affectedSopInstanceUid != null)
-				message.AffectedSopInstanceUid = affectedSopInstanceUid.UID;
+				message.CommandSet[DicomTags.AffectedSopInstanceUid].SetStringValue(affectedSopInstanceUid.UID);
 
 			SendDimse(presentationID, message.CommandSet, message.DataSet);
 		}
@@ -1191,12 +1186,9 @@ namespace ClearCanvas.Dicom.Network
 			if (message.DataSet.IsEmpty())
 				throw new DicomException("Unexpected empty DataSet when sending N-SET-RQ.");
 
-			message.MessageId = messageID;
-			message.CommandField = DicomCommandField.NSetRequest;
-			if (!message.CommandSet.Contains(DicomTags.Priority))
-				message.Priority = DicomPriority.Medium;
-
-			message.DataSetType = 0x0202;
+			message.CommandSet[DicomTags.MessageId].SetUInt16(0, messageID);
+			message.CommandSet[DicomTags.CommandField].SetUInt16(0, (ushort)DicomCommandField.NSetRequest);
+			message.CommandSet[DicomTags.DataSetType].SetUInt16(0, 0x0102);
 
 			SendDimse(presentationID, message.CommandSet, message.DataSet);
 		}
@@ -1221,11 +1213,11 @@ namespace ClearCanvas.Dicom.Network
 		/// <param name="message">The message.</param>
 		public void SendNActionRequest(byte presentationID, ushort messageID, DicomMessage message)
 		{
-			message.MessageId = messageID;
-			message.CommandField = DicomCommandField.NActionRequest;
+			message.CommandSet[DicomTags.MessageId].SetUInt16(0, messageID);
+			message.CommandSet[DicomTags.CommandField].SetUInt16(0, (ushort)DicomCommandField.NActionRequest);
 
 			//if (message.DataSet != null && !message.DataSet.IsEmpty())
-			message.DataSetType = 257;
+			message.CommandSet[DicomTags.DataSetType].SetUInt16(0, 0x101);
 
 			SendDimse(presentationID, message.CommandSet, message.DataSet);
 		}
@@ -1250,15 +1242,13 @@ namespace ClearCanvas.Dicom.Network
 		/// <param name="message">The message.</param>
 		public void SendNDeleteRequest(byte presentationID, ushort messageID, DicomMessage message)
 		{
-			message.MessageId = messageID;
-			message.CommandField = DicomCommandField.NDeleteRequest;
-			if (!message.CommandSet.Contains(DicomTags.Priority))
-				message.Priority = DicomPriority.Medium;
+			message.CommandSet[DicomTags.MessageId].SetUInt16(0, messageID);
+			message.CommandSet[DicomTags.CommandField].SetUInt16(0, (ushort)DicomCommandField.NDeleteRequest);
 
 			if (message.DataSet == null || message.DataSet.IsEmpty())
-				message.DataSetType = 0x0101;
+				message.CommandSet[DicomTags.DataSetType].SetUInt16(0, 0x101);
 			else
-				message.DataSetType = 0x202;
+				message.CommandSet[DicomTags.DataSetType].SetUInt16(0, 0x102);
 
 			SendDimse(presentationID, message.CommandSet, message.DataSet);
 		}
@@ -1764,13 +1754,11 @@ namespace ClearCanvas.Dicom.Network
 			message.CommandField = commandField;
 			message.MessageIdBeingRespondedTo = messageId;
 			message.AffectedSopClassUid = message.AffectedSopClassUid;
-			if (!message.CommandSet.Contains(DicomTags.Priority))
-				message.Priority = DicomPriority.Medium;
 
 			if (message.DataSet == null || message.DataSet.IsEmpty())
 				message.DataSetType = 0x0101;
 			else
-				message.DataSetType = 0x202;
+				message.DataSetType = 0x0102;
 			message.Status = status;
 			SendDimse(presentationId, message.CommandSet, message.DataSet);
 		}
