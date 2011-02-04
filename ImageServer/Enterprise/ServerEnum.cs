@@ -20,9 +20,7 @@ namespace ClearCanvas.ImageServer.Enterprise
     [Serializable]
     public abstract class ServerEnum : ServerEntity
     {
-        static private readonly ResourceManager _resourceManager = new ResourceManager("ClearCanvas.ImageServer.Enterprise.ServerEnumDescription", typeof(ServerEnum).Assembly);
-
-
+        
         #region Constructors
 
         /// <summary>
@@ -85,28 +83,6 @@ namespace ClearCanvas.ImageServer.Enterprise
         {
             get { return _longDescription; }
             set { _longDescription = value; }
-        }
-
-        #endregion
-
-        #region Localized Properties
-        public string LocalizedDescription
-        {
-            get
-            {
-                string key = GetDescriptionResKey(Name, Lookup);
-                string desc = _resourceManager.GetString(key);
-                return string.IsNullOrEmpty(desc) ? key : desc;
-            }
-        }
-        public string LocalizedLongDescription
-        {
-            get
-            {
-                string key = GetLongDescriptionResKey(Name, Lookup);
-                string desc = _resourceManager.GetString(key);
-                return string.IsNullOrEmpty(desc) ? key : desc;
-            }
         }
 
         #endregion
@@ -174,15 +150,5 @@ namespace ClearCanvas.ImageServer.Enterprise
         }
 
         #endregion
-
-        static public string GetDescriptionResKey(string enumName, string enumLookupValue)
-        {
-            return string.Format("{0}_{1}_Description", enumName, enumLookupValue);
-        }
-        static public string GetLongDescriptionResKey(string enumName, string enumLookupValue)
-        {
-            return string.Format("{0}_{1}_LongDescription", enumName, enumLookupValue);
-        }
-        
     }
 }

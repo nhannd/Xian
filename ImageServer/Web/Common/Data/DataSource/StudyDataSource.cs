@@ -63,9 +63,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			get
 			{
 				if (!QueueStudyStateEnum.Equals(QueueStudyStateEnum.Idle))
-                    return String.Format("{0}, {1}", StudyStatusEnum.LocalizedDescription, QueueStudyStateEnum.LocalizedDescription);
+                    return String.Format("{0}, {1}", StudyStatusEnum.Description, QueueStudyStateEnum.Description);
 
-				return StudyStatusEnum.LocalizedDescription;
+				return StudyStatusEnum.Description;
 			}
 		}
 
