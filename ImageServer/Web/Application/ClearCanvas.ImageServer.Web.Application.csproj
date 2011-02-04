@@ -1907,6 +1907,7 @@
     </None>
     <Content Include="PersistantImage.ashx" />
     <None Include="Scripts\CodeMirror\LICENSE" />
+    <Content Include="Web.config" />
     <Content Include="App_Themes\Default\images\Indicators\HelpSmall.png" />
     <EmbeddedResource Include="App_GlobalResources\SR.resx">
       <SubType>Designer</SubType>
@@ -2029,7 +2030,7 @@
     </When>
     <Otherwise>
       <PropertyGroup>
-        <ImageServerWebProperties>SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);ProjectDir=$(ProjectDir);Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir);Options=$(BuildOptions)</ImageServerWebProperties>
+        <ImageServerWebProperties>SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);ProjectDir=$(ProjectDir);Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionBuild=$(DistributionBuild);DistributionDir=$(DistributionDir);Options=$(BuildOptions)</ImageServerWebProperties>
       </PropertyGroup>
     </Otherwise>
   </Choose>
@@ -2046,7 +2047,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>2427</DevelopmentServerPort>
+          <DevelopmentServerPort>1977</DevelopmentServerPort>
           <DevelopmentServerVPath>/ImageServer</DevelopmentServerVPath>
           <IISUrl>http://localhost/ImageServer</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>

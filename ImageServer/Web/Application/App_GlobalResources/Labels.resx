@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ButtonLogin" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Change Password</value>
+  </data>
   <data name="DeleteSeriesConfirmDialog_DeleteEntireStudy" xml:space="preserve">
     <value>Note: All series for this study have been selected, so the entire study will be deleted.</value>
   </data>
@@ -146,5 +152,11 @@
   </data>
   <data name="GridPagerQueueSingleItem" xml:space="preserve">
     <value>Item Found</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="UserID" xml:space="preserve">
+    <value>User ID</value>
   </data>
 </root>

@@ -106,7 +106,7 @@ namespace ClearCanvas.Common.UsageTracking
                     WSHttpBinding binding = new WSHttpBinding();
                     EndpointAddress endpointAddress = new EndpointAddress("http://localhost:8080/UsageTracking");
 #elif	DEBUG
-                    WSHttpBinding binding = new WSHttpBinding();
+                    WSHttpBinding binding = new WSHttpBinding(SecurityMode.None);
                     EndpointAddress endpointAddress = new EndpointAddress("http://localhost/Tracking/Service.svc");
 #else
                     //TODO:  This should be updated to real address

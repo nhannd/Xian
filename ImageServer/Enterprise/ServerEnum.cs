@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Resources;
 
 namespace ClearCanvas.ImageServer.Enterprise
 {
@@ -19,6 +20,9 @@ namespace ClearCanvas.ImageServer.Enterprise
     [Serializable]
     public abstract class ServerEnum : ServerEntity
     {
+        static private readonly ResourceManager _resourceManager = new ResourceManager("ClearCanvas.ImageServer.Enterprise.ServerEnumDescription", typeof(ServerEnum).Assembly);
+
+
         #region Constructors
 
         /// <summary>
@@ -46,8 +50,8 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// <summary>
         /// The enumerated value itself.
         /// </summary>
-		[EntityFieldDatabaseMappingAttribute(TableName = "", ColumnName = "Enum")]
-		public short Enum
+        [EntityFieldDatabaseMappingAttribute(TableName = "", ColumnName = "Enum")]
+        public short Enum
         {
             get { return _enumValue; }
             set { _enumValue = value; }
@@ -56,7 +60,7 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// <summary>
         /// A lookup string.
         /// </summary>
-		[EntityFieldDatabaseMappingAttribute(TableName = "", ColumnName = "Lookup")]
+        [EntityFieldDatabaseMappingAttribute(TableName = "", ColumnName = "Lookup")]
         public string Lookup
         {
             get { return _lookup; }
@@ -66,8 +70,8 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// <summary>
         /// A short description of the enumerated value.
         /// </summary>
-		[EntityFieldDatabaseMappingAttribute(TableName = "", ColumnName = "Description")]
-		public string Description
+        [EntityFieldDatabaseMappingAttribute(TableName = "", ColumnName = "Description")]
+        public string Description
         {
             get { return _description; }
             set { _description = value; }
@@ -76,11 +80,33 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// <summary>
         /// A long description of the enumerated value.
         /// </summary>
-		[EntityFieldDatabaseMappingAttribute(TableName = "", ColumnName = "LongDescription")]
-		public string LongDescription
+        [EntityFieldDatabaseMappingAttribute(TableName = "", ColumnName = "LongDescription")]
+        public string LongDescription
         {
             get { return _longDescription; }
             set { _longDescription = value; }
+        }
+
+        #endregion
+
+        #region Localized Properties
+        public string LocalizedDescription
+        {
+            get
+            {
+                string key = GetDescriptionResKey(Name, Lookup);
+                string desc = _resourceManager.GetString(key);
+                return string.IsNullOrEmpty(desc) ? key : desc;
+            }
+        }
+        public string LocalizedLongDescription
+        {
+            get
+            {
+                string key = GetLongDescriptionResKey(Name, Lookup);
+                string desc = _resourceManager.GetString(key);
+                return string.IsNullOrEmpty(desc) ? key : desc;
+            }
         }
 
         #endregion
@@ -115,10 +141,10 @@ namespace ClearCanvas.ImageServer.Enterprise
                 return false;
         }
 
-		public override string ToString()
-		{
-			return Description;
-		}
+        public override string ToString()
+        {
+            return Description;
+        }
         #endregion
 
         #region Operators
@@ -128,9 +154,9 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// </summary>
         public static bool operator ==(ServerEnum t1, ServerEnum t2)
         {
-            if ((object) t1 == null && (object) t2 == null)
+            if ((object)t1 == null && (object)t2 == null)
                 return true;
-            if ((object) t1 == null || (object) t2 == null)
+            if ((object)t1 == null || (object)t2 == null)
                 return false;
             return t1.Equals(t2);
         }
@@ -140,13 +166,23 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// </summary>
         public static bool operator !=(ServerEnum t1, ServerEnum t2)
         {
-            if ((object) t1 == null && (object) t2 == null)
+            if ((object)t1 == null && (object)t2 == null)
                 return false;
-            if ((object) t1 == null || (object) t2 == null)
+            if ((object)t1 == null || (object)t2 == null)
                 return true;
             return !t1.Equals(t2);
         }
 
         #endregion
+
+        static public string GetDescriptionResKey(string enumName, string enumLookupValue)
+        {
+            return string.Format("{0}_{1}_Description", enumName, enumLookupValue);
+        }
+        static public string GetLongDescriptionResKey(string enumName, string enumLookupValue)
+        {
+            return string.Format("{0}_{1}_LongDescription", enumName, enumLookupValue);
+        }
+        
     }
 }

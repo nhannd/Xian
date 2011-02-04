@@ -11,6 +11,7 @@
 
 using System;
 using System.ServiceModel;
+using System.Threading;
 using System.Web;
 using System.Web.Security;
 using System.Xml;
@@ -37,7 +38,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
             
             if (!ServerPlatform.IsManifestVerified)
             {
-                ManifestWarningTextLabel.Text = SR.NonStandardInstallation;
+                ManifestWarningTextLabel.Text = HttpContext.GetGlobalResourceObject("SR", "NonStandardInstallation") as string;
             }
 
             DataBind();

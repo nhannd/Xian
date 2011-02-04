@@ -51,6 +51,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer.CodeGenerator
 
             if (comboBoxDatabase.Text.Equals("ImageServer"))
             {
+                generator.GenerateResxFile = true;
                 generator.ConnectionStringName = "ImageServerConnectString";
                 generator.Proprietary = false;
             }

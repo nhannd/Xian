@@ -138,6 +138,11 @@ namespace ClearCanvas.ImageServer.Model.SqlServer.CodeGenerator
             get { return _entityBrokerFolder; }
         }
 
+        protected string ImageServerEnterpriseFolder 
+        { 
+            get { return Path.Combine(ImageServerModelFolder, @"..\Enterprise"); }
+        }
+        
         public string ImageServerModelFolder { get; set; }
 
         public string EntityInterfaceFolder { get; set; }
@@ -154,6 +159,9 @@ namespace ClearCanvas.ImageServer.Model.SqlServer.CodeGenerator
         }
 
         public bool Proprietary { get; set; }
+
+        public bool GenerateResxFile { get; set; }
+
         #endregion
 
         public void LoadTableInfo()
@@ -710,7 +718,30 @@ namespace ClearCanvas.ImageServer.Model.SqlServer.CodeGenerator
                     WriteModelFile(table);
                 }
             }
+
+            if (GenerateResxFile)
+            {
+                if (!Directory.Exists(ImageServerEnterpriseFolder))
+                    Directory.CreateDirectory(ImageServerEnterpriseFolder);
+
+                GenerateResx(Path.Combine(ImageServerEnterpriseFolder, "ServerEnum"));
+            }
+
             Console.WriteLine("Done!");
         }
+
+        public void GenerateResx(string baseName)
+        {
+            var generator = new ResxGenerator(){ ConnectionStringName = ConnectionStringName };
+            string filename = string.Format("{0}.resx", baseName);
+
+            using (Stream stream = File.Open(filename, FileMode.Create))
+            {
+                TextWriter writer = new StreamWriter(stream);
+                generator.GenerateResxFile(writer);
+            }
+        }
+
     }
+
 }

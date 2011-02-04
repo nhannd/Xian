@@ -11,6 +11,8 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 
 <%@ Page Language="C#" AutoEventWireup="true" Codebehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Login._Default" %>
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources"%>
+<%@ Import Namespace="System.Threading"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Common"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -37,7 +39,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
         <div id="VersionInfoPanel">
             <table cellpadding="1">
             <tr><td align="right">Version:</td><td align="left"><%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%></td></tr>
-            <tr><td align="right"></td><td><%= EnterpriseMode ? "[Enterprise]" : "[Stand-alone]"%></td></tr>
+            <tr><td align="right"></td><td><%= Thread.CurrentThread.CurrentUICulture.NativeName %></td></tr>
             </table>
         </div>            
 
@@ -50,18 +52,18 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
             ></asp:Label></td>
             </tr>
             <tr>
-            <td align="right">User ID:</td>
+            <td align="right"><asp:Label runat="server" Text="<%$Resources: Labels,UserID %>"></asp:Label></td>
             <td align="right"><asp:TextBox runat="server" ID="UserName" Width="100" CssClass="LoginTextInput"></asp:TextBox></td>
             </tr>
             <tr>
-            <td align="right">Password:</td>
+            <td align="right"><asp:Label ID="Label1" runat="server" Text="<%$Resources: Labels,Password %>"></asp:Label></td>
             <td align="right"><asp:TextBox runat="server" ID="Password" TextMode="Password" Width="100" CssClass="LoginTextInput"></asp:TextBox></td>
             </tr> 
             <tr>
-                <td colspan="2" align="right"><asp:Button runat="server" ID="LoginButton" OnClick="LoginClicked"  Text="Login" CssClass="LoginButton"/></td>
+                <td colspan="2" align="right"><asp:Button runat="server" ID="LoginButton" OnClick="LoginClicked"  Text="<%$Resources: Labels,ButtonLogin %>" CssClass="LoginButton"/></td>
             </tr>               
             <tr>
-                <td colspan="2" align="right" ><asp:LinkButton ID="LinkButton1" runat="server" CssClass="LoginLink" OnClick="ChangePassword">Change Password</asp:LinkButton></td>            
+                <td colspan="2" align="right" ><asp:LinkButton ID="LinkButton1" runat="server" CssClass="LoginLink" OnClick="ChangePassword"><asp:Label ID="Label2" runat="server" Text="<%$Resources: Labels,ChangePassword%>"></asp:Label></asp:LinkButton></td>            
             </tr>
         </table>
           
