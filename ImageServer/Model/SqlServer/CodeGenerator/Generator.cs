@@ -137,11 +137,6 @@ namespace ClearCanvas.ImageServer.Model.SqlServer.CodeGenerator
         {
             get { return _entityBrokerFolder; }
         }
-
-        protected string ImageServerEnterpriseFolder 
-        { 
-            get { return Path.Combine(ImageServerModelFolder, @"..\Enterprise"); }
-        }
         
         public string ImageServerModelFolder { get; set; }
 
@@ -721,10 +716,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer.CodeGenerator
 
             if (GenerateResxFile)
             {
-                if (!Directory.Exists(ImageServerEnterpriseFolder))
-                    Directory.CreateDirectory(ImageServerEnterpriseFolder);
-
-                GenerateResx(Path.Combine(ImageServerEnterpriseFolder, "ServerEnum"));
+                GenerateResx(Path.Combine(ImageServerModelFolder, "ServerEnumDescriptions"));
             }
 
             Console.WriteLine("Done!");
