@@ -27,19 +27,24 @@
 		<SilverlightBinFolder>$(ProjectDir)ClientBin</SilverlightBinFolder>
 	</PropertyGroup>
 
-	<Choose>
-		<When Condition=" '$(TargetPlatform)' != 'x86' ">
-			<PropertyGroup>
-				<PlatformSubFolder>$(TargetPlatform)</PlatformSubFolder>
-			</PropertyGroup>
-		</When>
-		<Otherwise>
-			<!-- assumes Win32 -->
-			<PropertyGroup>
-				<PlatformSubFolder></PlatformSubFolder>
-			</PropertyGroup>
-		</Otherwise>
-	</Choose>
+  <Choose>
+    <When Condition=" '$(BuildPlatform)' == 'x64' ">
+      <PropertyGroup>
+        <PlatformSubFolder>$(BuildPlatform)</PlatformSubFolder>
+      </PropertyGroup>
+    </When>
+    <When Condition=" '$(TargetPlatform)' != 'x86' ">
+      <PropertyGroup>
+        <PlatformSubFolder>$(TargetPlatform)</PlatformSubFolder>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <!-- assumes Win32 -->
+      <PropertyGroup>
+        <PlatformSubFolder></PlatformSubFolder>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
 
 	<UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.CombineAppConfigs" AssemblyFile="$(TrunkDirectory)\Utilities\BuildTasks\bin\$(Configuration)\ClearCanvas.Utilities.BuildTasks.dll"/>
 
@@ -87,9 +92,9 @@
 
 		<WebViewerPlugins Include="$(TrunkDirectory)\ReferencedAssemblies\Interpolators\$(PlatformSubFolder)\BilinearInterpolation.dll"/>
 		<WebViewerPlugins Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
-		<WebViewerPlugins Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Rle.dll"/>
+		<WebViewerPlugins Include="$(TrunkDirectory)\Dicom\Codec\Rle\bin\$(Configuration)\ClearCanvas.Dicom.Codec.Rle.dll" />
 
-	</ItemGroup>
+  </ItemGroup>
 
 	<Target Name="CopyPlugins">
 		<Message Text="Copying plugin assemblies into plugins folder (ASP.NET Development Server must not be running)"/>
