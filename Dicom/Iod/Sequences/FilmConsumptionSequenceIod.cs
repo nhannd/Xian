@@ -66,8 +66,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The film size id.</value>
         public FilmSize FilmSizeId
         {
-            get { return IodBase.ParseEnum<FilmSize>(base.DicomAttributeProvider[DicomTags.FilmSizeId].GetString(0, String.Empty), FilmSize.None); }
-            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.FilmSizeId], value); }
+            get { return new FilmSize(base.DicomAttributeProvider[DicomTags.FilmSizeId].GetString(0, String.Empty)); }
+            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.FilmSizeId], value.DicomString); }
         }
         
         

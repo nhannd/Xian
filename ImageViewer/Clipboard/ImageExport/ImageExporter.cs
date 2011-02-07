@@ -17,6 +17,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 #pragma warning disable 0419,1574,1587,1591
 
@@ -85,6 +86,29 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 			try
 			{
+				// SizeMode doesn't matter in TrueSize.
+				if (exportParams.ExportOption == ExportOption.TrueSize)
+				{
+					if (!(image is IImageSopProvider))
+						throw new ArgumentException("The image must implement IImageSopProvider in order to be exported as true size.");
+
+					var paddedImage = new Bitmap(exportParams.OutputSize.Width, exportParams.OutputSize.Height);
+					using (var graphics = System.Drawing.Graphics.FromImage(paddedImage))
+					{
+						// paint background
+						using (Brush b = new SolidBrush(exportParams.BackgroundColor))
+						{
+							graphics.FillRectangle(b, new Rectangle(Point.Empty, exportParams.OutputSize));
+						}
+
+						// paint image portion
+						var bmp = DrawTrueSizeImageToBitmap(image, exportParams.OutputPixelSpacing);
+						graphics.DrawImageUnscaledAndClipped(bmp, new Rectangle(CenterRectangles(bmp.Size, exportParams.OutputSize), exportParams.OutputSize));
+						bmp.Dispose();
+					}
+					return paddedImage;
+				}
+
 				if (exportParams.SizeMode == SizeMode.Scale)
 				{
 					if (exportParams.ExportOption == ExportOption.Wysiwyg)
@@ -168,6 +192,34 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 				int height = (int) (displayRectangle.Height*scale);
 
 				transform.Scale *= scale;
+
+				return image.DrawToBitmap(width, height);
+			}
+			finally
+			{
+				transform.SetMemento(restoreMemento);
+			}
+		}
+
+		private static Bitmap DrawTrueSizeImageToBitmap(IPresentationImage image, float outputPixelSpacing)
+		{
+			ImageSpatialTransform transform = (ImageSpatialTransform)((ISpatialTransformProvider)image).SpatialTransform;
+			object restoreMemento = transform.CreateMemento();
+			try
+			{
+				ImageGraphic imageGraphic = ((IImageGraphicProvider)image).ImageGraphic;
+				Rectangle imageRectangle = new Rectangle(0, 0, imageGraphic.Columns, imageGraphic.Rows);
+
+				// Determine the incremental scale factor
+				var imageSop = (IImageSopProvider)image;
+				var pixelSpacing = imageSop.Frame.NormalizedPixelSpacing;
+
+				transform.ScaleToFit = false;
+				transform.Scale = (float)(outputPixelSpacing / pixelSpacing.Row);
+				RectangleF displayRectangle = imageGraphic.SpatialTransform.ConvertToDestination(imageRectangle);
+				int width = (int)Math.Round(displayRectangle.Width);
+				int height = (int)Math.Round(displayRectangle.Height);
+				transform.ScaleToFit = true;
 
 				return image.DrawToBitmap(width, height);
 			}
