@@ -2046,7 +2046,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>3209</DevelopmentServerPort>
+          <DevelopmentServerPort>2234</DevelopmentServerPort>
           <DevelopmentServerVPath>/ImageServer</DevelopmentServerVPath>
           <IISUrl>http://localhost/ImageServer</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
