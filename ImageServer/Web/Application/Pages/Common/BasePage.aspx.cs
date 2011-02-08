@@ -41,7 +41,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
 
         protected void SetPageTitle(string title)
         {
-			if (title.Contains("{0}"))
+            SetPageTitle(title, true);
+        }
+
+        protected void SetPageTitle(string title, bool includeProductInfo)
+        {
+            if (includeProductInfo)
 				Page.Title = string.IsNullOrEmpty(ConfigurationManager.AppSettings["ServerName"]) ? String.Format(title, ProductInformation.GetNameAndVersion(false, true)) : String.Format(title, ProductInformation.GetNameAndVersion(false, true)) + " [" + ConfigurationManager.AppSettings["ServerName"] + "]";
 			else
 				Page.Title = string.IsNullOrEmpty(ConfigurationManager.AppSettings["ServerName"]) ? title : title + " [" + ConfigurationManager.AppSettings["ServerName"] + "]";

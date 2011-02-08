@@ -197,7 +197,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
             }
             else
             {
-                SetPageTitle(String.Format("{0}:{1}", NameFormatter.Format(_study.PatientsName) , _study.PatientId));
+                SetPageTitle(String.Format("{0}:{1}", NameFormatter.Format(_study.PatientsName) , _study.PatientId), false);
             }
 
         }
