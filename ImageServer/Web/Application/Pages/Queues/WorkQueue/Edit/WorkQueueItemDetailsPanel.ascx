@@ -1,3 +1,14 @@
+<!--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+-->
+
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="WorkQueueItemDetailsPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit.WorkQueueItemDetailsPanel" %>
 
@@ -40,11 +51,11 @@
                 <tr><td colspan="2">
                         <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel" >
                             <tr><td style="padding-top: 5px; padding-left: 5px;">
-                                    <ccUI:ToolbarButton ID="RescheduleToolbarButton" runat="server" SkinID="RescheduleButton" OnClick="Reschedule_Click"/>
-                                    <ccUI:ToolbarButton ID="ResetButton" runat="server" SkinID="ResetButton" OnClick="Reset_Click"/>
-                                    <ccUI:ToolbarButton ID="DeleteButton" runat="server" SkinID="DeleteButton" OnClick="Delete_Click"/>
-                                    <ccUI:ToolbarButton ID="ReprocessButton" runat="server" SkinID="ReprocessButton" OnClick="Reprocess_Click"/>
-                                    <ccUI:ToolbarButton ID="StudyDetailsButton" runat="server" SkinID="ViewStudyButton" />      
+                                    <ccUI:ToolbarButton ID="RescheduleToolbarButton" runat="server" SkinID="<%$Image:RescheduleButton%>" OnClick="Reschedule_Click"/>
+                                    <ccUI:ToolbarButton ID="ResetButton" runat="server" SkinID="<%$Image:ResetButton%>" OnClick="Reset_Click"/>
+                                    <ccUI:ToolbarButton ID="DeleteButton" runat="server" SkinID="<%$Image:DeleteButton%>" OnClick="Delete_Click"/>
+                                    <ccUI:ToolbarButton ID="ReprocessButton" runat="server" SkinID="<%$Image:ReprocessButton%>" OnClick="Reprocess_Click"/>
+                                    <ccUI:ToolbarButton ID="StudyDetailsButton" runat="server" SkinID="<%$Image:ViewStudyButton%>" />      
                             </td></tr>
                             <tr><td><asp:PlaceHolder ID="WorkQueueDetailsViewPlaceHolder" runat="server"></asp:PlaceHolder></td></tr>
                        </table>

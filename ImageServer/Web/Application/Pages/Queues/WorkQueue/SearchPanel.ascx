@@ -1,3 +1,13 @@
+<!--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+-->
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" %>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="SearchPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.SearchPanel" %>
@@ -65,7 +75,7 @@
                                                 <asp:TextBox ID="ProcessingServer" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Processing Server" />
                                             </td>    
                                             <td valign="bottom">
-                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="SearchIcon" OnClick="SearchButton_Click" /></asp:Panel>
+                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="<%$Image:SearchIcon%>" OnClick="SearchButton_Click" /></asp:Panel>
                                             </td>  
                                         </tr>                                       
                                     </table>
@@ -82,11 +92,11 @@
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
                                     <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons" style="position:relative;" >
-                                        <ccUI:ToolbarButton ID="ViewItemDetailsButton" runat="server" SkinID="ViewDetailsButton" OnClick="ViewItemButton_Click" Roles='<%= ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.View %>'/>
-                                        <ccUI:ToolbarButton ID="RescheduleItemButton" runat="server" SkinID="RescheduleButton" OnClick="RescheduleItemButton_Click" Roles='<%= ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.Reschedule %>'/>
-                                        <ccUI:ToolbarButton ID="ResetItemButton" runat="server" SkinID="ResetButton" OnClick="ResetItemButton_Click" Roles='<%= ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.Reset %>'/>
-                                        <ccUI:ToolbarButton ID="DeleteItemButton" runat="server" SkinID="DeleteButton" OnClick="DeleteItemButton_Click" Roles='<%= ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.Delete %>'/>
-                                        <ccUI:ToolbarButton ID="ReprocessItemButton" runat="server" SkinID="ReprocessButton" OnClick="ReprocessItemButton_Click" Roles='<%= ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.Reprocess %>'/>
+                                        <ccUI:ToolbarButton ID="ViewItemDetailsButton" runat="server" SkinID="<%$Image:ViewDetailsButton%>" OnClick="ViewItemButton_Click" Roles='<%= ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.View %>'/>
+                                        <ccUI:ToolbarButton ID="RescheduleItemButton" runat="server" SkinID="<%$Image:RescheduleButton%>" OnClick="RescheduleItemButton_Click" Roles='<%= ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.Reschedule %>'/>
+                                        <ccUI:ToolbarButton ID="ResetItemButton" runat="server" SkinID="<%$Image:ResetButton%>" OnClick="ResetItemButton_Click" Roles='<%= ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.Reset %>'/>
+                                        <ccUI:ToolbarButton ID="DeleteItemButton" runat="server" SkinID="<%$Image:DeleteButton%>" OnClick="DeleteItemButton_Click" Roles='<%= ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.Delete %>'/>
+                                        <ccUI:ToolbarButton ID="ReprocessItemButton" runat="server" SkinID="<%$Image:ReprocessButton%>" OnClick="ReprocessItemButton_Click" Roles='<%= ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.Reprocess %>'/>
                                     </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  

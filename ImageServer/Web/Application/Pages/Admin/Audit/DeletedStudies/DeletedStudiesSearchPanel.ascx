@@ -1,3 +1,14 @@
+<!--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+-->
+
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DeletedStudiesSearchPanel.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.DeletedStudiesSearchPanel" %>
 
 <%@ Register Src="SearchResultGridView.ascx" TagName="SearchResultGridView" TagPrefix="localAsp" %>
@@ -50,7 +61,7 @@
                                                 <asp:TextBox ID="DeletedBy" runat="server"  CssClass="SearchTextBox" ToolTip="Search the list by the person who deleted the study" />
                                             </td>                                            
                                             <td valign="bottom">
-                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="SearchIcon" OnClick="SearchButton_Click" /></asp:Panel>
+                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="<%$Image:SearchIcon%>" OnClick="SearchButton_Click" /></asp:Panel>
                                             </td>
                                             </tr>
                                             </table>
@@ -74,8 +85,8 @@
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
                                     <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
-                                        <ccUI:ToolbarButton ID="ViewStudyDetailsButton" runat="server" SkinID="ViewDetailsButton" OnClick="ViewDetailsButtonClicked" />
-                                        <ccUI:ToolbarButton ID="DeleteButton" runat="server" SkinID="DeleteButton" OnClick="DeleteButtonClicked" />
+                                        <ccUI:ToolbarButton ID="ViewStudyDetailsButton" runat="server" SkinID="<%$Image:ViewDetailsButton%>" OnClick="ViewDetailsButtonClicked" />
+                                        <ccUI:ToolbarButton ID="DeleteButton" runat="server" SkinID="<%$Image:DeleteButton%>" OnClick="DeleteButtonClicked" />
                                     </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  

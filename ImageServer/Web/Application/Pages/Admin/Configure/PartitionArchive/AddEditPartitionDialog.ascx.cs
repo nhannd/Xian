@@ -156,14 +156,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
             if (EditMode)
             {
                 ModalDialog.Title = App_GlobalResources.Titles.EditPartitionArchiveTitle;
-                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
-                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
+                OKButton.Visible = false;
+                UpdateButton.Visible = true;
             }
             else
             {
                 ModalDialog.Title = App_GlobalResources.Titles.AddPartitionArchiveTitle;
-                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
-                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
+                OKButton.Visible = true;
+                UpdateButton.Visible = false;
             }
 
             if (PartitionArchive == null)

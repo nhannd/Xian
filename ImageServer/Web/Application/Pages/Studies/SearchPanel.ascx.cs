@@ -149,7 +149,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         [ClientPropertyName("ViewImageButtonClientID")]
         public string ViewImageButtonClientID
         {
-            get { return ViewImageButton.ClientID; }
+            get { return ViewImagesButton.ClientID; }
         }
 
         public ServerPartition ServerPartition
@@ -257,7 +257,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                         };
 
             //Set Roles
-            ViewImageButton.Roles = ImageServerConstants.WebViewerAuthorityToken;
+            ViewImagesButton.Roles = ImageServerConstants.WebViewerAuthorityToken;
             ViewStudyDetailsButton.Roles = AuthorityTokens.Study.View;
             MoveStudyButton.Roles = AuthorityTokens.Study.Move;
             DeleteStudyButton.Roles = AuthorityTokens.Study.Delete;

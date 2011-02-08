@@ -421,8 +421,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             if (EditMode)
             {
                 ModalDialog.Title = SR.DialogEditServerRuleTitle;
-                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
-                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
+                OKButton.Visible = false;
+                UpdateButton.Visible = true;
 
                 DefaultCheckBox.Checked = _rule.DefaultRule;
                 EnabledCheckBox.Checked = _rule.Enabled;
@@ -484,8 +484,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             else
             {
                 ModalDialog.Title = SR.DialogAddServerRuleTitle;
-                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
-                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
+                OKButton.Visible = false;
+                UpdateButton.Visible = true;
 
                 DefaultCheckBox.Checked = false;
                 EnabledCheckBox.Checked = true;

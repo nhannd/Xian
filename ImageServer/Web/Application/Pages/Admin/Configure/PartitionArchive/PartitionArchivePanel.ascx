@@ -1,3 +1,14 @@
+<!--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+-->
+
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="PartitionArchivePanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.PartitionArchive.PartitionArchivePanel" %>
 
@@ -31,7 +42,7 @@
                                                 <asp:DropDownList ID="StatusFilter" runat="server" CssClass="SearchDropDownList"></asp:DropDownList>
                                             </td>
                                             <td valign="bottom">
-                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="SearchIcon" OnClick="SearchButton_Click"/></asp:Panel>
+                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="<%$Image:SearchIcon%>" OnClick="SearchButton_Click"/></asp:Panel>
                                             </td>
                                         </tr>
                                     </table>
@@ -45,9 +56,9 @@
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
                                     <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
-                                        <ccUI:ToolbarButton ID="AddPartitionButton" runat="server" SkinID="AddButton" OnClick="AddPartitionButton_Click" />
-                                        <ccUI:ToolbarButton ID="EditPartitionButton" runat="server" SkinID="EditButton" OnClick="EditPartitionButton_Click" />
-                                        <ccUI:ToolbarButton ID="DeletePartitionButton" runat="server" SkinID="DeleteButton" OnClick="DeletePartitionButton_Click" />
+                                        <ccUI:ToolbarButton ID="AddPartitionButton" runat="server" SkinID="<%$Image:AddButton%>" OnClick="AddPartitionButton_Click" />
+                                        <ccUI:ToolbarButton ID="EditPartitionButton" runat="server" SkinID="<%$Image:EditButton%>" OnClick="EditPartitionButton_Click" />
+                                        <ccUI:ToolbarButton ID="DeletePartitionButton" runat="server" SkinID="<%$Image:DeleteButton%>" OnClick="DeletePartitionButton_Click" />
                                     </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  

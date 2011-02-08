@@ -183,14 +183,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
             if (EditMode)
             {
                 ModalDialog.Title = App_GlobalResources.SR.DialogEditFileSystemTitle;
-                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
-                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
+                OKButton.Visible = false;
+                UpdateButton.Visible = true;
             }
             else
             {
                 ModalDialog.Title = App_GlobalResources.SR.DialogAddFileSystemTitle;
-                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
-                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
+                OKButton.Visible = true;
+                UpdateButton.Visible = false;
             }
 
             // update the dropdown list

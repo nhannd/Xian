@@ -1,7 +1,7 @@
 <%-- 
 License
 
-Copyright (c) 2010, ClearCanvas Inc.
+Copyright (c) 2011, ClearCanvas Inc.
 All rights reserved.
 http://www.clearcanvas.ca
 
@@ -24,7 +24,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 <head runat="server">
     <link id="Link1" rel="shortcut icon" type="image/ico" runat="server" href="~/Images/favicon.ico" />
 </head>
-<body class="LoginBody">
+<body class="LoginBody" runat="server">
     
     <form runat="server">
 
@@ -32,21 +32,19 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
     <asp:ScriptManager ID="GlobalScriptManager" runat="server" EnableScriptGlobalization="true"
             EnableScriptLocalization="true">
-    </asp:ScriptManager>    
+    </asp:ScriptManager>
                 
-    <asp:Panel ID="LoginSplash" DefaultButton="LoginButton" runat="server">
+    <asp:Panel ID="LoginSplash" DefaultButton="LoginButton" runat="server" SkinID="<%$Image:LoginSplash%>">
 
         <div id="VersionInfoPanel">
             <table cellpadding="1">
             <tr><td align="right">Version:</td><td align="left"><%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%></td></tr>
             <tr><td align="right"></td><td><%= Thread.CurrentThread.CurrentUICulture.NativeName %></td></tr>
             </table>
-        </div>            
-
+        </div>
     
         <div id="LoginCredentials">
-        
-        <table>      
+        <table>
             <tr>
             <td align="right" colspan="2"><asp:Label runat="server" ID="ManifestWarningTextLabel" CssClass="ManifestWarningTextLabel"
             ></asp:Label></td>
@@ -67,7 +65,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
             </tr>
         </table>
           
-        </div>
+        </div>  
         
                         <asp:Panel CssClass="LoginErrorMessagePanel" runat="server" ID="ErrorMessagePanel" 
                         Visible='<%# !String.IsNullOrEmpty(Page.Request.QueryString["error"]) %>'>
@@ -75,9 +73,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
         </asp:Panel>  
                         
             
-    </asp:Panel>       
-    
-
+    </asp:Panel>      
     
     <asp:UpdatePanel runat="server">
         <ContentTemplate>

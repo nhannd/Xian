@@ -1,3 +1,14 @@
+<!--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+-->
+
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="SearchPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.SearchPanel" %>
 
@@ -67,7 +78,7 @@ function MultiSelect() {
                                                 </asp:ListBox>
                                             </td>
                                             <td valign="bottom">
-                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="SearchIcon" OnClick="SearchButton_Click" /></asp:Panel>
+                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="<%$Image:SearchIcon%>" OnClick="SearchButton_Click" /></asp:Panel>
                                             </td>
                                         </tr>
                                     </table>
@@ -90,7 +101,7 @@ function MultiSelect() {
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
                                     <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
-                                        <ccUI:ToolbarButton ID="ReconcileButton" runat="server" SkinID="ReconcileButton" OnClick="ReconcileButton_Click" />
+                                        <ccUI:ToolbarButton ID="ReconcileButton" runat="server" SkinID="<%$Image:ReconcileButton%>" OnClick="ReconcileButton_Click" />
                                     </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  

@@ -1,3 +1,14 @@
+<!--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+-->
+
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.UserGroups.AddEditUserGroupsDialog"
     Codebehind="AddEditUserGroupsDialog.ascx.cs" %>
 
@@ -60,8 +71,8 @@ function ValidationUserGroupNameParams()
             <tr>
                 <td align="right">
                     <asp:Panel runat="server" CssClass="DefaultModalDialogButtonPanel">
-                        <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="AddButton" ValidationGroup="AddEditUserGroupsValidationGroup" OnClick="OKButton_Click"/>
-                        <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="CancelButton" OnClick="CancelButton_Click"/>
+                        <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="<%$Image:AddButton%>" ValidationGroup="AddEditUserGroupsValidationGroup" OnClick="OKButton_Click"/>
+                        <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="<%$Image:CancelButton%>" OnClick="CancelButton_Click"/>
                     </asp:Panel>
                 </td>
             </tr>

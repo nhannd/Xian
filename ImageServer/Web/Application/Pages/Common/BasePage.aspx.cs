@@ -11,6 +11,7 @@
 
 using System;
 using System.Configuration;
+using System.Web;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
@@ -27,7 +28,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
         {
             //Set the Page Theme, then set the Page object on the ImageServerConstants
             Page.Theme = ImageServerConstants.Default;
+            
+            // TODO: review this. It should be per session.
             ImageServerConstants.Theme = Page.Theme;
+
+            HttpContext.Current.Items["Theme"] = Page.Theme;
 
             // This is necessary because Safari and Chrome browsers don't display the Menu control correctly.
             if (Request.ServerVariables["http_user_agent"].IndexOf("Safari", StringComparison.CurrentCultureIgnoreCase) != -1)

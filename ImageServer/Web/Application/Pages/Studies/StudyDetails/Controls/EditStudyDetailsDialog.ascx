@@ -1,3 +1,14 @@
+<!--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+-->
+
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="EditStudyDetailsDialog.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.EditStudyDetailsDialog" %>
 <%@ Import Namespace="System.Globalization"%>
 
@@ -294,8 +305,8 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                 <tr align="right">
                     <td>
                         <asp:Panel ID="Panel1" runat="server" CssClass="DefaultModalDialogButtonPanel">
-                            <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="UpdateButton" OnClick="OKButton_Click" ValidationGroup="EditStudyValidationGroup" />
-                            <ccUI:ToolbarButton ID="Cancel" runat="server" SkinID="CancelButton" OnClick="CancelButton_Click" />
+                            <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="<%$Image:UpdateButton%>" OnClick="OKButton_Click" ValidationGroup="EditStudyValidationGroup" />
+                            <ccUI:ToolbarButton ID="Cancel" runat="server" SkinID="<%$Image:CancelButton%>" OnClick="CancelButton_Click" />
                         </asp:Panel>
 
                     </td>

@@ -1,3 +1,14 @@
+<!--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+-->
+
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ServerRulePanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules.ServerRulePanel" %>
 
@@ -37,7 +48,7 @@
                                                 </asp:DropDownList>
                                             </td>
                                             <td align="right" valign="bottom">
-                                                <asp:Panel ID="Panel2" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="SearchIcon" OnClick="SearchButton_Click"/></asp:Panel>
+                                                <asp:Panel ID="Panel2" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="<%$Image:SearchIcon%>" OnClick="SearchButton_Click"/></asp:Panel>
                                             </td>
                                         </tr>
                                     </table>
@@ -52,9 +63,9 @@
                             <asp:UpdatePanel ID="ToolbarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
                                     <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
-                                        <ccUI:ToolbarButton ID="AddServerRuleButton" runat="server" SkinID="AddButton" OnClick="AddServerRuleButton_Click" />
-                                        <ccUI:ToolbarButton ID="EditServerRuleButton" runat="server" SkinID="EditButton" OnClick="EditServerRuleButton_Click" />
-                                        <ccUI:ToolbarButton ID="DeleteServerRuleButton" runat="server" SkinID="DeleteButton" OnClick="DeleteServerRuleButton_Click" />
+                                        <ccUI:ToolbarButton ID="AddServerRuleButton" runat="server" SkinID="<%$Image:AddButton%>" OnClick="AddServerRuleButton_Click" />
+                                        <ccUI:ToolbarButton ID="EditServerRuleButton" runat="server" SkinID="<%$Image:EditButton%>" OnClick="EditServerRuleButton_Click" />
+                                        <ccUI:ToolbarButton ID="DeleteServerRuleButton" runat="server" SkinID="<%$Image:DeleteButton%>" OnClick="DeleteServerRuleButton_Click" />
                                     </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  

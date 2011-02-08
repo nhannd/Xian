@@ -1,3 +1,14 @@
+<!--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+-->
+
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="SearchPanel.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.SearchPanel" %>
 
 <%@ Register Src="StudyListGridView.ascx" TagName="StudyListGridView" TagPrefix="localAsp" %>
@@ -110,7 +121,7 @@ function MultiSelect() {
                                                 </asp:ListBox>
                                             </td>
                                             <td valign="bottom">
-                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="SearchIcon" OnClick="SearchButton_Click" /></asp:Panel>
+                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="<%$Image:SearchIcon%>" OnClick="SearchButton_Click" /></asp:Panel>
                                             </td>
                                             </tr>                                          
                                             </table>
@@ -137,11 +148,11 @@ function MultiSelect() {
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
                                     <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
-                                        <ccUI:ToolbarButton ID="ViewImageButton" runat="server" SkinID="ViewImagesButton" />
-                                        <ccUI:ToolbarButton ID="ViewStudyDetailsButton" runat="server" SkinID="ViewDetailsButton" />
-                                        <ccUI:ToolbarButton ID="MoveStudyButton" runat="server" SkinID="MoveButton" />
-                                        <ccUI:ToolbarButton ID="DeleteStudyButton" runat="server" SkinID="DeleteButton" OnClick="DeleteStudyButton_Click" />
-                                        <ccUI:ToolbarButton ID="RestoreStudyButton" runat="server" SkinID="RestoreButton" OnClick="RestoreStudyButton_Click" />
+                                        <ccUI:ToolbarButton ID="ViewImagesButton" runat="server" SkinID="<%$Image:ViewImagesButton%>" />
+                                        <ccUI:ToolbarButton ID="ViewStudyDetailsButton" runat="server" SkinID="<%$Image:ViewDetailsButton%>" />
+                                        <ccUI:ToolbarButton ID="MoveStudyButton" runat="server" SkinID="<%$Image:MoveButton%>" />
+                                        <ccUI:ToolbarButton ID="DeleteStudyButton" runat="server" SkinID="<%$Image:DeleteButton%>" OnClick="DeleteStudyButton_Click" />
+                                        <ccUI:ToolbarButton ID="RestoreStudyButton" runat="server" SkinID="<%$Image:RestoreButton%>" OnClick="RestoreStudyButton_Click" />
                                     </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  

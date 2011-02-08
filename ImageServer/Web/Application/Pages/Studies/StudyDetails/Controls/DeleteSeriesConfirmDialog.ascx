@@ -1,3 +1,14 @@
+<!--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+-->
+
 <%@ Import namespace="Microsoft.JScript"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
 
@@ -169,9 +180,9 @@
             <tr align="right">
                 <td>
                     <asp:Panel ID="Panel1" runat="server" CssClass="DefaultModalDialogButtonPanel">
-                        <ccUI:ToolbarButton ID="DeleteSeriesButton" runat="server" SkinID="OKButton" 
+                        <ccUI:ToolbarButton ID="DeleteSeriesButton" runat="server" SkinID="<%$Image:OKButton%>" 
                            OnClick="DeleteSeriesButton_Clicked" ValidationGroup="SeriesGroup" />
-                        <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="CancelButton"
+                        <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="<%$Image:CancelButton%>"
                             OnClick="CancelButton_Clicked" />
                     </asp:Panel>
                 </td>

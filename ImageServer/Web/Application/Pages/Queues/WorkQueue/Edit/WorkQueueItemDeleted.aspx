@@ -1,3 +1,14 @@
+<!--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+-->
+
 <%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Pages/Common/MainContentSection.Master" Title="ClearCanvas ImageServer" Codebehind="WorkQueueItemDeleted.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit.WorkQueueItemDeleted" %>
 
 <asp:Content runat="server" ID="MainMenuContent" contentplaceholderID="MainMenuPlaceHolder">
@@ -10,10 +21,10 @@
                 <tr><td>
                         <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
                             <tr><td>
-                                    <ccUI:ToolbarButton ID="RescheduleToolbarButton" runat="server" SkinID="RescheduleButton"/>
-                                    <ccUI:ToolbarButton ID="ResetButton" runat="server" SkinID="ResetButton" />
-                                    <ccUI:ToolbarButton ID="DeleteButton" runat="server" SkinID="DeleteButton" />
-                                    <ccUI:ToolbarButton ID="ReprocessButton" runat="server" SkinID="ReprocessButton"/>                                    
+                                    <ccUI:ToolbarButton ID="RescheduleToolbarButton" runat="server" SkinID="<%$Image:RescheduleButton%>"/>
+                                    <ccUI:ToolbarButton ID="ResetButton" runat="server" SkinID="<%$Image:ResetButton%>" />
+                                    <ccUI:ToolbarButton ID="DeleteButton" runat="server" SkinID="<%$Image:DeleteButton%>" />
+                                    <ccUI:ToolbarButton ID="ReprocessButton" runat="server" SkinID="<%$Image:ReprocessButton%>"/>                                    
                             </td></tr>
                             <tr><td>
                                 <asp:Panel ID="Panel1" runat="server" BackColor="white" style="padding: 10px; border: solid 1px #305ba6">

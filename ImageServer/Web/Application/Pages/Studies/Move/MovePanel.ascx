@@ -1,3 +1,14 @@
+<!--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+-->
+
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="MovePanel.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move.MovePanel" %>
 
 <%@ Register Src="DeviceGridView.ascx" TagName="DeviceGridView" TagPrefix="localAsp" %>
@@ -28,8 +39,8 @@
             <td class="MainContentSubTitle" style="vertical-align: bottom; padding-top: 5px;">Studies</td>
             <td align="right" valign="bottom">
                 <asp:Panel CssClass="ToolbarButtons" style="padding-right: 4px;" runat="server">
-                    <ccUI:ToolbarButton runat="server" SkinID="MoveButton" ID="MoveButton" onClick="MoveButton_Click" />
-                    <ccUI:ToolbarButton runat="server" SkinID="DoneButton" ID="DoneButton" onClientClick="self.close();" />
+                    <ccUI:ToolbarButton runat="server" SkinID="<%$Image:MoveButton%>" ID="MoveButton" onClick="MoveButton_Click" />
+                    <ccUI:ToolbarButton runat="server" SkinID="<%$Image:DoneButton%>" ID="DoneButton" onClientClick="self.close();" />
                 </asp:Panel>
             </td>
         </tr>
@@ -69,7 +80,7 @@
                                                 <asp:Label ID="Label5" runat="server" Text="Device Type" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:ListBox ID="DeviceTypeFilter" runat="server" CssClass="SearchDropDownList" SelectionMode="Multiple">
                                                 </asp:ListBox></td>
-            <td align="right" nowrap="nowrap" style="padding-right: 6px; padding-bottom: 4px; vertical-align: bottom"><ccUI:ToolbarButton runat="server" ID="SearchButton" SkinID="SearchIcon" onClick="SearchButton_Click" /></td>
+            <td align="right" nowrap="nowrap" style="padding-right: 6px; padding-bottom: 4px; vertical-align: bottom"><ccUI:ToolbarButton runat="server" ID="SearchButton" SkinID="<%$Image:SearchIcon%>" onClick="SearchButton_Click" /></td>
             <td width="100%">&nbsp;</td>
         </tr>
 

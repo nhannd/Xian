@@ -1,3 +1,14 @@
+<!--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+-->
+
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DevicePanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel" %>
 <%@ Register Src="DeviceGridView.ascx" TagName="DeviceGridView" TagPrefix="localAsp" %>
@@ -55,7 +66,7 @@
                                     </td>
                                     <td align="right" valign="bottom">
                                         <asp:Panel ID="Panel3" runat="server" CssClass="SearchButtonPanel">
-                                            <ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="SearchIcon" OnClick="SearchButton_Click" /></asp:Panel>
+                                            <ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="<%$Image:SearchIcon%>" OnClick="SearchButton_Click" /></asp:Panel>
                                     </td>
                                 </tr>
                             </table>
@@ -70,9 +81,9 @@
                                     <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                         <ContentTemplate>
                                             <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
-                                                <ccUI:ToolbarButton ID="AddDeviceButton" runat="server" SkinID="AddButton" OnClick="AddDeviceButton_Click" />
-                                                <ccUI:ToolbarButton ID="EditDeviceButton" runat="server" SkinID="EditButton" OnClick="EditDeviceButton_Click" />
-                                                <ccUI:ToolbarButton ID="DeleteDeviceButton" runat="server" SkinID="DeleteButton"
+                                                <ccUI:ToolbarButton ID="AddDeviceButton" runat="server" SkinID="<%$Image:AddButton%>" OnClick="AddDeviceButton_Click" />
+                                                <ccUI:ToolbarButton ID="EditDeviceButton" runat="server" SkinID="<%$Image:EditButton%>" OnClick="EditDeviceButton_Click" />
+                                                <ccUI:ToolbarButton ID="DeleteDeviceButton" runat="server" SkinID="<%$Image:DeleteButton%>"
                                                     OnClick="DeleteDeviceButton_Click" />
                                             </asp:Panel>
                                         </ContentTemplate>

@@ -1,6 +1,11 @@
 <%@ Register assembly="ClearCanvas.ImageServer.Web.Common" namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" tagPrefix="ccUI" %>
 <%@ Register src="~/Controls/InvalidInputIndicator.ascx" tagPrefix="ccASP" tagName="InvalidInputIndicator" %>
 
+
+
+<%-- Splash screen --%>
+<asp:Panel runat="server" SkinID="LoginSplash" BackImageUrl="images/LoginSplash.png"/>
+
 <%-- Header and Menu Images --%>
 
 <asp:Image runat="server" SkinID="Logo" ImageUrl="images/Header/ClearCanvasLogo.png" Height="68" Width="210" />

@@ -1907,7 +1907,6 @@
     </None>
     <Content Include="PersistantImage.ashx" />
     <None Include="Scripts\CodeMirror\LICENSE" />
-    <Content Include="Web.config" />
     <Content Include="App_Themes\Default\images\Indicators\HelpSmall.png" />
     <EmbeddedResource Include="App_GlobalResources\SR.resx">
       <SubType>Designer</SubType>
@@ -2047,7 +2046,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>1119</DevelopmentServerPort>
+          <DevelopmentServerPort>3209</DevelopmentServerPort>
           <DevelopmentServerVPath>/ImageServer</DevelopmentServerVPath>
           <IISUrl>http://localhost/ImageServer</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>

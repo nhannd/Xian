@@ -1,3 +1,14 @@
+<!--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+-->
+
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="PasswordExpiredDialog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Login.PasswordExpiredDialog" %>
 
@@ -26,7 +37,7 @@
                     <tr>
                         <td align="right">
                             <asp:Panel ID="Panel2" runat="server" CssClass="DefaultModalDialogButtonPanel">
-                                <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="OKButton" OnClick="ChangePassword_Click" />
+                                <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="<%$Image:OKButton%>" OnClick="ChangePassword_Click" />
                             </asp:Panel>
                         </td>
                     </tr>

@@ -236,15 +236,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 			if (EditMode)
 			{
 				ModalDialog1.Title = SR.DialogEditDeviceTitle;
-				OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
-				OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
 				DeviceTypeDropDownList.Items.FindByValue(Device.DeviceTypeEnum.Lookup).Selected = true;
+			    OKButton.Visible = false;
+			    UpdateButton.Visible = true;
 			}
 			else
 			{
 				ModalDialog1.Title = SR.DialogAddDeviceTitle;
-				OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
-				OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
+				OKButton.Visible = true;
+                UpdateButton.Visible = false;
 			}
 
 		}

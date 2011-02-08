@@ -1,3 +1,15 @@
+<!--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+-->
+
+
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ApplicationLogPanel.ascx.cs"
 	Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog.ApplicationLogSearchPanel" %>
@@ -79,7 +91,7 @@
 												<asp:TextBox ID="MessageFilter" runat="server" CssClass="SearchTextBox" ToolTip="Search the log messages"></asp:TextBox></td>
 											<td valign="bottom">
 												<asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel">
-													<ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="SearchIcon" OnClick="SearchButton_Click" CausesValidation="true" ValidationGroup="AppLogValidationGroup" /></asp:Panel>
+													<ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="<%$Image:SearchIcon%>" OnClick="SearchButton_Click" CausesValidation="true" ValidationGroup="AppLogValidationGroup" /></asp:Panel>
 											</td>
 										</tr>
 									</table>

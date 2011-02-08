@@ -1,3 +1,14 @@
+<!--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+-->
+
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="StudyDetailsTabs.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsTabs" %>
 
@@ -36,9 +47,9 @@
                             <tr>
                                 <td>
                                     <div style="padding-top: 5px; padding-left: 1px;" />
-                                        <ccUI:ToolbarButton runat="server" ID="ViewSeriesButton" SkinID="ViewSeriesButton" />&nbsp;
-                                        <ccUI:ToolbarButton runat="server" ID="MoveSeriesButton" SkinID="MoveSeriesButton" />&nbsp;
-                                        <ccUI:ToolbarButton runat="server" ID="DeleteSeriesButton" SkinID="DeleteSeriesButton" OnClick="DeleteSeriesButton_Click"/>
+                                        <ccUI:ToolbarButton runat="server" ID="ViewSeriesButton" SkinID="<%$Image:ViewSeriesButton%>" />&nbsp;
+                                        <ccUI:ToolbarButton runat="server" ID="MoveSeriesButton" SkinID="<%$Image:MoveSeriesButton%>" />&nbsp;
+                                        <ccUI:ToolbarButton runat="server" ID="DeleteSeriesButton" SkinID="<%$Image:DeleteSeriesButton%>" OnClick="DeleteSeriesButton_Click"/>
                                     </div>
                                 </td>
                             </tr>

@@ -207,8 +207,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             if (EditMode)
             {
                 ModalDialog1.Title = App_GlobalResources.SR.DialogEditUserTitle;
-                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
-                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
+                OKButton.Visible = false;
+                UpdateButton.Visible = true;
+
                 UserLoginId.ReadOnly = true;
                 UserLoginId.Style.Add("Color", "#999999");
                 EnabledRow.Visible = true;
@@ -228,8 +229,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             else
             {
                 ModalDialog1.Title = App_GlobalResources.SR.DialogAddUserTitle;
-                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
-                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
+                OKButton.Visible = true;
+                UpdateButton.Visible = false;
+                
                 EnabledRow.Visible = false;
                 UserLoginId.ReadOnly = false;
                 UserLoginId.Style.Add("Color", "#000000");
