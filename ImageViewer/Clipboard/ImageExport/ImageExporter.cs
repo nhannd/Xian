@@ -76,8 +76,15 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			if (transform == null)
 				throw new ArgumentException("The image must have a valid ImageSpatialTransform in order to be exported.");
 
-			if (exportParams.ExportOption == ExportOption.TrueSize && !(image is IImageSopProvider))
-				throw new ArgumentException("The image must implement IImageSopProvider in order to be exported as true size.");
+			if (exportParams.ExportOption == ExportOption.TrueSize)
+			{
+				if (!(image is IImageSopProvider))
+					throw new ArgumentException("The image must implement IImageSopProvider in order to be exported as true size.");
+
+				var pixelSpacing = ((IImageSopProvider)image).Frame.NormalizedPixelSpacing;
+				if (pixelSpacing == null || pixelSpacing.IsNull)
+					throw new ArgumentException("The image does not contain pixel spacing information.  TrueSize option is not possible.");
+			}
 
 			bool oldAnnotationLayoutVisible = false;
 			IAnnotationLayoutProvider annotationLayout = image as IAnnotationLayoutProvider;
