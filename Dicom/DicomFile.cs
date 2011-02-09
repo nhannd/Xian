@@ -47,14 +47,17 @@ namespace ClearCanvas.Dicom
             DataSet = dataSet;
             _filename = filename;
 
-            ImplementationVersionName = DicomImplementation.Version;
-            ImplementationClassUid = DicomImplementation.ClassUID.UID;
+            if (!MetaInfo.Contains(DicomTags.ImplementationVersionName))
+                ImplementationVersionName = DicomImplementation.Version;
+            if (!MetaInfo.Contains(DicomTags.ImplementationClassUid))
+                ImplementationClassUid = DicomImplementation.ClassUID.UID;
 
 			// If the meta info doesn't already specify the transfer syntax, give it the default transfer syntax of ELE
             if (string.IsNullOrEmpty(MetaInfo[DicomTags.TransferSyntaxUid].ToString()))
                 MetaInfo[DicomTags.TransferSyntaxUid].SetStringValue(TransferSyntax.ExplicitVrLittleEndian.UidString);
 
-            MetaInfo[DicomTags.FileMetaInformationVersion].Values = new byte[] { 0x00, 0x01 }; 
+            if (!MetaInfo.Contains(DicomTags.FileMetaInformationVersion))
+                MetaInfo[DicomTags.FileMetaInformationVersion].Values = new byte[] { 0x00, 0x01 }; 
         }
 
         /// <summary>
