@@ -76,6 +76,9 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			if (transform == null)
 				throw new ArgumentException("The image must have a valid ImageSpatialTransform in order to be exported.");
 
+			if (exportParams.ExportOption == ExportOption.TrueSize && !(image is IImageSopProvider))
+				throw new ArgumentException("The image must implement IImageSopProvider in order to be exported as true size.");
+
 			bool oldAnnotationLayoutVisible = false;
 			IAnnotationLayoutProvider annotationLayout = image as IAnnotationLayoutProvider;
 			if (annotationLayout != null && annotationLayout.AnnotationLayout != null)
@@ -86,38 +89,19 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 			try
 			{
-				// SizeMode doesn't matter in TrueSize.
-				if (exportParams.ExportOption == ExportOption.TrueSize)
-				{
-					if (!(image is IImageSopProvider))
-						throw new ArgumentException("The image must implement IImageSopProvider in order to be exported as true size.");
-
-					var paddedImage = new Bitmap(exportParams.OutputSize.Width, exportParams.OutputSize.Height);
-					using (var graphics = System.Drawing.Graphics.FromImage(paddedImage))
-					{
-						// paint background
-						using (Brush b = new SolidBrush(exportParams.BackgroundColor))
-						{
-							graphics.FillRectangle(b, new Rectangle(Point.Empty, exportParams.OutputSize));
-						}
-
-						// paint image portion
-						var bmp = DrawTrueSizeImageToBitmap(image, exportParams.OutputPixelSpacing);
-						graphics.DrawImageUnscaledAndClipped(bmp, new Rectangle(CenterRectangles(bmp.Size, exportParams.OutputSize), exportParams.OutputSize));
-						bmp.Dispose();
-					}
-					return paddedImage;
-				}
-
 				if (exportParams.SizeMode == SizeMode.Scale)
 				{
 					if (exportParams.ExportOption == ExportOption.Wysiwyg)
 					{
 						return DrawWysiwygImageToBitmap(image, exportParams.DisplayRectangle, exportParams.Scale);
 					}
-					else
+					else if (exportParams.ExportOption == ExportOption.CompleteImage)
 					{
 						return DrawCompleteImageToBitmap(image, exportParams.Scale);
+					}
+					else // TrueSize
+					{
+						return DrawTrueSizeImageToBitmap(image, exportParams.DisplayRectangle, exportParams.OutputPixelSpacing);
 					}
 				}
 				else
@@ -138,12 +122,17 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 							float scale = ScaleToFit(exportParams.DisplayRectangle.Size, exportParams.OutputSize);
 							bmp = DrawWysiwygImageToBitmap(image, exportParams.DisplayRectangle, scale);
 						}
-						else
+						else if (exportParams.ExportOption == ExportOption.CompleteImage)
 						{
 							IImageGraphicProvider sourceImage = (IImageGraphicProvider) image;
 							float scale = ScaleToFit(new Size(sourceImage.ImageGraphic.Columns, sourceImage.ImageGraphic.Rows), exportParams.OutputSize);
 							bmp = DrawCompleteImageToBitmap(image, scale);
 						}
+						else // TrueSize
+						{
+							bmp = DrawTrueSizeImageToBitmap(image, exportParams.DisplayRectangle, exportParams.OutputPixelSpacing);
+						}
+
 						graphics.DrawImageUnscaledAndClipped(bmp, new Rectangle(CenterRectangles(bmp.Size, exportParams.OutputSize), bmp.Size));
 						bmp.Dispose();
 					}
@@ -201,32 +190,17 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 		}
 
-		private static Bitmap DrawTrueSizeImageToBitmap(IPresentationImage image, float outputPixelSpacing)
+		private static Bitmap DrawTrueSizeImageToBitmap(IPresentationImage image, Rectangle displayRectangle, float outputPixelSpacing)
 		{
-			ImageSpatialTransform transform = (ImageSpatialTransform)((ISpatialTransformProvider)image).SpatialTransform;
-			object restoreMemento = transform.CreateMemento();
-			try
-			{
-				ImageGraphic imageGraphic = ((IImageGraphicProvider)image).ImageGraphic;
-				Rectangle imageRectangle = new Rectangle(0, 0, imageGraphic.Columns, imageGraphic.Rows);
+			// Determine the incremental scale factor
+			var imageSop = (IImageSopProvider)image;
+			var pixelSpacing = imageSop.Frame.NormalizedPixelSpacing;
 
-				// Determine the incremental scale factor
-				var imageSop = (IImageSopProvider)image;
-				var pixelSpacing = imageSop.Frame.NormalizedPixelSpacing;
+			var transform = (ImageSpatialTransform)((ISpatialTransformProvider)image).SpatialTransform;
+			var absoluteScale = (float) (outputPixelSpacing/pixelSpacing.Row);
+			var incrementalScale = absoluteScale / transform.Scale;
 
-				transform.ScaleToFit = false;
-				transform.Scale = (float)(outputPixelSpacing / pixelSpacing.Row);
-				RectangleF displayRectangle = imageGraphic.SpatialTransform.ConvertToDestination(imageRectangle);
-				int width = (int)Math.Round(displayRectangle.Width);
-				int height = (int)Math.Round(displayRectangle.Height);
-				transform.ScaleToFit = true;
-
-				return image.DrawToBitmap(width, height);
-			}
-			finally
-			{
-				transform.SetMemento(restoreMemento);
-			}
+			return DrawWysiwygImageToBitmap(image, displayRectangle, incrementalScale);
 		}
 
 		private static float ScaleToFit(Size source, SizeF destination)

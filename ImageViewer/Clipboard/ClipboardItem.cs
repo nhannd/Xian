@@ -25,6 +25,11 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		/// Returns the actual clipboard item.
 		/// </summary>
 		object Item { get; }
+		
+		/// <summary>
+		/// Returns the display rectangle of the clipboard item.
+		/// </summary>
+		Rectangle DisplayRectangle { get; }
 
 		/// <summary>
 		/// Locks a clipboard item.

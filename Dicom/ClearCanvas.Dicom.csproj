@@ -370,11 +370,12 @@
     <Compile Include="Network\Scp\DicomScpExtensionPoint.cs" />
     <Compile Include="Network\Scp\DicomScpHandler.cs" />
     <Compile Include="Network\Scp\IDicomScp.cs" />
-    <Compile Include="Network\Scu\BasicGrayscalePrintScu.cs" />
     <Compile Include="Network\Scu\FindScu.cs" />
     <Compile Include="Network\Scu\ModalityWorklistScu.cs" />
     <Compile Include="Network\Scu\MoveScu.cs" />
     <Compile Include="Network\Scu\PrinterStatusScu.cs" />
+    <Compile Include="Network\Scu\PrintScu.cs" />
+    <Compile Include="Network\Scu\PrintScu2.cs" />
     <Compile Include="Network\Scu\ScuBase.cs" />
     <Compile Include="Network\Scu\StorageCommitScu.cs" />
     <Compile Include="Network\Scu\StorageInstance.cs" />

@@ -31,7 +31,6 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 		/// <summary>
 		/// Specifies the output sizing mode.
-		/// This is automatically set to Fixed if <see cref="ExportOption"/> is <see cref="ImageExport.ExportOption.TrueSize"/>
 		/// </summary>
 		public SizeMode SizeMode = SizeMode.Scale;
 
@@ -47,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 		public float OutputPixelSpacing;
 
 		/// <summary>
-		/// Specifies the output image dimensions when <see cref="SizeMode"/> has a value of <see cref="ImageExport.SizeMode.Fixed"/> or when <see cref="ExportOption"/> has a value of <see cref="ImageExport.ExportOption.TrueSize"/>.
+		/// Specifies the output image dimensions when <see cref="SizeMode"/> has a value of <see cref="ImageExport.SizeMode.Fixed"/>.
 		/// </summary>
 		public Size OutputSize;
 
