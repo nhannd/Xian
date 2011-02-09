@@ -10,7 +10,6 @@
 #endregion
 
 using System.Drawing;
-using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 {
@@ -46,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 		public float OutputPixelSpacing;
 
 		/// <summary>
-		/// Specifies the output image dimensions when <see cref="SizeMode"/> has a value of <see cref="ImageExport.SizeMode.Fixed"/>.
+		/// Specifies the output image dimensions when <see cref="SizeMode"/> has a value of <see cref="ImageExport.SizeMode.Fixed"/> or <see cref="ImageExport.SizeMode.ScaleToFit"/>.
 		/// </summary>
 		public Size OutputSize;
 
@@ -95,6 +94,13 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 		/// <summary>
 		/// Indicates that the exported image should be scaled to fit a fixed size.
+		/// The output image fit into the specified <see cref="ExportImageParams.OutputSize"/>.  There is no padding added.
+		/// </summary>
+		ScaleToFit,
+
+		/// <summary>
+		/// Indicates that the exported image should be scaled to fit a fixed size.
+		/// The output image is padded to fill the specified <see cref="ExportImageParams.OutputSize"/>.
 		/// </summary>
 		Fixed
 	}

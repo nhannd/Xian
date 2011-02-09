@@ -104,6 +104,24 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 						return DrawTrueSizeImageToBitmap(image, exportParams.DisplayRectangle, exportParams.OutputPixelSpacing);
 					}
 				}
+				else if (exportParams.SizeMode == SizeMode.ScaleToFit)
+				{
+					if (exportParams.ExportOption == ExportOption.Wysiwyg)
+					{
+						var scale = ScaleToFit(exportParams.DisplayRectangle.Size, exportParams.OutputSize);
+						return DrawWysiwygImageToBitmap(image, exportParams.DisplayRectangle, scale);
+					}
+					else if (exportParams.ExportOption == ExportOption.CompleteImage)
+					{
+						var sourceImage = (IImageGraphicProvider)image;
+						var scale = ScaleToFit(new Size(sourceImage.ImageGraphic.Columns, sourceImage.ImageGraphic.Rows), exportParams.OutputSize);
+						return DrawCompleteImageToBitmap(image, scale);
+					}
+					else // TrueSize
+					{
+						return DrawTrueSizeImageToBitmap(image, exportParams.DisplayRectangle, exportParams.OutputPixelSpacing);
+					}
+				}
 				else
 				{
 					Bitmap paddedImage = new Bitmap(exportParams.OutputSize.Width, exportParams.OutputSize.Height);
@@ -192,15 +210,28 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 		private static Bitmap DrawTrueSizeImageToBitmap(IPresentationImage image, Rectangle displayRectangle, float outputPixelSpacing)
 		{
-			// Determine the incremental scale factor
-			var imageSop = (IImageSopProvider)image;
-			var pixelSpacing = imageSop.Frame.NormalizedPixelSpacing;
+			ImageSpatialTransform transform = (ImageSpatialTransform)((ISpatialTransformProvider)image).SpatialTransform;
+			object restoreMemento = transform.CreateMemento();
+			try
+			{
+				// Determine the incremental scale factor
+				var imageSop = (IImageSopProvider)image;
+				var pixelSpacing = imageSop.Frame.NormalizedPixelSpacing;
 
-			var transform = (ImageSpatialTransform)((ISpatialTransformProvider)image).SpatialTransform;
-			var absoluteScale = (float) (outputPixelSpacing/pixelSpacing.Row);
-			var incrementalScale = absoluteScale / transform.Scale;
+				var scale = (float)(outputPixelSpacing / pixelSpacing.Row);
+				var incrementalScale = scale/transform.Scale;
 
-			return DrawWysiwygImageToBitmap(image, displayRectangle, incrementalScale);
+				var width = (int)(displayRectangle.Width * incrementalScale);
+				var height = (int)(displayRectangle.Height * incrementalScale);
+
+				transform.Scale = scale;
+
+				return image.DrawToBitmap(width, height);
+			}
+			finally
+			{
+				transform.SetMemento(restoreMemento);
+			}
 		}
 
 		private static float ScaleToFit(Size source, SizeF destination)

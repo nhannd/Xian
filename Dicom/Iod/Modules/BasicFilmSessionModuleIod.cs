@@ -231,7 +231,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
     public enum FilmDestination
     {
         /// <summary>
-        /// None - note, it could also be BIN_i
+        /// None
         /// </summary>
         None,
         /// <summary>
@@ -241,8 +241,21 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <summary>
         /// the exposed film is developed in film processor
         /// </summary>
-        Processor
+        Processor,
 
+        /// <summary>
+        /// Bin_0 to Bin_9
+        /// </summary>
+        Bin_0,
+        Bin_1,
+        Bin_2,
+        Bin_3,
+        Bin_4,
+        Bin_5,
+        Bin_6,
+        Bin_7,
+        Bin_8,
+        Bin_9
     }
     #endregion
 }

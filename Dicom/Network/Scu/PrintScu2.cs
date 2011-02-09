@@ -118,15 +118,15 @@ namespace ClearCanvas.Dicom.Network.Scu
 			/// <summary>
 			/// Delegate for getting pixel data.
 			/// </summary>
-			public delegate byte[] PixelDataDelegate(Size requestSize, bool isPrintingColor);
+			public delegate byte[] PixelDataDelegate(Size imageBoxSSize, out Size pixelSize, bool isPrintingColor);
 
-			protected readonly Size _size;
+			protected readonly Size _imageBoxSize;
 			protected readonly PixelDataDelegate _pixelDataGetter;
 
-			public ImageBox(ushort imageBoxPosition, Size requestSize, PixelDataDelegate pixelDataGetter)
+			public ImageBox(ushort imageBoxPosition, Size imageBoxSize, PixelDataDelegate pixelDataGetter)
 			{
 				this.ImageBoxPosition = imageBoxPosition;
-				_size = requestSize;
+				_imageBoxSize = imageBoxSize;
 				_pixelDataGetter = pixelDataGetter;
 			}
 
@@ -143,11 +143,13 @@ namespace ClearCanvas.Dicom.Network.Scu
 							PlanarConfiguration = 1,
 							BitsStored = 8,
 							BitsAllocated = 8,
-							HighBit = 7,
-							Rows = (ushort)_size.Height,
-							Columns = (ushort)_size.Width,
-							PixelData = _pixelDataGetter.Invoke(_size, true)
+							HighBit = 7
 						};
+
+					Size pixelSize;
+					image.PixelData = _pixelDataGetter.Invoke(_imageBoxSize, out pixelSize, true);
+					image.Rows = (ushort) pixelSize.Height;
+					image.Columns = (ushort) pixelSize.Width;
 
 					this.BasicColorImageSequenceList.Add(image);
 				}
@@ -161,11 +163,13 @@ namespace ClearCanvas.Dicom.Network.Scu
 							PixelAspectRatio = new PixelAspectRatio(1, 1),
 							BitsStored = 8,
 							BitsAllocated = 8,
-							HighBit = 7,
-							Rows = (ushort)_size.Height,
-							Columns = (ushort)_size.Width,
-							PixelData = _pixelDataGetter.Invoke(_size, false)
+							HighBit = 7
 						};
+
+					Size pixelSize;
+					image.PixelData = _pixelDataGetter.Invoke(_imageBoxSize, out pixelSize, false);
+					image.Rows = (ushort)pixelSize.Height;
+					image.Columns = (ushort)pixelSize.Width;
 
 					this.BasicGrayscaleImageSequenceList.Add(image);
 				}

@@ -719,6 +719,9 @@ namespace ClearCanvas.Dicom.Iod.Modules
 
                 if (value is MediumType)
                     return ConvertMediumType((MediumType)value);
+
+                if (value is FilmDestination)
+                    return ConvertFilmDestination((FilmDestination) value);
             }
 
             return base.ConvertTo(context, culture, value, destinationType);
@@ -741,6 +744,14 @@ namespace ClearCanvas.Dicom.Iod.Modules
                 default:
                     return mediumType.ToString();
             }
+        }
+
+        private static string ConvertFilmDestination(FilmDestination filmDestination)
+        {
+            var destinationString = filmDestination.ToString();
+            return destinationString.StartsWith("Bin_")
+                ? destinationString.Replace('_', ' ')
+                : destinationString;
         }
     }
 
