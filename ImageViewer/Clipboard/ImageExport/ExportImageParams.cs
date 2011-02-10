@@ -35,17 +35,11 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 		/// <summary>
 		/// Specifies the scaling factor when <see cref="SizeMode"/> has a value of <see cref="ImageExport.SizeMode.Scale"/>.
-		/// This is ignored if <see cref="ExportOption"/> is <see cref="ImageExport.ExportOption.TrueSize"/>
 		/// </summary>
 		public float Scale = 1F;
 
 		/// <summary>
-		/// Specifies the output pixel spacing (in millimeter) when <see cref="ExportOption"/> has a value of <see cref="ImageExport.ExportOption.TrueSize"/>.
-		/// </summary>
-		public float OutputPixelSpacing;
-
-		/// <summary>
-		/// Specifies the output image dimensions when <see cref="SizeMode"/> has a value of <see cref="ImageExport.SizeMode.Fixed"/> or <see cref="ImageExport.SizeMode.ScaleToFit"/>.
+		/// Specifies the output image dimensions when <see cref="SizeMode"/> has a value of <see cref="ImageExport.SizeMode.Fixed"/>.
 		/// </summary>
 		public Size OutputSize;
 
@@ -73,13 +67,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 		/// <summary>
 		/// Indicates that the entire image should be exported in the original image's orientation (i.e. excluding all rotations and/or flips).
 		/// </summary>
-		CompleteImage = 1,
-
-		/// <summary>
-		/// Indicates that the visible area of the image (including any rotation and/or flips) should be exported.
-		/// The image is automatically scaled so the destination correspond to the physical size of the original image.
-		/// </summary>
-		TrueSize = 2
+		CompleteImage = 1
 	}
 
 	/// <summary>
@@ -94,13 +82,6 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 		/// <summary>
 		/// Indicates that the exported image should be scaled to fit a fixed size.
-		/// The output image fit into the specified <see cref="ExportImageParams.OutputSize"/>.  There is no padding added.
-		/// </summary>
-		ScaleToFit,
-
-		/// <summary>
-		/// Indicates that the exported image should be scaled to fit a fixed size.
-		/// The output image is padded to fill the specified <see cref="ExportImageParams.OutputSize"/>.
 		/// </summary>
 		Fixed
 	}
