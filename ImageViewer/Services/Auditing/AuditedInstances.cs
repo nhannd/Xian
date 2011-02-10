@@ -212,7 +212,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 				{
 					DriveInfo drive = new DriveInfo(root[0].ToString());
 					if (!drives.ContainsKey(drive.Name))
-						drives.Add(drive.Name, string.IsNullOrEmpty(drive.VolumeLabel) ? drive.Name : drive.VolumeLabel);
+						drives.Add(drive.Name, !drive.IsReady || string.IsNullOrEmpty(drive.VolumeLabel) ? drive.Name : drive.VolumeLabel);
 				}
 			}
 			return drives.Values;
