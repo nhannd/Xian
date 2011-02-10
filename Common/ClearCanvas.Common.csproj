@@ -367,9 +367,7 @@
     <Compile Include="IUserCredentialsProvider.cs" />
     <Compile Include="LicenseSettings.cs" />
     <Compile Include="LicenseSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>LicenseSettings.settings</DependentUpon>
+      <DependentUpon>LicenseSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="ProductSettings.cs" />
     <Compile Include="ProductSettings.Designer.cs">
@@ -396,8 +394,8 @@
       <DependentUpon>UsageTrackingSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="UsageTracking\UsageMessage.cs" />
-    <Compile Include="UsageTracking\UsageUtilities.cs" />
     <Compile Include="UsageTracking\UsageTrackingServiceClient.cs" />
+    <Compile Include="UsageTracking\UsageUtilities.cs" />
     <Compile Include="Utilities\FtpFileTransfer.cs" />
     <Compile Include="Utilities\IObservableList.cs" />
     <Compile Include="Utilities\IRemoteFileTransfer.cs" />
@@ -417,7 +415,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Configuration\ClassDiagrams\Platform.cd" />
+    <None Include="ClassDiagrams\Platform.cd" />
     <EmbeddedResource Include="Configuration\Tests\TestPreviousConfiguration.config">
     </EmbeddedResource>
     <None Include="Configuration\UpgradeSettings.settings">
@@ -428,10 +426,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ExtensionSettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="LicenseSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>LicenseSettings.Designer.cs</LastGenOutput>
-    </None>
+    <None Include="LicenseSettings.settings" />
     <None Include="ProductSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ProductSettings.Designer.cs</LastGenOutput>
