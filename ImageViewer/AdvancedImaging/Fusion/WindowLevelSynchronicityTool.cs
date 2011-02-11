@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					if (e.NewDisplaySet.PresentationImages.Count == 0)
 						return;
 
-					// find any available display set containing the same series as the individual layers and replicate its VOI LUT
+					// find any available display set containing the same series as the individual layers and capture its VOI LUT
 					IComposableLut baseVoiLut = null, overlayVoiLut = null;
 					var descriptor = (PETFusionDisplaySetDescriptor) e.NewDisplaySet.Descriptor;
 					foreach (IImageBox imageBox in ImageViewer.PhysicalWorkspace.ImageBoxes)
@@ -68,9 +68,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 						var seriesUid = ((IImageSopProvider) selectedImage).ImageSop.SeriesInstanceUid;
 						if (baseVoiLut == null && seriesUid == descriptor.SourceSeries.SeriesInstanceUid)
-							baseVoiLut = ((IVoiLutProvider) imageBox.TopLeftPresentationImage).VoiLutManager.VoiLut.Clone();
+							baseVoiLut = ((IVoiLutProvider) selectedImage).VoiLutManager.VoiLut;
 						else if (overlayVoiLut == null && seriesUid == descriptor.PETSeries.SeriesInstanceUid)
-							overlayVoiLut = ((IVoiLutProvider) imageBox.TopLeftPresentationImage).VoiLutManager.VoiLut.Clone();
+							overlayVoiLut = ((IVoiLutProvider) selectedImage).VoiLutManager.VoiLut;
 
 						if (baseVoiLut != null && overlayVoiLut != null)
 							break;
@@ -80,17 +80,18 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					{
 						var fusionImage = (FusionPresentationImage) e.NewDisplaySet.PresentationImages[0];
 						if (baseVoiLut == null)
-							baseVoiLut = GetInitialVoiLutMemento(fusionImage.Frame);
+							baseVoiLut = GetInitialVoiLut(fusionImage.Frame);
 						if (overlayVoiLut == null)
-							overlayVoiLut = GetInitialVoiLutMemento(fusionImage.OverlayFrameData.OverlayData.Frames[0]);
+							overlayVoiLut = GetInitialVoiLut(fusionImage.OverlayFrameData.OverlayData.Frames[0]);
 					}
 
+					// replicate the captured VOI LUTs to the fusion images
 					foreach (FusionPresentationImage image in e.NewDisplaySet.PresentationImages)
 					{
 						if (baseVoiLut != null)
-							image.BaseVoiLutManager.InstallVoiLut(baseVoiLut);
+							image.BaseVoiLutManager.InstallVoiLut(ReplicateVoiLut(baseVoiLut));
 						if (overlayVoiLut != null)
-							image.OverlayVoiLutManager.InstallVoiLut(overlayVoiLut);
+							image.OverlayVoiLutManager.InstallVoiLut(ReplicateVoiLut(overlayVoiLut));
 					}
 				}
 			}
@@ -105,10 +106,13 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			{
 				if (e.PresentationImage is IImageSopProvider && e.PresentationImage is IVoiLutProvider)
 				{
-					IComposableLut voiLut = ((IVoiLutProvider) e.PresentationImage).VoiLutManager.VoiLut.Clone();
-					string seriesInstanceUid = ((IImageSopProvider) e.PresentationImage).ImageSop.SeriesInstanceUid;
+					// only synchronize the VOI LUTs if the source LUT is linear - otherwise, leave it alone
+					var sourceVoiLut = ((IVoiLutProvider) e.PresentationImage).VoiLutManager.VoiLut as IVoiLutLinear;
+					if (sourceVoiLut == null)
+						return;
 
-					// find any available display set containing the same series as the individual layers and replicate its VoiLutManager memento
+					// find any available display set containing the same series as the individual layers and capture its VOI LUT
+					var seriesInstanceUid = ((IImageSopProvider) e.PresentationImage).ImageSop.SeriesInstanceUid;
 					foreach (IDisplaySet displaySet in _fusionDisplaySets)
 					{
 						var anyVisibleChange = false;
@@ -116,23 +120,24 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 						var descriptor = (PETFusionDisplaySetDescriptor) displaySet.Descriptor;
 						if (descriptor.SourceSeries.SeriesInstanceUid == seriesInstanceUid)
 						{
+							// replicate the captured VOI LUT to the fusion images
 							foreach (FusionPresentationImage image in displaySet.PresentationImages)
 							{
-								// written this way because we want to set the memento regardless whether or not the image is visible
-								image.BaseVoiLutManager.InstallVoiLut(voiLut);
+								image.BaseVoiLutManager.InstallVoiLut(ReplicateVoiLut(sourceVoiLut));
 								anyVisibleChange |= (image.Visible);
 							}
 						}
 						else if (descriptor.PETSeries.SeriesInstanceUid == seriesInstanceUid)
 						{
+							// replicate the captured VOI LUT to the fusion images
 							foreach (FusionPresentationImage image in displaySet.PresentationImages)
 							{
-								// written this way because we want to set the memento regardless whether or not the image is visible
-								image.OverlayVoiLutManager.InstallVoiLut(voiLut);
+								image.OverlayVoiLutManager.InstallVoiLut(ReplicateVoiLut(sourceVoiLut));
 								anyVisibleChange |= (image.Visible);
 							}
 						}
 
+						// force a draw only if we replicated the VOI LUT to a visible image somewhere
 						if (anyVisibleChange)
 							displaySet.Draw();
 					}
@@ -140,7 +145,20 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 		}
 
-		private static IComposableLut GetInitialVoiLutMemento(Frame frame)
+		/// <summary>
+		/// Attempts to replicate the specified <paramref name="sourceVoiLut"/>. If the LUT is not linear, computes a dummy LUT.
+		/// </summary>
+		private static IComposableLut ReplicateVoiLut(IComposableLut sourceVoiLut)
+		{
+			if (sourceVoiLut is IVoiLutLinear)
+			{
+				var voiLutLinear = (IVoiLutLinear) sourceVoiLut;
+				return new BasicVoiLutLinear(voiLutLinear.WindowWidth, voiLutLinear.WindowCenter);
+			}
+			return new IdentityVoiLinearLut();
+		}
+
+		private static IComposableLut GetInitialVoiLut(Frame frame)
 		{
 			if (frame != null)
 			{

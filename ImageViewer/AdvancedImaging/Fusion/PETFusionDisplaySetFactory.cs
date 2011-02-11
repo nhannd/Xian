@@ -73,6 +73,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 									displaySet.PresentationImages.Add(fus);
 								}
 							}
+							displaySet.PresentationImages.Sort();
 							displaySets.Add(displaySet);
 						}
 					}

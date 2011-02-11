@@ -432,6 +432,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Determining reindex state ....
+        /// </summary>
+        internal static string MessageDeterminingReindexState {
+            get {
+                return ResourceManager.GetString("MessageDeterminingReindexState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to delete one or more studies. Please see the service log for more details. You may need to reindex the local data store after manually removing the affected studies..
         /// </summary>
         internal static string MessageFailedToDeleteOneOrMoreStudies {
@@ -738,6 +747,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string MessageStudyCountUnavailable {
             get {
                 return ResourceManager.GetString("MessageStudyCountUnavailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reindex.
+        /// </summary>
+        internal static string ReindexApplicationDialogTitle {
+            get {
+                return ResourceManager.GetString("ReindexApplicationDialogTitle", resourceCulture);
             }
         }
         

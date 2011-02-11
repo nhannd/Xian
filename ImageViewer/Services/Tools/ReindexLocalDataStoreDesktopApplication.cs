@@ -10,9 +10,11 @@
 #endregion
 
 using System;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.Desktop;
+using Timer=ClearCanvas.Common.Utilities.Timer;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
@@ -20,19 +22,36 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	public sealed class ReindexLocalDataStoreApplicationViewExtensionPoint : ExtensionPoint<IApplicationView>
 	{}
 
+	public delegate void NotifyDelegate();
+
 	public interface IReindexLocalDataStoreApplicationView : IApplicationView, IDisposable
 	{
-		void Initialize(ILocalDataStoreReindexer reindexer);
-		void RunModal();
+		void SetDialogTitle(string title);
+
+		void ShowStartupDialog(string message);
+		void DismissStartupDialog();
+	
+		void ShowReindexDialog(ILocalDataStoreReindexer reindexer, NotifyDelegate notifyUserClosed);
+		void DismissReindexDialog();
+
+		void ShowMessageBox(string message);
+		void DismissMessageBoxes();
 	}
 
 	[AssociateView(typeof(ReindexLocalDataStoreApplicationViewExtensionPoint))]
 	internal class ReindexLocalDataStoreDesktopApplication : Application
 	{
 		private LocalDataStoreReindexer _reindexer;
-		private ClearCanvas.Common.Utilities.Timer _timer;
-		private bool _hasStarted;
-		private bool _quit;
+		private Timer _timer;
+		private bool _reindexRunning;
+		private bool _quitting;
+
+		public ReindexLocalDataStoreDesktopApplication()
+		{
+			TimeoutSeconds = 10;
+		}
+
+		public int TimeoutSeconds { get; set; }
 
 		private new IReindexLocalDataStoreApplicationView View
 		{
@@ -43,16 +62,41 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			_reindexer = new LocalDataStoreReindexer();
 			_reindexer.PropertyChanged += OnReindexPropertyChanged;
+	
+			View.SetDialogTitle(SR.ReindexApplicationDialogTitle);
 
-			View.Initialize(_reindexer);
+			//Delay showing the startup dialog, just in case the reindex is already running.
+			SynchronizationContext synchronizationContext = SynchronizationContext.Current;
+			ThreadPool.QueueUserWorkItem(delegate
+			                             	{
+			                             		Thread.Sleep(500);
+												synchronizationContext.Post(ShowStartupDialog, null);
+			                             	});
 
-			StartTimer(10000);
+			StartTimer(TimeoutSeconds * 1000);
+
 			return true;
 		}
-        
+
+		private void ShowStartupDialog(object state)
+		{
+			if (_reindexer == null || _reindexRunning)
+				return;
+
+			try
+			{
+				//This'll throw if the reindex one is visible already ... just catch and ignore.
+				View.ShowStartupDialog(SR.MessageStartingReindex);
+			}
+			catch
+			{
+			}
+		}
+
 		private void StartTimer(int intervalMilliseconds)
 		{
-			_timer = new ClearCanvas.Common.Utilities.Timer(OnTimer) { IntervalMilliseconds = intervalMilliseconds };
+			KillTimer();
+			_timer = new Timer(OnTimer) { IntervalMilliseconds = intervalMilliseconds };
 			_timer.Start();
 		}
 
@@ -70,13 +114,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			if (_timer == null)
 				return;
 
-			if (!_hasStarted) //reindex didn't start for whatever reason.
-				TimedQuit(SR.MessageReindexNotStarted);
-
 			KillTimer();
-
-			if (_quit)
-				Quit();
+			if (_quitting)
+				Shutdown();
+			else
+				TimedQuit(SR.MessageReindexNotStarted);
 		}
 		
 		private void TimedQuit(string message)
@@ -86,65 +128,83 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private void TimedQuit(string message, int intervalMilliseconds)
 		{
-			if (_quit)
-				return;
-
-			if (_timer == null)
+			if (!_quitting)
+			{
+				View.DismissStartupDialog();
 				StartTimer(intervalMilliseconds);
+				_quitting = true;
+			}
 
-			_quit = true;
 			if (!String.IsNullOrEmpty(message))
-				View.ShowMessageBox(message, MessageBoxActions.Ok);
+			{
+				View.ShowMessageBox(message);
+				if (!_reindexRunning)
+					Shutdown();
+			}
 		}
 
-		private void ShowDialog()
+		private void ShowReindexDialog()
 		{
-			if (_hasStarted)
+			if (_reindexRunning)
 				return;
 
-			_hasStarted = true;
 			KillTimer();
 
-			View.RunModal();
+			//Cancel quit and dismiss all dialogs.
+			_quitting = false;
+			View.DismissMessageBoxes();
 
-			if (_reindexer.RunningState == RunningState.Running)
+			_reindexRunning = true;
+			View.ShowReindexDialog(_reindexer, OnReindexDialogClosed); //this is a modal call.
+		}
+
+		private void OnReindexDialogClosed()
+		{
+			if (_reindexRunning)
 				TimedQuit(SR.MessageReindexWillContinue);
-			else
-				Quit();
 		}
 
 		void OnReindexPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == "RunningState")
+			if (e.PropertyName != "RunningState")
+				return;
+
+			if (!_reindexRunning)
 			{
-				if (!_hasStarted)
+				switch (_reindexer.RunningState)
 				{
-					switch (_reindexer.RunningState)
-					{
-						case RunningState.NotRunning:
-							_reindexer.Start();
-							break;
-						case RunningState.Running:
-							ShowDialog();
-							break;
-					}
+					case RunningState.NotRunning:
+						if (!_reindexer.Start())
+							TimedQuit(SR.MessageReindexNotStarted);
+						break;
+					case RunningState.Running:
+						ShowReindexDialog();
+						break;
+					case RunningState.Unknown:
+						TimedQuit(SR.MessageReindexFailure);
+						break;
 				}
-				else
+			}
+			else
+			{
+				switch (_reindexer.RunningState)
 				{
-					if (_reindexer.RunningState == RunningState.NotRunning)
-					{
+					case RunningState.NotRunning:
+						_reindexRunning = false;
 						if (_reindexer.FailedSteps > 0 && !_reindexer.Canceled)
+						{
 							TimedQuit(SR.MessageReindexFailures);
+						}
 						else
 						{
-							//Let the user see the result for a couple of seconds.
-							TimedQuit(null, 3000);
+							//Let the user see the result for a few seconds.
+							TimedQuit(null, 5000);
 						}
-					}
-					else if (_reindexer.RunningState == RunningState.Unknown)
-					{
+						break;
+					case RunningState.Unknown:
+						_reindexRunning = false;
 						TimedQuit(SR.MessageReindexFailure);
-					}
+						break;
 				}
 			}
 		}

@@ -25,17 +25,27 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		private ManualResetEvent _quitEvent;
 
 		internal bool NoWait { get; set; }
+		internal int TimeoutSeconds { get; set; }
 
 		public void Run()
 		{
 			using (_reindexer = new LocalDataStoreReindexer())
 			{
-				_reindexer.PropertyChanged += OnPropertyChanged;
-				_quitEvent = new ManualResetEvent(false);
+				Console.WriteLine(SR.MessageStartingReindex);
 				
-				Console.WriteLine("Determining reindex state ...");
-				const int tenSeconds = 10000;
-				bool signaled = _quitEvent.WaitOne(tenSeconds, false);
+				_reindexer.PropertyChanged += OnPropertyChanged;
+				if (!_reindexer.Start() && !_hasStarted)
+				{
+					Console.WriteLine(SR.MessageReindexNotStarted);
+					Environment.ExitCode = -1;
+					return;
+				}
+				
+				Thread.MemoryBarrier();
+
+				//Wait up until the timeout for some activity
+				_quitEvent = new ManualResetEvent(false);
+				bool signaled = _quitEvent.WaitOne(TimeoutSeconds * 1000, false);
 				if (signaled)
 					return;
 
@@ -52,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private float PercentComplete
 		{
-			get { return 100* _reindexer.TotalProcessed / (float)_reindexer.TotalToProcess; }	
+			get { return 100 * _reindexer.TotalProcessed / (float)_reindexer.TotalToProcess; }	
 		}
 
 		private void Quit()
@@ -76,7 +86,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 					{
 						case RunningState.NotRunning:
 							_calledStart = true;
-							Console.WriteLine(SR.MessageStartingReindex);
 							_reindexer.Start();
 							break;
 						case RunningState.Running:

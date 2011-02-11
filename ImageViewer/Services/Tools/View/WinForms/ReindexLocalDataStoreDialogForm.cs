@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 		{
 			InitializeComponent();
 
-			this.Text = SR.TitleReindexingLocalDataStore;
+			this.Text = SR.TitleReindexing;
 			var control = new LocalDataStoreReindexApplicationComponentControl(reindexer);
 			control.Dock = DockStyle.Fill;
 			this._contentPanel.Controls.Add(control);

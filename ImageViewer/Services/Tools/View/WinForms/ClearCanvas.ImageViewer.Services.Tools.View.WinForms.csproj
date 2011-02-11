@@ -59,6 +59,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DismissableMessageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DismissableMessageBox.Designer.cs">
+      <DependentUpon>DismissableMessageBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="ReindexLocalDataStoreDialogForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -115,6 +121,12 @@
       <DependentUpon>SendQueueApplicationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="SendQueueApplicationComponentView.cs" />
+    <Compile Include="ReindexStartupDialogForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReindexStartupDialogForm.Designer.cs">
+      <DependentUpon>ReindexStartupDialogForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -145,6 +157,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="DismissableMessageBox.resx">
+      <DependentUpon>DismissableMessageBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ReindexLocalDataStoreDialogForm.resx">
       <DependentUpon>ReindexLocalDataStoreDialogForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -176,6 +191,9 @@
     <EmbeddedResource Include="SendQueueApplicationComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>SendQueueApplicationComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReindexStartupDialogForm.resx">
+      <DependentUpon>ReindexStartupDialogForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
