@@ -212,6 +212,7 @@ namespace ClearCanvas.Desktop
         public ProgressBarStyle ProgressBarStyle
         {
             get { return _progressBarStyle; }
+            set { _progressBarStyle = value; }
         }
 
 		/// <summary>

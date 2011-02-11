@@ -20,6 +20,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.Annotations;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 #pragma warning disable 0419,1574,1587,1591
 
@@ -419,11 +420,15 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		{
 			Rectangle clientRectangle = image.ClientRectangle;
 
+			// Must build description from the source image because the ParentDisplaySet info is lost in the cloned image.
+			var clipboardItemDescription = BuildClipboardDescription(image);
+
 			image = image.Clone();
 			HideTextOverlay(image);
 
 			Bitmap bmp = IconCreator.CreatePresentationImageIcon(image);
-			return new ClipboardItem(image, bmp, "", clientRectangle);
+
+			return new ClipboardItem(image, bmp, clipboardItemDescription, clientRectangle);
 		}
 
 		public static IClipboardItem CreateDisplaySetItem(IDisplaySet displaySet)
@@ -489,6 +494,27 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		{
 			if (image is IAnnotationLayoutProvider)
 				((IAnnotationLayoutProvider)image).AnnotationLayout.Visible = false;
+		}
+
+		private static string BuildClipboardDescription(IPresentationImage image)
+		{
+			if (!(image is IImageSopProvider))
+				return string.Empty;
+
+			var imageSopProvider = (IImageSopProvider)image;
+			if (image.ParentDisplaySet == null)
+				return string.Format("{0} (Image #{1})", imageSopProvider.ImageSop.SeriesDescription, imageSopProvider.ImageSop.InstanceNumber);
+
+			// Multi-frame image, display image and frame number
+			if (imageSopProvider.ImageSop.NumberOfFrames > 1)
+				return string.Format("{0} (Image #{1} - Frame #{2})", image.ParentDisplaySet.Name, imageSopProvider.ImageSop.InstanceNumber, imageSopProvider.Frame.FrameNumber);
+
+			// Single frame image in a display set of multiple images, display image number
+			if (image.ParentDisplaySet.PresentationImages.Count > 1)
+				return string.Format("{0} (Image #{1})", image.ParentDisplaySet.Name, imageSopProvider.ImageSop.InstanceNumber);
+
+			// Only one image in the displayset, no need for image number
+			return image.ParentDisplaySet.Name;
 		}
 
 		#endregion

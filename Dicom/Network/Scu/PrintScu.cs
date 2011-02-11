@@ -47,9 +47,6 @@ namespace ClearCanvas.Dicom.Network.Scu
 		private EventObjectType _eventObjectType;
 
 		private int _numberOfImageBoxesSent;
-		private int _numberOfImageBoxes;
-		private int _currentProgress;
-		private int _totalProgress;
 		private FilmSession _filmSession;
 
 		#endregion
@@ -73,7 +70,6 @@ namespace ClearCanvas.Dicom.Network.Scu
 		{
 			_filmSession = filmSession;
 			_filmSession.PrintScu = this;
-			InitializeProgress();
 
 			Connect(clientAETitle, remoteAE, remoteHost, remotePort);
 			if (Status == ScuOperationStatus.Canceled)
@@ -166,7 +162,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 					return;
 				}
 
-				UpdateProgress();
+				EventsHelper.Fire(this.ProgressUpdated, this, new ProgressUpdateEventArgs(_numberOfImageBoxesSent));
 
 				if (Canceled)
 				{
@@ -334,59 +330,12 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 		public class ProgressUpdateEventArgs : EventArgs
 		{
-			public ProgressUpdateEventArgs(
-				int numberOfImageBoxesSent,
-				int numberOfImageBoxes,
-				int currentProgress,
-				int totalProgress)
+			public ProgressUpdateEventArgs(int numberOfImageBoxesSent)
 			{
 				this.NumberOfImageBoxesSent = numberOfImageBoxesSent;
-				this.NumberOfImageBoxes = numberOfImageBoxes;
-				this.CurrentProgress = currentProgress;
-				this.TotalProgress = totalProgress;
-
-				// Sanity check
-				if (this.CurrentProgress >= this.TotalProgress)
-					this.CurrentProgress = this.TotalProgress - 1;
 			}
 
 			public int NumberOfImageBoxesSent { get; private set; }
-
-			public int NumberOfImageBoxes { get; private set; }
-
-			/// <summary>
-			/// A 0-based index of the current progress
-			/// </summary>
-			public int CurrentProgress { get; private set; }
-
-			public int TotalProgress { get; private set; }
-		}
-
-		private void InitializeProgress()
-		{
-			_numberOfImageBoxesSent = 0;
-			_numberOfImageBoxes = CollectionUtils.Reduce<FilmBox, int>(_filmSession.FilmBoxes, 0, (fb, sum) => sum + fb.ImageBoxes.Count);
-			var numberOfFilmBoxes = _filmSession.FilmBoxes.Count;
-	
-			_currentProgress = 0;
-			_totalProgress = 0
-				+ 2	// create and delete film session
-				+ 3 * numberOfFilmBoxes // create, print, delete filmBoxes
-				+ _numberOfImageBoxes; // setting of imageBoxes
-
-		}
-
-		private void UpdateProgress()
-		{
-			_currentProgress++;
-
-			var args = new ProgressUpdateEventArgs(
-				_numberOfImageBoxesSent,
-				_numberOfImageBoxes,
-				_currentProgress,
-				_totalProgress);
-
-			EventsHelper.Fire(this.ProgressUpdated, this, args);
 		}
 
 		#endregion

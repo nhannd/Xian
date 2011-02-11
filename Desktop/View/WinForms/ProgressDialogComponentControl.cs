@@ -61,6 +61,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             _message.Text = _component.ProgressMessage;
             _progressBar.Value = _component.ProgressBar;
+            _progressBar.Style = (System.Windows.Forms.ProgressBarStyle)_component.ProgressBarStyle;
         }
 
         private void OnProgressTerminate(object sender, EventArgs e)
