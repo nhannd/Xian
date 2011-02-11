@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common.Utilities;
@@ -109,6 +110,19 @@ namespace ClearCanvas.Dicom.Network.Scu
 			{
 				this.ImageBoxes = new List<ImageBox>();
 			}
+
+			public Size GetSizeInPixel(int filmDPI)
+			{
+				var physicalWidthInInches = this.FilmSizeId.GetWidth(FilmSize.UnitType.Inch);
+				var physicalHeightInInches = this.FilmSizeId.GetHeight(FilmSize.UnitType.Inch);
+
+				var width = (int)Math.Ceiling(physicalWidthInInches * filmDPI);
+				var height = (int)Math.Ceiling(physicalHeightInInches * filmDPI);
+
+				return this.FilmOrientation == FilmOrientation.Portrait
+					? new Size(width, height)
+					: new Size(height, width);
+			}
 		}
 
 		public class ImageBox : ImageBoxPixelModuleIod
@@ -118,15 +132,13 @@ namespace ClearCanvas.Dicom.Network.Scu
 			/// <summary>
 			/// Delegate for getting pixel data.
 			/// </summary>
-			public delegate byte[] PixelDataDelegate(Size imageBoxSSize, out Size pixelSize, bool isPrintingColor);
+			public delegate byte[] PixelDataDelegate(out Size pixelSize, bool isPrintingColor);
 
-			protected readonly Size _imageBoxSize;
 			protected readonly PixelDataDelegate _pixelDataGetter;
 
-			public ImageBox(ushort imageBoxPosition, Size imageBoxSize, PixelDataDelegate pixelDataGetter)
+			public ImageBox(ushort imageBoxPosition, PixelDataDelegate pixelDataGetter)
 			{
 				this.ImageBoxPosition = imageBoxPosition;
-				_imageBoxSize = imageBoxSize;
 				_pixelDataGetter = pixelDataGetter;
 			}
 
@@ -147,7 +159,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 						};
 
 					Size pixelSize;
-					image.PixelData = _pixelDataGetter.Invoke(_imageBoxSize, out pixelSize, true);
+					image.PixelData = _pixelDataGetter.Invoke(out pixelSize, true);
 					image.Rows = (ushort) pixelSize.Height;
 					image.Columns = (ushort) pixelSize.Width;
 
@@ -167,7 +179,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 						};
 
 					Size pixelSize;
-					image.PixelData = _pixelDataGetter.Invoke(_imageBoxSize, out pixelSize, false);
+					image.PixelData = _pixelDataGetter.Invoke(out pixelSize, false);
 					image.Rows = (ushort)pixelSize.Height;
 					image.Columns = (ushort)pixelSize.Width;
 

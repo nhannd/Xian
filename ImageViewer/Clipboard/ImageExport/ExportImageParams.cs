@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 		public float Scale = 1F;
 
 		/// <summary>
-		/// Specifies the output image dimensions when <see cref="SizeMode"/> has a value of <see cref="ImageExport.SizeMode.Fixed"/>.
+		/// Specifies the output image dimensions when <see cref="SizeMode"/> has a value of <see cref="ImageExport.SizeMode.ScaleToFit"/> and <see cref="ImageExport.SizeMode.Fixed"/>.
 		/// </summary>
 		public Size OutputSize;
 
@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 		/// <summary>
 		/// Specifies whether or not the text overlay annotation layer should be visible in the output.
 		/// </summary>
-		public bool ShowTextOverlay = false;
+		public bool ShowTextOverlay;
 	}
 
 	/// <summary>
@@ -82,6 +82,13 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 		/// <summary>
 		/// Indicates that the exported image should be scaled to fit a fixed size.
+		/// The output image fit into a specified size.  There is no padding added.
+		/// </summary>
+		ScaleToFit,
+
+		/// <summary>
+		/// Indicates that the exported image should be scaled to fit a fixed size.
+		/// The output image is padded to fill a specified size.
 		/// </summary>
 		Fixed
 	}

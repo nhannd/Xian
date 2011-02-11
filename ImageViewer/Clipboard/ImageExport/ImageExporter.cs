@@ -87,6 +87,13 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			{
 				if (exportParams.SizeMode == SizeMode.Scale)
 				{
+					// TODO: Refactor ImageExporter, so there only the displayRectangle and OutputRectangle are provided
+					//		Scale can be automatically figured out.
+					//		A "Padded" option can be provided to distinguish between the current Fixed and ScaleToFit options
+					// TODO: Refactor ImageExporter, so there are separate exporters for each ExportOption.
+					//		The ExportImageParams is getting too many options and not all of them are applicable to each exporter
+					//		Instead, each exporter should have its own parameters.
+
 					if (exportParams.ExportOption == ExportOption.Wysiwyg)
 					{
 						return DrawWysiwygImageToBitmap(image, exportParams.DisplayRectangle, exportParams.Scale);
@@ -94,6 +101,20 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 					else
 					{
 						return DrawCompleteImageToBitmap(image, exportParams.Scale);
+					}
+				}
+				else if (exportParams.SizeMode == SizeMode.ScaleToFit)
+				{
+					if (exportParams.ExportOption == ExportOption.Wysiwyg)
+					{
+						var scale = ScaleToFit(exportParams.DisplayRectangle.Size, exportParams.OutputSize);
+						return DrawWysiwygImageToBitmap(image, exportParams.DisplayRectangle, scale);
+					}
+					else
+					{
+						var sourceImage = (IImageGraphicProvider)image;
+						var scale = ScaleToFit(new Size(sourceImage.ImageGraphic.Columns, sourceImage.ImageGraphic.Rows), exportParams.OutputSize);
+						return DrawCompleteImageToBitmap(image, scale);
 					}
 				}
 				else

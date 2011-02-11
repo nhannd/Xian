@@ -137,10 +137,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// </para>
         /// </summary>
         /// <value>The border density.</value>
-        public string BorderDensity
+        public BorderDensity BorderDensity
         {
-            get { return base.DicomAttributeProvider[DicomTags.BorderDensity].GetString(0, String.Empty); }
-            set { base.DicomAttributeProvider[DicomTags.BorderDensity].SetString(0, value); }
+            get { return IodBase.ParseEnum<BorderDensity>(base.DicomAttributeProvider[DicomTags.BorderDensity].GetString(0, String.Empty), BorderDensity.None); }
+            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.BorderDensity], value, false); }
         }
 
         /// <summary>
@@ -155,12 +155,11 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// </para>
         /// </summary>
         /// <value>The empty image density.</value>
-        public string EmptyImageDensity
+        public EmptyImageDensity EmptyImageDensity
         {
-            get { return base.DicomAttributeProvider[DicomTags.EmptyImageDensity].GetString(0, String.Empty); }
-            set { base.DicomAttributeProvider[DicomTags.EmptyImageDensity].SetString(0, value); }
+            get { return IodBase.ParseEnum<EmptyImageDensity>(base.DicomAttributeProvider[DicomTags.EmptyImageDensity].GetString(0, String.Empty), EmptyImageDensity.None); }
+            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.EmptyImageDensity], value, false); }
         }
-
 
         /// <summary>
         /// Gets or sets the min density.  Minimum density of the images on the film, expressed in hundredths of OD. If Min Density is lower than minimum printer density than Min Density 
@@ -339,6 +338,35 @@ namespace ClearCanvas.Dicom.Iod.Modules
     }
     #endregion
 
+	#region SmooBorderDensitythingType 
+
+	/// <summary>
+	/// Defines the border density.  Density of the film areas surrounding and between images on the film.
+	/// Defined Terms: Black, White or i, where i represents the desired density in hundreds of OD.
+	/// </summary>
+	[TypeConverter(typeof(BasicPrintEnumConverter<BorderDensity>))]
+	public enum BorderDensity
+	{
+		None,
+		Black,
+		White
+	}
+	#endregion
+
+	#region EmptyImageDensity Enum
+	/// <summary>
+	/// Defines the empty image density.  Density of the image box area on the film that contains no image.
+	/// Defined Terms: Black, White or i, where i represents the desired density in hundreds of OD.
+	/// </summary>
+	[TypeConverter(typeof(BasicPrintEnumConverter<EmptyImageDensity>))]
+	public enum EmptyImageDensity
+	{
+		None,
+		Black,
+		White
+	}
+	#endregion
+
     #region SmoothingType Enum
     /// <summary>
     /// Further specifies the type of the interpolation function. Values are defined in Conformance Statement.
@@ -494,8 +522,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
                 new ImageDisplayFormat(FormatType.STANDARD,1,2),
                 new ImageDisplayFormat(FormatType.STANDARD,2,1),
                 new ImageDisplayFormat(FormatType.STANDARD,2,2),
+                new ImageDisplayFormat(FormatType.STANDARD,2,4),
                 new ImageDisplayFormat(FormatType.STANDARD,4,1),
                 new ImageDisplayFormat(FormatType.STANDARD,4,2),
+                new ImageDisplayFormat(FormatType.STANDARD,4,4),
                 new ImageDisplayFormat(FormatType.ROW,1,2),
                 new ImageDisplayFormat(FormatType.COL,1,2)
             };
