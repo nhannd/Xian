@@ -43,6 +43,9 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			if (_reindexDialog != null)
 				throw new InvalidOperationException();
 
+			if (_startupDialog != null)
+				return;
+
 			_startupDialog = new ReindexStartupDialogForm();
 			if (!String.IsNullOrEmpty(_dialogTitle))
 				_startupDialog.Text = _dialogTitle;
@@ -72,14 +75,14 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			_notifyReindexClosed = notifyUserClosed;
 			DismissStartupDialog();
 			_reindexDialog = new ReindexLocalDataStoreDialogForm(reindexer);
-			_reindexDialog.FormClosed += OnReindexDialogClosing;
+			_reindexDialog.FormClosed += OnReindexDialogClosed;
 			SplashScreenManager.DismissSplashScreen(_reindexDialog);
 			//Post it so the splash screen can go away.
 			_reindexDialog.Show();
 			_reindexDialog.Activate();
 		}
 
-		void OnReindexDialogClosing(object sender, FormClosedEventArgs e)
+		void OnReindexDialogClosed(object sender, FormClosedEventArgs e)
 		{
 			if (_notifyReindexClosed != null)
 				_notifyReindexClosed();
@@ -103,12 +106,14 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			                 	{
 			                 		Text = _dialogTitle,
 			                 		Message = message,
-			                 		StartPosition = parentForm == null ? FormStartPosition.CenterScreen : FormStartPosition.CenterParent
+			                 		ShowInTaskbar = parentForm == null,
+									StartPosition = parentForm == null ? FormStartPosition.CenterScreen : FormStartPosition.CenterParent
 			                 	};
 			
 			SplashScreenManager.DismissSplashScreen(messageBox);
 			_messageBoxes.Push(messageBox);
 			messageBox.ShowDialog(parentForm);
+			messageBox.Dispose();
 		}
 
 		public void DismissMessageBoxes()
@@ -117,7 +122,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			{
 				var messageBox = _messageBoxes.Pop();
 				messageBox.DialogResult = DialogResult.OK;
-				messageBox.Dispose();
+				messageBox.Close();
 			}
 		}
 

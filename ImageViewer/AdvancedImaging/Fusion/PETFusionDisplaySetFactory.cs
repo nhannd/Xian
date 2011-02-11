@@ -140,6 +140,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				maxRowSpacing = Math.Max(maxRowSpacing, pixelSpacing.Row);
 			}
 
+			//Aren't many of these rules taken from MPR?  If so, we should create a rule object.
+
 			// ensure all frames have consistent pixel spacing
 			if (maxColumnSpacing - minColumnSpacing > _sliceSpacingTolerance || maxRowSpacing - minRowSpacing > _sliceSpacingTolerance)
 				return false;

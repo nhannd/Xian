@@ -28,6 +28,7 @@ namespace ClearCanvas.Common
         private readonly string _description;
     	private readonly bool _enabled;
 
+		//TODO (CR February 2011): ExtensionInfo constructor public???
         /// <summary>
         /// Internal constructor.
         /// </summary>

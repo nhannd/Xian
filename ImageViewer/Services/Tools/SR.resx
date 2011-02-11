@@ -320,7 +320,7 @@ Please ensure the ClearCanvas server is running or contact your system administr
     <value>Reindex already running ...</value>
   </data>
   <data name="MessageReindexWillContinue" xml:space="preserve">
-    <value>The reindex operation will continue to run in the background.</value>
+    <value>The reindex operation will continue to run in the background, however you will NOT be informed of any errors that may have occurred.</value>
   </data>
   <data name="MessageRetrieveDicomServerServiceNotRunning" xml:space="preserve">
     <value>Failed to retrieve the selected studies because the Dicom Server service is not running.

@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			[CommandLineParameter("nowait", "n", "When true, the application will initiate the reindex and quit without waiting for it to complete.  Only works with 'silent' switch.")]
 			public bool NoWait { get; set; }
 
-			[CommandLineParameter("timeout", "t", "The amount of time, in seconds, to wait before reindex activity is detected before quitting.")]
+			[CommandLineParameter("timeout", "t", "The amount of time, in seconds, to wait for reindex activity to be detected before quitting.")]
 			public int TimeoutSeconds { get; set; }
 		}
 

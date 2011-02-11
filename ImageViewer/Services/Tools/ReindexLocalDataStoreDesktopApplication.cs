@@ -42,16 +42,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	internal class ReindexLocalDataStoreDesktopApplication : Application
 	{
 		private LocalDataStoreReindexer _reindexer;
-		private Timer _timer;
 		private bool _reindexRunning;
-		private bool _quitting;
+		private Timer _timer;
 
 		public ReindexLocalDataStoreDesktopApplication()
 		{
 			TimeoutSeconds = 10;
 		}
 
-		public int TimeoutSeconds { get; set; }
+		public int TimeoutSeconds { get; set;}
 
 		private new IReindexLocalDataStoreApplicationView View
 		{
@@ -72,10 +71,35 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			                             		Thread.Sleep(500);
 												synchronizationContext.Post(ShowStartupDialog, null);
 			                             	});
-
+			
 			StartTimer(TimeoutSeconds * 1000);
-
 			return true;
+		}
+
+		private void StartTimer(int intervalMilliseconds)
+		{
+			KillTimer();
+			_timer = new Timer(OnTimer, null, intervalMilliseconds);
+			_timer.Start();
+		}
+
+		private void KillTimer()
+		{
+			if (_timer == null)
+				return;
+
+			_timer.Stop();
+			_timer = null;
+		}
+
+		private void OnTimer(object ignore)
+		{
+			if (_timer == null)
+				return;
+
+			KillTimer();
+			if (!_reindexRunning)
+				OnError(SR.MessageReindexNotStarted);
 		}
 
 		private void ShowStartupDialog(object state)
@@ -93,66 +117,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			}
 		}
 
-		private void StartTimer(int intervalMilliseconds)
+		private void OnReindexStarted()
 		{
 			KillTimer();
-			_timer = new Timer(OnTimer) { IntervalMilliseconds = intervalMilliseconds };
-			_timer.Start();
-		}
-
-		private void KillTimer()
-		{
-			if (_timer == null)
-				return;
-
-			_timer.Stop();
-			_timer = null;
-		}
-
-		void OnTimer(object ignore)
-		{
-			if (_timer == null)
-				return;
-
-			KillTimer();
-			if (_quitting)
-				Shutdown();
-			else
-				TimedQuit(SR.MessageReindexNotStarted);
-		}
-		
-		private void TimedQuit(string message)
-		{
-			TimedQuit(message, 10000);
-		}
-
-		private void TimedQuit(string message, int intervalMilliseconds)
-		{
-			if (!_quitting)
-			{
-				View.DismissStartupDialog();
-				StartTimer(intervalMilliseconds);
-				_quitting = true;
-			}
-
-			if (!String.IsNullOrEmpty(message))
-			{
-				View.ShowMessageBox(message);
-				if (!_reindexRunning)
-					Shutdown();
-			}
-		}
-
-		private void ShowReindexDialog()
-		{
-			if (_reindexRunning)
-				return;
-
-			KillTimer();
-
-			//Cancel quit and dismiss all dialogs.
-			_quitting = false;
 			View.DismissMessageBoxes();
+			View.DismissStartupDialog();
 
 			_reindexRunning = true;
 			View.ShowReindexDialog(_reindexer, OnReindexDialogClosed); //this is a modal call.
@@ -160,8 +129,34 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private void OnReindexDialogClosed()
 		{
+			KillTimer();
+
 			if (_reindexRunning)
-				TimedQuit(SR.MessageReindexWillContinue);
+				View.ShowMessageBox(SR.MessageReindexWillContinue);
+
+			Shutdown();
+		}
+
+		private void OnReindexCompleted()
+		{
+			KillTimer();
+		}
+
+		private void OnReindexCanceled()
+		{
+			KillTimer();
+
+			Shutdown();
+		}
+
+		private void OnError(string message)
+		{
+			KillTimer();
+
+			View.DismissStartupDialog();
+			View.ShowMessageBox(message);
+			if (!_reindexRunning)
+				Shutdown();
 		}
 
 		void OnReindexPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -175,13 +170,13 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				{
 					case RunningState.NotRunning:
 						if (!_reindexer.Start())
-							TimedQuit(SR.MessageReindexNotStarted);
+							OnError(SR.MessageReindexNotStarted);
 						break;
 					case RunningState.Running:
-						ShowReindexDialog();
+						OnReindexStarted();
 						break;
 					case RunningState.Unknown:
-						TimedQuit(SR.MessageReindexFailure);
+						OnError(SR.MessageReindexFailure);
 						break;
 				}
 			}
@@ -192,18 +187,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 					case RunningState.NotRunning:
 						_reindexRunning = false;
 						if (_reindexer.FailedSteps > 0 && !_reindexer.Canceled)
-						{
-							TimedQuit(SR.MessageReindexFailures);
-						}
+							OnError(SR.MessageReindexFailures);
+						else if (_reindexer.Canceled)
+							OnReindexCanceled();
 						else
-						{
-							//Let the user see the result for a few seconds.
-							TimedQuit(null, 5000);
-						}
+							OnReindexCompleted();
 						break;
 					case RunningState.Unknown:
 						_reindexRunning = false;
-						TimedQuit(SR.MessageReindexFailure);
+						OnError(SR.MessageReindexFailure);
 						break;
 				}
 			}

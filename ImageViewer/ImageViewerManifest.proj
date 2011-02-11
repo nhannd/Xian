@@ -126,6 +126,11 @@
       <Output TaskParameter="Include" ItemName="ManifestFiles" />
     </CreateItem>
   </Target>
+  <Target Name="Fusion" >
+    <CreateItem Include="$(TrunkDirectory)\ImageViewer\ManifestInputFusion.xml">
+      <Output TaskParameter="Include" ItemName="ManifestFiles" />
+    </CreateItem>
+  </Target>
   <Target Name="Enterprise" >
     <CreateItem Include="$(TrunkDirectory)\ImageViewer\ManifestInputEnterprise.xml">
       <Output TaskParameter="Include" ItemName="ManifestFiles" />
@@ -198,6 +203,11 @@
       <Output TaskParameter="IsMatch" PropertyName="ExcludeMpr" />
     </RegexIsMatch>
     <CallTarget Targets="Mpr" Condition ="!$(ExcludeMpr)"/>
+    
+    <RegexIsMatch Pattern="ExcludeFusion" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeFusion" />
+    </RegexIsMatch>
+    <CallTarget Targets="Fusion" Condition ="!$(ExcludeFusion)"/>
     
     <RegexIsMatch Pattern="ExcludeEnterprise" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeEnterprise" />

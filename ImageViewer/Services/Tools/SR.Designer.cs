@@ -677,7 +677,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The reindex operation will continue to run in the background..
+        ///   Looks up a localized string similar to The reindex operation will continue to run in the background, however you will NOT be informed of any errors that may have occurred..
         /// </summary>
         internal static string MessageReindexWillContinue {
             get {

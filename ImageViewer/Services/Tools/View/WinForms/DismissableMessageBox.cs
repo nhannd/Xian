@@ -30,6 +30,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 
 		private void button1_Click(object sender, EventArgs e)
 		{
+			DialogResult = DialogResult.OK;
 			Close();
 		}
 	}
