@@ -502,16 +502,18 @@ namespace ClearCanvas.ImageViewer.Clipboard
 				return string.Empty;
 
 			var imageSopProvider = (IImageSopProvider)image;
+
+			// This is unlikely to happen
 			if (image.ParentDisplaySet == null)
-				return string.Format("{0} (Image #{1})", imageSopProvider.ImageSop.SeriesDescription, imageSopProvider.ImageSop.InstanceNumber);
+				return string.Format("{0} - Image #{1}", imageSopProvider.ImageSop.SeriesDescription, imageSopProvider.ImageSop.InstanceNumber);
 
 			// Multi-frame image, display image and frame number
 			if (imageSopProvider.ImageSop.NumberOfFrames > 1)
-				return string.Format("{0} (Image #{1} - Frame #{2})", image.ParentDisplaySet.Name, imageSopProvider.ImageSop.InstanceNumber, imageSopProvider.Frame.FrameNumber);
+				return string.Format("{0} - Image #{1}, Frame #{2}", image.ParentDisplaySet.Name, imageSopProvider.ImageSop.InstanceNumber, imageSopProvider.Frame.FrameNumber);
 
 			// Single frame image in a display set of multiple images, display image number
 			if (image.ParentDisplaySet.PresentationImages.Count > 1)
-				return string.Format("{0} (Image #{1})", image.ParentDisplaySet.Name, imageSopProvider.ImageSop.InstanceNumber);
+				return string.Format("{0} - Image #{1}", image.ParentDisplaySet.Name, imageSopProvider.ImageSop.InstanceNumber);
 
 			// Only one image in the displayset, no need for image number
 			return image.ParentDisplaySet.Name;
