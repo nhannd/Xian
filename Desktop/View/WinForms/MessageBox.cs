@@ -61,6 +61,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         internal DialogBoxAction Show(string message, string title, ClearCanvas.Common.MessageBoxActions buttons, IWin32Window owner)
         {
+#if !MONO 
+			// Ticket #7285:  messages boxes should not be obscured by the splashscreen
+			// If no splash screen is being displayed, this is effectively a no-op.
+			SplashScreenManager.DismissSplashScreen(owner as Form);
+#endif 
+
             title = string.IsNullOrEmpty(title) ? Application.Name : string.Format("{0} - {1}", Application.Name, title);
             DialogResult dr = System.Windows.Forms.MessageBox.Show(owner,
                 message, title, _buttonMap[(int)buttons]);
