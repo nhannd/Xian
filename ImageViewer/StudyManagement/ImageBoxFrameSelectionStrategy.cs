@@ -11,10 +11,9 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.ImageViewer.StudyManagement;
 using System.Diagnostics;
 
-namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
+namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	internal delegate void NotifyChangedDelegate();
 

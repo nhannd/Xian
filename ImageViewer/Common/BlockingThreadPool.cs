@@ -13,7 +13,7 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
+namespace ClearCanvas.ImageViewer.Common
 {
 	//TODO: incorporate this kind of thing into the thread pools in common, where the items being 
 	//processed can be added and/or removed.

@@ -168,7 +168,13 @@
     <Compile Include="PresentationStates\Dicom\Tests\OverlayPlanePresentationTests.cs" />
     <Compile Include="PresentationStates\GeometricShutterCache.cs" />
     <Compile Include="Rendering\RenderingException.cs" />
+    <Compile Include="Common\BlockingCollection.cs" />
+    <Compile Include="Common\BlockingThreadPool.cs" />
+    <Compile Include="Common\IBlockingEnumerator.cs" />
+    <Compile Include="StudyManagement\ImageBoxFrameSelectionStrategy.cs" />
     <Compile Include="StudyManagement\Tests\UnitTestStudyLoader.cs" />
+    <Compile Include="StudyManagement\ViewerFrameEnumerator.cs" />
+    <Compile Include="StudyManagement\WeightedWindowPrefetchingStrategy.cs" />
     <Compile Include="Tests\ImageDiff.cs" />
     <Compile Include="Tests\MockScreenInfoProvider.cs" />
     <Compile Include="ViewerActionFilter.cs" />

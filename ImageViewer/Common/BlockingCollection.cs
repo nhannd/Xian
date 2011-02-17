@@ -12,7 +12,7 @@
 using System.Collections.Generic;
 using System.Threading;
 
-namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
+namespace ClearCanvas.ImageViewer.Common
 {
 	//Similar to the BlockingQueue, except that items can be added and removed.
 	//TODO: the behaviour of this class and it's API should be refactored if it's going to be reused.

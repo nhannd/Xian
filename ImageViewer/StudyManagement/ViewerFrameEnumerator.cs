@@ -13,11 +13,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Common;
 using System.Collections;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
+namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	internal class ViewerFrameEnumerator : IBlockingEnumerator<Frame>, IDisposable
 	{

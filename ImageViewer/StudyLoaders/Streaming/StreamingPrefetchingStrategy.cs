@@ -9,28 +9,28 @@
 
 #endregion
 
+using System;
 using System.Diagnostics;
 using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
-using System;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
 	internal class StreamingPrefetchingStrategy : WeightedWindowPrefetchingStrategy
 	{
-		private int _activeLoadThreads = 0;
 		private int _activeRetrieveThreads = 0;
+		private int _activeDecompressThreads = 0;
 
 		public StreamingPrefetchingStrategy()
 			: base("CC_STREAMING", SR.DescriptionPrefetchingStrategy)
 		{
-			base.RetrieveConcurrency = StreamingSettings.Default.RetrieveConcurrency;
-			base.DecompressConcurrency = StreamingSettings.Default.DecompressConcurrency;
-			base.ImageWindow = StreamingSettings.Default.ImageWindow;
-			base.SelectedWeighting = StreamingSettings.Default.SelectedWeighting;
-			base.UnselectedWeighting = StreamingSettings.Default.UnselectedWeighting;
+			Enabled = StreamingSettings.Default.RetrieveConcurrency > 0;
+			RetrievalThreadConcurrency = Math.Max(StreamingSettings.Default.RetrieveConcurrency, 1);
+			DecompressionThreadConcurrency = Math.Max(StreamingSettings.Default.DecompressConcurrency, 1);
+			FrameLookAheadSize = StreamingSettings.Default.ImageWindow >= 0 ? (int?) StreamingSettings.Default.ImageWindow : null;
+			SelectedFrameWeight = Math.Max(StreamingSettings.Default.SelectedWeighting, 1);
+			UnselectedFrameWeight = Math.Max(StreamingSettings.Default.UnselectedWeighting, 0);
 		}
 
 		protected override bool CanRetrieveFrame(Frame frame)
@@ -38,34 +38,27 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			if (!(frame.ParentImageSop.DataSource is StreamingSopDataSource))
 				return false;
 
-			StreamingSopDataSource dataSource = (StreamingSopDataSource)frame.ParentImageSop.DataSource;
+			StreamingSopDataSource dataSource = (StreamingSopDataSource) frame.ParentImageSop.DataSource;
 			IStreamingSopFrameData frameData = dataSource.GetFrameData(frame.FrameNumber);
 			return !frameData.PixelDataRetrieved;
 		}
 
-		protected override void RetrieveFrame(Frame frame, out bool decompress)
+		protected override void RetrieveFrame(Frame frame)
 		{
-			decompress = false;
+			Interlocked.Increment(ref _activeRetrieveThreads);
 			try
 			{
-				//just return if the available memory is getting low - only retrieve and decompress on-demand now.
-				if (SystemResources.GetAvailableMemory(SizeUnits.Megabytes) < StreamingSettings.Default.AvailableMemoryLimitMegabytes)
-					return;
-
-				Interlocked.Increment(ref _activeRetrieveThreads);
-
 				string message = String.Format("Retrieving Frame (active threads: {0})", Thread.VolatileRead(ref _activeRetrieveThreads));
 				Trace.WriteLine(message);
 
-				IStreamingSopDataSource dataSource = (IStreamingSopDataSource)frame.ParentImageSop.DataSource;
+				IStreamingSopDataSource dataSource = (IStreamingSopDataSource) frame.ParentImageSop.DataSource;
 				IStreamingSopFrameData frameData = dataSource.GetFrameData(frame.FrameNumber);
 
 				frameData.RetrievePixelData();
-				decompress = true;
 			}
 			catch (OutOfMemoryException)
 			{
-				Platform.Log(LogLevel.Error, "Out of memory trying to retrieve pixel data.  Prefetching will not resume unless memory becomes available.");
+				Platform.Log(LogLevel.Error, "Out of memory trying to retrieve pixel data.");
 			}
 			catch (Exception e)
 			{
@@ -77,17 +70,22 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			}
 		}
 
-		protected override void LoadFramePixelData(Frame frame)
+		protected override bool CanDecompressFrame(Frame frame)
 		{
+			if (!(frame.ParentImageSop.DataSource is StreamingSopDataSource))
+				return false;
+
+			StreamingSopDataSource dataSource = (StreamingSopDataSource) frame.ParentImageSop.DataSource;
+			IStreamingSopFrameData frameData = dataSource.GetFrameData(frame.FrameNumber);
+			return frameData.PixelDataRetrieved;
+		}
+
+		protected override void DecompressFrame(Frame frame)
+		{
+			Interlocked.Increment(ref _activeDecompressThreads);
 			try
 			{
-				//just return if the available memory is getting low - only retrieve and decompress on-demand now.
-				if (SystemResources.GetAvailableMemory(SizeUnits.Megabytes) < StreamingSettings.Default.AvailableMemoryLimitMegabytes)
-					return;
-
-				Interlocked.Increment(ref _activeLoadThreads);
-
-				string message = String.Format("Loading Frame (active threads: {0})", Thread.VolatileRead(ref _activeLoadThreads));
+				string message = String.Format("Decompressing Frame (active threads: {0})", Thread.VolatileRead(ref _activeDecompressThreads));
 				Trace.WriteLine(message);
 
 				//TODO: try to trigger header retrieval for data luts?
@@ -95,15 +93,15 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			}
 			catch (OutOfMemoryException)
 			{
-				Platform.Log(LogLevel.Error, "Out of memory trying to decompress pixel data.  Prefetching will not resume unless memory becomes available.");
+				Platform.Log(LogLevel.Error, "Out of memory trying to decompress pixel data.");
 			}
 			catch (Exception e)
 			{
-				Platform.Log(LogLevel.Error, e, "Error loading frame pixel data.");
+				Platform.Log(LogLevel.Error, e, "Error decompressing frame pixel data.");
 			}
 			finally
 			{
-				Interlocked.Decrement(ref _activeLoadThreads);
+				Interlocked.Decrement(ref _activeDecompressThreads);
 			}
 		}
 	}
