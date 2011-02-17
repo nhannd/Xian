@@ -10,8 +10,10 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using NHibernate;
 using NHibernate.Cfg;
@@ -38,7 +40,35 @@ namespace ClearCanvas.Enterprise.Hibernate
 		{
 			get
 			{
-				return Assembly.GetExecutingAssembly().GetName().Version;
+                try
+                {
+                    using (IReadContext read = OpenReadContext())
+                    {
+                        IPersistentStoreVersionBroker broker = read.GetBroker<IPersistentStoreVersionBroker>();
+                        PersistentStoreVersionSearchCriteria criteria = new PersistentStoreVersionSearchCriteria();
+                        criteria.Major.SortDesc(0);
+                        criteria.Minor.SortDesc(1);
+                        criteria.Build.SortDesc(2);
+                        criteria.Revision.SortDesc(3);
+
+                        var versions = broker.Find(criteria);
+                        if (versions.Count == 0)
+                            return Assembly.GetExecutingAssembly().GetName().Version;                        
+
+                        var version = CollectionUtils.FirstElement(versions);
+
+                        return new Version(
+                            int.Parse(version.Major),
+                            int.Parse(version.Minor),
+                            int.Parse(version.Build),
+                            int.Parse(version.Revision));
+                    }
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Error, e);
+                    return Assembly.GetExecutingAssembly().GetName().Version;
+                }
 			}
 		}
 
