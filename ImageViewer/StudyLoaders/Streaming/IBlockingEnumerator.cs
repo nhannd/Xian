@@ -14,8 +14,8 @@ using System.Collections.Generic;
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
 	//TODO: work this into common, so that all thread pools aren't tied to queues that can't be changed.
-	public interface IBlockingEnumerator<T> : IEnumerable<T>
+	internal interface IBlockingEnumerator<T> : IEnumerable<T>
 	{
-		bool ContinueBlocking { get; set; }
+		bool IsBlocking { get; set; }
 	}
 }

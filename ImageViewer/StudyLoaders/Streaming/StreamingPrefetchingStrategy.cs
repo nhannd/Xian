@@ -18,81 +18,34 @@ using System;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
-	internal class StreamingPrefetchingStrategy : PrefetchingStrategy
+	internal class StreamingPrefetchingStrategy : WeightedWindowPrefetchingStrategy
 	{
-		private ViewerFrameEnumerator _imageBoxEnumerator;
-		private BlockingThreadPool<Frame> _retrieveThreadPool;
-		private SimpleBlockingThreadPool _decompressThreadPool;
-
-		private volatile bool _stopAllActivity = false;
 		private int _activeLoadThreads = 0;
 		private int _activeRetrieveThreads = 0;
 
 		public StreamingPrefetchingStrategy()
 			: base("CC_STREAMING", SR.DescriptionPrefetchingStrategy)
 		{
+			base.RetrieveConcurrency = StreamingSettings.Default.RetrieveConcurrency;
+			base.DecompressConcurrency = StreamingSettings.Default.DecompressConcurrency;
+			base.ImageWindow = StreamingSettings.Default.ImageWindow;
+			base.SelectedWeighting = StreamingSettings.Default.SelectedWeighting;
+			base.UnselectedWeighting = StreamingSettings.Default.UnselectedWeighting;
 		}
 
-		protected override void Start()
+		protected override bool CanRetrieveFrame(Frame frame)
 		{
-			InternalStart();
+			if (!(frame.ParentImageSop.DataSource is StreamingSopDataSource))
+				return false;
+
+			StreamingSopDataSource dataSource = (StreamingSopDataSource)frame.ParentImageSop.DataSource;
+			IStreamingSopFrameData frameData = dataSource.GetFrameData(frame.FrameNumber);
+			return !frameData.PixelDataRetrieved;
 		}
 
-		private void InternalStart()
+		protected override void RetrieveFrame(Frame frame, out bool decompress)
 		{
-			int retrieveConcurrency = StreamingSettings.Default.RetrieveConcurrency;
-			if (retrieveConcurrency == 0)
-				return;
-
-			_imageBoxEnumerator = new ViewerFrameEnumerator(base.ImageViewer, 
-				Math.Max(StreamingSettings.Default.SelectedWeighting, 1), 
-				Math.Max(StreamingSettings.Default.UnselectedWeighting, 0), 
-				StreamingSettings.Default.ImageWindow);
-
-			_retrieveThreadPool = new BlockingThreadPool<Frame>(_imageBoxEnumerator, RetrieveFrame);
-			_retrieveThreadPool.ThreadPoolName = "Retrieve";
-			_retrieveThreadPool.Concurrency = retrieveConcurrency;
-			_retrieveThreadPool.ThreadPriority = ThreadPriority.BelowNormal;
-			_retrieveThreadPool.Start();
-
-			int decompressConcurrency = Math.Max(StreamingSettings.Default.DecompressConcurrency, 1);
-			_decompressThreadPool = new SimpleBlockingThreadPool(decompressConcurrency);
-			_decompressThreadPool.ThreadPoolName = "Decompress";
-			_decompressThreadPool.ThreadPriority = ThreadPriority.Lowest;
-			_decompressThreadPool.Start();
-		}
-		
-		protected override void Stop()
-		{
-			InternalStop();
-		}
-
-		private void InternalStop()
-		{
-			if (_retrieveThreadPool != null)
-			{
-				_retrieveThreadPool.Stop(false);
-				_retrieveThreadPool = null;
-			}
-
-			if (_decompressThreadPool != null)
-			{
-				_decompressThreadPool.Stop(false);
-				_decompressThreadPool = null;
-			}
-
-			if (_imageBoxEnumerator != null)
-			{
-				_imageBoxEnumerator.Dispose();
-				_imageBoxEnumerator = null;
-			}
-		}
-
-		private void RetrieveFrame(Frame frame)
-		{
-			if (_stopAllActivity)
-				return;
-
+			decompress = false;
 			try
 			{
 				//just return if the available memory is getting low - only retrieve and decompress on-demand now.
@@ -108,11 +61,10 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 				IStreamingSopFrameData frameData = dataSource.GetFrameData(frame.FrameNumber);
 
 				frameData.RetrievePixelData();
-				_decompressThreadPool.Enqueue(delegate { LoadFramePixelData(frame); });
+				decompress = true;
 			}
-			catch(OutOfMemoryException)
+			catch (OutOfMemoryException)
 			{
-				_stopAllActivity = true;
 				Platform.Log(LogLevel.Error, "Out of memory trying to retrieve pixel data.  Prefetching will not resume unless memory becomes available.");
 			}
 			catch (Exception e)
@@ -125,11 +77,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			}
 		}
 
-		private void LoadFramePixelData(Frame frame)
+		protected override void LoadFramePixelData(Frame frame)
 		{
-			if (_stopAllActivity)
-				return;
-
 			try
 			{
 				//just return if the available memory is getting low - only retrieve and decompress on-demand now.
@@ -146,7 +95,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			}
 			catch (OutOfMemoryException)
 			{
-				_stopAllActivity = true;
 				Platform.Log(LogLevel.Error, "Out of memory trying to decompress pixel data.  Prefetching will not resume unless memory becomes available.");
 			}
 			catch (Exception e)

@@ -63,6 +63,7 @@
     <Compile Include="StreamingSopFrameData.cs" />
     <Compile Include="StreamingStudyLoader.cs" />
     <Compile Include="ViewerFrameEnumerator.cs" />
+    <Compile Include="WeightedWindowPrefetchingStrategy.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

@@ -11,30 +11,29 @@
 
 using System.Collections.Generic;
 using System.Threading;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
 	//Similar to the BlockingQueue, except that items can be added and removed.
 	//TODO: the behaviour of this class and it's API should be refactored if it's going to be reused.
-	public class BlockingCollection<T> : ICollection<T>, IBlockingEnumerator<T>
+	internal class BlockingCollection<T> : ICollection<T>, IBlockingEnumerator<T>
 	{
 		private readonly object _syncLock = new object();
 		private readonly List<T> _items = new List<T>();
-		private volatile bool _continueBlocking = true;
+		private volatile bool _isBlocking = true;
 
 		#region IBlockingCollection<T> Members
 
-		public bool ContinueBlocking
+		public bool IsBlocking
 		{
-			get { return _continueBlocking; }
+			get { return _isBlocking; }
 			set
 			{
-				if (_continueBlocking == value)
+				if (_isBlocking == value)
 					return;
 
-				_continueBlocking = value;
-				if (!_continueBlocking)
+				_isBlocking = value;
+				if (!_isBlocking)
 				{
 					lock (_syncLock)
 					{
@@ -48,7 +47,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 		private IEnumerable<T> GetItems()
 		{
-			while (_continueBlocking)
+			while (_isBlocking)
 			{
 				T item;
 
@@ -96,9 +95,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 		{
 			lock (_syncLock)
 			{
-				CodeClock clock = new CodeClock();
-				clock.Start();
-
 				foreach (T item in items)
 				{
 					if (!_items.Contains(item))
@@ -107,9 +103,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 						Monitor.Pulse(_syncLock);
 					}
 				}
-
-				clock.Stop();
-				PerformanceReportBroker.PublishReport("BlockingCollection", "AddRange", clock.Seconds);
 			}
 		}
 
