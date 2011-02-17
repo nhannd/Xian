@@ -61,14 +61,16 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		private object _item;
 		private Image _image;
 		private readonly string _name;
+		private readonly string _description;
 		private readonly Rectangle _displayRectangle;
 		private int _lockCount;
 
-		public ClipboardItem(object item, Image image, string description, Rectangle displayRectangle)
+		public ClipboardItem(object item, Image image, string name, string description, Rectangle displayRectangle)
 		{
 			_item = item;
 			_image = image;
-			_name = description;
+			_name = name;
+			_description = description;
 			_displayRectangle = displayRectangle;
 		}
 
@@ -90,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 		public string Description
 		{
-			get { return string.Empty; }
+			get { return _description; }
 		}
 
 		public Rectangle DisplayRectangle

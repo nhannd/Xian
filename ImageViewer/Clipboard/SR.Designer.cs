@@ -259,6 +259,38 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Patient Id: {0}
+        ///Patient Name: {1}
+        ///Study Date: {2}
+        ///Study Description: {3}
+        ///Accession Number: {4}
+        ///Modality: {5}.
+        /// </summary>
+        internal static string MessageClipboardDescription {
+            get {
+                return ResourceManager.GetString("MessageClipboardDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} - Image #{1}, Frame #{2}.
+        /// </summary>
+        internal static string MessageClipboardNameMultiframeImage {
+            get {
+                return ResourceManager.GetString("MessageClipboardNameMultiframeImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} - Image #{1}.
+        /// </summary>
+        internal static string MessageClipboardNameSingleImage {
+            get {
+                return ResourceManager.GetString("MessageClipboardNameSingleImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Creating video ....
         /// </summary>
         internal static string MessageCreatingVideo {
