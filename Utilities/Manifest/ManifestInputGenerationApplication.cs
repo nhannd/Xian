@@ -43,7 +43,7 @@ namespace ClearCanvas.Utilities.Manifest
             try
             {
                 _parms.Parse(args);
-
+         
                 // Scan the specified directory
                 ScanDirectory();
 
@@ -119,7 +119,10 @@ namespace ClearCanvas.Utilities.Manifest
                 input.Config = true;
 
             if (input.Name.EndsWith("critical.config"))
-                input.Config = true;
+            {
+                input.Config = false;
+                input.Checksum = true;
+            }
 
             _manifestInput.Files.Add(input);
         }
