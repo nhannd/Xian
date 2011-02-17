@@ -1128,15 +1128,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			DicomValidator.ValidateSOPInstanceUID(this.SopInstanceUid);
 			DicomValidator.ValidateSeriesInstanceUID(this.SeriesInstanceUid);
 			DicomValidator.ValidateStudyInstanceUID(this.StudyInstanceUid);
-
-			ValidatePatientId();
-		}
-
-		private void ValidatePatientId()
-		{
-			//Patient ID is a Type 2 tag, so this is our own restriction, not a Dicom Restriction.
-			if (String.IsNullOrEmpty(this.PatientId) || this.PatientId.TrimEnd(' ').Length == 0)
-				throw new SopValidationException(SR.ExceptionInvalidPatientID);
 		}
 
 		#endregion
