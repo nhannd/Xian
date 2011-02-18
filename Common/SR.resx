@@ -322,15 +322,15 @@
     <value>{0} Bytes</value>
   </data>
   <data name="FormatFileSizeGB" xml:space="preserve">
-    <value>{0:f2} GiB</value>
+    <value>{0:f2} GB</value>
   </data>
   <data name="FormatFileSizeKB" xml:space="preserve">
-    <value>{0:f2} KiB</value>
+    <value>{0:f2} KB</value>
   </data>
   <data name="FormatFileSizeMB" xml:space="preserve">
-    <value>{0:f2} MiB</value>
+    <value>{0:f2} MB</value>
   </data>
   <data name="FormatFileSizeTB" xml:space="preserve">
-    <value>{0:f2} TiB</value>
+    <value>{0:f2} TB</value>
   </data>
 </root>
