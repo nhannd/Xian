@@ -117,6 +117,26 @@
     <PluginDeleteFiles Include="$(PluginsDirectory)\*.*" />
   </ItemGroup>
 
+  <!-- Flags the CIL desktop executable as requiring 32-bit execution even on a 64-bit machine -->
+  <Target Name="SetExeX86Flag">
+    <GetFrameworkSdkPath>
+      <Output TaskParameter="Path" PropertyName="SdkPath" />
+    </GetFrameworkSdkPath>
+    <Exec Command="corflags /32BIT+ &quot;$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe&quot;" WorkingDirectory="$(SdkPath)\bin\" />
+  </Target>
+
+  <!-- Flags the CIL desktop executable as capable of handling extended process memory space ("large addresses") if the OS is configured to do so -->
+  <Target Name="SetExeLAAFlag">
+    <!-- The 64-bit version of editbin can be run directly from VC\bin\amd64 -->
+    <Exec Condition="'$(BuildPlatform)' == 'x64'"
+          Command="editbin /LARGEADDRESSAWARE &quot;$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe&quot;"
+          WorkingDirectory="$(VS90COMNTOOLS)\..\..\VC\bin\amd64" />
+    <!-- The 32-bit version of editbin has a dependency in Common7\IDE, hence the weird use of both WorkdingDirectory and a full command path -->
+    <Exec Condition="'$(BuildPlatform)' != 'x64'"
+          Command="&quot;$(VS90COMNTOOLS)..\..\VC\bin\editbin&quot; /LARGEADDRESSAWARE &quot;$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe&quot;"
+          WorkingDirectory="$(VS90COMNTOOLS)\..\IDE" />
+  </Target>
+
   <Target Name="Copy Files">
 
     <!-- Make required directories -->
@@ -157,8 +177,16 @@
     <RegexIsMatch Pattern="ExcludeDesktopExecutable" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeDesktopExecutable" />
     </RegexIsMatch>
+    <RegexIsMatch Pattern="SetDesktopExecutableX86Flag" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="SetDesktopExecutableX86Flag" />
+    </RegexIsMatch>
+    <RegexIsMatch Pattern="SetDesktopExecutableLAAFlag" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="SetDesktopExecutableLAAFlag" />
+    </RegexIsMatch>
 
     <CallTarget Condition="!$(ExcludeDesktopExecutable)" Targets="Copy Files" />
 
+    <CallTarget Condition="!$(ExcludeDesktopExecutable) AND $(SetDesktopExecutableX86Flag)" Targets="SetExeX86Flag" />
+    <CallTarget Condition="!$(ExcludeDesktopExecutable) AND $(SetDesktopExecutableLAAFlag)" Targets="SetExeLAAFlag" />
   </Target>
 </Project>
