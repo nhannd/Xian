@@ -484,6 +484,51 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} Bytes.
+        /// </summary>
+        public static string FormatFileSizeBytes {
+            get {
+                return ResourceManager.GetString("FormatFileSizeBytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0:f2} GiB.
+        /// </summary>
+        public static string FormatFileSizeGB {
+            get {
+                return ResourceManager.GetString("FormatFileSizeGB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0:f2} KiB.
+        /// </summary>
+        public static string FormatFileSizeKB {
+            get {
+                return ResourceManager.GetString("FormatFileSizeKB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0:f2} MiB.
+        /// </summary>
+        public static string FormatFileSizeMB {
+            get {
+                return ResourceManager.GetString("FormatFileSizeMB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0:f2} TiB.
+        /// </summary>
+        public static string FormatFileSizeTB {
+            get {
+                return ResourceManager.GetString("FormatFileSizeTB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Loading plugin: {0}.
         /// </summary>
         public static string FormatLoadingPlugin {
