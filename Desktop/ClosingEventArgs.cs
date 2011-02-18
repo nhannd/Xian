@@ -99,8 +99,10 @@ namespace ClearCanvas.Desktop
             get { return _interaction; }
         }
 
-        // maybe we can expose this later if needed
-        internal bool Cancel
+		/// <summary>
+		/// Gets and set whether to cancel the current closing request.  Set to true to prevent the <see cref="DesktopObject"/> from closing.
+		/// </summary>
+        public bool Cancel
         {
             get { return _cancel; }
             set { _cancel = _cancel || value; }
