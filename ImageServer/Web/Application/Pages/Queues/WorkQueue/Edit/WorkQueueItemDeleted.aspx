@@ -12,7 +12,13 @@
 <%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Pages/Common/MainContentSection.Master" Title="ClearCanvas ImageServer" Codebehind="WorkQueueItemDeleted.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit.WorkQueueItemDeleted" %>
 
 <asp:Content runat="server" ID="MainMenuContent" contentplaceholderID="MainMenuPlaceHolder">
-    <asp:Table ID="Table1" runat="server"><asp:TableRow><asp:TableCell HorizontalAlign="right" style="padding-top: 12px;"><asp:LinkButton ID="LinkButton1" runat="server" SkinId="CloseButton" Text="<%$Resources: Labels,Close %>"</asp:LinkButton> OnClientClick="javascript: window.close(); return false;" /></asp:TableCell></asp:TableRow></asp:Table>
+    <asp:Table ID="Table1" runat="server">
+        <asp:TableRow>
+            <asp:TableCell HorizontalAlign="right" style="padding-top: 12px;">
+                <asp:LinkButton ID="LinkButton1" runat="server" SkinId="CloseButton" Text="<%$Resources: Labels,Close %>" OnClientClick="javascript: window.close(); return false;"></asp:LinkButton> 
+            </asp:TableCell>
+        </asp:TableRow>
+    </asp:Table>
 </asp:Content>
 
 <asp:Content runat="server" ContentPlaceHolderID="MainContentSectionPlaceHolder" >
