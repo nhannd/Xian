@@ -116,7 +116,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			Platform.CheckForNullReference(sop, "sop");
 
-			sop.Validate();
+			if (!this.SopValidationDisabled)
+				sop.Validate();
 
 			if (_sops.ContainsKey(sop.SopInstanceUid))
 			{
@@ -131,6 +132,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		
 			return true;
 		}
+
+		/// <summary>
+		/// Indicates if each <see cref="Sop"/> should be validated when adding to the <see cref="StudyTree"/>
+		/// </summary>
+		public bool SopValidationDisabled { get; set; }
 
 		#region Private Methods
 
