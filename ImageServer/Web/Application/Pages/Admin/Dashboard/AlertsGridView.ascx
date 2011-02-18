@@ -1,3 +1,14 @@
+<%--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+
 <%@ Import namespace="Microsoft.JScript"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Data.DataSource"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
@@ -17,29 +28,29 @@
             <ccUI:GridView ID="AlertGridView" runat="server" OnRowDataBound="AlertGridView_RowDataBound" SelectionMode="Single" 
                 DataKeyNames="Key" PageSize="10">
                 <Columns>
-                    <asp:TemplateField HeaderText="Content">
+                    <asp:TemplateField HeaderText="<%$Resources:ColumnHeaders,AlertContent %>">
 					    <itemtemplate>
 					        <%# Eval("Message") %>
-					        <asp:LinkButton runat="server" ID="AppLogLink" Text="[Logs]" CssClass="LogInfo"/>
+					        <asp:LinkButton runat="server" ID="AppLogLink" Text="<%$Resources: Labels,AlertGridPanel_LinkToLogs%>" CssClass="LogInfo"/>
 					        <asp:PlaceHolder runat="server" ID="DetailsHoverPlaceHolder"></asp:PlaceHolder>
 					    </itemtemplate>
 				    </asp:TemplateField>
-                    <asp:BoundField DataField="Component" HeaderText="Component" HeaderStyle-HorizontalAlign="Left" />
-                    <asp:BoundField DataField="Source" HeaderText="Source" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />
-                    <asp:TemplateField HeaderText="Insert&nbsp;Date " HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+                    <asp:BoundField DataField="Component" HeaderText="<%$Resources:ColumnHeaders,AlertComponent %>" HeaderStyle-HorizontalAlign="Left" />
+                    <asp:BoundField DataField="Source" HeaderText="<%$Resources:ColumnHeaders,AlertSource %>" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />
+                    <asp:TemplateField HeaderText="<%$Resources:ColumnHeaders,AlertInsertDate%>" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
                         <ItemTemplate>
                             <ccUI:DateTimeLabel ID="InserTime" runat="server" Value='<%# Eval("InsertTime") %>' />                        
                         </ItemTemplate>
                     </asp:TemplateField> 
-                    <asp:TemplateField HeaderText="Level" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+                    <asp:TemplateField HeaderText="<%$Resources:ColumnHeaders,AlertLevel %>" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 					    <itemtemplate>
                             <asp:Label ID="Level" Text="" runat="server" />
                         </itemtemplate>
 				    </asp:TemplateField>
-                    <asp:BoundField DataField="Category" HeaderText="Category" HeaderStyle-HorizontalAlign="Left" />                                                                               
+                    <asp:BoundField DataField="Category" HeaderText="<%$Resources:ColumnHeaders,AlertCategory %>" HeaderStyle-HorizontalAlign="Left" />                                                                               
                 </Columns>
                 <EmptyDataTemplate>
-                    <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="No alerts were found using the provided criteria." />
+                    <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="<%$Resources: SR,NoAlertsFound %>" />
                 </EmptyDataTemplate>
                 <RowStyle CssClass="GlobalGridViewRow" />
                 <AlternatingRowStyle CssClass="GlobalGridViewRow" />

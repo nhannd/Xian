@@ -1,3 +1,13 @@
+<%-- License
+
+Copyright (c) 2011, ClearCanvas Inc.
+All rights reserved.
+http://www.clearcanvas.ca
+
+This software is licensed under the Open Software License v3.0.
+For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+--%>
+
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
 <%@ Import namespace="ClearCanvas.Common.Utilities"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Data.DataSource"%>
@@ -20,12 +30,12 @@
 					<Columns>
 					    <asp:BoundField DataField="Reason" HeaderText="" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left">
 						</asp:BoundField>
-						<asp:TemplateField HeaderText="Study Instance UID" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+						<asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,StudyInstanceUID %>" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 							<itemtemplate>
 							    <asp:Label runat="server" ID="ExistingStudyInstanceUidLabel" Text='<%# (bool)Eval("StudyExists")? Eval("StudyInstanceUid"): "N/A" %>'></asp:Label>
 							</itemtemplate>
 					    </asp:TemplateField>
-						<asp:TemplateField HeaderText="Existing Study" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+						<asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,SIQExistingStudy %>" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 							<itemtemplate>							    
 							    <asp:Table runat="server" ID="ExistingStudyTable">
 							        <asp:TableRow>
@@ -47,10 +57,10 @@
 							            </asp:TableCell>
 							        </asp:TableRow>
 							    </asp:Table>    
-							    <asp:Label runat="server" ID="StudyNotAvailableLabel" Text="N/A"></asp:Label>
+							    <asp:Label runat="server" ID="StudyNotAvailableLabel" Text="<%$Resources: SR, NotAvailable %>"></asp:Label>
                             </itemtemplate>
 						</asp:TemplateField>
-		                <asp:TemplateField HeaderText="Image Info" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+		                <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,SIQConflictingImageInfo %>" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 							<itemtemplate>                               
                                <table width="100%">
 							    <tr>
@@ -71,14 +81,14 @@
 							    </table>    
                             </itemtemplate>
 						</asp:TemplateField>
-			            <asp:TemplateField HeaderText="Time&nbsp;Received&nbsp;&nbsp;" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" >
+			            <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,SIQTimeReceived %>" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" >
                                 <ItemTemplate>
                                     <ccUI:DateTimeLabel ID="TimeReceived" runat="server" Value='<%# Eval("ReceivedTime") %>' ></ccUI:DateTimeLabel>
                                 </ItemTemplate>
                         </asp:TemplateField>   
 					</Columns>
 				    <EmptyDataTemplate>
-                        <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="No items were found using the provided criteria." />
+                        <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="<%$Resources: SR, StudyDetails_NoSIQForThisStudy %>" />
 					</EmptyDataTemplate>					
 					<RowStyle CssClass="GlobalGridViewRow StudyIntegrityQueueRow" />
 					<AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow StudyIntegrityQueueRow" />

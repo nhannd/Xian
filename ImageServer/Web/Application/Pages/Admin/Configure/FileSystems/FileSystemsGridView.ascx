@@ -1,3 +1,14 @@
+<%--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSystems.FileSystemsGridView"
     Codebehind="FileSystemsGridView.ascx.cs" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
@@ -11,41 +22,41 @@
                 PageSize="20">
                 <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
                 <Columns>
-                    <asp:BoundField DataField="Description" HeaderText="Description" HeaderStyle-HorizontalAlign="Left"></asp:BoundField>
-                    <asp:TemplateField HeaderText="Read">
+                    <asp:BoundField DataField="Description" HeaderText="<%$Resources: ColumnHeaders,FilesystemDescription %>" HeaderStyle-HorizontalAlign="Left"></asp:BoundField>
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,FilesystemReadPermission %>">
                         <ItemTemplate>
                             <asp:Image ID="ReadImage" runat="server" SkinID="Checked" />
                         </ItemTemplate>
                         <ItemStyle HorizontalAlign="Center" />
                         <HeaderStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Write">
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,FilesystemWritePermission %>">
                         <ItemTemplate>
                             <asp:Image ID="WriteImage" runat="server" SkinID="Unchecked" />
                         </ItemTemplate>
                         <ItemStyle HorizontalAlign="Center" />
                         <HeaderStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Tier" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,FilesystemTier %>" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
                         <ItemTemplate>
                             <asp:Label ID="FilesystemTierDescription" runat="server"></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Path" HeaderStyle-HorizontalAlign="Left">
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,FilesystemPath %>" HeaderStyle-HorizontalAlign="Left">
                         <ItemTemplate>
                             <asp:Label ID="PathLabel" runat="server" Text='<%# Bind("FileSystemPath") %>'></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:BoundField DataField="HighWatermark" HeaderText="High Watermark" Visible="False">
+                    <asp:BoundField DataField="HighWatermark" HeaderText="<%$Resources: ColumnHeaders,FilesystemHighWatermark %>" Visible="False">
                         <HeaderStyle Wrap="False" />
                     </asp:BoundField>
-                    <asp:BoundField DataField="LowWatermark" HeaderText="Low Watermark" Visible="False">
+                    <asp:BoundField DataField="LowWatermark" HeaderText="<%$Resources: ColumnHeaders,FilesystemLowWatermark %>" Visible="False">
                         <HeaderStyle Wrap="False" />
                     </asp:BoundField>
-                    <asp:BoundField DataField="PercentFull" HeaderText="Percent Full" Visible="False">
+                    <asp:BoundField DataField="PercentFull" HeaderText="<%$Resources: ColumnHeaders,FilesystemUsagePercentage %>" Visible="False">
                         <HeaderStyle Wrap="False" />
                     </asp:BoundField>
-                    <asp:TemplateField HeaderText="Disk Usage">
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,FilesystemDiskUsage %>">
                         <ItemTemplate>
                             <asp:Image ID="UsageImage" runat="server" ImageAlign="AbsBottom" />
                         </ItemTemplate>
@@ -54,7 +65,7 @@
                     </asp:TemplateField>
                 </Columns>
                 <EmptyDataTemplate>
-                   <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="No file systems were found using the provided criteria." />
+                   <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="<%$Resources: SR,AdminFilesystem_NoFilesystemFound %>" />
                 </EmptyDataTemplate>
                 <RowStyle CssClass="GlobalGridViewRow" />
                 <AlternatingRowStyle CssClass="GlobalGridViewRow" />                

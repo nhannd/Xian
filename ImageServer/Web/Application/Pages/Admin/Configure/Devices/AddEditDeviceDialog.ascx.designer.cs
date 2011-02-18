@@ -392,16 +392,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices 
         protected global::ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.ThrottleSettingsTab ThrottleSettingsTab;
         
         /// <summary>
-        /// OKButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton OKButton;
-
-        /// <summary>
-        /// OKButton control.
+        /// UpdateButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
@@ -409,7 +400,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices 
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton UpdateButton;
         
-
+        /// <summary>
+        /// OKButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton OKButton;
+        
         /// <summary>
         /// CancelButton control.
         /// </summary>

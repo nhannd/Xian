@@ -26,7 +26,7 @@
                                             <td align="right" valign="bottom">
                                             </td>
                                             <td align="left">
-                                                <asp:Label ID="Label3" runat="server" Text="Group Name" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label3" runat="server" Text="<%$Resources: SearchFieldLabels, GroupName %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:TextBox ID="GroupName" runat="server" CssClass="SearchTextBox"></asp:TextBox>
                                             </td>
                                             <td valign="bottom">

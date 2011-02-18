@@ -22,6 +22,7 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue.SearchPanel.js", "application/x-javascript")]
 
@@ -147,9 +148,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
 
             int prevSelectedIndex = StatusFilter.SelectedIndex;
             StatusFilter.Items.Clear();
-            StatusFilter.Items.Add(new ListItem("All", "All"));
+            StatusFilter.Items.Add(new ListItem(SR.All, "All"));
             foreach (RestoreQueueStatusEnum s in statusItems)
-                StatusFilter.Items.Add(new ListItem(s.Description, s.Lookup));
+                StatusFilter.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(s), s.Lookup));
             StatusFilter.SelectedIndex = prevSelectedIndex;
 
             DeleteItemButton.Roles = AuthorityTokens.RestoreQueue.Delete;
@@ -195,7 +196,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
                 foreach (Model.RestoreQueue item in items)
                 {
                     String text = "";
-                    String.Format("<tr align='left'><td>Study Instance Uid:{0}&nbsp;</td></tr>", 
+                    String.Format("<tr align='left'><td>{0}:{1}</td></tr>",
+                                    SR.StudyInstanceUID,
                                     StudyStorage.Load(item.StudyStorageKey).StudyInstanceUid);
                     MessageBox.Message += text;
                 }

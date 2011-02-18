@@ -154,7 +154,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             List<StudyIntegrityReasonEnum> reasons = StudyIntegrityReasonEnum.GetAll();
             foreach (StudyIntegrityReasonEnum reason in reasons)
             {
-                ReasonListBox.Items.Add(new ListItem(reason.Description, reason.Lookup));
+                ReasonListBox.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription( reason), reason.Lookup));
             }
 
             if (!string.IsNullOrEmpty(PatientNameFromUrl) || !string.IsNullOrEmpty(PatientIdFromUrl))

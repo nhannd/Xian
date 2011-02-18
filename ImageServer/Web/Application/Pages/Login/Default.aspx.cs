@@ -23,7 +23,6 @@ using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
 using SR=ClearCanvas.ImageServer.Web.Application.App_GlobalResources.SR;
-
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
 {
     public partial class _Default : BasePage
@@ -38,7 +37,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
             
             if (!ServerPlatform.IsManifestVerified)
             {
-                ManifestWarningTextLabel.Text = HttpContext.GetGlobalResourceObject("SR", "NonStandardInstallation") as string;
+                ManifestWarningTextLabel.Text = SR.NonStandardInstallation;
             }
 
             DataBind();

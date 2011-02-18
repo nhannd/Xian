@@ -9,10 +9,14 @@
 
 --%>
 
+
+
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="PasswordExpiredDialog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Login.PasswordExpiredDialog" %>
 
-<ccAsp:ModalDialog ID="ModalDialog1" runat="server" Width="500px" Title="Password Expired">
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
+<ccAsp:ModalDialog ID="ModalDialog1" runat="server" Width="500px" Title="<%$Resources: Titles, PasswordExpiredDialogTitle %>">
     <ContentTemplate>
     
     <asp:Panel runat="server" Visible="false" ID="ErrorMessagePanel" CssClass="ErrorMessage" style="margin-bottom: 10px;">
@@ -21,19 +25,22 @@
     
     <asp:Panel ID="Panel1" runat="server" width="100%" CssClass="DialogPanelContent">
 
-        <asp:Panel runat="server" CssClass="PasswordExpiredMessage"><asp:Label runat="server" ID="Label1" Text="Your password has expired, or this is your first login to the ImageServer. Please enter a new password below." /></asp:Panel>
+        <asp:Panel runat="server" CssClass="PasswordExpiredMessage">
+            <asp:Label runat="server" ID="Label1">
+                <%= SR.YourPasswordHasExpired %>
+            </asp:Label>
     
         <table style="margin-top: 10px; margin-bottom: 10px;">
-        <tr><td class="ChangePasswordLabel">User ID:</td><td><asp:TextBox runat="server" Width="150px" ID="Username"/></td></tr>
-        <tr><td class="ChangePasswordLabel">New Password:</td><td><asp:TextBox TextMode="Password" runat="server"  Width="150px" ID="NewPassword"/></td></tr>
-        <tr><td class="ChangePasswordLabel">Retype New Password:</td><td><asp:TextBox TextMode="Password" runat="server"  Width="150px" ID="ConfirmNewPassword"/></td></tr>
+        <tr><td class="ChangePasswordLabel"><%= Labels.UserID %>:</td><td><asp:TextBox runat="server" Width="150px" ID="Username"/></td></tr>
+        <tr><td class="ChangePasswordLabel"><%= Labels.NewPassword %>:</td><td><asp:TextBox TextMode="Password" runat="server"  Width="150px" ID="NewPassword"/></td></tr>
+        <tr><td class="ChangePasswordLabel"><%= Labels.RetypeNewPassword %>:</td><td><asp:TextBox TextMode="Password" runat="server"  Width="150px" ID="ConfirmNewPassword"/></td></tr>
         </table>
         
         <input type="hidden" runat="server" id="OriginalPassword" />
            
-    </asp:Panel>
+        </asp:Panel>
     
-<table cellpadding="0" cellspacing="0" width="100%">
+        <table cellpadding="0" cellspacing="0" width="100%">
                     <tr>
                         <td align="right">
                             <asp:Panel ID="Panel2" runat="server" CssClass="DefaultModalDialogButtonPanel">
@@ -42,7 +49,7 @@
                         </td>
                     </tr>
                 </table>
-    
+    </asp:Panel>
     </ContentTemplate>
 </ccAsp:ModalDialog>
 

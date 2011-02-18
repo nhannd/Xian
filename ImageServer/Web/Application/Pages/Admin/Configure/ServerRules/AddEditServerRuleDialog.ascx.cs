@@ -438,7 +438,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 
                 // Fill in the drop down menus
                 RuleTypeDropDownList.Items.Add(new ListItem(
-                                                   _rule.ServerRuleTypeEnum.Description,
+                                                   ServerEnumDescription.GetLocalizedDescription(_rule.ServerRuleTypeEnum),
                                                    _rule.ServerRuleTypeEnum.Lookup));
 
                 IList<ServerRuleApplyTimeEnum> list = new List<ServerRuleApplyTimeEnum>();
@@ -449,7 +449,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 
                 foreach (ServerRuleApplyTimeEnum applyTime in list)
                     RuleApplyTimeDropDownList.Items.Add(new ListItem(
-                                                            applyTime.Description,
+                                                            ServerEnumDescription.GetLocalizedDescription(applyTime),
                                                             applyTime.Lookup));
 
 
@@ -525,12 +525,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 
                         foreach (ServerRuleApplyTimeEnum applyTime in ruleTypeList[type])
                             RuleApplyTimeDropDownList.Items.Add(new ListItem(
-                                                                    applyTime.Description,
+                                                                    ServerEnumDescription.GetLocalizedDescription(applyTime),
                                                                     applyTime.Lookup));
                     }
 
                     RuleTypeDropDownList.Items.Add(new ListItem(
-                                                       type.Description, type.Lookup));
+                                                       ServerEnumDescription.GetLocalizedDescription(type), type.Lookup));
                 }
 
                 ServerRuleValidator.RuleTypeControl = RuleTypeDropDownList.SelectedValue;

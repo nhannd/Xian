@@ -1,3 +1,14 @@
+<%--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ServerPartitionGridPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPartitions.ServerPartitionGridPanel" %>
 
@@ -10,11 +21,11 @@
                 OnRowDataBound="PartitionGridView_RowDataBound" 
                 PageSize="20">
                 <Columns>
-                    <asp:BoundField DataField="AeTitle" HeaderText="AE Title" HeaderStyle-HorizontalAlign="Left"/>
-                    <asp:BoundField DataField="Description" HeaderText="Description" HeaderStyle-HorizontalAlign="Left" />
-                    <asp:BoundField DataField="Port" HeaderText="Port" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
-                    <asp:BoundField DataField="PartitionFolder" HeaderText="Partition Folder" HeaderStyle-HorizontalAlign="Left" />
-                    <asp:TemplateField HeaderText="Enabled">
+                    <asp:BoundField DataField="AeTitle" HeaderText="<%$Resources: ColumnHeaders,AETitle %>" HeaderStyle-HorizontalAlign="Left"/>
+                    <asp:BoundField DataField="Description" HeaderText="<%$Resources: ColumnHeaders, PartitionDescription %>" HeaderStyle-HorizontalAlign="Left" />
+                    <asp:BoundField DataField="Port" HeaderText="<%$Resources: ColumnHeaders,Port %>" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
+                    <asp:BoundField DataField="PartitionFolder" HeaderText="<%$Resources: ColumnHeaders,PartitionFolder %>" HeaderStyle-HorizontalAlign="Left" />
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,Enabled %>">
                         <EditItemTemplate>
                             <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("Enabled") %>'></asp:TextBox>
                         </EditItemTemplate>
@@ -24,7 +35,7 @@
                         <ItemStyle HorizontalAlign="Center" />
                         <HeaderStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Accept Any Device">
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, PartitionAcceptAnyDevice %>">
                         <EditItemTemplate>
                             <asp:TextBox ID="TextBox2" runat="server" Text='<%# Bind("AcceptAnyDeviceImage") %>'></asp:TextBox>
                         </EditItemTemplate>
@@ -34,12 +45,12 @@
                         <ItemStyle HorizontalAlign="Center" />
                         <HeaderStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Duplicate Object Policy" HeaderStyle-HorizontalAlign="Left">
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,PartitionDuplicateObjectPolicy %>" HeaderStyle-HorizontalAlign="Left">
                         <ItemTemplate>
                             <asp:Label ID="DuplicateSopDescription" runat="server"/>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Studies">
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, PartitionStudiesCount %>">
                         <ItemTemplate>
                             <asp:Label ID="Studies" runat="server" Text='<%# Bind("StudyCount") %>'></asp:Label>
                         </ItemTemplate>
@@ -48,7 +59,7 @@
                     </asp:TemplateField>
                 </Columns>
                 <EmptyDataTemplate>
-                    <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="No server partitions were found using the provided criteria." />
+                    <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="<%$Resources: SR, AdminPartition_NoPartitionsFound %>" />
                 </EmptyDataTemplate>
                 <RowStyle CssClass="GlobalGridViewRow" />
                 <HeaderStyle CssClass="GlobalGridViewHeader" />

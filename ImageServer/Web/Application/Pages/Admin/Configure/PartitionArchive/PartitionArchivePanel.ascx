@@ -30,15 +30,15 @@
                                             <td align="right" valign="bottom">
                                             </td>
                                             <td align="left">
-                                                <asp:Label ID="Label2" runat="server" Text="Description" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label2" runat="server" Text="<%$Resources: SearchFieldLabels, PartitionArchiveDescription %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:TextBox ID="DescriptionFilter" runat="server" CssClass="SearchTextBox"></asp:TextBox>
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label1" runat="server" Text="Type" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label1" runat="server" Text="<%$Resources: SearchFieldLabels, PartitionArchiveType %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:DropDownList ID="ArchiveTypeFilter" runat="server" CssClass="SearchDropDownList"></asp:DropDownList>
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label4" runat="server" Text="Status" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label4" runat="server" Text="<%$Resources: SearchFieldLabels, PartitionArchiveStatus %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:DropDownList ID="StatusFilter" runat="server" CssClass="SearchDropDownList"></asp:DropDownList>
                                             </td>
                                             <td valign="bottom">

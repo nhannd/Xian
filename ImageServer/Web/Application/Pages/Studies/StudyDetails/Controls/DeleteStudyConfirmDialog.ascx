@@ -11,7 +11,7 @@
 
 
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
-
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.Helpers" %>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="DeleteStudyConfirmDialog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.DeleteStudyConfirmDialog" %>
@@ -54,7 +54,7 @@
                             <tr>
                                 <td>
                                     <asp:Label ID="Label1" runat="server" CssClass="DialogTextBoxLabel" 
-                                                    Text='<%$ Resources:Labels, DeleteStudyConfirmDialog_StudyListingLabel %>'></asp:Label>
+                                                    Text="<%$ Resources:Labels, DeleteStudyConfirmDialog_StudyListingLabel %>"></asp:Label>
                                 </td>
                             </tr>
                             <tr>
@@ -64,18 +64,12 @@
                                         <HeaderTemplate>
                                             <table  cellspacing="0" width="100%" class="DeleteStudiesConfirmTable">
                                                 <tr>
-                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader">
-                                                        Patient's Name</th>
-                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader">
-                                                        Patient Id</th>
-                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader">
-                                                        Study Date</th>
-                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader">
-                                                        Study Description</th>
-                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader">
-                                                        Accession #</th>
-                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader">
-                                                        Modality</th>
+                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader"><%= ColumnHeaders.PatientName %></th>
+                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader"><%= ColumnHeaders.PatientID%></th>
+                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader"><%= ColumnHeaders.StudyDate%></th>
+                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader"><%= ColumnHeaders.StudyDescription%></th>
+                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader"><%= ColumnHeaders.AccessionNumber%></th>
+                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader"><%= ColumnHeaders.Modality%></th>
                                                 </tr>
                                         </HeaderTemplate>
                                         <ItemTemplate>
@@ -116,7 +110,7 @@
                 <table border="0">
                    <tr valign="top">
                         <td>
-                            <asp:Label ID="Label5" runat="server" CssClass="DialogTextBoxLabel" Text="Reason:"></asp:Label>                            
+                            <asp:Label ID="Label5" runat="server" CssClass="DialogTextBoxLabel" Text="<%$Resources: Labels, DeleteStudyConfirmDialog_Reason %>"></asp:Label>                            
                         </td>
                         <td>
                             <table cellpadding="0" cellspacing="0">
@@ -132,8 +126,7 @@
                    </tr>
                    <tr>
                         <td valign="top">
-                            <asp:Label ID="Label6" runat="server" CssClass="DialogTextBoxLabel" 
-                                            Text='Comment:'></asp:Label> 
+                            <asp:Label ID="Label6" runat="server" CssClass="DialogTextBoxLabel" Text="<%$Resources: Labels, DeleteStudyConfirmDialog_Comment %>"></asp:Label> 
                         </td>
                         <td>
                             <table cellpadding="0" cellspacing="0">
@@ -151,7 +144,7 @@
                     <tr id="ReasonSavePanel" runat="server">
                         <td>
                             <asp:Label ID="Label4" runat="server" CssClass="DialogTextBoxLabel" 
-                                                Text="Save reason as:"></asp:Label> 
+                                                Text="<%$Resources: Labels, DeleteStudyConfirmDialog_SaveReasonAs %>"></asp:Label> 
                                  
                         </td>
                         <td>
@@ -187,14 +180,14 @@
        <ccValidator:ConditionalRequiredFieldValidator ID="ReasonValidator" runat="server"
                                                 ControlToValidate="ReasonListBox" InvalidInputIndicatorID="InvalidReasonIndicator" 
                                                 ValidationGroup='StudyGroup'
-                                                Text="You must specify the reason for deleting the studies for future auditing purposes." Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>
+                                                Text="<%$Resources: InputValidation, DeleteStudyConfirmDialog_MissingReason %>" Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>
        <ccValidator:ConditionalRequiredFieldValidator ID="CommentValidator" runat="server"
                                                 ControlToValidate="Comment" InvalidInputIndicatorID="InvalidCommentIndicator" 
                                                 ValidationGroup='StudyGroup'
-                                                Text="You must specify a comment for the reason for deleting the studies for future auditing purposes." Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>                                                
+                                                Text="<%$Resources: InputValidation,DeleteStudyConfirmDialog_MissingComment %>" Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>                                                
        <ccValidator:ConditionalRequiredFieldValidator ID="SaveReasonAsNameValidator" runat="server"
                                                 ControlToValidate="SaveReasonAsName" InvalidInputIndicatorID="InvalidSaveReasonAsNameInputIndicator" 
                                                 ValidationGroup='StudyGroup'
-                                                Text="You must specify a name for the reason." Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>           
+                                                Text="<%$Resources: InputValidation,DeleteStudyConfirmDialog_MissingName %>" Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>           
     </ContentTemplate>
 </ccAsp:ModalDialog>

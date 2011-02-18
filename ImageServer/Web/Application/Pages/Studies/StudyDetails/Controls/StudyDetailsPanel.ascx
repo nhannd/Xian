@@ -17,11 +17,13 @@
 <%@ Register Src="StudyDetailsTabs.ascx" TagName="StudyDetailsTabs" TagPrefix="localAsp" %>
 <%@ Register Src="StudyStateAlertPanel.ascx" TagName="StudyStateAlertPanel" TagPrefix="localAsp" %>
 
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 <asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="conditional">
     <ContentTemplate>
             <table width="100%" cellpadding="0" cellspacing="0">
             <tr>
-                <td class="MainContentTitle">Study Details</td><td class="MainContentTitleButtonPanel">
+                <td class="MainContentTitle"><%= Titles.StudyDetails%></td><td class="MainContentTitleButtonPanel">
                     <ccUI:ToolbarButton runat="server" ID="EditStudyButton" SkinID="<%$Image:EditStudyButton%>" OnClick="EditStudyButton_Click" />
                     <ccUI:ToolbarButton runat="server" ID="DeleteStudyButton" SkinID="<%$Image:DeleteStudyButton%>" OnClick="DeleteStudyButton_Click" />
                     <ccUI:ToolbarButton runat="server" ID="ReprocessStudyButton" SkinID="<%$Image:ReprocessStudyButton%>" OnClick="ReprocessButton_Click" />

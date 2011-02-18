@@ -24,6 +24,8 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
+using SR = ClearCanvas.ImageServer.Web.Application.App_GlobalResources.SR;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts.AlertsPanel.js", "application/x-javascript")]
 
@@ -138,16 +140,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 
             int prevSelectedIndex = LevelFilter.SelectedIndex;
             LevelFilter.Items.Clear();
-            LevelFilter.Items.Add(new ListItem(App_GlobalResources.SR.Any, string.Empty));
+            LevelFilter.Items.Add(new ListItem(SR.Any, string.Empty));
             foreach (AlertLevelEnum ale in levelEnums)
-                LevelFilter.Items.Add(new ListItem(ale.Description, ale.Lookup));
+                LevelFilter.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(ale), ale.Lookup));
             LevelFilter.SelectedIndex = prevSelectedIndex;
 
             prevSelectedIndex = CategoryFilter.SelectedIndex;
             CategoryFilter.Items.Clear();
             CategoryFilter.Items.Add(new ListItem(App_GlobalResources.SR.Any, string.Empty));
             foreach (AlertCategoryEnum ace in categoryEnums)
-                CategoryFilter.Items.Add(new ListItem(ace.Description, ace.Lookup));
+                CategoryFilter.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(ace), ace.Lookup));
             CategoryFilter.SelectedIndex = prevSelectedIndex;
 
             DeleteAllAlertsButton.Roles =
@@ -229,7 +231,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 
                 DeleteConfirmationBox.Message += "<div id='DeleteAlertTableContainer' class='DeleteAlertTableContainer'> <table class='DeleteAlertConfirmTable' border='0' cellspacing='0' cellpadding='0'>";
                 DeleteConfirmationBox.Message +=
-                    "<thead class='DeleteAlertFixedHeader' id='DeleteAlertFixedHeader'><tr class='GlobalGridViewHeader'><th align='left'>Component</th><th>Insert Date</th><th>Level</th><th>Content</th></tr></thead><tbody class='DeleteAlertScrollContent'>";
+                    string.Format("<thead class='DeleteAlertFixedHeader' id='DeleteAlertFixedHeader'><tr class='GlobalGridViewHeader'><th align='left'>{0}</th><th>{1}</th><th>{2}</th><th>{3}</th></tr></thead><tbody class='DeleteAlertScrollContent'>",
+                        ColumnHeaders.AlertComponent, ColumnHeaders.AlertInsertDate, ColumnHeaders.AlertLevel, ColumnHeaders.AlertContent);
 
                 foreach (Model.Alert item in items)
                 {
@@ -240,7 +243,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                     item.Content.Save(xtw);
 
                     DeleteConfirmationBox.Message += String.Format("<tr class='DeleteAlertConfirmTableRow' align='left'><td>{0}</td><td>{1}</td><td>{2}</td><td width='300'>{3}</td></tr>",
-                                   item.Component, item.InsertTime, item.AlertLevelEnum, sb);
+                                   item.Component, item.InsertTime.ToString("g"), item.AlertLevelEnum, sb);
                     keyArray.Add(item.Key);
                 }
                 DeleteConfirmationBox.Message += "</tbody></table></div>";

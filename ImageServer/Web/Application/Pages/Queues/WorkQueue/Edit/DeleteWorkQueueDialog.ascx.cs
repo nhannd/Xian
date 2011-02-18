@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Web;
 using System.Web.UI;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Enterprise;
@@ -121,8 +122,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 if (item == null)
                 {
                     MessageBox.Message = SR.WorkQueueNotAvailable;
-                    MessageBox.MessageType =
-                        MessageBox.MessageTypeEnum.ERROR;
+                    MessageBox.MessageType = MessageBox.MessageTypeEnum.ERROR;
                     MessageBox.Show();
                 }
                 else

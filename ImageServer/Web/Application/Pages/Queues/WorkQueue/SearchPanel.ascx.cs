@@ -241,7 +241,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             {
                 foreach (WorkQueueTypeEnum t in workQueueTypes)
                 {
-                    TypeListBox.Items.Add(new ListItem(t.Description, t.Lookup));
+                    TypeListBox.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(t), t.Lookup));
                 }
             }
             else
@@ -262,7 +262,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             {
                 foreach (WorkQueueStatusEnum s in workQueueStatuses)
                 {
-                    StatusListBox.Items.Add(new ListItem(s.Description, s.Lookup));
+                    StatusListBox.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(s), s.Lookup));
                 }
             }
             else
@@ -273,7 +273,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                 int count = 0;
                 foreach (WorkQueueStatusEnum s in workQueueStatuses)
                 {
-                    StatusListBox.Items.Add(new ListItem(s.Description, s.Lookup));
+                    StatusListBox.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(s), s.Lookup));
                     StatusListBox.Items[count].Selected = statusItems[count].Selected;
                     count++;
                 }
@@ -282,7 +282,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             PriorityDropDownList.Items.Clear();
             PriorityDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.Any, string.Empty));
             foreach (WorkQueuePriorityEnum p in workQueuePriorities)
-                PriorityDropDownList.Items.Add(new ListItem(p.Description, p.Lookup));
+                PriorityDropDownList.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(p), p.Lookup));
             PriorityDropDownList.SelectedIndex = prevSelectedIndex;
 
             ViewItemDetailsButton.Roles = AuthorityTokens.WorkQueue.View;

@@ -11,6 +11,7 @@
 
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Security"%>
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SessionTimeout.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Controls.SessionTimeout" %>
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
 
 <script type="text/javascript">
     var countdownTimer;
@@ -175,7 +176,8 @@
     function UpdateCountdownPanel()
     {
         var timeLeft = GetSecondsLeft();
-        $("#<%= SessionTimeoutWarningMessage.ClientID %>").html("No activity is detected. For security reasons, this session will end in " + timeLeft + " seconds.");        
+        //$("#<%= SessionTimeoutWarningMessage.ClientID %>").html("No activity is detected. For security reasons, this session will end in " + timeLeft + " seconds.");        
+        $("#<%= SessionTimeoutWarningMessage.ClientID %>").html("<%= SR.SessionTimeoutCountdownMessage %>".replace("{0}", timeLeft));
     }
     
 </script>
@@ -194,7 +196,7 @@
                     <td>
                     <asp:Panel runat="server" ID="CountdownBanner" CssClass="CountdownBanner">
                         <asp:Label runat="server" ID="SessionTimeoutWarningMessage" CssClass="SessionTimeoutWarningMessage"></asp:Label> 
-                        <asp:Button runat="server" ID="KeepAliveLink" Text="Cancel" Font-Size="12px" UseSubmitBehavior="false" OnClientClick="HideSessionWarning()"></asp:Button>           
+                        <asp:Button runat="server" ID="KeepAliveLink" Text="<%= Labels.Cancel %>" Font-Size="12px" UseSubmitBehavior="false" OnClientClick="HideSessionWarning()"></asp:Button>           
                     </asp:Panel></td>
                     </tr>
                 </table>                

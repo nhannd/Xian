@@ -1,3 +1,14 @@
+<%--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="UserGridPanel.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Users.UserGridPanel" %>
 
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0" Width="100%">
@@ -10,22 +21,22 @@
             <ccUI:GridView ID="UserGridView" runat="server" OnRowDataBound="UserGridView_RowDataBound"
                 OnSelectedIndexChanged="UserGridView_SelectedIndexChanged" SelectionMode="Single">
                 <Columns>
-                    <asp:BoundField DataField="UserName" HeaderText="User ID" HeaderStyle-HorizontalAlign="Left" >
+                    <asp:BoundField DataField="UserName" HeaderText="<%$Resources: ColumnHeaders, UserID %>" HeaderStyle-HorizontalAlign="Left" >
                         <itemstyle width="200px" />
                     </asp:BoundField>
-                    <asp:BoundField DataField="DisplayName" HeaderText="Name" HeaderStyle-HorizontalAlign="Left" />
-                    <asp:TemplateField HeaderText="User Groups" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+                    <asp:BoundField DataField="DisplayName" HeaderText="<%$Resources: ColumnHeaders, UserID %>" HeaderStyle-HorizontalAlign="Left" />
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, UserGroups %>" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
                         <ItemTemplate>
                             <asp:TextBox ID="UserGroupTextBox" runat="server" TextMode="multiline" rows="2" columns="35" CssClass="UserGroupTextArea" ReadOnly="true"></asp:TextBox>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:BoundField DataField="Enabled" HeaderText="Enabled" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
-                    <asp:BoundField DataField="LastLoginTime" HeaderText="Last Login" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" >
+                    <asp:BoundField DataField="Enabled" HeaderText="<%$Resources: ColumnHeaders, Enabled %>" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
+                    <asp:BoundField DataField="LastLoginTime" HeaderText="<%$Resources: ColumnHeaders, LastLogin %>" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" >
                         <itemstyle width="175px" />
                     </asp:BoundField>
                 </Columns>
                 <EmptyDataTemplate>
-                    <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="No users were found using the provided criteria." />
+                    <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="<%$Resources: SR, NoUsersFound %>" />
                 </EmptyDataTemplate>
                 <RowStyle CssClass="GlobalGridViewRow" />
                 <AlternatingRowStyle CssClass="GlobalGridViewRow" />

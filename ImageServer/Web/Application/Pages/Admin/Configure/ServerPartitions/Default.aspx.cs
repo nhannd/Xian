@@ -16,6 +16,7 @@ using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPartitions
 {
@@ -103,8 +104,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
                     UpdateUI();
 
                     MessageBox.MessageType = MessageBox.MessageTypeEnum.ERROR;
-                    MessageBox.Message =
-                        "Unable to delete this server partition. This could mean there are studies on this partition.<BR>Please check the log file or contact the server administrator";
+                    MessageBox.Message = ErrorMessages.AdminPartition_DeletePartition_Failed;
                     MessageBox.Show();
                 }
                 else
@@ -113,10 +113,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
                     if (ServerPartitionPanel.Partitions != null && ServerPartitionPanel.Partitions.Count == 0)
                     {
                         MessageBox.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
-                        MessageBox.Message =
-                            String.Format(
-                                "Server partition {0} has been removed.<P>At least one server partition is required. Please add a new server partition.",
-                                partition.AeTitle);
+                        MessageBox.Message = String.Format(SR.AdminPartition_DeletePartition_Successful_AddOneNow, partition.AeTitle);
                         MessageBox.Show();
                     }
                 }
@@ -146,10 +143,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
         {
             deleteConfirmBox.Data = selectedPartition;
             deleteConfirmBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
-            deleteConfirmBox.Message =
-                String.Format(
-                    "It's recommended that you disable the partition instead of deleting it.<P>Are you sure you still want to delete partition {0} and all related settings permanently?",
-                    selectedPartition.AeTitle);
+            deleteConfirmBox.Message = Server.HtmlEncode(String.Format(SR.AdminPartition_DeletePartitionDialog_AreYouSure, selectedPartition.AeTitle));
             deleteConfirmBox.MessageStyle = "color: red; font-weight: bold;";
             deleteConfirmBox.Show();
         }

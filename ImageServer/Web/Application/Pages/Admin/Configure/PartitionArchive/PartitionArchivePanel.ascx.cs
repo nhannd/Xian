@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
             foreach (ArchiveTypeEnum archiveTypeEnum in ArchiveTypeEnum.GetAll())
             {
                 ArchiveTypeFilter.Items.Add(
-                    new ListItem(archiveTypeEnum.Description, archiveTypeEnum.Lookup));
+                    new ListItem(ServerEnumDescription.GetLocalizedDescription(archiveTypeEnum), archiveTypeEnum.Lookup));
             }
             ArchiveTypeFilter.SelectedIndex = archiveSelectedIndex;
 

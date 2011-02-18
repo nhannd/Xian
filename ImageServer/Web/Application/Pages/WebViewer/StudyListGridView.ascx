@@ -1,5 +1,19 @@
+<%--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.WebViewer.StudyListGridView"
 	Codebehind="StudyListGridView.ascx.cs" %>
+
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 <style>
 
@@ -67,31 +81,31 @@
 					OnRowDataBound="GridView_RowDataBound"
 					SelectionMode="Single" SkinID="WebViewerMultipleStudiesGridView">
 					<Columns>
-						<asp:TemplateField HeaderText="Patient Name" HeaderStyle-HorizontalAlign="Left">
+						<asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, PatientName %>" HeaderStyle-HorizontalAlign="Left">
 							<itemtemplate>
                             <ccUI:PersonNameLabel ID="PatientName" runat="server" PersonName='<%# Eval("PatientsName") %>' PersonNameType="Dicom"></ccUI:PersonNameLabel>
                         </itemtemplate>
 						</asp:TemplateField>
-						<asp:BoundField DataField="PatientId" HeaderText="Patient ID" HeaderStyle-HorizontalAlign="Left">
+						<asp:BoundField DataField="PatientId" HeaderText="<%$Resources: ColumnHeaders, PatientID %>" HeaderStyle-HorizontalAlign="Left">
 						</asp:BoundField>
-						<asp:BoundField DataField="AccessionNumber" HeaderText="Accession #" HeaderStyle-HorizontalAlign="Center"
+						<asp:BoundField DataField="AccessionNumber" HeaderText="<%$Resources: ColumnHeaders, AccessionNumber %>" HeaderStyle-HorizontalAlign="Center"
 							ItemStyle-HorizontalAlign="Center"></asp:BoundField>
-						<asp:TemplateField HeaderText="Study Date" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+						<asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, StudyDate %>" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 							<itemtemplate>
                             <ccUI:DALabel ID="StudyDate" runat="server" Value='<%# Eval("StudyDate") %>'></ccUI:DALabel>
                         </itemtemplate>
 						</asp:TemplateField>
-						<asp:BoundField DataField="StudyDescription" HeaderText="Description" HeaderStyle-HorizontalAlign="Left">
+						<asp:BoundField DataField="StudyDescription" HeaderText="<%$Resources: ColumnHeaders, StudyDescription %>" HeaderStyle-HorizontalAlign="Left">
 						</asp:BoundField>
-						<asp:BoundField DataField="NumberOfStudyRelatedSeries" HeaderText="Series" HeaderStyle-HorizontalAlign="Center"
+						<asp:BoundField DataField="NumberOfStudyRelatedSeries" HeaderText="<%$Resources: ColumnHeaders, SeriesCount %>" HeaderStyle-HorizontalAlign="Center"
 							ItemStyle-HorizontalAlign="Center" />
-						<asp:BoundField DataField="NumberOfStudyRelatedInstances" HeaderText="Instances" HeaderStyle-HorizontalAlign="Center"
+						<asp:BoundField DataField="NumberOfStudyRelatedInstances" HeaderText="<%$Resources: ColumnHeaders, Instances %>" HeaderStyle-HorizontalAlign="Center"
 							ItemStyle-HorizontalAlign="Center" />
-		                <asp:BoundField DataField="ModalitiesInStudy" HeaderText="Modality" HeaderStyle-HorizontalAlign="Center"
+		                <asp:BoundField DataField="ModalitiesInStudy" HeaderText="<%$Resources: ColumnHeaders, Modality %>" HeaderStyle-HorizontalAlign="Center"
 							ItemStyle-HorizontalAlign="Center" />
-						<asp:BoundField DataField="ReferringPhysiciansName" HeaderText="Ref. Physician" HeaderStyle-HorizontalAlign="Center"
+						<asp:BoundField DataField="ReferringPhysiciansName" HeaderText="<%$Resources: ColumnHeaders, ReferringPhysician %>" HeaderStyle-HorizontalAlign="Center"
 							ItemStyle-HorizontalAlign="Center" />
-						<asp:TemplateField HeaderText="Status" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+						<asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, StudyStatus %>" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 							<itemtemplate>
                             <asp:Label ID="StudyStatusEnum" runat="server" Text='<%# Eval("StudyStatusEnum") %>' ></asp:Label>
                         </itemtemplate>

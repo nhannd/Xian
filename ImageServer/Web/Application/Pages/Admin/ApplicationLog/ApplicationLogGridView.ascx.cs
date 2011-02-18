@@ -15,6 +15,7 @@ using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
 {
@@ -150,11 +151,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
                 {
                     if (ApplicationLogListControl.DataSource == null)
                     {
-                        message.Message = "Please enter search criteria to find log entries.";
+                        message.Message = SR.AppLogPleaseEnterSearchCriteria;
                     }
                     else
                     {
-                        message.Message = "No log entries found matching the provided criteria.";
+                        message.Message = SR.AppLogNotFound;
                     }
                 }
 

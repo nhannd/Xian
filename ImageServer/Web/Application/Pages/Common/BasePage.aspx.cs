@@ -13,6 +13,8 @@ using System;
 using System.Configuration;
 using System.Web;
 using ClearCanvas.Common;
+using System.Threading;
+using System.Globalization;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
 {

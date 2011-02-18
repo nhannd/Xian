@@ -32,34 +32,34 @@
                                             <tr>
 
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label1" runat="server" Text="Patient Name" CssClass="SearchTextBoxLabel"
+                                                <asp:Label ID="Label1" runat="server" Text="<%$Resources: SearchFieldLabels,PatientName %>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:TextBox ID="PatientName" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Patient Name" />
+                                                <asp:TextBox ID="PatientName" runat="server" CssClass="SearchTextBox" ToolTip="<%$Resources: Tooltips, SearchByPatientName %>" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label2" runat="server" Text="Patient ID" CssClass="SearchTextBoxLabel"
+                                                <asp:Label ID="Label2" runat="server" Text="<%$Resources: SearchFieldLabels,PatientID%>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:TextBox ID="PatientId" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Patient Id" />
+                                                <asp:TextBox ID="PatientId" runat="server" CssClass="SearchTextBox" ToolTip="<%$Resources: Tooltips, SearchByPatientID %>" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label3" runat="server" Text="Accession#" CssClass="SearchTextBoxLabel"
+                                                <asp:Label ID="Label3" runat="server" Text="<%$Resources: SearchFieldLabels,AccessionNumber %>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:TextBox ID="AccessionNumber" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Accession Number" />
+                                                <asp:TextBox ID="AccessionNumber" runat="server" CssClass="SearchTextBox" ToolTip="<%$Resources: Tooltips, SearchByAccessionNumber %>" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label5" runat="server" Text="Study Date" CssClass="SearchTextBoxLabel" EnableViewState="false"/>
+                                                <asp:Label ID="Label5" runat="server" Text="<%$Resources: SearchFieldLabels,StudyDate %>" CssClass="SearchTextBoxLabel" EnableViewState="false"/>
                                                 <asp:LinkButton ID="ClearStudyDateButton" runat="server" Text="X" CssClass="SmallLink"/><br />
-                                                <ccUI:TextBox ID="StudyDate" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="Search the list by Study Date" />
+                                                <ccUI:TextBox ID="StudyDate" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="<%$Resources: Tooltips, SearchByStudyDate%>" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label4" runat="server" Text="Description" CssClass="SearchTextBoxLabel"
+                                                <asp:Label ID="Label4" runat="server" Text="<%$Resources: SearchFieldLabels,StudyDescription %>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:TextBox ID="StudyDescription" runat="server"  CssClass="SearchTextBox" ToolTip="Search the list by Study Description" />
+                                                <asp:TextBox ID="StudyDescription" runat="server"  CssClass="SearchTextBox" ToolTip="<%$Resources: Tooltips, SearchByDescription %>" />
                                             </td>   
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label6" runat="server" Text="Deleted By" CssClass="SearchTextBoxLabel"
+                                                <asp:Label ID="Label6" runat="server" Text="<%$Resources: SearchFieldLabels,DeletedBy %>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:TextBox ID="DeletedBy" runat="server"  CssClass="SearchTextBox" ToolTip="Search the list by the person who deleted the study" />
+                                                <asp:TextBox ID="DeletedBy" runat="server"  CssClass="SearchTextBox" ToolTip="<%$Resources: Tooltips, SearchByPersonWhoDeletedStudies %>" />
                                             </td>                                            
                                             <td valign="bottom">
                                                 <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="<%$Image:SearchIcon%>" OnClick="SearchButton_Click" /></asp:Panel>

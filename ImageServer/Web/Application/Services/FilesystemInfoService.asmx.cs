@@ -15,6 +15,8 @@ using System.Web.Services;
 using System.ComponentModel;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
+using System.Globalization;
+using System.Threading;
 
 namespace ClearCanvas.ImageServer.Web.Application.Services
 {
@@ -31,6 +33,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
         [WebMethod]
         public FilesystemInfo GetFilesystemInfo(string path)
         {
+            CultureInfo Culture = new System.Globalization.CultureInfo(this.Context.Request.UserLanguages[0]);
+            Thread.CurrentThread.CurrentCulture = Culture;
+            Thread.CurrentThread.CurrentUICulture = Culture;
             return ServerUtility.GetFilesystemInfo(path);
         }
     }

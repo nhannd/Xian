@@ -17,6 +17,7 @@ using System.Xml;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.PartitionArchive
 {
@@ -111,8 +112,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
             }
 
             ArchiveTypeDropDownList.Items.Clear();
-            ArchiveTypeDropDownList.Items.Add(new ListItem("HSM Archive", "HsmArchive"));
 
+            foreach (ArchiveTypeEnum archiveTypeEnum in ArchiveTypeEnum.GetAll())
+            {
+                ArchiveTypeDropDownList.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(archiveTypeEnum), archiveTypeEnum.Lookup));
+            }
+            
         }
 
 
@@ -168,7 +173,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
 
             if (PartitionArchive == null)
             {
-                Description.Text = "Partition Archive Name";
+                Description.Text = SR.AdminPartitionArchive_AddEditDialog_ArchiveNameDefaultText;
                 ArchiveDelay.Text = "12";
                 EnabledCheckBox.Checked = true;
                 ReadOnlyCheckBox.Checked = false;

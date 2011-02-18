@@ -1,3 +1,15 @@
+<%--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+
+
 <%@ Control Language="C#" AutoEventWireup="True" Codebehind="PersonNameInputPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Controls.PersonNameInputPanel" %>
 <%@ Register Src="~/Controls/InvalidInputIndicator.ascx" TagName="InvalidInputIndicator"
@@ -12,7 +24,7 @@
             <table cellpadding="0" cellspacing="0">
                 <tr>
                     <td>
-                        <asp:Label ID="Label4" runat="server" Text="Title" CssClass="DialogTextBoxLabel" />
+                        <asp:Label ID="Label4" runat="server" Text="<%$ Resources: Labels, PersonNamePanel_Title %>" CssClass="DialogTextBoxLabel" />
                     </td>
                     <td>
                         <uc:InvalidInputIndicator ID="PersonTitleIndicator" runat="server" SkinID="InvalidInputIndicator" />
@@ -30,7 +42,7 @@
             <table cellpadding="0" cellspacing="0">
                 <tr>
                     <td>
-                        <asp:Label ID="Label7" runat="server" Text="Given Name" CssClass="DialogTextBoxLabel" />
+                        <asp:Label ID="Label7" runat="server" Text="<%$ Resources: Labels, PersonNamePanel_GivenName %>" CssClass="DialogTextBoxLabel" />
                     </td>
                     <td>
                         <uc:InvalidInputIndicator ID="PersonGivenNameIndicator" runat="server" SkinID="InvalidInputIndicator" />
@@ -47,7 +59,7 @@
             <table cellpadding="0" cellspacing="0">
                 <tr>
                     <td>
-                        <asp:Label ID="Label8" runat="server" Text="Middle Name" CssClass="DialogTextBoxLabel" />
+                        <asp:Label ID="Label8" runat="server" Text="<%$ Resources: Labels, PersonNamePanel_MiddleName %>" CssClass="DialogTextBoxLabel" />
                     </td>
                     <td>
                         <uc:InvalidInputIndicator ID="PersonMiddleNameIndicator" runat="server" SkinID="InvalidInputIndicator" />
@@ -65,7 +77,7 @@
             <table cellpadding="0" cellspacing="0">
                 <tr>
                     <td>
-                        <asp:Label ID="Label9" runat="server" Text="Last Name" CssClass="DialogTextBoxLabel" />
+                        <asp:Label ID="Label9" runat="server" Text="<%$ Resources: Labels, PersonNamePanel_LastName %>" CssClass="DialogTextBoxLabel" />
                     </td>
                     <td>
                         <uc:InvalidInputIndicator ID="PersonLastNameIndicator" runat="server" SkinID="InvalidInputIndicator" />
@@ -83,7 +95,7 @@
             <table cellpadding="0" cellspacing="0">
                 <tr>
                     <td>
-                        <asp:Label ID="Label15" runat="server" Text="Suffix" CssClass="DialogTextBoxLabel" />
+                        <asp:Label ID="Label15" runat="server" Text="<%$ Resources: Labels, PersonNamePanel_Suffix %>" CssClass="DialogTextBoxLabel" />
                     </td>
                     <td>
                         <uc:InvalidInputIndicator ID="PersonSuffixIndicator" runat="server" SkinID="InvalidInputIndicator" />
@@ -162,42 +174,42 @@
     runat="server" ControlToValidate="PersonTitle" InvalidInputCSS="DialogTextBoxInvalidInput"
     IgnoreEmptyValue="true"
     InvalidInputIndicatorID="PersonTitleIndicator" ValidationExpression="^([^\\]){1,64}$"
-    Text="Invalid Person Name. Each field may contain up to 64 characters, excluding &quot;\\&quot;"
+    Text="<%$Resources: InputValidation,PersonNameInputPanel_InvalidName %>"
     Display="None">
 </ccValidator:RegularExpressionFieldValidator>
 <ccValidator:RegularExpressionFieldValidator ID="PersonGivenNameValidator"
     runat="server" ControlToValidate="PersonGivenName" InvalidInputCSS="DialogTextBoxInvalidInput"
     InvalidInputIndicatorID="PersonGivenNameIndicator"
-    ValidationExpression="^([^\\]){1,64}$" Text="Invalid Person Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;"
+    ValidationExpression="^([^\\]){1,64}$" Text="<%$Resources: InputValidation,PersonNameInputPanel_InvalidName %>"
     Display="None">
 </ccValidator:RegularExpressionFieldValidator>
 <ccValidator:RegularExpressionFieldValidator ID="PersonMiddleNameValidator"
     runat="server" ControlToValidate="PersonMiddleName" InvalidInputCSS="DialogTextBoxInvalidInput"
     IgnoreEmptyValue="true" InvalidInputIndicatorID="PersonMiddleNameIndicator" ValidationExpression="^([^\\]){0,64}$"
-    Text="Invalid Person Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;"
+    Text="<%$Resources: InputValidation,PersonNameInputPanel_InvalidName %>"
     Display="None">
 </ccValidator:RegularExpressionFieldValidator>
 <ccValidator:RegularExpressionFieldValidator ID="PersonLastNameValidator"
     runat="server" ControlToValidate="PersonLastName" InvalidInputCSS="DialogTextBoxInvalidInput"
     InvalidInputIndicatorID="PersonLastNameIndicator"
-    ValidationExpression="^([^\\]){0,64}$" Text="Invalid Person Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;"
+    ValidationExpression="^([^\\]){0,64}$" Text="<%$Resources: InputValidation,PersonNameInputPanel_InvalidName %>"
     Display="None">
 </ccValidator:RegularExpressionFieldValidator>
 <ccValidator:RegularExpressionFieldValidator ID="PersonSuffixValidator"
     runat="server" ControlToValidate="PersonSuffix" InvalidInputCSS="DialogTextBoxInvalidInput"
     IgnoreEmptyValue="true" InvalidInputIndicatorID="PersonSuffixIndicator" ValidationExpression="^([^\\]){0,64}$"
-    Text="Invalid Person Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;."
+    Text="<%$Resources: InputValidation,PersonNameInputPanel_InvalidName %>"
     Display="None">
 </ccValidator:RegularExpressionFieldValidator>
 <ccValidator:ConditionalRequiredFieldValidator ID="PersonGivenNameRequiredValidator"
     runat="server" ControlToValidate="PersonGivenName" InvalidInputCSS="DialogTextBoxInvalidInput"
     IgnoreEmptyValue="true" InvalidInputIndicatorID="PersonSuffixIndicator" ValidationExpression="^([^\\]){0,64}$"
-    Text="Invalid Person Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;."
+    Text="<%$Resources: InputValidation,PersonNameInputPanel_InvalidName %>"
     Display="None">
 </ccValidator:ConditionalRequiredFieldValidator>
 <ccValidator:ConditionalRequiredFieldValidator ID="PersonLastNameRequiredValidator"
     runat="server" ControlToValidate="PersonLastName" InvalidInputCSS="DialogTextBoxInvalidInput"
     IgnoreEmptyValue="true" InvalidInputIndicatorID="PersonSuffixIndicator" ValidationExpression="^([^\\]){0,64}$"
-    Text="Invalid Person Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;."
+    Text="<%$Resources: InputValidation,PersonNameInputPanel_InvalidName %>"
     Display="None">
 </ccValidator:ConditionalRequiredFieldValidator>

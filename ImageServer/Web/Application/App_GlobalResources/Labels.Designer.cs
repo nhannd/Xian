@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "2.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Labels {
+    public class Labels {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageServer.Web.Application.App_GlobalResources.Labels", typeof(Labels).Assembly);
@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -61,36 +61,279 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Accession#.
+        /// </summary>
+        public static string AccessionNumber {
+            get {
+                return ResourceManager.GetString("AccessionNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add New Partition.
+        /// </summary>
+        public static string AddNewPartition {
+            get {
+                return ResourceManager.GetString("AddNewPartition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Partition.
+        /// </summary>
+        public static string AddPartition {
+            get {
+                return ResourceManager.GetString("AddPartition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total Size.
+        /// </summary>
+        public static string AdminFilesystem_AddEditDialog_TotalSize {
+            get {
+                return ResourceManager.GetString("AdminFilesystem_AddEditDialog_TotalSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Used.
+        /// </summary>
+        public static string AdminFilesystem_AddEditDialog_Used {
+            get {
+                return ResourceManager.GetString("AdminFilesystem_AddEditDialog_Used", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to AE Title.
+        /// </summary>
+        public static string AETitle {
+            get {
+                return ResourceManager.GetString("AETitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Age.
+        /// </summary>
+        public static string Age {
+            get {
+                return ResourceManager.GetString("Age", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [Logs].
+        /// </summary>
+        public static string AlertGridPanel_LinkToLogs {
+            get {
+                return ResourceManager.GetString("AlertGridPanel_LinkToLogs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to more info.
+        /// </summary>
+        public static string AlertHoverPopupDetails_MoreInfo {
+            get {
+                return ResourceManager.GetString("AlertHoverPopupDetails_MoreInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View All Alerts.
+        /// </summary>
+        public static string AlertIndicator_ViewAllAlerts {
+            get {
+                return ResourceManager.GetString("AlertIndicator_ViewAllAlerts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Back.
+        /// </summary>
+        public static string Back {
+            get {
+                return ResourceManager.GetString("Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Login.
         /// </summary>
-        internal static string ButtonLogin {
+        public static string ButtonLogin {
             get {
                 return ResourceManager.GetString("ButtonLogin", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string Cancel {
+            get {
+                return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Change Password.
         /// </summary>
-        internal static string ChangePassword {
+        public static string ChangePassword {
             get {
                 return ResourceManager.GetString("ChangePassword", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clear.
+        /// </summary>
+        public static string Clear {
+            get {
+                return ResourceManager.GetString("Clear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string Close {
+            get {
+                return ResourceManager.GetString("Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Critical Alerts:.
+        /// </summary>
+        public static string CriticalAlerts {
+            get {
+                return ResourceManager.GetString("CriticalAlerts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alerts.
+        /// </summary>
+        public static string Dashboard_Alerts {
+            get {
+                return ResourceManager.GetString("Dashboard_Alerts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File Systems.
+        /// </summary>
+        public static string Dashboard_FileSystems {
+            get {
+                return ResourceManager.GetString("Dashboard_FileSystems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server Partitions.
+        /// </summary>
+        public static string Dashboard_ServerPartitions {
+            get {
+                return ResourceManager.GetString("Dashboard_ServerPartitions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Studies.
+        /// </summary>
+        public static string Dashboard_Studies {
+            get {
+                return ResourceManager.GetString("Dashboard_Studies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total Studies:.
+        /// </summary>
+        public static string Dashboard_StudiesSummary_TotalStudies {
+            get {
+                return ResourceManager.GetString("Dashboard_StudiesSummary_TotalStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study Integrity Queue.
+        /// </summary>
+        public static string Dashboard_StudyIntegrityQueue {
+            get {
+                return ResourceManager.GetString("Dashboard_StudyIntegrityQueue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WorkQueue.
+        /// </summary>
+        public static string Dashboard_WorkQueue {
+            get {
+                return ResourceManager.GetString("Dashboard_WorkQueue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date Of Birth.
+        /// </summary>
+        public static string DateOfBirth {
+            get {
+                return ResourceManager.GetString("DateOfBirth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default Page.
+        /// </summary>
+        public static string DefaultPage {
+            get {
+                return ResourceManager.GetString("DefaultPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Comment:.
+        /// </summary>
+        public static string DeleteSeriesConfirmDialog_Comment {
+            get {
+                return ResourceManager.GetString("DeleteSeriesConfirmDialog_Comment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Note: All series for this study have been selected, so the entire study will be deleted..
         /// </summary>
-        internal static string DeleteSeriesConfirmDialog_DeleteEntireStudy {
+        public static string DeleteSeriesConfirmDialog_DeleteEntireStudy {
             get {
                 return ResourceManager.GetString("DeleteSeriesConfirmDialog_DeleteEntireStudy", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reason:.
+        /// </summary>
+        public static string DeleteSeriesConfirmDialog_Reason {
+            get {
+                return ResourceManager.GetString("DeleteSeriesConfirmDialog_Reason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save Reason As:.
+        /// </summary>
+        public static string DeleteSeriesConfirmDialog_SaveReasonAs {
+            get {
+                return ResourceManager.GetString("DeleteSeriesConfirmDialog_SaveReasonAs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The following series will be deleted:.
         /// </summary>
-        internal static string DeleteSeriesConfirmDialog_SeriesListingLabel {
+        public static string DeleteSeriesConfirmDialog_SeriesListingLabel {
             get {
                 return ResourceManager.GetString("DeleteSeriesConfirmDialog_SeriesListingLabel", resourceCulture);
             }
@@ -99,7 +342,7 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         /// <summary>
         ///   Looks up a localized string similar to Reason For Deletion:.
         /// </summary>
-        internal static string DeleteSeriesConfirmReasonLabel {
+        public static string DeleteSeriesConfirmReasonLabel {
             get {
                 return ResourceManager.GetString("DeleteSeriesConfirmReasonLabel", resourceCulture);
             }
@@ -108,16 +351,43 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         /// <summary>
         ///   Looks up a localized string similar to Detailed Description.
         /// </summary>
-        internal static string DeleteSeriesReasonDetailedDescription {
+        public static string DeleteSeriesReasonDetailedDescription {
             get {
                 return ResourceManager.GetString("DeleteSeriesReasonDetailedDescription", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Comment:.
+        /// </summary>
+        public static string DeleteStudyConfirmDialog_Comment {
+            get {
+                return ResourceManager.GetString("DeleteStudyConfirmDialog_Comment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reason:.
+        /// </summary>
+        public static string DeleteStudyConfirmDialog_Reason {
+            get {
+                return ResourceManager.GetString("DeleteStudyConfirmDialog_Reason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save Reason As:.
+        /// </summary>
+        public static string DeleteStudyConfirmDialog_SaveReasonAs {
+            get {
+                return ResourceManager.GetString("DeleteStudyConfirmDialog_SaveReasonAs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The following study/studies will be deleted:.
         /// </summary>
-        internal static string DeleteStudyConfirmDialog_StudyListingLabel {
+        public static string DeleteStudyConfirmDialog_StudyListingLabel {
             get {
                 return ResourceManager.GetString("DeleteStudyConfirmDialog_StudyListingLabel", resourceCulture);
             }
@@ -126,7 +396,7 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         /// <summary>
         ///   Looks up a localized string similar to Reason For Deletion:.
         /// </summary>
-        internal static string DeleteStudyConfirmReasonLabel {
+        public static string DeleteStudyConfirmReasonLabel {
             get {
                 return ResourceManager.GetString("DeleteStudyConfirmReasonLabel", resourceCulture);
             }
@@ -135,25 +405,142 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         /// <summary>
         ///   Looks up a localized string similar to Detailed Description.
         /// </summary>
-        internal static string DeleteStudyReasonDetailedDescription {
+        public static string DeleteStudyReasonDetailedDescription {
             get {
                 return ResourceManager.GetString("DeleteStudyReasonDetailedDescription", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        public static string Description {
+            get {
+                return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Destination Devices.
+        /// </summary>
+        public static string DestinationDevices {
+            get {
+                return ResourceManager.GetString("DestinationDevices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        public static string DeviceDescription {
+            get {
+                return ResourceManager.GetString("DeviceDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Device Type.
+        /// </summary>
+        public static string DeviceType {
+            get {
+                return ResourceManager.GetString("DeviceType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DHCP.
+        /// </summary>
+        public static string DHCP {
+            get {
+                return ResourceManager.GetString("DHCP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit Study.
         /// </summary>
-        internal static string EditStudyDialog {
+        public static string EditStudyDialog {
             get {
                 return ResourceManager.GetString("EditStudyDialog", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Comment:.
+        /// </summary>
+        public static string EditStudyDialog_Comment {
+            get {
+                return ResourceManager.GetString("EditStudyDialog_Comment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient Information.
+        /// </summary>
+        public static string EditStudyDialog_PatientInformation {
+            get {
+                return ResourceManager.GetString("EditStudyDialog_PatientInformation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reason:.
+        /// </summary>
+        public static string EditStudyDialog_Reason {
+            get {
+                return ResourceManager.GetString("EditStudyDialog_Reason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save Reason As:.
+        /// </summary>
+        public static string EditStudyDialog_SaveReasonAs {
+            get {
+                return ResourceManager.GetString("EditStudyDialog_SaveReasonAs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study Information.
+        /// </summary>
+        public static string EditStudyDialog_StudyInformation {
+            get {
+                return ResourceManager.GetString("EditStudyDialog_StudyInformation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enabled.
+        /// </summary>
+        public static string Enabled {
+            get {
+                return ResourceManager.GetString("Enabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Features.
+        /// </summary>
+        public static string Features {
+            get {
+                return ResourceManager.GetString("Features", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to From Date.
+        /// </summary>
+        public static string FromDate {
+            get {
+                return ResourceManager.GetString("FromDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Items Found.
         /// </summary>
-        internal static string GridPagerQueueMultipleItems {
+        public static string GridPagerQueueMultipleItems {
             get {
                 return ResourceManager.GetString("GridPagerQueueMultipleItems", resourceCulture);
             }
@@ -162,27 +549,954 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         /// <summary>
         ///   Looks up a localized string similar to Item Found.
         /// </summary>
-        internal static string GridPagerQueueSingleItem {
+        public static string GridPagerQueueSingleItem {
             get {
                 return ResourceManager.GetString("GridPagerQueueSingleItem", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to HSM Archive.
+        /// </summary>
+        public static string HSMArchive {
+            get {
+                return ResourceManager.GetString("HSMArchive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Instances.
+        /// </summary>
+        public static string Instances {
+            get {
+                return ResourceManager.GetString("Instances", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IP Address.
+        /// </summary>
+        public static string IPAddress {
+            get {
+                return ResourceManager.GetString("IPAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Issuer Of Patient ID.
+        /// </summary>
+        public static string IssuerOfPatientID {
+            get {
+                return ResourceManager.GetString("IssuerOfPatientID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logged in as.
+        /// </summary>
+        public static string LoggedInAs {
+            get {
+                return ResourceManager.GetString("LoggedInAs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Login.
+        /// </summary>
+        public static string Login {
+            get {
+                return ResourceManager.GetString("Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Login After Password Change.
+        /// </summary>
+        public static string LoginAfterPasswordChange {
+            get {
+                return ResourceManager.GetString("LoginAfterPasswordChange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logout.
+        /// </summary>
+        public static string Logout {
+            get {
+                return ResourceManager.GetString("Logout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Modality.
+        /// </summary>
+        public static string Modality {
+            get {
+                return ResourceManager.GetString("Modality", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New Password.
+        /// </summary>
+        public static string NewPassword {
+            get {
+                return ResourceManager.GetString("NewPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        public static string No {
+            get {
+                return ResourceManager.GetString("No", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Original Password.
+        /// </summary>
+        public static string OriginalPassword {
+            get {
+                return ResourceManager.GetString("OriginalPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Partition.
+        /// </summary>
+        public static string Partition {
+            get {
+                return ResourceManager.GetString("Partition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Partitions.
+        /// </summary>
+        public static string Partitions {
+            get {
+                return ResourceManager.GetString("Partitions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password.
         /// </summary>
-        internal static string Password {
+        public static string Password {
             get {
                 return ResourceManager.GetString("Password", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Patient&apos;s Birthdate.
+        /// </summary>
+        public static string PatientBirthdate {
+            get {
+                return ResourceManager.GetString("PatientBirthdate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sex.
+        /// </summary>
+        public static string PatientGender {
+            get {
+                return ResourceManager.GetString("PatientGender", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient ID.
+        /// </summary>
+        public static string PatientID {
+            get {
+                return ResourceManager.GetString("PatientID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient Name.
+        /// </summary>
+        public static string PatientName {
+            get {
+                return ResourceManager.GetString("PatientName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient Sex.
+        /// </summary>
+        public static string PatientSex {
+            get {
+                return ResourceManager.GetString("PatientSex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient&apos;s Sex.
+        /// </summary>
+        public static string PatientsSex {
+            get {
+                return ResourceManager.GetString("PatientsSex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Age:.
+        /// </summary>
+        public static string PatientSummary_Age {
+            get {
+                return ResourceManager.GetString("PatientSummary_Age", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DOB:.
+        /// </summary>
+        public static string PatientSummary_DOB {
+            get {
+                return ResourceManager.GetString("PatientSummary_DOB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gender:.
+        /// </summary>
+        public static string PatientSummary_Gender {
+            get {
+                return ResourceManager.GetString("PatientSummary_Gender", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ID:.
+        /// </summary>
+        public static string PatientSummary_ID {
+            get {
+                return ResourceManager.GetString("PatientSummary_ID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Performed On.
+        /// </summary>
+        public static string PerformedOn {
+            get {
+                return ResourceManager.GetString("PerformedOn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Given Name.
+        /// </summary>
+        public static string PersonNamePanel_GivenName {
+            get {
+                return ResourceManager.GetString("PersonNamePanel_GivenName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Last Name.
+        /// </summary>
+        public static string PersonNamePanel_LastName {
+            get {
+                return ResourceManager.GetString("PersonNamePanel_LastName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Middle Name.
+        /// </summary>
+        public static string PersonNamePanel_MiddleName {
+            get {
+                return ResourceManager.GetString("PersonNamePanel_MiddleName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Suffix.
+        /// </summary>
+        public static string PersonNamePanel_Suffix {
+            get {
+                return ResourceManager.GetString("PersonNamePanel_Suffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title.
+        /// </summary>
+        public static string PersonNamePanel_Title {
+            get {
+                return ResourceManager.GetString("PersonNamePanel_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Port.
+        /// </summary>
+        public static string Port {
+            get {
+                return ResourceManager.GetString("Port", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Priority.
+        /// </summary>
+        public static string Priority {
+            get {
+                return ResourceManager.GetString("Priority", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reconcile.
+        /// </summary>
+        public static string ReconcileLink {
+            get {
+                return ResourceManager.GetString("ReconcileLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ref. Physician.
+        /// </summary>
+        public static string ReferringPhysician {
+            get {
+                return ResourceManager.GetString("ReferringPhysician", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Refresh.
+        /// </summary>
+        public static string Refresh {
+            get {
+                return ResourceManager.GetString("Refresh", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retype New Password.
+        /// </summary>
+        public static string RetypeNewPassword {
+            get {
+                return ResourceManager.GetString("RetypeNewPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Schedule.
+        /// </summary>
+        public static string Schedule {
+            get {
+                return ResourceManager.GetString("Schedule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Priority:.
+        /// </summary>
+        public static string ScheduleWorkQueueDialog_Priority {
+            get {
+                return ResourceManager.GetString("ScheduleWorkQueueDialog_Priority", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Schedule:.
+        /// </summary>
+        public static string ScheduleWorkQueueDialog_Schedule {
+            get {
+                return ResourceManager.GetString("ScheduleWorkQueueDialog_Schedule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Schedule Now:.
+        /// </summary>
+        public static string ScheduleWorkQueueDialog_ScheduleNow {
+            get {
+                return ResourceManager.GetString("ScheduleWorkQueueDialog_ScheduleNow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series.
+        /// </summary>
+        public static string Series {
+            get {
+                return ResourceManager.GetString("Series", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Comment:.
+        /// </summary>
+        public static string SeriesDeleteDialog_Comment {
+            get {
+                return ResourceManager.GetString("SeriesDeleteDialog_Comment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reason:.
+        /// </summary>
+        public static string SeriesDeleteDialog_Reason {
+            get {
+                return ResourceManager.GetString("SeriesDeleteDialog_Reason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save Reason As:.
+        /// </summary>
+        public static string SeriesDeleteDialog_SaveReasonAs {
+            get {
+                return ResourceManager.GetString("SeriesDeleteDialog_SaveReasonAs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Instances:.
+        /// </summary>
+        public static string SeriesDetails_Instances {
+            get {
+                return ResourceManager.GetString("SeriesDetails_Instances", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Modality:.
+        /// </summary>
+        public static string SeriesDetails_Modality {
+            get {
+                return ResourceManager.GetString("SeriesDetails_Modality", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Performed On:.
+        /// </summary>
+        public static string SeriesDetails_PerformedOn {
+            get {
+                return ResourceManager.GetString("SeriesDetails_PerformedOn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series Description:.
+        /// </summary>
+        public static string SeriesDetails_SeriesDescription {
+            get {
+                return ResourceManager.GetString("SeriesDetails_SeriesDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series Instance UID:.
+        /// </summary>
+        public static string SeriesDetails_SeriesInstanceUID {
+            get {
+                return ResourceManager.GetString("SeriesDetails_SeriesInstanceUID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series Number:.
+        /// </summary>
+        public static string SeriesDetails_SeriesNumber {
+            get {
+                return ResourceManager.GetString("SeriesDetails_SeriesNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series Summary.
+        /// </summary>
+        public static string SeriesDetails_SeriesSummary {
+            get {
+                return ResourceManager.GetString("SeriesDetails_SeriesSummary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Source AE:.
+        /// </summary>
+        public static string SeriesDetails_SourceAE {
+            get {
+                return ResourceManager.GetString("SeriesDetails_SourceAE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study Summary.
+        /// </summary>
+        public static string SeriesDetails_StudySummary {
+            get {
+                return ResourceManager.GetString("SeriesDetails_StudySummary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series Instance UID.
+        /// </summary>
+        public static string SeriesInstanceUID {
+            get {
+                return ResourceManager.GetString("SeriesInstanceUID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series #.
+        /// </summary>
+        public static string SeriesNumber {
+            get {
+                return ResourceManager.GetString("SeriesNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server.
+        /// </summary>
+        public static string Server {
+            get {
+                return ResourceManager.GetString("Server", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Conflicting Study Location.
+        /// </summary>
+        public static string SIQ_ReconcileDialog_ConflictingImageLocation {
+            get {
+                return ResourceManager.GetString("SIQ_ReconcileDialog_ConflictingImageLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Conflicting Images.
+        /// </summary>
+        public static string SIQ_ReconcileDialog_ConflictingImages {
+            get {
+                return ResourceManager.GetString("SIQ_ReconcileDialog_ConflictingImages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create New Study.
+        /// </summary>
+        public static string SIQ_ReconcileDialog_CreateNewStudy {
+            get {
+                return ResourceManager.GetString("SIQ_ReconcileDialog_CreateNewStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Discard Images.
+        /// </summary>
+        public static string SIQ_ReconcileDialog_DiscardStudy {
+            get {
+                return ResourceManager.GetString("SIQ_ReconcileDialog_DiscardStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate SOP.
+        /// </summary>
+        public static string SIQ_ReconcileDialog_DuplicateSOP {
+            get {
+                return ResourceManager.GetString("SIQ_ReconcileDialog_DuplicateSOP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate SOP Location.
+        /// </summary>
+        public static string SIQ_ReconcileDialog_DuplicateSOPLocation {
+            get {
+                return ResourceManager.GetString("SIQ_ReconcileDialog_DuplicateSOPLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Existing Study.
+        /// </summary>
+        public static string SIQ_ReconcileDialog_ExistingStudy {
+            get {
+                return ResourceManager.GetString("SIQ_ReconcileDialog_ExistingStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filesystem Locations.
+        /// </summary>
+        public static string SIQ_ReconcileDialog_FilesystemLocations {
+            get {
+                return ResourceManager.GetString("SIQ_ReconcileDialog_FilesystemLocations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merge Using Conflicting Study.
+        /// </summary>
+        public static string SIQ_ReconcileDialog_MergeUsingConflictingStudy {
+            get {
+                return ResourceManager.GetString("SIQ_ReconcileDialog_MergeUsingConflictingStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merge Using Existing Study.
+        /// </summary>
+        public static string SIQ_ReconcileDialog_MergeUsingExistingStudy {
+            get {
+                return ResourceManager.GetString("SIQ_ReconcileDialog_MergeUsingExistingStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ignore (Process As Is).
+        /// </summary>
+        public static string SIQ_ReconcileDialog_ProcessAsIs {
+            get {
+                return ResourceManager.GetString("SIQ_ReconcileDialog_ProcessAsIs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study Location.
+        /// </summary>
+        public static string SIQ_ReconcileDialog_StudyLocation {
+            get {
+                return ResourceManager.GetString("SIQ_ReconcileDialog_StudyLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Status.
+        /// </summary>
+        public static string Status {
+            get {
+                return ResourceManager.GetString("Status", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study Date.
+        /// </summary>
+        public static string StudyDate {
+            get {
+                return ResourceManager.GetString("StudyDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study Date/Time.
+        /// </summary>
+        public static string StudyDateTime {
+            get {
+                return ResourceManager.GetString("StudyDateTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study Description.
+        /// </summary>
+        public static string StudyDescription {
+            get {
+                return ResourceManager.GetString("StudyDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Archive Queue.
+        /// </summary>
+        public static string StudyDetails_ArchivePanel_ArchiveQueue {
+            get {
+                return ResourceManager.GetString("StudyDetails_ArchivePanel_ArchiveQueue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Archive Study Storage.
+        /// </summary>
+        public static string StudyDetails_ArchivePanel_ArchiveStudyStorage {
+            get {
+                return ResourceManager.GetString("StudyDetails_ArchivePanel_ArchiveStudyStorage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changes:.
+        /// </summary>
+        public static string StudyDetails_History_Changes {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Changes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Comment:.
+        /// </summary>
+        public static string StudyDetails_History_Comment {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Comment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changes Applied:.
+        /// </summary>
+        public static string StudyDetails_History_Duplicate_ChangesApplied {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Duplicate_ChangesApplied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate Images:.
+        /// </summary>
+        public static string StudyDetails_History_Duplicate_DuplicateImages {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Duplicate_DuplicateImages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study (Snapshot):.
+        /// </summary>
+        public static string StudyDetails_History_Duplicate_StudySnapshot {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Duplicate_StudySnapshot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide Details.
+        /// </summary>
+        public static string StudyDetails_History_HideDetails {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_HideDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reason:.
+        /// </summary>
+        public static string StudyDetails_History_Reason {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Reason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Accession Number.
+        /// </summary>
+        public static string StudyDetails_History_Reconcile_AccessionNumber {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Reconcile_AccessionNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changes Applied To Existing Study:.
+        /// </summary>
+        public static string StudyDetails_History_Reconcile_ChangesApplied {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Reconcile_ChangesApplied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Issuer of Patient ID.
+        /// </summary>
+        public static string StudyDetails_History_Reconcile_IssuerOfPatientID {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Reconcile_IssuerOfPatientID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient&apos;s Birth Date.
+        /// </summary>
+        public static string StudyDetails_History_Reconcile_PatientBirthDate {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Reconcile_PatientBirthDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient ID.
+        /// </summary>
+        public static string StudyDetails_History_Reconcile_PatientID {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Reconcile_PatientID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient&apos;s Name.
+        /// </summary>
+        public static string StudyDetails_History_Reconcile_PatientName {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Reconcile_PatientName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient&apos;s Sex.
+        /// </summary>
+        public static string StudyDetails_History_Reconcile_PatientSex {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Reconcile_PatientSex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reconciled Images (Snapshot):.
+        /// </summary>
+        public static string StudyDetails_History_Reconcile_Snapshot {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Reconcile_Snapshot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study Date.
+        /// </summary>
+        public static string StudyDetails_History_Reconcile_StudyDate {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Reconcile_StudyDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series deleted:.
+        /// </summary>
+        public static string StudyDetails_History_SeriesDeleted {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_SeriesDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Details.
+        /// </summary>
+        public static string StudyDetails_History_ShowDetails {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_ShowDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series Summary.
+        /// </summary>
+        public static string StudyDetails_SeriesPanel_SeriesSummary {
+            get {
+                return ResourceManager.GetString("StudyDetails_SeriesPanel_SeriesSummary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study Summary.
+        /// </summary>
+        public static string StudyDetails_SeriesPanel_StudySummary {
+            get {
+                return ResourceManager.GetString("StudyDetails_SeriesPanel_StudySummary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study ID.
+        /// </summary>
+        public static string StudyID {
+            get {
+                return ResourceManager.GetString("StudyID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Status.
+        /// </summary>
+        public static string StudyStatus {
+            get {
+                return ResourceManager.GetString("StudyStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study Summary.
+        /// </summary>
+        public static string StudySummary {
+            get {
+                return ResourceManager.GetString("StudySummary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To Date.
+        /// </summary>
+        public static string ToDate {
+            get {
+                return ResourceManager.GetString("ToDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User ID.
         /// </summary>
-        internal static string UserID {
+        public static string UserID {
             get {
                 return ResourceManager.GetString("UserID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version.
+        /// </summary>
+        public static string Version {
+            get {
+                return ResourceManager.GetString("Version", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View Study.
+        /// </summary>
+        public static string WorkQueueAlertContextDataView_ViewStudy {
+            get {
+                return ResourceManager.GetString("WorkQueueAlertContextDataView_ViewStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View Work Queue.
+        /// </summary>
+        public static string WorkQueueAlertContextDataView_ViewWorkQueue {
+            get {
+                return ResourceManager.GetString("WorkQueueAlertContextDataView_ViewWorkQueue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type.
+        /// </summary>
+        public static string WorkQueueType {
+            get {
+                return ResourceManager.GetString("WorkQueueType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yes.
+        /// </summary>
+        public static string Yes {
+            get {
+                return ResourceManager.GetString("Yes", resourceCulture);
             }
         }
     }

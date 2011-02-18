@@ -292,6 +292,7 @@
     <Compile Include="RestoreQueue.gen.cs" />
     <Compile Include="RestoreQueueStatusEnum.gen.cs" />
     <Compile Include="Series.gen.cs" />
+    <Compile Include="ServerEnumDescription.cs" />
     <Compile Include="ServerPartition.cs" />
     <Compile Include="ServerPartition.gen.cs" />
     <Compile Include="ServerRule.gen.cs" />

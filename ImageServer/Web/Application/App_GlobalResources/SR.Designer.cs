@@ -61,6 +61,190 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Accession #.
+        /// </summary>
+        public static string AccessionNumber {
+            get {
+                return ResourceManager.GetString("AccessionNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Check Server Partition configuration to ensure a copy of the study is maintained after deletion..
+        /// </summary>
+        public static string AdminDeletedStudies_CheckPartitionConfiguration {
+            get {
+                return ResourceManager.GetString("AdminDeletedStudies_CheckPartitionConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete this record? You will have to delete all backup files manually..
+        /// </summary>
+        public static string AdminDeletedStudies_DeleteConfirmationDialog_AreYouSure {
+            get {
+                return ResourceManager.GetString("AdminDeletedStudies_DeleteConfirmationDialog_AreYouSure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Modify your search criteria..
+        /// </summary>
+        public static string AdminDeletedStudies_ModifySearchCriteria {
+            get {
+                return ResourceManager.GetString("AdminDeletedStudies_ModifySearchCriteria", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No studies found using the provided criteria..
+        /// </summary>
+        public static string AdminDeletedStudies_NoStudiesFound {
+            get {
+                return ResourceManager.GetString("AdminDeletedStudies_NoStudiesFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This study had not been archived at the time it was deleted..
+        /// </summary>
+        public static string AdminDeletedStudies_StudyWasNotArchived {
+            get {
+                return ResourceManager.GetString("AdminDeletedStudies_StudyWasNotArchived", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to remove {0} from partition {1}?.
+        /// </summary>
+        public static string AdminDevices_DeleteDevice_AreYouSure {
+            get {
+                return ResourceManager.GetString("AdminDevices_DeleteDevice_AreYouSure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specify the maximum number of simultaneous connections Image Server can initiate for this device..
+        /// </summary>
+        public static string AdminDevices_ThrottleSettings_Info {
+            get {
+                return ResourceManager.GetString("AdminDevices_ThrottleSettings_Info", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No file systems were found using the provided criteria..
+        /// </summary>
+        public static string AdminFilesystem_NoFilesystemFound {
+            get {
+                return ResourceManager.GetString("AdminFilesystem_NoFilesystemFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Incoming studies will be placed in the Study Integrity Queue if the Study Instance UID matches an existing study and the data differs from any of the selected criteria below..
+        /// </summary>
+        public static string AdminPartition_AddEditDialog_StudyMatchingInfo {
+            get {
+                return ResourceManager.GetString("AdminPartition_AddEditDialog_StudyMatchingInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server partition {0} has been removed.
+        ///
+        ///At least one server partition is required. Please add a new server partition..
+        /// </summary>
+        public static string AdminPartition_DeletePartition_Successful_AddOneNow {
+            get {
+                return ResourceManager.GetString("AdminPartition_DeletePartition_Successful_AddOneNow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to It&apos;s recommended that you disable the partition instead of deleting it.
+        ///
+        ///Are you sure you still want to delete partition {0} and all related settings permanently?.
+        /// </summary>
+        public static string AdminPartition_DeletePartitionDialog_AreYouSure {
+            get {
+                return ResourceManager.GetString("AdminPartition_DeletePartitionDialog_AreYouSure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No server partitions were found using the provided criteria..
+        /// </summary>
+        public static string AdminPartition_NoPartitionsFound {
+            get {
+                return ResourceManager.GetString("AdminPartition_NoPartitionsFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Partition Archive Name.
+        /// </summary>
+        public static string AdminPartitionArchive_AddEditDialog_ArchiveNameDefaultText {
+            get {
+                return ResourceManager.GetString("AdminPartitionArchive_AddEditDialog_ArchiveNameDefaultText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete partition archive &quot;{0}&quot; and all related settings permanently?.
+        /// </summary>
+        public static string AdminPartitionArchive_DeleteDialog_AreYouSure {
+            get {
+                return ResourceManager.GetString("AdminPartitionArchive_DeleteDialog_AreYouSure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No partition archives were found using the provided criteria..
+        /// </summary>
+        public static string AdminPartitionArchive_NoArchiveFound {
+            get {
+                return ResourceManager.GetString("AdminPartitionArchive_NoArchiveFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to remove rule &quot;{0}&quot; from partition {1}?.
+        /// </summary>
+        public static string AdminServerRules_DeleteDialog_AreYouSure {
+            get {
+                return ResourceManager.GetString("AdminServerRules_DeleteDialog_AreYouSure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure to delete user &quot;{0}&quot; ({1})?.
+        /// </summary>
+        public static string AdminUser_DeleteDialog_AreYouSure {
+            get {
+                return ResourceManager.GetString("AdminUser_DeleteDialog_AreYouSure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password for {0} has been reset..
+        /// </summary>
+        public static string AdminUser_PasswordReset {
+            get {
+                return ResourceManager.GetString("AdminUser_PasswordReset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete user group &quot;{0}&quot;?.
+        /// </summary>
+        public static string AdminUserGroups_DeleteDialog_AreYouSure {
+            get {
+                return ResourceManager.GetString("AdminUserGroups_DeleteDialog_AreYouSure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete all of the current Alert items? &lt;br/&gt;Only the alerts that are a result of the current search will be deleted..
         /// </summary>
         public static string AlertDeleteAllConfirm {
@@ -79,6 +263,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There is no study information for this item..
+        /// </summary>
+        public static string AlertNoStudyInformationForThisItem {
+            get {
+                return ResourceManager.GetString("AlertNoStudyInformationForThisItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All.
         /// </summary>
         public static string All {
@@ -93,6 +286,24 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         public static string Any {
             get {
                 return ResourceManager.GetString("Any", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No log entries found matching the provided criteria..
+        /// </summary>
+        public static string AppLogNotFound {
+            get {
+                return ResourceManager.GetString("AppLogNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please enter search criteria to find log entries..
+        /// </summary>
+        public static string AppLogPleaseEnterSearchCriteria {
+            get {
+                return ResourceManager.GetString("AppLogPleaseEnterSearchCriteria", resourceCulture);
             }
         }
         
@@ -133,6 +344,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to reprocess this study?.
+        /// </summary>
+        public static string AreYouSureToReprocessThisStudy {
+            get {
+                return ResourceManager.GetString("AreYouSureToReprocessThisStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please Confirm.
         /// </summary>
         public static string ConfirmDialogDefault {
@@ -165,6 +385,24 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         public static string CustomReasonComment {
             get {
                 return ResourceManager.GetString("CustomReasonComment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date.
+        /// </summary>
+        public static string Date {
+            get {
+                return ResourceManager.GetString("Date", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Days.
+        /// </summary>
+        public static string Days {
+            get {
+                return ResourceManager.GetString("Days", resourceCulture);
             }
         }
         
@@ -367,11 +605,38 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} by {1}.
+        /// </summary>
+        public static string EditBy {
+            get {
+                return ResourceManager.GetString("EditBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enabled.
         /// </summary>
         public static string Enabled {
             get {
                 return ResourceManager.GetString("Enabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Female.
+        /// </summary>
+        public static string Female {
+            get {
+                return ResourceManager.GetString("Female", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to For further assistance, try the following links:.
+        /// </summary>
+        public static string ForFurtherAssistanceTryTheFollowingLinks {
+            get {
+                return ResourceManager.GetString("ForFurtherAssistanceTryTheFollowingLinks", resourceCulture);
             }
         }
         
@@ -619,6 +884,87 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hours.
+        /// </summary>
+        public static string Hours {
+            get {
+                return ResourceManager.GetString("Hours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ImageServer Developers Forum.
+        /// </summary>
+        public static string ImageServerDevelopersForum {
+            get {
+                return ResourceManager.GetString("ImageServerDevelopersForum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ImageServer Users Forum.
+        /// </summary>
+        public static string ImageServerUsersForum {
+            get {
+                return ResourceManager.GetString("ImageServerUsersForum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- ANY --.
+        /// </summary>
+        public static string LogLevelAny {
+            get {
+                return ResourceManager.GetString("LogLevelAny", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ERROR.
+        /// </summary>
+        public static string LogLevelError {
+            get {
+                return ResourceManager.GetString("LogLevelError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to INFO.
+        /// </summary>
+        public static string LogLevelInfo {
+            get {
+                return ResourceManager.GetString("LogLevelInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WARN.
+        /// </summary>
+        public static string LogLevelWarning {
+            get {
+                return ResourceManager.GetString("LogLevelWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Male.
+        /// </summary>
+        public static string Male {
+            get {
+                return ResourceManager.GetString("Male", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Months.
+        /// </summary>
+        public static string Months {
+            get {
+                return ResourceManager.GetString("Months", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The following series will be moved to {0}:.
         /// </summary>
         public static string MoveSeriesMessage {
@@ -700,6 +1046,33 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No alerts were found using the provided criteria..
+        /// </summary>
+        public static string NoAlertsFound {
+            get {
+                return ResourceManager.GetString("NoAlertsFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No items were found using the provided criteria.
+        /// </summary>
+        public static string NoArchiveQueueItemFound {
+            get {
+                return ResourceManager.GetString("NoArchiveQueueItemFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No devices were found using the provided criteria..
+        /// </summary>
+        public static string NoDevicesWereFound {
+            get {
+                return ResourceManager.GetString("NoDevicesWereFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No DHCP.
         /// </summary>
         public static string NoDHCP {
@@ -718,6 +1091,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to None Specified.
+        /// </summary>
+        public static string NoneSpecified {
+            get {
+                return ResourceManager.GetString("NoneSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This is a non-standard installation.
         /// </summary>
         public static string NonStandardInstallation {
@@ -727,11 +1109,164 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No server partition has been set up..
+        /// </summary>
+        public static string NoPartitionSetup {
+            get {
+                return ResourceManager.GetString("NoPartitionSetup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No items were found using the provided criteria..
+        /// </summary>
+        public static string NoRestoreQueueItemFound {
+            get {
+                return ResourceManager.GetString("NoRestoreQueueItemFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No server rules were found using the provided criteria..
+        /// </summary>
+        public static string NoServerRulesFound {
+            get {
+                return ResourceManager.GetString("NoServerRulesFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No services were found using the provided criteria.
+        /// </summary>
+        public static string NoServicesFound {
+            get {
+                return ResourceManager.GetString("NoServicesFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No items were found using the provided criteria..
+        /// </summary>
+        public static string NoSIQItemsFound {
+            get {
+                return ResourceManager.GetString("NoSIQItemsFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No studies found matching the provided criteria..
+        /// </summary>
+        public static string NoStudiesFound {
+            get {
+                return ResourceManager.GetString("NoStudiesFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No studies were found using the provided criteria..
+        /// </summary>
+        public static string NoStudiesWereFound {
+            get {
+                return ResourceManager.GetString("NoStudiesWereFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to N/A.
+        /// </summary>
+        public static string NotAvailable {
+            get {
+                return ResourceManager.GetString("NotAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Not Default.
         /// </summary>
         public static string NotDefault {
             get {
                 return ResourceManager.GetString("NotDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not Specified.
+        /// </summary>
+        public static string NotSpecified {
+            get {
+                return ResourceManager.GetString("NotSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No User Groups were found using the provided criteria..
+        /// </summary>
+        public static string NoUserGroupsFound {
+            get {
+                return ResourceManager.GetString("NoUserGroupsFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No users were found using the provided criteria..
+        /// </summary>
+        public static string NoUsersFound {
+            get {
+                return ResourceManager.GetString("NoUsersFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No work queue items found matching the provided criteria..
+        /// </summary>
+        public static string NoWorkQueueFound {
+            get {
+                return ResourceManager.GetString("NoWorkQueueFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Other.
+        /// </summary>
+        public static string Other {
+            get {
+                return ResourceManager.GetString("Other", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Partition.
+        /// </summary>
+        public static string Partition {
+            get {
+                return ResourceManager.GetString("Partition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient ID.
+        /// </summary>
+        public static string PatientID {
+            get {
+                return ResourceManager.GetString("PatientID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient Name.
+        /// </summary>
+        public static string PatientName {
+            get {
+                return ResourceManager.GetString("PatientName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please enter search criteria to find studies..
+        /// </summary>
+        public static string PleaseEnterSearchCriteriaToFindStudies {
+            get {
+                return ResourceManager.GetString("PleaseEnterSearchCriteriaToFindStudies", resourceCulture);
             }
         }
         
@@ -750,6 +1285,24 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         public static string ReprocessOK {
             get {
                 return ResourceManager.GetString("ReprocessOK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reprocess Study via GUI.
+        /// </summary>
+        public static string ReprocessStudyViaGUI {
+            get {
+                return ResourceManager.GetString("ReprocessStudyViaGUI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please enter the search criteria to search for entries..
+        /// </summary>
+        public static string RestoreQueuePleaseEnterSearchCriteria {
+            get {
+                return ResourceManager.GetString("RestoreQueuePleaseEnterSearchCriteria", resourceCulture);
             }
         }
         
@@ -781,6 +1334,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No Series Items for this study..
+        /// </summary>
+        public static string SeriesDetails_NoSeriesForThisStudy {
+            get {
+                return ResourceManager.GetString("SeriesDetails_NoSeriesForThisStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This service lock is being used by the server.  Are you sure you want to edit it ?.
         /// </summary>
         public static string ServiceLockUpdate_Confirm_ServiceIsLocked {
@@ -795,6 +1357,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         public static string ServiceLockUpdateFailed_ContactAdmin {
             get {
                 return ResourceManager.GetString("ServiceLockUpdateFailed_ContactAdmin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No activity is detected. For security reasons, this session will end in {0} seconds..
+        /// </summary>
+        public static string SessionTimeoutCountdownMessage {
+            get {
+                return ResourceManager.GetString("SessionTimeoutCountdownMessage", resourceCulture);
             }
         }
         
@@ -853,11 +1424,263 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to WARNING: Duplicates contain information which does not match the existing study. The information in the study (and all existing images) will be replaced..
+        /// </summary>
+        public static string SIQ_ReconcileDuplicateDialog_UseDuplicateWarning {
+            get {
+                return ResourceManager.GetString("SIQ_ReconcileDuplicateDialog_UseDuplicateWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WARNING: Duplicates contain information which does not match the existing study. This information will be lost when the existing SOPs are overwritten..
+        /// </summary>
+        public static string SIQ_ReconcileDuplicateDialog_UseExistingWarning {
+            get {
+                return ResourceManager.GetString("SIQ_ReconcileDuplicateDialog_UseExistingWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This study is being processed..
         /// </summary>
         public static string StudyBeingProcessed {
             get {
                 return ResourceManager.GetString("StudyBeingProcessed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study Date.
+        /// </summary>
+        public static string StudyDate {
+            get {
+                return ResourceManager.GetString("StudyDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete duplicate SOPs..
+        /// </summary>
+        public static string StudyDetails_History_Duplicate_Delete {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Duplicate_Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Overwrite existing SOPs and preserve data in duplicates..
+        /// </summary>
+        public static string StudyDetails_History_Duplicate_OverwriteAsIs {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Duplicate_OverwriteAsIs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Overwrite existing SOPs and update study with information in duplicates..
+        /// </summary>
+        public static string StudyDetails_History_Duplicate_OverwriteWithDuplicateData {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Duplicate_OverwriteWithDuplicateData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Overwrite existing SOPs and use the existing study information..
+        /// </summary>
+        public static string StudyDetails_History_Duplicate_OverwriteWithExistingData {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Duplicate_OverwriteWithExistingData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Performed by {0}.
+        /// </summary>
+        public static string StudyDetails_History_Duplicate_PerformedBy {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Duplicate_PerformedBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} series were deleted by {1}.
+        /// </summary>
+        public static string StudyDetails_History_MultipleSeriesDeletedBy {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_MultipleSeriesDeletedBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} series was deleted by {1}.
+        /// </summary>
+        public static string StudyDetails_History_OneSeriesDeletedBy {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_OneSeriesDeletedBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Performed By {0}.
+        /// </summary>
+        public static string StudyDetails_History_Reconcile_PerformedBy {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Reconcile_PerformedBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study was reprocessed. Reason: {0}.
+        /// </summary>
+        public static string StudyDetails_History_Reconcile_ReprocessedBecause {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Reconcile_ReprocessedBecause", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study was reprocessed by {0}. Reason: {1}.
+        /// </summary>
+        public static string StudyDetails_History_Reconcile_ReprocessedByBecause {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Reconcile_ReprocessedByBecause", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Archive Queue items for this study..
+        /// </summary>
+        public static string StudyDetails_NoArchiveQueueItemForThisStudy {
+            get {
+                return ResourceManager.GetString("StudyDetails_NoArchiveQueueItemForThisStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Archive Study Storage items for this study..
+        /// </summary>
+        public static string StudyDetails_NoArchiveStudyStorageForThisStudy {
+            get {
+                return ResourceManager.GetString("StudyDetails_NoArchiveStudyStorageForThisStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No File System Queue items for this study..
+        /// </summary>
+        public static string StudyDetails_NoFileSystemForThisStudy {
+            get {
+                return ResourceManager.GetString("StudyDetails_NoFileSystemForThisStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No history record exists for this study..
+        /// </summary>
+        public static string StudyDetails_NoHistoryItemForThisStudy {
+            get {
+                return ResourceManager.GetString("StudyDetails_NoHistoryItemForThisStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This study does not contain any series..
+        /// </summary>
+        public static string StudyDetails_NoSeriesForThisStudy {
+            get {
+                return ResourceManager.GetString("StudyDetails_NoSeriesForThisStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No reconcile items for this study..
+        /// </summary>
+        public static string StudyDetails_NoSIQForThisStudy {
+            get {
+                return ResourceManager.GetString("StudyDetails_NoSIQForThisStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Study Storage details for this study..
+        /// </summary>
+        public static string StudyDetails_NoStudyStorageForThisStudy {
+            get {
+                return ResourceManager.GetString("StudyDetails_NoStudyStorageForThisStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Work Queue items for this study..
+        /// </summary>
+        public static string StudyDetails_NoWorkQueueForThisStudy {
+            get {
+                return ResourceManager.GetString("StudyDetails_NoWorkQueueForThisStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Discarded conflicting images.
+        /// </summary>
+        public static string StudyDetails_Reconcile_Discard_Description {
+            get {
+                return ResourceManager.GetString("StudyDetails_Reconcile_Discard_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merged study and conflicting images.
+        /// </summary>
+        public static string StudyDetails_Reconcile_Merge_Description {
+            get {
+                return ResourceManager.GetString("StudyDetails_Reconcile_Merge_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Created new study from conflicting images.
+        /// </summary>
+        public static string StudyDetails_Reconcile_NewStudy_Description {
+            get {
+                return ResourceManager.GetString("StudyDetails_Reconcile_NewStudy_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Processed the images normally.
+        /// </summary>
+        public static string StudyDetails_Reconcile_ProcessAsIs_Description {
+            get {
+                return ResourceManager.GetString("StudyDetails_Reconcile_ProcessAsIs_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study was not modified.
+        /// </summary>
+        public static string StudyDetails_StudyWasNoChanged {
+            get {
+                return ResourceManager.GetString("StudyDetails_StudyWasNoChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edited using Web GUI.
+        /// </summary>
+        public static string StudyDetails_WebEdit_Description {
+            get {
+                return ResourceManager.GetString("StudyDetails_WebEdit_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study Instance UID.
+        /// </summary>
+        public static string StudyInstanceUID {
+            get {
+                return ResourceManager.GetString("StudyInstanceUID", resourceCulture);
             }
         }
         
@@ -907,11 +1730,38 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Time.
+        /// </summary>
+        public static string Time {
+            get {
+                return ResourceManager.GetString("Time", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unknown.
         /// </summary>
         public static string Unknown {
             get {
                 return ResourceManager.GetString("Unknown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Multiple matching studies have been found. Please select a study to view..
+        /// </summary>
+        public static string WebViewerMutipleMatchingStudiesFound {
+            get {
+                return ResourceManager.GetString("WebViewerMutipleMatchingStudiesFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Weeks.
+        /// </summary>
+        public static string Weeks {
+            get {
+                return ResourceManager.GetString("Weeks", resourceCulture);
             }
         }
         
@@ -997,6 +1847,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please enter search criteria to find work queue items..
+        /// </summary>
+        public static string WorkQueuePleaseEnterSearchCritera {
+            get {
+                return ResourceManager.GetString("WorkQueuePleaseEnterSearchCritera", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to reschedule the selected item because it is being processed..
         /// </summary>
         public static string WorkQueueRescheduleConfirm_ItemBeingProcessed {
@@ -1065,6 +1924,33 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         public static string WorkQueueResetFailed {
             get {
                 return ResourceManager.GetString("WorkQueueResetFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The item has been successfully deleted from the Work Queue..
+        /// </summary>
+        public static string WorkQueueSuccessfullyDeleted {
+            get {
+                return ResourceManager.GetString("WorkQueueSuccessfullyDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Years.
+        /// </summary>
+        public static string Years {
+            get {
+                return ResourceManager.GetString("Years", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your password has expired, or this is your first login to the ImageServer. Please enter a new password below..
+        /// </summary>
+        public static string YourPasswordHasExpired {
+            get {
+                return ResourceManager.GetString("YourPasswordHasExpired", resourceCulture);
             }
         }
     }

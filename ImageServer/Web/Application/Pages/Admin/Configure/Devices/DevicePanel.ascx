@@ -36,32 +36,32 @@
                             <table cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td align="left">
-                                        <asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="SearchTextBoxLabel"
+                                        <asp:Label ID="Label1" runat="server" Text="<%$Resources: SearchFieldLabels, AETitle %>" CssClass="SearchTextBoxLabel"
                                             EnableViewState="False"></asp:Label><br />
                                         <asp:TextBox ID="AETitleFilter" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by AE Title"></asp:TextBox>
                                     </td>
                                     <td align="left" valign="bottom">
-                                        <asp:Label ID="Label6" runat="server" Text="Description" CssClass="SearchTextBoxLabel"
+                                        <asp:Label ID="Label6" runat="server" Text="<%$Resources: SearchFieldLabels, DeviceDescription %>" CssClass="SearchTextBoxLabel"
                                             EnableViewState="False"></asp:Label><br />
                                         <asp:TextBox ID="DescriptionFilter" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Description"></asp:TextBox>
                                     </td>
                                     <td align="left">
-                                        <asp:Label ID="Label2" runat="server" Text="IP Address" CssClass="SearchTextBoxLabel"
+                                        <asp:Label ID="Label2" runat="server" Text="<%$Resources: SearchFieldLabels, IPAddress %>" CssClass="SearchTextBoxLabel"
                                             EnableViewState="False"></asp:Label><br />
                                         <asp:TextBox ID="IPAddressFilter" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by IP Address"></asp:TextBox>
                                     </td>
                                     <td align="left" valign="bottom">
-                                        <asp:Label ID="Label3" runat="server" Text="Status" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                        <asp:Label ID="Label3" runat="server" Text="<%$Resources: SearchFieldLabels, DeviceStatus %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                         <asp:DropDownList ID="StatusFilter" runat="server" CssClass="SearchDropDownList">
                                         </asp:DropDownList>
                                     </td>
                                     <td align="left" valign="bottom">
-                                        <asp:Label ID="Label4" runat="server" Text="DHCP" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                        <asp:Label ID="Label4" runat="server" Text="<%$Resources: SearchFieldLabels, DHCP %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                         <asp:DropDownList ID="DHCPFilter" runat="server" CssClass="SearchDropDownList">
                                         </asp:DropDownList>
                                     </td>
                                     <td align="left" valign="bottom">
-                                        <asp:Label ID="Label5" runat="server" Text="Device Type" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                        <asp:Label ID="Label5" runat="server" Text="<%$Resources: SearchFieldLabels, DeviceType %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                         <asp:ListBox ID="DeviceTypeFilter" runat="server" CssClass="SearchDropDownList" SelectionMode="Multiple">
                                         </asp:ListBox>
                                     </td>

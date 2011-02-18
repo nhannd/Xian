@@ -1,4 +1,16 @@
+<%--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SearchResultGridView.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.SearchResultGridView" %>
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
 
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
 	Width="100%">
@@ -17,23 +29,23 @@
 				<ccUI:GridView ID="ListControl" runat="server"
 					SelectionMode="Single" DataKeyNames="RowKey">
 					<Columns>
-						<asp:TemplateField HeaderText="Patient Name" HeaderStyle-HorizontalAlign="Left">
+						<asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,PatientName %>" HeaderStyle-HorizontalAlign="Left">
 							<itemtemplate>
                             <ccUI:PersonNameLabel ID="PatientName" runat="server" PersonName='<%# Eval("PatientsName") %>' PersonNameType="Dicom"></ccUI:PersonNameLabel>
                         </itemtemplate>
 						</asp:TemplateField>
-						<asp:BoundField DataField="PatientId" HeaderText="Patient ID" HeaderStyle-HorizontalAlign="Left">
+						<asp:BoundField DataField="PatientId" HeaderText="<%$Resources: ColumnHeaders,PatientID%>" HeaderStyle-HorizontalAlign="Left">
 						</asp:BoundField>
-						<asp:BoundField DataField="AccessionNumber" HeaderText="Accession #" HeaderStyle-HorizontalAlign="Center"
+						<asp:BoundField DataField="AccessionNumber" HeaderText="<%$Resources: ColumnHeaders,AccessionNumber %>" HeaderStyle-HorizontalAlign="Center"
 							ItemStyle-HorizontalAlign="Center"></asp:BoundField>
 						<asp:TemplateField HeaderText="Study Date" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 							<itemtemplate>
                                 <ccUI:DALabel ID="StudyDate" runat="server" Value='<%# Eval("StudyDate") %>'></ccUI:DALabel>
                             </itemtemplate>
 						</asp:TemplateField>
-						<asp:BoundField DataField="StudyDescription" HeaderText="Description" HeaderStyle-HorizontalAlign="Center"
+						<asp:BoundField DataField="StudyDescription" HeaderText="<%$Resources: ColumnHeaders,StudyDescription%>" HeaderStyle-HorizontalAlign="Center"
 							ItemStyle-HorizontalAlign="Center" />
-				        <asp:BoundField DataField="PartitionAE" HeaderText="Partition" HeaderStyle-HorizontalAlign="Center"
+				        <asp:BoundField DataField="PartitionAE" HeaderText="<%$Resources: ColumnHeaders,Partition %>" HeaderStyle-HorizontalAlign="Center"
 							ItemStyle-HorizontalAlign="Center" />
 					    <asp:TemplateField HeaderText="Deleted By" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 							<itemtemplate>
@@ -42,15 +54,11 @@
 						</asp:TemplateField>
 					</Columns>
 					<EmptyDataTemplate>				    
-					<ccAsp:EmptySearchResultsMessage runat="server" ID="NoResultFoundMessage" Message="No studies found using the provided criteria.">
+					<ccAsp:EmptySearchResultsMessage runat="server" ID="NoResultFoundMessage" Message="<%$Resources: SR, AdminDeletedStudies_NoStudiesFound %>">
 						<SuggestionTemplate>					
 						    <ul style="padding-left: 15px; margin-left: 5px; margin-top: 4px; margin-bottom: 4px;">
-	                            <li>Modify your search criteria.</li>
-	                            <li>
-	                                Check that a copy of the study is maintained after deletion.<br />Use the "Delete Management" tab  on the Edit Dialog of the desired 
-	                                <asp:LinkButton runat="server" PostBackUrl="~/Pages/Admin/Configure/ServerPartitions/Default.aspx" 
-	                                        CssClass="EmptySearchResultsSuggestionContent">Server Partition</asp:LinkButton>.
-	                            </li>
+	                            <li><%=SR.AdminDeletedStudies_ModifySearchCriteria%></li>
+	                            <li><%=SR.AdminDeletedStudies_CheckPartitionConfiguration%></li>
 	                        </ul>	    
 						</SuggestionTemplate>
 					</ccAsp:EmptySearchResultsMessage>

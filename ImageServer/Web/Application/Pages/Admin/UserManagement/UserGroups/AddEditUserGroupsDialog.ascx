@@ -34,23 +34,23 @@ function ValidationUserGroupNameParams()
     
         <table cellpadding="5">           
             <tr>
-                <td class="DialogTextBoxLabel" nowrap="nowrap"><asp:Label ID="Label1" runat="server" Text="Group Name" CssClass="DialogTextBoxLabel" /></td><td><asp:TextBox runat="server" ID="GroupName" CssClass="DialogTextBox"></asp:TextBox><asp:HiddenField ID="OriginalGroupName" runat="server" /></td>
+                <td class="DialogTextBoxLabel" nowrap="nowrap"><asp:Label ID="Label1" runat="server" Text="<%$Resources: InputLabels, AdminUserGroups_GroupName %>" CssClass="DialogTextBoxLabel" /></td><td><asp:TextBox runat="server" ID="GroupName" CssClass="DialogTextBox"></asp:TextBox><asp:HiddenField ID="OriginalGroupName" runat="server" /></td>
                 <td width="100%">
                     <ccAsp:InvalidInputIndicator ID="GroupNameHelpId" runat="server" SkinID="InvalidInputIndicator" />
                     <ccValidator:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
                                                         ControlToValidate="GroupName" InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditUserGroupsValidationGroup"
-                                                        InvalidInputIndicatorID="GroupNameHelpId" Text="Group name is required" Display="None"
+                                                        InvalidInputIndicatorID="GroupNameHelpId" Text="<%$Resources: InputValidation, ThisFieldIsRequired %>" Display="None"
                                                         RequiredWhenChecked="False"/>
                     <ccValidator:DuplicateUsergroupValidator ID="DuplicateUsergroupValidator" runat="server"
                                                         ControlToValidate="GroupName" InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditUserGroupsValidationGroup"
-                                                        InvalidInputIndicatorID="GroupNameHelpId" Text="User Group already exists." Display="None"
+                                                        InvalidInputIndicatorID="GroupNameHelpId" Text="<%$Resources: InputValidation, AdminUserGroups_UserGroupAlreadyExists %>" Display="None"
                                                         ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateUserGroupName"
                                                         ParamsFunction="ValidationUserGroupNameParams"/>                                                        
                                                             
                 </td>
             </tr>
             <tr>
-                <td valign="top" class="DialogTextBoxLabel"><asp:Label ID="Label3" runat="server" Text="Tokens" CssClass="DialogTextBoxLabel" /></td>
+                <td valign="top" class="DialogTextBoxLabel"><asp:Label ID="Label3" runat="server" Text="<%$Resources: InputLabels, AdminUserGroups_Tokens %>" CssClass="DialogTextBoxLabel" /></td>
                 <td valign="top" colspan="2">                    
                     <div  class="DialogCheckBoxList">
                        <asp:CheckBoxList id="TokenCheckBoxList" runat="server" TextAlign="Right" RepeatColumns="1"></asp:CheckBoxList>
@@ -72,6 +72,7 @@ function ValidationUserGroupNameParams()
                 <td align="right">
                     <asp:Panel runat="server" CssClass="DefaultModalDialogButtonPanel">
                         <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="<%$Image:AddButton%>" ValidationGroup="AddEditUserGroupsValidationGroup" OnClick="OKButton_Click"/>
+                        <ccUI:ToolbarButton ID="UpdateButton" runat="server" SkinID="<%$Image:UpdateButton%>" ValidationGroup="AddEditUserGroupsValidationGroup" OnClick="OKButton_Click"/>
                         <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="<%$Image:CancelButton%>" OnClick="CancelButton_Click"/>
                     </asp:Panel>
                 </td>

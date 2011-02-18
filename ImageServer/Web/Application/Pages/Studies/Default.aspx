@@ -10,7 +10,8 @@
 --%>
 
 <%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true" 
-    EnableEventValidation="false" Codebehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.Default" %>
+    EnableEventValidation="false" Codebehind="Default.aspx.cs" 
+    Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.Default" %>
 
 <%@ Register Src="StudyDetails/Controls/DeleteStudyConfirmDialog.ascx" TagName="DeleteStudyConfirmDialog" TagPrefix="localAsp" %>
 

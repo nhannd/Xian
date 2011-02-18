@@ -22,6 +22,8 @@ using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
+using Resources;
+using SR = ClearCanvas.ImageServer.Web.Application.App_GlobalResources.SR;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
 {
@@ -180,11 +182,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
                                              usage,
                                              fs.HighWatermark,
                                              fs.LowWatermark);
-                img.AlternateText =
-                    string.Format("Current Usage   : {0}\nHigh Watermark : {1}%\nLow Watermark  : {2}%",
-                                  float.IsNaN(usage) ? "Unknown" : usage.ToString() + "%",
-                                  fs.HighWatermark,
-                                  fs.LowWatermark);
+                img.AlternateText = string.Format(Server.HtmlEncode(Tooltips.AdminFilesystem_DiskUsage).Replace(Environment.NewLine, "<br/>"),
+                                  float.IsNaN(usage) ? SR.Unknown : usage.ToString(),
+                                  fs.HighWatermark, fs.LowWatermark);
             }
         }
 

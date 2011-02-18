@@ -15,7 +15,7 @@
 <%@ Register Src="WorkQueueSettingsPanel.ascx" TagName="WorkQueueSettingsPanel" TagPrefix="localAsp" %>
 <%@ Register Src="../WorkQueueItemList.ascx" TagName="WorkQueueItemList" TagPrefix="localAsp" %>
 
-<ccAsp:ModalDialog id="ModalDialog" runat="server" title="Schedule Work Queue Item" Width="900px">
+<ccAsp:ModalDialog id="ModalDialog" runat="server" title="<%$Resources: Titles,ScheduleWorkQueueDialogTitle %>" Width="900px">
 <ContentTemplate>
    
     <asp:Panel ID="Panel1" runat="server" CssClass="DialogPanelContent" width="100%">

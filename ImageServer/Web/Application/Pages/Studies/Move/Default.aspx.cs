@@ -68,6 +68,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
                         break;
                 }
             }
+
+            SetPageTitle(App_GlobalResources.Titles.MoveStudiesPageTitle);
         }
 
         protected void Page_Load(object sender, EventArgs e)

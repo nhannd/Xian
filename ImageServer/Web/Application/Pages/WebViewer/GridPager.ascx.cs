@@ -224,7 +224,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WebViewer
                 EnableCurrentPage(_target.PageCount > 1);
 
                 PageCountLabel.Text =
-                    string.Format(" of {0}", AdjustCurrentPageForDisplay(_target.PageCount));
+                    string.Format(" {0} {1}", ClearCanvas.ImageServer.Web.Application.App_GlobalResources.GridPager.PageOf, AdjustCurrentPageForDisplay(_target.PageCount));
 
                 ItemCountLabel.Text = string.Format("{0} {1}", ItemCount, ItemCount == 1 ? ItemName : PluralItemName);
 
@@ -270,7 +270,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WebViewer
                 ItemCountLabel.Text = string.Format("0 {0}", PluralItemName);
                 CurrentPage.Text = "0";
                 EnableCurrentPage(false);
-                PageCountLabel.Text = string.Format(" of 0");
+                PageCountLabel.Text = string.Format(" {0} 0", ClearCanvas.ImageServer.Web.Application.App_GlobalResources.GridPager.PageOf);
                 PrevPageButton.Enabled = false;
                 PrevPageButton.ImageUrl = ImageServerConstants.ImageURLs.WebViewerPagerPreviousDisabled;
                 NextPageButton.Enabled = false;

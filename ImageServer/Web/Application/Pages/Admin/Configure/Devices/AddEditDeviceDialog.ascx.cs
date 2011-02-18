@@ -256,7 +256,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             foreach (DeviceTypeEnum t in deviceTypes)
             {
                 DeviceTypeDropDownList.Items.Add(
-                    new ListItem(t.Description, t.Lookup)
+                    new ListItem(ServerEnumDescription.GetLocalizedDescription(t), t.Lookup)
                     );
             }
 

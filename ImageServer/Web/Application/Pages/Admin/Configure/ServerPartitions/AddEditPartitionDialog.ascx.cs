@@ -164,7 +164,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
             DuplicateSopDropDownList.Items.Clear();
             foreach (DuplicateSopPolicyEnum policyEnum in DuplicateSopPolicyEnum.GetAll())
             {
-            	ListItem item = new ListItem(policyEnum.Description, policyEnum.Lookup);
+            	ListItem item = new ListItem(ServerEnumDescription.GetLocalizedDescription(policyEnum), policyEnum.Lookup);
                 DuplicateSopDropDownList.Items.Add(item);
             }
 

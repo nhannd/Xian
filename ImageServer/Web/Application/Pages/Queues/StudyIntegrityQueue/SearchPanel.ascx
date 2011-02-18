@@ -45,34 +45,34 @@ function MultiSelect() {
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label1" runat="server" Text="Patient Name" CssClass="SearchTextBoxLabel"
+                                                <asp:Label ID="Label1" runat="server" Text="<%$Resources: SearchFieldLabels,PatientName %>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
                                                 <asp:TextBox ID="PatientName" runat="server" CssClass="SearchTextBox" />
                                             </td>
                                              <td align="left" valign="bottom">
-                                                <asp:Label ID="Label4" runat="server" Text="Patient ID" CssClass="SearchTextBoxLabel"
+                                                <asp:Label ID="Label4" runat="server" Text="<%$Resources: SearchFieldLabels,PatientID %>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:TextBox ID="PatientId" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Patient Id" />
+                                                <asp:TextBox ID="PatientId" runat="server" CssClass="SearchTextBox" ToolTip="<%$Resources: Tooltips,SearchByPatientID %>" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label3" runat="server" Text="Accession #" CssClass="SearchTextBoxLabel"
+                                                <asp:Label ID="Label3" runat="server" Text="<%$Resources: SearchFieldLabels,AccessionNumber%>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
                                                 <asp:TextBox ID="AccessionNumber" runat="server" CssClass="SearchTextBox" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label2" runat="server" Text="From Date " CssClass="SearchTextBoxLabel"
+                                                <asp:Label ID="Label2" runat="server" Text="<%$Resources: SearchFieldLabels,FromDate%>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" />
                                                 <asp:LinkButton ID="ClearFromDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 8px;"/><br />
-                                                <ccUI:TextBox ID="FromDate" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="Search the list by Study Date" style="width:85px"/>
+                                                <ccUI:TextBox ID="FromDate" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="<%$Resources: Tooltips,SearchByStudyDate %>" style="width:85px"/>
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label6" runat="server" Text="To Date " CssClass="SearchTextBoxLabel"
+                                                <asp:Label ID="Label6" runat="server" Text="<%$Resources: SearchFieldLabels,ToDate%>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" />
                                                 <asp:LinkButton ID="ClearToDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 22px;"/><br />
-                                                <ccUI:TextBox ID="ToDate" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="Search the list by Study Date" style="width:85px"/>
+                                                <ccUI:TextBox ID="ToDate" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="<%$Resources: Tooltips,SearchByStudyDate %>" style="width:85px"/>
                                             </td>                                            
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label5" runat="server" Text="Reason" CssClass="SearchTextBoxLabel"
+                                                <asp:Label ID="Label5" runat="server" Text="<%$Resources: SearchFieldLabels,SIQReason%>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
                                                 <asp:ListBox runat="server" id="ReasonListBox" SelectionMode="Multiple">                                             
                                                 </asp:ListBox>

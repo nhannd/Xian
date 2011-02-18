@@ -1,3 +1,15 @@
+<%-- License
+
+Copyright (c) 2011, ClearCanvas Inc.
+All rights reserved.
+http://www.clearcanvas.ca
+
+This software is licensed under the Open Software License v3.0.
+For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+--%>
+
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="SeriesDetailsPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.SeriesDetails.SeriesDetailsPanel" %>
 
@@ -11,7 +23,7 @@
   <table cellpadding="0" cellspacing="0" width="100%">
   
   <tr>
-  <td class="MainContentTitle">Series Details</td>
+  <td class="MainContentTitle"><%= Titles.SeriesDetails %></td>
   </tr>
     
   <tr>
@@ -23,7 +35,7 @@
   <tr>
   <td>
       <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
-        <tr><td class="MainContentSubTitle">Study Summary</td></tr>
+        <tr><td class="MainContentSubTitle"><%= Labels.SeriesDetails_StudySummary%></td></tr>
         <tr><td>
         <localAsp:StudySummaryPanel ID="StudySummary" runat="server" />
         </td></tr>
@@ -36,7 +48,7 @@
   <tr>
   <td>
     <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
-        <tr><td class="MainContentSubTitle">Series Summary</td></tr>
+        <tr><td class="MainContentSubTitle"><%= Labels.SeriesDetails_SeriesSummary %></td></tr>
         <tr><td>
         <localAsp:SeriesDetailsView ID="SeriesDetails" runat="server" />
         </td></tr>

@@ -13,6 +13,8 @@
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.AddEditDeviceDialog"
     CodeBehind="AddEditDeviceDialog.ascx.cs" %>
 <%@ Register Src="ThrottleSettingsTab.ascx" TagName="ThrottleSettingsTab" TagPrefix="localAsp" %>
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 <ccAsp:ModalDialog ID="ModalDialog1" runat="server" Width="450px">
     <ContentTemplate>
         <script type="text/javascript">
@@ -59,7 +61,7 @@
                                 <table>
                                     <tr align="left">
                                         <td>
-                                            <asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="DialogTextBoxLabel" /><br />
+                                            <asp:Label ID="Label1" runat="server" Text="<%$Resources: InputLabels, AETitle %>" CssClass="DialogTextBoxLabel" /><br />
                                             <asp:TextBox ID="AETitleTextBox" runat="server" ValidationGroup="AddEditDeviceValidationGroup"
                                                 MaxLength="16" CssClass="DialogTextBox"></asp:TextBox>
                                         </td>
@@ -73,7 +75,7 @@
                                 <table width="100%">
                                     <tr align="left">
                                         <td>
-                                            <asp:Label ID="Label2" runat="server" Text="Description" CssClass="DialogTextBoxLabel" /><br />
+                                            <asp:Label ID="Label2" runat="server" Text="<%$Resources: InputLabels, DeviceDescription %>" CssClass="DialogTextBoxLabel" /><br />
                                             <asp:TextBox ID="DescriptionTextBox" runat="server" CssClass="DialogTextBox"></asp:TextBox>
                                         </td>
                                         <td>
@@ -87,8 +89,8 @@
                                 <table>
                                     <tr align="left">
                                         <td>
-                                            <asp:Label ID="Label3" runat="server" Text="IP Address" CssClass="DialogTextBoxLabel" />
-                                            <asp:CheckBox ID="DHCPCheckBox" runat="server" Text="DHCP" CssClass="DialogCheckBox" /><br />
+                                            <asp:Label ID="Label3" runat="server" Text="<%$Resources: InputLabels, IPAddress %>" CssClass="DialogTextBoxLabel" />
+                                            <asp:CheckBox ID="DHCPCheckBox" runat="server" Text="<%$Resources: InputLabels, DHCP %>" CssClass="DialogCheckBox" /><br />
                                             <asp:TextBox ID="IPAddressTextBox" runat="server" ValidationGroup="AddEditDeviceValidationGroup"
                                                 CssClass="DialogTextBox">
                                             </asp:TextBox>
@@ -104,7 +106,7 @@
                                 <table width="100%">
                                     <tr align="left">
                                         <td>
-                                            <asp:Label ID="Label6" runat="server" Text="Device Type" CssClass="DialogTextBoxLabel" /><br />
+                                            <asp:Label ID="Label6" runat="server" Text="<%$Resources: InputLabels, DeviceType %>" CssClass="DialogTextBoxLabel" /><br />
                                             <asp:DropDownList ID="DeviceTypeDropDownList" runat="server" Width="100%" CssClass="DialogDropDownList">
                                             </asp:DropDownList>
                                         </td>
@@ -119,7 +121,7 @@
                                 <table>
                                     <tr align="left">
                                         <td>
-                                            <asp:Label ID="Label5" runat="server" Text="Port" CssClass="DialogTextBoxLabel" /><br />
+                                            <asp:Label ID="Label5" runat="server" Text="<%$Resources: InputLabels, Port %>" CssClass="DialogTextBoxLabel" /><br />
                                             <asp:TextBox ID="PortTextBox" runat="server" CssClass="DialogTextBox" />
                                         </td>
                                         <td valign="bottom">
@@ -133,7 +135,7 @@
                                 <table width="100%">
                                     <tr align="left">
                                         <td>
-                                            <asp:CheckBox ID="ActiveCheckBox" runat="server" Checked="True" Text="Enabled" CssClass="DialogCheckBox" />
+                                            <asp:CheckBox ID="ActiveCheckBox" runat="server" Checked="True" Text="<%$Resources: InputLabels, Enabled %>" CssClass="DialogCheckBox" />
                                         </td>
                                         <td>
                                         </td>
@@ -145,22 +147,21 @@
                     <ccValidator:RegularExpressionFieldValidator ID="AETitleTextBoxValidator" runat="server"
                         ControlToValidate="AETitleTextBox" InvalidInputCSS="DialogTextBoxInvalidInput"
                         ValidationGroup="AddEditDeviceValidationGroup" InvalidInputIndicatorID="AETitleHelp"
-                        ValidationExpression="^([^\\]){1,16}$" Text="Invalid AE Title" Display="None"></ccValidator:RegularExpressionFieldValidator>
+                        ValidationExpression="^([^\\]){1,16}$" Text="<%$Resources: InputValidation,InvalidAETitle %>" Display="None"></ccValidator:RegularExpressionFieldValidator>
                     <ccValidator:DeviceValidator ID="DeviceValidator" runat="server"
                         ControlToValidate="AETitleTextBox" Display="None" EnableClientScript="false"
-                        Text="The AE Title is not valid." InvalidInputCSS="DialogTextBoxInvalidInput" 
+                        Text="<%$Resources: InputValidation, DuplicateAETitle %>" InvalidInputCSS="DialogTextBoxInvalidInput" 
                         ValidationGroup="AddEditDeviceValidationGroup" InvalidInputIndicatorID="AETitleHelp"></ccValidator:DeviceValidator>
                     <ccValidator:ConditionalRequiredFieldValidator ID="IPAddressValidator" runat="server"
                         ControlToValidate="IPAddressTextBox" ValidateWhenUnchecked="true" ConditionalCheckBoxID="DHCPCheckBox" InvalidInputCSS="DialogTextBoxInvalidInput"
-                        ValidationGroup="AddEditDeviceValidationGroup" Text="Device IP address is required if it uses static IP"
+                        ValidationGroup="AddEditDeviceValidationGroup" Text="<%$Resources: InputValidation, ThisFieldIsRequired %>"
                         InvalidInputIndicatorID="IPAddressHelp" Display="None"></ccValidator:ConditionalRequiredFieldValidator>
                     <ccValidator:RangeValidator ID="PortValidator" runat="server" ControlToValidate="PortTextBox"
                         ValidationGroup="AddEditDeviceValidationGroup" MinValue="1" MaxValue="65535"
-                        InvalidInputCSS="DialogTextBoxInvalidInput" Text="Device Port must be between 1 and 65535"
+                        InvalidInputCSS="DialogTextBoxInvalidInput" Text="<%$Resources: InputValidation, InvalidPort %>"
                         InvalidInputIndicatorID="PortHelp" Display="None"></ccValidator:RangeValidator>
                 </ContentTemplate>
-                <HeaderTemplate>
-                    General</HeaderTemplate>
+                <HeaderTemplate><%= Titles.AdminDevices_AddEditDialog_GeneralTabTitle%></HeaderTemplate>
             </aspAjax:TabPanel>
             <aspAjax:TabPanel ID="TabPanel2" runat="server" HeaderText="TabPanel2" Height="200px">
                 <ContentTemplate>
@@ -169,11 +170,12 @@
                             <td>
                             </td>
                             <td>
-                                <asp:CheckBox ID="AllowStorageCheckBox" runat="server" Text="Storage" ToolTip="Accept or reject C-STORE from this device"
+                                <asp:CheckBox ID="AllowStorageCheckBox" runat="server" Text="<%$Resources: InputLabels, DeviceFeatures_Storage %>" 
+                                    ToolTip="<%$Resources: Tooltips, DeviceFeatures_Store %>"
                                     CssClass="DialogCheckBox" />
                                 <div style="padding-left: 18px; padding-top: 3px; padding-bottom: 2px;">
                                     <asp:CheckBox ID="AcceptKOPR" runat="server" Checked="False" Text="" CssClass="DialogCheckBox" /><asp:Label
-                                        ID="AcceptKeyObjectStatesLabel" runat="server" Text="Only Accept Key Objects and Presentation States"
+                                        ID="AcceptKeyObjectStatesLabel" runat="server" Text="<%$Resources: InputLabels, DeviceFeatures_AcceptKOPRFeature %>"
                                         CssClass="DialogCheckBox" />
                                 </div>
                             </td>
@@ -184,7 +186,8 @@
                             <td>
                             </td>
                             <td>
-                                <asp:CheckBox ID="AllowAutoRouteCheckBox" runat="server" Text="Auto Route" ToolTip="Allow auto-routing to this device"
+                                <asp:CheckBox ID="AllowAutoRouteCheckBox" runat="server" Text="<%$Resources: InputLabels, DeviceFeatures_AutoRoute %>" 
+                                    ToolTip="<%$Resources: Tooltips, DeviceFeatures_AutoRoute %>"
                                     CssClass="DialogCheckBox" />
                             </td>
                             <td>
@@ -194,7 +197,8 @@
                             <td>
                             </td>
                             <td>
-                                <asp:CheckBox ID="AllowQueryCheckBox" runat="server" Text="Query" ToolTip="Accept or reject C-FIND from this device"
+                                <asp:CheckBox ID="AllowQueryCheckBox" runat="server" Text="<%$Resources: InputLabels, DeviceFeatures_Query %>" 
+                                    ToolTip="<%$Resources: Tooltips, DeviceFeatures_Query%>"
                                     CssClass="DialogCheckBox" />
                             </td>
                             <td>
@@ -204,7 +208,7 @@
                             <td>
                             </td>
                             <td>
-                                <asp:CheckBox ID="AllowRetrieveCheckBox" runat="server" Text="Retrieve" ToolTip="Accept or reject C-MOVE and C-GET from this device"
+                                <asp:CheckBox ID="AllowRetrieveCheckBox" runat="server" Text="<%$Resources: InputLabels, DeviceFeatures_Retrieve %>" ToolTip="<%$Resources: Tooltips, DeviceFeatures_Retrieve %>"
                                     CssClass="DialogCheckBox" />
                             </td>
                             <td>
@@ -212,15 +216,13 @@
                         </tr>
                     </table>
                 </ContentTemplate>
-                <HeaderTemplate>
-                    Features</HeaderTemplate>
+                <HeaderTemplate><%= Titles.AdminDevices_AddEditDialog_FeaturesTabTitle%></HeaderTemplate>
             </aspAjax:TabPanel>
             <aspAjax:TabPanel ID="TabPanel3" runat="server" HeaderText="TabPanel2" Height="200px">
                 <ContentTemplate>
                     <localAsp:ThrottleSettingsTab runat="server" ID="ThrottleSettingsTab" />
                 </ContentTemplate>
-                <HeaderTemplate>
-                    Throttle</HeaderTemplate>
+                <HeaderTemplate><%= Titles.AdminDevices_AddEditDialog_ThrottleTabTitle%></HeaderTemplate>
             </aspAjax:TabPanel>
         </aspAjax:TabContainer>
         <table cellpadding="0" cellspacing="0" width="100%">

@@ -15,6 +15,7 @@ using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 {
@@ -281,7 +282,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                         (EmptySearchResultsMessage)e.Row.FindControl("EmptySearchResultsMessage");
                 if (message != null)
                 {
-                    message.Message = TheGrid.DataSource == null ? "Please enter search criteria to find studies." : "No studies found matching the provided criteria.";
+                    message.Message = TheGrid.DataSource == null ? SR.PleaseEnterSearchCriteriaToFindStudies: SR.NoStudiesFound;
                 }
             } 
         }

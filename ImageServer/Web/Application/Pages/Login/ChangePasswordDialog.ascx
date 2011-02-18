@@ -13,7 +13,9 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ChangePasswordDialog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Login.ChangePasswordDialog" %>
 
-<ccAsp:ModalDialog ID="ModalDialog1" runat="server" Width="500px" Title="Change Password">
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
+<ccAsp:ModalDialog ID="ModalDialog1" runat="server" Width="500px" Title="<%$Resources: Titles, ChangePasswordDialogTitle %>">
     <ContentTemplate>
     
     <asp:Panel runat="server" Visible="false" ID="ErrorMessagePanel" CssClass="ErrorMessage" style="margin-bottom: 10px;">
@@ -23,11 +25,11 @@
     <asp:Panel ID="Panel1" runat="server" width="100%" CssClass="DialogPanelContent">
     
         <table style="margin-top: 10px; margin-bottom: 10px;">
-        <tr><td class="ChangePasswordLabel">User ID:</td><td><asp:TextBox runat="server" Width="150px" ID="ChangePasswordUsername"/></td></tr>
-        <tr><td class="ChangePasswordLabel">Original Password:</td><td><asp:TextBox TextMode="Password" runat="server" Width="150px" ID="OriginalPassword"/></td></tr>
-        <tr><td class="ChangePasswordLabel">New Password:</td><td><asp:TextBox TextMode="Password" runat="server"  Width="150px" ID="NewPassword"/></td></tr>
-        <tr><td class="ChangePasswordLabel">Retype New Password:</td><td><asp:TextBox TextMode="Password" runat="server"  Width="150px" ID="ConfirmNewPassword"/></td></tr>
-        <tr><td colspan="2" style="padding-top: 10px; font-family: Arial; font-size: 12px;" align="right">Login after password change: <asp:CheckBox runat="server" Checked="true" id="LoginPasswordChange"/></td></tr>
+        <tr><td class="ChangePasswordLabel"><%= Labels.UserID %>:</td><td><asp:TextBox runat="server" Width="150px" ID="ChangePasswordUsername"/></td></tr>
+        <tr><td class="ChangePasswordLabel"><%= Labels.OriginalPassword %>:</td><td><asp:TextBox TextMode="Password" runat="server" Width="150px" ID="OriginalPassword"/></td></tr>
+        <tr><td class="ChangePasswordLabel"><%= Labels.NewPassword %>:</td><td><asp:TextBox TextMode="Password" runat="server"  Width="150px" ID="NewPassword"/></td></tr>
+        <tr><td class="ChangePasswordLabel"><%= Labels.RetypeNewPassword %>:</td><td><asp:TextBox TextMode="Password" runat="server"  Width="150px" ID="ConfirmNewPassword"/></td></tr>
+        <tr><td colspan="2" style="padding-top: 10px; font-family: Arial; font-size: 12px;" align="right"><%= Labels.LoginAfterPasswordChange %>: <asp:CheckBox runat="server" Checked="true" id="LoginPasswordChange"/></td></tr>
         </table>
            
     </asp:Panel>

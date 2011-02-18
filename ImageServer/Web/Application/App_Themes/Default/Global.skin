@@ -59,7 +59,7 @@
 <ccUI:ToolbarButton runat="server" SkinID="ResetPasswordButton" EnabledImageURL="images/Buttons/ResetPasswordEnabled.png" DisabledImageURL="images/Buttons/ResetPasswordDisabled.png" HoverImageURL="images/Buttons/ResetPasswordHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="ViewImagesButton" EnabledImageURL="images/Buttons/ViewImagesEnabled.png" DisabledImageURL="images/Buttons/ViewImagesDisabled.png" HoverImageURL="images/Buttons/ViewImagesHover.png"/>
 
-<asp:LinkButton runat="server" SkinId="CloseButton" Text="Close" CssClass="CloseButton" />
+<asp:LinkButton runat="server" SkinId="CloseButton"  CssClass="CloseButton" />
 
 <%-- Tables --%>
 

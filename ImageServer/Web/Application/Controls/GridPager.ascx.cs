@@ -224,7 +224,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 EnableCurrentPage(_target.PageCount > 1);
 
                 PageCountLabel.Text =
-                    string.Format(" of {0}", AdjustCurrentPageForDisplay(_target.PageCount));
+                    string.Format(" {0} {1}", ClearCanvas.ImageServer.Web.Application.App_GlobalResources.GridPager.PageOf, AdjustCurrentPageForDisplay(_target.PageCount));
 
                 SetPageContainerWidth(_target.PageCount);
                

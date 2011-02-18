@@ -10,19 +10,21 @@
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="WebViewerTimeoutErrorPage.aspx.cs" MasterPageFile="WebViewerErrorPageMaster.Master" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Error.WebViewerTimeoutErrorPage" %>
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Security"%>
 <%@ Import namespace="System.Threading"%>
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
 
 <asp:Content ID="Content1" runat="server" ContentPlaceHolderID="ErrorMessagePlaceHolder">
-	    <asp:label ID="ErrorMessageLabel" Text="ImageServer session timed out." runat="server" />
+	    <asp:label ID="ErrorMessageLabel" runat="server">
+	        <%= ErrorMessages.SessionTimedout%>
+	    </asp:label>
 </asp:Content>
 
 <asp:Content ID="Content2" runat="server" ContentPlaceHolderID="DescriptionPlaceHolder">
 
     <asp:Label ID = "DescriptionLabel" runat="server">
-        This message is being displayed because there has been no activity in the past <%= Math.Round(SessionManager.SessionTimeout.TotalMinutes) %> minute(s). For security purposes, 
-        your ImageServer session has been closed.
+        <%= String.Format(ErrorMessages.WebViewerSessionTimedoutLongDescription,  Math.Round(SessionManager.SessionTimeout.TotalMinutes)) %>
     </asp:Label>
 </asp:Content>
 
 <asp:Content ID="Content3" runat="server" ContentPlaceHolderID="UserEscapePlaceHolder">
-    <table width="100%" class="UserEscapeTable"><tr><td style="height: 30px; text-align: center;"><a href="javascript:window.close()" class="UserEscapeLink">Close</a></td></tr></table>
+    <table width="100%" class="UserEscapeTable"><tr><td style="height: 30px; text-align: center;"><a href="javascript:window.close()" class="UserEscapeLink"><%= Labels.Close %></a></td></tr></table>
 </asp:Content>

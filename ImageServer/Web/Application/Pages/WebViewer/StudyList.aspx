@@ -1,17 +1,21 @@
-﻿<%-- License
-// Copyright (c) 2010, ClearCanvas Inc.
+﻿<%--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
 // This software is licensed under the Open Software License v3.0.
 // For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
 --%>
+
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="StudyList.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.WebViewer.StudyList"%>
 
 <%@ Register Src="StudyListGridView.ascx" TagName="StudyListGridView" TagPrefix="localAsp" %>
 <%@ Register Src="SearchPanel.ascx" TagName="SearchPanel" TagPrefix="localAsp" %>
 <%@ Register Src="SessionTimeout.ascx" TagName="SessionTimeout" TagPrefix="ccAsp" %>
 <%@ Register Src="JQuery.ascx" TagName="JQuery" TagPrefix="localAsp" %>
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -30,7 +34,12 @@
         <ccAsp:SessionTimeout runat="server" ID="SessionTimeout" />
    
         <div>
-            <div><table width="100%" cellpadding="0" cellspacing="0"><tr><td style="padding-bottom: 2px"><asp:Image ID="Image1" ImageUrl="~/Pages/WebViewer/Images/StudiesPageLogo.png" runat="server" /></td><td valign="bottom" align="right" style="padding-bottom: 2px; padding-right: 5px;"><span style="color: #dddddd; font-family: Sans-Serif; font-weight: bold">Multiple matching studies have been found. Please select a study to view.</span></td></tr></table></div>
+            <div><table width="100%" cellpadding="0" cellspacing="0"><tr><td style="padding-bottom: 2px">
+            <asp:Image ID="Image1" ImageUrl="~/Pages/WebViewer/Images/StudiesPageLogo.png" runat="server" /></td>
+            <td valign="bottom" align="right" style="padding-bottom: 2px; padding-right: 5px;">
+            <span style="color: #dddddd; font-family: Sans-Serif; font-weight: bold">
+                <%= SR.WebViewerMutipleMatchingStudiesFound%>
+            </span></td></tr></table></div>
             <asp:Panel ID="Panel2" runat="server" style="border-top: solid 2px #999999;">
                 <localAsp:SearchPanel ID="SearchPanel" runat="server"></localAsp:SearchPanel>
             </asp:Panel>

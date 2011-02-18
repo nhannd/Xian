@@ -175,7 +175,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
             ConflictingStudyLocation.Text = ReconcileDetails != null
                                                 ? ReconcileDetails.GetFolderPath()
-                                                : "Not Specified.";
+                                                : SR.NotSpecified;
 
             string reason;
             CanReconcile = _controller.CanReconcile(location, out reason);

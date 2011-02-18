@@ -177,8 +177,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             if (EditMode)
             {
                 ModalDialog1.Title = App_GlobalResources.SR.DialogEditUserGroupTitle;
-                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
-                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
+                UpdateButton.Visible = true;
+                OKButton.Visible = false;
                 GroupName.Text = UserGroup.Name;
                 OriginalGroupName.Value = UserGroup.Name;
                 TokenCheckBoxList.ClearSelection();
@@ -191,8 +191,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             {
                 TokenCheckBoxList.ClearSelection();
                 ModalDialog1.Title = App_GlobalResources.SR.DialogAddUserGroupTitle;
-                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
-                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
+                UpdateButton.Visible = false;
+                OKButton.Visible = true;
             }
 
             // Update the rest of the fields

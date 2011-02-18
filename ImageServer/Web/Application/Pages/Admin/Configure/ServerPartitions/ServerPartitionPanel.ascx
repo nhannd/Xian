@@ -31,19 +31,19 @@
                                             <td align="right" valign="bottom">
                                             </td>
                                             <td align="left">
-                                                <asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label1" runat="server" Text="<%$Resources: SearchFieldLabels, AETitle %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:TextBox ID="AETitleFilter" runat="server" CssClass="SearchTextBox"></asp:TextBox>
                                             </td>
                                             <td align="left">
-                                                <asp:Label ID="Label2" runat="server" Text="Description" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label2" runat="server" Text="<%$Resources: SearchFieldLabels, ServerPartitionDescription %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:TextBox ID="DescriptionFilter" runat="server" CssClass="SearchTextBox"></asp:TextBox>
                                             </td>
                                             <td align="left">
-                                                <asp:Label ID="Label3" runat="server" Text="Folder" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label3" runat="server" Text="<%$Resources: SearchFieldLabels, ServerPartitionFolder %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:TextBox ID="FolderFilter" runat="server" CssClass="SearchTextBox"></asp:TextBox>
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label4" runat="server" Text="Status" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label4" runat="server" Text="<%$Resources: SearchFieldLabels, ServerPartitionStatus %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:DropDownList ID="StatusFilter" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList>
                                             </td>

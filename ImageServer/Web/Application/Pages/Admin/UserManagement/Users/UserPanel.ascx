@@ -26,11 +26,11 @@
                                             <td align="right" valign="bottom">
                                             </td>
                                             <td align="left">
-                                                <asp:Label ID="Label3" runat="server" Text="User ID" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label3" runat="server" Text="<%$Resources: SearchFieldLabels, UserID %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:TextBox ID="UserNameTextBox" runat="server" CssClass="SearchTextBox"></asp:TextBox>
                                             </td>
                                             <td align="left">
-                                                <asp:Label ID="Label1" runat="server" Text="Name" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label1" runat="server" Text="<%$Resources: SearchFieldLabels, UserName %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:TextBox ID="DisplayNameTextBox" runat="server" CssClass="SearchTextBox"></asp:TextBox>
                                             </td>
                                             <td valign="bottom">

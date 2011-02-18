@@ -1,6 +1,17 @@
+<%-- License
+
+Copyright (c) 2011, ClearCanvas Inc.
+All rights reserved.
+http://www.clearcanvas.ca
+
+This software is licensed under the Open Software License v3.0.
+For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+--%>
+
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="FileSystemQueueGridView.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.FileSystemQueueGridView" %>
 <%@ Import Namespace="ClearCanvas.ImageServer.Model" %>
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
     
 <asp:ScriptManagerProxy ID="ScriptManagerProxy1" runat="server">
 </asp:ScriptManagerProxy>
@@ -17,16 +28,16 @@
                        MouseHoverRowHighlightEnabled="false"
                        GridLines="Horizontal" BackColor="White" >
                         <Columns>
-                            <asp:BoundField DataField="FilesystemQueueTypeEnum" HeaderText="Type">
+                            <asp:BoundField DataField="FilesystemQueueTypeEnum" HeaderText="<%$Resources: ColumnHeaders, FS_Type %>">
                                 <HeaderStyle wrap="False" />    
                             </asp:BoundField>
-                            <asp:TemplateField HeaderText="Scheduled Time">
+                            <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, FS_ScheduledTime %>">
                                 <ItemTemplate>
                                     <ccUI:DateTimeLabel ID="ScheduledTime" runat="server" Value='<%# Eval("ScheduledTime") %>' ></ccUI:DateTimeLabel>
                                 </ItemTemplate>
                                 <HeaderStyle wrap="False" />    
                             </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Queue XML">
+                            <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, FS_QueueXML %>">
                                 <ItemTemplate>
                                     <asp:Label ID="XmlText" runat="server"></asp:Label>
                                 </ItemTemplate>
@@ -35,13 +46,13 @@
                         <EmptyDataTemplate>
                             <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0" >
                                 <asp:TableHeaderRow CssClass="GlobalGridViewHeader">
-                                    <asp:TableHeaderCell>Type</asp:TableHeaderCell>
-                                    <asp:TableHeaderCell>Schedule</asp:TableHeaderCell>
-                                    <asp:TableHeaderCell>Queue XML</asp:TableHeaderCell>
+                                    <asp:TableHeaderCell><%=ColumnHeaders.FS_Type%></asp:TableHeaderCell>
+                                    <asp:TableHeaderCell><%=ColumnHeaders.FS_ScheduledTime%></asp:TableHeaderCell>
+                                    <asp:TableHeaderCell><%=ColumnHeaders.FS_QueueXML%></asp:TableHeaderCell>
                                 </asp:TableHeaderRow>
                                 <asp:TableRow>
                                     <asp:TableCell ColumnSpan="3" Height="50" HorizontalAlign="Center">
-                                        <asp:panel ID="Panel1" runat="server" CssClass="GlobalGridViewEmptyText">No File System Queue items for this study.</asp:panel>
+                                        <asp:panel ID="Panel1" runat="server" CssClass="GlobalGridViewEmptyText"><%= SR.StudyDetails_NoFileSystemForThisStudy%></asp:panel>
                                     </asp:TableCell>
                                 </asp:TableRow>
                             </asp:Table>

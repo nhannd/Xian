@@ -11,6 +11,7 @@
 
 
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="MovePanel.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries.MovePanel" %>
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
 
 <%@ Register Src="DeviceGridView.ascx" TagName="DeviceGridView" TagPrefix="localAsp" %>
 <%@ Register Src="SeriesGridView.ascx" TagName="SeriesGridView" TagPrefix="localAsp" %>
@@ -52,7 +53,7 @@
 <tr>
   <td class="SeriesDetailsContent">
       <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
-        <tr><td class="MainContentSubTitle">Study Summary</td></tr>
+        <tr><td class="MainContentSubTitle"><%= Labels.StudySummary%></td></tr>
         <tr><td>
         <localAsp:StudySummaryPanel ID="StudySummary" runat="server" />
         </td></tr>
@@ -66,7 +67,7 @@
   <td class="SeriesDetailsContent">
     <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
         <tr>
-            <td class="MainContentSubTitle" style="vertical-align: bottom; padding-top: 5px;">Series</td>
+            <td class="MainContentSubTitle" style="vertical-align: bottom; padding-top: 5px;"><%= Labels.Series%></td>
             <td align="right" valign="bottom">
                 <asp:Panel CssClass="ToolbarButtons" style="padding-right: 4px;" runat="server">
                     <ccUI:ToolbarButton runat="server" SkinID="<%$Image:MoveButton%>" ID="MoveButton" onClick="MoveButton_Click" />
@@ -85,31 +86,32 @@
   <tr><td style="background-color: #3D98D1"><asp:Image ID="Image3" runat="server" SkinID="Spacer" Height="4" /></td></tr>
   
   <tr>
-  <td class="ToolbarButtonPanel" style="border-bottom: solid 1px #3d98d1; width: 100%; color: #205F87; font-family: Sans-serif; font-weight: bold; font-size: 18px; padding-left: 5px;">Destination Devices</td>
+  <td class="ToolbarButtonPanel" style="border-bottom: solid 1px #3d98d1; width: 100%; color: #205F87; font-family: Sans-serif; font-weight: bold; font-size: 18px; padding-left: 5px;">
+  <%= Labels.DestinationDevices%></td>
   </tr>
 
   <tr>
   <td class="SeriesDetailsContent">
      <table cellpadding="2" cellspacing="0" class="ToolbarButtonPanel" width="100%" >
         <tr>
-            <td align="left" nowrap="nowrap" valign="bottom" style="padding-top: 5px;"><asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="SearchTextBoxLabel" /><br /><asp:TextBox ID="AETitleFilter" runat="server" CssClass="SearchTextBox" /></td>
+            <td align="left" nowrap="nowrap" valign="bottom" style="padding-top: 5px;"><asp:Label ID="Label1" runat="server" Text="<%$ Resources: Labels, AETitle %>" CssClass="SearchTextBoxLabel" /><br /><asp:TextBox ID="AETitleFilter" runat="server" CssClass="SearchTextBox" /></td>
             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label3" runat="server" Text="Description" CssClass="SearchTextBoxLabel"
+                                                <asp:Label ID="Label3" runat="server" Text="<%$ Resources: Labels, DeviceDescription %>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False"></asp:Label><br />
                                                 <asp:TextBox ID="DescriptionFilter" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Description"></asp:TextBox></td>
             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label2" runat="server" Text="IP Address" CssClass="SearchTextBoxLabel"
+                                                <asp:Label ID="Label2" runat="server" Text="<%$ Resources: Labels, IPAddress %>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False"></asp:Label><br />
                                                 <asp:TextBox ID="IPAddressFilter" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by IP Address"></asp:TextBox></td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label4" runat="server" Text="DHCP" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label4" runat="server" Text="<%$ Resources: Labels, DHCP %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:DropDownList ID="DHCPFilter" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList></td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label5" runat="server" Text="Device Type" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label5" runat="server" Text="<%$ Resources: Labels, DeviceType %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:ListBox ID="DeviceTypeFilter" runat="server" CssClass="SearchDropDownList" SelectionMode="Multiple">
                                                 </asp:ListBox></td>
-            <td align="right" nowrap="nowrap" style="padding-right: 6px; padding-bottom: 4px; vertical-align: bottom"><ccUI:ToolbarButton runat="server" ID="SearchButton" SkinID="SearchIcon" onClick="SearchButton_Click" /></td>
+            <td align="right" nowrap="nowrap" style="padding-right: 6px; padding-bottom: 4px; vertical-align: bottom"><ccUI:ToolbarButton runat="server" ID="SearchButton" SkinID="<%$Image:SearchIcon %>" onClick="SearchButton_Click" /></td>
             <td width="100%">&nbsp;</td>
         </tr>
 
@@ -130,4 +132,4 @@
     </ContentTemplate>
 </asp:UpdatePanel>
 
-<ccAsp:MessageBox ID="MoveConfirmation" runat="server" Title="Move Series Confirmation"/>
+<ccAsp:MessageBox ID="MoveConfirmation" runat="server" Title="<%$Resources: Titles, MoveSeries_Dialog_Confirmation %>"/>

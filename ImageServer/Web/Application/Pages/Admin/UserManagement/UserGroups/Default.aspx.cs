@@ -15,6 +15,7 @@ using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.UserGroups
 {
@@ -67,10 +68,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
 												}
 												catch (Exception)
 												{
-													DeleteErrorMessage.Message =
-														string.Format(
-															"Unable to Delete User Group \"{0}\" because there are users who are a part of this group.",
-															userGroup.Name);
+													DeleteErrorMessage.Message = string.Format(ErrorMessages.AdminUserGroups_DeleteUserGroupFailed,userGroup.Name);
 													DeleteErrorMessage.MessageStyle = "color: red; font-weight: bold";
 													DeleteErrorMessage.MessageType = MessageBox.MessageTypeEnum.ERROR;
 													DeleteErrorMessage.Show();
@@ -96,7 +94,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
 
         public void OnDeleteUserGroup(UserGroupRowData userGroupRowData)
         {
-            DeleteConfirmation.Message = string.Format("Are you sure you want to delete user group \"{0}?\"", userGroupRowData.Name);
+            DeleteConfirmation.Message = string.Format(SR.AdminUserGroups_DeleteDialog_AreYouSure, userGroupRowData.Name);
             DeleteConfirmation.MessageType = MessageBox.MessageTypeEnum.YESNO;
             DeleteConfirmation.Data = userGroupRowData;
             DeleteConfirmation.Show();

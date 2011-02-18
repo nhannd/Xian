@@ -15,6 +15,7 @@ using System.Web.UI;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Enterprise.Authentication;
 using ClearCanvas.ImageServer.Web.Common.Security;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
 {
@@ -44,8 +45,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                 {
                     if (!NewPassword.Text.Equals(ConfirmNewPassword.Text) || NewPassword.Text.Equals(string.Empty))
                     {
-                        ErrorMessage.Text =
-                            "Provided passwords don't match.<br/>Please retype your passwords and try again.";
+                        ErrorMessage.Text = ErrorMessages.PasswordsDontMatch;
                         ErrorMessagePanel.Visible = true;
                     }
                     else

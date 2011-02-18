@@ -14,6 +14,8 @@ using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
+using ClearCanvas.ImageServer.Web.Common.Utilities;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
@@ -46,16 +48,36 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         public string GetReason(string reasonString)
         {
-            if (string.IsNullOrEmpty(reasonString)) return "None Specified";
+            if (string.IsNullOrEmpty(reasonString)) return SR.NoneSpecified;
             string[] reason = reasonString.Split(ImageServerConstants.ReasonCommentSeparator, StringSplitOptions.None);
             return reason[0];
         }
 
         public string GetComment(string reasonString)
         {
-            if (string.IsNullOrEmpty(reasonString)) return "None Specified";
+            if (string.IsNullOrEmpty(reasonString)) return SR.NoneSpecified;
             string[] reason = reasonString.Split(ImageServerConstants.ReasonCommentSeparator, StringSplitOptions.None);
             return reason[1];
+        }
+
+        protected string ChangeSummaryText
+        {
+            get{
+                return String.Format(SR.EditBy, EditTypeTranslator.Translate(EditHistory.EditType), EditHistory.UserId ?? SR.Unknown);
+            }
+        }
+    }
+
+    public static class EditTypeTranslator{
+        public static string Translate(EditType type)
+        {
+            switch (type)
+            {
+                case EditType.WebEdit:
+                    return HtmlUtility.Encode(SR.StudyDetails_WebEdit_Description);
+            }
+
+            return HtmlUtility.Encode(HtmlUtility.GetEnumInfo(type).LongDescription);
         }
     }
 }

@@ -24,6 +24,7 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.Exceptions;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
 {
@@ -74,7 +75,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
 
         void StudyDetailsPanel_ReprocessStudyClicked(object sender, StudyDetailsPanelReprocessStudyClickEventArgs e)
         {
-            ReprocessConfirmationDialog.Message = String.Format("Are you sure you want to reprocess this study?");
+            ReprocessConfirmationDialog.Message = ImageServer.Web.Application.App_GlobalResources.SR.AreYouSureToReprocessThisStudy;
             ReprocessConfirmationDialog.MessageType = MessageBox.MessageTypeEnum.YESNO;
             ReprocessConfirmationDialog.Show();
         }
@@ -128,7 +129,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
                     }
                     else
                     {
-                        Response.Write("Unexpected Error: Multiple Partitions exist with AE title : " + _serverae);
+                        Response.Write(String.Format(ErrorMessages.MultiplePartitionsExistWithAETitle, _serverae));
                     }
                 }
             }
@@ -316,7 +317,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
         private void ReprocessStudy()
         {
             StudyController controller = new StudyController();
-            controller.ReprocessStudy("Reprocess Study via GUI", _study.TheStudyStorage.GetKey());
+            controller.ReprocessStudy(SR.ReprocessStudyViaGUI, _study.TheStudyStorage.GetKey());
             Refresh();
         }
 

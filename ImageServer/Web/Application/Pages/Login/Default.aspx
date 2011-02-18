@@ -1,5 +1,4 @@
-<%-- 
-License
+<%-- License
 
 Copyright (c) 2011, ClearCanvas Inc.
 All rights reserved.
@@ -10,10 +9,10 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 --%>
 
 
-<%@ Page Language="C#" AutoEventWireup="true" Codebehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Login._Default" %>
+<%@ Page Language="C#" AutoEventWireup="True" Codebehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Login._Default" %>
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources"%>
 <%@ Import Namespace="System.Threading"%>
-<%@ Import namespace="ClearCanvas.ImageServer.Common"%>
+<%@ Import namespace="ClearCanvas.ImageServer.Common"%> 
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -34,11 +33,11 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
             EnableScriptLocalization="true">
     </asp:ScriptManager>
                 
-    <asp:Panel ID="LoginSplash" DefaultButton="LoginButton" runat="server" SkinID="<%$Image:LoginSplash%>">
-
+    <asp:Panel ID="LoginSplash" DefaultButton="LoginButton" runat="server" SkinID="<%$ Image : LoginSplash%>">
+        
         <div id="VersionInfoPanel">
             <table cellpadding="1">
-            <tr><td align="right">Version:</td><td align="left"><%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%></td></tr>
+            <tr><td align="right"><asp:Label runat="server" Text="<%$Resources: Labels,Version %>"></asp:Label>:</td><td align="left"><%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%></td></tr>
             <tr><td align="right"></td><td><%= Thread.CurrentThread.CurrentUICulture.NativeName %></td></tr>
             </table>
         </div>

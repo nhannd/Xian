@@ -13,6 +13,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPartitions.AddEditPartitionDialog"
     Codebehind="AddEditPartitionDialog.ascx.cs" %>
     
+    <%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
 <script type="text/javascript">
 
 </script>
@@ -23,7 +24,7 @@
                 EnableClientScript="true" runat="server" ValidationGroup="AddEditServerPartitionValidationGroup" CssClass="EditStudyDialogErrorMessage" />   			
         <asp:Panel ID="Panel3" runat="server" DefaultButton="OKButton">
             <aspAjax:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0" CssClass="DialogTabControl">
-                <aspAjax:TabPanel ID="GeneralTabPanel" runat="server" HeaderText="GeneralTabPanel" CssClass="DialogTabControl">
+                <aspAjax:TabPanel ID="GeneralTabPanel" runat="server"  CssClass="DialogTabControl">
                     <ContentTemplate>
                             <table id="GeneralTabTable" runat="server">
                                 <tr id="Tr1" runat="server" align="left">
@@ -31,22 +32,22 @@
                                         <table width="100%">
                                             <tr align="left">
                                                 <td>
-                                                    <asp:Label ID="Label4" runat="server" Text="AE Title" CssClass="DialogTextBoxLabel" /><br />
+                                                    <asp:Label ID="Label4" runat="server" Text="<%$Resources: InputLabels,AETitle %>" CssClass="DialogTextBoxLabel" /><br />
                                                     <asp:TextBox ID="AETitleTextBox" runat="server" MaxLength="16" ValidationGroup="AddEditServerPartitionValidationGroup" CssClass="DialogTextBox"
-                                                        ToolTip="The DICOM Application Entity Title for the partition."></asp:TextBox>
+                                                        ToolTip="<%$Resources:Tooltips, AdminPartition_AddEditDialog_AETitle %>"></asp:TextBox>
                                                 </td>
                                                 <td valign="bottom">
                                                     <ccAsp:InvalidInputIndicator ID="AETitleHelp" runat="server" SkinID="InvalidInputIndicator" />
                                                     <ccValidator:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
-                                                        ControlToValidate="AETitleTextBox" Display="None" EnableClientScript="true" Text="AE Title is required"
+                                                        ControlToValidate="AETitleTextBox" Display="None" EnableClientScript="true" Text="<%$Resources:InputValidation, ThisFieldIsRequired %>"
                                                         InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditServerPartitionValidationGroup" InvalidInputIndicatorID="AETitleHelp" />
                                                     <ccValidator:RegularExpressionFieldValidator ID="RegularExpressionFieldValidator2"
-                                                        runat="server" ControlToValidate="AETitleTextBox" Display="None" Text="The AE Title is not valid."
+                                                        runat="server" ControlToValidate="AETitleTextBox" Display="None" Text="<%$Resources:InputValidation, InvalidAETitle %>"
                                                         InvalidInputCSS="DialogTextBoxInvalidInput" ValidationExpression="^([^\\]){1,16}$" ValidationGroup="AddEditServerPartitionValidationGroup"
                                                         InvalidInputIndicatorID="AETitleHelp" />
                                                     <ccValidator:ServerPartitionValidator ID="ServerPartitionValidator" runat="server"
                                                         ControlToValidate="AETitleTextBox" Display="None" EnableClientScript="false"
-                                                        Text="The AE Title is not valid." InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditServerPartitionValidationGroup"
+                                                        Text="<%$Resources:InputValidation, DuplicateAETitle %>" InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditServerPartitionValidationGroup"
                                                         InvalidInputIndicatorID="AETitleHelp" />
                                                 </td>
                                             </tr>
@@ -56,8 +57,8 @@
                                         <table width="100%">
                                             <tr align="left">
                                                 <td>
-                                                    <asp:Label ID="Label1" runat="server" Text="Description" CssClass="DialogTextBoxLabel" /><br />
-                                                    <asp:TextBox ID="DescriptionTextBox" runat="server" ToolTip="A textual description of the partition." CssClass="DialogTextBox"></asp:TextBox>
+                                                    <asp:Label ID="Label1" runat="server" Text="<%$Resources: InputLabels,PartitionDescription %>" CssClass="DialogTextBoxLabel" /><br />
+                                                    <asp:TextBox ID="DescriptionTextBox" runat="server" ToolTip="<%$Resources:Tooltips, AdminPartition_AddEditDialog_Description %>" CssClass="DialogTextBox"></asp:TextBox>
                                                 </td>
                                                 <td>
                                                 </td>
@@ -72,11 +73,11 @@
                                         <table>
                                             <tr align="left">
                                                 <td >
-                                                    <asp:Label ID="Label2" runat="server" Text="Port" CssClass="DialogTextBoxLabel" /><br />
+                                                    <asp:Label ID="Label2" runat="server" Text="<%$Resources: InputLabels,Port%>" CssClass="DialogTextBoxLabel" /><br />
                                                     <asp:TextBox ID="PortTextBox" runat="server" CssClass="DialogTextBox"></asp:TextBox>
                                                     <ccValidator:RangeValidator ID="PortValidator1" runat="server" ControlToValidate="PortTextBox"
                                                         InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditServerPartitionValidationGroup" MinValue="1" MaxValue="65535"
-                                                        Text="Partition Port must be between 1 and 65535" Display="None" InvalidInputIndicatorID="PortHelp"></ccValidator:RangeValidator>
+                                                        Text="<%$Resources:InputValidation, InvalidPort %>" Display="None" InvalidInputIndicatorID="PortHelp"></ccValidator:RangeValidator>
                                                 </td>
                                                 <td valign="bottom">
                                                     <ccAsp:InvalidInputIndicator ID="PortHelp" runat="server" SkinID="InvalidInputIndicator" />
@@ -88,12 +89,12 @@
                                         <table>
                                             <tr align="left">
                                                 <td>
-                                                    <asp:Label ID="Label3" runat="server" Text="Folder Name" CssClass="DialogTextBoxLabel" /><br />
+                                                    <asp:Label ID="Label3" runat="server" Text="<%$Resources: InputLabels, PartitionFolderName %>" CssClass="DialogTextBoxLabel" /><br />
                                                     <asp:TextBox ID="PartitionFolderTextBox" runat="server" CausesValidation="true" ValidationGroup="AddEditServerPartitionValidationGroup"
-                                                        ToolTip="A unique folder name to store images within for the partition." CssClass="DialogTextBox"/>
+                                                        ToolTip="<%$Resources:Tooltips, AdminPartition_AddEditDialog_PartitionFolderName %>" CssClass="DialogTextBox"/>
                                                     <ccValidator:ServerPartitionFolderValidator ID="PartitionFolderValidator"
                                                         runat="server" ControlToValidate="PartitionFolderTextBox" Display="None" EnableClientScript="false"
-                                                        Text="Folder Name is not valid" InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditServerPartitionValidationGroup"
+                                                        Text="<%$Resources:InputValidation, InvalidPartitionFolderName %>" InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditServerPartitionValidationGroup"
                                                         InvalidInputIndicatorID="FolderHelp"/>
                                                 </td>
                                                 <td valign="bottom">
@@ -108,7 +109,7 @@
                                         <table width="100%">
                                             <tr>
                                                 <td>
-                                                    <asp:CheckBox ID="EnabledCheckBox" runat="server" Checked="True" Text="Enabled" ToolTip="Enable or Disable DICOM connections to the partition." CssClass="DialogCheckBox" />
+                                                    <asp:CheckBox ID="EnabledCheckBox" runat="server" Checked="True" Text="<%$Resources: InputLabels, Enabled %>"  CssClass="DialogCheckBox" />
                                                 </td>
                                                 <td>
                                                 </td>
@@ -119,8 +120,9 @@
                                         <table width="100%">
                                             <tr>
                                                 <td>
-                                                    <asp:Label ID="DuplicateSopLabel" runat="server" Text="Duplicate Object Policy" CssClass="DialogTextBoxLabel" /><br />
-                                                    <asp:DropDownList ID="DuplicateSopDropDownList" runat="server" CssClass="DialogDropDownList" ToolTip="A policy for dealing with duplication DICOM objects received by the partition." />
+                                                    <asp:Label ID="DuplicateSopLabel" runat="server" Text="<%$Resources: InputLabels, DuplicateObjectPolicy %>" CssClass="DialogTextBoxLabel" /><br />
+                                                    <asp:DropDownList ID="DuplicateSopDropDownList" runat="server" CssClass="DialogDropDownList" 
+                                                    ToolTip="<%$Resources:Tooltips, AdminPartition_AddEditDialog_DuplicateObjectPolicy %>" />
                                                 </td>
                                                 <td>
                                                 </td>
@@ -130,9 +132,7 @@
                                 </tr>
                             </table>
                     </ContentTemplate>
-                    <HeaderTemplate>
-                        General
-                    </HeaderTemplate>
+                    <HeaderTemplate><%= Titles.AdminPartition_AddEditDialog_GeneralTabTitle %></HeaderTemplate>
                 </aspAjax:TabPanel>
                 <aspAjax:TabPanel ID="TabPanel2" runat="server" HeaderText="TabPanel2">
                     <ContentTemplate>
@@ -143,8 +143,8 @@
                                         <table>
                                             <tr>
                                                 <td>
-                                                    <asp:CheckBox ID="AcceptAnyDeviceCheckBox" runat="server" Text="Accept Any Device" CssClass="DialogCheckBox"
-                                                        ToolTip="Accept DICOM Associations from any device to this partition." />
+                                                    <asp:CheckBox ID="AcceptAnyDeviceCheckBox" runat="server" Text="<%$Resources: InputLabels, AcceptAnyDevice %>" CssClass="DialogCheckBox"
+                                                        ToolTip="<%$Resources:Tooltips, AdminPartition_AddEditDialog_AcceptAnyDevice %>" />
                                                 </td>
                                                 <td>
                                                 </td>
@@ -157,8 +157,8 @@
                                         <table>
                                             <tr>
                                                 <td>
-                                                    <asp:CheckBox ID="AutoInsertDeviceCheckBox" runat="server" Text="Auto Insert Devices" CssClass="DialogCheckBox"
-                                                        ToolTip="Automatically add devices when they connect to this partition." />
+                                                    <asp:CheckBox ID="AutoInsertDeviceCheckBox" runat="server" Text="<%$Resources: InputLabels, AutoInsertDevices %>" CssClass="DialogCheckBox"
+                                                        ToolTip="<%$Resources:Tooltips, AdminPartition_AddEditDialog_AutoInsertDevices %>" />
                                                 </td>
                                                 <td>
                                                 </td>
@@ -171,7 +171,7 @@
                                         <table>
                                             <tr>
                                                 <td>
-                                                    <asp:Label ID="Label5" runat="server" Text="Default Remote Port" CssClass="DialogTextBoxLabel" /><asp:TextBox ID="DefaultRemotePortTextBox" CssClass="DialogTextBox" runat="server"></asp:TextBox>
+                                                    <asp:Label ID="Label5" runat="server" Text="<%$Resources: InputLabels, DefaultRemotePort %>" CssClass="DialogTextBoxLabel" /><asp:TextBox ID="DefaultRemotePortTextBox" CssClass="DialogTextBox" runat="server"></asp:TextBox>
                                                     <td valign="bottom">
                                                         <ccAsp:InvalidInputIndicator ID="DefaultPortHelp" runat="server" SkinID="InvalidInputIndicator" />
                                                         <ccValidator:RangeValidator ID="DefaultRemotePortRangeValidator" runat="server"
@@ -186,48 +186,46 @@
                             </table>
                         </asp:Panel>
                     </ContentTemplate>
-                    <HeaderTemplate>
-                        Remote Devices
-                    </HeaderTemplate>
+                    <HeaderTemplate><%= Titles.AdminPartition_AddEditDialog_RemoteDevicesTabTitle %></HeaderTemplate>
                 </aspAjax:TabPanel>
                  <aspAjax:TabPanel ID="TabPanel1" runat="server" HeaderText="GeneralTabPanel" CssClass="DialogTabControl">
                     <ContentTemplate>
                         <asp:Panel ID="Panel4" runat="server" CssClass="DialogTabPanelContent" >
-                            <div class="DialogMessagePanel"  style="width: 460px;">Incoming studies will be placed in the Study Integrity Queue if the Study Instance UID matches an existing study and the data differs from any of the selected criteria below.</div>
+                            <div class="DialogMessagePanel"  style="width: 460px;">
+                                <%= SR.AdminPartition_AddEditDialog_StudyMatchingInfo %>
+                            </div>
                             
                             <table width="100%">
                             <tr>
-                                <td><asp:CheckBox ID="MatchPatientName" runat="server" Text="Patient Name" CssClass="DialogCheckBox"/></td>
+                                <td><asp:CheckBox ID="MatchPatientName" runat="server" Text="<%$Resources: Labels, PatientName %>" CssClass="DialogCheckBox"/></td>
                                 <td><asp:Image ID="Image1" runat="server" SkinID="Spacer" Width="20px" Height="1px"/></td>                                                        
-                                <td><asp:CheckBox ID="MatchPatientID" runat="server" Text="Patient ID" CssClass="DialogCheckBox" /></td>
+                                <td><asp:CheckBox ID="MatchPatientID" runat="server" Text="<%$Resources: Labels, PatientID %>" CssClass="DialogCheckBox" /></td>
 
                             </tr>
                             <tr>
-                                <td><asp:CheckBox ID="MatchPatientBirthDate" runat="server" Text="Patient Birth Date" CssClass="DialogCheckBox"/></td>
+                                <td><asp:CheckBox ID="MatchPatientBirthDate" runat="server" Text="<%$Resources: Labels, PatientBirthDate %>" CssClass="DialogCheckBox"/></td>
                                 <td></td>                                                        
-                                <td><asp:CheckBox ID="MatchPatientSex" runat="server" Text="Patient Sex" CssClass="DialogCheckBox"/></td>
+                                <td><asp:CheckBox ID="MatchPatientSex" runat="server" Text="<%$Resources: Labels, PatientSex %>" CssClass="DialogCheckBox"/></td>
                                                                                         
                             </tr>
                             <tr>
-                                <td><asp:CheckBox ID="MatchAccessionNumber" runat="server" Text="Accession Number" CssClass="DialogCheckBox"/></td>
+                                <td><asp:CheckBox ID="MatchAccessionNumber" runat="server" Text="<%$Resources: Labels, AccessionNumber %>" CssClass="DialogCheckBox"/></td>
                                 <td></td>                                                        
-                                <td><asp:CheckBox ID="MatchIssuer" runat="server" Text="Issuer of Patient ID" CssClass="DialogCheckBox"/></td>
+                                <td><asp:CheckBox ID="MatchIssuer" runat="server" Text="<%$Resources: Labels, IssuerOfPatientID %>" CssClass="DialogCheckBox"/></td>
                             </tr>
                         </table>
                         </asp:Panel>
                     
                     </ContentTemplate>
-                    <HeaderTemplate>
-                        Study Matching
-                    </HeaderTemplate>
+                    <HeaderTemplate><%= Titles.AdminPartition_AddEditDialog_StudyMatchingTabTitle%></HeaderTemplate>
                 </aspAjax:TabPanel>
-                <aspAjax:TabPanel ID="TabPanel3" runat="server" HeaderText="<%$ Resources:Titles, DeleteManagement %>" CssClass="DialogTabControl">
+                <aspAjax:TabPanel ID="TabPanel3" runat="server" CssClass="DialogTabControl">
                     <ContentTemplate>
                         <asp:Panel ID="Panel5" runat="server" CssClass="DialogTabPanelContent" >
                             <table width="100%">
                             <tr>
                                 <td>
-                                    <asp:CheckBox ID="AuditDeleteStudyCheckBox" runat="server" Text="Maintain a copy of each study after deletion" CssClass="DialogCheckBox" 
+                                    <asp:CheckBox ID="AuditDeleteStudyCheckBox" runat="server" Text="<%$Resources: InputLabels, MaintainCopyOfStudyAfterDeletion%>" CssClass="DialogCheckBox" 
                                             ToolTip="<%$ Resources:Tooltips, ServerPartitionAddEditDialog_AuditDeleteStudy %>"/>
                                 </td>
                             </tr>
@@ -235,7 +233,7 @@
                         </asp:Panel>
                     
                     </ContentTemplate>
-                    
+                    <HeaderTemplate><%= Titles.AdminPartition_AddEditDialog_DeleteManagementTabTitle%></HeaderTemplate>                    
                 </aspAjax:TabPanel>
             </aspAjax:TabContainer>
         </asp:Panel>

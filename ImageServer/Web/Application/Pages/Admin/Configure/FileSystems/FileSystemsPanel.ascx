@@ -24,10 +24,10 @@
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
                                             <td align="left">
-                                                <asp:Label ID="Label1" runat="server" Text="Description" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label1" runat="server" Text="<%$Resources: SearchFieldLabels, FileSystemDescription %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:TextBox ID="DescriptionFilter" runat="server" CssClass="SearchTextBox" ToolTip="Search by description"></asp:TextBox></td>
                                             <td align="left">
-                                                <asp:Label ID="Label2" runat="server" Text="Tiers" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label2" runat="server" Text="<%$Resources: SearchFieldLabels, FileSystemTiers %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:DropDownList ID="TiersDropDownList" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList></td>
                                             <td valign="bottom">

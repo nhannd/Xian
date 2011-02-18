@@ -43,17 +43,17 @@ function MultiSelect() {
                                         <tr>
 
                                             <td align="left">
-                                                <asp:Label ID="Label1" runat="server" Text="Type" CssClass="SearchTextBoxLabel"
+                                                <asp:Label ID="Label1" runat="server" Text="<%$Resources: SearchFieldLabels, ServiceType %>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False"></asp:Label><br />
                                                 <asp:DropDownList ID="TypeDropDownList" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList>
                                                 </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label3" runat="server" Text="Status" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label3" runat="server" Text="<%$Resources: SearchFieldLabels, ServiceStatus %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:DropDownList ID="StatusFilter" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList></td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label2" runat="server" Text="File System" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label2" runat="server" Text="<%$Resources: SearchFieldLabels, ServiceFileSystem %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:ListBox ID="FileSystemFilter" runat="server" CssClass="SearchDropDownList" SelectionMode="Multiple"></asp:ListBox></td>
                                             <td align="left" valign="bottom">
                                                 <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="<%$Image:SearchIcon%>" OnClick="SearchButton_Click"/></asp:Panel>

@@ -187,6 +187,11 @@
     <Compile Include="WebControls\Validators\ServerPartitionValidator.cs" />
     <Compile Include="WebControls\Validators\ServerRuleValidator.cs" />
     <Compile Include="WebControls\UI\ToolbarButton.cs" />
+    <Compile Include="WebControls\Validators\ValidationErrors.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ValidationErrors.resx</DependentUpon>
+    </Compile>
     <Compile Include="WebControls\Validators\ValidationResult.cs" />
     <Compile Include="WebControls\Validators\WebServiceValidator.cs" />
     <Compile Include="WebControls\Validators\RangeValidator.cs" />
@@ -296,6 +301,10 @@
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="WebControls\Validators\DateValidator.js" />
+    <EmbeddedResource Include="WebControls\Validators\ValidationErrors.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ValidationErrors.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

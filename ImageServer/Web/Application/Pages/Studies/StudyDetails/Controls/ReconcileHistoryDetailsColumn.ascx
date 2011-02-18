@@ -1,3 +1,14 @@
+<%-- License
+
+Copyright (c) 2011, ClearCanvas Inc.
+All rights reserved.
+http://www.clearcanvas.ca
+
+This software is licensed under the Open Software License v3.0.
+For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+--%>
+
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
 <%@ Import namespace="ClearCanvas.ImageServer.Core.Edit"%>
 <%@ Import Namespace="ClearCanvas.ImageServer.Core.Data" %>
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Utilities" %>
@@ -10,15 +21,15 @@
     $(document).ready(function() {
         $("#<%=HistoryDetailsPanel.ClientID%>").hide();
         $("#<%=ShowHideDetails.ClientID%>").click(function() {
-            if ($("#<%=ShowHideDetails.ClientID%>").text() == "[Show Details]") {
+            if ($("#<%=ShowHideDetails.ClientID%>").text() == "[<%= Labels.StudyDetails_History_ShowDetails %>]") {
                 $("#<%=HistoryDetailsPanel.ClientID%>").show();
-                $("#<%=ShowHideDetails.ClientID%>").text("[Hide Details]");
+                $("#<%=ShowHideDetails.ClientID%>").text("[<%= Labels.StudyDetails_History_HideDetails %>]");
                 $("#<%=SummaryPanel.ClientID %>").css("font-weight", "bold");
                 $("#<%=SummaryPanel.ClientID %>").css("margin-top", "5px");
                 $("#<%=ShowHideDetails.ClientID%>").css("font-weight", "normal");                
             } else {
                 $("#<%=HistoryDetailsPanel.ClientID%>").hide();
-                $("#<%=ShowHideDetails.ClientID%>").text("[Show Details]");
+                $("#<%=ShowHideDetails.ClientID%>").text("[<%= Labels.StudyDetails_History_ShowDetails %>]");
                 $("#<%=SummaryPanel.ClientID %>").css("font-weight", "normal");
                 $("#<%=SummaryPanel.ClientID %>").css("margin-top", "0px");
                 $("#<%=ShowHideDetails.ClientID%>").css("font-weight", "normal");                
@@ -30,9 +41,9 @@
 </script>
 
 
-<div id="SummaryPanel" runat="server">
-    <%# String.Format("{0}", HtmlUtility.GetEnumInfo(ReconcileHistory.Action).LongDescription)%>
-    <a href="#" id="ShowHideDetails" style="margin-left: 5px;" runat="server">[Show Details]</a>
+<div id="SummaryPanel" runat="server">    
+    <%= ChangeSummaryText %>    
+    <a href="#" id="ShowHideDetails" style="margin-left: 5px;" runat="server">[<%= Labels.StudyDetails_History_ShowDetails %>]</a>
 </div>
 
 <div id="HistoryDetailsPanel" runat="server" class="TallHistoryDetailsPanel">
@@ -44,13 +55,13 @@
                 <tr><td style="border:none">
                     <div>
                         <table cellpadding="0" cellspacing="0">
-                            <tr><td style="border-bottom:none">Patient ID</td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.PatientInfo.PatientId %></pre></td></tr>
-                            <tr><td style="border-bottom:none">Issuer of Patient ID</td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.PatientInfo.IssuerOfPatientId %></pre></td></tr>
-                            <tr><td style="border-bottom:none">Patient's Name</td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.PatientInfo.Name %></pre></td></tr>
-                            <tr><td style="border-bottom:none">Patient's Birth Date</td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.PatientInfo.PatientsBirthdate %></pre></td></tr>
-                            <tr><td style="border-bottom:none">Patient's Sex </td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.PatientInfo.Sex %></pre></td></tr>
-                            <tr><td style="border-bottom:none">Accession Number </td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.AccessionNumber %></pre></td></tr>
-                            <tr><td style="border-bottom:none">Study Date</td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.StudyDate %></pre></td></tr>
+                            <tr><td style="border-bottom:none"><%= Labels.StudyDetails_History_Reconcile_PatientID%></td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.PatientInfo.PatientId %></pre></td></tr>
+                            <tr><td style="border-bottom:none"><%= Labels.StudyDetails_History_Reconcile_IssuerOfPatientID%></td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.PatientInfo.IssuerOfPatientId %></pre></td></tr>
+                            <tr><td style="border-bottom:none"><%= Labels.StudyDetails_History_Reconcile_PatientName%></td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.PatientInfo.Name %></pre></td></tr>
+                            <tr><td style="border-bottom:none"><%= Labels.StudyDetails_History_Reconcile_PatientBirthDate%></td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.PatientInfo.PatientsBirthdate %></pre></td></tr>
+                            <tr><td style="border-bottom:none"><%= Labels.StudyDetails_History_Reconcile_PatientSex%></td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.PatientInfo.Sex %></pre></td></tr>
+                            <tr><td style="border-bottom:none"><%= Labels.StudyDetails_History_Reconcile_AccessionNumber%></td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.AccessionNumber %></pre></td></tr>
+                            <tr><td style="border-bottom:none"><%= Labels.StudyDetails_History_Reconcile_StudyDate%></td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.StudyDate %></pre></td></tr>
                         </table>                    
                     </div>
                 </td></tr>
@@ -58,14 +69,14 @@
         </td>
         <td style="border-bottom:none" valign="top">
             <table border="0" width="100%">
-                <tr><td class="HistoryDetailsLabel" style="border-bottom:dashed 1px #c0c0c0;">Reconciled Images (Snapshot):</td></tr>
+                <tr><td class="HistoryDetailsLabel" style="border-bottom:dashed 1px #c0c0c0;"><%= Labels.StudyDetails_History_Reconcile_Snapshot%><td></tr>
                 <tr><td style="border:none">
                 <div>
                     <%
                         if (ReconcileHistory.ImageSetData.Fields == null ||
                             ReconcileHistory.ImageSetData.Fields.Length == 0)
                         {%>
-                    N/A
+                        <%= SR.NotAvailable %>
                     <% }
                         else
                         { %>
@@ -88,19 +99,19 @@
     <tr>
         <td colspan="2" style="border-top:solid 1px #cccccc; padding-top:3px;">
             <% if (!ReconcileHistory.Automatic) { %>
-                    <asp:Label runat="server" CssClass="HistoryDetailsLabel">Performed by : </asp:Label><%= ReconcileHistory.UserName ?? "Unknown" %>
+                    <asp:Label runat="server" CssClass="HistoryDetailsLabel" Text="<%# PerformedBy %>"></asp:Label>
             <% } %>
         </td>
     </tr>
     <tr>
         <td colspan="2" style="border-top:solid 1px #cccccc; padding-top:3px;">
-            <asp:Label ID="Label1" runat="server" CssClass="HistoryDetailsLabel">Changes Applied To Existing Study: </asp:Label>
+            <asp:Label ID="Label1" runat="server" CssClass="HistoryDetailsLabel"><%= Labels.StudyDetails_History_Reconcile_ChangesApplied %></asp:Label>
             <div style="padding-top:5px;">
                 <table width="100%" cellspacing="0" >
                             <tr style="color: #205F87; background: #eeeeee; padding-top: 2px; ">
-                                <td style="border-top:dashed 1px #c0c0c0;"><b>Tag</b></td>
-                                <td style="border-top:dashed 1px #c0c0c0;"><b>Original Value</b></td>
-                                <td style="border-top:dashed 1px #c0c0c0;"><b>New Value</b></td>
+                                <td style="border-top:dashed 1px #c0c0c0;"><b><%= ColumnHeaders.Tag%></b></td>
+                                <td style="border-top:dashed 1px #c0c0c0;"><b><%= ColumnHeaders.OldValue%></b></td>
+                                <td style="border-top:dashed 1px #c0c0c0;"><b><%= ColumnHeaders.NewValue%></b></td>
                             </tr>
                             <%{
                                   foreach (BaseImageLevelUpdateCommand theCmd in ReconcileHistory.Commands)

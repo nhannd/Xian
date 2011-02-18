@@ -30,21 +30,21 @@
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label1" runat="server" Text="Type" CssClass="SearchTextBoxLabel" EnableViewState="False" /><br />
-                                                <asp:DropDownList ID="RuleTypeDropDownList" runat="server" CssClass="SearchDropDownList" ToolTip="Search by type" />
+                                                <asp:Label ID="Label1" runat="server" Text="<%$Resources: SearchFieldLabels, ServerRuleType %>" CssClass="SearchTextBoxLabel" EnableViewState="False" /><br />
+                                                <asp:DropDownList ID="RuleTypeDropDownList" runat="server" CssClass="SearchDropDownList" ToolTip="<%$Resources: Tooltips, SearchByType %>" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label2" runat="server" Text="Apply Time" CssClass="SearchTextBoxLabel"
+                                                <asp:Label ID="Label2" runat="server" Text="<%$Resources: SearchFieldLabels, ServerRuleApplyType %>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False"></asp:Label><br />
-                                                <asp:DropDownList ID="RuleApplyTimeDropDownList" runat="server" CssClass="SearchDropDownList" ToolTip="Search by apply time"/>
+                                                <asp:DropDownList ID="RuleApplyTimeDropDownList" runat="server" CssClass="SearchDropDownList" ToolTip="<%$Resources: Tooltips, SearchByApplyTime %>"/>
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label3" runat="server" Text="Status" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label3" runat="server" Text="<%$Resources: SearchFieldLabels, ServerRuleStatus %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:DropDownList ID="StatusFilter" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList>
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label4" runat="server" Text="Default" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label4" runat="server" Text="<%$Resources: SearchFieldLabels, ServerRuleDefault %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:DropDownList ID="DefaultFilter" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList>
                                             </td>

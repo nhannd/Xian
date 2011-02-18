@@ -33,6 +33,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
                 DescriptionLabel.Text = Context.Items[ImageServerConstants.ContextKeys.ErrorDescription].ToString();
             }
 
+            #region UnitTest
+            if (false == String.IsNullOrEmpty(Page.Request.QueryString["test"]))
+            {
+                StackTraceMessage.Visible = true;
+                StackTraceTextBox.Visible = true;
+                StackTraceTextBox.Text = "Dummy stack trace";
+            }
+            #endregion
+
             SetPageTitle(App_GlobalResources.Titles.ErrorPageTitle);
         }
 

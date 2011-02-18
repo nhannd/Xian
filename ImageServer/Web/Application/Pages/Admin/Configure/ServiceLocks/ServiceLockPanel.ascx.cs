@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
             TypeDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.All)); 
             foreach (ServiceLockTypeEnum t in types)
             {
-                TypeDropDownList.Items.Add(new ListItem(t.Description, t.Lookup));
+                TypeDropDownList.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(t), t.Lookup));
             }
 
             EditServiceLockDialog.ServiceLockUpdated += AddEditServiceLockDialog_ServiceLockUpdated; 

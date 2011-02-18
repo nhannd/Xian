@@ -266,7 +266,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies {
         protected global::System.Web.UI.WebControls.Panel ToolbarButtons;
         
         /// <summary>
-        /// ViewImageButton control.
+        /// ViewImagesButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.

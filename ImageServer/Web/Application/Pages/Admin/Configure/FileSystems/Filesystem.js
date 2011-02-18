@@ -137,10 +137,10 @@ function OnLoadFilesystemInfoSuccess(result)
         sizeUsed.value  = 0;
         
         total = document.getElementById('@@TOTAL_SIZE_INDICATOR_CLIENTID@@');                                       
-        total.innerHTML = 'Unknown';
+        total.innerHTML = SR.Unknown;
         
         used = document.getElementById('@@USED_SIZE_INDICATOR_CLIENTID@@');
-        used.innerHTML = 'Unknown';
+        used.innerHTML = SR.Unknown;
         
         RecalculateWatermark();
     }

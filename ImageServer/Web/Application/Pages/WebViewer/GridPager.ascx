@@ -1,4 +1,16 @@
+<%--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="GridPager.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.WebViewer.GridPager" %>
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
 
 <table width="100%" cellpadding="0" cellspacing="0" class="WebViewerGridPager">
     <tr>
@@ -57,10 +69,10 @@
                     </td>
                     <td nowrap="nowrap" valign="bottom">
                         <asp:panel ID="CurrentPageContainer" runat="server">
-                            <asp:Label ID="Label3" runat="server" Text="Page" CssClass="WebViewerGridPagerLabel" />
+                            <asp:Label ID="Label3" runat="server" CssClass="WebViewerGridPagerLabel"><%= GridPager.Page %></asp:Label>
                             <asp:TextBox ID="CurrentPage" runat="server" Width="85px" CssClass="WebViewerGridViewTextBox"
                                 Style="font-size: 12px;" />
-                            <asp:Label ID="PageCountLabel" runat="server" Text="Label" CssClass="WebViewerGridPagerLabel" />
+                            <asp:Label ID="PageCountLabel" runat="server" Text="<%$Resources: GridPager, Page %>" CssClass="WebViewerGridPagerLabel" />
                             <aspAjax:FilteredTextBoxExtender runat="server" ID="CurrentPageFilter" FilterType="Numbers" TargetControlID="CurrentPage"  />
                         </asp:panel>
                     </td>

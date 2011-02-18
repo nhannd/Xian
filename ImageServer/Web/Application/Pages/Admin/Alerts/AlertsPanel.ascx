@@ -27,21 +27,21 @@
                                             <td align="right" valign="bottom">
                                             </td>
                                             <td align="left">
-                                                <asp:Label ID="Label3" runat="server" Text="Component" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label3" runat="server" Text="<%$Resources: SearchFieldLabels,AlertComponent %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:TextBox ID="ComponentFilter" runat="server" CssClass="SearchTextBox"></asp:TextBox>
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label2" runat="server" Text="Insert Date" CssClass="SearchTextBoxLabel" />&nbsp;&nbsp;
+                                                <asp:Label ID="Label2" runat="server" Text="<%$Resources: SearchFieldLabels,AlertInsertDate %>" CssClass="SearchTextBoxLabel" />&nbsp;&nbsp;
                                                 <asp:LinkButton ID="ClearInsertDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 10px;"/><br />
                                                 <ccUI:TextBox ID="InsertDateFilter" runat="server" ReadOnly="true" CssClass="SearchDateBox" />
                                             </td>                                            
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label4" runat="server" Text="Category" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label4" runat="server" Text="<%$Resources: SearchFieldLabels,AlertCategory %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:DropDownList ID="CategoryFilter" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList>
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label1" runat="server" Text="Level" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label1" runat="server" Text="<%$Resources: SearchFieldLabels,AlertLevel %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:DropDownList ID="LevelFilter" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList>
                                             </td>                                                            
@@ -74,7 +74,9 @@
                          <asp:Panel ID="Panel2" runat="server" style="border: solid 1px #3d98d1; ">
                             <table width="100%" cellpadding="0" cellspacing="0">
                                  <tr><td style="border-bottom: solid 1px #3d98d1"><ccAsp:GridPager ID="GridPagerTop" runat="server" /></td></tr>                        
-                                <tr><td style="background-color: white;"><localAsp:AlertsGridPanel ID="AlertsGridPanel" runat="server" Height="500px" /></td></tr>
+                                    <tr>
+                                    <td style="background-color: white;"><localAsp:AlertsGridPanel ID="AlertsGridPanel" runat="server" Height="500px" /></td>
+                                </tr>
                             </table>                        
                         </asp:Panel>
                         </td>

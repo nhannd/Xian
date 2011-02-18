@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Text;
 using System.Threading;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using AjaxControlToolkit;
@@ -28,6 +29,7 @@ using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.Security;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Studies.SearchPanel.js", "application/x-javascript")]
 
@@ -164,6 +166,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
         private void SetupChildControls()
         {
+            foreach(StudyStatusEnum s in  StudyStatusEnum.GetAll())
+            {
+                StatusListBox.Items.Add(new ListItem(){ Text = ServerEnumDescription.GetLocalizedDescription(s), Value = s.Lookup});
+            }
+
             ClearToStudyDateButton.Attributes["onclick"] = ScriptHelper.ClearDate(ToStudyDate.ClientID, ToStudyDateCalendarExtender.ClientID);
             ClearFromStudyDateButton.Attributes["onclick"] = ScriptHelper.ClearDate(FromStudyDate.ClientID, FromStudyDateCalendarExtender.ClientID);
             ToStudyDate.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromStudyDate.ClientID, ToStudyDate.ClientID, ToStudyDate.ClientID, ToStudyDateCalendarExtender.ClientID, "To Date must be greater than From Date");
@@ -296,7 +303,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-
             SetupChildControls();
         }
         
@@ -304,7 +310,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         {   
             if(DisplaySearchWarning) {
                 StudyListGridView.DataBindOnPreRender = false;
-                ConfirmStudySearchMessageBox.Message = App_GlobalResources.SR.NoFiltersSearchWarning;
+                ConfirmStudySearchMessageBox.Message = SR.NoFiltersSearchWarning;
                    ConfirmStudySearchMessageBox.MessageStyle = "font-weight: bold; color: #205F87;";
                 ConfirmStudySearchMessageBox.Show();
             } else

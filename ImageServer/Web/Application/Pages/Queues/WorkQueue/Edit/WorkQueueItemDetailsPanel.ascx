@@ -35,7 +35,7 @@
            <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                     <td class="MainContentTitle">
-                        <asp:Label ID="WorkQueueItemTitle" runat="server" Text="Work Queue Item Details"></asp:Label>
+                        <asp:Label ID="WorkQueueItemTitle" runat="server" Text="<%$Resources: Titles, WorkQueueItemDetails %>"></asp:Label>
                     </td>
                     <td align="right" class="MainContentTitle">                        
                          <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="UpdatePanel" DisplayAfter="0">

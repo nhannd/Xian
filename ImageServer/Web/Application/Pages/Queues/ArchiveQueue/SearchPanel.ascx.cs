@@ -22,6 +22,7 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue.SearchPanel.js", "application/x-javascript")]
 
@@ -161,9 +162,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 
             int prevSelectedIndex = StatusFilter.SelectedIndex;
             StatusFilter.Items.Clear();
-            StatusFilter.Items.Add(new ListItem("All", "All"));
+            StatusFilter.Items.Add(new ListItem(SR.All, "All"));
             foreach (ArchiveQueueStatusEnum s in statusItems)
-                StatusFilter.Items.Add(new ListItem(s.Description, s.Lookup));
+                StatusFilter.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(s), s.Lookup));
             StatusFilter.SelectedIndex = prevSelectedIndex;
 
             DeleteItemButton.Roles = AuthorityTokens.ArchiveQueue.Delete;
@@ -206,8 +207,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
                 MessageBox.Message += "<table style=\"border: solid #CCCCCC 2px; margin-top: 5px;\">";
                 foreach (Model.ArchiveQueue item in items)
                 {
-                    MessageBox.Message += String.Format("<tr><td style=\"font-weight: bold; color: #618FAD\">Study Instance Uid:</td><td style=\"font-weight: normal; color: black;\">{0}</td></tr>", 
-                                    StudyStorage.Load(item.StudyStorageKey).StudyInstanceUid);
+                    MessageBox.Message += String.Format("<tr><td style=\"font-weight: bold; color: #618FAD\">{0}:</td><td style=\"font-weight: normal; color: black;\">{1}</td></tr>", 
+                        SR.StudyInstanceUID,            
+                        StudyStorage.Load(item.StudyStorageKey).StudyInstanceUid);
                 }
                 MessageBox.Message += "</table>";
 

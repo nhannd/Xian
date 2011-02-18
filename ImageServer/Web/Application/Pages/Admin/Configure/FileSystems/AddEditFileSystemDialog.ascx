@@ -12,7 +12,7 @@
 
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSystems.AddFilesystemDialog"
     Codebehind="AddEditFileSystemDialog.ascx.cs" %>
-
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
 <asp:ScriptManagerProxy ID="ScriptManagerProxy1" runat="server">
     <Services>
         <asp:ServiceReference Path="~/Services/FilesystemInfoService.asmx" />
@@ -28,7 +28,7 @@
             <asp:ValidationSummary ID="EditFileSystemValidationSummary" ShowMessageBox="false" ShowSummary="true" DisplayMode="SingleParagraph"
                 EnableClientScript="true" runat="server" ValidationGroup="AddEditFileSystemValidationGroup" CssClass="DialogValidationErrorMessage" />   			
             <aspAjax:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="DialogTabControl">
-                <aspAjax:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1" CssClass="DialogTabControl">
+                <aspAjax:TabPanel ID="TabPanel1" runat="server" CssClass="DialogTabControl">
                     <ContentTemplate>
                         <asp:Panel ID="Panel1" runat="server" CssClass="CSSDialogTabPanelContent">
                             <table id="TABLE1" runat="server" cellspacing="4" width="100%">
@@ -37,7 +37,7 @@
                                         <table>
                                             <tr>
                                                 <td>
-                                                    <asp:Label ID="Label1" runat="server" Text="Description" CssClass="DialogTextBoxLabel" /><br />
+                                                    <asp:Label ID="Label1" runat="server" Text="<%$Resources: InputLabels, FilesystemDescription %>" CssClass="DialogTextBoxLabel" /><br />
                                                     <asp:TextBox ID="DescriptionTextBox" runat="server" Width="220px" BorderColor="LightSteelBlue"
                                                         BorderWidth="1px" MaxLength="128" ValidationGroup="AddEditFileSystemValidationGroup" CssClass="DialogTextBox"></asp:TextBox>
                                                 </td>
@@ -45,7 +45,7 @@
                                                     <ccAsp:InvalidInputIndicator ID="InvalidDescriptionHint" runat="server" SkinID="InvalidInputIndicator"></ccAsp:InvalidInputIndicator>
                                                     <ccValidator:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1"
                                                         runat="server" ControlToValidate="DescriptionTextBox" InvalidInputCSS="DialogTextBoxInvalidInput"
-                                                        ValidationGroup="AddEditFileSystemValidationGroup" Text="Description is required" Display="None"
+                                                        ValidationGroup="AddEditFileSystemValidationGroup" Text="<%$Resources: InputValidation, ThisFieldIsRequired %>" Display="None"
                                                         InvalidInputIndicatorID="InvalidDescriptionHint" RequiredWhenChecked="False">
                                                     </ccValidator:ConditionalRequiredFieldValidator>
                                                 </td>
@@ -56,7 +56,7 @@
                                         <table width="100px">
                                             <tr>
                                                 <td>
-                                                    <asp:CheckBox ID="ReadCheckBox" runat="server"  Text="Read"
+                                                    <asp:CheckBox ID="ReadCheckBox" runat="server"  Text="<%$Resources: InputLabels, FilesystemReadPermission%>"
                                                         Checked="True" TextAlign="Right" CssClass="DialogCheckBox" />
                                                 </td>
                                             </tr>
@@ -68,7 +68,7 @@
                                         <table>
                                             <tr>
                                                 <td>
-                                                    <asp:Label ID="Label2" runat="server" Text="Path" CssClass="DialogTextBoxLabel" /><br />
+                                                    <asp:Label ID="Label2" runat="server" Text="<%$Resources: InputLabels, FilesystemPath%>" CssClass="DialogTextBoxLabel" /><br />
                                                     <asp:TextBox ID="PathTextBox" runat="server" Width="220px" BorderColor="LightSteelBlue"
                                                         BorderWidth="1px" ValidationGroup="AddEditFileSystemValidationGroup" MaxLength="256" CssClass="DialogTextBox"></asp:TextBox>
                                                 </td>
@@ -86,7 +86,7 @@
                                         <table width="100px">
                                             <tr>
                                                 <td>
-                                                    <asp:CheckBox ID="WriteCheckBox" runat="server" Text="Write" Checked="True" CssClass="DialogCheckBox" />
+                                                    <asp:CheckBox ID="WriteCheckBox" runat="server" Text="<%$Resources: InputLabels, FilesystemWritePermission%>" Checked="True" CssClass="DialogCheckBox" />
                                                 </td>
                                             </tr>
                                         </table>
@@ -97,7 +97,7 @@
                                         <table>
                                             <tr>
                                                 <td>
-                                                    <asp:Label ID="Label3" runat="server" Text="Filesystem" CssClass="DialogTextBoxLabel" /><br />
+                                                    <asp:Label ID="Label3" runat="server" Text="<%$Resources: InputLabels, FilesystemTier%>" CssClass="DialogTextBoxLabel" /><br />
                                                     <asp:DropDownList ID="TiersDropDownList" runat="server" Width="220px" CssClass="DialogDropDownList">
                                                     </asp:DropDownList>
                                                 </td>
@@ -110,11 +110,10 @@
                             </table>
                         </asp:Panel>
                     </ContentTemplate>
-                    <HeaderTemplate>
-                        General
+                    <HeaderTemplate><%= Titles.AdminFilesystem_AddEditDialog_GeneralTabTitle%>
                     </HeaderTemplate>
                 </aspAjax:TabPanel>
-                <aspAjax:TabPanel ID="TabPanel2" runat="server" HeaderText="Watermarks Tab" OnClientClick="LoadFilesystemInfo">
+                <aspAjax:TabPanel ID="TabPanel2" runat="server"  OnClientClick="LoadFilesystemInfo">
                     <ContentTemplate>
                             <table id="TABLE2" runat="server" cellspacing="4" border="0">
                                 <!-- total size -->
@@ -124,7 +123,7 @@
                                             <table>
                                                 <tr>
                                                     <td width="120px" align="left" valign="bottom">
-                                                        <asp:Label ID="Label7" runat="server" Text="Total Size" CssClass="DialogTextBoxLabel" />
+                                                        <asp:Label ID="Label7" runat="server" Text="<%$Resources: Labels, AdminFilesystem_AddEditDialog_TotalSize%>" CssClass="DialogTextBoxLabel" />
                                                     </td>
                                                     <td>
                                                         <asp:Label ID="TotalSizeIndicator" runat="server" Text="??? KB" CssClass="DialogTextBoxLabel" />
@@ -141,7 +140,7 @@
                                             <table width="100%">
                                                 <tr>
                                                     <td width="120px" align="left" valign="bottom">
-                                                        <asp:Label ID="Label8" runat="server" Text="Used" CssClass="DialogTextBoxLabel" />
+                                                        <asp:Label ID="Label8" runat="server" Text="<%$Resources: Labels, AdminFilesystem_AddEditDialog_Used%>" CssClass="DialogTextBoxLabel" />
                                                     </td>
                                                     <td>
                                                         <asp:Label ID="UsedSizeIndicator" runat="server" Text="??? KB" CssClass="DialogTextBoxLabel" />
@@ -158,7 +157,7 @@
                                             <table>
                                                 <tr>
                                                     <td width="150px" align="left" valign="bottom">
-                                                        <asp:Label ID="Label4" runat="server" Text="High Watermark" CssClass="DialogTextBoxLabel" /><br />
+                                                        <asp:Label ID="Label4" runat="server" Text="<%$Resources: InputLabels, FilesystemHighWatermark%>" CssClass="DialogTextBoxLabel" /><br />
                                                         <asp:TextBox ID="HighWatermarkTextBox" runat="server" CssClass="DialogTextBox"
                                                             ValidationGroup="AddEditFileSystemValidationGroup" MaxLength="8" />%
                                                     </td>
@@ -187,7 +186,7 @@
                                             <table>
                                                 <tr>
                                                     <td width="150px" align="left" valign="bottom">
-                                                        <asp:Label ID="Label5" runat="server" Text="Low Watermark" CssClass="DialogTextBoxLabel" /><br />
+                                                        <asp:Label ID="Label5" runat="server" Text="<%$Resources: InputLabels, FilesystemLowWatermark%>" CssClass="DialogTextBoxLabel" /><br />
                                                         <asp:TextBox ID="LowWatermarkTextBox" runat="server" CssClass="DialogTextBox" ValidationGroup="AddEditFileSystemValidationGroup" MaxLength="8" />%
                                                     </td>
                                                     <td align="left" valign="bottom">
@@ -210,8 +209,7 @@
                                 </tr>
                             </table>
                     </ContentTemplate>
-                    <HeaderTemplate>
-                        Watermarks
+                    <HeaderTemplate><%= Titles.AdminFilesystem_AddEditDialog_WatermarksTabTitle%>
                     </HeaderTemplate>
                 </aspAjax:TabPanel>
             </aspAjax:TabContainer>

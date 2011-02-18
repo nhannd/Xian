@@ -11,6 +11,7 @@
 
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="EditStudyDetailsDialog.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.EditStudyDetailsDialog" %>
 <%@ Import Namespace="System.Globalization"%>
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
 
 <ccAsp:ModalDialog ID="EditStudyModalDialog" runat="server" Width="775px" Title='<%$ Resources:Titles, EditStudyDialog %>'>
 <ContentTemplate>
@@ -48,11 +49,11 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                         <table cellpadding="2" cellspacing="5" width="100%" style="background-color: #eeeeee; border: solid 1px #cccccc;">
                             
                             <tr>
-                                <td valign="top" class="DialogLabelBackground"><asp:Label ID="Label6" runat="server" Text="Patient Name" CssClass="DialogTextBoxLabel" /></td>
+                                <td valign="top" class="DialogLabelBackground"><asp:Label ID="Label6" runat="server" Text="<%$Resources: Labels, PatientName %>" CssClass="DialogTextBoxLabel" /></td>
                                 <td><ccAsp:PersonNameInputPanel runat="server" ID="PatientNamePanel"  Required="true" ValidationGroup="EditStudyValidationGroup"/></td>
                             </tr>
                             <tr>
-                                <td class="DialogLabelBackground"><asp:Label ID="Label2" runat="server" Text="Patient ID" CssClass="DialogTextBoxLabel" /></td>
+                                <td class="DialogLabelBackground"><asp:Label ID="Label2" runat="server" Text="<%$Resources: Labels, PatientID %>" CssClass="DialogTextBoxLabel" /></td>
                                 <td>
                                 <table cellpadding="0" cellspacing="0">
                                         <tr><td><asp:TextBox ID="PatientID" runat="server" CssClass="DialogTextBox" MaxLength="64" CausesValidation="true" ValidationGroup="EditStudyValidationGroup"></asp:TextBox>
@@ -67,7 +68,7 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                                     </td></tr></table>
                                  </td>
                             <tr>
-                                <td class="DialogLabelBackground"><asp:Label ID="GenderLabel" runat="server" Text="Gender" CssClass="DialogTextBoxLabel" /></td>
+                                <td class="DialogLabelBackground"><asp:Label ID="GenderLabel" runat="server" Text="<%$Resources: Labels, PatientGender %>" CssClass="DialogTextBoxLabel" /></td>
                                 <td>
                                     <table cellpadding="0" cellspacing="0">
                                         <tr><td>
@@ -91,11 +92,12 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                                 </td>
                             </tr>
                             <tr>
-                                <td class="DialogLabelBackground"><asp:Label ID="Label1" runat="server" Text="Date of Birth" CssClass="DialogTextBoxLabel" /></td>
+                                <td class="DialogLabelBackground"><asp:Label ID="Label1" runat="server" Text="<%$Resources: Labels, DateOfBirth%>" CssClass="DialogTextBoxLabel" /></td>
                                 <td>
                                     <table cellpadding="0" cellspacing="0">
                                         <tr><td>
-                                        <ccUI:TextBox ID="PatientBirthDate" runat="server" CausesValidation="true" ValidationGroup="EditStudyValidationGroup" CssClass="DialogTextBox" Text="20010101" ></ccUI:TextBox><asp:ImageButton ID="CalendarLink" runat="server" style="padding-left: 3px; padding-right: 3px;" /><asp:LinkButton ID="ClearPatientBirthDateButton" Text="Clear" runat="server" CssClass="DialogLinkButton" />
+                                        <ccUI:TextBox ID="PatientBirthDate" runat="server" CausesValidation="true" ValidationGroup="EditStudyValidationGroup" CssClass="DialogTextBox" Text="20010101" ></ccUI:TextBox><asp:ImageButton ID="CalendarLink" runat="server" style="padding-left: 3px; padding-right: 3px;" /><asp:LinkButton ID="ClearPatientBirthDateButton" 
+                                                    Text="<%$Resources: Labels, Clear %>" runat="server" CssClass="DialogLinkButton" />
                                         </td><td valign="bottom">
                                             <ccAsp:InvalidInputIndicator ID="PatientBirthDateHelp" runat="server" SkinID="InvalidInputIndicator" />
                                             <ccValidator:DateValidator Enabled="true"
@@ -112,23 +114,23 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                                     </table>
                                 </td>
                             <tr>
-                                <td class="DialogLabelBackground"><asp:Label ID="Label3" runat="server" Text="Age" CssClass="DialogTextBoxLabel" /></td>
+                                <td class="DialogLabelBackground"><asp:Label ID="Label3" runat="server" Text="<%$Resources: Labels, Age%>" CssClass="DialogTextBoxLabel" /></td>
                                 <td>
                                     <table cellpadding="0" cellspacing="0">
                                         <tr><td>
                                         <ccUI:TextBox ID="PatientAge" runat="server" CausesValidation="true" ValidationGroup="EditStudyValidationGroup" CssClass="DialogTextBox" MaxLength="3"></ccUI:TextBox>
                                         <asp:DropDownList ID="PatientAgePeriod" runat="server" CssClass="DialogDropDownList">
-                                            <asp:ListItem Value="Y">Years</asp:ListItem>
-                                            <asp:ListItem Value="M">Months</asp:ListItem>
-                                            <asp:ListItem Value="W">Weeks</asp:ListItem>
-                                            <asp:ListItem Value="D">Days</asp:ListItem>
+                                            <asp:ListItem Value="Y" Text="<%$Resources: SR,Years %>"></asp:ListItem>
+                                            <asp:ListItem Value="M" Text="<%$Resources: SR,Months %>"></asp:ListItem>
+                                            <asp:ListItem Value="W" Text="<%$Resources: SR,Weeks %>"></asp:ListItem>
+                                            <asp:ListItem Value="D" Text="<%$Resources: SR,Days %>"></asp:ListItem>
                                         </asp:DropDownList>
                                         </td><td valign="bottom">
                                             <ccAsp:InvalidInputIndicator ID="PatientAgeHelp" runat="server" SkinID="InvalidInputIndicator" />
                                             <ccValidator:RegularExpressionFieldValidator
                                                         ID="PatientAgeValidator" runat="server" ControlToValidate="PatientAge"
                                                         InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="EditStudyValidationGroup" InvalidInputIndicatorID="PatientAgeHelp"
-                                                        ValidationExpression="^[^-][0-9]*$" Text="Patient Age must contain only digits and may not be negative" IgnoreEmptyValue="true" Display="None">
+                                                        ValidationExpression="^[^-][0-9]*$" Text="<%Resources: InputValidation , EditStudyDialog_InvalidPatientAge %>" IgnoreEmptyValue="true" Display="None">
                                             </ccValidator:RegularExpressionFieldValidator>
                                         </td></tr>
                                     </table>
@@ -137,20 +139,20 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                         </table>
                     </ContentTemplate>
                     <HeaderTemplate>
-                        Patient Information
+                        <%= Labels.EditStudyDialog_PatientInformation %>
                     </HeaderTemplate>
                 </aspAjax:TabPanel>
                 <aspAjax:TabPanel ID="TabPanel2" runat="server" HeaderText="TabPanel2">
                     <ContentTemplate>
                         <table cellpadding="2" cellspacing="5" width="100%" style="background-color: #eeeeee; border: solid 1px #cccccc;">
                             <tr>
-                                <td valign="top" class="DialogLabelBackground"><asp:Label ID="Label21" runat="server" Text="Referring Physician" CssClass="DialogTextBoxLabel" /></td>
+                                <td valign="top" class="DialogLabelBackground"><asp:Label ID="Label21" runat="server" Text="<%$Resources: Labels, ReferringPhysician%>" CssClass="DialogTextBoxLabel" /></td>
                                 <td>
                                     <ccAsp:PersonNameInputPanel runat="server" ID="ReferringPhysicianNamePanel" Required="false" ValidationGroup="EditStudyValidationGroup"/>
                                 </td>
                             </tr>
                                 <tr>
-                                <td class="DialogLabelBackground"><asp:Label ID="Label14" runat="server" Text="Study Description" CssClass="DialogTextBoxLabel" /></td>
+                                <td class="DialogLabelBackground"><asp:Label ID="Label14" runat="server" Text="<%$Resources: Labels, StudyDescription%>" CssClass="DialogTextBoxLabel" /></td>
                                 <td>
                                     <table cellpadding="0" cellspacing="0">
                                         <tr><td><asp:TextBox ID="StudyDescription" runat="server" CausesValidation="true" MaxLength="64" ValidationGroup="EditStudyValidationGroup" CssClass="DialogTextBox" />
@@ -166,7 +168,7 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                                 </td>
                                 </tr>
                                 <tr>
-                                <td class="DialogLabelBackground"><asp:Label ID="Label12" runat="server" Text="Accession #" CssClass="DialogTextBoxLabel" /></td>
+                                <td class="DialogLabelBackground"><asp:Label ID="Label12" runat="server" Text="<%$Resources: Labels, AccessionNumber%>" CssClass="DialogTextBoxLabel" /></td>
                                 <td>
                                     <table cellpadding="0" cellspacing="0"><tr><td><asp:TextBox ID="AccessionNumber" runat="server" MaxLength="16" CausesValidation="true" ValidationGroup="EditStudyValidationGroup" CssClass="DialogTextBox" /></td>
                                     <td valign="bottom"><ccAsp:InvalidInputIndicator ID="AccessionNumberHelp" runat="server" SkinID="InvalidInputIndicator" />
@@ -178,7 +180,7 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                                 </td>
                                 </tr>
                                 <tr>
-                                <td class="DialogLabelBackground"><asp:Label ID="Label11" runat="server" Text="Study Date/Time" CssClass="DialogTextBoxLabel" /></td>
+                                <td class="DialogLabelBackground"><asp:Label ID="Label11" runat="server" Text="<%$Resources: Labels, StudyDateTime%>" CssClass="DialogTextBoxLabel" /></td>
                                 <td>
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
@@ -213,7 +215,7 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                                         </table>
                                 </tr>
                                 <tr>
-                                <td class="DialogLabelBackground"><asp:Label ID="Label13" runat="server" Text="Study ID" CssClass="DialogTextBoxLabel" /></td>
+                                <td class="DialogLabelBackground"><asp:Label ID="Label13" runat="server" Text="<%$Resources: Labels, StudyID%>" CssClass="DialogTextBoxLabel" /></td>
                                 <td>
                                     <table cellpadding="0" cellspacing="0">
                                     <tr><td><asp:TextBox ID="StudyID" runat="server" CausesValidation="true" ValidationGroup="EditStudyValidationGroup" MaxLength="16" CssClass="DialogTextBox" /></td>
@@ -233,7 +235,7 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                             </ccUI:CalendarExtender>
                     </ContentTemplate>
                     <HeaderTemplate>
-                        Study Information
+                        <%= Labels.EditStudyDialog_StudyInformation %>
                     </HeaderTemplate>
                 </aspAjax:TabPanel>
             </aspAjax:TabContainer>
@@ -243,7 +245,7 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                     
                     <tr valign="top">
                         <td>
-                            <asp:Label ID="Label4" runat="server" CssClass="DialogTextBoxLabel" Text="Reason:"></asp:Label>                            
+                            <asp:Label ID="Label4" runat="server" CssClass="DialogTextBoxLabel" Text="<%$ Resources: Labels, EditStudyDialog_Reason %>"></asp:Label>                            
                         </td>
                         <td>
                         <table cellpadding="0" cellspacing="0">
@@ -259,7 +261,7 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                    <tr>
                         <td valign="top">
                             <asp:Label ID="Label5" runat="server" CssClass="DialogTextBoxLabel" 
-                                            Text='Comment:'></asp:Label> 
+                                            Text="<%$ Resources: Labels, EditStudyDialog_Comment %>"></asp:Label> 
                              
                         </td>
                         <td>
@@ -281,7 +283,7 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                     <tr id="ReasonSavePanel" runat="server">
                         <td>
                             <asp:Label ID="Label7" runat="server" CssClass="DialogTextBoxLabel" 
-                                                Text="Save reason as:"></asp:Label> 
+                                                Text="<%$ Resources: Labels, EditStudyDialog_SaveReasonAs %>"></asp:Label> 
                                  
                         </td>
                         <td>
@@ -316,14 +318,14 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
        <ccValidator:ConditionalRequiredFieldValidator ID="ReasonValidator" runat="server"
                                                 ControlToValidate="ReasonListBox" InvalidInputIndicatorID="InvalidReasonIndicator" 
                                                 ValidationGroup='EditStudyValidationGroup'
-                                                Text="You must specify the reason for editing the studies for future auditing purposes." Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>
+                                                Text="<%$Resources: InputValidation, EditStudyDialog_MissingReason %>" Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>
        <ccValidator:ConditionalRequiredFieldValidator ID="CommentValidator" runat="server"
                                                 ControlToValidate="Comment" InvalidInputIndicatorID="InvalidCommentIndicator" 
                                                 ValidationGroup='EditStudyValidationGroup'
-                                                Text="You must specify a comment for the reason for editing the studies for future auditing purposes." Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>
+                                                Text="<%$Resources: InputValidation, EditStudyDialog_MissingComment %>" Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>
        <ccValidator:ConditionalRequiredFieldValidator ID="SaveReasonAsNameValidator" runat="server"
                                                 ControlToValidate="SaveReasonAsName" InvalidInputIndicatorID="InvalidSaveReasonAsNameInputIndicator" 
                                                 ValidationGroup='EditStudyValidationGroup'
-                                                Text="You must specify a name for the reason." Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>
+                                                Text="<%$Resources: InputValidation, EditStudyDialog_MissingName %>" Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>
 </ContentTemplate>
 </ccAsp:ModalDialog>

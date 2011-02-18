@@ -26,6 +26,7 @@ using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Users
 {
@@ -105,7 +106,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
 
         public void OnDeleteUser(UserRowData userRowData)
         {
-            DeleteConfirmation.Message = string.Format("Are you sure to delete user \"{0} ({1})?\"", userRowData.DisplayName, userRowData.UserName);
+            DeleteConfirmation.Message = string.Format(SR.AdminUser_DeleteDialog_AreYouSure, userRowData.DisplayName, userRowData.UserName);
             DeleteConfirmation.MessageType = MessageBox.MessageTypeEnum.YESNO;
             DeleteConfirmation.Data = userRowData;
             DeleteConfirmation.Show();
@@ -115,12 +116,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         {
             if (_controller.ResetPassword(userRowData))
             {
-                PasswordResetConfirmation.Message = string.Format("Password for {0} has been reset.", userRowData.UserName);
+                PasswordResetConfirmation.Message = string.Format(SR.AdminUser_PasswordReset, userRowData.UserName);
             } else {
-                PasswordResetConfirmation.Message =
-                    string.Format("An error occurred resetting the password. Password has not been changed.");
+                PasswordResetConfirmation.Message = ErrorMessages.PasswordResetFailed;
                 }
-            PasswordResetConfirmation.Title = "Password Reset";
+            PasswordResetConfirmation.Title = Titles.AdminUser_PasswordResetDialogTitle;
             PasswordResetConfirmation.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
             PasswordResetConfirmation.Show();
         }
