@@ -18,6 +18,7 @@ using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.Rendering;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 #pragma warning disable 0419,1574,1587,1591
 
@@ -72,6 +73,14 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			if (!(image is ISpatialTransformProvider) || !(image is IImageGraphicProvider))
 				throw new ArgumentException("The image must implement IImageGraphicProvider and have a valid ImageSpatialTransform in order to be exported.");
 
+			if (exportParams.ExportOption == ExportOption.TrueSize)
+			{
+				var imageSopProvider = image as IImageSopProvider;
+				var pixelSpacing = imageSopProvider == null ? null : imageSopProvider.Frame.NormalizedPixelSpacing;
+				if (pixelSpacing == null || pixelSpacing.IsNull)
+					throw new ArgumentException("The image does not contain pixel spacing information.  TrueSize export is not possible.");
+			}
+
 			ImageSpatialTransform transform = ((ISpatialTransformProvider) image).SpatialTransform as ImageSpatialTransform;
 			if (transform == null)
 				throw new ArgumentException("The image must have a valid ImageSpatialTransform in order to be exported.");
@@ -86,6 +95,9 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 			try
 			{
+				if (exportParams.ExportOption == ExportOption.TrueSize)
+					return DrawTrueSizeImageToBitmap(image, exportParams.DisplayRectangle, exportParams.OutputSize, exportParams.Dpi);
+
 				if (exportParams.SizeMode == SizeMode.Scale)
 				{
 					// TODO: Refactor ImageExporter, so there only the displayRectangle and OutputRectangle are provided
@@ -192,6 +204,44 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 				transform.Scale *= scale;
 
 				return ImageDrawToBitmap(image, width, height, dpi);
+			}
+			finally
+			{
+				transform.SetMemento(restoreMemento);
+			}
+		}
+
+		private static Bitmap DrawTrueSizeImageToBitmap(IPresentationImage image, Rectangle displayRectangle, Size outputSize, float dpi)
+		{
+			ImageSpatialTransform transform = (ImageSpatialTransform) ((ISpatialTransformProvider) image).SpatialTransform;
+			object restoreMemento = transform.CreateMemento();
+			try
+			{
+				var srcPixelSpacing = ((IImageSopProvider)image).Frame.NormalizedPixelSpacing;
+				var dstPixelSpacing = 25.4f/dpi;
+				var scale = dstPixelSpacing/srcPixelSpacing.Column;
+
+				// Get the source rectangle before modifying the transform
+				var sourceRectangle = transform.ConvertToSource(displayRectangle);
+
+				// Apply scale
+				transform.Scale = (float)scale;
+
+				// Get the destination display rectangle
+				var destinationRectangle = transform.ConvertToDestination(sourceRectangle);
+
+				// First find the center.
+				var location = new Point(
+					(int)(destinationRectangle.Left + destinationRectangle.Right) / 2,
+					(int)(destinationRectangle.Top + destinationRectangle.Bottom)/2);
+
+				// Using the new display size, offset to get the top left location.
+				location.Offset(-outputSize.Width / 2, -outputSize.Height / 2);
+
+				// This client rectangle will center around the destination display rectangle, but size to the requested output size
+				transform.ClientRectangle = new Rectangle(location, outputSize);
+
+				return ImageDrawToBitmap(image, outputSize.Width, outputSize.Height, dpi);
 			}
 			finally
 			{

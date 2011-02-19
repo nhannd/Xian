@@ -90,6 +90,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 		/// <summary>
 		/// Specifies the output image dimensions when <see cref="SizeMode"/> has a value of <see cref="ImageExport.SizeMode.ScaleToFit"/> and <see cref="ImageExport.SizeMode.Fixed"/>.
+		/// This is also used when the <see cref="ExportOption"/> is <see cref="ImageExport.ExportOption.TrueSize"/>.
 		/// </summary>
 		public Size OutputSize
 		{
@@ -129,7 +130,16 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 		/// <summary>
 		/// Indicates that the entire image should be exported in the original image's orientation (i.e. excluding all rotations and/or flips).
 		/// </summary>
-		CompleteImage = 1
+		CompleteImage = 1,
+
+		/// <summary>
+		/// Indicates that the image will be scaled based on the <see cref="ExportImageParams.Dpi"/>.
+		/// The center of the visible area of the image (including any rotations and/or flips) should remain visible..
+		/// </summary>
+		/// <remarks>
+		/// <see cref="SizeMode"/> is irrelevant for TrueSize printing.
+		/// </remarks>
+		TrueSize = 2,
 	}
 
 	/// <summary>
