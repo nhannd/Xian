@@ -458,6 +458,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		/// </summary>
 		/// <remarks>
 		/// One audit event is generated for each file system volume from which data is imported.
+		/// If the audited instances are not on a file system, a single event is generated with an empty media identifier.
 		/// </remarks>
 		/// <param name="instances">The files that were imported.</param>
 		/// <param name="eventSource">The source user or application entity which invoked the operation.</param>
@@ -469,7 +470,11 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 
 			try
 			{
-				foreach (string volume in instances.EnumerateFileVolumes())
+				var fileVolumes = new List<string>(instances.EnumerateFileVolumes());
+				if (fileVolumes.Count == 0)
+					fileVolumes.Add(string.Empty);
+
+				foreach (string volume in fileVolumes)
 				{
 					DataImportAuditHelper auditHelper = new DataImportAuditHelper(eventSource, eventResult, volume);
 					auditHelper.AddImporter(eventSource);
@@ -493,6 +498,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		/// </summary>
 		/// <remarks>
 		/// One audit event is generated for each file system volume to which data is exported.
+		/// If the audited instances are not on a file system, a single event is generated with an empty media identifier.
 		/// </remarks>
 		/// <param name="instances">The files that were exported.</param>
 		/// <param name="eventSource">The source user or application entity which invoked the operation.</param>
@@ -504,7 +510,11 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 
 			try
 			{
-				foreach (string volume in instances.EnumerateFileVolumes())
+				var fileVolumes = new List<string>(instances.EnumerateFileVolumes());
+				if (fileVolumes.Count == 0)
+					fileVolumes.Add(string.Empty);
+
+				foreach (string volume in fileVolumes)
 				{
 					DataExportAuditHelper auditHelper = new DataExportAuditHelper(eventSource, eventResult, volume);
 					auditHelper.AddExporter(eventSource);
