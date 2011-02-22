@@ -32,6 +32,8 @@
             $("#aspectLicense").hide();
             $("#nUnitLicense").hide();
             $("#jQueryPlugins").hide();
+            $("#offis").hide();
+            $("#msdn").hide();
         });
 
         function showLicense(divName) {
@@ -71,12 +73,7 @@
     <asp:Panel runat="server" ScrollBars="Vertical" Height="700" CssClass="AboutPanel" style="padding-top: 5px;">
 <pre>
 <b>ClearCanvas Inc.</b>
-Copyright (c) 2010, ClearCanvas Inc.
-All rights reserved.
-<a href="http://www.clearcanvas.ca" >http://www.clearcanvas.ca</a>
-
-This software is licensed under the Open Software License v3.0.
-For the complete license, see <a href="http://www.clearcanvas.ca/OSLv3.0" >http://www.clearcanvas.ca/OSLv3.0</a>
+<%= ProductInformation.License %>
 </pre>
 <p></p>
 <div class="LicenseLink"><b><a href="#" onclick="showLicense('mDCMLicense')">mDCM: Jpeg Codec</a></b></div>
@@ -1028,6 +1025,103 @@ THE SOFTWARE.
 
 </pre></div>
   
+<div class="LicenseLink"><a href="#" onclick="showLicense('offis')"><b>Offis GetJpegBitDepth Method</b></a></div>
+<div id="offis" class="License">
+<pre>
+The GetJpegBitDepth() method has this copyright:  
+
+Copyright (C) 1997-2008, OFFIS
+
+This software and supporting documentation were developed by
+
+  Kuratorium OFFIS e.V.
+  Healthcare Information and Communication Systems
+  Escherweg 2
+  D-26121 Oldenburg, Germany
+ 
+THIS SOFTWARE IS MADE AVAILABLE,  AS IS,  AND OFFIS MAKES NO  WARRANTY
+REGARDING  THE  SOFTWARE,  ITS  PERFORMANCE,  ITS  MERCHANTABILITY  OR
+FITNESS FOR ANY PARTICULAR USE, FREEDOM FROM ANY COMPUTER DISEASES  OR
+ITS CONFORMITY TO ANY SPECIFICATION. THE ENTIRE RISK AS TO QUALITY AND
+PERFORMANCE OF THE SOFTWARE IS WITH THE USER.
+</pre></div>
+  
+<div class="LicenseLink"><a href="#" onclick="showLicense('msdn')"><b>MSDN Derived Code</b></a></div>
+<div id="msdn" class="License">
+<pre>
+
+MSDN Derived code including SilverlightFaultBehavior, BlockingQueue, 
+and PersistenceScope.
+
+Microsoft Limited Public License.
+
+This license governs use of code marked as “sample” or “example” available 
+on this web site without a license agreement, as provided under the section 
+above titled “NOTICE SPECIFIC TO SOFTWARE AVAILABLE ON THIS WEB SITE.” If 
+you use such code (the “software”), you accept this license. If you do not 
+accept the license, do not use the software.
+
+1. Definitions
+
+The terms “reproduce,” “reproduction,” “derivative works,” and “distribution”
+ have the same meaning here as under U.S. copyright law.
+
+A “contribution” is the original software, or any additions or changes to 
+the software.
+
+A “contributor” is any person that distributes its contribution under this 
+license.
+
+“Licensed patents” are a contributor’s patent claims that read directly on 
+its contribution.
+
+2. Grant of Rights
+
+(A) Copyright Grant - Subject to the terms of this license, including the 
+    license conditions and limitations in section 3, each contributor grants you
+    a non-exclusive, worldwide, royalty-free copyright license to reproduce its 
+    contribution, prepare derivative works of its contribution, and distribute 
+    its contribution or any derivative works that you create.
+
+(B) Patent Grant - Subject to the terms of this license, including the license 
+    conditions and limitations in section 3, each contributor grants you a
+    non-exclusive, worldwide, royalty-free license under its licensed patents 
+    to make, have made, use, sell, offer for sale, import, and/or otherwise 
+    dispose of its contribution in the software or derivative works of the 
+    contribution in the software.
+
+3. Conditions and Limitations
+
+(A) No Trademark License- This license does not grant you rights to use any 
+    contributors’ name, logo, or trademarks.
+
+(B) If you bring a patent claim against any contributor over patents that 
+    you claim are infringed by the software, your patent license from such 
+    contributor to the software ends automatically.
+
+(C) If you distribute any portion of the software, you must retain all 
+    copyright, patent, trademark, and attribution notices that are present in 
+    the software.
+
+(D) If you distribute any portion of the software in source code form, you may
+    do so only under this license by including a complete copy of this license 
+    with your distribution. If you distribute any portion of the software in 
+    compiled or object code form, you may only do so under a license that 
+    complies with this license.
+
+(E) The software is licensed “as-is.” You bear the risk of using it. The
+    contributors give no express warranties, guarantees or conditions. You may 
+    have additional consumer rights under your local laws which this license 
+    cannot change. To the extent permitted under your local laws, the 
+    contributors exclude the implied warranties of merchantability, fitness for
+    a particular purpose and non-infringement.
+
+(F) Platform Limitation - The licenses granted in sections 2(A) and 2(B) extend 
+    only to the software or derivative works that you create that run on a 
+    Microsoft Windows operating system product.
+
+</pre></div>
+
   </asp:Panel>
   </td></tr>
   </table>
