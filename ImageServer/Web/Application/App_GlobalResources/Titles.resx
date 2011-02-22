@@ -166,7 +166,7 @@
     <value>Study Integrity Queue</value>
   </data>
   <data name="StudyIntegrityQueuePageTitle" xml:space="preserve">
-    <value>Study Integrity Queue |  {0}</value>
+    <value>Study Integrity Queue | {0}</value>
   </data>
   <data name="ReconcileStudyDialog" xml:space="preserve">
     <value>Reconcile Study</value>
@@ -235,7 +235,7 @@
     <value>Alerts</value>
   </data>
   <data name="AlertsPageTitle" xml:space="preserve">
-    <value>Alerts | Admin | {0}</value>
+    <value>Alerts | {0}</value>
   </data>
   <data name="ApplicationLog" xml:space="preserve">
     <value>Application Log</value>
@@ -244,7 +244,7 @@
     <value>User Management</value>
   </data>
   <data name="UserManagementPageTitle" xml:space="preserve">
-    <value>Users | User Management | Admin | {0}</value>
+    <value>Users | {0}</value>
   </data>
   <data name="AuthorityTokens" xml:space="preserve">
     <value>Authority Tokens</value>
@@ -262,31 +262,31 @@
     <value>About | {0}</value>
   </data>
   <data name="ApplicationLogPageTitle" xml:space="preserve">
-    <value>Application Log | Admin | {0}</value>
+    <value>Application Log | {0}</value>
   </data>
   <data name="DeletedStudiesPageTitle" xml:space="preserve">
     <value>Deleted Studies | {0}</value>
   </data>
   <data name="UserGroupsPageTitle" xml:space="preserve">
-    <value>User Groups | User Management | Admin | {0}</value>
+    <value>User Groups | {0}</value>
   </data>
   <data name="DevicesPageTitle" xml:space="preserve">
-    <value>Devices | Configure | {0}</value>
+    <value>Devices | {0}</value>
   </data>
   <data name="FileSystemsPageTitle" xml:space="preserve">
-    <value>File Systems | Configure | {0}</value>
+    <value>File Systems | {0}</value>
   </data>
   <data name="PartitionArchivesPageTitle" xml:space="preserve">
-    <value>Partition Archives | Configure | {0}</value>
+    <value>Partition Archives | {0}</value>
   </data>
   <data name="ServerPartitionsPageTitle" xml:space="preserve">
-    <value>Server Partitions | Configure | {0}</value>
+    <value>Server Partitions | {0}</value>
   </data>
   <data name="ServerRulesPageTitle" xml:space="preserve">
-    <value>Server Rules | Configure | {0}</value>
+    <value>Server Rules | {0}</value>
   </data>
   <data name="ServiceSchedulingPageTitle" xml:space="preserve">
-    <value>Service Scheduling | Configure | {0}</value>
+    <value>Service Scheduling | {0}</value>
   </data>
   <data name="AuthorizationErrorPageTitle" xml:space="preserve">
     <value>Authorization Error</value>
@@ -404,5 +404,8 @@
   </data>
   <data name="PasswordExpiredDialogTitle" xml:space="preserve">
     <value>Password Expired</value>
+  </data>
+  <data name="LabelNotForDiagnosticUse" xml:space="preserve">
+    <value>Not for Diagnostic Use</value>
   </data>
 </root>

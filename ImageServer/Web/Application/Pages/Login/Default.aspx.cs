@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
             	// Here we assume it's stand-alone if the DefaultAuthenticationService plugin is enabled.
                 // This is not perfect but at least it works.                
             	XmlDocument doc = new XmlDocument();
-                doc.Load(Server.MapPath("~/Web.Config"));
+                doc.Load(Server.MapPath("~/critical.Config"));
                 XmlNode node = doc.SelectSingleNode("//extensions/extension[@class='ClearCanvas.ImageServer.Services.Common.Authentication.DefaultAuthenticationService, ClearCanvas.ImageServer.Services.Common']");
                 return node != null && bool.Parse(node.Attributes["enabled"].Value) == false;
             }

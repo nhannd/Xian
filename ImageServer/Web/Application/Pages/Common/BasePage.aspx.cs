@@ -10,11 +10,13 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Web;
 using ClearCanvas.Common;
 using System.Threading;
 using System.Globalization;
+using ClearCanvas.ImageServer.Common;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
 {
@@ -46,12 +48,36 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
             SetPageTitle(title, true);
         }
 
+        private static string GetProductInformation()
+        {
+            var tags = new List<string>();
+            if (!string.IsNullOrEmpty(ProductInformation.Release))
+                tags.Add(App_GlobalResources.Titles.LabelNotForDiagnosticUse);
+            if (!ServerPlatform.IsManifestVerified)
+                // should be hardcoded because manifest verification is all that prevents localizing this tag away
+                tags.Add("Modified Installation");
+
+            var name = ProductInformation.GetName(false, true);
+            if (tags.Count == 0)
+                return name;
+
+            var tagString = string.Join(" | ", tags.ToArray());
+            return string.IsNullOrEmpty(name) ? tagString : string.Format("{0} - {1}", name, tagString);
+        }
+
         protected void SetPageTitle(string title, bool includeProductInfo)
         {
             if (includeProductInfo)
-				Page.Title = string.IsNullOrEmpty(ConfigurationManager.AppSettings["ServerName"]) ? String.Format(title, ProductInformation.GetNameAndVersion(false, true)) : String.Format(title, ProductInformation.GetNameAndVersion(false, true)) + " [" + ConfigurationManager.AppSettings["ServerName"] + "]";
-			else
-				Page.Title = string.IsNullOrEmpty(ConfigurationManager.AppSettings["ServerName"]) ? title : title + " [" + ConfigurationManager.AppSettings["ServerName"] + "]";
+            {
+                Page.Title = string.IsNullOrEmpty(ConfigurationManager.AppSettings["ServerName"])
+                                 ? String.Format(title, GetProductInformation())
+                                 : String.Format(title, GetProductInformation()) + " [" +
+                                   ConfigurationManager.AppSettings["ServerName"] + "]";
+            }
+            else
+                Page.Title = string.IsNullOrEmpty(ConfigurationManager.AppSettings["ServerName"])
+                    ? title
+                    : title + " [" + ConfigurationManager.AppSettings["ServerName"] + "]";
 		}
     }
 
