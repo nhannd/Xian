@@ -64,8 +64,11 @@ namespace ClearCanvas.ImageViewer.TestTools
 		private void ChangeToSyntax(TransferSyntax syntax)
 		{
 			string[] files = BuildFileList();
-			const string directory = @"C:\Stewart\tmp";
-
+			var args = new SelectFolderDialogCreationArgs() {AllowCreateNewFolder = true, Prompt = "Select output folder" };
+			var result = base.Context.DesktopWindow.ShowSelectFolderDialogBox(args);
+			if (result.Action != DialogBoxAction.Ok)
+				return;
+			
 			try
 			{
 				foreach (string file in files)
@@ -73,14 +76,14 @@ namespace ClearCanvas.ImageViewer.TestTools
 					DicomFile dicomFile = new DicomFile(file);
 					dicomFile.Load();
 					dicomFile.ChangeTransferSyntax(syntax);
-					string fileName = System.IO.Path.Combine(directory, dicomFile.MediaStorageSopInstanceUid);
+					string fileName = System.IO.Path.Combine(result.FileName, dicomFile.MediaStorageSopInstanceUid);
 					fileName += ".dcm";
 					dicomFile.Save(fileName);
 				}
 			}
 			catch(Exception e)
 			{
-				ExceptionHandler.Report(e, this.Context.DesktopWindow);
+				ExceptionHandler.Report(e, Context.DesktopWindow);
 			}
 		}
 
