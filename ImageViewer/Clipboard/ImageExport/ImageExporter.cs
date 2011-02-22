@@ -18,6 +18,7 @@ using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.Rendering;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 #pragma warning disable 0419,1574,1587,1591
 
@@ -72,6 +73,14 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			if (!(image is ISpatialTransformProvider) || !(image is IImageGraphicProvider))
 				throw new ArgumentException("The image must implement IImageGraphicProvider and have a valid ImageSpatialTransform in order to be exported.");
 
+			if (exportParams.ExportOption == ExportOption.TrueSize)
+			{
+				var imageSopProvider = image as IImageSopProvider;
+				var pixelSpacing = imageSopProvider == null ? null : imageSopProvider.Frame.NormalizedPixelSpacing;
+				if (pixelSpacing == null || pixelSpacing.IsNull)
+					throw new ArgumentException("The image does not contain pixel spacing information.  TrueSize export is not possible.");
+			}
+
 			ImageSpatialTransform transform = ((ISpatialTransformProvider) image).SpatialTransform as ImageSpatialTransform;
 			if (transform == null)
 				throw new ArgumentException("The image must have a valid ImageSpatialTransform in order to be exported.");
@@ -86,6 +95,9 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 			try
 			{
+				if (exportParams.ExportOption == ExportOption.TrueSize)
+					return DrawTrueSizeImageToBitmap(image, exportParams.OutputSize, exportParams.Dpi);
+
 				if (exportParams.SizeMode == SizeMode.Scale)
 				{
 					// TODO: Refactor ImageExporter, so there only the displayRectangle and OutputRectangle are provided
@@ -192,6 +204,28 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 				transform.Scale *= scale;
 
 				return ImageDrawToBitmap(image, width, height, dpi);
+			}
+			finally
+			{
+				transform.SetMemento(restoreMemento);
+			}
+		}
+
+		private static Bitmap DrawTrueSizeImageToBitmap(IPresentationImage image, Size outputSize, float dpi)
+		{
+			var transform = (ImageSpatialTransform) ((ISpatialTransformProvider) image).SpatialTransform;
+			var restoreMemento = transform.CreateMemento();
+			try
+			{
+				var srcPixelSpacing = ((IImageSopProvider)image).Frame.NormalizedPixelSpacing;
+				var srcDPI = 25.4f/srcPixelSpacing.Column;
+				var scaleForTrueSize = dpi / srcDPI;
+
+				// Apply scale transformation
+				transform.ScaleToFit = false;
+				transform.Scale = (float)scaleForTrueSize;
+
+				return ImageDrawToBitmap(image, outputSize.Width, outputSize.Height, dpi);
 			}
 			finally
 			{
