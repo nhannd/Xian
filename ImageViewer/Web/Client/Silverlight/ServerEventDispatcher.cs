@@ -31,6 +31,7 @@ using System.Net;
 using System.Net.Browser;
 using System.Windows.Media;
 using System.IO;
+using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
@@ -130,46 +131,46 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             if (exception is CommunicationException)
             {
                 if (!NetworkInterface.GetIsNetworkAvailable())
-                    DisplayFaulted("Network Error", "Network connection has been lost.");
+                    DisplayFaulted(DialogTitles.Error, ErrorMessages.ConnectionLost);
                 else
                 {
                     StringBuilder sb = new StringBuilder();
                     sb.AppendLine(String.Format("{0}: {1}", exception.GetType(), exception.Message));
-                    sb.AppendLine("Stack Trace:");
+                    sb.AppendLine(SR.StackTrace +":");
                     sb.AppendLine(exception.StackTrace);
 
 
                     if (exception.InnerException != null)
                     {
                         sb.AppendLine(String.Format("{0}: {1}", exception.InnerException.GetType(), exception.InnerException.Message));
-                        sb.AppendLine("Stack Trace:");
+                        sb.AppendLine(SR.StackTrace + ":");
                         sb.AppendLine(exception.InnerException.StackTrace);
                     }
 
-                    DisplayFaulted("Communication Error", sb.ToString());
+                    DisplayFaulted(DialogTitles.Error, sb.ToString());
                 }
             }
             else if (exception is FaultException<SessionValidationFault>)
             {
                 FaultException<SessionValidationFault> fault = exception as FaultException<SessionValidationFault>;
-                DisplayFaulted("Session Error", fault.Detail.ErrorMessage);
+                DisplayFaulted(DialogTitles.Error, fault.Detail.ErrorMessage);
             }
             else
             {
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine(String.Format("{0}", exception.Message));
-                sb.AppendLine("Stack Trace:");
+                sb.AppendLine(SR.StackTrace + ":");
                 sb.AppendLine(exception.StackTrace);
 
                 if (exception.InnerException != null)
                 {
                     sb.AppendLine(String.Format("{0}: {1}", exception.InnerException.GetType(), exception.InnerException.Message));
-                    sb.AppendLine("Stack Trace:");
+                    sb.AppendLine(SR.StackTrace + ":");
                     sb.AppendLine(exception.InnerException.StackTrace);
                 }
 
 
-                DisplayFaulted("Error", sb.ToString());
+                DisplayFaulted(DialogTitles.Error, sb.ToString());
             }
         }
 
@@ -196,7 +197,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         {
             UIThread.Execute(() =>
             {    
-                _stateDialog = PopupHelper.PopupMessage("Initialization", "Opening connection...");
+                _stateDialog = PopupHelper.PopupMessage(DialogTitles.Initializing, SR.OpeningConnection);
             });
         }
 
@@ -275,7 +276,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         private void OnChannelFaulted(object sender, EventArgs e)
         {
             //TODO (CR May 2010) How to deal with string resources?
-            DisplayFaulted("Connection Error", _connectionOpened? "Connection to the server has been lost.": String.Format("Could not establish connection to {0}", _proxy.InnerChannel.RemoteAddress.Uri));
+            DisplayFaulted(DialogTitles.Error, _connectionOpened? ErrorMessages.ConnectionLost: String.Format(ErrorMessages.UnableToConnectTo, _proxy.InnerChannel.RemoteAddress.Uri));
             UIThread.Execute(() =>
             {
                 if (_stateDialog != null)
@@ -343,7 +344,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 //TODO (CR May 2010) This shouldn't be in the else, error could happen when a callback is available.
                 if (e.Error != null && _connectionOpened)
                 {
-                    DisplayFaulted("Error", e.Error.Message);
+                    DisplayFaulted(DialogTitles.Error, e.Error.Message);
                 }
             }
         }
@@ -413,8 +414,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             // NOTE: _startRequest contains the sessionid which is probably expired by this time.
             if (ApplicationContext.Current.ID.Equals(applicationNotFoundEvent.ApplicationId))
             {
-                DisplayFaulted("Synchronization Lost",
-                            String.Format("The application has not been found on the server: {0}", applicationNotFoundEvent.ApplicationId));
+                DisplayFaulted(DialogTitles.Error,
+                            String.Format(ErrorMessages.ApplicationIDNotFound, applicationNotFoundEvent.ApplicationId));
             }
         }
 
@@ -433,7 +434,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             }
             finally
             {
-                Disconnect("Application has stopped");
+                Disconnect(SR.ApplicationHasStopped);
             }
         }
 
@@ -477,7 +478,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             if (_proxy.State == CommunicationState.Faulted
                 || _proxy.InnerChannel.State == CommunicationState.Faulted)
             {
-                DisplayFaulted("Error", "Unexpected error");
+                DisplayFaulted(DialogTitles.Error, ErrorMessages.UnexpectedError);
                 return;
             }
 
@@ -528,7 +529,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                         // happens on timeout of connection
                         ErrorHandler.HandleException(e);
                         if (_proxy.State == CommunicationState.Faulted)
-                            DisplayFaulted("Channel Error", e.Message);
+                            DisplayFaulted(DialogTitles.Error, e.Message);
                     }
 	    }
 
@@ -662,13 +663,13 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                             msg = sb.ToString();                                
                         }
 
-                        PopupHelper.PopupMessage("Error Handler Not Found", msg);
+                        PopupHelper.PopupMessage(DialogTitles.HandlerNotFoundError, msg);
                     }
 				}
 				catch (Exception ex)
 				{
 					if (_proxy.State == CommunicationState.Faulted)
-                        DisplayFaulted("Channel Error", ex.Message);
+                        DisplayFaulted(DialogTitles.Error, ex.Message);
                 }
 			}
 		}
@@ -707,6 +708,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             if (_proxy != null)
             {
                 _startRequest = request;
+
+                request.MetaInformation = new MetaInformation() { Language = Thread.CurrentThread.CurrentUICulture.Name };
                 _proxy.StartApplicationAsync(request);
             }
 		}
@@ -749,7 +752,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             // But SL does not support calling web service on this event
             if (_proxy != null)
             {
-                Disconnect("Disposing");
+                Disconnect(SR.Disposing);
             }
 
             if (_queue != null)

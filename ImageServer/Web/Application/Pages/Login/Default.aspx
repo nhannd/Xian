@@ -37,8 +37,10 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
         
         <div id="VersionInfoPanel">
             <table cellpadding="1">
-            <tr><td align="right"><asp:Label runat="server" Text="<%$Resources: Labels,Version %>"></asp:Label>:</td><td align="left"><%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%></td></tr>
-            <tr><td align="right"></td><td><%= Thread.CurrentThread.CurrentUICulture.NativeName %></td></tr>
+            <tr><td align="right">
+                        <asp:Label runat="server" Text="<%$Resources: Labels,Version %>"></asp:Label>:
+                        <%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? SR.Unknown : ServerPlatform.VersionString%></td></tr>
+             <tr><td align="right" ><%= Thread.CurrentThread.CurrentUICulture.NativeName %></td></tr>
             </table>
         </div>
     

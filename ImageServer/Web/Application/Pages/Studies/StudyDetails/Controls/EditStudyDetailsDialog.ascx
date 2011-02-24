@@ -63,7 +63,7 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                                         <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator14" runat="server" ControlToValidate="PatientID"
                                                         InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="EditStudyValidationGroup" InvalidInputIndicatorID="PatientIDHelp"
-                                                        ValidationExpression="^([^\\]){0,64}$" Text="Invalid Patient ID" Display="None">
+                                                        ValidationExpression="^([^\\]){0,64}$" Text="<%$Resources: InputValidation, InvalidPatientID %>" Display="None">
                                         </ccValidator:RegularExpressionFieldValidator>
                                     </td></tr></table>
                                  </td>
@@ -74,9 +74,9 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                                         <tr><td>
                                             <asp:DropDownList ID="PatientGender" runat="server" CssClass="DialogDropDownList" CausesValidation="true" ValidationGroup="EditStudyValidationGroup"  >
                                                 <asp:ListItem Selected="True" Text=" " Value=" " />
-                                                <asp:ListItem Text="Male" Value="M" />
-                                                <asp:ListItem Text="Female" Value="F" />
-                                                <asp:ListItem Text="Other" Value="O" />
+                                                <asp:ListItem Text="<%$Resources: SR, Male %>" Value="M" />
+                                                <asp:ListItem Text="<%$Resources: SR, Female %>" Value="F" />
+                                                <asp:ListItem Text="<%$Resources: SR, Other %>" Value="O" />
                                             </asp:DropDownList>
                                         </td>
                                         <td valign="bottom">
@@ -84,7 +84,7 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                                             <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator15" runat="server" ControlToValidate="PatientGender"
                                                         InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="EditStudyValidationGroup" InvalidInputIndicatorID="PatientGenderHelp"
-                                                        ValidationExpression="M|F|O" Text="Patient Gender is a required field" Display="None">
+                                                        ValidationExpression="M|F|O" Text="<%$Resources: InputValidation, ThisFieldIsRequired %>" Display="None">
                                             </ccValidator:RegularExpressionFieldValidator>
                                         </td>
                                         </tr>

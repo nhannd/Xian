@@ -16,9 +16,12 @@ using System.ServiceModel.Channels;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Web.Common;
+using System.ServiceModel.Description;
+using System.ServiceModel.Dispatcher;
 
 namespace ClearCanvas.Web.Services
 {
+
     [ServiceBehavior( IncludeExceptionDetailInFaults = true, 
         InstanceContextMode = InstanceContextMode.PerSession,
         ConcurrencyMode= ConcurrencyMode.Multiple,
@@ -56,6 +59,7 @@ namespace ClearCanvas.Web.Services
 			return application;
 		}
 
+        
         public StartApplicationRequestResponse StartApplication(StartApplicationRequest request)
         {
         	//TODO (CR May 2010): should we be checking the max# of applications?

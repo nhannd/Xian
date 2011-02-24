@@ -21,6 +21,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Windows.Browser;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Views;
+using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
 {
@@ -54,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
 
         public static void StartAsync(Action<SpeedTestResult> actionWhenCompleted)
         {
-            ChildWindow msgBox = PopupHelper.PopupMessage("Initializing", "Checking connection speed...");
+            ChildWindow msgBox = PopupHelper.PopupMessage(DialogTitles.Initializing, SR.CheckingConnectionSpeed);
 
             ConnectionTester test = new ConnectionTester();
             test.SpeedTestCompleted += (s, ev) =>

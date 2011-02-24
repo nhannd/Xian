@@ -26,6 +26,7 @@ using System.Windows.Media.Effects;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
 using System.Windows.Media.Imaging;
 using System.Reflection;
+using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 {
@@ -56,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 
         private void ButtonComponent_Click(object sender, RoutedEventArgs e)
         {
-            PopupHelper.PopupContent("About", new HelpDialogContent());
+            PopupHelper.PopupContent(DialogTitles.About, new HelpDialogContent());
         }
 
         private void ButtonComponent_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)

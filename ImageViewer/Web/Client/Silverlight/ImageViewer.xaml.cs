@@ -26,6 +26,7 @@ using ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls;
 using System.Windows.Media.Imaging;
 using System.IO;
 using System.Windows.Controls.Primitives;
+using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
@@ -45,9 +46,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         public ImageViewer(StartViewerApplicationRequest startRequest)
         {
             InitializeComponent();
-            
-			_context = ApplicationContext.Current;
 
+			_context = ApplicationContext.Current;
             ErrorHandler.OnCriticalError += new EventHandler(ErrorHandler_OnCriticalError);
 
 			ApplicationContext.Current.ServerEventBroker.RegisterEventHandler(typeof(ApplicationStartedEvent), ApplicationStarted);
@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             if (startRequest == null)
             {
                 //TODO: replace this with the custom dialog. For some reason, it doesn't work here.
-                System.Windows.MessageBox.Show("Unable to start the viewer: parameters are missing");
+                System.Windows.MessageBox.Show(ErrorMessages.MissingParameters);
             }
             else
             {
@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                         panel.Children.Add(new StatisticsPanel() { Margin = new Thickness(10) });
                         panel.Children.Add(new ThrottlePanel(){ Margin = new Thickness(10)});
 
-                        PopupHelper.PopupContent("Throttle Settings", panel);
+                        PopupHelper.PopupContent(DialogTitles.ThrottleSettings, panel);
                     }
                     break;
                 }
@@ -119,11 +119,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     ApplicationStoppedEvent @event = e.ServerEvent as ApplicationStoppedEvent;
                     List<Button> buttons = new List<Button>();
                     
-                    Button closeButton = new Button { Content = "Close", Margin = new Thickness(5) };
+                    Button closeButton = new Button { Content = Labels.ButtonClose, Margin = new Thickness(5) };
                     closeButton.Click += (s, ev) => { BrowserWindow.Close(); };
                     buttons.Add(closeButton);
 
-                    String title= @event.IsTimedOut? "Timeout":"Error";
+                    String title= @event.IsTimedOut? DialogTitles.Timeout: DialogTitles.Error;
                     String mesage = @event.Message;
 
 
@@ -150,7 +150,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
             if (@event.MessageBox.Actions == WebMessageBoxActions.Ok)
             {
-                Button okButton = new Button { Content = "Ok", Margin = new Thickness(5) };
+                Button okButton = new Button { Content = Labels.ButtonOK, Margin = new Thickness(5) };
                 okButton.Click += (s, e) =>
                 {
                     ApplicationContext.Current.ServerEventBroker.DispatchMessage(new DismissMessageBoxMessage()
@@ -164,7 +164,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             }
             else if (@event.MessageBox.Actions == WebMessageBoxActions.OkCancel)
             {
-                Button okButton = new Button { Content = "Ok", Margin = new Thickness(5) };
+                Button okButton = new Button { Content = Labels.ButtonOK, Margin = new Thickness(5) };
                 okButton.Click += (s, e) =>
                 {
                     ApplicationContext.Current.ServerEventBroker.DispatchMessage(new DismissMessageBoxMessage()
@@ -175,7 +175,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     });
                 };
                 buttonList.Add(okButton);
-                Button cancelButton = new Button { Content = "Cancel", Margin = new Thickness(5) };
+                Button cancelButton = new Button { Content = Labels.ButtonCancel, Margin = new Thickness(5) };
                 cancelButton.Click += (s, e) =>
                 {
                     ApplicationContext.Current.ServerEventBroker.DispatchMessage(new DismissMessageBoxMessage()
@@ -189,7 +189,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             }
             else if (@event.MessageBox.Actions == WebMessageBoxActions.YesNo)
             {
-                Button yesButton = new Button { Content = "Yes", Margin = new Thickness(5) };
+                Button yesButton = new Button { Content = Labels.ButtonYes, Margin = new Thickness(5) };
                 yesButton.Click += (s, e) =>
                 {
                     ApplicationContext.Current.ServerEventBroker.DispatchMessage(new DismissMessageBoxMessage()
@@ -200,7 +200,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     });
                 };
                 buttonList.Add(yesButton);
-                Button noButton = new Button { Content = "No", Margin = new Thickness(5) };
+                Button noButton = new Button { Content = Labels.ButtonNo, Margin = new Thickness(5) };
                 noButton.Click += (s, e) =>
                 {
                     ApplicationContext.Current.ServerEventBroker.DispatchMessage(new DismissMessageBoxMessage()
@@ -214,7 +214,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             }
             else if (@event.MessageBox.Actions == WebMessageBoxActions.YesNoCancel)
             {
-                Button yesButton = new Button { Content = "Yes", Margin = new Thickness(5) };
+                Button yesButton = new Button { Content = Labels.ButtonYes, Margin = new Thickness(5) };
                 yesButton.Click += (s, e) =>
                 {
                     ApplicationContext.Current.ServerEventBroker.DispatchMessage(new DismissMessageBoxMessage()
@@ -225,7 +225,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     });
                 };
                 buttonList.Add(yesButton);
-                Button noButton = new Button { Content = "No", Margin = new Thickness(5) };
+                Button noButton = new Button { Content = Labels.ButtonNo, Margin = new Thickness(5) };
                 noButton.Click += (s, e) =>
                 {
                     ApplicationContext.Current.ServerEventBroker.DispatchMessage(new DismissMessageBoxMessage()
@@ -236,7 +236,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     });
                 };
                 buttonList.Add(noButton);
-                Button cancelButton = new Button { Content = "Cancel", Margin = new Thickness(5) };
+                Button cancelButton = new Button { Content = Labels.ButtonCancel, Margin = new Thickness(5) };
                 cancelButton.Click += (s, e) =>
                 {
                     ApplicationContext.Current.ServerEventBroker.DispatchMessage(

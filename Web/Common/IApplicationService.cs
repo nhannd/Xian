@@ -29,7 +29,18 @@ namespace ClearCanvas.Web.Common
 
 		[DataMember(IsRequired = false)]
 		public bool IsSessionShared { get; set; }
+
+        [DataMember(IsRequired = false)]
+        public MetaInformation MetaInformation { get; set; }
+
 	}
+
+    [DataContract(Namespace = Namespace.Value)]
+    public class MetaInformation
+    {
+        [DataMember(IsRequired = true)]
+        public string Language { get; set; }
+    }
 
     [DataContract(Namespace = Namespace.Value)]
     public class StartApplicationRequestResponse

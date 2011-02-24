@@ -26,6 +26,8 @@ using ClearCanvas.ImageViewer.Web.EntityHandlers;
 using ClearCanvas.ImageViewer.Web.Common.Entities;
 using Application=ClearCanvas.Desktop.Application;
 using ClearCanvas.Common.Utilities;
+using System.Threading;
+using System.Globalization;
 
 namespace ClearCanvas.ImageViewer.Web
 {
@@ -34,58 +36,32 @@ namespace ClearCanvas.ImageViewer.Web
 	[ExtensionOf(typeof(ExceptionTranslatorExtensionPoint))]
 	internal class ExceptionTranslator : IExceptionTranslator
 	{
-		private const string _messageStudyInUse = 
-			"The study is being processed by the server and cannot be opened at this time.  Please try again later.";
 		
-		private const string _messageStudyOffline = 
-			"The study cannot be opened because it is offline.\n"  +
-			"Please contact your PACS administrator to restore the study.";
-		
-		private const string _messageStudyNearline = 
-			"The study cannot be opened because it is nearline.\n" +
-            "Please contact your PACS administrator to restore the study.";
-
-		private const string _messageStudyNotFound = 
-			"The study could not be found.";
-		
-		private const string _messagePatientStudiesNotFound = 
-			"No studies could be found for the specified patient.";
-
-		private const string _messageAccessionStudiesNotFound = 
-			"Studies matching the specified accession number could not be found.";
-
-		private const string _messageStudyCouldNotBeLoaded =
-			"The study could not be loaded.";
-
-		private const string _messageNoImages =
-			"No images could be loaded for display.";
 
 		#region IExceptionTranslator Members
 
 		public string Translate(Exception e)
 		{
 			if (e.GetType().Equals(typeof(InUseLoadStudyException)))
-				return _messageStudyInUse;
+				return SR.MessageStudyIsInUse;
 			if (e.GetType().Equals(typeof(NearlineLoadStudyException)))
-				return _messageStudyNearline;
+				return SR.MessageStudyNearline;
 			if (e.GetType().Equals(typeof(OfflineLoadStudyException)))
-				return _messageStudyOffline;
+				return SR.MessageStudyOffline;
 			if (e.GetType().Equals(typeof(NotFoundLoadStudyException)))
-				return _messageStudyNotFound;
+                return SR.MessageStudyNotFound;
 			if (e.GetType().Equals(typeof(PatientStudiesNotFoundException)))
-				return _messagePatientStudiesNotFound;
+				return SR.MessagePatientStudiesNotFound;
 			if (e.GetType().Equals(typeof(AccessionStudiesNotFoundException)))
-				return _messageAccessionStudiesNotFound;
+				return SR.MessageAccessionStudiesNotFound;
 			if (e.GetType().Equals(typeof(InvalidRequestException)))
 				return e.Message;
 			if (e is LoadMultipleStudiesException)
 				return ((LoadMultipleStudiesException)e).GetUserMessage();
 			if (e.GetType().Equals(typeof(LoadStudyException)))
-				return _messageStudyCouldNotBeLoaded;
+                return SR.MessageStudyCouldNotBeLoaded;
 			if (e.GetType().Equals(typeof(NoVisibleDisplaySetsException)))
-				return _messageNoImages;
-			//if (e.GetType().Equals(typeof(StudyLoaderNotFoundException)))
-
+				return SR.MessageNoImages;
 			return null;
 		}
 
@@ -285,6 +261,7 @@ namespace ClearCanvas.ImageViewer.Web
 					Platform.StartApp();
 			}
 
+
             if (Platform.IsLogLevelEnabled(LogLevel.Debug))
                 Platform.Log(LogLevel.Debug, "Finding studies...");
 			var startRequest = (StartViewerApplicationRequest)request;
@@ -393,6 +370,8 @@ namespace ClearCanvas.ImageViewer.Web
 		{
 			return _app;
 		}
+
+        
 	}
 
     [ExtensionOf(typeof(SettingsStoreExtensionPoint))]

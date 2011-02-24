@@ -170,7 +170,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
             {
                 foreach (DeviceTypeEnum t in deviceTypes)
                 {
-                    DeviceTypeFilter.Items.Add(new ListItem(t.Description, t.Lookup));
+                    DeviceTypeFilter.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(t), t.Lookup));
                 }
             }
             else
@@ -181,7 +181,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
                 int count = 0;
                 foreach (DeviceTypeEnum t in deviceTypes)
                 {
-                    DeviceTypeFilter.Items.Add(new ListItem(t.Description, t.Lookup));
+                    DeviceTypeFilter.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(t), t.Lookup));
                     DeviceTypeFilter.Items[count].Selected = typeItems[count].Selected;
                     count++;
                 }

@@ -108,11 +108,18 @@
     <xs:sequence>
       <xs:element name="Identifier" type="ser:guid" />
       <xs:element minOccurs="0" name="IsSessionShared" type="xs:boolean" />
+      <xs:element minOccurs="0" name="MetaInformation" nillable="true" type="tns:MetaInformation" />
       <xs:element minOccurs="0" name="SessionId" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Username" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="StartApplicationRequest" nillable="true" type="tns:StartApplicationRequest" />
+  <xs:complexType name="MetaInformation">
+    <xs:sequence>
+      <xs:element name="Language" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="MetaInformation" nillable="true" type="tns:MetaInformation" />
   <xs:element name="StartApplication">
     <xs:complexType>
       <xs:sequence>

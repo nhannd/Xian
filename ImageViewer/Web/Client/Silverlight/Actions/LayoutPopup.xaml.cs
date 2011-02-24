@@ -22,6 +22,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
 using ClearCanvas.Web.Client.Silverlight;
+using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 {
@@ -150,8 +151,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
                     _tilesAction = node;
             }
 
-            ImageBoxLayoutText.Text = _imageBoxAction.Label = "Image Box Layout";
-            TileLayoutText.Text = _tilesAction.Label = "Tile Layout";
+            ImageBoxLayoutText.Text = _imageBoxAction.Label = Labels.MenuImageBoxLayout;
+            TileLayoutText.Text = _tilesAction.Label = Labels.MenuTileLayout;
 
             CreateGridElements();
         }

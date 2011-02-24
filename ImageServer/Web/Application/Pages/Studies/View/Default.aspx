@@ -127,6 +127,8 @@
 			<param name="windowless" value="false" />
 			<param name="minRuntimeVersion" value="4.0.41108.0" />
 			<param name="autoUpgrade" value="true" />
+			<param name="Culture" value="<%=System.Threading.Thread.CurrentThread.CurrentCulture.Name %>" />
+			<param name="UICulture" value="<%=System.Threading.Thread.CurrentThread.CurrentUICulture.Name %>" />
 			<param name="initParams" value="<%= WebServiceConfiguration.InitParamString %>,<%= UserCredentialsString %>,<%= ApplicationSettings %>,<%= OtherParameters %>" />
 			<a href="http://go.microsoft.com/fwlink/?LinkID=149156&v=4.0.50401.0" style="text-decoration: none">
 				<img src="http://go.microsoft.com/fwlink/?LinkId=161376" alt="Get Microsoft Silverlight"

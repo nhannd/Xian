@@ -239,6 +239,7 @@ public class ImageServerConstants
             public const string ListStudies = "liststudies";
             public const string AeTitle = "aetitle";
             public const string ApplicationName = "application";
+            public const string Language = "Language";
         }
         	
         #endregion

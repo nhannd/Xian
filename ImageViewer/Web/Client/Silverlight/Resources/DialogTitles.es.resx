@@ -117,32 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="MessageAccessionStudiesNotFound" xml:space="preserve">
-    <value>Studies matching the specified accession number could not be found.</value>
+  <data name="About" xml:space="preserve">
+    <value>Acerca de</value>
   </data>
-  <data name="MessageLoadPriorsFindErrors" xml:space="preserve">
-    <value>An unexpected error has occurred while searching for priors. Please contact your PACS administrator.</value>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
   </data>
-  <data name="MessageNoImages" xml:space="preserve">
-    <value>No images could be loaded for display.</value>
+  <data name="HandlerNotFoundError" xml:space="preserve">
+    <value>Controlador de errores no encontrado</value>
   </data>
-  <data name="MessagePatientStudiesNotFound" xml:space="preserve">
-    <value>No studies could be found for the specified patient.</value>
+  <data name="Initializing" xml:space="preserve">
+    <value>Inicializando</value>
   </data>
-  <data name="MessageStudyCouldNotBeLoaded" xml:space="preserve">
-    <value>The study could not be loaded.</value>
+  <data name="ThrottleSettings" xml:space="preserve">
+    <value>Del Acelerador de configuración</value>
   </data>
-  <data name="MessageStudyIsInUse" xml:space="preserve">
-    <value>The study is being processed by the server and cannot be opened at this time.  Please try again later.</value>
+  <data name="Timeout" xml:space="preserve">
+    <value>Tiempo de espera</value>
   </data>
-  <data name="MessageStudyNearline" xml:space="preserve">
-    <value>The study cannot be opened because it is nearline.
-Please contact your PACS administrator to restore the study.</value>
-  </data>
-  <data name="MessageStudyNotFound" xml:space="preserve">
-    <value>The study could not be found.</value>
-  </data>
-  <data name="MessageStudyOffline" xml:space="preserve">
-    <value>The study cannot be opened because it is offline. Please contact your PACS administrator to restore the study.</value>
+  <data name="Warning" xml:space="preserve">
+    <value>Advertencia</value>
   </data>
 </root>

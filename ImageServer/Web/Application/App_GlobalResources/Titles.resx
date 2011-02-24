@@ -405,6 +405,9 @@
   <data name="PasswordExpiredDialogTitle" xml:space="preserve">
     <value>Password Expired</value>
   </data>
+  <data name="MoveStudy_Dialog_Confirmation" xml:space="preserve">
+    <value>Move Confirmation</value>
+  </data>
   <data name="LabelNotForDiagnosticUse" xml:space="preserve">
     <value>Not for Diagnostic Use</value>
   </data>

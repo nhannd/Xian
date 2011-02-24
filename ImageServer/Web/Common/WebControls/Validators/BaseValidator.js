@@ -130,7 +130,7 @@ BaseClientValidator.prototype.OnEvaluate = function() {
     if (this.input.value == null || this.input.value == '') {
         if (!this.ignoreEmptyValue) {
             result.OK = false;
-            result.Message = 'This field is required';
+            result.Message = ValidationErrors.ThisFieldIsRequired;
         }
 
     }

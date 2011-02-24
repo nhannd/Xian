@@ -21,6 +21,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Threading;
 using System.Collections.Generic;
+using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
 {
@@ -99,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
             }
             else
             {
-                var closeButton = new Button { Content = "Close", HorizontalAlignment = HorizontalAlignment.Center,  };
+                var closeButton = new Button { Content = Labels.ButtonClose, HorizontalAlignment = HorizontalAlignment.Center, };
                 closeButton.Click += (s, e) => { msgBox.Close(); };
                 buttonPanel.Children.Add(closeButton);
 

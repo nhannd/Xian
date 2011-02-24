@@ -168,6 +168,9 @@
   <data name="InvalidPartitionFolderName" xml:space="preserve">
     <value>Partition Folder Name is either invalid or is being used for another partition.</value>
   </data>
+  <data name="InvalidPatientID" xml:space="preserve">
+    <value>This is an invalid DICOM Patient ID.</value>
+  </data>
   <data name="InvalidPort" xml:space="preserve">
     <value>Port must be between 1 and 65535</value>
   </data>

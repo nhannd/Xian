@@ -33,21 +33,21 @@
             </StackPanel>
 
             <StackPanel Margin="10">
-                <TextBlock Text="Mouse Move Msg" Foreground="White"/>
+                <TextBlock Text="Mouse Move Msg" Foreground="Black"/>
                 <ComboBox x:Name="Strategies" ItemsSource="{Binding Strategy, Converter={StaticResource enumConverter}, Mode=OneTime}"
                           SelectedItem="{Binding Strategy, Mode=TwoWay}" IsEnabled="False"/>
             </StackPanel>
             <StackPanel x:Name="RTTWithOffsetPanel"  Margin="10" Visibility="Collapsed" >
-                <TextBlock Text="Offset (ms)" Foreground="White"/>
+                <TextBlock Text="Offset (ms)" Foreground="Black"/>
                 <toolkitinput:NumericUpDown  Foreground="White" Minimum="-200" Maximum="200" Value="{Binding MouseMoveOffset, Mode=TwoWay}"  Increment="10"/>
             </StackPanel>
             <StackPanel Margin="10">
-                <TextBlock Text="Max Pending MouseMoveMsg RESPs" Foreground="White"/>
+                <TextBlock Text="Max Pending MouseMoveMsg RESPs" Foreground="Black"/>
                 <toolkitinput:NumericUpDown  Foreground="White" Minimum="1" Maximum="20" Value="{Binding MaxPendingMouseMoveMsgAllowed, Mode=TwoWay}"  Increment="1"/>
             </StackPanel>
 
             <StackPanel Margin="10" >
-                <TextBlock Text="Lag Detection" Foreground="White"/>
+                <TextBlock Text="Lag Detection" Foreground="Black"/>
                 <ComboBox x:Name="LagDetectionStrategies" ItemsSource="{Binding LagDetectionStrategy, Converter={StaticResource enumConverter}, Mode=OneTime}"
                           SelectedItem="{Binding LagDetectionStrategy, Mode=TwoWay}" IsEnabled="False">
                                         
@@ -55,7 +55,7 @@
             </StackPanel>
 
             <StackPanel Margin="10" >
-                <CheckBox Content="Enable Dynamic Image Quality" Foreground="White" IsChecked="{Binding EnableDynamicImageQuality, Mode=TwoWay}"/>
+                <CheckBox Content="Enable Dynamic Image Quality" Foreground="Black" IsChecked="{Binding EnableDynamicImageQuality, Mode=TwoWay}"/>
             </StackPanel>
         </StackPanel>
     </toolkit:WrapPanel>

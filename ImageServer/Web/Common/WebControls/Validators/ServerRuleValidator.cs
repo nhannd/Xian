@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
             if (String.IsNullOrEmpty(ruleXml))
             {
-                ErrorMessage = "Server Rule XML must be specified";
+                ErrorMessage = ValidationErrors.ServerRuleXMLIsMissing;
                 return false;
             }
 
@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             }
             catch (Exception e)
             {
-                ErrorMessage = "Unable to parse XML: " + e.Message;
+                ErrorMessage = String.Format(ValidationErrors.UnableToParseServerRuleXML, e.Message);
                 return false;
             }
 

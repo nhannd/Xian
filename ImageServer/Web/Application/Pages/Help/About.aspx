@@ -1141,7 +1141,7 @@ Canada
   <span style="color: #999999; font-size: 12px; font-weight: bold;"><%= ProductInformation.Copyright %></span><br />  
 </p>
 <p>
-  <span style="color: #999999; font-size: 12px; font-weight: bold;">Server Regional Settings: <%=System.Globalization.CultureInfo.CurrentCulture %>, <%=System.Globalization.CultureInfo.CurrentUICulture %></span><br />
+  <span style="color: #999999; font-size: 12px; font-weight: bold;">Current Regional Settings: <%=System.Globalization.CultureInfo.CurrentCulture %>, <%=System.Globalization.CultureInfo.CurrentUICulture %></span><br />
 </p>
 
 <p style="font-weight: bold;">

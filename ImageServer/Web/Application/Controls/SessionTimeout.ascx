@@ -196,7 +196,7 @@
                     <td>
                     <asp:Panel runat="server" ID="CountdownBanner" CssClass="CountdownBanner">
                         <asp:Label runat="server" ID="SessionTimeoutWarningMessage" CssClass="SessionTimeoutWarningMessage"></asp:Label> 
-                        <asp:Button runat="server" ID="KeepAliveLink" Text="<%= Labels.Cancel %>" Font-Size="12px" UseSubmitBehavior="false" OnClientClick="HideSessionWarning()"></asp:Button>           
+                        <asp:Button runat="server" ID="KeepAliveLink" Text="<%$Resources: Labels,Cancel %>" Font-Size="12px" UseSubmitBehavior="false" OnClientClick="HideSessionWarning()"></asp:Button>           
                     </asp:Panel></td>
                     </tr>
                 </table>                

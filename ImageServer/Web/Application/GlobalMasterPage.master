@@ -20,6 +20,10 @@
             this.Unknown = "<%= SR.Unknown %>";
             this.SelectAll = "<%= SR.SelectAll %>";
         };
+
+        var ValidationErrors = new function(){ 
+            this.ThisFieldIsRequired = "<%= InputValidation.ThisFieldIsRequired %>";
+        };
     </script>
     <script type="text/javascript" src="<%= ResolveClientUrl("~/Scripts/NumberFormat154.js") %>"></script>
     <script type="text/javascript" src="<%= ResolveClientUrl("~/Scripts/date.js") %>"></script>    

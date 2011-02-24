@@ -20,6 +20,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
+using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
@@ -34,7 +35,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 if (OnCriticalError!=null)
                     OnCriticalError(null, EventArgs.Empty);
 
-                var window= PopupHelper.PopupMessage("Error", string.Format(message, args));
+                var window= PopupHelper.PopupMessage(DialogTitles.Error, string.Format(message, args));
                 window.Closed += (s, e) => { CloseWindow(); };
             });
         }
@@ -46,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 if (OnCriticalError != null)
                     OnCriticalError(null, EventArgs.Empty);
 
-                var window = PopupHelper.PopupMessage("Error", ex.Message, "Close");
+                var window = PopupHelper.PopupMessage(DialogTitles.Error, ex.Message, Labels.ButtonClose);
                 window.Closed += (s, e) => { CloseWindow(); };
             });
         }

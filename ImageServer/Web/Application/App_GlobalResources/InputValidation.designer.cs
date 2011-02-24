@@ -214,6 +214,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This is an invalid DICOM Patient ID..
+        /// </summary>
+        public static string InvalidPatientID {
+            get {
+                return ResourceManager.GetString("InvalidPatientID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Port must be between 1 and 65535.
         /// </summary>
         public static string InvalidPort {

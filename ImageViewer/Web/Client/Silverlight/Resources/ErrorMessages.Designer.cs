@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageViewer.Web.Client.Silverlight {
+namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources {
     using System;
     
     
@@ -22,24 +22,24 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class SR {
+    internal class ErrorMessages {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal SR() {
+        internal ErrorMessages() {
         }
         
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageViewer.Web.Client.Silverlight.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources.ErrorMessages", typeof(ErrorMessages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -61,42 +61,47 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ClearCanvas Inc.
-        ///620-438 Richmond St. W.
-        ///Toronto, ON M5V 3S6
-        ///Canada.
+        ///   Looks up a localized string similar to The application has not been found on the server: {0}.
         /// </summary>
-        public static string CompanyAddress {
+        internal static string ApplicationIDNotFound {
             get {
-                return ResourceManager.GetString("CompanyAddress", resourceCulture);
+                return ResourceManager.GetString("ApplicationIDNotFound", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to www.clearcanvas.ca.
+        ///   Looks up a localized string similar to Network connection has been lost..
         /// </summary>
-        public static string CompanyWebAddress {
+        internal static string ConnectionLost {
             get {
-                return ResourceManager.GetString("CompanyWebAddress", resourceCulture);
+                return ResourceManager.GetString("ConnectionLost", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Copyright 2010 ClearCanvas Inc. All rights reserved..
+        ///   Looks up a localized string similar to Unable to start the viewer: parameters are missing.
         /// </summary>
-        public static string Copyright {
+        internal static string MissingParameters {
             get {
-                return ResourceManager.GetString("Copyright", resourceCulture);
+                return ResourceManager.GetString("MissingParameters", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ClearCanvas ImageServer {0} {1} [{2}]
-        ///Part of the ClearCanvas RIS/PACS.
+        ///   Looks up a localized string similar to Could not establish connection to {0}.
         /// </summary>
-        public static string ProductInfo {
+        internal static string UnableToConnectTo {
             get {
-                return ResourceManager.GetString("ProductInfo", resourceCulture);
+                return ResourceManager.GetString("UnableToConnectTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unexpected error has occurred and the connection has been closed..
+        /// </summary>
+        internal static string UnexpectedError {
+            get {
+                return ResourceManager.GetString("UnexpectedError", resourceCulture);
             }
         }
     }

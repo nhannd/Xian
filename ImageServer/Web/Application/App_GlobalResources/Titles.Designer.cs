@@ -583,6 +583,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Move Confirmation.
+        /// </summary>
+        public static string MoveStudy_Dialog_Confirmation {
+            get {
+                return ResourceManager.GetString("MoveStudy_Dialog_Confirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Partition Archive.
         /// </summary>
         public static string PartitionArchive {

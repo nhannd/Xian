@@ -17,18 +17,11 @@ using ClearCanvas.Web.Common;
 using ClearCanvas.Common;
 using ClearCanvas.Web.Common.Events;
 using ClearCanvas.Common.Utilities;
+using System.Globalization;
 
 namespace ClearCanvas.Web.Services
 {
-	internal static class SR
-	{
-		public const string MessageAccessDenied = "You are not authorized to view images.";
-		public const string MessagePasswordExpired = "Your password has expired.";
-		public const string MessageSessionEnded  = "Your session has ended.";
-		public const string MessageUnexpectedError = "An unexpected error has occurred on the server.";
-        public const string MessageNoCommunicationFromClientError = "No communication has been received from the client since {0}";
-	}
-
+	
 	[ExtensionOf(typeof(ExceptionTranslatorExtensionPoint))]
 	internal class UserSessionExceptionTranslator : IExceptionTranslator
 	{
@@ -125,6 +118,11 @@ namespace ClearCanvas.Web.Services
 		private static readonly TimeSpan _timerInterval = TimeSpan.FromSeconds(5);
 		private System.Threading.Timer _timer;
 		private bool _timerMethodExecuting;
+        public CultureInfo Culture
+        {
+            private set;
+            get;
+        }
 
 		protected Application()
 		{
@@ -234,13 +232,40 @@ namespace ClearCanvas.Web.Services
 			throw new InvalidOperationException("Start must be called internally.");
 		}
 
+        protected void ProcessMetaInfo(MetaInformation info)
+        {
+            if (info == null)
+            {
+                return;
+            }
+
+            if (false == string.IsNullOrEmpty(info.Language))
+            {
+                try
+                {
+                    Culture = new CultureInfo(info.Language);
+                    if (Culture.IsNeutralCulture)
+                        Culture = CultureInfo.CreateSpecificCulture(info.Language);
+
+                    Thread.CurrentThread.CurrentCulture = Culture;
+                    Thread.CurrentThread.CurrentUICulture = Culture;
+                }
+                catch (ArgumentException ex)
+                {
+                    Platform.Log(LogLevel.Warn, "Unable to use language () requested by the client : {0}", info.Language, ex.Message);
+                }
+            }
+        }
+
 		internal void InternalStart(StartApplicationRequest request)
 		{
             try
 			{
+                ProcessMetaInfo(request.MetaInformation);
+				
 				//TODO: do this here (which will fault the channel), or inside DoStart and stop the app?
 				AuthenticateUser(request);
-				_synchronizationContext = new WebSynchronizationContext(this);
+                _synchronizationContext = new WebSynchronizationContext(this);
 				_synchronizationContext.Send(nothing => DoStart(request), null);
 			}
 			catch (Exception)
@@ -392,7 +417,10 @@ namespace ClearCanvas.Web.Services
 					_timerMethodExecuting = true;
 				}
 
-				CheckIfSessionIsStillValid();
+                Thread.CurrentThread.CurrentCulture = this.Culture;
+                Thread.CurrentThread.CurrentUICulture = this.Culture;
+                
+                CheckIfSessionIsStillValid();
 
                 // TODO: REVIEW THIS
                 // This is a temporary workaround to ensure the app shuts down when the connection is lost.

@@ -15,6 +15,8 @@
 <%@ Register Src="StudyListGridView.ascx" TagName="StudyListGridView" TagPrefix="localAsp" %>
 <%@ Register Src="StudyDetails/Controls/DeleteStudyConfirmDialog.ascx" TagName="DeleteStudyConfirmDialog" TagPrefix="localAsp" %>
 
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 <asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="conditional">
     <ContentTemplate>
 
@@ -26,17 +28,17 @@ Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(InputHover);
 function MultiSelect() {
 
         $("#<%=ModalityListBox.ClientID %>").multiSelect({
-            selectAllText: 'All',
+            selectAllText: "<%= SR.All %>",
             noneSelected: '',
             oneOrMoreSelected: '*',
-            dropdownStyle: 'width: 85px;',
+            dropdownStyle: 'width: 90px;',
             textboxStyle: 'width: 75px;'
         });   
         
         $("#<%=StatusListBox.ClientID %>").multiSelect({
             noneSelected: '',
             oneOrMoreSelected: '*',
-            dropdownStyle: 'width: 200px;',
+            //dropdownStyle: 'width: 200px;',
             textboxStyle: 'width: 90px;'            
         });   
 

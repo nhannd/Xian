@@ -1,3 +1,14 @@
+/* License
+ *
+ * Copyright (c) 2010, ClearCanvas Inc.
+ * All rights reserved.
+ * http://www.clearcanvas.ca
+ *
+ * This software is licensed under the Open Software License v3.0.
+ * For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+ *
+ */
+ 
 // This script defines the client-side validator extension class @@CLIENTID@@_ClientSideEvaludator
 // to validate an input is not empty based on the state of a checkbox.
 //
@@ -73,7 +84,7 @@ function @@CLIENTID@@_ClientSideEvaluator()
     {
         if ('@@ERROR_MESSAGE@@' == null || '@@ERROR_MESSAGE@@'=='')
         {
-            result.Message = 'This field is required';
+            result.Message = ValidationErrors.ThisFieldIsRequired;
         }
         else
             result.Message = '@@ERROR_MESSAGE@@';

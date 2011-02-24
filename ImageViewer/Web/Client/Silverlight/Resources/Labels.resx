@@ -117,20 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CompanyAddress" xml:space="preserve">
-    <value>ClearCanvas Inc.
-620-438 Richmond St. W.
-Toronto, ON M5V 3S6
-Canada</value>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>Cancel</value>
   </data>
-  <data name="CompanyWebAddress" xml:space="preserve">
-    <value>www.clearcanvas.ca</value>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>Close</value>
   </data>
-  <data name="Copyright" xml:space="preserve">
-    <value>Copyright 2010 ClearCanvas Inc. All rights reserved.</value>
+  <data name="ButtonContinue" xml:space="preserve">
+    <value>Continue</value>
   </data>
-  <data name="ProductInfo" xml:space="preserve">
-    <value>ClearCanvas ImageServer {0} {1} [{2}]
-Part of the ClearCanvas RIS/PACS</value>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="ButtonOK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="MenuImageBoxLayout" xml:space="preserve">
+    <value>Image Box Layout</value>
+  </data>
+  <data name="MenuTileLayout" xml:space="preserve">
+    <value>Tile Layout</value>
   </data>
 </root>
