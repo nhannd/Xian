@@ -71,6 +71,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._sortAscendingButton = new System.Windows.Forms.ToolStripMenuItem();
 			this._sortDescendingButton = new System.Windows.Forms.ToolStripMenuItem();
 			this._sortSeparator = new System.Windows.Forms.ToolStripSeparator();
+			this._filterLabel = new System.Windows.Forms.ToolStripLabel();
 			this._filterTextBox = new System.Windows.Forms.ToolStripTextBox();
 			this._clearFilterButton = new System.Windows.Forms.ToolStripButton();
 			this._statusStrip = new System.Windows.Forms.StatusStrip();
@@ -101,6 +102,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._toolStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this._toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._sortButton,
+            this._filterLabel,
             this._filterTextBox,
             this._clearFilterButton});
 			this._toolStrip.Location = new System.Drawing.Point(0, 0);
@@ -143,6 +145,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			this._sortSeparator.Name = "_sortSeparator";
 			this._sortSeparator.Size = new System.Drawing.Size(149, 6);
+			// 
+			// _filterLabel
+			// 
+			this._filterLabel.Name = "_filterLabel";
+			this._filterLabel.Size = new System.Drawing.Size(35, 22);
+			this._filterLabel.Text = "Filter:";
+			this._filterLabel.Visible = false;
 			// 
 			// _filterTextBox
 			// 
@@ -257,5 +266,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         private System.Windows.Forms.ToolStripButton _clearFilterButton;
         private System.Windows.Forms.StatusStrip _statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel _statusLabel;
+		private System.Windows.Forms.ToolStripLabel _filterLabel;
 	}
 }
