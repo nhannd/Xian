@@ -115,7 +115,12 @@ namespace ClearCanvas.Utilities.Manifest
                 try
                 {
                     XmlDocument doc = new XmlDocument();
-                    doc.Load(file);
+
+                    // must open stream manually in case file is read-only
+                    using (var fileStream = File.Open(file, FileMode.Open, FileAccess.Read))
+                    {
+                        doc.Load(fileStream);
+                    }
 
                     XmlElement modulusNode =
                         (XmlElement) CollectionUtils.FirstElement(doc.GetElementsByTagName("Modulus"));

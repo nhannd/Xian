@@ -89,7 +89,7 @@ namespace ClearCanvas.Utilities.Manifest
         {
             XmlSerializer theSerializer = new XmlSerializer(typeof(ClearCanvasManifest));
 
-            using (FileStream fs = new FileStream(filename, FileMode.Open))
+            using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
             {
                 ClearCanvasManifest input = (ClearCanvasManifest)theSerializer.Deserialize(fs);
 
