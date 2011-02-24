@@ -532,7 +532,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 			return string.Format(SR.MessageClipboardDescription
 				, sop.PatientId
-				, sop.PatientsName
+				, sop.PatientsName == null ? null : sop.PatientsName.FormattedName
 				, Format.Date(DateParser.Parse(sop.StudyDate))
 				, sop.StudyDescription
 				, sop.AccessionNumber
@@ -541,10 +541,9 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 		private static string BuildClipboardItemDescription(IDisplaySet displaySet)
 		{
-			if (displaySet.PresentationImages.Count == 0)
-				return string.Empty;
-
-			return BuildClipboardItemDescription(displaySet.PresentationImages[0]);
+			return displaySet.PresentationImages.Count == 0
+				? string.Empty
+				: BuildClipboardItemDescription(displaySet.PresentationImages[0]);
 		}
 
 		#endregion
