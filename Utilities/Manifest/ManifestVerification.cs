@@ -54,8 +54,8 @@ namespace ClearCanvas.Utilities.Manifest
         private ClearCanvasManifest _productManifest;
         private ClearCanvasManifest[] _manifests;
         private readonly List<ManifestFile> _ignoredDirectories = new List<ManifestFile>();
-        private readonly Dictionary<string, string> _installedFileDictionary = new Dictionary<string,string>();
-        private readonly Dictionary<string, ManifestFile> _manifestFileDictionary = new Dictionary<string, ManifestFile>();
+        private readonly Dictionary<string, string> _installedFileDictionary = new Dictionary<string,string>(StringComparer.InvariantCultureIgnoreCase);
+        private readonly Dictionary<string, ManifestFile> _manifestFileDictionary = new Dictionary<string, ManifestFile>(StringComparer.InvariantCultureIgnoreCase);
 
         #endregion Private Members
 
@@ -238,17 +238,17 @@ namespace ClearCanvas.Utilities.Manifest
 
         private bool CheckIgnored(string path)
         {
-            if (path.StartsWith(Platform.ManifestDirectory))
+            if (path.StartsWith(Platform.ManifestDirectory, StringComparison.InvariantCultureIgnoreCase))
                 return true;
 
-            if (path.StartsWith(Platform.LogDirectory))
+            if (path.StartsWith(Platform.LogDirectory, StringComparison.InvariantCultureIgnoreCase))
                 return true;
 
             string relativePath = path.Substring(Platform.InstallDirectory.Length);
 
             foreach (ManifestFile dir in _ignoredDirectories)
             {
-                if (relativePath.StartsWith(dir.Filename))
+                if (relativePath.StartsWith(dir.Filename, StringComparison.InvariantCultureIgnoreCase))
                     return true;
             }
 
