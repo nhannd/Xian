@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private static readonly Dictionary<IImageViewer, CineTool> _tools = new Dictionary<IImageViewer, CineTool>();
 
 		private SynchronizationContext _synchronizationContext;
-		private bool _autoCineEnabled = true;
+		private bool _autoCineEnabled = false;
 
 		public CineTool() {}
 

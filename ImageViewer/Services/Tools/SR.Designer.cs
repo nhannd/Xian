@@ -631,6 +631,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The reindex has completed successfully..
+        /// </summary>
+        internal static string MessageReindexCompleted {
+            get {
+                return ResourceManager.GetString("MessageReindexCompleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error has occurred while reindexing.  You will have to correct the problem and reindex manually.  Please check the logs for more details..
         /// </summary>
         internal static string MessageReindexFailure {
@@ -753,9 +762,9 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         /// <summary>
         ///   Looks up a localized string similar to Reindex.
         /// </summary>
-        internal static string ReindexApplicationDialogTitle {
+        internal static string ReindexApplicationName {
             get {
-                return ResourceManager.GetString("ReindexApplicationDialogTitle", resourceCulture);
+                return ResourceManager.GetString("ReindexApplicationName", resourceCulture);
             }
         }
         

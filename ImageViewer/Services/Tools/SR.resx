@@ -468,7 +468,10 @@ Please ensure the ClearCanvas server is running or contact your system administr
   <data name="MessageDeterminingReindexState" xml:space="preserve">
     <value>Determining reindex state ...</value>
   </data>
-  <data name="ReindexApplicationDialogTitle" xml:space="preserve">
+  <data name="ReindexApplicationName" xml:space="preserve">
     <value>Reindex</value>
+  </data>
+  <data name="MessageReindexCompleted" xml:space="preserve">
+    <value>The reindex has completed successfully.</value>
   </data>
 </root>

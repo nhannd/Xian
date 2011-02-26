@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using System.ComponentModel;
 using System.Configuration;
 using System.IO;
 using System.Reflection;
@@ -64,20 +63,7 @@ namespace ClearCanvas.Common
 
 		public DecryptedProductSettings()
 		{
-			_settings = new ProductSettings();
-			_settings.PropertyChanged += OnSettingPropertyChanged;
-		}
-
-		private void OnSettingPropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			_product = null;
-			_component = null;
-			_edition = null;
-			_release = null;
-			_version = null;
-			_versionSuffix = null;
-			_copyright = null;
-			_license = null;
+			_settings = ((ProductSettings)(ApplicationSettingsBase.Synchronized(new ProductSettings())));
 		}
 
 		/// <summary>

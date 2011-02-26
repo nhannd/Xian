@@ -16,7 +16,7 @@ using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.Configuration
 {
-	[ExtensionOf(typeof (ConfigurationPageProviderExtensionPoint))]
+	[ExtensionOf(typeof (ConfigurationPageProviderExtensionPoint), Enabled = false)]
 	public sealed class ConfigurationPageProvider : IConfigurationPageProvider
 	{
 		public IEnumerable<IConfigurationPage> GetPages()
