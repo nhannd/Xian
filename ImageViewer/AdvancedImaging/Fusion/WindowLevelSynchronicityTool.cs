@@ -10,6 +10,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
@@ -22,6 +23,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 	public class WindowLevelSynchronicityTool : ImageViewerTool
 	{
 		private readonly IList<IDisplaySet> _fusionDisplaySets = new List<IDisplaySet>();
+		private SynchronizationContext _synchronizationContext;
 
 		public override void Initialize()
 		{
@@ -29,10 +31,14 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 			ImageViewer.EventBroker.ImageDrawing += OnImageDrawing;
 			ImageViewer.EventBroker.DisplaySetChanged += OnDisplaySetChanged;
+
+			_synchronizationContext = SynchronizationContext.Current;
 		}
 
 		protected override void Dispose(bool disposing)
 		{
+			_synchronizationContext = null;
+
 			ImageViewer.EventBroker.DisplaySetChanged -= OnDisplaySetChanged;
 			ImageViewer.EventBroker.ImageDrawing -= OnImageDrawing;
 
@@ -139,7 +145,12 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 						// force a draw only if we replicated the VOI LUT to a visible image somewhere
 						if (anyVisibleChange)
-							displaySet.Draw();
+						{
+							if (_synchronizationContext != null)
+								_synchronizationContext.Post(s => ((IDisplaySet) s).Draw(), displaySet);
+							else
+								displaySet.Draw();
+						}
 					}
 				}
 			}
