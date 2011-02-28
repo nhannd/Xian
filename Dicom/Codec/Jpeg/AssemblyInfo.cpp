@@ -60,3 +60,8 @@ using namespace ClearCanvas::Common;
 //[assembly:CLSCompliantAttribute(true)];
 
 //[assembly:SecurityPermission(SecurityAction::RequestMinimum, UnmanagedCode = true)];
+
+// Fix to load CRT as a private assembly when built against VS2008 SP1
+// ref: http://helgeklein.com/blog/2010/03/deploying-visual-c-runtime-files-as-private-assemblies/
+#define _BIND_TO_CURRENT_CRT_VERSION 1
+
